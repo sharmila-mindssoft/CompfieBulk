@@ -1,0 +1,91 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+  <div class="content-container width35">
+  <div class="content-area">
+      <h1>User Privileges</h1>
+      <div class="filters-and-search">
+      <div class="btn-add"  onclick="location.href='/inhouseprivileges/create'" formtarget="_self">Add</div>
+    </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+      <table>
+        <tr align="left">
+            <th width="8%" align="center">#</th>
+            <th >User Group Name</th>
+            <th align="center" width="11%">Edit</th>
+            <th align="center" width="11%">Status</th>
+          </tr>
+          <tr>
+            <td></td>
+            <td><input type="text" name="location-name" class="filter-text-box"></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td align="center">1</td>
+            <td>Manager</td>
+            <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+            <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+          </tr>
+          <tr>
+            <td align="center">2</td>
+            <td>Asst. Manager</td>
+            <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+            <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
+          </tr>
+          <tr>
+            <td align="center">3</td>
+            <td>Coordinator</td>
+            <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+            <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
+          </tr>
+          <tr>
+            <td align="center">4</td>
+            <td>Group 1</td>
+            <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+            <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
+          </tr>
+        </table>
+    </div>
+      
+    </div>
+</div>
+{% endblock %}
+  <table cellpadding="0" cellspacing="0" width="450px">
+    <tr>
+      <th colspan="2">Inhouse Privileges List</th>
+    </tr>
+    <tr>
+      <td>Role Name:
+        <input type="text" value="" />
+        <input type="button" align="right" value="Search" /></td>
+      <td><input type="button" align="right" value="Add" onclick="location.href='/InhousePrivileges/create'" formtarget="_self" /></td>
+    </tr>
+    <tr>
+      <td colspan="2"><table cellpadding="0" cellspacing="0" width="100%">
+          <tr align="left">
+            <th>Role Name</th>
+            <th>Edit</th>
+            <th>Status</th>
+          </tr>
+          <tr>
+            <td>Manager</td>
+            <td><img src="/images/icon-edit.png" id="editid" /></td>
+            <td><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+          </tr>
+          <tr>
+            <td>Asst.Manager</td>
+            <td><img src="/images/icon-edit.png" id="editid" /></td>
+            <td><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+          </tr>
+          <tr>
+            <td>Inhouse User</td>
+            <td><img src="/images/icon-edit.png" id="editid" /></td>
+            <td><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+          </tr>
+        </table></td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

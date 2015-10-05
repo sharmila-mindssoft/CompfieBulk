@@ -1,0 +1,58 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+  <div class="content-container width75" >
+  <div class="content-area">
+      <h1>Statutory Mapping List</h1>
+      <div class="filters-and-search">
+      <div class="btn-add"  onclick="location.href='/statutorymapping'" formtarget="_self">Add</div>
+    </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+      <table>
+          <tr align="left">
+          <th align="center">#</th>
+          <th width="10%">Country</th>
+          <th width="10%">Domain</th>
+          <th width="10%">Type</th>
+          <th width="35%">Statutory</th>
+         <th width="20%">Task</th>
+          <th width="5%" align="center">Edit</th>
+          <th width="5%" align="center" style="padding-right:3px">Status</th>
+        </tr>
+        <tr>
+          <td align="center"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td align="center"></td>
+          <td align="center"></td>
+        </tr>
+          <tr>
+          <td align="center">1</td>
+          <td>India</td>
+          <td>Industrial Law</td>
+          <td>Factory</td>
+          <td>Batteries Act <img src="/images/right_arrow.png"> Rule 4</td>
+          <td>FORM I Submission</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+      <tr>
+          <td align="center">2</td>
+          <td>India</td>
+          <td>Industrial Law</td>
+          <td>Factory</td>
+          <td>Batteries Act <img src="/images/right_arrow.png"> Rule 6(iii) <img src="/images/right_arrow.png"> FORM III</td>
+          <td>FORM III Submission</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+      
+        </table>
+    </div>
+      
+    </div>
+</div>
+{% endblock %} 

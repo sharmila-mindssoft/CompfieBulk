@@ -1,0 +1,62 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width40">
+  <div class="content-area">
+    <h1>Geography</h1>
+    <div class="filters-and-search">
+      <div class="btn-add" onclick="location.href='/geographymapping'" formtarget="_self">Add</div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="grid-table" >
+      <table >
+        <tr align="left" >
+          <th align="center">#</th>
+          <th>Country</th>
+          <th>Level</th>
+          <th>Name</th>
+          <th align="center">Edit</th>
+          <th align="center" style="padding-right:10px">Status</th>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td><input type="text"  class="filter-text-box"></td>
+          <td><input type="text"  class="filter-text-box"></td>
+          <td><input type="text"  class="filter-text-box"></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+          <tr>
+          <td align="center">1</td>
+          <td>India</td>
+          <td>State</td>
+          <td>Tamilnadu</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+        
+       
+        
+        <tr>
+          <td align="center">2</td>
+          <td>India</td>
+          <td>Municipality</td>
+          <td>Bodinayakanur</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-inactive.png" id="inactiveid" /></td>
+        </tr>
+      
+        <tr>
+          <td align="center">3</td>
+          <td>India</td>
+          <td>Corporation</td>
+          <td>Madurai</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+       
+      </table>
+    </div>
+    
+  </div>
+</div>
+{% endblock %}

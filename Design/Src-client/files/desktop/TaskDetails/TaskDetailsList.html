@@ -1,0 +1,173 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Task Details List<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Domain:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="domain"  placeholder="Enter Domain" value="Industrial Law">
+          </div>
+        </div>
+		<div class="input-row">
+          <div class="field-label">Task Type:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="tasktype" autofocus placeholder="Enter Task Type">
+          </div>
+        </div>
+      </div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Task:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="taskname" autofocus placeholder="Enter Task Name">
+          </div>
+        </div>
+		<div class="input-row">
+          <div class="field-label">Status:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="status" autofocus placeholder="Enter Status">
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+        <input type="submit" name="cancel" value="Export to CSV" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table-rpt">
+        <h1>Task List</h1>
+        <h2>Industrial Law</h2>
+        <div>
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+            <div style="margin-left:10px; font-size:0.8em;">Task Type :<span style="margin-left:10px; font-weight:bold;">ALL</span> </div>
+          </div>
+          <div style="float:right; margin-right:30%;">
+            <div style="margin-left:10px; font-size:0.8em;">&nbsp;<span style="margin-left:10px; font-weight:bold;">&nbsp;</span> </div>
+          </div>
+        </div>
+        <table style="border:1px dotted #CCCCCC;">
+          <tr align="left">
+            <th width="3%" align="center" class="header-bg">#</th>
+            <th class="header-bg">Compliance Name</th>
+            <th class="header-bg">Task Type</th>
+            <th class="header-bg">Assign Date</th>
+            <th class="header-bg">Due Date </th>
+            <th class="header-bg">Upload Date</th>
+            <th class="header-bg">Status</th>
+            <th class="header-bg">Format</th>
+            <th class="header-bg">Document</th>
+            <th class="header-bg">Document Date</th>
+            <th class="header-bg">Ageing</th>
+          </tr>
+          <tr>
+            <td align="center">1</td>
+            <td>FORM I Submission</td>
+            <td>One Time</td>
+			<td>20/08/2015</td>
+            <td>23/08/2015</td>
+            <td>24/08/2015</td>
+            <td>Complied</td>
+            <td><a href="#">Download</a></td>
+            <td><a href="#">Download</a></td>
+            <td>23/08/2015</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td align="center">2</td>
+            <td>FORM II Submission</td>
+            <td>Recurring</td>
+			<td>15/08/2015</td>
+            <td>20/08/2015</td>
+            <td>24/08/2015</td>
+            <td>Complied</td>
+            <td><a href="#">Download</a></td>
+            <td><a href="#">Download</a></td>
+            <td>23/08/2015</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td align="center">3</td>
+            <td>FORM III Submission</td>
+            <td>Recurring</td>
+			<td>21/08/2015</td>
+            <td>25/08/2015</td>
+            <td>26/08/2015</td>
+            <td>In progress</td>
+            <td><a href="#">Download</a></td>
+            <td></td>
+            <td></td>
+             <td>10 Days</td>
+          </tr>
+          <tr>
+            <td align="center">4</td>
+            <td>FORM IV Submission</td>
+            <td>Recurring</td>
+			<td>23/08/2015</td>
+            <td>29/08/2015</td>
+            <td>31/08/2015</td>
+            <td>Complied</td>
+            <td><a href="#">Download</a></td>
+            <td><a href="#">Download</a></td>
+            <td>30/08/2015</td>
+             <td>-</td>
+          </tr>
+          <tr>
+            <td align="center">5</td>
+            <td>FORM V Submission</td>
+            <td>Recurring</td>
+			<td>25/08/2015</td>
+            <td>30/08/2015</td>
+            <td>31/08/2015</td>
+            <td>In progress</td>
+            <td><a href="#">Download</a></td>
+            <td></td>
+            <td></td>
+            <td>5 Days</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(function(){
+  $('#taskname').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['FORM I Submission', 'FORM II Submission', 'FORM III Submission', 'FORM IV Submission', 'FORM V Submission'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#tasktype').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Recurring', 'One Time'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+  $('#domain').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Industrial Law', 'Finance Law', 'Labour Law'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+ 
+});
+</script> 
+{% endblock %}

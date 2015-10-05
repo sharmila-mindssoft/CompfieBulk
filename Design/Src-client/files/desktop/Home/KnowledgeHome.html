@@ -1,0 +1,477 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="css/dashboard.css">
+<script type="text/javascript">
+    $(document).ready(function() {
+      $(".dropdown-box-container").click(function() {
+        $(".filter-dropdown-container").slideToggle();
+      })
+      $("#viewaspie1").hide();
+      $("#viewaspie2").hide();
+      $("#viewasbar1").hide();
+      $("#viewasbar2").hide();
+      $("#back").hide();
+      loadCountrywiseDomain();
+    })
+
+    function viewStatutoryMappings(name){
+      $("#viewaspie1").hide();
+      $("#viewaspie2").hide();
+      $("#viewasbar1").hide();
+      $("#viewasbar2").hide();
+      var img_name="/images/dash-list/complienceopportunity-group-not.png";
+      var name = "Not Applied Tasks - Finance";
+      var htmlstr = '<div style="margin-left:50px;"><h2 style="margin-left:10px;font-size:20px">'+name+'</h2><br><img src='+img_name+'></div>';
+       $(function () {
+        $('#container').html(htmlstr);
+      });
+    }
+
+    function loadDomainwiseStatutory(){
+      $(function () {
+        $("#viewaspie2").hide();
+        $("#viewaspie1").hide();
+        $("#viewasbar1").hide();
+        $("#viewasbar2").hide();
+        $("#back").hide();
+        $('#container').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Statutory Mappings'
+            },
+            subtitle: {
+                text: 'Domain wise'
+            },
+            xAxis: {
+                type: 'category',
+                title:{
+              text: 'Domain'
+            }
+            },
+            yAxis: {
+                title: {
+                    text: 'Total Mappings'
+                }
+
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y:.0f}'
+                    }
+                },
+                column: {
+                    stacking: 'normal',
+                    cursor: 'pointer',
+                      point: {
+                        events: {
+                            click: function() {
+                                var drilldown = this.drilldown;
+                                if (drilldown) { 
+                                  viewStatutoryMappings();
+                                }
+                            }
+                          }
+                        }
+                    },
+            },
+
+            tooltip: {
+                headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.0f}</b> of total<br/>'
+            },
+
+            series: [{
+                name: "Domains",
+                colorByPoint: true,
+                data: [{
+                    name: "Finance",
+                    y: 3,
+                    drilldown: "india"
+                }, {
+                    name: "Industrial Law",
+                    y: 2,
+                }, {
+                    name: "Labour Law",
+                    y: 5,
+                }]
+            }],
+        });
+    });
+    }
+
+        function loadCountrywiseDomain(){
+      $("#back").hide();
+     $(function () {  
+          $('#container').highcharts({
+              chart: {
+                  type: 'column',
+                  events: {
+                  drilldown: function (e) {
+                    alert("hai");
+                    loadTaskWiseChart();
+                  }
+                }
+              },
+              title: {
+                  text: 'Domainwise Classification'
+              },
+              xAxis: {
+                  type: 'category'
+              },
+
+              legend: {
+                  enabled: true
+              },
+
+              plotOptions: {
+                  column: {
+                    stacking: 'normal',
+                    cursor: 'pointer',
+                      point: {
+                        events: {
+                            click: function() {
+                                var drilldown = this.drilldown;
+                                if (drilldown) { // drill down
+                                    //setChart(drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
+                                    // loadSubChart();
+                                } else { // restore
+                                    //setChart(name, categories, data);
+                                    // loadTaskWiseChart();
+                                }
+                            }
+                          }
+                        }
+                    },
+                  series: {
+                      borderWidth: 0,
+                      dataLabels: {
+                          enabled: true,
+                          style: {
+                              color: 'white',
+                              textShadow: '0 0 2px black, 0 0 2px black'
+                          }
+                      },
+                      stacking: 'normal'
+                  }
+              },
+
+              series: [
+              {
+                  name: 'Tasks',
+                  data: [{
+                      name: 'Finance',
+                      y: 300,
+                  }, {
+                      name: 'Industrial Law',
+                      y: 200,
+                  }, {
+                      name: 'Labour Law',
+                      y: 200,
+                  }]
+              }, {
+                  name: 'Clients',
+                  data: [{
+                      id:'fin',
+                      name: 'Finance',
+                      y: 100,
+                  }, {
+                      id:'ind',
+                      name: 'Industrial Law',
+                      y: 500,
+                  }, {
+                      id:'lab',
+                      name: 'Labour Law',
+                      y: 200,
+                  }]
+              }],
+          })
+      });
+  }
+
+//     function loadCountrywiseDomain(){
+//       $("#back").hide();
+//       $(function () {
+//     $('#container').highcharts({
+//         colors:['#90ED7D','#F15C80'],
+//         chart: {
+//             type: 'column'
+//         },
+//         title: {
+//             text: 'Domainwise Tasks'
+//         },
+//         xAxis: {
+//             categories: ['Finance', 'Labour Law', 'Industrial Law']
+//         },
+//         yAxis: {
+//             min: 0,
+//             title: {
+//                 text: 'Total Tasks'
+//             }
+//         },
+//         tooltip: {
+//             pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+//             shared: true
+//         },
+//         plotOptions: {
+//             column: {
+//                 stacking: 'percent',
+//                 point: {
+//                         events: {
+//                             click: function() {
+//                                 var drilldown = this.drilldown;
+//                                 if (drilldown) { 
+//                                   viewStatutoryMappings();
+//                                 }else{
+//                                 }
+//                             }
+//                           }
+//                 }
+//             },
+
+//         },
+//         series: [{
+//             name: 'Applied Tasks',
+//             data: [
+//             {
+//               y:5,
+//               drilldown:"finance"
+//             },
+//             {
+//               y:4,
+//             },
+//             {
+//               y:5,
+//             }
+//             ]
+//         }, {
+//             name: 'Not Applied Tasks',
+//             data: [2, 2, 3,]
+//         },]
+//     });
+// });
+//   }
+
+  function loadCountrywisePie(){
+    $("#back").hide();
+    $("#viewaspie1").hide();
+    $("#viewaspie2").hide();
+    $("#viewasbar1").hide();
+    $("#viewasbar2").hide();
+    $(function () {
+          $('#container').highcharts({
+              chart: {
+                  plotBackgroundColor: null,
+                  plotBorderWidth: null,
+                  plotShadow: false,
+                  type: 'pie'
+              },
+              title: {
+                  text: 'Domains'
+              },
+              subtitle: {
+                  text: 'Country wise'
+              },
+              tooltip: {
+                  pointFormat: '{series.name}: <b>{point.y:.0f}</b>'
+              },
+              plotOptions: {
+                  pie: {
+                      allowPointSelect: true,
+                      cursor: 'pointer',
+                      dataLabels: {
+                          enabled: false
+                      },
+                      showInLegend: true,
+                      point: {
+                        events: {
+                            click: function() {
+                                var drilldown = this.drilldown;
+                                if (drilldown) { 
+                                  loadDomainwiseStatutory();
+                                } 
+
+                            }
+                          }
+                        }
+                  }
+              },
+              series: [{
+                  name: "Domains",
+                  colorByPoint: true,
+                  data: [{
+                      name: "India",
+                      y: 3,
+                      drilldown:"india"
+                  }, {
+                      name: "US",
+                      y: 3,
+                  }, {
+                      name: "China",
+                      y: 4
+                  }, {
+                      name: "Singapore",
+                      y: 2
+                  }, {
+                      name: "Malaysia",
+                      y: 1
+                  }]
+              }]
+          });
+      });
+  }
+
+  function loadDomainwisePie(){
+    $("#viewaspie1").hide();
+    $("#viewaspie2").hide();
+    $("#viewasbar1").hide();
+    $("#viewasbar2").hide();
+    $("#back").hide();
+    $(function () {
+          $('#container').highcharts({
+              chart: {
+                  plotBackgroundColor: null,
+                  plotBorderWidth: null,
+                  plotShadow: false,
+                  type: 'pie'
+              },
+              title: {
+                  text: 'Statutory Mappings - India'
+              },
+              subtitle: {
+                  text: 'Domain wise'
+              },
+              tooltip: {
+                  pointFormat: '{series.name}: <b>{point.y:.0f} Mappings</b>'
+              },
+              plotOptions: {
+                  pie: {
+                      allowPointSelect: true,
+                      cursor: 'pointer',
+                      dataLabels: {
+                          enabled: false
+                      },
+                      showInLegend: true,
+                      point: {
+                        events: {
+                            click: function() {
+                                var drilldown = this.drilldown;
+                                if (drilldown) { 
+                                  viewStatutoryMappings();
+                                }
+                            }
+                          }
+                        }
+                  }
+              },
+              series: [{
+                  name: "Mappings",
+                  colorByPoint: true,
+                  data: [{
+                      name: "Finance",
+                      y: 3,
+                      drilldown:"finance"
+                  }, {
+                      name: "Industrial Law",
+                      y: 2,
+                  }, {
+                      name: "Labour Law",
+                      y: 5
+                  },]
+              }]
+          });
+      });
+  }
+  </script>
+<div class="notification-container">
+  <ul>
+    <li>
+      <p class="notification-text">Submit Form IV task was created.</p>
+      <p class="time">Sat, 25 July, 2015, 9.43AM</p>
+      <p class="notification-cat">User: <span>raveen Kumar</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping  Batteries Act>>Rule 4>>FORM I has been approved</p>
+      <p class="time">Fri, 24 July, 2015, 10.10AM</p>
+      <p class="notification-cat">Category: <span>Statutory Mapping</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping Batteries Act>>Rule 6(iii)>>FORM III has been Created</p>
+      <p class="time">Thu, 23 July, 2015, 12.26AM</p>
+      <p class="notification-cat">User: <span>Divagar</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping The Tamilnadu Shops and Commercial Establishments Act - 1947 and Rules - 1948>>Rule 11(3a)>>Form P - Register of fines,deduction for damages or loss and advance has been Created</p>
+      <p class="time">Wed, 22 July, 2015, 12.26AM</p>
+      <p class="notification-cat">User: <span>Geetha</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping  The Tamilnadu Shops and Commercial Establishments Act - 1947 and Rules - 1948>>>Rule 16 (1)>>Form Q - Register of employment has been approved</p>
+      <p class="time">Tue, 21 July, 2015, 10.10AM</p>
+      <p class="notification-cat">Category: <span>Statutory Mapping</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Submit Form P task was created.</p>
+      <p class="time">Tue, 21 July, 2015, 9.43AM</p>
+      <p class="notification-cat">User: <span>Praveen</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping Batteries Act>>Rule 8(i) & 9(1) & 9 (5>>FORM VI has been Created</p>
+      <p class="time">Mon, 20 July, 2015, 12.26AM</p>
+      <p class="notification-cat">User: <span>Sridhar</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping  Batteries Act>>Rule 8 (iii)>>FORM VII has been approved</p>
+      <p class="time">Mon, 20 July, 2015, 10.10AM</p>
+      <p class="notification-cat">Category: <span>Statutory Mapping</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping Batteries Act>>Rule 11(ii)>>FORM IX has been Created</p>
+      <p class="time">Sat, 18 July, 2015, 12.26AM</p>
+      <p class="notification-cat">User: <span>Sudha</span></p>
+    </li>
+  </ul>
+</div>
+<!-- notification section end here -->
+
+<div class="content-container">
+<div class="content-area">
+<div class="archive-container" style="width:850px;">
+ <!-- <div class="archive-header">
+    <span class="index-tab active">Client</span>
+    <span class="archive-tab">Prospective Clients</span>
+  </div>-->
+  <div class="graph-box" style="width:800px; display:none;" >
+           <!-- <div class="graph-box-heading">
+              <!--<select id="dropdown">
+                <option>Clients</option>
+                <option>Prospective Clients</option>
+              </select>
+              <div class="graph-title-container">
+                <span><img src="images/dashboard/icon-graph.png"></span>
+                <span class="graph-title">Client Status</span>
+              </div>
+            </div>-->
+            <div class="graph-holder">
+            <input type="button" onClick="loadCountrywiseDomain()" id="back" style="float:right;margin-right:20px" value="Back to Domains"/>
+            <input type="button" id="viewaspie1" onClick="loadCountrywisePie()" style="float:right;margin-right:20px" value="View as Pie chart"> 
+            <input type="button" id="viewaspie2" onClick="loadDomainwisePie()" style="float:right;margin-right:20px" value="View as Pie chart"/>
+            <input type="button" id="viewasbar1" onClick="loadCountrywiseDomain()" style="float:right;margin-right:20px" value="View as Bar chart"/>
+            <input type="button" id="viewasbar2" onClick="loadDomainwiseStatutory()" style="float:right;margin-right:20px" value="View as Bar chart"/>
+            <div class="clearfix"></div>
+             <!-- <img id="prosp_img"   src="images/dashboard/business_chart1.png">
+              <img id="clients_img"  src="images/dashboard/business_chart2.png">-->
+              <div id="container" style="height: 400px"></div>
+            </div>
+   </div>
+ </div>
+</div>
+</div>
+{% endblock %} 

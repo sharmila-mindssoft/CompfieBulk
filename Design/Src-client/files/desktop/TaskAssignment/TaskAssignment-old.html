@@ -1,0 +1,448 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
+<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
+<style>
+
+ .slider{
+        background-color: gray;
+        color: white;
+      }
+      #trigger{
+        width: 90%;
+        padding: 10px;
+        margin: 5px 5%;
+      }
+.tasks{
+  height:auto;
+  overflow: auto;
+}
+.paddingleft20{
+  padding-left:40px;
+}
+</style>
+<div class="content-container">
+        <div class="content-area">
+          <div class="add-container">
+            <div class="add-container-heading">Assign Task<span class="error-message" style="color:white"></span></div>
+            <div class="form-container-outer">
+            <div class="form-container-grid-table">
+              <table style="width:30%;float:left;height:375px" id="resizable-table">
+                <tr>
+                  <th style="background-color:#662D91;color:white;padding:5px"> I. Task Selection</th>
+                </tr>
+                <tr align="left">
+                  <th  align="center">Tasks</th>
+                </tr>
+                <tr>
+                  <th><input type="text" name="location-name" class="filter-text-box" placeholder="Tasks" style="margin-bottom:5px"></th>
+                </tr>
+                <tr style="height:375px">
+                  <td rowspan="2" style="height=375px">
+                    <h3 style="background-color:#8A8A8A;padding:5px;line-height:15px"><img src="/images/chevron_black_down.png" style="float:left;margin-right:5px;margin-top:4px;">The Batteries (Management & Handling) Rules, 2001</h3>
+                      <div >
+                        <h3 style="background-color:#FFFFFF;padding:5px"><img src="/images/chevron_black_down.png" style="float:left;margin-right:5px;margin-top:2px;padding-left:10px">Responsibilities of manufacturer, importer, assembler and re-conditioner</h3>
+                        <ul style="height:auto;overflow:auto;" class="tasks">
+                          <li class="paddingleft20 active" ><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead">Submit Form I<img src="/images/icon-info.png" style="margin-left:5px"></abbr></li>
+                        </ul>
+                      </div>
+                      <div >
+                        <h3 style="background-color:#FFFFFF;padding:5px"><img src="/images/chevron_black_down.png" style="float:left;margin-right:5px;margin-top:2px;padding-left:10px">Registration of Importers, Customs clearance of imports of new lead acid batteries</h3>
+                        <ul class="tasks" style="height:auto;overflow:auto;">
+                          <li class="paddingleft20 active" ><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned">Submit Form II<img src="/images/icon-info.png" style="margin-left:5px"></abbr></li>
+                        </ul>
+                      </div>
+                      <div >
+                        <h3 style="background-color:#FFFFFF;padding:5px"><img src="/images/chevron_black_down.png" style="float:left;margin-right:5px;margin-top:2px;padding-left:10px">Customs clearance of imports of new lead acid batteries</h3>
+                        <ul class="tasks" style="height:auto;overflow:auto;">
+                          <li class="paddingleft20 active" ><abbr class="page-load" title="Whether undertaking submitted by importer to authority">Submit Form III<img src="/images/icon-info.png" style="margin-left:5px"></abbr></li>
+                        </ul>
+                      </div>
+                      <div >
+                        <h3 style="background-color:#FFFFFF;padding:5px"><img src="/images/chevron_black_right.png" style="float:left;margin-right:5px;margin-top:2px;padding-left:10px">Responsibilities of recycler, Procedure for registration / renewal of registration of recyclers</h3>
+                        <ul style="display:none;height:auto;overflow:auto" class="tasks">
+                          <li class="paddingleft20">Submit Form VI</li>
+                        </ul>
+                      </div>
+                      <h3 style="background-color:#8A8A8A;padding:5px;line-height:15px"><img src="/images/chevron_black_down.png" style="float:left;margin-right:5px;margin-top:4px";>The Tamilnadu Shops and Commercial Establishments Act - 1947 and Rules - 1948</h3>
+                      <div >
+                        <h3 style="background-color:#FFFFFF;padding:5px"><img src="/images/chevron_black_right.png" style="float:left;margin-right:5px;margin-top:2px;padding-left:10px">Opening and closing hours</h3>
+                        <ul style="height:auto;overflow:auto;display:none">
+                          <li style="padding-left:20px;">Display Name board</li>
+                        </ul>
+                      </div>
+                      <div >
+                        <h3 style="background-color:#FFFFFF;padding:5px"><img src="/images/chevron_black_right.png" style="float:left;margin-right:5px;margin-top:2px;padding-left:10px">Selling out Side shops</h3>
+                        <ul class="tasks" style="height:auto;overflow:auto;display:none">
+                          <li class="paddingleft20">Submit Form P - Register of fines,deduction for damages or loss and advance</li>
+                        </ul>
+                      </div>
+                      <div >
+                        <h3 style="background-color:#FFFFFF;padding:5px"><img src="/images/chevron_black_right.png" style="float:left;margin-right:5px;margin-top:2px;padding-left:10px">Spread over of periods of work</h3>
+                        <ul style="display:none;height:auto;overflow:auto" class="tasks">
+                          <li class="paddingleft20">Submit Form Q - Register of employment</li>
+                        </ul>
+                      </div>
+                       <div >
+                        <h3 style="background-color:#FFFFFF;padding:5px"><img src="/images/chevron_black_down.png" style="float:left;margin-right:5px;margin-top:2px;padding-left:10px">Closing of shops and grant of holidays</h3>
+                        <ul style="height:auto;overflow:auto" class="tasks">
+                          <li class="paddingleft20 active"><abbr class="page-load" title="Register of fines,deduction for damages or loss and advance shall be maintained in Form P.">Submit Form P<img src="/images/icon-info.png" style="margin-left:5px"></abbr></li>
+                        </ul>
+                      </div>
+                      <h3 style="background-color:#8A8A8A;padding:5px;line-height:15px"><img src="/images/chevron_black_right.png" style="float:left;margin-right:5px;margin-top:2px">Companies act</h3>
+                  </td>
+                </tr>
+              </table>
+              <table style="width:70%;height:auto">
+                <tr>
+                  <th colspan="3" style="background-color:#9055BD;color:white;padding:5px">
+                    II. Assignment Settings
+                  </th>
+                </tr>
+                <tr>
+                  <th width="30%" >
+                      Assignee 
+                  </th>
+                  <th width="30%" align="center">Concurrence</th>
+                  <th width="30%" align="center">Approval</th>
+                </tr>
+                <tr>
+                  <th align="center" style="padding-bottom:5px">
+                    <Select class="input-box">
+                      <option>Corporate Office</option>
+                      <option>Regional Office - North</option>
+                      <option>Regional Office - South</option>
+                      <option>Branch Office - Delhi</option>
+                      <option>Branch Office - Chennai</option>
+                      <option selected="selected">Branch Office - Madurai</option>
+                      <option>Branch Office - Bangalore</option>
+                      <option>Service provider</option>
+                    </Select>
+                  </th>
+                  <th align="center">
+                    <Select class="input-box">
+                      <option>Corporate Office</option>
+                      <option>Regional Office - North</option>
+                      <option>Regional Office - South</option>
+                      <option>Branch Office - Delhi</option>
+                      <option>Branch Office - Chennai</option>
+                      <option selected="selected">Branch Office - Madurai</option>
+                      <option>Branch Office - Bangalore</option>
+                    </Select>
+                  </th>
+                  <th align="center">
+                    <Select class="input-box">
+                      <option>Corporate Office</option>
+                      <option>Regional Office - North</option>
+                      <option selected="selected">Regional Office - South</option>
+                      <option>Branch Office - Delhi</option>
+                      <option>Branch Office - Chennai</option>
+                      <option>Branch Office - Madurai</option>
+                      <option>Branch Office - Bangalore</option>
+                    </Select>
+                  </th>
+                </tr>
+                <tr>
+                  <th><input type="text" name="location-name" class="filter-text-box" placeholder="Search" style="margin-bottom:5px"></th>
+                  <th><input type="text" name="location-name" class="filter-text-box" placeholder="Search" style="margin-bottom:5px"></th>
+                  <th><input type="text" name="location-name" class="filter-text-box" placeholder="Search" style="margin-bottom:5px"></th>
+                </tr>
+                <tr style="height:387px">
+                  <td>
+                    <ul style="height:387px">
+                      <li class="active">Abishek - L2</li>
+                      <li>Krishna - L3</li>
+                      <li>Rajaram - L4</li>
+                      <li>Subash - L4</li>
+                      <li>Vishnu - L5</li>
+                      <li>Vivek - L5</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul style="height:387px">
+                      <li>Hariharan - L1</li>
+                      <li>Abishek - L2</span></li>
+                      <li>Krishna - L3</span></li>
+                      <li class="active">Rajaram - L4</span></li>
+                      <li>Subash - L4</span></li>
+                      <li>Vishnu - L5</span></li>
+                      <li>Vivek - L5</span></li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul style="height:387px">
+                      <li >Aravind - L1</span></li>
+                      <li>Arjun - L2</span></li>
+                      <li class="active">Arun - L3</span></li>
+                      <li>Babu - L4</span></li>
+                      <li>Dhinesh - L4</span></li>
+                      <li>Divagar - L5</span></li>
+                      <li>Praveen - L5</span></li>
+                    </ul>
+                  </td>
+                </tr>
+                
+              </table>                 
+                
+            </div>
+
+              <div class="grid-table" style="margin-left:150px">
+                <table style="width:700px">
+                <tr align="left" class="rightside" >
+                  <th  colspan="3" style="background-color:#fff; padding-left:0px; ">
+                    <span style="background-color:#eee; color:#000000; font-size: 0.8em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                    inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                    inset 0 0 5px rgba(53,86,129, 0.5),
+                    inset -285px 0 35px white;
+                  border-radius: 0 5px 0 5px;"  width="250px">
+                    Recurring
+                  </span>
+                </th>
+                </tr>
+                  <tr>
+                    <th width="3%" align="center">#</th>
+                    <th width="10%" align="left">Compliance</th>
+                    <th width="10%" align="left">Repeat Every</th>
+                    <th width="10%" align="left">Repeats</th>
+                    <th width="10%" align="left">Validity Date</th>
+                  </tr>
+                  <tr>
+                    <td align="center">1</td>
+                    <td>Submit Form I</td>
+                    <td>
+                      <select class="input-box" style="width:100px;">
+                        <option selected="selected">Monthly</option>
+                        <option >Yearly</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select class="input-box" style="width:50px; float:left;">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option selected="selected">6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                        <option>14</option>
+                        <option>15</option>
+                        <option>16</option>
+                        <option>17</option>
+                        <option>18</option>
+                        <option>19</option>
+                        <option>20</option>
+                        <option>21</option>
+                        <option>22</option>
+                        <option>23</option>
+                        <option>24</option>
+                        <option>25</option>
+                        <option>26</option>
+                        <option>27</option>
+                        <option>28</option>
+                        <option>29</option>
+                        <option>30</option>
+                      </select>
+                    </td>
+                    <td><input type="date" class="input-box" style="width:200px" value="2016-02-15"/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center">2</td>
+                    <td>Submit Form II</td>
+                    <td>
+                      <select class="input-box" style="width:100px;">
+                        <option >Monthly</option>
+                        <option selected="selected">Yearly</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select class="input-box" style="width:50px; float:left;">
+                        <option>1</option>
+                        <option selected="selected">2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option >6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                        <option>14</option>
+                        <option>15</option>
+                        <option>16</option>
+                        <option>17</option>
+                        <option>18</option>
+                        <option>19</option>
+                        <option>20</option>
+                        <option>21</option>
+                        <option>22</option>
+                        <option>23</option>
+                        <option>24</option>
+                        <option>25</option>
+                        <option>26</option>
+                        <option>27</option>
+                        <option>28</option>
+                        <option>29</option>
+                        <option>30</option>
+                      </select>
+                    </td>
+                    <td><input type="date" class="input-box" style="width:200px" value="2016-03-20"/></td>
+                  </tr>
+                  <tr>
+                    <td align="center">3</td>
+                    <td>Submit Form III</td>
+                    <td>
+                      <select class="input-box" style="width:100px;">
+                        <option selected="selected">Monthly</option>
+                        <option >Yearly</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select class="input-box" style="width:50px; float:left;">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option selected="selected">6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                        <option>14</option>
+                        <option>15</option>
+                        <option>16</option>
+                        <option>17</option>
+                        <option>18</option>
+                        <option>19</option>
+                        <option>20</option>
+                        <option>21</option>
+                        <option>22</option>
+                        <option>23</option>
+                        <option>24</option>
+                        <option>25</option>
+                        <option>26</option>
+                        <option>27</option>
+                        <option>28</option>
+                        <option>29</option>
+                        <option>30</option>
+                      </select>
+                    </td>
+                    <td><input type="date" class="input-box" style="width:200px" value="2016-08-28"/></td>
+                  </tr>
+                  <tr>
+                    <td align="center">4</td>
+                    <td>Submit Form P</td>
+                    <td>
+                      <select class="input-box" style="width:100px;">
+                        <option >Monthly</option>
+                        <option selected="selected">Yearly</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select class="input-box" style="width:50px; float:left;">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option selected="selected">5</option>
+                        <option >6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                        <option>14</option>
+                        <option>15</option>
+                        <option>16</option>
+                        <option>17</option>
+                        <option>18</option>
+                        <option>19</option>
+                        <option>20</option>
+                        <option>21</option>
+                        <option>22</option>
+                        <option>23</option>
+                        <option>24</option>
+                        <option>25</option>
+                        <option>26</option>
+                        <option>27</option>
+                        <option>28</option>
+                        <option>29</option>
+                        <option>30</option>
+                      </select>
+                    </td>
+                    <td><input type="date" class="input-box" style="width:200px" value="2016-12-10"/></td>
+                  </tr>
+                  <tr align="left" class="rightside" >
+                  <th  colspan="3" style="background-color:#fff; padding-left:0px; ">
+                      <span style="background-color:#eee; color:#000000; font-size: 0.8em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                      inset 0 0 5px rgba(53,86,129, 0.5),
+                      inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;"  width="250px">
+                      One Time
+                    </span>
+                  </th>
+                  </tr>
+                  <tr>
+                    <th></th>
+                    <th width="3%" align="center">#</th>
+                    <th width="10%" align="left">Compliance</th>
+                    <th></th>
+                    <th width="10%" align="left">Due Date</th>
+                  </tr>
+                  <tr>
+                    <td> </td>
+                    <td align="center">5</td>
+                    <td>Registration</td>
+                    <td></td>
+                    <td><input type="date" class="input-box" style="width:200px" value="2016-12-10"/></td>
+                  </tr>
+
+                </table>
+              </div>
+              <div>
+                  <div class="submit-button-container" style="margin-top:5px">
+                    <br>
+                  <span align:"center">  <input type="submit" name="cancel" value="Assign" class="btn-submit">
+                  </div> 
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+<script type="text/javascript">
+
+$(document).ready(function() {
+    $("#section-flip-1").show();
+    $("#section-flip-4").hide();
+  })
+
+  $("#example-basic").steps({
+    headerTag: "h3",
+    bodyTag: "section",
+    transitionEffect: "slideLeft",
+    autoFocus: true
+  });
+jQuery(window).load(function(){
+  jQuery('.page-load').tipso({
+    tooltipHover: true
+});
+
+});
+</script> 
+{% endblock %}

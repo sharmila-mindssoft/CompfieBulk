@@ -1,0 +1,352 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %} 
+<!-- <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/accordian/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/accordian/accordian.css">
+<script type="text/JavaScript" src="http://code.jquery.com/jquery-latest.min.js"></script> 
+<script type="text/javascript" src="/files/desktop/common/js/accordian/accordian.js"></script> 
+<script type="text/javascript" src="/files/desktop/common/js/accordian/accordian2.js"></script> 
+<script type="text/javascript" src="/files/desktop/common/js/accordian/jquery-ui.js"></script> --> 
+<script type="text/javascript">
+        $(document).ready(function () {
+            window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
+            $("#group-new").click(function(){
+              $("#group-text").show();
+              $("#group-select").hide();
+              $("#group-new").hide();
+            });
+            $("#division-new").click(function(){
+              $("#division-text").show();
+              $("#division-select").hide();
+              $("#division-new").hide();
+            });
+            $("#entity-new").click(function(){
+              $("#entity-text").show();
+              $("#entity-select").hide();
+              $("#entity-new").hide();
+            });
+            $("#businessgroup-new").click(function(){
+              $("#businessgroup-text").show();
+              $("#businessgroup-select").hide();
+              $("#businessgroup-new").hide();
+            });
+            $('.unitcode_checkbox').change(function() {
+              if ($(this).is(':checked')) {
+                $('.unit1').val("RG10001");
+                $('.unit2').val("RG10002");
+                $('.unit3').val("RG10003");
+                $('.unit4').val("RG10004");
+                $('.unit5').val("RG10005");
+
+              } else {
+                $('.unit1').val("");
+                $('.unit2').val("");
+                $('.unit3').val("");
+                $('.unit4').val("");
+                $('.unit5').val("");
+              }
+            });
+        });
+</script>
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Client Master<span class="error-message"></span></div>
+      <div class="input-row">
+        <div class="input-row-left">
+          <div class="input-row"> <br>
+            <div class="single-column-field-label">Group Company:<span class="mandatory">*</span></div>
+            <div class="single-column-field-input">
+              <Select id="group-select" class="input-box">
+                <option>RG Groups</option>
+                <option>SLK Groups</option>
+                <option>PGJ Groups</option>
+              </Select>
+              <input id="group-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Group Name">
+              <span style="font-size:10px"><a id="group-new" href="#">New</a></span> </div>
+          </div>
+           <div class="input-row">
+            <div class="single-column-field-label">Business Group</div>
+            <div class="single-column-field-input">
+              <Select id="businessgroup-select" class="input-box">
+                <option>RG1 Groups</option>
+                <option>SLK1 Groups</option>
+                <option>PGJ1 Groups</option>
+              </Select>
+              <input id="businessgroup-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Business Group Name">
+              <span style="font-size:10px"><a href="#" id="businessgroup-new">New</a></span> </div>
+          </div>
+          <div class="input-row">
+            <div class="single-column-field-label">Division</div>
+            <div class="single-column-field-input">
+              <Select id="division-select" class="input-box">
+                <option>RG Division</option>
+                <option>SLK Division</option>
+                <option>PGJ Division</option>
+              </Select>
+              <input id="division-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Division Name">
+              <span style="font-size:10px"><a href="#" id="division-new">New</a></span> </div>
+          </div>
+          <div class="input-row">
+            <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
+            <div class="single-column-field-input">
+              <select multiple="multiple" style="height:30px;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+                    <option value="Labour Law" selected>Labour Law</option>
+                    <option value="Industrial Law" selected>Industrial Law</option>
+                    <option value="Finance" selected="selected">Finance</option>
+                  </select>
+              
+              </div>
+          </div>
+           <div class="input-row">
+            <div class="single-column-field-label">Username:<span class="mandatory">*</span></div>
+            <div class="field-input">
+              <input type="text" class="input-box" placeholder="user@domain.com" style="width:200px;">
+            </div>
+          </div>
+        </div>
+        <div class="input-row-right">
+          
+          <div class="input-row"><br>
+            <div class="single-column-field-label">Legal Entity:<span class="mandatory">*</span></div>
+            <div class="single-column-field-input">
+              <Select id="entity-select" class="input-box">
+                <option>RG Entity</option>
+                <option>SLK Entity</option>
+                <option>PGJ Entity</option>
+              </Select>
+              <input id="entity-text" type="text" class="input-box" style="width:200px;display:none" placeholder="Legal Entity Name">
+              <span style="font-size:10px"><a href="#" id="entity-new">New</a></span> </div>
+          </div>
+          <div class="input-row">
+            <div class="single-column-field-label">Upload Logo:<span class="mandatory">*</span></div>
+            <div class="field-input">
+              <input type="file" class="input-box" style="width:200px;">
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="single-column-field-label">Login Limit:<span class="mandatory">*</span></div>
+            <div class="field-input">
+              <input type="text" class="input-box" placeholder="login limit"  value="10" style="width:200px;">
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="single-column-field-label">Password:<span class="mandatory">*</span></div>
+            <div class="field-input">
+              <input type="password" class="input-box" placeholder="password" style="width:200px;">
+            </div>
+          </div>
+          <div class="input-row">
+          <div class="single-column-field-label">Unitcode Auto Generate:</div>
+            <div class="field-input" style="margin-top:5px;">
+               <input type="checkbox" class="unitcode_checkbox" checked="checked">
+            </div>
+            
+          </div>
+        </div>
+        <div class="add-container">
+        <span class="error-message" style="padding-right:5px;padding-bottom:5px;"><a href="#"><img src="/images/icon-plus.png" formtarget="_self"/></a> </span>
+         <div class="grid-table">
+            <table>
+              <tr style="background-color:#CCC;">
+              <td colspan="9" align="left">Country : <input type="text" class="input-box icon-autocomplete" value="India" style="width:150px !important; background-color:#fff;" /></td>
+              </tr>
+              <tr align="left">
+              <th width="15%">Geography Level</th>
+              <th width="15%">Unit Location</th>
+              <th width="10%"></th>
+              <th width="11%">Unit Code</th>
+              <th width="19%">Unit Name</th>
+              <th width="15%">Unit Address</th>
+              <th width="8%">Domain</th>
+              <th width="5%" style="padding-right:5px">Status</th>
+              <th width="2%"></th>
+              </tr>
+              <tr>
+                <td><select class="input-box">
+                <option>Region</option>
+                <option>State</option>
+                <option selected="selected" >Union Territory</option>
+                <option>District</option>
+                <option>Corporation</option>
+                <option>Municipality</option>
+                <option>Town</option>
+                <option>Panchayat</option>
+                </select></td>
+                <td>
+                  <input type="text" class="input-box icon-autocomplete" placeholder="" value="New Delhi" style="width:150px;margin">
+                </td>
+                <td>North Region, India</td>
+                <td><input type="text" class="input-box unit1" placeholder="Unit Code" value="RG10001"></td>
+                <td><input type="text" class="input-box" placeholder="Unit Name" value="Corporate Office"></td>
+                <td><textarea class="input-box" placeholder="address">15/9, New Delhi </textarea></td>
+                <td><select multiple="multiple" style="height:30px;font-size:13px;max-width:100px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+                    <option value="Labour Law" selected>Labour Law</option>
+                    <option value="Industrial Law" selected>Industrial Law</option>
+                    <option value="Finance">Finance</option>
+                  </select></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></td>
+                <td></td>
+              </tr>
+              <tr>
+              <td><select class="input-box">
+                <option>Region</option>
+                <option>State</option>
+                <option>Union Territory</option>
+                <option selected="selected">District</option>
+                <option>Corporation</option>
+                <option>Municipality</option>
+                <option>Town</option>
+                <option>Panchayat</option>
+                </select></td>
+                <td>
+                <input type="text" class="input-box icon-autocomplete" placeholder="" value="South Delhi Municipal Corporation" style="width:150px;">
+                </td><td>South Delhi Municipal Corporation, Delhi</td>
+                <td><input type="text" class="input-box unit2" placeholder="Unit Code" value="RG10002"></td>
+                <td><input type="text" class="input-box" placeholder="Unit Name" value="Regional Office - North"></td>
+
+                <td><textarea class="input-box" placeholder="address"> 24-1/4, South Delhi</textarea></td>
+                <td><select multiple="multiple" style="height:30px;font-size:13px;max-width:100px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+                    <option value="Labour Law" selected>Labour Law</option>
+                    <option value="Industrial Law" selected>Industrial Law</option>
+                    <option value="Finance">Finance</option>
+                  </select></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td><select class="input-box">
+                <option>Region</option>
+                <option>State</option>
+                <option>Union Territory</option>
+                <option selected="selected">District</option>
+                <option>Corporation</option>
+                <option>Municipality</option>
+                <option>Town</option>
+                <option>Panchayat</option>
+                </select></td>
+                <td>
+                  <input type="text" class="input-box icon-autocomplete" placeholder="" value="Chennai" style="width:150px;">
+                  </td><td>Chennai, Tamil Nadu, South Region</td>
+                  <td><input type="text" class="input-box unit3" placeholder="Unit Code" value="RG10003"></td>
+                <td><input type="text" class="input-box" placeholder="Unit Name" value="Regional Office - South"></td>
+                <td>
+                  <textarea class="input-box" placeholder="address">12, KK nagar, Chennai</textarea>
+                  </td>
+                <td><select multiple="multiple" style="height:30px;font-size:13px;max-width:100px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+                    <option value="Labour Law" selected>Labour Law</option>
+                    <option value="Industrial Law" selected>Industrial Law</option>
+                    <option value="Finance">Finance</option>
+                  </select></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></td>
+                <td></td>
+              </tr>
+              <tr>
+              <td><select class="input-box">
+                <option>Region</option>
+                <option>State</option>
+                <option>Union Territory</option>
+                <option>District</option>
+                <option selected="selected">Corporation</option>
+                <option>Municipality</option>
+                <option>Town</option>
+                <option>Panchayat</option>
+                </select></td>
+                <td><input type="text" class="input-box icon-autocomplete" placeholder="" value="Madurai Corporation" style="width:150px;"></td><td>Madurai, Tamil Nadu, South Region</td>
+                 <td><input type="text" class="input-box unit4" placeholder="Unit Code" value="RG10004"></td>
+                <td><input type="text" class="input-box" placeholder="Unit Name" value="Branch Office - 1"></td>
+                <td><textarea class="input-box" placeholder="address">14/7, Mattuthavani, Madurai</textarea></td>
+                <td><select multiple="multiple" style="height:30px;font-size:13px;max-width:100px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+                    <option value="Labour Law" selected>Labour Law</option>
+                    <option value="Industrial Law" selected>Industrial Law</option>
+                    <option value="Finance">Finance</option>
+                  </select></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></td>
+                <td></td>
+              </tr>
+              <tr>
+              <td><select class="input-box">
+                <option>Region</option>
+                <option>State</option>
+                <option>Union Territory</option>
+                <option>District</option>
+                <option>Corporation</option>
+                <option selected="selected">Municipality</option>
+                <option>Town</option>
+                <option>Panchayat</option>
+                </select></td>
+                <td>
+                  <input type="text" class="input-box icon-autocomplete" placeholder="" value="Aviyur" style="width:150px;">
+                  </td><td>Madurai, Tamil Nadu, South Region</td>
+                   <td><input type="text" class="input-box unit5" placeholder="Unit Code" value="RG10005"></td>
+                <td><input type="text" class="input-box" placeholder="Unit Name" value="Branch Office - 2"><span style="margin-left:2px;[adding-top:5px"></span></td>
+                <td><textarea class="input-box" placeholder="address">13, North Street, Aviyur</textarea></td>
+                <td><select multiple="multiple" style="height:30px;font-size:13px;max-width:100px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+                    <option value="Labour Law" selected>Labour Law</option>
+                    <option value="Industrial Law">Industrial Law</option>
+                    <option value="Finance">Finance</option>
+                  </select></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></td>
+                <td><img src="/images/icon-plus.png" formtarget="_self" style="align:right;float:right"/></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="submit-button-container">
+          <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/group_company/list'" >
+          &nbsp;&nbsp;
+          <input type="submit" name="submit" value="Submit" class="btn-submit">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+$(function(){
+  $('#country3').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Italy'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#state3').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Andra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana','Himachal Pradesh','Jammu and Kashmir','Jharkhand','Karnataka','Kerala','Madya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Orissa','Punjab','Rajasthan','Sikkim','Tamil Nadu','Tripura','Uttaranchal','Uttar Pradesh','West Bengal'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#region3').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['North', 'East', 'West', 'South'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+    $('#district3').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Chennai','Kancheepuram','Vellore','Thiruvallur','Salem','Viluppuram','Coimbatore','Tirunelveli','Madurai','Tiruchirappalli','Cuddalore','Tiruppur','Tiruvannamalai','Thanjavur','Erode','Dindigul','Virudhunagar','Krishnagiri','Kanniyakumari','Thoothukkudi','Namakkal','Pudukkottai','Nagapattinam','Dharmapuri','Ramanathapuram','Sivaganga','Thiruvarur','Theni','Karur','Ariyalur','The Nilgiris','Perambalur'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+});
+</script> 
+{% endblock %}

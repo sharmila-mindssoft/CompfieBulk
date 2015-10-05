@@ -1,0 +1,142 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<script type="text/javascript">
+        $(document).ready(function () {
+            window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
+            
+        });
+</script>
+<div class="content-container width50">
+  <div class="content-area">
+    <div class="add-container">
+        <div class="add-container-heading">Settings<span class="error-message"></span></div>
+          <div class="single-column-input-row" style="margin-top:10px">
+            <div class="single-column-input-row">
+              <div class="single-column-field-label" style="font-size:0.9em">Enable 2 Levels of approval:</div>
+              <div class="single-column-field-input">
+                  <input type="radio"  name="2levels" checked/> <label>Yes</label>
+                  <input type="radio" name="2levels"/> <label>No</label>
+              </div>
+            </div>
+            <div class="single-column-input-row">
+              <div class="single-column-field-label" style="font-size:0.9em">Enable SMS Notification:<br><span style="font-size:10px">(will incur additional charges)</span></div>
+              <div class="single-column-field-input">
+                  <input type="radio"  name="smslevels" checked/> <label>Yes</label>
+                  <input type="radio" name="smslevels"/> <label>No</label>
+                  <span style="font-size:10px">(Default : Email, Mobile App Notification)</span>
+              </div>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="form-container-grid-table">
+              <div class="input-row">
+                <div class="field-label" style="font-size:0.9em"> Default Escalation:</div>
+              </div>
+              <table>
+                <tr>
+                  <th>Unit</th>
+                  <th>User</th>
+                </tr>
+                <tr>
+                  <td >
+                    <ul>
+                      <li class="active">Corporate Office</li>
+                      <li >Regional Office - North</li>
+                      <li class="active">Regional Office - South</li>
+                      <li>Branch Office - Delhi</li>
+                      <li>Branch Office - Chennai</li>
+                      <li>Branch Office - Madurai</li>
+                      <li>Branch Office - Bangalore</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <h3 style="background-color:#8A8A8A;padding:5px">Corporate Office</h3>
+                        <li class="active">Akash - L1</span></li>
+                        <li>Kumar - L2</span></li>
+                        <li>Vignesh - L2</span></li>
+                      <h3 style="background-color:#8A8A8A;padding:5px">Regional Office - South</h3>
+                        <li class="active">Aravind -L1</span></li>
+                        <li>Arjun - L2</span></li>
+                        <li >Arun - L3</span></li>
+                        <li>Babu - L4</span></li>
+                        <li>Dhinesh - L4</span></li>
+                        <li>Divagar - L5</span></li>
+                        <li>Praveen - L5</span></li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="form-container-grid-table">
+              <div class="input-row">
+                <div class="field-label" style="font-size:0.9em">Reminder Settings:</div>
+              </div>
+              <table>
+                <!-- <tr>
+                  <th>Days</th>
+                  <th>Reminders to</th>
+                </tr> -->
+                <!-- <tr>
+                  <td>Start Date</td>
+                  <td>
+                    <input type="checkbox" disabled="disabled" checked/> Assignee
+                    <input type="checkbox"/> Concurrence
+                    <input type="checkbox"/> Approver
+                    <input type="checkbox"/> Escalation Users
+                  </td>
+                </tr> -->
+                  <tr>
+                     <td>
+                      <input type="checkbox" disabled="disabled" checked style="vertical-align:middle"/> 
+                      <label style="vertical-align:middle">Assignee</label>
+                      <input type="checkbox"  disabled="disabled" checked style="vertical-align:middle"/> 
+                      <label style="vertical-align:middle">Concurrence</label>
+                      <input type="checkbox" style="vertical-align:middle"/> 
+                      <label style="vertical-align:middle">Approver</label>
+                      <input type="checkbox" style="vertical-align:middle"/> 
+                      <label style="vertical-align:middle">Escalation Users</label>
+                      <span style="margin-left:10px;margin-bottom:10px;">
+                        <input type="text" class="input-box" style="width:50px" value="7"/> 
+                        <span style="padding-top:10px;font-size:10px">(Every 7 days after start date)</span> 
+                      </span>
+                    </td>
+                  </tr>
+                <tr>
+                     <td>
+                      <input type="checkbox" disabled="disabled" checked style="vertical-align:middle"/> 
+                      <label style="vertical-align:middle">Assignee</label>
+                      <input type="checkbox"  disabled="disabled" checked style="vertical-align:middle"/>
+                      <label style="vertical-align:middle"> Concurrence</label>
+                      <input type="checkbox" disabled="disabled" checked style="vertical-align:middle"/> 
+                      <label style="vertical-align:middle">Approver</label>
+                      <input type="checkbox" style="vertical-align:middle"/> 
+                      <label style="vertical-align:middle">Escalation Users</label>
+                      <span style="margin-left:10px;margin-bottom:10px;">
+                        <input type="text" class="input-box" style="width:50px" value="3"/> 
+                        <span style="padding-top:10px;font-size:10px">(3 days before due days)</span> 
+                      </span>
+                    </td>
+                   
+                  </tr>
+                  <!-- <tr>
+                    <td>Next day to Due date</td>
+                    <td>
+                      <input type="checkbox" disabled="disabled" checked/> Assignee
+                      <input type="checkbox"  disabled="disabled" checked/> Concurrence
+                      <input type="checkbox" disabled="disabled" checked/> Approver
+                      <input type="checkbox" disabled="disabled" checked/> Escalation Users
+                    </td>
+                  </tr> -->
+              </table>
+            </div>
+          </div>
+        <div class="submit-button-container">        
+        <input type="submit" name="cancel" value="Submit" class="btn-submit">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

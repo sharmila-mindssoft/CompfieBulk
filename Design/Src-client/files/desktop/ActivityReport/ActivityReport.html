@@ -1,0 +1,161 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width75">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Activity Report<span class="error-message"><!----></span></div>
+      <div class="input-row-left">
+      	<div class="input-row">
+          <div class="field-label">User Type:</div>
+          <div class="field-input">
+            <select class="input-box"><option>Inhouse</option><option selected="selected">Service Provider</option></select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">From Date:</div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="01/08/2015" placeholder="dd/mm/yyyy">
+          </div>
+        </div>
+        </div>
+        <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">Inhouse/Service Provider:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="user" autofocus placeholder="Type User">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">To Date:</div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="10/08/2015" placeholder="dd/mm/yyyy">
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">&nbsp;&nbsp;
+        <input type="submit" name="cancel" value="Export to CSV" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table-rpt">
+      <h1>Activity Report</h1>
+      <div>
+          <div style="float:left; padding-bottom:0.5em; margin-left:1%;">
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">User Type :<span style="margin-left:10px; font-weight:bold;">Service Provider</span> </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">From Date :<span style="margin-left:10px; font-weight:bold;">01/08/2015</span> </div>
+          </div>
+          <div style="float:right; margin-right:30%;">
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">User :<span style="margin-left:10px; font-weight:bold;">-</span> </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">To Date :<span style="margin-left:10px; font-weight:bold;">10/08/2015</span> </div>
+          </div>
+        </div>
+        <table>
+          <tr align="left">
+            <th class="header-bg">#</th>
+            <th class="header-bg">Date</th>
+            <th class="header-bg">Compliance</th>
+            <th class="header-bg">Statutory</th>
+            <th class="header-bg">User</th>
+            <th class="header-bg">Status</th>
+            <th class="header-bg">Comments / Notes</th>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>10/08/2015</td>
+            <td>FORM I Submission</td>
+          
+           <td> Batteries Act <img src="/images/right_arrow.png"> Rule 4 (iii)  <img src="/images/right_arrow.png"> FORM I  </td>
+
+            <td>PGM Solutions</td>
+            <td>Complied</td>
+            <td>Comments text goes here</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>10/08/2015</td>
+             <td>FORM II Submission</td>
+          
+            <td>  Batteries Act <img src="/images/right_arrow.png"> Rule 5 and Rule 6 (ii)  <img src="/images/right_arrow.png"> FORM II </td>
+
+            <td>ART Solutions</td>
+            <td>Delayed Compliance</td>
+            <td>Comments text goes here</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>09/08/2015</td>
+              <td>FORM III Submission</td>
+           
+            <td>  Batteries Act <img src="/images/right_arrow.png"> Rule 6(iii) <img src="/images/right_arrow.png"> FORM III  </td>
+
+            <td>ART Solutions</td>
+            <td>Not Complied</td>
+            <td>Comments text goes here</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>08/08/2015</td>
+              <td>FORM IV Submission</td>
+            
+            <td>  Batteries Act <img src="/images/right_arrow.png"> Rule 4 and Rule 7(vii)  <img src="/images/right_arrow.png"> FORM IV </td>
+
+            <td>PGM Solutions</td>
+            <td>Complied</td>
+            <td>Comments text goes here</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>08/08/2015</td>
+             <td>FORM V Submission</td>
+          
+          <td>  Batteries Act <img src="/images/right_arrow.png"> Rule 7(iv)  <img src="/images/right_arrow.png"> FORM V  </td>
+
+            <td>PGM Solutions</td>
+            <td>Delayed Compliance</td>
+            <td>Comments text goes here</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>07/08/2015</td>
+             <td>FORM VI Submission</td>
+            
+           <td> Batteries Act <img src="/images/right_arrow.png"> Rule 8(i) & 9(1) & 9 (5)  <img src="/images/right_arrow.png"> FORM VI </td>
+
+            <td>ART Solutions</td>
+            <td>Complied</td>
+            <td>Comments text goes here</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>06/08/2015</td>
+              <td>FORM VII Submission</td>
+         
+           <td> Batteries Act <img src="/images/right_arrow.png"> Rule 8 (iii)  <img src="/images/right_arrow.png"> FORM VII  </td>
+
+            <td>PGM Solutions</td>
+            <td>Complied</td>
+            <td>Comments text goes here</td>
+          </tr>
+        
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(function(){
+
+   $('#user').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Ragavan', 'Muthu', 'Ramesh'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+});
+</script>
+{% endblock %} 

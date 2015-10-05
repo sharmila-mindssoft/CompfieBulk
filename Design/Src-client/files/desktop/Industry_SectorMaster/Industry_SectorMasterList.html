@@ -1,0 +1,63 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+  <div class="content-container width50">
+  <div class="content-area">
+      <h1>Industry Sectors</h1>
+      <div class="filters-and-search">
+      <div class="btn-add" onclick="location.href='/industry_sector/create'" formtarget="_self">Add</div>
+    </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+      <table>
+          <tr align="left">
+          <th align="center" width="8%">#</th>
+          <th>Sector </th>
+          <th>Industry </th>
+          <th>Sub Industry </th>
+          <th>Sub Sub Industry </th>
+          <th align="center" width="10%">Edit</th>
+          <th align="center" width="10%">Status</th>
+        </tr>
+         <tr>
+          <td>&nbsp;</td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+          <tr>
+          <td align="center">1</td>
+          <td>Chemical</td>
+          <td>Manufacturing</td>
+          <td>Sub Industry 2</td>
+          <td>Sub Sub Industry 3</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+        <tr>
+          <td align="center">2</td>
+          <td>Consumer Goods</td>
+          <td>Manufacturing</td>
+		  <td>Sub Industry 3</td>
+          <td>Sub Sub Industry 3</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
+        </tr>
+          <tr>
+          <td align="center">3</td>
+          <td>Software</td>
+          <td>Automobiles</td>
+          <td>Sub Industry 4</td>
+          <td>Sub Sub Industry 5</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+          
+        </table>
+    </div>
+      
+    </div>
+</div>
+{% endblock %} 

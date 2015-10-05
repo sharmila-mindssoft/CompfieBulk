@@ -1,0 +1,706 @@
+{% extends "web/header/Header.html" %}
+{% block content %}
+<meta name="description" content="Tab Styles Inspiration: A small collection of styles for tabs" />
+<meta name="keywords" content="tabs, inspiration, web design, css, modern, effects, svg" />
+<meta name="author" content="Codrops" />
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+<style type="text/css">
+  .input-row, .single-column-input-row {
+    float: left;
+    padding-bottom: 0.58em;
+    width: 100%;
+}
+#navbar {
+  width:auto;
+ } 
+
+ #navbar #holder {
+  height:auto;
+  border-bottom:0px solid #000;
+  width:auto;  
+  font-size:12px;
+  padding-left:5px; 
+ } 
+
+ #navbar #holder ul {
+  list-style:none;
+  margin:0;
+  padding:0; 
+  font-size:12px;
+ } 
+
+ #navbar #holder ul li a { 
+  text-decoration:none;
+  float:left;
+  color:#5E5E5E;
+  font-size:12px;
+  border:0px solid #000;
+  border-bottom:none;
+  padding:10px;
+  width:auto;
+  text-align:center;
+  display:block;
+  background:#CCCCCC;
+  -moz-border-radius-topleft:5px;
+  -moz-border-radius-topright:5px;
+  -webkit-border-top-left-radius:5px;
+  -webkit-border-top-right-radius:5px; 
+ } 
+
+ #navbar #holder ul li a:hover {
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+ } 
+
+ #navbar #holder ul li a.onlink {
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+ } 
+
+ #navbar #holder ul li a.onlink:hover {
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+ }
+ .tasks{
+  height:auto;
+  overflow: auto;
+}
+
+.onlink{
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+}
+
+.paddingleft20{
+  padding-left:40px;
+}
+</style>
+<script type="text/javascript">
+$(function() {
+  $('.tasktype').change(function(){
+    if($(this).val()=="Recurring" || $(this).val()=="Review")
+      $('#Recurring').show();
+    else
+      $('#Recurring').hide();
+  });
+});
+</script> 
+<script src="/Static/js/wizard/jquery.steps.js"></script>
+<link rel="stylesheet" type="text/css" href="/Static/css/wizard/jquery.steps.css">
+<link rel="stylesheet" type="text/css" href="/Static/css/tooltip/tipso.css">
+<script src="/Static/js/tooltip/tipso.js"></script>
+<div class="content-container width75">
+  <div class="content-area">
+    <h1>Statutory Mapping</h1>
+    <div class="add-container">
+      <div class="form-container-outer">
+        <div id="example-basic">
+          <h3>Select Domain</h3>
+          <section>
+            <div class="form-container-grid-table-sm">
+              <table style="height:500px">
+                <tr align="left">
+                  <th width="25%">Country</th>
+                  <th width="25%">Domain</th>
+                  <th width="25%">Type</th>
+                  <th width="25%">Applicability</th>
+                </tr>
+                <tr>
+                  <td><ul style="height:500px;overflow-y:scroll">
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                       {% for country in data %}
+                          {%if data[country] == "India" %}
+                            <li class="active">{{data[country]}}</li>
+                          {% else %}
+                            <li>{{data[country]}}</li>
+                          {% endif %}
+                       {% endfor %}
+                    </ul></td>
+                  <td><ul style="height:500px;overflow-y:scroll">
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                      <li>Finance Law</li>
+                      <li>Industrial Law</li>
+                      <li  class="active">Labour Law</li>
+                    </ul></td>
+                  <td><ul style="height:500px;overflow-y:scroll">
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                      <li class="active"><b>Select All</b></li>
+                      <li >Factory</li>
+                      <li>Office</li>
+                      <li>Plantation</li>
+                      <li>Contractor</li>
+                      <li>S & E</li>
+                      <li>Mines</li>
+                    </ul></td>
+                    <td><ul  style="height:500px;overflow-y:scroll">
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                      <li >Central</li>
+                      <li >State</li>
+                    </ul></td>
+                </tr>
+              </table>
+            </div>
+          </section>
+          <h3>Select Statutory</h3>
+          <section>
+            <div class="form-container-grid-table">
+              <table>
+                <tr align="left">
+                  <th width="16.66%">Act Name</th>
+                  <th width="16.66%">Rule Name</th>
+                  <th width="16.66%">Section</th>
+                  <th width="16.66%">Sub Section</th>
+                  
+                  
+                </tr>
+                
+                  <td><ul>
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                      <li class="active">Gratuity Act, 1972</li>
+                      <li >Batteries Act</li>
+                      <li>Industrial Disputes (Central) Rules, 1957</li>
+                     
+                      <li>Indian Partnership Act, 1932</li>
+                   
+                    </ul>
+                      <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder=" Enter Act Name"/>
+                   	<a href="#" class="addleftbutton"><img src="Static/images/icon-plus.png" 
+                           formtarget="_self" /></a> </div></td>
+                  <td><ul>
+                      <li>
+                        <input type="text" class="filter-text-box">
+                        </li>
+                        <li class="active">Tamil Nadu Gratuity Act, 1972</li>
+                          </ul>
+                      <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder=" Enter Rule Name"/>
+                   	<a href="#" class="addleftbutton"><img src="Static/images/icon-plus.png" 
+                           formtarget="_self" /></a> </div>
+                  
+
+                    </td>
+                  <td><ul>
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+
+                    </ul>
+<div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder=" Enter Section"/>
+                   	<a href="#" class="addleftbutton"><img src="Static/images/icon-plus.png" 
+                           formtarget="_self" /></a> </div>
+                    </td>
+                  <td><ul>
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      
+                      </li>
+                    </ul>
+<div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Sub Section"/>
+                   	<a href="#" class="addleftbutton"><img src="Static/images/icon-plus.png" 
+                           formtarget="_self" /></a> </div>
+                    </td>
+                 
+                </tr>
+                <tr align="left">
+                  <th width="16.66%">Rule</th>
+                  <th width="16.66%">Sub Rule</th>
+                  <th width="16.66%">Clause</th>
+                  <th width="16.66%">Sub Clause</th>
+                
+                </tr>
+                <tr>
+                  <td><ul>
+                      <li>
+                        <input type="text" class="filter-text-box">
+
+                      </li>
+                      <li>Rule 4 </li>
+                      <li>Rule 9(1) </li>
+                      <li class="active">Rule 3</li>
+                      <li>Rule 4 (iii)</li>
+                      <li>Rule 5 </li>
+                      <li>Rule 6 (ii)</li>
+                      <li>Rule 6(iii)</li>
+                      <li>Rule 7(vii)</li>
+                      <li>Rule 7(iv)</li>
+                      <li>Rule 8(i) </li>
+                      <li>Rule 8 (iii)</li>
+                      <li>Rule 10(2) (iii)</li>
+                      <li>Rule 11(ii)</li>
+                    </ul>
+
+<div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Rule"/>
+                   	<a href="#" class="addleftbutton"><img src="Static/images/icon-plus.png" 
+                           formtarget="_self" /></a> </div>
+                    </td>
+                  <td><ul>
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                    </ul>
+                    <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Sub Rule"/>
+                   	<a href="#" class="addleftbutton"><img src="Static/images/icon-plus.png" 
+                           formtarget="_self" /></a> </div></td>
+                  <td><ul>
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                    </ul>
+
+                    <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Clause"/>
+                   	<a href="#" class="addleftbutton"><img src="Static/images/icon-plus.png" 
+                           formtarget="_self" /></a> </div></td>
+                  <td><ul>
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                    </ul>
+
+                    <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Sub Clause"/>
+                   	<a href="#" class="addleftbutton"><img src="Static/images/icon-plus.png" 
+                           formtarget="_self" /></a> </div></td>
+                  
+                </tr>
+              </table>
+            </div>
+            <div class="clearfix"></div>
+            <div style="padding-top:3px;padding-bottom:5px"><input type="submit" class="btn-submit" value="Add" style="float:right;"/></div>
+            <br>
+            <div class="grid-table">
+              <table>
+                <tr align="left" style="height:2.0em;">
+                  <th style="height:2em;" align="center">#</th>
+                  <th style="height:2em;">Statutory</th>
+                  <th align="center" style="padding-right:3px; height:2em;">Remove</th>
+                </tr>
+                <tr>
+                  <td align="center">1</td>
+                  <td>Batteries Act >> Rule 8(i) >> Form VI</td>
+                  <td align="center"><img src="Static/images/icon-delete.png" title="Click here to deactivate" id="activeid" /></td>
+                </tr>
+                <tr>
+                  <td align="center">2</td>
+                  <td>Batteries Act >> Rule 9(1) >> Form VI</td>
+                  <td align="center"><img src="Static/images/icon-delete.png" title="Click here to deactivate" id="activeid" /></td>
+                </tr>
+              </table>
+            </div>
+          </section>
+          <h3>Compliances</h3>
+          <section >
+            <!-- <div id="navbar">
+              <div id="holder" class="tasktype"> 
+                <ul style="list-style:disc"> 
+                 <li><a href="#" onClick="loadNewTask()" id="newtask" class="onlink">New Task</a></li>
+                 <li><a href="#" onClick="loadExistingTask()" id="existingtask">Select Existing Task</a></li>
+                </ul>
+              </div>
+            </div> -->
+            <div class="form-container-grid-table-sm">
+            <section id="section-flip-1">
+              <div class="input-row-left">
+                <div class="input-row">
+                  <div class="field-label">Compliance Name<span class="mandatory">*</span></div>
+                  <div class="field-input">
+                    <input class="input-box" value="Notice of Opening"/>
+                  </div>
+              </div>
+               <div class="input-row">
+                  <div class="field-label">Compliance Description</div>
+                  <div class="field-input">
+                    <textarea class="input-box heightsmall" >Within 30 days of opening a branch</textarea>
+                  </div>
+              </div>
+              <div class="input-row">
+                  <div class="field-label">Task Type</div>
+                  <div class="field-input">
+                    <select class="input-box tasktype" >
+                      <option>Recurring</option>
+                      <option>Review</option>
+                      <option Selected="selected">One Time</option>
+                    </select>
+                  </div>
+                </div>
+                 <div class="input-row">
+                  <div class="field-label">Penal Description</div>
+                  <div class="field-input">
+                    <textarea class="input-box heightsmall">Imprisonment With Fine</textarea>
+                  </div>
+              </div>
+              
+              </div>
+              <div class="input-row-right">
+              	 <div class="input-row">
+                  <div class="field-label">Form No</div>
+                  <div class="field-input">
+                     <input type="text" class="input-box"  value="Form A" >
+                  </div>
+              </div>
+              	    <div class="input-row">
+                  <div class="field-label">Format</div>
+                  <div class="field-input">
+                     <input type="file" class="input-box" >
+                  </div>
+              </div>
+                <div class="input-row">
+                  <div class="field-label">Authority</div>
+                  <div class="field-input">
+                    <input type="text" class="input-box" value="" placeholder="Authority">
+                  </div>
+                </div>
+                <div class="input-row">
+                  <div class="field-label">Slab Rate</div>
+                  <div class="field-input">
+                    <input type="text" class="input-box">
+                  </div>
+                </div>
+                <div class="input-row">
+                  <div class="field-label">Penalty Rate</div>
+                  <div class="field-input">
+                    <input type="text" class="input-box">
+                  </div>
+                </div>
+              </div>
+ 
+</section>
+<div class="clearfix"></div>
+
+              <div class="recurring" id="Recurring" style="display:none;">
+
+
+                <fieldset>
+                  <legend>Recurring</legend>
+                   <div class="input-row-left">
+                  <div class="input-row" >
+                    <div class="field-label">Repeats</div>
+                    <div class="field-input">
+                      <select class="input-box" style="width:100px;">
+                        <option selected="selected">Monthly</option>
+                        <option >Yearly</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="input-row">
+                    <div class="field-label">Repeats Every</div>
+                    <div class="field-input">
+                      <select class="input-box" style="width:50px; float:left;">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option selected="selected">6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                        <option>14</option>
+                        <option>15</option>
+                        <option>16</option>
+                        <option>17</option>
+                        <option>18</option>
+                        <option>19</option>
+                        <option>20</option>
+                        <option>21</option>
+                        <option>22</option>
+                        <option>23</option>
+                        <option>24</option>
+                        <option>25</option>
+                        <option>26</option>
+                        <option>27</option>
+                        <option>28</option>
+                        <option>29</option>
+                        <option>30</option>
+                      </select>
+                      <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Months</span> </div>
+                  </div>
+                  <div class="input-row">
+                    <div class="field-label">Repeat by</div>
+                    <div class="field-input">
+                      <label >
+                        <input type="radio" name="repeatby" style="width:20px; float:left;" checked="checked">
+                        <span style="font-size:0.8em; padding-top:4px; float:left;">day of the month</span></label>
+                        <div class="clearfix"></div>
+                      <label >
+                        <input type="radio"  name="repeatby" style="width:20px; float:left;"  >
+                        <span style="font-size:0.8em; padding-top:4px;">End day of the month</span> </label>
+                    </div>
+                  </div>
+                   </div>
+              <div class="input-row-right">
+                  <div class="input-row">
+                    <div class="field-label">Trigger Before</div>
+                    <div class="field-input">
+                      <input type="text" class="input-box" value="15" style="width:50px; float:left;">
+                      <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span> </div>
+                  </div>
+                  <div class="input-row">
+                    <div class="field-label">Summary</div>
+                    <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;">Every 6 months</span> </div>
+                  </div>
+                  </div>
+                </fieldset>
+              
+            </div>
+
+            <div class="clearfix"></div>
+            <table style="border:none;">
+                    <tr>
+                      <td align="center" style="border:none;"><input type="submit" name="submit" value="Add" class="btn-submit"></td>
+                    </tr>
+                  </table>
+            <br>
+             </div>
+            <div class="grid-table">
+              <table>
+                <tr align="left" style="height:2.0em;">
+                  <th style="height:2em;" align="center">#</th>
+                  <th style="height:2em;">Task Name</th>
+                  <th style="height:2em;">Task Type</th>
+                  <th style="height:2em;">Authority</th>
+                  <th style="height:2em;">Repeats</th>
+                  <th style="height:2em;" align="center">Edit</th>
+                  <th align="center" style="padding-right:3px; height:2em;">Status</th>
+                </tr>
+                <tr>
+                  <td align="center">1</td>
+                  <td>Notice of Opening</td>
+                  <td>One Time</td>
+                  <td>Authority 1</td>
+                  <td>-</td>
+                  <td align="center"><img src="Static/images/icon-edit.png" id="editid" /></td>
+                  <td align="center"><img src="Static/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+                </tr>
+               
+              </table>
+            </div>
+              </section>
+              
+          </section> 
+      </section>
+          <!-- -->
+          <h3>Applicable Location</h3>
+          <section>
+            <div class="form-container-grid-table">
+              <table style="height:250px;">
+                <tr align="left">
+                  <th width="16.66%">Region</th>
+                  <th width="16.66%">State</th>
+                  <th width="16.66%">District</th>
+                  <th width="16.66%">Corporation</th>
+                </tr>
+                <tr>
+                  <td><ul  style="height:250px;overflow-y:scroll">
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                        <li>Select All</li>
+                      <li>East</li>
+                      <li>North</li>
+                      <li class="active">South</li>
+                      <li>West</li>
+                    </ul></td>
+                  <td><ul style="height:250px;overflow-y:scroll">
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                        <li>Select All</li>
+                      <li>Andhra Pradesh</li>
+                      <li>Karnataka</li>
+                      <li class="active">Kerala</li>
+                      <li class="active">Tamil Nadu</li>
+                      <li>Telangana</li>
+                    </ul></td>
+                  <td><ul style="height:250px;overflow-y:scroll">
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>  <li>Select All</li>
+                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Tamil Nadu</h3>
+                      <li>Ariyalur </li>
+                      <li>Chennai </li>
+                      <li  class="active">Madurai </li>
+                      <li class="active">Coimbatore </li>
+                      <li>Cuddalore </li>
+                      <li>Dharmapuri </li>
+                      <li>Dindigul </li>
+                      <li>Erode </li>
+                      <li>Kanchipuram </li>
+                      <li>Kanyakumari </li>
+                      <li>Karur </li>
+                      <li>Krishnagiri </li>
+                      <li>Nagapattinam </li>
+                      <li>Namakkal </li>
+                      <li>The Nilgiris </li>
+                      <li>Perambalur </li>
+                      <li>Pudukkottai </li>
+                      <li>Ramanathapuram </li>
+                      <li>Salem </li>
+                      <li>Sivaganga </li>
+                      <li>Thanjavur </li>
+                      <li>Theni </li>
+                      <li>Thoothukudi </li>
+                      <li>Tiruchirappalli </li>
+                      <li>Tirunelveli </li>
+                      <li>Tiruppur </li>
+                      <li>Tiruvallur </li>
+                      <li>Tiruvannamalai </li>
+                      <li>Tiruvarur </li>
+                      <li>Vellore </li>
+                      <li>Viluppuram </li>
+                      <li>Virudhunagar </li>
+                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Kerala</h3>
+                      <li> Alappuzha </li>
+                      <li> Ernakulam </li>
+                      <li> Idukki </li>
+                      <li> Kannur </li>
+                      <li> Kasaragod </li>
+                      <li> Kollam </li>
+                      <li> Kottayam </li>
+                      <li> Kozhikode </li>
+                      <li> Malappuram </li>
+                      <li> Palakkad </li>
+                      <li> Pathanamthitta </li>
+                      <li> Thiruvananthapuram </li>
+                      <li> Thrissur </li>
+                      <li> Wayanad </li>
+                    </ul></td>
+                  <td><ul style="height:250px;overflow-y:scroll">
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>  <li>Select All</li>
+                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Madurai</h3>
+                      <li class="active">Madurai Corporation</li>
+                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Coimbatore</h3>
+                      <li class="active">Coimbatore Corporation</li>
+                    </ul></td>
+                </tr>
+              </table>
+              <table>
+                <tr align="left">
+                  <th width="16.66%">Municipality</th>
+                  <th width="16.66%">Town</th>
+                  <th width="16.66%">Panchayat</th>
+                </tr>
+                <tr>
+                  <td><ul style="height:250px;overflow-y:scroll">
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>  <li>Select All</li>
+                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Madurai</h3>
+                      <li> Anaiyur</li>
+                      <li class="active"> Avaniyapuram </li>
+                      <li> Melur</li>
+                      <li> Thirupparankundram </li>
+                      <li> Tirumangalam </li>
+                      <li class="active"> Usilampatti</li>
+                    </ul></td>
+                  <td><ul style="height:250px;overflow-y:scroll">
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>  <li>Select All</li>
+                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Madurai</h3>
+                      <li class="active"> Alanganallur </li>
+                      <li class="active"> Sholavandan </li>
+                      <li class="active"> Vilangudi </li>
+                      <li class="active"> Palamedu </li>
+                      <li> Harveypatti </li>
+                      <li class="active"> Thirunagar </li>
+                      <li> A.Vellalapatti </li>
+                      <li class="active"> Peraiyur </li>
+                      <li> Paravai </li>
+                      <li> Vadipatti </li>
+                      <li> Elumalai </li>
+                      <li> T.Kallupatti </li>
+                    </ul></td>
+                  <td><ul style="height:250px;overflow-y:scroll">
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>  <li>Select All</li>
+                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Alanganallur</h3>
+                      <li> Alagapuri </li>
+                      <li class="active"> Ayyur </li>
+                      <li class="active"> Chinnailanthaikulam </li>
+                      <li> Kalvelipatti </li>
+                      <li class="active"> Kotankipatti </li>
+                      <li> Manickampatti </li>
+                      <li class="active"> Muduvarpatty </li>
+                      <li> Paraipatty </li>
+                      <li class="active"> Senthamangalam </li>
+                      <li> Thanichiyam </li>
+                      <li> Vadugapatty </li>
+                      <li> Vellaiampatty </li>
+                      <li> A. Kovilpatti </li>
+                      <li> Athanoor </li>
+                      <li> B. Mettupatty </li>
+                      <li> Errampatti </li>
+                      <li> Keelachinnampatti </li>
+                      <li> Kottaimedu </li>
+                      <li> Maniyanji </li>
+                      <li> Oorcheri </li>
+                      <li> Periailanthaikulam </li>
+                      <li> T. Mettupatty </li>
+                      <li> Theththur </li>
+                      <li> Valayapatty </li>
+                      <li> Achampatti </li>
+                      <li> Ayyankottai </li>
+                      <li> Chatravellalapatti </li>
+                      <li> Kallanai </li>
+                      <li> Kondayanpatty </li>
+                      <li> Kuttimeichipatty </li>
+                      <li> Melachinnampatty </li>
+                      <li> Pannaikudi </li>
+                      <li> Rajakalpatty </li>
+                      <li> Thandalai </li>
+                      <li> Thevaseri </li>
+                      <li> Vavidamaruthur </li>
+                    </ul></td>
+                </tr>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="clearfix"></div>
+<br>
+<script type="text/javascript">
+
+$(document).ready(function() {
+    $("#section-flip-1").show();
+    $("#section-flip-4").hide();
+  })
+
+  $("#example-basic").steps({
+    headerTag: "h3",
+    bodyTag: "section",
+    transitionEffect: "slideLeft",
+    autoFocus: true
+  });
+jQuery(window).load(function(){
+  jQuery('.page-load').tipso({
+    tooltipHover: true
+});
+
+});
+</script> 
+{% endblock %}

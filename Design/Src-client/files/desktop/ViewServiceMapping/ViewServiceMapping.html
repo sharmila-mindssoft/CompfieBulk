@@ -1,0 +1,86 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+  <div class="content-container width70">
+  <div class="content-area">
+      <div class="add-container">
+      <div class="add-container-heading">View Service Mapping<span class="error-message"></span></div>
+      <div class="input-row-left">
+          <div class="input-row">
+          <div class="field-label">Domain Mapping:</div>
+          <div class="field-input">
+              <select class="input-box">
+              <option selected="selected">LLC - Payroll</option>
+              <option >LLC - Administration</option>
+            </select>
+            </div>
+        </div>
+          <div class="input-row">
+          <div class="field-label">Statutory Mapping:</div>
+          <div class="field-input">
+              <select  class="input-box">
+              <option selected="selected">ITACT1961-192</option>
+              <option >ITACT1961-196</option>
+            </select>
+            </div>
+        </div>
+          <div class="input-row">
+          <div class="field-label">Short Name:</div>
+          <div class="field-input">
+              <input type="text" autocomplete="on" class="input-box" value="" />
+            </div>
+        </div>
+        </div>
+      <div class="input-row-right">
+          <div class="input-row">
+          <div class="field-label">Applicability:</div>
+          <div class="field-input">
+              <select  class="input-box">
+              <option selected="selected">Concurrent</option>
+              <option >Central</option>
+            </select>
+            </div>
+        </div>
+          <div class="input-row">
+          <div class="field-label">Industry Mapping:</div>
+          <div class="field-input">
+              <select  class="input-box">
+              <option selected="selected">Manf-Auto</option>
+              <option >Manf-Chemical</option>
+            </select>
+            </div>
+        </div>
+        </div>
+      <div class="submit-button-container">
+          <input type="submit" name="cancel" value="Show" class="btn-submit">
+          &nbsp;&nbsp;
+          <input type="button" value="Export to CSV" class="btn-submit"/>
+        </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+          <table>
+          <tr align="left">
+              <th>#</th>
+              <th>Service Mapping Short Name</th>
+              <th>Domain Mapping</th>
+            </tr>
+          <tr>
+              <td>1</td>
+              <td><a href="#">Payroll-TDS</a></td>
+              <td>LLC - Payroll</td>
+            </tr>
+          <tr>
+              <td>2</td>
+              <td><a href="#">Payroll-PF</a></td>
+              <td>LLC - Payroll</td>
+            </tr>
+          <tr>
+            <td>3</td>
+            <td><a href="#">Payroll-ESI</a></td>
+            <td>LLC - Payroll</td>
+          </tr>
+        </table>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}

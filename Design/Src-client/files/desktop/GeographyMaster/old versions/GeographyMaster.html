@@ -1,0 +1,117 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width40">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Geography Master<span class="error-message"></span></div>
+       <div class="form-container-outer">
+            <div class="single-column-input-row">
+              <br>
+              <div class="input-row">
+                <div class="single-column-field-label">Country</div>
+                <div class="single-column-field-input">
+                  <select class="input-box">
+                    <option selected="selected">India</option>
+                    <option>Singapore</option>
+                    <option>China</option>
+                    <option>Japan</option>
+                  </select>
+                </div>
+              </div>
+              <div class="input-row">
+                <div class="single-column-field-label">Level</div>
+                <div class="single-column-field-input">
+                  <select class="input-box">
+                    <option>Region</option>
+                    <option>State</option>
+                    <option>District</option>
+                    <option selected="selected">Corporation</option>
+                    <option>Municipal</option>
+                    <option>Town</option>
+                    <option>Panchayat</option>
+                  </select>
+                </div>
+              </div>
+              <div class="input-row">
+                <div class="single-column-field-label">Name</div>
+                <div class="single-column-field-input"><input type="text" class="input-box" value="Madurai"></div>
+              </div>
+              <div class="submit-button-container">
+              <input type="reset" name="cancel" value="Reset" class="btn-cancel"  >&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit">
+            </div>
+              </div>
+              <div class="clearfix"></div>
+    <div class="grid-table">
+      <table>
+        <tr>
+          <th width="3%">#</th>
+          <th width="12%" align="left">Country</th>
+          <th width="8%" align="left">Level</th>
+          <th width="8%" align="left">Name</th>
+          <th width="5%" align="center">Edit</th>
+          <th width="5%" align="center" style="padding-right:10px;">Status</th>
+        </tr>
+       <tr>
+          <td>&nbsp;</td>
+          <td><input type="text" name="country-name" class="filter-text-box"></td>
+          <td><input type="text" name="country-name" class="filter-text-box"></td>
+          <td><input type="text" name="country-name" class="filter-text-box"></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr >
+          <td align="center">1</td>
+          <td>India</td>
+          <td>State</td>
+          <td>Tamilnadu</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+        <tr >
+          <td align="center">2</td>
+          <td>India</td>
+          <td>Panchayat</td>
+          <td>Keelapavoor</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+        <tr >
+          <td align="center">3</td>
+          <td>India</td>
+          <td>Corporation</td>
+          <td>Chennai</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+        <tr >
+          <td align="center">4</td>
+          <td>India</td>
+          <td>District</td>
+          <td>Tirunelveli</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+        <tr >
+          <td align="center">5</td>
+          <td>India</td>
+          <td>Municipal</td>
+          <td>Aruppukottai</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+        <tr >
+          <td align="center">6</td>
+          <td>Srilanka</td>
+          <td>District</td>
+          <td>Badulla</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+      </table>
+    </div> 
+    </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

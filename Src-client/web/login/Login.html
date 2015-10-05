@@ -1,0 +1,90 @@
+<html>
+<head>
+  <title>Login</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="" />
+  <meta name="keywords" content="" />
+  <meta property="og:title" content=""/>
+  <meta property="og:description" content="" />
+  <meta property="og:url" content="" />
+  <meta property="og:site_name" content="" />
+  <meta property="og:image" content="" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="316" />
+  <meta property="og:image:height" content="316" />
+  <meta property="og:type" content="Website" />
+  <meta name="twitter:card" content="Summary" /> 
+  <meta name="twitter:site" content="" />
+  <meta name="twitter:title" content="" />
+  <meta name="twitter:description" content="" />
+  <meta name="twitter:url" content="" />
+  <meta name="twitter:image:src" content="" />
+  <link rel="shortcut icon" href="Static/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="icon" href="Static/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="stylesheet" type="text/css" href="Static/css/reset.css">
+  <link rel="stylesheet" type="text/css" href="Static/css/styles.css">
+  <script type="text/javascript" src="Static/js/jquery.min.js"></script>
+  <script type="text/javascript">
+    function OpenPopUp(url)
+    {         
+      var sFeatures = "directories=no;center=on;menubar=no;status=no; ";
+      sFeatures += "titlebar=no;toolbar=no;scrollbars=no;help:no;edge:raised;  ";
+      sFeatures += "dialogHeight=300px;dialogWidth=720px;center=on;";
+      window.showModalDialog(url,"",sFeatures);
+    }
+
+    $(document).ready(function (){
+      var windowHHeight = $(window).height();
+      var loginBoxHeight = $(".login-box-inner").outerHeight();
+      var getEmptySpace = windowHHeight - loginBoxHeight;
+      var topPadding = getEmptySpace / 2;
+      $(".login-box-inner").css("margin-top", topPadding);
+
+      $("#submit").click(function() {
+        jQuery.ajax({
+          url: "../post/login",
+          type: "post",
+          dataType: 'json',
+          cache : false,
+          contentType: "application/json; charset=utf-8",
+          data: JSON.stringify( {"data": {"username" : $('#username').val(), "password":$('#password').val()}} ),
+          success: function(msg) {
+              window.location = msg   
+          }
+
+      });
+      })
+    })
+  </script>
+</head>
+<body>
+  <div class="login-main-bg">
+    <div class="login-transparent-bg">
+      <div class="login-box-outer">
+        <div class="login-box-inner">
+          <div class="login-box-header">
+            <span class="logo"><img src="/images/logo.png"></span>
+            <span class="text-login">Login</span>
+          </div>
+          <div class="login-content">
+            <div class="login-icon"><img src="/images/key.png"></div>
+            <div class="login-field-lists">
+              <div class="input-username">
+                <input type="text" id="username" name="username" placeholder="Username" class="login-username-textbox" value={{username}} >
+              </div>
+              <div class="input-password">
+                <input type="password" id="password" name="username" placeholder="Password" class="login-password-textbox" value={{password}} >
+                <input type="hidden" id="name" name="name"  value="" placeholder="name">
+              </div>
+              <div class="submit-container">
+                <span class="text-forgot-password"><a href="/forgotpassword">Forgot Password?</a></span>
+                <span><input type="submit" id="submit" name="submit" value="Login" class="btn-login" ></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

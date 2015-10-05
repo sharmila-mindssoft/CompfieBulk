@@ -1,0 +1,142 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+ <div class="content-container width70">
+        <div class="content-area">
+          <div class="add-container">
+        <div class="add-container-heading">Service Provider List<span class="error-message"></span></div>
+      <div class="input-row-left">
+              <div class="input-row">
+                <div class="field-label">Service Provider:</div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="serviceprovider" autofocus placeholder="Type Service Provider"></div>
+              </div>
+            </div>
+            <div class="input-row-right">
+              <div class="input-row">
+                <div class="field-label">Task:</div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="taskname" autofocus placeholder="Type Task"></div>
+              </div>
+            </div>            
+            <div class="submit-button-container">
+              <input type="submit" name="cancel" value="Show" class="btn-submit">
+              <input type="submit" name="cancel" value="Export to CSV" class="btn-submit">
+            </div>
+        <div class="clearfix"></div>
+          <div class="grid-table-rpt">
+          <h1>Service Provider List</h1>
+            <table style="border:dotted 1px #ccc;">
+              <tr>
+                <th width="3%" align="center">#</th>
+                <th width="15%" align="left">Service Provider Name</th>
+                <th width="10%" align="left">Contact Person</th>
+                <th width="25%" align="left">Address</th>
+                <th width="14%" align="left">Mobile</th>
+                <th width="10%" align="left">Email</th>
+                <th width="3%" align="center">&nbsp;</th>
+              </tr>
+              <tr>
+                <td align="center">1</td>
+                <td>ART Solutions</td>
+                <td>John</td>
+                <td>12, West Cross Street, Madruai</td>
+                <td>9876543210</td>
+                <td>john@domain.com</td>
+                <td>&nbsp;</td>
+              </tr> 
+              <tr>
+                <th align="center">&nbsp;</th>
+                <th align="left">Compliance Name</th>
+                <th align="left">Task Type</th>
+                <th align="left">Compliance Description</th>
+                <th align="left">Repeats</th>
+                <th align="left">Form No</th>
+                <th align="center">Format</th>
+              </tr>    
+              <tr>
+                <td align="center">i)</td>
+                <td>Notice of Opening</td>
+                <td>One Time</td>
+                <td>Within 30 days of opening a branch</td>
+                <td>-</td>
+                <td>Form A</td>
+                <td><a href="#">Download</a></td>
+              </tr>
+              <tr>
+                <td align="center">ii)</td>
+                <td>Form I Submission</td>
+                <td>Recurring</td>
+                <td>Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned</td>
+                <td>Every 6 months</td>
+                <td>Form I</td>
+                <td><a href="#">Download</a></td>
+              </tr>
+            </table>
+            <table style="border:dotted 1px #ccc;">
+              <tr>
+                <th width="3%" align="center">#</th>
+                <th width="15%" align="left">Service Provider Name</th>
+                <th width="10%" align="left">Contact Person</th>
+                <th width="25%" align="left">Address</th>
+                <th width="14%" align="left">Mobile</th>
+                <th width="10%" align="left">Email</th>
+                <th width="3%" align="center">&nbsp;</th>
+              </tr>
+              <tr>
+                <td align="center">2</td>
+                <td>VRM Solutions</td>
+                <td>Naveen</td>
+                <td>154, West Veli Street, Madruai</td>
+                <td>9876543210</td>
+                <td>naveen@domain.com</td>
+                <td>&nbsp;</td>
+              </tr> 
+              <tr>
+                <th align="center">&nbsp;</th>
+                <th align="left">Compliance Name</th>
+                <th align="left">Task Type</th>
+                <th align="left">Compliance Description</th>
+                <th align="left">Repeats</th>
+                <th align="left">Form No</th>
+                <th align="center">Format</th>
+              </tr>    
+              <tr>
+                <td align="center">i)</td>
+                <td>Form II Submission</td>
+                <td>Recurring</td>
+                <td>Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
+                <td>Every 6 months</td>
+                <td>Form II</td>
+                <td><a href="#">Download</a></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      </div>
+      <script>
+$(function(){
+  $('#taskname').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Registration', 'Amendments', 'Prepare Wage Register', 'Process for Quantum', 'Remittance', 'Returns'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#serviceprovider').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Service provider 1', 'Service provider 2', 'Service provider 3'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   
+});
+</script>
+{% endblock %}

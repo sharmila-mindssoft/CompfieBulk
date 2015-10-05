@@ -1,0 +1,77 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %} 
+<script type="text/javascript">
+        $(document).ready(function () {
+            window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
+        });
+    </script>
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Client Master<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Client Name:</div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="TVS Group">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Group Company:</div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="TVS Group">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Legal Entity:</div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="TVS & Sons">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Domain:</div>
+          <div class="field-input">
+            <select multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+              <option value="Labour Law" selected="selected">Labour Law</option>
+              <option value="Industrial Law">Industrial Law</option>
+              <option value="Finance" selected="selected">Finance</option>
+            </select>
+          </div>
+        </div>
+        
+      </div>
+      <div class="input-row-right">
+      	<div class="input-row">
+          <div class="field-label">Contact Person:</div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="Radhakrishnan">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Address:</div>
+          <div class="field-input">
+            <textarea class="input-box" style="height:40px;">South Gate, Madurai, Tamil Nadu</textarea>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Mobile No.:</div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="9876543210">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Email ID:</div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="radhakrishnan@domain.com">
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/prospectivemaster/list'">
+        &nbsp;&nbsp;
+        <input type="submit" name="cancel" value="Submit" class="btn-submit">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

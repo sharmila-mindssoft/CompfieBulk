@@ -1,0 +1,236 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
+<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
+<style>
+.tasks{
+  height:auto;
+  overflow: auto;
+}
+.paddingleft20{
+  padding-left:40px;
+}
+</style>
+<div class="content-container width70">
+        <div class="content-area">
+          <div class="add-container">
+            <div class="add-container-heading">Reassign Task<span class="error-message" style="color:white">User Level - 1</span></div>
+            <div class="form-container-outer">
+            <div class="grid-table">
+              <table>
+                <tr>
+                  <td width="15%">Current Assignee</td>
+                  <td width="85%">Krishna - L3</td>
+                </tr>
+                <tr>
+                  <td>Unit</td>
+                  <td>Branch Office Madurai</td>
+                </tr>
+                <!--<tr>
+                  <td>Task</td>
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png" style="padding-right:5px;">FORM I Submission</abbr></td>
+                </tr>
+                <tr>
+                  <td>Statutory</td>
+                  <td>The Batteries (Management & Handling) Rules, 2001 >> Rule 4 (iii)</td>
+                </tr>-->
+              </table>
+              <table class="font1" style="width:100%;height:200px;overflow-y:scroll">
+            <tr align="left">
+              <th style="background-color:#9055BD;color:white;padding:5px;height:20px;font-size: 0.8em;font-weight: bold;">I. Task Selection</th>
+            </tr>
+            <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="95%">The Batteries Act<span><img src="/images/chevron_black_down.png"></span></th>
+            </tr>
+            <tr style="border:1px solid #cccccc;">
+              <td colspan="2"><table cellpadding="0" cellspacing="0" width="100%" class="managetask">
+                  <tr align="left">
+                    <td align="center"><span style="font-weight:bold;">Select</span></td>
+                    <td width="20%"><span style="font-weight:bold;">Task</span></td>
+                    <td width="8%"><span style="font-weight:bold;">Task Type</span></td>
+                    <td colspan="4" width="25%"><span style="font-weight:bold;" >Statutory Date</span></td>
+                    <td width="10%" align="center"><span style="font-weight:bold;">Trigger Before</span></td>
+                    <td width="15%" ><span style="font-weight:bold;">Due Date</span></td>
+                    <td width="15%" ><span style="font-weight:bold;">Validity Date</span></td>
+                  </tr>
+                  <tr style="background-color:#cccccc;">
+                    <td  align="center"><input type="checkbox" checked/></td>
+                    <td ><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png" style="margin-right:10px">FORM I Submission</abbr></td>
+                    <td>Recurring</td>
+                    <td colspan="4">Every Year 1st January</td>
+                    <td align="center">20</td>
+                    <td></td>
+                    <td><input type="text" class="input-box" value="01/01/2018"/></td>
+                  </tr>
+                  <tr>
+                    <td align="center"><input type="checkbox"/></td>
+                    <td><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"><img src="/images/icon-info.png" style="margin-right:10px">FORM II Submission</abbr></td>
+                    <td>One Time</td>   
+                    <td></td>
+                    <td></td>
+                    <td colspan="5"></td>
+                  </tr>
+                  <tr>
+                    <td align="center"><input type="checkbox"/></td>
+                    <td><abbr class="page-load" title="Whether undertaking submitted by importer to authority."><img src="/images/icon-info.png" style="margin-right:10px">FORM III Submission</abbr></td>
+                    <td>One Time</td>
+                    <td></td>
+                    <td></td>
+                    <td colspan="7"></td>
+                  </tr>
+                  <tr>
+                    <td align="center"><input type="checkbox" checked/></td>
+                    <td><abbr class="page-load" title="Whether registration obtained for dealers"><img src="/images/icon-info.png" style="margin-right:10px">FORM IV Submission</abbr></td>
+                    <td>One Time</td>
+                    <td colspan="4">Every year 10th January</td>
+                    <td align="center">15</td>
+                    <td><input type="text" class="input-box" value="10/01/2015"/></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td align="center"><input type="checkbox" checked/></td>
+                    <td><abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer"><img src="/images/icon-info.png" style="margin-right:10px">FORM V Submission</abbr></td>
+                    <td>Recurring</td>
+                    <td colspan="4" >Every year 31st March,30th June, 20th September, 31th December</td>
+                    <td align="center">20</td>
+                    <td></td>
+                    <td>31/12/2015</td>
+                  </tr>
+                </table></td>
+            </tr>
+          </table>
+            </div>
+            <div class="form-container-grid-table">
+              <table style="width:100%;">
+                <tr>
+                  <th colspan="3" style="background-color:#9055BD;color:white;padding:5px">
+                    I. Assignment Settings
+                  </th>
+                </tr>
+                <tr>
+                  <th width="30%" >
+                      Reassign to 
+                  </th>
+                  <th width="30%" align="center">Concurrence</th>
+                  <th width="30%" align="center">Approval</th>
+                </tr>
+                <tr>
+                  <th align="center" style="padding-bottom:5px">
+                    <input type="text" class="input-box icon-autocomplete" value="Branch Office - Madurai" id="unitname" />
+                    <!--<Select class="input-box">
+                      <option>Corporate Office</option>
+                      <option>Regional Office - North</option>
+                      <option>Regional Office - South</option>
+                      <option>Branch Office - Delhi</option>
+                      <option>Branch Office - Chennai</option>
+                      <option selected="selected">Branch Office - Madurai</option>
+                      <option>Branch Office - Bangalore</option>
+                      <option>Service provider</option>
+                    </Select>-->
+                  </th>
+                  <th align="center">
+                    <input type="text" class="input-box icon-autocomplete" value="Branch Office - Madurai" id="unitname" />
+                    <!--<Select class="input-box">
+                      <option>Corporate Office</option>
+                      <option>Regional Office - North</option>
+                      <option>Regional Office - South</option>
+                      <option>Branch Office - Delhi</option>
+                      <option>Branch Office - Chennai</option>
+                      <option selected="selected">Branch Office - Madurai</option>
+                      <option>Branch Office - Bangalore</option>
+                    </Select>-->
+                  </th>
+                  <th align="center">
+                    <input type="text" class="input-box icon-autocomplete" value="Regional Office - South" id="unitname" />
+                    <!--<Select class="input-box">
+                      <option>Corporate Office</option>
+                      <option>Regional Office - North</option>
+                      <option selected="selected">Regional Office - South</option>
+                      <option>Branch Office - Delhi</option>
+                      <option>Branch Office - Chennai</option>
+                      <option>Branch Office - Madurai</option>
+                      <option>Branch Office - Bangalore</option>
+                    </Select>-->
+                  </th>
+                </tr>
+                <tr>
+                  <th><input type="text" name="location-name" class="filter-text-box" placeholder="Search" style="margin-bottom:5px"></th>
+                  <th><input type="text" name="location-name" class="filter-text-box" placeholder="Search" style="margin-bottom:5px"></th>
+                  <th><input type="text" name="location-name" class="filter-text-box" placeholder="Search" style="margin-bottom:5px"></th>
+                </tr>
+                <tr>
+                  <td>
+                    <ul>
+                      <li>Abishek<span style="text-align=right;float:right;margin-right:130px">- L2</span></li>
+                      <li>Krishna<span style="text-align=right;float:right;margin-right:130px">- L3</span></li>
+                      <li class="active">Rajaram<span style="text-align=right;float:right;margin-right:128px">- L4</span></li>
+                      <li>Subash<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
+                      <li>Vishnu<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
+                      <li>Vivek<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li class="active">Abishek<span style="text-align=right;float:right;margin-right:128px">- L2</span></li>
+                      <li >Krishna<span style="text-align=right;float:right;margin-right:130px">- L3</span></li>
+                      <li>Rajaram<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
+                      <li>Subash<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
+                      <li>Vishnu<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
+                      <li>Vivek<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li >Aravind<span style="text-align=right;float:right;margin-right:130px">- L1</span></li>
+                      <li class="active">Arjun<span style="text-align=right;float:right;margin-right:128px">- L2</span></li>
+                      <li >Arun<span style="text-align=right;float:right;margin-right:130px">- L3</span></li>
+                      <li>Babu<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
+                      <li>Dhinesh<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
+                      <li>Divagar<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
+                      <li>Praveen<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+                <div class="input-row-left">
+                  <div class="input-row">
+                    <div class="field-label">Reason:<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                      <textarea placeholder="Enter reason here" class="input-box"></textarea>
+                    </div>
+                  </div> 
+                </div>
+                <div>
+                <div class="submit-button-container">
+                  <input type="submit" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/reassigntask'">
+                  &nbsp;&nbsp;
+                  <input type="submit" name="cancel" value="Reassign" class="btn-submit">
+                </div>
+                </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+<script>
+$(function(){
+	$('#unitname').autoComplete({
+			minChars: 1,
+			source: function(term, suggest){
+					term = term.toLowerCase();
+					var choices = ['Corporate Office', 'Regional Office - North', 'Regional Office - South', 'Branch Office - Chennai', 'Branch Office - Madurai', 'Branch Office - Bangalore'];
+					var suggestions = [];
+					for (i=0;i<choices.length;i++)
+							if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+					suggest(suggestions);
+			}
+	});
+});
+
+jQuery(window).load(function(){
+	jQuery('.page-load').tipso({
+		tooltipHover: true
+	});
+});
+</script>
+{% endblock %}

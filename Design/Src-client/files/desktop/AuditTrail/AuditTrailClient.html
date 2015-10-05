@@ -1,0 +1,98 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width60">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Audit Trail<span class="error-message"><!----></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">From Date:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="10/07/2015" placeholder="dd/mm/yyyy">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">User:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="user" autofocus placeholder="Type User">
+          </div>
+        </div>
+        </div>
+        <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">To Date:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="20/07/2015" placeholder="dd/mm/yyyy">
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+        <table>
+          <tr align="left">
+            <th>User</th>
+            <th>Date & Time</th>
+            <th>Form Name</th>
+            <th>Action</th>
+          </tr>
+          <tr>
+            <td>Krishna Moorthy</td>
+            <td>18/07/2015 12:15</td>
+            <td>Manage Task</td>
+            <td>Upload Task - "Returns - Obtain attendance"</td>
+          </tr>
+          <tr>
+            <td>Hariharan</td>
+            <td>16/07/2015 15:25</td>
+            <td>Task Assignment</td>
+            <td>Assign Task - "Returns - Krishna Moorthy"</td>
+          </tr>
+          <tr>
+            <td>Krishna Moorthy</td>
+            <td>15/07/2015 10:30</td>
+            <td>Manage Task</td>
+            <td>Upload Task - "Registration - Prepare Form 3"</td>
+          </tr>
+           <tr>
+            <td>Hariharan</td>
+            <td>14/07/2015 12:15</td>
+            <td>Task Assignment</td>
+            <td>Assign Task - "Registration - ART Solutions"</td>
+          </tr>
+          <tr>
+            <td>Hariharan</td>
+            <td>13/07/2015 15:25</td>
+            <td>Inhouse Privileges</td>
+            <td>Add Inhouse Privileges - "Asst. Manager"</td>
+          </tr>
+          <tr>
+            <td>Hariharan</td>
+            <td>11/07/2015 10:30</td>
+            <td>Service Provider</td>
+            <td>Add Service Provider - "ART Solutions"</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(function(){
+  
+   $('#user').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+         var choices = ['Ragavan', 'Muthu', 'Ramesh'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+});
+</script>
+{% endblock %} 

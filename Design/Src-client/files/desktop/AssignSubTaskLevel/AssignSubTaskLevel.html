@@ -1,0 +1,175 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width60">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Assign Sub Task Level<a href="/subtaskrecommendation"><span class="error-message recommendation">Recommendation (3)</span></a></div>
+      <h2>Client Info</h2>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Client Group:</div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="TVS Group">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Division:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="division" autofocus value="Auto Parts - Manufacturing">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Task:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="taskname" autofocus value="Returns">
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">Legal Entity:</div>
+          <div class="field-input">
+            <input type="text" class="input-box"  value="TVS & Sons">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Unit/ Branch:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="unitbranch" autofocus value="South Gate, Madurai">
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+      <h2>Sub Task List</h2>
+      <div class="grid-table">
+        <table>
+          <tr align="left">
+            <th width="1%"></th>
+            <th width="99%">Prepare Wage Register</th>
+          </tr>
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td style="font-weight:bold">Sub Task Level</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked" /></td>
+            <td>Obtain attendance</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked" /></td>
+            <td>Generate Muster Roll</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"  /></td>
+            <td>Process for wage register</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked" /></td>
+            <td>compute employee contributions</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td>compute employer contributions</td>
+          </tr>
+          <tr align="left">
+            <th width="1%"></th>
+            <th width="99%">Process for Quantum</th>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked"/></td>
+            <td style="font-weight:bold">Sub Task Level</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked" /></td>
+            <td>compute contributions + admin charges if applicable</td>
+          </tr>
+          <tr align="left">
+            <th width="1%"></th>
+            <th width="99%">Remitance</th>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked"/></td>
+            <td style="font-weight:bold">Sub Task Level</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked" /></td>
+            <td>payment of dues OR obtaining evidence of payment
+like challan copy etc</td>
+          </tr>
+          <tr align="left">
+            <th width="1%"></th>
+            <th width="99%">Returns</th>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked"/></td>
+            <td style="font-weight:bold">Sub Task Level</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked" /></td>
+            <td>compute the remitance(s) according to the periodicity definitions</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked" /></td>
+            <td>prepare the required information in the prescribed format</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked" /></td>
+            <td>file the returns</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked" /></td>
+            <td>obtain the acknowldgement</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked" /></td>
+            <td>Upload the scanned copies for closure of the task</td>
+          </tr>
+        </table>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Assign" class="btn-submit">
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(function(){
+  $('#taskname').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Registration', 'Amendments', 'Prepare Wage Register', 'Process for Quantum', 'Remittance', 'Returns'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#division').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Auto Parts - Manufacturing', 'Division 1', 'Division 2'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#unitbranch').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['South Gate, Madurai', 'Periyar, Madurai', 'Mattuthavani, Madurai'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+});
+</script>
+{% endblock %}

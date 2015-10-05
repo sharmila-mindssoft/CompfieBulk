@@ -1,0 +1,80 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width60">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Sub Task List<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Service Mapping:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="servicemapping" autofocus value="Mapping 1" placeholder="Enter mapping name" >
+          </div>
+        </div>
+      </div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Task Name: </div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="taskname" autofocus value="TDS Deduction" placeholder="Enter task name" >
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+        <input type="button"  class="btn-submit" value="Export to CSV" />
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+        <table>
+          <tr align="left">
+            <th>Sub Task Name</th>
+            <th>Sub Level</th>
+          </tr>
+          <tr>
+            <td>Process for Quantum</td>
+            <td><ul class="listview">
+                <li>compute contributions + admin charges if applicable</li>
+                <li>Acknowledgement</li>
+              </ul></td>
+          </tr>
+          <tr>
+            <td>Remitance</td>
+            <td><ul class="listview">
+                <li>payment of dues OR obtaining evidence of payment
+like challan copy etc</li>
+              </ul></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(function(){
+  $('#taskname').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Registration', 'Amendments', 'Prepare Wage Register', 'Process for Quantum', 'Remittance', 'Returns'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#servicemapping').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Mapping 1', 'Mapping 2', 'Mapping 3'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+  
+});
+</script>
+{% endblock %}

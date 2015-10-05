@@ -1,0 +1,157 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+  <div class="content-container width60">
+  <div class="content-area">
+      <div class="add-container">
+      <div class="add-container-heading">Approve Service Mapping<span class="error-message"></span></div>
+      <div class="input-row-left">
+          <div class="input-row">
+          <div class="field-label">Domain Mapping :</div>
+          <div class="field-input">
+              <input type="text" class="input-box icon-autocomplete" id="domainmapping" autofocus value="LLC - Payroll">
+            </div>
+        </div>
+          <div class="input-row">
+          <div class="field-label">Statutory Mapping :</div>
+          <div class="field-input">
+              <input type="text" class="input-box icon-autocomplete" id="statutorymapping" autofocus value="ITACT1961-192">
+            </div>
+        </div>
+          <div class="input-row">
+          <div class="field-label">Service Mapping :</div>
+          <div class="field-input">
+              <input type="text" class="input-box icon-autocomplete" autofocus id="servicemapping" value="" placeholder="Type Service Mapping">
+            </div>
+        </div>
+        </div>
+      <div class="input-row-right">
+          <div class="input-row">
+          <div class="field-label">Applicability :</div>
+          <div class="field-input">
+              <input type="text" class="input-box icon-autocomplete" id="applicability" autofocus value="Concurrent">
+            </div>
+        </div>
+          <div class="input-row">
+          <div class="field-label">Industry Mapping :</div>
+          <div class="field-input">
+              <input type="text" class="input-box icon-autocomplete" id="industrymapping" autofocus value="Manf-Auto">
+            </div>
+        </div>
+        </div>
+      <div class="submit-button-container">
+          <input type="submit" name="cancel" value="Show" class="btn-submit">
+        </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+          <table>
+          <tr align="left">
+              <th width="8%"><input type="checkbox" /></th>
+              <th width="20%">Service Mapping</th>
+              <th width="20%">Domain Mapping</th>
+              <th width="20%">Approve</th>
+              <th width="20%">Reason</th>
+            </tr>
+          <tr>
+              <td><input type="checkbox" checked="checked" /></td>
+              <td><a href="#">Payroll-TDS</a></td>
+              <td>LLC - Payroll</td>
+              <td>
+                <select class="input-box">
+                    <option selected="selected">Approve</option>
+                    <option >Reject</option>
+                </select>
+              </td>
+               <td></td>
+            </tr>
+          <tr>
+              <td><input type="checkbox" /></td>
+              <td><a href="#">Payroll-PF</a></td>
+              <td>LLC - Payroll</td>
+              <td>
+                <select class="input-box">
+                    <option >Approve</option>
+                    <option selected="selected">Reject</option>
+                </select>
+              </td>
+              <td><input type="text" placeholder="Text Here" class="input-box"></td>
+            </tr>
+          <tr>
+              <td><input type="checkbox" checked="checked" /></td>
+              <td><a href="#">Payroll-ESI</a></td>
+              <td>LLC - Payroll</td>
+              <td>
+                <select class="input-box">
+                    <option selected="selected">Approve</option>
+                    <option >Reject</option>
+                </select>
+              </td>
+              <td></td>
+            </tr>
+        </table>
+        </div>
+      <div class="submit-button-container">
+          <input type="submit" name="cancel" value="Save" class="btn-submit">
+        </div>
+    </div>
+    </div>
+</div>
+<script>
+$(function(){
+  $('#domainmapping').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['FL-Insolvency', 'FL-Tax', 'FL-Trusts', 'LLC-Administration', 'LLC-Payroll', 'LLC-Wage Regulations'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+  $('#statutorymapping').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['ITACT1961-191', 'ITACT1961-192', 'ICA1872-15'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+  $('#servicemapping').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Payroll-TDS', 'Payroll-PF', 'Payroll-ESI'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+  $('#applicability').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Central', 'Concurrent', 'State'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+  $('#industrymapping').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Manufacturing - Autoparts', 'Production - Mixing', 'IT - Hardware'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width60">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Task List<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Statutory Level:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <select class="input-box" >
+              <option>All</option>
+              <option selected="selected">Act</option>
+              <option>Section</option>
+              <option>Sub Section</option>
+              <option>Rule/Scheme/Regulation</option>
+              <option>Sub-Rule</option>
+              <option>Para</option>
+              <option>Ammendments/Remarks</option>
+              <option>Clause</option>
+              <option>Subclause</option>
+              <option>Forms</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Task Type:</div>
+          <div class="field-input">
+            <select class="input-box" >
+              <option>ALL</option>
+              <option>Recurring</option>
+              <option>One Time</option>
+              <option>Review</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">Statutory:<span class="mandatory">*</span> </div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" style="padding-right:20px !important;" id="taskname" autofocus value="Gratuity Act, 1972" placeholder="Enter Name" >
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Repeats:</div>
+          <div class="field-input">
+            <select class="input-box" >
+              <option>ALL</option>
+              <option>Monthly</option>
+              <option>Yearly</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+        <input type="button"  class="btn-submit" value="Export to CSV" />
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table-rpt">
+        <h1>Task List</h1>
+        <h2>Gratuity Act, 1972</h2>
+        <div>
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+            <div style="margin-left:10px; font-size:0.8em;">Task Type :<span style="margin-left:10px; font-weight:bold;">ALL</span> </div>
+          </div>
+          <div style="float:right; margin-right:30%;">
+            <div style="margin-left:10px; font-size:0.8em;">Repeats :<span style="margin-left:10px; font-weight:bold;">ALL</span> </div>
+          </div>
+        </div>
+        <table width="100%" style="border:1px dotted #CCCCCC;">
+          <tr align="left">
+            <th width="5%" align="center">#</th>
+            <th width="18%">Compliance Name</th>
+            <th width="28%">Compliance Description</th>
+            <th width="26%">Penal Description</th>
+            <th width="10%">Task Type</th>
+            <th width="23%">Repeats</th>
+          </tr>
+          <tr>
+            <td align="center">1</td>
+            <td>Notice of Opening</td>
+            <td>Within 30 days of opening a branch</td>
+            <td>Imprisonment With Fine</td>
+            <td>One Time</td>
+            <td> - </td>
+          </tr>
+          <tr align="left">
+            <th align="center">&nbsp;</th>
+            <th>Form No</th>
+            <th>Format</th>
+            <th>Authority</th>
+            <th>Slab Rate</th>
+            <th>Penalty Rate</th>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>Form A</td>
+            <td><a href="#">Download</a></td>
+            <td>Authority 1</td>
+            <td>Nil</td>
+            <td>Nil</td>
+          </tr>
+        </table>
+        <table width="100%" style="border:1px dotted #CCCCCC;">
+          <tr align="left">
+            <th width="5%" align="center">#</th>
+            <th width="18%">Compliance Name</th>
+            <th width="28%">Compliance Description</th>
+            <th width="26%">Penal Description</th>
+            <th width="10%">Task Type</th>
+            <th width="23%">Repeats</th>
+          </tr>
+          <tr>
+            <td align="center">2</td>
+            <td>FORM I Submit</td>
+            <td>Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned</td>
+            <td>Imprisonment With Fine</td>
+            <td>Recurring</td>
+            <td>Every 6 months</td>
+          </tr>
+          <tr align="left">
+            <th align="center">&nbsp;</th>
+            <th>Form No</th>
+            <th>Format</th>
+            <th>Authority</th>
+            <th>Slab Rate</th>
+            <th>Penalty Rate</th>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>Form I</td>
+            <td><a href="#">Download</a></td>
+            <td>Authority 1</td>
+            <td>Nil</td>
+            <td>Nil</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width50">
+  <div class="content-area">
+    <h1>Industries</h1>
+    <div class="filters-and-search">
+      <div class="btn-add" onclick="location.href='/industry/create'" formtarget="_self">Add</div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="grid-table">
+      <table>
+        <tr align="left">
+          <th align="center">#</th>
+          <th>Industry</th>
+          <th>Sub Industry</th>
+          <th>Sub Sub Industry</th>
+          <th align="center" >Edit</th>
+          <th align="center">Status</th>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td><input type="text" name="location-name" class="filter-text-box"></td>
+          <td><input type="text" name="location-name" class="filter-text-box"></td>
+          <td><input type="text" name="location-name" class="filter-text-box"></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td align="center">1</td>
+          <td>Automobiles</td>
+          <td>Auto Parts</td>
+          <td>Sub Sub Industry 1</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+        <tr>
+          <td align="center">2</td>
+          <td>Manufacturing</td>
+          <td>Chemical</td>
+          <td>Sub Sub Industry 2</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+        <tr>
+          <td align="center">3</td>
+          <td>Production</td>
+          <td>Sub Industry 1</td>
+          <td>Sub Sub Industry 3</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
+        </tr>
+      </table>
+    </div>
+    
+  </div>
+</div>
+{% endblock %} 

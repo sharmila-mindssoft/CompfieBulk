@@ -1,0 +1,378 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<script type="text/javascript">
+ $(function() {
+   $('#clientdecision').change(function () {
+    if($(this).is(':checked'))
+      $('#clienttextarea').hide();
+    else
+      $('#clienttextarea').show();
+  });
+}); 
+
+</script>
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/popup/popup.css">
+<script type="text/javascript" src="/files/desktop/common/js/popup/modernizr.js"></script>
+<div class="content-container width75">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Assign Statutory<!--<a href="/assignservicemappingrecommendation">
+      <span class="error-message recommendation">Recommendation (3)</span></a>--></div>
+      <div class="form-container-outer">
+        <div class="form-container-grid-table">
+          <table>
+            <tr align="left">
+              <th width="15%">Country</th>
+              <th width="15%">Client Group </th>
+              <th width="15%">Legal Entity </th>
+              <th width="15%">Division</th>
+              <th width="15%">Unit</th>
+            </tr>
+            <tr>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>Australia</li>
+                  <li>Bangladesh</li>
+                  <li class="active">India</li>
+                  <li>Malaysia</li>
+                  <li>Sri Lanka</li>
+                  <li>Singapore</li>
+                </ul></td>
+                <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>ART Private Ltd.</li>
+                  <li class="active">VRM Motors</li>
+                  <li>PRG Group of Companies</li>
+                  </a>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>VRM & Co.,</li>
+                  <li>VRM & Brothers</li>
+                  <li class="active">VRM & Sons</li>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li class="active">VRM Auto Parts - Manufacturing</li>
+                  <li>VRM Auto Pvt Ltd</li>
+                  <li>VRM Pvt Ltd</li>
+                  <li>VRM Fastners</li>
+                  <li>VRM Automobile Solutions Limited</li>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>Corporate Office</li>
+                  <li>Regional Office - North</li>
+                  <li>Regional Office - South</li>
+                  <li>Branch Office - Bangalore</li>
+                  <li class="active">Branch Office - Madurai</li>
+                  <li >Branch Office - Delhi</li>
+                  <li>Branch Office - Hydrabad</li>
+                  <li>Branch Office - Chennai</li>
+                </ul></td>
+            </tr>
+            <tr align="left">
+              <th width="15%">Type</th>
+              <th width="15%">Geography</th>
+              <th width="15%">Location</th>
+              <th width="15%" colspan="2">Domain</th>
+            </tr>
+            <tr>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li class="active">Factory</li>
+                  <li>Office</li>
+                  <li>Plantation</li>
+                  <li>Contractor</li>
+                  <li>S &amp; E</li>
+                  <li>Mines</li>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                   <li>All</li>
+                  <li>Region </li>
+                  <li class="active">State </li>
+                  <li>Union Territory</li>
+                  <li>District </li>
+                  <li>Corporation </li>
+                  <li>Municipality </li>
+                  <li>Town </li>
+                  <li>Panchayat </li>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                <li>  Andra Pradesh </li>
+                <li class="active">  Tamil Nadu  </li>
+<li>  Arunachal Pradesh </li>
+<li>  Assam </li>
+<li>  Bihar </li>
+<li>  Chhattisgarh  </li>
+<li>  Goa </li>
+<li>  Gujarat </li>
+<li>  Haryana </li>
+<li>  Himachal Pradesh  </li>
+<li>  Jammu and Kashmir </li>
+<li>  Jharkhand </li>
+<li>  Karnataka </li>
+<li>  Kerala  </li>
+<li>  Madya Pradesh </li>
+<li>  Maharashtra </li>
+<li>  Manipur </li>
+<li>  Meghalaya </li>
+<li>  Mizoram </li>
+<li>  Nagaland  </li>
+<li>  Orissa  </li>
+<li>  Punjab  </li>
+<li>  Rajasthan </li>
+<li>  Sikkim  </li>
+
+<li>  Tripura </li>
+<li>  Uttaranchal </li>
+<li>  Uttar Pradesh </li>
+<li>  West Bengal </li>
+
+                </ul></td>
+              <td colspan="2"><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>Finance Law</li>
+                  <li class="active">Industrial Law</li>
+                  <li >Labour Law</li>
+                </ul></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="clearfix"></div>
+        <br>
+        <div class="grid-table">
+          <table class="font1">
+            <tr align="left">
+              <th colspan="2">Statutory</th>
+            </tr>
+            <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="5%"><input type="checkbox" checked="checked" /></th>
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="95%">The Batteries Act<span><img src="/images/chevron_black_down.png"></span></th>
+            </tr>
+            <tr style="border:1px solid #cccccc;">
+              <td colspan="2"><table cellpadding="0" cellspacing="0" width="100%">
+                  <tr align="left">
+                    <td width="2%"><span style="font-weight:bold;">#</span></td>
+                    <td ><span style="font-weight:bold;">Statutory</span></td>
+                    <td ><span style="font-weight:bold;">Task</span></td>
+                    <td width="35%"><span style="font-weight:bold; ">Nature of Compliance
+                    <td align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Applicable" ></span></td>
+                    <td  align="center"><span style="font-weight:bold; "><img src="/images/icon-client-tick.png" title="Yet to Comply"></span></td>
+                    <td width="20%"><span style="font-weight:bold; font-size:11px;">Remarks</span></td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>Rule 4 (iii)</td>
+                    <td>FORM I Submission</td>
+                    <td>Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned
+</td>
+                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Rule 5 and Rule 6 (ii)</td>
+                    <td>FORM II Submission</td>
+                    <td>Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
+                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>Rule 6(iii)
+</td>
+                    <td>FORM III Submission
+</td>
+                    <td>Whether undertaking submitted by importer to authority.</td>
+                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                    <td align="center"><input type="checkbox" id="clientdecision"  /></td>
+                    <td><textarea class="input-box" style="height:60px;" id="clienttextarea" placeholder="Enter client decision"></textarea></td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>Rule 4 and Rule 7(vii)
+</td>
+                    <td>FORM IV Submission
+</td>
+                    <td>Whether registration obtained for dealers
+</td>
+                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>Rule 7(iv)
+</td>
+                    <td>FORM V Submission
+</td>
+                    <td>Whether half yearly returns submitted by dealer to manufacturer
+</td>
+                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td>Rule 8(i) & 9(1) & 9 (5)
+</td>
+                    <td>FORM VI Submission
+</td>
+                    <td>Whether registration and renewal obtained by recycler
+</td>
+                    <td align="center"><input type="checkbox" /></td>
+                    <td align="center">&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>7</td>
+                    <td>Rule 8 (iii)</td>
+                    <td>FORM VII Submission</td>
+                    <td>Whether half yearly returns submitted by recyclers</td>
+                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>8</td>
+                    <td>Rule 10(2) (iii)</td>
+                    <td>FORM VIII Submission</td>
+                    <td>Whether half yearly returns submitted by bulk consumer</td>
+                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                    <td align="center"><input type="checkbox" /></td>
+                    <td><textarea class="input-box" style="height:60px;" placeholder="Enter client decision"></textarea></td>
+                  </tr>
+                </table></td>
+            </tr>
+            <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="5%"><input type="checkbox" checked="checked" /></th>
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="95%">Indian Partnership Act, 1932<span><img src="/images/chevron_black_right.png"></span></th>
+            </tr>
+            <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="5%"><input type="checkbox" /></th>
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="95%">Industrial Employment (Standing Orders) Central Rules, 1946<span><img src="/images/chevron_black_right.png"></span></th>
+            </tr>
+            <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="5%"><input type="checkbox" checked="checked" /></th>
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="95%">The Factories Act, 1948 <span><img src="/images/chevron_black_right.png"></span></th>
+            </tr>
+            <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="5%"><input type="checkbox" /></th>
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="95%">Industrial Disputes (Central) Rules, 1957<span><img src="/images/chevron_black_right.png"></span></th>
+            </tr>
+          </table>
+        </div>
+        <div class="submit-button-container">
+          <input type="submit" name="cancel" value="Cancel" class="btn-submit" onclick="location.href='/assignservicemapping/list'" formtarget="_self">
+          &nbsp;&nbsp;
+          <input type="submit" name="cancel" value="Assign" class="btn-submit">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal">
+  <header>
+    <h1>Payroll Services</h1>
+    <div class="close toggleModal"></div>
+  </header>
+  <section >
+    <p>
+    <table cellpadding="0" cellspacing="0" class="content">
+      <tr>
+        <td colspan="2"><strong>Domain Mapping:</strong> LLC - Payroll
+          <table width="100%">
+            <tr>
+              <td width="30%">Domain:</td>
+              <td width="70%">Labour Law</td>
+            </tr>
+            <tr>
+              <td>SubDomain:</td>
+              <td>Payroll</td>
+            </tr>
+          </table></td>
+      </tr>
+      <tr>
+        <td colspan="2"><strong>Statutory Mapping: </strong>ITACT1961-192
+          <table width="100%">
+            <tr>
+              <td width="30%">ACT:</td>
+              <td width="70%">The Karnataka Shops & Commercial Establishments</td>
+            </tr>
+            <tr>
+              <td>Section:</td>
+              <td>Prohibition of Sexual Harassment of Women at Work place</td>
+            </tr>
+            <tr>
+              <td>Sub Section:</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>Rule/Scheme/Regulation:</td>
+              <td>Act is Applicable.</td>
+            </tr>
+            <tr>
+              <td>Sub-Rule:</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>Para:</td>
+              <td>Constitute a Complaintse</td>
+            </tr>
+            <tr>
+              <td>Ammendments/Remarks:</td>
+              <td>-</td>
+            </tr>
+          </table></td>
+      </tr>
+      <tr>
+        <td><strong>Applicability:</strong></td>
+        <td>Concurrent</td>
+      </tr>
+      <tr>
+        <td><strong>Industry - Sector:</strong></td>
+        <td>Hosting Services</td>
+      </tr>
+      <tr>
+        <td><strong>Country:</strong></td>
+        <td>India</td>
+      </tr>
+      <tr>
+        <td><strong>Location:</strong></td>
+        <td>T Nagar, Chennai, Tamil nadu</td>
+      </tr>
+    </table>
+    </p>
+  </section>
+</div>
+<script>
+$('.toggleModal').on('click', function (e) {
+    $('.modal').toggleClass('active');
+});
+//@ sourceURL=pen.js
+</script> 
+{% endblock %}

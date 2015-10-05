@@ -1,0 +1,137 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<script>
+  $(document).ready(function() {
+    $("#insert-level").hide();
+  });
+
+  function loadForm(){
+     $("#insert-level").show();
+      $("#add").hide();
+  }
+
+  function hideForm(){
+     $("#insert-level").hide();
+      $("#add").show();
+  }
+
+</script>
+<div class="content-container width60">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Geography Level Master<span class="error-message"></span></div>
+       <div class="form-container-outer">
+            <div class="single-column-input-row">
+              <br>
+              <div class="input-row">
+                <div class="single-column-field-label">Country:<span class="mandatory">*</span></div>
+                <div class="single-column-field-input">
+                  <input type="text" class="input-box icon-autocomplete" style="width:200px" value="India"/>
+                </div>
+              </div>
+            </div>
+            <div id="insert-level" class="input-row">
+              <br>
+              <div class="input-row-left">
+                <div class="field-label">Level</div>
+                <div class="field-input">
+                  <select class="input-box">
+                    <option>Level 1</option>
+                    <option>Level 2</option>
+                    <option>Level 3</option>
+                    <option>Level 4</option>
+                    <option>Level 5</option>
+                    <option>Level 6</option>
+                    <option>Level 7</option>
+                    <option>Level 8</option>
+                    <option>Level 9</option>
+                    <option>Level 10</option>
+                  </select>
+                </div>
+              </div>
+              <div class="input-row-right">
+                <div class="field-label">Title</div>
+                <div class="field-input">
+                  <input type="text" class="input-box" value="Sub District"/>
+                </div>
+              </div>
+              <div class="submit-button-container" style="margin-top:10px">
+                <input type="reset" name="cancel" value="Cancel" class="btn-cancel"  onclick="hideForm()" >&nbsp;&nbsp;
+                <input type="submit" name="submit" value="Submit" class="btn-submit">
+              </div>
+            </div>
+            <div id="add" class="filters-and-search">
+              <div class="btn-add" onclick="loadForm()" style="width:110px" formtarget="_self">Insert Level</div>
+            </div>
+            <div class="grid-table">
+              <table>
+                <tr>
+                  <th align="left">Level</th>
+                  <th align="left">Title</th>
+                  <th align="left">Level</th>
+                  <th align="left">Title</th>
+                </tr>
+                <tr>
+                  <td style="height:50px">
+                    Level 1
+                  </td>
+                  <td><input type="text" class="input-box" value="Region"/></td>
+                  <td>
+                   Level 2
+                  </td>
+                  <td><input type="text" class="input-box" value="State"/></td>
+                </tr>
+                 <tr>
+                  <td style="height:50px">
+                    Level 3
+                  </td>
+                  <td><input type="text" class="input-box" value="Union Territory"/></td>
+                  <td>
+                   Level 4
+                  </td>
+                  <td><input type="text" class="input-box" value="District"/></td>
+                </tr>
+                <tr>
+                  <td style="height:50px">
+                    Level 5
+                  </td>
+                  <td><input type="text" class="input-box" value="Corporation"/></td>
+                  <td>
+                   Level 6
+                  </td>
+                  <td><input type="text" class="input-box" value="Municipality"/></td>
+                </tr>
+                <tr>
+                  <td style="height:50px">
+                    Level 7
+                  </td>
+                  <td><input type="text" class="input-box" value="Town"/></td>
+                  <td>
+                   Level 8
+                  </td>
+                  <td><input type="text" class="input-box" value="Panchayat"/></td>
+                </tr>
+                <tr>
+                  <td style="height:50px">
+                    Level 9
+                  </td>
+                  <td><input type="text" class="input-box" value=""/></td>
+                  <td>
+                   Level 10
+                  </td>
+                  <td><input type="text" class="input-box" value=""/></td>
+                </tr>
+              </table>
+            </div> 
+            <div class="submit-button-container">
+              <input type="reset" name="cancel" value="Cancel" class="btn-cancel"  onclick="location.href='/geographylevel/list'" >&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit">
+            </div>
+        </div>
+    <div class="clearfix"></div>
+    </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

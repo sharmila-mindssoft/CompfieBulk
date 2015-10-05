@@ -1,0 +1,112 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width60">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Sub Task Level Request<span class="error-message"><!----></span></div>
+      <h2>Client Info</h2>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Client Group:</div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="TVS Group">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Division:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" autofocus id="division" value="Auto Parts - Manufacturing">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Task:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="task" autofocus value="Remittance">
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">Legal Entity:</div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="TVS & Sons">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Unit/ Branch:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="unitbranch" autofocus value="South Gate, Madurai">
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+      <h2>Sub Task List</h2>
+      <div class="grid-table">
+        <table>
+          <tr align="left">
+            <th colspan="2">Sub Task : Prepare wage register</th>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked" /></td>
+            <td>Obtain attendance</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked" /></td>
+            <td>Generate Muster Roll</td>
+          </tr>
+          <tr align="left">
+            <th colspan="2" >Sub Task : Process for Quantum</th>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked" /></td>
+            <td>compute contributions + admin charges if applicable</td>
+          </tr>
+        </table>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Request" class="btn-submit">
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(function(){
+  $('#division').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Auto Parts - Manufacturing', 'Division 1', 'Division 2'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#task').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Registration', 'Returns', 'Renewal', 'TDS Deduction'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#unitbranch').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['South Gate, Madurai', 'Periyar, Madurai', 'Mattuthavani, Madurai'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+});
+</script>
+{% endblock %}

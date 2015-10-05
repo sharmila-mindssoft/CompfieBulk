@@ -1,0 +1,438 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
+<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
+<style type="text/css">
+      .slider{
+        background-color: gray;
+        color: white;
+      }
+      #trigger{
+        width: 90%;
+        padding: 10px;
+        margin: 5px 5%;
+      }
+    </style>
+    <script type="text/javascript">
+    $(document).ready(function() {
+      $(".current-tab").click(function() {
+        $(".current-tab").addClass("active")
+        $(".upcomming-tab").removeClass("active")
+        $(".current-tab-content").show();
+        $(".upcomming-tab-content").hide();
+      })
+
+      $(".upcomming-tab").click(function() {
+        $(".upcomming-tab").addClass("active")
+        $(".current-tab").removeClass("active")
+        $(".current-tab-content").hide();
+        $(".upcomming-tab-content").show();
+      })
+
+    })
+
+  </script>
+<div class="content-container width75">
+  <div class="content-area">
+    <div class="add-container">
+    <div class="archive-container">
+            <div class="archive-header">
+              <span class="current-tab active">Current Task</span>
+              <span class="upcomming-tab">Upcoming Task</span>
+            </div>
+                <div class="current-tab-content" style="border:1px solid white;">
+                  <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
+                    <tr>
+                      <td width="60%"><div class="grid-table" style="padding-bottom:0em;">
+                          <table>
+                           
+                            <tr align="left" style="background:#ccc;">
+                              <td width="5%"><span style="font-weight:bold;">#</span></td>
+                              <td><span style="font-weight:bold;">Task </span></td>
+                              <td><span style="font-weight:bold;">Domain </span></td>                  
+                              <td ><span style="font-weight:bold;">Start Date </span></td>
+                              <td><span style="font-weight:bold;">Due Date</span></td>
+                              <td><span style="font-weight:bold;">Ageing </span></td>
+                              <td><span style="font-weight:bold;padding-right:5px">Format</span></td>
+                              <td width="5%"></td>
+                            </tr>
+                            <tr>
+                             <td></td>
+                      <td align="center"><input type="text" class="filter-text-box" style="width:150px;"></td>
+                      <td><input type="text" class="filter-text-box"></td>
+                      <td align="center"><input type="text" class="filter-text-box"></td>
+                      <td align="center"><input type="text" class="filter-text-box"></td>
+                      <td align="center"><input type="text" class="filter-text-box"  style="width:50px;"></td>
+                      <td></td>
+                      <td></td>
+        </tr>
+                 <!-- <tr align="left" class="rightside" >
+                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.8em;float:left; padding:5px 5px; margin-left:0px; box-shadow:inset 0 0 0 1px rgba(53,86,129, 0.4),inset 0 0 5px rgba(53,86,129, 0.5),
+    inset -285px 0 35px white;
+  border-radius: 0 5px 0 5px;"  width="200px">
+  Assignor: Sivaraman</span></th>
+                  <th colspan="8" style="background-color:#fff;"></th>
+                </tr> -->
+                <tr class="index-tab " style="background:#fff;" >
+                  <td>1</td>
+               
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png">FORM I Submission</abbr></td>
+                  <td>Industrial Law</td>
+                  <td>15/08/2015</td>
+                  <td>24/08/2015</td>
+                  <td>10 Days</td>
+                  <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                  <td style="padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr>
+                <tr style="background:#fff;" class="archive-tab active1">
+                  <td>2</td>
+                 
+                  <td><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead
+"><img src="/images/icon-info.png"> FORM II Submission</abbr></td>
+   <td>Industrial Law</td>
+                  <td>20/08/2015</td>
+                  <td>24/08/2015</td>
+                   <td>5 Days</td>
+                   <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr>
+               
+                     <!--   <tr align="left" class="rightside" >
+                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.8em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+    inset 0 0 0 1px rgba(53,86,129, 0.4), 
+    inset 0 0 5px rgba(53,86,129, 0.5),
+    inset -285px 0 35px white;
+  border-radius: 0 5px 0 5px;"  width="200px">Assignor: Rajkumaran</span></th>
+                  <th colspan="8" style="background-color:#fff;"></th>
+                </tr> -->
+                 <tr style="background:#fff;">
+                  <td>3</td>
+                  
+                  <td><abbr class="page-load" title="Whether undertaking submitted by importer to authority"><img src="/images/icon-info.png"> FORM III Submission </abbr></td><td>Industrial Law</td>
+                  <td>21/08/2015</td>
+                  <td>26/08/2015</td>
+                   <td>6 Days</td>
+                   <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                  <td style="padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr >
+                <tr style="background:#fff;">
+                  <td>4</td>
+                
+                  <td><abbr class="page-load" title="Whether registration obtained for dealers"><img src="/images/icon-info.png"> FORM IV Submission</abbr></td><td>Industrial Law</td>
+                  <td>25/08/2015</td>
+                  <td>31/08/2015</td>
+                   <td>7 Days</td>
+                   <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                  <td style="padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr>
+                <tr style="background:#fff;">
+                  <td>5</td>
+                  
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer
+"><img src="/images/icon-info.png"> FORM V Submission </abbr></td><td>Industrial Law</td>
+                  <td>26/08/2015</td>
+                  <td>29/08/2015</td>
+                   <td>4 Days</td>
+                   <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr>
+               <!--  <tr align="left" class="rightside" >
+                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.8em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+    inset 0 0 0 1px rgba(53,86,129, 0.4), 
+    inset 0 0 5px rgba(53,86,129, 0.5),
+    inset -285px 0 35px white;
+  border-radius: 0 5px 0 5px;"  width="200px">Assignor: Sundarrajan</span></th>
+                  <th colspan="8" style="background-color:#fff;"></th>
+                </tr> -->
+ <tr style="background:#fff;">
+                  <td>6</td>
+                  
+                  <td><abbr class="page-load" title="Whether registration and renewal obtained by recycler
+"><img src="/images/icon-info.png"> FORM VI Submission </abbr></td><td>Industrial Law</td>
+                  <td>21/08/2015</td>
+                  <td>26/08/2015</td>
+                   <td>6 Days</td>
+                   <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr >
+                <tr style="background:#fff;">
+                  <td>7</td>
+                  
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by recyclers."><img src="/images/icon-info.png"> FORM VII Submission</abbr></td><td>Industrial Law</td>
+                  <td>25/08/2015</td>
+                  <td>31/08/2015</td>
+                  <td>7 Days</td>
+                  <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr>
+              </table>
+            </div></td>
+          <td width="40%" style="vertical-align:top; background:#F1E9F6; padding-left:10px;"><div class="index-tab-content1" style="width:100%; height:100%; display:none;">
+              <table class="managetask">
+                <tr align="left">
+                  <td width="30%"><span style="font-weight:bold;">Task</span></td>
+                  <td width="70%" colspan="3"><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned."><img src="/images/icon-info.png"> FORM I Submission</abbr></td>
+                </tr>
+              <tr>
+                  <td ><span style="font-weight:bold;">Task Type:</span></td>
+                  <td>One Time</td>
+                </tr>
+                <tr>
+                  <td ><span style="font-weight:bold;">Upload</span></td>
+                  <td><input type="file" class="input-box" style="width:65%;" value=""><span style="float:right;">
+                  <span style="font-weight:bold;">25/08/2015</span><br><span style="font-size:10px"> (Upload Date) </span></span></td>
+                  <td></td>
+                </tr>
+                 <tr>
+                  <td ><span style="font-weight:bold;">Document:</span></td>
+                  <td colspan="2"><table class="tablenopadd"><tr><td width="80%">Form I.pdf </td><td width="10%">
+                 <img src="/images/delete.png" style="width:16px;height:16px;"/></td></tr>
+                <tr><td width="80%">Document 2.pdf</td><td width="10%">
+                 <img src="/images/delete.png" style="width:16px;height:16px;"/></td></tr>
+                 </table></td>
+                </tr>
+                 <tr>
+                  <td><span style="font-weight:bold;">Document/ Completion Date</span></td>
+                  <td><input class="input-box" type="text" value="23/08/2015"/></td>
+                </tr>
+               <!--<tr>
+                  <td ><span style="font-weight:bold;">Validity Date:</span></td>
+                  <td><input type="text" value="22/08/2016" class="input-box"/></td>
+                </tr>-->
+                <tr>
+                  <td ><span style="font-weight:bold;">Status</span></td>
+                  <td>In progress</td>
+                </tr>
+                <tr>
+                  <td style="vertical-align:middle;"><span style="font-weight:bold;">Remarks</span></td>
+                  <td  colspan="3"><Textarea class="input-box"></Textarea></td>
+                </tr>
+                <tr>
+                  <td colspan="2" align="center"><input type="submit" value="Submit" class="btn-submit"></td>
+                </tr>
+              </table>
+            </div>
+            <div class="archive-tab-content1" style="width:100%; height:100%;">
+              <table class="managetask">
+                <tr align="left">
+                  <td width="30%"><span style="font-weight:bold;">Task </span></td>
+                  <td width="70%" colspan="3"><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead."><img src="/images/icon-info.png"> FORM II Submission</abbr></td>
+                </tr>
+                 <tr>
+                  <td ><span style="font-weight:bold;">Task Type:</span></td>
+                  <td>Recurring</td>
+                </tr>
+                <tr>
+                  <td ><span style="font-weight:bold;">Upload</span></td>
+                  <td><input type="file" class="input-box" style="width:65%;" value=""><span style="float:right;">
+                  <span style="font-weight:bold;">28/08/2015</span><br><span style="font-size:10px"> (Upload Date) </span></span></td>
+                  
+                </tr>
+                <tr>
+                  <td ><span style="font-weight:bold;">Document:</span></td>
+                  <td colspan="2"><table class="tablenopadd"><tr><td width="80%">Form I.pdf </td><td width="10%">
+                 <img src="/images/delete.png" style="width:16px;height:16px;"/></td></tr>
+                <tr><td width="80%">Document 2.pdf</td><td width="10%">
+                 <img src="/images/delete.png" style="width:16px;height:16px;"/></td></tr>
+                 </table></td>
+                </tr>
+                <tr>
+                  <td ><span style="font-weight:bold;">Document/ Completion Date</span></td>
+                  <td  colspan="2"><input type="text" value="27/08/2015" class="input-box"></td>
+                </tr>
+                <tr>
+                  <td ><span style="font-weight:bold;">Validity Date:</span></td>
+                  <td><input type="text" value="25/08/2015" class="input-box"/></td>
+                </tr>
+                <tr>
+                  <td ><span style="font-weight:bold;">Status</span></td>
+                  <td colspan="2">In progress</td>
+                </tr>
+                <tr>
+                  <td valign="top" style="vertical-align:middle;" ><span style="font-weight:bold;">Remarks</span></td>
+                  <td colspan="3"><textarea class="input-box"></textarea></td>
+                </tr>
+                <tr>
+                  <td colspan="2" align="center"><input type="submit" value="Submit" class="btn-submit"></td>
+                </tr>
+              </table>
+            </div></td>
+        </tr>
+      </table>
+       </div>
+            <!-- index tab content end here -->
+
+            <!-- archive tab content start here -->
+            <div class="upcomming-tab-content" style="display:none; border:1px solid #fff;">
+              <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
+                    <tr>
+                      <td width="100%"><div class="grid-table" style="padding-bottom:0em;">
+                          <table>
+                           
+                            <tr align="left" style="background:#ccc;">
+                              <td width="3%"><span style="font-weight:bold;">#</span></td>
+                              <td><span style="font-weight:bold;">Task </span></td>
+                              <td><span style="font-weight:bold;">Domain </span></td>                  
+                              <td ><span style="font-weight:bold;">Assign Date </span></td>
+                              <td><span style="font-weight:bold;">Due Date  </span></td>
+                              <td width="10%"><span style="font-weight:bold;">Trigger Days </span></td>
+                              <td><span style="font-weight:bold;padding-right:5px">Format</span></td>
+
+                            </tr>
+                            <tr>
+                             <td></td>
+                      <td align="center"><input type="text" class="filter-text-box" ></td>
+                      <td><input type="text" class="filter-text-box"></td>
+                      <td align="center"><input type="text" class="filter-text-box"></td>
+                      <td align="center"><input type="text" class="filter-text-box"></td>
+                      <td align="center"><input type="text" class="filter-text-box"  style="width:100px;"></td>
+                      <td></td>
+                      
+        </tr>
+                 <!-- <tr align="left" class="rightside" >
+                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.8em;float:left; padding:5px 5px; margin-left:0px; box-shadow:inset 0 0 0 1px rgba(53,86,129, 0.4),inset 0 0 5px rgba(53,86,129, 0.5),
+    inset -285px 0 35px white;
+  border-radius: 0 5px 0 5px;"  width="200px">
+  Assignor: Sivaraman</span></th>
+                  <th colspan="8" style="background-color:#fff;"></th>
+                </tr> -->
+                <tr class="index-tab " style="background:#fff;" >
+                  <td>1</td>
+               
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png">FORM I Submission</abbr></td>
+                  <td>Industrial Law</td>
+                  <td>15/08/2015</td>
+                  <td>30/08/2015</td>
+                  <td>10 Days</td>
+                  <td align="center"><img src="/images/download.png" style="width:16px;height:16px;" title="Download Format"></td>
+                  
+                </tr>
+                <tr style="background:#fff;" class="archive-tab active1">
+                  <td>2</td>
+                 
+                  <td><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead
+"><img src="/images/icon-info.png"> FORM II Submission</abbr></td>
+   <td>Industrial Law</td>
+                  <td>20/08/2015</td>
+                  <td>26/08/2015</td>
+                   <td>5 Days</td>
+                   <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                 
+                </tr>
+               
+                     <!--   <tr align="left" class="rightside" >
+                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.8em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+    inset 0 0 0 1px rgba(53,86,129, 0.4), 
+    inset 0 0 5px rgba(53,86,129, 0.5),
+    inset -285px 0 35px white;
+  border-radius: 0 5px 0 5px;"  width="200px">Assignor: Rajkumaran</span></th>
+                  <th colspan="8" style="background-color:#fff;"></th>
+                </tr> -->
+                 <tr style="background:#fff;">
+                  <td>3</td>
+                  
+                  <td><abbr class="page-load" title="Whether undertaking submitted by importer to authority"><img src="/images/icon-info.png"> FORM III Submission </abbr></td><td>Industrial Law</td>
+                  <td>21/08/2015</td>
+                  <td>28/08/2015</td>
+                   <td>6 Days</td>
+                   <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+             
+                </tr >
+                <tr style="background:#fff;">
+                  <td>4</td>
+                
+                  <td><abbr class="page-load" title="Whether registration obtained for dealers"><img src="/images/icon-info.png"> FORM IV Submission</abbr></td><td>Industrial Law</td>
+                  <td>25/08/2015</td>
+                  <td>31/08/2015</td>
+                   <td>7 Days</td>
+                   <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+             
+                </tr>
+                <tr style="background:#fff;">
+                  <td>5</td>
+                  
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer
+"><img src="/images/icon-info.png"> FORM V Submission </abbr></td><td>Industrial Law</td>
+                  <td>26/08/2015</td>
+                  <td>29/08/2015</td>
+                   <td>4 Days</td>
+                   <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+             
+                </tr>
+               <!--  <tr align="left" class="rightside" >
+                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.8em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+    inset 0 0 0 1px rgba(53,86,129, 0.4), 
+    inset 0 0 5px rgba(53,86,129, 0.5),
+    inset -285px 0 35px white;
+  border-radius: 0 5px 0 5px;"  width="200px">Assignor: Sundarrajan</span></th>
+                  <th colspan="8" style="background-color:#fff;"></th>
+                </tr> -->
+ <tr style="background:#fff;">
+                  <td>6</td>
+                  
+                  <td><abbr class="page-load" title="Whether registration and renewal obtained by recycler
+"><img src="/images/icon-info.png"> FORM VI Submission </abbr></td><td>Industrial Law</td>
+                  <td>21/08/2015</td>
+                  <td>26/08/2015</td>
+                   <td>6 Days</td>
+                   <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                
+                </tr >
+                <tr style="background:#fff;">
+                  <td>7</td>
+                  
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by recyclers."><img src="/images/icon-info.png"> FORM VII Submission</abbr></td><td>Industrial Law</td>
+                  <td>25/08/2015</td>
+                  <td>31/08/2015</td>
+                  <td>7 Days</td>
+                  <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                
+                </tr>
+              </table>
+            </div></td>
+         
+        </tr>
+      </table>
+            </div>
+            </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+<script>
+$(function(){
+  $(".index-tab").click(function() {
+    $(".index-tab").addClass("active1")
+    $(".archive-tab").removeClass("active1")
+    $(".index-tab-content1").show();
+    $(".archive-tab-content1").hide();
+  })
+  $(".archive-tab").click(function() {
+    $(".archive-tab").addClass("active1")
+    $(".index-tab").removeClass("active1")
+    $(".index-tab-content1").hide();
+    $(".archive-tab-content1").show();
+  })
+});
+$(function(){
+  $('#taskname').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Registration', 'Amendments', 'Prepare Wage Register', 'Process for Quantum', 'Remittance', 'Returns'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+});
+
+jQuery(window).load(function(){
+  jQuery('.page-load').tipso({
+    tooltipHover: true
+  });
+});
+
+  </script> 
+{% endblock %}

@@ -1,0 +1,318 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="css/dashboard.css">
+<script type="text/javascript">
+    $(document).ready(function() {
+      $(".dropdown-box-container").click(function() {
+        $(".filter-dropdown-container").slideToggle();
+      })
+
+      $(document).ready(function() {
+      loadDomainWiseChart();
+      $(".index-tab").click(function() {
+        $(".index-tab").addClass("active")
+        $(".archive-tab").removeClass("active")
+        loadTaskWiseChart();
+      })
+
+      $(".archive-tab").click(function() {
+        $(".archive-tab").addClass("active")
+        $(".index-tab").removeClass("active")
+        loadDomainWiseChart();
+      })
+
+      })
+
+      function loadTaskWiseChart(){
+        $(function () {
+          $('#container').highcharts({
+              chart: {
+                  type: 'column'
+              },
+              title: {
+                  text: 'Tasks - Client Wise'
+              },
+              subtitle: {
+                  text: ''
+              },
+              xAxis: {
+                  type: 'category'
+              },
+              yAxis: {
+                  title: {
+                      text: 'Total Tasks'
+                  }
+
+              },
+              legend: {
+                  enabled: false
+              },
+              plotOptions: {
+                  series: {
+                      borderWidth: 0,
+                      dataLabels: {
+                          enabled: true,
+                          format: '{point.y:.1f}%'
+                      }
+                  }
+              },
+
+              tooltip: {
+                  headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                  pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+              },
+
+              series: [{
+                  name: "Tasks",
+                  colorByPoint: true,
+                  data: [{
+                      name: "TVS Group",
+                      y: 60,
+                      drilldown: null
+                  }, {
+                      name: "Bajaj Allianz Group",
+                      y: 55,
+                      drilldown: null
+                  }, {
+                      name: "PRG Group",
+                      y: 70,
+                      drilldown: null
+                  }, {
+                      name: "HDFC Group",
+                      y: 45,
+                      drilldown: null
+                  }, {
+                      name: "Essar Group",
+                      y: 45,
+                      drilldown: null
+                  }]
+              }],
+          });
+      });
+      }
+
+      function loadSubChart(){
+        $(function () {    
+
+    // Create the chart
+    $('#container').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Clients'
+        },
+        xAxis: {
+            type: 'category'
+        },
+
+        legend: {
+            enabled: true
+        },
+
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        color: 'white',
+                        textShadow: '0 0 2px black, 0 0 2px black'
+                    }
+                },
+                stacking: 'normal'
+            }
+        },
+
+        series: [{
+            name: 'Service Mapping',
+            data: [{
+                name: 'TVS Groups',
+                y: 5,
+            }, {
+                name: 'Asian Panits',
+                y: 2,
+            }, {
+                name: 'Appolo',
+                y: 4,
+            }]
+        }, {
+            name: 'Tasks',
+            data: [{
+                name: 'TVS Groups',
+                y: 1,
+            }, {
+                name: 'Asian Panits',
+                y: 5,
+            }, {
+                name: 'Appolo',
+                y: 2,
+            }]
+        }],
+    })
+});
+      }
+
+      function loadDomainWiseChart(){
+        $(function () {  
+          $('#container').highcharts({
+              chart: {
+                  type: 'column',
+                  events: {
+                  drilldown: function (e) {
+                    alert("hai");
+                    loadTaskWiseChart();
+                  }
+                }
+              },
+              title: {
+                  text: 'Domainwise Classification'
+              },
+              xAxis: {
+                  type: 'category'
+              },
+
+              legend: {
+                  enabled: true
+              },
+
+              plotOptions: {
+                  column: {
+                    stacking: 'normal',
+                    cursor: 'pointer',
+                      point: {
+                        events: {
+                            click: function() {
+                                var drilldown = this.drilldown;
+                                if (drilldown) { // drill down
+                                    //setChart(drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
+                                    // loadSubChart();
+                                } else { // restore
+                                    //setChart(name, categories, data);
+                                    // loadTaskWiseChart();
+                                }
+                            }
+                          }
+                        }
+                    },
+                  series: {
+                      borderWidth: 0,
+                      dataLabels: {
+                          enabled: true,
+                          style: {
+                              color: 'white',
+                              textShadow: '0 0 2px black, 0 0 2px black'
+                          }
+                      },
+                      stacking: 'normal'
+                  }
+              },
+
+              series: [
+              {
+                  name: 'Tasks',
+                  data: [{
+                      name: 'Finance',
+                      y: 300,
+                  }, {
+                      name: 'Industrial Law',
+                      y: 200,
+                  }, {
+                      name: 'Labour Law',
+                      y: 200,
+                  }]
+              }, {
+                  name: 'Clients',
+                  data: [{
+                      id:'fin',
+                      name: 'Finance',
+                      y: 100,
+                  }, {
+                      id:'ind',
+                      name: 'Industrial Law',
+                      y: 500,
+                  }, {
+                      id:'lab',
+                      name: 'Labour Law',
+                      y: 200,
+                  }]
+              }],
+          })
+      });
+      }
+
+    })
+  </script>
+<div class="notification-container">
+  <ul>
+    <li>
+      <p class="notification-text">Submit Form IV task was created.</p>
+      <p class="time">Sat, 25 July, 2015, 9.43AM</p>
+      <p class="notification-cat">User: <span>raveen Kumar</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping  Batteries Act>>Rule 4>>FORM I has been approved</p>
+      <p class="time">Fri, 24 July, 2015, 10.10AM</p>
+      <p class="notification-cat">Category: <span>Statutory Mapping</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping Batteries Act>>Rule 6(iii)>>FORM III has Assigned to Client "KLU Groups"</p>
+      <p class="time">Thu, 23 July, 2015, 12.26AM</p>
+      <p class="notification-cat">Category: <span>Statutory Assignment</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping The Tamilnadu Shops and Commercial Establishments Act - 1947 and Rules - 1948>>Rule 11(3a)>>Form P - Register of fines,deduction for damages or loss and advance has been Created</p>
+      <p class="time">Wed, 22 July, 2015, 12.26AM</p>
+      <p class="notification-cat">User: <span>Geetha</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping  The Tamilnadu Shops and Commercial Establishments Act - 1947 and Rules - 1948>>>Rule 16 (1)>>Form Q - Register of employment has been approved</p>
+      <p class="time">Tue, 21 July, 2015, 10.10AM</p>
+      <p class="notification-cat">Category: <span>Statutory Mapping</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Submit Form P task was created.</p>
+      <p class="time">Tue, 21 July, 2015, 9.43AM</p>
+      <p class="notification-cat">User: <span>Praveen</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping Batteries Act>>Rule 8(i) & 9(1) & 9 (5>>FORM VI has Assigned to client "USI groups"</p>
+      <p class="time">Mon, 20 July, 2015, 12.26AM</p>
+      <p class="notification-cat">Category: <span>Statutory Assignment</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping  Batteries Act>>Rule 8 (iii)>>FORM VII has been approved</p>
+      <p class="time">Mon, 20 July, 2015, 10.10AM</p>
+      <p class="notification-cat">Category: <span>Statutory Mapping</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Statutory Mapping Batteries Act>>Rule 11(ii)>>FORM IX has been Created</p>
+      <p class="time">Sat, 18 July, 2015, 12.26AM</p>
+      <p class="notification-cat">User: <span>Sudha</span></p>
+    </li>
+  </ul>
+</div>
+<div class="content-container">
+<div class="content-area">
+<div class="archive-container" style="width:850px;">
+  <div class="graph-box" style="width:800px; display:none;" >
+           <!-- <div class="graph-box-heading">
+              <!--<select id="dropdown">
+                <option>Clients</option>
+                <option>Prospective Clients</option>
+              </select>
+              <div class="graph-title-container">
+                <span><img src="images/dashboard/icon-graph.png"></span>
+                <span class="graph-title">Client Status</span>
+              </div>
+            </div>-->
+            <div class="graph-holder">
+             <!-- <img id="prosp_img"   src="images/dashboard/business_chart1.png">
+              <img id="clients_img"  src="images/dashboard/business_chart2.png">-->
+              <div id="container" style="height: 400px"></div>
+            </div>
+   </div>
+ </div>
+</div>
+</div>
+{% endblock %} 

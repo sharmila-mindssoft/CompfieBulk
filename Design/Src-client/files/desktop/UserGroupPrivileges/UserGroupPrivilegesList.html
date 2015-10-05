@@ -1,0 +1,51 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+ <div class="content-container width50">
+        <div class="content-area">
+          <h1>User Group</h1>
+          <div class="filters-and-search">
+            <div class="btn-add" onclick="location.href='/user_group_privileges/create'" formtarget="_self">Add</div>
+          </div>
+          <div class="clearfix"></div>
+          <div class="grid-table">
+            <table>
+              <tr align="left">
+                <th width="9%" align="center">#</th>
+                <th>Group Name</th>
+                <th>Category Name</th>
+                <th align="center" width="10%">Edit</th>
+                <th align="center" width="12%">Status</th>
+              </tr>
+               <tr>
+                <td align="center"></td>
+                <td><input type="text" name="group-name" class="filter-text-box"></td>
+                <td><input type="text" name="group-name" class="filter-text-box"></td>
+                <td align="center"></td>
+                <td align="center"></td>
+              </tr>
+              <tr>
+                <td align="center">1</td>
+                <td>Knowledge Manager</td>
+                <td>Knowledge Team</td>
+                <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+                <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
+              </tr>
+              <tr>
+                <td align="center">2</td>
+                <td>Techno Functional Manager</td>
+                <td>Techno Functional Team</td>
+                <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+                <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
+              </tr>
+              <tr>
+                <td align="center">3</td>
+                <td>Service Provider</td>
+                <td>Service Provider</td>
+                <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+{% endblock %}

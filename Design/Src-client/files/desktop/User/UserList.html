@@ -1,0 +1,56 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width50">
+  <div class="content-area">
+    <h1>Users</h1>
+    <div class="filters-and-search">
+      <div class="btn-add" onclick="location.href='/user/create'" formtarget="_self">Add</div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="grid-table">
+      <table>
+        <tr>
+          <th width="6%">#</th>
+          <th align="left">Employee</th>
+          <th align="left">User Group</th>
+          <th align="left">Designation</th>
+          <th align="center" width="9%">Edit</th>
+          <th align="center" width="9%">Status</th>
+        </tr>
+        <tr>
+          <td align="center"></td>
+          <td><input type="text" name="location-name" class="filter-text-box"></td>
+          <td><input type="text" name="district-name" class="filter-text-box"></td>
+          <td><input type="text" name="region-name" class="filter-text-box"></td>
+          <td align="center"></td>
+          <td align="center"></td>
+        </tr>
+        <tr>
+          <td align="center">1</td>
+          <td>Sivaraman</td>
+          <td>Sales Manager</td>
+          <td>Manager</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
+        </tr>
+        <tr>
+          <td align="center">2</td>
+          <td>Hariharan</td>
+          <td>Group 3</td>
+          <td>Designation 2</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+        <tr>
+          <td align="center">3</td>
+          <td>Srinivasan</td>
+          <td>Group 2</td>
+          <td>Designation 3</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %} 

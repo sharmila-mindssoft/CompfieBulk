@@ -1,0 +1,195 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<script type="text/javascript">
+        $(document).ready(function () {
+            window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
+        });
+    </script>
+<div class="content-container width60">
+        <div class="content-area">
+          <div class="add-container">
+            <div class="add-container-heading">Users<span class="error-message"></span></div>
+           <div class="input-row-left">
+              <div class="input-row">
+                <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
+                <div class="field-input"><input type="text" class="input-box" value="Sivaraman"></div>
+              </div>
+              <div class="input-row">
+                <div class="field-label">Employee ID:<span class="mandatory">*</span></div>
+                <div class="field-input"><input type="text" class="input-box" value="EMP001"></div>
+              </div>
+              
+            </div>  
+            <div class="input-row-right">
+            <div class="input-row">
+                <div class="field-label">User Group:<span class="mandatory">*</span></div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="usergroup" autofocus value="Manager"></div>
+              </div>
+            <!--  <div class="input-row">
+                <div class="field-label">Date of Birth:</div>
+                <div class="field-input"><input type="date" class="input-box" value="1984-02-15"></div>
+              </div> 
+              <div class="input-row">
+                  <div class="field-label">Designation:</div>
+                  <div class="field-input"><input type="text" class="input-box" value="Manager"></div>
+                </div> -->
+                <div class="input-row">
+                  <div class="field-label">User Level:<span class="mandatory">*</span></div>
+                  <div class="field-input">
+                     <select class="input-box">
+                        <option>Level 1</option>
+                        <option>Level 2</option>
+                        <option selected="selected">Level 3</option>
+                        <option>Level 4</option>
+                        <option>Level 5</option>
+                        <option>Level 6</option>
+                        <option>Level 7</option>
+                        <option>Level 8</option>
+                        <option>Level 9</option>
+                        <option>Level 10</option>
+                      </select>
+                  </div>
+              </div>
+            </div>
+            <h2>Contact Info</h2>
+              <div class="input-row-left">
+                <div class="input-row">
+                  <div class="field-label">Mobile:<span class="mandatory">*</span></div>
+                  <div class="field-input"><input type="text" class="input-box" value="9876543210"></div>
+                </div>
+                </div>
+                 <div class="input-row-right">
+               <div class="input-row" style="padding-bottom:0px;">
+                <div class="field-label">Email ID:<span class="mandatory">*</span></div>
+                <div class="field-input"><input type="text" class="input-box" placeholder="Username" value="sivaraman@domain.com"><br/>
+                <span style="font-size:10px;">[This will be used as the username for user account.]</span>
+                </div> 
+             </div>
+            </div>
+            <!--<h2>Login Credentials</h2>
+            <div class="input-row-left">
+              <div class="input-row" style="padding-bottom:0px;">
+                <div class="field-label">Username:</div>
+                <div class="field-input"><input type="text" class="input-box" placeholder="Username" value="sivaraman@domain.com">
+                </div>  
+              </div>
+              <div class="input-row">
+                <div class="field-label">&nbsp;</div>
+                <div class="field-input">
+                <span style="font-size:10px;">[This will be used as the contact email address for your account.]</span>
+                </div>
+              </div>
+            </div>
+            <div class="input-row-right">
+               <div class="input-row">
+                <div class="field-label">Password:</div>
+                <div class="field-input"><input type="password" class="input-box" value="123456"></div>
+              </div>
+            </div>-->
+            <h2>Settings</h2>
+              <div class="input-row-left">
+                <div class="input-row">
+                  <div class="field-label">Country:<span class="mandatory">*</span></div>
+                  <div class="field-input">
+                    <select id="legal-entity" multiple="multiple" placeholder="Select Country" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+                    <option value="australia" >Australia</option>
+                    <option value="china" >China</option>
+                    <option value="india" selected>India</option>
+                    <option value="malaysia" >Malaysia</option>
+                    <option value="singapore" selected>Singapore</option>
+                  </select>
+                  </div>
+                </div>
+                <div class="input-row">
+                  <div class="field-label">Division:</div>
+                  <div class="field-input">
+                    <select id="legal-entity" multiple="multiple" placeholder="Select Division" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+                      <option value="australia" >KG Manufacturing</option>
+                      <option value="china" selected>KG Sales</option>
+                      <option value="india" selected>KG Testing</option>
+                      <option value="malaysia" selected>KG Quality Checking</option>
+                    </select>
+                  </div>
+                </div>
+                 <div class="input-row">
+                  <div class="field-label">Domain:<span class="mandatory">*</span></div>
+                  <div class="field-input">
+                     <select id="legal-entity" multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+                      <option value="finance" selected>Finance</option>
+                      <option value="labour" selected>Labour Law</option>
+                      <option value="industrial" selected>Industrial Law</option>
+                    </select>
+                  </div>
+                </div>
+                
+              </div>
+              <div class="input-row-right">
+                <div class="input-row">
+                  <div class="field-label">Legal Entity:<span class="mandatory">*</span></div>
+                  <div class="field-input">
+                    <select id="legal-entity" multiple="multiple" placeholder="Select Legal Entity" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+                      <option value="kgauto" selected>KG Autoparts</option>
+                      <option value="kgtrans" selected>KG Transports</option>
+                      <option value="kgbooking" selected>KG Booking</option>
+                      <option value="kgservices" selected>KG Services</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="input-row">
+                  <div class="field-label">Unit:<span class="mandatory">*</span></div>
+                  <div class="field-input">
+                  <select id="legal-entity" multiple="multiple" placeholder="Select Unit" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+                      <option value="southgate" selected>South Gate, Madurai</option>
+                      <option value="aviyur" >Aviyur, Madurai</option>
+                      <option value="mattuthavani" selected>Mattuthavani, Madurai</option>
+                      <option value="periyar" selected>Periyar, Madurai</option>
+                    </select>
+                  </div>
+                </div>
+            </div> 
+            <div class="submit-button-container">
+              <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/userclient/list'">&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<script>
+$(function(){
+  $('#usergroup').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Sales Manager', 'Techno Functional Manager', 'Sales Coordinator'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+  $('#country').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['India', 'Singapore', 'Srilanka' , 'Malaysia'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#unitbranch').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Global Office', 'APAC Office - Singapore', 'APAC Office - Malaysia', 'Corporate office', 'Regional Office - South', 'Branch Office - Chennai', 'Branch Office - Madurai'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+});
+</script>
+{% endblock %}

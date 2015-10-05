@@ -1,0 +1,132 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %} 
+<div class="content-container width50">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Assign User<span class="error-message"><!----></span></div>
+		<div style="background-color:#C0C0C0; padding:8px 5px; font-size:14px; margin-top:35px;">Reporting User</div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Unit Name:</div>
+          <div class="field-input">
+            <select placeholder="Select Unit" class="input-box">
+              <option value="Labour Law">Global Office</option>
+              <option value="Industrial Law">APAC Office - Singapore</option>
+              <option value="Finance">APAC Office - Malaysia</option>
+              <option value="Finance">Corporate office</option>
+              <option value="Finance" selected="selected">Regional Office - South</option>
+              <option value="Finance">Branch Office - Chennai</option>
+              <option value="Finance">Branch Office - Madurai</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">User:</div>
+          <div class="field-input">
+            <select placeholder="Select User" class="input-box">
+              <option value="Labour Law">Hariharan</option>
+              <option value="Industrial Law" selected="selected">Srinivasan</option>
+              <option value="Finance">Muralikrishnan</option>
+              <option value="Finance">Narayanan</option>
+              <option value="Finance">Sivanathan</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">User Level:</div>
+          <div class="field-input">
+            <select class="input-box">
+              <option>Level 1</option>
+              <option>Level 2</option>
+              <option selected="selected">Level 3</option>
+              <option>Level 4</option>
+              <option>Level 5</option>
+              <option>Level 6</option>
+              <option>Level 7</option>
+              <option>Level 8</option>
+              <option>Level 9</option>
+              <option>Level 10</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+      <div style="background-color:#C0C0C0; padding:8px 5px; font-size:14px;">User</div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Unit Name:</div>
+          <div class="field-input">
+            <select placeholder="Select User" class="input-box">
+              <option value="Labour Law">Global Office</option>
+              <option value="Industrial Law">APAC Office - Singapore</option>
+              <option value="Finance">APAC Office - Malaysia</option>
+              <option value="Finance">Corporate office</option>
+              <option value="Finance">Regional Office - South</option>
+              <option value="Finance" selected="selected">Branch Office - Chennai</option>
+              <option value="Finance" selected="selected">Branch Office - Madurai</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">User Level:</div>
+          <div class="field-input">
+            <select class="input-box">
+              <option>Level 1</option>
+              <option>Level 2</option>
+              <option>Level 3</option>
+              <option selected="selected">Level 4</option>
+              <option>Level 5</option>
+              <option>Level 6</option>
+              <option>Level 7</option>
+              <option>Level 8</option>
+              <option>Level 9</option>
+              <option>Level 10</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit" />
+      </div>
+      <div class="clearfix"></div>
+    <div class="grid-table">
+      <table>
+        <tr>
+          <th width="5%" align="center"><input type="checkbox" /></th>
+          <th width="20%" align="left">User</th>
+          <th width="30%" align="left">Assigned To</th>
+        </tr>
+        <tr>
+          <td align="center"><input type="checkbox" /></td>
+          <td align="left">Hariharan</td>
+          <td align="left">Srinivasan [Regional Office - South]</td>
+        </tr>
+        <tr>
+          <td align="center"><input type="checkbox" checked="checked" /></td>
+          <td align="left">Sivaraman</td>
+          <td align="left">-</td>
+        </tr>
+        <tr>
+          <td align="center"><input type="checkbox" /></td>
+          <td align="left">Muthuraman</td>
+          <td align="left"><ul style="line-height:20px; padding:5px 0px;"><li>Magendran [Regional Office - North]</li><li>Srinivasan [Regional Office - South]</li></ul></td>
+        </tr>
+        <tr>
+          <td align="center"><input type="checkbox" /></td>
+          <td align="left">Rama Krishnan</td>
+          <td align="left">Magendran [Regional Office - North]</td>
+        </tr>
+      </table>
+    </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Cancel" class="btn-submit" onclick="location.href='/assignuserlevel/list'" formtarget="_self">&nbsp;&nbsp;<input type="submit" name="cancel" value="Assign" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

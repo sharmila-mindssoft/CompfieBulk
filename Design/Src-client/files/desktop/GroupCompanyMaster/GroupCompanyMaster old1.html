@@ -1,0 +1,365 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/accordian/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/accordian/accordian.css">
+<script type="text/JavaScript" src="http://code.jquery.com/jquery-latest.min.js"></script> 
+<script type="text/javascript" src="/files/desktop/common/js/accordian/accordian.js"></script> 
+<script type="text/javascript" src="/files/desktop/common/js/accordian/accordian2.js"></script> 
+<script type="text/javascript" src="/files/desktop/common/js/accordian/jquery-ui.js"></script>
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Group Company Master<span class="error-message"></span></div>
+      <div class="single-column-input-row">
+        <div class="input-row"> <br>
+          <div class="single-column-field-label">Group Company:</div>
+          <div class="single-column-field-input">
+            <input type="text" class="input-box" value="TVS Group">
+          </div>
+        </div>
+        <div class="input-row-left"> <span class="error-message" style="padding-right:5px;padding-bottom:5px;"> <a href="#"><img src="/images/icon-plus.png" formtarget="_self"/></a> </span>
+          <div class="grid-table">
+            <table>
+              <tr>
+                <th width="4%" align="center">#</th>
+                <th width="15%" align="left">Legal Entity Name</th>
+                <th width="6%" align="center">Status</th>
+              </tr>
+              <tr>
+                <td align="center">1</td>
+                <td><input type="text"  class="input-box" value="TVS & Sons"></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" /></td>
+              </tr>
+              <tr>
+                <td align="center">2</td>
+                <td><input type="text"  class="input-box" value="Legal Entity 1"></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" /></td>
+              </tr>
+              <tr>
+                <td align="center">3</td>
+                <td><input type="text"  class="input-box" value="Legal Entity 2"></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" /></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="input-row-right"> <span class="error-message" style="padding-right:5px;padding-bottom:5px;"> <a href="#"><img src="/images/icon-plus.png" formtarget="_self"/></a> </span>
+          <div class="grid-table">
+            <table>
+              <tr>
+                <th width="4%" align="center">#</th>
+                <th width="15%" align="left">Division Name</th>
+                <th width="6%" align="center">Status</th>
+              </tr>
+              <tr>
+                <td align="center">1</td>
+                <td><input type="text"  class="input-box" value="Auto Parts - Manufacturing"></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" /></td>
+              </tr>
+              <tr>
+                <td align="center">2</td>
+                <td><input type="text"  class="input-box" value="Division 1"></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" /></td>
+              </tr>
+              <tr>
+                <td align="center">3</td>
+                <td><input type="text"  class="input-box" value="Division 2"></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" /></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="single-column-input-row width40"> <span class="error-message" style="padding-right:5px;padding-bottom:5px;"> <a href="#"><img src="/images/icon-plus.png" formtarget="_self"/></a> </span>
+          <div class="grid-table">
+            <div id="accordian-risk">
+              <ul>
+                <li>
+                  <div class="accordian-block">
+                    <table cellpadding="0" cellspacing="0" class="compare-table-subtitles-gl">
+                      <tr>
+                        <td width="21%" style="padding-left:35px;">Country</td>
+                        <td width="18%">Region</td>
+                        <td width="18%">Province/State</td>
+                        <td width="18%">District</td>
+                        <td width="18%">Location</td>
+                        <td width="10%">&nbsp;</td>
+                      </tr>
+                    </table>
+                  </div>
+                </li>
+                <li class="active">
+                  <div class="accordian-risk-block">
+                    <div class="risk-arrow-control">
+                      <table cellpadding="0" cellspacing="0" class="risk-table-subtitles">
+                        <tr>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="India"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="South"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Tamil Nadu"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Madurai"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Madurai"/>
+                            </div></td>
+                            <td width="10%"><div class="button-select">Select</div></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <ul style="display:block;">
+                    <li>
+                      <table class="accordian-risk-content">
+                        <tr class="field-bg-gl">
+                          <td>1</td>
+                          <td width="15%"><div style="padding-left:30px;"> <span class="field-text">Unit / Branch :</span> </div></td>
+                          <td width="85%"><div class="field-input-gl">
+                              <input type="text" name="r1" value="South Gate" class="input-box" style="width:150px;" />
+                            </div></td>
+                        </tr>
+                        <tr class="field-bg-gl">
+                          <td>2</td>
+                          <td><div style="padding-left:30px;"> <span class="field-text">Unit / Branch :</span> </div></td>
+                          <td><div class="field-input-gl">
+                              <input type="text" name="r1" value="Aviyur" class="input-box" style="width:150px;" />
+                            </div></td>
+                        </tr>
+                        <tr class="field-bg-gl">
+                          <td>3</td>
+                          <td><div style="padding-left:30px;"> <span class="field-text">Unit / Branch :</span> </div></td>
+                          <td><div class="field-input-gl">
+                              <input type="text" name="r1" value="Kochadai" class="input-box" style="width:150px;" /><a href="#" ><img src="/images/icon-plus.png" formtarget="_self" style="padding-left:10px; vertical-align: middle;"/></a>
+                            </div></td>
+                        </tr>
+                      </table>
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <div class="accordian-risk-block">
+                    <div class="risk-arrow-control">
+                      <table cellpadding="0" cellspacing="0" class="risk-table-subtitles">
+                        <tr>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="India"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="South"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Tamil Nadu"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Chennai"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Chennai"/>
+                            </div></td>
+                            <td width="10%"><div class="button-select">Select</div></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <ul>
+                    <li>
+                      <table class="accordian-risk-content">
+                        <tr class="field-bg-gl">
+                          <td width="20%"><div style="padding-left:30px;"> <span class="field-text">Unit / Branch :</span> </div></td>
+                          <td width="80%"><div class="field-input-gl">
+                              <input type="text" name="r1" value="Padi" class="input-box" style="width:150px;" />
+                            </div></td>
+                        </tr>
+                        <tr class="field-bg-gl">
+                          <td><div style="padding-left:30px;"> <span class="field-text">Unit / Branch :</span> </div></td>
+                          <td><div class="field-input-gl">
+                              <input type="text" name="r1" value="Avadi" class="input-box" style="width:150px;" /><a href="#" ><img src="/images/icon-plus.png" formtarget="_self" style="padding-left:10px; vertical-align: middle;"/></a>
+                            </div></td>
+                        </tr>
+                      </table>
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <div class="accordian-risk-block">
+                    <div class="risk-arrow-control">
+                      <table cellpadding="0" cellspacing="0" class="risk-table-subtitles">
+                        <tr>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="India"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="South"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Kerala"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Kochi"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Kochi"/>
+                            </div></td>
+                            <td width="10%"><div class="button-select">Select</div></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <ul>
+                    <li>
+                      <table class="accordian-risk-content">
+                        <tr class="field-bg-gl">
+                          <td width="20%"><div style="padding-left:30px;"> <span class="field-text">Unit / Branch :</span> </div></td>
+                          <td width="80%"><div class="field-input-gl">
+                              <input type="text" name="r1" value="" placeholder="Enter Unit/Branch" class="input-box" style="width:150px;" /><a href="#" ><img src="/images/icon-plus.png" formtarget="_self" style="padding-left:10px; vertical-align: middle;"/></a>
+                            </div></td>
+                        </tr>
+                      </table>
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <div class="accordian-risk-block">
+                    <div class="risk-arrow-control">
+                      <table cellpadding="0" cellspacing="0" class="risk-table-subtitles">
+                        <tr>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="India"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="South"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Karnataka"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Bengaluru"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Bengaluru"/>
+                            </div></td>
+                            <td width="10%"><div class="button-select">Select</div></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <ul>
+                    <li>
+                      <table class="accordian-risk-content">
+                        <tr class="field-bg-gl">
+                          <td width="20%"><div style="padding-left:30px;"> <span class="field-text">Unit / Branch :</span> </div></td>
+                          <td width="80%"><div class="field-input-gl">
+                              <input type="text" name="r1" value="" placeholder="Enter Unit/Branch" class="input-box" style="width:150px;" /><a href="#" ><img src="/images/icon-plus.png" formtarget="_self" style="padding-left:10px; vertical-align: middle;"/></a>
+                            </div></td>
+                        </tr>
+                      </table>
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <div class="accordian-risk-block">
+                    <div class="risk-arrow-control">
+                      <table cellpadding="0" cellspacing="0" class="risk-table-subtitles">
+                        <tr>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="India"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="South"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Tamil Nadu"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Selam"/>
+                            </div></td>
+                          <td width="20%"><div>
+                              <input type="text" name="coverage-a" class="input-box" value="Selam"/>
+                            </div></td>
+                            <td width="10%"><div class="button-select">Select</div></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <ul>
+                    <li>
+                      <table class="accordian-risk-content">
+                        <tr class="field-bg-gl">
+                          <td width="20%"><div style="padding-left:30px;"> <span class="field-text">Unit / Branch :</span> </div></td>
+                          <td width="80%"><div class="field-input-gl">
+                              <input type="text" name="r1" value="" placeholder="Enter Unit/Branch" class="input-box" style="width:150px;" /><a href="#" ><img src="/images/icon-plus.png" formtarget="_self" style="padding-left:10px; vertical-align: middle;"/></a>
+                            </div></td>
+                        </tr>
+                      </table>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="submit-button-container">
+      <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/group_company/list'" >
+      &nbsp;&nbsp;
+      <input type="submit" name="submit" value="Submit" class="btn-submit">
+    </div>
+      </div>
+      
+    </div>
+    
+  </div>
+</div>
+</div>
+<script>
+$(function(){
+  $('#country3').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Italy'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#state3').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Andra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana','Himachal Pradesh','Jammu and Kashmir','Jharkhand','Karnataka','Kerala','Madya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Orissa','Punjab','Rajasthan','Sikkim','Tamil Nadu','Tripura','Uttaranchal','Uttar Pradesh','West Bengal'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#region3').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['North', 'East', 'West', 'South'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+    $('#district3').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Chennai','Kancheepuram','Vellore','Thiruvallur','Salem','Viluppuram','Coimbatore','Tirunelveli','Madurai','Tiruchirappalli','Cuddalore','Tiruppur','Tiruvannamalai','Thanjavur','Erode','Dindigul','Virudhunagar','Krishnagiri','Kanniyakumari','Thoothukkudi','Namakkal','Pudukkottai','Nagapattinam','Dharmapuri','Ramanathapuram','Sivaganga','Thiruvarur','Theni','Karur','Ariyalur','The Nilgiris','Perambalur'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+});
+</script> 
+{% endblock %}

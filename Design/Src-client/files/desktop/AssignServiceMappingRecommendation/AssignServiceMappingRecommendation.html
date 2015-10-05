@@ -1,0 +1,46 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width70">
+  <div class="content-area">
+    <h1>Assign Service Mapping Recommendation</h1>
+   
+    <div class="clearfix"></div>
+    <div class="grid-table">
+      <table >
+        <tr>
+          <th width="2%" align="center">#</th>
+          <th width="5%" align="left">Client</th>
+          <th width="15%" align="left">Recommendations</th>  
+        </tr>
+        <tr>
+          <td align="center"></td>
+          <td><input type="text"  class="filter-text-box"></td>
+          <td><input type="text"  class="filter-text-box"></td> 
+        </tr>
+        <tr height="50px">
+          <td align="center">1</td>
+          <td align="left"><a href="">TVS Group</a></td>
+          <td align="left">Domain : Labour law Compliances, Subdomain : Establishment, Tasks Requested : Returns , Prepare wage register, Process of Quantum, Sub tasks: Obtain attendance,Generate Muster Roll,Process for wage register </td>    
+        </tr>
+
+        <tr height="50px">
+          <td align="center">2</td>
+          <td align="left"><a href="">Bajaj Allianz</a></td>
+          <td align="left">Domain : Finance, Subdomain : Banking, Tasks Requested : Returns , Remittance, SubTasks : payment of dues OR obtaining evidence of payment
+like challan copy etc</td>   
+        </tr>
+        <tr height="50px">
+          <td align="center">3</td>
+          <td align="left"><a href="">PRG Group</a></td>
+          <td align="left">Domain : Information Technology, Sub domain : Software, Tasks Requested : Registration, Ammendments, Sub Tasks: prepare the required information in the prescribed format,obtain the acknowldgement</td>
+        </tr>
+      </table>
+
+    </div>
+     <div class="submit-button-container">
+        <input type="submit" name="cancel" onclick="location.href='/subtask_level_request'" value="Back" class="btn-submit">
+       
+      </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+ <div class="content-container">
+        <div class="content-area">
+        <div class="add-container">
+          <div class="add-container-heading">Prospective Client Details List<span class="error-message"><!----></span></div>
+            <div class="input-row-left">
+              <div class="input-row">
+                <div class="field-label">Client Group:</div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="client" autofocus value="TVS Group"></div>
+              </div>
+           
+              <div class="input-row">
+                <div class="field-label">Division:</div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="division" autofocus value="Auto Parts - Manufacturing"></div>
+              </div>
+               
+            </div>
+            <div class="input-row-right">
+             <div class="input-row">
+                <div class="field-label">Domain:</div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="domain" autofocus value="Labour Law Compliances"></div>
+              </div>
+           
+              <div class="input-row">
+                <div class="field-label">Unit/ Branch:</div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="unitbranch" autofocus value="South Gate, Madurai"></div>
+              </div>
+            </div>
+            <div class="submit-button-container">
+              <input type="submit" name="cancel" value="Show" class="btn-submit">&nbsp;&nbsp;<input type="submit" name="cancel" value="Export to CSV" class="btn-submit">
+            </div>
+          <div class="clearfix"></div>
+          <div class="grid-table">
+            <table>
+              <tr>
+                <th width="3%" align="center">#</th>
+                <th width="15%" align="left">Client Name</th>
+                <th width="15%" align="left">Group Company</th>
+                <th width="15%" align="left">Unit / Branch</th>
+                <th width="15%" align="left">Domain</th>
+                <th width="15%" align="left">Statutory</th>
+              </tr>
+              <tr>
+                <td align="center">1</td>
+                <td align="left">TVS Group</td>
+                <td align="left">TVS Group</td>
+                <td align="left">South Gate, Madurai</td>
+                <td align="left">Labour Law Compliances</td>
+                <td align="left">ITACT1961-192</td>
+              </tr>     
+              <tr>
+                <td align="center">2</td>
+                <td align="left">TVS Group</td>
+                <td align="left">TVS & sons</td>
+                <td align="left">Aviyoor, Madurai</td>
+                <td align="left">Payroll Services</td>
+                <td align="left">Income tax Act, 1961</td>
+              </tr>
+              <tr>
+                <td align="center">3</td>
+                <td align="left">TVS Group</td>
+                <td align="left">TVS & Sons</td>
+                <td align="left">North Gate, Madurai</td>
+                <td align="left">Payroll services</td>
+                <td align="left">ITACT1961-192</td>
+              </tr>          
+            </table>
+          </div>
+          
+        </div>
+      </div>
+      <script>
+$(function(){
+  $('#client').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['TVS', 'PRG', 'ART'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+  $('#division').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Auto Parts - Manufacturing', 'Division 1', 'Division 2'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+  $('#domain').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Finance Law','Labour Law', 'Industrial Law'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+    $('#unitbranch').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['South Gate, Madurai', 'Aviyur, Madurai', 'Mattuthavani, Madurai'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+});
+</script>
+{% endblock %}

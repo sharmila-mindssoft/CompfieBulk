@@ -1,0 +1,383 @@
+{% extends "web/header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="css/dashboard.css">
+<script type="text/javascript">
+    $(document).ready(function() {
+      $(".dropdown-box-container").click(function() {
+        $(".filter-dropdown-container").slideToggle();
+      })
+
+      $(document).ready(function() {
+      loadTaskWiseChart();
+      $(".index-tab").click(function() {
+        $(".index-tab").addClass("active")
+        $(".archive-tab").removeClass("active")
+        loadTaskWiseChart();
+      })
+
+      $(".archive-tab").click(function() {
+        $(".archive-tab").addClass("active")
+        $(".index-tab").removeClass("active")
+        loadDomainWiseChart();
+      })
+
+      })
+
+      function loadTaskWiseChart(){
+        $(function () {
+          $('#container').highcharts({
+              chart: {
+                  type: 'column'
+              },
+              title: {
+                  text: 'Tasks - Client Wise'
+              },
+              subtitle: {
+                  text: ''
+              },
+              xAxis: {
+                  type: 'category'
+              },
+              yAxis: {
+                  title: {
+                      text: 'Total Tasks'
+                  }
+
+              },
+              legend: {
+                  enabled: false
+              },
+              plotOptions: {
+                  series: {
+                      borderWidth: 0,
+                      dataLabels: {
+                          enabled: true,
+                          format: '{point.y:.1f}%'
+                      }
+                  }
+              },
+
+              tooltip: {
+                  headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                  pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+              },
+
+              series: [{
+                  name: "Tasks",
+                  colorByPoint: true,
+                  data: [{
+                      name: "TVS Group",
+                      y: 60,
+                      drilldown: null
+                  }, {
+                      name: "Bajaj Allianz Group",
+                      y: 55,
+                      drilldown: null
+                  }, {
+                      name: "PRG Group",
+                      y: 70,
+                      drilldown: null
+                  }, {
+                      name: "HDFC Group",
+                      y: 45,
+                      drilldown: null
+                  }, {
+                      name: "Essar Group",
+                      y: 45,
+                      drilldown: null
+                  }]
+              }],
+          });
+      });
+      }
+
+      function loadSubChart(){
+        $(function () {    
+
+    // Create the chart
+    $('#container').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Clients'
+        },
+        xAxis: {
+            type: 'category'
+        },
+
+        legend: {
+            enabled: true
+        },
+
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        color: 'white',
+                        textShadow: '0 0 2px black, 0 0 2px black'
+                    }
+                },
+                stacking: 'normal'
+            }
+        },
+
+        series: [{
+            name: 'Service Mapping',
+            data: [{
+                name: 'TVS Groups',
+                y: 5,
+            }, {
+                name: 'Asian Panits',
+                y: 2,
+            }, {
+                name: 'Appolo',
+                y: 4,
+            }]
+        }, {
+            name: 'Tasks',
+            data: [{
+                name: 'TVS Groups',
+                y: 1,
+            }, {
+                name: 'Asian Panits',
+                y: 5,
+            }, {
+                name: 'Appolo',
+                y: 2,
+            }]
+        }],
+    })
+});
+      }
+
+      function loadDomainWiseChart(){
+        $(function () {  
+          $('#container').highcharts({
+              chart: {
+                  type: 'column',
+                  events: {
+                  drilldown: function (e) {
+                    alert("hai");
+                    loadTaskWiseChart();
+                  }
+                }
+              },
+              title: {
+                  text: 'Classification Domain'
+              },
+              xAxis: {
+                  type: 'category'
+              },
+
+              legend: {
+                  enabled: true
+              },
+
+              plotOptions: {
+                  column: {
+                    stacking: 'normal',
+                    cursor: 'pointer',
+                      point: {
+                        events: {
+                            click: function() {
+                                var drilldown = this.drilldown;
+                                if (drilldown) { // drill down
+                                    //setChart(drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
+                                    loadSubChart();
+                                } else { // restore
+                                    //setChart(name, categories, data);
+                                    // loadTaskWiseChart();
+                                }
+                            }
+                          }
+                        }
+                    },
+                  series: {
+                      borderWidth: 0,
+                      dataLabels: {
+                          enabled: true,
+                          style: {
+                              color: 'white',
+                              textShadow: '0 0 2px black, 0 0 2px black'
+                          }
+                      },
+                      stacking: 'normal'
+                  }
+              },
+
+              series: [{
+                  name: 'Service Mapping',
+                  data: [{
+                      name: 'Finance',
+                      y: 5,
+                      //drilldown: 'finance1'
+                  }, {
+                      name: 'Industrial Law',
+                      y: 2,
+                      //drilldown: 'industrial1'
+                  }, {
+                      name: 'Labour Law',
+                      y: 4,
+                      //drilldown: 'labour1'
+                  }]
+              }, {
+                  name: 'Tasks',
+                  data: [{
+                      name: 'Finance',
+                      y: 1,
+                      //drilldown: 'finance2'
+                  }, {
+                      name: 'Industrial Law',
+                      y: 5,
+                      //drilldown: 'industrial2'
+                  }, {
+                      name: 'Labour Law',
+                      y: 2,
+                      //drilldown: 'labour2'
+                  }]
+              }, {
+                  name: 'Clients',
+                  data: [{
+                      id:'fin',
+                      name: 'Finance',
+                      y: 1,
+                      drilldown: 'finance3'
+                  }, {
+                      id:'ind',
+                      name: 'Industrial Law',
+                      y: 5,
+                      drilldown: 'industrial3'
+                  }, {
+                      id:'lab',
+                      name: 'Labour Law',
+                      y: 2,
+                     drilldown: 'labour3'
+                  }]
+              }],
+
+              drilldown: {
+                  activeDataLabelStyle: {
+                      color: 'white',
+                      textShadow: '0 0 2px black, 0 0 2px black'
+                  },
+                  series: [
+
+                  // {
+                  //     id: 'finance3',
+                  //     name: 'Finance - Clients',
+                  //     data: [
+                  //         ['TVS Group', 2],
+                  //     ],
+                  //     name: 'Finance - Clients',
+                  //     data: [
+                  //         ['TVS ', 3],
+                  //     ]
+                  //  }, 
+                  //  {
+                  //     id: 'industrial3',
+                  //     name: 'Industrial Law - Clients',
+                  //     data: [
+                  //         ['Toyota', 2],
+                  //         ['Airtel', 3],
+                  //         ['Alstom', 2],
+                  //         ['Amazon', 5],
+                  //         ['Appolo', 4],
+                  //         ['Acurus Solutions', 1]
+                  //     ]
+                  // }, {
+                  //     id: 'labour3',
+                  //     name: 'Labour Law - Clients',
+                  //     data: [
+                  //         ['Arvind', 2],
+                  //         ['Asian Paints', 3]
+                  //     ]
+                  // }
+
+                  ]
+              }
+          })
+      });
+      }
+
+    })
+  </script>
+<div class="notification-container">
+  <ul>
+    <li>
+      <p class="notification-text">TVS Group Company was created</p>
+      <p class="time">Tue, 21 July, 2015, 9.43AM</p>
+      <p class="notification-cat">User: <span>praveen</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Service mapping "Payroll-TDS" was assigned to TVS Group client.</p>
+      <p class="time">Tue, 21 July, 2015, 9.43AM</p>
+      <p class="notification-cat">Category: <span>Service Mapping</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Service mapping "Mapping one" was approved.</p>
+      <p class="time">Tue, 21 July, 2015, 9.43AM</p>
+      <p class="notification-cat">Category: <span>Approval</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Service mapping "Payroll-TDS" was created.</p>
+      <p class="time">Tue, 21 July, 2015, 9.43AM</p>
+      <p class="notification-cat">Category: <span>Mapping Created</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Sed ut perspiciatis unde omnis istetem accusantium doloremque</p>
+      <p class="time">Tue, 21 July, 2015, 9.43AM</p>
+      <p class="notification-cat">Category: <span>Automobile</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Sed ut perspiciatis unde omnis istetem accusantium doloremque</p>
+      <p class="time">Tue, 21 July, 2015, 9.43AM</p>
+      <p class="notification-cat">Category: <span>Automobile</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Sed ut perspiciatis unde omnis istetem accusantium doloremque</p>
+      <p class="time">Tue, 21 July, 2015, 9.43AM</p>
+      <p class="notification-cat">Category: <span>Automobile</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Sed ut perspiciatis unde omnis istetem accusantium doloremque</p>
+      <p class="time">Tue, 21 July, 2015, 9.43AM</p>
+      <p class="notification-cat">Category: <span>Automobile</span></p>
+    </li>
+    <li>
+      <p class="notification-text">Sed ut perspiciatis unde omnis istetem accusantium doloremque</p>
+      <p class="time">Tue, 21 July, 2015, 9.43AM</p>
+      <p class="notification-cat">Category: <span>Automobile</span></p>
+    </li>
+  </ul>
+</div>
+<div class="content-container">
+<div class="content-area">
+<div class="archive-container" style="width:850px;">
+  <div class="archive-header">
+    <span class="index-tab active">Clientwise Tasks</span>
+    <span class="archive-tab">Domain wise Classification</span>
+  </div>
+  <div class="graph-box" style="width:800px;" >
+           <!-- <div class="graph-box-heading">
+              <!--<select id="dropdown">
+                <option>Clients</option>
+                <option>Prospective Clients</option>
+              </select>
+              <div class="graph-title-container">
+                <span><img src="images/dashboard/icon-graph.png"></span>
+                <span class="graph-title">Client Status</span>
+              </div>
+            </div>-->
+            <div class="graph-holder">
+             <!-- <img id="prosp_img"   src="images/dashboard/business_chart1.png">
+              <img id="clients_img"  src="images/dashboard/business_chart2.png">-->
+              <div id="container" style="height: 400px"></div>
+            </div>
+   </div>
+ </div>
+</div>
+</div>
+{% endblock %} 

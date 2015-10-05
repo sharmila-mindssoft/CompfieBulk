@@ -1,0 +1,50 @@
+.modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  height: auto;
+  margin-left: -300px;
+  margin-top: -200px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  z-index: 10;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+}
+.modal.active {
+  display: block;
+}
+.modal header {
+  position: relative;
+}
+.modal h2 {
+  text-align: center;
+}
+.modal .close {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  margin: 0;width: 20px;
+  height: 20px;
+  background: url("/images/close-icon-black.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+}
+.content {
+ font-size:12px;
+ color:#000;
+ margin-top: 10px;
+ width:100%;
+}
+.content tr td {
+	border:1px solid #CCC;
+	padding:5px;
+}
+.content strong
+{
+  font-weight: bold;
+}
+.content table
+{
+  margin-top: 5px;
+}

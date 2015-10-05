@@ -1,0 +1,612 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<script>
+  $(document).ready(function() {
+    $("#grid").hide();
+    $("#grid-state").hide();
+    $("#grid-region").hide();
+    $("#grid-union").hide();
+    $("#grid-district").hide();
+    $("#grid-corporation").hide();
+    $("#grid-town").hide();
+    $("#grid-panchayat").hide();
+  });
+  function loadForm(){
+    var level = $("#level option:selected").text();
+    if(level == "Municipality - L6"){
+      $("#grid").show();
+      $("#grid-state").hide();
+      $("#grid-region").hide();
+      $("#grid-union").hide();
+      $("#grid-district").hide();
+      $("#grid-corporation").hide();
+      $("#grid-town").hide();
+    $("#grid-panchayat").hide();
+    }else if(level == "State - L2"){
+      $("#grid-state").show();
+      $("#grid").hide();
+      $("#grid-region").hide();
+      $("#grid-union").hide();
+      $("#grid-district").hide();
+      $("#grid-corporation").hide();
+      $("#grid-town").hide();
+      $("#grid-panchayat").hide();
+    }else if(level == "Region - L1"){
+      $("#grid-state").hide();
+      $("#grid").hide();
+      $("#grid-region").show();
+      $("#grid-union").hide();
+      $("#grid-district").hide();
+      $("#grid-corporation").hide();
+      $("#grid-town").hide();
+      $("#grid-panchayat").hide();
+    }else if(level == "Union Territory - L3"){
+      $("#grid-state").hide();
+      $("#grid").hide();
+      $("#grid-region").hide();
+      $("#grid-union").show();
+      $("#grid-district").hide();
+      $("#grid-corporation").hide();
+      $("#grid-town").hide();
+      $("#grid-panchayat").hide();
+    }else if(level == "District - L4"){
+      $("#grid-state").hide();
+      $("#grid").hide();
+      $("#grid-region").hide();
+      $("#grid-union").hide();
+      $("#grid-district").show();
+      $("#grid-corporation").hide();
+      $("#grid-town").hide();
+      $("#grid-panchayat").hide();
+    }else if(level == "Corporation - L5"){
+      $("#grid-state").hide();
+      $("#grid").hide();
+      $("#grid-region").hide();
+      $("#grid-union").hide();
+      $("#grid-district").hide();
+      $("#grid-corporation").show();
+      $("#grid-town").hide();
+      $("#grid-panchayat").hide();
+    }else if(level == "Town - L7"){
+      $("#grid-state").hide();
+      $("#grid").hide();
+      $("#grid-region").hide();
+      $("#grid-union").hide();
+      $("#grid-district").hide();
+      $("#grid-corporation").hide();
+      $("#grid-town").show();
+      $("#grid-panchayat").hide();
+    }else if(level == "Panchayat - L8"){
+      $("#grid-state").hide();
+      $("#grid").hide();
+      $("#grid-region").hide();
+      $("#grid-union").hide();
+      $("#grid-district").hide();
+      $("#grid-corporation").hide();
+      $("#grid-town").hide();
+      $("#grid-panchayat").show();
+    }else{
+      $("#grid-state").hide();
+      $("#grid").hide();
+      $("#grid-region").hide();
+      $("#grid-union").hide();
+      $("#grid-district").hide();
+      $("#grid-corporation").hide();
+      $("#grid-town").hide();
+      $("#grid-panchayat").hide();
+    }
+  }
+</script>
+<div class="content-container width60">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Geography Master<span class="error-message"></span></div>
+       <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Country</div>
+          <div class="field-input">
+            <input type="text" name="location-name" class="input-box icon-autocomplete" value="India">
+          </div>
+        </div>
+       </div>
+       <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">Level</div>
+            <div class="field-input">
+              <select id="level" class="input-box" onClick="loadForm()">
+                <option selected="selected">Select a level</option>
+                <option>Region - L1</option>
+                <option>State - L2</option>
+                <option>Union Territory - L3</option>
+                <option>District - L4</option>
+                <option >Corporation - L5</option>
+                <option>Municipality - L6</option>
+                <option>Town - L7</option>
+                <option>Panchayat - L8</option>
+              </select>
+            </div>
+        </div>
+       </div>
+       <br>
+       <div class="form-container-outer">
+            <div id="grid" class="form-container-grid-table" >
+              <br>
+              <table style="width:auto">
+                <tr align="left">
+                  <th width="200px">Region</th>
+                  <th width="200px">Union Territory</th>
+                  <th width="200px">State</th>
+                  <th width="200px">District</th>
+                </tr>
+                <tr>
+                  <td>
+                    <ul>
+                      <li>East India</li>
+                      <li>North India</li>
+                      <li>Northeast India</li>
+                      <li class="active">South India</li>
+                      <li>West India</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li>Andaman and Nicobar</li>
+                      <li>Lakshadweep</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li>Andhrapradesh</li>
+                      <li>Karnataka</li>
+                      <li >Kerala</li>
+                      <li class="active">TamilNadu</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li class="active">Madurai</li>
+                      <li>Kanyakumari</li>
+                      <li>Tirunelveli</li>
+                      <li>Virudhunagar</li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              <table style="width:auto">
+                <tr align="left">
+                  <th width="200px">Corporation</th>
+                  <th width="200px">Municipality</th>
+                </tr>
+                <tr>
+                  <td width="200px">
+                    <ul>
+                      <li>Madurai Corporation</li>
+                    </ul>
+                  </td>
+                  <td width="200px">
+                    <ul>
+                      <li>
+                        <input type="text" name="location" class="input-box" placeholder="Enter Location" value="Avaniyapuram">
+                        <span  style="padding-top:1px;"> <a href="#"><img src="/images/icon-plus.png" 
+                          style="margin-top:10px" formtarget="_self"/></a> </span>
+                      </li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Melur"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Thirumangalam"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Thiruparangundram"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Usilampatti"></li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              <br>
+              <div class="submit-button-container">
+              <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/geographymapping/list'" >&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit">
+              </div>
+            </div>
+
+<!--grid Town-->
+<div id="grid-town" class="form-container-grid-table" >
+              <table style="width:auto">
+                <tr align="left">
+                  <th width="200px">Region</th>
+                  <th width="200px">Union Territory</th>
+                  <th width="200px">State</th>
+                  <th width="200px">District</th>
+                </tr>
+                <tr>
+                  <td>
+                    <ul>
+                      <li>East India</li>
+                      <li>North India</li>
+                      <li>Northeast India</li>
+                      <li class="active">South India</li>
+                      <li>West India</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li>Andaman and Nicobar</li>
+                      <li>Lakshadweep</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li>Andhrapradesh</li>
+                      <li>Karnataka</li>
+                      <li >Kerala</li>
+                      <li class="active">TamilNadu</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li class="active">Madurai</li>
+                      <li>Kanyakumari</li>
+                      <li>Tirunelveli</li>
+                      <li>Virudhunagar</li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              <table style="width:auto">
+                <tr align="left">
+                  <th width="200px">Corporation</th>
+                  <th width="200px">Municipality</th>
+                  <th width="200px">Town</th>
+                </tr>
+                <tr>
+                  <td width="200px">
+                    <ul>
+                      <li>Madurai Corporation</li>
+                    </ul>
+                  </td>
+                  <td width="200px">
+                    <ul>
+                      <li>Avaniyapuram</li>
+                      <li>Melur</li>
+                      <li>Thirumangalam</li>
+                      <li>Thiruparangundram</li>
+                      <li>Usilampatti</li>
+                    </ul>
+                  </td>
+                  <td width="200px">
+                    <ul>
+                      <li>
+                        <input type="text" name="location" class="input-box" placeholder="Enter Location" value="Thirunagar">
+                        <span  style="padding-top:1px;"> <a href="#"><img src="/images/icon-plus.png" 
+                          style="margin-top:10px" formtarget="_self"/></a> </span>
+                      </li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Peraiyur"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Vadipatti"></li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              <br>
+              <div class="submit-button-container">
+              <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/geographymapping/list'" >&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit">
+              </div>
+            </div>
+
+<!--grid Panchayat-->
+<div id="grid-panchayat" class="form-container-grid-table" >
+              <table style="width:auto">
+                <tr align="left">
+                  <th width="200px">Region</th>
+                  <th width="200px">Union Territory</th>
+                  <th width="200px">State</th>
+                  <th width="200px">District</th>
+                </tr>
+                <tr>
+                  <td>
+                    <ul>
+                      <li>East India</li>
+                      <li>North India</li>
+                      <li>Northeast India</li>
+                      <li class="active">South India</li>
+                      <li>West India</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li>Andaman and Nicobar</li>
+                      <li>Lakshadweep</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li>Andhrapradesh</li>
+                      <li>Karnataka</li>
+                      <li >Kerala</li>
+                      <li class="active">TamilNadu</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li class="active">Madurai</li>
+                      <li>Kanyakumari</li>
+                      <li>Tirunelveli</li>
+                      <li>Virudhunagar</li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              <table style="width:auto">
+                <tr align="left">
+                  <th width="200px">Corporation</th>
+                  <th width="200px">Municipality</th>
+                  <th width="200px">Town</th>
+                  <th width="200px">Panchayat</th>
+                </tr>
+                <tr>
+                  <td width="200px">
+                    <ul>
+                      <li>Madurai Corporation</li>
+                    </ul>
+                  </td>
+                  <td width="200px">
+                    <ul>
+                      <li>Avaniyapuram</li>
+                      <li>Melur</li>
+                      <li>Thirumangalam</li>
+                      <li class="active">Thiruparangundram</li>
+                      <li>Usilampatti</li>
+                    </ul>
+                  </td>
+                  <td width="200px">
+                    <ul>
+                      <li>Thirunagar</li>
+                      <li>Peraiyur</li>
+                      <li>Vadipatti</li>
+                    </ul>
+                  </td>
+                  <td width="200px">
+                    <ul>
+                      <li ><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Parapathy"> <span  style="padding-left:.5px;"> <a href="#"><img src="/images/icon-plus.png" formtarget="_self"/></a> </span></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Karadipatty"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Nallur"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Eliyarpatthy"></li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              <br>
+              <div class="submit-button-container">
+              <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/geographymapping/list'" >&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit">
+              </div>
+            </div>
+
+<!--Grid district-->
+            <div id="grid-district" class="form-container-grid-table" >
+              <table style="width:auto">
+                <tr align="left">
+                  <th width="200px">Region</th>
+                  <th width="200px">State</th>
+                  <th width="200px">Union Territory</th>
+                  <th width="200px">District</th>
+                </tr>
+                <tr>
+                  <td>
+                    <ul>
+                      <li>East India</li>
+                      <li>North India</li>
+                      <li>Northeast India</li>
+                      <li class="active">South India</li>
+                      <li>West India</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li>Andhrapradesh</li>
+                      <li>Karnataka</li>
+                      <li >Telangana</li>
+                      <li >Kerala</li>
+                      <li class="active">TamilNadu</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li>Puducherry</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li>
+                        <input type="text" name="location" class="input-box" placeholder="Enter Location" value="Madurai">
+                        <span  style="padding-top:1px;"> <a href="#"><img src="/images/icon-plus.png" 
+                          style="margin-top:10px" formtarget="_self"/></a> </span>
+                      </li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Virudhunagar"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Tirunelveli"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Tuticorin"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Kanyakumari"></li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              <br>
+              <div class="submit-button-container">
+              <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/geographymapping/list'" >&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit">
+              </div>
+            </div>
+
+<!--Grid Corporation-->
+            <div id="grid-corporation" class="form-container-grid-table" >
+              <table style="width:auto">
+                <tr align="left">
+                  <th width="200px">Region</th>
+                  <th width="200px">State</th>
+                  <th width="200px">Union Territory</th>
+                  <th width="200px">District</th>
+                </tr>
+                <tr>
+                  <td>
+                    <ul>
+                      <li>East India</li>
+                      <li>North India</li>
+                      <li>Northeast India</li>
+                      <li class="active">South India</li>
+                      <li>West India</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li>Andhrapradesh</li>
+                      <li>Karnataka</li>
+                      <li >Telangana</li>
+                      <li >Kerala</li>
+                      <li class="active">TamilNadu</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li>Puducherry</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li class="active">Madurai</li>
+                      <li>Kanyakumari</li>
+                      <li>Tirunelveli</li>
+                      <li>Virudhunagar</li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              <table style="width:auto">
+                <tr align="left">
+                  <th width="200px">Corporation</th>
+                </tr>
+                <tr>
+                  <td width="200px">
+                    <ul>
+                      <li>
+                        <input type="text" name="location" class="input-box" placeholder="Enter Location" value="Madurai Corporation">
+                        <span  style="padding-top:1px;"> <a href="#"><img src="/images/icon-plus.png" 
+                          style="margin-top:10px" formtarget="_self"/></a> </span>
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              <br>
+              <div class="submit-button-container">
+              <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/geographymapping/list'" >&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit">
+              </div>
+            </div>
+
+<!--Grid State -->
+            <div id="grid-state" class="form-container-grid-table" >
+              <br>
+              <table style="width:auto">
+                <tr align="left">
+                  <th width="200px">Region</th>
+                  <th width="200px">State</th>
+                </tr>
+                <tr>
+                  <td>
+                    <ul>
+                      <li>East India</li>
+                      <li>North India</li>
+                      <li>Northeast India</li>
+                      <li class="active">South India</li>
+                      <li>West India</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Tamilnadu"> <span  style="padding-left:1px;"> <a href="#"><img src="/images/icon-plus.png" formtarget="_self"/></a> </span></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Kerala"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Andhrapradhesh"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Karnataka"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Telangana"></li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              <br>
+              <div class="submit-button-container">
+              <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/geographymapping/list'" >&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit">
+              </div>
+            </div>
+<!--Grid Unio Territory -->
+            <div id="grid-union" class="form-container-grid-table" >
+              <br>
+              <table style="width:auto">
+                <tr align="left">
+                  <th width="200px">Region</th>
+                  <th width="200px">State</th>
+                  <th width="200px">Union Territory</th>
+                </tr>
+                <tr>
+                  <td>
+                    <ul>
+                      <li>East India</li>
+                      <li>North India</li>
+                      <li>Northeast India</li>
+                      <li class="active">South India</li>
+                      <li>West India</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                     <li>Andhra Pradesh</li>
+                      <li>Karnataka</li>
+                      <li>Kerala</li>
+                      <li>Tamilnadu</li>
+                      <li>Telangana</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <ul>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Puducherry"> <span  style="padding-left:1px;"> <a href="#"><img src="/images/icon-plus.png" formtarget="_self"/></a> </span></li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              <br>
+              <div class="submit-button-container">
+              <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/geographymapping/list'" >&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit">
+              </div>
+            </div>
+
+
+
+            <!--Grid Region -->
+            <div id="grid-region" class="form-container-grid-table" >
+              <br>
+              <table style="width:auto">
+                <tr align="left">
+                  <th width="200px;">Region</th>
+                </tr>
+                <tr>
+                  <td>
+                    <ul>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="North India">
+                      <span  style="padding-left:1px;"> <a href="#"><img src="/images/icon-plus.png" formtarget="_self"/></a> </span></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="South India"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="East India"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="West India"></li>
+                      <li><input type="text" name="location" class="input-box" placeholder="Enter Location" value="Northeast India"></li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              <br>
+              <div class="submit-button-container">
+              <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/geographymapping/list'" >&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit">
+              </div>
+            </div>
+          </div>
+
+  </div>
+</div>
+</div>
+{% endblock %}

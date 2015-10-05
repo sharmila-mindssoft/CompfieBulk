@@ -1,0 +1,132 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width60">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Client Requirement<span class="error-message"><!----></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Client:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="client" autofocus value="TVS">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Domain:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="domain" autofocus value="Labour Law Compliances">
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">Statutory:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="statutory" autofocus value="ITACT1961-192">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Industry:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="industry" autofocus value="Manufacturing">
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+        &nbsp;&nbsp;
+        <input type="submit" name="cancel" value="Export to CSV" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+        <table>
+          <tr>
+            <th width="3%" align="center">#</th>
+            <th width="10%" align="left">Client</th>
+            <th width="20%" align="left">Domain</th>
+            <th width="15%" align="left">Statutory</th>
+            <th width="10%" align="left">Applicability</th>
+            <th width="12%" align="left">Industry</th>
+            <th width="8%" align="left">Country</th>
+          </tr>
+          <tr>
+            <td align="center">1</td>
+            <td align="left">TVS Group</td>
+            <td align="left">Labour Law Compliances</td>
+            <td align="left">ITACT1961-192</td>
+            <td align="left">Concurrent</td>
+            <td align="left">Manufacturing</td>
+            <td align="left">India</td>
+          </tr>
+          <tr>
+            <td align="center">2</td>
+            <td align="left">TVS Group</td>
+            <td align="left">Labour Law Compliances</td>
+            <td align="left">ITACT1961-192</td>
+            <td align="left">Central</td>
+            <td align="left">Manufacturing</td>
+            <td align="left">India</td>
+          </tr>
+          <tr>
+            <td align="center">3</td>
+            <td align="left">TVS Group</td>
+            <td align="left">Labour Law Compliances</td>
+            <td align="left">ITACT1961-192</td>
+            <td align="left">Concurrent</td>
+            <td align="left">Manufacturing</td>
+            <td align="left">India</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(function(){
+  $('#client').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+           var choices = ['TVS', 'PRG', 'ART'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#domain').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Labour Law', 'Industrial Law'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#statutory').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['ITACT1961-191', 'ITACT1961-192', '  ICA1872-15'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+    $('#industry').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Manufacturing', 'Production'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+});
+</script>
+{% endblock %}

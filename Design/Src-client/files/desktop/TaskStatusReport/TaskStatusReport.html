@@ -1,0 +1,68 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width60">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Task Status Report<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Task :</div>
+          <div class="field-input">
+            <select class="input-box">
+              <option>ALL</option>
+              <option selected="selected">FORM I Submission</option>
+              <option>FORM II Submission</option>
+            </select>
+          </div>
+        </div>
+      
+      </div>
+      <div  class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">Status :</div>
+          <div class="field-input">
+            <select class="input-box">
+              <option selected="selected">ALL</option>
+              <option>Completed</option>
+              <option>Pending</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+        <input type="submit" name="cancel" value="Export to CSV" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+        <table>
+          <tr align="left">
+            <th>#</th>
+            <th>Task/Activity Name</th>
+            <th>Comments</th>
+            <th>Status</th>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>FORM I Submission</td>
+            <td>Task was completed and uploaded the document</td>
+            <td>Completed</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>FORM II Submission</td>
+            <td>-</td>
+            <td>Pending</td>
+          </tr>
+           <tr>
+            <td>3</td>
+            <td>FORM III Submission</td>
+            <td>Task was completed.</td>
+            <td>Completed</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

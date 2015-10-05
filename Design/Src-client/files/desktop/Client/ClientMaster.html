@@ -1,0 +1,174 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<script type="text/javascript">
+        $(document).ready(function () {
+            window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
+        });
+    </script>
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Assign Key Contact<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Group:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <Select id="group-select" class="input-box">
+              <option>RG Groups</option>
+              <option>SLK Groups</option>
+              <option>PGJ Groups</option>
+            </Select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label"> Legal Entity:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <Select id="entity-select" class="input-box">
+              <option>RG Entity</option>
+              <option>SLK Entity</option>
+              <option>PGJ Entity</option>
+            </Select>
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+       <div class="input-row">
+          <div class="field-label">Division:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <Select id="division-select" class="input-box">
+              <option>RG Division</option>
+              <option>SLK Division</option>
+              <option>PGJ Division</option>
+            </Select>
+          </div>
+        </div>
+      </div>
+      <div class="grid-table">
+          <table>
+            <tr>
+              <th width="25%" align="left">Unit </th>
+              <th width="18%" align="left">Contact Person</th>
+              <th width="18%" align="left">DOB</th>
+              <th width="18%" align="left">Mobile</th>
+              <th width="20%" align="left">Email</th>
+              <th width="3%" align="center">&nbsp;</th>
+            </tr>
+            <td style="height:50px">
+               <input type="text" class="input-box icon-autocomplete" placeholder="Name" value="Corporate Office - India"/>
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Name" value="Hariharan"/>
+             </td>
+             <td>
+              <input type="date" class="input-box" placeholder="DOB" value="1979-03-11">
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Mobile" value="7869054321"/>
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Email" value="hariharan@domain.com"/>
+             </td>
+             <td>&nbsp;</td>
+            </tr>
+            <tr>
+             <td style="height:50px">
+               <input type="text" class="input-box icon-autocomplete" placeholder="Name" value="Regional Office - North"/>
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Name" value="SriShanth"/>
+             </td>
+             <td>
+              <input type="date" class="input-box" placeholder="DOB" value="1983-08-12">
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Mobile" value="9182736450"/>
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Email" value="srishanth@domain.com"/>
+             </td>
+             <td>&nbsp;</td>
+            </tr>
+            <tr>
+             <td style="height:50px">
+               <input type="text" class="input-box icon-autocomplete" placeholder="Name" value="Regional Office - South"/>
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Name" value="Sivaram"/>
+             </td>
+             <td>
+              <input type="date" class="input-box" placeholder="DOB" value="1985-12-29">
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Mobile" value="7896540321"/>
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Email" value="sivaram@domain.com"/>
+             </td>
+             <td>&nbsp;</td>
+            </tr>
+            <tr>
+             <td style="height:50px">
+               <input type="text" class="input-box icon-autocomplete" placeholder="Name" value="Branch Office - Madurai"/>
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Name" value="Ramakrishnan"/>
+             </td>
+             <td>
+              <input type="date" class="input-box" placeholder="DOB" value="1980-06-11">
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Mobile" value="987456321"/>
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Email" value="ramakrishna@domain.com"/>
+             </td>
+             <td>&nbsp;</td>
+            </tr>
+            <tr>
+             <td style="height:50px">
+               <input type="text" class="input-box icon-autocomplete" placeholder="Name" value="Branch Office - Bangalore"/>
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Name" value="Ramya"/>
+             </td>
+             <td>
+              <input type="date" class="input-box" placeholder="DOB" value="1990-09-21">
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Mobile" value="8967452310"/>
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Email" value="ramya@domain.com"/>
+             </td>
+             <td>&nbsp;</td>
+            </tr>
+            <tr>
+             <td style="height:50px">
+               <input type="text" class="input-box icon-autocomplete" placeholder="Name" value="Branch Office - Chennai"/>
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Name" value="Ratheesh"/>
+             </td>
+             <td>
+              <input type="date" class="input-box" placeholder="DOB" value="1986-11-28">
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Mobile" value="9967452310"/>
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Email" value="ratheesh@domain.com"/>
+             </td>
+             <td><img src="/images/icon-plus.png" formtarget="_self" style="align:center;float:right"/></td>
+            </tr>
+          </table>
+        </div> 
+        <div class="submit-button-container">
+          <input type="submit" name="cancel" value="Cancel" onclick="location.href='/client/list'" class="btn-cancel">
+          &nbsp;&nbsp;
+          <input type="submit" name="cancel" value="Submit" class="btn-submit">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

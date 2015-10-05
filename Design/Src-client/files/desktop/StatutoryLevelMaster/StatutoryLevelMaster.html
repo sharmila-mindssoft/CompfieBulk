@@ -1,0 +1,88 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width60">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Statutory Level Master<span class="error-message"></span></div>
+       <div class="form-container-outer">
+            <div class="single-column-input-row">
+              <br>
+              <div class="input-row">
+                <div class="single-column-field-label">Country:<span class="mandatory">*</span></div>
+                <div class="single-column-field-input">
+                  <input type="text" class="input-box icon-autocomplete" style="width:200px" value="India"/>
+                </div>
+              </div>
+            </div>
+            <div class="grid-table">
+              <table>
+                <tr>
+                  <th align="left">Level</th>
+                  <th align="left">Title</th>
+                  <th align="left">Level</th>
+                  <th align="left">Title</th>
+                </tr>
+                <tr>
+                  <td style="height:50px">
+                    1
+                  </td>
+                  <td><input type="text" class="input-box" value="Act"/></td>
+                  <td>
+                   2
+                  </td>
+                  <td><input type="text" class="input-box" value="Section"/></td>
+                </tr>
+                 <tr>
+                  <td style="height:50px">
+                    3
+                  </td>
+                  <td><input type="text" class="input-box" value="Sub Section"/></td>
+                  <td>
+                   4
+                  </td>
+                  <td><input type="text" class="input-box" value="Rule/Scheme/Regulation"/></td>
+                </tr>
+                <tr>
+                  <td style="height:50px">
+                    5
+                  </td>
+                  <td><input type="text" class="input-box" value="Sub-Rule"/></td>
+                  <td>
+                   6
+                  </td>
+                  <td><input type="text" class="input-box" value="Para"/></td>
+                </tr>
+                <tr>
+                  <td style="height:50px">
+                  7
+                  </td>
+                  <td><input type="text" class="input-box" value="Ammendments/Remarks"/></td>
+                  <td>
+                   8
+                  </td>
+                  <td><input type="text" class="input-box" value="Clause"/></td>
+                </tr>
+                <tr>
+                  <td style="height:50px">
+                    9
+                  </td>
+                  <td><input type="text" class="input-box" value="Subclause"/></td>
+                  <td>
+                   10
+                  </td>
+                  <td><input type="text" class="input-box" value="Forms"/></td>
+                </tr>
+              </table>
+            </div> 
+            <div class="submit-button-container">
+              <input type="reset" name="cancel" value="Cancel" class="btn-cancel"  onclick="location.href='/statutorylevel/list'" >&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit">
+            </div>
+        </div>
+    <div class="clearfix"></div>
+    </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

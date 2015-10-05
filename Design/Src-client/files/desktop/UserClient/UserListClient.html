@@ -1,0 +1,84 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container">
+  <div class="content-area">
+    <h1>Users</h1>
+    <div class="filters-and-search">
+      <div class="btn-add" onclick="location.href='/userclient/create'" formtarget="_self">Add</div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="grid-table">
+      <table>
+        <tr>
+          <th width="4%">#</th>
+          <th align="left" width="15%">Employee</th>
+          <th align="left" width="10%">User Group</th>
+          <th align="left" width="10%">User Level</th>
+          <th align="left" width="20%">Unit Name</th>
+          <th align="center" width="7%">Edit</th>
+          <th align="center" width="7%">Status</th>
+          <th align="center" width="9%">Promote Admin</th>
+          <th align="center" width="20%" colspan="2">Temporary Deactivation</th>
+        </tr>
+        <tr>
+          <td align="center">&nbsp;</td>
+          <td><input type="text" name="location-name" class="filter-text-box"></td>
+          <td><input type="text" name="district-name" class="filter-text-box"></td>
+          <td><input type="text" name="region-name" class="filter-text-box"></td>
+          <td><input type="text" name="region-name" class="filter-text-box"></td>
+          <td align="center">&nbsp;</td>
+          <td align="center">&nbsp;</td>
+          <td align="center">&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td align="center">1</td>
+          <td>Hariharan</td>
+          <td>Group 3</td>
+          <td>Level 4</td>
+          <td>Branch Office - Chennai</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
+          <td align="center"><img src="/images/promote-inactive.png" title="Click here to promote admin" id="inactiveid" /></td>
+          <td align="center" colspan="2">3 Days</td>
+        </tr>
+        <tr>
+          <td align="center">2</td>
+          <td>Sivaraman</td>
+          <td>Manager</td>
+          <td>Level 3</td>
+          <td>Regional Office - South</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+          <td align="center"><img src="/images/promote-active.png" title="Click here to depromote admin" id="inactiveid" /></td>
+          <td align="left"><input type="text" class="input-box" value="2" style="width:40px">
+          	<span>
+          	<select style="width:70px" class="input-box">
+          		<option>Days</option>
+          		<option selected="selected">Weeks</option>
+          		<option>Months</option>
+          	</select>
+          	</span>
+            <span>
+              <input type="button" class="btn-submit" value="Save"/>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td align="center">3</td>
+          <td>Srinivasan</td>
+          <td>Group 2</td>
+          <td>Level 2</td>
+          <td>Regional Office - North</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+          <td align="center"><img src="/images/promote-inactive.png" title="Click here to promote admin" id="inactiveid" /></td>
+          <td colspan="2" align="center">
+          	<input type="button" class="btn-submit" value="Deactivate"/>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %} 

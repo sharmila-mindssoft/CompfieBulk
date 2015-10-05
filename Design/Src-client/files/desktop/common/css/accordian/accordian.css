@@ -1,0 +1,230 @@
+#accordian,
+#accordian ul,
+#accordian li,
+#accordian div.accordian-block {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  list-style: none;
+  font-weight: normal;
+  text-decoration: none;
+  position: relative;
+}
+#accordian {
+  width: 100%;
+  margin: 0 auto;
+}
+#accordian div.accordian-block {
+  /*line-height: 1.3;*/
+}
+#accordian > ul > li:first-child {
+  background: #fff;
+}
+#accordian > ul > li {
+  background: #fff;
+}
+#accordian > ul > li:hover {
+  background: #fff;
+}
+#accordian > ul > li > div.accordian-block {
+  display: block;
+  color: #000;
+  border-bottom: 1px solid #e4e8ea;
+  width: 100%;
+  margin: 0 auto;
+}
+.highlight {
+  background: #c0f2ff;
+}
+#accordian > ul > li > div.accordian-block > div.arrow-control {
+  display: block;
+  padding: 0 0 0 0;
+}
+#accordian > ul > li > div:hover {
+  text-decoration: none;
+}
+#accordian > ul > li.active {
+  border-bottom: none;
+  background: #f7f7f7;
+  border-bottom: 1px solid #fff;
+  /*padding-bottom: 5px;*/
+}
+#accordian > ul > li.has-sub > div.accordian-block div.arrow-control {
+  background: url(../images/chevron_black_right.png) 4px 10px no-repeat;
+}
+#accordian > ul > li.has-sub.active > div.accordian-block div.arrow-control {
+  background: url(../images/chevron_black_down.png) 4px 11px no-repeat;
+}
+
+#accordian ul ul {
+  display: none;
+  background: #fff;
+  margin: 0 auto;
+  width: 100%;
+}
+#accordian ul ul li {
+  padding: 0;
+  border-top: none;
+}
+#accordian ul ul li:last-child {
+  border-bottom: none;
+}
+#accordian ul ul div.accordian-block {
+  padding: 10px 10px 10px 25px;
+  display: block;
+  color: #676767;
+  font-size: .8em;
+  font-weight: normal;
+}
+#accordian ul ul div.accordian-block:before {
+  content: '\00BB';
+  position: absolute;
+  left: 10px;
+  color: #e94f31;
+}
+#accordian ul ul div.accordian-block:hover {
+  color: #e94f31;
+}
+
+/* 2nd accordian */
+
+
+#accordian-risk,
+#accordian-risk ul,
+#accordian-risk li,
+#accordian-risk div.accordian-risk-block {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  list-style: none;
+  font-weight: normal;
+  text-decoration: none;
+  position: relative;
+}
+#accordian-risk {
+  width: 100%;
+  margin: 0 auto;
+}
+
+#accordian-risk div.accordian-risk-block {
+  line-height: 1.3;
+}
+#accordian-risk > ul > li:first-child {
+  /*background: #fff;*/
+}
+#accordian-risk > ul > li {
+  background: #eff4f7;
+}
+#accordian-risk > ul > li:hover {
+  background: #fff;
+}
+#accordian-risk > ul > li > div.accordian-risk-block {
+  display: block;
+  color: #000;
+  border-top: 1px solid #e4e8ea;
+  width: 100%;
+  margin: 0 auto;
+  padding-left: 10px;
+}
+#accordian-risk > ul > li > div.accordian-risk-block > div.risk-arrow-control {
+  display: block;
+  padding: 3px 0 0 0;
+}
+#accordian-risk > ul > li > div:hover {
+  text-decoration: none;
+}
+#accordian-risk > ul > li.active {
+  border-bottom: none;
+  background: #f8f9fb;
+  border-bottom: 1px solid #fff;
+  padding-bottom: 10px;
+}
+#accordian-risk > ul > li.has-sub > div.accordian-risk-block div.risk-arrow-control {
+  background: url(/images/chevron_black_right.png) 0 14px no-repeat;
+  padding-left: 15px;
+}
+#accordian-risk > ul > li.has-sub.active > div.accordian-risk-block div.risk-arrow-control {
+  background: url(/images/chevron_black_down.png) 0 15px no-repeat;
+  padding-left: 15px;
+}
+
+#accordian-risk ul ul {
+  display: none;
+  background: #fff;
+  margin: 0 auto;
+  width: 100%;
+}
+#accordian-risk ul ul li {
+  padding: 0;
+  border-top: none;
+}
+#accordian-risk ul ul li:last-child {
+  border-bottom: none;
+}
+#accordian-risk ul ul div.accordian-risk-block {
+  padding: 10px 10px 10px 25px;
+  display: block;
+  color: #676767;
+  font-size: .8em;
+  font-weight: normal;
+}
+#accordian-risk ul ul div.accordian-risk-block:before {
+  content: '\00BB';
+  position: absolute;
+  left: 10px;
+  color: #e94f31;
+}
+#accordian-risk ul ul div.accordian-risk-block:hover {
+  color: #e94f31;
+}
+.accordian-risk-content{
+  width: 100%;
+  background: #f8f9fb;
+}
+
+.accordian-content {
+  padding-left: 25px;
+  line-height:18px;
+}
+.accordian-content tr td select {
+  width: 150px;
+}
+.accordian-content tr td input[type="text"] {
+  border: 1px solid #D0D4D7;
+  border-radius: 4px;
+  height: 25px;
+  min-width: 148px;
+  padding: 0 5px;
+}
+.orange-text, .mandatory {
+  color: #ff571f;
+}
+
+table.compare-table-subtitles-gl tr td {
+	text-align: left;
+	font-weight: bold;
+	padding-left: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	color: #fff;
+	font-size: 12px;
+	vertical-align: middle;
+	background: #666666;
+}
+.button-select {
+    width: 60px;
+    background: #67bbf2;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+    font-size: 12px;
+    display: inline-block;
+    padding: 3px 0;
+}
+.risk-table-subtitles tr {
+	background-color:transparent !important;
+}
+.accordian-risk-content {
+    width: 100%;
+    background: #f8f9fb;
+}

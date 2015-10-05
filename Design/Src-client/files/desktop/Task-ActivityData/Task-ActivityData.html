@@ -1,0 +1,66 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+   <div class="single-column-form-outer width40">
+  <div class="content-area">
+      <div class="single-column-form-inner">
+    <div class="single-column-header">Task<span class="error-message"></span></div>
+       <div class="single-column-input-row">
+          <div class="input-row">
+          <div class="single-column-field-label">Task Name:</div>
+          <div class="single-column-field-input">
+              <input type="text" value="FORM I Submission"  class="input-box">
+            </div>
+        </div>
+        <div class="input-row">
+          <div class="single-column-field-label">Task Type</div>
+          <div class="single-column-field-input">
+              <select class="input-box">
+              <option >Recurring</option>
+              <option Selected="selected">One Time</option>
+            </select>
+            </div>
+        </div>
+        <div class="input-row">
+          <div class="single-column-field-label">Frequency</div>
+          <div class="single-column-field-input">
+              <select class="input-box">
+              <option>Monthly</option>
+              <option selected="selected">Yearly</option>
+            </select>
+            </div>
+        </div>
+         <div class="input-row">
+          <div class="single-column-field-label">Validity (Months):</div>
+          <div class="single-column-field-input">
+              <input type="text" class="input-box" value="12">
+            </div>
+        </div>
+          <div class="input-row">
+          <div class="single-column-field-label">Authority</div>
+          <div class="single-column-field-input">
+              <input type="text" class="input-box" value="Income Tax Office">
+          </div>
+        </div>
+          <div class="input-row">
+          <div class="single-column-field-label">Slab Rate:</div>
+          <div class="single-column-field-input">
+              <input type="text" class="input-box">
+            </div>
+        </div>
+          <div class="input-row">
+          <div class="single-column-field-label">Penalty Rate:</div>
+          <div class="single-column-field-input">
+              <input type="text" class="input-box">
+            </div>
+        </div>
+         
+        </div>
+      <div class="submit-button-container">
+          <input type="reset" name="cancel" value="Cancel" class="btn-cancel"  onclick="location.href='/taskactivity/list'" >
+          &nbsp;&nbsp;
+          <input type="submit" name="submit" value="Submit" class="btn-submit">
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %} 

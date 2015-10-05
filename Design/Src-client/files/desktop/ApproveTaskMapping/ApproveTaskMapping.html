@@ -1,0 +1,108 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/autocomplete/jquery.auto-complete.css">
+  <script type="text/javascript" src="/files/desktop/common/js/autocomplete/jquery.auto-complete.js"></script>
+  <div class="content-container width60">
+  <div class="content-area">
+      <div class="add-container">
+      <div class="add-container-heading">Approve Sub Task Mapping<span class="error-message"></span></div>
+      <div class="input-row-left">
+          <div class="input-row">
+            <div class="field-label">Task :</div>
+            <div class="field-input">
+                <input type="text" class="input-box icon-autocomplete" autofocus id="taskname" value="Remittance" autofocus>
+            </div>
+          </div>
+        </div>
+      <div class="input-row-right">
+          <div class="input-row">
+          <div class="field-label">Sub Task :</div>
+          <div class="field-input">
+              <input type="text" class="input-box icon-autocomplete" autofocus value=""  id="subtaskname" autofocus >
+            </div>
+          </div>
+        </div>
+      <div class="submit-button-container">
+          <input type="submit" name="cancel" value="Show" class="btn-submit">
+        </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+          <table>
+          <tr align="left">
+              <th width="3%"><input type="checkbox"  /></th>
+              <th width="20%">Sub Task</th>
+              <th width="50%">Sub Task Levels</th>
+              <th width="15%">Approve</th>
+              <th width="20%">Reason</th>
+            </tr>
+          <tr>
+              <td><input type="checkbox" checked="checked" /></td>
+              <td><a href="#">Process for Quantum</a></td>
+              <td>compute contributions + admin charges if applicable</td>
+              <td>
+                <select class="input-box">
+                    <option selected="selected">Approve</option>
+                    <option >Reject</option>
+                </select>
+              </td>
+               <td></td>
+            </tr>
+          <tr>
+              <td><input type="checkbox" /></td>
+              <td><a href="#">Prepare wage register</a></td>
+              <td>Obtain attendance, Generate Muster Roll</td>
+              <td>
+                <select class="input-box">
+                    <option >Approve</option>
+                    <option selected="selected">Reject</option>
+                </select>
+              </td>
+              <td><input type="text" placeholder="Text Here" class="input-box"></td>
+            </tr>
+          <tr>
+              <td><input type="checkbox" checked="checked" /></td>
+              <td><a href="#">Sub Task 1</a></td>
+              <td>Sub Task Level 1, Level 2, Level 3</td>
+              <td>
+                <select class="input-box">
+                    <option selected="selected">Approve</option>
+                    <option >Reject</option>
+                </select>
+              </td>
+              <td></td>
+            </tr>
+        </table>
+        </div>
+      <div class="submit-button-container">
+          <input type="submit" name="cancel" value="Save" class="btn-submit">
+        </div>
+    </div>
+    </div>
+</div>
+<script>
+$(function(){
+  $('#taskname').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Registration', 'Amendments', 'Prepare Wage Register', 'Process for Quantum', 'Remittance', 'Returns'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#subtaskname').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Process for Quantum', 'Prepare wage register', 'Sub Task 1', 'New'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+});
+</script>
+{% endblock %}

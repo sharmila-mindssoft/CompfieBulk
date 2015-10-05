@@ -1,0 +1,64 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="single-column-form-outer width45">
+  <div class="content-area">
+    <div class="single-column-form-inner">
+      <div class="single-column-header">User Privileges<span class="error-message"></span></div>
+      <div class="single-column-input-row">
+        <div class="input-row">
+          <div class="single-column-field-label">User Group Name:<span class="mandatory">*</span></div>
+          <div class="single-column-field-input">
+            <input type="text" class="input-box" value="Group 1">
+          </div>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+        <table >
+          <tr>
+            <th align="left"><input type="checkbox"></th>
+            <th align="left">Form List</th>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked"></td>
+            <td>Task Details </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Audit Trail </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Service Provider List </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td> Assign Task </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td> Reassign Task </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td> Task Assignment List </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Task Details List </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>User Wise Task Report</td>
+          </tr>
+        </table>
+      </div>
+      <div class="submit-button-container">
+        <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/inhouseprivileges/list'">
+        &nbsp;&nbsp;
+        <input type="submit" name="submit" value="Submit" class="btn-submit">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

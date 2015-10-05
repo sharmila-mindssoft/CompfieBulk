@@ -1,0 +1,138 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+
+<div class="content-container">
+        <div class="content-area">
+          <div class="add-container">
+            <div class="add-container-heading">Task Assignment List<span class="error-message"></span></div>
+            <div class="input-row-left">
+              <div class="input-row">
+                <div class="field-label">User Type:<span class="mandatory">*</span></div>
+                <div class="field-input">
+                  <select class="input-box">
+                    <option selected="selected">ALL</option>
+                    <option>Inhouse</option>
+                    <option>Service Provider</option>
+                  </select>
+                </div>
+              </div>
+                <div class="input-row">
+                <div class="field-label">Unit:</div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="unitname" autofocus placeholder="Type Unit Name">
+                </div>
+              </div>
+            </div>
+           <div class="input-row-right">
+              <div class="input-row">
+                <div class="field-label">Compliance:</div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="taskname" autofocus placeholder="Type Compliance Name">
+                </div>
+              </div>
+            </div>
+            
+            <div class="submit-button-container">
+              <input type="submit" name="cancel" value="Show" class="btn-submit">
+              <input type="submit" name="cancel" value="Export to CSV" class="btn-submit">
+            </div>
+        <div class="clearfix"></div>
+          <div class="grid-table-rpt">
+          <h1>Task Assignment List</h1>
+          <h2>All User Types</h2>
+            <table>
+             <tr align="left">
+              <th width="1%" class="header-bg" align="center">#</th>
+              <th width="15%" class="header-bg">Compliance Name</th>
+              <th width="5%" class="header-bg">Due Date</th>
+              <th width="5%" class="header-bg">Assignee</th>
+              <th width="8%" class="header-bg">Unit</th>
+              <th width="8%" class="header-bg">Concurrence</th>
+              <th width="8%" class="header-bg">Approval</th>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td><a href="#">Submit Form P - Register of fines,deduction for damages or loss and advance</a></td>
+            <td>21/09/2015</td>
+            <td>Krishna - L3 </td>
+            <td>Branch Office - Madurai</td>
+            <td>Abishek - L2 </td>
+            <td>Arjun - L2 </td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><a href="#">Submit Form Q - Register of employment</a></td>
+            <td>19/09/2015</td>
+            <td>vishnu - L5</td>
+            <td>Branch Office - Madurai</td>
+            <td>Rajaram - L4</td>
+            <td>Arun - L5 </td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><a href="#">Submit Form R - Register of wages</a></td>
+            <td>19/09/2015</td>
+            <td>Divagar - L5</td>
+            <td>Regional Office - South</td>
+            <td>Arun - L3</td>
+            <td>Shameer - L2</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><a href="#">Submit Form IX</a></td>
+            <td>18/09/2015</td>
+            <td>Dhinesh - L5</td>
+            <td>Branch Office - Chennai</td>
+            <td>Krishna - L3</td>
+            <td>Arjun - L2</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><a href="#">Submit Form VI</a></td>
+            <td>18/09/2015</td>
+            <td>ART Solutions</td>
+            <td>-</td>
+            <td>Arvind - L3</td>
+            <td>Shiva - L1</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(function(){
+  $('#taskname').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Registration', 'Amendments', 'Prepare Wage Register', 'Process for Quantum', 'Remittance', 'Returns'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#serviceprovidername').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Ramesh', 'Muthu'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#subtaskname').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Process for Quantum', 'Prepare wage register', 'Sub Task 1', 'New'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+});
+</script>
+{% endblock %}

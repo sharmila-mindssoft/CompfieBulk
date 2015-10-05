@@ -1,0 +1,113 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<script>
+  function loadForm(){
+    if (document.getElementById("indusID").value == "Para" || document.getElementById("indusID").value == "Ammendments/Remarks"){
+        document.getElementById("format_div").style.visibility = "hidden";
+    }     
+    else{
+        document.getElementById("format_div").style.visibility="visible";
+    } 
+  }
+</script>
+  <div class="content-container width60">
+  <div class="content-area">
+      <div class="add-container">
+        <div class="add-container-heading">Statutory Master<span class="error-message"><!----></span></div>
+            <div class="input-row-left">
+                <div class="input-row">
+                <div class="field-label">Country </div>
+                <div class="field-input"> 
+                  <input type="text" class="input-box icon-autocomplete" id="country" autofocus placeholder="Enter country" value="India"></div>
+              </div>
+              <div class="input-row">
+                <div class="field-label">Name </div>
+                <div class="field-input"><input type="text" class="input-box" value="Payment Act 1972" /></div>
+              </div>
+              <div class="input-row">
+                <div class="field-label">Description </div>
+                <div class="field-input"><textarea class="input-box">The Payment of Gratuity Act 1972</textarea></div>
+              </div>
+              <div id="format_div" class="input-row">
+                <div class="field-label">Consequences Description</div>
+                <div class="field-input"><textarea class="input-box"></textarea></div>
+              </div>
+            </div>
+            <div class="input-row-right">
+              <div class="input-row">
+                <div class="field-label">Statutory Level </div>
+                <div class="field-input"><select id="indusID" class="input-box" onchange="loadForm()">
+                          <option selected="selected">Act</option>
+                          <option>Section</option>
+                          <option>Subsection</option>
+                          <option>Rule/Scheme/Regulation</option>
+                          <option>Sub-Rule</option>                        
+                          <option>Para</option>
+                          <option>Ammendments/Remarks</option>
+                          <option>Clause</option>
+                          <option>Subclause</option>
+                          <option>Forms</option>
+                        </select></div>
+              </div>
+              <div id="format_div" class="input-row">
+                <div class="field-label">Format </div>
+                <div class="field-input"><input type="file" class="input-box" value="Payment Act 1972" /></div>
+              </div>
+              <div class="input-row">
+                <div class="field-label">Nature of Compliance </div>
+                <div class="field-input"><textarea class="input-box"></textarea></div>
+              </div>
+            </div>
+            <h2>Penal Provision</h2>
+            <div class="input-row-left">
+              <div class="input-row">
+                <div class="field-label">Fine</div>
+                <div class="field-input"> 
+                  <input type="text" class="input-box" id="country" autofocus placeholder="Enter Fine" value="">
+                </div>
+              </div>
+              <div class="input-row">
+                <div class="field-label">Prosecution</div>
+                <div class="field-input"> 
+                  <input type="text" class="input-box" id="country" autofocus placeholder="Enter Prosecution" value="">
+                </div>
+              </div>
+            </div>
+            <div class="input-row-right">
+              <div class="input-row">
+                <div class="field-label">Imprisonment</div>
+                <div class="field-input"> 
+                  <input type="text" class="input-box" id="country" autofocus placeholder="Enter Imprisonment" value="">
+                </div>
+              </div>
+            </div>
+            <div class="submit-button-container">
+              <input type="submit" name="cancel" value="Cancel" class="btn-cancel"  onclick="location.href='/statutory/list'" >&nbsp;&nbsp;
+              <input type="submit" name="cancel" value="Submit" class="btn-submit">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      
+<script>
+$(function(){
+  $('#country').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Afghanistan', 'Åland Islands', 'Albania', 'Algeria', 'American Samoa', 'Andorra', 'Angola', 'Anguilla', 'Antarctica', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia, Plurinational State of', 'Bonaire, Sint Eustatius and Saba', 'Bosnia and Herzegovina', 'Botswana', 'Bouvet Island', 'Brazil', 'British Indian Ocean Territory', 'Brunei Darussalam', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon', 'Canada', 'Cape Verde', 'Cayman Islands', 'Central African Republic', 'Chad', 'Chile', 'China', 'Christmas Island', 'Cocos (Keeling) Islands', 'Colombia', 'Comoros', 'Congo', 'Congo, the Democratic Republic of the', 'Cook Islands', 'Costa Rica', 'Côte dIvoire', 'Croatia', 'Cuba', 'Curaçao', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Ethiopia', 'Falkland Islands (Malvinas)', 'Faroe Islands', 'Fiji', 'Finland', 'France', 'French Guiana', 'French Polynesia', 'French Southern Territories', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guadeloupe', 'Guam', 'Guatemala', 'Guernsey', 'Guinea', 'Guinea-Bissau', 'Guyana', 'Haiti', 'Heard Island and McDonald Islands', 'Holy See (Vatican City State)', 'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran, Islamic Republic of', 'Iraq', 'Ireland', 'Isle of Man', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati', 'Korea, Democratic Peoples Republic of', 'Korea, Republic of', 'Kuwait', 'Kyrgyzstan', 'Lao Peoples Democratic Republic', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Macao', 'Macedonia, the former Yugoslav Republic of', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Martinique', 'Mauritania', 'Mauritius', 'Mayotte', 'Mexico', 'Micronesia, Federated States of', 'Moldova, Republic of', 'Monaco', 'Mongolia', 'Montenegro', 'Montserrat', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia', 'Nauru', 'Nepal', 'Netherlands', 'New Caledonia', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Niue', 'Norfolk Island', 'Northern Mariana Islands', 'Norway', 'Oman', 'Pakistan', 'Palau', 'Palestinian Territory, Occupied', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Pitcairn', 'Poland', 'Portugal', 'Puerto Rico', 'Qatar', 'Réunion', 'Romania', 'Russian Federation', 'Rwanda', 'Saint Barthélemy', 'Saint Helena, Ascension and Tristan da Cunha', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Martin (French part)', 'Saint Pierre and Miquelon', 'Saint Vincent and the Grenadines', 'Samoa', 'San Marino', 'Sao Tome and Principe', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Sint Maarten (Dutch part)', 'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia', 'South Africa', 'South Georgia and the South Sandwich Islands', 'South Sudan', 'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'Svalbard and Jan Mayen', 'Swaziland', 'Sweden', 'Switzerland', 'Syrian Arab Republic', 'Taiwan, Province of China', 'Tajikistan', 'Tanzania, United Republic of', 'Thailand', 'Timor-Leste', 'Togo', 'Tokelau', 'Tonga', 'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Turks and Caicos Islands', 'Tuvalu', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'United States Minor Outlying Islands', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Venezuela, Bolivarian Republic of', 'Viet Nam', 'Virgin Islands, British', 'Virgin Islands, U.S.', 'Wallis and Futuna', 'Western Sahara', 'Yemen', 'Zambia', 'Zimbabwe'];
+          var suggestions = [];
+          var len = term.length;
+          for (i=0;i<choices.length;i++){
+              choice = choices[i].slice(0,len).toLowerCase();
+              if (choice === term)
+                suggestions.push(choices[i]);
+          }
+          suggest(suggestions);
+      }
+  });
+  
+});
+</script>
+{% endblock %}

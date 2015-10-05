@@ -1,0 +1,105 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width75">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Service Mapping<span class="error-message"></span></div>
+      <div class="form-container-outer">
+        <div class="form-container-grid-table">
+          <table>
+            <tr align="left">
+              <th width="25%">Domain Mapping</th>
+              <th width="25%">Statutory Mapping</th>
+              <th width="25%">Applicability</th>
+              <th width="25%">Industry - Sector</th>
+            </tr>
+            <tr>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <a href="/servicemapping/create_insol" ><li>FL-Insolvency</li></a>
+                  <a href="/servicemapping/create_tax" ><li class="active">FL-Tax</li></a>
+                  <a href="/servicemapping/create_trust" ><li>FL-Trusts</li></a>
+                  <a href="/servicemapping/create_admin" ><li>LLC-Administration<span></a></li>
+                  <a href="/servicemapping/create" ><li >LLC-Payroll</li></a>
+                  <a href="/servicemapping/create_wage" ><li>LLC-Wage Regulations</li></a>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li ><a href="#" class="tooltip1">ITACT1961-191</a></li>
+                  <li class="active"><a href="#" class="tooltip1">ITACT1961-192</a></li>
+                  <li ><a href="#" class="tooltip1">ICA1872-15</a></li>
+                </ul></td>
+              <td><ul>
+                  <li><input type="text" class="filter-text-box">
+                  </li>
+                  <li >Central</li>
+                  <li >Concurrent</li>
+                  <li class="active">State</li>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li  >Hosting Services</li>
+                  <li>Software - Mobile Applications</li>
+                  <li class="active">Software - Web apps</li>
+                  <li>Performance Testing</li>
+                </ul></td>
+            </tr>
+          </table>
+        </div>
+        <div class="form-container-grid-table">
+          <table>
+            <tr align="left">
+              <th >Country</th>
+              <th >Location</th>
+              <th >Task Name</th>
+            </tr>
+            <tr>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>Algeria</li>
+                  <li>Srilanka</li>
+                  <li class="active">India</li>
+                  <li>Singapore</li>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>Anna Nagar, Madurai, Tamil nadu, India</li>
+                  <li>Colombo, Western, Srilanka</li>
+                  <li class="active">T Nagar, Chennai, Tamil nadu, India</li>
+                  <li>Woodlands, Northern Singapore, Singapore</li>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li class="active">Registration - One Time</li>
+                  <li>Returns</li>
+                  <li>TDS Deduction - Recurring</li>
+                </ul></td>
+            </tr>
+          </table>
+        </div>
+        <div class="location-details"> <span class="label-text">Name this Mapping As</span> <span>
+          <input type="text" name="location" class="location-textbox" value="Tax Services">
+          </span><br>
+          <div class="submit-button-container"> <br>
+            <input type="reset" name="cancel" value="Cancel" class="btn-save" onclick="location.href='/servicemapping/list'" >
+            &nbsp;&nbsp;
+            <input type="submit" name="submit" value="Submit" class="btn-save">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

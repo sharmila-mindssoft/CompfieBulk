@@ -1,0 +1,136 @@
+{% extends "web/header/Header.html" %}
+{% block content %}
+<div class="content-container width60">
+    <div class="content-area">
+        <div class="message"></div>
+        {% if mode == "view" %}
+            <div class="view-container">  
+                <h1>Statutory Levels</h1>
+                <div class="filters-and-search">
+                  <div class="btn-add add-level">Add</div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="grid-table" >
+                  <table>
+                    <tr>
+                      <th width="3%">#</th>
+                      <th width="12%" align="left">Country</th>
+                      <th width="1%" align="center">Edit</th>
+                      <th width="1%" align="center" style="padding-right:10px;">Status</th>
+                    </tr>
+                   <tr>
+                      <td>&nbsp;</td>
+                      <td><input type="text" name="country-name" class="filter-text-box" maxlength="50" ></td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                    </tr>
+                    {% if countryList|length== 0 %}
+                      <tr >
+                        <td colspan="4" align="center">No records found.</td>
+                      </tr>
+                    {% else %}
+                      {% for country in countryList  %}
+                        <tr>
+                          <td>{{ country[0] }}</td>
+                          <td class="country-code">{{ country[1] }}</td>
+                            {% if country[2] == 'A' %}
+                              <td align="center">
+                                <img src="/Static/images/icon-edit.png" class="level-edit" onclick="location.href='/statutory-level/edit?country={{country[1]}}'" name="{{country[1]}}"/>
+                              </td>
+                              <td align="center">
+                                <img src="/Static/images/icon-active.png" class="level-active" title="Click here to deactivate" name="{{country[1]}}" onclick="changeStatus('{{country[1]}}')" />
+                              </td>
+                            {% else %}
+                              <td align="center">
+                                <img src="/Static/images/icon-edit.png" class="level-edit" name="{{country[1]}}" />
+                              </td>
+                              <td align="center">
+                                <img src="/Static/images/icon-inactive.png" class="level-active" title="Click here to activate" name="{{country[1]}}" onclick="changeStatus('{{country[1]}}')" />
+                              </td>
+                            {% endif %}
+                        </tr>
+                      {% endfor %}
+                    {% endif %}
+                    
+                  </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="add-container">
+              <div class="add-container-heading">Statutory Level Master<span class="error-message"></span></div>
+               <div class="form-container-outer">
+                    <div class="single-column-input-row">
+                        <br>
+                        <div class="input-row">
+                            <div class="single-column-field-label">Country</div>
+                            <div class="single-column-field-input">
+                                <input type="text" class="input-box icon-autocomplete level-country" value="{{country}}" style="width:200px"/>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="grid-table">
+                      <table>
+                        <tr>
+                          <th align="left">Level</th>
+                          <th align="left">Title</th>
+                          <th align="left">Level</th>
+                          <th align="left">Title</th>
+                        </tr>
+                        {% if mode == "add" %}
+                          {% for i in range(1,11,2) %}
+                           <tr>
+                            <td style="height:50px">{{i}}</td>
+                            <td>
+                              <input type="text" class="input-box level-title" name="level{{i}}"/>
+                              </td>
+                            <td style="height:50px">{{i+1}}</td>
+                            <td>
+                              <input type="text" class="input-box level-title" name="level{{i+1}}"/>
+                            </td>
+                           </tr>
+                          {% endfor %}
+                        {% endif %}
+                        {% if mode == "edit" %}
+                          {% for i in range(0,10,2) %}
+                           <tr>
+                            {% if (i < levels|length)  %}
+                              <td style="height:50px">{{i+1}}</td>
+                              <td>
+                                <input type="text" class="input-box level-title" name="{{levels[i][0]}}" value="{{levels[i][2]}}"/>
+                              </td>
+                            {% else %}
+                              <td style="height:50px">{{i+1}}</td>
+                              <td>
+                                <input type="text" class="input-box level-title" />
+                              </td>
+                            {% endif %}
+                            {% if (i+1 < levels|length) %}
+                              <td style="height:50px">{{i+2}}</td>
+                              <td>
+                                <input type="text" class="input-box level-title" name="{{levels[i+1][0]}}" value="{{levels[i+1][2]}}" />
+                              </td>
+                            {% else %}
+                              <td style="height:50px">{{i+2}}</td>
+                              <td>
+                                <input type="text" class="input-box level-title" />
+                              </td>
+                            {% endif %}
+                           </tr>
+                          {% endfor %}
+                        {% endif %}
+                      </table>
+                    </div> 
+                    <div class="submit-button-container">
+                      <input type="reset" name="cancel" value="Cancel" class="btn-cancel"  onclick="location.href='/statutory-level'" >&nbsp;&nbsp;
+                      <input type="submit" name="submit" value="Submit" class="btn-submit save-level">
+                    </div>
+                </div>
+              <div class="clearfix"></div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script type="text/javascript" src="/Static/knowledge-team/StatutoryLevelMaster.js"></script>
+{% endblock %}
+

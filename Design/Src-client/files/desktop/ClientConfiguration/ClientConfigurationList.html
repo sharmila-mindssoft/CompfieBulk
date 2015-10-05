@@ -1,0 +1,47 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+ <div class="content-container width50">
+        <div class="content-area">
+          <h1>Client Configurations</h1>
+          <div class="filters-and-search">
+            <div class="btn-add" onclick="location.href='/client_configuration/create'" formtarget="_self">Add</div>
+          </div>
+          <div class="clearfix"></div>
+          <div class="grid-table">
+            <table>
+              <tr>
+                <th width="3%" align="center">#</th>
+                <th width="15%" align="left">Client</th>
+                <th width="6%" align="center">Edit</th>
+              </tr>
+              <tr>
+                <td align="center"></td>
+               <td><input type="text" class="filter-text-box"></td>
+               <td></td>
+              </tr>     
+              <tr>
+                <td align="center">1</td>
+                <td align="left">TVS Group</td>
+               	<td align="center"><a href="#"><img src="/images/icon-edit.png"></a></td>
+              </tr>     
+              <tr>
+                <td align="center">2</td>
+                <td align="left">Bajaj Allianz Group of Companies</td>
+               <td align="center"><a href="#"><img src="/images/icon-edit.png"></a></td>
+              </tr>
+              <tr>
+                <td align="center">3</td>
+                <td align="left">PRG Group of Companies</td>
+               <td align="center"><a href="#"><img src="/images/icon-edit.png"></a></td>
+              </tr> 
+              <tr>
+                <td align="center">4</td>
+                <td align="left">VRM Group of Companies</td>
+               <td align="center"><a href="#"><img src="/images/icon-edit.png"></a></td>
+              </tr>           
+            </table>
+          </div>
+          
+        </div>
+      </div>
+{% endblock %}

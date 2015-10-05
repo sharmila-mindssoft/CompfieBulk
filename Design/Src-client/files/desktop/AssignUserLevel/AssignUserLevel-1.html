@@ -1,0 +1,175 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Assign User Level<span class="error-message"></span></div>
+      <div class="form-container-outer">
+        <div class="form-container-grid-table">
+          <table>
+            <tr align="left">
+              <th>Unit</th>
+              <th>Level</th>
+              <th>User</th>
+            </tr>
+            <tr>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <a href="#" style="text-decoration:none;color:black">
+                  <li>Global Office</li>
+                  </a> <a href="#" style="text-decoration:none;color:black">
+                  <li>APAC Office - Singapore</li>
+                  </a> <a href="#" style="text-decoration:none;color:black">
+                  <li>APAC Office - Malaysia</li>
+                  </a> <a href="#" style="text-decoration:none;color:black">
+                  <li>Corporate office</li>
+                  </a> <a href="#" style="text-decoration:none;color:black">
+                  <li class="active">Regional Office - South</li>
+                  </a> <a href="#" style="text-decoration:none;color:black">
+                  <li >Branch Office - Chennai</li>
+                  </a> <a href="#" style="text-decoration:none;color:black">
+                  <li >Branch Office - Madurai</li>
+                  </a>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>Level 1</li>
+                  <li class="active">Level 2</li>
+                  <li>Level 3</li>
+                  <li>Level 4</li>
+                  <li>Level 5</li>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>Rajaram</li>
+                  <li class="active">Srinivasan</li>
+                  <li>Subash</li>
+                </ul></td>
+            </tr>
+          </table>
+        </div>
+        <div class="clearfix"></div>
+        <div class="form-container-grid-table">
+          <table>
+            <tr align="left">
+              <th>Unit</th>
+              <th>Level</th>
+              <th>User</th>
+            </tr>
+            <tr>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <a href="#" style="text-decoration:none;color:black">
+                  <li>Global Office</li>
+                  </a> <a href="#" style="text-decoration:none;color:black">
+                  <li>APAC Office - Singapore</li>
+                  </a> <a href="#" style="text-decoration:none;color:black">
+                  <li>APAC Office - Malaysia</li>
+                  </a> <a href="#" style="text-decoration:none;color:black">
+                  <li>Corporate office</li>
+                  </a> <a href="#" style="text-decoration:none;color:black">
+                  <li>Regional Office - India</li>
+                  </a> <a href="#" style="text-decoration:none;color:black">
+                  <li  class="active">Branch Office - Chennai</li>
+                  </a> <a href="#" style="text-decoration:none;color:black">
+                  <li>Branch Office - Madurai</li>
+                  </a>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li  class="active">Level 3</li>
+                  <li>Level 4</li>
+                  <li>Level 5</li>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>Ramkumar</li>
+                  <li class="active">Hariharan</li>
+                  <li>Sivaraman</li>
+                </ul></td>
+            </tr>
+          </table>
+        </div>
+        <div class="clearfix"></div>
+        <br/>
+        <div class="grid-table">
+          <table>
+            <tr>
+              <td colspan="2" align="center">
+                <input type="submit" value="Assign User" name="save" class="btn-save">
+                </td>
+            </tr>
+          </table>
+          <div class="clearfix"></div>
+          <div class="location-details" style="width:80%; margin-top:0em; margin-left:20% !important;">
+            <div class="location-list">
+              <table>
+                <tr>
+                  <th width="5%">#</th>
+                  <th width="25%" align="left">User</th>
+                  <th width="20%" align="left">Level</th>
+                  <th width="30%" align="left">Unit</th>
+                  <th width="8%" align="left">Edit</th>
+                  <th width="8%" align="left">Status</th>
+                </tr>
+                <tr>
+                  <td align="center"></td>
+                  <td><input type="text" name="location-name" class="filter-text-box"></td>
+                  <td><input type="text" name="location-name" class="filter-text-box"></td>
+                  <td><input type="text" name="location-name" class="filter-text-box"></td>
+                  <td align="center"></td>
+                  <td align="center"></td>
+                </tr>
+                <tr>
+                  <td align="center">1</td>
+                  <td class="location-name">Muralikrishnan</td>
+                  <td class="location-name">Level 2</td>
+                  <td class="location-name">Regional Office - India</td>
+                  <td align="center"><img src="/images/icon-edit.png"></td>
+                  <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" /></td>
+                </tr>
+                <tr>
+                  <td align="center">2</td>
+                  <td class="location-name">Sivaraman</td>
+                  <td class="location-name">Level 4</td>
+                  <td class="location-name">Branch Office - Chennai</td>
+                  <td align="center"><img src="/images/icon-edit.png"></td>
+                  <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" /></td>
+                </tr>
+                <tr>
+                  <td align="center">3</td>
+                  <td class="location-name">Ramkumar</td>
+                  <td class="location-name">Level 3</td>
+                  <td class="location-name">Branch Office - Chennai</td>
+                  <td align="center"><img src="/images/icon-edit.png"></td>
+                  <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" /></td>
+                </tr>
+                <tr>
+                  <td align="center">4</td>
+                  <td class="location-name">Radhakrishnan</td>
+                  <td class="location-name">Level 4</td>
+                  <td class="location-name">Branch Office - Madurai</td>
+                  <td align="center"><img src="/images/icon-edit.png"></td>
+                  <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" /></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
