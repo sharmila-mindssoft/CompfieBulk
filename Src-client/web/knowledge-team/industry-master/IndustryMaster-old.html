@@ -1,0 +1,34 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="single-column-form-outer width40">
+  <div class="content-area">
+    <div class="single-column-form-inner">
+      <div class="single-column-header">Industry Master<span class="error-message"><!----></span></div>
+      <div class="single-column-input-row">
+        <div class="input-row">
+          <div class="single-column-field-label">Industry:</div>
+          <div class="single-column-field-input">
+            <input type="text" class="input-box" value="Automobiles">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="single-column-field-label">Type:</div>
+          <div class="single-column-field-input">
+            <select class="input-box">
+            <option>(Select One)</option>
+            <option selected="selected">Industry</option>
+            <option>Sub Industry</option>
+            <option>Sub Sub Industry</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/industry/list'">
+        &nbsp;&nbsp;
+        <input type="submit" name="cancel" value="Submit" class="btn-submit">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 
