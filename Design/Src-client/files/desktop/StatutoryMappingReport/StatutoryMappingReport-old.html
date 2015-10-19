@@ -1,0 +1,205 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Statutory Mapping<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Country:<span class="mandatory">*</span></div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="India" placeholder="Enter Country	" />
+          </div>
+        </div>
+       <div class="input-row">
+          <div class="field-label">Domain:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" value="Industrial Law" placeholder="Enter Domain" />
+          </div>
+        </div>
+         <div class="input-row">
+          <div class="field-label">Rule Name:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Rule  " />
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Form:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Form" />
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+       <div class="input-row">
+          <div class="field-label">Location:</div>
+          <div class="field-input">
+          <input type="text" class="input-box icon-autocomplete" placeholder="" value="Tamil Nadu">
+          </div>
+        </div>
+          <div class="input-row">
+          <div class="field-label">Act:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="Batteries Act" placeholder="Enter Act  " />
+          </div>
+        </div>
+         <div class="input-row">
+          <div class="field-label">Section:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Section  " />
+          </div>
+        </div>
+         <div class="input-row">
+          <div class="field-label">Compliance:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Compliance  " />
+          </div>
+        </div>      
+        
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+        <input type="button"  class="btn-submit" value="Export" />
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table-rpt">
+        <h1>Statutory Mapping</h1>
+      
+      <div style="margin-left:15%;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>
+           
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;">Industrial Law</span> </div>
+            
+          
+          </div>
+          <div style="float:right; margin-right:20%;">
+           <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Location :<span style="margin-left:10px; font-weight:bold;">Tamil Nadu</span> </div>
+
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Act :<span style="margin-left:10px; font-weight:bold;">Batteries Act</span> </div>
+          </div>
+        </div>
+
+
+        <div class="clearfix"></div>
+        <div style="background:#ddd; height:30px; margin-top:0px;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em; ">
+            <div style="margin-left:10px; font-size:0.8em; padding-top:7px; font-weight:bold;">Section 1 <img src="/images/right_arrow.png"> Rule 4 </div>
+          </div>
+         
+        </div>
+        <table width="100%" style="border:1px dotted #CCCCCC;" >
+          <tr align="left">
+            <th width="3%" align="center">#</th>
+            <th width="12%">Form No.</th>
+            <th width="18%">Compliance Name</th>
+            <th width="25%">Compliance Description</th>
+            <th width="20%">Penal Description</th>
+            <th width="12%">Compliance Type</th>
+            <th width="10%">Repeats</th>
+           
+          </tr>
+          <tr>
+            <td align="center">1</td>
+            <td>FORM VIII</td>
+            <td>Notice of Opening</td>
+            <td>Within 30 days of opening a branch</td>
+            <td>Imprisonment With Fine</td>
+            <td>One Time</td>
+            <td> - </td>
+               
+          </tr>
+          <tr align="left">
+            <th align="center">&nbsp;</th>
+             <th width="12%">Statutory Date</th>
+            <th>Trigger Before</th>
+           
+            <th>Authority</th>
+            <th>Slab Rate</th>
+            <th>Penalty Rate</th>
+             <th>Format</th>
+           
+          </tr>
+          <tr>
+            <td></td>
+            <td>01-Sep </td>
+            <td>20 days</td>
+
+           
+            <td>Authority 1</td>
+            <td>Nil</td>
+            <td>Nil</td>
+             <td><a href="#">Download</a></td>
+           
+          </tr>
+           <tr>
+           <th></th>
+            <th align="left" colspan="5">Applicable Location</th>
+            </tr>
+            <tr>
+            <td></td>
+            <td colspan="5">India >> South >> Tamil Nadu >> Madurai<br>
+            India >> South >> Tamil Nadu >> Dindigul</td>
+            </tr>
+        </table>
+         <div style="background:#ddd; height:30px; margin-top:10px;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em; ">
+            <div style="margin-left:10px; font-size:0.8em; padding-top:7px; font-weight:bold;">Section 2 <img src="/images/right_arrow.png"> Rule 3(i) </div>
+          </div>
+         
+        </div>
+        <table width="100%" style="border:1px dotted #CCCCCC;" >
+          <tr align="left">
+            <th width="3%" align="center">#</th>
+            <th width="12%">Form No.</th>
+            <th width="18%">Compliance Name</th>
+            <th width="25%">Compliance Description</th>
+            <th width="20%">Penal Description</th>
+            <th width="12%">Compliance Type</th>
+            <th width="10%">Repeats</th>
+            
+          </tr>
+          <tr>
+            <td align="center">2</td>
+            <td>FORM I </td>
+             <td>Dealer Registration</td>
+            <td>Within 30 days of opening a branch</td>
+            <td>Imprisonment With Fine</td>
+            <td>Recurring</td>
+            <td>Every 6 months</td>
+            
+          </tr>
+          <tr align="left">
+            <th align="center">&nbsp;</th>
+            <th width="12%">Statutory Date</th>
+            <th>Trigger Before</th>
+            
+            <th>Authority</th>
+            <th>Slab Rate</th>
+            <th>Penalty Rate</th>
+           <th>Format</th>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>10-Sep, 10-Mar</td>
+            <td>15 Days, 10 Days</td>
+            <td>Authority 1</td>
+            <td>Nil</td>
+            <td>Nil</td>
+            <td><a href="#">Download</a></td>
+          </tr>
+           <tr>
+           <th></th>
+            <th align="left" colspan="5">Applicable Location</th>
+            </tr>
+            <tr>
+            <td></td>
+            <td colspan="5">India >> South >> Tamilnadu</td>
+            </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

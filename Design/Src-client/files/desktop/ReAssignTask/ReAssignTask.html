@@ -2,33 +2,21 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
 <script src="/files/desktop/common/js/tooltip/tipso.js"></script>
-<div class="content-container width50">
+<div class="content-container width60">
         <div class="content-area">
           <div class="add-container">
             <div class="add-container-heading">Reassign Compliance<span class="error-message"></span></div>
             <div class="input-row-left">
+              
               <div class="input-row">
-                <div class="field-label">User Type:<span class="mandatory">*</span></div>
+                <div class="field-label">Seating Unit:</div>
                 <div class="field-input">
-                  <select class="input-box">
-                    <option>Inhouse</option>
-                    <option>Service Provider</option>
-                  </select>
-                </div>
-              </div>
-              <div class="input-row">
-                <div class="field-label">Unit:</div>
-                <div class="field-input">
-                  <input type="text" class="input-box icon-autocomplete" value="" placeholder="Type Unit Name" />
+                  <input type="text" class="input-box icon-autocomplete" value="" placeholder="Type Unit Code-Unit Name" />
                 </div>
               </div>
             </div>
            <div class="input-row-right">
-              <div class="input-row">
-                <div class="field-label">Compliance:</div>
-                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="taskname" autofocus placeholder="Type Compliance Name">
-                </div>
-              </div>
+            
               <div class="input-row">
                 <div class="field-label">Assignee:</div>
                 <div class="field-input">
@@ -46,8 +34,8 @@
              <tr align="left">
               <th width="1%">#</th>
               <th width="5%">Assignee</th>
-              <th width="10%">Unit</th>
-              <th width="5%">Number of Compliance</th>
+              <th width="10%">Seating Unit</th>
+              <th width="5%" align="center">No. of Compliances</th>
               <!--<th width="10%">Task Name</th>
               <th width="16%">Statutory</th>
               <th width="6%">Concurrence</th>
@@ -57,9 +45,9 @@
           <tr>
             <td>1</td>
             <td>Krishna - L3 </td>
-            <td>Branch Office - Madurai</td>
-            <td align="center"><a href="#">5</a></td>
-            <!-- <td><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png" style="padding-right:5px;">FORM I Submission</abbr></td>
+            <td>VRM1003 - Branch Office - Madurai</td>
+            <td align="center"><a href="#">9</a></td>
+            <!-- <td><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png" style="padding-right:5px;">FORM I - Half yearly returns Submission</abbr></td>
             <td style="line-height:17px;">The Batteries (Management & Handling) Rules, 2001 >> Rule 4 (iii)</td>
             <td>Abishek - L2 </td>
             <td>Arjun - L2 </td> -->
@@ -68,10 +56,10 @@
           <tr>
             <td>2</td>
             <td>vishnu - L5</td>
-            <td>Branch Office - Madurai</td>
+            <td>VRM1002 - Branch Office - Madurai</td>
             <td align="center"><a href="#">3</a></td>
             <!-- <td><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead
-"><img src="/images/icon-info.png" style="padding-right:5px;">FORM II Submission</abbr></td>
+"><img src="/images/icon-info.png" style="padding-right:5px;">FORM II - Registration</abbr></td>
             <td style="line-height:17px;">The Batteries (Management & Handling) Rules, 2001 >> Rule 5 and Rule 6 (ii)</td>
             <td>Rajaram - L4</td>
             <td>Arun - L5 </td> -->
@@ -80,9 +68,9 @@
           <tr>
             <td>3</td>
             <td>Divagar - L5</td>
-            <td>Regional Office - South</td>
+            <td>VRM1005 - Regional Office - South</td>
             <td align="center"><a href="#">4</a></td>
-            <!-- <td><abbr class="page-load" title="Whether undertaking submitted by importer to authority."><img src="/images/icon-info.png" style="padding-right:5px;">FORM III Submission</abbr></td>
+            <!-- <td><abbr class="page-load" title="Whether undertaking submitted by importer to authority."><img src="/images/icon-info.png" style="padding-right:5px;">FORM III - Undertaking submission </abbr></td>
             <td style="line-height:17px;">The Batteries (Management & Handling) Rules, 2001 >> Rule 6(iii)</td>
             <td>Arun - L3</td>
             <td>Shameer - L2</td> -->

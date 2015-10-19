@@ -1,5 +1,37 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+
+<link rel="stylesheet" type="text/css" href="../Home/ClientAdminHome/common/css/dashboard.css">
+
+  <link rel="shortcut icon" href="../Home/ClientAdminHome/common/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="icon" href="../Home/ClientAdminHome/ClientAdminHome/common/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="stylesheet" type="text/css" href="../Home/ClientAdminHome/common/css/reset.css">
+  <link rel="stylesheet" type="text/css" href="../Home/ClientAdminHome/dashboard.css">
+  <link rel="stylesheet" type="text/css" href="../Home/ClientAdminHome/common/css/styles.css">
+  <link rel="stylesheet" type="text/css" href="../Home/ClientAdminHome/common/css/navigation.css">
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/jquery.min.js"></script>
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/html5.js"></script>
+  <!--<script type="text/javascript" src="../Home/ClientAdminHome/common/js/menu-script.js"></script>-->
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/highcharts.js"></script>
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/highcharts-3d.js"></script>
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/exporting.js"></script>
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/standalone-framework.js"></script>
+
+  <script src="../Home/ClientAdminHome/common/js/jquery.sumoselect.js"></script>
+  <script src="../Home/ClientAdminHome/common/js/drilldown.js"></script>
+  <link href="../Home/ClientAdminHome/common/css/sumoselect.css" rel="stylesheet" />
+  <!--Autocomplete-->
+  <link rel="stylesheet" type="text/css" href="../Home/ClientAdminHome/common/css/autocomplete/jquery.auto-complete.css">
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/autocomplete/jquery.auto-complete.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#my-account").click(function() {
+        $(".top-nav ul li ul").slideToggle(); 
+      })
+    })
+  </script>
+
  <div class="content-container width40">
         <div class="content-area">
           <div class="add-container">

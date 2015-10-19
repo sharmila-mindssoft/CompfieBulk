@@ -1,0 +1,1188 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+<link rel="stylesheet" type="text/css" href="/css/multiselect/multiple-select.css">
+<style>
+abbr
+{
+    border-bottom: 1px dotted #666;
+    cursor: help;
+}
+
+.btn {
+  background: #662d91;
+  background-image: -webkit-linear-gradient(top, #662d91, #662d91);
+  background-image: -moz-linear-gradient(top, #662d91, #662d91);
+  background-image: -ms-linear-gradient(top, #662d91, #662d91);
+  background-image: -o-linear-gradient(top, #662d91, #662d91);
+  background-image: linear-gradient(to bottom, #662d91, #662d91);
+  -webkit-border-radius: 7;
+  -moz-border-radius: 7;
+  border-radius: 7px;
+  font-family: Arial;
+  font-style:bold;
+  color: #ffffff;
+  font-size: 8px;
+  padding: 7px 9px 7px 9px;
+  text-decoration: none;
+  border-width:0px;
+
+}
+
+.btn:hover {
+  background: #C293E6;
+  background-image: -webkit-linear-gradient(top, #C293E6, #c4c4c4);
+  background-image: -moz-linear-gradient(top, #C293E6, #c4c4c4);
+  background-image: -ms-linear-gradient(top, #C293E6, #c4c4c4);
+  background-image: -o-linear-gradient(top, #C293E6, #c4c4c4);
+  background-image: linear-gradient(to bottom, #C293E6, #c4c4c4);
+  text-decoration: none;
+  cursor:hand;
+}
+
+.tooltip
+{
+    position:absolute;
+    background-color:#eeeefe;
+    border: 1px solid #aaaaca;
+    font-size: smaller;
+    padding:4px;
+    width: 160px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); 
+}
+
+#radiolabel {
+  width: 70px;
+  border-radius: 3px;
+  border: 1px solid #D1D3D4;
+  font-size: 11px;
+}
+
+/* hide input */
+input.radio:empty {
+    margin-left: -1200px;
+}
+
+/* style label */
+input.radio:empty ~ label {
+    position: relative; 
+    float: left;
+    line-height: 2.5em; 
+    text-indent: 3.25em;
+    margin-top: 2em;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input.radio:empty ~ label:before {
+    position: absolute;
+    display: block;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    content: '';
+    width: 2.5em;
+    background: #D1D3D4;
+    border-radius: 3px 0 0 3px;
+}
+
+/* toggle hover */
+input.radio:hover:not(:checked) ~ label:before {
+    content:'\2714';
+    text-indent: .9em;
+    color: #ffffff;
+}
+
+input.radio:hover:not(:checked) ~ label {
+    color: #888;
+}
+
+/* toggle on */
+input.radio:checked ~ label:before {
+    content:'\2714';
+    text-indent: .9em;
+    color: #ffffff;
+    background-color: #662d91;
+}
+
+input.radio:checked ~ label {
+    color: #777;
+}
+.leftmargin 
+{
+  float: left;
+  position: relative;
+  width: 160px;
+}
+.margin10
+{
+  margin-top: 10px;
+}
+#cssmenu > ul > li:hover > ul {
+  top: 46.5px !important;
+}
+
+.ms-drop ul > li label.optgroup {
+  font-size: 0.75em;
+  }
+  .optgroup 
+  {
+    font-size: 0.75em !important;
+  }
+  .ms-drop ul > li label
+  {
+    font-size: 0.75em !important;
+  }
+  </style>
+ 
+<script type="text/javascript">
+    $(document).ready(function() {
+      $("#year-para").hide();
+      $(".dropdown-box-container").click(function() {
+        $(".filter-dropdown-container").slideToggle();
+      })
+      window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
+      $("#entity-auto").hide();
+      $("#division-auto").hide();
+      $("#unit-auto").hide();
+    })
+
+        $(document).ready(function () {
+            $(".textboxdomain").show();
+            $(".textboxgroup").hide();
+            $(".textboxcompany").hide();
+            $(".textboxdivision").hide();
+            $(".textboxbranch").hide();
+            $(".textboxbusiness").hide();
+
+            $("#radio1").click(function () {
+               $(".textboxdomain").show();
+                $(".textboxgroup").hide();
+                $(".textboxcompany").hide();
+                $(".textboxdivision").hide();
+                $(".textboxbranch").hide();
+                $(".textboxbusiness").hide();
+            });
+           $("#radio2").click(function () {
+             $(".textboxdomain").show();
+                $(".textboxgroup").hide();
+                $(".textboxcompany").show();
+                $(".textboxdivision").hide();
+                $(".textboxbranch").hide();
+                $(".textboxbusiness").hide();
+            });
+           $("#radio3").click(function () {
+             $(".textboxdomain").show();
+                $(".textboxgroup").hide();
+                $(".textboxcompany").hide();
+                $(".textboxdivision").show();
+                $(".textboxbranch").hide();
+                $(".textboxbusiness").hide();
+            });
+           $("#radio4").click(function () {
+             $(".textboxdomain").show();
+                $(".textboxgroup").hide();
+                $(".textboxcompany").hide();
+                $(".textboxdivision").hide();
+                $(".textboxbranch").show();
+                $(".textboxbusiness").hide();
+            });
+           $("#radio5").click(function () {
+             $(".textboxdomain").show();
+                $(".textboxgroup").hide();
+                $(".textboxcompany").hide();
+                $(".textboxdivision").hide();
+                $(".textboxbranch").hide();
+                $(".textboxbusiness").show();
+            });
+        });
+
+    $(document).ready(function() {
+      loadTrendChart("KG Groups");
+      $("#viewaspie").hide();
+
+      $("#previous").click(function() {
+             if($("#radio3").is(':checked')){
+                 loadTrendChartDivision();
+             }else if($("#radio4").is(':checked')){
+                 loadTrendChartUnit();
+             }else if($("#radio2").is(':checked')){
+                 loadTrendChartEntity();
+             }
+       })
+
+      $("#next").click(function() {
+          if($("#radio3").is(':checked')){
+                 loadTrendChartDivision();
+             }else if($("#radio4").is(':checked')){
+                 loadTrendChartUnit();
+             }else if($("#radio2").is(':checked')){
+                 loadTrendChartEntity();
+             }
+       })
+
+      $("#viewaspie").click(function() {
+          
+       })
+
+      $("#viewasbar").click(function() {
+           
+       })
+
+      $("#back").click(function() {
+          
+       })
+
+      $("#go-le").click(function() {
+              loadTrendChartEntity();
+       })
+
+      $("#go-d").click(function() {
+              loadTrendChartDivision();
+       })
+
+      $("#go-u").click(function() {
+              loadTrendChartUnit();
+       })
+      $("#go-bu").click(function() {
+              loadTrendChartBusinessGroup();
+       })
+
+      $("#radio1").click(function() {
+              loadTrendChart("KG Groups");
+       })
+
+      $("#radio2").click(function() {
+              loadTrendChartEntity();
+       })
+
+      $("#radio3").click(function() {
+              loadTrendChartDivision();
+       })
+
+      $("#radio4").click(function() {
+              loadTrendChartUnit();
+       })
+
+    $("#radio5").click(function() {
+              loadTrendChartBusinessGroup();
+       })
+    
+     $(".trend-tab").click(function() {
+        $(".trend-tab").addClass("active")
+        $(".compliance-tab").removeClass("active")
+       // $(".actwise-tab").removeClass("active")
+        $(".ageing-tab").removeClass("active")
+        $(".esc-tab").removeClass("active")
+        $(".task-status-tab").removeClass("active")
+        $(".usecom-tab").removeClass("active")
+        $(".graph-box").show();
+        $(".grid-table-dash").hide();
+        $(".grid-table-dash1").hide();
+        $("#level-filter").fadeIn();
+        $("#viewaspie").hide();
+        $("#viewasbar").hide();
+        $("#back").hide(); 
+        $("#unit-auto").show();
+        $("#entity-auto").show();
+        $("#division-auto").show();
+        $("#legal-entity").hide();
+        $("#division").hide();
+        $("#unit").hide();
+        $("#year-para").show();
+        loadTrendChart("KG Groups");
+      })
+
+
+        function loadTrendChartBusinessGroup(title){
+          $("#back").hide();
+          $("#next").hide();
+          $("#previous").hide();
+        $(function () {
+		    $('#container').highcharts({
+		       
+		        title: {
+		            text: 'Complied (2009 to 2015)'
+		        },
+		        xAxis: {
+		            categories: ['2009', '2010', '2011', '2012', '2013', '2014',
+		                '2015'],
+		                labels: {
+		                      useHTML: true,
+		                      formatter: function() {
+		                          var name=this.value;
+                              if(name == "Jan"){
+  		                          var link = '<a href="#"  id="'+name+'" onclick=loadDrillDownData(this.id) >'+
+  		                              name +'</a>'
+  		                          return link;
+                              }else{
+                                var link = '<span  id="'+name+'" onclick=loadDrillDownData(this.id) >'+
+                                    name +'</span>'
+                                return link;
+                              }
+		                      }
+		                  },
+                 title: {
+                    text: 'Year'
+                },
+		        },
+		        yAxis: {
+		            title: {
+		                text: 'Compliance (%)'
+		            },
+		            labels: {
+		                formatter: function () {
+		                    return this.value + '%';
+		                }
+		            }
+		        },
+		        tooltip: {
+		            crosshairs: true,
+		            shared: true,
+                backgroundColor:"#FCFFC5",
+               formatter: function() {
+                        var s = '<b>'+ this.x +'</b>',
+                            sum = 0;
+
+                        $.each(this.points, function(i, point) {
+                            total = point.y+240;
+                            tasks = (point.y/100)*total;
+                            color = point.color;
+                            s += '<br/><span style="color:'+color+';"><b>'+ point.series.name +'</b></span>: '+
+                                point.y +'% ('+Math.round(tasks)+' out of '+total+')';
+                            sum += point.y;
+                        });
+
+                        return s;
+                    },
+		        },
+		        plotOptions: {
+		            spline: {
+		                marker: {
+		                    radius: 4,
+		                    lineColor: '#666666',
+		                    lineWidth: 1
+		                }
+		            }
+		        },
+		        series: [
+		        {
+                name: 'KG Business Group 1',
+                marker: {
+                    symbol: 'square'
+                },
+                data: [50, 56, 52,53, 61,62, 61]
+            },{
+		            name: 'KG Business Group 2',
+		            marker: {
+		                symbol: 'diamond'
+		            },
+		            data: [60, 56, 54,58, 64,66, 64]
+		        },{
+		            name: 'KG Business Group 3',
+		            marker: {
+		                symbol: 'square'
+		            },
+		            data: [70, 57, 60, 65, 70, 74, 72]
+
+		        }  ]
+		    });
+		});      
+    }
+
+
+
+        function loadTrendChartEntity(title){
+          $("#back").hide();
+          $("#next").show();
+          $("#previous").show();
+        $(function () {
+		    $('#container').highcharts({
+		       
+		        title: {
+		            text: 'Complied (2009 to 2015)'
+		        },
+		        xAxis: {
+		            categories: ['2009', '2010', '2011', '2012', '2013', '2014',
+		                '2015'],
+		                labels: {
+		                      useHTML: true,
+		                      formatter: function() {
+		                          var name=this.value;
+                              if(name == "Jan"){
+  		                          var link = '<a href="#"  id="'+name+'" onclick=loadDrillDownData(this.id) >'+
+  		                              name +'</a>'
+  		                          return link;
+                              }else{
+                                var link = '<span  id="'+name+'" onclick=loadDrillDownData(this.id) >'+
+                                    name +'</span>'
+                                return link;
+                              }
+		                      }
+		                  },
+                 title: {
+                    text: 'Year'
+                },
+		        },
+		        yAxis: {
+		            title: {
+		                text: 'Compliance (%)'
+		            },
+		            labels: {
+		                formatter: function () {
+		                    return this.value + '%';
+		                }
+		            }
+		        },
+		        tooltip: {
+		            crosshairs: true,
+		            shared: true,
+                backgroundColor:"#FCFFC5",
+               formatter: function() {
+                        var s = '<b>'+ this.x +'</b>',
+                            sum = 0;
+
+                        $.each(this.points, function(i, point) {
+                            total = point.y+240;
+                            tasks = (point.y/100)*total;
+                            color = point.color;
+                            s += '<br/><span style="color:'+color+';"><b>'+ point.series.name +'</b></span>: '+
+                                point.y +'% ('+Math.round(tasks)+' out of '+total+')';
+                            sum += point.y;
+                        });
+
+                        return s;
+                    },
+		        },
+		        plotOptions: {
+		            spline: {
+		                marker: {
+		                    radius: 4,
+		                    lineColor: '#666666',
+		                    lineWidth: 1
+		                }
+		            }
+		        },
+		        series: [
+		        {
+		            name: 'KG Autoparts',
+		            marker: {
+		                symbol: 'diamond'
+		            },
+		            data: [80,81,82,82,84,86,87]
+		        },{
+		            name: 'KG Booking',
+		            marker: {
+		                symbol: 'square'
+		            },
+		            data: [81,82,83,84,84,87,88]
+
+		        },{
+		            name: 'KG Electricals',
+		            marker: {
+		                symbol: 'circle'
+		            },
+		            data: [82,82,84,85,86,88,89]
+
+		        },{
+		            name: 'KG Healthcare',
+		            marker: {
+		                symbol: 'diamond'
+		            },
+		            data: [83,84,85,86,87,89,90]
+
+		        },{
+		            name: 'KG Hospitals',
+		            marker: {
+		                symbol: 'triangle'
+		            },
+		            data: [84,85,86,87,88,90,91]
+
+		        },{
+		            name: 'KG Hotels',
+		            marker: {
+		                symbol: 'circle'
+		            },
+		            data: [85, 86, 87, 88, 89, 91, 92]
+
+		        },{
+		            name: 'KG Transports',
+		            marker: {
+		                symbol: 'diamond'
+		            },
+		            data: [70, 65, 63, 62, 70, 69, 71]
+
+		        },   ]
+		    });
+		});      
+    }
+
+
+      function loadTrendChartUnit(){
+          $("#back").hide();
+          $("#next").show();
+          $("#previous").show();
+        $(function () {
+		    $('#container').highcharts({
+		    
+		        title: {
+		            text: 'Complied (2009 to 2015)'
+		        },
+		        xAxis: {
+		            categories: ['2009', '2010', '2011', '2012', '2013', '2014',
+		                '2015'],
+		                labels: {
+		                      useHTML: true,
+		                      formatter: function() {
+		                          var name=this.value;
+                              if(name == "Jan"){
+  		                          var link = '<a href="#"  id="'+name+'" onclick=loadDrillDownData(this.id) >'+
+  		                              name +'</a>'
+  		                          return link;
+                              }else{
+                                var link = '<span  id="'+name+'" onclick=loadDrillDownData(this.id) >'+
+                                    name +'</span>'
+                                return link;
+                              }
+		                      }
+		                  },
+                 title: {
+                    text: 'Year'
+                },
+		        },
+		        yAxis: {
+		            title: {
+		                text: 'Compliance (%)'
+		            },
+		            labels: {
+		                formatter: function () {
+		                    return this.value + '%';
+		                }
+		            }
+		        },
+		        tooltip: {
+		            crosshairs: true,
+		            shared: true,
+                backgroundColor:"#FCFFC5",
+               formatter: function() {
+                        var s = '<b>'+ this.x +'</b>',
+                            sum = 0;
+
+                        $.each(this.points, function(i, point) {
+                            total = point.y+240;
+                            tasks = (point.y/100)*total;
+                            color = point.color;
+                            s += '<br/><span style="color:'+color+';"><b>'+ point.series.name +'</b></span>: '+
+                                point.y +'% ('+Math.round(tasks)+' out of '+total+')';
+                            sum += point.y;
+                        });
+
+                        return s;
+                    },
+		        },
+		        plotOptions: {
+		            spline: {
+		                marker: {
+		                    radius: 4,
+		                    lineColor: '#666666',
+		                    lineWidth: 1
+		                }
+		            }
+		        },
+		        series: [
+		        {
+		            name: 'Branch Office - 1',
+		            marker: {
+		                symbol: 'diamond'
+		            },
+		            data: [59, 60, 61,62, 64,65, 67]
+		        },{
+		            name: 'Branch Office - 2',
+		            marker: {
+		                symbol: 'square'
+		            },
+		            data: [61, 61, 62,63, 65,66, 67]
+
+		        },{
+		            name: 'Branch Office - 3',
+		            marker: {
+		                symbol: 'circle'
+		            },
+		            data: [62, 64, 65,65, 66,68, 69]
+
+		        },{
+		            name: 'Branch Office - 4',
+		            marker: {
+		                symbol: 'diamond'
+		            },
+		            data: [63, 64, 66,67, 67,69, 70]
+
+		        },{
+		            name: 'Branch Office - 5',
+		            marker: {
+		                symbol: 'triangle'
+		            },
+		            data: [63, 65, 67, 68, 70, 71, 72]
+
+		        },{
+		            name: 'Branch Office - 6',
+		            marker: {
+		                symbol: 'circle'
+		            },
+		            data: [64, 66, 68, 69, 70, 72, 73]
+
+		        }, {
+		            name: 'Branch Office - 7',
+		            marker: {
+		                symbol: 'circle'
+		            },
+		            data: [65, 65, 66, 67, 71, 73, 74]
+
+		        },   ]
+		    });
+		});      
+    }
+
+
+      
+     function loadTrendChartDivision(){
+          $("#back").hide();
+          $("#next").show();
+          $("#previous").show();
+        $(function () {
+		    $('#container').highcharts({
+		     
+		        title: {
+		            text: 'Complied (2009 to 2015)'
+		        },
+		        xAxis: {
+		            categories: ['2009', '2010', '2011', '2012', '2013', '2014',
+		                '2015'],
+		                labels: {
+		                      useHTML: true,
+		                      formatter: function() {
+		                          var name=this.value;
+                              if(name == "Jan"){
+  		                          var link = '<a href="#"  id="'+name+'" onclick=loadDrillDownData(this.id) >'+
+  		                              name +'</a>'
+  		                          return link;
+                              }else{
+                                var link = '<span  id="'+name+'" onclick=loadDrillDownData(this.id) >'+
+                                    name +'</span>'
+                                return link;
+                              }
+		                      }
+		                  },
+                 title: {
+                    text: 'Year'
+                },
+		        },
+		        yAxis: {
+		            title: {
+		                text: 'Compliance (%)'
+		            },
+		            labels: {
+		                formatter: function () {
+		                    return this.value + '%';
+		                }
+		            }
+		        },
+		        tooltip: {
+		            crosshairs: true,
+		            shared: true,
+                backgroundColor:"#FCFFC5",
+                formatter: function() {
+                        var s = '<b>'+ this.x +'</b>',
+                            sum = 0;
+
+                        $.each(this.points, function(i, point) {
+                            total = point.y+240;
+                            tasks = (point.y/100)*total;
+                            color = point.color;
+                            s += '<br/><span style="color:'+color+';"><b>'+ point.series.name +'</b></span>: '+
+                                point.y +'% ('+Math.round(tasks)+' out of '+total+')';
+                            sum += point.y;
+                        });
+
+                        return s;
+                    },
+		        },
+		        plotOptions: {
+		            spline: {
+		                marker: {
+		                    radius: 4,
+		                    lineColor: '#666666',
+		                    lineWidth: 1
+		                }
+		            }
+		        },
+		        series: [
+		        {
+		            name: 'KG Administration',
+		            marker: {
+		                symbol: 'diamond'
+		            },
+		            data: [59, 60, 61,62, 64,65, 67]
+		        },{
+		            name: 'KG Development',
+		            marker: {
+		                symbol: 'square'
+		            },
+		            data: [61, 61, 62,63, 65,66, 67]
+
+		        },{
+		            name: 'KG HR Unit ',
+		            marker: {
+		                symbol: 'circle'
+		            },
+		            data: [62, 64, 65,65, 66,68, 69]
+
+		        },{
+		            name: 'KG Manufacturing',
+		            marker: {
+		                symbol: 'diamond'
+		            },
+		            data: [63, 64, 66,67, 67,69, 70]
+
+		        },{
+		            name: 'KG Quality Checking',
+		            marker: {
+		                symbol: 'triangle'
+		            },
+		            data: [63, 65, 67, 68, 70, 71, 72]
+
+		        },{
+		            name: 'KG Research',
+		            marker: {
+		                symbol: 'circle'
+		            },
+		            data: [64, 66, 68, 69, 70, 72, 73]
+
+		        }, {
+		            name: 'KG Sales',
+		            marker: {
+		                symbol: 'circle'
+		            },
+		            data: [65, 65, 66, 67, 71, 73, 74]
+
+		        },   ]
+		    });
+		});      
+    }
+
+
+      
+     
+      
+     
+        function loadTrendChart(title){
+          $("#back").hide();
+          $("#next").hide();
+          $("#previous").hide();
+        $(function () {
+		    $('#container').highcharts({
+		        title: {
+		            text: 'Complied (2009 to 2015)'
+		        },
+		        subtitle: {
+		            text: ''
+		        },
+		        xAxis: {
+		            categories: ['2009', '2010', '2011', '2012', '2013', '2014',
+		                '2015'],
+		                labels: {
+		                      useHTML: true,
+		                      formatter: function() {
+		                          var name=this.value;
+                              if(name == "Jan"){
+  		                          var link = '<a href="#"  id="'+name+'" onclick=loadDrillDownData(this.id) >'+
+  		                              name +'</a>'
+  		                          return link;
+                              }else{
+                                var link = '<span  id="'+name+'" onclick=loadDrillDownData(this.id) >'+
+                                    name +'</span>'
+                                return link;
+                              }
+		                      }
+		                  },
+                 title: {
+                    text: 'Year'
+                },
+		        },
+		        yAxis: {
+		            title: {
+		                text: 'Compliance (%)'
+		            },
+		            labels: {
+		                formatter: function () {
+		                    return this.value + '%';
+		                }
+		            }
+		        },
+		        tooltip: {
+		            crosshairs: true,
+		            shared: true,
+                backgroundColor:"#FCFFC5",
+                formatter: function() {
+                        var s = '<b>'+ this.x +'</b>',
+                            sum = 0;
+
+                        $.each(this.points, function(i, point) {
+                            total = point.y+240;
+                            tasks = (point.y/100)*total;
+                            color = point.color;
+                            s += '<br/><span style="color:'+color+';"><b>'+ point.series.name +'</b></span>: '+
+                                point.y +'% ('+Math.round(tasks)+' out of '+total+')';
+                            sum += point.y;
+                        });
+
+                        return s;
+                    },
+		        },
+		        plotOptions: {
+		            spline: {
+		                marker: {
+		                    radius: 4,
+		                    lineColor: '#666666',
+		                    lineWidth: 1
+		                }
+		            }
+		        },
+		        series: [
+		        {
+                name: 'India',
+                marker: {
+                    symbol: 'square'
+                },
+                data: [93, 94, 95,96, 97,98, 99]
+            },{
+		            name: 'US',
+		            marker: {
+		                symbol: 'diamond'
+		            },
+		            data: [90, 91, 93,93, 95,96, 97]
+		        },{
+		            name: 'Singapore',
+		            marker: {
+		                symbol: 'square'
+		            },
+		            data: [91, 92, 93,94, 95,97, 97]
+
+		        }, {
+		            name: 'Malaysia',
+		            marker: {
+		                symbol: 'circle'
+		            },
+		            data: [90, 90, 92,93, 95,96, 97]
+
+		        },]
+		    });
+		});      
+    }
+
+
+	  
+
+
+    })
+
+        function loadDrillDownData(name){
+    	$("#viewaspie").hide();
+    	$("#viewasbar").hide();
+      $("#next").hide();
+      $("#previous").hide();
+    	$("#back").show();
+
+    	var img_name="";
+    	var margin_style="";
+      if(name == "EntityInprogress"){
+        img_name = "/images/dash-list/task-entity-inprogress.png";
+        name = "In progress compliance";
+    	}else if(name == "EntityComplied"){
+          img_name = "/images/dash-list/task-entity-complied.png";
+          name = "Complied tasks";
+          margin_style = "margin-left:3px";
+      }else if(name == "Inprogress"){
+          img_name = "/images/dash-list/task-group-inprogress.png";
+          name = "In progress tasks";
+    	}else if(name == "Delayed"){
+          img_name = "/images/dash-list/task-group-delayed.png";
+          name = "Delayed compliance";
+    	}else if(name == "NotComplied"){
+        img_name = "/images/dash-list/task-group-notcomplied.png";
+    		name = "Not complied";
+    	}else if(name == "Complied"){
+        img_name = "/images/dash-list/task-group-complied.png";
+    		name = "Complied tasks";
+    	}else if(name == "unitesc"){
+    		img_name = "/images/dash-list/escalations-unit-delayed.png";
+    		name = "Unit wise escalations";
+    		margin_style="margin-left:200px";
+    	}else if(name == "divisionesc"){
+    		img_name = "/images/dash-list/escalations-division-delayed.png";
+    		name = "Division wise escalations";
+    		margin_style="margin-left:100px";
+    	}else if(name == "entityesc"){
+    		img_name = "/images/dash-list/escalations-entity-delayed.png";
+    		name = "Legal entity wise escalations";
+    		margin_style="margin-left:55px";
+    	}else if(name == "groupesc"){
+    		img_name = "/images/dash-list/escalations-group-delayed.png";
+    		name = "Group wise escalations";
+    	}else if(name == "unitcomp"){
+    		img_name = "/images/dash-list/complienceopportunity-unit-not.png";
+    		name = "South gate, Madurai - Applicable compliances";
+    		margin_style="margin-left:200px";
+    	}else if(name == "divisioncomp"){
+    		img_name = "/images/dash-list/complienceopportunity-division-not.png";
+    		name = "Manufacturing division - Applicable compliances";
+    		margin_style="margin-left:150px";
+    	}else if(name == "entitycomp"){
+    		img_name = "/images/dash-list/complienceopportunity-entity-not.png";
+    		name = "KG Entity- Applicable compliances";
+    		margin_style="margin-left:40px";
+    	}else if(name == "groupcomp"){
+    		img_name = "/images/dash-list/complienceopportunity-group-not.png";
+    		name = "KG Groups - Applicable compliances";
+    	}else if(name == "Jan"){
+        if($("#radio1").is(':checked')){
+             img_name = "/images/dash-list/drill-group-completed.png";
+        }else if($("#radio2").is(':checked')){
+              img_name = "/images/dash-list/drill-entity-completed.png";
+               margin_style="margin-left:30px";
+            }else if($("#radio3").is(':checked')){
+              img_name = "/images/dash-list/drill-division-completed.png";
+               margin_style="margin-left:120px";
+            }else if($("#radio4").is(':checked')){
+              img_name = "/images/dash-list/drill-unit-completed.png";
+               margin_style="margin-left:140px";
+            }
+        // img_name = "/images/Company-completed-drill.png";
+        name = "";
+      }
+    	var htmlstr = '<div style="'+margin_style+'"><h2 style="margin-left:10px;font-size:20px">'+name+'</h2><br><img src='+img_name+'></div>';
+       $(function () {
+        $('#container').html(htmlstr);
+    });
+    }
+
+
+  </script> 
+
+<div class="content-container" >
+  <div class="content-area">
+    <div class="archive-container" style="width:100%;margin-bottom: 40px;">
+      <div class="archive-header"> 
+        <span class="task-status-tab" id="task" style="padding-left:8px;padding-right:8px"><a href="/home" style="text-decoration:none;color:white">Compliance status</a></span>
+        <span class="esc-tab" id="esc" style="padding-left:8px;padding-right:8px"><a href="/home_escalations" style="text-decoration:none;color:white">Escalations</a></span> 
+        <span class="ageing-tab" id="age"><a href="/home_ageingwise" style="text-decoration:none;color:white">Not Complied</a></span> 
+        <span class="usecom-tab" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise compliance</a></span> 
+        <span class="trend-tab active" id="trend"><a href="/home_trend" style="text-decoration:none;color:white">Trend chart</a></span> 
+        <span class="compliance-tab" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance risk</a></span> 
+        </div>
+      <div id="level-filter" style="width:100%">
+        <input type="hidden" id="hidden"/>
+        <div style="margin: 32px 10px 0px 80px;float:left"> <span>Filter By:</span> </div>
+        <div style="float:left;position:relative;width:100px">
+          <input type="radio" name="" id="domainradio" class="radio" checked/>
+          <label for="domainradio" id="radiolabel"  style="width:90px">Domain</label>
+          <div class="textboxdomain">
+            <p id="domain-para" style="margin-top:5px;float:left;width:90px">
+              <select  multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo2" style="width:90px">
+                <option value="selectall" >Select All</option> 
+                <!--<option value="deselectall" >Deselect All</option>-->
+                <option value="Finance" selected>Finance</option>
+                <option value="Labour Law" selected>Labour Law</option>
+                <option value="Industrial Law" selected>Industrial Law</option>
+              </select>
+               <span><a href="#">
+            <input id="go-dom" type="button" class="btn" value="Go" style="float:right;margin-top:-25px;"/>
+            </a></span>
+            </p>
+          </div>
+        </div>
+
+        <div style="float:left;position:relative;width:100px">
+          <input type="radio" name="radio" id="radio1" class="radio" checked/>
+          <label for="radio1" id="radiolabel"  style="width:90px">Group</label>
+          <div class="textboxgroup">
+            <p>
+              <input type="text" name="text1" id="text1" autofocus class="input-box icon-autocomplete margin10">
+            </p>
+          </div>
+        </div>
+        <div style="float:left;position:relative;width:155px">
+          <input type="radio" name="radio" id="radio5" class="radio"/>
+          <label for="radio5" id="radiolabel"  style="width:120px">Business Group</label>
+          <div class="textboxbusiness">
+            <p id="business-para1" style="margin-top:5px;float:left;width:120px">
+              <select id="business" multiple="multiple" placeholder="Select Business" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1" style="width:120px">
+                <option value="selectall" selected>Select All</option>
+                <option value="KGbg1" selected>KG Business Group 1</option>
+                <option value="KGbg2" selected>KG Business Group 2</option>
+                <option value="KGbg3" selected>KG Business Group 3</option>
+                <option value="KGbg3" selected>KG Business Group 4</option>
+                <option value="KGbg3" selected>KG Business Group 5</option>
+              </select>
+              <span><a href="#">
+            <input id="go-bu" type="button" class="btn" value="Go" style="float:right;margin-top:0px;margin-right:-33px"/>
+            </a></span> 
+            </p>
+           
+            </div>
+        </div>
+        <div style="float:left;position:relative;width:145px">
+          <input type="radio" name="radio" id="radio2" class="radio"/>
+          <label for="radio2" id="radiolabel"  style="width:110px">Legal Entity</label>
+          <div class="textboxcompany">
+            <input type="text" name="text2" id="entity-auto" value="KG" autofocus class="input-box icon-autocomplete" style="width:120px;margin-top:10px;">
+            <p id="entity-para1" style="margin-top:5px;float:left;width:110px">
+              <select id="legal-entity" multiple="multiple" placeholder="Select Entity" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1" style="width:110px">
+                <option value="selectall" selected>Select All</option>
+                <option value="KG Autoparts" selected>KG Autoparts</option>
+                <option value="KG Transports" selected>KG Transports</option>
+                <option value="KG Booking" selected>KG Booking</option>
+                <option value="KG Electricals" selected>KG Electricals</option>
+                <option value="KG Mobiles" selected>KG Mobiles</option>
+                <option value="KG HealthCare" selected>KG HealthCare</option>
+                <option value="KG HR Services" selected>KG HR Services</option>
+                <option value="KG Hospitals" selected>KG Hospitals</option>
+                <option value="KG Bakeries" selected>KG Bakeries</option>
+                <option value="KG Hotels" selected>KG Hotels</option>
+                <option value="KG Schools" selected>KG Schools</option>
+                <option value="KG University" selected>KG University</option>
+              </select>
+              <span><a href="#">
+            <input id="go-le" type="button" class="btn" value="Go" style="float:right;margin-top:-0px;margin-right:-33px"/>
+            </a></span> 
+            </p>
+           
+            </div>
+        </div>
+        <div style="float:left;position:relative;width:120px">
+          <input type="radio" name="radio" id="radio3" class="radio"/>
+          <label for="radio3" id="radiolabel"  style="width:90px">Division</label>
+          <div class="textboxdivision">
+            <p id="division-para1" style="margin-top:5px;float:left;width:90px">
+              <select id="division" multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1" style="width:90px;">
+                <option value="selectall" >Select All</option>
+                <!--<option value="deselectall" >Deselect All</option>-->
+                <option value="KG Manufacturing" selected>KG Manufacturing</option>
+                <option value="KG Sales" selected>KG Sales</option>
+                <option value="KG Quality Checking" selected>KG Quality Checking</option>
+                <option value="KG Administration" selected>KG Administration</option>
+                <option value="KG Testing" selected>KG Testing</option>
+                <option value="KG Security" selected>KG Security</option>
+                <option value="KG Research" selected>KG Research</option>
+                <option value="KG HR Unit" selected>KG HR Unit</option>
+                <option value="KG Development" selected>KG Development</option>
+              </select>
+              <span><a href="#">
+            <input id="go-d" type="button" class="btn" value="Go" style="float:right;margin-top:0px;margin-right:-31px"/>
+            </a></span> 
+            </p>
+       
+            </div>
+        </div>
+        <div class="leftmargin">
+          <input type="radio" name="radio" id="radio4" class="radio"/>
+          <label for="radio4" id="radiolabel" style="width:80px">Unit</label>
+          <div class="textboxbranch">
+            <input type="text" name="text4" id="unit-auto" autofocus value="South gate, Madurai"  class="input-box icon-autocomplete" style="width:120px;margin-top:10px">
+            <p id="unit-para1" style="margin-top:5px;float:left;width:150px">
+             <select id="unit"  multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="unit" style="width:80px;" >
+                <optgroup label="Factory">
+                  <option value="Branch Office - 1" selected>Branch Office - 1</option>
+                  <option value="Branch Office - 2" selected>Branch Office - 2</option>
+                  <option value="Branch Office - 3" selected>Branch Office - 3</option>
+                  <option value="Branch Office - 4" selected>Branch Office - 4</option>
+                </optgroup>
+                   <optgroup label="Office">
+                <option value="Branch Office - 5" selected>Branch Office - 5</option>
+                <option value="Branch Office - 6" selected>Branch Office - 6</option>
+                <option value="Branch Office - 7" selected>Branch Office - 7</option>
+                <option value="Branch Office - 8" >Branch Office - 8</option>
+</optgroup>
+              </select>
+              <span><a href="#">
+            <input id="go-u" type="button" class="btn" value="Go" style="float:right;margin-top:-24px;margin-right:35px"/>
+            </a></span>
+            </p>
+           
+             </div>
+        </div>
+      </div>
+      <div class="clearfix" ></div><br>
+      <div class="graph-box">
+        <input type="button" id="back" onClick="loadGroup()" style="float:right;margin-right:20px" value="Back"/>
+        <p id="year-para" style="margin-top:5px;float:right;width:130px">
+          <span style="font-size:13px">Select Year:</span><select id="year" multiple="multiple" placeholder="Select Years" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo2" style="width:110px;float:right;" >
+            <option value="2009" >2009</option>
+            <option value="2010" >2010</option>
+            <option value="2011" >2011</option>
+            <option value="2012" >2012</option>
+            <option value="2013" selected>2013</option>
+            <option value="2014" selected>2014</option>
+            <option value="2015" selected>2015</option>
+          </select>
+        </p>
+        <div class="clearfix"></div>
+        <div id="container" style="height: 400px;"></div>
+        <input type="button" id="previous" style="float:left;margin-left:20px" value="<< Previous"/>
+        <input type="button" id="next" style="float:right;margin-right:20px" value="Next >>"/>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/multiselect/jquery.multiple.select.js"></script>
+<script>
+  $('#unit-para1').find('select').multipleSelect({
+            filter: true,
+            multiple: true
+        });
+</script>
+<script>
+$(function(){
+  $('#text2').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Bajaj Allianz Group', 'PRG Group', 'TVS Group'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+  $('#text3').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Auto Parts - Manufacturing', 'Division 1', 'Division 2'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+  $('#text4').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['South Gate, Madurai', 'Periyar, Madurai', 'Mattuthavani, Madurai'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   
+});
+</script> 
+{% endblock %} 

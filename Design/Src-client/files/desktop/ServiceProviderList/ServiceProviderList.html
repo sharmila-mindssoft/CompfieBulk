@@ -1,111 +1,133 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
- <div class="content-container width70">
+
+ <div class="content-container width75">
         <div class="content-area">
           <div class="add-container">
         <div class="add-container-heading">Service Provider List<span class="error-message"></span></div>
       <div class="input-row-left">
+  <div class="input-row">
+                <div class="field-label">Country<span class="mandatory">*</span>:</div>
+                <div class="field-input">  <select class="input-box">
+              <option selected="selected">India</option>
+              <option>Sri Lanka</option>
+              <option>Singapore</option>
+              <option>Malaysia</option>
+            </select></div>
+              </div>
               <div class="input-row">
+                <div class="field-label">Act<span class="mandatory">*</span>:</div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="act" autofocus placeholder="Type Act" value="Batteries Act"></div>
+              </div>
+
+                 <div class="input-row">
                 <div class="field-label">Service Provider:</div>
                 <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="serviceprovider" autofocus placeholder="Type Service Provider"></div>
               </div>
+             
             </div>
             <div class="input-row-right">
               <div class="input-row">
-                <div class="field-label">Task:</div>
-                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="taskname" autofocus placeholder="Type Task"></div>
+                <div class="field-label">Domain<span class="mandatory">*</span>:</div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="domain" value="Industrial Law" autofocus placeholder="Type Domain"></div>
               </div>
+               <div class="input-row">
+                <div class="field-label">Unit:</div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="unit" value="" autofocus placeholder="Type Unit" ></div>
+              </div>
+        
             </div>            
             <div class="submit-button-container">
               <input type="submit" name="cancel" value="Show" class="btn-submit">
-              <input type="submit" name="cancel" value="Export to CSV" class="btn-submit">
-            </div>
+              <input type="submit" name="cancel" value="Export" class="btn-submit">
+            </div>  
         <div class="clearfix"></div>
+        
           <div class="grid-table-rpt">
           <h1>Service Provider List</h1>
-            <table style="border:dotted 1px #ccc;">
+           <div style="margin-left:15%;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>
+             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Act :<span style="margin-left:10px; font-weight:bold;">Batteries Act</span> </div>
+           
+          
+          </div>
+          <div style="float:right; margin-right:20%;">
+              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;">Industrial Law</span> </div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+        
+            <table style="border:dotted 1px #ccc;" >
               <tr>
                 <th width="3%" align="center">#</th>
                 <th width="15%" align="left">Service Provider Name</th>
-                <th width="10%" align="left">Contact Person</th>
-                <th width="25%" align="left">Address</th>
-                <th width="14%" align="left">Mobile</th>
+                <th width="20%" align="left">Contact Person</th>
                 <th width="10%" align="left">Email</th>
-                <th width="3%" align="center">&nbsp;</th>
+                <th width="14%" align="left">Mobile</th>
+                <th width="15%" align="left">Address</th>
+                <th colspan="2" align="left">Contract Period</th>
               </tr>
               <tr>
                 <td align="center">1</td>
                 <td>ART Solutions</td>
                 <td>John</td>
+                <td>johnprl@domain.com</td>
+                <td>9876543210</td>                
                 <td>12, West Cross Street, Madruai</td>
-                <td>9876543210</td>
-                <td>john@domain.com</td>
-                <td>&nbsp;</td>
+                <td colspan="2">01-Jan-2015 to 31-Dec-2015</td>
               </tr> 
+              <tr><td colspan="8"><div class="heading">Branch Office - 1</div></td></tr>
               <tr>
                 <th align="center">&nbsp;</th>
-                <th align="left">Compliance Name</th>
-                <th align="left">Task Type</th>
+                <th align="left">Compliance Name</th>                
                 <th align="left">Compliance Description</th>
-                <th align="left">Repeats</th>
-                <th align="left">Form No</th>
-                <th align="center">Format</th>
+                <th align="left">Due Date</th>
+                <th align="left">Status</th>
+                <th align="left">Ageing</th>
+                <th align="left">Document</th>
               </tr>    
               <tr>
                 <td align="center">i)</td>
-                <td>Notice of Opening</td>
-                <td>One Time</td>
+                <td>FORM VIII - Notice of Opening</td>
+                
                 <td>Within 30 days of opening a branch</td>
-                <td>-</td>
-                <td>Form A</td>
+                <td>20-Aug-2015</td>
+                <td>In Progress</td>
+                <td>7 Days Left</td>
                 <td><a href="#">Download</a></td>
               </tr>
               <tr>
                 <td align="center">ii)</td>
-                <td>Form I Submission</td>
-                <td>Recurring</td>
+                <td>FORM I - Half yearly returns Submission</td>
+                
                 <td>Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned</td>
-                <td>Every 6 months</td>
-                <td>Form I</td>
+                <td>31-Aug-2015</td>
+                 <td>Delayed</td>
+                <td>Delayed By 7 Days</td>
                 <td><a href="#">Download</a></td>
               </tr>
-            </table>
-            <table style="border:dotted 1px #ccc;">
-              <tr>
-                <th width="3%" align="center">#</th>
-                <th width="15%" align="left">Service Provider Name</th>
-                <th width="10%" align="left">Contact Person</th>
-                <th width="25%" align="left">Address</th>
-                <th width="14%" align="left">Mobile</th>
-                <th width="10%" align="left">Email</th>
-                <th width="3%" align="center">&nbsp;</th>
-              </tr>
-              <tr>
-                <td align="center">2</td>
-                <td>VRM Solutions</td>
-                <td>Naveen</td>
-                <td>154, West Veli Street, Madruai</td>
-                <td>9876543210</td>
-                <td>naveen@domain.com</td>
-                <td>&nbsp;</td>
-              </tr> 
+            
+<tr><td colspan="8"><div class="heading">Branch Office - 2</div></td></tr>
               <tr>
                 <th align="center">&nbsp;</th>
                 <th align="left">Compliance Name</th>
-                <th align="left">Task Type</th>
                 <th align="left">Compliance Description</th>
-                <th align="left">Repeats</th>
-                <th align="left">Form No</th>
-                <th align="center">Format</th>
+                 <th align="left">Due Date</th>
+                <th align="left">Status</th>
+                <th align="left">Ageing</th>
+                <th align="left">Document</th>
               </tr>    
               <tr>
                 <td align="center">i)</td>
-                <td>Form II Submission</td>
-                <td>Recurring</td>
+                <td>FORM II - Registration</td>
+                
                 <td>Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
-                <td>Every 6 months</td>
-                <td>Form II</td>
+                <td>Not Complied</td>
+                <td>12-Aug-2015</td>
+                 <td>Overdue by 4 Days</td>
                 <td><a href="#">Download</a></td>
+
               </tr>
             </table>
           </div>

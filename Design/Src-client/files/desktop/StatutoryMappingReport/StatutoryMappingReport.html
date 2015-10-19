@@ -1,161 +1,188 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
-<script type="text/javascript">
-        $(document).ready(function () {
-            window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
-        });
-</script>
+
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
-      <div class="add-container-heading">Statutory Mapping Report<span class="error-message"></span></div>
+      <div class="add-container-heading">Statutory Mappings<span class="error-message"></span></div>
       <div class="input-row-left">
         <div class="input-row">
-          <div class="field-label">Country<span class="mandatory">*</span>:</div>
+          <div class="field-label">Country:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="countryid" value="India" placeholder="Type Service Provider">
+           <input type="text" class="input-box icon-autocomplete" value="India" placeholder="Enter Country	" />
+          </div>
+        </div>
+       <div class="input-row">
+          <div class="field-label">Domain:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" value="Industrial Law" placeholder="Enter Domain" />
+          </div>
+        </div>
+         <div class="input-row">
+          <div class="field-label">Act:<span class="mandatory">*</span></div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="Batteries Act" placeholder="Enter Act  " />
+          </div>
+        </div>
+         <div class="input-row">
+          <div class="field-label">Section:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Section  " />
           </div>
         </div>
         <div class="input-row">
-          <div class="field-label">Industry Type:</div>
+          <div class="field-label">Compliance:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="typeid" value="" autofocus placeholder="Type Industry Type">
+           <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Compliance  " />
           </div>
-        </div>
+        </div>      
       </div>
       <div class="input-row-right">
-        <div class="input-row">
-          <div class="field-label">Domain<span class="mandatory">*</span>:</div>
+       <div class="input-row">
+          <div class="field-label">Statutory Location:</div>
           <div class="field-input">
-            <select multiple="multiple" style="font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
-              <option value="Labour Law" selected>Labour Law</option>
-              <option value="Industrial Law" selected>Industrial Law</option>
-              <option value="Finance">Finance</option>
-            </select>
+          <input type="text" class="input-box icon-autocomplete" placeholder="" value="Tamil Nadu">
           </div>
         </div>
+         
+          <div class="input-row">
+          <div class="field-label">Applicability:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="Central" placeholder="Enter Applicability  " />
+          </div>
+        </div>
+         <div class="input-row">
+          <div class="field-label">Rule Name:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Rule  " />
+          </div>
+        </div>
+          <div class="input-row">
+          <div class="field-label">Form:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Form" />
+          </div>
+        </div>
+       
+        
       </div>
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Show" class="btn-submit">
-        <input type="submit" name="cancel" value="Export to CSV" class="btn-submit">
+        <input type="button"  class="btn-submit" value="Export" />
       </div>
       <div class="clearfix"></div>
       <div class="grid-table-rpt">
-        <h1>Statutory Mapping Report</h1>
-        <table style="border:dotted 1px #ccc;">
-          <tr>
+        <h1>Statutory Mappings</h1>
+      
+      <div style="margin-left:15%;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>           
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;">Industrial Law</span> </div>
+             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Applicability :<span style="margin-left:10px; font-weight:bold;">Central </span> </div>          
+          </div>
+          <div style="float:right; margin-right:20%;">
+           <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Statutory Location :<span style="margin-left:10px; font-weight:bold;">Tamil Nadu</span> </div>
+
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Act :<span style="margin-left:10px; font-weight:bold;">Batteries Act</span> </div>
+          </div>
+        </div>
+
+
+        <div class="clearfix"></div>
+        <div style="background:#ddd; height:30px; margin-top:0px;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em; ">
+            <div style="margin-left:10px; font-size:0.8em; padding-top:7px; font-weight:bold;">Section 1 <img src="/images/right_arrow.png"> Rule 4 </div>
+          </div>
+         
+        </div>
+        <table width="100%" style="border:1px dotted #CCCCCC;" >
+          <tr align="left"  class="sub-head">
             <th width="3%" align="center">#</th>
-            <th width="10%" align="left">Country</th>
-            <th width="9%" align="left">Domain</th>
-            <th width="25%" align="left">Statutory</th>
-            <th width="10%" align="left">Type</th>
-            <th width="10%" align="left">Applicability</th>
-            <th width="20%" align="left">Applicable Location</th>
+            <th width="12%">Form No.</th>
+            <th width="18%">Compliance Name</th>
+            <th width="25%">Compliance Description</th>
+            <th width="20%">Penal Description</th>
+            <th width="12%">Compliance Type</th>
+            <th width="10%">Repeats</th>
           </tr>
           <tr>
             <td align="center">1</td>
-            <td>India</td>
-            <td>Labour Law</td>
-            <td>Gratuity Act, 1972 >> Tamil Nadu Gratuity Act, 1972 >> Rule 3</td>
-            <td>ALL</td>
-            <td>Central</td>
-            <td>South >> Tamil Nadu >> Madurai</td>
-          </tr>
-          <tr>
-            <th align="center">&nbsp;</th>
-            <th align="left">Compliance Name</th>
-            <th align="left">Task Type</th>
-            <th align="left">Compliance Description</th>
-            <th align="left">Repeats</th>
-            <th align="left">Form No</th>
-            <th align="left">Trigger Before</th>
-          </tr>
-          <tr>
-            <td align="center">i)</td>
+            <td><a href="#">FORM VIII</a></td>
             <td>Notice of Opening</td>
-            <td>One Time</td>
             <td>Within 30 days of opening a branch</td>
-            <td>-</td>
-            <td>Form A</td>
-            <td>20 Days</td>
+            <td>Imprisonment With Fine</td>
+            <td>One Time</td>
+            <td> - </td>
+               
           </tr>
-        </table>
-        <table style="border:dotted 1px #ccc;">
+          <tr align="left">
+            <th align="center">&nbsp;</th>
+            <th width="12%">Statutory Date</th>
+            <th>Trigger Before</th>           
+            <th colspan="4">Applicable Location</th>
+          
+           
+          </tr>
           <tr>
+            <td></td>
+            <td>01-Sep </td>
+            <td>20 days</td>
+
+         <td colspan="4">India >> South >> Tamil Nadu >> Madurai<br>
+            India >> South >> Tamil Nadu >> Dindigul....</td>
+           
+          </tr>
+           
+            <tr>
+            <td></td>
+           
+            </tr>
+        </table>
+         <div style="background:#ddd; height:30px; margin-top:10px;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em; ">
+            <div style="margin-left:10px; font-size:0.8em; padding-top:7px; font-weight:bold;">Section 2 <img src="/images/right_arrow.png"> Rule 3(i) </div>
+          </div>
+         
+        </div>
+        <table width="100%" style="border:1px dotted #CCCCCC;" >
+          <tr align="left">
             <th width="3%" align="center">#</th>
-            <th width="10%" align="left">Country</th>
-            <th width="9%" align="left">Domain</th>
-            <th width="25%" align="left">Statutory</th>
-            <th width="10%" align="left">Type</th>
-            <th width="10%" align="left">Applicability</th>
-            <th width="20%" align="left">Applicable Location</th>
+            <th width="12%">Form No.</th>
+            <th width="18%">Compliance Name</th>
+            <th width="25%">Compliance Description</th>
+            <th width="20%">Penal Description</th>
+            <th width="12%">Compliance Type</th>
+            <th width="10%">Repeats</th>
+            
           </tr>
           <tr>
             <td align="center">2</td>
-            <td>India</td>
-            <td>Industrial Law</td>
-            <td>The Batteries (Management & Handling) Rules, 2001 >> Rule 4 >> iii</td>
-            <td>ALL</td>
-            <td>Central</td>
-            <td>South >> Tamil Nadu >> Chennai</td>
-          </tr>
-          <tr>
-            <th align="center">&nbsp;</th>
-            <th align="left">Compliance Name</th>
-            <th align="left">Task Type</th>
-            <th align="left">Compliance Description</th>
-            <th align="left">Repeats</th>
-            <th align="left">Form No</th>
-            <th align="left">Trigger Before</th>
-          </tr>
-          <tr>
-            <td align="center">i)</td>
-            <td>Form I Submission</td>
+            <td><a href="#">FORM I</a> </td>
+             <td>Dealer Registration</td>
+            <td>Within 30 days of opening a branch</td>
+            <td>Imprisonment With Fine</td>
             <td>Recurring</td>
-            <td>Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned</td>
             <td>Every 6 months</td>
-            <td>Form I</td>
-            <td>30 Days</td>
+            
+          </tr>
+          <tr align="left">
+            <th align="center">&nbsp;</th>
+            <th width="12%">Statutory Date</th>
+            <th>Trigger Before</th>
+            
+            <th colspan="4">Applicable Location</th>
+         
           </tr>
           <tr>
-            <td align="center">iI)</td>
-            <td>Form II Submission</td>
-            <td>One Time</td>
-            <td>Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
-            <td>-</td>
-            <td>Form II</td>
-            <td>20 Days</td>
+            <td>&nbsp;</td>
+            <td>10-Sep, 10-Mar</td>
+            <td>15 Days, 10 Days</td>
+             <td colspan="4">India >> South >> Tamilnadu</td>
           </tr>
+           
         </table>
       </div>
     </div>
   </div>
 </div>
-<script>
-$(function(){
-  $('#countryid').autoComplete({
-      minChars: 1,
-      source: function(term, suggest){
-          term = term.toLowerCase();
-          var choices = ['India', 'Srilanka', 'Singapore', 'Malaysia', 'US', 'England'];
-          var suggestions = [];
-          for (i=0;i<choices.length;i++)
-              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
-          suggest(suggestions);
-      }
-  });
-   $('#typeid').autoComplete({
-      minChars: 1,
-      source: function(term, suggest){
-          term = term.toLowerCase();
-          var choices = ['ALL', 'Office', 'Factory', 'Plantation', 'Contractor', 'S & E', 'Mines'];
-          var suggestions = [];
-          for (i=0;i<choices.length;i++)
-              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
-          suggest(suggestions);
-      }
-  });
-   
-});
-</script> 
 {% endblock %}

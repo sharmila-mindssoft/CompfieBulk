@@ -1,0 +1,356 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="css/dashboard.css">
+
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/popup/popup.css">
+<script type="text/javascript" src="/files/desktop/common/js/popup/modernizr.js"></script>
+
+
+<style type="text/css">
+  .modaltable th
+  {
+    padding: 5px;
+  }
+  .modaltable td
+  {
+    padding: 10px 0px;
+    font-size: 0.813em;
+  }
+abbr
+{
+    border-bottom: 1px dotted #666;
+    cursor: help;
+}
+
+.btn {
+  background: #662d91;
+  background-image: -webkit-linear-gradient(top, #662d91, #662d91);
+  background-image: -moz-linear-gradient(top, #662d91, #662d91);
+  background-image: -ms-linear-gradient(top, #662d91, #662d91);
+  background-image: -o-linear-gradient(top, #662d91, #662d91);
+  background-image: linear-gradient(to bottom, #662d91, #662d91);
+  -webkit-border-radius: 7;
+  -moz-border-radius: 7;
+  border-radius: 7px;
+  font-family: Arial;
+  font-style:bold;
+  color: #ffffff;
+  font-size: 8px;
+  padding: 7px 9px 7px 9px;
+  text-decoration: none;
+  border-width:0px;
+
+}
+
+.btn:hover {
+  background: #C293E6;
+  background-image: -webkit-linear-gradient(top, #C293E6, #c4c4c4);
+  background-image: -moz-linear-gradient(top, #C293E6, #c4c4c4);
+  background-image: -ms-linear-gradient(top, #C293E6, #c4c4c4);
+  background-image: -o-linear-gradient(top, #C293E6, #c4c4c4);
+  background-image: linear-gradient(to bottom, #C293E6, #c4c4c4);
+  text-decoration: none;
+  cursor:hand;
+}
+
+.tooltip
+{
+    position:absolute;
+    background-color:#eeeefe;
+    border: 1px solid #aaaaca;
+    font-size: smaller;
+    padding:4px;
+    width: 160px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); 
+}
+
+#radiolabel {
+  width: 70px;
+  border-radius: 3px;
+  border: 1px solid #D1D3D4;
+  font-size: 11px;
+}
+
+/* hide input */
+input.radio:empty {
+    margin-left: -1200px;
+}
+
+/* style label */
+input.radio:empty ~ label {
+    position: relative; 
+    float: left;
+    line-height: 2.5em; 
+    text-indent: 3.25em;
+    margin-top: 2em;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input.radio:empty ~ label:before {
+    position: absolute;
+    display: block;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    content: '';
+    width: 2.5em;
+    background: #D1D3D4;
+    border-radius: 3px 0 0 3px;
+}
+
+/* toggle hover */
+input.radio:hover:not(:checked) ~ label:before {
+    content:'\2714';
+    text-indent: .9em;
+    color: #ffffff;
+}
+
+input.radio:hover:not(:checked) ~ label {
+    color: #888;
+}
+
+/* toggle on */
+input.radio:checked ~ label:before {
+    content:'\2714';
+    text-indent: .9em;
+    color: #ffffff;
+    background-color: #662d91;
+}
+
+input.radio:checked ~ label {
+    color: #777;
+}
+.leftmargin 
+{
+  float: left;
+  position: relative;
+  width: 160px;
+}
+.margin10
+{
+  margin-top: 10px;
+}
+#cssmenu > ul > li:hover > ul {
+  top: 46.5px !important;
+}
+</style>
+<div class="content-container" >
+  <div class="content-area">
+    <div class="archive-container" style="width:100%;margin-bottom: 40px;">
+      <div class="archive-header"> 
+        <span class="task-status-tab " id="task" style="padding-left:8px;padding-right:8px"><a href="/home" style="text-decoration:none;color:white">Compliance status</a></span>
+        <span class="esc-tab" id="esc" style="padding-left:8px;padding-right:8px"><a href="/home_escalations" style="text-decoration:none;color:white">Escalations</a></span> 
+        <span class="ageing-tab" id="age"><a href="/home_ageingwise" style="text-decoration:none;color:white">Not Complied</a></span> 
+        <span class="usecom-tab active" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise compliance</a></span> 
+        <span class="trend-tab" id="trend"><a href="/home_trend" style="text-decoration:none;color:white">Trend chart</a></span> 
+        <span class="compliance-tab" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance risk</a></span> 
+      </div>
+      <!-- archive tab content start here -->
+      <div class="archive-tab-content" style="display:block;">
+        <div class="archive-list-content" style="width:100% !important;">
+       
+          <div class="grid-table-dash1">
+            <table  style="border:1px solid #ddd;" >
+              <tr >
+                <td colspan="6" style="background-color:#FFF;"><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>User:</b> Sivaraman</span><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em; margin-left:30%;"><b>Domain :</b> Finance</span><span style=" margin-left:30%; color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>Year:</b> 2015</span></td>
+              </tr>
+              <tr align="left" class="rightside">
+              
+                 <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Complied<span><img src="/images/chevron_black_down.png"></span></th>
+              </tr>
+              <tr align="left" style="background-color:#DBDBDB; color:#000000; font-size: 1em;font-weight: bold;">
+                <td width="5%" align="center">#</th>
+                <td width="45%">Task</th>
+                <td width="15%">Assign date</th>
+                <td width="15%">Actual due date</th>
+                <td width="15%" colspan="2">Date of completion</th>
+              </tr>
+              <tr><td colspan="5" style="background:#D4B7EB;font-weight:bold;"> KG1009 - Madurai unit </td></tr>
+              <tr align="left" class="rightside" >
+                <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                      inset 0 0 5px rgba(53,86,129, 0.5),
+                      inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;"  width="250px"> The Tamilnadu shops and commercial establishments act - 1947 </span> </th>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">1</td>
+                <td>Opening and closing hours</td>
+                <td>10-Sep-2015</td>
+                <td>15-Sep-2015</td>
+                <td colspan="2">14-Sep-2015</td>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">2</td>
+                <td>Daily and weekly hours</td>
+                <td>10-Sep-2015</td>
+                <td>15-Sep-2015</td>
+                <td colspan="2">15-Sep-2015</td>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">3</td>
+                <td>Overtime</td>
+                <td>10-Sep-2015</td>
+                <td>16-Sep-2015</td>
+                <td colspan="2">15-Sep-2015</td>
+              </tr>
+              <tr align="left" class="rightside" >
+                <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                      inset 0 0 5px rgba(53,86,129, 0.5),
+                      inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;"  width="250px"> The Batteries act - 2001 </span> </th>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">4</td>
+                <td>Form I - Importers Half yearly returns</td>
+                <td>12-Sep-2015</td>
+                <td>20-Sep-2015</td>
+                <td colspan="2">18-Sep-2015</td>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">5</td>
+                <td>Form II - Importers registration</td>
+                <td>15-Sep-2015</td>
+                <td>24-Sep-2015</td>
+                <td colspan="2">24-Sep-2015</td>
+              </tr>
+               <tr><td colspan="5" style="background:#D4B7EB;font-weight:bold;"> KG1010 - Chennai unit </td></tr>
+              <tr align="left" class="rightside" >
+                <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                      inset 0 0 5px rgba(53,86,129, 0.5),
+                      inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;"  width="250px"> The Tamilnadu shops and commercial establishments act - 1947 </span> </th>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">1</td>
+                <td>Opening and closing hours</td>
+                <td>10-Sep-2015</td>
+                <td>15-Sep-2015</td>
+                <td colspan="2">14-Sep-2015</td>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">2</td>
+                <td>Daily and weekly hours</td>
+                <td>10-Sep-2015</td>
+                <td>15-Sep-2015</td>
+                <td colspan="2">15-Sep-2015</td>
+              </tr>
+               <tr  align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Delayed<span><img src="/images/chevron_black_right.png"></span></th>
+            </tr>
+             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th  colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: In progress<span><img src="/images/chevron_black_right.png"></span></th>
+            </tr>
+             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Not complied<span><img src="/images/chevron_black_right.png"></span></th>
+            </tr>
+
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- archive tab content end here -->
+    
+    </div>
+  </div>
+</div>
+
+<div class="modal" style="width:75%; margin-left:-37.5%;">
+  <header>
+    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">Sivaraman</h1>
+     <div class="close toggleModal"></div>
+  </header>  
+  <section><p style="font-size:0.8em; padding-top:10px;">
+
+<table class="modaltable" width="100%">
+      <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
+                            <th width="5%" align="center">#</th>
+                            <th width="15%" align="left">Year</th>                            
+                            <th width="12%" align="center">Total</th>
+                            <th width="12%" align="center">Complied</th>
+                            <th width="12%" align="center">Delayed</th>
+                            <th width="12%" align="center">In progress</th>
+                            <th width="13%" align="center">Not complied</th>
+                            <th width="14%" align="left">Performance %</th>
+                            <th width="5%"></th>
+                          </tr>
+                          <tr >
+                            <td align="center">1</td>
+                            <td align="left"><a href="/home_userwise_2015" class="year2015">2015</a></td>
+                         
+                            <td align="center">10</td>
+                            <td align="center">06</td>
+                            <td align="center">02</td>
+                            <td align="center">01</td>
+                            <td align="center">01</td>
+                            <td align="center">60%</td>
+                            <td><img src="/images/right_arrow.png"></td>
+                          </tr>
+                          <tr >
+                            <td align="center">2</td>
+                            <td align="left">2014</td>
+                         
+                            <td align="center">10</td>
+                            <td align="center">08</td>
+                            <td align="center">00</td>
+                            <td align="center">01</td>
+                            <td align="center">01</td>
+                            <td align="center">80%</td>
+                             <td><img src="/images/right_arrow.png"></td>
+                          </tr>
+                         <tr >
+                            <td align="center">3</td>
+                            <td align="left">2013</td>
+                          
+                            <td align="center">10</td>
+                            <td align="center">07</td>
+                            <td align="center">02</td>
+                            <td align="center">0</td>
+                            <td align="center">01</td>
+                            <td align="center">70%</td>
+                             <td><img src="/images/right_arrow.png"></td>
+                          </tr>
+                        <tr >
+                            <td align="center">4</td>
+                            <td align="left">2012</td>
+                         
+                            <td align="center">10</td>
+                            <td align="center">10</td>
+                            <td align="center">0</td>
+                            <td align="center">0</td>
+                            <td align="center">0</td>
+                            <td align="center">100%</td>
+                             <td><img src="/images/right_arrow.png"></td>
+                          </tr>
+                        <tr>
+                            <td align="center">5</td>
+                            <td align="left">2011</td>
+                            
+                            <td align="center">10</td>
+                            <td align="center">07</td>
+                            <td align="center">02</td>
+                            <td align="center">01</td>
+                            <td align="center">00</td>
+                            <td align="center">70%</td>
+                             <td><img src="/images/right_arrow.png"></td>
+                          </tr>
+                        </table>
+    </p>
+  </section>
+</div>
+
+
+<script type="text/javascript">
+$('.toggleModal').on('click', function (e) {
+  $('.modal').toggleClass('active');
+});
+</script>
+{% endblock %} 

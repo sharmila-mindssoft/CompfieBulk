@@ -20,7 +20,7 @@
             });
         });
 </script>
-<div class="content-container width60">
+<div class="content-container width70">
   <div class="content-area">
     <div class="add-container">
       <div class="add-container-heading">Client List<span class="error-message"></span></div>
@@ -28,7 +28,7 @@
         <div class="input-row">
           <div class="field-label">Domain:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <select multiple="multiple" style="height:30px;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+            <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
               <option value="Labour Law" selected>Labour Law</option>
               <option value="Industrial Law" selected>Industrial Law</option>
               <option value="Finance">Finance</option>
@@ -36,15 +36,21 @@
           </div>
         </div>
         <div class="input-row">
-          <div class="field-label">Group Company:<span class="mandatory">*</span></div>
+          <div class="field-label">Group :<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" autofocus id="client" value="RG Group" placeholder="Enter Group Company" />
+            <input type="text" class="input-box icon-autocomplete" autofocus id="client" value="RG Group" placeholder="Enter Group " />
           </div>
         </div>
-        <div class="input-row">
-          <div class="field-label">Division:<span class="mandatory">*</span></div>
+          <div class="input-row">
+          <div class="field-label">Business Group:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" autofocus id="client" value="RG Division" placeholder="Enter Division Name" />
+            <input type="text" class="input-box icon-autocomplete" autofocus id="businessgroup" value="RG1 group" placeholder="Enter Business Group" />
+          </div>
+        </div>
+      <div class="input-row">
+          <div class="field-label">Unit:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" autofocus id="client" value="" placeholder="Enter Unit Code - Unit Name" />
           </div>
         </div>
       </div>
@@ -66,16 +72,17 @@
             <input type="text" class="input-box icon-autocomplete" autofocus id="client" value="RG Entity" placeholder="Enter Legal Entity" />
           </div>
         </div>
-        <div class="input-row">
-          <div class="field-label"> Unit:</div>
+          <div class="input-row">
+          <div class="field-label">Division:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" autofocus id="client" value="" placeholder="Enter Unit Name" />
+            <input type="text" class="input-box icon-autocomplete" autofocus id="client" value="RG Division" placeholder="Enter Division Name" />
           </div>
         </div>
+        
       </div>
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Show" class="btn-submit">
-        <input type="submit" name="cancel" value="Export to CSV" class="btn-submit">
+        <input type="submit" name="cancel" value="Export" class="btn-submit">
       </div>
       <div class="clearfix"></div>
       <div class="grid-table-rpt">
@@ -83,42 +90,42 @@
         <div>
           <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain Name :<span style="margin-left:10px; font-weight:bold;">Labour Law, Industrial Law</span> </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Group Company :<span style="margin-left:10px; font-weight:bold;">RG Group</span> </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Group  :<span style="margin-left:10px; font-weight:bold;">RG Group</span> </div>
             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Division :<span style="margin-left:10px; font-weight:bold;">RG Division</span> </div>
           </div>
           <div style="float:right; margin-right:30%;">
             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Legal Entity :<span style="margin-left:10px; font-weight:bold;">TG Entity</span> </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Legal Entity :<span style="margin-left:10px; font-weight:bold;">RG Entity</span> </div>
           </div>
         </div>
         <table>
           <tr align="left">
             <th width="3%" align="center" class="header-bg">#</th>
-            <th width="10%" class="header-bg">Unit Name</th>
-            <th width="18%" class="header-bg">Domain</th>
-            <th width="30%" class="header-bg">Unit Location</th>
+            <th width="22%" class="header-bg">Unit</th>
+            <th width="23%" class="header-bg">Domain</th>
+            <th width="52%" class="header-bg">Unit Location</th>
           </tr>
           <tr>
             <td align="center">1</td>
-            <td>Corporate Office</td>
+            <td>RG1001 - Corporate Office</td>
             <td>Labour Law, Industrial Law</td>
             <td>New Delhi, North Region, India</td>
           </tr>
           <tr>
             <td align="center">2</td>
-            <td>Regional Office</td>
+            <td>RG1002 - Regional Office</td>
             <td>Labour Law, Industrial Law</td>
             <td>Chennai, Tamil Nadu, South Region, India</td>
           </tr>
           <tr>
             <td align="center">3</td>
-            <td>Branch Office - 1</td>
+            <td>RG1003 - Branch Office - 1</td>
             <td>Labour Law</td>
             <td>Madurai Corporation, Madurai, Tamil Nadu, South Region, India</td>
           </tr>
           <tr>
             <td align="center">4</td>
-            <td>Branch Office - 2</td>
+            <td>RG1004 - Branch Office - 2</td>
             <td>Labour Law, Industrial Law</td>
             <td>Aviyur, Madurai, Tamil Nadu, South Region, India</td>
           </tr>

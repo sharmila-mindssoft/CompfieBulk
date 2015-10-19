@@ -6,135 +6,139 @@
       <div class="add-container-heading">Activity Report<span class="error-message"><!----></span></div>
       <div class="input-row-left">
       	<div class="input-row">
-          <div class="field-label">User Type:</div>
+          <div class="field-label">User Type:<span class="mandatory">*</span></div>
           <div class="field-input">
             <select class="input-box"><option>Inhouse</option><option selected="selected">Service Provider</option></select>
           </div>
         </div>
+    <div class="input-row">
+          <div class="field-label">Domain:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" autofocus id="domain" placeholder="Enter Domain" />
+          </div>
+        </div>
+         <div class="input-row">
+                <div class="field-label">Unit:</div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="unit" value="" autofocus placeholder="Enter Unit" ></div>
+              </div>
         <div class="input-row">
           <div class="field-label">From Date:</div>
           <div class="field-input">
-            <input type="text" class="input-box" value="01/08/2015" placeholder="dd/mm/yyyy">
+            <input type="text" class="input-box" value="01-Aug-2015" placeholder="dd-Mon-yyyy">
           </div>
         </div>
         </div>
         <div class="input-row-right">
         <div class="input-row">
-          <div class="field-label">Inhouse/Service Provider:</div>
+          <div class="field-label">Inhouse/Service Provider:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="user" autofocus placeholder="Type User">
+            <input type="text" class="input-box icon-autocomplete" id="user" value="PGM Solutions" autofocus placeholder="Enter User">
           </div>
         </div>
+          <div class="input-row">
+                <div class="field-label">Act:</div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="act" autofocus placeholder="Enter Act" ></div>
+              </div>
+   <div class="input-row">
+          <div class="field-label">Compliances:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" autofocus id="unit" value="" placeholder="Enter Compliance" />
+          </div>
+        </div>
+      
         <div class="input-row">
           <div class="field-label">To Date:</div>
           <div class="field-input">
-            <input type="text" class="input-box" value="10/08/2015" placeholder="dd/mm/yyyy">
+            <input type="text" class="input-box" value="10-Aug-2015" placeholder="dd-Mon-yyyy">
           </div>
         </div>
       </div>
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Show" class="btn-submit">&nbsp;&nbsp;
-        <input type="submit" name="cancel" value="Export to CSV" class="btn-submit">
+        <input type="submit" name="cancel" value="Export" class="btn-submit">
       </div>
       <div class="clearfix"></div>
       <div class="grid-table-rpt">
       <h1>Activity Report</h1>
-      <div>
+      <div style="margin-left:15%;">
           <div style="float:left; padding-bottom:0.5em; margin-left:1%;">
             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">User Type :<span style="margin-left:10px; font-weight:bold;">Service Provider</span> </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">From Date :<span style="margin-left:10px; font-weight:bold;">01/08/2015</span> </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">From Date :<span style="margin-left:10px; font-weight:bold;">01-Aug-2015</span> </div>
           </div>
-          <div style="float:right; margin-right:30%;">
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">User :<span style="margin-left:10px; font-weight:bold;">-</span> </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">To Date :<span style="margin-left:10px; font-weight:bold;">10/08/2015</span> </div>
+          <div style="float:right; margin-right:20%;">
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">User :<span style="margin-left:10px; font-weight:bold;">PGM Solutions</span> </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">To Date :<span style="margin-left:10px; font-weight:bold;">10-Aug-2015</span> </div>
           </div>
         </div>
+        <h2 style="background:#f1e9f6;font-size:0.8em !important;text-align:left;">Branch Office - 1</h2>
+
         <table>
           <tr align="left">
             <th class="header-bg">#</th>
             <th class="header-bg">Date</th>
             <th class="header-bg">Compliance</th>
-            <th class="header-bg">Statutory</th>
-            <th class="header-bg">User</th>
-            <th class="header-bg">Status</th>
-            <th class="header-bg">Comments / Notes</th>
+         
+            <th class="header-bg">Activity Status</th>
+               <th class="header-bg">Compliance Status</th>
+            
           </tr>
+          <tr><td colspan="5"><span class="heading">Industrial Law <img src="/images/right_arrow.png"> Batteries Act</span></td></tr>
           <tr>
             <td>1</td>
-            <td>10/08/2015</td>
-            <td>FORM I Submission</td>
+            <td>10-Aug-2015</td>
+            <td>FORM I - Half yearly returns Submission</td>
           
-           <td> Batteries Act <img src="/images/right_arrow.png"> Rule 4 (iii)  <img src="/images/right_arrow.png"> FORM I  </td>
+          
 
-            <td>PGM Solutions</td>
+            <td>Approved</td>
             <td>Complied</td>
-            <td>Comments text goes here</td>
+            
           </tr>
           <tr>
             <td>2</td>
-            <td>10/08/2015</td>
-             <td>FORM II Submission</td>
-          
-            <td>  Batteries Act <img src="/images/right_arrow.png"> Rule 5 and Rule 6 (ii)  <img src="/images/right_arrow.png"> FORM II </td>
-
-            <td>ART Solutions</td>
+            <td>10-Aug-2015</td>
+             <td>FORM II - Registration</td>    
+            <td>Approved</td>
             <td>Delayed Compliance</td>
-            <td>Comments text goes here</td>
+            
           </tr>
           <tr>
             <td>3</td>
-            <td>09/08/2015</td>
-              <td>FORM III Submission</td>
-           
-            <td>  Batteries Act <img src="/images/right_arrow.png"> Rule 6(iii) <img src="/images/right_arrow.png"> FORM III  </td>
-
-            <td>ART Solutions</td>
+            <td>09-Aug-2015</td>
+            <td>FORM III - Undertaking submission </td>
+            <td>Approved</td>
             <td>Not Complied</td>
-            <td>Comments text goes here</td>
+            
           </tr>
           <tr>
             <td>4</td>
-            <td>08/08/2015</td>
-              <td>FORM IV Submission</td>
-            
-            <td>  Batteries Act <img src="/images/right_arrow.png"> Rule 4 and Rule 7(vii)  <img src="/images/right_arrow.png"> FORM IV </td>
-
-            <td>PGM Solutions</td>
+            <td>08-Aug-2015</td>
+            <td>FORM IV - Dealer Registration</td><td>Submitted</td>
             <td>Complied</td>
-            <td>Comments text goes here</td>
+           
           </tr>
           <tr>
             <td>5</td>
-            <td>08/08/2015</td>
-             <td>FORM V Submission</td>
-          
-          <td>  Batteries Act <img src="/images/right_arrow.png"> Rule 7(iv)  <img src="/images/right_arrow.png"> FORM V  </td>
-
-            <td>PGM Solutions</td>
+            <td>08-Aug-2015</td>
+            <td>FORM V - Dealer Half yearly returns </td>
+            <td>Submitted</td>
             <td>Delayed Compliance</td>
-            <td>Comments text goes here</td>
+           
           </tr>
+          <tr><td colspan="5"><span class="heading">Industrial Law <img src="/images/right_arrow.png"> The Tamilnadu Gratuity Act</span></td></tr>
           <tr>
             <td>6</td>
-            <td>07/08/2015</td>
-             <td>FORM VI Submission</td>
-            
-           <td> Batteries Act <img src="/images/right_arrow.png"> Rule 8(i) & 9(1) & 9 (5)  <img src="/images/right_arrow.png"> FORM VI </td>
-
-            <td>ART Solutions</td>
+            <td>07-Aug-2015</td>
+            <td>Notice of Opening </td>
+            <td>Approved</td>
             <td>Complied</td>
-            <td>Comments text goes here</td>
           </tr>
           <tr>
             <td>7</td>
-            <td>06/08/2015</td>
-              <td>FORM VII Submission</td>
-         
-           <td> Batteries Act <img src="/images/right_arrow.png"> Rule 8 (iii)  <img src="/images/right_arrow.png"> FORM VII  </td>
-
-            <td>PGM Solutions</td>
-            <td>Complied</td>
-            <td>Comments text goes here</td>
+            <td>06-Aug-2015</td>
+            <td>Opening And Closing Hours</td>
+            <td>Rejected</td>
+            <td>Complied</td> 
           </tr>
         
         </table>

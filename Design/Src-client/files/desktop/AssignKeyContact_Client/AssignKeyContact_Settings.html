@@ -1,0 +1,167 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<script type="text/javascript">
+        $(document).ready(function () {
+            window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
+        });
+    </script>
+    
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Company Details<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Group:<span class="mandatory">*</span></div>
+          <div class="field-input"><span style="font-size:0.8em;">RG Groups</span>
+          </div>
+        </div>
+      
+       <div class="input-row">
+          <div class="field-label"> Legal Entity:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <Select id="entity-select" class="input-box">
+              <option>RG Entity 1</option>
+              <option>RG Entity 2</option>
+              <option>RG Entity 3</option>
+            </Select>
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+       <div class="input-row">
+          <div class="field-label">Business Group:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <Select id="group-select" class="input-box">
+              <option>RG Business Group 1</option>
+              <option>RG Business Group 2</option>
+              <option>RG Business Group 3</option>
+            </Select>
+          </div>
+        </div>
+       <div class="input-row">
+          <div class="field-label">Division:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <Select id="division-select" class="input-box">
+              <option>RG Division 1</option>
+              <option>RG Division 2</option>
+              <option>RG Division 3</option>
+            </Select>
+          </div>
+        </div>
+      </div>
+      <div class="grid-table">
+          <table >
+            <tr style="background:#D4B7EB !important;">
+              <th width="25%" align="left">Unit </th>
+              <th width="25%" align="left">Contact Person</th>
+              <th width="25%" align="left">Contact No.</th>
+              <th width="25%" align="left">Email</th>
+            </tr>
+            <td style="height:50px">
+               Corporate Office - India
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Name" value="Hariharan"/>
+             </td>
+             
+             <td>
+            <input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210">
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Email" value="hariharan@domain.com"/>
+             </td>
+           
+            </tr>
+            <tr>
+             <td style="height:50px">
+               Regional Office - North
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Name" value="SriShanth"/>
+             </td>
+            
+             <td>
+              <input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210">
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Email" value="srishanth@domain.com"/>
+             </td>
+             
+            </tr>
+            <tr>
+             <td style="height:50px">
+              Regional Office - South
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Name" value="Sivaram"/>
+             </td>
+            
+             <td>
+              <input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210">
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Email" value="sivaram@domain.com"/>
+             </td>
+             
+            </tr>
+            <tr>
+             <td style="height:50px">
+              Branch Office - Madurai
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Name" value="Ramakrishnan"/>
+             </td>
+             
+             <td>
+              <input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210">
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Email" value="ramakrishna@domain.com"/>
+             </td>
+            
+            </tr>
+            <tr>
+             <td style="height:50px">
+              Branch Office - Bangalore
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Name" value="Ramya"/>
+             </td>
+            
+             <td>
+              <input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210">
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Email" value="ramya@domain.com"/>
+             </td>
+           
+            </tr>
+            <tr>
+             <td style="height:50px">
+               Branch Office - Chennai
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Name" value="Ratheesh"/>
+             </td>
+          
+             <td>
+              <input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210">
+             </td>
+             <td>
+              <input type="text" class="input-box" placeholder="Email" value="ratheesh@domain.com"/>
+             </td>
+             
+            </tr>
+          </table>
+        </div> 
+        <div class="submit-button-container">
+          <input type="submit" name="cancel" value="Cancel" onclick="location.href='/client/list'" class="btn-cancel">
+          &nbsp;&nbsp;
+          <input type="submit" name="cancel" value="Submit" class="btn-submit">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

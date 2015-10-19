@@ -221,7 +221,7 @@ img, object {
 }
 .top-nav-section p {
 	color: #333;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	text-align: right;
 	width: 100%;
 	padding-bottom: 1em;
@@ -240,7 +240,7 @@ img, object {
 	list-style-type: none;
 	display: inline-block;
 	margin-left: 1.5em;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #333;
 	position: relative;
 }
@@ -338,7 +338,7 @@ img, object {
 	background: #fff url(../images/icon-filter.png) no-repeat 0.3em center;
 	padding-left: 2em;
 	color: #333;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	font-weight: normal;
 	border: 1px solid #fc9b01;
 
@@ -374,7 +374,7 @@ img, object {
 	background: #fff url(../images/icon-search.png) no-repeat 0.3em center;
 	padding-left: 2em;
 	color: #333;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	font-weight: normal;
 	border: 1px solid #fc9b01;
 
@@ -388,7 +388,7 @@ img, object {
 	background: #fc9b01;
 	cursor: pointer;
 	color: #333;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	text-align: center;
 	border: none;
 	outline: none;
@@ -406,7 +406,7 @@ img, object {
 	background: #fc9b01 url(../images/icon-plus.png) no-repeat 0.5em center;
 	cursor: pointer;
 	color: #333;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	text-align: left;
 	border: none;
 	outline: none;
@@ -434,7 +434,7 @@ img, object {
 	padding-left:0.5em;
 }
 .grid-table table tr td {
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #333;
 	height: 2.3em;
 	vertical-align: middle;
@@ -467,7 +467,7 @@ img, object {
 .current-records-count {
 	float: left;
 	color: #fc9b01;
-	font-size: 0.8em;
+	font-size: 0.813em;
 }
 .pagination-container {
 	float: right;
@@ -478,7 +478,7 @@ img, object {
 	border: 1px solid #c7c7c7;
 	color: #666;
 	text-decoration: none;
-	font-size: 0.8em;
+	font-size: 0.813em;
 }
 .pagination-container span.prev.disabled a, .pagination-container span.prev.disabled a:hover {
 	background: #f1f2f2;
@@ -486,7 +486,7 @@ img, object {
 	border: 1px solid #c7c7c7;
 	color: #999;
 	text-decoration: none;
-	font-size: 0.8em;
+	font-size: 0.813em;
 }
 .pagination-container span.next a, .pagination-container span.next a:hover {
 	background: #f1f2f2;
@@ -494,7 +494,7 @@ img, object {
 	border: 1px solid #c7c7c7;
 	color: #666;
 	text-decoration: none;
-	font-size: 0.8em;
+	font-size: 0.813em;
 }
 .pagination-container span.next.disabled a, .pagination-container span.next.disabled a:hover {
 	background: #f1f2f2;
@@ -502,7 +502,7 @@ img, object {
 	border: 1px solid #c7c7c7;
 	color: #999;
 	text-decoration: none;
-	font-size: 0.8em;
+	font-size: 0.813em;
 }
 .pagination-container span.page a {
 	background: #fff;
@@ -510,7 +510,7 @@ img, object {
 	border: 1px solid #fff;
 	color: #666;
 	text-decoration: none;
-	font-size: 0.8em;
+	font-size: 0.813em;
 }
 .pagination-container span.page a:hover {
 	background: #f1f2f2;
@@ -518,7 +518,7 @@ img, object {
 	border: 1px solid #c7c7c7;
 	color: #666;
 	text-decoration: none;
-	font-size: 0.8em;
+	font-size: 0.813em;
 }
 .pagination-container span.page.active a, .pagination-container span.page.active a:hover {
 	background: #f1f2f2;
@@ -526,7 +526,7 @@ img, object {
 	border: 1px solid #c7c7c7;
 	color: #666;
 	text-decoration: none;
-	font-size: 0.8em;
+	font-size: 0.813em;
 }
 
 .add-container {
@@ -583,7 +583,7 @@ img, object {
 	padding-bottom: 0.7em;
 }
 .field-label {
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #333;
 	text-align: left;
 	/*width: 45%;*/
@@ -601,7 +601,7 @@ img, object {
 	line-height:0.8em;
 }
 .input-label {
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #333;
 	text-align: left;
 	/*width: 45%;*/
@@ -610,6 +610,7 @@ img, object {
 	float: left;
 	line-height:1.3em;
 	padding-top: auto;
+
 }
 .input-box {
 	width: 85%;
@@ -621,12 +622,13 @@ img, object {
 	-webkit-border-radius: 0.3em;
 	-moz-border-radius: 0.3em;
 	border-radius: 0.3em;
+	font: normal 0.813em/100% Verdana, Tahoma, sans-serif;
 }
 textarea.input-box{
 	height: 80px;
 }
 .single-column-field-label {
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #333;
 	text-align: right;
 	width: 35%;
@@ -637,7 +639,7 @@ textarea.input-box{
 .single-column-field-input-label {
 	width: 50%;
 	float: left;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #333;
 	text-align: left;
 	padding-top: 0.6em;
@@ -658,7 +660,7 @@ textarea.input-box{
 .btn-cancel, .btn-submit {
 	padding: 0.4em 1em;
 	background: #662d91;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #fff;
 	cursor: pointer;
 	border: none;
@@ -734,7 +736,7 @@ textarea.input-box{
 	color: #ccc;
 	text-align: center;
 	line-height: 60px;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	font-weight: normal;
 	position: relative;
 	z-index: 2;
@@ -778,7 +780,6 @@ textarea.input-box{
  	color: #000;
 }
 .btn-save {
-	width: 15%;
 	height: 30px;
 	display: inline-block;
 	background: #fc9b01;
@@ -850,7 +851,7 @@ textarea.input-box{
 	height: 20px;
 	vertical-align: middle;
 	color: #000;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	font-weight: bold;
 	padding-left: 0.5em;
 	border-right: 1px solid #aaa;
@@ -862,7 +863,7 @@ textarea.input-box{
 	padding-top: 0.2em;
 	padding-bottom: 0.2em;
 	border-right: 1px solid #ccc;
-	font-size: 0.8em;
+	font-size: 0.813em;
 
 }
 .form-container-grid-table table tr td ul {
@@ -906,7 +907,7 @@ textarea.input-box{
 	padding-left:0.5em;
 }
 .index-table table tr td {
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #333;
 	height: 2.5em;
 	vertical-align: middle;
@@ -946,7 +947,7 @@ textarea.input-box{
 .archive-header span {
 	background: #8658a8;
 	color: #fff;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	padding: 0.5em 1em;
 	display: inline-block;
 	margin-right: 0.5em;
@@ -1033,13 +1034,13 @@ textarea.input-box{
 }
 .index-details-content h2, .archive-details-content h2 {
 	font-weight: bold;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #662d91;
 	padding-bottom: 1em;
 	padding-top: 1em;
 }
 .index-details-content p, .archive-details-content p {
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #333;
 	padding-bottom: 1em;
 }
@@ -1048,7 +1049,7 @@ textarea.input-box{
 }
 .index-details-content ul li, .archive-details-content ul li {
 	list-style-type: none;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	font-weight: 400;
 	padding-bottom: 0.8em;
 }
@@ -1144,7 +1145,7 @@ textarea.input-box{
 .managetask td
 {
 	padding:7px 5px;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	line-height: 17px;
 }
 .active1
@@ -1164,7 +1165,7 @@ textarea.input-box{
 	height: 20px;
 	vertical-align: middle;
 	color: #000;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	font-weight: bold;
 	padding-left: 0.5em;
 	border-right: 1px solid #aaa;
@@ -1176,7 +1177,7 @@ textarea.input-box{
 	padding-top: 0.2em;
 	padding-bottom: 0.2em;
 	border-right: 1px solid #ccc;
-	font-size: 0.8em;
+	font-size: 0.813em;
 
 }
 .form-container-grid-table-sm table tr td ul {
@@ -1192,8 +1193,8 @@ textarea.input-box{
 	padding-right: 0.3em;
 }
 .form-container-grid-table-sm table tr td ul li.active {
-	background: #f1e9f6 url(../images/tick.png) no-repeat right center;
-	background-size: 1.3em;
+	background: #f1e9f6 url(../images/tick1.png) no-repeat right center;
+	
 	border-right: 3px solid #f1e9f6
 
 }
@@ -1265,6 +1266,13 @@ textarea.heightsmall{ height: 40px; }
 	font-weight:bold;
 	text-align:center;
 }
+.grid-table-rpt h3 {
+	color:#333;
+	background-color:#FFF;
+	padding-left: 0.3em;
+	font-weight:bold;
+	text-align:center;
+}
 .grid-table-rpt table{
 	width: 100%;
 }
@@ -1272,7 +1280,7 @@ textarea.heightsmall{ height: 40px; }
 	background: #fff;
 	/*height: 2.5em;*/
 	vertical-align: middle;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #000;
 	padding-left:0.5em;
 	font-weight:bold;
@@ -1284,7 +1292,7 @@ textarea.heightsmall{ height: 40px; }
 	padding:0.6em 0 0.6em 0.8em !important;
 }
 .grid-table-rpt table tr td {
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #333;
 	height: 2.3em;
 	vertical-align: middle;
@@ -1340,4 +1348,32 @@ textarea.heightsmall{ height: 40px; }
 	margin:3px 10px 3px 7px; 
 }
 
-/*Reports*/
+.heading
+{
+	font-weight: bold;
+	background-color:#eee; 
+	color:#000000; 
+	font-size: 0.813em;
+	float:left; 
+	margin-left: 2em;
+	padding:0.5em 1em;
+	margin-left:0px; 
+	box-shadow: inset 0 0 0 1px rgba(53,86,129, 0.4), inset 0 0 5px rgba(53,86,129, 0.5), inset -285px 0 35px white;
+	border-radius: 0 5px 0 5px;
+	margin-bottom: 0.4em;
+}
+.valignmiddle {
+	vertical-align: middle;
+}
+.countrycode
+{
+	width: 18% !important;
+}
+.areacode
+{
+	width: 18% !important;
+}
+.mobile
+{
+	width: 45% !important;
+}

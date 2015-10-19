@@ -1,0 +1,197 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<script type="text/javascript">
+        $(document).ready(function () {
+            window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
+        });
+</script>
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Statutory Mapping Report<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Country<span class="mandatory">*</span>:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="countryid" value="India" placeholder="Type Service Provider">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Geography Level:</div>
+          <div class="field-input">
+             <select class="input-box">
+                <option>Region</option>
+                <option>State</option>
+                <option>Union Territory</option>
+                <option selected="selected">District</option>
+                <option>Corporation</option>
+                <option>Municipality</option>
+                <option>Town</option>
+                <option>Panchayat</option>
+                </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label"> Type:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="typeid" value="" autofocus >
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">Domain<span class="mandatory">*</span>:</div>
+          <div class="field-input">
+            <select multiple="multiple" style="font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+              <option value="Labour Law" selected>Labour Law</option>
+              <option value="Industrial Law" selected>Industrial Law</option>
+              <option value="Finance">Finance</option>
+            </select>
+          </div>
+        </div>
+       <div class="input-row">
+          <div class="field-label">Location:<span class="mandatory">*</span></div>
+          <div class="field-input">
+          <input type="text" class="input-box icon-autocomplete" placeholder="" value="Madurai">
+          </div>
+        </div>
+         <div class="input-row">
+          <div class="field-label"> Applicability:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="typeid" value="" autofocus >
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+        <input type="submit" name="cancel" value="Export" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table-rpt">
+        <h1>Statutory Mapping Report</h1>
+         <h2>India >> South >> Tamil Nadu >> Madurai</h2>
+          <h3>Industrial Law</h3>
+         <div class="heading">The Batteries Act</div>
+        <div class="clearfix"></div>
+        <table style="border:dotted 1px #ccc;">
+          <tr>
+            <th width="3%" align="center">#</th>
+            <th width="10%" align="left">Country</th>
+            <th width="9%" align="left">Domain</th>
+            <th width="25%" align="left">Statutory</th>
+            <th align="left">Statutory Date</th>
+            <th width="10%" align="left">Type</th>
+            <th width="10%" align="left">Applicability</th>
+            <th width="20%" align="left">Applicable Location</th>
+          </tr>
+          <tr>
+            <td align="center">1</td>
+            <td>India</td>
+            <td>Labour Law</td>
+            <td>Gratuity Act, 1972 >> Tamil Nadu Gratuity Act, 1972 >> Rule 3</td>
+               <td>05-Sep-2015</td>
+            <td>ALL</td>
+            <td>Central</td>
+            <td>South >> Tamil Nadu >> Madurai</td>
+          </tr>
+          <tr>
+            <th align="center">&nbsp;</th>
+            <th align="left">Compliance Name</th>
+            <th align="left">Compliance Type</th>
+            <th align="left">Compliance Description</th>
+            <th align="left">Repeats</th>
+            <th align="left">Form No</th>
+            <th align="left">Trigger Before</th>
+          </tr>
+          <tr>
+            <td align="center">i)</td>
+            <td>FORM VIII - Notice of Opening</td>
+            <td>One Time</td>
+            <td>Within 30 days of opening a branch</td>
+
+            <td>-</td>
+            <td>Form A</td>
+            <td>20 Days</td>
+          </tr>
+        </table>
+        <table style="border:dotted 1px #ccc;">
+          <tr>
+            <th width="3%" align="center">#</th>
+            <th width="10%" align="left">Country</th>
+            <th width="9%" align="left">Domain</th>
+            <th width="25%" align="left">Statutory</th>
+            <th align="left">Statutory Date</th>
+            <th width="10%" align="left">Type</th>
+            <th width="10%" align="left">Applicability</th>
+            <th width="20%" align="left">Applicable Location</th>
+          </tr>
+          <tr>
+            <td align="center">2</td>
+            <td>India</td>
+            <td>Industrial Law</td>
+            <td>The Batteries (Management & Handling) Rules, 2001 >> Rule 4 >> iii</td>
+            <td>10-Sep-2015</td>
+            <td>ALL</td>
+            <td>Central</td>
+            <td>South >> Tamil Nadu >> Madurai</td>
+          </tr>
+          <tr>
+            <th align="center">&nbsp;</th>
+            <th align="left">Compliance Name</th>
+            <th align="left">Compliance Type</th>
+            <th align="left">Compliance Description</th>
+            <th align="left">Repeats</th>
+            <th align="left">Form No</th>
+            <th align="left">Trigger Before</th>
+          </tr>
+          <tr>
+            <td align="center">i)</td>
+            <td>FORM I - Half yearly returns Submission</td>
+            <td>Recurring</td>
+            <td>Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned</td>
+            <td>Every 6 months</td>
+            <td>Form I</td>
+            <td>30 Days</td>
+          </tr>
+          <tr>
+            <td align="center">iI)</td>
+            <td>FORM II - Registration</td>
+            <td>One Time</td>
+            <td>Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
+            <td>-</td>
+            <td>Form II</td>
+            <td>20 Days</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(function(){
+  $('#countryid').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['India', 'Srilanka', 'Singapore', 'Malaysia', 'US', 'England'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   $('#typeid').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['ALL', 'Office', 'Factory', 'Plantation', 'Contractor', 'S & E', 'Mines'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   
+});
+</script> 
+{% endblock %}

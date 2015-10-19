@@ -1,105 +1,138 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+<script type="text/javascript">
+$(function() {
+  $('.editstat').click(function(){    
+      $('.showtextbox').show();
+      $('.editstat').hide();
+      $('.editstat1').hide();
+      
+  });
+  $('.closebtn').click(function(){    
+      $('.showtextbox').hide();
+      $('.editstat').show();
+      $('.editstat1').show();
+  });
+
+});
+</script>
 <div class="content-container width60">
   <div class="content-area">
-    <h1>Statutories</h1>
-    <div class="filters-and-search">
-      <div class="btn-add" onclick="location.href='/statutory/create'" formtarget="_self">Add</div>
-    </div>
-    <div class="clearfix"></div>
-    <div class="grid-table">
+    <div class="add-container">
+      <div class="add-container-heading">Edit Statutory<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Country:<span class="mandatory">*</span></div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="India" placeholder="Enter Country" />
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">Domain:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" value="Industrial Law" placeholder="Enter Domain" />
+          </div>
+        </div>      
+      </div>     
+        <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+      
+       
+      <div style="margin-left:15%;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>
+           
+         
+                        
+          
+          </div>
+          <div style="float:right; margin-right:20%;">
+             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;">Industrial Law</span> </div>
+          </div>
+        </div>
+      <div class="grid-table">
       <table>
+    
         <tr>
-          <th width="5%">#</th>
-          <th width="25%" align="left">Country</th>
-          <th width="20%" align="left">Statutory Level</th>
-          <th width="30%" align="left">Name</th>
-          <th width="10%" align="center">Edit</th>
-          <th width="10%" align="center">Status</th>
+          <th width="5%"  style="background:#d4b7eb; color:#000; font-weight:bold;">#</th>
+          
+          <th width="69%" style="background:#d4b7eb; color:#000;font-weight:bold;" align="left">Statutory</th>          
+          <th width="13%" style="background:#d4b7eb; color:#000;font-weight:bold;" align="center">Edit</th>
+          <th width="13%" style="background:#d4b7eb; color:#000;font-weight:bold;" align="center">Status</th>
         </tr>
+
         <tr>
           <td>&nbsp;</td>
-           <td><input type="text" name="country-name" class="filter-text-box"></td>
+           
           <td><input type="text" name="location-name" class="filter-text-box"></td>
-          <td><input type="text" name="district-name" class="filter-text-box"></td>
+          
           <td>&nbsp;</td>
           <td>&nbsp;</td>
         </tr>
+        <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%" colspan="5">Batteries Act<span><img src="/images/chevron_black_down.png"></span></th>
+            </tr>
         <tr>
           <td align="center">1</td>
-           <td>India</td>
-          <td>Act</td>
-          <td>Shop and Establishments Act</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+          
+          <td>Batteries Act <img src="/images/right_arrow.png"> Section 1  <img src="/images/right_arrow.png"> Rule 5(i)</td>
+          <td align="center" class="editstat"><img src="/images/icon-edit.png" id="editid" title="Edit Rule 5(i)"/></td>
+          <td align="center" class="editstat1"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+          <td colspan="2" class="showtextbox" style="display:none;"><input type="text" class="input-box" value="Rule 5(i)" style="width:50%;" />&nbsp;&nbsp;<input type="button" class="updatetextbox" value="Update">
+          <img src="/images/delete.png" class="closebtn" width="12"></td>
+          
+        </tr>
+   
+        <tr>
+          <td align="center">2</td>
+                   
+          <td>Batteries Act <img src="/images/right_arrow.png"> Rule 4(i) </td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" title="Rule 4(i)" /></td>
           <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
         </tr>
         <tr>
-          <td align="center">2</td>
-          <td>India</td>
-          <td>Section</td>
-          <td>Sec 13</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
-        </tr>
-        <tr>
           <td align="center">3</td>
-          <td>India</td>
-          <td>Rule/Scheme/Regulation</td>
-          <td>Rule 4(i)</td>
+          
+         
+          <td>Batteries Act <img src="/images/right_arrow.png"> Rule 4(i) <img src="/images/right_arrow.png"> Clause 1</td>
           <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
           <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
         </tr>
         <tr>
           <td align="center">4</td>
-          <td>India</td>
-          <td>Act</td>
-          <td>Batteries Act</td>
+         
+          
+          <td>Batteries Act <img src="/images/right_arrow.png"> Section 1</td>
           <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
           <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
         </tr>
         <tr>
           <td align="center">5</td>
-          <td>India</td>
-          <td>Act</td>
-          <td>Companies Act</td>
+         
+          
+          <td>Batteries Act <img src="/images/right_arrow.png"> Section 25</td>
           <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
           <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
         </tr>
         <tr>
           <td align="center">6</td>
-          <td>India</td>
-          <td>Section</td>
-          <td>Section 25</td>
+
+          
+          <td>Batteries Act <img src="/images/right_arrow.png"> Rule 3 <img src="/images/right_arrow.png"> Sub Rule1</td>
           <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
           <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
         </tr>
-        <tr>
-          <td align="center">7</td>
-          <td>India</td>
-          <td>Sub Section</td>
-          <td>Frequency - Annually</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-        </tr>
-        <tr>
-          <td align="center">8</td>
-          <td>Singapore</td>
-          <td>Act</td>
-          <td>The Payment of Gratuity Act 1972</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-        </tr>
-        <tr>
-          <td align="center">9</td>
-          <td>Singapore</td>
-          <td>Section</td>
-          <td>Section 12</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-        </tr>
+       <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%" colspan="5">Payment of Gratuity Act <span><img src="/images/chevron_black_right.png"></span></th>
+            </tr>
+            
       </table>
     </div>
-    
+    </div>
   </div>
 </div>
 {% endblock %}

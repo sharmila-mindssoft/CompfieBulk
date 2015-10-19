@@ -1,71 +1,62 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
-<div class="content-container width50">
+<div class="content-container width70">
         <div class="content-area">
           <div class="add-container">
-            <div class="add-container-heading">Service provider creation<span class="error-message"></span></div>
+            <div class="add-container-heading">Service Provider Creation<span class="error-message"></span></div>
             <div class="input-row-left">
               <div class="input-row">
-                <div class="field-label">Service provider:<span class="mandatory">*</span></div>
+                <div class="field-label">Service Provider:<span class="mandatory">*</span></div>
                 <div class="field-input"><input type="text" class="input-box" value="ART Solutions"></div>
               </div>
-              <div class="input-row">
-                <div class="field-label">Mobile no.:<span class="mandatory">*</span></div>
-                <div class="field-input"><input type="text" class="input-box" value="04524325856"></div>
+                 <div class="input-row" style="padding-bottom:0px;">
+                <div class="field-label">Contact No.:<span class="mandatory">*</span></div>
+                <div class="field-input"><input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210"></div>
               </div>
               <div class="input-row">
-                <div class="field-label">Address:</div>
-                <div class="field-input"><textarea class="input-box" style="height:50px;">152, South Cross Street</textarea></div>
+                <div class="field-label">&nbsp;</div>
+                <div class="field-input">
+                <span style="font-size:10px;">[+91 452 1234567]</span>
+                </div>
               </div>
-              <div class="input-row">
-                <div class="field-label">City:</div>
-                <div class="field-input"><input type="text" class="input-box icon-autocomplete" value="Madurai"></div>
-              </div>
-              <div class="input-row">
-                <div class="field-label">Contract from:<span class="mandatory">*</span></div>
-                <div class="field-input"><input type="text" class="input-box" value="12-07-2015"></div>
+                  
+              <div class="input-row" style="margin-top:10px;">
+                <div class="field-label">Contract From:<span class="mandatory">*</span></div>
+                <div class="field-input"><input type="text" class="input-box" value="12-Jul-2015"></div>
               </div>
             </div>
             <div class="input-row-right">
               <div class="input-row">
-                <div class="field-label">Contact person:<span class="mandatory">*</span></div>
+                <div class="field-label">Contact Person:<span class="mandatory">*</span></div>
                 <div class="field-input"><input type="text" class="input-box" value="Ram Kumar"></div>
               </div>
-              <div class="input-row">
-                <div class="field-label">Email ID:<span class="mandatory">*</span></div>
-                <div class="field-input"><input type="text" class="input-box" value="artsolution@gmail.com">
-                <span style="font-size:10px;">[This will be used as the username for user account.]</span></div>
-              </div>
-              
-              <div class="input-row">
-                <div class="field-label">State:</div>
-                <div class="field-input"><input type="text" class="input-box icon-autocomplete" value="Tamil Nadu"></div>
-              </div>
-              <div class="input-row">
-                <div class="field-label">Country:</div>
-                <div class="field-input"><input type="text" class="input-box icon-autocomplete" value="India"></div>
-              </div>
-              <div class="input-row">
-                <div class="field-label">Contract to:<span class="mandatory">*</span></div>
-                <div class="field-input"><input type="text" class="input-box" value="12-07-2016">
+                <div class="input-row">
+                <div class="field-label">Address:</div>
+                <div class="field-input"><textarea class="input-box" style="height:50px;">152, South Cross Street</textarea></div>
+              </div>      
+             
+              <div class="input-row" style="margin-top:10px;">
+                <div class="field-label">Contract To:<span class="mandatory">*</span></div>
+                <div class="field-input"><input type="text" class="input-box" value="12-Jul-2016">
                 </div>
               </div>
             </div>
-            <!--<div class="add-container-heading">Login Details<span class="error-message"></span></div>
+           <div class="add-container-heading">Login Credentials<span class="error-message"></span></div>
             <div class="input-row-left">
               <div class="input-row">
-                  <div class="field-label">Username</div>
-                  <div class="field-input"><input type="text" class="input-box" value="artraj"></div>
-                </div>
-              
+                <div class="field-label">Email ID:<span class="mandatory">*</span></div>
+                <div class="field-input" style="width:61%;"><input type="text" class="input-box" value="artsolution@gmail.com" style="width:77%;"><br>
+                <span style="font-size:10px;">[&#9658;This will be used as the username for user account.<br>&#9658;
+                Password will be auto-generated]</span></div>
+              </div>
             </div>
             <div class="input-row-right">
-              <div class="input-row">
+            <!--   <div class="input-row">
                   <div class="field-label">Password</div>
                   <div class="field-input"><input type="password" class="input-box" value="123456"></div>
-                </div>
+              </div> -->
                 
-            </div>-->
+            </div>
             <div class="submit-button-container">
               <input type="submit" name="cancel" value="Cancel" onclick="location.href='/report/service_provider'" class="btn-cancel">&nbsp;&nbsp;
               <input type="submit" name="cancel" value="Submit" class="btn-submit">
@@ -74,53 +65,3 @@
         </div>
       </div>
 {% endblock %}
-  <table cellpadding="0" cellspacing="0" width="600px">
-    <tr>
-      <th colspan="4">Service provider creation</th>
-    </tr>
-    <tr>
-    <td>Service provider name:</td>
-    <td><input type="text" value="ART Solutions" /></td>
-    <td>Contact Person:</td>
-      <td><input type="text" autocomplete="on" value="Ram Kumar" /></td>
-    </tr>
-    <tr>
-      <td>Contact no.:</td>
-      <td><input type="text" autocomplete="on" value="04524325856" /></td>
-      <td>Email ID:</td>
-      <td><input type="text" autocomplete="on" value="artsolution@gmail.com" /></td>
-    </tr>
-    <tr>
-      <td>Address 1:</td>
-      <td><input type="text" value="152, South Cross Street" /></td>
-      <td>Address 2:</td>
-      <td><input type="text" value="Anna Nagar" /></td>
-    </tr>
-    <tr>
-      <td>City:</td>
-      <td><input type="text" autocomplete="on" value="Madurai" /></td>
-      <td>State:</td>
-      <td><input type="text" autocomplete="on" value="Tamil Nadu" /></td>
-    </tr>
-    <tr>
-      <td>Country:</td>
-      <td><input type="text" autocomplete="on" value="India" /></td>
-      <td>Contract Duration(Years):</td>
-      <td><input type="number" autocomplete="on" value="2" /></td>
-    </tr>
-    <tr>
-    <th colspan="4">Login Details</th>
-    </tr>
-    <tr>
-      <td>Username:</td>
-      <td><input type="text" autocomplete="on" value="artraj" /></td>
-      <td>Password:</td>
-      <td><input type="password" autocomplete="on" value="123456" /></td>
-    </tr>
-    <tr>
-    <td colspan="4" align="center"><input type="button" value="Save" /></td>
-    </tr>
-  </table>
-</div>
-</body>
-</html>

@@ -3,105 +3,197 @@
 <div class="content-container width75">
   <div class="content-area">
     <div class="add-container">
-      <div class="add-container-heading">Userwise Task Details List<span class="error-message"><!----></span></div>
+      <div class="add-container-heading">Userwise Compliance Details List<span class="error-message"><!----></span></div>
       <div class="input-row-left">
         <div class="input-row">
-          <div class="field-label">Employee:</div>
+          <div class="field-label">User:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" placeholder="Type employee name" />
+            <input type="text" class="input-box icon-autocomplete" placeholder="Type employee name" value="Sivaraman" />
+          </div>
+        </div>
+         <div class="input-row">
+          <div class="field-label">Ageing:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" placeholder="" />
+          </div>
+        </div>
+         <div class="input-row">
+          <div class="field-label">From:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="fromdate" placeholder="dd-Mon-yyyy" value="" />
           </div>
         </div>
       </div>
       <div class="input-row-right">
         <div class="input-row">
-          <div class="field-label">Task:</div>
+          <div class="field-label">Compliance:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="taskname" autofocus placeholder="Type Task Name">
+            <input type="text" class="input-box icon-autocomplete" id="taskname" autofocus placeholder="Type Compliance Name">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Status:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="status" autofocus placeholder="Type Status">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">To:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="todate" autofocus placeholder="dd-Mon-yyyy">
           </div>
         </div>
       </div>
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Show" class="btn-submit">
-         <input type="submit" name="cancel" value="Export to CSV" class="btn-submit">
+         <input type="submit" name="cancel" value="Export" class="btn-submit">
       </div>
       <div class="clearfix"></div>
       <div class="grid-table-rpt">
-      <h1>Userwise Task Details</h1>
-      <div>
-          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
-            <div style="margin-left:10px; font-size:0.8em;">Employee :<span style="margin-left:10px; font-weight:bold;">Rajaram</span> </div>
-          </div>
-          <div style="float:right; margin-right:30%;">
-            <div style="margin-left:10px; font-size:0.8em;">&nbsp;<span style="margin-left:10px; font-weight:bold;">&nbsp;</span> </div>
-          </div>
-        </div>
-        <table>
+      <h1>Userwise Compliance Details</h1>
+    <div class="heading">User: Sivaraman</div>
+         <table style="border:1px dotted #CCCCCC;">
           <tr align="left">
-            <th width="3%" align="center" class="header-bg">#</th>
-            <th class="header-bg">Compliance Name</th>
-            <th class="header-bg">Task Type</th>
-            <th class="header-bg">Due date </th>
-            <th class="header-bg">Completion Date</th>
-            <th class="header-bg">Status</th>
-            <th class="header-bg">Form</th>
-            <th class="header-bg">Format</th>
-            <th class="header-bg">Document</th>
-            <th class="header-bg">Document Date</th>
-          </tr>
-          <tr>
-            <td colspan="9"><span width="250px" style="background-color:#eee; color:#000000; font-size: 0.8em; float:left; padding:5px 5px; margin-left:0px; box-shadow: inset 0 0 0 1px rgba(53,86,129, 0.4), inset 0 0 5px rgba(53,86,129, 0.5), inset -285px 0 35px white; border-radius: 0 5px 0 5px;">The Tamilnadu Shops and Commercial Establishments Act - 1947 </span></td>
+            <th width="3%" align="center" >#</th>
+            <th >Compliance Name</th>
+            <th >Compliance Type</th>
+           
+            <th >Due Date </th>
+            <th >Format</th>
+            <th >Statutory Date</th>
+             <th >Trigger Before</th>
+
           </tr>
           <tr>
             <td align="center">1</td>
-            <td>Notice of Opening</td>
+            <td  width="25%">FORM I - Half yearly returns Submission</td>
             <td>One Time</td>
-            <td>23/08/2015</td>
-            <td>24/08/2015</td>
+            <td>25-Aug-2015</td>
+          
+            <td><a href="#">Download</a></td>
+            <td>23-Aug</td>
+            <td>10 Days</td>
+          </tr>
+          <tr>
+          <th></th>
+             <th align="left">Assign Date</th>
+            <th align="left">Upload Date</th>
+            <th align="left">Status</th>
+           
+            
+            <th align="left">Document</th>
+            <th align="left">Document Date</th>
+            <th align="left">Ageing</th>
+          </tr>
+           <tr>
+            <td align="center"></td>
+            <td>20-Aug-2015</td>
+            <td>24-Aug-2015</td>
             <td>Complied</td>
-            <td>Form A</td>
             <td><a href="#">Download</a></td>
-            <td><a href="#">Download</a></td>
-            <td>23/08/2015</td>
+            
+            <td>24-Aug-2015</td>
+            <td>-</td>
+          </tr>
+
+
+           <tr align="left" style="border-top:1px dashed #ccc;">
+            <th width="3%" align="center" >#</th>
+            <th >Compliance Name</th>
+            <th  >Compliance Type</th>
+           
+            <th >Due Date </th>
+            <th >Format</th>
+            <th >Statutory Date</th>
+             <th >Trigger Before</th>
+
           </tr>
           <tr>
             <td align="center">2</td>
-            <td>FORM I Submission</td>
+            <td>FORM II - Registration</td>
             <td>Recurring</td>
-            <td>25/08/2015</td>
-            <td></td>
-            <td>Inprogress</td>
-            <td>Form I</td>
+           
+            <td>20-Aug-2015</td>
+           
             <td><a href="#">Download</a></td>
-            <td></td>
-            <td></td>
+          
+            <td>23-Aug</td>
+            <td>15 Days</td>
+          </tr>
+          <tr>
+              <th></th>
+             <th align="left">Assign Date</th>
+            <th align="left">Upload Date</th>
+            <th align="left">Status</th>
+           
+            
+            <th align="left">Document</th>
+            <th align="left">Document Date</th>
+            <th align="left">Ageing</th>
+          </tr>
+
+           <tr>
+            <td align="center"></td>
+            <td>20-Aug-2015</td>
+            <td>24-Aug-2015</td>
+            <td>Complied</td>
+            <td><a href="#">Download</a></td>
+            
+            <td>23-Aug-2015</td>
+            <td>-</td>
+          </tr>
+           </table>
+          
+          <table>
+           <tr align="left" >
+            <th width="3%" align="center" >#</th>
+            <th  width="25%">Compliance Name</th>
+            <th >Compliance Type</th>
+           
+            <th >Due Date </th>
+            <th >Format</th>
+            <th >Statutory Date</th>
+             <th >Trigger Before</th>
+
           </tr>
           <tr>
             <td align="center">3</td>
-            <td>FORM IV Submission</td>
+            <td>FORM III - Undertaking submission </td>
             <td>Recurring</td>
-            <td>29/08/2015</td>
-            <td>31/08/2015</td>
-            <td>Complied</td>
-            <td>Form IV</td>
+    
+            <td>25-Aug-2015</td>
+    
+    
             <td><a href="#">Download</a></td>
-            <td><a href="#">Download</a></td>
-            <td>30/08/2015</td>
+    
+            <td>20-Sep</td>
+             <td>10 Days</td>
+          </tr>
+            <tr>
+              <th></th>
+             <th align="left">Assign Date</th>
+            <th align="left">Upload Date</th>
+            <th align="left">Status</th>
+           
+            
+            <th align="left">Document</th>
+            <th align="left">Document Date</th>
+            <th align="left">Ageing</th>
           </tr>
           <tr>
-            <td colspan="9"><span width="250px" style="background-color:#eee; color:#000000; font-size: 0.8em; float:left; padding:5px 5px; margin-left:0px; box-shadow: inset 0 0 0 1px rgba(53,86,129, 0.4), inset 0 0 5px rgba(53,86,129, 0.5), inset -285px 0 35px white; border-radius: 0 5px 0 5px;">The Batteries Act - 2001</span></td>
-          </tr>
-          <tr>
-            <td align="center">1</td>
-            <td>FORM II Submission</td>
-            <td>Recurring</td>
-            <td>23/08/2015</td>
-            <td>24/08/2015</td>
+            <td align="center"></td>
+           
+           <td>23-Aug-2015</td>
+           
+            <td>31-Aug-2015</td>
             <td>Complied</td>
-            <td>Form II</td>
+           
             <td><a href="#">Download</a></td>
-            <td><a href="#">Download</a></td>
-            <td>23/08/2015</td>
+            <td>30-Aug-2015</td>
+             <td>-</td>
           </tr>
+         
+        
         </table>
       </div>
     </div>
@@ -113,7 +205,7 @@ $(function(){
       minChars: 1,
       source: function(term, suggest){
           term = term.toLowerCase();
-           var choices = ['FORM I Submission', 'FORM II Submission', 'FORM III Submission', 'FORM IV Submission', 'FORM V Submission', 'FORM VI Submission'];
+           var choices = ['FORM I - Half yearly returns Submission', 'FORM II - Registration', 'FORM III - Undertaking submission ', 'FORM IV - Dealer Registration', 'FORM V - Dealer Half yearly returns ', 'FORM VI - Recycler Registration and Review '];
           var suggestions = [];
           for (i=0;i<choices.length;i++)
               if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);

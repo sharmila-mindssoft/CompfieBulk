@@ -13,16 +13,16 @@
 	 background-color: #ffffa3;
     border: 1px solid #f1d031;
     color: #555;
--webkit-box-shadow: 0px 0px 18px -6px #333;
--moz-box-shadow: 0px 0px 18px -6px #333;
-box-shadow: 0px 0px 18px -6px #333;
+	-webkit-box-shadow: 0px 0px 18px -6px #333;
+	-moz-box-shadow: 0px 0px 18px -6px #333;
+	box-shadow: 0px 0px 18px -6px #333;
 }
 .tipso_style{
 cursor: pointer;
 }
 .tipso_content {
   	word-wrap: break-word;
-  	font-size: 0.8em !important;
+  	font-size: 0.813em !important;
 	line-height:15px;
 }
 

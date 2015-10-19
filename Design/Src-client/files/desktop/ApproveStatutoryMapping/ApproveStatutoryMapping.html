@@ -5,24 +5,31 @@
     <div class="add-container">
       <div class="add-container-heading">Approve Statutory Mapping<span class="error-message"></span></div>
       <div class="input-row-left">
-        <div class="input-row">
-          <div class="field-label">Domain:<span class="mandatory">*</span></div>
+       <div class="input-row">
+          <div class="field-label">Country:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="domainmapping" autofocus value="Labour Law" placeholder="Enter Domain Name">
+            <input type="text" class="input-box icon-autocomplete" id="statutorymapping" autofocus value="India">
           </div>
         </div>
+        
         <div class="input-row">
           <div class="field-label">Type:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="domainmapping" autofocus value="Factory" placeholder="Enter Type Name">
+            <input type="text" class="input-box icon-autocomplete" id="industrytype" autofocus value="Factory" placeholder="Enter Type Name">
           </div>
         </div>
       </div>
       <div class="input-row-right">
-        <div class="input-row">
-          <div class="field-label">Country:<span class="mandatory">*</span></div>
+       <div class="input-row">
+          <div class="field-label">Domain:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="statutorymapping" autofocus value="India">
+            <input type="text" class="input-box icon-autocomplete" id="domain" autofocus value="Labour Law" placeholder="Enter Domain Name">
+          </div>
+        </div>
+          <div class="input-row">
+          <div class="field-label">Applicability:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="applicability" autofocus value="Concurrent" placeholder="Enter Applicability">
           </div>
         </div>
       </div>
@@ -35,39 +42,38 @@
           <tr align="left">
             <th width="3%"><input type="checkbox" /></th>
             <th width="25%">Statutory</th>
-            <th width="15%">Task</th>
-            <th width="27%">Location</th>
-            <th width="18%">Action</th>
-            <th width="18%">Reason</th>
+            <th width="15%">Compliance</th>
+            <th width="27%">Location</th>            
+            <th width="18%">Remarks (If Rejected)</th>
           </tr>
           <tr>
             <td><input type="checkbox" checked="checked" /></td>
             <td><a href="#">Batteries Act >> Rule 4 >> FORM I</a></td>
-            <td>FORM I Submission</td>
+            <td>FORM I - Half yearly returns Submission</td>
             <td>South >> Tamil Nadu >> Chennai</td>
-          	<td><select class="input-box"><option selected="selected">Approve</option><option>Reject</option></select></td>
-          	<td>&nbsp;</td>
+          
+          <td><input type="text" class="input-box" placeholder="Enter Remarks" /></td>
           </tr>
           <tr>
             <td><input type="checkbox" /></td>
             <td><a href="#">Batteries Act >> Rule 4 >> FORM II</a></td>
-            <td>FORM II Submission</td>
+            <td>FORM II - Registration</td>
             <td>South >> Tamil Nadu >> Madurai</td>
-            <td><select class="input-box"><option>Approve</option><option selected="selected">Reject</option></select></td>
-          	<td><input type="text" class="input-box" placeholder="Enter reason" /></td>
+          	<td><input type="text" class="input-box" placeholder="Enter Remarks" /></td>
           </tr>
           <tr>
             <td><input type="checkbox" /></td>
             <td><a href="#">Batteries Act >> Rule 4 >> FORM III</a></td>
-            <td>FORM III Submission</td>
+            <td>FORM III - Undertaking submission </td>
             <td>South >> Tamil Nadu >> Madurai >> Aviyur</td>
-          	<td><select class="input-box"><option selected="selected">Approve</option><option>Reject</option></select></td>
-          	<td>&nbsp;</td>
+          
+          	<td><input type="text" class="input-box" placeholder="Enter Remarks" /></td>
           </tr>
         </table>
       </div>
       <div class="submit-button-container">
-        <input type="submit" name="cancel" value="Save" class="btn-submit">
+        <input type="submit" name="approve" value="Approve" class="btn-submit">
+        <input type="submit" name="reject" value="Reject" class="btn-submit">
       </div>
     </div>
   </div>

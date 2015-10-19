@@ -82,7 +82,7 @@
 $(document).ready(function(){
   $('#days').hide();
   $('#hours').show();
-  $("#trigger_every").hide();
+  $("#trigger_every").show();
   $("#summary").html("To Complete with 18 hours");
 })
 
@@ -94,12 +94,12 @@ $(function() {
       $('#days').show();
       $('#hours').hide();
       $("#trigger_every").show();
-      $("#summary").html("To Complete with in 3 days");
+      $("#summary").html("To Complete with in 2 days");
     }else if($(this).val()=="hour"){
       $('#days').hide();
       $('#hours').show();
-      $("#trigger_every").hide();
-      $("#summary").html("To Complete with in 18 hours");
+      $("#trigger_every").show();
+      $("#summary").html("To Complete with in 2 hours");
     } 
   });
 
@@ -138,10 +138,14 @@ $(function() {
   $('.repeatlabelday').click(function(){    
       $('.repeatbyday').show();
       $('.repeatbyendday').hide();
+    
   });
   $('.repeatlabelendday').click(function(){    
       $('.repeatbyday').hide();
       $('.repeatbyendday').show();
+      $('.repeatbyendday_stat_date1').hide();
+      $('.repeatbyendday_stat_date2').hide();
+      $('.repeatbyendday_stat_date').hide();      
   });
   $('.multipleinput').change(function() {
     if ($(this).is(':checked')) {
@@ -234,7 +238,7 @@ $(function() {
                       <li>
                         <input type="text" class="filter-text-box">
                       </li>
-                      <li >Central</li>
+                      <li class="active">Central</li>
                       <li >State</li>
                     </ul></td>
                 </tr>
@@ -250,9 +254,8 @@ $(function() {
                   <th width="16.66%">Rule Name</th>
                   <th width="16.66%">Section</th>
                   <th width="16.66%">Sub Section</th>
-                  
-                  
                 </tr>
+                <tr>
                 
                   <td><ul>
                       <li>
@@ -365,8 +368,7 @@ $(function() {
               </table>
             </div>
             <div class="clearfix"></div>
-            <div style="padding-top:3px;padding-bottom:5px"><input type="submit" class="btn-submit" value="Add" style="float:right;"/></div>
-            <br>
+            <div style="padding-top:3px;padding-bottom:5px;" align="center"><input type="submit" class="btn-submit" value="Add" /></div>
             <div class="grid-table">
               <table>
                 <tr align="left" style="height:2.0em;">
@@ -425,19 +427,14 @@ $(function() {
                     </select>
                   </div>
                 </div>
-                 <div class="input-row">
-                  <div class="field-label">Penal Description</div>
-                  <div class="field-input">
-                    <textarea class="input-box heightsmall">Imprisonment With Fine</textarea>
-                  </div>
-              </div>
+                
               
               </div>
               <div class="input-row-right">
               	 <div class="input-row">
                   <div class="field-label">Form No</div>
                   <div class="field-input">
-                     <input type="text" class="input-box"  value="Form A" >
+                     <input type="text" class="input-box"  value="FORM VIII" >
                   </div>
               </div>
               	    <div class="input-row">
@@ -446,24 +443,12 @@ $(function() {
                      <input type="file" class="input-box" >
                   </div>
               </div>
-                <div class="input-row">
-                  <div class="field-label">Authority</div>
+               <div class="input-row">
+                  <div class="field-label">Penal Description</div>
                   <div class="field-input">
-                    <input type="text" class="input-box" value="" placeholder="Authority">
+                    <textarea class="input-box heightsmall">Imprisonment With Fine</textarea>
                   </div>
-                </div>
-                <div class="input-row">
-                  <div class="field-label">Slab Rate</div>
-                  <div class="field-input">
-                    <input type="text" class="input-box">
-                  </div>
-                </div>
-                <div class="input-row">
-                  <div class="field-label">Penalty Rate</div>
-                  <div class="field-input">
-                    <input type="text" class="input-box">
-                  </div>
-                </div>
+              </div>
               </div>
  
 </section>
@@ -598,8 +583,8 @@ $(function() {
                   
                   </div>
                 </fieldset>
-  </div>
-  <div class="occasional" id="Occasional" style="display:none;">
+			  </div>
+			  <div class="occasional" id="Occasional" style="display:none;">
 
                 <fieldset>
                   <legend>On Occurrence</legend>
@@ -608,64 +593,7 @@ $(function() {
                   <div class="input-row">
                     <div class="field-label">To Complete Within</div>
                     <div class="field-input">
-                      <select class="input-box occasional_hours" id="hours" style="width:55px;float:left;" >
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option >6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>15</option>
-                        <option>16</option>
-                        <option>17</option>
-                        <option selected="selected">18</option>
-                        <option>19</option>
-                        <option>20</option>
-                        <option>21</option>
-                        <option>22</option>
-                        <option>23</option>
-                      </select>
-                      <select class="input-box occasional_days" id="days" style="width:55px;float:left;" >
-                        <option>1</option>
-                        <option>2</option>
-                        <option  selected="selected">3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option >6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>15</option>
-                        <option>16</option>
-                        <option>17</option>
-                        <option>18</option>
-                        <option>19</option>
-                        <option>20</option>
-                        <option>21</option>
-                        <option>22</option>
-                        <option>23</option>
-                        <option>24</option>
-                        <option>25</option>
-                        <option>26</option>
-                        <option>27</option>
-                        <option>28</option>
-                        <option>29</option>
-                        <option>30</option>
-                        <option>31</option>
-                      </select>
+                      <input class="input-box " value="10" style="width:55px; float:left;">
                        <select class="input-box dayhour" style="width:100px; margin-left:10px; float:left;">
                         <option selected="selected" selected value="day">Days</option>
                         <option selected="selected" value="hour">Hours</option>
@@ -676,40 +604,11 @@ $(function() {
                     <div class="field-label">Trigger Every</div>
                     <div class="field-input">
                       <div class="field-input">
-                      <select class="input-box occasional_days" id="trigger_days" style="width:50px;float:left;" >
-                        <option  selected="selected">1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option >6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>15</option>
-                        <option>16</option>
-                        <option>17</option>
-                        <option>18</option>
-                        <option>19</option>
-                        <option>20</option>
-                        <option>21</option>
-                        <option>22</option>
-                        <option>23</option>
-                        <option>24</option>
-                        <option>25</option>
-                        <option>26</option>
-                        <option>27</option>
-                        <option>28</option>
-                        <option>29</option>
-                        <option>30</option>
-                        <option>31</option>
-                      </select>
-                         <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;margin-left:10px" >Days</span> </div>    
+                      <input class="input-box " id="trigger_days" style="width:50px;float:left;" value="2" >                        
+                         <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;margin-left:10px" id="days" >Day(s)</span>
+ 						<span style="font-size:0.8em; float:left; padding-top:5px;margin-left:10px" id="hours" >Hour(s)</span>
+                          </div> 
+                         
                         </div>
                     </div>
                   </div>
@@ -755,7 +654,7 @@ $(function() {
                         <option >Year(s)</option>
                       </select>
 <div class="clearfix"></div>
-                       <label style="font-size:0.8em; padding-top:5px;"><input type="checkbox" class="multipleinput" checked="checked" />Multiple Input Selection</label>
+                       <label style="font-size:0.8em; padding-top:5px;"></label>
                       </div>
                   </div>
                   <div class="input-row">
@@ -777,6 +676,10 @@ $(function() {
                  
                    </div>
               <div class="input-row-right">
+               <div class="input-row">
+                  <div class="field-label" style="width:100% !important;"><input type="checkbox" class="multipleinput" checked="checked" />Multiple Input Selection</div>
+                 
+                </div>
               <div class="multipleselect">
                <div class="input-row">
                     <div class="field-label">Statutory Date 1</div>
@@ -830,7 +733,7 @@ $(function() {
                         </select>
                       </span>
                        <span style="margin-left:0px; float:left; display:none;" class="repeatbyendday" >
-                           <select class="input-box" style="width:60px;">
+                           <select class="input-box repeatbyendday_stat_date1" style="width:60px;">
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>
@@ -939,7 +842,7 @@ $(function() {
                         </select>
                       </span>
                        <span style="margin-left:0px; float:left; display:none;" class="repeatbyendday" >
-                           <select class="input-box" style="width:60px;">
+                           <select class="input-box repeatbyendday_stat_date2" style="width:60px;" >
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>
@@ -1003,6 +906,109 @@ $(function() {
 
                 </div>
                 <div class="multipleselectnone" style="display:none;">
+                  <div class="input-row">
+                    <div class="field-label">Statutory Date </div>
+                    <div class="field-input">
+                   <span style="float:left;margin-left:0px;" class="repeatbyday">
+                        <select class="input-box repeatbyday_stat_date" style="width:60px;">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                        <option>14</option>
+                        <option>15</option>
+                        <option>16</option>
+                        <option>17</option>
+                        <option>18</option>
+                        <option>19</option>
+                        <option selected="selected">20</option>
+                        <option>21</option>
+                        <option>22</option>
+                        <option>23</option>
+                        <option>24</option>
+                        <option>25</option>
+                        <option>26</option>
+                        <option>27</option>
+                        <option>28</option>
+                        <option>29</option>
+                        <option>30</option>
+                      </select>
+                     <select class="input-box" style="width:60px;">
+                        <option>Jan</option>
+                        <option>Feb</option>
+                        <option>Mar</option>
+                        <option>Apr</option>
+                        <option>May</option>
+                        <option >Jun</option>
+                        <option>Jul</option>
+                        <option>Aug</option>
+                        <option>Sep</option>
+                        <option>Oct</option>
+                        <option>Nov</option>
+                        <option selected="selected">Dec</option>
+                        </select>
+                      </span>
+                       <span style="margin-left:0px; float:left; display:none;" class="repeatbyendday" >
+                           <select class="input-box repeatbyendday_stat_date" style="width:60px;">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                        <option>14</option>
+                        <option>15</option>
+                        <option>16</option>
+                        <option>17</option>
+                        <option>18</option>
+                        <option>19</option>
+                        <option >20</option>
+                        <option>21</option>
+                        <option>22</option>
+                        <option>23</option>
+                        <option>24</option>
+                        <option>25</option>
+                        <option>26</option>
+                        <option>27</option>
+                        <option>28</option>
+                        <option>29</option>
+                        <option selected="selected">30</option>
+                        <option>31</option>
+                      </select>
+                   <select class="input-box" style="width:60px;">
+                        <option>Jan</option>
+                        <option>Feb</option>
+                        <option>Mar</option>
+                        <option>Apr</option>
+                        <option>May</option>
+                        <option >Jun</option>
+                        <option>Jul</option>
+                        <option>Aug</option>
+                        <option>Sep</option>
+                        <option>Oct</option>
+                        <option>Nov</option>
+                        <option selected="selected">Dec</option>
+                        </select>
+                      </span>
+
+                    </div>
+                  </div>
                  <div class="input-row">
                     <div class="field-label">Trigger Before</div>
                     <div class="field-input"><input type="text" class="input-box" value="15" style="width:50px; float:left;">
@@ -1020,12 +1026,8 @@ $(function() {
             </div>
 
             <div class="clearfix"></div>
-            <table style="border:none;">
-                    <tr>
-                      <td align="center" style="border:none;"><input type="submit" name="submit" value="Add" class="btn-submit"></td>
-                    </tr>
-                  </table>
-            <br>
+            <div align="center" style="padding-top:5px; padding-bottom:5px;"><input type="submit" name="submit" value="Add" class="btn-submit">
+            </div>
              </div>
             <div class="grid-table">
               <table>
@@ -1033,16 +1035,15 @@ $(function() {
                   <th style="height:2em;" align="center">#</th>
                   <th style="height:2em;">Compliance Name</th>
                   <th style="height:2em;">Compliance Type</th>
-                  <th style="height:2em;">Authority</th>
+              
                   <th style="height:2em;">Repeats</th>
                   <th style="height:2em;" align="center">Edit</th>
                   <th align="center" style="padding-right:3px; height:2em;">Status</th>
                 </tr>
                 <tr>
                   <td align="center">1</td>
-                  <td>Notice of Opening</td>
-                  <td>One Time</td>
-                  <td>Authority 1</td>
+                  <td>FORM VIII - Notice of Opening</td>
+                  <td>One Time</td> 
                   <td>-</td>
                   <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
                   <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>

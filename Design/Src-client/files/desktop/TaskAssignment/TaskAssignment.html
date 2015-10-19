@@ -1,134 +1,360 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
 
+<style type="text/css">
+  .input-row, .single-column-input-row {
+    float: left;
+    padding-bottom: 0.58em;
+    width: 100%;
+}
+#navbar {
+  width:auto;
+ } 
+
+ #navbar #holder {
+  height:auto;
+  border-bottom:0px solid #000;
+  width:auto;  
+  font-size:12px;
+  padding-left:5px; 
+ } 
+
+ #navbar #holder ul {
+  list-style:none;
+  margin:0;
+  padding:0; 
+  font-size:12px;
+ } 
+
+ #navbar #holder ul li a { 
+  text-decoration:none;
+  float:left;
+  color:#5E5E5E;
+  font-size:12px;
+  border:0px solid #000;
+  border-bottom:none;
+  padding:10px;
+  width:auto;
+  text-align:center;
+  display:block;
+  background:#CCCCCC;
+  -moz-border-radius-topleft:5px;
+  -moz-border-radius-topright:5px;
+  -webkit-border-top-left-radius:5px;
+  -webkit-border-top-right-radius:5px; 
+ } 
+
+ #navbar #holder ul li a:hover {
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+ } 
+
+ #navbar #holder ul li a.onlink {
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+ } 
+
+ #navbar #holder ul li a.onlink:hover {
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+ }
+ .tasks{
+  height:auto;
+  overflow: auto;
+}
+
+.onlink{
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+}
+
+.paddingleft20{
+  padding-left:40px;
+}
+
+.clearfix:after {
+    clear: both;
+    content: "";
+    display: table;
+}
+.wizard > .content
+{
+   min-height: 508px;
+}
+.wizard > .steps > ul > li {
+    width: 33.33% !important;
+}
+.form-container-grid-table-sm table tr td ul {
+    height: 465px;
+    overflow-y: scroll;
+    width: 100%;
+}
+.form-container-grid-table  table tr td ul {
+    height: 405px;
+    overflow-y: scroll;
+    width: 100%;
+}
+.modal td
+{
+  font-size: 0.813em;
+  border: 1px solid #ddd;
+  padding: 5px;
+}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+ $('.closetrigger').hide();
+})
+$(function() {
+   $('.edittrigger').click(function(){    
+      $('.edittriggertextbox').show();
+      $('.edittrigger').hide();
+      $('.closetrigger').show();
+  });
+  $('.closetrigger').click(function(){    
+      $('.edittriggertextbox').hide();
+      $('.edittrigger').show();
+      $('.closetrigger').hide();
+  });
+});
+</script>
+
+<script src="/files/desktop/common/js/wizard/jquery.steps.js"></script>
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/wizard/jquery.steps.css">
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
+<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/popup/popup.css">
+<script type="text/javascript" src="/files/desktop/common/js/popup/modernizr.js"></script>
 <div class="content-container width75">
   <div class="content-area">
+    <h1>Assign Compliance</h1>
     <div class="add-container">
-      <div class="add-container-heading">Assign Task<!--<a href="/assignservicemappingrecommendation">
-      <span class="error-message recommendation">Recommendation (3)</span></a>--></div>
       <div class="form-container-outer">
-        <div class="grid-table">
-          <table class="font1" style="width:100%;height:200px;overflow-y:scroll">
+        <div id="example-basic">
+          <h3>Select Unit</h3>
+          <section>
+            <div class="form-container-grid-table-sm">
+              <table style="border:1px solid #ccc; margin-bottom:5px;">
+          
             <tr align="left">
-              <th style="background-color:#9055BD;color:white;padding:5px;height:20px;font-size: 0.8em;font-weight: bold;">I. Task Selection</th>
+              <th width="16%">Country</th>
+              <th width="21%">Business Group </th>
+              <th width="21%">Legal Entity </th>
+              <th width="21%">Division</th>
+              <th width="21%">Unit</th>
             </tr>
+            <tr>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>Australia</li>
+                  <li>Bangladesh</li>
+                  <li class="active">India</li>
+                  <li>Malaysia</li>
+                  <li>Sri Lanka</li>
+                  <li>Singapore</li>
+                </ul></td>
+               
+                <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>VRM Motors Group 1</li>
+                  <li class="active">VRM Motorparts Group 2</li>
+                  <li>VRM  Construction</li>
+                  </a>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>VRM & Co.,</li>
+                  <li>VRM & Brothers</li>
+                  <li class="active">VRM & Sons</li>
+                </ul></td>
+           
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li class="active">VRM Auto Parts - Manufacturing</li>
+                  <li>VRM Auto Pvt Ltd</li>
+                  <li>VRM Pvt Ltd</li>
+                  <li>VRM Fastners</li>
+                  <li>VRM Automobile Solutions Limited</li>
+                </ul></td>
+              <td><ul>
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li>VRM1001 - Corporate Office</li>
+                  <li>VRM1002 - Regional Office - North</li>
+                  <li class="active">VRM1003 - Regional Office - South</li>
+                  <li>VRM1004 - Branch Office - Bangalore</li>
+                  <li class="active">VRM1005 - Branch Office - Madurai</li>
+                  <li >VRM1006 - Branch Office - Delhi</li>
+                  <li>VRM1007 - Branch Office - Hydrabad</li>
+                  <li class="active">VRM1008 - Branch Office - Chennai</li>
+                </ul></td>
+                
+            </tr>
+            </table>
+            </div>
+          </section>
+          <h3>Select Compliance</h3>
+          
+          <section >
+           <div class="grid-table">
+          <table class="font1" style="width:100%;height:200px;overflow-y:scroll">
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="95%">The Batteries Act<span><img src="/images/chevron_black_down.png"></span></th>
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Batteries Act<span><img src="/images/chevron_black_down.png"></span></th>
             </tr>
             <tr style="border:1px solid #cccccc;">
-              <td colspan="2"><table cellpadding="0" cellspacing="0" width="100%" class="managetask">
+              <td colspan="2" style="padding-left:0px; padding-top:0px"><table cellpadding="0" cellspacing="0" width="100%" class="managetask">
                   <tr align="left">
-                    <td align="center"><span style="font-weight:bold;">Select</span></td>
-                    <td width="20%"><span style="font-weight:bold;">Task</span></td>
-                    <td width="8%"><span style="font-weight:bold;">Task Type</span></td>
-                    <td colspan="4" width="25%"><span style="font-weight:bold;" >Statutory Date</span></td>
-                    <td width="10%" align="center"><span style="font-weight:bold;">Trigger Before</span></td>
-                    <td width="15%" ><span style="font-weight:bold;">Due Date</span></td>
-                    <td width="15%" ><span style="font-weight:bold;">Validity Date</span></td>
+                    <td width="2%"><span style="font-weight:bold;"></span></td>
+                    <td width="28%" ><span style="font-weight:bold;">Compliance</span></td>
+                    <td width="10%"><span style="font-weight:bold;">Applicable Unit</span></td>
+                    <td width="8%" ><span style="font-weight:bold;">Compliance Type</span></td>
+                    <td width="15%" colspan="4" ><span style="font-weight:bold;" >Statutory Date</span></td>
+                    <td width="13%" ><span style="font-weight:bold;">Trigger Before</span></td>
+                    <td width="12%"  ><span style="font-weight:bold;">Due Date</span></td>
+                    <td width="12%"  ><span style="font-weight:bold;">Validity Date</span></td>
                   </tr>
-                  <tr style="background-color:#cccccc;">
+                  <tr >
                     <td  align="center"><input type="checkbox" checked/></td>
-                    <td ><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png" style="margin-right:10px">FORM I Submission</abbr></td>
+                    <td ><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM I - Half yearly returns Submission</td>
+                    <td><a href="#" class="toggleModal">ALL</a></td>
                     <td>Recurring</td>
                     <td colspan="4">Every Year 1st January</td>
-                    <td align="center">20</td>
-                    <td></td>
-                    <td><input type="text" class="input-box" value="01/01/2018"/></td>
+                    <td >20 Days<span style="float:right;"><img src="/images/icon-edit.png" width="12"></span></td>
+                    <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
+                   
+                    <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
                   </tr>
                   <tr>
                     <td align="center"><input type="checkbox"/></td>
-                    <td><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"><img src="/images/icon-info.png" style="margin-right:10px">FORM II Submission</abbr></td>
+                    <td><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM II - Registration</td>
+                    <td><a href="#" class="toggleModal">ALL</a></td>
                     <td>One Time</td>   
-                    <td></td>
-                    <td></td>
-                    <td colspan="5"></td>
+                    <td colspan="4"> 10th March</td>
+                    <td >20 Days<span style="float:right;"><img src="/images/icon-edit.png" width="12"></span></td>
+                    <td><input type="text" class="input-box" value="10-Mar-2016"/></td>
+                   
+                     <td></td>
                   </tr>
                   <tr>
                     <td align="center"><input type="checkbox"/></td>
-                    <td><abbr class="page-load" title="Whether undertaking submitted by importer to authority."><img src="/images/icon-info.png" style="margin-right:10px">FORM III Submission</abbr></td>
+                    <td><abbr class="page-load" title="Whether undertaking submitted by importer to authority."><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM III - Undertaking submission </td>
+                    <td><a href="#" class="toggleModal">ALL</a></td>
                     <td>One Time</td>
-                    <td></td>
-                    <td></td>
-                    <td colspan="7"></td>
-                  </tr>
-                  <tr>
-                    <td align="center"><input type="checkbox" checked/></td>
-                    <td><abbr class="page-load" title="Whether registration obtained for dealers"><img src="/images/icon-info.png" style="margin-right:10px">FORM IV Submission</abbr></td>
-                    <td>One Time</td>
-                    <td colspan="4">Every year 10th January</td>
-                    <td align="center">15</td>
-                    <td><input type="text" class="input-box" value="10/01/2015"/></td>
+                    
+                     
+                    <td colspan="4"> 10th January</td>
+                    <td >48 Hours<span style="float:right;"><img src="/images/icon-edit.png" width="12"></span></td>
+                   <td><input type="text" class="input-box" value="10-Jan-2016"/></td>
+                   
                     <td></td>
                   </tr>
                   <tr>
                     <td align="center"><input type="checkbox" checked/></td>
-                    <td><abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer"><img src="/images/icon-info.png" style="margin-right:10px">FORM V Submission</abbr></td>
+                    <td><abbr class="page-load" title="Whether registration obtained for dealers"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM IV - Dealer Registration</td>
+                    <td><a href="#" class="toggleModal">ALL</a></td>
+                    <td>One Time</td>
+                    <td colspan="4">10th January</td>
+                    <td >15 Days<span style="float:right;"><img src="/images/icon-edit.png" width="12"></span></td>
+                    <td><input type="text" class="input-box" value="10-Jan-2016"/></td>
+                   
+                     <td></td>                  </tr>
+                  <tr>
+                    <td align="center"><input type="checkbox" checked/></td>
+                    <td><abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM V - Dealer Half yearly returns</td>
+                    <td><a href="#" class="toggleModal">ALL</a></td>
                     <td>Recurring</td>
-                    <td colspan="4" >Every year 31st March,30th June, 20th September, 31th December</td>
-                    <td align="center">20</td>
-                    <td></td>
-                    <td>31/12/2015</td>
+                    <td colspan="4" >Every 31st March, 30th June, 20th September, 31th December</td>
+                    <td >20 Days, 20 Days, 20 Days, 15 Days<span style="float:right;" class="edittrigger"><img src="/images/icon-edit.png" width=" 12"></span> <span style="float:right;" class="closetrigger" ><img src="/images/delete.png" width=" 12"></span>
+                    <div class="edittriggertextbox" style="display:none;">
+                    <input type="text" class="input-box" value="20" style="width:50px; float:left;"  /><input type="text" class="input-box" value="20" style="width:50px; float:left; margin-left:3px; "/><input type="text" class="input-box" value="20" style="width:50px; float:left;  "/><input type="text" class="input-box" value="15" style="width:50px; float:left; margin-left:3px;"/></div>
+
+
+
+                    </td>
+                  <td>
+                  <input type="text" class="input-box" value="31-Dec-2015"/></td>
+                     <td><input type="text" value="31-Dec-2015" class="input-box"/></td>
                   </tr>
                   <tr>
                     <td align="center"><input type="checkbox" checked/></td>
-                    <td><abbr class="page-load" title="Whether registration and renewal obtained by recycler"><img src="/images/icon-info.png" style="margin-right:10px">FORM VI Submission</abbr></td>
+                    <td><abbr class="page-load" title="Whether registration and renewal obtained by recycler"><img src="/images/icon-info.png" style="margin-right:10px"> </abbr>FORM VI - Recycler Registration and Review</td>
+                    <td><a href="#" class="toggleModal">ALL</a></td>
                     <td>Recurring</td>
                     <td colspan="4">Every 1st January</td>
-                    <td align="center">25</td>
-                    <td></td>
-                    <td><input type="text" value="01/01/2016" class="input-box"/></td>
+                    <td >25 Days<span style="float:right;"><img src="/images/icon-edit.png" width="12"></span></td>
+                    <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
+                 
+                    <td><input type="text" value="" class="input-box"/></td>
                   </tr>
                   <tr>
                     <td align="center"><input type="checkbox" checked/></td>
-                    <td><abbr class="page-load" title="Whether half yearly returns submitted by recyclers"><img src="/images/icon-info.png" style="margin-right:10px">FORM VII Submission</abbr></td>
+                    <td><abbr class="page-load" title="Whether half yearly returns submitted by recyclers"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM VII - Recycler Half yearly returns</td>
+                    <td><a href="#" class="toggleModal">VRM1003 - Regional Office - South...</a></td>
                     <td>Recurring</td>
-                    <td colspan="4">30th June and 31st December</td>
-                    <td align="center">10</td>
-                    <td></td>
-                    <td>31/12/2015</td>
+                    <td colspan="4">Every 30th June <br> 31st December</td>
+                    <td >15 Days,10 Days<span style="float:right;"><img src="/images/icon-edit.png" width="12"></span></td>
+                    <td>
+                    <input type="text" class="input-box" value="31-Dec-2015"/></td>
+                 
+                    <td>
+                    <input type="text" class="input-box" value=""/></td>
                   </tr>
                   <tr >
                     <td align="center"><input type="checkbox" checked/></td>
-                    <td><abbr class="page-load" title="Whether half yearly returns submitted by bulk consumer"><img src="/images/icon-info.png" style="margin-right:10px">FORM VIII Submission</abbr></td>
+                    <td><abbr class="page-load" title="Whether half yearly returns submitted by bulk consumer"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM VIII - Bulk consumer half yearly returns</td>
+                    <td><a href="#" class="toggleModal">VRM1005 - Branch Office - Madurai...</a></td>
                     <td>Recurring</td>
                     <td colspan="4">Every Month on 10th</td>
-                    <td align="center">15</td> 
-                    <td></td>
-                   <td>10/10/2015</td>
+                    <td >10 Days<span style="float:right;"><img src="/images/icon-edit.png" width="12"></span></td> 
+                   <td><input type="text" class="input-box" value="10-Oct-2015"/></td>
+                 
+                   <td><input type="text" value="10-Oct-2015" class="input-box"/></td>
                   </tr>
                 </table></td>
             </tr>
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="95%">Indian Partnership Act, 1932<span><img src="/images/chevron_black_right.png"></span></th>
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Indian Partnership Act, 1932<span><img src="/images/chevron_black_right.png"></span></th>
             </tr>
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="95%">Industrial Employment (Standing Orders) Central Rules, 1946<span><img src="/images/chevron_black_right.png"></span></th>
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Industrial Employment (Standing Orders) Central Rules, 1946<span><img src="/images/chevron_black_right.png"></span></th>
             </tr>
-            <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="95%">The Factories Act, 1948 <span><img src="/images/chevron_black_right.png"></span></th>
-            </tr>
-            <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-              <th style="background-color:#eae8e8; color:#000000; font-size: 0.8em;font-weight: bold;" width="95%">Industrial Disputes (Central) Rules, 1957<span><img src="/images/chevron_black_right.png"></span></th>
-            </tr>
+          
           </table>
+
         </div>
-        <div class="form-container-grid-table" style="margin-top:-18px">
-          <table style="width:100%">
+
+              
+         
+      </section>
+          <!-- -->
+          <h3>Select Assignee</h3>
+          <section>
+          <div class="form-container-grid-table">
+          <table style="width:100%">                
                 <tr>
-                  <th colspan="3" style="background-color:#9055BD;color:white;padding:5px" align="left">
-                    II. Assignment Settings
-                  </th>
-                </tr>
-                <tr>
-                  <th >
-                      Assignee 
-                  </th>
-                  <th  align="center">Concurrence</th>
+                  <th>Assigneee</th>
+                  <th align="center">Concurrence</th>
                   <th align="center">Approval</th>
                 </tr>
                 <tr>
-                  <th align="center" style="padding-bottom:5px">
-                    <Select class="input-box">
+                  <th  style="padding-bottom:5px">
+                    <Select class="input-box" style="width:95%; float:left;">
                       <option>Corporate Office</option>
                       <option>Regional Office - North</option>
                       <option>Regional Office - South</option>
@@ -139,8 +365,8 @@
                       <option>Service provider</option>
                     </Select>
                   </th>
-                  <th align="center">
-                    <Select class="input-box">
+                  <th >
+                    <Select class="input-box" style="width:95%; float:left;">
                       <option>Corporate Office</option>
                       <option>Regional Office - North</option>
                       <option>Regional Office - South</option>
@@ -150,8 +376,8 @@
                       <option>Branch Office - Bangalore</option>
                     </Select>
                   </th>
-                  <th align="center">
-                    <Select class="input-box">
+                  <th >
+                    <Select class="input-box" style="width:95%; float:left;">
                       <option>Corporate Office</option>
                       <option>Regional Office - North</option>
                       <option selected="selected">Regional Office - South</option>
@@ -202,16 +428,65 @@
                   </td>
                 </tr>
               </table> 
-        </div>
-        <div class="clearfix"></div>
-        <br>
-        <div class="submit-button-container">
-          <input type="submit" name="cancel" value="Cancel" class="btn-submit" onclick="location.href='/assignservicemapping/list'" formtarget="_self">
-          &nbsp;&nbsp;
-          <input type="submit" name="cancel" value="Assign" class="btn-submit">
+            </div>
+          </section>
         </div>
       </div>
     </div>
   </div>
 </div>
+<div class="clearfix"></div>
+
+<div class="modal">
+  <header>
+    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">Applicable Units</h1>
+     <div class="close toggleModal"></div>
+  </header>  
+  <section><p style="font-size:0.8em; padding-top:10px;">
+    <table width="100%" class="content">
+      <tr><td >VRM1003 - Regional Office - South,</td></tr><tr>
+      <td >VRM1005 - Branch Office - 1,</td></tr><tr>
+<td >VRM1008 - Branch Office - 2</td></tr>
+<tr>
+<td >VRM1009 - Branch Office - 3</td></tr>
+<tr>
+<td >VRM1010 - Branch Office - 4</td></tr>
+<tr>
+<td >VRM1011 - Branch Office - 5</td></tr>
+<tr>
+<td >VRM1012 - Branch Office - 6</td></tr>
+<tr>
+<td >VRM1013 - Branch Office - 7</td></tr>
+<tr>
+<td >VRM1014 - Branch Office - 8</td></tr>
+<tr>
+<td >VRM1015 - Branch Office - 9</td></tr>
+
+    </table>
+  </p>
+  </section>
+</div>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#section-flip-1").show();
+    $("#section-flip-4").hide();
+});
+$("#example-basic").steps({
+  headerTag: "h3",
+  bodyTag: "section",
+  transitionEffect: "slideLeft",
+  autoFocus: true
+});
+jQuery(window).load(function(){
+  jQuery('.page-load').tipso({
+    tooltipHover: true
+  });
+});
+$('.toggleModal').on('click', function (e) {
+  $('.modal').toggleClass('active');
+});
+
+</script> 
 {% endblock %}

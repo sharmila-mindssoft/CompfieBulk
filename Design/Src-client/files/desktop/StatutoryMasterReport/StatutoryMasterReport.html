@@ -24,88 +24,109 @@
   <div class="content-area">
     <div class="add-container">
       <div class="add-container-heading">Statutory Master Report<span class="error-message"></span></div>
+     
       <div class="input-row-left">
         <div class="input-row">
-          <div class="field-label">Country<span class="mandatory">*</span> :</div>
+          <div class="field-label">Country:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" value="India" placeholder="Type country name" />
+           <input type="text" class="input-box icon-autocomplete" value="India" placeholder="Enter Country  " />
           </div>
         </div>
-        <div class="input-row">
-          <div class="field-label">Name:</div>
+          <div class="input-row">
+          <div class="field-label">Act:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" autofocus id="client" value="" placeholder="Type Name" />
+           <input type="text" class="input-box icon-autocomplete" value="Batteries Act" placeholder="Enter Act  " />
           </div>
         </div>
+      
+      <!--  <div class="input-row">
+          <div class="field-label">Geography Level:<span class="mandatory">*</span> </div>
+          <div class="field-input">
+            <select class="input-box">
+                <option>Region</option>
+                <option>State</option>
+                <option>Union Territory</option>
+                <option selected="selected">District</option>
+                <option>Corporation</option>
+                <option>Municipality</option>
+                <option>Town</option>
+                <option>Panchayat</option>
+                </select>
+          </div>
+        </div>-->
       </div>
       <div class="input-row-right">
         <div class="input-row">
-          <div class="field-label">Statutory Level :</div>
+          <div class="field-label">Domain:</div>
           <div class="field-input">
-            <select class="input-box" >
-              <option selected="selected">All</option>
-              <option>Act</option>
-              <option>Rule Name</option>
-              <option>Section</option>
-              <option>Sub Section</option>
-              <option>Rule</option>
-              <option>Sub-Rule</option>
-              <option>Clause</option>
-              <option>Subclause</option>
-            </select>
+            <input type="text" class="input-box icon-autocomplete" value="Industrial Law" placeholder="Enter Domain" />
           </div>
         </div>
+      <!--  <div class="input-row">
+          <div class="field-label">Location:<span class="mandatory">*</span></div>
+          <div class="field-input">
+          <input type="text" class="input-box icon-autocomplete" placeholder="" value="Madurai">
+          </div>
+        </div>-->
+        
       </div>
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Show" class="btn-submit">
-        <input type="submit" name="cancel" value="Export to CSV" class="btn-submit">
+        <input type="button"  class="btn-submit" value="Export" />
       </div>
       <div class="clearfix"></div>
       <div class="grid-table-rpt">
-        <h1>Statutory Master Report</h1>
-        <div>
+        <h1>Statutory Master Report</h1><br>
+          <div style="margin-left:15%;">
           <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country:<span style="margin-left:10px; font-weight:bold;">India</span> </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>
+        
+            
+          
           </div>
-          <div style="float:right; margin-right:30%;">
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;"><span style="margin-left:10px; font-weight:bold;"></span> </div>
+          <div style="float:right; margin-right:20%;">
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;">Industrial Law</span> </div>
+          
           </div>
         </div>
+        <div class="clearfix"></div>
+        <div class="heading">Batteries Act</div>
+        <div class="clearfix"></div>
+        
         <table>
           <tr align="left">
-            <th width="3%" align="center" class="header-bg">#</th>
-            <th width="8%" class="header-bg">Statutory Level</th>
-            <th width="25%" class="header-bg">Name</th>
-            <th width="10%" class="header-bg">Status</th>
+            <th width="5%" align="center" class="header-bg">#</th>
+            <th class="header-bg">Statutory </th>
+            <th width="20%" class="header-bg">Status</th>
           </tr>
           <tr>
             <td align="center">1</td>
-            <td>Act</td>
-            <td>Gratuity Act, 1972</td>
+            <td> Section II  <img src="/images/right_arrow.png">  Rule 4 </td>
+           
             <td>Active</td>
           </tr>
           <tr>
             <td align="center">2</td>
-            <td>Rule Name</td>
-            <td>Tamil Nadu Gratuity Act, 1972</td>
+            <td>Batteries Act(Management) <img src="/images/right_arrow.png">  Section VII <img src="/images/right_arrow.png"> Rule 7</td>
+            
             <td>Active</td>
           </tr>
           <tr>
             <td align="center">3</td>
-            <td>Rule</td>
-            <td>Rule 3</td>
+            <td> Batteries Act(Handling) <img src="/images/right_arrow.png"> Section V <img src="/images/right_arrow.png"> Rule 8(I) </td>
+           
             <td>Active</td>
           </tr>
           <tr>
             <td align="center">4</td>
-            <td>Act</td>
-            <td>The Batteries (Management & Handling) Rules, 2001</td>
+            <td>  Rule 9 <img src="/images/right_arrow.png"> Sub Rule (iI)</td>
+           
             <td>Active</td>
           </tr>
           <tr>
             <td align="center">3</td>
-            <td>Rule</td>
-            <td>Rule 4</td>
+            <td>Rule 9(V) <img src="/images/right_arrow.png"> Clause I</td>
+           
             <td>Inactive</td>
           </tr>
         </table>

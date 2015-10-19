@@ -1,0 +1,38 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width40">
+  <div class="content-area">
+    <h1>Countries</h1>
+    <div class="clearfix"></div>
+    <div class="grid-table" style="height:390px; overflow-y:scroll;">
+      <table  >
+      <thead>
+        <tr align="left">
+          <th align="center" width="10%">#</th>
+          <th width="70%">Country Name</th>
+          <th align="center" width="20%">Status</th>
+        </tr>
+      </thead>
+       <tbody>
+          <tr>
+          <td width="10%">&nbsp;</td>
+          <td width="70%"><input type="text"  class="filter-text-box"></td>
+          
+          <td width="10%">&nbsp;</td>
+        </tr>
+        {% for country in data %}
+          <tr style="background:#fff;">
+            <td align="center" >{{loop.index}}</td>
+            <td>{{data[country]}}</td>
+            
+            <td align="center">Active</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+     
+      </table>
+    </div>
+    
+  </div>
+</div>
+{% endblock %}

@@ -13,21 +13,33 @@
 				margin: 5px 5%;
 			}
 		</style>
+    <script type="text/javascript">
+$(function() {
+  $('.duedate2_icon').click(function(){    
+    $('.duedate2_textbox').show();
+    $('.duedate2_label').hide();
+  });
+  $('.duedate1_icon').click(function(){    
+    $('.duedate1_textbox').show();
+    $('.duedate1_label').hide();
+  });
+});
+    </script>
 <div class="content-container width75">
   <div class="content-area">
     <div class="add-container">
-      <div class="add-container-heading">Task Approval<span class="error-message"></span></div>
+      <div class="add-container-heading">Compliance Approval<span class="error-message"></span></div>
       <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
         <tr>
-          <td width="55%"><div class="grid-table" style="padding-bottom:0em;">
+          <td width="57%"><div class="grid-table" style="padding-bottom:0em;">
               <table>
                 <tr align="left" style="background:#ccc;">
                   <td width="5%"><span style="font-weight:bold;">#</span></td>
-                  <td><span style="font-weight:bold;">Task name</span></td>
+                  <td><span style="font-weight:bold;">Compliance</span></td>
                   <td><span style="font-weight:bold;">Domain </span></td>
-                  <td ><span style="font-weight:bold;">Start date </span></td>
-                  <td><span style="font-weight:bold;">Due date </span></td>
-                  <td><span style="font-weight:bold;">Ageing </span></td>
+                  <td><span style="font-weight:bold;">Start date</span></td>
+                  <td><span style="font-weight:bold;">Due date</span></td>
+                  <td width="15%"><span style="font-weight:bold;">Delayed By </span></td>
                   <td ></td>
                 </tr>
                 <tr>
@@ -36,11 +48,11 @@
                   <td><input type="text" class="filter-text-box"></td>
                   <td align="center"><input type="text" class="filter-text-box"></td>
                   <td align="center"><input type="text" class="filter-text-box"></td>
-                  <td align="center"><input type="text" class="filter-text-box"  style="width:50px;"></td>
+                  <td align="center"><input type="text" class="filter-text-box"  style="width:75px;"></td>
                   <td></td>
                 </tr>
                 <tr align="left" class="rightside" >
-                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.8em;float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.813em;float:left; padding:5px 5px; margin-left:0px; box-shadow: 
     inset 0 0 0 1px rgba(53,86,129, 0.4), 
     inset 0 0 5px rgba(53,86,129, 0.5),
     inset -285px 0 35px white;
@@ -49,25 +61,25 @@
                 </tr> 
                 <tr class="index-tab " style="background:#fff;" >
                   <td>1</td>
-                  <td><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png"> FORM I Submission </abbr></td>
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png"> FORM I - Half yearly returns Submission </abbr></td>
                   <td>Industrial Law</td>
-                  <td>15/08/2015</td>
-                  <td>24/08/2015</td>
-                  <td>10 Days</td>
+                  <td>15-Aug-2015</td>
+                  <td>24-Aug-2015</td>
+                  <td >10 Days</td>
                   <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
                 </tr>
                 <tr style="background:#fff;" class="archive-tab active1">
                   <td>2</td>
                   <td><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead
-"><img src="/images/icon-info.png"> FORM II Submission</abbr></td>
+"><img src="/images/icon-info.png"> FORM II - Registration</abbr></td>
                   <td>Industrial Law</td>
-                  <td>20/08/2015</td>
-                  <td>24/08/2015</td>
+                  <td>20-Aug-2015</td>
+                  <td>24-Aug-2015</td>
                   <td>5 Days</td>
                   <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
                 </tr>
                  <tr align="left" class="rightside" >
-                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.8em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
     inset 0 0 0 1px rgba(53,86,129, 0.4), 
     inset 0 0 5px rgba(53,86,129, 0.5),
     inset -285px 0 35px white;
@@ -76,33 +88,33 @@
                 </tr> 
                 <tr style="background:#fff;" class="concurrence-tab " >
                   <td>3</td>
-                  <td><abbr class="page-load" title="Whether undertaking submitted by importer to authority."><img src="/images/icon-info.png"> FORM III Submission </abbr></td>
+                  <td><abbr class="page-load" title="Whether undertaking submitted by importer to authority."><img src="/images/icon-info.png"> FORM III - Undertaking submission  </abbr></td>
                   <td>Industrial Law</td>
-                  <td>21/08/2015</td>
-                  <td>26/08/2015</td>
+                  <td>21-Aug-2015</td>
+                  <td>26-Aug-2015</td>
                   <td>6 Days</td>
                   <td style="padding-right:5px;"><img src="/images/right_arrow.png"></td>
                 </tr >
                 <tr style="background:#fff;">
                   <td>4</td>
-                  <td><abbr class="page-load" title="Whether registration obtained for dealers."><img src="/images/icon-info.png"> FORM IV Submission</abbr></td>
+                  <td><abbr class="page-load" title="Whether registration obtained for dealers."><img src="/images/icon-info.png"> FORM IV - Dealer Registration</abbr></td>
                   <td>Industrial Law</td>
-                  <td>25/08/2015</td>
-                  <td>31/08/2015</td>
+                  <td>25-Aug-2015</td>
+                  <td>31-Aug-2015</td>
                   <td>7 Days</td>
                   <td style="padding-right:5px;"><img src="/images/right_arrow.png"></td>
                 </tr>
                 <tr style="background:#fff;">
                   <td>5</td>
-                  <td><abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer."><img src="/images/icon-info.png"> FORM V Submission </abbr></td>
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer."><img src="/images/icon-info.png"> FORM V - Dealer Half yearly returns  </abbr></td>
                   <td>Industrial Law</td>
-                  <td>26/08/2015</td>
-                  <td>29/08/2015</td>
-                  <td>4 Days</td>
+                  <td>26-Aug-2015</td>
+                  <td>29-Aug-2015</td>
+                  <td></td>
                   <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
                 </tr>
                  <tr align="left" class="rightside" >
-                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.8em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
     inset 0 0 0 1px rgba(53,86,129, 0.4), 
     inset 0 0 5px rgba(53,86,129, 0.5),
     inset -285px 0 35px white;
@@ -111,28 +123,28 @@
                 </tr> 
                 <tr style="background:#fff;">
                   <td>6</td>
-                  <td><abbr class="page-load" title="Whether registration and renewal obtained by recycler."><img src="/images/icon-info.png"> FORM VI Submission </abbr></td>
+                  <td><abbr class="page-load" title="Whether registration and renewal obtained by recycler."><img src="/images/icon-info.png"> FORM VI - Recycler Registration and Review  </abbr></td>
                   <td>Industrial Law</td>
-                  <td>21/08/2015</td>
-                  <td>26/08/2015</td>
+                  <td>21-Aug-2015</td>
+                  <td>26-Aug-2015</td>
                   <td>6 Days</td>
                   <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
                 </tr >
                 <tr style="background:#fff;">
                   <td>7</td>
-                  <td><abbr class="page-load" title="Whether half yearly returns submitted by recyclers."><img src="/images/icon-info.png"> FORM VII Submission</abbr></td>
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by recyclers."><img src="/images/icon-info.png"> FORM VII - Recycler Half yearly returns</abbr></td>
                   <td>Industrial Law</td>
-                  <td>25/08/2015</td>
-                  <td>31/08/2015</td>
-                  <td>7 Days</td>
+                  <td>25-Aug-2015</td>
+                  <td>31-Aug-2015</td>
+                  <td></td>
                   <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
                 </tr>
                 <tr style="background:#fff;">
                   <td>8</td>
-                  <td><abbr class="page-load" title="Whether half yearly returns submitted by bulk consumer."><img src="/images/icon-info.png"> FORM VIII Submission </abbr></td>
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by bulk consumer."><img src="/images/icon-info.png"> FORM VIII - Bulk consumer half yearly returns </abbr></td>
                   <td>Industrial Law</td>
-                  <td>26/08/2015</td>
-                  <td>29/08/2015</td>
+                  <td>26-Aug-2015</td>
+                  <td>29-Aug-2015</td>
                   <td>4 Days</td>
                   <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
                 </tr>
@@ -140,23 +152,27 @@
                   <td>9</td>
                   <td><abbr class="page-load" title="Whether half yearly returns submitted by auctioneer."><img src="/images/icon-info.png"> FORM IX Submission</abbr></td>
                   <td>Industrial Law</td>
-                  <td>26/08/2015</td>
-                  <td>29/08/2015</td>
-                  <td>4 Days</td>
+                  <td>26-Aug-2015</td>
+                  <td>29-Aug-2015</td>
+                  <td></td>
                   <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
                 </tr>
               </table>
             </div></td>
-          <td width="50%" style="vertical-align:top; background:#F1E9F6; padding-left:5px;">
+          <td width="43%" style="vertical-align:top; background:#F1E9F6; padding-left:5px;">
           <div class="index-tab-content1" style="width:100%; height:100%; display:none;" >
               <table class="managetask">
                 <tr align="left">
-                  <td width="35%"><span style="font-weight:bold;">Task:</span></td>
-                  <td width="65%"><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png"> FORM I Submission</abbr></td>
+                  <td width="35%"><span style="font-weight:bold;">Compliance:</span></td>
+                  <td width="65%"><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png"> FORM I - Half yearly returns Submission</abbr></td>
                   
                 </tr>
+                  <tr>
+                  <td ><span style="font-weight:bold;">Compliance Type:</span></td>
+                  <td>Recurring</td>
+                </tr>
                 <tr>
-                  <td ><span style="font-weight:bold;">Document:</span></td>
+                  <td ><span style="font-weight:bold;">Uploaded Document:</span></td>
                   <td width="65%"><table class="tablenopadd"><tr><td width="80%">Form-I.pdf </td><td width="10%">
                  <img src="/images/view.png" style="width:16px;height:16px;"/></td><td width="10%">
                  <img src="/images/download.png" style="width:16px;height:16px;"/></td></tr>
@@ -166,12 +182,12 @@
                  </table></td>
                 </tr>
                 <tr>
-                  <td ><span style="font-weight:bold;">Upload Date:</span></td>
-                  <td>25/08/2015</td>
+                  <td ><span style="font-weight:bold;">Uploaded Date:</span></td>
+                  <td>25-Aug-2015</td>
                 </tr>
                 <tr>
                   <td ><span style="font-weight:bold;">Document/ Completion Date:</span></td>
-                  <td>25/08/2015</td>
+                  <td>25-Aug-2015</td>
                 </tr>
                <!-- <tr>
                   <td ><span style="font-weight:bold;">Validity:</span></td>
@@ -200,7 +216,7 @@
                 </tr>
                 <tr>
                   <td style="vertical-align:top"><span style="font-weight:bold;">Remarks:</span></td>
-                  <td colspan="2"><textarea class="input-box" placeholder="Remarks"></textarea></td>
+                  <td colspan="2"><textarea class="input-box" placeholder="Remarks"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></td>
                 </tr>
                 <tr>
                   <td colspan="2" align="center"><input type="submit" value="Submit" class="btn-submit"></td>
@@ -210,12 +226,16 @@
             <div class="archive-tab-content1" style=" width:100%; height:100%;  " >
               <table class="managetask">
                 <tr align="left">
-                  <td width="35%" ><span style="font-weight:bold;">Task :</span></td>
-                  <td width="65%"><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"><img src="/images/icon-info.png"> FORM II Submission</abbr></td>
+                  <td width="35%" ><span style="font-weight:bold;">Compliance :</span></td>
+                  <td width="65%"><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"><img src="/images/icon-info.png"> FORM II - Registration</abbr></td>
                   
                 </tr>
+                  <tr>
+                  <td ><span style="font-weight:bold;">Compliance Type:</span></td>
+                  <td>Recurring</td>
+                </tr>
               <tr>
-                  <td ><span style="font-weight:bold;">Document:</span></td>
+                  <td ><span style="font-weight:bold;">Uploaded Document:</span></td>
                   <td><table class="tablenopadd"><tr><td width="80%">Form-I.pdf </td><td width="10%">
                  <img src="/images/view.png" style="width:16px;height:16px;"/></td><td width="10%">
                  <img src="/images/download.png" style="width:16px;height:16px;"/></td></tr>
@@ -225,16 +245,17 @@
                  </table></td>
                 </tr>
                 <tr>
-                  <td ><span style="font-weight:bold;">Upload Date:</span></td>
-                  <td>28/08/2015</td>
+                  <td ><span style="font-weight:bold;">Uploaded Date:</span></td>
+                  <td>28-Aug-2015</td>
                 </tr>
                 <tr>
                   <td ><span style="font-weight:bold;">Document/ Completion Date:</span></td>
-                  <td>28/08/2015</td>
+                  <td>28-Aug-2015</td>
                 </tr>
                 <tr>
-                  <td ><span style="font-weight:bold;">Validity Date:</span></td>
-                  <td><input type="text" class="input-box" value="27/08/2016"/></td>
+                  <td ><span style="font-weight:bold;">Due Date:</span></td>
+                  <td><span class="duedate1_label">27-Aug-2016 <a href="#" style="padding-left:40px;"><img src="/images/icon-edit.png" class="duedate1_icon"></a></span>
+                  <span class="duedate1_textbox" style="display:none;"><input type="text" value="27-Aug-2016" class="input-box"/></span></td>
                 </tr>
                 <tr>
                   <td ><span style="font-weight:bold;">Status:</span></td>
@@ -263,12 +284,16 @@
             <div class="concurrence-tab-content1" style=" width:100%; height:100%; display:none;" >
               <table class="managetask">
                 <tr align="left">
-                  <td width="35%" ><span style="font-weight:bold;">Task :</span></td>
-                  <td width="65%"><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"><img src="/images/icon-info.png"> FORM III Submission</abbr></td>
+                  <td width="35%" ><span style="font-weight:bold;">Compliance :</span></td>
+                  <td width="65%"><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"><img src="/images/icon-info.png"> FORM III - Undertaking submission </abbr></td>
                  
                 </tr>
                   <tr>
-                  <td ><span style="font-weight:bold;">Document:</span></td>
+                  <td ><span style="font-weight:bold;">Compliance Type:</span></td>
+                  <td>Recurring</td>
+                </tr>
+                  <tr>
+                  <td ><span style="font-weight:bold;">Uploaded Document:</span></td>
                   <td><table class="tablenopadd"><tr><td width="80%">Form-I.pdf </td><td width="10%">
                  <img src="/images/view.png" style="width:16px;height:16px;"/></td><td width="10%">
                  <img src="/images/download.png" style="width:16px;height:16px;"/></td></tr>
@@ -278,16 +303,17 @@
                  </table></td>
                 </tr>
                 <tr>
-                  <td ><span style="font-weight:bold;">Upload Date:</span></td>
-                  <td>12/01/2015</td>
+                  <td ><span style="font-weight:bold;">Uploaded Date:</span></td>
+                  <td>12-Jan-2015</td>
                 </tr>
                 <tr>
                   <td ><span style="font-weight:bold;">Document/ Completion Date:</span></td>
-                  <td>10/01/2015</td>
+                  <td>10-Jan-2015</td>
                 </tr>
                 <tr>
-                  <td ><span style="font-weight:bold;">Validity Date:</span></td>
-                  <td><input type="text" value="31/12/2015" class="input-box"/></td>
+                  <td ><span style="font-weight:bold;">Due Date:</span></td>
+                  <td><span class="duedate2_label">31-Dec-2015 <a href="#" style="padding-left:40px;"><img src="/images/icon-edit.png" class="duedate2_icon"></a></span>
+                  <span class="duedate2_textbox" style="display:none;"><input type="text" value="31-12-2015" class="input-box"/></span></td>
                 </tr>
                 <tr>
                   <td ><span style="font-weight:bold;">Status:</span></td>
@@ -346,7 +372,7 @@ $(function(){
 			minChars: 1,
 			source: function(term, suggest){
 					term = term.toLowerCase();
-					var choices = ['FORM I Submission', 'FORM II Submission', 'FORM III Submission', 'FORM IV Submission', 'FORM V Submission', 'FORM VI Submission'];
+					var choices = ['FORM I - Half yearly returns Submission', 'FORM II - Registration', 'FORM III - Undertaking submission ', 'FORM IV - Dealer Registration', 'FORM V - Dealer Half yearly returns ', 'FORM VI - Recycler Registration and Review '];
 					var suggestions = [];
 					for (i=0;i<choices.length;i++)
 							if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);

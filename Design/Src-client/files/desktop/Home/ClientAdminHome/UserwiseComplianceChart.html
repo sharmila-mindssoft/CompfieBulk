@@ -1,0 +1,855 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="css/dashboard.css">
+
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/popup/popup.css">
+<script type="text/javascript" src="/files/desktop/common/js/popup/modernizr.js"></script>
+
+
+<style type="text/css">
+  .modaltable th
+  {
+    padding: 5px;
+  }
+  .modaltable td
+  {
+    padding: 10px 0px;
+    font-size: 0.813em;
+  }
+abbr
+{
+    border-bottom: 1px dotted #666;
+    cursor: help;
+}
+
+.btn {
+  background: #662d91;
+  background-image: -webkit-linear-gradient(top, #662d91, #662d91);
+  background-image: -moz-linear-gradient(top, #662d91, #662d91);
+  background-image: -ms-linear-gradient(top, #662d91, #662d91);
+  background-image: -o-linear-gradient(top, #662d91, #662d91);
+  background-image: linear-gradient(to bottom, #662d91, #662d91);
+  -webkit-border-radius: 7;
+  -moz-border-radius: 7;
+  border-radius: 7px;
+  font-family: Arial;
+  font-style:bold;
+  color: #ffffff;
+  font-size: 8px;
+  padding: 7px 9px 7px 9px;
+  text-decoration: none;
+  border-width:0px;
+
+}
+
+.btn:hover {
+  background: #C293E6;
+  background-image: -webkit-linear-gradient(top, #C293E6, #c4c4c4);
+  background-image: -moz-linear-gradient(top, #C293E6, #c4c4c4);
+  background-image: -ms-linear-gradient(top, #C293E6, #c4c4c4);
+  background-image: -o-linear-gradient(top, #C293E6, #c4c4c4);
+  background-image: linear-gradient(to bottom, #C293E6, #c4c4c4);
+  text-decoration: none;
+  cursor:hand;
+}
+
+.tooltip
+{
+    position:absolute;
+    background-color:#eeeefe;
+    border: 1px solid #aaaaca;
+    font-size: smaller;
+    padding:4px;
+    width: 160px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); 
+}
+
+#radiolabel {
+  width: 70px;
+  border-radius: 3px;
+  border: 1px solid #D1D3D4;
+  font-size: 11px;
+}
+
+/* hide input */
+input.radio:empty {
+    margin-left: -1200px;
+}
+
+/* style label */
+input.radio:empty ~ label {
+    position: relative; 
+    float: left;
+    line-height: 2.5em; 
+    text-indent: 3.25em;
+    margin-top: 2em;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input.radio:empty ~ label:before {
+    position: absolute;
+    display: block;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    content: '';
+    width: 2.5em;
+    background: #D1D3D4;
+    border-radius: 3px 0 0 3px;
+}
+
+/* toggle hover */
+input.radio:hover:not(:checked) ~ label:before {
+    content:'\2714';
+    text-indent: .9em;
+    color: #ffffff;
+}
+
+input.radio:hover:not(:checked) ~ label {
+    color: #888;
+}
+
+/* toggle on */
+input.radio:checked ~ label:before {
+    content:'\2714';
+    text-indent: .9em;
+    color: #ffffff;
+    background-color: #662d91;
+}
+
+input.radio:checked ~ label {
+    color: #777;
+}
+.leftmargin 
+{
+  float: left;
+  position: relative;
+  width: 160px;
+}
+.margin10
+{
+  margin-top: 10px;
+}
+#cssmenu > ul > li:hover > ul {
+  top: 46.5px !important;
+}
+</style>
+<script type="text/javascript">
+
+$(document).ready(function() {
+  $("#year-para").hide();
+  $("#dialog-box").hide();
+  $(".dropdown-box-container").click(function() {
+    $(".filter-dropdown-container").slideToggle();
+  })
+  window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
+  $("#entity-auto").hide();
+  $("#division-auto").hide();
+  $("#unit-auto").hide();
+})
+
+    $(document).ready(function () {
+        $(".textboxdomain").show();
+        $(".textboxgroup").hide();
+        $(".textboxcompany").hide();
+        $(".textboxdivision").hide();
+        $(".textboxbranch").hide();
+
+        $("#radio1").click(function () {
+           $(".textboxdomain").show();
+            $(".textboxgroup").hide();
+            $(".textboxcompany").hide();
+            $(".textboxdivision").hide();
+            $(".textboxbranch").hide();
+        });
+       $("#radio2").click(function () {
+         $(".textboxdomain").show();
+            $(".textboxgroup").hide();
+            $(".textboxcompany").show();
+            $(".textboxdivision").hide();
+            $(".textboxbranch").hide();
+        });
+       $("#radio3").click(function () {
+         $(".textboxdomain").show();
+            $(".textboxgroup").hide();
+            $(".textboxcompany").hide();
+            $(".textboxdivision").show();
+            $(".textboxbranch").hide();
+        });
+       $("#radio4").click(function () {
+         $(".textboxdomain").show();
+            $(".textboxgroup").hide();
+            $(".textboxcompany").hide();
+            $(".textboxdivision").hide();
+            $(".textboxbranch").show();
+        });
+
+        $("#history").click(function () {
+            $("#dialog-box").toggle();
+        });
+        $("#history-close").click(function () {
+            $("#dialog-box").toggle();
+        });
+    });
+
+    $(document).ready(function() {
+      $("#viewaspie").hide();
+	   $("#level-filter").hide();
+        $(".graph-box").hide();
+        $(".archive-tab-content").show();
+        $(".grid-table-dash").show();
+        $(".grid-table-dash1").hide();
+        $("#viewaspie").hide();
+	  $(".usecom-tab").click(function() {
+      $("#year-para").hide();
+	  	$(".task-status-tab").removeClass("active");
+        $(".usecom-tab").addClass("active")
+        $(".ageing-tab").removeClass("active")
+        //$(".actwise-tab").removeClass("active")
+        $(".compliance-tab").removeClass("active")
+        $(".trend-tab").removeClass("active")
+    		$(".esc-tab").removeClass("active")
+    		$("#level-filter").hide();
+    		$(".graph-box").hide();
+    		$(".archive-tab-content").show();
+    		$(".grid-table-dash").show();
+    		$(".grid-table-dash1").hide();
+    		$("#viewaspie").hide();
+      })
+	  
+	  $(".usecom1-tab").click(function() {
+        $("#year-para").hide();
+        $(".usecom-tab").addClass("active");
+        $(".ageing-tab").removeClass("active")
+        //$(".actwise-tab").removeClass("active");
+        $(".compliance-tab").removeClass("active");
+        $(".trend-tab").removeClass("active")
+        $(".task-status-tab").removeClass("active");
+		    $(".esc-tab").removeClass("active");
+        $("#level-filter").hide();
+		    $(".grid-table-dash").hide();
+		    $(".grid-table-dash1").show();
+        $("#viewaspie").hide();
+      })
+
+    })
+
+
+  </script> 
+<div class="content-container" >
+  <div class="content-area">
+    <div class="archive-container" style="width:100%;margin-bottom: 40px;">
+      <div class="archive-header"> 
+        <span class="task-status-tab " id="task" style="padding-left:8px;padding-right:8px"><a href="/home" style="text-decoration:none;color:white">Compliance status</a></span>
+        <span class="esc-tab" id="esc" style="padding-left:8px;padding-right:8px"><a href="/home_escalations" style="text-decoration:none;color:white">Escalations</a></span> 
+        <span class="ageing-tab" id="age"><a href="/home_ageingwise" style="text-decoration:none;color:white">Not Complied</a></span> 
+        <span class="usecom-tab active" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise compliance</a></span> 
+        <span class="trend-tab" id="trend"><a href="/home_trend" style="text-decoration:none;color:white">Trend chart</a></span> 
+        <span class="compliance-tab" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance risk</a></span> 
+      </div>
+      <!-- archive tab content start here -->
+      <div class="archive-tab-content">
+        <div class="archive-list-content" style="width:100% !important;">
+          <div class="grid-table-dash">
+            <div class="input-row-left">
+              <div class="input-row">
+                <div class="field-label">Country:<span class="mandatory">*</span></div>
+                <div class="field-input">
+                  <input type="text" class="input-box icon-autocomplete" placeholder="Country">
+                </div>
+              </div>
+               <div class="input-row">
+                <div class="field-label">Legal Entity:</div>
+                <div class="field-input">
+                  <input type="text" class="input-box icon-autocomplete" placeholder="Legal entity">
+                </div>
+              </div>
+               <div class="input-row">
+                <div class="field-label">Seating Unit:</div>
+                <div class="field-input">
+                  <input type="text" class="input-box icon-autocomplete" placeholder="Seating Unit">
+                </div>
+              </div>
+             
+            </div>
+            <div class="input-row-right">
+              <div class="input-row">
+                <div class="field-label">Business Group:</div>
+                <div class="field-input">
+                  <input type="text" class="input-box icon-autocomplete" placeholder="Business Group">
+                </div>
+              </div>
+              <div class="input-row">
+                <div class="field-label">Division:</div>
+                <div class="field-input">
+                  <input type="text" class="input-box icon-autocomplete" placeholder="Division">
+                </div>
+              </div>
+              <div class="input-row">
+                <div class="field-label">User:</div>
+                <div class="field-input">
+                  <input type="text" class="input-box icon-autocomplete" placeholder="User">
+                </div>
+              </div>
+            </div>
+            <table style="border:1px solid #ddd;" >
+              <tr >
+                <th width="5%" align="center">#</th>
+                
+                <th width="25%" align="left">Domain</th>
+                <th width="10%" align="center">Total</th>
+                <th width="10%" align="center">Complied</th>
+                <th width="10%" align="center">Delayed</th>
+                <th width="10%" align="center">In progress</th>
+                <th width="10%" align="center">Not complied</th>
+                <th width="15%" align="center">Performance %</th>
+                <th style="padding-right:10px;" width="5%"></th>
+              </tr>
+              <tr style="background-color:#fff;">
+                <td width="4%" align="center"></td>
+                
+                <td width="15%" align="left"><input type="text"  class="filter-text-box"></td>
+                <td width="10%" align="center"></td>
+                <td width="10%" align="center"></td>
+                <td width="10%" align="center"></td>
+                <td width="10%" align="center"></td>
+                <td width="10%" align="center"></td>
+                <td width="10%" align="center"></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="9">
+                    KG1009 - Madurai unit
+                </td>
+              </tr>
+              <tr align="left" >
+                <td style="background-color:#fff;" align="left"> <a href="#" class="toggleModal" >Sivaraman</a></th>
+              </tr><a href="#">
+              <tr align="center" style="cursor:hand;padding-right:5px" class="usecom1-tab">
+                <td>1</td>
+                
+                <td align="left">Finance</td>
+                <td>10</td>
+                <td>06</td>
+                <td>02</td>
+                <td>01</td>
+                <td>01</td>
+                <td>60%</td>
+                <td align="left" ><img src="/images/right_arrow.png" /></td>
+              </tr></a>
+              <tr align="center" style="background-color:#FFFFFF">
+                <td>2</td>
+                
+                <td align="left">Labour Law</td>
+                <td>11</td>
+                <td>04</td>
+                <td>03</td>
+                <td>01</td>
+                <td>01</td>
+                <td>36%</td>
+                <td align="left" style="padding-right:1px;"><img src="/images/right_arrow.png" /></td>
+              </tr>
+            <tr align="center" >
+                <td>3</td>
+                
+                <td align="left">Industrial Law</td>
+                <td>11</td>
+                <td>04</td>
+                <td>03</td>
+                <td>01</td>
+                <td>01</td>
+                <td>36%</td>
+                <td align="left" ><img src="/images/right_arrow.png" /></td>
+              </tr>
+              <tr align="center" >
+                <td colspan="2">Total</td>
+                <td>32</td>
+                <td>14</td>
+                <td>08</td>
+                <td>03</td>
+                <td>03</td>
+                <td>44%</td>
+                <td align="left" ><img src="/images/right_arrow.png" /></td>
+              </tr>
+             <tr align="left" >
+                <th colspan="10" style="background-color:#FFFFFF"><span><a href="#">Vijayan</a></span></th>
+              </tr>
+              <tr align="center"  style="background-color:#FFFFFF">
+                <td>4</td>
+               
+                <td align="left">Labour law</td>
+                <td>08</td>
+                <td>04</td>
+                <td>01</td>
+                <td>02</td>
+                <td>01</td>
+                <td>50%</td>
+                <td align="left" ><img src="/images/right_arrow.png" /></td>
+              </tr>
+              <tr>
+                <td style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="9">
+                    KG1180 - Namakkal unit 
+                </td>
+              </tr>
+             <!--  <tr align="left" class="rightside" style="height:50px" >
+                <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                      inset 0 0 5px rgba(53,86,129, 0.5),
+                      inset -285px 0 35px white; 
+                    border-radius: 0 5px 0 5px;" width="250px">Sivanathan</span><img src="/images/icon-plus.png"> </th>
+                <th colspan="5" style="background-color:#fff;"></th>
+              </tr> -->
+              <tr align="left" >
+                <th colspan="9" style="background-color:#FFFFFF"><a href="#">Sivanathan</a></th>
+              </tr>
+              <tr align="center" >
+                <td>5</td>
+               
+                <td align="left">Industrial law</td>
+                <td>09</td>
+                <td>04</td>
+                <td>02</td>
+                <td>02</td>
+                <td>01</td>
+                <td>44%</td>
+                <td align="left" ><img src="/images/right_arrow.png" /></td>
+              </tr>
+              <!-- <tr align="left" class="rightside" style="height:50px" >
+                <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                      inset 0 0 5px rgba(53,86,129, 0.5),
+                      inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;" width="250px">Velmurugan</span><img src="/images/icon-plus.png"></th>
+                <th colspan="5" style="background-color:#fff;"></th>
+              </tr> -->
+               <tr align="left" >
+                <th colspan="9" style="background-color:#FFFFFF"><a href="#">Velmurugan</a></th>
+              </tr>
+              <tr align="center">
+                <td>6</td>
+                
+                <td align="left">Finance</td>
+                <td>10</td>
+                <td>04</td>
+                <td>03</td>
+                <td>02</td>
+                <td>01</td>
+                <td>40%</td>
+                <td align="left" ><img src="/images/right_arrow.png" /></td>
+              </tr>
+              <!-- <tr align="left" class="rightside" style="height:50px" >
+                <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                      inset 0 0 5px rgba(53,86,129, 0.5),
+                      inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;" width="250px">Vetriselvam</span><img src="/images/icon-plus.png"></th>
+                <th colspan="5" style="background-color:#fff;"></th>
+              </tr> -->
+              <tr align="left" >
+                <th colspan="10" style="background-color:#FFFFFF"><a href="#">Vetriselvam</a></th>
+              </tr>
+              <tr align="center" >
+                <td>7</td>
+               
+                <td align="left">Finance</td>
+                <td>08</td>
+                <td>02</td>
+                <td>04</td>
+                <td>01</td>
+                <td>01</td>
+                <td>25%</td>
+                <td align="left" ><img src="/images/right_arrow.png"/></td>
+              </tr>
+            </table>
+          </div>
+         
+           <div class="grid-table-dash1">
+            <table  style="border:1px solid #ddd;" >
+              <tr >
+                <td colspan="6" style="background-color:#FFF;"><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>User:</b> Sivaraman</span><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em; margin-left:30%;"><b>Domain :</b> Finance</span><span style=" margin-left:30%; color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>Year:</b> 2015</span></td>
+              </tr>
+              <tr align="left" class="rightside">
+              
+                 <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Complied<span><img src="/images/chevron_black_down.png"></span></th>
+              </tr>
+              <tr align="left" style="background-color:#DBDBDB; color:#000000; font-size: 1em;font-weight: bold;">
+                <td width="5%" align="center">#</th>
+                <td width="45%">Task</th>
+                <td width="15%">Assign date</th>
+                <td width="15%">Actual due date</th>
+                <td width="15%" colspan="2">Date of completion</th>
+              </tr>
+              <tr><td colspan="5" style="background:#D4B7EB;font-weight:bold;"> KG1009 - Madurai unit </td></tr>
+              <tr align="left" class="rightside" >
+                <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                      inset 0 0 5px rgba(53,86,129, 0.5),
+                      inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;"  width="250px"> The Tamilnadu shops and commercial establishments act - 1947 </span> </th>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">1</td>
+                <td>Opening and closing hours</td>
+                <td>10-Sep-2015</td>
+                <td>15-Sep-2015</td>
+                <td colspan="2">14-Sep-2015</td>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">2</td>
+                <td>Daily and weekly hours</td>
+                <td>10-Sep-2015</td>
+                <td>15-Sep-2015</td>
+                <td colspan="2">15-Sep-2015</td>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">3</td>
+                <td>Overtime</td>
+                <td>10-Sep-2015</td>
+                <td>16-Sep-2015</td>
+                <td colspan="2">15-Sep-2015</td>
+              </tr>
+              <tr align="left" class="rightside" >
+                <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                      inset 0 0 5px rgba(53,86,129, 0.5),
+                      inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;"  width="250px"> The Batteries act - 2001 </span> </th>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">4</td>
+                <td>Form I - Importers Half yearly returns</td>
+                <td>12-Sep-2015</td>
+                <td>20-Sep-2015</td>
+                <td colspan="2">18-Sep-2015</td>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">5</td>
+                <td>Form II - Importers registration</td>
+                <td>15-Sep-2015</td>
+                <td>24-Sep-2015</td>
+                <td colspan="2">24-Sep-2015</td>
+              </tr>
+               <tr><td colspan="5" style="background:#D4B7EB;font-weight:bold;"> KG1010 - Chennai unit </td></tr>
+              <tr align="left" class="rightside" >
+                <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                      inset 0 0 5px rgba(53,86,129, 0.5),
+                      inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;"  width="250px"> The Tamilnadu shops and commercial establishments act - 1947 </span> </th>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">1</td>
+                <td>Opening and closing hours</td>
+                <td>10-Sep-2015</td>
+                <td>15-Sep-2015</td>
+                <td colspan="2">14-Sep-2015</td>
+              </tr>
+              <tr style="background:#fff;">
+                <td align="center">2</td>
+                <td>Daily and weekly hours</td>
+                <td>10-Sep-2015</td>
+                <td>15-Sep-2015</td>
+                <td colspan="2">15-Sep-2015</td>
+              </tr>
+               <tr  align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Delayed<span><img src="/images/chevron_black_right.png"></span></th>
+            </tr>
+             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th  colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: In progress<span><img src="/images/chevron_black_right.png"></span></th>
+            </tr>
+             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+              <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Not complied<span><img src="/images/chevron_black_right.png"></span></th>
+            </tr>
+
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- archive tab content end here -->
+      <div id="level-filter" style="width:100%">
+        <input type="hidden" id="hidden"/>
+        <div style="margin: 32px 10px 0px 100px;float:left"> <span>Filter By:</span> </div>
+        <div class="leftmargin">
+          <input type="radio" name="" id="domainradio" class="radio" checked/>
+          <label for="domainradio" id="radiolabel"  style="width:120px">Domain</label>
+          <div class="textboxdomain">
+            <p id="domain-para" style="margin-top:5px;float:left;width:150px">
+              <select  multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo2" style="width:120px">
+                <option value="selectall" >Select All</option>
+                <!--<option value="deselectall" >Deselect All</option>-->
+                <option value="Finance" selected>Finance</option>
+                <option value="Labour Law" selected>Labour Law</option>
+                <option value="Industrial Law" selected>Industrial Law</option>
+              </select>
+               <span><a href="#">
+            <input id="go-dom" type="button" class="btn" value="Go" style="float:right;margin-top:-25px;"/>
+            </a></span>
+            </p>
+          </div>
+        </div>
+
+        <div class="leftmargin">
+          <input type="radio" name="radio" id="radio1" class="radio" checked/>
+          <label for="radio1" id="radiolabel"  style="width:120px">Group</label>
+          <div class="textboxgroup">
+            <p>
+              <input type="text" name="text1" id="text1" autofocus class="input-box icon-autocomplete margin10">
+            </p>
+          </div>
+        </div>
+        <div class="leftmargin">
+          <input type="radio" name="radio" id="radio2" class="radio"/>
+          <label for="radio2" id="radiolabel"  style="width:120px">Legal Entity</label>
+          <div class="textboxcompany">
+            <input type="text" name="text2" id="entity-auto" value="KG" autofocus class="input-box icon-autocomplete" style="width:120px;margin-top:10px;">
+            <p id="entity-para1" style="margin-top:5px;float:left;width:150px">
+              <select id="legal-entity" multiple="multiple" placeholder="Select Entity" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1" style="width:120px">
+                <option value="selectall" selected>Select All</option>
+                <option value="KG Autoparts" selected>KG Autoparts</option>
+                <option value="KG Transports" selected>KG Transports</option>
+                <option value="KG Booking" selected>KG Booking</option>
+                <option value="KG Electricals" selected>KG Electricals</option>
+                <option value="KG Mobiles" selected>KG Mobiles</option>
+                <option value="KG HealthCare" selected>KG HealthCare</option>
+                <option value="KG HR Services" selected>KG HR Services</option>
+                <option value="KG Hospitals" selected>KG Hospitals</option>
+                <option value="KG Bakeries" selected>KG Bakeries</option>
+                <option value="KG Hotels" selected>KG Hotels</option>
+                <option value="KG Schools" selected>KG Schools</option>
+                <option value="KG University" selected>KG University</option>
+              </select>
+              <span><a href="#">
+            <input id="go-le" type="button" class="btn" value="Go" style="float:right;margin-top:-25px;margin-right:-2px"/>
+            </a></span> 
+            </p>
+           
+            </div>
+        </div>
+        <div class="leftmargin">
+          <input type="radio" name="radio" id="radio3" class="radio"/>
+          <label for="radio3" id="radiolabel"  style="width:120px">Division</label>
+          <div class="textboxdivision">
+            <input type="text" name="text3" id="division-auto" autofocus value="Manufacturing" class="input-box icon-autocomplete" style="width:120px;margin-top:10px">
+            <p id="division-para1" style="margin-top:5px;float:left;width:150px">
+              <select id="division" multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1" style="width:120px;">
+                <option value="selectall" >Select All</option>
+                <!--<option value="deselectall" >Deselect All</option>-->
+                <option value="KG Manufacturing" selected>KG Manufacturing</option>
+                <option value="KG Sales" selected>KG Sales</option>
+                <option value="KG Quality Checking" selected>KG Quality Checking</option>
+                <option value="KG Administration" selected>KG Administration</option>
+                <option value="KG Testing" selected>KG Testing</option>
+                <option value="KG Security" selected>KG Security</option>
+                <option value="KG Research" selected>KG Research</option>
+                <option value="KG HR Unit" selected>KG HR Unit</option>
+                <option value="KG Development" selected>KG Development</option>
+              </select>
+              <span><a href="#">
+            <input id="go-d" type="button" class="btn" value="Go" style="float:right;margin-top:-25px;margin-right:-2px"/>
+            </a></span> 
+            </p>
+       
+            </div>
+        </div>
+        <div class="leftmargin">
+          <input type="radio" name="radio" id="radio4" class="radio"/>
+          <label for="radio4" id="radiolabel" style="width:120px">Unit</label>
+          <div class="textboxbranch">
+            <input type="text" name="text4" id="unit-auto" autofocus value="South gate, Madurai"  class="input-box icon-autocomplete" style="width:120px;margin-top:10px">
+            <p id="unit-para1" style="margin-top:5px;float:left;width:150px">
+              <select id="unit" multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1" style="width:120px;">
+                <option value="selectall" >Select All</option>
+                <!--<option value="deselectall" >Deselect All</option>-->
+                <option value="Aviyur, Madurai" selected>Aviyur, Madurai</option>
+                <option value="South Gate, Madurai" selected>South Gate, Madurai</option>
+                <option value="Padi, Chennai" selected>Padi, Chennai</option>
+                <option value="Periyar, Madurai" selected>Periyar, Madurai</option>
+                <option value="Mattuthavani, Madurai" selected>Mattuthavani, Madurai</option>
+                <option value="KK Nagar, Chennai" selected>KK Nagar, Chennai</option>
+                <option value="Vadapalani, Chennai" selected>Vadapalani, Chennai</option>
+                <option value="KG Namakal Unit" selected>KG Namakal Unit</option>
+                <option value="Suseendram, Kanyakumari" selected>Suseendram, Kanyakumari</option>
+                <option value="Nagercoil, Kanyakumari" selected>Nagercoil, Kanyakumari</option>
+                <option value="Naloor, Kanyakumari" selected>Naloor, Kanyakumari</option>
+              </select>
+              <span><a href="#">
+            <input id="go-u" type="button" class="btn" value="Go" style="float:right;margin-top:-25px;"/>
+            </a></span>
+            </p>
+           
+             </div>
+        </div>
+      </div>
+      <div class="graph-box">
+        <input type="button" id="viewaspie" style="float:right;margin-right:20px" value="View as pie chart"/>
+        <input type="button" id="viewasbar" style="float:right;margin-right:20px" value="View as bar chart"/>
+        <input type="button" id="back" onClick="loadGroup()" style="float:right;margin-right:20px" value="Back"/>
+        <p id="year-para" style="margin-top:5px;float:right;width:130px">
+          <span style="font-size:13px">Select Year:</span><select id="year" multiple="multiple" placeholder="Select Years" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo2" style="width:110px;float:right;" >
+            <option value="2009" >2009</option>
+            <option value="2010" >2010</option>
+            <option value="2011" >2011</option>
+            <option value="2012" >2012</option>
+            <option value="2013" selected>2013</option>
+            <option value="2014" selected>2014</option>
+            <option value="2015" selected>2015</option>
+          </select>
+        </p>
+        <div class="clearfix"></div>
+        <div id="container" style="height: 400px;"></div>
+        <input type="button" id="previous" style="float:left;margin-left:20px" value="<< Previous"/>
+        <input type="button" id="next" style="float:right;margin-right:20px" value="Next >>"/>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" style="width:75%; margin-left:-37.5%;">
+  <header>
+    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">Sivaraman</h1>
+     <div class="close toggleModal"></div>
+  </header>  
+  <section><p style="font-size:0.8em; padding-top:10px;">
+
+<table class="modaltable" width="100%">
+      <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
+                            <th width="5%" align="center">#</th>
+                            <th width="15%" align="left">Year</th>                            
+                            <th width="12%" align="center">Total</th>
+                            <th width="12%" align="center">Complied</th>
+                            <th width="12%" align="center">Delayed</th>
+                            <th width="12%" align="center">In progress</th>
+                            <th width="13%" align="center">Not complied</th>
+                            <th width="14%" align="left">Performance %</th>
+                            <th width="5%"></th>
+                          </tr>
+                          <tr >
+                            <td align="center">1</td>
+                            <td align="left"><a href="/home_userwise_2015" class="year2015">2015</a></td>
+                         
+                            <td align="center">10</td>
+                            <td align="center">06</td>
+                            <td align="center">02</td>
+                            <td align="center">01</td>
+                            <td align="center">01</td>
+                            <td align="center">60%</td>
+                            <td><img src="/images/right_arrow.png"></td>
+                          </tr>
+                          <tr >
+                            <td align="center">2</td>
+                            <td align="left">2014</td>
+                         
+                            <td align="center">10</td>
+                            <td align="center">08</td>
+                            <td align="center">00</td>
+                            <td align="center">01</td>
+                            <td align="center">01</td>
+                            <td align="center">80%</td>
+                             <td><img src="/images/right_arrow.png"></td>
+                          </tr>
+                         <tr >
+                            <td align="center">3</td>
+                            <td align="left">2013</td>
+                          
+                            <td align="center">10</td>
+                            <td align="center">07</td>
+                            <td align="center">02</td>
+                            <td align="center">0</td>
+                            <td align="center">01</td>
+                            <td align="center">70%</td>
+                             <td><img src="/images/right_arrow.png"></td>
+                          </tr>
+                        <tr >
+                            <td align="center">4</td>
+                            <td align="left">2012</td>
+                         
+                            <td align="center">10</td>
+                            <td align="center">10</td>
+                            <td align="center">0</td>
+                            <td align="center">0</td>
+                            <td align="center">0</td>
+                            <td align="center">100%</td>
+                             <td><img src="/images/right_arrow.png"></td>
+                          </tr>
+                        <tr>
+                            <td align="center">5</td>
+                            <td align="left">2011</td>
+                            
+                            <td align="center">10</td>
+                            <td align="center">07</td>
+                            <td align="center">02</td>
+                            <td align="center">01</td>
+                            <td align="center">00</td>
+                            <td align="center">70%</td>
+                             <td><img src="/images/right_arrow.png"></td>
+                          </tr>
+                        </table>
+    </p>
+  </section>
+</div>
+
+
+<script type="text/javascript">
+$('.toggleModal').on('click', function (e) {
+  $('.modal').toggleClass('active');
+});
+</script>
+<script>
+$(function(){
+  $('#text2').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Bajaj Allianz Group', 'PRG Group', 'TVS Group'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+  $('#text3').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['Auto Parts - Manufacturing', 'Division 1', 'Division 2'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+  $('#text4').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+          term = term.toLowerCase();
+          var choices = ['South Gate, Madurai', 'Periyar, Madurai', 'Mattuthavani, Madurai'];
+          var suggestions = [];
+          for (i=0;i<choices.length;i++)
+              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+          suggest(suggestions);
+      }
+  });
+   
+});
+$(document).ready(function() {
+  })
+
+  $("#example-basic").steps({
+    headerTag: "h3",
+    bodyTag: "section",
+    transitionEffect: "slideLeft",
+    autoFocus: true
+  });
+  jQuery(window).load(function(){
+    jQuery('.page-load').tipso({
+      tooltipHover: true
+  });
+});
+</script> 
+{% endblock %} 

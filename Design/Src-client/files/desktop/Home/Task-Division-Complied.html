@@ -1,61 +1,129 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
- <div class="content-container width50">
+
+<link rel="stylesheet" type="text/css" href="css/dashboard.css">
+
+<link rel="stylesheet" type="text/css" href="../Home/ClientAdminHome/common/css/dashboard.css">
+
+  <link rel="shortcut icon" href="../Home/ClientAdminHome/common/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="icon" href="../Home/ClientAdminHome/ClientAdminHome/common/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="stylesheet" type="text/css" href="../Home/ClientAdminHome/common/css/reset.css">
+  <link rel="stylesheet" type="text/css" href="../Home/ClientAdminHome/dashboard.css">
+  <link rel="stylesheet" type="text/css" href="../Home/ClientAdminHome/common/css/styles.css">
+  <link rel="stylesheet" type="text/css" href="../Home/ClientAdminHome/common/css/navigation.css">
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/jquery.min.js"></script>
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/html5.js"></script>
+  <!--<script type="text/javascript" src="../Home/ClientAdminHome/common/js/menu-script.js"></script>-->
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/highcharts.js"></script>
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/highcharts-3d.js"></script>
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/exporting.js"></script>
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/standalone-framework.js"></script>
+
+  <script src="../Home/ClientAdminHome/common/js/jquery.sumoselect.js"></script>
+  <script src="../Home/ClientAdminHome/common/js/drilldown.js"></script>
+  <link href="../Home/ClientAdminHome/common/css/sumoselect.css" rel="stylesheet" />
+  <!--Autocomplete-->
+  <link rel="stylesheet" type="text/css" href="../Home/ClientAdminHome/common/css/autocomplete/jquery.auto-complete.css">
+  <script type="text/javascript" src="../Home/ClientAdminHome/common/js/autocomplete/jquery.auto-complete.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#my-account").click(function() {
+        $(".top-nav ul li ul").slideToggle(); 
+      })
+    })
+  </script>
+
+
+ <div class="content-container">
         <div class="content-area">
           <div class="add-container">
           <div class="grid-table">
             <table>
               <tr>
-                <th width="5%" align="center">#</th>
-                <th width="20%" align="left">Unit</th>
-                <th width="10%" align="left">Type</th>
-                <th width="17%" align="left">Task</th>
-                <th width="12%" align="left">Assigned To</th>
+                <th width="3%" align="center">#</th>
+                <th width="5%" align="left">Type <span><img src="/images/dropdown-arrow.png"/></span></th>
+                <th width="20%" align="left">Compliance <span><img src="/images/dropdown-arrow.png"/></span></th>
+                <th width="11%" align="left">Assigned To <span><img src="/images/dropdown-arrow.png"/></span></th>
                 <th width="9%" align="left">Download</th>
               </tr>
               <tr>
+                <td align="center"></td>
+                <td><input type="text"  class="filter-text-box" placeholder="Search"></td>
+                <td><input type="text"  class="filter-text-box" placeholder="Search"></td>
+                <td><input type="text"  class="filter-text-box" placeholder="Search"></td>
+                <td></td>
+              </tr>
+              <tr style="padding:10px;text-align:left">
+                <th colspan="4" style="height:20px;font-size:0.8em;background-color:#D4B7EB;color:black">KG1018- Madurai Unit </th><th style="height:20px;font-size:0.8em;background-color:#D4B7EB;color:black;padding-right:5px" align="right"><img src="/images/dropdown-arrow.png"/></</th>
+              </tr>
+              <tr align="left" class="rightside" >
+                  <th  colspan="3" style="background-color:#fff; padding-left:0px; ">
+                    <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                      inset 0 0 5px rgba(53,86,129, 0.5),
+                      inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;"  width="250px">
+                      The Batteries Act, 2001
+                    </span>
+                  </th>
+                  <th colspan="4" style="background-color:#fff;"></th>
+              </tr>
+              <tr>
                 <td align="center">1</td>
-                <td>Unit Office 1 - Madurai</td>
                 <td>Factory</td>
-                <td>Submitting FORM I</td>
+                <td><img src="/images/icon-info.png" style="padding-right:3px;">FORM I - Submit Half yearly returns</td>
                 <td>Sivaraman</td>
                 <td><a href="#">Download</a></td>
               </tr>
               <tr>
                 <td align="center">2</td>
-                <td>Unit Office 2 - Madurai</td>
                 <td>Office</td>
-                <td>Submitting FORM II</td>
-                <td>Narayanan</td>
+                <td><img src="/images/icon-info.png" style="padding-right:3px;">FORM II - Importers registration</td>
+                <td>Dhinesh</td>
                 <td><a href="#">Download</a></td>
               </tr> 
               <tr>
                 <td align="center">3</td>
-                <td>Unit Office 1 - Madurai</td>
                 <td>Factory</td>
-                <td>Submitting FORM III</td>
+                <td><img src="/images/icon-info.png" style="padding-right:3px;">FORM III - Undertaking submission</td>
                 <td>Sivaraman</td>
                 <td><a href="#">Download</a></td>
               </tr> 
-              <tr>
+              <tr align="left" class="rightside" >
+                  <th  colspan="4" style="background-color:#fff; padding-left:0px; ">
+                    <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                      inset 0 0 5px rgba(53,86,129, 0.5),
+                      inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;"  width="250px">
+                      The Tamilnadu Shops and Commercial Establishments Act - 1947
+                    </span>
+                  </th>
+                  <th colspan="2" style="background-color:#fff;"></th>
+              </tr>
+                            <tr>
                 <td align="center">4</td>
-                <td>Unit Office 3 - Madurai</td>
                 <td>Factory</td>
-                <td>Submitting FORM II</td>
+                <td><img src="/images/icon-info.png" style="padding-right:3px;">Form P - Register of fines,deduction for damages or loss and advance</td>
                 <td>Velmurugan</td>
                 <td><a href="#">Download</a></td>
               </tr>     
               <tr>
                 <td align="center">5</td>
-                <td>Unit Office 4 - Chennai</td>
                 <td>Office</td>
-                <td>Submitting FORM I</td>
+                <td><img src="/images/icon-info.png" style="padding-right:3px;">Form S - Notice</td>
                 <td>Nagendren</td>
                 <td><a href="#">Download</a></td>
               </tr>
+		                 <tr style="padding:10px;text-align:left">
+                <th colspan="4" style="height:20px;font-size:0.8em;background-color:#D4B7EB;color:black">KG1019- Namakkal Unit </th><th style="height:20px;font-size:0.8em;background-color:#D4B7EB;color:black;padding-right:5px" align="right"><img src="/images/dropdown-arrow.png"/></</th>
+              </tr>
+
             </table>
           </div>
         </div>
       </div>
       </div>
 {% endblock %}
+

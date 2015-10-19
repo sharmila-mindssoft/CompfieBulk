@@ -67,7 +67,7 @@ img, object {
 }
 .top-nav-section p {
 	color: #333;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	text-align: right;
 	width: 100%;
 	padding-bottom: 1em;
@@ -86,7 +86,7 @@ img, object {
 	list-style-type: none;
 	display: inline-block;
 	margin-left: 1.5em;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #333;
 	position: relative;
 }
@@ -227,7 +227,7 @@ img, object {
 	position: relative;
 
 	color: #f1f2f2;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	line-height: 1.4em;
 }
 .reminder-box-content ul li span {
@@ -244,7 +244,7 @@ img, object {
 .reminder-box-content p a {
 	text-decoration: none;
 	color: #ffae00;
-	font-size: 0.8em;
+	font-size: 0.813em;
 }
 .escalations-box-heading {
 	width: 100%;
@@ -283,7 +283,7 @@ img, object {
 .escalations-box-content ul li {
 	list-style-type: none;
 	background: url(../images/dashboard/icon-info-1.png) no-repeat left top;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	line-height: 1.4em;
 	color: #f1f2f2;
 	font-weight: 400;
@@ -315,7 +315,7 @@ img, object {
 .escalations-box-content p a {
 	text-decoration: none;
 	color: #ffae00;
-	font-size: 0.8em;
+	font-size: 0.813em;
 }
 .graph-box {
 	width: 100%;
@@ -351,7 +351,7 @@ img, object {
 	/*background: rgba(0,0,0,0.40);*/
 	/*padding: 0.5em;*/
 	font-weight: 700;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #fff;
 	position: relative;
 	/*top: 0.4em;*/
@@ -366,7 +366,7 @@ img, object {
 	background: rgba(0,0,0,0.0) url(../images/dashboard/icon-filter.png) no-repeat 0.3em center;
 	padding: 0.5em 2em;
 	font-weight: 700;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #fff;
 	cursor: pointer;
 }
@@ -388,7 +388,7 @@ img, object {
 	color: #f1f2f2;
 	padding: 0.8em 1em;
 	font-weight: 400;
-	font-size: 0.8em;
+	font-size: 0.813em;
 }
 .filter-dropdown-container ul li:hover {
 	color: #fff;
@@ -472,7 +472,7 @@ img, object {
 	color: #ccc;
 	text-align: center;
 	line-height: 60px;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	font-weight: normal;
 	position: relative;
 	z-index: 2;
@@ -531,7 +531,7 @@ img, object {
 	position: relative;
 
 	color: #f1f2f2;
-	font-size: 0.8em;
+	font-size: 0.813em;
 	line-height: 1.4em;
 }
 .list-box-content ul li span {
@@ -548,7 +548,7 @@ img, object {
 .list-box-content p a {
 	text-decoration: none;
 	color: #ffae00;
-	font-size: 0.8em;
+	font-size: 0.813em;
 }
 .grid-table {
 	width: 100%;
@@ -570,7 +570,7 @@ img, object {
 	padding-left:0.5em;
 }
 .grid-table table tr td {
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #f1f2f2;
 	height: 2.3em;
 	vertical-align: middle;
@@ -611,7 +611,7 @@ img, object {
 	padding-left:0.5em;
 }
 .grid-table-dash table tr td {
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #333;
 	height: 2.3em;
 	vertical-align: middle;
@@ -651,7 +651,7 @@ img, object {
 	padding-left:0.5em;
 }
 .grid-table-dash1 table tr td {
-	font-size: 0.8em;
+	font-size: 0.813em;
 	color: #333;
 	height: 2.3em;
 	vertical-align: middle;
@@ -680,5 +680,5 @@ img, object {
 	padding-right: 1.2em;
 	text-decoration: none;
 	color: #ffae00;
-	font-size: 0.8em;
+	font-size: 0.813em;
 }

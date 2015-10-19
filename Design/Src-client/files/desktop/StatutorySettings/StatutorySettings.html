@@ -1,0 +1,78 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+  <div class="content-container" >
+  <div class="content-area">
+      <h1>Statutory Settings</h1>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+      <table>
+          <tr align="left">
+          <th align="center">#</th>
+          <th width="6%">Country</th>
+          
+          <th>Business Group</th>
+          <th>Legal Entity</th>
+          <th width="22%">Division</th>
+          <th width="22%">Unit</th>
+        
+          <th width="12%">Domain</th>
+          <th align="center" width="5%">Edit</th>
+         
+        </tr>
+        <tr>
+          <td align="center"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td align="center"></td>
+         
+        </tr>
+          <tr>
+          <td align="center">1</td>
+          <td>India</td>
+          
+          <td>VRM Business Group</td>
+          <td>VRM & Sons</td>
+          <td>Auto Parts - Manufacturing</td>
+          <td>VRM1005 - Branch Office 2</td>
+          
+          <td>Industrial Law</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" onclick="location.href='/statutorysettinglist'"/></td>
+          
+        </tr>
+          
+        <tr>
+          <td align="center">2</td>
+          <td>India</td>
+          
+          <td>VRM Business Group</td>
+          <td>VRM & Sons</td>
+          <td>Auto Parts - Manufacturing</td>
+          <td>VRM1004 - Branch Office 1</td>
+        
+          <td>Industrial Law</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" onclick="location.href='/statutorysettinglist'"/></td>
+         
+        </tr>
+        <tr>
+          <td align="center">3</td>
+          <td>India</td>
+          
+           <td>VRM Business Group</td>
+          <td>VRM & Sons</td>
+          <td>Auto Parts - Manufacturing</td>
+          <td>VRM1002 - Regional Office 1</td>
+      
+          <td>Industrial Law</td>
+          <td align="center"><img src="/images/icon-edit.png" id="editid" onclick="location.href='/statutorysettinglist'" /></td>
+          
+        </tr>
+        </table>
+    </div>
+      
+    </div>
+</div>
+{% endblock %} 
