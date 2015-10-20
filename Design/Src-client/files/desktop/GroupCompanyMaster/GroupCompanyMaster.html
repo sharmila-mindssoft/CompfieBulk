@@ -74,39 +74,6 @@ textarea.input-box {
               <input id="group-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Group Name">
               <span style="font-size:10px"><a id="group-new" href="#">New</a></span> </div>
           </div>
-          <div class="input-row">
-            <div class="single-column-field-label">Legal Entity:<span class="mandatory">*</span></div>
-            <div class="single-column-field-input">
-              <Select id="entity-select" class="input-box">
-                <option>RG Entity</option>
-                <option>SLK Entity</option>
-                <option>PGJ Entity</option>
-              </Select>
-              <input id="entity-text" type="text" class="input-box" style="width:200px;display:none" placeholder="Legal Entity Name">
-              <span style="font-size:10px"><a href="#" id="entity-new">New</a></span> </div>
-          </div>
-        <div class="input-row">
-            <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
-            <div class="single-column-field-input">
-              <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
-                    <option value="Labour Law" selected>Labour Law</option>
-                    <option value="Industrial Law" selected>Industrial Law</option>
-                    <option value="Finance" selected="selected">Finance</option>
-                  </select>
-              
-              </div>
-          </div>
-          
-           <div class="input-row">
-          <div class="single-column-field-label">Unit Code Auto Generate:</div>
-            <div class="field-input" style="margin-top:5px;">
-               <input type="checkbox" class="unitcode_checkbox" checked="checked">
-            </div>
-            
-          </div>
-            
-        </div>
-        <div class="input-row-right">
            <div class="input-row">
             <div class="single-column-field-label">Business Group</div>
             <div class="single-column-field-input">
@@ -118,7 +85,18 @@ textarea.input-box {
               <input id="businessgroup-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Business Group Name">
               <span style="font-size:10px"><a href="#" id="businessgroup-new">New</a></span> </div>
           </div>
-             <div class="input-row">
+          <div class="input-row">
+            <div class="single-column-field-label">Legal Entity:<span class="mandatory">*</span></div>
+            <div class="single-column-field-input">
+              <Select id="entity-select" class="input-box">
+                <option>RG Entity</option>
+                <option>SLK Entity</option>
+                <option>PGJ Entity</option>
+              </Select>
+              <input id="entity-text" type="text" class="input-box" style="width:200px;display:none" placeholder="Legal Entity Name">
+              <span style="font-size:10px"><a href="#" id="entity-new">New</a></span> </div>
+          </div>
+          <div class="input-row">
             <div class="single-column-field-label">Division</div>
             <div class="single-column-field-input">
               <Select id="division-select" class="input-box">
@@ -129,6 +107,20 @@ textarea.input-box {
               <input id="division-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Division Name">
               <span style="font-size:10px"><a href="#" id="division-new">New</a></span> </div>
           </div>
+            
+        </div>
+        <div class="input-row-right">
+          <div class="input-row">
+            <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
+            <div class="single-column-field-input">
+              <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+                    <option value="Labour Law" selected>Labour Law</option>
+                    <option value="Industrial Law" selected>Industrial Law</option>
+                    <option value="Finance" selected="selected">Finance</option>
+                  </select>
+              
+              </div>
+          </div>
           
           <div class="input-row">
             <div class="single-column-field-label">Upload Logo:<span class="mandatory">*</span></div>
@@ -137,7 +129,12 @@ textarea.input-box {
             </div>
           </div>
          
-       
+          <div class="input-row">
+            <div class="single-column-field-label">Unit Code Auto Generate:</div>
+              <div class="field-input" style="margin-top:5px;">
+                 <input type="checkbox" class="unitcode_checkbox" checked="checked">
+              </div>
+          </div>
         
             
         
@@ -153,25 +150,25 @@ textarea.input-box {
               <input type="text" class="input-box" placeholder=""  value="10-Sep-2015" style="width:200px;">
             </div>
           </div>
-             <div class="input-row">
-            <div class="single-column-field-label">Number of user licence:<span class="mandatory">*</span></div>
-            <div class="field-input">
-              <input type="text" class="input-box" placeholder="Number of user licence"  value="10" style="width:200px;">
-            </div>
-          </div>
-        </div>
-        <div class="input-row-right">
-        <div class="input-row">
+          <div class="input-row">
             <div class="single-column-field-label">Contract  To:<span class="mandatory">*</span></div>
             <div class="field-input">
               <input type="text" class="input-box" placeholder=""  value="10-Sep-2020" style="width:200px;">
             </div>
           </div>
-           <div class="input-row">
-          <div class="single-column-field-label">SMS Notification:</div>
-            <div class="field-input" style="margin-top:5px;">
-               <input type="checkbox" checked="checked">
+        </div>
+        <div class="input-row-right">
+          <div class="input-row">
+            <div class="single-column-field-label">Number of user licence:<span class="mandatory">*</span></div>
+            <div class="field-input">
+              <input type="text" class="input-box" placeholder="Number of user licence"  value="10" style="width:200px;">
             </div>
+          </div>
+           <div class="input-row">
+            <div class="single-column-field-label">SMS Notification:</div>
+              <div class="field-input" style="margin-top:5px;">
+                 <input type="checkbox" checked="checked">
+              </div>
             
           </div>
         </div>
