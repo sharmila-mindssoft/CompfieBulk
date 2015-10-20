@@ -8,25 +8,25 @@
     float: left;
     padding-bottom: 0.58em;
     width: 100%;
-  }
-  #navbar {
-    width:auto;
-  } 
+}
+#navbar {
+  width:auto;
+ } 
 
-  #navbar #holder {
-    height:auto;
-    border-bottom:0px solid #000;
-    width:auto;  
-    font-size:12px;
-    padding-left:5px; 
-  } 
+ #navbar #holder {
+  height:auto;
+  border-bottom:0px solid #000;
+  width:auto;  
+  font-size:12px;
+  padding-left:5px; 
+ } 
 
-  #navbar #holder ul {
-    list-style:none;
-    margin:0;
-    padding:0; 
-    font-size:12px;
-  } 
+ #navbar #holder ul {
+  list-style:none;
+  margin:0;
+  padding:0; 
+  font-size:12px;
+ } 
 
   #navbar #holder ul li a { 
     text-decoration:none;
@@ -46,17 +46,17 @@
     -webkit-border-top-right-radius:5px; 
   } 
 
-  #navbar #holder ul li a:hover {
-    background:#A0A2A3;
-    color:#000;
-    font-size:12px;
-  } 
+ #navbar #holder ul li a:hover {
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+ } 
 
-  #navbar #holder ul li a.onlink {
-    background:#A0A2A3;
-    color:#000;
-    font-size:12px;
-  } 
+ #navbar #holder ul li a.onlink {
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+ } 
 
   #navbar #holder ul li a.onlink:hover {
     background:#A0A2A3;
@@ -68,15 +68,15 @@
     overflow: auto;
   }
 
-  .onlink{
-    background:#A0A2A3;
-    color:#000;
-    font-size:12px;
-  }
+.onlink{
+  background:#A0A2A3;
+  color:#000;
+  font-size:12px;
+}
 
-  .paddingleft20{
-    padding-left:40px;
-  }
+.paddingleft20{
+  padding-left:40px;
+}
   #example-basic
   {
     min-height: 600px !important;
@@ -88,88 +88,88 @@
   
 </style>
 <script type="text/javascript">
-  $(document).ready(function(){
-    $('#days').hide();
-    $('#hours').show();
-    $("#trigger_every").show();
-    $("#summary").html("To Complete within 18 hours");
-  })
+$(document).ready(function(){
+  $('#days').hide();
+  $('#hours').show();
+  $("#trigger_every").show();
+  $("#summary").html("To Complete with 18 hours");
+})
 
-  $(function() {
-    $(".dayhour").change(function(){
+$(function() {
+  $(".dayhour").change(function(){
 
-      if($(this).val()=="day")
-      {
-        $('#days').show();
-        $('#hours').hide();
-        $("#trigger_every").show();
-        $("#summary").html("To Complete within 6 days");
-      }else if($(this).val()=="hour"){
-        $('#days').hide();
-        $('#hours').show();
-        $("#trigger_every").show();
-        $("#summary").html("To Complete within 6 hours");
-      } 
-    });
+    if($(this).val()=="day")
+    {
+      $('#days').show();
+      $('#hours').hide();
+      $("#trigger_every").show();
+      $("#summary").html("To Complete with in 2 days");
+    }else if($(this).val()=="hour"){
+      $('#days').hide();
+      $('#hours').show();
+      $("#trigger_every").show();
+      $("#summary").html("To Complete with in 2 hours");
+    } 
+  });
 
-    $('.tasktype').change(function(){
-      if($(this).val()=="Recurring" || $(this).val()=="Review")
-      {
-        $('#Recurring').show();
-        $('#Occasional').hide();
-        $('#As_when').hide();
-        $('#One_Time').hide();
-      }
-
-      else if($(this).val() == "onoccur" )
-      {
-        $('#Recurring').hide();
-        $('#Occasional').show();
-        $('#As_when').hide();
-        $('#One_Time').hide();
-      }
-
-      else if($(this).val() == "One_Time")
-      {
-        $('#Recurring').hide();
-        $('#Occasional').hide();
-        $('#As_when').hide();
-        $('#One_Time').show();
-      }
-      else
-      {
-        $('#Recurring').hide();
-        $('#Occasional').hide();
-        $('#As_when').hide();
-        $('#One_Time').hide();
-      }
-    });
-    $('.repeatlabelday').click(function(){    
+  $('.tasktype').change(function(){
+    if($(this).val()=="Recurring" || $(this).val()=="Review")
+    {
+      $('#Recurring').show();
+      $('#Occasional').hide();
+      $('#As_when').hide();
+      $('#One_Time').hide();
+    }
+   
+    else if($(this).val() == "onoccur" )
+    {
+      $('#Recurring').hide();
+      $('#Occasional').show();
+      $('#As_when').hide();
+      $('#One_Time').hide();
+    }
+    
+    else if($(this).val() == "One_Time")
+    {
+      $('#Recurring').hide();
+      $('#Occasional').hide();
+      $('#As_when').hide();
+      $('#One_Time').show();
+    }
+    else
+    {
+      $('#Recurring').hide();
+      $('#Occasional').hide();
+      $('#As_when').hide();
+      $('#One_Time').hide();
+    }
+  });
+  $('.repeatlabelday').click(function(){    
       $('.repeatbyday').show();
       $('.repeatbyendday').hide();
-
-    });
-    $('.repeatlabelendday').click(function(){    
+    
+  });
+  $('.repeatlabelendday').click(function(){    
       $('.repeatbyday').hide();
       $('.repeatbyendday').show();
       $('.repeatbyendday_stat_date1').hide();
       $('.repeatbyendday_stat_date2').hide();
       $('.repeatbyendday_stat_date').hide();      
-    });
-    $('.multipleinput').change(function() {
-      if ($(this).is(':checked')) {
-        $('.multipleselectnone').hide();
-        $('.multipleselect').show();
-      } else {
-        $('.multipleselect').hide();
-        $('.multipleselectnone').show();
-      }
-    });
-    $('.month_recurring_sel').change(function(){
+  });
+  $('.multipleinput').change(function() {
+    if ($(this).is(':checked')) {
+      $('.multipleselectnone').hide();
+      $('.multipleselect').show();
+    } else {
+      $('.multipleselect').hide();
+      $('.multipleselectnone').show();
+    }
+  });
+  $('.month_recurring_sel').change(function(){
 
-    }); 
-    $('.occasional_days').change(function(){
-      var daysrecord = $('.occasional_days').val();
+  }); 
+  $('.occasional_days').change(function(){
+    var daysrecord = $('.occasional_days').val();
       $('.occasional_summary').text(" To Complete within "+daysrecord+" Days ") 
     }); 
     $('.aswhen_sel').change(function(){
@@ -224,32 +224,32 @@
                     {% endfor %}
                   </ul></td>
                   <td><ul style="height:500px;overflow-y:scroll">
-                    <li>
-                      <input type="text" class="filter-text-box">
-                    </li>
-                    <li>Finance Law</li>
-                    <li>Industrial Law</li>
-                    <li  class="active">Labour Law</li>
-                  </ul></td>
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                      <li>Finance Law</li>
+                      <li>Industrial Law</li>
+                      <li  class="active">Labour Law</li>
+                    </ul></td>
                   <td><ul style="height:500px;overflow-y:scroll">
-                    <li>
-                      <input type="text" class="filter-text-box">
-                    </li>
-                    <li ><b>Select All</b></li>
-                    <li class="active">Factory</li>
-                    <li>Office</li>
-                    <li>Plantation</li>
-                    <li>Contractor</li>
-                    <li>S & E</li>
-                    <li>Mines</li>
-                  </ul></td>
-                  <td><ul  style="height:500px;overflow-y:scroll">
-                    <li>
-                      <input type="text" class="filter-text-box">
-                    </li>
-                    <li class="active">Central</li>
-                    <li >State</li>
-                  </ul></td>
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                      <li class="active"><b>Select All</b></li>
+                      <li >Factory</li>
+                      <li>Office</li>
+                      <li>Plantation</li>
+                      <li>Contractor</li>
+                      <li>S & E</li>
+                      <li>Mines</li>
+                    </ul></td>
+                    <td><ul  style="height:500px;overflow-y:scroll">
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                      <li class="active">Central</li>
+                      <li >State</li>
+                    </ul></td>
                 </tr>
               </table>
             </div>
@@ -266,7 +266,7 @@
                   <th width="16.66%">Sub Section</th>
                 </tr>
                 <tr>
-
+                
                   <td><ul>
                     <li>
                       <input type="text" class="filter-text-box">
@@ -308,21 +308,21 @@
                       <input type="text" class="filter-text-box">                        
                       </li>
                     </ul>
-                    <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Sub Section"/>
-                      <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
-                       formtarget="_self" /></a> </div>
-                     </td>
-
-                   </tr>
-                   <tr align="left">
-                    <th width="16.66%">Rule</th>
-                    <th width="16.66%">Sub Rule</th>
-                    <th width="16.66%">Clause</th>
-                    <th width="16.66%">Sub Clause</th>
-
-                  </tr>
-                  <tr>
-                    <td><ul>
+<div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Sub Section"/>
+                   	<a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                           formtarget="_self" /></a> </div>
+                    </td>
+                 
+                </tr>
+                <tr align="left">
+                  <th width="16.66%">Rule</th>
+                  <th width="16.66%">Sub Rule</th>
+                  <th width="16.66%">Clause</th>
+                  <th width="16.66%">Sub Clause</th>
+                
+                </tr>
+                <tr>
+                  <td><ul>
                       <li>
                         <input type="text" class="filter-text-box">
 
