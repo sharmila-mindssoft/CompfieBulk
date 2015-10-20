@@ -19,19 +19,21 @@
           <div class="field-input"><input type="text" class="input-box" value="EMP001"></div>
         </div>
         <div class="input-row">
-          <div class="field-label">Seating Unit:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="seatingunit" autofocus value="VBM1001 - Corporate Office"></div>
+          <div class="field-label">Contact No:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210"></div>
         </div>
+      
       </div>  
       <div class="input-row-right">
         <div class="input-row">
           <div class="field-label">User Group:<span class="mandatory">*</span></div>
           <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="usergroup" autofocus value="Manager"></div>
         </div>
-        <div class="input-row">
-          <div class="field-label">Contact No:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210"></div>
+          <div class="input-row">
+          <div class="field-label">Seating Unit:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="seatingunit" autofocus value="VBM1001 - Corporate Office"></div>
         </div>
+        
         
         
         <div class="input-row">
@@ -97,6 +99,16 @@
                 </div>
               </div>
               <div class="input-row">
+            <div class="field-label">Business Group:<span class="mandatory">*</span></div>
+            <div class="field-input">
+             <select id="legal-entity" multiple="multiple" placeholder="Select Business Group" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+              <option value="KG Business Group 1" selected>KG Business Group 1</option>
+              <option value="KG Business Group 1" selected>KG Business Group 2</option>
+              <option value="KG Business Group 1" selected>KG Business Group 3</option>
+            </select>
+          </div>
+        </div>
+              <div class="input-row">
                 <div class="field-label">Legal Entity:<span class="mandatory">*</span></div>
                 <div class="field-input">
                   <select id="legal-entity" multiple="multiple" placeholder="Select Legal Entity" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
@@ -108,29 +120,11 @@
                 </div>
               </div>
               
-              <div class="input-row">
-                <div class="field-label">Domain:<span class="mandatory">*</span></div>
-                <div class="field-input">
-                 <select id="legal-entity" multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
-                  <option value="finance" selected>Finance</option>
-                  <option value="labour" selected>Labour Law</option>
-                  <option value="industrial" selected>Industrial Law</option>
-                </select>
-              </div>
-            </div>
+             
             
           </div>
           <div class="input-row-right">
-           <div class="input-row">
-            <div class="field-label">Business Group:<span class="mandatory">*</span></div>
-            <div class="field-input">
-             <select id="legal-entity" multiple="multiple" placeholder="Select Business Group" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
-              <option value="KG Business Group 1" selected>KG Business Group 1</option>
-              <option value="KG Business Group 1" selected>KG Business Group 2</option>
-              <option value="KG Business Group 1" selected>KG Business Group 3</option>
-            </select>
-          </div>
-        </div>
+           
         <div class="input-row">
           <div class="field-label">Division:</div>
           <div class="field-input">
@@ -153,6 +147,17 @@
             </select>
           </div>
         </div>
+         <div class="input-row">
+                <div class="field-label">Domain:<span class="mandatory">*</span></div>
+                <div class="field-input">
+                 <select id="legal-entity" multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+                  <option value="finance" selected>Finance</option>
+                  <option value="labour" selected>Labour Law</option>
+                  <option value="industrial" selected>Industrial Law</option>
+                </select>
+              </div>
+            </div>
+        
         
       </div> 
       <div class="submit-button-container">
