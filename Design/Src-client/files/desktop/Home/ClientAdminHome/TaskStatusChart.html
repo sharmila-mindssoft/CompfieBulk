@@ -452,7 +452,7 @@ input.radio:checked ~ label {
             text: name
         },
         tooltip: {
-            pointFormat: '{series.name}: <b>{point.y}</b> <br>Total Compliance Tasks: 70'
+            pointFormat: '{series.name}: <b>{point.y}</b> <br>Total Compliances: 70'
         },
         plotOptions: {
             pie: {
@@ -523,12 +523,12 @@ input.radio:checked ~ label {
 		        xAxis: {
 		            type: 'category',
                 title: {
-                    text: 'Compliance Task Status'
+                    text: 'Compliance Status'
                 },
 		        },
 		        yAxis: {
 		            title: {
-		                text: 'Total Compliance Tasks'
+		                text: 'Total Compliances'
 		            }
 
 		        },
@@ -574,11 +574,11 @@ input.radio:checked ~ label {
 
 		        tooltip: {
                             headerFormat: '<b>{series.name}</b>:{point.percentage:.0f}%<br/>',
-                            pointFormat: 'Total Compliance Tasks: 18'
+                            pointFormat: 'Total Compliances: 18'
 		        },
 
 		        series: [{
-		            name: "Compliance Tasks - Group wise",
+		            name: "Compliance - Group wise",
 		            colorByPoint: true,
 		            data: [{
 		                name: "Complied",
@@ -648,7 +648,7 @@ input.radio:checked ~ label {
                
             },
             title: {
-                text: 'Legal entity wise compliance Tasks'
+                text: 'Legal entity wise compliances'
             },
             xAxis: {
                 categories: ['KG Hospitals','KG Bakeries','KG Hotels','KG Schools','KG University'],
@@ -675,7 +675,7 @@ input.radio:checked ~ label {
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Total Compliance Tasks'
+                    text: 'Total Compliances'
                 }
             },
             legend: {
@@ -683,7 +683,7 @@ input.radio:checked ~ label {
             },
             tooltip: {
               headerFormat: '<b>{point.x}</b><br/>',
-              pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliance Tasks: {point.stackTotal}'
+              pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
             },
             plotOptions: {
                 series: {
@@ -797,7 +797,7 @@ input.radio:checked ~ label {
                 
             },
             title: {
-                text: 'Legal entity wise compliance tasks'
+                text: 'Legal entity wise compliances'
             },
             xAxis: {
                 categories: ['KG Transports', 'KG Autoparts', 'KG Booking', 'KG Electricals', 'KG Mobiles', 'KG HR Services', 'KG HealthCare'],
@@ -825,7 +825,7 @@ input.radio:checked ~ label {
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Total Compliance Tasks'
+                    text: 'Total Compliances'
                 },
                   endOnTick: true,
             },
@@ -836,7 +836,7 @@ input.radio:checked ~ label {
               // headerFormat: '<b>{point.x}</b><br/>',
               // pointFormat: '{series.name}: {point.y} out of Total: {point.stackTotal}'
               headerFormat: '<b>{point.x}</b><br/>',
-              pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliance Tasks: {point.stackTotal}'
+              pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
             },
             plotOptions: {
                 series: {
@@ -911,7 +911,7 @@ input.radio:checked ~ label {
               
             },
             title: {
-                text: 'Division wise compliance tasks'
+                text: 'Division wise compliances'
             },
             xAxis: {
                 categories: ['KG HR Unit','KG Development'],
@@ -938,7 +938,7 @@ input.radio:checked ~ label {
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Total Compliance Tasks'
+                    text: 'Total Compliances'
                 }
             },
             legend: {
@@ -948,7 +948,7 @@ input.radio:checked ~ label {
               // headerFormat: '<b>{point.x}</b><br/>',
               // pointFormat: '{series.name}: {point.y} out of Total: {point.stackTotal}'
               headerFormat: '<b>{point.name}</b><br/>',
-              pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliance Tasks: {point.stackTotal}'
+              pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
             },
             plotOptions: {
                 series: {
@@ -1061,7 +1061,7 @@ input.radio:checked ~ label {
             width:'850'
         },
         title: {
-            text: 'Division wise compliance tasks'
+            text: 'Division wise compliances'
         },
         xAxis: {
             categories: ['KG Manufacturing', 'KG Sales', 'KG Quality Checking', 'KG Administration', 'KG Testing', 'KG Security', 'KG Research'],
@@ -1088,7 +1088,7 @@ input.radio:checked ~ label {
         yAxis: {
             min: 0,
             title: {
-                text: 'Total Compliance Tasks'
+                text: 'Total Compliances'
             }
         },
         legend: {
@@ -1098,7 +1098,7 @@ input.radio:checked ~ label {
               // headerFormat: '<b>{point.x}</b><br/>',
               // pointFormat: '{series.name}: {point.y} out of Total: {point.stackTotal}'
               headerFormat: '<b>{point.x}</b><br/>',
-              pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliance Tasks: {point.stackTotal}'
+              pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
             },
         plotOptions: {
             series: {
@@ -1209,7 +1209,7 @@ input.radio:checked ~ label {
             width:'850',
         },
         title: {
-            text: 'Unit wise compliance tasks'
+            text: 'Unit wise compliances'
         },
         xAxis: {
             categories: ['Branch Office - 1', 'Branch Office - 2', 'Branch Office - 3', 'Branch Office - 4', 'Branch Office - 5','Branch Office - 6','Branch Office - 7'],
@@ -1236,7 +1236,7 @@ input.radio:checked ~ label {
         yAxis: {
             min: 0,
             title: {
-                text: 'Total Compliance Tasks'
+                text: 'Total Compliances'
 
             }
         },
@@ -1247,7 +1247,7 @@ input.radio:checked ~ label {
               // headerFormat: '<b>{point.x}</b><br/>',
               // pointFormat: '{series.name}: {point.y} out of total: {point.stackTotal}'
               headerFormat: '<b>{point.x}</b><br/>',
-              pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliance tasks: {point.stackTotal}'
+              pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
             },
         plotOptions: {
             series: {
@@ -1316,7 +1316,7 @@ input.radio:checked ~ label {
               
           },
           title: {
-              text: 'Business Group wise compliance tasks'
+              text: 'Business Group wise compliances'
           },
           xAxis: {
              title: {
@@ -1342,7 +1342,7 @@ input.radio:checked ~ label {
           yAxis: {
               min: 0,
               title: {
-                  text: 'Total Compliance Tasks'
+                  text: 'Total Compliances'
               },
           },
           legend: {
@@ -1352,7 +1352,7 @@ input.radio:checked ~ label {
               // headerFormat: '<b>{point.x}</b><br/>',
               // pointFormat: '{series.name}: {point.y} out of {point.stackTotal}'
               headerFormat: '<b>{point.x}</b><br/>',
-            pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliance Tasks: {point.stackTotal}'
+            pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
           },
           plotOptions: {
               series: {
@@ -1489,7 +1489,7 @@ input.radio:checked ~ label {
                 
             },
             title: {
-                text: 'Unitwise compliance tasks'
+                text: 'Unitwise compliances'
             },
             xAxis: {
                 categories: ['KG Namakal unit','Suseendram, Kanyakumari','Nagercoil, Kanyakumari','Naloor, Tuticorin'],
@@ -1516,7 +1516,7 @@ input.radio:checked ~ label {
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Total Compliance Tasks'
+                    text: 'Total Compliances'
                 }
             },
             legend: {
@@ -1526,7 +1526,7 @@ input.radio:checked ~ label {
               // headerFormat: '<b>{point.x}</b><br/>',
               // pointFormat: '{series.name}: {point.y} out of Total: {point.stackTotal}'
               headerFormat: '<b>{point.x}</b><br/>',
-              pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliance Tasks: {point.stackTotal}'
+              pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
             },
             plotOptions: {
                 series: {
@@ -1643,15 +1643,15 @@ input.radio:checked ~ label {
     		margin_style="margin-left:200px";
     	}else if(name == "divisioncomp"){
     		img_name = "/images/dash-list/complienceopportunity-division-not.png";
-    		name = "Manufacturing division - Applicable compliance tasks";
+    		name = "Manufacturing division - Applicable compliances";
     		margin_style="margin-left:150px";
     	}else if(name == "entitycomp"){
     		img_name = "/images/dash-list/complienceopportunity-entity-not.png";
-    		name = "KG Entity- Applicable compliance tasks";
+    		name = "KG Entity- Applicable compliances";
     		margin_style="margin-left:40px";
     	}else if(name == "groupcomp"){
     		img_name = "/images/dash-list/complienceopportunity-group-not.png";
-    		name = "KG Groups - Applicable compliance tasks";
+    		name = "KG Groups - Applicable compliances";
     	}else if(name == "Jan"){
         if($("#radio1").is(':checked')){
              img_name = "/images/dash-list/drill-group-completed.png";
@@ -1668,7 +1668,7 @@ input.radio:checked ~ label {
         // img_name = "/images/Company-completed-drill.png";
         name = "";
       }
-    	var htmlstr = '<div style="'+margin_style+'" align="left"><table width="100%" style="margin-left:10px;"><tr><td style="margin-left:10px;font-size:1em" width="100%">Compliance Tasks - Country: '+name+', Status: '+com_name+'</td></tr></table><br><img src='+img_name+'></div>';
+    	var htmlstr = '<div style="'+margin_style+'" align="left"><table width="100%" style="margin-left:10px;"><tr><td style="margin-left:10px;font-size:1em" width="100%">Compliances - Country: '+name+', Status: '+com_name+'</td></tr></table><br><img src='+img_name+'></div>';
        $(function () {
         $('#imgcontainer').html(htmlstr);
       });
@@ -1688,17 +1688,17 @@ input.radio:checked ~ label {
 		            type: 'column'
 		        },
 		        title: {
-		            text: 'Group wise Compliance Tasks - India'
+		            text: 'Group wise Compliances - India'
 		        },
 		        xAxis: {
 		            type: 'category',
                   title: {
-                    text: 'Compliance Task Status'
+                    text: 'Compliance Status'
                 },
 		        },
 		        yAxis: {
 		            title: {
-		                text: 'Total Compliance Tasks'
+		                text: 'Total Compliances'
 		            }
 
 		        },
@@ -1749,7 +1749,7 @@ input.radio:checked ~ label {
 		        },
 
 		        series: [{
-		            name: "Compliance Tasks - Group wise",
+		            name: "Compliances - Group wise",
 		            colorByPoint: true,
 		            data: [{
 		                name: "Complied",
@@ -1792,7 +1792,7 @@ input.radio:checked ~ label {
             }
         },
         title: {
-            text: "Group wise Compliance Tasks - India"
+            text: "Group wise Compliances - India"
         },
         tooltip: {
               headerFormat : '',
@@ -1875,7 +1875,7 @@ input.radio:checked ~ label {
                
             },
             title: {
-                text: 'Group wise Compliance Tasks'
+                text: 'Group wise Compliances'
             },
             xAxis: {
                title: {
@@ -1901,7 +1901,7 @@ input.radio:checked ~ label {
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Total Compliance Tasks'
+                    text: 'Total Compliances'
                 },
             },
             legend: {
@@ -2024,12 +2024,12 @@ input.radio:checked ~ label {
   <div class="content-area">
     <div class="archive-container" style="width:100%;margin-bottom: 40px;">
       <div class="archive-header"> 
-        <span class="task-status-tab active" id="task" style="padding-left:8px;padding-right:8px"><a href="/home" style="text-decoration:none;color:white">Compliance Task Status</a></span>
+        <span class="task-status-tab active" id="task" style="padding-left:8px;padding-right:8px"><a href="/home" style="text-decoration:none;color:white">Compliance Status</a></span>
         <span class="esc-tab" id="esc" style="padding-left:8px;padding-right:8px"><a href="/home_escalations" style="text-decoration:none;color:white">Escalations</a></span> 
         <span class="ageing-tab" id="age"><a href="/home_ageingwise" style="text-decoration:none;color:white">Not Complied</a></span> 
-        <span class="usecom-tab" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise Compliance Tasks</a></span> 
+        <span class="usecom-tab" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise Compliances</a></span> 
         <span class="trend-tab" id="trend"><a href="/home_trend" style="text-decoration:none;color:white">Trend Chart</a></span> 
-        <span class="compliance-tab" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance Task Risk</a></span> 
+        <span class="compliance-tab" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance Risk</a></span> 
         </div>
         <div class="clearfix"></div>
       <div id="level-filter" style="width:100%">

@@ -296,41 +296,47 @@ input.radio:checked ~ label {
             var color = [6];
             var applied = 0;
             var not_opted = 0;
+            var not_applicable = 0;
             title="";
              if($('#radio4').is(':checked')){
                 applied = 815;
                 not_opted = 20;
-				      var dataSum = (815+20);
+                not_applicable = 12
+				      var dataSum = (815+20+12);
                 drill="unitcomp";
                 title=" - Branch Office - 1";
             }else if($('#radio3').is(':checked')){
                 applied = 49;
                 not_opted = 160;
-				        var dataSum = (160+49);
+                not_applicable = 41
+				        var dataSum = (160+49+41);
                 drill="divisioncomp";
                 title=" - Manufacturing division";
             }else if($('#radio5').is(':checked')){
                 applied = 40;
                 not_opted = 126;
-                var dataSum = (126+40);
+                not_applicable = 12
+                var dataSum = (126+40+12);
                 drill="divisioncomp";
                 title=" - KG Business Group 1";
             }else if($('#radio2').is(':checked')){
                 applied = 158;
                 not_opted = 48;
-				        var dataSum = (158+48);
+                not_applicable = 8
+				        var dataSum = (158+48+8);
                 drill="entitycomp";
                 title=" - KG & Sons";
             }else if($('#radio1').is(':checked')){
                color= [Highcharts.getOptions().colors[2],Highcharts.getOptions().colors[5] ,'#FFC0CB', '#00FF00','#008000' ]; 
                applied = 179;
                not_opted = 21;
-			   var dataSum = (179+21);
+               not_applicable = 12
+			         var dataSum = (179+21+12);
                drill="groupcomp";
                title=" - KG groups";
             }
              $('#container').highcharts({
-              colors: ['#66FF66','#CE253C','#A5D17A'],
+              colors: ['#66FF66','#CE253C','#F24159'],
               chart: {
                   type: 'pie',
                   options3d: {
@@ -340,7 +346,7 @@ input.radio:checked ~ label {
                   }
               },
               title: {
-                   text: 'Compliance Task Risk '+title
+                   text: 'Compliance Risk '+title
               },
               tooltip: {
                   pointFormat: '{series.name}: <b>{point.y:.0f}</b> of '+dataSum
@@ -373,14 +379,14 @@ input.radio:checked ~ label {
                           }
                       },
               series: [{
-                      name: "Compliance Tasks",
+                      name: "Compliance",
                       colorByPoint: true,
                       data: [{
                           name: "Applicable",
                           y: applied
-                      // }, {
-                      //     name: "Not Applicable",
-                      //     y: not_applied,
+                      }, {
+                          name: "Not Applicable",
+                          y: not_applicable,
                       }, {
                           name: "Not opted",
                           y: not_opted
@@ -401,7 +407,7 @@ input.radio:checked ~ label {
     	var margin_style="";
       if(name == "EntityInprogress"){
         img_name = "/images/dash-list/task-entity-inprogress.png";
-        name = "In progress compliance tasks";
+        name = "In progress compliances";
     	}else if(name == "EntityComplied"){
           img_name = "/images/dash-list/task-entity-complied.png";
           name = "Complied tasks";
@@ -435,19 +441,19 @@ input.radio:checked ~ label {
     		name = "Group wise escalations";
     	}else if(name == "unitcomp"){
     		img_name = "/images/dash-list/complienceopportunity-unit-not.png";
-    		name = "Branch Office - 1 - Applicable compliance tasks";
+    		name = "Branch Office - 1 - Applicable compliances";
     		margin_style="margin-left:200px";
     	}else if(name == "divisioncomp"){
     		img_name = "/images/dash-list/complienceopportunity-division-not.png";
-    		name = "Manufacturing division - Applicable compliance tasks";
+    		name = "Manufacturing division - Applicable compliances";
     		margin_style="margin-left:150px";
     	}else if(name == "entitycomp"){
     		img_name = "/images/dash-list/complienceopportunity-entity-not.png";
-    		name = "KG Entity- Applicable compliance tasks";
+    		name = "KG Entity- Applicable compliances";
     		margin_style="margin-left:40px";
     	}else if(name == "groupcomp"){
     		img_name = "/images/dash-list/complienceopportunity-group-not.png";
-    		name = "KG Groups - Applicable compliance tasks";
+    		name = "KG Groups - Applicable compliances";
     	}else if(name == "Jan"){
         if($("#radio1").is(':checked')){
              img_name = "/images/dash-list/drill-group-completed.png";
@@ -477,12 +483,12 @@ input.radio:checked ~ label {
   <div class="content-area">
     <div class="archive-container" style="width:100%;margin-bottom: 40px;">
       <div class="archive-header"> 
-        <span class="task-status-tab" id="task" style="padding-left:8px;padding-right:8px"><a href="/home" style="text-decoration:none;color:white">Compliance Task Status</a></span>
+        <span class="task-status-tab" id="task" style="padding-left:8px;padding-right:8px"><a href="/home" style="text-decoration:none;color:white">Compliance Status</a></span>
         <span class="esc-tab" id="esc" style="padding-left:8px;padding-right:8px"><a href="/home_escalations" style="text-decoration:none;color:white">Escalations</a></span> 
         <span class="ageing-tab" id="age"><a href="/home_ageingwise" style="text-decoration:none;color:white">Not Complied</a></span>
-        <span class="usecom-tab" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise Compliance Tasks</a></span>  
+        <span class="usecom-tab" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise Compliances</a></span>  
         <span class="trend-tab" id="trend"><a href="/home_trend" style="text-decoration:none;color:white">Trend Chart</a></span> 
-        <span class="compliance-tab active" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance Task Risk</a></span> 
+        <span class="compliance-tab active" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance Risk</a></span> 
         </div>
       <div id="level-filter" style="width:100%">
         <input type="hidden" id="hidden"/>

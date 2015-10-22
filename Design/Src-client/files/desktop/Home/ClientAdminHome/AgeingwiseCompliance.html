@@ -521,7 +521,7 @@ $("#unit").tagit({
                       }
                   },
                   title: {
-                      text: 'Over due compliance tasks of '+title
+                      text: 'Over due compliance of '+title
                   },
                   subtitle: {
                       text: ''
@@ -551,7 +551,7 @@ $("#unit").tagit({
                     pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of '+total
                   },
                   series: [{
-                      name: 'Compliance Tasks',
+                      name: 'Compliances',
                        dataLabels: {
                             enabled: true,
                             format:'{point.percentage:.0f}%'
@@ -584,12 +584,12 @@ $("#unit").tagit({
   <div class="content-area">
     <div class="archive-container" style="width:100%;margin-bottom: 40px;">
       <div class="archive-header"> 
-        <span class="task-status-tab" id="task" style="padding-left:8px;padding-right:8px"><a href="/home" style="text-decoration:none;color:white">Compliance Task Status</a></span>
+        <span class="task-status-tab" id="task" style="padding-left:8px;padding-right:8px"><a href="/home" style="text-decoration:none;color:white">Compliance Status</a></span>
         <span class="esc-tab" id="esc" style="padding-left:8px;padding-right:8px"><a href="/home_escalations" style="text-decoration:none;color:white">Escalations</a></span> 
         <span class="ageing-tab active" id="age"><a href="/home_ageingwise" style="text-decoration:none;color:white">Not Complied</a></span> 
-        <span class="usecom-tab" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise Compliance Tasks</a></span> 
+        <span class="usecom-tab" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise Compliance </a></span> 
         <span class="trend-tab" id="trend"><a href="/home_trend" style="text-decoration:none;color:white">Trend Chart</a></span> 
-        <span class="compliance-tab" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance Task Risk</a></span> 
+        <span class="compliance-tab" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance Risk</a></span> 
         </div>
       <div id="level-filter" style="width:100%">
         <input type="hidden" id="hidden"/>
