@@ -156,6 +156,8 @@ $(function() {
       $('.repeatbyendday_stat_date2').hide();
       $('.repeatbyendday_stat_date').hide();      
   });
+  $('.multipleselect').hide();
+  $('.multipleselectnone').show();
   $('.multipleinput').change(function() {
     if ($(this).is(':checked')) {
       $('.multipleselectnone').hide();
@@ -666,7 +668,7 @@ $(function() {
       </div>
     </div>
     <div class="input-row">
-      <div class="field-label">Repeat by</div>
+      <div class="field-label">Repeat by<span class="mandatory">*</span></div>
       <div class="field-input">
         <label style="padding:3px 0px 5px 0px; vertical-align:middle;" class="repeatlabelday" >
           <input type="radio" name="repeatby" style="width:20px;float:left;" checked="checked">
@@ -685,7 +687,7 @@ $(function() {
   </div>
   <div class="input-row-right">
    <div class="input-row">
-    <div class="field-label" style="width:100% !important;"><input type="checkbox" class="multipleinput" checked="checked" />Multiple Input Selection</div>
+    <div class="field-label" style="width:100% !important;"><input type="checkbox" class="multipleinput" />Multiple Input Selection</div>
 
   </div>
   <div class="multipleselect">
