@@ -290,72 +290,7 @@ input.radio:checked ~ label {
     	var margin_style="";
       img_name = "/images/dash-list/escalations.png";
       name = $("#hidden").val();
-     //    name = "In progress compliance";
-     //  if(name == "EntityInprogress"){
-     //    img_name = "/images/dash-list/task-entity-inprogress.png";
-     //    name = "In progress compliance";
-    	// }else if(name == "EntityComplied"){
-     //      img_name = "/images/dash-list/task-entity-complied.png";
-     //      name = "Complied tasks";
-     //      margin_style = "margin-left:3px";
-     //  }else if(name == "Inprogress"){
-     //      img_name = "/images/dash-list/task-group-inprogress.png";
-     //      name = "In progress tasks";
-    	// }else if(name == "Delayed"){
-     //      img_name = "/images/dash-list/task-group-delayed.png";
-     //      name = "Delayed compliance";
-    	// }else if(name == "NotComplied"){
-     //    img_name = "/images/dash-list/task-group-notcomplied.png";
-    	// 	name = "Not complied";
-    	// }else if(name == "Complied"){
-     //    img_name = "/images/dash-list/task-group-complied.png";
-    	// 	name = "Complied tasks";
-    	// }else if(name == "unitesc"){
-    	// 	img_name = "/images/dash-list/escalations-unit-delayed.png";
-    	// 	name = "Unit wise escalations";
-    	// 	margin_style="margin-left:200px";
-    	// }else if(name == "divisionesc"){
-    	// 	img_name = "/images/dash-list/escalations-division-delayed.png";
-    	// 	name = "Division wise escalations";
-    	// 	margin_style="margin-left:100px";
-    	// }else if(name == "entityesc"){
-    	// 	img_name = "/images/dash-list/escalations-entity-delayed.png";
-    	// 	name = "Legal entity wise escalations";
-    	// 	margin_style="margin-left:55px";
-    	// }else if(name == "groupesc"){
-    	// 	img_name = "/images/dash-list/escalations-group-delayed.png";
-    	// 	name = "Group wise escalations";
-    	// }else if(name == "unitcomp"){
-    	// 	img_name = "/images/dash-list/complienceopportunity-unit-not.png";
-    	// 	name = "South gate, Madurai - Applicable compliances";
-    	// 	margin_style="margin-left:200px";
-    	// }else if(name == "divisioncomp"){
-    	// 	img_name = "/images/dash-list/complienceopportunity-division-not.png";
-    	// 	name = "Manufacturing division - Applicable compliances";
-    	// 	margin_style="margin-left:150px";
-    	// }else if(name == "entitycomp"){
-    	// 	img_name = "/images/dash-list/complienceopportunity-entity-not.png";
-    	// 	name = "KG Entity- Applicable compliances";
-    	// 	margin_style="margin-left:40px";
-    	// }else if(name == "groupcomp"){
-    	// 	img_name = "/images/dash-list/complienceopportunity-group-not.png";
-    	// 	name = "KG Groups - Applicable compliances";
-    	// }else if(name == "Jan"){
-     //    if($("#radio1").is(':checked')){
-     //         img_name = "/images/dash-list/drill-group-completed.png";
-     //    }else if($("#radio2").is(':checked')){
-     //          img_name = "/images/dash-list/drill-entity-completed.png";
-     //           margin_style="margin-left:30px";
-     //        }else if($("#radio3").is(':checked')){
-     //          img_name = "/images/dash-list/drill-division-completed.png";
-     //           margin_style="margin-left:120px";
-     //        }else if($("#radio4").is(':checked')){
-     //          img_name = "/images/dash-list/drill-unit-completed.png";
-     //           margin_style="margin-left:140px";
-     //        }
-     //    // img_name = "/images/Company-completed-drill.png";
-     //    name = "";
-     //  }
+    
     	var htmlstr = '<div style="'+margin_style+'"><h2 style="margin-left:10px;font-size:20px">'+name+' for the year 2012</h2><br><img src='+img_name+'></div>';
        $(function () {
         $('#container').html(htmlstr);
@@ -465,7 +400,7 @@ input.radio:checked ~ label {
                     yAxis: {
                         min: 0,
                         title: {
-                            text: 'Total Compliance'
+                            text: 'Total Compliances'
                         }
                     },
                     tooltip: {
@@ -518,12 +453,12 @@ input.radio:checked ~ label {
   <div class="content-area">
     <div class="archive-container" style="width:100%;margin-bottom: 40px;">
       <div class="archive-header"> 
-        <span class="task-status-tab" id="task" style="padding-left:8px;padding-right:8px"><a href="/home" style="text-decoration:none;color:white">Compliance status</a></span>
+        <span class="task-status-tab" id="task" style="padding-left:8px;padding-right:8px"><a href="/home" style="text-decoration:none;color:white">Compliance Status</a></span>
         <span class="esc-tab active" id="esc" style="padding-left:8px;padding-right:8px"><a href="/home_escalations" style="text-decoration:none;color:white">Escalations</a></span> 
         <span class="ageing-tab " id="age"><a href="/home_ageingwise" style="text-decoration:none;color:white">Not Complied</a></span> 
-        <span class="usecom-tab" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise compliance</a></span> 
-        <span class="trend-tab" id="trend"><a href="/home_trend" style="text-decoration:none;color:white">Trend chart</a></span> 
-        <span class="compliance-tab" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance risk</a></span> 
+        <span class="usecom-tab" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise Compliances</a></span> 
+        <span class="trend-tab" id="trend"><a href="/home_trend" style="text-decoration:none;color:white">Trend Chart</a></span> 
+        <span class="compliance-tab" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance Risk</a></span> 
         </div>
       <div id="level-filter" style="width:100%">
         <input type="hidden" id="hidden"/>
