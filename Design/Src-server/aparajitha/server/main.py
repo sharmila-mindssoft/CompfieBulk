@@ -501,6 +501,8 @@ TEMPLATE_PATHS = [
         None, {}),
      ("/report/statutorynotification", "files/desktop/StatutoryNotificationsReport/StatutoryNotificationsReport.html",
         None, {}),
+     ("/report/statutorynotificationtechno", "files/desktop/StatutoryNotificationsReportTechno/StatutoryNotificationsReport.html",
+        None, {}),
 ]
 
 
