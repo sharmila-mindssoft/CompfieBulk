@@ -5,11 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"> 
 <script type="text/javascript">
  $(function() {
+  $('#text_area').hide();
    $('#clientdecision').change(function () {
-    if($(this).is(':checked'))
+    if($(this).is(':checked')){
       $('#clienttextarea').hide();
-    else
+      $('#not_applicable_row').css("background-color", "white");
+    }else{
       $('#clienttextarea').show();
+      $('#not_applicable_row').css("background-color", "#38EB91");
+    }
+  });
+
+   $('#not_applicable').change(function () {
+    if($(this).is(':checked'))
+      $('#text_area').show();
+    else
+      $('#text_area').hide();
   });
 }); 
 
@@ -121,14 +132,14 @@
               <th colspan="2">Statutory</th>
             </tr> -->
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-              
+                  <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"><input type="checkbox" checked="checked" /></th>
               <th colspan="2" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Batteries Act<span><img src="/images/chevron_black_down.png"></span></th>
             </tr>
             <tr style="border:1px solid #cccccc;">
               <td colspan="2" style="padding-left:0px;"><table cellpadding="0" cellspacing="0" width="100%">
                   <tr align="left">
                     <td width="2%"><span style="font-weight:bold;">#</span></td>
-                    <td ><span style="font-weight:bold;">Statutory</span></td>
+                    <td ><span style="font-weight:bold;">Statutory Provision</span></td>
                     <td ><span style="font-weight:bold;">Compliance Tasks</span></td>
                     <td width="35%"><span style="font-weight:bold; ">Compliance Description
                     <td align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Applicable" ></span></td>
@@ -181,14 +192,15 @@
                     <td align="center"><input type="checkbox" checked="checked"  /></td>
                     <td>&nbsp;</td>
                   </tr>
-                  <tr>
+                  <tr id="not_applicable_row">
                     <td>6</td>
                     <td>Rule 8(i) & 9(1) & 9 (5)</td>
                     <td>FORM VI - Recycler Registration and Review</td>
                     <td>Whether registration and renewal obtained by recycler</td>
                     <td align="center"><img src="/images/delete.png"></td>
-                    <td align="center">&nbsp;</td>
-                    <td>&nbsp;</td>
+                    <td align="center"><input id="not_applicable" type="checkbox" /></td>
+                    <td><textarea id="text_area" class="input-box" style="height:60px;" id="clienttextarea" placeholder="Enter 
+                    Reason"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></td>
                   </tr>
                   <tr>
                     <td>7</td>
@@ -203,12 +215,12 @@
                 </table></td>
             </tr>
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-            
+                <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"><input type="checkbox" checked="checked" /></th>
               <th colspan="2" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Indian Partnership Act, 1932<span><img src="/images/chevron_black_right.png"></span></th>
             </tr>
            
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-              
+                  <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"><img src="images/delete.png"></th>
               <th colspan="2"  style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Factories Act, 1948 <span><img src="/images/chevron_black_right.png"></span></th>
             </tr>
           </table>
