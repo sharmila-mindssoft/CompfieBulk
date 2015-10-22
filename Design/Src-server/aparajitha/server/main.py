@@ -419,6 +419,8 @@ TEMPLATE_PATHS = [
             None, {}),
 	("/home/task_unit_complied", "files/desktop/Home/Task-Unit-Complied.html",
             None, {}),
+    ("/home/comp_risk", "files/desktop/Home/ComplianceRisk.html",
+            None, {}),
 	("/home/complienceopprtunity_group_not", "files/desktop/Home/ComplienceOpportunity-Group-Not.html",
             None, {}),
 	("/home/complienceopprtunity_entity_not", "files/desktop/Home/ComplienceOpportunity-Entity-Not.html",
