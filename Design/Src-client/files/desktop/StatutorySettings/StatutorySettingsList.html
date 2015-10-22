@@ -16,7 +16,7 @@
     }
   });
 
-   $('#not_applicable').change(function () {
+   $('.not_applicable').change(function () {
     if($(this).is(':checked'))
       $('#text_area').show();
     else
@@ -113,6 +113,23 @@
     width: 100%;
 }
 </style>
+
+<style>
+.gt input[type="checkbox"] {
+    display: none !important;
+}
+.gt input[type="checkbox"]+label {    
+    background: url('images/delete.png') no-repeat;
+    height:12px;
+    padding-left: 18px;
+    cursor: pointer;
+}
+.gt input[type="checkbox"]:checked + label {
+    background: url('images/tick-green.png') no-repeat;
+    height:12px;
+    cursor: pointer;
+}
+  </style>
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
 <script src="/files/desktop/common/js/tooltip/tipso.js"></script>
 <div class="content-container width75">
@@ -132,7 +149,8 @@
               <th colspan="2">Statutory</th>
             </tr> -->
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-                  <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"><input type="checkbox" checked="checked" /></th>
+                  <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"
+               class="gt"><input type="checkbox" checked="checked" id="ch_h1" style="margin-top:10px;"><label for="ch_h1" style="margin-top:10px;"></label></th>
               <th colspan="2" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Batteries Act<span><img src="/images/chevron_black_down.png"></span></th>
             </tr>
             <tr style="border:1px solid #cccccc;">
@@ -153,7 +171,7 @@
                     <td>Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned
                   </td>
                     <td align="center"><img src="/images/tick1.png"></td>
-                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                  <td align="center" class="gt"><input type="checkbox" checked="checked" id="ch1"><label for="ch1"></label></td>
                     <td>&nbsp;</td>
                   </tr>
                   <tr>
@@ -162,7 +180,7 @@
                     <td>FORM II - Registration</td>
                     <td>Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
                     <td align="center"><img src="/images/tick1.png"></td>
-                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                   <td align="center" class="gt"><input type="checkbox" checked="checked" id="ch2"><label for="ch2"></label></td>
                     <td>&nbsp;</td>
                   </tr>
                   <tr>
@@ -171,7 +189,7 @@
                     <td>FORM III - Undertaking submission</td>
                     <td>Whether undertaking submitted by importer to authority.</td>
                     <td align="center"><img src="/images/tick1.png"></td>
-                    <td align="center"><input type="checkbox" id="clientdecision"  /></td>
+                    <td align="center" class="gt"><input type="checkbox"  id="ch3"><label for="ch3"></label></td>
                     <td><textarea class="input-box" style="height:60px;" id="clienttextarea" placeholder="Enter client decision"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></td>
                   </tr>
                   <tr>
@@ -180,7 +198,7 @@
                     <td>FORM IV - Dealer Registration</td>
                     <td>Whether registration obtained for dealers</td>
                     <td align="center"><img src="/images/tick1.png"></td>
-                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                     <td align="center" class="gt"><input type="checkbox" checked="checked" id="ch4"><label for="ch4"></label></td>
                     <td>&nbsp;</td>
                   </tr>
                   <tr>
@@ -189,7 +207,7 @@
                     <td>FORM V - Dealer Half yearly returns</td>
                     <td>Whether half yearly returns submitted by dealer to manufacturer</td>
                    <td align="center"><img src="/images/tick1.png"></td>
-                    <td align="center"><input type="checkbox" checked="checked"  /></td>
+                     <td align="center" class="gt"><input type="checkbox" checked="checked" id="ch5"><label for="ch5"></label></td>
                     <td>&nbsp;</td>
                   </tr>
                   <tr id="not_applicable_row">
@@ -198,7 +216,8 @@
                     <td>FORM VI - Recycler Registration and Review</td>
                     <td>Whether registration and renewal obtained by recycler</td>
                     <td align="center"><img src="/images/delete.png"></td>
-                    <td align="center"><input id="not_applicable" type="checkbox" /></td>
+
+                      <td align="center" class="gt"><input type="checkbox" class="not_applicable" id="ch6"><label for="ch6"></label></td>
                     <td><span id="text_area"><textarea id="text_area" class="input-box" id="clienttextarea" style="height:60px;"  placeholder="Enter Reason"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></td>
                   </tr>
                   <tr>
@@ -207,19 +226,20 @@
                     <td>FORM VII - Recycler Half yearly returns</td>
                     <td>Whether half yearly returns submitted by recyclers</td>
                    <td align="center"><img src="/images/tick1.png"></td>
-                    <td align="center"><input type="checkbox" /></td>
+                     <td align="center" class="gt"><input type="checkbox" id="ch7"><label for="ch7"></label></td>
                     <td><textarea class="input-box" style="height:60px;" placeholder="Enter client decision"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></td>
                   </tr>
                  
                 </table></td>
             </tr>
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-                <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"><input type="checkbox" checked="checked" /></th>
+                <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"
+               class="gt"><input type="checkbox" checked="checked" id="ch_h2" style="margin-top:20px;"><label for="ch_h2" style="margin-top:10px;"></label></th>
               <th colspan="2" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Indian Partnership Act, 1932<span><img src="/images/chevron_black_right.png"></span></th>
             </tr>
            
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-                  <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"><img src="images/delete.png" style="margin-left:5px;"></th>
+                  <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"><img src="images/delete.png"></th>
               <th colspan="2"  style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Factories Act, 1948 <span><img src="/images/chevron_black_right.png"></span></th>
             </tr>
           </table>
