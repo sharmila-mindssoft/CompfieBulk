@@ -297,34 +297,45 @@ input.radio:checked ~ label {
             var applied = 0;
             var not_opted = 0;
             var not_applicable = 0;
+            var drill1 = "";
+            var drill2 = "";
+            var drill3 = "";
             title="";
              if($('#radio4').is(':checked')){
                 applied = 815;
                 not_opted = 20;
                 not_applicable = 12
-				      var dataSum = (815+20+12);
-                drill="unitcomp";
+				        var dataSum = (815+20+12);
+                drill1="unitapp";
+                drill2="unitnotapp";
+                drill3="unitnotopt";
                 title=" - Branch Office - 1";
             }else if($('#radio3').is(':checked')){
                 applied = 49;
                 not_opted = 160;
                 not_applicable = 41
 				        var dataSum = (160+49+41);
-                drill="divisioncomp";
+                drill1="divapp";
+                drill2="divnotapp";
+                drill3="divnotopt";
                 title=" - Manufacturing division";
             }else if($('#radio5').is(':checked')){
                 applied = 40;
                 not_opted = 126;
                 not_applicable = 12
                 var dataSum = (126+40+12);
-                drill="divisioncomp";
+                drill1="bgapp";
+                drill2="bgnotapp";
+                drill3="bgnotopt";
                 title=" - KG Business Group 1";
             }else if($('#radio2').is(':checked')){
                 applied = 158;
                 not_opted = 48;
                 not_applicable = 8
 				        var dataSum = (158+48+8);
-                drill="entitycomp";
+                 drill1="entityapp";
+                drill2="entitynotapp";
+                drill3="entitynotopt";
                 title=" - KG & Sons";
             }else if($('#radio1').is(':checked')){
                color= [Highcharts.getOptions().colors[2],Highcharts.getOptions().colors[5] ,'#FFC0CB', '#00FF00','#008000' ]; 
@@ -332,7 +343,9 @@ input.radio:checked ~ label {
                not_opted = 21;
                not_applicable = 12
 			         var dataSum = (179+21+12);
-               drill="groupcomp";
+               drill1="groupapp";
+                drill2="groupnotapp";
+                drill3="groupnotopt";
                title=" - KG groups";
             }
              $('#container').highcharts({
@@ -383,13 +396,16 @@ input.radio:checked ~ label {
                       colorByPoint: true,
                       data: [{
                           name: "Applicable",
-                          y: applied
+                          y: applied,
+                          drilldown:drill1
                       }, {
                           name: "Not Applicable",
                           y: not_applicable,
+                          drilldown:drill2
                       }, {
                           name: "Not opted",
-                          y: not_opted
+                          y: not_opted,
+                          drilldown:drill3
                       }]
                   }]
           });
@@ -405,71 +421,53 @@ input.radio:checked ~ label {
 
     	var img_name="";
     	var margin_style="";
-      if(name == "EntityInprogress"){
-        img_name = "/images/dash-list/task-entity-inprogress.png";
-        name = "In progress compliances";
-    	}else if(name == "EntityComplied"){
-          img_name = "/images/dash-list/task-entity-complied.png";
-          name = "Complied tasks";
-          margin_style = "margin-left:3px";
-      }else if(name == "Inprogress"){
-          img_name = "/images/dash-list/task-group-inprogress.png";
-          name = "In progress tasks";
-    	}else if(name == "Delayed"){
-          img_name = "/images/dash-list/task-group-delayed.png";
-          name = "Delayed compliance";
-    	}else if(name == "NotComplied"){
-        img_name = "/images/dash-list/task-group-notcomplied.png";
-    		name = "Not complied";
-    	}else if(name == "Complied"){
-        img_name = "/images/dash-list/task-group-complied.png";
-    		name = "Complied tasks";
-    	}else if(name == "unitesc"){
-    		img_name = "/images/dash-list/escalations-unit-delayed.png";
-    		name = "Unit wise escalations";
-    		margin_style="margin-left:200px";
-    	}else if(name == "divisionesc"){
-    		img_name = "/images/dash-list/escalations-division-delayed.png";
-    		name = "Division wise escalations";
-    		margin_style="margin-left:100px";
-    	}else if(name == "entityesc"){
-    		img_name = "/images/dash-list/escalations-entity-delayed.png";
-    		name = "Legal entity wise escalations";
-    		margin_style="margin-left:55px";
-    	}else if(name == "groupesc"){
-    		img_name = "/images/dash-list/escalations-group-delayed.png";
-    		name = "Group wise escalations";
-    	}else if(name == "unitcomp"){
-    		img_name = "/images/dash-list/complienceopportunity-unit-not.png";
-    		name = "Branch Office - 1 - Applicable compliances";
-    		margin_style="margin-left:200px";
-    	}else if(name == "divisioncomp"){
-    		img_name = "/images/dash-list/complienceopportunity-division-not.png";
-    		name = "Manufacturing division - Applicable compliances";
-    		margin_style="margin-left:150px";
-    	}else if(name == "entitycomp"){
-    		img_name = "/images/dash-list/complienceopportunity-entity-not.png";
-    		name = "KG Entity- Applicable compliances";
-    		margin_style="margin-left:40px";
-    	}else if(name == "groupcomp"){
-    		img_name = "/images/dash-list/complienceopportunity-group-not.png";
-    		name = "KG Groups - Applicable compliances";
-    	}else if(name == "Jan"){
-        if($("#radio1").is(':checked')){
-             img_name = "/images/dash-list/drill-group-completed.png";
-        }else if($("#radio2").is(':checked')){
-              img_name = "/images/dash-list/drill-entity-completed.png";
-               margin_style="margin-left:30px";
-            }else if($("#radio3").is(':checked')){
-              img_name = "/images/dash-list/drill-division-completed.png";
-               margin_style="margin-left:120px";
-            }else if($("#radio4").is(':checked')){
-              img_name = "/images/dash-list/drill-unit-completed.png";
-               margin_style="margin-left:140px";
-            }
-        // img_name = "/images/Company-completed-drill.png";
-        name = "";
-      }
+      if(name == "groupapp"){
+        name = "KG Groups - Applicable Compliances";
+        img_name = "/images/dash-list/compliance_risk.png";
+    	}else if(name == "groupnotapp"){
+          img_name = "/images/dash-list/compliance_risk1.png";
+          name = "KG Groups - Not Applicable Compliances";
+     }else if(name == "groupnotopt"){
+          img_name = "/images/dash-list/compliance_risk3.png";
+          name = "KG Groups - Not Opted Compliances";
+     }else if(name == "entityapp"){
+        name = "KG Entity - Applicable Compliances";
+        img_name = "/images/dash-list/compliance_risk.png";
+      }else if(name == "entitynotapp"){
+          img_name = "/images/dash-list/compliance_risk1.png";
+          name = "KG Entity - Not Applicable Compliances";
+     }else if(name == "entitynotopt"){
+          img_name = "/images/dash-list/compliance_risk3.png";
+          name = "KG Entity - Not Opted Compliances";
+     }else if(name == "divapp"){
+        name = "KG Manufacturing - Applicable Compliances";
+        img_name = "/images/dash-list/compliance_risk.png";
+      }else if(name == "divnotapp"){
+          img_name = "/images/dash-list/compliance_risk1.png";
+          name = "KG Manufacturing - Not Applicable Compliances";
+     }else if(name == "divnotopt"){
+          img_name = "/images/dash-list/compliance_risk3.png";
+          name = "KG Manufacturing - Not Opted Compliances";
+     }else if(name == "unitapp"){
+        name = "MDU1004 - Branch Office Madurai - Applicable Compliances";
+        img_name = "/images/dash-list/compliance_risk.png";
+      }else if(name == "unitnotapp"){
+          img_name = "/images/dash-list/compliance_risk1.png";
+          name = "MDU1004 - Branch Office Madurai - Not Applicable Compliances";
+     }else if(name == "unitnotopt"){
+          img_name = "/images/dash-list/compliance_risk3.png";
+          name = "MDU1004 - Branch Office Madurai - Not Opted Compliances";
+     }else if(name == "bgapp"){
+        name = "KG Business Group- Applicable Compliances";
+        img_name = "/images/dash-list/compliance_risk.png";
+      }else if(name == "bgnotapp"){
+          img_name = "/images/dash-list/compliance_risk1.png";
+          name = "KG Business Group- Not Applicable Compliances";
+     }else if(name == "bgnotopt"){
+          img_name = "/images/dash-list/compliance_risk3.png";
+          name = "KG Business Group - Not Opted Compliances";
+     }
+      
     	var htmlstr = '<div style="'+margin_style+'"><h2 style="margin-left:10px;font-size:20px">'+name+'</h2><br><img src='+img_name+'></div>';
        $(function () {
         $('#container').html(htmlstr);
@@ -539,8 +537,8 @@ input.radio:checked ~ label {
           <div class="textboxcompany">
             <input type="text" name="text2" id="entity-auto" value="KG" autofocus class="input-box icon-autocomplete" style="width:120px;margin-top:10px;">
               <span><a href="#">
-            <input id="go-le" type="button" class="btn" value="Go" style="float:right;margin-top: 10px;
-    margin-right: -3px;"/>
+            <input id="go-le" type="button" class="btn" value="Go" style="float:right;margin-top: 12px;
+    margin-right: -7px;"/>
             </a></span> 
            
             </div>

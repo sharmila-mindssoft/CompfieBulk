@@ -419,6 +419,8 @@ TEMPLATE_PATHS = [
             None, {}),
 	("/home/task_unit_complied", "files/desktop/Home/Task-Unit-Complied.html",
             None, {}),
+    ("/home/comp_risk", "files/desktop/Home/ComplianceRisk.html",
+            None, {}),
 	("/home/complienceopprtunity_group_not", "files/desktop/Home/ComplienceOpportunity-Group-Not.html",
             None, {}),
 	("/home/complienceopprtunity_entity_not", "files/desktop/Home/ComplienceOpportunity-Entity-Not.html",
@@ -496,6 +498,10 @@ TEMPLATE_PATHS = [
      ("/report/assigned-compliances", "files/desktop/AssignedCompliances/AssignedCompliances.html",
         None, {}),
      ("/report/compliancerisk", "files/desktop/ComplianceRiskReport/ComplianceRiskReport.html",
+        None, {}),
+     ("/report/statutorynotification", "files/desktop/StatutoryNotificationsReport/StatutoryNotificationsReport.html",
+        None, {}),
+     ("/report/statutorynotificationtechno", "files/desktop/StatutoryNotificationsReportTechno/StatutoryNotificationsReport.html",
         None, {}),
 ]
 
