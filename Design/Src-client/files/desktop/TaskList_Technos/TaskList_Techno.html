@@ -7,111 +7,147 @@
       <div class="add-container-heading">Compliance List<span class="error-message"></span></div>
       <div class="input-row-left">
         <div class="input-row">
-          <div class="field-label">Country<span class="mandatory">*</span>:</div>
+          <div class="field-label">Country:<span class="mandatory">*</span></div>
           <div class="field-input">
            <input type="text" class="input-box icon-autocomplete" value="India" placeholder="Enter Country  " />
           </div>
-        </div>
-          <div class="input-row">
-          <div class="field-label">Act<span class="mandatory">*</span>:</div>
-          <div class="field-input">
-           <input type="text" class="input-box icon-autocomplete" value="Batteries Act" placeholder="Enter Act  " />
-          </div>
         </div> 
-        <div class="input-row">
-          <div class="field-label">Compliance Task:</div>
-          <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Compliance Task" />
-          </div>
-        </div>
-       
-        
-        
-      
-          
-      </div>
-      <div class="input-row-right">
-      <div class="input-row">
-          <div class="field-label">Domain<span class="mandatory">*</span>:</div>
+          <div class="input-row">
+          <div class="field-label">Domain:<span class="mandatory">*</span></div>
           <div class="field-input">
             <input type="text" class="input-box icon-autocomplete" value="Industrial Law" placeholder="Enter Domain" />
           </div>
-        </div>
-      <div class="input-row">
-          <div class="field-label">Compliance Document:</div>
+        </div> 
+         <div class="input-row">
+          <div class="field-label">Industry:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Compliance Document" />
+           <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Industry" />
           </div>
         </div>
-        
-        
-       
-        
+         <div class="input-row">
+          <div class="field-label">Statutory Nature:</div>
+          <div class="field-input">
+          <input type="text" class="input-box icon-autocomplete" placeholder="Enter Statutory Nature" value="">
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+         <div class="input-row">
+          <div class="field-label">Geography:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Geography" />
+          </div>
+        </div>     
+         <div class="input-row">
+          <div class="field-label">Act:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Act  " />
+          </div>
+        </div> 
+         <div class="input-row">
+          <div class="field-label">Statutory Frequency:</div>
+          <div class="field-input">
+           <select class="input-box tasktype" >
+           <option value="All" Selected="selected">All</option>
+                        <option value="Recurring">Periodical</option>
+                        <option value="Review">Review</option>
+                        <option value="One_Time" >One Time</option>
+                        <option value="onoccur">On Occurrence</option>
+                      <!-- <option value="Occasional">Occasional</option>
+                      <option value="As_When">As & When</option> -->
+                    </select>
+          </div>
+
+        </div>   
       </div>
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Show" class="btn-submit">
+        <!-- <input type="button"  class="btn-submit" value="Export" /> -->
       </div>
       <div class="clearfix"></div>
       <div class="grid-table-rpt">
         <h1>Compliance List</h1>
-        
-  <div style="margin-left:15%;">
+      
+      <div style="margin-left:15%;">
           <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>
-            
-            
-           
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>           
           </div>
           <div style="float:right; margin-right:20%;">
-           
-             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;">Industrial Law</span> </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;">Industrial Law</span> </div>
           </div>
         </div>
- <div class="clearfix"></div>
-        <div class="heading">Batteries Act</div>
+
+
         <div class="clearfix"></div>
+        <div style="background:#C4C0C0; height:30px; margin-top:0px;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em; ">
+            <div style="margin-left:10px; font-size:0.8em; padding-top:7px; font-weight:bold;">Batteries Act</div>
+          </div> 
+          <div style="margin-right:10px; font-size:0.8em; padding-top:7px; font-weight:bold;float:right"><span style="float:right">Industry type : Factory</span></div>
+        </div>
+         <div class="heading" style="margin-top:5px;">One Time</div><div class="clearfix"></div>
         <div style="background:#ddd; height:30px; margin-top:0px;">
           <div style="float:left; padding-bottom:0.5em; margin-left:0.5em; ">
-            <div style="margin-left:10px; font-size:0.8em; padding-top:7px; font-weight:bold;"> Rule 4 >> FORM VIII</div>
-          </div>
-         
+            <div style="margin-left:10px; font-size:0.8em; padding-top:7px; font-weight:bold;">Section 1 <img src="/images/right_arrow.png"> Rule 4</div>
+          </div> 
+          <div style="margin-right:10px; font-size:0.8em; padding-top:7px; font-weight:bold;float:right"><span style="float:right">Statutory Nature : Central</span></div>
         </div>
+       
         <table width="100%" style="border:1px dotted #CCCCCC;" >
-          <tr align="left">
+          <tr align="left"  class="sub-head">
             <th width="3%" align="center">#</th>
-            <th width="13%">Compliance Task</th>
-            <th width="20%">Compliance Description</th>
-            <th width="13%">Penal Consequences</th>
-            <th width="10%">Compliance Frequency</th>
-            <th width="21%">Compliance Occurence</th>
-           
+            <th width="12%">Compliance Task</th>
+            <th width="15%">Compliance Description</th>
+            <th width="15%">Penal Consequences</th>
+            
+            
           </tr>
           <tr>
             <td align="center">1</td>
             <td><a href="#">FORM VIII - Notice of Opening</a></td>
             <td>Within 30 days of opening a branch</td>
             <td>Imprisonment With Fine</td>
-            <td>One Time</td>
-            <td>1st September (will be triggered before 20 days)</td>
-             
+            
+           
                
           </tr>
-         
+          <tr align="left">
+            <th align="center">&nbsp;</th>
+            <th >Compliance Frequency</th>
+            <th >Compliance Occurence</th>          
+            <th >Applicable Location</th>
+          </tr>
+          <tr>
+            <td></td>
+            <td>One Time</td>
+            <td>1st September (Will be triggered before 20 days)</td>
+
+         <td >India >> South >> Tamil Nadu >> Madurai<br>
+            India >> South >> Tamil Nadu >> Dindigul....</td>
+           
+          </tr>
+           
+            <tr>
+            <td></td>
+           
+            </tr>
         </table>
-         <div style="background:#ddd; height:30px; margin-top:10px;">
+         <div class="heading" style="margin-top:5px;">Periodical</div><div class="clearfix"></div>
+         <div style="background:#ddd; height:30px; margin-top:0px;">
           <div style="float:left; padding-bottom:0.5em; margin-left:0.5em; ">
-            <div style="margin-left:10px; font-size:0.8em; padding-top:7px; font-weight:bold;"> Rule 4 >> FORM I</div>
+            <div style="margin-left:10px; font-size:0.8em; padding-top:7px; font-weight:bold;">Section 2 <img src="/images/right_arrow.png"> Rule 3(i) </div>
           </div>
-         
+          <div style="margin-right:10px; font-size:0.8em; padding-top:7px; font-weight:bold;float:right"><span style="float:right">Statutory Nature : State</span></div>
         </div>
+       
         <table width="100%" style="border:1px dotted #CCCCCC;" >
           <tr align="left">
             <th width="3%" align="center">#</th>
-            <th width="13%">Compliance Task</th>
-            <th width="20%">Compliance Description</th>
-            <th width="13%">Penal Consequences</th>
-            <th width="10%">Compliance Frequency</th>
-            <th width="21%">Compliance Occurence</th>
+            <th width="12%">Compliance Task</th>
+            <th width="15%">Compliance Description</th>
+            <th width="15%">Penal Consequences</th>
+            
+            
             
           </tr>
           <tr>
@@ -119,11 +155,23 @@
             <td><a href="#">FORM I - Dealer Registration</a> </td>
             <td>Within 30 days of opening a branch</td>
             <td>Imprisonment With Fine</td>
-            <td>Periodical</td>
-            <td>Every Year 10th March and 10th September (will be triggered before 15 days and 10 days respectively)</td>
+            
+            
           </tr>
+          <tr align="left">
+            <th align="center">&nbsp;</th>
+            <th >Compliance Frequency</th>
+            <th >Compliance Occurence</th>
+            <th >Applicable Location</th>
          
-         
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>Periodical</td>
+            <td>Every Year 10th March and 10th September (will be triggered before 15 days and 10 days respectively)</td>             
+            <td colspan="4">India >> South >> Tamilnadu</td>
+          </tr>
+           
         </table>
       </div>
     </div>
