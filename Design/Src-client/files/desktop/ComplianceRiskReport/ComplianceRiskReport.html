@@ -4,7 +4,7 @@
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
-      <div class="add-container-heading">Compliance List<span class="error-message"></span></div>
+      <div class="add-container-heading">Compliance Risk<span class="error-message"></span></div>
       <div class="input-row-left">
         <div class="input-row">
           <div class="field-label">Country<span class="mandatory">*</span>:</div>
@@ -12,61 +12,90 @@
            <input type="text" class="input-box icon-autocomplete" value="India" placeholder="Enter Country  " />
           </div>
         </div>
-          <div class="input-row">
-          <div class="field-label">Act<span class="mandatory">*</span>:</div>
-          <div class="field-input">
-           <input type="text" class="input-box icon-autocomplete" value="Batteries Act" placeholder="Enter Act  " />
-          </div>
-        </div> 
-        <div class="input-row">
-          <div class="field-label">Compliance Task:</div>
-          <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Compliance Task" />
-          </div>
-        </div>
-       
-        
-        
-      
-          
-      </div>
-      <div class="input-row-right">
-      <div class="input-row">
+         <div class="input-row">
           <div class="field-label">Domain<span class="mandatory">*</span>:</div>
           <div class="field-input">
             <input type="text" class="input-box icon-autocomplete" value="Industrial Law" placeholder="Enter Domain" />
           </div>
         </div>
-      <div class="input-row">
-          <div class="field-label">Compliance Document:</div>
+        
+         <div class="input-row">
+          <div class="field-label">Business Group:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Compliance Document" />
+            <input type="text" class="input-box icon-autocomplete" id="businessgroup" value="RG Business Group" placeholder="Enter Business Group" />
+          </div>
+        </div>
+            <div class="input-row">
+          <div class="field-label">Legal Entity:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="entity" value="RG Entity" placeholder="Enter Legal Entity" />
           </div>
         </div>
         
+      
+          
+      </div>
+      <div class="input-row-right">
+
+        <div class="input-row">
+          <div class="field-label">Division:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="division" value="Rg Division" placeholder="Enter Division Name" />
+          </div>
+        </div>
+        
+           <div class="input-row">
+          <div class="field-label">Unit:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" autofocus id="unit" value="" placeholder="Enter Unit" />
+          </div>
+        </div>
+      
+       <div class="input-row">
+          <div class="field-label">Act<span class="mandatory"></span>:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete"  placeholder="Enter Act" />
+          </div>
+        </div> 
+       <div class="input-row">
+          <div class="field-label">Applicable Status:</div>
+          <div class="field-input">
+            <select class="input-box">
+                <option selected="">Applicable</option>
+                <option>Not Applicable</option>
+                <option>Not Opted</option>
+            </select>
+          </div>
+        </div> 
+     
         
        
         
       </div>
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Show" class="btn-submit">
+        <input type="button"  class="btn-submit" value="Export" />
       </div>
       <div class="clearfix"></div>
       <div class="grid-table-rpt">
-        <h1>Compliance Task List</h1>
+        <h1>Compliance Risk List</h1>
         
   <div style="margin-left:15%;">
           <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>
             
-            
+             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Business Group :<span style="margin-left:10px; font-weight:bold;">RG Business Group</span> </div>
+             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Division :<span style="margin-left:10px; font-weight:bold;">RG Division</span> </div>
+
            
           </div>
           <div style="float:right; margin-right:20%;">
            
              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;">Industrial Law</span> </div>
+              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Legal Entity:<span style="margin-left:10px; font-weight:bold;">RG Entity</span> </div>
           </div>
         </div>
+        <h2 style="background:#f1e9f6;font-size:0.8em !important;text-align:left;">Applicable</h2>
  <div class="clearfix"></div>
         <div class="heading">Batteries Act</div>
         <div class="clearfix"></div>
@@ -83,7 +112,9 @@
             <th width="20%">Compliance Description</th>
             <th width="13%">Penal Consequences</th>
             <th width="10%">Compliance Frequency</th>
-            <th width="21%">Compliance Occurence</th>
+            <th width="10%">Repeats</th>
+            <th width="10%">Statutory Date</th>
+            <th  width="11%">Trigger Before</th>
            
           </tr>
           <tr>
@@ -92,11 +123,12 @@
             <td>Within 30 days of opening a branch</td>
             <td>Imprisonment With Fine</td>
             <td>One Time</td>
-            <td>1st September (will be triggered before 20 days)</td>
-             
+            <td> - </td>
+             <td>01-Sep </td>
+            <td>20 days</td>
                
           </tr>
-         
+        
         </table>
          <div style="background:#ddd; height:30px; margin-top:10px;">
           <div style="float:left; padding-bottom:0.5em; margin-left:0.5em; ">
@@ -111,7 +143,9 @@
             <th width="20%">Compliance Description</th>
             <th width="13%">Penal Consequences</th>
             <th width="10%">Compliance Frequency</th>
-            <th width="21%">Compliance Occurence</th>
+            <th width="10%">Repeats</th>
+            <th width="10%">Statutory Date</th>
+            <th  width="11%">Trigger Before</th>
             
           </tr>
           <tr>
@@ -120,7 +154,9 @@
             <td>Within 30 days of opening a branch</td>
             <td>Imprisonment With Fine</td>
             <td>Periodical</td>
-            <td>Every Year 10th March and 10th September (will be triggered before 15 days and 10 days respectively)</td>
+            <td>Every 6 months</td>
+             <td>10-Sep, 10-Mar</td>
+            <td>15 Days, 10 Days</td>
           </tr>
          
          

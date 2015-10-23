@@ -28,23 +28,23 @@
   font-size:12px;
  } 
 
- #navbar #holder ul li a { 
-  text-decoration:none;
-  float:left;
-  color:#5E5E5E;
-  font-size:12px;
-  border:0px solid #000;
-  border-bottom:none;
-  padding:10px;
-  width:auto;
-  text-align:center;
-  display:block;
-  background:#CCCCCC;
-  -moz-border-radius-topleft:5px;
-  -moz-border-radius-topright:5px;
-  -webkit-border-top-left-radius:5px;
-  -webkit-border-top-right-radius:5px; 
- } 
+  #navbar #holder ul li a { 
+    text-decoration:none;
+    float:left;
+    color:#5E5E5E;
+    font-size:12px;
+    border:0px solid #000;
+    border-bottom:none;
+    padding:10px;
+    width:auto;
+    text-align:center;
+    display:block;
+    background:#CCCCCC;
+    -moz-border-radius-topleft:5px;
+    -moz-border-radius-topright:5px;
+    -webkit-border-top-left-radius:5px;
+    -webkit-border-top-right-radius:5px; 
+  } 
 
  #navbar #holder ul li a:hover {
   background:#A0A2A3;
@@ -58,15 +58,15 @@
   font-size:12px;
  } 
 
- #navbar #holder ul li a.onlink:hover {
-  background:#A0A2A3;
-  color:#000;
-  font-size:12px;
- }
- .tasks{
-  height:auto;
-  overflow: auto;
-}
+  #navbar #holder ul li a.onlink:hover {
+    background:#A0A2A3;
+    color:#000;
+    font-size:12px;
+  }
+  .tasks{
+    height:auto;
+    overflow: auto;
+  }
 
 .onlink{
   background:#A0A2A3;
@@ -77,6 +77,15 @@
 .paddingleft20{
   padding-left:40px;
 }
+  #example-basic
+  {
+    min-height: 600px !important;
+  }
+  .wizard > .content
+  {
+    min-height: 534px !important;
+  }
+  
 </style>
 <script type="text/javascript">
 $(document).ready(function(){
@@ -147,6 +156,8 @@ $(function() {
       $('.repeatbyendday_stat_date2').hide();
       $('.repeatbyendday_stat_date').hide();      
   });
+  $('.multipleselect').hide();
+  $('.multipleselectnone').show();
   $('.multipleinput').change(function() {
     if ($(this).is(':checked')) {
       $('.multipleselectnone').hide();
@@ -162,24 +173,24 @@ $(function() {
   $('.occasional_days').change(function(){
     var daysrecord = $('.occasional_days').val();
       $('.occasional_summary').text(" To Complete within "+daysrecord+" Days ") 
-   }); 
-  $('.aswhen_sel').change(function(){
-    if($(this).val() == "Hours" )
-    {
-      $('.hours_sel').show();
-      $('.days_sel').hide(); 
-      var hoursrecord = $('.hours_sel').val();
-      $('.as_when_summary').text(" To Complete within "+hoursrecord+" Hours ")     
-    }
-    if($(this).val() == "Days" )
-    {
-      $('.hours_sel').hide();
-      $('.days_sel').show();  
-      var daysrecord = $('.days_sel').val();
-      $('.as_when_summary').text(" To Complete within "+daysrecord+" Days ")    
-    }
+    }); 
+    $('.aswhen_sel').change(function(){
+      if($(this).val() == "Hours" )
+      {
+        $('.hours_sel').show();
+        $('.days_sel').hide(); 
+        var hoursrecord = $('.hours_sel').val();
+        $('.as_when_summary').text(" To Complete within "+hoursrecord+" Hours ")     
+      }
+      if($(this).val() == "Days" )
+      {
+        $('.hours_sel').hide();
+        $('.days_sel').show();  
+        var daysrecord = $('.days_sel').val();
+        $('.as_when_summary').text(" To Complete within "+daysrecord+" Days ")    
+      }
+    });
   });
-});
 </script> 
 <script src="/files/desktop/common/js/wizard/jquery.steps.js"></script>
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/wizard/jquery.steps.css">
@@ -198,22 +209,22 @@ $(function() {
                 <tr align="left">
                   <th width="25%">Country</th>
                   <th width="25%">Domain</th>
-                  <th width="25%">Type</th>
-                  <th width="25%">Applicability</th>
+                  <th width="25%">Industry</th>
+                  <th width="25%">Statutory Nature</th>
                 </tr>
                 <tr>
                   <td><ul style="height:500px;overflow-y:scroll">
-                      <li>
-                        <input type="text" class="filter-text-box">
-                      </li>
-                       {% for country in data %}
-                          {%if data[country] == "India" %}
-                            <li class="active">{{data[country]}}</li>
-                          {% else %}
-                            <li>{{data[country]}}</li>
-                          {% endif %}
-                       {% endfor %}
-                    </ul></td>
+                    <li>
+                      <input type="text" class="filter-text-box">
+                    </li>
+                    {% for country in data %}
+                    {%if data[country] == "India" %}
+                    <li class="active">{{data[country]}}</li>
+                    {% else %}
+                    <li>{{data[country]}}</li>
+                    {% endif %}
+                    {% endfor %}
+                  </ul></td>
                   <td><ul style="height:500px;overflow-y:scroll">
                       <li>
                         <input type="text" class="filter-text-box">
@@ -248,6 +259,7 @@ $(function() {
           <h3>Select Statutory</h3>
           <section>
             <div class="form-container-grid-table">
+            <h2 style="font-size:0.813em;"> India <img src="images/right_arrow.png"> Labour Law <img src="images/right_arrow.png"> Factory <img src="images/right_arrow.png"> Central</h2>
               <table>
                 <tr align="left">
                   <th width="16.66%">Act Name</th>
@@ -258,45 +270,44 @@ $(function() {
                 <tr>
                 
                   <td><ul>
+                    <li>
+                      <input type="text" class="filter-text-box">
+                    </li>
+                    <li class="active"><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Gratuity Act, 1972</li>
+                    <li ><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Batteries Act</li>
+                    <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Industrial Disputes (Central) Rules, 1957</li>
+
+                    <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Indian Partnership Act, 1932</li>
+
+                  </ul>
+                  <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder=" Enter Act Name"/>
+                    <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                     formtarget="_self" /></a> </div></td>
+                     <td><ul>
                       <li>
                         <input type="text" class="filter-text-box">
                       </li>
-                      <li class="active">Gratuity Act, 1972</li>
-                      <li >Batteries Act</li>
-                      <li>Industrial Disputes (Central) Rules, 1957</li>
-                     
-                      <li>Indian Partnership Act, 1932</li>
-                   
+                      <li class="active"><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Tamil Nadu Gratuity Act, 1972</li>
                     </ul>
-                      <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder=" Enter Act Name"/>
-                   	<a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
-                           formtarget="_self" /></a> </div></td>
-                  <td><ul>
-                      <li>
-                        <input type="text" class="filter-text-box">
-                        </li>
-                        <li class="active">Tamil Nadu Gratuity Act, 1972</li>
-                          </ul>
-                      <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder=" Enter Rule Name"/>
-                   	<a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
-                           formtarget="_self" /></a> </div>
-                  
+                    <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder=" Enter Rule Name"/>
+                      <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                       formtarget="_self" /></a> </div>
 
-                    </td>
-                  <td><ul>
+
+                     </td>
+                     <td><ul>
                       <li>
                         <input type="text" class="filter-text-box">
                       </li>
 
                     </ul>
-<div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder=" Enter Section"/>
-                   	<a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
-                           formtarget="_self" /></a> </div>
-                    </td>
-                  <td><ul>
+                    <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder=" Enter Section"/>
+                      <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                       formtarget="_self" /></a> </div>
+                     </td>
+                     <td><ul>
                       <li>
-                        <input type="text" class="filter-text-box">
-                      
+                      <input type="text" class="filter-text-box">                        
                       </li>
                     </ul>
 <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Sub Section"/>
@@ -318,79 +329,79 @@ $(function() {
                         <input type="text" class="filter-text-box">
 
                       </li>
-                      <li>Rule 4 </li>
-                      <li>Rule 9(1) </li>
-                      <li class="active">Rule 3</li>
-                      <li>Rule 4 (iii)</li>
-                      <li>Rule 5 </li>
-                      <li>Rule 6 (ii)</li>
-                      <li>Rule 6(iii)</li>
-                      <li>Rule 7(vii)</li>
-                      <li>Rule 7(iv)</li>
-                      <li>Rule 8(i) </li>
-                      <li>Rule 8 (iii)</li>
-                      <li>Rule 10(2) (iii)</li>
-                      <li>Rule 11(ii)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 4 </li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 9(1) </li>
+                      <li class="active"><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 3</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 4 (iii)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 5 </li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 6 (ii)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 6(iii)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 7(vii)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 7(iv)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 8(i) </li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 8 (iii)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 10(2) (iii)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 11(ii)</li>
                     </ul>
 
-<div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Rule"/>
-                   	<a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
-                           formtarget="_self" /></a> </div>
-                    </td>
-                  <td><ul>
+                    <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Rule"/>
+                      <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                       formtarget="_self" /></a> </div>
+                     </td>
+                     <td><ul>
                       <li>
                         <input type="text" class="filter-text-box">
                       </li>
                     </ul>
                     <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Sub Rule"/>
-                   	<a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
-                           formtarget="_self" /></a> </div></td>
-                  <td><ul>
-                      <li>
-                        <input type="text" class="filter-text-box">
-                      </li>
-                    </ul>
+                      <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                       formtarget="_self" /></a> </div></td>
+                       <td><ul>
+                        <li>
+                          <input type="text" class="filter-text-box">
+                        </li>
+                      </ul>
 
-                    <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Clause"/>
-                   	<a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
-                           formtarget="_self" /></a> </div></td>
-                  <td><ul>
-                      <li>
-                        <input type="text" class="filter-text-box">
-                      </li>
-                    </ul>
+                      <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Clause"/>
+                        <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                         formtarget="_self" /></a> </div></td>
+                         <td><ul>
+                          <li>
+                            <input type="text" class="filter-text-box">
+                          </li>
+                        </ul>
 
-                    <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Sub Clause"/>
-                   	<a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                        <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Sub Clause"/>
+                          <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
                            formtarget="_self" /></a> </div></td>
-                  
-                </tr>
-              </table>
-            </div>
-            <div class="clearfix"></div>
-            <div style="padding-top:3px;padding-bottom:5px;" align="center"><input type="submit" class="btn-submit" value="Add" /></div>
-            <div class="grid-table">
-              <table>
-                <tr align="left" style="height:2.0em;">
-                  <th style="height:2em;" align="center">#</th>
-                  <th style="height:2em;">Statutory</th>
-                  <th align="center" style="padding-right:3px; height:2em;">Remove</th>
-                </tr>
-                <tr>
-                  <td align="center">1</td>
-                  <td>Batteries Act >> Rule 8(i)</td>
-                  <td align="center"><img src="/images/icon-delete.png" title="Click here to deactivate" id="activeid" /></td>
-                </tr>
-                <tr>
-                  <td align="center">2</td>
-                  <td>Batteries Act >> Rule 9(1) >> Form VI</td>
-                  <td align="center"><img src="/images/icon-delete.png" title="Click here to deactivate" id="activeid" /></td>
-                </tr>
-              </table>
-            </div>
-          </section>
-          <h3>Compliances</h3>
-          <section >
+
+                         </tr>
+                       </table>
+                     </div>
+                     <div class="clearfix"></div>
+                     <div style="padding-top:3px;padding-bottom:5px;" align="center"><input type="submit" class="btn-submit" value="Add" /></div>
+                     <div class="grid-table">
+                      <table>
+                        <tr align="left" style="height:2.0em;">
+                          <th style="height:2em;" align="center">#</th>
+                          <th style="height:2em;">Statutory</th>
+                          <th align="center" style="padding-right:3px; height:2em;">Remove</th>
+                        </tr>
+                        <tr>
+                          <td align="center">1</td>
+                          <td>Batteries Act <img src="images/right_arrow.png"> Rule 8(i)</td>
+                          <td align="center"><img src="/images/icon-delete.png" title="Click here to deactivate" id="activeid" /></td>
+                        </tr>
+                       <!--  <tr>
+                          <td align="center">2</td>
+                          <td>Batteries Act >> Rule 9(1) >> Form VI</td>
+                          <td align="center"><img src="/images/icon-delete.png" title="Click here to deactivate" id="activeid" /></td>
+                        </tr> -->
+                      </table>
+                    </div>
+                  </section>
+                  <h3>Compliances</h3>
+                  <section >
             <!-- <div id="navbar">
               <div id="holder" class="tasktype"> 
                 <ul style="list-style:disc"> 
@@ -399,852 +410,854 @@ $(function() {
                 </ul>
               </div>
             </div> -->
+              <h2 style="font-size:0.813em;">India <img src="images/right_arrow.png"> Labour Law <img src="images/right_arrow.png"> Factory <img src="images/right_arrow.png"> Central &nbsp;&nbsp;  <img src="images/chevron_black_right.png">&nbsp;&nbsp;  Batteries Act <img src="images/right_arrow.png"> Rule 8(i) </h2>
             <div class="form-container-grid-table-sm">
-            <section id="section-flip-1">
-              <div class="input-row-left">
-                <div class="input-row">
-                  <div class="field-label">Compliance Name<span class="mandatory">*</span></div>
-                  <div class="field-input">
-                    <input class="input-box" value="Notice of Opening"/>
+              <section id="section-flip-1">
+                <div class="input-row-left">
+                  <div class="input-row">
+                    <div class="field-label">Compliance Task<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                      <input class="input-box" value="Notice of Opening"/>
+                    </div>
                   </div>
-              </div>
-               <div class="input-row">
-                  <div class="field-label">Compliance Description</div>
-                  <div class="field-input">
-                    <textarea class="input-box heightsmall" >Within 30 days of opening a branch</textarea>
+                  <div class="input-row">
+                    <div class="field-label">Compliance Description<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                      <textarea class="input-box heightsmall" >Within 30 days of opening a branch</textarea>
+                    </div>
                   </div>
-              </div>
-              <div class="input-row">
-                  <div class="field-label">Compliance Type</div>
-                  <div class="field-input">
-                    <select class="input-box tasktype" >
-                      <option value="Recurring">Recurring</option>
-                      <option value="Review">Review</option>
-                      <option value="One_Time" Selected="selected">One Time</option>
-                      <option value="onoccur">On Occurrence</option>
+                  <div class="input-row">
+                    <div class="field-label">Compliance Frequency<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                      <select class="input-box tasktype" >
+                        <option value="Recurring">Periodical</option>
+                        <option value="Review">Review</option>
+                        <option value="One_Time" Selected="selected">One Time</option>
+                        <option value="onoccur">On Occurrence</option>
                       <!-- <option value="Occasional">Occasional</option>
                       <option value="As_When">As & When</option> -->
                     </select>
                   </div>
                 </div>
                 
-              
+
               </div>
               <div class="input-row-right">
-              	 <div class="input-row">
-                  <div class="field-label">Form No</div>
+                <div class="input-row">
+                  <div class="field-label">Compliance Document</div>
                   <div class="field-input">
-                     <input type="text" class="input-box"  value="FORM VIII" >
-                  </div>
-              </div>
-              	    <div class="input-row">
-                  <div class="field-label">Format</div>
-                  <div class="field-input">
-                     <input type="file" class="input-box" >
-                  </div>
-              </div>
+                   <input type="text" class="input-box"  value="FORM VIII" >
+                 </div>
+               </div>
                <div class="input-row">
-                  <div class="field-label">Penal Description</div>
-                  <div class="field-input">
-                    <textarea class="input-box heightsmall">Imprisonment With Fine</textarea>
-                  </div>
-              </div>
-              </div>
- 
-</section>
-<div class="clearfix"></div>
-
-  <div class="one_time" id="One_Time" style="display:block;">
-     <fieldset>
-                  <legend>One Time</legend>
-                   <div class="input-row-left">
-                 
-                  <div class="input-row">
-                    <div class="field-label">Statutory Date</div>
-                    <div class="field-input">
-                    
-                     <select class="input-box" style="width:60px;">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>15</option>
-                        <option>16</option>
-                        <option>17</option>
-                        <option>18</option>
-                        <option>19</option>
-                        <option selected="selected">20</option>
-                        <option>21</option>
-                        <option>22</option>
-                        <option>23</option>
-                        <option>24</option>
-                        <option>25</option>
-                        <option>26</option>
-                        <option>27</option>
-                        <option>28</option>
-                        <option>29</option>
-                        <option>30</option>
-                      </select>
-                      <select class="input-box" style="width:60px;">
-                        <option>Jan</option>
-                        <option>Feb</option>
-                        <option>Mar</option>
-                        <option>Apr</option>
-                        <option>May</option>
-                        <option selected="selected">Jun</option>
-                        <option>Jul</option>
-                        <option>Aug</option>
-                        <option>Sep</option>
-                        <option>Oct</option>
-                        <option>Nov</option>
-                        <option>Dec</option>
-                        </select>
-                      </div>
-                  </div>
-                  </div>
-                   <div class="input-row-right">
-                 
-                    <div class="input-row">
-                    <div class="field-label">Trigger Before</div>
-                    <div class="field-input"><input type="text" class="input-box" value="15" style="width:50px; float:left;">
-                      <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span> </div>
-                  </div>
-                   </div>
-              <div class="input-row-right">
-                  
-                  </div>
-                </fieldset>
-  </div>
-  <div class="as_when" id="As_when" style="display:none;">
-     <fieldset>
-                  <legend>As & When</legend>
-                   <div class="input-row-left">
-                 
-                  <div class="input-row">
-                    <div class="field-label">To Complete Within</div>
-                    <div class="field-input">
-                    
-                      
-                       <select class="input-box aswhen_sel" style="width:100px;  float:left;">
-                        <option selected="selected">Hours</option>       
-                        <option>Days</option>                
-                      </select>
-                        <input type="text" class="input-box hours_sel" value="4" style="width:50px; margin-left:10px; float:left;">
-                      <select class="input-box days_sel" style="width:50px; margin-left:10px; float:left; display:none;">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option selected="selected">4</option>
-                        <option>5</option>
-                        <option >6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>15</option>
-                        <option>16</option>
-                        <option>17</option>
-                        <option>18</option>
-                        <option>19</option>
-                        <option>20</option>
-                        <option>21</option>
-                        <option>22</option>
-                        <option>23</option>
-                        <option>24</option>
-                        <option>25</option>
-                        <option>26</option>
-                        <option>27</option>
-                        <option>28</option>
-                        <option>29</option>
-                        <option>30</option>
-                      </select>
-                      </div>
-                  </div>
-                    <div class="input-row">
-                    <div class="field-label">Summary</div>
-                    <div class="field-input" > <span style="font-size:0.8em; float:left; padding-top:5px;" class="as_when_summary">To Complete within 4 hours</span> </div>
-                  </div>
-                   </div>
-              <div class="input-row-right">
-                  
-                  </div>
-                </fieldset>
-			  </div>
-			  <div class="occasional" id="Occasional" style="display:none;">
-
-                <fieldset>
-                  <legend>On Occurrence</legend>
-                   <div class="input-row-left">
-                 
-                  <div class="input-row">
-                    <div class="field-label">To Complete Within</div>
-                    <div class="field-input">
-                      <input class="input-box " value="10" style="width:55px; float:left;">
-                       <select class="input-box dayhour" style="width:100px; margin-left:10px; float:left;">
-                        <option selected="selected" selected value="day">Days</option>
-                        <option selected="selected" value="hour">Hours</option>
-                      </select>
-                      </div>
-                  </div>
-                  <div class="input-row" id="trigger_every">
-                    <div class="field-label">Trigger Every</div>
-                    <div class="field-input">
-                      <div class="field-input">
-                      <input class="input-box " id="trigger_days" style="width:50px;float:left;" value="2" >                        
-                         <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;margin-left:10px" id="days" >Day(s)</span>
- 						<span style="font-size:0.8em; float:left; padding-top:5px;margin-left:10px" id="hours" >Hour(s)</span>
-                          </div> 
-                         
-                        </div>
-                    </div>
-                  </div>
-                  <div class="input-row">
-                    <div class="field-label">Summary</div>
-                    <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;" class="occasional_summary" id="summary">To Complete Within 3 Days </span> </div>
-                  </div>
-              </div>
-              <div class="input-row-right">
-                
-                  </div>
-                </fieldset>
-              </div>
-              <div class="recurring" id="Recurring" style="display:none;">
-
-
-                <fieldset>
-                  <legend>Recurring</legend>
-                   <div class="input-row-left">
-                 
-                  <div class="input-row">
-                    <div class="field-label">Repeats Every</div>
-                    <div class="field-input">
-                    
-                   
-                         <select class="input-box" class="month_recurring_sel" style="width:50px; float:left;">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option selected="selected">6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                      </select>
-
-                       <select class="input-box" style="width:100px; margin-left:10px; float:left;">
-                        <option selected="selected">Month(s)</option>
-                        <option >Year(s)</option>
-                      </select>
-<div class="clearfix"></div>
-                       <label style="font-size:0.8em; padding-top:5px;"></label>
-                      </div>
-                  </div>
-                  <div class="input-row">
-                    <div class="field-label">Repeat by</div>
-                    <div class="field-input">
-                      <label style="padding:3px 0px 5px 0px; vertical-align:middle;" class="repeatlabelday" >
-                        <input type="radio" name="repeatby" style="width:20px;float:left;" checked="checked">
-                        <span style="font-size:0.8em; padding-top:4px; float:left;">Day of the month</span>                          
-                      </label>
-
-                        <div class="clearfix"></div>
-                      <label   class="repeatlabelendday" >
-                        <input type="radio"  name="repeatby" style="width:20px; float:left;"  >
-                        <span style="font-size:0.8em; padding-top:4px;">End day of the month</span>    
-                       </label>
-                       
-                    </div>
-                  </div>
-                 
-                   </div>
-              <div class="input-row-right">
-               <div class="input-row">
-                  <div class="field-label" style="width:100% !important;"><input type="checkbox" class="multipleinput" checked="checked" />Multiple Input Selection</div>
-                 
-                </div>
-              <div class="multipleselect">
-               <div class="input-row">
-                    <div class="field-label">Statutory Date 1</div>
-                    <div class="field-input">
-                   <span style="float:left;margin-left:0px;" class="repeatbyday">
-                        <select class="input-box" style="width:60px;">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>15</option>
-                        <option>16</option>
-                        <option>17</option>
-                        <option>18</option>
-                        <option>19</option>
-                        <option selected="selected">20</option>
-                        <option>21</option>
-                        <option>22</option>
-                        <option>23</option>
-                        <option>24</option>
-                        <option>25</option>
-                        <option>26</option>
-                        <option>27</option>
-                        <option>28</option>
-                        <option>29</option>
-                        <option>30</option>
-                      </select>
-                      <select class="input-box" style="width:60px;">
-                        <option>Jan</option>
-                        <option>Feb</option>
-                        <option>Mar</option>
-                        <option>Apr</option>
-                        <option>May</option>
-                        <option selected="selected">Jun</option>
-                        <option>Jul</option>
-                        <option>Aug</option>
-                        <option>Sep</option>
-                        <option>Oct</option>
-                        <option>Nov</option>
-                        <option>Dec</option>
-                        </select>
-                      </span>
-                       <span style="margin-left:0px; float:left; display:none;" class="repeatbyendday" >
-                           <select class="input-box repeatbyendday_stat_date1" style="width:60px;">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>15</option>
-                        <option>16</option>
-                        <option>17</option>
-                        <option>18</option>
-                        <option>19</option>
-                        <option >20</option>
-                        <option>21</option>
-                        <option>22</option>
-                        <option>23</option>
-                        <option>24</option>
-                        <option>25</option>
-                        <option>26</option>
-                        <option>27</option>
-                        <option>28</option>
-                        <option>29</option>
-                        <option selected="selected">30</option>
-                        <option>31</option>
-                      </select>
-                      <select class="input-box" style="width:60px;">
-                        <option>Jan</option>
-                        <option>Feb</option>
-                        <option>Mar</option>
-                        <option>Apr</option>
-                        <option>May</option>
-                        <option selected="selected">Jun</option>
-                        <option>Jul</option>
-                        <option>Aug</option>
-                        <option>Sep</option>
-                        <option>Oct</option>
-                        <option>Nov</option>
-                        <option>Dec</option>
-                        </select>
-                      </span>
-                      <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
-                      
-                  
-                      <input type="text" class="input-box" value="15" style="width:40px; float:left;">
-                      <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span>
-
-
-                    </div>
-                  </div>
-                  <div class="input-row">
-                    <div class="field-label">Statutory Date 2</div>
-                    <div class="field-input">
-                   <span style="float:left;margin-left:0px;" class="repeatbyday">
-                        <select class="input-box" style="width:60px;">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>15</option>
-                        <option>16</option>
-                        <option>17</option>
-                        <option>18</option>
-                        <option>19</option>
-                        <option selected="selected">20</option>
-                        <option>21</option>
-                        <option>22</option>
-                        <option>23</option>
-                        <option>24</option>
-                        <option>25</option>
-                        <option>26</option>
-                        <option>27</option>
-                        <option>28</option>
-                        <option>29</option>
-                        <option>30</option>
-                      </select>
-                      <select class="input-box" style="width:60px;">
-                        <option>Jan</option>
-                        <option>Feb</option>
-                        <option>Mar</option>
-                        <option>Apr</option>
-                        <option>May</option>
-                        <option selected="selected">Dec</option>
-                        <option>Jul</option>
-                        <option>Aug</option>
-                        <option>Sep</option>
-                        <option>Oct</option>
-                        <option>Nov</option>
-                        <option>Dec</option>
-                        </select>
-                      </span>
-                       <span style="margin-left:0px; float:left; display:none;" class="repeatbyendday" >
-                           <select class="input-box repeatbyendday_stat_date2" style="width:60px;" >
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>15</option>
-                        <option>16</option>
-                        <option>17</option>
-                        <option>18</option>
-                        <option>19</option>
-                        <option >20</option>
-                        <option>21</option>
-                        <option>22</option>
-                        <option>23</option>
-                        <option>24</option>
-                        <option>25</option>
-                        <option>26</option>
-                        <option>27</option>
-                        <option>28</option>
-                        <option>29</option>
-                        <option >30</option>
-                        <option selected="selected" >31</option>
-                      </select>
-                      <select class="input-box" style="width:60px;">
-                        <option>Jan</option>
-                        <option>Feb</option>
-                        <option>Mar</option>
-                        <option>Apr</option>
-                        <option>May</option>
-                        <option >Jun</option>
-                        <option>Jul</option>
-                        <option>Aug</option>
-                        <option>Sep</option>
-                        <option>Oct</option>
-                        <option>Nov</option>
-                        <option selected="selected">Dec</option>
-                        </select>
-                      </span>
-                      <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
-                      <input type="text" class="input-box" value="15" style="width:40px; float:left;">
-                      <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span>
-                    </div>
-                  </div>
-                  <div class="input-row repeatbyday">
-                    <div class="field-label">Summary</div>
-                    <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;">Every Jun 20 and Dec 20</span> </div>
-                  </div>
-                   <div class="input-row repeatbyendday" style="display:none;">
-                    <div class="field-label">Summary</div>
-                    <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;">Every Jun 30 and Dec 31</span> </div>
-                  </div>
-
-                </div>
-                <div class="multipleselectnone" style="display:none;">
-                  <div class="input-row">
-                    <div class="field-label">Statutory Date </div>
-                    <div class="field-input">
-                   <span style="float:left;margin-left:0px;" class="repeatbyday">
-                        <select class="input-box repeatbyday_stat_date" style="width:60px;">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>15</option>
-                        <option>16</option>
-                        <option>17</option>
-                        <option>18</option>
-                        <option>19</option>
-                        <option selected="selected">20</option>
-                        <option>21</option>
-                        <option>22</option>
-                        <option>23</option>
-                        <option>24</option>
-                        <option>25</option>
-                        <option>26</option>
-                        <option>27</option>
-                        <option>28</option>
-                        <option>29</option>
-                        <option>30</option>
-                      </select>
-                     <select class="input-box" style="width:60px;">
-                        <option>Jan</option>
-                        <option>Feb</option>
-                        <option>Mar</option>
-                        <option>Apr</option>
-                        <option>May</option>
-                        <option >Jun</option>
-                        <option>Jul</option>
-                        <option>Aug</option>
-                        <option>Sep</option>
-                        <option>Oct</option>
-                        <option>Nov</option>
-                        <option selected="selected">Dec</option>
-                        </select>
-                      </span>
-                       <span style="margin-left:0px; float:left; display:none;" class="repeatbyendday" >
-                           <select class="input-box repeatbyendday_stat_date" style="width:60px;">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>15</option>
-                        <option>16</option>
-                        <option>17</option>
-                        <option>18</option>
-                        <option>19</option>
-                        <option >20</option>
-                        <option>21</option>
-                        <option>22</option>
-                        <option>23</option>
-                        <option>24</option>
-                        <option>25</option>
-                        <option>26</option>
-                        <option>27</option>
-                        <option>28</option>
-                        <option>29</option>
-                        <option selected="selected">30</option>
-                        <option>31</option>
-                      </select>
-                   <select class="input-box" style="width:60px;">
-                        <option>Jan</option>
-                        <option>Feb</option>
-                        <option>Mar</option>
-                        <option>Apr</option>
-                        <option>May</option>
-                        <option >Jun</option>
-                        <option>Jul</option>
-                        <option>Aug</option>
-                        <option>Sep</option>
-                        <option>Oct</option>
-                        <option>Nov</option>
-                        <option selected="selected">Dec</option>
-                        </select>
-                      </span>
-
-                    </div>
-                  </div>
-                 <div class="input-row">
-                    <div class="field-label">Trigger Before</div>
-                    <div class="field-input"><input type="text" class="input-box" value="15" style="width:50px; float:left;">
-                      <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span> </div>
-                  </div>
-                  <div class="input-row">
-                    <div class="field-label">Summary</div>
-                    <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;">Every 6 months </span> </div>
-                  </div>
-                </div>
-                  
-                  </div>
-                </fieldset>
-              
-            </div>
-
-            <div class="clearfix"></div>
-            <div align="center" style="padding-top:5px; padding-bottom:5px;"><input type="submit" name="submit" value="Add" class="btn-submit">
-            </div>
+                <div class="field-label">Format</div>
+                <div class="field-input">
+                 <input type="file" class="input-box" >
+               </div>
              </div>
-            <div class="grid-table">
-              <table>
-                <tr align="left" style="height:2.0em;">
-                  <th style="height:2em;" align="center">#</th>
-                  <th style="height:2em;">Compliance Name</th>
-                  <th style="height:2em;">Compliance Type</th>
-              
-                  <th style="height:2em;">Repeats</th>
-                  <th style="height:2em;" align="center">Edit</th>
-                  <th align="center" style="padding-right:3px; height:2em;">Status</th>
-                </tr>
-                <tr>
-                  <td align="center">1</td>
-                  <td>FORM VIII - Notice of Opening</td>
-                  <td>One Time</td> 
-                  <td>-</td>
-                  <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-                  <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-                </tr>
-               
-              </table>
+             <div class="input-row">
+              <div class="field-label">Penal Consequences</div>
+              <div class="field-input">
+                <textarea class="input-box heightsmall">Imprisonment With Fine</textarea>
+              </div>
             </div>
-              </section>
-              
-          </section> 
-      </section>
-          <!-- -->
-          <h3>Applicable Location</h3>
-          <section>
-            <div class="form-container-grid-table">
-              <table style="height:250px;">
-                <tr align="left">
-                  <th width="16.66%">Region</th>
-                  <th width="16.66%">State</th>
-                  <th width="16.66%">District</th>
-                  <th width="16.66%">Corporation</th>
-                </tr>
-                <tr>
-                  <td><ul  style="height:250px;overflow-y:scroll">
-                      <li>
-                        <input type="text" class="filter-text-box">
-                      </li>
-                        <li>Select All</li>
-                      <li>East</li>
-                      <li>North</li>
-                      <li class="active">South</li>
-                      <li>West</li>
-                    </ul></td>
-                  <td><ul style="height:250px;overflow-y:scroll">
-                      <li>
-                        <input type="text" class="filter-text-box">
-                      </li>
-                        <li>Select All</li>
-                      <li>Andhra Pradesh</li>
-                      <li>Karnataka</li>
-                      <li class="active">Kerala</li>
-                      <li class="active">Tamil Nadu</li>
-                      <li>Telangana</li>
-                    </ul></td>
-                  <td><ul style="height:250px;overflow-y:scroll">
-                      <li>
-                        <input type="text" class="filter-text-box">
-                      </li>  <li>Select All</li>
-                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Tamil Nadu</h3>
-                      <li>Ariyalur </li>
-                      <li>Chennai </li>
-                      <li  class="active">Madurai </li>
-                      <li class="active">Coimbatore </li>
-                      <li>Cuddalore </li>
-                      <li>Dharmapuri </li>
-                      <li>Dindigul </li>
-                      <li>Erode </li>
-                      <li>Kanchipuram </li>
-                      <li>Kanyakumari </li>
-                      <li>Karur </li>
-                      <li>Krishnagiri </li>
-                      <li>Nagapattinam </li>
-                      <li>Namakkal </li>
-                      <li>The Nilgiris </li>
-                      <li>Perambalur </li>
-                      <li>Pudukkottai </li>
-                      <li>Ramanathapuram </li>
-                      <li>Salem </li>
-                      <li>Sivaganga </li>
-                      <li>Thanjavur </li>
-                      <li>Theni </li>
-                      <li>Thoothukudi </li>
-                      <li>Tiruchirappalli </li>
-                      <li>Tirunelveli </li>
-                      <li>Tiruppur </li>
-                      <li>Tiruvallur </li>
-                      <li>Tiruvannamalai </li>
-                      <li>Tiruvarur </li>
-                      <li>Vellore </li>
-                      <li>Viluppuram </li>
-                      <li>Virudhunagar </li>
-                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Kerala</h3>
-                      <li> Alappuzha </li>
-                      <li> Ernakulam </li>
-                      <li> Idukki </li>
-                      <li> Kannur </li>
-                      <li> Kasaragod </li>
-                      <li> Kollam </li>
-                      <li> Kottayam </li>
-                      <li> Kozhikode </li>
-                      <li> Malappuram </li>
-                      <li> Palakkad </li>
-                      <li> Pathanamthitta </li>
-                      <li> Thiruvananthapuram </li>
-                      <li> Thrissur </li>
-                      <li> Wayanad </li>
-                    </ul></td>
-                  <td><ul style="height:250px;overflow-y:scroll">
-                      <li>
-                        <input type="text" class="filter-text-box">
-                      </li>  <li>Select All</li>
-                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Madurai</h3>
-                      <li class="active">Madurai Corporation</li>
-                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Coimbatore</h3>
-                      <li class="active">Coimbatore Corporation</li>
-                    </ul></td>
-                </tr>
-              </table>
-              <table>
-                <tr align="left">
-                  <th width="16.66%">Municipality</th>
-                  <th width="16.66%">Town</th>
-                  <th width="16.66%">Panchayat</th>
-                </tr>
-                <tr>
-                  <td><ul style="height:250px;overflow-y:scroll">
-                      <li>
-                        <input type="text" class="filter-text-box">
-                      </li>  <li>Select All</li>
-                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Madurai</h3>
-                      <li> Anaiyur</li>
-                      <li class="active"> Avaniyapuram </li>
-                      <li> Melur</li>
-                      <li> Thirupparankundram </li>
-                      <li> Tirumangalam </li>
-                      <li class="active"> Usilampatti</li>
-                    </ul></td>
-                  <td><ul style="height:250px;overflow-y:scroll">
-                      <li>
-                        <input type="text" class="filter-text-box">
-                      </li>  <li>Select All</li>
-                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Madurai</h3>
-                      <li class="active"> Alanganallur </li>
-                      <li class="active"> Sholavandan </li>
-                      <li class="active"> Vilangudi </li>
-                      <li class="active"> Palamedu </li>
-                      <li> Harveypatti </li>
-                      <li class="active"> Thirunagar </li>
-                      <li> A.Vellalapatti </li>
-                      <li class="active"> Peraiyur </li>
-                      <li> Paravai </li>
-                      <li> Vadipatti </li>
-                      <li> Elumalai </li>
-                      <li> T.Kallupatti </li>
-                    </ul></td>
-                  <td><ul style="height:250px;overflow-y:scroll">
-                      <li>
-                        <input type="text" class="filter-text-box">
-                      </li>  <li>Select All</li>
-                      <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Alanganallur</h3>
-                      <li> Alagapuri </li>
-                      <li class="active"> Ayyur </li>
-                      <li class="active"> Chinnailanthaikulam </li>
-                      <li> Kalvelipatti </li>
-                      <li class="active"> Kotankipatti </li>
-                      <li> Manickampatti </li>
-                      <li class="active"> Muduvarpatty </li>
-                      <li> Paraipatty </li>
-                      <li class="active"> Senthamangalam </li>
-                      <li> Thanichiyam </li>
-                      <li> Vadugapatty </li>
-                      <li> Vellaiampatty </li>
-                      <li> A. Kovilpatti </li>
-                      <li> Athanoor </li>
-                      <li> B. Mettupatty </li>
-                      <li> Errampatti </li>
-                      <li> Keelachinnampatti </li>
-                      <li> Kottaimedu </li>
-                      <li> Maniyanji </li>
-                      <li> Oorcheri </li>
-                      <li> Periailanthaikulam </li>
-                      <li> T. Mettupatty </li>
-                      <li> Theththur </li>
-                      <li> Valayapatty </li>
-                      <li> Achampatti </li>
-                      <li> Ayyankottai </li>
-                      <li> Chatravellalapatti </li>
-                      <li> Kallanai </li>
-                      <li> Kondayanpatty </li>
-                      <li> Kuttimeichipatty </li>
-                      <li> Melachinnampatty </li>
-                      <li> Pannaikudi </li>
-                      <li> Rajakalpatty </li>
-                      <li> Thandalai </li>
-                      <li> Thevaseri </li>
-                      <li> Vavidamaruthur </li>
-                    </ul></td>
-                </tr>
-              </table>
+          </div>
+
+        </section>
+        <div class="clearfix"></div>
+
+        <div class="one_time" id="One_Time" style="display:block;">
+         <fieldset>
+          <legend>One Time</legend>
+          <div class="input-row-left">
+
+            <div class="input-row">
+              <div class="field-label">Statutory Date</div>
+              <div class="field-input">
+
+               <select class="input-box" style="width:60px;">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+                <option>9</option>
+                <option>10</option>
+                <option>11</option>
+                <option>12</option>
+                <option>13</option>
+                <option>14</option>
+                <option>15</option>
+                <option>16</option>
+                <option>17</option>
+                <option>18</option>
+                <option>19</option>
+                <option selected="selected">20</option>
+                <option>21</option>
+                <option>22</option>
+                <option>23</option>
+                <option>24</option>
+                <option>25</option>
+                <option>26</option>
+                <option>27</option>
+                <option>28</option>
+                <option>29</option>
+                <option>30</option>
+              </select>
+              <select class="input-box" style="width:60px;">
+                <option>Jan</option>
+                <option>Feb</option>
+                <option>Mar</option>
+                <option>Apr</option>
+                <option>May</option>
+                <option selected="selected">Jun</option>
+                <option>Jul</option>
+                <option>Aug</option>
+                <option>Sep</option>
+                <option>Oct</option>
+                <option>Nov</option>
+                <option>Dec</option>
+              </select>
             </div>
-          </section>
+          </div>
+        </div>
+        <div class="input-row-right">
+
+          <div class="input-row">
+            <div class="field-label">Trigger Before</div>
+            <div class="field-input"><input type="text" class="input-box" value="15" style="width:50px; float:left;">
+              <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span> </div>
+            </div>
+          </div>
+          <div class="input-row-right">
+
+          </div>
+        </fieldset>
+      </div>
+      <div class="as_when" id="As_when" style="display:none;">
+       <fieldset>
+        <legend>As & When</legend>
+        <div class="input-row-left">
+
+          <div class="input-row">
+            <div class="field-label">To Complete Within<span class="mandatory">*</span></div>
+            <div class="field-input">
+             <select class="input-box aswhen_sel" style="width:100px;  float:left;">
+              <option selected="selected">Hours</option>       
+              <option>Days</option>                
+            </select>
+            <input type="text" class="input-box hours_sel" value="4" style="width:50px; margin-left:10px; float:left;">
+            <select class="input-box days_sel" style="width:50px; margin-left:10px; float:left; display:none;">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option selected="selected">4</option>
+              <option>5</option>
+              <option >6</option>
+              <option>7</option>
+              <option>8</option>
+              <option>9</option>
+              <option>10</option>
+              <option>11</option>
+              <option>12</option>
+              <option>13</option>
+              <option>14</option>
+              <option>15</option>
+              <option>16</option>
+              <option>17</option>
+              <option>18</option>
+              <option>19</option>
+              <option>20</option>
+              <option>21</option>
+              <option>22</option>
+              <option>23</option>
+              <option>24</option>
+              <option>25</option>
+              <option>26</option>
+              <option>27</option>
+              <option>28</option>
+              <option>29</option>
+              <option>30</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Summary</div>
+          <div class="field-input" > <span style="font-size:0.8em; float:left; padding-top:5px;" class="as_when_summary">To Complete within 4 hours</span> </div>
         </div>
       </div>
-    </div>
+      <div class="input-row-right">
+
+      </div>
+    </fieldset>
   </div>
+  <div class="occasional" id="Occasional" style="display:none;">
+
+    <fieldset>
+      <legend>On Occurrence</legend>
+      <div class="input-row-left">
+
+        <div class="input-row">
+          <div class="field-label">To Complete Within</div>
+          <div class="field-input">
+            <input class="input-box " value="18" style="width:55px; float:left;">
+            <select class="input-box dayhour" style="width:100px; margin-left:10px; float:left;">
+              <option selected="selected" selected value="day">Days</option>
+              <option selected="selected" value="hour">Hours</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-row" id="trigger_every">
+          <div class="field-label">Trigger Every</div>
+          <div class="field-input">
+            <div class="field-input">
+              <input class="input-box " id="trigger_days" style="width:50px;float:left;" value="6" >                        
+              <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;margin-left:10px" id="days" >Day(s)</span>
+               <span style="font-size:0.8em; float:left; padding-top:5px;margin-left:10px" id="hours" >Hour(s)</span>
+             </div> 
+
+           </div>
+         </div>
+       </div>
+       <div class="input-row">
+        <div class="field-label">Summary</div>
+        <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;" class="occasional_summary" id="summary">To Complete Within 3 Days </span> </div>
+      </div>
+    </div>
+    <div class="input-row-right">
+
+    </div>
+  </fieldset>
+</div>
+<div class="recurring" id="Recurring" style="display:none;">
+
+
+  <fieldset>
+    <legend>Periodical</legend>
+    <div class="input-row-left">
+
+      <div class="input-row">
+        <div class="field-label">Repeats Every<span class="mandatory">*</span></div>
+        <div class="field-input">
+
+
+         <select class="input-box" class="month_recurring_sel" style="width:50px; float:left;">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option selected="selected">6</option>
+          <option>7</option>
+          <option>8</option>
+          <option>9</option>
+          <option>10</option>
+          <option>11</option>
+          <option>12</option>
+        </select>
+
+        <select class="input-box" style="width:100px; margin-left:10px; float:left;">
+          <option selected="selected">Month(s)</option>
+          <option >Year(s)</option>
+        </select>
+        <div class="clearfix"></div>
+        <label style="font-size:0.8em; padding-top:5px;"></label>
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="field-label">Repeat by<span class="mandatory">*</span></div>
+      <div class="field-input">
+        <label style="padding:3px 0px 5px 0px; vertical-align:middle;" class="repeatlabelday" >
+          <input type="radio" name="repeatby" style="width:20px;float:left;" checked="checked">
+          <span style="font-size:0.8em; padding-top:4px; float:left;">Day of the month</span>                          
+        </label>
+
+        <div class="clearfix"></div>
+        <label   class="repeatlabelendday" >
+          <input type="radio"  name="repeatby" style="width:20px; float:left;"  >
+          <span style="font-size:0.8em; padding-top:4px;">End day of the month</span>    
+        </label>
+
+      </div>
+    </div>
+
+  </div>
+  <div class="input-row-right">
+   <div class="input-row">
+    <div class="field-label" style="width:100% !important;"><input type="checkbox" class="multipleinput" />Multiple Input Selection</div>
+
+  </div>
+  <div class="multipleselect">
+   <div class="input-row">
+    <div class="field-label">Statutory Date 1</div>
+    <div class="field-input">
+     <span style="float:left;margin-left:0px;" class="repeatbyday">
+      <select class="input-box" style="width:60px;">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+        <option>11</option>
+        <option>12</option>
+        <option>13</option>
+        <option>14</option>
+        <option>15</option>
+        <option>16</option>
+        <option>17</option>
+        <option>18</option>
+        <option>19</option>
+        <option selected="selected">20</option>
+        <option>21</option>
+        <option>22</option>
+        <option>23</option>
+        <option>24</option>
+        <option>25</option>
+        <option>26</option>
+        <option>27</option>
+        <option>28</option>
+        <option>29</option>
+        <option>30</option>
+      </select>
+      <select class="input-box" style="width:60px;">
+        <option>Jan</option>
+        <option>Feb</option>
+        <option>Mar</option>
+        <option>Apr</option>
+        <option>May</option>
+        <option selected="selected">Jun</option>
+        <option>Jul</option>
+        <option>Aug</option>
+        <option>Sep</option>
+        <option>Oct</option>
+        <option>Nov</option>
+        <option>Dec</option>
+      </select>
+    </span>
+    <span style="margin-left:0px; float:left; display:none;" class="repeatbyendday" >
+     <select class="input-box repeatbyendday_stat_date1" style="width:60px;">
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
+      <option>5</option>
+      <option>6</option>
+      <option>7</option>
+      <option>8</option>
+      <option>9</option>
+      <option>10</option>
+      <option>11</option>
+      <option>12</option>
+      <option>13</option>
+      <option>14</option>
+      <option>15</option>
+      <option>16</option>
+      <option>17</option>
+      <option>18</option>
+      <option>19</option>
+      <option >20</option>
+      <option>21</option>
+      <option>22</option>
+      <option>23</option>
+      <option>24</option>
+      <option>25</option>
+      <option>26</option>
+      <option>27</option>
+      <option>28</option>
+      <option>29</option>
+      <option selected="selected">30</option>
+      <option>31</option>
+    </select>
+    <select class="input-box" style="width:60px;">
+      <option>Jan</option>
+      <option>Feb</option>
+      <option>Mar</option>
+      <option>Apr</option>
+      <option>May</option>
+      <option selected="selected">Jun</option>
+      <option>Jul</option>
+      <option>Aug</option>
+      <option>Sep</option>
+      <option>Oct</option>
+      <option>Nov</option>
+      <option>Dec</option>
+    </select>
+  </span>
+  <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
+
+
+  <input type="text" class="input-box" value="15" style="width:40px; float:left;">
+  <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span>
+
+
+</div>
+</div>
+<div class="input-row">
+  <div class="field-label">Statutory Date 2</div>
+  <div class="field-input">
+   <span style="float:left;margin-left:0px;" class="repeatbyday">
+    <select class="input-box" style="width:60px;">
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
+      <option>5</option>
+      <option>6</option>
+      <option>7</option>
+      <option>8</option>
+      <option>9</option>
+      <option>10</option>
+      <option>11</option>
+      <option>12</option>
+      <option>13</option>
+      <option>14</option>
+      <option>15</option>
+      <option>16</option>
+      <option>17</option>
+      <option>18</option>
+      <option>19</option>
+      <option selected="selected">20</option>
+      <option>21</option>
+      <option>22</option>
+      <option>23</option>
+      <option>24</option>
+      <option>25</option>
+      <option>26</option>
+      <option>27</option>
+      <option>28</option>
+      <option>29</option>
+      <option>30</option>
+    </select>
+    <select class="input-box" style="width:60px;">
+      <option>Jan</option>
+      <option>Feb</option>
+      <option>Mar</option>
+      <option>Apr</option>
+      <option>May</option>
+      <option selected="selected">Dec</option>
+      <option>Jul</option>
+      <option>Aug</option>
+      <option>Sep</option>
+      <option>Oct</option>
+      <option>Nov</option>
+      <option>Dec</option>
+    </select>
+  </span>
+  <span style="margin-left:0px; float:left; display:none;" class="repeatbyendday" >
+   <select class="input-box repeatbyendday_stat_date2" style="width:60px;" >
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+    <option>5</option>
+    <option>6</option>
+    <option>7</option>
+    <option>8</option>
+    <option>9</option>
+    <option>10</option>
+    <option>11</option>
+    <option>12</option>
+    <option>13</option>
+    <option>14</option>
+    <option>15</option>
+    <option>16</option>
+    <option>17</option>
+    <option>18</option>
+    <option>19</option>
+    <option >20</option>
+    <option>21</option>
+    <option>22</option>
+    <option>23</option>
+    <option>24</option>
+    <option>25</option>
+    <option>26</option>
+    <option>27</option>
+    <option>28</option>
+    <option>29</option>
+    <option >30</option>
+    <option selected="selected" >31</option>
+  </select>
+  <select class="input-box" style="width:60px;">
+    <option>Jan</option>
+    <option>Feb</option>
+    <option>Mar</option>
+    <option>Apr</option>
+    <option>May</option>
+    <option >Jun</option>
+    <option>Jul</option>
+    <option>Aug</option>
+    <option>Sep</option>
+    <option>Oct</option>
+    <option>Nov</option>
+    <option selected="selected">Dec</option>
+  </select>
+</span>
+<span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
+<input type="text" class="input-box" value="15" style="width:40px; float:left;">
+<span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span>
+</div>
+</div>
+<div class="input-row repeatbyday">
+  <div class="field-label">Summary</div>
+  <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;">Every Jun 20 and Dec 20</span> </div>
+</div>
+<div class="input-row repeatbyendday" style="display:none;">
+  <div class="field-label">Summary</div>
+  <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;">Every Jun 30 and Dec 31</span> </div>
+</div>
+
+</div>
+<div class="multipleselectnone" style="display:none;">
+  <div class="input-row">
+    <div class="field-label">Statutory Date </div>
+    <div class="field-input">
+     <span style="float:left;margin-left:0px;" class="repeatbyday">
+      <select class="input-box repeatbyday_stat_date" style="width:60px;">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+        <option>11</option>
+        <option>12</option>
+        <option>13</option>
+        <option>14</option>
+        <option>15</option>
+        <option>16</option>
+        <option>17</option>
+        <option>18</option>
+        <option>19</option>
+        <option selected="selected">20</option>
+        <option>21</option>
+        <option>22</option>
+        <option>23</option>
+        <option>24</option>
+        <option>25</option>
+        <option>26</option>
+        <option>27</option>
+        <option>28</option>
+        <option>29</option>
+        <option>30</option>
+      </select>
+      <select class="input-box" style="width:60px;">
+        <option>Jan</option>
+        <option>Feb</option>
+        <option>Mar</option>
+        <option>Apr</option>
+        <option>May</option>
+        <option >Jun</option>
+        <option>Jul</option>
+        <option>Aug</option>
+        <option>Sep</option>
+        <option>Oct</option>
+        <option>Nov</option>
+        <option selected="selected">Dec</option>
+      </select>
+    </span>
+    <span style="margin-left:0px; float:left; display:none;" class="repeatbyendday" >
+     <select class="input-box repeatbyendday_stat_date" style="width:60px;">
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
+      <option>5</option>
+      <option>6</option>
+      <option>7</option>
+      <option>8</option>
+      <option>9</option>
+      <option>10</option>
+      <option>11</option>
+      <option>12</option>
+      <option>13</option>
+      <option>14</option>
+      <option>15</option>
+      <option>16</option>
+      <option>17</option>
+      <option>18</option>
+      <option>19</option>
+      <option >20</option>
+      <option>21</option>
+      <option>22</option>
+      <option>23</option>
+      <option>24</option>
+      <option>25</option>
+      <option>26</option>
+      <option>27</option>
+      <option>28</option>
+      <option>29</option>
+      <option selected="selected">30</option>
+      <option>31</option>
+    </select>
+    <select class="input-box" style="width:60px;">
+      <option>Jan</option>
+      <option>Feb</option>
+      <option>Mar</option>
+      <option>Apr</option>
+      <option>May</option>
+      <option >Jun</option>
+      <option>Jul</option>
+      <option>Aug</option>
+      <option>Sep</option>
+      <option>Oct</option>
+      <option>Nov</option>
+      <option selected="selected">Dec</option>
+    </select>
+  </span>
+
+</div>
+</div>
+<div class="input-row">
+  <div class="field-label">Trigger Before</div>
+  <div class="field-input"><input type="text" class="input-box" value="15" style="width:50px; float:left;">
+    <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span> </div>
+  </div>
+  <div class="input-row">
+    <div class="field-label">Summary</div>
+    <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;">Every 6 months </span> </div>
+  </div>
+</div>
+
+</div>
+</fieldset>
+
+</div>
+
+<div class="clearfix"></div>
+<div align="center" style="padding-top:5px; padding-bottom:5px;"><input type="submit" name="submit" value="Add" class="btn-submit">
+</div>
+</div>
+<div class="grid-table">
+  <table>
+    <tr align="left" style="height:2.0em;">
+      <th style="height:2em;" align="center">#</th>
+      <th style="height:2em;">Task</th>
+      <th style="height:2em;">Description</th>
+      <th style="height:2em;">Frequency</th>
+
+      <th style="height:2em;">Repeats</th>
+      <th style="height:2em;" align="center">Edit</th>
+      <th align="center" style="padding-right:3px; height:2em;">Status</th>
+    </tr>
+    <tr>
+      <td align="center">1</td>
+      <td>FORM VIII - Notice of Opening</td>
+      <td>Within 30 days of opening a branch</td>
+      <td>One Time</td> 
+      <td>-</td>
+      <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
+      <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
+    </tr>
+
+  </table>
+</div>
+</section>
+
+<!-- -->
+<h3>Applicable Location</h3>
+<section>
+ <h2 style="font-size:0.813em;">India <img src="images/right_arrow.png"> Labour Law <img src="images/right_arrow.png"> Factory <img src="images/right_arrow.png"> Central &nbsp;&nbsp;<img src="images/chevron_black_right.png">&nbsp;&nbsp; Batteries Act <img src="images/right_arrow.png"> Rule 8(i) &nbsp;&nbsp;<img src="images/chevron_black_right.png">&nbsp;&nbsp;  FORM VIII - Notice of Opening <img src="images/right_arrow.png"> One Time </h2>
+
+
+  <div class="form-container-grid-table">
+    <table style="height:200px;">
+      <tr align="left">
+        <th width="16.66%">Region</th>
+        <th width="16.66%">State</th>
+        <th width="16.66%">District</th>
+        <th width="16.66%">Corporation</th>
+      </tr>
+      <tr>
+        <td><ul  style="height:200px;overflow-y:scroll">
+          <li>
+            <input type="text" class="filter-text-box">
+          </li>
+          <li>Select All</li>
+          <li>East</li>
+          <li>North</li>
+          <li class="active">South</li>
+          <li>West</li>
+        </ul></td>
+        <td><ul style="height:200px;overflow-y:scroll">
+          <li>
+            <input type="text" class="filter-text-box">
+          </li>
+          <li>Select All</li>
+          <li>Andhra Pradesh</li>
+          <li>Karnataka</li>
+          <li class="active">Kerala</li>
+          <li class="active">Tamil Nadu</li>
+          <li>Telangana</li>
+        </ul></td>
+        <td><ul style="height:200px;overflow-y:scroll">
+          <li>
+            <input type="text" class="filter-text-box">
+          </li>  <li>Select All</li>
+          <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Tamil Nadu</h3>
+          <li>Ariyalur </li>
+          <li>Chennai </li>
+          <li  class="active">Madurai </li>
+          <li class="active">Coimbatore </li>
+          <li>Cuddalore </li>
+          <li>Dharmapuri </li>
+          <li>Dindigul </li>
+          <li>Erode </li>
+          <li>Kanchipuram </li>
+          <li>Kanyakumari </li>
+          <li>Karur </li>
+          <li>Krishnagiri </li>
+          <li>Nagapattinam </li>
+          <li>Namakkal </li>
+          <li>The Nilgiris </li>
+          <li>Perambalur </li>
+          <li>Pudukkottai </li>
+          <li>Ramanathapuram </li>
+          <li>Salem </li>
+          <li>Sivaganga </li>
+          <li>Thanjavur </li>
+          <li>Theni </li>
+          <li>Thoothukudi </li>
+          <li>Tiruchirappalli </li>
+          <li>Tirunelveli </li>
+          <li>Tiruppur </li>
+          <li>Tiruvallur </li>
+          <li>Tiruvannamalai </li>
+          <li>Tiruvarur </li>
+          <li>Vellore </li>
+          <li>Viluppuram </li>
+          <li>Virudhunagar </li>
+          <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Kerala</h3>
+          <li> Alappuzha </li>
+          <li> Ernakulam </li>
+          <li> Idukki </li>
+          <li> Kannur </li>
+          <li> Kasaragod </li>
+          <li> Kollam </li>
+          <li> Kottayam </li>
+          <li> Kozhikode </li>
+          <li> Malappuram </li>
+          <li> Palakkad </li>
+          <li> Pathanamthitta </li>
+          <li> Thiruvananthapuram </li>
+          <li> Thrissur </li>
+          <li> Wayanad </li>
+        </ul></td>
+        <td><ul style="height:200px;overflow-y:scroll">
+          <li>
+            <input type="text" class="filter-text-box">
+          </li>  <li>Select All</li>
+          <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Madurai</h3>
+          <li class="active">Madurai Corporation</li>
+          <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Coimbatore</h3>
+          <li class="active">Coimbatore Corporation</li>
+        </ul></td>
+      </tr>
+    </table>
+    <table>
+      <tr align="left">
+        <th width="16.66%">Municipality</th>
+        <th width="16.66%">Town</th>
+        <th width="16.66%">Panchayat</th>
+      </tr>
+      <tr>
+        <td><ul style="height:200px;overflow-y:scroll">
+          <li>
+            <input type="text" class="filter-text-box">
+          </li>  <li>Select All</li>
+          <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Madurai</h3>
+          <li> Anaiyur</li>
+          <li class="active"> Avaniyapuram </li>
+          <li> Melur</li>
+          <li> Thirupparankundram </li>
+          <li> Tirumangalam </li>
+          <li class="active"> Usilampatti</li>
+        </ul></td>
+        <td><ul style="height:200px;overflow-y:scroll">
+          <li>
+            <input type="text" class="filter-text-box">
+          </li>  <li>Select All</li>
+          <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Madurai</h3>
+          <li class="active"> Alanganallur </li>
+          <li class="active"> Sholavandan </li>
+          <li class="active"> Vilangudi </li>
+          <li class="active"> Palamedu </li>
+          <li> Harveypatti </li>
+          <li class="active"> Thirunagar </li>
+          <li> A.Vellalapatti </li>
+          <li class="active"> Peraiyur </li>
+          <li> Paravai </li>
+          <li> Vadipatti </li>
+          <li> Elumalai </li>
+          <li> T.Kallupatti </li>
+        </ul></td>
+        <td><ul style="height:200px;overflow-y:scroll">
+          <li>
+            <input type="text" class="filter-text-box">
+          </li>  <li>Select All</li>
+          <h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">Alanganallur</h3>
+          <li> Alagapuri </li>
+          <li class="active"> Ayyur </li>
+          <li class="active"> Chinnailanthaikulam </li>
+          <li> Kalvelipatti </li>
+          <li class="active"> Kotankipatti </li>
+          <li> Manickampatti </li>
+          <li class="active"> Muduvarpatty </li>
+          <li> Paraipatty </li>
+          <li class="active"> Senthamangalam </li>
+          <li> Thanichiyam </li>
+          <li> Vadugapatty </li>
+          <li> Vellaiampatty </li>
+          <li> A. Kovilpatti </li>
+          <li> Athanoor </li>
+          <li> B. Mettupatty </li>
+          <li> Errampatti </li>
+          <li> Keelachinnampatti </li>
+          <li> Kottaimedu </li>
+          <li> Maniyanji </li>
+          <li> Oorcheri </li>
+          <li> Periailanthaikulam </li>
+          <li> T. Mettupatty </li>
+          <li> Theththur </li>
+          <li> Valayapatty </li>
+          <li> Achampatti </li>
+          <li> Ayyankottai </li>
+          <li> Chatravellalapatti </li>
+          <li> Kallanai </li>
+          <li> Kondayanpatty </li>
+          <li> Kuttimeichipatty </li>
+          <li> Melachinnampatty </li>
+          <li> Pannaikudi </li>
+          <li> Rajakalpatty </li>
+          <li> Thandalai </li>
+          <li> Thevaseri </li>
+          <li> Vavidamaruthur </li>
+        </ul></td>
+      </tr>
+    </table>
+  </div>
+</section>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="clearfix"></div>
 <br>
 <script type="text/javascript">
 
-$(document).ready(function() {
+  $(document).ready(function() {
     $("#section-flip-1").show();
     $("#section-flip-4").hide();
   })
@@ -1255,11 +1268,11 @@ $(document).ready(function() {
     transitionEffect: "slideLeft",
     autoFocus: true
   });
-jQuery(window).load(function(){
-  jQuery('.page-load').tipso({
-    tooltipHover: true
-});
+  jQuery(window).load(function(){
+    jQuery('.page-load').tipso({
+      tooltipHover: true
+    });
 
-});
+  });
 </script> 
 {% endblock %}

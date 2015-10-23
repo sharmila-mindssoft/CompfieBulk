@@ -523,7 +523,7 @@ input.radio:checked ~ label {
 		        xAxis: {
 		            type: 'category',
                 title: {
-                    text: 'Compliance status'
+                    text: 'Compliance Status'
                 },
 		        },
 		        yAxis: {
@@ -578,7 +578,7 @@ input.radio:checked ~ label {
 		        },
 
 		        series: [{
-		            name: "Compliances - Group wise",
+		            name: "Compliance - Group wise",
 		            colorByPoint: true,
 		            data: [{
 		                name: "Complied",
@@ -1639,7 +1639,7 @@ input.radio:checked ~ label {
     		name = "KG Groups - escalations";
     	}else if(name == "unitcomp"){
     		img_name = "/images/dash-list/complienceopportunity-unit-not.png";
-    		name = "South gate, Madurai - Applicable compliances";
+    		name = "South gate, Madurai - Applicable compliance tasls";
     		margin_style="margin-left:200px";
     	}else if(name == "divisioncomp"){
     		img_name = "/images/dash-list/complienceopportunity-division-not.png";
@@ -1693,7 +1693,7 @@ input.radio:checked ~ label {
 		        xAxis: {
 		            type: 'category',
                   title: {
-                    text: 'Compliance status'
+                    text: 'Compliance Status'
                 },
 		        },
 		        yAxis: {
@@ -2013,7 +2013,7 @@ input.radio:checked ~ label {
 <style type="text/css">
 .filtertable 
 {
-  width: 85%;
+  width: 57%;
   margin-left: 5%;
 }
 .filtertable td{
@@ -2024,12 +2024,12 @@ input.radio:checked ~ label {
   <div class="content-area">
     <div class="archive-container" style="width:100%;margin-bottom: 40px;">
       <div class="archive-header"> 
-        <span class="task-status-tab active" id="task" style="padding-left:8px;padding-right:8px"><a href="/home" style="text-decoration:none;color:white">Compliance status</a></span>
+        <span class="task-status-tab active" id="task" style="padding-left:8px;padding-right:8px"><a href="/home" style="text-decoration:none;color:white">Compliance Status</a></span>
         <span class="esc-tab" id="esc" style="padding-left:8px;padding-right:8px"><a href="/home_escalations" style="text-decoration:none;color:white">Escalations</a></span> 
         <span class="ageing-tab" id="age"><a href="/home_ageingwise" style="text-decoration:none;color:white">Not Complied</a></span> 
-        <span class="usecom-tab" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise compliance</a></span> 
-        <span class="trend-tab" id="trend"><a href="/home_trend" style="text-decoration:none;color:white">Trend chart</a></span> 
-        <span class="compliance-tab" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance risk</a></span> 
+        <span class="usecom-tab" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise Compliances</a></span> 
+        <span class="trend-tab" id="trend"><a href="/home_trend" style="text-decoration:none;color:white">Trend Chart</a></span> 
+        <span class="compliance-tab" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance Risk</a></span> 
         </div>
         <div class="clearfix"></div>
       <div id="level-filter" style="width:100%">
@@ -2040,8 +2040,8 @@ input.radio:checked ~ label {
         <tr>
         <td colspan="5" align="center">
         <table width="100%" ><tr>
-        <td width="50%" >
-        <div class="align_right" style="float:right;postion:relative; margin-right:140px; width:300px;">
+        <td  >
+        <div class="align_right" style="float:right;postion:relative; margin-right:5px; width:300px;">
           <input type="radio" name="" id="domainradio" class="radio"   />
           <label for="domainradio" id="radiolabel"  style="width:90px">Domain</label>
           
@@ -2058,7 +2058,7 @@ input.radio:checked ~ label {
             </p>
           </div>
           </div>
-        </td><td  width="50%">
+        </td><td  >
           <input type="radio" name="dateradio" id="radio6" class="radio" checked />
           <label for="radio6" id="radiolabel" >Date</label>
           <div class="textboxdate" style="display:none;">          

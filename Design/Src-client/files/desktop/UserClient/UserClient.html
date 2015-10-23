@@ -5,6 +5,12 @@
     window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
   });
 </script>
+<script src="/files/desktop/common/js/wizard/jquery.steps.js"></script>
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/wizard/jquery.steps.css">
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
+<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/popup/popup.css">
+<script type="text/javascript" src="/files/desktop/common/js/popup/modernizr.js"></script>
 <div class="content-container width70">
   <div class="content-area">
     <div class="add-container">
@@ -19,19 +25,21 @@
           <div class="field-input"><input type="text" class="input-box" value="EMP001"></div>
         </div>
         <div class="input-row">
-          <div class="field-label">Seating Unit:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="seatingunit" autofocus value="VBM1001 - Corporate Office"></div>
+          <div class="field-label">Contact No:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210"></div>
         </div>
+       
       </div>  
       <div class="input-row-right">
         <div class="input-row">
           <div class="field-label">User Group:<span class="mandatory">*</span></div>
           <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="usergroup" autofocus value="Manager"></div>
         </div>
-        <div class="input-row">
-          <div class="field-label">Contact No:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210"></div>
+          <div class="input-row">
+          <div class="field-label">Seating Unit:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="seatingunit" autofocus value="VBM1001 - Corporate Office"></div>
         </div>
+        
         
         
         <div class="input-row">
@@ -97,6 +105,16 @@
                 </div>
               </div>
               <div class="input-row">
+            <div class="field-label">Business Group:<span class="mandatory">*</span></div>
+            <div class="field-input">
+             <select id="legal-entity" multiple="multiple" placeholder="Select Business Group" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+              <option value="KG Business Group 1" selected>KG Business Group 1</option>
+              <option value="KG Business Group 1" selected>KG Business Group 2</option>
+              <option value="KG Business Group 1" selected>KG Business Group 3</option>
+            </select>
+          </div>
+        </div>
+              <div class="input-row">
                 <div class="field-label">Legal Entity:<span class="mandatory">*</span></div>
                 <div class="field-input">
                   <select id="legal-entity" multiple="multiple" placeholder="Select Legal Entity" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
@@ -108,29 +126,11 @@
                 </div>
               </div>
               
-              <div class="input-row">
-                <div class="field-label">Domain:<span class="mandatory">*</span></div>
-                <div class="field-input">
-                 <select id="legal-entity" multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
-                  <option value="finance" selected>Finance</option>
-                  <option value="labour" selected>Labour Law</option>
-                  <option value="industrial" selected>Industrial Law</option>
-                </select>
-              </div>
-            </div>
+             
             
           </div>
           <div class="input-row-right">
-           <div class="input-row">
-            <div class="field-label">Business Group:<span class="mandatory">*</span></div>
-            <div class="field-input">
-             <select id="legal-entity" multiple="multiple" placeholder="Select Business Group" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
-              <option value="KG Business Group 1" selected>KG Business Group 1</option>
-              <option value="KG Business Group 1" selected>KG Business Group 2</option>
-              <option value="KG Business Group 1" selected>KG Business Group 3</option>
-            </select>
-          </div>
-        </div>
+           
         <div class="input-row">
           <div class="field-label">Division:</div>
           <div class="field-input">
@@ -142,7 +142,7 @@
             </select>
           </div>
         </div>
-        <div class="input-row">
+        <!-- <div class="input-row">
           <div class="field-label">Unit:<span class="mandatory">*</span></div>
           <div class="field-input">
             <select id="legal-entity" multiple="multiple" placeholder="Select Unit" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
@@ -152,9 +152,40 @@
               <option value="periyar" selected>VBM1004 - Branch Office - Madurai</option>
             </select>
           </div>
-        </div>
-        
+        </div> -->
+         <div class="input-row">
+                <div class="field-label">Domain:<span class="mandatory">*</span></div>
+                <div class="field-input">
+                 <select id="legal-entity" multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+                  <option value="finance" selected>Finance</option>
+                  <option value="labour" selected>Labour Law</option>
+                  <option value="industrial" selected>Industrial Law</option>
+                </select>
+              </div>
+            </div>
       </div> 
+      <div>
+      <div class="form-container-grid-table-sm" style="padding:10px" >
+      <div class="field-label">Unit:<span class="mandatory">*</span></div>
+        <table>
+          <tr>
+            <td><ul style="height:183px">
+                  <li>
+                    <input type="text" class="filter-text-box">
+                  </li>
+                  <li><abbr class="page-load tipso_style" title="871, South street, Delhi "><img src="/images/icon-info.png" style="margin-right:10px">VRM1001 - Corporate Office</li>
+                  <li><abbr class="page-load tipso_style" title="18, Main road, Simla"><img src="/images/icon-info.png" style="margin-right:10px">VRM1002 - Regional Office - North</li>
+                  <li class="active"><abbr class="page-load tipso_style" title="16, North Street, Mambalam, Chennai"><img src="/images/icon-info.png" style="margin-right:10px">VRM1003 - Regional Office - South</li>
+                  <li><abbr class="page-load tipso_style" title="85, First Floor, Hani Complex, Bangalore"><img src="/images/icon-info.png" style="margin-right:10px">VRM1004 - Branch Office - Bangalore</li>
+                  <li class="active"><abbr class="page-load tipso_style" title="KK nagar, Chennai"><img src="/images/icon-info.png" style="margin-right:10px">VRM1005 - Branch Office - Madurai</li>
+                  <li ><abbr class="page-load tipso_style" title="28,Ramnagar, Delhi"><img src="/images/icon-info.png" style="margin-right:10px">VRM1006 - Branch Office - Delhi</li>
+                  <li><abbr class="page-load tipso_style" title="28 West Street, Hydrabad"><img src="/images/icon-info.png" style="margin-right:10px">VRM1007 - Branch Office - Hydrabad</li>
+                  <li class="active"><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai"><img src="/images/icon-info.png" style="margin-right:10px">VRM1008 - Branch Office - Chennai</li>
+                </ul></td>
+          </tr>
+        </table>
+      </div>
+      </div>
       <div class="submit-button-container">
         <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/userclient/list'">&nbsp;&nbsp;
         <input type="submit" name="submit" value="Submit" class="btn-submit">
@@ -200,4 +231,25 @@
     });
   });
 </script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#section-flip-1").show();
+    $("#section-flip-4").hide();
+});
+$("#example-basic").steps({
+  headerTag: "h3",
+  bodyTag: "section",
+  transitionEffect: "slideLeft",
+  autoFocus: true
+});
+jQuery(window).load(function(){
+  jQuery('.page-load').tipso({
+    tooltipHover: true
+  });
+});
+$('.toggleModal').on('click', function (e) {
+  $('.modal').toggleClass('active');
+});
+
+</script> 
 {% endblock %}

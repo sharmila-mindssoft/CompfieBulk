@@ -10,7 +10,7 @@
   height:auto;
   overflow: auto;
 }
-.paddingleft20{
+.paddingleft20{ 
   padding-left:40px;
 }
 .wizard > .steps > ul > li {
@@ -42,18 +42,18 @@ $(function() {
 
 <div class="content-container width75">
   <div class="content-area">
-    <h1>Reassign Compliance</h1>
+    <h1>Reassign Compliance Tasks</h1>
    
     <div class="add-container">
       <div class="form-container-outer">
         <div id="example-basic">
-          <h3>Select Compliance</h3>
+          <h3>Select Compliance Tasks</h3>
           <section>
             <div class="grid-table">
             
               <table class="font1" style="width:100%;height:200px;overflow-y:scroll">
            
-            <tr style="background:#fff;"><td style="padding-bottom:0px;"><span class="heading" width="200px">Madurai Unit</span></td></tr>
+            <tr style="background:#fff;"><td style="padding-bottom:0px;"><span class="heading" width="200px"><abbr class="page-load tipso_style" title="18, Anna Nagar, Madurai">VRM1004 - Madurai Unit</abbr></span></td></tr>
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
               <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Batteries Act<span><img src="/images/chevron_black_down.png"></span></th>
             </tr>
@@ -61,8 +61,8 @@ $(function() {
               <td colspan="2" style="padding:0px;"><table cellpadding="0" cellspacing="0" width="100%" class="managetask">
                   <tr align="left">
                     <td align="center" width="3%"><span style="font-weight:bold;"></span></td>
-                    <td width="26%"><span style="font-weight:bold;">Compliance</span></td>
-                    <td width="13%"><span style="font-weight:bold;">Compliance Type</span></td>
+                    <td width="26%"><span style="font-weight:bold;">Compliance Tasks</span></td>
+                    <td width="13%"><span style="font-weight:bold;">Compliance Frequency</span></td>
                     <td width="20%"><span style="font-weight:bold;" >Statutory Date</span></td>
                     <td width="13%" ><span style="font-weight:bold;">Statutory Trigger</span></td>
                     <td width="13%" ><span style="font-weight:bold;">Due Date</span></td>                  
@@ -71,7 +71,7 @@ $(function() {
                  <tr >
                     <td  align="center"><input type="checkbox" checked/></td>
                     <td ><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png" style="margin-right:10px">FORM I - Half yearly returns Submission</abbr></td>
-                    <td>Recurring</td>
+                    <td>Periodical</td>
                     <td >Every Year 1st January</td>
                     <td >20 </td>
                     <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
@@ -112,7 +112,7 @@ $(function() {
                        <tr>
                     <td align="center"><input type="checkbox" checked/></td>
                     <td><abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer"><img src="/images/icon-info.png" style="margin-right:10px">FORM V - Dealer Half yearly returns </abbr></td>
-                    <td>Recurring</td>
+                    <td>Periodical</td>
                     <td  >Every 31st March, 30th June, 20th September, 31th December</td>
                     <td >20,20,20,15
                   </td>
@@ -120,14 +120,14 @@ $(function() {
                   <input type="text" class="input-box" value="31-Dec-2015"/></td>
                      <td>31-Dec-2015</td>
                   </tr>
-                   <tr><td colspan="7" style="padding-bottom:0px;"><span class="heading"   width="200px">Chennai Unit</span></td></tr>
+                   <tr><td colspan="7" style="padding-bottom:0px;"><span class="heading"   width="200px"><abbr class="page-load tipso_style" title="19, Mount Road, Madurai">VRM1013 - Chennai Unit</abbr></span></td></tr>
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
               <th colspan="7" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Batteries Act<span><img src="/images/chevron_black_down.png"></span></th>
             </tr>
              <tr align="left">
                     <td align="center" width="3%"><span style="font-weight:bold;"></span></td>
-                    <td width="26%"><span style="font-weight:bold;">Compliance</span></td>
-                    <td width="13%"><span style="font-weight:bold;">Compliance Type</span></td>
+                    <td width="26%"><span style="font-weight:bold;">Compliance Tasks</span></td>
+                    <td width="13%"><span style="font-weight:bold;">Compliance Frequency</span></td>
                     <td width="20%"><span style="font-weight:bold;" >Statutory Date</span></td>
                     <td width="13%" ><span style="font-weight:bold;">Statutory Trigger</span></td>
                     <td width="13%" ><span style="font-weight:bold;">Due Date</span></td>                  
@@ -136,7 +136,7 @@ $(function() {
                    <tr >
                     <td  align="center"><input type="checkbox" checked/></td>
                     <td ><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png" style="margin-right:10px">FORM I - Half yearly returns Submission</abbr></td>
-                    <td>Recurring</td>
+                    <td>Periodical</td>
                     <td >Every Year 1st January</td>
                     <td >20 </td>
                     <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
@@ -153,28 +153,6 @@ $(function() {
                    
                      <td></td>
                   </tr>
-                 <!--  <tr>
-                    <td align="center"><input type="checkbox" checked/></td>
-                    <td><abbr class="page-load" title="Whether registration and renewal obtained by recycler"><img src="/images/icon-info.png" style="margin-right:10px">FORM VI - Recycler Registration and Review </abbr></td>
-                    <td>Recurring</td>
-                    <td colspan="4">Every 1st January</td>
-                    <td >25</td>
-                    <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
-                 
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td align="center"><input type="checkbox" checked/></td>
-                    <td><abbr class="page-load" title="Whether half yearly returns submitted by recyclers"><img src="/images/icon-info.png" style="margin-right:10px">FORM VII - Recycler Half yearly returns</abbr></td>
-                    <td>Recurring</td>
-                    <td colspan="4">Every 30th June <br> 31st December</td>
-                    <td >15,10</td>
-                    <td>
-                    <input type="text" class="input-box" value="31-Dec-2015"/></td>
-                 
-                    <td>
-                    </td>
-                  </tr> -->
                 </table></td>
             </tr>
           </table>
@@ -188,7 +166,7 @@ $(function() {
             <table style="width:100%;padding:15px;border-radius:5px;background-color:#fff;">
       <tr style="color:black; background-color:#fff;" >
         <th  align="left" style="padding:10px;">
-         Current Assignee : Krishna - L3</th>
+         Current Assignee : EMP1005 - Krishna - L3</th>
       </tr>      
     </table>
               <table style="width:100%;">
@@ -201,7 +179,7 @@ $(function() {
                 </tr>
                 <tr>
                   <th align="center" style="padding-bottom:5px">
-                    <input type="text" class="input-box icon-autocomplete" value="Branch Office - Madurai" id="unitname" />
+                    <input type="text" class="input-box icon-autocomplete" value="VRM10016 - Branch Office - Madurai" id="unitname" />
                     <!--<Select class="input-box">
                       <option>Corporate Office</option>
                       <option>Regional Office - North</option>
@@ -214,7 +192,7 @@ $(function() {
                     </Select>-->
                   </th>
                   <th align="center">
-                    <input type="text" class="input-box icon-autocomplete" value="Branch Office - Madurai" id="unitname" />
+                    <input type="text" class="input-box icon-autocomplete" value="VRM10016 -  Branch Office - Madurai" id="unitname" />
                     <!--<Select class="input-box">
                       <option>Corporate Office</option>
                       <option>Regional Office - North</option>
@@ -226,7 +204,7 @@ $(function() {
                     </Select>-->
                   </th>
                   <th align="center">
-                    <input type="text" class="input-box icon-autocomplete" value="Regional Office - South" id="unitname" />
+                    <input type="text" class="input-box icon-autocomplete" value="VRM10005 - Regional Office - South" id="unitname" />
                     <!--<Select class="input-box">
                       <option>Corporate Office</option>
                       <option>Regional Office - North</option>
@@ -246,33 +224,33 @@ $(function() {
                 <tr>
                   <td>
                     <ul>
-                      <li>Abishek<span style="text-align=right;float:right;margin-right:130px">- L2</span></li>
-                      <li>Krishna<span style="text-align=right;float:right;margin-right:130px">- L3</span></li>
-                      <li class="active">Rajaram<span style="text-align=right;float:right;margin-right:128px">- L4</span></li>
-                      <li>Subash<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
-                      <li>Vishnu<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
-                      <li>Vivek<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
+                      <li>EMP1004 - Abishek<span style="text-align=right;float:right;margin-right:130px">- L2</span></li>
+                      <li>EMP1005 - Krishna<span style="text-align=right;float:right;margin-right:130px">- L3</span></li>
+                      <li class="active">EMP1006 - Rajaram<span style="text-align=right;float:right;margin-right:128px">- L4</span></li>
+                      <li>EMP1007 - Subash<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
+                      <li>EMP1008 - Vishnu<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
+                      <li>EMP1009 - Vivek<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
                     </ul>
                   </td>
                   <td>
                     <ul>
-                      <li class="active">Abishek<span style="text-align=right;float:right;margin-right:128px">- L2</span></li>
-                      <li >Krishna<span style="text-align=right;float:right;margin-right:130px">- L3</span></li>
-                      <li>Rajaram<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
-                      <li>Subash<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
-                      <li>Vishnu<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
-                      <li>Vivek<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
+                      <li class="active">EMP1004 - Abishek<span style="text-align=right;float:right;margin-right:130px">- L2</span></li>
+                      <li>EMP1005 - Krishna<span style="text-align=right;float:right;margin-right:130px">- L3</span></li>
+                      <li >EMP1006 - Rajaram<span style="text-align=right;float:right;margin-right:128px">- L4</span></li>
+                      <li>EMP1007 - Subash<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
+                      <li>EMP1008 - Vishnu<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
+                      <li>EMP1009 - Vivek<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
                     </ul>
                   </td>
                   <td>
                     <ul>
-                      <li >Aravind<span style="text-align=right;float:right;margin-right:130px">- L1</span></li>
-                      <li class="active">Arjun<span style="text-align=right;float:right;margin-right:128px">- L2</span></li>
-                      <li >Arun<span style="text-align=right;float:right;margin-right:130px">- L3</span></li>
-                      <li>Babu<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
-                      <li>Dhinesh<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
-                      <li>Divagar<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
-                      <li>Praveen<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
+                      <li >EMP2104 - Aravind<span style="text-align=right;float:right;margin-right:130px">- L1</span></li>
+                      <li class="active">EMP2105 - Arjun<span style="text-align=right;float:right;margin-right:128px">- L2</span></li>
+                      <li >EMP2106 - Arun<span style="text-align=right;float:right;margin-right:130px">- L3</span></li>
+                      <li>EMP2107 - Babu<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
+                      <li>EMP2108 - Dhinesh<span style="text-align=right;float:right;margin-right:130px">- L4</span></li>
+                      <li>EMP2109 - Divagar<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
+                      <li>EMP21010 - Praveen<span style="text-align=right;float:right;margin-right:130px">- L5</span></li>
                     </ul>
                   </td>
                 </tr>

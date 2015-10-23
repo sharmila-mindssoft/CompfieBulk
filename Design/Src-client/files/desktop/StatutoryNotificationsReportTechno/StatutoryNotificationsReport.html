@@ -1,0 +1,102 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Statutory Notifications<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Country<span class="mandatory">*</span>:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="India" placeholder="Enter Country  " />
+          </div>
+        </div>
+         <div class="input-row">
+          <div class="field-label">Domain<span class="mandatory">*</span>:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" value="Industrial Law" placeholder="Enter Domain" />
+          </div>
+        </div>
+         <div class="input-row">
+          <div class="field-label">Act<span class="mandatory"></span>:</div>
+          <div class="field-input">
+           <input type="text" class="input-box icon-autocomplete" value="Batteries act" placeholder="Enter Act" />
+          </div>
+        </div> 
+      </div>
+      <div class="input-row-right">
+          <div class="input-row">
+          <div class="field-label">From:</div>
+          <div class="field-input">
+            <input type="text" class="input-box" autofocus id="unit" value="" placeholder="From date" />
+          </div>
+        </div>
+      
+       <div class="input-row">
+          <div class="field-label">To:</div>
+          <div class="field-input">
+           <input type="text" class="input-box" value="" placeholder="To Date" />
+          </div>
+        </div> 
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+        <input type="button"  class="btn-submit" value="Export" />
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table-rpt">
+        <h1>Statutory Notifications List</h1>
+        
+  <div style="margin-left:15%;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>
+          </div>
+          <div style="float:right; margin-right:20%;">
+           
+             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;">Industrial Law</span> </div>
+             
+          </div>
+        </div>
+ <div class="clearfix"></div>
+        
+        <div style="background:#ddd; height:30px; margin-top:0px;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em; ">
+            <div style="margin-left:5px; font-size:0.8em; padding-top:7px; font-weight:bold;"> #</div>
+          </div>
+          <div style="margin-left:30px; font-size:0.8em; padding-top:7px; font-weight:bold;padding-right:50px"><span>Section</span><span style="margin-left:15px;margin-right:25px;">  Rule </span> Notification Content
+          <span style="float:right">Date and Time</span></div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="heading">Batteries Act</div>
+        <table width="100%" style="border:1px dotted #CCCCCC;" >
+         
+         <tr>
+            <td align="center">1</td>
+            <td>-</td>
+            <td>Rule 8</td>
+            <td>FORM VII -has been added to Batteries act under Rule 8 (Whether half yearly returns submitted by recyclers)</td>
+            <td>12 OCT 2015 05:30</td>
+          </tr>
+          <tr>
+            <td align="center">2</td>
+            <td>Section 2</td>
+            <td>Rule 11</td>
+            <td> Compliance Form IX - Half yearly returns for auctioneer has added to Rule 11 (II)</td>
+            <td>10 OCT 2015 11:00</td>
+          </tr>
+          <tr>
+            <td align="center">3</td>
+            <td>-</td>
+            <td>Rule 3</td>
+            <td> Compliance Form III - undertaking submission will be inactive</td>
+            <td>05 OCT 2015 17:20</td>
+          </tr>
+        
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
