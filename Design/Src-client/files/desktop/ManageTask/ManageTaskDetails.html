@@ -1,7 +1,80 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
-<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
 <script src="/files/desktop/common/js/tooltip/tipso.js"></script>
+<style>
+/* Tipso Bubble Styles */
+.tipso_bubble, .tipso_bubble > .tipso_arrow{
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing:    border-box;
+  box-sizing:         border-box;
+}
+.tipso_bubble {
+    position: absolute;
+  text-align: left;
+  border-radius: 6px;
+  z-index: 9999;
+  padding: 10px;
+   background-color: #F1E9F6;
+    border: 1px solid ##662d91;
+    color: #555;
+  -webkit-box-shadow: 0px 0px 18px -6px #333;
+  -moz-box-shadow: 0px 0px 18px -6px #333;
+  box-shadow: 0px 0px 18px -6px #333;
+}
+.tipso_style{
+cursor: pointer;
+}
+.tipso_content {
+    word-wrap: break-word;
+    font-size: 0.813em !important;
+  line-height:15px;
+}
+
+/* Tipso Bubble Div */
+.tipso_bubble > .tipso_arrow{
+  position: absolute;
+  width: 0; height: 0;
+  border: 8px solid;
+  pointer-events: none;
+}
+.tipso_bubble.top > .tipso_arrow {
+    border-top-color: #000;
+    border-right-color: transparent;
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+    top: 100%;
+    left: 50%;
+    margin-left: -8px;
+}
+.tipso_bubble.bottom > .tipso_arrow {
+    border-bottom-color: #000;
+    border-right-color: transparent;
+  border-left-color: transparent;
+  border-top-color: transparent;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -8px;
+}
+.tipso_bubble.left > .tipso_arrow {
+    border-left-color: #000;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+    top: 50%;
+  left: 100%;
+  margin-top: -8px;
+}
+.tipso_bubble.right > .tipso_arrow {
+    border-right-color: #000;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+    top: 50%;
+  right: 100%;
+  margin-top: -8px;
+}
+
+</style>
 <style type="text/css">
       .slider{
         background-color: gray;
@@ -15,6 +88,8 @@
     </style>
     <script type="text/javascript">
     $(document).ready(function() {
+       $('#arrow3').hide();
+    $('#arrow4').show();
       $(".current-tab").click(function() {
         $(".current-tab").addClass("active")
         $(".upcomming-tab").removeClass("active")
@@ -79,6 +154,27 @@ $(function() {
                       <td></td>
                       <td></td>
         </tr>
+        <tr style="background:#fff;">
+                  <td style="color:#FF4644">1</td>
+                  
+                  <td style="color:#FF4644"><abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer
+"><img src="/images/icon-info.png"> FORM V - Dealer Half yearly returns  </abbr></td><td style="color:#FF4644">Industrial Law</td>
+                  <td style="color:#FF4644">26-Jul-2015</td>
+                  <td style="color:#FF4644">29-Jul-2015</td>
+                   <td style="color:#FF4644">Over Due By 7 Days</td>
+                   <td align="center" style="color:#FF4644"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                  <td style=" padding-right:5px;color:#FF4644"><img src="/images/right_arrow.png"  style="visibility:hidden"></td>
+                </tr>
+        <tr style="background:#fff;">
+                  <td style="color:#FF4644">2</td>
+                  
+                  <td style="color:#FF4644"><abbr class="page-load" title="Whether half yearly returns submitted by recyclers."><img src="/images/icon-info.png"> FORM VII - Recycler Half yearly returns</abbr></td><td style="color:#FF4644">Industrial Law</td>
+                  <td style="color:#FF4644">25-Jul-2015</td>
+                  <td style="color:#FF4644">31-Jul-2015</td>
+                  <td style="color:#FF4644"> Over Due By 4 Days</td>
+                  <td align="center" style="color:#FF4644"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                  <td style=" padding-right:5px;color:#FF4644"><img src="/images/right_arrow.png"  style="visibility:hidden"></td>
+                </tr>
                  <!-- <tr align="left" class="rightside" >
                   <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.813em;float:left; padding:5px 5px; margin-left:0px; box-shadow:inset 0 0 0 1px rgba(53,86,129, 0.4),inset 0 0 5px rgba(53,86,129, 0.5),
     inset -285px 0 35px white;
@@ -87,18 +183,18 @@ $(function() {
                   <th colspan="8" style="background-color:#fff;"></th>
                 </tr> -->
                 <tr class="index-tab " style="background:#fff;" >
-                  <td>1</td>
+                  <td style="color:#FF4644">3</td>
                
-                  <td><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png">FORM I - Half yearly returns Submission</abbr></td>
-                  <td>Industrial Law</td>
-                  <td>15-Aug-2015</td>
-                  <td>24-Aug-2015</td>
-                  <td>10 Days left</td>
-                  <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
-                  <td style="padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                  <td style="color:#FF4644"><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png">FORM I - Half yearly returns Submission</abbr></td>
+                  <td style="color:#FF4644">Industrial Law</td>
+                  <td style="color:#FF4644">15-Aug-2015</td>
+                  <td style="color:#FF4644">24-Aug-2015</td>
+                  <td style="color:#FF4644">10 Days left</td>
+                  <td align="center" style="color:#FF4644"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                  <td style="padding-right:5px;color:#FF4644"><img id="arrow3" src="/images/right_arrow.png"></td>
                 </tr>
                 <tr style="background:#fff;" class="archive-tab active1">
-                  <td>2</td>
+                  <td>4</td>
                  
                   <td><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead
 "><img src="/images/icon-info.png"> FORM II - Registration</abbr></td>
@@ -107,7 +203,7 @@ $(function() {
                   <td>24-Aug-2015</td>
                    <td>5 Days left</td>
                    <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
-                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                  <td style=" padding-right:5px;"><img id="arrow4" src="/images/right_arrow.png"></td>
                 </tr>
                
                      <!--   <tr align="left" class="rightside" >
@@ -119,36 +215,26 @@ $(function() {
                   <th colspan="8" style="background-color:#fff;"></th>
                 </tr> -->
                  <tr style="background:#fff;">
-                  <td>3</td>
+                  <td>5</td>
                   
                   <td><abbr class="page-load" title="Whether undertaking submitted by importer to authority"><img src="/images/icon-info.png"> FORM III - Undertaking submission  </abbr></td><td>Industrial Law</td>
                   <td>21-Aug-2015</td>
                   <td>26-Aug-2015</td>
                    <td>6 Days left</td>
                    <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
-                  <td style="padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                  <td style="padding-right:5px;"><img src="/images/right_arrow.png"  style="visibility:hidden"></td>
                 </tr >
                 <tr style="background:#fff;">
-                  <td>4</td>
+                  <td>6</td>
                 
                   <td><abbr class="page-load" title="Whether registration obtained for dealers"><img src="/images/icon-info.png"> FORM IV - Dealer Registration</abbr></td><td>Industrial Law</td>
                   <td>25-Aug-2015</td>
                   <td>31-Aug-2015</td>
                    <td>7 Days left</td>
                    <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
-                  <td style="padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                  <td style="padding-right:5px;"><img src="/images/right_arrow.png"  style="visibility:hidden"></td>
                 </tr>
-                <tr style="background:#fff;">
-                  <td>5</td>
-                  
-                  <td><abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer
-"><img src="/images/icon-info.png"> FORM V - Dealer Half yearly returns  </abbr></td><td>Industrial Law</td>
-                  <td>26-Aug-2015</td>
-                  <td>29-Aug-2015</td>
-                   <td>Over Due By 4 Days</td>
-                   <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
-                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
-                </tr>
+                
                <!--  <tr align="left" class="rightside" >
                   <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
     inset 0 0 0 1px rgba(53,86,129, 0.4), 
@@ -158,7 +244,7 @@ $(function() {
                   <th colspan="8" style="background-color:#fff;"></th>
                 </tr> -->
  <tr style="background:#fff;">
-                  <td>6</td>
+                  <td>7</td>
                   
                   <td><abbr class="page-load" title="Whether registration and renewal obtained by recycler
 "><img src="/images/icon-info.png"> FORM VI - Recycler Registration and Review  </abbr></td><td>Industrial Law</td>
@@ -166,18 +252,8 @@ $(function() {
                   <td>26-Aug-2015</td>
                    <td>6 Days</td>
                    <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
-                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png" style="visibility:hidden"></td>
                 </tr >
-                <tr style="background:#fff;">
-                  <td>7</td>
-                  
-                  <td><abbr class="page-load" title="Whether half yearly returns submitted by recyclers."><img src="/images/icon-info.png"> FORM VII - Recycler Half yearly returns</abbr></td><td>Industrial Law</td>
-                  <td>25-Aug-2015</td>
-                  <td>31-Aug-2015</td>
-                  <td> Over Due By 7 Days</td>
-                  <td align="center"><img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
-                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
-                </tr>
               </table>
             </div></td>
           <td width="40%" style="vertical-align:top; background:#F1E9F6; padding-left:10px;"><div class="index-tab-content1" style="width:100%; height:100%; display:none;">
@@ -215,7 +291,7 @@ $(function() {
                 </tr>-->
                 <tr>
                   <td ><span style="font-weight:bold;">Status</span></td>
-                  <td>In progress</td>
+                  <td>Inprogress (Rejected)</td>
                 </tr>
                 <tr>
                   <td style="vertical-align:middle;"><span style="font-weight:bold;">Remarks</span></td>
@@ -426,12 +502,16 @@ $(function(){
     $(".archive-tab").removeClass("active1")
     $(".index-tab-content1").show();
     $(".archive-tab-content1").hide();
+    $('#arrow3').show();
+    $('#arrow4').hide();
   })
   $(".archive-tab").click(function() {
     $(".archive-tab").addClass("active1")
     $(".index-tab").removeClass("active1")
     $(".index-tab-content1").hide();
     $(".archive-tab-content1").show();
+    $('#arrow3').hide();
+    $('#arrow4').show();
   })
 });
 $(function(){
@@ -454,5 +534,541 @@ jQuery(window).load(function(){
   });
 });
 
+
+/*!
+ * tipso - A Lightweight Responsive jQuery Tooltip Plugin v1.0.5
+ * Copyright (c) 2014-2015 Bojan Petkovski
+ * http://tipso.object505.com
+ * Licensed under the MIT license
+ * http://object505.mit-license.org/
+ */
+;(function($, window, document, undefined) {
+  var pluginName = "tipso",
+    defaults = {
+      speed           : 400,
+      background      : '#F1E9F6',
+      color           : '#000000',
+      position        : 'top',
+      width           : 250,
+      maxWidth        : 400,
+      delay           : 200,
+      animationIn     : '',
+      animationOut    : '',
+      offsetX         : 0,
+      offsetY         : 0,
+      tooltipHover    : false,
+      content         : null,
+      ajaxContentUrl  : null,
+      useTitle        : true,
+      onBeforeShow    : null,
+      onShow          : null,
+      onHide          : null
+    };
+
+  function Plugin(element, options) {
+    this.element = $(element);
+    this.settings = $.extend({}, defaults, options);
+    this._defaults = defaults;
+    this._name = pluginName;
+    this._title = this.element.attr('title');
+    this.mode = 'hide';
+    this.ieFade = false;
+    if ( !supportsTransitions ) {        
+      this.ieFade = true;      
+    }
+    this.init();
+  }
+  $.extend(Plugin.prototype, {
+    init: function() {
+      var obj = this,
+        $e = this.element;
+      $e.addClass('tipso_style').removeAttr('title');
+      if (isTouchSupported()) {
+        $e.on('click' + '.' + pluginName, function(e) {
+          obj.mode == 'hide' ? obj.show() : obj.hide();
+          e.stopPropagation();
+        });
+        $(document).on('click', function() {
+          if (obj.mode == 'show') {
+            obj.hide();
+          }
+        });
+      } else {
+        if (obj.settings.tooltipHover) {
+          var waitForHover = null,
+              hoverHelper = null;
+          $e.on('mouseover' + '.' + pluginName, function() {
+            clearTimeout(waitForHover);
+            clearTimeout(hoverHelper);
+            hoverHelper = setTimeout(function(){
+              obj.show();
+            }, 150);            
+          });
+          $e.on('mouseout' + '.' + pluginName, function() {            
+            clearTimeout(waitForHover);
+            clearTimeout(hoverHelper);
+            waitForHover = setTimeout(function(){              
+              obj.hide(); 
+            }, 200);     
+
+            $(obj.tooltip()).on('mouseover' + '.' + pluginName, function() {
+              obj.mode = 'tooltipHover';
+            });  
+            $(obj.tooltip()).on('mouseout' + '.' + pluginName, function() {
+              obj.mode = 'show';
+              clearTimeout(waitForHover);
+              waitForHover = setTimeout(function(){              
+                obj.hide();
+              }, 200);
+            });       
+          });
+        } else {
+          $e.on('mouseover' + '.' + pluginName, function() {
+            obj.show();
+          });
+          $e.on('mouseout' + '.' + pluginName, function() {
+            obj.hide();
+          });
+        }
+      }
+    },
+    tooltip: function() {
+      if (!this.tipso_bubble) {
+        this.tipso_bubble = $(
+          '<div class="tipso_bubble"><div class="tipso_content"></div><div class="tipso_arrow"></div></div>'
+        );
+      }
+      return this.tipso_bubble;
+    },
+    show: function() {
+      var tipso_bubble = this.tooltip(),
+        obj = this,
+        $win = $(window);
+
+      if (obj.mode == 'hide') {
+        if ($.isFunction(obj.settings.onBeforeShow)) {
+          obj.settings.onBeforeShow($(this));
+        }
+        if (obj.settings.width){
+          tipso_bubble.css({
+            background: obj.settings.background,
+            color: obj.settings.color,       
+            width: obj.settings.width
+          }).hide();
+        } else if (obj.settings.maxWidth){
+          tipso_bubble.css({
+            background: obj.settings.background,
+            color: obj.settings.color,       
+            maxWidth: obj.settings.maxWidth
+          }).hide();
+        } else {
+          tipso_bubble.css({
+            background: obj.settings.background,
+            color: obj.settings.color,       
+            width: 200
+          }).hide();
+        }
+        tipso_bubble.find('.tipso_content').html(obj.content());
+        reposition(obj);
+        $win.resize(function() {
+          reposition(obj);
+        });
+        obj.timeout = window.setTimeout(function() {
+          if (obj.ieFade || obj.settings.animationIn === '' || obj.settings.animationOut === ''){
+            tipso_bubble.appendTo('body').stop(true, true).fadeIn(obj.settings
+            .speed, function() {
+              obj.mode = 'show';
+              if ($.isFunction(obj.settings.onShow)) {
+                obj.settings.onShow($(this));
+              }
+            });
+          } else {
+            tipso_bubble.remove().appendTo('body')
+            .stop(true, true)
+            .removeClass('animated ' + obj.settings.animationOut)
+            .addClass('noAnimation')
+            .removeClass('noAnimation')
+            .addClass('animated ' + obj.settings.animationIn).fadeIn(obj.settings.speed, function() {
+              $(this).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                $(this).removeClass('animated ' + obj.settings.animationIn);
+              });
+              obj.mode = 'show';
+              if ($.isFunction(obj.settings.onShow)) {
+                obj.settings.onShow($(this));
+              }
+            });
+          }
+        }, obj.settings.delay);
+      }
+    },
+    hide: function() {
+      var obj = this,
+        tipso_bubble = this.tooltip();
+
+      window.clearTimeout(obj.timeout);
+      obj.timeout = null;
+      if (obj.mode != 'tooltipHover') {  
+        if (obj.ieFade || obj.settings.animationIn === '' || obj.settings.animationOut === ''){
+          tipso_bubble.stop(true, true).fadeOut(obj.settings.speed,
+          function() {
+            $(this).remove();
+            if ($.isFunction(obj.settings.onHide) && obj.mode == 'show') {
+              obj.settings.onHide($(this));
+            }
+            obj.mode = 'hide';
+          });
+        } else {
+          tipso_bubble.stop(true, true)
+          .removeClass('animated ' + obj.settings.animationIn)
+          .addClass('noAnimation').removeClass('noAnimation')
+          .addClass('animated ' + obj.settings.animationOut)
+          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){          
+            $(this).removeClass('animated ' + obj.settings.animationOut).remove();          
+            if ($.isFunction(obj.settings.onHide) && obj.mode == 'show') {
+              obj.settings.onHide($(this));
+            }
+            obj.mode = 'hide';
+          });
+        }
+      }      
+    },
+    destroy: function() {
+      var $e = this.element;
+      $e.off('.' + pluginName);
+      $e.removeData(pluginName);
+      $e.removeClass('tipso_style').attr('title', this._title);
+    },
+    content: function() {
+      var content,
+        $e = this.element,
+        obj = this,
+        title = this._title;
+      if (obj.settings.ajaxContentUrl) {
+        content = $.ajax({
+          type: "GET",
+          url: obj.settings.ajaxContentUrl,
+          async: false
+        }).responseText;
+      } else if (obj.settings.content) {
+        content = obj.settings.content;
+      } else {
+        if (obj.settings.useTitle === true) {
+          content = title;
+        } else {
+          content = $e.data('tipso');
+        }
+      }
+      return content;
+    },
+    update: function(key, value) {
+      var obj = this;
+      if (value) {
+        obj.settings[key] = value;
+      } else {
+        return obj.settings[key];
+      }
+    }
+  });
+
+  function isTouchSupported() {
+    var msTouchEnabled = window.navigator.msMaxTouchPoints;
+    var generalTouchEnabled = "ontouchstart" in document.createElement(
+      "div");
+    if (msTouchEnabled || generalTouchEnabled) {
+      return true;
+    }
+    return false;
+  }
+
+  function realHeight(obj) {
+    var clone = obj.clone();
+    clone.css("visibility", "hidden");
+    $('body').append(clone);
+    var height = clone.outerHeight();
+    var width = clone.outerWidth();
+    clone.remove();
+    return {
+      'width' : width,
+      'height' : height
+    };
+  }
+
+  var supportsTransitions = (function() {
+    var s = document.createElement('p').style, 
+        v = ['ms','O','Moz','Webkit'];
+    if( s['transition'] == '' ) return true; 
+    while( v.length ) 
+        if( v.pop() + 'Transition' in s )
+            return true;
+    return false;
+  })();
+
+  function reposition(thisthat) {
+    var tipso_bubble = thisthat.tooltip(),
+      $e = thisthat.element,
+      obj = thisthat,
+      $win = $(window),
+      arrow = 10,
+      pos_top, pos_left, diff;
+
+      if ( $e.parent().outerWidth() > $win.outerWidth() ){
+        $win = $e.parent();
+      }
+    switch (obj.settings.position) {
+      case 'top':
+        pos_left = $e.offset().left + ($e.outerWidth() / 2) - (realHeight(tipso_bubble).width / 2);
+        pos_top = $e.offset().top - realHeight(tipso_bubble).height - arrow;
+        tipso_bubble.find('.tipso_arrow').css({
+          marginLeft: -8,
+          marginTop: ''
+        });
+        if (pos_top < $win.scrollTop()) {
+          pos_top = $e.offset().top + $e.outerHeight() + arrow;
+          tipso_bubble.find('.tipso_arrow').css({
+            'border-bottom-color': obj.settings.background,
+            'border-top-color': 'transparent',
+            'border-left-color': 'transparent',
+            'border-right-color': 'transparent'
+          });
+          tipso_bubble.removeClass('top bottom left right');
+          tipso_bubble.addClass('bottom');
+        } else {
+          tipso_bubble.find('.tipso_arrow').css({
+            'border-top-color': obj.settings.background,
+            'border-bottom-color': 'transparent',
+            'border-left-color': 'transparent',
+            'border-right-color': 'transparent'
+          });
+          tipso_bubble.removeClass('top bottom left right');
+          tipso_bubble.addClass('top');
+        }
+        break;
+      case 'bottom':
+        pos_left = $e.offset().left + ($e.outerWidth() / 2) - (realHeight(tipso_bubble).width / 2);
+        pos_top = $e.offset().top + $e.outerHeight() + arrow;
+        tipso_bubble.find('.tipso_arrow').css({
+          marginLeft: -8,
+          marginTop: ''
+        });
+        if (pos_top + realHeight(tipso_bubble).height > $win.scrollTop() + $win.outerHeight()) {
+          pos_top = $e.offset().top - realHeight(tipso_bubble).height - arrow;
+          tipso_bubble.find('.tipso_arrow').css({
+            'border-top-color': obj.settings.background,
+            'border-bottom-color': 'transparent',
+            'border-left-color': 'transparent',
+            'border-right-color': 'transparent'
+          });
+          tipso_bubble.removeClass('top bottom left right');
+          tipso_bubble.addClass('top');
+        } else {
+          tipso_bubble.find('.tipso_arrow').css({
+            'border-bottom-color': obj.settings.background,
+            'border-top-color': 'transparent',
+            'border-left-color': 'transparent',
+            'border-right-color': 'transparent'
+          });
+          tipso_bubble.removeClass('top bottom left right');
+          tipso_bubble.addClass(obj.settings.position);
+        }
+        break;
+      case 'left':
+        pos_left = $e.offset().left - realHeight(tipso_bubble).width - arrow;
+        pos_top = $e.offset().top + ($e.outerHeight() / 2) - (realHeight(tipso_bubble).height / 2);
+        tipso_bubble.find('.tipso_arrow').css({
+          marginTop: -8,
+          marginLeft: ''
+        });
+        if (pos_left < $win.scrollLeft()) {
+          pos_left = $e.offset().left + $e.outerWidth() + arrow;
+          tipso_bubble.find('.tipso_arrow').css({
+            'border-right-color': obj.settings.background,
+            'border-left-color': 'transparent',
+            'border-top-color': 'transparent',
+            'border-bottom-color': 'transparent'
+          });
+          tipso_bubble.removeClass('top bottom left right');
+          tipso_bubble.addClass('right');
+        } else {
+          tipso_bubble.find('.tipso_arrow').css({
+            'border-left-color': obj.settings.background,
+            'border-right-color': 'transparent',
+            'border-top-color': 'transparent',
+            'border-bottom-color': 'transparent'
+          });
+          tipso_bubble.removeClass('top bottom left right');
+          tipso_bubble.addClass(obj.settings.position);
+        }
+        break;
+      case 'right':
+        pos_left = $e.offset().left + $e.outerWidth() + arrow;
+        pos_top = $e.offset().top + ($e.outerHeight() / 2) - (realHeight(tipso_bubble).height / 2);
+        tipso_bubble.find('.tipso_arrow').css({
+          marginTop: -8,
+          marginLeft: ''
+        });
+        if (pos_left + arrow + obj.settings.width > $win.scrollLeft() +
+          $win.outerWidth()) {
+          pos_left = $e.offset().left - realHeight(tipso_bubble).width - arrow;
+          tipso_bubble.find('.tipso_arrow').css({
+            'border-left-color': obj.settings.background,
+            'border-right-color': 'transparent',
+            'border-top-color': 'transparent',
+            'border-bottom-color': 'transparent'
+          });
+          tipso_bubble.removeClass('top bottom left right');
+          tipso_bubble.addClass('left');
+        } else {
+          tipso_bubble.find('.tipso_arrow').css({
+            'border-right-color': obj.settings.background,
+            'border-left-color': 'transparent',
+            'border-top-color': 'transparent',
+            'border-bottom-color': 'transparent'
+          });
+          tipso_bubble.removeClass('top bottom left right');
+          tipso_bubble.addClass(obj.settings.position);
+        }
+        break;
+    }
+    if (pos_left < $win.scrollLeft() && (obj.settings.position == 'bottom' ||
+      obj.settings.position == 'top')) {
+      tipso_bubble.find('.tipso_arrow').css({
+        marginLeft: pos_left - 8
+      });
+      pos_left = 0;
+    }
+    if (pos_left + obj.settings.width > $win.outerWidth() && (obj.settings.position ==
+      'bottom' || obj.settings.position == 'top')) {
+      diff = $win.outerWidth() - (pos_left + obj.settings.width);
+      tipso_bubble.find('.tipso_arrow').css({
+        marginLeft: -diff - 8,
+        marginTop: ''
+      });
+      pos_left = pos_left + diff;
+    }
+    if (pos_left < $win.scrollLeft() && (obj.settings.position == 'left' ||
+      obj.settings.position == 'right')) {
+      pos_left = $e.offset().left + ($e.outerWidth() / 2) - (realHeight(tipso_bubble).width / 2);
+      tipso_bubble.find('.tipso_arrow').css({
+        marginLeft: -8,
+        marginTop: ''
+      });
+      pos_top = $e.offset().top - realHeight(tipso_bubble).height - arrow;
+      if (pos_top < $win.scrollTop()) {
+        pos_top = $e.offset().top + $e.outerHeight() + arrow;
+        tipso_bubble.find('.tipso_arrow').css({
+          'border-bottom-color': obj.settings.background,
+          'border-top-color': 'transparent',
+          'border-left-color': 'transparent',
+          'border-right-color': 'transparent'
+        });
+        tipso_bubble.removeClass('top bottom left right');
+        tipso_bubble.addClass('bottom');
+      } else {
+        tipso_bubble.find('.tipso_arrow').css({
+          'border-top-color': obj.settings.background,
+          'border-bottom-color': 'transparent',
+          'border-left-color': 'transparent',
+          'border-right-color': 'transparent'
+        });
+        tipso_bubble.removeClass('top bottom left right');
+        tipso_bubble.addClass('top');
+      }
+      if (pos_left + obj.settings.width > $win.outerWidth()) {
+        diff = $win.outerWidth() - (pos_left + obj.settings.width);
+        tipso_bubble.find('.tipso_arrow').css({
+          marginLeft: -diff - 8,
+          marginTop: ''
+        });
+        pos_left = pos_left + diff;
+      }
+      if (pos_left < $win.scrollLeft()) {
+        tipso_bubble.find('.tipso_arrow').css({
+          marginLeft: pos_left - 8
+        });
+        pos_left = 0;
+      }
+    }
+    if (pos_left + obj.settings.width > $win.outerWidth() && (obj.settings.position == 'left' || obj.settings.position == 'right')) {
+      pos_left = $e.offset().left + ($e.outerWidth() / 2) - (realHeight(tipso_bubble).width / 2);
+      tipso_bubble.find('.tipso_arrow').css({
+        marginLeft: -8,
+        marginTop: ''
+      });
+      pos_top = $e.offset().top - realHeight(tipso_bubble).height - arrow;
+      if (pos_top < $win.scrollTop()) {
+        pos_top = $e.offset().top + $e.outerHeight() + arrow;
+        tipso_bubble.find('.tipso_arrow').css({
+          'border-bottom-color': obj.settings.background,
+          'border-top-color': 'transparent',
+          'border-left-color': 'transparent',
+          'border-right-color': 'transparent'
+        });
+        tipso_bubble.removeClass('top bottom left right');
+        tipso_bubble.addClass('bottom');
+      } else {
+        tipso_bubble.find('.tipso_arrow').css({
+          'border-top-color': obj.settings.background,
+          'border-bottom-color': 'transparent',
+          'border-left-color': 'transparent',
+          'border-right-color': 'transparent'
+        });
+        tipso_bubble.removeClass('top bottom left right');
+        tipso_bubble.addClass('top');
+      }
+      if (pos_left + obj.settings.width > $win.outerWidth()) {
+        diff = $win.outerWidth() - (pos_left + obj.settings.width);
+        tipso_bubble.find('.tipso_arrow').css({
+          marginLeft: -diff - 8,
+          marginTop: ''
+        });
+        pos_left = pos_left + diff;
+      }
+      if (pos_left < $win.scrollLeft()) {
+        tipso_bubble.find('.tipso_arrow').css({
+          marginLeft: pos_left - 8
+        });
+        pos_left = 0;
+      }
+    }
+    tipso_bubble.css({
+      left: pos_left + obj.settings.offsetX,
+      top: pos_top + obj.settings.offsetY
+    });
+  }
+  $[pluginName] = $.fn[pluginName] = function(options) {
+    var args = arguments;
+    if (options === undefined || typeof options === 'object') {
+      if (!(this instanceof $)) {
+        $.extend(defaults, options);
+      }
+      return this.each(function() {
+        if (!$.data(this, 'plugin_' + pluginName)) {
+          $.data(this, 'plugin_' + pluginName, new Plugin(this, options));
+        }
+      });
+    } else if (typeof options === 'string' && options[0] !== '_' && options !==
+      'init') {
+      var returns;
+      this.each(function() {
+        var instance = $.data(this, 'plugin_' + pluginName);
+        if (!instance) {
+          instance = $.data(this, 'plugin_' + pluginName, new Plugin(
+            this, options));
+        }
+        if (instance instanceof Plugin && typeof instance[options] ===
+          'function') {
+          returns = instance[options].apply(instance, Array.prototype.slice
+            .call(args, 1));
+        }
+        if (options === 'destroy') {
+          $.data(this, 'plugin_' + pluginName, null);
+        }
+      });
+      return returns !== undefined ? returns : this;
+    }
+  };
+})(jQuery, window, document);
+
   </script> 
+
 {% endblock %}
