@@ -1,5 +1,7 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
+<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
 <style type="text/css">
  
 </style>
@@ -96,16 +98,16 @@
         <table style="border:1px dotted #CCCCCC;" class="filtertable">
         <tr align="left" style="height:30px;">
             <th style="background:#ccc;" width="3%" align="center" >#</th>
-            <th style="background:#ccc;" width="30%" >Compliance Task </th>                      
+            <th style="background:#ccc;" width="25%" >Compliance Task </th>                      
             <th style="background:#ccc;" width="12%" >Due Date </th>
             <th style="background:#ccc;" width="12%">Completion Date</th>
             <th style="background:#ccc;" width="12%">Validity Date </th>
             <th  style="background:#ccc;" width="12%">Uploaded Documents</th>
-            <th style="background:#ccc;" width="12%" >Assignee </th>
+            <th style="background:#ccc;" width="17%" >Assignee </th>
             <th style="background:#ccc;" width="19%"> </th>
           </tr>
           <tr align="left"><td colspan="8">
-          <div class="heading">Unit: Branch Office - 1</div>
+          <div class="heading"><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai">Unit: Branch Office - 1</abbr></div>
           </td></tr>
           <tr >
             <td align="center">1</td>
@@ -114,7 +116,7 @@
             <td>25-Aug-2015</td>
             <td>24-Aug-2016</td>
             <td><a href="#">Download</a></td>
-            <td>Sivaraman</td>
+            <td>EMP1007 - Sivaraman</td>
             <td>-</td>
           </tr>
          
@@ -125,13 +127,13 @@
             <td>20-Aug-2015</td>
             <td>20-Aug-2016</td>
             <td><a href="#">Download</a></td>
-            <td>Krishnamoorthy</td>
+            <td>EMP1011 - Krishnamoorthy</td>
             <td>-</td>
           </tr>
 
       
            <tr align="left"><td colspan="8">
-          <div class="heading">Unit: Branch Office - 2</div>
+          <div class="heading"><abbr class="page-load tipso_style" title="28,Ramnagar, Delhi">Unit: Branch Office - 2</abbr></div>
           </td></tr>
    
           <tr>
@@ -141,7 +143,7 @@
             <td>30-Aug-2015</td>
             <td>31-Aug-2016</td>
             <td><a href="#">Download</a></td>    
-            <td>Sivaraman</td>
+            <td>EMP1007 - Sivaraman</td>
              <td>-</td>
           </tr>
          
@@ -151,16 +153,16 @@
         <table style="border:1px dotted #CCCCCC;" class="filtertable">
           <tr align="left" style="height:30px;">
             <th style="background:#ccc;" width="3%" align="center" >#</th>
-            <th style="background:#ccc;" width="30%" >Compliance Tasks</th>                      
+            <th style="background:#ccc;" width="25%" >Compliance Tasks</th>                      
             <th style="background:#ccc;" width="12%" >Due Date </th>
             <th style="background:#ccc;" width="12%">Completion Date</th>
             <th style="background:#ccc;" width="12%">Validity Date </th>
             <th  style="background:#ccc;" width="12%">Uploaded Documents</th>
-            <th style="background:#ccc;" width="12%" >Assignee </th>
+            <th style="background:#ccc;" width="17%" >Assignee </th>
             <th style="background:#ccc;" width="19%">Ageing </th>
           </tr>
           <tr align="left"><td colspan="8">
-          <div class="heading">Unit: Branch Office - 1</div>
+          <div class="heading"><abbr class="page-load tipso_style" title="28,Ramnagar, Hydrabad">Unit: Branch Office - 1</abbr></div>
           </td></tr>
           <tr >
             <td align="center">4</td>
@@ -169,7 +171,7 @@
             <td>22-Aug-2015</td>
             <td>24-Aug-2016</td>
             <td><a href="#">Download</a></td>
-            <td>Sivaraman</td>
+            <td>EMP1007 - Sivaraman</td>
             <td>Delayed By 5 Days</td>
           </tr>
           </table>
@@ -213,6 +215,11 @@ $(function(){
       }
   });
  
+});
+jQuery(window).load(function(){
+  jQuery('.page-load').tipso({
+    tooltipHover: true
+  });
 });
 </script> 
 {% endblock %}

@@ -3,6 +3,8 @@
 <meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
 <meta name="viewport" content="width=device-width, initial-scale=1"> 
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
+<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
 <script type="text/javascript">
  $(function() {
   $('#text_area').hide();
@@ -20,7 +22,7 @@ $('#ch1').change(function () {
       $('#client1textarea').hide();
     
     }else{
-      $('#client1textarea').show();
+      $('#client1textarea').show(); 
     
     }
   });
@@ -183,6 +185,7 @@ $('#ch7').change(function () {
     cursor: pointer;
 }
   </style>
+
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
 <script src="/files/desktop/common/js/tooltip/tipso.js"></script>
 <div class="content-container width75">
@@ -197,10 +200,25 @@ $('#ch7').change(function () {
  
           <section>
          <div class="grid-table">
+         <div style="margin-left:15%;margin-top:10px">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+            
+             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Business Group :<span style="margin-left:10px; font-weight:bold;">VRM Business Group</span> </div>
+             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Division :<span style="margin-left:10px; font-weight:bold;">Auto Parts - Manufacturing</span> </div>
+
+           
+          </div>
+          <div style="float:right; margin-right:20%;">
+           
+              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Legal Entity:<span style="margin-left:10px; font-weight:bold;">VRM & Sons</span> </div>
+              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Unit:<span style="margin-left:10px; font-weight:bold;"><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai">VRM1005 - Branch Office 2</abbr></span> </div>
+          </div>
+        </div>
           <table class="font1">
             <!-- <tr align="left">
               <th colspan="2">Statutory</th>
             </tr> -->
+           
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
                   <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="1%"
                class="gt"><input type="checkbox" checked="checked" style="margin-top:10px;"><label for="ch_h1" style="margin-top:10px;"></label></th>
@@ -314,6 +332,10 @@ $('#ch7').change(function () {
 $(document).ready(function() {
     $("#section-flip-1").show();
     $("#section-flip-4").hide();
+    jQuery(window).load(function(){
+  jQuery('.page-load').tipso({
+    tooltipHover: true
+});
   })
 
   $("#example-basic").steps({

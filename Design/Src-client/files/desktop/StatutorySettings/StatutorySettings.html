@@ -1,5 +1,7 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
+<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
   <div class="content-container" >
   <div class="content-area">
       <h1>Statutory Settings</h1>
@@ -15,7 +17,7 @@
           <th width="22%">Division</th>
           <th width="22%">Unit</th>
         
-          <th width="12%">Domain</th>
+          <th width="12%">Domain</th> 
           <th align="center" width="5%">Edit</th>
          
         </tr>
@@ -37,7 +39,7 @@
           <td>VRM Business Group</td>
           <td>VRM & Sons</td>
           <td>Auto Parts - Manufacturing</td>
-          <td>VRM1005 - Branch Office 2</td>
+          <td><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai">VRM1005 - Branch Office 2</abbr></td>
           
           <td>Industrial Law</td>
           <td align="center"><img src="/images/icon-edit.png" id="editid" onclick="location.href='/statutorysettinglist'"/></td>
@@ -51,7 +53,7 @@
           <td>VRM Business Group</td>
           <td>VRM & Sons</td>
           <td>Auto Parts - Manufacturing</td>
-          <td>VRM1004 - Branch Office 1</td>
+          <td><abbr class="page-load tipso_style" title="12 South car street, Bangalore">VRM1004 - Branch Office 1</abbr></td>
         
           <td>Industrial Law</td>
           <td align="center"><img src="/images/icon-edit.png" id="editid" onclick="location.href='/statutorysettinglist'"/></td>
@@ -64,7 +66,7 @@
            <td>VRM Business Group</td>
           <td>VRM & Sons</td>
           <td>Auto Parts - Manufacturing</td>
-          <td>VRM1002 - Regional Office 1</td>
+          <td><abbr class="page-load tipso_style" title="26, West Steet, New Delhi">VRM1002 - Regional Office 1</abbr></td>
       
           <td>Industrial Law</td>
           <td align="center"><img src="/images/icon-edit.png" id="editid" onclick="location.href='/statutorysettinglist'" /></td>
@@ -75,4 +77,11 @@
       
     </div>
 </div>
+<script type="text/javascript">
+  jQuery(window).load(function(){
+    jQuery('.page-load').tipso({
+      tooltipHover: true
+    });
+  });
+</script>
 {% endblock %} 

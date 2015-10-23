@@ -4,7 +4,7 @@
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
-      <div class="add-container-heading">Compliance Task List<span class="error-message"></span></div>
+      <div class="add-container-heading">Compliance List<span class="error-message"></span></div>
       <div class="input-row-left">
         <div class="input-row">
           <div class="field-label">Country<span class="mandatory">*</span>:</div>
@@ -21,7 +21,7 @@
         <div class="input-row">
           <div class="field-label">Compliance Task:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Compliance" />
+            <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Compliance Task" />
           </div>
         </div>
        
@@ -40,7 +40,7 @@
       <div class="input-row">
           <div class="field-label">Compliance Document:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Form" />
+            <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Compliance Document" />
           </div>
         </div>
         
@@ -50,7 +50,6 @@
       </div>
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Show" class="btn-submit">
-        <input type="button"  class="btn-submit" value="Export" />
       </div>
       <div class="clearfix"></div>
       <div class="grid-table-rpt">
@@ -80,26 +79,21 @@
         <table width="100%" style="border:1px dotted #CCCCCC;" >
           <tr align="left">
             <th width="3%" align="center">#</th>
-            <th width="10%">Compliance Document</th>
             <th width="13%">Compliance Task</th>
             <th width="20%">Compliance Description</th>
             <th width="13%">Penal Consequences</th>
             <th width="10%">Compliance Frequency</th>
-            <th width="10%">Repeats</th>
-            <th width="10%">Statutory Date</th>
-            <th  width="11%">Trigger Before</th>
+            <th width="21%">Compliance Occurence</th>
            
           </tr>
           <tr>
             <td align="center">1</td>
-            <td><a href="#">FORM VIII</a></td>
-            <td>Notice of Opening</td>
+            <td><a href="#">FORM VIII - Notice of Opening</a></td>
             <td>Within 30 days of opening a branch</td>
             <td>Imprisonment With Fine</td>
             <td>One Time</td>
-            <td> - </td>
-             <td>01-Sep </td>
-            <td>20 days</td>
+            <td>1st September (will be triggered before 20 days)</td>
+             
                
           </tr>
          
@@ -113,26 +107,20 @@
         <table width="100%" style="border:1px dotted #CCCCCC;" >
           <tr align="left">
             <th width="3%" align="center">#</th>
-            <th width="10%">Compliance Document</th>
             <th width="13%">Compliance Task</th>
             <th width="20%">Compliance Description</th>
             <th width="13%">Penal Consequences</th>
             <th width="10%">Compliance Frequency</th>
-            <th width="10%">Repeats</th>
-            <th width="10%">Statutory Date</th>
-            <th  width="11%">Trigger Before</th>
+            <th width="21%">Compliance Occurence</th>
             
           </tr>
           <tr>
             <td align="center">2</td>
-            <td><a href="#">FORM I</a> </td>
-             <td>Dealer Registration</td>
+            <td><a href="#">FORM I - Dealer Registration</a> </td>
             <td>Within 30 days of opening a branch</td>
             <td>Imprisonment With Fine</td>
             <td>Periodical</td>
-            <td>Every 6 months</td>
-             <td>10-Sep, 10-Mar</td>
-            <td>15 Days, 10 Days</td>
+            <td>Every Year 10th March and 10th September (will be triggered before 15 days and 10 days respectively)</td>
           </tr>
          
          
