@@ -237,6 +237,8 @@ TEMPLATE_PATHS = [
         None, {}),
     ("/assignservicemapping/list", "files/desktop/AssignServiceMapping/AssignServiceMappingList.html",
         None, {}),
+     ("/assignservicemapping/editsubmit", "files/desktop/AssignServiceMapping/AssignServiceMappingSubmit.html",
+        None, {}),
     ("/tasklist_techno", "files/desktop/TaskList_Technos/TaskList_Techno.html",
         None, {}),
     ("/servicemappinglist", "files/desktop/ServiceMappingList/ServiceMappingList.html",
@@ -505,8 +507,11 @@ TEMPLATE_PATHS = [
         None, {}),
      ("/report/statutorynotificationtechno", "files/desktop/StatutoryNotificationsReportTechno/StatutoryNotificationsReport.html",
         None, {}),
-     ("/closeunit", "files/desktop/CloseUnit/CloseUnit.html",
+    ("/report/riskreport", "files/desktop/RiskReport/RiskReport.html",
         None, {}),
+    ("/closeunit", "files/desktop/CloseUnit/CloseUnit.html",
+        None, {}),
+
 ]
 
 
