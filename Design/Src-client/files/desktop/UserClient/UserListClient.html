@@ -6,6 +6,21 @@
 <script src="/files/desktop/common/js/tooltip/tipso.js"></script>
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/popup/popup.css">
 <script type="text/javascript" src="/files/desktop/common/js/popup/modernizr.js"></script>
+<style>
+  .modaltable th
+  {
+    padding: 5px;
+  }
+  .modaltable td
+  {
+    padding: 10px 0px;
+    font-size: 0.813em;
+  }
+   #inactiveid{
+    cursor:pointer;
+  }
+  
+</style>
 <div class="content-container">
   <div class="content-area">
     <h1>Users</h1>
@@ -44,8 +59,8 @@
           <td>Level 4</td>
           <td><abbr class="page-load tipso_style" title="26, West Steet, New Delhi">VBM1001 - Corporate Office</td>
           <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
-          <td align="center"><img src="/images/promote-inactive.png" title="Click here to promote admin" id="inactiveid" /></td>
+          <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid"/></td>
+          <td align="center"><a="#"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></a="#"></td>
         </tr>
         <tr>
           <td align="center">2</td>
@@ -54,8 +69,8 @@
           <td>Level 3</td>
           <td><abbr class="page-load tipso_style" title="12 South car street, Bangalore">VBM1002 - Regional Office - South</td>
           <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-          <td align="center"><img src="/images/promote-active.png" title="Click here to depromote admin" id="inactiveid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid"  onClick="$('.modal').toggleClass('active');" /></td>
+          <td align="center"><a="#"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"/></a="#"></td>
         
         </tr>
         <tr>
@@ -65,13 +80,36 @@
           <td>Level 2</td>
           <td><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai">VBM103 - Branch Office - Chennai</td>
           <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-          <td align="center"><img src="/images/promote-inactive.png" title="Click here to promote admin" id="inactiveid" /></td>
+          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" onClick="$('.modal').toggleClass('active');"/></td>
+          <td align="center"><a="#"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></a="#"></td>
           
         </tr>
       </table>
     </div>
   </div>
+</div>
+<div class="modal" style="width:20%; margin-left: -12.5%;">
+  <header>
+     <div class="close toggleModal" onClick="$('.modal').toggleClass('active');"></div>
+  </header>  
+  <section>
+  <p style="font-size:0.8em; padding-top:10px;">
+
+      <table width="100%">
+        <tr style="height:30px">
+          <td>
+            User has assigned tasks. Reassign the tasks to deactivate.
+          </td>
+        </tr>
+        <tr style="height:30px;padding-top:20px">
+          <td style="height:30px;padding-top:20px" align="center">
+            <input type="submit" name="cancel" value="Cancel" class="btn-submit" onClick="$('.modal').toggleClass('active');">
+            <input type="submit" name="cancel" value="Reassign" class="btn-submit" onclick="location.href='/reassigntask/edit'" formtarget="_self" >
+          </td>
+        </tr>
+      </table>
+    </p>
+  </section>
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
