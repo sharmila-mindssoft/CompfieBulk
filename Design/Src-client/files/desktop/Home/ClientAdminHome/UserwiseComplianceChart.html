@@ -7,6 +7,29 @@
 
 
 <style type="text/css">
+.grid-table-dash table tr:hover {
+      background-color: #F1E9F6;
+      cursor: pointer;
+    }
+
+
+    .grid-table-dash table tr:nth-child(even) {
+      background: #fff;
+    }
+
+    .grid-table-dash table tr:nth-child(odd) {
+      background: #fff;
+    }
+
+    .grid-table-dash table tr:nth-child(odd):hover {
+      background-color: #F1E9F6;
+      cursor: pointer;
+    }
+    .grid-table-dash table tr:nth-child(even):hover {
+      background-color: #F1E9F6;
+      cursor: pointer;
+    }
+
   .modaltable th
   {
     padding: 5px;
@@ -50,7 +73,7 @@ abbr
   background-image: -o-linear-gradient(top, #C293E6, #c4c4c4);
   background-image: linear-gradient(to bottom, #C293E6, #c4c4c4);
   text-decoration: none;
-  cursor:hand;
+  cursor:pointer;
 }
 
 .tooltip
@@ -196,6 +219,7 @@ $(document).ready(function() {
         $("#history-close").click(function () {
             $("#dialog-box").toggle();
         });
+
     });
 
     $(document).ready(function() {
@@ -298,6 +322,10 @@ $(document).ready(function() {
                 </div>
               </div>
             </div>
+            <div class="submit-button-container">
+              <input type="submit" name="cancel" value="Show" class="btn-submit">
+              <input type="submit" name="cancel" value="Export" class="btn-submit">
+            </div>
             <table style="border:1px solid #ddd;" >
               <tr >
                 <th width="5%" align="center">#</th>
@@ -308,14 +336,12 @@ $(document).ready(function() {
                 <th width="10%" align="center">Delayed</th>
                 <th width="10%" align="center">In progress</th>
                 <th width="10%" align="center">Not complied</th>
-                <th width="15%" align="center">Performance %</th>
                 <th style="padding-right:10px;" width="5%"></th>
               </tr>
               <tr style="background-color:#fff;">
                 <td width="4%" align="center"></td>
                 
                 <td width="15%" align="left"><input type="text"  class="filter-text-box"></td>
-                <td width="10%" align="center"></td>
                 <td width="10%" align="center"></td>
                 <td width="10%" align="center"></td>
                 <td width="10%" align="center"></td>
@@ -329,18 +355,17 @@ $(document).ready(function() {
                 </td>
               </tr>
               <tr align="left" >
-                <td style="background-color:#fff;" align="left"> <a href="#" class="toggleModal" >Sivaraman</a></th>
+                <td style="background-color:#fff;" align="left" colspan="8"> <a href="#" class="toggleModal" >EMP1028 -Sivaraman</a></th>
               </tr><a href="#">
-              <tr align="center" style="cursor:hand;padding-right:5px" class="usecom1-tab">
+              <tr align="center" style="cursor:pointer;padding-right:5px" class="usecom1-tab">
                 <td>1</td>
                 
                 <td align="left">Finance</td>
                 <td>10</td>
                 <td>06</td>
-                <td>02</td>
+                <td>02</span></td>
                 <td>01</td>
                 <td>01</td>
-                <td>60%</td>
                 <td align="left" ><img src="/images/right_arrow.png" /></td>
               </tr></a>
               <tr align="center" style="background-color:#FFFFFF">
@@ -349,10 +374,9 @@ $(document).ready(function() {
                 <td align="left">Labour Law</td>
                 <td>11</td>
                 <td>04</td>
-                <td>03</td>
+                <td>03<span class="toggleModal1"><a href="#" style="text-decoration:none">(+2)</a></td>
                 <td>01</td>
                 <td>01</td>
-                <td>36%</td>
                 <td align="left" style="padding-right:1px;"><img src="/images/right_arrow.png" /></td>
               </tr>
             <tr align="center" >
@@ -364,7 +388,6 @@ $(document).ready(function() {
                 <td>03</td>
                 <td>01</td>
                 <td>01</td>
-                <td>36%</td>
                 <td align="left" ><img src="/images/right_arrow.png" /></td>
               </tr>
               <tr align="center" >
@@ -374,11 +397,10 @@ $(document).ready(function() {
                 <td>08</td>
                 <td>03</td>
                 <td>03</td>
-                <td>44%</td>
                 <td align="left" ><img src="/images/right_arrow.png" /></td>
               </tr>
              <tr align="left" >
-                <th colspan="10" style="background-color:#FFFFFF"><span><a href="#">Vijayan</a></span></th>
+                <th colspan="10" style="background-color:#FFFFFF"><span><a href="#">EMP1027 - Vijayan</a></span></th>
               </tr>
               <tr align="center"  style="background-color:#FFFFFF">
                 <td>4</td>
@@ -389,7 +411,6 @@ $(document).ready(function() {
                 <td>01</td>
                 <td>02</td>
                 <td>01</td>
-                <td>50%</td>
                 <td align="left" ><img src="/images/right_arrow.png" /></td>
               </tr>
               <tr>
@@ -397,16 +418,8 @@ $(document).ready(function() {
                     KG1180 - Namakkal unit 
                 </td>
               </tr>
-             <!--  <tr align="left" class="rightside" style="height:50px" >
-                <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
-                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
-                      inset 0 0 5px rgba(53,86,129, 0.5),
-                      inset -285px 0 35px white; 
-                    border-radius: 0 5px 0 5px;" width="250px">Sivanathan</span><img src="/images/icon-plus.png"> </th>
-                <th colspan="5" style="background-color:#fff;"></th>
-              </tr> -->
               <tr align="left" >
-                <th colspan="9" style="background-color:#FFFFFF"><a href="#">Sivanathan</a></th>
+                <th colspan="9" style="background-color:#FFFFFF"><a href="#">EMP1129 - Sivanathan</a></th>
               </tr>
               <tr align="center" >
                 <td>5</td>
@@ -417,19 +430,10 @@ $(document).ready(function() {
                 <td>02</td>
                 <td>02</td>
                 <td>01</td>
-                <td>44%</td>
                 <td align="left" ><img src="/images/right_arrow.png" /></td>
               </tr>
-              <!-- <tr align="left" class="rightside" style="height:50px" >
-                <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
-                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
-                      inset 0 0 5px rgba(53,86,129, 0.5),
-                      inset -285px 0 35px white;
-                    border-radius: 0 5px 0 5px;" width="250px">Velmurugan</span><img src="/images/icon-plus.png"></th>
-                <th colspan="5" style="background-color:#fff;"></th>
-              </tr> -->
                <tr align="left" >
-                <th colspan="9" style="background-color:#FFFFFF"><a href="#">Velmurugan</a></th>
+                <th colspan="9" style="background-color:#FFFFFF"><a href="#">EMP1207 - Velmurugan</a></th>
               </tr>
               <tr align="center">
                 <td>6</td>
@@ -440,19 +444,10 @@ $(document).ready(function() {
                 <td>03</td>
                 <td>02</td>
                 <td>01</td>
-                <td>40%</td>
                 <td align="left" ><img src="/images/right_arrow.png" /></td>
               </tr>
-              <!-- <tr align="left" class="rightside" style="height:50px" >
-                <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
-                      inset 0 0 0 1px rgba(53,86,129, 0.4), 
-                      inset 0 0 5px rgba(53,86,129, 0.5),
-                      inset -285px 0 35px white;
-                    border-radius: 0 5px 0 5px;" width="250px">Vetriselvam</span><img src="/images/icon-plus.png"></th>
-                <th colspan="5" style="background-color:#fff;"></th>
-              </tr> -->
               <tr align="left" >
-                <th colspan="10" style="background-color:#FFFFFF"><a href="#">Vetriselvam</a></th>
+                <th colspan="10" style="background-color:#FFFFFF"><a href="#">EMP2018 - Vetriselvam</a></th>
               </tr>
               <tr align="center" >
                 <td>7</td>
@@ -463,7 +458,6 @@ $(document).ready(function() {
                 <td>04</td>
                 <td>01</td>
                 <td>01</td>
-                <td>25%</td>
                 <td align="left" ><img src="/images/right_arrow.png"/></td>
               </tr>
             </table>
@@ -472,7 +466,7 @@ $(document).ready(function() {
            <div class="grid-table-dash1">
             <table  style="border:1px solid #ddd;" >
               <tr >
-                <td colspan="6" style="background-color:#FFF;"><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>User:</b> Sivaraman</span><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em; margin-left:30%;"><b>Domain :</b> Finance</span><span style=" margin-left:30%; color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>Year:</b> 2015</span></td>
+                <td colspan="6" style="background-color:#FFF;"><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>User:</b> EMP1028 -Sivaraman</span><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em; margin-left:30%;"><b>Domain :</b> Finance</span><span style=" margin-left:30%; color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>Year:</b> 2015</span></td>
               </tr>
               <tr align="left" class="rightside">
               
@@ -712,10 +706,11 @@ $(document).ready(function() {
 
 <div class="modal" style="width:75%; margin-left:-37.5%;">
   <header>
-    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">Sivaraman</h1>
+    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">EMP1028 - Sivaraman</h1>
      <div class="close toggleModal"></div>
   </header>  
-  <section><p style="font-size:0.8em; padding-top:10px;">
+  <section>
+  <p style="font-size:0.8em; padding-top:10px;">
 
 <table class="modaltable" width="100%">
       <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
@@ -726,7 +721,6 @@ $(document).ready(function() {
                             <th width="12%" align="center">Delayed</th>
                             <th width="12%" align="center">In progress</th>
                             <th width="13%" align="center">Not complied</th>
-                            <th width="14%" align="left">Performance %</th>
                             <th width="5%"></th>
                           </tr>
                           <tr >
@@ -738,7 +732,6 @@ $(document).ready(function() {
                             <td align="center">02</td>
                             <td align="center">01</td>
                             <td align="center">01</td>
-                            <td align="center">60%</td>
                             <td><img src="/images/right_arrow.png"></td>
                           </tr>
                           <tr >
@@ -750,7 +743,6 @@ $(document).ready(function() {
                             <td align="center">00</td>
                             <td align="center">01</td>
                             <td align="center">01</td>
-                            <td align="center">80%</td>
                              <td><img src="/images/right_arrow.png"></td>
                           </tr>
                          <tr >
@@ -762,7 +754,6 @@ $(document).ready(function() {
                             <td align="center">02</td>
                             <td align="center">0</td>
                             <td align="center">01</td>
-                            <td align="center">70%</td>
                              <td><img src="/images/right_arrow.png"></td>
                           </tr>
                         <tr >
@@ -774,7 +765,6 @@ $(document).ready(function() {
                             <td align="center">0</td>
                             <td align="center">0</td>
                             <td align="center">0</td>
-                            <td align="center">100%</td>
                              <td><img src="/images/right_arrow.png"></td>
                           </tr>
                         <tr>
@@ -786,18 +776,62 @@ $(document).ready(function() {
                             <td align="center">02</td>
                             <td align="center">01</td>
                             <td align="center">00</td>
-                            <td align="center">70%</td>
                              <td><img src="/images/right_arrow.png"></td>
                           </tr>
                         </table>
     </p>
   </section>
 </div>
+<div class="modal modal1" style="width:75%; margin-left:-37.5%;">
+  <header>
+    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">EMP1028 - Sivaraman</h1>
+     <div class="close toggleModal1"></div>
+  </header>  
+  <section>
+  <p style="font-size:0.8em; padding-top:10px;">
+<table class="modaltable" width="100%">
+      <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
+                            <th width="5%" align="center">#</th>
+                            <th width="15%" align="left">Compliance</th>                            
+                            <th width="12%" align="center">Assigned Date</th>
+                            <th width="12%" align="center">Due Date</th>
+                            <th width="12%" align="center">Reassigned Date</th>
+                            <th width="12%" align="center">Target Date</th>
+                            <th width="13%" align="center">Complied Date</th>
+                          </tr>
+                          <tr >
+                            <td align="center">1</td>
+                            <td align="left">Form T - Wage Slip Submission</td>
+                            <td align="center">20-Oct-2015</td>
+                            <td align="center">30-Dec-2015</td>
+                            <td align="center">28-Dec-2015</td>
+                            <td align="center">-</td>
+                            <td align="center">03-Jan-2015</td>
+                          </tr>
+                          <tr >
+                            <td align="center">2</td>
+                            <td align="left">Form Q - Register of employment</td>
+                            <td align="center">01-Nov-2015</td>
+                            <td align="center">30-Dec-2015</td>
+                            <td align="center">01-Jan-2015</td>
+                            <td align="center">05-Jan-2015</td>
+                            <td align="center">03-Jan-2015</td>
+                          </tr>
+                    </table>
+    </p>
+  </section>
+</div>
+
+
 
 
 <script type="text/javascript">
 $('.toggleModal').on('click', function (e) {
   $('.modal').toggleClass('active');
+  $('.modal1').toggleClass('active');
+});
+$('.toggleModal1').on('click', function (e) {
+  $('.modal1').toggleClass('active');
 });
 </script>
 <script>

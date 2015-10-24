@@ -5,31 +5,10 @@
 <script type="text/JavaScript" src="http://code.jquery.com/jquery-latest.min.js"></script> 
 <script type="text/javascript" src="/files/desktop/common/js/accordian/accordian.js"></script> 
 <script type="text/javascript" src="/files/desktop/common/js/accordian/accordian2.js"></script> 
-<script type="text/javascript" src="/files/desktop/common/js/accordian/jquery-ui.js"></script> -->
-<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/popup/popup.css">
-<script type="text/javascript" src="/files/desktop/common/js/popup/modernizr.js"></script> 
-<style>
-  .modaltable th
-  {
-    padding: 5px;
-  }
-  .modaltable td
-  {
-    padding: 10px 0px;
-    font-size: 0.813em;
-  }
-  #inactiveid{
-    cursor:pointer;
-  }
-</style>
+<script type="text/javascript" src="/files/desktop/common/js/accordian/jquery-ui.js"></script> --> 
 <script type="text/javascript">
         $(document).ready(function () {
-
             window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
-
-            
-
-
             $("#group-new").click(function(){
               $("#group-text").show();
               $("#group-select").hide();
@@ -267,7 +246,7 @@ textarea.input-box {
                     <option value="Industrial Law" selected>Industrial Law</option>
                     <option value="Finance">Finance</option>
                   </select></td>
-               <td align="center"><a="#"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive" onClick="$('.modal').toggleClass('active');" /></a="#"></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></td>
               
               </tr>
               <tr>
@@ -304,7 +283,7 @@ textarea.input-box {
                     <option value="Industrial Law" selected>Industrial Law</option>
                     <option value="Finance">Finance</option>
                   </select></td>
-               <td align="center"><a="#"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive" onClick="$('.modal').toggleClass('active');" /></a="#"></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></td>
              
               </tr>
               <tr>
@@ -341,7 +320,7 @@ textarea.input-box {
                     <option value="Industrial Law" selected>Industrial Law</option>
                     <option value="Finance">Finance</option>
                   </select></td>
-                <td align="center"><a="#"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive" onClick="$('.modal').toggleClass('active');" /></a="#"></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></td>
                
               </tr>
               <tr>
@@ -374,10 +353,43 @@ textarea.input-box {
                     <option value="Industrial Law" selected>Industrial Law</option>
                     <option value="Finance">Finance</option>
                   </select></td>
-                <td align="center"><a="#"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive" onClick="$('.modal').toggleClass('active');" /></a="#"></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></td>
                 
               </tr>
-             
+             <!--  <tr>
+              <td><select class="input-box">
+                <option>Region</option>
+                <option>State</option>
+                <option>Union Territory</option>
+                <option>District</option>
+                <option>Corporation</option>
+                <option selected="selected">Municipality</option>
+                <option>Town</option>
+                <option>Panchayat</option>
+                </select></td>
+                <td>
+                  <input type="text" class="input-box icon-autocomplete" placeholder="" value="Aviyur" style="width:150px;">Madurai, Tamil Nadu, South Region
+                  </td>
+                   <td><input type="text" class="input-box unit5" placeholder="Unit Code" value="RG10005"></td>
+                <td><input type="text" class="input-box" placeholder="Unit Name" value="Branch Office - 2"><span style="margin-left:2px;[adding-top:5px"></span></td>
+                 <td><select class="input-box">
+                <option>Factory</option>
+                <option>Office</option>
+                <option>Plantation</option>
+                <option>Contractor</option>
+                <option>S & E</option>
+                <option>Mines</option>
+              
+                </select></td>
+                <td><textarea class="input-box" placeholder="address">13, North Street, Aviyur</textarea></td>
+                <td><select multiple="multiple" style="height:2em;font-size:13px;max-width:100px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+                    <option value="Labour Law" selected>Labour Law</option>
+                    <option value="Industrial Law">Industrial Law</option>
+                    <option value="Finance">Finance</option>
+                  </select></td>
+                <td align="center"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></td>
+                
+              </tr> -->
             </table>
             <td><img src="/images/icon-plus.png" formtarget="_self" style="align:right;float:right"/></td>
           </div>
@@ -385,39 +397,12 @@ textarea.input-box {
         <div class="submit-button-container">
           <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/group_company/list'" >
           &nbsp;&nbsp;
-          <input type="submit" name="submit" value="Submit" class="btn-submit" >
+          <input type="submit" name="submit" value="Submit" class="btn-submit">
         </div>
       </div>
     </div>
   </div>
 </div>
-</div>
-<div class="modal" style="width:20%; margin-left: -12.5%;">
-  <header>
-     <div class="close toggleModal" onClick="$('.modal').toggleClass('active');"></div>
-  </header>  
-  <section>
-  <p style="font-size:0.8em; padding-top:10px;">
-
-      <table width="100%">
-        <tr style="height:30px">
-          <td>
-            Enter Password
-          </td>
-        </tr>
-        <tr style="height:30px">
-          <td>
-            <input type="password" class="input-box" placeholder="Password" stsyle="margin-bottom:20px"/>
-          </td>
-        </tr>
-        <tr style="height:30px;padding-top:20px">
-          <td>
-            <input type="submit" name="cancel" value="Submit" class="btn-submit" >
-          </td>
-        </tr>
-      </table>
-    </p>
-  </section>
 </div>
 <script>
 $(function(){
