@@ -396,6 +396,15 @@ input.radio:checked ~ label {
                 }
        })
 
+      $("#go-co").click(function() {
+        var values = $("#country").val();
+        if(values.length == 1){
+            loadCompanySingleSelection(values[0])
+        }else{
+              loadGroup();
+        }
+       })
+
       $("#radio1").click(function() {
               loadGroup();
        })
@@ -752,7 +761,7 @@ input.radio:checked ~ label {
 	    	  for(var i=0;i<7;i++){
 	    	  	if (values[i] ==  "KG Transports"){
 	    	  		inprogress_data[i] = {name: 'KG Transports',y: 24,drilldown:"EntityInprogress"};
-	    	  		pending_data[i] = {name: 'KG Transports',y: 13,drilldown:"Delayed"};
+	    	  		pending_data[i] = {name: 'KG Transports',y: 13,drilldown:"EntityDelayed"};
 	    	  		completed_data[i] = {id:'fin',name: 'KG Transports',y: 18,drilldown:"EntityComplied"};
 	    	  		not_complied[i] = {name: 'KG Transports',y: 22,drilldown:"NotComplied"};
 	    	  	}else if(values[i] ==  "KG Autoparts"){
@@ -1018,8 +1027,8 @@ input.radio:checked ~ label {
 	    	  for(var i=0;i<values.length;i++){
 	    	  	if (values[i] ==  "KG Manufacturing"){
 	    	  		inprogress_data[i] = {name: 'KG Manufacturing',y: 24,drilldown:"Inprogress"};
-	    	  		pending_data[i] = {name: 'KG Manufacturing',y: 22,drilldown:"Delayed"};
-	    	  		completed_data[i] = {id:'fin',name: 'KG Manufacturing',y: 25,drilldown:"Complied"};
+	    	  		pending_data[i] = {name: 'KG Manufacturing',y: 22,drilldown:"DivisionDelayed"};
+	    	  		completed_data[i] = {id:'fin',name: 'KG Manufacturing',y: 25,drilldown:"DivisionComplied"};
 	    	  		not_complied[i] = {name: 'KG Manufacturing',y: 23,drilldown:"NotComplied"};
 	    	  	}else if(values[i] ==  "KG Quality Checking"){
 	    	  		inprogress_data[i] = {name: 'KG Quality Checking',y: 18,};
@@ -1169,10 +1178,10 @@ input.radio:checked ~ label {
 	    	  for(var i=0;i<values.length;i++){
 
 	    	  	if (values[i] ==  "Branch Office - 1"){
-	    	  		inprogress_data[i] = {name: 'Branch Office - 1',y: 23,drilldown:"Inprogress"};
-	    	  		pending_data[i] = {name: 'Branch Office - 1',y: 22,drilldown:"Delayed"};
-	    	  		completed_data[i] = {id:'fin',name: 'Branch Office - 1',y: 19,drilldown:"Complied"};
-	    	  		not_complied[i] = {name: 'Branch Office - 1',y: 31,drilldown:"NotComplied"};
+	    	  		inprogress_data[i] = {name: 'Branch Office - 1',y: 23,drilldown:"UnitInprogress"};
+	    	  		pending_data[i] = {name: 'Branch Office - 1',y: 22,drilldown:"UnitDelayed"};
+	    	  		completed_data[i] = {id:'fin',name: 'Branch Office - 1',y: 19,drilldown:"UnitComplied"};
+	    	  		not_complied[i] = {name: 'Branch Office - 1',y: 31,drilldown:"UnitNotComplied"};
 	    	  	}else if(values[i] ==  "Branch Office - 2"){
 	    	  		inprogress_data[i] = {name: 'Branch Office - 2',y: 19,};
 	    	  		pending_data[i] = {name: 'Branch Office - 2',y: 27,};
@@ -1297,7 +1306,7 @@ input.radio:checked ~ label {
                 name: 'Complied',
                 data : completed_data
             } ]
-    });
+        });
       });
     }
 
@@ -1600,6 +1609,11 @@ input.radio:checked ~ label {
           name = "KG Booking";
         com_name="Complied ";
           margin_style = "margin-left:3px";
+      }else if(name == "EntityDelayed"){
+          img_name = "/images/dash-list/task-entity-delayed.png";
+          name = "KG Booking";
+        com_name="Delayed ";
+          margin_style = "margin-left:3px";
       }else if(name == "Inprogress"){
           img_name = "/images/dash-list/task-group-inprogress.png";
           name = "India";
@@ -1632,6 +1646,22 @@ input.radio:checked ~ label {
         img_name = "/images/dash-list/task-business-complied.png";
         name = "Business Group 1";
         com_name="Complied ";
+      }else if(name == "UnitComplied"){
+        img_name = "/images/dash-list/task-unit-complied.png";
+        name = "Branch Office 1";
+        com_name="Complied ";
+      }else if(name == "UnitDelayed"){
+        img_name = "/images/dash-list/task-unit-delayed.png";
+        name = "Branch Office 1";
+        com_name="Delayed";
+      }else if(name == "DivisionComplied"){
+        img_name = "/images/dash-list/task-division-complied.png";
+        name = "KG Manufacturing";
+        com_name="Complied ";
+      }else if(name == "DivisionDelayed"){
+        img_name = "/images/dash-list/task-division-delayed.png";
+        name = "KG Manufacturing";
+        com_name="Delayed";
       }else if(name == "unitesc"){
     		img_name = "/images/dash-list/escalations-unit-delayed.png";
     		name = "South gate, Madurai - escalations";
@@ -1862,16 +1892,56 @@ input.radio:checked ~ label {
 
 	function loadGroup(){
 		$("#viewaspie").hide();
-                $("#back").hide();
-                $("#viewasbar").hide();
-                $(".SumoSelect").show();
-                $("#entity-auto").hide();
-                $("#division-auto").hide();
-                $("#unit-auto").hide();
-                $("#previous").hide();
-                $("#next").hide();
-                $("#container").show();
-      $("#imgcontainer").hide();
+    $("#back").hide();
+    $("#viewasbar").hide();
+    $(".SumoSelect").show();
+    $("#entity-auto").hide();
+    $("#division-auto").hide();
+    $("#unit-auto").hide();
+    $("#previous").hide();
+    $("#next").hide();
+    $("#container").show();
+    $("#imgcontainer").hide();
+    var values = $("#country").val();
+    var inprogress_data = [10];
+        var pending_data = [10];
+        var completed_data = [10];
+        var not_complied = [10];
+        
+        if(values.length <= 1){
+          loadCompanySingleSelection(values[0]);
+        }else if(values.length > 1){
+          for(var i=0;i<values.length;i++){
+            if (values[i] ==  "India"){
+              inprogress_data[i] = {name: 'India',y: 23,drilldown:"Inprogress"};
+              pending_data[i] = {name: 'India',y: 22,drilldown:"Delayed"};
+              completed_data[i] = {id:'fin',name: 'India',y: 19,drilldown:"Complied"};
+              not_complied[i] = {name: 'India',y: 31,drilldown:"NotComplied"};
+            }else if(values[i] ==  "US"){
+              inprogress_data[i] = {name: 'US',y: 19,};
+              pending_data[i] = {name: 'US',y: 27,};
+              completed_data[i] = {name: 'US',y: 28};
+              not_complied[i] = {name:"US", y:15}
+            }else if(values[i] ==  "Singapore"){
+              inprogress_data[i] = {name: 'Singapore',y: 15};
+              pending_data[i] = {name: 'Singapore',y: 23};
+              completed_data[i] = {name: 'Singapore',y: 16};
+              not_complied[i] = {name:"Singapore", y:23}
+            }else if(values[i] ==  "Malaysia"){
+              inprogress_data[i] = {name: 'Malaysia',y: 25};
+              pending_data[i] = {name: 'Malaysia',y: 32};
+              completed_data[i] = {name: 'Malaysia',y: 13};
+              not_complied[i] = {name:"Malaysia", y:24}
+            }else if(values[i] ==  "China"){
+              inprogress_data[i] = {name: 'China',y: 12};
+              pending_data[i] = {name: 'China',y: 26};
+              completed_data[i] = {id:'fin',name: 'China',y: 33};
+              not_complied[i] = {name:"China", y:14}
+            }
+          }
+        }else{
+          alert("Select atleast one unit to load chart");
+        } 
 		$(function () {
           $('#container').highcharts({
             // colors:['#125900','#FF7700','#FFDA0F','#D10018'],
@@ -1949,71 +2019,19 @@ input.radio:checked ~ label {
                                 }
                 },
             },
-            series: [ {
-                    name: 'Not complied',
-                        data : [
-                            {
-                                y:22,
-                                drilldown:"NotComplied",
-                            },{
-                                y:15,
-                            },{
-                                y:30,
-                            }, {
-                                y:10,
-                            },{
-                                y:20,
-                            },                   
-                        ]
-                },{
-                    name: 'In progress',
-                         data : [
-                            {
-                                y:18,
-                                drilldown:"Inprogress",
-                            },{
-                                y:25,
-                            },{
-                                y:10,
-                            }, {
-                                y:25,
-                            },{
-                                y:30,
-                            },                   
-                        ]
-                },{
-                    name: 'Delayed Compliance',
-                        data : [
-                            {
-                                y:15,
-                                drilldown:"Delayed",
-                            },{
-                                y:20,
-                            },{
-                                y:20,
-                            }, {
-                                y:15,
-                            },{
-                                y:10,
-                            },                   
-                        ]
-                },{
-                    name: 'Complied',
-                    data : [
-                            {
-                                y:15,
-                                drilldown:"Complied",
-                            },{
-                                y:30,
-                            },{
-                                y:20,
-                            }, {
-                                y:20,
-                            },{
-                                y:30,
-                            },                   
-                        ]
-                },  ]
+            series: [{
+                name: 'Not complied',
+                    data : not_complied
+            },  {
+                name: 'In progress',
+                     data : inprogress_data
+            },{
+                name: 'Delayed compliance',
+                    data : pending_data
+            },{
+                name: 'Complied',
+                data : completed_data
+            } ]
         });
     });
 	}
@@ -2039,7 +2057,7 @@ input.radio:checked ~ label {
         <span class="ageing-tab" id="age"><a href="/home_ageingwise" style="text-decoration:none;color:white">Not Complied</a></span> 
         <span class="usecom-tab" id="usecom"><a href="/home_userwise" style="text-decoration:none;color:white">User wise Compliances</a></span> 
         <span class="trend-tab" id="trend"><a href="/home_trend" style="text-decoration:none;color:white">Trend Chart</a></span> 
-        <span class="compliance-tab" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance Risk</a></span> 
+        <span class="compliance-tab" id="comp"><a href="/home_risk" style="text-decoration:none;color:white">Compliance Applicability Status</a></span> 
         </div>
         <div class="clearfix"></div>
 
@@ -2062,11 +2080,11 @@ input.radio:checked ~ label {
                 <p id="country-para1" style="margin-top:5px;float:left;width:120px">
                   <select id="country" multiple="multiple" placeholder="Select Business" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1" style="width:120px">
                     <option value="selectall" >Select All</option> 
-                    <option value="Industrial Law" selected>China</option>
-                    <option value="Finance" selected>India</option>
-                    <option value="Industrial Law" selected>Malaysia</option>
-                    <option value="Industrial Law" selected>Singapore</option>
-                    <option value="Labour Law" selected>US</option>
+                    <option value="India" selected>India</option>
+                    <option value="US" selected>US</option>
+                    <option value="Malaysia" selected>Malaysia</option>
+                    <option value="Singapore" selected>Singapore</option>
+                    <option value="China" selected>China</option>
                   </select>
                   <span><a href="#">
                 <input id="go-co" type="button" class="btn" value="Go" style="float:right;margin-top:0px;margin-right:-33px"/>
