@@ -3,6 +3,14 @@
 <link rel="stylesheet" type="text/css" href="/css/dashboard.css">
 <link rel="stylesheet" type="text/css" href="/css/multiselect/multiple-select.css">
 <style>
+.filtertable 
+{
+  width: 57%;
+  margin-left: 5%;
+}
+.filtertable td{
+  vertical-align: top; 
+}
 abbr
 {
     border-bottom: 1px dotted #666;
@@ -147,9 +155,9 @@ input.radio:checked ~ label {
         $(".filter-dropdown-container").slideToggle();
       })
       window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
-      $("#entity-auto").hide();
-      $("#division-auto").hide();
-      $("#unit-auto").hide();
+      // $("#entity-auto").hide();
+      // $("#division-auto").hide();
+      // $("#unit-auto").hide();
     })
 
         $(document).ready(function () {
@@ -161,7 +169,7 @@ input.radio:checked ~ label {
             $(".textboxbusiness").hide();
 
             $("#radio1").click(function () {
-               $(".textboxdomain").show();
+               // $(".textboxdomain").show();
                 $(".textboxgroup").hide();
                 $(".textboxcompany").hide();
                 $(".textboxdivision").hide();
@@ -169,7 +177,7 @@ input.radio:checked ~ label {
                 $(".textboxbusiness").hide();
             });
            $("#radio2").click(function () {
-             $(".textboxdomain").show();
+             // $(".textboxdomain").show();
                 $(".textboxgroup").hide();
                 $(".textboxcompany").show();
                 $(".textboxdivision").hide();
@@ -177,7 +185,7 @@ input.radio:checked ~ label {
                 $(".textboxbusiness").hide();
             });
            $("#radio3").click(function () {
-             $(".textboxdomain").show();
+             // $(".textboxdomain").show();
                 $(".textboxgroup").hide();
                 $(".textboxcompany").hide();
                 $(".textboxdivision").show();
@@ -185,7 +193,7 @@ input.radio:checked ~ label {
                 $(".textboxbusiness").hide();
             });
            $("#radio4").click(function () {
-             $(".textboxdomain").show();
+             // $(".textboxdomain").show();
                 $(".textboxgroup").hide();
                 $(".textboxcompany").hide();
                 $(".textboxdivision").hide();
@@ -193,7 +201,7 @@ input.radio:checked ~ label {
                 $(".textboxbusiness").hide();
             });
            $("#radio5").click(function () {
-             $(".textboxdomain").show();
+             // $(".textboxdomain").show();
                 $(".textboxgroup").hide();
                 $(".textboxcompany").hide();
                 $(".textboxdivision").hide();
@@ -272,6 +280,30 @@ input.radio:checked ~ label {
     $("#radio5").click(function() {
               loadTrendChartBusinessGroup();
        })
+
+
+      $('#domainradio').click(function() {
+             if( $(".textboxdomain").is(":hidden") ) {
+               $(".textboxdomain").show();
+               $("#domainradio").prop('checked', true);
+             }
+             else
+             {
+               $(".textboxdomain").hide();
+               $("#domainradio").prop('checked', false);
+             }
+             });
+      $('#countryradio').click(function() {
+          if( $(".textboxcountry").is(":hidden") ) {
+            $(".textboxcountry").show();
+            $("#countryradio").prop('checked', true);
+          }
+          else
+          {
+            $(".textboxcountry").hide();
+            $("#countryradio").prop('checked', false);
+          }
+      });
     
      $(".trend-tab").click(function() {
         $(".trend-tab").addClass("active")
@@ -289,7 +321,7 @@ input.radio:checked ~ label {
         $("#viewasbar").hide();
         $("#back").hide(); 
         $("#unit-auto").show();
-        $("#entity-auto").show();
+        // $("#entity-auto").show();
         $("#division-auto").show();
         $("#legal-entity").hide();
         $("#division").hide();
@@ -987,136 +1019,137 @@ input.radio:checked ~ label {
         </div>
       <div id="level-filter" style="width:100%">
         <input type="hidden" id="hidden"/>
-        <div style="margin: 32px 10px 0px 80px;float:left"> <span>Filter By:</span> </div>
-        <div style="float:left;position:relative;width:100px">
-          <input type="radio" name="" id="domainradio" class="radio" checked/>
-          <label for="domainradio" id="radiolabel"  style="width:90px">Domain</label>
-          <div class="textboxdomain">
-            <p id="domain-para" style="margin-top:5px;float:left;width:90px">
-              <select  multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo2" style="width:90px">
-                <option value="selectall" >Select All</option> 
-                <!--<option value="deselectall" >Deselect All</option>-->
-                <option value="Finance" selected>Finance</option>
-                <option value="Labour Law" selected>Labour Law</option>
-                <option value="Industrial Law" selected>Industrial Law</option>
-              </select>
-               <span><a href="#">
-            <input id="go-dom" type="button" class="btn" value="Go" style="float:right;margin-top:-25px;"/>
-            </a></span>
-            </p>
-          </div>
-        </div>
+        <div align="center" style="border:1px solid #fff;">
+        <table class="filtertable">
+            <tr>
+            <td colspan="5" align="center">
+            <table width="100%" ><tr>
+            <td>
+              <div style="padding-top:39px;MARGIN-LEFT: 44PX;"> <span>Filter By:</span> </div>
+            </td>
+            <td>
+            <div style="position:relative;  width: 80px;margin-left: -89px;">
+              <input type="radio" name="countryradio" id="countryradio" class="radio" checked/>
+              <label for="countryradio" id="radiolabel"  style="width:120px">Country</label>
+              <div class="textboxcountry">
+                <p id="country-para1" style="margin-top:5px;float:left;width:120px">
+                  <select id="country" multiple="multiple" placeholder="Select Business" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1" style="width:120px">
+                    <option value="selectall" >Select All</option> 
+                    <option value="Industrial Law" selected>China</option>
+                    <option value="Finance" selected>India</option>
+                    <option value="Industrial Law" selected>Malaysia</option>
+                    <option value="Industrial Law" selected>Singapore</option>
+                    <option value="Labour Law" selected>US</option>
+                  </select>
+                  <span><a href="#">
+                <input id="go-co" type="button" class="btn" value="Go" style="float:right;margin-top:0px;margin-right:-33px"/>
+                </a></span> 
+                </p>
+               
+                </div>
+            </div>
+          </td>
+          <td>
+           <div style="position:relative;  width: 77px;margin-left: 79px;">
+              <input type="radio" name="" id="domainradio" class="radio"  checked />
+              <label for="domainradio" id="radiolabel"  style="width:90px">Domain</label>
+              <div class="textboxdomain">
+                <p id="business-para1" style="margin-top:5px;float:left;width:120px">
+                  <select id="business" multiple="multiple" placeholder="Select Business" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1" style="width:120px">
+                    <option value="selectall" >Select All</option> 
+                    <option value="Industrial Law" selected>Finance</option>
+                    <option value="Finance" selected>Labour Law</option>
+                    <option value="Industrial Law" selected>Industrial Law</option>
+                  </select>
+                  <span><a href="#">
+                <input id="go-bu" type="button" class="btn" value="Go" style="float:right;margin-top:0px;margin-right:-33px"/>
+                </a></span> 
+                </p>
+               
+                </div>
+            </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+  <table class="filtertable">
+        <tr>
+          <td>
+            <div style="float:left;position:relative;width:100px">
+              <input type="radio" name="radio" id="radio1" class="radio" checked/>
+              <label for="radio1" id="radiolabel"  style="width:90px">Group</label>
+              <div class="textboxgroup">
+                <p>
+                  <input type="text" name="text1" id="text1" autofocus class="input-box icon-autocomplete margin10">
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div style="position:relative;width:132px">
+              <input type="radio" name="radio" id="radio5" class="radio"/>
+              <label for="radio5" id="radiolabel"  style="width:120px">Business Group</label>
+              <div class="textboxbusiness">
+                <input type="text" name="text2" id="business-auto" value="KG" autofocus class="input-box icon-autocomplete" style="width:110px;margin-top:4px;">
+                <span>
+                  <a href="#">
+                    <input id="go-bu" type="button" class="btn" value="Go" style="float:right;  margin-top: 6px;margin-right: -11px;"/>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div style="position:relative;width:124px">
+              <input type="radio" name="radio" id="radio2" class="radio"/>
+              <label for="radio2" id="radiolabel"  style="width:110px">Legal Entity</label>
+              <div class="textboxcompany">
+                <p id="entity-para1" style="margin-top:5px;float:left;width:110px">
+                   <input type="text" name="text2" id="entity-auto" value="KG" autofocus class="input-box icon-autocomplete" style="width:120px;margin-top:4px;">
+                    <span>
+                      <a href="#">
+                        <input id="go-le" type="button" class="btn" value="Go" style="float:right;      margin-top: -25px;margin-right: -46px"/>
+                      </a>
+                    </span>
+                </p>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div style="float:left;position:relative;width:101px">
+              <input type="radio" name="radio" id="radio3" class="radio"/>
+              <label for="radio3" id="radiolabel"  style="width:90px">Division</label>
+              <div class="textboxdivision">
+                <input type="text" name="text4" id="unit-auto" autofocus value="KG Manufacturing Division"  class="input-box icon-autocomplete" style="width:120px;margin-top:10px">
+                <span>
+                  <a href="#">
+                    <input id="go-d" type="button" class="btn" value="Go" style="float:right;  margin-top: -25px;margin-right: -52px;"/>
+                  </a>
+                </span> 
+                </div>
+            </div>
+          </td>
+          <td>
+            <div style="float: left; position: relative; width: 120px;">
+              <input type="radio" name="radio" id="radio4" class="radio"/>
+              <label for="radio4" id="radiolabel" style="width:80px">Unit</label>
+              <div class="textboxbranch">
+                <input type="text" class="input-box icon-autocomplete" value="Branch Office - 1" style="width:80px;  margin-top: 5px;">
+                <span>
+                  <a href="#">
+                    <input id="go-u" type="button" class="btn" value="Go" style="float:right;margin-right: 6px; margin-top: 6px;"/>
+                  </a>
+                </span>
+               </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
 
-        <div style="float:left;position:relative;width:100px">
-          <input type="radio" name="radio" id="radio1" class="radio" checked/>
-          <label for="radio1" id="radiolabel"  style="width:90px">Group</label>
-          <div class="textboxgroup">
-            <p>
-              <input type="text" name="text1" id="text1" autofocus class="input-box icon-autocomplete margin10">
-            </p>
-          </div>
-        </div>
-        <div style="float:left;position:relative;width:155px">
-          <input type="radio" name="radio" id="radio5" class="radio"/>
-          <label for="radio5" id="radiolabel"  style="width:120px">Business Group</label>
-          <div class="textboxbusiness">
-            <p id="business-para1" style="margin-top:5px;float:left;width:120px">
-              <select id="business" multiple="multiple" placeholder="Select Business" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1" style="width:120px">
-                <option value="selectall" selected>Select All</option>
-                <option value="KGbg1" selected>KG Business Group 1</option>
-                <option value="KGbg2" selected>KG Business Group 2</option>
-                <option value="KGbg3" selected>KG Business Group 3</option>
-                <option value="KGbg3" selected>KG Business Group 4</option>
-                <option value="KGbg3" selected>KG Business Group 5</option>
-              </select>
-              <span><a href="#">
-            <input id="go-bu" type="button" class="btn" value="Go" style="float:right;margin-top:0px;margin-right:-33px"/>
-            </a></span> 
-            </p>
-           
-            </div>
-        </div>
-        <div style="float:left;position:relative;width:145px">
-          <input type="radio" name="radio" id="radio2" class="radio"/>
-          <label for="radio2" id="radiolabel"  style="width:110px">Legal Entity</label>
-          <div class="textboxcompany">
-            <input type="text" name="text2" id="entity-auto" value="KG" autofocus class="input-box icon-autocomplete" style="width:120px;margin-top:10px;">
-            <p id="entity-para1" style="margin-top:5px;float:left;width:110px">
-              <select id="legal-entity" multiple="multiple" placeholder="Select Entity" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1" style="width:110px">
-                <option value="selectall" selected>Select All</option>
-                <option value="KG Autoparts" selected>KG Autoparts</option>
-                <option value="KG Transports" selected>KG Transports</option>
-                <option value="KG Booking" selected>KG Booking</option>
-                <option value="KG Electricals" selected>KG Electricals</option>
-                <option value="KG Mobiles" selected>KG Mobiles</option>
-                <option value="KG HealthCare" selected>KG HealthCare</option>
-                <option value="KG HR Services" selected>KG HR Services</option>
-                <option value="KG Hospitals" selected>KG Hospitals</option>
-                <option value="KG Bakeries" selected>KG Bakeries</option>
-                <option value="KG Hotels" selected>KG Hotels</option>
-                <option value="KG Schools" selected>KG Schools</option>
-                <option value="KG University" selected>KG University</option>
-              </select>
-              <span><a href="#">
-            <input id="go-le" type="button" class="btn" value="Go" style="float:right;margin-top:-0px;margin-right:-33px"/>
-            </a></span> 
-            </p>
-           
-            </div>
-        </div>
-        <div style="float:left;position:relative;width:120px">
-          <input type="radio" name="radio" id="radio3" class="radio"/>
-          <label for="radio3" id="radiolabel"  style="width:90px">Division</label>
-          <div class="textboxdivision">
-            <p id="division-para1" style="margin-top:5px;float:left;width:90px">
-              <select id="division" multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1" style="width:90px;">
-                <option value="selectall" >Select All</option>
-                <!--<option value="deselectall" >Deselect All</option>-->
-                <option value="KG Manufacturing" selected>KG Manufacturing</option>
-                <option value="KG Sales" selected>KG Sales</option>
-                <option value="KG Quality Checking" selected>KG Quality Checking</option>
-                <option value="KG Administration" selected>KG Administration</option>
-                <option value="KG Testing" selected>KG Testing</option>
-                <option value="KG Security" selected>KG Security</option>
-                <option value="KG Research" selected>KG Research</option>
-                <option value="KG HR Unit" selected>KG HR Unit</option>
-                <option value="KG Development" selected>KG Development</option>
-              </select>
-              <span><a href="#">
-            <input id="go-d" type="button" class="btn" value="Go" style="float:right;margin-top:0px;margin-right:-31px"/>
-            </a></span> 
-            </p>
-       
-            </div>
-        </div>
-        <div class="leftmargin">
-          <input type="radio" name="radio" id="radio4" class="radio"/>
-          <label for="radio4" id="radiolabel" style="width:80px">Unit</label>
-          <div class="textboxbranch">
-            <input type="text" name="text4" id="unit-auto" autofocus value="South gate, Madurai"  class="input-box icon-autocomplete" style="width:120px;margin-top:10px">
-            <p id="unit-para1" style="margin-top:5px;float:left;width:150px">
-             <select id="unit"  multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="unit" style="width:80px;" >
-                <optgroup label="Factory">
-                  <option value="Branch Office - 1" selected>Branch Office - 1</option>
-                  <option value="Branch Office - 2" selected>Branch Office - 2</option>
-                  <option value="Branch Office - 3" selected>Branch Office - 3</option>
-                  <option value="Branch Office - 4" selected>Branch Office - 4</option>
-                </optgroup>
-                   <optgroup label="Office">
-                <option value="Branch Office - 5" selected>Branch Office - 5</option>
-                <option value="Branch Office - 6" selected>Branch Office - 6</option>
-                <option value="Branch Office - 7" selected>Branch Office - 7</option>
-                <option value="Branch Office - 8" >Branch Office - 8</option>
-</optgroup>
-              </select>
-              <span><a href="#">
-            <input id="go-u" type="button" class="btn" value="Go" style="float:right;margin-top:-24px;margin-right:35px"/>
-            </a></span>
-            </p>
-           
-             </div>
-        </div>
-      </div>
       <div class="clearfix" ></div><br>
       <div class="graph-box">
         <input type="button" id="back" onClick="loadGroup()" style="float:right;margin-right:20px" value="Back"/>
