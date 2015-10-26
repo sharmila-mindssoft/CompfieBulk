@@ -124,7 +124,7 @@
     cursor: pointer;
 }
   </style>
-<script src="/files/desktop/common/js/wizard/jquery.steps.js"></script>
+<script src="/files/desktop/common/js/wizard/jquery.steps_save.js"></script>
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/wizard/jquery.steps.css">
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
 <script src="/files/desktop/common/js/tooltip/tipso.js"></script>
@@ -433,7 +433,9 @@ $(document).ready(function() {
     headerTag: "h3",
     bodyTag: "section",
     transitionEffect: "slideLeft",
-    autoFocus: true
+    autoFocus: true,
+    finish: "Save",
+
   });
 jQuery(window).load(function(){
   jQuery('.page-load').tipso({
