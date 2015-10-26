@@ -9,7 +9,7 @@
   var pluginName = "tipso",
     defaults = {
       speed           : 400,
-      background      : '#ffffa3',
+      background      : '#F1E9F6',
       color           : '#000000',
       position        : 'top',
       width           : 250,

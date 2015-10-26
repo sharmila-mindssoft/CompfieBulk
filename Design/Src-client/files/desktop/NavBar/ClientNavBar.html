@@ -1,10 +1,10 @@
 <style>
-#cssmenu > ul > li > a {
-  padding: 16px 0 21px 0;
-}
-#cssmenu > ul > li.has-sub::after {
-  top: 20px;
-}
+  #cssmenu > ul > li > a {
+    padding: 16px 0 21px 0;
+  }
+  #cssmenu > ul > li.has-sub::after {
+    top: 20px;
+  }
 </style>
 <div class="header-content">
   <div class="header-content-inner">
@@ -24,46 +24,50 @@
             </li>
             <li class='active has-sub'><a href='#'><span>Transactions</span></a>
               <ul>
-                 <!--<li><a href='/assignduedate'><span>Assign Due Date</span></a></li>-->
-                 <li><a href='/statutory_settings'><span>Statutory Settings</span></a></li>
-                <li><a href='/taskassignment'><span>Assign Compliance</span></a></li>
-                <li><a href='/reassigntask'><span>Reassign Compliance</span></a></li>
-                <li><a href='/taskverification'><span>Compliance Approval</span></a></li>
-              </ul>
-            </li>
-            <li class='active has-sub'><a href='#'><span>Reports</span></a>
-              <ul>
-                <li><a href='/report/service-provider'><span>Service Provider List</span></a></li>
-                <li><a href='/report/user-list'><span>User wise Compliance List</span></a></li>
-                <li><a href='/report/client_group_report'><span>Unit Details </span></a></li>
-                <li><a href='/report/unitwise_compliance'><span>Unit wise Compliance </span></a></li>
-                <li><a href='/report/assigned-compliances'><span>Employee wise Compliance list</span></a></li>
-                <li><a href='/activityreport'><span>Compliance Activity Report</span></a></li>
-                <li><a href='/taskdetails/list'><span>Compliance Details</span></a></li>
-                <li><a href='/report/compliancerisk'><span>Compliance Risk</span></a></li>
-                <li><a href='/report/statutorynotification'><span>Statutory Notifications List</span></a></li>
-                <li><a href='/audittrail_client'><span>Audit Trial</span></a></li>
-                
-                
-              </ul>
-            </li>
-            <li class='active user-icon'><a href='#'><span><img alt="" src="/images/user-icon.png" style="width:20px; vertical-align:text-bottom; padding-right:5px;">My Account</span></a>
-              <ul>
-                <li><a href="/profile_client">Logged in as:<br />
-                  <br />
-                  <span style="font-weight:bold; color:#333; padding-top:5px;">Hariharan</span></a></li>
-                <li><a href="/profile_client">View Profile</a></li>
-                <li><a href="/change_password">Change Password</a></li>
-                <li><a href='/settings'><span>Settings</span></a></li>
-                <li><a href="/index">Logout</a></li>
-              </ul>
-            </li>
-            <li><a href='/reminders'><img alt="" src="/images/reminders.png" style="width:30px;vertical-align:middle; padding-right:5px;" title="Reminders"></a></li>
-            <li><a href='/notifications'><img alt="" src="/images/notifications.png" style="width:30px;vertical-align:middle; padding-right:5px;" title="Notifications"></a></li>
-            <li><a href='/escalations'><img alt="" src="/images/escalations.png" style="width:30px;vertical-align:middle; padding-right:5px;" title="Escalations"></a></li>
-          </ul>
-        </div>
+               <!--<li><a href='/assignduedate'><span>Assign Due Date</span></a></li>-->
+               <li><a href='/statutory_settings'><span>Statutory Settings</span></a></li>
+               <li><a href='/taskassignment'><span>Assign Compliance</span></a></li>
+               <li><a href='/reassigntask'><span>Reassign Compliance</span></a></li>
+               <li><a href='/taskverification'><span>Compliance Approval</span></a></li>
+             </ul>
+           </li>
+           <li class='active has-sub'><a href='#'><span>Reports</span></a>
+            <ul>
+              <li><a href='/taskdetails/list'><span>Compliance Details</span></a></li>
+              <li><a href='/report/riskreport'><span>Risk Report</span></a></li>
+              <li class='has-sub'><a href='#'><span>Compliance List </span></a>
+                <ul>  
+                 <li><a href='/report/service-provider'><span>Service provider wise Compliance</span></a></li>
+                 <li><a href='/report/assigned-compliances'><span>Assignee wise Compliance</span></a></li>
+                 <li><a href='/report/unitwise_compliance'><span>Unit wise Compliance </span></a></li>                
+               </ul>
+              </li>
+              <li><a href='/report/compliancerisk'><span>Compliance Task Applicability Status</span></a></li>
+              <li><a href='/report/client_group_report'><span>Unit Details </span></a></li>
+
+            <!-- <li><a href='/report/user-list'><span>User wise Compliance List</span></a></li>-->
+              <li><a href='/activityreport'><span>Compliance Activity Report</span></a></li>
+              <li><a href='/report/statutorynotification'><span>Statutory Notifications List</span></a></li>
+              <li><a href='/audittrail_client'><span>Audit Trail</span></a></li>
+           </ul>
+         </li>
+         <li class='active user-icon'><a href='#'><span><img alt="" src="/images/user-icon.png" style="width:20px; vertical-align:text-bottom; padding-right:5px;">My Account</span></a>
+          <ul>
+            <li><a href="/profile_client">Logged in as:<br />
+              <br />
+              <span style="font-weight:bold; color:#333; padding-top:5px;">Hariharan</span></a></li>
+              <li><a href="/profile_client">View Profile</a></li>
+              <li><a href="/change_password">Change Password</a></li>
+              <li><a href='/settings'><span>Settings</span></a></li>
+              <li><a href="/index">Logout</a></li>
+            </ul>
+          </li>
+          <li><a href='/reminders'><img alt="" src="/images/reminders.png" style="width:30px;vertical-align:middle; padding-right:5px;" title="Reminders"></a></li>
+          <li><a href='/notifications'><img alt="" src="/images/notifications.png" style="width:30px;vertical-align:middle; padding-right:5px;" title="Notifications"></a></li>
+          <li><a href='/escalations'><img alt="" src="/images/escalations.png" style="width:30px;vertical-align:middle; padding-right:5px;" title="Escalations"></a></li>
+        </ul>
       </div>
     </div>
   </div>
+</div>
 </div>

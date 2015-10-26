@@ -94,9 +94,7 @@
 .paddingleft20{
   padding-left:40px;
 }
-.wizard > .steps > ul > li {
-    width: 50% !important;
-}
+
 .form-container-grid-table-sm table tr td ul {
     height: 445px;
     overflow-y: scroll;
@@ -107,25 +105,32 @@
     overflow-y: scroll;
     width: 100%;
 }
-</style>
-<style>
+#example-basic h3
+{
+    border-radius: 5px;
+    display: block;
+    margin: 0 0.1em;
+    padding: 0.7em 1em;
+    text-decoration: none;
+    width: auto;
+    background: none repeat scroll 0 0 #662d91;
+    color: #fff;
+}
 .gt input[type="checkbox"] {
     display: none !important;
 }
 .gt input[type="checkbox"]+label {    
-    background: url('images/deletebold.png') no-repeat;
+    background: url('/images/deletebold.png') no-repeat;
     height:17px;
     padding-left: 18px;
     cursor: pointer;
 }
 .gt input[type="checkbox"]:checked + label {
-    background: url('images/tick1bold.png') no-repeat;
+    background: url('/images/tick1bold.png') no-repeat;
     height:17px;
     cursor: pointer;
 }
   </style>
-<script src="/files/desktop/common/js/wizard/jquery.steps.js"></script>
-<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/wizard/jquery.steps.css">
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
 <script src="/files/desktop/common/js/tooltip/tipso.js"></script>
 <div class="content-container width75">
@@ -134,166 +139,7 @@
     <div class="add-container">
       <div class="form-container-outer">
         <div id="example-basic">
-          <h3>Select Unit & Domain</h3>
-          <section>
-            <div class="form-container-grid-table">
-              <table style="border:1px solid #ccc; margin-bottom:5px; height:200px !important;">
-          <tr align="left">
-              <th width="20%">Country</th>
-              <th width="20%">Group </th>
-              <th width="20%">Business Group </th>
-              <th width="20%">Legal Entity </th>
-              <th width="20%">Division</th>
-            </tr>
-            <tr>
-              <td><ul>
-                  <li>
-                    <input type="text" class="filter-text-box">
-                  </li>
-                  <li>Australia</li>
-                  <li>Bangladesh</li>
-                  <li class="active">India</li>
-                  <li>Malaysia</li>
-                  <li>Sri Lanka</li>
-                  <li>Singapore</li>
-                </ul></td>
-                <td><ul>
-                  <li>
-                    <input type="text" class="filter-text-box">
-                  </li>
-                  <li>ART Private Ltd.</li>
-                  <li class="active">VRM Motors</li>
-                  <li>PRG Group of Companies</li>
-                  </a>
-                </ul></td>
-                <td><ul>
-                  <li>
-                    <input type="text" class="filter-text-box">
-                  </li>
-                  <li>VRM Motors Business Group 1</li>
-                  <li class="active">VRM Motors Business Group 2</li>
-                  <li>VRM Motors Business Group 3</li>
-                  </a>
-                </ul></td>
-              <td><ul>
-                  <li>
-                    <input type="text" class="filter-text-box">
-                  </li>
-                  <li>VRM & Co.,</li>
-                  <li>VRM & Brothers</li>
-                  <li class="active">VRM & Sons</li>
-                </ul></td>
-                   <td><ul>
-                  <li>
-                    <input type="text" class="filter-text-box">
-                  </li>
-                  <li class="active">VRM Auto Parts - Manufacturing</li>
-                  <li>VRM Auto Pvt Ltd</li>
-                  <li>VRM Pvt Ltd</li>
-                  <li>VRM Fastners</li>
-                  <li>VRM Automobile Solutions Limited</li>
-                </ul></td>
-            </tr>
-            </table>
-            <table>
-            <tr align="left">
-               <th width="20%">Geography Levels</th>
-               <th width="20%">Location</th>
-               <th width="20%">Industry</th>
-               <th width="20%">Unit</th>
-              <th width="20%" >Domain</th>
-            </tr>
-            <tr>
-           
-                
-              <td><ul>
-                  <li>
-                    <input type="text" class="filter-text-box">
-                  </li>
-                   
-                  <li>Region </li>
-                  <li class="active">State </li>
-                  <li>Union Territory</li>
-                  <li>District </li>
-                  <li>Corporation </li>
-                  <li>Municipality </li>
-                  <li>Town </li>
-                  <li>Panchayat </li>
-                </ul></td>
-              <td><ul>
-                  <li>
-                    <input type="text" class="filter-text-box">
-                  </li>
-                <li>  Andra Pradesh </li>
-                <li class="active">  Tamil Nadu  </li>
-                <li>  Arunachal Pradesh </li>
-                <li>  Assam </li>
-                <li>  Bihar </li>
-                <li>  Chhattisgarh  </li>
-                <li>  Goa </li>
-                <li>  Gujarat </li>
-                <li>  Haryana </li>
-                <li>  Himachal Pradesh  </li>
-                <li>  Jammu and Kashmir </li>
-                <li>  Jharkhand </li>
-                <li>  Karnataka </li>
-                <li>  Kerala  </li>
-                <li>  Madya Pradesh </li>
-                <li>  Maharashtra </li>
-                <li>  Manipur </li>
-                <li>  Meghalaya </li>
-                <li>  Mizoram </li>
-                <li>  Nagaland  </li>
-                <li>  Orissa  </li>
-                <li>  Punjab  </li>
-                <li>  Rajasthan </li>
-                <li>  Sikkim  </li>
-
-                <li>  Tripura </li>
-                <li>  Uttaranchal </li>
-                <li>  Uttar Pradesh </li>
-                <li>  West Bengal </li>
-
-                </ul></td>
-            
-              <td><ul>
-                  <li>
-                    <input type="text" class="filter-text-box">
-                  </li>
-                  <li class="active">Factory</li>
-                  <li>Office</li>
-                  <li>Plantation</li>
-                  <li>Contractor</li>
-                  <li>S &amp; E</li>
-                  <li>Mines</li>
-                </ul></td>
-                
-              <td><ul>
-                  <li>
-                    <input type="text" class="filter-text-box">
-                  </li>
-                  <li>VRM1001 - Corporate Office</li>
-                  <li>VRM1002 - Regional Office - North</li>
-                  <li class="active">VRM1003 - Regional Office - South</li>
-                  <li>VRM1004 - Branch Office - Bangalore</li>
-                  <li class="active">VRM1005 - Branch Office - Madurai</li>
-                  <li >VRM1006 - Branch Office - Delhi</li>
-                  <li>VRM1007 - Branch Office - Hydrabad</li>
-                  <li class="active">VRM1008 - Branch Office - Chennai</li>
-                </ul></td>
-              <td><ul>
-                  <li>
-                    <input type="text" class="filter-text-box">
-                  </li>
-                  <li>Finance Law</li>
-                  <li class="active">Industrial Law</li>
-                  <li >Labour Law</li>
-                </ul></td>
-              
-            </tr>
-            </table>
-         </div>
-      </section>
+          
           <!-- -->
           <h3>Select Statutory</h3>
           <section>
@@ -303,8 +149,7 @@
               <th colspan="2">Statutory</th>
             </tr> -->
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-              <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"
-               class="gt"><input type="checkbox" checked="checked" id="ch_h1" style="margin-top:10px;"><label for="ch_h1" style="margin-top:10px;"></label></th>
+              <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"class="gt"><input type="checkbox" checked="checked" id="ch_h1" style="margin-top:10px;"><label for="ch_h1" style="margin-top:10px;"></label></th>
               <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Batteries Act<span><img src="/images/chevron_black_down.png"></span></th>
             </tr>
             <tr style="border:1px solid #cccccc;">

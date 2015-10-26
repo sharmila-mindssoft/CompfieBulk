@@ -146,7 +146,7 @@
   opacity: 1;
 }
 #cssmenu ul ul li:hover > ul {
-  left: 200px;
+  left: 216px;
   top: 0;
   opacity: 1;
 }
@@ -158,7 +158,7 @@
   padding-right: 5px;
 }
 #cssmenu ul ul li a {
-  width: 200px;
+  width: 218px;
   border-bottom: 1px solid #eeeeee;
   padding: 10px 15px;
   font-size: 12px;

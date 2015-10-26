@@ -1377,3 +1377,9 @@ textarea.heightsmall{ height: 40px; }
 {
 	width: 45% !important;
 }
+.grid-table-rpt p
+{
+	font-size: 0.813em;
+	padding-top: 10px;
+	padding-left: 5px;
+}
