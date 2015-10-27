@@ -1,0 +1,93 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<script>
+  $(document).ready(function() {
+    $("#insert-level").hide();
+  });
+
+  function loadForm(){
+     $("#insert-level").show();
+      $("#add").hide();
+  }
+
+  function hideForm(){
+     $("#insert-level").hide();
+      $("#add").show();
+  }
+
+</script>
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">On Occurence Tasks List<span class="error-message"></span></div>
+       <div class="form-container-outer">
+            <div id="insert-level" class="input-row">
+              <br>
+              <div class="input-row-left">
+                <div class="field-label">Level</div>
+                <div class="field-input">
+                  <select class="input-box">
+                    <option>Level 1</option>
+                    <option>Level 2</option>
+                    <option>Level 3</option>
+                    <option>Level 4</option>
+                    <option>Level 5</option>
+                    <option>Level 6</option>
+                    <option>Level 7</option>
+                    <option>Level 8</option>
+                    <option>Level 9</option>
+                    <option>Level 10</option>
+                  </select>
+                </div>
+              </div>
+              <div class="input-row-right">
+                <div class="field-label">Title</div>
+                <div class="field-input">
+                  <input type="text" class="input-box" value="Sub District"/>
+                </div>
+              </div>
+              <div class="submit-button-container" style="margin-top:10px">
+                <input type="reset" name="cancel" value="Cancel" class="btn-cancel"  onclick="hideForm()" >&nbsp;&nbsp;
+                <input type="submit" name="submit" value="Submit" class="btn-submit">
+              </div>
+            </div>
+            <div class="grid-table" style="margin-top:20px">
+              <table>
+                <tr>
+                  <th width="2%" align="left">S.NO</th>
+                  <th width="25%" align="left">Statutory</th>
+                  <th width="15%" align="left">Compliance Task</th>
+                  <th width="20%" align="left">Description</th>
+                  <th width="10%" align="left">To complete with in</th>
+                  <th width="10%" align="left">Start Date</th>
+                  <th width="3%" align="left">Start</th>
+                </tr>
+                <tr>
+                  <td style="height:50px" align="center">1</td>
+                  <td>WORKMEN’S COMPENSATION ACT, 1923 >> Rule 11 >> Sec.10B </td>
+                  <td> Form EE - Report of accident </td>
+                  <td>Report of fatal Accident and Serious Injury within 7 days to the
+Commissioner (not application when ESI Act applies).</td>
+                  <td>2 Days</td>
+                  <td><input type="text" class="input-box"/></td>
+                  <td><input type="button" class="btn-submit" value="Start"/></td>
+                </tr>
+                <tr>
+                  <td style="height:50px" align="center">2</td>
+                  <td>WORKMEN’S COMPENSATION ACT, 1923 >> Sec.10 </td>
+                  <td>Notice Accident </td>
+                  <td>As soon as Practicable</td>
+                  <td>3 Hours</td>
+                  <td><input type="text" class="input-box"/></td>
+                  <td><input type="button" class="btn-submit" value="Start"/></td>
+                </tr>
+              </table>
+            </div> 
+        </div>
+    <div class="clearfix"></div>
+    </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

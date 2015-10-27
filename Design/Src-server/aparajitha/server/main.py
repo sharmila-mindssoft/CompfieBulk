@@ -511,7 +511,8 @@ TEMPLATE_PATHS = [
         None, {}),
     ("/closeunit", "files/desktop/CloseUnit/CloseUnit.html",
         None, {}),
-
+    ("/onoccurrence", "files/desktop/OnOccurrence/OnOccurrence.html",
+        None, {}),
 ]
 
 
