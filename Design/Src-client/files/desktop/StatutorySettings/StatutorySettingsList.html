@@ -10,6 +10,7 @@
 <script type="text/javascript">
  $(function() {
   $('#text_area').hide();
+
    $('#clientdecision').change(function () {
     if($(this).is(':checked')){
       $('#clienttextarea').hide();
@@ -38,21 +39,18 @@ $('#ch2').change(function () {
     }
   });
 $('#ch3').change(function () {
-    if($(this).is(':checked')){
-      $('#client3textarea').hide();
-    
-    }else{
-      $('#client3textarea').show();
-    
-    }
+    $('#client3textarea').toggle();
+    $('#client3remarks').toggle();
+  });
+$('#ch6').change(function () {
+    $('#client6textarea').toggle();
+    $('#client6remarks').toggle();
   });
 $('#ch4').change(function () {
     if($(this).is(':checked')){
       $('#client4textarea').hide();
-    
     }else{
       $('#client4textarea').show();
-    
     }
   });
 $('#ch5').change(function () {
@@ -64,14 +62,10 @@ $('#ch5').change(function () {
     
     }
   });
+
 $('#ch7').change(function () {
-    if($(this).is(':checked')){
-      $('#client7textarea').hide();
-    
-    }else{
-      $('#client7textarea').show();
-    
-    }
+     $('#client7textarea').toggle();
+      $('#client7remarks').toggle();
   });
    $('.not_applicable').change(function () {
     if($(this).is(':checked'))
@@ -243,10 +237,10 @@ $('#ch7').change(function () {
                     <td width="2%"><span style="font-weight:bold;">#</span></td>
                     <td ><span style="font-weight:bold;">Statutory Provision</span></td>
                     <td ><span style="font-weight:bold;">Compliance Tasks</span></td>
-                    <td width="35%"><span style="font-weight:bold; ">Compliance Description
+                    <td width="40%"><span style="font-weight:bold; ">Compliance Description
                     <td align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Applicable" ></span></td>
                     <td  align="center"><span style="font-weight:bold; "><img src="/images/icon-client-tick.png" title="Opted"></span></td>
-                    <td width="20%"><span style="font-weight:bold; font-size:11px;">Remarks</span></td>
+                    <td width="15%"><span style="font-weight:bold; font-size:11px;">Remarks</span></td>
                   </tr>
                   <tr>
                     <td>1</td>
@@ -274,7 +268,11 @@ $('#ch7').change(function () {
                     <td>Whether undertaking submitted by importer to authority.</td>
                     <td align="center"><img src="/images/tick1bold.png"></td>
                     <td align="center" class="gt"><input type="checkbox"  id="ch3"><label for="ch3"></label></td>
-                    <td><span id="client3textarea"><textarea class="input-box" style="height:60px;"  placeholder="Enter client decision"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span></td>
+                    <td><span id="client3textarea"><textarea class="input-box" style="height:60px;"  placeholder="Enter client decision"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span>
+                     <span id="client3remarks"><abbr class="page-load tipso_style" title="Remarks text goes here.">
+                        <img src="images/icon-info.png"/>
+                          Remarks text g...</abbr></span>   
+                    </td>
                   </tr>
                   <tr>
                     <td>4</td>
@@ -302,7 +300,12 @@ $('#ch7').change(function () {
                     <td align="center"><img src="/images/deletebold.png"></td>
 
                       <td align="center" class="gt"><input type="checkbox" class="not_applicable" id="ch6"><label for="ch6"></label></td>
-                    <td><span id="text_area"><textarea id="text_area" class="input-box" id="clienttextarea" style="height:60px;"  placeholder="Enter Reason"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span></td>
+                    <td><span id="client6textarea">
+                      <textarea id="text_area" class="input-box" id="clienttextarea" style="height:60px;"  placeholder="Enter Reason"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span>
+                        <span id="client6remarks"><abbr class="page-load tipso_style" title="Remarks text goes here.">
+                        <img src="images/icon-info.png"/>
+                          Remarks text g...</abbr></span>
+                      </td>
                   </tr>
                   <tr>
                     <td>7</td>
@@ -311,7 +314,18 @@ $('#ch7').change(function () {
                     <td>Whether half yearly returns submitted by recyclers</td>
                    <td align="center"><img src="/images/tick1bold.png"></td>
                      <td align="center" class="gt"><input type="checkbox" id="ch7"><label for="ch7"></label></td>
-                   <td><span id="client7textarea"><textarea class="input-box" style="height:60px;"  placeholder="Enter client decision"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span></td>
+                   <td>
+                      <span id="client7textarea">
+                        <textarea class="input-box" style="height:60px;display:hidden"  placeholder="Enter client decision"></textarea>
+                        <br>
+                        <span style="font-size:0.75em;display:hidden">(max 500 characters)
+                        </span>
+                      </span>
+                      <span id="client7remarks">
+                        <abbr class="page-load tipso_style" title="Remarks text goes here.">
+                        <img src="images/icon-info.png"/>
+                          Remarks text g...</abbr></span>
+                    </td>
                   </tr>
                  
                 </table></td>
@@ -324,7 +338,13 @@ $('#ch7').change(function () {
            
             <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
                   <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"><img src="images/delete.png"></th>
-              <th colspan="2"  style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Factories Act, 1948<div style="float:right;"> Remarks: Not Applicable Content Goes Here&nbsp;&nbsp;&nbsp;&nbsp;<span><img src="/images/chevron_black_right.png"></span></div> </th>
+              <th colspan="2"  style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Factories Act, 1948
+                <div style="float:right;"> 
+                  <abbr class="page-load tipso_style" title="Remarks text goes here.">
+                  <img src="images/icon-info.png"/>
+                  Remarks tex...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</abbr>
+                  <span><img src="/images/chevron_black_right.png"></span></div> 
+                </th>
             </tr>
           </table>
 
@@ -372,25 +392,16 @@ $('#ch7').change(function () {
 <script type="text/javascript">
 
 $(document).ready(function() {
-    $("#section-flip-1").show();
-    $("#section-flip-4").hide();
+    // $("#section-flip-1").show();
+    // $("#section-flip-4").hide();
+    $('#client7textarea').hide();
+    $('#client3textarea').hide();
+    $('#client6textarea').hide();
     jQuery(window).load(function(){
-  jQuery('.page-load').tipso({
-    tooltipHover: true
-});
+      jQuery('.page-load').tipso({
+       tooltipHover: true
+    });
   })
-
-  $("#example-basic").steps({
-    headerTag: "h3",
-    bodyTag: "section",
-    transitionEffect: "slideLeft",
-    autoFocus: true
-  });
-jQuery(window).load(function(){
-  jQuery('.page-load').tipso({
-    tooltipHover: true
-});
-
 });
 </script> 
 {% endblock %}
