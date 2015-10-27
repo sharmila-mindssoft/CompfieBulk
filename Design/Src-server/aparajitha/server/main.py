@@ -517,6 +517,8 @@ TEMPLATE_PATHS = [
         None, {}),
     ("/company_profile", "files/desktop/CompanyProfile/CompanyProfile.html",
         None, {}),
+    ("/report/reassigntask", "files/desktop/ReassignTaskList/ReassignTaskList.html",
+        None, {}),
 ]
 
 
