@@ -515,6 +515,8 @@ TEMPLATE_PATHS = [
         None, {}),
     ("/onoccurrence", "files/desktop/OnOccurrence/OnOccurrence.html",
         None, {}),
+    ("/company_profile", "files/desktop/CompanyProfile/CompanyProfile.html",
+        None, {}),
 ]
 
 
