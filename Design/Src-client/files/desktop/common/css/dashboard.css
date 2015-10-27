@@ -427,38 +427,48 @@ img, object {
 	top: 0em;
 	overflow-y: scroll;
 	padding-bottom: 4.5em;
-	padding-top: 5em;
 }
 .notification-container ul li {
 	list-style-type: none;
-	background: url(../images/dashboard/notification-arrow.png) no-repeat 1em 0.4em;
+	background: url(../images/right_arrow.png) no-repeat 10px 16px;
 	background-size: 1em;
 	font-size: 0.75em;
 	font-weight: 400;
-	color: #c6c5c5;
+	color: #333;
 	letter-spacing: 0.05em;
 	line-height: 1.4em;
 	padding-left: 3em;
 	padding-right: 1.5em;
 	border-bottom: 1px solid #5c5c5c;
 	padding-bottom: 1em;
-	margin-bottom: 1em;
+	padding-top: 1em;
+}
+.notification-container ul li:hover {
+	background-color:#eee;
+}
+.unread
+{
+	background-color: #F1E9F6 !important;
+}
+.unread:hover
+{
+	background-color:#ddd  !important;
 }
 .notification-container ul li p.time {
 	text-align: right;
-	color: #f1e5b3;
+	color: #333;
 	font-size: 0.7em;
 }
 .notification-container ul li p.notification-cat {
 	text-align: right;
-	color: #f1e5b3;
+	color: #3B59A8;
 	font-size: 0.7em;
 }
 .notification-container ul li p.notification-text {
 	padding-bottom: 0.5em;
 }
 .notification-container ul li p.notification-cat span {
-	color: #fff;
+	color: #000;
 }
 /* Dashboard page styles end here */
 
