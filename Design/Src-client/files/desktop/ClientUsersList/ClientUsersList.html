@@ -1,0 +1,155 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
+<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
+<script>
+  $(document).ready(function() {
+    $("#insert-level").hide();
+  });
+
+  function loadForm(){
+     $("#insert-level").show();
+      $("#add").hide();
+  }
+
+  function hideForm(){
+     $("#insert-level").hide();
+      $("#add").show();
+  }
+
+</script>
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Client Users List<span class="error-message"></span></div>
+       <div class="form-container-outer">
+            <div class="single-column-input-row">
+              <br>
+              <div class="input-row">
+                <div class="single-column-field-label">Client:<span class="mandatory">*</span></div>
+                <div class="single-column-field-input">
+                  <input type="text" class="input-box icon-autocomplete" style="width:200px" value="RG Groups"/>
+                </div>
+              </div>
+            </div>
+            <div id="insert-level" class="input-row">
+              <br>
+              <div class="input-row-left">
+                <div class="field-label">Level</div>
+                <div class="field-input">
+                  <select class="input-box">
+                    <option>Level 1</option>
+                    <option>Level 2</option>
+                    <option>Level 3</option>
+                    <option>Level 4</option>
+                    <option>Level 5</option>
+                    <option>Level 6</option>
+                    <option>Level 7</option>
+                    <option>Level 8</option>
+                    <option>Level 9</option>
+                    <option>Level 10</option>
+                  </select>
+                </div>
+              </div>
+              <div class="input-row-right">
+                <div class="field-label">Title</div>
+                <div class="field-input">
+                  <input type="text" class="input-box" value="Sub District"/>
+                </div>
+              </div>
+              <div class="submit-button-container" style="margin-top:10px">
+                <input type="reset" name="cancel" value="Cancel" class="btn-cancel"  onclick="hideForm()" >&nbsp;&nbsp;
+                <input type="submit" name="submit" value="Submit" class="btn-submit">
+              </div>
+            </div>
+           <div class="grid-table">
+              <table>
+                <tr>
+                  <th width="4%">#</th>
+                  <th align="left" width="15%">Employee</th>
+                  <th align="left" width="10%">User Group</th>
+                  <th align="left" width="10%">User Level</th>
+                  <th align="left" width="20%">Seating Unit</th>
+                  <th align="center" width="7%">Status</th>
+                  <th align="center" width="9%">Promote Admin</th>
+                  
+                </tr> 
+                <tr>
+                  <td align="center">&nbsp;</td>
+                  <td><input type="text" name="location-name" class="filter-text-box"></td>
+                  <td><input type="text" name="district-name" class="filter-text-box"></td>
+                  <td><input type="text" name="region-name" class="filter-text-box"></td>
+                  <td><input type="text" name="region-name" class="filter-text-box"></td>
+                  <td align="center">&nbsp;</td>
+                  <td align="center">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td align="center">1</td>
+                  <td>EMP0010 - Hariharan</td>
+                  <td>Group 3</td>
+                  <td>Level 4</td>
+                  <td>
+                    <abbr class="page-load tipso_style" title="26, West Steet, New Delhi">
+                      <img src="/images/icon-info.png"/>
+                      VBM1001 - Corporate Office
+                    </abbr>
+                  </td>
+                  <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid"/></td>
+                  <td align="center"><a="#"><img src="/images/promote-active.png"title="Click here to inactivate" id="inactiveid" class="inactive"  /></a="#"></td>
+                </tr>
+                <tr>
+                  <td align="center">2</td>
+                  <td>EMP0012 - Sivaraman</td>
+                  <td>Manager</td>
+                  <td>Level 3</td>
+                  <td>
+                    <abbr class="page-load tipso_style" title="12 South car street, Bangalore">
+                    <img src="/images/icon-info.png"/>
+                    VBM1002 - Regional Office - South
+                    </abbr>
+                  </td>
+                  <td align="center"><img src="/images/icon-active.png" title="Click here to activate" id="inactiveid"/></td>
+                  <td align="center">
+                    <a="#">
+                      <img src="/images/promote-inactive.png" title="Click here to inactivate" id="inactiveid" class="inactive"/>
+                      </a="#">
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center">3</td>
+                  <td>EMP0015 - Srinivasan</td>
+                  <td>Group 2</td>
+                  <td>Level 2</td>
+                  <td>
+                    <abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai"><img src="/images/icon-info.png"/>
+                      VBM103 - Branch Office - Chennai
+                      </abbr>
+                    </td>
+                  <td align="center"><img src="/images/icon-active.png" title="Click here to activate" id="inactiveid"/></td>
+                  <td align="center"><a="#"><img src="/images/promote-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></a="#">
+                  </td>
+                </tr>
+              </table>
+            </div>
+        </div>
+    <div class="clearfix"></div>
+    </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+});
+
+jQuery(window).load(function(){
+  jQuery('.page-load').tipso({
+    tooltipHover: true
+  });
+});
+$('.toggleModal').on('click', function (e) {
+  $('.modal').toggleClass('active');
+});
+
+</script> 
+{% endblock %}
+
