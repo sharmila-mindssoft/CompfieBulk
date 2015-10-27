@@ -57,31 +57,36 @@
           <td>EMP0010 - Hariharan</td>
           <td>Group 3</td>
           <td>Level 4</td>
-          <td><abbr class="page-load tipso_style" title="26, West Steet, New Delhi">VBM1001 - Corporate Office</td>
+          <td>
+            <abbr class="page-load tipso_style" title="26, West Steet, New Delhi">
+            <img src="/images/icon-info.png" style="margin-right:10px"/>VBM1001 - Corporate Office
+          </td>
           <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
           <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid"/></td>
-          <td align="center"><a="#"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></a="#"></td>
+          <td align="center"><a="#"><img src="/images/promote-active.png"title="Click here to inactivate" id="inactiveid" class="inactive"  /></a="#"></td>
         </tr>
         <tr>
           <td align="center">2</td>
           <td>EMP0012 - Sivaraman</td>
           <td>Manager</td>
           <td>Level 3</td>
-          <td><abbr class="page-load tipso_style" title="12 South car street, Bangalore">VBM1002 - Regional Office - South</td>
+          <td>
+            <abbr class="page-load tipso_style" title="12 South car street, Bangalore">
+            <img src="/images/icon-info.png" style="margin-right:10px"/>VBM1002 - Regional Office - South
+          </td>
           <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
           <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid"  onClick="$('.modal').toggleClass('active');" /></td>
-          <td align="center"><a="#"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"/></a="#"></td>
-        
+          <td align="center"><a="#"><img src="/images/promote-inactive.png" title="Click here to inactivate" id="inactiveid" class="inactive"/></a="#"></td>
         </tr>
         <tr>
           <td align="center">3</td>
           <td>EMP0015 - Srinivasan</td>
           <td>Group 2</td>
           <td>Level 2</td>
-          <td><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai">VBM103 - Branch Office - Chennai</td>
+          <td><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai"><img src="/images/icon-info.png" style="margin-right:10px"/>VBM103 - Branch Office - Chennai</td>
           <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
           <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" onClick="$('.modal').toggleClass('active');"/></td>
-          <td align="center"><a="#"><img src="/images/icon-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></a="#"></td>
+          <td align="center"><a="#"><img src="/images/promote-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></a="#"></td>
           
         </tr>
       </table>
@@ -113,15 +118,8 @@
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
-    $("#section-flip-1").show();
-    $("#section-flip-4").hide();
 });
-$("#example-basic").steps({
-  headerTag: "h3",
-  bodyTag: "section",
-  transitionEffect: "slideLeft",
-  autoFocus: true
-});
+
 jQuery(window).load(function(){
   jQuery('.page-load').tipso({
     tooltipHover: true

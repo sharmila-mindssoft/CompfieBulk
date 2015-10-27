@@ -511,9 +511,14 @@ TEMPLATE_PATHS = [
         None, {}),
     ("/closeunit", "files/desktop/CloseUnit/CloseUnit.html",
         None, {}),
+    ("/client_user_list", "files/desktop/ClientUsersList/ClientUsersList.html",
+        None, {}),
+    ("/onoccurrence", "files/desktop/OnOccurrence/OnOccurrence.html",
+        None, {}),
+    ("/company_profile", "files/desktop/CompanyProfile/CompanyProfile.html",
+        None, {}),
     ("/report/reassigntask", "files/desktop/ReassignTaskList/ReassignTaskList.html",
         None, {}),
-
 ]
 
 
