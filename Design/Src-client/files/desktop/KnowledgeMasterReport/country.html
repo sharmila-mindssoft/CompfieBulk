@@ -1,7 +1,7 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
 <div class="content-container width40">
-  <div class="content-area">
+  <div class="content-area" style="margin-bottom:1em;">
     <h1>Countries</h1>
     <div class="clearfix"></div>
     <div class="grid-table" style="height:390px; overflow-y:scroll;">
@@ -33,10 +33,9 @@
       </table>
         
     </div>
-    <p style="border-top:1px dashed #ccc;font-size:10px;margin-top:10px;padding-top:20px">Total : 249 entries</p>
+    <div class="clearfix"></div>
+ 
   </div>
-  <tr>
-      <td colspan="3"></td>
-  </tr>
+  <span style="font-size:1em;">Total : 249 records</span>  
 </div>
 {% endblock %}
