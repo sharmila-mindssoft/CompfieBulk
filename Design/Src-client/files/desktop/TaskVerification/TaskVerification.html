@@ -13,7 +13,24 @@
 				margin: 5px 5%;
 			}
 		</style>
-    <script type="text/javascript">
+      <script type="text/javascript">
+      $(document).ready(function() {
+         $('.arrow3').hide();
+          $('.arrow4').hide();
+        $(".current-tab").click(function() {
+          $(".current-tab").addClass("active")
+         
+          $(".main-tab-content").show();
+          $(".current-tab-content").hide();
+         
+        })
+
+        $(".close").click(function() {
+          $(".current-tab-content").hide();
+          $(".main-tab-content").show();
+        })
+
+      })
 $(function() {
   $('.duedate2_icon').click(function(){    
     $('.duedate2_textbox').show();
@@ -29,6 +46,139 @@ $(function() {
   <div class="content-area">
     <div class="add-container">
       <div class="add-container-heading">Compliance Task Approval<span class="error-message"></span></div>
+
+      <div class="main-tab-content" style="border:1px solid white;">
+<div class="grid-table" style="padding-bottom:0em;">
+              <table>
+                <tr align="left" style="background:#ccc;">
+                  <td width="5%"><span style="font-weight:bold;">#</span></td>
+                  <td><span style="font-weight:bold;">Compliance Task</span></td>
+                  <td><span style="font-weight:bold;">Domain </span></td>
+                  <td><span style="font-weight:bold;">Start date</span></td>
+                  <td><span style="font-weight:bold;">Due date</span></td>
+                  <td width="15%"><span style="font-weight:bold;">Delayed By </span></td>
+                  <td ></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td align="center"><input type="text" class="filter-text-box" ></td>
+                  <td><input type="text" class="filter-text-box"></td>
+                  <td align="center"><input type="text" class="filter-text-box"></td>
+                  <td align="center"><input type="text" class="filter-text-box"></td>
+                  <td align="center"><input type="text" class="filter-text-box" ></td>
+                  <td></td>
+                </tr>
+                <tr align="left" class="rightside" >
+                  <th  colspan="4" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.813em;float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+    inset 0 0 0 1px rgba(53,86,129, 0.4), 
+    inset 0 0 5px rgba(53,86,129, 0.5),
+    inset -285px 0 35px white;
+  border-radius: 0 5px 0 5px;"  width="200px">Assignee: EMP10280 - Sivaraman</span></th>
+                  <th colspan="6" style="background-color:#fff;"></th>
+                </tr> 
+                <tr class="index-tab" style="background:#fff;" >
+                  <td>1</td>
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png"> FORM I - Half yearly returns Submission </abbr></td>
+                  <td>Industrial Law</td>
+                  <td>15-Aug-2015</td>
+                  <td>24-Aug-2015</td>
+                  <td >10 Days</td>
+                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr>
+                <tr style="background:#fff;" class="archive-tab">
+                  <td>2</td>
+                  <td><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead
+"><img src="/images/icon-info.png"> FORM II - Registration</abbr></td>
+                  <td>Industrial Law</td>
+                  <td>20-Aug-2015</td>
+                  <td>24-Aug-2015</td>
+                  <td>5 Days</td>
+                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr>
+                 <tr align="left" class="rightside" >
+                  <th  colspan="4" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+    inset 0 0 0 1px rgba(53,86,129, 0.4), 
+    inset 0 0 5px rgba(53,86,129, 0.5),
+    inset -285px 0 35px white;
+  border-radius: 0 5px 0 5px;"  width="200px">Assignee: EMP10288 - Rajkumaran</span></th>
+                  <th colspan="6" style="background-color:#fff;"></th>
+                </tr> 
+                <tr style="background:#fff;" class="concurrence-tab " >
+                  <td>3</td>
+                  <td><abbr class="page-load" title="Whether undertaking submitted by importer to authority."><img src="/images/icon-info.png" > FORM III - Undertaking submission  </abbr></td>
+                  <td>Industrial Law</td>
+                  <td>21-Aug-2015</td>
+                  <td>26-Aug-2015</td>
+                  <td>6 Days</td>
+                  <td style="padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr >
+                <tr style="background:#fff;">
+                  <td>4</td>
+                  <td><abbr class="page-load" title="Whether registration obtained for dealers."><img src="/images/icon-info.png"> FORM IV - Dealer Registration</abbr></td>
+                  <td>Industrial Law</td>
+                  <td>25-Aug-2015</td>
+                  <td>31-Aug-2015</td>
+                  <td>7 Days</td>
+                  <td style="padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr>
+                <tr style="background:#fff;">
+                  <td>5</td>
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer."><img src="/images/icon-info.png"> FORM V - Dealer Half yearly returns  </abbr></td>
+                  <td>Industrial Law</td>
+                  <td>26-Aug-2015</td>
+                  <td>29-Aug-2015</td>
+                  <td></td>
+                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr>
+                 <tr align="left" class="rightside" >
+                  <th  colspan="4" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+    inset 0 0 0 1px rgba(53,86,129, 0.4), 
+    inset 0 0 5px rgba(53,86,129, 0.5),
+    inset -285px 0 35px white;
+  border-radius: 0 5px 0 5px;"  width="200px">Assignee:  EMP10291 - Sundarrajan</span></th>
+                  <th colspan="6" style="background-color:#fff;"></th>
+                </tr> 
+                <tr style="background:#fff;">
+                  <td>6</td>
+                  <td><abbr class="page-load" title="Whether registration and renewal obtained by recycler."><img src="/images/icon-info.png"> FORM VI - Recycler Registration and Review  </abbr></td>
+                  <td>Industrial Law</td>
+                  <td>21-Aug-2015</td>
+                  <td>26-Aug-2015</td>
+                  <td>6 Days</td>
+                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr >
+                <tr style="background:#fff;">
+                  <td>7</td>
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by recyclers."><img src="/images/icon-info.png"> FORM VII - Recycler Half yearly returns</abbr></td>
+                  <td>Industrial Law</td>
+                  <td>25-Aug-2015</td>
+                  <td>31-Aug-2015</td>
+                  <td></td>
+                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr>
+                <tr style="background:#fff;">
+                  <td>8</td>
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by bulk consumer."><img src="/images/icon-info.png"> FORM VIII - Bulk consumer half yearly returns </abbr></td>
+                  <td>Industrial Law</td>
+                  <td>26-Aug-2015</td>
+                  <td>29-Aug-2015</td>
+                  <td>4 Days</td>
+                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr>
+                <tr style="background:#fff;">
+                  <td>9</td>
+                  <td><abbr class="page-load" title="Whether half yearly returns submitted by auctioneer."><img src="/images/icon-info.png"> FORM IX Submission</abbr></td>
+                  <td>Industrial Law</td>
+                  <td>26-Aug-2015</td>
+                  <td>29-Aug-2015</td>
+                  <td></td>
+                  <td style=" padding-right:5px;"><img src="/images/right_arrow.png"></td>
+                </tr>
+              </table>
+            </div>
+      </div>
+        <div class="current-tab-content" style="border:1px solid white;display:none" >
+
       <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
         <tr>
           <td width="57%"><div class="grid-table" style="padding-bottom:0em;">
@@ -162,6 +312,11 @@ $(function() {
           <td width="43%" style="vertical-align:top; background:#F1E9F6; padding-left:5px;">
           <div class="index-tab-content1" style="width:100%; height:100%; display:none;" >
               <table class="managetask">
+               <tr>
+                    <td colspan="2">
+                      <a href="#"><img class="close" src="/images/delete.png" style="float:right"/></a>
+                    </td>
+                  </tr>
                 <tr align="left">
                   <td width="35%"><span style="font-weight:bold;">Compliance Task:</span></td>
                   <td width="65%"><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png"> FORM I - Half yearly returns Submission</abbr></td>
@@ -225,6 +380,11 @@ $(function() {
             </div>
             <div class="archive-tab-content1" style=" width:100%; height:100%;  " >
               <table class="managetask">
+               <tr>
+                    <td colspan="2">
+                      <a href="#"><img class="close" src="/images/delete.png" style="float:right"/></a>
+                    </td>
+                  </tr>
                 <tr align="left">
                   <td width="35%" ><span style="font-weight:bold;">Compliance Task:</span></td>
                   <td width="65%"><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"><img src="/images/icon-info.png"> FORM II - Registration</abbr></td>
@@ -283,6 +443,11 @@ $(function() {
             </div>
             <div class="concurrence-tab-content1" style=" width:100%; height:100%; display:none;" >
               <table class="managetask">
+               <tr>
+                    <td colspan="2">
+                      <a href="#"><img class="close" src="/images/delete.png" style="float:right"/></a>
+                    </td>
+                  </tr>
                 <tr align="left">
                   <td width="35%" ><span style="font-weight:bold;">Compliance Task :</span></td>
                   <td width="65%"><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"><img src="/images/icon-info.png"> FORM III - Undertaking submission </abbr></td>
@@ -335,6 +500,7 @@ $(function() {
             </div></td>
         </tr>
       </table>
+      </div>
       <div class="clearfix"></div>
     </div>
   </div>
@@ -348,6 +514,8 @@ $(function(){
 		$(".index-tab-content1").show();
 		$(".archive-tab-content1").hide();
 		$(".concurrence-tab-content1").hide();
+    $(".main-tab-content").hide();
+    $(".current-tab-content").show();
 	})
 	$(".concurrence-tab").click(function() {
 		$(".concurrence-tab").addClass("active1")
@@ -356,6 +524,8 @@ $(function(){
 		$(".index-tab-content1").hide();
 		$(".archive-tab-content1").hide();
 		$(".concurrence-tab-content1").show();
+    $(".main-tab-content").hide();
+    $(".current-tab-content").show();
 	})
 	$(".archive-tab").click(function() {
 		$(".archive-tab").addClass("active1")
@@ -364,6 +534,8 @@ $(function(){
 		$(".index-tab-content1").hide();
 		$(".concurrence-tab-content1").hide();
 		$(".archive-tab-content1").show();
+    $(".main-tab-content").hide();
+    $(".current-tab-content").show();
 	})
 	
 });

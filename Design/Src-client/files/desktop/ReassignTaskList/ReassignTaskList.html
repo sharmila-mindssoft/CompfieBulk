@@ -1,5 +1,65 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+<style type="text/css">
+  .smallfont td
+  {
+    font-size: 0.75em !important;
+  }
+  .largefont td
+  {
+   font-size: 1.0em;
+ }
+
+ .tree,
+ .tree ul {
+  margin:0 0 0 1em; /* indentation */
+  padding:0;
+  list-style:none;
+  color:#369;
+  position:relative;
+}
+
+.tree ul {margin-left:.5em} /* (indentation/2) */
+
+.tree:before,
+.tree ul:before {
+  content:"";
+  display:block;
+  width:0;
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  border-left:1px solid;
+}
+
+.tree li {
+  margin:0;
+  padding:0 1.5em; /* indentation + .5em */
+  line-height:2em; /* default list item's `line-height` */
+  font-weight:bold;
+  position:relative;
+}
+
+.tree li:before {
+  content:"";
+  display:block;
+  width:10px; /* same with indentation */
+  height:0;
+  border-top:1px solid;
+  margin-top:-1px; /* border top width */
+  position:absolute;
+  top:1em; /* (line-height/2) */
+  left:0;
+}
+
+.tree li:last-child:before {
+  background:white; /* same with body background */
+  height:auto;
+  top:1em; /* (line-height/2) */
+  bottom:0;
+}
+</style>
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
 <script src="/files/desktop/common/js/tooltip/tipso.js"></script>
 <div class="content-container">
@@ -33,19 +93,13 @@
           <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="unit" value="" autofocus placeholder="Enter Unit Code - Unit Name" ></div>
         </div>
         <div class="input-row">
-        <div class="field-label">Compliance Task:</div>
+          <div class="field-label">Compliance Task:</div>
           <div class="field-input">
             <input type="text" class="input-box icon-autocomplete" id="taskname" autofocus placeholder="Enter Compliance Task Name">
           </div>
         </div>
-
-
-
       </div>
       <div class="input-row-right">
-
-
-
         <div class="input-row">
           <div class="field-label">User :</div>
           <div class="field-input">
@@ -94,83 +148,112 @@
         <table style="border:1px dotted #CCCCCC;" class="filtertable">
           <tr align="left" style="height:30px;">
             <th style="background:#ccc;" width="3%" align="center" >#</th>
-            <th style="background:#ccc;" width="20%" >Compliance Task </th>                      
+            <th style="background:#ccc;" width="18%" >Unit</th>
+            <th style="background:#ccc;" width="15%" >Compliance Task </th>  
+            <th style="background:#ccc;" width="9%" >Due Date </th>                   
             <th style="background:#ccc;" width="15%" >Assignee </th>
-            <th style="background:#ccc;" width="12%" >Due Date </th>
-            <th style="background:#ccc;" width="12%">Completion Date</th>
-            <th style="background:#ccc;" width="12%">Validity Date </th>
-            <th style="background:#ccc;" width="14%">Remarks </th>
+
+            <th style="background:#ccc;" width="12%">Reassign date </th>
+            <th style="background:#ccc;" width="14%">Reassigned From</th>
+            <th style="background:#ccc;" width="14%">Reason </th>
 
           </tr>
-          <tr align="left"><td colspan="8">
-            <div class="heading"><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai">Unit: RG1008 - Branch Office - 1</abbr></div>
-          </td></tr>
-          <tr >
-            <td align="center">1</td>
-            <td  width="25%">FORM I - Half yearly returns Submission</td>            
-            <td>EMP1007 - Sivaraman</td>
-            <td>25-Aug-2015</td>
-            <td>25-Aug-2015</td>
-            <td>24-Aug-2016</td>
-            <td>Content Goes Here</td>
+        <!--   <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+            <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="1%"  class="gt"></th>
+              <th colspan="2" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Batteries Act<span><img src="/images/chevron_black_down.png"></span></th>
+            </tr> -->
+            <tr class="largefont" >
+              <td  align="center">1</td>
+              <td>RG1008 - Branch Office - 1</td>
+              <td  >FORM I - Half yearly returns Submission</td>       
+              <td>25-Aug-2015</td>     
+              <td>EMP1004 - Ramasubbu</td>
+              <td>24-Aug-2015</td>
+              <td>EMP1002 - Rajkumar</td>
 
-          </tr>
+              <td>Content Goes Here</td>
 
-          <tr>
-            <td align="center">2</td>
-            <td>FORM II - Registration</td>
-            <td>EMP1011 - Vignesh</td>
-            <td>20-Aug-2015</td>
-            <td>20-Aug-2015</td>
-            <td>20-Aug-2016</td>
-             <td>Content Goes Here</td>
+            </tr>
+
+            <tr class="smallfont" style="background-color:#eae8e8; color:#000000;" ><td colspan="4" align="right"><span><img src="/images/right_arrow.png"></span></td>  
+
+              <td>EMP1002 - Rajkumar</td>  
+              <td>02-Aug-2015</td>        
+              <td>EMP1019 - Krishna</td>
+
+              <td>Content Goes Here</td></tr>
+
+              <tr class="smallfont" style="background-color:#eae8e8; color:#000000;" ><td colspan="4" align="right"><span><img src="/images/right_arrow.png"></span></td>  
+                <td>EMP1019 - Krishna</td>
+                <td>10-Aug-2015</td>
+                <td>EMP1006 - Rajuram</td>
+                <td>Content Goes Here</td>
+              </tr>
+
+               <tr class="smallfont" style="background-color:#eae8e8; color:#000000;" >
+                  <td colspan="4" align="right"><span><img src="/images/right_arrow.png"></span></td>
+                  <td>EMP1006 - Rajuram</td>                  
+                  <td>17-Aug-2015</td>
+                  <td>EMP1017 - Sivaram</td>
+                  <td>Content Goes Here</td>
+                </tr>
+
+                  <tr  class="largefont">
+                    <td  align="center">2</td>
+                    <td>RG1008 - Branch Office - 1</td>
+                    <td>FORM II - Registration</td>
+                    <td>12-Sep-2015</td>
+                    <td>EMP1011 - Vignesh</td>
+                    <td>04-Sep-2015</td>
+                    <td>EMP1012 - Krishnakumar</td>
+
+                    <td>Content Goes Here</td>
 
 
-          </tr>
-          <tr >
+                  </tr>
+         <!--  <tr style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;"  >
             <td align="center">3</td>
-            <td  width="25%">FORM IV -  Dealer Registration</td>            
+             <td> RG1009 - Branch Office - 2</td>
+            <td  >FORM IV -  Dealer Registration</td>            
             <td>EMP1017 - Ragurajan</td>
             <td>25-Aug-2015</td>
             <td>22-Aug-2015</td>
             <td>24-Aug-2016</td>
              <td>Content Goes Here</td>
-
+<td><span><img src="/images/chevron_black_right.png"></span></td>
 
           </tr>
 
-          <tr align="left"><td colspan="8">
-            <div class="heading"><abbr class="page-load tipso_style" title="28,Ramnagar, Delhi">Unit: RG1009 - Branch Office - 2</abbr></div>
-          </td></tr>
-
-          <tr>
+          <tr style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" >
             <td align="center">4</td>
+             <td> RG1008 - Branch Office - 1</td>
             <td>FORM III - Undertaking submission </td>    
             <td>EMP1007 - Sivaraman</td>
             <td>31-Aug-2015</td>
             <td>30-Aug-2015</td>
             <td>31-Aug-2016</td>
               <td>Content Goes Here</td>
-
+<td><span><img src="/images/chevron_black_right.png"></span></td>
 
           </tr>
-          <tr>
+          <tr style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" >
             <td align="center">5</td>
+             <td>RG1009 - Branch Office - 2</td>
             <td>FORM VII - Recycler Half yearly returns</td>    
             <td>EMP1007 - Sivaraman</td>
             <td>05-Sep-2015</td>
             <td>04-Sep-2015</td>
             <td>05-Sep-2016</td>
              <td>Content Goes Here</td>
+<td><span><img src="/images/chevron_black_right.png"></span></td>
+</tr> -->
+</table>
 
-          </tr>
-        </table>
 
-
-        <p>Total : 5 entries</p>
-      </div>
-    </div>
-  </div>
+<p>Total : 2 records</p>
+</div>
+</div>
+</div>
 </div>
 <script>
   $(function(){
