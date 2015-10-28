@@ -1,0 +1,218 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
+<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Reassign Compliance Task Details <span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Country<span class="mandatory">*</span>:</div>
+          <div class="field-input">
+            <select class="input-box">
+              <option selected="selected">India</option>
+              <option>Sri Lanka</option>
+              <option>Singapore</option>
+              <option>Malaysia</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Domain:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="domain"  placeholder="Enter Domain" value="Industrial Law">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Act:</div>
+          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="act" autofocus placeholder="Enter Act" ></div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Unit:</div>
+          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="unit" value="" autofocus placeholder="Enter Unit Code - Unit Name" ></div>
+        </div>
+        <div class="input-row">
+        <div class="field-label">Compliance Task:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="taskname" autofocus placeholder="Enter Compliance Task Name">
+          </div>
+        </div>
+
+
+
+      </div>
+      <div class="input-row-right">
+
+
+
+        <div class="input-row">
+          <div class="field-label">User :</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="user" autofocus placeholder="Enter User">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">From:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="fromdate" autofocus placeholder="dd-mon-yyyy">
+          </div>
+        </div>
+
+        <div class="input-row">
+          <div class="field-label">To:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="todate" autofocus placeholder="dd-mon-yyyy">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Status:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="status" autofocus placeholder="Enter Status">
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+        <input type="submit" name="cancel" value="Export" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table-rpt">
+        <h1>Reassign Compliance Task Details</h1>
+        <div style="margin-left:15%">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country:<span style="margin-left:10px; font-weight:bold;">India</span> </div>
+            <div style="margin-left:10px; font-size:0.8em;padding-bottom:1em;">Domain:<span style="margin-left:10px; font-weight:bold;">Industrial Law</span> </div>
+
+          </div>
+          <div style="float:right; margin-right:20%;">
+            <div style="margin-left:10px; font-size:0.8em;padding-bottom:1em;">Act:<span style="margin-left:10px; font-weight:bold;">Batteries Act</span> </div>
+            <div style="margin-left:10px; font-size:0.8em;padding-bottom:1em;">&nbsp;<span style="margin-left:10px; font-weight:bold;">&nbsp;</span> </div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+        <table style="border:1px dotted #CCCCCC;" class="filtertable">
+          <tr align="left" style="height:30px;">
+            <th style="background:#ccc;" width="3%" align="center" >#</th>
+            <th style="background:#ccc;" width="20%" >Compliance Task </th>                      
+            <th style="background:#ccc;" width="15%" >Assignee </th>
+            <th style="background:#ccc;" width="12%" >Due Date </th>
+            <th style="background:#ccc;" width="12%">Completion Date</th>
+            <th style="background:#ccc;" width="12%">Validity Date </th>
+            <th style="background:#ccc;" width="14%">Remarks </th>
+
+          </tr>
+          <tr align="left"><td colspan="8">
+            <div class="heading"><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai">Unit: RG1008 - Branch Office - 1</abbr></div>
+          </td></tr>
+          <tr >
+            <td align="center">1</td>
+            <td  width="25%">FORM I - Half yearly returns Submission</td>            
+            <td>EMP1007 - Sivaraman</td>
+            <td>25-Aug-2015</td>
+            <td>25-Aug-2015</td>
+            <td>24-Aug-2016</td>
+            <td>Content Goes Here</td>
+
+          </tr>
+
+          <tr>
+            <td align="center">2</td>
+            <td>FORM II - Registration</td>
+            <td>EMP1011 - Vignesh</td>
+            <td>20-Aug-2015</td>
+            <td>20-Aug-2015</td>
+            <td>20-Aug-2016</td>
+             <td>Content Goes Here</td>
+
+
+          </tr>
+          <tr >
+            <td align="center">3</td>
+            <td  width="25%">FORM IV -  Dealer Registration</td>            
+            <td>EMP1017 - Ragurajan</td>
+            <td>25-Aug-2015</td>
+            <td>22-Aug-2015</td>
+            <td>24-Aug-2016</td>
+             <td>Content Goes Here</td>
+
+
+          </tr>
+
+          <tr align="left"><td colspan="8">
+            <div class="heading"><abbr class="page-load tipso_style" title="28,Ramnagar, Delhi">Unit: RG1009 - Branch Office - 2</abbr></div>
+          </td></tr>
+
+          <tr>
+            <td align="center">4</td>
+            <td>FORM III - Undertaking submission </td>    
+            <td>EMP1007 - Sivaraman</td>
+            <td>31-Aug-2015</td>
+            <td>30-Aug-2015</td>
+            <td>31-Aug-2016</td>
+              <td>Content Goes Here</td>
+
+
+          </tr>
+          <tr>
+            <td align="center">5</td>
+            <td>FORM VII - Recycler Half yearly returns</td>    
+            <td>EMP1007 - Sivaraman</td>
+            <td>05-Sep-2015</td>
+            <td>04-Sep-2015</td>
+            <td>05-Sep-2016</td>
+             <td>Content Goes Here</td>
+
+          </tr>
+        </table>
+
+
+        <p>Total : 5 entries</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(function(){
+    $('#taskname').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+        term = term.toLowerCase();
+        var choices = ['FORM I - Half yearly returns Submission', 'FORM II - Registration', 'FORM III - Undertaking submission ', 'FORM IV - Dealer Registration', 'FORM V - Dealer Half yearly returns '];
+        var suggestions = [];
+        for (i=0;i<choices.length;i++)
+          if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+        suggest(suggestions);
+      }
+    });
+    $('#tasktype').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+        term = term.toLowerCase();
+        var choices = ['Recurring', 'One Time'];
+        var suggestions = [];
+        for (i=0;i<choices.length;i++)
+          if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+        suggest(suggestions);
+      }
+    });
+    $('#domain').autoComplete({
+      minChars: 1,
+      source: function(term, suggest){
+        term = term.toLowerCase();
+        var choices = ['Industrial Law', 'Finance Law', 'Labour Law'];
+        var suggestions = [];
+        for (i=0;i<choices.length;i++)
+          if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+        suggest(suggestions);
+      }
+    });
+
+  });
+jQuery(window).load(function(){
+  jQuery('.page-load').tipso({
+    tooltipHover: true
+  });
+});
+</script> 
+{% endblock %}

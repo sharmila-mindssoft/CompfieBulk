@@ -322,7 +322,7 @@ input.radio:checked ~ label {
       img_name = "/images/dash-list/escalations.png";
       name = $("#hidden").val();
     
-    	var htmlstr = '<div style="'+margin_style+'"><h2 style="margin-left:10px;font-size:20px">'+name+' for the year 2012</h2><br><img src='+img_name+'></div>';
+    	var htmlstr = '<div style="'+margin_style+'"><h2 style="margin-left:10px;font-size:20px">'+name+' for the year 2012</h2><br><img src='+img_name+' style="margin-left:3px;" ></div>';
        $(function () {
         $('#container').html(htmlstr);
     });
@@ -432,7 +432,8 @@ input.radio:checked ~ label {
                         min: 0,
                         title: {
                             text: 'Total Compliances'
-                        }
+                        },
+                        allowDecimals: false
                     },
                     tooltip: {
                         headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
