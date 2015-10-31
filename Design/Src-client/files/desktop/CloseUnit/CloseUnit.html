@@ -15,7 +15,7 @@
     font-size: 0.813em;
   }
 </style>
-  <div class="content-container width70">
+  <div class="content-container width75">
   <div class="content-area">
       <h1> Unit closure</h1>
       <div class="filters-and-search">
@@ -29,13 +29,15 @@
             <th>Business Group</th>
             <th>Legal Entity</th>
             <th>Division</th>
-            <th>Unit</th>
+            <th width="22%">Unit</th>
+             <th width="22%">Unit Address</th>
             <th align="center" style="padding-right:5px;">
               Close
             </th>
         </tr>
          <tr>
           <td align="center"></td>
+          <td><input type="text" class="filter-text-box"></td>
           <td><input type="text" class="filter-text-box"></td>
           <td><input type="text" class="filter-text-box"></td>
           <td><input type="text" class="filter-text-box"></td>
@@ -47,17 +49,17 @@
           <td>RG Business Group 1</td>
           <td>RG Entity 1</td>
           <td>RG Division 1</td>
-          <td>
-            <abbr class="page-load tipso_style" title="871, KK Nagar, Madurai, 625020"><img src="/images/icon-info.png" ></abbr> RG1034 - RG Madurai Unit
-          </td>
-          <td><input type="button" class="btn-submit" value="Close" onClick="$('.modal').toggleClass('active');"/></td>          
+          <td>RG1034 - RG Madurai Unit</td>
+           <td>142, North Street, Madurai-625001</td>
+          <td align="center"><img src="images/deletebold.png" title="close" onClick="$('.modal').toggleClass('active');"/></td>          
         </tr>
         <tr>
           <td align="center">2</td>
           <td>RG Business Group 1</td>
           <td>RG Entity 2</td>
           <td>RG Division 2</td>
-          <td><abbr class="page-load tipso_style" title="16, North Street, Dindugal, 624001"><img src="/images/icon-info.png" ></abbr> RG1035 - RG Dindugal Unit</td>
+          <td>RG1035 - RG Dindugal Unit</td>
+           <td>8/69, Collectorate Road, Dindugal-624015</td>
           <td>Closed</td>          
         </tr>
         <tr>
@@ -65,16 +67,18 @@
           <td>RG Business Group 1</td>
           <td>RG Entity 2</td>
           <td>RG Division 3</td>
-          <td><abbr class="page-load tipso_style" title="28,Ramnagar, Chennai, 600002"><img src="/images/icon-info.png" ></abbr> RG1036 - RG Chennai Unit</td>
-          <td><input type="button" class="btn-submit" value="Close" onClick="$('.modal').toggleClass('active');"/></td>          
+          <td>RG1036 - RG Chennai Unit</td>
+           <td>5-55, North Street, Chennai-600002</td>
+          <td align="center"><img src="images/deletebold.png" title="close" onClick="$('.modal').toggleClass('active');"/></td>               
         </tr>
         <tr>
           <td align="center">4</td>
           <td>RG Business Group 2</td>
           <td>RG Entity 3</td>
           <td>RG Division 4</td>
-          <td><abbr class="page-load tipso_style" title="18, Main road, Bangalore, 560001"><img src="/images/icon-info.png" ></abbr> RG1036 - RG Bangalore Unit</td>
-          <td><input type="button" class="btn-submit" value="Close" onClick="$('.modal').toggleClass('active');"/></td>          
+          <td> RG1036 - RG Bangalore Unit</td>
+           <td>8/699, West Street,  Bangalore-560001</td>
+           <td align="center"><img src="images/deletebold.png" title="close" onClick="$('.modal').toggleClass('active');"/></td>         
         </tr>
       </table>
     </div>
