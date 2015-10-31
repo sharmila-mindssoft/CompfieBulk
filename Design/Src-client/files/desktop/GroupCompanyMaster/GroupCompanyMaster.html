@@ -106,7 +106,11 @@ textarea.input-box {
               <input id="businessgroup-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Business Group Name">
               <span style="font-size:10px"><a href="#" id="businessgroup-new">New</a></span> </div>
           </div>
-          <div class="input-row">
+      
+            
+        </div>
+        <div class="input-row-right">
+            <div class="input-row">
             <div class="single-column-field-label">Legal Entity:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
               <Select id="entity-select" class="input-box">
@@ -128,9 +132,15 @@ textarea.input-box {
               <input id="division-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Division Name">
               <span style="font-size:10px"><a href="#" id="division-new">New</a></span> </div>
           </div>
+         
+          
             
+        
+          
         </div>
-        <div class="input-row-right">
+        <div class="clearfix"></div>
+        <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px;">Settings</div>
+        <div class="input-row-left">
           <div class="input-row">
             <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
@@ -149,21 +159,6 @@ textarea.input-box {
               <input type="file" class="input-box" style="width:200px;">
             </div>
           </div>
-         
-          <div class="input-row">
-            <div class="single-column-field-label">Unit Code Auto Generate:</div>
-              <div class="field-input" style="margin-top:5px;">
-                 <input type="checkbox" class="unitcode_checkbox" checked="checked">
-              </div>
-          </div>
-        
-            
-        
-          
-        </div>
-        <div class="clearfix"></div>
-        <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px;">Settings</div>
-        <div class="input-row-left">
 
           <div class="input-row">
             <div class="single-column-field-label">Contract From:<span class="mandatory">*</span></div>
@@ -177,14 +172,15 @@ textarea.input-box {
               <input type="text" class="input-box" placeholder=""  value="10-Sep-2020" style="width:200px;">
             </div>
           </div>
-           <div class="input-row">
+       
+        </div>
+        <div class="input-row-right">
+            <div class="input-row">
             <div class="single-column-field-label">Number of user licence:<span class="mandatory">*</span></div>
             <div class="field-input">
               <input type="text" class="input-box" placeholder="Number of user licence"  value="10" style="width:200px;">
             </div>
           </div>
-        </div>
-        <div class="input-row-right">
           <div class="input-row">
             <div class="single-column-field-label">File Space:<span class="mandatory">*</span></div>
             <div class="field-input">
@@ -222,6 +218,16 @@ textarea.input-box {
           </div> -->
         </div>
         <div class="add-container" style="padding-left:0px; padding-right:0px;">
+
+     <!--    <div class="input-row">
+            <div class="single-column-field-label">Unit Code Auto Generate:</div>
+              <div class="field-input" style="margin-top:5px;">
+                 <input type="checkbox" class="unitcode_checkbox" checked="checked">
+              </div>
+          </div> -->
+        
+
+
         <span class="error-message" style="padding-right:5px;padding-bottom:5px;"><a href="#"><img src="/images/icon-plus.png" formtarget="_self"/></a> </span>
          <div class="grid-table">
             <table class="btable">
@@ -232,7 +238,7 @@ textarea.input-box {
               <th width="11%">Geography Level</th>
               <th width="17%">Unit Location</th>
               
-              <th width="8%">Unit Code</th>
+              <th width="8%">Unit Code<input type="checkbox" class="unitcode_checkbox" checked="checked" alt="Unit Code Auto Generate"></th>
               <th width="13%">Unit Name</th>
               <th width="10%">Type</th>
               <th width="15%">Unit Address</th>
