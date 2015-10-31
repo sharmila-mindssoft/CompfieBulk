@@ -21,6 +21,10 @@
   #inactiveid{
     cursor:pointer;
   }
+  .btable th
+  {
+    font-size: 0.813em !important;
+  }
 </style>
 <script type="text/javascript">
         $(document).ready(function () {
@@ -235,17 +239,15 @@ textarea.input-box {
               <td colspan="9" align="left">Country : <input type="text" class="input-box icon-autocomplete" value="India" style="width:150px !important; background-color:#fff;" /></td>
               </tr>
               <tr align="left">
-              <th width="11%">Geography Level</th>
-              <th width="17%">Unit Location</th>
-              
-              <th width="8%">Unit Code<input type="checkbox" class="unitcode_checkbox" checked="checked" alt="Unit Code Auto Generate"></th>
-              <th width="13%">Unit Name</th>
-              <th width="10%">Type</th>
-              <th width="15%">Unit Address</th>
-              <th width="7%">Postal Code</th>
-              <th width="10%">Domain</th>
-              <th width="5%" style="padding-right:5px">Status</th>
-              
+                <th width="11%">Geography Level</th>
+                <th width="17%">Unit Location</th>
+                <th width="10%"><span style="float:left; padding-top:3px;">Unit Code</span><span style="float:left;"><input type="checkbox" class="unitcode_checkbox" checked="checked" title="Unit Code Auto Generate"></span></th>
+                <th width="13%">Unit Name</th>
+                <th width="10%">Type</th>
+                <th width="15%">Unit Address</th>
+                <th width="7%">Postal Code</th>
+                <th width="10%">Domain</th>
+                <th width="5%" style="padding-right:5px">Status</th>
               </tr>
               <tr>
                 <td><select class="input-box">
