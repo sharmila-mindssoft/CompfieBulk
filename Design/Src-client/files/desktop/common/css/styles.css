@@ -452,7 +452,7 @@ img, object {
 }
 .grid-table table tr td img.inactive {
 	/*width: 1em;*/
-	cursor: default;
+	cursor: pointer;
 }
 .grid-table table tr:nth-child(even) {
 	background: #f1e9f6;
