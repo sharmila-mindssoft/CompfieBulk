@@ -14,7 +14,7 @@ $(document).ready(function(){
 })
 
  $(function() {
-  //$('#text_area').hide();
+  $('#text_area').hide();
 
    $('#clientdecision').change(function () {
     if($(this).is(':checked')){
@@ -66,17 +66,18 @@ $('#ch2').change(function () {
       $('#client2textarea').hide();
     
     }else{
-      $('#client2textarea').show();    
+      $('#client2textarea').show();
+    
     }
   });
 $('#ch3').change(function () {
     $('#client3textarea').toggle();
     $('#client3remarks').toggle();
   });
-// $('#ch6').change(function () {
-//     $('#client6textarea').toggle();
-//     $('#client6remarks').toggle();
-//   });
+$('#ch6').change(function () {
+    $('#client6textarea').toggle();
+    $('#client6remarks').toggle();
+  });
 $('#ch4').change(function () {
     if($(this).is(':checked')){
       $('#client4textarea').hide();
@@ -93,31 +94,11 @@ $('#ch5').change(function () {
     
     }
   });
-$('#ch6').change(function () {
-    if($(this).is(':checked')){
 
-      $('#client6textarea').show();
-    
-    }else{
-      $('#client6textarea').hide();
-    
-    }
-  });
 $('#ch7').change(function () {
-    if($(this).is(':checked')){
-      $('#client7textarea').hide();
-    
-    }else{
-      $('#client7textarea').show();
-    
-    }
+     $('#client7textarea').toggle();
+      $('#client7remarks').toggle();
   });
-
-
-// $('#ch7').change(function () {
-//     $('#client7textarea').toggle();
-//     $('#client7remarks').toggle();
-//   });
    $('.not_applicable').change(function () {
     if($(this).is(':checked'))
       $('#text_area').show();
@@ -326,7 +307,9 @@ $('#ch7').change(function () {
                    <td align="center" class="gt"><input type="checkbox" checked="checked" id="ch2"><label for="ch2"></label></td>
                     <td>
                       <span id="client2textarea" style="display:none;" >
-                        <textarea  class="input-box" style="height:30px;"  placeholder="Enter Client decision"></textarea><br>
+                        <textarea  class="input-box" style="height:30px;"  placeholder="Enter Client decision">
+                          
+                        </textarea><br>
                         <span style="font-size:0.75em;">(max 500 characters)</span>
                       </span>
                     </td>
@@ -369,10 +352,12 @@ $('#ch7').change(function () {
                     <td>Whether registration and renewal obtained by recycler</td>
                     <td align="center"><img src="/images/deletebold.png"></td>
 
-                      <td align="center" class="gt"><input type="checkbox" checked="checked" class="not_applicable" id="ch6"><label for="ch6"></label></td>
+                      <td align="center" class="gt"><input type="checkbox" class="not_applicable" id="ch6"><label for="ch6"></label></td>
                     <td><span id="client6textarea">
-                      <textarea class="input-box"  style="height:30px;"  placeholder="Enter Remarks"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span>
-                      
+                      <textarea id="text_area" class="input-box" id="clienttextarea" style="height:30px;"  placeholder="Enter Reason"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span>
+                        <span id="client6remarks"><abbr class="page-load tipso_style" title="Remarks text goes here.">
+                        <img src="images/icon-info.png"/>
+                          Remarks text g...</abbr></span>
                       </td>
                   </tr>
                   <tr>
@@ -384,12 +369,15 @@ $('#ch7').change(function () {
                      <td align="center" class="gt"><input type="checkbox" id="ch7"><label for="ch7"></label></td>
                    <td>
                       <span id="client7textarea">
-                        <textarea class="input-box" style="height:30px;"  placeholder="Enter Remarks"></textarea>
+                        <textarea class="input-box" style="height:30px;display:hidden"  placeholder="Enter client decision"></textarea>
                         <br>
                         <span style="font-size:0.75em;display:hidden">(max 500 characters)
                         </span>
                       </span>
-                     
+                      <span id="client7remarks">
+                        <abbr class="page-load tipso_style" title="Remarks text goes here.">
+                        <img src="images/icon-info.png"/>
+                          Remarks text g...</abbr></span>
                     </td>
                   </tr>
                  
@@ -483,9 +471,9 @@ $('#ch7').change(function () {
 $(document).ready(function() {
     // $("#section-flip-1").show();
     // $("#section-flip-4").hide();
-    //$('#client7textarea').hide();
+    $('#client7textarea').hide();
     $('#client3textarea').hide();
-    //$('#client6textarea').hide();
+    $('#client6textarea').hide();
     jQuery(window).load(function(){
       jQuery('.page-load').tipso({
        tooltipHover: true
