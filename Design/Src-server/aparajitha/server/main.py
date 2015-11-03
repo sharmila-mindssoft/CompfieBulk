@@ -519,6 +519,8 @@ TEMPLATE_PATHS = [
         None, {}),
     ("/report/reassigntask", "files/desktop/ReassignTaskList/ReassignTaskList.html",
         None, {}),
+    ("/previousentryform", "files/desktop/PreviousEntryForm/PreviousEntryForm.html",
+        None, {}),
 ]
 
 
