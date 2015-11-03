@@ -1,0 +1,260 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
+<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Previous Entry Form<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Country<span class="mandatory">*</span>:</div>
+          <div class="field-input">
+            <select class="input-box">
+              <option selected="selected">India</option>
+              <option>Sri Lanka</option>
+              <option>Singapore</option>
+              <option>Malaysia</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Business Group:<span class="mandatory">*</span></div>
+          <div class="field-input">
+           <select class="input-box">
+            <option selected="selected">RG Business Group 1</option>
+            <option>RG Business Group 2</option>
+            <option>RG Business Group 3</option>
+          </select>
+          </div>
+      </div> 
+      <div class="input-row">
+        <div class="field-label">Legel Entity:<span class="mandatory">*</span></div>
+        <div class="field-input">
+         <select class="input-box">
+          <option selected="selected">RG Entity 1</option>
+          <option>RG Entity 2</option>
+          <option>RG Entity 3</option>
+        </select>
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="field-label">Division:<span class="mandatory">*</span></div>
+      <div class="field-input">
+       <select class="input-box">
+        <option selected="selected">RG Division 1</option>
+        <option>RG Division 2</option>
+        <option>RG Division 3</option>
+      </select>
+    </div>
+  </div>
+  <div class="input-row">
+    <div class="field-label">Unit:<span class="mandatory">*</span></div>
+    <div class="field-input">      
+      <select class="input-box">
+        <option selected="selected">RG1001 - Corporate Office</option>
+        <option>RG1002 - Regional Office - North</option>
+        <option>RG1003 - Regional Office - South</option>
+        <option>RG1004 - Branch Office - 1</option>
+        <option>RG1005 - Branch Office - 2</option>
+        <option>RG1006 - Branch Office - 3</option>
+        <option>RG1007 - Branch Office - 4</option>
+      </select>
+    </div>
+  </div>
+</div>
+<div class="input-row-right">
+ <div class="input-row">
+  <div class="field-label">Domain:<span class="mandatory">*</span></div>
+  <div class="field-input">
+    <select class="input-box">
+      <option >Finance Law</option>
+      <option selected="selected">Industrial Law</option>
+      <option>Labour Law</option>
+    </select>
+  </div>
+</div>
+
+
+ <div class="input-row">
+  <div class="field-label">Industry Type:<span class="mandatory">*</span></div>
+  <div class="field-input">
+    <select class="input-box">
+      <option selected="selected">Factory</option>
+      <option>Office</option>
+      <option>Plantation</option>
+      <option>Contractor</option>
+      <option>Mines</option>
+      
+    </select>
+  </div>
+</div>
+
+<div class="input-row">
+  <div class="field-label">Act:</div>
+  <div class="field-input">
+    <select class="input-box">
+    <option>Select</option>
+      <option >Batteries Act</option>
+      <option>Industrial Law</option>
+      <option>Labour Law</option>
+    </select>
+  </div>
+</div>
+
+<div class="input-row">
+  <div class="field-label">Frequency:</div>
+  <div class="field-input">
+    <select class="input-box">
+    <option>Select</option>
+      <option >One Time</option>
+      <option>Periodical</option>
+      <option>Review</option>
+      <option>On Occurance</option>
+    </select>
+  </div>
+</div>
+
+</div>
+<div class="submit-button-container">
+  <input type="submit" name="cancel" value="Show" class="btn-submit">
+  
+</div>
+<div class="clearfix"></div>
+<div class="grid-table-rpt">
+  
+  
+  <table cellpadding="0" cellspacing="0" width="100%" class="managetask">
+                  <tr align="left">
+                
+                    <td width="18%" style="background:#ccc;"  ><span style="font-weight:bold;">Compliance Tasks</span></td>
+                
+                    <td width="8%"  style="background:#ccc;"><span style="font-weight:bold;">Compliance Frequency</span></td>
+                    <td width="15%" style="background:#ccc;"colspan="4" ><span style="font-weight:bold;" >Statutory Date</span></td>
+                     <td width="12%" style="background:#ccc;" ><span style="font-weight:bold;">Due Date</span></td>
+                    <td width="13%" style="background:#ccc;" ><span style="font-weight:bold;">Completion Date</span></td>
+                   
+                    <td width="12%" style="background:#ccc;" ><span style="font-weight:bold;">Validity Date</span></td>
+
+<td width="12%" style="background:#ccc;" ><span style="font-weight:bold;">Document Upload</span></td>                  </tr>
+                  <tr >
+                    
+                    <td ><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM I - Half yearly returns Submission</td>
+                 
+                    <td>Periodical</td>
+                    <td colspan="4">Every Year 1st January</td>
+                   
+                    <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
+                     <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
+                    <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
+                    <td><input type="file" class="input-box" value=""/></td>
+                  </tr>
+                  <tr>
+                   
+                    <td><abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM II - Registration</td>
+                
+                    <td>One Time</td>   
+                    <td colspan="4"> 10th March</td>
+                  
+                    <td><input type="text" class="input-box" value="10-Mar-2016"/></td>
+                      <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
+                     <td></td>
+                     <td><input type="file" class="input-box" value=""/></td>
+                  </tr>
+                  <tr>
+                    
+                    <td><abbr class="page-load" title="Whether undertaking submitted by importer to authority."><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM III - Undertaking submission </td>
+                 
+                    <td>One Time</td>
+                    
+                     
+                    <td colspan="4"> 10th January</td>
+                   
+                   <td><input type="text" class="input-box" value="10-Jan-2016"/></td>
+                    <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
+                   
+                    <td></td>
+                    <td><input type="file" class="input-box" value=""/></td>
+                  </tr>
+                  <tr>
+                   
+                    <td><abbr class="page-load" title="Whether registration obtained for dealers"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM IV - Dealer Registration</td>
+                
+                    <td>One Time</td>
+                    <td colspan="4">10th January</td>
+                    
+                    <td><input type="text" class="input-box" value="10-Jan-2016"/></td>
+                 <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
+                     <td></td>            <td><input type="file" class="input-box" value=""/></td>      </tr>
+                  <tr>
+                   
+                    <td><abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM V - Dealer Half yearly returns</td>
+                
+                    <td>Periodical</td>
+                    <td colspan="4" >Every 31st March, 30th June, 20th September, 31th December</td>
+                    
+                  <td>
+                  <input type="text" class="input-box" value="31-Dec-2015"/></td>
+                  <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
+                     <td><input type="text" value="31-Dec-2015" class="input-box"/></td>
+                     <td><input type="file" class="input-box" value=""/></td>
+                  </tr>
+                  <tr>
+                   
+                    <td><abbr class="page-load" title="Whether registration and renewal obtained by recycler"><img src="/images/icon-info.png" style="margin-right:10px"> </abbr>FORM VI - Recycler Registration and Review</td>
+                
+                    <td>Periodical</td>
+                    <td colspan="4">Every 1st January</td>
+                    
+                    <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
+                 <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
+                    <td><input type="text" value="" class="input-box"/></td>
+                    <td><input type="file" class="input-box" value=""/></td>
+                  </tr>
+                  <tr>
+            
+                    <td><abbr class="page-load" title="Whether half yearly returns submitted by recyclers"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM VII - Recycler Half yearly returns</td>
+                  
+                    <td>Periodical</td>
+                    <td colspan="4">Every 30th June <br> 31st December</td>
+                   
+                    <td>
+                    <input type="text" class="input-box" value="31-Dec-2015"/></td>
+                  <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
+                    <td>
+                    <input type="text" class="input-box" value=""/></td>
+                    <td><input type="file" class="input-box" value=""/></td>
+                  </tr>
+                  <tr >
+            
+                    <td><abbr class="page-load" title="Whether half yearly returns submitted by bulk consumer"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM VIII - Bulk consumer half yearly returns</td>
+                  
+                    <td>Periodical</td>
+                    <td colspan="4">Every Month on 10th</td>
+                 
+                   <td><input type="text" class="input-box" value="10-Oct-2015"/></td>
+                   <td><input type="text" class="input-box" value="01-Jan-2016"/></td>
+                   <td><input type="text" value="10-Oct-2015" class="input-box"/></td>
+                   <td><input type="file" class="input-box" value=""/></td>
+                  </tr>
+                </table>
+
+
+
+
+                <div class="submit-button-container">
+           
+              <input type="submit" name="submit" value="Submit" class="btn-submit">
+            </div>
+</div>
+</div>
+</div>
+</div>
+<script>
+jQuery(window).load(function(){
+  jQuery('.page-load').tipso({
+    tooltipHover: true
+  });
+});
+</script> 
+{% endblock %}
