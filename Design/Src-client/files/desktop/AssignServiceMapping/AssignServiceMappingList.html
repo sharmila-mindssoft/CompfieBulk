@@ -2,7 +2,7 @@
 {% block content %}
   <div class="content-container" >
   <div class="content-area">
-      <h1>Assign Statutory List</h1>
+      <h1>Assign Statutory </h1>
       <div class="filters-and-search">
       <div class="btn-add"  onclick="location.href='/assignservicemapping'" formtarget="_self">Add</div>
     </div>
@@ -15,13 +15,16 @@
           <th>Group</th>
           <th>Business Group</th>
           <th>Legal Entity</th>
-          <th width="18%">Division</th>
-          <th width="18%">Unit</th>
-          
-          <th width="9%">Domain</th>
-           <th width="9%">Status</th>
+          <th >Division</th>
+		       
+		  <th >Location</th>
+		  <th >Industry</th>
+          <th width="12%">Unit</th>     
+          <th >Domain</th>
+          <th >Status</th>
           
           <th align="center" width="5%" style="padding-right:5px">Edit</th>
+             <th align="center" width="5%" style="padding-right:5px">View & Submit</th>
         </tr>
         <tr>
           <td align="center"></td>
@@ -33,7 +36,9 @@
           <td><input type="text" class="filter-text-box"></td>
           <td><input type="text" class="filter-text-box"></td>
           <td><input type="text" class="filter-text-box"></td>
-          
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td align="center"></td>
           <td align="center"></td>
         </tr>
           <tr>
@@ -43,12 +48,14 @@
           <td>VRM Business Group</td>
           <td>VRM & Sons</td>
           <td>Auto Parts - Manufacturing</td>
-          <td><a href="/assignservicemapping/editsubmit">VRM1005 - Branch Office 2</a></td>
-          
+        
+		  <td>Tamilnadu</td>
+		  <td>Factory</td>
+		    <td>VRM1005 - Branch Office 2</td>          
           <td>Industrial Law</td>
           <td>Submitted</td>
           <td align="center"></td>
-      
+       <td align="center"></td>
         </tr>
           
         <tr>
@@ -57,13 +64,15 @@
           <td>VRM Motors</td>
           <td>VRM Business Group</td>
           <td>VRM & Sons</td>
+		    
+		  <td>Tamilnadu</td>
+		  <td>Factory</td>
           <td>Auto Parts - Manufacturing</td>
-          <td><a href="/assignservicemapping/editsubmit">VRM1004 - Branch Office 1</td>
-          
+          <td>VRM1004 - Branch Office 1</td>          
           <td>Industrial Law</td>
           <td>Pending</td>
           <td align="center"><img src="/images/icon-edit.png" id="editid"   onclick="location.href='/assignservicemapping'"/></td>
-      
+          <td align="center"><img src="/images/icon-viewsubmit.png" onclick="location.href='/assignservicemapping/editsubmit'" /></td>      
         </tr>
         <tr>
           <td align="center">3</td>
@@ -72,10 +81,14 @@
            <td>ART Business Group</td>
           <td>ART Legal Entity</td>
           <td>ART Pvt Ltd</td>
-          <td><a href="/assignservicemapping/editsubmit">ART1004 - Regional Office 1</td>
-             <td>Industrial Law</td>
-        <td>Pending</td>
+		    
+		  <td>Tamilnadu</td>
+		  <td>Factory</td>
+          <td>ART1004 - Regional Office 1</td>
+          <td>Industrial Law</td>
+          <td>Pending</td>
           <td align="center"><img src="/images/icon-edit.png" id="editid"  onclick="location.href='/assignservicemapping'" /></td>
+          <td align="center"><img src="/images/icon-viewsubmit.png" onclick="location.href='/assignservicemapping/editsubmit'" /></td>          
         </tr>
         </table>
     </div>

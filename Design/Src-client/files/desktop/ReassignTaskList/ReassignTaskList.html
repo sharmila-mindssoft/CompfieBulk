@@ -17,6 +17,7 @@
   list-style:none;
   color:#369;
   position:relative;
+   margin-left:315px;
 }
 
 .tree ul {margin-left:.5em} /* (indentation/2) */
@@ -31,14 +32,16 @@
   bottom:0;
   left:0;
   border-left:1px solid;
+   
 }
 
 .tree li {
   margin:0;
-  padding:0 1.5em; /* indentation + .5em */
-  line-height:2em; /* default list item's `line-height` */
+  padding:0 0.5em; /* indentation + .5em */
+  line-height:1em; /* default list item's `line-height` */
   font-weight:bold;
   position:relative;
+
 }
 
 .tree li:before {
@@ -49,7 +52,7 @@
   border-top:1px solid;
   margin-top:-1px; /* border top width */
   position:absolute;
-  top:1em; /* (line-height/2) */
+  top:0.7em; /* (line-height/2) */
   left:0;
 }
 
@@ -65,7 +68,7 @@
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
-      <div class="add-container-heading">Reassign Compliance Task Details <span class="error-message"></span></div>
+      <div class="add-container-heading">Reassigned History<span class="error-message"></span></div>
       <div class="input-row-left">
         <div class="input-row">
           <div class="field-label">Country<span class="mandatory">*</span>:</div>
@@ -92,14 +95,15 @@
           <div class="field-label">Unit:</div>
           <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="unit" value="" autofocus placeholder="Enter Unit Code - Unit Name" ></div>
         </div>
+      
+      </div>
+      <div class="input-row-right">
         <div class="input-row">
           <div class="field-label">Compliance Task:</div>
           <div class="field-input">
             <input type="text" class="input-box icon-autocomplete" id="taskname" autofocus placeholder="Enter Compliance Task Name">
           </div>
         </div>
-      </div>
-      <div class="input-row-right">
         <div class="input-row">
           <div class="field-label">User :</div>
           <div class="field-input">
@@ -119,12 +123,12 @@
             <input type="text" class="input-box icon-autocomplete" id="todate" autofocus placeholder="dd-mon-yyyy">
           </div>
         </div>
-        <div class="input-row">
+        <!-- <div class="input-row">
           <div class="field-label">Status:</div>
           <div class="field-input">
             <input type="text" class="input-box icon-autocomplete" id="status" autofocus placeholder="Enter Status">
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Show" class="btn-submit">
@@ -132,7 +136,7 @@
       </div>
       <div class="clearfix"></div>
       <div class="grid-table-rpt">
-        <h1>Reassign Compliance Task Details</h1>
+        <h1>Reassigned History</h1>
         <div style="margin-left:15%">
           <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country:<span style="margin-left:10px; font-weight:bold;">India</span> </div>
@@ -148,12 +152,10 @@
         <table style="border:1px dotted #CCCCCC;" class="filtertable">
           <tr align="left" style="height:30px;">
             <th style="background:#ccc;" width="3%" align="center" >#</th>
-            <th style="background:#ccc;" width="18%" >Unit</th>
             <th style="background:#ccc;" width="15%" >Compliance Task </th>  
             <th style="background:#ccc;" width="9%" >Due Date </th>                   
             <th style="background:#ccc;" width="15%" >Assignee </th>
-
-            <th style="background:#ccc;" width="12%">Reassign date </th>
+            <th style="background:#ccc;" width="11%">Reassign date </th>
             <th style="background:#ccc;" width="14%">Reassigned From</th>
             <th style="background:#ccc;" width="14%">Reason </th>
 
@@ -162,10 +164,10 @@
             <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="1%"  class="gt"></th>
               <th colspan="2" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Batteries Act<span><img src="/images/chevron_black_down.png"></span></th>
             </tr> -->
+            <tr><td colspan="6"><span class="heading"><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai, 600002"><img src="/images/icon-info.png"></abbr> RG1008 - Branch Office - 1</span></td></tr>
             <tr class="largefont" >
-              <td  align="center">1</td>
-              <td>RG1008 - Branch Office - 1</td>
-              <td  >FORM I - Half yearly returns Submission</td>       
+              <td align="center">1</td>
+              <td>FORM I - Half yearly returns Submission</td>       
               <td>25-Aug-2015</td>     
               <td>EMP1004 - Ramasubbu</td>
               <td>24-Aug-2015</td>
@@ -174,40 +176,52 @@
               <td>Content Goes Here</td>
 
             </tr>
-
-            <tr class="smallfont" style="background-color:#eae8e8; color:#000000;" ><td colspan="4" align="right"><span><img src="/images/right_arrow.png"></span></td>  
-
-              <td>EMP1002 - Rajkumar</td>  
-              <td>02-Aug-2015</td>        
-              <td>EMP1019 - Krishna</td>
+			</table>
+			<ul class="tree">
+			<li>
+			<table>
+            <tr class="smallfont" style="background-color:#eae8e8; color:#000000;" ><td colspan="4" align="right"></td>  
+              <td width="28%">EMP1002 - Rajkumar</td>  
+              <td width="20%">02-Aug-2015</td>        
+              <td width="26%">EMP1019 - Krishna</td>
 
               <td>Content Goes Here</td></tr>
-
-              <tr class="smallfont" style="background-color:#eae8e8; color:#000000;" ><td colspan="4" align="right"><span><img src="/images/right_arrow.png"></span></td>  
-                <td>EMP1019 - Krishna</td>
-                <td>10-Aug-2015</td>
-                <td>EMP1006 - Rajuram</td>
+      </table></li>
+      <li><table>
+            <tr class="smallfont" style="background-color:#eae8e8; color:#000000;" ><td colspan="4" align="right"></td>  
+                <td width="28%">EMP1019 - Krishna</td>
+                <td width="20%">10-Aug-2015</td>
+                <td width="26%">EMP1006 - Rajuram</td>
                 <td>Content Goes Here</td>
               </tr>
-
+			  </table>
+</li>
+<li>
+<table>
                <tr class="smallfont" style="background-color:#eae8e8; color:#000000;" >
-                  <td colspan="4" align="right"><span><img src="/images/right_arrow.png"></span></td>
-                  <td>EMP1006 - Rajuram</td>                  
-                  <td>17-Aug-2015</td>
-                  <td>EMP1017 - Sivaram</td>
+                  <td colspan="4" align="right"></td>
+                  <td width="28%">EMP1006 - Rajuram</td>                  
+                  <td width="20%">17-Aug-2015</td>
+                  <td width="26%">EMP1017 - Sivaram</td>
                   <td>Content Goes Here</td>
                 </tr>
+</table></li>
+</ul>
+<br>
 
+
+
+<table>
                   <tr  class="largefont">
-                    <td  align="center">2</td>
-                    <td>RG1008 - Branch Office - 1</td>
-                    <td>FORM II - Registration</td>
-                    <td>12-Sep-2015</td>
-                    <td>EMP1011 - Vignesh</td>
-                    <td>04-Sep-2015</td>
-                    <td>EMP1012 - Krishnakumar</td>
+                    <td  width="3%" align="center">2</td>
+                   
+                    <td width="15%">FORM II - Registration</td>
+                    <td width="9%">12-Sep-2015</td>
+                    <td width="15%">EMP1011 - Vignesh</td>
+                    <td width="11%">04-Sep-2015</td>
+                    <td width="14%">EMP1012 - Krishnakumar</td>
 
-                    <td>Content Goes Here</td>
+                    <td width="14%">Content Goes Here</td>
 
 
                   </tr>
@@ -272,7 +286,7 @@
       minChars: 1,
       source: function(term, suggest){
         term = term.toLowerCase();
-        var choices = ['Recurring', 'One Time'];
+        var choices = ['Periodical', 'One Time'];
         var suggestions = [];
         for (i=0;i<choices.length;i++)
           if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);

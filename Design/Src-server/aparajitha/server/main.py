@@ -12,7 +12,7 @@ from collections import OrderedDict
 
 TEMPLATE_PATHS = [
     ("/", "files/desktop/Login/Login.html", "files/mobile/Login/Login.html", {}),
-    ("/index", "files/desktop/Login/index.html", "files/mobile/Login/index.html", {}),
+    ("/index", "files/desktop/Login/index.html", "files/mobile/index/index.html", {}),
     ("/login", "files/desktop/Login/Login.html",
         None, {}),
     ("/applicability/create", "files/desktop/Applicability_master/ApplicabilityMaster.html",
@@ -518,6 +518,8 @@ TEMPLATE_PATHS = [
     ("/company_profile", "files/desktop/CompanyProfile/CompanyProfile.html",
         None, {}),
     ("/report/reassigntask", "files/desktop/ReassignTaskList/ReassignTaskList.html",
+        None, {}),
+    ("/previousentryform", "files/desktop/PreviousEntryForm/PreviousEntryForm.html",
         None, {}),
 ]
 

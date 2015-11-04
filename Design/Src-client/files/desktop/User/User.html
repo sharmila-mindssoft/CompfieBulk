@@ -1,10 +1,17 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+<script type="text/javascript">
+        $(document).ready(function () {
+            window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
+         
+        });
+</script>
 <div class="content-container width70">
         <div class="content-area">
           <div class="add-container">
           <div class="add-container-heading">Users<span class="error-message"></span></div>
            <div class="input-row-left">
+           
               <div class="input-row">
                 <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
                 <div class="field-input"><input type="text" class="input-box" value="Sivaraman"></div>
@@ -43,7 +50,11 @@
               </div>
                <div class="input-row" >
                 <div class="field-label">Domain:<span class="mandatory">*</span></div>
-                <div class="field-input"><input type="text" class="input-box icon-autocomplete" placeholder="Enter Domain" value="Industrial Law">
+                <div class="field-input">  <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+              <option value="Labour Law" >Labour Law</option>
+              <option value="Industrial Law" >Industrial Law</option>
+              <option value="Finance">Finance</option>
+            </select>
                 </div>
               </div>
              

@@ -8,148 +8,171 @@
   });
 
   function loadForm(){
-     $("#insert-level").show();
-      $("#add").hide();
-  }
+   $("#insert-level").show();
+   $("#add").hide();
+ }
 
-  function hideForm(){
-     $("#insert-level").hide();
-      $("#add").show();
-  }
+ function hideForm(){
+   $("#insert-level").hide();
+   $("#add").show();
+ }
 
 </script>
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
-      <div class="add-container-heading">Client Profile List<span class="error-message"></span></div>
-       <div class="form-container-outer">
-            <div class="single-column-input-row">
-              <br>
-              <div class="input-row">
-                <div class="single-column-field-label">Client:<span class="mandatory">*</span></div>
-                <div class="single-column-field-input">
-                  <input type="text" class="input-box icon-autocomplete" style="width:200px" value="RG Groups"/>
-                </div>
-              </div>
+      <div class="add-container-heading">Client Profile<span class="error-message"></span></div>
+      <div class="form-container-outer">
+        <div class="single-column-input-row">
+          <br>
+          <div class="input-row">
+            <div class="single-column-field-label">Client:<span class="mandatory">*</span></div>
+            <div class="single-column-field-input">
+              <input type="text" class="input-box icon-autocomplete" style="width:200px" value="RG Groups"/>
             </div>
-            <div id="insert-level" class="input-row">
-              <br>
-              <div class="input-row-left">
-                <div class="field-label">Level</div>
-                <div class="field-input">
-                  <select class="input-box">
-                    <option>Level 1</option>
-                    <option>Level 2</option>
-                    <option>Level 3</option>
-                    <option>Level 4</option>
-                    <option>Level 5</option>
-                    <option>Level 6</option>
-                    <option>Level 7</option>
-                    <option>Level 8</option>
-                    <option>Level 9</option>
-                    <option>Level 10</option>
-                  </select>
-                </div>
-              </div>
-              <div class="input-row-right">
-                <div class="field-label">Title</div>
-                <div class="field-input">
-                  <input type="text" class="input-box" value="Sub District"/>
-                </div>
-              </div>
-              <div class="submit-button-container" style="margin-top:10px">
-                <input type="reset" name="cancel" value="Cancel" class="btn-cancel"  onclick="hideForm()" >&nbsp;&nbsp;
-                <input type="submit" name="submit" value="Submit" class="btn-submit">
-              </div>
-            </div>
-           <div class="grid-table">
-              <table>
-                <tr>
-                  <th width="4%">#</th>
-                  <th align="left" width="15%">Employee</th>
-                  <th align="left" width="10%">User Group</th>
-                  <th align="left" width="10%">User Level</th>
-                  <th align="left" width="20%">Seating Unit</th>
-                  <th align="center" width="7%">Status</th>
-                  <th align="center" width="9%">Promote Admin</th>
-                  
-                </tr> 
-                <tr>
-                  <td align="center">&nbsp;</td>
-                  <td><input type="text" name="location-name" class="filter-text-box"></td>
-                  <td><input type="text" name="district-name" class="filter-text-box"></td>
-                  <td><input type="text" name="region-name" class="filter-text-box"></td>
-                  <td><input type="text" name="region-name" class="filter-text-box"></td>
-                  <td align="center">&nbsp;</td>
-                  <td align="center">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="center">1</td>
-                  <td>EMP0010 - Hariharan</td>
-                  <td>Group 3</td>
-                  <td>Level 4</td>
-                  <td>
-                    <abbr class="page-load tipso_style" title="26, West Steet, New Delhi">
-                      <img src="/images/icon-info.png"/>
-                      VBM1001 - Corporate Office
-                    </abbr>
-                  </td>
-                  <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid"/></td>
-                  <td align="center"><a="#"><img src="/images/promote-active.png"title="Click here to inactivate" id="inactiveid" class="inactive"  /></a="#"></td>
-                </tr>
-                <tr>
-                  <td align="center">2</td>
-                  <td>EMP0012 - Sivaraman</td>
-                  <td>Manager</td>
-                  <td>Level 3</td>
-                  <td>
-                    <abbr class="page-load tipso_style" title="12 South car street, Bangalore">
-                    <img src="/images/icon-info.png"/>
-                    VBM1002 - Regional Office - South
-                    </abbr>
-                  </td>
-                  <td align="center"><img src="/images/icon-active.png" title="Click here to activate" id="inactiveid"/></td>
-                  <td align="center">
-                    <a="#">
-                      <img src="/images/promote-inactive.png" title="Click here to inactivate" id="inactiveid" class="inactive"/>
-                      </a="#">
-                  </td>
-                </tr>
-                <tr>
-                  <td align="center">3</td>
-                  <td>EMP0015 - Srinivasan</td>
-                  <td>Group 2</td>
-                  <td>Level 2</td>
-                  <td>
-                    <abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai"><img src="/images/icon-info.png"/>
-                      VBM103 - Branch Office - Chennai
-                      </abbr>
-                    </td>
-                  <td align="center"><img src="/images/icon-active.png" title="Click here to activate" id="inactiveid"/></td>
-                  <td align="center"><a="#"><img src="/images/promote-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></a="#">
-                  </td>
-                </tr>
-              </table>
-            </div>
+          </div>
         </div>
-    <div class="clearfix"></div>
-    </div>
+        <div class="grid-table" width="100%" style="margin-top:20px">
+          <table style="float:left;width:45%;margin-left:40px">
+            <tr>
+              <th colspan="2" style="background:#ccc;color:black;font-weight:bold">
+                Contract Period
+              </th>
+            </tr>
+            <tr>
+              <td>
+                Contract Start Date : 
+              </td>
+              <td>
+                01-Jun-2013
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Contract Expires on : 
+              </td>
+              <td>
+                01-Jun-2016
+              </td>
+            </tr>
+          </table>
+          <table style="float:left;width:45%;margin-left:40px">
+            <tr>
+              <th  style="background:#ccc;color:black;font-weight:bold">
+                File Space
+              </th>
+            </tr>
+            <tr>
+              <td style="background:#fff" align="center">
+                <div id="container-space" style="padding-right:10px">
+                  <table width="100%" style="border-width:2px;border-color:black;color:white">
+                    <tr width="100%" height="40px" style="padding:10px">
+                      <td align="center" style="width:48%;background-color:#662D91;color:white;font-weight:bold">48%</td>
+                      <td align="center" style="width:52%;background-color:#aaa;color:white">52%</td>
+                    </tr>
+                    <tr>
+                      <td align="center" colspan="2" style="font-weight:bold">
+                        4.8 GB of 10 GB used
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </table>
+      </div>
+      <div class="grid-table">
+          <table>
+            <tr>
+              <th align="left" colspan="4" style="background:#ccc;color:black;font-weight:bold">
+              Licence Holders list
+              </th>
+              <th align="right" colspan="4" style="background:#ccc;color:black;font-weight:bold;padding-right:10px;">
+              Remaining Licence : 7 
+              </th>
+            </tr>
+          <tr >
+          <th style="background:#A381BD;color:black;font-weight:bold" width="4%">#</th>
+          <th style="background:#A381BD;color:black;font-weight:bold" align="left" width="15%">Employee</th>
+          <th style="background:#A381BD;color:black;font-weight:bold" align="left" width="10%">Email</th>
+          <th style="background:#A381BD;color:black;font-weight:bold" align="left" width="10%">Mobile Number</th>
+          <th style="background:#A381BD;color:black;font-weight:bold" align="left" width="20%">Seating Unit</th>
+        
+          
+        </tr> 
+        <tr>
+          <td align="center">&nbsp;</td>
+          <td><input type="text" name="location-name" class="filter-text-box"></td>
+          <td><input type="text" name="district-name" class="filter-text-box"></td>
+          <td><input type="text" name="region-name" class="filter-text-box"></td>
+          <td><input type="text" name="region-name" class="filter-text-box"></td>
+        
+        </tr>
+        <tr>
+          <td align="center">1</td>
+          <td>EMP0010 - Hariharan</td>
+          <td>hariharn@domain.com</td>
+          <td>9632587410</td>
+          <td>
+            <abbr class="page-load tipso_style" title="26, West Steet, New Delhi">
+            <img src="/images/icon-info.png" style="margin-right:10px"/>VBM1001 - Corporate Office
+          </td>
+          
+        </tr>
+        <tr>
+          <td align="center">2</td>
+          <td>EMP0012 - Sivaraman</td>
+          <td>sivaraman@domain.com</td>
+          <td>9345678912</td>
+          <td>
+            <abbr class="page-load tipso_style" title="12 South car street, Bangalore">
+            <img src="/images/icon-info.png" style="margin-right:10px"/>VBM1002 - Regional Office - South
+          </td>
+          
+        </tr>
+        <tr>
+          <td align="center">3</td>
+          <td>EMP0015 - Srinivasan</td>
+          <td>srinivasan@domain.com</td>
+          <td>9876543210</td>
+          <td><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai"><img src="/images/icon-info.png" style="margin-right:10px"/>VBM1003 - Branch Office - Chennai</td>
+         
+          
+        </tr>
+          <tr>
+          <td align="center">4</td>
+          <td>ARM Solutions</td>
+          <td>armsolutions@domain.com</td>
+          <td>8520147963</td>
+          <td>-</td>
+         
+          
+        </tr>
+          </table>
+        </div> 
+
+
+        </div>
+        
+      </div>
+      <div class="clearfix"></div>
     </div>
   </div>
 </div>
+
 <script type="text/javascript">
 $(document).ready(function() {
 });
 
-jQuery(window).load(function(){
-  jQuery('.page-load').tipso({
-    tooltipHover: true
-  });
-});
-$('.toggleModal').on('click', function (e) {
-  $('.modal').toggleClass('active');
-});
+    jQuery(window).load(function(){
+      jQuery('.page-load').tipso({
+        tooltipHover: true
+      });
+    });
+    $('.toggleModal').on('click', function (e) {
+      $('.modal').toggleClass('active');
+    });
 
-</script> 
-{% endblock %}
+  </script> 
+  {% endblock %}
 

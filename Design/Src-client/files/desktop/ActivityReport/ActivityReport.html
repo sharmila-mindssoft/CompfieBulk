@@ -1,5 +1,72 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+
+<style type="text/css">
+  .smallfont td
+  {
+    font-size: 0.75em !important;
+	
+  }
+  .largefont td
+  {
+   font-size: 1.0em;
+   border:1px solid red;
+      
+ }
+
+ .tree,
+ .tree ul {
+  margin:0 0 0 1em; /* indentation */
+  padding:0;
+  list-style:none;
+  color:#369;
+  position:relative;
+   margin-left:380px;
+}
+
+.tree ul {margin-left:.5em} /* (indentation/2) */
+
+.tree:before,
+.tree ul:before {
+  content:"";
+  display:block;
+  width:0;
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  border-left:1px solid;
+   
+}
+
+.tree li {
+  margin:0;
+  padding:0 0.5em; /* indentation + .5em */
+  line-height:1em; /* default list item's `line-height` */
+  font-weight:bold;
+  position:relative;
+
+}
+
+.tree li:before {
+  content:"";
+  display:block;
+  width:10px; /* same with indentation */
+  height:0;
+  border-top:1px solid;
+  margin-top:-1px; /* border top width */
+  position:absolute;
+  top:0.7em; /* (line-height/2) */
+  left:0;
+}
+
+.tree li:last-child:before {
+  background:white; /* same with body background */
+  height:auto;
+  top:1em; /* (line-height/2) */
+  bottom:0;
+}
+</style>
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
 <script src="/files/desktop/common/js/tooltip/tipso.js"></script>
 <div class="content-container width75">
@@ -14,7 +81,7 @@
           </div>
         </div>
         <div class="input-row">
-          <div class="field-label">Inhouse/Service Provider:</div>
+          <div class="field-label">Assignee:</div>
           <div class="field-input">
             <input type="text" class="input-box icon-autocomplete" id="user" value="PGM Solutions" autofocus placeholder="Enter User">
           </div>
@@ -75,7 +142,7 @@
            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">To Date :<span style="margin-left:10px; font-weight:bold;">10-Aug-2015</span> </div>
          </div>
        </div>
-       <h2 style="background:#f1e9f6;font-size:0.8em !important;text-align:left;"><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai">VRP10037 - Branch Office - 1</abbr></h2>
+       <h2 style="background:#f1e9f6;font-size:0.8em !important;text-align:left;"><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai, 600001">VRP10037 - Branch Office - 1</abbr></h2>
 
        <table>
         <tr align="left">
@@ -88,7 +155,7 @@
 
         </tr>
         <tr><td colspan="5"><span class="heading">Industrial Law <img src="/images/right_arrow.png"> Batteries Act</span></td></tr>
-        <tr >
+        <tr style="border-bottom:1px solid #ccc;">
           <td>1</td>
           <td>FORM I - Half yearly returns Submission</td>
           <td>10-Aug-2015</td>
@@ -96,34 +163,47 @@
           <td>Complied</td>
           <td>On Time</td>
         </tr>
+			</table>
+			<ul class="tree">
+			<li>
+			<table>
+
           <tr class="smallfont" style="background-color:#eae8e8; color:#000000;">
-                  <td colspan="2" align="right"><span><img src="/images/right_arrow.png"></span></td>
-                            
-                  <td>24-Jul-2015</td>
-                  <td>Submitted</td>        
-                  <td>Inprogress</td>
-                  <td>Delayed By 7 Days</td>
-                </tr>
-         <tr class="smallfont" style="background-color:#eae8e8; color:#000000;">
-                  <td colspan="2" align="right"><span><img src="/images/right_arrow.png"></span></td>
                   
-                  <td>17-Jul-2015</td>
-                  <td>Rejected</td>                  
-                  <td>Not Complied</td>
-                  <td>Over due by 3 Days</td>
+                            
+                  <td width="19%">24-Jul-2015</td>
+                  <td  width="26%">Submitted</td>        
+                  <td  width="20%">Inprogress</td>
+                  <td align="right" >Delayed By 7 Days</td>
+                </tr>
+				</table></li><li><table>
+         <tr class="smallfont" style="background-color:#eae8e8; color:#000000;">
+                  
+                  
+                  <td  width="19.5%">17-Jul-2015</td>
+                  <td  width="25.5%">Rejected</td>                  
+                  <td  width="20%">Not Complied</td>
+                  <td align="right">Over due by 3 Days</td>
                 </tr>
                  
                
 
+</table></li>
+</ul>
+<br>
+
+
+
+<table>
         
         <tr>
           <td>2</td>
 
-          <td>FORM II - Registration</td> 
-          <td>10-Aug-2015</td>   
-          <td>Approved</td>
-          <td>Delayed Compliance</td>
-          <td>Delayed by 5 days</td>
+          <td width="38%">FORM II - Registration</td> 
+          <td width="12%">10-Aug-2015</td>   
+          <td width="15%">Approved</td>
+          <td width="20%">Delayed Compliance</td>
+          <td align="right">Delayed by 5 days</td>
 
         </tr>
        <!--    <tr>
@@ -162,8 +242,8 @@
             <td>Notice of Opening </td>
             <td>07-Aug-2015</td>
             <td>Approved</td>
-            <td>Complied</td>
-            <td>On Time</td>
+            <td width="22%">Complied</td>
+            <td >On Time</td>
           </tr>
           <tr>
             <td>4</td>
@@ -171,7 +251,7 @@
             <td>Opening And Closing Hours</td>
             <td>06-Aug-2015</td>
             <td>Rejected</td>
-            <td>Inprogress</td> 
+            <td width="22%">Inprogress</td> 
             <td>5 Days left</td>
           </tr>
 
