@@ -11,8 +11,11 @@
     if($("#usertype").val()=='Service Provider'){
       $('.service_provider').show();
       $('.star').hide();
+      $('.seatingunit').hide();      
     }else{
       $('.service_provider').hide();
+      $('.seatingunit').show();   
+      $('.star').show();  
     }
   });
  });
@@ -38,6 +41,10 @@
           <div class="field-label">Service Provider:<span class="mandatory">*</span></div>
           <div class="field-input"><input type="text" class="input-box icon-autocomplete" value="ARM Solutions"></div>
         </div>
+            <div class="input-row seatingunit">
+          <div class="field-label">Seating Unit:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="seatingunit" autofocus value="VBM1001 - Corporate Office"></div>
+        </div>
         <div class="input-row">
           <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
           <div class="field-input"><input type="text" class="input-box" value="Sivaraman"></div>
@@ -46,21 +53,19 @@
           <div class="field-label">Employee ID:<span class="mandatory star">*</span></div>
           <div class="field-input"><input type="text" class="input-box" value="EMP001"></div>
         </div>
-        <div class="input-row">
-          <div class="field-label">Contact No:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210"></div>
-        </div>
+    
        
       </div>  
       <div class="input-row-right">
+         <div class="input-row">
+          <div class="field-label">Contact No:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210"></div>
+        </div>
         <div class="input-row">
           <div class="field-label">User Group:<span class="mandatory">*</span></div>
           <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="usergroup" autofocus value="Manager"></div>
         </div>
-          <div class="input-row">
-          <div class="field-label">Seating Unit:<span class="mandatory star">*</span></div>
-          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="seatingunit" autofocus value="VBM1001 - Corporate Office"></div>
-        </div>
+       
         
         
         
