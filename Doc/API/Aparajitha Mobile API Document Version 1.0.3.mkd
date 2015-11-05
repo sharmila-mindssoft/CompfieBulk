@@ -1,0 +1,479 @@
+<h1> MIRROR - Mobile API Document </h1>
+
+[TOC]
+
+# Background Info
+
+### STATUTORY_ID, STATUTORY_MAPPING_ID, GROUP_ID, BUSINESS_GROUP_ID, LEGAL_ENTITY_ID, DIVISION_ID, UNIT_ID, COMPLIANCE_HISTORY_ID,  COMPLIANCE_ID, STATUTORYNATURE_ID, COUNTRY_ID, DOMAIN_ID, INDUSTRY_ID,USER_ID ,  GEOGRAPHY_ID,  INDUSTRY_TYPE_ID,NOTIFICATION_ID,SESSION_TOKEN
+
+All are int
+
+## General Success response
+
+    [
+        "Success",
+        {
+            "message" : String
+        }
+    ]
+
+## General Error response
+
+    [
+        "Error",
+        {
+            "message" : String
+        }
+    ]
+
+
+# Login API
+
+##  Login
+	
+		[
+			"login",
+			{
+				"username" : USERNAME,
+				"password" : String
+			}
+		]
+
+	On Success
+
+		[
+			"login_success",
+			{
+				"user_id" : USER_ID,
+				"name" : String,
+				"session_token" : int,
+				"group_id" : GROUP_ID,
+				"group_name" : String
+				"configuration" : [
+					{
+						"domain_id" : int,
+						"from" : String,
+						"to" : String
+					},
+				]
+			}
+		]
+
+		Note : 
+			* Knowledge users (who are having privilege to approve statutory mapping), 
+			* All Client users and Service providers can login to the mobile app
+			* Can differentiate knowledge and client user using configuration field. If configuration is empty then it is knowledge user else it is client user
+
+
+## Request Format
+
+		{
+			"session_token" : SESSION_TOKEN,
+			"request": will be any of the following requests except Login
+		}
+
+	Note :
+		* All request will be in above format (Except login)
+
+
+## Forgot Password
+
+		[
+			"forgot_password",
+			{
+				"username" : USERNAME
+			}
+		]
+
+	On Success, an email with password reset link will be sent to the user's email
+
+## Logout
+
+		[
+			"logout",
+			{
+				"user_id" : USER_ID
+			}
+		]
+
+
+# Common API
+
+## GCM Notifications (Common for Client, Knowledge and Service Provider)  
+
+    [
+        "get_notifications_success",
+        [
+          {
+            "notification_id" :  NOTIFICATION_ID,
+            "notification_type" : int,
+            "notification_text" : String,
+            "extra_details" : String
+          },
+        ]
+    ]
+
+   ( "notification_type" - 0: Notification,  1: Reminder, 2: Escalation)
+
+## Get Versions
+
+		[
+			"get_versions",
+			{
+				"group_id" : GROUP_ID,
+				"unit_details_version" : int,
+				"user_details_version" : int,
+				"compliance_applicability_version" : int,
+				"compliance_history_version" : int,
+				"reassign_history_version" :  int
+			}
+		]
+
+	On Success
+
+		[
+			"get_versions_success",
+			{
+				"unit_details_version" : int,
+				"user_details_version" : int,
+				"compliance_applicability_version" : int,
+				"compliance_history_version" : int,
+				"reassign_history_version" :  int
+			}
+		]
+
+	Note : 
+		* To check and sync updates from server
+
+## Get Users
+		
+		[
+			"get_users",
+			{
+				"user_id" : USER_ID,
+				"version" : int
+			}
+		]
+
+	On Success
+	
+		[
+			"get_users_success",
+			[
+				{
+					"user_id" : USER_ID,
+					"name" : String
+				},
+			]
+		]
+
+	Note : 
+		*	To get all the users of the units which are configured to the mobile user
+
+# Knowledge API
+
+## Get Statutory Mapping approval list
+		
+		[
+			"get_statutory_mapping_approval_list",
+			{
+				"user_id" : USER_ID
+			}
+		]
+
+	On Success
+
+		[
+			"get_statutory_mapping_approval_list_success",
+			[
+				{
+					"mapping_id" :STATUTORY_MAPPING_ID
+			        "country_id" : COUNTRY_ID,
+			        "domain_id" : DOMAIN_ID,
+			        "industry_type" : String,
+			        "statutory_nature" : String,
+			        "statutories":[
+			        	String,
+			        ],
+			        "compliances" :[
+			        	{ 
+				         "compliance_task" : String, 
+				         "description" : String, 
+				         "document" : FORM_NO, 
+				         "format" : [FORMAT_FILE_NAME,], 
+				         "penal_description" : String, 
+				         "frequency" : int, 
+				         "statutory_dates" : [
+				              {
+				                  "day" : int,
+				                  "month" : int
+				              },
+				         ],
+				         "repeats_type" : int, 
+				         "repeats_every" : int, 
+				         "duration" : int,
+				         "duration_type" : int,
+				         "is_active" : STATUS
+				      },
+			        ],
+			        "geographies" : [
+			        	String,
+			        ]
+				}
+			]
+		]
+
+## Approve Statutory mapping
+
+		[
+			"approve_statutory_mapping",
+			[
+				{
+					"user_id" : USER_ID,
+					"mapping_id" : MAPPING_ID,
+					"approval_status" : TINYINT,
+					"remarks" : String
+				},
+			]
+		]	
+
+# Client API
+
+## Get Unit Details
+
+		[
+			"get_unit_details",
+			{
+				"user_id" : USER_ID,
+				"version" : int
+			}
+		]
+
+	On Success
+
+		[
+			"get_unit_details_success",
+			[
+				{
+						"unit_id" : UNIT_ID,
+						"unit_name" : String,
+						"country_id" : COUNTRY_ID,
+						"country_name" : String,
+						"domain_id" : DOMAIN_ID,
+						"domain_name" : String,
+						"industry_type_id" : INDUSTRY_TYPE_ID,
+						"industry_type" : String,
+						"group_id" : GROUP_ID,
+						"business_group_id" :  BUSINESS_GROUP_ID,
+						"business_group_name" : String,
+						"legal_entity_id" : LEGAL_ENTITY_ID,
+						"legal_entity_name" : String,
+						"division_id" : DIVISION_ID,
+						"division_name" : String,
+				},
+			]
+		]	
+
+	Note : 
+		*	Above data will be used to populate chart filters
+
+## Get Compliance Applicability Details
+
+	To get the assigned statutory of all the units under the user
+
+		[
+			"get_compliance_applicability_status",
+			{
+				"user_id" :  USER_ID,
+				"version" : int
+			}	
+		]
+
+	On Success
+
+		[
+			"get_compliance_applicability_status_success",
+			[
+				{
+					"country_id" : COUNTRY_ID,
+					"domain_id" : DOMAIN_ID,
+					"unit_id" : UNIT_ID,
+					"compliance_id" : COMPLIANCE_ID,
+					"compliance_name" : FORM_NO - String,
+					"frequency" : String,
+					"compliance_applicable" : TINYINT,
+					"compliance_opted" : TINYINT,
+				},
+			]
+		]
+
+	Note:
+		*	Above data will be used for Compliance Applicability status chart
+		*	To display freqeuncy of compliance in compliance details form
+
+## Get Compliance History
+
+		[
+			"get_compliance_history",
+			{
+				"user_id" :  USER_ID,
+				"version" : int
+			}	
+		]
+
+	On Success
+
+		[
+			"get_compliance_history_success",
+			[
+				{
+					"compliance_history_id" : COMPLIANCE_HISTORY_ID,
+					"unit_id" : UNIT_ID,
+					"compliance_id" : COMPLIANCE_ID,
+					"start_date" : DATE,
+					"due_date" : DATE,
+					"completion_date" : DATE,
+					"documents" : String,
+					"validity_date" : DATE,
+					"next_due_date" : DATE,
+					"remarks" : String,
+					"completed_by" : USER_ID,
+					"completed_on" : DATE,
+					"concurrence_status" : TINYINT,
+					"concurred_by" : USER_ID,
+					"concurred_on" : DATE,
+					"approval_status" : TINYINT,
+					"approved_by" : USER_ID,
+					"approved_on" : DATE,
+				},
+			]
+		]
+
+	Note : 
+		* To get compliance history of all the units under the user (for current year)
+		* Above data will be used for Compliance details, Compliance Approval, Compliance Status Chart, Escalations Chart and Not Complied chart, Assignee wise compliance chart
+
+## Get reassigned compliance history
+	
+		[
+			"get_reassigned_compliance_history",
+			{
+				"user_id" : USER_ID,
+				"version" : int
+			}
+		]
+
+	On Success
+
+		[
+			"get_reassigned_compliance_history_success",
+			[
+				{
+					"unit_id" : UNIT_ID,
+					"compliance_history_id" : COMPLIANCE_HISTORY_ID,
+					"assignee" : USER_ID,
+					"reassigned_from" : USER_ID,
+					"reassigned_date" : DATE,
+					"remarks" : String
+				},
+			]
+		]
+
+	Note : 
+		* To display reassigned history in
+		Assignee wise compliance chart (delayed 
+		compliance reassigned popup)
+
+## Save compliance Details
+
+      [
+         "save_compliance_details",
+	      [
+	         {
+	            "compliance_history_id" : COMPLIANCE_HISTORY_ID,
+	            "user_id" : USER_ID,
+	            "documents" : [String,], 
+	            "completion_date" : String,
+	            "validity_date" : String
+	            "next_due_date" : String,
+	            "remarks" : String
+	         },
+	      ]
+      ]
+
+## Approve/ Concur Compliance
+
+      [
+         "approve_compliance",
+          [
+	         {
+	            "compliance_history_id" : COMPLIANCE_HISTORY_ID,
+	            "approval_status" : STATUS,
+	            "concurrence_status" : STATUS,
+	            "approved_on" : DATE,
+	            "concurred_on" : DATE,
+	            "remarks" : String
+	         },
+	      ]
+      ]
+
+## Past 4 year escalations
+
+		[
+			"get_past_4_year_escalations",
+			{
+				"user_id" : USER_ID
+			}
+		]
+
+	On Success
+
+		[
+			"get_past_4_year_escalations_success",
+			[
+				{
+						"unit_id" : UNIT_ID,
+						"unit_name" : String,
+						"data" :[
+							{
+								"year" : int,
+								"delayed" : int,
+								"not_complied" : int
+							}
+						]
+				},
+			]
+		]
+
+	Note : 
+			*	Above data will be used for past 4 year Escalations Chart
+			* For current year data will be from 
+			compliance history api
+
+## Get data for Trend Chart
+
+		[
+			"get_trend_chart_data",
+			{
+				"user_id" : USER_ID,
+			}
+		]
+
+	On Success
+
+		[
+			"get_trend_chart_data_success",
+			[
+				{
+						"unit_id" : UNIT_ID,
+						"unit_name" : String,
+						"data" :[
+							{
+								"year" : int,
+								"total_compliances" : int,
+								"complied_compliances" : int
+							}
+						]
+				},
+			]
+		]
