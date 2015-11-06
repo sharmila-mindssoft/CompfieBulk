@@ -521,6 +521,8 @@ TEMPLATE_PATHS = [
         None, {}),
     ("/previousentryform", "files/desktop/PreviousEntryForm/PreviousEntryForm.html",
         None, {}),
+     ("/logintrace", "files/desktop/LoginTrace/LoginTrace.html",
+        None, {}),
 ]
 
 
