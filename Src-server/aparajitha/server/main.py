@@ -53,8 +53,8 @@ class TemplateHandler(tornado.web.RequestHandler) :
 #
 
 TEMPLATE_PATHS = [
-    ("/", "files/desktop/login/login.html",
-        "files/mobile/login/login.html", {}),
+    ("/", "files/desktop/index/index.html",
+        "files/mobile/index/index.html", {}),
     ("/login", "files/desktop/login/login.html",
         "files/mobile/login/login.html", {}),
 ]
