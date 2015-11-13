@@ -1,0 +1,117 @@
+.login-main-bg {
+	background: #000 url(/files/desktop/login/images/login-bg.jpg) center center;
+	background-size: cover;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+}
+.login-transparent-bg {
+	background: url(/files/desktop/login/images/transparent-bg-main.png) repeat;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	z-index: 1;
+}
+.login-box-outer {
+	float: left;
+	position: relative;
+	left: 50%;
+}
+.login-box-inner {
+	position: relative;
+	left: -50%;
+	float: left;
+	width: 600px;
+}
+.login-box-header {
+	width: 100%;
+	float: left;
+	background: #fff;
+	padding: 0.8em 2em;
+}
+.logo {
+	float: left;
+	width: 50%;
+}
+.text-login {
+	float: right;
+	font-size: 1.375em;
+	color: #662d91;
+	width: 50%;
+	text-align: right;
+	font-weight: bold;
+	padding-top: 0.8em;
+}
+.login-content {
+	width: 100%;
+	padding: 2em 0 1em 0;
+	float: left;
+	background: url(/files/desktop/login/images/login-transparent-bg.png) repeat;
+}
+.login-icon {
+	width: 30%;
+	float: left;
+	text-align: right;
+}
+.login-field-lists {
+	width: 70%;
+	float: left;
+	padding-left: 5em;
+}
+.input-container {
+	width: 85%;
+	float: right;
+	margin-bottom: 1em;
+	margin-right: 15%;
+}
+.login-username-textbox,
+.login-password-textbox {
+	width: 100%;
+	height: 2.5em;
+	float: right;
+	border: none;
+	padding: 0 1em 0 3em;
+	outline: none;
+	font-size: 1em;
+
+	-webkit-border-radius: 0.3em;
+	-moz-border-radius: 0.3em;
+	border-radius: 0.3em;
+}
+.login-username-textbox {
+	background: #fff url(/files/desktop/login/images/icon-user.png) no-repeat 1em center;
+}
+.login-password-textbox {
+	background: #fff url(/files/desktop/login/images/icon-lock.png) no-repeat 1em center;
+}
+.text-forgot-password {
+	float: left;
+	line-height: 2.5em;
+	padding-left: 0.5em;
+}
+.text-forgot-password a {
+	color: #8e8d8e;
+	text-decoration: none;
+	font-size: 1em;
+}
+.text-forgot-password a:hover {
+	text-decoration: underline;
+	color: #999;
+}
+.btn-login {
+	width: 6em;
+	height: 2.5em;
+	float: right;
+	color: #fff;
+	font-weight: normal;
+	font-size: 1em;
+	line-height: 1em;
+	background: #662d91;
+	border: none;
+	cursor: pointer;
+	letter-spacing: 0.05em;
+
+	-webkit-border-radius: 0.4em;
+	-moz-border-radius: 0.4em;
+	border-radius: 0.4em;
+}
