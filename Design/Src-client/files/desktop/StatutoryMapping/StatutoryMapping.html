@@ -411,9 +411,15 @@ $(function() {
               </div>
             </div> -->
               <h2 style="font-size:0.813em;">India <img src="images/right_arrow.png"> Labour Law <img src="images/right_arrow.png"> Factory <img src="images/right_arrow.png"> Central &nbsp;&nbsp;  <img src="images/chevron_black_right.png">&nbsp;&nbsp;  Gratuity Act, 1972 <img src="images/right_arrow.png"> Tamil Nadu Gratuity Act, 1972 <img src="images/right_arrow.png"> Rule 5 </h2>
-            <div class="form-container-grid-table-sm">
+             <div class="form-container-grid-table-sm">
               <section id="section-flip-1">
                 <div class="input-row-left">
+                <div class="input-row">
+                    <div class="field-label">Statutory Provision<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                      <textarea class="input-box heightsmall">Rule 10, Section 1, Sub-Sec 1A</textarea>
+                    </div>
+                  </div>
                   <div class="input-row">
                     <div class="field-label">Compliance Task<span class="mandatory">*</span></div>
                     <div class="field-input">
@@ -423,7 +429,8 @@ $(function() {
                   <div class="input-row">
                     <div class="field-label">Compliance Description<span class="mandatory">*</span></div>
                     <div class="field-input">
-                      <textarea class="input-box heightsmall" >Within 30 days of opening a branch</textarea>
+                      <textarea class="input-box heightsmall" id="myTextarea" >Within 30 days of opening a branch</textarea>
+                        <p id="counter" style="font-size:0.65em;"></p>
                     </div>
                   </div>
                   <div class="input-row">
@@ -1284,4 +1291,24 @@ $(function() {
 
   });
 </script> 
+<script type="text/javascript">
+  $(function()
+        {
+            $('#myTextarea').keyup(function(e)
+            {
+                var maxLength = 500;
+                var textlength = this.value.length;
+                if (textlength >= maxLength)
+                {
+                    $('#counter').html('You cannot write more then ' + maxLength + ' characters!');
+                    this.value = this.value.substring(0, maxLength);
+                    e.preventDefault();
+                }
+                else
+                {
+                    $('#counter').html((maxLength - textlength) + ' characters left.');
+                }
+            });
+        });
+</script>
 {% endblock %}
