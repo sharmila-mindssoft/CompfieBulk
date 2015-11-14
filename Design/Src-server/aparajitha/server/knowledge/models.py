@@ -1,9 +1,12 @@
-from types import *
 import json
+from types import *
+
+from databasehandler import DatabaseHandler
 
 
 __all__ = [
-    "CMObject", "Domain",
+    "JSONHelper", "Domain", "DomainList", 
+    "SaveDomain", "UpdateDomain", "ChangeDomainStatus"
 ]
 
 def assertType (x, typeObject) :
@@ -11,23 +14,45 @@ def assertType (x, typeObject) :
         msg = "expected type %s, received invalid type  %s" % (typeObject, type(x))
         raise TypeError(msg)
 
-class CMObject(object) :
-    # def toStructure(self) :
-    #   raise NotImplementedError()
+class JSONHelper(object) :
+    
+    @staticmethod
+    def string(x) :
+        assertType(x, UnicodeType)
+        return str(x)
 
-    # def fromStructure(klass, data) :
-    #   raise NotImplementedError()
+    @staticmethod
+    def getString(data, name) :
+        return JSONHelper.string(data.get(name))
 
-    def toJSON(self) :
-        data = self.toStructure()
-        return json.dumps(data)
-    @classmethod
-    def fromJSON(klass, jsonData) :
-        data = json.loads(jsonData)
-        return klass.fromStructure(data)
+    @staticmethod
+    def int(x):
+        assertType(x, IntType)
+        return x
 
+    @staticmethod
+    def getInt(data, name) :
+        return JSONHelper.int(data.get(name))
 
-class Domain(CMObject) :
+    @staticmethod
+    def float(x) :
+        assertType(x, FloatType)
+        return x
+
+    @staticmethod
+    def getFloat(data, name) :
+        return JSONHelper.float(data.get(name))
+
+    @staticmethod
+    def list(x) :
+        assertType(x, ListType)
+        return x
+
+    @staticmethod
+    def getList(data, name) :
+        return JSONHelper.list(data.get(name))
+
+class Domain(object) :
     def __init__(self, domainId, domainName, isActive) :
         self.domainId = domainId
         self.domainName = domainName
@@ -59,3 +84,150 @@ class Domain(CMObject) :
     def __repr__(self) :
         return str(self.toStructure())
 
+class DomainList(object) :
+    def __init__(self, sessionToken, request) :
+        self.sessionToken = sessionToken
+        self.request = request
+        self.domainList = []
+        self.userId = None
+        self.possibleError = None
+        self.processData()
+
+    def processData(self) :
+        self.userId = DatabaseHandler.instance().validateSessionToken(self.sessionToken)
+        if self.userId is None :
+            self.possibleError = "InvalidSessionToken"
+        elif self.request[0] != "GetDomains" :
+            self.possibleError = "InvalidRequest"
+        else :
+            _domains = DatabaseHandler.instance().getDomains()
+            for row in _domains :
+                domain = Domain(int(row[0]), row[1], row[2])
+                self.domainList.append(domain)
+
+    def toStructure(self) :
+        if self.possibleError is not None :
+            return [
+                str(self.possibleError),
+                {}
+            ]
+        else :
+            return [
+                "success",
+                {"domains": self.domainList}
+            ]
+
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class SaveDomain(object) :
+    def __init__ (self, sessionToken, request) :
+        self.sessionToken = sessionToken
+        self.request = request
+        self.responseData = None
+        self.userId = None
+        self.domainName = None
+        self.processData()
+
+    def processData(self) :
+        self.userId = DatabaseHandler.instance().validateSessionToken(self.sessionToken)
+        if self.userId is None :
+            self.responseData = "InvalidSessionToken"
+        elif self.request[0] != "SaveDomain" :
+            self.responseData = "InvalidRequest"
+        else :
+            requestData = self.request[1]
+            assertType(requestData, DictType)
+            self.domainName = JSONHelper.getString(requestData, "domain_name")
+            isDuplicate = DatabaseHandler.instance().checkDuplicateDomain(self.domainName, None)
+            if isDuplicate :
+                self.responseData = "DomainNameAlreadyExists"
+            else :
+                if DatabaseHandler.instance().saveDomain(self.domainName, self.userId) :
+                    self.responseData = "success"
+                else :
+                    self.responseData = "saveFailed"
+
+    def toStructure(self) :
+        return [
+            str(self.responseData),
+            {}
+        ]
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class UpdateDomain(object) :
+    def __init__(self, sessionToken, request) :
+        self.sessionToken = sessionToken
+        self.request = request
+        self.responseData = None
+        self.userId = None
+        self.domainId = None
+        self.domainName = None
+        self.processData()
+
+    def processData(self) :
+        self.userId = DatabaseHandler.instance().validateSessionToken(self.sessionToken)
+        if self.userId is None :
+            self.responseData = "InvalidSessionToken"
+        elif self.request[0] != "UpdateDomain" :
+            self.responseData = "InvalidRequest"
+        else :
+            requestData = self.request[1]
+            assertType(requestData, DictType)
+            self.domainName = JSONHelper.getString(requestData, "domain_name")
+            self.domainId = JSONHelper.getInt(requestData, "domain_id")
+            isDuplicate = DatabaseHandler.instance().checkDuplicateDomain(self.domainName, self.domainId)
+            if isDuplicate :
+                self.responseData = "DomainNameAlreadyExists"
+            else :
+                if DatabaseHandler.instance().updateDomain(self.domainId, self.domainName, self.userId) :
+                    self.responseData = "success"
+                else :
+                    self.responseData = "InvalidDomainId"
+
+    def toStructure(self) :
+        return [
+            str(self.responseData),
+            {}
+        ]
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class ChangeDomainStatus(object) :
+    def __init__(self, sessionToken, request) :
+        self.sessionToken = sessionToken
+        self.request = request
+        self.userId = None
+        self.domainId = None
+        self.isActive = None
+        self.responseData = None
+        self.processData()
+
+    def processData(self) :
+        self.userId = DatabaseHandler.instance().validateSessionToken(self.sessionToken)
+        if self.userId is None :
+            self.responseData = "InvalidSessionToken"
+        elif self.request[0] != "ChangeDomainStatus" :
+            self.responseData = "InvalidRequest"
+        else :
+            requestData = self.request[1]
+            assertType(requestData, DictType)
+            self.isActive = JSONHelper.getInt(requestData, "is_active")
+            self.domainId = JSONHelper.getInt(requestData, "domain_id")
+            if DatabaseHandler.instance().updateDomainStatus(self.domainId, self.isActive, self.userId) :
+                self.responseData = "success"
+            else :
+                self.responseData = "InvalidDomainId"
+
+    def toStructure(self) :
+        return [
+            str(self.responseData),
+            {}
+        ]
+
+    def __repr__(self) :
+        return str(self.toStructure())

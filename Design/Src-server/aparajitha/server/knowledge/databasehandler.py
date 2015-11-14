@@ -1,7 +1,6 @@
 import datetime
 import MySQLdb as mysql
 
-from models import *
 
 __all__ = [
     "DatabaseHandler"
@@ -66,7 +65,7 @@ class DatabaseHandler(object) :
         return result
 
     def validateSessionToken(self, sessionToken) :
-        query = "SELECT user_id FROM tbl_user_sessions WHERE session_id = %s" % sessionToken
+        query = "SELECT user_id FROM tbl_user_sessions WHERE session_id = '%s'" % sessionToken
         rows = self.dataSelect(query)
         row = rows[0]
         return row[0]
@@ -96,13 +95,8 @@ class DatabaseHandler(object) :
         return domainId
             
     def getDomains(self) :
-        domainList = []
         query = "SELECT domain_id, domain_name, is_active FROM tbl_domains "
-        rows = self.dataSelect(query)
-        for row in rows :
-            domain = Domain(int(row[0]), row[1], row[2])
-            domainList.append(domain)
-        return domainList
+        return self.dataSelect(query)
 
     def saveDomain(self, domainName, createdBy) :
         createdOn = datetime.datetime.now()
