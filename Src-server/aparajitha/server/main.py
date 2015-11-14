@@ -5,8 +5,9 @@ import tornado.web
 from tornado.web import StaticFileHandler
 import tornado.ioloop
 from aparajitha.server.constants import ROOT_PATH, HTTP_PORT
+from aparajitha.server.knowledgecontroller import KnowledgeController
+from aparajitha.server.clientcontroller import ClientController
 from user_agents import parse
-
 from aparajitha.server import countries as countriesdb
 import json
 from collections import OrderedDict
@@ -45,7 +46,21 @@ class TemplateHandler(tornado.web.RequestHandler) :
         self.set_header("Access-Control-Allow-Headers", "Content-Type")
         self.set_header("Access-Control-Allow-Methods", "GET, POST")
         self.set_status(204)
-        self.send("")
+        self.write("")        
+
+class APIHandler(tornado.web.RequestHandler) :
+    def initialize(self, handler) :
+        self._handler = handler
+
+    def get(self) :
+        self._handler(self)
+
+    def options(self) :
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "Content-Type")
+        self.set_header("Access-Control-Allow-Methods", "GET, POST")
+        self.set_status(204)
+        self.write("")
 
 
 #
@@ -60,7 +75,19 @@ TEMPLATE_PATHS = [
 ]
 
 def run_server() :
+    knowledge_controller = KnowledgeController()
+    client_controller = ClientController()
+
     application_urls = []
+
+    api_urls_and_handlers = [
+        ("/api/test-knowledge", knowledge_controller.handle_api_test),
+        ("/api/test-client", client_controller.handle_api_test),
+    ]
+    for url, handler in api_urls_and_handlers :
+        entry = (url, APIHandler, dict(handler=handler))
+        application_urls.append(entry)
+
     for url, path_desktop, path_mobile, parameters in TEMPLATE_PATHS :
         args = {
             "path_desktop": path_desktop,
