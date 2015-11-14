@@ -22,161 +22,124 @@ class DatabaseHandler(object) :
             self.mysqlPassword, self.mysqlDatabase
         )
 
-
-    def checkDuplicateDomain(self, domainName, domainId) :
+    def dataInsertUpdate(self, query) :
         con = None
         cursor = None
-        domainNames = []
-        isDuplicate = False
+        isComplete = True
         try:
             con = self.dbConnect()
             cursor = con.cursor()
-            query = "SELECT count(*) FROM tbl_domains WHERE LOWER(domain_name) = LOWER('%s') " % domainName
-            if domainId is not None :
-                query = query + " AND domain_id != %s" % domainId
-            cursor.execute(query)
-            row = cursor.fetchone()
-            if row[0] > 0 :
-                isDuplicate = True
-
-        except mysql.Error, e:
-            print ("error while checking duplicate domain: %s", e)
-        finally:
-            if cursor is not None :
-                cursor.close()
-            if con is not None :
-                con.close()
-        return isDuplicate
-
-    def getDomainId(self) :
-        con = None
-        cursor = None
-        domainId = 1
-        try:
-            con = self.dbConnect()
-            cursor = con.cursor()
-            query = "SELECT max(domain_id) FROM tbl_domains "
-            cursor.execute(query)
-            row = cursor.fetchone()
-            if row[0] is not None:
-                domainId = row[0] + 1 
-
-        except mysql.Error, e:
-            print ("error while getting domain_id: %s", e)
-        finally:
-            if cursor is not None :
-                cursor.close()
-            if con is not None :
-                con.close()
-        return domainId
-            
-    def getDomains(self) :
-        con = None
-        cursor = None
-        domainList = []
-        try:
-            con = self.dbConnect()
-            cursor = con.cursor()
-            query = "SELECT domain_id, domain_name, is_active FROM tbl_domains "
-            cursor.execute(query)
-            rows = cursor.fetchall()
-            for row in rows :
-                domain = Domain(int(row[0]), row[1], row[2])
-                domainList.append(domain)
-
-        except  mysql.Error, e :
-            print ("error loading domain lists: %s", e)
-        
-        finally:
-            if cursor is not None :
-                cursor.close()
-            if con is not None :
-                con.close()
-        return domainList
-
-    def saveDomain(self, domainName, createdBy) :
-        con = None
-        cursor = None
-        createdOn = datetime.datetime.now()
-        domainId = self.getDomainId()
-        isActive = 1
-        isSaved = True
-        try:
-            con = self.dbConnect()
-            cursor = con.cursor()
-            query = "INSERT INTO tbl_domains(domain_id, domain_name, is_active, created_by, created_on)" + \
-            " VALUES (%s, '%s', %s, %s, '%s') " % (domainId, domainName, isActive, createdBy, createdOn)
             cursor.execute(query)
             con.commit()
 
         except mysql.Error, e:
-            print ("error, while saving domain: %s ", e)
-            isSaved = False
+            print ("Error:%s - %s" % (query, e))
+            isComplete = False
+
         finally:
             if cursor is not None :
                 cursor.close()
             if con is not None :
                 con.close()
-        return isSaved
+
+        return isComplete
+
+    def dataSelect(self, query) :
+        con = None
+        cursor = None
+        result = None
+        try:
+            con = self.dbConnect()
+            cursor = con.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+
+        except mysql.Error, e:
+            print ("Error:%s - %s" % (query, e))
+
+        finally:
+            if cursor is not None :
+                cursor.close()
+            if con is not None :
+                con.close()
+
+        return result
+
+    def validateSessionToken(self, sessionToken) :
+        query = "SELECT user_id FROM tbl_user_sessions WHERE session_id = %s" % sessionToken
+        rows = self.dataSelect(query)
+        row = rows[0]
+        return row[0]
+
+    def checkDuplicateDomain(self, domainName, domainId) :
+        domainNames = []
+        isDuplicate = False
+        query = "SELECT count(*) FROM tbl_domains WHERE LOWER(domain_name) = LOWER('%s') " % domainName
+        if domainId is not None :
+            query = query + " AND domain_id != %s" % domainId
+        rows = self.dataSelect(query)
+        row = rows[0]
+
+        if row[0] > 0 :
+            isDuplicate = True
+
+        return isDuplicate
+
+    def getDomainId(self) :
+        domainId = 1
+        query = "SELECT max(domain_id) FROM tbl_domains "
+        rows = self.dataSelect(query)
+
+        for row in rows :
+            domainId = row[0] + 1
+
+        return domainId
+            
+    def getDomains(self) :
+        domainList = []
+        query = "SELECT domain_id, domain_name, is_active FROM tbl_domains "
+        rows = self.dataSelect(query)
+        for row in rows :
+            domain = Domain(int(row[0]), row[1], row[2])
+            domainList.append(domain)
+        return domainList
+
+    def saveDomain(self, domainName, createdBy) :
+        createdOn = datetime.datetime.now()
+        domainId = self.getDomainId()
+        isActive = 1
+
+        query = "INSERT INTO tbl_domains(domain_id, domain_name, is_active, created_by, created_on)" + \
+            " VALUES (%s, '%s', %s, %s, '%s') " % (domainId, domainName, isActive, createdBy, createdOn)
+
+        return self.dataInsertUpdate(query)
+
+    def getDomainByDomainId(self, domainId) :
+        q = "SELECT domain_name FROM tbl_domains WHERE domain_id=%s" % domainId
+        rows = self.dataSelect(q)
+        domainName = rows[0][0]
+        return domainName
 
     def updateDomain(self, domainId, domainName, updatedBy) :
-        con = None
-        cursor = None
-        isUpdated = True
-        try:
-            con = self.dbConnect()
-            cursor = con.cursor()
-            q = "SELECT count(*) FROM tbl_domains WHERE domain_id=%s" % domainId
-            cursor.execute(q)
-            row = cursor.fetchone()
-            if row[0] > 0 :
-                query = "UPDATE tbl_domains SET domain_name = '%s', updated_by = %s WHERE domain_id = %s" % (
-                    domainName, updatedBy, domainId
-                )
-                cursor.execute(query)
-                con.commit()
-            else :
-                isUpdated = False
-
-        except mysql.Error, e:
-            print ("error while updating domain: %s ", e)
-            isUpdated = False
-        finally:
-            if cursor is not None :
-                cursor.close()
-            if con is not None :
-                con.close()
-        return isUpdated
+        
+        oldData = self.getDomainByDomainId(domainId)
+        if oldData is not None :
+            query = "UPDATE tbl_domains SET domain_name = '%s', updated_by = %s WHERE domain_id = %s" % (
+                domainName, updatedBy, domainId
+            )
+            return self.dataInsertUpdate(query)
+        else :
+            return False
 
     def updateDomainStatus(self, domainId, isActive, updatedBy) :
-        con = None
-        cursor = None
-        isUpdated = True
-        try:
-            con = self.dbConnect()
-            cursor = con.cursor()
-            q = "SELECT count(*) FROM tbl_domains WHERE domain_id=%s" % domainId
-            cursor.execute(q)
-            row = cursor.fetchone()
-            if row[0] > 0 :
-                query = "UPDATE tbl_domains SET is_active = %s, updated_by = %s WHERE domain_id = %s" % (
-                    isActive, updatedBy, domainId
-                )
-                cursor.execute(query)
-                con.commit()
-            else :
-                isUpdated = False
-
-        except mysql.Error, e:
-            print ("error while updating domain status: %s ", e)
-            isUpdated = False
-        finally:
-            if cursor is not None :
-                cursor.close()
-            if con is not None :
-                con.close()
-        return isUpdated
-
+        oldData = self.getDomainByDomainId(domainId)
+        if oldData is not None :
+            query = "UPDATE tbl_domains SET is_active = %s, updated_by = %s WHERE domain_id = %s" % (
+                isActive, updatedBy, domainId
+            )
+            return self.dataInsertUpdate(query)
+        else :
+            return False
 
     @staticmethod
     def instance() :
