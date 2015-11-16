@@ -193,6 +193,62 @@ def changeIndustry(status) :
     }
     return handle_request(url, data)
 
+### StatutoryNature
+
+def getStatutoryNature():
+    url = "http://localhost:8080/StatutoryNature"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "GetStatutoryNatures",
+            {}
+        ]
+    }
+
+    return handle_request(url, data)
+
+def saveStatutoryNature(industry):
+    url = "http://localhost:8080/StatutoryNature"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "SaveStatutoryNature",
+            {
+                "statutory_nature_name": industry
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+def updateStatutoryNature(industry) :
+    url = "http://localhost:8080/StatutoryNature"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "UpdateStatutoryNature",
+            {
+                "statutory_nature_id": 1,
+                "statutory_nature_name": industry
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+def changeStatutoryNatureStatus(status) :
+    url = "http://localhost:8080/StatutoryNature"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "ChangeStatutoryNatureStatus",
+            {
+                "statutory_nature_id": 1,
+                "is_active": status
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+
 
 if __name__ == "__main__" :
     print "listening on port 8090"
@@ -201,21 +257,25 @@ if __name__ == "__main__" :
     # updateDomain()
     # changeDomain()
     getdomains()
-    print 
+    
     ### Country ###
     # saveCountry()
     # updateCountry()
     # changeCountry()
     getcountries()
-    print
+    
 
     ### Industry ###
     # saveIndustry("Factory")
     # updateIndustry("Plantation")
-    changeIndustry(0)
+    # changeIndustry(0)
     getindustries()
 
-
+    ### StatutoryNature ###
+    # saveStatutoryNature("Concurrent")
+    # updateStatutoryNature("State")
+    changeStatutoryNatureStatus(0)
+    getStatutoryNature()
 
     application = tornado.web.Application(
         [],

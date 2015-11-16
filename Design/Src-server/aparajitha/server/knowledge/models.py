@@ -9,7 +9,9 @@ __all__ = [
     "Country", "CountryList", "SaveCountry",
     "UpdateCountry", "ChangeCountryStatus",
     "Industry", "IndustryList", "SaveIndustry",
-    "UpdateIndustry", "ChangeIndustryStatus"
+    "UpdateIndustry", "ChangeIndustryStatus",
+    "StatutoryNature", "StatutoryNatureList", "SaveStatutoryNature",
+    "UpdateStatutoryNature", "ChangeStatutoryNatureStatus"
 ]
 
 def assertType (x, typeObject) :
@@ -447,7 +449,7 @@ class UpdateIndustry(object) :
             if DatabaseHandler.instance().updateIndustry(self.industryId, self.industryName, self.userId) :
                 self.responseData = "success"
             else :
-                self.responseData = "InvalidCountryId"
+                self.responseData = "InvalidIndustryId"
 
     def toStructure(self) :
         return [
@@ -475,7 +477,7 @@ class ChangeIndustryStatus(object) :
         if DatabaseHandler.instance().updateIndustryStatus(self.industryId, self.isActive, self.userId) :
             self.responseData = "success"
         else :
-            self.responseData = "InvalidCountryId"
+            self.responseData = "InvalidIndustryId"
 
     def toStructure(self) :
         return [
@@ -486,3 +488,150 @@ class ChangeIndustryStatus(object) :
     def __repr__(self) :
         return str(self.toStructure())
 
+class StatutoryNature(object) :
+    def __init__(self, statutoryNatureId, statutoryNatureName, isActive) :
+        self.statutoryNatureId = statutoryNatureId
+        self.statutoryNatureName = statutoryNatureName
+        self.isActive = isActive
+        self.verify()
+
+    def verify(self) :
+        assertType(self.statutoryNatureId, IntType)
+        assertType(self.statutoryNatureName, StringType)
+        assertType(self.isActive, IntType)
+
+    def toStructure(self) :
+        return {
+            "statutory_nature_id": self.statutoryNatureId,
+            "statutory_nature_name": self.statutoryNatureName,
+            "is_active": self.isActive
+        }
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class StatutoryNatureList(object) :
+    def __init__(self, request) :
+        self.request = request
+        self.statutoryNatureList = []
+        self.possibleError = None
+        self.processData()
+
+    def processData(self) :
+        _statutoryNatures = DatabaseHandler.instance().getStatutoryNatures()
+        for row in _statutoryNatures :
+            statutoryNature = StatutoryNature(int(row[0]), row[1], row[2])
+            self.statutoryNatureList.append(statutoryNature)
+
+    def toStructure(self) :
+        if self.possibleError is not None :
+            return [
+                str(self.possibleError),
+                {}
+            ]
+        else :
+            return [
+                "success",
+                {"industries": self.statutoryNatureList}
+            ]
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class SaveStatutoryNature(object) :
+    def __init__ (self, request, userId) :
+        self.request = request
+        self.userId = userId
+        self.responseData = None
+        self.statutoryNatureName = None
+        self.processData()
+
+    def processData(self) :
+        requestData = self.request[1]
+        assertType(requestData, DictType)
+        self.statutoryNatureName = JSONHelper.getString(requestData, "statutory_nature_name")
+        isDuplicate = DatabaseHandler.instance().checkDuplicateStatutoryNature(
+            self.statutoryNatureName, None
+        )
+        if isDuplicate :
+            self.responseData = "StatutoryNatureNameAlreadyExists"
+        else :
+            if DatabaseHandler.instance().saveStatutoryNature(self.statutoryNatureName, self.userId) :
+                self.responseData = "success"
+            else :
+                self.responseData = "saveFailed"
+
+    def toStructure(self) :
+        return [
+            str(self.responseData),
+            {}
+        ]
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class UpdateStatutoryNature(object) :
+    def __init__(self, request, userId) :
+        self.request = request
+        self.userId = userId
+        self.responseData = None
+        self.statutoryNatureId = None
+        self.statutoryNatureName = None
+        self.processData()
+
+    def processData(self) :
+        requestData = self.request[1]
+        assertType(requestData, DictType)
+        self.statutoryNatureName = JSONHelper.getString(requestData, "statutory_nature_name")
+        self.statutoryNatureId = JSONHelper.getInt(requestData, "statutory_nature_id")
+        isDuplicate = DatabaseHandler.instance().checkDuplicateStatutoryNature(
+            self.statutoryNatureName, self.statutoryNatureId
+        )
+        if isDuplicate :
+            self.responseData = "StatutoryNatureNameAlreadyExists"
+        else :
+            if DatabaseHandler.instance().updateStatutoryNature(
+                self.statutoryNatureId, self.statutoryNatureName, self.userId
+            ) :
+                self.responseData = "success"
+            else :
+                self.responseData = "InvalidStatutoryNatureId"
+
+    def toStructure(self) :
+        return [
+            str(self.responseData),
+            {}
+        ]
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class ChangeStatutoryNatureStatus(object) :
+    def __init__(self, request, userId) :
+        self.request = request
+        self.userId = userId
+        self.statutoryNatureId = None
+        self.isActive = None
+        self.responseData = None
+        self.processData()
+
+    def processData(self) :
+        requestData = self.request[1]
+        assertType(requestData, DictType)
+        self.isActive = JSONHelper.getInt(requestData, "is_active")
+        self.statutoryNatureId = JSONHelper.getInt(requestData, "statutory_nature_id")
+        if DatabaseHandler.instance().updateStatutoryNatureStatus(
+            self.statutoryNatureId, self.isActive, self.userId
+        ) :
+            self.responseData = "success"
+        else :
+            self.responseData = "InvalidStatutoryNatureId"
+
+    def toStructure(self) :
+        return [
+            str(self.responseData),
+            {}
+        ]
+
+    def __repr__(self) :
+        return str(self.toStructure())

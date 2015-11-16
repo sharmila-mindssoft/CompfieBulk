@@ -50,6 +50,14 @@ class APIRequestHandler(tornado.web.RequestHandler) :
                     response = UpdateIndustry(request, userId)
                 elif request[0] == "ChangeIndustryStatus" :
                     response = ChangeIndustryStatus(request, userId)
+                elif request[0] == "GetStatutoryNatures" :
+                    response = StatutoryNatureList(request)
+                elif request[0] == "SaveStatutoryNature" :
+                    response = SaveStatutoryNature(request, userId)
+                elif request[0] == "UpdateStatutoryNature" :
+                    response = UpdateStatutoryNature(request, userId)
+                elif request[0] == "ChangeStatutoryNatureStatus" :
+                    response = ChangeStatutoryNatureStatus(request, userId)
                 else :
                     response = "InvalidRequest"
 
