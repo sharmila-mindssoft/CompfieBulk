@@ -265,6 +265,72 @@ class DatabaseHandler(object) :
         else :
             return False
 
+    ### StatutoryNature ###
+
+    def getStatutoryNatures(self) :
+        query = "SELECT statutory_nature_id, statutory_nature_name, is_active FROM tbl_statutory_natures "
+        return self.dataSelect(query)
+
+    def checkDuplicateStatutoryNature(self, statutoryNatureName, statutoryNatureId) :
+        isDuplicate = False
+        query = "SELECT count(*) FROM tbl_statutory_natures WHERE LOWER(statutory_nature_name) = LOWER('%s') " % statutoryNatureName
+        if statutoryNatureId is not None :
+            query = query + " AND statutory_nature_id != %s" % statutoryNatureId
+        rows = self.dataSelect(query)
+        row = rows[0]
+
+        if row[0] > 0 :
+            isDuplicate = True
+
+        return isDuplicate
+
+    def getStatutoryNatureId(self) :
+        statutoryNatureId = 1
+        query = "SELECT max(statutory_nature_id) FROM tbl_statutory_natures "
+        rows = self.dataSelect(query)
+        for row in rows :
+            if row[0] is not None :
+                statutoryNatureId = int(row[0]) + 1
+        return statutoryNatureId
+
+    def saveStatutoryNature(self, statutoryNatureName, createdBy) :
+        createdOn = datetime.datetime.now()
+        statutoryNatureId = self.getStatutoryNatureId()
+        isActive = 1
+
+        query = "INSERT INTO tbl_statutory_natures(statutory_nature_id, statutory_nature_name, is_active, created_by, created_on)" + \
+            " VALUES (%s, '%s', %s, %s, '%s') " % (statutoryNatureId, statutoryNatureName, isActive, createdBy, createdOn)
+
+        return self.dataInsertUpdate(query)
+
+    def getStatutoryNatureById(self, statutoryNatureId) :
+        q = "SELECT statutory_nature_name FROM tbl_statutory_natures WHERE statutory_nature_id=%s" % statutoryNatureId
+        rows = self.dataSelect(q)
+        statutoryNatureName = rows[0][0]
+        return statutoryNatureName
+
+    def updateStatutoryNature(self, statutoryNatureId, statutoryNatureName, updatedBy) :
+        oldData = self.getStatutoryNatureById(statutoryNatureId)
+        if oldData is not None :
+            query = "UPDATE tbl_statutory_natures SET statutory_nature_name = '%s', updated_by = %s WHERE statutory_nature_id = %s" % (
+                statutoryNatureName, updatedBy, statutoryNatureId
+            )
+            return self.dataInsertUpdate(query)
+        else :
+            return False
+
+    def updateStatutoryNatureStatus(self, statutoryNatureId, isActive, updatedBy) :
+        oldData = self.getStatutoryNatureById(statutoryNatureId)
+        if oldData is not None :
+            query = "UPDATE tbl_statutory_natures SET is_active = %s, updated_by = %s WHERE statutory_nature_id = %s" % (
+                isActive, updatedBy, statutoryNatureId
+            )
+            return self.dataInsertUpdate(query)
+        else :
+            return False
+
+    ### StatutoryLevels ###
+
     @staticmethod
     def instance() :
         global _databaseHandlerInstance
