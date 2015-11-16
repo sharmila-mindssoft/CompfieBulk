@@ -16,7 +16,7 @@ def handle_request(url, options) :
             print data
 
     encoded_parameters = urllib.urlencode(options)
-    print options
+    # print options
     http_client = AsyncHTTPClient()
     http_client.fetch(
         url, 
@@ -28,7 +28,7 @@ def handle_request(url, options) :
 
 ### get domain 
 def getdomains():
-    domain_url = "http://localhost:8080/GetDomains"
+    domain_url = "http://192.168.1.9:8080/GetDomains"
     domains_data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
@@ -84,14 +84,38 @@ def changeDomain() :
     print "changeDomain response"
     return handle_request(url, data)
 
+# Admin User Group Requests
 
+def getUserGroups():
+    url = "http://localhost:8080/UserGroups"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "GetUserGroups",
+            {}
+        ]
+    }
+    # data = {
+    #     "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+    #     "request" : [
+    #         "SaveUserGroup",
+    #         {
+    #             "user_group_name": "Knowledge User",
+    #             "form_type": "Knowledge",
+    #             "form_ids": [4,5]
+    #         }
+    #     ]
+    # }
+    print "Get User group request sent"
+    return handle_request(url, data)
 
 if __name__ == "__main__" :
     print "listening on port 8090"
     # saveDomain()
     # updateDomain()
     # changeDomain()
-    getdomains()
+    # getdomains()
+    getUserGroups()
     application = tornado.web.Application(
         [],
         gzip=True

@@ -11,6 +11,7 @@ from aparajitha.server import countries as countriesdb
 from collections import OrderedDict
 
 from knowledge import handler as knowledge_handler
+from admin import handler as admin_handler
 
 TEMPLATE_PATHS = [
     ("/", "files/desktop/Login/Login.html", "files/mobile/Login/Login.html", {}),
@@ -651,6 +652,14 @@ def run_server() :
         application_urls.append(entry)
 
     for url, handler in knowledge_handler.initializeKnowledgeHandler() :
+        args = {
+            "url": url,
+            "handler": handler
+        }
+        entry = (url, handler, args)
+        application_urls.append(entry)
+
+    for url, handler in admin_handler.initializeAdminHandler() :
         args = {
             "url": url,
             "handler": handler
