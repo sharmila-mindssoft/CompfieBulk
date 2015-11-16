@@ -1,0 +1,95 @@
+<html>
+<head>
+<title>Select Box</title>
+
+<style type="text/css">
+.ac-textbox li
+{
+list-style-type:none; line-height:25px;
+}
+.ac-textbox ul {
+	border:1px solid red;
+	position: absolute;
+	padding-left: 0em;
+}
+.ac-textbox ul li {
+	padding-bottom: 0.5em;
+	font-size: 0.9em;
+	padding-top: 0.3em;
+	padding-right: 0.3em;
+	padding-left:1.5em;
+	cursor: pointer;
+}
+.ac-textbox ul li:hover{
+	background: #EAE8E8;	
+}
+</style>
+</head>
+<body>
+
+<h3> <u>Autocomplete with Checkbox Selection</u></h3>
+<table>
+<tr>
+<td>Search Country</td>
+<td>
+<input type="text" id="ac-textbox" value="" onkeyup="loadautocomplete(this.value)"> 
+<input type="hidden" id="ac-resultautocompletevalue"> 
+</td>
+
+<td>
+</td>
+
+<td><input type="button" id="getresultautocomplete" value="Get Result" onclick="resultautocomplete()"></td>
+</tr>
+
+<tr>
+<td> </td>
+<td id="ac-view" class="ac-textbox" style="display:none;">
+	<ul id="ac-list" onclick="hideautocomplete();">
+</ul> 
+</td>
+<td> </td>
+</tr>
+</table>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript">
+
+function hideautocomplete()
+{
+    document.getElementById('ac-view').style.display = 'none';
+}
+
+function loadautocomplete (textval) {
+
+	document.getElementById('ac-view').style.display = 'block';
+	var countries = {"1":"India","2":"Singapore","3":"Malaysia","4":"United States","5":"Japan","6":"London","7":"China"};
+	var suggestions = [];
+	$('#ac-list').empty();
+	if(textval.length>0){
+		for(var i in countries){
+			if (~countries[i].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([i,countries[i]]);	
+		}
+		var str='';
+		for(var i in suggestions){
+          		str += '<li id="'+suggestions[i][0]+'"onclick="activateautocomplete(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+		}
+ 		$('#ac-list').append(str);
+ 		$("#ac-resultautocompletevalue").val('');
+    }
+}	
+
+function activateautocomplete (checkval,checkname) {
+	$("#ac-textbox").val(checkname);
+	$("#ac-resultautocompletevalue").val(checkval);
+}	
+
+function resultautocomplete () {
+	var resultautocomplete = $("#ac-resultautocompletevalue").val();
+	alert(resultautocomplete);
+}	
+
+</script>
+
+</body>
+</html>
