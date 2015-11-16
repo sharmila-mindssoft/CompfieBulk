@@ -70,8 +70,9 @@ class DatabaseHandler(object) :
         row = rows[0]
         return row[0]
 
+    ### Domain ###
+
     def checkDuplicateDomain(self, domainName, domainId) :
-        domainNames = []
         isDuplicate = False
         query = "SELECT count(*) FROM tbl_domains WHERE LOWER(domain_name) = LOWER('%s') " % domainName
         if domainId is not None :
@@ -90,7 +91,8 @@ class DatabaseHandler(object) :
         rows = self.dataSelect(query)
 
         for row in rows :
-            domainId = row[0] + 1
+            if row[0] is not None :
+                domainId = row[0] + 1
 
         return domainId
             
@@ -130,6 +132,70 @@ class DatabaseHandler(object) :
         if oldData is not None :
             query = "UPDATE tbl_domains SET is_active = %s, updated_by = %s WHERE domain_id = %s" % (
                 isActive, updatedBy, domainId
+            )
+            return self.dataInsertUpdate(query)
+        else :
+            return False
+
+    ### Country ###
+
+    def getCountries(self) :
+        query = "SELECT country_id, country_name, is_active FROM tbl_countries "
+        return self.dataSelect(query)
+
+    def checkDuplicateCountry(self, countryName, countryId) :
+        isDuplicate = False
+        query = "SELECT count(*) FROM tbl_countries WHERE LOWER(country_name) = LOWER('%s') " % countryName
+        if countryId is not None :
+            query = query + " AND country_id != %s" % countryId
+        rows = self.dataSelect(query)
+        row = rows[0]
+
+        if row[0] > 0 :
+            isDuplicate = True
+
+        return isDuplicate
+
+    def getCountryId(self) :
+        countryId = 1
+        query = "SELECT max(country_id) FROM tbl_countries "
+        rows = self.dataSelect(query)
+        for row in rows :
+            if row[0] is not None :
+                countryId = int(row[0]) + 1
+        return countryId
+
+    def saveCountry(self, countryName, createdBy) :
+        createdOn = datetime.datetime.now()
+        countryId = self.getCountryId()
+        isActive = 1
+
+        query = "INSERT INTO tbl_countries(country_id, country_name, is_active, created_by, created_on)" + \
+            " VALUES (%s, '%s', %s, %s, '%s') " % (countryId, countryName, isActive, createdBy, createdOn)
+
+        return self.dataInsertUpdate(query)
+
+    def getCountryByCountryId(self, countryId) :
+        q = "SELECT country_name FROM tbl_countries WHERE country_id=%s" % countryId
+        rows = self.dataSelect(q)
+        countryName = rows[0][0]
+        return countryName
+
+    def updateCountry(self, countryId, countryName, updatedBy) :
+        oldData = self.getCountryByCountryId(countryId)
+        if oldData is not None :
+            query = "UPDATE tbl_countries SET country_name = '%s', updated_by = %s WHERE country_id = %s" % (
+                countryName, updatedBy, countryId
+            )
+            return self.dataInsertUpdate(query)
+        else :
+            return False
+
+    def updateCountryStatus(self, countryId, isActive, updatedBy) :
+        oldData = self.getCountryByCountryId(countryId)
+        if oldData is not None :
+            query = "UPDATE tbl_countries SET is_active = %s, updated_by = %s WHERE country_id = %s" % (
+                isActive, updatedBy, countryId
             )
             return self.dataInsertUpdate(query)
         else :
