@@ -61,7 +61,7 @@ function changeStatus (domainId,isActive) {
 }
 
 function initialize () {
-  var domainsList = {
+  /*var domainsList = {
     "domains": [
     {
       "domain_id": "1",
@@ -79,12 +79,68 @@ function initialize () {
       "is_active": "true"
     }
     ]
-  };
-  loadDomainList(domainsList);
-}
+  };*/
+
+    /*jQuery.ajax({
+          url: "http://192.168.1.3:8080/GetDomains",
+          type: "post",
+          dataType: 'json',
+          cache : false,
+          contentType: "application/json; charset=utf-8",
+          data: JSON.stringify({ "session_token": "b4c59894336c4ee3b598f5e4bd2b276b","request": ["GetDomains",{}]
+ }),
+          success: function(msg) {
+            alert(msg);
+        }
+      });*/
+  //loadDomainList(domainsList);
+
+  
+
+
+
+
+
+
 
 $(document).ready(function () {
-  initialize();
+  var domain_url = "http://localhost:8080/ApiCall";
+            var domains_data = {
+                    "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+                    "request" : [
+                        "GetDomains",
+                        {}
+                    ]
+                };
+            var options = JSON.stringify(domains_data);
+            function ajaxCall (url, options, callback) {
+                $.support.cors = true;
+                $.ajax({
+                    crossDomain: true,
+                    url: url,
+                    dataType: 'json',
+                    type: 'POST',
+                    data: options,
+                    crossDomain: true,
+                    success: function(data) {
+                        console.log(data)
+                        var result = data["data"];
+                        if (result !== null) {
+                            callback(result);
+                        }
+                        else {
+                            callback(null);
+                        }
+                    },
+                    error: function(xhr, status, err) {
+                        console.error(url, status, err.toString());
+                        callback(null);
+                    }
+                });
+            }
+            ajaxCall(domain_url, options, function (data) {
+                console.log(data)
+            });
 });
 
 
