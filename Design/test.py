@@ -464,7 +464,6 @@ def saveGeoLevel() :
     }
     return handle_request(url, data)
 
-
 if __name__ == "__main__" :
     print "listening on port 8090"
     ### Domain ###
@@ -472,7 +471,8 @@ if __name__ == "__main__" :
     # updateDomain()
     # changeDomain()
     # getdomains()
-    
+    getUserGroups()
+
     ### Country ###
     # saveCountry()
     # updateCountry()
