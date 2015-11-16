@@ -201,6 +201,70 @@ class DatabaseHandler(object) :
         else :
             return False
 
+    ### Industry ###
+
+    def getIndustries(self) :
+        query = "SELECT industry_id, industry_name, is_active FROM tbl_industries "
+        return self.dataSelect(query)
+
+    def checkDuplicateIndustry(self, industryName, industryId) :
+        isDuplicate = False
+        query = "SELECT count(*) FROM tbl_industries WHERE LOWER(industry_name) = LOWER('%s') " % industryName
+        if industryId is not None :
+            query = query + " AND industry_id != %s" % industryId
+        rows = self.dataSelect(query)
+        row = rows[0]
+
+        if row[0] > 0 :
+            isDuplicate = True
+
+        return isDuplicate
+
+    def getIndustryId(self) :
+        industryId = 1
+        query = "SELECT max(industry_id) FROM tbl_industries "
+        rows = self.dataSelect(query)
+        for row in rows :
+            if row[0] is not None :
+                industryId = int(row[0]) + 1
+        return industryId
+
+    def saveIndustry(self, industryName, createdBy) :
+        createdOn = datetime.datetime.now()
+        industryId = self.getIndustryId()
+        isActive = 1
+
+        query = "INSERT INTO tbl_industries(industry_id, industry_name, is_active, created_by, created_on)" + \
+            " VALUES (%s, '%s', %s, %s, '%s') " % (industryId, industryName, isActive, createdBy, createdOn)
+
+        return self.dataInsertUpdate(query)
+
+    def getIndustryByIndustryId(self, industryId) :
+        q = "SELECT industry_name FROM tbl_industries WHERE industry_id=%s" % industryId
+        rows = self.dataSelect(q)
+        industryName = rows[0][0]
+        return industryName
+
+    def updateIndustry(self, industryId, industryName, updatedBy) :
+        oldData = self.getIndustryByIndustryId(industryId)
+        if oldData is not None :
+            query = "UPDATE tbl_industries SET industry_name = '%s', updated_by = %s WHERE industry_id = %s" % (
+                industryName, updatedBy, industryId
+            )
+            return self.dataInsertUpdate(query)
+        else :
+            return False
+
+    def updateIndustryStatus(self, industryId, isActive, updatedBy) :
+        oldData = self.getIndustryByIndustryId(industryId)
+        if oldData is not None :
+            query = "UPDATE tbl_industries SET is_active = %s, updated_by = %s WHERE industry_id = %s" % (
+                isActive, updatedBy, industryId
+            )
+            return self.dataInsertUpdate(query)
+        else :
+            return False
+
     @staticmethod
     def instance() :
         global _databaseHandlerInstance

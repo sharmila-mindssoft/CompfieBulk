@@ -14,6 +14,7 @@ def handle_request(url, options) :
         else:
             data = api_response.body
             print data
+            print 
 
     encoded_parameters = urllib.urlencode(options)
     print options
@@ -28,7 +29,7 @@ def handle_request(url, options) :
 
 ### get domain 
 def getdomains():
-    domain_url = "http://localhost:8080/GetDomains"
+    domain_url = "http://localhost:8080/ApiCall"
     domains_data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
@@ -41,7 +42,7 @@ def getdomains():
     return handle_request( domain_url, domains_data)
 
 def saveDomain():
-    url = "http://localhost:8080/SaveDomain"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
@@ -55,7 +56,7 @@ def saveDomain():
     return handle_request(url, data)
 
 def updateDomain() :
-    url = "http://localhost:8080/UpdateDomain"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
@@ -70,7 +71,7 @@ def updateDomain() :
     return handle_request(url, data)
 
 def changeDomain() :
-    url = "http://localhost:8080/ChangeDomainStatus"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
@@ -86,7 +87,7 @@ def changeDomain() :
 
 ### COUNTRY
 def getcountries():
-    url = "http://localhost:8080/GetCountries"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
@@ -98,20 +99,20 @@ def getcountries():
     return handle_request(url, data)
 
 def saveCountry():
-    url = "http://localhost:8080/SaveCountry"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
             "SaveCountry",
             {
-                "country_name": "USA"
+                "country_name": "Malaysia"
             }
         ]
     }
     return handle_request(url, data)
 
 def updateCountry() :
-    url = "http://localhost:8080/UpdateCountry"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
@@ -125,7 +126,7 @@ def updateCountry() :
     return handle_request(url, data)
 
 def changeCountry() :
-    url = "http://localhost:8080/ChangeCountryStatus"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
@@ -133,6 +134,60 @@ def changeCountry() :
             {
                 "country_id": 1,
                 "is_active": 0
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+### Industry
+def getindustries():
+    url = "http://localhost:8080/Industry"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "GetIndustries",
+            {}
+        ]
+    }
+
+    return handle_request(url, data)
+
+def saveIndustry(industry):
+    url = "http://localhost:8080/SaveIndustry"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "SaveIndustry",
+            {
+                "industry_name": industry
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+def updateIndustry(industry) :
+    url = "http://localhost:8080/abcdefgh"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "UpdateIndustry",
+            {
+                "industry_id": 3,
+                "industry_name": industry
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+def changeIndustry(status) :
+    url = "http://localhost:8080/ChangeStatus"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "ChangeIndustryStatus",
+            {
+                "industry_id": 1,
+                "is_active": status
             }
         ]
     }
@@ -146,12 +201,21 @@ if __name__ == "__main__" :
     # updateDomain()
     # changeDomain()
     getdomains()
-
+    print 
     ### Country ###
     # saveCountry()
     # updateCountry()
     # changeCountry()
     getcountries()
+    print
+
+    ### Industry ###
+    # saveIndustry("Factory")
+    # updateIndustry("Plantation")
+    changeIndustry(0)
+    getindustries()
+
+
 
     application = tornado.web.Application(
         [],
