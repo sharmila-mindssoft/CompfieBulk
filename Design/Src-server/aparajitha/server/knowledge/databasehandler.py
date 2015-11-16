@@ -212,7 +212,8 @@ class DatabaseHandler(object) :
     def checkDuplicateIndustry(self, industryName, industryId) :
         isDuplicate = False
         query = "SELECT count(*) FROM tbl_industries \
-        WHERE LOWER(industry_name) = LOWER('%s') " % industryName
+            WHERE LOWER(industry_name) = LOWER('%s') " % industryName
+
         if industryId is not None :
             query = query + " AND industry_id != %s" % industryId
         rows = self.dataSelect(query)

@@ -28,8 +28,7 @@ def handle_request(url, options) :
 
 ### get domain 
 def getdomains():
-    print "enter"
-    domain_url = "http://192.:8080/GetDomains"
+    domain_url = "http://localhost:8080/ApiCall"
     domains_data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
@@ -138,6 +137,7 @@ def changeCountry() :
         ]
     }
     return handle_request(url, data)
+
 
 def getUserGroups():
     url = "http://localhost:8080/AdminAPI"
@@ -463,6 +463,7 @@ def saveGeoLevel() :
         ]
     }
     return handle_request(url, data)
+
 
 if __name__ == "__main__" :
     print "listening on port 8090"
