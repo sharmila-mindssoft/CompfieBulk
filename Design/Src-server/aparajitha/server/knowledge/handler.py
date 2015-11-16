@@ -2,53 +2,34 @@ import json
 
 import tornado.ioloop
 import tornado.web
-
+from models import *
 from databasehandler import *
+
 
 __all__ = [
     "initializeKnowledgeHandler"
 ]
-
-def commonResultStructure(responseType) :
-    return [
-        responseType,
-        {}
-    ]
 
 class GetDomainHandler(tornado.web.RequestHandler) :
     def initialize(self, url, handler) :
         self.url = url
         self.handler = handler
 
-    def toStructure(self, domainList) :
-        response = [
-            "success",
-            { "domains" : str(domainList) }
-        ]
-        return json.dumps(response)
-
     @tornado.web.asynchronous
     def post(self) :
         try:
             data = json.loads(self.request.body)
-            sessionToken = data.get("session_token")
-            userId = 1
-            request = data.get("request")
-            if userId is None :
-                data = commonResultStructure("InvalidSessionToken")
-            elif request[0] != "GetDomains" :
-                data = commonResultStructure("InvalidRequest")
-            else :
-                domainList = DatabaseHandler.instance().getDomains()
-                data = self.toStructure(domainList)
-
+            sessionToken = JSONHelper.getString(data, "session_token")
+            request = JSONHelper.getList(data, "request")
+            response = DomainList(sessionToken, request)
         except Exception, e:
             print e
             self.send_error(400)
             return
+
         finally:            
             self.set_header("Content-Type", "application/json")
-            self.write(data)
+            self.write(json.dumps(str(response)))
             self.finish()
 
 class SaveDomainHandler(tornado.web.RequestHandler) :
@@ -60,32 +41,16 @@ class SaveDomainHandler(tornado.web.RequestHandler) :
     def post(self) :
         try:
             data = json.loads(self.request.body)
-            sessionToken = data.get("session_token")
-            request = data.get("request")
-            userId = 1
-            if userId is None :
-                data = commonResultStructure("InvalidSessionToken")
-            elif request[0] != "SaveDomain" :
-                data = commonResultStructure("InvalidRequest")
-            else :
-                requestData = request[1]
-                #asserttype
-                domainName = requestData.get("domain_name")
-                isDuplicate = DatabaseHandler.instance().checkDuplicateDomain(domainName, None)
-                if isDuplicate :
-                    data = commonResultStructure("DomainNameAlreadyExists")
-                else :
-                    if DatabaseHandler.instance().saveDomain(domainName, userId) :
-                        data = commonResultStructure("success")
-                    else :
-                        data = commonResultStructure("SaveFailed")
+            sessionToken = JSONHelper.getString(data, "session_token")
+            request = JSONHelper.getList(data, "request")
+            response = SaveDomain(sessionToken, request)
         except Exception, e:
             print e
             self.send_error(400)
             return
         finally :
             self.set_header("Content-Type", "application/json")
-            self.write(json.dumps(data))
+            self.write(json.dumps(str(response)))
             self.finish()
         
 class UpdateDomainHandler(tornado.web.RequestHandler) :
@@ -97,26 +62,9 @@ class UpdateDomainHandler(tornado.web.RequestHandler) :
     def post(self) :
         try:
             data = json.loads(self.request.body)
-            sessionToken = data.get("session_token")
-            request = data.get("request")
-            userId = 1
-            if userId is None :
-                data = commonResultStructure("InvalidSessionToken")
-            elif request[0] != "UpdateDomain" :
-                data = commonResultStructure("InvalidRequest")
-            else :
-                requestData = request[1]
-                #asserttype
-                domainName = requestData.get("domain_name")
-                domainId = requestData.get("domain_id")
-                isDuplicate = DatabaseHandler.instance().checkDuplicateDomain(domainName, domainId)
-                if isDuplicate :
-                    data = commonResultStructure("DomainNameAlreadyExists")
-                else :
-                    if DatabaseHandler.instance().updateDomain(domainId, domainName, userId) :
-                        data = commonResultStructure("success")
-                    else :
-                        data = commonResultStructure("InvalidDomainId")
+            sessionToken = JSONHelper.getString(data, "session_token")
+            request = JSONHelper.getList(data, "request")
+            response = UpdateDomain(sessionToken, request)
 
         except Exception, e:
             print e
@@ -124,7 +72,7 @@ class UpdateDomainHandler(tornado.web.RequestHandler) :
             return
         finally:
             self.set_header("Content-Type", "application/json")
-            self.write(json.dumps(data))
+            self.write(json.dumps(str(response)))
             self.finish()
 
 class ChangeDomainStatusHandler(tornado.web.RequestHandler) :
@@ -136,27 +84,104 @@ class ChangeDomainStatusHandler(tornado.web.RequestHandler) :
     def post(self) :
         try:
             data = json.loads(self.request.body)
-            sessionToken = data.get("session_token")
-            request = data.get("request")
-            userId = 1
-            if userId is None :
-                data = commonResultStructure("InvalidSessionToken")
-            elif request[0] != "ChangeDomainStatus" :
-                data = commonResultStructure("InvalidRequest")
-            else :
-                requestData = request[1]
-                #asserttype
-                domainId = requestData.get("domain_id")
-                isActive = requestData.get("is_active")
-                if DatabaseHandler.instance().updateDomainStatus(domainId, isActive, userId) :
-                    data = commonResultStructure("success")
-                else :
-                    data = commonResultStructure("InvalidDomainId")
+            sessionToken = JSONHelper.getString(data, "session_token")
+            request = JSONHelper.getList(data, "request")
+            response = ChangeDomainStatus(sessionToken, request)
+
         except Exception, e:
-            raise e
+            print e
+            self.send_error(400)
+            return
         finally:
             self.set_header("Content-Type", "application/json")
-            self.write(json.dumps(data))
+            self.write(json.dumps(str(response)))
+            self.finish()
+
+class GetCountryHandler(tornado.web.RequestHandler) :
+    def initialize(self, url, handler) :
+        self.url = url
+        self.handler = handler
+
+    @tornado.web.asynchronous
+    def post(self) :
+        try:
+            data = json.loads(self.request.body)
+            sessionToken = JSONHelper.getString(data, "session_token")
+            request = JSONHelper.getList(data, "request")
+            response = CountryList(sessionToken, request)
+        except Exception, e:
+            print e
+            self.send_error(400)
+            return
+
+        finally:            
+            self.set_header("Content-Type", "application/json")
+            self.write(json.dumps(str(response)))
+            self.finish()
+
+class SaveCountryHandler(tornado.web.RequestHandler) :
+    def initialize(self, url, handler) :
+        self.url = url
+        self.handler = handler
+    
+    @tornado.web.asynchronous
+    def post(self) :
+        try:
+            data = json.loads(self.request.body)
+            sessionToken = JSONHelper.getString(data, "session_token")
+            request = JSONHelper.getList(data, "request")
+            response = SaveCountry(sessionToken, request)
+        except Exception, e:
+            print e
+            self.send_error(400)
+            return
+        finally :
+            self.set_header("Content-Type", "application/json")
+            self.write(json.dumps(str(response)))
+            self.finish()
+
+class UpdateCountryHandler(tornado.web.RequestHandler) :
+    def initialize(self, url, handler) :
+        self.url = url
+        self.handler = handler
+
+    @tornado.web.asynchronous
+    def post(self) :
+        try:
+            data = json.loads(self.request.body)
+            sessionToken = JSONHelper.getString(data, "session_token")
+            request = JSONHelper.getList(data, "request")
+            response = UpdateCountry(sessionToken, request)
+
+        except Exception, e:
+            print e
+            self.send_error(400)
+            return
+        finally:
+            self.set_header("Content-Type", "application/json")
+            self.write(json.dumps(str(response)))
+            self.finish()
+
+class ChangeCountryStatusHandler(tornado.web.RequestHandler) :
+    def initialize(self, url, handler) :
+        self.url = url
+        self.handler = handler
+
+    @tornado.web.asynchronous
+    def post(self) :
+        try:
+            data = json.loads(self.request.body)
+            sessionToken = JSONHelper.getString(data, "session_token")
+            request = JSONHelper.getList(data, "request")
+            response = ChangeCountryStatus(sessionToken, request)
+
+        except Exception, e:
+            print e
+            self.send_error(400)
+            return
+        finally:
+            self.set_header("Content-Type", "application/json")
+            self.write(json.dumps(str(response)))
             self.finish()
 
 def initializeKnowledgeHandler() :
@@ -164,7 +189,13 @@ def initializeKnowledgeHandler() :
         ("/GetDomains", GetDomainHandler),
         ("/SaveDomain", SaveDomainHandler),
         ("/UpdateDomain", UpdateDomainHandler),
-        ("/ChangeDomainStatus", ChangeDomainStatusHandler)
+        ("/ChangeDomainStatus", ChangeDomainStatusHandler),
+
+        ("/GetCountries", GetCountryHandler),
+        ("/SaveCountry", SaveCountryHandler),
+        ("/UpdateCountry", UpdateCountryHandler),
+        ("/ChangeCountryStatus", ChangeCountryStatusHandler),
+
 
     ]
     return knowledge_urls

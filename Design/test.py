@@ -84,7 +84,59 @@ def changeDomain() :
     print "changeDomain response"
     return handle_request(url, data)
 
-# Admin User Group Requests
+### COUNTRY
+def getcountries():
+    url = "http://localhost:8080/GetCountries"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "GetCountries",
+            {}
+        ]
+    }
+
+    return handle_request(url, data)
+
+def saveCountry():
+    url = "http://localhost:8080/SaveCountry"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "SaveCountry",
+            {
+                "country_name": "USA"
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+def updateCountry() :
+    url = "http://localhost:8080/UpdateCountry"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "UpdateCountry",
+            {
+                "country_id": 2,
+                "country_name": "Sri Lanka"
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+def changeCountry() :
+    url = "http://localhost:8080/ChangeCountryStatus"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "ChangeCountryStatus",
+            {
+                "country_id": 1,
+                "is_active": 0
+            }
+        ]
+    }
+    return handle_request(url, data)
 
 def getUserGroups():
     url = "http://localhost:8080/UserGroups"
@@ -111,11 +163,19 @@ def getUserGroups():
 
 if __name__ == "__main__" :
     print "listening on port 8090"
+    ### Domain ###
     # saveDomain()
     # updateDomain()
     # changeDomain()
     # getdomains()
     getUserGroups()
+
+    ### Country ###
+    # saveCountry()
+    # updateCountry()
+    # changeCountry()
+    # getcountries()
+
     application = tornado.web.Application(
         [],
         gzip=True
