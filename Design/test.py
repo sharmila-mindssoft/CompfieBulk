@@ -14,6 +14,7 @@ def handle_request(url, options) :
         else:
             data = api_response.body
             print data
+            print 
 
     encoded_parameters = urllib.urlencode(options)
     # print options
@@ -28,7 +29,7 @@ def handle_request(url, options) :
 
 ### get domain 
 def getdomains():
-    domain_url = "http://192.168.1.3:8080/GetDomains"
+    domain_url = "http://localhost:8080/ApiCall"
     domains_data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
@@ -41,13 +42,13 @@ def getdomains():
     return handle_request( domain_url, domains_data)
 
 def saveDomain():
-    url = "http://localhost:8080/SaveDomain"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
             "SaveDomain",
             {
-                "domain_name": "Labour Law"
+                "domain_name": "New Labour Law"
             }
         ]
     }
@@ -55,14 +56,14 @@ def saveDomain():
     return handle_request(url, data)
 
 def updateDomain() :
-    url = "http://localhost:8080/UpdateDomain"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
             "UpdateDomain",
             {
                 "domain_id": 3,
-                "domain_name": "Industry Law"
+                "domain_name": "Industry Law Update"
             }
         ]
     }
@@ -70,14 +71,14 @@ def updateDomain() :
     return handle_request(url, data)
 
 def changeDomain() :
-    url = "http://localhost:8080/ChangeDomainStatus"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
             "ChangeDomainStatus",
             {
                 "domain_id": 1,
-                "is_active": 0
+                "is_active": 1
             }
         ]
     }
@@ -86,7 +87,7 @@ def changeDomain() :
 
 ### COUNTRY
 def getcountries():
-    url = "http://localhost:8080/GetCountries"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
@@ -98,41 +99,41 @@ def getcountries():
     return handle_request(url, data)
 
 def saveCountry():
-    url = "http://localhost:8080/SaveCountry"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
             "SaveCountry",
             {
-                "country_name": "USA"
+                "country_name": "Spain"
             }
         ]
     }
     return handle_request(url, data)
 
 def updateCountry() :
-    url = "http://localhost:8080/UpdateCountry"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
             "UpdateCountry",
             {
                 "country_id": 2,
-                "country_name": "Sri Lanka"
+                "country_name": "South Africa"
             }
         ]
     }
     return handle_request(url, data)
 
 def changeCountry() :
-    url = "http://localhost:8080/ChangeCountryStatus"
+    url = "http://localhost:8080/ApiCall"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
             "ChangeCountryStatus",
             {
                 "country_id": 1,
-                "is_active": 0
+                "is_active": 1
             }
         ]
     }
@@ -184,7 +185,102 @@ def sendUserGroupRequests():
             "ChangeUserGroupStatus",
             { 
                 "user_group_id" : 1,
-                "is_active": 1,
+                "is_active": 1
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+### Industry
+def getindustries():
+    url = "http://localhost:8080/Industry"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "GetIndustries",
+            {}
+        ]
+    }
+
+    return handle_request(url, data)
+
+def saveIndustry(industry):
+    url = "http://localhost:8080/SaveIndustry"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "SaveIndustry",
+            {
+                "industry_name": industry
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+def updateIndustry(industry) :
+    url = "http://localhost:8080/abcdefgh"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "UpdateIndustry",
+            {
+                "industry_id": 3,
+                "industry_name": industry
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+def changeIndustry(status) :
+    url = "http://localhost:8080/ChangeStatus"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "ChangeIndustryStatus",
+            {
+                "industry_id": 1,
+                "is_active": status
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+### StatutoryNature
+
+def getStatutoryNature():
+    url = "http://localhost:8080/StatutoryNature"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "GetStatutoryNatures",
+            {}
+        ]
+    }
+
+    return handle_request(url, data)
+
+def saveStatutoryNature(inputData):
+    url = "http://localhost:8080/StatutoryNature"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "SaveStatutoryNature",
+            {
+                "statutory_nature_name": inputData
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+def updateStatutoryNature(inputData) :
+    url = "http://localhost:8080/StatutoryNature"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "UpdateStatutoryNature",
+            {
+                "statutory_nature_id": 3,
+                "statutory_nature_name": inputData
             }
         ]
     }
@@ -229,6 +325,20 @@ def sendUserRequests():
     }
     return handle_request(url, data)
 
+def changeStatutoryNatureStatus(status) :
+    url = "http://localhost:8080/StatutoryNature"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "ChangeStatutoryNatureStatus",
+            {
+                "statutory_nature_id": 4,
+                "is_active": status
+            }
+        ]
+    }
+    return handle_request(url, data)
+
 if __name__ == "__main__" :
     print "listening on port 8090"
     ### Domain ###
@@ -238,12 +348,25 @@ if __name__ == "__main__" :
     # getdomains()
     # sendUserGroupRequests()
     sendUserRequests()
-
+    
     ### Country ###
     # saveCountry()
     # updateCountry()
     # changeCountry()
     # getcountries()
+    
+
+    ### Industry ###
+    # saveIndustry("Mines")
+    # updateIndustry("New Plantation")
+    # changeIndustry(1)
+    # getindustries()
+
+    ### StatutoryNature ###
+    # saveStatutoryNature("test")
+    # updateStatutoryNature("State")
+    # changeStatutoryNatureStatus(0)
+    # getStatutoryNature()
 
     application = tornado.web.Application(
         [],
