@@ -471,7 +471,9 @@ if __name__ == "__main__" :
     # updateDomain()
     # changeDomain()
     # getdomains()
-    getUserGroups()
+    # getUserGroups()
+    # getdomains()
+    
 
     ### Country ###
     # saveCountry()
