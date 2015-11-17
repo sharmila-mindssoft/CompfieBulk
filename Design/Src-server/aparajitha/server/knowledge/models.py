@@ -4,7 +4,7 @@ from types import *
 from databasehandler import DatabaseHandler
 
 __all__ = [
-    "JSONHelper", "Domain", "DomainList", 
+    "JSONHelper", "PossibleError", "Domain", "DomainList", 
     "SaveDomain", "UpdateDomain", "ChangeDomainStatus",
     "Country", "CountryList", "SaveCountry",
     "UpdateCountry", "ChangeCountryStatus",
@@ -57,6 +57,24 @@ class JSONHelper(object) :
     def getList(data, name) :
         return JSONHelper.list(data.get(name))
 
+class PossibleError(object) :
+    def __init__(self, possibleError) :
+        self.possibleError = possibleError
+        self.verify()
+
+    def verify(self) :
+        assertType(self.possibleError, StringType)
+
+    def toStructure(self) :
+        return {
+            str(self.possibleError),
+            {}
+        }
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+
 class Domain(object) :
     def __init__(self, domainId, domainName, isActive) :
         self.domainId = domainId
@@ -90,29 +108,21 @@ class Domain(object) :
         return str(self.toStructure())
 
 class DomainList(object) :
-    def __init__(self, request) :
-        self.request = request
+    def __init__(self) :
         self.domainList = []
-        self.possibleError = None
         self.processData()
 
     def processData(self) :
         _domains = DatabaseHandler.instance().getDomains()
         for row in _domains :
             domain = Domain(int(row[0]), row[1], row[2])
-            self.domainList.append(domain)
+            self.domainList.append(domain.toStructure())
 
     def toStructure(self) :
-        if self.possibleError is not None :
-            return [
-                str(self.possibleError),
-                {}
-            ]
-        else :
-            return [
-                "success",
-                {"domains": self.domainList}
-            ]
+        return [
+            "success",
+            {"domains": self.domainList}
+        ]
 
 
     def __repr__(self) :
@@ -231,29 +241,21 @@ class Country(object) :
         return str(self.toStructure())
 
 class CountryList(object) :
-    def __init__(self, request) :
-        self.request = request
+    def __init__(self) :
         self.countryList = []
-        self.possibleError = None
         self.processData()
 
     def processData(self) :
         _countries = DatabaseHandler.instance().getCountries()
         for row in _countries :
             country = Country(int(row[0]), row[1], row[2])
-            self.countryList.append(country)
+            self.countryList.append(country.toStructure())
 
     def toStructure(self) :
-        if self.possibleError is not None :
-            return [
-                str(self.possibleError),
-                {}
-            ]
-        else :
-            return [
-                "success",
-                {"countries": self.countryList}
-            ]
+        return [
+            "success",
+            {"countries": self.countryList}
+        ]
 
     def __repr__(self) :
         return str(self.toStructure())
@@ -371,10 +373,8 @@ class Industry(object) :
         return str(self.toStructure())
 
 class IndustryList(object) :
-    def __init__(self, request) :
-        self.request = request
+    def __init__(self) :
         self.industryList = []
-        self.possibleError = None
         self.processData()
 
     def processData(self) :
@@ -384,16 +384,10 @@ class IndustryList(object) :
             self.industryList.append(industry)
 
     def toStructure(self) :
-        if self.possibleError is not None :
-            return [
-                str(self.possibleError),
-                {}
-            ]
-        else :
-            return [
-                "success",
-                {"industries": self.industryList}
-            ]
+        return [
+            "success",
+            {"industries": self.industryList}
+        ]
 
     def __repr__(self) :
         return str(self.toStructure())
@@ -511,10 +505,8 @@ class StatutoryNature(object) :
         return str(self.toStructure())
 
 class StatutoryNatureList(object) :
-    def __init__(self, request) :
-        self.request = request
+    def __init__(self) :
         self.statutoryNatureList = []
-        self.possibleError = None
         self.processData()
 
     def processData(self) :
@@ -524,16 +516,10 @@ class StatutoryNatureList(object) :
             self.statutoryNatureList.append(statutoryNature)
 
     def toStructure(self) :
-        if self.possibleError is not None :
-            return [
-                str(self.possibleError),
-                {}
-            ]
-        else :
-            return [
-                "success",
-                {"industries": self.statutoryNatureList}
-            ]
+        return [
+            "success",
+            {"industries": self.statutoryNatureList}
+        ]
 
     def __repr__(self) :
         return str(self.toStructure())
@@ -635,3 +621,6 @@ class ChangeStatutoryNatureStatus(object) :
 
     def __repr__(self) :
         return str(self.toStructure())
+
+
+

@@ -24,10 +24,10 @@ class APIRequestHandler(tornado.web.RequestHandler) :
             response = None
             userId = DatabaseHandler.instance().validateSessionToken(sessionToken)
             if userId is None :
-                response = "InvalidSessionToken"
+                response = PossibleError("InvalidSessionToken")
             else :
                 if request[0] == "GetDomains" :
-                    response = DomainList(request)
+                    response = DomainList()
                 elif request[0] == "SaveDomain" :
                     response = SaveDomain(request, userId)
                 elif request[0] == "UpdateDomain" :
@@ -35,7 +35,7 @@ class APIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "ChangeDomainStatus" :
                     response = ChangeDomainStatus(request, userId)
                 elif request[0] == "GetCountries" :
-                    response = CountryList(request)
+                    response = CountryList()
                 elif request[0] == "SaveCountry" :
                     response = SaveCountry(request, userId)
                 elif request[0] == "UpdateCountry" :
@@ -43,7 +43,7 @@ class APIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "ChangeCountryStatus" :
                     response = ChangeCountryStatus(request, userId)
                 elif request[0] == "GetIndustries" :
-                    response = IndustryList(request)
+                    response = IndustryList()
                 elif request[0] == "SaveIndustry" :
                     response = SaveIndustry(request, userId)
                 elif request[0] == "UpdateIndustry" :
@@ -51,7 +51,7 @@ class APIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "ChangeIndustryStatus" :
                     response = ChangeIndustryStatus(request, userId)
                 elif request[0] == "GetStatutoryNatures" :
-                    response = StatutoryNatureList(request)
+                    response = StatutoryNatureList()
                 elif request[0] == "SaveStatutoryNature" :
                     response = SaveStatutoryNature(request, userId)
                 elif request[0] == "UpdateStatutoryNature" :
@@ -59,7 +59,7 @@ class APIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "ChangeStatutoryNatureStatus" :
                     response = ChangeStatutoryNatureStatus(request, userId)
                 else :
-                    response = "InvalidRequest"
+                    response = PossibleError("InvalidRequest")
 
         except Exception, e:
             print callerName, e
@@ -70,7 +70,7 @@ class APIRequestHandler(tornado.web.RequestHandler) :
             self.set_header("Access-Control-Allow-Origin", "*")
             self.set_header("Access-Control-Allow-Headers", "Content-Type")
             self.set_header("Access-Control-Allow-Methods", "POST")
-            self.write(json.dumps(str(response)))
+            self.write(json.dumps(response.toStructure()))
             self.finish()
 
 def initializeKnowledgeHandler() :
