@@ -1,63 +1,28 @@
 from types import *
 from databasehandler import DatabaseHandler 
 import json
-import datetime
-import time
-
+from aparajitha.server.common import *
 
 __all__ = [
-    "CMObject", "UserGroup",
+    "UserGroup",
 ]
 
-def assertType (x, typeObject) :
-    if type(x) is not typeObject :
-        msg = "expected type %s, received invalid type  %s " % (typeObject, type(x))
-        raise TypeError(msg)
-
-def listToString(list_value):
-    print "Entering into list to string"
-    string_value = ""
-    for index,value in enumerate(list_value):
-        if(index < len(list_value)-1):
-            string_value = string_value+"'"+str(value)+"',"
-        else:
-            string_value = string_value+"'"+str(value)+"'"
-
-    return string_value
-
-def getCurrentTimeStamp() :
-    ts = time.time()
-    return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-
-class CMObject(object) :
-    def toJSON(self) :
-        data = self.toStructure()
-        return json.dumps(data)
-    @classmethod
-    def fromJSON(klass, jsonData) :
-        data = json.loads(jsonData)
-        return klass.fromStructure(data)
-
 class UserGroup(CMObject) :
-    tblUserGroup = "tbl_user_groups"
+    tblName = "tbl_user_groups"
 
     def __init__(self, userGroupId, userGroupName, formType, formIds, isActive) :
         self.userGroupId =  userGroupId if userGroupId != None else self.generateNewUserGroupId()
-        self.userGroupName = userGroupName
-        self.formType = formType
-        self.formIds = formIds
+        self.userGroupName = userGroupName if userGroupName != None else ""
+        self.formType = formType if formType != None else ""
+        self.formIds = formIds if formIds != None else []
         self.isActive = isActive if isActive != None else 1
         self.verify()
 
     def verify(self) :
         assertType(self.userGroupId, IntType)
-        print "Crossed verifying group id"
         assertType(self.userGroupName, StringType)
-        print "Crossed verifying group name"
         assertType(self.formType, StringType)
-        print "Crossed verifying form type"
         assertType(self.formIds, ListType)
-        print "Crossed verifying form ids"
         assertType(self.isActive, IntType)
 
     def toStructure(self) :
@@ -70,22 +35,39 @@ class UserGroup(CMObject) :
         }
 
     def generateNewUserGroupId(self) :
-        return DatabaseHandler.instance().generateNewId(tblUserGroup, "user_group_id")
+        return DatabaseHandler.instance().generateNewId(self.tblName, "user_group_id")
 
     def isDuplicate(self):
-        return DatabaseHandler.instance().isAlreadyExists(tblUserGroup, "user_group_id", 
-            "user_group_name", self.userGroupId, self.userGroupName)
+        condition = "user_group_name ='"+self.userGroupName+\
+                "' AND user_group_id != '"+str(self.userGroupId)+"'"
+        return DatabaseHandler.instance().isAlreadyExists(self.tblName, condition)
+
+    def isIdInvalid(self):
+        condition = "user_group_id = '"+str(self.userGroupId)+"'"
+        return not DatabaseHandler.instance().isAlreadyExists(self.tblName, condition)
 
     def save(self):
         columns = "user_group_id, user_group_name,form_type, "+\
                   "form_ids, is_active, created_on, created_by, "+\
                   "updated_on, updated_by"
-        values = listToString(  [self.userGroupId, 
-                                self.userGroupName, 
-                                self.formType, 
-                                self.formIds, 
-                                self.isActive,
-                                getCurrentTimeStamp(),1,
-                                getCurrentTimeStamp(),1])
-        return DatabaseHandler.instance().insert(tblUserGroup,columns,values)
+        values_list =  [self.userGroupId, self.userGroupName, 
+                        self.formType, ",".join(self.formIds),
+                        self.isActive, getCurrentTimeStamp(),1,
+                        getCurrentTimeStamp(),1]
+        values = listToString(values_list)
+        return DatabaseHandler.instance().insert(self.tblName,columns,values)
 
+    def update(self):
+        columns = ["user_group_name","form_type",
+                  "form_ids", "updated_on", "updated_by"]
+        values =  [ self.userGroupName, 
+                    self.formType, convertToString(",".join(self.formIds)),
+                    getCurrentTimeStamp(),1]
+        condition = "user_group_id='"+str(self.userGroupId)+"'"
+        return DatabaseHandler.instance().update(self.tblName, columns, values, condition)
+
+    def updateStatus(self):
+        columns = ["is_active"]
+        values = [self.isActive]
+        condition = "user_group_id='"+str(self.userGroupId)+"'"
+        return DatabaseHandler.instance().update(self.tblName, columns, values, condition)

@@ -28,7 +28,7 @@ def handle_request(url, options) :
 
 ### get domain 
 def getdomains():
-    domain_url = "http://192.168.1.9:8080/GetDomains"
+    domain_url = "http://192.168.1.3:8080/GetDomains"
     domains_data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
@@ -138,27 +138,56 @@ def changeCountry() :
     }
     return handle_request(url, data)
 
-def getUserGroups():
+def SendUserGroupRequests():
     url = "http://localhost:8080/UserGroups"
-    data = {
-        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-        "request" : [
-            "GetUserGroups",
-            {}
-        ]
-    }
+
+    ## To Get User Groups list and Form data 
+    # data = {
+    #     "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+    #     "request" : [
+    #         "GetUserGroups",
+    #         {}
+    #     ]
+    # }
+
+    ## To Save User Group
     # data = {
     #     "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
     #     "request" : [
     #         "SaveUserGroup",
     #         {
-    #             "user_group_name": "Knowledge User",
-    #             "form_type": "Knowledge",
-    #             "form_ids": [4,5]
+    #             "user_group_name": "Techno User",
+    #             "form_type": "Techno",
+    #             "form_ids": ['1','2']
     #         }
     #     ]
     # }
-    print "Get User group request sent"
+
+    ## To Update User Group
+    # data = {
+    #     "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+    #     "request" : [
+    #         "UpdateUserGroup",
+    #         { 
+    #             "user_group_id" : 5,
+    #             "user_group_name": "Techno Manager",
+    #             "form_type": "Techno",
+    #             "form_ids": ['11','29']
+    #         }
+    #     ]
+    # }
+
+    ## To Change Status
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "ChangeUserGroupStatus",
+            { 
+                "user_group_id" : 1,
+                "is_active": 1,
+            }
+        ]
+    }
     return handle_request(url, data)
 
 if __name__ == "__main__" :
@@ -168,7 +197,7 @@ if __name__ == "__main__" :
     # updateDomain()
     # changeDomain()
     # getdomains()
-    getUserGroups()
+    SendUserGroupRequests()
 
     ### Country ###
     # saveCountry()
