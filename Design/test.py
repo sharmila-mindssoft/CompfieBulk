@@ -138,7 +138,7 @@ def changeCountry() :
     }
     return handle_request(url, data)
 
-def SendUserGroupRequests():
+def sendUserGroupRequests():
     url = "http://localhost:8080/UserGroups"
 
     ## To Get User Groups list and Form data 
@@ -190,6 +190,45 @@ def SendUserGroupRequests():
     }
     return handle_request(url, data)
 
+def sendUserRequests():
+    url = "http://localhost:8080/AdminUsers"
+    ## To Save User 
+    # data = {
+    #     "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+    #     "request" : [
+    #         "SaveUser",
+    #         {
+    #             "email_id": "sanju@domain.com",
+    #             "user_group_id": 1,
+    #             "employee_name": "Sharmila Madhavan",
+    #             "employee_code": "EMP1002",
+    #             "contact_no": "+917845605418",
+    #             "address": "kk nagar, Madurai", 
+    #             "designation": "developer",
+    #             "domain_ids": ['1','4']
+    #         }
+    #     ]
+    # }
+    ## To Update User 
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "UpdateUser",
+            {
+                "user_id": 1,
+                "email_id": "sanjana@domain.com",
+                "user_group_id": 1,
+                "employee_name": "Sharmila Madhavan",
+                "employee_code": "EMP1003",
+                "contact_no": "+917845605428",
+                "address": "kk nagar, Madurai", 
+                "designation": "developer",
+                "domain_ids": ['1','4']
+            }
+        ]
+    }
+    return handle_request(url, data)
+
 if __name__ == "__main__" :
     print "listening on port 8090"
     ### Domain ###
@@ -197,7 +236,8 @@ if __name__ == "__main__" :
     # updateDomain()
     # changeDomain()
     # getdomains()
-    SendUserGroupRequests()
+    # sendUserGroupRequests()
+    sendUserRequests()
 
     ### Country ###
     # saveCountry()

@@ -23,6 +23,35 @@ class UserGroupsHandler(tornado.web.RequestHandler) :
         self.url = url
         self.handler = handler
 
+    @tornado.web.asynchronous
+    def post(self) :
+        try:
+            data = json.loads(self.request.body)
+            sessionToken = data.get("session_token")
+            userId = 1
+            request = data.get("request")
+            if userId is None :
+                data = commonResultStructure("InvalidSessionToken")
+            elif request[0] == "GetUserGroups" :
+                data = self.getUserGroups()
+            elif request[0] == "SaveUserGroup" :
+                data = self.saveUserGroup(request[1])
+            elif request[0] == "UpdateUserGroup" :
+                data = self.updateUserGroup(request[1])
+            elif request[0] == "ChangeUserGroupStatus" :
+                data = self.changeUserGroupStatus(request[1])
+            else :
+                data = commonResultStructure("InvalidRequest")
+
+        except Exception, e:
+            print e
+            self.send_error(400)
+            return
+        finally:       
+            self.set_header("Content-Type", "application/json")
+            self.write(json.dumps(str(data)))
+            self.finish()
+
     def getUserGroupsFormData(self) :
         knowledgeForms = []
         technoForms = []
@@ -106,7 +135,10 @@ class UserGroupsHandler(tornado.web.RequestHandler) :
         elif userGroup.updateStatus():
             return commonResultStructure("ChangeUserGroupStatusSuccess")
 
-
+class UserHandler(tornado.web.RequestHandler) :
+    def initialize(self, url, handler) :
+        self.url = url
+        self.handler = handler
 
     @tornado.web.asynchronous
     def post(self) :
@@ -117,14 +149,14 @@ class UserGroupsHandler(tornado.web.RequestHandler) :
             request = data.get("request")
             if userId is None :
                 data = commonResultStructure("InvalidSessionToken")
-            elif request[0] == "GetUserGroups" :
-                data = self.getUserGroups()
-            elif request[0] == "SaveUserGroup" :
-                data = self.saveUserGroup(request[1])
-            elif request[0] == "UpdateUserGroup" :
-                data = self.updateUserGroup(request[1])
-            elif request[0] == "ChangeUserGroupStatus" :
-                data = self.changeUserGroupStatus(request[1])
+            elif request[0] == "GetUsers" :
+                data = self.getUsers()
+            elif request[0] == "SaveUser" :
+                data = self.saveUser(request[1])
+            elif request[0] == "UpdateUser" :
+                data = self.updateUser(request[1])
+            elif request[0] == "ChangeUserStatus" :
+                data = self.changeUserStatus(request[1])
             else :
                 data = commonResultStructure("InvalidRequest")
 
@@ -137,8 +169,58 @@ class UserGroupsHandler(tornado.web.RequestHandler) :
             self.write(json.dumps(str(data)))
             self.finish()
 
+    def saveUser(self, request_data) :
+        json = JsonParser(request_data)
+        emailId = json.getString("email_id")
+        userGroupId = json.getInt("user_group_id")
+        employeeName = json.getString("employee_name")
+        employeeCode = json.getString("employee_code")
+        contactNo = json.getString("contact_no")
+        address =  json.getString("address")
+        designation =  json.getString("designation")
+        domainIds = json.getData("domain_ids")
+        user = User(None, emailId, userGroupId, employeeName, employeeCode, 
+                    contactNo, address, designation, domainIds, None)
+        if user.isDuplicateEmail() :
+            return commonResultStructure("EmailIDAlreadyExists")
+        elif user.isDuplicateEmployeeCode() :
+            return commonResultStructure("EmployeeCodeAlreadyExists")
+        elif user.isDuplicateContactNo() :
+            return commonResultStructure("ContactNumberAlreadyExists")
+        elif user.save() :
+            return commonResultStructure("SaveUserSuccess")
+        else:
+            return commonResultStructure("Error")
+
+    def updateUser(self, request_data) :
+        json = JsonParser(request_data)
+        userId = json.getInt("user_id")
+        emailId = json.getString("email_id")
+        userGroupId = json.getInt("user_group_id")
+        employeeName = json.getString("employee_name")
+        employeeCode = json.getString("employee_code")
+        contactNo = json.getString("contact_no")
+        address =  json.getString("address")
+        designation =  json.getString("designation")
+        domainIds = json.getData("domain_ids")
+        user = User(userId, emailId, userGroupId, employeeName, employeeCode, 
+                    contactNo, address, designation, domainIds, None)
+        if user.isIdInvalid() :
+            return commonResultStructure("InvalidUserId")
+        elif user.isDuplicateEmail() :
+            return commonResultStructure("EmailIDAlreadyExists")
+        elif user.isDuplicateEmployeeCode() :
+            return commonResultStructure("EmployeeCodeAlreadyExists")
+        elif user.isDuplicateContactNo() :
+            return commonResultStructure("ContactNumberAlreadyExists")
+        elif user.update() :
+            return commonResultStructure("UpdateUserSuccess")
+        else:
+            return commonResultStructure("Error")
+
 def initializeAdminHandler() :
     admin_urls = [
         ("/UserGroups", UserGroupsHandler),
+        ("/AdminUsers", UserHandler),
     ]
     return admin_urls

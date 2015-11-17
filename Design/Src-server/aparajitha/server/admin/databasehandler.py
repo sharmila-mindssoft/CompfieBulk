@@ -66,11 +66,15 @@ class DatabaseHandler(object) :
     def insert(self, table, columns, values) :
         query = "INSERT INTO "+table+" ("+columns+")" + \
             " VALUES ("+values+")"
+        print "insert query : "+query
         return self.executeInsertUpdate(query)
 
     def update(self, table, columns, values, condition) :
-        query = "UPDATE "+table+" set "
+        print "inside update"
+        print columns
         print values
+        print condition
+        query = "UPDATE "+table+" set "
         for index,column in enumerate(columns):
             if index < len(columns)-1:
                 query += column+" = '"+str(values[index])+"', "
@@ -78,7 +82,8 @@ class DatabaseHandler(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
-        
+        print "update query : "+query
+
         return self.executeInsertUpdate(query)
 
     def generateNewId(self, table, column):
@@ -92,8 +97,7 @@ class DatabaseHandler(object) :
 
     def isAlreadyExists(self, table, condition) :
         query = "SELECT count(*) FROM "+table+" WHERE "+condition
-        rows = self.dataSelect(query)        
-        print rows[0][0]
+        rows = self.dataSelect(query)     
         if rows[0][0] > 0:
             return True
         else : 

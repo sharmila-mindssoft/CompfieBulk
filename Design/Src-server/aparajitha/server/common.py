@@ -1,6 +1,8 @@
 from types import *
 import datetime
 import time
+import string
+import random
 
 __all__ = [
     "CMObject", 
@@ -11,7 +13,8 @@ __all__ = [
     "getCurrentTimeStamp",
     "getMenu",
     "JsonParser",
-    "convertToString"
+    "convertToString",
+    "generatePassword"
 ]
 
 def assertType (x, typeObject) :
@@ -53,6 +56,11 @@ def getMenu(formList) :
             settings.append(structured_form)
 
     return Menu(masters, transactions,reports, settings).toStructure()
+
+def generatePassword() : 
+	characters = string.ascii_uppercase + string.digits
+	password = ''.join(random.SystemRandom().choice(characters) for _ in range(7))
+	return password
 
 class JsonParser():
 	def __init__(self, jsonData):
