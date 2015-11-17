@@ -48,7 +48,7 @@ def saveDomain():
         "request" : [
             "SaveDomain",
             {
-                "domain_name": "Labour Law"
+                "domain_name": "New Labour Law"
             }
         ]
     }
@@ -63,7 +63,7 @@ def updateDomain() :
             "UpdateDomain",
             {
                 "domain_id": 3,
-                "domain_name": "Industry Law"
+                "domain_name": "Industry Law Update"
             }
         ]
     }
@@ -78,7 +78,7 @@ def changeDomain() :
             "ChangeDomainStatus",
             {
                 "domain_id": 1,
-                "is_active": 0
+                "is_active": 1
             }
         ]
     }
@@ -105,7 +105,7 @@ def saveCountry():
         "request" : [
             "SaveCountry",
             {
-                "country_name": "Malaysia"
+                "country_name": "Spain"
             }
         ]
     }
@@ -119,7 +119,7 @@ def updateCountry() :
             "UpdateCountry",
             {
                 "country_id": 2,
-                "country_name": "Sri Lanka"
+                "country_name": "South Africa"
             }
         ]
     }
@@ -133,7 +133,7 @@ def changeCountry() :
             "ChangeCountryStatus",
             {
                 "country_id": 1,
-                "is_active": 0
+                "is_active": 1
             }
         ]
     }
@@ -207,28 +207,28 @@ def getStatutoryNature():
 
     return handle_request(url, data)
 
-def saveStatutoryNature(industry):
+def saveStatutoryNature(inputData):
     url = "http://localhost:8080/StatutoryNature"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
             "SaveStatutoryNature",
             {
-                "statutory_nature_name": industry
+                "statutory_nature_name": inputData
             }
         ]
     }
     return handle_request(url, data)
 
-def updateStatutoryNature(industry) :
+def updateStatutoryNature(inputData) :
     url = "http://localhost:8080/StatutoryNature"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
             "UpdateStatutoryNature",
             {
-                "statutory_nature_id": 1,
-                "statutory_nature_name": industry
+                "statutory_nature_id": 3,
+                "statutory_nature_name": inputData
             }
         ]
     }
@@ -241,7 +241,7 @@ def changeStatutoryNatureStatus(status) :
         "request" : [
             "ChangeStatutoryNatureStatus",
             {
-                "statutory_nature_id": 1,
+                "statutory_nature_id": 4,
                 "is_active": status
             }
         ]
@@ -266,16 +266,16 @@ if __name__ == "__main__" :
     
 
     ### Industry ###
-    # saveIndustry("Factory")
-    # updateIndustry("Plantation")
-    # changeIndustry(0)
-    getindustries()
+    # saveIndustry("Mines")
+    # updateIndustry("New Plantation")
+    # changeIndustry(1)
+    # getindustries()
 
     ### StatutoryNature ###
-    # saveStatutoryNature("Concurrent")
+    # saveStatutoryNature("test")
     # updateStatutoryNature("State")
-    changeStatutoryNatureStatus(0)
-    getStatutoryNature()
+    # changeStatutoryNatureStatus(0)
+    # getStatutoryNature()
 
     application = tornado.web.Application(
         [],

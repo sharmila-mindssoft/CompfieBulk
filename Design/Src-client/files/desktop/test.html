@@ -26,8 +26,11 @@
             var domains_data = {
                     "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
                     "request" : [
-                        "GetDomains",
-                        {}
+                        "UpdateDomain",
+                        {
+                            "domain_id": "3",
+                            "domain_name": "Industry Law Update"
+                        }
                     ]
                 };
             var options = JSON.stringify(domains_data);
