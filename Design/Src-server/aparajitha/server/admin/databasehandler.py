@@ -66,14 +66,9 @@ class DatabaseHandler(object) :
     def insert(self, table, columns, values) :
         query = "INSERT INTO "+table+" ("+columns+")" + \
             " VALUES ("+values+")"
-        print "insert query : "+query
         return self.executeInsertUpdate(query)
 
     def update(self, table, columns, values, condition) :
-        print "inside update"
-        print columns
-        print values
-        print condition
         query = "UPDATE "+table+" set "
         for index,column in enumerate(columns):
             if index < len(columns)-1:
@@ -82,7 +77,6 @@ class DatabaseHandler(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
-        print "update query : "+query
 
         return self.executeInsertUpdate(query)
 
@@ -107,6 +101,12 @@ class DatabaseHandler(object) :
         query = "SELECT "+columns+" FROM "+table+" WHERE "+condition
         return self.dataSelect(query)
 
+    def validateSessionToken(self, sessionToken) :
+        query = "SELECT user_id FROM tbl_user_sessions \
+        WHERE session_id = '%s'" % sessionToken
+        rows = self.dataSelect(query)
+        row = rows[0]
+        return row[0]
 
     @staticmethod
     def instance() :

@@ -3,18 +3,18 @@ import datetime
 import time
 import string
 import random
+from aparajitha.server.admin.databasehandler import DatabaseHandler 
 
 __all__ = [
-    "CMObject", 
     "Form", 
     "Menu",
     "assertType",
     "listToString",
     "getCurrentTimeStamp",
-    "getMenu",
-    "JsonParser",
+    "JSONHelper",
     "convertToString",
-    "generatePassword"
+    "generatePassword",
+    "commonResponseStructure"
 ]
 
 def assertType (x, typeObject) :
@@ -39,53 +39,78 @@ def getCurrentTimeStamp() :
     ts = time.time()
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
-def getMenu(formList) :
-    masters = []
-    transactions = []
-    reports = []
-    settings = []
-    for form in formList:
-        structured_form = form.toStructure()
-        if form.category == "Masters":
-            masters.append(structured_form)
-        elif form.category == "Transactions":
-            transactions.append(structured_form)
-        elif form.category == "Reports":
-            reports.append(structured_form)    
-        elif form.category == "Settings":
-            settings.append(structured_form)
-
-    return Menu(masters, transactions,reports, settings).toStructure()
-
 def generatePassword() : 
 	characters = string.ascii_uppercase + string.digits
 	password = ''.join(random.SystemRandom().choice(characters) for _ in range(7))
 	return password
 
-class JsonParser():
-	def __init__(self, jsonData):
-		self.jsonData = jsonData
+def commonResponseStructure(responseType, data) :
+	assertType(responseType, StringType)
+	assertType(data, dict)
+	response = [
+		responseType,
+		data
+	]
+	return response
 
-	def getString(self, key):
-		return convertToString(self.jsonData.get(key))
+class PossibleError(object) :
+    def __init__(self, possibleError) :
+        self.possibleError = possibleError
+        self.verify()
 
-	def getInt(self, key):
-		int_value = self.jsonData.get(key)
-		return int(int_value)
+    def verify(self) :
+        assertType(self.possibleError, StringType)
 
-	def getData(self, key):
-		return self.jsonData.get(key)
+    def toStructure(self) :
+        return {
+            str(self.possibleError),
+            {}
+        }
 
-class CMObject(object) :
-    def toJSON(self) :
-        data = self.toStructure()
-        return json.dumps(data)
-    @classmethod
-    def fromJSON(klass, jsonData) :
-        data = json.loads(jsonData)
-        return klass.fromStructure(data)
+    def __repr__(self) :
+        return str(self.toStructure())
 
-class Form(CMObject) :
+class JSONHelper(object) :
+    
+    @staticmethod
+    def string(x) :
+        assertType(x, UnicodeType)
+        return str(x)
+
+    @staticmethod
+    def getString(data, name) :
+        return JSONHelper.string(data.get(name))
+
+    @staticmethod
+    def int(x):
+        assertType(x, IntType)
+        return x
+
+    @staticmethod
+    def getInt(data, name) :
+        return JSONHelper.int(data.get(name))
+
+    @staticmethod
+    def float(x) :
+        assertType(x, FloatType)
+        return x
+
+    @staticmethod
+    def getFloat(data, name) :
+        return JSONHelper.float(data.get(name))
+
+    @staticmethod
+    def list(x) :
+        assertType(x, ListType)
+        return x
+
+    @staticmethod
+    def getList(data, name) :
+        return JSONHelper.list(data.get(name))
+
+   
+
+class Form(object) :
     tblName = "tbl_forms"
 
     def __init__(self, formId, formName, formUrl, formOrder, formType, 
@@ -108,17 +133,59 @@ class Form(CMObject) :
             "parent_menu": self.parentMenu
         }
 
-class Menu(CMObject):
-    def __init__(self, masterForms, transactionForms, report_forms, setting_forms):
+    @classmethod
+    def getForms(self, type):
+    	print "inside get forms"
+    	forms = []
+
+        columns = "form_id, form_name, form_url, form_order, form_type,"+\
+                 "category, admin_form, parent_menu"
+
+        if type == "Knowledge":
+        	condition = " form_type = 'knowledge' "
+        elif type == "Techno":
+        	condition = " form_type = 'techno' "
+        else :
+        	condition = " form_type = 'client' "
+
+        rows = DatabaseHandler.instance().getData(Form.tblName, columns, condition)
+
+        for row in rows:
+            formObj = Form(int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6], row[7])
+            forms.append(formObj)
+
+        return forms
+            
+class Menu(object):
+    def __init__(self, masterForms, transactionForms, reportForms, settingForms):
         self.masterForms = masterForms
         self.transactionForms = transactionForms
-        self.report_forms = report_forms
-        self.setting_forms = setting_forms
+        self.reportForms = reportForms
+        self.settingForms = settingForms
 
     def toStructure(self):
         return {
             "masters": self.masterForms,
             "transactions": self.transactionForms,
-            "reports": self.report_forms,
-            "settings": self.setting_forms
+            "reports": self.reportForms,
+            "settings": self.settingForms
         }
+
+    @classmethod
+    def getMenu(self, formList) :
+	    masters = []
+	    transactions = []
+	    reports = []
+	    settings = []
+	    for form in formList:
+	        structuredForm = form.toStructure()
+	        if form.category == "Masters":
+	            masters.append(structuredForm)
+	        elif form.category == "Transactions":
+	            transactions.append(structuredForm)
+	        elif form.category == "Reports":
+	            reports.append(structuredform)    
+	        elif form.category == "Settings":
+	            settings.append(structuredForm)
+	    menu = Menu(masters, transactions,reports, settings)
+	    return menu.toStructure()

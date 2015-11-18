@@ -651,7 +651,7 @@ def run_server() :
         entry = (url, handler, args)
         application_urls.append(entry)
 
-    for url, handler in knowledge_handler.initializeKnowledgeHandler() :
+    for url, handler in admin_handler.initializeAdminHandler() :
         args = {
             "url": url,
             "handler": handler
@@ -659,7 +659,7 @@ def run_server() :
         entry = (url, handler, args)
         application_urls.append(entry)
 
-    for url, handler in admin_handler.initializeAdminHandler() :
+    for url, handler in knowledge_handler.initializeKnowledgeHandler() :
         args = {
             "url": url,
             "handler": handler

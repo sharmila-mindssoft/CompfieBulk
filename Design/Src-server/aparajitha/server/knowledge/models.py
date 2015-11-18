@@ -124,6 +124,11 @@ class DomainList(object) :
             {"domains": self.domainList}
         ]
 
+    @classmethod
+    def getDomainList(self) :
+        domain = DomainList()
+        return domain.domainList
+
 
     def __repr__(self) :
         return str(self.toStructure())

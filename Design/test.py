@@ -139,57 +139,127 @@ def changeCountry() :
     }
     return handle_request(url, data)
 
-def sendUserGroupRequests():
-    url = "http://localhost:8080/UserGroups"
+def getUserGroups():
+    url = "http://localhost:8080/AdminAPI"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "GetUserGroups",
+            {}
+        ]
+    }
+    return handle_request(url, data)
 
-    ## To Get User Groups list and Form data 
-    # data = {
-    #     "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-    #     "request" : [
-    #         "GetUserGroups",
-    #         {}
-    #     ]
-    # }
+def saveUserGroup():
+    url = "http://localhost:8080/AdminAPI"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "SaveUserGroup",
+            {
+                "user_group_name": "Knowledge User",
+                "form_type": "Knowledge",
+                "form_ids": ['3','4']
+            }
+        ]
+    }
+    return handle_request(url, data)
 
-    ## To Save User Group
-    # data = {
-    #     "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-    #     "request" : [
-    #         "SaveUserGroup",
-    #         {
-    #             "user_group_name": "Techno User",
-    #             "form_type": "Techno",
-    #             "form_ids": ['1','2']
-    #         }
-    #     ]
-    # }
+def updateUserGroup():
+    url = "http://localhost:8080/AdminAPI"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "UpdateUserGroup",
+            { 
+                "user_group_id" : 1,
+                "user_group_name": "Techno Manager",
+                "form_type": "Techno",
+                "form_ids": ['11','29']
+            }
+        ]
+    }
+    return handle_request(url, data)
 
-    ## To Update User Group
-    # data = {
-    #     "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-    #     "request" : [
-    #         "UpdateUserGroup",
-    #         { 
-    #             "user_group_id" : 5,
-    #             "user_group_name": "Techno Manager",
-    #             "form_type": "Techno",
-    #             "form_ids": ['11','29']
-    #         }
-    #     ]
-    # }
-
-    ## To Change Status
+def changeUserGroupStatus(status):
+    url = "http://localhost:8080/AdminAPI"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
             "ChangeUserGroupStatus",
             { 
                 "user_group_id" : 1,
-                "is_active": 1
+                "is_active": status
             }
         ]
     }
     return handle_request(url, data)
+
+def saveUser():
+    url = "http://localhost:8080/AdminAPI"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "SaveUser",
+            {
+                "email_id": "sumi@domain.com",
+                "user_group_id": 1,
+                "employee_name": "Sumitha",
+                "employee_code": "EMP1054",
+                "contact_no": "+919845605438",
+                "address": "kk nagar, Madurai", 
+                "designation": "developer",
+                "domain_ids": ['1','4']
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+def updateUser():
+    url = "http://localhost:8080/AdminAPI"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "UpdateUser",
+            {
+                "user_id": 1,
+                "user_group_id": 1,
+                "employee_name": "Sanju Madhavan",
+                "employee_code": "EMP1012",
+                "contact_no": "+917845635428",
+                "address": "kk nagar, Madurai", 
+                "designation": "developer",
+                "domain_ids": ['1','4']
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+def changeUserStatus(status):
+    url = "http://localhost:8080/AdminAPI"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "ChangeUserStatus",
+            {
+                "user_id": 1,
+                "is_active" : status 
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+def getUsers():
+    url = "http://localhost:8080/AdminAPI"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "GetUsers",
+            {}
+        ]
+    }
+    return handle_request(url, data)
+
 
 ### Industry
 def getindustries():
@@ -286,45 +356,6 @@ def updateStatutoryNature(inputData) :
     }
     return handle_request(url, data)
 
-def sendUserRequests():
-    url = "http://localhost:8080/AdminUsers"
-    ## To Save User 
-    # data = {
-    #     "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-    #     "request" : [
-    #         "SaveUser",
-    #         {
-    #             "email_id": "sanju@domain.com",
-    #             "user_group_id": 1,
-    #             "employee_name": "Sharmila Madhavan",
-    #             "employee_code": "EMP1002",
-    #             "contact_no": "+917845605418",
-    #             "address": "kk nagar, Madurai", 
-    #             "designation": "developer",
-    #             "domain_ids": ['1','4']
-    #         }
-    #     ]
-    # }
-    ## To Update User 
-    data = {
-        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-        "request" : [
-            "UpdateUser",
-            {
-                "user_id": 1,
-                "email_id": "sanjana@domain.com",
-                "user_group_id": 1,
-                "employee_name": "Sharmila Madhavan",
-                "employee_code": "EMP1003",
-                "contact_no": "+917845605428",
-                "address": "kk nagar, Madurai", 
-                "designation": "developer",
-                "domain_ids": ['1','4']
-            }
-        ]
-    }
-    return handle_request(url, data)
-
 def changeStatutoryNatureStatus(status) :
     url = "http://localhost:8080/StatutoryNature"
     data = {
@@ -346,8 +377,6 @@ if __name__ == "__main__" :
     # updateDomain()
     # changeDomain()
     # getdomains()
-    # sendUserGroupRequests()
-    sendUserRequests()
     
     ### Country ###
     # saveCountry()
@@ -367,6 +396,18 @@ if __name__ == "__main__" :
     # updateStatutoryNature("State")
     # changeStatutoryNatureStatus(0)
     # getStatutoryNature()
+
+    ### AdminUserGroup ###
+    # saveUserGroup()
+    # updateUserGroup()
+    # changeUserGroupStatus(1)
+    # getUserGroups()
+
+    ### AdminUser ###
+    # saveUser()
+    # updateUser()
+    # changeUserStatus(1)
+    # getUsers()
 
     application = tornado.web.Application(
         [],
