@@ -17,7 +17,7 @@ def handle_request(url, options) :
             print 
 
     encoded_parameters = urllib.urlencode(options)
-    # print options
+    print options
     http_client = AsyncHTTPClient()
     http_client.fetch(
         url, 
@@ -260,7 +260,6 @@ def getUsers():
     }
     return handle_request(url, data)
 
-
 ### Industry
 def getindustries():
     url = "http://localhost:8080/Industry"
@@ -383,7 +382,7 @@ if __name__ == "__main__" :
     # updateCountry()
     # changeCountry()
     # getcountries()
-    
+   
 
     ### Industry ###
     # saveIndustry("Mines")

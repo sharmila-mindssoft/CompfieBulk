@@ -129,7 +129,6 @@ class DomainList(object) :
         domain = DomainList()
         return domain.domainList
 
-
     def __repr__(self) :
         return str(self.toStructure())
 
