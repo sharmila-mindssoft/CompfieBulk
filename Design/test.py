@@ -248,6 +248,72 @@ def changeStatutoryNatureStatus(status) :
     }
     return handle_request(url, data)
 
+def getLevels() :
+    url = "http://localhost:8080/StatutoryLevel"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "GetStatutoryLevels",
+            {}
+        ]
+    }
+    return handle_request(url, data)
+
+def saveLevel() :
+    url = "http://localhost:8080/StatutoryLevel"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "SaveStatutoryLevel",
+            {
+                "country_id": 1,
+                "levels" : [
+                    {   
+                        "level_id": 1,
+                        "level_position": 1,
+                        "level_name": "Act Name"
+                    },
+                    {
+                        "level_id": 2,
+                        "level_position": 2,
+                        "level_name": "Sub Act"
+                    },
+                    {
+                        "level_id": 3,
+                        "level_position": 3,
+                        "level_name": "Rule Name"
+                    },
+                ]
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+def updateLevel() :
+    url = "http://localhost:8080/StatutoryLevel"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "UpdateStatutoryLevel",
+            {
+                "country_id": 1,
+                "levels" : [
+                    {
+                        "level_id": 1,
+                        "level_position": 1,
+                        "level_name": "Act Name"
+                    },
+                    {
+                        "level_id": 2,
+                        "level_position": 2,
+                        "level_name": "Rule Name"
+                    }
+                ]
+            }
+        ]
+    }
+    return handle_request(url, data)
+
 
 
 if __name__ == "__main__" :
@@ -256,13 +322,13 @@ if __name__ == "__main__" :
     # saveDomain()
     # updateDomain()
     # changeDomain()
-    getdomains()
+    # getdomains()
     
     ### Country ###
     # saveCountry()
     # updateCountry()
     # changeCountry()
-    getcountries()
+    # getcountries()
     
 
     ### Industry ###
@@ -276,6 +342,12 @@ if __name__ == "__main__" :
     # updateStatutoryNature("State")
     # changeStatutoryNatureStatus(0)
     # getStatutoryNature()
+
+    ### StatutoryLevels ###
+    saveLevel()
+    # updateLevel()
+    getLevels()
+
 
     application = tornado.web.Application(
         [],
