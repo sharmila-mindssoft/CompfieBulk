@@ -415,7 +415,6 @@ def saveLevel() :
     }
     return handle_request(url, data)
 
-
 ### Geo Levels
 
 def getGeoLevels() :
