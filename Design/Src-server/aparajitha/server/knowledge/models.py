@@ -11,12 +11,13 @@ __all__ = [
     "Industry", "IndustryList", "SaveIndustry",
     "UpdateIndustry", "ChangeIndustryStatus",
     "StatutoryNature", "StatutoryNatureList", "SaveStatutoryNature",
-    "UpdateStatutoryNature", "ChangeStatutoryNatureStatus"
+    "UpdateStatutoryNature", "ChangeStatutoryNatureStatus",
+    "StatutoryLevel", "StatutoryLevelList", "SaveStatutoryLevel",
 ]
 
 def assertType (x, typeObject) :
     if type(x) is not typeObject :
-        msg = "expected type %s, received invalid type  %s" % (typeObject, type(x))
+        msg = "%s- expected type %s, received invalid type  %s" % (x, typeObject, type(x))
         raise TypeError(msg)
 
 class JSONHelper(object) :
@@ -38,6 +39,13 @@ class JSONHelper(object) :
     @staticmethod
     def getInt(data, name) :
         return JSONHelper.int(data.get(name))
+
+    @staticmethod
+    def getOptionalInt(data, name) :
+        x = data.get(name)
+        if x is None :
+            return x
+        return JSONHelper.int(x)
 
     @staticmethod
     def float(x) :
@@ -251,6 +259,9 @@ class CountryList(object) :
             country = Country(int(row[0]), row[1], row[2])
             self.countryList.append(country.toStructure())
 
+    def toList(self) :
+        return self.countryList
+
     def toStructure(self) :
         return [
             "success",
@@ -381,7 +392,7 @@ class IndustryList(object) :
         _industries = DatabaseHandler.instance().getIndustries()
         for row in _industries :
             industry = Industry(int(row[0]), row[1], row[2])
-            self.industryList.append(industry)
+            self.industryList.append(industry.toStructure())
 
     def toStructure(self) :
         return [
@@ -513,7 +524,7 @@ class StatutoryNatureList(object) :
         _statutoryNatures = DatabaseHandler.instance().getStatutoryNatures()
         for row in _statutoryNatures :
             statutoryNature = StatutoryNature(int(row[0]), row[1], row[2])
-            self.statutoryNatureList.append(statutoryNature)
+            self.statutoryNatureList.append(statutoryNature.toStructure())
 
     def toStructure(self) :
         return [
@@ -612,6 +623,116 @@ class ChangeStatutoryNatureStatus(object) :
             self.responseData = "success"
         else :
             self.responseData = "InvalidStatutoryNatureId"
+
+    def toStructure(self) :
+        return [
+            str(self.responseData),
+            {}
+        ]
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class StatutoryLevel(object) :
+    def __init__ (self, levelId, levelPosition, levelName) :
+        self.levelId = levelId
+        self.levelPosition = levelPosition
+        self.levelName = levelName
+        self.verify()
+
+    def verify(self) :
+        assertType(self.levelId, IntType)
+        assertType(self.levelPosition, IntType)
+        assertType(self.levelName, StringType)
+
+    def toStructure(self) :
+        return {
+            "level_id": self.levelId,
+            "level_position": self.levelPosition,
+            "level_name": self.levelName,
+        }
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class StatutoryLevelList(object) :
+    def __init__(self) :
+        self.statutoryLevels = {}
+        self. countryList = []
+        self.processData()
+
+    def processData(self) :
+        self.countryList = CountryList().toList()
+        _statutoryLevels = DatabaseHandler.instance().getStatutoryLevels()
+        for row in _statutoryLevels :
+            statutoryLevel = StatutoryLevel(int(row[0]), int(row[1]), row[2])
+            countryId = int(row[3])
+            _list = self.statutoryLevels.get(countryId)
+            if _list is None :
+                _list = []
+            _list.append(statutoryLevel.toStructure())
+            self.statutoryLevels[countryId] = _list
+
+    def toStructure(self) :
+        return [
+            "success",
+            {
+                "countries": self.countryList,
+                "statutory_levels": self.statutoryLevels
+            }
+        ]
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class SaveStatutoryLevel(object) :
+    def __init__(self, request, userId) :
+        self.request = request
+        self.userId = userId
+        self.responseData = None
+        self.processRequest()
+
+    def processRequest(self) :
+        DH = DatabaseHandler.instance()
+        requestData = self.request[1]
+        assertType(requestData, DictType)
+        countryId = JSONHelper.getInt(requestData, "country_id")
+        levels = JSONHelper.getList(requestData, "levels")
+        savedLevels = DH.getStatutoryLevelsByCountry(countryId)
+        savedNames = []
+        for row in savedLevels :
+            savedNames.append(row[2])
+
+        levelNames = []
+        levelPositions = []
+        for level in levels :
+            levelId = JSONHelper.getOptionalInt(level, "level_id")
+            name = JSONHelper.getString(level, "level_name")
+            position = JSONHelper.getInt(level, "level_position")
+            if levelId is None :
+                if (savedNames.count(name) > 0) :
+                    self.responseData = "LevelIdCannotNullFor '%s'" % name
+                    break
+            levelNames.append(name)
+            levelPositions.append(position)
+
+        duplicateNames = [x for i, x in enumerate(levelNames) if levelNames.count(x) > 1]
+        duplicatePositions = [x for i, x in enumerate(levelPositions) if levelPositions.count(x) > 1]
+        if len(duplicateNames) > 0 :
+            self.responseData = "DuplicateStatutoryLevelNamesExists"
+        elif len(duplicatePositions) > 0 :
+            self.responseData = "DuplicateStatutoryLevelPositionsExists"
+        if self.responseData is None :
+            for level in levels :
+                levelId = JSONHelper.getOptionalInt(level, "level_id")
+                name = JSONHelper.getString(level, "level_name")
+                position = JSONHelper.getInt(level, "level_position")
+
+                if (DH.saveStatutoryLevel(countryId, levelId, name, position, self.userId)) :
+                    self.responseData = "success"
+                else :
+                    self.responseData = "saveFailed: %s" % level
+                    break
 
     def toStructure(self) :
         return [

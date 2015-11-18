@@ -71,6 +71,17 @@ class DatabaseHandler(object) :
         row = rows[0]
         return row[0]
 
+    def getNewId(self, field , tableName) :
+        newId = 1
+        query = "SELECT max(%s) from %s " % (field, tableName)
+
+        rows = self.dataSelect(query)
+        for row in rows :
+            if row[0] is not None :
+                newId = int(row[0]) + 1
+        return newId
+
+
     ### Domain ###
 
     def checkDuplicateDomain(self, domainName, domainId) :
@@ -86,17 +97,6 @@ class DatabaseHandler(object) :
             isDuplicate = True
 
         return isDuplicate
-
-    def getDomainId(self) :
-        domainId = 1
-        query = "SELECT max(domain_id) FROM tbl_domains "
-        rows = self.dataSelect(query)
-
-        for row in rows :
-            if row[0] is not None :
-                domainId = row[0] + 1
-
-        return domainId
             
     def getDomains(self) :
         query = "SELECT domain_id, domain_name, is_active FROM tbl_domains "
@@ -104,7 +104,7 @@ class DatabaseHandler(object) :
 
     def saveDomain(self, domainName, createdBy) :
         createdOn = datetime.datetime.now()
-        domainId = self.getDomainId()
+        domainId = self.getNewId("domain_id", "tbl_domains")
         isActive = 1
 
         query = "INSERT INTO tbl_domains(domain_id, domain_name, is_active, \
@@ -163,18 +163,9 @@ class DatabaseHandler(object) :
 
         return isDuplicate
 
-    def getCountryId(self) :
-        countryId = 1
-        query = "SELECT max(country_id) FROM tbl_countries "
-        rows = self.dataSelect(query)
-        for row in rows :
-            if row[0] is not None :
-                countryId = int(row[0]) + 1
-        return countryId
-
     def saveCountry(self, countryName, createdBy) :
         createdOn = datetime.datetime.now()
-        countryId = self.getCountryId()
+        countryId = self.getNewId("country_id", "tbl_countries")
         isActive = 1
 
         query = "INSERT INTO tbl_countries(country_id, country_name, \
@@ -232,18 +223,9 @@ class DatabaseHandler(object) :
 
         return isDuplicate
 
-    def getIndustryId(self) :
-        industryId = 1
-        query = "SELECT max(industry_id) FROM tbl_industries "
-        rows = self.dataSelect(query)
-        for row in rows :
-            if row[0] is not None :
-                industryId = int(row[0]) + 1
-        return industryId
-
     def saveIndustry(self, industryName, createdBy) :
         createdOn = datetime.datetime.now()
-        industryId = self.getIndustryId()
+        industryId = self.getNewId("industry_id", "tbl_industries")
         isActive = 1
 
         query = "INSERT INTO tbl_industries(industry_id, industry_name, is_active, \
@@ -304,19 +286,9 @@ class DatabaseHandler(object) :
 
         return isDuplicate
 
-    def getStatutoryNatureId(self) :
-        statutoryNatureId = 1
-        query = "SELECT max(statutory_nature_id) FROM tbl_statutory_natures "
-
-        rows = self.dataSelect(query)
-        for row in rows :
-            if row[0] is not None :
-                statutoryNatureId = int(row[0]) + 1
-        return statutoryNatureId
-
     def saveStatutoryNature(self, statutoryNatureName, createdBy) :
         createdOn = datetime.datetime.now()
-        statutoryNatureId = self.getStatutoryNatureId()
+        statutoryNatureId = self.getNewId("statutory_nature_id", "tbl_statutory_natures")
         isActive = 1
 
         query = "INSERT INTO tbl_statutory_natures(statutory_nature_id, statutory_nature_name, \
@@ -356,6 +328,33 @@ class DatabaseHandler(object) :
             return False
 
     ### StatutoryLevels ###
+
+    def getStatutoryLevels(self) :
+        query = "SELECT level_id, level_position, level_name, country_id \
+            FROM tbl_statutory_levels"
+        return self.dataSelect(query)
+
+    def getStatutoryLevelsByCountry(self, countryId) :
+        query = "SELECT level_id, level_position, level_name \
+            FROM tbl_statutory_levels WHERE country_id = %s" % countryId
+        return self.dataSelect(query)
+
+    def saveStatutoryLevel(self, countryId, levelId, levelName, levelPosition, userId) :
+        if levelId is None :
+            levelId = self.getNewId("level_id", "tbl_statutory_levels")
+            createdOn = datetime.datetime.now()
+
+            query = "INSERT INTO tbl_statutory_levels (level_id, level_position, \
+                level_name, country_id, created_by, created_on) VALUES (%s, %s, '%s', %s, %s, '%s')" % (
+                    levelId, levelPosition, levelName, countryId, userId, createdOn
+                )
+            return self.dataInsertUpdate(query)
+        else :
+            query = "UPDATE tbl_statutory_levels SET level_position=%s, level_name='%s', \
+            updated_by=%s WHERE level_id=%s" % (
+                levelPosition, levelName, userId, levelId
+            )
+            return self.dataInsertUpdate(query)
 
     @staticmethod
     def instance() :
