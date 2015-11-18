@@ -356,6 +356,35 @@ class DatabaseHandler(object) :
             )
             return self.dataInsertUpdate(query)
 
+    ### Geography Levels ###
+
+    def getGeographyLevels(self) :
+        query = "SELECT level_id, level_position, level_name, country_id \
+            FROM tbl_geography_levels"
+        return self.dataSelect(query)
+
+    def getGeographyLevelsByCountry(self, countryId) :
+        query = "SELECT level_id, level_position, level_name \
+            FROM tbl_geography_levels WHERE country_id = %s" % countryId
+        return self.dataSelect(query)
+
+    def saveGeographyLevel(self, countryId, levelId, levelName, levelPosition, userId) :
+        if levelId is None :
+            levelId = self.getNewId("level_id", "tbl_geography_levels")
+            createdOn = datetime.datetime.now()
+
+            query = "INSERT INTO tbl_geography_levels (level_id, level_position, \
+                level_name, country_id, created_by, created_on) VALUES (%s, %s, '%s', %s, %s, '%s')" % (
+                    levelId, levelPosition, levelName, countryId, userId, createdOn
+                )
+            return self.dataInsertUpdate(query)
+        else :
+            query = "UPDATE tbl_geography_levels SET level_position=%s, level_name='%s', \
+            updated_by=%s WHERE level_id=%s" % (
+                levelPosition, levelName, userId, levelId
+            )
+            return self.dataInsertUpdate(query)
+
     @staticmethod
     def instance() :
         global _databaseHandlerInstance

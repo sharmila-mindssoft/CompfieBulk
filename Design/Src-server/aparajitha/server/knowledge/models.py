@@ -12,7 +12,8 @@ __all__ = [
     "UpdateIndustry", "ChangeIndustryStatus",
     "StatutoryNature", "StatutoryNatureList", "SaveStatutoryNature",
     "UpdateStatutoryNature", "ChangeStatutoryNatureStatus",
-    "StatutoryLevel", "StatutoryLevelList", "SaveStatutoryLevel",
+    "Level", "StatutoryLevelList", "SaveStatutoryLevel", "GeographyLevelList",
+    "SaveGeographyLevel"
 ]
 
 def assertType (x, typeObject) :
@@ -633,7 +634,7 @@ class ChangeStatutoryNatureStatus(object) :
     def __repr__(self) :
         return str(self.toStructure())
 
-class StatutoryLevel(object) :
+class Level(object) :
     def __init__ (self, levelId, levelPosition, levelName) :
         self.levelId = levelId
         self.levelPosition = levelPosition
@@ -665,7 +666,7 @@ class StatutoryLevelList(object) :
         self.countryList = CountryList().toList()
         _statutoryLevels = DatabaseHandler.instance().getStatutoryLevels()
         for row in _statutoryLevels :
-            statutoryLevel = StatutoryLevel(int(row[0]), int(row[1]), row[2])
+            statutoryLevel = Level(int(row[0]), int(row[1]), row[2])
             countryId = int(row[3])
             _list = self.statutoryLevels.get(countryId)
             if _list is None :
@@ -698,13 +699,10 @@ class SaveStatutoryLevel(object) :
         assertType(requestData, DictType)
         countryId = JSONHelper.getInt(requestData, "country_id")
         levels = JSONHelper.getList(requestData, "levels")
-        savedLevels = DH.getStatutoryLevelsByCountry(countryId)
-        savedNames = []
-        for row in savedLevels :
-            savedNames.append(row[2])
-
+        savedNames = [row[2] for row in DH.getGeographyLevelsByCountry(countryId)]
         levelNames = []
         levelPositions = []
+
         for level in levels :
             levelId = JSONHelper.getOptionalInt(level, "level_id")
             name = JSONHelper.getString(level, "level_name")
@@ -722,6 +720,7 @@ class SaveStatutoryLevel(object) :
             self.responseData = "DuplicateStatutoryLevelNamesExists"
         elif len(duplicatePositions) > 0 :
             self.responseData = "DuplicateStatutoryLevelPositionsExists"
+
         if self.responseData is None :
             for level in levels :
                 levelId = JSONHelper.getOptionalInt(level, "level_id")
@@ -743,5 +742,87 @@ class SaveStatutoryLevel(object) :
     def __repr__(self) :
         return str(self.toStructure())
 
+class GeographyLevelList(object) :
+    def __init__(self) :
+        self.geographyLevels = {}
+        self. countryList = []
+        self.processData()
 
+    def processData(self) :
+        self.countryList = CountryList().toList()
+        _geographyLevels = DatabaseHandler.instance().getGeographyLevels()
+        for row in _geographyLevels :
+            geographyLevel = Level(int(row[0]), int(row[1]), row[2])
+            countryId = int(row[3])
+            _list = self.geographyLevels.get(countryId)
+            if _list is None :
+                _list = []
+            _list.append(geographyLevel.toStructure())
+            self.geographyLevels[countryId] = _list
 
+    def toStructure(self) :
+        return [
+            "success",
+            {
+                "countries": self.countryList,
+                "geography_levels": self.geographyLevels
+            }
+        ]
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class SaveGeographyLevel(object) :
+    def __init__(self, request, userId) :
+        self.request = request
+        self.userId = userId
+        self.responseData = None
+        self.processRequest()
+
+    def processRequest(self) :
+        DH = DatabaseHandler.instance()
+        requestData = self.request[1]
+        assertType(requestData, DictType)
+        countryId = JSONHelper.getInt(requestData, "country_id")
+        levels = JSONHelper.getList(requestData, "levels")
+        savedNames = [row[2] for row in DH.getGeographyLevelsByCountry(countryId)]
+        levelNames = []
+        levelPositions = []
+
+        for level in levels :
+            levelId = JSONHelper.getOptionalInt(level, "level_id")
+            name = JSONHelper.getString(level, "level_name")
+            levelNames.append(name)
+            levelPositions.append(JSONHelper.getInt(level, "level_position"))
+            if levelId is None :
+                if (savedNames.count(name) > 0) :
+                    self.responseData = "LevelIdCannotNullFor '%s'" % name
+                    break
+
+        duplicateNames = [x for i, x in enumerate(levelNames) if levelNames.count(x) > 1]
+        duplicatePositions = [x for i, x in enumerate(levelPositions) if levelPositions.count(x) > 1]
+        if len(duplicateNames) > 0 :
+            self.responseData = "DuplicateGeographyLevelNamesExists"
+        elif len(duplicatePositions) > 0 :
+            self.responseData = "DuplicateGeographyLevelPositionsExists"
+
+        if self.responseData is None :
+            for level in levels :
+                levelId = JSONHelper.getOptionalInt(level, "level_id")
+                name = JSONHelper.getString(level, "level_name")
+                position = JSONHelper.getInt(level, "level_position")
+
+                if (DH.saveGeographyLevel(countryId, levelId, name, position, self.userId)) :
+                    self.responseData = "success"
+                else :
+                    self.responseData = "saveFailed: %s" % level
+                    break
+
+    def toStructure(self) :
+        return [
+            str(self.responseData),
+            {}
+        ]
+
+    def __repr__(self) :
+        return str(self.toStructure())

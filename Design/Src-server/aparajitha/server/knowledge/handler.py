@@ -62,6 +62,10 @@ class APIRequestHandler(tornado.web.RequestHandler) :
                     response = StatutoryLevelList()
                 elif request[0] == "SaveStatutoryLevel" :
                     response = SaveStatutoryLevel(request, userId)
+                elif request[0] == "GetGeographyLevels" :
+                    response = GeographyLevelList()
+                elif request[0] == "SaveGeographyLevel" :
+                    response = SaveGeographyLevel(request, userId)
                 else :
                     response = PossibleError("InvalidRequest")
 

@@ -276,12 +276,17 @@ def saveLevel() :
                     {
                         "level_id": 2,
                         "level_position": 2,
-                        "level_name": "Sub Act"
+                        "level_name": "Rule Name"
                     },
                     {
                         "level_id": 3,
                         "level_position": 3,
-                        "level_name": "Rule Name"
+                        "level_name": "Section"
+                    },
+                    {
+                        "level_id": 4,
+                        "level_position": 4,
+                        "level_name": "Sub Section"
                     },
                 ]
             }
@@ -289,31 +294,54 @@ def saveLevel() :
     }
     return handle_request(url, data)
 
-def updateLevel() :
-    url = "http://localhost:8080/StatutoryLevel"
+
+### Geo Levels
+
+def getGeoLevels() :
+    url = "http://localhost:8080/GeographyLevel"
     data = {
         "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
         "request" : [
-            "UpdateStatutoryLevel",
+            "GetGeographyLevels",
+            {}
+        ]
+    }
+    return handle_request(url, data)
+
+def saveGeoLevel() :
+    url = "http://localhost:8080/GeographyLevel"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "SaveGeographyLevel",
             {
                 "country_id": 1,
                 "levels" : [
-                    {
+                    {   
                         "level_id": 1,
                         "level_position": 1,
-                        "level_name": "Act Name"
+                        "level_name": "Region"
                     },
                     {
                         "level_id": 2,
                         "level_position": 2,
-                        "level_name": "Rule Name"
-                    }
+                        "level_name": "State"
+                    },
+                    {
+                        "level_id": None,
+                        "level_position": 3,
+                        "level_name": "District"
+                    },
+                    {
+                        "level_id": None,
+                        "level_position": 4,
+                        "level_name": "City"
+                    },
                 ]
             }
         ]
     }
     return handle_request(url, data)
-
 
 
 if __name__ == "__main__" :
@@ -344,10 +372,12 @@ if __name__ == "__main__" :
     # getStatutoryNature()
 
     ### StatutoryLevels ###
-    saveLevel()
-    # updateLevel()
-    getLevels()
+    # saveLevel()
+    # getLevels()
 
+    ### Geography Levels###
+    saveGeoLevel()
+    getGeoLevels()
 
     application = tornado.web.Application(
         [],
