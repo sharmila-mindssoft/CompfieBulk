@@ -969,7 +969,6 @@ class ChangeStatutoryNatureStatus(object) :
             self.responseData = "success"
         else :
             self.responseData = "InvalidStatutoryNatureId"
-
     def toStructure(self) :
         return [
             str(self.responseData),
@@ -978,3 +977,4 @@ class ChangeStatutoryNatureStatus(object) :
 
     def __repr__(self) :
         return str(self.toStructure())
+
