@@ -3,7 +3,7 @@ import datetime
 import time
 import string
 import random
-from aparajitha.server.admin.databasehandler import DatabaseHandler 
+from databasehandler import DatabaseHandler 
 
 __all__ = [
     "Form", 

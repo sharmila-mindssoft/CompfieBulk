@@ -5,7 +5,7 @@ import tornado.web
 from models import *
 from controllers import *
 from aparajitha.server.common import JSONHelper
-from aparajitha.server.databasehandler import DatabaseHandler
+from databasehandler import DatabaseHandler
 
 __all__ = [
     "initializeAdminHandler"

@@ -407,7 +407,7 @@ if __name__ == "__main__" :
     # saveUser()
     # updateUser()
     # changeUserStatus(1)
-    # getUsers()
+    getUsers()
 
     application = tornado.web.Application(
         [],
