@@ -37,7 +37,6 @@ class UserGroupController() :
         return response
 
     def saveUserGroup(self, requestData, sessionUser) :
-    	print "inside save user group"
         userGroupName = JSONHelper.getString(requestData, "user_group_name")
         formType = JSONHelper.getString(requestData, "form_type")
         formIds =  JSONHelper.getList(requestData, "form_ids")
@@ -50,7 +49,6 @@ class UserGroupController() :
             return commonResponseStructure("Error",{})
 
     def updateUserGroup(self, requestData, sessionUser) :
-    	print "inside update user group"
         userGroupId = JSONHelper.getInt(requestData,"user_group_id")
         userGroupName = JSONHelper.getString(requestData,"user_group_name")
         formType = JSONHelper.getString(requestData,"form_type")

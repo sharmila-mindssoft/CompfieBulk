@@ -1,5 +1,5 @@
 
-var BASE_URL = "http://192.168.1.7:8080/";
+var BASE_URL = "http://localhost:8080/";
 function initMirror() {
     var DEBUG = true;
 
@@ -259,6 +259,175 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    // Admin User Group Master
+    function isNull(value){
+        if (value == null)
+            return true
+        else
+            return false
+    }
+
+
+    function getAdminUserGroupList(callerName, callback, failure_callback) {
+        var request = [
+            "GetUserGroups",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function saveAdminUserGroup(callerName, userGroupDetail, callback, failure_callback) {
+        if (isNull(userGroupDetail))
+            return null;
+        else if (userGroupDetail.length != 3)
+            return null;
+        $.each(userGroupDetail, function( index, value ) {
+            if (isNull(value))
+                return null
+        });
+        var userGroupName= userGroupDetail[0] ;
+        var fromType= userGroupDetail[1] ;
+        var formIds= userGroupDetail[2].split(',') ;
+        var request = [
+            "SaveUserGroup",
+            {
+                "user_group_name": userGroupName,
+                "form_type": fromType,
+                "form_ids": formIds
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function updateAdminUserGroup(callerName, userGroupDetail, statutoryNatureName, callback, failure_callback) {
+        if (isNull(userGroupDetail))
+            return null;
+        else if (userGroupDetail.length != 4)
+            return null;
+        $.each(userGroupDetail, function( index, value ) {
+            if (isNull(value))
+                return null
+        });
+        var userGroupId= userGroupDetail[0] ;
+        var userGroupName= userGroupDetail[1] ;
+        var fromType= userGroupDetail[2] ;
+        var formIds= userGroupDetail[3].split(',') ;
+        var request = [
+            "UpdateUserGroup",
+            {
+                "user_group_id" : userGroupId,
+                "user_group_name": userGroupName,
+                "form_type": fromType,
+                "form_ids": formIds
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeAdminUserGroupStatus(callerName, userGroupId, isActive, callback, failure_callback) {
+        if (isNull(userGroupId) || isNull(isActive) )
+            return null;
+        var request = [
+            "ChangeUserGroupStatus",
+            {
+                "user_group_id" : userGroupId,
+                "is_active" : isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+
+    // Admin User Master
+
+    function getAdminUserList(callerName, callback, failure_callback) {
+        var request = [
+            "GetUsers",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+
+    function saveAdminUser(callerName, userDetail, callback, failure_callback) {
+       if (isNull(userDetail))
+            return null;
+        else if (userDetail.length != 8)
+            return null;
+        $.each(userDetail, function( index, value ) {
+            if (isNull(value))
+                return null
+        });
+        var emailId = userDetail[0];
+        var userGroupId = userDetail[1];
+        var employeeName = userDetail[2];
+        var employeeCode = userDetail[3];
+        var contactNo = userDetail[4];
+        var address = userDetail[5];
+        var designation = userDetail[6];
+        var domainIds= userDetail[7].split(',') ;
+        var request = [
+            "SaveUser",
+            {
+                "email_id": emailId,
+                "user_group_id": userGroupId,
+                "employee_name": employeeName,
+                "employee_code": employeeCode,
+                "contact_no": contactNo,
+                "address": address, 
+                "designation": designation,
+                "domain_ids": domainIds
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function updateAdminUser(callerName, userDetail, callback, failure_callback) {
+        if (isNull(userDetail))
+            return null;
+        else if (userDetail.length != 8)
+            return null;
+        $.each(userDetail, function( index, value ) {
+            if (isNull(value))
+                return null
+        });
+        var userId = userDetail[0];
+        var userGroupId = userDetail[1];
+        var employeeName = userDetail[2];
+        var employeeCode = userDetail[3];
+        var contactNo = userDetail[4];
+        var address = userDetail[5];
+        var designation = userDetail[6];
+        var domainIds= userDetail[7].split(',') ;
+        var request = [
+            "UpdateUser",
+            {
+                "user_id": userId,
+                "user_group_id": userGroupId,
+                "employee_name": employeeName,
+                "employee_code": employeeCode,
+                "contact_no": contactNo,
+                "address": address, 
+                "designation": designation,
+                "domain_ids": domainIds
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeAdminUserStatus(callerName, userId, isActive, callback, failure_callback) {
+        if (isNull(userId) || isNull(isActive) )
+            return null;
+        var request = [
+            "ChangeUserStatus",
+            {
+                "user_id": userId,
+                "is_active" : isActive 
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -289,7 +458,18 @@ function initMirror() {
         saveStatutoryNature: saveStatutoryNature,
         updateStatutoryNature: updateStatutoryNature,
         changeStatutoryNatureStatus: changeStatutoryNatureStatus,
-        getStatutoryNatureList: getStatutoryNatureList
+        getStatutoryNatureList: getStatutoryNatureList,
+
+        saveAdminUserGroup: saveAdminUserGroup,
+        updateAdminUserGroup: updateAdminUserGroup,
+        changeAdminUserGroupStatus: changeAdminUserGroupStatus,
+        getAdminUserGroupList: getAdminUserGroupList,
+
+        saveAdminUser: saveAdminUser,
+        updateAdminUser: updateAdminUser,
+        changeAdminUserStatus: changeAdminUserStatus,
+        getAdminUserList: getAdminUserList
+
     }
 
 }
