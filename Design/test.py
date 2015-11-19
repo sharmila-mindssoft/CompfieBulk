@@ -138,6 +138,7 @@ def changeCountry() :
     }
     return handle_request(url, data)
 
+
 def getUserGroups():
     url = "http://localhost:8080/AdminAPI"
     data = {
@@ -368,6 +369,100 @@ def changeStatutoryNatureStatus(status) :
     }
     return handle_request(url, data)
 
+def getLevels() :
+    url = "http://localhost:8080/StatutoryLevel"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "GetStatutoryLevels",
+            {}
+        ]
+    }
+    return handle_request(url, data)
+
+def saveLevel() :
+    url = "http://localhost:8080/StatutoryLevel"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "SaveStatutoryLevel",
+            {
+                "country_id": 1,
+                "levels" : [
+                    {   
+                        "level_id": 1,
+                        "level_position": 1,
+                        "level_name": "Act Name"
+                    },
+                    {
+                        "level_id": 2,
+                        "level_position": 2,
+                        "level_name": "Rule Name"
+                    },
+                    {
+                        "level_id": 3,
+                        "level_position": 3,
+                        "level_name": "Section"
+                    },
+                    {
+                        "level_id": 4,
+                        "level_position": 4,
+                        "level_name": "Sub Section"
+                    },
+                ]
+            }
+        ]
+    }
+    return handle_request(url, data)
+
+### Geo Levels
+
+def getGeoLevels() :
+    url = "http://localhost:8080/GeographyLevel"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "GetGeographyLevels",
+            {}
+        ]
+    }
+    return handle_request(url, data)
+
+def saveGeoLevel() :
+    url = "http://localhost:8080/GeographyLevel"
+    data = {
+        "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+        "request" : [
+            "SaveGeographyLevel",
+            {
+                "country_id": 1,
+                "levels" : [
+                    {   
+                        "level_id": 1,
+                        "level_position": 1,
+                        "level_name": "Region"
+                    },
+                    {
+                        "level_id": 2,
+                        "level_position": 2,
+                        "level_name": "State"
+                    },
+                    {
+                        "level_id": None,
+                        "level_position": 3,
+                        "level_name": "District"
+                    },
+                    {
+                        "level_id": None,
+                        "level_position": 4,
+                        "level_name": "City"
+                    },
+                ]
+            }
+        ]
+    }
+    return handle_request(url, data)
+
 if __name__ == "__main__" :
     print "listening on port 8090"
     ### Domain ###
@@ -375,13 +470,15 @@ if __name__ == "__main__" :
     # updateDomain()
     # changeDomain()
     # getdomains()
+    # getUserGroups()
+    # getdomains()
     
+
     ### Country ###
     # saveCountry()
     # updateCountry()
     # changeCountry()
     # getcountries()
-   
 
     ### Industry ###
     # saveIndustry("Mines")
@@ -405,7 +502,15 @@ if __name__ == "__main__" :
     # saveUser()
     # updateUser()
     # changeUserStatus(1)
-    getUsers()
+    # getUsers()
+
+    ### StatutoryLevels ###
+    # saveLevel()
+    # getLevels()
+
+    ### Geography Levels###
+    # saveGeoLevel()
+    # getGeoLevels()
 
     application = tornado.web.Application(
         [],

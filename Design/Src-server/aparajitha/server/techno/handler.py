@@ -8,10 +8,10 @@ from aparajitha.server.common import JSONHelper
 from databasehandler import DatabaseHandler
 
 __all__ = [
-    "initializeAdminHandler"
+    "initializeTechnoHandler"
 ]
 
-class AdminAPIRequestHandler(tornado.web.RequestHandler) :
+class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
     def initialize(self, url, handler) :
         self.url = url
         self.handler = handler
@@ -27,24 +27,8 @@ class AdminAPIRequestHandler(tornado.web.RequestHandler) :
             if userId is None :
                 response = PossibleError("InvalidSessionToken")
             else :
-                userGroupController = UserGroupController()
-                userController = UserController()
-                if request[0] == "GetUserGroups" :
-                    response = userGroupController.getUserGroups()
-                elif request[0] == "SaveUserGroup" :
-                    response = userGroupController.saveUserGroup(request[1], userId)
-                elif request[0] == "UpdateUserGroup" :
-                    response = userGroupController.updateUserGroup(request[1], userId)
-                elif request[0] == "ChangeUserGroupStatus" :
-                    response = userGroupController.changeUserGroupStatus(request[1], userId)
-                elif request[0] == "GetUsers" :
-                    response = userController.getUsers()
-                elif request[0] == "SaveUser" :
-                    response = userController.saveUser(request[1], userId)
-                elif request[0] == "UpdateUser" :
-                    response = userController.updateUser(request[1], userId)
-                elif request[0] == "ChangeUserStatus" :
-                    response = userController.changeUserStatus(request[1], userId)
+                if request[0] == "SaveClient" :
+                    response = SaveClient(request[1], userId)
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 
@@ -63,6 +47,6 @@ class AdminAPIRequestHandler(tornado.web.RequestHandler) :
 
 def initializeAdminHandler() :
     admin_urls = [
-        ("/AdminAPI", AdminAPIRequestHandler)
+        ("/TechnoAPI", TechnoAPIRequestHandler)
     ]
-    return admin_urls
+    return techno_urls
