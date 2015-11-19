@@ -10,6 +10,9 @@ import json
 from aparajitha.server import countries as countriesdb 
 from collections import OrderedDict
 
+from knowledge import handler as knowledge_handler
+from admin import handler as admin_handler
+
 TEMPLATE_PATHS = [
     ("/", "files/desktop/Login/Login.html", "files/mobile/Login/Login.html", {}),
     ("/index", "files/desktop/Login/index.html", "files/mobile/index/index.html", {}),
@@ -519,6 +522,10 @@ TEMPLATE_PATHS = [
         None, {}),
     ("/report/reassigntask", "files/desktop/ReassignTaskList/ReassignTaskList.html",
         None, {}),
+    ("/previousentryform", "files/desktop/PreviousEntryForm/PreviousEntryForm.html",
+        None, {}),
+     ("/logintrace", "files/desktop/LoginTrace/LoginTrace.html",
+        None, {}),
 ]
 
 
@@ -637,6 +644,22 @@ def run_server() :
         application_urls.append(entry)
 
     for url, handler in REQUEST_PATHS :
+        args = {
+            "url": url,
+            "handler": handler
+        }
+        entry = (url, handler, args)
+        application_urls.append(entry)
+
+    for url, handler in knowledge_handler.initializeKnowledgeHandler() :
+        args = {
+            "url": url,
+            "handler": handler
+        }
+        entry = (url, handler, args)
+        application_urls.append(entry)
+
+    for url, handler in admin_handler.initializeAdminHandler() :
         args = {
             "url": url,
             "handler": handler

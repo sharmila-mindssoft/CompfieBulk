@@ -1,0 +1,90 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<div class="content-container width60">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Login Trace<span class="error-message"><!----></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">From Date:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="10-Jul-2015" placeholder="dd-Mon-yyyy">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">User:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="user" autofocus placeholder="Type User">
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">To Date:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <input type="text" class="input-box" value="20-Jul-2015" placeholder="dd-Mon-yyyy">
+          </div>
+        </div>
+
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit">
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table">
+        <table>
+          <tr align="left">
+
+            <th>Date & Time</th>
+            <th>Action</th>
+            <th>Info</th>
+          </tr>
+          <tr>
+
+            <td>18-Jul-2015 12:15</td>
+            <td>Login</td>
+            <td>Login Succeeded for User "Ragavan".[IP: 192.168.111.14]</td>
+          </tr>
+          <tr>           
+            <td>16-Jul-2015 15:25</td>
+            <td>Login</td>
+            <td>Login Succeeded for User "Saravanan".[IP: 192.168.111.10]</td>
+          </tr>
+          <tr>
+            <td>15-Jul-2015 10:30</td>
+            <td>Login</td>
+            <td>Login failed. [IP: 192.168.111.55]</td>
+          </tr> 
+          <tr>
+            <td>14-Jul-2015 12:15</td>
+            <td>Logout</td>
+            <td>Logout Succeeded for User "Vinoth".[IP: 192.168.111.88]</td>
+          </tr>
+          <tr>
+          <td>14-Jul-2015 11:15</td>
+          <td>Login</td>
+          <td>Login Succeeded for User "Vinoth".[IP: 192.168.111.88]</td>
+        </tr>
+        
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+  $(function(){
+
+   $('#user').autoComplete({
+    minChars: 1,
+    source: function(term, suggest){
+      term = term.toLowerCase();
+      var choices = ['Ragavan', 'Muthu', 'Ramesh'];
+      var suggestions = [];
+      for (i=0;i<choices.length;i++)
+        if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
+      suggest(suggestions);
+    }
+  });
+ });
+</script>
+{% endblock %} 

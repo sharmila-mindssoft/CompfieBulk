@@ -4,6 +4,21 @@
   $(document).ready(function () {
     window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
   });
+   $(function() {
+     $('.service_provider').hide();
+
+   $('#usertype').change(function () {
+    if($("#usertype").val()=='Service Provider'){
+      $('.service_provider').show();
+      $('.star').hide();
+      $('.seatingunit').hide();      
+    }else{
+      $('.service_provider').hide();
+      $('.seatingunit').show();   
+      $('.star').show();  
+    }
+  });
+ });
 </script>
 <script src="/files/desktop/common/js/wizard/jquery.steps.js"></script>
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/wizard/jquery.steps.css">
@@ -17,28 +32,40 @@
       <div class="add-container-heading">Users<span class="error-message"></span></div>
       <div class="input-row-left">
         <div class="input-row">
+          <div class="field-label">User Type:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <select class="input-box" id="usertype" ><option selected="selected">Inhouse</option><option>Service Provider</option></select>
+          </div>
+        </div>
+           <div class="input-row service_provider">
+          <div class="field-label">Service Provider:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box icon-autocomplete" value="ARM Solutions"></div>
+        </div>
+            <div class="input-row seatingunit">
+          <div class="field-label">Seating Unit:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="seatingunit" autofocus value="VBM1001 - Corporate Office"></div>
+        </div>
+        <div class="input-row">
           <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
           <div class="field-input"><input type="text" class="input-box" value="Sivaraman"></div>
         </div>
         <div class="input-row">
-          <div class="field-label">Employee ID:<span class="mandatory">*</span></div>
+          <div class="field-label">Employee ID:<span class="mandatory star">*</span></div>
           <div class="field-input"><input type="text" class="input-box" value="EMP001"></div>
         </div>
-        <div class="input-row">
-          <div class="field-label">Contact No:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210"></div>
-        </div>
+    
        
       </div>  
       <div class="input-row-right">
+         <div class="input-row">
+          <div class="field-label">Contact No:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210"></div>
+        </div>
         <div class="input-row">
           <div class="field-label">User Group:<span class="mandatory">*</span></div>
           <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="usergroup" autofocus value="Manager"></div>
         </div>
-          <div class="input-row">
-          <div class="field-label">Seating Unit:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="seatingunit" autofocus value="VBM1001 - Corporate Office"></div>
-        </div>
+       
         
         
         
@@ -173,12 +200,14 @@
                   <li>
                     <input type="text" class="filter-text-box">
                   </li>
+                  <li style="font-weight:bold;background:#ddd;">KG Autoparts </li>
                   <li>VRM1001 - Corporate Office, 871, South street, Delhi</li>
                   <li>VRM1002 - Regional Office - North, 18, Main road, Simla</li>
                   <li class="active">VRM1003 - Regional Office - South, 16, North Street, Mambalam, Chennai</li>
                   <li>VRM1004 - Branch Office - 1, 85, First Floor, Hani Complex, Bangalore</li>
                   <li class="active">VRM1005 - Branch Office - 2, KK nagar, Madurai</li>
                   <li >VRM1006 - Branch Office - 3, 28,Ramnagar, Delhi</li>
+                   <li style="font-weight:bold;background:#ddd">KG Transports</li>
                   <li>VRM1007 - Branch Office - 4, 28 West Street, Hydrabad</li>
                   <li class="active">VRM1008 - Branch Office - 5, 12 RJ Complex, Main road, T.Nagar, Chennai</li>
                 </ul></td>
