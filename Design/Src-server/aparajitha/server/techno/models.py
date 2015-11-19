@@ -1,5 +1,5 @@
 from types import *
-from aparajitha.server.databasehandler import DatabaseHandler 
+from databasehandler import DatabaseHandler 
 import json
 from aparajitha.server.common import *
 

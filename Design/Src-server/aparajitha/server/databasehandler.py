@@ -68,6 +68,18 @@ class DatabaseHandler(object) :
             " VALUES ("+values+")"
         return self.executeInsertUpdate(query)
 
+    def update(self, table, columns, values, condition) :
+        query = "UPDATE "+table+" set "
+        for index,column in enumerate(columns):
+            if index < len(columns)-1:
+                query += column+" = '"+str(values[index])+"', "
+            else:
+                query += column+" = '"+str(values[index])+"' "
+
+        query += " WHERE "+condition
+
+        return self.executeInsertUpdate(query)
+
     def generateNewId(self, table, column):
         query = "SELECT max("+column+") FROM "+table
         rows = self.dataSelect(query)
@@ -77,21 +89,24 @@ class DatabaseHandler(object) :
 
         return int(newId)
 
-    def isAlreadyExists(self, table, id_column_name, value_column_name,
-        id, value) :
-        query = "SELECT count(*) FROM "+table+" WHERE "+value_column_name+"='"+value+\
-                "' AND "+id_column_name+" != '"+str(id)+"'"
-        rows = self.dataSelect(query)        
-        print rows[0][0]
+    def isAlreadyExists(self, table, condition) :
+        query = "SELECT count(*) FROM "+table+" WHERE "+condition
+        rows = self.dataSelect(query)     
         if rows[0][0] > 0:
             return True
         else : 
             return False
 
-    def getData(self, table, columns):
-        query = "SELECT "+columns+" FROM "+table
+    def getData(self, table, columns, condition):
+        query = "SELECT "+columns+" FROM "+table+" WHERE "+condition
         return self.dataSelect(query)
 
+    def validateSessionToken(self, sessionToken) :
+        query = "SELECT user_id FROM tbl_user_sessions \
+        WHERE session_id = '%s'" % sessionToken
+        rows = self.dataSelect(query)
+        row = rows[0]
+        return row[0]
 
     @staticmethod
     def instance() :
