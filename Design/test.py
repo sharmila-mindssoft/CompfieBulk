@@ -5,7 +5,6 @@ import tornado.ioloop
 import json
 
 
-
 def handle_request(url, options) :
     
     def handle_response (api_response) :

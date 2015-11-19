@@ -39,12 +39,12 @@ function loadStatNatureData(statNatureList){
 			var statNatureActive=statNature[j]['is_active'];
 			if(statNatureActive==1){	
 				imageName="icon-active.png";
-				title="Click here to deactivate"
+				title="Click here to deactivate";
 				statusVal=0;
 			}
 			else{
 				imageName="icon-inactive.png";	
-				title="Click here to Activate"
+				title="Click here to Activate";
 				statusVal=1;
 			}
 			var tableName=document.getElementById("tableStatutoryNatureList");

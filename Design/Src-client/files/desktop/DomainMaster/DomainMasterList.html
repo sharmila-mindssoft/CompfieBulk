@@ -15,17 +15,16 @@
     </div>
     <div class="clearfix"></div>
     <div class="grid-table" >
-      <table id="POITable">
+      <table>
         <tr align="left">
           <th align="center">#</th>
-          
           <th>Domain Name</th>
           <th align="center">Edit</th>
           <th align="center">Status</th>
         </tr>
         <tr>
           <td>&nbsp;</td>
-          <td><input type="text"  class="filter-text-box"></td>
+          <td><input type="text"  id="filterkey" class="filter-text-box" onkeyup="filter(this, 1)"></td>
           <td>&nbsp;</td>
           <td>&nbsp;</td>
         </tr>
@@ -36,7 +35,7 @@
           <td></td>
           <td align="center"></td>
           <td align="center"></td>
-        </tr>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -50,12 +49,12 @@
 <div class="single-column-form-outer width40">
   <div class="content-area">
     <div class="single-column-form-inner">
-    <div class="single-column-header">Domain Master<span class="error-message"><!----></span></div>
+    <div class="single-column-header">Domain Master<span id="error" class="error-message"></div>
             <div class="single-column-input-row">
               <div class="input-row">
                 <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
                 <div class="single-column-field-input">
-                <input type="text" id="domainname" class="input-box" value="">
+                <input type="text" id="domainname" class="input-box" value="" maxlength="50" >
                 <input type="hidden" id="domainid" value="">
                 </div>
               </div>
