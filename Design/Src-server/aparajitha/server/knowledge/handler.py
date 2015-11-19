@@ -58,6 +58,14 @@ class APIRequestHandler(tornado.web.RequestHandler) :
                     response = UpdateStatutoryNature(request, userId)
                 elif request[0] == "ChangeStatutoryNatureStatus" :
                     response = ChangeStatutoryNatureStatus(request, userId)
+                elif request[0] == "GetStatutoryLevels" :
+                    response = StatutoryLevelList()
+                elif request[0] == "SaveStatutoryLevel" :
+                    response = SaveStatutoryLevel(request, userId)
+                elif request[0] == "GetGeographyLevels" :
+                    response = GeographyLevelList()
+                elif request[0] == "SaveGeographyLevel" :
+                    response = SaveGeographyLevel(request, userId)
                 else :
                     response = PossibleError("InvalidRequest")
 
@@ -70,7 +78,7 @@ class APIRequestHandler(tornado.web.RequestHandler) :
             self.set_header("Access-Control-Allow-Origin", "*")
             self.set_header("Access-Control-Allow-Headers", "Content-Type")
             self.set_header("Access-Control-Allow-Methods", "POST")
-            self.write(json.dumps(response.toStructure()))
+            self.write(json.dumps(response.toStructure(), indent=4))
             self.finish()
 
 def initializeKnowledgeHandler() :
