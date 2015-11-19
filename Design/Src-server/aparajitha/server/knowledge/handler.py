@@ -190,7 +190,7 @@ def initializeKnowledgeHandler() :
         ("/SaveDomain", SaveDomainHandler),
         ("/UpdateDomain", UpdateDomainHandler),
         ("/ChangeDomainStatus", ChangeDomainStatusHandler),
-
+        
         ("/GetCountries", GetCountryHandler),
         ("/SaveCountry", SaveCountryHandler),
         ("/UpdateCountry", UpdateCountryHandler),
