@@ -5,7 +5,6 @@ import tornado.ioloop
 import json
 
 
-
 def handle_request(url, options) :
     
     def handle_response (api_response) :
@@ -138,6 +137,7 @@ def changeCountry() :
         ]
     }
     return handle_request(url, data)
+
 
 def getUserGroups():
     url = "http://localhost:8080/AdminAPI"
@@ -415,7 +415,6 @@ def saveLevel() :
     }
     return handle_request(url, data)
 
-
 ### Geo Levels
 
 def getGeoLevels() :
@@ -471,7 +470,10 @@ if __name__ == "__main__" :
     # updateDomain()
     # changeDomain()
     # getdomains()
+    # getUserGroups()
+    # getdomains()
     
+
     ### Country ###
     # saveCountry()
     # updateCountry()

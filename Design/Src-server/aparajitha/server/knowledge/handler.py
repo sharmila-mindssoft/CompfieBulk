@@ -83,6 +83,16 @@ class APIRequestHandler(tornado.web.RequestHandler) :
 
 def initializeKnowledgeHandler() :
     knowledge_urls = [
+        ("/GetDomains", GetDomainHandler),
+        ("/SaveDomain", SaveDomainHandler),
+        ("/UpdateDomain", UpdateDomainHandler),
+        ("/ChangeDomainStatus", ChangeDomainStatusHandler),
+        
+        ("/GetCountries", GetCountryHandler),
+        ("/SaveCountry", SaveCountryHandler),
+        ("/UpdateCountry", UpdateCountryHandler),
+        ("/ChangeCountryStatus", ChangeCountryStatusHandler),
+
         (r"/([a-zA-Z]+)", APIRequestHandler)
     ]
     return knowledge_urls

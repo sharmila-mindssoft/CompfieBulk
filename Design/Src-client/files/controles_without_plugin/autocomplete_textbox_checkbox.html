@@ -1,0 +1,128 @@
+<html>
+<head>
+<title>Select Box</title>
+
+<style type="text/css">
+.ac-textbox-checkbox li
+{
+list-style-type:none; line-height:25px;
+}
+.ac-textbox-checkbox ul {
+	border:1px solid red;
+	position: relative;
+	padding-left: 0em;
+}
+.ac-textbox-checkbox ul li {
+	padding-bottom: 0.5em;
+	font-size: 0.9em;
+	padding-top: 0.3em;
+	padding-right: 0.3em;
+	padding-left:1.5em;
+	cursor: pointer;
+}
+.ac-textbox-checkbox ul li:hover{
+	background: #EAE8E8;	
+}
+.ac-textbox-checkbox ul li.active_checkbox {
+	background: #f1e9f6 url(images/tick3.png) no-repeat left center;
+	background-size: 1.3em;
+	border-right: 3px solid #f1e9f6
+}
+
+</style>
+</head>
+<body>
+
+<h3> <u>Autocomplete with Checkbox Selection</u></h3>
+<table>
+<tr>
+<td>Search Country</td>
+<td>
+<input type="text" id="autoval" value="" onkeyup="loadautocompletecheckbox(this.value)"> 
+</td>
+
+<td>
+<span id="displayresultautocompletecheckbox"></span>
+</td>
+
+<td><input type="button" id="getresultautocompletecheckbox" value="Get Result" onclick="resultautocompletecheckbox()"></td>
+</tr>
+
+<tr>
+<td> </td>
+<td id="ac-checkbox-view" class="ac-textbox-checkbox" style="display:none;">
+	<ul id="ac-list-checkbox" onmouseleave="hideautocompletecheckbox();">
+</ul> 
+</td>
+<td> </td>
+</tr>
+</table>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript">
+
+function hideautocompletecheckbox()
+{
+    document.getElementById('ac-checkbox-view').style.display = 'none';
+}
+
+
+var tempsave=[];
+var tempsavename=[];
+function loadautocompletecheckbox (textval) {
+
+	document.getElementById('ac-checkbox-view').style.display = 'block';
+
+	var countries = {"1":"India","2":"Singapore","3":"Malaysia","4":"United States","5":"Japan","6":"London","7":"China"};
+	var suggestions = [];
+	$('#ac-list-checkbox').empty();
+
+	if(textval.length>0){
+		for(var i in countries){
+			if (~countries[i].toLowerCase().indexOf(textval)) suggestions.push([i,countries[i]]);	
+		}
+		 var str='';
+		 for(var i in suggestions){
+		 	var checkstate = $.inArray(suggestions[i][0], tempsave);
+          	if(checkstate>=0){
+          		str += '<li class="active_checkbox" id="'+suggestions[i][0]+'"onclick="activateautocompletecheckbox(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+          	}else{
+          		str += '<li id="'+suggestions[i][0]+'"onclick="activateautocompletecheckbox(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+          	}
+		 }
+ 		$('#ac-list-checkbox').append(str);
+    }
+}	
+
+
+function activateautocompletecheckbox (element,checkval,checkname) {
+
+var chkstatus = $(element).attr('class');
+   if(chkstatus == 'active_checkbox'){
+	$(element).removeClass("active_checkbox");
+	var removeelement = tempsave.indexOf(checkval);
+	tempsave.splice(removeelement, 1);
+	tempsavename.splice(removeelement, 1);
+   }else{
+   	$(element).addClass("active_checkbox");
+   	tempsave.push(checkval);
+	tempsavename.push(checkname);
+   }  
+   /*var selids='';
+   var totalcount=0;
+   $(".active_checkbox").each( function( index, el ) {
+            selids = selids+el.id+",";
+            totalcount = totalcount+1;
+    });*/
+	$("#displayresultautocompletecheckbox").text(tempsave.length + " selected ("+tempsavename+")");
+}	
+
+function resultautocompletecheckbox () {
+	var resultautocompletecheckbox = tempsave;
+	alert(resultautocompletecheckbox);
+}	
+
+</script>
+
+</body>
+</html>

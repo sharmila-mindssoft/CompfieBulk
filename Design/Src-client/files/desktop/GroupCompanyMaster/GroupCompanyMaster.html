@@ -25,8 +25,120 @@
   {
     font-size: 0.813em !important;
   }
+
+
+
+.autocomplete_style li
+{
+list-style-type:none; line-height:16px;
+}
+.autocomplete_style ul {
+  border:1px solid gray;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+}
+.autocomplete_style ul li {
+  padding-bottom: 0.5em;
+  font-size: 0.9em;
+  padding-top: 0.3em;
+  padding-right: 0.3em;
+  padding-left:1.5em;
+  cursor: pointer;
+}
+/*table tr td ul a{
+  text-decoration: none;
+  color:black;
+  width:100%;
+  height:100%;  
+  
+}*/
+.autocomplete_style ul li:hover{
+  background: #EAE8E8;  
+}
+.autocomplete_style ul li.active_ {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left center;
+  background-size: 1.3em;
+  border-right: 3px solid #f1e9f6
+}
+
 </style>
 <script type="text/javascript">
+
+function hidemenu()
+{
+    document.getElementById('selectboxview').style.display = 'none';
+     document.getElementById('autocompleteview').style.display = 'none';
+}
+
+function loadauto () {
+  document.getElementById('selectboxview').style.display = 'block';
+
+if($("#selecteditem").val() == ''){
+
+  var countries = [["1","India"],["2","Singapore"],["3","Malaysia"],["4","United States"],["5","Japan"],["6","London"],["7","China"]];
+
+     $('#ulist').empty();
+     var str='';
+     for(var i in countries){
+              str += '<li id="'+countries[i][0]+'" onclick="activate(this)" >'+countries[i][1]+'</li> ';
+     }
+    $('#ulist').append(str);
+    }
+} 
+
+function loadauto_text (textval) {
+
+  document.getElementById('autocompleteview').style.display = 'block';
+  var countries = {"1":"India","2":"Singapore","3":"Malaysia","4":"United States","5":"Japan","6":"London","7":"China"};
+  var suggestions = [];
+  $('#ulist_text').empty();
+  if(textval.length>0){
+    for(var i in countries){
+      if (~countries[i].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([i,countries[i]]); 
+    }
+    var str='';
+    for(var i in suggestions){
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+    }
+    $('#ulist_text').append(str);
+    $("#autocompleteresult").val('');
+    }
+} 
+
+
+function activate(element){
+   var chkstatus = $(element).attr('class');
+   if(chkstatus == 'active_'){
+  $(element).removeClass("active_");
+   }else{
+    $(element).addClass("active_");
+   }  
+
+   var selids='';
+   var totalcount=0;
+   $(".active_").each( function( index, el ) {
+            selids = selids+el.id+",";
+            totalcount = totalcount+1;
+    });
+
+   $("#selecteditem").val(totalcount+" Selected");
+  }
+
+function activate_text (element,checkval,checkname) {
+  $("#autoval").val(checkname);
+  $("#autocompleteresult").val(checkval);
+} 
+
+
+function result () {
+  var selids='';
+   $(".active").each( function( index, el ) {
+            selids = selids+el.id+",";
+    });
+  alert(selids);
+} 
+
         $(document).ready(function () {
             window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
             $("#group-new").click(function(){
@@ -146,6 +258,20 @@ textarea.input-box {
               
               </div>
           </div>
+
+
+          <div class="input-row">
+            <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
+            <div class="single-column-field-input">
+             <input type="text" class="input-box icon-autocomplete" id="selecteditem" value="" readonly="readonly" onclick="loadauto()"> 
+             <div id="selectboxview" class="autocomplete_style" style="display:none;">
+                <ul id="ulist" onmouseleave="hidemenu();" style="width:195px;"></ul> 
+            </div>
+          </div>
+          </div>
+
+
+          
           
           <div class="input-row">
             <div class="single-column-field-label">Upload Logo:<span class="mandatory">*</span></div>
@@ -233,7 +359,18 @@ textarea.input-box {
          <div class="grid-table">
             <table class="btable">
               <tr style="background-color:#CCC;border-radius:5px;">
-              <td colspan="9" align="left">Country : <input type="text" class="input-box icon-autocomplete" value="India" style="width:150px !important; background-color:#fff;" /></td>
+              <td colspan="2" align="left">Country : 
+              <input type="text" class="input-box icon-autocomplete" value="India" style="width:150px !important; background-color:#fff;" />
+              </td>
+              <td colspan="7">
+              <input type="text" class="input-box icon-autocomplete" id="autoval" value="" style="width:150px !important; background-color:#fff;" onkeyup="loadauto_text(this.value)"> 
+              <input type="hidden" id="autocompleteresult"> 
+             <div id="autocompleteview" class="autocomplete_style" style="display:none;">
+                <ul id="ulist_text" onclick="hidemenu();" style="width:195px;"></ul> 
+            </div>
+
+
+              </td>
               </tr>
               <tr align="left">
                 <th width="11%">Geography Level</th>
