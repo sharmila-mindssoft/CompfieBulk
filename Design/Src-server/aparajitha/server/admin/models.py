@@ -80,7 +80,6 @@ class UserGroup() :
         return userGroupList
 
     def save(self, sessionUser):
-        print "inside usergroup save"
         self.verify()
         columns = "user_group_id, user_group_name,form_type, form_ids, is_active,"+\
                   " created_on, created_by, updated_on, updated_by"
@@ -158,6 +157,25 @@ class User(object) :
             "employee_name": self.employeeName,
             "employee_code": self.employeeCode
         }
+
+    @classmethod
+    def getDetailedList(self):
+        userList = []
+        columns = "user_id, is_active"
+        rows = DatabaseHandler.instance().getData(User.mainTblName, columns, "1")
+
+        for row in rows:
+            userId = row[0]
+            isActive = row[1]
+            subColumns = "email_id, user_group_id, employee_name, employee_code,"+\
+                                "contact_no, address, designation, domain_ids"
+            condition = " user_id ='"+str(userId)+"'"                                
+            subRows = DatabaseHandler.instance().getData(User.detailTblName, subColumns, condition)
+            for subRow in subRows:
+                user = User(userId,subRow[0], subRow[1],subRow[2], subRow[3],
+                     subRow[4], subRow[5], subRow[6], subRow[7],isActive)
+                userList.append(user.toDetailedStructure())
+        return userList
 
     @classmethod
     def getList(self):

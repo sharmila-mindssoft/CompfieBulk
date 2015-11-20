@@ -3,7 +3,6 @@ import json
 import tornado.ioloop
 import tornado.web
 
-from aparajitha.server.databasehandler import DatabaseHandler
 from models import *
 from aparajitha.server.common import *
 from aparajitha.server.knowledge.models import DomainList
@@ -130,10 +129,8 @@ class UserController() :
 
     def getUsers(self) :
     	domainList = DomainList.getDomainList()
-    	print domainList
     	userGroupList = UserGroup.getList()
-    	print userGroupList
-    	userList = User.getList()
+    	userList = User.getDetailedList()
 
         response_data = {}
         response_data["domains"] = domainList
