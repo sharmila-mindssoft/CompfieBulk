@@ -1,11 +1,12 @@
 import datetime
+import os
 import MySQLdb as mysql
 
 __all__ = [
     "DatabaseHandler"
 ]
 
-_databaseHandlerInstance = None
+_databaseHandlerInstance = None 
 
 class DatabaseHandler(object) :
     def __init__(self) :
@@ -14,13 +15,42 @@ class DatabaseHandler(object) :
         self.mysqlPassword = "123456"
         self.mysqlDatabase = "aparajitha_knowledge"
 
+    def mysqlServerConnect(self):
+        return mysql.connect(
+            self.mysqlHost, self.mysqlUser, 
+            self.mysqlPassword
+        )
+
     def dbConnect(self) :
         return mysql.connect(
             self.mysqlHost, self.mysqlUser, 
             self.mysqlPassword, self.mysqlDatabase
         )
 
-    def executeInsertUpdate(self, query):
+    def createDatabase(self, databaseName):
+        con = None
+        cursor = None
+        isComplete = True
+        try:
+            con = self.mysqlServerConnect()
+            cursor = con.cursor()
+            query = "CREATE DATABASE "+databaseName
+            cursor.execute(query)
+            con.commit()
+
+        except mysql.Error, e:
+            print ("Error:%s - %s" % (query, e))
+            isComplete = False
+
+        finally:
+            if cursor is not None :
+                cursor.close()
+            if con is not None :
+                con.close()
+
+        return isComplete
+
+    def execute(self, query):
         con = None
         cursor = None
         isComplete = True
@@ -42,7 +72,7 @@ class DatabaseHandler(object) :
 
         return isComplete
 
-    def dataSelect(self, query) :
+    def executeAndReturn(self, query) :
         con = None
         cursor = None
         result = None
@@ -66,7 +96,7 @@ class DatabaseHandler(object) :
     def insert(self, table, columns, values) :
         query = "INSERT INTO "+table+" ("+columns+")" + \
             " VALUES ("+values+")"
-        return self.executeInsertUpdate(query)
+        return self.execute(query)
 
     def update(self, table, columns, values, condition) :
         query = "UPDATE "+table+" set "
@@ -78,11 +108,11 @@ class DatabaseHandler(object) :
 
         query += " WHERE "+condition
 
-        return self.executeInsertUpdate(query)
+        return self.execute(query)
 
     def generateNewId(self, table, column):
         query = "SELECT max("+column+") FROM "+table
-        rows = self.dataSelect(query)
+        rows = self.executeAndReturn(query)
 
         for row in rows :
             newId = row[0] + 1 if row[0] != None else 1
@@ -91,7 +121,7 @@ class DatabaseHandler(object) :
 
     def isAlreadyExists(self, table, condition) :
         query = "SELECT count(*) FROM "+table+" WHERE "+condition
-        rows = self.dataSelect(query)     
+        rows = self.executeAndReturn(query)     
         if rows[0][0] > 0:
             return True
         else : 
@@ -99,12 +129,12 @@ class DatabaseHandler(object) :
 
     def getData(self, table, columns, condition):
         query = "SELECT "+columns+" FROM "+table+" WHERE "+condition
-        return self.dataSelect(query)
+        return self.executeAndReturn(query)
 
     def validateSessionToken(self, sessionToken) :
         query = "SELECT user_id FROM tbl_user_sessions \
         WHERE session_id = '%s'" % sessionToken
-        rows = self.dataSelect(query)
+        rows = self.executeAndReturn(query)
         row = rows[0]
         return row[0]
 

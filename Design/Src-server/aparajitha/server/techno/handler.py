@@ -5,7 +5,7 @@ import tornado.web
 from models import *
 from controllers import *
 from aparajitha.server.common import JSONHelper
-from databasehandler import DatabaseHandler
+from aparajitha.server.databasehandler import DatabaseHandler 
 
 __all__ = [
     "initializeTechnoHandler"
@@ -45,8 +45,8 @@ class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
             self.finish()
 
 
-def initializeAdminHandler() :
-    admin_urls = [
+def initializeTechnoHandler() :
+    techno_urls = [
         ("/TechnoAPI", TechnoAPIRequestHandler)
     ]
     return techno_urls

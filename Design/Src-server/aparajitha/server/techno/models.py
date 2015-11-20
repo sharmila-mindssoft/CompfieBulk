@@ -1,14 +1,19 @@
 from types import *
-from databasehandler import DatabaseHandler 
 import json
+import re
+
+from aparajitha.server.databasehandler import DatabaseHandler 
+from aparajitha.server.clientdatabasehandler import ClientDatabaseHandler 
 from aparajitha.server.common import *
+from aparajitha.server.clientdatabasemapping import clientDatabaseMapping
 
 __all__ = [
     "GroupCompany",
     "BusinessGroup",
     "LegalEntity",
     "Division",
-    "Unit"
+    "Unit",
+    "SaveClient"
 ]
 
 class GroupCompany(object):
@@ -172,29 +177,42 @@ class Unit(object):
         }
 
 class SaveClient(object) :
+    clientTblName = "tbl_client_groups"
+    businessGroupTblName = "tbl_business_groups"
+    legalEntityTblName = "tbl_legal_entities"
+    divisionTblName = "tbl_divisions"
+    unitTblName = "tbl_units"
+    clientDBName = ""
 
     def __init__(self, requestData, sessionUser) :
         self.requestData = requestData
-        assertType(requestData, DictType)
         self.sessionUser = sessionUser
-        assertType(sessionUser, IntType)
 
-    def processRequest():
-        groupCompany = JSONHelper.getString(requestData, "group_company")
-        businessGroup = JSONHelper.getString(requestData, "business_group")
-        legalEntity = JSONHelper.getString(requestData, "legal_entity")
-        division = JSONHelper.getString(requestData, "division")
+        assertType(requestData, DictType)
+        print "validated request data"
+        assertType(sessionUser, LongType)
+        print "validated session user"
+        self.processRequest()
+
+    def processRequest(self):
+        print "inside process request"
+        requestData = self.requestData
+        groupCompany = JSONHelper.getDict(requestData, "group_company")
+        businessGroup = JSONHelper.getDict(requestData, "business_group")
+        legalEntity = JSONHelper.getDict(requestData, "legal_entity")
+        division = JSONHelper.getDict(requestData, "division")
         logo = JSONHelper.getString(requestData, "logo")
-        domainIds = JSONHelper.getString(requestData, "domain_ids")
+        domainIds = JSONHelper.getList(requestData, "domain_ids")
         username = JSONHelper.getString(requestData, "username")
-        noOfLicence = JSONHelper.getString(requestData, "no_of_licence")
+        noOfLicence = JSONHelper.getInt(requestData, "no_of_licence")
         contractFrom = JSONHelper.getString(requestData, "contract_from")
         contractTo = JSONHelper.getString(requestData, "contract_to")
-        totalDiskSpace = JSONHelper.getString(requestData, "total_disk_space")
-        isSmsSubscribed = JSONHelper.getString(requestData, "is_sms_subscribed")
-        countryWiseUnits = JSONHelper.getString(requestData, "country_wise_units")
+        totalDiskSpace = JSONHelper.getFloat(requestData, "total_disk_space")
+        isSmsSubscribed = JSONHelper.getInt(requestData, "is_sms_subscribed")
+        countryWiseUnits = JSONHelper.getList(requestData, "country_wise_units")
 
         assertType(groupCompany, DictType)
+        print "validated group company"
         assertType(businessGroup, DictType)
         assertType(legalEntity, DictType)
         assertType(division, DictType)
@@ -209,5 +227,61 @@ class SaveClient(object) :
         assertType(countryWiseUnits, ListType)
 
 
+        self.processGroupCompany(groupCompany)
 
+    def generateNewId(self, idType) :
+        if idType == "client":
+            return DatabaseHandler.instance().generateNewId(self.clientTblName, "client_id")
+        elif idType == "businessGroup":
+            return DatabaseHandler.instance().generateNewId(
+                self.businessGroupTblName, "business_group_id")
+        elif idType == "legalEntity":
+            return DatabaseHandler.instance().generateNewId(
+                self.legalEntityTblName, "legal_entity_id")
+        elif idType == "division":
+            return DatabaseHandler.instance().generateNewId(
+                self.divisionTblName, "division_id")
+        elif idType == "unit":
+            return DatabaseHandler.instance().generateNewId(
+                self.unitTblName, "unit_id")
 
+    def processGroupCompany(self, groupCompany):
+        clientId = JSONHelper.getInt(groupCompany, "client_id")
+        groupName = JSONHelper.getString(groupCompany, "group_name")
+
+        assertType(groupName, StringType)
+        print "client ID: %s",clientId
+        if(clientId == 0):
+            clientId = self.generateNewId("client")
+            print clientId
+            if self.saveGroupCompany(clientId, groupName):
+                print "GroupCompany saved"
+                self.createClientDatabase(clientId, groupName)
+        else:
+            print clientId
+            self.updateGroupCompany(clientId, groupName)
+
+    def saveGroupCompany(self, clientId, groupName):
+        columns = "client_id, group_name, created_on, created_by, updated_on, updated_by"
+        valuesList =  [clientId, groupName, getCurrentTimeStamp(), self.sessionUser,
+                        getCurrentTimeStamp(), self.sessionUser]
+        values = listToString(valuesList)
+        return DatabaseHandler.instance().insert(self.clientTblName,columns,values)
+
+    def updateGroupCompany(self, clientId, groupName):
+        print "Group company updated"
+        columns = ["group_name", "updated_on", "updated_by"]
+        values =  [ groupName, getCurrentTimeStamp(), self.sessionUser]
+        condition = "client_id='%s'",clientId
+        return DatabaseHandler.instance().update(self.clientTblName, columns, values, condition)
+
+    def createClientDatabase(self, clientId, groupName):
+        print "client database created"
+        isComplete = False
+        databaseName = re.sub('[^a-zA-Z0-9 \n\.]', '', str(clientId)+groupName)
+        databaseName = databaseName.replace (" ", "")
+        if DatabaseHandler.instance().createDatabase(databaseName):
+            clientDatabaseMapping[clientId] = databaseName
+            ClientDatabaseHandler.instance(databaseName).createClientDatabaseTables()
+            isComplete = True
+        return isComplete

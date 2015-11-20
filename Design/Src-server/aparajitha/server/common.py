@@ -108,6 +108,15 @@ class JSONHelper(object) :
     def getList(data, name) :
         return JSONHelper.list(data.get(name))
 
+    @staticmethod
+    def dict(x) :
+        assertType(x, DictType)
+        return x
+
+    @staticmethod
+    def getDict(data, name) :
+        return JSONHelper.dict(data.get(name))
+
    
 
 class Form(object) :

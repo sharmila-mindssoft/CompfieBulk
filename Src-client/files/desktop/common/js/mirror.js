@@ -428,6 +428,39 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    // Client Master
+
+    function saveClient(callerName, callback, failure_callback) {
+       
+        var request = [
+            "SaveClient",
+            {
+                "group_company": {
+                    "client_id":0,
+                    "group_name":"TVS Groups"
+                },
+                "business_group": {},
+                "legal_entity": {},
+                "division": {},
+                "logo": "url",
+                "domain_ids": [1,2],
+                "username": "username",
+                "no_of_licence": 10,
+                "contract_from": "20/11/2016",
+                "contract_to": "19/11/2017",
+                "total_disk_space": 1.5,
+                "is_sms_subscribed": 1,
+                "country_wise_units": [
+                    {
+                        "country_id" : 1,
+                        "units" : [{},]
+                    },
+                ]
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -468,7 +501,9 @@ function initMirror() {
         saveAdminUser: saveAdminUser,
         updateAdminUser: updateAdminUser,
         changeAdminUserStatus: changeAdminUserStatus,
-        getAdminUserList: getAdminUserList
+        getAdminUserList: getAdminUserList,
+
+        saveClient: saveClient
 
     }
 
