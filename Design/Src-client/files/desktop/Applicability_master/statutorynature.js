@@ -6,8 +6,8 @@ $("#btnStatutoryNatureAdd").click(function(){
 	$("#statutoryNatureAdd").show();
 	$("#statutoryNatureView").hide();
 	$("#statutoryNatureName").val('');
-  $("#statutoryNatureId").val('');
-  $(".error-message").html('');
+ 	$("#statutoryNatureId").val('');
+  	$(".error-message").html('');
 });
 $("#btnStatutoryNatureCancel").click(function(){
 	$("#statutoryNatureAdd").hide();
