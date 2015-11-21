@@ -192,7 +192,7 @@ textarea.input-box {
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
-      <div class="add-container-heading">Client<span class="error-message"></span></div>
+      <div class="add-container-heading">Client Unit<span class="error-message"></span></div>
       <div class="input-row">
         <div class="input-row-left">
           <div class="input-row">
@@ -203,93 +203,49 @@ textarea.input-box {
                 <option>SLK Groups</option>
                 <option>PGJ Groups</option>
               </Select>
-              <input id="group-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Group Name">
-              <span style="font-size:10px"><a id="group-new" href="#">New</a></span> </div>
+            </div>
           </div>
            <div class="input-row">
-            <div class="single-column-field-label">Business Group</div>
-            <div class="single-column-field-input">
-              <Select id="businessgroup-select" class="input-box">
-                <option>RG Business Groups</option>
-                <option>SLK Business Groups</option>
-                <option>PGJ Business Groups</option>
-              </Select>
-              <input id="businessgroup-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Business Group Name">
-              <span style="font-size:10px"><a href="#" id="businessgroup-new">New</a></span> </div>
+            <div class="single-column-field-label">Country:</div>
+            <div class="single-column-field-input-label">
+              India, Malaysia,...
+
+              </div>
           </div>
       
             
         </div>
         <div class="input-row-right">
             <div class="input-row">
-            <div class="single-column-field-label">Legal Entity:<span class="mandatory">*</span></div>
-            <div class="single-column-field-input">
-              <Select id="entity-select" class="input-box">
-                <option>RG Entity</option>
-                <option>SLK Entity</option>
-                <option>PGJ Entity</option>
-              </Select>
-              <input id="entity-text" type="text" class="input-box" style="width:200px;display:none" placeholder="Legal Entity Name">
-              <span style="font-size:10px"><a href="#" id="entity-new">New</a></span> </div>
+            <div class="single-column-field-label">Domain:</div>
+           <div class="single-column-field-input-label">
+              Finance Law, Industrial Law...
+
+              </div>
           </div>
-          <div class="input-row">
-            <div class="single-column-field-label">Division</div>
-            <div class="single-column-field-input">
-              <Select id="division-select" class="input-box">
-                <option>RG Division</option>
-                <option>SLK Division</option>
-                <option>PGJ Division</option>
-              </Select>
-              <input id="division-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Division Name">
-              <span style="font-size:10px"><a href="#" id="division-new">New</a></span> </div>
-          </div>
+          
        </div>
         <div class="clearfix"></div>
         <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px;">Settings</div>
         <div class="input-row-left">
-          <div class="input-row">
-            <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
-            <div class="single-column-field-input">
-              <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
-                    <option value="Labour Law" selected>Labour Law</option>
-                    <option value="Industrial Law" selected>Industrial Law</option>
-                    <option value="Finance" selected="selected">Finance</option>
-                  </select>
-              
-              </div>
-          </div>
-
-
-          <div class="input-row">
-            <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
-            <div class="single-column-field-input">
-             <input type="text" class="input-box icon-autocomplete" id="selecteditem" value="" readonly="readonly" onclick="loadauto()"> 
-             <div id="selectboxview" class="autocomplete_style" style="display:none;">
-                <ul id="ulist" onmouseleave="hidemenu();" style="width:195px;"></ul> 
-            </div>
-          </div>
-          </div>
-
-
-          
           
           <div class="input-row">
             <div class="single-column-field-label">Upload Logo:<span class="mandatory">*</span></div>
-            <div class="field-input">
-              <input type="file" class="input-box" style="width:200px;">
+            <div class="single-column-field-input-label ">
+             <img src="/images/logo.png" width="75">
             </div>
           </div>
 
           <div class="input-row">
             <div class="single-column-field-label">Contract From:<span class="mandatory">*</span></div>
-            <div class="field-input">
-              <input type="text" class="input-box" placeholder=""  value="10-Sep-2015" style="width:200px;">
+            <div class="single-column-field-input-label ">
+            10-Sep-2015
             </div>
           </div>
           <div class="input-row">
             <div class="single-column-field-label">Contract  To:<span class="mandatory">*</span></div>
-            <div class="field-input">
-              <input type="text" class="input-box" placeholder=""  value="10-Sep-2020" style="width:200px;">
+            <div class="single-column-field-input-label ">
+        10-Sep-2020
             </div>
           </div>
        
@@ -297,21 +253,21 @@ textarea.input-box {
         <div class="input-row-right">
             <div class="input-row">
             <div class="single-column-field-label">Number of user licence:<span class="mandatory">*</span></div>
-            <div class="field-input">
-              <input type="text" class="input-box" placeholder="Number of user licence"  value="10" style="width:200px;">
+            <div class="single-column-field-input-label ">
+            10
             </div>
           </div>
           <div class="input-row">
             <div class="single-column-field-label">File Space:<span class="mandatory">*</span></div>
-            <div class="field-input">
-              <input type="text" class="input-box" placeholder="File Space"  value="20" style="width:50px;float:left">
-              <span style="font-size:0.813em; padding-left:10px; line-height:2em;">GB</span>
+            <div class="single-column-field-input-label ">
+              20 GB
+              
             </div>
           </div>
            <div class="input-row">
             <div class="single-column-field-label">SMS Notification:</div>
               <div class="field-input" style="margin-top:5px;">
-                 <input type="checkbox" checked="checked">
+                 <input type="checkbox" checked="checked" disabled="">
               </div>
             
           </div>
@@ -328,10 +284,8 @@ textarea.input-box {
         <div class="input-row-left">
           <div class="input-row">
             <div class="single-column-field-label">Username:<span class="mandatory">*</span></div>
-            <div class="field-input" style=" width:60%;">
-              <input type="text" class="input-box" placeholder="user@domain.com" style="width:200px;"><br>
-                <span style="font-size:10px;">[&#9658;This will be used as the username for user account.<br>&#9658;
-                Password will be auto-generated]</span>
+            <div class="single-column-field-input-label " >
+              user@domain.com
             </div>
           </div>
         </div>
@@ -344,6 +298,48 @@ textarea.input-box {
             </div>
           </div> -->
         </div>
+<div class="clearfix"></div>
+        <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px;">Unit Creation</div>
+         <div class="input-row-left">
+      
+           <div class="input-row">
+            <div class="single-column-field-label">Business Group</div>
+            <div class="single-column-field-input">
+              <Select id="businessgroup-select" class="input-box">
+                <option>RG Business Groups</option>
+                <option>SLK Business Groups</option>
+                <option>PGJ Business Groups</option>
+              </Select>
+              <input id="businessgroup-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Business Group Name">
+              <span style="font-size:10px"><a href="#" id="businessgroup-new">New</a></span> </div>
+          </div>
+        <div class="input-row">
+            <div class="single-column-field-label">Legal Entity:<span class="mandatory">*</span></div>
+            <div class="single-column-field-input">
+              <Select id="entity-select" class="input-box">
+                <option>RG Entity</option>
+                <option>SLK Entity</option>
+                <option>PGJ Entity</option>
+              </Select>
+              <input id="entity-text" type="text" class="input-box" style="width:200px;display:none" placeholder="Legal Entity Name">
+              <span style="font-size:10px"><a href="#" id="entity-new">New</a></span> </div>
+          </div>
+            
+        </div>
+        <div class="input-row-right">
+          
+          <div class="input-row">
+            <div class="single-column-field-label">Division</div>
+            <div class="single-column-field-input">
+              <Select id="division-select" class="input-box">
+                <option>RG Division</option>
+                <option>SLK Division</option>
+                <option>PGJ Division</option>
+              </Select>
+              <input id="division-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Division Name">
+              <span style="font-size:10px"><a href="#" id="division-new">New</a></span> </div>
+          </div>
+       </div>
         <div class="add-container" style="padding-left:0px; padding-right:0px;">
 
      <!--    <div class="input-row">
