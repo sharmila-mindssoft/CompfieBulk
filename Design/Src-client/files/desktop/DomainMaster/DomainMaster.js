@@ -61,6 +61,7 @@ if(domainName == ''){
         { "domain_name": domainName }
     ]
   };
+   $("#error").text("Record Added Successfully");
   }
   else{
   var domain_url = "http://192.168.1.9:8080/UpdateDomain";
@@ -74,6 +75,7 @@ if(domainName == ''){
       }
     ]
   };
+  $("#error").text("Record Updated Successfully");
   }
   var options = JSON.stringify(domains_data);
   ajaxCall(domain_url, options, function (data) {
@@ -109,6 +111,7 @@ function changeStatus (domainId,isActive) {
   };
   var options = JSON.stringify(domains_data);
   ajaxCall(domain_url, options, function (data) {
+    $("#error").text("Status Changed Successfully");
     getDomains ();
   });
 }
@@ -148,7 +151,6 @@ function filter (term, cellNr){
 
 $(document).ready(function () {
   getDomains ();
-
   $('#domainname').keydown(function (e) {
   var key = e.keyCode;
   if (!((key == 8) || (key == 32) || (key == 46) || (key >= 65 && key <= 90))) {

@@ -1,56 +1,177 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+
+<style type="text/css">
+.ac-textbox li
+{
+list-style-type:none; line-height:16px;
+}
+.ac-textbox ul {
+  border:1px solid gray;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+}
+.ac-textbox ul li {
+  padding-bottom: 0.5em;
+  font-size: 0.9em;
+  padding-top: 0.3em;
+  padding-right: 0.3em;
+  padding-left:1.5em;
+  cursor: pointer;
+}
+.ac-textbox ul li:hover{
+  background: #EAE8E8;  
+}
+.ac-textbox ul li.active_ {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left center;
+  background-size: 1.3em;
+  border-right: 3px solid #f1e9f6
+}
+</style>
+
+
+<script type="text/javascript" src="/files/desktop/User/user.js"></script>
+<script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
+
+<div id="listview" style="display:block">
 <div class="content-container width50">
   <div class="content-area">
     <h1>Users</h1>
     <div class="filters-and-search">
-      <div class="btn-add" onclick="location.href='/user/create'" formtarget="_self">Add</div>
+      <div class="btn-add" onclick="displayAdd();" formtarget="_self">Add</div>
     </div>
     <div class="clearfix"></div>
     <div class="grid-table">
       <table>
         <tr>
-          <th width="6%">#</th>
+          <th >#</th>
           <th align="left">Employee</th>
           <th align="left">User Group</th>
           <th align="left">Designation</th>
           <th align="center" width="9%">Edit</th>
           <th align="center" width="9%">Status</th>
         </tr>
+
         <tr>
+          <td>&nbsp;</td>
+          <td>
+          <input type="text"  id="employeenamefilter" class="filter-text-box" onkeyup="filter(this, 1)">
+          </td>
+          <td>
+          <input type="text"  id="usergroupfilter" class="filter-text-box" onkeyup="filter(this, 2)">
+          </td>
+          <td>
+          <input type="text"  id="designationfilter" class="filter-text-box" onkeyup="filter(this, 3)">
+          </td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+
+        <tbody id="tableToModify">
+          <tr id="rowToClone">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
           <td align="center"></td>
-          <td><input type="text" name="location-name" class="filter-text-box"></td>
-          <td><input type="text" name="district-name" class="filter-text-box"></td>
-          <td><input type="text" name="region-name" class="filter-text-box"></td>
           <td align="center"></td>
-          <td align="center"></td>
-        </tr>
-        <tr>
-          <td align="center">1</td>
-          <td>Sivaraman</td>
-          <td>Sales Manager</td>
-          <td>Manager</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
-        </tr>
-        <tr>
-          <td align="center">2</td>
-          <td>Hariharan</td>
-          <td>Group 3</td>
-          <td>Designation 2</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-        </tr>
-        <tr>
-          <td align="center">3</td>
-          <td>Srinivasan</td>
-          <td>Group 2</td>
-          <td>Designation 3</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-        </tr>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>
+</div>
+</div>
+
+<div id="addview" style="display:none"> 
+<div class="content-container width70">
+        <div class="content-area">
+          <div class="add-container">
+          <div class="add-container-heading">Users<span class="error-message" id="error" ></span></div>
+           <div class="input-row-left">
+           
+              <div class="input-row">
+                <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
+                <div class="field-input">
+                <input type="text" id="employeename" class="input-box" value="" >
+                <input type="hidden" id="userid" value="">
+                </div>
+              </div>
+              <div class="input-row">
+                <div class="field-label">Employee ID:<span class="mandatory">*</span></div>
+                <div class="field-input"><input type="text" id="employeeid" class="input-box" value=""></div>
+              </div>
+              <div class="input-row">
+                <div class="field-label">Address:</div>
+                <div class="field-input"><textarea id="address" class="input-box" style="height:70px;"></textarea></div>
+              </div>
+              <div class="input-row" style="padding-bottom:0px;">
+                <div class="field-label">Contact No.:<span class="mandatory">*</span></div>
+                <div class="field-input"><input type="text" id="countrycode" class="input-box countrycode" value="+91"> <input type="text" id="areacode" class="input-box areacode" value="" > <input type="text" id="contactno" class="input-box mobile" value=""></div>
+              </div>
+              <div class="input-row">
+                <div class="field-label">&nbsp;</div>
+                <div class="field-input">
+                <span style="font-size:10px;">[+91 452 1234567]</span>
+                </div>
+              </div>
+            </div>
+            <div class="input-row-right">
+            
+              <div class="input-row">
+                <div class="field-label">User Group:<span class="mandatory">*</span></div>
+                <div class="field-input">
+                
+
+                <input type="text" class="input-box icon-autocomplete" id="usergroupval" value=""  onkeyup="loadauto_text(this.value)"> 
+              <input type="hidden" id="usergroup"> 
+             <div id="autocompleteview" class="ac-textbox" style="display:none;">
+                <ul id="ulist_text" onclick="hidemenu();" style="width:195px;"></ul> 
+            </div>
+
+
+                </div>
+              </div>
+              <div class="input-row">
+                <div class="field-label">Designation:</div>
+                <div class="field-input"><input type="text" id="designation" class="input-box" value=""></div>
+              </div>
+               <div class="input-row" >
+                <div class="field-label">Domain:<span class="mandatory">*</span></div>
+                <div class="field-input"> 
+                 <input type="hidden" id="domain"> 
+                <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto()"> 
+             <div id="selectboxview" class="ac-textbox" style="display:none;">
+                <ul id="ulist" onmouseleave="hidemenu();" style="width:195px;"></ul> 
+            </div>
+
+
+                </div>
+              </div>
+             
+              <div class="input-row" style="padding-bottom:0px;">
+                <div class="field-label">Email ID:<span class="mandatory">*</span></div>
+                <div class="field-input"><input type="text" id="emailid" class="input-box" placeholder="Email ID" value="">
+                </div>
+              </div>
+             
+              <div class="input-row">
+                <div class="field-label">&nbsp;</div>
+                <div class="field-input">
+                <span style="font-size:10px;">[This will be used as the username for user account.]</span>
+                </div>
+              </div>
+             
+            </div>
+            <div class="submit-button-container" style="text-align:left;">
+            </div>
+            <div class="submit-button-container">
+              <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/user/list'">&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit" onclick="saveRecord()">
+            </div>
+          </div>
+        </div>
+      </div>
 </div>
 {% endblock %} 

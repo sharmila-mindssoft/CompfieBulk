@@ -2,9 +2,7 @@
 {% block content %}
 
 
-
-<script type="text/javascript" src="/files/desktop/DomainMaster/DomainMaster.js"></script>
-
+<script type="text/javascript" src="/files/desktop/DomainMaster/domainmaster.js"></script>
 
 <div id="listview" style="display:block">
 <div class="content-container width40">
@@ -14,7 +12,9 @@
       <div class="btn-add" onclick="displayAdd();" formtarget="_self">Add</div>
     </div>
     <div class="clearfix"></div>
+
     <div class="grid-table" >
+     <div> <span id="error" class="error-message" style="color:#ffffff;padding-bottom:5px;"></span></div>
       <table>
         <tr align="left">
           <th align="center">#</th>
