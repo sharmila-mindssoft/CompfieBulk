@@ -25,43 +25,12 @@
   {
     font-size: 0.813em !important;
   }
-
-
-
-.autocomplete_style li
+  .modal td
 {
-list-style-type:none; line-height:16px;
+  font-size: 0.813em;
+  border: 1px solid #ddd;
+  padding: 5px;
 }
-.autocomplete_style ul {
-  border:1px solid gray;
-  position: absolute;
-  padding-left: 0em;
-  background: #ffffff;
-}
-.autocomplete_style ul li {
-  padding-bottom: 0.5em;
-  font-size: 0.9em;
-  padding-top: 0.3em;
-  padding-right: 0.3em;
-  padding-left:1.5em;
-  cursor: pointer;
-}
-/*table tr td ul a{
-  text-decoration: none;
-  color:black;
-  width:100%;
-  height:100%;  
-  
-}*/
-.autocomplete_style ul li:hover{
-  background: #EAE8E8;  
-}
-.autocomplete_style ul li.active_ {
-  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left center;
-  background-size: 1.3em;
-  border-right: 3px solid #f1e9f6
-}
-
 </style>
 <script type="text/javascript">
 
@@ -205,23 +174,42 @@ textarea.input-box {
               </Select>
             </div>
           </div>
-           <div class="input-row">
-            <div class="single-column-field-label">Country:</div>
-            <div class="single-column-field-input-label">
-              India, Malaysia,...
-
-              </div>
+       <div class="input-row">
+            <div class="single-column-field-label">Business Group</div>
+            <div class="single-column-field-input">
+              <Select id="businessgroup-select" class="input-box">
+                <option>RG Business Groups</option>
+                <option>SLK Business Groups</option>
+                <option>PGJ Business Groups</option>
+              </Select>
+              <input id="businessgroup-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Business Group Name">
+              <span style="font-size:10px"><a href="#" id="businessgroup-new">New</a></span> </div>
           </div>
       
             
         </div>
         <div class="input-row-right">
-            <div class="input-row">
-            <div class="single-column-field-label">Domain:</div>
-           <div class="single-column-field-input-label">
-              Finance Law, Industrial Law...
-
-              </div>
+                <div class="input-row">
+            <div class="single-column-field-label">Legal Entity:<span class="mandatory">*</span></div>
+            <div class="single-column-field-input">
+              <Select id="entity-select" class="input-box">
+                <option>RG Entity</option>
+                <option>SLK Entity</option>
+                <option>PGJ Entity</option>
+              </Select>
+              <input id="entity-text" type="text" class="input-box" style="width:200px;display:none" placeholder="Legal Entity Name">
+              <span style="font-size:10px"><a href="#" id="entity-new">New</a></span> </div>
+          </div>
+          <div class="input-row">
+            <div class="single-column-field-label">Division</div>
+            <div class="single-column-field-input">
+              <Select id="division-select" class="input-box">
+                <option>RG Division</option>
+                <option>SLK Division</option>
+                <option>PGJ Division</option>
+              </Select>
+              <input id="division-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Division Name">
+              <span style="font-size:10px"><a href="#" id="division-new">New</a></span> </div>
           </div>
           
        </div>
@@ -264,7 +252,7 @@ textarea.input-box {
             </div>
           </div>
            <div class="input-row">
-            <div class="single-column-field-label">SMS Notification:</div>
+            <div class="single-column-field-label">Subscribe for SMS Notification:</div>
               <div class="field-input" style="margin-top:5px;">
                  <input type="checkbox" checked="checked" disabled="">
               </div>
@@ -298,47 +286,8 @@ textarea.input-box {
           </div> -->
         </div>
 <div class="clearfix"></div>
-        <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px;">Unit Creation</div>
-         <div class="input-row-left">
-      
-           <div class="input-row">
-            <div class="single-column-field-label">Business Group</div>
-            <div class="single-column-field-input">
-              <Select id="businessgroup-select" class="input-box">
-                <option>RG Business Groups</option>
-                <option>SLK Business Groups</option>
-                <option>PGJ Business Groups</option>
-              </Select>
-              <input id="businessgroup-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Business Group Name">
-              <span style="font-size:10px"><a href="#" id="businessgroup-new">New</a></span> </div>
-          </div>
-        <div class="input-row">
-            <div class="single-column-field-label">Legal Entity:<span class="mandatory">*</span></div>
-            <div class="single-column-field-input">
-              <Select id="entity-select" class="input-box">
-                <option>RG Entity</option>
-                <option>SLK Entity</option>
-                <option>PGJ Entity</option>
-              </Select>
-              <input id="entity-text" type="text" class="input-box" style="width:200px;display:none" placeholder="Legal Entity Name">
-              <span style="font-size:10px"><a href="#" id="entity-new">New</a></span> </div>
-          </div>
-            
-        </div>
-        <div class="input-row-right">
-          
-          <div class="input-row">
-            <div class="single-column-field-label">Division</div>
-            <div class="single-column-field-input">
-              <Select id="division-select" class="input-box">
-                <option>RG Division</option>
-                <option>SLK Division</option>
-                <option>PGJ Division</option>
-              </Select>
-              <input id="division-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Division Name">
-              <span style="font-size:10px"><a href="#" id="division-new">New</a></span> </div>
-          </div>
-       </div>
+     
+
         <div class="add-container" style="padding-left:0px; padding-right:0px;">
 
      <!--    <div class="input-row">
@@ -563,6 +512,8 @@ textarea.input-box {
     </p>
   </section>
 </div>
+
+
 <script>
 $(function(){
   $('#country3').autoComplete({
@@ -610,5 +561,7 @@ $(function(){
       }
   });
 });
+
+
 </script> 
 {% endblock %}

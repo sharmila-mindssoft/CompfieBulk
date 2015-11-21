@@ -228,6 +228,20 @@ input.radio:checked ~ label {
                 $("#nextyear").show();
               //  $("#radio6").prop('checked', true);
             });
+           $("#radioConsolidated").click(function () {
+             //$(".textboxdomain").show();
+                $(".textboxgroup").hide();
+                $(".textboxcompany").hide();
+                $(".textboxdivision").hide();
+                $(".textboxbranch").hide();
+                $(".textboxbusiness").hide();
+              //  $(".textboxdate").show();
+                $("#previousyear").hide();
+                $("#nextyear").hide();
+              //  $("#radio6").prop('checked', true);
+              loadConsolidated();
+            });
+           
            // $("#radio6").click(function () {
            //    $(".textboxdomain").show();
            //    $(".textboxdate").show();
@@ -1735,7 +1749,7 @@ input.radio:checked ~ label {
 		            type: 'column'
 		        },
 		        title: {
-		            text: 'Group wise Compliances - India'
+		            text: 'Country wise Compliances - India'
 		        },
 		        xAxis: {
 		            type: 'category',
@@ -1840,7 +1854,7 @@ input.radio:checked ~ label {
             }
         },
         title: {
-            text: "Group wise Compliances - India"
+            text: "Country wise Compliances - India"
         },
         tooltip: {
               headerFormat : '',
@@ -1963,7 +1977,7 @@ input.radio:checked ~ label {
                
             },
             title: {
-                text: 'Group wise Compliances'
+                text: 'Country wise Compliances'
             },
             xAxis: {
                title: {
@@ -2044,6 +2058,73 @@ input.radio:checked ~ label {
         });
     });
 	}
+
+ function loadConsolidated(value){
+      $("#viewaspie").hide();
+      $("#back").hide();
+      $("#viewasbar").hide();
+      $("#container").show();
+      $("#imgcontainer").hide();
+        $(function () {
+            $('#container').highcharts({
+        colors:['#A5D17A','#F58835', '#F0F468', '#F32D2B'],
+        chart: {
+            type: 'pie',
+            options3d: {
+                enabled: true,
+                alpha: 45,
+                beta: 0
+            }
+        },
+        title: {
+            text: "Consolidated Chart"
+        },
+        tooltip: {
+              headerFormat : '',
+            pointFormat: '{point.name}:{point.y} Out of 70'
+
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 35,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.percentage:.0f}%'
+                },
+                showInLegend: true,
+                point: {
+                        
+                        }
+            }
+        },
+        series: [{
+            type: 'pie',
+                    name: 'Compliance',
+                    data: [
+                      {
+                        name:"Complied",
+                        y:15,
+                        drilldown:"Complied"
+                      },{
+                        name:"Delayed compliance",
+                        y:15,
+                        drilldown:"Delayed"
+                      },{
+                        name:"In progress",
+                        y:18,
+                        drilldown:"Inprogress"
+                      },{
+                        name:"Not complied",
+                        y:22,
+                        drilldown:"NotComplied"
+                      },
+                    ]
+        }]
+    });
+        });
+    }
 
 
 </script> 
@@ -2279,6 +2360,12 @@ input.radio:checked ~ label {
                 </p>
                
                  </div>
+            </div>
+          </td>
+          <td>
+            <div style="float: left; position: relative; width: 150px;">
+              <input type="radio" name="radio" id="radioConsolidated" class="radio"/>
+              <label for="radioConsolidated" id="radiolabel" style="width:120px">Consolidated</label>
             </div>
           </td>
         </tr>

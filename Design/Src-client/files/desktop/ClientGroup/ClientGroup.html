@@ -94,32 +94,11 @@
               <input id="group-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Group Name">
               <span style="font-size:10px"><a id="group-new" href="#">New</a></span> </div>
             </div>
-             <div class="input-row">
-              <div class="single-column-field-label">Country:<span class="mandatory">*</span></div>
-              <div class="single-column-field-input">
-                <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
-                  <option value="India" selected>India</option>
-                  <option value="Malaysia" selected>Malaysia</option>
-                  <option value="Singapore" selected="selected">Singapore</option>
-                </select>
-
-              </div>
-            </div>
            
             
           </div>
           <div class="input-row-right">
-            <div class="input-row">
-              <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
-              <div class="single-column-field-input">
-                <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
-                  <option value="Labour Law" selected>Labour Law</option>
-                  <option value="Industrial Law" selected>Industrial Law</option>
-                  <option value="Finance" selected="selected">Finance</option>
-                </select>
-
-              </div>
-            </div>
+         
 
           </div>
           <div class="clearfix"></div>
@@ -146,6 +125,17 @@
                 <input type="text" class="input-box" placeholder=""  value="10-Sep-2020" style="width:200px;">
               </div>
             </div>
+             <div class="input-row">
+              <div class="single-column-field-label">Incharge Person:<span class="mandatory">*</span></div>
+              <div class="single-column-field-input">
+                <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+                  <option value="   EMP0010 - Hariharan" selected> EMP0010 - Hariharan</option>
+                  <option value="EMP0012 - Sivaraman" selected>EMP0012 - Sivaraman</option>
+                  <option value="EMP0015 - Srinivasan" selected="selected">EMP0015 - Srinivasan</option>
+                </select>
+
+              </div>
+            </div>
 
           </div>
           <div class="input-row-right">
@@ -163,7 +153,7 @@
               </div>
             </div>
             <div class="input-row">
-              <div class="single-column-field-label">SMS Notification:</div>
+              <div class="single-column-field-label">Subscribe for SMS Notification:</div>
               <div class="field-input" style="margin-top:5px;">
                <input type="checkbox" checked="checked">
              </div>
@@ -172,8 +162,8 @@
          </div>
          <div class="clearfix"></div>
 
-         <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px; width:49%; float:left;">Login Credentials</div>
-         <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px; width:50%; margin-left:1%;float:left;">Incharge Person</div>
+         <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px;">Login Credentials</div>
+        
          <div class="input-row-left">
           <div class="input-row">
             <div class="single-column-field-label">Username:<span class="mandatory">*</span></div>
@@ -184,19 +174,7 @@
               </div>
             </div>
           </div>
-          <div class="input-row-right" >
-            <div class="input-row">
-              <div class="single-column-field-label">User:<span class="mandatory">*</span></div>
-              <div class="single-column-field-input">
-                <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
-                  <option value="   EMP0010 - Hariharan" selected> EMP0010 - Hariharan</option>
-                  <option value="EMP0012 - Sivaraman" selected>EMP0012 - Sivaraman</option>
-                  <option value="EMP0015 - Srinivasan" selected="selected">EMP0015 - Srinivasan</option>
-                </select>
-
-              </div>
-            </div>
-          </div>
+        
 
           <div class="submit-button-container">
             <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/group_company/list'" >
