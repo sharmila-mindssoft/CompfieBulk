@@ -92,13 +92,33 @@
                 <option>PGJ Groups</option>
               </Select>
               <input id="group-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Group Name">
-              <span style="font-size:10px"><a id="group-new" href="#">New</a></span> </div>
+              <span style="font-size:10px"><a id="group-new" href="#">New</a></span> 
             </div>
-           
-            
+            </div>
+            <div class="input-row">
+              <div class="single-column-field-label">Country:<span class="mandatory">*</span></div>
+              <div class="single-column-field-input">
+                <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+                  <option value="   EMP0010 - Hariharan" selected>India</option>
+                  <option value="EMP0012 - Sivaraman" selected>United States</option>
+                  <option value="EMP0015 - Srinivasan" >Malaysia</option>
+                </select>
+
+              </div>
+            </div>
           </div>
           <div class="input-row-right">
-         
+            <div class="input-row">
+              <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
+              <div class="single-column-field-input">
+                <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
+                  <option value="   EMP0010 - Hariharan" selected>Finance</option>
+                  <option value="EMP0012 - Sivaraman" selected>Labour Law</option>
+                  <option value="EMP0015 - Srinivasan" selected="selected">Industrial Law</option>
+                </select>
+
+              </div>
+            </div>
 
           </div>
           <div class="clearfix"></div>
@@ -160,6 +180,214 @@
 
            </div>
          </div>
+         <div class="clearfix"></div>
+
+         <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px;">Date Configuration</div>
+          <div class="grid-table" style="margin-top:10px">
+            <table style="padding:20px;">
+              <tr align="left">
+                <th width="25%" style="background-color:#D4B7EB; color:#000;">Domain</th>
+                <th colspan="2" width="75%" align="center" style="background-color:#D4B7EB; color:#000;">Timeline</th>
+              </tr>
+              <tr>
+                <td></td>
+                <td align="center"><span style="font-style:bold">From</span></td>
+                <td align="center">To</td>
+              </tr>
+              <tr align="left" class="rightside" >
+                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.813em;float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+    inset 0 0 0 1px rgba(53,86,129, 0.4), 
+    inset 0 0 5px rgba(53,86,129, 0.5),
+    inset -285px 0 35px white;
+  border-radius: 0 5px 0 5px;"  width="200px">India</span></th>
+                  
+              </tr> 
+              <tr>
+                <td>Finance</td>
+                <td align="center">
+                  <select class="input-box" style="width:100px">
+                        <option>January</option>
+                        <option>February</option>
+                        <option>March</option>
+                        <option selected>April</option>
+                        <option>May</option>
+                        <option>June</option>
+                        <option>July</option>
+                        <option>August</option>
+                        <option>September</option>
+                        <option>October</option>
+                        <option>November</option>
+                        <option>December</option>
+                    </select>
+                </td>
+                <td align="center">
+                  <select class="input-box"  style="width:100px">
+                        <option>January</option>
+                        <option>February</option>
+                        <option selected>March</option>
+                        <option>April</option>
+                        <option>May</option>
+                        <option>June</option>
+                        <option>July</option>
+                        <option>August</option>
+                        <option>September</option>
+                        <option>October</option>
+                        <option>November</option>
+                        <option>December</option>
+                    </select>
+                </td>
+              </tr>
+              <tr>
+                <td>Industrial</td>
+                <td align="center">
+                  <select class="input-box"  style="width:100px">
+                        <option selected>January</option>
+                        <option>February</option>
+                        <option>March</option>
+                        <option>April</option>
+                        <option>May</option>
+                        <option>June</option>
+                        <option>July</option>
+                        <option>August</option>
+                        <option>September</option>
+                        <option>October</option>
+                        <option>November</option>
+                        <option>December</option>
+                    </select>
+                </td>
+                <td align="center">
+                  <select class="input-box"  style="width:100px">
+                        <option >January</option>
+                        <option>February</option>
+                        <option>March</option>
+                        <option>April</option>
+                        <option>May</option>
+                        <option>June</option>
+                        <option>July</option>
+                        <option>August</option>
+                        <option>September</option>
+                        <option>October</option>
+                        <option>November</option>
+                        <option selected>December</option>
+                    </select>
+                </td>
+              </tr>
+              <tr>
+                <td>Labour</td>
+                <td align="center">
+                  <select class="input-box"  style="width:100px">
+                        <option selected>January</option>
+                        <option>February</option>
+                        <option>March</option>
+                        <option>April</option>
+                        <option>May</option>
+                        <option>June</option>
+                        <option>July</option>
+                        <option>August</option>
+                        <option>September</option>
+                        <option>October</option>
+                        <option>November</option>
+                        <option >December</option>
+                    </select>
+                </td>
+                <td align="center">
+                  <select class="input-box"  style="width:100px">
+                       <option >January</option>
+                        <option>February</option>
+                        <option>March</option>
+                        <option>April</option>
+                        <option>May</option>
+                        <option>June</option>
+                        <option>July</option>
+                        <option>August</option>
+                        <option>September</option>
+                        <option>October</option>
+                        <option>November</option>
+                        <option selected>December</option>
+                    </select>
+                </td>
+              </tr>
+              <tr align="left" class="rightside" >
+                  <th  colspan="2" style="background-color:#fff; padding-left:0px; "><span style="background-color:#eee; color:#000000; font-size: 0.813em;float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+    inset 0 0 0 1px rgba(53,86,129, 0.4), 
+    inset 0 0 5px rgba(53,86,129, 0.5),
+    inset -285px 0 35px white;
+  border-radius: 0 5px 0 5px;"  width="200px">United States</span></th>
+                  
+              </tr> 
+              <tr>
+                <td>Finance</td>
+                <td align="center">
+                  <select class="input-box"  style="width:100px">
+                        <option selected>January</option>
+                        <option>February</option>
+                        <option>March</option>
+                        <option>April</option>
+                        <option>May</option>
+                        <option>June</option>
+                        <option>July</option>
+                        <option>August</option>
+                        <option>September</option>
+                        <option>October</option>
+                        <option>November</option>
+                        <option >December</option>
+                    </select>
+                </td>
+                <td align="center">
+                  <select class="input-box"  style="width:100px">
+                        <option >January</option>
+                        <option>February</option>
+                        <option>March</option>
+                        <option>April</option>
+                        <option>May</option>
+                        <option>June</option>
+                        <option>July</option>
+                        <option>August</option>
+                        <option>September</option>
+                        <option>October</option>
+                        <option>November</option>
+                        <option selected>December</option>
+                    </select>
+                </td>
+              </tr>
+              <tr>
+                <td>Labour</td>
+                <td align="center">
+                  <select class="input-box"  style="width:100px">
+                        <option selected>January</option>
+                        <option>February</option>
+                        <option>March</option>
+                        <option>April</option>
+                        <option>May</option>
+                        <option>June</option>
+                        <option>July</option>
+                        <option>August</option>
+                        <option>September</option>
+                        <option>October</option>
+                        <option>November</option>
+                        <option >December</option>
+                    </select>
+                </td>
+                <td align="center">
+                  <select class="input-box"  style="width:100px">
+                       <option >January</option>
+                        <option>February</option>
+                        <option>March</option>
+                        <option>April</option>
+                        <option>May</option>
+                        <option>June</option>
+                        <option>July</option>
+                        <option>August</option>
+                        <option>September</option>
+                        <option>October</option>
+                        <option>November</option>
+                        <option selected>December</option>
+                    </select>
+                </td>
+              </tr>
+              
+            </table>
+          </div>
          <div class="clearfix"></div>
 
          <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px;">Login Credentials</div>
