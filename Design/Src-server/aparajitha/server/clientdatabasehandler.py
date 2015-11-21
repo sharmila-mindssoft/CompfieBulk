@@ -8,7 +8,7 @@ __all__ = [
 ]
 
 _databaseHandlerInstance = None 
-sqlScriptPath = os.path.join(ROOT_PATH, "Src-client/files/desktop/common/sql/client-tables.sql")
+sqlScriptPath = os.path.join(ROOT_PATH, "Src-client/files/desktop/common/clientdatabase/client-tables.sql")
 
 class ClientDatabaseHandler(object) :
     def __init__(self,  databaseName) :
@@ -29,7 +29,10 @@ class ClientDatabaseHandler(object) :
         fileObj.close()
         sqlCommands = sqlFile.split(';')
         for command in sqlCommands:
-            self.execute(command)
+            if command != "":
+                self.execute(command)
+            else:
+                continue
 
     def execute(self, query):
         con = None

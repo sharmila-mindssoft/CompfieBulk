@@ -209,7 +209,7 @@ class User(object) :
     def isDuplicateContactNo(self):
         print "inside isDuplicateContactNo"
         condition = "contact_no ='"+self.contactNo+\
-                "' AND user_id != '"+str(self.contactNo)+"'"
+                "' AND user_id != '"+str(self.userId)+"'"
         return DatabaseHandler.instance().isAlreadyExists(self.detailTblName, condition)
 
     def isIdInvalid(self):

@@ -3,7 +3,10 @@ import datetime
 import time
 import string
 import random
+import os
+
 from databasehandler import DatabaseHandler 
+from aparajitha.server.constants import ROOT_PATH
 
 __all__ = [
     "Form", 
@@ -16,6 +19,9 @@ __all__ = [
     "generatePassword",
     "commonResponseStructure"
 ]
+
+clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
+    "Src-client/files/desktop/common/clientdatabase/clientdatabasemapping.txt")
 
 def assertType (x, typeObject) :
     if type(x) is not typeObject :
@@ -52,6 +58,11 @@ def commonResponseStructure(responseType, data) :
 		data
 	]
 	return response
+
+def getClientDatabase(clientId):
+    clientDatabaseMappingJson = json.load(open(clientDatabaseMappingFilePath))
+    return clientDatabaseMappingJson[clientId]
+        
 
 class PossibleError(object) :
     def __init__(self, possibleError) :
