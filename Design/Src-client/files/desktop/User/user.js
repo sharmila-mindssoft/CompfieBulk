@@ -91,10 +91,10 @@ function loadUserList(usersList) {
 			$("#error").text("Status Changed Successfully");
 		}
 		function failure(data){
-
 		}
 	}
 	function saveRecord () {
+		$("#error").text("");
 		var userId = parseInt($("#userid").val());
 		var employeeName = $("#employeename").val();
 		var employeeId = $("#employeeid").val();
@@ -122,7 +122,6 @@ function loadUserList(usersList) {
 		} else {
 			if($("#userid").val() == '') {
 				saveUserDetail = [emailId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,domain];
-
 				function success(status,data) {
 					if(status == 'SaveUserSuccess') {
 						GetUsers();
@@ -156,6 +155,7 @@ function loadUserList(usersList) {
 		}
 	}
 	function displayEdit (userId) {
+		$("#error").text("");
 		$("#listview").hide();
   		$("#addview").show();
   		$("#userid").val(userId);
@@ -193,6 +193,8 @@ function loadUserList(usersList) {
 				$("#usergroup").val(userGroup);
 				$("#designation").val(designation);
 				$("#domain").val(domain);
+				var editdomainval = domain.split(",");
+				$("#domainselected").val(editdomainval.length+" Selected");
 				$("#emailid").val(emailId);
 				break;
 			}
@@ -237,8 +239,11 @@ function loadUserList(usersList) {
 	//load domain list in multi select box
 	function loadauto () {
 		document.getElementById('selectboxview').style.display = 'block';
-		var editdomainval = $("#domain").val().split(",");
-		if($("#domainselected").val() == ''){
+		var editdomainval=[];
+		if($("#domain").val() != ''){
+			editdomainval = $("#domain").val().split(",");
+		}
+		//if($("#domainselected").val() == ''){
 		  	var domains = domainsList;
 		  	$('#ulist').empty();
 		  	var str='';
@@ -249,7 +254,7 @@ function loadUserList(usersList) {
 		  				selectdomainstatus='checked';
 		  			}
 		  		}
-		  		if(selectstatus == 'checked'){
+		  		if(selectdomainstatus == 'checked'){
 		  			str += '<li id="'+domains[i]["domain_id"]+'" class="active_selectbox" onclick="activate(this)" >'+domains[i]["domain_name"]+'</li> ';
 		  		}else{
 		 			str += '<li id="'+domains[i]["domain_id"]+'" onclick="activate(this)" >'+domains[i]["domain_name"]+'</li> ';
@@ -257,24 +262,25 @@ function loadUserList(usersList) {
 		  	}
 		    $('#ulist').append(str);
 		    $("#domainselected").val(editdomainval.length+" Selected")
-		    }
+		   // }
 		}
 		//check & uncheck process
 		function activate(element){
 		   var chkstatus = $(element).attr('class');
-		   if(chkstatus == 'active_'){
-		   	$(element).removeClass("active_");
+		   if(chkstatus == 'active_selectbox'){
+		   	$(element).removeClass("active_selectbox");
 		   }else{
-		    $(element).addClass("active_");
+		    $(element).addClass("active_selectbox");
 		   }  
-
 		   var selids='';
-		   var totalcount=0;
-		   $(".active_").each( function( index, el ) {
-		            selids = selids+el.id+",";
-		            totalcount = totalcount+1;
+		   var totalcount =  $(".active_selectbox").length;
+		   $(".active_selectbox").each( function( index, el ) {
+		   	if (index === totalcount - 1) {
+		   		selids = selids+el.id;
+		   	}else{
+		   		selids = selids+el.id+",";
+		   	}    
 		    });
-
 		   $("#domainselected").val(totalcount+" Selected");
 		   $("#domain").val(selids);
 		  }

@@ -8,6 +8,44 @@
 
 All are int
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+### DOCUMENT_NAME, USER_NAME, COMPLIANCE_TASK_NAME, UNIT_CODE
+
+	All are String
+
+### NOTIFICATION_TYPE
+
+    - Notification
+    - Reminder
+    - Escalation
+
+### COMPLIANCE_FREQUENCY
+
+	- OneTime
+	- Periodical
+	- Review
+	- OnOccurrence 
+
+### REPEATS_TYPE
+	
+	- Year
+	- Month
+	- Day
+
+### DURATION_TYPE
+	
+	- Day
+	- Hour
+
+### APPROVAL_STATUS
+  
+    - Approve
+    - Reject
+    - ApproveAndNotify
+=======
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 ## General Success response
 
     [
@@ -26,13 +64,25 @@ All are int
         }
     ]
 
+<<<<<<< HEAD
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 
 # Login API
 
 ##  Login
 	
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"Login",
+=======
 			"login",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"login",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			{
 				"username" : USERNAME,
 				"password" : String
@@ -42,7 +92,15 @@ All are int
 	On Success
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"LoginSuccess",
+=======
 			"login_success",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"login_success",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			{
 				"user_id" : USER_ID,
 				"name" : String,
@@ -59,11 +117,59 @@ All are int
 			}
 		]
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+		Possible Errors
+      
+	    [
+	        "InvalidCredentials",
+	        {}
+	    ] 
+
+=======
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 		Note : 
 			* Knowledge users (who are having privilege to approve statutory mapping), 
 			* All Client users and Service providers can login to the mobile app
 			* Can differentiate knowledge and client user using configuration field. If configuration is empty then it is knowledge user else it is client user
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+## Forgot Password
+
+		[
+			"ForgotPassword",
+			{
+				"username" : USERNAME
+			}
+		]
+
+		On Success
+
+		[
+			"ForgotPasswordSuccess",
+			{}
+		]
+
+		Possible Errors
+      
+	    [
+	        "InvalidUsername",
+	        {}
+	    ]		
+
+	Note :
+
+		* On Success, an email with password reset link will be sent to the user's email
+
+
+# Common API
+=======
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 
 ## Request Format
 
@@ -75,6 +181,47 @@ All are int
 	Note :
 		* All request will be in above format (Except login)
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+## Logout
+
+		[
+			"Logout",
+			{
+				"user_id" : USER_ID
+			}
+		]
+
+		On Success
+
+		[
+			"LogoutSuccess",
+			{}
+		]
+
+## GCM Notifications (Common for Client, Knowledge and Service Provider)  
+
+    [
+        "GetNotificationsSuccess",
+        {
+            "notifications" :[
+            	{
+            		notification_id" :  NOTIFICATION_ID,
+            		"notification_type" : NOTIFICATION_TYPE,
+            		"notification_text" : String,
+            		"extra_details" : String
+          		},
+          	]
+        }
+    ]
+
+## Get Versions
+
+		[
+			"GetVersions",
+=======
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 
 ## Forgot Password
 
@@ -119,6 +266,10 @@ All are int
 
 		[
 			"get_versions",
+<<<<<<< HEAD
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			{
 				"group_id" : GROUP_ID,
 				"unit_details_version" : int,
@@ -132,7 +283,15 @@ All are int
 	On Success
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetVersionsSuccess",
+=======
 			"get_versions_success",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_versions_success",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			{
 				"unit_details_version" : int,
 				"user_details_version" : int,
@@ -148,7 +307,15 @@ All are int
 ## Get Users
 		
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetUsers",
+=======
 			"get_users",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_users",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			{
 				"user_id" : USER_ID,
 				"version" : int
@@ -158,11 +325,25 @@ All are int
 	On Success
 	
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetUsersSuccess",
+			[
+				{
+					"user_id" : USER_ID,
+					"user_name" : EMPLOYEE_CODE - USER_NAME
+=======
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			"get_users_success",
 			[
 				{
 					"user_id" : USER_ID,
 					"name" : String
+<<<<<<< HEAD
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 				},
 			]
 		]
@@ -175,7 +356,15 @@ All are int
 ## Get Statutory Mapping approval list
 		
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetStatutoryMappingApprovalList",
+=======
 			"get_statutory_mapping_approval_list",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_statutory_mapping_approval_list",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			{
 				"user_id" : USER_ID
 			}
@@ -184,19 +373,62 @@ All are int
 	On Success
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetStatutoryMappingApprovalListSuccess",
+=======
 			"get_statutory_mapping_approval_list_success",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_statutory_mapping_approval_list_success",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			[
 				{
 					"mapping_id" :STATUTORY_MAPPING_ID
 			        "country_id" : COUNTRY_ID,
 			        "domain_id" : DOMAIN_ID,
+<<<<<<< HEAD
+<<<<<<< HEAD
+			        "industry_name" : String,
+			        "statutory_nature_name" : String,
+=======
 			        "industry_type" : String,
 			        "statutory_nature" : String,
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			        "industry_type" : String,
+			        "statutory_nature" : String,
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			        "statutories":[
 			        	String,
 			        ],
 			        "compliances" :[
 			        	{ 
+<<<<<<< HEAD
+<<<<<<< HEAD
+				         	"compliance_task" : COMPLIANCE_TASK_NAME, 
+				         	"statutory_provision": String,
+				         	"description" : String, 
+				         	"document_name" : DOCUMENT_NAME, 
+				         	"format_file_name" : [FORMAT_FILE_NAME,], 
+				         	"penal_description" : String, 
+				         	"compliance_frequency" : COMPLIANCE_FREQUENCY, 
+				         	"statutory_dates" : [
+					            {
+					                "statutory_date": int,
+					                "statutory_month": int,
+					                "trigger_before_days": int
+					            },
+					        ],
+				         	"repeats_type" : REPEATS_TYPE, 
+				         	"repeats_every" : int, 
+				         	"duration_type" : DURATION_TYPE,
+				         	"duration" : int,
+				         	"is_active" : STATUS
+				      	},
+=======
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 				         "compliance_task" : String, 
 				         "description" : String, 
 				         "document" : FORM_NO, 
@@ -215,6 +447,10 @@ All are int
 				         "duration_type" : int,
 				         "is_active" : STATUS
 				      },
+<<<<<<< HEAD
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			        ],
 			        "geographies" : [
 			        	String,
@@ -226,6 +462,27 @@ All are int
 ## Approve Statutory mapping
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"ApproveStatutoryMapping",
+			[
+				{
+					"user_id" : USER_ID,
+					"statutory_mapping_id" : STATUTORY_MAPPING_ID,
+					"approval_status" : APPROVAL_STATUS,
+					"remarks" : String
+				},
+			]
+		]
+
+	On Success
+
+		[
+			"ApproveStatutoryMappingSuccess",
+			{}
+=======
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			"approve_statutory_mapping",
 			[
 				{
@@ -235,6 +492,10 @@ All are int
 					"remarks" : String
 				},
 			]
+<<<<<<< HEAD
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 		]	
 
 # Client API
@@ -242,7 +503,15 @@ All are int
 ## Get Unit Details
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetUnitDetails",
+=======
 			"get_unit_details",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_unit_details",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			{
 				"user_id" : USER_ID,
 				"version" : int
@@ -252,17 +521,41 @@ All are int
 	On Success
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetUnitDetailsSuccess",
+			[
+				{
+						"unit_id" : UNIT_ID,
+						"unit_name" : UNIT_CODE - UNIT_NAME,
+=======
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			"get_unit_details_success",
 			[
 				{
 						"unit_id" : UNIT_ID,
 						"unit_name" : String,
+<<<<<<< HEAD
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 						"country_id" : COUNTRY_ID,
 						"country_name" : String,
 						"domain_id" : DOMAIN_ID,
 						"domain_name" : String,
+<<<<<<< HEAD
+<<<<<<< HEAD
+						"industry_id" : INDUSTRY_ID,
+						"industry_name" : String,
+=======
 						"industry_type_id" : INDUSTRY_TYPE_ID,
 						"industry_type" : String,
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+						"industry_type_id" : INDUSTRY_TYPE_ID,
+						"industry_type" : String,
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 						"group_id" : GROUP_ID,
 						"business_group_id" :  BUSINESS_GROUP_ID,
 						"business_group_name" : String,
@@ -282,7 +575,15 @@ All are int
 	To get the assigned statutory of all the units under the user
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetComplianceApplicabilityStatus",
+=======
 			"get_compliance_applicability_status",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_compliance_applicability_status",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			{
 				"user_id" :  USER_ID,
 				"version" : int
@@ -292,17 +593,38 @@ All are int
 	On Success
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetComplianceApplicabilityStatusSuccess",
+=======
 			"get_compliance_applicability_status_success",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_compliance_applicability_status_success",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			[
 				{
 					"country_id" : COUNTRY_ID,
 					"domain_id" : DOMAIN_ID,
 					"unit_id" : UNIT_ID,
 					"compliance_id" : COMPLIANCE_ID,
+<<<<<<< HEAD
+<<<<<<< HEAD
+					"compliance_name" : DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+					"compliance_frequency" : COMPLIANCE_FREQUENCY,
+					"compliance_applicable" : Boolean,
+					"compliance_opted" : Boolean,
+=======
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 					"compliance_name" : FORM_NO - String,
 					"frequency" : String,
 					"compliance_applicable" : TINYINT,
 					"compliance_opted" : TINYINT,
+<<<<<<< HEAD
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 				},
 			]
 		]
@@ -314,7 +636,15 @@ All are int
 ## Get Compliance History
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetComplianceHistory",
+=======
 			"get_compliance_history",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_compliance_history",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			{
 				"user_id" :  USER_ID,
 				"version" : int
@@ -324,7 +654,15 @@ All are int
 	On Success
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetComplianceHistorySuccess",
+=======
 			"get_compliance_history_success",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_compliance_history_success",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			[
 				{
 					"compliance_history_id" : COMPLIANCE_HISTORY_ID,
@@ -333,16 +671,37 @@ All are int
 					"start_date" : DATE,
 					"due_date" : DATE,
 					"completion_date" : DATE,
+<<<<<<< HEAD
+<<<<<<< HEAD
+					"documents" : [String,],
+=======
 					"documents" : String,
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+					"documents" : String,
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 					"validity_date" : DATE,
 					"next_due_date" : DATE,
 					"remarks" : String,
 					"completed_by" : USER_ID,
 					"completed_on" : DATE,
+<<<<<<< HEAD
+<<<<<<< HEAD
+					"concurrence_status" : Boolean,
+					"concurred_by" : USER_ID,
+					"concurred_on" : DATE,
+					"approval_status" : Boolean,
+=======
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 					"concurrence_status" : TINYINT,
 					"concurred_by" : USER_ID,
 					"concurred_on" : DATE,
 					"approval_status" : TINYINT,
+<<<<<<< HEAD
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 					"approved_by" : USER_ID,
 					"approved_on" : DATE,
 				},
@@ -356,7 +715,15 @@ All are int
 ## Get reassigned compliance history
 	
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetReassignedComplianceHistory",
+=======
 			"get_reassigned_compliance_history",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_reassigned_compliance_history",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			{
 				"user_id" : USER_ID,
 				"version" : int
@@ -366,7 +733,15 @@ All are int
 	On Success
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetReassignedComplianceHistorySuccess",
+=======
 			"get_reassigned_compliance_history_success",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_reassigned_compliance_history_success",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			[
 				{
 					"unit_id" : UNIT_ID,
@@ -384,6 +759,84 @@ All are int
 		Assignee wise compliance chart (delayed 
 		compliance reassigned popup)
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+## Check Disk Space
+
+	[
+		"CheckDiskSpace",
+		{}
+	]
+
+	On Success
+
+	[
+		"CheckDiskSpaceSuccess",
+		{
+			"total_disk_space": Float,
+			"available_disk_space": Float
+		}	
+	]
+
+	Note : 
+		* To check whether space available or not before uploading documents
+
+## Save compliance Details
+
+    [
+        "SaveComplianceDetails",
+	    [
+	        {
+	            "compliance_history_id" : COMPLIANCE_HISTORY_ID,
+	            "user_id" : USER_ID,
+	            "documents" : [String,], 
+	            "completion_date" : Date,
+	            "validity_date" : Date,
+	            "next_due_date" : Date,
+	            "remarks" : String
+	        },
+	    ]
+    ]
+
+    On Success
+
+    [
+    	"SaveComplianceDetailsSuccess",
+    	{}
+    ]
+
+    Possible Errors
+
+    [
+    	"NotEnoughDiskSpaceAvailable",
+    	{}
+    ]
+
+## Approve/ Concur Compliance
+
+    [
+        "ApproveCompliance",
+        [
+	        {
+	            "compliance_history_id" : COMPLIANCE_HISTORY_ID,
+	            "approval_status" : Boolean,
+	            "concurrence_status" : Boolean,
+	            "approved_on" : DATE,
+	            "concurred_on" : DATE,
+	            "remarks" : String
+	        },
+	    ]
+    ]
+
+   	On Success
+
+   	[
+   		"ApproveComplianceSuccess",
+   		{}
+   	]
+=======
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 ## Save compliance Details
 
       [
@@ -416,11 +869,23 @@ All are int
 	         },
 	      ]
       ]
+<<<<<<< HEAD
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 
 ## Past 4 year escalations
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetPastFourYearEscalations",
+=======
 			"get_past_4_year_escalations",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_past_4_year_escalations",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			{
 				"user_id" : USER_ID
 			}
@@ -429,6 +894,23 @@ All are int
 	On Success
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetPastFourYearEscalationsSuccess",
+			[
+				{
+					"unit_id" : UNIT_ID,
+					"unit_name" : String,
+					"data" :[
+						{
+							"year" : int,
+							"delayed_compliance_count" : int,
+							"not_complied_count" : int
+						},
+					]
+=======
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			"get_past_4_year_escalations_success",
 			[
 				{
@@ -441,6 +923,10 @@ All are int
 								"not_complied" : int
 							}
 						]
+<<<<<<< HEAD
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 				},
 			]
 		]
@@ -453,7 +939,15 @@ All are int
 ## Get data for Trend Chart
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetTrendChartData",
+=======
 			"get_trend_chart_data",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_trend_chart_data",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			{
 				"user_id" : USER_ID,
 			}
@@ -462,7 +956,15 @@ All are int
 	On Success
 
 		[
+<<<<<<< HEAD
+<<<<<<< HEAD
+			"GetTrendChartDataSuccess",
+=======
 			"get_trend_chart_data_success",
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+			"get_trend_chart_data_success",
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 			[
 				{
 						"unit_id" : UNIT_ID,
@@ -471,7 +973,15 @@ All are int
 							{
 								"year" : int,
 								"total_compliances" : int,
+<<<<<<< HEAD
+<<<<<<< HEAD
+								"complied_compliances_count" : int
+=======
 								"complied_compliances" : int
+>>>>>>> fa4a2169fd84f4773a02d5add3471b2d8e9a0c28
+=======
+								"complied_compliances" : int
+>>>>>>> 4819f9f71b2108dd1f825a074a39a39f0455ff58
 							}
 						]
 				},

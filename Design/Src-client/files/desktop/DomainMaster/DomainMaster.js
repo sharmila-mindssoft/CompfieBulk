@@ -10,12 +10,10 @@ function loadDomainList (domainsList) {
 
   $('#rowToClone').show();
   $("#tableToModify").find("tr:gt(0)").remove();
-  for(var i in domainsList) {
-    domainList = domainsList[i];
-    for(var entity in domainList) {
-      domainId = domainList[entity]["domain_id"];
-      domainName = domainList[entity]["domain_name"];
-      isActive = domainList[entity]["is_active"];
+    for(var entity in domainsList) {
+      domainId = domainsList[entity]["domain_id"];
+      domainName = domainsList[entity]["domain_name"];
+      isActive = domainsList[entity]["is_active"];
       if(isActive == 1) {
         passStatus="0";
         imgName="icon-active.png"
@@ -35,7 +33,6 @@ function loadDomainList (domainsList) {
       table.appendChild(clone);
       j = j + 1;
     }
-  }
    $('#rowToClone').hide();
 }
 function displayAdd () {
@@ -53,29 +50,38 @@ if(domainName == ''){
   $("#error").text("Domain Name Required");
 }else{
   if($("#domainid").val() == ''){
-  var domain_url = "http://192.168.1.9:8080/SaveDomain";
-  var domains_data = {
-    "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-    "request" : [
-        "SaveDomain",
-        { "domain_name": domainName }
-    ]
-  };
-   $("#error").text("Record Added Successfully");
+    saveDomainDetail = [domainName];
+    function success(status,data) {
+      if(status == 'SaveDomainSuccess') {
+        getDomains ();
+        $("#listview").show();
+        $("#addview").hide();
+        $("#error").text("Record Added Successfully");
+      } else {
+        $("#error").text(status);
+      }
+    }
+    function failure(data){
+
+    }
+    mirror.saveDomain("SaveDomain", saveDomainDetail, success, failure);
   }
   else{
-  var domain_url = "http://192.168.1.9:8080/UpdateDomain";
-  var domains_data = {
-    "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-    "request" : [
-        "UpdateDomain",
-      {
-          "domain_id": domainId,
-          "domain_name": domainName
+
+    updateDomainDetail = [domainId, domainName];
+    function success(status,data){
+      if(status == 'UpdateDomainSuccess') {
+        getDomains()
+        $("#listview").show();
+        $("#addview").hide();
+        $("#error").text("Record Updated Successfully");
+      } else {
+        $("#error").text(status);
       }
-    ]
-  };
-  $("#error").text("Record Updated Successfully");
+    }
+    function failure(data) {
+    }
+    mirror.updateDomain("UpdateDomain", updateDomainDetail, success, failure);
   }
   var options = JSON.stringify(domains_data);
   ajaxCall(domain_url, options, function (data) {
@@ -88,7 +94,7 @@ if(domainName == ''){
     }
   });
 }
-}
+}   
 
 function displayEdit (domainId,domainName) {
   $("#listview").hide();
@@ -98,40 +104,24 @@ function displayEdit (domainId,domainName) {
 }
 
 function changeStatus (domainId,isActive) {
-  var domain_url = "http://192.168.1.9:8080/ChangeDomainStatus";
-  var domains_data = {
-    "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-    "request" : [
-        "ChangeDomainStatus",
-      {
-        "domain_id": domainId,
-        "is_active": isActive
-      }
-    ]
-  };
-  var options = JSON.stringify(domains_data);
-  ajaxCall(domain_url, options, function (data) {
-    $("#error").text("Status Changed Successfully");
+  function success(status,data){
     getDomains ();
-  });
+    $("#error").text("Status Changed Successfully");
+  }
+  function failure(data){
+  }
+  mirror.changeDomainStatus("ChangeDomainStatus", domainId, isActive, success, failure);
 }
 
 function getDomains () {
-  var domain_url = "http://192.168.1.9:8080/GetDomains";
-  var domains_data = {
-    "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-    "request" : [
-        "GetDomains",
-        {}
-    ]
-  };
-  var options = JSON.stringify(domains_data);
-  ajaxCall(domain_url, options, function (data) {
-    if(data[0] == 'success'){
-      tempDomainList = data[1];
-      loadDomainList(data[1]);
-    }
-  });
+  function success(status,data){
+    tempDomainList = data["domains"];
+    domainsList = data["domains"];
+    loadDomainList(domainsList);
+  }
+  function failure(data){
+  }
+  mirror.getDomainList("GetDomains", success, failure);
 }
 
 function filter (term, cellNr){
@@ -143,7 +133,7 @@ function filter (term, cellNr){
       domainId = domainList[entity]["domain_id"];
       domainName = domainList[entity]["domain_name"];
       isActive = domainList[entity]["is_active"];
-      if (~domainName.toLowerCase().indexOf(filterkey)) filteredList.push({"domains" : {"domain_id": domainId,"domain_name": domainName,"is_active": isActive}});
+      if (~domainName.toLowerCase().indexOf(filterkey)) filteredList.push(tempDomainList[i]);
     }
   }
   loadDomainList(filteredList);
@@ -158,23 +148,3 @@ $(document).ready(function () {
   }
 });
 });
-
-function ajaxCall (url, options, callback) {
-  $.support.cors = true;
-  $.ajax({
-    crossDomain: true,
-    url: url,
-    dataType: 'json',
-    type: 'POST',
-    data: options,
-    crossDomain: true,
-    success: function(data) {
-        console.log(data);
-        callback(data);
-    },
-    error: function(xhr, status, err) {
-        console.error(url, status, err.toString());
-        callback(null);
-    }
-  });
-  }

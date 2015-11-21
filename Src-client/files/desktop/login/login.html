@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="shortcut icon" href="/files/desktop/common/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="icon" href="/files/desktop/common/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/reset.css">
+  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/common.css">
+  <link rel="stylesheet" type="text/css" href="/files/desktop/login/login.css">
+  <script type="text/javascript" src="/files/desktop/common/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/files/desktop/login/login.js"></script>
+  <script type="text/javascript">
+    function alignCenter () {
+      var windowHHeight = $(window).height();
+      var loginBoxHeight = $(".login-box-inner").outerHeight();
+      var getEmptySpace = windowHHeight - loginBoxHeight;
+      var topPadding = getEmptySpace / 2;
+      $(".login-box-inner").css("margin-top", topPadding);
+    }
+    $(document).ready(alignCenter);
+    $(window).resize(alignCenter);
+  </script>
+</head>
+<body>
+  <div class="login-main-bg">
+    <div class="login-transparent-bg">
+      <div class="login-box-outer">
+        <div class="login-box-inner">
+          <div class="login-box-header">
+            <span class="logo"><img src="/files/desktop/common/images/logo.png"></span>
+            <span class="text-login">Login</span>
+          </div>
+          <div class="login-content">
+            <div class="login-icon"><img src="/files/desktop/login/images/key.png"></div>
+            <div class="login-field-lists">
+              <div class="input-container">
+                <input type="text" id="username" name="username" placeholder="Username" class="login-username-textbox" value={{username}} >
+              </div>
+              <div class="input-container">
+                <input type="password" id="password" name="username" placeholder="Password" class="login-password-textbox" value={{password}} >
+                <input type="hidden" id="name" name="name"  value="" placeholder="name">
+              </div>
+              <div class="input-container">
+                <span class="text-forgot-password"><a href="/forgotpassword">Forgot Password?</a></span>
+                <span><input type="submit" id="submit" name="submit" value="Login" class="btn-login" ></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

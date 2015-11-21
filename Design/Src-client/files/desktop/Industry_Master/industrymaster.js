@@ -54,6 +54,22 @@ if(industryName == ''){
   $("#error").text("Industry Name Required");
 }else{
   if($("#industryid").val() == ''){
+  saveIndustryDetail = [industryName];
+  function success(status,data) {
+    if(status == 'SaveIndustrySuccess') {
+      getIndustries ();
+      $("#listview").show();
+      $("#addview").hide();
+      $("#error").text("Record Added Successfully");
+    } else {
+      $("#error").text(status);
+    }
+  }
+  function failure(data){
+
+  }
+  mirror.saveDomain("SaveDomain", saveIndustryDetail, success, failure);
+
   var industry_url = "http://192.168.1.9:8080/SaveIndustry";
   var industry_data = {
     "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
