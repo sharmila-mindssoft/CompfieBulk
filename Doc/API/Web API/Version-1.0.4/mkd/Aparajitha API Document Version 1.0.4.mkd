@@ -1,0 +1,3802 @@
+<h1> MIRROR - API Document </h1>
+
+[TOC]
+
+# LOGIN
+
+## Login
+
+    [ 
+        "Login",
+        {
+        	"username": USERNAME,
+            "password": String
+        }
+    ]
+  
+    On Success response will be of the form
+    
+    [
+        "LoginSuccess",
+        {
+    	    "user_id": USER_ID,
+            "client_id": CLIENT_ID,
+            "session_token": SESSION_TOKEN,
+            "email_id": EMAIL_ID,
+            "user_group_name": USER_GROUP_NAME,
+            "menu": Menu,
+            "employee_name": String,
+            "employee_code": EMPLOYEE_CODE,
+            "contact_no": CONTACT_NUMBER,
+            "address": ADDRESS,
+            "designation": String
+        }
+    ]
+
+    Possible Errors
+      
+    [
+        "InvalidCredentials",
+        {}
+    ]  
+
+Note : 
+  * Above data will be used for displaying menu and user details in "User Profile" page
+  
+## Forgot Password
+    
+    [
+        "ForgotPassword",
+        {
+            "username": USERNAME
+        }
+    ]
+
+    On Success
+
+    [
+        "ForgotPasswordSuccess",
+        {}
+    ]
+
+    Possible Errors
+      
+    [
+        "InvalidUsername",
+        {}
+    ]
+
+Note :
+    * On success Reset link should be sent to the user's email with unique token embeded in the url
+
+## Reset Token Validation
+
+    [
+    	"ResetTokenValidation",
+        {
+          "reset_token": RESET_TOKEN
+        }
+    ]
+
+    On Success
+
+    [
+        "ResetTokenValidationSuccess",
+        {}
+    ]
+
+    Possible Errors
+
+    [
+        "InvalidResetToken",
+        {}
+    ]
+
+## Reset Password
+
+    [
+        "ResetPassword",
+        {
+          "reset_token": RESET_TOKEN,
+          "new_password": String
+        }
+    ]
+
+  	On Success
+
+    [
+        "ResetPasswordSuccess",
+        {} 
+    ]
+
+  	Possible Errors
+
+    [
+        "InvalidResetToken",
+        {}  
+    ]      
+
+## Request Format
+
+    {
+        "session_token": SESSION_TOKEN,
+        "request": will be any of the following requests
+    }
+
+    Possible Errors
+
+    [
+        "InvalidSessionToken",
+        {}  
+    ]
+
+  	Note : All Requests will be in the above format
+
+## Change Password
+
+    [
+        "ChangePassword",
+        {
+            "current_password": String,
+            "new_password": String  
+        }
+    ]
+
+    Possible Errors
+
+    [
+        "InvalidCurrentPassword",
+        {}
+    ]
+
+# COMMON
+
+## General Success response
+
+    [
+        "Success",
+        {}
+    ]
+
+## General Error response
+
+    [
+        "Error",
+        {
+            "message": String
+        }
+    ]
+        
+## Logout
+
+    [
+        "Logout",
+        {}
+    ]
+
+    On Success
+
+    [
+    	"LogoutSuccess",
+    	{}
+    ]
+
+## Update User profile
+
+    [
+    	"UpdateUserProfile",
+      	{
+        	"contact_no": CONTACT_NUMBER,
+        	"address": ADDRESS
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"UpdateUserProfileSuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"ContactNumberAlreadyExists",
+      	{}  
+    ]
+    
+
+## Get domains
+    
+    [
+      	"GetDomains",
+      	{}
+    ]
+
+  	On Success
+
+    [
+      	"GetDomainsSuccess",
+      	{
+       		"domains": [Domain,]
+      	}
+    ]
+
+## Save Domain
+
+    [
+      	"SaveDomain",
+      	{
+        	"domain_name": String
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"SaveDomainSuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"DomainNameAlreadyExists",
+      	{}  
+    ]    
+
+## Update Domain
+
+    [
+      	"UpdateDomain",
+      	{
+        	"domain_id": DOMAIN_ID,
+        	"domain_name": String
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"UpdateDomainSuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"InvalidDomainId"
+      	{}
+    ]
+    
+## Change Domain Status
+
+    [
+      	"ChangeDomainStatus",
+      	{
+        	"domain_id" : DOMAIN_ID,
+        	"is_active" : IS_ACTIVE
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"ChangeDomainStatusSuccess",
+      	{}
+    ]
+
+## Get Notifications 
+
+    [
+      	"GetNotifications",
+      	{
+        	"notification_type":  NOTIFICATION_TYPE
+      	}
+    ]
+
+  	On Success
+
+    [
+        "GetNotificationsSuccess",
+        {
+          	"notifications":  [
+            	{
+              		"notification_id":  NOTIFICATION_ID,
+              		"notification_text": String,
+              		"extra_details": String,
+              		"has_read": HAS_READ,
+              		"date_and_time" : TIMESTAMP
+            	},
+          	]
+        }
+    ]
+
+## Update Notification Status
+
+    [ 
+        "UpdateNotificationStatus",
+        {
+          	"notification_id": NOTIFICATION_ID,
+          	"has_read": HAS_READ
+        }
+    ]
+
+  	On Success
+
+    [
+      	"UpdateNotificationStatusSuccess",
+      	{}
+    ]
+
+# Admin Section	
+
+## Get User Groups
+
+    [
+        "GetUserGroups",
+        {}
+    ]
+
+  	On Success
+
+    [
+      	"GetUserGroupsSuccess",
+      	{
+        	"forms": {
+          		"knowledge": Menu,
+          		"techno": Menu
+        	},
+        	"user_groups": [UserGroup,]
+      	}
+    ]
+
+## Save User Group
+
+    [
+        "SaveUserGroup",
+        {
+          	"user_group_name": USER_GROUP_NAME,
+          	"form_type": FORM_TYPE,
+          	"form_ids": [FORM_ID, ]
+        }
+    ]
+
+  	On Success
+
+    [
+        "SaveUserGroupSuccess",
+        {}
+    ]
+
+  	Possible Errors
+
+    [
+        "GroupNameAlreadyExists",  
+        {}
+    ]
+
+## Update User Group
+  
+    [
+        "UpdateUserGroup"
+        {
+          "user_group_id" : USER_GROUP_ID,
+          "user_group_name": USER_GROUP_NAME,
+          "form_type": FORM_TYPE,
+          "form_ids": [FORM_ID, ]
+        }
+    ]
+
+  	On Success
+
+    [
+        "UpdateUserGroupSuccess",
+        {}
+    ]
+
+  	Possible Errors
+
+    [
+        "InvalidUserGroupId",
+        {}
+    ]
+
+## Change User Group Status
+
+    [
+      	"ChangeUserGroupStatus",
+      	{
+        	"user_group_id" : USER_GROUP_ID,
+        	"is_active" : IS_ACTIVE
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"ChangeUserGroupStatusSuccess",
+      	{}
+    ]
+
+## Get Users
+
+    [
+      	"GetUsers",
+      	{}
+    ]
+    
+    On Success  
+
+    [
+        "GetUsersSuccess",
+        {
+          	"user_groups": [
+            	{
+              		"user_group_id": USER_GROUP_ID,
+              		"user_group_name": String,
+            	},
+          	],
+          	"domains": [
+            	Domain,
+          	],
+          	"users":[
+            	{
+              		"user_id": USER_ID,
+              		"email_id": EMAIL_ID,
+              		"user_group_id": USER_GROUP_ID,
+              		"employee_name": EMPLOYEE_NAME,
+              		"employee_code": EMPLOYEE_CODE,
+              		"contact_no": CONTACT_NUMBER,
+              		"address": ADDRESS, 
+              		"designation": String,
+              		"domain_id": DOMAIN_ID,
+              		"is_active": IS_ACTIVE 
+            	},
+          	]
+        }   
+    ]
+
+## Save User 
+  
+    [
+    	"SaveUser",
+      	{
+        	"email_id": EMAIL_ID,
+        	"user_group_id": USER_GROUP_ID,
+        	"employee_name": EMPLOYEE_NAME,
+        	"employee_code": EMPLOYEE_CODE,
+        	"contact_no": CONTACT_NUMBER,
+        	"address": ADDRESS, 
+        	"designation": String,
+        	"domain_id": DOMAIN_ID
+      	}
+    ]
+
+   	* while saving this, need to get form_type from user_group table and save it too. 
+
+  	On Success
+
+    [
+    	"SaveUserSuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"EmailIDAlreadyExists",
+      	{}  
+    ]
+
+    [
+      	"ContactNumberAlreadyExists",
+      	{}  
+    ]
+    
+    [
+      	"EmployeeCodeAlreadyExists",
+      	{}  
+    ]
+
+## Update User 
+
+    [
+      	"UpdateUser",
+      	{
+        	"user_id": USER_ID,
+        	"email_id": EMAIL_ID,
+        	"user_group_id": USER_GROUP_ID,
+        	"employee_name": EMPLOYEE_NAME,
+        	"employee_code": EMPLOYEE_CODE,
+        	"contact_no": CONTACT_NUMBER,
+        	"address": ADDRESS, 
+        	"designation": String,
+        	"domain_id": DOMAIN_ID
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"UpdateUserSuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"InvalidUserId",
+      	{}
+    ]
+
+## Change User Status
+
+    [
+      	"ChangeUserStatus",
+      	{
+        	"user_id": USER_ID,
+        	"is_active" : IS_ACTIVE 
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"ChangeUserStatusSuccess",
+      	{}
+    ]
+ 
+#  KNOWLEDGE SECTION
+
+## KNOWLEDGE USER SECTION
+
+### KNOWLEDGE USER MASTERS
+
+####  Get Countries
+
+    [
+      	"GetCountries",
+      	{}
+    ]
+
+  	On Success
+
+    [
+      	"GetCountriesSuccess"
+      	{
+        	"countries": [
+            	Country,
+        	]
+      	}
+    ]
+
+#### Save Country
+
+    [
+    	"SaveCountry",
+      	{
+        	"country_name"  : String
+      	}
+    ]
+
+  	On Success
+
+    [
+    	"SaveCountrySuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"CountryNameAlreadyExists",
+      	{}  
+    ]
+
+#### Update Country
+
+    [
+      	"UpdateCountry",
+      	{
+        	"country_id": COUNTRY_ID,
+        	"country_name"  : String
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"UpdateCountrySuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"InvalidCountryId",
+      	{}
+    ]
+
+#### Change Country Status
+
+    [
+      	"ChangeCountryStatus",
+      	{
+        	"country_id" : COUNTRY_ID,
+        	"is_active" : IS_ACTIVE
+      	} 
+    ]
+
+  	On Success
+
+    [
+      	"ChangeCountryStatusSuccess",
+      	{}
+    ]
+
+####  Get Geography Levels
+
+    [
+        "GetGeographyLevels",
+        {}
+    ]
+
+ 	On Success
+
+    [
+        "GetGeographyLevelsSuccess",
+        {
+     	    "countries": [
+            	Country,
+          	],
+          	"geography_levels":{
+              	COUNTRY_ID : [
+                	GeographyLevel,
+              	],
+          	}
+        }
+    ]
+
+#### Save Geography Level
+
+	[
+	    "SaveGeographyLevel",
+	    { 
+	      	"country_id": COUNTRY_ID,
+	      	"Levels":[
+          		{
+	                "level_position": LEVEL_POSITION,
+	                "level_name": String
+	            },
+        	]
+	    }
+	]
+
+  	On Success
+
+    [
+      	"SaveGeographyLevelSuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"DuplicateGeographyLevelsExists",
+      	{}
+    ]
+
+#### Update Geography Level
+  
+    [
+      	"UpdateGeographyLevel",
+      	{
+        	"country_id": COUNTRY_ID,
+        	"Levels":[
+          		GeographyLevel,
+        	]
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"UpdateGeographyLevelSuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"InvalidGeographyLevelId",
+      	{}
+    ]
+      
+#### Get Geographies
+    
+    [
+      	"GetGeographies"
+      	{}
+    ]
+
+  	On Success
+
+    [
+      	"GetGeographiesSuccess"
+        {
+        	"countries": [Country,],
+          	"geography_levels":{
+            	COUNTRY_ID : [GeographyLevel,],
+          	},
+          	"geographies":{
+            	COUNTRY_ID : [Geography,],
+          	}
+        }
+    ]
+
+#### Save Geography
+
+    [
+        "SaveGeography",
+        {
+            "geography_level_id": GEOGRAPHY_LEVEL_ID,
+            "geography_name": String,
+            "parent_ids": [GEOGRAPHY_ID,]
+        }
+    ]
+
+    Possible Errors:
+
+    [
+    	"GeographyNameAlreadyExists",
+        {}  
+    ]  
+
+#### Update Geography
+
+	[
+        "Geography",
+        {
+            "geography_id": GEOGRAPHY_ID,
+            "geography_level_id": GEOGRAPHY_LEVEL_ID,
+            "geography_name": String,
+            "parent_ids": [GEOGRAPHY_ID,]
+        }
+    ]
+
+    Possible Errors:
+
+    [
+    	"InvalidGeographyId",
+        {}  
+    ]    
+
+####  Change Geography Status
+
+    [
+      	"ChangeGeographyStatus",
+      	{
+        	"geography_id": GEOGRAPHY_ID,
+        	"is_active" : IS_ACTIVE
+      	}
+    ]
+
+  On Success
+
+    [
+      	"ChangeGeographyStatusSuccesss",
+      	{}
+    ]
+
+####  Get Industries 
+
+    [
+    	"GetIndustries"
+        {}
+    ]
+
+  On Success
+
+    [
+        "GetIndustriesSuccess",
+        {
+    	    "industries": [
+            	Industry,
+          	]
+        }
+    ]
+
+#### Save Industry
+
+    [
+        "SaveIndustry",
+        {
+        	"industry_name": String
+        }
+    ]
+
+  	On Success
+
+    [
+      	"SaveIndustrySuccess"
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"IndustryNameAlreadyExists",  
+      	{}
+    ]
+
+#### Update Industry
+
+    [
+      	"UpdateIndustry",
+      	{
+        	"industry_id": INDUSTRY_ID,
+        	"industry_name": String
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"UpdateIndustrySuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"InvalidIndustryId",
+      	{}
+    ]
+
+#### Change Industry Status
+
+    [
+      	"ChangeIndustryStatus",
+      	{
+        	"industry_id": INDUSTRY_ID,
+        	"is_active" : IS_ACTIVE
+      	} 
+    ]
+
+  	On Success
+
+    [
+      	"ChangeIndustryStatusSuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"InvalidIndustryId",
+      	{}
+    ]
+
+####  Get Statutory Natures 
+
+    [
+    	"GetStatutoryNatures"
+      	{}
+    ]
+
+  	On Success
+
+    [
+      	"GetStatutoryNaturesSuccess",
+      	{
+        	"statutory_natures":  [
+            	StatutoryNature,
+        	]
+      	}
+    ]
+
+#### Save Statutory Nature
+
+    [
+        "SaveStatutoryNature",
+        {
+            "statutory_nature_name": String
+        }
+    ]
+
+  	On Success
+
+    [
+      	"SaveStatutoryNatureSuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"StatutoryNatureNameAlreadyExists",
+      	{}  
+    ]
+
+#### Update Statutory Nature
+
+    [
+      	"UpdateStatutoryNature",
+      	{
+        	"statutory_nature_id": STATUTORY_NATURE_ID,
+        	"statutory_nature_name": String
+      	}
+    ]
+
+  On Success
+
+    [
+      	"UpdateStatutoryNatureSuccess",
+      	{}
+    ]
+    
+  Possible Errors
+
+    [
+      	"InvalidStatutoryNatureId",
+      	{}
+    ]
+
+#### Change Statutory Nature Status
+
+    [
+      	"ChangeStatutoryNatureStatus",
+      	{
+        	"statutory_nature_id": STATUTORY_NATURE_ID,
+        	"is_active" : IS_ACTIVE
+      	} 
+    ]
+
+  On Success
+
+    [
+      	"ChangeStatutoryNatureStatusSuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+	    "InvalidStatutoryNatureId",
+    	{}
+    ]  
+
+####  Get statutory levels 
+
+    [
+      	"GetStatutoryLevels",
+      	{}
+    ]
+
+  On Success
+
+    [
+        "GetStatutoryLevelsSuccess",
+        {
+        	"countries": [Country,],
+          	"statutory_levels":{
+            	COUNTRY_ID : [StatutoryLevel,],
+          	}
+        }
+    ]
+
+#### Save statutory level
+
+    [
+        "SaveStatutoryLevel",
+        {
+            "country_id": COUNTRY_ID,
+            "levels": [
+            	{
+			      	"level_position": LEVEL_POSITION,
+			      	"level_name": String
+			    },
+            ]
+        }
+    ]
+
+    Possible Errors
+
+    [
+        "DuplicateStatutoryLevelsExists" ,
+        {}  
+    ]
+
+#### Update statutory level
+
+    [
+        "UpdateStatutoryLevel",
+        {
+            "country_id": COUNTRY_ID,
+            "levels": [StatutoryLevel,]
+        }
+    ]
+
+    Possible Errors
+
+    [
+        "InvalidStatutoryLevelId" ,
+        {}  
+    ]
+
+      
+
+### KNOWLEDGE USER TRANSACTIONS 
+
+####  Get statutory mappings
+
+    [
+ 	    "GetStatutoryMappings",
+      	{}
+    ]
+
+  	On Success
+
+    [
+      	"GetStatutoryMappingsSuccess",
+      	{
+        	"countries": [Country,],
+        	"domains": [Domain,],
+        	"industries": [Industry,],
+        	"statutory_natures": [StatutoryNature,],
+        	"statutory_levels":{
+          		COUNTRY_ID : [StatutoryLevel,],
+        	},
+        	"statutories":{
+          		COUNTRY_ID : [Statutory,],
+        	}, 
+        	"geography_levels":{
+          		COUNTRY_ID : [GeographyLevel,],
+        	},
+        	"geographies":{
+          		COUNTRY_ID : [Geography,],
+        	},
+        	"statutory_mappings": [StatutoryMapping,]
+      	}
+    ]
+
+#### Save statutory mapping
+
+    [
+        "SaveStatutoryMapping",
+        {
+	        "country_id": COUNTRY_ID,
+	        "domain_id": DOMAIN_ID,
+	        "industry_ids": [INDUSTRY_ID,],
+	        "statutory_nature_id": STATUTORY_NATURE_ID,
+	        "statutories": [ Statutory,],
+	        "compliances":[
+	            { 
+			        "compliance_task": COMPLIANCE_TASK_NAME, 
+			        "description": String, 
+			        "document": DOCUMENT_NAME, 
+			        "format_file_name": [FORMAT_FILE_NAME,], 
+			        "penal_description": String, 
+			        "compliance_frequency": COMPLIANCE_FREQUENCY, 
+			        "statutory_dates": [
+			            {
+			                "statutory_date": int,
+			                "statutory_month": int,
+			                "trigger_before_days": int
+			            },
+			        ],
+			        "repeats_type": REPEATS_TYPE, 
+			        "repeats_every": int, 
+			        "duration_type": DURATION_TYPE,
+			        "duration": int,
+			        "is_active": IS_ACTIVE
+			    },	
+	        ],
+	        "geographies":[ GEOGRAPHY_ID,]      
+	    }
+    ]
+
+  	Possible Errors
+
+    [
+ 	    "StatutoryMappingAlreadyExists",
+      	{}  
+    ]
+
+#### Update statutory mapping
+
+    [
+        "UpdateStatutoryMapping",
+        StatutoryMapping
+    ]
+
+  	Possible Errors
+
+    [
+ 	    "InvalidStatutoryMappingId",
+      	{}  
+    ]
+
+#### Change Statutory Mapping Status
+
+    [
+      	"ChangeStatutoryMappingStatus",
+      	{
+        	"statutory_mapping_id":STATUTORY_MAPPING_ID,
+        	"is_active" : IS_ACTIVE
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"ChangeStatutoryMappingStatusSuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"InvalidStatutoryMappingId",
+      	{}
+    ]
+
+## Knowledge Manager Section
+
+### Knowledge Manager Transactions
+
+#### Get Statutory Mapping Approval List
+
+    [
+      	"GetStatutoryMappingApprovalList",
+      	{}
+    ]
+
+  	On Success
+
+    [
+        "GetStatutoryMappingApprovalListSuccess",
+        {
+          	"countries": [Country,],
+          	"domains": [Domain,],
+          	"industries": [Industry,],
+          	"statutory_natures": [StatutoryNature,],
+          	"statutory_mappings": [
+            	{
+            		"industry_id": INDUSTRY_ID,
+              		"statutory_nature_id": STATUTORY_NATURE_ID,
+              		"statutory_provision":String,
+              		"compliances":[
+                		Compliance,
+              		],
+              		"geographies": String
+            	},
+          	]
+        }
+    ]
+
+#### Approve statutory mapping
+        
+    [
+    	"ApproveStatutoryMapping",
+        [
+            {
+            	"statutory_mapping_id": STATUTORY_MAPPING_ID,
+              	"approval_status": APPROVAL_STATUS,
+              	"rejected_reason": String,
+              	"notification_text": String
+            },
+        ]
+    ]
+
+## KNOWLEDGE SECTION REPORTS
+
+### Get Statutory Mapping Report Filters
+
+(Common for "Compliance List Report" in Techno Functional Section)
+	
+	[
+    	"GetStatutoryMappingReportFilters",
+      	{}
+    ]
+
+    On Success
+
+    [
+        "GetStatutoryMappingReportFiltersSuccess",
+        {
+        	"countries": [Country,],
+          	"domains": [Domain,],
+          	"industries": [Industry,],
+          	"statutory_natures": [StatutoryNature,],
+          	"geographies":{
+            	COUNTRY_ID :[ Geography,],
+          	},
+          	"level_1_statutories":{
+            	COUNTRY_ID :[ Statutory,],
+          	}
+        }
+    ]
+
+
+### Get Statutory Mapping Report 
+
+(Common for "Compliance List Report" in Techno Functional Section)
+
+    [
+    	"GetStatutoryMappingReportData",
+      	{
+      		"country_id" : COUNTRY_ID,
+            "domain_id" : DOMAIN_ID,
+            "industry_id": INDUSTRY_ID,
+            "statutory_nature_id": STATUTORY_NATURE_ID,
+            "geography_id": GEOGRAPHY_ID,
+            "level_1_statutory_id": LEVEL_1_STATUTORY_ID
+      	}
+    ]
+
+  	On Success
+
+    [
+        "GetStatutoryMappingReportDataSuccess",
+        {
+          	"country_wise_statutory_mappings":[
+            	{
+            		"country_id" : COUNTRY_ID,
+              		"domain_id" : DOMAIN_ID,
+              		"statutory_mappings"{
+              			LEVEL_1_STATUTORY_ID :[
+            				{
+            					"industry_id": INDUSTRY_ID,
+                    			"statutory_nature_id": STATUTORY_NATURE_ID,
+                    			"statutory_provision": String,
+                    			"compliances":[
+                    				Compliance,
+                    			],
+                    			"geographies": String
+            				},
+                		],
+              		} 
+            	},
+        	]
+    	}
+    ]
+
+#  TECHNO FUCTIONAL TEAM
+
+## TECHNO FUNCTIONAL MASTERS
+
+###  Get Clients
+  
+    [
+      	"GetClients",
+      	{}
+    ]
+
+  On Success
+
+    [
+        "GetClientsSuccess",
+        [
+          	{ 
+          		"countries": [Country,],
+            	"group_companies_with_detail":[GroupCompanyDetail,]
+            	"business_groups": [BusinessGroup,],
+            	"legal_entities": [LegalEntity,],
+            	"divisions": [Division,],
+            	"units": [Unit,],
+          	},
+        ]
+    ]
+
+### Save Client
+
+    [
+      	"SaveClient",
+      	{
+        	"group_company": GroupCompany,
+        	"business_group": BUSINESS_GROUP,
+        	"legal_entity": LEGAL_ENTITY,
+        	"division": DIVISION,
+        	"logo": URL,
+        	"domain_ids": [DOMAIN_ID,],
+        	"username": USERNAME,
+        	"no_of_licence": int,
+        	"contract_from": Date,
+        	"contract_to": Date,
+        	"total_disk_space": float,
+        	"is_sms_subscribed": Boolean,
+        	"country_wise_units": [
+          		{
+            		"country_id" : COUNTRY_ID,
+            		"units" : [Unit,]
+          		},
+        	]
+      	}
+    ]
+
+  	Possible Errors 
+
+    [
+      	"GroupCompanyNameAlreadyExists",
+      	{}
+    ]
+
+    [
+     	"BusinessGroupNameAlreadyExists",
+      	{}
+    ]
+
+    [
+      	"LegalEntityNameAlreadyExists",
+      	{}
+    ]
+
+    [
+      	"DivisionNameAlreadyExists",
+      	{}
+    ]	
+  		
+  	[
+      	"UnitNameAlreadyExists",
+      	{}
+    ]
+
+  	[
+      	"UsernameAlreadyExists",
+      	{}
+    ]	
+  		
+    [
+      	"UnitCodeAlreadyExists",
+      	{}
+    ]  
+
+    [
+      	"LogoSizeLimitExceeds",
+      	{}
+    ]  
+
+### Update Client
+
+    [
+      	"UpdateClient",
+      	{
+        	"client_id" : CLIENT_ID,
+        	"group_company": GroupCompany,
+        	"business_group": BUSINESS_GROUP,
+        	"legal_entity": LEGAL_ENTITY,
+        	"division": DIVISION,
+        	"logo": URL,
+        	"domain_ids": [DOMAIN_ID,],
+        	"username": USERNAME,
+        	"no_of_licence": int,
+        	"contract_from": Date,
+        	"contract_to": Date,
+        	"total_disk_space": float,
+        	"is_sms_subscribed": Boolean,
+        	"country_wise_units": [
+          		{
+            		"country_id" : COUNTRY_ID,
+            		"units" : [Unit,]
+          		},
+        	]
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"UpdateClientSuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"InvalidClientId",
+      	{}
+    ]
+
+### Change Client Status
+  
+    [
+      	"ChangeClientStatus",
+      	{
+        	"client_id" : CLIENT_ID,
+        	"is_active" : IS_ACTIVE
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"ChangeClientStatusSuccess",
+      	{}
+    ]
+
+### Reactivate Unit
+
+    [
+      	"ReactivateUnit",
+      	{
+        	"unit_id" : UNIT_ID,
+        	"password" : String
+      	}
+    ]
+
+  On Success
+
+    [
+      	"ReactivateUnitSuccess",
+      	{}
+    ]
+
+  	Possible Errors
+
+    [
+      	"InvalidPassword",
+      	{}
+    ]
+
+    [
+      	"InvalidUnitId",
+      	{}
+    ]
+
+###  Get client configuration
+
+    [
+       	"GetClientConfiguration",
+        {}
+    ]
+
+  	On Success
+
+    [
+        "GetClientConfigurationSuccess",
+        {
+        	"group_companies": [GroupCompany,],
+          	"countries": [Country,],
+          	"domains": [Domain,]        
+          	"configurations": {
+            	CLIENT_ID :[ClientConfiguration,],
+          	}
+        }
+    ]
+
+### Update client configuration
+
+    [
+    	"UpdateClientConfiguration",
+      	{
+        	"client_id": CLIENT_ID,
+        	"configuration":[
+          		ClientConfiguration,
+       		]
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"UpdateClientConfigurationSuccess",
+      	{}
+    ]
+
+
+## TECHNO FUNCTIONAL TRANSACTIONS
+
+### Get Assigned Statutories List
+
+	[
+      	"GetAssignedStatutoriesList",
+      	{}
+    ]
+
+   	On Success
+
+   	[
+   		"GetAssignedStatutoriesListSuccess",
+   		{
+   			"assigned_statutories":[
+          		{	
+          			"submission_status": ASSIGN_STATUTORY_SUBMISSION_STATUS,
+          			"client_saved_statutory_id": int,
+            		"client_assigned_statutory_id": int,
+            		"country_name" : String,
+            		"group_name" : String,
+            		"business_group_name" : String,
+            		"legal_entity_name" : String,
+            		"division_name" : String,
+            		"unit_name": UNIT_CODE - UNIT_NAME,
+            		"geography_name" : String,
+            		"domain_name": String
+            	},
+            ]
+   		}
+   	]
+
+### Get Assigned Statutories by Id
+	
+	[
+		"GetAssignedStatutoriesById",
+		{
+			"submission_status": ASSIGN_STATUTORY_SUBMISSION_STATUS,
+          	"client_saved_statutory_id": int,
+            "client_assigned_statutory_id": int
+		}
+	]
+
+	On Success
+
+	[
+		"GetAssignedStatutoriesByIdSuccess",
+		{
+			"country_name" : String,
+            "group_name" : String,
+            "business_group_name" : String,
+            "legal_entity_name" : String,
+            "division_name" : String,
+            "unit_name": UNIT_CODE - UNIT_NAME,
+            "geography_name" : String,
+            "domain_name": String,
+            "statutories":[
+	            AssignedStatutory,
+	        ]
+		}
+	]
+
+### Get Assigned Statutory Wizard 1 data
+
+    [
+      	"GetAssignedStatutoryWizardOneData",
+      	{}
+    ]
+
+  	On Success
+
+    [
+        "GetAssignedStatutoryWizardOneDataSuccess",
+        {
+          	"countries": [Country,],
+          	"domains":[Domain,],
+          	"industries":[Industry,],
+          	"geography_levels":{
+          		COUNTRY_ID : [GeographyLevel,],
+          	},
+          	"geographies":{
+          		COUNTRY_ID : [
+          			[Geographies,],
+          		],
+          	},
+          	"group_companies": [GroupCompany,],
+          	"business_groups": [BusinessGroup,],
+          	"legal_entities": [LegalEntity,],
+          	"divisions": [Division,],
+          	"units": [
+          		{
+          			"unit_id": UNIT_ID,
+          			"unit_name": String,
+          			"division_id": DIVISION_ID,
+          			"legal_entity_id": LEGAL_ENTITY_ID,
+          			"business_group_id": BUSINESS_GROUP_ID,
+          			"group_id": GROUP_ID,
+          			"domain_ids": [Domain_id,],
+          			"industry_id": INDUSTRY_ID,
+          			"geography_id": GEOGRAPHY_ID
+          		},
+          	]
+        }
+    ] 
+
+### Get Statutory Wizard 2 Data
+
+	[
+	    "GetStatutoryWizardTwoData",
+	    {
+         	"geography_id": GEOGRAPHY_ID,
+          	"industry_id": INDUSTRY_ID,
+           	"domain_id": DOMAIN_ID
+       	}
+	]
+
+  	On Success
+
+	[
+        "GetStatutoryWizardTwoDataSuccess",
+        {
+          	"statutories": [
+            	AssignedStatutory,
+          	]
+        } 
+	]
+
+### Save/ Submit Assigned Statutory
+
+    [
+        "SaveAssignedStatutory",
+        {
+          	"submission_type": ASSIGN_STATUTORY_SUBMISSION_TYPE,
+            "client_saved_statutory_id": int,
+            "client_assigned_statutory_id": int,
+            "assigned_statutories":[
+            	AssignedStatutory,
+            ]
+        }
+    ]
+
+    On Success
+
+    [
+    	"SaveAssignedStatutorySuccess",
+    	{}
+    ]
+
+### Get Client Profile
+
+    [ 
+    	"GetClientProfile",
+      	{
+        	"group_companies": [GroupCompany,],
+        	"profiles":[
+        		{
+		        	"client_id": CLIENT_ID,
+		        	"profile_detail": {
+		          		"contract_from": Date,
+		          		"contract_to": Date,
+		          		"no_of_user_licence": int,
+		          		"remaining_licence": int,
+		          		"licence_holders":[
+		            		{
+		              			"user_id": int,
+		              			"user_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+		              			"email_id": EMAIL_ID,
+		              			"contact_no": CONTACT_NO,
+		              			"seating_unit_name": UNIT_CODE - UNIT_NAME,
+		              			"address": ADDRESS,
+		              			"total_disk_space": float,
+		              			"used_disk_space": float,
+		            		},
+		          		]
+		        	},
+        		},
+        	]
+      	}
+    ]
+
+## TECHNO FUNCTIONAL REPORTS
+
+### Get Client Details Report Filters
+
+	[
+		"GetClientDetailsReportFilters",
+		{}
+	]
+
+	On Success
+
+	[
+		"GetClientDetailsReportFiltersSuccess",
+		{
+			"countries": [Country,],
+  			"domains": [Domain,]
+  			"group_companies":[GroupCompany,],
+        	"business_groups" : [BusinessGroup,],
+  			"legal_entities": [LegalEntity,],
+  			"divisions": [Division,],
+  			"units":[
+  				{
+  					"unit_id": UNIT_ID,
+  					"unit_name": UNIT_NAME
+  				},
+  			]
+		}
+	]
+
+### Get Client details Report Data
+
+    [
+    	"GetClientDetailsReportData",
+      	{
+      		"country_id": COUNTRY_ID,
+      		"group_id": GROUP_ID,
+      		"business_group_id": BUSINESS_GROUP_ID,
+      		"legal_entity_id": LEGAL_ENTITY_ID,
+      		"division_id": DIVISION_ID,
+      		"unit_id": UNIT_ID,
+      		"domain_ids" : [DOMAIN_ID,]
+      	}
+    ]
+
+  	On Success
+
+  	[
+  		"GetClientDetailsReportDataSuccess",
+  		{
+  			"units":[
+  				{
+  					"unit_id": UNIT_ID,
+  					"division_id": DIVISION_ID,
+  					"legal_entity_id": LEGAL_ENTITY_ID,
+  					"busines_group_id": BUSINES_GROUP_ID,
+  					"client_id": CLIENT_ID,
+  					"unit_name": Unit_code - UNIT_NAME,
+  					"domain_ids": [DOMAIN_ID,],
+  					"address": ADDRESS,
+  					"postal_code": String,
+  				},
+  			] 
+  		}	
+  	]
+
+### Get Statutory Notifications
+
+    [
+        "GetStatutoryNotifications",
+        {}
+    ]
+  
+  On Success
+
+    [
+      	"GetStatutoryNotificationsSuccess"
+      	{
+        	"countries": [COUNTRY,],
+        	"domains": [DOMAIN,],
+        	"level_1_statutories":{
+            	COUNTRY_ID : [STATUTORY,],
+        	},
+        	"country_wise_notifications":[
+        		{
+        			"country_id" : COUNTRY_ID,
+        			"domain_id" : DOMAIN_ID,
+        			"notifications" : [
+        				{
+        					"statutory_provision": String,
+        					"notification_text": String,
+        					"date_and_time": TIMESTAMP,
+        				},
+        			]
+        		},
+        	]
+      	}
+    ]
+
+### Get assigned statutory Report Filters
+	
+	[
+		"GetAssignedStatutoryReportFilters",	
+		{}
+	]
+
+	On Success
+
+	[
+		"GetAssignedStatutoryReportFiltersSuccess",
+		{
+			"countries": [COUNTRY,],
+        	"domains": [DOMAIN,],
+        	"groups": [GroupCompany,],
+        	"legal_entities": [LegalEntity,],
+        	"divisions": [Division,],
+        	"units": [Unit,],
+        	"level_1_statutories":{
+            	COUNTRY_ID : [STATUTORY,],
+        	}
+		}	
+	]
+
+### Get assigned statutory report
+    
+    [
+      	"GetAssignedStatutoryReport",
+      	{
+      		"country_id": COUNTRY_ID,
+      		"domain_ids" : [DOMAIN_ID,]
+      		"group_id": GROUP_ID,
+      		"business_group_id": BUSINESS_GROUP_ID,
+      		"legal_entity_id": LEGAL_ENTITY_ID,
+      		"division_id": DIVISION_ID,
+      		"unit_id": UNIT_ID,
+      		"level_1_statutory_id": LEVEL_1_STATUTORY_ID,
+      		"applicability_status": APPLICABILITY_STATUS
+      	}
+    ]
+
+  On Success 
+
+    [
+      	"GetAssignedStatutoryReportSuccess",
+      	{
+      		"unit_wise_assigned_statutories": [
+        		{
+        			"unit_id" : UNIT_ID,
+        			"address" : ADDRESS,
+        			"assigned_statutories" : [AssignedStatutory,]
+        		},
+        	]
+      	}
+    ]
+
+
+#  CLIENT 
+
+## CLIENT ADMIN SECTION
+
+### CLIENT ADMIN MASTERS
+
+####  Get service providers
+
+	[
+        "GetServiceProviders",
+        {
+          	"group_id": CLIENT_ID
+        }
+	]
+
+  	On Success
+
+	[
+    	"GetServiceProvidersSuccess",
+      	{
+       	 	"service_providers": [
+          		ServiceProvider,
+        	]  
+      	}   
+	]
+
+#### Save Service Provider
+
+    [  
+        "SaveServiceProvider",
+        {
+	        "service_provider_name": String, 
+	        "address": ADDRESS,
+	        "contract_from": Date,
+	        "contract_to": Date, 
+	        "contact_person": String,
+	        "contact_no": CONTACT_NO,
+	        "is_active": IS_ACTIVE
+	    }
+    ]
+
+  Possible Errors 
+
+    [
+      	"ServiceProviderNameAlreadyExists",
+      	{}  
+    ]
+
+    [
+      	"ContactNumberAlreadyExists",
+      	{}  
+    ]
+
+  	[
+      	"EmailIDAlreadyExists",
+      	{}  
+    ]
+
+#### Update Service Provider
+
+    [  
+        "SaveServiceProvider",
+        ServiceProvider
+    ]
+
+  Possible Errors 
+
+    [
+    	"InvalidServiceProviderId",
+        {}
+    ]
+
+#### Change Service Provider Status
+    
+    [
+      	"ChangeServiceProviderStatus",
+      	{
+        	"service_provider_id" : SERVICE_PROVIDER_ID,
+        	"is_active" : IS_ACTIVE
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"ChangeServiceProviderStatusSuccess",
+      	{}
+    ]
+
+#### Get User Privileges
+
+	[
+	    "GetUserPrivileges",
+	    {}
+	]
+
+  	On Success
+
+	[
+	    "GetUserPrivilegesSuccess",
+	    {
+	        "forms": Menu,
+	        "user_groups": [UserGroup,]
+	    }
+	]
+
+#### Save User Privileges
+
+    [
+        "SaveUserPrivileges",
+        {
+	        "client_id": CLIENT_ID,
+	        "user_group_name": USER_GROUP_NAME,
+	        "form_type": FORM_TYPE,
+	        "form_ids": [FORM_ID, ]
+        }
+   ]
+
+  Possible Errors :
+
+    [
+      	"UserGroupNameAlreadyExists",
+      	{}  
+    ]
+
+#### Update User Privileges
+
+    [
+        "UpdateUserPrivileges",
+        {
+	        "user_group_id": USER_GROUP_ID,
+	        "client_id": CLIENT_ID,
+	        "user_group_name": USER_GROUP_NAME,
+	        "form_type": FORM_TYPE,
+	        "form_ids": [FORM_ID, ]
+        }
+   ]
+
+  Possible Errors :
+
+    [
+      	"InvalidUserGroupId",
+      	{}  
+    ]
+
+#### Change User Privilege Status
+
+    [
+      	"ChangeUserPrivilegeStatus",
+      	{
+        	"user_group_id": USER_GROUP_ID,
+        	"is_active" : IS_ACTIVE
+      	}
+    ]
+
+  On Success
+
+    [
+      	"ChangeUserPrivilegeStatusSuccess",
+      	{}
+    ]
+
+####  Get client users
+   
+    [
+       	"GetClientUsers",
+        {}
+    ]
+
+  	On Success
+
+	[
+	    "GetClientUsersSuccess",
+        {
+  	        "client_users": [
+  	          ClientUser,
+  	        ]
+        }
+	]
+
+####  Save client user
+
+    [
+        "SaveClientUser",
+        {
+	        "email_id": EMAIL_ID,
+	        "user_group_id": USER_GROUP_ID, 
+	        "employee_name": String,
+	        "employee_code": EMPLOYEE_CODE,
+	        "contact_no": CONTACT_NUMBER,
+	        "seating_unit_id": UNIT_ID,
+	        "seating_unit_name": UNIT_NAME,
+	        "user_level": USER_LEVEL,
+	        "country_ids":[COUNTRY_ID,],
+	        "domain_ids": [DOMAIN_ID,],
+	        "unit_ids": [UNIT_ID,],
+	        "is_service_provider": BOOLEAN,
+	        "service_provider_id": SERVICE_PROVIDER_ID,
+	    }
+    ]
+
+   	On Success
+
+   	[	
+   		"SaveClientUserSuccess",
+   		{}
+   	]
+
+  	Possible Errors : 
+
+    [
+      	"EmployeeCodeAlreadyExists",
+      	{}  
+    ]
+
+    [
+      	"ContactNumberAlreadyExists",
+      	{}  
+    ]   
+
+####  Update client user
+
+    [
+        "UpdateClientUser",
+        ClientUser
+    ]
+
+   	On Success
+
+   	[	
+   		"UpdateClientUserSuccess",
+   		{}
+   	]    
+
+  	Possible Errors : 
+
+    [
+      	"InvalidUserId",
+      	{}  
+    ] 
+
+#### Change Client User Status
+
+    [
+      	"ChangeClientUserStatus",
+      	{
+        	"user_id"  : USER_ID,
+        	"is_active" : IS_ACTIVE,
+        	"is_admin" : IS_ADMIN
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"ChangeClientUserStatusSuccess",
+      	{}
+    ]
+
+#### Get Units
+
+    [
+      	"GetUnits",
+      	{}
+    ]
+
+  	On Success 
+
+    [
+      	"GetUnitsSuccess",
+      	{
+        	"business_groups": [BUSINESS_GROUP,],
+        	"legal_entities": [LEGAL_ENTITY,],
+        	"divisions": [DIVISION,],
+        	"units":[
+            	{
+              		"unit_id": UNIT_ID,
+              		"unit_name": UNIT_CODE - UNIT_NAME,
+              		"address": ADDRESS,
+              		"division_id": DIVISION_ID,
+              		"legal_entity_id": LEGAL_ENTITY_ID,
+              		"business_group_id": BUSINESS_GROUP_ID,
+              		"is_active": IS_ACTIVE
+            	}
+        	]
+      	}
+    ]
+
+#### Close Unit
+  
+	[
+	    "CloseUnit",
+	    {
+	      	"unit_id": UNIT_ID,
+	      	"password": String
+	    }
+	]
+
+  	On Success
+
+    [
+      	"CloseUnitSuccess",
+      	{}
+    ]
+
+	Possible Errors
+
+    [
+      	"InvalidPassword",
+      	{}  
+    ]
+
+### CLIENT ADMIN TRANSACTIONS
+
+#### Get Statutory Settings
+
+    [
+      	"GetStatutorySettings",
+    	{}
+    ]
+
+  	On Succes
+
+    [
+      	"GetStatutorySettings",
+      	[
+       		{	
+        		"unit_id": UNIT_ID,
+          		"unit_name": UNIT_CODE - UNIT_NAME,
+          		"address": ADDRESS,
+        		"country_name": String,
+        		"domain_id": DOMAIN_ID,
+        		"domain_name": String,
+          		"business_group_name": String,
+          		"legal_entity_name": String,
+          		"division_name": String,
+          		"statutories":[AssignedStatutory,]
+        	},  
+      	]
+    ] 
+
+#### Update Statutory Settings
+
+	[
+	    "UpdateStatutorySettings",
+	    {
+	      	"unit_id": UNIT_ID,
+	      	"domain_id": DOMAIN_ID,
+	        "statutories": [
+	          	{
+		          	"level_1_statutory_id": LEVEL_1_STATUTORY_ID,
+		          	"compliances":[
+		            	{
+		              		"compliance_id": COMPLIANCE_ID,
+		              		"compliance_applicable_status": BOOLEAN,
+		              		"compliance_opted_status": BOOLEAN,
+		              		"compliance_remarks": String
+		            	},
+		          	],
+		          "applicable_status": Boolean,
+		          "not_applicable_remarks": String
+		        },
+	        ]
+	    }
+	]
+
+    Possible Errors:
+
+    [
+        "InvalidPassword",
+        {}  
+    ]    	
+
+#### Get Assign compliances form data
+
+    [
+    	"GetAssignCompliancesFormData",
+        {}
+    ]
+
+  On Success
+
+    [
+        "GetAssignCompliancesFormDataSuccess",
+        {
+          	"countries": [COUNTRY,],
+          	"business_groups": [BUSINESS_GROUP,],
+          	"legal_entities": [LEGAL_ENTITY,],
+          	"divisions": [DIVISION,],
+          	"units":[
+            	{
+              		"unit_id": UNIT_ID,
+              		"unit_name": UNIT_CODE - UNIT_NAME,
+              		"address": ADDRESS,
+              		"division_id": DIVISION_ID,
+              		"legal_entity_id": LEGAL_ENTITY_ID,
+              		"business_group_id": BUSINESS_GROUP_ID,
+              		"group_id": GROUP_ID,
+              		"statutories":[
+              			[
+              				LEVEL_1_STATUTORY_NAME,
+              				[
+		              			{
+		              				"compliance_id": COMPLIANCE_ID,
+		              				"compliance_name":DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+		              				"description": String,
+		              				"frequency": String,
+		              				"statutory_date": String,
+		              				"due_date": Date
+		              			},
+		              		]
+              			],
+              		]
+            	},
+	        ],
+          	"users":[
+    	      	{
+        	    	"user_id": USER_ID,
+             		"user_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+              		"user_level": USER_LEVEL,
+              		"seating_unit_id": UNIT_ID,
+              		"settings_unit_ids":[UNIT_ID,]
+            	},
+          	]
+        }
+    ]
+    
+#### Save assigned compliance
+
+    [
+        "SaveAssignedCompliance",
+        {
+            "assignee": USER_ID,
+            "concurrence_person": USER_ID,
+            "approval_person": USER_ID,
+            "compliances": [
+                {
+                  	"compliance_id": COMPLIANCE_ID,
+                  	"statutory_dates": [
+                    	{
+                      		"statutory_date": int,
+                      		"statutory_month": int,
+                      		"trigger_before_days": int
+                    	},
+                  	],
+                  "due_date": Date,
+                  "validity_date": Date,
+                  "unit_ids": [UNIT_ID, ]
+                },
+            ]
+        }
+    ]
+
+    Possible Errors :
+
+    [
+        "AssigneeNotBelongToUnit",
+        {}  
+    ]
+
+    [
+        "ConcurrenceNotBelongToUnit",
+        {}  
+    ]
+    	
+    [
+        "ApprovalPersonNotBelongToUnit",
+        {}  
+    ]
+    
+#### Get User wise Compliances 
+
+    [
+        "GetUserwiseCompliances",
+        {}
+    ]
+
+  On Success
+
+    [
+      	"GetUserwiseCompliancesSuccess",
+      	{
+      		"user_wise_compliances":[
+            	{
+              		"user_id": USER_ID,
+              		"user_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+              		"seating_unit": UNIT_CODE - UNIT_NAME,
+              		"address": ADDRESS,
+              		"no_of_compliances": int,
+              		"units":[
+            	  		{
+              				"unit_id": UNIT_ID,
+              				"unit_name": UNIT_CODE - UNIT_NAME,
+              				"address": ADDRESS,
+              				"statutories":[
+              					{
+              						"level_1_statutory_name": LEVEL_1_STATUTORY_NAME,
+              						"compliances": [
+		              					{
+		              						"compliance_history_id":COMPLIANCE_HISTORY_ID ,
+		              						"compliance_id": COMPLIANCE_ID,
+		              						"compliance_name":DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+		              						"description": String,
+		              						"compliance_frequency": COMPLIANCE_FREQUENCY,
+		              						"statutory_date": [
+									            {
+									                "statutory_date": int,
+									                "statutory_month": int,
+									                "trigger_before_days": int
+									            },
+									        ],
+		              						"due_date": Date
+		              					},
+		              				]
+              					},
+              				]
+            	  		},
+	            	]
+            	},
+        	],
+        	"users":[
+    	    	{
+        	  		"user_id": USER_ID,
+            		"user_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+            		"user_level": USER_LEVEL,
+            		"seating_unit_id": UNIT_ID,
+            		"settings_unit_ids":[UNIT_ID,]
+          		},
+        	],
+      	}
+    ]
+
+#### Reassign compliance 
+
+	[
+	    "ReassignCompliance",
+	    {
+	        "reassigned_from": USER_ID,
+	        "assignee": USER_ID,
+	        "concurrence_person": USER_ID,
+	        "approval_person": USER_ID,
+	        "compliances":[
+	            {
+	               	"compliance_history_id":COMPLIANCE_HISTORY_ID ,
+	               	"due_date": Date
+	            },
+	        ],
+	        "reassigned_reason": String
+	    }
+	]
+
+    Possible Errors :
+
+    [
+       	"AssigneeNotBelongToUnit",
+        {}  
+    ]
+
+    [
+        "ConcurrenceNotBelongToUnit",
+        {}  
+    ]
+    	
+    [
+        "ApprovalPersonNotBelongToUnit",
+        {}  
+    ]
+
+####  Get Compliance Approval List
+
+    [
+        "GetComplianceApprovalList",
+        {}
+    ]
+
+    On Success
+    
+    [
+      	"GetComplianceApprovalList",
+      	{
+        	"approval_list": [
+          		{
+            		"assignee_id": USER_ID,
+            		"assignee_name":EMPLOYEE_CODE -  String,
+            		"compliances": [
+              			{
+               				"compliance_history_id": COMPLIANCE_HISTORY_ID,
+               				"compliance_name":DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                			"description": String,
+                			"domain_name": String,
+                			"start_date": Date,
+                			"due_date": Date,
+                			"delayed_by": int,
+                			"compliance_frequency": COMPLIANCE_FREQUENCY,
+                			"documents": [ FORMAT_FILE_NAME,],
+                			"upload_date": Date,
+                			"completion_date": Date,
+                			"next_due_date": Date,
+                			"concurrenced_by": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                			"remarks": String
+              			},
+            		]
+          		},
+        	]
+     	}
+    ]
+ 
+#### Approve Compliance
+
+    [
+        "ApproveCompliance",
+        {
+        	"compliance_history_id": COMPLIANCE_HISTORY_ID,
+        	"approval_status": COMPLIANCE_APPROVAL_STATUS,
+            "remarks": String
+        }
+    ]
+
+#### Get Past Records form data 
+	
+	[
+		"GetPastRecordsFormData",
+		{}
+	]
+
+	On Success
+
+	[
+		"GetPastRecordsFormDataSuccess",
+		{
+			"countries": [Country,],
+			"business_groups": [BusinessGroup,],
+			"legal_entites": [LegalEntity,],
+			"divisions": [Division,],
+			"units": {
+				INDUSTRY_NAME: [Unit,],
+			},
+			"domains": [Domain,],
+			"level_1_statutories": [Statutory,]
+		}
+	]
+
+#### Get Statutories By Unit
+	
+	[
+		"GetStatutoriesByUnit",
+		{
+			"unit_id": UNIT_ID,
+			"domain_id": DOMAIN_ID,
+			"level_1_statutory_id": LEVEL_1_STATUTORY_ID,
+			"compliance_frequency": COMPLIANCE_FREQUENCY
+		}
+	]
+
+	On Success
+
+	[
+		"GetStatutoriesByUnitSuccess",
+		{
+			"statutory_wise_compliances":[
+				{
+					"level_1_statutory_name": String,
+					"compliances":[
+						{
+							"compliance_id": COMPLIANCE_ID,
+							"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+							"compliance_description": String,
+							"compliance_frequency": COMPLIANCE_FREQUENCY,
+							"statutory_date":[
+								{
+									"statutory_day": int,
+									"statutory_month":int,
+									"trigger_before_days": int
+								},
+							]
+						},
+					]
+				},
+			] 
+		}
+	]
+
+#### Save Past Records
+
+	[
+		"SavePastRecords",
+		{
+			"compliances":[
+				{
+					"compliance_id": COMPLIANCE_ID,
+					"due_date" : Date,
+					"completion_date": Date,
+					"validity_date": Date,
+					"documents": [String,]
+				},
+			]
+		}
+	]
+
+	On Success
+
+	[
+		"SavePastRecordsSuccess",
+		{}
+	]
+
+
+## CLIENT REPORTS
+
+### Get Compliance details report filters
+  
+   	[
+	    "GetComplianceDetailsReportFilters",
+	    {}
+    ]	
+
+  	On Success
+
+    [
+      	"GetComplianceDetailsReportFiltersSuccess",
+      	{
+        	"countries": [COUNTRY,],
+        	"domains": [DOMAIN,],
+        	"level_1_statutories": {
+            	COUNTRY_ID : [STATUTORY,],
+        	},
+        	"units": [UNIT,],
+        	"compliances": [
+          		{
+            		"compliance_id": COMPLIANCE_ID,
+            		"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+          		},
+        	],
+        	"users": [
+          		{
+            		"employee_id": USER_ID,
+            		"employee_code": EMPLOYEE_CODE,
+            		"employee_name": String,
+          		},
+        	]
+      	}
+    ]
+
+### Get Compliance details report
+
+    [
+      	"GetComplianceDetailsReport",
+      	{
+        	"country_id": COUNTRY_ID,
+        	"domain_id": DOMAIN_ID,
+        	"statutory_id": STATUTORY_ID,
+        	"unit_id": UNIT_ID,
+        	"compliance_id": COMPLIANCE_ID,
+        	"assignee_id": USER_ID,
+        	"from_date": Date,
+        	"to_date": Date,
+        	"compliance_status": COMPLIANCE_STATUS
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"GetComplianceDetailsReportSuccess",
+      	[
+        	{
+        	 	"unit_id": UNIT_ID,
+          		"unit_name": UNIT_CODE - UNIT_NAME,
+          		"address": ADDRESS,
+          		"compliances":[
+            		{
+              			"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+              			"assignee": EMPLOYEE_CODE - EMPLOYEE_NAME,
+              			"due_date": DATE,
+              			"completion_date": DATE,
+              			"validity_date": DATE,
+              			"documents": [String,],
+              			"remarks": String
+            		},
+          		],
+        	},
+      	]
+    ]
+
+### Get Risk report filters
+
+    [
+      	"GetRiskReportFilters",
+      	{}
+    ]
+
+  	On Success
+
+    [
+      	"GetRiskReportFiltersSuccess",
+      	{
+        	"countries": [Countries,],
+        	"domains": [Domain,],
+        	"business_groups": [BusinessGroup,],
+        	"legal_entities": [LegalEntity,],
+        	"divisions": [Division,],
+        	"units": [Unit,],
+        	"level1_statutories": {
+            	COUNTRY_ID : [Statutory,],
+        	},
+      	}
+    ]
+
+### Get Risk Report
+
+    [
+      	"GetRiskReport",
+      	{
+          	"country_id": COUNTRY_ID,
+          	"domain_id": DOMAIN_ID,
+          	"business_group_id": BUSINESS_GROUP_ID,
+          	"legal_entity_id": LEGAL_ENTITY_ID,
+          	"division_id": DIVISION_ID,
+          	"unit_id": UNIT_ID,
+          	"statutory_id":  STATUTORY_ID,
+          	"statutory_status": int
+      	}
+    ]
+
+  	Note : statutory_status :- 0 - All , 1 - Delayed Compliance, 2 - Not Complied, 3 - Not Opted
+
+  On Success 
+
+    [
+      	"GetRiskReportSuccess",
+      	{
+        	"delayed_compliance": {
+            	LEVEL_1_STATUTORY_NAME : [
+	              	{
+	                	"unit_name": UNIT_CODE - UNIT_NAME,
+	                	"address": ADDRESS,
+	                	"compliances": [
+	                  		{
+	                    		"statutory_mapping": String,
+	                    		"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+	                    		"description": String,
+	                    		"penal_consequences"  : String,
+	                    		"compliance_frequency": COMPLIANCE_FREQUENCY,
+	                    		"repeats"  : String
+	                  		},
+	                	]
+	              	},
+            	]
+        	},
+        	"not_complied": {
+          		Same as delayed compliance
+        	},
+        	"not_opted": {
+          		Same as delayed compliance
+        	}
+      	}
+    ]
+
+### Get Service Provider wise compliance report filters
+
+    [
+      	"GetServiceProviderReportFilters",
+      	{}
+    ]
+
+  	On Success
+
+    [
+      	"GetServiceProviderReportFiltersSuccess",
+      	{
+        	"countries": [Countries,],
+        	"domains": [Domain,],
+        	"level_1_statutories": {
+            	COUNTRY_ID : [Statutory,],
+        	},
+        	"units": [Unit,],
+        	"service_providers": [ServiceProvider,]
+      	}
+    ]
+
+### Get Service provider wise compliance 
+
+    [
+        "GetServiceProviderWiseCompliance",
+        {
+          	"country_id": COUNTRY_ID,
+          	"domain_id"  : DOMAIN_ID,
+          	"statutory_id": STATUTORY_ID,
+          	"unit_id":  UNIT_ID,
+          	"service_provider_id": SERVICE_PROVIDER_ID
+        }
+    ]
+
+  	On Success 
+
+    [
+        "GetServiceProviderWiseComplianceSuccess",
+        {
+          	"compliance_list": [
+            	{
+              		"service_provider_name": String,
+              		"address": String,
+              		"contract_from": Date,
+              		"contract_to": Date,
+              		"contact_person": String,
+              		"contact_no": CONATACT_NUMBER,
+              		"unit_wise_compliance": [
+                  		{
+                    		"unit_name": UNIT_CODE - UNIT_NAME,
+                    		"address": ADDRESS,
+                    		"compliances": [
+                         		{
+                          			"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                          			"description": String,
+                          			"statutory_dates": [
+				              			{
+				                  			"statutory_date": int,
+				                  			"statutory_month": int,
+				                  			"trigger_before_days": int
+				              			},
+				         			],
+                          			"due_date": DATE,
+                          			"validity_date": DATE
+                        		},
+                    		]
+                  		},
+              		]
+            	},
+        	]
+    	}
+    ]
+
+### Get Client Report Filters
+
+(Common for Assignee wise compliances and Unit wise compliances)
+
+    [
+      	"GetClientReportFilters",
+      	{}
+    ]
+
+  	On Success
+    
+    [
+        "GetClientReportFiltersSuccess",
+        {
+          	"countries": [Countries,],
+          	"domains": [Domain,],
+          	"business_groups": [BusinessGroup,],
+          	"legal_entities": [LegalEntity,],
+          	"divisions": [Division,],
+          	"units": [Unit,],
+          	"users": [User,]
+        }
+    ]
+
+### Get Assignee wise compliance Report
+
+    [
+      	"GetAssigneewisecomplianceReport",
+      	{
+        	"country_id": COUNTRY_ID,
+        	"domain_id": DOMAIN_ID,
+        	"business_group_id": BUSINESS_GROUP_ID,
+        	"legal_entity_id": LEGAL_ENTITY_ID,
+        	"division_id"  : DIVISION_ID,
+        	"unit_id": UNIT_ID,
+        	"user_id": USER_ID
+      	}
+    ]
+
+  	On Success 
+
+    [
+      	"GetAssigneewisecomplianceReportSuccess",
+      	{
+        	"compliance_list": [
+	          	{
+	            	"business_group_name": String,
+	            	"legal_entity_name": String,
+	            	"division_name": String,
+	            	"domain_name": String,
+	            	"user_wise_compliance": [
+	              		{
+	                		"assignee": EMPLOYEE_CODE - EMPLOYEE_NAME,
+	                		"concurrence_person": EMPLOYEE_CODE - EMPLOYEE_NAME,
+	                		"approval_person": EMPLOYEE_CODE - EMPLOYEE_NAME,
+	                		"compliances": [
+	                  			{
+	                    			"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+	                    			"unit_name": UNIT_CODE - UNIT_NAME,
+	                    			"compliance_frequency": COMPLIANCE_FREQUENCY,
+	                    			"statutory_dates": [
+	  			            			{
+	  			                			"statutory_date": int,
+	  			                			"statutory_month": int,
+	  			                			"trigger_before_days": int
+	  			            			},
+	  			         			],
+	                    			"due_date": DATE,
+	                    			"validity_date": DATE
+	                  			}, 
+	                		]
+	             	 	},
+	            	]
+	          	},
+        	]
+    	}
+    ]
+
+### Get Unit wise compliance Report
+
+    [
+      	"GetUnitwisecomplianceReport",
+      	{
+        	"country_id": COUNTRY_ID,
+        	"domain_id": DOMAIN_ID,
+        	"business_group_id": BUSINESS_GROUP_ID,
+        	"legal_entity_id": LEGAL_ENTITY_ID,
+        	"division_id"  : DIVISION_ID,
+        	"unit_id": UNIT_ID,
+        	"user_id": USER_ID
+      	}
+    ]
+
+  	On Success 
+
+    [
+      	"GetUnitwisecomplianceReportSuccess",
+      	{
+        	"compliance_list": [
+          		{
+            		"business_group_name": String,
+            		"legal_entity_name": String,
+            		"division_name": String,
+            		"domain_name": String,
+            		"unit_wise_compliances":{
+                		UNIT_NAME : [
+                  			{
+                    			"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                    			"compliance_frequency": COMPLIANCE_FREQUENCY,
+                    			"statutory_date": String,
+                    			"trigger_before": String,
+                    			"due_date": DATE,
+                    			"validity_date": DATE
+                  			},
+                		],
+            		} 
+          		},
+        	]
+      	}
+    ]
+
+### Get Reassign Compliance Task Report Filters
+
+    [
+      	"GetReassignComplianceTaskReportFilters",
+      	{}
+    ]
+
+  	On Success
+
+    [
+      	"GetReassignComplianceTaskReportFiltersSuccess",
+      	{
+          	"countries": [Country,],
+          	"doamins": [Domain,],
+          	"level_1_statutories": {
+            	COUNTRY_ID : [Statutory,],
+          	},
+          	"units": [
+              	{
+                	"unit_name": UNIT_CODE - UNIT_NAME,
+                	"address": ADDRESS
+              	},
+          	],
+          	"compliances":[
+            	{
+              		"compliance_id": COMPLIANCE_ID,
+              		"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+            	},
+          	],
+          	"users":[
+          		{
+              		"user_id": USER_ID,
+              		"user_name": EMPLOYEE_CODE - EMPLOYEE_NAME
+              	},
+          	]
+      	}
+    ]
+
+
+### Get Reassign Compliance Task Details
+
+    [
+      	"GetReassignComplianceTaskDetails",
+      	{
+        	"country_id": COUNTRY_ID,
+        	"domain_id": DOMAIN_ID,
+        	"unit_id": UNIT_ID,
+        	"statutory_id": STATUTORY_ID,
+        	"compliance_id": COMPLIANCE_ID,
+        	"user_id": USER_ID,
+        	"from_date": Date,
+        	"to_date": Date
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"GetReassignComplianceTaskDetailsSuccess",
+      	{
+        	"compliance_list": [
+          		{
+            		"unit_name": UNIT_CODE - UNIT_NAME,
+            		"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+            		"due_date": Date,
+            		"reassign_history": [
+              			{
+                  			"reassigned_from": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                  			"reassigned_to": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                  			"reassigned_date": DATE,
+                  			"reassign_reason": String
+              			},
+            		]
+          		},
+        	]
+      	}
+    ]
+
+### Get Task Applicability Status Filters
+  
+    [
+      	"GetTaskApplicabilityStatusFilters",
+      	{}
+    ]
+
+  	On Success
+    
+    [
+      	"GetTaskApplicabilityStatusFiltersSuccess"
+      	{
+          	"countries": [Country,],
+          	"domains": [Domain,],
+          	"business_groups": [BusinessGroup,],
+          	"legal_entities": [LegalEntity,],
+          	"divisions": [Division,],
+          	"units":[
+            	{
+              		"unit_id": UNIT_ID,
+              		"unit_name": UNIT_CODE - UNIT_NAME,
+            	},
+          	],
+          	"level_1_statutories": {
+            	COUNTRY_ID : [Statutory,],
+          	}
+      	}
+    ]
+
+### Get Compliance Task Applicability Status report
+
+    [
+      	"GetComplianceTaskApplicabilityStatusReport",
+      	{
+          	"country_id": COUNTRY_ID,
+          	"domain_id": DOMAIN_ID,
+          	"business_group_id": BUSINESS_GROUP_ID,
+          	"legal_entity_id": LEGAL_ENTITY_ID,
+          	"division_id": DIVISION_ID,
+          	"unit_id": UNIT_ID,
+          	"statutory_id": STATUTORY_ID,
+          	"applicable_status": APPLICABILITY_STATUS
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"GetComplianceTaskApplicabilityStatusReportSuccess",
+      	{
+          	"applicable":{
+              	LEVEL_1_STATUTORY_NAME : [
+                	{
+                  		"unit_name": UNIT_CODE - UNIT_NAME,
+                  		"address": ADDRESS,
+                  		"compliances": [
+                    		{
+                      			"statutory_provision": String,
+                      			"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                      			"description": String,
+                      			"penal_consequences"  : String,
+                      			"compliance_frequency": COMPLIANCE_FREQUENCY,
+                      			"repeats"  : String
+                    		},
+                  		]
+                	},
+            	],
+          	},
+          	"not_applicable": {
+            	Same as applicable
+          	},
+          	"not_opted": {
+            	Same as applicable
+          	}
+      	}
+    ]
+
+### Get Unit Details Report
+		
+	Sames as Get Client details report in Techno Section
+
+### Get Compliance Activity Report Filters
+
+    [
+        "GetComplianceActivityReportFilters",
+        {}
+    ]
+    
+  	On Success
+
+    [
+      	"GetComplianceActivityReportFiltersSuccess",
+      	{
+          	"users":[
+            	{
+              		"user_id": USER_ID,
+              		"user_name":String
+            	},
+          	],
+          	"domains": [Domain,],
+          	"level_1_statutories": {
+           		COUNTRY_ID : [Statutory,],
+          	},
+          	"units":[
+            	{
+              		"unit_id": UNIT_ID,
+              		"unit_name": UNIT_CODE - UNIT_NAME
+            	},
+          	],
+          	"compliances": [
+            	{
+              		"compliance_id":  COMPLIANCE_ID,
+              		"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME
+            	},
+          	]
+      	}
+    ]
+
+### Get Compliance activity report
+
+    [
+      	"GetComplianceActivityReport",
+      	{
+          	"user_type": USER_TYPE,
+          	"user_id": USER_ID,
+          	"domain_id": DOMAIN_ID,
+          	"statutory_id": STATUTORY_ID,
+          	"unit_id": UNIT_ID,
+          	"compliance_id": COMPLIANCE_ID,
+          	"from_date": DATE,
+          	"to_date": DATE
+     	}
+    ]
+
+  	On Success
+
+    [
+        "GetComplianceActivityReportSuccess",
+        {
+          	"activities": [
+            	{
+                	"unit_name": UNIT_CODE - UNIT_NAME,
+                	"address": ADDRESS,
+                	"domain_wise_compliances":[
+                  		{
+                    		"domain_name": String,
+                    		"statutory_wise_compliances":{
+                        		LEVEL_1_STATUTORY_NAME : [
+                          			{
+                            			"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                            			"activity_date": Date,
+                            			"activity_status": String,
+                            			"compliance_status": String,
+                            			"remarks": String
+                          			}
+                        		],
+                    		}
+                  		},
+                	]
+            	},
+          	]
+        }
+    ]
+
+### Get Reassigned History Report Filters
+
+    [
+      	"GetReassignedHistoryReportFilters",
+      	{}
+    ]
+
+  	On Success
+
+    [
+      	"GetReassignedHistoryReportFiltersSuccess",
+      	{
+       		"countries": [Country,],
+       		"domains": [Domain,],
+       		"units": [
+       			{
+       				"unit_id": UNIT_ID,
+       				"unit_name": UNIT_NAME,
+       				"address": ADDRESS
+       			},
+       		],
+       		"level_1_statutories": {
+       			COUNTRY_ID: [Statutory,],
+       		},
+       		"compliances": [Compliance,],
+       		"users": [User,]
+      	}
+    ]
+
+### Get Reassigned History Report
+
+	[
+		"GetReassignedHistoryReport",
+		{
+			"country_id": COUNTRY_ID,
+			"domain_id": DOMAIN_ID,
+			"unit_id": UNIT_ID,
+			"level_1_statutory_id": LEVEL_1_STATUTORY_ID,
+			"compliance_id": COMPLIANCE_ID,
+			"user_id": USER_ID
+		}
+	]
+
+	On Success
+
+	[
+		"GetReassignedHistoryReportSuccess",
+		{
+			"statutory_wise_compliances":[
+				{
+					"level_1_statutory_id": LEVEL_1_STATUTORY_ID,
+					"level_1_statutory_name": LEVEL_1_STATUTORY_NAME,
+					"compliances":  [
+			            {
+			                "unit_name": UNIT_CODE - UNIT_NAME,
+			                "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+			                "due_date": String,
+			                "assignee": EMPLOYEE_CODE - EMPLOYEE_NAME,
+			                "reassign_history": [
+			                    {
+			                        "reassigned_from": EMPLOYEE_CODE - EMPLOYEE_NAME,
+			                        "reassigned_to": EMPLOYEE_CODE - EMPLOYEE_NAME,
+			                        "reassigned_date": DATE,
+			                        "reassign_reason": String
+			                    },
+			                ]
+			            },
+			        ]
+				}
+			]
+		}
+	]
+
+### Get Activity Log Filters
+
+    [
+      	"GetActivityLogFilters",
+      	{}
+    ]
+
+  	On Success
+
+    [
+      	"GetActivityLogFiltersSuccess",
+      	{
+       		"users": [
+          		{
+            		"user_id": USER_ID,
+            		"user_name": UNIT_CODE - UNIT_NAME
+          		},
+        	],
+        	"forms":[
+          		{
+            		"form_id": FORM_ID,
+            		"form_name": String
+          		},
+        	]
+      	}
+    ]
+
+### Get Activity Log Report
+
+    [
+        "GetActivityLogReport",
+        {
+          "from_date": Date,
+          "to_date": Date,
+          "form_name": String,
+          "action": String
+        }
+    ]
+
+  	On Success
+
+    [
+      	"GetActivityLogReportSuccess",
+      	{
+        	"activity_log":[
+          		{
+            		"user_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+            		"date_and_time": TIMESTAMP,
+            		"form_name": String,
+            		"action": String 
+          		},
+        	]
+      	}
+    ]
+
+### Get Login Trace
+
+	[
+		"GetLoginTrace",
+		{}
+	]
+
+	On Success
+
+	[
+		"GetLoginTraceSuccess",
+		{
+			"users": [User,],
+			"login_trace": [
+				{
+					"date_and_time": TIMESTAMP,
+					"action": String
+				},
+			]
+		}
+	]
+
+## CLIENT ADMIN SETTINGS
+
+### Get Settings
+  
+    [
+      	"GetSettings",
+      	{}
+    ]
+
+  	On Success
+
+    [
+      	"GetSettingsSuccess",
+      	{
+       		"is_two_levels_of_approval": Boolean,
+        	"assignee_reminder_days": int,
+        	"escalation_reminder_In_advance_days": int,
+        	"escalation_reminder_days": int
+      	}
+    ]
+
+### Update Settings
+
+    [
+      	"UpdateSettings",
+     	{
+        	"is_two_levels_of_approval": Boolean,
+        	"assignee_reminder_days": int,
+        	"escalation_reminder_In_advance_days": int,
+        	"escalation_reminder_days": int
+      	}
+    ]
+
+  On Success
+
+    [
+      	"UpdateSettingsSuccess",
+      	{}
+    ]
+
+## CLIENT USER & SERVICE PROVIDER SECTION
+
+###  Get compliance Detail
+
+    [
+        "GetComplianceDetail",
+        {}
+    ]
+
+  	On Success
+
+    [
+      	"GetComplianceDetailSuccess",
+      	{
+        	"compliance_detail":[
+          		{
+            		"unit_id": UNIT_ID,
+            		"current_compliances":[
+                		ACTIVE_COMPLIANCE,
+            		],
+            		"upcoming_compliances":[
+                		UPCOMING_COMPLIANCE,
+            		]
+          		},
+        	]
+      	}
+    ]
+
+### Check Disk Space
+
+	[
+		"CheckDiskSpace",
+		{}
+	]
+
+	On Success
+
+	[
+		"CheckDiskSpaceSuccess",
+		{
+			"total_disk_space": Float,
+			"available_disk_space": Float
+		}	
+	]
+
+### Update compliance Detail
+
+    [
+        "UpdateComplianceDetail",
+        {
+            "compliance_history_id": COMPLIANCE_HISTORY_ID,
+            "documents": [String,], 
+            "completion_date": Date,
+            "validity_date": Date,
+            "next_due_date": Date,
+            "remarks": String
+        }
+    ]
+
+   	On Success
+
+   	[
+   		"UpdateComplianceDetailSuccess",
+   		{}
+   	]
+
+   	Possible Errors
+
+   	[
+   		"NotEnoughDiskSpaceAvailable"
+   		{}
+   	]
+
+### Get On Occurrence Compliance
+    
+    [
+        "GetOnOccurrenceCompliances",
+        {}
+    ]
+
+  	On Success
+
+    [
+        "GetOnOccurrenceCompliancesSuccess",
+        {
+          	"compliances": [
+            	{
+              		"compliance_id":  compliance_id,
+              		"statutory_provision": String,
+              		"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+              		"description": String,
+              		"complete_within_days": int
+            	}
+        	]
+       	}
+    ]
+
+### Start On Occurrence Compliance
+  
+    [
+        "StartOnOccurrenceCompliance",
+        {
+          	"compliance_id": COMPLIANCE_ID,
+          	"start_date": Date
+        }
+    ]
+
+
+## DASHBOARD
+
+### Get data for chart filters
+
+    [
+      	"GetChartFilters",
+      	{}
+    ]
+
+  On Success
+
+    [
+      	"GetChartFiltersSuccess",
+      	{
+        	"countries": [Country,],
+        	"domains": [Domain,],
+        	"business_groups": [BusinessGroup,],
+        	"legal_entities": [LegalEntity,],
+        	"divisions": [Division,],
+        	"units": [Unit,]
+      	}
+    ]
+
+### Get Compliance Status Chart
+
+    [
+        "GetComplianceStatusChart",
+        {
+          	"country_ids": [COUNTRY_ID,],
+          	"domain_ids": [DOMAIN_ID,],
+          	"from_date": DATE,
+          	"to_date": DATE,
+          	"filter_type": String,
+          	"filter_ids": [int,]
+        }
+    ]
+
+  	On Success
+
+    [
+        "GetComplianceStatusChartSuccess",
+        {
+          	"chart_data": [
+            	{
+              		"year": String,
+              		"data":[
+                		{
+                  			"filter_name": FILTER_NAME,
+                  			"no_of_compliances":  NO_OF_COMPLIANCES
+                		},    
+              		]
+            	},
+          	]
+        }
+    ]
+
+### Get Escalations Chart
+
+    [
+      	"GetEscalationsChart",
+      	ChartFilters
+    ]
+
+  On Success
+
+  	[
+        "GetEscalationsChartSuccess",
+        {
+          	"chart_data": [
+            	{
+              		"year": String,
+              		"delayed_compliance_count": int,
+              		"not_complied_count": int
+            	},
+          	]
+        }
+    ]
+
+### Get Not Complied Chart
+
+	[
+	    "GetNotCompliedChart",
+	    ChartFilters
+	]
+
+    On Success
+
+	[
+	    "GetNotCompliedChartSuccess",
+	    {
+	        "0_to_30_days_count": int,
+	        "31_to_60_days_count": int,
+	        "61_to_90_days_count": int,
+	        "Above_90_days_count": int
+	    }
+	]
+
+### Get Trend Chart
+
+	[
+	    "GetTrendChart",
+	    ChartFilters
+	]
+
+    On Success
+
+	[
+	    "GetTrendChartSuccess",
+	    {
+	        "years": [int,],
+	        "data":[
+	          	{
+	            	"filter_name": FILTER_NAME,
+	            	"complied_compliance": [
+	            		{
+	            			"total_compliances": int,
+	            			"complied_compliances_count": int
+	            		},
+	            	]
+	          	},
+	        ]
+	    }
+	]
+
+### Get Compliance Applicability Status Chart
+
+	[
+	    "GetComplianceApplicabilityStatusChart",
+	    ChartFilters
+	]
+
+    On Success
+
+	[
+	    "GetComplianceApplicabilityStatusChartSuccess",
+	    {
+	        "applicable_count": int,
+	        "not_applicable_count": int,
+	        "not_opted_count": int
+	    }
+	]
+
+### Get Assignee wise Compliances Chart
+
+    [
+      	"GetAssigneeWiseCompliancesChart",
+      	{
+        	"country_id": COUNTRY_ID,
+        	"business_group_id": BUSINESS_GROUP_ID,
+        	"legal_entity_id": LEGAL_ENTITY_ID,
+        	"division_id": DIVISION_ID,
+        	"unit_id": UNIT_ID
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"GetAssigneeWiseCompliancesChartSuccess",
+      	{
+        	"chart_data": [
+          		{
+            		"unit_name": String,
+           	 		"assignee_wise_details": [
+              			{
+                			"user_id": USER_ID,
+                			"assignee_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                			"domain_wise_details":[
+                  				{
+                    				"domain_id": DOMAIN_ID,
+                    				"domain_name": String,
+                    				"total_compliances": int,
+                    				"complied_count": int,
+                    				"delayed_compliance": {
+                        				"assigned_count": int,
+                        				"reassigned_count": int,
+                        				"reassigned_compliances": [
+                          					{
+                            					"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                            					"reassigned_from": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                            					"start_date": DATE,
+                            					"due_date": DATE,
+                            					"reassigned_date": DATE,
+                            					"completed_date": DATE
+                          					},
+                        				]
+                    				},
+                    				"inprogress_compliance_count":int,
+                    				"not_complied_count": int
+                  				},
+                			]
+              			},
+            		]
+          		},
+        	]
+      	}
+    ]
+
+### Get Assingee wise compliance drilldown data
+
+    [
+      	"GetAssigneeWiseComplianceDrillDown",
+      	{
+        	"assignee_id": USER_ID,
+        	"domain_id": DOMAIN_ID
+      	}
+    ]
+
+  On Success
+
+    [
+        "GetAssigneeWiseComplianceDrillDownSuccess",
+        {
+          	"complied":[
+            	{
+              		"unit_name": UNIT_CODE - UNIT_NAME,
+              		"address": ADDRESS,
+              		"compliances":{
+                  		STATUTORY_LEVEL1_NAME : [
+                      		{
+                        		"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                        		"assigne_date": DATE,
+                        		"due_date": DATE,
+                        		"completion_date": DATE
+                      		}, 
+                  		],                  
+              		}
+            	}
+          	],
+          	"delayed":[
+              	Same as Complied
+          	],  
+          	"inprogress":[
+            	Same as Complied
+          	],
+          	"not_complied":[
+            	Same as Complied
+          	]
+        }
+    ]
+
+### Get Compliance Status Drill down data 
+
+    [
+      	"GetComplianceStatusDrillDownData",
+      	{
+        	"filter_type": FILTER_TYPE,
+        	"filter_id": FILTER_ID,
+        	"compliance_status": COMPLIANCE_STATUS
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"GetComplianceStatusDrillDownDataSuccess",
+      	{
+        	"drill_down_data": [
+          		{
+            		"business_group": String,
+            		"legal_entity": String,
+            		"division": String,
+            		"unit_wise_compliances": [
+              			COMPLIANCE_STATUS_DRILL_DOWN,
+            		]
+          		},
+        	]
+      	}
+    ]
+
+### Get Escalations Drill Down Data
+
+    [
+      	"GetEscalationsDrillDownData",
+      	{
+        	"filter_type": FILTER_TYPE,
+        	"filter_id": FILTER_ID,
+        	"year": int
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"GetEscalationsDrillDownDataSuccess",
+      	{
+        	"delayed":[
+            	{
+              		"business_group_name": String,
+              		"legal_entity_name": String,
+              		"division_name": String,
+              		"unit_wise_compliances": [
+                		ESCALATIONS_DRILL_DOWN,
+              		]
+            	}
+        	],
+        	"not_complied":[
+          		Same as delayed
+        	]
+      	}
+    ]
+
+### Get Compliance applicability status drill down
+  
+    [
+      	"GetComplianceApplicabilityStatusDrillDown",
+      	{
+        	"filter_type": FILTER_TYPE,
+        	"filter_id": FILTER_ID,
+        	"applicability_status": APPLICABILITY_STATUS
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"GetComplianceApplicabilityStatusDrillDownSuccess",
+      	{
+        	"filter_name": FILTER_NAME,
+        	"drill_down_data": [
+          		{
+            		"level1_statutory_name": LEVEL_1_STATUTORY_NAME,
+            		"compliances":[
+              			{
+                			"statutory": String,
+                			"compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                			"description": String,
+                			"penal_consequences": String,
+                			"compliance_frequency": COMPLIANCE_FREQUENCY,
+                			"repeats": String,
+                			"statutory_date": [
+                  				{
+                    				"statutory_date": int,
+                    				"statutory_month": int,
+                    				"trigger_before": int
+                  				},
+			                ]
+              			},
+            		]
+          		}
+        	]
+      	}
+    ]
+
+### Get Not Complied drill down
+
+    [
+      	"GetNotCompliedDrillDown",
+      	{
+        	"filter_type": FILTER_TYPE,
+        	"filter_id": FILTER_ID
+      	}
+    ]
+
+  	On Success
+
+    [
+      	"GetNotCompliedDrillDownSuccess",
+      	{
+        	"filter_name": FILTER_NAME,
+        	"drill_down_data": [
+         		{
+            		"business_group": String,
+            		"legal_entity": String,
+            		"division": String,
+            		"unit_wise_compliances": [
+              			ESCALATIONS_DRILL_DOWN,
+            		]
+          		},
+        	]
+      	}
+    ]
+
+### Get Trend Chart Drill down data
+
+    [
+      	"GetTrendChartDrillDownData",
+      	{
+        	"filter_type": FILTER_TYPE,
+        	"filter_id": FILTER_ID
+      	}
+    ]
+
+  	Response for the above request will be in same format as Compliance status drill down 
+
+
