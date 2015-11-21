@@ -1,51 +1,195 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
- <div class="content-container width50">
-        <div class="content-area">
-          <h1>User Group</h1>
-          <div class="filters-and-search">
-            <div class="btn-add" onclick="location.href='/user_group_privileges/create'" formtarget="_self">Add</div>
-          </div>
-          <div class="clearfix"></div>
-          <div class="grid-table">
-            <table>
-              <tr align="left">
-                <th width="9%" align="center">#</th>
-                <th>Group Name</th>
-                <th>Category Name</th>
-                <th align="center" width="10%">Edit</th>
-                <th align="center" width="12%">Status</th>
-              </tr>
-               <tr>
-                <td align="center"></td>
-                <td><input type="text" name="group-name" class="filter-text-box"></td>
-                <td><input type="text" name="group-name" class="filter-text-box"></td>
-                <td align="center"></td>
-                <td align="center"></td>
-              </tr>
-              <tr>
-                <td align="center">1</td>
-                <td>Knowledge Manager</td>
-                <td>Knowledge Team</td>
-                <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-                <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
-              </tr>
-              <tr>
-                <td align="center">2</td>
-                <td>Techno Functional Manager</td>
-                <td>Techno Functional Team</td>
-                <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-                <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" /></td>
-              </tr>
-              <tr>
-                <td align="center">3</td>
-                <td>Service Provider</td>
-                <td>Service Provider</td>
-                <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-                <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-              </tr>
-            </table>
+<div class="content-container width50" id="userGroupView">
+  <div class="content-area">
+    <h1>User Group</h1>
+    <div class="filters-and-search">
+      <div class="btn-add" id="btnUserGroupAdd">Add</div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="grid-table">
+      <table>
+        <tr align="left">
+          <th width="9%" align="center">#</th>
+          <th>Group Name</th>
+          <th>Category Name</th>
+          <th align="center" width="10%">Edit</th>
+          <th align="center" width="12%">Status</th>
+        </tr>
+        <tr>
+          <td align="center"></td>
+          <td><input type="text" name="groupNameSearch" id="groupNameSearch" class="filter-text-box"></td>
+          <td><input type="text" name="categoryNameSearch" id="categoryNameSearch" class="filter-text-box"></td>
+          <td align="center"></td>
+          <td align="center"></td>
+        </tr>
+        <tbody id="tableUserGroupList">
+          <tr id="tableRow">
+            <td align="center"></td>
+            <td></td>
+            <td></td>
+            <td align="center"></td>
+            <td align="center"></td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Group -->
+<div class="content-container width50" id="userGroupAdd">
+  <div class="content-area">
+    <div class="add-container" >
+      <div class="add-container-heading">User Group<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="single-column-field-label">Group Name:<span class="mandatory">*</span></div>
+          <div class="single-column-field-input">
+            <input type="text" class="input-box" name="groupName" id="groupName">
           </div>
         </div>
       </div>
+      <div class="input-row-right">
+        <div class="input-row">
+          <div class="single-column-field-label">Category Name:<span class="mandatory">*</span></div>
+          <div class="single-column-field-input">
+            <select class="input-box" id="categoryName" name="categoryName">
+              <option value="Knowledge">Knowledge Team </option>
+              <option value="Techno">Techno Functional Team</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit" id="btnUserGroupShow">
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table" style="overflow-y:scroll; height:240px;">
+        <table>
+          <tr align="left">
+            <th><input type="checkbox"></th>
+            <th>Form Name</th>
+          </tr>
+          <tbody id="tableUserGroupList">
+          <tr id="tableRow">
+            <td><input type="checkbox"></td>
+            <td>Domain Master</td>
+          </tr>
+          </tbody>
+          <!-- 
+          <tr><td colspan="2" style="font-weight:bold;"><b>Master</b></td></tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Domain Master</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Country Master</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Statutory Level Master</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked"></td>
+            <td>Statutory Master</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Statutory Nature Master</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked"></td>
+            <td>Industry Master</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="checked"></td>
+            <td>Geography Level Master</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Geography Master</td>
+          </tr>
+          <tr><td colspan="2" style="font-weight:bold;"><b>Transactions</b></td></tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Statutory Mapping</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Approve Statutory Mapping</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Client Master</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Assign Keycontact</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Assign Statutory</td>
+          </tr>
+          <tr><td colspan="2" style="font-weight:bold;" ><b>Reports</b></td></tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Client Report</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Compliance Tasks Report</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Audit Trail</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Service Provider Master</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>User Privilages</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>User Creation - Client</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Assign Userlevel</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Assign Compliance Task</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Reassign Compliance Task</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Compliance Task Approval</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>Compliance Task Details</td>
+          </tr> -->
+        </table>
+      </div>
+      <div class="submit-button-container">
+
+        <br>
+        <input type="reset" name="cancel" value="Cancel" class="btn-cancel" id="btnUserGroupCancel" >
+        &nbsp;&nbsp;
+        <input type="submit" name="submit" value="Submit" class="btn-submit">
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src="/files/desktop/UserGroupPrivileges/userGroup.js"></script>
+
 {% endblock %}
