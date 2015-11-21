@@ -10,12 +10,10 @@ function loadIndustryList (industriesList) {
 
   $('#rowToClone').show();
   $("#tableToModify").find("tr:gt(0)").remove();
-  for(var i in industriesList) {
-    industryList = industriesList[i];
-    for(var entity in industryList) {
-      industryId = industryList[entity]["industry_id"];
-      industryName = industryList[entity]["industry_name"];
-      isActive = industryList[entity]["is_active"];
+    for(var entity in industriesList) {
+      industryId = industriesList[entity]["industry_id"];
+      industryName = industriesList[entity]["industry_name"];
+      isActive = industriesList[entity]["is_active"];
       if(isActive == 1) {
         passStatus="0";
         imgName="icon-active.png"
@@ -35,10 +33,10 @@ function loadIndustryList (industriesList) {
       table.appendChild(clone);
       j = j + 1;
     }
-  }
   $('#rowToClone').hide();
 }
 function displayAdd () {
+  $("#error").text("");
   $("#listview").hide();
   $("#addview").show();
   $("#industryname").val('');
@@ -54,9 +52,8 @@ if(industryName == ''){
   $("#error").text("Industry Name Required");
 }else{
   if($("#industryid").val() == ''){
-  saveIndustryDetail = [industryName];
   function success(status,data) {
-    if(status == 'SaveIndustrySuccess') {
+    if(status == 'success') {
       getIndustries ();
       $("#listview").show();
       $("#addview").hide();
@@ -68,40 +65,23 @@ if(industryName == ''){
   function failure(data){
 
   }
-  mirror.saveDomain("SaveDomain", saveIndustryDetail, success, failure);
-
-  var industry_url = "http://192.168.1.9:8080/SaveIndustry";
-  var industry_data = {
-    "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-    "request" : [
-        "SaveIndustry",
-        { "industry_name": industryName }
-    ]
-  };
+  mirror.saveIndustry("SaveIndustry", industryName, success, failure);
   }
   else{
-  var industry_url = "http://192.168.1.9:8080/UpdateIndustry";
-  var industry_data = {
-    "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-    "request" : [
-        "UpdateIndustry",
-      {
-          "industry_id": industryId,
-          "industry_name": industryName
+    function success(status,data){
+      if(status == 'success') {
+         getIndustries ();
+        $("#listview").show();
+        $("#addview").hide();
+        $("#error").text("Record Updated Successfully");
+      } else {
+        $("#error").text(status);
       }
-    ]
-  };
-  }
-  var options = JSON.stringify(industry_data);
-  ajaxCall(industry_url, options, function (data) {
-    if(data[0] == 'success'){
-      $("#listview").show();
-      $("#addview").hide();
-      getIndustries ();
-    }else{
-      $("#error").text(data[0]);
     }
-  });
+    function failure(data) {
+    }
+    mirror.updateIndustry("UpdateIndustry", industryId, industryName, success, failure);
+  }
 }
 }
 
@@ -110,42 +90,29 @@ function displayEdit (industryId,industryName) {
   $("#addview").show();
   $("#industryname").val(industryName);
   $("#industryid").val(industryId);
+  $("#error").text("");
 }
 
 function changeStatus (industryId,isActive) {
-  var industry_url = "http://192.168.1.9:8080/ChangeIndustryStatus";
-  var industry_data = {
-    "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-    "request" : [
-        "ChangeIndustryStatus",
-      {
-        "industry_id": industryId,
-        "is_active": isActive
-      }
-    ]
-  };
-  var options = JSON.stringify(industry_data);
-  ajaxCall(industry_url, options, function (data) {
+  function success(status,data){
     getIndustries ();
-  });
+    $("#error").text("Status Changed Successfully");
+  }
+  function failure(data){
+  }
+  mirror.changeIndustryStatus("ChangeIndustryStatus", industryId, isActive, success, failure);
 }
 
 function getIndustries () {
-  var industry_url = "http://192.168.1.9:8080/GetIndustries";
-  var industry_data = {
-    "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-    "request" : [
-        "GetIndustries",
-        {}
-    ]
-  };
-  var options = JSON.stringify(industry_data);
-  ajaxCall(industry_url, options, function (data) {
-    if(data[0] == 'success'){
-      tempIndustryList = data[1];
-      loadIndustryList(data[1]);
-    }
-  });
+
+  function success(status,data){
+    tempIndustryList = data["industries"];
+    industriesList = data["industries"];
+    loadIndustryList(industriesList);
+  }
+  function failure(data){
+  }
+  mirror.getIndustryList("GetIndustries", success, failure);
 }
 
 function filter (term, cellNr){
@@ -160,15 +127,10 @@ function filter (term, cellNr){
   }*/
   var filterkey = term.value.toLowerCase();
   var filteredList=[];
-  for(var i in tempIndustryList) {
-    industryList = tempIndustryList[i];
-    for(var entity in industryList) {
-      industryId = industryList[entity]["industry_id"];
-      industryName = industryList[entity]["industry_name"];
-      isActive = industryList[entity]["is_active"];
-      if (~industryName.toLowerCase().indexOf(filterkey)) filteredList.push({"industries" : {"industry_id": industryId,"industry_name": industryName,"is_active": isActive}});
+    for(var entity in tempIndustryList) {
+      industryName = tempIndustryList[entity]["industry_name"];
+      if (~industryName.toLowerCase().indexOf(filterkey)) filteredList.push(tempIndustryList[entity]);
     }
-  }
   loadIndustryList(filteredList);
 }
 
@@ -182,24 +144,3 @@ $(document).ready(function () {
   }
 });
 });
-
-function ajaxCall (url, options, callback) {
-  $.support.cors = true;
-  $.ajax({
-    crossDomain: true,
-    url: url,
-    dataType: 'json',
-    type: 'POST',
-    data: options,
-    crossDomain: true,
-    success: function(data) {
-        console.log(data);
-        callback(data);
-       
-    },
-    error: function(xhr, status, err) {
-        console.error(url, status, err.toString());
-        callback(null);
-    }
-  });
-  }

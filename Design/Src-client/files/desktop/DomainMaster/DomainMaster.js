@@ -36,6 +36,7 @@ function loadDomainList (domainsList) {
    $('#rowToClone').hide();
 }
 function displayAdd () {
+  $("#error").text("");
   $("#listview").hide();
   $("#addview").show();
   $("#domainname").val('');
@@ -83,20 +84,11 @@ if(domainName == ''){
     }
     mirror.updateDomain("UpdateDomain", updateDomainDetail, success, failure);
   }
-  var options = JSON.stringify(domains_data);
-  ajaxCall(domain_url, options, function (data) {
-    if(data[0] == 'success'){
-      $("#listview").show();
-      $("#addview").hide();
-      getDomains ();
-    }else{
-      $("#error").text(data[0]);
-    }
-  });
 }
 }   
 
 function displayEdit (domainId,domainName) {
+  $("#error").text("");
   $("#listview").hide();
   $("#addview").show();
   $("#domainname").val(domainName);
@@ -127,15 +119,10 @@ function getDomains () {
 function filter (term, cellNr){
   var filterkey = term.value.toLowerCase();
   var filteredList=[];
-  for(var i in tempDomainList) {
-    domainList = tempDomainList[i];
-    for(var entity in domainList) {
-      domainId = domainList[entity]["domain_id"];
-      domainName = domainList[entity]["domain_name"];
-      isActive = domainList[entity]["is_active"];
-      if (~domainName.toLowerCase().indexOf(filterkey)) filteredList.push(tempDomainList[i]);
+    for(var entity in tempDomainList) {
+      domainName = tempDomainList[entity]["domain_name"];
+      if (~domainName.toLowerCase().indexOf(filterkey)) filteredList.push(tempDomainList[entity]);
     }
-  }
   loadDomainList(filteredList);
 }
 
