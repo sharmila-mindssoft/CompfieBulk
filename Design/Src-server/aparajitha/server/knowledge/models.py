@@ -276,6 +276,11 @@ class CountryList(object) :
             {"countries": self.countryList}
         ]
 
+    @classmethod
+    def getCountryList(self) :
+        country = CountryList()
+        return country.countryList
+
     def __repr__(self) :
         return str(self.toStructure())
 
