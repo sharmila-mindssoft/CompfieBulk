@@ -126,7 +126,7 @@ function loadUserList(usersList) {
 			$("#error").text("Country Required");
 		} else {
 			if($("#userid").val() == '') {
-				saveUserDetail = [emailId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,domain];
+				saveUserDetail = [emailId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,country,domain];
 				function success(status,data) {
 					if(status == 'SaveUserSuccess') {
 						GetUsers();
@@ -142,7 +142,7 @@ function loadUserList(usersList) {
 				}
 				mirror.saveAdminUser("AdminAPI", saveUserDetail, success, failure);
 			} else {
-				updateUserDetail = [userId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,domain];
+				updateUserDetail = [userId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,country,domain];
 				function success(status,data){
 					if(status == 'UpdateUserSuccess') {
 						GetUsers();
@@ -180,6 +180,7 @@ function loadUserList(usersList) {
 				var userGroupval;
 				var designation = usersList[entity]["designation"];
 				var domain = usersList[entity]["domain_ids"]; 
+				var country = usersList[entity]["country_ids"];
 
 				var emailId = usersList[entity]["email_id"];
 				for(var k in userGroupsList){
@@ -200,6 +201,10 @@ function loadUserList(usersList) {
 				$("#domain").val(domain);
 				var editdomainval = domain.split(",");
 				$("#domainselected").val(editdomainval.length+" Selected");
+
+				$("#country").val(country);
+				var editcountryval = domain.split(",");
+				$("#countryselected").val(editcountryval.length+" Selected");
 				$("#emailid").val(emailId);
 				break;
 			}
