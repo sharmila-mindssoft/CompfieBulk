@@ -27,8 +27,8 @@ class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
             if userId is None :
                 response = PossibleError("InvalidSessionToken")
             else :
-                if request[0] == "SaveClient" :
-                    response = SaveClient(request[1], userId)
+                if request[0] == "SaveClientGroup" :
+                    response = SaveClientGroup(request[1], userId)
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 

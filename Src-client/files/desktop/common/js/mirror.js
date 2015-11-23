@@ -432,33 +432,49 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    // Client Master
+    // Client Group Master
 
-    function saveClient(callerName, callback, failure_callback) {
+    function saveClientGroup(callerName, callback, failure_callback) {
        
         var request = [
-            "SaveClient",
+            "SaveClientGroup",
             {
-                "group_company": {
-                    "client_id":0,
-                    "group_name":"TVS Groups"
-                },
-                "business_group": {},
-                "legal_entity": {},
-                "division": {},
-                "logo": "url",
-                "domain_ids": [1,2],
-                "username": "username",
-                "no_of_licence": 10,
-                "contract_from": "20/11/2016",
-                "contract_to": "19/11/2017",
-                "total_disk_space": 1.5,
-                "is_sms_subscribed": 1,
-                "country_wise_units": [
+                "group_name": "TVS Groups",
+                "country_ids": [1,2],
+                "domain_ids":[3,4],
+                "logo" : "/logo.png",
+                "contract_from": "25/12/2015",
+                "contract_to": "24/12/2016",
+                "incharge_persons": [5,6,7],
+                "no_of_user_licence": 10,
+                "file_space": 4.5,
+                "is_sms_subscribed": 0,
+                "email_id": "tvsgroups@domain.com",
+                "date_configurations":[
                     {
-                        "country_id" : 1,
-                        "units" : [{},]
+                        "country_id": 1,
+                        "domain_id": 3,
+                        "period_from": 4,
+                        "period_to": 3
                     },
+                    {
+                        "country_id": 1,
+                        "domain_id": 4,
+                        "period_from": 4,
+                        "period_to": 3
+                    },
+                    {
+                        "country_id": 2,
+                        "domain_id": 3,
+                        "period_from": 1,
+                        "period_to": 12
+                    },
+                    {
+                        "country_id": 2,
+                        "domain_id": 4,
+                        "period_from": 1,
+                        "period_to": 12
+                    }
                 ]
             }
         ];
@@ -507,7 +523,7 @@ function initMirror() {
         changeAdminUserStatus: changeAdminUserStatus,
         getAdminUserList: getAdminUserList,
 
-        saveClient: saveClient
+        saveClientGroup: saveClientGroup
 
     }
 
