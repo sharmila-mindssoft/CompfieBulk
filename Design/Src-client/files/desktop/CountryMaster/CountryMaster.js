@@ -74,7 +74,7 @@ function loadData(countriesList){
 			tableName.appendChild(clone);
 			sno = sno + 1;
 		}
-		$('#tableRow').remove();
+		$('#tableRow').hide();
 	}
 }
 
@@ -101,11 +101,15 @@ $("#submit").click(function(){
 		mirror.saveCountry("SaveCountry", countryNameValue, success, failure);
 	}
 	else{		
-		//countryVal=[countryIdValue, countryNameValue];
 		function success(status, data){
-			$("#country-add").hide();
-  			$("#country-view").show();
-  			initialize();
+			if(status == 'success') {
+				$("#country-add").hide();
+	  			$("#country-view").show();
+	  			initialize();
+  			}
+  			if(status == 'CountryNameAlreadyExists') {
+  				$(".error-message").html(status);
+  			}	
 		}
 		function failure(status, data){
 		}

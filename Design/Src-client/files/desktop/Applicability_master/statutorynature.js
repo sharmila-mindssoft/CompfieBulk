@@ -82,9 +82,14 @@ $("#btnStatutoryNatureSubmit").click(function(){
 	}
 	else{
 		function success(status, data){
-			$("#statutoryNatureAdd").hide();
-  			$("#statutoryNatureView").show();
-  			initialize();
+			if(status == 'success') {
+				$("#statutoryNatureAdd").hide();
+  				$("#statutoryNatureView").show();
+  				initialize();
+  			}
+  			if(status == 'StatutoryNatureNameAlreadyExists') {
+  				$(".error-message").html(status);
+  			}	
 		}
 		function failure(status, data){
 		}
@@ -131,7 +136,7 @@ function filter (term, cellNr){
 	var suche = term.value.toLowerCase();
 	var table = document.getElementById("tableStatutoryNatureList");
 	var ele;
-	for (var r = 1; r < table.rows.length; r++){
+	for (var r = 0; r < table.rows.length; r++){
 		ele = table.rows[r].cells[cellNr].innerHTML.replace(/<[^>]+>/g,"");
 		if (ele.toLowerCase().indexOf(suche)>=0 )
 			table.rows[r].style.display = '';
