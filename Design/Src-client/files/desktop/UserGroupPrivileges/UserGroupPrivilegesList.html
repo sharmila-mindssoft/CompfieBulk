@@ -56,8 +56,8 @@
           <div class="single-column-field-label">Category Name:<span class="mandatory">*</span></div>
           <div class="single-column-field-input">
             <select class="input-box" id="categoryName" name="categoryName">
-              <option value="Knowledge">Knowledge Team </option>
-              <option value="Techno">Techno Functional Team</option>
+              <option value="knowledge">Knowledge Team </option>
+              <option value="techno">Techno Functional Team</option>
             </select>
           </div>
         </div>
@@ -66,16 +66,17 @@
         <input type="submit" name="cancel" value="Show" class="btn-submit" id="btnUserGroupShow">
       </div>
       <div class="clearfix"></div>
+      <div id="formList">
       <div class="grid-table" style="overflow-y:scroll; height:240px;">
         <table>
           <tr align="left">
             <th><input type="checkbox"></th>
             <th>Form Name</th>
           </tr>
-          <tbody id="tableUserGroupList">
-          <tr id="tableRow">
-            <td><input type="checkbox"></td>
-            <td>Domain Master</td>
+          <tbody id="tableFormList">
+          <tr id="tableRowFormList">
+            <td></td>
+            <td></td>
           </tr>
           </tbody>
           <!-- 
@@ -181,12 +182,12 @@
         </table>
       </div>
       <div class="submit-button-container">
-
         <br>
         <input type="reset" name="cancel" value="Cancel" class="btn-cancel" id="btnUserGroupCancel" >
         &nbsp;&nbsp;
         <input type="submit" name="submit" value="Submit" class="btn-submit">
       </div>
+      </div><!-- End Form List -->
     </div>
   </div>
 </div>

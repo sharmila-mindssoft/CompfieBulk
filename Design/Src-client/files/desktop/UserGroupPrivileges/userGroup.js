@@ -5,30 +5,25 @@ $(function() {
 $("#btnUserGroupAdd").click(function(){
 	$("#userGroupAdd").show();
 	$("#userGroupView").hide();
-	//$("#countryName").val('');
-	//$("#countryId").val('');
+	$("#formList").hide();
   	$(".error-message").html('');
-  	mirror.getAdminUserGroupList("AdminAPI", success, failure);
+  	$("#groupName").val('');
 	function success(status, data){
-		for(var i in data){
-			loadsuccessdata(data['user_groups'])
-		}
+		loadUserGroupdata(data['user_groups']);		
 	}
 	function failure(status, data){
-		for(var i in data){
-			//alert(data[i]);
-		}
+		
 	}
+	mirror.getAdminUserGroupList("AdminAPI", success, failure);
 });
 $("#btnUserGroupCancel").click(function(){
 	$("#userGroupAdd").hide();
 	$("#userGroupView").show();
 });
 function initialize(){
-	mirror.getAdminUserGroupList("AdminAPI", success, failure);
 	function success(status, data){
 		for(var i in data){
-			loadsuccessdata(data['user_groups'])
+			loadUserGroupdata(data['user_groups'])
 		}
 	}
 	function failure(status, data){
@@ -36,11 +31,11 @@ function initialize(){
 			//alert(data[i]);
 		}
 	}
-
+	mirror.getAdminUserGroupList("AdminAPI", success, failure);
 }
 
-function loadsuccessdata(userGroupList){
-	
+function loadUserGroupdata(userGroupList){
+	// saveUserGroupDetail = ["Knowledge User 1", "Knowledge" , "11,53"];
  	$('#tableRow').show();
   	$("#tableUserGroupList").find("tr:gt(0)").remove();
   	var sno=1;
@@ -81,40 +76,65 @@ function loadsuccessdata(userGroupList){
 $("#btnUserGroupShow").click(function(){
 	var groupNameVal = $("#groupName").val();
 	var categoryNameVal = $("#categoryName").val();
+
 	if(groupNameVal=='' || groupNameVal==null){
 		$(".error-message").html('Group Name Required');
 	}
 	else{
-		mirror.getAdminUserGroupList("AdminAPI", success, failure);
+		$(".error-message").html('');
+		$("#formList").show();
 		function success(status, data){
-			for(var i in data){
-				loadFormList(data['forms'])
-			}
+			loadFormList(data['forms'], categoryNameVal)
+		
 		}
+		function failure(status, data){
+		}
+		mirror.getAdminUserGroupList("AdminAPI", success, failure);
 	}
 });
-function loadFormList(formList){
-	for(var catgList in formList){
-		
+function loadFormList(formList,categoryNameVal){
+	var i_incre;
+	var tableFormList=document.getElementById("tableFormList");
+	var tableRowFormList=document.getElementById("tableRowFormList");
+	
+	
+	console.log(formList[categoryNameVal]);
+	for(var list in formList[categoryNameVal]){
+		var cloneFormList=tableRowFormList.cloneNode(true);
+		cloneFormList.id = i_incre; 
+		cloneFormList.cells[0].innerHTML = '<input type="checkbox" name="formListChkBox" >';
+		cloneFormList.cells[1].innerHTML = list;
+		tableFormList.appendChild(cloneFormList);	
+		console.log(list);
 	}
+	// for(var catgList in formList){		
+	// //	console.log(catgList);
+	// 	for(var list in catgList){
+	// 		console.log(list);
+	// 		// console.log(list['masters']);
+			
+	// 	}
+	// }
+	// //$('#tableRowFormList').hide();
+	// cloneFormList.id = i_incre; 
+	// 		cloneFormList.cells[0].innerHTML = '<input type="checkbox" name="formListChkBox" >';
+	// 		cloneFormList.cells[1].innerHTML = catgList;
+	// 		tableFormList.appendChild(cloneFormList);	
 }
-function userGroupEdit(countryId, countryName){
-	$("#country-add").show();
-	$("#country-view").hide();
-	$("#countryName").val(countryName);
-  	$("#countryId").val(countryId);
+function userGroupEdit(userGroupId, userGroupName){
+	$("#userGroupAdd").show();
+	$("#userGroupView").hide();
+	$("#userGroupName").val(userGroupName);
+  	$("#userGroupId").val(userGroupId);
 }
 function userGroupActive(userGroupId, isActive){
   	$("#userGroupId").val( userGroupId);
-  	mirror.changeAdminUserGroupStatus("AdminAPI", userGroupId, isActive, success, failure);
-
-	function success(status, data){
+  	function success(status, data){
 		initialize();
 	}
 	function failure(status, data){
-		
 	}
-
+	mirror.changeAdminUserGroupStatus("AdminAPI", userGroupId, isActive, success, failure);
 }
 
 function filter (term, cellNr){
