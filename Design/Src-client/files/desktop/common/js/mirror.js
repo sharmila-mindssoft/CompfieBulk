@@ -351,7 +351,7 @@ function initMirror() {
     function saveAdminUser(callerName, userDetail, callback, failure_callback) {
        if (isNull(userDetail))
             return null;
-        else if (userDetail.length != 8)
+        else if (userDetail.length != 9)
             return null;
         $.each(userDetail, function( index, value ) {
             if (isNull(value))
@@ -364,7 +364,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var domainIds= userDetail[7].split(',') ;
+        var countryIds= userDetail[7].split(',') ;
+        var domainIds= userDetail[8].split(',') ;
         var request = [
             "SaveUser",
             {
@@ -375,6 +376,7 @@ function initMirror() {
                 "contact_no": contactNo,
                 "address": address, 
                 "designation": designation,
+                "country_ids": countryIds,
                 "domain_ids": domainIds
             }
         ];
@@ -384,7 +386,7 @@ function initMirror() {
     function updateAdminUser(callerName, userDetail, callback, failure_callback) {
         if (isNull(userDetail))
             return null;
-        else if (userDetail.length != 8)
+        else if (userDetail.length != 9)
             return null;
         $.each(userDetail, function( index, value ) {
             if (isNull(value))
@@ -397,7 +399,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var domainIds= userDetail[7].split(',') ;
+        var countryIds= userDetail[7].split(',') ;
+        var domainIds= userDetail[8].split(',') ;
         var request = [
             "UpdateUser",
             {
@@ -408,6 +411,7 @@ function initMirror() {
                 "contact_no": contactNo,
                 "address": address, 
                 "designation": designation,
+                "country_ids": countryIds,
                 "domain_ids": domainIds
             }
         ];
@@ -422,6 +426,55 @@ function initMirror() {
             {
                 "user_id": userId,
                 "is_active" : isActive 
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    // Client Group Master
+
+    function saveClientGroup(callerName, callback, failure_callback) {
+       
+        var request = [
+            "SaveClientGroup",
+            {
+                "group_name": "TVS Groups",
+                "country_ids": [1,2],
+                "domain_ids":[3,4],
+                "logo" : "/logo.png",
+                "contract_from": "25/12/2015",
+                "contract_to": "24/12/2016",
+                "incharge_persons": [5,6,7],
+                "no_of_user_licence": 10,
+                "file_space": 4.5,
+                "is_sms_subscribed": 0,
+                "email_id": "tvsgroups@domain.com",
+                "date_configurations":[
+                    {
+                        "country_id": 1,
+                        "domain_id": 3,
+                        "period_from": 4,
+                        "period_to": 3
+                    },
+                    {
+                        "country_id": 1,
+                        "domain_id": 4,
+                        "period_from": 4,
+                        "period_to": 3
+                    },
+                    {
+                        "country_id": 2,
+                        "domain_id": 3,
+                        "period_from": 1,
+                        "period_to": 12
+                    },
+                    {
+                        "country_id": 2,
+                        "domain_id": 4,
+                        "period_from": 1,
+                        "period_to": 12
+                    }
+                ]
             }
         ];
         apiRequest(callerName, request, callback, failure_callback);
@@ -467,7 +520,9 @@ function initMirror() {
         saveAdminUser: saveAdminUser,
         updateAdminUser: updateAdminUser,
         changeAdminUserStatus: changeAdminUserStatus,
-        getAdminUserList: getAdminUserList
+        getAdminUserList: getAdminUserList,
+
+        saveClientGroup: saveClientGroup
 
     }
 
