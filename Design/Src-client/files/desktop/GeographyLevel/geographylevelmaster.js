@@ -1,33 +1,28 @@
-var tempStatutoryLevelsList;
+var countryList;
+var geographyLevelsList;
+var tempGeographyLevelsList;
 
 $(document).ready(function(){
-	GetStatutoryLevels()
+	GetGeographyLevels()
 });
 
-function GetStatutoryLevels(){
+function GetGeographyLevels(){
 	function success(status,data){
-		tempStatutoryLevelsList = data["statutorylevels"];
-		statutoryLevelsList = data["statutorylevels"];
-
-		loadStatutoryLevelList(statutoryLevelsList);
+		tempGeographyLevelsList = data["geography_levels"];
+		geographyLevelsList = data["geography_levels"];
+		countryList = data["countries"];
+		loadGeographyLevelsList(geographyLevelsList);
 	}
 	function failure(data){
 	}
 	mirror.getAdminUserList("AdminAPI", success, failure);
 }
 
+function loadGeographyLevelsList(geographyLevelsList) {
 
-function loadStatutoryLevelList(statutoryLevelsList) {
-	  var j = 1;
-	  var imgName = '';
-    var passStatus = '';
-    var userId = 0;
-    var employeeName = '';
-    var isActive = 0;
-    var designation = '';
-    var userList;
+alert(geographyLevelsList);
 
-    $('#rowToClone').show();
+    /*$('#rowToClone').show();
     $("#tableToModify").find("tr:gt(0)").remove();
     for(var entity in usersList) {
     	userId = usersList[entity]["user_id"];
@@ -61,5 +56,5 @@ function loadStatutoryLevelList(statutoryLevelsList) {
       	 table.appendChild(clone);
       	 j = j + 1;
       	}
-      	$('#rowToClone').hide();
+      	$('#rowToClone').hide();*/
       }
