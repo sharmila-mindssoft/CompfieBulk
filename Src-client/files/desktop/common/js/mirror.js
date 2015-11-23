@@ -255,10 +255,48 @@ function initMirror() {
     }
 
     function getStatutoryNatureList(callerName, callback, failure_callback) {
-        var request = ["GetIStatutoryNatures", {}];
+        var request = ["GetStatutoryNatures", {}];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    // Geography Levels 
+    function getGeographyLevels(callerName, callback, failure_callback) {
+        var request = ["GetGeographyLevels", {}];
+        apiRequest(callerName, request, callback, failure_callback);   
+    }
+
+    function saveAndUpdateGeographyLevels(callerName, countryId, levels, callback, failure_callback) {
+        if (statutoryNatureName == null)
+            return null;
+        var request = [
+            "SaveGeographyLevel",
+            { 
+                "country_id" : countryId,
+                "levels" : levels
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    // Statutory Levels
+    function getStatutoryLevels(callerName, callback, failure_callback) {
+        var request = ["GetStatutoryLevels", {}];
+        apiRequest(callerName, request, callback, failure_callback);   
+    }
+
+    function saveAndUpdateStatutoryLevels(callerName, countryId, domainId, levels, callback, failure_callback) {
+        if (statutoryNatureName == null)
+            return null;
+        var request = [
+            "SaveStatutoryLevel",
+            { 
+                "country_id" : countryId,
+                "domain_id" : domain_id,
+                "levels" : levels
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
     // Admin User Group Master
     function isNull(value){
         if (value == null)
@@ -352,7 +390,7 @@ function initMirror() {
     function saveAdminUser(callerName, userDetail, callback, failure_callback) {
        if (isNull(userDetail))
             return null;
-        else if (userDetail.length != 8)
+        else if (userDetail.length != 9)
             return null;
         $.each(userDetail, function( index, value ) {
             if (isNull(value))
@@ -365,7 +403,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var domainIds= userDetail[7].split(',') ;
+        var countryIds= userDetail[7].split(',') ;
+        var domainIds= userDetail[8].split(',') ;
         var request = [
             "SaveUser",
             {
@@ -376,6 +415,7 @@ function initMirror() {
                 "contact_no": contactNo,
                 "address": address, 
                 "designation": designation,
+                "country_ids": countryIds,
                 "domain_ids": domainIds
             }
         ];
@@ -385,7 +425,7 @@ function initMirror() {
     function updateAdminUser(callerName, userDetail, callback, failure_callback) {
         if (isNull(userDetail))
             return null;
-        else if (userDetail.length != 8)
+        else if (userDetail.length != 9)
             return null;
         $.each(userDetail, function( index, value ) {
             if (isNull(value))
@@ -398,7 +438,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var domainIds= userDetail[7].split(',') ;
+        var countryIds= userDetail[7].split(',') ;
+        var domainIds= userDetail[8].split(',') ;
         var request = [
             "UpdateUser",
             {
@@ -409,6 +450,7 @@ function initMirror() {
                 "contact_no": contactNo,
                 "address": address, 
                 "designation": designation,
+                "country_ids": countryIds,
                 "domain_ids": domainIds
             }
         ];
@@ -492,6 +534,10 @@ function initMirror() {
         updateStatutoryNature: updateStatutoryNature,
         changeStatutoryNatureStatus: changeStatutoryNatureStatus,
         getStatutoryNatureList: getStatutoryNatureList,
+        getGeographyLevels: getGeographyLevels,
+        saveAndUpdateGeographyLevels: saveAndUpdateGeographyLevels,
+        getStatutoryLevels: getStatutoryLevels,
+        saveAndUpdateStatutoryLevels: saveAndUpdateStatutoryLevels,
 
         saveAdminUserGroup: saveAdminUserGroup,
         updateAdminUserGroup: updateAdminUserGroup,

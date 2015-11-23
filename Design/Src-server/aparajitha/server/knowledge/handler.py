@@ -59,7 +59,7 @@ class APIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "ChangeStatutoryNatureStatus" :
                     response = ChangeStatutoryNatureStatus(request, userId)
                 elif request[0] == "GetStatutoryLevels" :
-                    response = StatutoryLevelList()
+                    response = StatutoryLevelsList()
                 elif request[0] == "SaveStatutoryLevel" :
                     response = SaveStatutoryLevel(request, userId)
                 elif request[0] == "GetGeographyLevels" :
