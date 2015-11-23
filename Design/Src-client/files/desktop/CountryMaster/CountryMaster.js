@@ -33,18 +33,25 @@ function ajaxCall (url, options, callback) {
 	});
 }
 function initialize(){
-	var countries_url = "http://192.168.1.9:8080/GetCountries";
-	var countries_data = {
-		"session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-		"request" : [
-			"GetCountries",
-			{}
-		]
-	};
-	var options = JSON.stringify(countries_data);	
-	ajaxCall(countries_url, options, function (data) {
+	mirror.getCountryList("getCountryList", success, failure);
+	function success(status, data){
 		loadData(data[1]);
-	});
+	}
+	function failure(status, data){
+
+	}
+	// var countries_url = "http://192.168.1.9:8080/GetCountries";
+	// var countries_data = {
+	// 	"session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
+	// 	"request" : [
+	// 		"GetCountries",
+	// 		{}
+	// 	]
+	// };
+	// var options = JSON.stringify(countries_data);	
+	// ajaxCall(countries_url, options, function (data) {
+	// 	loadData(data[1]);
+	// });
 }
 
 function loadData(countriesList){
@@ -93,24 +100,15 @@ $("#submit").click(function(){
 		$(".error-message").html('Country Name Required');
 	}
 	else if(countryIdValue==''){
-		var countries_url = "http://192.168.1.9:8080/SaveCountry";
- 		var countries_data = {
- 			"session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-          	"request" : [
-          		"SaveCountry",{ "country_name": countryNameValue }
-          	]
-    	};
-    	var options = JSON.stringify(countries_data);
-  		ajaxCall(countries_url, options, function (data) {
-  			if(data[0] == 'success'){
-			    $("#country-add").hide();
-  				$("#country-view").show();
-  				initialize();
-    		}
-    		else{
-      			$(".error-message").html(data[0]);
-    		}
-		});
+		mirror.SaveCountry("SaveCountry", success, failure);
+		function success(status, data){
+		    $("#country-add").hide();
+	  		$("#country-view").show();
+	  		initialize();
+	    }
+		function failure(status, data){
+			$(".error-message").html(data[0]);
+		}
 	}
 	else{
 		var countries_url = "http://192.168.1.9:8080/UpdateCountry";

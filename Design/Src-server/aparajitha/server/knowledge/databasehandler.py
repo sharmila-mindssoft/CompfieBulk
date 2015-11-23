@@ -13,7 +13,7 @@ class DatabaseHandler(object) :
         self.mysqlHost = "localhost"
         self.mysqlUser = "root"
         self.mysqlPassword = "123456"
-        self.mysqlDatabase = "aparajitha_knowledge"
+        self.mysqlDatabase = "mirror_knowledge"
 
     def dbConnect(self) :
         return mysql.connect(
