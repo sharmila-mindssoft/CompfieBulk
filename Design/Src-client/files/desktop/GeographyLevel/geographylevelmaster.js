@@ -15,7 +15,7 @@ function GetGeographyLevels(){
 	}
 	function failure(data){
 	}
-	mirror.getAdminUserList("AdminAPI", success, failure);
+	mirror.getGeographyLevels("GetGeographyLevels", success, failure);
 }
 
 function loadGeographyLevelsList(geographyLevelsList) {
