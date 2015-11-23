@@ -2,9 +2,10 @@
 {% block content %}
 
 <style type="text/css">
+/* Autocomplete textbox Style */
 .ac-textbox li
 {
-list-style-type:none; line-height:16px;
+list-style-type:none; line-height:25px;
 }
 .ac-textbox ul {
   border:1px solid gray;
@@ -13,19 +14,50 @@ list-style-type:none; line-height:16px;
   background: #ffffff;
 }
 .ac-textbox ul li {
-  padding-bottom: 0.5em;
-  font-size: 0.9em;
-  padding-top: 0.3em;
+  font-size: 0.8em;
   padding-right: 0.3em;
-  padding-left:1.5em;
+  padding-left:0.3em;
+  vertical-align: center;
   cursor: pointer;
 }
 .ac-textbox ul li:hover{
   background: #EAE8E8;  
 }
-.ac-textbox ul li.active_selectbox {
+
+/* Autocomplete selectbox Style */
+.ac-selectbox li
+{
+list-style-type:none; line-height:33px;
+}
+.ac-selectbox ul {
+  border:1px solid gray;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+}
+.ac-selectbox ul li {
+  font-size: 0.8em;
+  padding-right: 0.3em;
+  padding-left:1.8em;
+  vertical-align: center;
+  cursor: pointer;
+}
+.ac-selectbox ul li:hover{
+  background: #EAE8E8;  
+}
+.ac-selectbox ul li.active_selectbox {
+  background: url(/files/desktop/common/images/tick_1.png) no-repeat left center;
+  background-size: 1.5em;
+  border-right: 3px solid #f1e9f6
+}
+.ac-selectbox ul li.active_selectbox:hover {
   background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left center;
-  background-size: 1.3em;
+  background-size: 1.5em;
+  border-right: 3px solid #f1e9f6
+}
+.ac-selectbox ul li.active_selectbox_country {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left center;
+  background-size: 1.5em;
   border-right: 3px solid #f1e9f6
 }
 </style>
@@ -33,7 +65,6 @@ list-style-type:none; line-height:16px;
 
 <script type="text/javascript" src="/files/desktop/User/user.js"></script>
 <script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
-
 <div id="listview" style="display:block">
 <div class="content-container width50">
   <div class="content-area">
@@ -46,7 +77,7 @@ list-style-type:none; line-height:16px;
     
       <table>
         <tr>
-          <th >#</th>
+          <th align="center">#</th>
           <th align="left">Employee</th>
           <th align="left">User Group</th>
           <th align="left">Designation</th>
@@ -71,7 +102,7 @@ list-style-type:none; line-height:16px;
 
         <tbody id="tableToModify">
           <tr id="rowToClone">
-          <td></td>
+          <td align="center"></td>
           <td></td>
           <td></td>
           <td></td>
@@ -92,7 +123,7 @@ list-style-type:none; line-height:16px;
           <div class="add-container-heading">Users<span class="error-message" id="error" ></span></div>
            <div class="input-row-left">
            
-              <div class="input-row">
+            <div class="input-row">
                 <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
                 <div class="field-input">
                 <input type="text" id="employeename" class="input-box" value="" >
@@ -105,72 +136,93 @@ list-style-type:none; line-height:16px;
               </div>
               <div class="input-row">
                 <div class="field-label">Address:</div>
-                <div class="field-input"><textarea id="address" class="input-box" style="height:70px;"></textarea></div>
+                <div class="field-input"><textarea class="input-box" id="address" style="height:70px;"></textarea></div>
               </div>
-              <div class="input-row" style="padding-bottom:0px;">
-                <div class="field-label">Contact No.:<span class="mandatory">*</span></div>
-                <div class="field-input"><input type="text" id="countrycode" class="input-box countrycode" value="+91"> <input type="text" id="areacode" class="input-box areacode" value="" > <input type="text" id="contactno" class="input-box mobile" value=""></div>
-              </div>
-              <div class="input-row">
-                <div class="field-label">&nbsp;</div>
-                <div class="field-input">
-                <span style="font-size:10px;">[+91 452 1234567]</span>
-                </div>
-              </div>
+              
             </div>
             <div class="input-row-right">
-            
-              <div class="input-row">
-                <div class="field-label">User Group:<span class="mandatory">*</span></div>
-                <div class="field-input">
-                
-
-                <input type="text" class="input-box icon-autocomplete" id="usergroupval" value=""  onkeyup="loadauto_text(this.value)"> 
-              <input type="hidden" id="usergroup"> 
-             <div id="autocompleteview" class="ac-textbox" style="display:none;">
-                <ul id="ulist_text" onclick="hidemenu();" style="width:195px;"></ul> 
-            </div>
-
-
-                </div>
-              </div>
-              <div class="input-row">
-                <div class="field-label">Designation:</div>
-                <div class="field-input"><input type="text" id="designation" class="input-box" value=""></div>
-              </div>
-               <div class="input-row" >
-                <div class="field-label">Domain:<span class="mandatory">*</span></div>
-                <div class="field-input"> 
-                 <input type="hidden" id="domain"> 
-                <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto()"> 
-             <div id="selectboxview" class="ac-textbox" style="display:none;">
-                <ul id="ulist" onmouseleave="hidemenu();" style="width:195px;"></ul> 
-            </div>
-
-
-                </div>
-              </div>
              
               <div class="input-row" style="padding-bottom:0px;">
                 <div class="field-label">Email ID:<span class="mandatory">*</span></div>
                 <div class="field-input"><input type="text" id="emailid" class="input-box" placeholder="Email ID" value="">
                 </div>
               </div>
+
              
-              <div class="input-row">
+              <div class="input-row" style="padding-bottom:0px;">
                 <div class="field-label">&nbsp;</div>
                 <div class="field-input">
-                <span style="font-size:10px;">[This will be used as the username for user account.]</span>
+                <span style="font-size:10px;">[This will be used as the username for user acc.]</span>
                 </div>
               </div>
+              <div class="input-row" style="padding-bottom:0px;">
+                <div class="field-label">Contact No.:<span class="mandatory">*</span></div>
+                <div class="field-input"><input type="text" id="countrycode" class="input-box countrycode" value="+91"> <input type="text" id="areacode" class="input-box areacode" value="" > <input type="text" id="contactno" class="input-box mobile" value=""></div>
+              </div>
              
+               <div class="input-row" style="padding-bottom:0px;">
+                <div class="field-label">&nbsp;</div>
+                <div class="field-input">
+                <span style="font-size:10px;">[+91 452 1234567]</span>
+                </div>
+              </div>
+                 <div class="input-row">
+                <div class="field-label">User Group:<span class="mandatory">*</span></div>
+                <div class="field-input">
+
+                  <input type="text" class="input-box icon-autocomplete" id="usergroupval" value=""  onkeyup="loadauto_text(this.value)"> 
+              <input type="hidden" id="usergroup"> 
+             <div id="autocompleteview" class="ac-textbox" style="display:none;">
+                <ul id="ulist_text" onclick="hidemenu();" style="width:195px;"></ul> 
             </div>
+                
+                </div>
+              </div>
+              <div class="input-row">
+                <div class="field-label">Designation:</div>
+                <div class="field-input"><input type="text" id="designation" class="input-box" value="Manager"></div>
+              </div>
+              
+               </div>
+             <h2>Settings</h2>
+              <div class="input-row-left">             
+             <div class="input-row" >
+                <div class="field-label">Countries:<span class="mandatory">*</span></div>
+                <div class="field-input">  
+
+                <input type="hidden" id="country"> 
+                <input type="text" class="input-box icon-autocomplete" id="countryselected" value="" readonly="readonly" onclick="loadautocountry()"> 
+             <div id="selectboxview-country" class="ac-selectbox" style="display:none;">
+                <ul id="ulist-country" onmouseleave="hidemenu();" style="width:195px;"></ul> 
+            </div>
+                </div>
+              </div>
+              </div>
+              <div class="input-row-right">
+           
+              <div class="input-row" >
+                <div class="field-label">Domain:<span class="mandatory">*</span></div>
+                <div class="field-input">  
+                <input type="hidden" id="domain"> 
+                <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto()"> 
+             <div id="selectboxview" class="ac-selectbox" style="display:none;">
+                <ul id="ulist" onmouseleave="hidemenu();" style="width:195px;"></ul> 
+            </div>
+
+                </div>
+              </div>
+              </div>
+             
+           
             <div class="submit-button-container" style="text-align:left;">
             </div>
             <div class="submit-button-container">
-              <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/user/list'">&nbsp;&nbsp;
+             <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/user/list'">&nbsp;&nbsp;
               <input type="submit" name="submit" value="Submit" class="btn-submit" onclick="saveRecord()">
-            </div>
+
+              </div>
+              </div>
+            </div> 
           </div>
         </div>
       </div>
