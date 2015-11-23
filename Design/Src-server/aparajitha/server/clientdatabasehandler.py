@@ -14,7 +14,7 @@ class ClientDatabaseHandler(object) :
     def __init__(self,  databaseName) :
         self.mysqlHost = "localhost"
         self.mysqlUser = "root"
-        self.mysqlPassword = "minds"
+        self.mysqlPassword = "123456"
         self.mysqlDatabase = databaseName
 
     def dbConnect(self) :
