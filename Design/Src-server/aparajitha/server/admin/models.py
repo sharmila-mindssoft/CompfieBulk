@@ -197,25 +197,21 @@ class User(object) :
         return DatabaseHandler.instance().generateNewId(self.mainTblName, "user_id")
 
     def isDuplicateEmail(self):
-        print "inside isDuplicateEmail"
         condition = "username ='"+self.emailId+\
                 "' AND user_id != '"+str(self.userId)+"'"
         return DatabaseHandler.instance().isAlreadyExists(self.mainTblName, condition)
 
     def isDuplicateEmployeeCode(self):
-        print "inside isDuplicateEmployeeCode"
         condition = "employee_code ='"+self.employeeCode+\
                 "' AND user_id != '"+str(self.userId)+"'"
         return DatabaseHandler.instance().isAlreadyExists(self.detailTblName, condition)
 
     def isDuplicateContactNo(self):
-        print "inside isDuplicateContactNo"
         condition = "contact_no ='"+self.contactNo+\
                 "' AND user_id != '"+str(self.userId)+"'"
         return DatabaseHandler.instance().isAlreadyExists(self.detailTblName, condition)
 
     def isIdInvalid(self):
-        print "inside isIdInvalid"
         condition = "user_id = '"+str(self.userId)+"'"
         return not DatabaseHandler.instance().isAlreadyExists(self.mainTblName, condition)
 
@@ -225,8 +221,8 @@ class User(object) :
         return rows[0][0]
 
     def save(self, sessionUser):
-        print "Entered save user iin models"
         currentTimeStamp = getCurrentTimeStamp()
+
         mainTblColumns = "user_id, username, password, created_on,created_by, updated_on, updated_by"
         mainTblValuesList = [ self.userId, self.emailId, generatePassword(), currentTimeStamp,sessionUser,
                             currentTimeStamp,sessionUser]
@@ -249,7 +245,6 @@ class User(object) :
             return False
 
     def update(self, sessionUser):
-        print "inside user model update"
         currentTimeStamp = getCurrentTimeStamp()
         detailTblcolumns = [ "user_group_id", "form_type", "employee_name", "employee_code", 
                             "contact_no", "address", "designation", "country_ids", "domain_ids",
@@ -262,7 +257,6 @@ class User(object) :
                                                 detailTblValuesList, condition)
 
     def updateStatus(self, sessionUser):
-        print "inside user model update status"
         assertType(self.userId, IntType)
         assertType(self.isActive, IntType)
         columns = ["is_active", "updated_on" , "updated_by"]

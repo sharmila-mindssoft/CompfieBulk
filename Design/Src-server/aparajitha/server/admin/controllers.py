@@ -5,7 +5,7 @@ import tornado.web
 
 from models import *
 from aparajitha.server.common import *
-from aparajitha.server.knowledge.models import DomainList
+from aparajitha.server.knowledge.models import DomainList, CountryList
 
 __all__ = [
     "UserGroupController",
@@ -14,7 +14,6 @@ __all__ = [
 
 class UserGroupController() :
     def getUserGroupsFormData(self) :
-    	print "inside get user groups form data"
     	knowledgeForms = Form.getForms("Knowledge")
     	technoForms = Form.getForms("Techno")
 
@@ -74,7 +73,6 @@ class UserGroupController() :
 
 class UserController() :
     def saveUser(self, requestData, sessionUser) :
-        print "Entered Save User"
         emailId = JSONHelper.getString(requestData, "email_id")
         userGroupId = JSONHelper.getInt(requestData,"user_group_id")
         employeeName = JSONHelper.getString(requestData,"employee_name")
@@ -132,11 +130,13 @@ class UserController() :
 
     def getUsers(self) :
     	domainList = DomainList.getDomainList()
+        countryList = CountryList.getCountryList()
     	userGroupList = UserGroup.getList()
     	userList = User.getDetailedList()
 
         response_data = {}
         response_data["domains"] = domainList
+        response_data["countries"] = countryList
         response_data["user_groups"] = userGroupList
         response_data["users"] = userList
 
