@@ -12,8 +12,8 @@ class DatabaseHandler(object) :
     def __init__(self) :
         self.mysqlHost = "localhost"
         self.mysqlUser = "root"
-        self.mysqlPassword = "minds"
-        self.mysqlDatabase = "aparajitha_knowledge"
+        self.mysqlPassword = "123456"
+        self.mysqlDatabase = "mirror_knowledge"
 
     def mysqlServerConnect(self):
         return mysql.connect(
