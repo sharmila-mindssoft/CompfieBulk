@@ -112,7 +112,6 @@ class User(object) :
     def __init__(self, userId, emailId, userGroupId, employeeName, 
                 employeeCode, contactNo, address, designation, countryIds,
                 domainIds, isActive) :
-        print "inside user constructor"
         self.userId =  userId if userId != None else self.generateNewUserId()
         self.emailId =  emailId
         self.userGroupId =  userGroupId
