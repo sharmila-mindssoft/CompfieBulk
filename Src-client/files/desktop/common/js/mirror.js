@@ -261,11 +261,30 @@ function initMirror() {
 
     // Geography Levels 
     function getGeographyLevels(callerName, callback, failure_callback) {
+        var request = ["GetGeographyLevels", {}];
+        apiRequest(callerName, request, callback, failure_callback);   
+    }
+
+    function saveAndUpdateGeographyLevels(callerName, countryId, levels, callback, failure_callback) {
+        if (statutoryNatureName == null)
+            return null;
+        var request = [
+            "SaveGeographyLevel",
+            { 
+                "country_id" : countryId,
+                "levels" : levels
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    // Statutory Levels
+    function getStatutoryLevels(callerName, callback, failure_callback) {
         var request = ["GetStatutoryLevels", {}];
         apiRequest(callerName, request, callback, failure_callback);   
     }
 
-    function saveAndUpdateGeographyLevels(callerName, countryId, domainId, levels, callback, failure_callback) {
+    function saveAndUpdateStatutoryLevels(callerName, countryId, domainId, levels, callback, failure_callback) {
         if (statutoryNatureName == null)
             return null;
         var request = [
@@ -278,7 +297,6 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
-
     // Admin User Group Master
     function isNull(value){
         if (value == null)
@@ -518,6 +536,8 @@ function initMirror() {
         getStatutoryNatureList: getStatutoryNatureList,
         getGeographyLevels: getGeographyLevels,
         saveAndUpdateGeographyLevels: saveAndUpdateGeographyLevels,
+        getStatutoryLevels: getStatutoryLevels,
+        saveAndUpdateStatutoryLevels: saveAndUpdateStatutoryLevels,
 
         saveAdminUserGroup: saveAdminUserGroup,
         updateAdminUserGroup: updateAdminUserGroup,
