@@ -12,7 +12,7 @@ class DatabaseHandler(object) :
     def __init__(self) :
         self.mysqlHost = "localhost"
         self.mysqlUser = "root"
-        self.mysqlPassword = "123456"
+        self.mysqlPassword = "minds"
         self.mysqlDatabase = "aparajitha_knowledge"
 
     def mysqlServerConnect(self):
