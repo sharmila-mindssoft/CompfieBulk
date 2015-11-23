@@ -450,7 +450,8 @@ Note :
               		"contact_no": CONTACT_NUMBER,
               		"address": ADDRESS, 
               		"designation": String,
-              		"domain_id": DOMAIN_ID,
+                    "country_ids":[COUNTRY_ID,]
+              		"domain_ids": [DOMAIN_ID,],
               		"is_active": IS_ACTIVE 
             	},
           	]
@@ -469,7 +470,8 @@ Note :
         	"contact_no": CONTACT_NUMBER,
         	"address": ADDRESS, 
         	"designation": String,
-        	"domain_id": DOMAIN_ID
+            "country_ids":[COUNTRY_ID,],
+        	"domain_ids": [DOMAIN_ID,]
       	}
     ]
 
@@ -478,8 +480,8 @@ Note :
   	On Success
 
     [
-    	"SaveUserSuccess",
-      	{}
+      	"SaveUserSuccess",
+        {}
     ]
 
   	Possible Errors
@@ -505,14 +507,14 @@ Note :
       	"UpdateUser",
       	{
         	"user_id": USER_ID,
-        	"email_id": EMAIL_ID,
         	"user_group_id": USER_GROUP_ID,
         	"employee_name": EMPLOYEE_NAME,
         	"employee_code": EMPLOYEE_CODE,
         	"contact_no": CONTACT_NUMBER,
         	"address": ADDRESS, 
         	"designation": String,
-        	"domain_id": DOMAIN_ID
+        	"country_ids":[COUNTRY_ID,],
+            "domain_ids": [DOMAIN_ID,]
       	}
     ]
 
@@ -980,8 +982,11 @@ Note :
         "GetStatutoryLevelsSuccess",
         {
         	"countries": [Country,],
+            "domains": [Domain,],
           	"statutory_levels":{
-            	COUNTRY_ID : [StatutoryLevel,],
+            	COUNTRY_ID : {
+                DOMAIN_ID : [StatutoryLevel,],
+              },
           	}
         }
     ]
@@ -992,10 +997,11 @@ Note :
         "SaveStatutoryLevel",
         {
             "country_id": COUNTRY_ID,
+            "domain_id": DOMAIN_ID,
             "levels": [
             	{
-			      	"level_position": LEVEL_POSITION,
-			      	"level_name": String
+  			      	"level_position": LEVEL_POSITION,
+  			      	"level_name": String
 			    },
             ]
         }
@@ -1007,24 +1013,6 @@ Note :
         "DuplicateStatutoryLevelsExists" ,
         {}  
     ]
-
-#### Update statutory level
-
-    [
-        "UpdateStatutoryLevel",
-        {
-            "country_id": COUNTRY_ID,
-            "levels": [StatutoryLevel,]
-        }
-    ]
-
-    Possible Errors
-
-    [
-        "InvalidStatutoryLevelId" ,
-        {}  
-    ]
-
       
 
 ### KNOWLEDGE USER TRANSACTIONS 
@@ -1265,6 +1253,148 @@ Note :
 
 #  TECHNO FUCTIONAL TEAM
 
+## TECHNO - MANAGER SECTION
+
+### TECHNO MANAGER MASTERS
+
+#### Get Client Groups
+
+    [
+        "GetClientGroups",
+        {}   
+    ]
+
+    On Success
+
+    [
+        "GetClientGroupsSuccess",
+        {
+            "countries":[Country,],
+            "domains":[Domain,],
+            "users":[
+                {
+                    "user_id": USER_ID,
+                    "employee_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                },
+            ]
+            "client_list":[
+                {
+                    "client_id": CLIENT_ID,
+                    "client_name": String,
+                    "incharge_persons":[String,],
+                    "countries": [COUNTRY_ID,],
+                    "domain_ids":[DOMAIN_ID,],
+                    "logo" : URL,
+                    "contract_from": Date,
+                    "contract_to": Date,
+                    "incharge_persons": [USER_ID,],
+                    "no_of_user_licence": int,
+                    "file_space": float,
+                    "is_sms_subscribed": Boolean,
+                    "date_configurations":[ClientConfiguration,],
+                    "username": USERNAME,
+                    "is_active": IS_ACTIVE
+                },
+            ]
+        }
+    ]
+
+#### Save Client Group
+
+    [
+        "SaveClientGroup",
+        {
+            "group_name": String,
+            "country_ids": [COUNTRY_ID,],
+            "domain_ids":[DOMAIN_ID,],
+            "logo" : URL,
+            "contract_from": Date,
+            "contract_to": Date,
+            "incharge_persons": [USER_ID,],
+            "no_of_user_licence": int,
+            "file_space": float,
+            "is_sms_subscribed": Boolean,
+            "date_configurations":[ClientConfiguration,]
+        }
+    ]
+
+    On Success 
+
+    [
+        "SaveClientGroupSuccess",
+        {}
+    ]
+
+    Possible Errors
+
+    [
+        "GroupNameAlreadyExists",
+        {}
+    ]
+
+    [
+        "UsernameAlreadyExists",
+        {}
+    ]
+
+#### Update Client Group
+
+    [
+        "UpdateClientGroup",
+        {
+            "client_id": CLIENT_ID,
+            "group_name": String,
+            "countries": [COUNTRY_ID,],
+            "domain_ids":[DOMAIN_ID,],
+            "logo" : URL,
+            "contract_from": Date,
+            "contract_to": Date,
+            "incharge_persons": [USER_ID,],
+            "no_of_user_licence": int,
+            "file_space": float,
+            "is_sms_subscribed": Boolean,
+            "date_configurations":[ClientConfiguration,]
+        }
+    ]
+
+    On Success 
+
+    [
+        "UpdateClientGroupSuccess",
+        {}
+    ]
+
+    Possible Errors
+
+    [
+        "GroupNameAlreadyExists",
+        {}
+    ]
+
+#### Change Client Group Status
+    
+    [
+        "ChangeClientGroupStatus",
+        {
+            "client_id":client_id,
+            "is_active": IS_ACTIVE
+        }
+    ]
+
+    On Success
+
+    [
+        "ChangeClientGroupStatusSuccess",
+        {}
+    ]
+
+    Possible Errors
+
+    [
+        "InvalidClientId",
+        {}
+    ]
+
 ## TECHNO FUNCTIONAL MASTERS
 
 ###  Get Clients
@@ -1281,7 +1411,7 @@ Note :
         [
           	{ 
           		"countries": [Country,],
-            	"group_companies_with_detail":[GroupCompanyDetail,]
+            	"group_companies":[GroupCompany,]
             	"business_groups": [BusinessGroup,],
             	"legal_entities": [LegalEntity,],
             	"divisions": [Division,],
@@ -1295,18 +1425,10 @@ Note :
     [
       	"SaveClient",
       	{
-        	"group_company": GroupCompany,
+        	"client_id": CLIENT_ID,
         	"business_group": BUSINESS_GROUP,
         	"legal_entity": LEGAL_ENTITY,
         	"division": DIVISION,
-        	"logo": URL,
-        	"domain_ids": [DOMAIN_ID,],
-        	"username": USERNAME,
-        	"no_of_licence": int,
-        	"contract_from": Date,
-        	"contract_to": Date,
-        	"total_disk_space": float,
-        	"is_sms_subscribed": Boolean,
         	"country_wise_units": [
           		{
             		"country_id" : COUNTRY_ID,
@@ -1317,6 +1439,11 @@ Note :
     ]
 
   	Possible Errors 
+
+    [
+        "InvalidClientId",
+        {}
+    ]
 
     [
       	"GroupCompanyNameAlreadyExists",
@@ -1342,11 +1469,6 @@ Note :
       	"UnitNameAlreadyExists",
       	{}
     ]
-
-  	[
-      	"UsernameAlreadyExists",
-      	{}
-    ]	
   		
     [
       	"UnitCodeAlreadyExists",
@@ -1368,14 +1490,6 @@ Note :
         	"business_group": BUSINESS_GROUP,
         	"legal_entity": LEGAL_ENTITY,
         	"division": DIVISION,
-        	"logo": URL,
-        	"domain_ids": [DOMAIN_ID,],
-        	"username": USERNAME,
-        	"no_of_licence": int,
-        	"contract_from": Date,
-        	"contract_to": Date,
-        	"total_disk_space": float,
-        	"is_sms_subscribed": Boolean,
         	"country_wise_units": [
           		{
             		"country_id" : COUNTRY_ID,
@@ -1442,46 +1556,6 @@ Note :
 
     [
       	"InvalidUnitId",
-      	{}
-    ]
-
-###  Get client configuration
-
-    [
-       	"GetClientConfiguration",
-        {}
-    ]
-
-  	On Success
-
-    [
-        "GetClientConfigurationSuccess",
-        {
-        	"group_companies": [GroupCompany,],
-          	"countries": [Country,],
-          	"domains": [Domain,]        
-          	"configurations": {
-            	CLIENT_ID :[ClientConfiguration,],
-          	}
-        }
-    ]
-
-### Update client configuration
-
-    [
-    	"UpdateClientConfiguration",
-      	{
-        	"client_id": CLIENT_ID,
-        	"configuration":[
-          		ClientConfiguration,
-       		]
-      	}
-    ]
-
-  	On Success
-
-    [
-      	"UpdateClientConfigurationSuccess",
       	{}
     ]
 
@@ -3283,7 +3357,25 @@ Note :
        		"is_two_levels_of_approval": Boolean,
         	"assignee_reminder_days": int,
         	"escalation_reminder_In_advance_days": int,
-        	"escalation_reminder_days": int
+        	"escalation_reminder_days": int,
+            "profile_detail":{
+                "contract_from": Date,
+                "contract_to": Date,
+                "no_of_user_licence": int,
+                "remaining_licence": int,
+                "licence_holders":[
+                    {
+                        "user_id": int,
+                        "user_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                        "email_id": EMAIL_ID,
+                        "contact_no": CONTACT_NO,
+                        "seating_unit_name": UNIT_CODE - UNIT_NAME,
+                        "address": ADDRESS,
+                        "total_disk_space": float,
+                        "used_disk_space": float,
+                    },
+                ]
+            },
       	}
     ]
 
@@ -3438,7 +3530,7 @@ Note :
     ]
 
 ### Get Compliance Status Chart
-
+    
     [
         "GetComplianceStatusChart",
         {
@@ -3449,7 +3541,7 @@ Note :
           	"filter_type": String,
           	"filter_ids": [int,]
         }
-    ]
+    ] 
 
   	On Success
 
@@ -3800,3 +3892,7 @@ Note :
   	Response for the above request will be in same format as Compliance status drill down 
 
 
+
+## ConsolidatedChart
+    
+    Same as Compliance Status Chart
