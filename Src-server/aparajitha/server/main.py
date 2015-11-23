@@ -99,7 +99,11 @@ def run_server() :
 
     static_path = os.path.join(ROOT_PATH, "Src-client")
 
+    api_design_path = os.path.join(
+        ROOT_PATH, "Doc", "API", "Web-API", "Version-1.0.4", "html")
+
     lower_level_handlers = [
+        (r"/api-design/(.*)", tornado.web.StaticFileHandler, dict(path=api_design_path)),
         (r"/(.*)", tornado.web.StaticFileHandler, dict(path=static_path)),
     ]
     application_urls.extend(lower_level_handlers)
