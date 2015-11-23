@@ -74,6 +74,7 @@ class UserGroupController() :
 
 class UserController() :
     def saveUser(self, requestData, sessionUser) :
+        print "Entered Save User"
         emailId = JSONHelper.getString(requestData, "email_id")
         userGroupId = JSONHelper.getInt(requestData,"user_group_id")
         employeeName = JSONHelper.getString(requestData,"employee_name")
@@ -81,9 +82,10 @@ class UserController() :
         contactNo = JSONHelper.getString(requestData,"contact_no")
         address =  JSONHelper.getString(requestData,"address")
         designation =  JSONHelper.getString(requestData,"designation")
+        countryIds = JSONHelper.getList(requestData,"country_ids")
         domainIds = JSONHelper.getList(requestData,"domain_ids")
         user = User(None, emailId, userGroupId, employeeName, employeeCode, 
-                    contactNo, address, designation, domainIds, None)
+                    contactNo, address, designation, countryIds, domainIds, None)
         if user.isDuplicateEmail() :
             return commonResponseStructure("EmailIDAlreadyExists",{})
         elif user.isDuplicateEmployeeCode() :
@@ -103,9 +105,10 @@ class UserController() :
         contactNo = JSONHelper.getString(requestData,"contact_no")
         address =  JSONHelper.getString(requestData,"address")
         designation =  JSONHelper.getString(requestData,"designation")
+        countryIds = JSONHelper.getList(requestData,"country_ids")
         domainIds = JSONHelper.getList(requestData,"domain_ids")
         user = User(userId, None, userGroupId, employeeName, employeeCode, 
-                    contactNo, address, designation, domainIds, None)
+                    contactNo, address, designation, countryIds, domainIds, None)
         if user.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
         elif user.isDuplicateEmployeeCode() :
@@ -121,7 +124,7 @@ class UserController() :
     	userId = JSONHelper.getInt(requestData, "user_id")
         isActive = JSONHelper.getInt(requestData, "is_active")
         user = User(userId, None, None, None, None, 
-                    None, None, None, None, isActive)
+                    None, None, None, None, None,isActive)
         if user.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
         elif user.updateStatus(sessionUser):

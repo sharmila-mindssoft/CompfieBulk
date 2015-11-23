@@ -352,7 +352,7 @@ function initMirror() {
     function saveAdminUser(callerName, userDetail, callback, failure_callback) {
        if (isNull(userDetail))
             return null;
-        else if (userDetail.length != 8)
+        else if (userDetail.length != 9)
             return null;
         $.each(userDetail, function( index, value ) {
             if (isNull(value))
@@ -365,7 +365,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var domainIds= userDetail[7].split(',') ;
+        var countryIds= userDetail[7].split(',') ;
+        var domainIds= userDetail[8].split(',') ;
         var request = [
             "SaveUser",
             {
@@ -376,6 +377,7 @@ function initMirror() {
                 "contact_no": contactNo,
                 "address": address, 
                 "designation": designation,
+                "country_ids": countryIds,
                 "domain_ids": domainIds
             }
         ];
@@ -385,7 +387,7 @@ function initMirror() {
     function updateAdminUser(callerName, userDetail, callback, failure_callback) {
         if (isNull(userDetail))
             return null;
-        else if (userDetail.length != 8)
+        else if (userDetail.length != 9)
             return null;
         $.each(userDetail, function( index, value ) {
             if (isNull(value))
@@ -398,7 +400,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var domainIds= userDetail[7].split(',') ;
+        var countryIds= userDetail[7].split(',') ;
+        var domainIds= userDetail[8].split(',') ;
         var request = [
             "UpdateUser",
             {
@@ -409,6 +412,7 @@ function initMirror() {
                 "contact_no": contactNo,
                 "address": address, 
                 "designation": designation,
+                "country_ids": countryIds,
                 "domain_ids": domainIds
             }
         ];
