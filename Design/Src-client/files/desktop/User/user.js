@@ -2,6 +2,7 @@ var usersList;
 var domainsList;
 var userGroupsList;
 var tempUsersList;
+var countriesList;
 
 $(document).ready(function(){
 	GetUsers()
@@ -13,6 +14,7 @@ function GetUsers(){
 		usersList = data["users"];
 		domainsList = data["domains"];
 		userGroupsList = data["user_groups"];
+		countriesList = data["countries"];
 		loadUserList(usersList);
 	}
 	function failure(data){
@@ -304,7 +306,7 @@ function loadUserList(usersList) {
 		if($("#country").val() != ''){
 			editcountryval = $("#country").val().split(",");
 		}
-		  	var countries = [{"is_active": 0, "country_id": 1, "country_name": "India"}];
+		  	var countries = countriesList;
 		  	$('#ulist-country').empty();
 		  	var str='';
 		  	for(var i in countries){
