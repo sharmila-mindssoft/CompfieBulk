@@ -1,0 +1,4928 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body {
+  width: 45em;
+  border: 1px solid #ddd;
+  outline: 1300px solid #fff;
+  margin: 16px auto;
+}
+
+body .markdown-body
+{
+  padding: 30px;
+}
+
+@font-face {
+  font-family: fontawesome-mini;
+  src: url(data:font/woff;charset=utf-8;base64,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) format('woff');
+}
+
+@font-face {
+  font-family: octicons-anchor;
+  src: url(data:font/woff;charset=utf-8;base64,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) format('woff');
+}
+
+.markdown-body {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  color: #333333;
+  overflow: hidden;
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.markdown-body a {
+  background: transparent;
+}
+
+.markdown-body a:active,
+.markdown-body a:hover {
+  outline: 0;
+}
+
+.markdown-body b,
+.markdown-body strong {
+  font-weight: bold;
+}
+
+.markdown-body mark {
+  background: #ff0;
+  color: #000;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.markdown-body sub,
+.markdown-body sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+.markdown-body sup {
+  top: -0.5em;
+}
+.markdown-body sub {
+  bottom: -0.25em;
+}
+
+.markdown-body h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+.markdown-body img {
+  border: 0;
+}
+
+.markdown-body hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+
+.markdown-body pre {
+  overflow: auto;
+}
+
+.markdown-body code,
+.markdown-body kbd,
+.markdown-body pre,
+.markdown-body samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
+.markdown-body input {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+
+.markdown-body html input[disabled] {
+  cursor: default;
+}
+
+.markdown-body input {
+  line-height: normal;
+}
+
+.markdown-body input[type="checkbox"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.markdown-body td,
+.markdown-body th {
+  padding: 0;
+}
+
+.markdown-body .codehilitetable {
+  border: 0;
+  border-spacing: 0;
+}
+
+.markdown-body .codehilitetable tr {
+  border: 0;
+}
+
+.markdown-body .codehilitetable pre,
+.markdown-body .codehilitetable div.codehilite {
+  margin: 0;
+}
+
+.markdown-body .linenos,
+.markdown-body .code,
+.markdown-body .codehilitetable td {
+  border: 0;
+  padding: 0;
+}
+
+.markdown-body td:not(.linenos) .linenodiv {
+  padding: 0 !important;
+}
+
+.markdown-body .code {
+  width: 100%;
+}
+
+.markdown-body .linenos div pre,
+.markdown-body .linenodiv pre,
+.markdown-body .linenodiv {
+  border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-top-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.markdown-body .code div pre,
+.markdown-body .code div {
+  border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.markdown-body * {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.markdown-body input {
+  font: 13px Helvetica, arial, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  line-height: 1.4;
+}
+
+.markdown-body a {
+  color: #4183c4;
+  text-decoration: none;
+}
+
+.markdown-body a:hover,
+.markdown-body a:focus,
+.markdown-body a:active {
+  text-decoration: underline;
+}
+
+.markdown-body hr {
+  height: 0;
+  margin: 15px 0;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.markdown-body hr:before,
+.markdown-body hr:after {
+  display: table;
+  content: " ";
+}
+
+.markdown-body hr:after {
+  clear: both;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  line-height: 1.1;
+}
+
+.markdown-body h1 {
+  font-size: 30px;
+}
+
+.markdown-body h2 {
+  font-size: 21px;
+}
+
+.markdown-body h3 {
+  font-size: 16px;
+}
+
+.markdown-body h4 {
+  font-size: 14px;
+}
+
+.markdown-body h5 {
+  font-size: 12px;
+}
+
+.markdown-body h6 {
+  font-size: 11px;
+}
+
+.markdown-body blockquote {
+  margin: 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body ol ol,
+.markdown-body ul ol {
+  list-style-type: lower-roman;
+}
+
+.markdown-body ul ul ol,
+.markdown-body ul ol ol,
+.markdown-body ol ul ol,
+.markdown-body ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+.markdown-body dd {
+  margin-left: 0;
+}
+
+.markdown-body code,
+.markdown-body pre,
+.markdown-body samp {
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 12px;
+}
+
+.markdown-body pre {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body kbd {
+  background-color: #e7e7e7;
+  background-image: -moz-linear-gradient(#fefefe, #e7e7e7);
+  background-image: -webkit-linear-gradient(#fefefe, #e7e7e7);
+  background-image: linear-gradient(#fefefe, #e7e7e7);
+  background-repeat: repeat-x;
+  border-radius: 2px;
+  border: 1px solid #cfcfcf;
+  color: #000;
+  padding: 3px 5px;
+  line-height: 10px;
+  font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  display: inline-block;
+}
+
+.markdown-body>*:first-child {
+  margin-top: 0 !important;
+}
+
+.markdown-body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+.markdown-body .headeranchor-link {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  padding-right: 6px;
+  padding-left: 30px;
+  margin-left: -30px;
+}
+
+.markdown-body .headeranchor-link:focus {
+  outline: none;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  position: relative;
+  margin-top: 1em;
+  margin-bottom: 16px;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+.markdown-body h1 .headeranchor,
+.markdown-body h2 .headeranchor,
+.markdown-body h3 .headeranchor,
+.markdown-body h4 .headeranchor,
+.markdown-body h5 .headeranchor,
+.markdown-body h6 .headeranchor {
+  display: none;
+  color: #000;
+  vertical-align: middle;
+}
+
+.markdown-body h1:hover .headeranchor-link,
+.markdown-body h2:hover .headeranchor-link,
+.markdown-body h3:hover .headeranchor-link,
+.markdown-body h4:hover .headeranchor-link,
+.markdown-body h5:hover .headeranchor-link,
+.markdown-body h6:hover .headeranchor-link {
+  height: 1em;
+  padding-left: 8px;
+  margin-left: -30px;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.markdown-body h1:hover .headeranchor-link .headeranchor,
+.markdown-body h2:hover .headeranchor-link .headeranchor,
+.markdown-body h3:hover .headeranchor-link .headeranchor,
+.markdown-body h4:hover .headeranchor-link .headeranchor,
+.markdown-body h5:hover .headeranchor-link .headeranchor,
+.markdown-body h6:hover .headeranchor-link .headeranchor {
+  display: inline-block;
+}
+
+.markdown-body h1 {
+  padding-bottom: 0.3em;
+  font-size: 2.25em;
+  line-height: 1.2;
+  border-bottom: 1px solid #eee;
+}
+
+.markdown-body h2 {
+  padding-bottom: 0.3em;
+  font-size: 1.75em;
+  line-height: 1.225;
+  border-bottom: 1px solid #eee;
+}
+
+.markdown-body h3 {
+  font-size: 1.5em;
+  line-height: 1.43;
+}
+
+.markdown-body h4 {
+  font-size: 1.25em;
+}
+
+.markdown-body h5 {
+  font-size: 1em;
+}
+
+.markdown-body h6 {
+  font-size: 1em;
+  color: #777;
+}
+
+.markdown-body p,
+.markdown-body blockquote,
+.markdown-body ul,
+.markdown-body ol,
+.markdown-body dl,
+.markdown-body table,
+.markdown-body pre,
+.markdown-body .admonition {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.markdown-body hr {
+  height: 4px;
+  padding: 0;
+  margin: 16px 0;
+  background-color: #e7e7e7;
+  border: 0 none;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 2em;
+}
+
+.markdown-body ul ul,
+.markdown-body ul ol,
+.markdown-body ol ol,
+.markdown-body ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body li>p {
+  margin-top: 16px;
+}
+
+.markdown-body dl {
+  padding: 0;
+}
+
+.markdown-body dl dt {
+  padding: 0;
+  margin-top: 16px;
+  font-size: 1em;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.markdown-body dl dd {
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+
+.markdown-body blockquote {
+  padding: 0 15px;
+  color: #777;
+  border-left: 4px solid #ddd;
+}
+
+.markdown-body blockquote>:first-child {
+  margin-top: 0;
+}
+
+.markdown-body blockquote>:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  word-break: normal;
+  word-break: keep-all;
+}
+
+.markdown-body table th {
+  font-weight: bold;
+}
+
+.markdown-body table th,
+.markdown-body table td {
+  padding: 6px 13px;
+  border: 1px solid #ddd;
+}
+
+.markdown-body table tr {
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+}
+
+.markdown-body table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+.markdown-body img {
+  max-width: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.markdown-body code,
+.markdown-body samp {
+  padding: 0;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(0,0,0,0.04);
+  border-radius: 3px;
+}
+
+.markdown-body code:before,
+.markdown-body code:after {
+  letter-spacing: -0.2em;
+  content: "\00a0";
+}
+
+.markdown-body pre>code {
+  padding: 0;
+  margin: 0;
+  font-size: 100%;
+  word-break: normal;
+  white-space: pre;
+  background: transparent;
+  border: 0;
+}
+
+.markdown-body .codehilite {
+  margin-bottom: 16px;
+}
+
+.markdown-body .codehilite pre,
+.markdown-body pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f7f7f7;
+  border-radius: 3px;
+}
+
+.markdown-body .codehilite pre {
+  margin-bottom: 0;
+  word-break: normal;
+}
+
+.markdown-body pre {
+  word-wrap: normal;
+}
+
+.markdown-body pre code {
+  display: inline;
+  max-width: initial;
+  padding: 0;
+  margin: 0;
+  overflow: initial;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: transparent;
+  border: 0;
+}
+
+.markdown-body pre code:before,
+.markdown-body pre code:after {
+  content: normal;
+}
+
+/* Admonition */
+.markdown-body .admonition {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  position: relative;
+  border-radius: 3px;
+  border: 1px solid #e0e0e0;
+  border-left: 6px solid #333;
+  padding: 10px 10px 10px 30px;
+}
+
+.markdown-body .admonition table {
+  color: #333;
+}
+
+.markdown-body .admonition p {
+  padding: 0;
+}
+
+.markdown-body .admonition-title {
+  font-weight: bold;
+  margin: 0;
+}
+
+.markdown-body .admonition>.admonition-title {
+  color: #333;
+}
+
+.markdown-body .attention>.admonition-title {
+  color: #a6d796;
+}
+
+.markdown-body .caution>.admonition-title {
+  color: #d7a796;
+}
+
+.markdown-body .hint>.admonition-title {
+  color: #96c6d7;
+}
+
+.markdown-body .danger>.admonition-title {
+  color: #c25f77;
+}
+
+.markdown-body .question>.admonition-title {
+  color: #96a6d7;
+}
+
+.markdown-body .note>.admonition-title {
+  color: #d7c896;
+}
+
+.markdown-body .admonition:before,
+.markdown-body .attention:before,
+.markdown-body .caution:before,
+.markdown-body .hint:before,
+.markdown-body .danger:before,
+.markdown-body .question:before,
+.markdown-body .note:before {
+  font: normal normal 16px fontawesome-mini;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  line-height: 1.5;
+  color: #333;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
+.markdown-body .admonition:before {
+  content: "\f056\00a0";
+  color: 333;
+}
+
+.markdown-body .attention:before {
+  content: "\f058\00a0";
+  color: #a6d796;
+}
+
+.markdown-body .caution:before {
+  content: "\f06a\00a0";
+  color: #d7a796;
+}
+
+.markdown-body .hint:before {
+  content: "\f05a\00a0";
+  color: #96c6d7;
+}
+
+.markdown-body .danger:before {
+  content: "\f057\00a0";
+  color: #c25f77;
+}
+
+.markdown-body .question:before {
+  content: "\f059\00a0";
+  color: #96a6d7;
+}
+
+.markdown-body .note:before {
+  content: "\f040\00a0";
+  color: #d7c896;
+}
+
+.markdown-body .admonition::after {
+  content: normal;
+}
+
+.markdown-body .attention {
+  border-left: 6px solid #a6d796;
+}
+
+.markdown-body .caution {
+  border-left: 6px solid #d7a796;
+}
+
+.markdown-body .hint {
+  border-left: 6px solid #96c6d7;
+}
+
+.markdown-body .danger {
+  border-left: 6px solid #c25f77;
+}
+
+.markdown-body .question {
+  border-left: 6px solid #96a6d7;
+}
+
+.markdown-body .note {
+  border-left: 6px solid #d7c896;
+}
+
+.markdown-body .admonition>*:first-child {
+  margin-top: 0 !important;
+}
+
+.markdown-body .admonition>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* progress bar*/
+.markdown-body .progress {
+  display: block;
+  width: 300px;
+  margin: 10px 0;
+  height: 24px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #ededed;
+  position: relative;
+  box-shadow: inset -1px 1px 3px rgba(0, 0, 0, .1);
+}
+
+.markdown-body .progress-label {
+  position: absolute;
+  text-align: center;
+  font-weight: bold;
+  width: 100%; margin: 0;
+  line-height: 24px;
+  color: #333;
+  text-shadow: 1px 1px 0 #fefefe, -1px -1px 0 #fefefe, -1px 1px 0 #fefefe, 1px -1px 0 #fefefe, 0 1px 0 #fefefe, 0 -1px 0 #fefefe, 1px 0 0 #fefefe, -1px 0 0 #fefefe, 1px 1px 2px #000;
+  -webkit-font-smoothing: antialiased !important;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.markdown-body .progress-bar {
+  height: 24px;
+  float: left;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #96c6d7;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), inset 0 -1px 0 rgba(0, 0, 0, .1);
+  background-size: 30px 30px;
+  background-image: -webkit-linear-gradient(
+    135deg, rgba(255, 255, 255, .4) 27%,
+    transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%,
+    transparent 77%, transparent
+  );
+  background-image: -moz-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+  background-image: -ms-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+  background-image: -o-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+}
+
+.markdown-body .progress-100plus .progress-bar {
+  background-color: #a6d796;
+}
+
+.markdown-body .progress-80plus .progress-bar {
+  background-color: #c6d796;
+}
+
+.markdown-body .progress-60plus .progress-bar {
+  background-color: #d7c896;
+}
+
+.markdown-body .progress-40plus .progress-bar {
+  background-color: #d7a796;
+}
+
+.markdown-body .progress-20plus .progress-bar {
+  background-color: #d796a6;
+}
+
+.markdown-body .progress-0plus .progress-bar {
+  background-color: #c25f77;
+}
+
+.markdown-body .candystripe-animate .progress-bar{
+  -webkit-animation: animate-stripes 3s linear infinite;
+  -moz-animation: animate-stripes 3s linear infinite;
+  animation: animate-stripes 3s linear infinite;
+}
+
+@-webkit-keyframes animate-stripes {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 60px 0;
+  }
+}
+
+@-moz-keyframes animate-stripes {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 60px 0;
+  }
+}
+
+@keyframes animate-stripes {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 60px 0;
+  }
+}
+
+.markdown-body .gloss .progress-bar {
+  box-shadow:
+    inset 0 4px 12px rgba(255, 255, 255, .7),
+    inset 0 -12px 0 rgba(0, 0, 0, .05);
+}
+
+/* Multimarkdown Critic Blocks */
+.markdown-body .critic_mark {
+  background: #ff0;
+}
+
+.markdown-body .critic_delete {
+  color: #c82829;
+  text-decoration: line-through;
+}
+
+.markdown-body .critic_insert {
+  color: #718c00 ;
+  text-decoration: underline;
+}
+
+.markdown-body .critic_comment {
+  color: #8e908c;
+  font-style: italic;
+}
+
+.markdown-body .headeranchor {
+  font: normal normal 16px octicons-anchor;
+  line-height: 1;
+  display: inline-block;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.headeranchor:before {
+  content: '\f05c';
+}
+
+.markdown-body .task-list-item {
+  list-style-type: none;
+}
+
+.markdown-body .task-list-item+.task-list-item {
+  margin-top: 3px;
+}
+
+.markdown-body .task-list-item input {
+  margin: 0 4px 0.25em -20px;
+  vertical-align: middle;
+}
+
+/* Media */
+@media only screen and (min-width: 480px) {
+  .markdown-body {
+    font-size:14px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .markdown-body {
+    font-size:16px;
+  }
+}
+
+@media print {
+  .markdown-body * {
+    background: transparent !important;
+    color: black !important;
+    filter:none !important;
+    -ms-filter: none !important;
+  }
+
+  .markdown-body {
+    font-size:12pt;
+    max-width:100%;
+    outline:none;
+    border: 0;
+  }
+
+  .markdown-body a,
+  .markdown-body a:visited {
+    text-decoration: underline;
+  }
+
+  .markdown-body .headeranchor-link {
+    display: none;
+  }
+
+  .markdown-body a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  .markdown-body abbr[title]:after {
+    content: " (" attr(title) ")";
+  }
+
+  .markdown-body .ir a:after,
+  .markdown-body a[href^="javascript:"]:after,
+  .markdown-body a[href^="#"]:after {
+    content: "";
+  }
+
+  .markdown-body pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .markdown-body pre,
+  .markdown-body blockquote {
+    border: 1px solid #999;
+    padding-right: 1em;
+    page-break-inside: avoid;
+  }
+
+  .markdown-body .progress,
+  .markdown-body .progress-bar {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .markdown-body .progress {
+    border: 1px solid #ddd;
+  }
+
+  .markdown-body .progress-bar {
+    height: 22px;
+    border-right: 1px solid #ddd;
+  }
+
+  .markdown-body tr,
+  .markdown-body img {
+    page-break-inside: avoid;
+  }
+
+  .markdown-body img {
+    max-width: 100% !important;
+  }
+
+  .markdown-body p,
+  .markdown-body h2,
+  .markdown-body h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .markdown-body h2,
+  .markdown-body h3 {
+    page-break-after: avoid;
+  }
+}
+</style><title>Aparajitha API Document Version 1.0.4</title></head><body><article class="markdown-body"><h1> MIRROR - API Document </h1>
+
+<div class="toc">
+<ul>
+<li><a href="#login">LOGIN</a><ul>
+<li><a href="#login_1">Login</a></li>
+<li><a href="#forgot-password">Forgot Password</a></li>
+<li><a href="#reset-token-validation">Reset Token Validation</a></li>
+<li><a href="#reset-password">Reset Password</a></li>
+<li><a href="#request-format">Request Format</a></li>
+<li><a href="#change-password">Change Password</a></li>
+</ul>
+</li>
+<li><a href="#common">COMMON</a><ul>
+<li><a href="#general-success-response">General Success response</a></li>
+<li><a href="#general-error-response">General Error response</a></li>
+<li><a href="#logout">Logout</a></li>
+<li><a href="#update-user-profile">Update User profile</a></li>
+<li><a href="#get-domains">Get domains</a></li>
+<li><a href="#save-domain">Save Domain</a></li>
+<li><a href="#update-domain">Update Domain</a></li>
+<li><a href="#change-domain-status">Change Domain Status</a></li>
+<li><a href="#get-notifications">Get Notifications</a></li>
+<li><a href="#update-notification-status">Update Notification Status</a></li>
+</ul>
+</li>
+<li><a href="#admin-section">Admin Section</a><ul>
+<li><a href="#get-user-groups">Get User Groups</a></li>
+<li><a href="#save-user-group">Save User Group</a></li>
+<li><a href="#update-user-group">Update User Group</a></li>
+<li><a href="#change-user-group-status">Change User Group Status</a></li>
+<li><a href="#get-users">Get Users</a></li>
+<li><a href="#save-user">Save User</a></li>
+<li><a href="#update-user">Update User</a></li>
+<li><a href="#change-user-status">Change User Status</a></li>
+</ul>
+</li>
+<li><a href="#knowledge-section">KNOWLEDGE SECTION</a><ul>
+<li><a href="#knowledge-user-section">KNOWLEDGE USER SECTION</a><ul>
+<li><a href="#knowledge-user-masters">KNOWLEDGE USER MASTERS</a><ul>
+<li><a href="#get-countries">Get Countries</a></li>
+<li><a href="#save-country">Save Country</a></li>
+<li><a href="#update-country">Update Country</a></li>
+<li><a href="#change-country-status">Change Country Status</a></li>
+<li><a href="#get-geography-levels">Get Geography Levels</a></li>
+<li><a href="#save-geography-level">Save Geography Level</a></li>
+<li><a href="#update-geography-level">Update Geography Level</a></li>
+<li><a href="#get-geographies">Get Geographies</a></li>
+<li><a href="#save-geography">Save Geography</a></li>
+<li><a href="#update-geography">Update Geography</a></li>
+<li><a href="#change-geography-status">Change Geography Status</a></li>
+<li><a href="#get-industries">Get Industries</a></li>
+<li><a href="#save-industry">Save Industry</a></li>
+<li><a href="#update-industry">Update Industry</a></li>
+<li><a href="#change-industry-status">Change Industry Status</a></li>
+<li><a href="#get-statutory-natures">Get Statutory Natures</a></li>
+<li><a href="#save-statutory-nature">Save Statutory Nature</a></li>
+<li><a href="#update-statutory-nature">Update Statutory Nature</a></li>
+<li><a href="#change-statutory-nature-status">Change Statutory Nature Status</a></li>
+<li><a href="#get-statutory-levels">Get statutory levels</a></li>
+<li><a href="#save-statutory-level">Save statutory level</a></li>
+</ul>
+</li>
+<li><a href="#knowledge-user-transactions">KNOWLEDGE USER TRANSACTIONS</a><ul>
+<li><a href="#get-statutory-mappings">Get statutory mappings</a></li>
+<li><a href="#save-statutory-mapping">Save statutory mapping</a></li>
+<li><a href="#update-statutory-mapping">Update statutory mapping</a></li>
+<li><a href="#change-statutory-mapping-status">Change Statutory Mapping Status</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#knowledge-manager-section">Knowledge Manager Section</a><ul>
+<li><a href="#knowledge-manager-transactions">Knowledge Manager Transactions</a><ul>
+<li><a href="#get-statutory-mapping-approval-list">Get Statutory Mapping Approval List</a></li>
+<li><a href="#approve-statutory-mapping">Approve statutory mapping</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#knowledge-section-reports">KNOWLEDGE SECTION REPORTS</a><ul>
+<li><a href="#get-statutory-mapping-report-filters">Get Statutory Mapping Report Filters</a></li>
+<li><a href="#get-statutory-mapping-report">Get Statutory Mapping Report</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#techno-fuctional-team">TECHNO FUCTIONAL TEAM</a><ul>
+<li><a href="#techno-manager-section">TECHNO - MANAGER SECTION</a><ul>
+<li><a href="#techno-manager-masters">TECHNO MANAGER MASTERS</a><ul>
+<li><a href="#get-client-groups">Get Client Groups</a></li>
+<li><a href="#save-client-group">Save Client Group</a></li>
+<li><a href="#update-client-group">Update Client Group</a></li>
+<li><a href="#change-client-group-status">Change Client Group Status</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#techno-functional-masters">TECHNO FUNCTIONAL MASTERS</a><ul>
+<li><a href="#get-clients">Get Clients</a></li>
+<li><a href="#save-client">Save Client</a></li>
+<li><a href="#update-client">Update Client</a></li>
+<li><a href="#change-client-status">Change Client Status</a></li>
+<li><a href="#reactivate-unit">Reactivate Unit</a></li>
+</ul>
+</li>
+<li><a href="#techno-functional-transactions">TECHNO FUNCTIONAL TRANSACTIONS</a><ul>
+<li><a href="#get-assigned-statutories-list">Get Assigned Statutories List</a></li>
+<li><a href="#get-assigned-statutories-by-id">Get Assigned Statutories by Id</a></li>
+<li><a href="#get-assigned-statutory-wizard-1-data">Get Assigned Statutory Wizard 1 data</a></li>
+<li><a href="#get-statutory-wizard-2-data">Get Statutory Wizard 2 Data</a></li>
+<li><a href="#save-submit-assigned-statutory">Save/ Submit Assigned Statutory</a></li>
+<li><a href="#get-client-profile">Get Client Profile</a></li>
+</ul>
+</li>
+<li><a href="#techno-functional-reports">TECHNO FUNCTIONAL REPORTS</a><ul>
+<li><a href="#get-client-details-report-filters">Get Client Details Report Filters</a></li>
+<li><a href="#get-client-details-report-data">Get Client details Report Data</a></li>
+<li><a href="#get-statutory-notifications">Get Statutory Notifications</a></li>
+<li><a href="#get-assigned-statutory-report-filters">Get assigned statutory Report Filters</a></li>
+<li><a href="#get-assigned-statutory-report">Get assigned statutory report</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#client">CLIENT</a><ul>
+<li><a href="#client-admin-section">CLIENT ADMIN SECTION</a><ul>
+<li><a href="#client-admin-masters">CLIENT ADMIN MASTERS</a><ul>
+<li><a href="#get-service-providers">Get service providers</a></li>
+<li><a href="#save-service-provider">Save Service Provider</a></li>
+<li><a href="#update-service-provider">Update Service Provider</a></li>
+<li><a href="#change-service-provider-status">Change Service Provider Status</a></li>
+<li><a href="#get-user-privileges">Get User Privileges</a></li>
+<li><a href="#save-user-privileges">Save User Privileges</a></li>
+<li><a href="#update-user-privileges">Update User Privileges</a></li>
+<li><a href="#change-user-privilege-status">Change User Privilege Status</a></li>
+<li><a href="#get-client-users">Get client users</a></li>
+<li><a href="#save-client-user">Save client user</a></li>
+<li><a href="#update-client-user">Update client user</a></li>
+<li><a href="#change-client-user-status">Change Client User Status</a></li>
+<li><a href="#get-units">Get Units</a></li>
+<li><a href="#close-unit">Close Unit</a></li>
+</ul>
+</li>
+<li><a href="#client-admin-transactions">CLIENT ADMIN TRANSACTIONS</a><ul>
+<li><a href="#get-statutory-settings">Get Statutory Settings</a></li>
+<li><a href="#update-statutory-settings">Update Statutory Settings</a></li>
+<li><a href="#get-assign-compliances-form-data">Get Assign compliances form data</a></li>
+<li><a href="#save-assigned-compliance">Save assigned compliance</a></li>
+<li><a href="#get-user-wise-compliances">Get User wise Compliances</a></li>
+<li><a href="#reassign-compliance">Reassign compliance</a></li>
+<li><a href="#get-compliance-approval-list">Get Compliance Approval List</a></li>
+<li><a href="#approve-compliance">Approve Compliance</a></li>
+<li><a href="#get-past-records-form-data">Get Past Records form data</a></li>
+<li><a href="#get-statutories-by-unit">Get Statutories By Unit</a></li>
+<li><a href="#save-past-records">Save Past Records</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#client-reports">CLIENT REPORTS</a><ul>
+<li><a href="#get-compliance-details-report-filters">Get Compliance details report filters</a></li>
+<li><a href="#get-compliance-details-report">Get Compliance details report</a></li>
+<li><a href="#get-risk-report-filters">Get Risk report filters</a></li>
+<li><a href="#get-risk-report">Get Risk Report</a></li>
+<li><a href="#get-service-provider-wise-compliance-report-filters">Get Service Provider wise compliance report filters</a></li>
+<li><a href="#get-service-provider-wise-compliance">Get Service provider wise compliance</a></li>
+<li><a href="#get-client-report-filters">Get Client Report Filters</a></li>
+<li><a href="#get-assignee-wise-compliance-report">Get Assignee wise compliance Report</a></li>
+<li><a href="#get-unit-wise-compliance-report">Get Unit wise compliance Report</a></li>
+<li><a href="#get-reassign-compliance-task-report-filters">Get Reassign Compliance Task Report Filters</a></li>
+<li><a href="#get-reassign-compliance-task-details">Get Reassign Compliance Task Details</a></li>
+<li><a href="#get-task-applicability-status-filters">Get Task Applicability Status Filters</a></li>
+<li><a href="#get-compliance-task-applicability-status-report">Get Compliance Task Applicability Status report</a></li>
+<li><a href="#get-unit-details-report">Get Unit Details Report</a></li>
+<li><a href="#get-compliance-activity-report-filters">Get Compliance Activity Report Filters</a></li>
+<li><a href="#get-compliance-activity-report">Get Compliance activity report</a></li>
+<li><a href="#get-reassigned-history-report-filters">Get Reassigned History Report Filters</a></li>
+<li><a href="#get-reassigned-history-report">Get Reassigned History Report</a></li>
+<li><a href="#get-activity-log-filters">Get Activity Log Filters</a></li>
+<li><a href="#get-activity-log-report">Get Activity Log Report</a></li>
+<li><a href="#get-login-trace">Get Login Trace</a></li>
+</ul>
+</li>
+<li><a href="#client-admin-settings">CLIENT ADMIN SETTINGS</a><ul>
+<li><a href="#get-settings">Get Settings</a></li>
+<li><a href="#update-settings">Update Settings</a></li>
+</ul>
+</li>
+<li><a href="#client-user-service-provider-section">CLIENT USER &amp; SERVICE PROVIDER SECTION</a><ul>
+<li><a href="#get-compliance-detail">Get compliance Detail</a></li>
+<li><a href="#check-disk-space">Check Disk Space</a></li>
+<li><a href="#update-compliance-detail">Update compliance Detail</a></li>
+<li><a href="#get-on-occurrence-compliance">Get On Occurrence Compliance</a></li>
+<li><a href="#start-on-occurrence-compliance">Start On Occurrence Compliance</a></li>
+</ul>
+</li>
+<li><a href="#dashboard">DASHBOARD</a><ul>
+<li><a href="#get-data-for-chart-filters">Get data for chart filters</a></li>
+<li><a href="#get-compliance-status-chart">Get Compliance Status Chart</a></li>
+<li><a href="#get-escalations-chart">Get Escalations Chart</a></li>
+<li><a href="#get-not-complied-chart">Get Not Complied Chart</a></li>
+<li><a href="#get-trend-chart">Get Trend Chart</a></li>
+<li><a href="#get-compliance-applicability-status-chart">Get Compliance Applicability Status Chart</a></li>
+<li><a href="#get-assignee-wise-compliances-chart">Get Assignee wise Compliances Chart</a></li>
+<li><a href="#get-assingee-wise-compliance-drilldown-data">Get Assingee wise compliance drilldown data</a></li>
+<li><a href="#get-compliance-status-drill-down-data">Get Compliance Status Drill down data</a></li>
+<li><a href="#get-escalations-drill-down-data">Get Escalations Drill Down Data</a></li>
+<li><a href="#get-compliance-applicability-status-drill-down">Get Compliance applicability status drill down</a></li>
+<li><a href="#get-not-complied-drill-down">Get Not Complied drill down</a></li>
+<li><a href="#get-trend-chart-drill-down-data">Get Trend Chart Drill down data</a></li>
+</ul>
+</li>
+<li><a href="#consolidatedchart">ConsolidatedChart</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="login"><a name="user-content-login" href="#login" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>LOGIN</h1>
+<h2 id="login_1"><a name="user-content-login_1" href="#login_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Login</h2>
+<pre><code>[ 
+    "Login",
+    {
+        "username": USERNAME,
+        "password": String
+    }
+]
+
+On Success response will be of the form
+
+[
+    "LoginSuccess",
+    {
+        "user_id": USER_ID,
+        "client_id": CLIENT_ID,
+        "session_token": SESSION_TOKEN,
+        "email_id": EMAIL_ID,
+        "user_group_name": USER_GROUP_NAME,
+        "menu": Menu,
+        "employee_name": String,
+        "employee_code": EMPLOYEE_CODE,
+        "contact_no": CONTACT_NUMBER,
+        "address": ADDRESS,
+        "designation": String
+    }
+]
+
+Possible Errors
+
+[
+    "InvalidCredentials",
+    {}
+]
+</code></pre>
+<p>Note : <br />
+  * Above data will be used for displaying menu and user details in &ldquo;User Profile&rdquo; page</p>
+<h2 id="forgot-password"><a name="user-content-forgot-password" href="#forgot-password" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Forgot Password</h2>
+<pre><code>[
+    "ForgotPassword",
+    {
+        "username": USERNAME
+    }
+]
+
+On Success
+
+[
+    "ForgotPasswordSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidUsername",
+    {}
+]
+</code></pre>
+<p>Note :<br />
+    * On success Reset link should be sent to the user&rsquo;s email with unique token embeded in the url</p>
+<h2 id="reset-token-validation"><a name="user-content-reset-token-validation" href="#reset-token-validation" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Reset Token Validation</h2>
+<pre><code>[
+    "ResetTokenValidation",
+    {
+      "reset_token": RESET_TOKEN
+    }
+]
+
+On Success
+
+[
+    "ResetTokenValidationSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidResetToken",
+    {}
+]
+</code></pre>
+<h2 id="reset-password"><a name="user-content-reset-password" href="#reset-password" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Reset Password</h2>
+<pre><code>[
+    "ResetPassword",
+    {
+      "reset_token": RESET_TOKEN,
+      "new_password": String
+    }
+]
+
+On Success
+
+[
+    "ResetPasswordSuccess",
+    {} 
+]
+
+Possible Errors
+
+[
+    "InvalidResetToken",
+    {}  
+]
+</code></pre>
+<h2 id="request-format"><a name="user-content-request-format" href="#request-format" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Request Format</h2>
+<pre><code>{
+    "session_token": SESSION_TOKEN,
+    "request": will be any of the following requests
+}
+
+Possible Errors
+
+[
+    "InvalidSessionToken",
+    {}  
+]
+
+Note : All Requests will be in the above format
+</code></pre>
+<h2 id="change-password"><a name="user-content-change-password" href="#change-password" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change Password</h2>
+<pre><code>[
+    "ChangePassword",
+    {
+        "current_password": String,
+        "new_password": String  
+    }
+]
+
+Possible Errors
+
+[
+    "InvalidCurrentPassword",
+    {}
+]
+</code></pre>
+<h1 id="common"><a name="user-content-common" href="#common" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>COMMON</h1>
+<h2 id="general-success-response"><a name="user-content-general-success-response" href="#general-success-response" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>General Success response</h2>
+<pre><code>[
+    "Success",
+    {}
+]
+</code></pre>
+<h2 id="general-error-response"><a name="user-content-general-error-response" href="#general-error-response" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>General Error response</h2>
+<pre><code>[
+    "Error",
+    {
+        "message": String
+    }
+]
+</code></pre>
+<h2 id="logout"><a name="user-content-logout" href="#logout" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Logout</h2>
+<pre><code>[
+    "Logout",
+    {}
+]
+
+On Success
+
+[
+    "LogoutSuccess",
+    {}
+]
+</code></pre>
+<h2 id="update-user-profile"><a name="user-content-update-user-profile" href="#update-user-profile" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update User profile</h2>
+<pre><code>[
+    "UpdateUserProfile",
+    {
+        "contact_no": CONTACT_NUMBER,
+        "address": ADDRESS
+    }
+]
+
+On Success
+
+[
+    "UpdateUserProfileSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "ContactNumberAlreadyExists",
+    {}  
+]
+</code></pre>
+<h2 id="get-domains"><a name="user-content-get-domains" href="#get-domains" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get domains</h2>
+<pre><code>[
+    "GetDomains",
+    {}
+]
+
+On Success
+
+[
+    "GetDomainsSuccess",
+    {
+        "domains": [Domain,]
+    }
+]
+</code></pre>
+<h2 id="save-domain"><a name="user-content-save-domain" href="#save-domain" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save Domain</h2>
+<pre><code>[
+    "SaveDomain",
+    {
+        "domain_name": String
+    }
+]
+
+On Success
+
+[
+    "SaveDomainSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "DomainNameAlreadyExists",
+    {}  
+]
+</code></pre>
+<h2 id="update-domain"><a name="user-content-update-domain" href="#update-domain" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update Domain</h2>
+<pre><code>[
+    "UpdateDomain",
+    {
+        "domain_id": DOMAIN_ID,
+        "domain_name": String
+    }
+]
+
+On Success
+
+[
+    "UpdateDomainSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidDomainId"
+    {}
+]
+</code></pre>
+<h2 id="change-domain-status"><a name="user-content-change-domain-status" href="#change-domain-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change Domain Status</h2>
+<pre><code>[
+    "ChangeDomainStatus",
+    {
+        "domain_id" : DOMAIN_ID,
+        "is_active" : IS_ACTIVE
+    }
+]
+
+On Success
+
+[
+    "ChangeDomainStatusSuccess",
+    {}
+]
+</code></pre>
+<h2 id="get-notifications"><a name="user-content-get-notifications" href="#get-notifications" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Notifications</h2>
+<pre><code>[
+    "GetNotifications",
+    {
+        "notification_type":  NOTIFICATION_TYPE
+    }
+]
+
+On Success
+
+[
+    "GetNotificationsSuccess",
+    {
+        "notifications":  [
+            {
+                "notification_id":  NOTIFICATION_ID,
+                "notification_text": String,
+                "extra_details": String,
+                "has_read": HAS_READ,
+                "date_and_time" : TIMESTAMP
+            },
+        ]
+    }
+]
+</code></pre>
+<h2 id="update-notification-status"><a name="user-content-update-notification-status" href="#update-notification-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update Notification Status</h2>
+<pre><code>[ 
+    "UpdateNotificationStatus",
+    {
+        "notification_id": NOTIFICATION_ID,
+        "has_read": HAS_READ
+    }
+]
+
+On Success
+
+[
+    "UpdateNotificationStatusSuccess",
+    {}
+]
+</code></pre>
+<h1 id="admin-section"><a name="user-content-admin-section" href="#admin-section" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Admin Section</h1>
+<h2 id="get-user-groups"><a name="user-content-get-user-groups" href="#get-user-groups" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get User Groups</h2>
+<pre><code>[
+    "GetUserGroups",
+    {}
+]
+
+On Success
+
+[
+    "GetUserGroupsSuccess",
+    {
+        "forms": {
+            "knowledge": Menu,
+            "techno": Menu
+        },
+        "user_groups": [UserGroup,]
+    }
+]
+</code></pre>
+<h2 id="save-user-group"><a name="user-content-save-user-group" href="#save-user-group" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save User Group</h2>
+<pre><code>[
+    "SaveUserGroup",
+    {
+        "user_group_name": USER_GROUP_NAME,
+        "form_type": FORM_TYPE,
+        "form_ids": [FORM_ID, ]
+    }
+]
+
+On Success
+
+[
+    "SaveUserGroupSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "GroupNameAlreadyExists",  
+    {}
+]
+</code></pre>
+<h2 id="update-user-group"><a name="user-content-update-user-group" href="#update-user-group" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update User Group</h2>
+<pre><code>[
+    "UpdateUserGroup"
+    {
+      "user_group_id" : USER_GROUP_ID,
+      "user_group_name": USER_GROUP_NAME,
+      "form_type": FORM_TYPE,
+      "form_ids": [FORM_ID, ]
+    }
+]
+
+On Success
+
+[
+    "UpdateUserGroupSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidUserGroupId",
+    {}
+]
+</code></pre>
+<h2 id="change-user-group-status"><a name="user-content-change-user-group-status" href="#change-user-group-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change User Group Status</h2>
+<pre><code>[
+    "ChangeUserGroupStatus",
+    {
+        "user_group_id" : USER_GROUP_ID,
+        "is_active" : IS_ACTIVE
+    }
+]
+
+On Success
+
+[
+    "ChangeUserGroupStatusSuccess",
+    {}
+]
+</code></pre>
+<h2 id="get-users"><a name="user-content-get-users" href="#get-users" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Users</h2>
+<pre><code>[
+    "GetUsers",
+    {}
+]
+
+On Success
+
+[
+    "GetUsersSuccess",
+    {
+        "user_groups": [
+            {
+                "user_group_id": USER_GROUP_ID,
+                "user_group_name": String,
+            },
+        ],
+        "domains": [
+            Domain,
+        ],
+        "users":[
+            {
+                "user_id": USER_ID,
+                "email_id": EMAIL_ID,
+                "user_group_id": USER_GROUP_ID,
+                "employee_name": EMPLOYEE_NAME,
+                "employee_code": EMPLOYEE_CODE,
+                "contact_no": CONTACT_NUMBER,
+                "address": ADDRESS, 
+                "designation": String,
+                "country_ids":[COUNTRY_ID,]
+                "domain_ids": [DOMAIN_ID,],
+                "is_active": IS_ACTIVE 
+            },
+        ]
+    }   
+]
+</code></pre>
+<h2 id="save-user"><a name="user-content-save-user" href="#save-user" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save User</h2>
+<pre><code>[
+    "SaveUser",
+    {
+        "email_id": EMAIL_ID,
+        "user_group_id": USER_GROUP_ID,
+        "employee_name": EMPLOYEE_NAME,
+        "employee_code": EMPLOYEE_CODE,
+        "contact_no": CONTACT_NUMBER,
+        "address": ADDRESS, 
+        "designation": String,
+        "country_ids":[COUNTRY_ID,],
+        "domain_ids": [DOMAIN_ID,]
+    }
+]
+
+* while saving this, need to get form_type from user_group table and save it too.
+
+On Success
+
+[
+    "SaveUserSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "EmailIDAlreadyExists",
+    {}  
+]
+
+[
+    "ContactNumberAlreadyExists",
+    {}  
+]
+
+[
+    "EmployeeCodeAlreadyExists",
+    {}  
+]
+</code></pre>
+<h2 id="update-user"><a name="user-content-update-user" href="#update-user" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update User</h2>
+<pre><code>[
+    "UpdateUser",
+    {
+        "user_id": USER_ID,
+        "user_group_id": USER_GROUP_ID,
+        "employee_name": EMPLOYEE_NAME,
+        "employee_code": EMPLOYEE_CODE,
+        "contact_no": CONTACT_NUMBER,
+        "address": ADDRESS, 
+        "designation": String,
+        "country_ids":[COUNTRY_ID,],
+        "domain_ids": [DOMAIN_ID,]
+    }
+]
+
+On Success
+
+[
+    "UpdateUserSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidUserId",
+    {}
+]
+</code></pre>
+<h2 id="change-user-status"><a name="user-content-change-user-status" href="#change-user-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change User Status</h2>
+<pre><code>[
+    "ChangeUserStatus",
+    {
+        "user_id": USER_ID,
+        "is_active" : IS_ACTIVE 
+    }
+]
+
+On Success
+
+[
+    "ChangeUserStatusSuccess",
+    {}
+]
+</code></pre>
+<h1 id="knowledge-section"><a name="user-content-knowledge-section" href="#knowledge-section" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>KNOWLEDGE SECTION</h1>
+<h2 id="knowledge-user-section"><a name="user-content-knowledge-user-section" href="#knowledge-user-section" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>KNOWLEDGE USER SECTION</h2>
+<h3 id="knowledge-user-masters"><a name="user-content-knowledge-user-masters" href="#knowledge-user-masters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>KNOWLEDGE USER MASTERS</h3>
+<h4 id="get-countries"><a name="user-content-get-countries" href="#get-countries" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Countries</h4>
+<pre><code>[
+    "GetCountries",
+    {}
+]
+
+On Success
+
+[
+    "GetCountriesSuccess"
+    {
+        "countries": [
+            Country,
+        ]
+    }
+]
+</code></pre>
+<h4 id="save-country"><a name="user-content-save-country" href="#save-country" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save Country</h4>
+<pre><code>[
+    "SaveCountry",
+    {
+        "country_name"  : String
+    }
+]
+
+On Success
+
+[
+    "SaveCountrySuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "CountryNameAlreadyExists",
+    {}  
+]
+</code></pre>
+<h4 id="update-country"><a name="user-content-update-country" href="#update-country" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update Country</h4>
+<pre><code>[
+    "UpdateCountry",
+    {
+        "country_id": COUNTRY_ID,
+        "country_name"  : String
+    }
+]
+
+On Success
+
+[
+    "UpdateCountrySuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidCountryId",
+    {}
+]
+</code></pre>
+<h4 id="change-country-status"><a name="user-content-change-country-status" href="#change-country-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change Country Status</h4>
+<pre><code>[
+    "ChangeCountryStatus",
+    {
+        "country_id" : COUNTRY_ID,
+        "is_active" : IS_ACTIVE
+    } 
+]
+
+On Success
+
+[
+    "ChangeCountryStatusSuccess",
+    {}
+]
+</code></pre>
+<h4 id="get-geography-levels"><a name="user-content-get-geography-levels" href="#get-geography-levels" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Geography Levels</h4>
+<pre><code>[
+    "GetGeographyLevels",
+    {}
+]
+
+On Success
+
+[
+    "GetGeographyLevelsSuccess",
+    {
+        "countries": [
+            Country,
+        ],
+        "geography_levels":{
+            COUNTRY_ID : [
+                GeographyLevel,
+            ],
+        }
+    }
+]
+</code></pre>
+<h4 id="save-geography-level"><a name="user-content-save-geography-level" href="#save-geography-level" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save Geography Level</h4>
+<pre><code>[
+    "SaveGeographyLevel",
+    { 
+        "country_id": COUNTRY_ID,
+        "Levels":[
+            {
+                "level_position": LEVEL_POSITION,
+                "level_name": String
+            },
+        ]
+    }
+]
+
+On Success
+
+[
+    "SaveGeographyLevelSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "DuplicateGeographyLevelsExists",
+    {}
+]
+</code></pre>
+<h4 id="update-geography-level"><a name="user-content-update-geography-level" href="#update-geography-level" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update Geography Level</h4>
+<pre><code>[
+    "UpdateGeographyLevel",
+    {
+        "country_id": COUNTRY_ID,
+        "Levels":[
+            GeographyLevel,
+        ]
+    }
+]
+
+On Success
+
+[
+    "UpdateGeographyLevelSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidGeographyLevelId",
+    {}
+]
+</code></pre>
+<h4 id="get-geographies"><a name="user-content-get-geographies" href="#get-geographies" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Geographies</h4>
+<pre><code>[
+    "GetGeographies"
+    {}
+]
+
+On Success
+
+[
+    "GetGeographiesSuccess"
+    {
+        "countries": [Country,],
+        "geography_levels":{
+            COUNTRY_ID : [GeographyLevel,],
+        },
+        "geographies":{
+            COUNTRY_ID : [Geography,],
+        }
+    }
+]
+</code></pre>
+<h4 id="save-geography"><a name="user-content-save-geography" href="#save-geography" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save Geography</h4>
+<pre><code>[
+    "SaveGeography",
+    {
+        "geography_level_id": GEOGRAPHY_LEVEL_ID,
+        "geography_name": String,
+        "parent_ids": [GEOGRAPHY_ID,]
+    }
+]
+
+Possible Errors:
+
+[
+    "GeographyNameAlreadyExists",
+    {}  
+]
+</code></pre>
+<h4 id="update-geography"><a name="user-content-update-geography" href="#update-geography" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update Geography</h4>
+<pre><code>[
+    "Geography",
+    {
+        "geography_id": GEOGRAPHY_ID,
+        "geography_level_id": GEOGRAPHY_LEVEL_ID,
+        "geography_name": String,
+        "parent_ids": [GEOGRAPHY_ID,]
+    }
+]
+
+Possible Errors:
+
+[
+    "InvalidGeographyId",
+    {}  
+]
+</code></pre>
+<h4 id="change-geography-status"><a name="user-content-change-geography-status" href="#change-geography-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change Geography Status</h4>
+<pre><code>[
+    "ChangeGeographyStatus",
+    {
+        "geography_id": GEOGRAPHY_ID,
+        "is_active" : IS_ACTIVE
+    }
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "ChangeGeographyStatusSuccesss",
+    {}
+]
+</code></pre>
+<h4 id="get-industries"><a name="user-content-get-industries" href="#get-industries" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Industries</h4>
+<pre><code>[
+    "GetIndustries"
+    {}
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "GetIndustriesSuccess",
+    {
+        "industries": [
+            Industry,
+        ]
+    }
+]
+</code></pre>
+<h4 id="save-industry"><a name="user-content-save-industry" href="#save-industry" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save Industry</h4>
+<pre><code>[
+    "SaveIndustry",
+    {
+        "industry_name": String
+    }
+]
+
+On Success
+
+[
+    "SaveIndustrySuccess"
+    {}
+]
+
+Possible Errors
+
+[
+    "IndustryNameAlreadyExists",  
+    {}
+]
+</code></pre>
+<h4 id="update-industry"><a name="user-content-update-industry" href="#update-industry" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update Industry</h4>
+<pre><code>[
+    "UpdateIndustry",
+    {
+        "industry_id": INDUSTRY_ID,
+        "industry_name": String
+    }
+]
+
+On Success
+
+[
+    "UpdateIndustrySuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidIndustryId",
+    {}
+]
+</code></pre>
+<h4 id="change-industry-status"><a name="user-content-change-industry-status" href="#change-industry-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change Industry Status</h4>
+<pre><code>[
+    "ChangeIndustryStatus",
+    {
+        "industry_id": INDUSTRY_ID,
+        "is_active" : IS_ACTIVE
+    } 
+]
+
+On Success
+
+[
+    "ChangeIndustryStatusSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidIndustryId",
+    {}
+]
+</code></pre>
+<h4 id="get-statutory-natures"><a name="user-content-get-statutory-natures" href="#get-statutory-natures" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Statutory Natures</h4>
+<pre><code>[
+    "GetStatutoryNatures"
+    {}
+]
+
+On Success
+
+[
+    "GetStatutoryNaturesSuccess",
+    {
+        "statutory_natures":  [
+            StatutoryNature,
+        ]
+    }
+]
+</code></pre>
+<h4 id="save-statutory-nature"><a name="user-content-save-statutory-nature" href="#save-statutory-nature" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save Statutory Nature</h4>
+<pre><code>[
+    "SaveStatutoryNature",
+    {
+        "statutory_nature_name": String
+    }
+]
+
+On Success
+
+[
+    "SaveStatutoryNatureSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "StatutoryNatureNameAlreadyExists",
+    {}  
+]
+</code></pre>
+<h4 id="update-statutory-nature"><a name="user-content-update-statutory-nature" href="#update-statutory-nature" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update Statutory Nature</h4>
+<pre><code>[
+    "UpdateStatutoryNature",
+    {
+        "statutory_nature_id": STATUTORY_NATURE_ID,
+        "statutory_nature_name": String
+    }
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "UpdateStatutoryNatureSuccess",
+    {}
+]
+</code></pre>
+<p>Possible Errors</p>
+<pre><code>[
+    "InvalidStatutoryNatureId",
+    {}
+]
+</code></pre>
+<h4 id="change-statutory-nature-status"><a name="user-content-change-statutory-nature-status" href="#change-statutory-nature-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change Statutory Nature Status</h4>
+<pre><code>[
+    "ChangeStatutoryNatureStatus",
+    {
+        "statutory_nature_id": STATUTORY_NATURE_ID,
+        "is_active" : IS_ACTIVE
+    } 
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "ChangeStatutoryNatureStatusSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidStatutoryNatureId",
+    {}
+]
+</code></pre>
+<h4 id="get-statutory-levels"><a name="user-content-get-statutory-levels" href="#get-statutory-levels" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get statutory levels</h4>
+<pre><code>[
+    "GetStatutoryLevels",
+    {}
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "GetStatutoryLevelsSuccess",
+    {
+        "countries": [Country,],
+        "domains": [Domain,],
+        "statutory_levels":{
+            COUNTRY_ID : {
+            DOMAIN_ID : [StatutoryLevel,],
+          },
+        }
+    }
+]
+</code></pre>
+<h4 id="save-statutory-level"><a name="user-content-save-statutory-level" href="#save-statutory-level" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save statutory level</h4>
+<pre><code>[
+    "SaveStatutoryLevel",
+    {
+        "country_id": COUNTRY_ID,
+        "domain_id": DOMAIN_ID,
+        "levels": [
+            {
+                "level_position": LEVEL_POSITION,
+                "level_name": String
+            },
+        ]
+    }
+]
+
+Possible Errors
+
+[
+    "DuplicateStatutoryLevelsExists" ,
+    {}  
+]
+</code></pre>
+<h3 id="knowledge-user-transactions"><a name="user-content-knowledge-user-transactions" href="#knowledge-user-transactions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>KNOWLEDGE USER TRANSACTIONS</h3>
+<h4 id="get-statutory-mappings"><a name="user-content-get-statutory-mappings" href="#get-statutory-mappings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get statutory mappings</h4>
+<pre><code>[
+    "GetStatutoryMappings",
+    {}
+]
+
+On Success
+
+[
+    "GetStatutoryMappingsSuccess",
+    {
+        "countries": [Country,],
+        "domains": [Domain,],
+        "industries": [Industry,],
+        "statutory_natures": [StatutoryNature,],
+        "statutory_levels":{
+            COUNTRY_ID : [StatutoryLevel,],
+        },
+        "statutories":{
+            COUNTRY_ID : [Statutory,],
+        }, 
+        "geography_levels":{
+            COUNTRY_ID : [GeographyLevel,],
+        },
+        "geographies":{
+            COUNTRY_ID : [Geography,],
+        },
+        "statutory_mappings": [StatutoryMapping,]
+    }
+]
+</code></pre>
+<h4 id="save-statutory-mapping"><a name="user-content-save-statutory-mapping" href="#save-statutory-mapping" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save statutory mapping</h4>
+<pre><code>[
+    "SaveStatutoryMapping",
+    {
+        "country_id": COUNTRY_ID,
+        "domain_id": DOMAIN_ID,
+        "industry_ids": [INDUSTRY_ID,],
+        "statutory_nature_id": STATUTORY_NATURE_ID,
+        "statutories": [ Statutory,],
+        "compliances":[
+            { 
+                "compliance_task": COMPLIANCE_TASK_NAME, 
+                "description": String, 
+                "document": DOCUMENT_NAME, 
+                "format_file_name": [FORMAT_FILE_NAME,], 
+                "penal_description": String, 
+                "compliance_frequency": COMPLIANCE_FREQUENCY, 
+                "statutory_dates": [
+                    {
+                        "statutory_date": int,
+                        "statutory_month": int,
+                        "trigger_before_days": int
+                    },
+                ],
+                "repeats_type": REPEATS_TYPE, 
+                "repeats_every": int, 
+                "duration_type": DURATION_TYPE,
+                "duration": int,
+                "is_active": IS_ACTIVE
+            },  
+        ],
+        "geographies":[ GEOGRAPHY_ID,]      
+    }
+]
+
+Possible Errors
+
+[
+    "StatutoryMappingAlreadyExists",
+    {}  
+]
+</code></pre>
+<h4 id="update-statutory-mapping"><a name="user-content-update-statutory-mapping" href="#update-statutory-mapping" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update statutory mapping</h4>
+<pre><code>[
+    "UpdateStatutoryMapping",
+    StatutoryMapping
+]
+
+Possible Errors
+
+[
+    "InvalidStatutoryMappingId",
+    {}  
+]
+</code></pre>
+<h4 id="change-statutory-mapping-status"><a name="user-content-change-statutory-mapping-status" href="#change-statutory-mapping-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change Statutory Mapping Status</h4>
+<pre><code>[
+    "ChangeStatutoryMappingStatus",
+    {
+        "statutory_mapping_id":STATUTORY_MAPPING_ID,
+        "is_active" : IS_ACTIVE
+    }
+]
+
+On Success
+
+[
+    "ChangeStatutoryMappingStatusSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidStatutoryMappingId",
+    {}
+]
+</code></pre>
+<h2 id="knowledge-manager-section"><a name="user-content-knowledge-manager-section" href="#knowledge-manager-section" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Knowledge Manager Section</h2>
+<h3 id="knowledge-manager-transactions"><a name="user-content-knowledge-manager-transactions" href="#knowledge-manager-transactions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Knowledge Manager Transactions</h3>
+<h4 id="get-statutory-mapping-approval-list"><a name="user-content-get-statutory-mapping-approval-list" href="#get-statutory-mapping-approval-list" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Statutory Mapping Approval List</h4>
+<pre><code>[
+    "GetStatutoryMappingApprovalList",
+    {}
+]
+
+On Success
+
+[
+    "GetStatutoryMappingApprovalListSuccess",
+    {
+        "countries": [Country,],
+        "domains": [Domain,],
+        "industries": [Industry,],
+        "statutory_natures": [StatutoryNature,],
+        "statutory_mappings": [
+            {
+                "industry_id": INDUSTRY_ID,
+                "statutory_nature_id": STATUTORY_NATURE_ID,
+                "statutory_provision":String,
+                "compliances":[
+                    Compliance,
+                ],
+                "geographies": String
+            },
+        ]
+    }
+]
+</code></pre>
+<h4 id="approve-statutory-mapping"><a name="user-content-approve-statutory-mapping" href="#approve-statutory-mapping" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Approve statutory mapping</h4>
+<pre><code>[
+    "ApproveStatutoryMapping",
+    [
+        {
+            "statutory_mapping_id": STATUTORY_MAPPING_ID,
+            "approval_status": APPROVAL_STATUS,
+            "rejected_reason": String,
+            "notification_text": String
+        },
+    ]
+]
+</code></pre>
+<h2 id="knowledge-section-reports"><a name="user-content-knowledge-section-reports" href="#knowledge-section-reports" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>KNOWLEDGE SECTION REPORTS</h2>
+<h3 id="get-statutory-mapping-report-filters"><a name="user-content-get-statutory-mapping-report-filters" href="#get-statutory-mapping-report-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Statutory Mapping Report Filters</h3>
+<p>(Common for &ldquo;Compliance List Report&rdquo; in Techno Functional Section)</p>
+<pre><code>[
+    "GetStatutoryMappingReportFilters",
+    {}
+]
+
+On Success
+
+[
+    "GetStatutoryMappingReportFiltersSuccess",
+    {
+        "countries": [Country,],
+        "domains": [Domain,],
+        "industries": [Industry,],
+        "statutory_natures": [StatutoryNature,],
+        "geographies":{
+            COUNTRY_ID :[ Geography,],
+        },
+        "level_1_statutories":{
+            COUNTRY_ID :[ Statutory,],
+        }
+    }
+]
+</code></pre>
+<h3 id="get-statutory-mapping-report"><a name="user-content-get-statutory-mapping-report" href="#get-statutory-mapping-report" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Statutory Mapping Report</h3>
+<p>(Common for &ldquo;Compliance List Report&rdquo; in Techno Functional Section)</p>
+<pre><code>[
+    "GetStatutoryMappingReportData",
+    {
+        "country_id" : COUNTRY_ID,
+        "domain_id" : DOMAIN_ID,
+        "industry_id": INDUSTRY_ID,
+        "statutory_nature_id": STATUTORY_NATURE_ID,
+        "geography_id": GEOGRAPHY_ID,
+        "level_1_statutory_id": LEVEL_1_STATUTORY_ID
+    }
+]
+
+On Success
+
+[
+    "GetStatutoryMappingReportDataSuccess",
+    {
+        "country_wise_statutory_mappings":[
+            {
+                "country_id" : COUNTRY_ID,
+                "domain_id" : DOMAIN_ID,
+                "statutory_mappings"{
+                    LEVEL_1_STATUTORY_ID :[
+                        {
+                            "industry_id": INDUSTRY_ID,
+                            "statutory_nature_id": STATUTORY_NATURE_ID,
+                            "statutory_provision": String,
+                            "compliances":[
+                                Compliance,
+                            ],
+                            "geographies": String
+                        },
+                    ],
+                } 
+            },
+        ]
+    }
+]
+</code></pre>
+<h1 id="techno-fuctional-team"><a name="user-content-techno-fuctional-team" href="#techno-fuctional-team" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>TECHNO FUCTIONAL TEAM</h1>
+<h2 id="techno-manager-section"><a name="user-content-techno-manager-section" href="#techno-manager-section" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>TECHNO - MANAGER SECTION</h2>
+<h3 id="techno-manager-masters"><a name="user-content-techno-manager-masters" href="#techno-manager-masters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>TECHNO MANAGER MASTERS</h3>
+<h4 id="get-client-groups"><a name="user-content-get-client-groups" href="#get-client-groups" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Client Groups</h4>
+<pre><code>[
+    "GetClientGroups",
+    {}   
+]
+
+On Success
+
+[
+    "GetClientGroupsSuccess",
+    {
+        "countries":[Country,],
+        "domains":[Domain,],
+        "users":[
+            {
+                "user_id": USER_ID,
+                "employee_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+            },
+        ]
+        "client_list":[
+            {
+                "client_id": CLIENT_ID,
+                "client_name": String,
+                "incharge_persons":[String,],
+                "countries": [COUNTRY_ID,],
+                "domain_ids":[DOMAIN_ID,],
+                "logo" : URL,
+                "contract_from": Date,
+                "contract_to": Date,
+                "incharge_persons": [USER_ID,],
+                "no_of_user_licence": int,
+                "file_space": float,
+                "is_sms_subscribed": Boolean,
+                "date_configurations":[ClientConfiguration,],
+                "username": USERNAME,
+                "is_active": IS_ACTIVE
+            },
+        ]
+    }
+]
+</code></pre>
+<h4 id="save-client-group"><a name="user-content-save-client-group" href="#save-client-group" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save Client Group</h4>
+<pre><code>[
+    "SaveClientGroup",
+    {
+        "group_name": String,
+        "country_ids": [COUNTRY_ID,],
+        "domain_ids":[DOMAIN_ID,],
+        "logo" : URL,
+        "contract_from": Date,
+        "contract_to": Date,
+        "incharge_persons": [USER_ID,],
+        "no_of_user_licence": int,
+        "file_space": float,
+        "is_sms_subscribed": Boolean,
+        "date_configurations":[ClientConfiguration,]
+    }
+]
+
+On Success
+
+[
+    "SaveClientGroupSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "GroupNameAlreadyExists",
+    {}
+]
+
+[
+    "UsernameAlreadyExists",
+    {}
+]
+</code></pre>
+<h4 id="update-client-group"><a name="user-content-update-client-group" href="#update-client-group" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update Client Group</h4>
+<pre><code>[
+    "UpdateClientGroup",
+    {
+        "client_id": CLIENT_ID,
+        "group_name": String,
+        "countries": [COUNTRY_ID,],
+        "domain_ids":[DOMAIN_ID,],
+        "logo" : URL,
+        "contract_from": Date,
+        "contract_to": Date,
+        "incharge_persons": [USER_ID,],
+        "no_of_user_licence": int,
+        "file_space": float,
+        "is_sms_subscribed": Boolean,
+        "date_configurations":[ClientConfiguration,]
+    }
+]
+
+On Success
+
+[
+    "UpdateClientGroupSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "GroupNameAlreadyExists",
+    {}
+]
+</code></pre>
+<h4 id="change-client-group-status"><a name="user-content-change-client-group-status" href="#change-client-group-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change Client Group Status</h4>
+<pre><code>[
+    "ChangeClientGroupStatus",
+    {
+        "client_id":client_id,
+        "is_active": IS_ACTIVE
+    }
+]
+
+On Success
+
+[
+    "ChangeClientGroupStatusSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidClientId",
+    {}
+]
+</code></pre>
+<h2 id="techno-functional-masters"><a name="user-content-techno-functional-masters" href="#techno-functional-masters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>TECHNO FUNCTIONAL MASTERS</h2>
+<h3 id="get-clients"><a name="user-content-get-clients" href="#get-clients" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Clients</h3>
+<pre><code>[
+    "GetClients",
+    {}
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "GetClientsSuccess",
+    [
+        { 
+            "countries": [Country,],
+            "group_companies":[GroupCompany,]
+            "business_groups": [BusinessGroup,],
+            "legal_entities": [LegalEntity,],
+            "divisions": [Division,],
+            "units": [Unit,],
+        },
+    ]
+]
+</code></pre>
+<h3 id="save-client"><a name="user-content-save-client" href="#save-client" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save Client</h3>
+<pre><code>[
+    "SaveClient",
+    {
+        "client_id": CLIENT_ID,
+        "business_group": BUSINESS_GROUP,
+        "legal_entity": LEGAL_ENTITY,
+        "division": DIVISION,
+        "country_wise_units": [
+            {
+                "country_id" : COUNTRY_ID,
+                "units" : [Unit,]
+            },
+        ]
+    }
+]
+
+Possible Errors
+
+[
+    "InvalidClientId",
+    {}
+]
+
+[
+    "GroupCompanyNameAlreadyExists",
+    {}
+]
+
+[
+    "BusinessGroupNameAlreadyExists",
+    {}
+]
+
+[
+    "LegalEntityNameAlreadyExists",
+    {}
+]
+
+[
+    "DivisionNameAlreadyExists",
+    {}
+]
+
+[
+    "UnitNameAlreadyExists",
+    {}
+]
+
+[
+    "UnitCodeAlreadyExists",
+    {}
+]
+
+[
+    "LogoSizeLimitExceeds",
+    {}
+]
+</code></pre>
+<h3 id="update-client"><a name="user-content-update-client" href="#update-client" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update Client</h3>
+<pre><code>[
+    "UpdateClient",
+    {
+        "client_id" : CLIENT_ID,
+        "group_company": GroupCompany,
+        "business_group": BUSINESS_GROUP,
+        "legal_entity": LEGAL_ENTITY,
+        "division": DIVISION,
+        "country_wise_units": [
+            {
+                "country_id" : COUNTRY_ID,
+                "units" : [Unit,]
+            },
+        ]
+    }
+]
+
+On Success
+
+[
+    "UpdateClientSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidClientId",
+    {}
+]
+</code></pre>
+<h3 id="change-client-status"><a name="user-content-change-client-status" href="#change-client-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change Client Status</h3>
+<pre><code>[
+    "ChangeClientStatus",
+    {
+        "client_id" : CLIENT_ID,
+        "is_active" : IS_ACTIVE
+    }
+]
+
+On Success
+
+[
+    "ChangeClientStatusSuccess",
+    {}
+]
+</code></pre>
+<h3 id="reactivate-unit"><a name="user-content-reactivate-unit" href="#reactivate-unit" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Reactivate Unit</h3>
+<pre><code>[
+    "ReactivateUnit",
+    {
+        "unit_id" : UNIT_ID,
+        "password" : String
+    }
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "ReactivateUnitSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidPassword",
+    {}
+]
+
+[
+    "InvalidUnitId",
+    {}
+]
+</code></pre>
+<h2 id="techno-functional-transactions"><a name="user-content-techno-functional-transactions" href="#techno-functional-transactions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>TECHNO FUNCTIONAL TRANSACTIONS</h2>
+<h3 id="get-assigned-statutories-list"><a name="user-content-get-assigned-statutories-list" href="#get-assigned-statutories-list" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Assigned Statutories List</h3>
+<pre><code>[
+    "GetAssignedStatutoriesList",
+    {}
+]
+
+On Success
+
+[
+    "GetAssignedStatutoriesListSuccess",
+    {
+        "assigned_statutories":[
+            {   
+                "submission_status": ASSIGN_STATUTORY_SUBMISSION_STATUS,
+                "client_saved_statutory_id": int,
+                "client_assigned_statutory_id": int,
+                "country_name" : String,
+                "group_name" : String,
+                "business_group_name" : String,
+                "legal_entity_name" : String,
+                "division_name" : String,
+                "unit_name": UNIT_CODE - UNIT_NAME,
+                "geography_name" : String,
+                "domain_name": String
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-assigned-statutories-by-id"><a name="user-content-get-assigned-statutories-by-id" href="#get-assigned-statutories-by-id" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Assigned Statutories by Id</h3>
+<pre><code>[
+    "GetAssignedStatutoriesById",
+    {
+        "submission_status": ASSIGN_STATUTORY_SUBMISSION_STATUS,
+        "client_saved_statutory_id": int,
+        "client_assigned_statutory_id": int
+    }
+]
+
+On Success
+
+[
+    "GetAssignedStatutoriesByIdSuccess",
+    {
+        "country_name" : String,
+        "group_name" : String,
+        "business_group_name" : String,
+        "legal_entity_name" : String,
+        "division_name" : String,
+        "unit_name": UNIT_CODE - UNIT_NAME,
+        "geography_name" : String,
+        "domain_name": String,
+        "statutories":[
+            AssignedStatutory,
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-assigned-statutory-wizard-1-data"><a name="user-content-get-assigned-statutory-wizard-1-data" href="#get-assigned-statutory-wizard-1-data" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Assigned Statutory Wizard 1 data</h3>
+<pre><code>[
+    "GetAssignedStatutoryWizardOneData",
+    {}
+]
+
+On Success
+
+[
+    "GetAssignedStatutoryWizardOneDataSuccess",
+    {
+        "countries": [Country,],
+        "domains":[Domain,],
+        "industries":[Industry,],
+        "geography_levels":{
+            COUNTRY_ID : [GeographyLevel,],
+        },
+        "geographies":{
+            COUNTRY_ID : [
+                [Geographies,],
+            ],
+        },
+        "group_companies": [GroupCompany,],
+        "business_groups": [BusinessGroup,],
+        "legal_entities": [LegalEntity,],
+        "divisions": [Division,],
+        "units": [
+            {
+                "unit_id": UNIT_ID,
+                "unit_name": String,
+                "division_id": DIVISION_ID,
+                "legal_entity_id": LEGAL_ENTITY_ID,
+                "business_group_id": BUSINESS_GROUP_ID,
+                "group_id": GROUP_ID,
+                "domain_ids": [Domain_id,],
+                "industry_id": INDUSTRY_ID,
+                "geography_id": GEOGRAPHY_ID
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-statutory-wizard-2-data"><a name="user-content-get-statutory-wizard-2-data" href="#get-statutory-wizard-2-data" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Statutory Wizard 2 Data</h3>
+<pre><code>[
+    "GetStatutoryWizardTwoData",
+    {
+        "geography_id": GEOGRAPHY_ID,
+        "industry_id": INDUSTRY_ID,
+        "domain_id": DOMAIN_ID
+    }
+]
+
+On Success
+
+[
+    "GetStatutoryWizardTwoDataSuccess",
+    {
+        "statutories": [
+            AssignedStatutory,
+        ]
+    } 
+]
+</code></pre>
+<h3 id="save-submit-assigned-statutory"><a name="user-content-save-submit-assigned-statutory" href="#save-submit-assigned-statutory" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save/ Submit Assigned Statutory</h3>
+<pre><code>[
+    "SaveAssignedStatutory",
+    {
+        "submission_type": ASSIGN_STATUTORY_SUBMISSION_TYPE,
+        "client_saved_statutory_id": int,
+        "client_assigned_statutory_id": int,
+        "assigned_statutories":[
+            AssignedStatutory,
+        ]
+    }
+]
+
+On Success
+
+[
+    "SaveAssignedStatutorySuccess",
+    {}
+]
+</code></pre>
+<h3 id="get-client-profile"><a name="user-content-get-client-profile" href="#get-client-profile" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Client Profile</h3>
+<pre><code>[ 
+    "GetClientProfile",
+    {
+        "group_companies": [GroupCompany,],
+        "profiles":[
+            {
+                "client_id": CLIENT_ID,
+                "profile_detail": {
+                    "contract_from": Date,
+                    "contract_to": Date,
+                    "no_of_user_licence": int,
+                    "remaining_licence": int,
+                    "licence_holders":[
+                        {
+                            "user_id": int,
+                            "user_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                            "email_id": EMAIL_ID,
+                            "contact_no": CONTACT_NO,
+                            "seating_unit_name": UNIT_CODE - UNIT_NAME,
+                            "address": ADDRESS,
+                            "total_disk_space": float,
+                            "used_disk_space": float,
+                        },
+                    ]
+                },
+            },
+        ]
+    }
+]
+</code></pre>
+<h2 id="techno-functional-reports"><a name="user-content-techno-functional-reports" href="#techno-functional-reports" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>TECHNO FUNCTIONAL REPORTS</h2>
+<h3 id="get-client-details-report-filters"><a name="user-content-get-client-details-report-filters" href="#get-client-details-report-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Client Details Report Filters</h3>
+<pre><code>[
+    "GetClientDetailsReportFilters",
+    {}
+]
+
+On Success
+
+[
+    "GetClientDetailsReportFiltersSuccess",
+    {
+        "countries": [Country,],
+        "domains": [Domain,]
+        "group_companies":[GroupCompany,],
+        "business_groups" : [BusinessGroup,],
+        "legal_entities": [LegalEntity,],
+        "divisions": [Division,],
+        "units":[
+            {
+                "unit_id": UNIT_ID,
+                "unit_name": UNIT_NAME
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-client-details-report-data"><a name="user-content-get-client-details-report-data" href="#get-client-details-report-data" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Client details Report Data</h3>
+<pre><code>[
+    "GetClientDetailsReportData",
+    {
+        "country_id": COUNTRY_ID,
+        "group_id": GROUP_ID,
+        "business_group_id": BUSINESS_GROUP_ID,
+        "legal_entity_id": LEGAL_ENTITY_ID,
+        "division_id": DIVISION_ID,
+        "unit_id": UNIT_ID,
+        "domain_ids" : [DOMAIN_ID,]
+    }
+]
+
+On Success
+
+[
+    "GetClientDetailsReportDataSuccess",
+    {
+        "units":[
+            {
+                "unit_id": UNIT_ID,
+                "division_id": DIVISION_ID,
+                "legal_entity_id": LEGAL_ENTITY_ID,
+                "busines_group_id": BUSINES_GROUP_ID,
+                "client_id": CLIENT_ID,
+                "unit_name": Unit_code - UNIT_NAME,
+                "domain_ids": [DOMAIN_ID,],
+                "address": ADDRESS,
+                "postal_code": String,
+            },
+        ] 
+    }   
+]
+</code></pre>
+<h3 id="get-statutory-notifications"><a name="user-content-get-statutory-notifications" href="#get-statutory-notifications" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Statutory Notifications</h3>
+<pre><code>[
+    "GetStatutoryNotifications",
+    {}
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "GetStatutoryNotificationsSuccess"
+    {
+        "countries": [COUNTRY,],
+        "domains": [DOMAIN,],
+        "level_1_statutories":{
+            COUNTRY_ID : [STATUTORY,],
+        },
+        "country_wise_notifications":[
+            {
+                "country_id" : COUNTRY_ID,
+                "domain_id" : DOMAIN_ID,
+                "notifications" : [
+                    {
+                        "statutory_provision": String,
+                        "notification_text": String,
+                        "date_and_time": TIMESTAMP,
+                    },
+                ]
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-assigned-statutory-report-filters"><a name="user-content-get-assigned-statutory-report-filters" href="#get-assigned-statutory-report-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get assigned statutory Report Filters</h3>
+<pre><code>[
+    "GetAssignedStatutoryReportFilters",    
+    {}
+]
+
+On Success
+
+[
+    "GetAssignedStatutoryReportFiltersSuccess",
+    {
+        "countries": [COUNTRY,],
+        "domains": [DOMAIN,],
+        "groups": [GroupCompany,],
+        "legal_entities": [LegalEntity,],
+        "divisions": [Division,],
+        "units": [Unit,],
+        "level_1_statutories":{
+            COUNTRY_ID : [STATUTORY,],
+        }
+    }   
+]
+</code></pre>
+<h3 id="get-assigned-statutory-report"><a name="user-content-get-assigned-statutory-report" href="#get-assigned-statutory-report" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get assigned statutory report</h3>
+<pre><code>[
+    "GetAssignedStatutoryReport",
+    {
+        "country_id": COUNTRY_ID,
+        "domain_ids" : [DOMAIN_ID,]
+        "group_id": GROUP_ID,
+        "business_group_id": BUSINESS_GROUP_ID,
+        "legal_entity_id": LEGAL_ENTITY_ID,
+        "division_id": DIVISION_ID,
+        "unit_id": UNIT_ID,
+        "level_1_statutory_id": LEVEL_1_STATUTORY_ID,
+        "applicability_status": APPLICABILITY_STATUS
+    }
+]
+</code></pre>
+<p>On Success </p>
+<pre><code>[
+    "GetAssignedStatutoryReportSuccess",
+    {
+        "unit_wise_assigned_statutories": [
+            {
+                "unit_id" : UNIT_ID,
+                "address" : ADDRESS,
+                "assigned_statutories" : [AssignedStatutory,]
+            },
+        ]
+    }
+]
+</code></pre>
+<h1 id="client"><a name="user-content-client" href="#client" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>CLIENT</h1>
+<h2 id="client-admin-section"><a name="user-content-client-admin-section" href="#client-admin-section" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>CLIENT ADMIN SECTION</h2>
+<h3 id="client-admin-masters"><a name="user-content-client-admin-masters" href="#client-admin-masters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>CLIENT ADMIN MASTERS</h3>
+<h4 id="get-service-providers"><a name="user-content-get-service-providers" href="#get-service-providers" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get service providers</h4>
+<pre><code>[
+    "GetServiceProviders",
+    {
+        "group_id": CLIENT_ID
+    }
+]
+
+On Success
+
+[
+    "GetServiceProvidersSuccess",
+    {
+        "service_providers": [
+            ServiceProvider,
+        ]  
+    }   
+]
+</code></pre>
+<h4 id="save-service-provider"><a name="user-content-save-service-provider" href="#save-service-provider" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save Service Provider</h4>
+<pre><code>[  
+    "SaveServiceProvider",
+    {
+        "service_provider_name": String, 
+        "address": ADDRESS,
+        "contract_from": Date,
+        "contract_to": Date, 
+        "contact_person": String,
+        "contact_no": CONTACT_NO,
+        "is_active": IS_ACTIVE
+    }
+]
+</code></pre>
+<p>Possible Errors </p>
+<pre><code>[
+    "ServiceProviderNameAlreadyExists",
+    {}  
+]
+
+[
+    "ContactNumberAlreadyExists",
+    {}  
+]
+
+[
+    "EmailIDAlreadyExists",
+    {}  
+]
+</code></pre>
+<h4 id="update-service-provider"><a name="user-content-update-service-provider" href="#update-service-provider" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update Service Provider</h4>
+<pre><code>[  
+    "SaveServiceProvider",
+    ServiceProvider
+]
+</code></pre>
+<p>Possible Errors </p>
+<pre><code>[
+    "InvalidServiceProviderId",
+    {}
+]
+</code></pre>
+<h4 id="change-service-provider-status"><a name="user-content-change-service-provider-status" href="#change-service-provider-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change Service Provider Status</h4>
+<pre><code>[
+    "ChangeServiceProviderStatus",
+    {
+        "service_provider_id" : SERVICE_PROVIDER_ID,
+        "is_active" : IS_ACTIVE
+    }
+]
+
+On Success
+
+[
+    "ChangeServiceProviderStatusSuccess",
+    {}
+]
+</code></pre>
+<h4 id="get-user-privileges"><a name="user-content-get-user-privileges" href="#get-user-privileges" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get User Privileges</h4>
+<pre><code>[
+    "GetUserPrivileges",
+    {}
+]
+
+On Success
+
+[
+    "GetUserPrivilegesSuccess",
+    {
+        "forms": Menu,
+        "user_groups": [UserGroup,]
+    }
+]
+</code></pre>
+<h4 id="save-user-privileges"><a name="user-content-save-user-privileges" href="#save-user-privileges" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save User Privileges</h4>
+<pre><code>[
+    "SaveUserPrivileges",
+    {
+        "client_id": CLIENT_ID,
+        "user_group_name": USER_GROUP_NAME,
+        "form_type": FORM_TYPE,
+        "form_ids": [FORM_ID, ]
+    }
+</code></pre>
+<p>]</p>
+<p>Possible Errors :</p>
+<pre><code>[
+    "UserGroupNameAlreadyExists",
+    {}  
+]
+</code></pre>
+<h4 id="update-user-privileges"><a name="user-content-update-user-privileges" href="#update-user-privileges" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update User Privileges</h4>
+<pre><code>[
+    "UpdateUserPrivileges",
+    {
+        "user_group_id": USER_GROUP_ID,
+        "client_id": CLIENT_ID,
+        "user_group_name": USER_GROUP_NAME,
+        "form_type": FORM_TYPE,
+        "form_ids": [FORM_ID, ]
+    }
+</code></pre>
+<p>]</p>
+<p>Possible Errors :</p>
+<pre><code>[
+    "InvalidUserGroupId",
+    {}  
+]
+</code></pre>
+<h4 id="change-user-privilege-status"><a name="user-content-change-user-privilege-status" href="#change-user-privilege-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change User Privilege Status</h4>
+<pre><code>[
+    "ChangeUserPrivilegeStatus",
+    {
+        "user_group_id": USER_GROUP_ID,
+        "is_active" : IS_ACTIVE
+    }
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "ChangeUserPrivilegeStatusSuccess",
+    {}
+]
+</code></pre>
+<h4 id="get-client-users"><a name="user-content-get-client-users" href="#get-client-users" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get client users</h4>
+<pre><code>[
+    "GetClientUsers",
+    {}
+]
+
+On Success
+
+[
+    "GetClientUsersSuccess",
+    {
+        "client_users": [
+          ClientUser,
+        ]
+    }
+]
+</code></pre>
+<h4 id="save-client-user"><a name="user-content-save-client-user" href="#save-client-user" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save client user</h4>
+<pre><code>[
+    "SaveClientUser",
+    {
+        "email_id": EMAIL_ID,
+        "user_group_id": USER_GROUP_ID, 
+        "employee_name": String,
+        "employee_code": EMPLOYEE_CODE,
+        "contact_no": CONTACT_NUMBER,
+        "seating_unit_id": UNIT_ID,
+        "seating_unit_name": UNIT_NAME,
+        "user_level": USER_LEVEL,
+        "country_ids":[COUNTRY_ID,],
+        "domain_ids": [DOMAIN_ID,],
+        "unit_ids": [UNIT_ID,],
+        "is_service_provider": BOOLEAN,
+        "service_provider_id": SERVICE_PROVIDER_ID,
+    }
+]
+
+On Success
+
+[   
+    "SaveClientUserSuccess",
+    {}
+]
+
+Possible Errors :
+
+[
+    "EmployeeCodeAlreadyExists",
+    {}  
+]
+
+[
+    "ContactNumberAlreadyExists",
+    {}  
+]
+</code></pre>
+<h4 id="update-client-user"><a name="user-content-update-client-user" href="#update-client-user" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update client user</h4>
+<pre><code>[
+    "UpdateClientUser",
+    ClientUser
+]
+
+On Success
+
+[   
+    "UpdateClientUserSuccess",
+    {}
+]
+
+Possible Errors :
+
+[
+    "InvalidUserId",
+    {}  
+]
+</code></pre>
+<h4 id="change-client-user-status"><a name="user-content-change-client-user-status" href="#change-client-user-status" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Change Client User Status</h4>
+<pre><code>[
+    "ChangeClientUserStatus",
+    {
+        "user_id"  : USER_ID,
+        "is_active" : IS_ACTIVE,
+        "is_admin" : IS_ADMIN
+    }
+]
+
+On Success
+
+[
+    "ChangeClientUserStatusSuccess",
+    {}
+]
+</code></pre>
+<h4 id="get-units"><a name="user-content-get-units" href="#get-units" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Units</h4>
+<pre><code>[
+    "GetUnits",
+    {}
+]
+
+On Success
+
+[
+    "GetUnitsSuccess",
+    {
+        "business_groups": [BUSINESS_GROUP,],
+        "legal_entities": [LEGAL_ENTITY,],
+        "divisions": [DIVISION,],
+        "units":[
+            {
+                "unit_id": UNIT_ID,
+                "unit_name": UNIT_CODE - UNIT_NAME,
+                "address": ADDRESS,
+                "division_id": DIVISION_ID,
+                "legal_entity_id": LEGAL_ENTITY_ID,
+                "business_group_id": BUSINESS_GROUP_ID,
+                "is_active": IS_ACTIVE
+            }
+        ]
+    }
+]
+</code></pre>
+<h4 id="close-unit"><a name="user-content-close-unit" href="#close-unit" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Close Unit</h4>
+<pre><code>[
+    "CloseUnit",
+    {
+        "unit_id": UNIT_ID,
+        "password": String
+    }
+]
+
+On Success
+
+[
+    "CloseUnitSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "InvalidPassword",
+    {}  
+]
+</code></pre>
+<h3 id="client-admin-transactions"><a name="user-content-client-admin-transactions" href="#client-admin-transactions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>CLIENT ADMIN TRANSACTIONS</h3>
+<h4 id="get-statutory-settings"><a name="user-content-get-statutory-settings" href="#get-statutory-settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Statutory Settings</h4>
+<pre><code>[
+    "GetStatutorySettings",
+    {}
+]
+
+On Succes
+
+[
+    "GetStatutorySettings",
+    [
+        {   
+            "unit_id": UNIT_ID,
+            "unit_name": UNIT_CODE - UNIT_NAME,
+            "address": ADDRESS,
+            "country_name": String,
+            "domain_id": DOMAIN_ID,
+            "domain_name": String,
+            "business_group_name": String,
+            "legal_entity_name": String,
+            "division_name": String,
+            "statutories":[AssignedStatutory,]
+        },  
+    ]
+]
+</code></pre>
+<h4 id="update-statutory-settings"><a name="user-content-update-statutory-settings" href="#update-statutory-settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update Statutory Settings</h4>
+<pre><code>[
+    "UpdateStatutorySettings",
+    {
+        "unit_id": UNIT_ID,
+        "domain_id": DOMAIN_ID,
+        "statutories": [
+            {
+                "level_1_statutory_id": LEVEL_1_STATUTORY_ID,
+                "compliances":[
+                    {
+                        "compliance_id": COMPLIANCE_ID,
+                        "compliance_applicable_status": BOOLEAN,
+                        "compliance_opted_status": BOOLEAN,
+                        "compliance_remarks": String
+                    },
+                ],
+              "applicable_status": Boolean,
+              "not_applicable_remarks": String
+            },
+        ]
+    }
+]
+
+Possible Errors:
+
+[
+    "InvalidPassword",
+    {}  
+]
+</code></pre>
+<h4 id="get-assign-compliances-form-data"><a name="user-content-get-assign-compliances-form-data" href="#get-assign-compliances-form-data" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Assign compliances form data</h4>
+<pre><code>[
+    "GetAssignCompliancesFormData",
+    {}
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "GetAssignCompliancesFormDataSuccess",
+    {
+        "countries": [COUNTRY,],
+        "business_groups": [BUSINESS_GROUP,],
+        "legal_entities": [LEGAL_ENTITY,],
+        "divisions": [DIVISION,],
+        "units":[
+            {
+                "unit_id": UNIT_ID,
+                "unit_name": UNIT_CODE - UNIT_NAME,
+                "address": ADDRESS,
+                "division_id": DIVISION_ID,
+                "legal_entity_id": LEGAL_ENTITY_ID,
+                "business_group_id": BUSINESS_GROUP_ID,
+                "group_id": GROUP_ID,
+                "statutories":[
+                    [
+                        LEVEL_1_STATUTORY_NAME,
+                        [
+                            {
+                                "compliance_id": COMPLIANCE_ID,
+                                "compliance_name":DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                                "description": String,
+                                "frequency": String,
+                                "statutory_date": String,
+                                "due_date": Date
+                            },
+                        ]
+                    ],
+                ]
+            },
+        ],
+        "users":[
+            {
+                "user_id": USER_ID,
+                "user_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                "user_level": USER_LEVEL,
+                "seating_unit_id": UNIT_ID,
+                "settings_unit_ids":[UNIT_ID,]
+            },
+        ]
+    }
+]
+</code></pre>
+<h4 id="save-assigned-compliance"><a name="user-content-save-assigned-compliance" href="#save-assigned-compliance" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save assigned compliance</h4>
+<pre><code>[
+    "SaveAssignedCompliance",
+    {
+        "assignee": USER_ID,
+        "concurrence_person": USER_ID,
+        "approval_person": USER_ID,
+        "compliances": [
+            {
+                "compliance_id": COMPLIANCE_ID,
+                "statutory_dates": [
+                    {
+                        "statutory_date": int,
+                        "statutory_month": int,
+                        "trigger_before_days": int
+                    },
+                ],
+              "due_date": Date,
+              "validity_date": Date,
+              "unit_ids": [UNIT_ID, ]
+            },
+        ]
+    }
+]
+
+Possible Errors :
+
+[
+    "AssigneeNotBelongToUnit",
+    {}  
+]
+
+[
+    "ConcurrenceNotBelongToUnit",
+    {}  
+]
+
+[
+    "ApprovalPersonNotBelongToUnit",
+    {}  
+]
+</code></pre>
+<h4 id="get-user-wise-compliances"><a name="user-content-get-user-wise-compliances" href="#get-user-wise-compliances" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get User wise Compliances</h4>
+<pre><code>[
+    "GetUserwiseCompliances",
+    {}
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "GetUserwiseCompliancesSuccess",
+    {
+        "user_wise_compliances":[
+            {
+                "user_id": USER_ID,
+                "user_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                "seating_unit": UNIT_CODE - UNIT_NAME,
+                "address": ADDRESS,
+                "no_of_compliances": int,
+                "units":[
+                    {
+                        "unit_id": UNIT_ID,
+                        "unit_name": UNIT_CODE - UNIT_NAME,
+                        "address": ADDRESS,
+                        "statutories":[
+                            {
+                                "level_1_statutory_name": LEVEL_1_STATUTORY_NAME,
+                                "compliances": [
+                                    {
+                                        "compliance_history_id":COMPLIANCE_HISTORY_ID ,
+                                        "compliance_id": COMPLIANCE_ID,
+                                        "compliance_name":DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                                        "description": String,
+                                        "compliance_frequency": COMPLIANCE_FREQUENCY,
+                                        "statutory_date": [
+                                            {
+                                                "statutory_date": int,
+                                                "statutory_month": int,
+                                                "trigger_before_days": int
+                                            },
+                                        ],
+                                        "due_date": Date
+                                    },
+                                ]
+                            },
+                        ]
+                    },
+                ]
+            },
+        ],
+        "users":[
+            {
+                "user_id": USER_ID,
+                "user_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                "user_level": USER_LEVEL,
+                "seating_unit_id": UNIT_ID,
+                "settings_unit_ids":[UNIT_ID,]
+            },
+        ],
+    }
+]
+</code></pre>
+<h4 id="reassign-compliance"><a name="user-content-reassign-compliance" href="#reassign-compliance" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Reassign compliance</h4>
+<pre><code>[
+    "ReassignCompliance",
+    {
+        "reassigned_from": USER_ID,
+        "assignee": USER_ID,
+        "concurrence_person": USER_ID,
+        "approval_person": USER_ID,
+        "compliances":[
+            {
+                "compliance_history_id":COMPLIANCE_HISTORY_ID ,
+                "due_date": Date
+            },
+        ],
+        "reassigned_reason": String
+    }
+]
+
+Possible Errors :
+
+[
+    "AssigneeNotBelongToUnit",
+    {}  
+]
+
+[
+    "ConcurrenceNotBelongToUnit",
+    {}  
+]
+
+[
+    "ApprovalPersonNotBelongToUnit",
+    {}  
+]
+</code></pre>
+<h4 id="get-compliance-approval-list"><a name="user-content-get-compliance-approval-list" href="#get-compliance-approval-list" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Compliance Approval List</h4>
+<pre><code>[
+    "GetComplianceApprovalList",
+    {}
+]
+
+On Success
+
+[
+    "GetComplianceApprovalList",
+    {
+        "approval_list": [
+            {
+                "assignee_id": USER_ID,
+                "assignee_name":EMPLOYEE_CODE -  String,
+                "compliances": [
+                    {
+                        "compliance_history_id": COMPLIANCE_HISTORY_ID,
+                        "compliance_name":DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                        "description": String,
+                        "domain_name": String,
+                        "start_date": Date,
+                        "due_date": Date,
+                        "delayed_by": int,
+                        "compliance_frequency": COMPLIANCE_FREQUENCY,
+                        "documents": [ FORMAT_FILE_NAME,],
+                        "upload_date": Date,
+                        "completion_date": Date,
+                        "next_due_date": Date,
+                        "concurrenced_by": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                        "remarks": String
+                    },
+                ]
+            },
+        ]
+    }
+]
+</code></pre>
+<h4 id="approve-compliance"><a name="user-content-approve-compliance" href="#approve-compliance" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Approve Compliance</h4>
+<pre><code>[
+    "ApproveCompliance",
+    {
+        "compliance_history_id": COMPLIANCE_HISTORY_ID,
+        "approval_status": COMPLIANCE_APPROVAL_STATUS,
+        "remarks": String
+    }
+]
+</code></pre>
+<h4 id="get-past-records-form-data"><a name="user-content-get-past-records-form-data" href="#get-past-records-form-data" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Past Records form data</h4>
+<pre><code>[
+    "GetPastRecordsFormData",
+    {}
+]
+
+On Success
+
+[
+    "GetPastRecordsFormDataSuccess",
+    {
+        "countries": [Country,],
+        "business_groups": [BusinessGroup,],
+        "legal_entites": [LegalEntity,],
+        "divisions": [Division,],
+        "units": {
+            INDUSTRY_NAME: [Unit,],
+        },
+        "domains": [Domain,],
+        "level_1_statutories": [Statutory,]
+    }
+]
+</code></pre>
+<h4 id="get-statutories-by-unit"><a name="user-content-get-statutories-by-unit" href="#get-statutories-by-unit" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Statutories By Unit</h4>
+<pre><code>[
+    "GetStatutoriesByUnit",
+    {
+        "unit_id": UNIT_ID,
+        "domain_id": DOMAIN_ID,
+        "level_1_statutory_id": LEVEL_1_STATUTORY_ID,
+        "compliance_frequency": COMPLIANCE_FREQUENCY
+    }
+]
+
+On Success
+
+[
+    "GetStatutoriesByUnitSuccess",
+    {
+        "statutory_wise_compliances":[
+            {
+                "level_1_statutory_name": String,
+                "compliances":[
+                    {
+                        "compliance_id": COMPLIANCE_ID,
+                        "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                        "compliance_description": String,
+                        "compliance_frequency": COMPLIANCE_FREQUENCY,
+                        "statutory_date":[
+                            {
+                                "statutory_day": int,
+                                "statutory_month":int,
+                                "trigger_before_days": int
+                            },
+                        ]
+                    },
+                ]
+            },
+        ] 
+    }
+]
+</code></pre>
+<h4 id="save-past-records"><a name="user-content-save-past-records" href="#save-past-records" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Save Past Records</h4>
+<pre><code>[
+    "SavePastRecords",
+    {
+        "compliances":[
+            {
+                "compliance_id": COMPLIANCE_ID,
+                "due_date" : Date,
+                "completion_date": Date,
+                "validity_date": Date,
+                "documents": [String,]
+            },
+        ]
+    }
+]
+
+On Success
+
+[
+    "SavePastRecordsSuccess",
+    {}
+]
+</code></pre>
+<h2 id="client-reports"><a name="user-content-client-reports" href="#client-reports" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>CLIENT REPORTS</h2>
+<h3 id="get-compliance-details-report-filters"><a name="user-content-get-compliance-details-report-filters" href="#get-compliance-details-report-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Compliance details report filters</h3>
+<pre><code>[
+    "GetComplianceDetailsReportFilters",
+    {}
+]
+
+On Success
+
+[
+    "GetComplianceDetailsReportFiltersSuccess",
+    {
+        "countries": [COUNTRY,],
+        "domains": [DOMAIN,],
+        "level_1_statutories": {
+            COUNTRY_ID : [STATUTORY,],
+        },
+        "units": [UNIT,],
+        "compliances": [
+            {
+                "compliance_id": COMPLIANCE_ID,
+                "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+            },
+        ],
+        "users": [
+            {
+                "employee_id": USER_ID,
+                "employee_code": EMPLOYEE_CODE,
+                "employee_name": String,
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-compliance-details-report"><a name="user-content-get-compliance-details-report" href="#get-compliance-details-report" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Compliance details report</h3>
+<pre><code>[
+    "GetComplianceDetailsReport",
+    {
+        "country_id": COUNTRY_ID,
+        "domain_id": DOMAIN_ID,
+        "statutory_id": STATUTORY_ID,
+        "unit_id": UNIT_ID,
+        "compliance_id": COMPLIANCE_ID,
+        "assignee_id": USER_ID,
+        "from_date": Date,
+        "to_date": Date,
+        "compliance_status": COMPLIANCE_STATUS
+    }
+]
+
+On Success
+
+[
+    "GetComplianceDetailsReportSuccess",
+    [
+        {
+            "unit_id": UNIT_ID,
+            "unit_name": UNIT_CODE - UNIT_NAME,
+            "address": ADDRESS,
+            "compliances":[
+                {
+                    "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                    "assignee": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                    "due_date": DATE,
+                    "completion_date": DATE,
+                    "validity_date": DATE,
+                    "documents": [String,],
+                    "remarks": String
+                },
+            ],
+        },
+    ]
+]
+</code></pre>
+<h3 id="get-risk-report-filters"><a name="user-content-get-risk-report-filters" href="#get-risk-report-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Risk report filters</h3>
+<pre><code>[
+    "GetRiskReportFilters",
+    {}
+]
+
+On Success
+
+[
+    "GetRiskReportFiltersSuccess",
+    {
+        "countries": [Countries,],
+        "domains": [Domain,],
+        "business_groups": [BusinessGroup,],
+        "legal_entities": [LegalEntity,],
+        "divisions": [Division,],
+        "units": [Unit,],
+        "level1_statutories": {
+            COUNTRY_ID : [Statutory,],
+        },
+    }
+]
+</code></pre>
+<h3 id="get-risk-report"><a name="user-content-get-risk-report" href="#get-risk-report" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Risk Report</h3>
+<pre><code>[
+    "GetRiskReport",
+    {
+        "country_id": COUNTRY_ID,
+        "domain_id": DOMAIN_ID,
+        "business_group_id": BUSINESS_GROUP_ID,
+        "legal_entity_id": LEGAL_ENTITY_ID,
+        "division_id": DIVISION_ID,
+        "unit_id": UNIT_ID,
+        "statutory_id":  STATUTORY_ID,
+        "statutory_status": int
+    }
+]
+
+Note : statutory_status :- 0 - All , 1 - Delayed Compliance, 2 - Not Complied, 3 - Not Opted
+</code></pre>
+<p>On Success </p>
+<pre><code>[
+    "GetRiskReportSuccess",
+    {
+        "delayed_compliance": {
+            LEVEL_1_STATUTORY_NAME : [
+                {
+                    "unit_name": UNIT_CODE - UNIT_NAME,
+                    "address": ADDRESS,
+                    "compliances": [
+                        {
+                            "statutory_mapping": String,
+                            "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                            "description": String,
+                            "penal_consequences"  : String,
+                            "compliance_frequency": COMPLIANCE_FREQUENCY,
+                            "repeats"  : String
+                        },
+                    ]
+                },
+            ]
+        },
+        "not_complied": {
+            Same as delayed compliance
+        },
+        "not_opted": {
+            Same as delayed compliance
+        }
+    }
+]
+</code></pre>
+<h3 id="get-service-provider-wise-compliance-report-filters"><a name="user-content-get-service-provider-wise-compliance-report-filters" href="#get-service-provider-wise-compliance-report-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Service Provider wise compliance report filters</h3>
+<pre><code>[
+    "GetServiceProviderReportFilters",
+    {}
+]
+
+On Success
+
+[
+    "GetServiceProviderReportFiltersSuccess",
+    {
+        "countries": [Countries,],
+        "domains": [Domain,],
+        "level_1_statutories": {
+            COUNTRY_ID : [Statutory,],
+        },
+        "units": [Unit,],
+        "service_providers": [ServiceProvider,]
+    }
+]
+</code></pre>
+<h3 id="get-service-provider-wise-compliance"><a name="user-content-get-service-provider-wise-compliance" href="#get-service-provider-wise-compliance" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Service provider wise compliance</h3>
+<pre><code>[
+    "GetServiceProviderWiseCompliance",
+    {
+        "country_id": COUNTRY_ID,
+        "domain_id"  : DOMAIN_ID,
+        "statutory_id": STATUTORY_ID,
+        "unit_id":  UNIT_ID,
+        "service_provider_id": SERVICE_PROVIDER_ID
+    }
+]
+
+On Success
+
+[
+    "GetServiceProviderWiseComplianceSuccess",
+    {
+        "compliance_list": [
+            {
+                "service_provider_name": String,
+                "address": String,
+                "contract_from": Date,
+                "contract_to": Date,
+                "contact_person": String,
+                "contact_no": CONATACT_NUMBER,
+                "unit_wise_compliance": [
+                    {
+                        "unit_name": UNIT_CODE - UNIT_NAME,
+                        "address": ADDRESS,
+                        "compliances": [
+                            {
+                                "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                                "description": String,
+                                "statutory_dates": [
+                                    {
+                                        "statutory_date": int,
+                                        "statutory_month": int,
+                                        "trigger_before_days": int
+                                    },
+                                ],
+                                "due_date": DATE,
+                                "validity_date": DATE
+                            },
+                        ]
+                    },
+                ]
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-client-report-filters"><a name="user-content-get-client-report-filters" href="#get-client-report-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Client Report Filters</h3>
+<p>(Common for Assignee wise compliances and Unit wise compliances)</p>
+<pre><code>[
+    "GetClientReportFilters",
+    {}
+]
+
+On Success
+
+[
+    "GetClientReportFiltersSuccess",
+    {
+        "countries": [Countries,],
+        "domains": [Domain,],
+        "business_groups": [BusinessGroup,],
+        "legal_entities": [LegalEntity,],
+        "divisions": [Division,],
+        "units": [Unit,],
+        "users": [User,]
+    }
+]
+</code></pre>
+<h3 id="get-assignee-wise-compliance-report"><a name="user-content-get-assignee-wise-compliance-report" href="#get-assignee-wise-compliance-report" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Assignee wise compliance Report</h3>
+<pre><code>[
+    "GetAssigneewisecomplianceReport",
+    {
+        "country_id": COUNTRY_ID,
+        "domain_id": DOMAIN_ID,
+        "business_group_id": BUSINESS_GROUP_ID,
+        "legal_entity_id": LEGAL_ENTITY_ID,
+        "division_id"  : DIVISION_ID,
+        "unit_id": UNIT_ID,
+        "user_id": USER_ID
+    }
+]
+
+On Success
+
+[
+    "GetAssigneewisecomplianceReportSuccess",
+    {
+        "compliance_list": [
+            {
+                "business_group_name": String,
+                "legal_entity_name": String,
+                "division_name": String,
+                "domain_name": String,
+                "user_wise_compliance": [
+                    {
+                        "assignee": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                        "concurrence_person": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                        "approval_person": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                        "compliances": [
+                            {
+                                "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                                "unit_name": UNIT_CODE - UNIT_NAME,
+                                "compliance_frequency": COMPLIANCE_FREQUENCY,
+                                "statutory_dates": [
+                                    {
+                                        "statutory_date": int,
+                                        "statutory_month": int,
+                                        "trigger_before_days": int
+                                    },
+                                ],
+                                "due_date": DATE,
+                                "validity_date": DATE
+                            }, 
+                        ]
+                    },
+                ]
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-unit-wise-compliance-report"><a name="user-content-get-unit-wise-compliance-report" href="#get-unit-wise-compliance-report" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Unit wise compliance Report</h3>
+<pre><code>[
+    "GetUnitwisecomplianceReport",
+    {
+        "country_id": COUNTRY_ID,
+        "domain_id": DOMAIN_ID,
+        "business_group_id": BUSINESS_GROUP_ID,
+        "legal_entity_id": LEGAL_ENTITY_ID,
+        "division_id"  : DIVISION_ID,
+        "unit_id": UNIT_ID,
+        "user_id": USER_ID
+    }
+]
+
+On Success
+
+[
+    "GetUnitwisecomplianceReportSuccess",
+    {
+        "compliance_list": [
+            {
+                "business_group_name": String,
+                "legal_entity_name": String,
+                "division_name": String,
+                "domain_name": String,
+                "unit_wise_compliances":{
+                    UNIT_NAME : [
+                        {
+                            "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                            "compliance_frequency": COMPLIANCE_FREQUENCY,
+                            "statutory_date": String,
+                            "trigger_before": String,
+                            "due_date": DATE,
+                            "validity_date": DATE
+                        },
+                    ],
+                } 
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-reassign-compliance-task-report-filters"><a name="user-content-get-reassign-compliance-task-report-filters" href="#get-reassign-compliance-task-report-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Reassign Compliance Task Report Filters</h3>
+<pre><code>[
+    "GetReassignComplianceTaskReportFilters",
+    {}
+]
+
+On Success
+
+[
+    "GetReassignComplianceTaskReportFiltersSuccess",
+    {
+        "countries": [Country,],
+        "doamins": [Domain,],
+        "level_1_statutories": {
+            COUNTRY_ID : [Statutory,],
+        },
+        "units": [
+            {
+                "unit_name": UNIT_CODE - UNIT_NAME,
+                "address": ADDRESS
+            },
+        ],
+        "compliances":[
+            {
+                "compliance_id": COMPLIANCE_ID,
+                "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+            },
+        ],
+        "users":[
+            {
+                "user_id": USER_ID,
+                "user_name": EMPLOYEE_CODE - EMPLOYEE_NAME
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-reassign-compliance-task-details"><a name="user-content-get-reassign-compliance-task-details" href="#get-reassign-compliance-task-details" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Reassign Compliance Task Details</h3>
+<pre><code>[
+    "GetReassignComplianceTaskDetails",
+    {
+        "country_id": COUNTRY_ID,
+        "domain_id": DOMAIN_ID,
+        "unit_id": UNIT_ID,
+        "statutory_id": STATUTORY_ID,
+        "compliance_id": COMPLIANCE_ID,
+        "user_id": USER_ID,
+        "from_date": Date,
+        "to_date": Date
+    }
+]
+
+On Success
+
+[
+    "GetReassignComplianceTaskDetailsSuccess",
+    {
+        "compliance_list": [
+            {
+                "unit_name": UNIT_CODE - UNIT_NAME,
+                "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                "due_date": Date,
+                "reassign_history": [
+                    {
+                        "reassigned_from": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                        "reassigned_to": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                        "reassigned_date": DATE,
+                        "reassign_reason": String
+                    },
+                ]
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-task-applicability-status-filters"><a name="user-content-get-task-applicability-status-filters" href="#get-task-applicability-status-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Task Applicability Status Filters</h3>
+<pre><code>[
+    "GetTaskApplicabilityStatusFilters",
+    {}
+]
+
+On Success
+
+[
+    "GetTaskApplicabilityStatusFiltersSuccess"
+    {
+        "countries": [Country,],
+        "domains": [Domain,],
+        "business_groups": [BusinessGroup,],
+        "legal_entities": [LegalEntity,],
+        "divisions": [Division,],
+        "units":[
+            {
+                "unit_id": UNIT_ID,
+                "unit_name": UNIT_CODE - UNIT_NAME,
+            },
+        ],
+        "level_1_statutories": {
+            COUNTRY_ID : [Statutory,],
+        }
+    }
+]
+</code></pre>
+<h3 id="get-compliance-task-applicability-status-report"><a name="user-content-get-compliance-task-applicability-status-report" href="#get-compliance-task-applicability-status-report" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Compliance Task Applicability Status report</h3>
+<pre><code>[
+    "GetComplianceTaskApplicabilityStatusReport",
+    {
+        "country_id": COUNTRY_ID,
+        "domain_id": DOMAIN_ID,
+        "business_group_id": BUSINESS_GROUP_ID,
+        "legal_entity_id": LEGAL_ENTITY_ID,
+        "division_id": DIVISION_ID,
+        "unit_id": UNIT_ID,
+        "statutory_id": STATUTORY_ID,
+        "applicable_status": APPLICABILITY_STATUS
+    }
+]
+
+On Success
+
+[
+    "GetComplianceTaskApplicabilityStatusReportSuccess",
+    {
+        "applicable":{
+            LEVEL_1_STATUTORY_NAME : [
+                {
+                    "unit_name": UNIT_CODE - UNIT_NAME,
+                    "address": ADDRESS,
+                    "compliances": [
+                        {
+                            "statutory_provision": String,
+                            "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                            "description": String,
+                            "penal_consequences"  : String,
+                            "compliance_frequency": COMPLIANCE_FREQUENCY,
+                            "repeats"  : String
+                        },
+                    ]
+                },
+            ],
+        },
+        "not_applicable": {
+            Same as applicable
+        },
+        "not_opted": {
+            Same as applicable
+        }
+    }
+]
+</code></pre>
+<h3 id="get-unit-details-report"><a name="user-content-get-unit-details-report" href="#get-unit-details-report" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Unit Details Report</h3>
+<pre><code>Sames as Get Client details report in Techno Section
+</code></pre>
+<h3 id="get-compliance-activity-report-filters"><a name="user-content-get-compliance-activity-report-filters" href="#get-compliance-activity-report-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Compliance Activity Report Filters</h3>
+<pre><code>[
+    "GetComplianceActivityReportFilters",
+    {}
+]
+
+On Success
+
+[
+    "GetComplianceActivityReportFiltersSuccess",
+    {
+        "users":[
+            {
+                "user_id": USER_ID,
+                "user_name":String
+            },
+        ],
+        "domains": [Domain,],
+        "level_1_statutories": {
+            COUNTRY_ID : [Statutory,],
+        },
+        "units":[
+            {
+                "unit_id": UNIT_ID,
+                "unit_name": UNIT_CODE - UNIT_NAME
+            },
+        ],
+        "compliances": [
+            {
+                "compliance_id":  COMPLIANCE_ID,
+                "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-compliance-activity-report"><a name="user-content-get-compliance-activity-report" href="#get-compliance-activity-report" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Compliance activity report</h3>
+<pre><code>[
+    "GetComplianceActivityReport",
+    {
+        "user_type": USER_TYPE,
+        "user_id": USER_ID,
+        "domain_id": DOMAIN_ID,
+        "statutory_id": STATUTORY_ID,
+        "unit_id": UNIT_ID,
+        "compliance_id": COMPLIANCE_ID,
+        "from_date": DATE,
+        "to_date": DATE
+    }
+]
+
+On Success
+
+[
+    "GetComplianceActivityReportSuccess",
+    {
+        "activities": [
+            {
+                "unit_name": UNIT_CODE - UNIT_NAME,
+                "address": ADDRESS,
+                "domain_wise_compliances":[
+                    {
+                        "domain_name": String,
+                        "statutory_wise_compliances":{
+                            LEVEL_1_STATUTORY_NAME : [
+                                {
+                                    "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                                    "activity_date": Date,
+                                    "activity_status": String,
+                                    "compliance_status": String,
+                                    "remarks": String
+                                }
+                            ],
+                        }
+                    },
+                ]
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-reassigned-history-report-filters"><a name="user-content-get-reassigned-history-report-filters" href="#get-reassigned-history-report-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Reassigned History Report Filters</h3>
+<pre><code>[
+    "GetReassignedHistoryReportFilters",
+    {}
+]
+
+On Success
+
+[
+    "GetReassignedHistoryReportFiltersSuccess",
+    {
+        "countries": [Country,],
+        "domains": [Domain,],
+        "units": [
+            {
+                "unit_id": UNIT_ID,
+                "unit_name": UNIT_NAME,
+                "address": ADDRESS
+            },
+        ],
+        "level_1_statutories": {
+            COUNTRY_ID: [Statutory,],
+        },
+        "compliances": [Compliance,],
+        "users": [User,]
+    }
+]
+</code></pre>
+<h3 id="get-reassigned-history-report"><a name="user-content-get-reassigned-history-report" href="#get-reassigned-history-report" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Reassigned History Report</h3>
+<pre><code>[
+    "GetReassignedHistoryReport",
+    {
+        "country_id": COUNTRY_ID,
+        "domain_id": DOMAIN_ID,
+        "unit_id": UNIT_ID,
+        "level_1_statutory_id": LEVEL_1_STATUTORY_ID,
+        "compliance_id": COMPLIANCE_ID,
+        "user_id": USER_ID
+    }
+]
+
+On Success
+
+[
+    "GetReassignedHistoryReportSuccess",
+    {
+        "statutory_wise_compliances":[
+            {
+                "level_1_statutory_id": LEVEL_1_STATUTORY_ID,
+                "level_1_statutory_name": LEVEL_1_STATUTORY_NAME,
+                "compliances":  [
+                    {
+                        "unit_name": UNIT_CODE - UNIT_NAME,
+                        "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                        "due_date": String,
+                        "assignee": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                        "reassign_history": [
+                            {
+                                "reassigned_from": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                                "reassigned_to": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                                "reassigned_date": DATE,
+                                "reassign_reason": String
+                            },
+                        ]
+                    },
+                ]
+            }
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-activity-log-filters"><a name="user-content-get-activity-log-filters" href="#get-activity-log-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Activity Log Filters</h3>
+<pre><code>[
+    "GetActivityLogFilters",
+    {}
+]
+
+On Success
+
+[
+    "GetActivityLogFiltersSuccess",
+    {
+        "users": [
+            {
+                "user_id": USER_ID,
+                "user_name": UNIT_CODE - UNIT_NAME
+            },
+        ],
+        "forms":[
+            {
+                "form_id": FORM_ID,
+                "form_name": String
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-activity-log-report"><a name="user-content-get-activity-log-report" href="#get-activity-log-report" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Activity Log Report</h3>
+<pre><code>[
+    "GetActivityLogReport",
+    {
+      "from_date": Date,
+      "to_date": Date,
+      "form_name": String,
+      "action": String
+    }
+]
+
+On Success
+
+[
+    "GetActivityLogReportSuccess",
+    {
+        "activity_log":[
+            {
+                "user_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                "date_and_time": TIMESTAMP,
+                "form_name": String,
+                "action": String 
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-login-trace"><a name="user-content-get-login-trace" href="#get-login-trace" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Login Trace</h3>
+<pre><code>[
+    "GetLoginTrace",
+    {}
+]
+
+On Success
+
+[
+    "GetLoginTraceSuccess",
+    {
+        "users": [User,],
+        "login_trace": [
+            {
+                "date_and_time": TIMESTAMP,
+                "action": String
+            },
+        ]
+    }
+]
+</code></pre>
+<h2 id="client-admin-settings"><a name="user-content-client-admin-settings" href="#client-admin-settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>CLIENT ADMIN SETTINGS</h2>
+<h3 id="get-settings"><a name="user-content-get-settings" href="#get-settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Settings</h3>
+<pre><code>[
+    "GetSettings",
+    {}
+]
+
+On Success
+
+[
+    "GetSettingsSuccess",
+    {
+        "is_two_levels_of_approval": Boolean,
+        "assignee_reminder_days": int,
+        "escalation_reminder_In_advance_days": int,
+        "escalation_reminder_days": int,
+        "profile_detail":{
+            "contract_from": Date,
+            "contract_to": Date,
+            "no_of_user_licence": int,
+            "remaining_licence": int,
+            "licence_holders":[
+                {
+                    "user_id": int,
+                    "user_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                    "email_id": EMAIL_ID,
+                    "contact_no": CONTACT_NO,
+                    "seating_unit_name": UNIT_CODE - UNIT_NAME,
+                    "address": ADDRESS,
+                    "total_disk_space": float,
+                    "used_disk_space": float,
+                },
+            ]
+        },
+    }
+]
+</code></pre>
+<h3 id="update-settings"><a name="user-content-update-settings" href="#update-settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update Settings</h3>
+<pre><code>[
+    "UpdateSettings",
+    {
+        "is_two_levels_of_approval": Boolean,
+        "assignee_reminder_days": int,
+        "escalation_reminder_In_advance_days": int,
+        "escalation_reminder_days": int
+    }
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "UpdateSettingsSuccess",
+    {}
+]
+</code></pre>
+<h2 id="client-user-service-provider-section"><a name="user-content-client-user-service-provider-section" href="#client-user-service-provider-section" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>CLIENT USER &amp; SERVICE PROVIDER SECTION</h2>
+<h3 id="get-compliance-detail"><a name="user-content-get-compliance-detail" href="#get-compliance-detail" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get compliance Detail</h3>
+<pre><code>[
+    "GetComplianceDetail",
+    {}
+]
+
+On Success
+
+[
+    "GetComplianceDetailSuccess",
+    {
+        "compliance_detail":[
+            {
+                "unit_id": UNIT_ID,
+                "current_compliances":[
+                    ACTIVE_COMPLIANCE,
+                ],
+                "upcoming_compliances":[
+                    UPCOMING_COMPLIANCE,
+                ]
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="check-disk-space"><a name="user-content-check-disk-space" href="#check-disk-space" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Check Disk Space</h3>
+<pre><code>[
+    "CheckDiskSpace",
+    {}
+]
+
+On Success
+
+[
+    "CheckDiskSpaceSuccess",
+    {
+        "total_disk_space": Float,
+        "available_disk_space": Float
+    }   
+]
+</code></pre>
+<h3 id="update-compliance-detail"><a name="user-content-update-compliance-detail" href="#update-compliance-detail" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update compliance Detail</h3>
+<pre><code>[
+    "UpdateComplianceDetail",
+    {
+        "compliance_history_id": COMPLIANCE_HISTORY_ID,
+        "documents": [String,], 
+        "completion_date": Date,
+        "validity_date": Date,
+        "next_due_date": Date,
+        "remarks": String
+    }
+]
+
+On Success
+
+[
+    "UpdateComplianceDetailSuccess",
+    {}
+]
+
+Possible Errors
+
+[
+    "NotEnoughDiskSpaceAvailable"
+    {}
+]
+</code></pre>
+<h3 id="get-on-occurrence-compliance"><a name="user-content-get-on-occurrence-compliance" href="#get-on-occurrence-compliance" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get On Occurrence Compliance</h3>
+<pre><code>[
+    "GetOnOccurrenceCompliances",
+    {}
+]
+
+On Success
+
+[
+    "GetOnOccurrenceCompliancesSuccess",
+    {
+        "compliances": [
+            {
+                "compliance_id":  compliance_id,
+                "statutory_provision": String,
+                "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                "description": String,
+                "complete_within_days": int
+            }
+        ]
+    }
+]
+</code></pre>
+<h3 id="start-on-occurrence-compliance"><a name="user-content-start-on-occurrence-compliance" href="#start-on-occurrence-compliance" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Start On Occurrence Compliance</h3>
+<pre><code>[
+    "StartOnOccurrenceCompliance",
+    {
+        "compliance_id": COMPLIANCE_ID,
+        "start_date": Date
+    }
+]
+</code></pre>
+<h2 id="dashboard"><a name="user-content-dashboard" href="#dashboard" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>DASHBOARD</h2>
+<h3 id="get-data-for-chart-filters"><a name="user-content-get-data-for-chart-filters" href="#get-data-for-chart-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get data for chart filters</h3>
+<pre><code>[
+    "GetChartFilters",
+    {}
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "GetChartFiltersSuccess",
+    {
+        "countries": [Country,],
+        "domains": [Domain,],
+        "business_groups": [BusinessGroup,],
+        "legal_entities": [LegalEntity,],
+        "divisions": [Division,],
+        "units": [Unit,]
+    }
+]
+</code></pre>
+<h3 id="get-compliance-status-chart"><a name="user-content-get-compliance-status-chart" href="#get-compliance-status-chart" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Compliance Status Chart</h3>
+<pre><code>[
+    "GetComplianceStatusChart",
+    {
+        "country_ids": [COUNTRY_ID,],
+        "domain_ids": [DOMAIN_ID,],
+        "from_date": DATE,
+        "to_date": DATE,
+        "filter_type": String,
+        "filter_ids": [int,]
+    }
+]
+
+On Success
+
+[
+    "GetComplianceStatusChartSuccess",
+    {
+        "chart_data": [
+            {
+                "year": String,
+                "data":[
+                    {
+                        "filter_name": FILTER_NAME,
+                        "no_of_compliances":  NO_OF_COMPLIANCES
+                    },    
+                ]
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-escalations-chart"><a name="user-content-get-escalations-chart" href="#get-escalations-chart" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Escalations Chart</h3>
+<pre><code>[
+    "GetEscalationsChart",
+    ChartFilters
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "GetEscalationsChartSuccess",
+    {
+        "chart_data": [
+            {
+                "year": String,
+                "delayed_compliance_count": int,
+                "not_complied_count": int
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-not-complied-chart"><a name="user-content-get-not-complied-chart" href="#get-not-complied-chart" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Not Complied Chart</h3>
+<pre><code>[
+    "GetNotCompliedChart",
+    ChartFilters
+]
+
+On Success
+
+[
+    "GetNotCompliedChartSuccess",
+    {
+        "0_to_30_days_count": int,
+        "31_to_60_days_count": int,
+        "61_to_90_days_count": int,
+        "Above_90_days_count": int
+    }
+]
+</code></pre>
+<h3 id="get-trend-chart"><a name="user-content-get-trend-chart" href="#get-trend-chart" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Trend Chart</h3>
+<pre><code>[
+    "GetTrendChart",
+    ChartFilters
+]
+
+On Success
+
+[
+    "GetTrendChartSuccess",
+    {
+        "years": [int,],
+        "data":[
+            {
+                "filter_name": FILTER_NAME,
+                "complied_compliance": [
+                    {
+                        "total_compliances": int,
+                        "complied_compliances_count": int
+                    },
+                ]
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-compliance-applicability-status-chart"><a name="user-content-get-compliance-applicability-status-chart" href="#get-compliance-applicability-status-chart" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Compliance Applicability Status Chart</h3>
+<pre><code>[
+    "GetComplianceApplicabilityStatusChart",
+    ChartFilters
+]
+
+On Success
+
+[
+    "GetComplianceApplicabilityStatusChartSuccess",
+    {
+        "applicable_count": int,
+        "not_applicable_count": int,
+        "not_opted_count": int
+    }
+]
+</code></pre>
+<h3 id="get-assignee-wise-compliances-chart"><a name="user-content-get-assignee-wise-compliances-chart" href="#get-assignee-wise-compliances-chart" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Assignee wise Compliances Chart</h3>
+<pre><code>[
+    "GetAssigneeWiseCompliancesChart",
+    {
+        "country_id": COUNTRY_ID,
+        "business_group_id": BUSINESS_GROUP_ID,
+        "legal_entity_id": LEGAL_ENTITY_ID,
+        "division_id": DIVISION_ID,
+        "unit_id": UNIT_ID
+    }
+]
+
+On Success
+
+[
+    "GetAssigneeWiseCompliancesChartSuccess",
+    {
+        "chart_data": [
+            {
+                "unit_name": String,
+                "assignee_wise_details": [
+                    {
+                        "user_id": USER_ID,
+                        "assignee_name": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                        "domain_wise_details":[
+                            {
+                                "domain_id": DOMAIN_ID,
+                                "domain_name": String,
+                                "total_compliances": int,
+                                "complied_count": int,
+                                "delayed_compliance": {
+                                    "assigned_count": int,
+                                    "reassigned_count": int,
+                                    "reassigned_compliances": [
+                                        {
+                                            "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                                            "reassigned_from": EMPLOYEE_CODE - EMPLOYEE_NAME,
+                                            "start_date": DATE,
+                                            "due_date": DATE,
+                                            "reassigned_date": DATE,
+                                            "completed_date": DATE
+                                        },
+                                    ]
+                                },
+                                "inprogress_compliance_count":int,
+                                "not_complied_count": int
+                            },
+                        ]
+                    },
+                ]
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-assingee-wise-compliance-drilldown-data"><a name="user-content-get-assingee-wise-compliance-drilldown-data" href="#get-assingee-wise-compliance-drilldown-data" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Assingee wise compliance drilldown data</h3>
+<pre><code>[
+    "GetAssigneeWiseComplianceDrillDown",
+    {
+        "assignee_id": USER_ID,
+        "domain_id": DOMAIN_ID
+    }
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "GetAssigneeWiseComplianceDrillDownSuccess",
+    {
+        "complied":[
+            {
+                "unit_name": UNIT_CODE - UNIT_NAME,
+                "address": ADDRESS,
+                "compliances":{
+                    STATUTORY_LEVEL1_NAME : [
+                        {
+                            "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                            "assigne_date": DATE,
+                            "due_date": DATE,
+                            "completion_date": DATE
+                        }, 
+                    ],                  
+                }
+            }
+        ],
+        "delayed":[
+            Same as Complied
+        ],  
+        "inprogress":[
+            Same as Complied
+        ],
+        "not_complied":[
+            Same as Complied
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-compliance-status-drill-down-data"><a name="user-content-get-compliance-status-drill-down-data" href="#get-compliance-status-drill-down-data" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Compliance Status Drill down data</h3>
+<pre><code>[
+    "GetComplianceStatusDrillDownData",
+    {
+        "filter_type": FILTER_TYPE,
+        "filter_id": FILTER_ID,
+        "compliance_status": COMPLIANCE_STATUS
+    }
+]
+
+On Success
+
+[
+    "GetComplianceStatusDrillDownDataSuccess",
+    {
+        "drill_down_data": [
+            {
+                "business_group": String,
+                "legal_entity": String,
+                "division": String,
+                "unit_wise_compliances": [
+                    COMPLIANCE_STATUS_DRILL_DOWN,
+                ]
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-escalations-drill-down-data"><a name="user-content-get-escalations-drill-down-data" href="#get-escalations-drill-down-data" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Escalations Drill Down Data</h3>
+<pre><code>[
+    "GetEscalationsDrillDownData",
+    {
+        "filter_type": FILTER_TYPE,
+        "filter_id": FILTER_ID,
+        "year": int
+    }
+]
+
+On Success
+
+[
+    "GetEscalationsDrillDownDataSuccess",
+    {
+        "delayed":[
+            {
+                "business_group_name": String,
+                "legal_entity_name": String,
+                "division_name": String,
+                "unit_wise_compliances": [
+                    ESCALATIONS_DRILL_DOWN,
+                ]
+            }
+        ],
+        "not_complied":[
+            Same as delayed
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-compliance-applicability-status-drill-down"><a name="user-content-get-compliance-applicability-status-drill-down" href="#get-compliance-applicability-status-drill-down" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Compliance applicability status drill down</h3>
+<pre><code>[
+    "GetComplianceApplicabilityStatusDrillDown",
+    {
+        "filter_type": FILTER_TYPE,
+        "filter_id": FILTER_ID,
+        "applicability_status": APPLICABILITY_STATUS
+    }
+]
+
+On Success
+
+[
+    "GetComplianceApplicabilityStatusDrillDownSuccess",
+    {
+        "filter_name": FILTER_NAME,
+        "drill_down_data": [
+            {
+                "level1_statutory_name": LEVEL_1_STATUTORY_NAME,
+                "compliances":[
+                    {
+                        "statutory": String,
+                        "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                        "description": String,
+                        "penal_consequences": String,
+                        "compliance_frequency": COMPLIANCE_FREQUENCY,
+                        "repeats": String,
+                        "statutory_date": [
+                            {
+                                "statutory_date": int,
+                                "statutory_month": int,
+                                "trigger_before": int
+                            },
+                        ]
+                    },
+                ]
+            }
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-not-complied-drill-down"><a name="user-content-get-not-complied-drill-down" href="#get-not-complied-drill-down" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Not Complied drill down</h3>
+<pre><code>[
+    "GetNotCompliedDrillDown",
+    {
+        "filter_type": FILTER_TYPE,
+        "filter_id": FILTER_ID
+    }
+]
+
+On Success
+
+[
+    "GetNotCompliedDrillDownSuccess",
+    {
+        "filter_name": FILTER_NAME,
+        "drill_down_data": [
+            {
+                "business_group": String,
+                "legal_entity": String,
+                "division": String,
+                "unit_wise_compliances": [
+                    ESCALATIONS_DRILL_DOWN,
+                ]
+            },
+        ]
+    }
+]
+</code></pre>
+<h3 id="get-trend-chart-drill-down-data"><a name="user-content-get-trend-chart-drill-down-data" href="#get-trend-chart-drill-down-data" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Trend Chart Drill down data</h3>
+<pre><code>[
+    "GetTrendChartDrillDownData",
+    {
+        "filter_type": FILTER_TYPE,
+        "filter_id": FILTER_ID
+    }
+]
+
+Response for the above request will be in same format as Compliance status drill down
+</code></pre>
+<h2 id="consolidatedchart"><a name="user-content-consolidatedchart" href="#consolidatedchart" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>ConsolidatedChart</h2>
+<pre><code>Same as Compliance Status Chart
+</code></pre></article></body></html>
