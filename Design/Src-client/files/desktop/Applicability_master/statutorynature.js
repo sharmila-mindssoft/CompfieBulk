@@ -14,18 +14,12 @@ $("#btnStatutoryNatureCancel").click(function(){
 	$("#statutoryNatureView").show();
 });
 function initialize(){
-	var statNature_url = "http://192.168.1.9:8080/GetStatutoryNatures";
-	var statNature_data = {
-		"session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-		"request" : [
-			"GetStatutoryNatures",
-			{}
-		]
-	};
-	var options = JSON.stringify(statNature_data);	
-	ajaxCall(statNature_url, options, function (data) {
-		loadStatNatureData(data[1]);
-	});
+	function success(status, data){
+		loadStatNatureData(data);
+	}
+	function failure(status, data){
+	}
+	mirror.getStatutoryNatureList("GetStatutoryNatures", success, failure);
 }
 function loadStatNatureData(statNatureList){
 	$('#tableRow').show();
