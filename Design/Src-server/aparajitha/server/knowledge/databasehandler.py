@@ -12,7 +12,7 @@ class DatabaseHandler(object) :
     def __init__(self) :
         self.mysqlHost = "localhost"
         self.mysqlUser = "root"
-        self.mysqlPassword = "123456"
+        self.mysqlPassword = "minds"
         self.mysqlDatabase = "aparajitha_knowledge"
 
     def dbConnect(self) :
@@ -331,23 +331,25 @@ class DatabaseHandler(object) :
     ### StatutoryLevels ###
 
     def getStatutoryLevels(self) :
-        query = "SELECT level_id, level_position, level_name, country_id \
+        query = "SELECT level_id, level_position, level_name, country_id, domain_id \
             FROM tbl_statutory_levels"
         return self.dataSelect(query)
 
-    def getStatutoryLevelsByCountry(self, countryId) :
+    def getStatutoryLevelsByID(self, countryId, domainId) :
         query = "SELECT level_id, level_position, level_name \
-            FROM tbl_statutory_levels WHERE country_id = %s" % countryId
+            FROM tbl_statutory_levels WHERE country_id = %s and domain_id = %s" % (
+                countryId, domainId
+            )
         return self.dataSelect(query)
 
-    def saveStatutoryLevel(self, countryId, levelId, levelName, levelPosition, userId) :
+    def saveStatutoryLevel(self, countryId, domainId, levelId, levelName, levelPosition, userId) :
         if levelId is None :
             levelId = self.getNewId("level_id", "tbl_statutory_levels")
             createdOn = datetime.datetime.now()
 
             query = "INSERT INTO tbl_statutory_levels (level_id, level_position, \
-                level_name, country_id, created_by, created_on) VALUES (%s, %s, '%s', %s, %s, '%s')" % (
-                    levelId, levelPosition, levelName, countryId, userId, createdOn
+                level_name, country_id, domain_id, created_by, created_on) VALUES (%s, %s, '%s', %s, %s, %s, '%s')" % (
+                    levelId, levelPosition, levelName, countryId, domainId, userId, createdOn
                 )
             return self.dataInsertUpdate(query)
         else :
