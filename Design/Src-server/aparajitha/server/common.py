@@ -31,15 +31,15 @@ def assertType (x, typeObject) :
 def convertToString(unicode_str):
 	return unicode_str.encode('utf-8')
 
-def listToString(list_value):
-    string_value = ""
-    for index,value in enumerate(list_value):
-        if(index < len(list_value)-1):
-            string_value = string_value+"'"+str(value)+"',"
+def listToString(valueList):
+    stringValue = ""
+    for index,value in enumerate(valueList):
+        if(index < len(valueList)-1):
+            stringValue = stringValue+"'"+str(value)+"',"
         else:
-            string_value = string_value+"'"+str(value)+"'"
+            stringValue = stringValue+"'"+str(value)+"'"
 
-    return string_value
+    return stringValue
 
 def getCurrentTimeStamp() :
     ts = time.time()
@@ -161,9 +161,9 @@ class Form(object) :
         columns = "form_id, form_name, form_url, form_order, form_type,"+\
                  "category, admin_form, parent_menu"
 
-        if type == "Knowledge":
+        if type == "knowledge".lower():
         	condition = " form_type = 'knowledge' "
-        elif type == "Techno":
+        elif type == "techno".lower():
         	condition = " form_type = 'techno' "
         else :
         	condition = " form_type = 'client' "
@@ -199,13 +199,13 @@ class Menu(object):
 	    settings = []
 	    for form in formList:
 	        structuredForm = form.toStructure()
-	        if form.category == "Masters":
+	        if form.category == "masters".lower():
 	            masters.append(structuredForm)
-	        elif form.category == "Transactions":
+	        elif form.category == "transactions".lower():
 	            transactions.append(structuredForm)
-	        elif form.category == "Reports":
+	        elif form.category == "reports".lower():
 	            reports.append(structuredform)    
-	        elif form.category == "Settings":
+	        elif form.category == "settings".lower():
 	            settings.append(structuredForm)
 	    menu = Menu(masters, transactions,reports, settings)
 	    return menu.toStructure()
