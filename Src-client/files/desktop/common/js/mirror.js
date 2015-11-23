@@ -259,6 +259,26 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    // Geography Levels 
+    function getGeographyLevels(callerName, callback, failure_callback) {
+        var request = ["GetStatutoryLevels", {}];
+        apiRequest(callerName, request, callback, failure_callback);   
+    }
+
+    function saveAndUpdateGeographyLevels(callerName, countryId, domainId, levels, callback, failure_callback) {
+        if (statutoryNatureName == null)
+            return null;
+        var request = [
+            "SaveStatutoryLevel",
+            { 
+                "country_id" : countryId,
+                "domain_id" : domain_id,
+                "levels" : levels
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
     // Admin User Group Master
     function isNull(value){
         if (value == null)
@@ -496,6 +516,8 @@ function initMirror() {
         updateStatutoryNature: updateStatutoryNature,
         changeStatutoryNatureStatus: changeStatutoryNatureStatus,
         getStatutoryNatureList: getStatutoryNatureList,
+        getGeographyLevels: getGeographyLevels,
+        saveAndUpdateGeographyLevels: saveAndUpdateGeographyLevels,
 
         saveAdminUserGroup: saveAdminUserGroup,
         updateAdminUserGroup: updateAdminUserGroup,
