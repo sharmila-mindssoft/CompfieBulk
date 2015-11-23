@@ -15,6 +15,8 @@ function GetStatutoryLevels(){
 	}
 	mirror.getAdminUserList("AdminAPI", success, failure);
 }
+
+
 function loadStatutoryLevelList(statutoryLevelsList) {
 	  var j = 1;
 	  var imgName = '';
