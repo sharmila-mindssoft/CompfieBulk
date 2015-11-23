@@ -50,7 +50,7 @@ CREATE TABLE `tbl_user_details` (
   `form_type` varchar(20) DEFAULT NULL,
   `employee_name` varchar(50) DEFAULT NULL,
   `employee_code` varchar(50) DEFAULT NULL,
-  `contact_no` int(11) DEFAULT NULL,
+  `contact_no` varchar(20) DEFAULT NULL,
   `address` varchar(250) DEFAULT NULL,
   `designation` varchar(50) DEFAULT NULL,
   `domain_ids` varchar(50) DEFAULT NULL,
