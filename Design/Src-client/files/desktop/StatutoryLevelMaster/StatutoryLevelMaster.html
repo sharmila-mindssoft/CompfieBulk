@@ -1,32 +1,45 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+<style type="text/css">
+  .grid-table .input-box{
+    height: 2.2em;
+    font-size: 0.9em;
+  }
+
+</style>
 <div class="content-container width60">
   <div class="content-area">
     <div class="add-container">
       <div class="add-container-heading">Statutory Level Master<span class="error-message"></span></div>
        <div class="form-container-outer">
-            <div class="single-column-input-row">
-              <br>
+            <div class="input-row-left">
               <div class="input-row">
-                <div class="single-column-field-label">Country:<span class="mandatory">*</span></div>
-                <div class="single-column-field-input">
-                  <input type="text" class="input-box icon-autocomplete" style="width:200px" value="India"/>
+                <div class="field-label">Country:<span class="mandatory">*</span></div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" style="width:200px" value="India"/>
                 </div>
               </div>
             </div>
+             <div class="input-row-right">
+              <div class="input-row">
+                <div class="field-label">Domain:<span class="mandatory">*</span></div>
+                <div class="field-input"><input type="text" class="input-box icon-autocomplete" style="width:200px" value="Finance Law"/>
+                </div>
+              </div>
+            </div>
+
             <div class="grid-table">
               <table>
                 <tr>
-                  <th align="left">Level</th>
-                  <th align="left">Title</th>
-                  <th align="left">Level</th>
-                  <th align="left">Title</th>
+                  <th align="left" style="background:#aaa;">Level</th>
+                  <th align="left" style="background:#aaa;">Title</th>
+                  <th align="left" style="background:#aaa;">Level</th>
+                  <th align="left" style="background:#aaa;" >Title</th>
                 </tr>
                 <tr>
                   <td style="height:50px">
                     1
                   </td>
-                  <td><input type="text" class="input-box" value="Act Name"/></td>
+                  <td><input type="text" class="input-box" value="Primary Legislation"/></td>
                   <td>
                    6
                   </td>
@@ -36,7 +49,7 @@
                   <td style="height:50px">
                     2
                   </td>
-                  <td><input type="text" class="input-box" value="Rule Name"/></td>
+                  <td><input type="text" class="input-box" value="Secondary Legislation"/></td>
                   <td>
                    7
                   </td>
