@@ -110,7 +110,7 @@ class User(object) :
     detailTblName = "tbl_user_details"
 
     def __init__(self, userId, emailId, userGroupId, employeeName, 
-                employeeCode, contactNo, address, designation, 
+                employeeCode, contactNo, address, designation, countryIds,
                 domainIds, isActive) :
         print "inside user constructor"
         self.userId =  userId if userId != None else self.generateNewUserId()
@@ -121,6 +121,7 @@ class User(object) :
         self.contactNo =  contactNo
         self.address =  address
         self.designation =  designation
+        self.countryIds =  countryIds
         self.domainIds =  domainIds
         self.isActive = isActive if isActive != None else 1
 
@@ -133,6 +134,7 @@ class User(object) :
         assertType(self.contactNo, StringType)
         assertType(self.address, StringType)
         assertType(self.designation, StringType)
+        assertType(self.countryIds, ListType)
         assertType(self.domainIds, ListType)
         assertType(self.isActive, IntType)
 
@@ -146,12 +148,12 @@ class User(object) :
             "contact_no": self.contactNo,
             "address": self.address, 
             "designation": self.designation,
+            "country_ids": self.countryIds,
             "domain_ids": self.domainIds,
             "is_active": self.isActive
         }
 
     def toStructure(self):
-        print "inside tostructure"
         return {
             "user_id": self.userId,
             "employee_name": self.employeeName,
@@ -168,12 +170,12 @@ class User(object) :
             userId = row[0]
             isActive = row[1]
             subColumns = "email_id, user_group_id, employee_name, employee_code,"+\
-                                "contact_no, address, designation, domain_ids"
+                                "contact_no, address, designation, country_ids,domain_ids"
             condition = " user_id ='"+str(userId)+"'"                                
             subRows = DatabaseHandler.instance().getData(User.detailTblName, subColumns, condition)
             for subRow in subRows:
                 user = User(userId,subRow[0], subRow[1],subRow[2], subRow[3],
-                     subRow[4], subRow[5], subRow[6], subRow[7],isActive)
+                     subRow[4], subRow[5], subRow[6], subRow[7], subRow[8],isActive)
                 userList.append(user.toDetailedStructure())
         return userList
 
@@ -185,7 +187,7 @@ class User(object) :
 
         for row in rows:
             user = User(int(row[0]),None,None, row[1], row[2],
-                 None, None, None, None, None)
+                 None, None, None, None, None, None)
             userList.append(user.toStructure())
 
         return userList
@@ -223,18 +225,19 @@ class User(object) :
         return rows[0][0]
 
     def save(self, sessionUser):
+        print "Entered save user iin models"
         currentTimeStamp = getCurrentTimeStamp()
         mainTblColumns = "user_id, username, password, created_on,created_by, updated_on, updated_by"
         mainTblValuesList = [ self.userId, self.emailId, generatePassword(), currentTimeStamp,sessionUser,
                             currentTimeStamp,sessionUser]
 
         detailTblcolumns = "user_id, email_id, user_group_id, form_type,employee_name, "+\
-                            "employee_code, contact_no, address, designation, domain_ids,"+\
-                            " created_on, created_by, updated_on, updated_by"
+                            "employee_code, contact_no, address, designation, country_ids,"+\
+                            " domain_ids, created_on, created_by, updated_on, updated_by"
         detailTblValuesList = [ self.userId, self.emailId, self.userGroupId, self.getFormType(),
                             self.employeeName, self.employeeCode, self.contactNo, self.address,
-                            self.designation, ",".join(self.domainIds),currentTimeStamp,sessionUser,
-                            currentTimeStamp,sessionUser]
+                            self.designation, ",".join(self.countryIds), ",".join(self.domainIds),
+                            currentTimeStamp,sessionUser,currentTimeStamp,sessionUser]
 
         mainTblValues = listToString(mainTblValuesList)
         detailTblValues = listToString(detailTblValuesList)
@@ -248,10 +251,11 @@ class User(object) :
     def update(self, sessionUser):
         print "inside user model update"
         currentTimeStamp = getCurrentTimeStamp()
-        detailTblcolumns = [ "user_group_id", "form_type", "employee_name", "employee_code", "contact_no",
-                             "address", "designation", "domain_ids","updated_on", "updated_by"]
+        detailTblcolumns = [ "user_group_id", "form_type", "employee_name", "employee_code", 
+                            "contact_no", "address", "designation", "country_ids", "domain_ids",
+                            "updated_on", "updated_by"]
         detailTblValuesList = [ self.userGroupId, self.getFormType(), self.employeeName, self.employeeCode,
-                            self.contactNo, self.address, self.designation, 
+                            self.contactNo, self.address, self.designation, convertToString(",".join(self.countryIds)),
                             convertToString(",".join(self.domainIds)), currentTimeStamp,sessionUser ]
         condition = "user_id='"+str(self.userId)+"'"
         return DatabaseHandler.instance().update(self.detailTblName, detailTblcolumns,
