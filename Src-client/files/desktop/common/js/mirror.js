@@ -255,7 +255,7 @@ function initMirror() {
     }
 
     function getStatutoryNatureList(callerName, callback, failure_callback) {
-        var request = ["GetIStatutoryNatures", {}];
+        var request = ["GetStatutoryNatures", {}];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
