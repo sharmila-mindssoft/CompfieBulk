@@ -80,6 +80,8 @@ function loadUserList(usersList) {
 	    $("#designation").val('');
 	    $("#domain").val('');
 	    $("#domainselected").val('');
+	    $("#country").val('');
+	    $("#countryselected").val('');
 	    $("#emailid").val('');
 	    $("#error").text('');
 	}
@@ -105,6 +107,7 @@ function loadUserList(usersList) {
 		var userGroup = parseInt($("#usergroup").val());
 		var designation = $("#designation").val();
 		var domain = $("#domain").val();
+		var country = $("#country").val();
 		var emailId = $("#emailid").val();
 
 		if(employeeName == '') {
@@ -119,6 +122,8 @@ function loadUserList(usersList) {
 			$("#error").text("Domain Required");
 		} else if(emailId == '') {
 			$("#error").text("Email Id Required");
+		} else if(country == '') {
+			$("#error").text("Country Required");
 		} else {
 			if($("#userid").val() == '') {
 				saveUserDetail = [emailId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,domain];
@@ -234,6 +239,7 @@ function loadUserList(usersList) {
 	//Hide list items after select
 	function hidemenu() {
 		document.getElementById('selectboxview').style.display = 'none';
+		document.getElementById('selectboxview-country').style.display = 'none';
 		document.getElementById('autocompleteview').style.display = 'none';
 	}
 	//load domain list in multi select box
@@ -284,6 +290,55 @@ function loadUserList(usersList) {
 		   $("#domainselected").val(totalcount+" Selected");
 		   $("#domain").val(selids);
 		  }
+
+
+		  //load country list in multi select box
+		function loadautocountry () {
+		document.getElementById('selectboxview-country').style.display = 'block';
+		var editcountryval=[];
+		if($("#country").val() != ''){
+			editcountryval = $("#country").val().split(",");
+		}
+		  	var countries = [{"is_active": 0, "country_id": 1, "country_name": "India"}];
+		  	$('#ulist-country').empty();
+		  	var str='';
+		  	for(var i in countries){
+		  		var selectcountrystatus='';
+		  		for(var j=0; j<editcountryval.length; j++){
+		  			if(editcountryval[j]==countries[i]["country_id"]){
+		  				selectcountrystatus='checked';
+		  			}
+		  		}
+		  		if(selectcountrystatus == 'checked'){
+		  			str += '<li id="'+countries[i]["country_id"]+'" class="active_selectbox_country" onclick="activatecountry(this)" >'+countries[i]["country_name"]+'</li> ';
+		  		}else{
+		 			str += '<li id="'+countries[i]["country_id"]+'" onclick="activatecountry(this)" >'+countries[i]["country_name"]+'</li> ';
+		 		}
+		  	}
+		    $('#ulist-country').append(str);
+		    $("#countryselected").val(editcountryval.length+" Selected")
+		}
+		//check & uncheck process
+		function activatecountry(element){
+		   var chkstatus = $(element).attr('class');
+		   if(chkstatus == 'active_selectbox_country'){
+		   	$(element).removeClass("active_selectbox_country");
+		   }else{
+		    $(element).addClass("active_selectbox_country");
+		   }  
+		   var selids='';
+		   var totalcount =  $(".active_selectbox_country").length;
+		   $(".active_selectbox_country").each( function( index, el ) {
+		   	if (index === totalcount - 1) {
+		   		selids = selids+el.id;
+		   	}else{
+		   		selids = selids+el.id+",";
+		   	}    
+		    });
+		   $("#countryselected").val(totalcount+" Selected");
+		   $("#country").val(selids);
+		  }
+
 
 		//load usergroup list in autocomplete text box  
 		function loadauto_text (textval) {
