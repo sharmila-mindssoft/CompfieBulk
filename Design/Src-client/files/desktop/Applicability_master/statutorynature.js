@@ -63,48 +63,33 @@ $("#btnStatutoryNatureSubmit").click(function(){
 		$(".error-message").html('Statutory Nature Name Required');
 	}
 	else if(statutoryNatureIdVal==''){
-		var statNature_url = "http://192.168.1.9:8080/SaveStatutoryNature";
- 		var statNature_data = {
- 			"session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-          	"request" : [
-          		"SaveStatutoryNature",{ "statutory_nature_name": statutoryNatureNameVal }
-          	]
-    	};
-    	var options = JSON.stringify(statNature_data);
-  		ajaxCall(statNature_url, options, function (data) {
-  			if(data[0] == 'success'){
-			    $("#statutoryNatureAdd").hide();
+
+		function success(status, data){
+			if(status == 'success') {
+		    	$("#statutoryNatureAdd").hide();
   				$("#statutoryNatureView").show();
   				initialize();
-    		}
-    		else{
-      			$(".error-message").html(data[0]);
-    		}
-		});
+	  		}
+	  		else {
+      			$(".error-message").html(status);
+      		}	
+	    }
+		function failure(status, data){
+			$(".error-message").html(status);
+		}
+		mirror.saveStatutoryNature("SaveStatutoryNature", statutoryNatureNameVal, success, failure);
+		
 	}
 	else{
-		var statNature_url = "http://192.168.1.9:8080/UpdateStatutoryNature";
- 		var statNature_data = {
- 			"session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-           	"request" : [
-	            "UpdateStatutoryNature",
-	            {
-	                "statutory_nature_id": parseInt(statutoryNatureIdVal),
-	                "statutory_nature_name": statutoryNatureNameVal,
-	            }
-       		]
-    	};
-    	var options = JSON.stringify(statNature_data);
-  		ajaxCall(statNature_url, options, function (data) {  		
-  			if(data[0] == 'success'){
-			    $("#statutoryNatureAdd").hide();
-  				$("#statutoryNatureView").show();
-  				initialize();
-    		}
-    		else{
-      			$(".error-message").html(data[0]);
-    		}
-		});	
+		function success(status, data){
+			$("#statutoryNatureAdd").hide();
+  			$("#statutoryNatureView").show();
+  			initialize();
+		}
+		function failure(status, data){
+		}
+		mirror.updateStatutoryNature("UpdateStatutoryNature", parseInt(statutoryNatureIdVal), statutoryNatureNameVal, success, failure);
+	
 	}
 });
 function statNature_edit(statNatureId, statNatureName){
@@ -113,24 +98,14 @@ function statNature_edit(statNatureId, statNatureName){
 	$("#statutoryNatureName").val(statNatureName);
   	$("#statutoryNatureId").val(statNatureId);
 }
-function statNature_active(statNatureId, activeStatus){
-  	var countries_url = "http://192.168.1.9:8080/ChangeStatutoryNatureStatus";
-  	var countries_data = {
-          "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-          "request" : [
-              "ChangeStatutoryNatureStatus",
-            {
-                "statutory_nature_id": statNatureId,
-                "is_active": activeStatus
-            }
-          ]
-      };
-  	var options = JSON.stringify(countries_data);
-
-	ajaxCall(countries_url, options, function (data) {
-	  console.log(data)
+function statNature_active(statNatureId, isActive){
+	function success(status, data){
 	  initialize();
-	});
+  	}
+  	function failure(status, data){
+  	}
+  	mirror.changeCountryStatus("ChangeStatutoryNatureStatus",  parseInt(statNatureId), isActive, success, failure);
+
 }
 function ajaxCall (url, options, callback) {
 	$.support.cors = true;
