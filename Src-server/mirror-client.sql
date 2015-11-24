@@ -40,12 +40,13 @@ CREATE TABLE `tbl_compliances` (
 
 DROP TABLE IF EXISTS `tbl_client_settings`;
 CREATE TABLE `tbl_client_settings` (
+  `country_ids` varchar(250) NOT NULL,
   `domain_ids` varchar(250) NOT NULL,
   `logo_url` varchar(200) DEFAULT NULL,
   `contract_from` date DEFAULT NULL,
   `contract_to` date DEFAULT NULL,
   `no_of_user_licence` int(11) DEFAULT NULL,
-  `total_disk_space` int(11) DEFAULT NULL,
+  `total_disk_space` float(11) DEFAULT NULL,
   `is_sms_subscribed` tinyint(4) DEFAULT NULL,
   `two_levels_of_approval` tinyint(4) DEFAULT NULL,
   `assignee_reminder` int(11) DEFAULT NULL,
