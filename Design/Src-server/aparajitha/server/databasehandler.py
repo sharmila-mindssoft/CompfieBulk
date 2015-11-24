@@ -138,6 +138,7 @@ class DatabaseHandler(object) :
 
     def getData(self, table, columns, condition):
         query = "SELECT "+columns+" FROM "+table+" WHERE "+condition
+        print 
         return self.executeAndReturn(query)
 
     def validateSessionToken(self, sessionToken) :

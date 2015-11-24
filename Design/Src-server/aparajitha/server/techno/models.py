@@ -206,27 +206,21 @@ class SaveClientGroup(object) :
         self.countryIds = JSONHelper.getList(requestData, "country_ids")
         self.domainIds = JSONHelper.getList(requestData, "domain_ids")
         self.logo = JSONHelper.getString(requestData, "logo")
-        self.contractFrom = JSONHelper.getString(requestData, "contract_from")
-        self.contractTo = JSONHelper.getString(requestData, "contract_to")
+        print "got  logo"
+        self.contractFrom = JSONHelper.getLong(requestData, "contract_from")
+        print "got contract from"
+        self.contractTo = JSONHelper.getLong(requestData, "contract_to")
+        print "got contract to"
         self.inchargePersons = JSONHelper.getList(requestData, "incharge_persons")
+        print "got inchargePersons"
         self.noOfLicence = JSONHelper.getInt(requestData, "no_of_user_licence")
+        print "got noOfLicence"
         self.fileSpace = JSONHelper.getFloat(requestData, "file_space")
+        print "got file space"
         self.isSmsSubscribed = JSONHelper.getInt(requestData, "is_sms_subscribed")
+        print "got isSmsSubscribed"
         self.username = JSONHelper.getString(requestData, "email_id")     
         self.dateConfigurations = JSONHelper.getList(requestData, "date_configurations")
-
-        assertType(self.groupName, StringType)
-        assertType(self.countryIds, ListType)
-        assertType(self.domainIds, ListType)
-        assertType(self.logo, StringType)
-        assertType(self.contractFrom, StringType)
-        assertType(self.contractTo, StringType)
-        assertType(self.inchargePersons, ListType)
-        assertType(self.noOfLicence, IntType)
-        assertType(self.fileSpace, FloatType)
-        assertType(self.isSmsSubscribed, IntType)
-        assertType(self.username, StringType)
-        assertType(self.dateConfigurations, ListType)
 
         self.clientId = self.generateNewId()
 
@@ -378,6 +372,7 @@ class SaveClientGroup(object) :
             return True
         else:
             return False
+
 
 
 class SaveClient(object):
