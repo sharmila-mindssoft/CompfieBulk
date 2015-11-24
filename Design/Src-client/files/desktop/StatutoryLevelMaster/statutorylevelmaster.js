@@ -76,8 +76,8 @@ function activate_text_domain (element,checkval,checkname) {
 }
 //Autocomplete Script ends
 
-
 function loadstatutoryLevelsList() {
+  $("#error").text("");
   $("#level1").val("");
   $("#level2").val("");
   $("#level3").val("");
