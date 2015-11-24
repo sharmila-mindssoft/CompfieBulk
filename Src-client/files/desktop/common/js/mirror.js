@@ -255,7 +255,94 @@ function initMirror() {
     }
 
     function getStatutoryNatureList(callerName, callback, failure_callback) {
-        var request = ["GetIStatutoryNatures", {}];
+        var request = ["GetStatutoryNatures", {}];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    // Geography Levels 
+    function getGeographyLevels(callerName, callback, failure_callback) {
+        var request = ["GetGeographyLevels", {}];
+        apiRequest(callerName, request, callback, failure_callback);   
+    }
+
+    function saveAndUpdateGeographyLevels(callerName, countryId, levels, callback, failure_callback) {
+        if ((countryId == null) || (levels == null))
+            return null;
+        var request = [
+            "SaveGeographyLevel",
+            { 
+                "country_id" : countryId,
+                "levels" : levels
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    // Statutory Levels
+    function getStatutoryLevels(callerName, callback, failure_callback) {
+        var request = ["GetStatutoryLevels", {}];
+        apiRequest(callerName, request, callback, failure_callback);   
+    }
+
+    function saveAndUpdateStatutoryLevels(callerName, countryId, domainId, levels, callback, failure_callback) {
+        if ((countryId == null) || (domainId == null) || (levels == null))
+            return null;
+        var request = [
+            "SaveStatutoryLevel",
+            { 
+                "country_id" : countryId,
+                "domain_id" : domain_id,
+                "levels" : levels
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    //Geographies
+    function getGeographies(callerName, callback, failure_callback) {
+        var request = ["GetGeographies", {}];
+        apiRequest(callerName, request, callback, failure_callback);   
+    }
+
+    function saveGeography(callerName, levelId, name, parentIds, callback, failure_callback) {
+        if ((levelId == null) || (name == null) || (parentIds == null))
+            return null;
+        var request = [
+            "SaveGeography",
+            { 
+                "geography_level_id": levelId,
+                "geography_name": name,
+                "parent_ids": parentIds
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function updateGeography(callerName, geographyId, levelId, name, parentIds, callback, failure_callback) {
+        if ((geographyId == null) || (levelId == null) || (name == null) || (parentIds == null))
+            return null;
+        var request = [
+            "UpdateGeography",
+            { 
+                "geography_id": geographyId,
+                "geography_level_id": levelId,
+                "geography_name": name,
+                "parent_ids": parentIds
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeGeographyStatus(callerName, geographyId, isActive, callback, failure_callback) {
+        if ((geographyId == null) || (isActive == null))
+            return null;
+        var request = [
+            "ChangeGeographyStatus",
+            { 
+                "geography_id": geographyId,
+                "is_active": isActive
+            }
+        ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
@@ -488,6 +575,14 @@ function initMirror() {
         updateStatutoryNature: updateStatutoryNature,
         changeStatutoryNatureStatus: changeStatutoryNatureStatus,
         getStatutoryNatureList: getStatutoryNatureList,
+        getGeographyLevels: getGeographyLevels,
+        saveAndUpdateGeographyLevels: saveAndUpdateGeographyLevels,
+        getStatutoryLevels: getStatutoryLevels,
+        saveAndUpdateStatutoryLevels: saveAndUpdateStatutoryLevels,
+        getGeographies: getGeographies,
+        saveGeography: saveGeography,
+        updateGeography: updateGeography,
+        changeGeographyStatus: changeGeographyStatus,
 
         saveAdminUserGroup: saveAdminUserGroup,
         updateAdminUserGroup: updateAdminUserGroup,

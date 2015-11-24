@@ -12,8 +12,8 @@ __all__ = [
     "UpdateIndustry", "ChangeIndustryStatus",
     "StatutoryNature", "StatutoryNatureList", "SaveStatutoryNature",
     "UpdateStatutoryNature", "ChangeStatutoryNatureStatus",
-    "Level", "StatutoryLevelList", "SaveStatutoryLevel", "GeographyLevelList",
-    "SaveGeographyLevel"
+    "Level", "StatutoryLevelsList", "SaveStatutoryLevel", "GeographyLevelList",
+    "SaveGeographyLevel", "Geography", "GeographyAPI"
 ]
 
 def assertType (x, typeObject) :
@@ -83,7 +83,6 @@ class PossibleError(object) :
     def __repr__(self) :
         return str(self.toStructure())
 
-
 class Domain(object) :
     def __init__(self, domainId, domainName, isActive) :
         self.domainId = domainId
@@ -126,6 +125,9 @@ class DomainList(object) :
         for row in _domains :
             domain = Domain(int(row[0]), row[1], row[2])
             self.domainList.append(domain.toStructure())
+
+    def toList(self) :
+        return self.domainList
 
     def toStructure(self) :
         return [
@@ -264,7 +266,7 @@ class CountryList(object) :
             country = Country(int(row[0]), row[1], row[2])
             self.countryList.append(country.toStructure())
 
-    def toList(self) :
+    def getCountry(self) :
         return self.countryList
 
     def toStructure(self) :
@@ -539,7 +541,7 @@ class StatutoryNatureList(object) :
     def toStructure(self) :
         return [
             "success",
-            {"industries": self.statutoryNatureList}
+            {"statutory_natures": self.statutoryNatureList}
         ]
 
     def __repr__(self) :
@@ -665,29 +667,39 @@ class Level(object) :
     def __repr__(self) :
         return str(self.toStructure())
 
-class StatutoryLevelList(object) :
+class StatutoryLevelsList(object) :
     def __init__(self) :
         self.statutoryLevels = {}
-        self. countryList = []
+        self.countryList = []
+        self.domainList = []
         self.processData()
 
     def processData(self) :
-        self.countryList = CountryList().toList()
+        self.countryList = CountryList().getCountry()
+        self.domainList = DomainList().toList()
         _statutoryLevels = DatabaseHandler.instance().getStatutoryLevels()
         for row in _statutoryLevels :
             statutoryLevel = Level(int(row[0]), int(row[1]), row[2])
             countryId = int(row[3])
-            _list = self.statutoryLevels.get(countryId)
-            if _list is None :
-                _list = []
+            domainId = int(row[4])
+            _list = []
+            countryWise = {}
+            countryWise = self.statutoryLevels.get(countryId)
+            if countryWise is None :
+                countryWise = {}
+            else :
+                _list = countryWise.get(domainId)
+                if _list is None :
+                    _list = []
             _list.append(statutoryLevel.toStructure())
-            self.statutoryLevels[countryId] = _list
-
+            countryWise[domainId] = _list
+            self.statutoryLevels[countryId] = countryWise
     def toStructure(self) :
         return [
             "success",
             {
                 "countries": self.countryList,
+                "domains": self.domainList,
                 "statutory_levels": self.statutoryLevels
             }
         ]
@@ -707,8 +719,9 @@ class SaveStatutoryLevel(object) :
         requestData = self.request[1]
         assertType(requestData, DictType)
         countryId = JSONHelper.getInt(requestData, "country_id")
+        domainId = JSONHelper.getInt(requestData, "domain_id")
         levels = JSONHelper.getList(requestData, "levels")
-        savedNames = [row[2] for row in DH.getGeographyLevelsByCountry(countryId)]
+        savedNames = [row[2] for row in DH.getStatutoryLevelsByID(countryId, domainId)]
         levelNames = []
         levelPositions = []
 
@@ -729,14 +742,13 @@ class SaveStatutoryLevel(object) :
             self.responseData = "DuplicateStatutoryLevelNamesExists"
         elif len(duplicatePositions) > 0 :
             self.responseData = "DuplicateStatutoryLevelPositionsExists"
-
         if self.responseData is None :
             for level in levels :
                 levelId = JSONHelper.getOptionalInt(level, "level_id")
                 name = JSONHelper.getString(level, "level_name")
                 position = JSONHelper.getInt(level, "level_position")
 
-                if (DH.saveStatutoryLevel(countryId, levelId, name, position, self.userId)) :
+                if (DH.saveStatutoryLevel(countryId, domainId, levelId, name, position, self.userId)) :
                     self.responseData = "success"
                 else :
                     self.responseData = "saveFailed: %s" % level
@@ -758,7 +770,7 @@ class GeographyLevelList(object) :
         self.processData()
 
     def processData(self) :
-        self.countryList = CountryList().toList()
+        self.countryList = CountryList().getCountry()
         _geographyLevels = DatabaseHandler.instance().getGeographyLevels()
         for row in _geographyLevels :
             geographyLevel = Level(int(row[0]), int(row[1]), row[2])
@@ -768,6 +780,9 @@ class GeographyLevelList(object) :
                 _list = []
             _list.append(geographyLevel.toStructure())
             self.geographyLevels[countryId] = _list
+
+    def getGeographyLevels(self) :
+        return self.geographyLevels
 
     def toStructure(self) :
         return [
@@ -836,150 +851,123 @@ class SaveGeographyLevel(object) :
     def __repr__(self) :
         return str(self.toStructure())
 
-class StatutoryNature(object) :
-    def __init__(self, statutoryNatureId, statutoryNatureName, isActive) :
-        self.statutoryNatureId = statutoryNatureId
-        self.statutoryNatureName = statutoryNatureName
+class Geography(object) :
+    def __init__(self, geographyId, name, levelId, parentIds, isActive) :
+        self.geographyId = geographyId
+        self.name = name
+        self.levelId = levelId
+        self.parentIds = parentIds
         self.isActive = isActive
         self.verify()
 
     def verify(self) :
-        assertType(self.statutoryNatureId, IntType)
-        assertType(self.statutoryNatureName, StringType)
+        assertType(self.geographyId, IntType)
+        assertType(self.name, StringType)
+        assertType(self.levelId, IntType)
+        assertType(self.parentIds, ListType)
         assertType(self.isActive, IntType)
 
     def toStructure(self) :
         return {
-            "statutory_nature_id": self.statutoryNatureId,
-            "statutory_nature_name": self.statutoryNatureName,
+            "geography_id": self.geographyId,
+            "geography_name": self.name,
+            "level_id": self.levelId,
+            "parent_ids": self.parentIds,
             "is_active": self.isActive
         }
 
     def __repr__(self) :
         return str(self.toStructure())
 
-class StatutoryNatureList(object) :
-    def __init__(self, request) :
-        self.request = request
-        self.statutoryNatureList = []
-        self.possibleError = None
-        self.processData()
-
-    def processData(self) :
-        _statutoryNatures = DatabaseHandler.instance().getStatutoryNatures()
-        for row in _statutoryNatures :
-            statutoryNature = StatutoryNature(int(row[0]), row[1], row[2])
-            self.statutoryNatureList.append(statutoryNature)
-
-    def toStructure(self) :
-        if self.possibleError is not None :
-            return [
-                str(self.possibleError),
-                {}
-            ]
-        else :
-            return [
-                "success",
-                {"industries": self.statutoryNatureList}
-            ]
-
-    def __repr__(self) :
-        return str(self.toStructure())
-
-class SaveStatutoryNature(object) :
-    def __init__ (self, request, userId) :
+class GeographyAPI(object) :
+    def __init__(self, request, userId) :
         self.request = request
         self.userId = userId
         self.responseData = None
-        self.statutoryNatureName = None
-        self.processData()
+        self.countryList = CountryList().getCountry()
+        self.geographyLevelList = GeographyLevelList().getGeographyLevels()
+        self.geographies = {}
 
-    def processData(self) :
+    def getGeographies(self) :
+        DH = DatabaseHandler.instance()
+        _geographyList = DH.instance().getGeographies()
+        for row in _geographyList :
+            parentIds = [int(x) for x in row[3].split(',')]
+            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds, int(row[4]))
+            countryId = int(row[5])
+            _list = self.geographies.get(countryId)
+            if _list is None :
+                _list = []
+            _list.append(geography.toStructure())
+            self.geographies[countryId] = _list
+        return [
+            "success",
+            {
+                "countries": self.countryList,
+                "geography_levels": self.geographyLevelList,
+                "geographies": self.geographies
+            }
+        ]
+
+    def saveGeographies(self) :
+        DH = DatabaseHandler.instance()
         requestData = self.request[1]
         assertType(requestData, DictType)
-        self.statutoryNatureName = JSONHelper.getString(requestData, "statutory_nature_name")
-        isDuplicate = DatabaseHandler.instance().checkDuplicateStatutoryNature(
-            self.statutoryNatureName, None
-        )
-        if isDuplicate :
-            self.responseData = "StatutoryNatureNameAlreadyExists"
+        levelId = JSONHelper.getInt(requestData, "geography_level_id")
+        geographyName = JSONHelper.getString(requestData, "geography_name")
+        parentIdsList = JSONHelper.getList(requestData, "parent_ids")
+        parentIds = ','.join(str(x) for x in parentIdsList)
+        geographyNames = [row[1].lower() for row in DH.getDuplicateGeographies(parentIds, None)]
+        if geographyNames.count(geographyName.lower()) > 0:
+            self.responseData = "GeographyNameAlreadyExists"
         else :
-            if DatabaseHandler.instance().saveStatutoryNature(self.statutoryNatureName, self.userId) :
+            if (DH.saveGeographies(geographyName, levelId, parentIds, self.userId)) :
                 self.responseData = "success"
             else :
-                self.responseData = "saveFailed"
+                self.responseData = "saveFailed: %s" % requestData
 
-    def toStructure(self) :
         return [
             str(self.responseData),
             {}
         ]
 
-    def __repr__(self) :
-        return str(self.toStructure())
-
-class UpdateStatutoryNature(object) :
-    def __init__(self, request, userId) :
-        self.request = request
-        self.userId = userId
-        self.responseData = None
-        self.statutoryNatureId = None
-        self.statutoryNatureName = None
-        self.processData()
-
-    def processData(self) :
+    def updateGeographies(self) :
+        DH = DatabaseHandler.instance()
         requestData = self.request[1]
         assertType(requestData, DictType)
-        self.statutoryNatureName = JSONHelper.getString(requestData, "statutory_nature_name")
-        self.statutoryNatureId = JSONHelper.getInt(requestData, "statutory_nature_id")
-        isDuplicate = DatabaseHandler.instance().checkDuplicateStatutoryNature(
-            self.statutoryNatureName, self.statutoryNatureId
-        )
-        if isDuplicate :
-            self.responseData = "StatutoryNatureNameAlreadyExists"
+        geographyId =  JSONHelper.getInt(requestData, "geography_id")
+        levelId = JSONHelper.getInt(requestData, "geography_level_id")
+        geographyName = JSONHelper.getString(requestData, "geography_name")
+        parentIdsList = JSONHelper.getList(requestData, "parent_ids")
+        parentIds = ','.join(str(x) for x in parentIdsList)
+        geographyNames = [row[1].lower() for row in DH.getDuplicateGeographies(parentIds, geographyId)]
+        if geographyNames.count(geographyName.lower()) > 0:
+            self.responseData = "GeographyNameAlreadyExists"
         else :
-            if DatabaseHandler.instance().updateStatutoryNature(
-                self.statutoryNatureId, self.statutoryNatureName, self.userId
-            ) :
+            if (DH.updateGeographies(geographyId, geographyName, levelId, parentIds, self.userId)) :
                 self.responseData = "success"
             else :
-                self.responseData = "InvalidStatutoryNatureId"
+                self.responseData = "saveFailed: %s" % requestData
 
-    def toStructure(self) :
         return [
             str(self.responseData),
             {}
         ]
 
-    def __repr__(self) :
-        return str(self.toStructure())
-
-class ChangeStatutoryNatureStatus(object) :
-    def __init__(self, request, userId) :
-        self.request = request
-        self.userId = userId
-        self.statutoryNatureId = None
-        self.isActive = None
-        self.responseData = None
-        self.processData()
-
-    def processData(self) :
+    def changeGeographyStatus(self) :
+        DH = DatabaseHandler.instance()
         requestData = self.request[1]
         assertType(requestData, DictType)
-        self.isActive = JSONHelper.getInt(requestData, "is_active")
-        self.statutoryNatureId = JSONHelper.getInt(requestData, "statutory_nature_id")
-        if DatabaseHandler.instance().updateStatutoryNatureStatus(
-            self.statutoryNatureId, self.isActive, self.userId
-        ) :
+        geographyId =  JSONHelper.getInt(requestData, "geography_id")
+        isActive = JSONHelper.getInt(requestData, "is_active")
+
+        if (DH.changeGeographyStatus(geographyId, isActive, self.userId)) :
             self.responseData = "success"
         else :
-            self.responseData = "InvalidStatutoryNatureId"
-    def toStructure(self) :
+            self.responseData = "saveFailed: %s" % requestData
+
         return [
             str(self.responseData),
             {}
         ]
-
-    def __repr__(self) :
-        return str(self.toStructure())
 

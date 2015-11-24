@@ -331,23 +331,25 @@ class DatabaseHandler(object) :
     ### StatutoryLevels ###
 
     def getStatutoryLevels(self) :
-        query = "SELECT level_id, level_position, level_name, country_id \
+        query = "SELECT level_id, level_position, level_name, country_id, domain_id \
             FROM tbl_statutory_levels"
         return self.dataSelect(query)
 
-    def getStatutoryLevelsByCountry(self, countryId) :
+    def getStatutoryLevelsByID(self, countryId, domainId) :
         query = "SELECT level_id, level_position, level_name \
-            FROM tbl_statutory_levels WHERE country_id = %s" % countryId
+            FROM tbl_statutory_levels WHERE country_id = %s and domain_id = %s" % (
+                countryId, domainId
+            )
         return self.dataSelect(query)
 
-    def saveStatutoryLevel(self, countryId, levelId, levelName, levelPosition, userId) :
+    def saveStatutoryLevel(self, countryId, domainId, levelId, levelName, levelPosition, userId) :
         if levelId is None :
             levelId = self.getNewId("level_id", "tbl_statutory_levels")
             createdOn = datetime.datetime.now()
 
             query = "INSERT INTO tbl_statutory_levels (level_id, level_position, \
-                level_name, country_id, created_by, created_on) VALUES (%s, %s, '%s', %s, %s, '%s')" % (
-                    levelId, levelPosition, levelName, countryId, userId, createdOn
+                level_name, country_id, domain_id, created_by, created_on) VALUES (%s, %s, '%s', %s, %s, %s, '%s')" % (
+                    levelId, levelPosition, levelName, countryId, domainId, userId, createdOn
                 )
             return self.dataInsertUpdate(query)
         else :
@@ -385,6 +387,46 @@ class DatabaseHandler(object) :
                 levelPosition, levelName, userId, levelId
             )
             return self.dataInsertUpdate(query)
+
+    ### Geographies ###
+
+    def getGeographies(self) :
+        # query = "SELECT geography_id, geography_name, level_id, \
+        #     parent_ids, is_active FROM tbl_geographies"
+        query = "SELECT t1.geography_id, t1.geography_name, t1.level_id, \
+            t1.parent_ids, t1.is_active, t2.country_id FROM tbl_geographies t1 \
+            INNER JOIN tbl_geography_levels t2 on t1.level_id = t2.level_id"
+        return self.dataSelect(query)
+
+    def getDuplicateGeographies(self, parentIds, geographyId) :
+        query = "SELECT geography_id, geography_name, level_id, is_active \
+            FROM tbl_geographies WHERE parent_ids='%s' " % (parentIds)
+        if geographyId is not None :
+            query = query + " AND geography_id != %s" % geographyId
+        return self.dataSelect(query)
+
+    def saveGeographies(self, name, levelId, parentIds, userId) :
+        geographyId = self.getNewId("geography_id", "tbl_geographies")
+        createdOn = datetime.datetime.now()
+
+        query = "INSERT INTO tbl_geographies (geography_id, geography_name, level_id, \
+            parent_ids, created_by, created_on) VALUES (%s, '%s', %s, '%s', %s, '%s')" % (
+                geographyId, name, levelId, parentIds, userId, createdOn
+            )
+        return self.dataInsertUpdate(query)
+
+    def updateGeographies(self, geographyId, name, levelId, parentIds, updatedBy) :
+        query = "UPDATE tbl_geographies set geography_name='%s', level_id=%s, \
+            parent_ids='%s', updated_by=%s WHERE geography_id=%s " % (
+                name, levelId, parentIds, updatedBy, geographyId
+            )
+        return self.dataInsertUpdate(query)
+
+    def changeGeographyStatus(self,geographyId, isActive, updatedBy) :
+        query = "UPDATE tbl_geographies set is_active=%s, updated_by=%s WHERE geography_id=%s" % (
+            isActive, updatedBy, geographyId
+        )
+        return self.dataInsertUpdate(query)
 
     @staticmethod
     def instance() :
