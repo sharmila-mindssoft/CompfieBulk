@@ -2,57 +2,37 @@
 {% block content %}
 <div class="content-container width40">
   <div class="content-area">
-    <h1>Domains</h1>
-    
+    <h1>Domains</h1>    
     <div class="clearfix"></div>
     <div class="grid-table" >
-      <table >
+      <table class="table-domain-list" >
         <tr align="left">
-          <th align="center">#</th>
-          
-          <th>Domain Name</th>
-          
+          <th align="center">#</th>          
+          <th>Domain Name</th>          
           <th align="center">Status</th>
         </tr>
         <tr>
           <td>&nbsp;</td>
-          <td><input type="text"  class="filter-text-box"></td>
-         
-          
+          <td><input type="text" class="filter-text-box" id="search-domainname"></td>           
           <td>&nbsp;</td>
         </tr>
-          <tr>
-          <td align="center">1</td>
-        
-          <td>Finance Law</td>
-          
-          <td align="center">Active</td>
-        </tr>
-        
-       
-        
-        <tr style="background:#fff;">
-          <td align="center">2</td>
-        
-          <td>Industrial Law</td>
-          
-          <td align="center">Active</td>
-        </tr>
-      
+        <tbody class="tbody-domain-list">        
+        </tbody>
         <tr>
-          <td align="center">3</td>
-        
-          <td>Labour Law</td>
-          
-         <td align="center">Inactive</td></td>
-        </tr>
-        <tr>
-          <td colspan="3"><p style="border-top:1px dashed #ccc;">Total : 3 records</p></td>
+          <td colspan="3" style="border-top:1px dashed #ccc;"><p id="total-records"></p></td>
         </tr> 
       </table>
-
-    </div>
-    
+    </div>    
   </div>
 </div>
+<div id="templates">
+<table class="table-domain-report">
+  <tr class="table-row">
+    <td class="sno" align="center"></td>
+    <td class="domain-name"></td>
+    <td class="is-active" align="center"></td>
+  </tr>
+</table>
+</div>
+<script type="text/javascript" src="/files/desktop/KnowledgeMasterReport/domain.js"></script>
 {% endblock %}
