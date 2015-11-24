@@ -13,7 +13,7 @@ __all__ = [
     "StatutoryNature", "StatutoryNatureList", "SaveStatutoryNature",
     "UpdateStatutoryNature", "ChangeStatutoryNatureStatus",
     "Level", "StatutoryLevelsList", "SaveStatutoryLevel", "GeographyLevelList",
-    "SaveGeographyLevel"
+    "SaveGeographyLevel", "Geography", "GeographyAPI"
 ]
 
 def assertType (x, typeObject) :
@@ -82,7 +82,6 @@ class PossibleError(object) :
 
     def __repr__(self) :
         return str(self.toStructure())
-
 
 class Domain(object) :
     def __init__(self, domainId, domainName, isActive) :
@@ -267,7 +266,7 @@ class CountryList(object) :
             country = Country(int(row[0]), row[1], row[2])
             self.countryList.append(country.toStructure())
 
-    def toList(self) :
+    def getCountry(self) :
         return self.countryList
 
     def toStructure(self) :
@@ -671,7 +670,7 @@ class StatutoryLevelsList(object) :
         self.processData()
 
     def processData(self) :
-        self.countryList = CountryList().toList()
+        self.countryList = CountryList().getCountry()
         self.domainList = DomainList().toList()
         _statutoryLevels = DatabaseHandler.instance().getStatutoryLevels()
         for row in _statutoryLevels :
@@ -766,7 +765,7 @@ class GeographyLevelList(object) :
         self.processData()
 
     def processData(self) :
-        self.countryList = CountryList().toList()
+        self.countryList = CountryList().getCountry()
         _geographyLevels = DatabaseHandler.instance().getGeographyLevels()
         for row in _geographyLevels :
             geographyLevel = Level(int(row[0]), int(row[1]), row[2])
@@ -776,6 +775,9 @@ class GeographyLevelList(object) :
                 _list = []
             _list.append(geographyLevel.toStructure())
             self.geographyLevels[countryId] = _list
+
+    def getGeographyLevels(self) :
+        return self.geographyLevels
 
     def toStructure(self) :
         return [
@@ -843,4 +845,124 @@ class SaveGeographyLevel(object) :
 
     def __repr__(self) :
         return str(self.toStructure())
+
+class Geography(object) :
+    def __init__(self, geographyId, name, levelId, parentIds, isActive) :
+        self.geographyId = geographyId
+        self.name = name
+        self.levelId = levelId
+        self.parentIds = parentIds
+        self.isActive = isActive
+        self.verify()
+
+    def verify(self) :
+        assertType(self.geographyId, IntType)
+        assertType(self.name, StringType)
+        assertType(self.levelId, IntType)
+        assertType(self.parentIds, ListType)
+        assertType(self.isActive, IntType)
+
+    def toStructure(self) :
+        return {
+            "geography_id": self.geographyId,
+            "geography_name": self.name,
+            "level_id": self.levelId,
+            "parent_ids": self.parentIds,
+            "is_active": self.isActive
+        }
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class GeographyAPI(object) :
+    def __init__(self, request, userId) :
+        self.request = request
+        self.userId = userId
+        self.responseData = None
+        self.countryList = CountryList().getCountry()
+        self.geographyLevelList = GeographyLevelList().getGeographyLevels()
+        self.geographies = {}
+
+    def getGeographies(self) :
+        DH = DatabaseHandler.instance()
+        _geographyList = DH.instance().getGeographies()
+        for row in _geographyList :
+            parentIds = [int(x) for x in row[3].split(',')]
+            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds, int(row[4]))
+            countryId = int(row[5])
+            _list = self.geographies.get(countryId)
+            if _list is None :
+                _list = []
+            _list.append(geography.toStructure())
+            self.geographies[countryId] = _list
+        return [
+            "success",
+            {
+                "countries": self.countryList,
+                "geography_levels": self.geographyLevelList,
+                "geographies": self.geographies
+            }
+        ]
+
+    def saveGeographies(self) :
+        DH = DatabaseHandler.instance()
+        requestData = self.request[1]
+        assertType(requestData, DictType)
+        levelId = JSONHelper.getInt(requestData, "geography_level_id")
+        geographyName = JSONHelper.getString(requestData, "geography_name")
+        parentIdsList = JSONHelper.getList(requestData, "parent_ids")
+        parentIds = ','.join(str(x) for x in parentIdsList)
+        geographyNames = [row[1].lower() for row in DH.getDuplicateGeographies(parentIds, None)]
+        if geographyNames.count(geographyName.lower()) > 0:
+            self.responseData = "GeographyNameAlreadyExists"
+        else :
+            if (DH.saveGeographies(geographyName, levelId, parentIds, self.userId)) :
+                self.responseData = "success"
+            else :
+                self.responseData = "saveFailed: %s" % requestData
+
+        return [
+            str(self.responseData),
+            {}
+        ]
+
+    def updateGeographies(self) :
+        DH = DatabaseHandler.instance()
+        requestData = self.request[1]
+        assertType(requestData, DictType)
+        geographyId =  JSONHelper.getInt(requestData, "geography_id")
+        levelId = JSONHelper.getInt(requestData, "geography_level_id")
+        geographyName = JSONHelper.getString(requestData, "geography_name")
+        parentIdsList = JSONHelper.getList(requestData, "parent_ids")
+        parentIds = ','.join(str(x) for x in parentIdsList)
+        geographyNames = [row[1].lower() for row in DH.getDuplicateGeographies(parentIds, geographyId)]
+        if geographyNames.count(geographyName.lower()) > 0:
+            self.responseData = "GeographyNameAlreadyExists"
+        else :
+            if (DH.updateGeographies(geographyId, geographyName, levelId, parentIds, self.userId)) :
+                self.responseData = "success"
+            else :
+                self.responseData = "saveFailed: %s" % requestData
+
+        return [
+            str(self.responseData),
+            {}
+        ]
+
+    def changeGeographyStatus(self) :
+        DH = DatabaseHandler.instance()
+        requestData = self.request[1]
+        assertType(requestData, DictType)
+        geographyId =  JSONHelper.getInt(requestData, "geography_id")
+        isActive = JSONHelper.getInt(requestData, "is_active")
+
+        if (DH.changeGeographyStatus(geographyId, isActive, self.userId)) :
+            self.responseData = "success"
+        else :
+            self.responseData = "saveFailed: %s" % requestData
+
+        return [
+            str(self.responseData),
+            {}
+        ]
 
