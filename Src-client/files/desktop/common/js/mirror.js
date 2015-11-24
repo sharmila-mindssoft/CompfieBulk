@@ -434,48 +434,24 @@ function initMirror() {
 
     // Client Group Master
 
-    function saveClientGroup(callerName, callback, failure_callback) {
-       
+    function saveClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
+        var contractTo = parseInt(new Date(clientGroupDetails["contract_to"]).getTime(),10);
+        var contractFrom = parseInt(new Date(clientGroupDetails["contract_from"]).getTime(),10);
         var request = [
             "SaveClientGroup",
             {
-                "group_name": "TVS Groups",
-                "country_ids": [1,2],
-                "domain_ids":[3,4],
-                "logo" : "/logo.png",
-                "contract_from": "25/12/2015",
-                "contract_to": "24/12/2016",
-                "incharge_persons": [5,6,7],
-                "no_of_user_licence": 10,
-                "file_space": 4.5,
-                "is_sms_subscribed": 0,
-                "email_id": "tvsgroups@domain.com",
-                "date_configurations":[
-                    {
-                        "country_id": 1,
-                        "domain_id": 3,
-                        "period_from": 4,
-                        "period_to": 3
-                    },
-                    {
-                        "country_id": 1,
-                        "domain_id": 4,
-                        "period_from": 4,
-                        "period_to": 3
-                    },
-                    {
-                        "country_id": 2,
-                        "domain_id": 3,
-                        "period_from": 1,
-                        "period_to": 12
-                    },
-                    {
-                        "country_id": 2,
-                        "domain_id": 4,
-                        "period_from": 1,
-                        "period_to": 12
-                    }
-                ]
+                "group_name": clientGroupDetails["group_name"],
+                "country_ids": clientGroupDetails["country_ids"],
+                "domain_ids":clientGroupDetails["domain_ids"],
+                "logo" : clientGroupDetails["logo"],
+                "contract_from": contractFrom,
+                "contract_to": contractTo,
+                "incharge_persons": clientGroupDetails["incharge_persons"],
+                "no_of_user_licence": clientGroupDetails["no_of_user_licence"],
+                "file_space": clientGroupDetails["file_space"],
+                "is_sms_subscribed": clientGroupDetails["is_sms_subscribed"],
+                "email_id": clientGroupDetails["email_id"],
+                "date_configurations":dateConfigurations
             }
         ];
         apiRequest(callerName, request, callback, failure_callback);
