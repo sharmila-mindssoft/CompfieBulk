@@ -438,7 +438,7 @@ function initMirror() {
     function saveAdminUser(callerName, userDetail, callback, failure_callback) {
        if (isNull(userDetail))
             return null;
-        else if (userDetail.length != 8)
+        else if (userDetail.length != 9)
             return null;
         $.each(userDetail, function( index, value ) {
             if (isNull(value))
@@ -451,7 +451,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var domainIds= userDetail[7].split(',') ;
+        var countryIds= userDetail[7].split(',') ;
+        var domainIds= userDetail[8].split(',') ;
         var request = [
             "SaveUser",
             {
@@ -462,6 +463,7 @@ function initMirror() {
                 "contact_no": contactNo,
                 "address": address, 
                 "designation": designation,
+                "country_ids": countryIds,
                 "domain_ids": domainIds
             }
         ];
@@ -471,7 +473,7 @@ function initMirror() {
     function updateAdminUser(callerName, userDetail, callback, failure_callback) {
         if (isNull(userDetail))
             return null;
-        else if (userDetail.length != 8)
+        else if (userDetail.length != 9)
             return null;
         $.each(userDetail, function( index, value ) {
             if (isNull(value))
@@ -484,7 +486,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var domainIds= userDetail[7].split(',') ;
+        var countryIds= userDetail[7].split(',') ;
+        var domainIds= userDetail[8].split(',') ;
         var request = [
             "UpdateUser",
             {
@@ -495,6 +498,7 @@ function initMirror() {
                 "contact_no": contactNo,
                 "address": address, 
                 "designation": designation,
+                "country_ids": countryIds,
                 "domain_ids": domainIds
             }
         ];
@@ -509,6 +513,31 @@ function initMirror() {
             {
                 "user_id": userId,
                 "is_active" : isActive 
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    // Client Group Master
+
+    function saveClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
+        var contractTo = parseInt(new Date(clientGroupDetails["contract_to"]).getTime(),10);
+        var contractFrom = parseInt(new Date(clientGroupDetails["contract_from"]).getTime(),10);
+        var request = [
+            "SaveClientGroup",
+            {
+                "group_name": clientGroupDetails["group_name"],
+                "country_ids": clientGroupDetails["country_ids"],
+                "domain_ids":clientGroupDetails["domain_ids"],
+                "logo" : clientGroupDetails["logo"],
+                "contract_from": contractFrom,
+                "contract_to": contractTo,
+                "incharge_persons": clientGroupDetails["incharge_persons"],
+                "no_of_user_licence": clientGroupDetails["no_of_user_licence"],
+                "file_space": clientGroupDetails["file_space"],
+                "is_sms_subscribed": clientGroupDetails["is_sms_subscribed"],
+                "email_id": clientGroupDetails["email_id"],
+                "date_configurations":dateConfigurations
             }
         ];
         apiRequest(callerName, request, callback, failure_callback);
@@ -562,7 +591,9 @@ function initMirror() {
         saveAdminUser: saveAdminUser,
         updateAdminUser: updateAdminUser,
         changeAdminUserStatus: changeAdminUserStatus,
-        getAdminUserList: getAdminUserList
+        getAdminUserList: getAdminUserList,
+
+        saveClientGroup: saveClientGroup
 
     }
 

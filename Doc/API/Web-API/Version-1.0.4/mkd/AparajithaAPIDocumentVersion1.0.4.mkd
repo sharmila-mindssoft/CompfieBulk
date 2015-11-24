@@ -1314,6 +1314,7 @@ Note :
             "no_of_user_licence": int,
             "file_space": float,
             "is_sms_subscribed": Boolean,
+            "email_id": String,
             "date_configurations":[ClientConfiguration,]
         }
     ]

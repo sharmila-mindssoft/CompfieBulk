@@ -14,7 +14,7 @@ class ClientDatabaseHandler(object) :
     def __init__(self,  databaseName) :
         self.mysqlHost = "localhost"
         self.mysqlUser = "root"
-        self.mysqlPassword = "minds"
+        self.mysqlPassword = "123456"
         self.mysqlDatabase = databaseName
 
     def dbConnect(self) :
@@ -80,6 +80,18 @@ class ClientDatabaseHandler(object) :
     def insert(self, table, columns, values) :
         query = "INSERT INTO "+table+" ("+columns+")" + \
             " VALUES ("+values+")"
+        return self.execute(query)
+
+    def bulkInsert(self, table, columns, valueList) :
+        query = "INSERT INTO "+table+" ("+columns+")" + \
+            " VALUES "
+
+        for index, value in enumerate(valueList):
+            if index < len(valueList)-1:
+                query += str(value)+","
+            else:
+                query += str(value)
+        print query
         return self.execute(query)
 
     def update(self, table, columns, values, condition) :

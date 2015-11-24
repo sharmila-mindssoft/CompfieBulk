@@ -98,6 +98,15 @@ class DatabaseHandler(object) :
             " VALUES ("+values+")"
         return self.execute(query)
 
+    def bulkInsert(self, table, columns, valueList) :
+        query = "INSERT INTO "+table+" ("+columns+")" + \
+            " VALUES "
+
+        for value in valueList:
+            query += value
+
+        return self.execute(query)
+
     def update(self, table, columns, values, condition) :
         query = "UPDATE "+table+" set "
         for index,column in enumerate(columns):
@@ -129,6 +138,7 @@ class DatabaseHandler(object) :
 
     def getData(self, table, columns, condition):
         query = "SELECT "+columns+" FROM "+table+" WHERE "+condition
+        print 
         return self.executeAndReturn(query)
 
     def validateSessionToken(self, sessionToken) :

@@ -519,34 +519,26 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    // Client Master
+    // Client Group Master
 
-    function saveClient(callerName, callback, failure_callback) {
-       
+    function saveClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
+        var contractTo = parseInt(new Date(clientGroupDetails["contract_to"]).getTime(),10);
+        var contractFrom = parseInt(new Date(clientGroupDetails["contract_from"]).getTime(),10);
         var request = [
-            "SaveClient",
+            "SaveClientGroup",
             {
-                "group_company": {
-                    "client_id":0,
-                    "group_name":"TVS Groups"
-                },
-                "business_group": {},
-                "legal_entity": {},
-                "division": {},
-                "logo": "url",
-                "domain_ids": [1,2],
-                "username": "username",
-                "no_of_licence": 10,
-                "contract_from": "20/11/2016",
-                "contract_to": "19/11/2017",
-                "total_disk_space": 1.5,
-                "is_sms_subscribed": 1,
-                "country_wise_units": [
-                    {
-                        "country_id" : 1,
-                        "units" : [{},]
-                    },
-                ]
+                "group_name": clientGroupDetails["group_name"],
+                "country_ids": clientGroupDetails["country_ids"],
+                "domain_ids":clientGroupDetails["domain_ids"],
+                "logo" : clientGroupDetails["logo"],
+                "contract_from": contractFrom,
+                "contract_to": contractTo,
+                "incharge_persons": clientGroupDetails["incharge_persons"],
+                "no_of_user_licence": clientGroupDetails["no_of_user_licence"],
+                "file_space": clientGroupDetails["file_space"],
+                "is_sms_subscribed": clientGroupDetails["is_sms_subscribed"],
+                "email_id": clientGroupDetails["email_id"],
+                "date_configurations":dateConfigurations
             }
         ];
         apiRequest(callerName, request, callback, failure_callback);
@@ -602,7 +594,7 @@ function initMirror() {
         changeAdminUserStatus: changeAdminUserStatus,
         getAdminUserList: getAdminUserList,
 
-        saveClient: saveClient
+        saveClientGroup: saveClientGroup
 
     }
 
