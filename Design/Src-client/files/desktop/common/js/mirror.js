@@ -265,8 +265,8 @@ function initMirror() {
     }
 
     function saveAndUpdateGeographyLevels(callerName, countryId, levels, callback, failure_callback) {
-        if (statutoryNatureName == null)
-            return null;
+        /*if (statutoryNatureName == null)
+            return null;*/
         var request = [
             "SaveGeographyLevel",
             { 
@@ -274,6 +274,7 @@ function initMirror() {
                 "levels" : levels
             }
         ];
+        console.log("request----->"+request)
         apiRequest(callerName, request, callback, failure_callback);
     }
 
@@ -284,13 +285,13 @@ function initMirror() {
     }
 
     function saveAndUpdateStatutoryLevels(callerName, countryId, domainId, levels, callback, failure_callback) {
-        if (statutoryNatureName == null)
-            return null;
+        /*if (statutoryNatureName == null)
+            return null;*/
         var request = [
             "SaveStatutoryLevel",
             { 
                 "country_id" : countryId,
-                "domain_id" : domain_id,
+                "domain_id" : domainId,
                 "levels" : levels
             }
         ];
