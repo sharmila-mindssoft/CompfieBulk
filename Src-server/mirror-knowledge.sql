@@ -273,6 +273,7 @@ CREATE TABLE `tbl_client_groups` (
   `client_id` int(11) NOT NULL,
   `group_name` varchar(50) DEFAULT NULL,
   `incharge_persons` varchar(50) DEFAULT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
