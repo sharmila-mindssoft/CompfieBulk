@@ -14,8 +14,8 @@ __all__ = [
 
 class UserGroupController() :
     def getUserGroupsFormData(self) :
-    	knowledgeForms = Form.getForms("Knowledge")
-    	technoForms = Form.getForms("Techno")
+    	knowledgeForms = Form.getForms("knowledge")
+    	technoForms = Form.getForms("techno")
 
         result = {}
         result["knowledge"] = Menu.getMenu(knowledgeForms)
