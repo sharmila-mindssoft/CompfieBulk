@@ -23,10 +23,13 @@ clientDatabaseMappingFilePath = os.path.join(ROOT_PATH,
 
 class GroupCompany(object):
 
-    def __init__(self, clientId, groupName, domainIds, logo, contractFrom, contractTo,
-        noOfUserLicence, fileSpace, isSmsSubscribed):
+    def __init__(self, clientId, groupName, inchargePersons, countryIds ,domainIds, logo, 
+        contractFrom, contractTo, noOfUserLicence, fileSpace, isSmsSubscribed,
+        dateConfigurations, username, isActive):
         self.clientId = clientId
         self.groupName = groupName
+        self.inchargePersons = inchargePersons
+        self.countryIds = countryIds
         self.domainIds = domainIds
         self.logo = logo
         self.contractFrom = contractFrom
@@ -34,10 +37,15 @@ class GroupCompany(object):
         self.noOfUserLicence = noOfUserLicence
         self.fileSpace = fileSpace
         self.isSmsSubscribed = isSmsSubscribed
+        self.dateConfigurations = dateConfigurations
+        self.username = username
+        self.isActive = isActive
 
     def verify(self) :
         assertType(self.clientId, IntType)
         assertType(self.groupName, StringType)
+        assertType(self.inchargePersons, ListType)
+        assertType(self.countryIds, ListType)
         assertType(self.domainIds, ListType)
         assertType(self.logo, StringType)
         assertType(self.contractFrom, StringType)
@@ -45,19 +53,31 @@ class GroupCompany(object):
         assertType(self.noOfUserLicence, IntType)
         assertType(self.fileSpace, FloatType)
         assertType(self.isSmsSubscribed, IntType)
+        assertType(self.dateConfigurations, ListType)
+        assertType(self.username, StringType)
+        assertType(self.isActive, IntType)
 
-    def toStructure(self) :
+    def toDetailedStructure(self) :
         return {
-            "client_id": clientId,
-            "group_company_name": groupName,
-            "domains": domainIds,
-            "logo": logo,
-            "contract_from": contractFrom,
-            "contract_to": contractTo,
-            "no_of_user_licence": noOfUserLicence,
-            "file_space": fileSpace,
-            "is_sms_subscribed": isSmsSubscribed
+            "client_id": self.clientId,
+            "client_name": self.groupName,
+            "incharge_persons": self.inchargePersons,
+            "countries": self.countryIds,
+            "domain_ids": self.domainIds,
+            "logo" : self.logo,
+            "contract_from": self.contractFrom,
+            "contract_to": self.contractTo,
+            "incharge_persons": self.inchargePersons,
+            "no_of_user_licence": self.noOfUserLicence,
+            "file_space": self.fileSpace,
+            "is_sms_subscribed": self.isSmsSubscribed,
+            "date_configurations": self.dateConfigurations,
+            "username": self.username,
+            "is_active": self.isActive
         }
+
+    # def getDetailedStructure(self):
+
 
 class BusinessGroup(object):
 
@@ -206,19 +226,12 @@ class SaveClientGroup(object) :
         self.countryIds = JSONHelper.getList(requestData, "country_ids")
         self.domainIds = JSONHelper.getList(requestData, "domain_ids")
         self.logo = JSONHelper.getString(requestData, "logo")
-        print "got  logo"
         self.contractFrom = JSONHelper.getLong(requestData, "contract_from")
-        print "got contract from"
         self.contractTo = JSONHelper.getLong(requestData, "contract_to")
-        print "got contract to"
         self.inchargePersons = JSONHelper.getList(requestData, "incharge_persons")
-        print "got inchargePersons"
         self.noOfLicence = JSONHelper.getInt(requestData, "no_of_user_licence")
-        print "got noOfLicence"
         self.fileSpace = JSONHelper.getFloat(requestData, "file_space")
-        print "got file space"
         self.isSmsSubscribed = JSONHelper.getInt(requestData, "is_sms_subscribed")
-        print "got isSmsSubscribed"
         self.username = JSONHelper.getString(requestData, "email_id")     
         self.dateConfigurations = JSONHelper.getList(requestData, "date_configurations")
 
@@ -228,7 +241,7 @@ class SaveClientGroup(object) :
             print "Duplicate grup name"
             self.response = "GroupNameAlreadyExists"
         elif self.saveGroupCompany():
-            print "Saved group company"
+            print "Saved group company" 
             if self.createClientDatabase():
                 print "Saved client database"
                 if self.saveClientDetails():
@@ -266,7 +279,6 @@ class SaveClientGroup(object) :
     def copyBasicData(self):
         if self.insertCountries() and self.insertDomains():
             return True
-
     
     def insertCountries(self):
         valuesList = []
@@ -304,6 +316,13 @@ class SaveClientGroup(object) :
                         getCurrentTimeStamp(), self.sessionUser,
                         getCurrentTimeStamp(), self.sessionUser]
         values = listToString(valuesList)
+
+        userColumns = "client_ids"
+        userValues = str(self.clientId)
+        for inchargePerson in self.inchargePersons:
+            condition = " user_id='"+inchargePerson+"'"
+            DatabaseHandler.instance().append(self.userTblName,userColumns, userValues, condition)
+
         return DatabaseHandler.instance().insert(self.clientTblName,columns,values)
 
     # def updateGroupCompany(self, clientId, groupName):
@@ -372,6 +391,20 @@ class SaveClientGroup(object) :
             return True
         else:
             return False
+
+class GetClientGroup(object):
+
+    def __init__(self):
+        domainList = DomainList.getDomainList()
+        countryList = CountryList.getCountryList()
+        userList = User.getList()
+        # clientList = 
+
+        response_data = {}
+        response_data["domains"] = domainList
+        response_data["countries"] = countryList
+        response_data["users"] = userList
+        response_data["client_list"] = clientList
 
 
 
