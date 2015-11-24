@@ -99,28 +99,44 @@ function loadFormList(formList,categoryNameVal){
 	
 	
 	console.log(formList[categoryNameVal]);
-	for(var list in formList[categoryNameVal]){
+	for(var headingList in formList[categoryNameVal]){
 		var cloneFormList=tableRowFormList.cloneNode(true);
 		cloneFormList.id = i_incre; 
-		cloneFormList.cells[0].innerHTML = '<input type="checkbox" name="formListChkBox" >';
-		cloneFormList.cells[1].innerHTML = list;
+		cloneFormList.cells[0].innerHTML = '<span class="formHeading">'+headingList+'<span>';
 		tableFormList.appendChild(cloneFormList);	
-		console.log(list);
+		for(var list in formList[categoryNameVal][headingList]){
+			var cloneList=tableRowFormList.cloneNode(true);
+			cloneList.cells[0].innerHTML = '<input type="checkbox" class="checkedFormId" value="'+formList[categoryNameVal][headingList][list]['form_id']+'">';
+			cloneList.cells[1].innerHTML = '<span class="formName">'+formList[categoryNameVal][headingList][list]['form_name']+'</span>';
+			tableFormList.appendChild(cloneList);
+		}
 	}
-	// for(var catgList in formList){		
-	// //	console.log(catgList);
-	// 	for(var list in catgList){
-	// 		console.log(list);
-	// 		// console.log(list['masters']);
-			
-	// 	}
-	// }
-	// //$('#tableRowFormList').hide();
-	// cloneFormList.id = i_incre; 
-	// 		cloneFormList.cells[0].innerHTML = '<input type="checkbox" name="formListChkBox" >';
-	// 		cloneFormList.cells[1].innerHTML = catgList;
-	// 		tableFormList.appendChild(cloneFormList);	
+
 }
+$("#btnUserGroupSubmit").click(function(){
+	var groupNameVal = $("#groupName").val();
+	var categoryNameVal = $("#categoryName").val();
+	var chkArray = [];
+	
+	$(".checkedFormId:checked").each(function() {
+		chkArray.push($(this).val());
+	});	
+	/* we join the array separated by the comma */
+	var selectedVal;
+	selectedVal = chkArray.join(',') + ",";
+	function success(status, data){
+		if(status=="SaveUserGroupSuccess"){
+			$("#userGroupAdd").hide();
+	  		$("#userGroupView").show();
+			initialize();
+
+		}	
+	}
+	function failure(status, data){
+	}
+	var userGroupInsertDetails=[groupNameVal,categoryNameVal, selectedVal];
+	mirror.saveAdminUserGroup("AdminAPI", userGroupInsertDetails, success, failure);
+});
 function userGroupEdit(userGroupId, userGroupName){
 	$("#userGroupAdd").show();
 	$("#userGroupView").hide();

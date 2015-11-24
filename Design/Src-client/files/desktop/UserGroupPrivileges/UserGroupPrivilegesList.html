@@ -1,5 +1,15 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+<style type="text/css">
+.formHeading{
+  font-weight: bold;
+  text-transform: capitalize;
+}
+.formName
+{
+ text-transform: capitalize; 
+}
+</style>
 <div class="content-container width50" id="userGroupView">
   <div class="content-area">
     <h1>User Group</h1>
@@ -75,11 +85,27 @@
           </tr>
           <tbody id="tableFormList">
           <tr id="tableRowFormList">
-            <td></td>
-            <td></td>
+            <td width="20%"></td>
+            <td width="80%"></td>
           </tr>
           </tbody>
-          <!-- 
+        
+        </table>
+      </div>
+      <div class="submit-button-container">
+        <br>
+        <input type="reset" name="cancel" value="Cancel" class="btn-cancel" id="btnUserGroupCancel" >
+        &nbsp;&nbsp;
+        <input type="submit" name="submit" value="Submit" class="btn-submit" id="btnUserGroupSubmit">
+      </div>
+      </div><!-- End Form List -->
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src="/files/desktop/UserGroupPrivileges/userGroup.js"></script>
+
+{% endblock %}
+  <!-- 
           <tr><td colspan="2" style="font-weight:bold;"><b>Master</b></td></tr>
           <tr>
             <td><input type="checkbox"></td>
@@ -179,18 +205,3 @@
             <td><input type="checkbox"></td>
             <td>Compliance Task Details</td>
           </tr> -->
-        </table>
-      </div>
-      <div class="submit-button-container">
-        <br>
-        <input type="reset" name="cancel" value="Cancel" class="btn-cancel" id="btnUserGroupCancel" >
-        &nbsp;&nbsp;
-        <input type="submit" name="submit" value="Submit" class="btn-submit">
-      </div>
-      </div><!-- End Form List -->
-    </div>
-  </div>
-</div>
-<script type="text/javascript" src="/files/desktop/UserGroupPrivileges/userGroup.js"></script>
-
-{% endblock %}
