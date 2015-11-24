@@ -290,7 +290,7 @@ function initMirror() {
             "SaveStatutoryLevel",
             { 
                 "country_id" : countryId,
-                "domain_id" : domain_id,
+                "domain_id" : domainId,
                 "levels" : levels
             }
         ];
