@@ -5,30 +5,25 @@ $(function() {
 $("#btnUserGroupAdd").click(function(){
 	$("#userGroupAdd").show();
 	$("#userGroupView").hide();
-	//$("#countryName").val('');
-	//$("#countryId").val('');
+	$("#formList").hide();
   	$(".error-message").html('');
-  	mirror.getAdminUserGroupList("AdminAPI", success, failure);
+  	$("#groupName").val('');
 	function success(status, data){
-		for(var i in data){
-			loadsuccessdata(data['user_groups'])
-		}
+		loadUserGroupdata(data['user_groups']);		
 	}
 	function failure(status, data){
-		for(var i in data){
-			//alert(data[i]);
-		}
+		
 	}
+	mirror.getAdminUserGroupList("AdminAPI", success, failure);
 });
 $("#btnUserGroupCancel").click(function(){
 	$("#userGroupAdd").hide();
 	$("#userGroupView").show();
 });
 function initialize(){
-	mirror.getAdminUserGroupList("AdminAPI", success, failure);
 	function success(status, data){
 		for(var i in data){
-			loadsuccessdata(data['user_groups'])
+			loadUserGroupdata(data['user_groups'])
 		}
 	}
 	function failure(status, data){
@@ -36,11 +31,11 @@ function initialize(){
 			//alert(data[i]);
 		}
 	}
-
+	mirror.getAdminUserGroupList("AdminAPI", success, failure);
 }
 
-function loadsuccessdata(userGroupList){
-	
+function loadUserGroupdata(userGroupList){
+	// saveUserGroupDetail = ["Knowledge User 1", "Knowledge" , "11,53"];
  	$('#tableRow').show();
   	$("#tableUserGroupList").find("tr:gt(0)").remove();
   	var sno=1;
@@ -81,40 +76,81 @@ function loadsuccessdata(userGroupList){
 $("#btnUserGroupShow").click(function(){
 	var groupNameVal = $("#groupName").val();
 	var categoryNameVal = $("#categoryName").val();
+
 	if(groupNameVal=='' || groupNameVal==null){
 		$(".error-message").html('Group Name Required');
 	}
 	else{
-		mirror.getAdminUserGroupList("AdminAPI", success, failure);
+		$(".error-message").html('');
+		$("#formList").show();
 		function success(status, data){
-			for(var i in data){
-				loadFormList(data['forms'])
-			}
+			loadFormList(data['forms'], categoryNameVal)
+		
 		}
+		function failure(status, data){
+		}
+		mirror.getAdminUserGroupList("AdminAPI", success, failure);
 	}
 });
-function loadFormList(formList){
-	for(var catgList in formList){
-		
+function loadFormList(formList,categoryNameVal){
+	var i_incre;
+	var tableFormList=document.getElementById("tableFormList");
+	var tableRowFormList=document.getElementById("tableRowFormList");
+	
+	
+	console.log(formList[categoryNameVal]);
+	for(var headingList in formList[categoryNameVal]){
+		var cloneFormList=tableRowFormList.cloneNode(true);
+		cloneFormList.id = i_incre; 
+		cloneFormList.cells[0].innerHTML = '<span class="formHeading">'+headingList+'<span>';
+		tableFormList.appendChild(cloneFormList);	
+		for(var list in formList[categoryNameVal][headingList]){
+			var cloneList=tableRowFormList.cloneNode(true);
+			cloneList.cells[0].innerHTML = '<input type="checkbox" class="checkedFormId" value="'+formList[categoryNameVal][headingList][list]['form_id']+'">';
+			cloneList.cells[1].innerHTML = '<span class="formName">'+formList[categoryNameVal][headingList][list]['form_name']+'</span>';
+			tableFormList.appendChild(cloneList);
+		}
 	}
+
 }
-function userGroupEdit(countryId, countryName){
-	$("#country-add").show();
-	$("#country-view").hide();
-	$("#countryName").val(countryName);
-  	$("#countryId").val(countryId);
+$("#btnUserGroupSubmit").click(function(){
+	var groupNameVal = $("#groupName").val();
+	var categoryNameVal = $("#categoryName").val();
+	var chkArray = [];
+	
+	$(".checkedFormId:checked").each(function() {
+		chkArray.push($(this).val());
+	});	
+	/* we join the array separated by the comma */
+	var selectedVal;
+	selectedVal = chkArray.join(',') + ",";
+	function success(status, data){
+		if(status=="SaveUserGroupSuccess"){
+			$("#userGroupAdd").hide();
+	  		$("#userGroupView").show();
+			initialize();
+
+		}	
+	}
+	function failure(status, data){
+	}
+	var userGroupInsertDetails=[groupNameVal,categoryNameVal, selectedVal];
+	mirror.saveAdminUserGroup("AdminAPI", userGroupInsertDetails, success, failure);
+});
+function userGroupEdit(userGroupId, userGroupName){
+	$("#userGroupAdd").show();
+	$("#userGroupView").hide();
+	$("#userGroupName").val(userGroupName);
+  	$("#userGroupId").val(userGroupId);
 }
 function userGroupActive(userGroupId, isActive){
   	$("#userGroupId").val( userGroupId);
-  	mirror.changeAdminUserGroupStatus("AdminAPI", userGroupId, isActive, success, failure);
-
-	function success(status, data){
+  	function success(status, data){
 		initialize();
 	}
 	function failure(status, data){
-		
 	}
-
+	mirror.changeAdminUserGroupStatus("AdminAPI", userGroupId, isActive, success, failure);
 }
 
 function filter (term, cellNr){

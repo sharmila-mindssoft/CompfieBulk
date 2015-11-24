@@ -1,5 +1,15 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+<style type="text/css">
+.formHeading{
+  font-weight: bold;
+  text-transform: capitalize;
+}
+.formName
+{
+ text-transform: capitalize; 
+}
+</style>
 <div class="content-container width50" id="userGroupView">
   <div class="content-area">
     <h1>User Group</h1>
@@ -56,8 +66,8 @@
           <div class="single-column-field-label">Category Name:<span class="mandatory">*</span></div>
           <div class="single-column-field-input">
             <select class="input-box" id="categoryName" name="categoryName">
-              <option value="Knowledge">Knowledge Team </option>
-              <option value="Techno">Techno Functional Team</option>
+              <option value="knowledge">Knowledge Team </option>
+              <option value="techno">Techno Functional Team</option>
             </select>
           </div>
         </div>
@@ -66,19 +76,36 @@
         <input type="submit" name="cancel" value="Show" class="btn-submit" id="btnUserGroupShow">
       </div>
       <div class="clearfix"></div>
+      <div id="formList">
       <div class="grid-table" style="overflow-y:scroll; height:240px;">
         <table>
           <tr align="left">
             <th><input type="checkbox"></th>
             <th>Form Name</th>
           </tr>
-          <tbody id="tableUserGroupList">
-          <tr id="tableRow">
-            <td><input type="checkbox"></td>
-            <td>Domain Master</td>
+          <tbody id="tableFormList">
+          <tr id="tableRowFormList">
+            <td width="20%"></td>
+            <td width="80%"></td>
           </tr>
           </tbody>
-          <!-- 
+        
+        </table>
+      </div>
+      <div class="submit-button-container">
+        <br>
+        <input type="reset" name="cancel" value="Cancel" class="btn-cancel" id="btnUserGroupCancel" >
+        &nbsp;&nbsp;
+        <input type="submit" name="submit" value="Submit" class="btn-submit" id="btnUserGroupSubmit">
+      </div>
+      </div><!-- End Form List -->
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src="/files/desktop/UserGroupPrivileges/userGroup.js"></script>
+
+{% endblock %}
+  <!-- 
           <tr><td colspan="2" style="font-weight:bold;"><b>Master</b></td></tr>
           <tr>
             <td><input type="checkbox"></td>
@@ -178,18 +205,3 @@
             <td><input type="checkbox"></td>
             <td>Compliance Task Details</td>
           </tr> -->
-        </table>
-      </div>
-      <div class="submit-button-container">
-
-        <br>
-        <input type="reset" name="cancel" value="Cancel" class="btn-cancel" id="btnUserGroupCancel" >
-        &nbsp;&nbsp;
-        <input type="submit" name="submit" value="Submit" class="btn-submit">
-      </div>
-    </div>
-  </div>
-</div>
-<script type="text/javascript" src="/files/desktop/UserGroupPrivileges/userGroup.js"></script>
-
-{% endblock %}
