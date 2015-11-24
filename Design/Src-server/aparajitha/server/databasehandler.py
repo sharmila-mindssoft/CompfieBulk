@@ -119,6 +119,11 @@ class DatabaseHandler(object) :
 
         return self.execute(query)
 
+    def append(self, table, column, value, condition):
+        rows = self.getData(table, column, condition)
+        currentValue = rows[0][0]
+
+
     def generateNewId(self, table, column):
         query = "SELECT max("+column+") FROM "+table
         rows = self.executeAndReturn(query)

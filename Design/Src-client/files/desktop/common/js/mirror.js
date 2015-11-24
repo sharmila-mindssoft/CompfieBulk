@@ -385,7 +385,7 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateAdminUserGroup(callerName, userGroupDetail, statutoryNatureName, callback, failure_callback) {
+    function updateAdminUserGroup(callerName, userGroupDetail, callback, failure_callback) {
         if (isNull(userGroupDetail))
             return null;
         else if (userGroupDetail.length != 4)

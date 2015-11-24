@@ -155,8 +155,7 @@ class User(object) :
     def toStructure(self):
         return {
             "user_id": self.userId,
-            "employee_name": self.employeeName,
-            "employee_code": self.employeeCode
+            "employee_name": self.employeeCode+"-"+self.employeeName,
         }
 
     @classmethod
