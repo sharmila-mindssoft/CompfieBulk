@@ -29,6 +29,7 @@ class AdminAPIRequestHandler(tornado.web.RequestHandler) :
             else :
                 userGroupController = UserGroupController()
                 userController = UserController()
+                changePassword = ChangePassword()
                 if request[0] == "GetUserGroups" :
                     response = userGroupController.getUserGroups()
                 elif request[0] == "SaveUserGroup" :
@@ -45,6 +46,8 @@ class AdminAPIRequestHandler(tornado.web.RequestHandler) :
                     response = userController.updateUser(request[1], userId)
                 elif request[0] == "ChangeUserStatus" :
                     response = userController.changeUserStatus(request[1], userId)
+                elif request[0] == "ChangePassword" :
+                    response = changePassword.changePassword(request[1], userId)
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 

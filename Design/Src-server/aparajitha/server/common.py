@@ -5,6 +5,7 @@ import string
 import random
 import os
 import hashlib
+import json
 
 from databasehandler import DatabaseHandler 
 from aparajitha.server.constants import ROOT_PATH
@@ -18,7 +19,9 @@ __all__ = [
     "JSONHelper",
     "convertToString",
     "generatePassword",
-    "commonResponseStructure"
+    "encrypt",
+    "commonResponseStructure",
+    "getClientDatabase"
 ]
 
 clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
@@ -57,14 +60,20 @@ def commonResponseStructure(responseType, data) :
 
 def getClientDatabase(clientId):
     clientDatabaseMappingJson = json.load(open(clientDatabaseMappingFilePath))
-    return clientDatabaseMappingJson[clientId] 
+    return JSONHelper.getString(clientDatabaseMappingJson,  unicode(str(clientId), "utf-8"))
 
 def generatePassword() : 
     characters = string.ascii_uppercase + string.digits
     password = ''.join(random.SystemRandom().choice(characters) for _ in range(7))
+    print password
+    print encrypt(password)
+    return encrypt(password)
+
+def encrypt(value):
     m = hashlib.md5()
-    m.update(password)
+    m.update(value)
     return m.hexdigest()
+
 
 class PossibleError(object) :
     def __init__(self, possibleError) :

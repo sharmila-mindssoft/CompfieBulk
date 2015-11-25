@@ -2,9 +2,28 @@ var usersList;
 var domainsList;
 var userGroupsList;
 var tempUsersList;
+var countriesList;
 
 $(document).ready(function(){
-	GetUsers()
+	GetUsers();
+	$('#countrycode').keydown(function (e) {
+    var key = e.keyCode;
+    if (!((key == 8) || (key == 43) || (key == 31) || (key >= 48 && key <= 57))) {
+    e.preventDefault();
+  }
+});
+	$('#areacode').keydown(function (e) {
+    var key = e.keyCode;
+    if (!((key == 8) || (key >= 48 && key <= 57))) {
+    e.preventDefault();
+  }
+});
+	$('#contactno').keydown(function (e) {
+    var key = e.keyCode;
+    if (!((key == 8) || (key >= 48 && key <= 57))) {
+    e.preventDefault();
+  }
+});
 });
 
 function GetUsers(){
@@ -13,6 +32,7 @@ function GetUsers(){
 		usersList = data["users"];
 		domainsList = data["domains"];
 		userGroupsList = data["user_groups"];
+		countriesList = data["countries"];
 		loadUserList(usersList);
 	}
 	function failure(data){
@@ -29,8 +49,7 @@ function loadUserList(usersList) {
     var designation = '';
     var userList;
 
-    $('#rowToClone').show();
-    $("#tableToModify").find("tr:gt(0)").remove();
+   $(".tbody-user-list").find("tr").remove();
     for(var entity in usersList) {
     	userId = usersList[entity]["user_id"];
         employeeName = usersList[entity]["employee_name"];
@@ -50,20 +69,17 @@ function loadUserList(usersList) {
         	passStatus="1";
        	 	imgName="icon-inactive.png"
        	 }
-       	 var row = document.getElementById("rowToClone"); 
-      	 var table = document.getElementById("tableToModify");
-      	 var clone = row.cloneNode(true);
-       	 clone.id = j; 
-      	 clone.cells[0].innerHTML = j;
-      	 clone.cells[1].innerHTML = employeeName;
-      	 clone.cells[2].innerHTML = usergroup;
-       	 clone.cells[3].innerHTML = designation;
-      	 clone.cells[4].innerHTML = '<img src=\'/images/icon-edit.png\' onclick="displayEdit('+userId+',\''+employeeName+'\')"/>'
-      	 clone.cells[5].innerHTML = '<img src=\'/images/'+imgName+'\' onclick="changeStatus('+userId+','+passStatus+')"/>'
-      	 table.appendChild(clone);
-      	 j = j + 1;
+       	  var tableRow=$('#templates .table-user-master .table-row');
+	      var clone=tableRow.clone();
+	      $('.sno', clone).text(j);
+	      $('.employee-name', clone).text(employeeName);
+	      $('.user-group', clone).text(usergroup);
+	      $('.designation', clone).text(designation);
+	      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+userId+',\''+employeeName+'\')"/>');
+	      $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+userId+','+passStatus+')"/>');
+	      $('.tbody-user-list').append(clone);
+	      j = j + 1;
       	}
-      	$('#rowToClone').hide();
       }
 
       function displayAdd () {
@@ -95,6 +111,7 @@ function loadUserList(usersList) {
 		function failure(data){
 		}
 	}
+
 	function saveRecord () {
 		$("#error").text("");
 		var userId = parseInt($("#userid").val());
@@ -110,6 +127,8 @@ function loadUserList(usersList) {
 		var country = $("#country").val();
 		var emailId = $("#emailid").val();
 
+		var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        
 		if(employeeName == '') {
 			$("#error").text("Employee Name Required");
 		} else if(employeeId == '') {
@@ -122,6 +141,8 @@ function loadUserList(usersList) {
 			$("#error").text("Domain Required");
 		} else if(emailId == '') {
 			$("#error").text("Email Id Required");
+		} else if(reg.test(emailId) == false) {
+			$("#error").text("Invalid Email Address");
 		} else if(country == '') {
 			$("#error").text("Country Required");
 		} else {
@@ -138,7 +159,6 @@ function loadUserList(usersList) {
 					}
 				}
 				function failure(data){
-
 				}
 				mirror.saveAdminUser("AdminAPI", saveUserDetail, success, failure);
 			} else {
@@ -170,18 +190,15 @@ function loadUserList(usersList) {
 				var employeeName = usersList[entity]["employee_name"];
 				var employeeId = usersList[entity]["employee_code"];
 				var address = usersList[entity]["address"];
-
 				var mergeContactNo = usersList[entity]["contact_no"].split("-");
 				var countryCode = mergeContactNo[0];
 				var areaCode = mergeContactNo[1];
 				var contactNo = mergeContactNo[2];
-
 				var userGroup = usersList[entity]["user_group_id"];
 				var userGroupval;
 				var designation = usersList[entity]["designation"];
 				var domain = usersList[entity]["domain_ids"]; 
 				var country = usersList[entity]["country_ids"];
-
 				var emailId = usersList[entity]["email_id"];
 				for(var k in userGroupsList){
 					if(userGroupsList[k]["user_group_id"] == userGroup){
@@ -201,7 +218,6 @@ function loadUserList(usersList) {
 				$("#domain").val(domain);
 				var editdomainval = domain.split(",");
 				$("#domainselected").val(editdomainval.length+" Selected");
-
 				$("#country").val(country);
 				var editcountryval = domain.split(",");
 				$("#countryselected").val(editcountryval.length+" Selected");
@@ -212,16 +228,14 @@ function loadUserList(usersList) {
 	}
 
 	//filter process
-	function filter (term, cellNr){
-		var filterkey = term.value.toLowerCase();
+	function filter (){
+		var employeenamefilter = $("#employeenamefilter").val().toLowerCase();
+		var usergroupfilter = $("#usergroupfilter").val().toLowerCase();
+		var designationfilter = $("#designationfilter").val().toLowerCase();
 		var filteredList=[];
-		if(cellNr == '1'){
-			for(var entity in tempUsersList) {
+		for(var entity in tempUsersList) {
 				employeeName = tempUsersList[entity]["employee_name"];
-				if (~employeeName.toLowerCase().indexOf(filterkey)) filteredList.push(tempUsersList[entity]);
-			}
-		} else if(cellNr == '2') {
-			for(var entity in tempUsersList) {
+				designation = tempUsersList[entity]["designation"];
 				var userGroup='';
 				for(var k in userGroupsList){
 					if(userGroupsList[k]["user_group_id"] == tempUsersList[entity]["user_group_id"]){
@@ -229,13 +243,10 @@ function loadUserList(usersList) {
 						break;
 					}
 				}
-				if (~userGroup.toLowerCase().indexOf(filterkey)) filteredList.push(tempUsersList[entity]);
-			}
-		} else {
-			for(var entity in tempUsersList) {
-				designation = tempUsersList[entity]["designation"];
-				if (~designation.toLowerCase().indexOf(filterkey)) filteredList.push(tempUsersList[entity]);
-			}
+				if (~employeeName.toLowerCase().indexOf(employeenamefilter) && ~designation.toLowerCase().indexOf(designationfilter) && ~userGroup.toLowerCase().indexOf(usergroupfilter)) 
+				{
+					filteredList.push(tempUsersList[entity]);
+				}		
 		}
 		loadUserList(filteredList);
 	}
@@ -304,7 +315,7 @@ function loadUserList(usersList) {
 		if($("#country").val() != ''){
 			editcountryval = $("#country").val().split(",");
 		}
-		  	var countries = [{"is_active": 0, "country_id": 1, "country_name": "India"}];
+		  	var countries = countriesList;
 		  	$('#ulist-country').empty();
 		  	var str='';
 		  	for(var i in countries){
@@ -343,7 +354,6 @@ function loadUserList(usersList) {
 		   $("#countryselected").val(totalcount+" Selected");
 		   $("#country").val(selids);
 		  }
-
 
 		//load usergroup list in autocomplete text box  
 		function loadauto_text (textval) {

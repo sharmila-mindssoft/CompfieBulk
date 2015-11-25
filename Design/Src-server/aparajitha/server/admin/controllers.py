@@ -6,10 +6,12 @@ import tornado.web
 from models import *
 from aparajitha.server.common import *
 from aparajitha.server.knowledge.models import DomainList, CountryList
+from aparajitha.server.databasehandler import DatabaseHandler
 
 __all__ = [
     "UserGroupController",
-    "UserController"
+    "UserController",
+    "ChangePassword"
 ]
 
 class UserGroupController() :
@@ -82,8 +84,8 @@ class UserController() :
         designation =  JSONHelper.getString(requestData,"designation")
         countryIds = JSONHelper.getList(requestData,"country_ids")
         domainIds = JSONHelper.getList(requestData,"domain_ids")
-        user = User(None, emailId, userGroupId, employeeName, employeeCode, 
-                    contactNo, address, designation, countryIds, domainIds, None)
+        user = User(None, emailId, userGroupId, employeeName, employeeCode, contactNo, 
+                    address, designation, countryIds, domainIds, None,None)
         if user.isDuplicateEmail() :
             return commonResponseStructure("EmailIDAlreadyExists",{})
         elif user.isDuplicateEmployeeCode() :
@@ -105,8 +107,8 @@ class UserController() :
         designation =  JSONHelper.getString(requestData,"designation")
         countryIds = JSONHelper.getList(requestData,"country_ids")
         domainIds = JSONHelper.getList(requestData,"domain_ids")
-        user = User(userId, None, userGroupId, employeeName, employeeCode, 
-                    contactNo, address, designation, countryIds, domainIds, None)
+        user = User(userId, None, userGroupId, employeeName, employeeCode, contactNo,
+                    address, designation, countryIds, domainIds, None, None)
         if user.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
         elif user.isDuplicateEmployeeCode() :
@@ -142,3 +144,37 @@ class UserController() :
 
         response = commonResponseStructure("GetUsersSuccess", response_data)
         return response
+
+
+class ChangePassword() :
+    userTblName = "tbl_users"
+
+    def changePassword(self, requestData, sessionUser) :
+        self.sessionUser = sessionUser
+        self.currentPassword = JSONHelper.getString(requestData, "current_password")
+        self.newPassword = JSONHelper.getString(requestData, "new_password")
+
+        if self.validateCurrentPassword() :
+            if self.updatePassword() :
+                return commonResponseStructure("ChangePasswordSuccess",{})
+        else :
+            return commonResponseStructure("InvalidCurrentPassword",{})
+
+    def validateCurrentPassword(self):
+        column = "password"
+        condition = " user_id='"+str(self.sessionUser)+"'"
+        rows = DatabaseHandler.instance().getData(self.userTblName, column, condition)
+        password = rows[0][0]
+        if password == encrypt(self.currentPassword):
+            return True
+        else:
+            return False
+
+    def updatePassword(self):
+        columns = ["password"]
+        values = [encrypt(self.newPassword)]
+        condition = " user_id='"+str(self.sessionUser)+"'"
+        if DatabaseHandler.instance().update(self.userTblName, columns, values, condition):
+            return True
+        else:
+            return False

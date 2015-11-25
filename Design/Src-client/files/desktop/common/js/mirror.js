@@ -274,6 +274,7 @@ function initMirror() {
                 "levels" : levels
             }
         ];
+        console.log("request----->"+request)
         apiRequest(callerName, request, callback, failure_callback);
     }
 
@@ -284,6 +285,7 @@ function initMirror() {
     }
 
     function saveAndUpdateStatutoryLevels(callerName, countryId, domainId, levels, callback, failure_callback) {
+
         if ((countryId == null) || (domainId == null) || (levels == null))
             return null;
         var request = [
@@ -548,6 +550,27 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function getClientGroup(callerName, callback, failure_callback) {
+        
+        var request = [
+            "GetClientGroup",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changePassword(callerName, currentPassword, newPassword, callback, failure_callback) {
+        
+        var request = [
+            "ChangePassword",
+            {
+                "current_password": currentPassword,
+                "new_password": newPassword
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -599,8 +622,10 @@ function initMirror() {
         changeAdminUserStatus: changeAdminUserStatus,
         getAdminUserList: getAdminUserList,
 
-        saveClientGroup: saveClientGroup
+        saveClientGroup: saveClientGroup,
+        getClientGroup: getClientGroup,
 
+        changePassword: changePassword
     }
 
 }

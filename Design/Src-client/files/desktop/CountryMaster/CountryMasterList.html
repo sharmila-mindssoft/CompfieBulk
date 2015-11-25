@@ -19,22 +19,26 @@
         </tr>   
         <tr>
           <td width="10%">&nbsp;</td>
-          <td width="70%"><input type="text" class="filter-text-box" onkeyup="filter(this, 1)" ></td>
+          <td width="70%"><input type="text" class="filter-text-box" id="search-country-name" ></td>
           <td width="10%">&nbsp;</td>
           <td width="10%">&nbsp;</td>
         </tr>
       </thead>
-      <tbody id="tableCountriesList" style="max-height:400px;">
-        <tr id="tableRow">
-          <td align="center"></td>
-          <td></td>
-          <td align="center"></td>
-          <td align="center"></td>
-        </tr>
+      <tbody class="tbody-countries-list" style="max-height:400px;">
       </tbody>
       </table>
     </div>    
   </div>
+</div>
+<div id="templates">
+<table class="table-countries-list">
+  <tr class="table-row">
+    <td class="sno" align="center"></td>
+    <td class="country-name"></td>
+    <td class="edit" align="center"></td>
+    <td class="is-active" align="center"></td>
+  </tr>
+</table>
 </div>
 <!-- Add Country-->
 <div class="single-column-form-outer width40" id="country-add">
@@ -44,8 +48,8 @@
       <div class="single-column-input-row">
         <div class="input-row">
           <div class="single-column-field-label">Country Name:<span class="mandatory">*</span></div>
-          <div class="single-column-field-input"><input type="text" class="input-box" name="countryName" id="countryName">
-          <input type="hidden" id="countryId" value="" ></div>
+          <div class="single-column-field-input"><input type="text" class="input-box" name="country-name" id="country-name">
+          <input type="hidden" id="country-id" value="" ></div>
         </div>
         <div class="submit-button-container">
           <input type="reset" name="cancel" value="Cancel" class="btn-cancel btn-country-cancel">&nbsp;&nbsp;
