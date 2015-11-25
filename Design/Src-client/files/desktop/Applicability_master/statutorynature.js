@@ -1,17 +1,17 @@
 $(function() {
-	$("#statutoryNatureAdd").hide();
+	$("#statutory-nature-add").hide();
 	initialize();
 });
-$("#btnStatutoryNatureAdd").click(function(){
-	$("#statutoryNatureAdd").show();
-	$("#statutoryNatureView").hide();
-	$("#statutoryNatureName").val('');
- 	$("#statutoryNatureId").val('');
+$("#btn-statutory-nature-add").click(function(){
+	$("#statutory-nature-add").show();
+	$("#statutory-nature-view").hide();
+	$("#statutory-nature-name").val('');
+ 	$("#statutory-nature-id").val('');
   	$(".error-message").html('');
 });
-$("#btnStatutoryNatureCancel").click(function(){
-	$("#statutoryNatureAdd").hide();
-	$("#statutoryNatureView").show();
+$("#btn-statutory-nature-cancel").click(function(){
+	$("#statutory-nature-add").hide();
+	$("#statutory-nature-view").show();
 });
 function initialize(){
 	function success(status, data){
@@ -22,9 +22,8 @@ function initialize(){
 	mirror.getStatutoryNatureList("GetStatutoryNatures", success, failure);
 }
 function loadStatNatureData(statNatureList){
-	$('#tableRow').show();
-  	$("#tableStatutoryNatureList").find("tr:gt(0)").remove();
-	var sno=1;
+  	$(".tbody-statutory-nature-list").find("tr").remove();
+	var sno=0;
 	for(var i in statNatureList){
 		var statNature=statNatureList[i];
 		for(var j in statNature){
@@ -40,25 +39,22 @@ function loadStatNatureData(statNatureList){
 				imageName="icon-inactive.png";	
 				title="Click here to Activate";
 				statusVal=1;
-			}
-			var tableName=document.getElementById("tableStatutoryNatureList");
-			var tableRow=document.getElementById("tableRow");
-			var clone=tableRow.cloneNode(true);
-
-			clone.cells[0].innerHTML=sno;
-			clone.cells[1].innerHTML=statNatureName;
-			clone.cells[2].innerHTML='<img src="/images/icon-edit.png" id="editid" onclick="statNature_edit('+statNatureId+',\''+statNatureName+'\')"/>';
-			clone.cells[3].innerHTML='<img src="/images/'+imageName+'" title="'+title+'" onclick="statNature_active('+statNatureId+', '+statusVal+')"/>';
-			tableName.appendChild(clone);
-      		sno = sno + 1;
+			}	
+			var tableRow=$('#templates .table-statutory-nature-list .table-row');
+			var clone=tableRow.clone();
+			sno = sno + 1;
+			$('.sno', clone).text(sno);
+			$('.statutory-nature-name', clone).text(statNatureName);
+			$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="statNature_edit('+statNatureId+',\''+statNatureName+'\')"/>');
+			$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="statNature_active('+statNatureId+', '+statusVal+')"/>');
+			$('.tbody-statutory-nature-list').append(clone);	
 		}
-		$('#tableRow').hide();
 	}
 }
 
-$("#btnStatutoryNatureSubmit").click(function(){
-	var statutoryNatureIdVal = $("#statutoryNatureId").val();
-	var statutoryNatureNameVal = $("#statutoryNatureName").val();
+$("#btn-statutory-nature-submit").click(function(){
+	var statutoryNatureIdVal = $("#statutory-nature-id").val();
+	var statutoryNatureNameVal = $("#statutory-nature-name").val();
 	if(statutoryNatureNameVal=='' || statutoryNatureNameVal==null){
 		$(".error-message").html('Statutory Nature Name Required');
 	}
@@ -66,8 +62,8 @@ $("#btnStatutoryNatureSubmit").click(function(){
 
 		function success(status, data){
 			if(status == 'success') {
-		    	$("#statutoryNatureAdd").hide();
-  				$("#statutoryNatureView").show();
+		    	$("#statutory-nature-add").hide();
+  				$("#statutory-nature-view").show();
   				initialize();
 	  		}
 	  		else {
@@ -83,8 +79,8 @@ $("#btnStatutoryNatureSubmit").click(function(){
 	else{
 		function success(status, data){
 			if(status == 'success') {
-				$("#statutoryNatureAdd").hide();
-  				$("#statutoryNatureView").show();
+				$("#statutory-nature-add").hide();
+  				$("#statutory-nature-view").show();
   				initialize();
   			}
   			if(status == 'StatutoryNatureNameAlreadyExists') {
@@ -98,10 +94,10 @@ $("#btnStatutoryNatureSubmit").click(function(){
 	}
 });
 function statNature_edit(statNatureId, statNatureName){
-	$("#statutoryNatureAdd").show();
-	$("#statutoryNatureView").hide();
-	$("#statutoryNatureName").val(statNatureName);
-  	$("#statutoryNatureId").val(statNatureId);
+	$("#statutory-nature-add").show();
+	$("#statutory-nature-view").hide();
+	$("#statutory-nature-name").val(statNatureName);
+  	$("#statutory-nature-id").val(statNatureId);
 }
 function statNature_active(statNatureId, isActive){
 	function success(status, data){
@@ -112,34 +108,12 @@ function statNature_active(statNatureId, isActive){
   	mirror.changeCountryStatus("ChangeStatutoryNatureStatus",  parseInt(statNatureId), isActive, success, failure);
 
 }
-function ajaxCall (url, options, callback) {
-	$.support.cors = true;
-	$.ajax({
-		crossDomain: true,
-		url: url,
-		dataType: 'json',
-		type: 'POST',
-		data: options,
-		success: function(data) {
-			console.log(data);
-			callback(data);					
-		},
-		error: function(xhr, status, err) {
-			console.error(url, status, err.toString());
-			callback(null);
-		}
-	});
-}
-
-
-function filter (term, cellNr){
-	var suche = term.value.toLowerCase();
-	var table = document.getElementById("tableStatutoryNatureList");
-	var ele;
-	for (var r = 0; r < table.rows.length; r++){
-		ele = table.rows[r].cells[cellNr].innerHTML.replace(/<[^>]+>/g,"");
-		if (ele.toLowerCase().indexOf(suche)>=0 )
-			table.rows[r].style.display = '';
-		else table.rows[r].style.display = 'none';
-	}
-}
+$("#search-statutory-nature-name").keyup(function() { 
+	var count=0;
+    var value = this.value.toLowerCase();
+    $("table").find("tr:not(:first)").each(function(index) {
+        if (index === 0) return;
+        var id = $(this).find(".statutory-nature-name").text().toLowerCase();       
+        $(this).toggle(id.indexOf(value) !== -1);;
+    });
+});

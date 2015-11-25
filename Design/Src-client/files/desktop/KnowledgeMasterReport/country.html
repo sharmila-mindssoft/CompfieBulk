@@ -4,7 +4,7 @@
   <div class="content-area" style="margin-bottom:1em;">
     <h1>Countries</h1>
     <div class="clearfix"></div>
-    <div class="grid-table" style="height:370px !important;overflow-y:scroll;">
+    <div class="grid-table" >
       <table >
       <thead>
         <tr align="left">
@@ -13,30 +13,28 @@
           <th align="center" width="20%">Status</th>
         </tr>
       </thead>
-       <tbody>
-          <tr>
+        <tr>
           <td width="10%">&nbsp;</td>
-          <td width="70%"><input type="text"  class="filter-text-box"></td>
-          
+          <td width="70%"><input type="text"  class="filter-text-box" id="search-country-name"></td>
           <td width="10%">&nbsp;</td>
         </tr>
-        {% for country in data %}
-          <tr style="background:#fff;">
-            <td align="center" >{{loop.index}}</td>
-            <td>{{data[country]}}</td>
-            
-            <td align="center">Active</td>
-          </tr>
-        {% endfor %}
+        <tbody class="tbody-country-list" style="max-height:370px !important;">
         </tbody>
-     
-      </table>
-         
-    </div>
-    <div style="font-size:0.813em;background:#F1E9F6; padding:0 !important; width:100%;"><p style="line-height:2em; padding-left:10px;">Total : 249 records</p></div>  
-    <div class="clearfix"></div>
- 
+        <tr>
+          <td colspan="3" style="border-top:1px dashed #ccc;"><p id="total-records"></p></td>
+        </tr> 
+      </table>         
+    </div> 
   </div>
- 
 </div>
+<div id="templates">
+<table class="table-country-report">
+  <tr class="table-row">
+    <td class="sno" align="center"></td>
+    <td class="country-name"></td>
+    <td class="is-active" align="center"></td>
+  </tr>
+</table>
+</div>
+<script type="text/javascript" src="/files/desktop/KnowledgeMasterReport/country.js"></script>
 {% endblock %}
