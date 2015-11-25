@@ -179,7 +179,7 @@ class User(object) :
                 userList.append(user.toDetailedStructure())
         return userList
 
-    @staticmethod
+    @classmethod
     def getList(self):
         userList = []
         columns = "user_id, employee_name, employee_code"
