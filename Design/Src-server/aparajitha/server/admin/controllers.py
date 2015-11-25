@@ -82,8 +82,8 @@ class UserController() :
         designation =  JSONHelper.getString(requestData,"designation")
         countryIds = JSONHelper.getList(requestData,"country_ids")
         domainIds = JSONHelper.getList(requestData,"domain_ids")
-        user = User(None, emailId, userGroupId, employeeName, employeeCode, 
-                    contactNo, address, designation, countryIds, domainIds, None)
+        user = User(None, emailId, userGroupId, employeeName, employeeCode, contactNo, 
+                    address, designation, countryIds, domainIds, None,None)
         if user.isDuplicateEmail() :
             return commonResponseStructure("EmailIDAlreadyExists",{})
         elif user.isDuplicateEmployeeCode() :
@@ -105,8 +105,8 @@ class UserController() :
         designation =  JSONHelper.getString(requestData,"designation")
         countryIds = JSONHelper.getList(requestData,"country_ids")
         domainIds = JSONHelper.getList(requestData,"domain_ids")
-        user = User(userId, None, userGroupId, employeeName, employeeCode, 
-                    contactNo, address, designation, countryIds, domainIds, None)
+        user = User(userId, None, userGroupId, employeeName, employeeCode, contactNo,
+                    address, designation, countryIds, domainIds, None, None)
         if user.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
         elif user.isDuplicateEmployeeCode() :

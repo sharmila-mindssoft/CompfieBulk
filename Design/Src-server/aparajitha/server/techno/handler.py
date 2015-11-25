@@ -30,8 +30,9 @@ class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
                 if request[0] == "SaveClientGroup" :
                     saveClientGroup = SaveClientGroup(request[1], userId)
                     response = saveClientGroup.processRequest()
-                elif request[0] == "GetClientGroup" :
-                    response = GetClientGroup()
+                elif request[0] == "GetClientGroups" :
+                    getClientGroup = GetClientGroups()
+                    response = getClientGroup.getList()
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 

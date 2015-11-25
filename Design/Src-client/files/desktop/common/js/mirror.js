@@ -545,6 +545,15 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function getClientGroup(callerName, callback, failure_callback) {
+        
+        var request = [
+            "GetClientGroup",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -595,7 +604,8 @@ function initMirror() {
         changeAdminUserStatus: changeAdminUserStatus,
         getAdminUserList: getAdminUserList,
 
-        saveClientGroup: saveClientGroup
+        saveClientGroup: saveClientGroup,
+        getClientGroup: getClientGroup
 
     }
 

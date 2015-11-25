@@ -91,7 +91,6 @@ class ClientDatabaseHandler(object) :
                 query += str(value)+","
             else:
                 query += str(value)
-        print query
         return self.execute(query)
 
     def update(self, table, columns, values, condition) :
