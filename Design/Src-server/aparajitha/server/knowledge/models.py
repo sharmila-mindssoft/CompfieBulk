@@ -129,6 +129,9 @@ class DomainList(object) :
     def toList(self) :
         return self.domainList
 
+    def getDomains(self) :
+        return self.domainList
+
     def toStructure(self) :
         return [
             "success",
@@ -406,6 +409,9 @@ class IndustryList(object) :
             industry = Industry(int(row[0]), row[1], row[2])
             self.industryList.append(industry.toStructure())
 
+    def getIndustries(self):
+        return self.industryList
+
     def toStructure(self) :
         return [
             "success",
@@ -537,6 +543,9 @@ class StatutoryNatureList(object) :
         for row in _statutoryNatures :
             statutoryNature = StatutoryNature(int(row[0]), row[1], row[2])
             self.statutoryNatureList.append(statutoryNature.toStructure())
+
+    def getStatutoryNatures(self):
+        return self.statutoryNatureList
 
     def toStructure(self) :
         return [
@@ -694,6 +703,10 @@ class StatutoryLevelsList(object) :
             _list.append(statutoryLevel.toStructure())
             countryWise[domainId] = _list
             self.statutoryLevels[countryId] = countryWise
+    
+    def getStatutoryLevels(self):
+        return self.statutoryLevels
+
     def toStructure(self) :
         return [
             "success",
@@ -909,6 +922,9 @@ class GeographyAPI(object) :
             }
         ]
 
+    def getGeographyList(self) :
+        return self.geographies
+
     def saveGeographies(self) :
         DH = DatabaseHandler.instance()
         requestData = self.request[1]
@@ -969,5 +985,38 @@ class GeographyAPI(object) :
         return [
             str(self.responseData),
             {}
+        ]
+
+    def geographyReport(self) :
+        DH = DatabaseHandler.instance()
+        _geographyList = DH.instance().getGeographies()
+        geoMappingList = []
+        geoMappingDict = {}
+        geographyData = {}
+
+        for row in _geographyList :
+            geographyData[int(row[0])] = row[1]
+        for geo in _geographyList :
+            countryId = int(row[5])
+            parentIds = [int(x) for x in geo[3].split(',')]
+            names = []
+            names.append(geo[6])
+            for id in parentIds :
+                if id > 0 :
+                    names.append(geographyData.get(id))
+                names.append(geo[1])
+
+            geographies = '>>'.join(str(x) for x in names)
+            isActive = int(geo[4])
+            geoMappingList.append(
+                {
+                    "geography": geographies,
+                    "is_active": isActive
+                }
+            )
+            geoMappingDict[countryId] = geoMappingList
+        return [
+            "success",
+            geoMappingDict
         ]
 
