@@ -75,10 +75,10 @@ class PossibleError(object) :
         assertType(self.possibleError, StringType)
 
     def toStructure(self) :
-        return {
+        return [
             str(self.possibleError),
             {}
-        }
+        ]
 
     def __repr__(self) :
         return str(self.toStructure())
@@ -265,6 +265,7 @@ class CountryList(object) :
 
     def processData(self) :
         _countries = DatabaseHandler.instance().getCountries()
+        print _countries
         for row in _countries :
             country = Country(int(row[0]), row[1], row[2])
             self.countryList.append(country.toStructure())
