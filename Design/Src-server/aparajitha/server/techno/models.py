@@ -396,12 +396,6 @@ class SaveClientGroup(object) :
 
         return DatabaseHandler.instance().insert(self.clientTblName,columns,values)
 
-    # def updateGroupCompany(self, clientId, groupName):
-    #     columns = ["group_name", "updated_on", "updated_by"]
-    #     values =  [ groupName, getCurrentTimeStamp(), self.sessionUser]
-    #     condition = "client_id='%s'",clientId
-    #     return DatabaseHandler.instance().update(self.clientTblName, columns, values, condition)
-
     def saveClientDatabaseMapping(self, clientId, databaseName):
         clientDatabaseMappingJson = json.load(open(clientDatabaseMappingFilePath))
         clientDatabaseMappingJson[clientId] = databaseName
@@ -478,6 +472,117 @@ class GetClientGroups(object):
 
     def getList(self):
         return commonResponseStructure("GetClientGroupsSuccess",self.responseData)
+
+class UpdateClientGroup(object):
+    clientTblName = "tbl_client_groups"
+    clientSettingsTblName = "tbl_client_settings"
+    clietConfigurationTblName = "tbl_client_configurations"
+    userDetailsTblName = "tbl_user_details"
+
+    def __init__(self, requestData, sessionUser) :
+        self.requestData = requestData
+        self.sessionUser = sessionUser
+        self.response = ""
+
+        assertType(requestData, DictType)
+        assertType(sessionUser, LongType)
+
+    def processRequest(self):
+        requestData = self.requestData
+
+        self.groupName = JSONHelper.getString(requestData, "group_name")
+        self.countryIds = JSONHelper.getList(requestData, "country_ids")
+        self.domainIds = JSONHelper.getList(requestData, "domain_ids")
+        self.logo = JSONHelper.getString(requestData, "logo")
+        self.contractFrom = JSONHelper.getLong(requestData, "contract_from")
+        self.contractTo = JSONHelper.getLong(requestData, "contract_to")
+        self.inchargePersons = JSONHelper.getList(requestData, "incharge_persons")
+        self.noOfLicence = JSONHelper.getInt(requestData, "no_of_user_licence")
+        self.fileSpace = JSONHelper.getFloat(requestData, "file_space")
+        self.isSmsSubscribed = JSONHelper.getInt(requestData, "is_sms_subscribed")
+        self.dateConfigurations = JSONHelper.getList(requestData, "date_configurations")
+
+        self.clientId = self.generateNewId()
+
+        if self.isDuplicateGroupName():
+            self.response = "GroupNameAlreadyExists"
+        elif self.updateGroupCompany() :
+            if self.updateClientDetails():
+                if self.copyBasicData():
+                    if self.updateDateConfigurations():
+                        self.response = "SaveClientGroupSuccess"
+                    else:
+                        print "Saving date configurations Failed"
+                else:
+                    print "Copying Data Failed"
+            else:
+                print "Saving client settings failed"
+        else:
+            print "Save Group company failed"
+
+        return commonResponseStructure(self.response,{})
+
+    def isDuplicateGroupName(self):
+        condition = "group_name ='"+self.groupName+\
+                "' AND client_id != '"+str(self.clientId)+"'"
+        return DatabaseHandler.instance().isAlreadyExists(self.clientTblName, condition) 
+
+    def updateGroupCompany(self):
+        columnsList = ["client_id", "group_name", "incharge_persons", "updated_on", 
+                        "updated_by"]
+        valuesList =  [self.clientId, self.groupName, 
+                        ",".join(str(x) for x in self.inchargePersons),
+                        getCurrentTimeStamp(), self.sessionUser]
+
+        userColumns = "client_ids"
+        userValues = str(self.clientId)
+        # for inchargePerson in self.inchargePersons:
+        #     condition = " user_id='"+str(inchargePerson)+"'"
+        #     DatabaseHandler.instance().append(self.userDetailsTblName,userColumns, userValues, condition)
+
+        return DatabaseHandler.instance().update(self.clientTblName,columns,valuesList)
+
+    def updateClientDetails(self):
+        columns = ["country_ids", "domain_ids", "logo_url", "contract_from", "contract_to",
+        "no_of_user_licence","total_disk_space", "is_sms_subscribed","updated_on", "updated_by"]
+        valuesList =  [ ",".join(str(x) for x in self.countryIds),
+                         ",".join(str(x) for x in self.countryIds),
+                        self.logo, self.contractFrom, self.contractTo, self.noOfLicence, 
+                        self.fileSpace, self.isSmsSubscribed, getCurrentTimeStamp(), 
+                        self.sessionUser]
+        return ClientDatabaseHandler.instance(self.getDatabaseName()).insert(self.clientSettingsTblName,columns,values)
+
+    def copyBasicData(self):
+        if self.insertCountries() and self.insertDomains():
+            return True
+    
+    def insertCountries(self):
+        valuesList = []
+        countryIdsStrVal = ",".join(str(x) for x in self.countryIds)
+        condition = "country_id in ("+countryIdsStrVal+")"
+        columns = "country_id, country_name, is_active"
+        rows = DatabaseHandler.instance().getData(self.countryTblName, columns, condition)
+        for row in rows:
+            countryId = int(row[0])
+            countryName = row[1]
+            isActive = row[2]
+            valuesTuple = (countryId, countryName, isActive)
+            valuesList.append(valuesTuple)
+        return ClientDatabaseHandler.instance(self.getDatabaseName()).bulkInsert(self.countryTblName,columns,valuesList)
+
+    def insertDomains(self):
+        valuesList = []
+        domainIdsStrVal = ",".join(str(x) for x in self.domainIds)
+        condition = "domain_id in ("+domainIdsStrVal+")"
+        columns = "domain_id, domain_name, is_active"
+        rows = DatabaseHandler.instance().getData(self.domainTblName, columns, condition)
+        for row in rows:
+            domainId = int(row[0])
+            doaminName = row[1]
+            isActive = row[2]
+            valuesTuple = (domainId, doaminName, isActive)
+            valuesList.append(valuesTuple)
+        return ClientDatabaseHandler.instance(self.getDatabaseName()).bulkInsert(self.domainTblName,columns,valuesList)
 
 
 class SaveClient(object):
