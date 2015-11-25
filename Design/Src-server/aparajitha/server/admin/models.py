@@ -159,7 +159,7 @@ class User(object) :
             "employee_name": self.employeeCode+"-"+self.employeeName,
         }
 
-    @classmethod
+    @staticmethod
     def getDetailedList(self):
         userList = []
         columns = "user_id, is_active"
@@ -179,7 +179,7 @@ class User(object) :
                 userList.append(user.toDetailedStructure())
         return userList
 
-    @classmethod
+    @staticmethod
     def getList(self):
         userList = []
         columns = "user_id, employee_name, employee_code"
@@ -191,7 +191,6 @@ class User(object) :
             userList.append(user.toStructure())
 
         return userList
-
 
     def generateNewUserId(self) :
         return DatabaseHandler.instance().generateNewId(self.mainTblName, "user_id")
@@ -232,12 +231,10 @@ class User(object) :
 
     def save(self, sessionUser):
         currentTimeStamp = getCurrentTimeStamp()
-
         mainTblColumns = "user_id, username, password, client_id,created_on,created_by, updated_on, updated_by"
-        mainTblValuesList = [ self.userId, self.emailId, generatePassword(), self.clientId,
+        mainTblValuesList = [self.userId, self.emailId, generatePassword(), self.clientId,
                             currentTimeStamp,sessionUser,
                             currentTimeStamp,sessionUser]
-
         detailTblcolumns = "user_id, email_id, user_group_id, form_type,employee_name, "+\
                             "employee_code, contact_no, address, designation, country_ids,"+\
                             " domain_ids, created_on, created_by, updated_on, updated_by"
@@ -246,6 +243,7 @@ class User(object) :
                             self.designation, ",".join(str(x) for x in self.countryIds), 
                             ",".join(str(x) for x in self.domainIds), currentTimeStamp,sessionUser,
                             currentTimeStamp,sessionUser]
+
         mainTblValues = listToString(mainTblValuesList)
         detailTblValues = listToString(detailTblValuesList)
 

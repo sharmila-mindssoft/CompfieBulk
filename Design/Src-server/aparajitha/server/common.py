@@ -19,6 +19,7 @@ __all__ = [
     "JSONHelper",
     "convertToString",
     "generatePassword",
+    "encrypt",
     "commonResponseStructure",
     "getClientDatabase"
 ]
@@ -64,9 +65,15 @@ def getClientDatabase(clientId):
 def generatePassword() : 
     characters = string.ascii_uppercase + string.digits
     password = ''.join(random.SystemRandom().choice(characters) for _ in range(7))
+    print password
+    print encrypt(password)
+    return encrypt(password)
+
+def encrypt(value):
     m = hashlib.md5()
-    m.update(password)
+    m.update(value)
     return m.hexdigest()
+
 
 class PossibleError(object) :
     def __init__(self, possibleError) :

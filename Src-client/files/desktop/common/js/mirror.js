@@ -554,6 +554,18 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function changePassword(callerName, currentPassword, newPassword, callback, failure_callback) {
+        
+        var request = [
+            "ChangePassword",
+            {
+                "current_password": currentPassword,
+                "new_password": newPassword
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -605,7 +617,9 @@ function initMirror() {
         getAdminUserList: getAdminUserList,
 
         saveClientGroup: saveClientGroup,
-        getClientGroups: getClientGroups
+        getClientGroups: getClientGroups,
+
+        changePassword: changePassword
 
     }
 
