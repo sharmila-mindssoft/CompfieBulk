@@ -345,6 +345,11 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function getGeographyReport(callerName, callback, failure_callback) {
+        var request = ["GeographyReport", {}];
+        apiRequest(callerName, request, callback, failure_callback);   
+    }
+
     // Admin User Group Master
     function isNull(value){
         if (value == null)
@@ -582,6 +587,7 @@ function initMirror() {
         saveGeography: saveGeography,
         updateGeography: updateGeography,
         changeGeographyStatus: changeGeographyStatus,
+        getGeographyReport: getGeographyReport,
 
         saveAdminUserGroup: saveAdminUserGroup,
         updateAdminUserGroup: updateAdminUserGroup,
