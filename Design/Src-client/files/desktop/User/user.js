@@ -5,7 +5,25 @@ var tempUsersList;
 var countriesList;
 
 $(document).ready(function(){
-	GetUsers()
+	GetUsers();
+	$('#countrycode').keydown(function (e) {
+    var key = e.keyCode;
+    if (!((key == 8) || (key == 43) || (key == 31) || (key >= 48 && key <= 57))) {
+    e.preventDefault();
+  }
+});
+	$('#areacode').keydown(function (e) {
+    var key = e.keyCode;
+    if (!((key == 8) || (key >= 48 && key <= 57))) {
+    e.preventDefault();
+  }
+});
+	$('#contactno').keydown(function (e) {
+    var key = e.keyCode;
+    if (!((key == 8) || (key >= 48 && key <= 57))) {
+    e.preventDefault();
+  }
+});
 });
 
 function GetUsers(){
@@ -93,6 +111,7 @@ function loadUserList(usersList) {
 		function failure(data){
 		}
 	}
+
 	function saveRecord () {
 		$("#error").text("");
 		var userId = parseInt($("#userid").val());
@@ -108,6 +127,8 @@ function loadUserList(usersList) {
 		var country = $("#country").val();
 		var emailId = $("#emailid").val();
 
+		var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        
 		if(employeeName == '') {
 			$("#error").text("Employee Name Required");
 		} else if(employeeId == '') {
@@ -120,6 +141,8 @@ function loadUserList(usersList) {
 			$("#error").text("Domain Required");
 		} else if(emailId == '') {
 			$("#error").text("Email Id Required");
+		} else if(reg.test(emailId) == false) {
+			$("#error").text("Invalid Email Address");
 		} else if(country == '') {
 			$("#error").text("Country Required");
 		} else {
@@ -205,16 +228,14 @@ function loadUserList(usersList) {
 	}
 
 	//filter process
-	function filter (term, cellNr){
-		var filterkey = term.value.toLowerCase();
+	function filter (){
+		var employeenamefilter = $("#employeenamefilter").val().toLowerCase();
+		var usergroupfilter = $("#usergroupfilter").val().toLowerCase();
+		var designationfilter = $("#designationfilter").val().toLowerCase();
 		var filteredList=[];
-		if(cellNr == '1'){
-			for(var entity in tempUsersList) {
+		for(var entity in tempUsersList) {
 				employeeName = tempUsersList[entity]["employee_name"];
-				if (~employeeName.toLowerCase().indexOf(filterkey)) filteredList.push(tempUsersList[entity]);
-			}
-		} else if(cellNr == '2') {
-			for(var entity in tempUsersList) {
+				designation = tempUsersList[entity]["designation"];
 				var userGroup='';
 				for(var k in userGroupsList){
 					if(userGroupsList[k]["user_group_id"] == tempUsersList[entity]["user_group_id"]){
@@ -222,13 +243,10 @@ function loadUserList(usersList) {
 						break;
 					}
 				}
-				if (~userGroup.toLowerCase().indexOf(filterkey)) filteredList.push(tempUsersList[entity]);
-			}
-		} else {
-			for(var entity in tempUsersList) {
-				designation = tempUsersList[entity]["designation"];
-				if (~designation.toLowerCase().indexOf(filterkey)) filteredList.push(tempUsersList[entity]);
-			}
+				if (~employeeName.toLowerCase().indexOf(employeenamefilter) && ~designation.toLowerCase().indexOf(designationfilter) && ~userGroup.toLowerCase().indexOf(usergroupfilter)) 
+				{
+					filteredList.push(tempUsersList[entity]);
+				}		
 		}
 		loadUserList(filteredList);
 	}
@@ -336,7 +354,6 @@ function loadUserList(usersList) {
 		   $("#countryselected").val(totalcount+" Selected");
 		   $("#country").val(selids);
 		  }
-
 
 		//load usergroup list in autocomplete text box  
 		function loadauto_text (textval) {
