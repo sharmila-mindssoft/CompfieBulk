@@ -254,7 +254,7 @@ function initMirror() {
     }
 
     function getStatutoryNatureList(callerName, callback, failure_callback) {
-        var request = ["GetIStatutoryNatures", {}];
+        var request = ["GetStatutoryNatures", {}];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
@@ -274,6 +274,7 @@ function initMirror() {
                 "levels" : levels
             }
         ];
+        console.log("request----->"+request)
         apiRequest(callerName, request, callback, failure_callback);
     }
 
@@ -284,13 +285,14 @@ function initMirror() {
     }
 
     function saveAndUpdateStatutoryLevels(callerName, countryId, domainId, levels, callback, failure_callback) {
+
         if ((countryId == null) || (domainId == null) || (levels == null))
             return null;
         var request = [
             "SaveStatutoryLevel",
             { 
                 "country_id" : countryId,
-                "domain_id" : domain_id,
+                "domain_id" : domainId,
                 "levels" : levels
             }
         ];

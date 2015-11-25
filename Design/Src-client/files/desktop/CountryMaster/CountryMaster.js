@@ -2,64 +2,30 @@ $(function() {
 	$("#country-add").hide();
 	initialize();
 });
-
 $(".btn-country-add").click(function(){
 	$("#country-add").show();
 	$("#country-view").hide();
-	$("#countryName").val('');
-  	$("#countryId").val('');
+	$("#country-name").val('');
+  	$("#country-id").val('');
   	$(".error-message").html('');
 });
 $(".btn-country-cancel").click(function(){
 	$("#country-add").hide();
 	$("#country-view").show();
 });
-function ajaxCall (url, options, callback) {
-	$.support.cors = true;
-	$.ajax({
-		crossDomain: true,
-		url: url,
-		dataType: 'json',
-		type: 'POST',
-		data: options,
-		success: function(data) {
-			console.log(data);
-			callback(data);					
-		},
-		error: function(xhr, status, err) {
-			console.error(url, status, err.toString());
-			callback(null);
-		}
-	});
-}
 function initialize(){
-	mirror.getCountryList("getCountryList", success, failure);
 	function success(status, data){
-		loadData(data[1]);
+		loadCountriesList(data);
 	}
 	function failure(status, data){
-
 	}
-	// var countries_url = "http://192.168.1.9:8080/GetCountries";
-	// var countries_data = {
-	// 	"session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-	// 	"request" : [
-	// 		"GetCountries",
-	// 		{}
-	// 	]
-	// };
-	// var options = JSON.stringify(countries_data);	
-	// ajaxCall(countries_url, options, function (data) {
-	// 	loadData(data[1]);
-	// });
+	mirror.getCountryList("getCountryList", success, failure);
 }
 
-function loadData(countriesList){
- 	$('#tableRow').show();
-  	$("#tableCountriesList").find("tr:gt(0)").remove();
-  	var sno=1;
-	var imageName, title;
-
+function loadCountriesList(countriesList){
+ 	$(".tbody-countries-list").find("tr").remove();
+  	var sno=0;
+	var imageName, title;	
 	for(var i in countriesList){
 		var countries=countriesList[i];
 		for(var j in countries){
@@ -77,96 +43,79 @@ function loadData(countriesList){
 				title="Click here to Activate"
 				statusVal=1;
 			}
-			var tableName = document.getElementById("tableCountriesList");
-			var tableRow=document.getElementById('tableRow');
-			var clone=tableRow.cloneNode(true);
-			clone.id = sno; 
-
-			clone.cells[0].innerHTML =sno;
-			clone.cells[1].innerHTML=countryName;
-			clone.cells[2].innerHTML='<img src="/images/icon-edit.png" id="editid" onclick="country_edit('+countryId+',\''+countryName+'\')"/>';
-			clone.cells[3].innerHTML='<img src="/images/'+imageName+'" title="'+title+'" onclick="country_active('+countryId+', '+statusVal+')"/>';
-			tableName.appendChild(clone);
-      		sno = sno + 1;
+			var tableRow=$('#templates .table-countries-list .table-row');
+			var clone=tableRow.clone();
+			sno = sno + 1;
+			$('.sno', clone).text(sno);
+			$('.country-name', clone).text(countryName);
+			$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="country_edit('+countryId+',\''+countryName+'\')"/>');
+			$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="country_active('+countryId+', '+statusVal+')"/>');
+			$('.tbody-countries-list').append(clone);
 		}
-		$('#tableRow').hide();
 	}
 }
 
 $("#submit").click(function(){
-	var countryIdValue = $("#countryId").val();
-	var countryNameValue = $("#countryName").val();
+	var countryIdValue = $("#country-id").val();
+	var countryNameValue = $("#country-name").val();
 	if(countryNameValue=='' || countryNameValue==null){
 		$(".error-message").html('Country Name Required');
 	}
-	else if(countryIdValue==''){
-		mirror.SaveCountry("SaveCountry", success, failure);
+	else if(countryIdValue==''){		
 		function success(status, data){
-		    $("#country-add").hide();
-	  		$("#country-view").show();
-	  		initialize();
+			if(status == 'success') {
+		    	$("#country-add").hide();
+	  			$("#country-view").show();
+	  			initialize();
+	  		}
+	  		 else {
+      			$(".error-message").html(status);
+      		}	
 	    }
 		function failure(status, data){
-			$(".error-message").html(data[0]);
+			$(".error-message").html(status);
 		}
+		mirror.saveCountry("SaveCountry", countryNameValue, success, failure);
 	}
-	else{
-		var countries_url = "http://192.168.1.9:8080/UpdateCountry";
- 		var countries_data = {
- 			"session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-           	"request" : [
-	            "UpdateCountry",
-	            {
-	                "country_id": parseInt(countryIdValue),
-	                "country_name": countryNameValue,
-	            }
-       		]
-    	};
-    	var options = JSON.stringify(countries_data);
-  		ajaxCall(countries_url, options, function (data) {  		
-  			$("#country-add").hide();
-  			$("#country-view").show();
-  			initialize();
-		});	
+	else{		
+		function success(status, data){
+			if(status == 'success') {
+				$("#country-add").hide();
+	  			$("#country-view").show();
+	  			initialize();
+  			}
+  			if(status == 'CountryNameAlreadyExists') {
+  				$(".error-message").html(status);
+  			}	
+		}
+		function failure(status, data){
+		}
+		mirror.updateCountry("updateCountry", parseInt(countryIdValue), countryNameValue, success, failure);
 	}
 });
 function country_edit(countryId, countryName){
 	$("#country-add").show();
 	$("#country-view").hide();
-	$("#countryName").val(countryName);
-  	$("#countryId").val(countryId);
+	$("#country-name").val(countryName);
+  	$("#country-id").val(countryId);
 }
 function country_active(countryId, isActive){
-	$("#countryName").val(countryName);
-  	$("#countryId").val(countryId);
-
-  	var countries_url = "http://192.168.1.9:8080/ChangeDomainStatus";
-  	var countries_data = {
-          "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-          "request" : [
-              "ChangeCountryStatus",
-            {
-                "country_id": countryId,
-                "is_active": isActive
-            }
-          ]
-      };
-  	var options = JSON.stringify(countries_data);
-
-	ajaxCall(countries_url, options, function (data) {
-	  console.log(data)
+  	$("#country-id").val(countryId);
+  	function success(status, data){
 	  initialize();
-	});
+  	}
+  	function failure(status, data){
+  	}
+  	mirror.changeCountryStatus("ChangeCountryStatus",  parseInt(countryId), isActive, success, failure);
 }
 
-function filter (term, cellNr){
-	var suche = term.value.toLowerCase();
-	var table = document.getElementById("tableCountriesList");
-	var ele;
-	for (var r = 1; r < table.rows.length; r++){
-		ele = table.rows[r].cells[cellNr].innerHTML.replace(/<[^>]+>/g,"");
-		if (ele.toLowerCase().indexOf(suche)>=0 )
-			table.rows[r].style.display = '';
-		else table.rows[r].style.display = 'none';
-	}
-}
+
+$("#search-country-name").keyup(function() { 
+	var count=0;
+    var value = this.value.toLowerCase();
+    $("table").find("tr:not(:first)").each(function(index) {
+        if (index === 0) return;
+        var id = $(this).find(".country-name").text().toLowerCase();       
+        $(this).toggle(id.indexOf(value) !== -1);;
+    });
+});
