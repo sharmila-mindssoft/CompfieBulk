@@ -86,13 +86,9 @@
           <div class="input-row">
             <div class="single-column-field-label">Group:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
-              <Select id="group-select" class="input-box">
-                <option>RG Groups</option>
-                <option>SLK Groups</option>
-                <option>PGJ Groups</option>
-              </Select>
-              <input id="group-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Group Name">
-              <span style="font-size:10px"><a id="group-new" href="#">New</a></span> 
+             
+              <input id="group-text" type="text" value="RG Group" class="input-box"  style="width:200px;" placeholder="Group Name">
+               
             </div>
             </div>
             <div class="input-row">
@@ -106,8 +102,6 @@
 
               </div>
             </div>
-          </div>
-          <div class="input-row-right">
             <div class="input-row">
               <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
               <div class="single-column-field-input">
@@ -119,20 +113,6 @@
 
               </div>
             </div>
-
-          </div>
-          <div class="clearfix"></div>
-          <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px;">Settings</div>
-          <div class="input-row-left">
-
-
-            <div class="input-row">
-              <div class="single-column-field-label">Upload Logo:<span class="mandatory">*</span></div>
-              <div class="field-input">
-                <input type="file" class="input-box" style="width:200px;">
-              </div>
-            </div>
-
             <div class="input-row">
               <div class="single-column-field-label">Contract From:<span class="mandatory">*</span></div>
               <div class="field-input">
@@ -145,7 +125,43 @@
                 <input type="text" class="input-box" placeholder=""  value="10-Sep-2020" style="width:200px;">
               </div>
             </div>
+            <div class="input-row">
+            <div class="single-column-field-label">Username:<span class="mandatory">*</span></div>
+            <div class="field-input" style=" width:60%;">
+              <input type="text" class="input-box" placeholder="user@domain.com" style="width:200px;"><br>
+              <span style="font-size:10px;">[&#9658;This will be used as the username for user account.<br>&#9658;
+                Password will be auto-generated]</span>
+              </div>
+            </div>
+          </div>
+          <div class="input-row-right">
+            <div class="input-row">
+              <div class="single-column-field-label">Upload Logo:<span class="mandatory">*</span></div>
+              <div class="field-input">
+                <input type="file" class="input-box" style="width:200px;">
+              </div>
+            </div>
+            <div class="input-row">
+              <div class="single-column-field-label">Number of user licence:<span class="mandatory">*</span></div>
+              <div class="field-input">
+                <input type="text" class="input-box" placeholder="Number of user licence"  value="10" style="width:200px;">
+              </div>
+            </div>
              <div class="input-row">
+              <div class="single-column-field-label">File Space:<span class="mandatory">*</span></div>
+              <div class="field-input">
+                <input type="text" class="input-box" placeholder="File Space"  value="20" style="width:50px;float:left">
+                <span style="font-size:0.813em; padding-left:10px; line-height:2em;">GB</span>
+              </div>
+            </div>
+            <div class="input-row">
+              <div class="single-column-field-label"><p>Subscribe for SMS Notification:</p></div>
+              <div class="field-input" style="margin-top:5px;">
+               <input type="checkbox" checked="checked">
+             </div>
+
+           </div>
+           <div class="input-row">
               <div class="single-column-field-label">Incharge Person:<span class="mandatory">*</span></div>
               <div class="single-column-field-input">
                 <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
@@ -156,30 +172,8 @@
 
               </div>
             </div>
-
           </div>
-          <div class="input-row-right">
-            <div class="input-row">
-              <div class="single-column-field-label">Number of user licence:<span class="mandatory">*</span></div>
-              <div class="field-input">
-                <input type="text" class="input-box" placeholder="Number of user licence"  value="10" style="width:200px;">
-              </div>
-            </div>
-            <div class="input-row">
-              <div class="single-column-field-label">File Space:<span class="mandatory">*</span></div>
-              <div class="field-input">
-                <input type="text" class="input-box" placeholder="File Space"  value="20" style="width:50px;float:left">
-                <span style="font-size:0.813em; padding-left:10px; line-height:2em;">GB</span>
-              </div>
-            </div>
-            <div class="input-row">
-              <div class="single-column-field-label">Subscribe for SMS Notification:</div>
-              <div class="field-input" style="margin-top:5px;">
-               <input type="checkbox" checked="checked">
-             </div>
-
-           </div>
-         </div>
+         
          <div class="clearfix"></div>
 
          <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px;">Date Configuration</div>
@@ -390,18 +384,6 @@
           </div>
          <div class="clearfix"></div>
 
-         <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px;">Login Credentials</div>
-        
-         <div class="input-row-left">
-          <div class="input-row">
-            <div class="single-column-field-label">Username:<span class="mandatory">*</span></div>
-            <div class="field-input" style=" width:60%;">
-              <input type="text" class="input-box" placeholder="user@domain.com" style="width:200px;"><br>
-              <span style="font-size:10px;">[&#9658;This will be used as the username for user account.<br>&#9658;
-                Password will be auto-generated]</span>
-              </div>
-            </div>
-          </div>
         
 
           <div class="submit-button-container">

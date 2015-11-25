@@ -4,6 +4,7 @@ import time
 import string
 import random
 import os
+import hashlib
 
 from databasehandler import DatabaseHandler 
 from aparajitha.server.constants import ROOT_PATH
@@ -45,11 +46,6 @@ def getCurrentTimeStamp() :
     ts = time.time()
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
-def generatePassword() : 
-	characters = string.ascii_uppercase + string.digits
-	password = ''.join(random.SystemRandom().choice(characters) for _ in range(7))
-	return password
-
 def commonResponseStructure(responseType, data) :
 	assertType(responseType, StringType)
 	assertType(data, dict)
@@ -61,8 +57,14 @@ def commonResponseStructure(responseType, data) :
 
 def getClientDatabase(clientId):
     clientDatabaseMappingJson = json.load(open(clientDatabaseMappingFilePath))
-    return clientDatabaseMappingJson[clientId]
-        
+    return clientDatabaseMappingJson[clientId] 
+
+def generatePassword() : 
+    characters = string.ascii_uppercase + string.digits
+    password = ''.join(random.SystemRandom().choice(characters) for _ in range(7))
+    m = hashlib.md5()
+    m.update(password)
+    return m.hexdigest()
 
 class PossibleError(object) :
     def __init__(self, possibleError) :
@@ -127,6 +129,15 @@ class JSONHelper(object) :
     @staticmethod
     def getDict(data, name) :
         return JSONHelper.dict(data.get(name))
+
+    @staticmethod
+    def long(x):
+        assertType(x, LongType)
+        return x
+
+    @staticmethod
+    def getLong(data, name) :
+        return JSONHelper.long(data.get(name))
 
    
 

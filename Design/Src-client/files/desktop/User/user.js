@@ -2,6 +2,7 @@ var usersList;
 var domainsList;
 var userGroupsList;
 var tempUsersList;
+var countriesList;
 
 $(document).ready(function(){
 	GetUsers()
@@ -13,6 +14,7 @@ function GetUsers(){
 		usersList = data["users"];
 		domainsList = data["domains"];
 		userGroupsList = data["user_groups"];
+		countriesList = data["countries"];
 		loadUserList(usersList);
 	}
 	function failure(data){
@@ -29,8 +31,7 @@ function loadUserList(usersList) {
     var designation = '';
     var userList;
 
-    $('#rowToClone').show();
-    $("#tableToModify").find("tr:gt(0)").remove();
+   $(".tbody-user-list").find("tr").remove();
     for(var entity in usersList) {
     	userId = usersList[entity]["user_id"];
         employeeName = usersList[entity]["employee_name"];
@@ -50,20 +51,17 @@ function loadUserList(usersList) {
         	passStatus="1";
        	 	imgName="icon-inactive.png"
        	 }
-       	 var row = document.getElementById("rowToClone"); 
-      	 var table = document.getElementById("tableToModify");
-      	 var clone = row.cloneNode(true);
-       	 clone.id = j; 
-      	 clone.cells[0].innerHTML = j;
-      	 clone.cells[1].innerHTML = employeeName;
-      	 clone.cells[2].innerHTML = usergroup;
-       	 clone.cells[3].innerHTML = designation;
-      	 clone.cells[4].innerHTML = '<img src=\'/images/icon-edit.png\' onclick="displayEdit('+userId+',\''+employeeName+'\')"/>'
-      	 clone.cells[5].innerHTML = '<img src=\'/images/'+imgName+'\' onclick="changeStatus('+userId+','+passStatus+')"/>'
-      	 table.appendChild(clone);
-      	 j = j + 1;
+       	  var tableRow=$('#templates .table-user-master .table-row');
+	      var clone=tableRow.clone();
+	      $('.sno', clone).text(j);
+	      $('.employee-name', clone).text(employeeName);
+	      $('.user-group', clone).text(usergroup);
+	      $('.designation', clone).text(designation);
+	      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+userId+',\''+employeeName+'\')"/>');
+	      $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+userId+','+passStatus+')"/>');
+	      $('.tbody-user-list').append(clone);
+	      j = j + 1;
       	}
-      	$('#rowToClone').hide();
       }
 
       function displayAdd () {
@@ -138,7 +136,6 @@ function loadUserList(usersList) {
 					}
 				}
 				function failure(data){
-
 				}
 				mirror.saveAdminUser("AdminAPI", saveUserDetail, success, failure);
 			} else {
@@ -170,18 +167,15 @@ function loadUserList(usersList) {
 				var employeeName = usersList[entity]["employee_name"];
 				var employeeId = usersList[entity]["employee_code"];
 				var address = usersList[entity]["address"];
-
 				var mergeContactNo = usersList[entity]["contact_no"].split("-");
 				var countryCode = mergeContactNo[0];
 				var areaCode = mergeContactNo[1];
 				var contactNo = mergeContactNo[2];
-
 				var userGroup = usersList[entity]["user_group_id"];
 				var userGroupval;
 				var designation = usersList[entity]["designation"];
 				var domain = usersList[entity]["domain_ids"]; 
 				var country = usersList[entity]["country_ids"];
-
 				var emailId = usersList[entity]["email_id"];
 				for(var k in userGroupsList){
 					if(userGroupsList[k]["user_group_id"] == userGroup){
@@ -201,7 +195,6 @@ function loadUserList(usersList) {
 				$("#domain").val(domain);
 				var editdomainval = domain.split(",");
 				$("#domainselected").val(editdomainval.length+" Selected");
-
 				$("#country").val(country);
 				var editcountryval = domain.split(",");
 				$("#countryselected").val(editcountryval.length+" Selected");
@@ -304,7 +297,7 @@ function loadUserList(usersList) {
 		if($("#country").val() != ''){
 			editcountryval = $("#country").val().split(",");
 		}
-		  	var countries = [{"is_active": 0, "country_id": 1, "country_name": "India"}];
+		  	var countries = countriesList;
 		  	$('#ulist-country').empty();
 		  	var str='';
 		  	for(var i in countries){

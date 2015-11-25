@@ -155,8 +155,7 @@ class User(object) :
     def toStructure(self):
         return {
             "user_id": self.userId,
-            "employee_name": self.employeeName,
-            "employee_code": self.employeeCode
+            "employee_name": self.employeeCode+"-"+self.employeeName,
         }
 
     @classmethod
@@ -216,8 +215,17 @@ class User(object) :
 
     def getFormType(self) :
         rows = DatabaseHandler.instance().getData(UserGroup.tblName, 
-                "form_type", "user_group_id='"+str(self.userGroupId)+"'")
+                    "form_type", "user_group_id='"+str(self.userGroupId)+"'")
         return rows[0][0]
+
+    def saveAdmin(self, sessionUser):
+        currentTimeStamp = getCurrentTimeStamp()
+
+        mainTblColumns = "user_id, username, password, created_on,created_by, updated_on, updated_by"
+        mainTblValuesList = [ self.userId, self.emailId, generatePassword(), currentTimeStamp,sessionUser,
+                            currentTimeStamp,sessionUser]
+        mainTblValues = listToString(mainTblValuesList)
+        return DatabaseHandler.instance().insert(self.mainTblName, mainTblColumns, mainTblValues)
 
     def save(self, sessionUser):
         currentTimeStamp = getCurrentTimeStamp()
@@ -231,9 +239,9 @@ class User(object) :
                             " domain_ids, created_on, created_by, updated_on, updated_by"
         detailTblValuesList = [ self.userId, self.emailId, self.userGroupId, self.getFormType(),
                             self.employeeName, self.employeeCode, self.contactNo, self.address,
-                            self.designation, ",".join(self.countryIds), ",".join(self.domainIds),
-                            currentTimeStamp,sessionUser,currentTimeStamp,sessionUser]
-
+                            self.designation, ",".join(str(x) for x in self.countryIds), 
+                            ",".join(str(x) for x in self.domainIds), currentTimeStamp,sessionUser,
+                            currentTimeStamp,sessionUser]
         mainTblValues = listToString(mainTblValuesList)
         detailTblValues = listToString(detailTblValuesList)
 
