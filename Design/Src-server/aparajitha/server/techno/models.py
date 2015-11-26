@@ -97,15 +97,16 @@ class GroupCompany(object):
         for row in rows:
             clientId = int(row[0])
             groupName = row[1]
+            print "Inside"+groupName
             inchargePersons = row[2].split(",")
             isActive = row[3]
 
             condition = " client_id='%d'" % clientId
             userRows = DatabaseHandler.instance().getData(self.userTblName, userColumns, condition)
             username = userRows[0][0]
-
+            print "Got user name for:"+groupName
             clientDBName = getClientDatabase(clientId)
-
+            print "Got db name for:"+groupName
             settingsRows = ClientDatabaseHandler.instance(clientDBName).getData(self.clientSettingsTblName,
                 clientSettingsColumns, "1")
             countryIds = settingsRows[0][0].split(",")
@@ -116,7 +117,7 @@ class GroupCompany(object):
             noOfUserLicence = int(settingsRows[0][5])
             fileSpace = settingsRows[0][6]
             isSmsSubscribed = int(settingsRows[0][7])
-
+            print "Crossed settings:"+groupName
             configurationRows = ClientDatabaseHandler.instance(clientDBName).getData(self.clietConfigurationTblName,
                 clientConfigurationColums, "1")
             dateConfigurations = []
@@ -128,14 +129,16 @@ class GroupCompany(object):
                 clientConfiguration = ClientConfiguration(country_id, domain_id,
                     period_from, period_to)
                 dateConfigurations.append(clientConfiguration.toStructure())
-            print "got fourth set of data"
+
             groupCompany = GroupCompany(clientId, groupName, inchargePersons, countryIds ,domainIds, logo, 
         contractFrom, contractTo, noOfUserLicence, fileSpace, isSmsSubscribed,
         dateConfigurations, username, isActive)
-            print "created group company object"
+
             groupCompany.verify()
-            print "Verified group company object"
+
             clientList.append(groupCompany.toDetailedStructure())
+
+            # print clientList
 
         return clientList
 
