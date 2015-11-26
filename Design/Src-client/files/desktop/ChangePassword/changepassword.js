@@ -29,6 +29,6 @@ function saveRecord () {
         }
         function failure(data){
         }
-        mirror.changePassword("ChangePassword", currentpassword, newpassword, success, failure);
+        mirror.changePassword("AdminAPI", currentpassword, newpassword, success, failure);
       }
   }
