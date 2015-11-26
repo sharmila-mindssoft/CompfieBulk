@@ -886,7 +886,7 @@ class Geography(object) :
             "geography_id": self.geographyId,
             "geography_name": self.name,
             "level_id": self.levelId,
-            "parent_ids": self.parentIds,
+            "parent_id": self.parentIds,
             "is_active": self.isActive
         }
 
@@ -907,7 +907,7 @@ class GeographyAPI(object) :
         _geographyList = DH.instance().getGeographies()
         for row in _geographyList :
             parentIds = [int(x) for x in row[3].split(',')]
-            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds, int(row[4]))
+            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds[-1], int(row[4]))
             countryId = int(row[5])
             _list = self.geographies.get(countryId)
             if _list is None :
