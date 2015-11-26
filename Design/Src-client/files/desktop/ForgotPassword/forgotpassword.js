@@ -17,12 +17,13 @@ function saveRecord () {
         }
         function failure(data){
         }
-        mirror.forgotPassword("ForgotPassword", username, success, failure);
+        mirror.forgotPassword("AdminAPI", username, success, failure);
       }
   }
 
   function resetPassword () { 
     $("#error").text("");
+    var resetToken = "123";
     var newpassword = $("#newpassword").val();
     var confirmpassword = $("#confirmpassword").val();
 
@@ -46,6 +47,6 @@ function saveRecord () {
         }
         function failure(data){
         }
-        mirror.changePassword("ChangePassword", currentpassword, newpassword, success, failure);
+        mirror.resetPassword("AdminAPI", resetToken, newpassword, success, failure);
       }
   }
