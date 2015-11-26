@@ -172,35 +172,6 @@ function activate(element, id, type,country, level){
 
 //load geographymapping sub level data dynamically
 function load(id,type,level,country){
- /*   jQuery.ajax({
-          url: "/geographymapping/load",
-          type: "post",
-          dataType: 'json',
-          cache : false,
-          contentType: "application/json; charset=utf-8",
-          data: JSON.stringify( {"data": {"id" : id }} ),
-          success: function(msg) {
-          var levelstages= parseInt(level) + 1;
-          for(var k=levelstages;k<=10;k++){
-          var setlevelstage= k;
-          $('#datavalue'+setlevelstage).val('');
-          $('#ulist'+setlevelstage).empty();
-          var list = JSON.parse(msg);
-          var str='';
-          var idval='';
-          var clsval='.list'+setlevelstage;
-          var clsval1='list'+setlevelstage;
-          for(var i in list){
-            //idval=list[i].toString().split(',');
-            if(list[i][1] == setlevelstage){
-            str += '<a href="#"> <li id="'+i+'" class="'+clsval1+'" onclick="activate(this,'+i+',\''+clsval+'\','+setlevelstage+')" >'+list[i][0]+'</li> </a>';
-          }
-          }
-          $('#ulist'+setlevelstage).append(str); 
-        
-          }
-        }
-      });*/
           var levelstages= parseInt(level) + 1;
           for(var k=levelstages;k<=10;k++){
           var setlevelstage= k;
@@ -224,7 +195,7 @@ function load(id,type,level,country){
           var geographyList = geographiesList[country];
             for(var i in geographyList){
               var setgeographyid = geographyList[i]["geography_id"];
-              if( (id in geographyList[i]["parent_ids"] || id == geographyList[i]["parent_ids"]) && geographyList[i]["level_id"] == levelid) {
+              if( id == geographyList[i]["parent_id"] && geographyList[i]["level_id"] == levelid) {
               str += '<a href="#"> <li id="'+setgeographyid+'" class="'+clsval1+'" onclick="activate(this,'+setgeographyid+',\''+clsval+'\','+country+','+setlevelstage+')" >'+geographyList[i]["geography_name"]+'</li> </a>';
             }
             }
