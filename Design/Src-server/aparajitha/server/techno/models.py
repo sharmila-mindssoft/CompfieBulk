@@ -18,7 +18,8 @@ __all__ = [
     "Unit",
     "SaveClientGroup",
     "SaveClient",
-    "GetClientGroups"
+    "GetClientGroups",
+    "ChangeClientGroupStatus"
 ]
 clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
     "Src-client/files/desktop/common/clientdatabase/clientdatabasemapping.txt")
@@ -472,6 +473,43 @@ class GetClientGroups(object):
 
     def getList(self):
         return commonResponseStructure("GetClientGroupsSuccess",self.responseData)
+
+class ChangeClientGroupStatus(object):
+    clientTblName = "tbl_client_groups"
+
+    def __init__(self, requestData, sessionUser) :
+        self.requestData = requestData
+        self.sessionUser = sessionUser
+        self.response = ""
+
+        assertType(requestData, DictType)
+        assertType(sessionUser, LongType)
+
+    def updateStatus(self):
+        requestData = self.requestData
+
+        self.clientId = JSONHelper.getInt(requestData, "client_id")
+        self.isActive = JSONHelper.getInt(requestData, "is_active")
+
+        if self.isValidClientId():
+            columns = ["is_active","updated_on", "updated_by"]
+            values = [self.isActive, getCurrentTimeStamp(), self.sessionUser]
+            condition = " client_id='%d'" % self.clientId
+            if DatabaseHandler.instance().update(self.clientTblName, columns, values, condition):
+                return commonResponseStructure("ChangeClientGroupStatusSuccess",{})
+            else:
+                print "Updating Status Failed"
+        else:
+            return commonResponseStructure("InvalidClientId",{})
+
+    def isValidClientId(self):
+        columns = "count(*)"
+        condition = "client_id='%d'" % self.clientId
+        rows = DatabaseHandler.instance().getData(self.clientTblName, columns, condition)
+        if rows[0][0] == 1:
+            return True
+        else:
+            return False
 
 class UpdateClientGroup(object):
     clientTblName = "tbl_client_groups"
