@@ -877,7 +877,7 @@ class Geography(object) :
         assertType(self.geographyId, IntType)
         assertType(self.name, StringType)
         assertType(self.levelId, IntType)
-        assertType(self.parentIds, ListType)
+        assertType(self.parentIds, IntType)
         assertType(self.isActive, IntType)
 
     def toStructure(self) :
