@@ -550,6 +550,18 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function changeClientGroupStatus(callerName, clientId, isActive, callback, failure_callback) {
+        
+        var request = [
+            "ChangeClientGroupStatus",
+            {
+                "client_id": clientId,
+                "is_active": isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
     function getClientGroups(callerName, callback, failure_callback) {
         
         var request = [
@@ -658,6 +670,7 @@ function initMirror() {
 
         saveClientGroup: saveClientGroup,
         getClientGroups: getClientGroups,
+        changeClientGroupStatus: changeClientGroupStatus,
 
         changePassword: changePassword,
         forgotPassword: forgotPassword,
