@@ -11,7 +11,7 @@ _databaseHandlerInstance = None
 
 class DatabaseHandler(object) :
     def __init__(self) :
-        self.mysqlHost = "192.168.1.2"
+        self.mysqlHost = "localhost"
         self.mysqlUser = "root"
         self.mysqlPassword = "123456"
         self.mysqlDatabase = "mirror_knowledge"
