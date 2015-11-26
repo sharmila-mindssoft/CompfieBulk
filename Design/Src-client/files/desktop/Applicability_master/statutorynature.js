@@ -105,7 +105,7 @@ function statNature_active(statNatureId, isActive){
   	}
   	function failure(status, data){
   	}
-  	mirror.changeCountryStatus("ChangeStatutoryNatureStatus",  parseInt(statNatureId), isActive, success, failure);
+  	mirror.changeStatutoryNatureStatus("ChangeStatutoryNatureStatus",  parseInt(statNatureId), isActive, success, failure);
 
 }
 $("#search-statutory-nature-name").keyup(function() { 

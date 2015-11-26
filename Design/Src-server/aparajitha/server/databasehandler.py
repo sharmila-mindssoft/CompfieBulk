@@ -10,7 +10,7 @@ _databaseHandlerInstance = None
 
 class DatabaseHandler(object) :
     def __init__(self) :
-        self.mysqlHost = "localhost"
+        self.mysqlHost = "192.168.1.2"
         self.mysqlUser = "root"
         self.mysqlPassword = "123456"
         self.mysqlDatabase = "mirror_knowledge"
@@ -118,6 +118,10 @@ class DatabaseHandler(object) :
         query += " WHERE "+condition
 
         return self.execute(query)
+
+    def delete(self, table, condition):
+        query = "DELETE from "+table+" WHERE "+condition
+        return self.execute(query)        
 
     def append(self, table, column, value, condition):
         rows = self.getData(table, column, condition)

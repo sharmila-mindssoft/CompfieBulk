@@ -550,6 +550,18 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function changeClientGroupStatus(callerName, clientId, isActive, callback, failure_callback) {
+        
+        var request = [
+            "ChangeClientGroupStatus",
+            {
+                "client_id": clientId,
+                "is_active": isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
     function getClientGroups(callerName, callback, failure_callback) {
         
         var request = [
@@ -565,6 +577,40 @@ function initMirror() {
             "ChangePassword",
             {
                 "current_password": currentPassword,
+                "new_password": newPassword
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function forgotPassword(callerName, username, callback, failure_callback) {
+        
+        var request = [
+            "ForgotPassword",
+            {
+                "username": username
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function validateResetToken(callerName, resetToken, callback, failure_callback) {
+        
+        var request = [
+            "ResetTokenValidation",
+            {
+                "reset_token": resetToken
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function resetPassword(callerName, resetToken, newPassword, callback, failure_callback) {
+        
+        var request = [
+            "ResetPassword",
+            {
+                "reset_token": resetToken,
                 "new_password": newPassword
             }
         ];
@@ -624,8 +670,12 @@ function initMirror() {
 
         saveClientGroup: saveClientGroup,
         getClientGroups: getClientGroups,
+        changeClientGroupStatus: changeClientGroupStatus,
 
-        changePassword: changePassword
+        changePassword: changePassword,
+        forgotPassword: forgotPassword,
+        validateResetToken: validateResetToken,
+        resetPassword: resetPassword
 
     }
 
