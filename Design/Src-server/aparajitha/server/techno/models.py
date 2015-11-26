@@ -29,6 +29,7 @@ class GroupCompany(object):
     clientSettingsTblName = "tbl_client_settings"
     clietConfigurationTblName = "tbl_client_configurations"
     userDetailsTblName = "tbl_user_details"
+    clientUserDetailsTblName = "tbl_client_user_details"
     userTblName = "tbl_users"
 
     def __init__(self, clientId, groupName, inchargePersons, countryIds ,domainIds, logo, 
@@ -84,30 +85,55 @@ class GroupCompany(object):
         }
 
     @classmethod
-    def getClientList(self):
-        clientList = []
+    def getClientUsername(self, clientId):
+        username = ""
+        columns = "user_id"
+        condition = " is_admin = 1"
+        rows = []
 
-        clientGroupColumns = "client_id, group_name,incharge_persons,is_active"
-        userColumns = "username"
+        try : 
+            clientDBName = self.getClienDatabaseName(clientId)
+            rows = ClientDatabaseHandler.instance(clientDBName).getData(self.clientUserDetailsTblName,
+                    columns, condition)
+        except:
+            print "Error : Client Database Not exists for the client %d" % clientId
+
+        if len(rows) < 1:
+            print "Error :User details not found for client admin"
+
+        for row in rows:
+            userId = int(row[0])
+            columns = "username"
+            condition = "user_id='%d'" % userId
+            rows = DatabaseHandler.instance().getData(self.userTblName, columns, condition)
+            try :
+                username += rows[0][0]
+            except:
+                print "Error: No Credentials exist for admin user "+str(userId)+" for client %d" % clientId
+
+        return username
+
+    @classmethod
+    def getClienDatabaseName(self, clientId):
+        clientDBName = getClientDatabase(clientId)
+        if clientDBName == None:
+            print "Error : Database Not exists for the client %d" % clientId
+        return clientDBName
+
+    @classmethod
+    def getSettings(self, clientId):
         clientSettingsColumns = "country_ids,domain_ids,logo_url,contract_from,"+\
                     "contract_to,no_of_user_licence,total_disk_space,is_sms_subscribed"
-        clientConfigurationColums = "country_id, domain_id, period_from, period_to"
-
-        rows = DatabaseHandler.instance().getData(self.clientTblName, clientGroupColumns, "1")
-        for row in rows:
-            clientId = int(row[0])
-            groupName = row[1]
-            inchargePersons = row[2].split(",")
-            isActive = row[3]
-
-            condition = " client_id='%d'" % clientId
-            userRows = DatabaseHandler.instance().getData(self.userTblName, userColumns, condition)
-            username = userRows[0][0]
-
-            clientDBName = getClientDatabase(clientId)
-
+        settingsRows = []
+        settingsDataList = []
+        try : 
+            clientDBName = self.getClienDatabaseName(clientId)
             settingsRows = ClientDatabaseHandler.instance(clientDBName).getData(self.clientSettingsTblName,
                 clientSettingsColumns, "1")
+        except:
+            print "Error : Client Database Not exists for client %d" % clientId
+
+        try :
             countryIds = settingsRows[0][0].split(",")
             domainIds = settingsRows[0][1].split(",")
             logo = settingsRows[0][2]
@@ -115,27 +141,78 @@ class GroupCompany(object):
             contractTo = settingsRows[0][4]
             noOfUserLicence = int(settingsRows[0][5])
             fileSpace = settingsRows[0][6]
-            isSmsSubscribed = int(settingsRows[0][7])
+            isSmsSubscribed = int(settingsRows[0][7])  
+            settingsDataList = [countryIds, domainIds, logo, contractFrom, contractTo, noOfUserLicence,
+        fileSpace, isSmsSubscribed]
+        except:
+            print "Settings Not exists for client %d" % clientId
 
+        return settingsDataList    
+
+    @classmethod
+    def getDateConfigurations(self, clientId):
+        clientConfigurationColums = "country_id, domain_id, period_from, period_to"
+        try:
+            clientDBName = self.getClienDatabaseName(clientId)
             configurationRows = ClientDatabaseHandler.instance(clientDBName).getData(self.clietConfigurationTblName,
-                clientConfigurationColums, "1")
-            dateConfigurations = []
-            for configuraion in configurationRows:
-                country_id = int(configuraion[0])
-                domain_id = int(configuraion[1])
-                period_from = int(configuraion[2])
-                period_to = int(configuraion[3])
-                clientConfiguration = ClientConfiguration(country_id, domain_id,
-                    period_from, period_to)
-                dateConfigurations.append(clientConfiguration.toStructure())
-            print "got fourth set of data"
-            groupCompany = GroupCompany(clientId, groupName, inchargePersons, countryIds ,domainIds, logo, 
-        contractFrom, contractTo, noOfUserLicence, fileSpace, isSmsSubscribed,
-        dateConfigurations, username, isActive)
-            print "created group company object"
-            groupCompany.verify()
-            print "Verified group company object"
-            clientList.append(groupCompany.toDetailedStructure())
+                    clientConfigurationColums, "1")
+        except:
+            print "Error : Client Database Not exists for the client %d" % clientId
+
+        dateConfigurations = []
+
+        for configuraion in configurationRows:
+            country_id = int(configuraion[0])
+            domain_id = int(configuraion[1])
+            period_from = int(configuraion[2])
+            period_to = int(configuraion[3])
+            clientConfiguration = ClientConfiguration(country_id, domain_id,
+                period_from, period_to)
+            dateConfigurations.append(clientConfiguration.toStructure())
+
+        return dateConfigurations
+
+    @classmethod
+    def getClientGroups(self):
+        clientGroupColumns = "client_id, group_name,incharge_persons,is_active"
+        rows = DatabaseHandler.instance().getData(self.clientTblName, clientGroupColumns, "1")
+        return rows
+
+    @classmethod
+    def getClientList(self):
+        clientList = []
+
+        clientGroupRows = self.getClientGroups()
+
+        for row in clientGroupRows:
+            try:
+                clientId = int(row[0])
+                groupName = row[1]
+                inchargePersons = row[2].split(",")
+                isActive = row[3]
+
+                username = self.getClientUsername(clientId)
+
+                settingsDataList = self.getSettings(clientId)
+                countryIds = settingsDataList[0]
+                domainIds = settingsDataList[1]
+                logo = settingsDataList[2]
+                contractFrom = settingsDataList[3]
+                contractTo = settingsDataList[4]
+                noOfUserLicence = settingsDataList[5]
+                fileSpace = settingsDataList[6]
+                isSmsSubscribed = settingsDataList[7]
+                dateConfigurations = self.getDateConfigurations(clientId)
+
+                groupCompany = GroupCompany(clientId, groupName, inchargePersons, countryIds ,domainIds, 
+                                            logo, contractFrom, contractTo, noOfUserLicence, fileSpace, 
+                                            isSmsSubscribed, dateConfigurations, username, isActive)
+                groupCompany.verify()
+
+                clientList.append(groupCompany.toDetailedStructure())
+            except:
+                print "Error : Settings not exist for client : %d" %clientId
+                continue
 
         return clientList
 
@@ -473,8 +550,9 @@ class SaveClientGroup(object) :
         columns = "user_id, email_id, employee_name, country_ids, domain_ids, is_admin, "+\
                     "is_service_provider, created_by, created_on, updated_by, updated_on"
         self.userId = self.getUserId()
-        valuesList = [self.userId, self.username, "Admin" , self.countryIds, self.domainIds,
-        1,0, self.sessionUser, getCurrentTimeStamp(), self.sessionUser, getCurrentTimeStamp()]
+        valuesList = [self.userId, self.username, "Admin" , ",".join(str(x) for x in self.countryIds), 
+                    ",".join(str(x) for x in self.domainIds),1,0, self.sessionUser, 
+                    getCurrentTimeStamp(), self.sessionUser, getCurrentTimeStamp()]
         values = listToString(valuesList)
         return ClientDatabaseHandler.instance(self.getDatabaseName()).insert(self.clientUserDetailsTblName, columns, values)
 

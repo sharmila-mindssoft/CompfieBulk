@@ -12,7 +12,7 @@ sqlScriptPath = os.path.join(ROOT_PATH, "Src-client/files/desktop/common/clientd
 
 class ClientDatabaseHandler(object) :
     def __init__(self,  databaseName) :
-        self.mysqlHost = "192.168.1.2"
+        self.mysqlHost = "localhost"
         self.mysqlUser = "root"
         self.mysqlPassword = "123456"
         self.mysqlDatabase = databaseName
@@ -33,6 +33,7 @@ class ClientDatabaseHandler(object) :
                 self.execute(command)
             else:
                 continue
+
 
     def execute(self, query):
         con = None
@@ -74,7 +75,7 @@ class ClientDatabaseHandler(object) :
                 cursor.close()
             if con is not None :
                 con.close()
-
+            
         return result
 
     def insert(self, table, columns, values) :
@@ -133,9 +134,11 @@ class ClientDatabaseHandler(object) :
         row = rows[0]
         return row[0]
 
+
     @staticmethod
     def instance(databaseName) :
         global _databaseHandlerInstance
+        _databaseHandlerInstance = None 
         if _databaseHandlerInstance is None :
             _databaseHandlerInstance = ClientDatabaseHandler(databaseName)
         return _databaseHandlerInstance
