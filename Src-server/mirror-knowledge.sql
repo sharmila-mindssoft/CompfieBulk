@@ -221,7 +221,7 @@ CREATE TABLE `tbl_compliances` (
   `duration` int(11) DEFAULT NULL,
   `duration_type` varchar(20) DEFAULT NULL,
   `statutory_mapping_id` int(11) DEFAULT NULL,
-  `is_active` tinyint(4) DEFAULT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,

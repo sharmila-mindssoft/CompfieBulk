@@ -291,8 +291,10 @@ class SaveClientGroup(object) :
     clientSettingsTblName = "tbl_client_settings"
     clietConfigurationTblName = "tbl_client_configurations"
     userDetailsTblName = "tbl_user_details"
+    clientUserDetailsTblName = "tbl_client_user_details"
     countryTblName = "tbl_countries"
     domainTblName = "tbl_domains"
+    userTblName = "tbl_users"
     clientDBName = None
 
     def __init__(self, requestData, sessionUser) :
@@ -328,7 +330,10 @@ class SaveClientGroup(object) :
                 if self.saveClientDetails():
                     if self.copyBasicData():
                         if self.saveDateConfigurations():
-                            self.response = "SaveClientGroupSuccess"
+                            if self.saveClientAdminUserDetails():
+                                self.response = "SaveClientGroupSuccess"
+                            else:
+                                print "Saving Client admin user details failed"
                         else:
                             print "Saving date configurations Failed"
                     else:
@@ -457,6 +462,21 @@ class SaveClientGroup(object) :
             return True
         else:
             return False
+
+    def getUserId(self):
+        columns = "user_id"
+        condition = " username='%s'" % self.username
+        rows = DatabaseHandler.instance().getData(self.userTblName, columns, condition)
+        return rows[0][0]
+
+    def saveClientAdminUserDetails(self):
+        columns = "user_id, email_id, employee_name, country_ids, domain_ids, is_admin, "+\
+                    "is_service_provider, created_by, created_on, updated_by, updated_on"
+        self.userId = self.getUserId()
+        valuesList = [self.userId, self.username, "Admin" , self.countryIds, self.domainIds,
+        1,0, self.sessionUser, getCurrentTimeStamp(), self.sessionUser, getCurrentTimeStamp()]
+        values = listToString(valuesList)
+        return ClientDatabaseHandler.instance(self.getDatabaseName()).insert(self.clientUserDetailsTblName, columns, values)
 
 class GetClientGroups(object):
     responseData = {}

@@ -23,18 +23,31 @@
 		alert("failure_data"+data)
 	}
 	$(document).ready(function(){
-		// mirror.getAdminUserGroupList("AdminAPI", success, failure);
-		// mirror.getClientGroups("TechnoAPI", success, failure)
-		// clientId = 2
-		// isActive = 1
-		// mirror.changeClientGroupStatus("TechnoAPI", clientId, isActive, success, failure)
-		// mirror.changeAdminUserGroupStatus("AdminAPI", 100, 0, success, failure);
-		// updateUserDetail = [1,1,"Sanju Madhavan.","EMP1012","+9112344441122-33-44","KK Nagar, Madurai", "developer", "2,5", "1,4"]
-		// mirror.updateAdminUser("AdminAPI", updateUserDetail, success, failure);
-		// saveUserDetail = ["nivi@domain.com",1,"Nivi","EMP1119","+917966403239","KK Nagar, Madurai", "Manager", "1","1"];
-		// mirror.saveAdminUser("AdminAPI", saveUserDetail, success, failure);
-		// mirror.getAdminUserList("AdminAPI", success, failure);
-		// mirror.changeAdminUserStatus("AdminAPI", 1, 0, success, failure);
+		// clientGroupDetails = {}
+		// clientGroupDetails["group_name"] = "Client Test Group 5";
+  //       clientGroupDetails["country_ids"] = [1];
+  //       clientGroupDetails["domain_ids"] = [1];
+  //       clientGroupDetails["logo"] = "logo.png";
+  //       clientGroupDetails["contract_from"] = "25-Jun-2016";
+  //       clientGroupDetails["contract_to"] = "24-Jun-2017";
+  //       clientGroupDetails["incharge_persons"] = [1];
+  //       clientGroupDetails["no_of_user_licence"] = 10;
+  //       clientGroupDetails["file_space"] = 4.5;
+  //       clientGroupDetails["is_sms_subscribed"] = 1;
+  //       clientGroupDetails["email_id"] = "ClientTestGroup5@domain.com";
+	
+		// dateConfigurations = []
+
+		// configuration1 = {}
+		// configuration1["country_id"] = 1;
+		// configuration1["domain_id"] = 1;
+		// configuration1["period_from"] = 1;
+		// configuration1["period_to"] = 12;
+	        
+		// dateConfigurations.push(configuration1)
+
+		// mirror.saveClientGroup("TechnoAPI", clientGroupDetails, dateConfigurations,success, failure);
+		 mirror.getClientGroups("TechnoAPI", success, failure)
 	});
 </script>
 </html>
