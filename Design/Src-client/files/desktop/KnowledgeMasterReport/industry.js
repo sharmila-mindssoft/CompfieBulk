@@ -3,39 +3,39 @@ $(function() {
 });
 function initialize(){
 	function success(status, data){
-		loadStatNatureData(data);
+		loadIndustriesData(data);
 	}
 	function failure(status, data){
 	}
-	mirror.getStatutoryNatureList("GetStatutoryNatures", success, failure);
+	  mirror.getIndustryList("GetIndustries", success, failure);
 }
-function loadStatNatureData(statNatureList){
+function loadIndustriesData(industriesList){
   	var sno=0;
 	var title;	
-	for(var i in statNatureList){
-		var statNature=statNatureList[i];
-		for(var j in statNature){
-			var isActive=statNature[j]["is_active"];
+	for(var i in industriesList){
+		var industry=industriesList[i];
+		for(var j in industry){
+			var isActive=industry[j]["is_active"];
 			if(isActive==1){ title="Active"; }
 			else { title="Inacive"; }
-			var tableRow=$('#templates .table-stat-nature-report .table-row');
+			var tableRow=$('#templates .table-industry-report .table-row');
 			var clone=tableRow.clone();
 			sno = sno + 1;
 			$('.sno', clone).text(sno);
-			$('.stat-nature-name', clone).text(statNature[j]["statutory_nature_name"]);
+			$('.industry-name', clone).text(industry[j]["industry_name"]);
 			$('.is-active', clone).text(title);
-			$('.tbody-stat-nature-list').append(clone);			
+			$('.tbody-industry-list').append(clone);			
 		}
 	
 	}
 	$("#total-records").html('Total : '+sno+' records');
 }
-$("#search-stat-nature-name").keyup(function() { 
+$("#search-industry-name").keyup(function() { 
 	var count=0;
     var value = this.value.toLowerCase();
     $("table").find("tr:not(:first):not(:last)").each(function(index) {
         if (index === 0) return;
-        var id = $(this).find(".stat-nature-name").text().toLowerCase();       
+        var id = $(this).find(".industry-name").text().toLowerCase();       
         $(this).toggle(id.indexOf(value) !== -1);;
     });
     count = $('tr:visible').length-3;

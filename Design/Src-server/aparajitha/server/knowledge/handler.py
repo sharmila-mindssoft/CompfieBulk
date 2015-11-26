@@ -74,6 +74,8 @@ class APIRequestHandler(tornado.web.RequestHandler) :
                     response = GeographyAPI(request, userId).updateGeographies()
                 elif request[0] == "ChangeGeographyStatus" :
                     response = GeographyAPI(request, userId).changeGeographyStatus()
+                elif request[0] == "GeographyReport" :
+                    response = GeographyAPI(request, userId).geographyReport()
                 else :
                     response = PossibleError("InvalidRequest")
 

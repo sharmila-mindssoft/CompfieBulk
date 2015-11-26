@@ -347,6 +347,11 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function getGeographyReport(callerName, callback, failure_callback) {
+        var request = ["GeographyReport", {}];
+        apiRequest(callerName, request, callback, failure_callback);   
+    }
+
     // Admin User Group Master
     function isNull(value){
         if (value == null)
@@ -554,6 +559,18 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function changePassword(callerName, currentPassword, newPassword, callback, failure_callback) {
+        
+        var request = [
+            "ChangePassword",
+            {
+                "current_password": currentPassword,
+                "new_password": newPassword
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -593,6 +610,7 @@ function initMirror() {
         saveGeography: saveGeography,
         updateGeography: updateGeography,
         changeGeographyStatus: changeGeographyStatus,
+        getGeographyReport: getGeographyReport,
 
         saveAdminUserGroup: saveAdminUserGroup,
         updateAdminUserGroup: updateAdminUserGroup,
@@ -605,7 +623,9 @@ function initMirror() {
         getAdminUserList: getAdminUserList,
 
         saveClientGroup: saveClientGroup,
-        getClientGroups: getClientGroups
+        getClientGroups: getClientGroups,
+
+        changePassword: changePassword
 
     }
 

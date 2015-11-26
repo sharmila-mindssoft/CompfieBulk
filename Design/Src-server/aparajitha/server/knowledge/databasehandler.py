@@ -1,5 +1,6 @@
 import datetime
 import MySQLdb as mysql
+from types import *
 
 
 __all__ = [
@@ -332,12 +333,12 @@ class DatabaseHandler(object) :
 
     def getStatutoryLevels(self) :
         query = "SELECT level_id, level_position, level_name, country_id, domain_id \
-            FROM tbl_statutory_levels"
+            FROM tbl_statutory_levels ORDER BY level_position"
         return self.dataSelect(query)
 
     def getStatutoryLevelsByID(self, countryId, domainId) :
         query = "SELECT level_id, level_position, level_name \
-            FROM tbl_statutory_levels WHERE country_id = %s and domain_id = %s" % (
+            FROM tbl_statutory_levels WHERE country_id = %s and domain_id = %s ORDER BY level_position" % (
                 countryId, domainId
             )
         return self.dataSelect(query)
@@ -363,12 +364,12 @@ class DatabaseHandler(object) :
 
     def getGeographyLevels(self) :
         query = "SELECT level_id, level_position, level_name, country_id \
-            FROM tbl_geography_levels"
+            FROM tbl_geography_levels ORDER BY level_position"
         return self.dataSelect(query)
 
     def getGeographyLevelsByCountry(self, countryId) :
         query = "SELECT level_id, level_position, level_name \
-            FROM tbl_geography_levels WHERE country_id = %s" % countryId
+            FROM tbl_geography_levels WHERE country_id = %s ORDER BY level_position" % countryId
         return self.dataSelect(query)
 
     def saveGeographyLevel(self, countryId, levelId, levelName, levelPosition, userId) :
@@ -391,11 +392,10 @@ class DatabaseHandler(object) :
     ### Geographies ###
 
     def getGeographies(self) :
-        # query = "SELECT geography_id, geography_name, level_id, \
-        #     parent_ids, is_active FROM tbl_geographies"
         query = "SELECT t1.geography_id, t1.geography_name, t1.level_id, \
-            t1.parent_ids, t1.is_active, t2.country_id FROM tbl_geographies t1 \
-            INNER JOIN tbl_geography_levels t2 on t1.level_id = t2.level_id"
+            t1.parent_ids, t1.is_active, t2.country_id, t3.country_name FROM tbl_geographies t1 \
+            INNER JOIN tbl_geography_levels t2 on t1.level_id = t2.level_id \
+            INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id"
         return self.dataSelect(query)
 
     def getDuplicateGeographies(self, parentIds, geographyId) :
@@ -427,6 +427,7 @@ class DatabaseHandler(object) :
             isActive, updatedBy, geographyId
         )
         return self.dataInsertUpdate(query)
+
 
     @staticmethod
     def instance() :
