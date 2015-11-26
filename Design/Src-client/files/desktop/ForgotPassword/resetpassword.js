@@ -10,12 +10,12 @@ $(document).ready(function(){
   }
   function failure(data){
   }
-  mirror.validateResetToken("AdminAPI", "314341777276858582911697971726622782117", success, failure)
+  mirror.validateResetToken("AdminAPI", "b4c59894336c4ee3b598f5e4bd2b276b", success, failure)
   });
 
 function resetPassword () { 
     $("#error").text("");
-    var resetToken = "314341777276858582911697971726622782117";
+    var resetToken = "b4c59894336c4ee3b598f5e4bd2b276b";
     var newpassword = $("#newpassword").val();
     var confirmpassword = $("#confirmpassword").val();
 
@@ -27,7 +27,7 @@ function resetPassword () {
       $("#error").text("New Password & Confirm Password is Not Match");
     } else {
         function success(status,data) {
-          if(status == 'success') {
+          if(status == 'ResetPasswordSuccess') {
             $("#error").text("Password Changed Successfully");
             $("#newpassword").val("");
             $("#confirmpassword").val("");
