@@ -582,6 +582,29 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function validateResetToken(callerName, resetToken, callback, failure_callback) {
+        
+        var request = [
+            "ResetTokenValidation",
+            {
+                "reset_token": resetToken
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function resetPassword(callerName, resetToken, newPassword, callback, failure_callback) {
+        
+        var request = [
+            "ResetPassword",
+            {
+                "reset_token": resetToken,
+                "new_password": newPassword
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -637,7 +660,9 @@ function initMirror() {
         getClientGroups: getClientGroups,
 
         changePassword: changePassword,
-        forgotPassword: forgotPassword
+        forgotPassword: forgotPassword,
+        validateResetToken: validateResetToken,
+        resetPassword: resetPassword
     }
 
 }
