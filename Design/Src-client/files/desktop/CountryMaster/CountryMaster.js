@@ -21,7 +21,6 @@ function initialize(){
 	}
 	mirror.getCountryList("getCountryList", success, failure);
 }
-
 function loadCountriesList(countriesList){
  	$(".tbody-countries-list").find("tr").remove();
   	var sno=0;

@@ -174,8 +174,10 @@ CREATE TABLE `tbl_statutory_mappings` (
   `statutory_mapping_id` int(11) NOT NULL,
   `country_id` int(11) DEFAULT NULL,
   `domain_id` int(11) DEFAULT NULL,
-  `industry_id` int(11) DEFAULT NULL,
+  `industry_ids` varchar(50) DEFAULT NULL,
   `statutory_nature_id` int(11) DEFAULT NULL,
+  `statutory_ids` varchar(50) DEFAULT NULL,
+  `compliance_ids` varchar(50) DEFAULT NULL,
   `approval_status` tinyint(4) DEFAULT '0',
   `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
@@ -185,8 +187,7 @@ CREATE TABLE `tbl_statutory_mappings` (
   PRIMARY KEY (`statutory_mapping_id`),
   CONSTRAINT `fk_statutory_mappings_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `fk_statutory_mappings_domains` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
-  CONSTRAINT `fk_statutory_mappings_industries` FOREIGN KEY (`industry_id`) REFERENCES `tbl_industries` (`industry_id`),
-  CONSTRAINT `fk_statutory_mappings_statutory_natures` FOREIGN KEY (`industry_id`) REFERENCES `tbl_statutory_natures` (`statutory_nature_id`)
+  CONSTRAINT `fk_statutory_mappings_statutory_natures` FOREIGN KEY (`statutory_nature_id`) REFERENCES `tbl_statutory_natures` (`statutory_nature_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_statutories`;
@@ -195,15 +196,13 @@ CREATE TABLE `tbl_statutories` (
   `statutory_name` varchar(50) DEFAULT NULL,
   `level_id` int(11) DEFAULT NULL,
   `parent_ids` varchar(50) DEFAULT NULL,
-  `is_active` tinyint(4) DEFAULT '1',
-  `statutory_mapping_id` int(11) DEFAULT NULL,
+  `statutory_mapping_ids` varchar(50) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`statutory_id`),
-  CONSTRAINT `fk_statutories_statutory_levels` FOREIGN KEY (`level_id`) REFERENCES `tbl_statutory_levels` (`level_id`),
-  CONSTRAINT `fk_statutories_statutory_mappings` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`)
+  CONSTRAINT `fk_statutories_statutory_levels` FOREIGN KEY (`level_id`) REFERENCES `tbl_statutory_levels` (`level_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_compliances`;

@@ -12,7 +12,7 @@ sqlScriptPath = os.path.join(ROOT_PATH, "Src-client/files/desktop/common/clientd
 
 class ClientDatabaseHandler(object) :
     def __init__(self,  databaseName) :
-        self.mysqlHost = "localhost"
+        self.mysqlHost = "192.168.1.2"
         self.mysqlUser = "root"
         self.mysqlPassword = "123456"
         self.mysqlDatabase = databaseName
