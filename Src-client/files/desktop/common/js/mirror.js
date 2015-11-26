@@ -566,6 +566,17 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function forgotPassword(callerName, username, callback, failure_callback) {
+        
+        var request = [
+            "ForgotPassword",
+            {
+                "username": username
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -619,7 +630,8 @@ function initMirror() {
         saveClientGroup: saveClientGroup,
         getClientGroups: getClientGroups,
 
-        changePassword: changePassword
+        changePassword: changePassword,
+        forgotPassword: forgotPassword
 
     }
 

@@ -545,10 +545,10 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function getClientGroup(callerName, callback, failure_callback) {
+    function getClientGroups(callerName, callback, failure_callback) {
         
         var request = [
-            "GetClientGroup",
+            "GetClientGroups",
             {}
         ];
         apiRequest(callerName, request, callback, failure_callback);
@@ -561,6 +561,17 @@ function initMirror() {
             {
                 "current_password": currentPassword,
                 "new_password": newPassword
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function forgotPassword(callerName, username, callback, failure_callback) {
+        
+        var request = [
+            "ForgotPassword",
+            {
+                "username": username
             }
         ];
         apiRequest(callerName, request, callback, failure_callback);
@@ -619,7 +630,8 @@ function initMirror() {
         saveClientGroup: saveClientGroup,
         getClientGroup: getClientGroup,
 
-        changePassword: changePassword
+        changePassword: changePassword,
+        forgotPassword: forgotPassword
     }
 
 }
