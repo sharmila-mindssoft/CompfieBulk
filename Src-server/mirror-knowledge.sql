@@ -417,3 +417,19 @@ CREATE TABLE `tbl_client_compliances` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT `fk_client_compliances_statutories` FOREIGN KEY (`statutory_id`) REFERENCES `tbl_statutories` (`statutory_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_email_verification`;
+CREATE TABLE IF NOT EXISTS `tbl_email_verification` (
+  `user_id` int(11) NOT NULL,
+  `verification_code` varchar(50) NOT NULL,
+  PRIMARY KEY (`verification_code`),
+  CONSTRAINT `fk_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_mobile_registration`;
+CREATE TABLE IF NOT EXISTS `tbl_mobile_registration` (
+  `user_id` int(11) NOT NULL,
+  `registration_key` varchar(50) NOT NULL,
+  PRIMARY KEY (`registration_key`),
+  CONSTRAINT `fk_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
