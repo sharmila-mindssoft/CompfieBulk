@@ -634,7 +634,7 @@ function initMirror() {
         getAdminUserList: getAdminUserList,
 
         saveClientGroup: saveClientGroup,
-        getClientGroup: getClientGroup,
+        getClientGroups: getClientGroups,
 
         changePassword: changePassword,
         forgotPassword: forgotPassword
