@@ -159,7 +159,7 @@ class User(object) :
             "employee_name": self.employeeCode+"-"+self.employeeName,
         }
 
-    @staticmethod
+    @classmethod
     def getDetailedList(self):
         userList = []
         columns = "user_id, is_active"
@@ -170,7 +170,7 @@ class User(object) :
             isActive = row[1]
             subColumns = "email_id, user_group_id, employee_name, employee_code,"+\
                                 "contact_no, address, designation, country_ids,"+\
-                                "domain_ids,client_id"
+                                "domain_ids,client_ids"
             condition = " user_id ='"+str(userId)+"'"                                
             subRows = DatabaseHandler.instance().getData(User.detailTblName, subColumns, condition)
             for subRow in subRows:
