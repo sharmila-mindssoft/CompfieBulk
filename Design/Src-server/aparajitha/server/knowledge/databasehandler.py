@@ -391,11 +391,10 @@ class DatabaseHandler(object) :
     ### Geographies ###
 
     def getGeographies(self) :
-        # query = "SELECT geography_id, geography_name, level_id, \
-        #     parent_ids, is_active FROM tbl_geographies"
         query = "SELECT t1.geography_id, t1.geography_name, t1.level_id, \
-            t1.parent_ids, t1.is_active, t2.country_id FROM tbl_geographies t1 \
-            INNER JOIN tbl_geography_levels t2 on t1.level_id = t2.level_id"
+            t1.parent_ids, t1.is_active, t2.country_id, t3.country_name FROM tbl_geographies t1 \
+            INNER JOIN tbl_geography_levels t2 on t1.level_id = t2.level_id \
+            INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id"
         return self.dataSelect(query)
 
     def getDuplicateGeographies(self, parentIds, geographyId) :
