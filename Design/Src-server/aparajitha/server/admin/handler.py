@@ -30,6 +30,7 @@ class AdminAPIRequestHandler(tornado.web.RequestHandler) :
                 userGroupController = UserGroupController()
                 userController = UserController()
                 changePassword = ChangePassword()
+                forgotPassword = ForgotPassword()
                 if request[0] == "GetUserGroups" :
                     response = userGroupController.getUserGroups()
                 elif request[0] == "SaveUserGroup" :
@@ -48,6 +49,12 @@ class AdminAPIRequestHandler(tornado.web.RequestHandler) :
                     response = userController.changeUserStatus(request[1], userId)
                 elif request[0] == "ChangePassword" :
                     response = changePassword.changePassword(request[1], userId)
+                elif request[0] == "ForgotPassword" :
+                    response = forgotPassword.processRequest(request[1], self.request.uri)
+                elif request[0] == "ResetTokenValidation" :
+                    response = forgotPassword.validateResetToken(request[1], self.request.uri)
+                elif request[0] == "ResetPassword" :
+                    response = forgotPassword.resetPassword(request[1])
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 
@@ -66,6 +73,7 @@ class AdminAPIRequestHandler(tornado.web.RequestHandler) :
 
 def initializeAdminHandler() :
     admin_urls = [
-        ("/AdminAPI", AdminAPIRequestHandler)
+        ("/AdminAPI", AdminAPIRequestHandler),
+        ("/AdminAPI/ForgotPassword", AdminAPIRequestHandler)
     ]
     return admin_urls

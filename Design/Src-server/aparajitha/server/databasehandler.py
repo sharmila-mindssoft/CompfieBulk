@@ -119,6 +119,10 @@ class DatabaseHandler(object) :
 
         return self.execute(query)
 
+    def delete(self, table, condition):
+        query = "DELETE from "+table+" WHERE "+condition
+        return self.execute(query)        
+
     def append(self, table, column, value, condition):
         rows = self.getData(table, column, condition)
         currentValue = rows[0][0]
