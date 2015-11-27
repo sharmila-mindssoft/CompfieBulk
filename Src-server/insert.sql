@@ -58,4 +58,4 @@ INSERT INTO tbl_users VALUES(1, "admin@compliance-mirror.com", "aparajitha_123_a
 INSERT INTO tbl_user_groups VALUES(1, "Administrator", "it", "1,2,3,4", 1, null, 1448455226, null, 1448455226);
 
 -- DELETE FROM tbl_user_details;
-INSERT INTO tbl_user_details VALUES(1, "admin@compliance-mirror.com", 1, "it", "Administrator", "", null, null, null, null, null, null, 1, 1, null, 1448455226, null, 1448455226);
+INSERT INTO tbl_user_details VALUES(1, "admin@compliance-mirror.com", null, 1, 1, "it", "Administrator", "", null, null, null, null, null, null, 1, null, 1448455226, null, 1448455226);

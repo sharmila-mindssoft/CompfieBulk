@@ -46,6 +46,8 @@ DROP TABLE IF EXISTS `tbl_user_details`;
 CREATE TABLE `tbl_user_details` (
   `user_id` int(11) NOT NULL,
   `email_id` varchar(100) NOT NULL,
+  `client_id` int(11) DEFAULT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
   `user_group_id` int(11) NOT NULL,
   `category` varchar(20) NOT NULL,
   `employee_name` varchar(50) NOT NULL,
@@ -57,7 +59,6 @@ CREATE TABLE `tbl_user_details` (
   `country_ids` varchar(50) DEFAULT NULL,
   `client_ids` varchar(50) DEFAULT NULL,
   `is_admin` tinyint(4) DEFAULT '0',
-  `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
   `created_on` float DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
@@ -420,17 +421,17 @@ CREATE TABLE `tbl_client_compliances` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_email_verification`;
-CREATE TABLE IF NOT EXISTS `tbl_email_verification` (
+CREATE TABLE `tbl_email_verification` (
   `user_id` int(11) NOT NULL,
   `verification_code` varchar(50) NOT NULL,
   PRIMARY KEY (`verification_code`),
-  CONSTRAINT `fk_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+  CONSTRAINT `fk_email_verification_user_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_mobile_registration`;
-CREATE TABLE IF NOT EXISTS `tbl_mobile_registration` (
+CREATE TABLE `tbl_mobile_registration` (
   `user_id` int(11) NOT NULL,
   `registration_key` varchar(50) NOT NULL,
   PRIMARY KEY (`registration_key`),
-  CONSTRAINT `fk_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+  CONSTRAINT `fk_mobile_registration_user_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
