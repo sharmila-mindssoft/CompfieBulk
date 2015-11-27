@@ -528,8 +528,8 @@ function initMirror() {
     // Client Group Master
 
     function saveClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
-        var contractTo = parseInt(new Date(clientGroupDetails["contract_to"]).getTime(),10);
-        var contractFrom = parseInt(new Date(clientGroupDetails["contract_from"]).getTime(),10);
+        alert(clientGroupDetails["contract_from"]);
+        alert(clientGroupDetails["contract_to"]);
         var request = [
             "SaveClientGroup",
             {
@@ -537,8 +537,8 @@ function initMirror() {
                 "country_ids": clientGroupDetails["country_ids"],
                 "domain_ids":clientGroupDetails["domain_ids"],
                 "logo" : clientGroupDetails["logo"],
-                "contract_from": contractFrom,
-                "contract_to": contractTo,
+                "contract_from": clientGroupDetails["contract_from"],
+                "contract_to": clientGroupDetails["contract_to"],
                 "incharge_persons": clientGroupDetails["incharge_persons"],
                 "no_of_user_licence": clientGroupDetails["no_of_user_licence"],
                 "file_space": clientGroupDetails["file_space"],
@@ -551,18 +551,18 @@ function initMirror() {
     }
 
     function updateClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
-        var contractTo = parseInt(new Date(clientGroupDetails["contract_to"]).getTime(),10);
-        var contractFrom = parseInt(new Date(clientGroupDetails["contract_from"]).getTime(),10);
+        alert(clientGroupDetails["contract_from"]);
+        alert(clientGroupDetails["contract_to"]);
         var request = [
-            "updateClientGroup",
+            "UpdateClientGroup",
             {
                 "client_id": clientGroupDetails["client_id"],
                 "group_name": clientGroupDetails["group_name"],
                 "country_ids": clientGroupDetails["country_ids"],
                 "domain_ids":clientGroupDetails["domain_ids"],
                 "logo" : clientGroupDetails["logo"],
-                "contract_from": contractFrom,
-                "contract_to": contractTo,
+                "contract_from": clientGroupDetails["contract_from"],
+                "contract_to": clientGroupDetails["contract_to"],
                 "incharge_persons": clientGroupDetails["incharge_persons"],
                 "no_of_user_licence": clientGroupDetails["no_of_user_licence"],
                 "file_space": clientGroupDetails["file_space"],
@@ -640,6 +640,16 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function getClients(callerName, callback, failure_callback) {
+        
+        var request = [
+            "GetClients",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+
     return {
         log: log,
         toJSON: toJSON,
@@ -699,7 +709,9 @@ function initMirror() {
         changePassword: changePassword,
         forgotPassword: forgotPassword,
         validateResetToken: validateResetToken,
-        resetPassword: resetPassword
+        resetPassword: resetPassword,
+
+        getClients: getClients
     }
 
 }

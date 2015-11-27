@@ -20,7 +20,8 @@ __all__ = [
     "SaveClient",
     "GetClientGroups",
     "ChangeClientGroupStatus",
-    "UpdateClientGroup"
+    "UpdateClientGroup",
+    "GetClients"
 ]
 clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
     "Src-client/files/desktop/common/clientdatabase/clientdatabasemapping.txt")
@@ -85,8 +86,17 @@ class GroupCompany(object):
             "is_active": self.isActive
         }
 
+    def toStructure(self):
+        return {
+            "client_id": self.clientId,
+            "group_name": self.groupName,
+            "country_ids": self.countryIds,
+            "domain_ids": self.domainIds,
+            "is_active": self.isActive
+        }
+
     @classmethod
-    def getClientUsername(self, clientId):
+    def getClientAdminUsername(self, clientId):
         username = ""
         columns = "user_id"
         condition = " is_admin = 1"
@@ -180,7 +190,7 @@ class GroupCompany(object):
         return rows
 
     @classmethod
-    def getClientList(self):
+    def getDetailedClientList(self):
         clientList = []
 
         clientGroupRows = self.getClientGroups()
@@ -192,7 +202,7 @@ class GroupCompany(object):
                 inchargePersons = row[2].split(",")
                 isActive = row[3]
 
-                username = self.getClientUsername(clientId)
+                username = self.getClientAdminUsername(clientId)
 
                 settingsDataList = self.getSettings(clientId)
                 countryIds = settingsDataList[0]
@@ -216,6 +226,39 @@ class GroupCompany(object):
                 continue
 
         return clientList
+
+    @classmethod
+    def getClientList(self, clientIds):
+        clientList = []
+        clientDetails = {}
+        column = "client_id, group_name, is_active"
+        condition = "client_id in (%s)" % clientIds
+        clientRows = DatabaseHandler.instance().getData(self.clientTblName, column, condition)
+
+        for row in clientRows:
+            clientDetails[str(row[0])] = [row[1], row[2]]
+
+        for index, clientId in enumerate(clientIds.split(",")):
+            try:
+                clientDBName = self.getClienDatabaseName(clientId)
+                columns = "country_ids, domain_ids"
+                settingsRows = ClientDatabaseHandler.instance(clientDBName).getData(self.clientSettingsTblName,
+                    columns, "1")
+
+                clientDetail = clientDetails[clientId]
+                groupName = clientDetail[0]
+                countryIds = settingsRows[0][0]
+                domainIds = settingsRows[0][1]
+                isActive = clientDetail[1]
+                
+                groupCompany = GroupCompany(clientId, groupName, None, countryIds ,domainIds, None, 
+                                            None, None, None, None, None,None, None, isActive)
+                clientList.append(groupCompany.toStructure())
+            except:
+                print "Error: Client Settings Not exists for client %s" % clientId
+
+        return clientList
+
 
 
 class ClientConfiguration(object):
@@ -243,6 +286,7 @@ class ClientConfiguration(object):
 
 
 class BusinessGroup(object):
+    businessGroupTblName = "tbl_business_groups"
 
     def __init__(self, businessGroupId, businessGroupName):
         self.businessGroupId = businessGroupId
@@ -258,7 +302,29 @@ class BusinessGroup(object):
             "business_group_name": self.businessGroupName
         }
 
+    @classmethod
+    def getList(self, clientIds):
+        businessGroupList = []
+
+        for index, clientId in enumerate(clientIds.split(",")):
+            try:
+                clientDBName = self.getClienDatabaseName(clientId)
+                columns = "business_group_id, business_group_name"
+                rows = ClientDatabaseHandler.instance(clientDBName).getData(
+                    self.businessGroupTblName,columns, "1")
+
+                for row in rows:
+                    businessGroupId = row[0]
+                    businessGroupName = row[1]
+                    businessGroup = BusinessGroup(businessGroupId, businessGroupName)
+                    businessGroupList.append(businessGroup.toStructure())
+            except:
+                print "Error: While fetching Business Groups of client id %s" % clientId
+
+        return businessGroupList
+
 class LegalEntity(object):
+    legalEntityTblName = "tbl_legal_entities"
 
     def __init__(self, legalEntityId, legalEntityName, businessGroupId):
         self.legalEntityId = legalEntityId
@@ -277,7 +343,30 @@ class LegalEntity(object):
             "business_group_id": self.businessGroupId
         }
 
+    @classmethod
+    def getList(self, clientIds):
+        legalEntitiesList = []
+
+        for index, clientId in enumerate(clientIds.split(",")):
+            try:
+                clientDBName = self.getClienDatabaseName(clientId)
+                columns = "legal_entity_id, legal_entity_name, business_group_id"
+                rows = ClientDatabaseHandler.instance(clientDBName).getData(
+                    self.legalEntityTblName,columns, "1")
+
+                for row in rows:
+                    legalEntityId = row[0]
+                    legalEntityName = row[1]
+                    businessGroupId = row[2]
+                    legalEntity = LegalEntity(legalEntityId, legalEntityName, businessGroupId)
+                    legalEntitiesList.append(legalEntity.toStructure())
+            except:
+                print "Error: While fetching Legal Entities of client id %s" % clientId
+
+        return legalEntitiesList
+
 class Division(object):
+    divisionTblName = "tbl_divisions"
 
     def __init__(self, divisionId, divisionName,legalEntityId, businessGroupId):
         self.divisionId = divisionId
@@ -298,6 +387,29 @@ class Division(object):
             "legal_entity_id": self.legalEntityId,
             "business_group_id": self.businessGroupId
         }
+
+    @classmethod
+    def getList(self, clientIds):
+        divisionsList = []
+
+        for index, clientId in enumerate(clientIds.split(",")):
+            try:
+                clientDBName = self.getClienDatabaseName(clientId)
+                columns = "division_id, division_name, legal_entity_id, business_group_id"
+                rows = ClientDatabaseHandler.instance(clientDBName).getData(
+                    self.divisionTblName,columns, "1")
+
+                for row in rows:
+                    divisionId = row[0]
+                    divisionName = row[1]
+                    legalEntityId = row[2]
+                    businessGroupId = row[2]
+                    division = Division(divisionId, divisionName, legalEntityId, businessGroupId)
+                    divisionsList.append(division.toStructure())
+            except:
+                print "Error: While fetching Division of client id %s" % clientId
+
+        return divisionsList
 
 class Unit(object):
 
@@ -364,6 +476,29 @@ class Unit(object):
             "unit_address": address
         }
 
+    @classmethod
+    def getDetailedList(self, clientIds):
+        unitList = []
+
+        for index, clientId in enumerate(clientIds.split(",")):
+            try:
+                clientDBName = self.getClienDatabaseName(clientId)
+                columns = "unit_id, "
+                rows = ClientDatabaseHandler.instance(clientDBName).getData(
+                    self.divisionTblName,columns, "1")
+
+                for row in rows:
+                    divisionId = row[0]
+                    divisionName = row[1]
+                    legalEntityId = row[2]
+                    businessGroupId = row[2]
+                    division = Division(divisionId, divisionName, legalEntityId, businessGroupId)
+                    unitList.append(division.toStructure())
+            except:
+                print "Error: While fetching Division of client id %s" % clientId
+
+        return unitList
+
 class SaveClientGroup(object) :
     clientTblName = "tbl_client_groups"
     clientSettingsTblName = "tbl_client_settings"
@@ -390,8 +525,8 @@ class SaveClientGroup(object) :
         self.countryIds = JSONHelper.getList(requestData, "country_ids")
         self.domainIds = JSONHelper.getList(requestData, "domain_ids")
         self.logo = JSONHelper.getString(requestData, "logo")
-        self.contractFrom = JSONHelper.getLong(requestData, "contract_from")
-        self.contractTo = JSONHelper.getLong(requestData, "contract_to")
+        self.contractFrom = JSONHelper.getString(requestData, "contract_from")
+        self.contractTo = JSONHelper.getString(requestData, "contract_to")
         self.inchargePersons = JSONHelper.getList(requestData, "incharge_persons")
         self.noOfLicence = JSONHelper.getInt(requestData, "no_of_user_licence")
         self.fileSpace = JSONHelper.getFloat(requestData, "file_space")
@@ -482,6 +617,7 @@ class SaveClientGroup(object) :
 
     def saveClientDatabaseMapping(self, clientId, databaseName):
         clientDatabaseMappingJson = json.load(open(clientDatabaseMappingFilePath))
+        if clientId in clientDatabaseMappingJson: del clientDatabaseMappingJson[clientId]
         clientDatabaseMappingJson[clientId] = databaseName
         json.dump(clientDatabaseMappingJson, 
             open(clientDatabaseMappingFilePath,'w'))
@@ -563,7 +699,7 @@ class GetClientGroups(object):
         domainList = DomainList.getDomainList()
         countryList = CountryList.getCountryList()
         userList = User.getList()
-        clientList = GroupCompany.getClientList()
+        clientList = GroupCompany.getDetailedClientList()
 
         self.responseData["domains"] = domainList
         self.responseData["countries"] = countryList
@@ -637,8 +773,8 @@ class UpdateClientGroup(object):
         self.countryIds = JSONHelper.getList(requestData, "country_ids")
         self.domainIds = JSONHelper.getList(requestData, "domain_ids")
         self.logo = JSONHelper.getString(requestData, "logo")
-        self.contractFrom = JSONHelper.getLong(requestData, "contract_from")
-        self.contractTo = JSONHelper.getLong(requestData, "contract_to")
+        self.contractFrom = JSONHelper.getString(requestData, "contract_from")
+        self.contractTo = JSONHelper.getString(requestData, "contract_to")
         self.inchargePersons = JSONHelper.getList(requestData, "incharge_persons")
         self.noOfLicence = JSONHelper.getInt(requestData, "no_of_user_licence")
         self.fileSpace = JSONHelper.getFloat(requestData, "file_space")
@@ -853,6 +989,49 @@ class UpdateClientGroup(object):
         return ClientDatabaseHandler.instance(
                         self.getDatabaseName()).update( 
                         self.clientUserDetailsTblName, columnsList, valuesList, condition)   
+
+
+class GetClients(object):
+    userDetailsTblName = "tbl_user_details"
+
+    responseData = {}
+
+    def __init__(self,  sessionUser) :
+        self.sessionUser = sessionUser
+        countryList = []
+        groupCompanyList = []
+        businessGroupList = []
+        legalEntityList = []
+        divisionList = []
+        unitList = []
+
+        countryList = CountryList.getCountryList()
+
+        clientIds = self.getClientIdsOfUser()
+        print clientIds
+        if clientIds ==  None:
+            print "Error : User is not responsible for any client"
+        else:
+            groupCompanyList = GroupCompany.getClientList(clientIds)
+            businessGroupList = BusinessGroup.getList(clientIds)
+            legalEntityList = LegalEntity.getList(clientIds)
+            divisionList = Division.getList(clientIds)
+            unitsList = Unit.getList()
+        
+        self.responseData["countries"] = countryList
+        self.responseData["group_companies"] = groupCompanyList
+        self.responseData["business_groups"] = businessGroupList
+        self.responseData["legal_entities"] = legalEntityList
+        self.responseData["divisions"] = divisionList
+
+    def getClientIdsOfUser(self):
+        columns = "client_ids"
+        condition = "user_id = '%d'" % self.sessionUser
+        rows = DatabaseHandler.instance().getData(self.userDetailsTblName, columns, condition)
+        return rows[0][0]
+
+    def getList(self):
+        return commonResponseStructure("GetClientsSuccess",self.responseData)
 
 
 class SaveClient(object):
