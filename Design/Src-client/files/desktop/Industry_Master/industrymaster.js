@@ -8,8 +8,7 @@ function loadIndustryList (industriesList) {
   var isActive = 0;
   var industryList;
 
-  $('#rowToClone').show();
-  $("#tableToModify").find("tr:gt(0)").remove();
+  $(".tbody-industry-list").find("tr").remove();
     for(var entity in industriesList) {
       industryId = industriesList[entity]["industry_id"];
       industryName = industriesList[entity]["industry_name"];
@@ -22,18 +21,15 @@ function loadIndustryList (industriesList) {
         passStatus="1";
         imgName="icon-inactive.png"
       }
-      var row = document.getElementById("rowToClone"); 
-      var table = document.getElementById("tableToModify");
-      var clone = row.cloneNode(true);
-      clone.id = j; 
-      clone.cells[0].innerHTML = j;
-      clone.cells[1].innerHTML = industryName;
-      clone.cells[2].innerHTML = '<img src=\'/images/icon-edit.png\' onclick="displayEdit('+industryId+',\''+industryName+'\')"/>'
-      clone.cells[3].innerHTML = '<img src=\'/images/'+imgName+'\' onclick="changeStatus('+industryId+','+passStatus+')"/>'
-      table.appendChild(clone);
+      var tableRow=$('#templates .table-industry-master .table-row');
+      var clone=tableRow.clone();
+      $('.sno', clone).text(j);
+      $('.industry-name', clone).text(industryName);
+      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+industryId+',\''+industryName+'\')"/>');
+      $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+industryId+','+passStatus+')"/>');
+      $('.tbody-industry-list').append(clone);
       j = j + 1;
     }
-  $('#rowToClone').hide();
 }
 function displayAdd () {
   $("#error").text("");

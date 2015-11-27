@@ -103,8 +103,9 @@ function initMirror() {
         .fail(
             function (data) {
                 log(data);
-                if (failure_callback) 
+                if (failure_callback){ 
                     failure_callback(data);
+                }
             }
         );
     }
@@ -255,8 +256,100 @@ function initMirror() {
     }
 
     function getStatutoryNatureList(callerName, callback, failure_callback) {
-        var request = ["GetIStatutoryNatures", {}];
+        var request = ["GetStatutoryNatures", {}];
         apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    // Geography Levels 
+    function getGeographyLevels(callerName, callback, failure_callback) {
+        var request = ["GetGeographyLevels", {}];
+        apiRequest(callerName, request, callback, failure_callback);   
+    }
+
+    function saveAndUpdateGeographyLevels(callerName, countryId, levels, callback, failure_callback) {
+        if ((countryId == null) || (levels == null))
+            return null;
+        var request = [
+            "SaveGeographyLevel",
+            { 
+                "country_id" : countryId,
+                "levels" : levels
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    // Statutory Levels
+    function getStatutoryLevels(callerName, callback, failure_callback) {
+        var request = ["GetStatutoryLevels", {}];
+        apiRequest(callerName, request, callback, failure_callback);   
+    }
+
+    function saveAndUpdateStatutoryLevels(callerName, countryId, domainId, levels, callback, failure_callback) {
+        if ((countryId == null) || (domainId == null) || (levels == null))
+            return null;
+        var request = [
+            "SaveStatutoryLevel",
+            { 
+                "country_id" : countryId,
+                "domain_id" : domainId,
+                "levels" : levels
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    //Geographies
+    function getGeographies(callerName, callback, failure_callback) {
+        var request = ["GetGeographies", {}];
+        apiRequest(callerName, request, callback, failure_callback);   
+    }
+
+    function saveGeography(callerName, levelId, name, parentIds, callback, failure_callback) {
+        if ((levelId == null) || (name == null) || (parentIds == null))
+            return null;
+        var request = [
+            "SaveGeography",
+            { 
+                "geography_level_id": levelId,
+                "geography_name": name,
+                "parent_ids": parentIds
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function updateGeography(callerName, geographyId, levelId, name, parentIds, callback, failure_callback) {
+        if ((geographyId == null) || (levelId == null) || (name == null) || (parentIds == null))
+            return null;
+        var request = [
+            "UpdateGeography",
+            { 
+                "geography_id": geographyId,
+                "geography_level_id": levelId,
+                "geography_name": name,
+                "parent_ids": parentIds
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeGeographyStatus(callerName, geographyId, isActive, callback, failure_callback) {
+        if ((geographyId == null) || (isActive == null))
+            return null;
+        var request = [
+            "ChangeGeographyStatus",
+            { 
+                "geography_id": geographyId,
+                "is_active": isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function getGeographyReport(callerName, callback, failure_callback) {
+        var request = ["GeographyReport", {}];
+        apiRequest(callerName, request, callback, failure_callback);   
     }
 
     // Admin User Group Master
@@ -299,7 +392,7 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateAdminUserGroup(callerName, userGroupDetail, statutoryNatureName, callback, failure_callback) {
+    function updateAdminUserGroup(callerName, userGroupDetail, callback, failure_callback) {
         if (isNull(userGroupDetail))
             return null;
         else if (userGroupDetail.length != 4)
@@ -432,34 +525,47 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    // Client Master
+    // Client Group Master
 
-    function saveClient(callerName, callback, failure_callback) {
-       
+    function saveClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
+        var contractTo = parseInt(new Date(clientGroupDetails["contract_to"]).getTime(),10);
+        var contractFrom = parseInt(new Date(clientGroupDetails["contract_from"]).getTime(),10);
         var request = [
-            "SaveClient",
+            "SaveClientGroup",
             {
-                "group_company": {
-                    "client_id":0,
-                    "group_name":"TVS Groups"
-                },
-                "business_group": {},
-                "legal_entity": {},
-                "division": {},
-                "logo": "url",
-                "domain_ids": [1,2],
-                "username": "username",
-                "no_of_licence": 10,
-                "contract_from": "20/11/2016",
-                "contract_to": "19/11/2017",
-                "total_disk_space": 1.5,
-                "is_sms_subscribed": 1,
-                "country_wise_units": [
-                    {
-                        "country_id" : 1,
-                        "units" : [{},]
-                    },
-                ]
+                "group_name": clientGroupDetails["group_name"],
+                "country_ids": clientGroupDetails["country_ids"],
+                "domain_ids":clientGroupDetails["domain_ids"],
+                "logo" : clientGroupDetails["logo"],
+                "contract_from": contractFrom,
+                "contract_to": contractTo,
+                "incharge_persons": clientGroupDetails["incharge_persons"],
+                "no_of_user_licence": clientGroupDetails["no_of_user_licence"],
+                "file_space": clientGroupDetails["file_space"],
+                "is_sms_subscribed": clientGroupDetails["is_sms_subscribed"],
+                "email_id": clientGroupDetails["email_id"],
+                "date_configurations":dateConfigurations
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function getClientGroups(callerName, callback, failure_callback) {
+        
+        var request = [
+            "GetClientGroups",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changePassword(callerName, currentPassword, newPassword, callback, failure_callback) {
+        
+        var request = [
+            "ChangePassword",
+            {
+                "current_password": currentPassword,
+                "new_password": newPassword
             }
         ];
         apiRequest(callerName, request, callback, failure_callback);
@@ -496,6 +602,15 @@ function initMirror() {
         updateStatutoryNature: updateStatutoryNature,
         changeStatutoryNatureStatus: changeStatutoryNatureStatus,
         getStatutoryNatureList: getStatutoryNatureList,
+        getGeographyLevels: getGeographyLevels,
+        saveAndUpdateGeographyLevels: saveAndUpdateGeographyLevels,
+        getStatutoryLevels: getStatutoryLevels,
+        saveAndUpdateStatutoryLevels: saveAndUpdateStatutoryLevels,
+        getGeographies: getGeographies,
+        saveGeography: saveGeography,
+        updateGeography: updateGeography,
+        changeGeographyStatus: changeGeographyStatus,
+        getGeographyReport: getGeographyReport,
 
         saveAdminUserGroup: saveAdminUserGroup,
         updateAdminUserGroup: updateAdminUserGroup,
@@ -507,7 +622,10 @@ function initMirror() {
         changeAdminUserStatus: changeAdminUserStatus,
         getAdminUserList: getAdminUserList,
 
-        saveClient: saveClient
+        saveClientGroup: saveClientGroup,
+        getClientGroups: getClientGroups,
+
+        changePassword: changePassword
 
     }
 

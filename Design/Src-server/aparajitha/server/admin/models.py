@@ -44,13 +44,11 @@ class UserGroup() :
         return DatabaseHandler.instance().generateNewId(self.tblName, "user_group_id")
 
     def isDuplicate(self):
-        print "inside is duplicate"
         condition = "user_group_name ='"+self.userGroupName+\
                 "' AND user_group_id != '"+str(self.userGroupId)+"'"
         return DatabaseHandler.instance().isAlreadyExists(self.tblName, condition)
 
     def isIdInvalid(self):
-        print "inside isIdInvalid"
         condition = "user_group_id = '"+str(self.userGroupId)+"'"
         return not DatabaseHandler.instance().isAlreadyExists(self.tblName, condition)
 
@@ -111,8 +109,7 @@ class User(object) :
 
     def __init__(self, userId, emailId, userGroupId, employeeName, 
                 employeeCode, contactNo, address, designation, countryIds,
-                domainIds, isActive) :
-        print "inside user constructor"
+                domainIds, clientId,isActive) :
         self.userId =  userId if userId != None else self.generateNewUserId()
         self.emailId =  emailId
         self.userGroupId =  userGroupId
@@ -123,6 +120,7 @@ class User(object) :
         self.designation =  designation
         self.countryIds =  countryIds
         self.domainIds =  domainIds
+        self.clientId = clientId
         self.isActive = isActive if isActive != None else 1
 
     def verify(self) :
@@ -136,6 +134,7 @@ class User(object) :
         assertType(self.designation, StringType)
         assertType(self.countryIds, ListType)
         assertType(self.domainIds, ListType)
+        assertType(self.clientId, IntType)
         assertType(self.isActive, IntType)
 
     def toDetailedStructure(self) :
@@ -150,17 +149,17 @@ class User(object) :
             "designation": self.designation,
             "country_ids": self.countryIds,
             "domain_ids": self.domainIds,
+            "client_id": self.clientId,
             "is_active": self.isActive
         }
 
     def toStructure(self):
         return {
             "user_id": self.userId,
-            "employee_name": self.employeeName,
-            "employee_code": self.employeeCode
+            "employee_name": self.employeeCode+"-"+self.employeeName,
         }
 
-    @classmethod
+    @staticmethod
     def getDetailedList(self):
         userList = []
         columns = "user_id, is_active"
@@ -170,16 +169,17 @@ class User(object) :
             userId = row[0]
             isActive = row[1]
             subColumns = "email_id, user_group_id, employee_name, employee_code,"+\
-                                "contact_no, address, designation, country_ids,domain_ids"
+                                "contact_no, address, designation, country_ids,"+\
+                                "domain_ids,client_id"
             condition = " user_id ='"+str(userId)+"'"                                
             subRows = DatabaseHandler.instance().getData(User.detailTblName, subColumns, condition)
             for subRow in subRows:
                 user = User(userId,subRow[0], subRow[1],subRow[2], subRow[3],
-                     subRow[4], subRow[5], subRow[6], subRow[7], subRow[8],isActive)
+                     subRow[4], subRow[5], subRow[6], subRow[7], subRow[8], subRow[9],isActive)
                 userList.append(user.toDetailedStructure())
         return userList
 
-    @classmethod
+    @staticmethod
     def getList(self):
         userList = []
         columns = "user_id, employee_name, employee_code"
@@ -187,57 +187,62 @@ class User(object) :
 
         for row in rows:
             user = User(int(row[0]),None,None, row[1], row[2],
-                 None, None, None, None, None, None)
+                 None, None, None, None, None, None, None)
             userList.append(user.toStructure())
 
         return userList
-
 
     def generateNewUserId(self) :
         return DatabaseHandler.instance().generateNewId(self.mainTblName, "user_id")
 
     def isDuplicateEmail(self):
-        print "inside isDuplicateEmail"
         condition = "username ='"+self.emailId+\
                 "' AND user_id != '"+str(self.userId)+"'"
         return DatabaseHandler.instance().isAlreadyExists(self.mainTblName, condition)
 
     def isDuplicateEmployeeCode(self):
-        print "inside isDuplicateEmployeeCode"
         condition = "employee_code ='"+self.employeeCode+\
                 "' AND user_id != '"+str(self.userId)+"'"
         return DatabaseHandler.instance().isAlreadyExists(self.detailTblName, condition)
 
     def isDuplicateContactNo(self):
-        print "inside isDuplicateContactNo"
         condition = "contact_no ='"+self.contactNo+\
                 "' AND user_id != '"+str(self.userId)+"'"
         return DatabaseHandler.instance().isAlreadyExists(self.detailTblName, condition)
 
     def isIdInvalid(self):
-        print "inside isIdInvalid"
         condition = "user_id = '"+str(self.userId)+"'"
         return not DatabaseHandler.instance().isAlreadyExists(self.mainTblName, condition)
 
     def getFormType(self) :
         rows = DatabaseHandler.instance().getData(UserGroup.tblName, 
-                "form_type", "user_group_id='"+str(self.userGroupId)+"'")
+                    "form_type", "user_group_id='"+str(self.userGroupId)+"'")
         return rows[0][0]
 
-    def save(self, sessionUser):
-        print "Entered save user iin models"
+    def saveAdmin(self, sessionUser):
         currentTimeStamp = getCurrentTimeStamp()
-        mainTblColumns = "user_id, username, password, created_on,created_by, updated_on, updated_by"
-        mainTblValuesList = [ self.userId, self.emailId, generatePassword(), currentTimeStamp,sessionUser,
-                            currentTimeStamp,sessionUser]
 
+        mainTblColumns = "user_id, username, password, client_id, created_on,created_by, updated_on, updated_by"
+        mainTblValuesList = [ self.userId, self.emailId, generatePassword(), self.clientId, 
+                            currentTimeStamp,sessionUser,
+                            currentTimeStamp,sessionUser]
+        mainTblValues = listToString(mainTblValuesList)
+        return DatabaseHandler.instance().insert(self.mainTblName, mainTblColumns, mainTblValues)
+
+    def save(self, sessionUser):
+        currentTimeStamp = getCurrentTimeStamp()
+        mainTblColumns = "user_id, username, password, client_id,created_on,created_by, updated_on, updated_by"
+        mainTblValuesList = [self.userId, self.emailId, generatePassword(), self.clientId,
+                            currentTimeStamp,sessionUser,
+                            currentTimeStamp,sessionUser]
         detailTblcolumns = "user_id, email_id, user_group_id, form_type,employee_name, "+\
                             "employee_code, contact_no, address, designation, country_ids,"+\
                             " domain_ids, created_on, created_by, updated_on, updated_by"
         detailTblValuesList = [ self.userId, self.emailId, self.userGroupId, self.getFormType(),
                             self.employeeName, self.employeeCode, self.contactNo, self.address,
-                            self.designation, ",".join(self.countryIds), ",".join(self.domainIds),
-                            currentTimeStamp,sessionUser,currentTimeStamp,sessionUser]
+                            self.designation, ",".join(str(x) for x in self.countryIds), 
+                            ",".join(str(x) for x in self.domainIds), currentTimeStamp,sessionUser,
+                            currentTimeStamp,sessionUser]
 
         mainTblValues = listToString(mainTblValuesList)
         detailTblValues = listToString(detailTblValuesList)
@@ -249,7 +254,6 @@ class User(object) :
             return False
 
     def update(self, sessionUser):
-        print "inside user model update"
         currentTimeStamp = getCurrentTimeStamp()
         detailTblcolumns = [ "user_group_id", "form_type", "employee_name", "employee_code", 
                             "contact_no", "address", "designation", "country_ids", "domain_ids",
@@ -262,7 +266,6 @@ class User(object) :
                                                 detailTblValuesList, condition)
 
     def updateStatus(self, sessionUser):
-        print "inside user model update status"
         assertType(self.userId, IntType)
         assertType(self.isActive, IntType)
         columns = ["is_active", "updated_on" , "updated_by"]

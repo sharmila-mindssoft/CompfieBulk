@@ -142,6 +142,13 @@ Note :
         }
     ]
 
+    On Success
+
+    [
+        "ChangePasswordSuccess",
+        {}
+    ]
+
     Possible Errors
 
     [
@@ -666,7 +673,7 @@ Note :
 	    "SaveGeographyLevel",
 	    { 
 	      	"country_id": COUNTRY_ID,
-	      	"Levels":[
+	      	"levels":[
           		{
 	                "level_position": LEVEL_POSITION,
 	                "level_name": String
@@ -1045,7 +1052,24 @@ Note :
         	"geographies":{
           		COUNTRY_ID : [Geography,],
         	},
-        	"statutory_mappings": [StatutoryMapping,]
+        	"statutory_mappings": {
+              STATUTORY_MAPPING_ID:{
+                "country_id": COUNTRY_ID,
+                "country_name": String,
+                "domain_id": DOMAIN_ID,
+                "domain_name": String,
+                "industry_ids": [INDUSTRY_ID,],
+                "industry_names":[String,],
+                "statutory_nature_id": STATUTORY_NATURE_ID,
+                "statutory_nature_name":String,
+                "statutory_ids": [ STATUTORY_ID,],
+                "statutory_mappings":[String,],
+                "compliances":[Compliance,],
+                "compliance_names":[DOUCMENT_NAME-COMPLIANCE_TASK_NAME,]
+                "geographies":[ GEOGRAPHY_ID,],
+                "approval_status": APPROVAL_STATUS      
+            }, 
+          }
       	}
     ]
 
@@ -1314,6 +1338,7 @@ Note :
             "no_of_user_licence": int,
             "file_space": float,
             "is_sms_subscribed": Boolean,
+            "email_id": String,
             "date_configurations":[ClientConfiguration,]
         }
     ]

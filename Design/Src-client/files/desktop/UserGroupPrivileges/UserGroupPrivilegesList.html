@@ -1,5 +1,15 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+<style type="text/css">
+.formHeading{
+  font-weight: bold;
+  text-transform: capitalize;
+}
+.formName
+{
+ text-transform: capitalize; 
+}
+</style>
 <div class="content-container width50" id="userGroupView">
   <div class="content-area">
     <h1>User Group</h1>
@@ -48,6 +58,7 @@
           <div class="single-column-field-label">Group Name:<span class="mandatory">*</span></div>
           <div class="single-column-field-input">
             <input type="text" class="input-box" name="groupName" id="groupName">
+            <input type="hidden" name="groupId" id="groupId" value="">
           </div>
         </div>
       </div>
@@ -56,8 +67,8 @@
           <div class="single-column-field-label">Category Name:<span class="mandatory">*</span></div>
           <div class="single-column-field-input">
             <select class="input-box" id="categoryName" name="categoryName">
-              <option value="Knowledge">Knowledge Team </option>
-              <option value="Techno">Techno Functional Team</option>
+              <option value="knowledge">Knowledge Team </option>
+              <option value="techno">Techno Functional Team</option>
             </select>
           </div>
         </div>
@@ -66,127 +77,29 @@
         <input type="submit" name="cancel" value="Show" class="btn-submit" id="btnUserGroupShow">
       </div>
       <div class="clearfix"></div>
+      <div id="formList">
       <div class="grid-table" style="overflow-y:scroll; height:240px;">
         <table>
           <tr align="left">
             <th><input type="checkbox"></th>
             <th>Form Name</th>
           </tr>
-          <tbody id="tableUserGroupList">
-          <tr id="tableRow">
-            <td><input type="checkbox"></td>
-            <td>Domain Master</td>
+          <tbody id="tableFormList">
+          <tr id="tableRowFormList">
+            <td width="20%"></td>
+            <td width="80%"></td>
           </tr>
           </tbody>
-          <!-- 
-          <tr><td colspan="2" style="font-weight:bold;"><b>Master</b></td></tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Domain Master</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Country Master</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Statutory Level Master</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox" checked="checked"></td>
-            <td>Statutory Master</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Statutory Nature Master</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox" checked="checked"></td>
-            <td>Industry Master</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox" checked="checked"></td>
-            <td>Geography Level Master</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Geography Master</td>
-          </tr>
-          <tr><td colspan="2" style="font-weight:bold;"><b>Transactions</b></td></tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Statutory Mapping</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Approve Statutory Mapping</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Client Master</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Assign Keycontact</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Assign Statutory</td>
-          </tr>
-          <tr><td colspan="2" style="font-weight:bold;" ><b>Reports</b></td></tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Client Report</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Compliance Tasks Report</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Audit Trail</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Service Provider Master</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>User Privilages</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>User Creation - Client</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Assign Userlevel</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Assign Compliance Task</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Reassign Compliance Task</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Compliance Task Approval</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>Compliance Task Details</td>
-          </tr> -->
+        
         </table>
       </div>
       <div class="submit-button-container">
-
         <br>
         <input type="reset" name="cancel" value="Cancel" class="btn-cancel" id="btnUserGroupCancel" >
         &nbsp;&nbsp;
-        <input type="submit" name="submit" value="Submit" class="btn-submit">
+        <input type="submit" name="submit" value="Submit" class="btn-submit" id="btnUserGroupSubmit">
       </div>
+      </div><!-- End Form List -->
     </div>
   </div>
 </div>

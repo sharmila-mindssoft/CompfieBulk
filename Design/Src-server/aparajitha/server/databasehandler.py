@@ -98,6 +98,15 @@ class DatabaseHandler(object) :
             " VALUES ("+values+")"
         return self.execute(query)
 
+    def bulkInsert(self, table, columns, valueList) :
+        query = "INSERT INTO "+table+" ("+columns+")" + \
+            " VALUES "
+
+        for value in valueList:
+            query += value
+
+        return self.execute(query)
+
     def update(self, table, columns, values, condition) :
         query = "UPDATE "+table+" set "
         for index,column in enumerate(columns):
@@ -109,6 +118,17 @@ class DatabaseHandler(object) :
         query += " WHERE "+condition
 
         return self.execute(query)
+
+    def append(self, table, column, value, condition):
+        rows = self.getData(table, column, condition)
+        currentValue = rows[0][0]
+        if currentValue != None:
+            newValue = currentValue+","+str(value)
+        else:
+            newValue = str(value)
+        columns = [column]
+        values = [newValue]
+        return self.update(table, columns, values, condition)
 
     def generateNewId(self, table, column):
         query = "SELECT max("+column+") FROM "+table
@@ -128,7 +148,7 @@ class DatabaseHandler(object) :
             return False
 
     def getData(self, table, columns, condition):
-        query = "SELECT "+columns+" FROM "+table+" WHERE "+condition
+        query = "SELECT "+columns+" FROM "+table+" WHERE "+condition 
         return self.executeAndReturn(query)
 
     def validateSessionToken(self, sessionToken) :

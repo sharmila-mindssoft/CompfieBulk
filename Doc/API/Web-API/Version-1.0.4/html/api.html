@@ -1014,7 +1014,7 @@ body .markdown-body
     page-break-after: avoid;
   }
 }
-</style><title>Aparajitha API Document Version 1.0.4</title></head><body><article class="markdown-body"><h1> MIRROR - API Document </h1>
+</style><title>AparajithaAPIDocumentVersion1.0.4</title></head><body><article class="markdown-body"><h1> MIRROR - API Document </h1>
 
 <div class="toc">
 <ul>
@@ -1361,6 +1361,13 @@ Note : All Requests will be in the above format
         "current_password": String,
         "new_password": String  
     }
+]
+
+On Success
+
+[
+    "ChangePasswordSuccess",
+    {}
 ]
 
 Possible Errors
@@ -1857,7 +1864,7 @@ On Success
     "SaveGeographyLevel",
     { 
         "country_id": COUNTRY_ID,
-        "Levels":[
+        "levels":[
             {
                 "level_position": LEVEL_POSITION,
                 "level_name": String
@@ -2212,7 +2219,24 @@ On Success
         "geographies":{
             COUNTRY_ID : [Geography,],
         },
-        "statutory_mappings": [StatutoryMapping,]
+        "statutory_mappings": {
+          STATUTORY_MAPPING_ID:{
+            "country_id": COUNTRY_ID,
+            "country_name": String,
+            "domain_id": DOMAIN_ID,
+            "domain_name": String,
+            "industry_ids": [INDUSTRY_ID,],
+            "industry_names":[String,],
+            "statutory_nature_id": STATUTORY_NATURE_ID,
+            "statutory_nature_name":String,
+            "statutory_ids": [ STATUTORY_ID,],
+            "statutory_mappings":[String,],
+            "compliances":[Compliance,],
+            "compliance_names":[DOUCMENT_NAME-COMPLIANCE_TASK_NAME,]
+            "geographies":[ GEOGRAPHY_ID,],
+            "approval_status": APPROVAL_STATUS      
+        }, 
+      }
     }
 ]
 </code></pre>
@@ -2463,6 +2487,7 @@ On Success
         "no_of_user_licence": int,
         "file_space": float,
         "is_sms_subscribed": Boolean,
+        "email_id": String,
         "date_configurations":[ClientConfiguration,]
     }
 ]
