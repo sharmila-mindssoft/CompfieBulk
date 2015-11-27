@@ -528,7 +528,6 @@ function initMirror() {
     // Client Group Master
 
     function saveClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
-        
         var request = [
             "SaveClientGroup",
             {
@@ -550,9 +549,9 @@ function initMirror() {
     }
 
     function updateClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
-        
+
         var request = [
-            "updateClientGroup",
+            "UpdateClientGroup",
             {
                 "client_id": clientGroupDetails["client_id"],
                 "group_name": clientGroupDetails["group_name"],
@@ -638,6 +637,16 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function getClients(callerName, callback, failure_callback) {
+        
+        var request = [
+            "GetClients",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+
     return {
         log: log,
         toJSON: toJSON,
@@ -697,7 +706,9 @@ function initMirror() {
         changePassword: changePassword,
         forgotPassword: forgotPassword,
         validateResetToken: validateResetToken,
-        resetPassword: resetPassword
+        resetPassword: resetPassword,
+
+        getClients: getClients
     }
 
 }
