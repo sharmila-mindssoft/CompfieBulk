@@ -162,6 +162,10 @@ class DatabaseHandler(object) :
         row = rows[0]
         return row[0]
 
+    def truncate(self, table):
+        query = "TRUNCATE TABLE  %s;" % table
+        return self.execute(query)
+
     @staticmethod
     def instance() :
         global _databaseHandlerInstance

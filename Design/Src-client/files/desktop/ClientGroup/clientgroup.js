@@ -118,7 +118,7 @@ $("#btn-clientgroup-submit").click(function(){
 	else if(inchargePersonVal==''){
 		$(".error-message").html('Incharge Person Required');
 	}
-	else if(countryIdValue==''){		
+	else if($('#clientgroup-id'),val()==''){		
 		function success(status, data){
 			if(status == 'success') {
 		    	$("#clientgroup-add").hide();
@@ -134,6 +134,7 @@ $("#btn-clientgroup-submit").click(function(){
 		}
 		var clientGroupDetails=[clientGroupNameVal,countriesVal,domainsVal, uploadLogoVal, contractFromVal, contractToVal, inchargePersonVal,licenceVal, fileSpaceVal, subscribeSmsVal, usernameVal ]
 		var dateConfigurations=[];
+
 		mirror.saveClientGroup("TechnoAPI", clientGroupDetails, dateConfigurations,success, failure);
 	}
 });
