@@ -1,5 +1,6 @@
 import datetime
 import MySQLdb as mysql
+from types import *
 
 
 __all__ = [
@@ -332,12 +333,12 @@ class DatabaseHandler(object) :
 
     def getStatutoryLevels(self) :
         query = "SELECT level_id, level_position, level_name, country_id, domain_id \
-            FROM tbl_statutory_levels"
+            FROM tbl_statutory_levels ORDER BY level_position"
         return self.dataSelect(query)
 
     def getStatutoryLevelsByID(self, countryId, domainId) :
         query = "SELECT level_id, level_position, level_name \
-            FROM tbl_statutory_levels WHERE country_id = %s and domain_id = %s" % (
+            FROM tbl_statutory_levels WHERE country_id = %s and domain_id = %s ORDER BY level_position" % (
                 countryId, domainId
             )
         return self.dataSelect(query)
@@ -363,12 +364,12 @@ class DatabaseHandler(object) :
 
     def getGeographyLevels(self) :
         query = "SELECT level_id, level_position, level_name, country_id \
-            FROM tbl_geography_levels"
+            FROM tbl_geography_levels ORDER BY level_position"
         return self.dataSelect(query)
 
     def getGeographyLevelsByCountry(self, countryId) :
         query = "SELECT level_id, level_position, level_name \
-            FROM tbl_geography_levels WHERE country_id = %s" % countryId
+            FROM tbl_geography_levels WHERE country_id = %s ORDER BY level_position" % countryId
         return self.dataSelect(query)
 
     def saveGeographyLevel(self, countryId, levelId, levelName, levelPosition, userId) :
@@ -426,6 +427,7 @@ class DatabaseHandler(object) :
             isActive, updatedBy, geographyId
         )
         return self.dataInsertUpdate(query)
+
 
     @staticmethod
     def instance() :
