@@ -1,1 +1,1 @@
-{"6": "mirror_ClientTestGroup6_6", "1": "mirror_ClientTestGroup1_1", "3": "mirror_ClientTestGroup3_3", "2": "mirror_ClientTestGroup2_2", "5": "mirror_ClientTestGroup5_5", "4": "mirror_ClientTestGroup4_4"}
+{"1": "mirror_ClientTestGroup1_1", "3": "mirror_ClientTestGroup3_3", "2": "mirror_ClientTestGroup2_2"}

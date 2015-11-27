@@ -265,7 +265,6 @@ class CountryList(object) :
 
     def processData(self) :
         _countries = DatabaseHandler.instance().getCountries()
-        print _countries
         for row in _countries :
             country = Country(int(row[0]), row[1], row[2])
             self.countryList.append(country.toStructure())
@@ -878,7 +877,7 @@ class Geography(object) :
         assertType(self.geographyId, IntType)
         assertType(self.name, StringType)
         assertType(self.levelId, IntType)
-        assertType(self.parentIds, ListType)
+        assertType(self.parentIds, IntType)
         assertType(self.isActive, IntType)
 
     def toStructure(self) :
@@ -886,7 +885,7 @@ class Geography(object) :
             "geography_id": self.geographyId,
             "geography_name": self.name,
             "level_id": self.levelId,
-            "parent_ids": self.parentIds,
+            "parent_id": self.parentIds,
             "is_active": self.isActive
         }
 
@@ -907,7 +906,7 @@ class GeographyAPI(object) :
         _geographyList = DH.instance().getGeographies()
         for row in _geographyList :
             parentIds = [int(x) for x in row[3].split(',')]
-            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds, int(row[4]))
+            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds[-1], int(row[4]))
             countryId = int(row[5])
             _list = self.geographies.get(countryId)
             if _list is None :

@@ -34,6 +34,7 @@ class ClientDatabaseHandler(object) :
             else:
                 continue
 
+
     def execute(self, query):
         con = None
         cursor = None
@@ -74,7 +75,7 @@ class ClientDatabaseHandler(object) :
                 cursor.close()
             if con is not None :
                 con.close()
-
+            
         return result
 
     def insert(self, table, columns, values) :
@@ -133,9 +134,11 @@ class ClientDatabaseHandler(object) :
         row = rows[0]
         return row[0]
 
+
     @staticmethod
     def instance(databaseName) :
         global _databaseHandlerInstance
+        _databaseHandlerInstance = None 
         if _databaseHandlerInstance is None :
             _databaseHandlerInstance = ClientDatabaseHandler(databaseName)
         return _databaseHandlerInstance

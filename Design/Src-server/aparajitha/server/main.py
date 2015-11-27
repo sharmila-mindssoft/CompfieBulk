@@ -339,6 +339,8 @@ TEMPLATE_PATHS = [
             None, {}),
     ("/forgotpassword", "files/desktop/ForgotPassword/ForgotPassword.html",
             None, {}),
+    ("/resetpassword", "files/desktop/ForgotPassword/resetpassword.html",
+            None, {}),
     ("/subtasklist", "files/desktop/SubTaskList/SubTaskList.html",
             None, {}),
     ("/dataarchive-client", "files/desktop/DataArchive-Client/DataArchive-Client.html",
