@@ -1,0 +1,61 @@
+USE `mirror_knowledge`;
+
+-- DELETE FROM tbl_forms;
+INSERT INTO tbl_forms VALUES(1, 'User Group Master', '/user-group-master', 1, 'master', 'it', 0, null);
+INSERT INTO tbl_forms VALUES(2, 'User Master', '/user-master', 2, 'master', 'it', 0, null);
+INSERT INTO tbl_forms VALUES(3, 'Country Master', '/country-master', 3, 'master', 'it', 0, null);
+INSERT INTO tbl_forms VALUES(4, 'Domain Master', '/domain-master', 4, 'master', 'it', 0, null);
+INSERT INTO tbl_forms VALUES(5, 'Industry Master', 'industry-master', 5, 'master', 'knowledge', 0, null);
+INSERT INTO tbl_forms VALUES(6, 'Geography Levels Master - Geography', 'geography-levels-master', 6, 'master', 'knowledge', 0, 'Geography');
+INSERT INTO tbl_forms VALUES(7, 'Geography Master - Geography', 'geography-master', 7, 'master', 'knowledge', 0, 'Geography');
+INSERT INTO tbl_forms VALUES(8, 'Statutory Nature Master', 'statutory-nature-master', 8, 'master', 'knowledge', 0, 'Statutory');
+INSERT INTO tbl_forms VALUES(9, 'Statutory Levels Master', 'statutory-levels-master', 9, 'master', 'knowledge', 0, 'Statutory');
+INSERT INTO tbl_forms VALUES(10, 'Client Master', 'client-master', 10, 'master', 'techno', 0, null);
+INSERT INTO tbl_forms VALUES(11, 'Client Unit Creation', 'client-unit-creation', 11, 'master', 'techno', 0, null);
+INSERT INTO tbl_forms VALUES(12, 'Client Profile', 'client-profile', 12, 'master', 'techno', 0, null);
+INSERT INTO tbl_forms VALUES(13, 'Service Provider', 'service-provider', 13, 'master', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(14, 'User Privilege', 'user-privilege', 14, 'master', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(15, 'User', 'user', 15, 'master', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(16, 'Unit Closure', 'unit-closure', 16, 'master', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(17, 'Statutory Mapping', 'statutory-mapping', 17, 'transaction', 'knowledge', 0, null);
+INSERT INTO tbl_forms VALUES(18, 'Approve Statutory Mapping', 'approve-statutory-mapping', 18, 'transaction', 'knowledge', 0, null);
+INSERT INTO tbl_forms VALUES(19, 'Assign Statutory', 'assign-statutory', 19, 'transaction', 'techno', 0, null);
+INSERT INTO tbl_forms VALUES(20, 'Statutory Settings', 'statutory-settings', 20, 'transaction', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(21, 'Assign Compliance', 'assign-compliance', 21, 'transaction', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(22, 'Reassign Compliance', 'reassign-compliance', 22, 'transaction', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(23, 'Compliance Approval', 'compliance-approval', 23, 'transaction', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(24, 'Completed Tasks - Current Year', 'completed-tasks-current-year', 24, 'transaction', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(25, 'Statutory Mapping Report', 'statutory-mapping-report', 25, 'report', 'knowledge', 0, null);
+INSERT INTO tbl_forms VALUES(26, 'Country Report', 'country-report', 26, 'report', 'knowledge', 0, 'Master');
+INSERT INTO tbl_forms VALUES(27, 'Domain Report', 'domain-report', 27, 'report', 'knowledge', 0, 'Master');
+INSERT INTO tbl_forms VALUES(28, 'Geography Report', 'geography-report', 28, 'report', 'knowledge', 0, 'Master');
+INSERT INTO tbl_forms VALUES(29, 'Industry Report', 'industry-report', 29, 'report', 'knowledge', 0, 'Master');
+INSERT INTO tbl_forms VALUES(30, 'Statutory Nature Report', 'statutory-nature-report', 30, 'report', 'knowledge', 0, 'Master');
+INSERT INTO tbl_forms VALUES(31, 'Client Details Report', 'client-details-report', 31, 'report', 'techno', 0, null);
+INSERT INTO tbl_forms VALUES(32, 'Assigned Statutory', 'assigned-statutory', 32, 'report', 'techno', 0, null);
+INSERT INTO tbl_forms VALUES(33, 'Compliance Task List', 'compliance-task-list', 33, 'report', 'techno', 0, null);
+INSERT INTO tbl_forms VALUES(34, 'Statutory Notifications List', 'statutory-notifications-list', 34, 'report', 'techno', 0, null);
+INSERT INTO tbl_forms VALUES(35, 'Charts', 'charts', 35, 'report', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(36, 'Compliance Details', 'compliance-details', 36, 'report', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(37, 'Risk Report', 'risk-report', 37, 'report', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(38, 'Service Provider wise Compliance', 'service-provider-wise-compliance', 38, 'report', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(39, 'Assignee wise Compliance', 'assignee-wise-compliance', 39, 'report', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(40, 'Unit wise Compliance', 'unit-wise-compliance', 40, 'report', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(41, 'Compliance Task Applicability Status', 'compliance-task-applicability-status', 41, 'report', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(42, 'Unit Details', 'unit-details', 42, 'report', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(43, 'Compliance Activity Report', 'compliance-activity-report', 43, 'report', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(44, 'Reassigned History', 'reassigned-history', 44, 'report', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(45, 'Statutory Notifications List', 'statutory-notifications-list', 45, 'report', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(46, 'Login Trace', 'login-trace', 46, 'report', 'client', 0, null);
+INSERT INTO tbl_forms VALUES(47, 'Settings', 'settings', 47, 'report', 'client', 1, null);
+INSERT INTO tbl_forms VALUES(48, 'Audit Trail', 'audit-trail', 48, 'report', 'common', 1, null);
+
+
+-- DELETE FROM tbl_users;
+INSERT INTO tbl_users VALUES(1, "admin@compliance-mirror.com", "aparajitha_123_admin", null, 1, null, 1448455226, null, 1448455226);
+
+-- DELETE FROM tbl_user_groups;
+INSERT INTO tbl_user_groups VALUES(1, "Administrator", "it", "1,2,3,4", 1, null, 1448455226, null, 1448455226);
+
+-- DELETE FROM tbl_user_details;
+INSERT INTO tbl_user_details VALUES(1, "admin@compliance-mirror.com", 1, "it", "Administrator", "", null, null, null, null, null, null, 1, 1, null, 1448455226, null, 1448455226);
