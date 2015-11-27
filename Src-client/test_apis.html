@@ -1,0 +1,63 @@
+<html>
+	<head>
+		<script type="text/javascript" src="/files/desktop/common/js/jquery.min.js"></script>
+		<script type="text/javascript">
+			var API_URL = "/api/test-knowledge";
+			function toJSON(data) {
+				return JSON.stringify(data, null, "  ");
+			}
+			function apiRequest(request, callback, failure_callback) {
+				var sessionId = null;
+				if (sessionId === null)
+					sessionId = "";
+				var requestFrame = {
+					"session_id": sessionId,
+					"request": request
+				};
+
+				jQuery.post(
+					API_URL,
+					toJSON({"data": requestFrame}),
+					function (data) {
+						console.log(data);
+						var data = data["data"];
+						var status = data[0];
+						var response = data[1];
+						console.log("API Status: " + status);
+						if (callback) {
+							callback(status, response);
+						}
+					}
+				)
+				.fail(
+					function (data) {
+						console.log(data);
+						if (failure_callback)
+							failure_callback(data.statusText);
+					}
+				);
+			}
+			function test_api () {
+				var requestData = ["Login", {
+					username: "admin@compliance-mirror.com",
+					password: "aparajitha_123_admin"
+				}];
+				apiRequest(requestData, function (status, response) {
+					console.log(status, response);
+					alert(status);
+				}, function (data) {
+					console.log(data);
+					// alert("Failure");
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Testing APIs</h1>
+		<div>
+			<button onclick="test_api()">Test API</button>
+		</div>
+		<br>
+		<br>
+	</body>
+</html>
