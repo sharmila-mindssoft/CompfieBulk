@@ -688,18 +688,19 @@ class UpdateClientGroup(object):
             print "Error : Incharge Persons not exists for client id %d " % self.clientId
 
 
+
     def getDatabaseName(self):
         if self.clientDBName == None:
             self.clientDBName = getClientDatabase(self.clientId)
         return self.clientDBName
 
     def updateGroupCompany(self):
-
         oldInchargePersons = self.getOldInchargePersons()
         
         existingInchargePersons = []
         newInchargePersons = []
         removedInchargePersons = []
+
         for inchargePerson in self.inchargePersons:
             if inchargePerson in oldInchargePersons:
                 existingInchargePersons.append(inchargePerson)
@@ -796,6 +797,7 @@ class UpdateClientGroup(object):
             isActive = row[2]
             valuesTuple = (domainId, doaminName, isActive)
             valuesList.append(valuesTuple)
+
         updateColumns = ["domain_name"]
         return ClientDatabaseHandler.instance(
                         self.getDatabaseName()).onDuplicateKeyUpdate(
@@ -813,6 +815,7 @@ class UpdateClientGroup(object):
             valuesTuple = (countryId, domainId, peroidFrom, perodTo, 
                 getCurrentTimeStamp(), int(self.sessionUser))
             valuesList.append(valuesTuple)
+
         updateColums = ["period_from", "period_to"]
         return ClientDatabaseHandler.instance(
                             self.getDatabaseName()).onDuplicateKeyUpdate(
@@ -838,12 +841,15 @@ class UpdateClientGroup(object):
         
         return userId
 
+
     def updateClientAdminUserDetails(self):
         columnsList = [  "country_ids", "domain_ids", "updated_by", "updated_on"]
         valuesList = [ ",".join(str(x) for x in self.countryIds), 
                     ",".join(str(x) for x in self.domainIds),1,0, 
                     self.sessionUser, getCurrentTimeStamp()]
+
         condition = "user_id= '%d'" % self.getClientAdminUserId()
+
         return ClientDatabaseHandler.instance(
                         self.getDatabaseName()).update( 
                         self.clientUserDetailsTblName, columnsList, valuesList, condition)   

@@ -107,7 +107,7 @@ class ClientDatabaseHandler(object) :
         return self.execute(query)
 
     def onDuplicateKeyUpdate(self, table, columns, valueList, updateColumnsList):
-        query="INSERT INTO %s (%s) VALUES " % (table, columns)
+        query = "INSERT INTO %s (%s) VALUES " % (table, columns)
 
         for index, value in enumerate(valueList):
             if index < len(valueList)-1:

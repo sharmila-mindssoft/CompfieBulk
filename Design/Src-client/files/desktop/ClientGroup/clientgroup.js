@@ -6,8 +6,8 @@ $(".btn-clientgroup-add").click(function(){
 	$("#clientgroup-add").show();
 	$("#clientgroup-view").hide();
 	$("#clientgroup-name").val('');
-  $("#clientgroup-id").val('');
-  $(".error-message").html('');
+  	$("#clientgroup-id").val('');
+ 	$(".error-message").html('');
   function success(status, data){
   	userList = data["users"];
 		domainsList = data["domains"];
@@ -18,15 +18,15 @@ $(".btn-clientgroup-add").click(function(){
   }
   mirror.getClientGroups("TechnoAPI", success, failure);
 });
-$(".btn-clientgroup-cancel").click(function(){
+$("#btn-clientgroup-cancel").click(function(){
 	$("#clientgroup-add").hide();
 	$("#clientgroup-view").show();
 });
-function initialize(){
+function initialize(){	
 	function success(status, data){
 		loadClientGroupList(data['client_list']);
 	}
-	function failure(status, data){
+	function failure(status, data){	
 	}
 	mirror.getClientGroups("TechnoAPI", success, failure);
 }
@@ -64,18 +64,21 @@ function loadClientGroupList(clientGroupList){
 $("#btn-clientgroup-submit").click(function(){
 	var clientGroupIdVal = $("#clientgroup-id").val();
 	var clientGroupNameVal = $("#clientgroup-name").val();
-	var countriesVal = $("#countries").val();
-	var domainsVal = $("#domains").val();
+	var countriesVal = $("#country").val();
+	var domainsVal = $("#domain").val();
 	var contractFromVal = $("#contract-from").val();
 	var contractToVal = $("#contract-to").val();
 	var usernameVal = $("#username").val();
 	var uploadLogoVal = $("#upload-logo").val();
 	var licenceVal = $("#no-of-user-licence").val();
 	var fileSpaceVal = $("#file-space").val();
-	var subscribeSmsVal = $("#subscribe-sms").val();
-	var inchargePersonVal = $("#incharge-person").val();
-
-	
+	//var subscribeSmsVal = $("#subscribe-sms").val();
+	var inchargePersonVal = $("#users").val();
+	if ($('#subscribe-sms').is(":checked")){
+	 var subscribeSmsVal=1;	 
+	}
+	else{ var subscribeSmsVal=0; }
+	console.log("enter")
 	if(clientGroupNameVal==''){
 		$(".error-message").html('Group Required');
 	}
@@ -103,7 +106,7 @@ $("#btn-clientgroup-submit").click(function(){
 	else if(licenceVal==''){
 		$(".error-message").html('No. Of User Licence Required');
 	}
-	else if(validateDigit(licenceVal)){
+	else if(isNaN(licenceVal)){
 		$(".error-message").html('Invalid No. Of User Licence');
 	}
 	else if(fileSpaceVal==''){
@@ -115,7 +118,7 @@ $("#btn-clientgroup-submit").click(function(){
 	else if(inchargePersonVal==''){
 		$(".error-message").html('Incharge Person Required');
 	}
-	else if(countryIdValue==''){		
+	else if($('#clientgroup-id'),val()==''){		
 		function success(status, data){
 			if(status == 'success') {
 		    	$("#clientgroup-add").hide();
@@ -129,15 +132,12 @@ $("#btn-clientgroup-submit").click(function(){
 		function failure(status, data){
 			$(".error-message").html(status);
 		}
+		var clientGroupDetails=[clientGroupNameVal,countriesVal,domainsVal, uploadLogoVal, contractFromVal, contractToVal, inchargePersonVal,licenceVal, fileSpaceVal, subscribeSmsVal, usernameVal ]
+		var dateConfigurations=[];
+
 		mirror.saveClientGroup("TechnoAPI", clientGroupDetails, dateConfigurations,success, failure);
 	}
 });
-function validateDigit($numb) {
-  if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
-    $(".error-message").html("Invaild Number");
-    return false;
-  }
-}
 function validateEmail($email) {
   var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
   return emailReg.test( $email );
@@ -220,7 +220,7 @@ function activate(element, domainId, domainName){
 	});
 	$("#domainselected").val(totalcount+" Selected");
 	$("#domain").val(selids);
-	dateconfigdomains(domainId, domainName);
+	dateconfig();
 }
 
 function loadautocountry () {
@@ -243,9 +243,9 @@ function loadautocountry () {
 		var countryName=countries[i]["country_name"];
 		
 		if(selectcountrystatus == 'checked'){	
-			str += '<li id="'+countryId+'" class="active_selectbox_country" onclick="activatecountry(this,countryId,'+countryName+')" >'+countryName+'</li> ';
+			str += '<li id="'+countryId+'" class="active_selectbox_country" onclick="activateCountry(this,countryId,'+countryName+')" >'+countryName+'</li> ';
 		}else{
-			str += '<li id="'+countryId+'" onclick="activatecountry(this,\''+countryId+'\',\''+countryName+'\')" >'+countryName+'</li> ';
+			str += '<li id="'+countryId+'" onclick="activateCountry(this,\''+countryId+'\',\''+countryName+'\')" >'+countryName+'</li> ';
 		}
 	}
   $('#ulist-country').append(str);
@@ -253,7 +253,7 @@ function loadautocountry () {
   
 }
 //check & uncheck process
-function activatecountry(element, countryId, countryName){
+function activateCountry(element, countryId, countryName){
   var chkstatus = $(element).attr('class');
   if(chkstatus == 'active_selectbox_country'){
 	 	$(element).removeClass("active_selectbox_country");
@@ -274,14 +274,37 @@ function activatecountry(element, countryId, countryName){
 	$("#country").val(selids);
 	//Add date configuration
 //	$('.tbody-dateconfiguration-list').empty();
-  dateconfigcountries(countryId,countryName);
+  	dateconfig();
 }
-function dateconfigcountries(countryId, countryName){
-  var tableRow=$('#templates .table-dconfig-countries-list .table-dconfig-countries-row');
-	var clone=tableRow.clone();
-	$('.country-name', clone).text(countryName);
-	$('.tbody-dateconfiguration-list').append(clone);
-	$('.country-name').addClass("heading");
+function dateconfig(){
+	$('.tbody-dateconfiguration-list').empty();
+	var countriesList=$('#country').val();
+	var domainsList=$('#domain').val();
+	//console.log(countriesList+"==="+domainsList);
+	if(countriesList!='' && domainsList!=''){
+		if(countriesList!=''){ 
+			var arrayCountries=countriesList.split(",");
+			if(domainsList!=''){
+				var arrayDomains=domainsList.split(",");
+			}
+			for(var ccount=0;ccount < arrayCountries.length; ccount++){
+				var tableRow=$('#templates .table-dconfig-list .table-dconfig-countries-row');
+				var clone=tableRow.clone();
+				$('.country-name', clone).text(arrayCountries[ccount]);
+				$('.country-name', clone).addClass("heading");
+				$('.tbody-dateconfiguration-list').append(clone);
+
+				for(var dcount=0;dcount < arrayDomains.length; dcount++){
+					var tableRowDomains=$('#templates .table-dconfig-list .table-dconfig-domain-row');
+					var clone1=tableRowDomains.clone();
+					$('.domain-name', clone1).text(arrayDomains[dcount]);
+					$('tl-from').addClass(arrayDomains[dcount].toString());
+					$('tl-to').addClass("-month"+arrayDomains[dcount].toString());
+					$('.tbody-dateconfiguration-list').append(clone1);
+				}
+			}
+		}
+	}
 }
 function dateconfigdomains(domainId, domainName){
 	console.log(domainId+"-------"+domainName);
