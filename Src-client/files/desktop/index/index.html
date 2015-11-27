@@ -26,8 +26,8 @@
     		clientGroupDetails = {}
         clientGroupDetails["client_id"] = 3;
         clientGroupDetails["group_name"] = "Client Test Group 18";
-        clientGroupDetails["country_ids"] = [1];
-        clientGroupDetails["domain_ids"] = [1];
+        clientGroupDetails["country_ids"] = [1,2];
+        clientGroupDetails["domain_ids"] = [1,2];
         clientGroupDetails["logo"] = "logo.png";
         clientGroupDetails["contract_from"] = "25-Jun-2016";
         clientGroupDetails["contract_to"] = "24-Jun-2017";
@@ -47,6 +47,8 @@
         dateConfigurations.push(configuration1)
 
         mirror.updateClientGroup("TechnoAPI", clientGroupDetails, dateConfigurations,success, failure);
+
+      // mirror.getClientGroups("TechnoAPI", success, failure)
 	});
 </script>
 </html>

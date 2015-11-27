@@ -146,7 +146,7 @@ class GroupCompany(object):
             settingsDataList = [countryIds, domainIds, logo, contractFrom, contractTo, noOfUserLicence,
         fileSpace, isSmsSubscribed]
         except:
-            print "Settings Not exists for client %d" % clientId
+            print "Error :Settings Not exists for client %d" % clientId
 
         return settingsDataList    
 
@@ -411,17 +411,17 @@ class SaveClientGroup(object) :
                             if self.saveClientAdminUserDetails():
                                 self.response = "SaveClientGroupSuccess"
                             else:
-                                print "Saving Client admin user details failed"
+                                print "Error : Saving Client admin user details failed"
                         else:
-                            print "Saving date configurations Failed"
+                            print "Error : Saving date configurations Failed"
                     else:
-                        print "Copying Data Failed"
+                        print "Error : Copying Data Failed"
                 else:
-                    print "Saving client settings failed"
+                    print "Error : Saving client settings failed"
             else:
-                print "Creating client database failed"
+                print "Error : Creating client database failed"
         else:
-            print "Save Group company failed"
+            print "Error : Save Group company failed"
 
         return commonResponseStructure(self.response,{})
 
@@ -597,7 +597,7 @@ class ChangeClientGroupStatus(object):
             if DatabaseHandler.instance().update(self.clientTblName, columns, values, condition):
                 return commonResponseStructure("ChangeClientGroupStatusSuccess",{})
             else:
-                print "Updating Status Failed"
+                print "Error :  Updating Status Failed"
         else:
             return commonResponseStructure("InvalidClientId",{})
 
@@ -615,6 +615,11 @@ class UpdateClientGroup(object):
     clientSettingsTblName = "tbl_client_settings"
     clietConfigurationTblName = "tbl_client_configurations"
     userDetailsTblName = "tbl_user_details"
+    clientUserDetailsTblName = "tbl_client_user_details"
+    countryTblName = "tbl_countries"
+    domainTblName = "tbl_domains"
+    userTblName = "tbl_users"
+    clientDBName = None
 
     def __init__(self, requestData, sessionUser) :
         self.requestData = requestData
@@ -640,26 +645,32 @@ class UpdateClientGroup(object):
         self.isSmsSubscribed = JSONHelper.getInt(requestData, "is_sms_subscribed")
         self.dateConfigurations = JSONHelper.getList(requestData, "date_configurations")
 
-        if self.isDuplicateGroupName():
+        if not self.isClientExists():
+            self.response = "InvalidClientId"
+        elif self.isDuplicateGroupName():
             self.response = "GroupNameAlreadyExists"
         elif self.updateGroupCompany() :
-            if self.updateClientDetails():
-                if self.copyBasicData():
+            if self.copyBasicData():
+                if self.updateClientDetails():
                     if self.updateDateConfigurations():
                         if self.updateClientAdminUserDetails():
                                 self.response = "UpdateClientGroupSuccess"
                         else:
-                            print "Saving Client admin user details failed"
+                            print "Error : Saving Client admin user details failed"
                     else:
-                        print "Saving date configurations Failed"
+                        print "Error : Saving date configurations Failed"
                 else:
-                    print "Copying Data Failed"
+                    print "Error : Saving client settings failed"
             else:
-                print "Saving client settings failed"
+                print "Error : Copying Data Failed"
         else:
-            print "Save Group company failed"
+            print "Error : Save Group company failed"
 
         return commonResponseStructure(self.response,{})
+
+    def isClientExists(self):
+        condition = " client_id = '%d'" % self.clientId
+        return DatabaseHandler.instance().isAlreadyExists(self.clientTblName, condition) 
 
     def isDuplicateGroupName(self):
         condition = "group_name ='"+self.groupName+\
@@ -677,57 +688,83 @@ class UpdateClientGroup(object):
             print "Error : Incharge Persons not exists for client id %d " % self.clientId
 
 
+    def getDatabaseName(self):
+        if self.clientDBName == None:
+            self.clientDBName = getClientDatabase(self.clientId)
+        return self.clientDBName
+
     def updateGroupCompany(self):
-        columnsList = ["client_id", "group_name", "incharge_persons", "updated_on", 
-                        "updated_by"]
-        valuesList =  [self.clientId, self.groupName, 
-                        ",".join(str(x) for x in self.inchargePersons),
-                        getCurrentTimeStamp(), self.sessionUser]
+
         oldInchargePersons = self.getOldInchargePersons()
         
         existingInchargePersons = []
         newInchargePersons = []
         removedInchargePersons = []
-        for inchargePerson in inchargePersons:
+        for inchargePerson in self.inchargePersons:
             if inchargePerson in oldInchargePersons:
                 existingInchargePersons.append(inchargePerson)
             else:
                 newInchargePersons.append(inchargePerson)
 
         for oldInchargePerson in oldInchargePersons:
-            if oldInchargePerson not in inchargePersons:
+            if oldInchargePerson not in self.inchargePersons:
                 removedInchargePersons.append(oldInchargePerson)
 
         for newInchargePerson in newInchargePersons:
-            condition = " user_id='%d'" % newInchargePerson 
-            columns = "client_ids"
-            values = str(self.clientId)
-            DatabaseHandler.instance().append(self.userDetailsTblName, columns, values, condition)
+            try:
+                condition = " user_id='%d'" % newInchargePerson 
+                columns = "client_ids"
+                values = str(self.clientId)
+                DatabaseHandler.instance().append(self.userDetailsTblName, columns, values, condition)
+            except:
+                self.response = "InvalidInchargePersonId"
+                return False
 
         for removedInchargePerson in removedInchargePersons:
             columns = "client_ids"
-            condition = "user_id='%d'" % removedInchargePerson
+            condition = "user_id='%s'" % removedInchargePerson
             rows = DatabaseHandler.instance().getData(self.userDetailsTblName, columns, condition)
             clientIds = rows[0][0].split(",")
-            clientIds.remove(self.clientId)
+            if self.clientId in clientIds:
+                clientIds.remove(self.clientId)
             updateColumns = ["client_ids"]
-            updateValues = [clientIds]
+            updateValues = [",".join(str(x) for x in clientIds)]
             DatabaseHandler.instance().update(self.userDetailsTblName, updateColumns, 
                                             updateValues, condition)
 
-        return DatabaseHandler.instance().update(self.clientTblName,columns,valuesList)
+        columnsList = ["group_name", "incharge_persons", "updated_on", "updated_by"]
+        valuesList =  [ self.groupName, ",".join(str(x) for x in self.inchargePersons),
+                        getCurrentTimeStamp(), self.sessionUser]
+        condition = "client_id='%d'" % self.clientId
+        return DatabaseHandler.instance().update(self.clientTblName, columnsList, valuesList, condition)
 
     def updateClientDetails(self):
-        columns = ["country_ids", "domain_ids", "logo_url", "contract_from", "contract_to",
+        columnsList = ["country_ids", "domain_ids", "logo_url", "contract_from", "contract_to",
         "no_of_user_licence","total_disk_space", "is_sms_subscribed","updated_on", "updated_by"]
         valuesList =  [ ",".join(str(x) for x in self.countryIds),
                          ",".join(str(x) for x in self.domainIds),
                         self.logo, self.contractFrom, self.contractTo, self.noOfLicence, 
                         self.fileSpace, self.isSmsSubscribed, getCurrentTimeStamp(), 
                         self.sessionUser]
-        return ClientDatabaseHandler.instance(self.getDatabaseName()).insert(self.clientSettingsTblName,columns,values)
+        clientDBName = self.getDatabaseName()
+        return ClientDatabaseHandler.instance(clientDBName).update(self.clientSettingsTblName,
+            columnsList, valuesList, "1")
 
     def copyBasicData(self):
+        for countryId in self.countryIds:
+            condition = "country_id='%d'" % countryId
+            if DatabaseHandler.instance().isAlreadyExists(self.countryTblName, condition):
+                continue
+            else:
+                self.response = "InvalidCountryId"
+                return
+        for domainId in self.domainIds:
+            condition = "domain_id ='%d'" % domainId
+            if DatabaseHandler.instance().isAlreadyExists(self.domainTblName, condition):
+                continue
+            else:
+                self.response = "InvalidDomainId"
+                return
         if self.insertCountries() and self.insertDomains():
             return True
     
@@ -743,8 +780,9 @@ class UpdateClientGroup(object):
             isActive = row[2]
             valuesTuple = (countryId, countryName, isActive)
             valuesList.append(valuesTuple)
-        ClientDatabaseHandler.instance(self.getDatabaseName()).truncate(self.countryTblName)
-        return ClientDatabaseHandler.instance(self.getDatabaseName()).bulkInsert(self.countryTblName,columns,valuesList)
+        updateColumns = ["country_name"]
+        return ClientDatabaseHandler.instance(self.getDatabaseName()).onDuplicateKeyUpdate(
+                self.countryTblName,columns,valuesList, updateColumns)
 
     def insertDomains(self):
         valuesList = []
@@ -758,10 +796,10 @@ class UpdateClientGroup(object):
             isActive = row[2]
             valuesTuple = (domainId, doaminName, isActive)
             valuesList.append(valuesTuple)
-        ClientDatabaseHandler.instance(self.getDatabaseName()).truncate(self.domainTblName)
+        updateColumns = ["domain_name"]
         return ClientDatabaseHandler.instance(
-                        self.getDatabaseName()).bulkInsert(
-                        self.domainTblName,columns,valuesList)
+                        self.getDatabaseName()).onDuplicateKeyUpdate(
+                        self.domainTblName,columns,valuesList, updateColumns)
 
     def updateDateConfigurations(self):
         valuesList = []
@@ -775,16 +813,37 @@ class UpdateClientGroup(object):
             valuesTuple = (countryId, domainId, peroidFrom, perodTo, 
                 getCurrentTimeStamp(), int(self.sessionUser))
             valuesList.append(valuesTuple)
-
+        updateColums = ["period_from", "period_to"]
         return ClientDatabaseHandler.instance(
                             self.getDatabaseName()).onDuplicateKeyUpdate(
-                            self.clietConfigurationTblName,columns,valuesList)
+                            self.clietConfigurationTblName,columns,valuesList, updateColums)
+
+    def getClientAdminUserId(self):
+        userId = None
+        columns = "user_id"
+        condition = " is_admin = 1"
+        rows = []
+
+        try : 
+            clientDBName = self.getDatabaseName()
+            rows = ClientDatabaseHandler.instance(clientDBName).getData(self.clientUserDetailsTblName,
+                    columns, condition)
+        except:
+            print "Error : Client Database Not exists for the client %d" % self.clientId
+
+        if len(rows) < 1:
+            print "Error :User details not found for client admin"
+        else:
+            userId = int(rows[0][0])
+        
+        return userId
 
     def updateClientAdminUserDetails(self):
         columnsList = [  "country_ids", "domain_ids", "updated_by", "updated_on"]
         valuesList = [ ",".join(str(x) for x in self.countryIds), 
                     ",".join(str(x) for x in self.domainIds),1,0, 
                     self.sessionUser, getCurrentTimeStamp()]
+        condition = "user_id= '%d'" % self.getClientAdminUserId()
         return ClientDatabaseHandler.instance(
                         self.getDatabaseName()).update( 
                         self.clientUserDetailsTblName, columnsList, valuesList, condition)   

@@ -80,7 +80,7 @@ class ClientDatabaseHandler(object) :
 
     def insert(self, table, columns, values) :
         query = "INSERT INTO "+table+" ("+columns+")" + \
-            " VALUES ("+values+")"
+            " VALUES ("+values+")"     
         return self.execute(query)
 
     def bulkInsert(self, table, columns, valueList) :
@@ -106,18 +106,23 @@ class ClientDatabaseHandler(object) :
 
         return self.execute(query)
 
-    def onDuplicateKeyUpdate(self, table, columns, valueList):
-        query="INSERT INTO "+table+" ("+columns+") VALUES "
+    def onDuplicateKeyUpdate(self, table, columns, valueList, updateColumnsList):
+        query="INSERT INTO %s (%s) VALUES " % (table, columns)
 
         for index, value in enumerate(valueList):
             if index < len(valueList)-1:
-                query += str(value)+","
+                query += "%s," % str(value)
             else:
-                query += str(value)
+                query += "%s" % str(value)
 
-        query += " ON DUPLICATE KEY UPDATE "+\
-                " period_from = VALUES(period_from),"+\
-                " period_to = VALUES(period_to)"
+        query += " ON DUPLICATE KEY UPDATE "
+
+        for index, updateColumn in enumerate(updateColumnsList):
+
+            if index < len(updateColumnsList)-1:
+                query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
+            else:
+                query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
 
         return self.execute(query)
 
