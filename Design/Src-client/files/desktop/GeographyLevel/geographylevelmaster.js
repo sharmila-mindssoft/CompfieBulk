@@ -140,8 +140,10 @@ function saveRecord () {
        		var s = x-1;
        		if( x == insertlevel){
        			$("#level"+x).val(insertvalue);
+       			$("#levelid"+x).val('');
        		}else{
        			$("#level"+x).val($("#level"+s).val());
+       			$("#levelid"+x).val($("#levelid"+s).val());
        		}
 		}
 	}

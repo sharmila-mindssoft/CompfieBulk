@@ -4,7 +4,7 @@ import tornado.ioloop
 import tornado.web
 from models import *
 from controllers import *
-from aparajitha.server.common import JSONHelper
+from aparajitha.server.common import *
 from aparajitha.server.databasehandler import DatabaseHandler 
 
 __all__ = [
@@ -33,6 +33,12 @@ class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "GetClientGroups" :
                     getClientGroup = GetClientGroups()
                     response = getClientGroup.getList()
+                elif request[0] == "ChangeClientGroupStatus" :
+                    changeClientGroupStatus = ChangeClientGroupStatus(request[1], userId)
+                    response = changeClientGroupStatus.updateStatus()
+                elif request[0] == "updateClientGroup" :
+                    updateClientGroup = UpdateClientGroup(request[1], userId)
+                    response = updateClientGroup.processRequest()
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 

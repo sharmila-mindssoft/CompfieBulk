@@ -222,7 +222,7 @@ CREATE TABLE `tbl_compliances` (
   `duration` int(11) DEFAULT NULL,
   `duration_type` varchar(20) DEFAULT NULL,
   `statutory_mapping_id` int(11) DEFAULT NULL,
-  `is_active` tinyint(4) DEFAULT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
   `created_on` float DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
@@ -417,4 +417,20 @@ CREATE TABLE `tbl_client_compliances` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` float DEFAULT NULL,
   CONSTRAINT `fk_client_compliances_statutories` FOREIGN KEY (`statutory_id`) REFERENCES `tbl_statutories` (`statutory_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_email_verification`;
+CREATE TABLE IF NOT EXISTS `tbl_email_verification` (
+  `user_id` int(11) NOT NULL,
+  `verification_code` varchar(50) NOT NULL,
+  PRIMARY KEY (`verification_code`),
+  CONSTRAINT `fk_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_mobile_registration`;
+CREATE TABLE IF NOT EXISTS `tbl_mobile_registration` (
+  `user_id` int(11) NOT NULL,
+  `registration_key` varchar(50) NOT NULL,
+  PRIMARY KEY (`registration_key`),
+  CONSTRAINT `fk_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
