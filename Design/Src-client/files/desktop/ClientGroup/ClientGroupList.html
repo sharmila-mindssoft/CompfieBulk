@@ -47,6 +47,10 @@
   height: 2.25em;
   margin-bottom:0px;
 }
+.date-configuration{
+  max-height: 270px;
+  overflow: auto;
+}
 </style>
 
 <link href="/files/desktop/common/css/datepicker/jquery-ui.css" rel="stylesheet">
@@ -100,7 +104,7 @@
             <div class="single-column-field-label">Group:<span class="mandatory">*</span></div>
             <div class="field-input"> 
               <input id="clientgroup-id" type="hidden" value="">           
-              <input id="clientgroup-name" type="text" class="input-box"  >               
+              <input id="clientgroup-name" type="text" class="input-box"  value="TVS Group" >               
             </div>
             </div>
             <div class="input-row">
@@ -126,19 +130,19 @@
             <div class="input-row">
               <div class="single-column-field-label">Contract From:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="text" class="input-box"  id="contract-from" readonly="readonly" >
+                <input type="text" class="input-box"  id="contract-from" readonly="readonly"  value="02-Nov-2015">
               </div>
             </div>
             <div class="input-row">
               <div class="single-column-field-label">Contract  To:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="text" class="input-box" id="contract-to" readonly="readonly">
+                <input type="text" class="input-box" id="contract-to" readonly="readonly" value="01-Nov-2016">
               </div>
             </div>
             <div class="input-row">
             <div class="single-column-field-label">Username:<span class="mandatory">*</span></div>
             <div class="field-input">
-              <input type="text" class="input-box" placeholder="user@domain.com" id="username"><br>
+              <input type="text" class="input-box" placeholder="user@domain.com" id="username" value="sample@tvsgroup.com"><br>
               <span style="font-size:10px;">[&#9658;This will be used as the username for user acc.<br>&#9658;
                 Password will be auto-generated]</span>
               </div>
@@ -148,19 +152,19 @@
             <div class="input-row">
               <div class="single-column-field-label">Upload Logo:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="file" class="input-box" id="upload-logo">
+                <input type="file" class="input-box" id="upload-logo" value="user-icon.png">
               </div>
             </div>
             <div class="input-row">
               <div class="single-column-field-label">Number of user licence:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="text" class="input-box"  id="no-of-user-licence">
+                <input type="text" class="input-box"  id="no-of-user-licence" value="10">
               </div>
             </div>
              <div class="input-row">
               <div class="single-column-field-label">File Space:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="text" class="input-box"  id="file-space" style="width:50px;float:left">
+                <input type="text" class="input-box"  id="file-space" style="width:50px;float:left" value="5">
                 <span style="font-size:0.813em; padding-left:10px; line-height:2em;">GB</span>
               </div>
             </div>
@@ -186,7 +190,7 @@
           <div class="clearfix"></div>
 
           <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px;">Date Configuration</div>
-          <div class="grid-table" style="margin-top:10px;">
+          <div class="grid-table date-configuration">
             <table style="padding:20px;width:100%;">
               <tr align="left">
                 <th width="25%" style="background-color:#D4B7EB; color:#000;padding-left:10px;">Domain</th>
@@ -203,9 +207,9 @@
           </div>
           <div class="clearfix"></div>
           <div class="submit-button-container">
-            <input type="reset" name="cancel" value="Cancel" class="btn-cancel" id="btn-clientgroup-cancel"  >
+            <input type="reset" name="cancel" value="Cancel" class="btn-cancel" id="btn-clientgroup-cancel">
               &nbsp;&nbsp;
-            <input type="submit" name="submit" value="Submit" class="btn-submit" id="btn-clientgroup-submit" >
+            <input type="submit" name="submit" value="Submit" class="btn-submit" id="btn-clientgroup-submit">
           </div>
         </div>
       </div>
@@ -214,11 +218,11 @@
 </div>
 <div id="templates">
   <table class="table-dconfig-list">
-    <tr class="table-dconfig-countries-row" >
-        <td colspan="3"  width="100%"><span class="country-name"></span></td>
+    <tr class="table-dconfig-countries-row">
+        <td colspan="3"  width="100%"><span class="dconfig-country-name"></span></td>
     </tr>    
     <tr class="table-dconfig-domain-row rightside" >
-      <td style="padding-left:10px;" class="domain-name" width="30%"></td>
+      <td style="padding-left:10px;" class="dconfig-domain-name" width="30%"></td>
         <td align="center" width="35%">
           <select class="input-box tl-from" style="width:100px">
                 <option value="1">January</option>
