@@ -10,7 +10,7 @@ _databaseHandlerInstance = None
 
 class DatabaseHandler(object) :
     def __init__(self) :
-        self.mysqlHost = "192.168.1.2"
+        self.mysqlHost = "localhost"
         self.mysqlUser = "root"
         self.mysqlPassword = "123456"
         self.mysqlDatabase = "mirror_knowledge"
@@ -161,6 +161,10 @@ class DatabaseHandler(object) :
         rows = self.executeAndReturn(query)
         row = rows[0]
         return row[0]
+
+    def truncate(self, table):
+        query = "TRUNCATE TABLE  %s;" % table
+        return self.execute(query)
 
     @staticmethod
     def instance() :

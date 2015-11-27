@@ -106,6 +106,21 @@ class ClientDatabaseHandler(object) :
 
         return self.execute(query)
 
+    def onDuplicateKeyUpdate(self, table, columns, valueList):
+        query="INSERT INTO "+table+" ("+columns+") VALUES "
+
+        for index, value in enumerate(valueList):
+            if index < len(valueList)-1:
+                query += str(value)+","
+            else:
+                query += str(value)
+
+        query += " ON DUPLICATE KEY UPDATE "+\
+                " period_from = VALUES(period_from),"+\
+                " period_to = VALUES(period_to)"
+
+        return self.execute(query)
+
     def generateNewId(self, table, column):
         query = "SELECT max("+column+") FROM "+table
         rows = self.executeAndReturn(query)
@@ -134,6 +149,24 @@ class ClientDatabaseHandler(object) :
         row = rows[0]
         return row[0]
 
+    def delete(self, table, condition):
+        query = "DELETE from "+table+" WHERE "+condition
+        return self.execute(query)        
+
+    def append(self, table, column, value, condition):
+        rows = self.getData(table, column, condition)
+        currentValue = rows[0][0]
+        if currentValue != None:
+            newValue = currentValue+","+str(value)
+        else:
+            newValue = str(value)
+        columns = [column]
+        values = [newValue]
+        return self.update(table, columns, values, condition)
+
+    def truncate(self, table):
+        query = "TRUNCATE TABLE  %s;" % table
+        return self.execute(query)
 
     @staticmethod
     def instance(databaseName) :

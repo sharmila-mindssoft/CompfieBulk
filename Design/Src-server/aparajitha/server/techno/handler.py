@@ -36,6 +36,9 @@ class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "ChangeClientGroupStatus" :
                     changeClientGroupStatus = ChangeClientGroupStatus(request[1], userId)
                     response = changeClientGroupStatus.updateStatus()
+                elif request[0] == "updateClientGroup" :
+                    updateClientGroup = UpdateClientGroup(request[1], userId)
+                    response = updateClientGroup.processRequest()
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 
