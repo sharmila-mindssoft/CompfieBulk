@@ -339,7 +339,7 @@ TEMPLATE_PATHS = [
             None, {}),
     ("/forgotpassword", "files/desktop/ForgotPassword/ForgotPassword.html",
             None, {}),
-    ("/resetpassword", "files/desktop/ForgotPassword/ResetPassword.html",
+    ("/resetpassword", "files/desktop/ForgotPassword/resetpassword.html",
             None, {}),
     ("/subtasklist", "files/desktop/SubTaskList/SubTaskList.html",
             None, {}),
@@ -531,8 +531,10 @@ TEMPLATE_PATHS = [
         None, {}),
     ("/previousentryform", "files/desktop/PreviousEntryForm/PreviousEntryForm.html",
         None, {}),
-     ("/logintrace", "files/desktop/LoginTrace/LoginTrace.html",
+    ("/logintrace", "files/desktop/LoginTrace/LoginTrace.html",
         None, {}),
+
+    ("/multi-check-box", "files/desktop/custom-controls/multi-check-box.html", None, {}),
 ]
 
 

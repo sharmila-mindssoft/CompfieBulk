@@ -1,5 +1,54 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+
+<style type="text/css">
+/*.grid-table td{ border:1px solid red;}
+.grid-table tr{ border:1px solid blue;}*/
+/* Autocomplete selectbox Style */
+.ac-selectbox ul {
+  background: none repeat scroll 0 0 #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.11);
+  box-sizing: border-box;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+  transition: opacity 200ms ease-out 0s, top 200ms ease-out 0s, visibility 200ms ease-out 0s;
+}
+.ac-selectbox ul li {
+  font-size: 0.8em;
+  list-style-type:none; 
+  padding: 6px;
+  padding-left: 2em;
+  vertical-align: center;
+  cursor: pointer;
+  background: url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li:hover{
+  
+  background:  #EAE8E8 url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox {
+  background: url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox:hover {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox_country {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox_users {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.heading{
+  color: #000;
+  font-size: 1em;
+  height: 2.25em;
+  margin-bottom:0px;
+}
+</style>
+
 <link href="/files/desktop/common/css/datepicker/jquery-ui.css" rel="stylesheet">
 <div class="content-container width40" id="clientgroup-view">
   <div class="content-area">
@@ -31,7 +80,7 @@
     <table class="table-clientgroup-list">
       <tr class="table-row">
         <td align="center" class="sno"></td>
-        <td class="group-name"></td>     
+        <td class="clientgroup-name"></td>     
         <td align="center" class="edit"></td>
         <td align="center" class="is-active"></td>
       </tr>
@@ -57,26 +106,21 @@
             <div class="input-row">
               <div class="single-column-field-label">Country:<span class="mandatory">*</span></div>
               <div class="field-input">
-                  <input type="text" class="input-box icon-autocomplete" id="countries">
-           <!--      <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
-                  <option value="EMP0010 - Hariharan" selected>India</option>
-                  <option value="EMP0012 - Sivaraman" selected>United States</option>
-                  <option value="EMP0015 - Srinivasan" >Malaysia</option>
-                </select> -->
-
+                <input type="hidden" id="country"> 
+                <input type="text" class="input-box icon-autocomplete" id="countryselected" value="" readonly="readonly" onclick="loadautocountry()"> 
+                <div id="selectboxview-country" class="ac-selectbox" style="display:none;">
+                  <ul id="ulist-country" onmouseleave="hidemenu();" style="width:213px;"></ul> 
+                </div>
               </div>
             </div>
             <div class="input-row">
               <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
-              <div class="field-input">
-               <input type="text" class="input-box icon-autocomplete" id="domains">
-
-               <!--  <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
-                  <option value="   EMP0010 - Hariharan" selected>Finance</option>
-                  <option value="EMP0012 - Sivaraman" selected>Labour Law</option>
-                  <option value="EMP0015 - Srinivasan" selected="selected">Industrial Law</option>
-                </select> -->
-
+              <div class="field-input">  
+                <input type="hidden" id="domain"> 
+                <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto()"> 
+                <div id="selectboxview" class="ac-selectbox" style="display:none;">
+                  <ul id="ulist" onmouseleave="hidemenu();" style="width:213px;"></ul> 
+                </div>
               </div>
             </div>
             <div class="input-row">
@@ -130,15 +174,11 @@
            <div class="input-row">
               <div class="single-column-field-label">Incharge Person:<span class="mandatory">*</span></div>
               <div class="field-input">
-              <input type="text" class="input-box icon-autocomplete" id="incharge-person">
-
-
-               <!--  <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
-                  <option value="   EMP0010 - Hariharan" selected> EMP0010 - Hariharan</option>
-                  <option value="EMP0012 - Sivaraman" selected>EMP0012 - Sivaraman</option>
-                  <option value="EMP0015 - Srinivasan" selected="selected">EMP0015 - Srinivasan</option>
-                </select> -->
-
+                <input type="hidden" id="users"> 
+                <input type="text" class="input-box icon-autocomplete" id="usersSelected" value="" readonly="readonly" onclick="loadAutoUsers()"> 
+                <div id="selectboxview-users" class="ac-selectbox" style="display:none;">
+                  <ul id="ulist-users" onmouseleave="hidemenu();" style="width:213px;"></ul> 
+                </div>
               </div>
             </div>
           </div>
@@ -157,202 +197,66 @@
                 <td align="center"><span style="font-style:bold">From</span></td>
                 <td align="center">To</td>
               </tr>
-              <tr align="left" class="rightside" >
-                  <th  colspan="2" class="heading" style="color:#000;height:1.9em; min-width:100px;">India</span></th>
-                  
-              </tr> 
-              <tr>
-                <td style="padding-left:10px;">Finance</td>
-                <td align="center">
-                  <select class="input-box" style="width:100px">
-                        <option>January</option>
-                        <option>February</option>
-                        <option>March</option>
-                        <option selected>April</option>
-                        <option>May</option>
-                        <option>June</option>
-                        <option>July</option>
-                        <option>August</option>
-                        <option>September</option>
-                        <option>October</option>
-                        <option>November</option>
-                        <option>December</option>
-                    </select>
-                </td>
-                <td align="center">
-                  <select class="input-box"  style="width:100px">
-                        <option>January</option>
-                        <option>February</option>
-                        <option selected>March</option>
-                        <option>April</option>
-                        <option>May</option>
-                        <option>June</option>
-                        <option>July</option>
-                        <option>August</option>
-                        <option>September</option>
-                        <option>October</option>
-                        <option>November</option>
-                        <option>December</option>
-                    </select>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding-left:10px;">Industrial</td>
-                <td align="center">
-                  <select class="input-box"  style="width:100px">
-                        <option selected>January</option>
-                        <option>February</option>
-                        <option>March</option>
-                        <option>April</option>
-                        <option>May</option>
-                        <option>June</option>
-                        <option>July</option>
-                        <option>August</option>
-                        <option>September</option>
-                        <option>October</option>
-                        <option>November</option>
-                        <option>December</option>
-                    </select>
-                </td>
-                <td align="center">
-                  <select class="input-box"  style="width:100px">
-                        <option >January</option>
-                        <option>February</option>
-                        <option>March</option>
-                        <option>April</option>
-                        <option>May</option>
-                        <option>June</option>
-                        <option>July</option>
-                        <option>August</option>
-                        <option>September</option>
-                        <option>October</option>
-                        <option>November</option>
-                        <option selected>December</option>
-                    </select>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding-left:10px;">Labour</td>
-                <td align="center">
-                  <select class="input-box"  style="width:100px">
-                        <option selected>January</option>
-                        <option>February</option>
-                        <option>March</option>
-                        <option>April</option>
-                        <option>May</option>
-                        <option>June</option>
-                        <option>July</option>
-                        <option>August</option>
-                        <option>September</option>
-                        <option>October</option>
-                        <option>November</option>
-                        <option >December</option>
-                    </select>
-                </td>
-                <td align="center">
-                  <select class="input-box"  style="width:100px">
-                        <option>January</option>
-                        <option>February</option>
-                        <option>March</option>
-                        <option>April</option>
-                        <option>May</option>
-                        <option>June</option>
-                        <option>July</option>
-                        <option>August</option>
-                        <option>September</option>
-                        <option>October</option>
-                        <option>November</option>
-                        <option selected>December</option>
-                    </select>
-                </td>
-              </tr>
-              <tr align="left" class="rightside" >
-                  <th  colspan="2" class="heading" style="color:#000;height:1.9em; min-width:100px;">United States</span></th>
-                  
-              </tr> 
-              <tr>
-                <td style="padding-left:10px;">Finance</td>
-                <td align="center">
-                  <select class="input-box"  style="width:100px">
-                        <option selected>January</option>
-                        <option>February</option>
-                        <option>March</option>
-                        <option>April</option>
-                        <option>May</option>
-                        <option>June</option>
-                        <option>July</option>
-                        <option>August</option>
-                        <option>September</option>
-                        <option>October</option>
-                        <option>November</option>
-                        <option >December</option>
-                    </select>
-                </td>
-                <td align="center">
-                  <select class="input-box"  style="width:100px">
-                        <option >January</option>
-                        <option>February</option>
-                        <option>March</option>
-                        <option>April</option>
-                        <option>May</option>
-                        <option>June</option>
-                        <option>July</option>
-                        <option>August</option>
-                        <option>September</option>
-                        <option>October</option>
-                        <option>November</option>
-                        <option selected>December</option>
-                    </select>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding-left:10px;">Labour</td>
-                <td align="center">
-                  <select class="input-box"  style="width:100px">
-                        <option selected>January</option>
-                        <option>February</option>
-                        <option>March</option>
-                        <option>April</option>
-                        <option>May</option>
-                        <option>June</option>
-                        <option>July</option>
-                        <option>August</option>
-                        <option>September</option>
-                        <option>October</option>
-                        <option>November</option>
-                        <option >December</option>
-                    </select>
-                </td>
-                <td align="center">
-                  <select class="input-box"  style="width:100px">
-                       <option >January</option>
-                        <option>February</option>
-                        <option>March</option>
-                        <option>April</option>
-                        <option>May</option>
-                        <option>June</option>
-                        <option>July</option>
-                        <option>August</option>
-                        <option>September</option>
-                        <option>October</option>
-                        <option>November</option>
-                        <option selected>December</option>
-                    </select>
-                  </td>
-                </tr>
-              </table>
-            </div>
-            <div class="clearfix"></div>
-            <div class="submit-button-container">
-              <input type="reset" name="cancel" value="Cancel" class="btn-cancel btn-clientgroup-cancel"  >
-              &nbsp;&nbsp;
-              <input type="submit" name="submit" value="Submit" class="btn-submit btn-clientgroup-submit" >
-            </div>
+              <tbody class="tbody-dateconfiguration-list">
+              </tbody>
+            </table>
           </div>
+          <div class="clearfix"></div>
+          <div class="submit-button-container">
+            <input type="reset" name="cancel" value="Cancel" class="btn-cancel btn-clientgroup-cancel"  >
+              &nbsp;&nbsp;
+            <input type="submit" name="submit" value="Submit" class="btn-submit btn-clientgroup-submit" >
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
+<div id="templates" style="display:none;">
+  <table class="table-dconfig-countries-list">
+    <tr class="table-dconfig-countries-row" >
+        <td colspan="3"  width="100%"><span class="country-name"></span></td>
+    </tr>    
+  </table>
+  <table class="table-dconfig-domains-list">
+    <tr class="table-dconfig-domain-row rightside" >
+      <td style="padding-left:10px;" class="domain-name" width="30%"></td>
+        <td align="center" width="35%">
+          <select class="input-box tl-from" style="width:100px">
+                <option>January</option>
+                <option>February</option>
+                <option>March</option>
+                <option>April</option>
+                <option>May</option>
+                <option>June</option>
+                <option>July</option>
+                <option>August</option>
+                <option>September</option>
+                <option>October</option>
+                <option>November</option>
+                <option>December</option>
+            </select>
+        </td>
+        <td align="center" width="35%">
+          <select class="input-box tl-to" style="width:100px">
+                <option>January</option>
+                <option>February</option>
+                <option>March</option>
+                <option>April</option>
+                <option>May</option>
+                <option>June</option>
+                <option>July</option>
+                <option>August</option>
+                <option>September</option>
+                <option>October</option>
+                <option>November</option>
+                <option>December</option>
+            </select>
+        </td>
+    </tr> 
+  </table>
+</div>
+
 <script type="text/javascript" src="/files/desktop/ClientGroup/clientgroup.js"></script>
 <script src="/files/desktop/common/js/datepicker/jquery-ui.js"></script>  
 <script type="text/javascript">
