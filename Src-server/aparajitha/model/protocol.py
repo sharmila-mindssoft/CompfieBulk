@@ -58,15 +58,17 @@ define_request(
 		"password": Text50
 	}, {
 		"session_token": Text50,
-		"user_id": Int,
-		"client_id": OptionalType(Int),
-		"email_id": Text100,
-		"user_group_name": Text50,
-		"employee_name": Text50,
-		"employee_code": Text50,
-		"contact_no": OptionalType(Text20),
-		"address": OptionalType(Text250),
-		"designation": OptionalType(Text50),
+		"user": DictType({
+			"user_id": Int,
+			"client_id": OptionalType(Int),
+			"email_id": Text100,
+			"user_group_name": Text50,
+			"employee_name": Text50,
+			"employee_code": Text50,
+			"contact_no": OptionalType(Text20),
+			"address": OptionalType(Text250),
+			"designation": OptionalType(Text50)
+		}),
 		"menu": Menu
 	},
 	["LoginFailed"]
@@ -86,6 +88,6 @@ define_request(
 
 Request = VariantType("Request", DictType(_request_options))
 RequestFrame = DictType({
-	"session_id": Text50,
+	"session_token": Text50,
 	"request": Request
 })

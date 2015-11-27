@@ -43,18 +43,42 @@ class KnowledgeDatabase(object) :
 		self._db.execute(query)
 		return session_id
 
+	def remove_session(self, session_id) :
+		query = "delete from tbl_user_sessions where session_id = '%s';"
+		query = query % (session_id,)
+		self._db.execute(query)
+
 	def get_session_user_id(self, session_id) :
-		pass
+		query = "select user_id from tbl_user_sessions where session_id = '%s';"
+		query = query % (session_id,)
+		result = self._db.execute_and_return(query)
+		if len(result) == 0 :
+			return None
+		return int(result[0][0])
 
 	def get_user(self, user_id) :
-		pass
+		select_fields = [
+			"user_id", "email_id", "client_id", "is_active", "user_group_id",
+			"category", "employee_name", "employee_code", "contact_no", "address",
+			"designation", "domain_ids", "country_ids", "client_ids", "is_admin"
+		]
+		query = "select %s from tbl_user_details where user_id = %s;"
+		query = query % (get(select_fields), user_id,)
+		result = self._db.execute_and_return(query)
+		if len(result) == 0 :
+			return None
+		result = to_dict(select_fields, result)
+		for row in result :
+			row["user_id"] = int(row["user_id"])
+			row["user_group_id"] = int(row["user_group_id"])
+		return result
 
 	def get_user_id(self, email) :
 		select_fields = ["user_id"]
 		query = "select %s from tbl_users where username = '%s';"
 		query = query % (get(select_fields), email,)
 		result = self._db.execute_and_return(query)
-		if result is None :
+		if len(result) == 0 :
 			return None
 		return int(result[0][0])
 
@@ -64,7 +88,7 @@ class KnowledgeDatabase(object) :
 			"password = '%s' and is_active = 1;")
 		query = query % (get(select_fields), user_id, password)
 		result = self._db.execute_and_return(query)
-		if result is None :
+		if len(result) == 0 :
 			return None
 		return to_dict(select_fields, result)
 
@@ -87,7 +111,7 @@ class KnowledgeDatabase(object) :
 			if client_db is None :
 				return None
 			result = self.client_db.execute_and_return(query)
-		if result is None :
+		if len(result) == 0 :
 			return None
 		result = to_dict(select_fields, result)
 		result = result[0]
@@ -106,7 +130,7 @@ class KnowledgeDatabase(object) :
 			query = query + " and admin_form = 0"
 		query = query % (get(select_fields), tuple(form_ids2))
 		forms = self._db.execute_and_return(query)
-		if forms is None :
+		if len(forms) == 0 :
 			return None
 		forms = to_dict(select_fields, forms)
 

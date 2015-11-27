@@ -33,12 +33,14 @@ class APIHandler(object):
 		handler = self._request_map[request_option]
 		if self._is_protocol_without_session(request_option) :
 			return handler(db, request_data)
-		user_id = db.get_session_user_id()
+		user_id = db.get_session_user_id(session_id)
 		if user_id is None :
-			return self.failure_response("InvalidSession")
-		if option is protocol.Request.Logout :
+			return self.failure_response(
+				request_option + "Response", "InvalidSession"
+			)
+		if request_option == u"Logout" :
 			return handler(db, session_id, request_data)
-		user = db.get_user()
+		user = db.get_user(user_id)
 		return handler(db, user, request_data)
 
 
@@ -62,15 +64,17 @@ class APIHandler(object):
 		session_id = db.add_session(user_id)
 		response_data = {
 			"session_token": session_id,
-			"user_id": user_id,
-			"client_id": user["client_id"],
-			"email_id": email,
-			"user_group_name": user_details["user_group_name"],
-			"employee_name": user_details["employee_name"],
-			"employee_code": user_details["employee_code"],
-			"contact_no": user_details["contact_no"],
-			"address": user_details["address"],
-			"designation": user_details["designation"],
+			"user": {
+				"user_id": user_id,
+				"client_id": user["client_id"],
+				"email_id": email,
+				"user_group_name": user_details["user_group_name"],
+				"employee_name": user_details["employee_name"],
+				"employee_code": user_details["employee_code"],
+				"contact_no": user_details["contact_no"],
+				"address": user_details["address"],
+				"designation": user_details["designation"]
+			},
 			"menu": user_details["menu"]
 		}
 		return self.success_response(
@@ -78,7 +82,10 @@ class APIHandler(object):
 		)
 
 	def _logout(self, db, session_id, request) :
-		pass
+		db.remove_session(session_id)
+		return self.success_response(
+			"LogoutResponse", "LogoutSuccess", {}
+		)
 
 
 #
@@ -137,7 +144,7 @@ class KnowledgeController(object):
 			request_handler.set_status(500)
 			request_handler.write("")
 			return
-		session_id = request_frame["session_id"]
+		session_id = request_frame["session_token"]
 		request_obj = request_frame["request"]
 		response_obj = self._api_handler.process(db, session_id, request_obj)
 		self._send_response(request_handler, response_obj["protocol"], response_obj["data"])

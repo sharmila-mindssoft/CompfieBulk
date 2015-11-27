@@ -81,7 +81,8 @@ def run_server() :
     application_urls = []
 
     api_urls_and_handlers = [
-        ("/api/test-knowledge", knowledge_controller.handle_api_knowledge),
+        ("/api/login", knowledge_controller.handle_api_knowledge),
+        ("/api/logout", knowledge_controller.handle_api_knowledge),
         ("/api/test-client", client_controller.handle_api_client),
     ]
     for url, handler in api_urls_and_handlers :
