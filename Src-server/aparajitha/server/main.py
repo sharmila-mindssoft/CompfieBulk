@@ -68,8 +68,10 @@ class APIHandler(tornado.web.RequestHandler) :
 #
 
 TEMPLATE_PATHS = [
-    ("/", "files/desktop/index/index.html",
-        "files/mobile/index/index.html", {}),
+    # ("/", "files/desktop/index/index.html",
+    #     "files/mobile/index/index.html", {}),
+    ("/", "files/desktop/login/login.html",
+        "files/mobile/login/login.html", {}),
     ("/login", "files/desktop/login/login.html",
         "files/mobile/login/login.html", {}),
 ]
