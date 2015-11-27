@@ -1,19 +1,25 @@
 <html>
 <head>
 	<title>Multi Check Box</title>
+	<meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Expires" content="-1">
 	<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/reset.css">
 	<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/styles.css">
 	<style type="text/css">
+		.multi-check-box {
+			padding: 1em;
+		}
+		.multi-check-box-textbox {
+			height: 2em;
+			margin-bottom: 0.1em;
+		}
 		.multi-check-box ul {
 			background: none repeat scroll 0 0 #fff;
-			border: 1px solid #ddd;
-			border-radius: 3px;
+			border-radius: 2px;
 			box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.11);
-			box-sizing: border-box;
 			position: absolute;
 			padding-left: 0em;
 			background: #ffffff;
-			transition: opacity 200ms ease-out 0s, top 200ms ease-out 0s, visibility 200ms ease-out 0s;
 		}
 		.multi-check-box ul li {
 			font-size: 0.8em;
@@ -27,25 +33,16 @@
 		.multi-check-box ul li:hover{
 			background:  #EAE8E8 url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
 		}
-		.multi-check-box ul li.active_selectbox {
+		.multi-check-box ul li.active {
 			background: url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 		}
-		.multi-check-box ul li.active_selectbox:hover {
+		.multi-check-box ul li.active:hover {
 			background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
-		}
-		.multi-check-box ul li.active_selectbox_country {
-			background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
-		}
-		.multi-check-box ul li.active_selectbox_users {
-			background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
-		}
-		.heading{
-			color: #000;
-			font-size: 1em;
-			height: 2.25em;
-			margin-bottom:0px;
 		}
 		.multi-check-box-list {
+			/*display: none;*/
+		}
+		.multi-check-box-selected {
 			display: none;
 		}
 		#templates {
@@ -63,7 +60,7 @@
     <div class="multi-check-box-list">
       <ul></ul>
     </div>
-    <input type="hidden" class="multi-check-box-values">
+    <div class="multi-check-box-selected"></div>
   </div>
 
   <div id="templates">

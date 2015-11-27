@@ -18,22 +18,53 @@ function createLiElement (value, className) {
 	return liElement;
 }
 
+function createDivElement (value, className) {
+	var divElement = $("<div></div>");
+	divElement.text(value);
+	if (typeof(className) !== "undefined") {
+		divElement.addClass(className);
+	}
+	return divElement;
+}
+
 function initializeMultiCheckBox (
 	multiCheckBox, items, onClickCallback, OnItemsClickCallback
 ) {
+	$(".multi-check-box-selected", multiCheckBox).empty();
 	var multiCheckBoxUl = $(".multi-check-box-list ul", multiCheckBox);
 	for (var i = 0; i < items.length; i++) {
-		var country = items[i];
-		var liElement = createLiElement(country["country_name"]);
-		liElement.addClass(country["country_id"]);
+		var item = items[i];
+		var liElement = createLiElement(item["item_name"]);
+		liElement.addClass(item["item_id"].toString());
+		liElement.on("click", function () {
+			$(this).toggleClass("active");
+			var className = $(this).attr('class');
+			var itemId = className.split(" ")[1];
+			var selectedDiv = $(".multi-check-box-selected", multiCheckBox);
+			var selectedItems = json.parse(selectedDiv.text());
+			
+
+			var item2 = {"item_id": itemId, "item_name": $(this).text()};
+			var item3 = {itemId: item2};
+			var selectedItems2 = 
+			var itemDiv = createDivElement(item3);
+			selectedDiv.text(itemDiv);
+		});
 		multiCheckBoxUl.append(liElement);
 	}
 }
 
 function initialize () {
+	var items = [];
+	for (var i = 0; i < countryList.length; i++) {
+		items.push({
+			"item_id": countryList[i]["country_id"],
+			"item_name": countryList[i]["country_name"],
+		});
+	}
 	initializeMultiCheckBox(
 		$(".multi-check-box"),
-		countryList,
+		items,
 		function onClickCallback () {
 			// body...
 		},
@@ -41,6 +72,10 @@ function initialize () {
 			// body...
 		}
 	);
+
+	var width = $(".multi-check-box-textbox").outerWidth();
+	console.log(width);
+	$(".multi-check-box-list ul").width(width);
 }
 
 $(function () {
