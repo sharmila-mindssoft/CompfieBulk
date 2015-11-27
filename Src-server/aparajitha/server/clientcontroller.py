@@ -24,6 +24,6 @@ class ClientController(object):
 		unbound_method(self, self._db, request_handler)
 
 	@db_request
-	def handle_api_test(self, db, request_handler) :
+	def handle_api_client(self, db, request_handler) :
 		db.test()
 		request_handler.write("client test api success")

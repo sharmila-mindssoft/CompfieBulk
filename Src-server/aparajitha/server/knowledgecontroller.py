@@ -24,6 +24,6 @@ class KnowledgeController(object):
 		unbound_method(self, self._db, request_handler)
 
 	@db_request
-	def handle_api_test(self, db, request_handler) :
+	def handle_api_knowledge(self, db, request_handler) :
 		db.test()
 		request_handler.write("knowledge test api success")

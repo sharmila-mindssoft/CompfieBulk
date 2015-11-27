@@ -52,7 +52,7 @@ class APIHandler(tornado.web.RequestHandler) :
     def initialize(self, handler) :
         self._handler = handler
 
-    def get(self) :
+    def post(self) :
         self._handler(self)
 
     def options(self) :
@@ -81,8 +81,8 @@ def run_server() :
     application_urls = []
 
     api_urls_and_handlers = [
-        ("/api/test-knowledge", knowledge_controller.handle_api_test),
-        ("/api/test-client", client_controller.handle_api_test),
+        ("/api/test-knowledge", knowledge_controller.handle_api_knowledge),
+        ("/api/test-client", client_controller.handle_api_client),
     ]
     for url, handler in api_urls_and_handlers :
         entry = (url, APIHandler, dict(handler=handler))
