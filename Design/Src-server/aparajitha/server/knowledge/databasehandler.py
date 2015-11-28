@@ -1,6 +1,8 @@
 import datetime
 import MySQLdb as mysql
+import json
 from types import *
+
 
 
 __all__ = [
@@ -82,6 +84,8 @@ class DatabaseHandler(object) :
                 newId = int(row[0]) + 1
         return newId
 
+    def getDateTime(self) :
+        return datetime.datetime.now()
 
     ### Domain ###
 
@@ -104,7 +108,7 @@ class DatabaseHandler(object) :
         return self.dataSelect(query)
 
     def saveDomain(self, domainName, createdBy) :
-        createdOn = datetime.datetime.now()
+        createdOn = self.getDateTime()
         domainId = self.getNewId("domain_id", "tbl_domains")
         isActive = 1
 
@@ -165,7 +169,7 @@ class DatabaseHandler(object) :
         return isDuplicate
 
     def saveCountry(self, countryName, createdBy) :
-        createdOn = datetime.datetime.now()
+        createdOn = self.getDateTime()
         countryId = self.getNewId("country_id", "tbl_countries")
         isActive = 1
 
@@ -226,7 +230,7 @@ class DatabaseHandler(object) :
         return isDuplicate
 
     def saveIndustry(self, industryName, createdBy) :
-        createdOn = datetime.datetime.now()
+        createdOn = self.getDateTime()
         industryId = self.getNewId("industry_id", "tbl_industries")
         isActive = 1
 
@@ -238,9 +242,15 @@ class DatabaseHandler(object) :
         return self.dataInsertUpdate(query)
 
     def getIndustryByIndustryId(self, industryId) :
-        q = "SELECT industry_name FROM tbl_industries WHERE industry_id=%s" % industryId
-        rows = self.dataSelect(q)
-        industryName = rows[0][0]
+        if type(industryId) == IntType :
+            qry = "SELECT industry_name FROM tbl_industries WHERE industry_id=%s" % industryId
+        else :
+            # ids = (int(x) for x in industryId.split(','))
+            qry = " SELECT (GROUP_CONCAT(industry_name SEPARATOR ', ')) as industry_name \
+                FROM tbl_industries WHERE industry_id in %s" % str(tuple(industryId))
+
+        rows = self.dataSelect(qry)
+        industryName = str(rows[0][0])
         return industryName
 
     def updateIndustry(self, industryId, industryName, updatedBy) :
@@ -289,7 +299,7 @@ class DatabaseHandler(object) :
         return isDuplicate
 
     def saveStatutoryNature(self, statutoryNatureName, createdBy) :
-        createdOn = datetime.datetime.now()
+        createdOn = self.getDateTime()
         statutoryNatureId = self.getNewId("statutory_nature_id", "tbl_statutory_natures")
         isActive = 1
 
@@ -346,7 +356,7 @@ class DatabaseHandler(object) :
     def saveStatutoryLevel(self, countryId, domainId, levelId, levelName, levelPosition, userId) :
         if levelId is None :
             levelId = self.getNewId("level_id", "tbl_statutory_levels")
-            createdOn = datetime.datetime.now()
+            createdOn = self.getDateTime()
 
             query = "INSERT INTO tbl_statutory_levels (level_id, level_position, \
                 level_name, country_id, domain_id, created_by, created_on) VALUES (%s, %s, '%s', %s, %s, %s, '%s')" % (
@@ -375,7 +385,7 @@ class DatabaseHandler(object) :
     def saveGeographyLevel(self, countryId, levelId, levelName, levelPosition, userId) :
         if levelId is None :
             levelId = self.getNewId("level_id", "tbl_geography_levels")
-            createdOn = datetime.datetime.now()
+            createdOn = self.getDateTime()
 
             query = "INSERT INTO tbl_geography_levels (level_id, level_position, \
                 level_name, country_id, created_by, created_on) VALUES (%s, %s, '%s', %s, %s, '%s')" % (
@@ -407,7 +417,7 @@ class DatabaseHandler(object) :
 
     def saveGeographies(self, name, levelId, parentIds, userId) :
         geographyId = self.getNewId("geography_id", "tbl_geographies")
-        createdOn = datetime.datetime.now()
+        createdOn = self.getDateTime()
 
         query = "INSERT INTO tbl_geographies (geography_id, geography_name, level_id, \
             parent_ids, created_by, created_on) VALUES (%s, '%s', %s, '%s', %s, '%s')" % (
@@ -428,9 +438,215 @@ class DatabaseHandler(object) :
         )
         return self.dataInsertUpdate(query)
 
+    ### Statutory ###
+    def getStatutories(self) :
+        query = "SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, \
+            t2.country_id, t3.country_name, t2.domain_id, t4.domain_name \
+            FROM tbl_statutories t1 \
+            INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id \
+            INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id \
+            INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id"
+        return self.dataSelect(query)
 
-    @staticmethod
-    def instance() :
+    def getStatutoryWithMappings(self) :
+        query = "SELECT t1.statutory_id, t1.statutory_name, t1.parent_ids FROM tbl_statutories t1"
+        _rows = self.dataSelect(query)
+        statutoryNames = {}
+        statutoryMapping = {}
+
+        for row in _rows :
+            statutoryNames[int(row[0])] = row[1]
+
+        for geo in _rows :
+            parentIds = [int(x) for x in geo[2].split(',')]
+            names = []
+            for id in parentIds :
+                if id > 0 :
+                    names.append(statutoryNames.get(id))
+                names.append(geo[1])
+
+            statutoryMapping [int(geo[0])] = '>>'.join(str(x) for x in names)
+
+        return statutoryMapping
+
+    def getStatutoriesByIds(self, statutoryIds) :
+        if type(statutoryIds) == IntType :
+            qry = " WHERE t1.statutory_id = %s" %  statutoryIds
+        else :
+            ids = (int(x) for x in statutoryIds.split(','))
+            qry = " WHERE t1.statutory_id in (%s)" % str(ids)
+
+        query = "SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, \
+            t2.country_id, t3.country_name, t2.domain_id, t4.domain_name \
+            FROM tbl_statutories t1 \
+            INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id \
+            INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id \
+            INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id %s" % qry
+        return self.dataSelect(query)        
+
+    def getDuplicateStatutories(self, parentIds, statutoryId) :
+        query = "SELECT statutory_id, statutory_name, level_id \
+            FROM tbl_statutories WHERE parent_ids='%s' " % (parentIds)
+        if statutoryId is not None :
+            query = query + " AND statutory_id != %s" % statutoryId
+        return self.dataSelect(query)
+
+    def saveStatutories(self, name, levelId, parentIds, userId) :
+        statutoryId = self.getNewId("statutory_id", "tbl_statutories")
+        createdOn = self.getDateTime()
+
+        query = "INSERT INTO tbl_statutories (statutory_id, statutory_name, level_id, \
+            parent_ids, created_by, created_on) VALUES (%s, '%s', %s, '%s', %s, '%s')" % (
+                statutoryId, name, levelId, parentIds, userId, createdOn
+            )
+        return self.dataInsertUpdate(query)
+
+    def updateStatutories(self, statutoryId, name, parentIds, updatedBy) :
+        query = "UPDATE tbl_statutories set statutory_name='%s', parent_ids=%s, \
+             updated_by=%s WHERE statutory_id=%s " % (
+                name, parentIds, updatedBy, statutoryId
+            )
+        return self.dataInsertUpdate(query)
+
+    def updateStatutoryMappingId(self, statutoryIds, mappingId, updatedBy) :
+        statutoryIds = statutoryIds[:-1]
+        ids = [int(x) for x in statutoryIds.split(',')]
+        qry = "SELECT statutory_id, statutory_mapping_ids from tbl_statutories where statutory_id in %s" % str(tuple(ids))
+        rows = self.dataSelect(qry);
+        isUpdated = False
+        for row in rows :
+            statutoryId = row[0]
+            _statutoryMappingId = mappingId
+            if (row[1] is not None) :
+                mappingIds = [int(x) for x in row[1].split(',')]
+                if (mappingId not in mappingIds) :
+                    mappingIds.append(mappingId)
+                    _statutoryMappingId = ','.join(str(x) for x in mappingIds)
+
+            query = "UPDATE tbl_statutories set statutory_mapping_ids = %s, updated_by = %s \
+                WHERE statutory_id = %s" % (
+                _statutoryMappingId, updatedBy, statutoryId
+            )
+            isUpdated = self.dataInsertUpdate(query)
+
+        return isUpdated
+
+
+    ### Compliance ###
+    def getCompliancesByIds(self, complianceIds) :
+        if type(complianceIds) == IntType :
+            qry = " WHERE t1.compliance_id = %s" %  complianceIds
+        else :
+            # ids = (int(x) for x in complianceIds.split(','))
+            qry = " WHERE t1.compliance_id in %s" % str(tuple(complianceIds))
+
+        query = "SELECT t1.compliance_id, t1.statutory_provision, t1.compliance_task, \
+            t1.compliance_description, t1.document_name, t1.format_file, t1.penal_consequences, \
+            t1.compliance_frequency, t1.statutory_dates, t1.repeats_every, t1.repeats_type, \
+            t1.duration, t1.duration_type, t1.is_active \
+            FROM tbl_compliances t1 %s" % qry
+        return self.dataSelect(query)
+
+    def saveCompliance(self, mappingId, datas, createdBy) :
+        complianceIds = []
+        for data in datas :
+            complianceId = self.getNewId("compliance_id", "tbl_compliances")
+            createdOn = self.getDateTime()
+
+            statutoryProvision = data.get("statutory_provision")
+            complianceTask = data.get("compliance_task")
+            complianceDescription = data.get("description")
+            documentName = data.get("document")
+            formatFile = data.get("format_file_name")
+            penalConsequences = data.get("penal_consequences")
+            complianceFrequency = data.get("compliance_frequency")
+            statutoryDates =  json.dumps(data.get("statutory_dates"))
+            repeatsEvery = data.get("repeats_every")
+            repeatsType = data.get("repeats_type")
+            duration = data.get("duration")
+            durationType = data.get("duration_type")
+            isActive = data.get("is_active")
+
+            if complianceFrequency == "OneTime" :
+                query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
+                    compliance_task, compliance_description, document_name, format_file, \
+                    penal_consequences, compliance_frequency, statutory_dates, statutory_mapping_id, \
+                    is_active, created_by, created_on) VALUES (%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', \
+                    '%s', %s, %s, %s, '%s')" % (complianceId, statutoryProvision, complianceTask, 
+                    complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
+                    statutoryDates, mappingId, isActive, createdBy, createdOn)
+
+            elif complianceFrequency == "OnOccurrence" :
+                query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
+                    compliance_task, compliance_description, document_name, format_file, \
+                    penal_consequences, compliance_frequency, statutory_dates, duration, \
+                    duration_type, statutory_mapping_id, \
+                    is_active, created_by, created_on) VALUES (%s,'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, \
+                    '%s', %s, %s, %s, '%s')" % (complianceId, statutoryProvision, complianceTask, 
+                    complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
+                    statutoryDates, int(duration), durationType, mappingId, isActive, createdBy, createdOn)
+
+            else :
+                query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
+                    compliance_task, compliance_description, document_name, format_file, \
+                    penal_consequences, compliance_frequency, statutory_dates, repeats_every, \
+                    repeats_type, statutory_mapping_id, \
+                    is_active, created_by, created_on) VALUES (%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', \
+                    %s, '%s', %s, %s, %s, '%s')"  % (complianceId, statutoryProvision, complianceTask, 
+                    complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
+                    statutoryDates, int(repeatsEvery), repeatsType, mappingId, isActive, createdBy, createdOn)
+
+            if (self.dataInsertUpdate(query)) :
+                complianceIds.append(complianceId)
+
+        return complianceIds
+
+
+
+    ### Stautory Mapping ###
+    def getStautoryMappings(self) :
+        query = "SELECT t1.statutory_mapping_id, t1.country_id, t2.country_name, t1.domain_id,  \
+            t3.domain_name, t1.industry_ids, t1.statutory_nature_id, t4.statutory_nature_name, \
+            t1.statutory_ids, t1.compliance_ids, t1.geography_ids, t1.approval_status  \
+            FROM tbl_statutory_mappings t1 \
+            INNER JOIN tbl_countries t2 on t1.country_id = t2.country_id \
+            INNER JOIN tbl_domains t3 on t1.domain_id = t3.domain_id \
+            INNER JOIN tbl_statutory_natures t4 on t1.statutory_nature_id = t4.statutory_nature_id "
+        return self.dataSelect(query)
+
+    def saveStatutoryMapping(self, data, createdBy) :
+        countryId =data.get("country_id")
+        domainId =data.get("domain_id")
+        industryIds = ','.join(str(x) for x in data.get("industry_ids")) + ","
+        natureId =data.get("statutory_nature_id")
+        statutoryIds = ','.join(str(x) for x in data.get("statutory_ids")) + ","
+        compliances = data.get("compliances")
+        geographyIds = ','.join(str(x) for x in data.get("geography_ids")) + ","
+        
+        statutoryMappingId = self.getNewId("statutory_mapping_id", "tbl_statutory_mappings")
+        createdOn = self.getDateTime()
+        isActive = 1
+
+        query = "INSERT INTO tbl_statutory_mappings (statutory_mapping_id, country_id, \
+            domain_id, industry_ids, statutory_nature_id, statutory_ids, geography_ids,\
+            is_active, created_by, created_on) \
+            VALUES (%s, %s, %s, '%s', %s, '%s', '%s', %s, %s, '%s' )" % (
+                statutoryMappingId, countryId, domainId, industryIds, natureId, statutoryIds,
+                geographyIds, isActive, createdBy, createdOn
+            )
+        if (self.dataInsertUpdate(query)) :
+            self.updateStatutoryMappingId(statutoryIds, statutoryMappingId, createdBy)
+            ids = self.saveCompliance(statutoryMappingId, compliances, createdBy)
+            complianceIds = ','.join(str(x) for x in ids) + ","
+            qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
+                where statutory_mapping_id = %s" % (complianceIds, statutoryMappingId)
+            return self.dataInsertUpdate(qry)
+        else :
+            return False
+
+
+    @staticmethod     
+    def instance() :         
         global _databaseHandlerInstance
         if _databaseHandlerInstance is None :
             _databaseHandlerInstance = DatabaseHandler()
