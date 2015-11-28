@@ -23,7 +23,32 @@
 		alert("failure_data"+data)
 	}
 	$(document).ready(function(){
-		
+
+    		// mirror.getClients("TechnoAPI", success, failure);
+        clientGroupDetails = {}
+        clientGroupDetails["group_name"] = "Client Test Group 57";
+        clientGroupDetails["country_ids"] = [1];
+        clientGroupDetails["domain_ids"] = [1];
+        clientGroupDetails["logo"] = "logo.png";
+        clientGroupDetails["contract_from"] = "02-Nov-2015";
+        clientGroupDetails["contract_to"] = "01-Nov-2016";
+        clientGroupDetails["incharge_persons"] = [1];
+        clientGroupDetails["no_of_user_licence"] = 10;
+        clientGroupDetails["file_space"] = 4.5;
+        clientGroupDetails["is_sms_subscribed"] = 1;
+        clientGroupDetails["email_id"] = "ClientTestGroup57@domain.com";
+  
+        dateConfigurations = []
+
+        configuration1 = {}
+        configuration1["country_id"] = 1;
+        configuration1["domain_id"] = 1;
+        configuration1["period_from"] = 1;
+        configuration1["period_to"] = 12;
+        
+        dateConfigurations.push(configuration1)
+
+        mirror.saveClientGroup("TechnoAPI", clientGroupDetails, dateConfigurations, success, failure);
 	});
 </script>
 </html>

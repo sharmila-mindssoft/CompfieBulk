@@ -80,7 +80,7 @@ class ClientDatabaseHandler(object) :
 
     def insert(self, table, columns, values) :
         query = "INSERT INTO "+table+" ("+columns+")" + \
-            " VALUES ("+values+")"
+            " VALUES ("+values+")"     
         return self.execute(query)
 
     def bulkInsert(self, table, columns, valueList) :
@@ -103,6 +103,26 @@ class ClientDatabaseHandler(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
+
+        return self.execute(query)
+
+    def onDuplicateKeyUpdate(self, table, columns, valueList, updateColumnsList):
+        query = "INSERT INTO %s (%s) VALUES " % (table, columns)
+
+        for index, value in enumerate(valueList):
+            if index < len(valueList)-1:
+                query += "%s," % str(value)
+            else:
+                query += "%s" % str(value)
+
+        query += " ON DUPLICATE KEY UPDATE "
+
+        for index, updateColumn in enumerate(updateColumnsList):
+
+            if index < len(updateColumnsList)-1:
+                query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
+            else:
+                query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
 
         return self.execute(query)
 
@@ -134,6 +154,24 @@ class ClientDatabaseHandler(object) :
         row = rows[0]
         return row[0]
 
+    def delete(self, table, condition):
+        query = "DELETE from "+table+" WHERE "+condition
+        return self.execute(query)        
+
+    def append(self, table, column, value, condition):
+        rows = self.getData(table, column, condition)
+        currentValue = rows[0][0]
+        if currentValue != None:
+            newValue = currentValue+","+str(value)
+        else:
+            newValue = str(value)
+        columns = [column]
+        values = [newValue]
+        return self.update(table, columns, values, condition)
+
+    def truncate(self, table):
+        query = "TRUNCATE TABLE  %s;" % table
+        return self.execute(query)
 
     @staticmethod
     def instance(databaseName) :
