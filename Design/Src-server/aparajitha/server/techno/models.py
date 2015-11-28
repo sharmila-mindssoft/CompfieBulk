@@ -215,7 +215,7 @@ class GroupCompany(object):
                 isSmsSubscribed = settingsDataList[7]
                 dateConfigurations = self.getDateConfigurations(clientId)
 
-                groupCompany = GroupCompany(clientId, groupName, inchargePersons, countryIds ,domainIds, 
+                groupCompany = GroupCompany(int(clientId), groupName, inchargePersons, countryIds ,domainIds, 
                                             logo, contractFrom, contractTo, noOfUserLicence, fileSpace, 
                                             isSmsSubscribed, dateConfigurations, username, isActive)
                 groupCompany.verify()
@@ -251,7 +251,7 @@ class GroupCompany(object):
                 domainIds = settingsRows[0][1]
                 isActive = clientDetail[1]
                 
-                groupCompany = GroupCompany(clientId, groupName, None, countryIds ,domainIds, None, 
+                groupCompany = GroupCompany(int(clientId), groupName, None, countryIds ,domainIds, None, 
                                             None, None, None, None, None,None, None, isActive)
                 clientList.append(groupCompany.toStructure())
             except:
@@ -288,19 +288,29 @@ class ClientConfiguration(object):
 class BusinessGroup(object):
     businessGroupTblName = "tbl_business_groups"
 
-    def __init__(self, businessGroupId, businessGroupName):
+    def __init__(self, businessGroupId, businessGroupName, clientId):
         self.businessGroupId = businessGroupId
         self.businessGroupName = businessGroupName
+        self.clientId = clientId
 
     def verify(self) :
         assertType(self.businessGroupId, IntType)
         assertType(self.businessGroupName, StringType)
+        assertType(self.clientId, IntType)
 
     def toStructure(self) :
         return {
             "business_group_id": self.businessGroupId,
-            "business_group_name": self.businessGroupName
+            "business_group_name": self.businessGroupName,
+            "client_id": self.clientId
         }
+
+    @classmethod
+    def getClienDatabaseName(self, clientId):
+        clientDBName = getClientDatabase(clientId)
+        if clientDBName == None:
+            print "Error : Database Not exists for the client %d" % clientId
+        return clientDBName
 
     @classmethod
     def getList(self, clientIds):
@@ -316,7 +326,8 @@ class BusinessGroup(object):
                 for row in rows:
                     businessGroupId = row[0]
                     businessGroupName = row[1]
-                    businessGroup = BusinessGroup(businessGroupId, businessGroupName)
+                    businessGroup = BusinessGroup(businessGroupId, businessGroupName, 
+                        int(clientId))
                     businessGroupList.append(businessGroup.toStructure())
             except:
                 print "Error: While fetching Business Groups of client id %s" % clientId
@@ -326,22 +337,32 @@ class BusinessGroup(object):
 class LegalEntity(object):
     legalEntityTblName = "tbl_legal_entities"
 
-    def __init__(self, legalEntityId, legalEntityName, businessGroupId):
+    def __init__(self, legalEntityId, legalEntityName, businessGroupId, clientId):
         self.legalEntityId = legalEntityId
         self.legalEntityName = legalEntityName
         self.businessGroupId = businessGroupId
+        self.clientId = clientId
 
     def verify(self) :
         assertType(self.legalEntityId, IntType)
         assertType(self.legalEntityName, StringType)
         assertType(self.businessGroupId, IntType)
+        assertType(self.clientId, IntType)
 
     def toStructure(self) :
         return {
             "legal_entity_id": self.legalEntityId,
             "legal_entity_name": self.legalEntityName,
-            "business_group_id": self.businessGroupId
+            "business_group_id": self.businessGroupId,
+            "client_id": self.clientId
         }
+
+    @classmethod
+    def getClienDatabaseName(self, clientId):
+        clientDBName = getClientDatabase(clientId)
+        if clientDBName == None:
+            print "Error : Database Not exists for the client %d" % clientId
+        return clientDBName
 
     @classmethod
     def getList(self, clientIds):
@@ -358,7 +379,8 @@ class LegalEntity(object):
                     legalEntityId = row[0]
                     legalEntityName = row[1]
                     businessGroupId = row[2]
-                    legalEntity = LegalEntity(legalEntityId, legalEntityName, businessGroupId)
+                    legalEntity = LegalEntity(legalEntityId, legalEntityName, 
+                        businessGroupId, int(clientId))
                     legalEntitiesList.append(legalEntity.toStructure())
             except:
                 print "Error: While fetching Legal Entities of client id %s" % clientId
@@ -368,25 +390,35 @@ class LegalEntity(object):
 class Division(object):
     divisionTblName = "tbl_divisions"
 
-    def __init__(self, divisionId, divisionName,legalEntityId, businessGroupId):
+    def __init__(self, divisionId, divisionName,legalEntityId, businessGroupId, clientId):
         self.divisionId = divisionId
         self.divisionName = divisionName
         self.legalEntityId = legalEntityId
         self.businessGroupId = businessGroupId
+        self.clientId = clientId
 
     def verify(self) :
         assertType(self.divisionId, IntType)
         assertType(self.divisionName, StringType)
         assertType(self.legalEntityId, IntType)
         assertType(self.businessGroupId, IntType)
+        assertType(self.clientId, IntType)
 
     def toStructure(self) :
         return {
-            "division_id": self.divisionID,
+            "division_id": self.divisionId,
             "division_name": self.divisionName,
             "legal_entity_id": self.legalEntityId,
-            "business_group_id": self.businessGroupId
+            "business_group_id": self.businessGroupId,
+            "client_id": self.clientId
         }
+
+    @classmethod
+    def getClienDatabaseName(self, clientId):
+        clientDBName = getClientDatabase(clientId)
+        if clientDBName == None:
+            print "Error : Database Not exists for the client %d" % clientId
+        return clientDBName
 
     @classmethod
     def getList(self, clientIds):
@@ -404,7 +436,8 @@ class Division(object):
                     divisionName = row[1]
                     legalEntityId = row[2]
                     businessGroupId = row[2]
-                    division = Division(divisionId, divisionName, legalEntityId, businessGroupId)
+                    division = Division(divisionId, divisionName, legalEntityId, 
+                        businessGroupId, int(clientId))
                     divisionsList.append(division.toStructure())
             except:
                 print "Error: While fetching Division of client id %s" % clientId
@@ -450,32 +483,39 @@ class Unit(object):
 
     def toDetailedStructure(self) :
         return {
-            "unit_id": unitId,
-            "division_id": divisionId,
-            "legal_entity_id": legalEntityId,
-            "business_group_id": businessGroupId,
-            "client_id"  : clientId,
-            "country_id": countryId,
-            "geography_id": geographyId,
-            "unit_code": unitCode,
-            "unit_name": unitName,
-            "industry_id": industryId,
-            "unit_address": address,
-            "postal_code": postalCode,
-            "domain_ids": domainIds,
-            "is_active": isActive
+            "unit_id": self.unitId,
+            "division_id": self.divisionId,
+            "legal_entity_id": self.legalEntityId,
+            "business_group_id": self.businessGroupId,
+            "client_id"  : self.clientId,
+            "country_id": self.countryId,
+            "geography_id": self.geographyId,
+            "unit_code": self.unitCode,
+            "unit_name": self.unitName,
+            "industry_id": self.industryId,
+            "unit_address": self.address,
+            "postal_code": self.postalCode,
+            "domain_ids": self.domainIds,
+            "is_active": self.isActive
         }
 
     def toStructure(self):
         return{
-            "unit_id": unitId,
-            "division_id": divisionId,
-            "legal_entity_id": legalEntityId,
-            "business_group_id": businessGroupId,
-            "client_id"  : clientId,
-            "unit_name": unitName,
-            "unit_address": address
+            "unit_id": self.unitId,
+            "division_id": self.divisionId,
+            "legal_entity_id": self.legalEntityId,
+            "business_group_id": self.businessGroupId,
+            "client_id"  : self.clientId,
+            "unit_name": self.unitName,
+            "unit_address": self.address
         }
+
+    @classmethod
+    def getClienDatabaseName(self, clientId):
+        clientDBName = getClientDatabase(clientId)
+        if clientDBName == None:
+            print "Error : Database Not exists for the client %d" % clientId
+        return clientDBName
 
     @classmethod
     def getDetailedList(self, clientIds):
@@ -484,11 +524,12 @@ class Unit(object):
         for index, clientId in enumerate(clientIds.split(",")):
             try:
                 clientDBName = self.getClienDatabaseName(clientId)
-                clientColumns = "unit_id, division_id, legal_entity_id, business_group_id, client_id, unit_code,"+\
-                        "unit_name, country_id,  address, postal_code, domain_ids, is_active"
+                clientColumns = "unit_id, division_id, legal_entity_id, business_group_id, "+\
+                                "unit_code, unit_name, country_id,  address,"+\
+                                "postal_code, domain_ids, is_active"
 
                 rows = ClientDatabaseHandler.instance(clientDBName).getData(
-                    self.unitTblName,columns, "1")
+                    self.unitTblName, clientColumns, "1")
 
                 knowledgeColumns = "geography_id, industry_id"
 
@@ -497,21 +538,21 @@ class Unit(object):
                     divisionId = row[1]
                     legalEntityId = row[2]
                     businessGroupId = row[3]
-                    clientId = row[4]
-                    unitCode = row[5]
-                    unitName = row[6]
-                    countryId = row[7]
-                    address = row[8]
-                    postalCode = row[9]
-                    domainIds = row[10]
-                    isActive = row[11]
-                    knowledgeRows = DatabaseHandler.instance().getData(self.unitTblName, knowledgeColumns, "1")
+                    unitCode = row[4]
+                    unitName = row[5]
+                    countryId = row[6]
+                    address = row[7]
+                    postalCode = row[8]
+                    domainIds = row[9]
+                    isActive = row[10]
+                    knowledgeRows = DatabaseHandler.instance().getData(self.unitTblName, 
+                        knowledgeColumns, "1")
                     for knowledgeRow in knowledgeRows:
                         geographyId = knowledgeRow[0]
                         industryId = knowledgeRow[1]
-                    unit = Unit(unitId, divisionId, legalEntityId, businessGroupId, clientId, 
-                            countryId, geographyId, unitCode, unitName, industryId, address, 
-                            postalCode, domainIds, isActive)
+                    unit = Unit(unitId, divisionId, legalEntityId, businessGroupId, 
+                            int(clientId), countryId, geographyId, unitCode, unitName,
+                            industryId, address, postalCode, domainIds, isActive)
                     unitList.append(unit.toDetailedStructure())
 
             except:
@@ -1026,6 +1067,7 @@ class GetClients(object):
         unitList = []
 
         countryList = CountryList.getCountryList()
+        domainList = DomainList.getDomainList()
 
         clientIds = self.getClientIdsOfUser()
         print clientIds
@@ -1039,11 +1081,13 @@ class GetClients(object):
             unitList = Unit.getDetailedList(clientIds)
         
         self.responseData["countries"] = countryList
+        self.responseData["domains"] = domainList
         self.responseData["group_companies"] = groupCompanyList
         self.responseData["business_groups"] = businessGroupList
         self.responseData["legal_entities"] = legalEntityList
         self.responseData["divisions"] = divisionList
         self.responseData["units"] = unitList
+        
 
     def getClientIdsOfUser(self):
         columns = "client_ids"
@@ -1083,8 +1127,6 @@ class SaveClient(object):
         assertType(self.legalEntity, DictType)
         assertType(self.division, DictType)
         assertType(self.countryWiseUnits, ListType)
-
-
 
         if self.processBusinessGroup():
             if self.processLegalEntity():
