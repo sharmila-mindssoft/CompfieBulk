@@ -82,8 +82,10 @@ class APIRequestHandler(tornado.web.RequestHandler) :
                     response = StatutoryApi(request, userId).updateStatutory()
                 elif request[0] == "GetStatutoryMappings" :
                     response = StatutoryMappingApi(request, userId).getStatutoryMappings()
-                elif request[0] == "SaveStatutoryMappings" :
+                elif request[0] == "SaveStatutoryMapping" :
                     response = StatutoryMappingApi(request, userId).saveStatutoryMapping()
+                elif request[0] == "UpdateStatutoryMapping" :
+                    response = StatutoryMappingApi(request, userId).updateStatutoryMapping()
                 else :
                     response = PossibleError("InvalidRequest").toStructure()
 
