@@ -219,7 +219,7 @@ function loadUserList(usersList) {
 				var editdomainval = domain.split(",");
 				$("#domainselected").val(editdomainval.length+" Selected");
 				$("#country").val(country);
-				var editcountryval = domain.split(",");
+				var editcountryval = country.split(",");
 				$("#countryselected").val(editcountryval.length+" Selected");
 				$("#emailid").val(emailId);
 				break;

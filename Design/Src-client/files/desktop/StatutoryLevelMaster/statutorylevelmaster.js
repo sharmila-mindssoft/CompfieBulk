@@ -14,7 +14,7 @@ function GetStatutoryLevels(){
   }
   function failure(data){
   }
-  mirror.getStatutoryLevels("GetStatutoryLevels", success, failure);
+  mirror.getStatutoryLevels(success, failure);
 }
 
 //Autocomplete Script Starts
@@ -160,7 +160,7 @@ function saveRecord () {
         }
         function failure(data){
         }
-        mirror.saveAndUpdateStatutoryLevels("SaveStatutoryLevel", parseInt(country), parseInt(domain), passlevellist, success, failure);
+        mirror.saveAndUpdateStatutoryLevels(parseInt(country), parseInt(domain), passlevellist, success, failure);
          }else{
           $("#error").text("Intermediate Level's should not be Empty");
          }

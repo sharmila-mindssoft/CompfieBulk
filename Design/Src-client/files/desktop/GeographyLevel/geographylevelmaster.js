@@ -12,7 +12,7 @@ function GetGeographyLevels(){
 	}
 	function failure(data){
 	}
-	mirror.getGeographyLevels("GetGeographyLevels", success, failure);
+	mirror.getGeographyLevels(success, failure);
 }
 //Autocomplete Script Starts
 //Hide list items after select
@@ -126,7 +126,7 @@ function saveRecord () {
 				}
 				function failure(data){
 				}
-				mirror.saveAndUpdateGeographyLevels("SaveGeographyLevel", parseInt(country), passlevellist, success, failure);
+				mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist, success, failure);
 			   }else{
 			   	$("#error").text("Intermediate Level's should not be Empty");
 			   }

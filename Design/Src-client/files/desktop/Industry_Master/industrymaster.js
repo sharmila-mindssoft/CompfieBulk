@@ -61,7 +61,7 @@ if(industryName == ''){
   function failure(data){
 
   }
-  mirror.saveIndustry("SaveIndustry", industryName, success, failure);
+  mirror.saveIndustry(industryName, success, failure);
   }
   else{
     function success(status,data){
@@ -76,7 +76,7 @@ if(industryName == ''){
     }
     function failure(data) {
     }
-    mirror.updateIndustry("UpdateIndustry", industryId, industryName, success, failure);
+    mirror.updateIndustry(industryId, industryName, success, failure);
   }
 }
 }
@@ -96,7 +96,7 @@ function changeStatus (industryId,isActive) {
   }
   function failure(data){
   }
-  mirror.changeIndustryStatus("ChangeIndustryStatus", industryId, isActive, success, failure);
+  mirror.changeIndustryStatus(industryId, isActive, success, failure);
 }
 
 function getIndustries () {
@@ -108,7 +108,7 @@ function getIndustries () {
   }
   function failure(data){
   }
-  mirror.getIndustryList("GetIndustries", success, failure);
+  mirror.getIndustryList(success, failure);
 }
 
 function filter (term, cellNr){
