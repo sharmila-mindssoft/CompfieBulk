@@ -127,9 +127,10 @@ function activate_text (element,checkval,checkname) {
 //Autocomplete Script ends
 
 function loadGeographyFirstLevels(checkval){
-    $('#geography-level-templates').each(function (i) {
+   /*$('#geography-level-templates').each(function (i) {
     $('[id="' + this.id + '"]:gt(0)').remove();
-  });
+  });*/
+  $(".tbody-geography-level").find("div").remove();
   var geographyLevelList = geographyLevelsList[checkval];
   var levelposition;
     for(var j in geographyLevelList){
@@ -176,7 +177,6 @@ function load(id,type,level,country){
           var levelstages= parseInt(level) + 1;
           for(var k=levelstages;k<=10;k++){
           var setlevelstage= k;
-
           if($('#geographyid').val()==''){
           $('#datavalue'+setlevelstage).val('');
            }
@@ -195,7 +195,6 @@ function load(id,type,level,country){
             }
             }
           $('#ulist'+setlevelstage).append(str); 
-        
           }
     }
 
@@ -239,6 +238,8 @@ function load(id,type,level,country){
             $("#error").text("Record Added Successfully");
             GetGeographies();
             load(last_geography_id,"type",last_level,$('#country').val());
+              /*str += '<a href="#"> <li id="'+setgeographyid+'" class="'+clsval1+'" onclick="activate(this,'+setgeographyid+',\''+clsval+'\','+country+','+setlevelstage+')" >'+geographyList[i]["geography_name"]+'</li> </a>';
+              $('#ulist'+setlevelstage).append(str);*/
           }else{
             $("#error").text(status)
           }
@@ -376,7 +377,6 @@ function activateedit(element, id, type,country, level,levelstage){
 
 //load geographymapping sub level data dynamically
 function loadedit(id,type,level,country,levelstagemax){
-  alert(levelstagemax);
           var levelstages= parseInt(level) + 1;
           for(var k=levelstages;k<=levelstagemax;k++){
           var setlevelstage= k;
