@@ -1,53 +1,49 @@
 var countriesList;
 var geographiesList;
+var tempGeographiesList;
 
 $(function() {
-	initialize();
+	getGeography();
 });
-function initialize(){
+function getGeography(){
 	function success(status, data){
 		console.log(data);
-		//loadGeographyList(data);
-		alert("success");
+		geographiesList = data["geographies"];
+		countriesList = data["countries"];
+		tempGeographiesList = data["geographies"];
 	}
 	function failure(status, data){
 	}
-	mirror.getGeographyReport("GeographyReport", success, failure);
+	mirror.getGeographyReport(success, failure);
 }
 
-function loadGeographyList(domainList){
-  	/*var sno=0;
+function loadGeographyList(geographyList){
+  	var sno=0;
+  	var geography = '';
+    var isActive = 0;
 	var title;	
-	for(var i in domainList){
-		var domains=domainList[i];
-		for(var j in domains){
-			var isActive=domains[j]["is_active"];
-			if(isActive==1){ title="Active"; }
-			else { title="Inacive"; }
-			var tableRow=$('#templates .table-domain-report .table-row');
-			var clone=tableRow.clone();
-			sno = sno + 1;
-			$('.sno', clone).text(sno);
-			$('.domain-name', clone).text(domains[j]["domain_name"]);
-			$('.is-active', clone).text(title);
-			$('.tbody-geography-list').append(clone);			
-		}
-	
-	}
-	$("#total-records").html('Total : '+sno+' records');*/
+    
+    $(".tbody-geography-list").find("tr").remove();
+      for(var list in geographyList) {
+        geography = geographyList[list]["geography"];
+        isActive = geographyList[list]["is_active"];
+        var geographyimage = geography.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
+        if(isActive == 1) {
+          title="Active";
+        }
+        else {
+          title="Inacive";
+         }
+        var tableRow=$('#templates .table-geography-report .table-row');
+		var clone=tableRow.clone();
+		sno = sno + 1;
+		$('.sno', clone).text(sno);
+		$('.geography-name', clone).html(geographyimage);
+		$('.is-active', clone).text(title);
+		$('.tbody-geography-list').append(clone);
+        }
+	$("#total-records").html('Total : '+sno+' records');
 }
-$("#search-geography-name").keyup(function() { 
-	var count=0;
-    var value = this.value.toLowerCase();
-    $("table").find("tr:not(:first):not(:last)").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".geography-name").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-    count = $('tr:visible').length-3;
-    $("#total-records").html('Total : '+count+' records');
-});
-
 
 //Autocomplete Script Starts
 //Hide list items after select
@@ -77,7 +73,23 @@ function loadauto_text (textval) {
 function activate_text (element,checkval,checkname) {
   $("#countryval").val(checkname);
   $("#country").val(checkval);
-  
-  loadGeographyFirstLevels(checkval);
+
+  var geographyList = geographiesList[checkval];
+  loadGeographyList(geographyList);
 }
 //Autocomplete Script ends
+
+//filter process
+function filter (){
+	var filterkey = $("#search-geography-name").val().toLowerCase();
+	var filteredList=[];
+	var geographyList = tempGeographiesList[1];
+	for(var entity in geographyList) {
+			geogtaphyname = geographyList[entity]["geography"];
+			if (~geogtaphyname.toLowerCase().indexOf(filterkey)) 
+			{
+				filteredList.push(geographyList[entity]);
+			}		
+	}
+	loadGeographyList(filteredList);
+}
