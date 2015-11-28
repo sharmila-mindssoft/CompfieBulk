@@ -1346,3 +1346,17 @@ class StatutoryMappingApi(object):
             str(self.responseData),
             {}
         ]
+
+    def updateStatutoryMapping(self) :
+        DH = DatabaseHandler.instance()
+        requestData = self.request[1]
+        assertType(requestData, DictType)
+        if (DH.updateStatutoryMapping(requestData, self.userId)) :
+            self.responseData = "success"
+        else :
+            self.responseData = "updateFailed"
+
+        return [
+            str(self.responseData),
+            {}
+        ]
