@@ -84,12 +84,11 @@ class ClientDatabaseHandler(object) :
         return self.execute(query)
 
     def bulkInsert(self, table, columns, valueList) :
-        query = "INSERT INTO "+table+" ("+columns+")" + \
-            " VALUES "
+        query = "INSERT INTO %s (%s) VALUES" % (table, columns)
 
         for index, value in enumerate(valueList):
             if index < len(valueList)-1:
-                query += str(value)+","
+                query += +"%s," % str(value)
             else:
                 query += str(value)
         return self.execute(query)

@@ -649,6 +649,22 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function saveClient(callerName, clientId, businessGroup, legalEntity, division, 
+        countryWiseUnits, callback, failure_callback) {
+        
+        var request = [
+            "SaveClient",
+            {
+                "client_id": clientId,
+                "business_group": businessGroup,
+                "legal_entity": legalEntity,
+                "division": division,
+                "country_wise_units": countryWiseUnits
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }    
+
 
     return {
         log: log,
@@ -711,7 +727,8 @@ function initMirror() {
         validateResetToken: validateResetToken,
         resetPassword: resetPassword,
 
-        getClients: getClients
+        getClients: getClients,
+        saveClient: saveClient
     }
 
 }

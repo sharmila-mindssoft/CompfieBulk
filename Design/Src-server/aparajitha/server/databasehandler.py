@@ -99,12 +99,13 @@ class DatabaseHandler(object) :
         return self.execute(query)
 
     def bulkInsert(self, table, columns, valueList) :
-        query = "INSERT INTO "+table+" ("+columns+")" + \
-            " VALUES "
+        query = "INSERT INTO %s (%s)  VALUES" % (table, columns)
 
-        for value in valueList:
-            query += value
-
+        for index, value in enumerate(valueList):
+            if index < len(valueList)-1:
+                query += +"%s," % str(value)
+            else:
+                query += str(value)
         return self.execute(query)
 
     def update(self, table, columns, values, condition) :
@@ -116,6 +117,26 @@ class DatabaseHandler(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
+
+        return self.execute(query)
+
+    def onDuplicateKeyUpdate(self, table, columns, valueList, updateColumnsList):
+        query = "INSERT INTO %s (%s) VALUES " % (table, columns)
+
+        for index, value in enumerate(valueList):
+            if index < len(valueList)-1:
+                query += "%s," % str(value)
+            else:
+                query += "%s" % str(value)
+
+        query += " ON DUPLICATE KEY UPDATE "
+
+        for index, updateColumn in enumerate(updateColumnsList):
+
+            if index < len(updateColumnsList)-1:
+                query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
+            else:
+                query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
 
         return self.execute(query)
 

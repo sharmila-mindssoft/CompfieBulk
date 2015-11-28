@@ -24,31 +24,47 @@
 	}
 	$(document).ready(function(){
 
-    		// mirror.getClients("TechnoAPI", success, failure);
-        clientGroupDetails = {}
-        clientGroupDetails["group_name"] = "Client Test Group 57";
-        clientGroupDetails["country_ids"] = [1];
-        clientGroupDetails["domain_ids"] = [1];
-        clientGroupDetails["logo"] = "logo.png";
-        clientGroupDetails["contract_from"] = "02-Nov-2015";
-        clientGroupDetails["contract_to"] = "01-Nov-2016";
-        clientGroupDetails["incharge_persons"] = [1];
-        clientGroupDetails["no_of_user_licence"] = 10;
-        clientGroupDetails["file_space"] = 4.5;
-        clientGroupDetails["is_sms_subscribed"] = 1;
-        clientGroupDetails["email_id"] = "ClientTestGroup57@domain.com";
-  
-        dateConfigurations = []
+      clientId = 1
 
-        configuration1 = {}
-        configuration1["country_id"] = 1;
-        configuration1["domain_id"] = 1;
-        configuration1["period_from"] = 1;
-        configuration1["period_to"] = 12;
-        
-        dateConfigurations.push(configuration1)
+      businessGroup = {}
+      businessGroup["business_group_id"] = 1
+      businessGroup["business_group_name"] = "Test Business Group 7"
 
-        mirror.saveClientGroup("TechnoAPI", clientGroupDetails, dateConfigurations, success, failure);
+      legalEntity = {}
+      legalEntity["legal_entity_id"] = 1
+      legalEntity["legal_entity_name"] = "Test Legal Entity Name 7"
+
+      division = {}
+      division["division_id"] = 1
+      division["division_name"] = "Test Division Name 7"
+
+      countryWiseUnits = []
+
+
+      units = []
+      unit = {}
+      unit["unit_id"] = null
+      unit["unit_code"] = "UNIT00008"
+      unit["unit_name"] = "Madurai Unit 8"
+      unit["unit_address"] = "Sample Address 8"
+      unit["postal_code"] = "678267841"
+      unit["geography_id"] = 1
+      unit["unit_location"] = "Madurai"
+      unit["industry_id"] = 1
+      unit["industry_name"] = "Factory"
+      unit["domain_ids"] = [3,4]
+
+      units.push(unit)
+
+      india = {}
+      india["country_id"] = 1
+      india["units"] = units
+
+      countryWiseUnits.push(india)
+
+    	mirror.saveClient("TechnoAPI", clientId, businessGroup, legalEntity, division, 
+        countryWiseUnits, success, failure);
+       
 	});
 </script>
 </html>
