@@ -282,6 +282,7 @@ CREATE TABLE `tbl_client_groups` (
 
 DROP TABLE IF EXISTS `tbl_units`;
 CREATE TABLE `tbl_units` (
+  `client_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `country_id` int(11) DEFAULT NULL,
   `geography_id` int(11) DEFAULT NULL,
@@ -294,6 +295,7 @@ CREATE TABLE `tbl_units` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`unit_id`),
+  CONSTRAINT `fk_units_client` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
   CONSTRAINT `fk_units_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `fk_units_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`),
   CONSTRAINT `fk_units_industries` FOREIGN KEY (`industry_id`) REFERENCES `tbl_industries` (`industry_id`)
