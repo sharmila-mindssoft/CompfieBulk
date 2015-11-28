@@ -348,8 +348,57 @@ function initMirror() {
 
     function getGeographyReport(callback, failure_callback) {
         var request = ["GeographyReport", {}];
-        apiRequest("GeographyReport", request, callback, failure_callback);   
+        apiRequest("GeographyReport", request, callback, failure_callback);
     }
+
+    // statutory Mapping
+
+    function saveStatutory(levelId, name, parentIds, callback, failure_callback) {
+        var request = [
+            "SaveStatutory",
+            {
+                "statutory_level_id": levelId,
+                "statutory_name": name,
+                "parent_ids": parentIds
+            }
+        ]
+        apiRequest("SaveStatutory", request, callback, failure_callback);
+    }
+
+    function updateStatutory(statutoryId, levelId, name, parentIds, callback, failure_callback) {
+        var request = [
+            "UpdateStatutory",
+            {
+                "statutory_id": statutoryId,
+                "statutory_level_id": levelId,
+                "statutory_name": name,
+                "parent_ids": parentIds
+            }
+        ]
+        apiRequest("UpdateStatutory", request, callback, failure_callback);
+    }
+
+    function saveStatutoryMapping(mappingData, callback, failure_callback ) {
+        var request = [
+            "SaveStatutoryMapping",
+            mappingData
+        ]
+        apiRequest("SaveStatutoryMapping", request, callback, failure_callback);
+    }
+
+    function updateStatutoryMapping(mappingData, callback, failure_callback ) {
+        var request = [
+            "UpdateStatutoryMapping",
+            mappingData
+        ]
+        apiRequest("UpdateStatutoryMapping", request, callback, failure_callback);
+    }
+    
+    function getStatutoryMappings(callback, failure_callback) {
+        var request = ["getStatutoryMappings", {}];
+        apiRequest("getStatutoryMappings", request, callback, failure_callback);
+    }
+
 
     // Admin User Group Master
     function isNull(value){
@@ -688,6 +737,11 @@ function initMirror() {
         updateGeography: updateGeography,
         changeGeographyStatus: changeGeographyStatus,
         getGeographyReport: getGeographyReport,
+        saveStatutory: saveStatutory,
+        updateStatutory: updateStatutory,
+        saveStatutoryMapping: saveStatutoryMapping,
+        updateStatutoryMapping: updateStatutoryMapping,
+        getStatutoryMappings: getStatutoryMappings,
 
         saveAdminUserGroup: saveAdminUserGroup,
         updateAdminUserGroup: updateAdminUserGroup,
