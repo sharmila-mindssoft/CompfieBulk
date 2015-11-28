@@ -67,7 +67,7 @@ class APIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "SaveGeographyLevel" :
                     response = SaveGeographyLevel(request, userId).toStructure()
                 elif request[0] == "GetGeographies" :
-                    response = GeographyAPI(request, userId).getGeographies()
+                    response = GeographyAPI(request, userId).getGeography()
                 elif request[0] == "SaveGeography" :
                     response = GeographyAPI(request, userId).saveGeographies()
                 elif request[0] == "UpdateGeography" :
@@ -76,8 +76,16 @@ class APIRequestHandler(tornado.web.RequestHandler) :
                     response = GeographyAPI(request, userId).changeGeographyStatus()
                 elif request[0] == "GeographyReport" :
                     response = GeographyAPI(request, userId).geographyReport()
+                elif request[0] == "SaveStatutory" :
+                    response = StatutoryApi(request, userId).saveStatutory()
+                elif request[0] == "UpdateStatutory" :
+                    response = StatutoryApi(request, userId).updateStatutory()
+                elif request[0] == "GetStatutoryMappings" :
+                    response = StatutoryMappingApi(request, userId).getStatutoryMappings()
+                elif request[0] == "SaveStatutoryMappings" :
+                    response = StatutoryMappingApi(request, userId).saveStatutoryMapping()
                 else :
-                    response = PossibleError("InvalidRequest")
+                    response = PossibleError("InvalidRequest").toStructure()
 
         except Exception, e:
             print callerName, e
@@ -88,7 +96,7 @@ class APIRequestHandler(tornado.web.RequestHandler) :
             self.set_header("Access-Control-Allow-Origin", "*")
             self.set_header("Access-Control-Allow-Headers", "Content-Type")
             self.set_header("Access-Control-Allow-Methods", "POST")
-            self.write(json.dumps(response, indent=4))
+            self.write(json.dumps(response, indent=2))
             self.finish()
 
 def initializeKnowledgeHandler() :
