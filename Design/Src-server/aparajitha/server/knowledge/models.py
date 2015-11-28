@@ -265,7 +265,6 @@ class CountryList(object) :
 
     def processData(self) :
         _countries = DatabaseHandler.instance().getCountries()
-        print _countries
         for row in _countries :
             country = Country(int(row[0]), row[1], row[2])
             self.countryList.append(country.toStructure())
@@ -901,10 +900,11 @@ class GeographyAPI(object) :
         self.countryList = CountryList().getCountry()
         self.geographyLevelList = GeographyLevelList().getGeographyLevels()
         self.geographies = {}
+        self.getGeographies()
 
     def getGeographies(self) :
         DH = DatabaseHandler.instance()
-        _geographyList = DH.instance().getGeographies()
+        _geographyList = DH.getGeographies()
         for row in _geographyList :
             parentIds = [int(x) for x in row[3].split(',')]
             geography = Geography(int(row[0]), row[1], int(row[2]), parentIds[-1], int(row[4]))
@@ -990,7 +990,7 @@ class GeographyAPI(object) :
 
     def geographyReport(self) :
         DH = DatabaseHandler.instance()
-        _geographyList = DH.instance().getGeographies()
+        _geographyList = DH.getGeographies()
         geoMappingList = []
         geoMappingDict = {}
         geographyData = {}
@@ -1017,7 +1017,11 @@ class GeographyAPI(object) :
             )
             geoMappingDict[countryId] = geoMappingList
         return [
-            "success",
-            geoMappingDict
+            "success", 
+            {
+                "countries": self.countryList,
+                "geographies": geoMappingDict
+            }
+            
         ]
 
