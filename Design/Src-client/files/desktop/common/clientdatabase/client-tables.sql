@@ -154,7 +154,7 @@ CREATE TABLE `tbl_client_user_details` (
   `user_group_id` int(11) DEFAULT NULL,
   `employee_name` varchar(50) DEFAULT NULL,
   `employee_code` varchar(50) DEFAULT NULL,
-  `contact_no` int(11) DEFAULT NULL,
+  `contact_no` varchar(20) DEFAULT NULL,
   `seating_unit_id` int(11) DEFAULT NULL,
   `user_level` int(11) DEFAULT NULL,
   `country_ids` varchar(250) DEFAULT NULL,
