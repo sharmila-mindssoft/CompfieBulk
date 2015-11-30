@@ -12,8 +12,7 @@ from aparajitha.server.databasehandler import DatabaseHandler
 __all__ = [
     "UserPrivilegeController",
     "UserController",
-    "ChangePassword",
-    "ForgotPassword"
+    "ServiceProviderController"
 ]
 
 class UserPrivilegeController() :
@@ -146,136 +145,78 @@ class UserController() :
         return response
 
 
-class ChangePassword() :
-    userTblName = "tbl_users"
+class ServiceProviderController() :
+    tblName = " tbl_service_providers"
 
-    def changePassword(self, requestData, sessionUser) :
-        self.sessionUser = sessionUser
-        self.currentPassword = JSONHelper.getString(requestData, "current_password")
-        self.newPassword = JSONHelper.getString(requestData, "new_password")
+    def getUserGroupsFormData(self) :
+        ClientForms = Form.getForms("client")
+        forms = Menu.getMenu(ClientForms)
+        return forms
 
-        if self.validateCurrentPassword() :
-            if self.updatePassword() :
-                return commonResponseStructure("ChangePasswordSuccess",{})
-        else :
-            return commonResponseStructure("InvalidCurrentPassword",{})
+    def getServiceProviders(self, sessionUser) :
+        serviceProviderList = ServiceProvider.getList(sessionUser)
 
-    def validateCurrentPassword(self):
-        column = "password"
-        condition = " user_id='"+str(self.sessionUser)+"'"
-        rows = DatabaseHandler.instance().getData(self.userTblName, column, condition)
-        password = rows[0][0]
-        if password == encrypt(self.currentPassword):
-            return True
+        response_data = {}
+        response_data["service_providers"] = serviceProviderList
+
+        response = commonResponseStructure("GetServiceProvidersSuccess", response_data)
+        return response
+
+    def saveServiceProvider(self, requestData, sessionUser) :
+        serviceProviderName = JSONHelper.getString(requestData, "service_provider_name")
+        address = JSONHelper.getString(requestData, "address")
+        contractFrom =  JSONHelper.getString(requestData, "contract_from")
+        contractTo =  JSONHelper.getString(requestData, "contract_to")
+        contactPerson =  JSONHelper.getString(requestData, "contact_person")
+        contactNo =  JSONHelper.getString(requestData, "contact_no")
+        contractFrom = datetimeToTimestamp(stringToDatetime(contractFrom))
+        contractTo = datetimeToTimestamp(stringToDatetime(contractTo))
+        serviceProvider = ServiceProvider(getClientId(sessionUser), None, serviceProviderName, 
+                                        address, contractFrom, contractTo, contactPerson, 
+                                        contactNo, None)
+        if serviceProvider.isDuplicate() :
+            return commonResponseStructure("ServiceProviderNameAlreadyExists",{})
+        elif serviceProvider.isDuplicateContactNo() :
+            return commonResponseStructure("ContactNumberAlreadyExists",{})
+        elif serviceProvider.save(sessionUser) :
+            return commonResponseStructure("SaveServiceProviderSuccess",{})
         else:
-            return False
+            return commonResponseStructure("Error",{})
 
-    def updatePassword(self):
-        columns = ["password"]
-        values = [encrypt(self.newPassword)]
-        condition = " user_id='"+str(self.sessionUser)+"'"
-        if DatabaseHandler.instance().update(self.userTblName, columns, values, condition):
-            return True
+    def updateServiceProvider(self, requestData, sessionUser) :
+        serviceProviderId = JSONHelper.getInt(requestData,"service_provider_id")
+        serviceProviderName = JSONHelper.getString(requestData, "service_provider_name")
+        address = JSONHelper.getString(requestData, "address")
+        contractFrom =  JSONHelper.getString(requestData, "contract_from")
+        contractTo =  JSONHelper.getString(requestData, "contract_to")
+        contactPerson =  JSONHelper.getString(requestData, "contact_person")
+        contactNo =  JSONHelper.getString(requestData, "contact_no")
+        contractFrom = datetimeToTimestamp(stringToDatetime(contractFrom))
+        contractTo = datetimeToTimestamp(stringToDatetime(contractTo))
+        serviceProvider = ServiceProvider(getClientId(sessionUser), serviceProviderId, 
+                                        serviceProviderName, address, contractFrom, 
+                                        contractTo, contactPerson, contactNo, None)
+        if serviceProvider.isIdInvalid() :
+            return commonResponseStructure("InvalidServiceProviderId",{})
+        elif serviceProvider.isDuplicate() :
+            return commonResponseStructure("ServiceProviderNameAlreadyExists",{})
+        elif serviceProvider.isDuplicateContactNo() :
+            return commonResponseStructure("ContactNumberAlreadyExists",{})
+        elif serviceProvider.update(sessionUser) :
+            return commonResponseStructure("UpdateServiceProviderSuccess",{})
         else:
-            return False
+            return commonResponseStructure("Error",{})
 
-class ForgotPassword() :
-    userTblName = "tbl_users"
-    emailVerificationTblName = "tbl_email_verification"
+    def changeServiceProviderStatus(self, requestData, sessionUser) :
+        serviceProviderId = JSONHelper.getInt(requestData,"service_provider_id")
+        isActive = JSONHelper.getInt(requestData, "is_active")
+        serviceProvider = ServiceProvider(getClientId(sessionUser), serviceProviderId,
+                                        None, None, None, None, None, None, isActive )
+        if serviceProvider.isIdInvalid() :
+            return commonResponseStructure("InvalidServiceProviderId",{})
+        elif serviceProvider.updateStatus(sessionUser):
+            return commonResponseStructure("ChangeServiceProviderStatusSuccess",{})
 
-    def processRequest(self, requestData, url):
-        self.url = url
-        self.username = JSONHelper.getString(requestData, "username")
-        if self.validateUsername():
-            if self.sendResetLink():
-                return commonResponseStructure("ForgotPasswordSuccess",{})
-            else:
-                print "sendResetLink Failed"
-        else:
-            return commonResponseStructure("InvalidUsername",{})
-
-    def validateUsername(self):
-        column = "count(*), user_id"
-        condition = " username='"+self.username+"'"
-        rows = DatabaseHandler.instance().getData(self.userTblName, column, condition)
-        count = rows[0][0]
-        if count == 1:
-            self.userId = rows[0][1]
-            return True
-        else :
-            return False
-
-    def sendResetLink(self):
-        resetToken = uuid.uuid4()
-        print "http://localhost:8080"+self.url+"/ForgotPassword?reset_token=%d" % resetToken
-        columns = "user_id, verification_code"
-        valuesList = [self.userId, int(resetToken)]
-        values = listToString(valuesList)
-        if DatabaseHandler.instance().insert(self.emailVerificationTblName, columns, values):
-            if self.sendEmail():
-                return True
-            else:
-                print "Send email failed"
-        else:
-            print "Saving reset token failed"
-
-
-    def sendEmail(self):
-        return True
-
-    def validateResetToken(self, requestData, url):
-        self.resetToken = JSONHelper.getString(requestData, "reset_token")
-        if self.validate():
-            return commonResponseStructure("ResetTokenValidationSuccess", {})
-        else:
-            return commonResponseStructure("InvalidResetToken", {})
-
-    def validate(self):
-        column = "count(*), user_id"
-        condition = " verification_code='"+self.resetToken+"'"
-        rows = DatabaseHandler.instance().getData(self.emailVerificationTblName, column, condition)
-        count = rows[0][0]
-        self.userId = rows[0][1]
-        if count == 1:
-            return True
-        else:
-            return False
-
-    def getUserId(self):
-        column = "user_id"
-        condition = " verification_code='"+self.resetToken+"'"
-        rows = DatabaseHandler.instance().getData(self.emailVerificationTblName, column, condition)
-        return rows[0][0]
-
-    def updatePassword(self):
-        columns = ["password"]
-        values = [encrypt(self.newPassword)]
-        condition = " user_id='%d'" % self.getUserId()
-        if DatabaseHandler.instance().update(self.userTblName, columns, values, condition):
-            return True
-        else:
-            return False
-
-    def deleteUsedToken(self):
-        condition = " verification_code='"+self.resetToken+"'"
-        if DatabaseHandler.instance().delete(self.emailVerificationTblName, condition):
-            return True
-        else:
-            return False
-
-    def resetPassword(self, requestData):
-        self.resetToken = JSONHelper.getString(requestData, "reset_token")
-        if self.validate():
-            self.newPassword = JSONHelper.getString(requestData, "new_password")
-            if self.updatePassword():
-                if self.deleteUsedToken():
-                    return commonResponseStructure("ResetPasswordSuccess", {})
-                else:
-                    print "Failed to delete used token"
-            else:
-                print "Failed to update password"
-        else:
-            return commonResponseStructure("InvalidResetToken", {})
         
 
 

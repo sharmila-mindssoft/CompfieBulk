@@ -27,15 +27,25 @@ class ClientAdminAPIRequestHandler(tornado.web.RequestHandler) :
             if userId is None :
                 response = PossibleError("InvalidSessionToken")
             else :
-                userPrivilegeController = UserPrivilegeController()
+                userPrivilege = UserPrivilegeController()
+                serviceProvider = ServiceProviderController()
                 if request[0] == "GetUserPrivileges" :
-                    response = userPrivilegeController.getUserPrivileges(userId)
+                    response = userPrivilege.getUserPrivileges(userId)
                 elif request[0] == "SaveUserPrivilege" :
-                    response = userPrivilegeController.saveUserPrivilege(request[1], userId)
+                    response = userPrivilege.saveUserPrivilege(request[1], userId)
                 elif request[0] == "UpdateUserPrivilege" :
-                    response = userPrivilegeController.updateUserPrivilege(request[1], userId)
+                    response = userPrivilege.updateUserPrivilege(request[1], userId)
                 elif request[0] == "ChangeUserPrivilegeStatus" :
-                    response = userPrivilegeController.changeUserPrivilegeStatus(
+                    response = userPrivilege.changeUserPrivilegeStatus(
+                        request[1], userId)
+                elif request[0] == "GetServiceProviders" :
+                    response = serviceProvider.getServiceProviders( userId)
+                elif request[0] == "SaveServiceProvider" :
+                    response = serviceProvider.saveServiceProvider(request[1], userId)
+                elif request[0] == "UpdateServiceProvider" :
+                    response = serviceProvider.updateServiceProvider(request[1], userId)
+                elif request[0] == "ChangeServiceProviderStatus" :
+                    response = serviceProvider.changeServiceProviderStatus(
                         request[1], userId)
                 else :
                     response = commonResponseStructure("InvalidRequest",{})

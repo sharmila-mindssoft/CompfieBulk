@@ -6,7 +6,8 @@ from aparajitha.server.common import *
 
 __all__ = [
     "UserPrivilege",
-    "User"
+    "User",
+    "ServiceProvider"
 ]
 
 class UserPrivilege() :
@@ -174,12 +175,9 @@ class User(object) :
 
     def toStructure(self):
         employeeName = None
-        print "Employee Name = %s" % self.employeeName
         if self.employeeCode == None:
-            print "Employee code null"
             employeeName = self.employeeName
         else:
-            print "Employee code not null"
             employeeName = "%s-%s" % (self.employeeCode, self.employeeName)
         return {
             "user_id": self.userId,
@@ -208,7 +206,6 @@ class User(object) :
 
     @classmethod
     def getList(self):
-        print "Inside GetList in User"
         userList = []
         columns = "user_id, employee_name, employee_code"
         rows = DatabaseHandler.instance().getData(User.detailTblName, columns, "1")
@@ -302,3 +299,119 @@ class User(object) :
         condition = "user_id='"+str(self.userId)+"'"
         return DatabaseHandler.instance().update(self.mainTblName, columns, values, condition)
             
+class ServiceProvider(object):
+    tblName = " tbl_service_providers"
+
+    def __init__(self, clientId, serviceProviderId, serviceProviderName, address, 
+                contractFrom, contractTo, contactPerson, contactNo, isActive) :
+        self.clientId = clientId
+        self.serviceProviderId =  serviceProviderId if serviceProviderId != None else self.generateNewUserId()
+        self.serviceProviderName =  serviceProviderName
+        self.address =  address
+        self.contractFrom =  contractFrom
+        self.contractTo =  contractTo
+        self.contactPerson =  contactPerson
+        self.contactNo =  contactNo
+        self.isActive = isActive if isActive != None else 1
+
+    def verify(self) :
+        assertType(self.serviceProviderId, IntType)
+        assertType(self.serviceProviderName, StringType)
+        assertType(self.address, StringType)
+        assertType(self.contractFrom, StringType)
+        assertType(self.contractTo, StringType)
+        assertType(self.contactPerson, StringType)
+        assertType(self.contactNo, StringType)
+        assertType(self.isActive, IntType)
+
+    def toStructure(self):
+        return {
+        "service_provider_id": self.serviceProviderId,
+        "service_provider_name": self.serviceProviderName, 
+        "address": self.address,
+        "contract_from": self.contractFrom,
+        "contract_to": self.contractTo, 
+        "contact_person": self.contactPerson,
+        "contact_no": self.contactNo,
+        "is_active": self.isActive
+    }
+
+    @classmethod
+    def getList(self, sessionUser):
+        servcieProviderList = []
+        columns = "service_provider_id, service_provider_name, address, contract_from,"+\
+                "contract_to, contact_person, contact_no, is_active"
+
+        clientId = getClientId(sessionUser)
+        rows = ClientDatabaseHandler.instance(getClientDatabase(clientId)).getData(
+            ServiceProvider.tblName, columns, "1")
+
+        for row in rows:
+            serviceProviderId = int(row[0])
+            serviceProviderName = row[1]
+            address = row[2]
+            contractFrom = datetimeToString(timestampToDatetime(row[3]))
+            contractTo = datetimeToString(timestampToDatetime(row[4]))
+            contactPerson = row[5]
+            contactNo = row[6]
+            isActive = row[7]
+            serviceProvider = ServiceProvider(None, serviceProviderId, serviceProviderName, address, 
+                contractFrom, contractTo, contactPerson, contactNo, isActive)
+            servcieProviderList.append(serviceProvider.toStructure())
+
+        return servcieProviderList
+
+    def generateNewUserId(self) :
+        return ClientDatabaseHandler.instance(getClientDatabase(
+            self.clientId)).generateNewId(self.tblName, "service_provider_id")
+
+    def isDuplicate(self):
+        condition = "service_provider_name ='%s' AND service_provider_id != '%d'" %(
+            self.serviceProviderName, self.serviceProviderId)
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).isAlreadyExists(
+            self.tblName, condition)
+
+    def isDuplicateContactNo(self):
+        condition = "contact_no ='%s' AND service_provider_id != '%d'" % (self.contactNo, 
+            self.serviceProviderId)
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).isAlreadyExists(self.tblName, condition)
+
+    def isIdInvalid(self):
+        condition = "service_provider_id = '%d'" % self.serviceProviderId
+        return not ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).isAlreadyExists(self.tblName, condition)
+
+    def save(self, sessionUser):
+        currentTimeStamp = getCurrentTimeStamp()
+        columns = "service_provider_id, service_provider_name, address, contract_from,"+\
+                "contract_to, contact_person, contact_no, created_on,created_by, "+\
+                "updated_on, updated_by"
+        valuesList = [self.serviceProviderId, self.serviceProviderName, self.address, 
+                    self.contractFrom, self.contractTo, self.contactPerson, self.contactNo,
+                    currentTimeStamp, sessionUser, currentTimeStamp, sessionUser]
+
+        values = listToString(valuesList)
+
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).insert(self.tblName, columns, values)
+
+    def update(self, sessionUser):
+        currentTimeStamp = getCurrentTimeStamp()
+        columnsList = [ "service_provider_name", "address", "contract_from", "contract_to", 
+                    "contact_person", "contact_no", "updated_on", "updated_by"]
+        valuesList = [self.serviceProviderName, self.address, self.contractFrom, self.contractTo,
+                    self.contactPerson, self.contactNo, currentTimeStamp, sessionUser]
+        condition = "service_provider_id='%d'" % self.serviceProviderId
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).update(
+            self.tblName, columnsList, valuesList, condition)
+
+    def updateStatus(self, sessionUser):
+        columns = ["is_active", "updated_on" , "updated_by"]
+        values = [self.isActive, getCurrentTimeStamp(), sessionUser]
+        condition = "service_provider_id='%d'" % self.serviceProviderId
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).update(
+            self.tblName, columns, values, condition)
