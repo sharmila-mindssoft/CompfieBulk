@@ -7,7 +7,8 @@ from aparajitha.server.constants import ROOT_PATH
 from aparajitha.server.databasehandler import DatabaseHandler 
 from aparajitha.server.clientdatabasehandler import ClientDatabaseHandler 
 from aparajitha.server.admin.models import User
-from aparajitha.server.knowledge.models import DomainList, CountryList
+from aparajitha.server.knowledge.models import DomainList, CountryList, GeographyLevelList
+from aparajitha.server.knowledge.models import IndustryList, Geography
 from aparajitha.server.common import *
 
 __all__ = [
@@ -59,8 +60,8 @@ class GroupCompany(object):
         assertType(self.countryIds, ListType)
         assertType(self.domainIds, ListType)
         assertType(self.logo, StringType)
-        assertType(self.contractFrom, LongType)
-        assertType(self.contractTo, LongType)
+        assertType(self.contractFrom, StringType)
+        assertType(self.contractTo, StringType)
         assertType(self.noOfUserLicence, IntType)
         assertType(self.fileSpace, FloatType)
         assertType(self.isSmsSubscribed, IntType)
@@ -137,26 +138,21 @@ class GroupCompany(object):
                     "contract_to,no_of_user_licence,total_disk_space,is_sms_subscribed"
         settingsRows = []
         settingsDataList = []
-        try : 
-            clientDBName = self.getClienDatabaseName(clientId)
-            settingsRows = ClientDatabaseHandler.instance(clientDBName).getData(self.clientSettingsTblName,
+       
+        clientDBName = self.getClienDatabaseName(clientId)
+        settingsRows = ClientDatabaseHandler.instance(clientDBName).getData(self.clientSettingsTblName,
                 clientSettingsColumns, "1")
-        except:
-            print "Error : Client Database Not exists for client %d" % clientId
 
-        try :
-            countryIds = settingsRows[0][0].split(",")
-            domainIds = settingsRows[0][1].split(",")
-            logo = settingsRows[0][2]
-            contractFrom = settingsRows[0][3]
-            contractTo = settingsRows[0][4]
-            noOfUserLicence = int(settingsRows[0][5])
-            fileSpace = settingsRows[0][6]
-            isSmsSubscribed = int(settingsRows[0][7])  
-            settingsDataList = [countryIds, domainIds, logo, contractFrom, contractTo, noOfUserLicence,
-        fileSpace, isSmsSubscribed]
-        except:
-            print "Error :Settings Not exists for client %d" % clientId
+        countryIds = settingsRows[0][0].split(",")
+        domainIds = settingsRows[0][1].split(",")
+        logo = settingsRows[0][2]
+        contractFrom = datetimeToString(timestampToDatetime(settingsRows[0][3]))
+        contractTo = datetimeToString(timestampToDatetime(settingsRows[0][4]))
+        noOfUserLicence = int(settingsRows[0][5])
+        fileSpace = settingsRows[0][6]
+        isSmsSubscribed = int(settingsRows[0][7])  
+        settingsDataList = [countryIds, domainIds, logo, contractFrom, contractTo, noOfUserLicence,
+                            fileSpace, isSmsSubscribed]
 
         return settingsDataList    
 
@@ -196,14 +192,13 @@ class GroupCompany(object):
         clientGroupRows = self.getClientGroups()
 
         for row in clientGroupRows:
-            try:
+            # try:
                 clientId = int(row[0])
                 groupName = row[1]
                 inchargePersons = row[2].split(",")
                 isActive = row[3]
 
                 username = self.getClientAdminUsername(clientId)
-
                 settingsDataList = self.getSettings(clientId)
                 countryIds = settingsDataList[0]
                 domainIds = settingsDataList[1]
@@ -221,9 +216,6 @@ class GroupCompany(object):
                 groupCompany.verify()
 
                 clientList.append(groupCompany.toDetailedStructure())
-            except:
-                print "Error : Settings not exist for client : %d" %clientId
-                continue
 
         return clientList
 
@@ -239,27 +231,23 @@ class GroupCompany(object):
             clientDetails[str(row[0])] = [row[1], row[2]]
 
         for index, clientId in enumerate(clientIds.split(",")):
-            try:
-                clientDBName = self.getClienDatabaseName(clientId)
-                columns = "country_ids, domain_ids"
-                settingsRows = ClientDatabaseHandler.instance(clientDBName).getData(self.clientSettingsTblName,
-                    columns, "1")
+            clientDBName = self.getClienDatabaseName(clientId)
+            columns = "country_ids, domain_ids"
+            settingsRows = ClientDatabaseHandler.instance(clientDBName).getData(self.clientSettingsTblName,
+                columns, "1")
 
-                clientDetail = clientDetails[clientId]
-                groupName = clientDetail[0]
-                countryIds = settingsRows[0][0]
-                domainIds = settingsRows[0][1]
-                isActive = clientDetail[1]
+            clientDetail = clientDetails[clientId]
+            groupName = clientDetail[0]
+            countryIds = settingsRows[0][0]
+            domainIds = settingsRows[0][1]
+            isActive = clientDetail[1]
                 
-                groupCompany = GroupCompany(int(clientId), groupName, None, countryIds ,domainIds, None, 
-                                            None, None, None, None, None,None, None, isActive)
-                clientList.append(groupCompany.toStructure())
-            except:
-                print "Error: Client Settings Not exists for client %s" % clientId
+            groupCompany = GroupCompany(int(clientId), groupName, None, countryIds ,domainIds, None, 
+                                        None, None, None, None, None,None, None, isActive)
+            clientList.append(groupCompany.toStructure())
+            
 
         return clientList
-
-
 
 class ClientConfiguration(object):
 
@@ -268,6 +256,7 @@ class ClientConfiguration(object):
         self.domainId = domainId
         self.periodFrom = periodFrom
         self.periodTo = periodTo
+
         self.verify()
 
     def verify(self):
@@ -283,7 +272,6 @@ class ClientConfiguration(object):
             "period_from": self.periodFrom,
             "period_to": self.periodTo
         }
-
 
 class BusinessGroup(object):
     businessGroupTblName = "tbl_business_groups"
@@ -622,18 +610,22 @@ class SaveClientGroup(object) :
         return commonResponseStructure(self.response,{})
 
     def generateNewId(self) :
+        print "inside generateNewId"
         return DatabaseHandler.instance().generateNewId(self.clientTblName, "client_id")
 
     def isDuplicateGroupName(self):
+        print "inside isDuplicateGroupName"
         condition = "group_name ='"+self.groupName+\
                 "' AND client_id != '"+str(self.clientId)+"'"
         return DatabaseHandler.instance().isAlreadyExists(self.clientTblName, condition)     
 
     def copyBasicData(self):
+        print "inside copyBasicData"
         if self.insertCountries() and self.insertDomains():
             return True
     
     def insertCountries(self):
+        print "inside insertCountries"
         valuesList = []
         countryIdsStrVal = ",".join(str(x) for x in self.countryIds)
         condition = "country_id in ("+countryIdsStrVal+")"
@@ -648,6 +640,7 @@ class SaveClientGroup(object) :
         return ClientDatabaseHandler.instance(self.getDatabaseName()).bulkInsert(self.countryTblName,columns,valuesList)
 
     def insertDomains(self):
+        print "inside insertDomains"
         valuesList = []
         domainIdsStrVal = ",".join(str(x) for x in self.domainIds)
         condition = "domain_id in ("+domainIdsStrVal+")"
@@ -662,8 +655,10 @@ class SaveClientGroup(object) :
         return ClientDatabaseHandler.instance(self.getDatabaseName()).bulkInsert(self.domainTblName,columns,valuesList)
 
     def saveGroupCompany(self):
+        print "inside saveGroupCompany"
         columns = "client_id, group_name, incharge_persons,created_on, created_by, updated_on, updated_by"
-        valuesList =  [self.clientId, self.groupName, ",".join(str(x) for x in self.inchargePersons),
+        valuesList =  [self.clientId, self.groupName, 
+                        ",".join(str(x) for x in self.inchargePersons),
                         getCurrentTimeStamp(), self.sessionUser,
                         getCurrentTimeStamp(), self.sessionUser]
         values = listToString(valuesList)
@@ -671,19 +666,25 @@ class SaveClientGroup(object) :
         userColumns = "client_ids"
         userValues = str(self.clientId)
         for inchargePerson in self.inchargePersons:
-            condition = " user_id='"+str(inchargePerson)+"'"
+            condition = " user_id='%d'" % inchargePerson 
+            print condition
             DatabaseHandler.instance().append(self.userDetailsTblName,userColumns, userValues, condition)
-
+        print "returning from saveGroupCompany"
         return DatabaseHandler.instance().insert(self.clientTblName,columns,values)
 
     def saveClientDatabaseMapping(self, clientId, databaseName):
+        print "inside saveClientDatabaseMapping"
         clientDatabaseMappingJson = json.load(open(clientDatabaseMappingFilePath))
-        if clientId in clientDatabaseMappingJson: del clientDatabaseMappingJson[clientId]
-        clientDatabaseMappingJson[clientId] = databaseName
+        try:
+            del clientDatabaseMappingJson[str(clientId)]
+        except:
+            print "Key not exists"
+        clientDatabaseMappingJson[str(clientId)] = databaseName
         json.dump(clientDatabaseMappingJson, 
             open(clientDatabaseMappingFilePath,'w'))
 
     def createClientDatabase(self):
+        print "inside createClientDatabase"
         isComplete = False
         self.groupName = re.sub('[^a-zA-Z0-9 \n\.]', '', self.groupName)
         self.groupName = self.groupName.replace (" ", "")
@@ -695,14 +696,23 @@ class SaveClientGroup(object) :
         return isComplete
 
     def getDatabaseName(self):
+        print "inside getDatabaseName"
         if self.clientDBName == None:
             self.clientDBName = getClientDatabase(self.clientId)
         return self.clientDBName
 
     def saveClientDetails(self):
+        print "inside saveClientDetails"
         columns = "country_ids ,domain_ids, logo_url, contract_from, contract_to,"+\
                   "no_of_user_licence,total_disk_space, is_sms_subscribed,"+\
                   "  updated_on, updated_by"
+        print "before converting "+self.contractFrom
+        dt = stringToDatetime(self.contractFrom)
+        print "stringToDatetime(self.contractFrom):{dt}".format(dt= dt)
+        ts = datetimeToTimestamp(stringToDatetime(self.contractFrom))
+        print "datetimeToTimestamp(stringToDatetime(self.contractFrom)):{ts}".format(ts= ts)
+        self.contractFrom = datetimeToTimestamp(stringToDatetime(self.contractFrom))
+        self.contractTo = datetimeToTimestamp(stringToDatetime(self.contractTo))
         valuesList =  [ ",".join(str(x) for x in self.countryIds),
                          ",".join(str(x) for x in self.countryIds),
                         self.logo, self.contractFrom, self.contractTo, self.noOfLicence, 
@@ -712,6 +722,7 @@ class SaveClientGroup(object) :
         return ClientDatabaseHandler.instance(self.getDatabaseName()).insert(self.clientSettingsTblName,columns,values)
 
     def saveDateConfigurations(self):
+        print "inside saveDateConfigurations"
         valuesList = []
         columns = "country_id ,domain_id, period_from, period_to, updated_on, updated_by"
         for configuration in self.dateConfigurations:
@@ -727,6 +738,7 @@ class SaveClientGroup(object) :
         return ClientDatabaseHandler.instance(self.getDatabaseName()).bulkInsert(self.clietConfigurationTblName,columns,valuesList)
 
     def saveCredentials(self):
+        print "inside saveCredentials"
         password = generatePassword()
         user = User(None, self.username, None, self.groupName+" Admin", "",None,
              " ", "Admin", self.countryIds,self.domainIds, self.clientId, None)
@@ -739,12 +751,14 @@ class SaveClientGroup(object) :
             return False
 
     def getUserId(self):
+        print "inside getUserId"
         columns = "user_id"
         condition = " username='%s'" % self.username
         rows = DatabaseHandler.instance().getData(self.userTblName, columns, condition)
         return rows[0][0]
 
     def saveClientAdminUserDetails(self):
+        print "inside saveClientAdminUserDetails"
         columns = "user_id, email_id, employee_name, country_ids, domain_ids, is_admin, "+\
                     "is_service_provider, created_by, created_on, updated_by, updated_on"
         self.userId = self.getUserId()
@@ -758,9 +772,13 @@ class GetClientGroups(object):
     responseData = {}
     def __init__(self):
         domainList = DomainList.getDomainList()
+        print "Got Domain List"
         countryList = CountryList.getCountryList()
+        print "Got Country List"
         userList = User.getList()
+        print "Got User List"
         clientList = GroupCompany.getDetailedClientList()
+        print "Got Client List"
 
         self.responseData["domains"] = domainList
         self.responseData["countries"] = countryList
@@ -819,6 +837,7 @@ class UpdateClientGroup(object):
     clientDBName = None
 
     def __init__(self, requestData, sessionUser) :
+        print "initializing updateClientGroup"
         self.requestData = requestData
         self.sessionUser = sessionUser
         self.response = ""
@@ -826,7 +845,8 @@ class UpdateClientGroup(object):
         assertType(requestData, DictType)
         assertType(sessionUser, LongType)
 
-    def processRequest(self):
+    def processRequest(self):   
+        print "Processing updateClientGroup request"
         requestData = self.requestData
 
         self.clientId = JSONHelper.getInt(requestData, "client_id")
@@ -884,8 +904,6 @@ class UpdateClientGroup(object):
         except:
             print "Error : Incharge Persons not exists for client id %d " % self.clientId
 
-
-
     def getDatabaseName(self):
         if self.clientDBName == None:
             self.clientDBName = getClientDatabase(self.clientId)
@@ -897,17 +915,24 @@ class UpdateClientGroup(object):
         existingInchargePersons = []
         newInchargePersons = []
         removedInchargePersons = []
-
+        print "oldInchargePersons: {oldInchargePersons}".format(
+            oldInchargePersons =oldInchargePersons)
         for inchargePerson in self.inchargePersons:
-            if inchargePerson in oldInchargePersons:
+            if str(inchargePerson) in oldInchargePersons:
                 existingInchargePersons.append(inchargePerson)
             else:
                 newInchargePersons.append(inchargePerson)
 
         for oldInchargePerson in oldInchargePersons:
-            if oldInchargePerson not in self.inchargePersons:
-                removedInchargePersons.append(oldInchargePerson)
+            if int(oldInchargePerson) not in self.inchargePersons:
+                removedInchargePersons.append(int(oldInchargePerson))
 
+        print "existingInchargePersons: {existingInchargePersons}".format(
+            existingInchargePersons =existingInchargePersons)
+        print "newInchargePersons: {newInchargePersons}".format(
+            newInchargePersons =newInchargePersons)
+        print "removedInchargePersons:{removedInchargePersons}".format(
+            removedInchargePersons =removedInchargePersons)
         for newInchargePerson in newInchargePersons:
             try:
                 condition = " user_id='%d'" % newInchargePerson 
@@ -923,8 +948,9 @@ class UpdateClientGroup(object):
             condition = "user_id='%s'" % removedInchargePerson
             rows = DatabaseHandler.instance().getData(self.userDetailsTblName, columns, condition)
             clientIds = rows[0][0].split(",")
-            if self.clientId in clientIds:
-                clientIds.remove(self.clientId)
+            print "clientIds:{clientIds}".format(clientIds =clientIds)
+            if str(self.clientId) in clientIds:
+                clientIds.remove(str(self.clientId))
             updateColumns = ["client_ids"]
             updateValues = [",".join(str(x) for x in clientIds)]
             DatabaseHandler.instance().update(self.userDetailsTblName, updateColumns, 
@@ -939,6 +965,8 @@ class UpdateClientGroup(object):
     def updateClientDetails(self):
         columnsList = ["country_ids", "domain_ids", "logo_url", "contract_from", "contract_to",
         "no_of_user_licence","total_disk_space", "is_sms_subscribed","updated_on", "updated_by"]
+        self.contractFrom = datetimeToTimestamp(stringToDatetime(self.contractFrom))
+        self.contractTo = datetimeToTimestamp(stringToDatetime(self.contractTo))
         valuesList =  [ ",".join(str(x) for x in self.countryIds),
                          ",".join(str(x) for x in self.domainIds),
                         self.logo, self.contractFrom, self.contractTo, self.noOfLicence, 
@@ -1051,7 +1079,6 @@ class UpdateClientGroup(object):
                         self.getDatabaseName()).update( 
                         self.clientUserDetailsTblName, columnsList, valuesList, condition)   
 
-
 class GetClients(object):
     userDetailsTblName = "tbl_user_details"
 
@@ -1065,12 +1092,18 @@ class GetClients(object):
         legalEntityList = []
         divisionList = []
         unitList = []
+        geographyLevelList = []
+        industryList = []
+        geographyList = []
 
         countryList = CountryList.getCountryList()
         domainList = DomainList.getDomainList()
+        geographyLevelList = GeographyLevelList.getCountryWiseList()
+        industryList = IndustryList.getList()
+        geographyList = Geography.getCountryWiseList()
 
         clientIds = self.getClientIdsOfUser()
-        print clientIds
+        
         if clientIds ==  None:
             print "Error : User is not responsible for any client"
         else:
@@ -1079,14 +1112,18 @@ class GetClients(object):
             legalEntityList = LegalEntity.getList(clientIds)
             divisionList = Division.getList(clientIds)
             unitList = Unit.getDetailedList(clientIds)
-        
+            
         self.responseData["countries"] = countryList
         self.responseData["domains"] = domainList
+        self.responseData["geography_levels"] = geographyLevelList
+        self.responseData["geographies"] =geographyList
+        self.responseData["industries"] = industryList
         self.responseData["group_companies"] = groupCompanyList
         self.responseData["business_groups"] = businessGroupList
         self.responseData["legal_entities"] = legalEntityList
         self.responseData["divisions"] = divisionList
         self.responseData["units"] = unitList
+
         
 
     def getClientIdsOfUser(self):
@@ -1097,7 +1134,6 @@ class GetClients(object):
 
     def getList(self):
         return commonResponseStructure("GetClientsSuccess",self.responseData)
-
 
 class SaveClient(object):
     businessGroupTblName = "tbl_business_groups"
@@ -1342,6 +1378,7 @@ class SaveClient(object):
             print "Inserted in Knowledge Database"
             return ClientDatabaseHandler.instance(self.getDatabaseName()).onDuplicateKeyUpdate(
                 self.unitTblName, clientDbColumns, self.clientValuesList, clientUpdateColumnsList)
+
 
 
         

@@ -528,8 +528,6 @@ function initMirror() {
     // Client Group Master
 
     function saveClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
-        alert(clientGroupDetails["contract_from"]);
-        alert(clientGroupDetails["contract_to"]);
         var request = [
             "SaveClientGroup",
             {
@@ -551,8 +549,6 @@ function initMirror() {
     }
 
     function updateClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
-        alert(clientGroupDetails["contract_from"]);
-        alert(clientGroupDetails["contract_to"]);
         var request = [
             "UpdateClientGroup",
             {
