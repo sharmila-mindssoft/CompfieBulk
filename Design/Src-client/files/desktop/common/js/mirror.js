@@ -638,6 +638,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    // Change Password APIs
+
     function changePassword(callerName, currentPassword, newPassword, callback, failure_callback) {
         
         var request = [
@@ -649,6 +651,8 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
+
+    // Forgot Password APIs
 
     function forgotPassword(callerName, username, callback, failure_callback) {
         
@@ -683,6 +687,8 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
+
+    // Client Unit APIs
 
     function getClients(callerName, callback, failure_callback) {
         
@@ -735,6 +741,78 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }  
+
+    // Client User Group  
+
+    function getClientUserGroups(callerName, callback, failure_callback) {
+        var request = [
+            "GetUserPrivileges",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function saveClientUserGroup(callerName, userGroupDetail, callback, failure_callback) {
+        if (isNull(userGroupDetail))
+            return null;
+        else if (userGroupDetail.length != 3)
+            return null;
+        $.each(userGroupDetail, function( index, value ) {
+            if (isNull(value))
+                return null
+        });
+        var userGroupName= userGroupDetail[0] ;
+        var fromType= userGroupDetail[1] ;
+        var formIds= userGroupDetail[2].split(',') ;
+        var request = [
+            "SaveUserPrivilege",
+            {
+                "user_group_name": userGroupName,
+                "form_type": fromType,
+                "form_ids": formIds
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function updateClientUserGroup(callerName, userGroupDetail, callback, failure_callback) {
+        if (isNull(userGroupDetail))
+            return null;
+        else if (userGroupDetail.length != 4)
+            return null;
+        $.each(userGroupDetail, function( index, value ) {
+            if (isNull(value))
+                return null
+        });
+        var userGroupId= userGroupDetail[0] ;
+        var userGroupName= userGroupDetail[1] ;
+        var fromType= userGroupDetail[2] ;
+        var formIds= userGroupDetail[3].split(',') ;
+        var request = [
+            "UpdateUserPrivilege",
+            {
+                "user_group_id" : userGroupId,
+                "user_group_name": userGroupName,
+                "form_type": fromType,
+                "form_ids": formIds
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeClientUserGroupStatus(callerName, userGroupId, isActive, callback, failure_callback) {
+        if (isNull(userGroupId) || isNull(isActive) )
+            return null;
+        var request = [
+            "ChangeUserPrivilegeStatus",
+            {
+                "user_group_id" : userGroupId,
+                "is_active" : isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
 
     return {
         log: log,
@@ -806,7 +884,12 @@ function initMirror() {
         getClients: getClients,
         saveClient: saveClient,
         changeClientStatus: changeClientStatus,
-        reactivateUnit: reactivateUnit
+        reactivateUnit: reactivateUnit,
+
+        saveClientUserGroup: saveClientUserGroup,
+        updateClientUserGroup: updateClientUserGroup,
+        changeClientUserGroupStatus: changeClientUserGroupStatus,
+        getClientUserGroups: getClientUserGroups
     }
 
 }

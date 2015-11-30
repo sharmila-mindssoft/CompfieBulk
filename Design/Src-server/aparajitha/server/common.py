@@ -26,7 +26,8 @@ __all__ = [
     "datetimeToTimestamp",
     "timestampToDatetime",
     "stringToDatetime",
-    "datetimeToString"
+    "datetimeToString",
+    "getClientId"
 ]
 
 clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
@@ -88,6 +89,13 @@ def commonResponseStructure(responseType, data) :
 		data
 	]
 	return response
+
+def getClientId(sessionUser):
+    userTblName = "tbl_users"
+    columns = "client_id"
+    condition = "user_id='%d'" % sessionUser
+    rows = DatabaseHandler.instance().getData(userTblName, columns, condition)
+    return rows[0][0]
 
 def getClientDatabase(clientId):
     databaseName = None
@@ -250,6 +258,7 @@ class Form(object) :
         return forms
             
 class Menu(object):
+    structuredForm = {}
     def __init__(self, masterForms, transactionForms, reportForms, settingForms):
         self.masterForms = masterForms
         self.transactionForms = transactionForms
@@ -271,14 +280,14 @@ class Menu(object):
 	    reports = []
 	    settings = []
 	    for form in formList:
-	        structuredForm = form.toStructure()
-	        if form.formType == "masters".lower():
-	            masters.append(structuredForm)
-	        elif form.formType == "transactions".lower():
-	            transactions.append(structuredForm)
-	        elif form.formType == "reports".lower():
-	            reports.append(structuredform)    
-	        elif form.formType == "settings".lower():
-	            settings.append(structuredForm)
+	        self.structuredForm = form.toStructure()
+	        if form.formType == "master".lower():
+	            masters.append(self.structuredForm)
+	        elif form.formType == "transaction".lower():
+	            transactions.append(self.structuredForm)
+	        elif form.formType == "report".lower():
+	            reports.append(self.structuredForm)    
+	        elif form.formType == "setting".lower():
+	            settings.append(self.structuredForm)
 	    menu = Menu(masters, transactions,reports, settings)
 	    return menu.toStructure()

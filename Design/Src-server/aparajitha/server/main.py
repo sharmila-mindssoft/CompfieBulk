@@ -11,6 +11,7 @@ from aparajitha.server import countries as countriesdb
 from collections import OrderedDict
 
 from knowledge import handler as knowledge_handler
+from client import handler as client_admin_handler
 from admin import handler as admin_handler
 from techno import handler as techno_handler
 
@@ -653,6 +654,14 @@ def run_server() :
         application_urls.append(entry)
 
     for url, handler in REQUEST_PATHS :
+        args = {
+            "url": url,
+            "handler": handler
+        }
+        entry = (url, handler, args)
+        application_urls.append(entry)
+
+    for url, handler in client_admin_handler.initializeClientAdminHandler() :
         args = {
             "url": url,
             "handler": handler
