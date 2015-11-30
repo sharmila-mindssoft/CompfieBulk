@@ -1,5 +1,6 @@
 from types import *
 import datetime
+import calendar
 import time
 import string
 import random
@@ -21,11 +22,45 @@ __all__ = [
     "generatePassword",
     "encrypt",
     "commonResponseStructure",
-    "getClientDatabase"
+    "getClientDatabase",
+    "datetimeToTimestamp",
+    "timestampToDatetime",
+    "stringToDatetime",
+    "datetimeToString"
 ]
 
 clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
     "Src-client/files/desktop/common/clientdatabase/clientdatabasemapping.txt")
+
+IntegerMonths = {
+    "Jan": 1,
+    "Feb": 2,
+    "Mar": 3,
+    "Apr": 4,
+    "May": 5,
+    "Jun": 6,
+    "Jul": 7,
+    "Aug": 8,
+    "Sep": 9,
+    "Oct": 10,
+    "Nov": 11,
+    "Dec": 12,
+}
+
+StringMonths = {
+     1 : "Jan",
+     2 : "Feb",
+     3 : "Mar",
+     4 : "Apr",
+     5 : "May",
+     6 : "Jun",
+     7 : "Jul",
+     8 : "Aug",
+     9 : "Sep",
+     10 : "Oct",
+     11 : "Nov",
+     12 : "Dec",
+}
 
 def assertType (x, typeObject) :
     if type(x) is not typeObject :
@@ -44,10 +79,6 @@ def listToString(valueList):
             stringValue = stringValue+"'"+str(value)+"'"
 
     return stringValue
-
-def getCurrentTimeStamp() :
-    ts = time.time()
-    return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 def commonResponseStructure(responseType, data) :
 	assertType(responseType, StringType)
@@ -79,6 +110,23 @@ def encrypt(value):
     m.update(value)
     return m.hexdigest()
 
+def stringToDatetime(string):
+    date = string.split("-")
+    datetimeVal = datetime.datetime(year=int(date[2]), 
+        month=IntegerMonths[date[1]], day=int(date[0]))
+    return datetimeVal
+
+def datetimeToString(datetimeVal):
+    return "%d-%s-%d" % (datetimeVal.day, StringMonths[datetimeVal.month], datetimeVal.year)
+
+def datetimeToTimestamp(d) :
+    return calendar.timegm(d.timetuple())
+
+def timestampToDatetime(t) :
+    return datetime.datetime.utcfromtimestamp(t)
+
+def getCurrentTimeStamp() :
+    return datetimeToTimestamp(datetime.datetime.utcnow())
 
 class PossibleError(object) :
     def __init__(self, possibleError) :
@@ -187,11 +235,11 @@ class Form(object) :
                  "category, admin_form, parent_menu"
 
         if type == "knowledge".lower():
-        	condition = " form_type = 'knowledge' "
+        	condition = " category = 'knowledge' "
         elif type == "techno".lower():
-        	condition = " form_type = 'techno' "
+        	condition = " category = 'techno' "
         else :
-        	condition = " form_type = 'client' "
+        	condition = " category = 'client' "
 
         rows = DatabaseHandler.instance().getData(Form.tblName, columns, condition)
 
@@ -224,13 +272,13 @@ class Menu(object):
 	    settings = []
 	    for form in formList:
 	        structuredForm = form.toStructure()
-	        if form.category == "masters".lower():
+	        if form.formType == "masters".lower():
 	            masters.append(structuredForm)
-	        elif form.category == "transactions".lower():
+	        elif form.formType == "transactions".lower():
 	            transactions.append(structuredForm)
-	        elif form.category == "reports".lower():
+	        elif form.formType == "reports".lower():
 	            reports.append(structuredform)    
-	        elif form.category == "settings".lower():
+	        elif form.formType == "settings".lower():
 	            settings.append(structuredForm)
 	    menu = Menu(masters, transactions,reports, settings)
 	    return menu.toStructure()
