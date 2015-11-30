@@ -509,21 +509,48 @@ class DatabaseHandler(object) :
         return self.dataInsertUpdate(query)
 
     def updateStatutoryMappingId(self, statutoryIds, mappingId, updatedBy) :
-        statutoryIds = statutoryIds[:-1]
-        ids = [int(x) for x in statutoryIds.split(',')]
-        qry = "SELECT statutory_id, statutory_mapping_ids from tbl_statutories where statutory_id in %s" % str(tuple(ids))
-        rows = self.dataSelect(qry);
-        isUpdated = False
+        # remove mapping id
+        mapId = str("%" + str(mappingId) + ",%")
+        q = "SELECT statutory_id, statutory_mapping_ids from tbl_statutories \
+            WHERE statutory_mapping_ids like '%s'" % mapId
+        rows = self.dataSelect(q)
+        oldStatuIds = {}
         for row in rows :
-            statutoryId = row[0]
-            _statutoryMappingId = mappingId
+            oldStatuIds[int(row[0])] = row[1][:-1]
+        difference = list(set(oldStatuIds.keys()) - set(statutoryIds))
+
+        for x in difference :
+            oldMapId =  [int(j) for j in oldStatuIds.get(x).split(',')]
+            oldMapId = oldMapId.remove(mappingId)
+            
+            newMapId = ""
+            if oldMapId is not None : 
+                newMapId = ','.join(str(k) for k in oldMapId) + ","
+
+            qry1 = "UPDATE tbl_statutories set statutory_mapping_ids = '%s', updated_by = %s \
+                WHERE statutory_id = %s" % (newMapId, updatedBy, x)
+            if (self.dataInsertUpdate(qry1)) :
+                print "Mapping Id %s removed from statutory table, Id=%s" % (mappingId, x)
+
+
+
+
+        # statutoryIds = statutoryIds[:-1]
+        # ids = [int(x) for x in statutoryIds.split(',')]
+        ids = tuple(statutoryIds)
+        qry = "SELECT statutory_id, statutory_mapping_ids from tbl_statutories where statutory_id in %s" % str(ids)
+        isUpdated = False
+        rows = self.dataSelect(qry)
+        for row in rows:
+            statutoryId = int(row[0])
+            _statutoryMappingId = str(mappingId) + ","
             if (row[1] is not None) :
-                mappingIds = [int(x) for x in row[1].split(',')]
+                mappingIds = [int(x) for x in row[1][:-1].split(',')]
                 if (mappingId not in mappingIds) :
                     mappingIds.append(mappingId)
-                    _statutoryMappingId = ','.join(str(x) for x in mappingIds)
+                    _statutoryMappingId = ','.join(str(x) for x in mappingIds[:-1]) + ","
 
-            query = "UPDATE tbl_statutories set statutory_mapping_ids = %s, updated_by = %s \
+            query = "UPDATE tbl_statutories set statutory_mapping_ids = '%s', updated_by = %s \
                 WHERE statutory_id = %s" % (
                 _statutoryMappingId, updatedBy, statutoryId
             )
@@ -601,6 +628,60 @@ class DatabaseHandler(object) :
 
         return complianceIds
 
+    def updateCompliance(self, mappingId, datas, updatedBy) :
+        complianceIds = []
+        for data in datas :
+            complianceId = data.get("compliance_id")
+            statutoryProvision = data.get("statutory_provision")
+            complianceTask = data.get("compliance_task")
+            complianceDescription = data.get("description")
+            documentName = data.get("document")
+            formatFile = data.get("format_file_name")
+            penalConsequences = data.get("penal_consequences")
+            complianceFrequency = data.get("compliance_frequency")
+            statutoryDates =  json.dumps(data.get("statutory_dates"))
+            repeatsEvery = data.get("repeats_every")
+            repeatsType = data.get("repeats_type")
+            duration = data.get("duration")
+            durationType = data.get("duration_type")
+            isActive = data.get("is_active")
+
+            if complianceFrequency == "OneTime" :
+                query = "UPDATE tbl_compliances set statutory_provision = '%s', \
+                    compliance_task = '%s', compliance_description = '%s', document_name = '%s' , format_file = '%s', \
+                    penal_consequences = '%s', compliance_frequency = '%s', statutory_dates = '%s', statutory_mapping_id = %s, \
+                    is_active = %s, updated_by = %s WHERE compliance_id = %s "  % (
+                        statutoryProvision, complianceTask, 
+                        complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
+                        statutoryDates, mappingId, isActive, updatedBy, complianceId
+                    )
+
+            elif complianceFrequency == "OnOccurrence" :
+                query = "UPDATE tbl_compliances set statutory_provision='%s', \
+                    compliance_task='%s', compliance_description='%s', document_name='%s', format_file='%s', \
+                    penal_consequences='%s', compliance_frequency='%s', statutory_dates='%s', duration=%s, \
+                    duration_type='%s', statutory_mapping_id = %s, \
+                    is_active = %s, updated_by = %s WHERE compliance_id = %s "% (
+                        statutoryProvision, complianceTask, 
+                        complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
+                        statutoryDates, int(duration), durationType, mappingId, isActive, updatedBy, complianceId
+                    )
+
+            else :
+                query = "UPDATE tbl_compliances set statutory_provision ='%s', \
+                    compliance_task ='%s', compliance_description='%s', document_name='%s', format_file='%s', \
+                    penal_consequences='%s', compliance_frequency='%s', statutory_dates='%s', repeats_every=%s, \
+                    repeats_type='%s', statutory_mapping_id=%s, \
+                    is_active=%s, updated_by=%s WHERE compliance_id = %s "  % (
+                        statutoryProvision, complianceTask, 
+                        complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
+                        statutoryDates, int(repeatsEvery), repeatsType, mappingId, isActive, updatedBy, complianceId
+                    )
+
+            if (self.dataInsertUpdate(query)) :
+                complianceIds.append(complianceId)
+
+        return complianceIds
 
 
     ### Stautory Mapping ###
@@ -635,7 +716,7 @@ class DatabaseHandler(object) :
                 geographyIds, isActive, createdBy, createdOn
             )
         if (self.dataInsertUpdate(query)) :
-            self.updateStatutoryMappingId(statutoryIds, statutoryMappingId, createdBy)
+            self.updateStatutoryMappingId(data.get("statutory_ids"), statutoryMappingId, createdBy)
             ids = self.saveCompliance(statutoryMappingId, compliances, createdBy)
             complianceIds = ','.join(str(x) for x in ids) + ","
             qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
@@ -644,6 +725,32 @@ class DatabaseHandler(object) :
         else :
             return False
 
+
+    def updateStatutoryMapping(self, data, updatedBy) :
+        statutoryMappingId = data.get("statutory_mapping_id")
+        countryId =data.get("country_id")
+        domainId =data.get("domain_id")
+        industryIds = ','.join(str(x) for x in data.get("industry_ids")) + ","
+        natureId =data.get("statutory_nature_id")
+        statutoryIds = ','.join(str(x) for x in data.get("statutory_ids")) + ","
+        compliances = data.get("compliances")
+        geographyIds = ','.join(str(x) for x in data.get("geography_ids")) + ","
+
+        query = "UPDATE tbl_statutory_mappings set country_id=%s, domain_id=%s, industry_ids='%s', \
+            statutory_nature_id=%s, statutory_ids='%s', geography_ids='%s', updated_by=%s \
+            WHERE statutory_mapping_id=%s" % (
+                countryId, domainId, industryIds, natureId, statutoryIds, geographyIds,
+                updatedBy, statutoryMappingId
+            )
+        if (self.dataInsertUpdate(query)) :
+            self.updateStatutoryMappingId(data.get("statutory_ids"), statutoryMappingId, updatedBy)
+            ids = self.updateCompliance(statutoryMappingId, compliances, updatedBy)
+            complianceIds = ','.join(str(x) for x in ids) + ","
+            qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
+                where statutory_mapping_id = %s" % (complianceIds, statutoryMappingId)
+            return self.dataInsertUpdate(qry)
+        else :
+            return False
 
     @staticmethod     
     def instance() :         

@@ -395,8 +395,8 @@ function initMirror() {
     }
     
     function getStatutoryMappings(callback, failure_callback) {
-        var request = ["getStatutoryMappings", {}];
-        apiRequest("getStatutoryMappings", request, callback, failure_callback);
+        var request = ["GetStatutoryMappings", {}];
+        apiRequest("GetStatutoryMappings", request, callback, failure_callback);
     }
 
 
