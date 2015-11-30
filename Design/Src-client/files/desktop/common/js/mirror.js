@@ -233,7 +233,8 @@ function initMirror() {
         apiRequest("SaveStatutoryNature", request, callback, failure_callback);
     }
 
-    function updateStatutoryNature(statutoryNatureId, statutoryNatureName, callback, failure_callback) {
+    function updateStatutoryNature(statutoryNatureId, statutoryNatureName, 
+        callback, failure_callback) {
         if ((statutoryNatureId == null) || (statutoryNatureName == null))
             return null;
         var request = [
@@ -243,7 +244,8 @@ function initMirror() {
         apiRequest("UpdateStatutoryNature", request, callback, failure_callback);
     }
 
-    function changeStatutoryNatureStatus(statutoryNatureId, isActive, callback, failure_callback) {
+    function changeStatutoryNatureStatus(statutoryNatureId, isActive, 
+        callback, failure_callback) {
         if ((statutoryNatureId == null) || (isActive == null))
             return null;
         var request = [
@@ -283,7 +285,8 @@ function initMirror() {
         apiRequest("GetStatutoryLevels", request, callback, failure_callback);   
     }
 
-    function saveAndUpdateStatutoryLevels(countryId, domainId, levels, callback, failure_callback) {
+    function saveAndUpdateStatutoryLevels(countryId, domainId, levels, 
+        callback, failure_callback) {
 
         if ((countryId == null) || (domainId == null) || (levels == null))
             return null;
@@ -365,7 +368,8 @@ function initMirror() {
         apiRequest("SaveStatutory", request, callback, failure_callback);
     }
 
-    function updateStatutory(statutoryId, levelId, name, parentIds, callback, failure_callback) {
+    function updateStatutory(statutoryId, levelId, name, parentIds, 
+        callback, failure_callback) {
         var request = [
             "UpdateStatutory",
             {
@@ -464,7 +468,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeAdminUserGroupStatus(callerName, userGroupId, isActive, callback, failure_callback) {
+    function changeAdminUserGroupStatus(callerName, userGroupId, isActive, 
+        callback, failure_callback) {
         if (isNull(userGroupId) || isNull(isActive) )
             return null;
         var request = [
@@ -574,7 +579,8 @@ function initMirror() {
 
     // Client Group Master
 
-    function saveClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
+    function saveClientGroup(callerName, clientGroupDetails, dateConfigurations, 
+        callback, failure_callback) {
         var request = [
             "SaveClientGroup",
             {
@@ -595,7 +601,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
+    function updateClientGroup(callerName, clientGroupDetails, dateConfigurations, 
+        callback, failure_callback) {
 
         var request = [
             "UpdateClientGroup",
@@ -617,7 +624,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientGroupStatus(callerName, clientId, isActive, callback, failure_callback) {
+    function changeClientGroupStatus(callerName, clientId, isActive, 
+        callback, failure_callback) {
         
         var request = [
             "ChangeClientGroupStatus",
@@ -640,7 +648,8 @@ function initMirror() {
 
     // Change Password APIs
 
-    function changePassword(callerName, currentPassword, newPassword, callback, failure_callback) {
+    function changePassword(callerName, currentPassword, newPassword,
+     callback, failure_callback) {
         
         var request = [
             "ChangePassword",
@@ -729,7 +738,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }  
 
-    function reactivateUnit(callerName, clientId, unitId, password, callback, failure_callback) {
+    function reactivateUnit(callerName, clientId, unitId, password, 
+        callback, failure_callback) {
         
         var request = [
             "ReactivateUnit",
@@ -800,7 +810,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientUserGroupStatus(callerName, userGroupId, isActive, callback, failure_callback) {
+    function changeClientUserGroupStatus(callerName, userGroupId, isActive, 
+        callback, failure_callback) {
         if (isNull(userGroupId) || isNull(isActive) )
             return null;
         var request = [
@@ -813,10 +824,96 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+     // Service Providers  
+
+    function getServiceProviders(callerName, callback, failure_callback) {
+        var request = [
+            "GetServiceProviders",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function saveServiceProvider(callerName, serviceProviderDetail,
+     callback, failure_callback) {
+        if (isNull(serviceProviderDetail))
+            return null;
+        else if (serviceProviderDetail.length != 6)
+            return null;
+        $.each(serviceProviderDetail, function( index, value ) {
+            if (isNull(value))
+                return null
+        });
+        var serviceProviderName= serviceProviderDetail[0] ;
+        var address= serviceProviderDetail[1] ;
+        var contractFrom= serviceProviderDetail[2];
+        var contractTo= serviceProviderDetail[3];
+        var contactPerson= serviceProviderDetail[4];
+        var contactNo= serviceProviderDetail[5];
+        var request = [
+            "SaveServiceProvider",
+            {
+                "service_provider_name": serviceProviderName, 
+                "address": address,
+                "contract_from": contractFrom,
+                "contract_to": contractTo, 
+                "contact_person": contactPerson,
+                "contact_no": contactNo
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function updateServiceProvider(callerName, serviceProviderDetail, 
+        callback, failure_callback) {
+        if (isNull(serviceProviderDetail))
+            return null;
+        else if (serviceProviderDetail.length != 7)
+            return null;
+        $.each(serviceProviderDetail, function( index, value ) {
+            if (isNull(value))
+                return null
+        });
+        var serviceProviderId= serviceProviderDetail[0] ;
+        var serviceProviderName= serviceProviderDetail[1] ;
+        var address= serviceProviderDetail[2] ;
+        var contractFrom= serviceProviderDetail[3];
+        var contractTo= serviceProviderDetail[4];
+        var contactPerson= serviceProviderDetail[5];
+        var contactNo= serviceProviderDetail[6];
+        var request = [
+            "UpdateServiceProvider",
+            {
+                "service_provider_id": serviceProviderId,
+                "service_provider_name": serviceProviderName, 
+                "address": address,
+                "contract_from": contractFrom,
+                "contract_to": contractTo, 
+                "contact_person": contactPerson,
+                "contact_no": contactNo,
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeServiceProviderStatus(callerName, serviceProviderId, isActive, 
+        callback, failure_callback) {
+        if (isNull(serviceProviderId) || isNull(isActive) )
+            return null;
+        var request = [
+            "ChangeServiceProviderStatus",
+            {
+                "service_provider_id" : serviceProviderId,
+                "is_active" : isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
 
     return {
         log: log,
-        toJSON: toJSON,
+        toJSON: toJSON, 
         parseJSON: parseJSON,
 
         initSession: initSession,
@@ -889,7 +986,12 @@ function initMirror() {
         saveClientUserGroup: saveClientUserGroup,
         updateClientUserGroup: updateClientUserGroup,
         changeClientUserGroupStatus: changeClientUserGroupStatus,
-        getClientUserGroups: getClientUserGroups
+        getClientUserGroups: getClientUserGroups,
+
+        saveServiceProvider: saveServiceProvider,
+        updateServiceProvider: updateServiceProvider,
+        changeServiceProviderStatus: changeServiceProviderStatus,
+        getServiceProviders: getServiceProviders
     }
 
 }
