@@ -27,8 +27,9 @@ class ClientAdminAPIRequestHandler(tornado.web.RequestHandler) :
             if userId is None :
                 response = PossibleError("InvalidSessionToken")
             else :
-                userPrivilege = UserPrivilegeController()
                 serviceProvider = ServiceProviderController()
+                userPrivilege = UserPrivilegeController()
+                user = UserController()
                 if request[0] == "GetUserPrivileges" :
                     response = userPrivilege.getUserPrivileges(userId)
                 elif request[0] == "SaveUserPrivilege" :
@@ -46,6 +47,15 @@ class ClientAdminAPIRequestHandler(tornado.web.RequestHandler) :
                     response = serviceProvider.updateServiceProvider(request[1], userId)
                 elif request[0] == "ChangeServiceProviderStatus" :
                     response = serviceProvider.changeServiceProviderStatus(
+                        request[1], userId)
+                elif request[0] == "GetClientUsers" :
+                    response = user.getUsers( userId)
+                elif request[0] == "SaveClientUser" :
+                    response = user.saveUser(request[1], userId)
+                elif request[0] == "UpdateClientUser" :
+                    response = user.updateUser(request[1], userId)
+                elif request[0] == "ChangeClientUserStatus" :
+                    response = user.changeUserStatus(
                         request[1], userId)
                 else :
                     response = commonResponseStructure("InvalidRequest",{})

@@ -490,13 +490,16 @@ class Unit(object):
         }
 
     def toStructure(self):
+        unitName = "%s - %s" % (self.unitCode, self.unitName)
         return{
             "unit_id": self.unitId,
             "division_id": self.divisionId,
             "legal_entity_id": self.legalEntityId,
             "business_group_id": self.businessGroupId,
-            "client_id"  : self.clientId,
-            "unit_name": self.unitName,
+            "client_id": self.clientId,
+            "country_id": self.countryId,
+            "domain_ids": self.domainIds,
+            "unit_name": unitName,
             "unit_address": self.address
         }
 
@@ -506,6 +509,40 @@ class Unit(object):
         if clientDBName == None:
             print "Error : Database Not exists for the client %d" % clientId
         return clientDBName
+
+    @classmethod
+    def getList(self,clientIds):
+        unitList = []
+
+        for index, clientId in enumerate(clientIds.split(",")):
+            try:
+                clientDBName = self.getClienDatabaseName(clientId)
+                clientColumns = "unit_id, division_id, legal_entity_id, "+\
+                                "business_group_id, unit_code, unit_name,"+\
+                                " country_id, address, domain_ids"
+
+                rows = ClientDatabaseHandler.instance(clientDBName).getData(
+                    self.unitTblName, clientColumns, "1")
+
+                for row in rows:
+                    unitId = row[0]
+                    divisionId = row[1]
+                    legalEntityId = row[2]
+                    businessGroupId = row[3]
+                    unitCode = row[4]
+                    unitName = row[5]
+                    countryId = row[6]
+                    address = row[7]
+                    domainIds = row[8]
+                    unit = Unit(unitId, divisionId, legalEntityId, businessGroupId, 
+                            int(clientId), countryId, None, unitCode, unitName,
+                            None, address, None, domainIds, None)
+                    unitList.append(unit.toStructure())
+
+            except:
+                print "Error: While fetching Unit of client id %s" % clientId
+
+        return unitList
 
     @classmethod
     def getDetailedList(self, clientIds):
@@ -546,7 +583,7 @@ class Unit(object):
                     unitList.append(unit.toDetailedStructure())
 
             except:
-                print "Error: While fetching Division of client id %s" % clientId
+                print "Error: While fetching Unit of client id %s" % clientId
 
         return unitList
 

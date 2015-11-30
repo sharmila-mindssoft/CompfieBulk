@@ -78,15 +78,15 @@ class UserPrivilege() :
         return userGroupList
 
     @classmethod
-    def getList(self):
+    def getList(self, clientId):
         userGroupList = []
         columns = "user_group_id, user_group_name"
         rows = ClientDatabaseHandler.instance(
-            getClientDatabase(self.clientId)).getData(
-            UserGroup.tblName, columns, "1")
+            getClientDatabase(clientId)).getData(
+            UserPrivilege.tblName, columns, "1")
 
         for row in rows:
-            userGroup = UserGroup(int(row[0]), row[1], None, None, None)
+            userGroup = UserPrivilege(clientId, int(row[0]), row[1], None, None, None)
             userGroupList.append(userGroup.toStructure())
 
         return userGroupList
@@ -125,23 +125,26 @@ class UserPrivilege() :
 
 class User(object) :
     mainTblName = "tbl_users"
-    detailTblName = "tbl_user_details"
+    detailTblName = "tbl_client_user_details"
 
-    def __init__(self, userId, emailId, userGroupId, employeeName, 
-                employeeCode, contactNo, address, designation, countryIds,
-                domainIds, clientId,isActive) :
+    def __init__(self, clientId ,userId, emailId, userGroupId, employeeName, employeeCode, 
+        contactNo, seatingUnitId, userLevel, countryIds, domainIds, unitIds, 
+        isAdmin, isServiceProvider, serviceProviderId ) :
+        self.clientId = clientId
         self.userId =  userId if userId != None else self.generateNewUserId()
         self.emailId =  emailId
         self.userGroupId =  userGroupId
         self.employeeName =  employeeName
         self.employeeCode =  employeeCode
         self.contactNo =  contactNo
-        self.address =  address
-        self.designation =  designation
+        self.seatingUnitId =  seatingUnitId
+        self.userLevel =  userLevel
         self.countryIds =  countryIds
         self.domainIds =  domainIds
-        self.clientId = clientId
-        self.isActive = isActive if isActive != None else 1
+        self.unitIds =  unitIds
+        self.isAdmin =  isAdmin
+        self.isServiceProvider =  isServiceProvider
+        self.serviceProviderId =  serviceProviderId
 
     def verify(self) :
         assertType(self.userId, IntType)
@@ -150,27 +153,31 @@ class User(object) :
         assertType(self.employeeName, StringType)
         assertType(self.employeeCode, StringType)
         assertType(self.contactNo, StringType)
-        assertType(self.address, StringType)
-        assertType(self.designation, StringType)
+        assertType(self.seatingUnitId, IntType)
+        assertType(self.userLevel, IntType)
         assertType(self.countryIds, ListType)
         assertType(self.domainIds, ListType)
-        assertType(self.clientId, IntType)
-        assertType(self.isActive, IntType)
+        assertType(self.unitIds, ListType)
+        assertType(self.isAdmin, IntType)
+        assertType(self.isServiceProvider, IntType)
+        assertType(self.serviceProviderId, IntType)
 
     def toDetailedStructure(self) :
+        employeeName = "%s - %s" % (self.employeeCode,self.employeeName)
         return {
             "user_id": self.userId,
             "email_id": self.emailId,
             "user_group_id": self.userGroupId,
-            "employee_name": self.employeeName,
-            "employee_code": self.employeeCode,
+            "employee_name": employeeName,
             "contact_no": self.contactNo,
-            "address": self.address, 
-            "designation": self.designation,
+            "seating_unit_id": self.seatingUnitId, 
+            "user_level": self.userLevel,
             "country_ids": self.countryIds,
             "domain_ids": self.domainIds,
-            "client_id": self.clientId,
-            "is_active": self.isActive
+            "unit_ids": self.unitIds,
+            "is_admin": self.isAdmin,
+            "is_service_provider": self.isServiceProvider,
+            "service_provider_id": self.serviceProviderId
         }
 
     def toStructure(self):
@@ -182,36 +189,56 @@ class User(object) :
         return {
             "user_id": self.userId,
             "employee_name": employeeName,
+            "user_level": self.userLevel
         }
 
     @classmethod
-    def getDetailedList(self):
+    def getDetailedList(self, clientId):
         userList = []
         columns = "user_id, is_active"
-        rows = DatabaseHandler.instance().getData(User.mainTblName, columns, "1")
-
+        condition = "client_id='%d'" % int(clientId)
+        rows = DatabaseHandler.instance().getData(
+            User.mainTblName, columns, condition)
         for row in rows:
             userId = row[0]
             isActive = row[1]
             subColumns = "email_id, user_group_id, employee_name, employee_code,"+\
-                                "contact_no, address, designation, country_ids,"+\
-                                "domain_ids,client_ids"
-            condition = " user_id ='"+str(userId)+"'"                                
-            subRows = DatabaseHandler.instance().getData(User.detailTblName, subColumns, condition)
+                        " contact_no, seating_unit_id, user_level, country_ids,"+\
+                        " domain_ids, unit_ids, is_admin, is_service_provider"
+            condition = " user_id ='%d'" % int(userId)                               
+            subRows = ClientDatabaseHandler.instance(
+                        getClientDatabase(clientId)).getData(
+                        User.detailTblName, subColumns, condition)
             for subRow in subRows:
-                user = User(userId,subRow[0], subRow[1],subRow[2], subRow[3],
-                     subRow[4], subRow[5], subRow[6], subRow[7], subRow[8], subRow[9],isActive)
+                emailId = subRow[0]
+                userGroupId = subRow[1]
+                employeeName = subRow[2]
+                employeeCode = subRow[3]
+                contactNo =  subRow[4]
+                seatingUnitId = subRow[5]
+                userLevel = subRow[6]
+                countryIds = subRow[7]
+                domainIds = subRow[8]
+                unitIds = subRow[9]
+                isAdmin = subRow[10]
+                isServiceProvider = subRow[11]
+                user = User(clientId,userId, emailId, userGroupId, 
+                            employeeName, employeeCode, contactNo, 
+                            seatingUnitId, userLevel, countryIds, 
+                            domainIds, unitIds, isAdmin, isServiceProvider, 
+                            None )
                 userList.append(user.toDetailedStructure())
         return userList
 
     @classmethod
-    def getList(self):
+    def getList(self, clientId):
         userList = []
         columns = "user_id, employee_name, employee_code"
-        rows = DatabaseHandler.instance().getData(User.detailTblName, columns, "1")
+        rows = ClientDatabaseHandler.instance(
+                        getClientDatabase(self.clientId)).getData(
+                        User.detailTblName, columns, "1")
 
         for row in rows:
-            print "inside for loop in user model"
             user = User(int(row[0]),None,None, row[1], row[2],
                  None, None, None, None, None, None, None)
             userList.append(user.toStructure())
@@ -222,82 +249,88 @@ class User(object) :
         return DatabaseHandler.instance().generateNewId(self.mainTblName, "user_id")
 
     def isDuplicateEmail(self):
-        condition = "username ='"+self.emailId+\
-                "' AND user_id != '"+str(self.userId)+"'"
+        condition = "username ='%s' AND user_id != '%d'" % (self.emailId, self.userId)
         return DatabaseHandler.instance().isAlreadyExists(self.mainTblName, condition)
 
     def isDuplicateEmployeeCode(self):
-        condition = "employee_code ='"+self.employeeCode+\
-                "' AND user_id != '"+str(self.userId)+"'"
-        return DatabaseHandler.instance().isAlreadyExists(self.detailTblName, condition)
+        condition = "employee_code ='%s' AND user_id != '%d'" % (self.employeeCode, self.userId)
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).isAlreadyExists(self.detailTblName, condition)
 
     def isDuplicateContactNo(self):
-        condition = "contact_no ='"+self.contactNo+\
-                "' AND user_id != '"+str(self.userId)+"'"
-        return DatabaseHandler.instance().isAlreadyExists(self.detailTblName, condition)
+        condition = "contact_no ='%s' AND user_id != '%d'" % (self.contactNo, self.userId)
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).isAlreadyExists(self.detailTblName, condition)
 
     def isIdInvalid(self):
-        condition = "user_id = '"+str(self.userId)+"'"
+        condition = "user_id = '%d'" % self.userId
         return not DatabaseHandler.instance().isAlreadyExists(self.mainTblName, condition)
 
-    def getFormType(self) :
-        rows = DatabaseHandler.instance().getData(UserGroup.tblName, 
-                    "form_type", "user_group_id='"+str(self.userGroupId)+"'")
-        return rows[0][0]
-
-    def saveAdmin(self, sessionUser):
-        currentTimeStamp = getCurrentTimeStamp()
-
-        mainTblColumns = "user_id, username, password, client_id, created_on,created_by, updated_on, updated_by"
-        mainTblValuesList = [ self.userId, self.emailId, generatePassword(), self.clientId, 
-                            currentTimeStamp,sessionUser,
-                            currentTimeStamp,sessionUser]
-        mainTblValues = listToString(mainTblValuesList)
-        return DatabaseHandler.instance().insert(self.mainTblName, mainTblColumns, mainTblValues)
 
     def save(self, sessionUser):
         currentTimeStamp = getCurrentTimeStamp()
-        mainTblColumns = "user_id, username, password, client_id,created_on,created_by, updated_on, updated_by"
+        mainTblColumns = "user_id, username, password, client_id,created_on,created_by,"+\
+                        " updated_on, updated_by"
         mainTblValuesList = [self.userId, self.emailId, generatePassword(), self.clientId,
                             currentTimeStamp,sessionUser,
                             currentTimeStamp,sessionUser]
-        detailTblcolumns = "user_id, email_id, user_group_id, form_type,employee_name, "+\
-                            "employee_code, contact_no, address, designation, country_ids,"+\
-                            " domain_ids, created_on, created_by, updated_on, updated_by"
-        detailTblValuesList = [ self.userId, self.emailId, self.userGroupId, self.getFormType(),
-                            self.employeeName, self.employeeCode, self.contactNo, self.address,
-                            self.designation, ",".join(str(x) for x in self.countryIds), 
-                            ",".join(str(x) for x in self.domainIds), currentTimeStamp,sessionUser,
-                            currentTimeStamp,sessionUser]
+        detailTblcolumns = "user_id, email_id, user_group_id, employee_name, employee_code,"+\
+                            " contact_no, seating_unit_id, user_level, country_ids,"+\
+                            " domain_ids, unit_ids, is_admin, is_service_provider, "+\
+                            " created_by, created_on, updated_by,updated_on"
+        detailTblValuesList = [ self.userId, self.emailId, self.userGroupId, self.employeeName,
+                                self.employeeCode, self.contactNo, self.seatingUnitId, 
+                                self.userLevel, ",".join(str(x) for x in self.countryIds), 
+                                ",".join(str(x) for x in self.domainIds), 
+                                ",".join(str(x) for x in self.unitIds), self.isAdmin,
+                                self.isServiceProvider, sessionUser,currentTimeStamp,
+                                sessionUser, currentTimeStamp,]
+
+        if self.isServiceProvider == 1:
+            detailTblcolumns += ", service_provider_id" 
+            detailTblValuesList.append(self.serviceProviderId)
 
         mainTblValues = listToString(mainTblValuesList)
         detailTblValues = listToString(detailTblValuesList)
 
         if DatabaseHandler.instance().insert(self.mainTblName, mainTblColumns, mainTblValues): 
-            return DatabaseHandler.instance().insert(self.detailTblName, 
-                detailTblcolumns, detailTblValues)
+            return ClientDatabaseHandler.instance(
+                getClientDatabase(self.clientId)).insert(
+                self.detailTblName, detailTblcolumns, detailTblValues)
         else : 
             return False
 
     def update(self, sessionUser):
         currentTimeStamp = getCurrentTimeStamp()
-        detailTblcolumns = [ "user_group_id", "form_type", "employee_name", "employee_code", 
-                            "contact_no", "address", "designation", "country_ids", "domain_ids",
-                            "updated_on", "updated_by"]
-        detailTblValuesList = [ self.userGroupId, self.getFormType(), self.employeeName, self.employeeCode,
-                            self.contactNo, self.address, self.designation, convertToString(",".join(self.countryIds)),
-                            convertToString(",".join(self.domainIds)), currentTimeStamp,sessionUser ]
-        condition = "user_id='"+str(self.userId)+"'"
-        return DatabaseHandler.instance().update(self.detailTblName, detailTblcolumns,
-                                                detailTblValuesList, condition)
+        detailTblcolumns = [ "user_group_id", "employee_name", "employee_code",
+                            "contact_no", "seating_unit_id", "user_level", "country_ids",
+                            "domain_ids", "unit_ids", "is_admin", "is_service_provider",
+                             "updated_on", "updated_by"]
+        detailTblValuesList = [ self.userGroupId, self.employeeName, self.employeeCode,
+                            self.contactNo, self.seatingUnitId, self.userLevel, 
+                            ",".join(str(x) for x in self.countryIds),
+                            ",".join(str(x) for x in self.domainIds),
+                            ",".join(str(x) for x in self.unitIds), self.isAdmin, 
+                            self.isServiceProvider, currentTimeStamp, sessionUser ]
+        condition = "user_id='%d'" % self.userId
+
+        if self.isServiceProvider == 1:
+            detailTblcolumns.append("service_provider_id")
+            detailTblValuesList.append(self.serviceProviderId)
+
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).update(
+            self.detailTblName, detailTblcolumns, detailTblValuesList, condition)
 
     def updateStatus(self, sessionUser):
         assertType(self.userId, IntType)
         assertType(self.isActive, IntType)
         columns = ["is_active", "updated_on" , "updated_by"]
         values = [self.isActive, getCurrentTimeStamp(), sessionUser]
-        condition = "user_id='"+str(self.userId)+"'"
-        return DatabaseHandler.instance().update(self.mainTblName, columns, values, condition)
+        condition = "user_id='%d'" % self.userId
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).update(
+            self.mainTblName, columns, values, condition)
             
 class ServiceProvider(object):
     tblName = " tbl_service_providers"

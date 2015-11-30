@@ -6,6 +6,8 @@ import uuid
 
 from models import *
 from aparajitha.server.common import *
+from aparajitha.server.admin.models import User as AdminUser
+from aparajitha.server.techno.models import BusinessGroup,LegalEntity,Division,Unit
 from aparajitha.server.knowledge.models import DomainList, CountryList
 from aparajitha.server.databasehandler import DatabaseHandler
 
@@ -79,12 +81,21 @@ class UserController() :
         employeeName = JSONHelper.getString(requestData,"employee_name")
         employeeCode = JSONHelper.getString(requestData,"employee_code")
         contactNo = JSONHelper.getString(requestData,"contact_no")
-        address =  JSONHelper.getString(requestData,"address")
-        designation =  JSONHelper.getString(requestData,"designation")
+        seatingUnitId =  JSONHelper.getInt(requestData,"seating_unit_id")
+        userLevel =  JSONHelper.getInt(requestData,"user_level")
         countryIds = JSONHelper.getList(requestData,"country_ids")
         domainIds = JSONHelper.getList(requestData,"domain_ids")
-        user = User(None, emailId, userGroupId, employeeName, employeeCode, contactNo, 
-                    address, designation, countryIds, domainIds, None,None)
+        unitIds = JSONHelper.getList(requestData,"unit_ids")
+        isAdmin = JSONHelper.getInt(requestData,"is_admin")
+        isServiceProvider = JSONHelper.getInt(requestData,"is_service_provider")
+        try:
+            serviceProviderId = JSONHelper.getInt(requestData,"service_provider_id")
+        except:
+            serviceProviderId = None
+
+        user = User(getClientId(sessionUser), None, emailId, userGroupId, employeeName, 
+                    employeeCode, contactNo, seatingUnitId, userLevel, countryIds,
+                    domainIds, unitIds, isAdmin, isServiceProvider, serviceProviderId)
         if user.isDuplicateEmail() :
             return commonResponseStructure("EmailIDAlreadyExists",{})
         elif user.isDuplicateEmployeeCode() :
@@ -92,22 +103,31 @@ class UserController() :
         elif user.isDuplicateContactNo() :
             return commonResponseStructure("ContactNumberAlreadyExists",{})
         elif user.save(sessionUser) :
-            return commonResponseStructure("SaveUserSuccess",{})
+            return commonResponseStructure("SaveClientUserSuccess",{})
         else:
             return commonResponseStructure("Error",{})
 
     def updateUser(self, requestData, sessionUser) :
-        userId = JSONHelper.getInt(requestData,"user_id")
+        userId = JSONHelper.getInt(requestData, "user_id")
         userGroupId = JSONHelper.getInt(requestData,"user_group_id")
         employeeName = JSONHelper.getString(requestData,"employee_name")
         employeeCode = JSONHelper.getString(requestData,"employee_code")
         contactNo = JSONHelper.getString(requestData,"contact_no")
-        address =  JSONHelper.getString(requestData,"address")
-        designation =  JSONHelper.getString(requestData,"designation")
+        seatingUnitId =  JSONHelper.getInt(requestData,"seating_unit_id")
+        userLevel =  JSONHelper.getInt(requestData,"user_level")
         countryIds = JSONHelper.getList(requestData,"country_ids")
         domainIds = JSONHelper.getList(requestData,"domain_ids")
-        user = User(userId, None, userGroupId, employeeName, employeeCode, contactNo,
-                    address, designation, countryIds, domainIds, None, None)
+        unitIds = JSONHelper.getList(requestData,"unit_ids")
+        isAdmin = JSONHelper.getInt(requestData,"is_admin")
+        isServiceProvider = JSONHelper.getInt(requestData,"is_service_provider")
+        try:
+            serviceProviderId = JSONHelper.getInt(requestData,"service_provider_id")
+        except:
+            serviceProviderId = None
+
+        user = User(getClientId(sessionUser), userId, None,userGroupId, employeeName, 
+                    employeeCode, contactNo, seatingUnitId, userLevel, countryIds,
+                    domainIds, unitIds, isAdmin, isServiceProvider, serviceProviderId)
         if user.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
         elif user.isDuplicateEmployeeCode() :
@@ -122,26 +142,36 @@ class UserController() :
     def changeUserStatus(self, requestData, sessionUser):
     	userId = JSONHelper.getInt(requestData, "user_id")
         isActive = JSONHelper.getInt(requestData, "is_active")
-        user = User(userId, None, None, None, None, None,
+        user = AdminUser(userId, None, None, None, None, None,
                     None, None, None, None, None,isActive)
         if user.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
         elif user.updateStatus(sessionUser):
-            return commonResponseStructure("ChangeUserStatusSuccess",{})
+            return commonResponseStructure("ChangeClientUserStatusSuccess",{})
 
-    def getUsers(self) :
-    	domainList = DomainList.getDomainList()
+    def getUsers(self, sessionUser) :
+        clientId = str(getClientId(sessionUser))
+
         countryList = CountryList.getCountryList()
-    	userGroupList = UserGroup.getList()
-    	userList = User.getDetailedList()
+    	domainList = DomainList.getDomainList()
+        businessGroupList = BusinessGroup.getList(clientId)
+        legalEntityList = LegalEntity.getList(clientId)
+        divisionList = Division.getList(clientId)
+        unitList = Unit.getList(clientId)
+    	userGroupList = UserPrivilege.getList(clientId)
+    	userList = User.getDetailedList(clientId)
 
         response_data = {}
         response_data["domains"] = domainList
         response_data["countries"] = countryList
+        response_data["business_groups"] = businessGroupList
+        response_data["legal_entities"] = legalEntityList
+        response_data["divisions"] = divisionList
+        response_data["units"] = unitList
         response_data["user_groups"] = userGroupList
         response_data["users"] = userList
 
-        response = commonResponseStructure("GetUsersSuccess", response_data)
+        response = commonResponseStructure("GetClientUsersSuccess", response_data)
         return response
 
 
