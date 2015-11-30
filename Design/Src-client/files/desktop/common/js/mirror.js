@@ -721,8 +721,20 @@ function initMirror() {
             }
         ];
         apiRequest(callerName, request, callback, failure_callback);
-    }    
+    }  
 
+    function reactivateUnit(callerName, clientId, unitId, password, callback, failure_callback) {
+        
+        var request = [
+            "ReactivateUnit",
+            {
+                "client_id": clientId,
+                "unit_id" : unitId,
+                "password": password
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }  
 
     return {
         log: log,
@@ -794,6 +806,7 @@ function initMirror() {
         getClients: getClients,
         saveClient: saveClient,
         changeClientStatus: changeClientStatus,
+        reactivateUnit: reactivateUnit
     }
 
 }

@@ -23,7 +23,8 @@ __all__ = [
     "ChangeClientGroupStatus",
     "UpdateClientGroup",
     "GetClients",
-    "ChangeClientStatus"
+    "ChangeClientStatus",
+    "ReactivateUnit"
 ]
 clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
     "Src-client/files/desktop/common/clientdatabase/clientdatabasemapping.txt")
@@ -1431,6 +1432,68 @@ class ChangeClientStatus(object):
             unitIdsList = ",".join(str(x) for x in unitIdsList), clientId = self.clientId)
         return DatabaseHandler.instance().update(
             self.unitTblName, columns, values, condition)
+
+class ReactivateUnit(object):
+    unitTblName = "tbl_units"
+    userTblName = "tbl_users"
+
+    def __init__(self, requestData, sessionUser) :
+        self.requestData = requestData
+        self.sessionUser = int(sessionUser)
+
+        assertType(requestData, DictType)
+        assertType(sessionUser, LongType)
+
+    def processRequest(self):
+        requestData = self.requestData
+        self.clientId = JSONHelper.getInt(requestData, "client_id")
+        self.unitId = JSONHelper.getInt(requestData, "unit_id")
+        self.password = JSONHelper.getString(requestData, "password")
+        if self.verifyPassword():
+            if self.activateUnit():
+                return commonResponseStructure("ReactivateUnitSuccess", {})
+            else:
+                print "Error: Failed to activate unit"
+        else:
+            return commonResponseStructure("InvalidPassword", {})
+
+    def verifyPassword(self):
+        encryptedPassword = encrypt(self.password)
+        columns = "count(*)"
+        condition = "password='%s' and user_id='%d'" % (encryptedPassword, self.sessionUser)
+        rows = DatabaseHandler.instance().getData(self.userTblName, columns, condition)
+        
+        if(int(rows[0][0]) <= 0):
+            return False
+        else:
+            return True
+
+    def activateUnit(self):
+        if self.activateUnitInClientDB():
+            if self.activateUnitInKnowledgeDB():
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    def activateUnitInClientDB(self):
+        columns = ["is_active"]
+        values = [1]
+        condition = "unit_id ='%d'" % self.unitId
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).update(
+            self.unitTblName, columns, values, condition)
+
+    def activateUnitInKnowledgeDB(self):    
+        columns = ["is_active", "updated_by", "updated_on"]
+        values = [1, self.sessionUser, getCurrentTimeStamp()]
+        condition = "unit_id = {unitId} and client_id={clientId}".format(
+            unitId = self.unitId, clientId = self.clientId)
+        return DatabaseHandler.instance().update(
+            self.unitTblName, columns, values, condition)
+
+
 
 
 

@@ -48,6 +48,9 @@ class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "ChangeClientStatus" :
                     changeClientStatus = ChangeClientStatus(request[1], userId)
                     response = changeClientStatus.processRequest()
+                elif request[0] == "ReactivateUnit" :
+                    reactivateUnit = ReactivateUnit(request[1], userId)
+                    response = reactivateUnit.processRequest()
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 
