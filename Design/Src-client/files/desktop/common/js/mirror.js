@@ -765,22 +765,10 @@ function initMirror() {
     function saveClientUserGroup(callerName, userGroupDetail, callback, failure_callback) {
         if (isNull(userGroupDetail))
             return null;
-        else if (userGroupDetail.length != 3)
-            return null;
-        $.each(userGroupDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var userGroupName= userGroupDetail[0] ;
-        var fromType= userGroupDetail[1] ;
-        var formIds= userGroupDetail[2].split(',') ;
+        
         var request = [
             "SaveUserPrivilege",
-            {
-                "user_group_name": userGroupName,
-                "form_type": fromType,
-                "form_ids": formIds
-            }
+            userGroupDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
@@ -788,24 +776,10 @@ function initMirror() {
     function updateClientUserGroup(callerName, userGroupDetail, callback, failure_callback) {
         if (isNull(userGroupDetail))
             return null;
-        else if (userGroupDetail.length != 4)
-            return null;
-        $.each(userGroupDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var userGroupId= userGroupDetail[0] ;
-        var userGroupName= userGroupDetail[1] ;
-        var fromType= userGroupDetail[2] ;
-        var formIds= userGroupDetail[3].split(',') ;
+        
         var request = [
             "UpdateUserPrivilege",
-            {
-                "user_group_id" : userGroupId,
-                "user_group_name": userGroupName,
-                "form_type": fromType,
-                "form_ids": formIds
-            }
+            userGroupDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
@@ -838,28 +812,10 @@ function initMirror() {
      callback, failure_callback) {
         if (isNull(serviceProviderDetail))
             return null;
-        else if (serviceProviderDetail.length != 6)
-            return null;
-        $.each(serviceProviderDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var serviceProviderName= serviceProviderDetail[0] ;
-        var address= serviceProviderDetail[1] ;
-        var contractFrom= serviceProviderDetail[2];
-        var contractTo= serviceProviderDetail[3];
-        var contactPerson= serviceProviderDetail[4];
-        var contactNo= serviceProviderDetail[5];
+       
         var request = [
             "SaveServiceProvider",
-            {
-                "service_provider_name": serviceProviderName, 
-                "address": address,
-                "contract_from": contractFrom,
-                "contract_to": contractTo, 
-                "contact_person": contactPerson,
-                "contact_no": contactNo
-            }
+            serviceProviderDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
@@ -868,30 +824,10 @@ function initMirror() {
         callback, failure_callback) {
         if (isNull(serviceProviderDetail))
             return null;
-        else if (serviceProviderDetail.length != 7)
-            return null;
-        $.each(serviceProviderDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var serviceProviderId= serviceProviderDetail[0] ;
-        var serviceProviderName= serviceProviderDetail[1] ;
-        var address= serviceProviderDetail[2] ;
-        var contractFrom= serviceProviderDetail[3];
-        var contractTo= serviceProviderDetail[4];
-        var contactPerson= serviceProviderDetail[5];
-        var contactNo= serviceProviderDetail[6];
+        
         var request = [
             "UpdateServiceProvider",
-            {
-                "service_provider_id": serviceProviderId,
-                "service_provider_name": serviceProviderName, 
-                "address": address,
-                "contract_from": contractFrom,
-                "contract_to": contractTo, 
-                "contact_person": contactPerson,
-                "contact_no": contactNo,
-            }
+            serviceProviderDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
@@ -904,6 +840,54 @@ function initMirror() {
             "ChangeServiceProviderStatus",
             {
                 "service_provider_id" : serviceProviderId,
+                "is_active" : isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    // Client User
+
+    function getClientUsers(callerName, callback, failure_callback) {
+        var request = [
+            "GetClientUsers",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function saveClientUser(callerName, clientUserDetail,
+     callback, failure_callback) {
+        if (isNull(clientUserDetail))
+            return null;
+        
+        var request = [
+            "SaveClientUser",
+            clientUserDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function updateClientUser(callerName, clientUserDetail, 
+        callback, failure_callback) {
+        if (isNull(clientUserDetail))
+            return null;
+       
+        var request = [
+            "UpdateClientUser",
+            clientUserDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeClientUserStatus(callerName, userId, isActive, 
+        callback, failure_callback) {
+        if (isNull(userId) || isNull(isActive) )
+            return null;
+        var request = [
+            "ChangeClientUserStatus",
+            {
+                "user_id" : userId,
                 "is_active" : isActive
             }
         ];
@@ -991,7 +975,12 @@ function initMirror() {
         saveServiceProvider: saveServiceProvider,
         updateServiceProvider: updateServiceProvider,
         changeServiceProviderStatus: changeServiceProviderStatus,
-        getServiceProviders: getServiceProviders
+        getServiceProviders: getServiceProviders,
+
+        getClientUsers: getClientUsers,
+        saveClientUser: saveClientUser,
+        updateClientUser: updateClientUser,
+        changeClientUserStatus: changeClientUserStatus
     }
 
 }
