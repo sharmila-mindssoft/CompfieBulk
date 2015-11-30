@@ -778,8 +778,6 @@ function initMirror() {
 
         getClients: getClients,
         saveClient: saveClient
-
-
     }
 
 }
