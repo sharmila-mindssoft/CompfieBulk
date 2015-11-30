@@ -22,7 +22,8 @@ __all__ = [
     "GetClientGroups",
     "ChangeClientGroupStatus",
     "UpdateClientGroup",
-    "GetClients"
+    "GetClients",
+    "ChangeClientStatus"
 ]
 clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
     "Src-client/files/desktop/common/clientdatabase/clientdatabasemapping.txt")
@@ -1378,6 +1379,58 @@ class SaveClient(object):
             print "Inserted in Knowledge Database"
             return ClientDatabaseHandler.instance(self.getDatabaseName()).onDuplicateKeyUpdate(
                 self.unitTblName, clientDbColumns, self.clientValuesList, clientUpdateColumnsList)
+
+class ChangeClientStatus(object):
+    unitTblName = "tbl_units"
+
+    def __init__(self, requestData, sessionUser) :
+        self.requestData = requestData
+        self.sessionUser = int(sessionUser)
+
+        assertType(requestData, DictType)
+        assertType(sessionUser, LongType)
+
+    def processRequest(self):
+        requestData = self.requestData
+        self.clientId = JSONHelper.getInt(requestData, "client_id")
+        self.divisionId = JSONHelper.getInt(requestData, "division_id")
+        self.isActive = JSONHelper.getInt(requestData, "is_active")
+        if self.deactivateUnitsInClientDB():
+            if self.deactivateUnitsInKnowledgeDB():
+                return commonResponseStructure("ChangeClientStatusSuccess",{})
+            else:
+                print "Error: Failed to deactivate units in knowledge database"
+        else:
+            print "Error: Failed to deactivate units in client database"
+
+
+    def deactivateUnitsInClientDB(self):
+        columns = ["is_active"]
+        values = [self.isActive]
+        condition = "division_id='%d'" % self.divisionId
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).update(
+            self.unitTblName, columns, values, condition)
+
+    def getUnits(self):
+        unitIdsList = []
+        columns = "unit_id"
+        condition = "division_id='%d'" % self.divisionId
+        rows = ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).getData(self.unitTblName, columns, condition)
+        for row in rows:
+            unitIdsList.append(row[0])
+
+        return unitIdsList
+
+    def deactivateUnitsInKnowledgeDB(self):
+        columns = ["is_active", "updated_by", "updated_on"]
+        values = [self.isActive, self.sessionUser, getCurrentTimeStamp()]
+        unitIdsList  = self.getUnits()
+        condition = "unit_id in ({unitIdsList}) and client_id={clientId}".format(
+            unitIdsList = ",".join(str(x) for x in unitIdsList), clientId = self.clientId)
+        return DatabaseHandler.instance().update(
+            self.unitTblName, columns, values, condition)
 
 
 

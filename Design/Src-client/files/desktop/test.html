@@ -1,78 +1,32 @@
-<!doctype html>
-<!-- <html>
+<!DOCTYPE html>
+<html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width,minimum-scale=1.0, maximum-scale=1.0" />
-    <title>Site Name</title>
-    <style>@media screen and (max-device-width:480px){body{-webkit-text-size-adjust:none}}</style>
-
-    <script>
-    window.onload = function() {
-        window.location = 'http://www.mindssoft.com/';
-        setTimeout("window.location = 'http://www.mindssoft.com';", 1000);
-    }
-    </script>
+  <title>Aparajitha</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="shortcut icon" href="/files/desktop/common/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="icon" href="/files/desktop/common/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/reset.css">
+  <script type="text/javascript" src="files/desktop/common/js/jquery.min.js"></script>
+  <script type="text/javascript" src="files/desktop/common/js/mirror.js"></script>
 </head>
 <body>
- 
+  <div id="wrapper">
+    "Welcome to Aparajitha!"
+  </div>
+  <script>
+    function success(data){
+      alert("success_data"+data);
+    }
+    function failure(data){
+      alert("failure_data"+data)
+    }
+    $(document).ready(function(){
+      clientId = 1;
+      divisionId = 1;
+      isActive = 0;
+          
+      mirror.changeClientStatus("TechnoAPI", clientId, divisionId, isActive, success, failure);
+    });
+</script>
 </body>
-</html> -->
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script type="text/javascript">
-            var domain_url = "http://localhost:8080/ApiCall";
-            var domains_data = {
-                    "session_token" : "b4c59894336c4ee3b598f5e4bd2b276b",
-                    "request" : [
-                        "UpdateDomain",
-                        {
-                            "domain_id": "3",
-                            "domain_name": "Industry Law Update"
-                        }
-                    ]
-                };
-            var options = JSON.stringify(domains_data);
-            function ajaxCall (url, options, callback) {
-                $.support.cors = true;
-                $.ajax({
-                    crossDomain: true,
-                    url: url,
-                    dataType: 'json',
-                    type: 'POST',
-                    data: options,
-                    crossDomain: true,
-                    success: function(data) {
-                        console.log(data)
-                        var result = data["data"];
-                        if (result !== null) {
-                            callback(result);
-                        }
-                        else {
-                            callback(null);
-                        }
-                    },
-                    error: function(xhr, status, err) {
-                        console.error(url, status, err.toString());
-                        callback(null);
-                    }
-                });
-            }
-            ajaxCall(domain_url, options, function (data) {
-                console.log(data)
-            });
-        </script>
-    </head>
-    <body>
-        <script language="javascript">
-        // $(document).ready(function() {
-        //     alert("hi");
-            window.location = 'customscheme://customHost/49FYTJTF00';
-            // window.location = 'http://www.mindssoft.com/silverapp';
-        // });s
-        </script>
-        <a href="customscheme://customHost/49FYTJTF00">click here</a>
-
-    </body>
 </html>

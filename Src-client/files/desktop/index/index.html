@@ -14,56 +14,20 @@
   <div id="wrapper">
     "Welcome to Aparajitha!"
   </div>
-</body>
-<script>
-	function success(data){
-		alert("success_data"+data);
-	}
-	function failure(data){
-		alert("failure_data"+data)
-	}
-	$(document).ready(function(){
-    clientId = 1
-
-      businessGroup = {}
-      businessGroup["business_group_id"] = null
-      businessGroup["business_group_name"] = "Test Business Group 1"
-
-      legalEntity = {}
-      legalEntity["legal_entity_id"] = null
-      legalEntity["legal_entity_name"] = "Test Legal Entity Name 1"
-
-      division = {}
-      division["division_id"] = null
-      division["division_name"] = "Test Division Name 1"
-
-      countryWiseUnits = []
-
-
-      units = []
-      unit = {}
-      unit["unit_id"] = null
-      unit["unit_code"] = "UNIT00001"
-      unit["unit_name"] = "Madurai Unit 1"
-      unit["unit_address"] = "Sample Address 1"
-      unit["postal_code"] = "678267841"
-      unit["geography_id"] = 1
-      unit["unit_location"] = "Madurai"
-      unit["industry_id"] = 1
-      unit["industry_name"] = "Factory"
-      unit["domain_ids"] = [1]
-
-      units.push(unit)
-
-      india = {}
-      india["country_id"] = 1
-      india["units"] = units
-
-      countryWiseUnits.push(india)
-
-        // mirror.saveClient("TechnoAPI", clientId, businessGroup, legalEntity, division, 
-        // countryWiseUnits, success, failure);
-    mirror.getClients("TechnoAPI", success, failure)
-	});
+  <script>
+    function success(data){
+      alert("success_data"+data);
+    }
+    function failure(data){
+      alert("failure_data"+data)
+    }
+    $(document).ready(function(){
+      clientId = 1;
+      divisionId = 1;
+      isActive = 0;
+          
+      mirror.changeClientStatus("TechnoAPI", clientId, divisionId, isActive, success, failure);
+    });
 </script>
+</body>
 </html>

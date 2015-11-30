@@ -707,6 +707,20 @@ function initMirror() {
             }
         ];
         apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeClientStatus(callerName, clientId, divisionId, isActive, 
+        callback, failure_callback) {
+        
+        var request = [
+            "ChangeClientStatus",
+            {
+                "client_id": clientId,
+                "division_id" : divisionId,
+                "is_active": isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
     }    
 
 
@@ -778,7 +792,8 @@ function initMirror() {
         resetPassword: resetPassword,
 
         getClients: getClients,
-        saveClient: saveClient
+        saveClient: saveClient,
+        changeClientStatus: changeClientStatus,
     }
 
 }
