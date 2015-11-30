@@ -12,7 +12,7 @@ function GetGeographyLevels(){
 	}
 	function failure(data){
 	}
-	mirror.getGeographyLevels("GetGeographyLevels", success, failure);
+	mirror.getGeographyLevels(success, failure);
 }
 //Autocomplete Script Starts
 //Hide list items after select
@@ -28,7 +28,7 @@ function loadauto_text (textval) {
   $('#ulist_text').empty();
   if(textval.length>0){
     for(var i in countries){
-      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
+      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == 1) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
     }
     var str='';
     for(var i in suggestions){
@@ -126,7 +126,7 @@ function saveRecord () {
 				}
 				function failure(data){
 				}
-				mirror.saveAndUpdateGeographyLevels("SaveGeographyLevel", parseInt(country), passlevellist, success, failure);
+				mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist, success, failure);
 			   }else{
 			   	$("#error").text("Intermediate Level's should not be Empty");
 			   }
