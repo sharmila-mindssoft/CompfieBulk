@@ -1,3 +1,6 @@
+var usersList;
+var domainsList;
+var countriesList;
 $(function() {
 	$("#clientgroup-add").hide();
 	initialize();
@@ -8,15 +11,22 @@ $(".btn-clientgroup-add").click(function(){
 	$("#clientgroup-name").val('');
   	$("#clientgroup-id").val('');
  	$(".error-message").html('');
-  function success(status, data){
-  	userList = data["users"];
+ 	$("#upload-logo-img").hide();
+ 	var x=document.getElementsByTagName("input");
+ 	for(i = 0; i<=x.length-1; i++){
+  		if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
+  	}
+  	
+  	$('.tbody-dateconfiguration-list').empty();
+  	function success(status, data){
+  		userList = data["users"];
 		domainsList = data["domains"];
 		countriesList = data["countries"];  	
-  }
-  function failure(status, data){
-  	console.log(status);
-  }
-  mirror.getClientGroups("TechnoAPI", success, failure);
+  	}
+  	function failure(status, data){
+  		console.log(status);
+  	}
+  	mirror.getClientGroups("TechnoAPI", success, failure);
 });
 $("#btn-clientgroup-cancel").click(function(){
 	$("#clientgroup-add").hide();
@@ -30,10 +40,72 @@ function initialize(){
 	}
 	mirror.getClientGroups("TechnoAPI", success, failure);
 }
+function clientgroup_edit(clientGroupId){
+	$("#clientgroup-add").show();
+	$("#clientgroup-view").hide();
+	$("#clientgroup-id").val(clientGroupId);
+	function success(status, data){
+		if(status=="GetClientGroupsSuccess"){
+			userList = data["users"];
+			domainsList = data["domains"];	
+			countriesList = data["countries"];  	
+			loadFormListUpdate(data['client_list'],clientGroupId);
+		}
+	}
+	function failure(status, data){
+	}
+	mirror.getClientGroups("TechnoAPI", success, failure);
+}
+function loadFormListUpdate(clientListData, clientGroupId){
+	for(clientList in clientListData){
+		if(clientGroupId==clientListData[clientList]['client_id']){
+			$("#clientgroup-name").val(clientListData[clientList]['client_name']);
 
+			var countriesListArray=clientListData[clientList]['country_ids'];
+			$("#country").val(countriesListArray);
+			$("#countryselected").val(countriesListArray.length+" Selected");
+
+			var domainsListArray=clientListData[clientList]['domain_ids'];
+			$("#domain").val(domainsListArray);
+			$("#domainselected").val(domainsListArray.length+" Selected");
+
+			$("#contract-from").val(clientListData[clientList]['contract_from']);
+			$("#contract-to").val(clientListData[clientList]['contract_to']);
+			$("#username").val(clientListData[clientList]['username']);
+			//$("#upload-logo-img").attr("src",clientListData[clientList]['logo']);
+			$("#upload-logo-img").show();
+			$("#no-of-user-licence").val(clientListData[clientList]['no_of_user_licence']);
+			$("#file-space").val(clientListData[clientList]['file_space']);
+			console.log(clientListData[clientList]['is_sms_subscribed']);
+			if(clientListData[clientList]['is_sms_subscribed']==1){ $('#subscribe-sms').prop("checked", true); }
+			var userListArray=clientListData[clientList]['incharge_persons'];
+			$("#users").val(userListArray);
+			$("#usersSelected").val(userListArray.length+" Selected");
+		}
+	}	
+	var countryNamesList='';
+	for (var countryselect in countriesList){
+		for(var i=0;i<countriesListArray.length;i++){
+			if(countriesList[countryselect]['country_id']==countriesListArray[i]){
+				countryNamesList = countryNamesList + countriesList[countryselect]['country_name'] + ',';
+			}
+		}
+	}
+	$("#countryNames").val(countryNamesList);
+	var domainNamesList='';
+	for (var domainselect in domainsList){
+		for(var i=0;i<domainsListArray.length;i++){
+			if(domainsList[domainselect]['domain_id']==domainsListArray[i]){
+				domainNamesList = domainNamesList + domainsList[domainselect]['domain_name'] + ',';
+			}
+		}
+	}
+	$("#domainNames").val(domainNamesList);
+	dateconfig();	
+}
 function loadClientGroupList(clientGroupList){
 	$(".tbody-clientgroup-list").find("tr").remove();
-  var sno=0;
+  	var sno=0;
 	var imageName, title;	
 	for(var i in clientGroupList){
 		var clientGroups=clientGroupList[i];
@@ -54,7 +126,7 @@ function loadClientGroupList(clientGroupList){
 		sno = sno + 1;
 		$('.sno', clone).text(sno);
 		$('.clientgroup-name', clone).text(clientGroups["client_name"]);
-		$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="clientgroup_edit('+clientId+',\''+isActive+'\')"/>');
+		$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="clientgroup_edit('+clientId+')"/>');
 		$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientgroup_active('+clientId+', '+statusVal+')"/>');
 		$('.tbody-clientgroup-list').append(clone);			
 	}
@@ -62,23 +134,53 @@ function loadClientGroupList(clientGroupList){
 }
 
 $("#btn-clientgroup-submit").click(function(){
+	var dateConfigurations=[];	
+	var countriesList=$('#country').val();
+	var domainsList=$('#domain').val();
+	if(countriesList!='' && domainsList!=''){
+		if(countriesList!=''){ 
+			var arrayCountries=countriesList.split(",");
+			if(domainsList!=''){
+				var arrayDomains=domainsList.split(",");
+			}
+			for(var ccount=0;ccount < arrayCountries.length; ccount++){
+				for(var dcount=0;dcount < arrayDomains.length; dcount++){
+					var configuration = {};
+					configuration["country_id"] =parseInt(arrayCountries[ccount]);
+					configuration["domain_id"] = parseInt(arrayDomains[dcount]);
+					configuration["period_from"] = parseInt($(".tl-from-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val());
+					configuration["period_to"] = parseInt($(".tl-to-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val());
+					dateConfigurations.push(configuration);
+				}
+			}
+		}
+	}
 	var clientGroupIdVal = $("#clientgroup-id").val();
 	var clientGroupNameVal = $("#clientgroup-name").val();
-	var countriesVal = $("#country").val();
-	var domainsVal = $("#domain").val();
+	var arrayCountriesVal=$("#country").val().split(",");
+	var arrayCountries= [];
+	for(var i=0; i<arrayCountriesVal.length; i++){ arrayCountries[i] = parseInt(arrayCountriesVal[i]); } 
+	var countriesVal = arrayCountries;
+	var arrayDomainsVal=$("#domain").val().split(",");
+	var arrayDomains= [];
+	for(var j=0; j<arrayDomainsVal.length; j++){ arrayDomains[j] = parseInt(arrayDomainsVal[j]); } 
+	var domainsVal = arrayDomains;
 	var contractFromVal = $("#contract-from").val();
-	var contractToVal = $("#contract-to").val();
+	var contractToVal = $("#contract-to").val();	
 	var usernameVal = $("#username").val();
 	var uploadLogoVal = $("#upload-logo").val();
-	var licenceVal = $("#no-of-user-licence").val();
-	var fileSpaceVal = $("#file-space").val();
+	var licenceVal = parseInt($("#no-of-user-licence").val());
+	var intFilesSpace=Number($("#file-space").val());
+	var fileSpaceVal =parseFloat(intFilesSpace);
 	//var subscribeSmsVal = $("#subscribe-sms").val();
-	var inchargePersonVal = $("#users").val();
+	var arrayinchargePersonVal=$("#users").val().split(",");
+	var arrayinchargePerson= [];
+	for(var k=0; k<arrayinchargePersonVal.length; k++) { arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]); } 
+	var inchargePersonVal = arrayinchargePerson;
 	if ($('#subscribe-sms').is(":checked")){
 	 var subscribeSmsVal=1;	 
 	}
 	else{ var subscribeSmsVal=0; }
-	console.log("enter")
 	if(clientGroupNameVal==''){
 		$(".error-message").html('Group Required');
 	}
@@ -89,19 +191,16 @@ $("#btn-clientgroup-submit").click(function(){
 		$(".error-message").html('Domain Required');
 	}
 	else if(contractFromVal==''){
-		$(".error-message").html('Contract From Required');
+		$(".error-message").html('Contract From Required');		
 	}
 	else if(contractToVal==''){
-		$(".error-message").html('Contract To Required');
+		$(".error-message").html('Contract To Required');		
 	}
 	else if(usernameVal==''){
-		$(".error-message").html('Username Required');
+		$(".error-message").html('Username Required');		
 	}
 	else if(validateEmail(usernameVal)==''){
-		$(".error-message").html('Username Invalid Format');
-	}
-	else if(uploadLogoVal==''){
-		$(".error-message").html('Logo Required');
+		$(".error-message").html('Username Invalid Format');		
 	}
 	else if(licenceVal==''){
 		$(".error-message").html('No. Of User Licence Required');
@@ -118,9 +217,13 @@ $("#btn-clientgroup-submit").click(function(){
 	else if(inchargePersonVal==''){
 		$(".error-message").html('Incharge Person Required');
 	}
-	else if($('#clientgroup-id'),val()==''){		
+	else if($('#clientgroup-id').val()==''){	
+		if(uploadLogoVal==''){
+			$(".error-message").html('Logo Required');	
+			return false;	
+		}	
 		function success(status, data){
-			if(status == 'success') {
+			if(status == 'SaveClientGroupSuccess') {
 		    	$("#clientgroup-add").hide();
 	  			$("#clientgroup-view").show();
 	  			initialize();
@@ -132,10 +235,57 @@ $("#btn-clientgroup-submit").click(function(){
 		function failure(status, data){
 			$(".error-message").html(status);
 		}
-		var clientGroupDetails=[clientGroupNameVal,countriesVal,domainsVal, uploadLogoVal, contractFromVal, contractToVal, inchargePersonVal,licenceVal, fileSpaceVal, subscribeSmsVal, usernameVal ]
-		var dateConfigurations=[];
-
+		
+		var clientGroupDetails = {}
+		clientGroupDetails["group_name"] = clientGroupNameVal ;
+        clientGroupDetails["country_ids"] = countriesVal;
+        clientGroupDetails["domain_ids"] = domainsVal;
+        clientGroupDetails["logo"] = uploadLogoVal;
+        clientGroupDetails["contract_from"] = contractFromVal;
+        clientGroupDetails["contract_to"] = contractToVal;
+        clientGroupDetails["incharge_persons"] = inchargePersonVal;
+        clientGroupDetails["no_of_user_licence"] = licenceVal;
+        clientGroupDetails["file_space"] = fileSpaceVal;
+        clientGroupDetails["is_sms_subscribed"] = subscribeSmsVal;
+        clientGroupDetails["email_id"] = usernameVal;
+		//console.log(dateConfigurations);
+		//console.log(clientGroupDetails);
 		mirror.saveClientGroup("TechnoAPI", clientGroupDetails, dateConfigurations,success, failure);
+	}
+	else if($('#clientgroup-id').val()!=''){		
+		function success(status, data){
+			if(status == 'UpdateClientGroupSuccess') {
+		    	$("#clientgroup-add").hide();
+	  			$("#clientgroup-view").show();
+	  			initialize();
+	  		}
+	  		 else {
+      			$(".error-message").html(status);
+      		}
+	    }
+		function failure(status, data){
+			$(".error-message").html(status);
+		}
+		
+		var clientGroupDetails = {}
+		clientGroupDetails["client_id"] = parseInt(clientGroupIdVal);
+		clientGroupDetails["group_name"] = clientGroupNameVal ;
+        clientGroupDetails["country_ids"] = countriesVal;
+        clientGroupDetails["domain_ids"] = domainsVal;
+        clientGroupDetails["logo"] = uploadLogoVal;
+        clientGroupDetails["contract_from"] = contractFromVal;
+        clientGroupDetails["contract_to"] = contractToVal;
+        clientGroupDetails["incharge_persons"] = inchargePersonVal;
+        clientGroupDetails["no_of_user_licence"] = licenceVal;
+        clientGroupDetails["file_space"] = fileSpaceVal;
+        clientGroupDetails["is_sms_subscribed"] = subscribeSmsVal;
+        clientGroupDetails["email_id"] = usernameVal;
+		//console.log(dateConfigurations);
+		//console.log(clientGroupDetails);
+		mirror.updateClientGroup("TechnoAPI", clientGroupDetails, dateConfigurations,success, failure);
+	}
+	else{
+		console.log("all fails");
 	}
 });
 function validateEmail($email) {
@@ -157,7 +307,7 @@ function clientgroup_active(clientId, isActive){
 $("#search-clientgroup-name").keyup(function() { 
 	var count=0;
     var value = this.value.toLowerCase();
-    $("table").find("tr:not(:first):not(:last)").each(function(index) {
+    $("table").find("tr:not(:first)").each(function(index) {
         if (index === 0) return;
         var id = $(this).find(".clientgroup-name").text().toLowerCase();       
         $(this).toggle(id.indexOf(value) !== -1);;
@@ -172,7 +322,7 @@ function hidemenu() {
 	document.getElementById('selectboxview-users').style.display = 'none';
 }
 //load domain list in multi select box
-function loadauto () {
+function loadauto() {
 	document.getElementById('selectboxview').style.display = 'block';
 	var editdomainval=[];
 	if($("#domain").val() != ''){
@@ -192,9 +342,9 @@ function loadauto () {
 		var domainId=parseInt(domains[i]["domain_id"]);
 		var domainName=domains[i]["domain_name"];
 		if(selectdomainstatus == 'checked'){
-			str += '<li id="'+domainId+'" class="active_selectbox" onclick="activate(this,\''+domainId+'\',\''+domainName+'\')" >'+domainName+'</li> ';
+			str += '<li id="'+domainId+'" class="active_selectbox" onclick="activate(this)" >'+domainName+'</li> ';
 		}else{
-			str += '<li id="'+domainId+'" onclick="activate(this,\''+domainId+'\',\''+domainName+'\')" >'+domainName+'</li> ';
+			str += '<li id="'+domainId+'" onclick="activate(this)" >'+domainName+'</li> ';
 		}
 	}
   $('#ulist').append(str);
@@ -202,7 +352,7 @@ function loadauto () {
  // }
 }
 //check & uncheck process
-function activate(element, domainId, domainName){
+function activate(element){
 	var chkstatus = $(element).attr('class');
 	if(chkstatus == 'active_selectbox'){
 		$(element).removeClass("active_selectbox");
@@ -210,16 +360,20 @@ function activate(element, domainId, domainName){
 		$(element).addClass("active_selectbox");
 	}  
 	var selids='';
+	var selNames='';
 	var totalcount =  $(".active_selectbox").length;
 	$(".active_selectbox").each( function( index, el ) {
 		if (index === totalcount - 1) {
 			selids = selids+el.id;
+			selNames = selNames+$(this).text();
 		}else{
 			selids = selids+el.id+",";
+			selNames = selNames+$(this).text()+",";			
 		}    
 	});
 	$("#domainselected").val(totalcount+" Selected");
 	$("#domain").val(selids);
+	$("#domainNames").val(selNames);
 	dateconfig();
 }
 
@@ -229,7 +383,9 @@ function loadautocountry () {
 	if($("#country").val() != ''){
 		editcountryval = $("#country").val().split(",");
 	}
+	//alert(editcountryval[0]+"---"+editcountryval[1]);
 	var countries = countriesList;
+
 	$('#ulist-country').empty();
 	var str='';
 	for(var i in countries){
@@ -243,9 +399,9 @@ function loadautocountry () {
 		var countryName=countries[i]["country_name"];
 		
 		if(selectcountrystatus == 'checked'){	
-			str += '<li id="'+countryId+'" class="active_selectbox_country" onclick="activateCountry(this,countryId,'+countryName+')" >'+countryName+'</li> ';
+			str += '<li id="'+countryId+'" class="active_selectbox_country" onclick="activateCountry(this)" >'+countryName+'</li> ';
 		}else{
-			str += '<li id="'+countryId+'" onclick="activateCountry(this,\''+countryId+'\',\''+countryName+'\')" >'+countryName+'</li> ';
+			str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';
 		}
 	}
   $('#ulist-country').append(str);
@@ -253,7 +409,7 @@ function loadautocountry () {
   
 }
 //check & uncheck process
-function activateCountry(element, countryId, countryName){
+function activateCountry(element){
   var chkstatus = $(element).attr('class');
   if(chkstatus == 'active_selectbox_country'){
 	 	$(element).removeClass("active_selectbox_country");
@@ -262,16 +418,21 @@ function activateCountry(element, countryId, countryName){
     $(element).addClass("active_selectbox_country");
   }  
 	var selids='';
+	var selNames='';
 	var totalcount =  $(".active_selectbox_country").length;
 	$(".active_selectbox_country").each( function( index, el ) {
+
 		if (index === totalcount - 1) {
 			selids = selids+el.id;
+			selNames = selNames+$(this).text();
 		}else{
 			selids = selids+el.id+",";
+			selNames = selNames+$(this).text()+",";
 		}    
 	});
 	$("#countryselected").val(totalcount+" Selected");
 	$("#country").val(selids);
+	$("#countryNames").val(selNames);
 	//Add date configuration
 //	$('.tbody-dateconfiguration-list').empty();
   	dateconfig();
@@ -279,46 +440,40 @@ function activateCountry(element, countryId, countryName){
 function dateconfig(){
 	$('.tbody-dateconfiguration-list').empty();
 	var countriesList=$('#country').val();
+	var countriesNamesList=$('#countryNames').val();
 	var domainsList=$('#domain').val();
+	var domainNamesList=$('#domainNames').val();
 	//console.log(countriesList+"==="+domainsList);
 	if(countriesList!='' && domainsList!=''){
 		if(countriesList!=''){ 
 			var arrayCountries=countriesList.split(",");
+			var arrayCountriesName=countriesNamesList.split(",");
 			if(domainsList!=''){
 				var arrayDomains=domainsList.split(",");
+				var arrayDomainName=domainNamesList.split(",");
 			}
 			for(var ccount=0;ccount < arrayCountries.length; ccount++){
 				var tableRow=$('#templates .table-dconfig-list .table-dconfig-countries-row');
 				var clone=tableRow.clone();
-				$('.country-name', clone).text(arrayCountries[ccount]);
-				$('.country-name', clone).addClass("heading");
+				$('.inputCountry', clone).val(arrayCountries[ccount]);
+				$('.dconfig-country-name', clone).text(arrayCountriesName[ccount]);
+				$('.dconfig-country-name', clone).addClass("heading");
 				$('.tbody-dateconfiguration-list').append(clone);
 
 				for(var dcount=0;dcount < arrayDomains.length; dcount++){
 					var tableRowDomains=$('#templates .table-dconfig-list .table-dconfig-domain-row');
 					var clone1=tableRowDomains.clone();
-					$('.domain-name', clone1).text(arrayDomains[dcount]);
-					$('tl-from').addClass(arrayDomains[dcount].toString());
-					$('tl-to').addClass("-month"+arrayDomains[dcount].toString());
+					$('.inputDomain', clone1).val(arrayDomains[dcount]);
+					$('.dconfig-domain-name', clone1).text(arrayDomainName[dcount]);
+
+					$('.tl-from', clone1).addClass('tl-from-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]);
+					$('.tl-to', clone1).addClass('tl-to-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]);
 					$('.tbody-dateconfiguration-list').append(clone1);
 				}
 			}
 		}
 	}
 }
-function dateconfigdomains(domainId, domainName){
-	console.log(domainId+"-------"+domainName);
-  var tableRowDomain=$('#templates .table-dconfig-domains-list .table-dconfig-domain-row');
-	var cloneDomain=tableRowDomain.clone();
-	$('.domain-name', cloneDomain).text(domainName);
-	$('.tbody-dateconfiguration-list').append(cloneDomain);
-	
-}
-//--------------------------------------------------------------------------------------------------------
-
-
-
-//------------------------------------------------------------------------------------------------------
 function loadAutoUsers () {
 	document.getElementById('selectboxview-users').style.display = 'block';
 	var editusersval=[];
@@ -365,4 +520,6 @@ function activateUsers(element){
 	$("#usersSelected").val(totalcount+" Selected");
 	$("#users").val(selids);
 }
-
+function gototop(){
+	$("html, body").animate({ scrollTop: 0 }, "slow");
+}

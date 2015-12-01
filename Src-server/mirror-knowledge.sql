@@ -180,6 +180,7 @@ CREATE TABLE `tbl_statutory_mappings` (
   `statutory_nature_id` int(11) NOT NULL,
   `statutory_ids` varchar(50) NOT NULL,
   `compliance_ids` varchar(50) NOT NULL,
+  `geography_ids` varchar(100) NOT NULL,
   `approval_status` tinyint(4) DEFAULT 0,
   `is_active` tinyint(4) DEFAULT 1,
   `created_by` int(11) DEFAULT NULL,

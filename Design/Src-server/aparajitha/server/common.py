@@ -59,14 +59,12 @@ def commonResponseStructure(responseType, data) :
 	return response
 
 def getClientDatabase(clientId):
-    print "Inside getClientDatabase"
     databaseName = None
     clientDatabaseMappingJson = json.load(open(clientDatabaseMappingFilePath))
     try:
         databaseName = JSONHelper.getString(clientDatabaseMappingJson,  unicode(str(clientId), "utf-8"))
     except:
         print "Error: Database Not exists for the client %d" % clientId
-    print "databaseName:"+databaseName
     return databaseName
 
 def generatePassword() : 

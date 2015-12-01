@@ -13,7 +13,8 @@ __all__ = [
     "StatutoryNature", "StatutoryNatureList", "SaveStatutoryNature",
     "UpdateStatutoryNature", "ChangeStatutoryNatureStatus",
     "Level", "StatutoryLevelsList", "SaveStatutoryLevel", "GeographyLevelList",
-    "SaveGeographyLevel", "Geography", "GeographyAPI"
+    "SaveGeographyLevel", "Geography", "GeographyAPI", "Statutory", "StatutoryApi", "Compliance",
+    "StatutoryMapping", "StatutoryMappingApi"
 ]
 
 def assertType (x, typeObject) :
@@ -901,9 +902,9 @@ class GeographyAPI(object) :
         self.geographyLevelList = GeographyLevelList().getGeographyLevels()
         self.geographies = {}
 
-    def getGeographies(self) :
+    def getGeography(self) :
         DH = DatabaseHandler.instance()
-        _geographyList = DH.instance().getGeographies()
+        _geographyList = DH.getGeographies()
         for row in _geographyList :
             parentIds = [int(x) for x in row[3].split(',')]
             geography = Geography(int(row[0]), row[1], int(row[2]), parentIds[-1], int(row[4]))
@@ -923,6 +924,7 @@ class GeographyAPI(object) :
         ]
 
     def getGeographyList(self) :
+        self.getGeography()
         return self.geographies
 
     def saveGeographies(self) :
@@ -989,7 +991,7 @@ class GeographyAPI(object) :
 
     def geographyReport(self) :
         DH = DatabaseHandler.instance()
-        _geographyList = DH.instance().getGeographies()
+        _geographyList = DH.getGeographies()
         geoMappingList = []
         geoMappingDict = {}
         geographyData = {}
@@ -1016,7 +1018,331 @@ class GeographyAPI(object) :
             )
             geoMappingDict[countryId] = geoMappingList
         return [
-            "success",
-            geoMappingDict
+            "success", 
+            {
+                "countries": self.countryList,
+                "geographies": geoMappingDict
+            }
+            
         ]
 
+class Statutory(object) :
+    def __init__(self, statutoryId, name, levelId, parentIds) :
+        self.statutoryId = statutoryId
+        self.name = name
+        self.levelId = levelId
+        self.parentIds = parentIds
+        self.verify()
+    
+    def verify(self) :
+        assertType(self.statutoryId, IntType)
+        assertType(self.name, StringType)
+        assertType(self.levelId, IntType)
+        assertType(self.parentIds, ListType)
+
+    def toStructure(self) :
+        return {
+            "statutory_id": self.statutoryId, 
+            "statutory_name": self.name,
+            "level_id": self.levelId,
+            "parent_ids": self.parentIds,
+        }
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class StatutoryApi (object) :
+    def __init__(self, request, userId) :
+        self.request = request
+        self.userId = userId
+        self.responseData = None
+        self.statutories = {}
+
+    def getStatutories(self) :
+        DH = DatabaseHandler.instance()
+        _statutoryList = DH.getStatutories()
+        for row in _statutoryList :
+            parentIds = [int(x) for x in row[3].split(',')]
+            statutory = Statutory(int(row[0]), row[1], int(row[2]), parentIds)
+            countryId = int(row[4])
+            domainId = int(row[6])
+            _list = []
+            _countryWise = self.statutories.get(countryId)
+            if _countryWise is None :
+                _countryWise = {}
+            else :
+                _list = _countryWise.get(domainId)
+                if _list is None :
+                    _list = []
+            _list.append(statutory.toStructure())
+            _countryWise[domainId] = _list
+            self.statutories[countryId] = _countryWise
+
+        return self.statutories
+
+    def saveStatutory(self) :
+        DH = DatabaseHandler.instance()
+        requestData = self.request[1]
+        assertType(requestData, DictType)
+        statutoryName = JSONHelper.getString(requestData, "statutory_name")
+        levelId = JSONHelper.getInt(requestData, "statutory_level_id")
+        parentIdsList = JSONHelper.getList(requestData, "parent_ids")
+        parentIds = ','.join(str(x) for x in parentIdsList)
+        statutoryNames = [row[1].lower() for row in DH.getDuplicateStatutories(parentIds, None)]
+        if statutoryNames.count(statutoryName.lower()) > 0:
+            self.responseData = "StatutoryNameAlreadyExists"
+        else :
+            if (DH.saveStatutories(statutoryName, levelId, parentIds, self.userId)) :
+                self.responseData = "success"
+            else :
+                self.responseData = "saveFailed: %s" % requestData
+
+        return [
+            str(self.responseData),
+            {}
+        ]
+
+    def updateStatutory(self) :
+        DH = DatabaseHandler.instance()
+        requestData = self.request[1]
+        assertType(requestData, DictType)
+        statutoryId = JSONHelper.getInt(requestData, "statutory_id")
+        statutoryName = JSONHelper.getString(requestData, "statutory_name")
+        levelId = JSONHelper.getInt(requestData, "statutory_level_id")
+        parentIdsList = JSONHelper.getList(requestData, "parent_ids")
+        parentIds = ','.join(str(x) for x in parentIdsList)
+        statutoryNames = [row[1].lower() for row in DH.getDuplicateStatutories(parentIds, statutoryId)]
+        if statutoryNames.count(statutoryName.lower()) > 0:
+            self.responseData = "StatutoryNameAlreadyExists"
+        else :
+            if (DH.updateStatutories(statutoryId, statutoryName, parentIds, self.userId)) :
+                self.responseData = "success"
+            else :
+                self.responseData = "updateFailed: %s" % requestData
+
+        return [
+            str(self.responseData),
+            {}
+        ]
+
+    def updateStatutoryMappingId(self, mappingId, statutoryIds) :
+        pass
+        
+class Compliance(object) :
+    def __init__(
+            self, complianceId, statutoryProvition, complianceTask,
+            description, documentName, formatFileName, penalDescription,
+            complianceFrequency, statutoryDates,
+            repeatsType, repeatsEvery, durationType, duration, isActive
+        ):
+        self.complianceId = complianceId
+        self.statutoryProvition = statutoryProvition
+        self. complianceTask = complianceTask
+        self.description = description
+        self.documentName = documentName
+        self.formatFileName = formatFileName
+        self.penalDescription = penalDescription
+        self.complianceFrequency = complianceFrequency
+        self.statutoryDates = statutoryDates
+        self.repeatsType = repeatsType
+        self.repeatsEvery = repeatsEvery
+        self.durationType = durationType
+        self.duration = duration
+        self.isActive = isActive
+        self.verify()
+    
+    def verify(self) :
+        assertType(self.complianceId, IntType)
+        assertType(self.statutoryProvition, StringType)
+        assertType(self.complianceTask, StringType)
+        assertType(self.description, StringType)
+        assertType(self.documentName, StringType)
+        assertType(self.formatFileName, ListType)
+        assertType(self.penalDescription, StringType)
+        assertType(self.complianceFrequency, StringType)
+        assertType(self.statutoryDates, ListType)
+        # assertType(self.repeatsType, StringType)
+        # assertType(self.repeatsEvery, IntType)
+        # assertType(self.durationType, StringType)
+        # assertType(self.duration, IntType)
+        assertType(self.isActive, IntType)
+
+    def toStructure(self) :
+        # "statutory_dates": [
+        #         {
+        #             "statutory_date": self.statutoryDate,
+        #             "statutory_month": self.statutoryMonth,
+        #             "trigger_before_days": self.triggerBefore
+        #         },
+        #     ],
+        return {
+            "compliance_id": self.complianceId,
+            "statutory_provision" : self.statutoryProvition,
+            "compliance_task": self.complianceTask,
+            "description": self.description,
+            "document_name": self.documentName,
+            "format_file_name": self.formatFileName,
+            "penal_description": self.penalDescription,
+            "compliance_frequency": self.complianceFrequency,
+            "statutory_dates": self.statutoryDates,
+            "repeats_type": self.repeatsType,
+            "repeats_every": self.repeatsEvery, 
+            "duration_type": self.durationType,
+            "duration": self.duration,
+            "is_active": self.isActive
+        }
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+class StatutoryMapping(object) :
+    def __init__(
+        self, countryId, countryName, domainId, 
+        domainName, industryIds,
+        statutoryNatureId, statutoryNatureName,
+        statutoryIds, statutoryMappings, complianceIds, 
+        geographyIds, approvalStatus
+    ) :
+        self.countryId = countryId
+        self.countryName = countryName 
+        self.domainId = domainId
+        self.domainName = domainName
+        self.industryIds = industryIds
+        self.industryNames = None
+        self.statutoryNatureId = statutoryNatureId
+        self.statutoryNatureName = statutoryNatureName
+        self.statutoryIds = statutoryIds
+        self.statutoryMappings = statutoryMappings
+        self.complianceIds = complianceIds
+        self.complianceNames = []
+        self.compliances = []
+        self.geographyIds = geographyIds
+        self.approvalStatus = approvalStatus
+        self.verify()
+    
+    def verify(self) :
+        assertType(self.countryId, IntType)
+        assertType(self.countryName, StringType)
+        assertType(self.domainId, IntType)
+        assertType(self.domainName, StringType)
+        assertType(self.industryIds, ListType)
+        # assertType(self.industryNames, ListType)
+        assertType(self.statutoryNatureId, IntType)
+        assertType(self.statutoryNatureName, StringType)
+        assertType(self.statutoryIds, ListType)
+        assertType(self.statutoryMappings, ListType)
+        assertType(self.complianceIds, ListType)
+        # assertType(self.complianceNames, ListType)
+        assertType(self.geographyIds, ListType)
+        assertType(self.approvalStatus, IntType)
+        self.getData()
+
+    def getData(self) :
+        DH = DatabaseHandler.instance()
+        self.industryNames = DH.getIndustryByIndustryId(self.industryIds)
+        _compliances = DH.getCompliancesByIds(self.complianceIds)
+        for row in _compliances :
+            formatFileName = []
+            if len(row[5]) >1 :
+                formatFileName = [int(x) for x in row[5].split(',')]
+            compliance =  Compliance(
+                    int(row[0]), row[1], row[2], row[3], row[4], 
+                    formatFileName, row[6], row[7], 
+                    json.loads(row[8]), row[9], 
+                    row[10], row[11], row[12], row[13]
+                )
+            self.compliances.append(compliance.toStructure())
+            self.complianceNames.append("%s-%s" % (row[2], row[4]))
+
+
+    def toStructure(self) :
+        return {
+            "country_id": self.countryId,
+            "country_name": self.countryName,
+            "domain_id": self.domainId,
+            "domain_name": self.domainName,
+            "industry_ids": self.industryIds,
+            "industry_names": self.industryNames,
+            "statutory_nature_id": self.statutoryNatureId,
+            "statutory_nature_name": self.statutoryNatureName,
+            "statutory_ids": self.statutoryIds,
+            "statutory_mappings": self.statutoryMappings,
+            "compliances": self.compliances,
+            "compliance_names": self.complianceNames,
+            "geographies_ids": self.geographyIds,
+            "approval_status": self.approvalStatus
+        }
+
+    def __repr__(self) :
+        return str(self.toStructure())
+
+
+class StatutoryMappingApi(object):
+    def __init__(self, request, userId) :
+        self.request = request
+        self.userId = userId
+        self.responseData = None
+        self.countryList = CountryList().getCountry()
+        self.domainList = DomainList().getDomains()
+        self.industryList = IndustryList().getIndustries()
+        self.statutoryNatureList = StatutoryNatureList().getStatutoryNatures()
+        self.statutoryLevelList = StatutoryLevelsList().getStatutoryLevels()
+        self.statutories= StatutoryApi(request, userId).getStatutories()
+        self.geographyLevelList = GeographyLevelList().getGeographyLevels()
+        self.geographies= GeographyAPI(request, userId).getGeographyList()
+        self.statutoryMappings = {}
+
+    def getStatutoryMappings(self) :
+        DH = DatabaseHandler.instance()
+        _staturoyMapList = DH.getStautoryMappings()
+        _statutoryMappings = DH.getStatutoryWithMappings()
+        for row in _staturoyMapList :
+            mappingId = int(row[0])
+            countryId = int(row[1])
+            countryName = row[2]
+            domainId = int(row[3])
+            domainName = row[4]
+            industryIds = [int(x) for x in row[5][:-1].split(',')]
+            statutoryNatureId = int(row[6])
+            statutoryNatureName = row[7]
+            statutoryIds = [int(x) for x in row[8][:-1].split(',')]
+            statutoryMappings = [_statutoryMappings.get(int(x)) for x in statutoryIds ]
+            complianceIds = [int(x) for x in row[9][:-1].split(',')]
+            geographyIds = [int(x) for x in row[10][:-1].split(',')]
+            approvalStatus = row[11]
+            mapping = StatutoryMapping (
+                countryId, countryName, domainId, domainName, 
+                industryIds, statutoryNatureId, statutoryNatureName, 
+                statutoryIds, statutoryMappings, complianceIds, 
+                geographyIds, approvalStatus
+            )
+            self.statutoryMappings[mappingId] = mapping.toStructure()
+            
+        return [
+            "GetStatutoryMappingsSuccess",
+            {
+                "countries": self.countryList,
+                "domains": self.domainList,
+                "industries": self.industryList,
+                "statutory_natures": self.statutoryNatureList,
+                "statutory_levels": self.statutoryLevelList,
+                "statutories": self.statutories,
+                "geography_levels": self.geographyLevelList,
+                "geographies": self.geographies,
+                "statutory_mappings": self.statutoryMappings
+            }
+        ]
+
+    def saveStatutoryMapping(self) :
+        DH = DatabaseHandler.instance()
+        requestData = self.request[1]
+        assertType(requestData, DictType)
+        if (DH.saveStatutoryMapping(requestData, self.userId)) :
+            self.responseData = "success"
+        else :
+            self.responseData = "saveFailed"
+
+        return [
+            str(self.responseData),
+            {}
+        ]
