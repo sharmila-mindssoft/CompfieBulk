@@ -598,6 +598,7 @@ function initMirror() {
                 "date_configurations":dateConfigurations
             }
         ];
+       
         apiRequest(callerName, request, callback, failure_callback);
     }
 

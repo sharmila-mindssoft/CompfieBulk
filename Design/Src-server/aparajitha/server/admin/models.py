@@ -229,6 +229,13 @@ class User(object) :
                     "form_type", "user_group_id='"+str(self.userGroupId)+"'")
         return rows[0][0]
 
+    @classmethod
+    def getClientIds(self, sessionUser):
+        columns = "client_ids"
+        condition = "user_id = '%d'" % sessionUser
+        rows = DatabaseHandler.instance().getData(self.detailTblName, columns, condition)
+        return rows[0][0]
+
     def saveAdmin(self, sessionUser):
         currentTimeStamp = getCurrentTimeStamp()
 
