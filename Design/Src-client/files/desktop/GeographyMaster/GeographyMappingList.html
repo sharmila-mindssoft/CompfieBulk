@@ -63,13 +63,13 @@ list-style-type:none; line-height:25px;
         </tr>
         <tr>
           <td>&nbsp;</td>
-          <td><input type="text"  id="countryfilter" class="filter-text-box" onkeyup="filter()"></td>
-          <td><input type="text"  id="levelfilter" class="filter-text-box" onkeyup="filter()"></td>
-          <td><input type="text"  id="namefilter" class="filter-text-box" onkeyup="filter()"></td>
+          <td><input type="text"  id="countryfilter" class="filter-text-box" onkeyup="filter(this, 1)"></td>
+          <td><input type="text"  id="levelfilter" class="filter-text-box" onkeyup="filter(this, 2)"></td>
+          <td><input type="text"  id="namefilter" class="filter-text-box" onkeyup="filter(this, 3)"></td>
           <td>&nbsp;</td>
           <td>&nbsp;</td>
         </tr>
-        <tbody class="tbody-geography-list">        
+        <tbody class="tbody-geography-list" id="tableToModify">        
         </tbody>
        
       </table>
@@ -96,13 +96,14 @@ list-style-type:none; line-height:25px;
 <div class="content-container width60">
   <div class="content-area">
     <div class="add-container">
-      <div class="add-container-heading">Geography Master<span class="error-message"></span></div>
+      <div class="add-container-heading">Geography Master<span id="error" class="error-message"></span></div>
        <div class="single-column-input-row" style="margin-top:10px">
         <div class="input-row">
           <div class="single-column-field-label">Country:<span class="mandatory">*</span></div>
           <div class="single-column-field-input">
             <input type="text" class="input-box icon-autocomplete" id="countryval" value=""  onkeyup="loadauto_text(this.value)" style="width:200px"> 
               <input type="hidden" id="country"> 
+              <input type="hidden" id="geographyid"> 
              <div id="autocompleteview" class="ac-textbox" style="display:none;">
                 <ul id="ulist_text" onclick="hidemenu();" style="width:195px;"></ul>
             </div>
@@ -135,6 +136,5 @@ list-style-type:none; line-height:25px;
     </tr>
   </table>
 </div>
-      
-
+    
 {% endblock %}

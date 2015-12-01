@@ -390,8 +390,57 @@ function initMirror() {
 
     function getGeographyReport(callback, failure_callback) {
         var request = ["GeographyReport", {}];
-        apiRequest("GeographyReport", request, callback, failure_callback);   
+        apiRequest("GeographyReport", request, callback, failure_callback);
     }
+
+    // statutory Mapping
+
+    function saveStatutory(levelId, name, parentIds, callback, failure_callback) {
+        var request = [
+            "SaveStatutory",
+            {
+                "statutory_level_id": levelId,
+                "statutory_name": name,
+                "parent_ids": parentIds
+            }
+        ]
+        apiRequest("SaveStatutory", request, callback, failure_callback);
+    }
+
+    function updateStatutory(statutoryId, levelId, name, parentIds, callback, failure_callback) {
+        var request = [
+            "UpdateStatutory",
+            {
+                "statutory_id": statutoryId,
+                "statutory_level_id": levelId,
+                "statutory_name": name,
+                "parent_ids": parentIds
+            }
+        ]
+        apiRequest("UpdateStatutory", request, callback, failure_callback);
+    }
+
+    function saveStatutoryMapping(mappingData, callback, failure_callback ) {
+        var request = [
+            "SaveStatutoryMapping",
+            mappingData
+        ]
+        apiRequest("SaveStatutoryMapping", request, callback, failure_callback);
+    }
+
+    function updateStatutoryMapping(mappingData, callback, failure_callback ) {
+        var request = [
+            "UpdateStatutoryMapping",
+            mappingData
+        ]
+        apiRequest("UpdateStatutoryMapping", request, callback, failure_callback);
+    }
+    
+    function getStatutoryMappings(callback, failure_callback) {
+        var request = ["GetStatutoryMappings", {}];
+        apiRequest("GetStatutoryMappings", request, callback, failure_callback);
+    }
+
 
     // Admin User Group Master
     function isNull(value){
@@ -569,8 +618,6 @@ function initMirror() {
     // Client Group Master
 
     function saveClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
-        alert(clientGroupDetails["contract_from"]);
-        alert(clientGroupDetails["contract_to"]);
         var request = [
             "SaveClientGroup",
             {
@@ -591,10 +638,7 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-<<<<<<< HEAD
     function updateClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
-        alert(clientGroupDetails["contract_from"]);
-        alert(clientGroupDetails["contract_to"]);
         var request = [
             "UpdateClientGroup",
             {
@@ -628,7 +672,7 @@ function initMirror() {
     }
 
     function getClientGroups(callerName, callback, failure_callback) {
-       
+
         var request = [
             "GetClientGroup",
             {}
@@ -691,6 +735,36 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function saveClient(callerName, clientId, businessGroup, legalEntity, division, 
+        countryWiseUnits, callback, failure_callback) {
+        
+        var request = [
+            "SaveClient",
+            {
+                "client_id": clientId,
+                "business_group": businessGroup,
+                "legal_entity": legalEntity,
+                "division": division,
+                "country_wise_units": countryWiseUnits
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    } 
+
+    function changeClientStatus(callerName, clientId, divisionId, isActive, 
+        callback, failure_callback) {
+        
+        var request = [
+            "ChangeClientStatus",
+            {
+                "client_id": clientId,
+                "division_id" : divisionId,
+                "is_active": isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }  
+
     return {
         log: log,
         toJSON: toJSON,
@@ -741,6 +815,11 @@ function initMirror() {
         updateGeography: updateGeography,
         changeGeographyStatus: changeGeographyStatus,
         getGeographyReport: getGeographyReport,
+        saveStatutory: saveStatutory,
+        updateStatutory: updateStatutory,
+        saveStatutoryMapping: saveStatutoryMapping,
+        updateStatutoryMapping: updateStatutoryMapping,
+        getStatutoryMappings: getStatutoryMappings,
 
         saveAdminUserGroup: saveAdminUserGroup,
         updateAdminUserGroup: updateAdminUserGroup,
@@ -763,8 +842,9 @@ function initMirror() {
         validateResetToken: validateResetToken,
         resetPassword: resetPassword,
 
-        getClients: getClients
-
+        getClients: getClients,
+        saveClient: saveClient,
+        changeClientStatus: changeClientStatus
     }
 
 }
