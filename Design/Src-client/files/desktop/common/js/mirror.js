@@ -894,6 +894,20 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function changeAdminStatus(callerName, userId, isAdmin, 
+        callback, failure_callback) {
+        if (isNull(userId) || isNull(isAdmin) )
+            return null;
+        var request = [
+            "ChangeAdminStatus",
+            {
+                "user_id" : userId,
+                "is_admin" : isAdmin
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
 
     return {
         log: log,
@@ -980,7 +994,8 @@ function initMirror() {
         getClientUsers: getClientUsers,
         saveClientUser: saveClientUser,
         updateClientUser: updateClientUser,
-        changeClientUserStatus: changeClientUserStatus
+        changeClientUserStatus: changeClientUserStatus,
+        changeAdminStatus: changeAdminStatus
     }
 
 }
