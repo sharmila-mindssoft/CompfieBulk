@@ -10,11 +10,13 @@ from aparajitha.server.admin.models import User as AdminUser
 from aparajitha.server.techno.models import BusinessGroup,LegalEntity,Division,Unit
 from aparajitha.server.knowledge.models import DomainList, CountryList
 from aparajitha.server.databasehandler import DatabaseHandler
+from aparajitha.server.clientdatabasehandler import ClientDatabaseHandler
 
 __all__ = [
     "UserPrivilegeController",
     "UserController",
-    "ServiceProviderController"
+    "ServiceProviderController",
+    "UnitClosure"
 ]
 
 class UserPrivilegeController() :
@@ -72,7 +74,6 @@ class UserPrivilegeController() :
             return commonResponseStructure("InvalidGroupId",{})
         elif userPrivilege.updateStatus(sessionUser):
             return commonResponseStructure("ChangeUserGroupStatusSuccess",{})
-
 
 class UserController() :
     def saveUser(self, requestData, sessionUser) :
@@ -185,7 +186,6 @@ class UserController() :
         response = commonResponseStructure("GetClientUsersSuccess", response_data)
         return response
 
-
 class ServiceProviderController() :
     tblName = " tbl_service_providers"
 
@@ -257,6 +257,59 @@ class ServiceProviderController() :
             return commonResponseStructure("InvalidServiceProviderId",{})
         elif serviceProvider.updateStatus(sessionUser):
             return commonResponseStructure("ChangeServiceProviderStatusSuccess",{})
+
+class UnitClosure():
+    unitTblName = "tbl_units"
+
+    def getList(self, sessionUser):
+        self.clientId = getClientId(sessionUser)
+        unitList = Unit.getUnitListForClosure(self.clientId)
+        unitStructure = {}
+        unitStructure["units"] = unitList
+        return commonResponseStructure("GetUnitClosureListSuccess", unitStructure)
+
+    def closeUnit(self, requestData, sessionUser):
+        self.sessionUser = sessionUser
+        self.unitId = JSONHelper.getInt(requestData, "unit_id")
+        self.password = JSONHelper.getString(requestData, "password")
+        self.clientId = getClientId(sessionUser)
+
+        if self.verifyPassword():
+            if self.deactivateUnitInClientDB():
+                if self.deactivateUnitInKnowledgeDB():
+                    return commonResponseStructure("CloseUnitSuccess", {})
+                else:
+                    print "Error : While deactivating Unit in Knowledge DB"    
+                    return False
+            else:
+                print "Error : While deactivating Unit in client DB"
+                return False
+        else:
+            return commonResponseStructure("InvalidPassword", {})
+
+    def verifyPassword(self):
+        encryptedPassword = encrypt(self.password)
+        return DatabaseHandler.instance().verifyPassword(encryptedPassword, 
+            self.sessionUser, self.clientId)
+
+    def deactivateUnitInClientDB(self):
+        columns = ["is_active"]
+        values = [0]
+        condition = "unit_id ='%d'" % self.unitId
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).update(
+            self.unitTblName, columns, values, condition)
+
+    def deactivateUnitInKnowledgeDB(self):    
+        columns = ["is_active", "updated_by", "updated_on"]
+        values = [0, self.sessionUser, getCurrentTimeStamp()]
+        condition = "unit_id = {unitId} and client_id={clientId}".format(
+            unitId = self.unitId, clientId = self.clientId)
+        return DatabaseHandler.instance().update(
+            self.unitTblName, columns, values, condition)
+
+
+
 
         
 

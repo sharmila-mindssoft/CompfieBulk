@@ -30,6 +30,7 @@ class ClientAdminAPIRequestHandler(tornado.web.RequestHandler) :
                 serviceProvider = ServiceProviderController()
                 userPrivilege = UserPrivilegeController()
                 user = UserController()
+                unitClosure = UnitClosure()
                 if request[0] == "GetUserPrivileges" :
                     response = userPrivilege.getUserPrivileges(userId)
                 elif request[0] == "SaveUserPrivilege" :
@@ -60,6 +61,10 @@ class ClientAdminAPIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "ChangeAdminStatus" :
                     response = user.changeAdminStatus(
                         request[1], userId)
+                elif request[0] == "GetUnitClosureList" :
+                    response = unitClosure.getList(userId)
+                elif request[0] == "CloseUnit" :
+                    response = unitClosure.closeUnit(request[1], userId)
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 

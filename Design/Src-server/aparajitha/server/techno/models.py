@@ -436,6 +436,9 @@ class Division(object):
 
 class Unit(object):
     unitTblName = "tbl_units"
+    divisionTblName = "tbl_divisions"
+    legalEntityTblName = "tbl_legal_entities"
+    businessGroupTblName = "tbl_business_groups"
 
     def __init__(self, unitId, divisionId, legalEntityId, businessGroupId, clientId, 
                 countryId, geographyId, unitCode, unitName, industryId, address, 
@@ -541,6 +544,33 @@ class Unit(object):
 
             except:
                 print "Error: While fetching Unit of client id %s" % clientId
+
+        return unitList
+
+    @classmethod
+    def getUnitListForClosure(self, clientId):
+        unitList = []
+
+        columns = "business_group_name,legal_entity_name,division_name,unit_id,"+\
+                    "unit_code, unit_name, address,is_active"
+        tables = [self.unitTblName, self.divisionTblName, self.legalEntityTblName,
+                self.businessGroupTblName]
+        conditionColumns = ["division_id", "legal_entity_id", "business_group_id"]
+
+        clientDBName = self.getClienDatabaseName(clientId)
+        rows = ClientDatabaseHandler.instance(clientDBName).getDataFromMultipleTables(
+            columns, tables, conditionColumns)
+        
+        for row in rows:
+            unitStructure = {}
+            unitStructure["business_group_name"] = row[0]
+            unitStructure["legal_entity_name"] = row[1]
+            unitStructure["division_name"] = row[2]
+            unitStructure["unit_id"] = row[3]
+            unitStructure["unit_name"] = "%s - %s" % (row[4], row[5])
+            unitStructure["address"] = row[6]
+            unitStructure["is_active"] = row[7]
+            unitList.append(unitStructure)
 
         return unitList
 
@@ -1496,14 +1526,7 @@ class ReactivateUnit(object):
 
     def verifyPassword(self):
         encryptedPassword = encrypt(self.password)
-        columns = "count(*)"
-        condition = "password='%s' and user_id='%d'" % (encryptedPassword, self.sessionUser)
-        rows = DatabaseHandler.instance().getData(self.userTblName, columns, condition)
-        
-        if(int(rows[0][0]) <= 0):
-            return False
-        else:
-            return True
+        return verifyPassword(encryptedPassword, userId, self.clientId)
 
     def activateUnit(self):
         if self.activateUnitInClientDB():
