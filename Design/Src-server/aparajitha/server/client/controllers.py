@@ -149,6 +149,17 @@ class UserController() :
         elif user.updateStatus(sessionUser):
             return commonResponseStructure("ChangeClientUserStatusSuccess",{})
 
+    def changeAdminStatus(self, requestData, sessionUser):
+        print "inside change Admin status in controller"
+        userId = JSONHelper.getInt(requestData, "user_id")
+        isAdmin = JSONHelper.getInt(requestData, "is_admin")
+        user = User( getClientId(sessionUser), userId, None, None, None, None, None, None, None, 
+                    None, None, None, isAdmin, None, None )
+        if user.isIdInvalid() :
+            return commonResponseStructure("InvalidUserId",{})
+        elif user.updateAdminStatus(sessionUser):
+            return commonResponseStructure("UpdateAdminStatusSuccess",{})
+
     def getUsers(self, sessionUser) :
         clientId = str(getClientId(sessionUser))
 

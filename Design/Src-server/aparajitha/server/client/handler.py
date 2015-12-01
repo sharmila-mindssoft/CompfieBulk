@@ -57,6 +57,9 @@ class ClientAdminAPIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "ChangeClientUserStatus" :
                     response = user.changeUserStatus(
                         request[1], userId)
+                elif request[0] == "ChangeAdminStatus" :
+                    response = user.changeAdminStatus(
+                        request[1], userId)
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 

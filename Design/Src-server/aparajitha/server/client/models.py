@@ -322,15 +322,15 @@ class User(object) :
             getClientDatabase(self.clientId)).update(
             self.detailTblName, detailTblcolumns, detailTblValuesList, condition)
 
-    def updateStatus(self, sessionUser):
-        assertType(self.userId, IntType)
-        assertType(self.isActive, IntType)
-        columns = ["is_active", "updated_on" , "updated_by"]
-        values = [self.isActive, getCurrentTimeStamp(), sessionUser]
+    def updateAdminStatus(self, sessionUser):
+        print "inside update Admin status in model"
+        columns = ["is_admin", "updated_on" , "updated_by"]
+        values = [self.isAdmin, getCurrentTimeStamp(), sessionUser]
         condition = "user_id='%d'" % self.userId
         return ClientDatabaseHandler.instance(
             getClientDatabase(self.clientId)).update(
-            self.mainTblName, columns, values, condition)
+            self.detailTblName, columns, values, condition)
+
             
 class ServiceProvider(object):
     tblName = " tbl_service_providers"
