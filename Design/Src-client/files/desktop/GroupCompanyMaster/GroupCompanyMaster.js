@@ -1,36 +1,36 @@
 $(function() {
-	$("#country-add").hide();
+	$("#clientunit-add").hide();
 	initialize();
 });
-$(".btn-country-add").click(function(){
-	$("#country-add").show();
-	$("#country-view").hide();
-	$("#country-name").val('');
-  	$("#country-id").val('');
+$(".btn-clientunit-add").click(function(){
+	$("#clientunit-add").show();
+	$("#clientunit-view").hide();
+ 	//$("#clientunit-id").val('');
   	$(".error-message").html('');
 });
-$(".btn-country-cancel").click(function(){
-	$("#country-add").hide();
-	$("#country-view").show();
+$(".btn-clientunit-cancel").click(function(){
+	$("#clientunit-add").hide();
+	$("#clientunit-view").show();
 });
 function initialize(){
 	function success(status, data){
-		loadCountriesList(data);
+		loadClientsList(data);
 	}
 	function failure(status, data){
+		$(".error-message").html(status);
 	}
-	mirror.getCountryList("getCountryList", success, failure);
+	mirror.getClients("TechnoAPI", success, failure);
 }
-function loadCountriesList(countriesList){
- 	$(".tbody-countries-list").find("tr").remove();
+function loadClientsList(clientunitsList){
+ 	$(".tbody-clientunit-list").find("tr").remove();
   	var sno=0;
 	var imageName, title;	
-	for(var i in countriesList){
-		var countries=countriesList[i];
-		for(var j in countries){
-			var countryId=countries[j]["country_id"];
-			var countryName=countries[j]["country_name"];
-			var isActive=countries[j]["is_active"];
+	for(var i in clientunitList){
+		var clientunits=clientunitsList[i];
+		for(var j in clientunits){
+			var clientunitId=clientunits[j]["clientunit_id"];
+			var clientunitName=clientunits[j]["clientunit_name"];
+			var isActive=clientunits[j]["is_active"];
 					
 			if(isActive==1){
 				imageName="icon-active.png";
@@ -42,29 +42,29 @@ function loadCountriesList(countriesList){
 				title="Click here to Activate"
 				statusVal=1;
 			}
-			var tableRow=$('#templates .table-countries-list .table-row');
+			var tableRow=$('#templates .table-clientunits-list .table-row');
 			var clone=tableRow.clone();
 			sno = sno + 1;
 			$('.sno', clone).text(sno);
-			$('.country-name', clone).text(countryName);
-			$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="country_edit('+countryId+',\''+countryName+'\')"/>');
-			$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="country_active('+countryId+', '+statusVal+')"/>');
-			$('.tbody-countries-list').append(clone);
+			$('.clientunit-name', clone).text(clientunitName);
+			$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="clientunit_edit('+clientunitId+',\''+clientunitName+'\')"/>');
+			$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientunit_active('+clientunitId+', '+statusVal+')"/>');
+			$('.tbody-clientunits-list').append(clone);
 		}
 	}
 }
 
-$("#submit").click(function(){
-	var countryIdValue = $("#country-id").val();
-	var countryNameValue = $("#country-name").val();
-	if(countryNameValue=='' || countryNameValue==null){
-		$(".error-message").html('Country Name Required');
+$("#btn-clientunit-submit").click(function(){
+	var clientunitIdValue = $("#clientunit-id").val();
+	var clientunitNameValue = $("#clientunit-name").val();
+	if(clientunitNameValue=='' || clientunitNameValue==null){
+		$(".error-message").html('clientunit Name Required');
 	}
-	else if(countryIdValue==''){		
+	else if(clientunitIdValue==''){		
 		function success(status, data){
 			if(status == 'success') {
-		    	$("#country-add").hide();
-	  			$("#country-view").show();
+		    	$("#clientunit-add").hide();
+	  			$("#clientunit-view").show();
 	  			initialize();
 	  		}
 	  		 else {
@@ -74,47 +74,47 @@ $("#submit").click(function(){
 		function failure(status, data){
 			$(".error-message").html(status);
 		}
-		mirror.saveCountry("SaveCountry", countryNameValue, success, failure);
+		mirror.saveclientunit("Saveclientunit", clientunitNameValue, success, failure);
 	}
 	else{		
 		function success(status, data){
 			if(status == 'success') {
-				$("#country-add").hide();
-	  			$("#country-view").show();
+				$("#clientunit-add").hide();
+	  			$("#clientunit-view").show();
 	  			initialize();
   			}
-  			if(status == 'CountryNameAlreadyExists') {
+  			if(status == 'clientunitNameAlreadyExists') {
   				$(".error-message").html(status);
   			}	
 		}
 		function failure(status, data){
 		}
-		mirror.updateCountry("updateCountry", parseInt(countryIdValue), countryNameValue, success, failure);
+		mirror.updateclientunit("updateclientunit", parseInt(clientunitIdValue), clientunitNameValue, success, failure);
 	}
 });
-function country_edit(countryId, countryName){
-	$("#country-add").show();
-	$("#country-view").hide();
-	$("#country-name").val(countryName);
-  	$("#country-id").val(countryId);
+function clientunit_edit(clientunitId, clientunitName){
+	$("#clientunit-add").show();
+	$("#clientunit-view").hide();
+	$("#clientunit-name").val(clientunitName);
+  	$("#clientunit-id").val(clientunitId);
 }
-function country_active(countryId, isActive){
-  	$("#country-id").val(countryId);
+function clientunit_active(clientunitId, isActive){
+  	$("#clientunit-id").val(clientunitId);
   	function success(status, data){
 	  initialize();
   	}
   	function failure(status, data){
   	}
-  	mirror.changeCountryStatus("ChangeCountryStatus",  parseInt(countryId), isActive, success, failure);
+  	mirror.changeclientunitStatus("ChangeclientunitStatus",  parseInt(clientunitId), isActive, success, failure);
 }
 
 
-$("#search-country-name").keyup(function() { 
+$("#search-clientunit-name").keyup(function() { 
 	var count=0;
     var value = this.value.toLowerCase();
     $("table").find("tr:not(:first)").each(function(index) {
         if (index === 0) return;
-        var id = $(this).find(".country-name").text().toLowerCase();       
+        var id = $(this).find(".clientunit-name").text().toLowerCase();       
         $(this).toggle(id.indexOf(value) !== -1);;
     });
 });

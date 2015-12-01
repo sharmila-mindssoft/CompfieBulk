@@ -4,7 +4,7 @@
   <div class="content-area">
       <h1>Clients Unit</h1>
       <div class="filters-and-search">
-      <div class="btn-add" onclick="location.href='/group_company/create'" formtarget="_self">Add</div>
+      <div class="btn-add" id="btn-clientunit-add" formtarget="_self">Add</div>
     </div>
       <div class="clearfix"></div>
       <div class="grid-table">
@@ -22,47 +22,32 @@
          <tr>
           <td align="center"></td>
           <td><input type="text" class="filter-text-box"></td>
-            <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
           <td><input type="text" class="filter-text-box"></td>
           <td><input type="text" class="filter-text-box"></td>
           <td align="center"></td>
-          <td align="center"></td>
-          
+          <td align="center"></td>  
         </tr>
-            <tr>
-          <td align="center">1</td>
-          <td>NJR Group</td>
-          <td>NJR Business Group</td>
-          <td>NJR Entity</td>
-          <td>NJR Division</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" class="inactive"  /></td>
-          
-        </tr>
-        <tr>
-          <td align="center">2</td>
-          <td>PRG Group</td>
-           <td>PRG Business Group</td>
-          <td>PRG Entity</td>
-          <td>PRG Division</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" id="inactiveid" class="inactive"  title="Click here to activate"/></td>
-          
-        </tr>
-          <tr>
-          <td align="center">3</td>
-          <td>TKU Group</td>
-           <td>TKU Business Group</td>
-          <td>TKU Entity</td>
-          <td>TKU Division</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-        </tr>
+        <tbody class="tbody-clientunit-list">
+        </tbody>
+
       </table>
     </div>    
   </div>
 </div>
-
+<div id="templates">
+<table class="table-clientunit-list">
+  <tr class="table-row">
+    <td align="center" class="sno"></td>
+    <td class="group-name"></td>
+    <td class="business-group-name"></td>
+    <td class="legal-entity-name"></td>
+    <td class="division-name"></td>
+    <td align="center" class="edit"></td>
+    <td align="center" class="is-active"></td>
+  </tr>  
+</table>
+</div>
 <!-- Add Client Unit -->
 
 <div class="content-container" id="clientunit-add">
@@ -294,14 +279,14 @@
           </div>
         </div>
         <div class="submit-button-container">
-          <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/group_company/list'" >
+          <input type="reset" name="cancel" value="Cancel" class="btn-cancel" id="btn-clientunit-cancel" >
           &nbsp;&nbsp;
-          <input type="submit" name="submit" value="Submit" class="btn-submit" >
+          <input type="submit" name="submit" value="Submit" class="btn-submit" id="btn-clientunit-submit" >
         </div>
       </div>
     </div>
   </div>
 </div>
 </div>
-<script type="text/javascript" src="/files/desktop/CountryMaster/CountryMaster.js"></script>
+<script type="text/javascript" src="/files/desktop/GroupCompanyMaster/GroupCompanyMaster.js"></script>
 {% endblock %} 
