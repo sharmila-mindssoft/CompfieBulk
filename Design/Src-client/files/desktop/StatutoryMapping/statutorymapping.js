@@ -5,42 +5,24 @@ var tempUsersList;
 var countriesList;
 
 $(document).ready(function(){
-	GetUsers();
-	$('#countrycode').keydown(function (e) {
-    var key = e.keyCode;
-    if (!((key == 8) || (key == 43) || (key == 31) || (key >= 48 && key <= 57))) {
-    e.preventDefault();
-  }
-});
-	$('#areacode').keydown(function (e) {
-    var key = e.keyCode;
-    if (!((key == 8) || (key >= 48 && key <= 57))) {
-    e.preventDefault();
-  }
-});
-	$('#contactno').keydown(function (e) {
-    var key = e.keyCode;
-    if (!((key == 8) || (key >= 48 && key <= 57))) {
-    e.preventDefault();
-  }
-});
+	GetStatutories();
 });
 
-function GetUsers(){
+function GetStatutories(){
 	function success(status,data){
-		tempUsersList = data["users"];
+		/*tempUsersList = data["users"];
 		usersList = data["users"];
 		domainsList = data["domains"];
 		userGroupsList = data["user_groups"];
 		countriesList = data["countries"];
-		loadUserList(usersList);
+		loadUserList(usersList);*/
 	}
 	function failure(data){
 	}
-	mirror.getAdminUserList("AdminAPI", success, failure);
+	mirror.getAdminUserList(success, failure);
 }
 function loadUserList(usersList) {
-	var j = 1;
+	/*var j = 1;
 	var imgName = '';
     var passStatus = '';
     var userId = 0;
@@ -79,155 +61,24 @@ function loadUserList(usersList) {
 	      $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+userId+','+passStatus+')"/>');
 	      $('.tbody-user-list').append(clone);
 	      j = j + 1;
-      	}
+      	}*/
       }
 
       function displayAdd () {
-      	$("#listview").hide();
-	    $("#addview").show();
-	    $("#userid").val('');
-		$("#employeename").val('');
-	    $("#employeeid").val('');
-	    $("#address").val('');
-	    $("#countrycode").val('');
-	    $("#areacode").val('');
-	    $("#contactno").val('');
-	    $("#usergroup").val('');
-	    $("#designation").val('');
-	    $("#domain").val('');
-	    $("#domainselected").val('');
-	    $("#country").val('');
-	    $("#countryselected").val('');
-	    $("#emailid").val('');
 	    $("#error").text('');
 	}
 
 	function changeStatus (userId,isActive) {
-		mirror.changeAdminUserStatus("AdminAPI", userId, isActive, success, failure);
+		/*mirror.changeAdminUserStatus("AdminAPI", userId, isActive, success, failure);
 		function success(status,data){
 			GetUsers();
 			$("#error").text("Status Changed Successfully");
 		}
 		function failure(data){
-		}
+		}*/
 	}
 
-	function saveRecord () {
-		$("#error").text("");
-		var userId = parseInt($("#userid").val());
-		var employeeName = $("#employeename").val();
-		var employeeId = $("#employeeid").val();
-		var address = $("#address").val();
-		var countryCode = $("#countrycode").val();
-		var areaCode = $("#areacode").val();
-		var contactNo = $("#contactno").val();
-		var userGroup = parseInt($("#usergroup").val());
-		var designation = $("#designation").val();
-		var domain = $("#domain").val();
-		var country = $("#country").val();
-		var emailId = $("#emailid").val();
-
-		var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-        
-		if(employeeName == '') {
-			$("#error").text("Employee Name Required");
-		} else if(employeeId == '') {
-			$("#error").text("Employee Id Required");
-		} else if(contactNo == '') {
-			$("#error").text("Contact Number Required");
-		} else if(userGroup == '') {
-			$("#error").text("User Group Required");
-		} else if(domain == '') {
-			$("#error").text("Domain Required");
-		} else if(emailId == '') {
-			$("#error").text("Email Id Required");
-		} else if(reg.test(emailId) == false) {
-			$("#error").text("Invalid Email Address");
-		} else if(country == '') {
-			$("#error").text("Country Required");
-		} else {
-			if($("#userid").val() == '') {
-				saveUserDetail = [emailId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,country,domain];
-				function success(status,data) {
-					if(status == 'SaveUserSuccess') {
-						GetUsers();
-						$("#listview").show();
-     					$("#addview").hide();
-						$("#error").text("Record Added Successfully");
-					} else {
-						$("#error").text(status);
-					}
-				}
-				function failure(data){
-				}
-				mirror.saveAdminUser("AdminAPI", saveUserDetail, success, failure);
-			} else {
-				updateUserDetail = [userId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,country,domain];
-				function success(status,data){
-					if(status == 'UpdateUserSuccess') {
-						GetUsers();
-						$("#listview").show();
-      					$("#addview").hide();
-						$("#error").text("Record Updated Successfully");
-					} else {
-						$("#error").text(status);
-					}
-				}
-				function failure(data) {
-				}
-				mirror.updateAdminUser("AdminAPI", updateUserDetail, success, failure);
-			}
-		}
-	}
-	function displayEdit (userId) {
-		$("#error").text("");
-		$("#listview").hide();
-  		$("#addview").show();
-  		$("#userid").val(userId);
-  		for(var entity in usersList) {
-  			if(usersList[entity]["user_id"] == userId){
-  				var userId = usersList[entity]["user_id"];
-				var employeeName = usersList[entity]["employee_name"];
-				var employeeId = usersList[entity]["employee_code"];
-				var address = usersList[entity]["address"];
-				var mergeContactNo = usersList[entity]["contact_no"].split("-");
-				var countryCode = mergeContactNo[0];
-				var areaCode = mergeContactNo[1];
-				var contactNo = mergeContactNo[2];
-				var userGroup = usersList[entity]["user_group_id"];
-				var userGroupval;
-				var designation = usersList[entity]["designation"];
-				var domain = usersList[entity]["domain_ids"]; 
-				var country = usersList[entity]["country_ids"];
-				var emailId = usersList[entity]["email_id"];
-				for(var k in userGroupsList){
-					if(userGroupsList[k]["user_group_id"] == userGroup){
-						userGroupval = userGroupsList[k]["user_group_name"];
-						break;
-					}
-				}
-				$("#employeename").val(employeeName);
-			    $("#employeeid").val(employeeId);
-			  	$("#address").val(address);
-			 	$("#countrycode").val(countryCode);
-				$("#areacode").val(areaCode);
-				$("#contactno").val(contactNo);
-				$("#usergroupval").val(userGroupval);
-				$("#usergroup").val(userGroup);
-				$("#designation").val(designation);
-				$("#domain").val(domain);
-				var editdomainval = domain.split(",");
-				$("#domainselected").val(editdomainval.length+" Selected");
-				$("#country").val(country);
-				var editcountryval = country.split(",");
-				$("#countryselected").val(editcountryval.length+" Selected");
-				$("#emailid").val(emailId);
-				break;
-			}
-		}
-	}
-
-	//filter process
+	/*//filter process
 	function filter (){
 		var employeenamefilter = $("#employeenamefilter").val().toLowerCase();
 		var usergroupfilter = $("#usergroupfilter").val().toLowerCase();
@@ -249,7 +100,7 @@ function loadUserList(usersList) {
 				}		
 		}
 		loadUserList(filteredList);
-	}
+	}*/
 
 	//Autocomplete Script Starts
 	//Hide list items after select

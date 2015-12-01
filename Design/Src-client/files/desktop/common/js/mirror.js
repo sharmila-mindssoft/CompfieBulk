@@ -233,7 +233,8 @@ function initMirror() {
         apiRequest("SaveStatutoryNature", request, callback, failure_callback);
     }
 
-    function updateStatutoryNature(statutoryNatureId, statutoryNatureName, callback, failure_callback) {
+    function updateStatutoryNature(statutoryNatureId, statutoryNatureName, 
+        callback, failure_callback) {
         if ((statutoryNatureId == null) || (statutoryNatureName == null))
             return null;
         var request = [
@@ -243,7 +244,8 @@ function initMirror() {
         apiRequest("UpdateStatutoryNature", request, callback, failure_callback);
     }
 
-    function changeStatutoryNatureStatus(statutoryNatureId, isActive, callback, failure_callback) {
+    function changeStatutoryNatureStatus(statutoryNatureId, isActive, 
+        callback, failure_callback) {
         if ((statutoryNatureId == null) || (isActive == null))
             return null;
         var request = [
@@ -283,7 +285,8 @@ function initMirror() {
         apiRequest("GetStatutoryLevels", request, callback, failure_callback);   
     }
 
-    function saveAndUpdateStatutoryLevels(countryId, domainId, levels, callback, failure_callback) {
+    function saveAndUpdateStatutoryLevels(countryId, domainId, levels, 
+        callback, failure_callback) {
 
         if ((countryId == null) || (domainId == null) || (levels == null))
             return null;
@@ -351,6 +354,55 @@ function initMirror() {
         apiRequest("GeographyReport", request, callback, failure_callback);   
     }
 
+    // statutory Mapping
+
+    function saveStatutory(levelId, name, parentIds, callback, failure_callback) {
+        var request = [
+            "SaveStatutory",
+            {
+                "statutory_level_id": levelId,
+                "statutory_name": name,
+                "parent_ids": parentIds
+            }
+        ]
+        apiRequest("SaveStatutory", request, callback, failure_callback);
+    }
+
+    function updateStatutory(statutoryId, levelId, name, parentIds, 
+        callback, failure_callback) {
+        var request = [
+            "UpdateStatutory",
+            {
+                "statutory_id": statutoryId,
+                "statutory_level_id": levelId,
+                "statutory_name": name,
+                "parent_ids": parentIds
+            }
+        ]
+        apiRequest("UpdateStatutory", request, callback, failure_callback);
+    }
+
+    function saveStatutoryMapping(mappingData, callback, failure_callback ) {
+        var request = [
+            "SaveStatutoryMapping",
+            mappingData
+        ]
+        apiRequest("SaveStatutoryMapping", request, callback, failure_callback);
+    }
+
+    function updateStatutoryMapping(mappingData, callback, failure_callback ) {
+        var request = [
+            "UpdateStatutoryMapping",
+            mappingData
+        ]
+        apiRequest("UpdateStatutoryMapping", request, callback, failure_callback);
+    }
+    
+    function getStatutoryMappings(callback, failure_callback) {
+        var request = ["GetStatutoryMappings", {}];
+        apiRequest("GetStatutoryMappings", request, callback, failure_callback);
+    }
+
     // Admin User Group Master
     function isNull(value){
         if (value == null)
@@ -416,7 +468,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeAdminUserGroupStatus(callerName, userGroupId, isActive, callback, failure_callback) {
+    function changeAdminUserGroupStatus(callerName, userGroupId, isActive, 
+        callback, failure_callback) {
         if (isNull(userGroupId) || isNull(isActive) )
             return null;
         var request = [
@@ -526,7 +579,8 @@ function initMirror() {
 
     // Client Group Master
 
-    function saveClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
+    function saveClientGroup(callerName, clientGroupDetails, dateConfigurations, 
+        callback, failure_callback) {
         var request = [
             "SaveClientGroup",
             {
@@ -547,7 +601,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
+    function updateClientGroup(callerName, clientGroupDetails, dateConfigurations, 
+        callback, failure_callback) {
 
         var request = [
             "UpdateClientGroup",
@@ -569,7 +624,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientGroupStatus(callerName, clientId, isActive, callback, failure_callback) {
+    function changeClientGroupStatus(callerName, clientId, isActive, 
+        callback, failure_callback) {
         
         var request = [
             "ChangeClientGroupStatus",
@@ -590,7 +646,10 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changePassword(callerName, currentPassword, newPassword, callback, failure_callback) {
+    // Change Password APIs
+
+    function changePassword(callerName, currentPassword, newPassword,
+     callback, failure_callback) {
         
         var request = [
             "ChangePassword",
@@ -601,6 +660,8 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
+
+    // Forgot Password APIs
 
     function forgotPassword(callerName, username, callback, failure_callback) {
         
@@ -636,6 +697,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    // Client Unit APIs
+
     function getClients(callerName, callback, failure_callback) {
         
         var request = [
@@ -645,10 +708,231 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function saveClient(callerName, clientId, businessGroup, legalEntity, division, 
+        countryWiseUnits, callback, failure_callback) {
+        
+        var request = [
+            "SaveClient",
+            {
+                "client_id": clientId,
+                "business_group": businessGroup,
+                "legal_entity": legalEntity,
+                "division": division,
+                "country_wise_units": countryWiseUnits
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeClientStatus(callerName, clientId, divisionId, isActive, 
+        callback, failure_callback) {
+        
+        var request = [
+            "ChangeClientStatus",
+            {
+                "client_id": clientId,
+                "division_id" : divisionId,
+                "is_active": isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }  
+
+    function reactivateUnit(callerName, clientId, unitId, password, 
+        callback, failure_callback) {
+        
+        var request = [
+            "ReactivateUnit",
+            {
+                "client_id": clientId,
+                "unit_id" : unitId,
+                "password": password
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }  
+
+    // Client User Group  
+
+    function getClientUserGroups(callerName, callback, failure_callback) {
+        var request = [
+            "GetUserPrivileges",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function saveClientUserGroup(callerName, userGroupDetail, callback, failure_callback) {
+        if (isNull(userGroupDetail))
+            return null;
+        
+        var request = [
+            "SaveUserPrivilege",
+            userGroupDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function updateClientUserGroup(callerName, userGroupDetail, callback, failure_callback) {
+        if (isNull(userGroupDetail))
+            return null;
+        
+        var request = [
+            "UpdateUserPrivilege",
+            userGroupDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeClientUserGroupStatus(callerName, userGroupId, isActive, 
+        callback, failure_callback) {
+        if (isNull(userGroupId) || isNull(isActive) )
+            return null;
+        var request = [
+            "ChangeUserPrivilegeStatus",
+            {
+                "user_group_id" : userGroupId,
+                "is_active" : isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+     // Service Providers  
+
+    function getServiceProviders(callerName, callback, failure_callback) {
+        var request = [
+            "GetServiceProviders",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function saveServiceProvider(callerName, serviceProviderDetail,
+     callback, failure_callback) {
+        if (isNull(serviceProviderDetail))
+            return null;
+       
+        var request = [
+            "SaveServiceProvider",
+            serviceProviderDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function updateServiceProvider(callerName, serviceProviderDetail, 
+        callback, failure_callback) {
+        if (isNull(serviceProviderDetail))
+            return null;
+        
+        var request = [
+            "UpdateServiceProvider",
+            serviceProviderDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeServiceProviderStatus(callerName, serviceProviderId, isActive, 
+        callback, failure_callback) {
+        if (isNull(serviceProviderId) || isNull(isActive) )
+            return null;
+        var request = [
+            "ChangeServiceProviderStatus",
+            {
+                "service_provider_id" : serviceProviderId,
+                "is_active" : isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    // Client User
+
+    function getClientUsers(callerName, callback, failure_callback) {
+        var request = [
+            "GetClientUsers",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function saveClientUser(callerName, clientUserDetail,
+     callback, failure_callback) {
+        if (isNull(clientUserDetail))
+            return null;
+        
+        var request = [
+            "SaveClientUser",
+            clientUserDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function updateClientUser(callerName, clientUserDetail, 
+        callback, failure_callback) {
+        if (isNull(clientUserDetail))
+            return null;
+       
+        var request = [
+            "UpdateClientUser",
+            clientUserDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeClientUserStatus(callerName, userId, isActive, 
+        callback, failure_callback) {
+        if (isNull(userId) || isNull(isActive) )
+            return null;
+        var request = [
+            "ChangeClientUserStatus",
+            {
+                "user_id" : userId,
+                "is_active" : isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeAdminStatus(callerName, userId, isAdmin, 
+        callback, failure_callback) {
+        if (isNull(userId) || isNull(isAdmin) )
+            return null;
+        var request = [
+            "ChangeAdminStatus",
+            {
+                "user_id" : userId,
+                "is_admin" : isAdmin
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    // Unit Closure
+
+    function getUnitClosureList(callerName, callback, failure_callback) {
+        var request = [
+            "GetUnitClosureList",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function closeUnit(callerName, unitId, password, callback, failure_callback) {
+        var request = [
+            "CloseUnit",
+            {
+                "unit_id": unitId,
+                "password": password
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
 
     return {
         log: log,
-        toJSON: toJSON,
+        toJSON: toJSON, 
         parseJSON: parseJSON,
 
         initSession: initSession,
@@ -686,6 +970,12 @@ function initMirror() {
         updateGeography: updateGeography,
         changeGeographyStatus: changeGeographyStatus,
         getGeographyReport: getGeographyReport,
+        saveStatutory: saveStatutory,
+        updateStatutory: updateStatutory,
+        saveStatutoryMapping: saveStatutoryMapping,
+        updateStatutoryMapping: updateStatutoryMapping,
+        getStatutoryMappings: getStatutoryMappings,
+
 
         saveAdminUserGroup: saveAdminUserGroup,
         updateAdminUserGroup: updateAdminUserGroup,
@@ -707,7 +997,29 @@ function initMirror() {
         validateResetToken: validateResetToken,
         resetPassword: resetPassword,
 
-        getClients: getClients
+        getClients: getClients,
+        saveClient: saveClient,
+        changeClientStatus: changeClientStatus,
+        reactivateUnit: reactivateUnit,
+
+        saveClientUserGroup: saveClientUserGroup,
+        updateClientUserGroup: updateClientUserGroup,
+        changeClientUserGroupStatus: changeClientUserGroupStatus,
+        getClientUserGroups: getClientUserGroups,
+
+        saveServiceProvider: saveServiceProvider,
+        updateServiceProvider: updateServiceProvider,
+        changeServiceProviderStatus: changeServiceProviderStatus,
+        getServiceProviders: getServiceProviders,
+
+        getClientUsers: getClientUsers,
+        saveClientUser: saveClientUser,
+        updateClientUser: updateClientUser,
+        changeClientUserStatus: changeClientUserStatus,
+        changeAdminStatus: changeAdminStatus,
+
+        getUnitClosureList: getUnitClosureList,
+        closeUnit: closeUnit
     }
 
 }

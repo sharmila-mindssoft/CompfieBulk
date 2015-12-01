@@ -84,12 +84,11 @@ class ClientDatabaseHandler(object) :
         return self.execute(query)
 
     def bulkInsert(self, table, columns, valueList) :
-        query = "INSERT INTO "+table+" ("+columns+")" + \
-            " VALUES "
+        query = "INSERT INTO %s (%s) VALUES" % (table, columns)
 
         for index, value in enumerate(valueList):
             if index < len(valueList)-1:
-                query += str(value)+","
+                query += +"%s," % str(value)
             else:
                 query += str(value)
         return self.execute(query)
@@ -103,7 +102,6 @@ class ClientDatabaseHandler(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
-
         return self.execute(query)
 
     def onDuplicateKeyUpdate(self, table, columns, valueList, updateColumnsList):
@@ -145,6 +143,22 @@ class ClientDatabaseHandler(object) :
 
     def getData(self, table, columns, condition):
         query = "SELECT "+columns+" FROM "+table+" WHERE "+condition
+        return self.executeAndReturn(query)
+
+    def getDataFromMultipleTables(self, columns, tables, conditions):
+
+        query = "SELECT %s FROM " % columns
+
+        for index,table in enumerate(tables):
+            if index == 0:
+                query += "%s alias%d  left join " % (table, index)
+            elif index <= len(tables) -2:
+                query += " %s alias%d on (alias%d.%s = alias%d.%s) left join " % (table, 
+                    index, index-1, conditions[index-1], index, conditions[index-1])
+            else:
+                query += " %s alias%d on (alias%d.%s = alias%d.%s)" % (table, index,
+                    index-1, conditions[index-1], index, conditions[index-1])
+
         return self.executeAndReturn(query)
 
     def validateSessionToken(self, sessionToken) :

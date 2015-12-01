@@ -63,6 +63,29 @@ img, object {
 	line-height: 1.875em;
 	text-align: center;
 }
+.loading-indicator-spin {
+	text-align: center;
+	vertical-align: middle;
+	position: relative;
+	width: 100%;
+	left: 0;
+	top: 0;
+	z-index: 4;
+	display:none;
+	background: url(/files/desktop/common/images/transparent-bg-light.png) repeat;
+	height: 100%;
+}
+.loading-indicator-spin span {
+	width: 100%;
+	position: absolute;
+	top: 40%;
+	left: 0;
+	text-align: center;
+}
+.loading-indicator-spin img {
+	width: 4em;
+	opacity: 100%;
+}
 .processing-button {
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
 	filter: alpha(opacity=20);

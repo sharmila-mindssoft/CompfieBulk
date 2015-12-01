@@ -59,7 +59,7 @@ if(domainName == ''){
     function failure(data){
 
     }
-    mirror.saveDomain("SaveDomain", domainName, success, failure);
+    mirror.saveDomain(domainName, success, failure);
   }
   else{
 
@@ -75,7 +75,7 @@ if(domainName == ''){
     }
     function failure(data) {
     }
-    mirror.updateDomain("UpdateDomain", domainId, domainName, success, failure);
+    mirror.updateDomain(domainId, domainName, success, failure);
   }
 }
 }   
@@ -95,7 +95,7 @@ function changeStatus (domainId,isActive) {
   }
   function failure(data){
   }
-  mirror.changeDomainStatus("ChangeDomainStatus", domainId, isActive, success, failure);
+  mirror.changeDomainStatus(domainId, isActive, success, failure);
 }
 
 function getDomains () {
@@ -106,7 +106,7 @@ function getDomains () {
   }
   function failure(data){
   }
-  mirror.getDomainList("GetDomains", success, failure);
+  mirror.getDomainList(success, failure);
 }
 
 function filter (term, cellNr){
