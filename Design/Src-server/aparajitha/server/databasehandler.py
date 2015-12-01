@@ -117,7 +117,6 @@ class DatabaseHandler(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
-
         return self.execute(query)
 
     def onDuplicateKeyUpdate(self, table, columns, valueList, updateColumnsList):
@@ -176,12 +175,39 @@ class DatabaseHandler(object) :
         query = "SELECT "+columns+" FROM "+table+" WHERE "+condition 
         return self.executeAndReturn(query)
 
+    def getDataFromMultipleTables(self, columns, tables, conditions):
+
+        query = "SELECT %s FROM " % columns
+
+        for index,table in enumerate(tables):
+            if index == 0:
+                query += "%s alias%d  left join " % (table, index)
+            elif index <= len(tables) -2:
+                query += " %s alias%d on (alias%d.%s = alias%d.%s) left join " % (table, 
+                    index, index-1, conditions[index-1], index, conditions[index-1])
+            else:
+                query += " %s alias%d on (alias%d.%s = alias%d.%s)" % (table, index,
+                    index-1, conditions[index-1], index, conditions[index-1])
+
+        return self.executeAndReturn(query)
+
     def validateSessionToken(self, sessionToken) :
         query = "SELECT user_id FROM tbl_user_sessions \
         WHERE session_id = '%s'" % sessionToken
         rows = self.executeAndReturn(query)
         row = rows[0]
         return row[0]
+
+    def verifyPassword(self, password, userId, clientId):
+        columns = "count(*)"
+        condition = "password='%s' and user_id='%d'" % (password, userId)
+        if clientId != None:
+            condition += " and client_id='%d'" % clientId
+        rows = self.getData("tbl_users", columns, condition)
+        if(int(rows[0][0]) <= 0):
+            return False
+        else:
+            return True
 
     def truncate(self, table):
         query = "TRUNCATE TABLE  %s;" % table
