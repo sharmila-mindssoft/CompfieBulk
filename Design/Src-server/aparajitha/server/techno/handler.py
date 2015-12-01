@@ -27,30 +27,25 @@ class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
             if userId is None :
                 response = PossibleError("InvalidSessionToken")
             else :
+                clientGroupController = ClientGroupController()
+                clientController = ClientController()
                 if request[0] == "SaveClientGroup" :
-                    saveClientGroup = SaveClientGroup(request[1], userId)
-                    response = saveClientGroup.processRequest()
+                    response = clientGroupController.saveClientGroup(request[1], userId)
                 elif request[0] == "GetClientGroups" :
-                    getClientGroup = GetClientGroups()
-                    response = getClientGroup.getList()
+                    response = clientGroupController.getClientGroups()
                 elif request[0] == "ChangeClientGroupStatus" :
-                    changeClientGroupStatus = ChangeClientGroupStatus(request[1], userId)
-                    response = changeClientGroupStatus.updateStatus()
+                    response = clientGroupController.changeClientGroupStatus(
+                        request[1], userId)
                 elif request[0] == "UpdateClientGroup" :
-                    updateClientGroup = UpdateClientGroup(request[1], userId)
-                    response = updateClientGroup.processRequest()
+                    response = clientGroupController.updateClientGroup(request[1], userId)
                 elif request[0] == "GetClients" :
-                    getClients = GetClients(userId)
-                    response = getClients.getList()
+                    response = clientController.getClients(userId)
                 elif request[0] == "SaveClient" :
-                    saveClient = SaveClient(request[1], userId)
-                    response = saveClient.processRequest()
+                    response = clientController.saveClient(request[1], userId)
                 elif request[0] == "ChangeClientStatus" :
-                    changeClientStatus = ChangeClientStatus(request[1], userId)
-                    response = changeClientStatus.processRequest()
+                    response = clientController.changeClientStatus(request[1], userId)
                 elif request[0] == "ReactivateUnit" :
-                    reactivateUnit = ReactivateUnit(request[1], userId)
-                    response = reactivateUnit.processRequest()
+                    response = clientController.reactivateUnit(request[1], userId)
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 
