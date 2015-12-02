@@ -151,6 +151,10 @@ function initMirror() {
         clearSession();
     }
 
+    function testClient(callback) {
+        apiRequest("api/test-client", ["Test", {}], callback);
+    }
+
 
     //Domain Master
 
@@ -783,6 +787,7 @@ function initMirror() {
 
         login: login,
         logout: logout,
+        testClient: testClient,
 
         saveDomain: saveDomain,
         updateDomain: updateDomain,

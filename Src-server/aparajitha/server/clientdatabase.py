@@ -7,3 +7,4 @@ class ClientDatabase(object) :
 	def test(self) :
 		query = "SHOW TABLES;"
 		print self._db.execute_and_return(query)
+		return True
