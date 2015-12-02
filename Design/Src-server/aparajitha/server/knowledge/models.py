@@ -962,7 +962,7 @@ class GeographyAPI(object) :
         levelId = JSONHelper.getInt(requestData, "geography_level_id")
         geographyName = JSONHelper.getString(requestData, "geography_name")
         parentIdsList = JSONHelper.getList(requestData, "parent_ids")
-        parentIds = ','.join(str(x) for x in parentIdsList)
+        parentIds = ','.join(str(x) for x in parentIdsList) + ","
         geographyNames = [row[1].lower() for row in DH.getDuplicateGeographies(parentIds, None)]
         if geographyNames.count(geographyName.lower()) > 0:
             self.responseData = "GeographyNameAlreadyExists"
@@ -985,12 +985,12 @@ class GeographyAPI(object) :
         levelId = JSONHelper.getInt(requestData, "geography_level_id")
         geographyName = JSONHelper.getString(requestData, "geography_name")
         parentIdsList = JSONHelper.getList(requestData, "parent_ids")
-        parentIds = ','.join(str(x) for x in parentIdsList)
+        parentIds = ','.join(str(x) for x in parentIdsList) + ","
         geographyNames = [row[1].lower() for row in DH.getDuplicateGeographies(parentIds, geographyId)]
         if geographyNames.count(geographyName.lower()) > 0:
             self.responseData = "GeographyNameAlreadyExists"
         else :
-            if (DH.updateGeographies(geographyId, geographyName, levelId, parentIds, self.userId)) :
+            if (DH.updateGeographyMaster(geographyId, geographyName, parentIds, self.userId)) :
                 self.responseData = "success"
             else :
                 self.responseData = "saveFailed: %s" % requestData
@@ -1115,7 +1115,7 @@ class StatutoryApi (object) :
         statutoryName = JSONHelper.getString(requestData, "statutory_name")
         levelId = JSONHelper.getInt(requestData, "statutory_level_id")
         parentIdsList = JSONHelper.getList(requestData, "parent_ids")
-        parentIds = ','.join(str(x) for x in parentIdsList)
+        parentIds = ','.join(str(x) for x in parentIdsList) + ","
         statutoryNames = [row[1].lower() for row in DH.getDuplicateStatutories(parentIds, None)]
         if statutoryNames.count(statutoryName.lower()) > 0:
             self.responseData = "StatutoryNameAlreadyExists"
@@ -1138,7 +1138,7 @@ class StatutoryApi (object) :
         statutoryName = JSONHelper.getString(requestData, "statutory_name")
         levelId = JSONHelper.getInt(requestData, "statutory_level_id")
         parentIdsList = JSONHelper.getList(requestData, "parent_ids")
-        parentIds = ','.join(str(x) for x in parentIdsList)
+        parentIds = ','.join(str(x) for x in parentIdsList) + ","
         statutoryNames = [row[1].lower() for row in DH.getDuplicateStatutories(parentIds, statutoryId)]
         if statutoryNames.count(statutoryName.lower()) > 0:
             self.responseData = "StatutoryNameAlreadyExists"

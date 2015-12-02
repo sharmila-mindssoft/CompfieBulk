@@ -485,7 +485,7 @@ class DatabaseHandler(object) :
             _tempDict[int(row[0])] = row[1]
 
         for row in rows :
-            parentIds = [int(x) for x in row[3].split(',')]
+            parentIds = [int(x) for x in row[3][:-1].split(',')]
             names = []
             names.append(row[6])
             for id in parentIds :
@@ -518,18 +518,36 @@ class DatabaseHandler(object) :
                 geographyId, name, levelId, parentIds, userId, createdOn
             )
         self.dataInsertUpdate(query)
+        self.getAllGeographies()
         action = "Add Geography - %s" % name
         self.saveActivity(userId, 7, action)
         return True
 
-    def updateGeographies(self, geographyId, name, levelId, parentIds, updatedBy) :
-        query = "UPDATE tbl_geographies set geography_name='%s', level_id=%s, \
-            parent_ids='%s', updated_by=%s WHERE geography_id=%s " % (
-                name, levelId, parentIds, updatedBy, geographyId
+    def updateGeographyMaster(self, geographyId, name, parentIds, updatedBy) :
+        oldData = self.allGeographies.get(geographyId)
+        oldParentIds = oldData[2]
+        query = "UPDATE tbl_geographies set geography_name='%s', parent_ids='%s',\
+            updated_by=%s WHERE geography_id=%s " % (
+                name, parentIds, updatedBy, geographyId
             )
         self.dataInsertUpdate(query)
         action = "Edit Geography - %s" % name
         self.saveActivity(updatedBy, 7, action)
+        if oldParentIds != parentIds :
+            oldPId = str(oldParentIds) + str(geographyId)
+            newPId = str(parentIds) + str(geographyId)
+            qry = "SELECT geography_id, geography_name, parent_ids from tbl_geographies \
+                WHERE parent_ids like '%s'" % str("%" + str(oldPId) + ",%")
+            rows = self.dataSelect(qry)
+            for row in rows :
+                newParentId = str(row[2]).replace(oldPId, newPId)
+                q = "UPDATE tbl_geographies set parent_ids='%s', updated_by=%s where geography_id=%s" % (
+                    newParentId, updatedBy, row[0]
+                )
+                self.dataInsertUpdate(q)
+            action = "Edit Geography Mappings Parent"
+            self.saveActivity(updatedBy, 7, action)
+        self.getAllGeographies()
         return True
 
     def changeGeographyStatus(self,geographyId, isActive, updatedBy) :
@@ -630,15 +648,32 @@ class DatabaseHandler(object) :
             return True
 
     def updateStatutories(self, statutoryId, name, parentIds, updatedBy) :
-        query = "UPDATE tbl_statutories set statutory_name='%s', parent_ids=%s, \
-             updated_by=%s WHERE statutory_id=%s " % (
+        oldData = self.allStatutories.get(statutoryId)
+        oldParentIds = oldData[2]
+        query = "UPDATE tbl_statutories set statutory_name='%s', parent_ids='%s',\
+            updated_by=%s WHERE statutory_id=%s " % (
                 name, parentIds, updatedBy, statutoryId
             )
-        if (self.dataInsertUpdate(query)) :
-            self.getAllStatutories()
-            action = "Edit Statutory - %s" % name
+        self.dataInsertUpdate(query)
+        action = "Edit Statutory - %s" % name
+        self.saveActivity(updatedBy, 17, action)
+        if oldParentIds != parentIds :
+            oldPId = str(oldParentIds) + str(statutoryId)
+            newPId = str(parentIds) + str(statutoryId)
+            qry = "SELECT statutory_id, statutory_name, parent_ids from tbl_statutories \
+                WHERE parent_ids like '%s'" % str("%" + str(oldPId) + ",%")
+            rows = self.dataSelect(qry)
+            for row in rows :
+                newParentId = str(row[2]).replace(oldPId, newPId)
+                q = "UPDATE tbl_statutories set parent_ids='%s', updated_by=%s where statutory_id=%s" % (
+                    newParentId, updatedBy, row[0]
+                )
+                self.dataInsertUpdate(q)
+            action = "Edit Statutory Mappings Parent"
             self.saveActivity(updatedBy, 17, action)
-            return True
+        self.getAllStatutories()
+        return True
+
 
     def updateStatutoryMappingId(self, statutoryIds, mappingId, updatedBy) :
         # remove mapping id
@@ -651,11 +686,10 @@ class DatabaseHandler(object) :
             oldStatuIds[int(row[0])] = row[1][:-1]
         difference = list(set(oldStatuIds.keys()) - set(statutoryIds))
 
-
         for x in difference :
             oldMapId =  [int(j) for j in oldStatuIds.get(x).split(',')]
             oldMapId = oldMapId.remove(mappingId)
-            
+
             newMapId = ""
             if oldMapId is not None : 
                 newMapId = ','.join(str(k) for k in oldMapId) + ","
