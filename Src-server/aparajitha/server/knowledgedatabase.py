@@ -31,7 +31,7 @@ class KnowledgeDatabase(object) :
 	def new_uuid(self) :
 		s = str(uuid.uuid4())
 		return s.replace("-", "")
-		
+
 	def test(self) :
 		query = "SHOW TABLES;"
 		return self._db.execute_and_return(query)
