@@ -4,65 +4,48 @@
   <div class="content-area">
       <h1>Clients Unit</h1>
       <div class="filters-and-search">
-      <div class="btn-add" onclick="location.href='/group_company/create'" formtarget="_self">Add</div>
+      <div class="btn-add" id="btn-clientunit-add" formtarget="_self">Add</div>
     </div>
       <div class="clearfix"></div>
       <div class="grid-table">
       <table>
-          <tr align="left">
+        <tr align="left">
           <th align="center">#</th>
           <th>Group</th>
           <th>Business Group</th>
           <th>Legal Entity</th>
           <th>Division</th>
           <th align="center">Edit</th>
-          <th align="center" style="padding-right:5px;">Status</th>
-           
-        </tr>
-         <tr>
-          <td align="center"></td>
-          <td><input type="text" class="filter-text-box"></td>
-            <td><input type="text" class="filter-text-box"></td>
-          <td><input type="text" class="filter-text-box"></td>
-          <td><input type="text" class="filter-text-box"></td>
-          <td align="center"></td>
-          <td align="center"></td>
-          
-        </tr>
-            <tr>
-          <td align="center">1</td>
-          <td>NJR Group</td>
-          <td>NJR Business Group</td>
-          <td>NJR Entity</td>
-          <td>NJR Division</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" class="inactive"  /></td>
-          
+          <th align="center" style="padding-right:5px;">Status</th>           
         </tr>
         <tr>
-          <td align="center">2</td>
-          <td>PRG Group</td>
-           <td>PRG Business Group</td>
-          <td>PRG Entity</td>
-          <td>PRG Division</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" id="inactiveid" class="inactive"  title="Click here to activate"/></td>
-          
+          <td align="center"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box"></td>
+          <td align="center"></td>
+          <td align="center"></td>  
         </tr>
-          <tr>
-          <td align="center">3</td>
-          <td>TKU Group</td>
-           <td>TKU Business Group</td>
-          <td>TKU Entity</td>
-          <td>TKU Division</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-        </tr>
+        <tbody class="tbody-clientunit-list">
+        </tbody>
       </table>
     </div>    
   </div>
 </div>
-
+<div id="templates">
+<table class="table-clientunit-list">
+  <tr class="table-row">
+    <td align="center" class="sno"></td>
+    <td class="group-name"></td>
+    <td class="business-group-name"></td>
+    <td class="legal-entity-name"></td>
+    <td class="division-name"></td>
+    <td align="center" class="edit"></td>
+    <td align="center" class="is-active"></td>
+  </tr>  
+</table>
+</div>
 <!-- Add Client Unit -->
 
 <div class="content-container" id="clientunit-add">
@@ -75,19 +58,13 @@
             <div class="single-column-field-label">Group:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
               <Select id="group-select" class="input-box">
-                <option>RG Groups</option>
-                <option>SLK Groups</option>
-                <option>PGJ Groups</option>
               </Select>
             </div>
           </div>
-       <div class="input-row">
+          <div class="input-row">
             <div class="single-column-field-label">Business Group</div>
             <div class="single-column-field-input">
               <Select id="businessgroup-select" class="input-box">
-                <option>RG Business Groups</option>
-                <option>SLK Business Groups</option>
-                <option>PGJ Business Groups</option>
               </Select>
               <input id="businessgroup-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Business Group Name">
               <span style="font-size:10px"><a href="#" id="businessgroup-new">New</a></span> </div>
@@ -100,9 +77,6 @@
             <div class="single-column-field-label">Legal Entity:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
               <Select id="entity-select" class="input-box">
-                <option>RG Entity</option>
-                <option>SLK Entity</option>
-                <option>PGJ Entity</option>
               </Select>
               <input id="entity-text" type="text" class="input-box" style="width:200px;display:none" placeholder="Legal Entity Name">
               <span style="font-size:10px"><a href="#" id="entity-new">New</a></span> </div>
@@ -111,9 +85,6 @@
             <div class="single-column-field-label">Division</div>
             <div class="single-column-field-input">
               <Select id="division-select" class="input-box">
-                <option>RG Division</option>
-                <option>SLK Division</option>
-                <option>PGJ Division</option>
               </Select>
               <input id="division-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Division Name">
               <span style="font-size:10px"><a href="#" id="division-new">New</a></span> </div>
@@ -124,7 +95,8 @@
         <div class="clearfix"></div>     
 
         <div class="add-container" style="padding-left:0px; padding-right:0px;">
-        <span class="error-message" style="padding-right:5px;padding-bottom:5px;"><a href="#"><img src="/images/icon-plus.png" formtarget="_self"/></a> </span>
+        <span class="error-message" style="padding-right:5px;padding-bottom:5px;"></span>
+        <a href="#"><img src="/images/icon-plus.png" formtarget="_self"/></a> 
          <div class="grid-table">
             <table class="btable">
               <tr style="background-color:#CCC;border-radius:5px;">
@@ -294,14 +266,14 @@
           </div>
         </div>
         <div class="submit-button-container">
-          <input type="reset" name="cancel" value="Cancel" class="btn-cancel" onclick="location.href='/group_company/list'" >
+          <input type="reset" name="cancel" value="Cancel" class="btn-cancel" id="btn-clientunit-cancel" >
           &nbsp;&nbsp;
-          <input type="submit" name="submit" value="Submit" class="btn-submit" >
+          <input type="submit" name="submit" value="Submit" class="btn-submit" id="btn-clientunit-submit" >
         </div>
       </div>
     </div>
   </div>
 </div>
 </div>
-<script type="text/javascript" src="/files/desktop/CountryMaster/CountryMaster.js"></script>
+<script type="text/javascript" src="/files/desktop/GroupCompanyMaster/GroupCompanyMaster.js"></script>
 {% endblock %} 
