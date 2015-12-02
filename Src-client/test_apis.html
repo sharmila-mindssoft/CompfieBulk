@@ -17,6 +17,14 @@
 			function logout () {
 				mirror.logout();
 			}
+			function test () {
+				mirror.testClient(
+					function (status, response) {
+						console.log(status);
+						console.log(response);
+					}
+				);
+			}
 		</script>
 	</head>
 	<body>
@@ -24,6 +32,7 @@
 		<div>
 			<button onclick="login()">Login</button>
 			<button onclick="logout()">Logout</button>
+			<button onclick="test()">Test Client</button>
 		</div>
 		<br>
 		<br>

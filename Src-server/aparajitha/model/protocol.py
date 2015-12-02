@@ -81,6 +81,13 @@ define_request(
 	["InvalidSession"]
 )
 
+define_request(
+	"Test",
+	{},
+	{},
+	["InvalidSession"]
+)
+
 
 #
 # Request, RequestFrame
