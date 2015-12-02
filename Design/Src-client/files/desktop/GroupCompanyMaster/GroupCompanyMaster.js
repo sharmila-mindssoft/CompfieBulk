@@ -2,18 +2,18 @@ $(function() {
 	$("#clientunit-add").hide();
 	initialize();
 });
-$(".btn-clientunit-add").click(function(){
+$("#btn-clientunit-add").click(function(){
 	$("#clientunit-add").show();
 	$("#clientunit-view").hide();
- 	//$("#clientunit-id").val('');
   	$(".error-message").html('');
 });
-$(".btn-clientunit-cancel").click(function(){
+$("#btn-clientunit-cancel").click(function(){
 	$("#clientunit-add").hide();
 	$("#clientunit-view").show();
 });
 function initialize(){
 	function success(status, data){
+		console.log(data);
 		loadClientsList(data);
 	}
 	function failure(status, data){
@@ -25,7 +25,7 @@ function loadClientsList(clientunitsList){
  	$(".tbody-clientunit-list").find("tr").remove();
   	var sno=0;
 	var imageName, title;	
-	for(var i in clientunitList){
+	for(var i in clientunitsList){
 		var clientunits=clientunitsList[i];
 		for(var j in clientunits){
 			var clientunitId=clientunits[j]["clientunit_id"];
