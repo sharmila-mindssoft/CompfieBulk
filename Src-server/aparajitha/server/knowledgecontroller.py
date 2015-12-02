@@ -55,9 +55,9 @@ class APIHandler(object):
 		if user_id is None :
 			return self._failure_response("LoginResponse", "LoginFailed")
 		user = db.match_password(user_id, password)
-		user = user[0]
 		if user is None :
 			return self._failure_response("LoginResponse", "LoginFailed")
+		user = user[0]
 		user_details = db.get_user_details(user_id, user["client_id"])
 		if user_details is None :
 			return self._failure_response("LoginResponse", "LoginFailed")
