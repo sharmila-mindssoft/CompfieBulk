@@ -142,7 +142,7 @@ class ClientDatabaseHandler(object) :
             return False
 
     def getData(self, table, columns, condition):
-        query = "SELECT "+columns+" FROM "+table+" WHERE "+condition
+        query = "SELECT %s FROM %s WHERE %s" %(columns, table, condition)
         return self.executeAndReturn(query)
 
     def getDataFromMultipleTables(self, columns, tables, conditions, joinType):
