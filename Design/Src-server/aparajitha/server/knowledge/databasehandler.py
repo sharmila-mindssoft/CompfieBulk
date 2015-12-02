@@ -17,6 +17,8 @@ class DatabaseHandler(object) :
         self.mysqlUser = "root"
         self.mysqlPassword = "123456"
         self.mysqlDatabase = "mirror_knowledge"
+        self.allStatutories = {}
+        self.allGeographies = {}
 
     def dbConnect(self) :
         return mysql.connect(
@@ -245,9 +247,12 @@ class DatabaseHandler(object) :
         if type(industryId) == IntType :
             qry = "SELECT industry_name FROM tbl_industries WHERE industry_id=%s" % industryId
         else :
-            # ids = (int(x) for x in industryId.split(','))
+            if type(industryId) == ListType :
+                ids = industryId
+            else :
+                ids = [int(x) for x in industryId[:-1].split(',')]
             qry = " SELECT (GROUP_CONCAT(industry_name SEPARATOR ', ')) as industry_name \
-                FROM tbl_industries WHERE industry_id in %s" % str(tuple(industryId))
+                FROM tbl_industries WHERE industry_id in %s" % str(tuple(ids))
 
         rows = self.dataSelect(qry)
         industryName = str(rows[0][0])
@@ -400,6 +405,22 @@ class DatabaseHandler(object) :
             return self.dataInsertUpdate(query)
 
     ### Geographies ###
+    def getAllGeographies(self):
+        rows = self.getGeographies()
+        _tempDict = {}
+        for row in rows :
+            _tempDict[int(row[0])] = row[1]
+
+        for row in rows :
+            parentIds = [int(x) for x in row[3].split(',')]
+            names = []
+            names.append(row[6])
+            for id in parentIds :
+                if id > 0 :
+                    names.append(_tempDict.get(id))
+                names.append(row[1])
+            mappings = '>>'.join(str(x) for x in names)
+            self.allGeographies[int(row[0])] = [row[1], mappings, row[3]]
 
     def getGeographies(self) :
         query = "SELECT t1.geography_id, t1.geography_name, t1.level_id, \
@@ -439,6 +460,22 @@ class DatabaseHandler(object) :
         return self.dataInsertUpdate(query)
 
     ### Statutory ###
+    def getAllStatutories(self):
+        rows = self.getStatutories()
+        _tempDict = {}
+        for row in rows :
+            _tempDict[int(row[0])] = row[1]
+
+        for row in rows :
+            parentIds = [int(x) for x in row[3].split(',')]
+            names = []
+            for id in parentIds :
+                if id > 0 :
+                    names.append(_tempDict.get(id))
+                names.append(row[1])
+            mappings = '>>'.join(str(x) for x in names)
+            self.allStatutories[int(row[0])] = [row[1], mappings, row[3]]
+                
     def getStatutories(self) :
         query = "SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, \
             t2.country_id, t3.country_name, t2.domain_id, t4.domain_name \
@@ -499,14 +536,18 @@ class DatabaseHandler(object) :
             parent_ids, created_by, created_on) VALUES (%s, '%s', %s, '%s', %s, '%s')" % (
                 statutoryId, name, levelId, parentIds, userId, createdOn
             )
-        return self.dataInsertUpdate(query)
+        if (self.dataInsertUpdate(query)) :
+            self.getAllStatutories()
+            return True
 
     def updateStatutories(self, statutoryId, name, parentIds, updatedBy) :
         query = "UPDATE tbl_statutories set statutory_name='%s', parent_ids=%s, \
              updated_by=%s WHERE statutory_id=%s " % (
                 name, parentIds, updatedBy, statutoryId
             )
-        return self.dataInsertUpdate(query)
+        if (self.dataInsertUpdate(query)) :
+            self.getAllStatutories()
+            return True
 
     def updateStatutoryMappingId(self, statutoryIds, mappingId, updatedBy) :
         # remove mapping id
@@ -533,8 +574,6 @@ class DatabaseHandler(object) :
                 print "Mapping Id %s removed from statutory table, Id=%s" % (mappingId, x)
 
 
-
-
         # statutoryIds = statutoryIds[:-1]
         # ids = [int(x) for x in statutoryIds.split(',')]
         ids = tuple(statutoryIds)
@@ -544,18 +583,16 @@ class DatabaseHandler(object) :
         for row in rows:
             statutoryId = int(row[0])
             _statutoryMappingId = str(mappingId) + ","
-            if (row[1] is not None) :
+            if (len(row[1]) > 0) :
                 mappingIds = [int(x) for x in row[1][:-1].split(',')]
                 if (mappingId not in mappingIds) :
                     mappingIds.append(mappingId)
-                    _statutoryMappingId = ','.join(str(x) for x in mappingIds[:-1]) + ","
-
+                _statutoryMappingId = ','.join(str(x) for x in mappingIds) + ","
             query = "UPDATE tbl_statutories set statutory_mapping_ids = '%s', updated_by = %s \
                 WHERE statutory_id = %s" % (
                 _statutoryMappingId, updatedBy, statutoryId
             )
             isUpdated = self.dataInsertUpdate(query)
-
         return isUpdated
 
 
@@ -683,6 +720,12 @@ class DatabaseHandler(object) :
 
         return complianceIds
 
+    def changeComplianceStatus(self, mappingId, isActive, updatedBy) :
+        query = "UPDATE tbl_compliances set is_active=%s, \
+            updated_by=%s WHERE statutory_mapping_id=%s" % (
+                isActive, updatedBy, mappingId
+            )
+        return self.dataInsertUpdate(query)
 
     ### Stautory Mapping ###
     def getStautoryMappings(self) :
@@ -694,6 +737,19 @@ class DatabaseHandler(object) :
             INNER JOIN tbl_domains t3 on t1.domain_id = t3.domain_id \
             INNER JOIN tbl_statutory_natures t4 on t1.statutory_nature_id = t4.statutory_nature_id "
         return self.dataSelect(query)
+
+    def getStatutoryMappingsById (self, mappingId) :
+        query = "SELECT t1.country_id, t2.country_name, t1.domain_id,  \
+            t3.domain_name, t1.industry_ids, t1.statutory_nature_id, t4.statutory_nature_name, \
+            t1.statutory_ids, t1.compliance_ids, t1.geography_ids, t1.approval_status  \
+            FROM tbl_statutory_mappings t1 \
+            INNER JOIN tbl_countries t2 on t1.country_id = t2.country_id \
+            INNER JOIN tbl_domains t3 on t1.domain_id = t3.domain_id \
+            INNER JOIN tbl_statutory_natures t4 on t1.statutory_nature_id = t4.statutory_nature_id \
+            WHERE t1.statutory_mapping_id=%s" % mappingId
+        rows = self.dataSelect(query)
+        return rows[0]
+
 
     def saveStatutoryMapping(self, data, createdBy) :
         countryId =data.get("country_id")
@@ -736,6 +792,7 @@ class DatabaseHandler(object) :
         compliances = data.get("compliances")
         geographyIds = ','.join(str(x) for x in data.get("geography_ids")) + ","
 
+        self.saveStatutoryBackup(statutoryMappingId, updatedBy)
         query = "UPDATE tbl_statutory_mappings set country_id=%s, domain_id=%s, industry_ids='%s', \
             statutory_nature_id=%s, statutory_ids='%s', geography_ids='%s', updated_by=%s \
             WHERE statutory_mapping_id=%s" % (
@@ -752,9 +809,90 @@ class DatabaseHandler(object) :
         else :
             return False
 
+    def changeStatutoryMappingStatus(self, data, updatedBy):
+        statutoryMappingId = data.get("statutory_mapping_id")
+        isActive = data.get("is_active")
+
+        query = "UPDATE tbl_statutory_mappings set is_active=%s, updated_by=%s \
+            WHERE statutory_mapping_id=%s" % (
+            isActive, updatedBy, statutoryMappingId
+        )
+        if (self.dataInsertUpdate(query)) :
+            self.changeComplianceStatus(statutoryMappingId, isActive, updatedBy)
+
+
+    def changeApprovalStatus(self, data, updatedBy) :
+        statutoryMappingId = data.get("statutory_mapping_id")
+        approvalStatus = data.get("approval_status")
+        rejectedReason = data.get("rejected_ reason")
+        notificationText = data.get("notification_text")
+
+        if approvalStatus == "Reject" :
+            query = "UPDATE tbl_statutory_mappings set approval_status='%s', rejected_reason='%s', \
+                updated_by=%s WHERE statutory_mapping_id = %s" % (
+                    approvalStatus, rejectedReason, updatedBy, statutoryMappingId
+                )
+        elif approvalStatus == "Approve" :
+            query = "UPDATE tbl_statutory_mappings set approval_status='%s', \
+                updated_by=%s WHERE statutory_mapping_id = %s" % (
+                    approvalStatus, rejectedReason, updatedBy, statutoryMappingId
+                )
+        else :
+            query = "UPDATE tbl_statutory_mappings set approval_status='%s', \
+                updated_by=%s WHERE statutory_mapping_id = %s" % (
+                    approvalStatus, rejectedReason, updatedBy, statutoryMappingId
+                )
+            # if (self.dataInsertUpdate(query)) :
+
+        return self.dataInsertUpdate(query)
+
+    def saveStatutoryBackup(self, statutoryMappingId, createdBy):
+        oldRecord = self.getStatutoryMappingsById(statutoryMappingId)
+        print oldRecord
+        backupId = self.getNewId("statutory_backup_id", "tbl_statutories_backup")
+        createdOn = self.getDateTime()
+        industryName = self.getIndustryByIndustryId(oldRecord[4])
+        print industryName
+        print self.allGeographies
+        print self.allStatutories
+
+        statutoryProvision = []
+        print oldRecord[7], oldRecord[8]
+        for sid in oldRecord[7][:-1].split(',') :
+            data = self.allStatutories.get(sid)
+            statutoryProvision.append(data[1])
+        mappings = ','.join(str(x) for x in statutoryProvision)
+        geoMap = []
+        for gid in oldRecord[8][:-1].split(',') :
+            data = self.allGeographies.get(gid)
+            geoMap.append(data[1])
+        geoMappings = ','.join(str(x) for x in geoMap)
+        print mappings, geoMappings
+        query = "INSERT INTO tbl_statutories_backup(statutory_backup_id, country_name, domain_name, industry_name, \
+            statutory_nature, statutory_provision, applicable_location, updated_by, updated_on) \
+            VALUES(%s, '%s', '%s', '%s', '%s', '%s', '%s', %s, '%s') " % (
+                backupId, oldRecord[1], oldRecord[3], industryName, oldRecord[6], mappings, geoMappings,
+                createdBy, createdOn
+            )
+        print query
+        if (self.dataInsertUpdate(query)) :
+            qry = " INSERT INTO tbl_compliances_backup(statutory_backup_id, statutory_provision, \
+                compliance_task, compliance_description, document_name, format_file, \
+                penal_consequences, compliance_frequency, statutory_dates, repeats_every, \
+                repeats_type, duration, duration_type)  \
+                SELECT %s,t1.statutory_provision, t1.compliance_task, t1.compliance_description, \
+                t1.document_name, t1.format_file, t1.penal_consequences, t1.compliance_frequency, \
+                t1.statutory_dates, t1.repeats_every, t1.repeats_type, t1.duration, t1.duration_type \
+                FROM tbl_compliances t1 WHERE statutory_mapping_id=%s" % (backupId, statutoryMappingId)
+            print qry
+            self.dataInsertUpdate(qry)
+
+
     @staticmethod     
     def instance() :         
         global _databaseHandlerInstance
         if _databaseHandlerInstance is None :
             _databaseHandlerInstance = DatabaseHandler()
+            _databaseHandlerInstance.getAllStatutories()
+            _databaseHandlerInstance.getAllGeographies()
         return _databaseHandlerInstance
