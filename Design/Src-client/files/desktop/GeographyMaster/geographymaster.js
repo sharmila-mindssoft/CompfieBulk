@@ -118,24 +118,24 @@ function loadauto_text (textval) {
     }
 }
 //set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
+function activate_text (element,saverecord,checkname) {
   $("#countryval").val(checkname);
-  $("#country").val(checkval);
+  $("#country").val(saverecord);
   
-  loadGeographyFirstLevels(checkval);
+  loadGeographyFirstLevels(saverecord);
 }
 //Autocomplete Script ends
 
-function loadGeographyFirstLevels(checkval){
+function loadGeographyFirstLevels(saverecord){
   $(".tbody-geography-level").find("div").remove();
-  var geographyLevelList = geographyLevelsList[checkval];
+  var geographyLevelList = geographyLevelsList[saverecord];
   var levelposition;
     for(var j in geographyLevelList){
       levelposition = geographyLevelList[j]["level_position"];
       var tableRow=$('#geography-level-templates');
       var clone=tableRow.clone();
       $('.title', clone).text(geographyLevelList[j]["level_name"]);
-      $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" class="input-box addleft" placeholder=""  style="width:80%;" id="datavalue'+levelposition+'" onkeypress="checkval('+levelposition+',event)"/><span> <a href="#" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="checkval('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+      $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" class="input-box addleft" placeholder=""  style="width:80%;" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
       $('.tbody-geography-level').append(clone);
     }    
     var setlevelstage= 1;
@@ -148,11 +148,11 @@ function loadGeographyFirstLevels(checkval){
     var clsval='.list'+setlevelstage;
     var clsval1='list'+setlevelstage;
 
-    var geographyList = geographiesList[checkval];
+    var geographyList = geographiesList[saverecord];
     for(var i in geographyList){
       var setgeographyid = geographyList[i]["geography_id"];
       if((geographyList[i]["level_id"] == firstlevelid) && (geographyList[i]["is_active"] == 1)){
-      str += '<a href="#"> <li id="'+setgeographyid+'" class="'+clsval1+'" onclick="activate(this,'+setgeographyid+',\''+clsval+'\','+checkval+','+setlevelstage+')" >'+geographyList[i]["geography_name"]+'</li> </a>';
+      str += '<a href="#"> <li id="'+setgeographyid+'" class="'+clsval1+'" onclick="activate(this,'+setgeographyid+',\''+clsval+'\','+saverecord+','+setlevelstage+')" >'+geographyList[i]["geography_name"]+'</li> </a>';
     }
     }
     $('#ulist'+setlevelstage).append(str); 
@@ -206,7 +206,7 @@ function load(id,level,country){
   }
   } 
   //validate and insert records in geograpahymapping table
-  function checkval(j,e){
+  function saverecord(j,e){
       var data = e.keyCode;
       if(data==13 || data ==undefined){
       $("#error").text("");
@@ -272,9 +272,9 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
       var clone=tableRow.clone();
       $('.title', clone).text(geographyLevelList[j]["level_name"]);
       if(levelposition == lposition){
-        $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="editcheckval('+levelposition+',event)"/><span> <a href="#" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="editcheckval('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/> <input type="hidden" id="visible'+levelposition+'" value=""/> <input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+        $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="updaterecord('+levelposition+',event)"/><span> <a href="#" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="updaterecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/> <input type="hidden" id="visible'+levelposition+'" value=""/> <input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
       }else{
-        $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" readonly="readonly" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="checkval('+levelposition+',event)"/><span> <img src="/images/icon-plus.png" formtarget="_self"/></span></div><input type="hidden" name="glmid'+levelposition+'" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/> <input type="hidden" name="visible'+levelposition+'" id="visible'+levelposition+'" value=""/> <input type="hidden" name="level'+levelposition+'" id="level'+levelposition+'" value="'+levelposition+'" />');
+        $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" readonly="readonly" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <img src="/images/icon-plus.png" formtarget="_self"/></span></div><input type="hidden" name="glmid'+levelposition+'" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/> <input type="hidden" name="visible'+levelposition+'" id="visible'+levelposition+'" value=""/> <input type="hidden" name="level'+levelposition+'" id="level'+levelposition+'" value="'+levelposition+'" />');
       }
       $('.tbody-geography-level').append(clone);
     }
@@ -323,7 +323,7 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
 
   }
 
-  function editcheckval(j,e){
+  function updaterecord(j,e){
       var data = e.keyCode;
       if(data==13 || data ==undefined){
       $("#error").text("");
