@@ -664,4 +664,30 @@ class ClientProfile(object):
             responseData["profiles"] = profiles
             return commonResponseStructure("GetClientProfileSuccess", responseData)
 
+    def getClientDetailsReportFilters(self, sessionUser):
+        clientIds = User.getClientIds(sessionUser)
+
+        if clientIds ==  None:
+            print "Error : User is not responsible for any client"
+        else:
+            countryList = CountryList.getCountryList()
+            domainList = DomainList.getDomainList()
+            groupCompanyList = GroupCompany.getClientList(clientIds)
+            businessGroupList = BusinessGroup.getList(clientIds)
+            legalEntityList = LegalEntity.getList(clientIds)
+            divisionList = Division.getList(clientIds)
+            unitList = Unit.getList(clientIds)
+
+            responseData = {}
+            responseData["countries"] = countryList
+            responseData["domains"] = domainList
+            responseData["group_companies"] = groupCompanyList
+            responseData["business_groups"] = businessGroupList
+            responseData["legal_entities"] = legalEntityList
+            responseData["divisions"] = divisionList
+            responseData["units"] = unitList
+
+            return commonResponseStructure(
+                "GetClientDetailsReportFiltersSuccess", responseData)
+
         

@@ -34,18 +34,22 @@ class ClientAdminAPIRequestHandler(tornado.web.RequestHandler) :
                 if request[0] == "GetUserPrivileges" :
                     response = userPrivilege.getUserPrivileges(userId)
                 elif request[0] == "SaveUserPrivilege" :
-                    response = userPrivilege.saveUserPrivilege(request[1], userId)
+                    response = userPrivilege.saveUserPrivilege(
+                        request[1], userId)
                 elif request[0] == "UpdateUserPrivilege" :
-                    response = userPrivilege.updateUserPrivilege(request[1], userId)
+                    response = userPrivilege.updateUserPrivilege(
+                        request[1], userId)
                 elif request[0] == "ChangeUserPrivilegeStatus" :
                     response = userPrivilege.changeUserPrivilegeStatus(
                         request[1], userId)
                 elif request[0] == "GetServiceProviders" :
-                    response = serviceProvider.getServiceProviders( userId)
+                    response = serviceProvider.getServiceProviders(userId)
                 elif request[0] == "SaveServiceProvider" :
-                    response = serviceProvider.saveServiceProvider(request[1], userId)
+                    response = serviceProvider.saveServiceProvider(
+                        request[1], userId)
                 elif request[0] == "UpdateServiceProvider" :
-                    response = serviceProvider.updateServiceProvider(request[1], userId)
+                    response = serviceProvider.updateServiceProvider(
+                        request[1], userId)
                 elif request[0] == "ChangeServiceProviderStatus" :
                     response = serviceProvider.changeServiceProviderStatus(
                         request[1], userId)

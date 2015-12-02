@@ -125,7 +125,7 @@ class GroupCompany(object):
     def getClienDatabaseName(self, clientId):
         clientDBName = getClientDatabase(clientId)
         if clientDBName == None:
-            print "Error : Database Not exists for the client %d" % clientId
+            print "Error : Database Not exists for the client %d" % int(clientId)
         return clientDBName
 
     @classmethod
@@ -839,13 +839,25 @@ class Client(object):
 
             licenceHolders = []
             for row in rows:
+                employeeName = None
+                unitName = None
+                if(row[3] == None):
+                    employeeName = row[2]
+                else:
+                    employeeName = "%s - %s" % (row[3], row[2])
+
+                if row[7] == None:
+                    unitName = "-"
+                else:
+                    unitName =  "%s - %s" % (row[6], row[7])
+
                 licenceHolderDetails = {}
                 licenceHolderDetails["user_id"] = row[0]
                 licenceHolderDetails["email_id"] = row[1]
-                licenceHolderDetails["employee_name"] = "%s - %s" % (row[3], row[2])
+                licenceHolderDetails["employee_name"] = employeeName
                 licenceHolderDetails["contact_no"] = row[4]
                 licenceHolderDetails["is_admin"] = row[5]
-                licenceHolderDetails["unit_name"] = "%s - %s" % (row[6], row[7])
+                licenceHolderDetails["unit_name"] =unitName
                 licenceHolderDetails["address"] = row[8]
 
                 columns = "is_active"
