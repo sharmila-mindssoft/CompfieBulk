@@ -11,11 +11,11 @@ class APIHandler(object):
 			"Logout": self._logout,
 		}
 
-	def success_response(self, response, response_option, data) :
+	def _success_response(self, response, response_option, data) :
 		response = getattr(protocol, response)
 		return {"protocol": response, "data": [response_option, data]}
 
-	def failure_response(self, response, option) :
+	def _failure_response(self, response, option) :
 		response = getattr(protocol, response)
 		return {"protocol": response, "data": [option, {}]}
 
@@ -35,7 +35,7 @@ class APIHandler(object):
 			return handler(db, request_data)
 		user_id = db.get_session_user_id(session_id)
 		if user_id is None :
-			return self.failure_response(
+			return self._failure_response(
 				request_option + "Response", "InvalidSession"
 			)
 		if request_option == u"Logout" :
@@ -53,14 +53,14 @@ class APIHandler(object):
 		email = email.lower()
 		user_id = db.get_user_id(email)
 		if user_id is None :
-			return self.failure_response("LoginResponse", "LoginFailed")
+			return self._failure_response("LoginResponse", "LoginFailed")
 		user = db.match_password(user_id, password)
 		user = user[0]
 		if user is None :
-			return self.failure_response("LoginResponse", "LoginFailed")
+			return self._failure_response("LoginResponse", "LoginFailed")
 		user_details = db.get_user_details(user_id, user["client_id"])
 		if user_details is None :
-			return self.failure_response("LoginResponse", "LoginFailed")
+			return self._failure_response("LoginResponse", "LoginFailed")
 		session_id = db.add_session(user_id)
 		response_data = {
 			"session_token": session_id,
@@ -77,13 +77,13 @@ class APIHandler(object):
 			},
 			"menu": user_details["menu"]
 		}
-		return self.success_response(
+		return self._success_response(
 			"LoginResponse", "LoginSuccess", response_data
 		)
 
 	def _logout(self, db, session_id, request) :
 		db.remove_session(session_id)
-		return self.success_response(
+		return self._success_response(
 			"LogoutResponse", "LogoutSuccess", {}
 		)
 
