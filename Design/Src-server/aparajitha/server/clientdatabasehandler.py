@@ -34,6 +34,7 @@ class ClientDatabaseHandler(object) :
             else:
                 continue
 
+
     def execute(self, query):
         con = None
         cursor = None
@@ -74,21 +75,20 @@ class ClientDatabaseHandler(object) :
                 cursor.close()
             if con is not None :
                 con.close()
-
+            
         return result
 
     def insert(self, table, columns, values) :
         query = "INSERT INTO "+table+" ("+columns+")" + \
-            " VALUES ("+values+")"
+            " VALUES ("+values+")"     
         return self.execute(query)
 
     def bulkInsert(self, table, columns, valueList) :
-        query = "INSERT INTO "+table+" ("+columns+")" + \
-            " VALUES "
+        query = "INSERT INTO %s (%s) VALUES" % (table, columns)
 
         for index, value in enumerate(valueList):
             if index < len(valueList)-1:
-                query += str(value)+","
+                query += +"%s," % str(value)
             else:
                 query += str(value)
         return self.execute(query)
@@ -102,6 +102,25 @@ class ClientDatabaseHandler(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
+        return self.execute(query)
+
+    def onDuplicateKeyUpdate(self, table, columns, valueList, updateColumnsList):
+        query = "INSERT INTO %s (%s) VALUES " % (table, columns)
+
+        for index, value in enumerate(valueList):
+            if index < len(valueList)-1:
+                query += "%s," % str(value)
+            else:
+                query += "%s" % str(value)
+
+        query += " ON DUPLICATE KEY UPDATE "
+
+        for index, updateColumn in enumerate(updateColumnsList):
+
+            if index < len(updateColumnsList)-1:
+                query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
+            else:
+                query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
 
         return self.execute(query)
 
@@ -126,6 +145,22 @@ class ClientDatabaseHandler(object) :
         query = "SELECT "+columns+" FROM "+table+" WHERE "+condition
         return self.executeAndReturn(query)
 
+    def getDataFromMultipleTables(self, columns, tables, conditions):
+
+        query = "SELECT %s FROM " % columns
+
+        for index,table in enumerate(tables):
+            if index == 0:
+                query += "%s alias%d  left join " % (table, index)
+            elif index <= len(tables) -2:
+                query += " %s alias%d on (alias%d.%s = alias%d.%s) left join " % (table, 
+                    index, index-1, conditions[index-1], index, conditions[index-1])
+            else:
+                query += " %s alias%d on (alias%d.%s = alias%d.%s)" % (table, index,
+                    index-1, conditions[index-1], index, conditions[index-1])
+
+        return self.executeAndReturn(query)
+
     def validateSessionToken(self, sessionToken) :
         query = "SELECT user_id FROM tbl_user_sessions \
         WHERE session_id = '%s'" % sessionToken
@@ -133,9 +168,29 @@ class ClientDatabaseHandler(object) :
         row = rows[0]
         return row[0]
 
+    def delete(self, table, condition):
+        query = "DELETE from "+table+" WHERE "+condition
+        return self.execute(query)        
+
+    def append(self, table, column, value, condition):
+        rows = self.getData(table, column, condition)
+        currentValue = rows[0][0]
+        if currentValue != None:
+            newValue = currentValue+","+str(value)
+        else:
+            newValue = str(value)
+        columns = [column]
+        values = [newValue]
+        return self.update(table, columns, values, condition)
+
+    def truncate(self, table):
+        query = "TRUNCATE TABLE  %s;" % table
+        return self.execute(query)
+
     @staticmethod
     def instance(databaseName) :
         global _databaseHandlerInstance
+        _databaseHandlerInstance = None 
         if _databaseHandlerInstance is None :
             _databaseHandlerInstance = ClientDatabaseHandler(databaseName)
         return _databaseHandlerInstance

@@ -25,41 +25,40 @@ list-style-type:none; line-height:25px;
 }
 
 /* Autocomplete selectbox Style */
-.ac-selectbox li
-{
-list-style-type:none; line-height:33px;
-}
 .ac-selectbox ul {
-  border:1px solid gray;
+  background: none repeat scroll 0 0 #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.11);
+  box-sizing: border-box;
   position: absolute;
   padding-left: 0em;
   background: #ffffff;
+  transition: opacity 200ms ease-out 0s, top 200ms ease-out 0s, visibility 200ms ease-out 0s;
 }
 .ac-selectbox ul li {
   font-size: 0.8em;
-  padding-right: 0.3em;
-  padding-left:1.8em;
+  list-style-type:none; 
+  padding: 6px;
+  padding-left: 2em;
   vertical-align: center;
   cursor: pointer;
+  background: url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li:hover{
-  background: #EAE8E8;  
+  
+  background:  #EAE8E8 url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox {
-  background: url(/files/desktop/common/images/tick_1.png) no-repeat left center;
-  background-size: 1.5em;
-  border-right: 3px solid #f1e9f6
+  background: url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox:hover {
-  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left center;
-  background-size: 1.5em;
-  border-right: 3px solid #f1e9f6
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 }
 .ac-selectbox ul li.active_selectbox_country {
-  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left center;
-  background-size: 1.5em;
-  border-right: 3px solid #f1e9f6
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 }
+
 </style>
 
 

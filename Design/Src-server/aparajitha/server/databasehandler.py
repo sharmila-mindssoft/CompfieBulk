@@ -99,12 +99,13 @@ class DatabaseHandler(object) :
         return self.execute(query)
 
     def bulkInsert(self, table, columns, valueList) :
-        query = "INSERT INTO "+table+" ("+columns+")" + \
-            " VALUES "
+        query = "INSERT INTO %s (%s)  VALUES" % (table, columns)
 
-        for value in valueList:
-            query += value
-
+        for index, value in enumerate(valueList):
+            if index < len(valueList)-1:
+                query += +"%s," % str(value)
+            else:
+                query += str(value)
         return self.execute(query)
 
     def update(self, table, columns, values, condition) :
@@ -116,8 +117,31 @@ class DatabaseHandler(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
+        return self.execute(query)
+
+    def onDuplicateKeyUpdate(self, table, columns, valueList, updateColumnsList):
+        query = "INSERT INTO %s (%s) VALUES " % (table, columns)
+
+        for index, value in enumerate(valueList):
+            if index < len(valueList)-1:
+                query += "%s," % str(value)
+            else:
+                query += "%s" % str(value)
+
+        query += " ON DUPLICATE KEY UPDATE "
+
+        for index, updateColumn in enumerate(updateColumnsList):
+
+            if index < len(updateColumnsList)-1:
+                query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
+            else:
+                query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
 
         return self.execute(query)
+
+    def delete(self, table, condition):
+        query = "DELETE from "+table+" WHERE "+condition
+        return self.execute(query)        
 
     def append(self, table, column, value, condition):
         rows = self.getData(table, column, condition)
@@ -151,12 +175,43 @@ class DatabaseHandler(object) :
         query = "SELECT "+columns+" FROM "+table+" WHERE "+condition 
         return self.executeAndReturn(query)
 
+    def getDataFromMultipleTables(self, columns, tables, conditions):
+
+        query = "SELECT %s FROM " % columns
+
+        for index,table in enumerate(tables):
+            if index == 0:
+                query += "%s alias%d  left join " % (table, index)
+            elif index <= len(tables) -2:
+                query += " %s alias%d on (alias%d.%s = alias%d.%s) left join " % (table, 
+                    index, index-1, conditions[index-1], index, conditions[index-1])
+            else:
+                query += " %s alias%d on (alias%d.%s = alias%d.%s)" % (table, index,
+                    index-1, conditions[index-1], index, conditions[index-1])
+
+        return self.executeAndReturn(query)
+
     def validateSessionToken(self, sessionToken) :
         query = "SELECT user_id FROM tbl_user_sessions \
         WHERE session_id = '%s'" % sessionToken
         rows = self.executeAndReturn(query)
         row = rows[0]
         return row[0]
+
+    def verifyPassword(self, password, userId, clientId):
+        columns = "count(*)"
+        condition = "password='%s' and user_id='%d'" % (password, userId)
+        if clientId != None:
+            condition += " and client_id='%d'" % clientId
+        rows = self.getData("tbl_users", columns, condition)
+        if(int(rows[0][0]) <= 0):
+            return False
+        else:
+            return True
+
+    def truncate(self, table):
+        query = "TRUNCATE TABLE  %s;" % table
+        return self.execute(query)
 
     @staticmethod
     def instance() :

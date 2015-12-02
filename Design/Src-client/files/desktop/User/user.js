@@ -219,7 +219,7 @@ function loadUserList(usersList) {
 				var editdomainval = domain.split(",");
 				$("#domainselected").val(editdomainval.length+" Selected");
 				$("#country").val(country);
-				var editcountryval = domain.split(",");
+				var editcountryval = country.split(",");
 				$("#countryselected").val(editcountryval.length+" Selected");
 				$("#emailid").val(emailId);
 				break;
@@ -270,17 +270,19 @@ function loadUserList(usersList) {
 		  	$('#ulist').empty();
 		  	var str='';
 		  	for(var i in domains){
-		  		var selectdomainstatus='';
-		  		for(var j=0; j<editdomainval.length; j++){
-		  			if(editdomainval[j]==domains[i]["domain_id"]){
-		  				selectdomainstatus='checked';
-		  			}
+		  		if(domains[i]["is_active"] == 1){
+			  		var selectdomainstatus='';
+			  		for(var j=0; j<editdomainval.length; j++){
+			  			if(editdomainval[j]==domains[i]["domain_id"]){
+			  				selectdomainstatus='checked';
+			  			}
+			  		}
+			  		if(selectdomainstatus == 'checked'){
+			  			str += '<li id="'+domains[i]["domain_id"]+'" class="active_selectbox" onclick="activate(this)" >'+domains[i]["domain_name"]+'</li> ';
+			  		}else{
+			 			str += '<li id="'+domains[i]["domain_id"]+'" onclick="activate(this)" >'+domains[i]["domain_name"]+'</li> ';
+			 		}
 		  		}
-		  		if(selectdomainstatus == 'checked'){
-		  			str += '<li id="'+domains[i]["domain_id"]+'" class="active_selectbox" onclick="activate(this)" >'+domains[i]["domain_name"]+'</li> ';
-		  		}else{
-		 			str += '<li id="'+domains[i]["domain_id"]+'" onclick="activate(this)" >'+domains[i]["domain_name"]+'</li> ';
-		 		}
 		  	}
 		    $('#ulist').append(str);
 		    $("#domainselected").val(editdomainval.length+" Selected")
@@ -319,6 +321,7 @@ function loadUserList(usersList) {
 		  	$('#ulist-country').empty();
 		  	var str='';
 		  	for(var i in countries){
+		  		if(countries[i]["is_active"] == 1){
 		  		var selectcountrystatus='';
 		  		for(var j=0; j<editcountryval.length; j++){
 		  			if(editcountryval[j]==countries[i]["country_id"]){
@@ -330,6 +333,7 @@ function loadUserList(usersList) {
 		  		}else{
 		 			str += '<li id="'+countries[i]["country_id"]+'" onclick="activatecountry(this)" >'+countries[i]["country_name"]+'</li> ';
 		 		}
+		 	}
 		  	}
 		    $('#ulist-country').append(str);
 		    $("#countryselected").val(editcountryval.length+" Selected")
@@ -363,7 +367,7 @@ function loadUserList(usersList) {
 		  $('#ulist_text').empty();
 		  if(textval.length>0){
 		    for(var i in usergroups){
-		      if (~usergroups[i]["user_group_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([usergroups[i]["user_group_id"],usergroups[i]["user_group_name"]]); 
+		      if (~usergroups[i]["user_group_name"].toLowerCase().indexOf(textval.toLowerCase()) && usergroups[i]["is_active"] == 1) suggestions.push([usergroups[i]["user_group_id"],usergroups[i]["user_group_name"]]); 
 		    }
 		    var str='';
 		    for(var i in suggestions){

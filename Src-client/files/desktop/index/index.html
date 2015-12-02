@@ -14,25 +14,20 @@
   <div id="wrapper">
     "Welcome to Aparajitha!"
   </div>
-</body>
-<script>
-	function success(data){
-		alert("success_data"+data);
-	}
-	function failure(data){
-		alert("failure_data"+data)
-	}
-	$(document).ready(function(){
-		// mirror.getAdminUserGroupList("AdminAPI", success, failure);
-		mirror.changePassword("AdminAPI", "abcd", "WTJT6X8", success, failure)
-		// mirror.getClientGroups("TechnoAPI", success, failure)
-		// mirror.changeAdminUserGroupStatus("AdminAPI", 100, 0, success, failure);
-		// updateUserDetail = [1,1,"Sanju Madhavan.","EMP1012","+9112344441122-33-44","KK Nagar, Madurai", "developer", "2,5", "1,4"]
-		// mirror.updateAdminUser("AdminAPI", updateUserDetail, success, failure);
-		// saveUserDetail = ["nivi@domain.com",1,"Nivi","EMP1119","+917966403239","KK Nagar, Madurai", "Manager", "1","1"];
-		// mirror.saveAdminUser("AdminAPI", saveUserDetail, success, failure);
-		// mirror.getAdminUserList("AdminAPI", success, failure);
-		// mirror.changeAdminUserStatus("AdminAPI", 1, 0, success, failure);
-	});
+  <script>
+    function success(data){
+      alert("success_data"+data);
+    }
+    function failure(data){
+      alert("failure_data"+data)
+    }
+    $(document).ready(function(){
+      clientId = 1;
+      divisionId = 1;
+      isActive = 0;
+          
+      mirror.changeClientStatus("TechnoAPI", clientId, divisionId, isActive, success, failure);
+    });
 </script>
+</body>
 </html>

@@ -11,6 +11,7 @@ from aparajitha.server import countries as countriesdb
 from collections import OrderedDict
 
 from knowledge import handler as knowledge_handler
+from client import handler as client_admin_handler
 from admin import handler as admin_handler
 from techno import handler as techno_handler
 
@@ -339,6 +340,8 @@ TEMPLATE_PATHS = [
             None, {}),
     ("/forgotpassword", "files/desktop/ForgotPassword/ForgotPassword.html",
             None, {}),
+    ("/resetpassword", "files/desktop/ForgotPassword/resetpassword.html",
+            None, {}),
     ("/subtasklist", "files/desktop/SubTaskList/SubTaskList.html",
             None, {}),
     ("/dataarchive-client", "files/desktop/DataArchive-Client/DataArchive-Client.html",
@@ -529,8 +532,10 @@ TEMPLATE_PATHS = [
         None, {}),
     ("/previousentryform", "files/desktop/PreviousEntryForm/PreviousEntryForm.html",
         None, {}),
-     ("/logintrace", "files/desktop/LoginTrace/LoginTrace.html",
+    ("/logintrace", "files/desktop/LoginTrace/LoginTrace.html",
         None, {}),
+
+    ("/multi-check-box", "files/desktop/custom-controls/multi-check-box.html", None, {}),
 ]
 
 
@@ -649,6 +654,14 @@ def run_server() :
         application_urls.append(entry)
 
     for url, handler in REQUEST_PATHS :
+        args = {
+            "url": url,
+            "handler": handler
+        }
+        entry = (url, handler, args)
+        application_urls.append(entry)
+
+    for url, handler in client_admin_handler.initializeClientAdminHandler() :
         args = {
             "url": url,
             "handler": handler

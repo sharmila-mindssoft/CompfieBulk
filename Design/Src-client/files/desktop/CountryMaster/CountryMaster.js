@@ -19,9 +19,8 @@ function initialize(){
 	}
 	function failure(status, data){
 	}
-	mirror.getCountryList("getCountryList", success, failure);
+	mirror.getCountryList(success, failure);
 }
-
 function loadCountriesList(countriesList){
  	$(".tbody-countries-list").find("tr").remove();
   	var sno=0;
@@ -75,7 +74,7 @@ $("#submit").click(function(){
 		function failure(status, data){
 			$(".error-message").html(status);
 		}
-		mirror.saveCountry("SaveCountry", countryNameValue, success, failure);
+		mirror.saveCountry(countryNameValue, success, failure);
 	}
 	else{		
 		function success(status, data){
@@ -90,7 +89,7 @@ $("#submit").click(function(){
 		}
 		function failure(status, data){
 		}
-		mirror.updateCountry("updateCountry", parseInt(countryIdValue), countryNameValue, success, failure);
+		mirror.updateCountry(parseInt(countryIdValue), countryNameValue, success, failure);
 	}
 });
 function country_edit(countryId, countryName){
@@ -106,7 +105,7 @@ function country_active(countryId, isActive){
   	}
   	function failure(status, data){
   	}
-  	mirror.changeCountryStatus("ChangeCountryStatus",  parseInt(countryId), isActive, success, failure);
+  	mirror.changeCountryStatus( parseInt(countryId), isActive, success, failure);
 }
 
 

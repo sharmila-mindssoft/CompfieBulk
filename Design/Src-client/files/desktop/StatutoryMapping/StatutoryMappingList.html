@@ -1,10 +1,14 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+<script type="text/javascript" src="/files/desktop/StatutoryMapping/statutorymapping.js"></script>
+<script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
+
+<div id="listview" style="display:block">
   <div class="content-container width75" >
   <div class="content-area">
       <h1>Statutory Mapping List</h1>
       <div class="filters-and-search">
-      <div class="btn-add"  onclick="location.href='/statutorymapping'" formtarget="_self">Add</div>
+      <div class="btn-add" onclick="displayAdd();">Add</div>
     </div>
       <div class="clearfix"></div>
       <div class="grid-table">
@@ -13,7 +17,8 @@
           <th align="center">#</th>
           <th width="10%">Country</th>
           <th width="10%">Domain</th>
-          <th width="10%">Industry</th><th width="10%">Statutory Nature</th>
+          <th width="10%">Industry</th>
+          <th width="10%">Statutory Nature</th>
           <th width="35%">Statutory</th>
          <th width="30%">Compliance Task</th>
           <th width="5%" align="center">Edit</th>
@@ -32,7 +37,10 @@
           <td align="center"></td>
           <td align="center"></td>
         </tr>
-          <tr>
+
+        <tbody class="tbody-statutorymapping-list">        
+        </tbody>
+<!--           <tr>
           <td align="center">1</td>
           <td>India</td>
           <td>Industrial Law</td>
@@ -70,12 +78,31 @@
           <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
           <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
           <td>Pending</td>
-        </tr>
-
-      
+        </tr> -->
         </table>
     </div>
       
     </div>
+</div>
+</div>
+
+<div id="templates">
+<table class="table-statutorymapping">
+  <tr class="table-row">
+    <td class="sno" align="center"></td>
+    <td class="country"></td>
+    <td class="domain"></td>
+    <td class="industry"></td>
+    <td class="statutorynature"></td>
+    <td class="statutory"></td>
+    <td class="compliancetask"></td>
+    <td class="edit" align="center"></td>
+    <td class="status" align="center"></td>
+    <td class="approvalstatus"></td>
+  </tr>
+</table>
+</div>
+
+<div id="addview" style="display:block">
 </div>
 {% endblock %} 

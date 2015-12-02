@@ -5,9 +5,6 @@ function saveRecord () {
     var newpassword = $("#newpassword").val();
     var confirmpassword = $("#confirmpassword").val();
 
-    alert("currentpassword:" + currentpassword);
-    alert("newpassword:" + newpassword);
-
     if(currentpassword == '') {
       $("#error").text("Current Password Required");
     } else if(newpassword == '') {
@@ -18,17 +15,18 @@ function saveRecord () {
       $("#error").text("New Password & Confirm Password is Not Match");
     } else {
         function success(status,data) {
-          if(status == 'success') {
+          if(status == 'ChangePasswordSuccess') {
             $("#error").text("Password Changed Successfully");
             $("#currentpassword").val("");
             $("#newpassword").val("");
             $("#confirmpassword").val("");
+            //window.location.href='/login';
           } else {
             $("#error").text(status);
           }
         }
         function failure(data){
         }
-        mirror.changePassword("ChangePassword", currentpassword, newpassword, success, failure);
+        mirror.changePassword("AdminAPI", currentpassword, newpassword, success, failure);
       }
   }

@@ -4,7 +4,7 @@ import tornado.ioloop
 import tornado.web
 from models import *
 from controllers import *
-from aparajitha.server.common import JSONHelper
+from aparajitha.server.common import *
 from aparajitha.server.databasehandler import DatabaseHandler 
 
 __all__ = [
@@ -27,12 +27,25 @@ class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
             if userId is None :
                 response = PossibleError("InvalidSessionToken")
             else :
+                clientGroupController = ClientGroupController()
+                clientController = ClientController()
                 if request[0] == "SaveClientGroup" :
-                    saveClientGroup = SaveClientGroup(request[1], userId)
-                    response = saveClientGroup.processRequest()
+                    response = clientGroupController.saveClientGroup(request[1], userId)
                 elif request[0] == "GetClientGroups" :
-                    getClientGroup = GetClientGroups()
-                    response = getClientGroup.getList()
+                    response = clientGroupController.getClientGroups()
+                elif request[0] == "ChangeClientGroupStatus" :
+                    response = clientGroupController.changeClientGroupStatus(
+                        request[1], userId)
+                elif request[0] == "UpdateClientGroup" :
+                    response = clientGroupController.updateClientGroup(request[1], userId)
+                elif request[0] == "GetClients" :
+                    response = clientController.getClients(userId)
+                elif request[0] == "SaveClient" :
+                    response = clientController.saveClient(request[1], userId)
+                elif request[0] == "ChangeClientStatus" :
+                    response = clientController.changeClientStatus(request[1], userId)
+                elif request[0] == "ReactivateUnit" :
+                    response = clientController.reactivateUnit(request[1], userId)
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 

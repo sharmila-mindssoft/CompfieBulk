@@ -1,10 +1,64 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
-  <div class="content-container width50">
+
+<style type="text/css">
+/*.grid-table td{ border:1px solid red;}
+.grid-table tr{ border:1px solid blue;}*/
+/* Autocomplete selectbox Style */
+.ac-selectbox ul {
+  background: none repeat scroll 0 0 #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.11);
+  box-sizing: border-box;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+  transition: opacity 200ms ease-out 0s, top 200ms ease-out 0s, visibility 200ms ease-out 0s;
+}
+.ac-selectbox ul li {
+  font-size: 0.8em;
+  list-style-type:none; 
+  padding: 6px;
+  padding-left: 2em;
+  vertical-align: center;
+  cursor: pointer;
+  background: url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li:hover{
+  
+  background:  #EAE8E8 url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox {
+  background: url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox:hover {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox_country {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox_users {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.heading{
+  color: #000;
+  font-size: 1em;
+  height: 2.25em;
+  margin-bottom:0px;
+}
+.date-configuration{
+  max-height: 270px;
+  overflow: auto;
+}
+</style>
+
+<link href="/files/desktop/common/css/datepicker/jquery-ui.css" rel="stylesheet">
+<div class="content-container width40" id="clientgroup-view">
   <div class="content-area">
       <h1>Clients</h1>
       <div class="filters-and-search">
-      <div class="btn-add" onclick="location.href='/clientgroup/create'" formtarget="_self">Add</div>
+      <div class="btn-add btn-clientgroup-add" formtarget="_self">Add</div>
     </div>
       <div class="clearfix"></div>
       <div class="grid-table">
@@ -12,52 +66,233 @@
           <tr align="left">
           <th align="center">#</th>
           <th>Group</th>
-         
-          <th>Incharge Person</th>
           <th align="center">Edit</th>
           <th align="center" style="padding-right:5px;">Status</th>
-           
         </tr>
          <tr>
           <td align="center"></td>
-          <td><input type="text" class="filter-text-box"></td>
-       
-          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box" id="search-clientgroup-name"></td>
           <td align="center"></td>
           <td align="center"></td>
-          
         </tr>
-            <tr>
-          <td align="center">1</td>
-          <td>NJR Group</td>
-      
-          <td>EMP0015 - Srinivasan...</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid" class="inactive"  /></td>
-          
-        </tr>
-        <tr>
-          <td align="center">2</td>
-          <td>PRG Group</td>
-         
-          <td>EMP0012 - Sivaraman...</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" id="inactiveid" class="inactive"  title="Click here to activate"/></td>
-          
-        </tr>
-          <tr>
-          <td align="center">3</td>
-          <td>TKU Group</td>
-     
-          <td>EMP0010 - Hariharan...</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-        </tr>
-      
-          
-        </table>
-    </div>
-      
-    </div>
+        <tbody class="tbody-clientgroup-list">
+        </tbody>  
+      </table>
+    </div>      
+  </div>
+  <div id="templates">
+    <table class="table-clientgroup-list">
+      <tr class="table-row">
+        <td align="center" class="sno"></td>
+        <td class="clientgroup-name"></td>     
+        <td align="center" class="edit"></td>
+        <td align="center" class="is-active"></td>
+      </tr>
+    </table>
+  </div>
 </div>
+
+<!-- Add Client Group-->
+
+<div class="content-container" id="clientgroup-add" >
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Client<span class="error-message"></span></div>
+      <div class="input-row">
+        <div class="input-row-left">
+          <div class="input-row">
+            <div class="single-column-field-label">Group:<span class="mandatory">*</span></div>
+            <div class="field-input"> 
+              <input id="clientgroup-id" type="hidden" value="">           
+              <input id="clientgroup-name" type="text" class="input-box"  value="" >               
+            </div>
+            </div>
+            <div class="input-row">
+              <div class="single-column-field-label">Country:<span class="mandatory">*</span></div>
+              <div class="field-input">
+                <input type="hidden" id="country"> 
+                <input type="hidden" id="countryNames"> 
+                <input type="text" class="input-box icon-autocomplete" id="countryselected" value="" readonly="readonly" onclick="loadautocountry()"> 
+                <div id="selectboxview-country" class="ac-selectbox" style="display:none;">
+                  <ul id="ulist-country" onmouseleave="hidemenu();" style="width:213px;"></ul> 
+                </div>
+              </div>
+            </div>
+            <div class="input-row">
+              <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
+              <div class="field-input">  
+                <input type="hidden" id="domain"> 
+                 <input type="hidden" id="domainNames">
+                <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto()"> 
+                <div id="selectboxview" class="ac-selectbox" style="display:none;">
+                  <ul id="ulist" onmouseleave="hidemenu();" style="width:213px;"></ul> 
+                </div>
+              </div>
+            </div>
+            <div class="input-row">
+              <div class="single-column-field-label">Contract From:<span class="mandatory">*</span></div>
+              <div class="field-input">
+                <input type="text" class="input-box"  id="contract-from" readonly="readonly"  value="">
+              </div>
+            </div>
+            <div class="input-row">
+              <div class="single-column-field-label">Contract  To:<span class="mandatory">*</span></div>
+              <div class="field-input">
+                <input type="text" class="input-box" id="contract-to" readonly="readonly" value="">
+              </div>
+            </div>
+            <div class="input-row">
+            <div class="single-column-field-label">Username:<span class="mandatory">*</span></div>
+            <div class="field-input">
+              <input type="text" class="input-box" placeholder="user@domain.com" id="username" value=""><br>
+              <span style="font-size:10px;">[&#9658;This will be used as the username for user acc.<br>&#9658;
+                Password will be auto-generated]</span>
+              </div>
+            </div>
+          </div>
+          <div class="input-row-right">
+            <div class="input-row">
+              <div class="single-column-field-label">Upload Logo:<span class="mandatory">*</span></div>
+              <div class="field-input">
+                <input type="file" class="input-box" id="upload-logo" value="">
+                <img src="/files/desktop/common/images/dashboard/icon-graph.png" id="upload-logo-img" width="20" style="display:none;">
+              </div>
+            </div>
+            <div class="input-row">
+              <div class="single-column-field-label">Number of user licence:<span class="mandatory">*</span></div>
+              <div class="field-input">
+                <input type="text" class="input-box"  id="no-of-user-licence" value="">
+              </div>
+            </div>
+             <div class="input-row">
+              <div class="single-column-field-label">File Space:<span class="mandatory">*</span></div>
+              <div class="field-input">
+                <input type="text" class="input-box"  id="file-space" style="width:50px;float:left" value="">
+                <span style="font-size:0.813em; padding-left:10px; line-height:2em;">GB</span>
+              </div>
+            </div>
+            <div class="input-row">
+              <div class="single-column-field-label"><p>Subscribe for SMS Notification:</p></div>
+              <div class="field-input" style="margin-top:5px;">
+               <input type="checkbox" id="subscribe-sms">
+             </div>
+
+           </div>
+           <div class="input-row">
+              <div class="single-column-field-label">Incharge Person:<span class="mandatory">*</span></div>
+              <div class="field-input">
+                <input type="hidden" id="users"> 
+                <input type="text" class="input-box icon-autocomplete" id="usersSelected" value="" readonly="readonly" onclick="loadAutoUsers()"> 
+                <div id="selectboxview-users" class="ac-selectbox" style="display:none;">
+                  <ul id="ulist-users" onmouseleave="hidemenu();" style="width:213px;"></ul> 
+                </div>
+              </div>
+            </div>
+          </div>
+         
+          <div class="clearfix"></div>
+
+          <div style="background-color:#ddd; padding:5px; padding-left:10px;border-radius:3px;">Date Configuration</div>
+          <div class="grid-table date-configuration">
+            <table style="padding:20px;width:100%;">
+              <tr align="left">
+                <th width="25%" style="background-color:#D4B7EB; color:#000;padding-left:10px;">Domain</th>
+                <th colspan="2" width="75%" align="center" style="background-color:#D4B7EB; color:#000;">Timeline</th>
+              </tr>
+              <tr>
+                <td></td>
+                <td align="center"><span style="font-style:bold">From</span></td>
+                <td align="center">To</td>
+              </tr>
+              <tbody class="tbody-dateconfiguration-list">
+              </tbody>
+            </table>
+          </div>
+          <div class="clearfix"></div>
+          <div class="submit-button-container">
+            <input type="submit" name="cancel" value="Cancel" class="btn-cancel" id="btn-clientgroup-cancel">
+              &nbsp;&nbsp;
+            <input type="submit" name="submit" value="Submit" class="btn-submit" id="btn-clientgroup-submit">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="templates">
+  <table class="table-dconfig-list">
+    <tr class="table-dconfig-countries-row">
+        <td colspan="3"  width="100%"><span class="dconfig-country-name"></span>
+        <input type="hidden" class="inputCountry" value="">
+        </td>
+    </tr>    
+    <tr class="table-dconfig-domain-row" >
+      <td style="padding-left:10px;" width="30%"><span class="dconfig-domain-name" ></span>
+      <input type="hidden" class="inputDomain" value="">      
+        
+      </td>
+        <td align="center" width="35%">
+          <select class="input-box tl-from" style="width:100px">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+        </td>
+        <td align="center" width="35%">
+          <select class="input-box tl-to" style="width:100px">
+                 <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12" selected>December</option>
+            </select>
+        </td>
+    </tr> 
+  </table>
+</div>
+
+<script type="text/javascript" src="/files/desktop/ClientGroup/clientgroup.js"></script>
+<script src="/files/desktop/common/js/datepicker/jquery-ui.js"></script>  
+<script type="text/javascript">
+$(function() {
+    $( "#contract-from" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+      numberOfMonths: 1,
+      dateFormat: "d-M-yy",
+      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      onClose: function( selectedDate ) {
+        $( "#contract-to" ).datepicker( "option", "minDate", selectedDate );
+      }
+    });
+    $( "#contract-to" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+      numberOfMonths: 1,
+      dateFormat: "d-M-yy",
+      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      onClose: function( selectedDate ) {
+        $( "#contract-from" ).datepicker( "option", "maxDate", selectedDate );
+      }
+    });
+  });
+</script>
 {% endblock %} 

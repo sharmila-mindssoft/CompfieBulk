@@ -1,0 +1,40 @@
+<html>
+	<head>
+		<script type="text/javascript" src="/files/desktop/common/js/jquery.min.js"></script>
+		<script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
+		<script type="text/javascript">
+			function login () {
+				mirror.login(
+					"admin@compliance-mirror.com",
+					"aparajitha_123_admin",
+					function (status, response) {
+						console.log(status, response);
+					}, function (data) {
+						console.log(data);
+					}
+				);
+			}
+			function logout () {
+				mirror.logout();
+			}
+			function test () {
+				mirror.testClient(
+					function (status, response) {
+						console.log(status);
+						console.log(response);
+					}
+				);
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Testing APIs</h1>
+		<div>
+			<button onclick="login()">Login</button>
+			<button onclick="logout()">Logout</button>
+			<button onclick="test()">Test Client</button>
+		</div>
+		<br>
+		<br>
+	</body>
+</html>

@@ -7,7 +7,7 @@ function initialize(){
 	}
 	function failure(status, data){
 	}
-	mirror.getStatutoryNatureList("GetStatutoryNatures", success, failure);
+	mirror.getStatutoryNatureList(success, failure);
 }
 function loadStatNatureData(statNatureList){
   	var sno=0;

@@ -14,7 +14,7 @@ function GetStatutoryLevels(){
   }
   function failure(data){
   }
-  mirror.getStatutoryLevels("GetStatutoryLevels", success, failure);
+  mirror.getStatutoryLevels(success, failure);
 }
 
 //Autocomplete Script Starts
@@ -32,7 +32,7 @@ function loadauto_text (textval) {
   $('#ulist_text').empty();
   if(textval.length>0){
     for(var i in countries){
-      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
+      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == 1) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
     }
     var str='';
     for(var i in suggestions){
@@ -58,7 +58,7 @@ function loadauto_text_domain (textval) {
   $('#ulist_text_domain').empty();
   if(textval.length>0){
     for(var i in domains){
-      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
+      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == 1) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
     }
     var str='';
     for(var i in suggestions){
@@ -160,7 +160,7 @@ function saveRecord () {
         }
         function failure(data){
         }
-        mirror.saveAndUpdateStatutoryLevels("SaveStatutoryLevel", parseInt(country), parseInt(domain), passlevellist, success, failure);
+        mirror.saveAndUpdateStatutoryLevels(parseInt(country), parseInt(domain), passlevellist, success, failure);
          }else{
           $("#error").text("Intermediate Level's should not be Empty");
          }

@@ -7,7 +7,7 @@ function initialize(){
 	}
 	function failure(status, data){
 	}
-	  mirror.getIndustryList("GetIndustries", success, failure);
+	  mirror.getIndustryList(success, failure);
 }
 function loadIndustriesData(industriesList){
   	var sno=0;
