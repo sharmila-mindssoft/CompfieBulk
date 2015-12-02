@@ -22,7 +22,6 @@ function initMirror() {
             "user": user,
             "menu": menu
         };
-        console.log(info);
         window.localStorage["userInfo"] = toJSON(info);
     }
 
