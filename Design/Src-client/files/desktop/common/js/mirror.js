@@ -931,6 +931,15 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    // Client Details Report
+    function getClientDetailsReportFilters(callerName, callback, failure_callback){
+        var request = [
+            "GetClientDetailsReportFilters",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -1022,7 +1031,8 @@ function initMirror() {
         getUnitClosureList: getUnitClosureList,
         closeUnit: closeUnit,
 
-        getClientProfile: getClientProfile
+        getClientProfile: getClientProfile,
+        getClientDetailsReportFilters: getClientDetailsReportFilters
     }
 
 }
