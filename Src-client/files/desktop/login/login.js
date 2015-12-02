@@ -104,7 +104,7 @@ function initializeLogin () {
 }
 
 $(document).ready(function () {
-    if (mirror.verifyLoggedIn(false)) {
+    if (mirror.verifyLoggedIn(true)) {
         window.location.href = "/home";
         return;
     }

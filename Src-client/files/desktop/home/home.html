@@ -29,6 +29,8 @@
   <script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
   <script type="text/javascript">
     $(document).ready(function () {
+      if (!mirror.verifyLoggedIn())
+        return;
       var user = mirror.getUser();
       $(".welcome-msg").text("Welcome " + user["employee_name"] + "!");
     });

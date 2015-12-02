@@ -77,11 +77,12 @@ function initMirror() {
         return url;
     }
 
-    function verifyLoggedIn(is_redirect) {
+    function verifyLoggedIn(skip_redirect) {
         setRedirectUrl(window.location.href);
         if (getSessionToken() === null) {
-            if (is_redirect)
-                window.location.href = "/login";
+            if (skip_redirect === true)
+                return false;
+            window.location.href = "/login";
             return false;
         }
         return true;
