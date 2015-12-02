@@ -690,4 +690,25 @@ class ClientProfile(object):
             return commonResponseStructure(
                 "GetClientDetailsReportFiltersSuccess", responseData)
 
+    def getClientDetailsReport(self, requestData, sessionUser):
+
+        countryId = requestData["country_id"]
+        clientId = requestData["group_id"]
+        businessGroupId = requestData["business_group_id"]
+        legalEntityId = requestData["legal_entity_id"]
+        divisionId = requestData["division_id"]
+        unitId = requestData["unit_id"]
+        domainIds = requestData["domain_ids"]
+
+        client = Client()
+        divisionWiseUnitDetails = client.getReport(
+                countryId, clientId, businessGroupId, legalEntityId, 
+                divisionId, unitId, domainIds)
+
+        responseData = {}
+        responseData["units"] = divisionWiseUnitDetails
+
+        return commonResponseStructure(
+            "GetClientDetailsReportSuccess", responseData)
+
         

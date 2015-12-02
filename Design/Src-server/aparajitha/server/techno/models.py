@@ -188,7 +188,6 @@ class GroupCompany(object):
         clientGroupRows = self.getClientGroups()
 
         for row in clientGroupRows:
-            # try:
                 clientId = int(row[0])
                 groupName = row[1]
                 inchargePersons = row[2].split(",")
@@ -746,7 +745,8 @@ class Client(object):
     clientUserDetails = "tbl_client_user_details"
     usersTblName = "tbl_users"
 
-    def save(self, businessGroup, legalEntity, division, unitList , sessionUser):
+    def save(self, businessGroup, legalEntity, division, 
+        unitList , sessionUser):
         self.businessGroup = businessGroup
         self.legalEntity = legalEntity
         self.division = division
@@ -768,7 +768,8 @@ class Client(object):
         else:
             return False
 
-    def changeClientStatus(self, clientId, divisionId, isActive, sessionUser):
+    def changeClientStatus(self, clientId, divisionId, 
+        isActive, sessionUser):
         self.clientId = clientId
         self.divisionId = divisionId
         self.isActive = isActive
@@ -880,3 +881,47 @@ class Client(object):
             profiles[clientId] = profileDetails
 
         return profiles
+
+    def getReport(self, countryId, clientId, businessGroupId, 
+            legalEntityId, divisionId, unitId, domainIds):
+        clientDBName = getClientDatabase(clientId)
+        columns = "business_group_id, legal_entity_id, division_id,"+\
+                "unit_code, unit_name, geography, address, domain_ids, postal_code"
+
+        condition = "1 "
+
+        if businessGroupId != None:
+            condition += " AND business_group_id = '%d'" % businessGroupId
+        if legalEntityId != None:
+            condition += " AND legal_entity_id = '%d'" % legalEntityId
+        if divisionId != None:
+            condition += " AND division_id = '%d'" % divisionId
+        if unitId != None:
+            condition += " AND unit_id = '%d'" % unitId
+        if domainIds != None:
+            for domainId in domainIds:
+                condition += " AND  ( domain_ids LIKE  '%,"+str(domainId)+",%' "+\
+                            "or domain_ids LIKE  '%,"+str(domainId)+"' "+\
+                            "or domain_ids LIKE  '"+str(domainId)+",%'"+\
+                            " or domain_ids LIKE '"+str(domainId)+"') "
+
+        rows = ClientDatabaseHandler.instance(clientDBName).getData(self.unitTblName,
+            columns, condition)
+
+        divisionWiseUnitDetails={}
+
+        for row in rows:
+            unitDetails = {}
+            unitDetails["unit_name"] = "%s - %s" % (row[3], row[4])
+            unitDetails["unit_location_and_address"] = "%s - %s" % (
+                row[5], row[6])
+            unitDetails["domain_ids"] = row[7]
+            unitDetails["postal_code"] = row[8]
+            divisionId = row[2]
+            if divisionId in divisionWiseUnitDetails:
+                divisionWiseUnitDetails[divisionId].append(unitDetails)
+            else:
+                divisionWiseUnitDetails[divisionId] = []
+                divisionWiseUnitDetails[divisionId].append(unitDetails)
+
+        return divisionWiseUnitDetails

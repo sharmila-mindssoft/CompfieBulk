@@ -51,6 +51,8 @@ class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
                     response = clientProfile.getClientProfile(userId)
                 elif request[0] == "GetClientDetailsReportFilters" :
                     response = clientProfile.getClientDetailsReportFilters(userId)
+                elif request[0] == "GetClientDetailsReport" :
+                    response = clientProfile.getClientDetailsReport(request[1], userId)
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 
