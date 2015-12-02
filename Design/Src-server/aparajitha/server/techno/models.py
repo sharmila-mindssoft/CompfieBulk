@@ -702,7 +702,7 @@ class Unit(object):
         unitList = []
 
         for index, clientId in enumerate(clientIds.split(",")):
-            # try:
+            try:
                 clientDBName = getClientDatabase(clientId)
                 clientColumns = "unit_id, division_id, legal_entity_id, business_group_id, "+\
                                 "unit_code, unit_name, country_id,  address,"+\
@@ -735,8 +735,8 @@ class Unit(object):
                             industryId, address, postalCode, domainIds, isActive, None, None)
                     unitList.append(unit.toDetailedStructure())
 
-            # except:
-            #     print "Error: While fetching Unit of client id %s" % clientId
+            except:
+                print "Error: While fetching Unit of client id %s" % clientId
 
         return unitList
 
@@ -744,6 +744,7 @@ class Client(object):
     unitTblName = "tbl_units"
     clientSettingsTblName = "tbl_client_settings"
     clientUserDetails = "tbl_client_user_details"
+    usersTblName = "tbl_users"
 
     def save(self, businessGroup, legalEntity, division, unitList , sessionUser):
         self.businessGroup = businessGroup
@@ -788,7 +789,7 @@ class Client(object):
             getClientDatabase(self.clientId)).update(
             self.unitTblName, columns, values, condition)
 
-    def getUnits(self):
+    def getUnitsOfDivision(self):
         unitIdsList = []
         columns = "unit_id"
         condition = "division_id='%d'" % self.divisionId
@@ -802,15 +803,15 @@ class Client(object):
     def changeUnitStatusInKnowledgeDB(self):
         columns = ["is_active", "updated_by", "updated_on"]
         values = [self.isActive, self.sessionUser, getCurrentTimeStamp()]
-        unitIdsList  = self.getUnits()
+        unitIdsList  = self.getUnitsOfDivision()
         condition = "unit_id in ({unitIdsList}) and client_id={clientId}".format(
             unitIdsList = ",".join(str(x) for x in unitIdsList), clientId = self.clientId)
         return DatabaseHandler.instance().update(
             self.unitTblName, columns, values, condition)
 
-    def getProfile(self, clientIds):
+    def getProfiles(self, clientIds):
         clientIdsList = clientIds.split(",")
-
+        profiles = {}
         for clientId in clientIdsList:
             clientDBName = getClientDatabase(clientId)
 
@@ -825,7 +826,7 @@ class Client(object):
                                 "contact_no, is_admin, unit_code, unit_name,"+\
                                 " address"
             userDetailsTables = [ self.clientUserDetails, self.unitTblName]
-            userDetailsConditions = [("unit_id","seating_unit_id")]
+            userDetailsConditions = [("seating_unit_id","unit_id")]
 
             rows = ClientDatabaseHandler.instance(clientDBName).getDataFromMultipleTables(
             userDetailsColumns, userDetailsTables, userDetailsConditions, "left join")
@@ -834,15 +835,36 @@ class Client(object):
             contractTo = settingsRows[0][1]
             noOfUserLicence = settingsRows[0][2]
             fileSpace = settingsRows[0][3]
-            remainingSpace = 34
+            usedSpace = 34
 
+            licenceHolders = []
             for row in rows:
-                userId = row[0]
-                emailId = row[1]
-                employeeName = row[2]
-                employeeCode = row[3]
-                contactNo = row[4]
-                isAdmin = row[5]
-                unitCode = row[6]
-                unitName = row[7]
-                address = row[8]
+                licenceHolderDetails = {}
+                licenceHolderDetails["user_id"] = row[0]
+                licenceHolderDetails["email_id"] = row[1]
+                licenceHolderDetails["employee_name"] = "%s - %s" % (row[3], row[2])
+                licenceHolderDetails["contact_no"] = row[4]
+                licenceHolderDetails["is_admin"] = row[5]
+                licenceHolderDetails["unit_name"] = "%s - %s" % (row[6], row[7])
+                licenceHolderDetails["address"] = row[8]
+
+                columns = "is_active"
+                condition = "user_id='%d'" % int(row[0])
+                isActiveRows =DatabaseHandler.instance().getData(
+                    self.usersTblName, columns, condition)
+                licenceHolderDetails["is_active"] = isActiveRows[0][0]
+
+                licenceHolders.append(licenceHolderDetails)
+
+            profileDetails = {}
+            profileDetails["contract_from"] = contractFrom
+            profileDetails["contract_to"] = contractTo
+            profileDetails["no_of_user_licence"] = noOfUserLicence
+            profileDetails["remaining_licence"] = (noOfUserLicence) - len(rows)
+            profileDetails["total_disk_space"] = fileSpace
+            profileDetails["used_disk_space"] = usedSpace
+            profileDetails["licence_holders"] = licenceHolders
+
+            profiles[clientId] = profileDetails
+
+        return profiles

@@ -29,6 +29,7 @@ class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
             else :
                 clientGroupController = ClientGroupController()
                 clientController = ClientController()
+                clientProfile = ClientProfile()
                 if request[0] == "SaveClientGroup" :
                     response = clientGroupController.saveClientGroup(request[1], userId)
                 elif request[0] == "GetClientGroups" :
@@ -46,6 +47,8 @@ class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
                     response = clientController.changeClientStatus(request[1], userId)
                 elif request[0] == "ReactivateUnit" :
                     response = clientController.reactivateUnit(request[1], userId)
+                elif request[0] == "GetClientProfile" :
+                    response = clientProfile.getClientProfile(userId)
                 else :
                     response = commonResponseStructure("InvalidRequest",{})
 
