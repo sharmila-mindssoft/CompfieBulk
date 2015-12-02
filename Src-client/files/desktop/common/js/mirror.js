@@ -16,18 +16,13 @@ function initMirror() {
         return JSON.parse(data);
     }
 
-    function initSession(userProfile){
+    function initSession(token, user, menu){
         var info = {
-            "userProfile": userProfile
+            "sessionToken": token,
+            "user": user,
+            "menu": menu
         };
-        windows.localStorage["userInfo"] = toJSON(info);
-    }
-
-    function updateUser_Session(user) {
-        var info = parseJSON(window.localStorage["userInfo"])
-        delete window.localStorage["userInfo"];
-
-        info.userProfile = user;
+        console.log(info);
         window.localStorage["userInfo"] = toJSON(info);
     }
 
@@ -35,37 +30,33 @@ function initMirror() {
         delete window.localStorage["userInfo"];
     }
 
+    function updateUser_Session(user) {
+        var info = parseJSON(window.localStorage["userInfo"])
+        delete window.localStorage["userInfo"];
+
+        info.user = user;
+        window.localStorage["userInfo"] = toJSON(info);
+    }
+
     function getUserInfo() {
         var info = window.localStorage["userInfo"];
         if (typeof(info) === "undefined")
             return null;
-        user = parseJSON(info)
-        return user["userProfile"];
-    }
-
-    function getUserProfile() {
-        var info = getUserProfile();
-        if (info === null)
-            return null
-        var userDetails = {
-            "user_id": info["user_id"],
-            "client_id": info["client_id"],
-            "user_group": info["user_group"],
-            "employee_name": info["employee_name"],
-            "employee_code": info["employee_code"],
-            "email_id": info["email_id"],
-            "contact_no": info["contact_no"],
-            "address": info["address"],
-            "designation": info["designation"]
-        }
-        return userDetails;
+        return parseJSON(info);
     }
 
     function getSessionToken() {
         var info = getUserInfo();
         if (info === null)
             return null;
-        return info["session_token"];
+        return info["sessionToken"];
+    }
+
+    function getUser() {
+        var info = getUserInfo();
+        if (info === null)
+            return null;
+        return info["user"];
     }
 
     function getUserMenu(){
@@ -75,19 +66,39 @@ function initMirror() {
         return info["menu"];
     }
 
-    function apiRequest(callerName, request, callback, failure_callback) {
+    function setRedirectUrl(url) {
+        window.localStorage["redirectUrl"] = url;
+    }
+
+    function getRedirectUrl() {
+        var url = window.localStorage["redirectUrl"];
+        if (typeof(url) === "undefined")
+            url = "/home";
+        return url;
+    }
+
+    function verifyLoggedIn() {
+        setRedirectUrl(window.location.href);
+        if (getSessionToken() === null) {
+            window.location.href = "/login";
+            return false;
+        }
+        return true;
+    }
+
+    function apiRequest(api_url, request, callback, failure_callback) {
         var sessionToken = getSessionToken();
         if (sessionToken == null)
-            sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
+            sessionToken = "";
         var requestFrame = {
             "session_token": sessionToken,
             "request": request
         };
         jQuery.post(
-            BASE_URL + callerName,
-            toJSON(requestFrame),
+            BASE_URL + api_url,
+            toJSON({"data": requestFrame}),
             function (data) {
-                var data = parseJSON(data);
+                var data = data["data"];
                 var status = data[0];
                 var response = data[1];
 
@@ -108,7 +119,38 @@ function initMirror() {
         );
     }
 
-    // Login function 
+
+    // Login, Logout
+
+    function login(email, password, callback, failure_callback) {
+        var api_url = "api/login";
+        apiRequest(
+            api_url,
+            ["Login", {"username": email, "password": password}],
+            function (status, response) {
+                console.log(response);
+                if (status == "LoginSuccess") {
+                    initSession(
+                        response["session_token"],
+                        response["user"],
+                        response["menu"]
+                    );
+                }
+                if (callback)
+                    callback(status, response);
+            },
+            function (data) {
+                if (failure_callback)
+                    failure_callback(data);
+            }
+        );
+    }
+
+    function logout(callback) {
+        apiRequest("api/logout", ["Logout", {}], callback);
+        clearSession();
+    }
+
 
     //Domain Master
 
@@ -576,8 +618,6 @@ function initMirror() {
     // Client Group Master
 
     function saveClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
-        alert(clientGroupDetails["contract_from"]);
-        alert(clientGroupDetails["contract_to"]);
         var request = [
             "SaveClientGroup",
             {
@@ -599,8 +639,6 @@ function initMirror() {
     }
 
     function updateClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
-        alert(clientGroupDetails["contract_from"]);
-        alert(clientGroupDetails["contract_to"]);
         var request = [
             "UpdateClientGroup",
             {
@@ -697,41 +735,81 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function saveClient(callerName, clientId, businessGroup, legalEntity, division, 
+        countryWiseUnits, callback, failure_callback) {
+        
+        var request = [
+            "SaveClient",
+            {
+                "client_id": clientId,
+                "business_group": businessGroup,
+                "legal_entity": legalEntity,
+                "division": division,
+                "country_wise_units": countryWiseUnits
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    } 
+
+    function changeClientStatus(callerName, clientId, divisionId, isActive, 
+        callback, failure_callback) {
+        
+        var request = [
+            "ChangeClientStatus",
+            {
+                "client_id": clientId,
+                "division_id" : divisionId,
+                "is_active": isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }  
+
     return {
         log: log,
         toJSON: toJSON,
         parseJSON: parseJSON,
 
-        initSession: initSession,
-        updateUser_Session: updateUser_Session,
-        clearSession: clearSession,
-
         getUserInfo: getUserInfo,
-        getUserProfile: getUserProfile,
         getSessionToken: getSessionToken,
+        getUser: getUser,
         getUserMenu: getUserMenu,
+
+        setRedirectUrl: setRedirectUrl,
+        getRedirectUrl: getRedirectUrl,
+        verifyLoggedIn: verifyLoggedIn,
+
         apiRequest: apiRequest,
+
+        login: login,
+        logout: logout,
 
         saveDomain: saveDomain,
         updateDomain: updateDomain,
         changeDomainStatus: changeDomainStatus,
         getDomainList: getDomainList,
+
         saveCountry: saveCountry,
         updateCountry: updateCountry,
         changeCountryStatus: changeCountryStatus,
         getCountryList: getCountryList,
+
         saveIndustry: saveIndustry,
         updateIndustry: updateIndustry,
         changeIndustryStatus: changeIndustryStatus,
         getIndustryList: getIndustryList,
+
         saveStatutoryNature: saveStatutoryNature,
         updateStatutoryNature: updateStatutoryNature,
         changeStatutoryNatureStatus: changeStatutoryNatureStatus,
         getStatutoryNatureList: getStatutoryNatureList,
+
         getGeographyLevels: getGeographyLevels,
         saveAndUpdateGeographyLevels: saveAndUpdateGeographyLevels,
+
         getStatutoryLevels: getStatutoryLevels,
         saveAndUpdateStatutoryLevels: saveAndUpdateStatutoryLevels,
+
         getGeographies: getGeographies,
         saveGeography: saveGeography,
         updateGeography: updateGeography,
@@ -764,9 +842,9 @@ function initMirror() {
         validateResetToken: validateResetToken,
         resetPassword: resetPassword,
 
-        getClients: getClients
-
-
+        getClients: getClients,
+        saveClient: saveClient,
+        changeClientStatus: changeClientStatus
     }
 
 }

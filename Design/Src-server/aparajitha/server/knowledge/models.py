@@ -419,6 +419,11 @@ class IndustryList(object) :
             {"industries": self.industryList}
         ]
 
+    @classmethod
+    def getList(self):
+        industryListObj = IndustryList()
+        return industryListObj.industryList
+
     def __repr__(self) :
         return str(self.toStructure())
 
@@ -807,6 +812,11 @@ class GeographyLevelList(object) :
             }
         ]
 
+    @classmethod
+    def getCountryWiseList(self):
+        geographyLevelList = GeographyLevelList()
+        return geographyLevelList.geographyLevels
+
     def __repr__(self) :
         return str(self.toStructure())
 
@@ -890,6 +900,22 @@ class Geography(object) :
             "is_active": self.isActive
         }
 
+    @classmethod
+    def getCountryWiseList(self):
+        geographies = {}
+        DH = DatabaseHandler.instance()
+        _geographyList = DH.instance().getGeographies()
+        for row in _geographyList :
+            parentIds = [int(x) for x in row[3].split(',')]
+            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds[-1], int(row[4]))
+            countryId = int(row[5])
+            _list = geographies.get(countryId)
+            if _list is None :
+                _list = []
+            _list.append(geography.toStructure())
+            geographies[countryId] = _list
+        return geographies
+
     def __repr__(self) :
         return str(self.toStructure())
 
@@ -901,6 +927,7 @@ class GeographyAPI(object) :
         self.countryList = CountryList().getCountry()
         self.geographyLevelList = GeographyLevelList().getGeographyLevels()
         self.geographies = {}
+
 
     def getGeography(self) :
         DH = DatabaseHandler.instance()
@@ -926,6 +953,7 @@ class GeographyAPI(object) :
     def getGeographyList(self) :
         self.getGeography()
         return self.geographies
+
 
     def saveGeographies(self) :
         DH = DatabaseHandler.instance()

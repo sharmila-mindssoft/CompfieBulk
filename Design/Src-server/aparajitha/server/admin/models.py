@@ -154,9 +154,17 @@ class User(object) :
         }
 
     def toStructure(self):
+        employeeName = None
+        print "Employee Name = %s" % self.employeeName
+        if self.employeeCode == None:
+            print "Employee code null"
+            employeeName = self.employeeName
+        else:
+            print "Employee code not null"
+            employeeName = "%s-%s" % (self.employeeCode, self.employeeName)
         return {
             "user_id": self.userId,
-            "employee_name": self.employeeCode+"-"+self.employeeName,
+            "employee_name": employeeName,
         }
 
     @classmethod
@@ -181,11 +189,13 @@ class User(object) :
 
     @classmethod
     def getList(self):
+        print "Inside GetList in User"
         userList = []
         columns = "user_id, employee_name, employee_code"
         rows = DatabaseHandler.instance().getData(User.detailTblName, columns, "1")
 
         for row in rows:
+            print "inside for loop in user model"
             user = User(int(row[0]),None,None, row[1], row[2],
                  None, None, None, None, None, None, None)
             userList.append(user.toStructure())
@@ -217,6 +227,13 @@ class User(object) :
     def getFormType(self) :
         rows = DatabaseHandler.instance().getData(UserGroup.tblName, 
                     "form_type", "user_group_id='"+str(self.userGroupId)+"'")
+        return rows[0][0]
+
+    @classmethod
+    def getClientIds(self, sessionUser):
+        columns = "client_ids"
+        condition = "user_id = '%d'" % sessionUser
+        rows = DatabaseHandler.instance().getData(self.detailTblName, columns, condition)
         return rows[0][0]
 
     def saveAdmin(self, sessionUser):

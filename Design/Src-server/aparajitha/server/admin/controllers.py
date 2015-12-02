@@ -125,7 +125,7 @@ class UserController() :
     def changeUserStatus(self, requestData, sessionUser):
     	userId = JSONHelper.getInt(requestData, "user_id")
         isActive = JSONHelper.getInt(requestData, "is_active")
-        user = User(userId, None, None, None, None, 
+        user = User(userId, None, None, None, None, None,
                     None, None, None, None, None,isActive)
         if user.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})

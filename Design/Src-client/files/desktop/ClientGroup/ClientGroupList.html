@@ -104,13 +104,14 @@
             <div class="single-column-field-label">Group:<span class="mandatory">*</span></div>
             <div class="field-input"> 
               <input id="clientgroup-id" type="hidden" value="">           
-              <input id="clientgroup-name" type="text" class="input-box"  value="TVS Group" >               
+              <input id="clientgroup-name" type="text" class="input-box"  value="" >               
             </div>
             </div>
             <div class="input-row">
               <div class="single-column-field-label">Country:<span class="mandatory">*</span></div>
               <div class="field-input">
                 <input type="hidden" id="country"> 
+                <input type="hidden" id="countryNames"> 
                 <input type="text" class="input-box icon-autocomplete" id="countryselected" value="" readonly="readonly" onclick="loadautocountry()"> 
                 <div id="selectboxview-country" class="ac-selectbox" style="display:none;">
                   <ul id="ulist-country" onmouseleave="hidemenu();" style="width:213px;"></ul> 
@@ -121,6 +122,7 @@
               <div class="single-column-field-label">Domain:<span class="mandatory">*</span></div>
               <div class="field-input">  
                 <input type="hidden" id="domain"> 
+                 <input type="hidden" id="domainNames">
                 <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto()"> 
                 <div id="selectboxview" class="ac-selectbox" style="display:none;">
                   <ul id="ulist" onmouseleave="hidemenu();" style="width:213px;"></ul> 
@@ -130,19 +132,19 @@
             <div class="input-row">
               <div class="single-column-field-label">Contract From:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="text" class="input-box"  id="contract-from" readonly="readonly"  value="02-Nov-2015">
+                <input type="text" class="input-box"  id="contract-from" readonly="readonly"  value="">
               </div>
             </div>
             <div class="input-row">
               <div class="single-column-field-label">Contract  To:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="text" class="input-box" id="contract-to" readonly="readonly" value="01-Nov-2016">
+                <input type="text" class="input-box" id="contract-to" readonly="readonly" value="">
               </div>
             </div>
             <div class="input-row">
             <div class="single-column-field-label">Username:<span class="mandatory">*</span></div>
             <div class="field-input">
-              <input type="text" class="input-box" placeholder="user@domain.com" id="username" value="sample@tvsgroup.com"><br>
+              <input type="text" class="input-box" placeholder="user@domain.com" id="username" value=""><br>
               <span style="font-size:10px;">[&#9658;This will be used as the username for user acc.<br>&#9658;
                 Password will be auto-generated]</span>
               </div>
@@ -152,19 +154,20 @@
             <div class="input-row">
               <div class="single-column-field-label">Upload Logo:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="file" class="input-box" id="upload-logo" value="user-icon.png">
+                <input type="file" class="input-box" id="upload-logo" value="">
+                <img src="/files/desktop/common/images/dashboard/icon-graph.png" id="upload-logo-img" width="20" style="display:none;">
               </div>
             </div>
             <div class="input-row">
               <div class="single-column-field-label">Number of user licence:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="text" class="input-box"  id="no-of-user-licence" value="10">
+                <input type="text" class="input-box"  id="no-of-user-licence" value="">
               </div>
             </div>
              <div class="input-row">
               <div class="single-column-field-label">File Space:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="text" class="input-box"  id="file-space" style="width:50px;float:left" value="5">
+                <input type="text" class="input-box"  id="file-space" style="width:50px;float:left" value="">
                 <span style="font-size:0.813em; padding-left:10px; line-height:2em;">GB</span>
               </div>
             </div>
@@ -207,7 +210,7 @@
           </div>
           <div class="clearfix"></div>
           <div class="submit-button-container">
-            <input type="reset" name="cancel" value="Cancel" class="btn-cancel" id="btn-clientgroup-cancel">
+            <input type="submit" name="cancel" value="Cancel" class="btn-cancel" id="btn-clientgroup-cancel">
               &nbsp;&nbsp;
             <input type="submit" name="submit" value="Submit" class="btn-submit" id="btn-clientgroup-submit">
           </div>
@@ -219,10 +222,15 @@
 <div id="templates">
   <table class="table-dconfig-list">
     <tr class="table-dconfig-countries-row">
-        <td colspan="3"  width="100%"><span class="dconfig-country-name"></span></td>
+        <td colspan="3"  width="100%"><span class="dconfig-country-name"></span>
+        <input type="hidden" class="inputCountry" value="">
+        </td>
     </tr>    
-    <tr class="table-dconfig-domain-row rightside" >
-      <td style="padding-left:10px;" class="dconfig-domain-name" width="30%"></td>
+    <tr class="table-dconfig-domain-row" >
+      <td style="padding-left:10px;" width="30%"><span class="dconfig-domain-name" ></span>
+      <input type="hidden" class="inputDomain" value="">      
+        
+      </td>
         <td align="center" width="35%">
           <select class="input-box tl-from" style="width:100px">
                 <option value="1">January</option>
