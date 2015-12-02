@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Home</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="shortcut icon" href="/files/desktop/common/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="icon" href="/files/desktop/common/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/reset.css">
+  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/common.css">
+  <style type="text/css">
+    .welcome-msg {
+      position: absolute;
+      top: 45%;
+      left: 0;
+      width: 100%;
+      height: 10%;
+      text-align: center;
+      vertical-align: middle;
+
+      color: #efefef;
+      font-size: 20px;
+    }
+  </style>
+
+  <script type="text/javascript" src="/files/desktop/common/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var user = mirror.getUser();
+      $(".welcome-msg").text("Welcome " + user["employee_name"] + "!");
+    });
+  </script>
+</head>
+<body>
+  <div id="wrapper">
+    <div class="welcome-msg"></div>
+  </div>
+</body>
+</html>

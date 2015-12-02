@@ -77,10 +77,11 @@ function initMirror() {
         return url;
     }
 
-    function verifyLoggedIn() {
+    function verifyLoggedIn(is_redirect) {
         setRedirectUrl(window.location.href);
         if (getSessionToken() === null) {
-            window.location.href = "/login";
+            if (is_redirect)
+                window.location.href = "/login";
             return false;
         }
         return true;
@@ -128,7 +129,6 @@ function initMirror() {
             api_url,
             ["Login", {"username": email, "password": password}],
             function (status, response) {
-                console.log(response);
                 if (status == "LoginSuccess") {
                     initSession(
                         response["session_token"],

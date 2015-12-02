@@ -74,6 +74,7 @@ TEMPLATE_PATHS = [
         "files/mobile/login/login.html", {}),
     ("/login", "files/desktop/login/login.html",
         "files/mobile/login/login.html", {}),
+    ("/home", "files/desktop/home/home.html", None, {}),
 ]
 
 def run_server() :
