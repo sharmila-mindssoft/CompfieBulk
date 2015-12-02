@@ -89,6 +89,9 @@ class DatabaseHandler(object) :
     def getDateTime(self) :
         return datetime.datetime.now()
 
+    def saveActivity(self, userId, formId, action ):
+        pass
+
     ### Domain ###
 
     def checkDuplicateDomain(self, domainName, domainId) :
@@ -560,6 +563,7 @@ class DatabaseHandler(object) :
             oldStatuIds[int(row[0])] = row[1][:-1]
         difference = list(set(oldStatuIds.keys()) - set(statutoryIds))
 
+
         for x in difference :
             oldMapId =  [int(j) for j in oldStatuIds.get(x).split(',')]
             oldMapId = oldMapId.remove(mappingId)
@@ -577,7 +581,12 @@ class DatabaseHandler(object) :
         # statutoryIds = statutoryIds[:-1]
         # ids = [int(x) for x in statutoryIds.split(',')]
         ids = tuple(statutoryIds)
-        qry = "SELECT statutory_id, statutory_mapping_ids from tbl_statutories where statutory_id in %s" % str(ids)
+        if (len(ids) == 1) :
+            qryWhere = " WHERE statutory_id = %s" % ids[0]
+        else :
+            qryWhere = " WHERE statutory_id in %s" % str(ids)
+
+        qry = "SELECT statutory_id, statutory_mapping_ids from tbl_statutories %s" % qryWhere
         isUpdated = False
         rows = self.dataSelect(qry)
         for row in rows:
