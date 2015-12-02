@@ -289,8 +289,13 @@ class DatabaseHandler(object) :
                 ids = industryId
             else :
                 ids = [int(x) for x in industryId[:-1].split(',')]
+            if (len(ids) == 1) :
+                qrywhere = "WHERE industry_id = %s" % ids[0]
+            else :
+                qrywhere = "WHERE industry_id in %s" % str(tuple(ids))
+
             qry = " SELECT (GROUP_CONCAT(industry_name SEPARATOR ', ')) as industry_name \
-                FROM tbl_industries WHERE industry_id in %s" % str(tuple(ids))
+                FROM tbl_industries %s" % qrywhere
 
         rows = self.dataSelect(qry)
         industryName = str(rows[0][0])
@@ -572,7 +577,7 @@ class DatabaseHandler(object) :
             _tempDict[int(row[0])] = row[1]
 
         for row in rows :
-            parentIds = [int(x) for x in row[3].split(',')]
+            parentIds = [int(x) for x in row[3][:-1].split(',')]
             names = []
             for id in parentIds :
                 if id > 0 :
@@ -600,7 +605,7 @@ class DatabaseHandler(object) :
             statutoryNames[int(row[0])] = row[1]
 
         for geo in _rows :
-            parentIds = [int(x) for x in geo[2].split(',')]
+            parentIds = [int(x) for x in geo[2][:-1].split(',')]
             names = []
             for id in parentIds :
                 if id > 0 :
@@ -738,7 +743,10 @@ class DatabaseHandler(object) :
             qry = " WHERE t1.compliance_id = %s" %  complianceIds
         else :
             # ids = (int(x) for x in complianceIds.split(','))
-            qry = " WHERE t1.compliance_id in %s" % str(tuple(complianceIds))
+            if (len(complianceIds) == 1):
+                qry = " WHERE t1.compliance_id in (%s)" % complianceIds[0]
+            else :
+                qry = " WHERE t1.compliance_id in %s" % str(tuple(complianceIds))
 
         query = "SELECT t1.compliance_id, t1.statutory_provision, t1.compliance_task, \
             t1.compliance_description, t1.document_name, t1.format_file, t1.penal_consequences, \
@@ -867,7 +875,7 @@ class DatabaseHandler(object) :
     def getStautoryMappings(self) :
         query = "SELECT t1.statutory_mapping_id, t1.country_id, t2.country_name, t1.domain_id,  \
             t3.domain_name, t1.industry_ids, t1.statutory_nature_id, t4.statutory_nature_name, \
-            t1.statutory_ids, t1.compliance_ids, t1.geography_ids, t1.approval_status  \
+            t1.statutory_ids, t1.compliance_ids, t1.geography_ids, t1.approval_status, t1.is_active  \
             FROM tbl_statutory_mappings t1 \
             INNER JOIN tbl_countries t2 on t1.country_id = t2.country_id \
             INNER JOIN tbl_domains t3 on t1.domain_id = t3.domain_id \

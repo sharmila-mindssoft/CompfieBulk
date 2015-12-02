@@ -933,7 +933,7 @@ class GeographyAPI(object) :
         DH = DatabaseHandler.instance()
         _geographyList = DH.getGeographies()
         for row in _geographyList :
-            parentIds = [int(x) for x in row[3].split(',')]
+            parentIds = [int(x) for x in row[3][:-1].split(',')]
             geography = Geography(int(row[0]), row[1], int(row[2]), parentIds[-1], int(row[4]))
             countryId = int(row[5])
             _list = self.geographies.get(countryId)
@@ -1028,7 +1028,7 @@ class GeographyAPI(object) :
             geographyData[int(row[0])] = row[1]
         for geo in _geographyList :
             countryId = int(row[5])
-            parentIds = [int(x) for x in geo[3].split(',')]
+            parentIds = [int(x) for x in geo[3][:-1].split(',')]
             names = []
             names.append(geo[6])
             for id in parentIds :
@@ -1090,7 +1090,7 @@ class StatutoryApi (object) :
         DH = DatabaseHandler.instance()
         _statutoryList = DH.getStatutories()
         for row in _statutoryList :
-            parentIds = [int(x) for x in row[3].split(',')]
+            parentIds = [int(x) for x in row[3][:-1].split(',')]
             statutory = Statutory(int(row[0]), row[1], int(row[2]), parentIds)
             countryId = int(row[4])
             domainId = int(row[6])
@@ -1229,7 +1229,7 @@ class StatutoryMapping(object) :
         domainName, industryIds,
         statutoryNatureId, statutoryNatureName,
         statutoryIds, statutoryMappings, complianceIds, 
-        geographyIds, approvalStatus
+        geographyIds, approvalStatus, isActive
     ) :
         self.countryId = countryId
         self.countryName = countryName 
@@ -1246,6 +1246,7 @@ class StatutoryMapping(object) :
         self.compliances = []
         self.geographyIds = geographyIds
         self.approvalStatus = approvalStatus
+        self.isActive = isActive
         self.verify()
     
     def verify(self) :
@@ -1263,6 +1264,7 @@ class StatutoryMapping(object) :
         # assertType(self.complianceNames, ListType)
         assertType(self.geographyIds, ListType)
         assertType(self.approvalStatus, IntType)
+        assertType(self.isActive, IntType)
         self.getData()
 
     def getData(self) :
@@ -1298,7 +1300,8 @@ class StatutoryMapping(object) :
             "compliances": self.compliances,
             "compliance_names": self.complianceNames,
             "geographies_ids": self.geographyIds,
-            "approval_status": self.approvalStatus
+            "approval_status": self.approvalStatus,
+            "is_active": self.isActive
         }
 
     def __repr__(self) :
@@ -1324,7 +1327,7 @@ class StatutoryMappingApi(object):
     def getStatutoryMappings(self) :
         DH = DatabaseHandler.instance()
         _staturoyMapList = DH.getStautoryMappings()
-        _statutoryMappings = DH.getStatutoryWithMappings()
+        _statutoryMappings = DH.allStatutories
         for row in _staturoyMapList :
             mappingId = int(row[0])
             countryId = int(row[1])
@@ -1335,15 +1338,16 @@ class StatutoryMappingApi(object):
             statutoryNatureId = int(row[6])
             statutoryNatureName = row[7]
             statutoryIds = [int(x) for x in row[8][:-1].split(',')]
-            statutoryMappings = [_statutoryMappings.get(int(x)) for x in statutoryIds ]
+            statutoryMappings = [_statutoryMappings.get(x) for x in statutoryIds ]
             complianceIds = [int(x) for x in row[9][:-1].split(',')]
             geographyIds = [int(x) for x in row[10][:-1].split(',')]
             approvalStatus = row[11]
+            isActive = row[12]
             mapping = StatutoryMapping (
                 countryId, countryName, domainId, domainName, 
                 industryIds, statutoryNatureId, statutoryNatureName, 
                 statutoryIds, statutoryMappings, complianceIds, 
-                geographyIds, approvalStatus
+                geographyIds, approvalStatus, isActive
             )
             self.statutoryMappings[mappingId] = mapping.toStructure()
             
