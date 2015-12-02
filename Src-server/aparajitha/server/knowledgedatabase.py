@@ -71,7 +71,7 @@ class KnowledgeDatabase(object) :
 		for row in result :
 			row["user_id"] = int(row["user_id"])
 			row["user_group_id"] = int(row["user_group_id"])
-		return result
+		return result[0]
 
 	def get_user_id(self, email) :
 		select_fields = ["user_id"]
