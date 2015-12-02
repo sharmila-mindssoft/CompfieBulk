@@ -4,13 +4,13 @@ $(document).ready(function(){
 	}
 	function failure(data){
 	}
-		 var None =null;
-	     var mappingdate ={
+		 /*var None =null;
+	     var mappingdata ={
                 "country_id": 1,
                 "domain_id": 1,
                 "industry_ids": [1,2],
                 "statutory_nature_id": 1,
-                "statutory_ids": [1],
+                "statutory_ids": [1,2],
                 "compliances":[
                                         { 
                         "statutory_provision": "Rule 10, Section 1, Sub-Sec 1A",
@@ -80,7 +80,14 @@ $(document).ready(function(){
                 "geography_ids":[2]
             }
 
-	mirror.saveStatutoryMapping(mappingdate, success, failure);
+	mirror.saveStatutoryMapping(mappingdata, success, failure);*/
+
+	 {
+                "statutory_level_id": 2,
+                "statutory_name": "Tamil Nadu Gratuity Act, 1972",
+                "parent_ids": [1]
+            }
+            mirror.saveStatutory(1,"Tamil Nadu Gratuity Act, 1972",[0], success, failure);
 });
 
 function GetStatutories(){
@@ -141,6 +148,8 @@ function loadUserList(usersList) {
 
       function displayAdd () {
 	    $("#error").text('');
+	    $("#listview").hide();
+	    $("#addview").show();
 	}
 
 	function changeStatus (userId,isActive) {
