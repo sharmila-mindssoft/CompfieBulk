@@ -1,11 +1,86 @@
-var usersList;
-var domainsList;
-var userGroupsList;
-var tempUsersList;
-var countriesList;
-
 $(document).ready(function(){
-	GetStatutories();
+	function success(status,data){
+		alert("success");
+	}
+	function failure(data){
+	}
+		 var None =null;
+	     var mappingdate ={
+                "country_id": 1,
+                "domain_id": 1,
+                "industry_ids": [1,2],
+                "statutory_nature_id": 1,
+                "statutory_ids": [1],
+                "compliances":[
+                                        { 
+                        "statutory_provision": "Rule 10, Section 1, Sub-Sec 1A",
+                        "compliance_task": "Notice of Opening",
+                        "description": "Within 30 days of opening a branch", 
+                        "document": "Form I", 
+                        "format_file_name": "", 
+                        "penal_consequences": "Imprisonment With Fine", 
+                        "compliance_frequency": "OneTime", 
+                        "statutory_dates": [
+                            {
+                                "statutory_date": 9,
+                                "statutory_month": 7,
+                                "trigger_before_days": 30
+                            },
+                        ],
+                        "repeats_type": None, 
+                        "repeats_every": None, 
+                        "duration_type": None,
+                        "duration": None,
+                        "is_active": 1
+                    },
+                    { 
+                        "statutory_provision": "Rule 3, Section 1, Sub-Sec 1A",
+                        "compliance_task": "Dealer Registration",
+                        "description": "Within 30 days of opening a branch", 
+                        "document": "Form I", 
+                        "format_file_name": "", 
+                        "penal_consequences": "Imprisonment With Fine", 
+                        "compliance_frequency": "Periodical", 
+                        "statutory_dates": [
+                            {
+                                "statutory_date": 9,
+                                "statutory_month": 7,
+                                "trigger_before_days": 30
+                            },
+                        ],
+                        "repeats_type": "Year", 
+                        "repeats_every": 1, 
+                        "duration_type": None,
+                        "duration": None,
+                        "is_active": 1
+                    },
+                    { 
+                        "statutory_provision": "Rule 11, Section 12, Sub-Sec 1A",
+                        "compliance_task": "Dealer Registration",
+                        "description": "Within 30 days of opening a branch", 
+                        "document": "Form I", 
+                        "format_file_name": "", 
+                        "penal_consequences": "Imprisonment With Fine", 
+                        "compliance_frequency": "OnOccurrence", 
+                        "statutory_dates": [
+                            {
+                                "statutory_date": 9,
+                                "statutory_month": 7,
+                                "trigger_before_days": 30
+                            },
+                        ],
+                        "repeats_type": None, 
+                        "repeats_every": None, 
+                        "duration_type": "Day",
+                        "duration": 30,
+                        "is_active": 1
+                    }
+                    
+                ],
+                "geography_ids":[2]
+            }
+
+	mirror.saveStatutoryMapping(mappingdate, success, failure);
 });
 
 function GetStatutories(){
