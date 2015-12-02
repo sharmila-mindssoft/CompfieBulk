@@ -582,8 +582,13 @@ class DatabaseHandler(object) :
         rows = self.dataSelect(qry)
         for row in rows:
             statutoryId = int(row[0])
+
+            if row[1] is None : 
+                mapId = ""
+            else :
+                mapId = row[1]
             _statutoryMappingId = str(mappingId) + ","
-            if (len(row[1]) > 0) :
+            if (len(mapId) > 0):
                 mappingIds = [int(x) for x in row[1][:-1].split(',')]
                 if (mappingId not in mappingIds) :
                     mappingIds.append(mappingId)
@@ -848,33 +853,26 @@ class DatabaseHandler(object) :
 
     def saveStatutoryBackup(self, statutoryMappingId, createdBy):
         oldRecord = self.getStatutoryMappingsById(statutoryMappingId)
-        print oldRecord
         backupId = self.getNewId("statutory_backup_id", "tbl_statutories_backup")
         createdOn = self.getDateTime()
         industryName = self.getIndustryByIndustryId(oldRecord[4])
-        print industryName
-        print self.allGeographies
-        print self.allStatutories
 
         statutoryProvision = []
-        print oldRecord[7], oldRecord[8]
         for sid in oldRecord[7][:-1].split(',') :
-            data = self.allStatutories.get(sid)
+            data = self.allStatutories.get(int(sid))
             statutoryProvision.append(data[1])
         mappings = ','.join(str(x) for x in statutoryProvision)
         geoMap = []
         for gid in oldRecord[8][:-1].split(',') :
-            data = self.allGeographies.get(gid)
+            data = self.allGeographies.get(int(gid))
             geoMap.append(data[1])
         geoMappings = ','.join(str(x) for x in geoMap)
-        print mappings, geoMappings
         query = "INSERT INTO tbl_statutories_backup(statutory_backup_id, country_name, domain_name, industry_name, \
             statutory_nature, statutory_provision, applicable_location, updated_by, updated_on) \
             VALUES(%s, '%s', '%s', '%s', '%s', '%s', '%s', %s, '%s') " % (
                 backupId, oldRecord[1], oldRecord[3], industryName, oldRecord[6], mappings, geoMappings,
                 createdBy, createdOn
             )
-        print query
         if (self.dataInsertUpdate(query)) :
             qry = " INSERT INTO tbl_compliances_backup(statutory_backup_id, statutory_provision, \
                 compliance_task, compliance_description, document_name, format_file, \
@@ -884,7 +882,6 @@ class DatabaseHandler(object) :
                 t1.document_name, t1.format_file, t1.penal_consequences, t1.compliance_frequency, \
                 t1.statutory_dates, t1.repeats_every, t1.repeats_type, t1.duration, t1.duration_type \
                 FROM tbl_compliances t1 WHERE statutory_mapping_id=%s" % (backupId, statutoryMappingId)
-            print qry
             self.dataInsertUpdate(qry)
 
 
