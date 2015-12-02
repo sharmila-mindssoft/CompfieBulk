@@ -2,14 +2,7 @@
 <html>
 <head>
   <title>Home</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <link rel="shortcut icon" href="/files/desktop/common/images/favicon.ico" type="image/x-icon" property="icon">
-  <link rel="icon" href="/files/desktop/common/images/favicon.ico" type="image/x-icon" property="icon">
-  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/reset.css">
-  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/common.css">
+  {% include "/files/desktop/common/html/header.html" %}
   <style type="text/css">
     .welcome-msg {
       position: absolute;
@@ -24,9 +17,6 @@
       font-size: 20px;
     }
   </style>
-
-  <script type="text/javascript" src="/files/desktop/common/js/jquery.min.js"></script>
-  <script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
   <script type="text/javascript">
     $(document).ready(function () {
       if (!mirror.verifyLoggedIn())
@@ -40,5 +30,6 @@
   <div id="wrapper">
     <div class="welcome-msg"></div>
   </div>
+  {% include "/files/desktop/common/html/footer.html" %}
 </body>
 </html>

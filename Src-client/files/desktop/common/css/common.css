@@ -24,6 +24,20 @@ img, object {
 	-o-background-size: cover;
 	background-size: cover;
 }
+#wrapper:after {
+  height: 60px;
+}
+.footer {
+	width: 100%;
+	float: left;
+	background: #000;
+	color: #989898;
+	text-align: center;
+	line-height: 60px;
+	font-size: 0.9em;
+	position: relative;
+	z-index: 2;
+}
 .clearfix:after {
 	content: "";
 	display: table;
