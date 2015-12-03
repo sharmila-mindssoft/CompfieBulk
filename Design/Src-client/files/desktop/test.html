@@ -21,17 +21,8 @@
       alert("failure_data"+data)
     }
     $(document).ready(function(){
-        reportFilters = {
-          "country_id": 1,
-          "group_id": 1,
-          "business_group_id": null,
-          "legal_entity_id": null,
-          "division_id": null,
-          "unit_id": null,
-          "domain_ids" : null
-        }
-
-        mirror.getClientDetailsReport("TechnoAPI", reportFilters, success, failure)
+        saveUserDetail = ["vinod@domain.com",1,"Vinod","EMP1129","+917956403219","KK Nagar, Madurai", "Manager", "1","1"];
+        mirror.saveAdminUser("AdminAPI", saveUserDetail, success, failure);
     });
 </script>
 </body>
