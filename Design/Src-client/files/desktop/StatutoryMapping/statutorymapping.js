@@ -79,20 +79,14 @@ function loadStatutoryMappingList(statutoryMappingsList) {
       	}
       }
 
-      function displayAdd () {
-	    $("#error").text('');
-	    $("#listview").hide();
-	    $("#addview").show();
-	}
-
 	function changeStatus (userId,isActive) {
-		/*mirror.changeAdminUserStatus("AdminAPI", userId, isActive, success, failure);
 		function success(status,data){
-			GetUsers();
+			getStatutoryMappings();
 			$("#error").text("Status Changed Successfully");
 		}
 		function failure(data){
-		}*/
+		}
+		mirror.changeStatutoryMappingStatus(statutorymappingId, isActive, success, failure);
 	}
 
 	function filter (term, cellNr){
@@ -105,4 +99,10 @@ function loadStatutoryMappingList(statutoryMappingsList) {
 				table.rows[r].style.display = '';
 			else table.rows[r].style.display = 'none';
 		}
+	}
+	
+	function displayAdd () {
+	    $("#error").text('');
+	    $("#listview").hide();
+	    $("#addview").show();
 	} 
