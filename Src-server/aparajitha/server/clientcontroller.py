@@ -1,5 +1,6 @@
 import os
 from aparajitha.server.clientdatabase import ClientDatabase
+from aparajitha.server.clientmodels import *
 from aparajitha.model.common import validate_data
 from aparajitha.model import protocol
 import json
@@ -14,6 +15,10 @@ class APIHandler(object):
 		self._knowledge_db = KnowledgeDatabase()
 		self._request_map = {
 			"Test": self._test,
+			"GetServiceProviders": self._getServiceProviders,
+			"SaveServiceProvider": self._saveServiceProvider,
+			"UpdateServiceProvider": self._updateServiceProvider,
+			"ChangeServiceProviderStatus": self._changeServiceProviderStatus
 		}
 
 	def _success_response(self, response, response_option, data) :
@@ -54,6 +59,92 @@ class APIHandler(object):
 			"TestResponse", "TestSuccess", {}
 		)
 
+	def _getServiceProviders(self, db, user, request):
+		serviceProviderList = ServiceProvider.getList(db)
+		responseData = {}
+		responseData["service_providers"] = serviceProviderList
+		return self._success_response(
+			"GetServiceProvidersResponse", 
+			"GetServiceProvidersSuccess", 
+			responseData
+		)
+
+	def _saveServiceProvider(self, db, user, request):
+		form = "ServiceProvider"
+		sessionUser = user["user_id"]
+
+		response = "SaveServiceProviderResponse"
+		responseData = None
+
+		serviceProviderId = db.generateNewId(form)
+		serviceProvider = ServiceProvider.initializeWithRequest(request, 
+			serviceProviderId, self._client_id)
+
+		if db.isDuplicate(form, "name", serviceProvider.serviceProviderName,
+			serviceProvider.serviceProviderId):
+			responseData = self._failure_response(
+				response,"ServiceProviderNameAlreadyExists")
+		elif db.isDuplicate(form, "contactNo", serviceProvider.contactNo,serviceProvider.serviceProviderId):
+			responseData = self._failure_response(
+				response,"ContactNumberAlreadyExists")
+		elif db.saveServiceProvider(serviceProvider, sessionUser):
+			actionType = "save"
+			self._knowledge_db.saveActivity(form, serviceProvider.serviceProviderName, 
+				actionType, sessionUser)
+			responseData =  self._success_response(
+				response,"SaveServiceProviderSuccess",{})		
+		return responseData
+
+	def _updateServiceProvider(self, db, user, request):
+		form = "ServiceProvider"
+		sessionUser = user["user_id"]
+
+		response = "UpdateServiceProviderResponse"
+		responseData = None
+
+		serviceProviderId = request["service_provider_id"]
+		serviceProvider = ServiceProvider.initializeWithRequest(request, 
+			serviceProviderId, self._client_id)
+		
+		if db.isIdInvalid(form, serviceProviderId):
+			responseData = self._failure_response(
+				response, "InvalidServiceProviderId")
+		elif db.isDuplicate(form, "name", serviceProvider.serviceProviderName,
+			serviceProvider.serviceProviderId):
+			responseData = self._failure_response(
+				response, "ServiceProviderNameAlreadyExists")
+		elif db.isDuplicate(form, "contactNo", serviceProvider.contactNo,serviceProvider.serviceProviderId):
+			responseData = self._failure_response(
+				response, "ContactNumberAlreadyExists")
+		elif db.saveServiceProvider(serviceProvider, sessionUser):
+			actionType = "update"
+			self._knowledge_db.saveActivity(form, serviceProvider.serviceProviderName, 
+				actionType, sessionUser)
+			responseData =  self._success_response(
+				response, "UpdateServiceProviderSuccess",{})		
+		return responseData
+
+	def _changeServiceProviderStatus(self, db, user, request):
+		form = "ServiceProvider"
+		sessionUser = user["user_id"]
+
+		response = "ChangeServiceProviderStatusResponse"
+		responseData = None
+
+		serviceProviderId = request["service_provider_id"]
+		isActive = request["is_active"]
+
+		if db.isIdInvalid(form, serviceProviderId):
+			responseData = self._failure_response(
+				response, "InvalidServiceProviderId")
+		elif db.changeServiceProviderStatus(serviceProviderId, isActive,
+										sessionUser):
+			actionType = "statusChange"
+			self._knowledge_db.saveActivity(form, serviceProviderId, 
+				actionType, sessionUser)
+			responseData = self._success_response(
+				response, "ChangeServiceProviderStatusSuccess",{})
+		return responseData
 
 #
 # db_request

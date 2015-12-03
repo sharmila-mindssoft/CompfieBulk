@@ -235,12 +235,12 @@ class OptionalType(object):
 
 NoneType = type(None)
 type_map = {
-	list: (VariantType, ListType, SetType),
-	str: (TextType, EnumType),
-	unicode: (TextType, EnumType),
-	int: (IntegerType, UnsignedIntegerType, BoolType),
-	float: (FloatType, UnsignedFloatType),
-	dict: (DictType,),
+	list: (VariantType, ListType, SetType, OptionalType),
+	str: (TextType, EnumType, OptionalType),
+	unicode: (TextType, EnumType, OptionalType),
+	int: (IntegerType, UnsignedIntegerType, BoolType, OptionalType),
+	float: (FloatType, UnsignedFloatType, OptionalType),
+	dict: (DictType, OptionalType),
 	NoneType: (OptionalType,)
 }
 
