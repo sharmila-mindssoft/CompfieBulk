@@ -61,6 +61,7 @@ define_request(
 		"user": DictType({
 			"user_id": Int,
 			"client_id": OptionalType(Int),
+			"category": Text20,
 			"email_id": Text100,
 			"user_group_name": Text50,
 			"employee_name": Text50,

@@ -9,7 +9,7 @@ html, body {
 }
 img, object {
 	max-width: 100%;
-	height: auto; 
+	height: auto;
 }
 #wrapper {
 	height: auto;
@@ -23,6 +23,40 @@ img, object {
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
+}
+#wrapper:after {
+  height: 60px;
+}
+.main-content-area {
+	width: 100%;
+	height: 100%;
+	float: left;
+}
+.content-container {
+	width: 62.500em;
+	margin: auto;
+}
+.content-area {
+	width: 100%;
+	float: left;
+	padding-top: 2em;
+	margin-bottom: 2em;
+}
+.content-area h1 {
+	color: #fff;
+	font-size: 1.3em;
+	padding-bottom: 1.5em;
+}
+.footer {
+	width: 100%;
+	float: left;
+	background: #000;
+	color: #989898;
+	text-align: center;
+	line-height: 60px;
+	font-size: 0.9em;
+	position: relative;
+	z-index: 2;
 }
 .clearfix:after {
 	content: "";
