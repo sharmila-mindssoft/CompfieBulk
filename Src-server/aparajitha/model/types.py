@@ -245,14 +245,12 @@ class OptionalType(object):
 		return self.field_type
 
 
-NoneType = type(None)
 type_map = {
 	list: (VariantType, ListType, SetType),
 	str: (TextType, EnumType),
 	unicode: (TextType, EnumType),
 	int: (IntegerType, UnsignedIntegerType, BoolType),
 	float: (FloatType, UnsignedFloatType),
-	dict: (DictType,),
-	NoneType: (OptionalType,)
+	dict: (DictType,)
 }
 
