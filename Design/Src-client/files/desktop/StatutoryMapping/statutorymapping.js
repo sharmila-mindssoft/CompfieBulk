@@ -19,7 +19,7 @@ function GetStatutories(){
 	}
 	function failure(data){
 	}
-	mirror.getAdminUserList(success, failure);
+	mirror.getStatutoryMappings(success, failure);
 }
 function loadUserList(usersList) {
 	/*var j = 1;

@@ -21,8 +21,17 @@
       alert("failure_data"+data)
     }
     $(document).ready(function(){
-      mirror.reactivateUnit("TechnoAPI", 1, 5, "hi", 
-        success, failure)
+        reportFilters = {
+          "country_id": 1,
+          "group_id": 1,
+          "business_group_id": null,
+          "legal_entity_id": null,
+          "division_id": null,
+          "unit_id": null,
+          "domain_ids" : null
+        }
+
+        mirror.getClientDetailsReport("TechnoAPI", reportFilters, success, failure)
     });
 </script>
 </body>

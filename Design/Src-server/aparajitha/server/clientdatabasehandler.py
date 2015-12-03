@@ -142,22 +142,23 @@ class ClientDatabaseHandler(object) :
             return False
 
     def getData(self, table, columns, condition):
-        query = "SELECT "+columns+" FROM "+table+" WHERE "+condition
+        query = "SELECT %s FROM %s WHERE %s" %(columns, table, condition)
         return self.executeAndReturn(query)
 
-    def getDataFromMultipleTables(self, columns, tables, conditions):
+    def getDataFromMultipleTables(self, columns, tables, conditions, joinType):
 
         query = "SELECT %s FROM " % columns
 
         for index,table in enumerate(tables):
             if index == 0:
-                query += "%s alias%d  left join " % (table, index)
+                query += "%s alias%d  %s" % (table, index, joinType)
             elif index <= len(tables) -2:
-                query += " %s alias%d on (alias%d.%s = alias%d.%s) left join " % (table, 
-                    index, index-1, conditions[index-1], index, conditions[index-1])
+                query += " %s alias%d on (alias%d.%s = alias%d.%s) %s " % (table, 
+                    index, index-1, conditions[index-1][0], index, 
+                    conditions[index-1][1], joinType)
             else:
                 query += " %s alias%d on (alias%d.%s = alias%d.%s)" % (table, index,
-                    index-1, conditions[index-1], index, conditions[index-1])
+                    index-1, conditions[index-1][0], index, conditions[index-1][1])
 
         return self.executeAndReturn(query)
 

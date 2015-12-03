@@ -19,6 +19,7 @@ function GetGeographies(){
 	}
 	mirror.getGeographies(success, failure);
 }
+
 function loadGeographiesList(geographiesList) {
 	var j = 1;
 	var imgName = '';
@@ -46,10 +47,9 @@ function loadGeographiesList(geographiesList) {
             break;
           }
         }
-        var country = ''; 
         for(var countryList in countriesList){
           if(countriesList[countryList]["country_id"] == entity){
-            country = countriesList[countryList]["country_name"];
+            countryName = countriesList[countryList]["country_name"];
             break;
           }
         }
@@ -64,10 +64,10 @@ function loadGeographiesList(geographiesList) {
         var tableRow=$('#templates .table-geography-master .table-row');
         var clone=tableRow.clone();
         $('.sno', clone).text(j);
-        $('.country', clone).text(country);
+        $('.country', clone).text(countryName);
         $('.level', clone).text(level);
         $('.name', clone).text(geographyName);
-        $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+geographyId+',\''+geographyName+'\',\''+country+'\','+entity+','+lposition+','+parentid+')"/>');
+        $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+geographyId+',\''+geographyName+'\',\''+countryName+'\','+entity+','+lposition+','+parentid+')"/>');
         $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+geographyId+','+passStatus+')"/>');
         $('.tbody-geography-list').append(clone);
         j = j + 1;
@@ -127,9 +127,6 @@ function activate_text (element,checkval,checkname) {
 //Autocomplete Script ends
 
 function loadGeographyFirstLevels(checkval){
-   /*$('#geography-level-templates').each(function (i) {
-    $('[id="' + this.id + '"]:gt(0)').remove();
-  });*/
   $(".tbody-geography-level").find("div").remove();
   var geographyLevelList = geographyLevelsList[checkval];
   var levelposition;
@@ -138,11 +135,9 @@ function loadGeographyFirstLevels(checkval){
       var tableRow=$('#geography-level-templates');
       var clone=tableRow.clone();
       $('.title', clone).text(geographyLevelList[j]["level_name"]);
-      $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="checkval('+levelposition+',event)"/><span> <a href="#" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="checkval('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" name="glmid'+levelposition+'" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/><input type="hidden" name="level'+levelposition+'" id="level'+levelposition+'" value="'+levelposition+'" />');
+      $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" class="input-box addleft" placeholder=""  style="width:80%;" id="datavalue'+levelposition+'" onkeypress="checkval('+levelposition+',event)"/><span> <a href="#" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="checkval('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
       $('.tbody-geography-level').append(clone);
-    }
-    //$('#geography-level-templates').eq(0).remove();
-    
+    }    
     var setlevelstage= 1;
     $('#datavalue'+setlevelstage).val('');
     $('#ulist'+setlevelstage).empty();
@@ -169,11 +164,11 @@ function activate(element, id, type,country, level){
     $(el).removeClass( "active" );
       });
    $(element).addClass("active");
-     load(id,type,level,country);
+     load(id,level,country);
   }
 
 //load geographymapping sub level data dynamically
-function load(id,type,level,country){
+function load(id,level,country){
           var levelstages= parseInt(level) + 1;
           for(var k=levelstages;k<=10;k++){
           var setlevelstage= k;
@@ -236,10 +231,8 @@ function load(id,type,level,country){
         function success(status,data){
           if(status == "success"){
             $("#error").text("Record Added Successfully");
-            GetGeographies();
-            load(last_geography_id,"type",last_level,$('#country').val());
-              /*str += '<a href="#"> <li id="'+setgeographyid+'" class="'+clsval1+'" onclick="activate(this,'+setgeographyid+',\''+clsval+'\','+country+','+setlevelstage+')" >'+geographyList[i]["geography_name"]+'</li> </a>';
-              $('#ulist'+setlevelstage).append(str);*/
+            reload(last_geography_id,last_level,$('#country').val());
+           
           }else{
             $("#error").text(status)
           }
@@ -253,6 +246,16 @@ function load(id,type,level,country){
 }
 }}
 
+function reload(last_geography_id,last_level,cny){
+  function success(status,data){
+    geographiesList = data["geographies"];
+    load(last_geography_id,last_level,cny)
+  }
+  function failure(data){
+  }
+  mirror.getGeographies(success, failure);
+}
+
 function displayEdit (geographyId,geographyName,country,countryid,lposition,parentidval) {
     $("#error").text("");
     $("#listview").hide();
@@ -260,9 +263,7 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
     $("#geographyid").val(geographyId);
     $("#countryval").val(country);
     $("#country").val(countryid);
-    $('#geography-level-templates').each(function (i) {
-    $('[id="' + this.id + '"]:gt(0)').remove();
-  });
+    $(".tbody-geography-level").find("div").remove();
   var geographyLevelList = geographyLevelsList[countryid];
   var levelposition;
     for(var j in geographyLevelList){
@@ -271,13 +272,12 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
       var clone=tableRow.clone();
       $('.title', clone).text(geographyLevelList[j]["level_name"]);
       if(levelposition == lposition){
-        $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="editcheckval('+levelposition+',event)"/><span> <a href="#" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="editcheckval('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" name="glmid'+levelposition+'" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/> <input type="hidden" name="visible'+levelposition+'" id="visible'+levelposition+'" value=""/> <input type="hidden" name="level'+levelposition+'" id="level'+levelposition+'" value="'+levelposition+'" />');
+        $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="editcheckval('+levelposition+',event)"/><span> <a href="#" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="editcheckval('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/> <input type="hidden" id="visible'+levelposition+'" value=""/> <input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
       }else{
         $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" readonly="readonly" class="input-box addleft" placeholder=""  style="width:80%;" name="datavalue'+levelposition+'" id="datavalue'+levelposition+'" onkeypress="checkval('+levelposition+',event)"/><span> <img src="/images/icon-plus.png" formtarget="_self"/></span></div><input type="hidden" name="glmid'+levelposition+'" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/> <input type="hidden" name="visible'+levelposition+'" id="visible'+levelposition+'" value=""/> <input type="hidden" name="level'+levelposition+'" id="level'+levelposition+'" value="'+levelposition+'" />');
       }
       $('.tbody-geography-level').append(clone);
     }
-      //$('#geography-level-templates').eq(0).remove();
       $('#datavalue'+lposition).val(geographyName);
       var levelstages= lposition-1;
       var parentid=parentidval;
@@ -322,7 +322,6 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
       }
 
   }
-
 
   function editcheckval(j,e){
       var data = e.keyCode;
@@ -372,11 +371,11 @@ function activateedit(element, id, type,country, level,levelstage){
     $(el).removeClass( "active" );
       });
    $(element).addClass("active");
-     loadedit(id,type,level,country,levelstage);
+     loadedit(id,level,country,levelstage);
   }
 
 //load geographymapping sub level data dynamically
-function loadedit(id,type,level,country,levelstagemax){
+function loadedit(id,level,country,levelstagemax){
           var levelstages= parseInt(level) + 1;
           for(var k=levelstages;k<=levelstagemax;k++){
           var setlevelstage= k;
