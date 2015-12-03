@@ -46,7 +46,7 @@ class TemplateHandler(tornado.web.RequestHandler) :
         self.set_header("Access-Control-Allow-Headers", "Content-Type")
         self.set_header("Access-Control-Allow-Methods", "GET, POST")
         self.set_status(204)
-        self.write("")        
+        self.write("")
 
 class APIHandler(tornado.web.RequestHandler) :
     def initialize(self, handler) :
@@ -76,6 +76,7 @@ TEMPLATE_PATHS = [
         "files/mobile/login/login.html", {}),
     ("/test", "test_apis.html",
         "", {}),
+    ("/home", "files/desktop/home/home.html", None, {}),
 ]
 
 def run_server() :
@@ -113,7 +114,7 @@ def run_server() :
         (r"/(.*)", tornado.web.StaticFileHandler, dict(path=static_path)),
     ]
     application_urls.extend(lower_level_handlers)
-    
+
     print "Listening on port %s" % (HTTP_PORT,)
     application = tornado.web.Application(
         application_urls,

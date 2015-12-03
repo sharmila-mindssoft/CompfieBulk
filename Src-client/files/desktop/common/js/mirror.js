@@ -22,7 +22,6 @@ function initMirror() {
             "user": user,
             "menu": menu
         };
-        console.log(info);
         window.localStorage["userInfo"] = toJSON(info);
     }
 
@@ -66,6 +65,13 @@ function initMirror() {
         return info["menu"];
     }
 
+    function getUserCategory() {
+        var info = getUserInfo();
+        if (info === null)
+            return null;
+        return info["user"]["category"];
+    }
+
     function setRedirectUrl(url) {
         window.localStorage["redirectUrl"] = url;
     }
@@ -77,9 +83,11 @@ function initMirror() {
         return url;
     }
 
-    function verifyLoggedIn() {
+    function verifyLoggedIn(skip_redirect) {
         setRedirectUrl(window.location.href);
         if (getSessionToken() === null) {
+            if (skip_redirect === true)
+                return false;
             window.location.href = "/login";
             return false;
         }
@@ -128,7 +136,6 @@ function initMirror() {
             api_url,
             ["Login", {"username": email, "password": password}],
             function (status, response) {
-                console.log(response);
                 if (status == "LoginSuccess") {
                     initSession(
                         response["session_token"],
@@ -827,6 +834,7 @@ function initMirror() {
         getSessionToken: getSessionToken,
         getUser: getUser,
         getUserMenu: getUserMenu,
+        getUserCategory: getUserCategory,
 
         setRedirectUrl: setRedirectUrl,
         getRedirectUrl: getRedirectUrl,

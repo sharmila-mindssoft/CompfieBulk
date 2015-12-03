@@ -38,7 +38,7 @@ class KnowledgeDatabase(object) :
 	def new_uuid(self) :
 		s = str(uuid.uuid4())
 		return s.replace("-", "")
-		
+
 	def test(self) :
 		query = "SHOW TABLES;"
 		return self._db.executeAndReturn(query)
@@ -102,7 +102,7 @@ class KnowledgeDatabase(object) :
 
 	def get_user_details(self, user_id, client_id) :
 		select_fields = [
-			"user_group_name", "form_ids",
+			"tbl1.category", "user_group_name", "form_ids",
 			"employee_name", "employee_code",
 			"contact_no", "address", "designation", "is_admin"
 		]
@@ -154,6 +154,7 @@ class KnowledgeDatabase(object) :
 			form["form_order"] = int(form["form_order"])
 			menu[form_type].append(form)
 		result2 = {
+			"category": result["tbl1.category"],
 			"user_group_name": result["user_group_name"],
 			"employee_name": result["employee_name"],
 			"employee_code": result["employee_code"],

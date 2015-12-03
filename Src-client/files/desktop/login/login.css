@@ -115,3 +115,20 @@
 	-moz-border-radius: 0.4em;
 	border-radius: 0.4em;
 }
+.login-error-message {
+	position: absolute;
+	top: -32px;
+	left: 0px;
+	width: 100%;
+	text-align: center;
+	background: #f1f2f2;
+	z-index: 3;
+	padding: 0.5em 0;
+	display: none;
+}
+.login-error-message span {
+	line-height: 1.4em;
+	padding: 0 30px;
+	display: inline-block;
+	color: red;
+}

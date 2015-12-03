@@ -57,7 +57,7 @@ class FloatType(object):
 		if (v < self.min_value) or (v > self.max_value) :
 			raise ValueError("value out of range")
 		return True
-		
+
 class UnsignedFloatType(object):
 	def __init__(self, bytes):
 		self.range = 2 ** (bytes * 8)
@@ -146,14 +146,26 @@ class DictType(object):
 		self.fields = fields
 
 	def validate(self, value):
+		def match_type(_type, _value) :
+			if not type(_type) in type_map[type(_value)] :
+				msg = "expecting type %s but received %s" % (_type, value[_key])
+				raise TypeError(msg)
+			return True
+
 		if not isinstance(value, dict) :
 			raise TypeError("%s not a dictionary" % (value,))
+
 		for _key, _type in self.fields.items():
 			if not _key in value.keys() :
 				raise ValueError("key: %s not found" % (_key,))
-			if not type(_type) in type_map[type(value[_key])] :
-				msg = "expecting type %s but received %s" % (_type, value[_key])
-				raise TypeError(msg)
+			if type(_type) == OptionalType :
+				if value[_key] is None :
+					continue
+				if match_type(_type._field_type(), value[_key]) :
+					continue
+			else :
+				if match_type(_type, value[_key]) :
+					continue
 		return True
 
 	def _keys(self):
@@ -233,14 +245,13 @@ class OptionalType(object):
 		return self.field_type
 
 
-NoneType = type(None)
 type_map = {
-	list: (VariantType, ListType, SetType, OptionalType),
-	str: (TextType, EnumType, OptionalType),
-	unicode: (TextType, EnumType, OptionalType),
-	int: (IntegerType, UnsignedIntegerType, BoolType, OptionalType),
-	float: (FloatType, UnsignedFloatType, OptionalType),
-	dict: (DictType, OptionalType),
-	NoneType: (OptionalType,)
+
+	list: (VariantType, ListType, SetType),
+	str: (TextType, EnumType),
+	unicode: (TextType, EnumType),
+	int: (IntegerType, UnsignedIntegerType, BoolType),
+	float: (FloatType, UnsignedFloatType),
+	dict: (DictType,)
 }
 
