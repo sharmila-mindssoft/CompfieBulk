@@ -6,8 +6,8 @@ INSERT INTO tbl_forms VALUES(2, 'User Master', '/user-master', 2, 'master', 'it'
 INSERT INTO tbl_forms VALUES(3, 'Country Master', '/country-master', 3, 'master', 'it', 0, null);
 INSERT INTO tbl_forms VALUES(4, 'Domain Master', '/domain-master', 4, 'master', 'it', 0, null);
 INSERT INTO tbl_forms VALUES(5, 'Industry Master', 'industry-master', 5, 'master', 'knowledge', 0, null);
-INSERT INTO tbl_forms VALUES(6, 'Geography Levels Master - Geography', 'geography-levels-master', 6, 'master', 'knowledge', 0, 'Geography');
-INSERT INTO tbl_forms VALUES(7, 'Geography Master - Geography', 'geography-master', 7, 'master', 'knowledge', 0, 'Geography');
+INSERT INTO tbl_forms VALUES(6, 'Geography Levels Master', 'geography-levels-master', 6, 'master', 'knowledge', 0, 'Geography');
+INSERT INTO tbl_forms VALUES(7, 'Geography Master', 'geography-master', 7, 'master', 'knowledge', 0, 'Geography');
 INSERT INTO tbl_forms VALUES(8, 'Statutory Nature Master', 'statutory-nature-master', 8, 'master', 'knowledge', 0, 'Statutory');
 INSERT INTO tbl_forms VALUES(9, 'Statutory Levels Master', 'statutory-levels-master', 9, 'master', 'knowledge', 0, 'Statutory');
 INSERT INTO tbl_forms VALUES(10, 'Client Master', 'client-master', 10, 'master', 'techno', 0, null);
@@ -47,8 +47,8 @@ INSERT INTO tbl_forms VALUES(43, 'Compliance Activity Report', 'compliance-activ
 INSERT INTO tbl_forms VALUES(44, 'Reassigned History', 'reassigned-history', 44, 'report', 'client', 0, null);
 INSERT INTO tbl_forms VALUES(45, 'Statutory Notifications List', 'statutory-notifications-list', 45, 'report', 'client', 0, null);
 INSERT INTO tbl_forms VALUES(46, 'Login Trace', 'login-trace', 46, 'report', 'client', 0, null);
-INSERT INTO tbl_forms VALUES(47, 'Settings', 'settings', 47, 'report', 'client', 1, null);
-INSERT INTO tbl_forms VALUES(48, 'Audit Trail', 'audit-trail', 48, 'report', 'common', 1, null);
+INSERT INTO tbl_forms VALUES(47, 'Audit Trail', 'audit-trail', 47, 'report', 'common', 1, null);
+INSERT INTO tbl_forms VALUES(48, 'Settings', 'settings', 48, 'setting', 'client', 1, null);
 
 
 -- DELETE FROM tbl_users;
