@@ -68,6 +68,7 @@ class APIHandler(object):
 				"user_id": user_id,
 				"client_id": user["client_id"],
 				"email_id": email,
+				"category": user_details["category"],
 				"user_group_name": user_details["user_group_name"],
 				"employee_name": user_details["employee_name"],
 				"employee_code": user_details["employee_code"],
