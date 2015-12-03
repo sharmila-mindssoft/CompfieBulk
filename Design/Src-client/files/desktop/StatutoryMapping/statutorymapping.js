@@ -59,6 +59,9 @@ function loadStatutoryMappingList(statutoryMappingsList) {
           passStatus="1";
           imgName="icon-inactive.png"
          }
+         if(approvalStatus == '0'){
+         	approvalStatus = "Pending";
+         }
         var tableRow=$('#templates .table-statutorymapping .table-row');
         var clone=tableRow.clone();
         $('.sno', clone).text(j);

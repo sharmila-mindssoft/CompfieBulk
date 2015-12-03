@@ -89,8 +89,15 @@ class DatabaseHandler(object) :
     def getDateTime(self) :
         return datetime.datetime.now()
 
-    def saveActivity(self, userId, formId, action ):
-        pass
+    def saveActivity(self, userId, formId, action, notificationText=None, notificationLink=None):
+        createdOn = self.getDateTime()
+        activityId = self.getNewId("activity_log_id", "tbl_activity_log")
+        query = "INSERT INTO tbl_activity_log(activity_log_id, user_id, form_id, \
+            action, ticker_text, ticker_link, created_on) \
+            VALUES (%s, %s, %s, '%s', '%s', '%s', '%s')" % (
+                activityId, userId, formId, action, str(notificationText), str(notificationLink), createdOn
+            )
+        self.dataInsertUpdate(query)
 
     ### Domain ###
 
@@ -122,7 +129,10 @@ class DatabaseHandler(object) :
             domainId, domainName, isActive, createdBy, createdOn
         )
 
-        return self.dataInsertUpdate(query)
+        self.dataInsertUpdate(query)
+        action = "Add Domain - \"%s\"" % domainName
+        self.saveActivity(createdBy, 4, action)
+        return True
 
     def getDomainByDomainId(self, domainId) :
         q = "SELECT domain_name FROM tbl_domains WHERE domain_id=%s" % domainId
@@ -138,7 +148,10 @@ class DatabaseHandler(object) :
             updated_by = %s WHERE domain_id = %s" % (
                 domainName, updatedBy, domainId
             )
-            return self.dataInsertUpdate(query)
+            self.dataInsertUpdate(query)
+            action = "Edit Domain - \"%s\"" % domainName
+            self.saveActivity(updatedBy, 4, action)
+            return True
         else :
             return False
 
@@ -149,7 +162,14 @@ class DatabaseHandler(object) :
             updated_by = %s WHERE domain_id = %s" % (
                 isActive, updatedBy, domainId
             )
-            return self.dataInsertUpdate(query)
+            self.dataInsertUpdate(query)
+            if isActive == 0 :
+                status = "deactivated"
+            else:
+                status = "activated"
+            action = "Domain %s status  - %s" % (oldData, status)
+            self.saveActivity(updatedBy, 4, action)
+            return True
         else :
             return False
 
@@ -182,8 +202,10 @@ class DatabaseHandler(object) :
             is_active, created_by, created_on) VALUES (%s, '%s', %s, %s, '%s') " % (
             countryId, countryName, isActive, createdBy, createdOn
         )
-
-        return self.dataInsertUpdate(query)
+        self.dataInsertUpdate(query)
+        action = "Add Country - \"%s\"" % countryName
+        self.saveActivity(createdBy, 4, action)
+        return True
 
     def getCountryByCountryId(self, countryId) :
         q = "SELECT country_name FROM tbl_countries WHERE country_id=%s" % countryId
@@ -198,7 +220,10 @@ class DatabaseHandler(object) :
             updated_by = %s WHERE country_id = %s" % (
                 countryName, updatedBy, countryId
             )
-            return self.dataInsertUpdate(query)
+            self.dataInsertUpdate(query)
+            action = "Edit Country - \"%s\"" % countryName
+            self.saveActivity(updatedBy, 3, action)
+            return True
         else :
             return False
 
@@ -209,7 +234,14 @@ class DatabaseHandler(object) :
             updated_by = %s WHERE country_id = %s" % (
                 isActive, updatedBy, countryId
             )
-            return self.dataInsertUpdate(query)
+            if isActive == 0:
+                status = "deactivated"
+            else:
+                status = "activated"
+            self.dataInsertUpdate(query)
+            action = "Country %s status  - %s" % (oldData, status)
+            self.saveActivity(updatedBy, 3, action)
+            return True
         else :
             return False
 
@@ -244,7 +276,10 @@ class DatabaseHandler(object) :
             industryId, industryName, isActive, createdBy, createdOn
         )
 
-        return self.dataInsertUpdate(query)
+        self.dataInsertUpdate(query)
+        action = "Add Industry - \"%s\"" % industryName
+        self.saveActivity(createdBy, 5, action)
+        return True
 
     def getIndustryByIndustryId(self, industryId) :
         if type(industryId) == IntType :
@@ -254,8 +289,13 @@ class DatabaseHandler(object) :
                 ids = industryId
             else :
                 ids = [int(x) for x in industryId[:-1].split(',')]
+            if (len(ids) == 1) :
+                qrywhere = "WHERE industry_id = %s" % ids[0]
+            else :
+                qrywhere = "WHERE industry_id in %s" % str(tuple(ids))
+
             qry = " SELECT (GROUP_CONCAT(industry_name SEPARATOR ', ')) as industry_name \
-                FROM tbl_industries WHERE industry_id in %s" % str(tuple(ids))
+                FROM tbl_industries %s" % qrywhere
 
         rows = self.dataSelect(qry)
         industryName = str(rows[0][0])
@@ -268,7 +308,10 @@ class DatabaseHandler(object) :
             updated_by = %s WHERE industry_id = %s" % (
                 industryName, updatedBy, industryId
             )
-            return self.dataInsertUpdate(query)
+            self.dataInsertUpdate(query)
+            action = "Edit Industry - \"%s\"" % industryName
+            self.saveActivity(updatedBy, 5, action)
+            return True
         else :
             return False
 
@@ -279,7 +322,14 @@ class DatabaseHandler(object) :
             WHERE industry_id = %s" % (
                 isActive, updatedBy, industryId
             )
-            return self.dataInsertUpdate(query)
+            if isActive == 0:
+                status = "deactivated"
+            else:
+                status = "activated"
+            self.dataInsertUpdate(query)
+            action = "Industry %s status  - %s" % (oldData, status)
+            self.saveActivity(updatedBy, 5, action)
+            return True
         else :
             return False
 
@@ -316,7 +366,10 @@ class DatabaseHandler(object) :
                 statutoryNatureId, statutoryNatureName, isActive, createdBy, createdOn
             )
 
-        return self.dataInsertUpdate(query)
+        self.dataInsertUpdate(query)
+        action = "Add Stautory Nature - \"%s\"" % statutoryNatureName
+        self.saveActivity(createdBy, 8, action)
+        return True
 
     def getStatutoryNatureById(self, statutoryNatureId) :
         q = "SELECT statutory_nature_name FROM tbl_statutory_natures \
@@ -332,7 +385,10 @@ class DatabaseHandler(object) :
             updated_by = %s WHERE statutory_nature_id = %s" % (
                 statutoryNatureName, updatedBy, statutoryNatureId
             )
-            return self.dataInsertUpdate(query)
+            self.dataInsertUpdate(query)
+            action = "Edit Stautory Nature - \"%s\"" % statutoryNatureName
+            self.saveActivity(updatedBy, 8, action)
+            return True
         else :
             return False
 
@@ -340,10 +396,17 @@ class DatabaseHandler(object) :
         oldData = self.getStatutoryNatureById(statutoryNatureId)
         if oldData is not None :
             query = "UPDATE tbl_statutory_natures SET is_active = %s, \
-            updated_by = %s WHERE statutory_nature_id = %s" % (
-                isActive, updatedBy, statutoryNatureId
-            )
-            return self.dataInsertUpdate(query)
+                updated_by = %s WHERE statutory_nature_id = %s" % (
+                    isActive, updatedBy, statutoryNatureId
+                )
+            if isActive == 0:
+                status = "deactivated"
+            else:
+                status = "activated"
+            self.dataInsertUpdate(query)
+            action = "Statutory Nature %s status  - %s" % (oldData, status)
+            self.saveActivity(updatedBy, 8, action)
+            return True
         else :
             return False
 
@@ -370,13 +433,19 @@ class DatabaseHandler(object) :
                 level_name, country_id, domain_id, created_by, created_on) VALUES (%s, %s, '%s', %s, %s, %s, '%s')" % (
                     levelId, levelPosition, levelName, countryId, domainId, userId, createdOn
                 )
-            return self.dataInsertUpdate(query)
+            self.dataInsertUpdate(query)
+            action = "Add Stautory Levels"
+            self.saveActivity(userId, 9, action)
+            return True
         else :
             query = "UPDATE tbl_statutory_levels SET level_position=%s, level_name='%s', \
             updated_by=%s WHERE level_id=%s" % (
                 levelPosition, levelName, userId, levelId
             )
-            return self.dataInsertUpdate(query)
+            self.dataInsertUpdate(query)
+            action = "Edit Stautory Levels"
+            self.saveActivity(userId, 9, action)
+            return True
 
     ### Geography Levels ###
 
@@ -399,13 +468,19 @@ class DatabaseHandler(object) :
                 level_name, country_id, created_by, created_on) VALUES (%s, %s, '%s', %s, %s, '%s')" % (
                     levelId, levelPosition, levelName, countryId, userId, createdOn
                 )
-            return self.dataInsertUpdate(query)
+            self.dataInsertUpdate(query)
+            action = "Add Geography Levels"
+            self.saveActivity(userId,6, action)
+            return True
         else :
             query = "UPDATE tbl_geography_levels SET level_position=%s, level_name='%s', \
             updated_by=%s WHERE level_id=%s" % (
                 levelPosition, levelName, userId, levelId
             )
-            return self.dataInsertUpdate(query)
+            self.dataInsertUpdate(query)
+            action = "Edit Geography Levels"
+            self.saveActivity(userId, 6, action)
+            return True
 
     ### Geographies ###
     def getAllGeographies(self):
@@ -415,7 +490,7 @@ class DatabaseHandler(object) :
             _tempDict[int(row[0])] = row[1]
 
         for row in rows :
-            parentIds = [int(x) for x in row[3].split(',')]
+            parentIds = [int(x) for x in row[3][:-1].split(',')]
             names = []
             names.append(row[6])
             for id in parentIds :
@@ -447,20 +522,52 @@ class DatabaseHandler(object) :
             parent_ids, created_by, created_on) VALUES (%s, '%s', %s, '%s', %s, '%s')" % (
                 geographyId, name, levelId, parentIds, userId, createdOn
             )
-        return self.dataInsertUpdate(query)
+        self.dataInsertUpdate(query)
+        self.getAllGeographies()
+        action = "Add Geography - %s" % name
+        self.saveActivity(userId, 7, action)
+        return True
 
-    def updateGeographies(self, geographyId, name, levelId, parentIds, updatedBy) :
-        query = "UPDATE tbl_geographies set geography_name='%s', level_id=%s, \
-            parent_ids='%s', updated_by=%s WHERE geography_id=%s " % (
-                name, levelId, parentIds, updatedBy, geographyId
+    def updateGeographyMaster(self, geographyId, name, parentIds, updatedBy) :
+        oldData = self.allGeographies.get(geographyId)
+        oldParentIds = oldData[2]
+        query = "UPDATE tbl_geographies set geography_name='%s', parent_ids='%s',\
+            updated_by=%s WHERE geography_id=%s " % (
+                name, parentIds, updatedBy, geographyId
             )
-        return self.dataInsertUpdate(query)
+        self.dataInsertUpdate(query)
+        action = "Edit Geography - %s" % name
+        self.saveActivity(updatedBy, 7, action)
+        if oldParentIds != parentIds :
+            oldPId = str(oldParentIds) + str(geographyId)
+            newPId = str(parentIds) + str(geographyId)
+            qry = "SELECT geography_id, geography_name, parent_ids from tbl_geographies \
+                WHERE parent_ids like '%s'" % str("%" + str(oldPId) + ",%")
+            rows = self.dataSelect(qry)
+            for row in rows :
+                newParentId = str(row[2]).replace(oldPId, newPId)
+                q = "UPDATE tbl_geographies set parent_ids='%s', updated_by=%s where geography_id=%s" % (
+                    newParentId, updatedBy, row[0]
+                )
+                self.dataInsertUpdate(q)
+            action = "Edit Geography Mappings Parent"
+            self.saveActivity(updatedBy, 7, action)
+        self.getAllGeographies()
+        return True
 
     def changeGeographyStatus(self,geographyId, isActive, updatedBy) :
         query = "UPDATE tbl_geographies set is_active=%s, updated_by=%s WHERE geography_id=%s" % (
             isActive, updatedBy, geographyId
         )
-        return self.dataInsertUpdate(query)
+        self.dataInsertUpdate(query)
+        if isActive == 0:
+            status = "deactivated"
+        else:
+            status = "activated"
+        name = self.allGeographies.get(geographyId)[0]
+        action = "Geography %s status  - %s" % (name, status)
+        self.saveActivity(updatedBy, 7, action)
+        return True
 
     ### Statutory ###
     def getAllStatutories(self):
@@ -470,7 +577,7 @@ class DatabaseHandler(object) :
             _tempDict[int(row[0])] = row[1]
 
         for row in rows :
-            parentIds = [int(x) for x in row[3].split(',')]
+            parentIds = [int(x) for x in row[3][:-1].split(',')]
             names = []
             for id in parentIds :
                 if id > 0 :
@@ -498,7 +605,7 @@ class DatabaseHandler(object) :
             statutoryNames[int(row[0])] = row[1]
 
         for geo in _rows :
-            parentIds = [int(x) for x in geo[2].split(',')]
+            parentIds = [int(x) for x in geo[2][:-1].split(',')]
             names = []
             for id in parentIds :
                 if id > 0 :
@@ -541,16 +648,37 @@ class DatabaseHandler(object) :
             )
         if (self.dataInsertUpdate(query)) :
             self.getAllStatutories()
+            action = "Add Statutory - %s" % name
+            self.saveActivity(userId, 17, action)
             return True
 
     def updateStatutories(self, statutoryId, name, parentIds, updatedBy) :
-        query = "UPDATE tbl_statutories set statutory_name='%s', parent_ids=%s, \
-             updated_by=%s WHERE statutory_id=%s " % (
+        oldData = self.allStatutories.get(statutoryId)
+        oldParentIds = oldData[2]
+        query = "UPDATE tbl_statutories set statutory_name='%s', parent_ids='%s',\
+            updated_by=%s WHERE statutory_id=%s " % (
                 name, parentIds, updatedBy, statutoryId
             )
-        if (self.dataInsertUpdate(query)) :
-            self.getAllStatutories()
-            return True
+        self.dataInsertUpdate(query)
+        action = "Edit Statutory - %s" % name
+        self.saveActivity(updatedBy, 17, action)
+        if oldParentIds != parentIds :
+            oldPId = str(oldParentIds) + str(statutoryId)
+            newPId = str(parentIds) + str(statutoryId)
+            qry = "SELECT statutory_id, statutory_name, parent_ids from tbl_statutories \
+                WHERE parent_ids like '%s'" % str("%" + str(oldPId) + ",%")
+            rows = self.dataSelect(qry)
+            for row in rows :
+                newParentId = str(row[2]).replace(oldPId, newPId)
+                q = "UPDATE tbl_statutories set parent_ids='%s', updated_by=%s where statutory_id=%s" % (
+                    newParentId, updatedBy, row[0]
+                )
+                self.dataInsertUpdate(q)
+            action = "Edit Statutory Mappings Parent"
+            self.saveActivity(updatedBy, 17, action)
+        self.getAllStatutories()
+        return True
+
 
     def updateStatutoryMappingId(self, statutoryIds, mappingId, updatedBy) :
         # remove mapping id
@@ -563,11 +691,10 @@ class DatabaseHandler(object) :
             oldStatuIds[int(row[0])] = row[1][:-1]
         difference = list(set(oldStatuIds.keys()) - set(statutoryIds))
 
-
         for x in difference :
             oldMapId =  [int(j) for j in oldStatuIds.get(x).split(',')]
             oldMapId = oldMapId.remove(mappingId)
-            
+
             newMapId = ""
             if oldMapId is not None : 
                 newMapId = ','.join(str(k) for k in oldMapId) + ","
@@ -616,7 +743,10 @@ class DatabaseHandler(object) :
             qry = " WHERE t1.compliance_id = %s" %  complianceIds
         else :
             # ids = (int(x) for x in complianceIds.split(','))
-            qry = " WHERE t1.compliance_id in %s" % str(tuple(complianceIds))
+            if (len(complianceIds) == 1):
+                qry = " WHERE t1.compliance_id in (%s)" % complianceIds[0]
+            else :
+                qry = " WHERE t1.compliance_id in %s" % str(tuple(complianceIds))
 
         query = "SELECT t1.compliance_id, t1.statutory_provision, t1.compliance_task, \
             t1.compliance_description, t1.document_name, t1.format_file, t1.penal_consequences, \
@@ -745,7 +875,7 @@ class DatabaseHandler(object) :
     def getStautoryMappings(self) :
         query = "SELECT t1.statutory_mapping_id, t1.country_id, t2.country_name, t1.domain_id,  \
             t3.domain_name, t1.industry_ids, t1.statutory_nature_id, t4.statutory_nature_name, \
-            t1.statutory_ids, t1.compliance_ids, t1.geography_ids, t1.approval_status  \
+            t1.statutory_ids, t1.compliance_ids, t1.geography_ids, t1.approval_status, t1.is_active  \
             FROM tbl_statutory_mappings t1 \
             INNER JOIN tbl_countries t2 on t1.country_id = t2.country_id \
             INNER JOIN tbl_domains t3 on t1.domain_id = t3.domain_id \
@@ -791,7 +921,10 @@ class DatabaseHandler(object) :
             complianceIds = ','.join(str(x) for x in ids) + ","
             qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
                 where statutory_mapping_id = %s" % (complianceIds, statutoryMappingId)
-            return self.dataInsertUpdate(qry)
+            self.dataInsertUpdate(qry)
+            action = "Add Statutory Mappings"
+            self.saveActivity(createdBy, 17, action)
+            return True
         else :
             return False
 
@@ -819,7 +952,10 @@ class DatabaseHandler(object) :
             complianceIds = ','.join(str(x) for x in ids) + ","
             qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
                 where statutory_mapping_id = %s" % (complianceIds, statutoryMappingId)
-            return self.dataInsertUpdate(qry)
+            self.dataInsertUpdate(qry)
+            action = "Edit Statutory Mappings"
+            self.saveActivity(userId, 17, action)
+            return True
         else :
             return False
 
@@ -833,7 +969,12 @@ class DatabaseHandler(object) :
         )
         if (self.dataInsertUpdate(query)) :
             self.changeComplianceStatus(statutoryMappingId, isActive, updatedBy)
-
+            if isActive == 0:
+                status = "deactivated"
+            else:
+                status = "activated"
+            action = "Statutory Mapping status changed"
+            self.saveActivity(updatedBy, 17, action)
 
     def changeApprovalStatus(self, data, updatedBy) :
         statutoryMappingId = data.get("statutory_mapping_id")

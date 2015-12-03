@@ -1,5 +1,127 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+
+<style type="text/css">
+  body{ margin-top:20px; }
+  .text-center
+  {
+    text-align: center;
+  }
+
+  .nav > li {
+    position: relative;
+    display: block;
+  }
+
+  .nav > li > a {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+  }
+
+  .nav > li > a:hover,
+  .nav > li > a:focus {
+    text-decoration: none;
+    background-color: #eeeeee;
+  }
+
+  .nav > li.disabled > a {
+    color: #999999;
+  }
+
+  .nav > li.disabled > a:hover,
+  .nav > li.disabled > a:focus {
+    color: #999999;
+    text-decoration: none;
+    cursor: not-allowed;
+    background-color: transparent;
+  }
+
+  .nav .open > a,
+  .nav .open > a:hover,
+  .nav .open > a:focus {
+    background-color: #eeeeee;
+    border-color: #428bca;
+  }
+
+  .nav .nav-divider {
+    height: 1px;
+    margin: 9px 0;
+    overflow: hidden;
+    background-color: #e5e5e5;
+  }
+
+  .nav > li > a > img {
+    max-width: none;
+  }
+
+  .nav-pills > li {
+    float: left;
+  }
+
+  .nav-pills > li > a {
+    border-radius: 5px;
+  }
+
+  .nav-pills > li + li {
+    margin-left: 2px;
+  }
+
+  .nav-pills > li.active > a,
+  .nav-pills > li.active > a:hover,
+  .nav-pills > li.active > a:focus {
+    color: #ffffff;
+    background-color: #428bca;
+  }
+
+  .nav-justified {
+    width: 100%;
+  }
+
+  .nav-justified > li {
+    display: table-cell;
+    width: 1%;
+  }
+  .nav-justified > li {
+    float: none;
+  }
+
+  .nav-justified > li > a {
+    text-align: center;
+  }
+
+  .thumbnail {
+    display: inline-block;
+    display: block;
+    height: auto;
+    max-width: 100%;
+    padding: 4px;
+    line-height: 1.428571429;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+  }
+  .setup-content
+  {
+    border:1px solid #ccc ;
+    border-radius: 5px;
+  }
+  .innercontent
+  {
+    width: 100%;
+    min-height: 300px;
+    
+  }
+  .btn-right
+  {
+    float:right;
+  }
+
+</style>
+
 <script type="text/javascript" src="/files/desktop/StatutoryMapping/statutorymapping.js"></script>
 <script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
 
@@ -103,6 +225,96 @@
 </table>
 </div>
 
-<div id="addview" style="display:block">
+<div id="addview" style="display:none">
+
+  <ul class="nav nav-pills nav-justified thumbnail setup-panel">
+    <li class="active"><a href="#step-1">
+      <h4 class="list-group-item-heading">Step 1</h4>
+      
+    </a></li>
+    <li class="disabled"><a href="#step-2">
+      <h4 class="list-group-item-heading">Step 2</h4>
+      
+    </a></li>
+    <li class="disabled"><a href="#step-3">
+      <h4 class="list-group-item-heading">Step 3</h4>
+     
+    </a></li>
+  </ul>
+
+  <div class="setup-content" id="step-1">
+    <div class="innercontent">
+      <h1> STEP 1</h1>
+    </div>
+    <button id="activate-step-2" class="btn-right">Next</button>
+  </div>
+  <div class="setup-content" id="step-2">
+    <div class="innercontent">
+      <h1 class="text-center"> STEP 2</h1>
+    </div>
+
+    <button id="activate-step-3" class="btn-right">Next</button>
+    <button id="backward-step-1" class="btn-right">Previous</button>
+  </div>
+  <div class="setup-content" id="step-3">
+    <div class="innercontent">
+      <h1 class="text-center"> STEP 3</h1>
+    </div>
+    <button id="activate-step-finish" class="btn-right">Submit</button>
+    <button id="backward-step-2" class="btn-right">Previous</button>
+  </div>
 </div>
+
+
+<script type="text/javascript">
+  $(document).ready(function() {
+
+    var navListItems = $('ul.setup-panel li a'),
+    allWells = $('.setup-content');
+
+    allWells.hide();
+
+    navListItems.click(function(e)
+    {
+      e.preventDefault();
+      var $target = $($(this).attr('href')),
+      $item = $(this).closest('li');
+
+      if (!$item.hasClass('disabled')) {
+        navListItems.closest('li').removeClass('active');
+        $item.addClass('active');
+        allWells.hide();
+        $target.show();
+      }
+    });
+
+    $('ul.setup-panel li.active a').trigger('click');
+
+    // DEMO ONLY //
+    $('#activate-step-2').on('click', function(e) {
+      $('ul.setup-panel li:eq(1)').removeClass('disabled');
+      $('ul.setup-panel li a[href="#step-2"]').trigger('click');
+      
+    }) 
+    $('#activate-step-3').on('click', function(e) {
+      $('ul.setup-panel li:eq(2)').removeClass('disabled');
+      $('ul.setup-panel li a[href="#step-3"]').trigger('click');
+      
+    })  
+    $('#backward-step-1').on('click', function(e) {
+      $('ul.setup-panel li:eq(1)').removeClass('disabled');
+      $('ul.setup-panel li a[href="#step-1"]').trigger('click');
+      
+    })  
+    $('#backward-step-2').on('click', function(e) {
+      $('ul.setup-panel li:eq(2)').removeClass('disabled');
+      $('ul.setup-panel li a[href="#step-2"]').trigger('click');
+      
+    })  
+
+       
+});
+
+
+</script>
 {% endblock %} 
