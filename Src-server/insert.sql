@@ -53,9 +53,12 @@ INSERT INTO tbl_forms VALUES(48, 'Audit Trail', 'audit-trail', 48, 'report', 'co
 
 -- DELETE FROM tbl_users;
 INSERT INTO tbl_users VALUES(1, "admin@compliance-mirror.com", "aparajitha_123_admin", null, 1, null, 1448455226, null, 1448455226);
+INSERT INTO tbl_users VALUES(2, "dl@gmail.com", "dl", null, 1, null, 1448455226, null, 1448455226);
 
 -- DELETE FROM tbl_user_groups;
 INSERT INTO tbl_user_groups VALUES(1, "Administrator", "it", "1,2,3,4", 1, null, 1448455226, null, 1448455226);
+INSERT INTO tbl_user_groups VALUES(2, "Knowledge", "knowledge", "5,6,7,8,9,17,25,26,27,28,29", 1, null, 1448455226, null, 1448455226);
 
 -- DELETE FROM tbl_user_details;
 INSERT INTO tbl_user_details VALUES(1, "admin@compliance-mirror.com", null, 1, 1, "it", "Administrator", "", null, null, null, null, null, null, 1, null, 1448455226, null, 1448455226);
+INSERT INTO tbl_user_details VALUES(2, "dl@gmail.com", null, 1, 2, "knowledge", "Knowledge User", "", null, null, null, null, null, null, 1, null, 1448455226, null, 1448455226);
