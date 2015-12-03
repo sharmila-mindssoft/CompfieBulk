@@ -595,6 +595,16 @@ class DatabaseHandler(object) :
             INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id"
         return self.dataSelect(query)
 
+    def getCountryWiseLevel1Statutories(self) :
+        query = "SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, \
+            t2.country_id, t3.country_name, t2.domain_id, t4.domain_name \
+            FROM tbl_statutories t1 \
+            INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id \
+            INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id \
+            INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id \
+            WHERE t2.level_position=1"
+        return self.dataSelect(query)
+
     def getStatutoryWithMappings(self) :
         query = "SELECT t1.statutory_id, t1.statutory_name, t1.parent_ids FROM tbl_statutories t1"
         _rows = self.dataSelect(query)
@@ -1033,6 +1043,18 @@ class DatabaseHandler(object) :
                 t1.statutory_dates, t1.repeats_every, t1.repeats_type, t1.duration, t1.duration_type \
                 FROM tbl_compliances t1 WHERE statutory_mapping_id=%s" % (backupId, statutoryMappingId)
             self.dataInsertUpdate(qry)
+
+    def getStatutoryMappingReport(self, countryId, domainId, industryId, statutoryNatureId, geographyId) :
+        query = "SELECT t1.statutory_mapping_id, t1.country_id, t1.domain_id,  \
+            t1.industry_ids, t1.statutory_nature_id, t1.statutory_ids, t1.compliance_ids, \
+            t1.geography_ids, t1.approval_status, t1.is_active  \
+            FROM tbl_statutory_mappings t1 \
+            WHERE t1.country_id = %s and t1.domain_id = %s and t1.industry_ids like '%s' and \
+            t1.statutory_nature_id like '%s' and t1.geography_ids like '%s'" % (
+                countryId, domainId, str("%" + str(industryId) + ",%"), str(statutoryNatureId),
+                str("%" + str(geographyId) + ",%")
+            )
+        return self.dataSelect(query)
 
 
     @staticmethod     

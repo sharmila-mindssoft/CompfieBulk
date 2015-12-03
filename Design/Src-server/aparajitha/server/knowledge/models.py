@@ -906,8 +906,8 @@ class Geography(object) :
         DH = DatabaseHandler.instance()
         _geographyList = DH.instance().getGeographies()
         for row in _geographyList :
-            parentIds = [int(x) for x in row[3].split(',')]
-            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds[-1], int(row[4]))
+            parentIds = [int(x) for x in row[3][:-1].split(',')]
+            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds, int(row[4]))
             countryId = int(row[5])
             _list = geographies.get(countryId)
             if _list is None :
@@ -1282,7 +1282,7 @@ class StatutoryMapping(object) :
                     row[10], row[11], row[12], row[13]
                 )
             self.compliances.append(compliance.toStructure())
-            self.complianceNames.append("%s-%s" % (row[2], row[4]))
+            self.complianceNames.append("%s-%s" % (row[4], row[2]))
 
 
     def toStructure(self) :
@@ -1338,7 +1338,7 @@ class StatutoryMappingApi(object):
             statutoryNatureId = int(row[6])
             statutoryNatureName = row[7]
             statutoryIds = [int(x) for x in row[8][:-1].split(',')]
-            statutoryMappings = [_statutoryMappings.get(x) for x in statutoryIds ]
+            statutoryMappings = [_statutoryMappings.get(x)[1] for x in statutoryIds ]
             complianceIds = [int(x) for x in row[9][:-1].split(',')]
             geographyIds = [int(x) for x in row[10][:-1].split(',')]
             approvalStatus = row[11]
@@ -1416,3 +1416,42 @@ class StatutoryMappingApi(object):
             str(self.responseData),
             {}
         ]
+
+    def getLevel1Statutories(self) :
+        DH = DatabaseHandler.instance()
+        rows = DH.getCountryWiseLevel1Statutories()
+        statutories = {}
+        for row in rows :
+            parentIds = [int(x) for x in row[3][:-1].split(',')]
+            statutory = Statutory(int(row[0]), row[1], int(row[2]), parentIds)
+            countryId = int(row[4])
+            domainId = int(row[6])
+            _list = []
+            _countryWise = statutories.get(countryId)
+            if _countryWise is None :
+                _countryWise = {}
+            else :
+                _list = _countryWise.get(domainId)
+                if _list is None :
+                    _list = []
+            _list.append(statutory.toStructure())
+            _countryWise[domainId] = _list
+            statutories[countryId] = _countryWise
+        return statutories
+
+    def getReportFilters(self) :
+        DH = DatabaseHandler.instance()
+        return [
+            "GetStatutoryMappingReportFiltersSuccess",
+            {
+                "countries": self.countryList,
+                "domains": self.domainList,
+                "industries": self.industryList,
+                "statutory_natures": self.statutoryNatureList,
+                "geographies": self.geographies,
+                "level_1_statutories": self.getLevel1Statutories()
+            }
+        ]
+
+    def getReportData(self) :
+        DH = DatabaseHandler.instance()
