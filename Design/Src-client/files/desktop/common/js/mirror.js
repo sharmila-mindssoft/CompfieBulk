@@ -1000,6 +1000,8 @@ function initMirror() {
         saveStatutoryMapping: saveStatutoryMapping,
         updateStatutoryMapping: updateStatutoryMapping,
         getStatutoryMappings: getStatutoryMappings,
+        changeStatutoryMappingStatus: changeStatutoryMappingStatus,
+        approveStatutoryMapping: approveStatutoryMapping,
 
 
         saveAdminUserGroup: saveAdminUserGroup,
