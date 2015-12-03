@@ -65,6 +65,13 @@ function initMirror() {
         return info["menu"];
     }
 
+    function getUserCategory() {
+        var info = getUserInfo();
+        if (info === null)
+            return null;
+        return info["user"]["category"];
+    }
+
     function setRedirectUrl(url) {
         window.localStorage["redirectUrl"] = url;
     }
@@ -778,6 +785,7 @@ function initMirror() {
         getSessionToken: getSessionToken,
         getUser: getUser,
         getUserMenu: getUserMenu,
+        getUserCategory: getUserCategory,
 
         setRedirectUrl: setRedirectUrl,
         getRedirectUrl: getRedirectUrl,
