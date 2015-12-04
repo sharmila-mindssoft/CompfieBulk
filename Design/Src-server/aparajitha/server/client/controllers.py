@@ -27,9 +27,7 @@ class UserPrivilegeController() :
 
     def getUserPrivileges(self, sessionUser) :
     	forms = self.getUserGroupsFormData()
-        print "got forms"
     	userGroupList = UserPrivilege.getDetailedList(sessionUser)
-        print "got userGroupList"
 
         response_data = {}
         response_data["forms"] = forms
