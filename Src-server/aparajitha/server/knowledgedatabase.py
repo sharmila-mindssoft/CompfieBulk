@@ -181,6 +181,20 @@ class KnowledgeDatabase(object) :
 		return self._db.generateNewId(tblName, column)
 
 #
+#	Forms
+#
+	def getSectionWiseForms(self, type):
+		columns = "form_id, form_name, form_url, form_order, form_type,"+\
+		"category, admin_form, parent_menu"
+		if type == "knowledge".lower():
+			condition = " category = 'knowledge' "
+		elif type == "techno".lower():
+			condition = " category = 'techno' "
+		else :
+			condition = " category = 'client' "
+		rows = self._db.getData(self._db.tblForms, columns, condition)
+		return rows
+#
 #	Activity Log
 #
 
@@ -194,11 +208,18 @@ class KnowledgeDatabase(object) :
 
 		if form == "ServiceProvider":
 			if actionType == "save":
-				action = "Service Provider %s has been created" % obj.serviceProviderName
+				action = "Service Provider %s has been created" % obj
 			elif actionType == "update":
-				action = "Service Provider %s has been updated" % obj.serviceProviderName
+				action = "Service Provider %s has been updated" % obj
 			elif actionType == "statusChange":
 				action = "Status of service Provider %s has been updated" % str(obj)
+		if form == "UserPrivilege":
+			if actionType == "save":
+				action = "User Privilege %s has been created" % obj
+			elif actionType == "update":
+				action = "User Privilege %s has been updated" % obj
+			elif actionType == "statusChange":
+				action = "Status of User Privilege %s has been updated" % str(obj)			
 		else:
 			print "Error : Activity Log not available for form %s" % form
 		

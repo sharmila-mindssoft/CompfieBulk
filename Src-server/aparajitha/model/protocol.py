@@ -186,7 +186,7 @@ define_request(
 	},
 	{},
 	[
-		"UserGroupNameAlreadyExists"
+		"GroupNameAlreadyExists"
 	]
 )
 
@@ -201,7 +201,7 @@ define_request(
 	{},
 	[
 		"InvalidUserGroupId",
-		"UserGroupNameAlreadyExists"
+		"GroupNameAlreadyExists"
 	]
 )
 
