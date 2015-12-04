@@ -2,10 +2,13 @@ var countriesList;
 var domainsList;
 var industriesList;
 var statutoryNaturesList;
+var statutoryLevelsList;
+var sm_countryid='';
+var sm_domainid='';
 
 $(document).ready(function(){
 	getStatutoryMappings();
-
+	//start -filter process in select domain tab
 	$("#filter_country").keyup( function() {
     var filter = $("#filter_country").val().toLowerCase();
     var lis = document.getElementsByClassName('countrylist');
@@ -53,13 +56,14 @@ $(document).ready(function(){
             lis[i].style.display = 'none';
     }
     });
+    //end -filter process in select domain tab
 
 });
 
 function getStatutoryMappings(){
 	function success(status,data){
 		industriesList = data["industries"];
-		var statutoryLevelsList = data["statutory_levels"];
+		statutoryLevelsList = data["statutory_levels"];
 		var statutoriesList = data["statutories"];
 		countriesList = data["countries"];
 		domainsList = data["domains"];
@@ -85,7 +89,6 @@ function loadStatutoryMappingList(statutoryMappingsList) {
 	var countryName = '';
 	var domainName = '';
 	var approvalStatus = '';
-
 
 	$(".tbody-statutorymapping-list").find("tr").remove();
 	for(var entity in statutoryMappingsList) {
@@ -193,7 +196,7 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     	var str='';
     	$('#industry').empty();
 	    for(var industry in industriesList){
-	    	var industryid = industriesList[industry]["domain_id"];
+	    	var industryid = industriesList[industry]["industry_id"];
 	    	if(industriesList[industry]["is_active"] == 1){
 				str += '<li id="'+industryid+'" class="'+clsval1+'" onclick="multiactivate(this,'+industryid+',\''+clsval+'\')" ><span class="filter3_name">'+industriesList[industry]["industry_name"]+'</span></li>';
 			}
@@ -219,6 +222,18 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     	$(el).removeClass( "active" );
     });
 		$(element).addClass("active");
+		var checkbox_status = $(element).attr('class');
+	    if(checkbox_status == 'countrylist active'){
+			sm_countryid = id;
+	    }
+
+	    if(checkbox_status == 'domainlist active'){
+			sm_domainid = id;
+	    }
+
+	    if(sm_countryid != '' && sm_domainid !=''){
+		loadStatutoryLevels(sm_countryid,sm_domainid);
+	}
 	}
 
 	//check & uncheck list data for multi selection
@@ -229,6 +244,41 @@ function loadStatutoryMappingList(statutoryMappingsList) {
 	}else{
 		$(element).addClass("active");
 	}
+}
+
+//load statutory levels
+function loadStatutoryLevels(countryval,domainval){
+  $(".tbody-statutory-level").find("div").remove();
+  var statutoryLevelList = statutoryLevelsList[countryval][domainval];
+  var levelposition;
+    for(var j in statutoryLevelList){
+      levelposition = statutoryLevelList[j]["level_position"];
+      var tableRow=$('#statutory-level-templates');
+      var clone=tableRow.clone();
+      $('.statutory_title', clone).text(statutoryLevelList[j]["level_name"]);
+      $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="filter'+levelposition+'"> <ul id="ulist'+levelposition+'"></ul><div class="bottomfield"><input type="text" class="input-box addleft" placeholder="" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+      $('.tbody-statutory-level').append(clone);
+    }   
+
+
+    /*var setlevelstage= 1;
+    $('#datavalue'+setlevelstage).val('');
+    $('#ulist'+setlevelstage).empty();
+    var firstlevelid= $('#glmid'+setlevelstage).val();
+
+    var str='';
+    var idval='';
+    var clsval='.list'+setlevelstage;
+    var clsval1='list'+setlevelstage;
+
+    var geographyList = geographiesList[saverecord];
+    for(var i in geographyList){
+      var setgeographyid = geographyList[i]["geography_id"];
+      if((geographyList[i]["level_id"] == firstlevelid) && (geographyList[i]["is_active"] == 1)){
+      str += '<a href="#"> <li id="'+setgeographyid+'" class="'+clsval1+'" onclick="activate(this,'+setgeographyid+',\''+clsval+'\','+saverecord+','+setlevelstage+')" >'+geographyList[i]["geography_name"]+'</li> </a>';
+    }
+    }
+    $('#ulist'+setlevelstage).append(str); */
 }
 
 

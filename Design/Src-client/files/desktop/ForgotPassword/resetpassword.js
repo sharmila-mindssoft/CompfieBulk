@@ -10,12 +10,12 @@ $(document).ready(function(){
   }
   function failure(data){
   }
-  mirror.validateResetToken("AdminAPI", "167239168767466667442285860250828853749", success, failure)
+  mirror.validateResetToken("AdminAPI", "71546293895338817723334292533594853377", success, failure)
   });
 
 function resetPassword () { 
     $("#error").text("");
-    var resetToken = "167239168767466667442285860250828853749";
+    var resetToken = "71546293895338817723334292533594853377";
     var newpassword = $("#newpassword").val();
     var confirmpassword = $("#confirmpassword").val();
 
