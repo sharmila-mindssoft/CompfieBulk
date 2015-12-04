@@ -14,7 +14,8 @@ from models import *
 
 __all__ = [
     "ClientGroupController",
-    "ClientController"
+    "ClientController",
+    "ClientProfile"
 ]
 clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
     "Src-client/files/desktop/common/clientdatabase/clientdatabasemapping.txt")
@@ -456,9 +457,9 @@ class ClientController(object):
         assertType(self.countryWiseUnits, ListType)
 
         if self.processRequest():
-            client = Client(self.businessGroupObj, self.legalEntityObj,
-                self.divisionObj, self.unitObjList, self.sessionUser)
-            if client.save():
+            client = Client()
+            if client.save(self.businessGroupObj, self.legalEntityObj,
+                self.divisionObj, self.unitObjList, self.sessionUser):
                self.responseData = commonResponseStructure("SaveClientSuccess", {}) 
             else:
                 print "Error: Failed to save client"
@@ -613,7 +614,8 @@ class ClientController(object):
         self.divisionId = JSONHelper.getInt(requestData, "division_id")
         self.isActive = JSONHelper.getInt(requestData, "is_active")
 
-        if Client.changeClientStatus(self.clientId, self.divisionId, 
+        client = Client()
+        if client.changeClientStatus(self.clientId, self.divisionId, 
             self.isActive, self.sessionUser):
             return commonResponseStructure("ChangeClientStatusSuccess",{})
         else:
@@ -631,7 +633,7 @@ class ClientController(object):
         self.password = JSONHelper.getString(requestData, "password")
         self.isActive = 1
         if self.verifyPassword():
-            print "verified password"
+            client = Client()
             if client.changeClientStatus(self.clientId, self.divisionId, 
                 self.isActive, self.sessionUser):
                 return commonResponseStructure("ReactivateUnitSuccess", {})
@@ -645,14 +647,68 @@ class ClientController(object):
         return DatabaseHandler.instance().verifyPassword(
             encryptedPassword, self.sessionUser, self.clientId)
 
-# class ClientProfile(object):
+class ClientProfile(object):
 
-#     def __init__(self, sessionUser) :
-#         self.sessionUser = int(sessionUser)
-#         assertType(sessionUser, LongType)
+    def getClientProfile(self, sessionUser):
+        clientIds = User.getClientIds(sessionUser)
 
-#     def getClientProfile(self):
-#         clientId = getClientId(sessionUser)
-#         groupCompanyList = GroupCompany.getClientList(clientId)
+        if clientIds ==  None:
+            print "Error : User is not responsible for any client"
+        else:
+            client = Client()
+            profiles = client.getProfiles(clientIds)
+            groupCompanies = GroupCompany.getClientList(clientIds)
+
+            responseData = {}
+            responseData["group_companies"] = groupCompanies
+            responseData["profiles"] = profiles
+            return commonResponseStructure("GetClientProfileSuccess", responseData)
+
+    def getClientDetailsReportFilters(self, sessionUser):
+        clientIds = User.getClientIds(sessionUser)
+
+        if clientIds ==  None:
+            print "Error : User is not responsible for any client"
+        else:
+            countryList = CountryList.getCountryList()
+            domainList = DomainList.getDomainList()
+            groupCompanyList = GroupCompany.getClientList(clientIds)
+            businessGroupList = BusinessGroup.getList(clientIds)
+            legalEntityList = LegalEntity.getList(clientIds)
+            divisionList = Division.getList(clientIds)
+            unitList = Unit.getList(clientIds)
+
+            responseData = {}
+            responseData["countries"] = countryList
+            responseData["domains"] = domainList
+            responseData["group_companies"] = groupCompanyList
+            responseData["business_groups"] = businessGroupList
+            responseData["legal_entities"] = legalEntityList
+            responseData["divisions"] = divisionList
+            responseData["units"] = unitList
+
+            return commonResponseStructure(
+                "GetClientDetailsReportFiltersSuccess", responseData)
+
+    def getClientDetailsReport(self, requestData, sessionUser):
+
+        countryId = requestData["country_id"]
+        clientId = requestData["group_id"]
+        businessGroupId = requestData["business_group_id"]
+        legalEntityId = requestData["legal_entity_id"]
+        divisionId = requestData["division_id"]
+        unitId = requestData["unit_id"]
+        domainIds = requestData["domain_ids"]
+
+        client = Client()
+        divisionWiseUnitDetails = client.getReport(
+                countryId, clientId, businessGroupId, legalEntityId, 
+                divisionId, unitId, domainIds)
+
+        responseData = {}
+        responseData["units"] = divisionWiseUnitDetails
+
+        return commonResponseStructure(
+            "GetClientDetailsReportSuccess", responseData)
 
         

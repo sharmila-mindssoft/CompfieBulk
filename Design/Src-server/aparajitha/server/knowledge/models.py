@@ -1327,7 +1327,6 @@ class StatutoryMappingApi(object):
     def getStatutoryMappings(self) :
         DH = DatabaseHandler.instance()
         _staturoyMapList = DH.getStautoryMappings()
-
         _statutoryMappings = DH.allStatutories
         for row in _staturoyMapList :
             mappingId = int(row[0])

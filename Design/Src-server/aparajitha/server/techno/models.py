@@ -125,7 +125,7 @@ class GroupCompany(object):
     def getClienDatabaseName(self, clientId):
         clientDBName = getClientDatabase(clientId)
         if clientDBName == None:
-            print "Error : Database Not exists for the client %d" % clientId
+            print "Error : Database Not exists for the client %d" % int(clientId)
         return clientDBName
 
     @classmethod
@@ -188,7 +188,6 @@ class GroupCompany(object):
         clientGroupRows = self.getClientGroups()
 
         for row in clientGroupRows:
-            # try:
                 clientId = int(row[0])
                 groupName = row[1]
                 inchargePersons = row[2].split(",")
@@ -326,7 +325,7 @@ class BusinessGroup(object):
 
         for index, clientId in enumerate(clientIds.split(",")):
             try:
-                clientDBName = self.getClientDatabase(clientId)
+                clientDBName = getClientDatabase(clientId)
                 columns = "business_group_id, business_group_name"
                 rows = ClientDatabaseHandler.instance(clientDBName).getData(
                     self.businessGroupTblName,columns, "1")
@@ -660,7 +659,7 @@ class Unit(object):
                     domainIds = row[8]
                     unit = Unit(unitId, divisionId, legalEntityId, businessGroupId, 
                             int(clientId), countryId, None, unitCode, unitName,
-                            None, address, None, domainIds, None)
+                            None, address, None, domainIds, None, None, None)
                     unitList.append(unit.toStructure())
 
             except:
@@ -676,11 +675,13 @@ class Unit(object):
                     "unit_code, unit_name, address,is_active"
         tables = [self.unitTblName, self.divisionTblName, self.legalEntityTblName,
                 self.businessGroupTblName]
-        conditionColumns = ["division_id", "legal_entity_id", "business_group_id"]
+        conditionColumns = [("division_id","division_id"), 
+                            ("legal_entity_id","legal_entity_id"),
+                            ("business_group_id","business_group_id")]
 
         clientDBName = self.getClientDatabaseName(clientId)
         rows = ClientDatabaseHandler.instance(clientDBName).getDataFromMultipleTables(
-            columns, tables, conditionColumns)
+            columns, tables, conditionColumns, "left join")
         
         for row in rows:
             unitStructure = {}
@@ -701,7 +702,7 @@ class Unit(object):
 
         for index, clientId in enumerate(clientIds.split(",")):
             try:
-                clientDBName = self.getClientDatabaseName(clientId)
+                clientDBName = getClientDatabase(clientId)
                 clientColumns = "unit_id, division_id, legal_entity_id, business_group_id, "+\
                                 "unit_code, unit_name, country_id,  address,"+\
                                 "postal_code, domain_ids, is_active"
@@ -730,7 +731,7 @@ class Unit(object):
                         industryId = knowledgeRow[1]
                     unit = Unit(unitId, divisionId, legalEntityId, businessGroupId, 
                             int(clientId), countryId, geographyId, unitCode, unitName,
-                            industryId, address, postalCode, domainIds, isActive)
+                            industryId, address, postalCode, domainIds, isActive, None, None)
                     unitList.append(unit.toDetailedStructure())
 
             except:
@@ -740,20 +741,17 @@ class Unit(object):
 
 class Client(object):
     unitTblName = "tbl_units"
+    clientSettingsTblName = "tbl_client_settings"
+    clientUserDetails = "tbl_client_user_details"
+    usersTblName = "tbl_users"
 
-    def __init__(self, businessGroup, legalEntity, division, unitList , sessionUser):
+    def save(self, businessGroup, legalEntity, division, 
+        unitList , sessionUser):
         self.businessGroup = businessGroup
         self.legalEntity = legalEntity
         self.division = division
         self.unitList = unitList
         self.sessionUser = sessionUser
-
-    def save(self):
-        print "inside client save"
-        print "businessgroup : {businessgroup}".format(businessgroup = self.businessGroup)
-        print "legalEntity : {legalEntity}".format(legalEntity = self.legalEntity)
-        print "division : {division}".format(division = self.division)
-        print "unitList : {unitList}".format(unitList = self.unitList)
         if self.businessGroup.save(self.sessionUser):
             if self.legalEntity.save(self.sessionUser):
                 if self.division.save(self.sessionUser):
@@ -770,8 +768,8 @@ class Client(object):
         else:
             return False
 
-    @classmethod
-    def changeClientStatus(self, clientId, divisionId, isActive, sessionUser):
+    def changeClientStatus(self, clientId, divisionId, 
+        isActive, sessionUser):
         self.clientId = clientId
         self.divisionId = divisionId
         self.isActive = isActive
@@ -784,7 +782,6 @@ class Client(object):
         else:
             return False
 
-    @classmethod
     def changeUnitStatusInClientDB(self):
         columns = ["is_active"]
         values = [self.isActive]
@@ -793,8 +790,7 @@ class Client(object):
             getClientDatabase(self.clientId)).update(
             self.unitTblName, columns, values, condition)
 
-    @classmethod
-    def getUnits(self):
+    def getUnitsOfDivision(self):
         unitIdsList = []
         columns = "unit_id"
         condition = "division_id='%d'" % self.divisionId
@@ -804,12 +800,128 @@ class Client(object):
             unitIdsList.append(row[0])
 
         return unitIdsList
-    @classmethod
+
     def changeUnitStatusInKnowledgeDB(self):
         columns = ["is_active", "updated_by", "updated_on"]
         values = [self.isActive, self.sessionUser, getCurrentTimeStamp()]
-        unitIdsList  = self.getUnits()
+        unitIdsList  = self.getUnitsOfDivision()
         condition = "unit_id in ({unitIdsList}) and client_id={clientId}".format(
             unitIdsList = ",".join(str(x) for x in unitIdsList), clientId = self.clientId)
         return DatabaseHandler.instance().update(
             self.unitTblName, columns, values, condition)
+
+    def getProfiles(self, clientIds):
+        clientIdsList = clientIds.split(",")
+        profiles = {}
+        for clientId in clientIdsList:
+            clientDBName = getClientDatabase(clientId)
+
+            settingsColumns = "contract_from, contract_to, no_of_user_licence,"+\
+                              " total_disk_space"
+
+            settingsRows = ClientDatabaseHandler.instance(clientDBName).getData(
+                self.clientSettingsTblName, settingsColumns, "1")
+
+            
+            userDetailsColumns = "user_id, email_id, employee_name, employee_code, "+\
+                                "contact_no, is_admin, unit_code, unit_name,"+\
+                                " address"
+            userDetailsTables = [ self.clientUserDetails, self.unitTblName]
+            userDetailsConditions = [("seating_unit_id","unit_id")]
+
+            rows = ClientDatabaseHandler.instance(clientDBName).getDataFromMultipleTables(
+            userDetailsColumns, userDetailsTables, userDetailsConditions, "left join")
+
+            contractFrom = settingsRows[0][0]
+            contractTo = settingsRows[0][1]
+            noOfUserLicence = settingsRows[0][2]
+            fileSpace = settingsRows[0][3]
+            usedSpace = 34
+
+            licenceHolders = []
+            for row in rows:
+                employeeName = None
+                unitName = None
+                if(row[3] == None):
+                    employeeName = row[2]
+                else:
+                    employeeName = "%s - %s" % (row[3], row[2])
+
+                if row[7] == None:
+                    unitName = "-"
+                else:
+                    unitName =  "%s - %s" % (row[6], row[7])
+
+                licenceHolderDetails = {}
+                licenceHolderDetails["user_id"] = row[0]
+                licenceHolderDetails["email_id"] = row[1]
+                licenceHolderDetails["employee_name"] = employeeName
+                licenceHolderDetails["contact_no"] = row[4]
+                licenceHolderDetails["is_admin"] = row[5]
+                licenceHolderDetails["unit_name"] =unitName
+                licenceHolderDetails["address"] = row[8]
+
+                columns = "is_active"
+                condition = "user_id='%d'" % int(row[0])
+                isActiveRows =DatabaseHandler.instance().getData(
+                    self.usersTblName, columns, condition)
+                licenceHolderDetails["is_active"] = isActiveRows[0][0]
+
+                licenceHolders.append(licenceHolderDetails)
+
+            profileDetails = {}
+            profileDetails["contract_from"] = contractFrom
+            profileDetails["contract_to"] = contractTo
+            profileDetails["no_of_user_licence"] = noOfUserLicence
+            profileDetails["remaining_licence"] = (noOfUserLicence) - len(rows)
+            profileDetails["total_disk_space"] = fileSpace
+            profileDetails["used_disk_space"] = usedSpace
+            profileDetails["licence_holders"] = licenceHolders
+
+            profiles[clientId] = profileDetails
+
+        return profiles
+
+    def getReport(self, countryId, clientId, businessGroupId, 
+            legalEntityId, divisionId, unitId, domainIds):
+        clientDBName = getClientDatabase(clientId)
+        columns = "business_group_id, legal_entity_id, division_id,"+\
+                "unit_code, unit_name, geography, address, domain_ids, postal_code"
+
+        condition = "1 "
+
+        if businessGroupId != None:
+            condition += " AND business_group_id = '%d'" % businessGroupId
+        if legalEntityId != None:
+            condition += " AND legal_entity_id = '%d'" % legalEntityId
+        if divisionId != None:
+            condition += " AND division_id = '%d'" % divisionId
+        if unitId != None:
+            condition += " AND unit_id = '%d'" % unitId
+        if domainIds != None:
+            for domainId in domainIds:
+                condition += " AND  ( domain_ids LIKE  '%,"+str(domainId)+",%' "+\
+                            "or domain_ids LIKE  '%,"+str(domainId)+"' "+\
+                            "or domain_ids LIKE  '"+str(domainId)+",%'"+\
+                            " or domain_ids LIKE '"+str(domainId)+"') "
+
+        rows = ClientDatabaseHandler.instance(clientDBName).getData(self.unitTblName,
+            columns, condition)
+
+        divisionWiseUnitDetails={}
+
+        for row in rows:
+            unitDetails = {}
+            unitDetails["unit_name"] = "%s - %s" % (row[3], row[4])
+            unitDetails["unit_location_and_address"] = "%s - %s" % (
+                row[5], row[6])
+            unitDetails["domain_ids"] = row[7]
+            unitDetails["postal_code"] = row[8]
+            divisionId = row[2]
+            if divisionId in divisionWiseUnitDetails:
+                divisionWiseUnitDetails[divisionId].append(unitDetails)
+            else:
+                divisionWiseUnitDetails[divisionId] = []
+                divisionWiseUnitDetails[divisionId].append(unitDetails)
+
+        return divisionWiseUnitDetails
