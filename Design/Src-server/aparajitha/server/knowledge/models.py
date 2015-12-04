@@ -265,15 +265,10 @@ class CountryList(object) :
         self.processData()
 
     def processData(self) :
-        print "inside process data"
-        db = DatabaseHandler.instance()
-        print "db:{db}".format(db = db)
-        _countries = db.getCountries()
-        print _countries
+        _countries = DatabaseHandler.instance().getCountries()
         for row in _countries :
             country = Country(int(row[0]), row[1], row[2])
             self.countryList.append(country.toStructure())
-        print self.countryList
 
     def getCountry(self) :
         return self.countryList
@@ -286,10 +281,7 @@ class CountryList(object) :
 
     @classmethod
     def getCountryList(self) :
-        print "inside get country list"
         country = CountryList()
-        print "country List obj created "
-        print "country.countryList:{country}".format(country = country.countryList)
         return country.countryList
 
     def __repr__(self) :
@@ -915,7 +907,7 @@ class Geography(object) :
         _geographyList = DH.instance().getGeographies()
         for row in _geographyList :
             parentIds = [int(x) for x in row[3][:-1].split(',')]
-            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds, int(row[4]))
+            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds[-1], int(row[4]))
             countryId = int(row[5])
             _list = geographies.get(countryId)
             if _list is None :
@@ -962,6 +954,21 @@ class GeographyAPI(object) :
         self.getGeography()
         return self.geographies
 
+    @classmethod
+    def getList(self):
+        geographies = {}
+        DH = DatabaseHandler.instance()
+        _geographyList = DH.getGeographies()
+        for row in _geographyList :
+            parentIds = [int(x) for x in row[3][:-1].split(',')]
+            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds[-1], int(row[4]))
+            countryId = int(row[5])
+            _list = geographies.get(countryId)
+            if _list is None :
+                _list = []
+            _list.append(geography.toStructure())
+            geographies[countryId] = _list
+        return geographies
 
     def saveGeographies(self) :
         DH = DatabaseHandler.instance()

@@ -176,9 +176,7 @@ class DatabaseHandler(object) :
     ### Country ###
 
     def getCountries(self) :
-        print "inside get countries"
         query = "SELECT country_id, country_name, is_active FROM tbl_countries "
-        print query
         return self.dataSelect(query)
 
     def checkDuplicateCountry(self, countryName, countryId) :
@@ -1064,8 +1062,7 @@ class DatabaseHandler(object) :
 
 
     @staticmethod     
-    def instance() : 
-        print "instance of db handler"        
+    def instance() :         
         global _databaseHandlerInstance
         if _databaseHandlerInstance is None :
             _databaseHandlerInstance = DatabaseHandler()
