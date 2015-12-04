@@ -8,7 +8,7 @@ from aparajitha.server.databasehandler import DatabaseHandler
 from aparajitha.server.clientdatabasehandler import ClientDatabaseHandler 
 from aparajitha.server.admin.models import User
 from aparajitha.server.knowledge.models import DomainList, CountryList, GeographyLevelList
-from aparajitha.server.knowledge.models import IndustryList, Geography
+from aparajitha.server.knowledge.models import IndustryList, Geography, GeographyAPI
 from aparajitha.server.common import *
 from models import *
 
@@ -577,11 +577,9 @@ class ClientController(object):
         domainList = DomainList.getDomainList()
         geographyLevelList = GeographyLevelList.getCountryWiseList()
         industryList = IndustryList.getList()
-        geographyList = Geography.getCountryWiseList()
-
+        geographyList = GeographyAPI.getList()
 
         clientIds = User.getClientIds(sessionUser)
-        
         if clientIds ==  None:
             print "Error : User is not responsible for any client"
         else:

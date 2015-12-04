@@ -1,8 +1,10 @@
 from aparajitha.server.database import Database
 from aparajitha.misc.dates import *
 from aparajitha.misc.client_mappings import *
+from aparajitha.misc.formmappings import formIdMappings
 import uuid
 import datetime
+import hashlib
 
 DATABASE = "mirror_knowledge"
 
@@ -14,6 +16,11 @@ def to_dict(keys, values_list):
 
 def get(fields) :
     return ", ".join(fields)
+
+def encrypt(value):
+	m = hashlib.md5()
+	m.update(value)
+	return m.hexdigest()
 
 class KnowledgeDatabase(object) :
     def __init__(self) :
@@ -1134,5 +1141,71 @@ class KnowledgeDatabase(object) :
             )
         return self._db.execute(query)
 
+#
+#	Common
+#
 
+	def generateNewId(self, form):
+		tblName = None
+		column = None
+		if form == "ActivityLog":
+			tblName = self._db.tblActivityLog
+			column = "activity_log_id"
+		else:
+			print "Error : Cannot generate new id for form %s" % form
 
+		return self._db.generateNewId(tblName, column)
+
+#
+#	Forms
+#
+	def getSectionWiseForms(self, type):
+		columns = "form_id, form_name, form_url, form_order, form_type,"+\
+		"category, admin_form, parent_menu"
+		if type == "knowledge".lower():
+			condition = " category = 'knowledge' "
+		elif type == "techno".lower():
+			condition = " category = 'techno' "
+		else :
+			condition = " category = 'client' "
+		rows = self._db.getData(self._db.tblForms, columns, condition)
+		return rows
+#
+#	Activity Log
+#
+
+	def saveActivity(self, form, obj, actionType, sessionUser):
+		activityLogId = self.generateNewId("ActivityLog")
+		formId = formIdMappings[form]
+		action = None
+		tickerText = None
+		tickerLink = None
+		createdOn = currentTimestamp()
+
+		if form == "ServiceProvider":
+			if actionType == "save":
+				action = "Service Provider %s has been created" % obj
+			elif actionType == "update":
+				action = "Service Provider %s has been updated" % obj
+			elif actionType == "statusChange":
+				action = "Status of service Provider %s has been updated" % str(obj)
+		if form == "UserPrivilege":
+			if actionType == "save":
+				action = "User Privilege %s has been created" % obj
+			elif actionType == "update":
+				action = "User Privilege %s has been updated" % obj
+			elif actionType == "statusChange":
+				action = "Status of User Privilege %s has been updated" % str(obj)			
+		else:
+			print "Error : Activity Log not available for form %s" % form
+		
+		if tickerText != None and tickerLink != None:
+			columns = "activity_log_id, user_id, form_id, action, ticker_text,"+\
+						"ticker_link, created_on"
+			valuesList = [(activityLogId, sessionUser, formId, action, tickerText,
+					tickerLink, createdOn)]
+		else:
+			columns = "activity_log_id, user_id, form_id, action, created_on"
+			valuesList = [(activityLogId, sessionUser, formId, action, createdOn)]
+
+		return self._db.insert(self._db.tblActivityLog, columns, valuesList)

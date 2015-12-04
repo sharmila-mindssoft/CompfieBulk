@@ -89,6 +89,134 @@ define_request(
 	["InvalidSession"]
 )
 
+# Service Provider
+
+define_request(
+	"SaveServiceProvider",
+	{
+		"service_provider_name": Text50, 
+        "address": Text500,
+        "contract_from": Text20 ,
+        "contract_to": Text20, 
+        "contact_person": Text50,
+        "contact_no": Text20
+	},
+	{},
+	[
+		"ServiceProviderNameAlreadyExists",
+		"ContactNumberAlreadyExists"
+	]
+)
+
+define_request(
+	"UpdateServiceProvider",
+	{
+		"service_provider_id": Int,
+		"service_provider_name": Text50, 
+        "address": Text500,
+        "contract_from": Text20 ,
+        "contract_to": Text20, 
+        "contact_person": Text50,
+        "contact_no": Text20
+	},
+	{},
+	[
+		"InvalidServiceProviderId",
+		"ServiceProviderNameAlreadyExists",
+		"ContactNumberAlreadyExists"
+	]
+)
+
+define_request(
+	"ChangeServiceProviderStatus",
+	{
+		"service_provider_id" : Int,
+        "is_active" : Int
+	},
+	{},
+	[
+		"InvalidServiceProviderId"
+	]
+)
+
+define_request(
+	"GetServiceProviders",
+	{},
+	{
+		"service_providers": ListType(
+			DictType({
+				"service_provider_id": Int,
+				"service_provider_name": Text50, 
+		        "address": Text500,
+		        "contract_from": Text20 ,
+		        "contract_to": Text20, 
+		        "contact_person": Text50,
+		        "contact_no": Text20
+			})
+		)
+	},
+	[]
+)
+
+define_request(
+	"GetUserPrivileges",
+	{},
+	{
+		"forms": Menu,
+        "user_groups": ListType(
+        		DictType(
+        			{     
+					    "user_group_id": Int,
+					    "user_group_name": Text50,
+					    "form_ids": ListType(Int),
+					    "is_active": Int
+					}
+        		)
+        	)
+	},
+	[]
+)
+
+define_request(
+	"SaveUserPrivilege",
+	{
+		"user_group_name": Text50,
+        "form_type": Text20,
+        "form_ids": ListType(Int)
+	},
+	{},
+	[
+		"GroupNameAlreadyExists"
+	]
+)
+
+define_request(
+	"UpdateUserPrivilege",
+	{
+		"user_group_id": Int,
+		"user_group_name": Text50,
+        "form_type": Text20,
+        "form_ids": ListType(Int)
+	},
+	{},
+	[
+		"InvalidUserGroupId",
+		"GroupNameAlreadyExists"
+	]
+)
+
+define_request(
+	"ChangeUserPrivilegeStatus",
+	{
+		"user_group_id": Int,
+		"is_active": Int
+	},
+	{},
+	[
+		"InvalidUserGroupId",
+	]
+)
+
 
 #
 # Request, RequestFrame

@@ -1958,8 +1958,14 @@ Note :
 	        "contract_to": Date, 
 	        "contact_person": String,
 	        "contact_no": CONTACT_NO,
-	        "is_active": IS_ACTIVE
 	    }
+    ]
+
+  On Success
+
+    [
+      "SaveServiceProviderSuccess",
+      {}
     ]
 
   Possible Errors 
@@ -1974,22 +1980,35 @@ Note :
       	{}  
     ]
 
-  	[
-      	"EmailIDAlreadyExists",
-      	{}  
-    ]
 
 #### Update Service Provider
 
     [  
-        "SaveServiceProvider",
+        "UpdateServiceProvider",
         ServiceProvider
+    ]
+
+  On Success
+
+    [
+      "UpdateServiceProviderSuccess",
+      {}
     ]
 
   Possible Errors 
 
     [
     	"InvalidServiceProviderId",
+        {}
+    ]
+
+    [
+      "ServiceProviderNameAlreadyExists",
+        {}
+    ]
+
+    [
+      "ContactNumberAlreadyExists",
         {}
     ]
 

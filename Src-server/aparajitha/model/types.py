@@ -246,6 +246,7 @@ class OptionalType(object):
 
 
 type_map = {
+
 	list: (VariantType, ListType, SetType),
 	str: (TextType, EnumType),
 	unicode: (TextType, EnumType),

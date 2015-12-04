@@ -3075,8 +3075,13 @@ On Success
         "contract_to": Date, 
         "contact_person": String,
         "contact_no": CONTACT_NO,
-        "is_active": IS_ACTIVE
     }
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+  "SaveServiceProviderSuccess",
+  {}
 ]
 </code></pre>
 <p>Possible Errors </p>
@@ -3089,21 +3094,32 @@ On Success
     "ContactNumberAlreadyExists",
     {}  
 ]
-
-[
-    "EmailIDAlreadyExists",
-    {}  
-]
 </code></pre>
 <h4 id="update-service-provider"><a name="user-content-update-service-provider" href="#update-service-provider" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Update Service Provider</h4>
 <pre><code>[  
-    "SaveServiceProvider",
+    "UpdateServiceProvider",
     ServiceProvider
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+  "UpdateServiceProviderSuccess",
+  {}
 ]
 </code></pre>
 <p>Possible Errors </p>
 <pre><code>[
     "InvalidServiceProviderId",
+    {}
+]
+
+[
+  "ServiceProviderNameAlreadyExists",
+    {}
+]
+
+[
+  "ContactNumberAlreadyExists",
     {}
 ]
 </code></pre>
