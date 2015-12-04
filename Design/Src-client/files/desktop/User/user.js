@@ -6,18 +6,6 @@ var countriesList;
 
 $(document).ready(function(){
 	GetUsers();
-	$('#countrycode').keydown(function (e) {
-    var key = e.keyCode;
-    if (!((key == 8) || (key == 43) || (key == 31) || (key >= 48 && key <= 57))) {
-    e.preventDefault();
-  }
-});
-	$('#areacode').keydown(function (e) {
-    var key = e.keyCode;
-    if (!((key == 8) || (key >= 48 && key <= 57))) {
-    e.preventDefault();
-  }
-});
 	$('#contactno').keydown(function (e) {
     var key = e.keyCode;
     if (!((key == 8) || (key >= 48 && key <= 57))) {
