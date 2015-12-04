@@ -847,6 +847,55 @@ function initMirror() {
             }
         ];
         apiRequest(callerName, request, callback, failure_callback);
+    }
+
+// Client User Group  
+    function getClientUserGroups(callback, failure_callback) {
+        callerName = "api/client"
+        var request = [
+            "GetUserPrivileges",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function saveClientUserGroup(userGroupDetail, 
+        callback, failure_callback) {
+        callerName = "api/client"
+        if (isNull(userGroupDetail))
+            return null;   
+        var request = [
+            "SaveUserPrivilege",
+            userGroupDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function updateClientUserGroup(userGroupDetail, 
+        callback, failure_callback) {
+        callerName = "api/client"
+        if (isNull(userGroupDetail))
+            return null;
+        var request = [
+            "UpdateUserPrivilege",
+            userGroupDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeClientUserGroupStatus(userGroupId, isActive, 
+        callback, failure_callback) {
+        callerName = "api/client"
+        if (isNull(userGroupId) || isNull(isActive) )
+            return null;
+        var request = [
+            "ChangeUserPrivilegeStatus",
+            {
+                "user_group_id" : userGroupId,
+                "is_active" : isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
     }  
 
     return {
@@ -920,7 +969,6 @@ function initMirror() {
         getAdminUserList: getAdminUserList,
 
         saveClientGroup: saveClientGroup,
-
         updateClientGroup: updateClientGroup,
         getClientGroups: getClientGroups,
         changeClientGroupStatus: changeClientGroupStatus,
@@ -937,7 +985,12 @@ function initMirror() {
         saveServiceProvider: saveServiceProvider,
         updateServiceProvider: updateServiceProvider,
         changeServiceProviderStatus: changeServiceProviderStatus,
-        getServiceProviders: getServiceProviders
+        getServiceProviders: getServiceProviders,
+
+        saveClientUserGroup: saveClientUserGroup,
+        updateClientUserGroup: updateClientUserGroup,
+        changeClientUserGroupStatus: changeClientUserGroupStatus,
+        getClientUserGroups: getClientUserGroups,
     }
 
 }

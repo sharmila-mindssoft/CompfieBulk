@@ -21,8 +21,9 @@
       alert("failure_data"+data)
     }
     $(document).ready(function(){
-        saveUserDetail = ["vinod@domain.com",1,"Vinod","EMP1129","+917956403219","KK Nagar, Madurai", "Manager", "1","1"];
-        mirror.saveAdminUser("AdminAPI", saveUserDetail, success, failure);
+        // saveUserDetail = ["vinod@domain.com",1,"Vinod","EMP1129","+917956403219","KK Nagar, Madurai", "Manager", "1","1"];
+        // mirror.saveAdminUser("AdminAPI", saveUserDetail, success, failure);
+        mirror.getClients("TechnoAPI", success, failure)
     });
 </script>
 </body>
