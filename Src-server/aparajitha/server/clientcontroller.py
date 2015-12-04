@@ -142,7 +142,7 @@ class APIHandler(object):
 			responseData = self._failure_response(
 				response, "InvalidServiceProviderId")
 		elif db.changeServiceProviderStatus(serviceProviderId, isActive,
-										sessionUser):
+				sessionUser):
 			actionType = "statusChange"
 			self._knowledge_db.saveActivity(form, serviceProviderId, 
 				actionType, sessionUser)
@@ -151,13 +151,74 @@ class APIHandler(object):
 		return responseData
 
 	def _getUserPrivileges(self, db, user, request):
+		sessionUser = user["user_id"]
+		clientForms = Form.getForms("client", self._knowledge_db)
+		forms = Menu.getMenu(clientForms)
+		userGroupList = UserPrivilege.getDetailedList(sessionUser, db)
+		responseData = {}
+		responseData["forms"] = forms
+		responseData["user_groups"] = userGroupList
+		response = self._success_response("GetUserPrivilegesResponse", 
+			"GetUserPrivilegesSuccess",responseData)
+		return response
 
 	def _saveUserPrivilege(self, db, user, request):
+		form = "UserPrivilege"
+		sessionUser = user["user_id"]
+		response = "SaveUserPrivilegeResponse"
+		responseData = None
+		userPrivilegeId = db.generateNewId(form)
+		userPrivilege = UserPrivilege.initializeWithRequest(request, userPrivilegeId, self._client_id)
+		if db.isDuplicate(form, "name", userPrivilege.userGroupName,userPrivilegeId):
+			responseData = self._failure_response(response,"GroupNameAlreadyExists")
+		elif db.saveUserPrivilege(userPrivilege, sessionUser):
+			actionType = "save"
+			self._knowledge_db.saveActivity(form, userPrivilege.userGroupName, 
+				actionType, sessionUser)
+			responseData =  self._success_response(response, "SaveUserPrivilegeSuccess",{})
+		return responseData
 
 	def _updateUserPrivilege(self, db, user, request):
+		form = "UserPrivilege"
+		sessionUser = user["user_id"]
+		response = "UpdateUserPrivilegeResponse"
+		responseData = None
+		userPrivilegeId = request["user_group_id"]
+		userPrivilege = UserPrivilege.initializeWithRequest(request, 
+			userPrivilegeId, self._client_id)
+		if db.isIdInvalid(form, userPrivilegeId):
+			responseData = self._failure_response(response, "InvalidUserGroupId")
+		elif db.isDuplicate(form, "name", userPrivilege.userGroupName,
+			userPrivilege.userGroupId):
+			responseData = self._failure_response(response,"GroupNameAlreadyExists")
+		elif db.saveUserPrivilege(userPrivilege, sessionUser):
+			actionType = "update"
+			self._knowledge_db.saveActivity(form, userPrivilege.userGroupName, 
+				actionType, sessionUser)
+			responseData =  self._success_response(response, "UpdateUserPrivilegeSuccess",{})
+		return responseData
 
 	def _changeUserPrivilegeStatus(self, db, user, request):
+		form = "UserPrivilege"
+		sessionUser = user["user_id"]
 
+		response = "ChangeUserPrivilegeStatusResponse"
+		responseData = None
+
+		userGroupId = request["user_group_id"]
+		isActive = request["is_active"]
+
+		if db.isIdInvalid(form, userGroupId):
+			responseData = self._failure_response(
+				response, "InvalidUserGroupId")
+		elif db.changeUserPrivilegeStatus(userGroupId, isActive,
+				sessionUser):
+			actionType = "statusChange"
+			self._knowledge_db.saveActivity(form, userGroupId, 
+				actionType, sessionUser)
+			responseData = self._success_response(
+				response, "ChangeUserPrivilegeStatusSuccess",{})
+		return responseData
 #
 # db_request
 #

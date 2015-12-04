@@ -68,7 +68,7 @@
 			}
 			function saveClientUserGroup(){
 				userGroupDetails = {
-			        "user_group_name": "Test user group name 1",
+			        "user_group_name": "Test user group name 2",
 			        "form_type": "client",
 			        "form_ids": [1,2]
 			    }
@@ -77,19 +77,19 @@
 			function updateClientUserGroup(){
 				userGroupDetails = {
 					"user_group_id": 1,
-			        "user_group_name": "Test user group name update",
+			        "user_group_name": "Test user group name 2",
 			        "form_type": "client",
 			        "form_ids": [5,6]
 			    }
 			    mirror.updateClientUserGroup(userGroupDetails,success, failure);
 			}
 			function changeClientUserGroupStatus(){
-				userGroupId = 1
+				userGroupId = 111
 				isActive = 0
 				mirror.changeClientUserGroupStatus(userGroupId,isActive, success,failure) ;
 			}
 			function getClientUserGroupList(){
-				getClientUserGroups(success, failure);
+				mirror.getClientUserGroups(success, failure);
 			}
 		</script>
 	</head>

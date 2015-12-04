@@ -37,7 +37,8 @@ class UserGroup() :
     def toStructure(self):
         return {
             "user_group_id": self.userGroupId,
-            "user_group_name": self.userGroupName
+            "user_group_name": self.userGroupName,
+            "is_active":self.isActive
         }
 
     def generateNewUserGroupId(self) :
@@ -68,11 +69,11 @@ class UserGroup() :
     @classmethod
     def getList(self):
         userGroupList = []
-        columns = "user_group_id, user_group_name"
+        columns = "user_group_id, user_group_name, is_active"
         rows = DatabaseHandler.instance().getData(UserGroup.tblName, columns, "1")
 
         for row in rows:
-            userGroup = UserGroup(int(row[0]), row[1], None, None, None)
+            userGroup = UserGroup(int(row[0]), row[1], None, None, row[2])
             userGroupList.append(userGroup.toStructure())
 
         return userGroupList
