@@ -90,3 +90,13 @@ class ClientDatabase(object) :
 		condition = "service_provider_id='%d'" % serviceProviderId
 		return self._db.update(self._db.tblServiceProviders, 
         	columns, values, condition)
+
+#
+# User Groups
+#
+	def getUserGroups(self):
+		columns = "user_group_id, user_group_name,form_type, "+\
+                    "form_ids, is_active"
+		condition = "1"
+		rows = self._db.getData(self._db.tblServiceProviders, columns, condition)
+		return rows

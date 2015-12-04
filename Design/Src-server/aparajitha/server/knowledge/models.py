@@ -265,10 +265,15 @@ class CountryList(object) :
         self.processData()
 
     def processData(self) :
-        _countries = DatabaseHandler.instance().getCountries()
+        print "inside process data"
+        db = DatabaseHandler.instance()
+        print "db:{db}".format(db = db)
+        _countries = db.getCountries()
+        print _countries
         for row in _countries :
             country = Country(int(row[0]), row[1], row[2])
             self.countryList.append(country.toStructure())
+        print self.countryList
 
     def getCountry(self) :
         return self.countryList
@@ -281,7 +286,10 @@ class CountryList(object) :
 
     @classmethod
     def getCountryList(self) :
+        print "inside get country list"
         country = CountryList()
+        print "country List obj created "
+        print "country.countryList:{country}".format(country = country.countryList)
         return country.countryList
 
     def __repr__(self) :

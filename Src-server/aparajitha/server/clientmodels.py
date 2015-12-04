@@ -59,3 +59,61 @@ class ServiceProvider(object):
                 contractFrom, contractTo, contactPerson, contactNo, isActive)
             servcieProviderList.append(serviceProvider.toStructure())
         return servcieProviderList
+
+class UserPrivilege() :
+
+    def __init__(self, clientId, userGroupId, userGroupName, formType, formIds, isActive) :
+        self.clientId = clientId
+        self.userGroupId =  userGroupId if userGroupId != None else self.generateNewUserGroupId()
+        self.userGroupName = userGroupName
+        self.formType = formType 
+        self.formIds = formIds 
+        self.isActive = isActive if isActive != None else 1
+
+    def verify(self) :
+        assertType(self.userGroupId, IntType)
+        assertType(self.userGroupName, StringType)
+        assertType(self.formType, StringType)
+        assertType(self.formIds, ListType)
+        assertType(self.isActive, IntType)
+
+    def toDetailedStructure(self) :
+        return {
+            "user_group_id": self.userGroupId,
+            "user_group_name": self.userGroupName,
+            "form_type": self.formType,
+            "form_ids": self.formIds,
+            "is_active": self.isActive
+        }
+
+    def toStructure(self):
+        return {
+            "user_group_id": self.userGroupId,
+            "user_group_name": self.userGroupName
+        }
+
+    @classmethod
+    def getDetailedList(self, sessionUser) :
+        userGroupList = []
+        
+        
+
+        for row in rows:
+            userGroup = UserPrivilege(None, int(row[0]), row[1], row[2], row[3].split(","), row[4])
+            userGroupList.append(userGroup.toDetailedStructure())
+
+        return userGroupList
+
+    @classmethod
+    def getList(self, clientId):
+        userGroupList = []
+        columns = "user_group_id, user_group_name"
+        rows = ClientDatabaseHandler.instance(
+            getClientDatabase(clientId)).getData(
+            UserPrivilege.tblName, columns, "1")
+
+        for row in rows:
+            userGroup = UserPrivilege(clientId, int(row[0]), row[1], None, None, None)
+            userGroupList.append(userGroup.toStructure())
+
+        return userGroupList

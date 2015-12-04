@@ -571,17 +571,22 @@ class ClientController(object):
         return True
             
     def getClients(self, sessionUser):
+        print "inside getClients"
         responseData = {}
 
         countryList = CountryList.getCountryList()
+        print countryList
         domainList = DomainList.getDomainList()
+        print domainLists
         geographyLevelList = GeographyLevelList.getCountryWiseList()
+        print geographyLevelList
         industryList = IndustryList.getList()
+        print industryList
         geographyList = Geography.getCountryWiseList()
-
+        print geographyList  
 
         clientIds = User.getClientIds(sessionUser)
-        
+        print clientIds
         if clientIds ==  None:
             print "Error : User is not responsible for any client"
         else:
