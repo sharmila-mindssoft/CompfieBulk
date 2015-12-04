@@ -74,6 +74,8 @@ TEMPLATE_PATHS = [
         "files/mobile/login/login.html", {}),
     ("/login", "files/desktop/login/login.html",
         "files/mobile/login/login.html", {}),
+    ("/test", "test_apis.html",
+        "", {}),
     ("/home", "files/desktop/home/home.html", None, {}),
 ]
 
@@ -87,6 +89,7 @@ def run_server() :
         ("/api/login", knowledge_controller.handle_api_knowledge),
         ("/api/logout", knowledge_controller.handle_api_knowledge),
         ("/api/test-client", client_controller.handle_api_client),
+        ("/api/client", client_controller.handle_api_client),
     ]
     for url, handler in api_urls_and_handlers :
         entry = (url, APIHandler, dict(handler=handler))

@@ -333,7 +333,7 @@ class User(object) :
 
             
 class ServiceProvider(object):
-    tblName = " tbl_service_providers"
+    tblName = "tbl_service_providers"
 
     def __init__(self, clientId, serviceProviderId, serviceProviderName, address, 
                 contractFrom, contractTo, contactPerson, contactNo, isActive) :

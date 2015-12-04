@@ -1,7 +1,9 @@
 from aparajitha.server.database import Database
 from aparajitha.misc.dates import *
 from aparajitha.misc.client_mappings import *
+from aparajitha.misc.formmappings import formIdMappings
 import uuid
+import hashlib
 
 DATABASE = "mirror_knowledge"
 
@@ -13,6 +15,11 @@ def to_dict(keys, values_list):
 
 def get(fields) :
 	return ", ".join(fields)
+
+def encrypt(value):
+	m = hashlib.md5()
+	m.update(value)
+	return m.hexdigest()
 
 class KnowledgeDatabase(object) :
 	def __init__(self) :
@@ -34,12 +41,12 @@ class KnowledgeDatabase(object) :
 
 	def test(self) :
 		query = "SHOW TABLES;"
-		return self._db.execute_and_return(query)
+		return self._db.executeAndReturn(query)
 
 	def add_session(self, user_id) :
 		session_id = self.new_uuid()
 		query = "insert into tbl_user_sessions values ('%s', '%s', '%d');"
-		query = query % (session_id, user_id, current_timestamp())
+		query = query % (session_id, user_id, currentTimestamp())
 		self._db.execute(query)
 		return session_id
 
@@ -51,7 +58,7 @@ class KnowledgeDatabase(object) :
 	def get_session_user_id(self, session_id) :
 		query = "select user_id from tbl_user_sessions where session_id = '%s';"
 		query = query % (session_id,)
-		result = self._db.execute_and_return(query)
+		result = self._db.executeAndReturn(query)
 		if len(result) == 0 :
 			return None
 		return int(result[0][0])
@@ -64,7 +71,7 @@ class KnowledgeDatabase(object) :
 		]
 		query = "select %s from tbl_user_details where user_id = %s;"
 		query = query % (get(select_fields), user_id,)
-		result = self._db.execute_and_return(query)
+		result = self._db.executeAndReturn(query)
 		if len(result) == 0 :
 			return None
 		result = to_dict(select_fields, result)
@@ -77,17 +84,18 @@ class KnowledgeDatabase(object) :
 		select_fields = ["user_id"]
 		query = "select %s from tbl_users where username = '%s';"
 		query = query % (get(select_fields), email,)
-		result = self._db.execute_and_return(query)
+		result = self._db.executeAndReturn(query)
 		if len(result) == 0 :
 			return None
 		return int(result[0][0])
 
 	def match_password(self, user_id, password) :
 		select_fields = ["client_id"]
+		encryptedPassword = encrypt(password)
 		query = ("select %s from tbl_users where user_id = %s and " +
 			"password = '%s' and is_active = 1;")
-		query = query % (get(select_fields), user_id, password)
-		result = self._db.execute_and_return(query)
+		query = query % (get(select_fields), user_id, encryptedPassword)
+		result = self._db.executeAndReturn(query)
 		if len(result) == 0 :
 			return None
 		return to_dict(select_fields, result)
@@ -105,12 +113,12 @@ class KnowledgeDatabase(object) :
 		query = query % (get(select_fields), user_id,)
 		result = None
 		if client_id is None :
-			result = self._db.execute_and_return(query)
+			result = self._db.executeAndReturn(query)
 		else :
 			client_db = client_database(client_id)
 			if client_db is None :
 				return None
-			result = self.client_db.execute_and_return(query)
+			result = self.client_db.executeAndReturn(query)
 		if len(result) == 0 :
 			return None
 		result = to_dict(select_fields, result)
@@ -125,11 +133,11 @@ class KnowledgeDatabase(object) :
 			"form_id", "form_name", "form_url",
 			"form_type", "form_order", "parent_menu"
 		]
-		query = "select %s from tbl_forms where form_id in %s;"
+		query = "select %s from tbl_forms where form_id in %s "
 		if result["is_admin"] == 0 :
 			query = query + " and admin_form = 0"
 		query = query % (get(select_fields), tuple(form_ids2))
-		forms = self._db.execute_and_return(query)
+		forms = self._db.executeAndReturn(query)
 		if len(forms) == 0 :
 			return None
 		forms = to_dict(select_fields, forms)
@@ -145,7 +153,6 @@ class KnowledgeDatabase(object) :
 			form["form_id"] = int(form["form_id"])
 			form["form_order"] = int(form["form_order"])
 			menu[form_type].append(form)
-
 		result2 = {
 			"category": result["tbl1.category"],
 			"user_group_name": result["user_group_name"],
@@ -157,3 +164,51 @@ class KnowledgeDatabase(object) :
 			"menu": menu
 		}
 		return result2
+
+#
+#	Common
+#
+
+	def generateNewId(self, form):
+		tblName = None
+		column = None
+		if form == "ActivityLog":
+			tblName = self._db.tblActivityLog
+			column = "activity_log_id"
+		else:
+			print "Error : Cannot generate new id for form %s" % form
+
+		return self._db.generateNewId(tblName, column)
+
+#
+#	Activity Log
+#
+
+	def saveActivity(self, form, obj, actionType, sessionUser):
+		activityLogId = self.generateNewId("ActivityLog")
+		formId = formIdMappings[form]
+		action = None
+		tickerText = None
+		tickerLink = None
+		createdOn = currentTimestamp()
+
+		if form == "ServiceProvider":
+			if actionType == "save":
+				action = "Service Provider %s has been created" % obj.serviceProviderName
+			elif actionType == "update":
+				action = "Service Provider %s has been updated" % obj.serviceProviderName
+			elif actionType == "statusChange":
+				action = "Status of service Provider %s has been updated" % str(obj)
+		else:
+			print "Error : Activity Log not available for form %s" % form
+		
+		if tickerText != None and tickerLink != None:
+			columns = "activity_log_id, user_id, form_id, action, ticker_text,"+\
+						"ticker_link, created_on"
+			valuesList = [(activityLogId, sessionUser, formId, action, tickerText,
+					tickerLink, createdOn)]
+		else:
+			columns = "activity_log_id, user_id, form_id, action, created_on"
+			valuesList = [(activityLogId, sessionUser, formId, action, createdOn)]
+
+		return self._db.insert(self._db.tblActivityLog, columns, valuesList)
