@@ -2,54 +2,67 @@
 {% block content %}
 
 <style type="text/css">
-  body{ margin-top:20px; }
+
+  .form-container-grid-table-sm table tr td ul li:hover{
+    background: #EAE8E8;  
+    cursor:pointer;
+  }
+  .form-container-grid-table-sm table tr td ul li.active:hover {
+    background: #f1e9f6 url(../images/tick1.png) no-repeat right center;
+    background-size: 1em;
+    border-right: 3px solid #f1e9f6
+  }
+
   .text-center
   {
     text-align: center;
   }
 
   .nav > li {
+    background-color: #a381bd;
     position: relative;
     display: block;
+    border-radius: 6px;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
   }
 
   .nav > li > a {
+    color: #ffffff;
     position: relative;
     display: block;
     padding: 10px 15px;
     text-decoration: none;
   }
 
-  .nav > li > a:hover,
   .nav > li > a:focus {
     text-decoration: none;
     background-color: #eeeeee;
   }
-
   .nav > li.disabled > a {
     color: #999999;
+    background-color: #eee;
+    border-radius:6px;
   }
 
-  .nav > li.disabled > a:hover,
   .nav > li.disabled > a:focus {
     color: #999999;
+    background-color: #eee;
     text-decoration: none;
     cursor: not-allowed;
-    background-color: transparent;
   }
 
   .nav .open > a,
-  .nav .open > a:hover,
   .nav .open > a:focus {
     background-color: #eeeeee;
-    border-color: #428bca;
+    border-color: #662d91;
   }
 
   .nav .nav-divider {
     height: 1px;
     margin: 9px 0;
     overflow: hidden;
-    background-color: #e5e5e5;
+    background-color: #e5e5e5; 
   }
 
   .nav > li > a > img {
@@ -65,14 +78,13 @@
   }
 
   .nav-pills > li + li {
-    margin-left: 2px;
+    
   }
 
   .nav-pills > li.active > a,
-  .nav-pills > li.active > a:hover,
   .nav-pills > li.active > a:focus {
     color: #ffffff;
-    background-color: #428bca;
+    background-color: #662d91;
   }
 
   .nav-justified {
@@ -80,15 +92,14 @@
   }
 
   .nav-justified > li {
-    display: table-cell;
-    width: 1%;
-  }
-  .nav-justified > li {
-    float: none;
+    margin-right: 0.5%;
+    float: left;
+    width: 24.5%; 
+   
   }
 
   .nav-justified > li > a {
-    text-align: center;
+    text-align: left;
   }
 
   .thumbnail {
@@ -99,28 +110,148 @@
     padding: 4px;
     line-height: 1.428571429;
     background-color: #ffffff;
-    border: 1px solid #dddddd;
-    border-radius: 4px;
+    border: 0px solid #dddddd;
+    border-radius: 6px;
     -webkit-transition: all 0.2s ease-in-out;
     transition: all 0.2s ease-in-out;
   }
   .setup-content
   {
-    border:1px solid #ccc ;
+    border:0px solid #ccc ;
     border-radius: 5px;
   }
   .innercontent
   {
     width: 100%;
-    min-height: 300px;
-    
+    min-height: 530px;
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
   .btn-right
   {
     float:right;
+    color: #ffffff;
+    background-color: #662d91;
+    border: 0px;
+    border-radius: 4px;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+    padding: 5px 10px 5px 10px;
+    font-size:12px;
+    margin-right: 10px;
+    margin-top: 10px;
   }
 
 </style>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('#days').hide();
+  $('#hours').show();
+  $("#trigger_every").show();
+  $("#summary").html("To Complete within 18 hours");
+})
+
+$(function() {
+  $(".dayhour").change(function(){
+
+    if($(this).val()=="day")
+    {
+      $('#days').show();
+      $('#hours').hide();
+      $("#trigger_every").show();
+      $("#summary").html("To Complete within 18 days");
+    }else if($(this).val()=="hour"){
+      $('#days').hide();
+      $('#hours').show();
+      $("#trigger_every").show();
+      $("#summary").html("To Complete within 18 hours");
+    } 
+  });
+
+  $('.tasktype').change(function(){
+    if($(this).val()=="Recurring" || $(this).val()=="Review")
+    {
+      $('#Recurring').show();
+      $('#Occasional').hide();
+      $('#As_when').hide();
+      $('#One_Time').hide();
+    }
+   
+    else if($(this).val() == "onoccur" )
+    {
+      $('#Recurring').hide();
+      $('#Occasional').show();
+      $('#As_when').hide();
+      $('#One_Time').hide();
+    }
+    
+    else if($(this).val() == "One_Time")
+    {
+      $('#Recurring').hide();
+      $('#Occasional').hide();
+      $('#As_when').hide();
+      $('#One_Time').show();
+    }
+    else
+    {
+      $('#Recurring').hide();
+      $('#Occasional').hide();
+      $('#As_when').hide();
+      $('#One_Time').hide();
+    }
+  });
+  $('.repeatlabelday').click(function(){    
+      $('.repeatbyday').show();
+      $('.repeatbyendday').hide();
+    
+  });
+  $('.repeatlabelendday').click(function(){    
+      $('.repeatbyday').hide();
+      $('.repeatbyendday').show();
+      $('.repeatbyendday_stat_date1').hide();
+      $('.repeatbyendday_stat_date2').hide();
+      $('.repeatbyendday_stat_date').hide();      
+  });
+  $('.multipleselect').hide();
+  $('.multipleselectnone').show();
+  $('.multipleinput').change(function() {
+    if ($(this).is(':checked')) {
+      $('.multipleselectnone').hide();
+      $('.multipleselect').show();
+    } else {
+      $('.multipleselect').hide();
+      $('.multipleselectnone').show();
+    }
+  });
+  $('.month_recurring_sel').change(function(){
+
+  }); 
+  $('.occasional_days').change(function(){
+    var daysrecord = $('.occasional_days').val();
+      $('.occasional_summary').text(" To Complete within "+daysrecord+" Days ") 
+    }); 
+    $('.aswhen_sel').change(function(){
+      if($(this).val() == "Hours" )
+      {
+        $('.hours_sel').show();
+        $('.days_sel').hide(); 
+        var hoursrecord = $('.hours_sel').val();
+        $('.as_when_summary').text(" To Complete within "+hoursrecord+" Hours ")     
+      }
+      if($(this).val() == "Days" )
+      {
+        $('.hours_sel').hide();
+        $('.days_sel').show();  
+        var daysrecord = $('.days_sel').val();
+        $('.as_when_summary').text(" To Complete within "+daysrecord+" Days ")    
+      }
+    });
+  });
+</script> 
+
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
+<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
 
 <script type="text/javascript" src="/files/desktop/StatutoryMapping/statutorymapping.js"></script>
 <script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
@@ -227,53 +358,266 @@
 
 <div id="addview" style="display:none">
 
-  <ul class="nav nav-pills nav-justified thumbnail setup-panel">
+<div class="content-container width75">
+  <div class="content-area">
+    <h1>Statutory Mapping</h1>
+    <div class="add-container">
+    <div class="form-container-outer">
+
+    <ul class="nav  nav-pills nav-justified setup-panel">
     <li class="active"><a href="#step-1">
-      <h4 class="list-group-item-heading">Step 1</h4>
-      
-    </a></li>
+      <h4 class="list-group-item-heading">1. Select Domain</h4>
+    </a>
+    </li>
     <li class="disabled"><a href="#step-2">
-      <h4 class="list-group-item-heading">Step 2</h4>
-      
+      <h4 class="list-group-item-heading">2. Select Statutory</h4>
     </a></li>
     <li class="disabled"><a href="#step-3">
-      <h4 class="list-group-item-heading">Step 3</h4>
-     
+      <h4 class="list-group-item-heading">3. Compliances</h4>
+    </a></li>
+    <li class="disabled"><a href="#step-4">
+      <h4 class="list-group-item-heading">4. Applicable Location</h4>
     </a></li>
   </ul>
 
+  <div class="clearfix"></div>
+
   <div class="setup-content" id="step-1">
     <div class="innercontent">
-      <h1> STEP 1</h1>
+      <div class="form-container-grid-table-sm">
+              <table style="height:500px">
+                <tr align="left">
+                  <th width="25%">Country</th>
+                  <th width="25%">Domain</th>
+                  <th width="25%">Industry</th>
+                  <th width="25%">Statutory Nature</th>
+                </tr>
+
+                <tr>
+                  <td>
+                  <input type="text" class="filter-text-box" id="filter_country">
+                  </td>
+
+                  <td>
+                  <input type="text" class="filter-text-box" id="filter_domain">
+                  </td>
+
+                  <td>
+                  <input type="text" class="filter-text-box" id="filter_industry">
+                  </td>
+
+                  <td>
+                  <input type="text" class="filter-text-box" id="filter_statutorynature">
+                  </td>
+                  
+                </tr>
+
+                <tr>
+                  <td>
+                  <ul style="height:500px;overflow-y:scroll" id="country">
+                  </ul>
+                  </td>
+
+                  <td>
+                  <ul style="height:500px;overflow-y:scroll" id="domain">
+                      
+                  </ul>
+                  </td>
+
+                  <td>
+                  <ul style="height:500px;overflow-y:scroll" id="industry">
+                      
+                     
+                  </ul>
+                  </td>
+
+                  <td>
+                  <ul  style="height:500px;overflow-y:scroll" id="statutorynature">
+                      
+                  </ul>
+                  </td>
+                </tr>
+              </table>
+            </div>
     </div>
     <button id="activate-step-2" class="btn-right">Next</button>
   </div>
+
   <div class="setup-content" id="step-2">
     <div class="innercontent">
-      <h1 class="text-center"> STEP 2</h1>
-    </div>
+     <div class="form-container-grid-table">
+            <h2 style="font-size:0.813em;"> India <img src="images/right_arrow.png"> Labour Law <img src="images/right_arrow.png"> Factory <img src="images/right_arrow.png"> Central</h2>
+              <table>
+                <tr align="left">
+                  <th width="16.66%">Primary Legislation</th>
+                  <th width="16.66%">Secondary Legislation</th>
+                  <th width="16.66%">Section</th>
+                  <th width="16.66%">Sub Section</th>
+                </tr>
+                <tr>
+                
+                  <td><ul>
+                    <li>
+                      <input type="text" class="filter-text-box">
+                    </li>
+                    <li class="active"><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Gratuity Act, 1972</li>
+                    <li ><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Batteries Act</li>
+                    <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Industrial Disputes (Central) Rules, 1957</li>
 
+                    <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Indian Partnership Act, 1932</li>
+
+                  </ul>
+                  <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder=" Enter Act Name"/>
+                    <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                     formtarget="_self" /></a> </div></td>
+                     <td><ul>
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                      <li class="active"><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Tamil Nadu Gratuity Act, 1972</li>
+                    </ul>
+                    <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder=" Enter Rule Name"/>
+                      <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                       formtarget="_self" /></a> </div>
+
+
+                     </td>
+                     <td><ul>
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+
+                    </ul>
+                    <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder=" Enter Section"/>
+                      <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                       formtarget="_self" /></a> </div>
+                     </td>
+                     <td><ul>
+                      <li>
+                      <input type="text" class="filter-text-box">                        
+                      </li>
+                    </ul>
+<div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Sub Section"/>
+                    <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                           formtarget="_self" /></a> </div>
+                    </td>
+                 
+                </tr>
+                <tr align="left">
+                  <th width="16.66%">Rule</th>
+                  <th width="16.66%">Sub Rule</th>
+                  <th width="16.66%">Clause</th>
+                  <th width="16.66%">Sub Clause</th>
+                
+                </tr>
+                <tr>
+                  <td><ul>
+                      <li>
+                        <input type="text" class="filter-text-box">
+
+                      </li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 4 </li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 9(1) </li>
+                      <li class="active"><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 3</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 4 (iii)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 5 </li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 6 (ii)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 6(iii)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 7(vii)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 7(iv)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 8(i) </li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 8 (iii)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 10(2) (iii)</li>
+                      <li><span style="float:left;margin-right:5px;margin-left:5px"><a href="#"><img src="/images/icon-edit.png" style="width:11px;height:11px"/></a></span>Rule 11(ii)</li>
+                    </ul>
+
+                    <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Rule"/>
+                      <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                       formtarget="_self" /></a> </div>
+                     </td>
+                     <td><ul>
+                      <li>
+                        <input type="text" class="filter-text-box">
+                      </li>
+                    </ul>
+                    <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Sub Rule"/>
+                      <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                       formtarget="_self" /></a> </div></td>
+                       <td><ul>
+                        <li>
+                          <input type="text" class="filter-text-box">
+                        </li>
+                      </ul>
+
+                      <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Clause"/>
+                        <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                         formtarget="_self" /></a> </div></td>
+                         <td><ul>
+                          <li>
+                            <input type="text" class="filter-text-box">
+                          </li>
+                        </ul>
+
+                        <div class="bottomfield" ><input type="text" class="input-box  addleft" placeholder="Enter Sub Clause"/>
+                          <a href="#" class="addleftbutton"><img src="/images/icon-plus.png" 
+                           formtarget="_self" /></a> </div></td>
+
+                         </tr>
+                       </table>
+                     </div>
+                     <div class="clearfix"></div>
+                     <div style="padding-top:3px;padding-bottom:5px;" align="center"><input type="submit" class="btn-submit" value="Add" /></div>
+                     <div class="grid-table">
+                      <table>
+                        <tr align="left" style="height:2.0em;">
+                          <th style="height:2em;" align="center">#</th>
+                          <th style="height:2em;">Statutory</th>
+                          <th align="center" style="padding-right:3px; height:2em;">Remove</th>
+                        </tr>
+                        <tr>
+                          <td align="center">1</td>
+                          <td>Gratuity Act, 1972 <img src="images/right_arrow.png"> Tamil Nadu Gratuity Act, 1972 <img src="images/right_arrow.png"> Rule 5</td>
+                          <td align="center"><img src="/images/icon-delete.png" title="Click here to deactivate" id="activeid" /></td>
+                        </tr>
+                       <!--  <tr>
+                          <td align="center">2</td>
+                          <td>Gratuity Act, 1972 <img src="images/right_arrow.png"> Tamil Nadu Gratuity Act, 1972</td>
+                          <td align="center"><img src="/images/icon-delete.png" title="Click here to deactivate" id="activeid" /></td>
+                        </tr> -->
+                      </table>
+                    </div>
+    </div>
     <button id="activate-step-3" class="btn-right">Next</button>
     <button id="backward-step-1" class="btn-right">Previous</button>
   </div>
-  <div class="setup-content" id="step-3">
+
+   <div class="setup-content" id="step-3">
     <div class="innercontent">
-      <h1 class="text-center"> STEP 3</h1>
+     
+    </div>
+    <button id="activate-step-4" class="btn-right">Next</button>
+    <button id="backward-step-2" class="btn-right">Previous</button>
+  </div>
+
+  <div class="setup-content" id="step-4">
+    <div class="innercontent">
+     
     </div>
     <button id="activate-step-finish" class="btn-right">Submit</button>
-    <button id="backward-step-2" class="btn-right">Previous</button>
+    <button id="backward-step-3" class="btn-right">Previous</button>
+  </div>
+      </div>
+    </div>
   </div>
 </div>
 
 
+
 <script type="text/javascript">
   $(document).ready(function() {
-
     var navListItems = $('ul.setup-panel li a'),
     allWells = $('.setup-content');
-
     allWells.hide();
-
     navListItems.click(function(e)
     {
       e.preventDefault();
@@ -301,6 +645,13 @@
       $('ul.setup-panel li a[href="#step-3"]').trigger('click');
       
     })  
+
+    $('#activate-step-4').on('click', function(e) {
+      $('ul.setup-panel li:eq(3)').removeClass('disabled');
+      $('ul.setup-panel li a[href="#step-4"]').trigger('click');
+      
+    })  
+
     $('#backward-step-1').on('click', function(e) {
       $('ul.setup-panel li:eq(1)').removeClass('disabled');
       $('ul.setup-panel li a[href="#step-1"]').trigger('click');
@@ -311,10 +662,46 @@
       $('ul.setup-panel li a[href="#step-2"]').trigger('click');
       
     })  
+    $('#backward-step-3').on('click', function(e) {
+      $('ul.setup-panel li:eq(3)').removeClass('disabled');
+      $('ul.setup-panel li a[href="#step-3"]').trigger('click');
+      
+    })  
+
+    $('#activate-step-finish').on('click', function(e) {
+      alert("submit");      
+    })  
 
        
 });
+</script>
 
 
+<script type="text/javascript">
+  jQuery(window).load(function(){
+    jQuery('.page-load').tipso({
+      tooltipHover: true
+    });
+  });
+</script> 
+<script type="text/javascript">
+  $(function()
+        {
+            $('#myTextarea').keyup(function(e)
+            {
+                var maxLength = 500;
+                var textlength = this.value.length;
+                if (textlength >= maxLength)
+                {
+                    $('#counter').html('You cannot write more then ' + maxLength + ' characters!');
+                    this.value = this.value.substring(0, maxLength);
+                    e.preventDefault();
+                }
+                else
+                {
+                    $('#counter').html((maxLength - textlength) + ' characters left.');
+                }
+            });
+        });
 </script>
 {% endblock %} 
