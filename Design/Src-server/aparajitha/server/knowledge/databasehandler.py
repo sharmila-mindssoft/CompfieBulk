@@ -985,6 +985,7 @@ class DatabaseHandler(object) :
                 status = "activated"
             action = "Statutory Mapping status changed"
             self.saveActivity(updatedBy, 17, action)
+            return True
 
     def changeApprovalStatus(self, data, updatedBy) :
         statutoryMappingId = data.get("statutory_mapping_id")
@@ -1000,16 +1001,19 @@ class DatabaseHandler(object) :
         elif approvalStatus == "Approve" :
             query = "UPDATE tbl_statutory_mappings set approval_status='%s', \
                 updated_by=%s WHERE statutory_mapping_id = %s" % (
-                    approvalStatus, rejectedReason, updatedBy, statutoryMappingId
+                    approvalStatus, updatedBy, statutoryMappingId
                 )
         else :
             query = "UPDATE tbl_statutory_mappings set approval_status='%s', \
                 updated_by=%s WHERE statutory_mapping_id = %s" % (
-                    approvalStatus, rejectedReason, updatedBy, statutoryMappingId
+                    approvalStatus, updatedBy, statutoryMappingId
                 )
             # if (self.dataInsertUpdate(query)) :
 
-        return self.dataInsertUpdate(query)
+        self.dataInsertUpdate(query)
+        action = "Statutory Mapping approval status changed"
+        self.saveActivity(updatedBy, 17, action)
+        return True
 
     def saveStatutoryBackup(self, statutoryMappingId, createdBy):
         oldRecord = self.getStatutoryMappingsById(statutoryMappingId)

@@ -404,6 +404,30 @@ function initMirror() {
         apiRequest("GetStatutoryMappings", request, callback, failure_callback);
     }
 
+    function changeStatutoryMappingStatus(mappingId, isActive, callback, failure_callback) {
+        var request = [
+            "ChangeStatutoryMappingStatus",
+            {
+                "statutory_mapping_id":mappingId,
+                "is_active" : is_active
+            }
+        ]
+        apiRequest("ChangeStatutoryMappingStatus", request, callback, failure_callback);
+    }
+
+    function approveStatutoryMapping(mappingId, approveStatus, reason, notification, callback, failure_callback) {
+        var request = [
+            "ApproveStatutoryMapping",
+            {
+                "statutory_mapping_id": mappingId,
+                "approval_status": approveStatus,
+                "rejected_reason": reason,
+                "notification_text": notification
+            }
+        ]
+        apiRequest("ApproveStatutoryMapping", request, callback, failure_callback);
+    }
+
     // Admin User Group Master
     function isNull(value){
         if (value == null)
@@ -994,6 +1018,8 @@ function initMirror() {
         saveStatutoryMapping: saveStatutoryMapping,
         updateStatutoryMapping: updateStatutoryMapping,
         getStatutoryMappings: getStatutoryMappings,
+        changeStatutoryMappingStatus: changeStatutoryMappingStatus,
+        approveStatutoryMapping: approveStatutoryMapping,
 
 
         saveAdminUserGroup: saveAdminUserGroup,
