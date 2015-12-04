@@ -18,7 +18,11 @@ class APIHandler(object):
 			"GetServiceProviders": self._getServiceProviders,
 			"SaveServiceProvider": self._saveServiceProvider,
 			"UpdateServiceProvider": self._updateServiceProvider,
-			"ChangeServiceProviderStatus": self._changeServiceProviderStatus
+			"ChangeServiceProviderStatus": self._changeServiceProviderStatus,
+			"GetUserPrivileges": self._getUserPrivileges,
+			"SaveUserPrivilege": self._saveUserPrivilege,
+			"UpdateUserPrivilege": self._updateUserPrivilege,
+			"ChangeUserPrivilegeStatus": self._changeUserPrivilegeStatus
 		}
 
 	def _success_response(self, response, response_option, data) :
@@ -145,6 +149,14 @@ class APIHandler(object):
 			responseData = self._success_response(
 				response, "ChangeServiceProviderStatusSuccess",{})
 		return responseData
+
+	def _getUserPrivileges(self, db, user, request):
+
+	def _saveUserPrivilege(self, db, user, request):
+
+	def _updateUserPrivilege(self, db, user, request):
+
+	def _changeUserPrivilegeStatus(self, db, user, request):
 
 #
 # db_request

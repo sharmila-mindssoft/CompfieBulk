@@ -8,6 +8,8 @@ $("#btnUserGroupAdd").click(function(){
 	$("#formList").hide();
   	$(".error-message").html('');
   	$("#groupName").val('');
+  	$("#groupId").val('');
+  	
 	function success(status, data){
 		loadUserGroupdata(data['user_groups']);		
 	}
@@ -35,10 +37,8 @@ function initialize(){
 }
 
 function loadUserGroupdata(userGroupList){
-	// saveUserGroupDetail = ["Knowledge User 1", "Knowledge" , "11,53"];
- 	$('#tableRow').show();
-  	$("#tableUserGroupList").find("tr:gt(0)").remove();
-  	var sno=1;
+	$(".tbody-usergroups-list").find("tr").remove();
+  	var sno=0;
 	var imageName, title;
 	for(var j in userGroupList){
 		var form_type=userGroupList[j]["form_type"];
@@ -56,21 +56,17 @@ function loadUserGroupdata(userGroupList){
 			title="Click here to Activate"
 			statusVal=1;
 		}
-		var tableName = document.getElementById("tableUserGroupList");
-		var tableRow=document.getElementById('tableRow');
-		var clone=tableRow.cloneNode(true);
-		clone.id = sno; 
 
-		clone.cells[0].innerHTML =sno;
-		clone.cells[1].innerHTML=user_group_name;
-		clone.cells[2].innerHTML=form_type;
-		clone.cells[3].innerHTML='<img src="/images/icon-edit.png" id="editid" onclick="userGroupEdit('+userGroupId+',\''+user_group_name+'\', \''+form_type+'\')"/>';
-		clone.cells[4].innerHTML='<img src="/images/'+imageName+'" title="'+title+'" onclick="userGroupActive('+userGroupId+', '+statusVal+')"/>';
-		tableName.appendChild(clone);
-  		sno = sno + 1;
+		var tableRow=$('#templates .table-usergroup-list .table-row');
+		var clone=tableRow.clone();
+		sno = sno + 1;
+		$('.sno', clone).text(sno);
+		$('.group-name', clone).text(user_group_name);
+		$('.catg-name', clone).text(form_type);
+		$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="userGroupEdit('+userGroupId+',\''+user_group_name+'\', \''+form_type+'\')"/>');
+		$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="userGroupActive('+userGroupId+', '+statusVal+')"/>');
+		$('.tbody-usergroups-list').append(clone);			
 	}
-	$('#tableRow').hide();
-
 }
 
 $("#btnUserGroupShow").click(function(){
@@ -221,14 +217,23 @@ function userGroupActive(userGroupId, isActive){
 	mirror.changeAdminUserGroupStatus("AdminAPI", userGroupId, isActive, success, failure);
 }
 
-function filter (term, cellNr){
-	var suche = term.value.toLowerCase();
-	var table = document.getElementById("tableCountriesList");
-	var ele;
-	for (var r = 1; r < table.rows.length; r++){
-		ele = table.rows[r].cells[cellNr].innerHTML.replace(/<[^>]+>/g,"");
-		if (ele.toLowerCase().indexOf(suche)>=0 )
-			table.rows[r].style.display = '';
-		else table.rows[r].style.display = 'none';
-	}
-}
+$("#groupNameSearch").keyup(function() { 
+	var count=0;
+    var value = this.value.toLowerCase();
+    $("table").find("tr:not(:first)").each(function(index) {
+        if (index === 0) return;
+        var id = $(this).find(".group-name").text().toLowerCase();       
+        $(this).toggle(id.indexOf(value) !== -1);;
+    });
+   
+});
+$("#categoryNameSearch").keyup(function() { 
+	var count=0;
+    var value = this.value.toLowerCase();
+    $("table").find("tr:not(:first)").each(function(index) {
+        if (index === 0) return;
+        var id = $(this).find(".catg-name").text().toLowerCase();       
+        $(this).toggle(id.indexOf(value) !== -1);;
+    });
+   
+});

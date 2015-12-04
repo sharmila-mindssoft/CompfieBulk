@@ -158,6 +158,65 @@ define_request(
 	[]
 )
 
+define_request(
+	"GetUserPrivileges",
+	{},
+	{
+		"forms": Menu,
+        "user_groups": ListType(
+        		DictType(
+        			{     
+					    "user_group_id": Int,
+					    "user_group_name": Text50,
+					    "form_ids": ListType(Int),
+					    "is_active": Int
+					}
+        		)
+        	)
+	},
+	[]
+)
+
+define_request(
+	"SaveUserPrivilege",
+	{
+		"user_group_name": Text50,
+        "form_type": Text20,
+        "form_ids": ListType(Int)
+	},
+	{},
+	[
+		"UserGroupNameAlreadyExists"
+	]
+)
+
+define_request(
+	"UpdateUserPrivilege",
+	{
+		"user_group_id": Int,
+		"user_group_name": Text50,
+        "form_type": Text20,
+        "form_ids": ListType(Int)
+	},
+	{},
+	[
+		"InvalidUserGroupId",
+		"UserGroupNameAlreadyExists"
+	]
+)
+
+define_request(
+	"ChangeUserPrivilegeStatus",
+	{
+		"user_group_id": Int,
+		"is_active": Int
+	},
+	{},
+	[
+		"InvalidUserGroupId",
+	]
+)
+
 
 #
 # Request, RequestFrame

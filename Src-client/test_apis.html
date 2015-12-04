@@ -61,11 +61,35 @@
 			function changeServiceProviderStatus() {
 				serviceProviderId = 1
 				isActive = 0
-				mirror.changeServiceProviderStatus(serviceProviderId, 
-        isActive, success, failure)
+				mirror.changeServiceProviderStatus(serviceProviderId, isActive, success, failure)
 			}
 			function getServiceProvidersList() {
 				mirror.getServiceProviders(success, failure)
+			}
+			function saveClientUserGroup(){
+				userGroupDetails = {
+			        "user_group_name": "Test user group name 1",
+			        "form_type": "client",
+			        "form_ids": [1,2]
+			    }
+			    mirror.saveClientUserGroup(userGroupDetails,success, failure);
+			}
+			function updateClientUserGroup(){
+				userGroupDetails = {
+					"user_group_id": 1,
+			        "user_group_name": "Test user group name update",
+			        "form_type": "client",
+			        "form_ids": [5,6]
+			    }
+			    mirror.updateClientUserGroup(userGroupDetails,success, failure);
+			}
+			function changeClientUserGroupStatus(){
+				userGroupId = 1
+				isActive = 0
+				mirror.changeClientUserGroupStatus(userGroupId,isActive, success,failure) ;
+			}
+			function getClientUserGroupList(){
+				getClientUserGroups(success, failure);
 			}
 		</script>
 	</head>
@@ -75,6 +99,9 @@
 			<button onclick="login()">Login</button>
 			<button onclick="logout()">Logout</button>
 			<button onclick="test()">Test Client</button>
+			
+		</div>
+		<div>
 			<button onclick="saveServiceProvider()">
 				Save Service Provider
 			</button>
@@ -86,6 +113,20 @@
 			</button>
 			<button onclick="getServiceProvidersList()">
 				Get service Providers
+			</button>
+		</div>
+		<div>
+			<button onclick="saveClientUserGroup()">
+				Save Client User Group
+			</button>
+			<button onclick="updateClientUserGroup()">
+				Update Client User Group
+			</button>
+			<button onclick="changeClientUserGroupStatus()">
+				Change Client User Group Status
+			</button>
+			<button onclick="getClientUserGroupList()">
+				Get Client User Groups
 			</button>
 		</div>
 		<br>
