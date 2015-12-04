@@ -22,7 +22,12 @@ class APIHandler(object):
 			"GetUserPrivileges": self._getUserPrivileges,
 			"SaveUserPrivilege": self._saveUserPrivilege,
 			"UpdateUserPrivilege": self._updateUserPrivilege,
-			"ChangeUserPrivilegeStatus": self._changeUserPrivilegeStatus
+			"ChangeUserPrivilegeStatus": self._changeUserPrivilegeStatus,
+			"GetClientUsers": self._getClientUsers,
+			"SaveClientUser": self._saveClientUser,
+			"UpdateClientUser": self._updateClientUser,
+			"ChangeClientUserStatus": self._changeClientUserStatus,
+			"ChangeAdminStatus": self._changeAdminStatus
 		}
 
 	def _success_response(self, response, response_option, data) :
@@ -63,6 +68,9 @@ class APIHandler(object):
 			"TestResponse", "TestSuccess", {}
 		)
 
+#
+#	Service Provider
+#	
 	def _getServiceProviders(self, db, user, request):
 		serviceProviderList = ServiceProvider.getList(db)
 		responseData = {}
@@ -150,11 +158,16 @@ class APIHandler(object):
 				response, "ChangeServiceProviderStatusSuccess",{})
 		return responseData
 
+#
+#	User Privilege
+#	
 	def _getUserPrivileges(self, db, user, request):
 		sessionUser = user["user_id"]
+
 		clientForms = Form.getForms("client", self._knowledge_db)
 		forms = Menu.getMenu(clientForms)
 		userGroupList = UserPrivilege.getDetailedList(sessionUser, db)
+		
 		responseData = {}
 		responseData["forms"] = forms
 		responseData["user_groups"] = userGroupList
@@ -219,6 +232,36 @@ class APIHandler(object):
 			responseData = self._success_response(
 				response, "ChangeUserPrivilegeStatusSuccess",{})
 		return responseData
+
+
+#
+#	User
+#
+
+	def _getClientUsers(self, db, user, request):
+
+        countryList = CountryList.getCountryList()
+    	domainList = DomainList.getDomainList()
+        businessGroupList = BusinessGroup.getList(self._client_id, db)
+        legalEntityList = LegalEntity.getList(self._client_id, db)
+        divisionList = Division.getList(self._client_id, db)
+        unitList = Unit.getList(self._client_id, db)
+    	userGroupList = UserPrivilege.getList(self._client_id, db)
+    	userList = User.getDetailedList(self._client_id, db)
+
+        responseData = {}
+        responseData["domains"] = domainList
+        responseData["countries"] = countryList
+        responseData["business_groups"] = businessGroupList
+        responseData["legal_entities"] = legalEntityList
+        responseData["divisions"] = divisionList
+        responseData["units"] = unitList
+        responseData["user_groups"] = userGroupList
+        responseData["users"] = userList
+
+       	return self._success_response("GetClientUsersResponse", 
+			"GetClientUsersSuccess",responseData
+
 #
 # db_request
 #

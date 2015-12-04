@@ -127,3 +127,43 @@ class ClientDatabase(object) :
 		values = [isActive, currentTimeStamp, sessionUser]
 		condition = "user_group_id='%d'" % userGroupId
 		return self._db.update(self._db.tblClientUserGroups, columns, values, condition)
+
+#
+#	Business Group
+#
+
+	def getBusinessGroups(self):
+		columns = "business_group_id, business_group_name"
+		condition = "1"
+		rows = self._db.getData(self._db.tblBusinessGroup,columns, 
+			condition)
+		return rows
+
+#
+#	Legal Entity
+#
+	def getLegalEntities(self):
+		columns = "legal_entity_id, legal_entity_name, business_group_id"
+		condition = "1"
+        rows = self._db.getData(self._db.tblLegalEntity,columns, condition)
+        return rows
+#
+# 	Divisions
+#
+
+	def getDivisions(self):
+		columns = "division_id, division_name, legal_entity_id, business_group_id"
+		condition = "1"
+		rows = self._db.getData(self._db.tblDivision,columns, condition)
+
+#
+#	Units
+#
+	def getUnits(self):
+		columns = "unit_id, division_id, legal_entity_id, "+\
+                   "business_group_id, unit_code, unit_name,"+\
+                   " country_id, address, domain_ids"
+		condition = "1"                 
+		rows = self._db.getData(self._db.tblUnit, columns, condition)
+
+

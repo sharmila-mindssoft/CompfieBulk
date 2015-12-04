@@ -184,3 +184,179 @@ class UserPrivilege() :
             userGroup = UserPrivilege(clientId, int(row[0]), row[1], None, None, None)
             userGroupList.append(userGroup.toStructure())
         return userGroupList
+
+class BusinessGroup(object):
+    def __init__(self, businessGroupId, businessGroupName, clientId):
+        self.clientId = clientId
+        self.businessGroupId = businessGroupId if businessGroupId != None else self.generateNewBusinessGroupId()
+        self.businessGroupName = businessGroupName
+
+    def toStructure(self) :
+        return {
+            "business_group_id": self.businessGroupId,
+            "business_group_name": self.businessGroupName,
+            "client_id": self.clientId
+        }
+
+    @classmethod
+    def getList(self, clientId, db):
+        businessGroupList = []
+        try:
+            rows = db.getBusinessGroups()
+            for row in rows:
+                businessGroupId = row[0]
+                businessGroupName = row[1]
+                businessGroup = BusinessGroup(businessGroupId, businessGroupName, clientId)
+                businessGroupList.append(businessGroup.toStructure())
+            except:
+                print "Error: While fetching Business Groups of client id %s" % clientId
+        return businessGroupList
+
+class LegalEntity(object):
+
+    def __init__(self, legalEntityId, legalEntityName, businessGroupId, clientId):
+        self.clientId = clientId
+        self.legalEntityId = legalEntityId if legalEntityId != None else self.generateNewLegalEntityId()
+        self.legalEntityName = legalEntityName
+        self.businessGroupId = businessGroupId
+
+    def toStructure(self) :
+        return {
+            "legal_entity_id": self.legalEntityId,
+            "legal_entity_name": self.legalEntityName,
+            "business_group_id": self.businessGroupId,
+            "client_id": self.clientId
+        }
+
+    @classmethod
+    def getList(self, clientId):
+        legalEntitiesList = []
+        try:
+            rows = db.getLegalEntities()
+            for row in rows:
+                legalEntityId = row[0]
+                legalEntityName = row[1]
+                businessGroupId = row[2]
+                legalEntity = LegalEntity(legalEntityId, legalEntityName, businessGroupId, clientId)
+                legalEntitiesList.append(legalEntity.toStructure())
+        except:
+            print "Error: While fetching Legal Entities of client id %s" % clientId
+        return legalEntitiesList
+
+class Division(object):
+    divisionTblName = "tbl_divisions"
+
+    def __init__(self, divisionId, divisionName,legalEntityId, businessGroupId, clientId):
+        self.clientId = clientId
+        self.divisionId = divisionId if divisionId != None else self.generateNewDivisionId()
+        self.divisionName = divisionName
+        self.legalEntityId = legalEntityId
+        self.businessGroupId = businessGroupId
+
+    def toStructure(self) :
+        return {
+            "division_id": self.divisionId,
+            "division_name": self.divisionName,
+            "legal_entity_id": self.legalEntityId,
+            "business_group_id": self.businessGroupId,
+            "client_id": self.clientId
+        }
+
+    @classmethod
+    def getList(self, clientId, db):
+        divisionsList = []
+        try:
+            rows = db.getDivisions()     
+            for row in rows:
+                divisionId = row[0]
+                divisionName = row[1]
+                legalEntityId = row[2]
+                businessGroupId = row[2]
+                division = Division(divisionId, divisionName, legalEntityId, 
+                        businessGroupId, clientId)
+                    divisionsList.append(division.toStructure())
+            except:
+                print "Error: While fetching Division of client id %s" % clientId
+        return divisionsList
+
+class Unit(object):
+    unitTblName = "tbl_units"
+    divisionTblName = "tbl_divisions"
+    legalEntityTblName = "tbl_legal_entities"
+    businessGroupTblName = "tbl_business_groups"
+
+    def __init__(self, unitId, divisionId, legalEntityId, businessGroupId, clientId, 
+                countryId, geographyId, unitCode, unitName, industryId, address, 
+                postalCode, domainIds, isActive, industryName, geography):
+        self.clientId = clientId
+        self.unitId = unitId if unitId != None else self.generateNewUnitId()
+        self.divisionId = divisionId
+        self.legalEntityId = legalEntityId
+        self.businessGroupId = businessGroupId
+        self.countryId = countryId
+        self.geographyId = geographyId
+        self.unitCode = unitCode
+        self.unitName = unitName
+        self.industryId = industryId
+        self.address = address
+        self.postalCode = postalCode
+        self.domainIds = domainIds
+        self.isActive = isActive if isActive != None else 1
+        self.industryName = industryName
+        self.geography = geography
+
+    def toDetailedStructure(self) :
+        return {
+            "unit_id": self.unitId,
+            "division_id": self.divisionId,
+            "legal_entity_id": self.legalEntityId,
+            "business_group_id": self.businessGroupId,
+            "client_id"  : self.clientId,
+            "country_id": self.countryId,
+            "geography_id": self.geographyId,
+            "unit_code": self.unitCode,
+            "unit_name": self.unitName,
+            "industry_id": self.industryId,
+            "unit_address": self.address,
+            "postal_code": self.postalCode,
+            "domain_ids": self.domainIds,
+            "is_active": self.isActive
+        }
+
+    def toStructure(self):
+        unitName = "%s - %s" % (self.unitCode, self.unitName)
+        return{
+            "unit_id": self.unitId,
+            "division_id": self.divisionId,
+            "legal_entity_id": self.legalEntityId,
+            "business_group_id": self.businessGroupId,
+            "client_id": self.clientId,
+            "country_id": self.countryId,
+            "domain_ids": self.domainIds,
+            "unit_name": unitName,
+            "unit_address": self.address
+        }
+
+    @classmethod
+    def getList(self, clientId , db):
+        unitList = []
+        try:
+            rows = db.getUnits()
+            for row in rows:1
+                unitId = row[0]
+                divisionId = row[1]
+                legalEntityId = row[2]
+                businessGroupId = row[3]
+                unitCode = row[4]
+                unitName = row[5]
+                countryId = row[6]
+                address = row[7]
+                domainIds = row[8]
+                unit = Unit(unitId, divisionId, legalEntityId, businessGroupId, 
+                            clientId, countryId, None, unitCode, unitName,
+                            None, address, None, domainIds, None, None, None)
+                unitList.append(unit.toStructure())
+        except:
+            print "Error: While fetching Unit of client id %s" % clientId
+
+        return unitList
