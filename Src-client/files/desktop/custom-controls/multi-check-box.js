@@ -76,12 +76,12 @@ function initializeMultiCheckBox (
 	}
 
 	function fillUpSuggestions (suggestions) {
-		$(".multi-check-box-suggestions", multiCheckBox).hide();
+		$(".multi-check-box-list", multiCheckBox).hide();
 		var multiCheckBoxUl = $(".multi-check-box-ul", multiCheckBox);
 		multiCheckBoxUl.empty();
 		if (suggestions.length == 0)
 			return;
-		$(".multi-check-box-suggestions", multiCheckBox).show();
+		$(".multi-check-box-list", multiCheckBox).show();
 		for (var i = 0; i < suggestions.length; i++) {
 			var item = suggestions[i];
 			var liElement = createLiElement(parent, item["item_name"]);
@@ -101,7 +101,11 @@ function initializeMultiCheckBox (
 					$(this).next().focus();
 				}
 				if (e.keyCode == 38) {
-					$(this).prev().focus();
+					if ( $(this).is(':first-child') ) {
+						$(".multi-check-box-textbox", multiCheckBox).focus();
+					}
+					else
+						$(this).prev().focus();
 				}
 				if (e.keyCode == 32) {
 					onItemClick($(this));
