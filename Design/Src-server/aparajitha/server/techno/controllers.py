@@ -577,7 +577,7 @@ class ClientController(object):
         domainList = DomainList.getDomainList()
         geographyLevelList = GeographyLevelList.getCountryWiseList()
         industryList = IndustryList.getList()
-        geographyList = GeographyAPI.getList()
+        geographyList = GeographyAPI.geographyReport()
 
         clientIds = User.getClientIds(sessionUser)
         if clientIds ==  None:

@@ -920,6 +920,7 @@ class Geography(object) :
         return str(self.toStructure())
 
 class GeographyAPI(object) :
+    countryList = None
     def __init__(self, request, userId) :
         self.request = request
         self.userId = userId
@@ -1032,6 +1033,7 @@ class GeographyAPI(object) :
             {}
         ]
 
+    @classmethod
     def geographyReport(self) :
         DH = DatabaseHandler.instance()
         _geographyList = DH.getGeographies()
@@ -1060,6 +1062,7 @@ class GeographyAPI(object) :
                 }
             )
             geoMappingDict[countryId] = geoMappingList
+            self.countryList = CountryList().getCountry()
         return [
             "success", 
             {
