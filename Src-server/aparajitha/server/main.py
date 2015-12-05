@@ -75,6 +75,8 @@ TEMPLATE_PATHS = [
     ("/login", "files/desktop/login/login.html",
         "files/mobile/login/login.html", {}),
     ("/home", "files/desktop/home/home.html", None, {}),
+    ("/custom-controls", "files/desktop/custom-controls/custom-controls.html",
+        None, {}),
 ]
 
 def run_server() :
@@ -105,7 +107,6 @@ def run_server() :
 
     api_design_path = os.path.join(
         ROOT_PATH, "Doc", "API", "Web-API", "Version-1.0.4", "html")
-
     lower_level_handlers = [
         (r"/api-design/(.*)", tornado.web.StaticFileHandler, dict(path=api_design_path)),
         (r"/(.*)", tornado.web.StaticFileHandler, dict(path=static_path)),
