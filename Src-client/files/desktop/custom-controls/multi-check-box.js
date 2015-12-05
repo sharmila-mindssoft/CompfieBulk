@@ -40,20 +40,7 @@ function initializeMultiCheckBox (
 		return suggestions2;
 	}
 
-	function onItemClick (element) {
-		var className = element.attr('class');
-		var itemId = className.split(" ")[1];
-		if (element.hasClass("active")) {
-			element.removeClass("active");
-			if ($("." + itemId, selectedDiv).length > 0) {
-				$("." + itemId, selectedDiv).remove();
-			}
-		}
-		else {
-			element.addClass("active");
-			var itemDiv = createDivElement(element.text(), itemId);
-			selectedDiv.append(itemDiv);
-		}
+	function updateDropDown () {
 		$(".multi-check-box-dropdown", multiCheckBox).removeClass("empty");
 		var selectedItemsCount = $("div", selectedDiv).length;
 		var selectedItems = selectedItemsCount + " Selected";
@@ -72,7 +59,55 @@ function initializeMultiCheckBox (
 		else {
 			$(".multi-check-box-dropdown", multiCheckBox).val(selectedItems);
 		}
+	}
+
+	function onItemClick (element) {
+		var className = element.attr('class');
+		var itemId = className.split(" ")[1];
+		if (element.hasClass("active")) {
+			element.removeClass("active");
+			if ($("." + itemId, selectedDiv).length > 0) {
+				$("." + itemId, selectedDiv).remove();
+			}
+		}
+		else {
+			element.addClass("active");
+			var itemDiv = createDivElement(element.text(), itemId);
+			selectedDiv.append(itemDiv);
+		}
+		updateDropDown();
 		OnItemsClickCallback(itemId, element.text());
+	}
+
+	function prepareLiElement (i, item) {
+		var liElement = createLiElement(parent, item["item_name"]);
+		var itemId = item["item_id"].toString();
+		liElement.addClass(itemId);
+		if ($("." + itemId, selectedDiv).length > 0)
+			liElement.addClass("active");
+		liElement.on("click", function () {
+			onItemClick($(this));
+		});
+		liElement.attr("tabindex", i);
+		liElement.on("keydown", function (e) {
+			if (e.keyCode == 27 || e.keyCode == 9) {
+				$(".multi-check-box-suggestions", multiCheckBox).hide();
+			}
+			if (e.keyCode == 40) {
+				$(this).next().focus();
+			}
+			if (e.keyCode == 38) {
+				if ( $(this).is(':first-child') ) {
+					$(".multi-check-box-textbox", multiCheckBox).focus();
+				}
+				else
+					$(this).prev().focus();
+			}
+			if (e.keyCode == 32) {
+				onItemClick($(this));
+			}
+		});
+		return liElement;
 	}
 
 	function fillUpSuggestions (suggestions) {
@@ -84,33 +119,7 @@ function initializeMultiCheckBox (
 		$(".multi-check-box-list", multiCheckBox).show();
 		for (var i = 0; i < suggestions.length; i++) {
 			var item = suggestions[i];
-			var liElement = createLiElement(parent, item["item_name"]);
-			var itemId = item["item_id"].toString();
-			liElement.addClass(itemId);
-			if ($("." + itemId, selectedDiv).length > 0)
-				liElement.addClass("active");
-			liElement.on("click", function () {
-				onItemClick($(this));
-			});
-			liElement.attr("tabindex", i);
-			liElement.on("keydown", function (e) {
-				if (e.keyCode == 27 || e.keyCode == 9) {
-					$(".multi-check-box-suggestions", multiCheckBox).hide();
-				}
-				if (e.keyCode == 40) {
-					$(this).next().focus();
-				}
-				if (e.keyCode == 38) {
-					if ( $(this).is(':first-child') ) {
-						$(".multi-check-box-textbox", multiCheckBox).focus();
-					}
-					else
-						$(this).prev().focus();
-				}
-				if (e.keyCode == 32) {
-					onItemClick($(this));
-				}
-			});
+			var liElement = prepareLiElement(i, item);
 			multiCheckBoxUl.append(liElement);
 		}
 	}
