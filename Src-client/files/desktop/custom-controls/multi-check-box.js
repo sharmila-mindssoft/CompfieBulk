@@ -58,12 +58,12 @@ function initializeMultiCheckBox (
 		var selectedItemsCount = $("div", selectedDiv).length;
 		var selectedItems = selectedItemsCount + " Selected";
 		if (selectedItemsCount <= 3) {
-			var items = [];
+			var _items = [];
 			var selectedDivs = $("div", selectedDiv);
 			for (var i = 0; i < selectedDivs.length; i++) {
-				items.push($(selectedDivs[i]).text());
+				_items.push($(selectedDivs[i]).text());
 			}
-			selectedItems = items.join(", ");
+			selectedItems = _items.join(", ");
 		}
 		if (selectedItemsCount == 0) {
 			$(".multi-check-box-dropdown", multiCheckBox).addClass("empty");
@@ -116,14 +116,14 @@ function initializeMultiCheckBox (
 	}
 
 	function getSelected () {
-		var items = [];
+		var _items = [];
 		$.each($("div", selectedDiv), function (i, div) {
-			items.push({
+			_items.push({
 				"item_id": parseInt($(div).attr("class")),
 				"item_name": $(div).text()
 			});
 		});
-		return items;
+		return _items;
 	}
 
 	$(".multi-check-box-textbox", multiCheckBox).on("keyup", function (e) {
