@@ -175,6 +175,7 @@ CREATE TABLE `tbl_client_user_details` (
   `domain_ids` varchar(250) DEFAULT NULL,
   `unit_ids` longtext,
   `is_admin` tinyint(4) DEFAULT '0',
+  `is_active` tinyint(4) DEFAULT '1',
   `is_service_provider` tinyint(4) DEFAULT NULL,
   `service_provider_id` int(11) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,

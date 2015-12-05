@@ -899,7 +899,8 @@ function initMirror() {
     } 
 
 // Client User
-    function getClientUsers(callerName, callback, failure_callback) {
+    function getClientUsers(callback, failure_callback) {
+        callerName = "api/client"
         var request = [
             "GetClientUsers",
             {}
@@ -907,8 +908,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function saveClientUser(callerName, clientUserDetail,
+    function saveClientUser(clientUserDetail,
      callback, failure_callback) {
+        callerName = "api/client"
         if (isNull(clientUserDetail))
             return null;
         var request = [
@@ -918,8 +920,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateClientUser(callerName, clientUserDetail, 
+    function updateClientUser(clientUserDetail, 
         callback, failure_callback) {
+        callerName = "api/client"
         if (isNull(clientUserDetail))
             return null;
         var request = [
@@ -929,8 +932,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientUserStatus(callerName, userId, isActive, 
+    function changeClientUserStatus(userId, isActive, 
         callback, failure_callback) {
+        callerName = "api/client"
         if (isNull(userId) || isNull(isActive) )
             return null;
         var request = [
@@ -943,8 +947,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeAdminStatus(callerName, userId, isAdmin, 
+    function changeAdminStatus(userId, isAdmin, 
         callback, failure_callback) {
+        callerName = "api/client"
         if (isNull(userId) || isNull(isAdmin) )
             return null;
         var request = [

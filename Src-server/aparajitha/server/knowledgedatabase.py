@@ -4,6 +4,9 @@ from aparajitha.misc.client_mappings import *
 from aparajitha.misc.formmappings import formIdMappings
 import uuid
 import hashlib
+import string
+import random
+
 
 DATABASE = "mirror_knowledge"
 
@@ -15,6 +18,13 @@ def to_dict(keys, values_list):
 
 def get(fields) :
 	return ", ".join(fields)
+
+def generatePassword() : 
+    characters = string.ascii_uppercase + string.digits
+    password = ''.join(random.SystemRandom().choice(characters) for _ in range(7))
+    print password
+    print encrypt(password)
+    return encrypt(password)
 
 def encrypt(value):
 	m = hashlib.md5()
@@ -175,10 +185,35 @@ class KnowledgeDatabase(object) :
 		if form == "ActivityLog":
 			tblName = self._db.tblActivityLog
 			column = "activity_log_id"
+		elif form == "User":
+			tblName = self._db.tblUsers
+			column = "user_id"
 		else:
 			print "Error : Cannot generate new id for form %s" % form
 
 		return self._db.generateNewId(tblName, column)
+
+	def isDuplicate(self, form, field, value, idValue):
+		tblName = None
+		condition = None
+		if form == "User":
+			tblName = self._db.tblUsers
+			if field == "email":
+				condition = "username ='%s' AND user_id != '%d'" %(
+           value, idValue)
+		
+		return self._db.isAlreadyExists(tblName, condition)
+
+	def isIdInvalid(self, form, idValue):
+		tblName = None
+		condition = None
+		if form == "User":
+			tblName = self._db.tblUsers
+			condition = "user_id = '%d'" % idValue
+		else:
+			print "Error: Id Validation not exists for form %s" % form
+
+		return not self._db.isAlreadyExists(tblName, condition)
 
 #
 #	Forms
@@ -216,6 +251,25 @@ class KnowledgeDatabase(object) :
 		return rows	
 
 #
+#	User
+#
+	def saveUser(self, user, sessionUser):
+		currentTimeStamp = None
+		currentTimeStamp = currentTimestamp()
+		columns = "user_id, username, password, client_id,created_on,created_by,"+\
+                        " updated_on, updated_by"
+		values = [(user.userId, user.emailId, generatePassword(), 
+        		user.clientId, currentTimeStamp,sessionUser,
+                currentTimeStamp,sessionUser)]
+		return self._db.insert(self._db.tblUsers, columns, values)
+
+	def changeUserStatus(self, userId, isActive, sessionUser):
+		columns = ["is_active", "updated_on" , "updated_by"]
+		values = [isActive, currentTimestamp(), sessionUser]
+		condition = "user_id='%d'" % userId
+		return self._db.update(self._db.tblUsers, columns, values,
+			condition)
+#
 #	Activity Log
 #
 
@@ -234,13 +288,22 @@ class KnowledgeDatabase(object) :
 				action = "Service Provider %s has been updated" % obj
 			elif actionType == "statusChange":
 				action = "Status of service Provider %s has been updated" % str(obj)
-		if form == "UserPrivilege":
+		elif form == "UserPrivilege":
 			if actionType == "save":
 				action = "User Privilege %s has been created" % obj
 			elif actionType == "update":
 				action = "User Privilege %s has been updated" % obj
 			elif actionType == "statusChange":
 				action = "Status of User Privilege %s has been updated" % str(obj)			
+		elif form == "User":
+			if actionType == "save":
+				action = "User %s has been created" % obj
+			elif actionType == "update":
+				action = "User %s has been updated" % obj
+			elif actionType == "statusChange":
+				action = "Status of User %s has been updated" % str(obj)
+			elif actionType == "adminStatusChange":
+				action = "Admin Status of User Privilege %s has been updated" % str(obj)
 		else:
 			print "Error : Activity Log not available for form %s" % form
 		

@@ -73,11 +73,10 @@ class Database(object) :
 	def getData(self, table, columns, condition):
 		query = "SELECT %s FROM %s WHERE %s" %  (columns, 
 			table, condition) 
-		print query
 		return self.execute_and_return(query)
 
 	def insert(self, table, columns, valueList) :
-		query = "INSERT INTO %s (%s)  VALUES" % (table, columns)
+		query = "INSERT INTO %s (%s)  VALUES " % (table, columns)
 		for index, value in enumerate(valueList):
 			if index < len(valueList)-1:
 				query += " %s," % str(value)
@@ -119,7 +118,6 @@ class Database(object) :
 				query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
 			else:
 				query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
-		print query
 		return self.execute(query)
 
 

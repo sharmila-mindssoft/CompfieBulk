@@ -6,6 +6,7 @@ from aparajitha.model import protocol
 import json
 from aparajitha.misc.client_mappings import client_db_mappings
 from aparajitha.server.knowledgedatabase import KnowledgeDatabase
+from aparajitha.server.knowledgemodels import *
 
 
 class APIHandler(object):
@@ -166,7 +167,7 @@ class APIHandler(object):
 
 		clientForms = Form.getForms("client", self._knowledge_db)
 		forms = Menu.getMenu(clientForms)
-		userGroupList = UserPrivilege.getDetailedList(sessionUser, db)
+		userGroupList = UserPrivilege.getDetailedList(self._client_id, db)
 		
 		responseData = {}
 		responseData["forms"] = forms
@@ -233,35 +234,113 @@ class APIHandler(object):
 				response, "ChangeUserPrivilegeStatusSuccess",{})
 		return responseData
 
-
 #
 #	User
 #
-
 	def _getClientUsers(self, db, user, request):
+			countryList = Country.getList( db)
+			domainList = Domain.getList(db)
+			businessGroupList = BusinessGroup.getList(self._client_id, db)
+			legalEntityList = LegalEntity.getList(self._client_id, db)
+			divisionList = Division.getList(self._client_id, db)
+			unitList = Unit.getList(self._client_id, db)
+			userGroupList = UserPrivilege.getList(self._client_id, db)
+			userList = User.getDetailedList(self._client_id, db)
 
-        countryList = CountryList.getCountryList()
-    	domainList = DomainList.getDomainList()
-        businessGroupList = BusinessGroup.getList(self._client_id, db)
-        legalEntityList = LegalEntity.getList(self._client_id, db)
-        divisionList = Division.getList(self._client_id, db)
-        unitList = Unit.getList(self._client_id, db)
-    	userGroupList = UserPrivilege.getList(self._client_id, db)
-    	userList = User.getDetailedList(self._client_id, db)
+			responseData = {}
+			responseData["domains"] = domainList
+			responseData["countries"] = countryList
+			responseData["business_groups"] = businessGroupList
+			responseData["legal_entities"] = legalEntityList
+			responseData["divisions"] = divisionList
+			responseData["units"] = unitList
+			responseData["user_groups"] = userGroupList
+			responseData["users"] = userList
+			return self._success_response("GetClientUsersResponse",
+	        	"GetClientUsersSuccess",responseData)
 
-        responseData = {}
-        responseData["domains"] = domainList
-        responseData["countries"] = countryList
-        responseData["business_groups"] = businessGroupList
-        responseData["legal_entities"] = legalEntityList
-        responseData["divisions"] = divisionList
-        responseData["units"] = unitList
-        responseData["user_groups"] = userGroupList
-        responseData["users"] = userList
+	def _saveClientUser(self, db, user, request):
+		form = "User"
+		sessionUser = user["user_id"]
+		response = "SaveClientUserResponse"
+		responseData = None
+		userId = self._knowledge_db.generateNewId(form)
+		user = User.initializeWithRequest(request, userId, self._client_id)
+		if self._knowledge_db.isDuplicate(form, "email", user.emailId, userId):
+			responseData = self._failure_response(response,"EmailIdAlreadyExists")
+		elif db.isDuplicate(form, "employeeCode", user.employeeCode, userId):
+			responseData = self._failure_response(response,"EmployeeCodeAlreadyExists")
+		elif db.isDuplicate(form, "contactNo", user.contactNo, userId):
+			responseData = self._failure_response(response,"ContactNumberAlreadyExists")
+		elif (self._knowledge_db.saveUser(user, sessionUser) and db.saveUserDetail(user, sessionUser)):
+			actionType = "save"
+			self._knowledge_db.saveActivity(form, user.employeeCode+"-"+user.employeeName, 
+				actionType, sessionUser)
+			responseData =  self._success_response(response, "SaveClientUserSuccess",{})
+		return responseData
+        
+	def _updateClientUser(self, db, user, request):
+		form = "User"
+		sessionUser = user["user_id"]
+		response = "UpdateClientUserResponse"
+		responseData = None
+		userId = request["user_id"]
+		user = User.initializeWithRequest(request, userId, self._client_id)
+		if self._db.isIdInvalid(form, userId):
+			responseData = self._failure_response(response,"InvalidUserId")
+		elif db.isDuplicate(form, "employeeCode", user.employeeCode, userId):
+			responseData = self._failure_response(response,"EmployeeCodeAlreadyExists")
+		elif db.isDuplicate(form, "contactNo", user.contactNo, userId):
+			responseData = self._failure_response(response,"ContactNumberAlreadyExists")
+		elif db.updateUserDetail(user, sessionUser):
+			actionType = "update"
+			self._knowledge_db.saveActivity(form, user.employeeCode+"-"+user.employeeName, 
+				actionType, sessionUser)
+			responseData =  self._success_response(response, "UpdateClientUserSuccess",{})
+		return responseData
 
-       	return self._success_response("GetClientUsersResponse", 
-			"GetClientUsersSuccess",responseData
+	def _changeClientUserStatus(self, db, user, request):
+		form = "User"
+		sessionUser = user["user_id"]
 
+		response = "ChangeClientUserStatusResponse"
+		responseData = None
+
+		userId = request["user_id"]
+		isActive = request["is_active"]
+
+		if db.isIdInvalid(form, userId):
+			responseData = self._failure_response(
+				response, "InvalidUserId")
+		elif (self._knowledge_db.changeUserStatus (userId, isActive, sessionUser) and db.changeUserDetailStatus(
+			userId, isActive, sessionUser)):
+			actionType = "statusChange"
+			self._knowledge_db.saveActivity(form, userId, 
+				actionType, sessionUser)
+			responseData = self._success_response(
+				response, "ChangeClientUserStatusSuccess",{})
+		return responseData		
+
+	def _changeAdminStatus(self, db, user, request):
+		form = "User"
+		sessionUser = user["user_id"]
+
+		response = "ChangeAdminStatusResponse"
+		responseData = None
+
+		userId = request["user_id"]
+		isAdmin = request["is_admin"]
+
+		if db.isIdInvalid(form, userId):
+			responseData = self._failure_response(
+				response, "InvalidUserId")
+		elif db.changeAdminStatus(userId, isAdmin, sessionUser):
+			actionType = "adminStatusChange"
+			self._knowledge_db.saveActivity(form, userId, 
+				actionType, sessionUser)
+			responseData = self._success_response(
+				response, "ChangeAdminStatusSuccess",{})
+		return responseData	
 #
 # db_request
 #

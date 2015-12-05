@@ -33,12 +33,12 @@
 			}
 			function saveServiceProvider() {
 				serviceProviderDetail = {
-					"service_provider_name": "Test Service Provider Name 12", 
-			        "address": "Test Address 12",
+					"service_provider_name": "Test Service Provider Name 121", 
+			        "address": "Test Address 121",
 			        "contract_from": "25-Aug-2015",
 			        "contract_to": "25-Aug-2016", 
 			        "contact_person": "DongTae",
-			        "contact_no": "+919166553210"
+			        "contact_no": "+919162553210"
 				}
 				mirror.saveServiceProvider(
 					serviceProviderDetail,
@@ -68,7 +68,7 @@
 			}
 			function saveClientUserGroup(){
 				userGroupDetails = {
-			        "user_group_name": "Test user group name 2",
+			        "user_group_name": "Test user group name 24",
 			        "form_type": "client",
 			        "form_ids": [1,2]
 			    }
@@ -77,19 +77,71 @@
 			function updateClientUserGroup(){
 				userGroupDetails = {
 					"user_group_id": 1,
-			        "user_group_name": "Test user group name 2",
+			        "user_group_name": "Test user group name 26",
 			        "form_type": "client",
 			        "form_ids": [5,6]
 			    }
 			    mirror.updateClientUserGroup(userGroupDetails,success, failure);
 			}
 			function changeClientUserGroupStatus(){
-				userGroupId = 111
+				userGroupId = 1
 				isActive = 0
 				mirror.changeClientUserGroupStatus(userGroupId,isActive, success,failure) ;
 			}
 			function getClientUserGroupList(){
 				mirror.getClientUserGroups(success, failure);
+			}
+			function getClientUsers(){
+				mirror.getClientUsers(success, failure)	
+			}
+			function saveClientUser(){
+				clientUserDetail = {
+			        "email_id": "Testclientuser3@domain.com",
+			        "user_group_id": 1, 
+			        "employee_name": "Test Client User 3",
+			        "employee_code": "TEMP003",
+			        "contact_no": "+91737586246",
+			        "seating_unit_id": 1,
+			        "seating_unit_name": "Test Unit 1",
+			        "user_level": 5,
+			        "country_ids": [1],
+			        "domain_ids": [1],
+			        "unit_ids": [1],
+			        "is_service_provider": 0,
+			        "service_provider_id": null
+			    }
+				mirror.saveClientUser(clientUserDetail,
+     					success, failure)
+			}
+			function updateClientUser(){
+				clientUserDetail = {
+			        "user_id": 18,
+			        "user_group_id": 1, 
+			        "employee_name": "Test Client User update4",
+			        "employee_code": "TEMPupdate4",
+			        "contact_no": "+91914586246",
+			        "seating_unit_id": 1,
+			        "seating_unit_name": "Test Unit 1",
+			        "user_level": 5,
+			        "country_ids": [1],
+			        "domain_ids": [1],
+			        "unit_ids": [1],
+			        "is_service_provider": 0,
+			        "service_provider_id": null
+			    }
+				mirror.updateClientUser(clientUserDetail,
+     					success, failure)
+			}
+			function changeClientUserStatus(){
+				userId = 18
+				isActive = 0
+				mirror.changeClientUserStatus(userId, isActive, success, failure)
+			}
+			function changeAdminStatus(){
+				userId = 18
+				isAdmin = 1
+				mirror.changeAdminStatus(userId, isAdmin, 
+        				success, failure)
 			}
 		</script>
 	</head>
@@ -127,6 +179,23 @@
 			</button>
 			<button onclick="getClientUserGroupList()">
 				Get Client User Groups
+			</button>
+		</div>
+		<div>
+			<button onclick="getClientUsers()">
+				Get Client Users
+			</button>
+			<button onclick="saveClientUser()">
+				Save Client User
+			</button>
+			<button onclick="updateClientUser()">
+				Update Client User
+			</button>
+			<button onclick="changeClientUserStatus()">
+				Change Client User Status
+			</button>
+			<button onclick="changeAdminStatus()">
+				Change Admin Status
 			</button>
 		</div>
 		<br>

@@ -52,6 +52,42 @@ Menu = DictType({
 	"settings": ListType(Form),
 })
 
+Domain = DictType({
+		"domain_id": Int,
+		"domain_name": Text50,
+	})
+
+Country = DictType({
+		"country_id": Int,
+		"country_name": Text50,
+	})
+
+BusinessGroup = DictType({
+		"business_group_id": Int,
+		"business_group_name": Text50,
+	})
+
+LegalEntity = DictType({
+		"legal_entity_id": Int,
+		"legal_entity_name": Text50,
+		"business_group_id": Int,
+	})
+
+Division = DictType({
+		"division_id": Int,
+		"division_name": Text50,
+		"legal_entity_id": Int,
+		"business_group_id": Int,
+	})
+
+Unit = DictType({
+		"unit_id": Int,
+		"unit_name": Text50,
+		"division_id": Int,
+		"legal_entity_id": Int,
+		"business_group_id": Int,
+	})
+
 define_request(
 	"Login", {
 		"username": Text250,
@@ -230,25 +266,38 @@ define_request(
 	"GetClientUsers",
 	{},
 	{
-		"client_users": ListType(
+		"domains":ListType(Domain),
+		"countries":ListType(Country),
+		"business_groups":ListType(BusinessGroup),
+		"legal_entities":ListType(LegalEntity),
+		"divisions": ListType(Division),
+		"units": ListType(Unit),
+		"user_groups":ListType(
+			DictType(
+				{
+					"user_group_id": Int,
+					"user_group_name": Text50,
+					"is_active": Int
+				}
+			)
+		),
+		"users": ListType(
 			DictType(
 				{
 				    "user_id": Int,
 				    "email_id": Text100,
-				    "user_group_id": Int, 
+				    "user_group_id": OptionalType(Int), 
 				    "employee_name": Text50,
-				    "employee_code": Text50,
-				    "contact_no": Text20,
-				    "seating_unit_id": Int,
-				    "seating_unit_name": Text50,
-				    "user_level": Int,
+				    "contact_no": OptionalType(Text20),
+				    "seating_unit_id": OptionalType(Int),
+				    "user_level": OptionalType(Int),
 				    "country_ids":ListType(Int),
 				    "domain_ids": ListType(Int),
-				    "unit_ids": ListType(Int),
-				    "is_admin": BoolType,
+				    "unit_ids": OptionalType(ListType(Int)),
+				    "is_admin": Int,
 				    "is_service_provider": Int,
-				    "service_provider_id": Int,
-				    "is_active": BoolType
+				    "service_provider_id": OptionalType(Int),
+				    "is_active": Int
 				}
 			)
 		)
@@ -270,11 +319,12 @@ define_request(
         "country_ids": ListType(Int),
         "domain_ids": ListType(Int),
         "unit_ids": ListType(Int),
-        "is_service_provider": BoolType,
-        "service_provider_id": Int
+        "is_service_provider": Int,
+        "service_provider_id": OptionalType(Int)
     },
 	{},
 	[
+		"EmailIdAlreadyExists",
 		"EmployeeCodeAlreadyExists",
 		"ContactNumberAlreadyExists"
 	]
@@ -284,7 +334,6 @@ define_request(
 	"UpdateClientUser",
 	{
 		"user_id": Int,
-        "email_id": Text100,
         "user_group_id": Int, 
         "employee_name": Text50,
         "employee_code": Text50,
@@ -295,8 +344,8 @@ define_request(
         "country_ids": ListType(Int),
         "domain_ids": ListType(Int),
         "unit_ids": ListType(Int),
-        "is_service_provider": BoolType,
-        "service_provider_id": Int
+        "is_service_provider": Int,
+        "service_provider_id": OptionalType(Int)
     },
 	{},
 	[
@@ -314,7 +363,7 @@ define_request(
 	},
 	{},
 	[
-		"InvalidUserGroupId",
+		"InvalidUserId",
 	]
 )
 
@@ -322,11 +371,11 @@ define_request(
 	"ChangeAdminStatus",
 	{
 		"user_id": Int,
-		"is_active": Int
+		"is_admin": Int
 	},
 	{},
 	[
-		"InvalidUserGroupId",
+		"InvalidUserId",
 	] 
 )
 
