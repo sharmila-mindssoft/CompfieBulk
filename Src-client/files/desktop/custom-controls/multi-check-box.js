@@ -115,16 +115,10 @@ function initializeMultiCheckBox (
 		}
 	}
 
-	function getSelected () {
-		var _items = [];
-		$.each($("div", selectedDiv), function (i, div) {
-			_items.push({
-				"item_id": parseInt($(div).attr("class")),
-				"item_name": $(div).text()
-			});
-		});
-		return _items;
-	}
+	$(".multi-check-box-textbox", multiCheckBox).on("focus", function (e) {
+		var items2 = filterSuggestions(items, $(this).val());
+		fillUpSuggestions(items2);
+	});
 
 	$(".multi-check-box-textbox", multiCheckBox).on("keyup", function (e) {
 		if (e.keyCode == 27)
@@ -139,11 +133,6 @@ function initializeMultiCheckBox (
 		if (e.keyCode == 40) {
 			$(".multi-check-box-li", multiCheckBox)[0].focus();
 		}
-	});
-
-	$(".multi-check-box-textbox", multiCheckBox).on("focus", function (e) {
-		var items2 = filterSuggestions(items, $(this).val());
-		fillUpSuggestions(items2);
 	});
 
 	$(".multi-check-box-dropdown", multiCheckBox).on("click", function (e) {
@@ -175,6 +164,18 @@ function initializeMultiCheckBox (
 			return;
 		$(".multi-check-box-suggestions", multiCheckBox).hide();
 	});
+
+
+	function getSelected () {
+		var _items = [];
+		$.each($("div", selectedDiv), function (i, div) {
+			_items.push({
+				"item_id": parseInt($(div).attr("class")),
+				"item_name": $(div).text()
+			});
+		});
+		return _items;
+	}
 
 	return {
 		getSelected: getSelected
