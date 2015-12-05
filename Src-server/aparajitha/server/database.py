@@ -10,10 +10,17 @@ class Database(object) :
 	tblActivityLog = "tbl_activity_log"
 	tblUsers = "tbl_users"
 	tblForms = "tbl_forms"
+	tblCoutries = "tbl_countries"
+	tblDomains = "tbl_domains"
 
 	### Client Tables ###
 	tblServiceProviders = "tbl_service_providers"
 	tblClientUserGroups = "tbl_client_user_groups"
+	tblBusinessGroup = "tbl_business_groups"
+	tblLegalEntity = "tbl_legal_entities"
+	tblDivision = "tbl_divisions"
+	tblUnit = "tbl_units"
+	tblClientUserDetails = "tbl_client_user_details"
 
 	def __init__(self, database) :
 		self._database = database
@@ -37,7 +44,7 @@ class Database(object) :
 				cursor.close()
 		return isComplete
 
-	def executeAndReturn(self, query) :
+	def execute_and_return(self, query) :
 		db = None
 		cursor = None
 		try:
@@ -57,7 +64,7 @@ class Database(object) :
 
 	def isAlreadyExists(self, table, condition) :
 		query = "SELECT count(*) FROM %s WHERE %s" %(table, condition)
-		rows = self.executeAndReturn(query)
+		rows = self.execute_and_return(query)
 		if rows[0][0] > 0:
 			return True
 		else :
@@ -66,7 +73,8 @@ class Database(object) :
 	def getData(self, table, columns, condition):
 		query = "SELECT %s FROM %s WHERE %s" %  (columns, 
 			table, condition) 
-		return self.executeAndReturn(query)
+		print query
+		return self.execute_and_return(query)
 
 	def insert(self, table, columns, valueList) :
 		query = "INSERT INTO %s (%s)  VALUES" % (table, columns)
@@ -89,7 +97,7 @@ class Database(object) :
 
 	def generateNewId(self, table, column):
 		query = "SELECT max(%s) FROM %s" % (column, table)
-		rows = self.executeAndReturn(query)
+		rows = self.execute_and_return(query)
 		for row in rows :
 			newId = row[0] + 1 if row[0] != None else 1
 		return int(newId)

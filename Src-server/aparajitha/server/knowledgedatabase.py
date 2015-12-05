@@ -41,7 +41,7 @@ class KnowledgeDatabase(object) :
 
 	def test(self) :
 		query = "SHOW TABLES;"
-		return self._db.executeAndReturn(query)
+		return self._db.execute_and_return(query)
 
 	def add_session(self, user_id) :
 		session_id = self.new_uuid()
@@ -58,7 +58,7 @@ class KnowledgeDatabase(object) :
 	def get_session_user_id(self, session_id) :
 		query = "select user_id from tbl_user_sessions where session_id = '%s';"
 		query = query % (session_id,)
-		result = self._db.executeAndReturn(query)
+		result = self._db.execute_and_return(query)
 		if len(result) == 0 :
 			return None
 		return int(result[0][0])
@@ -71,7 +71,7 @@ class KnowledgeDatabase(object) :
 		]
 		query = "select %s from tbl_user_details where user_id = %s;"
 		query = query % (get(select_fields), user_id,)
-		result = self._db.executeAndReturn(query)
+		result = self._db.execute_and_return(query)
 		if len(result) == 0 :
 			return None
 		result = to_dict(select_fields, result)
@@ -84,7 +84,7 @@ class KnowledgeDatabase(object) :
 		select_fields = ["user_id"]
 		query = "select %s from tbl_users where username = '%s';"
 		query = query % (get(select_fields), email,)
-		result = self._db.executeAndReturn(query)
+		result = self._db.execute_and_return(query)
 		if len(result) == 0 :
 			return None
 		return int(result[0][0])
@@ -95,7 +95,7 @@ class KnowledgeDatabase(object) :
 		query = ("select %s from tbl_users where user_id = %s and " +
 			"password = '%s' and is_active = 1;")
 		query = query % (get(select_fields), user_id, encryptedPassword)
-		result = self._db.executeAndReturn(query)
+		result = self._db.execute_and_return(query)
 		if len(result) == 0 :
 			return None
 		return to_dict(select_fields, result)
@@ -113,12 +113,12 @@ class KnowledgeDatabase(object) :
 		query = query % (get(select_fields), user_id,)
 		result = None
 		if client_id is None :
-			result = self._db.executeAndReturn(query)
+			result = self._db.execute_and_return(query)
 		else :
 			client_db = client_database(client_id)
 			if client_db is None :
 				return None
-			result = self.client_db.executeAndReturn(query)
+			result = self.client_db.execute_and_return(query)
 		if len(result) == 0 :
 			return None
 		result = to_dict(select_fields, result)
@@ -137,7 +137,7 @@ class KnowledgeDatabase(object) :
 		if result["is_admin"] == 0 :
 			query = query + " and admin_form = 0"
 		query = query % (get(select_fields), tuple(form_ids2))
-		forms = self._db.executeAndReturn(query)
+		forms = self._db.execute_and_return(query)
 		if len(forms) == 0 :
 			return None
 		forms = to_dict(select_fields, forms)
@@ -194,6 +194,27 @@ class KnowledgeDatabase(object) :
 			condition = " category = 'client' "
 		rows = self._db.getData(self._db.tblForms, columns, condition)
 		return rows
+
+#
+#	Country
+#
+	def getCountries(self):
+		columns = "country_id, country_name, is_active"
+		condition = "1"
+		rows = self._db.getData(self._db.tblCoutries,columns, 
+			condition)
+		return rows		
+
+#
+#	Domain
+#
+	def getDomains(self):
+		columns = "domain_id, domain_name, is_active"
+		condition = "1"
+		rows = self._db.getData(self._db.tblDomains,columns, 
+			condition)
+		return rows	
+
 #
 #	Activity Log
 #
