@@ -16,6 +16,7 @@
     .content-container h3 {
       float: left;
       margin-right: 20px;
+      padding: 5px 0;
     }
     .inner-container {
       width: 100%;
@@ -25,21 +26,24 @@
       float: left;
       margin-right: 20px;
     }
-    .btn-countries, .btn-countries2 {
+    .btn-countries, .btn-countries2,
+    .btn-set-countries, .btn-set-countries2 {
       float: left;
+      margin: 4px 0;
+      margin-right: 10px;
     }
   </style>
   <script type="text/javascript" src="/files/desktop/common/js/jquery.min.js"></script>
   <script type="text/javascript">
     var items = [
-      {"item_id": 1, "item_name": "India"},
-      {"item_id": 2, "item_name": "Singapore"},
-      {"item_id": 3, "item_name": "Malaysia"},
-      {"item_id": 4, "item_name": "Bhutan"},
-      {"item_id": 5, "item_name": "Srilanka"},
-      {"item_id": 6, "item_name": "Australia"},
-      {"item_id": 7, "item_name": "Pakistan"},
-      {"item_id": 8, "item_name": "Afganisthan"}
+      {"item_id": 1, "item_name": "India", "selected": 1},
+      {"item_id": 2, "item_name": "Singapore", "selected": 0},
+      {"item_id": 3, "item_name": "Malaysia", "selected": 0},
+      {"item_id": 4, "item_name": "Bhutan", "selected": 1},
+      {"item_id": 5, "item_name": "Srilanka", "selected": 0},
+      {"item_id": 6, "item_name": "Australia", "selected": 0},
+      {"item_id": 7, "item_name": "Pakistan", "selected": 1},
+      {"item_id": 8, "item_name": "Afganisthan", "selected": 1}
     ];
 
     $(function () {
@@ -48,9 +52,6 @@
         items,
         function OnItemsClickCallback (itemId, itemName) {
           // console.log(itemId, itemName);
-        },
-        function callback () {
-          // body...
         }
       );
       var country2 = initializeMultiCheckBox(
@@ -69,6 +70,14 @@
         var selected = country2.getSelected();
         console.log(selected);
       });
+      $(".btn-set-countries").on("click", function () {
+        var item = {"item_id": 2, "item_name": "Singapore", "selected": 1};
+        items[1] = item;
+        country.setSelected(items);
+      });
+      $(".btn-set-countries2").on("click", function () {
+        country2.setSelected(items);
+      });
     });
   </script>
 </head>
@@ -76,21 +85,23 @@
   <div class="content-container">
     <h2>Custom Controls</h2>
     <div class="inner-container">
-      <h3><u>Multi Check Box</u></h3>
+      <h3>Multi Check Box</h3>
       <div class="country">
       {% include "/files/desktop/custom-controls/multi-check-box.html" %}
       </div>
       <button class="btn-countries">Get Selected</button>
+      <button class="btn-set-countries">Set Selected</button>
     </div>
     <br>
     <br>
     <br>
     <div class="inner-container">
-      <h3><u>Multi Check Box</u></h3>
+      <h3>Multi Check Box</h3>
       <div class="country2">
       {% include "/files/desktop/custom-controls/multi-check-box.html" %}
       </div>
       <button class="btn-countries2">Get Selected</button>
+      <button class="btn-set-countries2">Set Selected</button>
     </div>
   </div>
 </body>

@@ -186,7 +186,24 @@ function initializeMultiCheckBox (
 		return _items;
 	}
 
+	function setSelected (all_items) {
+		selectedDiv.empty();
+		for (var i = 0; i < all_items.length; i++) {
+			var item = all_items[i];
+			if (item["selected"] == 0)
+				continue;
+			var itemDiv = createDivElement(
+				item["item_name"], item["item_id"].toString()
+			);
+			selectedDiv.append(itemDiv);
+		}
+		updateDropDown();
+	}
+
+	setSelected(items);
+
 	return {
-		getSelected: getSelected
+		getSelected: getSelected,
+		setSelected: setSelected
 	}
 }
