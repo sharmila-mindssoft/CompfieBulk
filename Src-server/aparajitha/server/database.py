@@ -4,21 +4,16 @@ HOST = "localhost"
 USER = "root"
 PASSWORD = "123456"
 
-KnowledgeTables = {
-	"ActivityLog": "tbl_activity_log"
-}
-
-clientTables = {
-	"ServiceProvider": "tbl_service_providers"
-}
-
 class Database(object) :
 
 	### Knowledge Tables ###
 	tblActivityLog = "tbl_activity_log"
+	tblUsers = "tbl_users"
+	tblForms = "tbl_forms"
 
 	### Client Tables ###
 	tblServiceProviders = "tbl_service_providers"
+	tblClientUserGroups = "tbl_client_user_groups"
 
 	def __init__(self, database) :
 		self._database = database
@@ -116,6 +111,7 @@ class Database(object) :
 				query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
 			else:
 				query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
+		print query
 		return self.execute(query)
 
 

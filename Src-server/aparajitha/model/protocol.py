@@ -89,7 +89,9 @@ define_request(
 	["InvalidSession"]
 )
 
+#
 # Service Provider
+#
 
 define_request(
 	"SaveServiceProvider",
@@ -158,6 +160,10 @@ define_request(
 	[]
 )
 
+#
+# Client User Group
+#
+
 define_request(
 	"GetUserPrivileges",
 	{},
@@ -186,7 +192,7 @@ define_request(
 	},
 	{},
 	[
-		"UserGroupNameAlreadyExists"
+		"GroupNameAlreadyExists"
 	]
 )
 
@@ -201,7 +207,7 @@ define_request(
 	{},
 	[
 		"InvalidUserGroupId",
-		"UserGroupNameAlreadyExists"
+		"GroupNameAlreadyExists"
 	]
 )
 
@@ -217,6 +223,112 @@ define_request(
 	]
 )
 
+#
+# Client Users
+#
+define_request(
+	"GetClientUsers",
+	{},
+	{
+		"client_users": ListType(
+			DictType(
+				{
+				    "user_id": Int,
+				    "email_id": Text100,
+				    "user_group_id": Int, 
+				    "employee_name": Text50,
+				    "employee_code": Text50,
+				    "contact_no": Text20,
+				    "seating_unit_id": Int,
+				    "seating_unit_name": Text50,
+				    "user_level": Int,
+				    "country_ids":ListType(Int),
+				    "domain_ids": ListType(Int),
+				    "unit_ids": ListType(Int),
+				    "is_admin": BoolType,
+				    "is_service_provider": Int,
+				    "service_provider_id": Int,
+				    "is_active": BoolType
+				}
+			)
+		)
+	},
+	[]
+)
+
+define_request(
+	"SaveClientUser",
+	{
+        "email_id": Text100,
+        "user_group_id": Int, 
+        "employee_name": Text50,
+        "employee_code": Text50,
+        "contact_no": Text20,
+        "seating_unit_id": Int,
+        "seating_unit_name": Text50,
+        "user_level": Int,
+        "country_ids": ListType(Int),
+        "domain_ids": ListType(Int),
+        "unit_ids": ListType(Int),
+        "is_service_provider": BoolType,
+        "service_provider_id": Int
+    },
+	{},
+	[
+		"EmployeeCodeAlreadyExists",
+		"ContactNumberAlreadyExists"
+	]
+)
+
+define_request(
+	"UpdateClientUser",
+	{
+		"user_id": Int,
+        "email_id": Text100,
+        "user_group_id": Int, 
+        "employee_name": Text50,
+        "employee_code": Text50,
+        "contact_no": Text20,
+        "seating_unit_id": Int,
+        "seating_unit_name": Text50,
+        "user_level": Int,
+        "country_ids": ListType(Int),
+        "domain_ids": ListType(Int),
+        "unit_ids": ListType(Int),
+        "is_service_provider": BoolType,
+        "service_provider_id": Int
+    },
+	{},
+	[
+		"InvalidUserId",
+		"EmployeeCodeAlreadyExists",
+		"ContactNumberAlreadyExists"
+	]
+)
+
+define_request(
+	"ChangeClientUserStatus",
+	{
+		"user_id": Int,
+		"is_active": Int
+	},
+	{},
+	[
+		"InvalidUserGroupId",
+	]
+)
+
+define_request(
+	"ChangeAdminStatus",
+	{
+		"user_id": Int,
+		"is_active": Int
+	},
+	{},
+	[
+		"InvalidUserGroupId",
+	] 
+)
 
 #
 # Request, RequestFrame

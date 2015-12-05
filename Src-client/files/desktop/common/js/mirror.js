@@ -896,7 +896,67 @@ function initMirror() {
             }
         ];
         apiRequest(callerName, request, callback, failure_callback);
-    }  
+    } 
+
+// Client User
+    function getClientUsers(callerName, callback, failure_callback) {
+        var request = [
+            "GetClientUsers",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function saveClientUser(callerName, clientUserDetail,
+     callback, failure_callback) {
+        if (isNull(clientUserDetail))
+            return null;
+        var request = [
+            "SaveClientUser",
+            clientUserDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function updateClientUser(callerName, clientUserDetail, 
+        callback, failure_callback) {
+        if (isNull(clientUserDetail))
+            return null;
+        var request = [
+            "UpdateClientUser",
+            clientUserDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeClientUserStatus(callerName, userId, isActive, 
+        callback, failure_callback) {
+        if (isNull(userId) || isNull(isActive) )
+            return null;
+        var request = [
+            "ChangeClientUserStatus",
+            {
+                "user_id" : userId,
+                "is_active" : isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeAdminStatus(callerName, userId, isAdmin, 
+        callback, failure_callback) {
+        if (isNull(userId) || isNull(isAdmin) )
+            return null;
+        var request = [
+            "ChangeAdminStatus",
+            {
+                "user_id" : userId,
+                "is_admin" : isAdmin
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+ 
 
     return {
         log: log,
@@ -991,6 +1051,12 @@ function initMirror() {
         updateClientUserGroup: updateClientUserGroup,
         changeClientUserGroupStatus: changeClientUserGroupStatus,
         getClientUserGroups: getClientUserGroups,
+
+        getClientUsers: getClientUsers,
+        saveClientUser: saveClientUser,
+        updateClientUser: updateClientUser,
+        changeClientUserStatus: changeClientUserStatus,
+        changeAdminStatus: changeAdminStatus
     }
 
 }
