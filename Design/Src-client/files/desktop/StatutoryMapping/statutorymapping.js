@@ -3,6 +3,7 @@ var domainsList;
 var industriesList;
 var statutoryNaturesList;
 var statutoryLevelsList;
+var statutoriesList;
 var sm_countryid='';
 var sm_domainid='';
 
@@ -64,7 +65,7 @@ function getStatutoryMappings(){
 	function success(status,data){
 		industriesList = data["industries"];
 		statutoryLevelsList = data["statutory_levels"];
-		var statutoriesList = data["statutories"];
+		statutoriesList = data["statutories"];
 		countriesList = data["countries"];
 		domainsList = data["domains"];
 		var geographyLevelsList = data["geography_levels"];
@@ -256,30 +257,63 @@ function loadStatutoryLevels(countryval,domainval){
       var tableRow=$('#statutory-level-templates');
       var clone=tableRow.clone();
       $('.statutory_title', clone).text(statutoryLevelList[j]["level_name"]);
-      $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="filter'+levelposition+'"> <ul id="ulist'+levelposition+'"></ul><div class="bottomfield"><input type="text" class="input-box addleft" placeholder="" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+      $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="filter'+levelposition+'"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" class="input-box addleft" placeholder="" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
       $('.tbody-statutory-level').append(clone);
     }   
 
-
-    /*var setlevelstage= 1;
+    var setlevelstage= 1;
     $('#datavalue'+setlevelstage).val('');
-    $('#ulist'+setlevelstage).empty();
-    var firstlevelid= $('#glmid'+setlevelstage).val();
+    $('#statutorylist'+setlevelstage).empty();
+    var firstlevelid= $('#statutorylevelid'+setlevelstage).val();
 
     var str='';
     var idval='';
-    var clsval='.list'+setlevelstage;
-    var clsval1='list'+setlevelstage;
+    var clsval='.slist'+setlevelstage;
+    var clsval1='slist'+setlevelstage;
 
-    var geographyList = geographiesList[saverecord];
-    for(var i in geographyList){
-      var setgeographyid = geographyList[i]["geography_id"];
-      if((geographyList[i]["level_id"] == firstlevelid) && (geographyList[i]["is_active"] == 1)){
-      str += '<a href="#"> <li id="'+setgeographyid+'" class="'+clsval1+'" onclick="activate(this,'+setgeographyid+',\''+clsval+'\','+saverecord+','+setlevelstage+')" >'+geographyList[i]["geography_name"]+'</li> </a>';
+    var statutoryList = statutoriesList[countryval][domainval];
+    for(var i in statutoryList){
+      var setstatutoryid = statutoryList[i]["statutory_id"];
+      if(statutoryList[i]["level_id"] == firstlevelid){
+      str += '<a href="#"> <li id="'+setstatutoryid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+countryval+','+domainval+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> </a>';
     }
     }
-    $('#ulist'+setlevelstage).append(str); */
+    $('#statutorylist'+setlevelstage).append(str);
 }
+
+//check & uncheck list data
+function activate_statutorylist(element,id,type,country,domain,level){
+  $(type).each( function( index, el ) {
+    $(el).removeClass( "active" );
+      });
+   $(element).addClass("active");
+     load(id,level,country,domain);
+  }
+
+//load statutory sub level data dynamically
+function load(id,level,country,domain){
+          var levelstages= parseInt(level) + 1;
+          for(var k=levelstages;k<=10;k++){
+          var setlevelstage= k;
+          if($('#statutoryid').val()==''){
+          $('#datavalue'+setlevelstage).val('');
+           }
+          $('#statutorylist'+setlevelstage).empty();
+          var str='';
+          var idval='';
+          var clsval='.slist'+setlevelstage;
+          var clsval1='slist'+setlevelstage;
+          var levelid=$('#statutorylevelid'+setlevelstage).val();
+          var statutoryList = statutoriesList[country][domain];
+            for(var i in statutoryList){
+              var setstatutoryid = statutoryList[i]["statutory_id"];
+              if( id == statutoryList[i]["parent_id"] && statutoryList[i]["level_id"] == levelid) {
+              str += '<a href="#"> <li id="'+setgeographyid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+country+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> </a>';
+            }
+            }
+          $('#statutorylist'+setlevelstage).append(str); 
+          }
+    }
 
 
 
