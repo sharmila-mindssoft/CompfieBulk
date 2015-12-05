@@ -55,11 +55,13 @@ Menu = DictType({
 Domain = DictType({
 		"domain_id": Int,
 		"domain_name": Text50,
+		"is_active":Int
 	})
 
 Country = DictType({
 		"country_id": Int,
 		"country_name": Text50,
+		"is_active":Int
 	})
 
 BusinessGroup = DictType({
