@@ -23,7 +23,7 @@ template_loader = jinja2.FileSystemLoader(
 template_env = jinja2.Environment(loader=template_loader)
 
 class TemplateHandler(tornado.web.RequestHandler) :
-    def initialize(self, path_desktop, path_mobile, parameters) :
+    def initialize(self, path_desktop, path_mobile,     parameters) :
         parameters = {"user":self.get_cookie("user"), "data":OrderedDict(sorted(countriesdb.countries.items(), key=lambda t: t[1])),}
         self.__path_desktop = path_desktop
         self.__path_mobile = path_mobile
@@ -32,7 +32,10 @@ class TemplateHandler(tornado.web.RequestHandler) :
     def get(self) :
         path = self.__path_desktop
         if self.__path_mobile is not None :
-            user_agent = parse(self.request.headers["User-Agent"])
+            useragent = self.request.headers.get("User-Agent")
+            if useragent is None:
+                useragent = ""
+            user_agent = parse(useragent)
             if user_agent.is_mobile :
                 path = self.__path_mobile
         mime_type, encoding = mimetypes.guess_type(path)
