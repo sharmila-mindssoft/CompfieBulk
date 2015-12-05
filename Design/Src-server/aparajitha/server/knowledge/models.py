@@ -1089,6 +1089,7 @@ class Statutory(object) :
             "statutory_name": self.name,
             "level_id": self.levelId,
             "parent_ids": self.parentIds,
+            "parent_id": self.parentIds[-1]
         }
 
     def __repr__(self) :
