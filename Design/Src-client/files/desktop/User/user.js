@@ -134,9 +134,10 @@ function loadUserList(usersList) {
 		} else if(country == '') {
 			$("#error").text("Country Required");
 		} else {
+
 			if($("#userid").val() == '') {
 				saveUserDetail = [emailId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,country,domain];
-				function success(status,data) {
+				function success1(status,data) {
 					if(status == 'SaveUserSuccess') {
 						GetUsers();
 						$("#listview").show();
@@ -146,9 +147,10 @@ function loadUserList(usersList) {
 						$("#error").text(status);
 					}
 				}
-				function failure(data){
+				function failure1(data){
+			
 				}
-				mirror.saveAdminUser("AdminAPI", saveUserDetail, success, failure);
+				mirror.saveAdminUser("AdminAPI", saveUserDetail, success1, failure1);
 			} else {
 				updateUserDetail = [userId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,country,domain];
 				function success(status,data){
