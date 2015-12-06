@@ -961,6 +961,28 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
+
+// Unit Closure
+    function getUnitClosureList(callback, failure_callback) {
+        callerName = "api/client"
+        var request = [
+            "GetUnitClosureList",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function closeUnit(unitId, password, callback, failure_callback){
+        callerName = "api/client"
+        var request = [
+            "CloseUnit",
+            {
+                "unit_id": unitId,
+                "password": password
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
  
 
     return {
@@ -1061,7 +1083,10 @@ function initMirror() {
         saveClientUser: saveClientUser,
         updateClientUser: updateClientUser,
         changeClientUserStatus: changeClientUserStatus,
-        changeAdminStatus: changeAdminStatus
+        changeAdminStatus: changeAdminStatus,
+
+        getUnitClosureList: getUnitClosureList,
+        closeUnit: closeUnit,
     }
 
 }

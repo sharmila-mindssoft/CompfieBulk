@@ -19,7 +19,7 @@ def to_dict(keys, values_list):
 def get(fields) :
 	return ", ".join(fields)
 
-def generatePassword() : 
+def generate_password() : 
     characters = string.ascii_uppercase + string.digits
     password = ''.join(random.SystemRandom().choice(characters) for _ in range(7))
     print password
@@ -31,19 +31,19 @@ def encrypt(value):
 	m.update(value)
 	return m.hexdigest()
 
+def client_database(client_id) :
+	database_name = None
+	if client_id in client_db_mappings :
+		database_name = client_db_mappings[client_id]
+	if database_name is None :
+		# temporary purpose
+		database_name = "mirror_client"
+		# return None
+	return Database(database_name)
+
 class KnowledgeDatabase(object) :
 	def __init__(self) :
 		self._db = Database(DATABASE)
-
-	def client_database(client_id) :
-		database_name = None
-		if client_id in client_db_mappings :
-			database_name = client_db_mappings[client_id]
-		if database_name is None :
-			# temporary purpose
-			database_name = "mirror_client"
-			# return None
-		return Database(database_name)
 
 	def new_uuid(self) :
 		s = str(uuid.uuid4())
@@ -56,7 +56,7 @@ class KnowledgeDatabase(object) :
 	def add_session(self, user_id) :
 		session_id = self.new_uuid()
 		query = "insert into tbl_user_sessions values ('%s', '%s', '%d');"
-		query = query % (session_id, user_id, currentTimestamp())
+		query = query % (session_id, user_id, current_timestamp())
 		self._db.execute(query)
 		return session_id
 
@@ -99,12 +99,21 @@ class KnowledgeDatabase(object) :
 			return None
 		return int(result[0][0])
 
+	def get_client_id(self, user_id):
+		select_fields = ["client_id"]
+		query = "select %s from tbl_users where user_id = '%s';"
+		query = query % (get(select_fields), user_id,)
+		result = self._db.execute_and_return(query)
+		if len(result) == 0 :
+			return None
+		return int(result[0][0])		
+
 	def match_password(self, user_id, password) :
 		select_fields = ["client_id"]
-		encryptedPassword = encrypt(password)
+		encrypted_password = encrypt(password)
 		query = ("select %s from tbl_users where user_id = %s and " +
 			"password = '%s' and is_active = 1;")
-		query = query % (get(select_fields), user_id, encryptedPassword)
+		query = query % (get(select_fields), user_id, encrypted_password)
 		result = self._db.execute_and_return(query)
 		if len(result) == 0 :
 			return None
@@ -116,24 +125,33 @@ class KnowledgeDatabase(object) :
 			"employee_name", "employee_code",
 			"contact_no", "address", "designation", "is_admin"
 		]
-		query = ("select %s from tbl_user_details tbl1 " +
-			"inner join tbl_user_groups tbl2 " +
+		client_select_fields = [
+			"user_group_name", "form_ids",
+			"employee_name", "employee_code",
+			"contact_no", "is_admin"
+		]
+		query = ("select %s from %s tbl1 " +
+			"inner join %s tbl2 " +
 			"on tbl1.user_group_id = tbl2.user_group_id " +
 			"where user_id = %s;")
-		query = query % (get(select_fields), user_id,)
+
 		result = None
 		if client_id is None :
+			query = query % (get(select_fields), 
+			self._db.tblUserDetails,self._db.tblUserGroups,user_id,)
 			result = self._db.execute_and_return(query)
+			result = to_dict(select_fields, result)
 		else :
 			client_db = client_database(client_id)
 			if client_db is None :
 				return None
-			result = self.client_db.execute_and_return(query)
+			query = query % (get(client_select_fields), 
+			self._db.tblClientUserDetails, self._db.tblClientUserGroups,user_id,)
+			result = client_db.execute_and_return(query)
+			result = to_dict(client_select_fields, result)
 		if len(result) == 0 :
 			return None
-		result = to_dict(select_fields, result)
 		result = result[0]
-
 		form_ids = result["form_ids"].split(",")
 		form_ids2 = []
 		for form_id in form_ids :
@@ -164,79 +182,97 @@ class KnowledgeDatabase(object) :
 			form["form_order"] = int(form["form_order"])
 			menu[form_type].append(form)
 		result2 = {
-			"category": result["tbl1.category"],
 			"user_group_name": result["user_group_name"],
 			"employee_name": result["employee_name"],
 			"employee_code": result["employee_code"],
 			"contact_no": result["contact_no"],
-			"address": result["address"],
-			"designation": result["designation"],
 			"menu": menu
 		}
+		if client_id == None :
+			result2["address"] = result["address"]
+			result2["designation"] = result["designation"]
+			result2["category"] = result["tbl.category"]
+		else:
+			result2["address"] = ""
+			result2["designation"] = ""
+			result2["category"] = ""
 		return result2
+
 
 #
 #	Common
 #
 
-	def generateNewId(self, form):
-		tblName = None
+	def generate_new_id(self, form):
+		tbl_name = None
 		column = None
 		if form == "ActivityLog":
-			tblName = self._db.tblActivityLog
+			tbl_name = self._db.tblActivityLog
 			column = "activity_log_id"
 		elif form == "User":
-			tblName = self._db.tblUsers
+			tbl_name = self._db.tblUsers
 			column = "user_id"
 		else:
 			print "Error : Cannot generate new id for form %s" % form
 
-		return self._db.generateNewId(tblName, column)
+		return self._db.generate_new_id(tbl_name, column)
 
-	def isDuplicate(self, form, field, value, idValue):
-		tblName = None
+	def is_duplicate(self, form, field, value, idValue):
+		tbl_name = None
 		condition = None
 		if form == "User":
-			tblName = self._db.tblUsers
+			tbl_name = self._db.tblUsers
 			if field == "email":
 				condition = "username ='%s' AND user_id != '%d'" %(
            value, idValue)
 		
-		return self._db.isAlreadyExists(tblName, condition)
+		return self._db.is_already_exists(tbl_name, condition)
 
 	def isIdInvalid(self, form, idValue):
-		tblName = None
+		tbl_name = None
 		condition = None
 		if form == "User":
-			tblName = self._db.tblUsers
+			tbl_name = self._db.tblUsers
 			condition = "user_id = '%d'" % idValue
 		else:
 			print "Error: Id Validation not exists for form %s" % form
 
-		return not self._db.isAlreadyExists(tblName, condition)
+		return not self._db.is_already_exists(tbl_name, condition)
+
+	def verify_password(self, password, session_user, client_id):
+		encrypted_password = encrypt(password)
+		columns = ["count(*)"]
+		condition = "password='%s' and user_id='%d'" % (encrypted_password, session_user)
+		if client_id != None:
+			condition += " and client_id='%d'" % client_id
+		rows = self._db.get_data(self._db.tblUsers, columns, condition)
+		if(int(rows[0][0]) <= 0):
+			return False
+		else:
+			return True
 
 #
 #	Forms
 #
-	def getSectionWiseForms(self, type):
-		columns = "form_id, form_name, form_url, form_order, form_type,"+\
-		"category, admin_form, parent_menu"
+	def get_section_wise_forms(self, type):
+		columns = ["form_id", "form_name", "form_url", "form_order", "form_type",
+		"category", "admin_form", "parent_menu"]
 		if type == "knowledge".lower():
 			condition = " category = 'knowledge' "
 		elif type == "techno".lower():
 			condition = " category = 'techno' "
 		else :
 			condition = " category = 'client' "
-		rows = self._db.getData(self._db.tblForms, columns, condition)
+		rows = self._db.get_data(self._db.tblForms, columns, condition)
 		return rows
 
 #
 #	Country
 #
-	def getCountries(self):
+	def get_countries(self):
 		columns = "country_id, country_name, is_active"
 		condition = "1"
-		rows = self._db.getData(self._db.tblCoutries,columns, 
+		rows = self._db.get_data(self._db.tblCoutries,columns, 
 			condition)
 		return rows		
 
@@ -246,74 +282,84 @@ class KnowledgeDatabase(object) :
 	def getDomains(self):
 		columns = "domain_id, domain_name, is_active"
 		condition = "1"
-		rows = self._db.getData(self._db.tblDomains,columns, 
+		rows = self._db.get_data(self._db.tblDomains,columns, 
 			condition)
 		return rows	
 
 #
+#	Unit
+#
+	def deactivate_unit(self, unit_id, client_id, session_user):
+		columns = ["is_active", "updated_by", "updated_on"]
+		values = [0, session_user, current_timestamp()]
+		condition = "unit_id = {unit_id} and client_id={client_id}".format(
+            unit_id = unit_id, client_id = client_id)
+		return self._db.update(self._db.tblUnit, columns, 
+        	values, condition)
+
+#
 #	User
 #
-	def saveUser(self, user, sessionUser):
-		currentTimeStamp = None
-		currentTimeStamp = currentTimestamp()
+	def save_user(self, user, session_user):
+		timestamp = current_timestamp()
 		columns = "user_id, username, password, client_id,created_on,created_by,"+\
                         " updated_on, updated_by"
-		values = [(user.userId, user.emailId, generatePassword(), 
-        		user.clientId, currentTimeStamp,sessionUser,
-                currentTimeStamp,sessionUser)]
+		values = [(user.user_id, user.email_id, generate_password(), 
+        		user.client_id, timestamp,session_user,
+                timestamp,session_user)]
 		return self._db.insert(self._db.tblUsers, columns, values)
 
-	def changeUserStatus(self, userId, isActive, sessionUser):
+	def change_user_status(self, user_id, is_active, session_user):
 		columns = ["is_active", "updated_on" , "updated_by"]
-		values = [isActive, currentTimestamp(), sessionUser]
-		condition = "user_id='%d'" % userId
+		values = [is_active, current_timestamp(), session_user]
+		condition = "user_id='%d'" % user_id
 		return self._db.update(self._db.tblUsers, columns, values,
 			condition)
 #
 #	Activity Log
 #
 
-	def saveActivity(self, form, obj, actionType, sessionUser):
-		activityLogId = self.generateNewId("ActivityLog")
-		formId = formIdMappings[form]
+	def save_activity(self, form, obj, action_type, session_user):
+		activity_log_id = self.generate_new_id("ActivityLog")
+		form_id = formIdMappings[form]
 		action = None
-		tickerText = None
-		tickerLink = None
-		createdOn = currentTimestamp()
+		ticker_text = None
+		ticker_link = None
+		created_on = current_timestamp()
 
 		if form == "ServiceProvider":
-			if actionType == "save":
+			if action_type == "save":
 				action = "Service Provider %s has been created" % obj
-			elif actionType == "update":
+			elif action_type == "update":
 				action = "Service Provider %s has been updated" % obj
-			elif actionType == "statusChange":
+			elif action_type == "status_change":
 				action = "Status of service Provider %s has been updated" % str(obj)
 		elif form == "UserPrivilege":
-			if actionType == "save":
+			if action_type == "save":
 				action = "User Privilege %s has been created" % obj
-			elif actionType == "update":
+			elif action_type == "update":
 				action = "User Privilege %s has been updated" % obj
-			elif actionType == "statusChange":
+			elif action_type == "status_change":
 				action = "Status of User Privilege %s has been updated" % str(obj)			
 		elif form == "User":
-			if actionType == "save":
+			if action_type == "save":
 				action = "User %s has been created" % obj
-			elif actionType == "update":
+			elif action_type == "update":
 				action = "User %s has been updated" % obj
-			elif actionType == "statusChange":
+			elif action_type == "status_change":
 				action = "Status of User %s has been updated" % str(obj)
-			elif actionType == "adminStatusChange":
+			elif action_type == "admin_status_change":
 				action = "Admin Status of User Privilege %s has been updated" % str(obj)
 		else:
 			print "Error : Activity Log not available for form %s" % form
 		
-		if tickerText != None and tickerLink != None:
+		if ticker_text != None and ticker_link != None:
 			columns = "activity_log_id, user_id, form_id, action, ticker_text,"+\
 						"ticker_link, created_on"
-			valuesList = [(activityLogId, sessionUser, formId, action, tickerText,
-					tickerLink, createdOn)]
+			values_list = [(activity_log_id, session_user, form_id, action, ticker_text,
+					ticker_link, created_on)]
 		else:
 			columns = "activity_log_id, user_id, form_id, action, created_on"
-			valuesList = [(activityLogId, sessionUser, formId, action, createdOn)]
+			values_list = [(activity_log_id, session_user, form_id, action, created_on)]
 
-		return self._db.insert(self._db.tblActivityLog, columns, valuesList)
+		return self._db.insert(self._db.tblActivityLog, columns, values_list)

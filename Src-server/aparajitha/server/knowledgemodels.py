@@ -4,57 +4,57 @@ __all__ = [
 ]
 
 class Country(object) :
-    def __init__(self, countryId, countryName, isActive) :
-        self.countryId = countryId
-        self.countryName = countryName
-        self.isActive = isActive
+    def __init__(self, country_id, country_name, is_active) :
+        self.country_id = country_id
+        self.country_name = country_name
+        self.is_active = is_active
 
-    def toStructure(self) :
+    def to_structure(self) :
         return {
-            "country_id": self.countryId,
-            "country_name": self.countryName,
-            "is_active": self.isActive
+            "country_id": self.country_id,
+            "country_name": self.country_name,
+            "is_active": self.is_active
         }
 
     @classmethod
-    def getList(self, db):
-        countryList = []
+    def get_list(self, db):
+        country_list = []
         # try:
-        rows = db.getCountries()
+        rows = db.get_countries()
         for row in rows:
-            countryId = int(row[0])
-            countryName = row[1]
-            isActive = row[2]
-            country = Country(countryId, countryName, isActive)
-            countryList.append(country.toStructure())
+            country_id = int(row[0])
+            country_name = row[1]
+            is_active = row[2]
+            country = Country(country_id, country_name, is_active)
+            country_list.append(country.to_structure())
         # except:
         #     print "Error: While fetching Countries"
-        return countryList
+        return country_list
 
 class Domain(object) :
-    def __init__(self, domainId, domainName, isActive) :
-        self.domainId = domainId
-        self.domainName = domainName
-        self.isActive = isActive
+    def __init__(self, domain_id, domain_name, is_active) :
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+        self.is_active = is_active
 
-    def toStructure(self) :
+    def to_structure(self) :
         return {
-            "domain_id": self.domainId,
-            "domain_name": self.domainName,
-            "is_active": self.isActive
+            "domain_id": self.domain_id,
+            "domain_name": self.domain_name,
+            "is_active": self.is_active
         }
 
     @classmethod
-    def getList(self, db):
-        domainList = []
+    def get_list(self, db):
+        domain_list = []
         # try:
-        rows = db.getDomains()
+        rows = db.get_domains()
         for row in rows:
-            domainId = int(row[0])
-            domainName = row[1]
-            isActive = row[2]
-            domain = Domain(domainId, domainName, isActive)
-            domainList.append(domain.toStructure())
+            domain_id = int(row[0])
+            domain_name = row[1]
+            is_active = row[2]
+            domain = Domain(domain_id, domain_name, is_active)
+            domain_list.append(domain.to_structure())
         # except:
         #     print "Error: While fetching Countries"
-        return domainList
+        return domain_list

@@ -5,8 +5,8 @@
 		<script type="text/javascript">
 			function login () {
 				mirror.login(
-					"vinod@domain.com",
-					"GBH1CEE",
+					"Testclientuser2@domain.com",
+					"123456",
 					function (status, response) {
 						console.log(status, response);
 					}, function (data) {
@@ -33,12 +33,12 @@
 			}
 			function saveServiceProvider() {
 				serviceProviderDetail = {
-					"service_provider_name": "Test Service Provider Name 122", 
-			        "address": "Test Address 122",
+					"service_provider_name": "Test Service Provider Name 142", 
+			        "address": "Test Address 142",
 			        "contract_from": "25-Aug-2015",
 			        "contract_to": "25-Aug-2016", 
 			        "contact_person": "DongTae",
-			        "contact_no": "+919162553210"
+			        "contact_no": "+919232553210"
 				}
 				mirror.saveServiceProvider(
 					serviceProviderDetail,
@@ -46,21 +46,21 @@
 			}
 			function updateServiceProvider() {
 				serviceProviderDetail = {
-					"service_provider_id": 1,
-					"service_provider_name": "Test Service Provider Name Update", 
-			        "address": "Test Address update",
+					"service_provider_id": 2,
+					"service_provider_name": "Test Service Provider Name Update 3", 
+			        "address": "Test Address update 3",
 			        "contract_from": "1-Jan-2017",
 			        "contract_to": "31-Dec-2018", 
-			        "contact_person": "Neethu",
-			        "contact_no": "+919151553210"
+			        "contact_person": "Mio",
+			        "contact_no": "+919131553210"
 				}
 				mirror.updateServiceProvider(
 					serviceProviderDetail,
 					success, failure);
 			}
 			function changeServiceProviderStatus() {
-				serviceProviderId = 1
-				isActive = 0
+				serviceProviderId = 2
+				isActive = 1
 				mirror.changeServiceProviderStatus(serviceProviderId, isActive, success, failure)
 			}
 			function getServiceProvidersList() {
@@ -68,7 +68,7 @@
 			}
 			function saveClientUserGroup(){
 				userGroupDetails = {
-			        "user_group_name": "Test user group name 25",
+			        "user_group_name": "Test user group name 345",
 			        "form_type": "client",
 			        "form_ids": [1,2]
 			    }
@@ -76,15 +76,15 @@
 			}
 			function updateClientUserGroup(){
 				userGroupDetails = {
-					"user_group_id": 1,
-			        "user_group_name": "Test user group name 27",
+					"user_group_id": 2,
+			        "user_group_name": "Test user group name update 346",
 			        "form_type": "client",
 			        "form_ids": [5,6]
 			    }
 			    mirror.updateClientUserGroup(userGroupDetails,success, failure);
 			}
 			function changeClientUserGroupStatus(){
-				userGroupId = 1
+				userGroupId = 2
 				isActive = 0
 				mirror.changeClientUserGroupStatus(userGroupId,isActive, success,failure) ;
 			}
@@ -96,14 +96,14 @@
 			}
 			function saveClientUser(){
 				clientUserDetail = {
-			        "email_id": "Testclientuser5@domain.com",
-			        "user_group_id": 1, 
-			        "employee_name": "Test Client User 5",
-			        "employee_code": "TEMP005",
-			        "contact_no": "+91737586246",
-			        "seating_unit_id": 1,
-			        "seating_unit_name": "Test Unit 1",
-			        "user_level": 5,
+			        "email_id": "Testclientser24@domain.com",
+			        "user_group_id": 3, 
+			        "employee_name": "TestClientUser24",
+			        "employee_code": "TEMP028",
+			        "contact_no": "+91999586249",
+			        "seating_unit_id": 2,
+			        "seating_unit_name": "Test Unit 2",
+			        "user_level": 2,
 			        "country_ids": [1],
 			        "domain_ids": [1],
 			        "unit_ids": [1],
@@ -117,12 +117,12 @@
 				clientUserDetail = {
 			        "user_id": 18,
 			        "user_group_id": 1, 
-			        "employee_name": "Test Client User update5",
-			        "employee_code": "TEMPupdate5",
-			        "contact_no": "+91914586246",
-			        "seating_unit_id": 1,
-			        "seating_unit_name": "Test Unit 1",
-			        "user_level": 5,
+			        "employee_name": "Test Client User update 113",
+			        "employee_code": "TEMPU113",
+			        "contact_no": "+91915586246",
+			        "seating_unit_id": 2,
+			        "seating_unit_name": "Test Unit 113",
+			        "user_level": 2,
 			        "country_ids": [1],
 			        "domain_ids": [1],
 			        "unit_ids": [1],
@@ -134,7 +134,7 @@
 			}
 			function changeClientUserStatus(){
 				userId = 18
-				isActive = 0
+				isActive = 1
 				mirror.changeClientUserStatus(userId, isActive, success, failure)
 			}
 			function changeAdminStatus(){
@@ -142,6 +142,14 @@
 				isAdmin = 1
 				mirror.changeAdminStatus(userId, isAdmin, 
         				success, failure)
+			}
+			function getUnitClosureList(){
+				mirror.getUnitClosureList(success, failure)
+			}
+			function closeUnit(){
+				unitId = 2
+				password = "123456"
+				mirror.closeUnit(unitId, password, success, failure)
 			}
 		</script>
 	</head>
@@ -196,6 +204,14 @@
 			</button>
 			<button onclick="changeAdminStatus()">
 				Change Admin Status
+			</button>
+		</div>
+		<div>
+			<button onclick="getUnitClosureList()">
+				Get Unit Closure List
+			</button>
+			<button onclick="closeUnit()">
+				Close Unit
 			</button>
 		</div>
 		<br>

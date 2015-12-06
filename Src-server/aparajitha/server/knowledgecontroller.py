@@ -53,21 +53,24 @@ class APIHandler(object):
 		email = email.lower()
 		user_id = db.get_user_id(email)
 		if user_id is None :
+			print "inside user_id is none"
 			return self._failure_response("LoginResponse", "LoginFailed")
 		user = db.match_password(user_id, password)
 		if user is None :
+			print "inside user is none"
 			return self._failure_response("LoginResponse", "LoginFailed")
 		user = user[0]
 		user_details = db.get_user_details(user_id, user["client_id"])
 		if user_details is None :
+			print "inside user details is none"
 			return self._failure_response("LoginResponse", "LoginFailed")
 		session_id = db.add_session(user_id)
 		response_data = {
 			"session_token": session_id,
 			"user": {
 				"user_id": user_id,
-				"client_id": user["client_id"],
-				"email_id": email,
+				"client_id": int(user["client_id"]),
+				"email_id": str(email),
 				"category": user_details["category"],
 				"user_group_name": user_details["user_group_name"],
 				"employee_name": user_details["employee_name"],

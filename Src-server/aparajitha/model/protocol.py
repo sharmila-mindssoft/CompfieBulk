@@ -382,6 +382,44 @@ define_request(
 )
 
 #
+# 	Unit Closure
+#
+define_request(
+	"GetUnitClosureList",
+	{},
+	{
+		"units": ListType(
+			DictType(
+				{
+					"business_group_name":Text50,
+					"legal_entity_name": Text50,
+					"division_name": Text50,
+					"unit_id": Int,
+					"unit_name": Text100,
+					"address": Text250,
+					"is_active": Int,
+				}
+			)
+		)
+	},
+	[] 
+)
+
+define_request(
+	"CloseUnit",
+	{
+		"unit_id":Int,
+		"password": Text50
+	},
+	{},
+	[
+		"InvalidPassword"
+	] 
+)
+
+define_request
+
+#
 # Request, RequestFrame
 #
 

@@ -16,19 +16,21 @@ class APIHandler(object):
 		self._knowledge_db = KnowledgeDatabase()
 		self._request_map = {
 			"Test": self._test,
-			"GetServiceProviders": self._getServiceProviders,
-			"SaveServiceProvider": self._saveServiceProvider,
-			"UpdateServiceProvider": self._updateServiceProvider,
-			"ChangeServiceProviderStatus": self._changeServiceProviderStatus,
-			"GetUserPrivileges": self._getUserPrivileges,
-			"SaveUserPrivilege": self._saveUserPrivilege,
-			"UpdateUserPrivilege": self._updateUserPrivilege,
-			"ChangeUserPrivilegeStatus": self._changeUserPrivilegeStatus,
-			"GetClientUsers": self._getClientUsers,
-			"SaveClientUser": self._saveClientUser,
-			"UpdateClientUser": self._updateClientUser,
-			"ChangeClientUserStatus": self._changeClientUserStatus,
-			"ChangeAdminStatus": self._changeAdminStatus
+			"GetServiceProviders": self._get_service_providers,
+			"SaveServiceProvider": self._save_service_provider,
+			"UpdateServiceProvider": self._update_service_provider,
+			"ChangeServiceProviderStatus": self._change_service_provider_status,
+			"GetUserPrivileges": self._get_user_privileges,
+			"SaveUserPrivilege": self._save_user_privilege,
+			"UpdateUserPrivilege": self._update_user_privilege,
+			"ChangeUserPrivilegeStatus": self._change_user_privilege_status,
+			"GetClientUsers": self._get_client_users,
+			"SaveClientUser": self._save_client_user,
+			"UpdateClientUser": self._update_client_user,
+			"ChangeClientUserStatus": self._change_client_user_status,
+			"ChangeAdminStatus": self._change_admin_status,
+			"GetUnitClosureList": self._get_unit_closure_list,
+			"CloseUnit": self._close_unit
 		}
 
 	def _success_response(self, response, response_option, data) :
@@ -56,8 +58,9 @@ class APIHandler(object):
 			return self._failure_response(
 				request_option + "Response", "InvalidSession"
 			)
-		user = self._knowledge_db.get_user(user_id)
-		db = self._get_database(user["client_id"])
+		self._client_id = self._knowledge_db.get_client_id(user_id)
+		db = self._get_database(self._client_id)
+		user = db.get_user(user_id)
 		if db is None :
 			return self._failure_response(
 				request_option + "Response", "InvalidSession"
@@ -72,275 +75,314 @@ class APIHandler(object):
 #
 #	Service Provider
 #	
-	def _getServiceProviders(self, db, user, request):
-		serviceProviderList = ServiceProvider.getList(db)
-		responseData = {}
-		responseData["service_providers"] = serviceProviderList
+	def _get_service_providers(self, db, user, request):
+		service_provider_list = ServiceProvider.get_list(db)
+		response_data = {}
+		response_data["service_providers"] = service_provider_list
 		return self._success_response(
 			"GetServiceProvidersResponse", 
 			"GetServiceProvidersSuccess", 
-			responseData
+			response_data
 		)
 
-	def _saveServiceProvider(self, db, user, request):
+	def _save_service_provider(self, db, user, request):
 		form = "ServiceProvider"
-		sessionUser = user["user_id"]
+		session_user = int(user["user_id"])
 
 		response = "SaveServiceProviderResponse"
-		responseData = None
+		response_data = None
 
-		serviceProviderId = db.generateNewId(form)
-		serviceProvider = ServiceProvider.initializeWithRequest(request, 
-			serviceProviderId, self._client_id)
+		service_provider_id = db.generate_new_id(form)
+		service_provider = ServiceProvider.initialize_with_request(request, 
+			service_provider_id, self._client_id)
 
-		if db.isDuplicate(form, "name", serviceProvider.serviceProviderName,
-			serviceProvider.serviceProviderId):
-			responseData = self._failure_response(
+		if db.is_duplicate(form, "name", service_provider.service_provider_name,
+			service_provider.service_provider_id):
+			response_data = self._failure_response(
 				response,"ServiceProviderNameAlreadyExists")
-		elif db.isDuplicate(form, "contactNo", serviceProvider.contactNo,serviceProvider.serviceProviderId):
-			responseData = self._failure_response(
+		elif db.is_duplicate(form, "contact_no", service_provider.contact_no,
+			service_provider.service_provider_id):
+			response_data = self._failure_response(
 				response,"ContactNumberAlreadyExists")
-		elif db.saveServiceProvider(serviceProvider, sessionUser):
-			actionType = "save"
-			self._knowledge_db.saveActivity(form, serviceProvider.serviceProviderName, 
-				actionType, sessionUser)
-			responseData =  self._success_response(
+		elif db.save_service_provider(service_provider, session_user):
+			action_type = "save"
+			self._knowledge_db.save_activity(form, service_provider.service_provider_name, 
+				action_type, session_user)
+			response_data =  self._success_response(
 				response,"SaveServiceProviderSuccess",{})		
-		return responseData
+		return response_data
 
-	def _updateServiceProvider(self, db, user, request):
+	def _update_service_provider(self, db, user, request):
 		form = "ServiceProvider"
-		sessionUser = user["user_id"]
+		session_user = int(user["user_id"])
 
 		response = "UpdateServiceProviderResponse"
-		responseData = None
+		response_data = None
 
-		serviceProviderId = request["service_provider_id"]
-		serviceProvider = ServiceProvider.initializeWithRequest(request, 
-			serviceProviderId, self._client_id)
+		service_provider_id = request["service_provider_id"]
+		service_provider = ServiceProvider.initialize_with_request(request, 
+			service_provider_id, self._client_id)
 		
-		if db.isIdInvalid(form, serviceProviderId):
-			responseData = self._failure_response(
-				response, "InvalidServiceProviderId")
-		elif db.isDuplicate(form, "name", serviceProvider.serviceProviderName,
-			serviceProvider.serviceProviderId):
-			responseData = self._failure_response(
+		if db.is_id_invalid(form, service_provider_id):
+			response_data = self._failure_response(
+				response, "InvalidService_provider_id")
+		elif db.is_duplicate(form, "name", service_provider.service_provider_name,
+			service_provider.service_provider_id):
+			response_data = self._failure_response(
 				response, "ServiceProviderNameAlreadyExists")
-		elif db.isDuplicate(form, "contactNo", serviceProvider.contactNo,serviceProvider.serviceProviderId):
-			responseData = self._failure_response(
+		elif db.is_duplicate(form, "contact_no", service_provider.contact_no,
+			service_provider.service_provider_id):
+			response_data = self._failure_response(
 				response, "ContactNumberAlreadyExists")
-		elif db.saveServiceProvider(serviceProvider, sessionUser):
-			actionType = "update"
-			self._knowledge_db.saveActivity(form, serviceProvider.serviceProviderName, 
-				actionType, sessionUser)
-			responseData =  self._success_response(
+		elif db.save_service_provider(service_provider, session_user):
+			action_type = "update"
+			self._knowledge_db.save_activity(form, service_provider.service_provider_name, 
+				action_type, session_user)
+			response_data =  self._success_response(
 				response, "UpdateServiceProviderSuccess",{})		
-		return responseData
+		return response_data
 
-	def _changeServiceProviderStatus(self, db, user, request):
+	def _change_service_provider_status(self, db, user, request):
 		form = "ServiceProvider"
-		sessionUser = user["user_id"]
+		session_user = int(user["user_id"])
 
 		response = "ChangeServiceProviderStatusResponse"
-		responseData = None
+		response_data = None
 
-		serviceProviderId = request["service_provider_id"]
-		isActive = request["is_active"]
+		service_provider_id = request["service_provider_id"]
+		is_active = request["is_active"]
 
-		if db.isIdInvalid(form, serviceProviderId):
-			responseData = self._failure_response(
+		if db.is_id_invalid(form, service_provider_id):
+			response_data = self._failure_response(
 				response, "InvalidServiceProviderId")
-		elif db.changeServiceProviderStatus(serviceProviderId, isActive,
-				sessionUser):
-			actionType = "statusChange"
-			self._knowledge_db.saveActivity(form, serviceProviderId, 
-				actionType, sessionUser)
-			responseData = self._success_response(
+		elif db.change_service_provider_status(service_provider_id, is_active,
+				session_user):
+			action_type = "status_change"
+			self._knowledge_db.save_activity(form, service_provider_id, 
+				action_type, session_user)
+			response_data = self._success_response(
 				response, "ChangeServiceProviderStatusSuccess",{})
-		return responseData
+		return response_data
 
 #
 #	User Privilege
 #	
-	def _getUserPrivileges(self, db, user, request):
-		sessionUser = user["user_id"]
+	def _get_user_privileges(self, db, user, request):
+		session_user = int(user["user_id"])
 
-		clientForms = Form.getForms("client", self._knowledge_db)
-		forms = Menu.getMenu(clientForms)
-		userGroupList = UserPrivilege.getDetailedList(self._client_id, db)
+		client_forms = Form.get_forms("client", self._knowledge_db)
+		forms = Menu.get_menu(client_forms)
+		user_group_list = UserPrivilege.get_detailed_list(self._client_id, db)
 		
-		responseData = {}
-		responseData["forms"] = forms
-		responseData["user_groups"] = userGroupList
+		response_data = {}
+		response_data["forms"] = forms
+		response_data["user_groups"] = user_group_list
 		response = self._success_response("GetUserPrivilegesResponse", 
-			"GetUserPrivilegesSuccess",responseData)
+			"GetUserPrivilegesSuccess",response_data)
 		return response
 
-	def _saveUserPrivilege(self, db, user, request):
+	def _save_user_privilege(self, db, user, request):
 		form = "UserPrivilege"
-		sessionUser = user["user_id"]
+		session_user = int(user["user_id"])
 		response = "SaveUserPrivilegeResponse"
-		responseData = None
-		userPrivilegeId = db.generateNewId(form)
-		userPrivilege = UserPrivilege.initializeWithRequest(request, userPrivilegeId, self._client_id)
-		if db.isDuplicate(form, "name", userPrivilege.userGroupName,userPrivilegeId):
-			responseData = self._failure_response(response,"GroupNameAlreadyExists")
-		elif db.saveUserPrivilege(userPrivilege, sessionUser):
-			actionType = "save"
-			self._knowledge_db.saveActivity(form, userPrivilege.userGroupName, 
-				actionType, sessionUser)
-			responseData =  self._success_response(response, "SaveUserPrivilegeSuccess",{})
-		return responseData
+		response_data = None
+		user_privilege_id = db.generate_new_id(form)
+		user_privilege = UserPrivilege.initialize_with_request(request, user_privilege_id, 
+			self._client_id)
+		if db.is_duplicate(form, "name", user_privilege.user_group_name,user_privilege_id):
+			response_data = self._failure_response(response,"GroupNameAlreadyExists")
+		elif db.save_user_privilege(user_privilege, session_user):
+			action_type = "save"
+			self._knowledge_db.save_activity(form, user_privilege.user_group_name, 
+				action_type, session_user)
+			response_data =  self._success_response(response, "SaveUserPrivilegeSuccess",{})
+		return response_data
 
-	def _updateUserPrivilege(self, db, user, request):
+	def _update_user_privilege(self, db, user, request):
 		form = "UserPrivilege"
-		sessionUser = user["user_id"]
+		session_user = int(user["user_id"])
 		response = "UpdateUserPrivilegeResponse"
-		responseData = None
-		userPrivilegeId = request["user_group_id"]
-		userPrivilege = UserPrivilege.initializeWithRequest(request, 
-			userPrivilegeId, self._client_id)
-		if db.isIdInvalid(form, userPrivilegeId):
-			responseData = self._failure_response(response, "InvalidUserGroupId")
-		elif db.isDuplicate(form, "name", userPrivilege.userGroupName,
-			userPrivilege.userGroupId):
-			responseData = self._failure_response(response,"GroupNameAlreadyExists")
-		elif db.saveUserPrivilege(userPrivilege, sessionUser):
-			actionType = "update"
-			self._knowledge_db.saveActivity(form, userPrivilege.userGroupName, 
-				actionType, sessionUser)
-			responseData =  self._success_response(response, "UpdateUserPrivilegeSuccess",{})
-		return responseData
+		response_data = None
+		user_privilege_id = request["user_group_id"]
+		user_privilege = UserPrivilege.initialize_with_request(request, 
+			user_privilege_id, self._client_id)
+		if db.is_id_invalid(form, user_privilege_id):
+			response_data = self._failure_response(response, "InvalidUser_group_id")
+		elif db.is_duplicate(form, "name", user_privilege.user_group_name,
+			user_privilege.user_group_id):
+			response_data = self._failure_response(response,"GroupNameAlreadyExists")
+		elif db.save_user_privilege(user_privilege, session_user):
+			action_type = "update"
+			self._knowledge_db.save_activity(form, user_privilege.user_group_name, 
+				action_type, session_user)
+			response_data =  self._success_response(response, "UpdateUserPrivilegeSuccess",{})
+		return response_data
 
-	def _changeUserPrivilegeStatus(self, db, user, request):
+	def _change_user_privilege_status(self, db, user, request):
 		form = "UserPrivilege"
-		sessionUser = user["user_id"]
+		session_user = int(user["user_id"])
 
 		response = "ChangeUserPrivilegeStatusResponse"
-		responseData = None
+		response_data = None
 
-		userGroupId = request["user_group_id"]
-		isActive = request["is_active"]
+		user_group_id = request["user_group_id"]
+		is_active = request["is_active"]
 
-		if db.isIdInvalid(form, userGroupId):
-			responseData = self._failure_response(
+		if db.is_id_invalid(form, user_group_id):
+			response_data = self._failure_response(
 				response, "InvalidUserGroupId")
-		elif db.changeUserPrivilegeStatus(userGroupId, isActive,
-				sessionUser):
-			actionType = "statusChange"
-			self._knowledge_db.saveActivity(form, userGroupId, 
-				actionType, sessionUser)
-			responseData = self._success_response(
+		elif db.change_user_privilege_status(user_group_id, is_active,
+				session_user):
+			action_type = "status_change"
+			self._knowledge_db.save_activity(form, user_group_id, 
+				action_type, session_user)
+			response_data = self._success_response(
 				response, "ChangeUserPrivilegeStatusSuccess",{})
-		return responseData
+		return response_data
 
 #
 #	User
 #
-	def _getClientUsers(self, db, user, request):
-			countryList = Country.getList( db)
-			domainList = Domain.getList(db)
-			businessGroupList = BusinessGroup.getList(self._client_id, db)
-			legalEntityList = LegalEntity.getList(self._client_id, db)
-			divisionList = Division.getList(self._client_id, db)
-			unitList = Unit.getList(self._client_id, db)
-			userGroupList = UserPrivilege.getList(self._client_id, db)
-			userList = User.getDetailedList(self._client_id, db)
+	def _get_client_users(self, db, user, request):
+			country_list = Country.get_list(db)
+			domain_list = Domain.get_list(db)
+			business_group_list = BusinessGroup.get_list(self._client_id, db)
+			legal_entity_list = LegalEntity.get_list(self._client_id, db)
+			division_list = Division.get_list(self._client_id, db)
+			unit_list = Unit.get_list(self._client_id, db)
+			user_group_list = UserPrivilege.get_list(self._client_id, db)
+			user_list = User.get_detailed_list(self._client_id, db)
 
-			responseData = {}
-			responseData["domains"] = domainList
-			responseData["countries"] = countryList
-			responseData["business_groups"] = businessGroupList
-			responseData["legal_entities"] = legalEntityList
-			responseData["divisions"] = divisionList
-			responseData["units"] = unitList
-			responseData["user_groups"] = userGroupList
-			responseData["users"] = userList
+			response_data = {}
+			response_data["domains"] = domain_list
+			response_data["countries"] = country_list
+			response_data["business_groups"] = business_group_list
+			response_data["legal_entities"] = legal_entity_list
+			response_data["divisions"] = division_list
+			response_data["units"] = unit_list
+			response_data["user_groups"] = user_group_list
+			response_data["users"] = user_list
 			return self._success_response("GetClientUsersResponse",
-	        	"GetClientUsersSuccess",responseData)
+	        	"GetClientUsersSuccess",response_data)
 
-	def _saveClientUser(self, db, user, request):
+	def _save_client_user(self, db, user, request):
 		form = "User"
-		sessionUser = user["user_id"]
+		session_user = int(user["user_id"])
 		response = "SaveClientUserResponse"
-		responseData = None
-		userId = self._knowledge_db.generateNewId(form)
-		user = User.initializeWithRequest(request, userId, self._client_id)
-		if self._knowledge_db.isDuplicate(form, "email", user.emailId, userId):
-			responseData = self._failure_response(response,"EmailIdAlreadyExists")
-		elif db.isDuplicate(form, "employeeCode", user.employeeCode, userId):
-			responseData = self._failure_response(response,"EmployeeCodeAlreadyExists")
-		elif db.isDuplicate(form, "contactNo", user.contactNo, userId):
-			responseData = self._failure_response(response,"ContactNumberAlreadyExists")
-		elif (self._knowledge_db.saveUser(user, sessionUser) and db.saveUserDetail(user, sessionUser)):
-			actionType = "save"
-			self._knowledge_db.saveActivity(form, user.employeeCode+"-"+user.employeeName, 
-				actionType, sessionUser)
-			responseData =  self._success_response(response, "SaveClientUserSuccess",{})
-		return responseData
+		response_data = None
+		user_id = self._knowledge_db.generate_new_id(form)
+		user = User.initialize_with_request(request, user_id, self._client_id)
+		if self._knowledge_db.is_duplicate(form, "email", user.email_id, user_id):
+			response_data = self._failure_response(response,"EmailIdAlreadyExists")
+		elif db.is_duplicate(form, "employee_code", user.employee_code, user_id):
+			response_data = self._failure_response(response,"EmployeeCodeAlreadyExists")
+		elif db.is_duplicate(form, "contact_no", user.contact_no, user_id):
+			response_data = self._failure_response(response,"ContactNumberAlreadyExists")
+		elif (self._knowledge_db.save_user(user, session_user) and db.save_user_detail(user, session_user)):
+			action_type = "save"
+			self._knowledge_db.save_activity(form, user.employee_code+"-"+user.employee_name, 
+				action_type, session_user)
+			response_data =  self._success_response(response, "SaveClientUserSuccess",{})
+		return response_data
         
-	def _updateClientUser(self, db, user, request):
+	def _update_client_user(self, db, user, request):
 		form = "User"
-		sessionUser = user["user_id"]
+		session_user = int(user["user_id"])
 		response = "UpdateClientUserResponse"
-		responseData = None
-		userId = request["user_id"]
-		user = User.initializeWithRequest(request, userId, self._client_id)
-		if self._db.isIdInvalid(form, userId):
-			responseData = self._failure_response(response,"InvalidUserId")
-		elif db.isDuplicate(form, "employeeCode", user.employeeCode, userId):
-			responseData = self._failure_response(response,"EmployeeCodeAlreadyExists")
-		elif db.isDuplicate(form, "contactNo", user.contactNo, userId):
-			responseData = self._failure_response(response,"ContactNumberAlreadyExists")
-		elif db.updateUserDetail(user, sessionUser):
-			actionType = "update"
-			self._knowledge_db.saveActivity(form, user.employeeCode+"-"+user.employeeName, 
-				actionType, sessionUser)
-			responseData =  self._success_response(response, "UpdateClientUserSuccess",{})
-		return responseData
+		response_data = None
+		user_id = request["user_id"]
+		user = User.initialize_with_request(request, user_id, self._client_id)
+		if self._db.is_id_invalid(form, user_id):
+			response_data = self._failure_response(response,"InvalidUser_id")
+		elif db.is_duplicate(form, "employee_code", user.employee_code, user_id):
+			response_data = self._failure_response(response,"EmployeeCodeAlreadyExists")
+		elif db.is_duplicate(form, "contact_no", user.contact_no, user_id):
+			response_data = self._failure_response(response,"ContactNumberAlreadyExists")
+		elif db.update_user_detail(user, session_user):
+			action_type = "update"
+			self._knowledge_db.save_activity(form, user.employee_code+"-"+user.employee_name, 
+				action_type, session_user)
+			response_data =  self._success_response(response, "UpdateClientUserSuccess",{})
+		return response_data
 
-	def _changeClientUserStatus(self, db, user, request):
+	def _change_client_user_status(self, db, user, request):
 		form = "User"
-		sessionUser = user["user_id"]
+		session_user = int(user["user_id"])
 
 		response = "ChangeClientUserStatusResponse"
-		responseData = None
+		response_data = None
 
-		userId = request["user_id"]
-		isActive = request["is_active"]
+		user_id = request["user_id"]
+		is_active = request["is_active"]
 
-		if db.isIdInvalid(form, userId):
-			responseData = self._failure_response(
+		if db.is_id_invalid(form, user_id):
+			response_data = self._failure_response(
 				response, "InvalidUserId")
-		elif (self._knowledge_db.changeUserStatus (userId, isActive, sessionUser) and db.changeUserDetailStatus(
-			userId, isActive, sessionUser)):
-			actionType = "statusChange"
-			self._knowledge_db.saveActivity(form, userId, 
-				actionType, sessionUser)
-			responseData = self._success_response(
+		elif (self._knowledge_db.change_user_status (
+			user_id, is_active, session_user) and db.change_user_detail_status(
+			user_id, is_active, session_user)):
+			action_type = "status_change"
+			self._knowledge_db.save_activity(form, user_id, 
+				action_type, session_user)
+			response_data = self._success_response(
 				response, "ChangeClientUserStatusSuccess",{})
-		return responseData		
+		return response_data		
 
-	def _changeAdminStatus(self, db, user, request):
+	def _change_admin_status(self, db, user, request):
 		form = "User"
-		sessionUser = user["user_id"]
+		session_user = int(user["user_id"])
 
 		response = "ChangeAdminStatusResponse"
-		responseData = None
+		response_data = None
 
-		userId = request["user_id"]
-		isAdmin = request["is_admin"]
+		user_id = request["user_id"]
+		is_admin = request["is_admin"]
 
-		if db.isIdInvalid(form, userId):
-			responseData = self._failure_response(
+		if db.is_id_invalid(form, user_id):
+			response_data = self._failure_response(
 				response, "InvalidUserId")
-		elif db.changeAdminStatus(userId, isAdmin, sessionUser):
-			actionType = "adminStatusChange"
-			self._knowledge_db.saveActivity(form, userId, 
-				actionType, sessionUser)
-			responseData = self._success_response(
+		elif db.change_admin_status(user_id, is_admin, session_user):
+			action_type = "admin_status_change"
+			self._knowledge_db.save_activity(form, user_id, 
+				action_type, session_user)
+			response_data = self._success_response(
 				response, "ChangeAdminStatusSuccess",{})
-		return responseData	
+		return response_data	
+
+#
+#	Close Unit
+#
+
+	def _get_unit_closure_list(self, db, user, request):
+		unit_list = Unit.get_unit_list_for_closure(self._client_id, db)
+		response_data = {}
+		response_data["units"] = unit_list
+		return self._success_response(
+        	"GetUnitClosureListResponse", 
+        	"GetUnitClosureListSuccess",
+        	response_data)
+
+	def _close_unit(self, db, user, request):
+		session_user = int(user["user_id"])
+		unit_id = request["unit_id"]
+		password = request["password"]
+		response_data = None
+		response = "CloseUnitResponse"
+		if not self._knowledge_db.verify_password(password, session_user, self._client_id):
+			response_data =  self._failure_response(
+						        	response, 
+						        	"InvalidPassword")
+		elif (db.deactivate_unit(unit_id) and self._knowledge_db.deactivate_unit(
+			unit_id, self._client_id, session_user)):
+				response_data =  self._success_response(
+						        	response, 
+						        	"CloseUnitSuccess",
+						        	{})
+		else:
+			print "Error : While deactivating Unit in client DB"
+			return False
+		return response_data
+
 #
 # db_request
 #
