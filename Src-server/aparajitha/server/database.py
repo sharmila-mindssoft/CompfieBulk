@@ -77,6 +77,7 @@ class Database(object) :
 		columns = ",".join(columns)
 		query = "SELECT %s FROM %s WHERE %s" %  (columns, 
 			table, condition) 
+		print query
 		return self.execute_and_return(query)
 
 	def insert(self, table, columns, value_list) :

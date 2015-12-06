@@ -151,6 +151,32 @@
 				password = "123456"
 				mirror.closeUnit(unitId, password, success, failure)
 			}
+			function saveAdminUserGroup(){
+				userGroupDetails = {
+	                "user_group_name": "Test User Group 12",
+	                "form_type": "knowledge",
+	                "form_ids": [1,2,3]
+	            }
+			    mirror.saveAdminUserGroup(userGroupDetails,success, failure);
+			}
+			function updateAdminUserGroup(){
+				userGroupDetails = {
+	                "user_group_id" : 1,
+	                "user_group_name": "Test Update 1",
+	                "form_type": "knowledge",
+	                "form_ids": [1,3,4]
+	            }
+			    mirror.updateAdminUserGroup(userGroupDetails,success, failure);
+			}
+			function changeAdminUserGroupStatus(){
+				userGroupId = 2
+				isActive = 0
+				mirror.changeAdminUserGroupStatus(userGroupId,isActive, success,failure) ;
+			}
+			function getAdminUserGroupList(){
+				mirror.getAdminUserGroupList(success, 
+					failure);
+			}
 		</script>
 	</head>
 	<body>
@@ -212,6 +238,20 @@
 			</button>
 			<button onclick="closeUnit()">
 				Close Unit
+			</button>
+		</div>
+		<div>
+			<button onclick="saveAdminUserGroup()">
+				Save Admin User Group
+			</button>
+			<button onclick="updateAdminUserGroup()">
+				Update Admin User Group
+			</button>
+			<button onclick="changeAdminUserGroupStatus()">
+				Change Admin User Group Status
+			</button>
+			<button onclick="getAdminUserGroupList()">
+				Get Admin User Groups
 			</button>
 		</div>
 		<br>

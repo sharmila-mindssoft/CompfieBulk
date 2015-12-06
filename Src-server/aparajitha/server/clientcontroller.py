@@ -207,7 +207,7 @@ class APIHandler(object):
 		user_privilege = UserPrivilege.initialize_with_request(request, 
 			user_privilege_id, self._client_id)
 		if db.is_id_invalid(form, user_privilege_id):
-			response_data = self._failure_response(response, "InvalidUser_group_id")
+			response_data = self._failure_response(response, "InvalidUserGroupId")
 		elif db.is_duplicate(form, "name", user_privilege.user_group_name,
 			user_privilege.user_group_id):
 			response_data = self._failure_response(response,"GroupNameAlreadyExists")

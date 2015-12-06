@@ -93,6 +93,7 @@ def run_server() :
         ("/api/logout", knowledge_controller.handle_api_knowledge),
         ("/api/test-client", client_controller.handle_api_client),
         ("/api/client", client_controller.handle_api_client),
+        ("/api/knowledge", knowledge_controller.handle_api_knowledge),
     ]
     for url, handler in api_urls_and_handlers :
         entry = (url, APIHandler, dict(handler=handler))

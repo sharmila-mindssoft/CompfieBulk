@@ -417,7 +417,72 @@ define_request(
 	] 
 )
 
-define_request
+#
+#	Admin User Group
+#
+define_request(
+	"GetUserGroups",
+	{},
+	{
+		"forms": DictType(
+			{
+	            "knowledge": Menu,
+	            "techno": Menu
+	        }
+	    ),
+        "user_groups": ListType(
+        	DictType(
+        		{
+        			"user_group_id": Int,
+				    "user_group_name": Text50,
+				    "form_ids": ListType(Int),
+				    "is_active": Int
+        		}
+        	)
+        )
+	},
+	[] 
+)
+
+define_request(
+	"SaveUserGroup",
+	{
+		"user_group_name": Text50,
+        "form_type": Text20,
+        "form_ids": ListType(Int)
+	},
+	{},
+	[
+		"GroupNameAlreadyExists"
+	] 
+)
+
+define_request(
+	"UpdateUserGroup",
+	{
+		"user_group_id": Int,
+		"user_group_name": Text50,
+        "form_type": Text20,
+        "form_ids": ListType(Int)
+	},
+	{},
+	[
+		"InvalidUserGroupId",
+		"GroupNameAlreadyExists"
+	] 
+)
+
+define_request(
+	"ChangeUserGroupStatus",
+	{
+		"user_group_id" : Int,
+        "is_active" : Int
+	},
+	{},
+	[
+		"InvalidUserGroupId"
+	] 
+)
 
 #
 # Request, RequestFrame

@@ -212,28 +212,38 @@ class KnowledgeDatabase(object) :
 		elif form == "User":
 			tbl_name = self._db.tblUsers
 			column = "user_id"
+		elif form == "UserGroupMaster":
+			tbl_name = self._db.tblUserGroups
+			column = "user_group_id"
 		else:
 			print "Error : Cannot generate new id for form %s" % form
 
 		return self._db.generate_new_id(tbl_name, column)
 
-	def is_duplicate(self, form, field, value, idValue):
+	def is_duplicate(self, form, field, value, id_value):
 		tbl_name = None
 		condition = None
 		if form == "User":
 			tbl_name = self._db.tblUsers
 			if field == "email":
 				condition = "username ='%s' AND user_id != '%d'" %(
-           value, idValue)
-		
+           value, id_value)
+		elif form == "UserGroupMaster":
+			tbl_name = self._db.tblUserGroups
+			if field == "name":
+				condition = "user_group_name = '%s' AND user_group_id != '%d'" %(
+					value, id_value)
 		return self._db.is_already_exists(tbl_name, condition)
 
-	def isIdInvalid(self, form, idValue):
+	def is_id_invalid(self, form, id_value):
 		tbl_name = None
 		condition = None
 		if form == "User":
 			tbl_name = self._db.tblUsers
-			condition = "user_id = '%d'" % idValue
+			condition = "user_id = '%d'" % id_value
+		elif form == "UserGroupMaster":
+			tbl_name = self._db.tblUserGroups
+			condition = "user_group_id = '%d'" % id_value
 		else:
 			print "Error: Id Validation not exists for form %s" % form
 
@@ -298,6 +308,40 @@ class KnowledgeDatabase(object) :
         	values, condition)
 
 #
+#	User Group
+#
+	def get_user_group_details_list(self):
+		columns = ["user_group_id", "user_group_name","form_type", 
+                    "form_ids", "is_active"]
+		condition = "1"
+		rows = self._db.get_data(self._db.tblUserGroups, columns, condition)
+		return rows
+
+	def get_user_group_list(self):
+		columns = ["user_group_id", "user_group_name", "is_active"]
+		condition = "1"
+		rows = self_db.get_data(self._db.tblUserGroups, columns, condition)
+		return rows
+
+	def save_user_group(self, user_group, session_user):
+		columns = ["user_group_id", "user_group_name","form_type", "form_ids", "is_active",
+                  "created_on", "created_by", "updated_on", "updated_by"]
+		form_ids = ",".join(str(x) for x in user_group.form_ids)
+		values_list =  [(user_group.user_group_id, user_group.user_group_name, user_group.form_type,
+        				form_ids, user_group.is_active, current_timestamp(), 
+        				session_user,current_timestamp(), session_user)]
+		update_columns_list = ["user_group_name","form_type", "form_ids", 
+        						"updated_on", "updated_by"]
+		return self._db.on_duplicate_key_update(self._db.tblUserGroups, 
+			columns, values_list, update_columns_list)
+
+	def change_user_group_status(self, user_group_id, is_active, session_user):
+		timestamp = current_timestamp()
+		columns = ["is_active", "updated_on" , "updated_by"]
+		values = [is_active, timestamp, session_user]
+		condition = "user_group_id='%d'" % user_group_id
+		return self._db.update(self._db.tblUserGroups, columns, values, condition)
+#
 #	User
 #
 	def save_user(self, user, session_user):
@@ -350,6 +394,13 @@ class KnowledgeDatabase(object) :
 				action = "Status of User %s has been updated" % str(obj)
 			elif action_type == "admin_status_change":
 				action = "Admin Status of User Privilege %s has been updated" % str(obj)
+		elif form == "UserGroupMaster":
+			if action_type == "save":
+				action = "User Group %s has been created" % obj
+			elif action_type == "update":
+				action = "User Group %s has been updated" % obj
+			elif action_type == "status_change":
+				action = "Status of User Group %s has been updated" % str(obj)
 		else:
 			print "Error : Activity Log not available for form %s" % form
 		
