@@ -486,7 +486,8 @@ function initMirror() {
     }
 
 
-    function getAdminUserGroupList(callerName, callback, failure_callback) {
+    function getAdminUserGroupList(callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "GetUserGroups",
             {}
@@ -494,55 +495,30 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function saveAdminUserGroup(callerName, userGroupDetail, callback, failure_callback) {
+    function saveAdminUserGroup(userGroupDetail, callback, failure_callback) {
+        callerName = "api/knowledge"
         if (isNull(userGroupDetail))
             return null;
-        else if (userGroupDetail.length != 3)
-            return null;
-        $.each(userGroupDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var userGroupName= userGroupDetail[0] ;
-        var fromType= userGroupDetail[1] ;
-        var formIds= userGroupDetail[2].split(',') ;
         var request = [
             "SaveUserGroup",
-            {
-                "user_group_name": userGroupName,
-                "form_type": fromType,
-                "form_ids": formIds
-            }
+            userGroupDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateAdminUserGroup(callerName, userGroupDetail, callback, failure_callback) {
+    function updateAdminUserGroup(userGroupDetail, callback, failure_callback) {
+        callerName = "api/knowledge"
         if (isNull(userGroupDetail))
             return null;
-        else if (userGroupDetail.length != 4)
-            return null;
-        $.each(userGroupDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var userGroupId= userGroupDetail[0] ;
-        var userGroupName= userGroupDetail[1] ;
-        var fromType= userGroupDetail[2] ;
-        var formIds= userGroupDetail[3].split(',') ;
         var request = [
             "UpdateUserGroup",
-            {
-                "user_group_id" : userGroupId,
-                "user_group_name": userGroupName,
-                "form_type": fromType,
-                "form_ids": formIds
-            }
+            userGroupDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeAdminUserGroupStatus(callerName, userGroupId, isActive, callback, failure_callback) {
+    function changeAdminUserGroupStatus(userGroupId, isActive, callback, failure_callback) {
+        callerName = "api/knowledge"
         if (isNull(userGroupId) || isNull(isActive) )
             return null;
         var request = [
@@ -558,7 +534,8 @@ function initMirror() {
 
     // Admin User Master
 
-    function getAdminUserList(callerName, callback, failure_callback) {
+    function getAdminUserList(callback, failure_callback) {
+        callerName = "/api/knowledge"
         var request = [
             "GetUsers",
             {}
@@ -567,7 +544,8 @@ function initMirror() {
     }
 
 
-    function saveAdminUser(callerName, userDetail, callback, failure_callback) {
+    function saveAdminUser( userDetail, callback, failure_callback) {
+       callerName = "/api/knowledge"
        if (isNull(userDetail))
             return null;
         else if (userDetail.length != 9)
@@ -602,7 +580,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateAdminUser(callerName, userDetail, callback, failure_callback) {
+    function updateAdminUser(userDetail, callback, failure_callback) {
+        callerName = "/api/knowledge"
         if (isNull(userDetail))
             return null;
         else if (userDetail.length != 9)
@@ -637,7 +616,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeAdminUserStatus(callerName, userId, isActive, callback, failure_callback) {
+    function changeAdminUserStatus(userId, isActive, callback, failure_callback) {
+        callerName = "/api/knowledge"
         if (isNull(userId) || isNull(isActive) )
             return null;
         var request = [
@@ -899,7 +879,8 @@ function initMirror() {
     } 
 
 // Client User
-    function getClientUsers(callerName, callback, failure_callback) {
+    function getClientUsers(callback, failure_callback) {
+        callerName = "api/client"
         var request = [
             "GetClientUsers",
             {}
@@ -907,8 +888,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function saveClientUser(callerName, clientUserDetail,
+    function saveClientUser(clientUserDetail,
      callback, failure_callback) {
+        callerName = "api/client"
         if (isNull(clientUserDetail))
             return null;
         var request = [
@@ -918,8 +900,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateClientUser(callerName, clientUserDetail, 
+    function updateClientUser(clientUserDetail, 
         callback, failure_callback) {
+        callerName = "api/client"
         if (isNull(clientUserDetail))
             return null;
         var request = [
@@ -929,8 +912,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientUserStatus(callerName, userId, isActive, 
+    function changeClientUserStatus(userId, isActive, 
         callback, failure_callback) {
+        callerName = "api/client"
         if (isNull(userId) || isNull(isActive) )
             return null;
         var request = [
@@ -943,8 +927,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeAdminStatus(callerName, userId, isAdmin, 
+    function changeAdminStatus(userId, isAdmin, 
         callback, failure_callback) {
+        callerName = "api/client"
         if (isNull(userId) || isNull(isAdmin) )
             return null;
         var request = [
@@ -952,6 +937,28 @@ function initMirror() {
             {
                 "user_id" : userId,
                 "is_admin" : isAdmin
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+// Unit Closure
+    function getUnitClosureList(callback, failure_callback) {
+        callerName = "api/client"
+        var request = [
+            "GetUnitClosureList",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function closeUnit(unitId, password, callback, failure_callback){
+        callerName = "api/client"
+        var request = [
+            "CloseUnit",
+            {
+                "unit_id": unitId,
+                "password": password
             }
         ];
         apiRequest(callerName, request, callback, failure_callback);
@@ -1056,7 +1063,10 @@ function initMirror() {
         saveClientUser: saveClientUser,
         updateClientUser: updateClientUser,
         changeClientUserStatus: changeClientUserStatus,
-        changeAdminStatus: changeAdminStatus
+        changeAdminStatus: changeAdminStatus,
+
+        getUnitClosureList: getUnitClosureList,
+        closeUnit: closeUnit,
     }
 
 }

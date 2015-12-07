@@ -2,6 +2,8 @@ import os
 from aparajitha.server.knowledgedatabase import KnowledgeDatabase
 from aparajitha.model.common import validate_data
 from aparajitha.model import protocol
+from aparajitha.server.knowledgemodels import *
+from aparajitha.server.clientmodels import *
 import json
 
 class APIHandler(object):
@@ -9,6 +11,10 @@ class APIHandler(object):
 		self._request_map = {
 			"Login": self._login,
 			"Logout": self._logout,
+			"GetUserGroups": self._get_user_groups,
+			"SaveUserGroup": self._save_user_group,
+			"UpdateUserGroup": self._update_user_group,
+			"ChangeUserGroupStatus": self._change_user_group_status,
 		}
 
 	def _success_response(self, response, response_option, data) :
@@ -41,6 +47,7 @@ class APIHandler(object):
 		if request_option == u"Logout" :
 			return handler(db, session_id, request_data)
 		user = db.get_user(user_id)
+		print user
 		return handler(db, user, request_data)
 
 
@@ -66,8 +73,8 @@ class APIHandler(object):
 			"session_token": session_id,
 			"user": {
 				"user_id": user_id,
-				"client_id": user["client_id"],
-				"email_id": email,
+				"client_id": int(user["client_id"]),
+				"email_id": str(email),
 				"category": user_details["category"],
 				"user_group_name": user_details["user_group_name"],
 				"employee_name": user_details["employee_name"],
@@ -88,6 +95,81 @@ class APIHandler(object):
 			"LogoutResponse", "LogoutSuccess", {}
 		)
 
+	def _get_user_groups(self, db, user, request):
+		knowledge_forms = Form.get_forms("knowledge", db)
+		techno_forms = Form.get_forms("techno", db)
+		forms = {}
+		forms["knowledge"] = Menu.get_menu(knowledge_forms)
+		forms["techno"] = Menu.get_menu(techno_forms)
+		user_group_list = UserGroup.get_detailed_list(db)
+		response_data = {}
+		response_data["forms"] = forms
+		response_data["user_groups"] = user_group_list
+		print response_data
+		return self._success_response(
+			"GetUserGroupsResponse", 
+			"GetUserGroupsSuccess", 
+			response_data
+		)
+
+	def _save_user_group(self, db, user, request):
+		form = "UserGroupMaster"
+		session_user = int(user["user_id"])
+		response = "SaveUserGroupResponse"
+		response_data = None
+		user_group_id = db.generate_new_id(form)
+		user_group = UserGroup.initialize_with_request( request, user_group_id)
+		if db.is_duplicate(form, "name", user_group.user_group_name,user_group_id):
+			response_data = self._failure_response(response, "GroupNameAlreadyExists")
+		elif db.save_user_group(user_group, session_user):
+			action_type = "save"
+			db.save_activity(form, user_group.user_group_name, 
+				action_type, session_user)
+			response_data =  self._success_response(
+				response, 
+				"SaveUserGroupSuccess", 
+				{}
+			)
+		return response_data
+        
+
+	def _update_user_group(self, db, user, request):
+		form = "UserGroupMaster"
+		session_user = int(user["user_id"])
+		response = "UpdateUserGroupResponse"
+		response_data = None
+		user_group_id = request["user_group_id"]
+		user_group = UserGroup.initialize_with_request(request, user_group_id)
+		if db.is_id_invalid(form, user_group_id):
+			response_data = self._failure_response(response, "InvalidUserGroupId")
+		elif db.is_duplicate(form, "name", user_group.user_group_name,
+			user_group.user_group_id):
+			response_data = self._failure_response(response,"GroupNameAlreadyExists")
+		elif db.save_user_group(user_group, session_user):
+			action_type = "update"
+			db.save_activity(form, user_group.user_group_name, 
+				action_type, session_user)
+			response_data =  self._success_response(response, "UpdateUserGroupSuccess",{})
+		return response_data
+
+	def _change_user_group_status(self, db, user, request):
+		form = "UserGroupMaster"
+		session_user = int(user["user_id"])
+		response = "ChangeUserGroupStatusResponse"
+		response_data = None
+		user_group_id = request["user_group_id"]
+		is_active = request["is_active"]
+		if db.is_id_invalid(form, user_group_id):
+			response_data = self._failure_response(
+				response, "InvalidUserGroupId")
+		elif db.change_user_group_status(user_group_id, is_active,
+				session_user):
+			action_type = "status_change"
+			db.save_activity(form, user_group_id, 
+				action_type, session_user)
+			response_data = self._success_response(
+				response, "ChangeUserGroupStatusSuccess",{})
+		return response_data
 
 #
 # db_request

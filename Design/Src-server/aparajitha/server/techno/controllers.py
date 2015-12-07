@@ -472,12 +472,16 @@ class ClientController(object):
         try:
             self.businessGroupId = JSONHelper.getInt(
                                     self.businessGroup, "business_group_id")
-            self.legalEntityId = JSONHelper.getInt(
-                                    self.legalEntity, "legal_entity_id")
-            self.divisionId = JSONHelper.getInt(self.division, "division_id")
         except:
             self.businessGroupId = None
+        try:
+            self.legalEntityId = JSONHelper.getInt(
+                                    self.legalEntity, "legal_entity_id")
+        except:
             self.legalEntityId = None
+        try:
+            self.divisionId = JSONHelper.getInt(self.division, "division_id")
+        except:
             self.divisionId = None
 
         self.businessGroupName = JSONHelper.getString(
@@ -548,22 +552,17 @@ class ClientController(object):
                                 self.clientId, countryId,geographyId, unitCode, 
                                 unitName, industryId, address, postalCode, domainIds, 
                                 None, industryName, geography)
-                print "unit Obj created"
                 if unitObj.isDuplicateUnitName():
-                    print "inside if"
                     self.responseData = commonResponseStructure("UnitNameAlreadyExists",{})
                     return False
                 elif unitObj.isDuplicateUnitCode():
-                    print "first elif"
                     self.responseData = commonResponseStructure("UnitCodeAlreadyExists",{})
                     return False
                 elif self.unitId != None:
-                    print "second elif"
                     if unitObj.isIdInvalid():
                         self.responseData = commonResponseStructure("InvalidUnitId",{})
                         return False
                     else:
-                        print "inside else"
                         self.unitObjList.append(unitObj)
                 else:
                     self.unitObjList.append(unitObj)

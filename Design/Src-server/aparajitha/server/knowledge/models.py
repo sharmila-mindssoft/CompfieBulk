@@ -986,7 +986,7 @@ class GeographyAPI(object) :
                     names.append(geographyData.get(id))
                 names.append(row[1])
 
-            mapping = '>>'.join(str(x) for x in names)
+            mapping = ' >> '.join(str(x) for x in names)
             _list = geographies.get(countryId)
             if _list is None :
                 _list = []

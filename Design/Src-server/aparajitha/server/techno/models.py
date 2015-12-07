@@ -307,7 +307,6 @@ class BusinessGroup(object):
                 self.businessGroupTblName, condition)
 
     def save(self, sessionUser):
-        print "inside businessGroup save"
         valuesList = []
         columns = "business_group_id, business_group_name, created_on, created_by,"+\
                 "updated_on, updated_by"
@@ -384,7 +383,6 @@ class LegalEntity(object):
             self.legalEntityTblName, condition)
 
     def save(self, sessionUser):
-        print "inside legalEntity save"
         columns = "legal_entity_id, legal_entity_name, business_group_id,"+\
                   "created_on, created_by, updated_on, updated_by"
         valuesTuple = (self.legalEntityId, self.legalEntityName, self.businessGroupId, 
@@ -464,7 +462,6 @@ class Division(object):
             self.divisionTblName, condition)
 
     def save(self, sessionUser):
-        print "Entered into saveDivision"
         columns = "division_id, division_name, legal_entity_id, business_group_id,"+\
                   "created_on, created_by, updated_on, updated_by"
         valuesTuple = (self.divisionId, self.divisionName, self.legalEntityId, 
@@ -598,7 +595,6 @@ class Unit(object):
             getClientDatabase(self.clientId)).isAlreadyExists(self.unitTblName, condition)
 
     def save(self, sessionUser):
-        print "inside unit save"
         knowledgeValueslist = []
         clientValuesList = []
         clientDbColumns = "unit_id, division_id, legal_entity_id, business_group_id,"+\
@@ -757,7 +753,7 @@ class Client(object):
                 if self.division.save(self.sessionUser):
                     for unitObj in self.unitList:
                         if unitObj.save(self.sessionUser):
-                            continue
+                            return True
                         else:
                             return False
                     return True
