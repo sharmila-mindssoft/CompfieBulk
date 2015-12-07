@@ -21,46 +21,7 @@
       alert("failure_data"+data)
     }
     $(document).ready(function(){
-      clientId = 1
-
-      businessGroup = {}
-      businessGroup["business_group_id"] = 1
-      businessGroup["business_group_name"] = "Test Business Group 235"
-
-      legalEntity = {}
-      legalEntity["legal_entity_id"] = null
-      legalEntity["legal_entity_name"] = "Test Legal Entity Name 236"
-
-      division = {}
-      division["division_id"] = null
-      division["division_name"] = "Test Division Name 238"
-
-      countryWiseUnits = []
-
-
-      units = []
-      unit = {}
-      unit["unit_id"] = null
-      unit["unit_code"] = "MDUNIT0111"
-      unit["unit_name"] = "MD Unit 111"
-      unit["unit_address"] = "Sample Address 111"
-      unit["postal_code"] = "678267841"
-      unit["geography_id"] = 1
-      unit["unit_location"] = "Madurai"
-      unit["industry_id"] = 1
-      unit["industry_name"] = "Factory"
-      unit["domain_ids"] = [3,4]
-
-      units.push(unit)
-
-      india = {}
-      india["country_id"] = 1
-      india["units"] = units
-
-      countryWiseUnits.push(india)
-
-        mirror.saveClient("TechnoAPI", clientId, businessGroup, legalEntity, division, 
-        countryWiseUnits, success, failure);
+     
     });
 </script>
 </body>

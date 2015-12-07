@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8080/";
+var BASE_URL = "http://192.168.1.7:8080/";
 function initMirror() {
     var DEBUG = true;
 
@@ -522,8 +522,7 @@ function initMirror() {
     }
 
 
-    function saveAdminUser(callerName, userDetail, 
-        callback, failure_callback) {
+    function saveAdminUser(callerName, userDetail, callback, failure_callback) {
        if (isNull(userDetail))
             return null;
         else if (userDetail.length != 9)
