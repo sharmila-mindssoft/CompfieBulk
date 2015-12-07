@@ -37,7 +37,7 @@ class Database(object) :
 				cursor.close()
 		return isComplete
 
-	def executeAndReturn(self, query) :
+	def execute_and_return(self, query) :
 		db = None
 		cursor = None
 		try:
