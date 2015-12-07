@@ -14,6 +14,7 @@ class Database(object) :
 	tblDomains = "tbl_domains"
 	tblUserDetails = "tbl_user_details"
 	tblUserGroups = "tbl_user_groups"
+	tblEmailVerification = "tbl_email_verification"
 
 	### Client Tables ###
 	tblServiceProviders = "tbl_service_providers"

@@ -1262,12 +1262,49 @@ class KnowledgeDatabase(object) :
 			return False
 		else:
 			return True
-
+#
+#	Change Password
+#
 	def update_password(self, password, session_user):
 		column = ["password"]
 		condition = "user_id = '%d'" % session_user
 		value = [encrypt(password)]
 		return self._db.update(self._db.tblUsers, column, value, condition)
+
+#
+#	Forgot Password
+#
+
+	def validate_username(self, username):
+		column = ["count(*)", "user_id"]
+		condition = " username='"+username+"'"
+		rows = self._db.get_data(self._db.tblUsers, column, condition)
+		count = rows[0][0]
+		if count == 1:
+			user_id = rows[0][1]
+			return user_id
+		else :
+			return None
+
+	def save_reset_token(self, reset_token, user_id):
+		columns = "user_id, verification_code"
+		user_id = int(user_id)
+		reset_token = int(reset_token)
+		values = [(user_id, str(reset_token))]
+		return self._db.insert(self._db.tblEmailVerification, 
+	    	columns, values)
+
+	def validate_reset_token(self, reset_token):
+		column = ["count(*)", "user_id"]
+		condition = " verification_code='%s'" % reset_token
+		rows = self._db.get_data(self._db.tblEmailVerification,
+        column, condition)
+		count = rows[0][0]
+		user_id = rows[0][1]
+		if count == 1:
+			return True
+		else:
+			return False
 
 #
 #	Forms

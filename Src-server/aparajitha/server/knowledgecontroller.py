@@ -5,6 +5,7 @@ from aparajitha.model import protocol
 from aparajitha.server.knowledgemodels import *
 from aparajitha.server.clientmodels import *
 import json
+import uuid
 
 class APIHandler(object):
 	def __init__(self):
@@ -55,7 +56,6 @@ class APIHandler(object):
 		if request_option == u"Logout" :
 			return handler(db, session_id, request_data)
 		user = db.get_user(user_id)
-		print user
 		return handler(db, user, request_data)
 
 
@@ -281,10 +281,37 @@ class APIHandler(object):
 		return response_data
         
 	def _forgot_password(self, db, user, request):
-		print "inside forgot password"
+		username = request["username"]
+		response = "ForgotPasswordResponse"
+		response_data = None
+		user_id = db.validate_username(username)
+		if user_id == None :
+			response_data = self._failure_response(response,
+			 "InvalidUsername")
+		else:
+			self._send_reset_link(db, user_id)
+			response_data = self._success_response(response,
+				"ForgotPasswordSuccess",{})
+		return response_data
+
+	def _send_reset_link(self, db, user_id):
+		resetToken = uuid.uuid4()
+		print "http://localhost:8080/ForgotPassword?reset_token=%d" % resetToken
+		if db.save_reset_token(resetToken, user_id):
+			print "send email"
+			# send_email()
+			return True
 
 	def _validate_reset_token(self, db, user, request):
-		print "inside validate token"
+		response = "ResetTokenValidationResponse"
+		response_data = None
+		reset_token = request["reset_token"]
+		if db.validate_reset_token(reset_token):
+			response_data = self._success_response(response,
+            	"ResetTokenValidationSuccess",{})
+		else:
+			response_data = self._failure_response(response, "InvalidResetToken")
+		return response_data
 
 	def _reset_password(self, db, user, request):		
 		print "inside reset password"
