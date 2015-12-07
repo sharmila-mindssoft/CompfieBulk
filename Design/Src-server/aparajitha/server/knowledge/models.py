@@ -1387,7 +1387,7 @@ class StatutoryMappingApi(object):
             statutoryMappings = [_statutoryMappings.get(x)[1] for x in statutoryIds ]
             complianceIds = [int(x) for x in row[9][:-1].split(',')]
             geographyIds = [int(x) for x in row[10][:-1].split(',')]
-            approvalStatus = row[11]
+            approvalStatus = str(row[11])
             isActive = row[12]
             mapping = StatutoryMapping (
                 countryId, countryName, domainId, domainName, 
