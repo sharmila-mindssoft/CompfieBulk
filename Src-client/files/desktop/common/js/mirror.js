@@ -476,6 +476,15 @@ function initMirror() {
         apiRequest("ApproveStatutoryMapping", request, callback, failure_callback);
     }
 
+    function getStatutoryMappingsReportFilter(callback, failure_callback) {
+        var request = ["GetStatutoryMappingReportFilter", {}];
+        apiRequest("GetStatutoryMappingReportFilter", request, callback, failure_callback);
+    }
+
+    function getStatutoryMappingReportData(filterData, callback, failure_callback) {
+        var request = ["GetStatutoryMappingReportData", filterData];
+        apiRequest("getStatutoryMappingReportData", request, callback, failure_callback);
+    }
 
     // Admin User Group Master
     function isNull(value){
@@ -969,13 +978,19 @@ function initMirror() {
         updateGeography: updateGeography,
         changeGeographyStatus: changeGeographyStatus,
         getGeographyReport: getGeographyReport,
+
         saveStatutory: saveStatutory,
         updateStatutory: updateStatutory,
+
         saveStatutoryMapping: saveStatutoryMapping,
         updateStatutoryMapping: updateStatutoryMapping,
+
         getStatutoryMappings: getStatutoryMappings,
         changeStatutoryMappingStatus: changeStatutoryMappingStatus,
         approveStatutoryMapping: approveStatutoryMapping,
+        getStatutoryMappingsReportFilter: getStatutoryMappingsReportFilter,
+        getStatutoryMappingsReportData: getStatutoryMappingsReportData,
+
 
         saveAdminUserGroup: saveAdminUserGroup,
         updateAdminUserGroup: updateAdminUserGroup,
