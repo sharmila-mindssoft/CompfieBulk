@@ -578,6 +578,59 @@ define_request(
 	] 
 )
 
+#
+#	Change Password
+#
+
+define_request(
+	"ChangePassword",
+	{
+		"current_password" : Text50,
+        "new_password" : Text50
+	},
+	{},
+	[
+		"InvalidCurrentPassword"
+	] 
+)
+
+#
+#	Forgot Password
+#
+define_request(
+	"ForgotPassword",
+	{
+		"username" : Text50
+	},
+	{},
+	[
+		"InvalidUsername"
+	] 
+)
+
+define_request(
+	"ResetTokenValidation",
+	{
+		"reset_token" : Text100
+	},
+	{},
+	[
+		"InvalidResetToken"
+	] 
+)
+
+define_request(
+	"ResetPassword",
+	{
+		"reset_token" : Text100,
+		"new_password" : Text50
+	},
+	{},
+	[
+		"InvalidResetToken"
+	] 
+)
+
 
 #
 # Request, RequestFrame

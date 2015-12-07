@@ -1263,6 +1263,12 @@ class KnowledgeDatabase(object) :
 		else:
 			return True
 
+	def update_password(self, password, session_user):
+		column = ["password"]
+		condition = "user_id = '%d'" % session_user
+		value = [encrypt(password)]
+		return self._db.update(self._db.tblUsers, column, value, condition)
+
 #
 #	Forms
 #

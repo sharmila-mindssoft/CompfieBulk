@@ -18,7 +18,11 @@ class APIHandler(object):
 			"GetUsers": self._get_users,
 			"SaveUser": self._save_user,
 			"UpdateUser": self._update_user,
-			"ChangeUserStatus": self._change_admin_user_status,									
+			"ChangeUserStatus": self._change_admin_user_status,
+			"ChangePassword": self._change_password,
+			"ForgotPassword": self._forgot_password,
+			"ResetTokenValidation": self._validate_reset_token,
+			"ResetPassword": self._reset_password,
 		}
 
 	def _success_response(self, response, response_option, data) :
@@ -262,6 +266,28 @@ class APIHandler(object):
 				response, "ChangeUserStatusSuccess",{})
 		return response_data
 
+	def _change_password(self, db, user, request):
+		session_user = user["user_id"]
+		current_password = request["current_password"]
+		new_password = request["new_password"]
+		client_id = db.get_client_id(session_user)        
+		response = "ChangePasswordResponse"
+		response_data = None
+		if not db.verify_password(current_password, session_user, client_id):
+			response_data = self._failure_response(response, "InvalidCurrentPassword")
+		elif db.update_password(new_password, session_user):
+			response_data = self._success_response(
+				response, "ChangePasswordSuccess",{})
+		return response_data
+        
+	def _forgot_password(self, db, user, request):
+		print "inside forgot password"
+
+	def _validate_reset_token(self, db, user, request):
+		print "inside validate token"
+
+	def _reset_password(self, db, user, request):		
+		print "inside reset password"
 
 #		
 # db_request
