@@ -584,8 +584,8 @@ class DatabaseHandler(object) :
                     names.append(_tempDict.get(id))
                 names.append(row[1])
             mappings = '>>'.join(str(x) for x in names)
-            self.allStatutories[int(row[0])] = [row[1], mappings, row[3]]
-                
+            self.allStatutories[int(row[0])] = [row[1], int(row[2]), parentIds, mappings, int(row[4]), int(row[6])]
+        return self.allStatutories
     def getStatutories(self) :
         query = "SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, \
             t2.country_id, t3.country_name, t2.domain_id, t4.domain_name \
@@ -664,7 +664,7 @@ class DatabaseHandler(object) :
 
     def updateStatutories(self, statutoryId, name, parentIds, updatedBy) :
         oldData = self.allStatutories.get(statutoryId)
-        oldParentIds = oldData[2]
+        oldParentIds = oldData[3]
         query = "UPDATE tbl_statutories set statutory_name='%s', parent_ids='%s',\
             updated_by=%s WHERE statutory_id=%s " % (
                 name, parentIds, updatedBy, statutoryId
@@ -1024,7 +1024,7 @@ class DatabaseHandler(object) :
         statutoryProvision = []
         for sid in oldRecord[7][:-1].split(',') :
             data = self.allStatutories.get(int(sid))
-            statutoryProvision.append(data[1])
+            statutoryProvision.append(data[3])
         mappings = ','.join(str(x) for x in statutoryProvision)
         geoMap = []
         for gid in oldRecord[8][:-1].split(',') :

@@ -1070,11 +1070,12 @@ class GeographyAPI(object) :
         ]
 
 class Statutory(object) :
-    def __init__(self, statutoryId, name, levelId, parentIds) :
+    def __init__(self, statutoryId, name, levelId, parentIds, parentMappings) :
         self.statutoryId = statutoryId
         self.name = name
         self.levelId = levelId
         self.parentIds = parentIds
+        self.parentMappings = parentMappings
         self.verify()
     
     def verify(self) :
@@ -1082,6 +1083,7 @@ class Statutory(object) :
         assertType(self.name, StringType)
         assertType(self.levelId, IntType)
         assertType(self.parentIds, ListType)
+        assertType(self.parentMappings, StringType)
 
     def toStructure(self) :
         return {
@@ -1089,7 +1091,8 @@ class Statutory(object) :
             "statutory_name": self.name,
             "level_id": self.levelId,
             "parent_ids": self.parentIds,
-            "parent_id": self.parentIds[-1]
+            "parent_id": self.parentIds[-1],
+            "parent_mappings": self.parentMappings
         }
 
     def __repr__(self) :
@@ -1104,12 +1107,13 @@ class StatutoryApi (object) :
 
     def getStatutories(self) :
         DH = DatabaseHandler.instance()
-        _statutoryList = DH.getStatutories()
-        for row in _statutoryList :
-            parentIds = [int(x) for x in row[3][:-1].split(',')]
-            statutory = Statutory(int(row[0]), row[1], int(row[2]), parentIds)
-            countryId = int(row[4])
-            domainId = int(row[6])
+        _statutoryDict = DH.getAllStatutories()
+        for key, value in _statutoryDict.iteritems() :
+            # parentIds = [int(x) for x in row[3][:-1].split(',')]
+
+            statutory = Statutory(key, value[0], value[1], value[2], value[3])
+            countryId = int(value[4])
+            domainId = int(value[5])
             _list = []
             _countryWise = self.statutories.get(countryId)
             if _countryWise is None :
@@ -1121,7 +1125,6 @@ class StatutoryApi (object) :
             _list.append(statutory.toStructure())
             _countryWise[domainId] = _list
             self.statutories[countryId] = _countryWise
-
         return self.statutories
 
     def saveStatutory(self) :
@@ -1279,7 +1282,7 @@ class StatutoryMapping(object) :
         assertType(self.complianceIds, ListType)
         # assertType(self.complianceNames, ListType)
         assertType(self.geographyIds, ListType)
-        assertType(self.approvalStatus, IntType)
+        assertType(self.approvalStatus, StringType)
         assertType(self.isActive, IntType)
         self.getData()
 
