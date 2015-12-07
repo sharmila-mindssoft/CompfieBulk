@@ -608,11 +608,15 @@ class ClientController(object):
         assertType(sessionUser, LongType)
 
         self.clientId = JSONHelper.getInt(requestData, "client_id")
-        self.divisionId = JSONHelper.getInt(requestData, "division_id")
+        self.legalEntityId = JSONHelper.getInt(requestData, "legal_entity_id")
         self.isActive = JSONHelper.getInt(requestData, "is_active")
+        try:
+            self.divisionId = JSONHelper.getInt(requestData, "division_id")
+        except:
+            self.divisionId = None
 
         client = Client()
-        if client.changeClientStatus(self.clientId, self.divisionId, 
+        if client.changeClientStatus(self.clientId, self.legalEntityId, self.divisionId, 
             self.isActive, self.sessionUser):
             return commonResponseStructure("ChangeClientStatusSuccess",{})
         else:
