@@ -215,6 +215,24 @@
 				isActive = 1
 				mirror.changeAdminUserStatus(userId, isActive, success, failure)
 			}
+			function changePassword(){
+				currentPassword = "1234567"
+				newPassword = "123456"
+				mirror.changePassword(currentPassword, newPassword,success, failure)
+			}
+			function forgotPassword(){
+				username = "Testclientser24@domain.com"
+				mirror.forgotPassword(username, success, failure)
+			}
+			function validateResetToken(){
+				resetToken = "1"
+				mirror.validateResetToken(resetToken, success, failure)
+			}
+			function resetPassword(){
+				resetToken = "158350839976395462222620754547803639110"
+				newPassword = "1234567"
+				mirror.resetPassword(resetToken, newPassword, success, failure) 
+			}
 		</script>
 	</head>
 	<body>
@@ -304,6 +322,22 @@
 			</button>
 			<button onclick="changeAdminUserStatus()">
 				Change Admin User Status
+			</button>
+		</div>
+		<div>
+			<button onclick="changePassword()">
+				Change Password
+			</button>
+		</div>
+		<div>
+			<button onclick="forgotPassword()">
+				Forgot Password
+			</button>
+			<button onclick="validateResetToken()">
+				Validate Reset Token
+			</button>
+			<button onclick="resetPassword()">
+				Reset password
 			</button>
 		</div>
 		<br>

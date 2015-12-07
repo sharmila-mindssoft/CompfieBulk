@@ -5,6 +5,7 @@ from aparajitha.model import protocol
 from aparajitha.server.knowledgemodels import *
 from aparajitha.server.clientmodels import *
 import json
+import uuid
 
 class APIHandler(object):
 	def __init__(self):
@@ -50,7 +51,11 @@ class APIHandler(object):
 			"GetUsers": self._get_users,
 			"SaveUser": self._save_user,
 			"UpdateUser": self._update_user,
-			"ChangeUserStatus": self._change_admin_user_status,									
+			"ChangeUserStatus": self._change_admin_user_status,
+			"ChangePassword": self._change_password,
+			"ForgotPassword": self._forgot_password,
+			"ResetTokenValidation": self._validate_reset_token,
+			"ResetPassword": self._reset_password,
 		}
 
 	def _success_response(self, response, response_option, data) :
@@ -83,7 +88,6 @@ class APIHandler(object):
 		if request_option == u"Logout" :
 			return handler(db, session_id, request_data)
 		user = db.get_user(user_id)
-		print user
 		return handler(db, user, request_data)
 
 
@@ -668,7 +672,6 @@ class APIHandler(object):
 		response_data = {}
 		response_data["forms"] = forms
 		response_data["user_groups"] = user_group_list
-		print response_data
 		return self._success_response(
 			"GetUserGroupsResponse", 
 			"GetUserGroupsSuccess", 
@@ -744,7 +747,6 @@ class APIHandler(object):
 		response_data["countries"] = country_list
 		response_data["user_groups"] = user_group_list
 		response_data["users"] = user_list
-		print response_data
 		return self._success_response(
 				"GetUsersResponse", 
 				"GetUsersSuccess",
@@ -821,7 +823,72 @@ class APIHandler(object):
 				response, "ChangeUserStatusSuccess",{})
 		return response_data
 
+	def _change_password(self, db, user, request):
+		session_user = user["user_id"]
+		current_password = request["current_password"]
+		new_password = request["new_password"]
+		client_id = db.get_client_id(session_user)        
+		response = "ChangePasswordResponse"
+		response_data = None
+		if not db.verify_password(current_password, session_user, client_id):
+			response_data = self._failure_response(response, "InvalidCurrentPassword")
+		elif db.update_password(new_password, session_user):
+			response_data = self._success_response(
+				response, "ChangePasswordSuccess",{})
+		return response_data
+        
+	def _forgot_password(self, db, user, request):
+		username = request["username"]
+		response = "ForgotPasswordResponse"
+		response_data = None
+		user_id = db.validate_username(username)
+		if user_id == None :
+			response_data = self._failure_response(response,
+			 "InvalidUsername")
+		else:
+			self._send_reset_link(db, user_id)
+			response_data = self._success_response(response,
+				"ForgotPasswordSuccess",{})
+		return response_data
 
+	def _send_reset_link(self, db, user_id):
+		resetToken = uuid.uuid4()
+		print "http://localhost:8080/ForgotPassword?reset_token=%d" % resetToken
+		if db.save_reset_token(resetToken, user_id):
+			print "send email"
+			# send_email()
+			return True
+
+	def _validate_reset_token(self, db, user, request):
+		response = "ResetTokenValidationResponse"
+		response_data = None
+		reset_token = request["reset_token"]
+		if db.validate_reset_token(reset_token):
+			response_data = self._success_response(response,
+            	"ResetTokenValidationSuccess",{})
+		else:
+			response_data = self._failure_response(response, "InvalidResetToken")
+		return response_data
+
+	def _reset_password(self, db, user, request):		
+		reset_token = request["reset_token"]
+		newPassword = request["new_password"]
+		user_id = None
+		response = "ResetPasswordResponse"
+		response_data = None
+		if db.validate_reset_token(reset_token):
+			user_id = db.get_user_id_by_verification_code(reset_token)
+			if (db.update_password(newPassword, user_id) and 
+        		db.delete_user_verfication_code(reset_token)):
+				response_data = self._success_response(response,
+            	"ResetPasswordSuccess",{})
+			else:
+				print "Error: Reset Password Failed"
+		else:
+			response_data = self._failure_response(response, "InvalidResetToken")			
+		return response_data
+                
+                
 #		
 # db_request
 #

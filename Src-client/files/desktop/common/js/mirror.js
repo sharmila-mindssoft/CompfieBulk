@@ -656,8 +656,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changePassword(callerName, currentPassword, newPassword, callback, failure_callback) {
-        
+    function changePassword(currentPassword, newPassword, callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "ChangePassword",
             {
@@ -668,8 +668,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function forgotPassword(callerName, username, callback, failure_callback) {
-        
+    function forgotPassword(username, callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "ForgotPassword",
             {
@@ -679,8 +679,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function validateResetToken(callerName, resetToken, callback, failure_callback) {
-        
+    function validateResetToken(resetToken, callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "ResetTokenValidation",
             {
@@ -690,8 +690,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function resetPassword(callerName, resetToken, newPassword, callback, failure_callback) {
-        
+    function resetPassword(resetToken, newPassword, callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "ResetPassword",
             {
