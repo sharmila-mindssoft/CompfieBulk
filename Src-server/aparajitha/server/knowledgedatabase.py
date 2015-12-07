@@ -2,9 +2,13 @@ from aparajitha.server.database import Database
 from aparajitha.misc.dates import *
 from aparajitha.misc.client_mappings import *
 from aparajitha.misc.formmappings import formIdMappings
+from types import *
 import uuid
 import datetime
 import hashlib
+import string
+import random
+
 
 DATABASE = "mirror_knowledge"
 
@@ -17,250 +21,275 @@ def to_dict(keys, values_list):
 def get(fields) :
     return ", ".join(fields)
 
+def generate_password() : 
+    characters = string.ascii_uppercase + string.digits
+    password = ''.join(random.SystemRandom().choice(characters) for _ in range(7))
+    print password
+    print encrypt(password)
+    return encrypt(password)
+
 def encrypt(value):
 	m = hashlib.md5()
 	m.update(value)
 	return m.hexdigest()
 
+def client_database(client_id) :
+	database_name = None
+	if client_id in client_db_mappings :
+		database_name = client_db_mappings[client_id]
+	if database_name is None :
+		# temporary purpose
+		database_name = "mirror_client"
+		# return None
+	return Database(database_name)
+
 class KnowledgeDatabase(object) :
-    def __init__(self) :
-        self._db = Database(DATABASE)
-        self.allStatutories = {}
-        self.allGeographies = {}
-        self.get_all_geographies()
-        self.get_all_statutories()
 
+	def __init__(self) :
+		self._db = Database(DATABASE)
+		self.allStatutories = {}
+		self.allGeographies = {}
+		self.get_all_geographies()
+		self.get_all_statutories()
 
-    def client_database(client_id) :
-        database_name = None
-        if client_id in client_db_mappings :
-            database_name = client_db_mappings[client_id]
-        if database_name is None :
+	def client_database(client_id) :
+		database_name = None
+		if client_id in client_db_mappings :
+			database_name = client_db_mappings[client_id]
+		if database_name is None :
             # temporary purpose
-            database_name = "mirror_client"
+			database_name = "mirror_client"
             # return None
         return Database(database_name)
 
-    def new_uuid(self) :
-        s = str(uuid.uuid4())
-        return s.replace("-", "")
+	def new_uuid(self) :
+		s = str(uuid.uuid4())
+		return s.replace("-", "")
 
-    def test(self) :
-        query = "SHOW TABLES;"
-        return self._db.execute_and_return(query)
+	def test(self) :
+		query = "SHOW TABLES;"
+		return self._db.execute_and_return(query)
 
-    def add_session(self, user_id) :
-        session_id = self.new_uuid()
-        query = "insert into tbl_user_sessions values ('%s', '%s', '%d');"
-        query = query % (session_id, user_id, current_timestamp())
-        self._db.execute(query)
-        return session_id
+	def add_session(self, user_id) :
+		session_id = self.new_uuid()
+		query = "insert into tbl_user_sessions values ('%s', '%s', '%d');"
+		query = query % (session_id, user_id, current_timestamp())
+		self._db.execute(query)
+		return session_id
 
-    def remove_session(self, session_id) :
-        query = "delete from tbl_user_sessions where session_id = '%s';"
-        query = query % (session_id,)
-        self._db.execute(query)
+	def remove_session(self, session_id) :
+		query = "delete from tbl_user_sessions where session_id = '%s';"
+		query = query % (session_id,)
+		self._db.execute(query)
 
-    def get_session_user_id(self, session_id) :
-        query = "select user_id from tbl_user_sessions where session_id = '%s';"
-        query = query % (session_id,)
-        result = self._db.execute_and_return(query)
-        if len(result) == 0 :
-            return None
-        return int(result[0][0])
+	def get_session_user_id(self, session_id) :
+		query = "select user_id from tbl_user_sessions where session_id = '%s';"
+		query = query % (session_id,)
+		result = self._db.execute_and_return(query)
+		if len(result) == 0 :
+			return None
+		return int(result[0][0])
 
-    def get_user(self, user_id) :
-        select_fields = [
-            "user_id", "email_id", "client_id", "is_active", "user_group_id",
-            "category", "employee_name", "employee_code", "contact_no", "address",
-            "designation", "domain_ids", "country_ids", "client_ids", "is_admin"
-        ]
-        query = "select %s from tbl_user_details where user_id = %s;"
-        query = query % (get(select_fields), user_id,)
-        result = self._db.execute_and_return(query)
-        if len(result) == 0 :
-            return None
-        result = to_dict(select_fields, result)
-        for row in result :
-            row["user_id"] = int(row["user_id"])
-            row["user_group_id"] = int(row["user_group_id"])
-        return result[0]
+	def get_user(self, user_id) :
+		select_fields = [
+			"user_id", "email_id", "client_id", "is_active", "user_group_id",
+			"category", "employee_name", "employee_code", "contact_no", "address",
+			"designation", "domain_ids", "country_ids", "client_ids", "is_admin"
+		]
+		query = "select %s from tbl_user_details where user_id = %s;"
+		query = query % (get(select_fields), user_id,)
+		result = self._db.execute_and_return(query)
+		if len(result) == 0 :
+			return None
+		result = to_dict(select_fields, result)
+		for row in result :
+			row["user_id"] = int(row["user_id"])
+			row["user_group_id"] = int(row["user_group_id"])
+		return result[0]
 
-    def get_user_id(self, email) :
-        select_fields = ["user_id"]
-        query = "select %s from tbl_users where username = '%s';"
-        query = query % (get(select_fields), email,)
-        result = self._db.execute_and_return(query)
-        if len(result) == 0 :
-            return None
-        return int(result[0][0])
+	def get_user_id(self, email) :
+		select_fields = ["user_id"]
+		query = "select %s from tbl_users where username = '%s';"
+		query = query % (get(select_fields), email,)
+		result = self._db.execute_and_return(query)
+		if len(result) == 0 :
+			return None
+		return int(result[0][0])
 
-    def match_password(self, user_id, password) :
-        select_fields = ["client_id"]
-        query = ("select %s from tbl_users where user_id = %s and " +
-            "password = '%s' and is_active = 1;")
-        query = query % (get(select_fields), user_id, password)
-        result = self._db.execute_and_return(query)
-        if len(result) == 0 :
-            return None
-        return to_dict(select_fields, result)
+	def get_client_id(self, user_id):
+		select_fields = ["client_id"]
+		query = "select %s from tbl_users where user_id = '%s';"
+		query = query % (get(select_fields), user_id,)
+		result = self._db.execute_and_return(query)
+		if len(result) == 0 :
+			return None
+		return int(result[0][0])		
 
-    def get_user_details(self, user_id, client_id) :
-        select_fields = [
-            "tbl1.category", "user_group_name", "form_ids",
-            "employee_name", "employee_code",
-            "contact_no", "address", "designation", "is_admin"
-        ]
-        query = ("select %s from tbl_user_details tbl1 " +
-            "inner join tbl_user_groups tbl2 " +
-            "on tbl1.user_group_id = tbl2.user_group_id " +
-            "where user_id = %s;")
-        query = query % (get(select_fields), user_id,)
-        result = None
-        if client_id is None :
-            result = self._db.execute_and_return(query)
-        else :
-            client_db = client_database(client_id)
-            if client_db is None :
-                return None
-            result = self.client_db.execute_and_return(query)
-        if len(result) == 0 :
-            return None
-        result = to_dict(select_fields, result)
-        result = result[0]
+	def match_password(self, user_id, password) :
+		select_fields = ["client_id"]
+		encrypted_password = encrypt(password)
+		query = ("select %s from tbl_users where user_id = %s and " +
+			"password = '%s' and is_active = 1;")
+		query = query % (get(select_fields), user_id, encrypted_password)
+		result = self._db.execute_and_return(query)
+		if len(result) == 0 :
+			return None
+		return to_dict(select_fields, result)
 
-        form_ids = result["form_ids"].split(",")
-        form_ids2 = []
-        for form_id in form_ids :
-            form_ids2.append(int(form_id))
+	def get_user_details(self, user_id, client_id) :
+		select_fields = [
+			"tbl1.category", "user_group_name", "form_ids",
+			"employee_name", "employee_code",
+			"contact_no", "address", "designation", "is_admin"
+		]
+		client_select_fields = [
+			"user_group_name", "form_ids",
+			"employee_name", "employee_code",
+			"contact_no", "is_admin"
+		]
+		query = ("select %s from %s tbl1 " +
+			"inner join %s tbl2 " +
+			"on tbl1.user_group_id = tbl2.user_group_id " +
+			"where user_id = %s;")
 
-        select_fields = [
-            "form_id", "form_name", "form_url",
-            "form_type", "form_order", "parent_menu"
-        ]
-        query = "select %s from tbl_forms where form_id in %s;"
-        if result["is_admin"] == 0 :
-            query = query + " and admin_form = 0"
-        query = query % (get(select_fields), tuple(form_ids2))
-        forms = self._db.execute_and_return(query)
-        if len(forms) == 0 :
-            return None
-        forms = to_dict(select_fields, forms)
+		result = None
+		if client_id is None :
+			query = query % (get(select_fields), 
+			self._db.tblUserDetails,self._db.tblUserGroups,user_id,)
+			result = self._db.execute_and_return(query)
+			result = to_dict(select_fields, result)
+		else :
+			client_db = client_database(client_id)
+			if client_db is None :
+				return None
+			query = query % (get(client_select_fields), 
+			self._db.tblClientUserDetails, self._db.tblClientUserGroups,user_id,)
+			result = client_db.execute_and_return(query)
+			result = to_dict(client_select_fields, result)
+		if len(result) == 0 :
+			return None
+		result = result[0]
+		form_ids = result["form_ids"].split(",")
+		form_ids2 = []
+		for form_id in form_ids :
+			form_ids2.append(int(form_id))
 
-        menu = {
-            "masters": [],
-            "transactions": [],
-            "reports": [],
-            "settings": []
-        }
-        for form in forms :
-            form_type = form["form_type"] + "s"
-            form["form_id"] = int(form["form_id"])
-            form["form_order"] = int(form["form_order"])
-            menu[form_type].append(form)
+		select_fields = [
+			"form_id", "form_name", "form_url",
+			"form_type", "form_order", "parent_menu"
+		]
+		query = "select %s from tbl_forms where form_id in %s "
+		if result["is_admin"] == 0 :
+			query = query + " and admin_form = 0"
+		query = query % (get(select_fields), tuple(form_ids2))
+		forms = self._db.execute_and_return(query)
+		if len(forms) == 0 :
+			return None
+		forms = to_dict(select_fields, forms)
 
-        result2 = {
-            "category": result["tbl1.category"],
-            "user_group_name": result["user_group_name"],
-            "employee_name": result["employee_name"],
-            "employee_code": result["employee_code"],
-            "contact_no": result["contact_no"],
-            "address": result["address"],
-            "designation": result["designation"],
-            "menu": menu
-        }
-        return result2
+		menu = {
+			"masters": [],
+			"transactions": [],
+			"reports": [],
+			"settings": []
+		}
+		for form in forms :
+			form_type = form["form_type"] + "s"
+			form["form_id"] = int(form["form_id"])
+			form["form_order"] = int(form["form_order"])
+			menu[form_type].append(form)
+		result2 = {
+			"user_group_name": result["user_group_name"],
+			"employee_name": result["employee_name"],
+			"employee_code": result["employee_code"],
+			"contact_no": result["contact_no"],
+			"menu": menu
+		}
+		if client_id == None :
+			result2["address"] = result["address"]
+			result2["designation"] = result["designation"]
+			result2["category"] = result["tbl.category"]
+		else:
+			result2["address"] = ""
+			result2["designation"] = ""
+			result2["category"] = ""
+		return result2
 
-    def getNewId(self, field , tableName) :
-        query = "SELECT max(%s) from %s " % (field, tableName)
-        result = self._db.execute_and_return(query)
-        if len(result) == 0 :
-            return 1
-        return int(row[0][0]) + 1
+	def getNewId(self, field , tableName) :
+		query = "SELECT max(%s) from %s " % (field, tableName)
+		result = self._db.execute_and_return(query)
+		if len(result) == 0 :
+			return 1
+		return int(result[0][0]) + 1
 
-    def getDateTime(self) :
-        return datetime.datetime.now()
+	def getDateTime(self) :
+		return datetime.datetime.now()
 
-    def add_activity_log(self, user_id, form_id, action, notification_text=None, notification_link=None) :
-        created_on = self.getDateTime()
-        activityId = self.getNewId("activity_log_id", "tbl_activity_log")
-        query = "INSERT INTO tbl_activity_log(activity_log_id, user_id, form_id, \
+	def add_activity_log(self, user_id, form_id, action, notification_text=None, notification_link=None) :
+		created_on = self.getDateTime()
+		activityId = self.getNewId("activity_log_id", "tbl_activity_log")
+		query = "INSERT INTO tbl_activity_log(activity_log_id, user_id, form_id, \
             action, ticker_text, ticker_link, created_on) \
             VALUES (%s, %s, %s, '%s', '%s', '%s', '%s')" % (
-                activityId, userId, formId, action, str(notificationText), str(notificationLink), created_on
+                activity_id, user_id, form_id, action, str(notification_text), str(notification_link), created_on
             )
-        self._db.execute(query)
+		self._db.execute(query)
 
-    def check_duplicate_domain(self, domain_name, domain_id) :
-        query = "SELECT count(*) FROM tbl_domains \
+	def check_duplicate_domain(self, domain_name, domain_id) :
+		query = "SELECT count(*) FROM tbl_domains \
             WHERE LOWER(domain_name) = LOWER('%s') " % domain_name
-        if domain_id is not None :
-            query = query + " AND domain_id != %s" % domain_id
-        result = self._db.execute_and_return(query)
-        if result[0][0] > 0 :
-            return True
-        return False
+		if domain_id is not None :
+			query = query + " AND domain_id != %s" % domain_id
+		result = self._db.execute_and_return(query)
+		if result[0][0] > 0 :
+			return True
+		return False
     
-    def get_domains(self) :
-        query = "SELECT domain_id, domain_name, is_active FROM tbl_domains "
-        return self._db.execute_and_return(query)
+	def get_domains(self) :
+		query = "SELECT domain_id, domain_name, is_active FROM tbl_domains "
+		return self._db.execute_and_return(query)
 
-    def add_domain(self, domain_name, created_by) :
-        created_on = self.getDateTime()
-        domain_id = self.getNewId("domain_id", "tbl_domains")
-        is_active = 1
+	def add_domain(self, domain_name, created_by) :
+		created_on = self.getDateTime()
+		domain_id = self.getNewId("domain_id", "tbl_domains")
+		is_active = 1
 
-        query = "INSERT INTO tbl_domains(domain_id, domain_name, is_active, \
+		query = "INSERT INTO tbl_domains(domain_id, domain_name, is_active, \
             created_by, created_on) VALUES (%s, '%s', %s, %s, '%s') " % (
             domain_id, domain_name, is_active, created_by, created_on
         )
 
         self._db.execute(query)
-        action = "Add Domain - \"%s\"" % domainName
+        action = "Add Domain - \"%s\"" % domain_name
         self.add_activity_log(created_by, 4, action)
         return True
 
     def get_domain_by_domain_id(self, domain_id) :
         q = "SELECT domain_name FROM tbl_domains WHERE domain_id=%s" % domain_id
         rows = self._db.execute_and_return(q)
-        return rows[0][0]
+        if (len(rows) > 0):
+            return rows[0][0]
+        else :
+            return None
 
-    def update_domain(self, domain_id, domain_name, updated_by) :
-        old_data = self.get_domain_by_domain_id(domain_id)
-        if old_data is not None :
-            query = "UPDATE tbl_domains SET domain_name = '%s', \
+	def update_domain(self, domain_id, domain_name, updated_by) :
+		old_data = self.get_domain_by_domain_id(domain_id)
+		if old_data is not None :
+			query = "UPDATE tbl_domains SET domain_name = '%s', \
             updated_by = %s WHERE domain_id = %s" % (
                 domain_name, updated_by, domain_id
             )
-            self._db.execute(query)
-            action = "Edit Domain - \"%s\"" % domain_name
-            self.add_activity_log(updated_by, 4, action)
-            return True
-        else :
-            return False
+			self._db.execute(query)
+			action = "Edit Domain - \"%s\"" % domain_name
+			self.add_activity_log(updated_by, 4, action)
+			return True
+		else :
+			return False
 
-    def update_domain_status(self, domain_id, is_active, updated_by) :
-        old_data = self.get_domain_by_domain_id(domain_id)
-        if old_data is not None :
-            query = "UPDATE tbl_domains SET is_active = %s, \
-            updated_by = %s WHERE domain_id = %s" % (
-                is_active, updated_by, domain_id
-            )
-            self._db.execute(query)
-            if is_active == 0 :
-                status = "deactivated"
-            else:
-                status = "activated"
-            action = "Domain %s status  - %s" % (old_data, status)
-            self.add_activity_log(updated_by, 4, action)
-            return True
-        else :
-            return False
-
-    def update_domain_status(self, domain_id, is_active, updated_by) :
-        old_data = self.get_domain_by_domain_id(domain_id)
-        if old_data is not None :
-            query = "UPDATE tbl_domains SET is_active = %s, \
+	def update_domain_status(self, domain_id, is_active, updated_by) :
+		old_data = self.get_domain_by_domain_id(domain_id)
+		if old_data is not None :
+			query = "UPDATE tbl_domains SET is_active = %s, \
             updated_by = %s WHERE domain_id = %s" % (
                 is_active, updated_by, domain_id
             )
@@ -348,7 +377,7 @@ class KnowledgeDatabase(object) :
 
     def check_duplicate_industry(self, industry_name, industry_id) :
         query = "SELECT count(*) FROM tbl_industries \
-            WHERE LOWER(industry_name) = LOWER('%s') " % industr_name
+            WHERE LOWER(industry_name) = LOWER('%s') " % industry_name
 
         if industry_id is not None :
             query = query + " AND industry_id != %s" % industry_id
@@ -442,7 +471,7 @@ class KnowledgeDatabase(object) :
 
         return False
 
-    def save_statutory_nature(self, statutory_nature_name, created_by) :
+    def add_statutory_nature(self, statutory_nature_name, created_by) :
         created_on = self.getDateTime()
         statutory_nature_id = self.getNewId("statutory_nature_id", "tbl_statutory_natures")
         is_active = 1
@@ -461,7 +490,9 @@ class KnowledgeDatabase(object) :
         q = "SELECT statutory_nature_name FROM tbl_statutory_natures \
             WHERE statutory_nature_id=%s" % statutory_nature_id
         rows = self._db.execute_and_return(q)
-        return rows[0][0]
+        if (len(rows) > 0):
+            return rows[0][0]
+        return None
 
     def update_statutory_nature(self, statutory_nature_id, statutory_nature_name, updated_by) :
         old_data = self.get_statutory_nature_by_id(statutory_nature_id)
@@ -519,7 +550,6 @@ class KnowledgeDatabase(object) :
             self._db.execute(query)
             action = "Add Stautory Levels"
             self.add_activity_log(user_id, 9, action)
-            return True
         else :
             query = "UPDATE tbl_statutory_levels SET level_position=%s, level_name='%s', \
             updated_by=%s WHERE level_id=%s" % (
@@ -528,7 +558,6 @@ class KnowledgeDatabase(object) :
             self._db.execute(query)
             action = "Edit Stautory Levels"
             self.add_activity_log(user_id, 9, action)
-            return True
 
     def get_geography_levels(self) :
         query = "SELECT level_id, level_position, level_name, country_id \
@@ -585,14 +614,14 @@ class KnowledgeDatabase(object) :
             t1.parent_ids, t1.is_active, t2.country_id, t3.country_name FROM tbl_geographies t1 \
             INNER JOIN tbl_geography_levels t2 on t1.level_id = t2.level_id \
             INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id"
-        return self._db.execute(query)
+        return self._db.execute_and_return(query)
 
     def get_duplicate_geographies(self, parent_ids, geography_id) :
         query = "SELECT geography_id, geography_name, level_id, is_active \
             FROM tbl_geographies WHERE parent_ids='%s' " % (parent_ids)
         if geography_id is not None :
             query = query + " AND geography_id != %s" % geography_id
-        return self._db.execute(query)
+        return self._db.execute_and_return(query)
 
     def save_geographies(self, name, level_id, parent_ids, user_id) :
         geography_id = self.getNewId("geography_id", "tbl_geographies")
@@ -608,7 +637,7 @@ class KnowledgeDatabase(object) :
         self.add_activity_log(user_d, 7, action)
         return True
 
-    def update_geography_master(self, geography_id, name, parent_ids, updated_by) :
+    def update_geographies(self, geography_id, name, parent_ids, updated_by) :
         oldData = self.allGeographies.get(geography_id)
         old_parent_ids = oldData[2]
         query = "UPDATE tbl_geographies set geography_name='%s', parent_ids='%s',\
@@ -1140,72 +1169,274 @@ class KnowledgeDatabase(object) :
                 str("%" + str(geography_id) + ",%")
             )
         return self._db.execute(query)
-
 #
 #	Common
 #
 
-	def generateNewId(self, form):
-		tblName = None
+	def generate_new_id(self, form):
+		tbl_name = None
 		column = None
 		if form == "ActivityLog":
-			tblName = self._db.tblActivityLog
+			tbl_name = self._db.tblActivityLog
 			column = "activity_log_id"
+		elif form == "User":
+			tbl_name = self._db.tblUsers
+			column = "user_id"
+		elif form == "UserGroupMaster":
+			tbl_name = self._db.tblUserGroups
+			column = "user_group_id"
+		elif form == "UserMaster":
+			tbl_name = self._db.tblUsers
+			column = "user_id"
 		else:
 			print "Error : Cannot generate new id for form %s" % form
 
-		return self._db.generateNewId(tblName, column)
+		return self._db.generate_new_id(tbl_name, column)
+
+	def is_duplicate(self, form, field, value, id_value):
+		tbl_name = None
+		condition = None
+		if form == "User":
+			tbl_name = self._db.tblUsers
+			if field == "email":
+				condition = "username ='%s' AND user_id != '%d'" %(
+           value, id_value)
+		elif form == "UserGroupMaster":
+			tbl_name = self._db.tblUserGroups
+			if field == "name":
+				condition = "user_group_name = '%s' AND user_group_id != '%d'" %(
+					value, id_value)
+		elif form == "UserMaster":
+			tbl_name = self._db.tblUserDetails
+			if field == "email":
+				condition = "email_id = '%s' AND user_id != '%d'" %(
+					value, id_value)
+			elif field == "contact_no":
+				condition = "contact_no = '%s' AND user_id != '%d'" %(
+					value, id_value)
+			elif field == "employee_code":
+				condition = "employee_code = '%s' AND user_id != '%d'" %(
+					value, id_value)
+		return self._db.is_already_exists(tbl_name, condition)
+
+	def is_id_invalid(self, form, id_value):
+		tbl_name = None
+		condition = None
+		if form == "User":
+			tbl_name = self._db.tblUsers
+			condition = "user_id = '%d'" % id_value
+		elif form == "UserGroupMaster":
+			tbl_name = self._db.tblUserGroups
+			condition = "user_group_id = '%d'" % id_value
+		elif form == "UserMaster":
+			tbl_name = self._db.tblUsers
+			condition = "user_id = '%d'" % id_value
+		else:
+			print "Error: Id Validation not exists for form %s" % form
+
+		return not self._db.is_already_exists(tbl_name, condition)
+
+	def verify_password(self, password, session_user, client_id):
+		encrypted_password = encrypt(password)
+		columns = ["count(*)"]
+		condition = "password='%s' and user_id='%d'" % (encrypted_password, session_user)
+		if client_id != None:
+			condition += " and client_id='%d'" % client_id
+		rows = self._db.get_data(self._db.tblUsers, columns, condition)
+		if(int(rows[0][0]) <= 0):
+			return False
+		else:
+			return True
 
 #
 #	Forms
 #
-	def getSectionWiseForms(self, type):
-		columns = "form_id, form_name, form_url, form_order, form_type,"+\
-		"category, admin_form, parent_menu"
+	def get_section_wise_forms(self, type):
+		columns = ["form_id", "form_name", "form_url", "form_order", "form_type",
+		"category", "admin_form", "parent_menu"]
 		if type == "knowledge".lower():
 			condition = " category = 'knowledge' "
 		elif type == "techno".lower():
 			condition = " category = 'techno' "
 		else :
 			condition = " category = 'client' "
-		rows = self._db.getData(self._db.tblForms, columns, condition)
+		rows = self._db.get_data(self._db.tblForms, columns, condition)
+		return rows
+
+#
+#	Country
+#
+	def get_countries(self):
+		columns = ["country_id", "country_name", "is_active"]
+		condition = "1"
+		rows = self._db.get_data(self._db.tblCoutries,columns, 
+			condition)
+		return rows		
+
+#
+#	Domain
+#
+	def get_domains(self):
+		columns = ["domain_id", "domain_name", "is_active"]
+		condition = "1"
+		rows = self._db.get_data(self._db.tblDomains,columns, 
+			condition)
+		return rows	
+
+#
+#	Unit
+#
+	def deactivate_unit(self, unit_id, client_id, session_user):
+		columns = ["is_active", "updated_by", "updated_on"]
+		values = [0, session_user, current_timestamp()]
+		condition = "unit_id = {unit_id} and client_id={client_id}".format(
+            unit_id = unit_id, client_id = client_id)
+		return self._db.update(self._db.tblUnit, columns, 
+        	values, condition)
+
+#
+#	User Group
+#
+	def get_user_group_details_list(self):
+		columns = ["user_group_id", "user_group_name","form_type", 
+                    "form_ids", "is_active"]
+		condition = "1"
+		rows = self._db.get_data(self._db.tblUserGroups, columns, condition)
+		return rows
+
+	def get_user_group_list(self):
+		columns = ["user_group_id", "user_group_name", "is_active"]
+		condition = "1"
+		rows = self._db.get_data(self._db.tblUserGroups, columns, condition)
+		return rows
+
+	def save_user_group(self, user_group, session_user):
+		columns = ["user_group_id", "user_group_name","form_type", "form_ids", "is_active",
+                  "created_on", "created_by", "updated_on", "updated_by"]
+		form_ids = ",".join(str(x) for x in user_group.form_ids)
+		values_list =  [(user_group.user_group_id, user_group.user_group_name, user_group.form_type,
+        				form_ids, user_group.is_active, current_timestamp(), 
+        				session_user,current_timestamp(), session_user)]
+		update_columns_list = ["user_group_name","form_type", "form_ids", 
+        						"updated_on", "updated_by"]
+		return self._db.on_duplicate_key_update(self._db.tblUserGroups, 
+			columns, values_list, update_columns_list)
+
+	def change_user_group_status(self, user_group_id, is_active, session_user):
+		timestamp = current_timestamp()
+		columns = ["is_active", "updated_on" , "updated_by"]
+		values = [is_active, timestamp, session_user]
+		condition = "user_group_id='%d'" % user_group_id
+		return self._db.update(self._db.tblUserGroups, columns, values, condition)
+#
+#	User
+#
+	def save_user(self, user, session_user):
+		timestamp = current_timestamp()
+		columns = "user_id, username, password, created_on,"+\
+					"created_by,updated_on, updated_by"
+		values = [(user.user_id, user.email_id, generate_password(), 
+        		timestamp,session_user, timestamp,session_user)]
+		return self._db.insert(self._db.tblUsers, columns, values)
+
+	def get_form_type(self, user_group_id) :
+		column = ["form_type"]
+		condition = "user_group_id='%d'" % user_group_id
+		rows = self._db.get_data(self._db.tblUserGroups, 
+                    column, condition)
+		return rows[0][0]
+
+	def save_user_details(self, user, session_user):
+		timestamp = current_timestamp()
+		columns = ["user_id", "email_id", "user_group_id", "form_type", "employee_name", 
+                  "employee_code", "contact_no", "address", "designation", "country_ids",
+                  "domain_ids", "created_on", "created_by", "updated_on", "updated_by"]
+		form_type = self.get_form_type(user.user_group_id)
+		country_ids = ",".join(str(x) for x in user.country_ids)
+		domain_ids = ",".join(str(x) for x in user.domain_ids)
+		values_list =  [(user.user_id, user.email_id, user.user_group_id,
+        				form_type, user.employee_name, user.employee_code, 
+        				user.contact_no, user.address, user.designation, 
+        				country_ids, domain_ids, timestamp, session_user,
+        				timestamp, session_user)]
+		update_columns_list = ["user_group_id", "form_type","employee_name", 
+					"employee_code", "contact_no", "address", "designation", 
+					"country_ids", "domain_ids","updated_on", "updated_by"]
+		return self._db.on_duplicate_key_update(self._db.tblUserDetails, 
+			columns, values_list, update_columns_list)
+
+	def change_user_status(self, user_id, is_active, session_user):
+		columns = ["is_active", "updated_on" , "updated_by"]
+		values = [is_active, current_timestamp(), session_user]
+		condition = "user_id='%d'" % user_id
+		return self._db.update(self._db.tblUsers, columns, values,
+			condition)
+
+	def get_user_details_list(self):
+		columns = ["user_id", "email_id", "user_group_id", "employee_name",
+				"employee_code","contact_no", "address", "designation", 
+				"country_ids","domain_ids","client_ids", "is_active"]
+		condition = "1"                                
+		rows = self._db.get_data(self._db.tblUserDetails, columns, condition)
+		return rows
+
+	def get_user_list(self):
+		columns = "user_id, employee_name, employee_code, is_active"
+		condition = "1"
+		rows = self._db.get_data(self._db.tblUserDetails, columns, conditions)
 		return rows
 #
 #	Activity Log
 #
 
-	def saveActivity(self, form, obj, actionType, sessionUser):
-		activityLogId = self.generateNewId("ActivityLog")
-		formId = formIdMappings[form]
+	def save_activity(self, form, obj, action_type, session_user):
+		activity_log_id = self.generate_new_id("ActivityLog")
+		form_id = formIdMappings[form]
 		action = None
-		tickerText = None
-		tickerLink = None
-		createdOn = currentTimestamp()
+		ticker_text = None
+		ticker_link = None
+		created_on = current_timestamp()
 
 		if form == "ServiceProvider":
-			if actionType == "save":
+			if action_type == "save":
 				action = "Service Provider %s has been created" % obj
-			elif actionType == "update":
+			elif action_type == "update":
 				action = "Service Provider %s has been updated" % obj
-			elif actionType == "statusChange":
+			elif action_type == "status_change":
 				action = "Status of service Provider %s has been updated" % str(obj)
-		if form == "UserPrivilege":
-			if actionType == "save":
+		elif form == "UserPrivilege":
+			if action_type == "save":
 				action = "User Privilege %s has been created" % obj
-			elif actionType == "update":
+			elif action_type == "update":
 				action = "User Privilege %s has been updated" % obj
-			elif actionType == "statusChange":
+			elif action_type == "status_change":
 				action = "Status of User Privilege %s has been updated" % str(obj)			
+		elif ((form == "User") or (form == "UserMaster")):
+			if action_type == "save":
+				action = "User %s has been created" % obj
+			elif action_type == "update":
+				action = "User %s has been updated" % obj
+			elif action_type == "status_change":
+				action = "Status of User %s has been updated" % str(obj)
+			elif action_type == "admin_status_change":
+				action = "Admin Status of User Privilege %s has been updated" % str(obj)
+		elif form == "UserGroupMaster":
+			if action_type == "save":
+				action = "User Group %s has been created" % obj
+			elif action_type == "update":
+				action = "User Group %s has been updated" % obj
+			elif action_type == "status_change":
+				action = "Status of User Group %s has been updated" % str(obj)
 		else:
 			print "Error : Activity Log not available for form %s" % form
 		
-		if tickerText != None and tickerLink != None:
+		if ticker_text != None and ticker_link != None:
 			columns = "activity_log_id, user_id, form_id, action, ticker_text,"+\
 						"ticker_link, created_on"
-			valuesList = [(activityLogId, sessionUser, formId, action, tickerText,
-					tickerLink, createdOn)]
+			values_list = [(activity_log_id, session_user, form_id, action, ticker_text,
+					ticker_link, created_on)]
 		else:
 			columns = "activity_log_id, user_id, form_id, action, created_on"
-			valuesList = [(activityLogId, sessionUser, formId, action, createdOn)]
+			values_list = [(activity_log_id, session_user, form_id, action, created_on)]
 
-		return self._db.insert(self._db.tblActivityLog, columns, valuesList)
+		return self._db.insert(self._db.tblActivityLog, columns, values_list)

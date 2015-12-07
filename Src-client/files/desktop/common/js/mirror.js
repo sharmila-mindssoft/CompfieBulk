@@ -486,7 +486,8 @@ function initMirror() {
     }
 
 
-    function getAdminUserGroupList(callerName, callback, failure_callback) {
+    function getAdminUserGroupList(callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "GetUserGroups",
             {}
@@ -494,55 +495,30 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function saveAdminUserGroup(callerName, userGroupDetail, callback, failure_callback) {
+    function saveAdminUserGroup(userGroupDetail, callback, failure_callback) {
+        callerName = "api/knowledge"
         if (isNull(userGroupDetail))
             return null;
-        else if (userGroupDetail.length != 3)
-            return null;
-        $.each(userGroupDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var userGroupName= userGroupDetail[0] ;
-        var fromType= userGroupDetail[1] ;
-        var formIds= userGroupDetail[2].split(',') ;
         var request = [
             "SaveUserGroup",
-            {
-                "user_group_name": userGroupName,
-                "form_type": fromType,
-                "form_ids": formIds
-            }
+            userGroupDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateAdminUserGroup(callerName, userGroupDetail, callback, failure_callback) {
+    function updateAdminUserGroup(userGroupDetail, callback, failure_callback) {
+        callerName = "api/knowledge"
         if (isNull(userGroupDetail))
             return null;
-        else if (userGroupDetail.length != 4)
-            return null;
-        $.each(userGroupDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var userGroupId= userGroupDetail[0] ;
-        var userGroupName= userGroupDetail[1] ;
-        var fromType= userGroupDetail[2] ;
-        var formIds= userGroupDetail[3].split(',') ;
         var request = [
             "UpdateUserGroup",
-            {
-                "user_group_id" : userGroupId,
-                "user_group_name": userGroupName,
-                "form_type": fromType,
-                "form_ids": formIds
-            }
+            userGroupDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeAdminUserGroupStatus(callerName, userGroupId, isActive, callback, failure_callback) {
+    function changeAdminUserGroupStatus(userGroupId, isActive, callback, failure_callback) {
+        callerName = "api/knowledge"
         if (isNull(userGroupId) || isNull(isActive) )
             return null;
         var request = [
@@ -558,7 +534,8 @@ function initMirror() {
 
     // Admin User Master
 
-    function getAdminUserList(callerName, callback, failure_callback) {
+    function getAdminUserList(callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "GetUsers",
             {}
@@ -567,77 +544,32 @@ function initMirror() {
     }
 
 
-    function saveAdminUser(callerName, userDetail, callback, failure_callback) {
+    function saveAdminUser( userDetail, callback, failure_callback) {
+       callerName = "api/knowledge"
        if (isNull(userDetail))
             return null;
-        else if (userDetail.length != 9)
-            return null;
-        $.each(userDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var emailId = userDetail[0];
-        var userGroupId = userDetail[1];
-        var employeeName = userDetail[2];
-        var employeeCode = userDetail[3];
-        var contactNo = userDetail[4];
-        var address = userDetail[5];
-        var designation = userDetail[6];
-        var countryIds= userDetail[7].split(',') ;
-        var domainIds= userDetail[8].split(',') ;
+        
         var request = [
             "SaveUser",
-            {
-                "email_id": emailId,
-                "user_group_id": userGroupId,
-                "employee_name": employeeName,
-                "employee_code": employeeCode,
-                "contact_no": contactNo,
-                "address": address, 
-                "designation": designation,
-                "country_ids": countryIds,
-                "domain_ids": domainIds
-            }
+            userDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateAdminUser(callerName, userDetail, callback, failure_callback) {
+    function updateAdminUser(userDetail, callback, failure_callback) {
+        callerName = "api/knowledge"
         if (isNull(userDetail))
             return null;
-        else if (userDetail.length != 9)
-            return null;
-        $.each(userDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var userId = userDetail[0];
-        var userGroupId = userDetail[1];
-        var employeeName = userDetail[2];
-        var employeeCode = userDetail[3];
-        var contactNo = userDetail[4];
-        var address = userDetail[5];
-        var designation = userDetail[6];
-        var countryIds= userDetail[7].split(',') ;
-        var domainIds= userDetail[8].split(',') ;
+        
         var request = [
             "UpdateUser",
-            {
-                "user_id": userId,
-                "user_group_id": userGroupId,
-                "employee_name": employeeName,
-                "employee_code": employeeCode,
-                "contact_no": contactNo,
-                "address": address, 
-                "designation": designation,
-                "country_ids": countryIds,
-                "domain_ids": domainIds
-            }
+            userDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeAdminUserStatus(callerName, userId, isActive, callback, failure_callback) {
+    function changeAdminUserStatus(userId, isActive, callback, failure_callback) {
+        callerName = "api/knowledge"
         if (isNull(userId) || isNull(isActive) )
             return null;
         var request = [
@@ -896,7 +828,94 @@ function initMirror() {
             }
         ];
         apiRequest(callerName, request, callback, failure_callback);
-    }  
+    } 
+
+// Client User
+    function getClientUsers(callback, failure_callback) {
+        callerName = "api/client"
+        var request = [
+            "GetClientUsers",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function saveClientUser(clientUserDetail,
+     callback, failure_callback) {
+        callerName = "api/client"
+        if (isNull(clientUserDetail))
+            return null;
+        var request = [
+            "SaveClientUser",
+            clientUserDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function updateClientUser(clientUserDetail, 
+        callback, failure_callback) {
+        callerName = "api/client"
+        if (isNull(clientUserDetail))
+            return null;
+        var request = [
+            "UpdateClientUser",
+            clientUserDetail
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeClientUserStatus(userId, isActive, 
+        callback, failure_callback) {
+        callerName = "api/client"
+        if (isNull(userId) || isNull(isActive) )
+            return null;
+        var request = [
+            "ChangeClientUserStatus",
+            {
+                "user_id" : userId,
+                "is_active" : isActive
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeAdminStatus(userId, isAdmin, 
+        callback, failure_callback) {
+        callerName = "api/client"
+        if (isNull(userId) || isNull(isAdmin) )
+            return null;
+        var request = [
+            "ChangeAdminStatus",
+            {
+                "user_id" : userId,
+                "is_admin" : isAdmin
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+// Unit Closure
+    function getUnitClosureList(callback, failure_callback) {
+        callerName = "api/client"
+        var request = [
+            "GetUnitClosureList",
+            {}
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function closeUnit(unitId, password, callback, failure_callback){
+        callerName = "api/client"
+        var request = [
+            "CloseUnit",
+            {
+                "unit_id": unitId,
+                "password": password
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+ 
 
     return {
         log: log,
@@ -991,6 +1010,15 @@ function initMirror() {
         updateClientUserGroup: updateClientUserGroup,
         changeClientUserGroupStatus: changeClientUserGroupStatus,
         getClientUserGroups: getClientUserGroups,
+
+        getClientUsers: getClientUsers,
+        saveClientUser: saveClientUser,
+        updateClientUser: updateClientUser,
+        changeClientUserStatus: changeClientUserStatus,
+        changeAdminStatus: changeAdminStatus,
+
+        getUnitClosureList: getUnitClosureList,
+        closeUnit: closeUnit,
     }
 
 }

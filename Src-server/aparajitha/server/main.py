@@ -23,7 +23,7 @@ template_loader = jinja2.FileSystemLoader(
 template_env = jinja2.Environment(loader=template_loader)
 
 class TemplateHandler(tornado.web.RequestHandler) :
-    def initialize(self, path_desktop, path_mobile, parameters) :
+    def initialize(self, path_desktop, path_mobile,     parameters) :
         parameters = {"user":self.get_cookie("user"), "data":OrderedDict(sorted(countriesdb.countries.items(), key=lambda t: t[1])),}
         self.__path_desktop = path_desktop
         self.__path_mobile = path_mobile
@@ -32,7 +32,10 @@ class TemplateHandler(tornado.web.RequestHandler) :
     def get(self) :
         path = self.__path_desktop
         if self.__path_mobile is not None :
-            user_agent = parse(self.request.headers["User-Agent"])
+            useragent = self.request.headers.get("User-Agent")
+            if useragent is None:
+                useragent = ""
+            user_agent = parse(useragent)
             if user_agent.is_mobile :
                 path = self.__path_mobile
         mime_type, encoding = mimetypes.guess_type(path)
@@ -77,6 +80,8 @@ TEMPLATE_PATHS = [
     ("/test", "test_apis.html",
         "", {}),
     ("/home", "files/desktop/home/home.html", None, {}),
+    ("/custom-controls", "files/desktop/custom-controls/custom-controls.html",
+        None, {}),
 ]
 
 def run_server() :
@@ -88,8 +93,39 @@ def run_server() :
     api_urls_and_handlers = [
         ("/api/login", knowledge_controller.handle_api_knowledge),
         ("/api/logout", knowledge_controller.handle_api_knowledge),
+        ("/api/get-domains", knowledge_controller.handle_api_knowledge),
+        ("/api/save-domain", knowledge_controller.handle_api_knowledge),
+        ("/api/update-domain", knowledge_controller.handle_api_knowledge),
+        ("/api/change-domain-status", knowledge_controller.handle_api_knowledge),
+        ("/api/get-countries", knowledge_controller.handle_api_knowledge),
+        ("/api/save-country", knowledge_controller.handle_api_knowledge),
+        ("/api/update-country", knowledge_controller.handle_api_knowledge),
+        ("/api/change-country-status", knowledge_controller.handle_api_knowledge),
+        ("/api/get-industries", knowledge_controller.handle_api_knowledge),
+        ("/api/save-industry", knowledge_controller.handle_api_knowledge),
+        ("/api/update-industry", knowledge_controller.handle_api_knowledge),
+        ("/api/change-industry-status", knowledge_controller.handle_api_knowledge),
+        ("/api/get-statutory-natures", knowledge_controller.handle_api_knowledge),
+        ("/api/save-statutory-nature", knowledge_controller.handle_api_knowledge),
+        ("/api/update-statutory-nature", knowledge_controller.handle_api_knowledge),
+        ("/api/change-statutory-nature-status", knowledge_controller.handle_api_knowledge),
+        ("/api/get-statutory-levels", knowledge_controller.handle_api_knowledge),
+        ("/api/save-statutory-level", knowledge_controller.handle_api_knowledge),
+        ("/api/get-geography-levels", knowledge_controller.handle_api_knowledge),
+        ("/api/save-geography-level", knowledge_controller.handle_api_knowledge),
+        ("/api/get-geographies", knowledge_controller.handle_api_knowledge),
+        ("/api/save-geography", knowledge_controller.handle_api_knowledge),
+        ("/api/update-geography", knowledge_controller.handle_api_knowledge),
+        ("/api/change-geography-status", knowledge_controller.handle_api_knowledge),
+        ("/api/geography-report", knowledge_controller.handle_api_knowledge),
+        ("/api/get-statutory-mappings", knowledge_controller.handle_api_knowledge),
+        ("/api/save-statutory-mapping", knowledge_controller.handle_api_knowledge),
+        ("/api/update-statutory-mapping", knowledge_controller.handle_api_knowledge),
+        ("/api/change-statutory-mapping-status", knowledge_controller.handle_api_knowledge),
+        ("/api/approve-statutory-mapping", knowledge_controller.handle_api_knowledge),
         ("/api/test-client", client_controller.handle_api_client),
         ("/api/client", client_controller.handle_api_client),
+        ("/api/knowledge", knowledge_controller.handle_api_knowledge),
     ]
     for url, handler in api_urls_and_handlers :
         entry = (url, APIHandler, dict(handler=handler))
@@ -108,7 +144,6 @@ def run_server() :
 
     api_design_path = os.path.join(
         ROOT_PATH, "Doc", "API", "Web-API", "Version-1.0.4", "html")
-
     lower_level_handlers = [
         (r"/api-design/(.*)", tornado.web.StaticFileHandler, dict(path=api_design_path)),
         (r"/(.*)", tornado.web.StaticFileHandler, dict(path=static_path)),

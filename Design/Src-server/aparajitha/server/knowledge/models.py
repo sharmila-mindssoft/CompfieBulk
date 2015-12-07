@@ -920,6 +920,7 @@ class Geography(object) :
         return str(self.toStructure())
 
 class GeographyAPI(object) :
+    countryList = None
     def __init__(self, request, userId) :
         self.request = request
         self.userId = userId
@@ -955,18 +956,42 @@ class GeographyAPI(object) :
         return self.geographies
 
     @classmethod
+    def toMappingStructure(self, geographyId, name, levelId, parentIds, mapping, isActive) :
+        return {
+            "geography_id": geographyId,
+            "geography_name": name,
+            "level_id": levelId,
+            "parent_id": parentIds,
+            "mapping": mapping,
+            "is_active": isActive
+        }    
+
+    @classmethod
     def getList(self):
         geographies = {}
         DH = DatabaseHandler.instance()
         _geographyList = DH.getGeographies()
+        geographyData = {}
+
+        for row in _geographyList :
+            geographyData[int(row[0])] = row[1]
         for row in _geographyList :
             parentIds = [int(x) for x in row[3][:-1].split(',')]
             geography = Geography(int(row[0]), row[1], int(row[2]), parentIds[-1], int(row[4]))
             countryId = int(row[5])
+            names = []
+            names.append(row[6])
+            for id in parentIds :
+                if id > 0 :
+                    names.append(geographyData.get(id))
+                names.append(row[1])
+
+            mapping = ' >> '.join(str(x) for x in names)
             _list = geographies.get(countryId)
             if _list is None :
                 _list = []
-            _list.append(geography.toStructure())
+            _list.append(self.toMappingStructure(int(row[0]), row[1], int(row[2]), 
+                parentIds[-1], mapping, int(row[4])))
             geographies[countryId] = _list
         return geographies
 
@@ -1032,6 +1057,7 @@ class GeographyAPI(object) :
             {}
         ]
 
+    @classmethod
     def geographyReport(self) :
         DH = DatabaseHandler.instance()
         _geographyList = DH.getGeographies()
@@ -1060,6 +1086,7 @@ class GeographyAPI(object) :
                 }
             )
             geoMappingDict[countryId] = geoMappingList
+            self.countryList = CountryList().getCountry()
         return [
             "success", 
             {
@@ -1070,11 +1097,12 @@ class GeographyAPI(object) :
         ]
 
 class Statutory(object) :
-    def __init__(self, statutoryId, name, levelId, parentIds) :
+    def __init__(self, statutoryId, name, levelId, parentIds, parentMappings) :
         self.statutoryId = statutoryId
         self.name = name
         self.levelId = levelId
         self.parentIds = parentIds
+        self.parentMappings = parentMappings
         self.verify()
     
     def verify(self) :
@@ -1082,6 +1110,7 @@ class Statutory(object) :
         assertType(self.name, StringType)
         assertType(self.levelId, IntType)
         assertType(self.parentIds, ListType)
+        assertType(self.parentMappings, StringType)
 
     def toStructure(self) :
         return {
@@ -1089,7 +1118,8 @@ class Statutory(object) :
             "statutory_name": self.name,
             "level_id": self.levelId,
             "parent_ids": self.parentIds,
-            "parent_id": self.parentIds[-1]
+            "parent_id": self.parentIds[-1],
+            "parent_mappings": self.parentMappings
         }
 
     def __repr__(self) :
@@ -1104,12 +1134,13 @@ class StatutoryApi (object) :
 
     def getStatutories(self) :
         DH = DatabaseHandler.instance()
-        _statutoryList = DH.getStatutories()
-        for row in _statutoryList :
-            parentIds = [int(x) for x in row[3][:-1].split(',')]
-            statutory = Statutory(int(row[0]), row[1], int(row[2]), parentIds)
-            countryId = int(row[4])
-            domainId = int(row[6])
+        _statutoryDict = DH.getAllStatutories()
+        for key, value in _statutoryDict.iteritems() :
+            # parentIds = [int(x) for x in row[3][:-1].split(',')]
+
+            statutory = Statutory(key, value[0], value[1], value[2], value[3])
+            countryId = int(value[4])
+            domainId = int(value[5])
             _list = []
             _countryWise = self.statutories.get(countryId)
             if _countryWise is None :
@@ -1121,7 +1152,6 @@ class StatutoryApi (object) :
             _list.append(statutory.toStructure())
             _countryWise[domainId] = _list
             self.statutories[countryId] = _countryWise
-
         return self.statutories
 
     def saveStatutory(self) :
@@ -1279,7 +1309,7 @@ class StatutoryMapping(object) :
         assertType(self.complianceIds, ListType)
         # assertType(self.complianceNames, ListType)
         assertType(self.geographyIds, ListType)
-        assertType(self.approvalStatus, IntType)
+        assertType(self.approvalStatus, StringType)
         assertType(self.isActive, IntType)
         self.getData()
 
