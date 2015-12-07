@@ -735,8 +735,7 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function saveClient(callerName, clientId, businessGroup, legalEntity, 
-        division, countryWiseUnits, callback, failure_callback) {
+    function saveClient(callerName, clientId, businessGroup, legalEntity, division, countryWiseUnits, callback, failure_callback) {
         var request = [
             "SaveClient",
             {
