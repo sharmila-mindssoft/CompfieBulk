@@ -764,9 +764,10 @@ class Client(object):
         else:
             return False
 
-    def changeClientStatus(self, clientId, divisionId, 
+    def changeClientStatus(self, clientId,  legalEntityId, divisionId, 
         isActive, sessionUser):
         self.clientId = clientId
+        self.legalEntityId = legalEntityId
         self.divisionId = divisionId
         self.isActive = isActive
         self.sessionUser = sessionUser
@@ -781,7 +782,9 @@ class Client(object):
     def changeUnitStatusInClientDB(self):
         columns = ["is_active"]
         values = [self.isActive]
-        condition = "division_id='%d'" % self.divisionId
+        condition = " legal_entity_id='%d'" % self.legalEntityId
+        if self.divisionId != None:
+            condition += " AND division_id='%d'" % self.divisionId
         return ClientDatabaseHandler.instance(
             getClientDatabase(self.clientId)).update(
             self.unitTblName, columns, values, condition)
@@ -789,7 +792,9 @@ class Client(object):
     def getUnitsOfDivision(self):
         unitIdsList = []
         columns = "unit_id"
-        condition = "division_id='%d'" % self.divisionId
+        condition = " legal_entity_id='%d'" % self.legalEntityId
+        if self.divisionId != None:
+            condition += " AND division_id='%d'" % self.divisionId
         rows = ClientDatabaseHandler.instance(
             getClientDatabase(self.clientId)).getData(self.unitTblName, columns, condition)
         for row in rows:

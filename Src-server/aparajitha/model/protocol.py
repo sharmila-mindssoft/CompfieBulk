@@ -485,6 +485,101 @@ define_request(
 )
 
 #
+#	Admin User
+#
+define_request(
+	"GetUsers",
+	{},
+	{
+		"user_groups": ListType(
+			DictType(
+				{
+	                "user_group_id": Int,
+	                "user_group_name": Text50,
+	                "is_active":Int
+            	}
+			)
+		),
+        "domains": ListType(Domain),
+        "users":ListType(
+        	DictType(
+	            {
+	                "user_id": Int,
+	                "email_id": Text50,
+	                "user_group_id": OptionalType(Int),
+	                "employee_name": Text50,
+	                "employee_code": OptionalType(Text20),
+	                "contact_no": OptionalType(Text20),
+	                "address": OptionalType(Text250), 
+	                "designation": OptionalType(Text50),
+	                "country_ids": OptionalType(ListType(Int)),
+	                "domain_ids": OptionalType(ListType(Int)),
+	                "is_active": Int 
+	            }
+	        )
+        )
+	},
+	[] 
+)
+
+define_request(
+	"SaveUser",
+	{
+		"email_id": Text50,
+		"user_group_id": Int,
+		"employee_name": Text50,
+		"employee_code": Text20,
+		"contact_no": Text20,
+		"address": Text250, 
+		"designation": Text50,
+		"country_ids": ListType(Int),
+		"domain_ids": ListType(Int)
+	},
+	{},
+	[
+		"EmailIdAlreadyExists",
+		"EmployeeNameAlreadyExists",
+		"EmployeeCodeAlreadyExists",
+		"ContactNumberAlreadyExists"
+	] 
+)
+
+define_request(
+	"UpdateUser",
+	{
+		"user_id": Int,
+		"user_group_id": Int,
+		"employee_name": Text50,
+		"employee_code": Text20,
+		"contact_no": Text20,
+		"address": Text250, 
+		"designation": Text50,
+		"country_ids": ListType(Int),
+		"domain_ids": ListType(Int)
+	},
+	{},
+	[
+		"InvalidUserId",
+		"EmployeeNameAlreadyExists",
+		"EmployeeCodeAlreadyExists",
+		"ContactNumberAlreadyExists"
+	] 
+)
+
+define_request(
+	"ChangeUserStatus",
+	{
+		"user_id" : Int,
+        "is_active" : Int
+	},
+	{},
+	[
+		"InvalidUserId"
+	] 
+)
+
+
+#
 # Request, RequestFrame
 #
 

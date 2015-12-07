@@ -1116,6 +1116,7 @@ class Statutory(object) :
             "statutory_name": self.name,
             "level_id": self.levelId,
             "parent_ids": self.parentIds,
+            "parent_id": self.parentIds[-1]
         }
 
     def __repr__(self) :
@@ -1369,7 +1370,6 @@ class StatutoryMappingApi(object):
     def getStatutoryMappings(self) :
         DH = DatabaseHandler.instance()
         _staturoyMapList = DH.getStautoryMappings()
-
         _statutoryMappings = DH.allStatutories
         for row in _staturoyMapList :
             mappingId = int(row[0])

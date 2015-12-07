@@ -15,6 +15,10 @@ class APIHandler(object):
 			"SaveUserGroup": self._save_user_group,
 			"UpdateUserGroup": self._update_user_group,
 			"ChangeUserGroupStatus": self._change_user_group_status,
+			"GetUsers": self._get_users,
+			"SaveUser": self._save_user,
+			"UpdateUser": self._update_user,
+			"ChangeUserStatus": self._change_admin_user_status,									
 		}
 
 	def _success_response(self, response, response_option, data) :
@@ -171,7 +175,95 @@ class APIHandler(object):
 				response, "ChangeUserGroupStatusSuccess",{})
 		return response_data
 
-#
+	def _get_users(self, db, user, request):
+		domain_list = Domain.get_list(db)
+		country_list = Country.get_list(db)
+		user_group_list = UserGroup.get_list(db)
+		user_list = AdminUser.get_detailed_list(db)
+		response_data = {}
+		response_data["domains"] = domain_list
+		response_data["countries"] = country_list
+		response_data["user_groups"] = user_group_list
+		response_data["users"] = user_list
+		print response_data
+		return self._success_response(
+				"GetUsersResponse", 
+				"GetUsersSuccess",
+				response_data)
+        
+	def _save_user(self, db, user, request):
+		form = "UserMaster"
+		session_user = int(user["user_id"])
+		response = "SaveUserResponse"
+		response_data = None
+		user_id = db.generate_new_id(form)
+		user = AdminUser.initialize_with_request( request, user_id)
+		if db.is_duplicate(form, "email", user.email_id,user_id):
+			response_data = self._failure_response(
+				response, "EmailIdAlreadyExists")
+		elif db.is_duplicate(form, "employee_code", user.employee_code,user_id):
+			response_data = self._failure_response(
+				response, "EmployeeCodeAlreadyExists")
+		elif db.is_duplicate(form, "contact_no", user.contact_no,user_id):
+			response_data = self._failure_response(
+				response, "ContactNumberAlreadyExists")
+		elif (db.save_user(user, session_user) and db.save_user_details(
+					user, session_user)):
+			action_type = "save"
+			db.save_activity(form, user.employee_code+"-"+user.employee_name, 
+				action_type, session_user)
+			response_data = self._success_response(response, "SaveUserSuccess",
+				{})
+		return response_data
+
+	def _update_user(self, db, user, request):
+		form = "UserMaster"
+		session_user = int(user["user_id"])
+		response = "UpdateUserResponse"
+		response_data = None
+		user_id = request["user_id"]
+		user = AdminUser.initialize_with_request( request, user_id)
+		if db.is_id_invalid(form, user_id):
+			response_data = self._failure_response(
+				response, "InvalidUserId")
+		elif db.is_duplicate(form, "email", user.email_id,user_id):
+			response_data = self._failure_response(
+				response, "EmailIdAlreadyExists")
+		elif db.is_duplicate(form, "employee_code", user.employee_code,user_id):
+			response_data = self._failure_response(
+				response, "EmployeeCodeAlreadyExists")
+		elif db.is_duplicate(form, "contact_no", user.contact_no,user_id):
+			response_data = self._failure_response(
+				response, "ContactNumberAlreadyExists")
+		elif db.save_user_details(user, session_user):
+			action_type = "update"
+			db.save_activity(form, user.employee_code+"-"+user.employee_name, 
+				action_type, session_user)
+			response_data = self._success_response(response, "UpdateUserSuccess",
+				{})
+		return response_data
+
+	def _change_admin_user_status(self, db, user, request):
+		form = "UserMaster"
+		session_user = int(user["user_id"])
+		response = "ChangeUserStatusResponse"
+		response_data = None
+		user_id = request["user_id"]
+		is_active = request["is_active"]
+		if db.is_id_invalid(form, user_id):
+			response_data = self._failure_response(
+				response, "InvalidUserId")
+		elif db.change_user_status(user_id, is_active,
+				session_user):
+			action_type = "status_change"
+			db.save_activity(form, user_id, 
+				action_type, session_user)
+			response_data = self._success_response(
+				response, "ChangeUserStatusSuccess",{})
+		return response_data
+
+
+#		
 # db_request
 #
 

@@ -1,0 +1,66 @@
+.multi-check-box-dropdown {
+	width: 200px;
+	height: 2.0em;
+	padding: 0em 0.5em;
+	border: 1px solid #999;
+
+	-webkit-border-radius: 0.3em;
+	-moz-border-radius: 0.3em;
+	border-radius: 0.3em;
+	font: normal 0.813em/100% Verdana, Tahoma, sans-serif;
+	background: url(/files/desktop/custom-controls/images/down-arrow.png) no-repeat right 5px center #dadada;
+}
+.multi-check-box-dropdown.empty {
+	color: #A9A9A9;
+}
+.multi-check-box-textbox {
+	height: 2em;
+	padding: 0em 0.5em;
+	width: 200px;
+	margin-bottom: 0.1em;
+}
+.multi-check-box ul {
+	width: 200px;
+	background: none repeat scroll 0 0 #fff;
+	border: 1px solid #cccccc;
+	border-radius: 2px;
+	box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.11);
+	position: absolute;
+	padding-left: 0em;
+	background: #ffffff;
+}
+.multi-check-box ul li {
+	font-size: 0.8em;
+	list-style-type:none;
+	padding: 6px;
+	padding-left: 2em;
+	vertical-align: center;
+	cursor: pointer;
+	background: url(/files/desktop/custom-controls/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.multi-check-box ul li:hover{
+	background:  #EAE8E8 url(/files/desktop/custom-controls/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.multi-check-box ul li:focus{
+	outline: none;
+	background:  #EAE8E8 url(/files/desktop/custom-controls/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.multi-check-box ul li.active {
+	background: url(/files/desktop/custom-controls/images/tick_1.png) no-repeat left 5px center;
+}
+.multi-check-box ul li.active:hover {
+	background: #f1e9f6 url(/files/desktop/custom-controls/images/tick_1.png) no-repeat left 5px center;
+}
+.multi-check-box ul li.active:focus{
+	outline: none;
+	background:  #EAE8E8 url(/files/desktop/custom-controls/images/tick_1.png) no-repeat left 5px center;
+}
+.multi-check-box-suggestions {
+	display: none;
+}
+.multi-check-box-selected {
+	display: none;
+}
+#templates {
+	display: none;
+}

@@ -535,7 +535,7 @@ function initMirror() {
     // Admin User Master
 
     function getAdminUserList(callback, failure_callback) {
-        callerName = "/api/knowledge"
+        callerName = "api/knowledge"
         var request = [
             "GetUsers",
             {}
@@ -545,79 +545,31 @@ function initMirror() {
 
 
     function saveAdminUser( userDetail, callback, failure_callback) {
-       callerName = "/api/knowledge"
+       callerName = "api/knowledge"
        if (isNull(userDetail))
             return null;
-        else if (userDetail.length != 9)
-            return null;
-        $.each(userDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var emailId = userDetail[0];
-        var userGroupId = userDetail[1];
-        var employeeName = userDetail[2];
-        var employeeCode = userDetail[3];
-        var contactNo = userDetail[4];
-        var address = userDetail[5];
-        var designation = userDetail[6];
-        var countryIds= userDetail[7].split(',') ;
-        var domainIds= userDetail[8].split(',') ;
+        
         var request = [
             "SaveUser",
-            {
-                "email_id": emailId,
-                "user_group_id": userGroupId,
-                "employee_name": employeeName,
-                "employee_code": employeeCode,
-                "contact_no": contactNo,
-                "address": address, 
-                "designation": designation,
-                "country_ids": countryIds,
-                "domain_ids": domainIds
-            }
+            userDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
     function updateAdminUser(userDetail, callback, failure_callback) {
-        callerName = "/api/knowledge"
+        callerName = "api/knowledge"
         if (isNull(userDetail))
             return null;
-        else if (userDetail.length != 9)
-            return null;
-        $.each(userDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var userId = userDetail[0];
-        var userGroupId = userDetail[1];
-        var employeeName = userDetail[2];
-        var employeeCode = userDetail[3];
-        var contactNo = userDetail[4];
-        var address = userDetail[5];
-        var designation = userDetail[6];
-        var countryIds= userDetail[7].split(',') ;
-        var domainIds= userDetail[8].split(',') ;
+        
         var request = [
             "UpdateUser",
-            {
-                "user_id": userId,
-                "user_group_id": userGroupId,
-                "employee_name": employeeName,
-                "employee_code": employeeCode,
-                "contact_no": contactNo,
-                "address": address, 
-                "designation": designation,
-                "country_ids": countryIds,
-                "domain_ids": domainIds
-            }
+            userDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
     function changeAdminUserStatus(userId, isActive, callback, failure_callback) {
-        callerName = "/api/knowledge"
+        callerName = "api/knowledge"
         if (isNull(userId) || isNull(isActive) )
             return null;
         var request = [

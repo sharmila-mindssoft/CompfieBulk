@@ -121,10 +121,4 @@ function filter (term, cellNr){
 
 $(document).ready(function () {
   getDomains ();
-  $('#domainname').keydown(function (e) {
-  var key = e.keyCode;
-  if (!((key == 8) || (key == 32) || (key == 46) || (key >= 65 && key <= 90))) {
-  e.preventDefault();
-  }
-});
 });
