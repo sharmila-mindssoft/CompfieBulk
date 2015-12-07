@@ -6,6 +6,14 @@ var statutoryLevelsList;
 var statutoriesList;
 var sm_countryid='';
 var sm_domainid='';
+var sm_statutorynatureid='';
+var sm_industryids=[];
+var sm_countryval='';
+var sm_domainval='';
+var sm_industryvals=[];
+var sm_statutorynatureval='';
+
+var sm_statutoryids=[];
 
 $(document).ready(function(){
 	getStatutoryMappings();
@@ -163,7 +171,14 @@ function loadStatutoryMappingList(statutoryMappingsList) {
 	    $("#error").text('');
 	    $("#listview").hide();
 	    $("#addview").show();
-
+        sm_industryid=[];
+        sm_industryval=[];
+        sm_countryid='';
+        sm_domainid='';
+        sm_statutorynatureid='';
+        sm_countryval='';
+        sm_domainval='';
+        sm_statutorynatureval='';
 
 	    //load country details
 	    var clsval='.countrylist';
@@ -172,8 +187,9 @@ function loadStatutoryMappingList(statutoryMappingsList) {
 		$('#country').empty();
 	    for(var country in countriesList){
 	    	var countryid = countriesList[country]["country_id"];
+            var dispcountryname = countriesList[country]["country_name"];
 	    	if(countriesList[country]["is_active"] == 1){
-				str += '<li id="'+countryid+'" class="'+clsval1+'" onclick="activate(this,'+countryid+',\''+clsval+'\')" ><span class="filter1_name">'+countriesList[country]["country_name"]+'</span></li>';
+				str += '<li id="'+countryid+'" class="'+clsval1+'" onclick="activate(this,'+countryid+',\''+dispcountryname+'\',\''+clsval+'\')" ><span class="filter1_name">'+dispcountryname+'</span></li>';
 			}
 		}
 		$('#country').append(str); 
@@ -185,8 +201,9 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     	$('#domain').empty();
 	    for(var domain in domainsList){
 	    	var domainid = domainsList[domain]["domain_id"];
+            var dispdomainname = domainsList[domain]["domain_name"];
 	    	if(domainsList[domain]["is_active"] == 1){
-				str += '<li id="'+domainid+'" class="'+clsval1+'" onclick="activate(this,'+domainid+',\''+clsval+'\')" ><span class="filter2_name">'+domainsList[domain]["domain_name"]+'</span></li>';
+				str += '<li id="'+domainid+'" class="'+clsval1+'" onclick="activate(this,'+domainid+',\''+dispdomainname+'\',\''+clsval+'\')" ><span class="filter2_name">'+dispdomainname+'</span></li>';
 			}
 		}
 		$('#domain').append(str);
@@ -198,8 +215,9 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     	$('#industry').empty();
 	    for(var industry in industriesList){
 	    	var industryid = industriesList[industry]["industry_id"];
+            var dispindustryname = industriesList[industry]["industry_name"];
 	    	if(industriesList[industry]["is_active"] == 1){
-				str += '<li id="'+industryid+'" class="'+clsval1+'" onclick="multiactivate(this,'+industryid+',\''+clsval+'\')" ><span class="filter3_name">'+industriesList[industry]["industry_name"]+'</span></li>';
+				str += '<li id="'+industryid+'" class="'+clsval1+'" onclick="multiactivate(this,'+industryid+',\''+dispindustryname+'\',\''+clsval+'\')" ><span class="filter3_name">'+dispindustryname+'</span></li>';
 			}
 		}
 		$('#industry').append(str);
@@ -211,14 +229,15 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     	$('#statutorynature').empty();
 	    for(var statutorynature in statutoryNaturesList){
 	    	var statutorynatureid = statutoryNaturesList[statutorynature]["statutory_nature_id"];
+            var dispstatutoryname = statutoryNaturesList[statutorynature]["statutory_nature_name"];
 	    	if(statutoryNaturesList[statutorynature]["is_active"] == 1){
-				str += '<li id="'+statutorynatureid+'" class="'+clsval1+'" onclick="activate(this,'+statutorynatureid+',\''+clsval+'\')" ><span class="filter4_name">'+statutoryNaturesList[statutorynature]["statutory_nature_name"]+'</span></li>';
+				str += '<li id="'+statutorynatureid+'" class="'+clsval1+'" onclick="activate(this,'+statutorynatureid+',\''+dispstatutoryname+'\',\''+clsval+'\')" ><span class="filter4_name">'+dispstatutoryname+'</span></li>';
 			}
 		}
 		$('#statutorynature').append(str);
 	} 
 	//check & uncheck list data for single selection
-	function activate(element, id, type){
+	function activate(element, id, dispname, type){
 		$(type).each( function( index, el ) {
     	$(el).removeClass( "active" );
     });
@@ -226,27 +245,45 @@ function loadStatutoryMappingList(statutoryMappingsList) {
 		var checkbox_status = $(element).attr('class');
 	    if(checkbox_status == 'countrylist active'){
 			sm_countryid = id;
+            sm_countryval = dispname;
 	    }
 
 	    if(checkbox_status == 'domainlist active'){
 			sm_domainid = id;
+            sm_domainval = dispname;
 	    }
 
+        if(checkbox_status == 'statutorynaturelist active'){
+            sm_statutorynatureid = id;
+            sm_statutorynatureval = dispname;
+        }
 	    if(sm_countryid != '' && sm_domainid !=''){
 		loadStatutoryLevels(sm_countryid,sm_domainid);
 	}
+    make_breadcrumbs();
 	}
 
 	//check & uncheck list data for multi selection
-	function multiactivate(element, id, type){
+	function multiactivate(element, id, dispname, type){
 	var chkstatus = $(element).attr('class');
 	if(chkstatus == 'industrylist active'){
 		$(element).removeClass("active");
+        var removeid = sm_industryid.indexOf(id);
+        sm_industryids.splice(removeid,1);
+        var removename = sm_industryval.indexOf(dispname);
+        sm_industryvals.splice(removename,1);
 	}else{
 		$(element).addClass("active");
+        sm_industryids.push(id);
+        sm_industryvals.push(dispname);
 	}
+    make_breadcrumbs();
 }
 
+function make_breadcrumbs(){
+    var arrowimage = " <img src=\'/images/right_arrow.png\'/> ";
+    $("#breadcrumbs_1").html(sm_countryval + arrowimage + sm_domainval + arrowimage + sm_industryvals + arrowimage + sm_statutorynatureval);
+}
 //load statutory levels
 function loadStatutoryLevels(countryval,domainval){
   $(".tbody-statutory-level").find("div").remove();
@@ -356,7 +393,6 @@ function load(id,level,country,domain){
         }
         mirror.saveStatutory(parseInt(statutorylevel_id), datavalue, map_statutory_id, success, failure);
         }else{
-
             function success_update(status,data){
               if(status == "success"){
                 $("#error").text("Record Updated Successfully");
@@ -374,8 +410,7 @@ function load(id,level,country,domain){
         mirror.updateStatutory(parseInt($("#statutoryid").val()), parseInt(statutorylevel_id), datavalue, map_statutory_id, success_update, failure_update);
         $("#statutoryid").val('');
         $('#datavalue'+j).val('');
-        }
-        
+        }    
 }
 }}
 
@@ -388,7 +423,6 @@ function reload(last_statutory_id,last_level,country,domain){
   }
   mirror.getStatutoryMappings(success, failure);
 }
-
 
 function filter_statutory(position){  
     var slist_filter = document.getElementsByClassName('slist-filter'+position);
@@ -411,6 +445,39 @@ function editstaturoty(statu_id, statu_name, position){
     $('#datavalue'+position).val(statu_name)
 }
 
+function load_statories(){
+    $(".tbody-statutory-list").find("tr").remove();
+    for(var i=0; i<sm_statutoryids.length; i++) {
+    var tableRow=$('#statutory-templates .table-statutory .table-row');
+    var clone=tableRow.clone();
+    $('.sno', clone).text(i+1);
+    $('.statutory', clone).text(sm_statutoryids[i]);
+    $('.remove', clone).html('<img src=\'/images/icon-delete.png\' onclick="temp_removestatutories('+sm_statutoryids[i]+')"/>');
+    $('.tbody-statutory-list').append(clone);
+}
+}
 
+function temp_addstatutories(){
+      var last_statutory_id=0;
+      for(k=1;k<=10;k++){
+        $(".slist"+k+".active").each( function( index, el ) {
+          last_statutory_id = el.id;
+          });
+      }
+      if(last_statutory_id==0){
+        $("#error").text("No Statutory is selected");
+      }else if($.inArray(last_statutory_id, sm_statutoryids) >= 0){
+        $("#error").text("This Statutory already added");
+      }else{
+        sm_statutoryids.push(last_statutory_id);
+      }
+      load_statories();
+}
+
+function temp_removestatutories(remove_id){
+    var remove = sm_statutoryids.indexOf(remove_id);
+    sm_statutoryids.splice(remove,1);
+    load_statories();
+}
 
 
