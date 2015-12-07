@@ -23,7 +23,7 @@ template_loader = jinja2.FileSystemLoader(
 template_env = jinja2.Environment(loader=template_loader)
 
 class TemplateHandler(tornado.web.RequestHandler) :
-    def initialize(self, path_desktop, path_mobile, parameters) :
+    def initialize(self, path_desktop, path_mobile,     parameters) :
         parameters = {"user":self.get_cookie("user"), "data":OrderedDict(sorted(countriesdb.countries.items(), key=lambda t: t[1])),}
         self.__path_desktop = path_desktop
         self.__path_mobile = path_mobile
@@ -32,7 +32,10 @@ class TemplateHandler(tornado.web.RequestHandler) :
     def get(self) :
         path = self.__path_desktop
         if self.__path_mobile is not None :
-            user_agent = parse(self.request.headers["User-Agent"])
+            useragent = self.request.headers.get("User-Agent")
+            if useragent is None:
+                useragent = ""
+            user_agent = parse(useragent)
             if user_agent.is_mobile :
                 path = self.__path_mobile
         mime_type, encoding = mimetypes.guess_type(path)
@@ -77,6 +80,8 @@ TEMPLATE_PATHS = [
     ("/test", "test_apis.html",
         "", {}),
     ("/home", "files/desktop/home/home.html", None, {}),
+    ("/custom-controls", "files/desktop/custom-controls/custom-controls.html",
+        None, {}),
 ]
 
 def run_server() :
@@ -120,6 +125,7 @@ def run_server() :
         ("/api/approve-statutory-mapping", knowledge_controller.handle_api_knowledge),
         ("/api/test-client", client_controller.handle_api_client),
         ("/api/client", client_controller.handle_api_client),
+        ("/api/knowledge", knowledge_controller.handle_api_knowledge),
     ]
     for url, handler in api_urls_and_handlers :
         entry = (url, APIHandler, dict(handler=handler))
@@ -138,7 +144,6 @@ def run_server() :
 
     api_design_path = os.path.join(
         ROOT_PATH, "Doc", "API", "Web-API", "Version-1.0.4", "html")
-
     lower_level_handlers = [
         (r"/api-design/(.*)", tornado.web.StaticFileHandler, dict(path=api_design_path)),
         (r"/(.*)", tornado.web.StaticFileHandler, dict(path=static_path)),

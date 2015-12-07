@@ -1545,6 +1545,8 @@ Note :
       	"ChangeClientStatus",
       	{
         	"client_id" : CLIENT_ID,
+          "legal_entity_id": LEGAL_ENTITY_ID,
+          "division_id": DIVISION_ID,
         	"is_active" : IS_ACTIVE
       	}
     ]
@@ -2051,12 +2053,17 @@ Note :
     [
         "SaveUserPrivileges",
         {
-	        "client_id": CLIENT_ID,
 	        "user_group_name": USER_GROUP_NAME,
 	        "form_type": FORM_TYPE,
 	        "form_ids": [FORM_ID, ]
         }
    ]
+
+  On Success
+    [
+      "SaveUserPrivilegesSuccess",
+      {}
+    ]
 
   Possible Errors :
 
@@ -2071,12 +2078,17 @@ Note :
         "UpdateUserPrivileges",
         {
 	        "user_group_id": USER_GROUP_ID,
-	        "client_id": CLIENT_ID,
 	        "user_group_name": USER_GROUP_NAME,
 	        "form_type": FORM_TYPE,
 	        "form_ids": [FORM_ID, ]
         }
    ]
+
+  On Success
+    [
+      "UpdateUserPrivilegesSuccess",
+      {}
+    ]
 
   Possible Errors :
 
@@ -2100,6 +2112,13 @@ Note :
     [
       	"ChangeUserPrivilegeStatusSuccess",
       	{}
+    ]
+
+  Possible Errors
+
+    [
+      "InvalidUserGroupId",
+      {}
     ]
 
 ####  Get client users

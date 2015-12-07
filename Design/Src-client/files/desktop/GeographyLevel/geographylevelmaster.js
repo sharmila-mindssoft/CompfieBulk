@@ -119,6 +119,8 @@ function saveRecord () {
 				function success(status,data) {
 					if(status == 'success') {
 						$("#error").text("Record Added Successfully");
+						$("#level1").val("");
+						$("#level1").val("");
 						GetGeographyLevels();
 					} else {
 						$("#error").text(status);
@@ -136,6 +138,7 @@ function saveRecord () {
 	function insertRecord () { 
 		var insertlevel = parseInt($("#insertlevel").val());
 		var insertvalue = $("#insertvalue").val();
+		if(insertvalue != ''){
 		for(var x=10; x >= insertlevel; x--){
        		var s = x-1;
        		if( x == insertlevel){
@@ -145,5 +148,19 @@ function saveRecord () {
        			$("#level"+x).val($("#level"+s).val());
        			$("#levelid"+x).val($("#levelid"+s).val());
        		}
-		}
+       	}
+       	$("#insertlevel").val("");
+		$("#insertvalue").val("");
+		$("#insert-level").hide();
+      	$("#add").show();
+	}else{
+		$("#error").text("Title should not be Empty");
+	}
+	for(var i=1; i <= 10; i++){
+       		if( $("#level"+i).val() == ''){
+       			$("#add").show();
+       		}else{
+       			$("#add").hide();
+       		}
+       	}
 	}

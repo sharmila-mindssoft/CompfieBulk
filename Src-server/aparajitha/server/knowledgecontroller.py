@@ -3,6 +3,7 @@ from aparajitha.server.knowledgedatabase import KnowledgeDatabase
 from aparajitha.model.common import validate_data
 from aparajitha.model import protocol
 from aparajitha.server.knowledgemodels import *
+from aparajitha.server.clientmodels import *
 import json
 
 class APIHandler(object):
@@ -42,7 +43,14 @@ class APIHandler(object):
 			"UpdateStatutoryMapping": self._update_statutory_mappings,
 			"ChangeStatutoryMappingStatus": self._change_statutory_mappings_status,
 			"ApproveStatutoryMapping": self._change_approval_status
-
+			"GetUserGroups": self._get_user_groups,
+			"SaveUserGroup": self._save_user_group,
+			"UpdateUserGroup": self._update_user_group,
+			"ChangeUserGroupStatus": self._change_user_group_status,
+			"GetUsers": self._get_users,
+			"SaveUser": self._save_user,
+			"UpdateUser": self._update_user,
+			"ChangeUserStatus": self._change_admin_user_status,									
 		}
 
 	def _success_response(self, response, response_option, data) :
@@ -75,6 +83,7 @@ class APIHandler(object):
 		if request_option == u"Logout" :
 			return handler(db, session_id, request_data)
 		user = db.get_user(user_id)
+		print user
 		return handler(db, user, request_data)
 
 
@@ -100,8 +109,8 @@ class APIHandler(object):
 			"session_token": session_id,
 			"user": {
 				"user_id": user_id,
-				"client_id": user["client_id"],
-				"email_id": email,
+				"client_id": int(user["client_id"]),
+				"email_id": str(email),
 				"category": user_details["category"],
 				"user_group_name": user_details["user_group_name"],
 				"employee_name": user_details["employee_name"],
@@ -649,8 +658,171 @@ class APIHandler(object):
 
 		
 
+	def _get_user_groups(self, db, user, request):
+		knowledge_forms = Form.get_forms("knowledge", db)
+		techno_forms = Form.get_forms("techno", db)
+		forms = {}
+		forms["knowledge"] = Menu.get_menu(knowledge_forms)
+		forms["techno"] = Menu.get_menu(techno_forms)
+		user_group_list = UserGroup.get_detailed_list(db)
+		response_data = {}
+		response_data["forms"] = forms
+		response_data["user_groups"] = user_group_list
+		print response_data
+		return self._success_response(
+			"GetUserGroupsResponse", 
+			"GetUserGroupsSuccess", 
+			response_data
+		)
 
-#
+	def _save_user_group(self, db, user, request):
+		form = "UserGroupMaster"
+		session_user = int(user["user_id"])
+		response = "SaveUserGroupResponse"
+		response_data = None
+		user_group_id = db.generate_new_id(form)
+		user_group = UserGroup.initialize_with_request( request, user_group_id)
+		if db.is_duplicate(form, "name", user_group.user_group_name,user_group_id):
+			response_data = self._failure_response(response, "GroupNameAlreadyExists")
+		elif db.save_user_group(user_group, session_user):
+			action_type = "save"
+			db.save_activity(form, user_group.user_group_name, 
+				action_type, session_user)
+			response_data =  self._success_response(
+				response, 
+				"SaveUserGroupSuccess", 
+				{}
+			)
+		return response_data
+        
+
+	def _update_user_group(self, db, user, request):
+		form = "UserGroupMaster"
+		session_user = int(user["user_id"])
+		response = "UpdateUserGroupResponse"
+		response_data = None
+		user_group_id = request["user_group_id"]
+		user_group = UserGroup.initialize_with_request(request, user_group_id)
+		if db.is_id_invalid(form, user_group_id):
+			response_data = self._failure_response(response, "InvalidUserGroupId")
+		elif db.is_duplicate(form, "name", user_group.user_group_name,
+			user_group.user_group_id):
+			response_data = self._failure_response(response,"GroupNameAlreadyExists")
+		elif db.save_user_group(user_group, session_user):
+			action_type = "update"
+			db.save_activity(form, user_group.user_group_name, 
+				action_type, session_user)
+			response_data =  self._success_response(response, "UpdateUserGroupSuccess",{})
+		return response_data
+
+	def _change_user_group_status(self, db, user, request):
+		form = "UserGroupMaster"
+		session_user = int(user["user_id"])
+		response = "ChangeUserGroupStatusResponse"
+		response_data = None
+		user_group_id = request["user_group_id"]
+		is_active = request["is_active"]
+		if db.is_id_invalid(form, user_group_id):
+			response_data = self._failure_response(
+				response, "InvalidUserGroupId")
+		elif db.change_user_group_status(user_group_id, is_active,
+				session_user):
+			action_type = "status_change"
+			db.save_activity(form, user_group_id, 
+				action_type, session_user)
+			response_data = self._success_response(
+				response, "ChangeUserGroupStatusSuccess",{})
+		return response_data
+
+	def _get_users(self, db, user, request):
+		domain_list = Domain.get_list(db)
+		country_list = Country.get_list(db)
+		user_group_list = UserGroup.get_list(db)
+		user_list = AdminUser.get_detailed_list(db)
+		response_data = {}
+		response_data["domains"] = domain_list
+		response_data["countries"] = country_list
+		response_data["user_groups"] = user_group_list
+		response_data["users"] = user_list
+		print response_data
+		return self._success_response(
+				"GetUsersResponse", 
+				"GetUsersSuccess",
+				response_data)
+        
+	def _save_user(self, db, user, request):
+		form = "UserMaster"
+		session_user = int(user["user_id"])
+		response = "SaveUserResponse"
+		response_data = None
+		user_id = db.generate_new_id(form)
+		user = AdminUser.initialize_with_request( request, user_id)
+		if db.is_duplicate(form, "email", user.email_id,user_id):
+			response_data = self._failure_response(
+				response, "EmailIdAlreadyExists")
+		elif db.is_duplicate(form, "employee_code", user.employee_code,user_id):
+			response_data = self._failure_response(
+				response, "EmployeeCodeAlreadyExists")
+		elif db.is_duplicate(form, "contact_no", user.contact_no,user_id):
+			response_data = self._failure_response(
+				response, "ContactNumberAlreadyExists")
+		elif (db.save_user(user, session_user) and db.save_user_details(
+					user, session_user)):
+			action_type = "save"
+			db.save_activity(form, user.employee_code+"-"+user.employee_name, 
+				action_type, session_user)
+			response_data = self._success_response(response, "SaveUserSuccess",
+				{})
+		return response_data
+
+	def _update_user(self, db, user, request):
+		form = "UserMaster"
+		session_user = int(user["user_id"])
+		response = "UpdateUserResponse"
+		response_data = None
+		user_id = request["user_id"]
+		user = AdminUser.initialize_with_request( request, user_id)
+		if db.is_id_invalid(form, user_id):
+			response_data = self._failure_response(
+				response, "InvalidUserId")
+		elif db.is_duplicate(form, "email", user.email_id,user_id):
+			response_data = self._failure_response(
+				response, "EmailIdAlreadyExists")
+		elif db.is_duplicate(form, "employee_code", user.employee_code,user_id):
+			response_data = self._failure_response(
+				response, "EmployeeCodeAlreadyExists")
+		elif db.is_duplicate(form, "contact_no", user.contact_no,user_id):
+			response_data = self._failure_response(
+				response, "ContactNumberAlreadyExists")
+		elif db.save_user_details(user, session_user):
+			action_type = "update"
+			db.save_activity(form, user.employee_code+"-"+user.employee_name, 
+				action_type, session_user)
+			response_data = self._success_response(response, "UpdateUserSuccess",
+				{})
+		return response_data
+
+	def _change_admin_user_status(self, db, user, request):
+		form = "UserMaster"
+		session_user = int(user["user_id"])
+		response = "ChangeUserStatusResponse"
+		response_data = None
+		user_id = request["user_id"]
+		is_active = request["is_active"]
+		if db.is_id_invalid(form, user_id):
+			response_data = self._failure_response(
+				response, "InvalidUserId")
+		elif db.change_user_status(user_id, is_active,
+				session_user):
+			action_type = "status_change"
+			db.save_activity(form, user_id, 
+				action_type, session_user)
+			response_data = self._success_response(
+				response, "ChangeUserStatusSuccess",{})
+		return response_data
+
+
+#		
 # db_request
 #
 

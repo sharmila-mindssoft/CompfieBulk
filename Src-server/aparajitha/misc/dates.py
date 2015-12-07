@@ -2,11 +2,11 @@ import datetime
 import calendar
 
 __all__ = [
-    "datetimeToTimestamp",
-    "timestampToDatetime",
-    "currentTimestamp",
-    "stringToDatetime",
-    "datetimeToString"
+    "datetime_to_timestamp",
+    "timestamp_to_datetime",
+    "current_timestamp",
+    "string_to_datetime",
+    "datetime_to_string"
 ]
 
 IntegerMonths = {
@@ -39,21 +39,21 @@ StringMonths = {
      12 : "Dec",
 }
 
-def datetimeToTimestamp(d) :
+def datetime_to_timestamp(d) :
     return calendar.timegm(d.timetuple())
 
-def timestampToDatetime(t) :
+def timestamp_to_datetime(t) :
     return datetime.datetime.utcfromtimestamp(t)
 
-def currentTimestamp() :
-    return datetimeToTimestamp(datetime.datetime.utcnow())
+def current_timestamp() :
+    return datetime_to_timestamp(datetime.datetime.utcnow())
 
-def stringToDatetime(string):
+def string_to_datetime(string):
     date = string.split("-")
-    datetimeVal = datetime.datetime(year=int(date[2]), 
+    datetime_val = datetime.datetime(year=int(date[2]), 
         month=IntegerMonths[date[1]], day=int(date[0]))
-    return datetimeVal
+    return datetime_val
 
-def datetimeToString(datetimeVal):
-    return "%d-%s-%d" % (datetimeVal.day, StringMonths[datetimeVal.month], 
-    	datetimeVal.year)
+def datetime_to_string(datetime_val):
+    return "%d-%s-%d" % (datetime_val.day, StringMonths[datetime_val.month], 
+    	datetime_val.year)

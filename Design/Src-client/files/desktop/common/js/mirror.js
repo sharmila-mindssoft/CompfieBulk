@@ -572,8 +572,7 @@ function initMirror() {
     }
 
 
-    function saveAdminUser(callerName, userDetail, 
-        callback, failure_callback) {
+    function saveAdminUser(callerName, userDetail, callback, failure_callback) {
        if (isNull(userDetail))
             return null;
         else if (userDetail.length != 9)
@@ -800,12 +799,13 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientStatus(callerName, clientId, divisionId, isActive, 
+    function changeClientStatus(callerName, clientId, legalEntityId, divisionId, isActive, 
         callback, failure_callback) {
         var request = [
             "ChangeClientStatus",
             {
                 "client_id": clientId,
+                "legal_entity_id": legalEntityId,
                 "division_id" : divisionId,
                 "is_active": isActive
             }
