@@ -215,6 +215,9 @@ class KnowledgeDatabase(object) :
 		elif form == "UserGroupMaster":
 			tbl_name = self._db.tblUserGroups
 			column = "user_group_id"
+		elif form == "UserMaster":
+			tbl_name = self._db.tblUsers
+			column = "user_id"
 		else:
 			print "Error : Cannot generate new id for form %s" % form
 
@@ -233,6 +236,17 @@ class KnowledgeDatabase(object) :
 			if field == "name":
 				condition = "user_group_name = '%s' AND user_group_id != '%d'" %(
 					value, id_value)
+		elif form == "UserMaster":
+			tbl_name = self._db.tblUserDetails
+			if field == "email":
+				condition = "email_id = '%s' AND user_id != '%d'" %(
+					value, id_value)
+			elif field == "contact_no":
+				condition = "contact_no = '%s' AND user_id != '%d'" %(
+					value, id_value)
+			elif field == "employee_code":
+				condition = "employee_code = '%s' AND user_id != '%d'" %(
+					value, id_value)
 		return self._db.is_already_exists(tbl_name, condition)
 
 	def is_id_invalid(self, form, id_value):
@@ -244,6 +258,9 @@ class KnowledgeDatabase(object) :
 		elif form == "UserGroupMaster":
 			tbl_name = self._db.tblUserGroups
 			condition = "user_group_id = '%d'" % id_value
+		elif form == "UserMaster":
+			tbl_name = self._db.tblUsers
+			condition = "user_id = '%d'" % id_value
 		else:
 			print "Error: Id Validation not exists for form %s" % form
 
@@ -280,7 +297,7 @@ class KnowledgeDatabase(object) :
 #	Country
 #
 	def get_countries(self):
-		columns = "country_id, country_name, is_active"
+		columns = ["country_id", "country_name", "is_active"]
 		condition = "1"
 		rows = self._db.get_data(self._db.tblCoutries,columns, 
 			condition)
@@ -289,8 +306,8 @@ class KnowledgeDatabase(object) :
 #
 #	Domain
 #
-	def getDomains(self):
-		columns = "domain_id, domain_name, is_active"
+	def get_domains(self):
+		columns = ["domain_id", "domain_name", "is_active"]
 		condition = "1"
 		rows = self._db.get_data(self._db.tblDomains,columns, 
 			condition)
@@ -320,7 +337,7 @@ class KnowledgeDatabase(object) :
 	def get_user_group_list(self):
 		columns = ["user_group_id", "user_group_name", "is_active"]
 		condition = "1"
-		rows = self_db.get_data(self._db.tblUserGroups, columns, condition)
+		rows = self._db.get_data(self._db.tblUserGroups, columns, condition)
 		return rows
 
 	def save_user_group(self, user_group, session_user):
@@ -346,12 +363,37 @@ class KnowledgeDatabase(object) :
 #
 	def save_user(self, user, session_user):
 		timestamp = current_timestamp()
-		columns = "user_id, username, password, client_id,created_on,created_by,"+\
-                        " updated_on, updated_by"
+		columns = "user_id, username, password, created_on,"+\
+					"created_by,updated_on, updated_by"
 		values = [(user.user_id, user.email_id, generate_password(), 
-        		user.client_id, timestamp,session_user,
-                timestamp,session_user)]
+        		timestamp,session_user, timestamp,session_user)]
 		return self._db.insert(self._db.tblUsers, columns, values)
+
+	def get_form_type(self, user_group_id) :
+		column = ["form_type"]
+		condition = "user_group_id='%d'" % user_group_id
+		rows = self._db.get_data(self._db.tblUserGroups, 
+                    column, condition)
+		return rows[0][0]
+
+	def save_user_details(self, user, session_user):
+		timestamp = current_timestamp()
+		columns = ["user_id", "email_id", "user_group_id", "form_type", "employee_name", 
+                  "employee_code", "contact_no", "address", "designation", "country_ids",
+                  "domain_ids", "created_on", "created_by", "updated_on", "updated_by"]
+		form_type = self.get_form_type(user.user_group_id)
+		country_ids = ",".join(str(x) for x in user.country_ids)
+		domain_ids = ",".join(str(x) for x in user.domain_ids)
+		values_list =  [(user.user_id, user.email_id, user.user_group_id,
+        				form_type, user.employee_name, user.employee_code, 
+        				user.contact_no, user.address, user.designation, 
+        				country_ids, domain_ids, timestamp, session_user,
+        				timestamp, session_user)]
+		update_columns_list = ["user_group_id", "form_type","employee_name", 
+					"employee_code", "contact_no", "address", "designation", 
+					"country_ids", "domain_ids","updated_on", "updated_by"]
+		return self._db.on_duplicate_key_update(self._db.tblUserDetails, 
+			columns, values_list, update_columns_list)
 
 	def change_user_status(self, user_id, is_active, session_user):
 		columns = ["is_active", "updated_on" , "updated_by"]
@@ -359,6 +401,20 @@ class KnowledgeDatabase(object) :
 		condition = "user_id='%d'" % user_id
 		return self._db.update(self._db.tblUsers, columns, values,
 			condition)
+
+	def get_user_details_list(self):
+		columns = ["user_id", "email_id", "user_group_id", "employee_name",
+				"employee_code","contact_no", "address", "designation", 
+				"country_ids","domain_ids","client_ids", "is_active"]
+		condition = "1"                                
+		rows = self._db.get_data(self._db.tblUserDetails, columns, condition)
+		return rows
+
+	def get_user_list(self):
+		columns = "user_id, employee_name, employee_code, is_active"
+		condition = "1"
+		rows = self._db.get_data(self._db.tblUserDetails, columns, conditions)
+		return rows
 #
 #	Activity Log
 #
@@ -385,7 +441,7 @@ class KnowledgeDatabase(object) :
 				action = "User Privilege %s has been updated" % obj
 			elif action_type == "status_change":
 				action = "Status of User Privilege %s has been updated" % str(obj)			
-		elif form == "User":
+		elif ((form == "User") or (form == "UserMaster")):
 			if action_type == "save":
 				action = "User %s has been created" % obj
 			elif action_type == "update":

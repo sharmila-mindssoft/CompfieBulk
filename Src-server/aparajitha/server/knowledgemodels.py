@@ -1,7 +1,8 @@
 __all__ = [
     "Country",
     "Domain",
-    "UserGroup"
+    "UserGroup",
+    "AdminUser"
 ]
 
 class Country(object) :
@@ -110,3 +111,90 @@ class UserGroup() :
             user_group = UserGroup(int(row[0]), row[1], None, None, row[2])
             user_group_list.append(user_group.to_structure())
         return user_group_list
+
+class AdminUser(object) :
+    def __init__(self, user_id, email_id, user_group_id, form_type,employee_name, 
+                employee_code, contact_no, address, designation, country_ids,
+                domain_ids, client_id,is_active) :
+        self.user_id =  int(user_id)
+        self.email_id =  str(email_id)
+        self.user_group_id =  int(user_group_id) if user_group_id != None else None
+        self.form_type = str(form_type) if form_type != None else None
+        self.employee_name =  str(employee_name)
+        self.employee_code =  str(employee_code)
+        self.contact_no =  str(contact_no)
+        self.address =  str(address)
+        self.designation =  str(designation)
+        self.country_ids =  country_ids
+        self.domain_ids =  domain_ids
+        self.client_id = client_id 
+        self.is_active = int(is_active) if is_active != None else 1
+
+    @classmethod
+    def initialize_with_request(self, request, user_id):
+        email_id = None
+        try:
+            email_id = request["email_id"]
+        except:
+            email_id = None
+        user_group_id = request["user_group_id"]
+        employee_name = request["employee_name"]
+        employee_code = request["employee_code"]
+        contact_no = request["contact_no"]
+        address =  request["address"]
+        designation =  request["designation"]
+        country_ids = request["country_ids"]
+        domain_ids = request["domain_ids"]
+        user = AdminUser(user_id, email_id, user_group_id, None,employee_name, employee_code, contact_no, 
+                    address, designation, country_ids, domain_ids, None,None)
+        return user
+
+    def to_detailed_structure(self) :
+        return {
+            "user_id": self.user_id,
+            "email_id": self.email_id,
+            "user_group_id": self.user_group_id,
+            "employee_name": self.employee_name,
+            "employee_code": self.employee_code,
+            "contact_no": self.contact_no,
+            "address": self.address, 
+            "designation": self.designation,
+            "country_ids": self.country_ids,
+            "domain_ids": self.domain_ids,
+            "client_id": self.client_id,
+            "is_active": self.is_active
+        }
+
+    def to_structure(self):
+        employee_name = None
+        if self.employee_code == None:
+            employee_name = self.employee_name
+        else:
+            employee_name = "%s-%s" % (self.employee_code, self.employee_name)
+        return {
+            "user_id": self.user_id,
+            "employee_name": employee_name,
+        }
+
+    @classmethod
+    def get_detailed_list(self, db):
+        userList = []
+        rows = db.get_user_details_list()    
+        for row in rows:
+            country_ids = [int(x) for x in row[8].split(",")] if row[8] != None else None
+            domain_ids = [int(x) for x in row[9].split(",")] if row[9] != None else None
+            user = AdminUser(row[0],row[1], row[2], None,row[3], row[4],
+                 row[5], row[6], row[7], country_ids, domain_ids, 
+                 row[10], row[11])
+            userList.append(user.to_detailed_structure())
+        return userList
+
+    @classmethod
+    def get_list(self, db):
+        userList = []
+        rows = db.get_user_list()
+        for row in rows:
+            user = AdminUser(int(row[0]),None,None, None,row[1], row[2],
+                 None, None, None, None, None, None, None)
+            userList.append(user.toStructure())
+        return userList    

@@ -177,6 +177,44 @@
 				mirror.getAdminUserGroupList(success, 
 					failure);
 			}
+			function getAdminUsers(){
+				mirror.getAdminUserList(success, failure)
+			}
+			function saveAdminUser(){
+				userDetail = {
+	                "email_id": "Testemail@domain.com",
+	                "user_group_id": 1,
+	                "employee_name": "Test emp name 1",
+	                "employee_code": "TEMPCODE2",
+	                "contact_no": "+91-6365-3546",
+	                "address": "Test addresss 1", 
+	                "designation": "Test designation 1",
+	                "country_ids": [1],
+	                "domain_ids": [1]
+	            }
+				mirror.saveAdminUser(userDetail,
+     					success, failure)
+			}
+			function updateAdminUser(){
+				userDetail = {
+	                "user_id": 2,
+	                "user_group_id": 1,
+	                "employee_name": "Test emp update name 1",
+	                "employee_code": "EMP0257",
+	                "contact_no": "9479835",
+	                "address": "Test address update 1", 
+	                "designation": "Test designation 1",
+	                "country_ids": [1],
+	                "domain_ids": [1]
+	            }
+				mirror.updateAdminUser(userDetail,
+     					success, failure)
+			}
+			function changeAdminUserStatus(){
+				userId = 18
+				isActive = 1
+				mirror.changeAdminUserStatus(userId, isActive, success, failure)
+			}
 		</script>
 	</head>
 	<body>
@@ -252,6 +290,20 @@
 			</button>
 			<button onclick="getAdminUserGroupList()">
 				Get Admin User Groups
+			</button>
+		</div>
+		<div>
+			<button onclick="getAdminUsers()">
+				Get Admin Users
+			</button>
+			<button onclick="saveAdminUser()">
+				Save Admin User
+			</button>
+			<button onclick="updateAdminUser()">
+				Update Admin User
+			</button>
+			<button onclick="changeAdminUserStatus()">
+				Change Admin User Status
 			</button>
 		</div>
 		<br>
