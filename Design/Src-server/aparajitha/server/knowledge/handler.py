@@ -19,7 +19,6 @@ class APIRequestHandler(tornado.web.RequestHandler) :
     def post(self, callerName) :
         try:
             data = json.loads(self.request.body)
-            data = data["data"]
             sessionToken = JSONHelper.getString(data, "session_token")
             request = JSONHelper.getList(data, "request")
             response = None
