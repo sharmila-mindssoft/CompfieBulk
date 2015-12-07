@@ -113,7 +113,6 @@ class APIHandler(object):
 		response_data = {}
 		response_data["forms"] = forms
 		response_data["user_groups"] = user_group_list
-		print response_data
 		return self._success_response(
 			"GetUserGroupsResponse", 
 			"GetUserGroupsSuccess", 
@@ -189,7 +188,6 @@ class APIHandler(object):
 		response_data["countries"] = country_list
 		response_data["user_groups"] = user_group_list
 		response_data["users"] = user_list
-		print response_data
 		return self._success_response(
 				"GetUsersResponse", 
 				"GetUsersSuccess",
@@ -314,8 +312,24 @@ class APIHandler(object):
 		return response_data
 
 	def _reset_password(self, db, user, request):		
-		print "inside reset password"
-
+		reset_token = request["reset_token"]
+		newPassword = request["new_password"]
+		user_id = None
+		response = "ResetPasswordResponse"
+		response_data = None
+		if db.validate_reset_token(reset_token):
+			user_id = db.get_user_id_by_verification_code(reset_token)
+			if (db.update_password(newPassword, user_id) and 
+        		db.delete_user_verfication_code(reset_token)):
+				response_data = self._success_response(response,
+            	"ResetPasswordSuccess",{})
+			else:
+				print "Error: Reset Password Failed"
+		else:
+			response_data = self._failure_response(response, "InvalidResetToken")			
+		return response_data
+                
+                
 #		
 # db_request
 #

@@ -1306,6 +1306,22 @@ class KnowledgeDatabase(object) :
 		else:
 			return False
 
+	def get_user_id_by_verification_code(self, reset_token):
+		column = ["user_id"]
+		condition = " verification_code='%s'" % reset_token
+		rows = self._db.get_data(self._db.tblEmailVerification, column, condition)
+		if len(rows) > 0:
+			return rows[0][0]
+		else:
+			return None
+
+	def delete_user_verfication_code(self, reset_token):
+		condition = " verification_code='%s'" % reset_token
+		if self._db.delete(self._db.tblEmailVerification, condition):
+			return True
+		else:
+			return False
+
 #
 #	Forms
 #
