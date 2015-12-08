@@ -22,6 +22,37 @@
 .ac-textbox ul li:hover{
   background: #EAE8E8;  
 }
+/*selectbox*/
+.ac-selectbox ul {
+  background: none repeat scroll 0 0 #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.11);
+  box-sizing: border-box;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+  transition: opacity 200ms ease-out 0s, top 200ms ease-out 0s, visibility 200ms ease-out 0s;
+}
+.ac-selectbox ul li {
+  font-size: 0.8em;
+  list-style-type:none; 
+  padding: 6px;
+  padding-left: 2em;
+  vertical-align: center;
+  cursor: pointer;
+  background: url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li:hover{  
+  background:  #EAE8E8 url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active {
+  background: url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active:hover {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.grid-table table tr td { vertical-align: top;}
 
 </style>
 <div class="content-container width60" id="clientunit-view">
@@ -81,7 +112,8 @@
           <div class="input-row">
             <div class="single-column-field-label">Group:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
-              <Select id="group-select" class="input-box" >
+              <input type="hidden" id="client-unit-id"> 
+              <Select id="group-select" class="input-box" onchange="getBusinessGroups(this.value);" >
                 <option value="">Select</option>
               </Select>
             </div>
@@ -89,24 +121,22 @@
           <div class="input-row">
             <div class="single-column-field-label">Business Group</div>
             <div class="single-column-field-input">
-              <Select id="businessgroup-select" class="input-box">
+              <Select id="businessgroup-select" class="input-box" onchange="getLegalEntity(this.value);">
                <option value="">Select</option>
               </Select>
-              <input id="businessgroup-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Business Group Name">
-              <span style="font-size:10px"><a href="#" id="businessgroup-new">New</a></span> </div>
+              <input id="businessgroup-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Business Group Name">
+              <span style="font-size:10px"><a href="#" id="businessgroup-new">New</a><a href="#" id="businessgroup-existing" style="display:none;">Cancel</a></span> </div>
           </div>
-      
-            
         </div>
         <div class="input-row-right">
                 <div class="input-row">
             <div class="single-column-field-label">Legal Entity:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
-              <Select id="entity-select" class="input-box">
+              <Select id="entity-select" class="input-box" onchange="getDivision(this.value);">
                <option value="">Select</option>
               </Select>
-              <input id="entity-text" type="text" class="input-box" style="width:200px;display:none" placeholder="Legal Entity Name">
-              <span style="font-size:10px"><a href="#" id="entity-new">New</a></span> </div>
+              <input id="entity-text" type="text" class="input-box" style="width:190px;display:none" placeholder="Legal Entity Name">
+              <span style="font-size:10px"><a href="#" id="entity-new">New</a><a href="#" id="entity-existing" style="display:none;">Cancel</a></span> </div>
           </div>
           <div class="input-row">
             <div class="single-column-field-label">Division</div>
@@ -114,8 +144,8 @@
               <Select id="division-select" class="input-box">
                <option value="">Select</option>
               </Select>
-              <input id="division-text" type="text" class="input-box"  style="width:200px;display:none" placeholder="Division Name">
-              <span style="font-size:10px"><a href="#" id="division-new">New</a></span> </div>
+              <input id="division-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Division Name">
+              <span style="font-size:10px"><a href="#" id="division-new">New</a><a href="#" id="division-existing" style="display:none;">Cancel</a></span> </div>
           </div>
         </div>
         
@@ -127,7 +157,7 @@
           </div>
         </div>
         <div class="submit-button-container">
-          <input type="reset" name="cancel" value="Cancel" class="btn-cancel" id="btn-clientunit-cancel" >
+          <input type="submit" name="cancel" value="Cancel" class="btn-cancel" id="btn-clientunit-cancel" >
           &nbsp;&nbsp;
           <input type="submit" name="submit" value="Submit" class="btn-submit" id="btn-clientunit-submit" >
         </div>
@@ -141,10 +171,10 @@
   <table class="btable">
     <tr style="background-color:#CCC;border-radius:5px;">
       <td  align="left">Country : </td><td>
-        <input type="text" class="input-box icon-autocomplete" id="countryval" value=""  onkeyup="loadauto_text(this.value, this.className)" style="width:150px !important; background-color:#fff;"> 
-        <input type="hidden" id="country"> 
-        <div id="autocompleteview" class="ac-textbox" style="display:none;" onclick="hidemenu(this.className);" onmouseleave="hidemenu(this.className);" >
-          <ul id="ulist-text" style="width:195px;"></ul> 
+        <input type="text" class="input-box icon-autocomplete countryval" value=""  onkeyup="loadauto_text(this.value, this.className)" style="width:150px !important; background-color:#fff;"> 
+        <input type="hidden" class="country"> 
+        <div class="autocompleteview ac-textbox" style="display:none;" onclick="hidemenu(this.className);" onmouseleave="hidemenu(this.className);" >
+          <ul class="ulist-text" style="width:195px;"></ul> 
         </div>
       </td>
       <td colspan="7"></td>
@@ -161,16 +191,18 @@
       <th width="5%" style="padding-right:5px">Status</th>
     </tr>
     <tbody class="tbody-unit-list">
-      <tr class="table-row">
-        <td><select class="input-box geography-levels" onfocus="loadglevels(this.className);" >
+      <tr class="table-row" style="vertical-align:top;">
+        <td><input type="hidden" class="no-of-units">      
+        <select class="input-box geography-levels" onfocus="loadglevels(this.className);" >
           <option value="">Select</option>
           </select>
         </td>
         <td><input type="text" class="input-box icon-autocomplete unit-location" onkeyup="loadlocation(this.value, this.className);" style="width:150px;">
         <input type="hidden" class="unit-location-ids"> 
-        <div class="auto-complete-unit-location ac-textbox" style="display:none;" onclick="hidemenu(this.className);" onmouseleave="hidemenu(this.className);" >
-          <ul class="unitlocationlist-text" style="width:195px;"></ul> 
+        <div class="auto-complete-unit-location ac-textbox" style="display:none;" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);" >
+          <ul class="unitlocationlist-text" style="width:170px;"></ul> 
         </div>
+        <div class="clearfix"></div>
         <span class="full-location-list"></span></td>
         <td><input type="text" class="input-box unit-code"  ></td>
         <td><input type="text" class="input-box unit-name"  ></td>
@@ -180,15 +212,15 @@
         <td><input type="text" class="input-box unit-address" /></td>
         <td><input type="text" class="input-box postal-code" ></td>
 
-        <td> <input type="text" class="input-box icon-autocomplete  domain-selected" value="" readonly="readonly" onclick="loadauto()"> 
-        <input type="hidden" class="domain"> 
-                <div class="domain-selectbox-view ac-selectbox" style="display:none;">
-                  <ul class="ul-domain-list" onmouseleave="hidemenu();" style="width:213px;"></ul> 
-                </div>
-        
-            </td>
+        <td> <input type="text" class="input-box icon-autocomplete  domainselected" value="" readonly="readonly" onclick="loaddomain(this.className)"> 
+          <input type="hidden" class="domain"> 
+          <div class="domain-selectbox-view ac-selectbox" style="display:none;">
+            <ul class="ul-domain-list" onmouseleave="hidedomain(this.className);" style="width:170px;"></ul> 
+          </div>
+        </td>
         <td align="center">Active</td>
-      </tr>             
+      </tr>      
+
     </tbody>
     <tr>
       <td colspan="9" align="right"><div style="float:right" class="add-unit-row" onclick="addNewUnitRow(this)" ><img src="/images/icon-plus.png" alt="Add New Unit" />Add Unit</div></td>
@@ -199,14 +231,14 @@
 </div>
 <div id="templatesUnitRow" style="display:none;">
 <table class="table-UnitRow-list">
-  <tr class="table-row">
+  <tr class="table-row" style="vertical-align:top;"d>
     <td><select class="input-box geography-levels" onfocus="loadglevels(this.className);" >
       <option value="">Select</option>
     </select>
     </td>
-    <td><input type="text" class="input-box icon-autocomplete unit-location" onkeyup="loadlocation(this.className);" style="width:150px;">
+    <td><input type="text" class="input-box icon-autocomplete unit-location" onkeyup="loadlocation(this.value, this.className);" style="width:150px;">
     <input type="hidden" class="unit-location-ids"> 
-    <div class="auto-complete-unit-location ac-textbox" style="display:none;" onclick="hidemenu(this.className);" onmouseleave="hidemenu(this.className);" >
+    <div class="auto-complete-unit-location ac-textbox" style="display:none;" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);" >
       <ul class="unitlocationlist-text" style="width:195px;"></ul> 
     </div>
     <span class="full-location-list"></span></td>
@@ -217,10 +249,10 @@
     </td>
     <td><input type="text" class="input-box unit-address" /></td>
     <td><input type="text" class="input-box postal-code" ></td>
-    <td> <input type="text" class="input-box icon-autocomplete  domain-selected" value="" readonly="readonly" onclick="loadauto()"> 
+    <td> <input type="text" class="input-box icon-autocomplete domainselected" value="" readonly="readonly" onclick="loaddomain(this.className)"> 
     <input type="hidden" class="domain"> 
     <div class="domain-selectbox-view ac-selectbox" style="display:none;">
-      <ul class="ul-domain-list" onmouseleave="hidemenu();" style="width:213px;"></ul> 
+      <ul class="ul-domain-list" onmouseleave="hidedomain(this.className);" style="width:170px;"></ul> 
     </div>
     </td>
     <td align="center">Active</td>
