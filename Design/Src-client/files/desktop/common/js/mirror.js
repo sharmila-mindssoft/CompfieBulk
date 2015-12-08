@@ -433,7 +433,7 @@ function initMirror() {
         apiRequest("GetStatutoryMappingReportFilter", request, callback, failure_callback);
     }
 
-    function getStatutoryMappingReportData(filterData, callback, failure_callback) {
+    function getStatutoryMappingsReportData(filterData, callback, failure_callback) {
         var request = ["GetStatutoryMappingReportData", filterData];
         apiRequest("getStatutoryMappingReportData", request, callback, failure_callback);
     }
