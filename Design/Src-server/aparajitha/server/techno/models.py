@@ -273,8 +273,8 @@ class BusinessGroup(object):
 
     def __init__(self, businessGroupId, businessGroupName, clientId):
         self.clientId = clientId
-        self.businessGroupId = businessGroupId if businessGroupId != None else self.generateNewBusinessGroupId()
-        self.businessGroupName = businessGroupName
+        self.businessGroupId = int(businessGroupId) if businessGroupId != None else self.generateNewBusinessGroupId()
+        self.businessGroupName = str(businessGroupName)
 
     def verify(self) :
         assertType(self.businessGroupId, IntType)
@@ -307,16 +307,24 @@ class BusinessGroup(object):
                 self.businessGroupTblName, condition)
 
     def save(self, sessionUser):
-        valuesList = []
+        # valuesList = []
         columns = "business_group_id, business_group_name, created_on, created_by,"+\
                 "updated_on, updated_by"
-        valuesTuple = (self.businessGroupId, self.businessGroupName, getCurrentTimeStamp(), 
-                        sessionUser, getCurrentTimeStamp(), sessionUser)
-        valuesList.append(valuesTuple)
-        updateColumnsList = ["business_group_name", "updated_on", "updated_by"]
+        valuesList = [self.businessGroupId, self.businessGroupName, getCurrentTimeStamp(), 
+                        sessionUser, getCurrentTimeStamp(), sessionUser]
+        values = listToString(valuesList)
         return ClientDatabaseHandler.instance(
-            getClientDatabase(self.clientId)).onDuplicateKeyUpdate(
-            self.businessGroupTblName, columns, valuesList, updateColumnsList)
+            getClientDatabase(self.clientId)).insert(
+            self.businessGroupTblName, columns, values)
+
+    def update(self, sessionUser):
+        # valuesList = []
+        columns = ["business_group_name","updated_on", "updated_by"]
+        valuesList = [self.businessGroupName, getCurrentTimeStamp(), sessionUser]
+        condition = " business_group_id = '%d'" % self.businessGroupId
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).update(
+            self.businessGroupTblName, columns, valuesList, condition)
 
     @classmethod
     def getList(self, clientIds):
@@ -345,9 +353,9 @@ class LegalEntity(object):
 
     def __init__(self, legalEntityId, legalEntityName, businessGroupId, clientId):
         self.clientId = clientId
-        self.legalEntityId = legalEntityId if legalEntityId != None else self.generateNewLegalEntityId()
-        self.legalEntityName = legalEntityName
-        self.businessGroupId = businessGroupId
+        self.legalEntityId = int(legalEntityId) if legalEntityId != None else self.generateNewLegalEntityId()
+        self.legalEntityName = str(legalEntityName)
+        self.businessGroupId = int(businessGroupId)
         
 
     def verify(self) :
@@ -385,15 +393,23 @@ class LegalEntity(object):
     def save(self, sessionUser):
         columns = "legal_entity_id, legal_entity_name, business_group_id,"+\
                   "created_on, created_by, updated_on, updated_by"
-        valuesTuple = (self.legalEntityId, self.legalEntityName, self.businessGroupId, 
+        valuesList = [self.legalEntityId, self.legalEntityName, self.businessGroupId, 
                         getCurrentTimeStamp(), sessionUser, 
-                        getCurrentTimeStamp(), sessionUser)
-        valuesList =  []
-        valuesList.append(valuesTuple)
-        updateColumnsList = ["legal_entity_name", "updated_on", "updated_by"]
+                        getCurrentTimeStamp(), sessionUser]
+        values = listToString(valuesList)
         return ClientDatabaseHandler.instance(
-            getClientDatabase(self.clientId)).onDuplicateKeyUpdate(
-            self.legalEntityTblName, columns, valuesList, updateColumnsList)
+            getClientDatabase(self.clientId)).insert(
+            self.legalEntityTblName, columns, values)
+
+    def update(self, sessionUser):
+        columns = [ "legal_entity_name", "business_group_id",
+                  "updated_on", "updated_by"]
+        valuesList = [ self.legalEntityName, self.businessGroupId, 
+                        getCurrentTimeStamp(), sessionUser]
+        condition = " legal_entity_id = '%d'" % self.legalEntityId
+        return ClientDatabaseHandler.instance(
+            getClientDatabase(self.clientId)).update(
+            self.legalEntityTblName, columns, valuesList, "1")
 
     @classmethod
     def getList(self, clientIds):
@@ -422,11 +438,11 @@ class Division(object):
     divisionTblName = "tbl_divisions"
 
     def __init__(self, divisionId, divisionName,legalEntityId, businessGroupId, clientId):
-        self.clientId = clientId
-        self.divisionId = divisionId if divisionId != None else self.generateNewDivisionId()
-        self.divisionName = divisionName
-        self.legalEntityId = legalEntityId
-        self.businessGroupId = businessGroupId
+        self.clientId = int(clientId)
+        self.divisionId = int(divisionId) if divisionId != None else self.generateNewDivisionId()
+        self.divisionName = str(divisionName)
+        self.legalEntityId = int(legalEntityId)
+        self.businessGroupId = int(businessGroupId)
 
     def verify(self) :
         assertType(self.divisionId, IntType)
@@ -464,15 +480,23 @@ class Division(object):
     def save(self, sessionUser):
         columns = "division_id, division_name, legal_entity_id, business_group_id,"+\
                   "created_on, created_by, updated_on, updated_by"
-        valuesTuple = (self.divisionId, self.divisionName, self.legalEntityId, 
+        valuesList = [self.divisionId, self.divisionName, self.legalEntityId, 
                         self.businessGroupId, getCurrentTimeStamp(), sessionUser, 
-                        getCurrentTimeStamp(), sessionUser)          
-        valuesList =  []
-        valuesList.append(valuesTuple)
-        updateColumnsList = ["division_name", "updated_on", "updated_by"]
+                        getCurrentTimeStamp(), sessionUser]
+        values = listToString(valuesList)
         return ClientDatabaseHandler.instance(
-                getClientDatabase(self.clientId)).onDuplicateKeyUpdate(
-                self.divisionTblName, columns, valuesList, updateColumnsList)
+                getClientDatabase(self.clientId)).insert(
+                self.divisionTblName, columns, values)
+
+    def update(self, sessionUser):
+        columns = ["division_name", "legal_entity_id", "business_group_id",
+                  "updated_on", "updated_by"]
+        valuesList = [ self.divisionName, self.legalEntityId, 
+                        self.businessGroupId, getCurrentTimeStamp(), sessionUser]
+        condition = "division_id='%d'" % self.divisionId
+        return ClientDatabaseHandler.instance(
+                getClientDatabase(self.clientId)).update(
+                self.divisionTblName, columns, valuesList, condition)
 
     @classmethod
     def getList(self, clientIds):
@@ -507,22 +531,22 @@ class Unit(object):
     def __init__(self, unitId, divisionId, legalEntityId, businessGroupId, clientId, 
                 countryId, geographyId, unitCode, unitName, industryId, address, 
                 postalCode, domainIds, isActive, industryName, geography):
-        self.clientId = clientId
-        self.unitId = unitId if unitId != None else self.generateNewUnitId()
-        self.divisionId = divisionId
-        self.legalEntityId = legalEntityId
-        self.businessGroupId = businessGroupId
-        self.countryId = countryId
-        self.geographyId = geographyId
-        self.unitCode = unitCode
-        self.unitName = unitName
-        self.industryId = industryId
-        self.address = address
-        self.postalCode = postalCode
+        self.clientId = int(clientId)
+        self.unitId = unitId
+        self.divisionId = int(divisionId)
+        self.legalEntityId = int(legalEntityId)
+        self.businessGroupId = int(businessGroupId)
+        self.countryId = int(countryId)
+        self.geographyId = int(geographyId)
+        self.unitCode = str(unitCode)
+        self.unitName = str(unitName)
+        self.industryId = int(industryId)
+        self.address = str(address)
+        self.postalCode = str(postalCode)
         self.domainIds = domainIds
-        self.isActive = isActive if isActive != None else 1
-        self.industryName = industryName
-        self.geography = geography
+        self.isActive = int(isActive) if isActive != None else 1
+        self.industryName = str(industryName)
+        self.geography = str(geography)
 
     def verify(self) :
         assertType(self.unitId, IntType)
@@ -572,9 +596,10 @@ class Unit(object):
             "unit_address": self.address
         }
 
-    def generateNewUnitId(self):
+    @classmethod
+    def generateNewUnitId(self, clientId):
         return ClientDatabaseHandler.instance(
-                getClientDatabase(self.clientId)).generateNewId(
+                getClientDatabase(clientId)).generateNewId(
                 self.unitTblName, "unit_id")
 
     def isIdInvalid(self):
@@ -583,51 +608,73 @@ class Unit(object):
             getClientDatabase(self.clientId)).isAlreadyExists(self.unitTblName, condition)
 
     def isDuplicateUnitName(self):
-        condition = "unit_name= '%s' and unit_id != '%d'" % (
-                    self.unitName, self.unitId)
+        condition = "unit_name= '%s'" % self.unitName
+        if self.unitId != None:
+            condition += " and unit_id != '%d'" % self.unitId
         return ClientDatabaseHandler.instance(
             getClientDatabase(self.clientId)).isAlreadyExists(self.unitTblName, condition)
 
     def isDuplicateUnitCode(self):
-        condition = "unit_code= '%s' and unit_id != '%d'" % (
-                    self.unitCode, self.unitId)
+        condition = "unit_code= '%s' " % self.unitCode
+        if self.unitId != None:
+            condition += " and unit_id != '%d'" % self.unitId
         return ClientDatabaseHandler.instance(
             getClientDatabase(self.clientId)).isAlreadyExists(self.unitTblName, condition)
 
     def save(self, sessionUser):
         knowledgeValueslist = []
         clientValuesList = []
+        if self.unitId == None:
+            self.unitId = self.generateNewUnitId(self.clientId)
         clientDbColumns = "unit_id, division_id, legal_entity_id, business_group_id,"+\
                         " country_id, geography, unit_code, unit_name, industry_name,"+\
                         " address, postal_code, domain_ids"
         knowledgeDbColumns = "client_id, unit_id, country_id, geography_id, unit_code,"+\
                             " unit_name, industry_id, created_by, created_on,"+\
                             " updated_by, updated_on"
-        
-        knowledgeValuesTuple = (self.clientId, self.unitId, self.countryId, self.geographyId,
+        knowledgeValuesList = [self.clientId, self.unitId, self.countryId, self.geographyId,
                                 self.unitCode, self.unitName, self.industryId, 
                                 int(sessionUser), getCurrentTimeStamp(), 
-                                int(sessionUser), getCurrentTimeStamp())
-        knowledgeValueslist.append(knowledgeValuesTuple)
-        clientValuesTuple = ( self.unitId, self.divisionId, self.legalEntityId,
+                                int(sessionUser), getCurrentTimeStamp()]
+        clientValuesList = [self.unitId, self.divisionId, self.legalEntityId,
                             self.businessGroupId, self.countryId, self.geography, 
                             self.unitCode, self.unitName, self.industryName, 
                             self.address, self.postalCode, 
-                            ",".join(str(x) for x in self.domainIds))
-        clientValuesList.append(clientValuesTuple)
-
-
-        knowledgeUpdateColumnsList = ["geography_id", "unit_code", "unit_name", "industry_id",
-        "updated_by", "updated_on"]
-        clientUpdateColumnsList = ["geography", "unit_code", "unit_name", "industry_name",
-        "address", "postal_code", "domain_ids"]
-        
-        if DatabaseHandler.instance().onDuplicateKeyUpdate(
-                        self.unitTblName, knowledgeDbColumns, knowledgeValueslist, 
-                        knowledgeUpdateColumnsList):
+                            ",".join(str(x) for x in self.domainIds)]
+        knowledgeValues = listToString(knowledgeValuesList)
+        clientValues = listToString(clientValuesList)
+        if DatabaseHandler.instance().insert(
+                        self.unitTblName, knowledgeDbColumns, knowledgeValues):
             return ClientDatabaseHandler.instance(
-                getClientDatabase(self.clientId)).onDuplicateKeyUpdate(
-                self.unitTblName, clientDbColumns, clientValuesList, clientUpdateColumnsList)
+                getClientDatabase(self.clientId)).insert(
+                self.unitTblName, clientDbColumns, clientValues)
+
+    def update(self, sessionUser):
+        knowledgeValueslist = []
+        clientValuesList = []
+        if self.unitId == None:
+            self.unitId = self.generateNewUnitId(self.clientId)
+        clientDbColumns = ["division_id", "legal_entity_id", "business_group_id",
+                        "country_id", "geography", "unit_code", "unit_name", "industry_name",
+                        "address", "postal_code", "domain_ids"]
+        knowledgeDbColumns = [ "country_id", "geography_id", "unit_code",
+                            "unit_name", "industry_id", "updated_by", "updated_on"]
+        knowledgeValuesList = [self.countryId, self.geographyId,
+                                self.unitCode, self.unitName, self.industryId, 
+                                int(sessionUser), getCurrentTimeStamp()]
+        clientValuesList = [self.divisionId, self.legalEntityId,
+                            self.businessGroupId, self.countryId, self.geography, 
+                            self.unitCode, self.unitName, self.industryName, 
+                            self.address, self.postalCode, ",".join(str(x) for x in self.domainIds)]
+        knowledgeCondition = " client_id = '%d' and unit_id= '%d'" % (self.clientId, self.unitId)
+        clientCondition = " unit_id= '%d'" % self.unitId
+
+        if DatabaseHandler.instance().update(
+                        self.unitTblName, knowledgeDbColumns, knowledgeValuesList, knowledgeCondition):
+            print "knowledge updated"
+            return ClientDatabaseHandler.instance(
+                getClientDatabase(self.clientId)).update(
+                self.unitTblName, clientDbColumns, clientValuesList, clientCondition) 
 
     @classmethod
     def getList(self,clientIds):
@@ -742,27 +789,51 @@ class Client(object):
     usersTblName = "tbl_users"
 
     def save(self, businessGroup, legalEntity, division, 
-        unitList , sessionUser):
+        unitList , sessionUser, type):
         self.businessGroup = businessGroup
         self.legalEntity = legalEntity
         self.division = division
         self.unitList = unitList
         self.sessionUser = sessionUser
-        if self.businessGroup.save(self.sessionUser):
-            if self.legalEntity.save(self.sessionUser):
-                if self.division.save(self.sessionUser):
-                    for unitObj in self.unitList:
-                        if unitObj.save(self.sessionUser):
-                            return True
-                        else:
-                            return False
-                    return True
+        if type == "save":
+            if self.businessGroup.businessGroupId != None:
+                self.businessGroup.save(self.sessionUser)
+                if self.legalEntity.legalEntityId != None:
+                    self.legalEntity.save(self.sessionUser)
+                    if self.division.divisionId != None:
+                        self.division.save(self.sessionUser)
+                        for unitObj in self.unitList:
+                            print "going to save unit %s" % unitObj.unitName
+                            if unitObj.save(self.sessionUser):
+                                print "saved unit %s" % unitObj.unitName
+                                continue
+                            else:
+                                return False
+                        return True
+                    else:
+                        return False
                 else:
                     return False
             else:
                 return False
-        else:
-            return False
+        elif type == "update":
+            if self.businessGroup.update(self.sessionUser):
+                if self.legalEntity.update(self.sessionUser):
+                    if self.division.update(self.sessionUser):
+                        for unitObj in self.unitList:
+                            print "going to update unit %s" % unitObj.unitName
+                            if unitObj.update(self.sessionUser):
+                                print "saved unit %s" % unitObj.unitName
+                                continue
+                            else:
+                                return False
+                        return True
+                    else:
+                        return False
+                else:
+                    return False
+            else:
+                return False
 
     def changeClientStatus(self, clientId,  legalEntityId, divisionId, 
         isActive, sessionUser):
