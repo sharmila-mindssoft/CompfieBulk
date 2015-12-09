@@ -10,6 +10,7 @@ var industryList;
 var unitList;
 var geographyList;
 var geographyLevelList;
+var unitcodecount=1001;
 $(function() {
 	$("#clientunit-add").hide();
 	initialize();
@@ -194,7 +195,8 @@ $("#add-country-row").click(function(){
 			$('.auto-complete-unit-location', clone).addClass('auto-complete-unit-location-'+countryArray[countc]+'-'+1);
 			$('.unitlocationlist-text', clone).addClass('unitlocationlist-text-'+countryArray[countc]+'-'+1);
 			$('.full-location-list', clone).addClass('full-location-list-'+countryArray[countc]+'-'+1);
-			$('.unitcode_checkbox', clone).addClass('unitcode_checkbox-'+countryArray[countc]);
+			$('.unitcode-checkbox', clone).addClass('unitcode-checkbox-'+countryArray[countc]);
+			$('.unit-code', clone).addClass('unit-code-'+countryArray[countc]);
 			$('.unit-code', clone).addClass('unit-code-'+countryArray[countc]+'-'+1);
 			$('.unit-name', clone).addClass('unit-name-'+countryArray[countc]+'-'+1);
 			$('.industry', clone).addClass('industry-'+countryArray[countc]+'-'+1);
@@ -236,7 +238,7 @@ function addNewUnitRow(str){
 	$('.auto-complete-unit-location', clone1).addClass('auto-complete-unit-location-'+countval+'-'+(lastClassval+1));
 	$('.unitlocationlist-text', clone1).addClass('unitlocationlist-text-'+countval+'-'+(lastClassval+1));
 	$('.full-location-list', clone1).addClass('full-location-list-'+countval+'-'+(lastClassval+1));
-	$('.unitcode_checkbox', clone1).addClass('unitcode_checkbox-'+countval);
+	$('.unit-code', clone1).addClass('unit-code-'+countval);
 	$('.unit-code', clone1).addClass('unit-code-'+countval+'-'+(lastClassval+1));
 	$('.unit-name', clone1).addClass('unit-name-'+countval+'-'+(lastClassval+1));
 	$('.industry', clone1).addClass('industry-'+countval+'-'+(lastClassval+1));
@@ -250,14 +252,33 @@ function addNewUnitRow(str){
 	$('.no-of-units-'+countval).val(parseInt($('.no-of-units-'+countval).val())+1);
 	$('.'+tbodyclasses[1]).append(clone1);
 }
-	
+//Auto Generate Unit Code------------------------------------------------------------------------------------------
+function autoGenerateUnitCode(classval){
+	var className = classval.split(' ');
+	var groupId=$("#group-select :selected").val();
+	var groupname=$.trim($("#group-select :Selected").text());	
+	var get3Chars=groupname.slice(0, 3);	
+	var getLastNumber=className[1].split('-').pop();
+	var countryname=$('.country-'+getLastNumber).val();
+	var totUnitcode=$('.unit-code-'+getLastNumber).length
+	if($('.'+className[1]).prop("checked")==true){
+		for(var i=1;i<=totUnitcode; i++){
+			$('.unit-code-'+getLastNumber+'-'+i).val(get3Chars+unitcodecount);	
+			unitcodecount++;
+		}		
+	}
+	if($('.'+className[1]).prop("checked")==false){
+		$('.unit-code-'+getLastNumber).val('');
+	}
+
+}
+
 //Load Geography Levels -------------------------------------------------------------------------------------------
 function loadglevels(classval){
 	var lastClass = classval.split(' ').pop();
 	var checkval=lastClass.split('-');	
 	var countryvalue=$('.countryval-'+checkval[1]).val();
 	var countryid=$('.country-'+checkval[1]).val();
-	console.log(countryvalue);
 	if(countryvalue==''){
 		$('.error-message').html('Enter Country First');
 	}
@@ -479,7 +500,7 @@ $("#btn-clientunit-submit").click(function(){
 	    }
     } 
 
-    mirror.saveClient("TechnoAPI", parseInt(groupNameValue), businessGroup, legalEntity, division, countryWiseUnits, success, failure);
+    mirror.updateClient("TechnoAPI", parseInt(groupNameValue), businessGroup, legalEntity, division, countryWiseUnits, success, failure);
 	}
 	else{
 		console.log("Fails All");
