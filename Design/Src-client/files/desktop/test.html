@@ -21,7 +21,58 @@
       alert("failure_data"+data)
     }
     $(document).ready(function(){
-     
+      clientId = 3
+
+      businessGroup = {}
+      businessGroup["business_group_id"] = 3
+      businessGroup["business_group_name"] = "Test Business Group 4"
+
+      legalEntity = {}
+      legalEntity["legal_entity_id"] = 3
+      legalEntity["legal_entity_name"] = "Test Legal Entity Name 4"
+
+      division = {}
+      division["division_id"] = 3
+      division["division_name"] = "Test Division Name 4"
+
+      countryWiseUnits = []
+
+
+      units = []
+      unit = {}
+      unit["unit_id"] = null
+      unit["unit_code"] = "TUNITUP0042"
+      unit["unit_name"] = "Test Unit Name 42"
+      unit["unit_address"] = "Sample Address 42"
+      unit["postal_code"] = "678267841"
+      unit["geography_id"] = 1
+      unit["unit_location"] = "Madurai"
+      unit["industry_id"] = 1
+      unit["industry_name"] = "Factory"
+      unit["domain_ids"] = [3,4]
+      unit1 = {}
+      unit1["unit_id"] = null
+      unit1["unit_code"] = "TUNITUP0043"
+      unit1["unit_name"] = "Test Unit Name 43"
+      unit1["unit_address"] = "Sample Address 43"
+      unit1["postal_code"] = "678267841"
+      unit1["geography_id"] = 1
+      unit1["unit_location"] = "Madurai"
+      unit1["industry_id"] = 1
+      unit1["industry_name"] = "Factory"
+      unit1["domain_ids"] = [3,4]
+      units.push(unit)
+      units.push(unit1)
+
+      india = {}
+      india["country_id"] = 1 
+      india["units"] = units
+
+      countryWiseUnits.push(india)
+
+        mirror.updateClient("TechnoAPI", clientId, businessGroup, legalEntity, division, 
+        countryWiseUnits, success, failure);
+        // mirror.getClients("TechnoAPI", success, failure)
     });
 </script>
 </body>
