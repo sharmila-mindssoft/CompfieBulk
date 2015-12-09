@@ -388,9 +388,9 @@ $(function() {
 <div class="content-container width75">
   <div class="content-area">
     <h1>Statutory Mapping</h1>
+    <span id="error" class="error-message" style="color:black;"></span>
     <div class="add-container">
     <div class="form-container-outer">
-
     <ul class="nav  nav-pills nav-justified setup-panel">
     <li class="active"><a href="#step-1">
       <h4 class="list-group-item-heading">1. Select Domain</h4>
@@ -408,7 +408,6 @@ $(function() {
   </ul>
 
   <div class="clearfix"></div>
-
   <div class="setup-content" id="step-1">
     <div class="innercontent">
       <div class="form-container-grid-table-sm">
@@ -469,9 +468,7 @@ $(function() {
   <div class="setup-content" id="step-2">
     <div class="innercontent">
      <div class="form-container-grid-table">
-
-            <h2 style="font-size:0.813em;"> India <img src="/images/right_arrow.png"> Labour Law <img src="/images/right_arrow.png"> Factory <img src="/images/right_arrow.png"> Central</h2>
-
+            <h2 style="font-size:0.813em;" id="breadcrumbs_1"> </h2>
             <input type="hidden" id="statutoryid"> 
             <table>
               <tbody class="tbody-statutory-level">        
@@ -480,21 +477,17 @@ $(function() {
 
              </div>
              <div class="clearfix"></div>
-             <div style="padding-top:3px;padding-bottom:5px;" align="center"><input type="submit" class="btn-submit" value="Add" /></div>
+             <div style="padding-top:3px;padding-bottom:5px;" align="center"><input type="submit" class="btn-submit" value="Add" onclick="temp_addstatutories()" /></div>
              
              <div class="grid-table">
-              <table>
+              <table width="100%">
                 <tr align="left" style="height:2.0em;">
-                  <th style="height:2em;" align="center">#</th>
-                  <th style="height:2em;">Statutory</th>
-                  <th align="center" style="padding-right:3px; height:2em;">Remove</th>
+                  <th style="height:2em;width:5%" align="center">#</th>
+                  <th style="height:2em;width:85%">Statutory</th>
+                  <th align="center" style="padding-right:3px; height:2em;width:10%">Remove</th>
                 </tr>
-
-                <tr>
-                  <td align="center">1</td>
-                  <td>Gratuity Act, 1972 <img src="/images/right_arrow.png"> Tamil Nadu Gratuity Act, 1972 <img src="/images/right_arrow.png"> Rule 5</td>
-                  <td align="center"><img src="/images/icon-delete.png" title="Click here to deactivate" id="activeid" /></td>
-                </tr>
+                <tbody class="tbody-statutory-list">        
+                </tbody>
                
               </table>
             </div>
@@ -515,9 +508,21 @@ $(function() {
   </table>
 </div>
 
+<div id="statutory-templates">
+<table class="table-statutory">
+  <tr class="table-row">
+    <td class="sno" align="center"></td>
+    <td class="statutory"></td>
+    <td class="remove" align="center"></td>
+  </tr>
+</table>
+</div>
+
 
    <div class="setup-content" id="step-3">
     <div class="innercontent">
+     
+
      
     </div>
     <button id="activate-step-4" class="btn-right">Next</button>
@@ -535,7 +540,6 @@ $(function() {
     </div>
   </div>
 </div>
-
 
 
 <script type="text/javascript">
