@@ -767,7 +767,7 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-<<<<<<< HEAD
+
     function updateClient(callerName, clientId, businessGroup, legalEntity, 
         division, countryWiseUnits, callback, failure_callback) {
         var request = [
