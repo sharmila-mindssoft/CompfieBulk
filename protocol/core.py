@@ -5,7 +5,14 @@ __all__ = [
 	"ASSIGN_STATUTORY_SUBMISSION_TYPE", "NOTIFICATION_TYPE",
 	"FILTER_TYPE", "COMPLIANCE_FREQUENCY", "COMPLIANCE_STATUS",
 	"APPLICABILITY_STATUS", "FORM_TYPE", "REPEATS_TYPE",
-	"DURATION_TYPE",
+	"DURATION_TYPE","Form", "Menu", "UserGroup", "Country", "Domain",
+	"GeographyLevel", "Geography", "Industry", "StatutoryNature",
+	"StatutoryLevel", "Statutory", "Compliance", "StatutoryMapping",
+	"GroupCompany", "GroupCompanyDetail", "ClientConfiguration", 
+	"BusinessGroup", "LegalEntity", "Division", "Unit", "ServiceProvider",
+	"ClientUser", "AssignedStatutory", "ActiveCompliance", "UpcomingCompliance",
+	"NumberOfCompliances", "ChartFilters", "ComplianceStatusDrillDown",
+	"EscalationsDrillDown", 
 ]
 
 # frm = EnumType("FORM_TYPE", [
@@ -119,12 +126,12 @@ DURATION_TYPE = EnumType("DURATION_TYPE", [
 ])
 
 FormIdsList = VectorType(FORM_ID)
-CountryIds = VectorType(COUNTRY_ID)
-DomainIds = VectorType(DOMAIN_ID)
-IndustryIds = VectorType(INDUSTRY_ID)
-GeographyIds = VectorType(GEOGRAPHY_ID)
-StatutoryIds = VectorType(STATUTORY_ID)
-FormatFiles = VectorType(FORMAT_FILE_NAME)
+CountryIdsList = VectorType(COUNTRY_ID)
+DomainIdsList = VectorType(DOMAIN_ID)
+IndustryIdsList = VectorType(INDUSTRY_ID)
+GeographyIdsList = VectorType(GEOGRAPHY_ID)
+StatutoryIdsList = VectorType(STATUTORY_ID)
+FormatFilesList = VectorType(FORMAT_FILE_NAME)
 
 Form = RecordType("Form", [
 	Filed("form_id", FORM_ID),
@@ -181,7 +188,7 @@ Geography = RecordType("Geography", [
 	Filed("geography_id", GEOGRAPHY_ID),
 	Filed("geography_name", GEOGRAPHY_NAME),
 	Filed("level_id", GEOGRAPHY_LEVEL_ID),
-	Filed("parent_ids", GeographyIds),
+	Filed("parent_ids", GeographyIdsList),
 	Filed("is_active", IS_ACTIVE),
 ])
 
@@ -209,7 +216,7 @@ Statutory = RecordType("Statutory", [
 	Filed("statutory_id", STATUTORY_ID),
 	Filed("statutory_name", STATUTORY_NAME),
 	Filed("level_id", STATUTORY_LEVEL_ID),
-	Filed("parent_ids", StatutoryIds),
+	Filed("parent_ids", StatutoryIdsList),
 	Filed("is_active", IS_ACTIVE),
 ])
 
@@ -221,7 +228,7 @@ Compliance = RecordType("Compliance", [
     Filed("compliance_task", COMPLIANCE_NAME), 
     Filed("description", DESCRIPTION), 
     Filed("document_name", DOCUMENT_NAME), 
-    Filed("format_file_name", FormatFiles), 
+    Filed("format_file_name", FormatFilesList), 
     Filed("penal_description", DESCRIPTION), 
     Filed("compliance_frequency", COMPLIANCE_FREQUENCY), 
     Filed("statutory_dates", StatutoryDates),
@@ -251,7 +258,7 @@ StatutoryMapping = RecordType("StatutoryMapping", [
 	Filed("statutory_mapping_id", STATUTORY_MAPPING_ID),
     Filed("country_id", COUNTRY_ID),
     Filed("domain_id", DOMAIN_ID), 
-    Filed("industry_ids", IndustryIds), 
+    Filed("industry_ids", IndustryIdsList), 
     Filed("statutory_nature_id", STATUTORY_NATURE_ID), 
     Filed("statutories", StatutoryList), 
     Filed("compliances", ComplianceList), 
@@ -318,7 +325,7 @@ Unit = RecordType("Unit", [
     Filed("industry_id", INDUSTRY_ID),
     Filed("unit_address", ADDRESS),
     Filed("postal_code", Int8),
-    Filed("domain_ids", DomainIds),
+    Filed("domain_ids", DomainIdsList),
     Filed("is_active", IS_ACTIVE),
 ])
 
@@ -343,8 +350,8 @@ ClientUser = RecordType("ClientUser", [
     Filed("seating_unit_id", UNIT_ID),
     Filed("seating_unit_name", UNIT_NAME),
     Filed("user_level", USER_LEVEL),
-    Filed("country_ids",CountryIds),
-    Filed("domain_ids", DomainIds),
+    Filed("country_ids",CountryIdsList),
+    Filed("domain_ids", DomainIdsList),
     Filed("unit_ids", UnitIds),
     Filed("is_admin", STATUS),
     Filed("is_service_provider", STATUS),
@@ -371,7 +378,7 @@ ActiveCompliance = RecordType("ActiveCompliance", [
     Filed("validity_date", DATE),
     Filed("next_due_date", DATE),
     Filed("ageing", Int8),
-    Filed("format_file_name", FormatFiles)
+    Filed("format_file_name", FormatFilesList)
 ])
 
 UpcomingCompliance = RecordType("UpcomingCompliance", [
@@ -381,7 +388,7 @@ UpcomingCompliance = RecordType("UpcomingCompliance", [
     Filed("domain_name", DOMAIN_NAME),
     Filed("start_date", DATE),
     Filed("due_date", DATE),
-    Filed("format_file_name", FormatFiles)
+    Filed("format_file_name", FormatFilesList)
 ])
 
 NumberOfCompliances = RecordType("NumberOfCompliances", [
