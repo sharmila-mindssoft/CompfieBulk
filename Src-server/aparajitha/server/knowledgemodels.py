@@ -1,8 +1,8 @@
+import json
+from types import *
 from aparajitha.misc.client_mappings import client_db_mappings
 from aparajitha.server.clientdatabase import ClientDatabase
 from aparajitha.misc.dates import *
-import json
-from types import *
 
 __all__ = [
     "PossibleError", "Domain",
@@ -16,15 +16,6 @@ __all__ = [
     "GroupCompany"
 ]
 
-_client_db = None
-
-def _get_database(client_id) :
-    database_name = None
-    if client_id is None :
-        return None
-    database_name = client_db_mappings[client_id]
-    _client_db = ClientDatabase(database_name)
-    return _client_db
 
 def assertType (x, typeObject) :
     if type(x) is not typeObject :
@@ -94,6 +85,16 @@ class Domain(object) :
 
     def __repr__(self) :
         return str(self.toStructure())
+
+_client_db = None
+
+def _get_database(client_id) :
+    database_name = None
+    if client_id is None :
+        return None
+    database_name = client_db_mappings[client_id]
+    _client_db = ClientDatabase(database_name)
+    return _client_db
 
 class Country(object) :
     def __init__(self, countryId, countryName, isActive) :

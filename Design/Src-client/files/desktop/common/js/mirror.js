@@ -377,8 +377,7 @@ function initMirror() {
         apiRequest("SaveStatutory", request, callback, failure_callback);
     }
 
-    function updateStatutory(statutoryId, levelId, name, parentIds, 
-        callback, failure_callback) {
+    function updateStatutory(statutoryId, levelId, name, parentIds, callback, failure_callback) {
         var request = [
             "UpdateStatutory",
             {
@@ -443,6 +442,7 @@ function initMirror() {
 
         return mappingData;
     }
+
 
     function saveStatutoryMapping(mappingData, callback, failure_callback 
     ) {
