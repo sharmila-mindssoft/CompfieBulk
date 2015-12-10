@@ -15,6 +15,7 @@ class Database(object) :
 	tblUserDetails = "tbl_user_details"
 	tblUserGroups = "tbl_user_groups"
 	tblEmailVerification = "tbl_email_verification"
+	tblClientGroups = "tbl_client_groups"
 
 	### Client Tables ###
 	tblServiceProviders = "tbl_service_providers"
@@ -24,6 +25,8 @@ class Database(object) :
 	tblDivision = "tbl_divisions"
 	tblUnit = "tbl_units"
 	tblClientUserDetails = "tbl_client_user_details"
+	tblClientSettings = "tbl_client_settings"
+	tblConfiguration = "tbl_client_configurations"
 
 	def __init__(self, database) :
 		self._database = database

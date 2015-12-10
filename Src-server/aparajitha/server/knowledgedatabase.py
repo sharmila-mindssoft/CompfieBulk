@@ -1387,6 +1387,16 @@ class KnowledgeDatabase(object) :
 		values = [is_active, timestamp, session_user]
 		condition = "user_group_id='%d'" % user_group_id
 		return self._db.update(self._db.tblUserGroups, columns, values, condition)
+
+#
+#	Client Group
+#
+	def get_client_groups(self):
+		columns = ["client_id", "group_name", "incharge_persons" ,
+					"is_active"]
+		condition = "1"
+		rows = self._db.get_data(self._db.tblClientGroups, columns, condition)
+		return rows
 #
 #	User
 #
@@ -1440,9 +1450,9 @@ class KnowledgeDatabase(object) :
 		return rows
 
 	def get_user_list(self):
-		columns = "user_id, employee_name, employee_code, is_active"
+		columns = ["user_id", "employee_name", "employee_code", "is_active"]
 		condition = "1"
-		rows = self._db.get_data(self._db.tblUserDetails, columns, conditions)
+		rows = self._db.get_data(self._db.tblUserDetails, columns, condition)
 		return rows
 #
 #	Activity Log
