@@ -52,17 +52,17 @@ Menu = DictType({
 	"settings": ListType(Form),
 })
 
-Domain = DictType({
-		"domain_id": Int,
-		"domain_name": Text50,
-		"is_active":Int
-	})
-
 Country = DictType({
-		"country_id": Int,
-		"country_name": Text50,
-		"is_active":Int
-	})
+	"country_id" : Int,
+	"country_name": Text50,
+	"is_active": Int
+})
+
+Domain = DictType({
+	"domain_id": Int,
+	"domain_name": Text50,
+	"is_active": Int
+})
 
 BusinessGroup = DictType({
 		"business_group_id": Int,
@@ -96,6 +96,81 @@ DateConfiguration = DictType({
 	    "period_from": Int,
 	    "period_to": Int
 	})
+
+Industry = DictType({
+	"industry_id": Int,
+	"industry_name": Text50,
+	"is_active": Int
+})
+
+StatutoryNature = DictType({
+	"statutory_nature_id": Int,
+	"statutory_nature_name": Text50,
+	"is_active": Int
+})
+
+Level = DictType({
+	"level_id": OptionalType(Int),
+	"level_position": Int,
+	"level_name": Text50
+})
+
+Geography = DictType({
+	"geography_id": Int,
+    "geography_name": Text100,
+    "level_id": Int,
+    "parent_id": Int,
+    "is_active": Int
+})
+
+Statutory = DictType({
+	"statutory_id": Int, 
+    "statutory_name": Text100,
+    "level_id": Int,
+    "parent_ids": ListType(Int),
+    "parent_id": Int
+})
+
+Compliance = DictType({
+	"compliance_id": OptionalType(Int),
+    "statutory_provision" : Text100,
+    "compliance_task": Text100,
+    "description": Text500,
+    "document_name": Text50,
+    "format_file_name": ListType(Text50),
+    "penal_description": Text100,
+    "compliance_frequency": Text20,
+    "statutory_dates": ListType(
+    	DictType({
+    		"statutory_date": Int,
+            "statutory_month": Int,
+            "trigger_before_days": Int
+    	})
+    ),
+    "repeats_type": OptionalType(Text20),
+    "repeats_every": OptionalType(Int),
+    "duration_type": OptionalType(Text20),
+    "duration": OptionalType(Int),
+    "is_active": Int
+})
+
+StatutoryMapping = DictType({
+	"country_id": Int,
+    "country_name": Text50,
+    "domain_id": Int,
+    "domain_name": Text50,
+    "industry_ids": ListType(Int),
+    "industry_names": Text100,
+    "statutory_nature_id": Int,
+    "statutory_nature_name": Text50,
+    "statutory_ids": ListType(Int),
+    "statutory_mappings": ListType(Text500),
+    "compliances": ListType(Compliance),
+    "compliance_names": ListType(Text100),
+    "geographies_ids": ListType(Int),
+    "approval_status": Text50,
+    "is_active": Int
+})
 
 define_request(
 	"Login", {
@@ -132,6 +207,333 @@ define_request(
 	{},
 	{},
 	["InvalidSession"]
+)
+
+# Domain
+define_request("GetDomains", 
+	{}, 
+	{
+		"domains": ListType(Domain)
+	}, 
+	[]
+)
+
+define_request ( "SaveDomain", 
+	{
+		"domain_name": Text50
+	},
+	{},
+	["DomainNameAlreadyExists"]
+)
+
+define_request ( "UpdateDomain", 
+	{
+		"domain_id": Int,
+		"domain_name": Text50
+	},
+	{},
+	["DomainNameAlreadyExists", "InvalidDomainId"]
+)
+
+define_request ( "ChangeDomainStatus", 
+	{
+		"domain_id": Int,
+		"is_active": Int
+	},
+	{},
+	["InvalidDomainId"]
+)
+
+# Country
+define_request( "GetCountries", 
+	{}, 
+	{
+		"countries": ListType(Country)
+	}, 
+	[]
+)
+
+define_request ( "SaveCountry", 
+	{
+		"country_name": Text50
+	},
+	{},
+	["CountryNameAlreadyExists"]
+)
+
+define_request ( "UpdateCountry", 
+	{
+		"country_id": Int,
+		"country_name": Text50
+	},
+	{},
+	["CountryNameAlreadyExists", "InvalidCountryId"]
+)
+
+define_request ( "ChangeCountryStatus", 
+	{
+		"country_id": Int,
+		"is_active": Int
+	},
+	{},
+	["InvalidCountryId"]
+)
+
+# Industry
+define_request( "GetIndustries", 
+	{}, 
+	{
+		"industries": ListType(Industry)
+	}, 
+	[]
+)
+
+define_request ( "SaveIndustry", 
+	{
+		"industry_name": Text50
+	},
+	{},
+	["IndustryNameAlreadyExists"]
+)
+
+define_request ( "UpdateIndustry", 
+	{
+		"industry_id": Int,
+		"industry_name": Text50
+	},
+	{},
+	["IndustryNameAlreadyExists", "InvalidIndustryId"]
+)
+
+define_request ( "ChangeIndustryStatus", 
+	{
+		"industry_id": Int,
+		"is_active": Int
+	},
+	{},
+	["InvalidIndustryId"]
+)
+
+# Statutory Nature
+define_request( "GetStatutoryNatures", 
+	{}, 
+	{
+		"statutory_natures": ListType(StatutoryNature)
+	}, 
+	[]
+)
+
+define_request ( "SaveStatutoryNature", 
+	{
+		"statutory_nature_name": Text50
+	},
+	{},
+	["StatutoryNatureNameAlreadyExists"]
+)
+
+define_request ( "UpdateStatutoryNature", 
+	{
+		"statutory_nature_id": Int,
+		"statutory_nature_name": Text50
+	},
+	{},
+	["StatutoryNatureNameAlreadyExists", "InvalidStatutoryNatureId"]
+)
+
+define_request ( "ChangeStatutoryNatureStatus", 
+	{
+		"statutory_nature_id": Int,
+		"is_active": Int
+	},
+	{},
+	["InvalidStatutoryNatureId"]
+)
+
+define_request ("GetStatutoryLevels", {},
+	{
+		"countries": ListType(Country),
+		"domains": ListType(Domain),
+		"statutory_levels": DictType({
+			Int: DictType({
+				Int: ListType(Level),
+			})
+		})
+	},
+	[]
+)
+
+define_request("SaveStatutoryLevels", 
+	{
+		"country_id": Int,
+		"domain_id": Int,
+		"levels": ListType(Level)
+	},
+	{},
+	["DuplicateStatutoryLevelNamesExists", "DuplicateStatutoryLevelPositionsExists"]
+)
+
+define_request ("GetGeographyLevels", {},
+	{
+		"countries": ListType(Country),
+		"geography_levels": DictType({
+			"country_id": ListType(Level),
+		})
+	},
+	[]
+)
+
+define_request("SaveGeographyLevels", 
+	{
+		"country_id": Int,
+		"levels": ListType(Level)
+	},
+	{},
+	["DuplicateGeographyLevelNamesExists", "DuplicateGeographyLevelPositionsExists"]
+)
+
+define_request("GetGeographies", 
+	{}, 
+	{
+		"countries": ListType(Country),
+		"geography_levels": DictType({
+			"country_id": ListType(Level),
+		}),
+		"geographies": ListType(Geography)
+	}, 
+	[]
+)
+
+define_request ("SaveGeography", 
+	{
+		"geography_level_id": Int,
+        "geography_name": Text50,
+        "parent_ids": ListType(Int)
+	},
+	{},
+	["GeographyNameAlreadyExists"]
+)
+
+define_request ("UpdateGeography", 
+	{
+		"geography_name": Text50,
+		"parent_ids": ListType(Int)
+	}, 
+	{}, 
+	["GeographyNameAlreadyExists", "InvalidGeographyId"]
+)
+
+define_request ("ChangeGeographyStatus", 
+	{
+		"geography_id": Int,
+		"is_active": Int
+	}, 
+	{},
+	["GeographyNameAlreadyExists", "InvalidGeographyId"]
+)
+
+define_request ("GeographyReport", 
+	{}, 
+	{
+		"countries": ListType(Country),
+		"geographies": DictType({
+			"geography": Text250,
+			"is_active": Int
+		})
+	},
+	[]
+)
+
+define_request ("SaveStatutory", 
+	{
+		"statutory_level_id": Int,
+        "statutory_name": Text250,
+        "parent_ids": ListType(Int)
+	},
+	{},
+	["StatutoryNameAlreadyExists"]
+)
+
+define_request ("UpdateStatutory", 
+	{
+		"statutory_id": Int,
+		"statutory_name": Text250,
+		"parent_ids": ListType(Int)
+	},
+	{},
+	["StatutoryNameAlreadyExists", "InvalidStatutoryId"]
+)
+
+define_request ("GetStatutoryMappings", 
+	{}, 
+	{
+		"countries": ListType(Country),
+		"domains": ListType(Domain),
+		"statutory_natures": ListType(StatutoryNature),
+        "statutory_levels": DictType({
+			"country_id": DictType({
+				"domain_id": ListType(Level),
+			})
+		}),
+        "statutories": ListType(Statutory),
+        "geography_levels": DictType({
+			"country_id": ListType(Level)
+		}),
+        "geographies": ListType(Geography),
+        "statutory_mappings": DictType({
+        	"statutory_mapping_id": StatutoryMapping
+        })
+
+	}, 
+	[]
+)
+
+define_request( "SaveStatutoryMapping",
+	{
+		"country_id": Int,
+        "domain_id": Int,
+        "industry_ids": ListType(Int),
+        "statutory_nature_id": Int,
+        "statutory_ids": ListType(Int),
+        "compliances":ListType(Compliance),
+        "geography_ids": ListType(Int)
+	},
+	{},
+	[]
+)
+
+define_request("UpdateStatutoryMapping", 
+	{
+		"statutory_mapping_id": Int,
+		"country_id": Int,
+        "domain_id": Int,
+        "industry_ids": ListType(Int),
+        "statutory_nature_id": Int,
+        "statutory_ids": ListType(Int),
+        "compliances":ListType(Compliance),
+        "geography_ids": ListType(Int)
+	}, 
+	{}, 
+	["InvalidStatutoryMappingId"]
+)
+
+define_request ("UpdateStatutoryMappingStatus", 
+	{
+		"statutory_mapping_id": Int,
+		"is_active": Int
+	}, 
+	{}, 
+	["InvalidStatutoryMappingId"]
+)
+
+define_request ("ApproveStatutoryMapping", 
+	{
+		"statutory_mapping_id": Int,
+        "approval_status": Text20,
+        "rejected_reason": OptionalType(Text500),
+        "notification_text": OptionalType(Text500)
+	}, 
+	{}, 
+	["InvalidStatutoryMappingId"]
 )
 
 #

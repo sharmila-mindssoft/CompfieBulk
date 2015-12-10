@@ -2,6 +2,7 @@ from aparajitha.server.database import Database
 from aparajitha.misc.dates import *
 from aparajitha.misc.client_mappings import *
 from aparajitha.misc.formmappings import formIdMappings
+from types import *
 import uuid
 import datetime
 import hashlib
@@ -56,9 +57,9 @@ class KnowledgeDatabase(object) :
 		if client_id in client_db_mappings :
 			database_name = client_db_mappings[client_id]
 		if database_name is None :
-            # temporary purpose
+			# temporary purpose
 			database_name = "mirror_client"
-            # return None
+			# return None
 		return Database(database_name)
 
 	def new_uuid(self) :
@@ -219,7 +220,7 @@ class KnowledgeDatabase(object) :
 		result = self._db.execute_and_return(query)
 		if len(result) == 0 :
 			return 1
-		return int(row[0][0]) + 1
+		return int(result[0][0]) + 1
 
 	def getDateTime(self) :
 		return datetime.datetime.now()
@@ -230,7 +231,7 @@ class KnowledgeDatabase(object) :
 		query = "INSERT INTO tbl_activity_log(activity_log_id, user_id, form_id, \
             action, ticker_text, ticker_link, created_on) \
             VALUES (%s, %s, %s, '%s', '%s', '%s', '%s')" % (
-                activityId, userId, formId, action, str(notificationText), str(notificationLink), created_on
+                activity_id, user_id, form_id, action, str(notification_text), str(notification_link), created_on
             )
 		self._db.execute(query)
 
@@ -252,21 +253,22 @@ class KnowledgeDatabase(object) :
 		created_on = self.getDateTime()
 		domain_id = self.getNewId("domain_id", "tbl_domains")
 		is_active = 1
-
 		query = "INSERT INTO tbl_domains(domain_id, domain_name, is_active, \
             created_by, created_on) VALUES (%s, '%s', %s, %s, '%s') " % (
             domain_id, domain_name, is_active, created_by, created_on
         )
-
 		self._db.execute(query)
-		action = "Add Domain - \"%s\"" % domainName
+		action = "Add Domain - \"%s\"" % domain_name
 		self.add_activity_log(created_by, 4, action)
 		return True
 
 	def get_domain_by_domain_id(self, domain_id) :
-		q = "SELECT domain_name FROM tbl_domains WHERE domain_id=%s" % domain_id
-		rows = self._db.execute_and_return(q)
-		return rows[0][0]
+	    q = "SELECT domain_name FROM tbl_domains WHERE domain_id=%s" % domain_id
+	    rows = self._db.execute_and_return(q)
+	    if (len(rows) > 0):
+	        return rows[0][0]
+	    else :
+	        return None
 
 	def update_domain(self, domain_id, domain_name, updated_by) :
 		old_data = self.get_domain_by_domain_id(domain_id)
@@ -277,24 +279,6 @@ class KnowledgeDatabase(object) :
             )
 			self._db.execute(query)
 			action = "Edit Domain - \"%s\"" % domain_name
-			self.add_activity_log(updated_by, 4, action)
-			return True
-		else :
-			return False
-
-	def update_domain_status(self, domain_id, is_active, updated_by) :
-		old_data = self.get_domain_by_domain_id(domain_id)
-		if old_data is not None :
-			query = "UPDATE tbl_domains SET is_active = %s, \
-            updated_by = %s WHERE domain_id = %s" % (
-                is_active, updated_by, domain_id
-            )
-			self._db.execute(query)
-			if is_active == 0 :
-				status = "deactivated"
-			else:
-				status = "activated"
-			action = "Domain %s status  - %s" % (old_data, status)
 			self.add_activity_log(updated_by, 4, action)
 			return True
 		else :
@@ -391,7 +375,7 @@ class KnowledgeDatabase(object) :
 
 	def check_duplicate_industry(self, industry_name, industry_id) :
 	    query = "SELECT count(*) FROM tbl_industries \
-	        WHERE LOWER(industry_name) = LOWER('%s') " % industr_name
+	        WHERE LOWER(industry_name) = LOWER('%s') " % industry_name
 
 	    if industry_id is not None :
 	        query = query + " AND industry_id != %s" % industry_id
@@ -485,7 +469,7 @@ class KnowledgeDatabase(object) :
 
 	    return False
 
-	def save_statutory_nature(self, statutory_nature_name, created_by) :
+	def add_statutory_nature(self, statutory_nature_name, created_by) :
 	    created_on = self.getDateTime()
 	    statutory_nature_id = self.getNewId("statutory_nature_id", "tbl_statutory_natures")
 	    is_active = 1
@@ -504,7 +488,9 @@ class KnowledgeDatabase(object) :
 	    q = "SELECT statutory_nature_name FROM tbl_statutory_natures \
 	        WHERE statutory_nature_id=%s" % statutory_nature_id
 	    rows = self._db.execute_and_return(q)
-	    return rows[0][0]
+	    if (len(rows) > 0):
+	        return rows[0][0]
+	    return None
 
 	def update_statutory_nature(self, statutory_nature_id, statutory_nature_name, updated_by) :
 	    old_data = self.get_statutory_nature_by_id(statutory_nature_id)
@@ -562,7 +548,6 @@ class KnowledgeDatabase(object) :
 	        self._db.execute(query)
 	        action = "Add Stautory Levels"
 	        self.add_activity_log(user_id, 9, action)
-	        return True
 	    else :
 	        query = "UPDATE tbl_statutory_levels SET level_position=%s, level_name='%s', \
 	        updated_by=%s WHERE level_id=%s" % (
@@ -571,7 +556,6 @@ class KnowledgeDatabase(object) :
 	        self._db.execute(query)
 	        action = "Edit Stautory Levels"
 	        self.add_activity_log(user_id, 9, action)
-	        return True
 
 	def get_geography_levels(self) :
 	    query = "SELECT level_id, level_position, level_name, country_id \
@@ -635,7 +619,7 @@ class KnowledgeDatabase(object) :
 	        FROM tbl_geographies WHERE parent_ids='%s' " % (parent_ids)
 	    if geography_id is not None :
 	        query = query + " AND geography_id != %s" % geography_id
-	    return self._db.execute(query)
+	    return self._db.execute_and_return(query)
 
 	def save_geographies(self, name, level_id, parent_ids, user_id) :
 	    geography_id = self.getNewId("geography_id", "tbl_geographies")
@@ -651,7 +635,7 @@ class KnowledgeDatabase(object) :
 	    self.add_activity_log(user_d, 7, action)
 	    return True
 
-	def update_geography_master(self, geography_id, name, parent_ids, updated_by) :
+	def update_geographies(self, geography_id, name, parent_ids, updated_by) :
 	    oldData = self.allGeographies.get(geography_id)
 	    old_parent_ids = oldData[2]
 	    query = "UPDATE tbl_geographies set geography_name='%s', parent_ids='%s',\
@@ -1183,7 +1167,6 @@ class KnowledgeDatabase(object) :
 	            str("%" + str(geography_id) + ",%")
 	        )
 	    return self._db.execute(query)
-
 #
 #	Common
 #

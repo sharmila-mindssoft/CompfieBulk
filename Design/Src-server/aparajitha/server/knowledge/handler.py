@@ -19,6 +19,7 @@ class APIRequestHandler(tornado.web.RequestHandler) :
     def post(self, callerName) :
         try:
             data = json.loads(self.request.body)
+            data = data["data"]
             sessionToken = JSONHelper.getString(data, "session_token")
             request = JSONHelper.getList(data, "request")
             response = None
@@ -111,6 +112,6 @@ class APIRequestHandler(tornado.web.RequestHandler) :
 
 def initializeKnowledgeHandler() :
     knowledge_urls = [
-        (r"/([a-zA-Z]+)", APIRequestHandler)
+        (r"/([a-zA-Z-]+)", APIRequestHandler)
     ]
     return knowledge_urls

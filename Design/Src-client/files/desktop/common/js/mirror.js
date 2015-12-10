@@ -115,35 +115,43 @@ function initMirror() {
     function saveDomain(domainName, callback, failure_callback) {
         if (domainName == null)
             return null;
-        var request = [
-            "SaveDomain",
-            { "domain_name" : domainName }
-        ];
+        var request = {
+            "data":[
+                "SaveDomain",
+                { "domain_name" : domainName }
+            ]
+        };
         apiRequest("SaveDomain", request, callback, failure_callback);
     }
 
     function updateDomain(domainId, domainName, callback, failure_callback) {
         if ((domainId == null) || (domainName == null))
             return null;
-        var request = [
-            "UpdateDomain",
-            { "domain_id" : domainId, "domain_name" : domainName }
-        ];
+        var request = {
+            "data": [
+                "UpdateDomain",
+                { "domain_id" : domainId, "domain_name" : domainName }
+            ]
+        };
         apiRequest("UpdateDomain", request, callback, failure_callback);
     }
 
     function changeDomainStatus(domainId, isActive, callback, failure_callback) {
         if ((domainId == null) || (isActive == null))
             return null;
-        var request = [
-            "ChangeDomainStatus",
-            {"domain_id" : domainId, "is_active" : isActive}
-        ];
+        var request = {
+            "data":[
+                "ChangeDomainStatus",
+                {"domain_id" : domainId, "is_active" : isActive}
+            ]
+        };
         apiRequest("ChangeDomainStatus", request, callback, failure_callback);
     }
 
     function getDomainList(callback, failure_callback) {
-        var request = ["GetDomains", {}];
+        var request = {
+            "data":["GetDomains", {}]
+        };
         apiRequest("GetDomains", request, callback, failure_callback);
     }
 
@@ -152,35 +160,43 @@ function initMirror() {
     function saveCountry(countryName, callback, failure_callback) {
         if (countryName == null)
             return null;
-        var request = [
-            "SaveCountry",
-            { "country_name" : countryName }
-        ];
+        var request = {
+            "data":[
+                "SaveCountry",
+                { "country_name" : countryName }
+            ]
+        };
         apiRequest("SaveCountry", request, callback, failure_callback);
     }
 
     function updateCountry(countryId, countryName, callback, failure_callback) {
         if ((countryId == null) || (countryName == null))
             return null;
-        var request = [
-            "UpdateCountry",
-            { "country_id" : countryId, "country_name" : countryName }
-        ];
+        var request = {
+            "data":[
+                "UpdateCountry",
+                { "country_id" : countryId, "country_name" : countryName }
+            ]
+        };
         apiRequest("UpdateCountry", request, callback, failure_callback);
     }
 
     function changeCountryStatus(countryId, isActive, callback, failure_callback) {
         if ((countryId == null) || (isActive == null))
             return null;
-        var request = [
-            "ChangeCountryStatus",
-            {"country_id" : countryId, "is_active" : isActive}
-        ];
+        var request = {
+            "data":[
+                "ChangeCountryStatus",
+                {"country_id" : countryId, "is_active" : isActive}
+            ]
+        };
         apiRequest("ChangeCountryStatus", request, callback, failure_callback);
     }
 
     function getCountryList(callback, failure_callback) {
-        var request = ["GetCountries", {}];
+        var request = {
+            "data":["GetCountries", {}]
+        };
         apiRequest("GetCountries", request, callback, failure_callback);
     }
 
@@ -188,35 +204,41 @@ function initMirror() {
     function saveIndustry(industryName, callback, failure_callback) {
         if (industryName == null)
             return null;
-        var request = [
-            "SaveIndustry",
-            { "industry_name" : industryName }
-        ];
+        var request = {
+            "data":[
+                "SaveIndustry",
+                { "industry_name" : industryName }
+            ]
+        };
         apiRequest("SaveIndustry", request, callback, failure_callback);
     }
 
     function updateIndustry(industryId, industryName, callback, failure_callback) {
         if ((industryId == null) || (industryName == null))
             return null;
-        var request = [
-            "UpdateIndustry",
-            { "industry_id" : industryId, "industry_name" : industryName }
-        ];
+        var request = {
+            "data":[
+                "UpdateIndustry",
+                { "industry_id" : industryId, "industry_name" : industryName }
+            ]
+        };
         apiRequest("UpdateIndustry", request, callback, failure_callback);
     }
 
     function changeIndustryStatus(industryId, isActive, callback, failure_callback) {
         if ((industryId == null) || (isActive == null))
             return null;
-        var request = [
-            "ChangeIndustryStatus",
-            {"industry_id" : industryId, "is_active" : isActive}
-        ];
+        var request = {
+            "data":[
+                "ChangeIndustryStatus",
+                {"industry_id" : industryId, "is_active" : isActive}
+            ]
+        };
         apiRequest("ChangeIndustryStatus", request, callback, failure_callback);
     }
 
     function getIndustryList(callback, failure_callback) {
-        var request = ["GetIndustries", {}];
+        var request = { "data":["GetIndustries", {}] };
         apiRequest("GetIndustries", request, callback, failure_callback);
     }
 
@@ -225,10 +247,12 @@ function initMirror() {
     function saveStatutoryNature(statutoryNatureName, callback, failure_callback) {
         if (statutoryNatureName == null)
             return null;
-        var request = [
-            "SaveStatutoryNature",
-            { "statutory_nature_name" : statutoryNatureName }
-        ];
+        var request = {
+            "data":[
+                "SaveStatutoryNature",
+                { "statutory_nature_name" : statutoryNatureName }
+            ]
+        };
         apiRequest("SaveStatutoryNature", request, callback, failure_callback);
     }
 
@@ -236,10 +260,12 @@ function initMirror() {
         callback, failure_callback) {
         if ((statutoryNatureId == null) || (statutoryNatureName == null))
             return null;
-        var request = [
-            "UpdateStatutoryNature",
-            { "statutory_nature_id" : statutoryNatureId, "statutory_nature_name" : statutoryNatureName }
-        ];
+        var request = {
+            "data":[
+                "UpdateStatutoryNature",
+                { "statutory_nature_id" : statutoryNatureId, "statutory_nature_name" : statutoryNatureName }
+            ]
+        };
         apiRequest("UpdateStatutoryNature", request, callback, failure_callback);
     }
 
@@ -247,21 +273,23 @@ function initMirror() {
         callback, failure_callback) {
         if ((statutoryNatureId == null) || (isActive == null))
             return null;
-        var request = [
-            "ChangeStatutoryNatureStatus",
-            {"statutory_nature_id" : statutoryNatureId, "is_active" : isActive}
-        ];
+        var request = {
+            "data":[
+                "ChangeStatutoryNatureStatus",
+                {"statutory_nature_id" : statutoryNatureId, "is_active" : isActive}
+            ]
+        };
         apiRequest("ChangeStatutoryNatureStatus", request, callback, failure_callback);
     }
 
     function getStatutoryNatureList(callback, failure_callback) {
-        var request = ["GetStatutoryNatures", {}];
+        var request = { "data":["GetStatutoryNatures", {}] };
         apiRequest("GetStatutoryNatures", request, callback, failure_callback);
     }
 
     // Geography Levels 
     function getGeographyLevels(callback, failure_callback) {
-        var request = ["GetGeographyLevels", {}];
+        var request = { "data":["GetGeographyLevels", {}] };
         apiRequest("GetGeographyLevels", request, callback, failure_callback);   
     }
 
@@ -269,19 +297,21 @@ function initMirror() {
         callback, failure_callback) {
         if ((countryId == null) || (levels == null))
             return null;
-        var request = [
-            "SaveGeographyLevel",
-            { 
-                "country_id" : countryId,
-                "levels" : levels
-            }
-        ];
+        var request = {
+            "data":[
+                "SaveGeographyLevel",
+                { 
+                    "country_id" : countryId,
+                    "levels" : levels
+                }
+            ]
+        };
         apiRequest("SaveGeographyLevel", request, callback, failure_callback);
     }
 
     // Statutory Levels
     function getStatutoryLevels(callback, failure_callback) {
-        var request = ["GetStatutoryLevels", {}];
+        var request = { "data":["GetStatutoryLevels", {}] };
         apiRequest("GetStatutoryLevels", request, callback, failure_callback);   
     }
 
@@ -289,34 +319,38 @@ function initMirror() {
         callback, failure_callback) {
         if ((countryId == null) || (domainId == null) || (levels == null))
             return null;
-        var request = [
-            "SaveStatutoryLevel",
-            { 
-                "country_id" : countryId,
-                "domain_id" : domainId,
-                "levels" : levels
-            }
-        ];
+        var request = {
+            "data":[
+                "SaveStatutoryLevel",
+                { 
+                    "country_id" : countryId,
+                    "domain_id" : domainId,
+                    "levels" : levels
+                }
+            ]
+        };
         apiRequest("SaveStatutoryLevel", request, callback, failure_callback);
     }
 
     //Geographies
     function getGeographies(callback, failure_callback) {
-        var request = ["GetGeographies", {}];
+        var request = { "data":["GetGeographies", {}] };
         apiRequest("GetGeographies", request, callback, failure_callback);   
     }
 
     function saveGeography(levelId, name, parentIds, callback, failure_callback) {
         if ((levelId == null) || (name == null) || (parentIds == null))
             return null;
-        var request = [
-            "SaveGeography",
-            { 
-                "geography_level_id": levelId,
-                "geography_name": name,
-                "parent_ids": parentIds
-            }
-        ];
+        var request = {
+            "data":[
+                "SaveGeography",
+                { 
+                    "geography_level_id": levelId,
+                    "geography_name": name,
+                    "parent_ids": parentIds
+                }
+            ]
+        };
         apiRequest("SaveGeography", request, callback, failure_callback);
     }
 
@@ -325,106 +359,122 @@ function initMirror() {
         if ((geographyId == null) || (levelId == null) || (name == null) || 
             (parentIds == null))
             return null;
-        var request = [
-            "UpdateGeography",
-            { 
-                "geography_id": geographyId,
-                "geography_level_id": levelId,
-                "geography_name": name,
-                "parent_ids": parentIds
-            }
-        ];
+        var request = {
+            "data":[
+                "UpdateGeography",
+                { 
+                    "geography_id": geographyId,
+                    "geography_level_id": levelId,
+                    "geography_name": name,
+                    "parent_ids": parentIds
+                }
+            ]
+        };
         apiRequest("UpdateGeography", request, callback, failure_callback);
     }
 
     function changeGeographyStatus(geographyId, isActive, callback, failure_callback) {
         if ((geographyId == null) || (isActive == null))
             return null;
-        var request = [
-            "ChangeGeographyStatus",
-            { 
-                "geography_id": geographyId,
-                "is_active": isActive
-            }
-        ];
+        var request = {
+            "data":[
+                "ChangeGeographyStatus",
+                { 
+                    "geography_id": geographyId,
+                    "is_active": isActive
+                }
+            ]
+        };
         apiRequest("ChangeGeographyStatus", request, callback, failure_callback);
     }
 
     function getGeographyReport(callback, failure_callback) {
-        var request = ["GeographyReport", {}];
+        var request = { "data":["GeographyReport", {}] };
         apiRequest("GeographyReport", request, callback, failure_callback);   
     }
 
     // statutory Mapping
 
     function saveStatutory(levelId, name, parentIds, callback, failure_callback) {
-        var request = [
-            "SaveStatutory",
-            {
-                "statutory_level_id": levelId,
-                "statutory_name": name,
-                "parent_ids": parentIds
-            }
-        ]
+        var request = {
+            "data":[
+                "SaveStatutory",
+                {
+                    "statutory_level_id": levelId,
+                    "statutory_name": name,
+                    "parent_ids": parentIds
+                }
+            ]
+        };
         apiRequest("SaveStatutory", request, callback, failure_callback);
     }
 
     function updateStatutory(statutoryId, levelId, name, parentIds, 
         callback, failure_callback) {
-        var request = [
-            "UpdateStatutory",
-            {
-                "statutory_id": statutoryId,
-                "statutory_level_id": levelId,
-                "statutory_name": name,
-                "parent_ids": parentIds
-            }
-        ]
+        var request = {
+            "data":[
+                "UpdateStatutory",
+                {
+                    "statutory_id": statutoryId,
+                    "statutory_level_id": levelId,
+                    "statutory_name": name,
+                    "parent_ids": parentIds
+                }
+            ]
+        };
         apiRequest("UpdateStatutory", request, callback, failure_callback);
     }
 
     function saveStatutoryMapping(mappingData, callback, failure_callback ) {
-        var request = [
-            "SaveStatutoryMapping",
-            mappingData
-        ]
+        var request = {
+            "data":[
+                "SaveStatutoryMapping",
+                mappingData
+            ]
+        };
         apiRequest("SaveStatutoryMapping", request, callback, failure_callback);
     }
 
     function updateStatutoryMapping(mappingData, callback, failure_callback ) {
-        var request = [
-            "UpdateStatutoryMapping",
-            mappingData
-        ]
+        var request = {
+            "data":[
+                "UpdateStatutoryMapping",
+                mappingData
+            ]
+        };
         apiRequest("UpdateStatutoryMapping", request, callback, failure_callback);
     }
     
     function getStatutoryMappings(callback, failure_callback) {
-        var request = ["GetStatutoryMappings", {}];
+        var request = { "data":["GetStatutoryMappings", {}] };
         apiRequest("GetStatutoryMappings", request, callback, failure_callback);
     }
 
     function changeStatutoryMappingStatus(mappingId, isActive, callback, failure_callback) {
-        var request = [
-            "ChangeStatutoryMappingStatus",
-            {
-                "statutory_mapping_id":mappingId,
-                "is_active" : is_active
-            }
-        ]
+        var request = {
+            "data":[
+                "ChangeStatutoryMappingStatus",
+                {
+                    "statutory_mapping_id":mappingId,
+                    "is_active" : is_active
+                }
+            ]
+        };
         apiRequest("ChangeStatutoryMappingStatus", request, callback, failure_callback);
     }
 
     function approveStatutoryMapping(mappingId, approveStatus, reason, notification, callback, failure_callback) {
-        var request = [
-            "ApproveStatutoryMapping",
-            {
-                "statutory_mapping_id": mappingId,
-                "approval_status": approveStatus,
-                "rejected_reason": reason,
-                "notification_text": notification
-            }
-        ]
+        var request = {
+            "data":[
+                "ApproveStatutoryMapping",
+                {
+                    "statutory_mapping_id": mappingId,
+                    "approval_status": approveStatus,
+                    "rejected_reason": reason,
+                    "notification_text": notification
+                }
+            ]
+        };
         apiRequest("ApproveStatutoryMapping", request, callback, failure_callback);
     }
 
