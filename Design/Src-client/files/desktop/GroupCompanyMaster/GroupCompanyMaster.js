@@ -26,8 +26,8 @@ function initialize(){
 		geographyList=data['geographies'];
 		industryList=data['industries'];
 		domainList=data['domains'];
+		unitList=data['units'];
 		loadClientsList(data);
-
 	}
 	function failure(status, data){
 		console.log(status);
@@ -40,52 +40,67 @@ function loadClientsList(clientunitsList){
  	$(".tbody-clientunit-list").find("tr").remove();
   var sno=0;
 	var imageName, title;	
-	for(var clients in groupList){
-		var clientname=groupList[clients]['group_name'];
-		var clientid=groupList[clients]['client_id'];
-		var isActive=groupList[clients]['is_active'];
+	var clientArray=[];
+	var businessGroupArray=[];
+	var legalEntityArray=[];
+	var divisionArray=[];
+	for(var units in unitList){
+		var isActive=unitList[units]['is_active'];	
+
+		for(var clients in groupList){
+			if(unitList[units]['client_id']==groupList[clients]['client_id']){
+				var clientname=groupList[clients]['group_name'];
+				var clientid=groupList[clients]['client_id'];
+			}
+		}
 		for (var bgroups in businessGroupList){
-			var bgclientid=businessGroupList[bgroups]['client_id'];
-			if(clientid==bgclientid){
+			if(unitList[units]['business_group_id']==businessGroupList[bgroups]['business_group_id']){
 				var bgroupid=businessGroupList[bgroups]['business_group_id'];
 				var bgroupsname=businessGroupList[bgroups]['business_group_name'];
-				for (var lentity in legalEntitiesList){
-					var lebgroupid=legalEntitiesList[lentity]['business_group_id'];
-					if(lebgroupid==bgroupid){
-						var lentitiesname=legalEntitiesList[lentity]['legal_entity_name'];
-						var lentitiesid=legalEntitiesList[lentity]['legal_entity_id'];	
-						for(var division in divisionList){
-							var dlentityid=divisionList[division]['legal_entity_id'];
-							var divisionname=divisionList[division]['division_name'];
-							var divisionid=divisionList[division]['division_id'];
-
-							if(lentitiesid==dlentityid){
-								if(isActive==1){
-									imageName="icon-active.png";
-									title="Click here to deactivate"
-									statusVal=0;
-								}
-								else{
-									imageName="icon-inactive.png";  
-									title="Click here to Activate"
-									statusVal=1;
-								}
-								var tableRow=$('#templates .table-clientunit-list .table-row');
-								var clone=tableRow.clone();
-								sno = sno + 1;
-								$('.sno', clone).text(sno);
-								$('.group-name', clone).text(clientname);
-								$('.business-group-name', clone).text(bgroupsname);
-								$('.legal-entity-name', clone).text(lentitiesname);
-								$('.division-name', clone).text(divisionname);
-								$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="clientunit_edit('+clientid+','+bgroupid+','+lentitiesid+','+divisionid+')"/>');
-								$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientunit_active('+clientid+', '+divisionid+', '+statusVal+')"/>');
-								$('.tbody-clientunit-list').append(clone);	
-							}
-						}
-					}
-				}	
-			}			
+			}
+		}
+		for (var lentity in legalEntitiesList){			
+			if(unitList[units]['legal_entity_id']==legalEntitiesList[lentity]['legal_entity_id']){
+				var lentitiesid=legalEntitiesList[lentity]['legal_entity_id'];	
+				var lentitiesname=legalEntitiesList[lentity]['legal_entity_name'];
+			}
+		}
+		for(var division in divisionList){
+			if(unitList[units]['division_id']==divisionList[division]['division_id']){
+				var divisionname=divisionList[division]['division_name'];
+				var divisionid=divisionList[division]['division_id'];
+			}
+		}
+		console.log(clientid+"---"+bgroupid+"---"+lentitiesid+"---"+divisionid);
+		if((jQuery.inArray(clientid, clientArray)==0 || jQuery.inArray(clientid, clientArray)==-1) &&  
+			(jQuery.inArray(bgroupid, businessGroupArray)==0 || jQuery.inArray(bgroupid, businessGroupArray)==-1) &&
+			 (jQuery.inArray(lentitiesid, legalEntityArray)==0 || jQuery.inArray(lentitiesid, legalEntityArray)==-1)  && 
+			 (jQuery.inArray(divisionid, divisionArray)==0 || jQuery.inArray(divisionid, divisionArray)==-1)){
+			clientArray.push(clientid);
+			businessGroupArray.push(bgroupid);
+			legalEntityArray.push(lentitiesid);
+			divisionArray.push(divisionid);
+			if(isActive==1){
+				imageName="icon-active.png";
+				title="Click here to deactivate"
+				statusVal=0;
+			}
+			else{
+				imageName="icon-inactive.png";  
+				title="Click here to Activate"
+				statusVal=1;
+			}
+			var tableRow=$('#templates .table-clientunit-list .table-row');
+			var clone=tableRow.clone();
+			sno = sno + 1;
+			$('.sno', clone).text(sno);
+			$('.group-name', clone).text(clientname);
+			$('.business-group-name', clone).text(bgroupsname);
+			$('.legal-entity-name', clone).text(lentitiesname);
+			$('.division-name', clone).text(divisionname);
+			$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="clientunit_edit('+clientid+','+bgroupid+','+lentitiesid+','+divisionid+')"/>');
+			$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientunit_active('+clientid+','+lentitiesid+', '+divisionid+', '+statusVal+')"/>');
+			$('.tbody-clientunit-list').append(clone);			
 		}
 	}
 }
@@ -608,15 +623,21 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisi
 }
 
 //Active or inactive Client Unit List --------------------------------------------------------------------------
-function clientunit_active(clientunitId, divisionId, isActive){
+function clientunit_active(clientunitId, lentityId, divisionId, isActive){
   function success(status, data){
- 	 	console.log(status);
-	  initialize();
+ 	 	if(status=="ChangeClientStatusSuccess"){
+ 	 		initialize();	
+ 	 	}
+ 	 	else{
+ 	 		console.log("error possible:"+status);
+ 	 	}
+	  
   }
   function failure(status, data){
-  		console.log("fails----"+status);	
+  	console.log("fails----"+status);	
+  		
   }
-  mirror.changeClientStatus("TechnoAPI",  parseInt(clientunitId), parseInt(divisionId), parseInt(isActive), success, failure);
+  mirror.changeClientStatus("TechnoAPI",  parseInt(clientunitId), parseInt(lentityId), parseInt(divisionId), parseInt(isActive), success, failure);
 }
 
 //Search Client name ----------------------------------------------------------------------------------------------
