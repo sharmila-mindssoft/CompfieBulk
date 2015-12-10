@@ -584,7 +584,8 @@ function initMirror() {
 
     // Client Group Master
 
-    function saveClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
+    function saveClientGroup(clientGroupDetails, dateConfigurations,callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "SaveClientGroup",
             {
@@ -605,7 +606,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
+    function updateClientGroup(clientGroupDetails, dateConfigurations,callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "UpdateClientGroup",
             {
@@ -626,8 +628,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientGroupStatus(callerName, clientId, isActive, callback, failure_callback) {
-        
+    function changeClientGroupStatus(clientId, isActive, callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "ChangeClientGroupStatus",
             {
@@ -638,10 +640,10 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function getClientGroups(callerName, callback, failure_callback) {
-
+    function getClientGroups(callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
-            "GetClientGroup",
+            "GetClientGroups",
             {}
         ];
         apiRequest(callerName, request, callback, failure_callback);

@@ -90,6 +90,13 @@ Unit = DictType({
 		"business_group_id": Int,
 	})
 
+DateConfiguration = DictType({
+		"country_id": Int,
+	    "domain_id": Int,
+	    "period_from": Int,
+	    "period_to": Int
+	})
+
 define_request(
 	"Login", {
 		"username": Text250,
@@ -629,6 +636,105 @@ define_request(
 	[
 		"InvalidResetToken"
 	] 
+)
+
+#
+#	Client Groups
+#
+define_request(
+	"SaveClientGroup",
+	{
+		"group_name": Text50,
+        "country_ids": ListType(Int),
+		"domain_ids": ListType(Int),
+		"logo" : Text250,
+		"contract_from": Text20,
+		"contract_to": Text20,
+		"incharge_persons": ListType(Int),
+		"no_of_user_licence": Int,
+		"file_space": Text50,
+		"is_sms_subscribed": Int,
+		"email_id": Text50,
+		"date_configurations":ListType(DateConfiguration)
+	},
+	{},
+	[
+		"GroupNameAlreadyExists",
+		"UsernameAlreadyExists"
+	] 
+)
+
+define_request(
+	"UpdateClientGroup",
+	{
+		"client_id": Int,
+		"group_name": Text50,
+        "country_ids": ListType(Int),
+		"domain_ids": ListType(Int),
+		"logo" : Text250,
+		"contract_from": Text20,
+		"contract_to": Text20,
+		"incharge_persons": ListType(Int),
+		"no_of_user_licence": Int,
+		"file_space": Text50,
+		"is_sms_subscribed": Int,
+		"email_id": Text50,
+		"date_configurations":ListType(DateConfiguration)
+	},
+	{},
+	[
+		"GroupNameAlreadyExists"
+	] 
+)
+
+define_request(
+	"ChangeClientGroupStatus",
+	{
+		"client_id": Int,
+        "is_active": Int
+	},
+	{},
+	[
+		"InvalidClientId"
+	] 
+)
+
+define_request(
+	"GetClientGroups",
+	{},
+	{
+		"countries":ListType(Country),
+        "domains":ListType(Domain),
+        "users":ListType(
+        	DictType(
+        		{
+	                "user_id": Int,
+	                "employee_name": Text50,
+            	}		
+        	)
+        ),
+        "client_list":ListType(
+        	DictType(
+        		{
+	                "client_id": Int,
+	                "client_name": Text50,
+	                "incharge_persons": ListType(Int),
+	                "country_ids": ListType(Int),
+	                "domain_ids":ListType(Int),
+	                "logo" : Text250,
+	                "contract_from": Text20,
+	                "contract_to": Text20,
+	                "no_of_user_licence": Int,
+	                "file_space": Text20,
+	                "is_sms_subscribed": Int,
+	                "date_configurations":ListType(DateConfiguration),
+	                "username": Text50,
+	                "is_active": Int
+	            }
+        	)
+        )
+	},
+	[] 
 )
 
 

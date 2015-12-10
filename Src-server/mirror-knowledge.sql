@@ -298,7 +298,7 @@ CREATE TABLE `tbl_units` (
   `created_on` float DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` float DEFAULT NULL,
-  PRIMARY KEY (`unit_id`),
+  PRIMARY KEY (`unit_id`,`client_id`),
   CONSTRAINT `fk_units_client` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
   CONSTRAINT `fk_units_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `fk_units_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`),
