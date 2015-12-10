@@ -437,29 +437,27 @@ class ClientController(object):
     businessGroupObj = None
     legalEntityObj = None
     divisionObj = None
+    optionalBusinessGroup = False
+    optionalDivision = False
 
-    def saveClient(self, requestData, sessionUser):
+    def saveClient(self, requestData, sessionUser, savetype):
         self.sessionUser = int(sessionUser)
-
-        assertType(requestData, DictType)
-        assertType(sessionUser, LongType)
-
-        self.clientId = JSONHelper.getInt(requestData, "client_id")
-        self.businessGroup = JSONHelper.getDict(requestData, "business_group")
-        self.legalEntity = JSONHelper.getDict(requestData, "legal_entity")
-        self.division = JSONHelper.getDict(requestData, "division")
-        self.countryWiseUnits = JSONHelper.getList(requestData, "country_wise_units")
-
-
-        assertType(self.businessGroup, DictType)
-        assertType(self.legalEntity, DictType)
-        assertType(self.division, DictType)
-        assertType(self.countryWiseUnits, ListType)
+        self.type = savetype
+        print "inside save client type {type}".format(type= savetype)
+        self.clientId = requestData["client_id"]
+        self.businessGroup = requestData["business_group"]
+        if self.businessGroup == None:
+            self.optionalBusinessGroup = True
+        self.legalEntity = requestData["legal_entity"]
+        self.division = requestData["division"]
+        if self.division == None:
+            self.optionalDivision = True
+        self.countryWiseUnits = requestData["country_wise_units"]
 
         if self.processRequest():
             client = Client()
             if client.save(self.businessGroupObj, self.legalEntityObj,
-                self.divisionObj, self.unitObjList, self.sessionUser):
+                self.divisionObj, self.unitObjList, self.sessionUser, self.type):
                self.responseData = commonResponseStructure("SaveClientSuccess", {}) 
             else:
                 print "Error: Failed to save client"
@@ -469,67 +467,70 @@ class ClientController(object):
         return self.responseData
 
     def processRequest(self):
-        try:
-            self.businessGroupId = JSONHelper.getInt(
-                                    self.businessGroup, "business_group_id")
-        except:
-            self.businessGroupId = None
-        try:
-            self.legalEntityId = JSONHelper.getInt(
-                                    self.legalEntity, "legal_entity_id")
-        except:
-            self.legalEntityId = None
-        try:
-            self.divisionId = JSONHelper.getInt(self.division, "division_id")
-        except:
-            self.divisionId = None
+        self.legalEntityId = self.legalEntity["legal_entity_id"]
+        self.legalEntityName = self.legalEntity["legal_entity_name"]
 
-        self.businessGroupName = JSONHelper.getString(
-                                    self.businessGroup, "business_group_name")
-        self.legalEntityName = JSONHelper.getString(
-                                    self.legalEntity, "legal_entity_name")
-        self.divisionName = JSONHelper.getString(self.division, "division_name")
-
-        
-        self.businessGroupObj = BusinessGroup(self.businessGroupId,
-                                    self.businessGroupName, self.clientId)  
-        self.legalEntityObj = LegalEntity(self.legalEntityId, 
+        if not self.optionalBusinessGroup:
+            self.businessGroupId = self.businessGroup["business_group_id"]
+            self.businessGroupName = self.businessGroup["business_group_name"]
+            self.businessGroupObj = BusinessGroup(self.businessGroupId,
+                                    self.businessGroupName, self.clientId) 
+            self.legalEntityObj = LegalEntity(self.legalEntityId, 
                                 self.legalEntityName, 
                                 self.businessGroupObj.businessGroupId, 
                                 self.clientId)
-        self.divisionObj = Division(self.divisionId, self.divisionName, 
+            if not self.optionalDivision:
+                self.divisionId = self.division["division_id"]
+                self.divisionName = self.division["division_name"]
+                self.divisionObj = Division(self.divisionId, self.divisionName, 
                                 self.legalEntityObj.legalEntityId, 
                                 self.businessGroupObj.businessGroupId, 
                                 self.clientId)
+            else:
+                self.divisionId = None
+                self.divisionName = None
+        else:
+            self.businessGroupId = None
+            self.businessGroupName = None
+            self.legalEntityObj = LegalEntity(self.legalEntityId, 
+                                self.legalEntityName, None, self.clientId)
+            if not self.optionalDivision:
+                self.divisionObj = Division(self.divisionId, self.divisionName, 
+                                self.legalEntityObj.legalEntityId, None, 
+                                self.clientId)
 
-        if self.businessGroupObj.isDuplicate():
-            self.responseData = commonResponseStructure("BusinessGroupNameAlreadyExists", {})
-            return False
+        
+        if not self.optionalBusinessGroup:
+            if (self.businessGroupObj.isDuplicate()):
+                self.responseData = commonResponseStructure("BusinessGroupNameAlreadyExists", {})
+                return False
         elif self.legalEntityObj.isDuplicate():
             self.responseData = commonResponseStructure("LegalEntityNameAlreadyExists", {})
             return False
-        elif self.divisionObj.isDuplicate():
-            self.responseData = commonResponseStructure("DivisionNameAlreadyExists", {})
-            return False
+        elif not self.optionalDivision:
+            if self.divisionObj.isDuplicate():
+                self.responseData = commonResponseStructure("DivisionNameAlreadyExists", {})
+                return False
 
-        if self.businessGroupId != None:
-            if self.businessGroupObj.isIdInvalid():
-                self.responseData = commonResponseStructure("InvalidBusinessGroupId",{})
-                return False
-        elif self.legalEntityId != None:
+        if self.type == "update":
+            print "inside id check"
+            if not self.optionalBusinessGroup:
+                print "inside not optinal business group"
+                if self.businessGroupObj.isIdInvalid():
+                        self.responseData = commonResponseStructure("InvalidBusinessGroupId",{})
+                        return False
             if self.legalEntityObj.isIdInvalid():
-                self.responseData = commonResponseStructure("InvalidLegalEntityId",{})
-                return False
-        elif self.divisionId != None:
-            if self.divisionObj.isIdInvalid():
-                self.responseData = commonResponseStructure("InvalidDivisionId",{})
-                return False
+                    self.responseData = commonResponseStructure("InvalidLegalEntityId",{})
+                    return False
+            elif not self.optionalDivision:            
+                if self.divisionObj.isIdInvalid():
+                        self.responseData = commonResponseStructure("InvalidDivisionId",{})
+                        return False
 
         for country in self.countryWiseUnits:
-                
             countryId = JSONHelper.getInt(country,"country_id")
             units = JSONHelper.getList(country, "units")
-            print units
+            incrementUnitId = None
             for unit in units:
                 try:
                     self.unitId = JSONHelper.getInt(unit, "unit_id")
@@ -545,10 +546,15 @@ class ClientController(object):
                 industryName = JSONHelper.getString(unit, "industry_name")
                 domainIds = JSONHelper.getList(unit, "domain_ids")
                 
+                if not self.optionalBusinessGroup:
+                    self.businessGroupId = self.businessGroupObj.businessGroupId
+                if not self.optionalDivision:
+                    self.divisionId = self.divisionObj.divisionId
+                print "before unit create : clientid {x}".format(x=self.clientId)
                 unitObj = Unit(self.unitId, 
-                               self.divisionObj.divisionId,
+                               self.divisionId,
                                self.legalEntityObj.legalEntityId, 
-                                self.businessGroupObj.businessGroupId, 
+                                self.businessGroupId, 
                                 self.clientId, countryId,geographyId, unitCode, 
                                 unitName, industryId, address, postalCode, domainIds, 
                                 None, industryName, geography)
@@ -566,7 +572,7 @@ class ClientController(object):
                         self.unitObjList.append(unitObj)
                 else:
                     self.unitObjList.append(unitObj)
-
+        print "Unit objects list: {x}".format(x=self.unitObjList)
         return True
             
     def getClients(self, sessionUser):

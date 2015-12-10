@@ -807,8 +807,15 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function getUnit(){
+        unit = {}
+        unit["a"] = a
+        return unit
+    }
+
     function saveClient(callerName, clientId, businessGroup, legalEntity, 
         division, countryWiseUnits, callback, failure_callback) {
+
         var request = [
             "SaveClient",
             {
@@ -822,12 +829,29 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientStatus(callerName, clientId, divisionId, isActive, 
+
+    function updateClient(callerName, clientId, businessGroup, legalEntity, 
+        division, countryWiseUnits, callback, failure_callback) {
+        var request = [
+            "UpdateClient",
+            {
+                "client_id": clientId,
+                "business_group": businessGroup,
+                "legal_entity": legalEntity,
+                "division": division,
+                "country_wise_units": countryWiseUnits
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeClientStatus(callerName, clientId, legalEntityId, divisionId, isActive, 
         callback, failure_callback) {
         var request = [
             "ChangeClientStatus",
             {
                 "client_id": clientId,
+                "legal_entity_id" : legalEntityId,
                 "division_id" : divisionId,
                 "is_active": isActive
             }
@@ -1130,6 +1154,7 @@ function initMirror() {
 
         getClients: getClients,
         saveClient: saveClient,
+        updateClient : updateClient,
         changeClientStatus: changeClientStatus,
         reactivateUnit: reactivateUnit,
 

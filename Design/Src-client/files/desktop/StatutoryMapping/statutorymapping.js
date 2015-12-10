@@ -448,12 +448,18 @@ function editstaturoty(statu_id, statu_name, position){
 function load_statories(){
     $(".tbody-statutory-list").find("tr").remove();
     for(var i=0; i<sm_statutoryids.length; i++) {
-    var tableRow=$('#statutory-templates .table-statutory .table-row');
-    var clone=tableRow.clone();
-    $('.sno', clone).text(i+1);
-    $('.statutory', clone).text(sm_statutoryids[i]);
-    $('.remove', clone).html('<img src=\'/images/icon-delete.png\' onclick="temp_removestatutories('+sm_statutoryids[i]+')"/>');
-    $('.tbody-statutory-list').append(clone);
+        for(var statutory in statutoriesList){
+            var dispstatutory = '';
+            if(statutoriesList[statutory]["statutory_id"] == sm_statutoryids[i]){
+                dispstatutory = statutoriesList[statutory]["statutory_id"];
+            }
+        }
+        var tableRow=$('#statutory-templates .table-statutory .table-row');
+        var clone=tableRow.clone();
+        $('.sno', clone).text(i+1);
+        $('.statutory', clone).text(dispstatutory);
+        $('.remove', clone).html('<img src=\'/images/icon-delete.png\' onclick="temp_removestatutories('+sm_statutoryids[i]+')"/>');
+        $('.tbody-statutory-list').append(clone);
 }
 }
 

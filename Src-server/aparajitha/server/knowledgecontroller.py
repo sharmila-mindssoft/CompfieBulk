@@ -56,6 +56,10 @@ class APIHandler(object):
 			"ForgotPassword": self._forgot_password,
 			"ResetTokenValidation": self._validate_reset_token,
 			"ResetPassword": self._reset_password,
+			"SaveClientGroup": self._save_client_group,
+			"UpdateClientGroup": self._update_client_group,
+			"ChangeClientGroupStatus": self._change_client_group_status,
+			"GetClientGroups": self._get_client_groups
 		}
 
 	def _success_response(self, response, response_option, data) :
@@ -887,6 +891,30 @@ class APIHandler(object):
 		else:
 			response_data = self._failure_response(response, "InvalidResetToken")			
 		return response_data
+
+	def _save_client_group(self, db, user, request):
+		print "inside save client"
+
+	def _update_client_group(self, db, user, request):
+		print "inside update client"
+	
+	def _change_client_group_status(self, db, user, request):
+		print "inside change client status"
+	
+	def _get_client_groups(self, db, user, request):
+		response_data = {}
+		domain_list = Domain.get_list(db)
+		country_list = Country.get_list(db)
+		user_list = AdminUser.get_list(db)
+		client_list = GroupCompany.get_detailed_list(db)
+		response_data["domains"] = domain_list
+		response_data["countries"] = country_list
+		response_data["users"] = user_list
+		response_data["client_list"] = client_list
+		print response_data
+		return self._success_response("GetClientGroupsResponse",
+	        	"GetClientGroupsSuccess",
+	        	response_data)
                 
                 
 #		
