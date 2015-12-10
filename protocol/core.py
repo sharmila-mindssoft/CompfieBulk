@@ -12,7 +12,7 @@ __all__ = [
 	"BusinessGroup", "LegalEntity", "Division", "Unit", "ServiceProvider",
 	"ClientUser", "AssignedStatutory", "ActiveCompliance", "UpcomingCompliance",
 	"NumberOfCompliances", "ChartFilters", "ComplianceStatusDrillDown",
-	"EscalationsDrillDown", 
+	"EscalationsDrillDown", "UserGroupDetails", "User"
 ]
 
 # frm = EnumType("FORM_TYPE", [
@@ -157,10 +157,16 @@ Menu = RecordType("Menu", [
 	Filed("settings", FormList)
 ])
 
-UserGroup = RecordType("UserGroup", [
+UserGroupDetails = RecordType("UserGroupDetails", [
 	Filed("user_group_id", USER_GROUP_ID),
 	Filed("user_group_name", USER_GROUP_NAME),
 	Filed("form_ids", FormIdsList),
+	Filed("is_active", IS_ACTIVE)
+])
+
+UserGroup = RecordType("UserGroup", [
+	Filed("user_group_id", USER_GROUP_ID),
+	Filed("user_group_name", USER_GROUP_NAME),
 	Filed("is_active", IS_ACTIVE)
 ])
 
@@ -338,6 +344,21 @@ ServiceProvider = RecordType("ServiceProvider", [
      Filed("contact_person", Text50),
      Filed("contact_no", CONTACT_NUMBER),
      Filed("is_active", IS_ACTIVE)
+])
+
+
+User = RecordType("User", [
+	Filed("user_id", USER_ID),
+    Filed("email_id", EMAIL_ID),
+    Filed("user_group_id", USER_GROUP_ID), 
+    Filed("employee_name", EMPLOYEE_NAME),
+    Filed("employee_code", EMPLOYEE_CODE),
+    Filed("contact_no", CONTACT_NUMBER),
+    Filed("address", ADDRESS),
+    Filed("designation", DESIGNATION),
+    Filed("country_ids",CountryIdsList),
+    Filed("domain_ids", DomainIdsList),
+    Filed("is_active", IS_ACTIVE)
 ])
 
 ClientUser = RecordType("ClientUser", [
