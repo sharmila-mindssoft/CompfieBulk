@@ -43,7 +43,7 @@ class APIHandler(object):
 			"SaveStatutoryMapping": self._save_statutory_mappings,
 			"UpdateStatutoryMapping": self._update_statutory_mappings,
 			"ChangeStatutoryMappingStatus": self._change_statutory_mappings_status,
-			"ApproveStatutoryMapping": self._change_approval_status
+			"ApproveStatutoryMapping": self._change_approval_status,
 			"GetUserGroups": self._get_user_groups,
 			"SaveUserGroup": self._save_user_group,
 			"UpdateUserGroup": self._update_user_group,
