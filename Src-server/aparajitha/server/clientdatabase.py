@@ -153,6 +153,17 @@ class ClientDatabase(object) :
 #
 #	Users
 #
+	
+	def get_client_admin_username(self):
+		username = ""
+		columns = ["user_id", "email_id"]
+		condition = " is_admin = 1"
+		rows = self._db.get_data(self._db.tblClientUserDetails, columns, condition)
+		if len(rows)>0:
+			return rows[0][1]
+		else:
+			return None
+
 	def get_user(self, user_id) :
 		columns = ["user_id", "email_id", "is_active", "user_group_id",
 			"employee_name", "employee_code", "contact_no", 
@@ -244,6 +255,26 @@ class ClientDatabase(object) :
 		rows = self._db.get_data(self._db.tblDomains,columns, 
 			condition)
 		return rows	
+
+#
+#	Client
+#
+	def get_client_settings(self):
+		columns = ["country_ids", "domain_ids", "logo_url","contract_from",
+                    "contract_to","no_of_user_licence","total_disk_space",
+                    "is_sms_subscribed"]
+		condition = "1"
+		rows = self._db.get_data(self._db.tblClientSettings, 
+        	columns, condition)
+		return to_dict(columns, rows)
+
+	def get_date_configurations(self):
+		columns = ["country_id", "domain_id", "period_from",
+    				"period_to"]
+		condition = "1"
+		rows = self._db.get_data(self._db.tblConfiguration, 
+    		columns, condition)
+		return rows
 
 #
 #	Business Group

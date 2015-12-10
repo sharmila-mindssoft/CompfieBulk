@@ -1,3 +1,6 @@
+from aparajitha.misc.client_mappings import client_db_mappings
+from aparajitha.server.clientdatabase import ClientDatabase
+from aparajitha.misc.dates import *
 import json
 from types import *
 
@@ -9,9 +12,19 @@ __all__ = [
     "Level", "Geography", "Statutory", "Compliance",
     "StatutoryMapping",
     "UserGroup",
-    "AdminUser"
+    "AdminUser",
+    "GroupCompany"
 ]
 
+_client_db = None
+
+def _get_database(client_id) :
+    database_name = None
+    if client_id is None :
+        return None
+    database_name = client_db_mappings[client_id]
+    _client_db = ClientDatabase(database_name)
+    return _client_db
 
 def assertType (x, typeObject) :
     if type(x) is not typeObject :
@@ -544,6 +557,144 @@ class AdminUser(object) :
         for row in rows:
             user = AdminUser(int(row[0]),None,None, None,row[1], row[2],
                  None, None, None, None, None, None, None)
-            userList.append(user.toStructure())
+            userList.append(user.to_structure())
         return userList    
 
+class GroupCompany(object):
+    def __init__(self, client_id, group_name, incharge_persons, country_ids ,domain_ids, logo, 
+        contract_from, contract_to, no_of_user_licence, file_space, is_sms_subscribed,
+        date_configurations, username, is_active):
+        self.client_id = client_id
+        self.group_name = group_name
+        self.incharge_persons = incharge_persons
+        self.country_ids = country_ids
+        self.domain_ids = domain_ids
+        self.logo = logo
+        self.contract_from = contract_from
+        self.contract_to = contract_to
+        self.no_of_user_licence = no_of_user_licence
+        self.file_space = file_space
+        self.is_sms_subscribed = is_sms_subscribed
+        self.date_configurations = date_configurations
+        self.username = username
+        self.is_active = is_active
+
+    def to_detailed_structure(self) :
+        return {
+            "client_id": self.client_id,
+            "client_name": self.group_name,
+            "incharge_persons": self.incharge_persons,
+            "country_ids": self.country_ids,
+            "domain_ids": self.domain_ids,
+            "logo" : self.logo,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "no_of_user_licence": self.no_of_user_licence,
+            "file_space": self.file_space,
+            "is_sms_subscribed": self.is_sms_subscribed,
+            "date_configurations": self.date_configurations,
+            "username": self.username,
+            "is_active": self.is_active
+        }
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "group_name": self.group_name,
+            "country_ids": self.country_ids,
+            "domain_ids": self.domain_ids,
+            "is_active": self.is_active
+        }
+
+    @classmethod
+    def get_detailed_list(self, db):
+        clientList = []
+        client_group_rows = db.get_client_groups()
+
+        for row in client_group_rows:
+            client_id = int(row[0])
+            group_name = row[1]
+            incharge_persons = [int(x) for x in row[2].split(",")]
+            is_active = row[3]
+            client_db = _get_database(client_id)
+            username = client_db.get_client_admin_username()
+
+            settings = client_db.get_client_settings()
+            country_ids = [int(x) for x in settings[0]["country_ids"].split(",")]
+            domain_ids = [int(x) for x in settings[0]["domain_ids"].split(",")]
+            contract_from = datetime_to_string(
+                timestamp_to_datetime(settings[0]["contract_from"]))
+            contract_to = datetime_to_string(
+                timestamp_to_datetime(settings[0]["contract_to"]))
+            no_of_user_licence = int(settings[0]["no_of_user_licence"])
+            is_sms_subscribed = settings[0]["is_sms_subscribed"]
+            file_space = str(settings[0]["total_disk_space"])
+            logo = settings[0]["logo_url"]
+
+            date_configurations = ClientConfiguration.get_list(client_db)
+            groupCompany = GroupCompany(int(client_id), 
+                group_name, incharge_persons, country_ids,
+                domain_ids, logo, contract_from, contract_to, 
+                no_of_user_licence, file_space, is_sms_subscribed, 
+                date_configurations, username, is_active)
+            clientList.append(groupCompany.to_detailed_structure())
+        return clientList
+
+    @classmethod
+    def get_list(self, client_ids):
+        clientList = []
+        clientDetails = {}
+        column = "client_id, group_name, is_active"
+        condition = "client_id in (%s)" % client_ids
+        clientRows = DatabaseHandler.instance().getData(self.clientTblName, column, condition)
+
+        for row in clientRows:
+            clientDetails[str(row[0])] = [row[1], row[2]]
+
+        for index, client_id in enumerate(client_ids.split(",")):
+            clientDBName = self.getClienDatabaseName(client_id)
+            columns = "country_ids, domain_ids"
+            settingsRows = ClientDatabaseHandler.instance(clientDBName).getData(self.clientSettingsTblName,
+                columns, "1")
+
+            clientDetail = clientDetails[client_id]
+            group_name = clientDetail[0]
+            country_ids = settingsRows[0][0]
+            domain_ids = settingsRows[0][1]
+            is_active = clientDetail[1]
+                
+            groupCompany = GroupCompany(int(client_id), group_name, None, country_ids ,domain_ids, None, 
+                                        None, None, None, None, None,None, None, is_active)
+            clientList.append(groupCompany.to_structure())
+        return clientList
+
+class ClientConfiguration(object):
+
+    def __init__(self, country_id, domain_id, period_from, period_to):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.period_from = period_from
+        self.period_to = period_to
+
+    def to_structure(self):
+        return {
+            "country_id": self.country_id,
+            "domain_id": self.domain_id,
+            "period_from": self.period_from,
+            "period_to": self.period_to
+        }
+
+    @classmethod
+    def get_list(self, client_db):
+        configuration_rows = client_db.get_date_configurations()
+        date_configurations = []
+        for configuraion in configuration_rows:
+            country_id = int(configuraion[0])
+            domain_id = int(configuraion[1])
+            period_from = int(configuraion[2])
+            period_to = int(configuraion[3])
+            client_configuration = ClientConfiguration(country_id, domain_id,
+                period_from, period_to)
+            date_configurations.append(client_configuration.to_structure())
+
+        return date_configurations

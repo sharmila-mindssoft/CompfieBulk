@@ -14,6 +14,8 @@ class Database(object) :
 	tblDomains = "tbl_domains"
 	tblUserDetails = "tbl_user_details"
 	tblUserGroups = "tbl_user_groups"
+	tblEmailVerification = "tbl_email_verification"
+	tblClientGroups = "tbl_client_groups"
 
 	### Client Tables ###
 	tblServiceProviders = "tbl_service_providers"
@@ -23,6 +25,8 @@ class Database(object) :
 	tblDivision = "tbl_divisions"
 	tblUnit = "tbl_units"
 	tblClientUserDetails = "tbl_client_user_details"
+	tblClientSettings = "tbl_client_settings"
+	tblConfiguration = "tbl_client_configurations"
 
 	def __init__(self, database) :
 		self._database = database
@@ -66,7 +70,6 @@ class Database(object) :
 
 	def is_already_exists(self, table, condition) :
 		query = "SELECT count(*) FROM %s WHERE %s" %(table, condition)
-		print query
 		rows = self.execute_and_return(query)
 		if rows[0][0] > 0:
 			return True
@@ -77,7 +80,6 @@ class Database(object) :
 		columns = ",".join(columns)
 		query = "SELECT %s FROM %s WHERE %s" %  (columns, 
 			table, condition) 
-		print query
 		return self.execute_and_return(query)
 
 	def insert(self, table, columns, value_list) :
@@ -87,7 +89,6 @@ class Database(object) :
 				query += " %s," % str(value)
 			else:
 				query += str(value)
-		print query
 		return self.execute(query) 
 
 	def update(self, table, columns, values, condition) :
@@ -98,7 +99,6 @@ class Database(object) :
 			else:
 				query += column+" = '"+str(values[index])+"' "
 		query += " WHERE "+condition
-		print query
 		return self.execute(query)
 
 	def generate_new_id(self, table, column):
@@ -126,7 +126,6 @@ class Database(object) :
 				query += "%s = VALUES(%s)," % (update_column, update_column)
 			else:
 				query += "%s = VALUES(%s)" % (update_column, update_column)
-		print query
 		return self.execute(query)
 
 	def get_data_from_multiple_tables(self, columns, tables, conditions, join_type):
@@ -142,7 +141,11 @@ class Database(object) :
 			else:
 				query += " %s alias%d on (alias%d.%s = alias%d.%s)" % (table, index,
                     index-1, conditions[index-1][0], index, conditions[index-1][1])
-		return self.execute_and_return(query)	
+		return self.execute_and_return(query)
+
+	def delete(self, table, condition):
+		query = "DELETE from "+table+" WHERE "+condition
+		return self.execute(query)   	
 
 
 

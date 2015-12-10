@@ -1,5 +1,11 @@
 <html>
 	<head>
+		<style>
+			div{
+				margin-top: 10px;
+				margin-bottom: 10px;
+			}
+		</style>
 		<script type="text/javascript" src="/files/desktop/common/js/jquery.min.js"></script>
 		<script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
 		<script type="text/javascript">
@@ -215,6 +221,83 @@
 				isActive = 1
 				mirror.changeAdminUserStatus(userId, isActive, success, failure)
 			}
+			function changePassword(){
+				currentPassword = "1234567"
+				newPassword = "123456"
+				mirror.changePassword(currentPassword, newPassword,success, failure)
+			}
+			function forgotPassword(){
+				username = "Testclientser24@domain.com"
+				mirror.forgotPassword(username, success, failure)
+			}
+			function validateResetToken(){
+				resetToken = "1"
+				mirror.validateResetToken(resetToken, success, failure)
+			}
+			function resetPassword(){
+				resetToken = "158350839976395462222620754547803639110"
+				newPassword = "1234567"
+				mirror.resetPassword(resetToken, newPassword, success, failure) 
+			}
+			function saveClientGroup(){
+				clientGroupDetails = {}
+				clientGroupDetails["group_name"] = "Client Test Group 18";
+		        clientGroupDetails["country_ids"] = [1];
+		        clientGroupDetails["domain_ids"] = [1];
+		        clientGroupDetails["logo"] = "logo.png";
+		        clientGroupDetails["contract_from"] = "02-Nov-2015";
+		        clientGroupDetails["contract_to"] = "01-Nov-2016";
+		        clientGroupDetails["incharge_persons"] = [1];
+		        clientGroupDetails["no_of_user_licence"] = 10;
+		        clientGroupDetails["file_space"] = 4.5;
+		        clientGroupDetails["is_sms_subscribed"] = 1;
+		        clientGroupDetails["email_id"] = "ClientTestGroup18@domain.com";
+	
+				dateConfigurations = []
+
+				configuration1 = {}
+				configuration1["country_id"] = 1;
+				configuration1["domain_id"] = 1;
+				configuration1["period_from"] = 1;
+				configuration1["period_to"] = 12;
+			        
+				dateConfigurations.push(configuration1)
+				mirror.saveClientGroup(clientGroupDetails,dateConfigurations, 
+				 	success, failure)
+			}
+			function updateClientGroup(){
+				clientGroupDetails = {}
+		        clientGroupDetails["client_id"] = 3;
+		        clientGroupDetails["group_name"] = "Client Test Group 18";
+		        clientGroupDetails["country_ids"] = [1,2];
+		        clientGroupDetails["domain_ids"] = [1,2];
+		        clientGroupDetails["logo"] = "logo.png";
+		        clientGroupDetails["contract_from"] = "25-Jun-2016";
+		        clientGroupDetails["contract_to"] = "24-Jun-2017";
+		        clientGroupDetails["incharge_persons"] = [1];
+		        clientGroupDetails["no_of_user_licence"] = 10;
+		        clientGroupDetails["file_space"] = 4.5;
+		        clientGroupDetails["is_sms_subscribed"] = 1;
+		  
+		        dateConfigurations = []
+
+		        configuration1 = {}
+		        configuration1["country_id"] = 1;
+		        configuration1["domain_id"] = 1;
+		        configuration1["period_from"] = 1;
+		        configuration1["period_to"] = 12;
+		              
+		        dateConfigurations.push(configuration1)
+
+		        mirror.updateClientGroup(clientGroupDetails, dateConfigurations,success, failure);
+			}
+			function changeClientGroupStatus(){
+				clientId = 2
+				mirror.changeClientGroupStatus(clientId, isActive, success, failure)
+			}
+			function getClientGroups(){
+				mirror.getClientGroups(success, failure)
+			}
 		</script>
 	</head>
 	<body>
@@ -304,6 +387,36 @@
 			</button>
 			<button onclick="changeAdminUserStatus()">
 				Change Admin User Status
+			</button>
+		</div>
+		<div>
+			<button onclick="changePassword()">
+				Change Password
+			</button>
+		</div>
+		<div>
+			<button onclick="forgotPassword()">
+				Forgot Password
+			</button>
+			<button onclick="validateResetToken()">
+				Validate Reset Token
+			</button>
+			<button onclick="resetPassword()">
+				Reset password
+			</button>
+		</div>
+		<div>
+			<button onclick="saveClientGroup()">
+				Save Client Group
+			</button>
+			<button onclick="updateClientGroup()">
+				Update Client Group
+			</button>
+			<button onclick="changeClientGroupStatus()">
+				Change Client Group Status
+			</button>
+			<button onclick="getClientGroups()">
+				Get Client Groups
 			</button>
 		</div>
 		<br>

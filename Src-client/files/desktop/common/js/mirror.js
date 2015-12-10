@@ -476,6 +476,15 @@ function initMirror() {
         apiRequest("ApproveStatutoryMapping", request, callback, failure_callback);
     }
 
+    function getStatutoryMappingsReportFilter(callback, failure_callback) {
+        var request = ["GetStatutoryMappingReportFilter", {}];
+        apiRequest("GetStatutoryMappingReportFilter", request, callback, failure_callback);
+    }
+
+    function getStatutoryMappingsReportData(filterData, callback, failure_callback) {
+        var request = ["GetStatutoryMappingReportData", filterData];
+        apiRequest("getStatutoryMappingReportData", request, callback, failure_callback);
+    }
 
     // Admin User Group Master
     function isNull(value){
@@ -584,7 +593,8 @@ function initMirror() {
 
     // Client Group Master
 
-    function saveClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
+    function saveClientGroup(clientGroupDetails, dateConfigurations,callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "SaveClientGroup",
             {
@@ -605,7 +615,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateClientGroup(callerName, clientGroupDetails, dateConfigurations,callback, failure_callback) {
+    function updateClientGroup(clientGroupDetails, dateConfigurations,callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "UpdateClientGroup",
             {
@@ -626,8 +637,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientGroupStatus(callerName, clientId, isActive, callback, failure_callback) {
-        
+    function changeClientGroupStatus(clientId, isActive, callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "ChangeClientGroupStatus",
             {
@@ -638,17 +649,17 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function getClientGroups(callerName, callback, failure_callback) {
-
+    function getClientGroups(callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
-            "GetClientGroup",
+            "GetClientGroups",
             {}
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changePassword(callerName, currentPassword, newPassword, callback, failure_callback) {
-        
+    function changePassword(currentPassword, newPassword, callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "ChangePassword",
             {
@@ -659,8 +670,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function forgotPassword(callerName, username, callback, failure_callback) {
-        
+    function forgotPassword(username, callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "ForgotPassword",
             {
@@ -670,8 +681,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function validateResetToken(callerName, resetToken, callback, failure_callback) {
-        
+    function validateResetToken(resetToken, callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "ResetTokenValidation",
             {
@@ -681,8 +692,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function resetPassword(callerName, resetToken, newPassword, callback, failure_callback) {
-        
+    function resetPassword(resetToken, newPassword, callback, failure_callback) {
+        callerName = "api/knowledge"
         var request = [
             "ResetPassword",
             {
@@ -969,13 +980,19 @@ function initMirror() {
         updateGeography: updateGeography,
         changeGeographyStatus: changeGeographyStatus,
         getGeographyReport: getGeographyReport,
+
         saveStatutory: saveStatutory,
         updateStatutory: updateStatutory,
+
         saveStatutoryMapping: saveStatutoryMapping,
         updateStatutoryMapping: updateStatutoryMapping,
+
         getStatutoryMappings: getStatutoryMappings,
         changeStatutoryMappingStatus: changeStatutoryMappingStatus,
         approveStatutoryMapping: approveStatutoryMapping,
+        getStatutoryMappingsReportFilter: getStatutoryMappingsReportFilter,
+        getStatutoryMappingsReportData: getStatutoryMappingsReportData,
+
 
         saveAdminUserGroup: saveAdminUserGroup,
         updateAdminUserGroup: updateAdminUserGroup,

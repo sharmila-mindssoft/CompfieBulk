@@ -265,6 +265,14 @@ function initMirror() {
         apiRequest("GetGeographyLevels", request, callback, failure_callback);   
     }
 
+    function levelDetails(levelId, levelPosition, levelName) {
+        var level = {};
+        level["level_id"] = levelId;
+        level["level_position"] = levelPosition;
+        level["level_name"] = levelName;
+        return level;
+    }
+
     function saveAndUpdateGeographyLevels(countryId, levels, 
         callback, failure_callback) {
         if ((countryId == null) || (levels == null))
@@ -383,11 +391,65 @@ function initMirror() {
         apiRequest("UpdateStatutory", request, callback, failure_callback);
     }
 
-    function saveStatutoryMapping(mappingData, callback, failure_callback ) {
+    function statutoryDates(date, month, triggerBefore) {
+        var statutoryDate = {};
+        statutoryDate["statutory_date"] = date;
+        statutoryDate["statutory_month"] = month;
+        statutoryDate["trigger_before_days"] = triggerBefore;
+        return statutoryDate;
+    }
+
+    function complianceDetails (
+        statutoryProvision, complianceTask, 
+        description, documentName, fileFormat, penalConsequence, 
+        complianceFrequency, statutoryDates, repeatsType, repeatsEvery,
+        durationType, duration, isActive, complianceId
+    ) {
+        var compliance = {};
+        compliance["statutory_provision"] = statutoryProvision;
+        compliance["compliance_task"] = complianceTask;
+        compliance["description"] = description;
+        compliance["format_file_name"] = fileFormat;
+        compliance["penal_consequences"] = penalConsequence;
+        compliance["compliance_frequency"] = complianceFrequency;
+        compliance["statutory_dates"] = statutoryDates;
+        compliance["repeats_type"] = repeatsType;
+        compliance["repeats_every"] = repeatsEvery;
+        compliance["duration_type"] = durationType;
+        compliance["duration"] = duration;
+        compliance["is_active"] = isActive;
+        if (complianceId !== null) {
+            compliance["compliance_id"] = complianceId;
+        }
+
+        return compliance;
+    }
+
+    function statutoryMapping(
+        countryId, domainId, industryIds, statutoryNatureId, 
+        statutoryIds, compliances, geographyIds, mappingId
+    ) {
+        var mappingData = {};
+        mappingData["country_id"] = countryId;
+        mappingData["domain_id"] = domainId;
+        mappingData["industry_ids"] = industryIds;
+        mappingData["statutory_nature_id"] = statutoryNatureId;
+        mappingData["statutory_ids"] = statutoryIds;
+        mappingData["compliances"] = compliances;
+        mappingData["geography_ids"] = geographyIds;
+        if (mappingId !== null) {
+            mappingData["statutory_mapping_idping_id"] = mappingId
+        }
+
+        return mappingData;
+    }
+
+    function saveStatutoryMapping(mappingData, callback, failure_callback 
+    ) {
         var request = [
             "SaveStatutoryMapping",
             mappingData
-        ]
+        ];
         apiRequest("SaveStatutoryMapping", request, callback, failure_callback);
     }
 
@@ -426,6 +488,16 @@ function initMirror() {
             }
         ]
         apiRequest("ApproveStatutoryMapping", request, callback, failure_callback);
+    }
+
+    function getStatutoryMappingsReportFilter(callback, failure_callback) {
+        var request = ["GetStatutoryMappingReportFilter", {}];
+        apiRequest("GetStatutoryMappingReportFilter", request, callback, failure_callback);
+    }
+
+    function getStatutoryMappingsReportData(filterData, callback, failure_callback) {
+        var request = ["GetStatutoryMappingReportData", filterData];
+        apiRequest("getStatutoryMappingReportData", request, callback, failure_callback);
     }
 
     // Admin User Group Master
@@ -735,8 +807,15 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function getUnit(){
+        unit = {}
+        unit["a"] = a
+        return unit
+    }
+
     function saveClient(callerName, clientId, businessGroup, legalEntity, 
         division, countryWiseUnits, callback, failure_callback) {
+
         var request = [
             "SaveClient",
             {
@@ -750,12 +829,29 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientStatus(callerName, clientId, divisionId, isActive, 
+
+    function updateClient(callerName, clientId, businessGroup, legalEntity, 
+        division, countryWiseUnits, callback, failure_callback) {
+        var request = [
+            "UpdateClient",
+            {
+                "client_id": clientId,
+                "business_group": businessGroup,
+                "legal_entity": legalEntity,
+                "division": division,
+                "country_wise_units": countryWiseUnits
+            }
+        ];
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
+    function changeClientStatus(callerName, clientId, legalEntityId, divisionId, isActive, 
         callback, failure_callback) {
         var request = [
             "ChangeClientStatus",
             {
                 "client_id": clientId,
+                "legal_entity_id" : legalEntityId,
                 "division_id" : divisionId,
                 "is_active": isActive
             }
@@ -992,34 +1088,48 @@ function initMirror() {
         updateDomain: updateDomain,
         changeDomainStatus: changeDomainStatus,
         getDomainList: getDomainList,
+
         saveCountry: saveCountry,
         updateCountry: updateCountry,
         changeCountryStatus: changeCountryStatus,
         getCountryList: getCountryList,
+
         saveIndustry: saveIndustry,
         updateIndustry: updateIndustry,
         changeIndustryStatus: changeIndustryStatus,
         getIndustryList: getIndustryList,
+
         saveStatutoryNature: saveStatutoryNature,
         updateStatutoryNature: updateStatutoryNature,
         changeStatutoryNatureStatus: changeStatutoryNatureStatus,
         getStatutoryNatureList: getStatutoryNatureList,
+
+        levelDetails: levelDetails,
         getGeographyLevels: getGeographyLevels,
         saveAndUpdateGeographyLevels: saveAndUpdateGeographyLevels,
         getStatutoryLevels: getStatutoryLevels,
         saveAndUpdateStatutoryLevels: saveAndUpdateStatutoryLevels,
+
         getGeographies: getGeographies,
         saveGeography: saveGeography,
         updateGeography: updateGeography,
         changeGeographyStatus: changeGeographyStatus,
         getGeographyReport: getGeographyReport,
+
         saveStatutory: saveStatutory,
         updateStatutory: updateStatutory,
+
+        statutoryDates: statutoryDates,
+        complianceDetails: complianceDetails,
+        statutoryMapping: statutoryMapping,
+
         saveStatutoryMapping: saveStatutoryMapping,
         updateStatutoryMapping: updateStatutoryMapping,
         getStatutoryMappings: getStatutoryMappings,
         changeStatutoryMappingStatus: changeStatutoryMappingStatus,
         approveStatutoryMapping: approveStatutoryMapping,
+        getStatutoryMappingsReportFilter: getStatutoryMappingsReportFilter,
+        getStatutoryMappingsReportData: getStatutoryMappingsReportData,
 
 
         saveAdminUserGroup: saveAdminUserGroup,
@@ -1044,6 +1154,7 @@ function initMirror() {
 
         getClients: getClients,
         saveClient: saveClient,
+        updateClient : updateClient,
         changeClientStatus: changeClientStatus,
         reactivateUnit: reactivateUnit,
 
