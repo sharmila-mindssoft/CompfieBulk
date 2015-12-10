@@ -496,7 +496,7 @@ class DatabaseHandler(object) :
             for id in parentIds :
                 if id > 0 :
                     names.append(_tempDict.get(id))
-                names.append(row[1])
+            names.append(row[1])
             mappings = '>>'.join(str(x) for x in names)
             self.allGeographies[int(row[0])] = [row[1], mappings, row[3]]
 
@@ -582,7 +582,7 @@ class DatabaseHandler(object) :
             for id in parentIds :
                 if id > 0 :
                     names.append(_tempDict.get(id))
-                names.append(row[1])
+            names.append(row[1])
             mappings = '>>'.join(str(x) for x in names)
             self.allStatutories[int(row[0])] = [row[1], int(row[2]), parentIds, mappings, int(row[4]), int(row[6])]
         return self.allStatutories
@@ -604,6 +604,12 @@ class DatabaseHandler(object) :
             INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id \
             WHERE t2.level_position=1"
         return self.dataSelect(query)
+
+    def getMappingIds(self, statutoryId) :
+        query = "SELECT t1.statutory_mapping_ids from tbl_statutories t1 \
+            WHERE t1.parent_ids like '%0%' OR t1.parent_ids like '%s'" % str("%" + str(statutoryId) + ",%")
+        return self.dataSelect(query)
+
 
     def getStatutoryWithMappings(self) :
         query = "SELECT t1.statutory_id, t1.statutory_name, t1.parent_ids FROM tbl_statutories t1"
@@ -1050,15 +1056,17 @@ class DatabaseHandler(object) :
 
     def getStatutoryMappingReport(self, countryId, domainId, industryId, statutoryNatureId, geographyId) :
         query = "SELECT t1.statutory_mapping_id, t1.country_id, t1.domain_id,  \
-            t1.industry_ids, t1.statutory_nature_id, t1.statutory_ids, t1.compliance_ids, \
-            t1.geography_ids, t1.approval_status, t1.is_active  \
+            t1.industry_ids, t1.statutory_nature_id, t2.statutory_nature_name, t1.statutory_ids, t1.compliance_ids, \
+            t1.geography_ids, t1.is_active  \
             FROM tbl_statutory_mappings t1 \
+            INNER JOIN tbl_statutory_natures t2 on t1.statutory_nature_id = t2.statutory_nature_id \
             WHERE t1.country_id = %s and t1.domain_id = %s and t1.industry_ids like '%s' and \
             t1.statutory_nature_id like '%s' and t1.geography_ids like '%s'" % (
                 countryId, domainId, str("%" + str(industryId) + ",%"), str(statutoryNatureId),
                 str("%" + str(geographyId) + ",%")
             )
         return self.dataSelect(query)
+
 
 
     @staticmethod     

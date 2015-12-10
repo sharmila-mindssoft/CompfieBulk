@@ -1097,7 +1097,7 @@ class GeographyAPI(object) :
         ]
 
 class Statutory(object) :
-    def __init__(self, statutoryId, name, levelId, parentIds, parentMappings) :
+    def __init__(self, statutoryId, name, levelId, parentIds, parentMappings=None) :
         self.statutoryId = statutoryId
         self.name = name
         self.levelId = levelId
@@ -1110,7 +1110,6 @@ class Statutory(object) :
         assertType(self.name, StringType)
         assertType(self.levelId, IntType)
         assertType(self.parentIds, ListType)
-        assertType(self.parentMappings, StringType)
 
     def toStructure(self) :
         return {
@@ -1275,7 +1274,7 @@ class StatutoryMapping(object) :
         domainName, industryIds,
         statutoryNatureId, statutoryNatureName,
         statutoryIds, statutoryMappings, complianceIds, 
-        geographyIds, approvalStatus, isActive
+        geographyIds, geographyMappings, approvalStatus, isActive
     ) :
         self.countryId = countryId
         self.countryName = countryName 
@@ -1291,9 +1290,9 @@ class StatutoryMapping(object) :
         self.complianceNames = []
         self.compliances = []
         self.geographyIds = geographyIds
+        self.geographyMappings = geographyMappings
         self.approvalStatus = approvalStatus
         self.isActive = isActive
-        self.verify()
     
     def verify(self) :
         assertType(self.countryId, IntType)
@@ -1330,8 +1329,25 @@ class StatutoryMapping(object) :
             self.compliances.append(compliance.toStructure())
             self.complianceNames.append("%s-%s" % (row[4], row[2]))
 
+    def toReportStructure(self) :
+        self.getData()
+        return {
+            "country_id": self.countryId,
+            "domain_id": self.domainId,
+            "industry_ids": self.industryIds,
+            "industry_name": self.industryNames,
+            "statutory_nature_id": self.statutoryNatureId,
+            "statutory_nature_name": self.statutoryNatureName,
+            "statutory_provision": self.statutoryMappings,
+            "compliances": self.compliances,
+            "geographies_ids": self.geographyIds,
+            "geography_mappings": self.geographyMappings,
+            "is_active": self.isActive
+
+        }
 
     def toStructure(self) :
+        self.verify()
         return {
             "country_id": self.countryId,
             "country_name": self.countryName,
@@ -1346,6 +1362,7 @@ class StatutoryMapping(object) :
             "compliances": self.compliances,
             "compliance_names": self.complianceNames,
             "geographies_ids": self.geographyIds,
+            "geography_mappings": self.geographyMappings,
             "approval_status": self.approvalStatus,
             "is_active": self.isActive
         }
@@ -1372,9 +1389,10 @@ class StatutoryMappingApi(object):
 
     def getStatutoryMappings(self) :
         DH = DatabaseHandler.instance()
-        _staturoyMapList = DH.getStautoryMappings()
+        _statutoryMapList = DH.getStautoryMappings()
         _statutoryMappings = DH.allStatutories
-        for row in _staturoyMapList :
+        _geographyMappings = DH.allGeographies
+        for row in _statutoryMapList :
             mappingId = int(row[0])
             countryId = int(row[1])
             countryName = row[2]
@@ -1384,16 +1402,17 @@ class StatutoryMappingApi(object):
             statutoryNatureId = int(row[6])
             statutoryNatureName = row[7]
             statutoryIds = [int(x) for x in row[8][:-1].split(',')]
-            statutoryMappings = [_statutoryMappings.get(x)[1] for x in statutoryIds ]
+            statutoryMappings = [_statutoryMappings.get(x)[3] for x in statutoryIds ]
             complianceIds = [int(x) for x in row[9][:-1].split(',')]
             geographyIds = [int(x) for x in row[10][:-1].split(',')]
-            approvalStatus = row[11]
+            geographyMappings = [_geographyMappings.get(x)[1] for x in geographyIds]
+            approvalStatus = str(row[11])
             isActive = row[12]
             mapping = StatutoryMapping (
                 countryId, countryName, domainId, domainName, 
                 industryIds, statutoryNatureId, statutoryNatureName, 
                 statutoryIds, statutoryMappings, complianceIds, 
-                geographyIds, approvalStatus, isActive
+                geographyIds, geographyMappings, approvalStatus, isActive
             )
             self.statutoryMappings[mappingId] = mapping.toStructure()
             
@@ -1486,7 +1505,6 @@ class StatutoryMappingApi(object):
         return statutories
 
     def getReportFilters(self) :
-        DH = DatabaseHandler.instance()
         return [
             "GetStatutoryMappingReportFiltersSuccess",
             {
@@ -1500,4 +1518,76 @@ class StatutoryMappingApi(object):
         ]
 
     def getReportData(self) :
+        requestData = self.request[1]
+        assertType(requestData, DictType)
+        countryId = requestData["country_id"]
+        domainId = requestData["domain_id"]
+        industryId = requestData["industry_id"]
+        if industryId is None :
+            industryId = '%'
+        statutoryNatureId = requestData["statutory_nature_id"]
+        if statutoryNatureId is None :
+            statutoryNatureId = '%'
+        geographyId = requestData["geography_id"]
+        if geographyId is None :
+            geographyId = '%'
+        level1Id = requestData["level_1_statutory_id"]
+
         DH = DatabaseHandler.instance()
+        _geographyMappings = DH.allGeographies
+        _statutoryMappings = DH.allStatutories
+        mappingData = DH.getStatutoryMappingReport(countryId, domainId, industryId, statutoryNatureId, geographyId)
+        for row in mappingData :
+            mappingId = int(row[0])
+            countryId = int(row[1])
+            domainId = int(row[2])
+            industryIds = [int(x) for x in row[3][:-1].split(',')]
+            statutoryNatureId = int(row[4])
+            statutoryNatureName = row[5]
+            statutoryIds = [int(x) for x in row[6][:-1].split(',')]
+            statutoryProvision = [_statutoryMappings.get(x)[3] for x in statutoryIds ]
+            complianceIds = [int(x) for x in row[7][:-1].split(',')]
+            geographyIds = [int(x) for x in row[8][:-1].split(',')]
+            geographyMappings = [_geographyMappings.get(x)[1] for x in geographyIds]
+            isActive = row[9]
+            mapping = StatutoryMapping (
+                countryId, None, domainId, None, 
+                industryIds, statutoryNatureId, statutoryNatureName, 
+                statutoryIds, statutoryProvision, complianceIds, 
+                geographyIds, geographyMappings, None, isActive
+            )
+            self.statutoryMappings[mappingId] = mapping.toReportStructure()
+
+        level1Statutory = self.getLevel1Statutories()
+        level1s = level1Statutory[countryId][domainId]
+        level1Mappings = {}
+        for x in level1s :
+            statutoryId = x["statutory_id"]
+            rows = DH.getMappingIds(statutoryId)
+            mapping_list = []
+            for row in rows :
+                def getData(i) :
+                    return self.statutoryMappings.get(int(i))
+                mapping_list.extend(
+                    [getData(x) for x in row[0][:-1].split(',') if getData(x) is not None]  
+                )
+            level1Mappings[statutoryId] = mapping_list
+
+        statutory_mappings = {}
+        if level1Id is None :
+            statutory_mappings = level1Mappings
+        else :
+            statutory_mappings[level1Id] = level1Mappings[level1Id]
+
+        return [
+            "GetStatutoryMappingReportDataSuccess",
+            {
+                "country_id" : countryId,
+                "domain_id": domainId,
+                "statutory_mappings": statutory_mappings
+            }
+        ]
+
+
+
+
