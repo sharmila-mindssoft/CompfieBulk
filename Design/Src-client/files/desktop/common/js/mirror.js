@@ -445,7 +445,7 @@ function initMirror() {
     }
 
     function saveStatutoryMapping(mappingData, callback, failure_callback 
-    ) 
+    ) {
         var request = [
             "SaveStatutoryMapping",
             mappingData
