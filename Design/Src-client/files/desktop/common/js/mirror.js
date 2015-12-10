@@ -789,6 +789,7 @@ function initMirror() {
             "ChangeClientStatus",
             {
                 "client_id": clientId,
+                "legal_entity_id" : legalEntityId,
                 "division_id" : divisionId,
                 "is_active": isActive
             }
