@@ -9,10 +9,11 @@ __all__ = [
 	"GeographyLevel", "Geography", "Industry", "StatutoryNature",
 	"StatutoryLevel", "Statutory", "Compliance", "StatutoryMapping",
 	"GroupCompany", "GroupCompanyDetail", "ClientConfiguration", 
-	"BusinessGroup", "LegalEntity", "Division", "Unit", "ServiceProvider",
-	"ClientUser", "AssignedStatutory", "ActiveCompliance", "UpcomingCompliance",
-	"NumberOfCompliances", "ChartFilters", "ComplianceStatusDrillDown",
-	"EscalationsDrillDown", "UserGroupDetails", "User"
+	"BusinessGroup", "LegalEntity", "Division", "Unit", "UnitDetails", 
+	"ServiceProvider", "ClientUser", "AssignedStatutory", 
+	"ActiveCompliance", "UpcomingCompliance", "NumberOfCompliances", 
+	"ChartFilters", "ComplianceStatusDrillDown","EscalationsDrillDown", 
+	"UserGroupDetails", "User", "UserDetails", "CountryWiseUnits"
 ]
 
 # frm = EnumType("FORM_TYPE", [
@@ -125,13 +126,14 @@ DURATION_TYPE = EnumType("DURATION_TYPE", [
 	"Hour"
 ])
 
-FormIdsList = VectorType(FORM_ID)
-CountryIdsList = VectorType(COUNTRY_ID)
-DomainIdsList = VectorType(DOMAIN_ID)
-IndustryIdsList = VectorType(INDUSTRY_ID)
-GeographyIdsList = VectorType(GEOGRAPHY_ID)
-StatutoryIdsList = VectorType(STATUTORY_ID)
+FormIdList = VectorType(FORM_ID)
+CountryIdList = VectorType(COUNTRY_ID)
+DomainIdList = VectorType(DOMAIN_ID)
+IndustryIdList = VectorType(INDUSTRY_ID)
+GeographyIdList = VectorType(GEOGRAPHY_ID)
+StatutoryIdList = VectorType(STATUTORY_ID)
 FormatFilesList = VectorType(FORMAT_FILE_NAME)
+UserIdList = VectorType(USER_ID)
 
 Form = RecordType("Form", [
 	Filed("form_id", FORM_ID),
@@ -142,7 +144,7 @@ Form = RecordType("Form", [
 
 FormList = VectorType(Form)
 
-StatutoryDate = RecordType("Form", [
+StatutoryDate = RecordType("StatutoryDate", [
 	Filed("statutory_date", STATUTORY_DATE),
 	Filed("statutory_month", STATUTORY_MONTH),
 	Filed("trigger_before_days", Int8)
@@ -160,7 +162,7 @@ Menu = RecordType("Menu", [
 UserGroupDetails = RecordType("UserGroupDetails", [
 	Filed("user_group_id", USER_GROUP_ID),
 	Filed("user_group_name", USER_GROUP_NAME),
-	Filed("form_ids", FormIdsList),
+	Filed("form_ids", FormIdList),
 	Filed("is_active", IS_ACTIVE)
 ])
 
@@ -175,6 +177,8 @@ Country = RecordType("Country", [
 	Filed("country_name", COUNTRY_NAME),
 	Filed("is_active", IS_ACTIVE)
 ])
+
+CountryList = VectorType(Country)
 
 Domain = RecordType("Domain", [
 	Filed("domain_id", DOMAIN_ID),
@@ -194,7 +198,7 @@ Geography = RecordType("Geography", [
 	Filed("geography_id", GEOGRAPHY_ID),
 	Filed("geography_name", GEOGRAPHY_NAME),
 	Filed("level_id", GEOGRAPHY_LEVEL_ID),
-	Filed("parent_ids", GeographyIdsList),
+	Filed("parent_ids", GeographyIdList),
 	Filed("is_active", IS_ACTIVE),
 ])
 
@@ -222,7 +226,7 @@ Statutory = RecordType("Statutory", [
 	Filed("statutory_id", STATUTORY_ID),
 	Filed("statutory_name", STATUTORY_NAME),
 	Filed("level_id", STATUTORY_LEVEL_ID),
-	Filed("parent_ids", StatutoryIdsList),
+	Filed("parent_ids", StatutoryIdList),
 	Filed("is_active", IS_ACTIVE),
 ])
 
@@ -264,7 +268,7 @@ StatutoryMapping = RecordType("StatutoryMapping", [
 	Filed("statutory_mapping_id", STATUTORY_MAPPING_ID),
     Filed("country_id", COUNTRY_ID),
     Filed("domain_id", DOMAIN_ID), 
-    Filed("industry_ids", IndustryIdsList), 
+    Filed("industry_ids", IndustryIdList), 
     Filed("statutory_nature_id", STATUTORY_NATURE_ID), 
     Filed("statutories", StatutoryList), 
     Filed("compliances", ComplianceList), 
@@ -279,15 +283,18 @@ GroupCompany = RecordType("GroupCompany", [
 
 GroupCompanyDetail = RecordType("GroupCompanyDetail", [
 	Filed("client_id", GROUP_ID),
-    Filed("group_name", CLIENT_NAME),
-    Filed("domains", DomainList),
+    Filed("client_name", CLIENT_NAME),
+    Filed("domain_ids", DomainIdList),
+    Filed("country_ids", CountryIdList),
+    Filed("incharge_persons", UserIdList),
     Filed("logo", URL),
     Filed("contract_from", DATE),
     Filed("contract_to", DATE),
     Filed("no_of_user_licence", NO_OF_USER_LICENCE),
     Filed("total_disk_space", TOTAL_DISK_SPACE),
     Filed("is_sms_subscribed", Bool),
-    Filed("username", USERNAME)
+    Filed("username", USERNAME),
+    Filed("is_active", IS_ACTIVE)
 ])
 
 ClientConfiguration = RecordType("ClientConfiguration", [
@@ -318,7 +325,7 @@ Division = RecordType("Division", [
     Filed("client_id", GROUP_ID)
 ])
 
-Unit = RecordType("Unit", [
+UnitDetails = RecordType("UnitDetails", [
 	Filed("unit_id", UNIT_ID),
 	Filed("division_id", DIVISION_ID),
 	Filed("legal_entity_id", LEGAL_ENTITY_ID),
@@ -331,8 +338,27 @@ Unit = RecordType("Unit", [
     Filed("industry_id", INDUSTRY_ID),
     Filed("unit_address", ADDRESS),
     Filed("postal_code", Int8),
-    Filed("domain_ids", DomainIdsList),
+    Filed("domain_ids", DomainIdList),
     Filed("is_active", IS_ACTIVE),
+])
+
+UnitDetailsList = VectorType(UnitDetails)
+
+Unit = RecordType("Unit", [
+	Filed("unit_id", UNIT_ID),
+	Filed("division_id", DIVISION_ID),
+	Filed("legal_entity_id", LEGAL_ENTITY_ID),
+    Filed("business_group_id", BUSINESS_GROUP_ID),
+    Filed("client_id", GROUP_ID),
+    Filed("unit_code", UNIT_CODE),
+    Filed("unit_name", UNIT_NAME),
+    Filed("unit_address", ADDRESS),
+    Filed("is_active", IS_ACTIVE),
+])
+
+CountryWiseUnits = RecordType("CountryWiseUnits", [
+	Filed("country_id", COUNTRY_ID),
+	Filed("units", UnitDetailsList),
 ])
 
 ServiceProvider = RecordType("ServiceProvider", [
@@ -347,7 +373,7 @@ ServiceProvider = RecordType("ServiceProvider", [
 ])
 
 
-User = RecordType("User", [
+UserDetails = RecordType("UserDetails", [
 	Filed("user_id", USER_ID),
     Filed("email_id", EMAIL_ID),
     Filed("user_group_id", USER_GROUP_ID), 
@@ -356,8 +382,14 @@ User = RecordType("User", [
     Filed("contact_no", CONTACT_NUMBER),
     Filed("address", ADDRESS),
     Filed("designation", DESIGNATION),
-    Filed("country_ids",CountryIdsList),
-    Filed("domain_ids", DomainIdsList),
+    Filed("country_ids",CountryIdList),
+    Filed("domain_ids", DomainIdList),
+    Filed("is_active", IS_ACTIVE)
+])
+
+User = RecordType("User", [
+	Filed("user_id", USER_ID),
+    Filed("employee_name", EMPLOYEE_NAME),
     Filed("is_active", IS_ACTIVE)
 ])
 
@@ -371,8 +403,8 @@ ClientUser = RecordType("ClientUser", [
     Filed("seating_unit_id", UNIT_ID),
     Filed("seating_unit_name", UNIT_NAME),
     Filed("user_level", USER_LEVEL),
-    Filed("country_ids",CountryIdsList),
-    Filed("domain_ids", DomainIdsList),
+    Filed("country_ids",CountryIdList),
+    Filed("domain_ids", DomainIdList),
     Filed("unit_ids", UnitIds),
     Filed("is_admin", STATUS),
     Filed("is_service_provider", STATUS),

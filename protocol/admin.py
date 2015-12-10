@@ -2,6 +2,14 @@ __all__=  [
 	"Request", "Response"
 ]
 
+FormIdList = VectorType(FORM_ID)
+CountryIdList = VectorType(COUNTRY_ID)
+DomainIdList = VectorType(DOMAIN_ID)
+UserGroupList = VectorType(UserGroup)
+DomainList = VectorType(Domain)
+CountryList = VectorType(Country)
+UserDetailsList = VectorType(UserDetails)
+
 #	
 #	Request
 #
@@ -14,14 +22,14 @@ GetUserGroups = Recordtype("GetUserGroups", [
 SaveUserGroup = Recordtype("SaveUserGroup", [
 	Field("user_group_name", USER_GROUP_NAME),
 	Field("form_type", FORM_TYPE),
-	Field("form_ids", VectorType(FORM_ID))
+	Field("form_ids", FormIdList)
 ])
 
 UpdateUserGroup = Recordtype("UpdateUserGroup", [
 	Field("user_group_id", USER_GROUP_ID),
 	Field("user_group_name", USER_GROUP_NAME),
 	Field("form_type", FORM_TYPE),
-	Field("form_ids", VectorType(FORM_ID))
+	Field("form_ids", FormIdList)
 ])
 
 ChangeUserGroupStatus = Recordtype("ChangeUserGroupStatus", [
@@ -42,8 +50,8 @@ SaveUser = Recordtype("SaveUser", [
     Field("contact_no", CONTACT_NUMBER),
     Field("address", ADDRESS), 
     Field("designation", DESIGNATION),
-    Field("country_ids", VectorType(COUNTRY_ID)),
-    Field("domain_ids", VectorType(DOMAIN_ID))
+    Field("country_ids", CountryIdList),
+    Field("domain_ids", DomainIdList)
 
 ])
 
@@ -55,8 +63,8 @@ UpdateUser = Recordtype("UpdateUser", [
     Field("contact_no", CONTACT_NUMBER),
     Field("address", ADDRESS), 
     Field("designation", DESIGNATION),
-    Field("country_ids", VectorType(COUNTRY_ID)),
-    Field("domain_ids", VectorType(DOMAIN_ID))
+    Field("country_ids", CountryIdList),
+    Field("domain_ids", DomainIdList)
 
 ])
 
@@ -79,7 +87,7 @@ Request = VariantType("Request", [
 
 GetUserGroupsSuccess = Recordtype("GetUserGroupsSuccess", [
 	Field("forms", Maptype(Text50, Menu)),
-	Field("user_groups", VectorType(UserGroup))
+	Field("user_groups", UserGroupList)
 ])
 
 SaveUserGroupSuccess = Recordtype("SaveUserGroupSuccess", [
@@ -100,9 +108,9 @@ ChangeUserGroupStatusSuccess = Recordtype("ChangeUserGroupStatusSuccess", [
 ### User
 
 GetUsersSuccess = Recordtype("GetUsersSuccess", [
-	Field("user_groups", VectorType(UserGroup)),
-	Field("domains", VectorType(Domain)),
-	Field("users", VectorType(User))
+	Field("user_groups", UserGroupList),
+	Field("domains", DomainList),
+	Field("users", UserDetailsList)
 ])
 
 SaveUserSuccess = Recordtype("SaveUserSuccess", [
