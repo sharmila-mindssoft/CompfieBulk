@@ -1,3 +1,5 @@
+from protocol.types import *
+
 # SESSION_TOKEN = Text
 # USERNAME = Text
 
@@ -59,6 +61,7 @@ DESIGNATION = Text50
 STATUTORY_ID = Int8
 STATUTORY_MAPPING_ID = Int8
 GROUP_ID = Int8
+CLIENT_ID = Int8
 BUSINESS_GROUP_ID = Int8
 LEGAL_ENTITY_ID = Int8
 DIVISION_ID = Int8

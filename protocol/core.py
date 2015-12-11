@@ -1,4 +1,5 @@
-from protocol.common import FORM_ID
+from protocol.types import RecordType, VariantType, EnumType, CustomTextType, VectorType
+from protocol.common import *
 __all__ = [
 	"USER_TYPE", "APPROVAL_STATUS", "COMPLIANCE_APPROVAL_STATUS",
 	"ASSIGN_STATUTORY_SUBMISSION_STATUS", 
@@ -234,7 +235,7 @@ Statutory = RecordType("Statutory", [
 StatutoryList = VectorType(Statutory)
 
 Compliance = RecordType("Compliance", [
-	Field("compliance_id", COMPLIANCE_ID),
+	Field("compliance_id",  OptionalType(COMPLIANCE_ID)),
     Field("statutory_provision", STATUTORY_PROVISION),
     Field("compliance_task", COMPLIANCE_NAME), 
     Field("description", DESCRIPTION), 
@@ -344,6 +345,7 @@ UnitDetails = RecordType("UnitDetails", [
 ])
 
 UnitDetailsList = VectorType(UnitDetails)
+
 
 Unit = RecordType("Unit", [
 	Field("unit_id", UNIT_ID),
