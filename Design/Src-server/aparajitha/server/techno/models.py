@@ -355,7 +355,7 @@ class LegalEntity(object):
         self.clientId = clientId
         self.legalEntityId = int(legalEntityId) if legalEntityId != None else self.generateNewLegalEntityId()
         self.legalEntityName = str(legalEntityName)
-        self.businessGroupId = int(businessGroupId)
+        self.businessGroupId = int(businessGroupId) if businessGroupId != None else None
         
 
     def verify(self) :
@@ -391,25 +391,29 @@ class LegalEntity(object):
             self.legalEntityTblName, condition)
 
     def save(self, sessionUser):
-        columns = "legal_entity_id, legal_entity_name, business_group_id,"+\
+        columns = "legal_entity_id, legal_entity_name,"+\
                   "created_on, created_by, updated_on, updated_by"
-        valuesList = [self.legalEntityId, self.legalEntityName, self.businessGroupId, 
+        valuesList = [self.legalEntityId, self.legalEntityName,  
                         getCurrentTimeStamp(), sessionUser, 
                         getCurrentTimeStamp(), sessionUser]
+        if self.businessGroupId != None:
+            columns += ", business_group_id"
+            valuesList.append(self.businessGroupId)
         values = listToString(valuesList)
         return ClientDatabaseHandler.instance(
             getClientDatabase(self.clientId)).insert(
             self.legalEntityTblName, columns, values)
 
     def update(self, sessionUser):
-        columns = [ "legal_entity_name", "business_group_id",
-                  "updated_on", "updated_by"]
-        valuesList = [ self.legalEntityName, self.businessGroupId, 
-                        getCurrentTimeStamp(), sessionUser]
+        columns = [ "legal_entity_name", "updated_on", "updated_by"]
+        valuesList = [ self.legalEntityName, getCurrentTimeStamp(), sessionUser]
         condition = " legal_entity_id = '%d'" % self.legalEntityId
+        if self.businessGroupId != None:
+            columns.append("business_group_id")
+            valuesList.append(self.businessGroupId)
         return ClientDatabaseHandler.instance(
             getClientDatabase(self.clientId)).update(
-            self.legalEntityTblName, columns, valuesList, "1")
+            self.legalEntityTblName, columns, valuesList, condition)
 
     @classmethod
     def getList(self, clientIds):
@@ -533,9 +537,9 @@ class Unit(object):
                 postalCode, domainIds, isActive, industryName, geography):
         self.clientId = int(clientId)
         self.unitId = unitId
-        self.divisionId = int(divisionId)
+        self.divisionId = int(divisionId) if divisionId != None else None
         self.legalEntityId = int(legalEntityId)
-        self.businessGroupId = int(businessGroupId)
+        self.businessGroupId = int(businessGroupId)  if businessGroupId != None else None
         self.countryId = int(countryId)
         self.geographyId = int(geographyId)
         self.unitCode = str(unitCode)
@@ -624,9 +628,10 @@ class Unit(object):
     def save(self, sessionUser):
         knowledgeValueslist = []
         clientValuesList = []
-        if self.unitId == None:
+        if (self.unitId == None or not self.isIdInvalid()):
             self.unitId = self.generateNewUnitId(self.clientId)
-        clientDbColumns = "unit_id, division_id, legal_entity_id, business_group_id,"+\
+            print "generating new id for unit {unitId}".format(unitId = self.unitId)
+        clientDbColumns = "unit_id, legal_entity_id, "+\
                         " country_id, geography, unit_code, unit_name, industry_name,"+\
                         " address, postal_code, domain_ids"
         knowledgeDbColumns = "client_id, unit_id, country_id, geography_id, unit_code,"+\
@@ -636,25 +641,30 @@ class Unit(object):
                                 self.unitCode, self.unitName, self.industryId, 
                                 int(sessionUser), getCurrentTimeStamp(), 
                                 int(sessionUser), getCurrentTimeStamp()]
-        clientValuesList = [self.unitId, self.divisionId, self.legalEntityId,
-                            self.businessGroupId, self.countryId, self.geography, 
+        clientValuesList = [self.unitId, self.legalEntityId,
+                            self.countryId, self.geography, 
                             self.unitCode, self.unitName, self.industryName, 
                             self.address, self.postalCode, 
                             ",".join(str(x) for x in self.domainIds)]
+
+        if self.businessGroupId != None:
+            columns += ", business_group_id"
+            valuesList.append(self.businessGroupId)
+        if self.divisionId != None:
+            columns += ", division_id"
+            valuesList.append(self.divisionId)
         knowledgeValues = listToString(knowledgeValuesList)
         clientValues = listToString(clientValuesList)
-        if DatabaseHandler.instance().insert(
-                        self.unitTblName, knowledgeDbColumns, knowledgeValues):
-            return ClientDatabaseHandler.instance(
+        if ClientDatabaseHandler.instance(
                 getClientDatabase(self.clientId)).insert(
-                self.unitTblName, clientDbColumns, clientValues)
+                self.unitTblName, clientDbColumns, clientValues):
+            return DatabaseHandler.instance().insert(
+                        self.unitTblName, knowledgeDbColumns, knowledgeValues) 
 
     def update(self, sessionUser):
         knowledgeValueslist = []
         clientValuesList = []
-        if self.unitId == None:
-            self.unitId = self.generateNewUnitId(self.clientId)
-        clientDbColumns = ["division_id", "legal_entity_id", "business_group_id",
+        clientDbColumns = [ "legal_entity_id",
                         "country_id", "geography", "unit_code", "unit_name", "industry_name",
                         "address", "postal_code", "domain_ids"]
         knowledgeDbColumns = [ "country_id", "geography_id", "unit_code",
@@ -662,12 +672,19 @@ class Unit(object):
         knowledgeValuesList = [self.countryId, self.geographyId,
                                 self.unitCode, self.unitName, self.industryId, 
                                 int(sessionUser), getCurrentTimeStamp()]
-        clientValuesList = [self.divisionId, self.legalEntityId,
-                            self.businessGroupId, self.countryId, self.geography, 
+        clientValuesList = [self.legalEntityId,
+                             self.countryId, self.geography, 
                             self.unitCode, self.unitName, self.industryName, 
                             self.address, self.postalCode, ",".join(str(x) for x in self.domainIds)]
         knowledgeCondition = " client_id = '%d' and unit_id= '%d'" % (self.clientId, self.unitId)
         clientCondition = " unit_id= '%d'" % self.unitId
+        
+        if self.businessGroupId != None:
+            clientDbColumns.append("business_group_id")
+            clientValuesList.append(self.businessGroupId)
+        if self.divisionId != None:
+            clientDbColumns.append("division_id")
+            clientValuesList.append(self.divisionId)
 
         if DatabaseHandler.instance().update(
                         self.unitTblName, knowledgeDbColumns, knowledgeValuesList, knowledgeCondition):
