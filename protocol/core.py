@@ -257,7 +257,7 @@ ComplianceApplicability = RecordType("ComplianceApplicability", [
 	Field("compliance_id", COMPLIANCE_ID),
 	Field("compliance_name", COMPLIANCE_NAME),
 	Field("description", DESCRIPTION), 
-    Field("statutory_provision" STATUTORY_PROVISION),
+    Field("statutory_provision", STATUTORY_PROVISION),
     Field("statutory_nature", STATUTORY_NATURE_NAME), 
     Field("compliance_applicable_status", STATUS), 
     Field("compliance_opted_status", STATUS), 
@@ -365,14 +365,14 @@ CountryWiseUnits = RecordType("CountryWiseUnits", [
 ])
 
 ServiceProvider = RecordType("ServiceProvider", [
-	 Field("service_provider_id", SERVICE_PROVIDER_ID),
+	 Field("service_provider_id", OptionalType(SERVICE_PROVIDER_ID)),
      Field("service_provider_name", SERVICE_PROVIDER_NAME), 
      Field("address", ADDRESS),
      Field("contract_from", DATE),
      Field("contract_to", DATE), 
      Field("contact_person", Text50),
      Field("contact_no", CONTACT_NUMBER),
-     Field("is_active", IS_ACTIVE)
+     Field("is_active", OptionalType(IS_ACTIVE))
 ])
 
 
