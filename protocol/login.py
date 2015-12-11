@@ -71,13 +71,13 @@ ForgotPasswordSuccess = RecordType("ForgotPasswordSuccess", [])
 
 InvalidUserName = RecordType("InvalidUserName", [])
 
-ResetSessionTokenValidationSuccess = RecordType("ResetSessionTokenValidationSuccess" [])
+ResetSessionTokenValidationSuccess = RecordType("ResetSessionTokenValidationSuccess", [])
 
 InvalidResetToken = RecordType("InvalidResetToken", [])
 
 ResetPasswordSuccess = RecordType("ResetPasswordSuccess", [])
 
-InvalidResetToken = RecordType("InvalidResetToken"), [])
+InvalidResetToken = RecordType("InvalidResetToken", [])
 
 ChangePasswordSuccess = RecordType("ChangePasswordSuccess", [])
 
