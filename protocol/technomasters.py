@@ -92,11 +92,15 @@ ReactivateUnit = Recordtype("ReactivateUnit", [
 	Field("passsword", PASSWORD)
 ])
 
+GetClientProfile = Recordtype("GetClientProfile", [
+])
+
 
 Request = VariantType("Request", [
 	GetClientGroups, SaveClientGroup, UpdateClientGroup,
 	ChangeClientGroupStatus, GetClients, SaveClient,
-	UpdateClient, ChangeClientStatus, ReactivateUnit
+	UpdateClient, ChangeClientStatus, ReactivateUnit,
+	GetClientProfile
 ])
 
 
@@ -179,6 +183,37 @@ InvalidPassword = Recordtype("InvalidPassword", [
 InvalidUnitId = Recordtype("InvalidUnitId", [
 ])
 
+LICENCE_HOLDER_DETAILS = Recordtype("LICENCE_HOLDER_DETAILS", [
+	"user_id": USER_ID,
+	"user_name": EMPLOYEE_NAME,
+	"email_id": EMAIL_ID,
+	"contact_no": CONTACT_NO,
+	"seating_unit_name": UNIT_NAME,
+	"address": ADDRESS,
+	"total_disk_space": TOTAL_DISK_SPACE,
+	"used_disk_space": USED_DISK_SPACE,
+])
+
+PROFILE_DETAIL = Recordtype("PROFILES", [
+	Field("contract_from", DATE),
+	Field("contract_to", DATE),
+	Field("no_of_user_licence", NO_OF_USER_LICENCE),
+	Field("remaining_licence", REMAINING_USER_LICENCE),
+	Field("total_disk_space", REMAINING_USER_LICENCE),
+	Field("used_disk_space", USED_DISK_SPACE),
+	Field("licence_holders", VectorType(LICENCE_HOLDER_DETAILS))
+])
+
+PROFILES = Recordtype("PROFILES", [
+	Field("client_id", GROUP_ID),
+	Field("profile_detail", PROFILE_DETAIL),
+])
+
+GetClientProfileSuccess = Recordtype("GetClientProfileSuccess", [
+	Field("group_companies", ClientList),
+	Field("profiles", VectorType(PROFILES))
+])
+
 Response = VariantType("Response", [
 	GetClientGroupsSuccess, SaveClientGroupSuccess,
 	GroupNameAlreadyExists, UsernameAlreadyExists,
@@ -188,5 +223,6 @@ Response = VariantType("Response", [
 	DivisionNameAlreadyExists, UnitNameAlreadyExists, 
 	UnitCodeAlreadyExists, LogoSizeLimitExceeds,
 	UpdateClientSuccess, ChangeClientStatusSuccess,
-	ReactivateUnitSuccess, InvalidPassword, InvalidUnitId
+	ReactivateUnitSuccess, InvalidPassword, InvalidUnitId,
+	GetClientProfileSuccess
 ])
