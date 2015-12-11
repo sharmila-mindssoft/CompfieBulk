@@ -1,7 +1,7 @@
 from protocol.common import *
 
 __all__ = [
-	"Request", Response
+	"Request", "Response"
 ]
 
 NOTIFICATION_TEXT = Text500
@@ -130,7 +130,7 @@ GetNotificationsSuccess = RecordType("GetNotificationsSuccess", [
 
 UpdateNotificationStatusSuccess = RecordType("UpdateNotificationStatusSuccess", [])
 
-RecordType = VariantType("Response", [
+Response = VariantType("Response", [
 	UpdateUserProfileSuccess, ContactNumberAlreadyExists,
 	GetDomainsSuccess, 
 	SaveDomainSuccess, DomainNameAlreadyExists,
