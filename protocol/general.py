@@ -1,4 +1,5 @@
 from protocol.common import *
+from protocol.core import Domain, Country
 
 __all__ = [
 	"Request", "Response"
@@ -22,14 +23,13 @@ UpdateUserProfile = RecordType("UpdateUserProfile", [
 GetDomains = RecordType("GetDomains", [
 ])
 
-SaveDomain = RecordType("SaveDomain"),[
+SaveDomain = RecordType("SaveDomain", [
 	Field("domain_name", DOMAIN_NAME)
 ])
 
-UpdateDomain = RecordType("UpdateDomain"),[
+UpdateDomain = RecordType("UpdateDomain", [
 	Field("domain_id", DOMAIN_ID),
 	Field("domain_name", DOMAIN_NAME),
-
 ])
 
 ChangeDomainStatus = RecordType("ChangeDomainStatus", [
@@ -40,11 +40,11 @@ ChangeDomainStatus = RecordType("ChangeDomainStatus", [
 GetCountries = RecordType("GetCountries", [
 ])
 
-SaveCountry = RecordType("SaveCountry"),[
+SaveCountry = RecordType("SaveCountry", [
 	Field("country_name", COUNTRY_NAME)
 ])
 
-UpdateCountry = RecordType("UpdateCountry"),[
+UpdateCountry = RecordType("UpdateCountry", [
 	Field("country_id", COUNTRY_ID),
 	Field("country_name", COUNTRY_NAME),
 
@@ -85,7 +85,7 @@ ContactNumberAlreadyExists = RecordType("ContactNumberAlreadyExists", [])
 DomainList = VectorType(Domain)
 
 GetDomainsSuccess = RecordType("GetDomainsSuccess", [
-	Field("domains": DomainList)
+	Field("domains", DomainList)
 ])
 
 SaveDomainSuccess = RecordType("SaveDomainSuccess", [])
@@ -101,7 +101,7 @@ ChangeDomainStatusSuccess = RecordType("ChangeDomainStatusSuccess", [])
 CountryList = VectorType(Country)
 
 GetCountriesSuccess = RecordType("GetCountriesSuccess", [
-	Field("countries": CountryList)
+	Field("countries", CountryList)
 ])
 
 SaveCountrySuccess = RecordType("SaveCountrySuccess", [])
@@ -117,9 +117,9 @@ ChangeCountryStatusSuccess = RecordType("ChangeCountryStatusSuccess", [])
 Notification = RecordType("Notification", [
 	Field("notification_id",  NOTIFICATION_ID),
 	Field("notification_text", NOTIFICATION_TEXT),
-	Field("extra_details": EXTRA_DETAILS),
-	Field("has_read": HAS_READ),
-	Field("date_and_time" : DATE_AND_TIME)
+	Field("extra_details", EXTRA_DETAILS),
+	Field("has_read", HAS_READ),
+	Field("date_and_time", TIMESTAMP)
 ])
 
 NotificationList = VectorType(Notification)

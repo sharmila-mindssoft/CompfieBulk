@@ -6,7 +6,8 @@ __all__ = [
 	"ASSIGN_STATUTORY_SUBMISSION_TYPE", "NOTIFICATION_TYPE",
 	"FILTER_TYPE", "COMPLIANCE_FREQUENCY", "COMPLIANCE_STATUS",
 	"APPLICABILITY_STATUS", "FORM_TYPE", "REPEATS_TYPE",
-	"DURATION_TYPE","Form", "Menu", "UserGroup", "Country", "Domain",
+	"DURATION_TYPE",
+	"Form", "Menu", "UserGroup", "Country", "Domain", "Level",
 	"GeographyLevel", "Geography", "Industry", "StatutoryNature",
 	"StatutoryLevel", "Statutory", "Compliance", "StatutoryMapping",
 	"GroupCompany", "GroupCompanyDetail", "ClientConfiguration", 
@@ -190,6 +191,13 @@ Domain = RecordType("Domain", [
 
 DomainList = VectorType(Domain)
 
+Level = RecordType("Level", [
+	Field("level_id", OptionalType(LEVEL_ID)),
+	Field("level_position", LEVEL_POSITION),
+	Field("level_name", LEVEL_NAME)
+])
+
+
 GeographyLevel = RecordType("GeographyLevel", [
 	Field("level_id", GEOGRAPHY_LEVEL_ID),
 	Field("level_position", LEVEL_POSITION),
@@ -267,16 +275,22 @@ ComplianceApplicability = RecordType("ComplianceApplicability", [
 ComplianceApplicabilityList = VectorType(ComplianceApplicability)
 
 StatutoryMapping = RecordType("StatutoryMapping", [
-	Field("statutory_mapping_id", STATUTORY_MAPPING_ID),
-    Field("country_id", COUNTRY_ID),
-    Field("domain_id", DOMAIN_ID), 
-    Field("industry_ids", IndustryIdList), 
-    Field("statutory_nature_id", STATUTORY_NATURE_ID), 
-    Field("statutories", StatutoryList), 
-    Field("compliances", ComplianceList), 
-    Field("geographies", COMPLIANCE_FREQUENCY), 
-    Field("approval_status", StatutoryDates)
+	Field("country_id", COUNTRY_ID),
+	Field("country_name", COUNTRY_NAME),
+	Field("domain_id", DOMAIN_ID),
+	Field("domain_name", DOMAIN_NAME),
+	Field("industry_ids", [INDUSTRY_ID,]),
+	Field("industry_names", Text),
+	Field("statutory_nature_id", STATUTORY_NATURE_ID),
+	Field("statutory_nature_name", STATUTORY_NATURE_NAME),
+	Field("statutory_ids", VectorType(STATUTORY_ID)),
+	Field("statutory_mappings", VectorType(Text)),
+	Field("compliances", VectorType(Compliance)),
+	Field("compliance_names", VectorType(Text)),
+	Field("geographies", VectorType(GEOGRAPHY_ID)),
+	Field("approval_status", APPROVAL_STATUS),
 ])
+
 
 GroupCompany = RecordType("GroupCompany", [
 	Field("client_id", GROUP_ID),
