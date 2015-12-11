@@ -193,21 +193,21 @@ $(function() {
   });
 
   $('.tasktype').change(function(){
-    if($(this).val()=="periodical" || $(this).val()=="review")
+    if($(this).val()=="Periodical" || $(this).val()=="Review")
     {
       $('#Recurring').show();
       $('#Occasional').hide();
       $('#One_Time').hide();
     }
    
-    else if($(this).val() == "onoccur" )
+    else if($(this).val() == "OnOccurrence" )
     {
       $('#Recurring').hide();
       $('#Occasional').show();
       $('#One_Time').hide();
     }
     
-    else if($(this).val() == "onetime")
+    else if($(this).val() == "OneTime")
     {
       $('#Recurring').hide();
       $('#Occasional').hide();
@@ -566,10 +566,10 @@ function load_stautorydates(){
                     <div class="field-input">
                       <select class="input-box tasktype" id="compliance_frequency">
                         <option value="">Select</option>
-                        <option value="periodical">Periodical</option>
-                        <option value="review">Review</option>
-                        <option value="onetime">One Time</option>
-                        <option value="onoccur">On Occurrence</option>
+                        <option value="Periodical">Periodical</option>
+                        <option value="Review">Review</option>
+                        <option value="OneTime">One Time</option>
+                        <option value="OnOccurrence">On Occurrence</option>
                     </select>
                   </div>
                 </div>
@@ -609,19 +609,19 @@ function load_stautorydates(){
                <select class="input-box" style="width:60px;" id="statutory_date">
                </select>
               <select class="input-box" style="width:60px;" id="statutory_month">
-                <option>Select</option>
-                <option>Jan</option>
-                <option>Feb</option>
-                <option>Mar</option>
-                <option>Apr</option>
-                <option>May</option>
-                <option>Jun</option>
-                <option>Jul</option>
-                <option>Aug</option>
-                <option>Sep</option>
-                <option>Oct</option>
-                <option>Nov</option>
-                <option>Dec</option>
+                <option value="">Select</option>
+                <option value="1">Jan</option>
+                <option value="2">Feb</option>
+                <option value="3">Mar</option>
+                <option value="4">Apr</option>
+                <option value="5">May</option>
+                <option value="6">Jun</option>
+                <option value="7">Jul</option>
+                <option value="8">Aug</option>
+                <option value="9">Sep</option>
+                <option value="10">Oct</option>
+                <option value="11">Nov</option>
+                <option value="12">Dec</option>
               </select>
             </div>
           </div>
@@ -720,19 +720,19 @@ function load_stautorydates(){
       <select class="input-box" style="width:60px;" id="multiple_statutory_date1">
       </select>
       <select class="input-box" style="width:60px;" id="multiple_statutory_month1">
-        <option>Select</option>
-        <option>Jan</option>
-        <option>Feb</option>
-        <option>Mar</option>
-        <option>Apr</option>
-        <option>May</option>
-        <option>Jun</option>
-        <option>Jul</option>
-        <option>Aug</option>
-        <option>Sep</option>
-        <option>Oct</option>
-        <option>Nov</option>
-        <option>Dec</option>
+        <option value="">Select</option>
+        <option value="1">Jan</option>
+        <option value="2">Feb</option>
+        <option value="3">Mar</option>
+        <option value="4">Apr</option>
+        <option value="5">May</option>
+        <option value="6">Jun</option>
+        <option value="7">Jul</option>
+        <option value="8">Aug</option>
+        <option value="9">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
       </select>
     </span>
   <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
@@ -748,19 +748,19 @@ function load_stautorydates(){
       <select class="input-box" style="width:60px;" id="multiple_statutory_date2">
       </select>
       <select class="input-box" style="width:60px;" id="multiple_statutory_month2">
-        <option>Select</option>
-        <option>Jan</option>
-        <option>Feb</option>
-        <option>Mar</option>
-        <option>Apr</option>
-        <option>May</option>
-        <option>Jun</option>
-        <option>Jul</option>
-        <option>Aug</option>
-        <option>Sep</option>
-        <option>Oct</option>
-        <option>Nov</option>
-        <option>Dec</option>
+        <option value="">Select</option>
+        <option value="1">Jan</option>
+        <option value="2">Feb</option>
+        <option value="3">Mar</option>
+        <option value="4">Apr</option>
+        <option value="5">May</option>
+        <option value="6">Jun</option>
+        <option value="7">Jul</option>
+        <option value="8">Aug</option>
+        <option value="9">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
       </select>
     </span>
   <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
@@ -776,19 +776,19 @@ function load_stautorydates(){
       <select class="input-box" style="width:60px;" id="multiple_statutory_date3">
       </select>
       <select class="input-box" style="width:60px;" id="multiple_statutory_month3">
-        <option>Select</option>
-        <option>Jan</option>
-        <option>Feb</option>
-        <option>Mar</option>
-        <option>Apr</option>
-        <option>May</option>
-        <option>Jun</option>
-        <option>Jul</option>
-        <option>Aug</option>
-        <option>Sep</option>
-        <option>Oct</option>
-        <option>Nov</option>
-        <option>Dec</option>
+        <option value="">Select</option>
+        <option value="1">Jan</option>
+        <option value="2">Feb</option>
+        <option value="3">Mar</option>
+        <option value="4">Apr</option>
+        <option value="5">May</option>
+        <option value="6">Jun</option>
+        <option value="7">Jul</option>
+        <option value="8">Aug</option>
+        <option value="9">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
       </select>
     </span>
   <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
@@ -806,19 +806,19 @@ function load_stautorydates(){
       <select class="input-box" style="width:60px;" id="multiple_statutory_date4">
       </select>
       <select class="input-box" style="width:60px;" id="multiple_statutory_month4">
-        <option>Select</option>
-        <option>Jan</option>
-        <option>Feb</option>
-        <option>Mar</option>
-        <option>Apr</option>
-        <option>May</option>
-        <option>Jun</option>
-        <option>Jul</option>
-        <option>Aug</option>
-        <option>Sep</option>
-        <option>Oct</option>
-        <option>Nov</option>
-        <option>Dec</option>
+        <option value="">Select</option>
+        <option value="1">Jan</option>
+        <option value="2">Feb</option>
+        <option value="3">Mar</option>
+        <option value="4">Apr</option>
+        <option value="5">May</option>
+        <option value="6">Jun</option>
+        <option value="7">Jul</option>
+        <option value="8">Aug</option>
+        <option value="9">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
       </select>
     </span>
   <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
@@ -835,19 +835,19 @@ function load_stautorydates(){
       <select class="input-box" style="width:60px;" id="multiple_statutory_date5">
       </select>
       <select class="input-box" style="width:60px;" id="multiple_statutory_month5">
-        <option>Select</option>
-        <option>Jan</option>
-        <option>Feb</option>
-        <option>Mar</option>
-        <option>Apr</option>
-        <option>May</option>
-        <option>Jun</option>
-        <option>Jul</option>
-        <option>Aug</option>
-        <option>Sep</option>
-        <option>Oct</option>
-        <option>Nov</option>
-        <option>Dec</option>
+        <option value="">Select</option>
+        <option value="1">Jan</option>
+        <option value="2">Feb</option>
+        <option value="3">Mar</option>
+        <option value="4">Apr</option>
+        <option value="5">May</option>
+        <option value="6">Jun</option>
+        <option value="7">Jul</option>
+        <option value="8">Aug</option>
+        <option value="9">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
       </select>
     </span>
   <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
@@ -864,19 +864,19 @@ function load_stautorydates(){
       <select class="input-box" style="width:60px;" id="multiple_statutory_date6">
       </select>
       <select class="input-box" style="width:60px;" id="multiple_statutory_month6">
-        <option>Select</option>
-        <option>Jan</option>
-        <option>Feb</option>
-        <option>Mar</option>
-        <option>Apr</option>
-        <option>May</option>
-        <option>Jun</option>
-        <option>Jul</option>
-        <option>Aug</option>
-        <option>Sep</option>
-        <option>Oct</option>
-        <option>Nov</option>
-        <option>Dec</option>
+        <option value="">Select</option>
+        <option value="1">Jan</option>
+        <option value="2">Feb</option>
+        <option value="3">Mar</option>
+        <option value="4">Apr</option>
+        <option value="5">May</option>
+        <option value="6">Jun</option>
+        <option value="7">Jul</option>
+        <option value="8">Aug</option>
+        <option value="9">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
       </select>
     </span>
   <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
@@ -901,19 +901,19 @@ function load_stautorydates(){
       <select class="input-box" style="width:60px;" id="single_statutory_date" >
       </select>
       <select class="input-box" style="width:60px;" id="single_statutory_month">
-        <option>Select</option>
-        <option>Jan</option>
-        <option>Feb</option>
-        <option>Mar</option>
-        <option>Apr</option>
-        <option>May</option>
-        <option>Jun</option>
-        <option>Jul</option>
-        <option>Aug</option>
-        <option>Sep</option>
-        <option>Oct</option>
-        <option>Nov</option>
-        <option>Dec</option>
+       <option value="">Select</option>
+      <option value="1">Jan</option>
+      <option value="2">Feb</option>
+      <option value="3">Mar</option>
+      <option value="4">Apr</option>
+      <option value="5">May</option>
+      <option value="6">Jun</option>
+      <option value="7">Jul</option>
+      <option value="8">Aug</option>
+      <option value="9">Sep</option>
+      <option value="10">Oct</option>
+      <option value="11">Nov</option>
+      <option value="12">Dec</option>
       </select>
     </span>
 </div>
@@ -1048,20 +1048,23 @@ function load_stautorydates(){
 
     $('ul.setup-panel li.active a').trigger('click');
     $('#activate-step-2').on('click', function(e) {
+
+      if (validate_firsttab()){
       $('ul.setup-panel li:eq(1)').removeClass('disabled');
       $('ul.setup-panel li a[href="#step-2"]').trigger('click');
+      }
       
     }) 
     $('#activate-step-3').on('click', function(e) {
       $('ul.setup-panel li:eq(2)').removeClass('disabled');
       $('ul.setup-panel li a[href="#step-3"]').trigger('click');
-      
+      validate_secondtab();
     })  
 
     $('#activate-step-4').on('click', function(e) {
       $('ul.setup-panel li:eq(3)').removeClass('disabled');
       $('ul.setup-panel li a[href="#step-4"]').trigger('click');
-      
+      validate_thirdtab();
     })  
 
     $('#backward-step-1').on('click', function(e) {
@@ -1080,10 +1083,21 @@ function load_stautorydates(){
       
     })  
     $('#activate-step-finish').on('click', function(e) {
-      getGeographyResult();    
+      getGeographyResult();
+      validate_fourthtab(); 
+      saveRecord();   
     })  
 
 });
+
+function validate_firsttab(){
+  var result='fail';
+
+  if(result == 'success'){
+    return true;
+  }
+  
+}
 </script>
 
 

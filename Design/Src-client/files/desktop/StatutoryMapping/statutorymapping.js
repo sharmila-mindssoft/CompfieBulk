@@ -12,15 +12,17 @@ var sm_statutorynatureid='';
 var sm_industryids=[];
 var sm_countryval='';
 var sm_domainval='';
-var sm_industryvals=[];
+var sm_industryvals = [];
 var sm_statutorynatureval='';
 
-var sm_statutoryids=[];
-var disp_statutories=[];
+var sm_statutoryids = [];
+var disp_statutories = [];
 
-var sm_compliancedetails=[];
-var compliances = [];
+var sm_compliancedetails = [];
 var statutory_dates = [];
+
+var sm_geographyids = [];
+var compliances = []
 
 
 
@@ -517,7 +519,7 @@ function temp_addstatutories(){
       }else if($.inArray(last_statutory_id, sm_statutoryids) >= 0){
         $("#error").text("This Statutory already added");
       }else{
-        sm_statutoryids.push(last_statutory_id);
+        sm_statutoryids.push(parseInt(last_statutory_id));
       }
       load_statories();
       
@@ -532,75 +534,81 @@ function temp_removestatutories(remove_id){
 function temp_addcompliance(){
       var repeats='';
       var comp_id=$('#complianceid').val();
-      var repeatstype = null;
-      var repeatsevery = null;
+      var repeats_type = null;
+      var repeats_every = null;
       var duration = null;
-      var durationtype= null;
+      var duration_type= null;
       var compliance_frequency = $('#compliance_frequency').val();
 
-      if(compliance_frequency == "onetime"){
-        var statutory_date = {};
-        statutory_date["statutory_date"] = $('#statutory_date').val();
-        statutory_date["statutory_month"] = $('#statutory_month').val();
-        statutory_date["trigger_before_days"] = $('#triggerbefore').val();
+      var statutory_date = '';
+      var statutory_month = '';
+      var trigger_before_days = '';
+      statutory_dates = [];
+
+      if(compliance_frequency == "OneTime"){
+        statutory_date = parseInt($('#statutory_date').val());
+        statutory_month = parseInt($('#statutory_month').val());
+        trigger_before_days = parseInt($('#triggerbefore').val());
+
+        statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
         statutory_dates.push(statutory_date);
-      }else if (compliance_frequency == "periodical" || compliance_frequency == "review"){
-        repeatstype = $('#repeats_type').val();
-        repeatsevery = $('#repeats_every').val();
-        if($('#repeats_type').val() == 'month' && $('.multipleinput').prop("checked") == 'true'){
+      }else if (compliance_frequency == "Periodical" || compliance_frequency == "Review"){
+        repeats_type = $('#repeats_type').val();
+        repeats_every = parseInt($('#repeats_every').val());
+
+        if(repeats_type == 'month' && $('.multipleinput').prop("checked") == true){
            for(var i=1;i<=6;i++){
-            if($('#multiple_statutory_month'+i).val() != "Select"){
-            var statutory_date = {};
-            statutory_date["statutory_date"] = $('#multiple_statutory_date'+i).val();
-            statutory_date["statutory_month"] = $('#multiple_statutory_month'+i).val();
-            statutory_date["trigger_before_days"] = $('#multiple_triggerbefore'+i).val();
+            if($('#multiple_statutory_month'+i).val() != ""){
+            statutory_date = parseInt($('#multiple_statutory_date'+i).val());
+            statutory_month = parseInt($('#multiple_statutory_month'+i).val());
+            trigger_before_days = parseInt($('#multiple_triggerbefore'+i).val());
+
+            statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
             statutory_dates.push(statutory_date);
         }
+
         }
         }else{
-            var statutory_date = {};
-            statutory_date["statutory_date"] = $('#single_statutory_date').val();
-            statutory_date["statutory_month"] = $('#single_statutory_month').val();
-            statutory_date["trigger_before_days"] = $('#single_triggerbefore').val();
+            statutory_date = parseInt($('#single_statutory_date').val());
+            statutory_month = parseInt($('#single_statutory_month').val());
+            trigger_before_days = parseInt($('#single_triggerbefore').val());
+
+            statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
             statutory_dates.push(statutory_date);
           }
       }else{
-        duration = $('#duration').val();
-        durationtype = $('#duration_type').val();
+        duration = parseInt($('#duration').val());
+        duration_type = $('#duration_type').val();
       }
-  
-      if(comp_id == ''){         
-          var compliance = {};
-          compliance["statutory_provision"] = $('#statutory_provision').val();
-          compliance["compliance_task"] = $('#compliance_task').val();
-          compliance["description"] = $('#compliance_description').val();
-          compliance["document"] = $('#compliance_document').val();
-          compliance["format_file_name"] = $('#upload_file').val();
-          compliance["penal_consequences"] = $('#penal_consequences').val();
-          compliance["compliance_frequency"] = compliance_frequency;
-          compliance["statutory_dates"] = statutory_dates;
-          compliance["repeats_type"] = repeatstype;
-          compliance["repeats_every"] = repeatsevery;
-          compliance["duration_type"] = durationtype;
-          compliance["duration"] = duration;
-          compliance["is_active"] = 1;
+    
+        var statutory_provision = $('#statutory_provision').val();
+        var compliance_task = $('#compliance_task').val();
+        var description = $('#compliance_description').val();
+        var compliance_document = $('#compliance_document').val();
+        var file_format = $('#upload_file').val();
+        var penal_consequences = $('#penal_consequences').val();
+        var is_active = 1;
+
+        if(comp_id == ''){         
+          compliance = mirror.complianceDetails(statutory_provision, compliance_task, description, compliance_document, file_format, penal_consequences, compliance_frequency,
+            statutory_dates, repeats_type, repeats_every, duration_type, duration, is_active, comp_id);
           compliances.push(compliance);
-      }else{
-        compliances[comp_id]["statutory_provision"] = $('#statutory_provision').val();
-        compliances[comp_id]["compliance_task"] = $('#compliance_task').val();
-        compliances[comp_id]["description"] = $('#compliance_description').val();
-        compliances[comp_id]["document"] = $('#compliance_document').val();
-        compliances[comp_id]["format_file_name"] = $('#upload_file').val();
-        compliances[comp_id]["penal_consequences"] = $('#penal_consequences').val();
-        compliances[comp_id]["compliance_frequency"] = compliance_frequency;
-        compliances[comp_id]["statutory_dates"] = statutory_dates;
-        compliances[comp_id]["repeats_type"] = repeatstype;
-        compliances[comp_id]["repeats_every"] = repeatsevery;
-        compliances[comp_id]["duration_type"] = durationtype;
-        compliances[comp_id]["duration"] = duration;
-        compliances[comp_id]["is_active"] = 1;
-    }
-      
+        }else{
+          compliances[comp_id]["statutory_provision"] = statutory_provision;
+          compliances[comp_id]["compliance_task"] = compliance_task;
+          compliances[comp_id]["description"] = description;
+          compliances[comp_id]["document"] = compliance_document;
+          compliances[comp_id]["format_file_name"] = file_format;
+          compliances[comp_id]["penal_consequences"] = penal_consequences;
+          compliances[comp_id]["compliance_frequency"] = compliance_frequency;
+          compliances[comp_id]["statutory_dates"] = statutory_dates;
+          compliances[comp_id]["repeats_type"] = repeats_type;
+          compliances[comp_id]["repeats_every"] = repeats_every;
+          compliances[comp_id]["duration_type"] = duration_type;
+          compliances[comp_id]["duration"] = duration;
+          compliances[comp_id]["is_active"] = 1;
+      }
+
       $('#statutory_provision').val('');
       $('#compliance_task').val('');
       $('#compliance_description').val('');
@@ -645,6 +653,10 @@ function load_compliance(){
     $(".tbody-compliance-list").find("tr").remove();
      for(var entity in compliances) {
         complianceid = 0;
+        var display_repeats = 'Nil';
+        if(compliances[entity]["repeats_every"] != null && compliances[entity]["repeats_type"] != null){
+          display_repeats = compliances[entity]["repeats_every"] + " " + compliances[entity]["repeats_type"];
+        }
         var tableRow=$('#compliance-templates .table-compliance .table-row');
         var clone=tableRow.clone();
         $('.sno', clone).text(complianceid+1);
@@ -652,7 +664,7 @@ function load_compliance(){
         $('.task', clone).text(compliances[entity]["compliance_task"]);
         $('.description', clone).text(compliances[entity]["description"]);
         $('.frequency', clone).text(compliances[entity]["compliance_frequency"]);
-        $('.repeats', clone).text(compliances[entity]["repeats_every"] +" "+ compliances[entity]["repeats_type"]);
+        $('.repeats', clone).text(display_repeats);
         $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="temp_editcompliance(\''+complianceid+'\')"/>');
         $('.status', clone).html('<img src=\'/images/icon-delete.png\' onclick="temp_removecompliance(\''+complianceid+'\')"/>');
         $('.tbody-compliance-list').append(clone);
@@ -677,7 +689,7 @@ function temp_editcompliance(edit_id){
     $('#repeats_every').val(compliances[edit_id]["repeats_every"]);
 
       var compliance_frequency = compliances[edit_id]["compliance_frequency"];
-      if(compliance_frequency == "onetime"){
+      if(compliance_frequency == "OneTime"){
         $('#statutory_date').val(statutory_dates[0]["statutory_date"]);
         $('#statutory_month').val(statutory_dates[0]["statutory_month"]);
         $('#triggerbefore').val(statutory_dates[0]["trigger_before_days"]);
@@ -685,7 +697,7 @@ function temp_editcompliance(edit_id){
         $('#Occasional').hide();
         $('#One_Time').show();
 
-      }else if (compliance_frequency == "periodical" || compliance_frequency == "review"){
+      }else if (compliance_frequency == "Periodical" || compliance_frequency == "Review"){
         $('#Recurring').show();
         $('#Occasional').hide();
         $('#One_Time').hide();
@@ -792,10 +804,10 @@ function activate_geography_all(element,country,level){
 
 //load geographymapping sub level data dynamically
 function load_geography(level,country){
-    var sm_geographyids=[];
+    var geographyids=[];
     $(".list"+level+".active").each( function( index, el ) {
         var split_id = el.id.split(',');
-        sm_geographyids.push([parseInt(split_id[0]),el.innerHTML]);
+        geographyids.push([parseInt(split_id[0]),el.innerHTML]);
     });
     
     var levelstages= parseInt(level) + 1;
@@ -816,19 +828,19 @@ function load_geography(level,country){
         var geographyList = geographiesList[country];
 
         //working order is even for multiple selection
-       for(var j=0;j<sm_geographyids.length;j++){
+       for(var j=0;j<geographyids.length;j++){
         splittext = '';
         for(var i in geographyList){
           var setgeographyid = geographyList[i]["geography_id"];
           var setparentid = geographyList[i]["parent_id"];
           var combineid = setgeographyid + "," + setparentid;
 
-          if( geographyList[i]["parent_id"] == sm_geographyids[j][0] && geographyList[i]["level_id"] == levelid && geographyList[i]["is_active"] == 1) {
+          if( geographyList[i]["parent_id"] == geographyids[j][0] && geographyList[i]["level_id"] == levelid && geographyList[i]["is_active"] == 1) {
             str += sel_all;
            if(splittext != '') {
             str += '<li id="'+combineid+'" class="'+clsval1+'" onclick="activate_geography(this,'+country+','+setlevelstage+')" > '+geographyList[i]["geography_name"]+'</li>';
            }else{
-            splittext = '<h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">'+sm_geographyids[j][1]+'</h3>';
+            splittext = '<h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">'+geographyids[j][1]+'</h3>';
             str += splittext + '<li id="'+combineid+'" class="'+clsval1+'" onclick="activate_geography(this,'+country+','+setlevelstage+')" >'+geographyList[i]["geography_name"]+'</li>';
            }
            sel_all = '';
@@ -838,7 +850,7 @@ function load_geography(level,country){
         //working but order is not even for multiple selection
         /*for(var i in geographyList){
           var setgeographyid = geographyList[i]["geography_id"];
-          var checkstate = $.inArray(geographyList[i]["parent_id"], sm_geographyids);
+          var checkstate = $.inArray(geographyList[i]["parent_id"], geographyids);
           if( checkstate >= 0 && geographyList[i]["level_id"] == levelid && geographyList[i]["is_active"] == 1) {
           str += '<a href="#"> <span class="glist-filter'+setlevelstage+'"> <li id="'+setgeographyid+'" class="'+clsval1+'" onclick="activate_geography(this,'+country+','+setlevelstage+')" > '+geographyList[i]["geography_name"]+'</li></span> </a>';
         }
@@ -848,21 +860,20 @@ function load_geography(level,country){
 }
 
 function getGeographyResult(){
-      var selected_geography=[];
+      sm_geographyids=[];
       for(k=1;k<=10;k++){
         $(".list"+k+".active").each( function( index, el ) {
             var split_id = el.id.split(',');
             var g_id = parseInt(split_id[0]);
             var p_id = parseInt(split_id[1]);
-            selected_geography.push(g_id);
-            if($.inArray(p_id, selected_geography) >= 0){
-                var remove_geography = selected_geography.indexOf(p_id);
-                selected_geography.splice(remove_geography,1);
+            sm_geographyids.push(g_id);
+            if($.inArray(p_id, sm_geographyids) >= 0){
+                var remove_geography = sm_geographyids.indexOf(p_id);
+                sm_geographyids.splice(remove_geography,1);
             }
             
           });
       }
-      alert(selected_geography);
 }
 
 function filter_geography(position){  
@@ -876,4 +887,24 @@ function filter_geography(position){
             glist_filter[i].style.display = 'none';
         }
     }
+}
+
+function saveRecord(){
+
+    function success(status,data){
+        if(status == "success"){
+            $("#error").text("Record Added Successfully");
+        }else{
+            $("#error").text(status)
+        }
+    }
+    function failure(data){
+
+    }
+    
+
+    statutorymappingData = mirror.statutoryMapping(sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids)
+
+    mirror.saveStatutoryMapping(statutorymappingData, success, failure);
+
 }
