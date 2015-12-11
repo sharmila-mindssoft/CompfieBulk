@@ -11,10 +11,11 @@ __all__ = [
 	"GeographyLevel", "Geography", "Industry", "StatutoryNature",
 	"StatutoryLevel", "Statutory", "Compliance", "StatutoryMapping",
 	"GroupCompany", "GroupCompanyDetail", "ClientConfiguration", 
-	"BusinessGroup", "LegalEntity", "Division", "Unit", "ServiceProvider",
-	"ClientUser", "AssignedStatutory", "ActiveCompliance", "UpcomingCompliance",
-	"NumberOfCompliances", "ChartFilters", "ComplianceStatusDrillDown",
-	"EscalationsDrillDown", 
+	"BusinessGroup", "LegalEntity", "Division", "Unit", "UnitDetails", 
+	"ServiceProvider", "ClientUser", "AssignedStatutory", 
+	"ActiveCompliance", "UpcomingCompliance", "NumberOfCompliances", 
+	"ChartFilters", "ComplianceStatusDrillDown","EscalationsDrillDown", 
+	"UserGroupDetails", "User", "UserDetails", "CountryWiseUnits"
 ]
 
 # frm = EnumType("FORM_TYPE", [
@@ -127,13 +128,15 @@ DURATION_TYPE = EnumType("DURATION_TYPE", [
 	"Hour"
 ])
 
-FormIdsList = VectorType(FORM_ID)
-CountryIdsList = VectorType(COUNTRY_ID)
-DomainIdsList = VectorType(DOMAIN_ID)
-IndustryIdsList = VectorType(INDUSTRY_ID)
-GeographyIdsList = VectorType(GEOGRAPHY_ID)
-StatutoryIdsList = VectorType(STATUTORY_ID)
+FormIdList = VectorType(FORM_ID)
+CountryIdList = VectorType(COUNTRY_ID)
+DomainIdList = VectorType(DOMAIN_ID)
+IndustryIdList = VectorType(INDUSTRY_ID)
+GeographyIdList = VectorType(GEOGRAPHY_ID)
+StatutoryIdList = VectorType(STATUTORY_ID)
 FormatFilesList = VectorType(FORMAT_FILE_NAME)
+UserIdList = VectorType(USER_ID)
+UnitIdList = VectorType(UNIT_ID)
 
 Form = RecordType("Form", [
 	Field("form_id", FORM_ID),
@@ -144,7 +147,7 @@ Form = RecordType("Form", [
 
 FormList = VectorType(Form)
 
-StatutoryDate = RecordType("Form", [
+StatutoryDate = RecordType("StatutoryDate", [
 	Field("statutory_date", STATUTORY_DATE),
 	Field("statutory_month", STATUTORY_MONTH),
 	Field("trigger_before_days", Int8)
@@ -159,10 +162,16 @@ Menu = RecordType("Menu", [
 	Field("settings", FormList)
 ])
 
+UserGroupDetails = RecordType("UserGroupDetails", [
+	Field("user_group_id", USER_GROUP_ID),
+	Field("user_group_name", USER_GROUP_NAME),
+	Field("form_ids", FormIdList),
+	Field("is_active", IS_ACTIVE)
+])
+
 UserGroup = RecordType("UserGroup", [
 	Field("user_group_id", USER_GROUP_ID),
 	Field("user_group_name", USER_GROUP_NAME),
-	Field("form_ids", FormIdsList),
 	Field("is_active", IS_ACTIVE)
 ])
 
@@ -171,6 +180,8 @@ Country = RecordType("Country", [
 	Field("country_name", COUNTRY_NAME),
 	Field("is_active", IS_ACTIVE)
 ])
+
+CountryList = VectorType(Country)
 
 Domain = RecordType("Domain", [
 	Field("domain_id", DOMAIN_ID),
@@ -197,7 +208,7 @@ Geography = RecordType("Geography", [
 	Field("geography_id", GEOGRAPHY_ID),
 	Field("geography_name", GEOGRAPHY_NAME),
 	Field("level_id", GEOGRAPHY_LEVEL_ID),
-	Field("parent_ids", GeographyIdsList),
+	Field("parent_ids", GeographyIdList),
 	Field("is_active", IS_ACTIVE),
 ])
 
@@ -225,7 +236,7 @@ Statutory = RecordType("Statutory", [
 	Field("statutory_id", STATUTORY_ID),
 	Field("statutory_name", STATUTORY_NAME),
 	Field("level_id", STATUTORY_LEVEL_ID),
-	Field("parent_ids", StatutoryIdsList),
+	Field("parent_ids", StatutoryIdList),
 	Field("is_active", IS_ACTIVE),
 ])
 
@@ -288,15 +299,18 @@ GroupCompany = RecordType("GroupCompany", [
 
 GroupCompanyDetail = RecordType("GroupCompanyDetail", [
 	Field("client_id", GROUP_ID),
-    Field("group_name", CLIENT_NAME),
-    Field("domains", DomainList),
+    Field("client_name", CLIENT_NAME),
+    Field("domain_ids", DomainIdList),
+    Field("country_ids", CountryIdList),
+    Field("incharge_persons", UserIdList),
     Field("logo", URL),
     Field("contract_from", DATE),
     Field("contract_to", DATE),
     Field("no_of_user_licence", NO_OF_USER_LICENCE),
     Field("total_disk_space", TOTAL_DISK_SPACE),
     Field("is_sms_subscribed", Bool),
-    Field("username", USERNAME)
+    Field("username", USERNAME),
+    Field("is_active", IS_ACTIVE)
 ])
 
 ClientConfiguration = RecordType("ClientConfiguration", [
@@ -327,7 +341,7 @@ Division = RecordType("Division", [
     Field("client_id", GROUP_ID)
 ])
 
-Unit = RecordType("Unit", [
+UnitDetails = RecordType("UnitDetails", [
 	Field("unit_id", UNIT_ID),
 	Field("division_id", DIVISION_ID),
 	Field("legal_entity_id", LEGAL_ENTITY_ID),
@@ -340,8 +354,27 @@ Unit = RecordType("Unit", [
     Field("industry_id", INDUSTRY_ID),
     Field("unit_address", ADDRESS),
     Field("postal_code", Int8),
-    Field("domain_ids", DomainIdsList),
+    Field("domain_ids", DomainIdList),
     Field("is_active", IS_ACTIVE),
+])
+
+UnitDetailsList = VectorType(UnitDetails)
+
+Unit = RecordType("Unit", [
+	Field("unit_id", UNIT_ID),
+	Field("division_id", DIVISION_ID),
+	Field("legal_entity_id", LEGAL_ENTITY_ID),
+    Field("business_group_id", BUSINESS_GROUP_ID),
+    Field("client_id", GROUP_ID),
+    Field("unit_code", UNIT_CODE),
+    Field("unit_name", UNIT_NAME),
+    Field("unit_address", ADDRESS),
+    Field("is_active", IS_ACTIVE),
+])
+
+CountryWiseUnits = RecordType("CountryWiseUnits", [
+	Field("country_id", COUNTRY_ID),
+	Field("units", UnitDetailsList),
 ])
 
 ServiceProvider = RecordType("ServiceProvider", [
@@ -355,6 +388,27 @@ ServiceProvider = RecordType("ServiceProvider", [
      Field("is_active", IS_ACTIVE)
 ])
 
+
+UserDetails = RecordType("UserDetails", [
+	Field("user_id", USER_ID),
+    Field("email_id", EMAIL_ID),
+    Field("user_group_id", USER_GROUP_ID), 
+    Field("employee_name", EMPLOYEE_NAME),
+    Field("employee_code", EMPLOYEE_CODE),
+    Field("contact_no", CONTACT_NUMBER),
+    Field("address", ADDRESS),
+    Field("designation", DESIGNATION),
+    Field("country_ids",CountryIdList),
+    Field("domain_ids", DomainIdList),
+    Field("is_active", IS_ACTIVE)
+])
+
+User = RecordType("User", [
+	Field("user_id", USER_ID),
+    Field("employee_name", EMPLOYEE_NAME),
+    Field("is_active", IS_ACTIVE)
+])
+
 ClientUser = RecordType("ClientUser", [
 	Field("user_id", USER_ID),
     Field("email_id", EMAIL_ID),
@@ -365,9 +419,9 @@ ClientUser = RecordType("ClientUser", [
     Field("seating_unit_id", UNIT_ID),
     Field("seating_unit_name", UNIT_NAME),
     Field("user_level", USER_LEVEL),
-    Field("country_ids",CountryIdsList),
-    Field("domain_ids", DomainIdsList),
-    Field("unit_ids", VectorType(UNIT_ID)),
+    Field("country_ids",CountryIdList),
+    Field("domain_ids", DomainIdList),
+    Field("unit_ids", UnitIdList),
     Field("is_admin", STATUS),
     Field("is_service_provider", STATUS),
     Field("service_provider_id", SERVICE_PROVIDER_ID),
