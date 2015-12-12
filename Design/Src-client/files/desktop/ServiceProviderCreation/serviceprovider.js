@@ -170,14 +170,13 @@ function serviceprovider_edit(serviceProviderId){
 		}
 	}
 }
-function serviceprovider_active(countryId, isActive){
-  	$("#service-provider-id").val(countryId);
+function serviceprovider_active(serviceProviderId, isActive){
   	function success(status, data){
 	  initialize();
   	}
   	function failure(status, data){
   	}
-  	mirror.changeServiceProviderStatus( parseInt(countryId), isActive, success, failure);
+  	mirror.changeServiceProviderStatus("ClientAdminAPI", parseInt(serviceProviderId), isActive, success, failure);
 }
 
 
