@@ -1,7 +1,10 @@
-from core import *
 from common import *
-from types import VectorType
-
+from core import (
+	COMPLIANCE_APPROVAL_STATUS, COMPLIANCE_FREQUENCY,
+	AssignedStatutory, Country, 
+	StatutoryDate, BusinessGroup, LegalEntity,
+	Division, Domain, Unit, Statutory
+)
 __all__=  [
 	"Request", "Response"
 ]
@@ -41,7 +44,7 @@ ASSINGED_COMPLIANCE =  RecordType("SaveAssignedCompliance", [
 	Field("compliance_id" ,USER_ID),
 	Field("statutory_dates", StatutoryDateList),
 	Field("due_date", DATE),
-	Field("validity_date", DATE)
+	Field("validity_date", DATE),
 	Field("unit_ids", UnitIdList)
 ])
 
@@ -59,7 +62,7 @@ GetUserwiseCompliances = RecordType("GetUserwiseCompliances", [
 ])
 
 REASSIGNED_COMPLIANCE = RecordType("ReassignCompliance", [
-	Field("compliance_history_id":COMPLIANCE_HISTORY_I,,)
+	Field("compliance_history_id",COMPLIANCE_HISTORY_ID),
 	Field("due_date", DATE)
 ])
 
@@ -100,7 +103,7 @@ PAST_RECORD_COMPLIANCE =  RecordType("SavePastRecords", [
 	Field("due_date" , DATE),
 	Field("completion_date", DATE),
 	Field("validity_date", DATE),
-	Field("documents", VectorType)(DOCUMENT_NAME)
+	Field("documents", VectorType(DOCUMENT_NAME))
 ])
 
 SavePastRecords = RecordType("SavePastRecords", [
@@ -196,13 +199,13 @@ ConcurrenceNotBelongToUnit = RecordType("ConcurrenceNotBelongToUnit", [
 ApprovalPersonNotBelongToUnit = RecordType("ApprovalPersonNotBelongToUnit", [
 ])
 
-SaveAssignComplianceSuccess = RecordType("SaveAssignedComplianceSuccess", [
+SaveAssignedComplianceSuccess = RecordType("SaveAssignedComplianceSuccess", [
 ])
 
 ### Reassign Compliance
 
 STATUTORYWISECOMPLIANCE = RecordType("USERWISECOMPLIANCE", [
-	Field("compliance_history_id":COMPLIANCE_HISTORY_ID),
+	Field("compliance_history_id",COMPLIANCE_HISTORY_ID),
 	Field("compliance_id", COMPLIANCE_ID),
 	Field("compliance_name", COMPLIANCE_TASK_NAME),
 	Field("description", DESCRIPTION),
@@ -240,9 +243,6 @@ GetUserwiseCompliancesSuccess = RecordType("GetUserwiseCompliancesSuccess", [
 ReassignComplianceSuccess = RecordType("ReassignComplianceSuccess", [
 ])
 
-ReassignComplianceSuccess = RecordType("ReassignComplianceSuccess", [
-])
-
 ### Compliance Approval
 
 APPROVALCOMPLIANCE =  RecordType("APPROVALCOMPLIANCE", [
@@ -254,7 +254,7 @@ APPROVALCOMPLIANCE =  RecordType("APPROVALCOMPLIANCE", [
 	Field("due_date", DATE),
 	Field("delayed_by", AGEING),
 	Field("compliance_frequency", COMPLIANCE_FREQUENCY),
-	Field("documents", VectorType(FORMAT_FILE_NAME),
+	Field("documents", VectorType(FORMAT_FILE_NAME)),
 	Field("upload_date", DATE),
 	Field("completion_date", DATE),
 	Field("next_due_date", DATE),
@@ -265,7 +265,7 @@ APPROVALCOMPLIANCE =  RecordType("APPROVALCOMPLIANCE", [
 APPORVALCOMPLIANCELIST =  RecordType("APPORVALCOMPLIANCELIST", [
 	Field("assignee_id", USER_ID),
 	Field("assignee_name", EMPLOYEE_NAME),
-	Field("compliances", VectorType(APPROVECOMPLIANCE))
+	Field("compliances", VectorType(APPROVALCOMPLIANCE))
 ])
 
 GetComplianceApprovalListSuccess = RecordType("GetComplianceApprovalListSuccess", [
@@ -280,7 +280,36 @@ GetPastRecordsFormDataSuccess = RecordType("GetPastRecordsFormDataSuccess", [
 	Field("business_groups", BusinessGroupList),
 	Field("legal_entites", LegalEntityList),
 	Field("divisions", DivisionList),
-	Field("units", MapType(INDUSTRY_NAME, UnitList),
+	Field("units", MapType(INDUSTRY_NAME, UnitList)),
 	Field("domains", DomainList),
 	Field("level_1_statutories", StatutoryList)
+])
+
+STATUTORY_WISE_COMPLIANCES = RecordType("STATUTORY_WISE_COMPLIANCES", [
+	Field("level_1_statutory_name", LEVEL_1_STATUTORY_NAME),
+	Field("compliences", VectorType(UNIT_WISE_STATUTORIES))
+])
+
+GetStatutoriesByUnitSuccess = RecordType("GetStatutoriesByUnitSuccess", [
+	Field("statutory_wise_compliances", VectorType(STATUTORY_WISE_COMPLIANCES))
+])
+
+SavePastRecordsSuccess = RecordType("SavePastRecordsSuccess", [])
+
+Response = VariantType("Response", [
+	GetStatutorySettingsSuccess,
+	UpdateStatutorySettingsSuccess,
+	InvalidPassword,
+	GetAssignCompliancesFormDataSuccess,
+	SaveAssignedComplianceSuccess,
+	AssigneeNotBelongToUnit,
+	ConcurrenceNotBelongToUnit,
+	ApprovalPersonNotBelongToUnit,
+	GetUserwiseCompliancesSuccess,
+	ReassignComplianceSuccess,
+	GetComplianceApprovalListSuccess,
+	ApproveComplianceSuccess,
+	GetPastRecordsFormDataSuccess,
+	GetStatutoriesByUnitSuccess,
+	SavePastRecords
 ])
