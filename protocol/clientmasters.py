@@ -10,6 +10,10 @@ FormIdList = VectorType(FORM_ID)
 CountryIdList = VectorType(COUNTRY_ID)
 DomainIdList = VectorType(DOMAIN_ID)
 UnitIdList = VectorType(UNIT_ID)
+BusinessGroupList = VectorType(BusinessGroup)
+LegalEntityList = VectorType(LegalEntity)
+DivisionList = VectorType(Division)
+UnitList = VectorType(Unit)
 
 #	
 #	Request
@@ -111,6 +115,8 @@ UpdateClientUser = RecordType("UpdateClientUser", [
 	Field("is_active", IS_ACTIVE)
 ])
 
+### Close Unit
+
 GetUnits = RecordType("GetUnits", [
 ])
 
@@ -132,5 +138,101 @@ Request = VariantType("Request", [
 #	Response
 #
 
+### Service Providers
+
+GetServiceProvidersSuccess = RecordType("GetServiceProvidersSuccess", [
+	Field("service_providers", VectorType(ServiceProvider))
+])
+
+SaveServiceProviderSuccess = RecordType("SaveServiceProviderSuccess", [
+])
+
+ServiceProviderNameAlreadyExists = RecordType("ServiceProviderNameAlreadyExists", [
+])
+
+ContactNumberAlreadyExists = RecordType("ContactNumberAlreadyExists", [
+])
+
+UpdateServiceProviderSuccess = RecordType("UpdateServiceProviderSuccess", [
+])
+
+InvalidServiceProviderId = RecordType("InvalidServiceProviderId", [
+])
+
+ChangeServiceProviderStatusSuccess = RecordType("ChangeServiceProviderStatusSuccess", [
+])
+
+### User Privileges
+
+GetUserPrivilegesSuccess = RecordType("GetUserPrivilegesSuccess", [
+	Field("forms", Menu),
+	Field("user_groups", VectorType(UserGroup))
+])
+
+UserGroupNameAlreadyExists = RecordType("UserGroupNameAlreadyExists", [
+])
+
+InvalidUserGroupId = RecordType("InvalidUserGroupId", [
+])
+
+SaveUserPrivilegesSuccess = RecordType("SaveUserPrivilegesSuccess", [
+])
+
+UpdateUserPrivilegesSuccess = RecordType("UpdateUserPrivilegesSuccess", [
+])
+
+ChangeUserPrivilegeStatusSuccess = RecordType("ChangeUserPrivilegeStatusSuccess", [
+])
+
+### Users
+
+GetClientUsersSuccess = RecordType("GetClientUsersSuccess", [
+	Field("client_users", VectorType(ClientUser))
+])
+
+SaveClientUserSuccess = RecordType("SaveClientUserSuccess", [
+])
+
+EmployeeCodeAlreadyExists = RecordType("EmployeeCodeAlreadyExists", [
+])
+
+EmployeeCodeAlreadyExists = RecordType("EmployeeCodeAlreadyExists", [
+])
+
+UpdateClientUserSuccess = RecordType("UpdateClientUserSuccess", [
+])
+
+InvalidUserId = RecordType("InvalidUserId", [
+])
+
+ChangeClientUserStatusSuccess = RecordType("ChangeClientUserStatusSuccess", [
+])
+
+### Close Unit
+
+GetUnitsSuccess = RecordType("GetUnitsSuccess", [
+	Field("business_groups", BusinessGroupList),
+	Field("legal_entities", LegalEntityList),
+	Field("divisions", DivisionList),
+	Field("units", UnitList)
+])
+
+CloseUnitSuccess = RecordType("CloseUnitSuccess", [
+])
+
+InvalidPassword = RecordType("InvalidPassword", [
+])
+
+Response = VariantType("Response", [
+	GetServiceProvidersSuccess, SaveServiceProviderSuccess,
+	ServiceProviderNameAlreadyExists, ContactNumberAlreadyExists,
+	UpdateServiceProviderSuccess,  ChangeServiceProviderStatusSuccess,
+	GetUserPrivilegesSuccess, UserGroupNameAlreadyExists, 
+	InvalidUserGroupId, SaveUserPrivilegesSuccess, 
+	UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess,
+	GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists,
+	UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess,
+	GetUnitsSuccess, InvalidPassword, CloseUnitSuccess
+])
 
 
