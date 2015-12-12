@@ -6,7 +6,7 @@ __all__ = [
 	"ASSIGN_STATUTORY_SUBMISSION_TYPE", "NOTIFICATION_TYPE",
 	"FILTER_TYPE", "COMPLIANCE_FREQUENCY", "COMPLIANCE_STATUS",
 	"APPLICABILITY_STATUS", "FORM_TYPE", "REPEATS_TYPE",
-	"DURATION_TYPE",
+	"DURATION_TYPE", "COMPLIANCE_ACTIVITY_STATUS",
 	"Form", "Menu", "UserGroup", "Country", "Domain", "Level",
 	"GeographyLevel", "Geography", "Industry", "StatutoryNature",
 	"StatutoryLevel", "Statutory", "Compliance", "StatutoryMapping",
@@ -58,6 +58,12 @@ COMPLIANCE_APPROVAL_STATUS = EnumType("COMPLIANCE_APPROVAL_STATUS", [
 	"RejectConcurrence",
 	"Approve",
 	"RejectApproval"
+])
+
+COMPLIANCE_ACTIVITY_STATUS = EnumType("COMPLIANCE_ACTIVITY_STATUS", [
+	"Submited",
+	"Approved",
+	"Rejected"
 ])
 
 ASSIGN_STATUTORY_SUBMISSION_STATUS = EnumType("ASSIGN_STATUTORY_SUBMISSION_STATUS", [
