@@ -17,10 +17,7 @@ var sm_statutorynatureval='';
 
 var sm_statutoryids = [];
 var disp_statutories = [];
-
-var sm_compliancedetails = [];
 var statutory_dates = [];
-
 var sm_geographyids = [];
 var compliances = []
 
@@ -78,7 +75,13 @@ $(document).ready(function(){
     });
     //end -filter process in select domain tab
 
+   
+    
     $("#statutory_date").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#statutory_date").append(defaultoption);
     for (var i=1; i<=31; i++) {
         var option = $("<option></option>");
         option.val(i);
@@ -87,6 +90,10 @@ $(document).ready(function(){
     }
 
     $("#single_statutory_date").empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+    $("#single_statutory_date").append(defaultoption);
     for (var i=1; i<=31; i++) {
         var option = $("<option></option>");
         option.val(i);
@@ -95,7 +102,11 @@ $(document).ready(function(){
     }
 
     for(var j=1; j<=6; j++){
-     $("#multiple_statutory_date"+j).empty();
+    $("#multiple_statutory_date"+j).empty();
+    var defaultoption = $("<option></option>");
+    defaultoption.val("");
+    defaultoption.text("")
+     $("#multiple_statutory_date"+j).append(defaultoption);
     for (var i=1; i<=31; i++) {
         var option = $("<option></option>");
         option.val(i);
@@ -532,63 +543,90 @@ function temp_removestatutories(remove_id){
 }
 
 function temp_addcompliance(){
-      var repeats='';
-      var comp_id=$('#complianceid').val();
-      var repeats_type = null;
-      var repeats_every = null;
-      var duration = null;
-      var duration_type= null;
-      var compliance_frequency = $('#compliance_frequency').val();
 
-      var statutory_date = '';
-      var statutory_month = '';
-      var trigger_before_days = '';
-      statutory_dates = [];
+  var comp_id=$('#complianceid').val();
+  var statutory_provision = $('#statutory_provision').val();
+  var compliance_task = $('#compliance_task').val();
+  var description = $('#compliance_description').val();
+  var compliance_document = $('#compliance_document').val();
+  var file_format = $('#upload_file').val();
+  var penal_consequences = $('#penal_consequences').val();
+  var compliance_frequency = $('#compliance_frequency').val();
+  var repeats_type = null;
+  var repeats_every = null;
+  var duration = null;
+  var duration_type= null;
+  var statutory_date = '';
+  var statutory_month = '';
+  var trigger_before_days = '';
+  var is_active = 1;
+  statutory_dates = [];
 
-      if(compliance_frequency == "OneTime"){
+
+  if(statutory_provision == ''){
+    $("#error").text("Statutory Provision Required");
+  }else if (compliance_task == ''){
+    $("#error").text("Compliance Task Required");
+  }else if (description == ''){
+    $("#error").text("Compliance Description Required");
+  }else if (compliance_frequency == ''){
+    $("#error").text("Compliance Frequency Required");
+  }else if ((compliance_frequency == "Periodical" || compliance_frequency == "Review") && $('#repeats_type').val()==''){
+     $("#error").text("Repeats Type Required");
+  }else if ((compliance_frequency == "Periodical" || compliance_frequency == "Review") && $('#repeats_every').val()==''){
+     $("#error").text("Repeats Every Required");
+  }else{
+    $("#error").text("");
+    if(compliance_frequency == "OneTime"){
+        if($('#statutory_date').val() != '')
         statutory_date = parseInt($('#statutory_date').val());
+
+        if($('#statutory_month').val() != '')
         statutory_month = parseInt($('#statutory_month').val());
+
+        if($('#triggerbefore').val() != '')
         trigger_before_days = parseInt($('#triggerbefore').val());
 
         statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
         statutory_dates.push(statutory_date);
       }else if (compliance_frequency == "Periodical" || compliance_frequency == "Review"){
-        repeats_type = $('#repeats_type').val();
-        repeats_every = parseInt($('#repeats_every').val());
-
+          repeats_type = $('#repeats_type').val();
+          repeats_every = parseInt($('#repeats_every').val());
         if(repeats_type == 'month' && $('.multipleinput').prop("checked") == true){
            for(var i=1;i<=6;i++){
             if($('#multiple_statutory_month'+i).val() != ""){
+
+            if($('#multiple_statutory_date'+i).val() != '')
             statutory_date = parseInt($('#multiple_statutory_date'+i).val());
+
+            if($('#multiple_statutory_month'+i).val() != '')
             statutory_month = parseInt($('#multiple_statutory_month'+i).val());
+
+            if($('#multiple_triggerbefore'+i).val() != '')
             trigger_before_days = parseInt($('#multiple_triggerbefore'+i).val());
-
-            statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
-            statutory_dates.push(statutory_date);
-        }
-
-        }
-        }else{
-            statutory_date = parseInt($('#single_statutory_date').val());
-            statutory_month = parseInt($('#single_statutory_month').val());
-            trigger_before_days = parseInt($('#single_triggerbefore').val());
-
+            
             statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
             statutory_dates.push(statutory_date);
           }
+        }
+      }else{
+            if($('#single_statutory_date').val() != '')
+            statutory_date = parseInt($('#single_statutory_date').val());
+
+            if($('#single_statutory_month').val() != '')
+            statutory_month = parseInt($('#single_statutory_month').val());
+
+            if($('#single_triggerbefore').val() != '')
+            trigger_before_days = parseInt($('#single_triggerbefore').val());
+            
+            statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
+            statutory_dates.push(statutory_date);
+          }
+        
       }else{
         duration = parseInt($('#duration').val());
         duration_type = $('#duration_type').val();
       }
-    
-        var statutory_provision = $('#statutory_provision').val();
-        var compliance_task = $('#compliance_task').val();
-        var description = $('#compliance_description').val();
-        var compliance_document = $('#compliance_document').val();
-        var file_format = $('#upload_file').val();
-        var penal_consequences = $('#penal_consequences').val();
-        var is_active = 1;
-
         if(comp_id == ''){         
           compliance = mirror.complianceDetails(statutory_provision, compliance_task, description, compliance_document, file_format, penal_consequences, compliance_frequency,
             statutory_dates, repeats_type, repeats_every, duration_type, duration, is_active, comp_id);
@@ -619,22 +657,24 @@ function temp_addcompliance(){
       $('#Recurring').hide();
       $('#Occasional').hide();
       $('#One_Time').hide();
-      $('#statutory_date').val('1');
-      $('#single_statutory_date').val('1');
-      $('#multiple_statutory_date1').val('1');
-      $('#multiple_statutory_date2').val('1');
-      $('#multiple_statutory_date3').val('1');
-      $('#multiple_statutory_date4').val('1');
-      $('#multiple_statutory_date5').val('1');
-      $('#multiple_statutory_date6').val('1');
-      $('#statutory_month').val('Select');
-      $('#single_statutory_month').val('Select');
-      $('#multiple_statutory_month1').val('Select');
-      $('#multiple_statutory_month2').val('Select');
-      $('#multiple_statutory_month3').val('Select');
-      $('#multiple_statutory_month4').val('Select');
-      $('#multiple_statutory_month5').val('Select');
-      $('#multiple_statutory_month6').val('Select');
+      $('#repeats_every').val('');
+      $('#repeats_type').val('');
+      $('#statutory_date').val('');
+      $('#single_statutory_date').val('');
+      $('#multiple_statutory_date1').val('');
+      $('#multiple_statutory_date2').val('');
+      $('#multiple_statutory_date3').val('');
+      $('#multiple_statutory_date4').val('');
+      $('#multiple_statutory_date5').val('');
+      $('#multiple_statutory_date6').val('');
+      $('#statutory_month').val('');
+      $('#single_statutory_month').val('');
+      $('#multiple_statutory_month1').val('');
+      $('#multiple_statutory_month2').val('');
+      $('#multiple_statutory_month3').val('');
+      $('#multiple_statutory_month4').val('');
+      $('#multiple_statutory_month5').val('');
+      $('#multiple_statutory_month6').val('');
       $('#triggerbefore').val('');
       $('#single_triggerbefore').val('');
       $('#multiple_triggerbefore1').val('');
@@ -643,16 +683,17 @@ function temp_addcompliance(){
       $('#multiple_triggerbefore4').val('');
       $('#multiple_triggerbefore5').val('');
       $('#multiple_triggerbefore6').val('');
-      $('.multipleinput').prop("checked") == false;
+      //$('.multipleinput').prop("checked") == false;
 
       $('#complianceid').val('');
       load_compliance();
+  }     
 }
 
 function load_compliance(){
     $(".tbody-compliance-list").find("tr").remove();
+    complianceid = 0;
      for(var entity in compliances) {
-        complianceid = 0;
         var display_repeats = 'Nil';
         if(compliances[entity]["repeats_every"] != null && compliances[entity]["repeats_type"] != null){
           display_repeats = compliances[entity]["repeats_every"] + " " + compliances[entity]["repeats_type"];
@@ -671,7 +712,6 @@ function load_compliance(){
 
         complianceid = complianceid + 1;
 }
-
 make_breadcrumbs3();
 }
 
@@ -698,21 +738,30 @@ function temp_editcompliance(edit_id){
         $('#One_Time').show();
 
       }else if (compliance_frequency == "Periodical" || compliance_frequency == "Review"){
+        
         $('#Recurring').show();
         $('#Occasional').hide();
         $('#One_Time').hide();
-
-        if(statutory_dates.length > 0){
+        if(statutory_dates.length > 1){
             $('.multipleinput').prop("checked") == true;
             $('.multipleselectnone').hide();
             $('.multipleselect').show();
-        }
-       for(var i=1;i<=statutory_dates.length;i++){
+            for(var i=1;i<=statutory_dates.length;i++){
             $('#multiple_statutory_date'+i).val(statutory_dates[i-1]["statutory_date"]);
             $('#multiple_statutory_month'+i).val(statutory_dates[i-1]["statutory_month"]);
             $('#multiple_triggerbefore'+i).val(statutory_dates[i-1]["trigger_before_days"]);
-        }
-      }else{
+        }}else{
+            $('.multipleinput').prop("checked") == false;
+            $('.multipleselectnone').show();
+            $('.multipleselect').hide();
+            if(statutory_dates.length > 0){
+            $('#single_statutory_date').val(statutory_dates[0]["statutory_date"]);
+            $('#single_statutory_month').val(statutory_dates[0]["statutory_month"]);
+            $('#single_triggerbefore').val(statutory_dates[0]["trigger_before_days"]);
+            }
+      }
+
+    }else{
             $('#Recurring').hide();
             $('#Occasional').show();
             $('#One_Time').hide();
@@ -890,7 +939,6 @@ function filter_geography(position){
 }
 
 function saveRecord(){
-
     function success(status,data){
         if(status == "success"){
             $("#error").text("Record Added Successfully");
@@ -901,10 +949,45 @@ function saveRecord(){
     function failure(data){
 
     }
-    
-
     statutorymappingData = mirror.statutoryMapping(sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids)
-
     mirror.saveStatutoryMapping(statutorymappingData, success, failure);
+}
 
+function validate_firsttab(){
+  if(sm_countryid == ''){
+    $("#error").text("Country Required");
+  }else if (sm_domainid == ''){
+    $("#error").text("Domain Required");
+  }else if (sm_industryids.length == 0){
+    $("#error").text("Industry Required");
+  }else if (sm_statutorynatureid == ''){
+    $("#error").text("Statutory Nature Required");
+  }else{
+    $("#error").text("");
+    return true;
+  }
+}
+function validate_secondtab(){
+  if (sm_statutoryids.length == 0){
+    $("#error").text("Atleast one Staturory should be selected");
+  }else{
+    $("#error").text("");
+    return true;
+  }
+}
+function validate_thirdtab(){
+  if (compliances.length == 0){
+    $("#error").text("Atleast one Compliance should be selected");
+  }else{
+    $("#error").text("");
+    return true;
+  }
+}
+function validate_fourthtab(){
+  if (sm_geographyids.length == 0){
+    $("#error").text("Atleast one Location should be selected");
+  }else{
+    $("#error").text("");
+    return true;
+  }
 }
