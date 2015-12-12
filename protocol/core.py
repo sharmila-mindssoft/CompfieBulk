@@ -1,4 +1,5 @@
-from protocol.common import FORM_ID
+from protocol.types import RecordType, VariantType, EnumType, CustomTextType, VectorType
+from protocol.common import *
 __all__ = [
 	"USER_TYPE", "APPROVAL_STATUS", "COMPLIANCE_APPROVAL_STATUS",
 	"ASSIGN_STATUTORY_SUBMISSION_STATUS", 
@@ -23,8 +24,8 @@ __all__ = [
 # ])
 
 # Form = RecordType("Form", [
-# 	Filed("form_id", FORM_ID),
-# 	Filed("form_name", Text)
+# 	Field("form_id", FORM_ID),
+# 	Field("form_name", Text)
 # ])
 
 # Geography = RecordType("Geography",[fields...])
@@ -37,7 +38,7 @@ __all__ = [
 # 	Field("masters", FormList),
 # 	Field("masters2", FormListvector),
 # 	Field("masters3", Maptype(Text50, Form)),
-# 	Filed("geographies", Maptype(COUNTry_ID, VectorType(Geography)))
+# 	Field("geographies", Maptype(COUNTry_ID, VectorType(Geography)))
 # ])
 
 USER_TYPE = EnumType("USER_TYPE", [
@@ -134,348 +135,350 @@ GeographyIdList = VectorType(GEOGRAPHY_ID)
 StatutoryIdList = VectorType(STATUTORY_ID)
 FormatFilesList = VectorType(FORMAT_FILE_NAME)
 UserIdList = VectorType(USER_ID)
+UnitIdList = VectorType(UNIT_ID)
 
 Form = RecordType("Form", [
-	Filed("form_id", FORM_ID),
-	Filed("form_name", FORM_NAME),
-	Filed("form_url", URL),
-	Filed("form_type", FORM_TYPE)
+	Field("form_id", FORM_ID),
+	Field("form_name", FORM_NAME),
+	Field("form_url", URL),
+	Field("form_type", FORM_TYPE)
 ])
 
 FormList = VectorType(Form)
 
 StatutoryDate = RecordType("StatutoryDate", [
-	Filed("statutory_date", STATUTORY_DATE),
-	Filed("statutory_month", STATUTORY_MONTH),
-	Filed("trigger_before_days", Int8)
+	Field("statutory_date", STATUTORY_DATE),
+	Field("statutory_month", STATUTORY_MONTH),
+	Field("trigger_before_days", Int8)
 ])
 
 StatutoryDates = VectorType(StatutoryDate)
 
 Menu = RecordType("Menu", [
-	Filed("masters", FormList),
-	Filed("transactions", FormList),
-	Filed("reports", FormList),
-	Filed("settings", FormList)
+	Field("masters", FormList),
+	Field("transactions", FormList),
+	Field("reports", FormList),
+	Field("settings", FormList)
 ])
 
 UserGroupDetails = RecordType("UserGroupDetails", [
-	Filed("user_group_id", USER_GROUP_ID),
-	Filed("user_group_name", USER_GROUP_NAME),
-	Filed("form_ids", FormIdList),
-	Filed("is_active", IS_ACTIVE)
+	Field("user_group_id", USER_GROUP_ID),
+	Field("user_group_name", USER_GROUP_NAME),
+	Field("form_ids", FormIdList),
+	Field("is_active", IS_ACTIVE)
 ])
 
 UserGroup = RecordType("UserGroup", [
-	Filed("user_group_id", USER_GROUP_ID),
-	Filed("user_group_name", USER_GROUP_NAME),
-	Filed("is_active", IS_ACTIVE)
+	Field("user_group_id", USER_GROUP_ID),
+	Field("user_group_name", USER_GROUP_NAME),
+	Field("is_active", IS_ACTIVE)
 ])
 
 Country = RecordType("Country", [
-	Filed("country_id", COUNTRY_ID),
-	Filed("country_name", COUNTRY_NAME),
-	Filed("is_active", IS_ACTIVE)
+	Field("country_id", COUNTRY_ID),
+	Field("country_name", COUNTRY_NAME),
+	Field("is_active", IS_ACTIVE)
 ])
 
 CountryList = VectorType(Country)
 
 Domain = RecordType("Domain", [
-	Filed("domain_id", DOMAIN_ID),
-	Filed("domain_name", DOMAIN_NAME),
-	Filed("is_active", IS_ACTIVE)
+	Field("domain_id", DOMAIN_ID),
+	Field("domain_name", DOMAIN_NAME),
+	Field("is_active", IS_ACTIVE)
 ])
 
 DomainList = VectorType(Domain)
 
 GeographyLevel = RecordType("GeographyLevel", [
-	Filed("level_id", GEOGRAPHY_LEVEL_ID),
-	Filed("level_position", LEVEL_POSITION),
-	Filed("level_name", LEVEL_NAME)
+	Field("level_id", GEOGRAPHY_LEVEL_ID),
+	Field("level_position", LEVEL_POSITION),
+	Field("level_name", LEVEL_NAME)
 ])
 
 Geography = RecordType("Geography", [
-	Filed("geography_id", GEOGRAPHY_ID),
-	Filed("geography_name", GEOGRAPHY_NAME),
-	Filed("level_id", GEOGRAPHY_LEVEL_ID),
-	Filed("parent_ids", GeographyIdList),
-	Filed("is_active", IS_ACTIVE),
+	Field("geography_id", GEOGRAPHY_ID),
+	Field("geography_name", GEOGRAPHY_NAME),
+	Field("level_id", GEOGRAPHY_LEVEL_ID),
+	Field("parent_ids", GeographyIdList),
+	Field("is_active", IS_ACTIVE),
 ])
 
 GeographyList = VectorType(Geography)
 
 Industry = RecordType("Industry", [
-	Filed("industry_id", INDUSTRY_ID),
-	Filed("industry_name", INDUSTRY_NAME),
-	Filed("is_active", IS_ACTIVE),
+	Field("industry_id", INDUSTRY_ID),
+	Field("industry_name", INDUSTRY_NAME),
+	Field("is_active", IS_ACTIVE),
 ])
 
 StatutoryNature = RecordType("StatutoryNature", [
-	Filed("statutory_nature_id", STATUTORY_NATURE_ID),
-	Filed("statutory_nature_name", STATUTORY_NATURE_NAME),
-	Filed("is_active", IS_ACTIVE),
+	Field("statutory_nature_id", STATUTORY_NATURE_ID),
+	Field("statutory_nature_name", STATUTORY_NATURE_NAME),
+	Field("is_active", IS_ACTIVE),
 ])
 
 StatutoryLevel = RecordType("StatutoryLevel", [
-	Filed("level_id", STATUTORY_LEVEL_ID),
-	Filed("level_position", LEVEL_POSITION),
-	Filed("level_name", LEVEL_NAME)
+	Field("level_id", STATUTORY_LEVEL_ID),
+	Field("level_position", LEVEL_POSITION),
+	Field("level_name", LEVEL_NAME)
 ])
 
 Statutory = RecordType("Statutory", [
-	Filed("statutory_id", STATUTORY_ID),
-	Filed("statutory_name", STATUTORY_NAME),
-	Filed("level_id", STATUTORY_LEVEL_ID),
-	Filed("parent_ids", StatutoryIdList),
-	Filed("is_active", IS_ACTIVE),
+	Field("statutory_id", STATUTORY_ID),
+	Field("statutory_name", STATUTORY_NAME),
+	Field("level_id", STATUTORY_LEVEL_ID),
+	Field("parent_ids", StatutoryIdList),
+	Field("is_active", IS_ACTIVE),
 ])
 
 StatutoryList = VectorType(Statutory)
 
 Compliance = RecordType("Compliance", [
-	Filed("compliance_id", COMPLIANCE_ID),
-    Filed("statutory_provision", STATUTORY_PROVISION),
-    Filed("compliance_task", COMPLIANCE_NAME), 
-    Filed("description", DESCRIPTION), 
-    Filed("document_name", DOCUMENT_NAME), 
-    Filed("format_file_name", FormatFilesList), 
-    Filed("penal_description", DESCRIPTION), 
-    Filed("compliance_frequency", COMPLIANCE_FREQUENCY), 
-    Filed("statutory_dates", StatutoryDates),
-    Filed("repeats_type", REPEATS_TYPE), 
-    Filed("repeats_every", Int8), 
-    Filed("duration_type", DURATION_TYPE),
-    Filed("duration", Int8),
-    Filed("is_active", IS_ACTIVE)
+	Field("compliance_id",  OptionalType(COMPLIANCE_ID)),
+    Field("statutory_provision", STATUTORY_PROVISION),
+    Field("compliance_task", COMPLIANCE_NAME), 
+    Field("description", DESCRIPTION), 
+    Field("document_name", DOCUMENT_NAME), 
+    Field("format_file_name", FormatFilesList), 
+    Field("penal_description", DESCRIPTION), 
+    Field("compliance_frequency", COMPLIANCE_FREQUENCY), 
+    Field("statutory_dates", StatutoryDates),
+    Field("repeats_type", REPEATS_TYPE), 
+    Field("repeats_every", Int8), 
+    Field("duration_type", DURATION_TYPE),
+    Field("duration", Int8),
+    Field("is_active", IS_ACTIVE)
 ])
 
 ComplianceList = VectorType(Compliance)
 
 ComplianceApplicability = RecordType("ComplianceApplicability", [
-	Filed("compliance_id", COMPLIANCE_ID),
-	Filed("compliance_name", COMPLIANCE_NAME),
-	Filed("description", DESCRIPTION), 
-    Filed("statutory_provision" STATUTORY_PROVISION),
-    Filed("statutory_nature", STATUTORY_NATURE_NAME), 
-    Filed("compliance_applicable_status", STATUS), 
-    Filed("compliance_opted_status", STATUS), 
-    Filed("compliance_remarks", DESCRIPTION)
+	Field("compliance_id", COMPLIANCE_ID),
+	Field("compliance_name", COMPLIANCE_NAME),
+	Field("description", DESCRIPTION), 
+    Field("statutory_provision", STATUTORY_PROVISION),
+    Field("statutory_nature", STATUTORY_NATURE_NAME), 
+    Field("compliance_applicable_status", STATUS), 
+    Field("compliance_opted_status", STATUS), 
+    Field("compliance_remarks", DESCRIPTION)
 ])
 
 ComplianceApplicabilityList = VectorType(ComplianceApplicability)
 
 StatutoryMapping = RecordType("StatutoryMapping", [
-	Filed("statutory_mapping_id", STATUTORY_MAPPING_ID),
-    Filed("country_id", COUNTRY_ID),
-    Filed("domain_id", DOMAIN_ID), 
-    Filed("industry_ids", IndustryIdList), 
-    Filed("statutory_nature_id", STATUTORY_NATURE_ID), 
-    Filed("statutories", StatutoryList), 
-    Filed("compliances", ComplianceList), 
-    Filed("geographies", COMPLIANCE_FREQUENCY), 
-    Filed("approval_status", StatutoryDates)
+	Field("statutory_mapping_id", STATUTORY_MAPPING_ID),
+    Field("country_id", COUNTRY_ID),
+    Field("domain_id", DOMAIN_ID), 
+    Field("industry_ids", IndustryIdList), 
+    Field("statutory_nature_id", STATUTORY_NATURE_ID), 
+    Field("statutories", StatutoryList), 
+    Field("compliances", ComplianceList), 
+    Field("geographies", COMPLIANCE_FREQUENCY), 
+    Field("approval_status", StatutoryDates)
 ])
 
 GroupCompany = RecordType("GroupCompany", [
-	Filed("client_id", GROUP_ID),
-    Filed("group_name", CLIENT_NAME),
+	Field("client_id", GROUP_ID),
+    Field("group_name", CLIENT_NAME),
 ])
 
 GroupCompanyDetail = RecordType("GroupCompanyDetail", [
-	Filed("client_id", GROUP_ID),
-    Filed("client_name", CLIENT_NAME),
-    Filed("domain_ids", DomainIdList),
-    Filed("country_ids", CountryIdList),
-    Filed("incharge_persons", UserIdList),
-    Filed("logo", URL),
-    Filed("contract_from", DATE),
-    Filed("contract_to", DATE),
-    Filed("no_of_user_licence", NO_OF_USER_LICENCE),
-    Filed("total_disk_space", TOTAL_DISK_SPACE),
-    Filed("is_sms_subscribed", Bool),
-    Filed("username", USERNAME),
-    Filed("is_active", IS_ACTIVE)
+	Field("client_id", GROUP_ID),
+    Field("client_name", CLIENT_NAME),
+    Field("domain_ids", DomainIdList),
+    Field("country_ids", CountryIdList),
+    Field("incharge_persons", UserIdList),
+    Field("logo", URL),
+    Field("contract_from", DATE),
+    Field("contract_to", DATE),
+    Field("no_of_user_licence", NO_OF_USER_LICENCE),
+    Field("total_disk_space", TOTAL_DISK_SPACE),
+    Field("is_sms_subscribed", Bool),
+    Field("username", USERNAME),
+    Field("is_active", IS_ACTIVE)
 ])
 
 ClientConfiguration = RecordType("ClientConfiguration", [
-	Filed("country_id", COUNTRY_ID),
-    Filed("domain_id", DOMAIN_ID),
-    Filed("period_from", Int8),
-    Filed("period_to", Int8)
+	Field("country_id", COUNTRY_ID),
+    Field("domain_id", DOMAIN_ID),
+    Field("period_from", Int8),
+    Field("period_to", Int8)
 ])
 
 BusinessGroup = RecordType("BusinessGroup", [
-	Filed("business_group_id", BUSINESS_GROUP_ID),
-    Filed("business_group_name", BUSINESS_GROUP_NAME),
-    Filed("client_id", GROUP_ID)
+	Field("business_group_id", BUSINESS_GROUP_ID),
+    Field("business_group_name", BUSINESS_GROUP_NAME),
+    Field("client_id", GROUP_ID)
 ])
 
 LegalEntity = RecordType("LegalEntity", [
-	Filed("legal_entity_id", LEGAL_ENTITY_ID),
-    Filed("legal_entity_name", BUSINESS_GROUP_NAME),
-    Filed("business_group_id", BUSINESS_GROUP_ID),
-    Filed("client_id", GROUP_ID)
+	Field("legal_entity_id", LEGAL_ENTITY_ID),
+    Field("legal_entity_name", BUSINESS_GROUP_NAME),
+    Field("business_group_id", BUSINESS_GROUP_ID),
+    Field("client_id", GROUP_ID)
 ])
 
 Division = RecordType("Division", [
-	Filed("division_id", DIVISION_ID),
-	Filed("division_name", DIVISION_NAME),
-	Filed("legal_entity_id", LEGAL_ENTITY_ID),
-    Filed("business_group_id", BUSINESS_GROUP_ID),
-    Filed("client_id", GROUP_ID)
+	Field("division_id", DIVISION_ID),
+	Field("division_name", DIVISION_NAME),
+	Field("legal_entity_id", LEGAL_ENTITY_ID),
+    Field("business_group_id", BUSINESS_GROUP_ID),
+    Field("client_id", GROUP_ID)
 ])
 
 UnitDetails = RecordType("UnitDetails", [
-	Filed("unit_id", UNIT_ID),
-	Filed("division_id", DIVISION_ID),
-	Filed("legal_entity_id", LEGAL_ENTITY_ID),
-    Filed("business_group_id", BUSINESS_GROUP_ID),
-    Filed("client_id", GROUP_ID),
-    Filed("country_id", COUNTRY_ID),
-    Filed("geography_id", GEOGRAPHY_ID),
-    Filed("unit_code", UNIT_CODE),
-    Filed("unit_name", UNIT_NAME),
-    Filed("industry_id", INDUSTRY_ID),
-    Filed("unit_address", ADDRESS),
-    Filed("postal_code", Int8),
-    Filed("domain_ids", DomainIdList),
-    Filed("is_active", IS_ACTIVE),
+	Field("unit_id", UNIT_ID),
+	Field("division_id", DIVISION_ID),
+	Field("legal_entity_id", LEGAL_ENTITY_ID),
+    Field("business_group_id", BUSINESS_GROUP_ID),
+    Field("client_id", GROUP_ID),
+    Field("country_id", COUNTRY_ID),
+    Field("geography_id", GEOGRAPHY_ID),
+    Field("unit_code", UNIT_CODE),
+    Field("unit_name", UNIT_NAME),
+    Field("industry_id", INDUSTRY_ID),
+    Field("unit_address", ADDRESS),
+    Field("postal_code", Int8),
+    Field("domain_ids", DomainIdList),
+    Field("is_active", IS_ACTIVE),
 ])
 
 UnitDetailsList = VectorType(UnitDetails)
 
+
 Unit = RecordType("Unit", [
-	Filed("unit_id", UNIT_ID),
-	Filed("division_id", DIVISION_ID),
-	Filed("legal_entity_id", LEGAL_ENTITY_ID),
-    Filed("business_group_id", BUSINESS_GROUP_ID),
-    Filed("client_id", GROUP_ID),
-    Filed("unit_code", UNIT_CODE),
-    Filed("unit_name", UNIT_NAME),
-    Filed("unit_address", ADDRESS),
-    Filed("is_active", IS_ACTIVE),
+	Field("unit_id", UNIT_ID),
+	Field("division_id", DIVISION_ID),
+	Field("legal_entity_id", LEGAL_ENTITY_ID),
+    Field("business_group_id", BUSINESS_GROUP_ID),
+    Field("client_id", GROUP_ID),
+    Field("unit_code", UNIT_CODE),
+    Field("unit_name", UNIT_NAME),
+    Field("unit_address", ADDRESS),
+    Field("is_active", IS_ACTIVE),
 ])
 
 CountryWiseUnits = RecordType("CountryWiseUnits", [
-	Filed("country_id", COUNTRY_ID),
-	Filed("units", UnitDetailsList),
+	Field("country_id", COUNTRY_ID),
+	Field("units", UnitDetailsList),
 ])
 
 ServiceProvider = RecordType("ServiceProvider", [
-	 Filed("service_provider_id", SERVICE_PROVIDER_ID),
-     Filed("service_provider_name", SERVICE_PROVIDER_NAME), 
-     Filed("address", ADDRESS),
-     Filed("contract_from", DATE),
-     Filed("contract_to", DATE), 
-     Filed("contact_person", Text50),
-     Filed("contact_no", CONTACT_NUMBER),
-     Filed("is_active", IS_ACTIVE)
+	 Field("service_provider_id", OptionalType(SERVICE_PROVIDER_ID)),
+     Field("service_provider_name", SERVICE_PROVIDER_NAME), 
+     Field("address", ADDRESS),
+     Field("contract_from", DATE),
+     Field("contract_to", DATE), 
+     Field("contact_person", Text50),
+     Field("contact_no", CONTACT_NUMBER),
+     Field("is_active", OptionalType(IS_ACTIVE))
 ])
 
 
 UserDetails = RecordType("UserDetails", [
-	Filed("user_id", USER_ID),
-    Filed("email_id", EMAIL_ID),
-    Filed("user_group_id", USER_GROUP_ID), 
-    Filed("employee_name", EMPLOYEE_NAME),
-    Filed("employee_code", EMPLOYEE_CODE),
-    Filed("contact_no", CONTACT_NUMBER),
-    Filed("address", ADDRESS),
-    Filed("designation", DESIGNATION),
-    Filed("country_ids",CountryIdList),
-    Filed("domain_ids", DomainIdList),
-    Filed("is_active", IS_ACTIVE)
+	Field("user_id", USER_ID),
+    Field("email_id", EMAIL_ID),
+    Field("user_group_id", USER_GROUP_ID), 
+    Field("employee_name", EMPLOYEE_NAME),
+    Field("employee_code", EMPLOYEE_CODE),
+    Field("contact_no", CONTACT_NUMBER),
+    Field("address", ADDRESS),
+    Field("designation", DESIGNATION),
+    Field("country_ids",CountryIdList),
+    Field("domain_ids", DomainIdList),
+    Field("is_active", IS_ACTIVE)
 ])
 
 User = RecordType("User", [
-	Filed("user_id", USER_ID),
-    Filed("employee_name", EMPLOYEE_NAME),
-    Filed("is_active", IS_ACTIVE)
+	Field("user_id", USER_ID),
+    Field("employee_name", EMPLOYEE_NAME),
+    Field("is_active", IS_ACTIVE)
 ])
 
 ClientUser = RecordType("ClientUser", [
-	Filed("user_id", USER_ID),
-    Filed("email_id", EMAIL_ID),
-    Filed("user_group_id", USER_GROUP_ID), 
-    Filed("employee_name", EMPLOYEE_NAME),
-    Filed("employee_code", EMPLOYEE_CODE),
-    Filed("contact_no", CONTACT_NUMBER),
-    Filed("seating_unit_id", UNIT_ID),
-    Filed("seating_unit_name", UNIT_NAME),
-    Filed("user_level", USER_LEVEL),
-    Filed("country_ids",CountryIdList),
-    Filed("domain_ids", DomainIdList),
-    Filed("unit_ids", UnitIds),
-    Filed("is_admin", STATUS),
-    Filed("is_service_provider", STATUS),
-    Filed("service_provider_id", SERVICE_PROVIDER_ID),
-    Filed("is_active", IS_ACTIVE)
+	Field("user_id", USER_ID),
+    Field("email_id", EMAIL_ID),
+    Field("user_group_id", USER_GROUP_ID), 
+    Field("employee_name", EMPLOYEE_NAME),
+    Field("employee_code", EMPLOYEE_CODE),
+    Field("contact_no", CONTACT_NUMBER),
+    Field("seating_unit_id", UNIT_ID),
+    Field("seating_unit_name", UNIT_NAME),
+    Field("user_level", USER_LEVEL),
+    Field("country_ids",CountryIdList),
+    Field("domain_ids", DomainIdList),
+    Field("unit_ids", UnitIdList),
+    Field("is_admin", STATUS),
+    Field("is_service_provider", STATUS),
+    Field("service_provider_id", SERVICE_PROVIDER_ID),
+    Field("is_active", IS_ACTIVE)
 ])
 
 AssignedStatutory = RecordType("AssignedStatutory", [
-	Filed("level_1_statutory_id", USER_ID),
-    Filed("level_1_statutory_name", EMAIL_ID),
-    Filed("compliances", ComplianceApplicabilityList), 
-    Filed("applicable_status", STATUS),
-    Filed("not_applicable_remarks", DESCRIPTION)
+	Field("level_1_statutory_id", USER_ID),
+    Field("level_1_statutory_name", EMAIL_ID),
+    Field("compliances", ComplianceApplicabilityList), 
+    Field("applicable_status", STATUS),
+    Field("not_applicable_remarks", DESCRIPTION)
 ])
 
 ActiveCompliance = RecordType("ActiveCompliance", [
-	Filed("compliance_history_id", COMPLIANCE_HISTORY_ID),
-    Filed("compliance_name", COMPLIANCE_NAME),
-    Filed("compliance_frequency", COMPLIANCE_FREQUENCY), 
-    Filed("domain_name", DOMAIN_NAME),
-    Filed("start_date", DATE),
-    Filed("due_date", DATE),
-    Filed("compliance_status", STATUS),
-    Filed("validity_date", DATE),
-    Filed("next_due_date", DATE),
-    Filed("ageing", Int8),
-    Filed("format_file_name", FormatFilesList)
+	Field("compliance_history_id", COMPLIANCE_HISTORY_ID),
+    Field("compliance_name", COMPLIANCE_NAME),
+    Field("compliance_frequency", COMPLIANCE_FREQUENCY), 
+    Field("domain_name", DOMAIN_NAME),
+    Field("start_date", DATE),
+    Field("due_date", DATE),
+    Field("compliance_status", STATUS),
+    Field("validity_date", DATE),
+    Field("next_due_date", DATE),
+    Field("ageing", Int8),
+    Field("format_file_name", FormatFilesList)
 ])
 
 UpcomingCompliance = RecordType("UpcomingCompliance", [
-	Filed("compliance_history_id", COMPLIANCE_HISTORY_ID),
-    Filed("compliance_name", COMPLIANCE_NAME),
-    Filed("compliance_frequency", COMPLIANCE_FREQUENCY), 
-    Filed("domain_name", DOMAIN_NAME),
-    Filed("start_date", DATE),
-    Filed("due_date", DATE),
-    Filed("format_file_name", FormatFilesList)
+	Field("compliance_history_id", COMPLIANCE_HISTORY_ID),
+    Field("compliance_name", COMPLIANCE_NAME),
+    Field("compliance_frequency", COMPLIANCE_FREQUENCY), 
+    Field("domain_name", DOMAIN_NAME),
+    Field("start_date", DATE),
+    Field("due_date", DATE),
+    Field("format_file_name", FormatFilesList)
 ])
 
 NumberOfCompliances = RecordType("NumberOfCompliances", [
-	Filed("complied_count", Int8),
-    Filed("delayed_compliance_count", Int8),
-    Filed("inprogress_compliance_count", Int8), 
-    Filed("not_complied_count", Int8)
+	Field("complied_count", Int8),
+    Field("delayed_compliance_count", Int8),
+    Field("inprogress_compliance_count", Int8), 
+    Field("not_complied_count", Int8)
 ])
 
 ChartFilters = RecordType("ChartFilters", [
-	Filed("country_id", COUNTRY_ID),
-    Filed("domain_id", DOMAIN_ID),
-    Filed("from_date", DATE), 
-    Filed("to_date", DATE),
-    Filed("filter_type", FILTER_TYPE),
-    Filed("filter_id", Int8)
+	Field("country_id", COUNTRY_ID),
+    Field("domain_id", DOMAIN_ID),
+    Field("from_date", DATE), 
+    Field("to_date", DATE),
+    Field("filter_type", FILTER_TYPE),
+    Field("filter_id", Int8)
 ])
 
 ComplianceShortDescription = RecordType("ComplianceShortDescription", [
-	Filed("compliance_name", COMPLIANCE_NAME),
-	Filed("description", DESCRIPTION), 
-    Filed("assignee_name", EMPLOYEE_NAME),
-    Filed("compliance_status", COMPLIANCE_STATUS),
-    Filed("ageing", Int8)
+	Field("compliance_name", COMPLIANCE_NAME),
+	Field("description", DESCRIPTION), 
+    Field("assignee_name", EMPLOYEE_NAME),
+    Field("compliance_status", COMPLIANCE_STATUS),
+    Field("ageing", Int8)
 ])
 
 ComplianceStatusDrillDown = RecordType("ComplianceStatusDrillDown", [
-	Filed("unit_name", COUNTRY_ID),
-    Filed("address", DOMAIN_ID),
-    Filed("compliances", VectorType(ComplianceShortDescription))
+	Field("unit_name", COUNTRY_ID),
+    Field("address", DOMAIN_ID),
+    Field("compliances", VectorType(ComplianceShortDescription))
 ])
 
 EscalationsDrillDown = RecordType("EscalationsDrillDown", [
-	Filed("unit_name", COUNTRY_ID),
-    Filed("address", DOMAIN_ID),
-    Filed("compliances", VectorType(ComplianceShortDescription))
+	Field("unit_name", COUNTRY_ID),
+    Field("address", DOMAIN_ID),
+    Field("compliances", VectorType(ComplianceShortDescription))
 ])

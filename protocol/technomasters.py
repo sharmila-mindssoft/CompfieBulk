@@ -1,3 +1,7 @@
+from types import VectorType
+from core import *
+from common import *
+
 __all__=  [
 	"Request", "Response"
 ]
@@ -8,10 +12,10 @@ UserIdList =  VectorType(USER_ID)
 ClientConfigurationList = VectorType(ClientConfiguration)
 UserList = VectorType(User)
 ClientDetailsList = VectorType(GroupCompanyDetail)
-ClientList = VectorType(Groupcompany)
+ClientList = VectorType(GroupCompany)
 BusinessGroupList= VectorType(BusinessGroup)
 LegalEntityList = VectorType(LegalEntity)
-DivisionList = VectorType(DivisionList)
+DivisionList = VectorType(Division)
 UnitDetailsList = VectorType(UnitDetails)
 
 #	
@@ -20,51 +24,51 @@ UnitDetailsList = VectorType(UnitDetails)
 
 ### Client Group 
 
-GetClientGroups = Recordtype("GetClientGroups", [
+GetClientGroups = RecordType("GetClientGroups", [
 ])
 
-SaveClientGroup = Recordtype("SaveClientGroup", [
+SaveClientGroup = RecordType("SaveClientGroup", [
 	Field("group_name",CLIENT_NAME),
 	Field("country_ids", CountryList),
 	Field("domain_ids", DomainList),
 	Field("logo", URL),
-	Field("contract_from",Date),
-	Field("contract_to",Date),
+	Field("contract_from",DATE),
+	Field("contract_to",DATE),
 	Field("incharge_persons", UserIdList),
 	Field("no_of_user_licence", NO_OF_USER_LICENCE),
 	Field("file_space", TOTAL_DISK_SPACE),
 	Field("is_sms_subscribed", STATUS),
 	Field("email_id", EMAIL_ID),
-	Field("date_configurations",ClientConfigurationList)
+	Field("DATE_configurations",ClientConfigurationList)
 ])
 
-UpdateClientGroup = Recordtype("UpdateClientGroup", [
+UpDATEClientGroup = RecordType("UpDATEClientGroup", [
 	Field("client_id", CLIENT_ID),
 	Field("group_name",CLIENT_NAME),
 	Field("country_ids", CountryList),
 	Field("domain_ids", DomainList),
 	Field("logo", URL),
-	Field("contract_from",Date),
-	Field("contract_to",Date),
+	Field("contract_from",DATE),
+	Field("contract_to",DATE),
 	Field("incharge_persons", UserIdList),
 	Field("no_of_user_licence", NO_OF_USER_LICENCE),
 	Field("file_space", TOTAL_DISK_SPACE),
 	Field("is_sms_subscribed", STATUS),
 	Field("email_id", EMAIL_ID),
-	Field("date_configurations",ClientConfigurationList)
+	Field("DATE_configurations",ClientConfigurationList)
 ])
 
-ChangeClientGroupStatus = Recordtype("ChangeClientGroupStatus", [
+ChangeClientGroupStatus = RecordType("ChangeClientGroupStatus", [
 	Field("client_id", CLIENT_ID),
-	Field("is_active",IS_ACTIVE))
+	Field("is_active",IS_ACTIVE)
 ])
 
 ### Clients
 
-GetClients = Recordtype("GetClients", [
+GetClients = RecordType("GetClients", [
 ])
 
-SaveClient = Recordtype("SaveClient", [
+SaveClient = RecordType("SaveClient", [
 	Field("client_id", CLIENT_ID),
 	Field("business_group", BusinessGroup),
 	Field("legal_entity", LegalEntity),
@@ -72,7 +76,7 @@ SaveClient = Recordtype("SaveClient", [
 	Field("country_wise_units", CountryWiseUnits)
 ])	
 
-UpdateClient = Recordtype("UpdateClient", [
+UpDATEClient = RecordType("UpDATEClient", [
 	Field("client_id", CLIENT_ID),
 	Field("business_group", BusinessGroup),
 	Field("legal_entity", LegalEntity),
@@ -80,23 +84,27 @@ UpdateClient = Recordtype("UpdateClient", [
 	Field("country_wise_units", CountryWiseUnits)
 ])
 
-ChangeClientStatus = Recordtype("ChangeClientStatus", [
+ChangeClientStatus = RecordType("ChangeClientStatus", [
 	Field("client_id", CLIENT_ID),
 	Field("legal_entity_id", LEGAL_ENTITY_ID),
 	Field("division_id", DIVISION_ID),
 	Field("is_active", IS_ACTIVE)
 ])
 
-ReactivateUnit = Recordtype("ReactivateUnit", [
+ReactivateUnit = RecordType("ReactivateUnit", [
 	Field("unit_id", UNIT_ID),
 	Field("passsword", PASSWORD)
 ])
 
+GetClientProfile = RecordType("GetClientProfile", [
+])
+
 
 Request = VariantType("Request", [
-	GetClientGroups, SaveClientGroup, UpdateClientGroup,
+	GetClientGroups, SaveClientGroup, UpDATEClientGroup,
 	ChangeClientGroupStatus, GetClients, SaveClient,
-	UpdateClient, ChangeClientStatus, ReactivateUnit
+	UpDATEClient, ChangeClientStatus, ReactivateUnit,
+	GetClientProfile
 ])
 
 
@@ -106,34 +114,34 @@ Request = VariantType("Request", [
 
 ### Client Group
 
-GetClientGroupsSuccess = Recordtype("GetClientGroupsSuccess", [
+GetClientGroupsSuccess = RecordType("GetClientGroupsSuccess", [
 	Field("countries", CountryList),
 	Field("domains", DomainList),
 	Field("users", UserList),
 	Field("client_list", ClientDetailsList)
 ])
 
-SaveClientGroupSuccess = Recordtype("SaveClientGroupSuccess", [
+SaveClientGroupSuccess = RecordType("SaveClientGroupSuccess", [
 ])
 
-GroupNameAlreadyExists = Recordtype("GroupNameAlreadyExists", [
+GroupNameAlreadyExists = RecordType("GroupNameAlreadyExists", [
 ])
 
-UsernameAlreadyExists = Recordtype("UsernameAlreadyExists", [
+UsernameAlreadyExists = RecordType("UsernameAlreadyExists", [
 ])
 
-UpdateClientGroupSuccess = Recordtype("UpdateClientGroupSuccess", [
+UpDATEClientGroupSuccess = RecordType("UpDATEClientGroupSuccess", [
 ])
 
-ChangeClientGroupStatusSuccess = Recordtype("ChangeClientGroupStatusSuccess", [
+ChangeClientGroupStatusSuccess = RecordType("ChangeClientGroupStatusSuccess", [
 ])
 
-InvalidClientId = Recordtype("InvalidClientId", [
+InvalidClientId = RecordType("InvalidClientId", [
 ])
 
 ### Client Unit 
 
-GetClientsSuccess = Recordtype("GetClientsSuccess", [
+GetClientsSuccess = RecordType("GetClientsSuccess", [
 	Field("countries", CountryList),
 	Field("domains", DomainList),
 	Field("group_companies", ClientList),
@@ -143,50 +151,82 @@ GetClientsSuccess = Recordtype("GetClientsSuccess", [
 	Field("units", UnitDetailsList)
 ])
 
-SaveClientSuccess = Recordtype("SaveClientSuccess", [
+SaveClientSuccess = RecordType("SaveClientSuccess", [
 ])
 
-BusinessGroupNameAlreadyExists = Recordtype("BusinessGroupNameAlreadyExists", [
+BusinessGroupNameAlreadyExists = RecordType("BusinessGroupNameAlreadyExists", [
 ])
 
-LegalEntityNameAlreadyExists = Recordtype("LegalEntityNameAlreadyExists", [
+LegalEntityNameAlreadyExists = RecordType("LegalEntityNameAlreadyExists", [
 ])
 
-DivisionNameAlreadyExists = Recordtype("DivisionNameAlreadyExists", [
+DivisionNameAlreadyExists = RecordType("DivisionNameAlreadyExists", [
 ])
 
-UnitNameAlreadyExists = Recordtype("UnitNameAlreadyExists", [
+UnitNameAlreadyExists = RecordType("UnitNameAlreadyExists", [
 ])
 
-UnitCodeAlreadyExists = Recordtype("UnitCodeAlreadyExists", [
+UnitCodeAlreadyExists = RecordType("UnitCodeAlreadyExists", [
 ])
 
-LogoSizeLimitExceeds = Recordtype("LogoSizeLimitExceeds", [
+LogoSizeLimitExceeds = RecordType("LogoSizeLimitExceeds", [
 ])
 
-UpdateClientSuccess = Recordtype("UpdateClientSuccess", [
+UpDATEClientSuccess = RecordType("UpDATEClientSuccess", [
 ])
 
-ChangeClientStatusSuccess = Recordtype("ChangeClientStatusSuccess", [
+ChangeClientStatusSuccess = RecordType("ChangeClientStatusSuccess", [
 ])
 
-ReactivateUnitSuccess = Recordtype("ReactivateUnitSuccess", [
+ReactivateUnitSuccess = RecordType("ReactivateUnitSuccess", [
 ])
 
-InvalidPassword = Recordtype("InvalidPassword", [
+InvalidPassword = RecordType("InvalidPassword", [
 ])
 
-InvalidUnitId = Recordtype("InvalidUnitId", [
+InvalidUnitId = RecordType("InvalidUnitId", [
+])
+
+LICENCE_HOLDER_DETAILS = RecordType("LICENCE_HOLDER_DETAILS", [
+	Field("user_id", USER_ID),
+	Field("user_name", EMPLOYEE_NAME),
+	Field("email_id", EMAIL_ID),
+	Field("contact_no", CONTACT_NUMBER),
+	Field("seating_unit_name", UNIT_NAME),
+	Field("address", ADDRESS),
+	Field("total_disk_space", TOTAL_DISK_SPACE),
+	Field("used_disk_space", USED_DISK_SPACE)
+])
+
+PROFILE_DETAIL = RecordType("PROFILES", [
+	Field("contract_from", DATE),
+	Field("contract_to", DATE),
+	Field("no_of_user_licence", NO_OF_USER_LICENCE),
+	Field("remaining_licence", REMAINING_USER_LICENCE),
+	Field("total_disk_space", REMAINING_USER_LICENCE),
+	Field("used_disk_space", USED_DISK_SPACE),
+	Field("licence_holders", VectorType(LICENCE_HOLDER_DETAILS))
+])
+
+PROFILES = RecordType("PROFILES", [
+	Field("client_id", GROUP_ID),
+	Field("profile_detail", PROFILE_DETAIL),
+])
+
+GetClientProfileSuccess = RecordType("GetClientProfileSuccess", [
+	Field("group_companies", ClientList),
+	Field("profiles", VectorType(PROFILES))
 ])
 
 Response = VariantType("Response", [
 	GetClientGroupsSuccess, SaveClientGroupSuccess,
 	GroupNameAlreadyExists, UsernameAlreadyExists,
-	UpdateClientGroupSuccess, ChangeClientGroupStatusSuccess,
+	UpDATEClientGroupSuccess, ChangeClientGroupStatusSuccess,
 	InvalidClientId, GetClientsSuccess, SaveClientSuccess, 
 	BusinessGroupNameAlreadyExists, LegalEntityNameAlreadyExists,
 	DivisionNameAlreadyExists, UnitNameAlreadyExists, 
 	UnitCodeAlreadyExists, LogoSizeLimitExceeds,
-	UpdateClientSuccess, ChangeClientStatusSuccess,
-	ReactivateUnitSuccess, InvalidPassword, InvalidUnitId
+	UpDATEClientSuccess, ChangeClientStatusSuccess,
+	ReactivateUnitSuccess, InvalidPassword, InvalidUnitId,
+	GetClientProfileSuccess
 ])
