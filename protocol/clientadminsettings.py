@@ -1,8 +1,4 @@
 from protocol.common import *
-# from protocol.core import (
-# 	ActiveCompliance,
-# 	UpcomingCompliance
-# )
 
 __all__ = [
 	"Request", "Response"
