@@ -472,7 +472,7 @@ function initMirror() {
             "ChangeStatutoryMappingStatus",
             {
                 "statutory_mapping_id":mappingId,
-                "is_active" : is_active
+                "is_active" : isActive
             }
         ]
         apiRequest("ChangeStatutoryMappingStatus", request, callback, failure_callback);

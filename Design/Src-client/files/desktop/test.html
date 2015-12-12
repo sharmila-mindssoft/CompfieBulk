@@ -70,9 +70,10 @@
 
       countryWiseUnits.push(india)
 
-        mirror.updateClient("TechnoAPI", clientId, businessGroup, legalEntity, division, 
-        countryWiseUnits, success, failure);
+        // mirror.updateClient("TechnoAPI", clientId, businessGroup, legalEntity, division, 
+        // countryWiseUnits, success, failure);
         // mirror.getClients("TechnoAPI", success, failure)
+        mirror.getClientUsers("ClientAdminAPI", success, failure)
     });
 </script>
 </body>

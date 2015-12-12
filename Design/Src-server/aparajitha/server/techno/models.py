@@ -533,14 +533,14 @@ class Unit(object):
                 postalCode, domainIds, isActive, industryName, geography):
         self.clientId = int(clientId)
         self.unitId = unitId
-        self.divisionId = int(divisionId)
+        self.divisionId = int(divisionId) if divisionId != None else None
         self.legalEntityId = int(legalEntityId)
-        self.businessGroupId = int(businessGroupId)
+        self.businessGroupId = int(businessGroupId) if businessGroupId != None else None
         self.countryId = int(countryId)
-        self.geographyId = int(geographyId)
+        self.geographyId = int(geographyId) if isActive != None else None
         self.unitCode = str(unitCode)
         self.unitName = str(unitName)
-        self.industryId = int(industryId)
+        self.industryId = int(industryId) if isActive != None else None
         self.address = str(address)
         self.postalCode = str(postalCode)
         self.domainIds = domainIds
@@ -679,9 +679,10 @@ class Unit(object):
     @classmethod
     def getList(self,clientIds):
         unitList = []
-
+        print clientIds
         for index, clientId in enumerate(clientIds.split(",")):
-            try:
+                print clientId
+            # try:
                 clientDBName = getClientDatabase(clientId)
                 clientColumns = "unit_id, division_id, legal_entity_id, "+\
                                 "business_group_id, unit_code, unit_name,"+\
@@ -705,8 +706,8 @@ class Unit(object):
                             None, address, None, domainIds, None, None, None)
                     unitList.append(unit.toStructure())
 
-            except:
-                print "Error: While fetching Unit of client id %s" % clientId
+            # except:
+            #     print "Error: While fetching Unit of client id %s" % clientId
 
         return unitList
 
