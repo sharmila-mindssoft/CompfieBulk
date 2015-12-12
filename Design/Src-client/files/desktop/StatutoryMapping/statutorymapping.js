@@ -769,6 +769,7 @@ function temp_editcompliance(edit_id){
         $('#Recurring').show();
         $('#Occasional').hide();
         $('#One_Time').hide();
+
         if(statutory_dates.length > 1){
             $('.multipleinput').prop("checked") == true;
             $('.multipleselectnone').hide();
@@ -1124,6 +1125,7 @@ function displayEdit (sm_Id) {
     $("#listview").hide();
     $("#addview").show();
     $("#edit_sm_id").val(sm_Id);
+
     sm_countryid = statutoryMappingsList[sm_Id]["country_id"];
     sm_countryval = statutoryMappingsList[sm_Id]["country_name"];
     sm_domainid = statutoryMappingsList[sm_Id]["domain_id"];
@@ -1201,3 +1203,4 @@ function edit_geography(country,geographyids_edit){
     }*/
     
 }
+
