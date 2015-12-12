@@ -1,40 +1,10 @@
 from protocol.common import *
-
+from protocol.core import Level, Industry, StatutoryNature, Country, Domain, Geography, Statutory
 __all__ = [
 	"Request", "Response"
 ]
 
-LEVEL_NAME = Text50
-GEOGRAPHY_NAME = Text50
-INDUSTRY_NAME = Text50
-STATUTORY_NATURE_NAME = Text50
-STATUTORY_NAME = Text50
-
-Level = RecordType("Level", [
-	Field("level_id", OptionalType(LEVEL_ID)),
-	Field("level_position", LEVEL_POSITION),
-	Field("level_name", LEVEL_NAME)
-])
-
 LevelList = VectorType(Level)
-
-Geography = RecordType("Geography", [
-	Field("geography_id", OptionalType(GEOGRAPHY_ID)),
-	Field("geography_level_id", GEOGRAPHY_LEVEL_ID),
-	Field("geography_name", GEOGRAPHY_NAME),
-	Field("parent_ids", VectorType(GEOGRAPHY_ID))
-	Field("is_active", IS_ACTIVE)
-])
-
-Statutory = RecordType("Statutory", [
-	Field("statutory_id", OptionalType(STATUTORY_ID)),
-	Field("statutory_level_id", STATUTORY_LEVEL_ID),
-	Field("statutory_name", STATUTORY_NAME),
-	Field("parent_ids", VectorType(STATUTORY_ID))
-	Field("is_active", IS_ACTIVE)
-])
-
-
 #
 # Request
 #
@@ -55,14 +25,14 @@ SaveGeography  = RecordType("SaveGeography", [
 ])
 
 UpdateGeography = RecordType("UpdateGeography", [
-	Field("geography_id", GEOGRAPHY_ID)
+	Field("geography_id", GEOGRAPHY_ID),
 	Field("geography_level_id", GEOGRAPHY_LEVEL_ID),
 	Field("geography_name", GEOGRAPHY_NAME),
 	Field("parent_ids", VectorType(GEOGRAPHY_ID))
 ])
 
 ChangeGeographyStatus = RecordType("ChangeGeographyStatus", [
-	Field("geography_id", GEOGRAPHY_ID)
+	Field("geography_id", GEOGRAPHY_ID),
 	Field("is_active", IS_ACTIVE)
 ])
 
@@ -103,7 +73,7 @@ GetStatutoryLevels = RecordType("GetStatutoryLevels", [])
 SaveStatutoryLevel = RecordType("SaveStatutoryLevel", [
 	Field("country_id", COUNTRY_ID),
 	Field("domain_id", DOMAIN_ID),
-	Field("levels": LevelList),
+	Field("levels", LevelList),
 ])
 
 
@@ -116,7 +86,7 @@ SaveStatutory  = RecordType("SaveStatutory", [
 ])
 
 UpdateStatutory = RecordType("UpdateStatutory", [
-	Field("statutory_id", STATUTORY_ID)
+	Field("statutory_id", STATUTORY_ID),
 	Field("statutory_level_id", STATUTORY_LEVEL_ID),
 	Field("statutory_name", STATUTORY_NAME),
 	Field("parent_ids", VectorType(STATUTORY_ID))
@@ -156,7 +126,7 @@ InvalidGeographyLevelId = RecordType("InvalidGeographyLevelId", [])
 
 GetGeographiesSuccess = RecordType("GetGeographiesSuccess", [
 	Field("countries", VectorType(Country)),
-	Field("geography_levels", MapType(COUNTRY_ID, LevelList))
+	Field("geography_levels", MapType(COUNTRY_ID, LevelList)),
 	Field("geographies", MapType(COUNTRY_ID, VectorType(Geography)))
 ])
 
@@ -206,7 +176,7 @@ GetStatutoryLevelsSuccess = RecordType("GetStatutoryLevelsSuccess", [
 	Field("statutory_levels", MapType(COUNTRY_ID, DomainLevelMap))
 ])
 
-SaveStatutoryLevelSuccess = RecordType("SaveStatutoryLevelSuccess". [])
+SaveStatutoryLevelSuccess = RecordType("SaveStatutoryLevelSuccess", [])
 
 DuplicateStatutoryLevelsExists = RecordType("DuplicateStatutoryLevelsExists", [])
 
@@ -215,7 +185,7 @@ DomainStatutoryMap = MapType(DOMAIN_ID, VectorType(Statutory))
 GetStatutoriesSuccess = RecordType("GetStatutoriesSuccess", [
 	Field("countries", VectorType(Country)),
 	Field("domains", VectorType(Domain)),
-	Field("statutory_levels", MapType(COUNTRY_ID, DomainLevelMap))
+	Field("statutory_levels", MapType(COUNTRY_ID, DomainLevelMap)),
 	Field("statutories", MapType(COUNTRY_ID, DomainStatutoryMap))
 ])
 
