@@ -1,3 +1,7 @@
+from types import VectorType
+from common import *
+from core import *
+
 __all__=  [
 	"Request", "Response"
 ]
@@ -20,25 +24,25 @@ DomainIdList = VectorType(Domain)
 
 ### Assign Statutory
 
-GetAssignedStatutoriesList = Recordtype("GetAssignedStatutoriesList", [
+GetAssignedStatutoriesList = RecordType("GetAssignedStatutoriesList", [
 ])
 
-GetAssignedStatutoriesById = Recordtype("GetAssignedStatutoriesById", [
+GetAssignedStatutoriesById = RecordType("GetAssignedStatutoriesById", [
 	Field("submission_status", ASSIGN_STATUTORY_SUBMISSION_TYPE),
 	Field("client_saved_statutory_id", CLIENT_SAVED_STATUTORY_ID),
 	Field("client_assigned_statutory_id", CLIENT_ASSIGNED_STATUTORY_ID)
 ])
 
-GetAssignedStatutoryWizardOneData = Recordtype("GetAssignedStatutoryWizardOneData", [
+GetAssignedStatutoryWizardOneData = RecordType("GetAssignedStatutoryWizardOneData", [
 ])
 
-GetStatutoryWizardTwoData = Recordtype("GetStatutoryWizardTwoData", [
+GetStatutoryWizardTwoData = RecordType("GetStatutoryWizardTwoData", [
 	Field("geography_id", GEOGRAPHY_ID),
 	Field("industry_id", INDUSTRY_ID),
 	Field("domain_id", DOMAIN_ID)
 ])
 
-SaveAssignedStatutory = Recordtype("SaveAssignedStatutory", [
+SaveAssignedStatutory = RecordType("SaveAssignedStatutory", [
 	Field("submission_type", ASSIGN_STATUTORY_SUBMISSION_TYPE),
 	Field("client_saved_statutory_id", CLIENT_SAVED_STATUTORY_ID),
 	Field("client_assigned_statutory_id", CLIENT_ASSIGNED_STATUTORY_ID),
@@ -58,7 +62,7 @@ Request = VariantType("Request", [
 
 ### Assign Statutory
 
-ASSIGNED_STATUTORIES = Recordtype("ASSIGNED_STATUTORIES", [
+ASSIGNED_STATUTORIES = RecordType("ASSIGNED_STATUTORIES", [
 	Field("submission_status", ASSIGN_STATUTORY_SUBMISSION_STATUS),
 	Field("client_saved_statutory_id", CLIENT_SAVED_STATUTORY_ID),
 	Field("client_assigned_statutory_id", CLIENT_ASSIGNED_STATUTORY_ID),
@@ -72,11 +76,11 @@ ASSIGNED_STATUTORIES = Recordtype("ASSIGNED_STATUTORIES", [
 	Field("domain_name", DOMAIN_NAME)
 ])
 
-GetAssignedStatutoriesListSuccess = Recordtype("GetAssignedStatutoriesListSuccess", [
-	Field("assigned_statutories": VectorType(ASSIGNED_STATUTORIES))
+GetAssignedStatutoriesListSuccess = RecordType("GetAssignedStatutoriesListSuccess", [
+	Field("assigned_statutories", VectorType(ASSIGNED_STATUTORIES))
 ])
 
-GetAssignedStatutoriesByIdSuccess = Recordtype("GetAssignedStatutoriesByIdSuccess", [
+GetAssignedStatutoriesByIdSuccess = RecordType("GetAssignedStatutoriesByIdSuccess", [
 	Field("country_name",  COUNTRY_NAME),
 	Field("group_name",  CLIENT_NAME),
 	Field("business_group_name",  BUSINESS_GROUP_NAME),
@@ -88,7 +92,7 @@ GetAssignedStatutoriesByIdSuccess = Recordtype("GetAssignedStatutoriesByIdSucces
 	Field("statutories", AssignedStatutoryList)
 ])
 
-UNIT = Recordtype("ASSIGNED_STATUTORIES", [
+UNIT = RecordType("ASSIGNED_STATUTORIES", [
 	Field("unit_id", UNIT_ID),
 	Field("unit_name", UNIT_NAME),
 	Field("division_id", DIVISION_ID),
@@ -100,12 +104,12 @@ UNIT = Recordtype("ASSIGNED_STATUTORIES", [
 	Field("geography_id", GEOGRAPHY_ID)
 ])
 
-GetAssignedStatutoryWizardOneDataSuccess = Recordtype("GetAssignedStatutoryWizardOneDataSuccess", [
+GetAssignedStatutoryWizardOneDataSuccess = RecordType("GetAssignedStatutoryWizardOneDataSuccess", [
 	Field("countries", CountryList),
-	Field("domains": DomainList),
-	Field("industries": IndustryList),
-	Field("geography_levels": MapType(COUNTRY_ID, GeographyLevelList)),
-	Field("geographies": MapType(COUNTRY_ID,GeographyList)),
+	Field("domains", DomainList),
+	Field("industries", IndustryList),
+	Field("geography_levels", MapType(COUNTRY_ID, GeographyLevelList)),
+	Field("geographies", MapType(COUNTRY_ID,GeographyList)),
 	Field("group_companies", GroupCompanyList),
 	Field("business_groups", BusinessGroupList),
 	Field("legal_entities", LegalEntityList),
@@ -113,11 +117,11 @@ GetAssignedStatutoryWizardOneDataSuccess = Recordtype("GetAssignedStatutoryWizar
 	Field("units", VectorType(UNIT))
 ])
 
-GetStatutoryWizardTwoDataSuccess = Recordtype("GetStatutoryWizardTwoDataSuccess", [
+GetStatutoryWizardTwoDataSuccess = RecordType("GetStatutoryWizardTwoDataSuccess", [
 	Field("statutories", AssignedStatutoryList)	
 ])
 
-SaveAssignedStatutorySuccess = Recordtype("SaveAssignedStatutorySuccess", [
+SaveAssignedStatutorySuccess = RecordType("SaveAssignedStatutorySuccess", [
 ])
 
 Response = VariantType("Response", [

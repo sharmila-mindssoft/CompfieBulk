@@ -378,14 +378,14 @@ CountryWiseUnits = RecordType("CountryWiseUnits", [
 ])
 
 ServiceProvider = RecordType("ServiceProvider", [
-	 Field("service_provider_id", SERVICE_PROVIDER_ID),
+	 Field("service_provider_id", OptionalType(SERVICE_PROVIDER_ID)),
      Field("service_provider_name", SERVICE_PROVIDER_NAME), 
      Field("address", ADDRESS),
      Field("contract_from", DATE),
      Field("contract_to", DATE), 
      Field("contact_person", Text50),
      Field("contact_no", CONTACT_NUMBER),
-     Field("is_active", IS_ACTIVE)
+     Field("is_active", OptionalType(IS_ACTIVE))
 ])
 
 
@@ -430,7 +430,7 @@ ClientUser = RecordType("ClientUser", [
 
 AssignedStatutory = RecordType("AssignedStatutory", [
 	Field("level_1_statutory_id", USER_ID),
-    Field("level_1_statutory_name", EMAIL_ID),
+    Field("level_1_statutory_name", LEVEL_1_STATUTORY_NAME),
     Field("compliances", ComplianceApplicabilityList), 
     Field("applicable_status", STATUS),
     Field("not_applicable_remarks", DESCRIPTION)

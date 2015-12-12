@@ -1,3 +1,7 @@
+from core import *
+from common import *
+from types import VectorType
+
 __all__=  [
 	"Request", "Response"
 ]
@@ -16,33 +20,33 @@ UserDetailsList = VectorType(UserDetails)
 
 ### User Groups
 
-GetUserGroups = Recordtype("GetUserGroups", [
+GetUserGroups = RecordType("GetUserGroups", [
 ])
 
-SaveUserGroup = Recordtype("SaveUserGroup", [
+SaveUserGroup = RecordType("SaveUserGroup", [
 	Field("user_group_name", USER_GROUP_NAME),
 	Field("form_type", FORM_TYPE),
 	Field("form_ids", FormIdList)
 ])
 
-UpdateUserGroup = Recordtype("UpdateUserGroup", [
+UpdateUserGroup = RecordType("UpdateUserGroup", [
 	Field("user_group_id", USER_GROUP_ID),
 	Field("user_group_name", USER_GROUP_NAME),
 	Field("form_type", FORM_TYPE),
 	Field("form_ids", FormIdList)
 ])
 
-ChangeUserGroupStatus = Recordtype("ChangeUserGroupStatus", [
+ChangeUserGroupStatus = RecordType("ChangeUserGroupStatus", [
 	Field("user_group_id", USER_GROUP_ID),
 	Field("is_active", IS_ACTIVE)
 ])
 
 ### User
 
-GetUsers = Recordtype("GetUsers", [
+GetUsers = RecordType("GetUsers", [
 ])
 
-SaveUser = Recordtype("SaveUser", [
+SaveUser = RecordType("SaveUser", [
 	Field("email_id", EMAIL_ID),
     Field("user_group_id", USER_GROUP_ID),
     Field("employee_name", EMPLOYEE_NAME),
@@ -55,7 +59,7 @@ SaveUser = Recordtype("SaveUser", [
 
 ])
 
-UpdateUser = Recordtype("UpdateUser", [
+UpdateUser = RecordType("UpdateUser", [
 	Field("user_id", USER_ID),
     Field("user_group_id", USER_GROUP_ID),
     Field("employee_name", EMPLOYEE_NAME),
@@ -68,7 +72,7 @@ UpdateUser = Recordtype("UpdateUser", [
 
 ])
 
-ChangeUserStatus = Recordtype("ChangeUserStatus", [
+ChangeUserStatus = RecordType("ChangeUserStatus", [
 	Field("user_id", USER_ID),
 	Field("is_active", IS_ACTIVE)
 ])
@@ -85,53 +89,53 @@ Request = VariantType("Request", [
 
 ### User Group
 
-GetUserGroupsSuccess = Recordtype("GetUserGroupsSuccess", [
-	Field("forms", Maptype(Text50, Menu)),
+GetUserGroupsSuccess = RecordType("GetUserGroupsSuccess", [
+	Field("forms", MapType(Text50, Menu)),
 	Field("user_groups", UserGroupList)
 ])
 
-SaveUserGroupSuccess = Recordtype("SaveUserGroupSuccess", [
+SaveUserGroupSuccess = RecordType("SaveUserGroupSuccess", [
 ])
 
-GroupNameAlreadyExists = Recordtype("GroupNameAlreadyExists", [
+GroupNameAlreadyExists = RecordType("GroupNameAlreadyExists", [
 ])
 
-UpdateUserGroupSuccess = Recordtype("UpdateUserGroupSuccess", [
+UpdateUserGroupSuccess = RecordType("UpdateUserGroupSuccess", [
 ])
 
-InvalidUserGroupId = Recordtype("InvalidUserGroupId", [
+InvalidUserGroupId = RecordType("InvalidUserGroupId", [
 ])
 
-ChangeUserGroupStatusSuccess = Recordtype("ChangeUserGroupStatusSuccess", [
+ChangeUserGroupStatusSuccess = RecordType("ChangeUserGroupStatusSuccess", [
 ])
 
 ### User
 
-GetUsersSuccess = Recordtype("GetUsersSuccess", [
+GetUsersSuccess = RecordType("GetUsersSuccess", [
 	Field("user_groups", UserGroupList),
 	Field("domains", DomainList),
 	Field("users", UserDetailsList)
 ])
 
-SaveUserSuccess = Recordtype("SaveUserSuccess", [
+SaveUserSuccess = RecordType("SaveUserSuccess", [
 ])
 
-EmailIDAlreadyExists = Recordtype("EmailIDAlreadyExists", [
+EmailIDAlreadyExists = RecordType("EmailIDAlreadyExists", [
 ])
 
-ContactNumberAlreadyExists = Recordtype("ContactNumberAlreadyExists", [
+ContactNumberAlreadyExists = RecordType("ContactNumberAlreadyExists", [
 ])
 
-EmployeeCodeAlreadyExists = Recordtype("EmployeeCodeAlreadyExists", [
+EmployeeCodeAlreadyExists = RecordType("EmployeeCodeAlreadyExists", [
 ])
 
-InvalidUserId = Recordtype("InvalidUserId", [
+InvalidUserId = RecordType("InvalidUserId", [
 ])
 
-UpdateUserSuccess = Recordtype("UpdateUserSuccess", [
+UpdateUserSuccess = RecordType("UpdateUserSuccess", [
 ])
 
-ChangeUserStatusSuccess = Recordtype("ChangeUserStatusSuccess", [
+ChangeUserStatusSuccess = RecordType("ChangeUserStatusSuccess", [
 ])
 
 Response = VariantType("Response", [
