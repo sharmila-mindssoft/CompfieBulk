@@ -54,7 +54,7 @@ function initialize(){
 
 function loadUserGroupdata(userGroupList){
 	$(".tbody-userprivilege-list").find("tr").remove();
-  var sno=0;
+ 	var sno=0;
 	var imageName, title;
 	for(var j in userGroupList){
 		var user_group_name=userGroupList[j]["user_group_name"];
