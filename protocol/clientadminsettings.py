@@ -26,7 +26,7 @@ Request = VariantType("Request", [
 # Response
 #
 
-LicenceHolder = RecordType("LicenceHolder", [
+LICENCE_HOLDER = RecordType("LICENCE_HOLDER", [
 	Field("user_id", USER_ID),
 	Field("user_name", Text100),
 	Field("email_id", EMAIL_ID),
@@ -37,12 +37,12 @@ LicenceHolder = RecordType("LicenceHolder", [
 	Field("used_disk_space", Int8),
 ])
 
-ProfileDetails = RecordType("ProfileDetails", [
+PROFILE_DETAIL = RecordType("PROFILE_DETAIL", [
 	Field("contract_from", Text20),
 	Field("contract_to", Text20),
 	Field("no_of_user_licence", Int8),
 	Field("remaining_licence", Int8),
-	Field("licence_holders", VectorType(LicenceHolder))
+	Field("licence_holders", VectorType(LICENCE_HOLDER))
 ])
 
 GetSettingsSuccess = RecordType("GetSettingsSuccess", [
@@ -50,7 +50,7 @@ GetSettingsSuccess = RecordType("GetSettingsSuccess", [
 	Field("assignee_reminder_days", Int8),
 	Field("escalation_reminder_In_advance_days", Int8),
 	Field("escalation_reminder_days", Int8),
-	Field("profile_detail", VectorType(ProfileDetails))
+	Field("profile_detail", VectorType(PROFILE_DETAIL))
 ])
 
 UpdateSettingsSuccess = RecordType("UpdateSettingsSuccess", [])
