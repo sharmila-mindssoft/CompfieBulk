@@ -540,11 +540,11 @@ class Unit(object):
         self.divisionId = int(divisionId) if divisionId != None else None
         self.legalEntityId = int(legalEntityId)
         self.businessGroupId = int(businessGroupId)  if businessGroupId != None else None
-        self.countryId = int(countryId)
-        self.geographyId = int(geographyId)
+        self.countryId = int(countryId) 
+        self.geographyId = int(geographyId) if businessGroupId != None else None
         self.unitCode = str(unitCode)
         self.unitName = str(unitName)
-        self.industryId = int(industryId)
+        self.industryId = int(industryId) if businessGroupId != None else None
         self.address = str(address)
         self.postalCode = str(postalCode)
         self.domainIds = domainIds
