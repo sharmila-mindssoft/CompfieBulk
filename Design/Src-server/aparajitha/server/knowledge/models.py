@@ -896,7 +896,8 @@ class Geography(object) :
             "geography_id": self.geographyId,
             "geography_name": self.name,
             "level_id": self.levelId,
-            "parent_id": self.parentIds,
+            "parent_ids": self.parentIds,
+            "parent_id": self.parentIds[-1],
             "is_active": self.isActive
         }
 
@@ -907,7 +908,7 @@ class Geography(object) :
         _geographyList = DH.instance().getGeographies()
         for row in _geographyList :
             parentIds = [int(x) for x in row[3][:-1].split(',')]
-            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds[-1], int(row[4]))
+            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds, int(row[4]))
             countryId = int(row[5])
             _list = geographies.get(countryId)
             if _list is None :
@@ -935,7 +936,7 @@ class GeographyAPI(object) :
         _geographyList = DH.getGeographies()
         for row in _geographyList :
             parentIds = [int(x) for x in row[3][:-1].split(',')]
-            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds[-1], int(row[4]))
+            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds, int(row[4]))
             countryId = int(row[5])
             _list = self.geographies.get(countryId)
             if _list is None :
@@ -977,7 +978,7 @@ class GeographyAPI(object) :
             geographyData[int(row[0])] = row[1]
         for row in _geographyList :
             parentIds = [int(x) for x in row[3][:-1].split(',')]
-            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds[-1], int(row[4]))
+            geography = Geography(int(row[0]), row[1], int(row[2]), parentIds, int(row[4]))
             countryId = int(row[5])
             names = []
             names.append(row[6])
@@ -1206,7 +1207,7 @@ class Compliance(object) :
             self, complianceId, statutoryProvition, complianceTask,
             description, documentName, formatFileName, penalDescription,
             complianceFrequency, statutoryDates,
-            repeatsType, repeatsEvery, durationType, duration, isActive
+            repeatsEvery, repeatsType, durationType, duration, isActive
         ):
         self.complianceId = complianceId
         self.statutoryProvition = statutoryProvition
@@ -1258,8 +1259,8 @@ class Compliance(object) :
             "penal_description": self.penalDescription,
             "compliance_frequency": self.complianceFrequency,
             "statutory_dates": self.statutoryDates,
-            "repeats_type": self.repeatsType,
             "repeats_every": self.repeatsEvery, 
+            "repeats_type": self.repeatsType,
             "duration_type": self.durationType,
             "duration": self.duration,
             "is_active": self.isActive
