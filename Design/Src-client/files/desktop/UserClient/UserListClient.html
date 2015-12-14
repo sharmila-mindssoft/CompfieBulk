@@ -1,31 +1,28 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
-<script src="/files/desktop/common/js/wizard/jquery.steps.js"></script>
-<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/wizard/jquery.steps.css">
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
 <script src="/files/desktop/common/js/tooltip/tipso.js"></script>
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/popup/popup.css">
 <script type="text/javascript" src="/files/desktop/common/js/popup/modernizr.js"></script>
 <style>
-  .modaltable th
-  {
-    padding: 5px;
-  }
-  .modaltable td
-  {
-    padding: 10px 0px;
-    font-size: 0.813em;
-  }
-   #inactiveid{
-    cursor:pointer;
-  }
-  
+.modaltable th
+{
+  padding: 5px;
+}
+.modaltable td
+{
+  padding: 10px 0px;
+  font-size: 0.813em;
+}
+ #inactiveid{
+  cursor:pointer;
+}  
 </style>
-<div class="content-container">
+<div class="content-container" id="user-view">
   <div class="content-area">
     <h1>Users</h1>
     <div class="filters-and-search">
-      <div class="btn-add" onclick="location.href='/userclient/create'" formtarget="_self">Add</div>
+      <div class="btn-add" id="btn-user-add" formtarget="_self">Add</div>
     </div>
     <div class="clearfix"></div>
     <div class="grid-table">
@@ -50,84 +47,213 @@
           <td align="center">&nbsp;</td>
           <td align="center">&nbsp;</td>
           <td align="center">&nbsp;</td>
-        
         </tr>
-        <tr>
-          <td align="center">1</td>
-          <td>EMP0010 - Hariharan</td>
-          <td>Group 3</td>
-          <td>Level 4</td>
-          <td>
-            <abbr class="page-load tipso_style" title="26, West Steet, New Delhi, 110001">
-            <img src="/images/icon-info.png" style="margin-right:10px"/>VBM1001 - Corporate Office
-          </td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid"/></td>
-          <td align="center"><a="#"><img src="/images/promote-active.png"title="Click here to inactivate" id="inactiveid" class="inactive"  /></a="#"></td>
-        </tr>
-        <tr>
-          <td align="center">2</td>
-          <td>EMP0012 - Sivaraman</td>
-          <td>Manager</td>
-          <td>Level 3</td>
-          <td>
-            <abbr class="page-load tipso_style" title="12 South car street, Bangalore, 560001">
-            <img src="/images/icon-info.png" style="margin-right:10px"/>VBM1002 - Regional Office - South
-          </td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid"  onClick="$('.modal').toggleClass('active');" /></td>
-          <td align="center"><a="#"><img src="/images/promote-inactive.png" title="Click here to inactivate" id="inactiveid" class="inactive"/></a="#"></td>
-        </tr>
-        <tr>
-          <td align="center">3</td>
-          <td>EMP0015 - Srinivasan</td>
-          <td>Group 2</td>
-          <td>Level 2</td>
-          <td><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai, 600012"><img src="/images/icon-info.png" style="margin-right:10px"/>VBM103 - Branch Office - Chennai</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" onClick="$('.modal').toggleClass('active');"/></td>
-          <td align="center"><a="#"><img src="/images/promote-active.png" title="Click here to inactivate" id="inactiveid" class="inactive"  /></a="#"></td>
-          
-        </tr>
+        <tbody class="tbody-users-list">
+        </tbody>
       </table>
     </div>
   </div>
+  <div class="modal" style="width:20%; margin-left: -12.5%;">
+    <header>
+       <div class="close toggleModal" onClick="$('.modal').toggleClass('active');"></div>
+    </header>  
+    <section>
+    <p style="font-size:0.8em; padding-top:10px;">
+        <table width="100%">
+          <tr style="height:30px">
+            <td>
+              User has assigned tasks. Reassign the tasks to deactivate.
+            </td>
+          </tr>
+          <tr style="height:30px;padding-top:20px">
+            <td style="height:30px;padding-top:20px" align="center">
+              <input type="submit" name="cancel" value="Cancel" class="btn-submit" onClick="$('.modal').toggleClass('active');">
+              <input type="submit" name="cancel" value="Reassign" class="btn-submit" onclick="location.href='/reassigntask/edit'" formtarget="_self" >
+            </td>
+          </tr>
+        </table>
+      </p>
+    </section>
+  </div>
 </div>
-<div class="modal" style="width:20%; margin-left: -12.5%;">
-  <header>
-     <div class="close toggleModal" onClick="$('.modal').toggleClass('active');"></div>
-  </header>  
-  <section>
-  <p style="font-size:0.8em; padding-top:10px;">
-
-      <table width="100%">
-        <tr style="height:30px">
-          <td>
-            User has assigned tasks. Reassign the tasks to deactivate.
-          </td>
-        </tr>
-        <tr style="height:30px;padding-top:20px">
-          <td style="height:30px;padding-top:20px" align="center">
-            <input type="submit" name="cancel" value="Cancel" class="btn-submit" onClick="$('.modal').toggleClass('active');">
-            <input type="submit" name="cancel" value="Reassign" class="btn-submit" onclick="location.href='/reassigntask/edit'" formtarget="_self" >
-          </td>
-        </tr>
-      </table>
-    </p>
-  </section>
+<div id="templates">
+<table class="table-users-list">
+  <tr class="table-row">
+    <td align="center" class="sno"></td>
+    <td class="employee-code-name"></td>
+    <td class="group-name"></td>
+    <td class="level-name"></td>
+    <td class="seating-unit">
+      <abbr class="page-load tipso_style" title="26, West Steet, New Delhi, 110001">
+      <img src="/images/icon-info.png" style="margin-right:10px"/>VBM1001 - Corporate Office
+    </td>
+    <td align="center" class="edit"></td>
+    <td align="center" class="is-active"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid"/></td>
+    <td align="center" class="promote-admin"><a href="#"><img src="/images/promote-active.png" title="Click here to Promote Admin" id="promoteadminid" /></a></td>
+  </tr>
+</table>
 </div>
-<script type="text/javascript">
-$(document).ready(function() {
-});
+<!-- Add++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-jQuery(window).load(function(){
-  jQuery('.page-load').tipso({
-    tooltipHover: true
-  });
-});
-$('.toggleModal').on('click', function (e) {
-  $('.modal').toggleClass('active');
-});
+<div class="content-container width70" id="user-add">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Users<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">User Type:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <select class="input-box" id="usertype" ><option selected="selected">Inhouse</option><option>Service Provider</option></select>
+          </div>
+        </div>
+           <div class="input-row service_provider">
+          <div class="field-label">Service Provider:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="service-provider"></div>
+        </div>
+            <div class="input-row seatingunit">
+          <div class="field-label">Seating Unit:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="seatingunit" autofocus value=""></div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box" id="employee-name"></div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Employee ID:<span class="mandatory star">*</span></div>
+          <div class="field-input"><input type="text" class="input-box" id="employee-id"></div>
+        </div>      
+      </div>  
+      <div class="input-row-right">
+         <div class="input-row">
+          <div class="field-label">Contact No:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box countrycode" id="country-code" value=""> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" id="mobile-number" value=""></div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">User Group:<span class="mandatory">*</span></div>
+          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="usergroup" autofocus value=""></div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">User Level:<span class="mandatory">*</span></div>
+          <div class="field-input">
+           <select class="input-box" id="user-level">
+            <option value="">Select</option>
+            <option>Level 1</option>
+            <option>Level 2</option>
+            <option>Level 3</option>
+            <option>Level 4</option>
+            <option>Level 5</option>
+            <option>Level 6</option>
+            <option>Level 7</option>
+            <option>Level 8</option>
+            <option>Level 9</option>
+            <option>Level 10</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <h2>Login Credentials</h2>
+    <div class="input-row-left">
+      <div class="input-row" style="padding-bottom:0px;">
+        <div class="field-label">Email ID:<span class="mandatory">*</span></div>
+        <div class="field-input" style="width:61%;">
+          <input type="text" class="input-box" id="email-id" value="" style="width:77%;"><br><span style="font-size:10px;">[&#9658;This will be used as the username for user account.<br>&#9658;Password will be auto-generated]</span>
+        </div>
+      </div>
+    </div>      
+    <h2>Settings</h2>
+    <div class="input-row-left">
+      <div class="input-row">
+        <div class="field-label">Country:<span class="mandatory">*</span></div>
+        <div class="field-input">
+          
+        
+          <select id="country" multiple="multiple" placeholder="Select Country" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+            <option value="australia" >Australia</option>
+            <option value="china" >China</option>
+            <option value="india" selected>India</option>
+            <option value="malaysia" >Malaysia</option>
+            <option value="singapore" selected>Singapore</option>
+          </select>
+        </div>
+    </div>
+    <div class="input-row">
+      <div class="field-label">Business Group:<span class="mandatory">*</span></div>
+      <div class="field-input">
+        <select id="legal-entity" multiple="multiple" placeholder="Select Business Group" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+        <option value="KG Business Group 1" selected>KG Business Group 1</option>
+        <option value="KG Business Group 1" selected>KG Business Group 2</option>
+        <option value="KG Business Group 1" selected>KG Business Group 3</option>
+        </select>
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="field-label">Legal Entity:<span class="mandatory">*</span></div>
+      <div class="field-input">
+        <select id="legal-entity" multiple="multiple" placeholder="Select Legal Entity" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+          <option value="kgauto" selected>KG Autoparts</option>
+          <option value="kgtrans" selected>KG Transports</option>
+          <option value="kgbooking" selected>KG Booking</option>
+          <option value="kgservices" selected>KG Services</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="input-row-right">           
+    <div class="input-row">
+      <div class="field-label">Division:<span class="mandatory">*</span></div>
+      <div class="field-input">
+        <select id="legal-entity" multiple="multiple" placeholder="Select Division" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+          <option value="australia" >KG Manufacturing</option>
+          <option value="china" selected>KG Sales</option>
+          <option value="india" selected>KG Testing</option>
+          <option value="malaysia" selected>KG Quality Checking</option>
+        </select>
+      </div>
+      </div>
+      <div class="input-row">
+        <div class="field-label">Domain:<span class="mandatory">*</span></div>
+        <div class="field-input">
+         <select id="legal-entity" multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
+          <option value="finance" selected>Finance</option>
+          <option value="labour" selected>Labour Law</option>
+          <option value="industrial" selected>Industrial Law</option>
+        </select>
+      </div>
+    </div>
+  </div> 
+<div>
+<div class="form-container-grid-table-sm" >
+  <div class="field-label"  style="padding-left:18px;" >Unit:<span class="mandatory">*</span></div>
+    <table>
+      <tr>
+        <td style="padding-left:18px;">
+          <ul style="height:183px; font-size:1em;">
+            <li>
+              <input type="text" class="filter-text-box">
+            </li>
+            <li style="font-weight:bold;background:#ddd;">KG Autoparts </li>
+            <li>VRM1001 - Corporate Office, 871, South street, Delhi</li>
+            <li>VRM1002 - Regional Office - North, 18, Main road, Simla</li>
+            <li class="active">VRM1003 - Regional Office - South, 16, North Street, Mambalam, Chennai</li>
+            <li>VRM1004 - Branch Office - 1, 85, First Floor, Hani Complex, Bangalore</li>
+            <li class="active">VRM1005 - Branch Office - 2, KK nagar, Madurai</li>
+            <li >VRM1006 - Branch Office - 3, 28,Ramnagar, Delhi</li>
+             <li style="font-weight:bold;background:#ddd">KG Transports</li>
+            <li>VRM1007 - Branch Office - 4, 28 West Street, Hydrabad</li>
+            <li class="active">VRM1008 - Branch Office - 5, 12 RJ Complex, Main road, T.Nagar, Chennai</li>
+          </ul>
+          </td>
+      </tr>
+    </table>
+  </div>
+  </div>
+  <div class="submit-button-container">
+    <input type="reset" name="cancel" value="Cancel" class="btn-cancel"  id="btn-user-cancel">&nbsp;&nbsp;
+    <input type="submit" name="submit" value="Submit" class="btn-submit">
+  </div>
+</div>
+</div>
+</div>
 
-</script> 
+<script type="text/javascript" src="/files/desktop/UserClient/userclient.js"></script>
 {% endblock %} 

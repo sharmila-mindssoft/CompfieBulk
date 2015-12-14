@@ -90,13 +90,6 @@ Unit = DictType({
 		"business_group_id": Int,
 	})
 
-DateConfiguration = DictType({
-		"country_id": Int,
-	    "domain_id": Int,
-	    "period_from": Int,
-	    "period_to": Int
-	})
-
 Industry = DictType({
 	"industry_id": Int,
 	"industry_name": Text50,
@@ -171,6 +164,13 @@ StatutoryMapping = DictType({
     "approval_status": Text50,
     "is_active": Int
 })
+
+DateConfiguration = DictType({
+		"country_id": Int,
+	    "domain_id": Int,
+	    "period_from": Int,
+	    "period_to": Int
+	})
 
 define_request(
 	"Login", {
