@@ -183,10 +183,15 @@ function getDivision(lentityId) {
 //Add Country Wise List ----------------------------------------------------------------------------------------
 $("#add-country-row").click(function(){
 	var groupId=$("#group-select").val();
+	var legalEntityValue = $("#entity-select").val();
 	if(groupId==''){
-		$(".error-message").html("Select Group First");
+		$(".error-message").html("Please Select Group");
 	}
+	else if(legalEntityValue==''){
+ 		$('.error-message').html('Please Select Legal Entity');
+ 	}
 	else{
+		$('.error-message').html('');
 		for (var i in groupList){
 			if(groupList[i]['client_id']==groupId){ countryList=groupList[i]['country_ids'];
 			}
@@ -226,6 +231,8 @@ $("#add-country-row").click(function(){
 			$('.tbody-unit-list', clone).addClass('tbody-unit-'+countryArray[countc]);
 			$('.no-of-units', clone).addClass('no-of-units-'+countryArray[countc]);
 			$('.no-of-units-'+countryArray[countc], clone).val(1);
+			$('.unitcount').val(1);
+			$('.unit-error-msg', clone).addClass('unit-error-msg-'+countryArray[countc]);
 			$('.add-country-unit-list').append(clone);			
 			countc++;
 		}
@@ -265,6 +272,7 @@ function addNewUnitRow(str){
 	$('.domain-selectbox-view', clone1).addClass('domain-selectbox-view-'+countval+'-'+(lastClassval+1));
 	$('.ul-domain-list', clone1).addClass('ul-domain-list-'+countval+'-'+(lastClassval+1));
 	$('.no-of-units-'+countval).val(parseInt($('.no-of-units-'+countval).val())+1);
+
 	$('.'+tbodyclasses[1]).append(clone1);
 }
 //Auto Generate Unit Code------------------------------------------------------------------------------------------
@@ -294,9 +302,11 @@ function loadglevels(classval){
 	var checkval=lastClass.split('-');	
 	var countryvalue=$('.countryval-'+checkval[1]).val();
 	var countryid=$('.country-'+checkval[1]).val();
+	
 	if(countryvalue==''){
-		$('.error-message').html('Enter Country First');
+		$('.error-message').html('Please Select  Country');
 	}
+	
 	else{
 		$('.'+lastClass).empty();
 		for(var glevel in geographyLevelList[countryid]){
@@ -322,19 +332,27 @@ $("#btn-clientunit-submit").click(function(){
 	var groupNameValue = $("#group-select").val();
 	var businessgrouptextValue = $("#businessgroup-text").val();		
 	var businessgroupValue = $("#businessgroup-select").val();	
-	var businessgroupName = $("#businessgroup-select :selected").text();
-	var lentitytextValue = $("#entity-text").val();			
+	var businessgroupName = $("#businessgroup-select :selected").text();		
 	var legalEntityValue = $("#entity-select").val();
+	var lentitytextValue = $("#entity-select").text();
 	var legalEntityName = $("#entity-select :selected").text();
 	var divisiontextValue = $("#division-text").val();		
 	var divisionValue = $("#division-select").val();
 	var divisionName = $("#division-select :selected").text();
+	var unitCountValue = $(".unitcount").val();
+	var countryVal = $(".country").val();
 	if(groupNameValue==''){
 		$(".error-message").html("Please Select Group");
 	}
-	//else if(legalEntityValue=='' && lentitytextValue==''){
-			//$(".error-message").html("Please Select Legal Entity or Create New One");
-	//}
+	else if(legalEntityValue==''){
+		$(".error-message").html("Please Select Legal Entity or Create New One");
+	}
+	else if(unitCountValue==''){
+		$('.error-message').html("Please Add Atleast One Unit in a Group!")
+	}
+	else if(countryVal==''){
+		$('.error-message').html("Please Enter Country");
+	}
 	else if(clientunitIdValue==''){		
 		function success(status, data){
 			if(status == 'SaveClientSuccess') {
@@ -365,18 +383,18 @@ $("#btn-clientunit-submit").click(function(){
      	businessGroup["business_group_name"] = businessgrouptextValue;   
 	 	}
 	 	var legalEntity = {}
-	 	if(lentitytextValue==''){
+	 	if(lentitytextValue=='Select'){
 	 		legalEntity["legal_entity_id"] = parseInt(legalEntityValue);
-    	if(legalEntityValue!=''){
-    		legalEntity["legal_entity_name"] = legalEntityName;	
-    	}
-	    else{
-	    	legalEntity["legal_entity_name"] = '';	
-	    }	
+	    	if(legalEntityValue!=''){
+	    		legalEntity["legal_entity_name"] = legalEntityName;	
+	    	}
+		    else{
+		    	legalEntity["legal_entity_name"] = '';	
+		    }	
 	 	}
 	 	else{
 	 		legalEntity["legal_entity_id"] = '';
-     	legalEntity["legal_entity_name"] = lentitytextValue;   
+     		legalEntity["legal_entity_name"] = legalEntityName;   
 	 	}
 	 	var division = {}
 	 	if(divisiontextValue==''){

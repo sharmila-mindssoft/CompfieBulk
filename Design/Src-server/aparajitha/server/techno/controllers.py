@@ -442,99 +442,84 @@ class ClientController(object):
 
     def saveClient(self, requestData, sessionUser, savetype):
         self.sessionUser = int(sessionUser)
-        self.type = savetype
-        print "inside save client type {type}".format(type= savetype)
         self.clientId = requestData["client_id"]
+        self.type = savetype
+        
         self.businessGroup = requestData["business_group"]
-        if self.businessGroup == None:
-            self.optionalBusinessGroup = True
         self.legalEntity = requestData["legal_entity"]
         self.division = requestData["division"]
-        if self.division == None:
-            self.optionalDivision = True
         self.countryWiseUnits = requestData["country_wise_units"]
 
-        if self.processRequest():
-            client = Client()
-            if client.save(self.businessGroupObj, self.legalEntityObj,
-                self.divisionObj, self.unitObjList, self.sessionUser, self.type):
-               self.responseData = commonResponseStructure("SaveClientSuccess", {}) 
+        if self.businessGroup == None:
+            self.optionalBusinessGroup = True     
+        
+        if self.division == None:
+            self.optionalDivision = True        
+
+        if self.type == "save":
+            if self.processRequest():
+                if self.saveUnit():
+                   self.responseData = commonResponseStructure("SaveClientSuccess", {}) 
+                else:
+                    print "Error: Failed to save client"
             else:
-                print "Error: Failed to save client"
-        else:
-            print "Error : Save Client request validation failed"
+                print "Error : Save Client request validation failed"
+        elif self.type == "update":
+            if self.processUpdateRequest():
+                if self.updateUnit():
+                    self.responseData = commonResponseStructure("UpdateClientSuccess", {}) 
+                else:
+                    print "Error: Failed to update client"
+            else:
+                print "Error : Update Client request validation failed"
 
         return self.responseData
 
     def processRequest(self):
-        self.legalEntityId = self.legalEntity["legal_entity_id"]
-        self.legalEntityName = self.legalEntity["legal_entity_name"]
-
+        print "inside process request"
         if not self.optionalBusinessGroup:
+            print "inside not optionalBusinessGroup"
             self.businessGroupId = self.businessGroup["business_group_id"]
             self.businessGroupName = self.businessGroup["business_group_name"]
-            self.businessGroupObj = BusinessGroup(self.businessGroupId,
-                                    self.businessGroupName, self.clientId) 
-            self.legalEntityObj = LegalEntity(self.legalEntityId, 
-                                self.legalEntityName, 
-                                self.businessGroupObj.businessGroupId, 
-                                self.clientId)
-            if not self.optionalDivision:
-                self.divisionId = self.division["division_id"]
-                self.divisionName = self.division["division_name"]
-                self.divisionObj = Division(self.divisionId, self.divisionName, 
-                                self.legalEntityObj.legalEntityId, 
-                                self.businessGroupObj.businessGroupId, 
-                                self.clientId)
-            else:
-                self.divisionId = None
-                self.divisionName = None
+            if self.businessGroupId == None:
+                if not self.saveBusinessGroup():
+                    return False
+            print self.businessGroupId
+            print self.businessGroupName
         else:
             self.businessGroupId = None
             self.businessGroupName = None
-            self.legalEntityObj = LegalEntity(self.legalEntityId, 
-                                self.legalEntityName, None, self.clientId)
-            if not self.optionalDivision:
-                self.divisionObj = Division(self.divisionId, self.divisionName, 
-                                self.legalEntityObj.legalEntityId, None, 
-                                self.clientId)
-
-        
-        if not self.optionalBusinessGroup:
-            if (self.businessGroupObj.isDuplicate()):
-                self.responseData = commonResponseStructure("BusinessGroupNameAlreadyExists", {})
+            
+        self.legalEntityId = self.legalEntity["legal_entity_id"]
+        self.legalEntityName = self.legalEntity["legal_entity_name"]
+        if self.legalEntityId == None:
+            if not self.saveLegalEntity():
                 return False
-        elif self.legalEntityObj.isDuplicate():
-            self.responseData = commonResponseStructure("LegalEntityNameAlreadyExists", {})
-            return False
-        elif not self.optionalDivision:
-            if self.divisionObj.isDuplicate():
-                self.responseData = commonResponseStructure("DivisionNameAlreadyExists", {})
-                return False
+        print self.legalEntityId
+        print self.legalEntityName
 
-        if self.type == "update":
-            print "inside id check"
-            if not self.optionalBusinessGroup:
-                print "inside not optinal business group"
-                if self.businessGroupObj.isIdInvalid():
-                        self.responseData = commonResponseStructure("InvalidBusinessGroupId",{})
-                        return False
-            if self.legalEntityObj.isIdInvalid():
-                    self.responseData = commonResponseStructure("InvalidLegalEntityId",{})
+        if not self.optionalDivision:
+            print "inside not optionaldivision"
+            self.divisionId = self.division["division_id"]
+            self.divisionName = self.division["division_name"]
+            if self.divisionId == None:
+                if not self.saveDivision():
                     return False
-            elif not self.optionalDivision:            
-                if self.divisionObj.isIdInvalid():
-                        self.responseData = commonResponseStructure("InvalidDivisionId",{})
-                        return False
-
+            print self.divisionId
+            print self.divisionName
+        else:
+            self.divisionId = None
+            self.divisionName = None                      
+        self.unitObjList = []
         for country in self.countryWiseUnits:
             countryId = JSONHelper.getInt(country,"country_id")
             units = JSONHelper.getList(country, "units")
-            incrementUnitId = None
             for unit in units:
                 try:
                     self.unitId = JSONHelper.getInt(unit, "unit_id")
+                    print "inside try unit id {unitId}".format(unitId = self.unitId)
                 except:
+                    print "inside except.. will generate new id"
                     self.unitId = None
                 unitCode = JSONHelper.getString(unit, "unit_code")
                 unitName = JSONHelper.getString(unit, "unit_name")
@@ -545,15 +530,10 @@ class ClientController(object):
                 industryId = JSONHelper.getInt(unit, "industry_id")
                 industryName = JSONHelper.getString(unit, "industry_name")
                 domainIds = JSONHelper.getList(unit, "domain_ids")
-                
-                if not self.optionalBusinessGroup:
-                    self.businessGroupId = self.businessGroupObj.businessGroupId
-                if not self.optionalDivision:
-                    self.divisionId = self.divisionObj.divisionId
-                print "before unit create : clientid {x}".format(x=self.clientId)
+
                 unitObj = Unit(self.unitId, 
                                self.divisionId,
-                               self.legalEntityObj.legalEntityId, 
+                               self.legalEntityId, 
                                 self.businessGroupId, 
                                 self.clientId, countryId,geographyId, unitCode, 
                                 unitName, industryId, address, postalCode, domainIds, 
@@ -572,9 +552,174 @@ class ClientController(object):
                         self.unitObjList.append(unitObj)
                 else:
                     self.unitObjList.append(unitObj)
-        print "Unit objects list: {x}".format(x=self.unitObjList)
+        print self.unitObjList
+        return True
+
+    def processUpdateRequest(self):
+        print "inside update request"
+        if not self.optionalBusinessGroup:
+            print "inside not optionalBusinessGroup"
+            self.businessGroupId = self.businessGroup["business_group_id"]
+            self.businessGroupName = self.businessGroup["business_group_name"]
+            if not self.updateBusinessGroup():
+                return False
+        else:
+            self.businessGroupId = None
+            self.businessGroupName = None
+            
+        self.legalEntityId = self.legalEntity["legal_entity_id"]
+        self.legalEntityName = self.legalEntity["legal_entity_name"]
+        if not self.updateLegalEntity():
+            return False
+
+        if not self.optionalDivision:
+            print "inside not optionalBusinessGroup"
+            self.divisionId = self.division["division_id"]
+            self.divisionName = self.division["division_name"]
+            if not self.updateDivision():
+                return False
+        else:
+            self.divisionId = None
+            self.divisionName = None                      
+
+        for country in self.countryWiseUnits:
+            countryId = JSONHelper.getInt(country,"country_id")
+            units = JSONHelper.getList(country, "units")
+            for unit in units:
+                self.unitId = JSONHelper.getInt(unit, "unit_id")
+                unitCode = JSONHelper.getString(unit, "unit_code")
+                unitName = JSONHelper.getString(unit, "unit_name")
+                address = JSONHelper.getString(unit, "unit_address")
+                postalCode = JSONHelper.getString(unit, "postal_code")
+                geographyId = JSONHelper.getInt(unit, "geography_id")
+                geography = JSONHelper.getString(unit, "unit_location")
+                industryId = JSONHelper.getInt(unit, "industry_id")
+                industryName = JSONHelper.getString(unit, "industry_name")
+                domainIds = JSONHelper.getList(unit, "domain_ids")
+
+                unitObj = Unit(self.unitId, 
+                               self.divisionId,
+                               self.legalEntityObj.legalEntityId, 
+                                self.businessGroupId, 
+                                self.clientId, countryId,geographyId, unitCode, 
+                                unitName, industryId, address, postalCode, domainIds, 
+                                None, industryName, geography)
+                
+                if unitObj.isIdInvalid():
+                    self.responseData = commonResponseStructure("InvalidUnitId",{})
+                    return False
+                elif unitObj.isDuplicateUnitName():
+                    self.responseData = commonResponseStructure("UnitNameAlreadyExists",{})
+                    return False
+                elif unitObj.isDuplicateUnitCode():
+                    self.responseData = commonResponseStructure("UnitCodeAlreadyExists",{})
+                    return False
+                elif self.unitId != None:
+                    if unitObj.isIdInvalid():
+                        self.responseData = commonResponseStructure("InvalidUnitId",{})
+                        return False
+                    else:
+                        self.unitObjList.append(unitObj)
+                else:
+                    self.unitObjList.append(unitObj)
         return True
             
+    def saveBusinessGroup(self):
+        print "inside save Business group"
+        self.businessGroupObj = BusinessGroup(self.businessGroupId, self.businessGroupName, self.clientId) 
+        self.businessGroupId = self.businessGroupObj.businessGroupId
+        if (self.businessGroupObj.isDuplicate()):
+            self.responseData = commonResponseStructure("BusinessGroupNameAlreadyExists", {})
+            return False
+        elif self.businessGroupObj.save(self.sessionUser):
+            return True
+
+    def saveLegalEntity(self):
+        print "inside save legal entity"
+        self.legalEntityObj = LegalEntity(self.legalEntityId, self.legalEntityName, 
+                                self.businessGroupId, 
+                                self.clientId)
+        self.legalEntityId = self.legalEntityObj.legalEntityId
+        if self.legalEntityObj.isDuplicate():
+            self.responseData = commonResponseStructure("LegalEntityNameAlreadyExists", {})
+            return False
+        elif self.legalEntityObj.save(self.sessionUser):
+            return True
+
+    def saveDivision(self):
+        print "inside save division"
+        self.divisionObj = Division(self.divisionId, self.divisionName, 
+                            self.legalEntityId, 
+                            self.businessGroupId, 
+                            self.clientId)
+        self.divisionId = self.divisionObj.divisionId
+        if self.divisionObj.isDuplicate():
+            self.responseData = commonResponseStructure("DivisionNameAlreadyExists", {})
+            return False
+        elif self.divisionObj.save(self.sessionUser):
+            return True
+
+    def saveUnit(self):
+        print "inside save unit"
+        for unitObj in self.unitObjList:
+            print "unitObj.unitId :{x}".format(x= unitObj.unitId)
+            if unitObj.save(self.sessionUser):
+                continue
+            else:
+                return False
+        return True
+
+    def updateBusinessGroup(self):
+        print "inside update bg"
+        self.businessGroupObj = BusinessGroup(self.businessGroupId, self.businessGroupName, self.clientId) 
+        if self.businessGroupObj.isIdInvalid():
+            self.responseData = commonResponseStructure("InvalidBusinessGroupId",{})
+            return False
+        elif (self.businessGroupObj.isDuplicate()):
+            self.responseData = commonResponseStructure("BusinessGroupNameAlreadyExists", {})
+            return False
+        elif self.businessGroupObj.update(self.sessionUser):
+            return True
+
+    def updateLegalEntity(self):
+        print "inside update legal entity"
+        self.legalEntityObj = LegalEntity(self.legalEntityId, self.legalEntityName, 
+                                self.businessGroupId, 
+                                self.clientId)
+        if self.legalEntityObj.isIdInvalid():
+            self.responseData = commonResponseStructure("InvalidLegalEntityId",{})
+            return False
+        elif self.legalEntityObj.isDuplicate():
+            self.responseData = commonResponseStructure("LegalEntityNameAlreadyExists", {})
+            return False
+        elif self.legalEntityObj.update(self.sessionUser):
+            return True
+
+    def updateDivision(self):
+        print "inside update division"
+        self.divisionObj = Division(self.divisionId, self.divisionName, 
+                            self.legalEntityObj.legalEntityId, 
+                            self.businessGroupId, 
+                            self.clientId)
+        if self.divisionObj.isIdInvalid():
+            self.responseData = commonResponseStructure("InvalidDivisionId",{})
+            return False
+        elif self.divisionObj.isDuplicate():
+            self.responseData = commonResponseStructure("DivisionNameAlreadyExists", {})
+            return False
+        elif self.divisionObj.update(self.sessionUser):
+            return True
+
+    def updateUnit(self):
+        print "inside update unit"
+        for unitObj in self.unitObjList:
+            if unitObj.update(self.sessionUser):
+                continue
+            else:
+                return False
+        return True
+
+
     def getClients(self, sessionUser):
         responseData = {}
 

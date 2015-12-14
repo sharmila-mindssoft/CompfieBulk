@@ -53,7 +53,7 @@
   background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 }
 .grid-table table tr td { vertical-align: top;}
-
+.unit-error-msg {color: #f00000 ;float: right;  text-align: right; padding-right: 10px;}
 </style>
 <div class="content-container width60" id="clientunit-view">
   <div class="content-area">
@@ -148,7 +148,7 @@
               <span style="font-size:10px"><a href="#" id="division-new">New</a><a href="#" id="division-existing" style="display:none;">Cancel</a></span> </div>
           </div>
         </div>
-        
+        <input type="hidden" class="unitcount" value="">
         <div class="clearfix"></div>     
 
         <div class="add-container" style="padding-left:0px; padding-right:0px;">
@@ -170,14 +170,15 @@
 <div class="grid-table">
   <table class="btable">
     <tr style="background-color:#CCC;border-radius:5px;">
-      <td  align="left">Country : </td><td>
+      <td  align="left">Country : </td>
+      <td>
         <input type="text" class="input-box icon-autocomplete countryval" value=""  onkeyup="loadauto_text(this.value, this.className)" style="width:150px !important; background-color:#fff;"> 
         <input type="hidden" class="country"> 
         <div class="autocompleteview ac-textbox" style="display:none;" onclick="hidemenu(this.className);" onmouseleave="hidemenu(this.className);" >
           <ul class="ulist-text" style="width:195px;"></ul> 
         </div>
       </td>
-      <td colspan="7"></td>
+      <td colspan="7"><div style="text-align:right;" class="unit-error-msg"></div></td>
     </tr>
     <tr align="left">
       <th width="11%">Geography Level</th>
