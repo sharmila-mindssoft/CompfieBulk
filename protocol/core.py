@@ -450,7 +450,7 @@ ClientUser = RecordType("ClientUser", [
 
 AssignedStatutory = RecordType("AssignedStatutory", [
 	Field("level_1_statutory_id", USER_ID),
-    Field("level_1_statutory_name", EMAIL_ID),
+    Field("level_1_statutory_name", LEVEL_1_STATUTORY_NAME),
     Field("compliances", ComplianceApplicabilityList), 
     Field("applicable_status", STATUS),
     Field("not_applicable_remarks", DESCRIPTION)
