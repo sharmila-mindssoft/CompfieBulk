@@ -698,9 +698,13 @@ function temp_addcompliance(){
 
 function load_compliance(){
     $(".tbody-compliance-list").find("tr").remove();
-    complianceid = 0;
+      complianceid = 0;
      for(var entity in compliances) {
         var display_repeats = 'Nil';
+        var edit_compliance_id = compliances[entity]["compliance_id"];
+        var passStatus = '';
+        var isActive = compliances[entity]["is_active"];
+        var display_image = '';
         if(compliances[entity]["repeats_every"] != null && compliances[entity]["repeats_type"] != null){
           display_repeats = compliances[entity]["repeats_every"] + " " + compliances[entity]["repeats_type"];
         }
@@ -713,7 +717,21 @@ function load_compliance(){
         $('.frequency', clone).text(compliances[entity]["compliance_frequency"]);
         $('.repeats', clone).text(display_repeats);
         $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="temp_editcompliance(\''+complianceid+'\')"/>');
-        $('.status', clone).html('<img src=\'/images/icon-delete.png\' onclick="temp_removecompliance(\''+complianceid+'\')"/>');
+
+        if(edit_compliance_id != ''){
+          if(isActive == 1) {
+            display_image="icon-active.png"
+            passStatus = "0";
+          }
+          else {
+            display_image="icon-inactive.png";
+            passStatus = "1";
+           }
+          $('.status', clone).html('<img src=\'/images/'+display_image+'\' onclick="temp_change_status_compliance(\''+complianceid+'\','+passStatus+')"/>');
+        }else{
+          $('.status', clone).html('<img src=\'/images/icon-delete.png\' onclick="temp_removecompliance(\''+complianceid+'\')"/>');
+        }
+        
         $('.tbody-compliance-list').append(clone);
 
         complianceid = complianceid + 1;
@@ -734,6 +752,8 @@ function temp_editcompliance(edit_id){
     $('#repeats_type').val(compliances[edit_id]["repeats_type"]);
     $('#repeats_every').val(compliances[edit_id]["repeats_every"]);
 
+    alert(compliances[edit_id]["repeats_type"]);
+
       var compliance_frequency = compliances[edit_id]["compliance_frequency"];
       statutory_dates = compliances[edit_id]["statutory_dates"];
       if(compliance_frequency == "OneTime"){
@@ -749,7 +769,6 @@ function temp_editcompliance(edit_id){
         $('#Recurring').show();
         $('#Occasional').hide();
         $('#One_Time').hide();
-
         if(statutory_dates.length > 1){
             $('.multipleinput').prop("checked") == true;
             $('.multipleselectnone').hide();
@@ -787,6 +806,11 @@ function temp_editcompliance(edit_id){
 function temp_removecompliance(remove_id){
     compliances.splice(remove_id,1);
     load_compliance();
+}
+
+function temp_change_status_compliance(edit_id, passStatus){
+   compliances[edit_id]["is_active"] = passStatus;
+   load_compliance();
 }
 function make_breadcrumbs2(){
     var arrowimage = " <img src=\'/images/right_arrow.png\'/> ";
@@ -941,6 +965,7 @@ function getGeographyResult(){
       }
 }
 
+
 function filter_geography(position){  
     var glist_filter = document.getElementsByClassName('list'+position);
     var filter = $('#filter_geography'+position).val().toLowerCase();
@@ -968,7 +993,7 @@ function saveRecord(){
     function failure(data){
 
     }
-    statutorymappingData = mirror.statutoryMapping(sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids)
+    statutorymappingData = mirror.statutoryMapping(sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, $("#edit_sm_id").val())
     mirror.saveStatutoryMapping(statutorymappingData, success, failure);
 }
 
@@ -1099,7 +1124,6 @@ function displayEdit (sm_Id) {
     $("#listview").hide();
     $("#addview").show();
     $("#edit_sm_id").val(sm_Id);
-
     sm_countryid = statutoryMappingsList[sm_Id]["country_id"];
     sm_countryval = statutoryMappingsList[sm_Id]["country_name"];
     sm_domainid = statutoryMappingsList[sm_Id]["domain_id"];
@@ -1110,6 +1134,7 @@ function displayEdit (sm_Id) {
     sm_statutorynatureval = statutoryMappingsList[sm_Id]["statutory_nature_name"];
     sm_statutoryids = statutoryMappingsList[sm_Id]["statutory_ids"];
     compliances = statutoryMappingsList[sm_Id]["compliances"];
+    sm_geographyids = statutoryMappingsList[sm_Id]["geographies_ids"];
 
     load_edit_selectdomain_master(sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid);
 
@@ -1117,47 +1142,62 @@ function displayEdit (sm_Id) {
 
     load_compliance();
 
-
-        /*industryName = statutoryMappingsList[sm_Id]["industry_names"];
-        statutoryNatureName = statutoryMappingsList[entity]["statutory_nature_name"];        
-        var statutoryMappings='';
-        for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
-          statutoryMappings = statutoryMappings + statutoryMappingsList[entity]["statutory_mappings"][i] + " <br>";
-        }
-        var complianceNames='';
-        for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
-          complianceNames = complianceNames + statutoryMappingsList[entity]["compliance_names"][i] + " <br>";
-        }
-        statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
-        countryName = statutoryMappingsList[sm_Id]["country_name"];
-        domainName = statutoryMappingsList[entity]["domain_name"];
-        isActive = statutoryMappingsList[entity]["is_active"];
-        approvalStatus = statutoryMappingsList[entity]["approval_status"];
-        if(isActive == 1) {
-          passStatus="0";
-          imgName="icon-active.png"
-        }
-        else {
-          passStatus="1";
-          imgName="icon-inactive.png"
-         }
-         if(approvalStatus == '0'){
-          approvalStatus = "Pending";
-         }
-        var tableRow=$('#templates .table-statutorymapping .table-row');
-        var clone=tableRow.clone();
-        $('.sno', clone).text(j);
-        $('.country', clone).text(countryName);
-        $('.domain', clone).text(domainName);
-        $('.industry', clone).text(industryName);
-        $('.statutorynature', clone).text(statutoryNatureName);
-        $('.statutory', clone).html(statutoryMappings);
-        $('.compliancetask', clone).html(complianceNames);
-        $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+statutorymappingId+')"/>');
-        $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+statutorymappingId+','+passStatus+')"/>');
-        $('.approvalstatus', clone).text(approvalStatus);
-        $('.tbody-statutorymapping-list').append(clone);
-        j = j + 1;
-        */
+    edit_geography(sm_countryid,sm_geographyids);
 
     }
+
+//edit geographymapping data dynamically
+function edit_geography(country,geographyids_edit){
+    var geographyids=geographyids_edit;
+    /*$(".list"+level+".active").each( function( index, el ) {
+        var split_id = el.id.split(',');
+        geographyids.push([parseInt(split_id[0]),el.innerHTML]);
+    });*/
+    
+    /*var levelstages= 1;
+    for(var k=levelstages;k<=10;k++){
+        var setlevelstage= k;
+        if($('#geographyid').val()==''){
+            $('#datavalue'+setlevelstage).val('');
+        }
+        $('#ulist'+setlevelstage).empty();
+        var splittext = '';
+        var idval='';
+        var clsval='.list'+setlevelstage;
+        var clsval1='list'+setlevelstage;
+        var str='';
+        var sel_all='<li id="0" class="'+clsval1+'" onclick="activate_geography_all(this,'+sm_countryid+','+setlevelstage+')" > Select All</li>';
+        var geographyLevelList = geographyLevelsList[country];
+        var levelid=$('#glmid'+setlevelstage).val();
+        var geographyList = geographiesList[country];
+
+        //working order is even for multiple selection
+
+       for(var j=0;j<geographyids.length;j++){
+        splittext = '';
+        for(var i in geographyList){
+          var setgeographyid = geographyList[i]["geography_id"];
+          var setparentid = geographyList[i]["parent_id"];
+          var combineid = setgeographyid + "," + setparentid;
+
+          /*alert(geographyList[i]["parent_id"] + ":"+ geographyids[j]);
+          alert(geographyList[i]["level_id"] + ":"+ levelid);
+          alert(geographyList[i]["is_active"] + ":"+ 1);*/
+
+          /*if( geographyList[i]["parent_id"] == geographyids[j] && geographyList[i]["level_id"] == levelid && geographyList[i]["is_active"] == 1) {
+            str += sel_all;
+            alert("enter");
+           if(splittext != '') {
+            str += '<li id="'+combineid+'" class="'+clsval1+'" onclick="activate_geography(this,'+country+','+setlevelstage+')" > '+geographyList[i]["geography_name"]+'</li>';
+           }else{
+            splittext = '<h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">'+geographyids[j][1]+'</h3>';
+            str += splittext + '<li id="'+combineid+'" class="'+clsval1+'" onclick="activate_geography(this,'+country+','+setlevelstage+')" >'+geographyList[i]["geography_name"]+'</li>';
+           }
+           sel_all = '';
+        }
+        }
+       }
+        $('#ulist'+setlevelstage).append(str); 
+    }*/
+    
+}
