@@ -91,9 +91,9 @@ class APIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "ApproveStatutoryMapping" :
                     response = StatutoryMappingApi(request, userId).changeApprovalStatus()
                 elif request[0] == "GetStatutoryMappingReportFilters" :
-                    response = StatutoryMappingApi(request, userId).getReportFilters()
+                    response = StatutoryMappingReport(request, userId).getReportFilters()
                 elif request[0] == "GetStatutoryMappingReportData" :
-                    response = StatutoryMappingApi(request, userId).getReportData()
+                    response = StatutoryMappingReport(request, userId).getReportData()
                 else :
                     response = PossibleError("InvalidRequest").toStructure()
 
