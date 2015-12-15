@@ -81,7 +81,7 @@ CREATE TABLE `tbl_user_countries` (
   `country_id` int(11) NOT NULL,
   PRIMARY KEY (`country_id`,`user_id`),
   CONSTRAINT `fk_tbl_users_countries_user_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`),
-  CONSTRAINT `fk_tbl_user_countries_countries_id` FOREIGN KEY (`country_id`) REFERENCES `tbl_client_countries` (`country_id`)
+  CONSTRAINT `fk_tbl_user_countries_countries_id` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_user_domains`;
@@ -102,14 +102,12 @@ CREATE TABLE `tbl_user_login_history` (
   CONSTRAINT `tbl_user_login_history_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
 DROP TABLE IF EXISTS `tbl_session_types`;
 CREATE TABLE `tbl_session_types` (
   `session_type_id` int(11) NOT NULL,
   `session_type` varchar(20) NOT NULL,
   PRIMARY KEY (`session_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 
 DROP TABLE IF EXISTS `tbl_user_sessions`;
 CREATE TABLE `tbl_user_sessions` (
@@ -482,7 +480,7 @@ CREATE TABLE `tbl_client_users` (
   `email_id` varchar(100) NOT NULL,
   `employee_name` int(50) NOT NULL,
   `employee_code` varchar(50) NOT NULL,
-  `contact_no` varchar(20) NOT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
   `is_admin` tinyint(1) NOT NULL,
   `is_active` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -492,10 +490,10 @@ DROP TABLE IF EXISTS `tbl_statutory_notifications_log`;
 CREATE TABLE `tbl_statutory_notifications_log` (
   `statutory_notification_id` int(11) NOT NULL,
   `statutory_backup_id` int(11) NOT NULL,
-  `country_name` varchar(50) NOT NULL,
-  `domain_name` varchar(50) NOT NULL,
-  `industry_name` varchar(50) NOT NULL,
-  `statutory_nature` varchar(50) NOT NULL,
+  `country_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
+  `industry_id` int(11) NOT NULL,
+  `statutory_nature_id` int(11) NOT NULL,
   `statutory_provision` longtext,
   `applicable_location` longtext,
   `notification_text` longtext,
