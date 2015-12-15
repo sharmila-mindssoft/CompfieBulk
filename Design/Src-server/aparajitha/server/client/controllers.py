@@ -171,6 +171,7 @@ class UserController() :
         userGroupList = UserPrivilege.getList(clientId)
         userList = User.getDetailedList(clientId)
         groupDetails = GroupCompany.getDetailedClientList()
+        serviceProvidersList = ServiceProvider.getSimpleList(sessionUser)
 
         countryIds =groupDetails[0]["country_ids"]
         domainIds =groupDetails[0]["domain_ids"]
@@ -194,6 +195,7 @@ class UserController() :
         response_data["units"] = unitList
         response_data["user_groups"] = userGroupList
         response_data["users"] = userList
+        response_data["service_providers"] = serviceProvidersList
 
         response = commonResponseStructure("GetClientUsersSuccess", response_data)
         return response

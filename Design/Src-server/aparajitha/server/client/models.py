@@ -369,6 +369,31 @@ class ServiceProvider(object):
         "is_active": self.isActive
     }
 
+    def toSimpleStructure(self):
+        return {
+        "service_provider_id": self.serviceProviderId,
+        "service_provider_name": self.serviceProviderName,
+        "is_active": self.isActive
+    }
+
+    @classmethod
+    def getSimpleList(self, sessionUser):
+        servcieProviderList = []
+        columns = "service_provider_id, service_provider_name, is_active"
+        clientId = getClientId(sessionUser)
+        rows = ClientDatabaseHandler.instance(getClientDatabase(clientId)).getData(
+            ServiceProvider.tblName, columns, "1")
+
+        for row in rows:
+            serviceProviderId = int(row[0])
+            serviceProviderName = row[1]
+            isActive = row[2]
+            serviceProvider = ServiceProvider(None, serviceProviderId, serviceProviderName, None, 
+                None, None, None, None, isActive)
+            servcieProviderList.append(serviceProvider.toSimpleStructure())
+
+        return servcieProviderList
+
     @classmethod
     def getList(self, sessionUser):
         servcieProviderList = []
