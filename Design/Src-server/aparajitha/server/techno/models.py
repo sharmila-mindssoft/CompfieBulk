@@ -541,14 +541,14 @@ class Unit(object):
         self.legalEntityId = int(legalEntityId)
         self.businessGroupId = int(businessGroupId)  if businessGroupId != None else None
         self.countryId = int(countryId) 
-        self.geographyId = int(geographyId) if businessGroupId != None else None
+        self.geographyId = geographyId if businessGroupId != None else None
         self.unitCode = str(unitCode)
         self.unitName = str(unitName)
-        self.industryId = int(industryId) if businessGroupId != None else None
+        self.industryId = industryId if businessGroupId != None else None
         self.address = str(address)
         self.postalCode = str(postalCode)
         self.domainIds = domainIds
-        self.isActive = int(isActive) if isActive != None else 1
+        self.isActive = isActive if isActive != None else 1
         self.industryName = str(industryName)
         self.geography = str(geography)
 
@@ -698,7 +698,7 @@ class Unit(object):
         unitList = []
 
         for index, clientId in enumerate(clientIds.split(",")):
-            try:
+            # try:
                 clientDBName = getClientDatabase(clientId)
                 clientColumns = "unit_id, division_id, legal_entity_id, "+\
                                 "business_group_id, unit_code, unit_name,"+\
@@ -722,8 +722,8 @@ class Unit(object):
                             None, address, None, domainIds, None, None, None)
                     unitList.append(unit.toStructure())
 
-            except:
-                print "Error: While fetching Unit of client id %s" % clientId
+            # except:
+            #     print "Error: While fetching Unit of client id %s" % clientId
 
         return unitList
 
