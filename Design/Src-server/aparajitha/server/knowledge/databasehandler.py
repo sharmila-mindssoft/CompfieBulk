@@ -114,9 +114,15 @@ class DatabaseHandler(object) :
             isDuplicate = True
 
         return isDuplicate
-            
+
     def getDomains(self) :
         query = "SELECT domain_id, domain_name, is_active FROM tbl_domains "
+        return self.dataSelect(query)
+
+    def getDomainsForUser(self, userId) :
+        query = "SELECT t1.domain_id, t1.domain_name, t1.is_active FROM tbl_domains t1 \
+            INNER JOIN tbl_user_domains t2 ON t1.domain_id = t2.domain_id \
+            WHERE t2.user_id = %s" % (userId)
         return self.dataSelect(query)
 
     def saveDomain(self, domainName, createdBy) :
@@ -177,6 +183,12 @@ class DatabaseHandler(object) :
 
     def getCountries(self) :
         query = "SELECT country_id, country_name, is_active FROM tbl_countries "
+        return self.dataSelect(query)
+
+    def getCountriesForUser(self, userId) :
+        query = "SELECT t1.country_id, t1.country_name, t1.is_active FROM tbl_countries t1 \
+            INNER JOIN tbl_user_countries t2 ON t1.domain_id = t2.domain_id \
+            WHERE t2.user_id = %s" % (userId)
         return self.dataSelect(query)
 
     def checkDuplicateCountry(self, countryName, countryId) :
@@ -888,14 +900,16 @@ class DatabaseHandler(object) :
         return self.dataInsertUpdate(query)
 
     ### Stautory Mapping ###
-    def getStautoryMappings(self) :
+    def getStautoryMappings(self, userId) :
         query = "SELECT t1.statutory_mapping_id, t1.country_id, t2.country_name, t1.domain_id,  \
             t3.domain_name, t1.industry_ids, t1.statutory_nature_id, t4.statutory_nature_name, \
             t1.statutory_ids, t1.compliance_ids, t1.geography_ids, t1.approval_status, t1.is_active  \
             FROM tbl_statutory_mappings t1 \
             INNER JOIN tbl_countries t2 on t1.country_id = t2.country_id \
             INNER JOIN tbl_domains t3 on t1.domain_id = t3.domain_id \
-            INNER JOIN tbl_statutory_natures t4 on t1.statutory_nature_id = t4.statutory_nature_id "
+            INNER JOIN tbl_statutory_natures t4 on t1.statutory_nature_id = t4.statutory_nature_id \
+            INNER JOIN tbl_user_domains t5 on t1.domain_id = t5.domain_id and t5.user_id = %s \
+            INNER JOIN tbl_user_countries t6 on t1.country_id = t6.country_id and t6.user_id = %s" %(userId, userId)
         return self.dataSelect(query)
 
     def getStatutoryMappingsById (self, mappingId) :
