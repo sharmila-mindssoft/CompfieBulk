@@ -7,7 +7,7 @@ import uuid
 from models import *
 from aparajitha.server.common import *
 from aparajitha.server.admin.models import User as AdminUser
-from aparajitha.server.techno.models import BusinessGroup,LegalEntity,Division,Unit
+from aparajitha.server.techno.models import GroupCompany, BusinessGroup,LegalEntity,Division,Unit
 from aparajitha.server.knowledge.models import DomainList, CountryList
 from aparajitha.server.databasehandler import DatabaseHandler
 from aparajitha.server.clientdatabasehandler import ClientDatabaseHandler
@@ -163,17 +163,31 @@ class UserController() :
         clientId = str(getClientId(sessionUser))
 
         countryList = CountryList.getCountryList()
-    	domainList = DomainList.getDomainList()
+        domainList = DomainList.getDomainList()
         businessGroupList = BusinessGroup.getList(clientId)
         legalEntityList = LegalEntity.getList(clientId)
         divisionList = Division.getList(clientId)
         unitList = Unit.getList(clientId)
-    	userGroupList = UserPrivilege.getList(clientId)
-    	userList = User.getDetailedList(clientId)
+        userGroupList = UserPrivilege.getList(clientId)
+        userList = User.getDetailedList(clientId)
+        groupDetails = GroupCompany.getDetailedClientList()
+
+        countryIds =groupDetails[0]["country_ids"]
+        domainIds =groupDetails[0]["domain_ids"]
+
+        newCountryList = []
+        newDomainList = []
+        for country in countryList:
+            if str(country["country_id"]) in countryIds:
+                newCountryList.append(country) 
+
+        for domain in domainList:
+            if str(domain["domain_id"]) in domainIds:
+                newDomainList.append(domain)
 
         response_data = {}
-        response_data["domains"] = domainList
-        response_data["countries"] = countryList
+        response_data["domains"] = newDomainList
+        response_data["countries"] = newCountryList
         response_data["business_groups"] = businessGroupList
         response_data["legal_entities"] = legalEntityList
         response_data["divisions"] = divisionList
