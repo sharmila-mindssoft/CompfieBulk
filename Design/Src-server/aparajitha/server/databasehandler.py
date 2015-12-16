@@ -172,7 +172,8 @@ class DatabaseHandler(object) :
             return False
 
     def getData(self, table, columns, condition):
-        query = "SELECT "+columns+" FROM "+table+" WHERE "+condition 
+        # query = "SELECT "+columns+" FROM "+table+" WHERE "+condition 
+        query = "SELECT %s FROM %s WHERE %s "  % (table, columns, condition)
         return self.executeAndReturn(query)
 
     def getDataFromMultipleTables(self, columns, tables, conditions, joinType):
@@ -209,6 +210,42 @@ class DatabaseHandler(object) :
             return False
         else:
             return True
+
+    def add_session(self, user_id) :
+        session_id = self.new_uuid()
+        query = "insert into tbl_user_sessions values ('%s', '%s', '%d');"
+        query = query % (session_id, user_id, current_timestamp())
+        self._db.execute(query)
+        return session_id
+
+    def verifyLogin(self, userName, password):
+        tblAdminCondition = "password='%s' and user_name='%s'" % (password, userName)
+        adminDetails = self.getData("tbl_admin", "*", tblAdminCondition)
+        if (len(adminDetails) == 0) :
+            query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
+                t1.employee_name, t1.employee_code, t1.contact_no, t1.address, t1.designation \
+                t2.user_group_name, t2.form_ids \
+                FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
+                ON t1.user_group_id = t2.user_group_id \
+                WHERE t1.password='%s' and t1.email_id='%s'" % (password, userName)
+            return userDetails = self.executeAndReturn(query)
+        else :
+            return True
+
+    def getForms(self, form_category_id, form_ids):
+        query = "SELECT t1.form_id, t1.form_category_id, t1.form_type_id, t1.form_name, \
+            t1.form_url, t1.form_order, t1.parent_menu, t2.form_category_name, t3.form_type_name \
+            FROM tbl_forms t1 INNER JOIN tbl_form_category t2 ON t1.form_category_id = t2.form_category_id \
+            INNER JOIN tbl_form_types t3 ON t1.form_type_id = t3.form_type_id "
+        qry = ""
+
+        if (form_category_id is not None) :
+            qry = " WHERE t1.form_category_id = %s" % (form_category_id)
+        if (form_ids is not None):
+            ids = [int(x) for x in form_ids.split(',')]
+            qry = " WHERE t1.form_id in '%s' " str(tuple(ids))
+
+        return self.executeAndReturn(query + qry)
 
     def truncate(self, table):
         query = "TRUNCATE TABLE  %s;" % table
