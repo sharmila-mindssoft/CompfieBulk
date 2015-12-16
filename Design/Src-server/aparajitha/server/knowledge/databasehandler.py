@@ -793,7 +793,7 @@ class DatabaseHandler(object) :
             complianceTask = data.get("compliance_task")
             complianceDescription = data.get("description")
             documentName = data.get("document")
-            formatFile = data.get("format_file_name")
+            formatFile = ','.join(str(x) for x in data.get("format_file_name")) + ","
             penalConsequences = data.get("penal_consequences")
             complianceFrequency = data.get("compliance_frequency")
             statutoryDates =  json.dumps(data.get("statutory_dates"))
@@ -845,7 +845,7 @@ class DatabaseHandler(object) :
             complianceTask = data.get("compliance_task")
             complianceDescription = data.get("description")
             documentName = data.get("document")
-            formatFile = data.get("format_file_name")
+            formatFile = ','.join(str(x) for x in data.get("format_file_name")) + ","
             penalConsequences = data.get("penal_consequences")
             complianceFrequency = data.get("compliance_frequency")
             statutoryDates =  json.dumps(data.get("statutory_dates"))
@@ -984,7 +984,7 @@ class DatabaseHandler(object) :
                 where statutory_mapping_id = %s" % (complianceIds, statutoryMappingId)
             self.dataInsertUpdate(qry)
             action = "Edit Statutory Mappings"
-            self.saveActivity(userId, 17, action)
+            self.saveActivity(updatedBy, 17, action)
             return True
         else :
             return False
