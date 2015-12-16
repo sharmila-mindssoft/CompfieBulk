@@ -1272,7 +1272,7 @@ class Compliance(object) :
             "description": self.description,
             "document_name": self.documentName,
             "format_file_name": self.formatFileName,
-            "penal_description": self.penalDescription,
+            "penal_consequences": self.penalDescription,
             "compliance_frequency": self.complianceFrequency,
             "statutory_dates": self.statutoryDates,
             "repeats_every": self.repeatsEvery, 
