@@ -322,6 +322,8 @@ CREATE TABLE `tbl_statutories_backup` (
   `statutory_nature` varchar(50) NOT NULL,
   `statutory_provision` longtext,
   `applicable_location` longtext,
+  `created_by` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_on` int(11) NOT NULL,
   PRIMARY KEY (`statutory_backup_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

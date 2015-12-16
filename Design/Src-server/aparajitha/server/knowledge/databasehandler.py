@@ -1056,7 +1056,7 @@ class DatabaseHandler(object) :
             geoMap.append(data[1])
         geoMappings = ','.join(str(x) for x in geoMap)
         query = "INSERT INTO tbl_statutories_backup(statutory_backup_id, country_name, domain_name, industry_name, \
-            statutory_nature, statutory_provision, applicable_location, updated_by, updated_on) \
+            statutory_nature, statutory_provision, applicable_location, created_by, created_on) \
             VALUES(%s, '%s', '%s', '%s', '%s', '%s', '%s', %s, '%s') " % (
                 backupId, oldRecord[1], oldRecord[3], industryName, oldRecord[6], mappings, geoMappings,
                 createdBy, createdOn
