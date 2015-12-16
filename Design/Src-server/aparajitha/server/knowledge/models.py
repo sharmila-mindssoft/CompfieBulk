@@ -1394,8 +1394,8 @@ class StatutoryMappingApi(object):
         assertType(self.request[1], DictType)
         self.userId = userId
         self.responseData = None
-        self.countryList = CountryList().getUserCountry()
-        self.domainList = DomainList().getUserDomains()
+        self.countryList = CountryList().getUserCountry(userId)
+        self.domainList = DomainList().getUserDomains(userId)
         self.industryList = IndustryList().getIndustries()
         self.statutoryNatureList = StatutoryNatureList().getStatutoryNatures()
         self.statutoryLevelList = StatutoryLevelsList().getStatutoryLevels()
@@ -1537,8 +1537,8 @@ class StatutoryMappingReport(object) :
         return statutories
 
     def getReportFilters(self) :
-        self.countryList = CountryList().getUserCountry()
-        self.domainList = DomainList().getUserDomains()
+        self.countryList = CountryList().getUserCountry(self.userId)
+        self.domainList = DomainList().getUserDomains(self.userId)
         self.industryList = IndustryList().getIndustries()
         self.statutoryNatureList = StatutoryNatureList().getStatutoryNatures()
         self.geographies= GeographyAPI(request, userId).getGeographyList()
