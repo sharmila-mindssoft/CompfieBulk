@@ -841,6 +841,10 @@ class DatabaseHandler(object) :
         complianceIds = []
         for data in datas :
             complianceId = data.get("compliance_id")
+            if (len(complianceId) == 0) :
+                ids = self.saveCompliance(mappingId, [data], updatedBy)
+                complianceIds.extend(ids)
+                continue
             statutoryProvision = data.get("statutory_provision")
             complianceTask = data.get("compliance_task")
             complianceDescription = data.get("description")
