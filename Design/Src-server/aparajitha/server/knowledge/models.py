@@ -134,11 +134,12 @@ class DomainList(object) :
         return self.domainList
 
     def getUserDomains(self, userId):
+        _domainList = []
         _domains = DatabaseHandler.instance().getDomainsForUser(userId)
         for row in _domains :
             domain = Domain(int(row[0]), row[1], row[2])
-            self.domainList.append(domain.toStructure())
-        return self.domainList
+            _domainList.append(domain.toStructure())
+        return _domainList
 
 
     def toStructure(self) :
@@ -282,11 +283,12 @@ class CountryList(object) :
         return self.countryList
 
     def getUserCountry(self, userId) :
+        _countryList = []
         _countries = DatabaseHandler.instance().getCountriesForUser(userId)
         for row in _countries :
             country = Country(int(row[0]), row[1], row[2])
-            self.countryList.append(country.toStructure())
-        return self.countryList
+            _countryList.append(country.toStructure())
+        return _countryList
 
 
     def toStructure(self) :
