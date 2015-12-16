@@ -187,7 +187,7 @@ class DatabaseHandler(object) :
 
     def getCountriesForUser(self, userId) :
         query = "SELECT t1.country_id, t1.country_name, t1.is_active FROM tbl_countries t1 \
-            INNER JOIN tbl_user_countries t2 ON t1.domain_id = t2.domain_id \
+            INNER JOIN tbl_user_countries t2 ON t1.country_id = t2.country_id \
             WHERE t2.user_id = %s" % (userId)
         return self.dataSelect(query)
 
