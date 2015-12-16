@@ -243,7 +243,7 @@ class DatabaseHandler(object) :
             qry = " WHERE t1.form_category_id = %s" % (form_category_id)
         if (form_ids is not None):
             ids = [int(x) for x in form_ids.split(',')]
-            qry = " WHERE t1.form_id in '%s' " str(tuple(ids))
+            qry = " WHERE t1.form_id in '%s' " % str(tuple(ids))
 
         return self.executeAndReturn(query + qry)
 
