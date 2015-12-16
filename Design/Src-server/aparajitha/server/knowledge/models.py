@@ -133,7 +133,7 @@ class DomainList(object) :
     def getDomains(self) :
         return self.domainList
 
-    def getUserDomains(self):
+    def getUserDomains(self, userId):
         _domains = DatabaseHandler.instance().getDomains()
         for row in _domains :
             domain = Domain(int(row[0], row[1], row[2]))
