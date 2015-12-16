@@ -228,7 +228,7 @@ class DatabaseHandler(object) :
                 FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
                 ON t1.user_group_id = t2.user_group_id \
                 WHERE t1.password='%s' and t1.email_id='%s'" % (password, userName)
-            return userDetails = self.executeAndReturn(query)
+            return self.executeAndReturn(query)
         else :
             return True
 
