@@ -543,20 +543,8 @@ function load_stautorydates(){
 <div class="setup-content" id="step-3">
 <div class="innercontent">
 
-<table style="width:100%;line-height: 25px;float: left;background: #f1e9f6;color: #000;-webkit-border-radius: 0.3em;-moz-border-radius: 0.3em; border-radius: 0.3em;">
-  <tr>
-  <td style="width:auto%; vertical-align: middle;">
-  <h2 style="font-size:0.813em;" class="breadcrumbs_1"> </h2>
-  </td>
-  <td style="width:auto; vertical-align: middle;">
-   <h2><img src="/images/chevron_black_right.png"></h2>
-  </td>
-   <td style="width:auto%; vertical-align: middle;">
-   <h2 style="font-size:0.813em;" class="breadcrumbs_2"> </h2>
-  </td>
-  </tr>
-</table>
-  
+<h2 style="font-size:0.813em;"> <span class="breadcrumbs_1"> </span>  <img src="/images/chevron_black_right.png"> <span class="breadcrumbs_2"> </span></h2>
+
              <div class="form-container-grid-table-sm">
               <section id="section-flip-1">
                 <div class="input-row-left">
@@ -995,28 +983,9 @@ function load_stautorydates(){
 </table>
 </div>
   <div class="setup-content" id="step-4">
-    <div class="innercontent">
-      
-  <table style="width:100%;line-height: 25px;float: left;background: #f1e9f6;color: #000;-webkit-border-radius: 0.3em;-moz-border-radius: 0.3em; border-radius: 0.3em;">
-  <tr>
-  <td style="width:auto%; vertical-align: middle;">
-  <h2 style="font-size:0.813em;" class="breadcrumbs_1"> </h2>
-  </td>
-  <td style="width:auto; vertical-align: middle;">
-   <h2><img src="/images/chevron_black_right.png"></h2>
-  </td>
-   <td style="width:auto%; vertical-align: middle;">
-   <h2 style="font-size:0.813em;" class="breadcrumbs_2"> </h2>
-  </td>
-  <td style="width:auto; vertical-align: middle;">
-   <h2><img src="/images/chevron_black_right.png"></h2>
-  </td>
-   <td style="width:auto%; vertical-align: middle;">
-   <h2 style="font-size:0.813em;" class="breadcrumbs_3"> </h2>
-  </td>
-  </tr>
-</table>
+<div class="innercontent">
 
+<h2 style="font-size:0.813em;"> <span class="breadcrumbs_1"> </span>  <img src="/images/chevron_black_right.png"> <span class="breadcrumbs_2">  </span> <img src="/images/chevron_black_right.png"> <span class="breadcrumbs_3"> </span></h2>
 
   <div class="form-container-grid-table" style="padding-top:10px;">
   <table>
@@ -1024,7 +993,6 @@ function load_stautorydates(){
     </tbody>
   </table>
   </div>
-
 
     </div>
     <button id="activate-step-finish" class="btn-right">Submit</button>
@@ -1068,24 +1036,24 @@ function load_stautorydates(){
 
     $('ul.setup-panel li.active a').trigger('click');
     $('#activate-step-2').on('click', function(e) {
-      //if (validate_firsttab()){
+      if (validate_firsttab()){
       $('ul.setup-panel li:eq(1)').removeClass('disabled');
       $('ul.setup-panel li a[href="#step-2"]').trigger('click');
-     // }
+      }
       
     }) 
     $('#activate-step-3').on('click', function(e) {
-      //if (validate_secondtab()){
+      if (validate_secondtab()){
       $('ul.setup-panel li:eq(2)').removeClass('disabled');
       $('ul.setup-panel li a[href="#step-3"]').trigger('click');
-    //}
+    }
     })  
 
     $('#activate-step-4').on('click', function(e) {
-      //if (validate_thirdtab()){
+      if (validate_thirdtab()){
       $('ul.setup-panel li:eq(3)').removeClass('disabled');
       $('ul.setup-panel li a[href="#step-4"]').trigger('click');
-    //}
+    }
     })  
 
     $('#backward-step-1').on('click', function(e) {
@@ -1105,9 +1073,9 @@ function load_stautorydates(){
     })  
     $('#activate-step-finish').on('click', function(e) {
       getGeographyResult();
-      //if (validate_fourthtab()){
-        saveRecord();
-      //}   
+      if (validate_fourthtab()){
+        savestatutorymapping();
+      }   
     })  
 
 });

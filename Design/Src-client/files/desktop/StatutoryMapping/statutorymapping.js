@@ -276,8 +276,8 @@ function loadStatutoryMappingList(statutoryMappingsList) {
 	    $("#error").text('');
 	    $("#listview").hide();
 	    $("#addview").show();
-      sm_industryid=[];
-      sm_industryval=[];
+      //sm_industryid=[];
+      //sm_industryval=[];
       sm_countryid='';
       sm_domainid='';
       sm_statutorynatureid='';
@@ -325,9 +325,9 @@ function loadStatutoryMappingList(statutoryMappingsList) {
 	var chkstatus = $(element).attr('class');
 	if(chkstatus == 'industrylist active'){
 		$(element).removeClass("active");
-        var removeid = sm_industryid.indexOf(id);
+        var removeid = sm_industryids.indexOf(id);
         sm_industryids.splice(removeid,1);
-        var removename = sm_industryval.indexOf(dispname);
+        var removename = sm_industryvals.indexOf(dispname);
         sm_industryvals.splice(removename,1);
 	}else{
 		$(element).addClass("active");
@@ -555,7 +555,8 @@ function temp_addcompliance(){
   var compliance_task = $('#compliance_task').val();
   var description = $('#compliance_description').val();
   var compliance_document = $('#compliance_document').val();
-  var file_format = $('#upload_file').val();
+  var file_format = [];
+  //file_format = $('#upload_file').val()
   var penal_consequences = $('#penal_consequences').val();
   var compliance_frequency = $('#compliance_frequency').val();
   var repeats_type = null;
@@ -641,7 +642,7 @@ function temp_addcompliance(){
           compliances[comp_id]["statutory_provision"] = statutory_provision;
           compliances[comp_id]["compliance_task"] = compliance_task;
           compliances[comp_id]["description"] = description;
-          compliances[comp_id]["document"] = compliance_document;
+          compliances[comp_id]["document_name"] = compliance_document;
           compliances[comp_id]["format_file_name"] = file_format;
           compliances[comp_id]["penal_consequences"] = penal_consequences;
           compliances[comp_id]["compliance_frequency"] = compliance_frequency;
@@ -744,7 +745,7 @@ function temp_editcompliance(edit_id){
     $('#compliance_task').val(compliances[edit_id]["compliance_task"]);
     $('#compliance_description').val(compliances[edit_id]["description"]);
     $('#compliance_frequency').val(compliances[edit_id]["compliance_frequency"]);
-    $('#compliance_document').val(compliances[edit_id]["document"]);
+    $('#compliance_document').val(compliances[edit_id]["document_name"]);
     $('#upload_file').val(compliances[edit_id]["format_file_name"]);
     $('#penal_consequences').val(compliances[edit_id]["penal_consequences"]);
     $('#duration_type').val(compliances[edit_id]["duration_type"]);
@@ -817,16 +818,18 @@ function make_breadcrumbs2(){
     var arrowimage = " <img src=\'/images/right_arrow.png\'/> ";
     var statutories_name = '';
     for(var i=0;i<disp_statutories.length;i++){
-        statutories_name = statutories_name + disp_statutories[i].replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ') + '<br/>';
+        statutories_name = statutories_name + disp_statutories[i].replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ') + ',';
     }
+    statutories_name = statutories_name.replace(/,\s*$/, "");
     $(".breadcrumbs_2").html(statutories_name);
 }
 
 function make_breadcrumbs3(){
     var compliance_name = '';
     for(var entity in compliances) {
-        compliance_name = compliance_name + compliances[entity]["document"] +" - " + compliances[entity]["statutory_provision"] + '<br/>';
+        compliance_name = compliance_name + compliances[entity]["document"] +" - " + compliances[entity]["statutory_provision"] + ',';
     }
+    compliance_name = compliance_name.replace(/,\s*$/, "");
     $(".breadcrumbs_3").html(compliance_name);
 }
 
@@ -834,15 +837,14 @@ function loadGeographyLevels(sm_countryid){
   $(".tbody-geography-level").find("div").remove();
   var geographyLevelList = geographyLevelsList[sm_countryid];
   var levelposition;
-    for(var j in geographyLevelList){
-
-      levelposition = geographyLevelList[j]["level_position"];
-      var tableRow=$('#geography-level-templates');
-      var clone=tableRow.clone();
-      $('.title', clone).text(geographyLevelList[j]["level_name"]);
-      $('.levelvalue', clone).html('<input type="text" class="filter-text-box" id="filter_geography'+levelposition+'" onkeyup="filter_geography('+levelposition+')"> <ul id="ulist'+levelposition+'"></ul><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
-      $('.tbody-geography-level').append(clone);
-    }    
+  for(var j in geographyLevelList){
+    levelposition = geographyLevelList[j]["level_position"];
+    var tableRow=$('#geography-level-templates');
+    var clone=tableRow.clone();
+    $('.title', clone).text(geographyLevelList[j]["level_name"]);
+    $('.levelvalue', clone).html('<input type="text" class="filter-text-box" id="filter_geography'+levelposition+'" onkeyup="filter_geography('+levelposition+')"> <ul id="ulist'+levelposition+'"></ul><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+    $('.tbody-geography-level').append(clone);
+  }    
     var setlevelstage= 1;
     $('#datavalue'+setlevelstage).val('');
     $('#ulist'+setlevelstage).empty();
@@ -930,7 +932,6 @@ function load_geography(level,country,combineids,status,displaytext){
           }
         });
 
-        //working order is even for multiple selection
         for(var j=0;j<geographyids.length;j++){
         splittext = '';
         for(var i in geographyList){
@@ -957,7 +958,6 @@ function load_geography(level,country,combineids,status,displaytext){
               }
           }
         }
-        //sel_all = '';
         }
        } 
 
@@ -1056,13 +1056,13 @@ function filter_geography(position){
     }
 }
 
-function saveRecord(){
+function savestatutorymapping(){
     function success(status,data){
         if(status == "success"){
             getStatutoryMappings();
             //$("#error").text("Record Added Successfully");
-            $("#listview").show();
             $("#addview").hide();
+            $("#listview").show();
         }else{
             $("#error").text(status)
         }
@@ -1070,8 +1070,19 @@ function saveRecord(){
     function failure(data){
 
     }
-    statutorymappingData = mirror.statutoryMapping(sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, $("#edit_sm_id").val())
-    mirror.saveStatutoryMapping(statutorymappingData, success, failure);
+    var sm_id = null;
+    if($("#edit_sm_id").val().length > 0){
+      sm_id = parseInt($("#edit_sm_id").val());
+    }
+    alert(sm_id);
+    statutorymappingData = mirror.statutoryMapping(sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, sm_id)
+
+    if(sm_id == null){
+      mirror.saveStatutoryMapping(statutorymappingData, success, failure);
+    }else{
+      mirror.updateStatutoryMapping(statutorymappingData, success, failure);
+    }
+    
 }
 
 function validate_firsttab(){
@@ -1207,7 +1218,7 @@ function displayEdit (sm_Id) {
     sm_domainid = statutoryMappingsList[sm_Id]["domain_id"];
     sm_domainval = statutoryMappingsList[sm_Id]["domain_name"];
     sm_industryids = statutoryMappingsList[sm_Id]["industry_ids"]; 
-    sm_industryvals = statutoryMappingsList[sm_Id]["industry_names"]; 
+    sm_industryvals = statutoryMappingsList[sm_Id]["industry_names"].split(","); 
     sm_statutorynatureid = statutoryMappingsList[sm_Id]["statutory_nature_id"];
     sm_statutorynatureval = statutoryMappingsList[sm_Id]["statutory_nature_name"];
     sm_statutoryids = statutoryMappingsList[sm_Id]["statutory_ids"];
@@ -1215,61 +1226,47 @@ function displayEdit (sm_Id) {
     sm_geographyids = statutoryMappingsList[sm_Id]["geographies_ids"];
 
     load_edit_selectdomain_master(sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid);
-
     load_statories();
-
     load_compliance();
-
     edit_geography(sm_countryid,sm_geographyids);
-
-    
-
     }
 
 //edit geographymapping data dynamically
 function edit_geography(country,geographyids_edit){
     var geographyids=geographyids_edit;
-
     for(var i=0; i<geographyids.length;i++){
       var geographyList = geographiesList[country];
       for(glist in geographyList){
         if(geographyids[i] == geographyList[glist]["geography_id"]){
           var parentids = geographyList[glist]["parent_ids"];
+          var level = geographyList[glist]["level_position"];
         }
       }
-
-
       for(var j=0; j<parentids.length; j++){
-            var geo_id = 0;
-            var parent_id = 0;
-            if(j!=0){
-              parent_id = parentids[j-1];
-              geo_id = parentids[j];
-            }else{
-              geo_id = geographyids[i];
-            }
-            var combineid = geo_id + "-" + parent_id;
-            var displaytext = "Edit";
-
-            alert(combineid);
-
-            for(glist in geographyList){
-        if(geo_id == geographyList[glist]["geography_id"]){
+        var geo_id = parentids[j];;
+        var parent_id = 0;
+        if(j!=0){
+          parent_id = parentids[j-1];
+        }
+        for(glist in geographyList){
+          if(geo_id == geographyList[glist]["geography_id"]){
           var level_id = geographyList[glist]["level_id"];
+          var displaytext = geographyList[glist]["geography_name"];
         }
       }
-
-          var geographyLevelList = geographyLevelsList[country];
-          for(glevel in geographyLevelList){
+      var combineid = geo_id + "-" + parent_id;
+      var displaytext = displaytext;
+      var geographyLevelList = geographyLevelsList[country];
+      for(glevel in geographyLevelList){
         if(level_id == geographyLevelList[glevel]["level_id"]){
           var levelposition = geographyLevelList[glevel]["level_position"];
         }
       }
-
-
-            $('#'+combineid).addClass( "active" );
-            load_geography(levelposition,country,combineid,"add",displaytext);
-          }
+      $('#'+combineid).addClass( "active" );
+      load_geography(levelposition,country,combineid,"add",displaytext);
+    }
+    var finalcombineid = geographyids[i]+"-"+geo_id;
+    $('#'+finalcombineid).addClass( "active" );
     }
 }
 
