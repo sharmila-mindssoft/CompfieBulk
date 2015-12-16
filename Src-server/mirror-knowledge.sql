@@ -4,7 +4,7 @@ USE `mirror_knowledge`;
 DROP TABLE IF EXISTS `tbl_form_category`;
 CREATE TABLE `tbl_form_category` (
   `form_category_id` int(11) NOT NULL,
-  `form_category` varchar(20) DEFAULT NULL,
+  `form_category` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`form_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -43,7 +43,7 @@ CREATE TABLE `tbl_user_groups` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_group_id`),
-  CONSTRAINT `fk_tbl_user_groups_1` FOREIGN KEY (`form_category_id`) REFERENCES `tbl_notifications` (`notification_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_tbl_user_groups_1` FOREIGN KEY (`form_category_id`) REFERENCES `tbl_form_category` (`form_category_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_admin`;
@@ -52,6 +52,29 @@ CREATE TABLE `tbl_admin` (
   `password` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `tbl_countries`;
+CREATE TABLE `tbl_countries` (
+  `country_id` int(11) NOT NULL,
+  `country_name` varchar(50) NOT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`country_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_domains`;
+CREATE TABLE `tbl_domains` (
+  `domain_id` int(11) NOT NULL,
+  `domain_name` varchar(50) NOT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`domain_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_users`;
 CREATE TABLE `tbl_users` (
@@ -118,30 +141,6 @@ CREATE TABLE `tbl_user_sessions` (
   PRIMARY KEY (`session_token`),
   CONSTRAINT `fk_tbl_user_sessions_id_1` FOREIGN KEY (`session_type_id`) REFERENCES `tbl_session_types` (`session_type_id`),
   CONSTRAINT `fk_user_sessions_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `tbl_countries`;
-CREATE TABLE `tbl_countries` (
-  `country_id` int(11) NOT NULL,
-  `country_name` varchar(50) NOT NULL,
-  `is_active` tinyint(4) DEFAULT '1',
-  `created_by` int(11) DEFAULT NULL,
-  `created_on` timestamp NULL DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`country_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `tbl_domains`;
-CREATE TABLE `tbl_domains` (
-  `domain_id` int(11) NOT NULL,
-  `domain_name` varchar(50) NOT NULL,
-  `is_active` tinyint(4) DEFAULT '1',
-  `created_by` int(11) DEFAULT NULL,
-  `created_on` timestamp NULL DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_industries`;
