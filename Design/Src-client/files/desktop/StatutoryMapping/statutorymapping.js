@@ -848,33 +848,35 @@ function loadGeographyLevels(sm_countryid){
     $('#ulist'+setlevelstage).empty();
     var firstlevelid= $('#glmid'+setlevelstage).val();
 
-    
     var idval='';
     var clsval='.list'+setlevelstage;
     var clsval1='list'+setlevelstage;
-    var str='<li id="0" class="'+clsval1+'" onclick="activate_geography_all(this,'+sm_countryid+','+setlevelstage+')" > Select All</li>';
+    var str='<li id="select'+setlevelstage+'" class="'+clsval1+'" onclick="activate_geography_all(this,'+sm_countryid+','+setlevelstage+')" > Select All</li>';
 
     var geographyList = geographiesList[sm_countryid];
     for(var i in geographyList){
       var setgeographyid = geographyList[i]["geography_id"];
       var setparentid = geographyList[i]["parent_id"];
-      var combineid = setgeographyid + "," + setparentid;
+      var combineid = setgeographyid + "-" + setparentid;
       if((geographyList[i]["level_id"] == firstlevelid) && (geographyList[i]["is_active"] == 1)){
-      str += '<li id="'+combineid+'" class="'+clsval1+'" onclick="activate_geography(this,'+sm_countryid+','+setlevelstage+')" >'+geographyList[i]["geography_name"]+'</li>';
+      str += '<li id="'+combineid+'" value="'+setparentid+'" class="'+clsval1+'" onclick="activate_geography(this,'+sm_countryid+','+setlevelstage+',\''+combineid+'\')" >'+geographyList[i]["geography_name"]+'</li>';
     }
     }
     $('#ulist'+setlevelstage).append(str); 
 }
 
 //check & uncheck list data
-function activate_geography(element,country,level){
+function activate_geography(element,country,level,combineid){
     var chkstatus = $(element).attr('class');
+    var displaytext = $(element).text();
     if(chkstatus == 'list'+level+' active'){
         $(element).removeClass("active");
+        load_geography(level,country,combineid,"remove",displaytext);
     }else{
         $(element).addClass("active");
+        load_geography(level,country,combineid,"add",displaytext);
     } 
-    load_geography(level,country); 
+     
 }
 
 //select all geography level data
@@ -889,14 +891,89 @@ function activate_geography_all(element,country,level){
             $(el).addClass( "active" );
         });
     } 
-    load_geography(level,country); 
+    load_geography_all(level,country); 
 }
 
 //load geographymapping sub level data dynamically
-function load_geography(level,country){
+function load_geography(level,country,combineids,status,displaytext){
+    var geographyids=[];
+    $("#error").text("");
+    /*$(".list"+level+".active").each( function( index, el ) {
+        var split_id = el.id.split(',');
+        geographyids.push([parseInt(split_id[0]),el.innerHTML]);
+    });*/
+    var split_id = combineids.split('-');
+    var previous_primary_id= split_id[1];
+    geographyids.push([parseInt(split_id[0]),displaytext]);
+    
+    var levelstages= parseInt(level) + 1;
+    for(var k=levelstages;k<=10;k++){
+
+        var setlevelstage= k;
+        $('#select'+setlevelstage).remove();
+        if($('#geographyid').val()==''){
+            $('#datavalue'+setlevelstage).val('');
+        }
+        var splittext = '';
+        var idval='';
+        var clsval='.list'+setlevelstage;
+        var clsval1='list'+setlevelstage;
+        var str='';
+        var sel_all='<li id="select'+setlevelstage+'" class="'+clsval1+'" onclick="activate_geography_all(this,'+sm_countryid+','+setlevelstage+')" > Select All</li>';
+        var levelid=$('#glmid'+setlevelstage).val();
+        var geographyList = geographiesList[country];
+        $("#ulist"+setlevelstage).children("li").each(function()
+        {
+          if($(this).val() == previous_primary_id){
+            $(this).remove();
+            $('.split'+previous_primary_id+setlevelstage).remove();
+          }
+        });
+
+        //working order is even for multiple selection
+        for(var j=0;j<geographyids.length;j++){
+        splittext = '';
+        for(var i in geographyList){
+          var setgeographyid = geographyList[i]["geography_id"];
+          var setparentid = geographyList[i]["parent_id"];
+          var combineid = setgeographyid + "-" + setparentid;
+
+          if( geographyList[i]["parent_id"] == geographyids[j][0] && geographyList[i]["level_id"] == levelid && geographyList[i]["is_active"] == 1) {
+           if(status == 'add'){
+           if(splittext != '') {
+            str += '<li id="'+combineid+'" value="'+setparentid+'" class="'+clsval1+'" onclick="activate_geography(this,'+country+','+setlevelstage+',\''+combineid+'\')" > '+geographyList[i]["geography_name"]+'</li>';
+           }else{
+            splittext = '<h3 class="split'+setparentid+setlevelstage+'" style="background-color:gray;padding:2px;font-size:13px;color:white;">'+geographyids[j][1]+'</h3>';
+            str += splittext + '<li id="'+combineid+'" value="'+setparentid+'" class="'+clsval1+'" onclick="activate_geography(this,'+country+','+setlevelstage+',\''+combineid+'\')" >'+geographyList[i]["geography_name"]+'</li>';
+           }
+          }
+           else{
+              if($('#'+combineid).attr('class') == 'list'+setlevelstage+' active'){
+                $("#error").text("Remove Child First");
+                $('#'+combineids).addClass( "active" );
+              }else{
+                $('#'+combineid).remove();
+                $('.split'+setparentid+setlevelstage).remove();
+              }
+          }
+        }
+        //sel_all = '';
+        }
+       } 
+
+        $('#ulist'+setlevelstage).append(str);
+        if($('#ulist'+setlevelstage+" li").length > 0){
+          //alert($('#select'+setlevelstage).val());
+          $('#ulist'+setlevelstage).prepend(sel_all);
+        }
+    }
+}
+
+//load geographymapping sub level data dynamically
+function load_geography_all(level,country){
     var geographyids=[];
     $(".list"+level+".active").each( function( index, el ) {
-        var split_id = el.id.split(',');
+        var split_id = el.id.split('-');
         geographyids.push([parseInt(split_id[0]),el.innerHTML]);
     });
     
@@ -912,8 +989,7 @@ function load_geography(level,country){
         var clsval='.list'+setlevelstage;
         var clsval1='list'+setlevelstage;
         var str='';
-        var sel_all='<li id="0" class="'+clsval1+'" onclick="activate_geography_all(this,'+sm_countryid+','+setlevelstage+')" > Select All</li>';
-        var geographyLevelList = geographyLevelsList[country];
+        var sel_all='<li id="selectall'+setlevelstage+'" class="'+clsval1+'" onclick="activate_geography_all(this,'+sm_countryid+','+setlevelstage+')" > Select All</li>';
         var levelid=$('#glmid'+setlevelstage).val();
         var geographyList = geographiesList[country];
 
@@ -923,7 +999,7 @@ function load_geography(level,country){
         for(var i in geographyList){
           var setgeographyid = geographyList[i]["geography_id"];
           var setparentid = geographyList[i]["parent_id"];
-          var combineid = setgeographyid + "," + setparentid;
+          var combineid = setgeographyid + "-" + setparentid;
 
           if( geographyList[i]["parent_id"] == geographyids[j][0] && geographyList[i]["level_id"] == levelid && geographyList[i]["is_active"] == 1) {
             str += sel_all;
@@ -1146,61 +1222,54 @@ function displayEdit (sm_Id) {
 
     edit_geography(sm_countryid,sm_geographyids);
 
+    
+
     }
 
 //edit geographymapping data dynamically
 function edit_geography(country,geographyids_edit){
     var geographyids=geographyids_edit;
-    /*$(".list"+level+".active").each( function( index, el ) {
-        var split_id = el.id.split(',');
-        geographyids.push([parseInt(split_id[0]),el.innerHTML]);
-    });*/
-    
-    /*var levelstages= 1;
-    for(var k=levelstages;k<=10;k++){
-        var setlevelstage= k;
-        if($('#geographyid').val()==''){
-            $('#datavalue'+setlevelstage).val('');
+
+    for(var i=0; i<geographyids.length;i++){
+      var geographyList = geographiesList[country];
+      for(glist in geographyList){
+        if(geographyids[i] == geographyList[glist]["geography_id"]){
+          var parentids = geographyList[glist]["parent_ids"];
         }
-        $('#ulist'+setlevelstage).empty();
-        var splittext = '';
-        var idval='';
-        var clsval='.list'+setlevelstage;
-        var clsval1='list'+setlevelstage;
-        var str='';
-        var sel_all='<li id="0" class="'+clsval1+'" onclick="activate_geography_all(this,'+sm_countryid+','+setlevelstage+')" > Select All</li>';
-        var geographyLevelList = geographyLevelsList[country];
-        var levelid=$('#glmid'+setlevelstage).val();
-        var geographyList = geographiesList[country];
+      }
 
-        //working order is even for multiple selection
 
-       for(var j=0;j<geographyids.length;j++){
-        splittext = '';
-        for(var i in geographyList){
-          var setgeographyid = geographyList[i]["geography_id"];
-          var setparentid = geographyList[i]["parent_id"];
-          var combineid = setgeographyid + "," + setparentid;
+      for(var j=0; j<parentids.length; j++){
+            var geo_id = 0;
+            var parent_id = 0;
+            if(j!=0){
+              parent_id = parentids[j-1];
+              geo_id = parentids[j];
+            }else{
+              geo_id = geographyids[i];
+            }
+            var combineid = geo_id + "-" + parent_id;
+            var displaytext = "Edit";
 
-          /*alert(geographyList[i]["parent_id"] + ":"+ geographyids[j]);
-          alert(geographyList[i]["level_id"] + ":"+ levelid);
-          alert(geographyList[i]["is_active"] + ":"+ 1);*/
+            alert(combineid);
 
-          /*if( geographyList[i]["parent_id"] == geographyids[j] && geographyList[i]["level_id"] == levelid && geographyList[i]["is_active"] == 1) {
-            str += sel_all;
-            alert("enter");
-           if(splittext != '') {
-            str += '<li id="'+combineid+'" class="'+clsval1+'" onclick="activate_geography(this,'+country+','+setlevelstage+')" > '+geographyList[i]["geography_name"]+'</li>';
-           }else{
-            splittext = '<h3 style="background-color:gray;padding:2px;font-size:13px;color:white;">'+geographyids[j][1]+'</h3>';
-            str += splittext + '<li id="'+combineid+'" class="'+clsval1+'" onclick="activate_geography(this,'+country+','+setlevelstage+')" >'+geographyList[i]["geography_name"]+'</li>';
-           }
-           sel_all = '';
+            for(glist in geographyList){
+        if(geo_id == geographyList[glist]["geography_id"]){
+          var level_id = geographyList[glist]["level_id"];
         }
+      }
+
+          var geographyLevelList = geographyLevelsList[country];
+          for(glevel in geographyLevelList){
+        if(level_id == geographyLevelList[glevel]["level_id"]){
+          var levelposition = geographyLevelList[glevel]["level_position"];
         }
-       }
-        $('#ulist'+setlevelstage).append(str); 
-    }*/
-    
+      }
+
+
+            $('#'+combineid).addClass( "active" );
+            load_geography(levelposition,country,combineid,"add",displaytext);
+          }
+    }
 }
 
