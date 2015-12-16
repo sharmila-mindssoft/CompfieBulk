@@ -793,7 +793,7 @@ class DatabaseHandler(object) :
             complianceTask = data.get("compliance_task")
             complianceDescription = data.get("description")
             documentName = data.get("document")
-            formatFile = ','.join(str(x) for x in data.get("format_file_name")) + ","
+            formatFile = ','.join(str(x) for x in data.get("format_file_name"))
             penalConsequences = data.get("penal_consequences")
             complianceFrequency = data.get("compliance_frequency")
             statutoryDates =  json.dumps(data.get("statutory_dates"))
@@ -845,7 +845,7 @@ class DatabaseHandler(object) :
             complianceTask = data.get("compliance_task")
             complianceDescription = data.get("description")
             documentName = data.get("document")
-            formatFile = ','.join(str(x) for x in data.get("format_file_name")) + ","
+            formatFile = ','.join(str(x) for x in data.get("format_file_name"))
             penalConsequences = data.get("penal_consequences")
             complianceFrequency = data.get("compliance_frequency")
             statutoryDates =  json.dumps(data.get("statutory_dates"))
