@@ -438,7 +438,7 @@ function initMirror() {
         mappingData["compliances"] = compliances;
         mappingData["geography_ids"] = geographyIds;
         if (mappingId !== null) {
-            mappingData["statutory_mapping_idping_id"] = mappingId
+            mappingData["statutory_mapping_id"] = mappingId
         }
 
         return mappingData;
