@@ -301,10 +301,10 @@ CREATE TABLE `tbl_compliances` (
   `repeats_type` varchar(20) DEFAULT NULL,
   `duration` int(11) DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT '1',
-  `created_by` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created_on` int(11) NOT NULL,
-  `updated_by` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `updated_on` int(11) NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_by` int(11) NOT NULL,
+  `updated_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`compliance_id`),
   CONSTRAINT `fk_compliances_statutory_mappings` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`),
   CONSTRAINT `fk_compliance_duration_id_1` FOREIGN KEY (`duration_type_id`) REFERENCES `tbl_compliance_duration_type` (`duration_type_id`),
@@ -322,8 +322,8 @@ CREATE TABLE `tbl_statutories_backup` (
   `statutory_nature` varchar(50) NOT NULL,
   `statutory_provision` longtext,
   `applicable_location` longtext,
-  `created_by` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created_on` int(11) NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`statutory_backup_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
