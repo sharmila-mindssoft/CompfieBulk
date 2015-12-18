@@ -792,7 +792,7 @@ class DatabaseHandler(object) :
             statutoryProvision = data.get("statutory_provision")
             complianceTask = data.get("compliance_task")
             complianceDescription = data.get("description")
-            documentName = data.get("document")
+            documentName = data.get("document_name")
             formatFile = ','.join(str(x) for x in data.get("format_file_name"))
             penalConsequences = data.get("penal_consequences")
             complianceFrequency = data.get("compliance_frequency")
@@ -840,15 +840,23 @@ class DatabaseHandler(object) :
     def updateCompliance(self, mappingId, datas, updatedBy) :
         complianceIds = []
         for data in datas :
+            print data
             complianceId = data.get("compliance_id")
-            if (len(complianceId) == 0) :
+            print complianceId
+            if (complianceId == ""):
+                complianceId = 0
+            print
+            print data 
+            print
+            print complianceId
+            if (complianceId == 0) :
                 ids = self.saveCompliance(mappingId, [data], updatedBy)
                 complianceIds.extend(ids)
                 continue
             statutoryProvision = data.get("statutory_provision")
             complianceTask = data.get("compliance_task")
             complianceDescription = data.get("description")
-            documentName = data.get("document")
+            documentName = data.get("document_name")
             formatFile = ','.join(str(x) for x in data.get("format_file_name"))
             penalConsequences = data.get("penal_consequences")
             complianceFrequency = data.get("compliance_frequency")
@@ -964,6 +972,8 @@ class DatabaseHandler(object) :
 
 
     def updateStatutoryMapping(self, data, updatedBy) :
+        print data
+        print
         statutoryMappingId = data.get("statutory_mapping_id")
         countryId =data.get("country_id")
         domainId =data.get("domain_id")
@@ -980,7 +990,10 @@ class DatabaseHandler(object) :
                 countryId, domainId, industryIds, natureId, statutoryIds, geographyIds,
                 updatedBy, statutoryMappingId
             )
+        print query
+        print 
         if (self.dataInsertUpdate(query)) :
+            print "update mapping"
             self.updateStatutoryMappingId(data.get("statutory_ids"), statutoryMappingId, updatedBy)
             ids = self.updateCompliance(statutoryMappingId, compliances, updatedBy)
             complianceIds = ','.join(str(x) for x in ids) + ","
