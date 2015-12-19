@@ -285,7 +285,7 @@ StatutoryMapping = RecordType("StatutoryMapping", [
 	Field("country_name", COUNTRY_NAME),
 	Field("domain_id", DOMAIN_ID),
 	Field("domain_name", DOMAIN_NAME),
-	Field("industry_ids", [INDUSTRY_ID,]),
+	Field("industry_ids", VectorType(INDUSTRY_ID)),
 	Field("industry_names", Text),
 	Field("statutory_nature_id", STATUTORY_NATURE_ID),
 	Field("statutory_nature_name", STATUTORY_NATURE_NAME),
