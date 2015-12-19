@@ -173,6 +173,7 @@ class UserController() :
         groupDetails = GroupCompany.getDetailedClientList()
         serviceProvidersList = ServiceProvider.getSimpleList(sessionUser)
 
+
         countryIds =groupDetails[0]["country_ids"]
         domainIds =groupDetails[0]["domain_ids"]
 

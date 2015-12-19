@@ -21,66 +21,7 @@
       alert("failure_data"+data)
     }
     $(document).ready(function(){
-      clientId = 1
-
-      businessGroup = {}
-      businessGroup["business_group_id"] = 1
-      businessGroup["business_group_name"] = "BGUP1"
-
-      legalEntity = {}
-      legalEntity["legal_entity_id"] = 1
-      legalEntity["legal_entity_name"] = "LEUP11"
-
-      division = {}
-      division["division_id"] = 1
-      division["division_name"] = "DUP111"
-
-      countryWiseUnits = []
-
-
-      units = []
-      unit = {}
-      unit["unit_id"] = 1
-      unit["unit_code"] = "UUP1111"
-      unit["unit_name"] = "Unit Update 1111"
-      unit["unit_address"] = "Sample Address 1111"
-      unit["postal_code"] = "678267841"
-      unit["geography_id"] = 1
-      unit["unit_location"] = "Madurai"
-      unit["industry_id"] = 1
-      unit["industry_name"] = "Factory"
-      unit["domain_ids"] = [3,4]
-      unit1 = {}
-      unit1["unit_id"] = 1
-      unit1["unit_code"] = "UUP1112"
-      unit1["unit_name"] = "Unit Update 1112"
-      unit1["unit_address"] = "Sample Address 1112"
-      unit1["postal_code"] = "678267841"
-      unit1["geography_id"] = 1
-      unit1["unit_location"] = "Madurai"
-      unit1["industry_id"] = 1
-      unit1["industry_name"] = "Factory"
-      unit1["domain_ids"] = [3,4]
-      units.push(unit)
-      units.push(unit1)
-
-      india = {}
-      india["country_id"] = 1 
-      india["units"] = units
-
-      countryWiseUnits.push(india)
-
-        // mirror.updateClient("TechnoAPI", clientId, businessGroup, legalEntity, division, 
-        // countryWiseUnits, success, failure);
-        // mirror.getClients("TechnoAPI", success, failure)
-        // mirror.getServiceProviders("ClientAdminAPI", success, failure)
-        userGroupDetails = {
-          "user_group_id": 1,
-              "user_group_name": "Test user group name 2",
-              "form_type": "client",
-              "form_ids": [5,6]
-          }
-          mirror.updateClientUserGroup("ClientAdminAPI",userGroupDetails,success, failure);
+      mirror.getClientUsers("ClientAdminAPI", "success", "failure")
     });
 </script>
 </body>

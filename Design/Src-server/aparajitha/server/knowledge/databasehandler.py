@@ -114,9 +114,15 @@ class DatabaseHandler(object) :
             isDuplicate = True
 
         return isDuplicate
-            
+
     def getDomains(self) :
         query = "SELECT domain_id, domain_name, is_active FROM tbl_domains "
+        return self.dataSelect(query)
+
+    def getDomainsForUser(self, userId) :
+        query = "SELECT distinct t1.domain_id, t1.domain_name, t1.is_active FROM tbl_domains t1 \
+            INNER JOIN tbl_user_domains t2 ON t1.domain_id = t2.domain_id \
+            WHERE t2.user_id = %s" % (userId)
         return self.dataSelect(query)
 
     def saveDomain(self, domainName, createdBy) :
@@ -177,6 +183,12 @@ class DatabaseHandler(object) :
 
     def getCountries(self) :
         query = "SELECT country_id, country_name, is_active FROM tbl_countries "
+        return self.dataSelect(query)
+
+    def getCountriesForUser(self, userId) :
+        query = "SELECT distinct t1.country_id, t1.country_name, t1.is_active FROM tbl_countries t1 \
+            INNER JOIN tbl_user_countries t2 ON t1.country_id = t2.country_id \
+            WHERE t2.user_id = %s" % (userId)
         return self.dataSelect(query)
 
     def checkDuplicateCountry(self, countryName, countryId) :
@@ -780,8 +792,8 @@ class DatabaseHandler(object) :
             statutoryProvision = data.get("statutory_provision")
             complianceTask = data.get("compliance_task")
             complianceDescription = data.get("description")
-            documentName = data.get("document")
-            formatFile = data.get("format_file_name")
+            documentName = data.get("document_name")
+            formatFile = ','.join(str(x) for x in data.get("format_file_name"))
             penalConsequences = data.get("penal_consequences")
             complianceFrequency = data.get("compliance_frequency")
             statutoryDates =  json.dumps(data.get("statutory_dates"))
@@ -828,12 +840,24 @@ class DatabaseHandler(object) :
     def updateCompliance(self, mappingId, datas, updatedBy) :
         complianceIds = []
         for data in datas :
+            print data
             complianceId = data.get("compliance_id")
+            print complianceId
+            if (complianceId == ""):
+                complianceId = 0
+            print
+            print data 
+            print
+            print complianceId
+            if (complianceId == 0) :
+                ids = self.saveCompliance(mappingId, [data], updatedBy)
+                complianceIds.extend(ids)
+                continue
             statutoryProvision = data.get("statutory_provision")
             complianceTask = data.get("compliance_task")
             complianceDescription = data.get("description")
-            documentName = data.get("document")
-            formatFile = data.get("format_file_name")
+            documentName = data.get("document_name")
+            formatFile = ','.join(str(x) for x in data.get("format_file_name"))
             penalConsequences = data.get("penal_consequences")
             complianceFrequency = data.get("compliance_frequency")
             statutoryDates =  json.dumps(data.get("statutory_dates"))
@@ -888,14 +912,16 @@ class DatabaseHandler(object) :
         return self.dataInsertUpdate(query)
 
     ### Stautory Mapping ###
-    def getStautoryMappings(self) :
+    def getStautoryMappings(self, userId) :
         query = "SELECT t1.statutory_mapping_id, t1.country_id, t2.country_name, t1.domain_id,  \
             t3.domain_name, t1.industry_ids, t1.statutory_nature_id, t4.statutory_nature_name, \
             t1.statutory_ids, t1.compliance_ids, t1.geography_ids, t1.approval_status, t1.is_active  \
             FROM tbl_statutory_mappings t1 \
             INNER JOIN tbl_countries t2 on t1.country_id = t2.country_id \
             INNER JOIN tbl_domains t3 on t1.domain_id = t3.domain_id \
-            INNER JOIN tbl_statutory_natures t4 on t1.statutory_nature_id = t4.statutory_nature_id "
+            INNER JOIN tbl_statutory_natures t4 on t1.statutory_nature_id = t4.statutory_nature_id \
+            INNER JOIN tbl_user_domains t5 on t1.domain_id = t5.domain_id and t5.user_id = %s \
+            INNER JOIN tbl_user_countries t6 on t1.country_id = t6.country_id and t6.user_id = %s" %(userId, userId)
         return self.dataSelect(query)
 
     def getStatutoryMappingsById (self, mappingId) :
@@ -946,6 +972,8 @@ class DatabaseHandler(object) :
 
 
     def updateStatutoryMapping(self, data, updatedBy) :
+        print data
+        print
         statutoryMappingId = data.get("statutory_mapping_id")
         countryId =data.get("country_id")
         domainId =data.get("domain_id")
@@ -962,7 +990,10 @@ class DatabaseHandler(object) :
                 countryId, domainId, industryIds, natureId, statutoryIds, geographyIds,
                 updatedBy, statutoryMappingId
             )
+        print query
+        print 
         if (self.dataInsertUpdate(query)) :
+            print "update mapping"
             self.updateStatutoryMappingId(data.get("statutory_ids"), statutoryMappingId, updatedBy)
             ids = self.updateCompliance(statutoryMappingId, compliances, updatedBy)
             complianceIds = ','.join(str(x) for x in ids) + ","
@@ -970,7 +1001,7 @@ class DatabaseHandler(object) :
                 where statutory_mapping_id = %s" % (complianceIds, statutoryMappingId)
             self.dataInsertUpdate(qry)
             action = "Edit Statutory Mappings"
-            self.saveActivity(userId, 17, action)
+            self.saveActivity(updatedBy, 17, action)
             return True
         else :
             return False
@@ -1038,7 +1069,7 @@ class DatabaseHandler(object) :
             geoMap.append(data[1])
         geoMappings = ','.join(str(x) for x in geoMap)
         query = "INSERT INTO tbl_statutories_backup(statutory_backup_id, country_name, domain_name, industry_name, \
-            statutory_nature, statutory_provision, applicable_location, updated_by, updated_on) \
+            statutory_nature, statutory_provision, applicable_location, created_by, created_on) \
             VALUES(%s, '%s', '%s', '%s', '%s', '%s', '%s', %s, '%s') " % (
                 backupId, oldRecord[1], oldRecord[3], industryName, oldRecord[6], mappings, geoMappings,
                 createdBy, createdOn

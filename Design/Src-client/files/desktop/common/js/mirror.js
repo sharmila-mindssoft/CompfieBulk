@@ -408,7 +408,7 @@ function initMirror() {
         compliance["statutory_provision"] = statutoryProvision;
         compliance["compliance_task"] = complianceTask;
         compliance["description"] = description;
-        compliance["document"] = documentName;
+        compliance["document_name"] = documentName;
         compliance["format_file_name"] = fileFormat;
         compliance["penal_consequences"] = penalConsequence;
         compliance["compliance_frequency"] = complianceFrequency;
@@ -438,7 +438,7 @@ function initMirror() {
         mappingData["compliances"] = compliances;
         mappingData["geography_ids"] = geographyIds;
         if (mappingId !== null) {
-            mappingData["statutory_mapping_idping_id"] = mappingId
+            mappingData["statutory_mapping_id"] = mappingId
         }
 
         return mappingData;
