@@ -792,7 +792,7 @@ class DatabaseHandler(object) :
             statutoryProvision = data.get("statutory_provision")
             complianceTask = data.get("compliance_task")
             complianceDescription = data.get("description")
-            documentName = data.get("document")
+            documentName = data.get("document_name")
             formatFile = ','.join(str(x) for x in data.get("format_file_name"))
             penalConsequences = data.get("penal_consequences")
             complianceFrequency = data.get("compliance_frequency")
@@ -841,14 +841,14 @@ class DatabaseHandler(object) :
         complianceIds = []
         for data in datas :
             complianceId = data.get("compliance_id")
-            if (len(complianceId) == 0) :
+            if (complianceId == "") :
                 ids = self.saveCompliance(mappingId, [data], updatedBy)
                 complianceIds.extend(ids)
                 continue
             statutoryProvision = data.get("statutory_provision")
             complianceTask = data.get("compliance_task")
             complianceDescription = data.get("description")
-            documentName = data.get("document")
+            documentName = data.get("document_name")
             formatFile = ','.join(str(x) for x in data.get("format_file_name"))
             penalConsequences = data.get("penal_consequences")
             complianceFrequency = data.get("compliance_frequency")

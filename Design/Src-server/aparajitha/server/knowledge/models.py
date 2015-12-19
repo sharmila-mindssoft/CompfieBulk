@@ -1225,7 +1225,7 @@ class Compliance(object) :
             self, complianceId, statutoryProvition, complianceTask,
             description, documentName, formatFileName, penalDescription,
             complianceFrequency, statutoryDates,
-            repeatsEvery, repeatsType, durationType, duration, isActive
+            repeatsEvery, repeatsType, duration, durationType, isActive
         ):
         self.complianceId = complianceId
         self.statutoryProvition = statutoryProvition
