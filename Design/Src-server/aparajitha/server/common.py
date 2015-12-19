@@ -145,10 +145,10 @@ class PossibleError(object) :
         assertType(self.possibleError, StringType)
 
     def toStructure(self) :
-        return {
+        return [
             str(self.possibleError),
             {}
-        }
+        ]
 
     def __repr__(self) :
         return str(self.toStructure())
