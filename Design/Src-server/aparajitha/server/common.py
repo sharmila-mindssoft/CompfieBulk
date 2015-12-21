@@ -234,28 +234,47 @@ class Form(object) :
             "parent_menu": self.parentMenu
         }
 
-    @classmethod
-    def getForms(self, type):
-    	print "inside get forms"
-    	forms = []
+    # @classmethod
+    # def getForms(self, type):
+    # 	forms = []
 
-        columns = "form_id, form_name, form_url, form_order, form_type,"+\
-                 "category, admin_form, parent_menu"
+    #     columns = "form_id, form_name, form_url, form_order, parent_menu"
+    #     tables = []
 
-        if type == "knowledge".lower():
-        	condition = " category = 'knowledge' "
-        elif type == "techno".lower():
-        	condition = " category = 'techno' "
-        else :
-        	condition = " category = 'client' "
+    #     if type == "knowledge".lower():
+    #     	condition = " category = 'knowledge' "
+    #     elif type == "techno".lower():
+    #     	condition = " category = 'techno' "
+    #     else :
+    #     	condition = " category = 'client' "
 
-        rows = DatabaseHandler.instance().getData(Form.tblName, columns, condition)
+    #     rows = DatabaseHandler.instance().getDataFromMultipleTables(self, columns, tables, conditions, joinType)
+    #     for row in rows:
+    #         formObj = Form(int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6], row[7])
+    #         forms.append(formObj)
 
-        for row in rows:
-            formObj = Form(int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6], row[7])
-            forms.append(formObj)
+    #     return forms
 
-        return forms
+
+    # SELECT `form_id`, tf.`form_category_id`, form_category,  tf.`form_type_id`, 
+    # form_type,`form_name`, `form_url`, `form_order`, `parent_menu` FROM `tbl_forms` tf 
+    # left join tbl_form_category tfc on tf.form_category_id = tfc.form_category_id 
+    # left join tbl_form_type tft on tft.form_type_id = tf.form_type_id 
+    # where tf.form_category_id in (3,2,4) 
+
+    def getForms(self):
+        forms = []
+
+        columns = "tf.form_id, tf.form_category_id, tfc.form_category, tf.form_type_id, tft.form_type,"+\
+        "tf.form_name, tf.form_url, tf.form_order, tf.parent_menu"
+        tables = [tblForms, tblFormCategory, tblFormType]
+        aliases = ["tf", "tfc", "tft"]
+        joinConditions = [("tf.form_caetgory_id", "tfc.form_category_id"), ("tf.form_type_id", "tft.form_type_id")]
+        whereCondition = " tf.form_category_id in (3,2,4)"
+        joinType = "left join"
+
+        rows = DatabaseHandler.instance().getDataFromMultipleTables(self, columns, tables, aliases, )
+
             
 class Menu(object):
     structuredForm = {}

@@ -202,7 +202,7 @@ CREATE TABLE `tbl_users` (
   `user-group_id` int(11) NOT NULL,
   `service_provider_id` int(11) NOT NULL,
   `email_id` varchar(100) NOT NULL,
-  `password` varchar(50) NOT NULL
+  `password` varchar(50) NOT NULL,
   `employee_name` varchar(50) DEFAULT NULL,
   `employee_code` varchar(50) DEFAULT NULL,
   `contact_no` varchar(20) DEFAULT NULL,
