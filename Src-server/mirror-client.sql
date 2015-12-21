@@ -177,7 +177,7 @@ CREATE TABLE `tbl_service_providers` (
   PRIMARY KEY (`service_provider_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `tbl_client_user_groups`;
+DROP TABLE IF EXISTS `tbl_user_groups`;
 CREATE TABLE `tbl_user_groups` (
   `user_group_id` int(11) NOT NULL,
   `user_group_name` varchar(50) DEFAULT NULL,
@@ -196,10 +196,10 @@ CREATE TABLE `tbl_admin` (
   `password` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `tbl_client_user_details`;
+DROP TABLE IF EXISTS `tbl_users`;
 CREATE TABLE `tbl_users` (
   `user_id` int(11) NOT NULL,
-  `user-group_id` int(11) NOT NULL,
+  `user_group_id` int(11) NOT NULL,
   `service_provider_id` int(11) NOT NULL,
   `email_id` varchar(100) NOT NULL,
   `password` varchar(50) NOT NULL,
@@ -208,15 +208,15 @@ CREATE TABLE `tbl_users` (
   `contact_no` varchar(20) DEFAULT NULL,
   `seating_unit_id` int(11) DEFAULT NULL,
   `user_level` int(11) DEFAULT NULL,
-  `is_admin` tinyint(4) DEFAULT '0',
+  `is_admin` tinyint(4) DEFAULT 0,
   `is_service_provider` tinyint(4) DEFAULT NULL,
-  `is_active` tinyint(4) DEFAULT '1',
+  `is_active` tinyint(4) DEFAULT 1,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`),
-  CONSTRAINT `fk_client_user_details_client_user_groups` FOREIGN KEY (`user_group_id`) REFERENCES `tbl_client_user_groups` (`user_group_id`),
+  CONSTRAINT `fk_client_user_details_client_user_groups` FOREIGN KEY (`user_group_id`) REFERENCES `tbl_user_groups` (`user_group_id`),
   CONSTRAINT `fk_client_user_details_service_providers` FOREIGN KEY (`service_provider_id`) REFERENCES `tbl_service_providers` (`service_provider_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -277,14 +277,13 @@ CREATE TABLE `tbl_user_sessions` (
 DROP TABLE IF EXISTS `tbl_client_statutories`;
 CREATE TABLE `tbl_client_statutories` (
   `client_statutory_id` int(11) NOT NULL,
-  `geography_id` int(11) NOT NULL,
+  `geography` VARCHAR(50) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   PRIMARY KEY (`client_statutory_id`),
   CONSTRAINT `fk_client_statutories_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `fk_client_statutories_domains` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
-  CONSTRAINT `fk_client_statutories_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`),
   CONSTRAINT `fk_client_statutories_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -292,18 +291,19 @@ DROP TABLE IF EXISTS `tbl_client_compliances`;
 CREATE TABLE `tbl_client_compliances` (
   `client_statutory_id` int(11) NOT NULL,
   `compliance_id` int(11) NOT NULL,
-  `statutory_id` int(11) NOT NULL,
+  `unit_id` int(11) NOT NULL,
+  `statutory_provision` VARCHAR(50) NOT NULL,
   `applicable` tinyint(4) DEFAULT NULL,
   `not_applicable_remarks` varchar(250) DEFAULT NULL,
   `compliance_applicable` tinyint(4) DEFAULT NULL,
   `compliance_opted` tinyint(4) DEFAULT NULL,
   `compliance_remarks` varchar(250) DEFAULT NULL,
-  `submitted_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `submitted_on` timestamp NULL DEFAULT '0000-00-00 00:00:00',
   `created_by` int(11) NOT NULL,
   `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_by` int(11) NOT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT `fk_client_compliances_statutories` FOREIGN KEY (`statutory_id`) REFERENCES `tbl_statutories` (`statutory_id`)
+  PRIMARY KEY (`compliance_id`, `unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -326,10 +326,10 @@ CREATE TABLE `tbl_assigned_compliances` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT `fk_assigned_compliances_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `fk_assigned_compliances_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
-  CONSTRAINT `fk_assigned_compliances_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
-  CONSTRAINT `fk_assigned_compliances_assignee_client_user_details` FOREIGN KEY (`assignee`) REFERENCES `tbl_client_user_details` (`user_id`),
-  CONSTRAINT `fk_assigned_compliances_concurrence_client_user_details` FOREIGN KEY (`concurrence_person`) REFERENCES `tbl_client_user_details` (`user_id`),
-  CONSTRAINT `fk_assigned_compliances_approve_client_user_details` FOREIGN KEY (`approval_person`) REFERENCES `tbl_client_user_details` (`user_id`)
+  CONSTRAINT `fk_assigned_compliances_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_client_compliances` (`compliance_id`),
+  CONSTRAINT `fk_assigned_compliances_assignee_client_user_details` FOREIGN KEY (`assignee`) REFERENCES `tbl_users` (`user_id`),
+  CONSTRAINT `fk_assigned_compliances_concurrence_client_user_details` FOREIGN KEY (`concurrence_person`) REFERENCES `tbl_users` (`user_id`),
+  CONSTRAINT `fk_assigned_compliances_approve_client_user_details` FOREIGN KEY (`approval_person`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_reassigned_compliances_history`;
@@ -344,9 +344,9 @@ CREATE TABLE `tbl_reassigned_compliances_history` (
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT `fk_rch_assignee_user_details` FOREIGN KEY (`assignee`) REFERENCES `tbl_client_user_details` (`user_id`),
-  CONSTRAINT `fk_rch_reassigned_from_user_details` FOREIGN KEY (`reassigned_from`) REFERENCES `tbl_client_user_details` (`user_id`),
-  CONSTRAINT `fk_rch_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
+  CONSTRAINT `fk_rch_assignee_user_details` FOREIGN KEY (`assignee`) REFERENCES `tbl_users` (`user_id`),
+  CONSTRAINT `fk_rch_reassigned_from_user_details` FOREIGN KEY (`reassigned_from`) REFERENCES `tbl_users` (`user_id`),
+  CONSTRAINT `fk_rch_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_client_compliances` (`compliance_id`),
   CONSTRAINT `fk_rch_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -386,7 +386,7 @@ CREATE TABLE `tbl_compliance_history` (
   `approved_by` int(11) DEFAULT NULL,
   `approved_on` float DEFAULT NULL,
   PRIMARY KEY (`compliance_history_id`),
-  CONSTRAINT `fk_compliance_history_user_details` FOREIGN KEY (`completed_by`) REFERENCES `tbl_client_user_details` (`user_id`),
+  CONSTRAINT `fk_compliance_history_user_details` FOREIGN KEY (`completed_by`) REFERENCES `tbl_users` (`user_id`),
   CONSTRAINT `fk_compliance_history_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
   CONSTRAINT `fk_compliance_history_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -448,8 +448,7 @@ CREATE TABLE `tbl_statutory_notifications_log` (
   `applicable_location` longtext,
   `notification_text` longtext,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`statutory_notification_id`),
-  CONSTRAINT `fk_statutory_notifications_log_statutories_backup` FOREIGN KEY (`statutory_backup_id`) REFERENCES `tbl_statutories_backup` (`statutory_backup_id`)
+  PRIMARY KEY (`statutory_notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_statutory_notifications_units`;
@@ -459,7 +458,7 @@ CREATE TABLE `tbl_statutory_notifications_units` (
   `legal_entity_id` int(11) NOT NULL,
   `division_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
-  PRIMARY KEY (`statutory_notification_id`),
+  PRIMARY KEY (`statutory_notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_statutory_notification_status`;
@@ -467,14 +466,14 @@ CREATE TABLE `tbl_statutory_notification_status` (
   `statutory_notification_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `read_status` int(11) NOT NULL,
-  PRIMARY KEY (`statutory_notification_id`),
+  PRIMARY KEY (`statutory_notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_notification_type`;
 CREATE TABLE `tbl_notification_types` (
   `notification_type_id` int(11) NOT NULL,
   `notification_type` varchar(20) NOT NULL,
-  PRIMARY KEY (`notification_type_id`),
+  PRIMARY KEY (`notification_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_notifications_log`;
@@ -503,7 +502,7 @@ CREATE TABLE `tbl_notifications_log` (
   CONSTRAINT `fk_notifications_log_divisions` FOREIGN KEY (`division_id`) REFERENCES `tbl_divisions` (`division_id`),
   CONSTRAINT `fk_notifications_log_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
   CONSTRAINT `fk_notifications_log_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
-  CONSTRAINT `fk_notifications_log_assignee_units` FOREIGN KEY (`assignee`) REFERENCES `tbl_client_user_details` (`user_id`),
+  CONSTRAINT `fk_notifications_log_assignee_units` FOREIGN KEY (`assignee`) REFERENCES `tbl_users` (`user_id`),
   CONSTRAINT `fk_notifications_log_concurrence_units` FOREIGN KEY (`concurrence_person`) REFERENCES `tbl_units` (`unit_id`),
   CONSTRAINT `fk_notifications_log_approve_units` FOREIGN KEY (`approval_person`) REFERENCES `tbl_units` (`unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -514,7 +513,7 @@ CREATE TABLE `tbl_notification_user_log` (
   `user_id` int(11) NOT NULL,
   `read_status` tinyint(1) DEFAULT '0',
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`notification_id`),
+  PRIMARY KEY (`notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
