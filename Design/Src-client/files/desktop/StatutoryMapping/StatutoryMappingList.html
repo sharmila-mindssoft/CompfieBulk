@@ -2,10 +2,10 @@
 {% block content %}
 
 <style type="text/css">
-
 /*siva starts*/
 .form-container-grid-table table tr td ul a{
   text-decoration: none;
+
   color:black;
   width:100%;
   height:100%;  
@@ -49,6 +49,7 @@ cursor:pointer;
     position: relative;
     display: block;
     border-radius: 6px;
+
     -webkit-transition: all 0.2s ease-in-out;
     transition: all 0.2s ease-in-out;
   }
@@ -175,105 +176,172 @@ $(document).ready(function(){
   $('#days').hide();
   $('#hours').show();
   $("#trigger_every").show();
-  $("#summary").html("To Complete within 18 hours");
 })
 
 $(function() {
   $(".dayhour").change(function(){
-
     if($(this).val()=="day")
     {
       $('#days').show();
       $('#hours').hide();
       $("#trigger_every").show();
-      $("#summary").html("To Complete within 18 days");
     }else if($(this).val()=="hour"){
       $('#days').hide();
       $('#hours').show();
       $("#trigger_every").show();
-      $("#summary").html("To Complete within 18 hours");
     } 
   });
 
   $('.tasktype').change(function(){
-    if($(this).val()=="Recurring" || $(this).val()=="Review")
+    if($(this).val()=="Periodical" || $(this).val()=="Review")
     {
       $('#Recurring').show();
       $('#Occasional').hide();
-      $('#As_when').hide();
       $('#One_Time').hide();
     }
    
-    else if($(this).val() == "onoccur" )
+    else if($(this).val() == "OnOccurrence" )
     {
       $('#Recurring').hide();
       $('#Occasional').show();
-      $('#As_when').hide();
       $('#One_Time').hide();
     }
     
-    else if($(this).val() == "One_Time")
+    else if($(this).val() == "OneTime")
     {
       $('#Recurring').hide();
       $('#Occasional').hide();
-      $('#As_when').hide();
       $('#One_Time').show();
     }
     else
     {
       $('#Recurring').hide();
       $('#Occasional').hide();
-      $('#As_when').hide();
       $('#One_Time').hide();
     }
   });
-  $('.repeatlabelday').click(function(){    
-      $('.repeatbyday').show();
-      $('.repeatbyendday').hide();
-    
-  });
-  $('.repeatlabelendday').click(function(){    
-      $('.repeatbyday').hide();
-      $('.repeatbyendday').show();
-      $('.repeatbyendday_stat_date1').hide();
-      $('.repeatbyendday_stat_date2').hide();
-      $('.repeatbyendday_stat_date').hide();      
-  });
-  $('.multipleselect').hide();
-  $('.multipleselectnone').show();
+
   $('.multipleinput').change(function() {
     if ($(this).is(':checked')) {
-      $('.multipleselectnone').hide();
-      $('.multipleselect').show();
+      if($('#repeats_type').val() == 'month'){
+        $('.multipleselectnone').hide();
+        $('.multipleselect').show();
+        load_stautorydates();
+      }else{
+        $('.multipleselect').hide();
+        $('.multipleselectnone').show();
+      }
+      
     } else {
       $('.multipleselect').hide();
       $('.multipleselectnone').show();
     }
   });
-  $('.month_recurring_sel').change(function(){
 
-  }); 
-  $('.occasional_days').change(function(){
-    var daysrecord = $('.occasional_days').val();
-      $('.occasional_summary').text(" To Complete within "+daysrecord+" Days ") 
-    }); 
-    $('.aswhen_sel').change(function(){
-      if($(this).val() == "Hours" )
-      {
-        $('.hours_sel').show();
-        $('.days_sel').hide(); 
-        var hoursrecord = $('.hours_sel').val();
-        $('.as_when_summary').text(" To Complete within "+hoursrecord+" Hours ")     
+  $('#repeats_type').change(function() {
+      if($('#repeats_type').val() == 'month' && $('.multipleinput').prop("checked") == 'true'){
+        $('.multipleselectnone').hide();
+        $('.multipleselect').show();
+        load_stautorydates();
+      }else{
+        $('.multipleselect').hide();
+        $('.multipleselectnone').show();
       }
-      if($(this).val() == "Days" )
-      {
-        $('.hours_sel').hide();
-        $('.days_sel').show();  
-        var daysrecord = $('.days_sel').val();
-        $('.as_when_summary').text(" To Complete within "+daysrecord+" Days ")    
-      }
-    });
   });
+   $('#repeats_every').change(function() {
+      if($('#repeats_type').val() == 'month' && $('.multipleinput').prop("checked") == 'true'){
+        $('.multipleselectnone').hide();
+        $('.multipleselect').show();
+        load_stautorydates();
+      }else{
+        $('.multipleselect').hide();
+        $('.multipleselectnone').show();
+      }
+  });
+
+  $('.repeatlabelday').click(function(){    
+      $('#single_statutory_date').show();  
+      $('#multiple_statutory_date1').show();
+      $('#multiple_statutory_date2').show();
+      $('#multiple_statutory_date3').show();
+      $('#multiple_statutory_date4').show();
+      $('#multiple_statutory_date5').show();
+      $('#multiple_statutory_date6').show(); 
+
+      $('#single_statutory_date').val('');
+      $('#multiple_statutory_date1').val('');
+      $('#multiple_statutory_date2').val('');
+      $('#multiple_statutory_date3').val('');
+      $('#multiple_statutory_date4').val('');
+      $('#multiple_statutory_date5').val('');
+      $('#multiple_statutory_date6').val(''); 
+  });
+  $('.repeatlabelendday').click(function(){    
+      $('#single_statutory_date').hide();
+      $('#multiple_statutory_date1').hide();
+      $('#multiple_statutory_date2').hide();
+      $('#multiple_statutory_date3').hide();
+      $('#multiple_statutory_date4').hide();
+      $('#multiple_statutory_date5').hide();
+      $('#multiple_statutory_date6').hide();
+
+      $('#single_statutory_date').val('30');
+      $('#multiple_statutory_date1').val('30');
+      $('#multiple_statutory_date2').val('30');
+      $('#multiple_statutory_date3').val('30');
+      $('#multiple_statutory_date4').val('30');
+      $('#multiple_statutory_date5').val('30');
+      $('#multiple_statutory_date6').val('30');
+
+  });
+  });
+
+function load_stautorydates(){
+        var rep_every = parseInt($('#repeats_every').val());
+        if(rep_every == 1 || rep_every == 12){
+          $('.input-row1').show();
+          $('.input-row2').hide();
+          $('.input-row3').hide();
+          $('.input-row4').hide();
+          $('.input-row5').hide();
+          $('.input-row6').hide();
+        }else if (rep_every == 2){
+          $('.input-row1').show();
+          $('.input-row2').show();
+          $('.input-row3').show();
+          $('.input-row4').show();
+          $('.input-row5').show();
+          $('.input-row6').show();
+        }else if (rep_every == 3){
+          $('.input-row1').show();
+          $('.input-row2').show();
+          $('.input-row3').show();
+          $('.input-row4').show();
+          $('.input-row5').hide();
+          $('.input-row6').hide();
+        }else if (rep_every == 4){
+          $('.input-row1').show();
+          $('.input-row2').show();
+          $('.input-row3').show();
+          $('.input-row4').hide();
+          $('.input-row5').hide();
+          $('.input-row6').hide();
+        }else if (rep_every == 5){
+          $('.input-row1').show();
+          $('.input-row2').show();
+          $('.input-row3').show();
+          $('.input-row4').hide();
+          $('.input-row5').hide();
+          $('.input-row6').hide();
+        }else{
+          $('.input-row1').show();
+          $('.input-row2').show();
+          $('.input-row3').hide();
+          $('.input-row4').hide();
+          $('.input-row5').hide();
+          $('.input-row6').hide();
+        }
+}
 </script> 
 
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
@@ -307,12 +375,12 @@ $(function() {
         </tr>
         <tr>
           <td align="center"></td>
-          <td><input type="text" class="filter-text-box" onkeyup="filter(this, 1)"></td>
-          <td><input type="text" class="filter-text-box" onkeyup="filter(this, 2)"></td>
-          <td><input type="text" class="filter-text-box" onkeyup="filter(this, 3)"></td>
-          <td><input type="text" class="filter-text-box" onkeyup="filter(this, 4)"></td>
-          <td><input type="text" class="filter-text-box" onkeyup="filter(this, 5)"></td>
-          <td><input type="text" class="filter-text-box" onkeyup="filter(this, 6)"></td>
+          <td><input type="text" class="filter-text-box" id="filter1" onkeyup="filter()"></td>
+          <td><input type="text" class="filter-text-box" id="filter2" onkeyup="filter()"></td>
+          <td><input type="text" class="filter-text-box" id="filter3" onkeyup="filter()"></td>
+          <td><input type="text" class="filter-text-box" id="filter4" onkeyup="filter()"></td>
+          <td><input type="text" class="filter-text-box" id="filter5" onkeyup="filter()"></td>
+          <td><input type="text" class="filter-text-box" id="filter6" onkeyup="filter()"></td>
           <td align="center"></td>
           <td align="center"></td>
           <td align="center"></td>
@@ -320,45 +388,6 @@ $(function() {
 
         <tbody class="tbody-statutorymapping-list" id="filter_statutorymapping">        
         </tbody>
-<!--           <tr>
-          <td align="center">1</td>
-          <td>India</td>
-          <td>Industrial Law</td>
-          <td>Factory</td>
-          <td>Central</td>
-          <td>Batteries Act <img src="/images/right_arrow.png"> Rule 4<br>
-            Batteries Act <img src="/images/right_arrow.png"> Rule 7 <img src="/images/right_arrow.png">Section VII</td>
-          <td>FORM IV - Dealer Registration </td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-          <td>Approved</td>
-        </tr>
-      <tr>
-          <td align="center">2</td>
-          <td>India</td>
-          <td>Industrial Law</td>
-          <td>Factory</td>
-          <td>Central</td>
-          <td>Batteries Act <img src="/images/right_arrow.png"> Rule 8(I) <br>
-          Batteries Act <img src="/images/right_arrow.png"> Rule 9(I) <br>
-          Batteries Act <img src="/images/right_arrow.png"> Rule 9(V) <br></td>
-          <td>FORM VI - Recycler Registration and Review </td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-          <td>Rejected</td>
-        </tr>
-        <tr>
-          <td align="center">3</td>
-          <td>India</td>
-          <td>Industrial Law</td>
-          <td>Factory</td>
-          <td>Central</td>
-          <td>Batteries Act <img src="/images/right_arrow.png"> Rule 8(III) 
-          <td>FORM VII - Half yearly returns by recyclers</td>
-          <td align="center"><img src="/images/icon-edit.png" id="editid" /></td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to deactivate" id="activeid" /></td>
-          <td>Pending</td>
-        </tr> -->
         </table>
     </div>
       
@@ -389,6 +418,7 @@ $(function() {
   <div class="content-area">
     <h1>Statutory Mapping</h1>
     <span id="error" class="error-message" style="color:black;"></span>
+    <input type="hidden" id="edit_sm_id" value="">
     <div class="add-container">
     <div class="form-container-outer">
     <ul class="nav  nav-pills nav-justified setup-panel">
@@ -423,7 +453,6 @@ $(function() {
                   <td>
                   <input type="text" class="filter-text-box" id="filter_country">
                   </td>
-
                   <td>
                   <input type="text" class="filter-text-box" id="filter_domain">
                   </td>
@@ -431,11 +460,9 @@ $(function() {
                   <td>
                   <input type="text" class="filter-text-box" id="filter_industry">
                   </td>
-
                   <td>
                   <input type="text" class="filter-text-box" id="filter_statutorynature">
                   </td>
-                  
                 </tr>
 
                 <tr>
@@ -443,17 +470,14 @@ $(function() {
                   <ul style="height:500px;overflow-y:scroll" id="country">
                   </ul>
                   </td>
-
                   <td>
                   <ul style="height:500px;overflow-y:scroll" id="domain">  
                   </ul>
                   </td>
-
                   <td>
                   <ul style="height:500px;overflow-y:scroll" id="industry">  
                   </ul>
                   </td>
-
                   <td>
                   <ul  style="height:500px;overflow-y:scroll" id="statutorynature"> 
                   </ul>
@@ -468,7 +492,7 @@ $(function() {
   <div class="setup-content" id="step-2">
     <div class="innercontent">
      <div class="form-container-grid-table">
-            <h2 style="font-size:0.813em;" id="breadcrumbs_1"> </h2>
+            <h2 style="font-size:0.813em;" class="breadcrumbs_1"> </h2>
             <input type="hidden" id="statutoryid"> 
             <table>
               <tbody class="tbody-statutory-level">        
@@ -507,7 +531,6 @@ $(function() {
     </tr>
   </table>
 </div>
-
 <div id="statutory-templates">
 <table class="table-statutory">
   <tr class="table-row">
@@ -517,30 +540,480 @@ $(function() {
   </tr>
 </table>
 </div>
+<div class="setup-content" id="step-3">
+<div class="innercontent">
 
+<h2 style="font-size:0.813em;"> <span class="breadcrumbs_1"> </span>  <img src="/images/chevron_black_right.png"> <span class="breadcrumbs_2"> </span></h2>
 
-   <div class="setup-content" id="step-3">
-    <div class="innercontent">
-     
+             <div class="form-container-grid-table-sm">
+              <section id="section-flip-1">
+                <div class="input-row-left">
+                <div class="input-row">
+                    <div class="field-label">Statutory Provision<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                      <textarea class="input-box heightsmall" id="statutory_provision" ></textarea>
+                    </div>
+                  </div>
+                  <div class="input-row">
+                    <div class="field-label">Compliance Task<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                      <input type="text" class="input-box" value="" id="compliance_task"/>
+                    </div>
+                  </div>
+                  <div class="input-row">
+                    <div class="field-label">Compliance Description<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                      <textarea class="input-box heightsmall" id="compliance_description" ></textarea>
+                        <p id="counter" style="font-size:0.65em;"></p>
+                    </div>
+                  </div>
+                  <div class="input-row">
+                    <div class="field-label">Compliance Frequency<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                      <select class="input-box tasktype" id="compliance_frequency">
+                        <option value="">Select</option>
+                        <option value="Periodical">Periodical</option>
+                        <option value="Review">Review</option>
+                        <option value="OneTime">One Time</option>
+                        <option value="OnOccurrence">On Occurrence</option>
+                    </select>
+                  </div>
+                </div>
+                
+              </div>
+              <div class="input-row-right">
+                <div class="input-row">
+                  <div class="field-label">Compliance Document</div>
+                  <div class="field-input">
+                   <input type="text" class="input-box"  value="" id="compliance_document">
+                 </div>
+               </div>
+               <div class="input-row">
+                <div class="field-label">Format</div>
+                <div class="field-input">
+                 <input type="file" class="input-box" id="upload_file">
+               </div>
+             </div>
+             <div class="input-row">
+              <div class="field-label">Penal Consequences</div>
+              <div class="field-input">
+                <textarea class="input-box heightsmall" id="penal_consequences"></textarea>
+              </div>
+            </div>
+          </div>
 
-     
+        </section>
+        <div class="clearfix"></div>
+
+        <div class="one_time" id="One_Time" style="display:none;">
+         <fieldset>
+          <legend>One Time</legend>
+          <div class="input-row-left">
+            <div class="input-row">
+              <div class="field-label">Statutory Date</div>
+              <div class="field-input">
+               <select class="input-box" style="width:60px;" id="statutory_date">
+               </select>
+              <select class="input-box" style="width:60px;" id="statutory_month">
+                <option value="">Select</option>
+                <option value="1">Jan</option>
+                <option value="2">Feb</option>
+                <option value="3">Mar</option>
+                <option value="4">Apr</option>
+                <option value="5">May</option>
+                <option value="6">Jun</option>
+                <option value="7">Jul</option>
+                <option value="8">Aug</option>
+                <option value="9">Sep</option>
+                <option value="10">Oct</option>
+                <option value="11">Nov</option>
+                <option value="12">Dec</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="input-row-right">
+          <div class="input-row">
+            <div class="field-label">Trigger Before</div>
+            <div class="field-input">
+            <input type="text" class="input-box" value="" style="width:50px; float:left;" id="triggerbefore">
+              <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span> 
+            </div>
+            </div>
+          </div>
+          <div class="input-row-right">
+          </div>
+        </fieldset>
+      </div>
+  <div class="occasional" id="Occasional" style="display:none;">
+    <fieldset>
+      <legend>On Occurrence</legend>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">To Complete Within</div>
+          <div class="field-input">
+            <input class="input-box " value="" style="width:55px; float:left;" id="duration">
+            <select class="input-box dayhour" style="width:100px; margin-left:10px; float:left;" id="duration_type">
+              <option value="day">Days</option>
+              <option value="hour">Hours</option>
+            </select>
+          </div>
+        </div>
+       <div class="input-row">
+        <div class="field-label">Summary</div>
+        <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;" class="occasional_summary" id="summary"></span> </div>
+      </div>
     </div>
+    <div class="input-row-right">
+    </div>
+  </fieldset>
+</div>
+<div class="recurring" id="Recurring" style="display:none;">
+
+  <fieldset>
+    <legend>Periodical</legend>
+    <div class="input-row-left">
+      <div class="input-row">
+        <div class="field-label">Repeats Every<span class="mandatory">*</span></div>
+        <div class="field-input">
+         <select class="input-box" class="month_recurring_sel" style="width:50px; float:left;" id="repeats_every">
+          <option></option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+          <option>8</option>
+          <option>9</option>
+          <option>10</option>
+          <option>11</option>
+          <option>12</option>
+        </select>
+        <select class="input-box" style="width:100px; margin-left:10px; float:left;" id="repeats_type">
+          <option value="">Select</option>
+          <option value="day">Day(s)</option>
+          <option value="month">Month(s)</option>
+          <option value="year">Year(s)</option>
+        </select>
+        <div class="clearfix"></div>
+        <label style="font-size:0.8em; padding-top:5px;"></label>
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="field-label">Repeat by<span class="mandatory">*</span></div>
+      <div class="field-input">
+        <label style="padding:3px 0px 5px 0px; vertical-align:middle;" class="repeatlabelday" >
+          <input type="radio" name="repeatby" style="width:20px;float:left;" value="dayofmonth" checked="checked">
+          <span style="font-size:0.8em; padding-top:4px; float:left;">Day of the month</span>                          
+        </label>
+        <div class="clearfix"></div>
+        <label   class="repeatlabelendday" >
+          <input type="radio" name="repeatby" style="width:20px; float:left;"   value="enddayofmonth">
+          <span style="font-size:0.8em; padding-top:4px;">End day of the month</span>    
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="input-row-right">
+   <div class="input-row">
+    <div class="field-label" style="width:100% !important;"><input type="checkbox" class="multipleinput" />Multiple Input Selection</div>
+  </div>
+  <div class="multipleselect" style="display:none">
+   <div class="input-row">
+    <div class="field-label">Statutory Date 1</div>
+    <div class="field-input">
+     <span style="float:left;margin-left:0px;">
+      <select class="input-box" style="width:60px;" id="multiple_statutory_date1">
+      </select>
+      <select class="input-box" style="width:60px;" id="multiple_statutory_month1">
+        <option value="">Select</option>
+        <option value="1">Jan</option>
+        <option value="2">Feb</option>
+        <option value="3">Mar</option>
+        <option value="4">Apr</option>
+        <option value="5">May</option>
+        <option value="6">Jun</option>
+        <option value="7">Jul</option>
+        <option value="8">Aug</option>
+        <option value="9">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
+      </select>
+    </span>
+  <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
+  <input type="text" class="input-box" value="" style="width:40px; float:left;" id="multiple_triggerbefore1">
+  <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span>
+</div>
+</div>
+<div class="clearfix"></div>
+<div class="input-row2" style="display:none">
+    <div class="field-label">Statutory Date 2</div>
+    <div class="field-input">
+     <span style="float:left;margin-left:0px;">
+      <select class="input-box" style="width:60px;" id="multiple_statutory_date2">
+      </select>
+      <select class="input-box" style="width:60px;" id="multiple_statutory_month2">
+        <option value="">Select</option>
+        <option value="1">Jan</option>
+        <option value="2">Feb</option>
+        <option value="3">Mar</option>
+        <option value="4">Apr</option>
+        <option value="5">May</option>
+        <option value="6">Jun</option>
+        <option value="7">Jul</option>
+        <option value="8">Aug</option>
+        <option value="9">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
+      </select>
+    </span>
+  <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
+  <input type="text" class="input-box" value="" style="width:40px; float:left;" id="multiple_triggerbefore2">
+  <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span>
+</div>
+</div>
+<div class="clearfix"></div>
+<div class="input-row3" style="display:none;padding-top:10px;">
+    <div class="field-label">Statutory Date 3</div>
+    <div class="field-input">
+     <span style="float:left;margin-left:0px;">
+      <select class="input-box" style="width:60px;" id="multiple_statutory_date3">
+      </select>
+      <select class="input-box" style="width:60px;" id="multiple_statutory_month3">
+        <option value="">Select</option>
+        <option value="1">Jan</option>
+        <option value="2">Feb</option>
+        <option value="3">Mar</option>
+        <option value="4">Apr</option>
+        <option value="5">May</option>
+        <option value="6">Jun</option>
+        <option value="7">Jul</option>
+        <option value="8">Aug</option>
+        <option value="9">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
+      </select>
+    </span>
+  <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
+  <input type="text" class="input-box" value="" style="width:40px; float:left;" id="multiple_triggerbefore3">
+  <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span>
+</div>
+<br/>
+</div>
+
+<div class="clearfix"></div>
+<div class="input-row4" style="display:none;padding-top:10px;">
+    <div class="field-label">Statutory Date 4</div>
+    <div class="field-input">
+     <span style="float:left;margin-left:0px;">
+      <select class="input-box" style="width:60px;" id="multiple_statutory_date4">
+      </select>
+      <select class="input-box" style="width:60px;" id="multiple_statutory_month4">
+        <option value="">Select</option>
+        <option value="1">Jan</option>
+        <option value="2">Feb</option>
+        <option value="3">Mar</option>
+        <option value="4">Apr</option>
+        <option value="5">May</option>
+        <option value="6">Jun</option>
+        <option value="7">Jul</option>
+        <option value="8">Aug</option>
+        <option value="9">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
+      </select>
+    </span>
+  <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
+  <input type="text" class="input-box" value="" style="width:40px; float:left;" id="multiple_triggerbefore4">
+  <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span>
+</div>
+<br/>
+</div>
+<div class="clearfix"></div>
+<div class="input-row5" style="display:none;padding-top:10px;">
+    <div class="field-label">Statutory Date 5</div>
+    <div class="field-input">
+     <span style="float:left;margin-left:0px;">
+      <select class="input-box" style="width:60px;" id="multiple_statutory_date5">
+      </select>
+      <select class="input-box" style="width:60px;" id="multiple_statutory_month5">
+        <option value="">Select</option>
+        <option value="1">Jan</option>
+        <option value="2">Feb</option>
+        <option value="3">Mar</option>
+        <option value="4">Apr</option>
+        <option value="5">May</option>
+        <option value="6">Jun</option>
+        <option value="7">Jul</option>
+        <option value="8">Aug</option>
+        <option value="9">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
+      </select>
+    </span>
+  <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
+  <input type="text" class="input-box" value="" style="width:40px; float:left;" id="multiple_triggerbefore5">
+  <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span>
+</div>
+<br/>
+</div>
+<div class="clearfix"></div>
+<div class="input-row6" style="display:none;padding-top:10px;">
+    <div class="field-label">Statutory Date 6</div>
+    <div class="field-input">
+     <span style="float:left;margin-left:0px;">
+      <select class="input-box" style="width:60px;" id="multiple_statutory_date6">
+      </select>
+      <select class="input-box" style="width:60px;" id="multiple_statutory_month6">
+        <option value="">Select</option>
+        <option value="1">Jan</option>
+        <option value="2">Feb</option>
+        <option value="3">Mar</option>
+        <option value="4">Apr</option>
+        <option value="5">May</option>
+        <option value="6">Jun</option>
+        <option value="7">Jul</option>
+        <option value="8">Aug</option>
+        <option value="9">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
+      </select>
+    </span>
+  <span style="float:left; font-size:0.8em; margin-left:20px; padding-top:8px;">Trigger Before &nbsp;&nbsp;</span>
+  <input type="text" class="input-box" value="" style="width:40px; float:left;" id="multiple_triggerbefore6">
+  <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span>
+</div>
+<br/>
+</div>
+<div>
+  <div class="field-label">Summary</div>
+  <div class="field-input"> 
+  <span style="font-size:0.8em; float:left; padding-top:5px;" class="summary_repeat"></span> 
+  </div>
+</div>
+
+</div>
+<div class="multipleselectnone">
+  <div class="input-row">
+    <div class="field-label">Statutory Date </div>
+    <div class="field-input">
+     <span style="float:left;margin-left:0px;">
+      <select class="input-box" style="width:60px;" id="single_statutory_date" >
+      </select>
+      <select class="input-box" style="width:60px;" id="single_statutory_month">
+       <option value="">Select</option>
+      <option value="1">Jan</option>
+      <option value="2">Feb</option>
+      <option value="3">Mar</option>
+      <option value="4">Apr</option>
+      <option value="5">May</option>
+      <option value="6">Jun</option>
+      <option value="7">Jul</option>
+      <option value="8">Aug</option>
+      <option value="9">Sep</option>
+      <option value="10">Oct</option>
+      <option value="11">Nov</option>
+      <option value="12">Dec</option>
+      </select>
+    </span>
+</div>
+</div>
+<div class="input-row">
+  <div class="field-label">Trigger Before</div>
+  <div class="field-input">
+  <input type="text" class="input-box" value="" style="width:50px; float:left;" id="single_triggerbefore">
+    <span style="font-size:0.8em; float:left; padding-top:5px;">&nbsp;Days</span> </div>
+  </div>
+  <div class="input-row">
+    <div class="field-label">Summary</div>
+    <div class="field-input"> <span style="font-size:0.8em; float:left; padding-top:5px;" class="summary_repeat"> </span> </div>
+  </div>
+</div>
+</div>
+</fieldset>
+</div>
+
+<div class="clearfix"></div>
+<div align="center" style="padding-top:5px; padding-bottom:5px;">
+<input type="submit" name="submit" value="Add" onclick="temp_addcompliance()" class="btn-submit">
+<input type="hidden" id="complianceid" value=""/>
+</div>
+</div>
+<div class="grid-table">
+  <table>
+    <tr align="left" style="height:2.0em;">
+      <th style="height:2em;" align="center">#</th>
+      <th style="height:2em;">Statutory Provision</th>
+      <th style="height:2em;">Task</th>
+      <th style="height:2em;">Description</th>
+      <th style="height:2em;">Frequency</th>
+      <th style="height:2em;">Repeats</th>
+      <th style="height:2em;" align="center">Edit</th>
+      <th align="center" style="padding-right:3px; height:2em;">Status</th>
+    </tr>
+
+    <tbody class="tbody-compliance-list">        
+    </tbody>
+  </table>
+</div>
+  </div>
     <button id="activate-step-4" class="btn-right">Next</button>
     <button id="backward-step-2" class="btn-right">Previous</button>
   </div>
-
+<div id="compliance-templates">
+<table class="table-compliance">
+  <tr class="table-row">
+    <td class="sno" align="center"></td>
+    <td class="statutory-provision"></td>
+    <td class="task"></td>
+    <td class="description"></td>
+    <td class="frequency"></td>
+    <td class="repeats"></td>
+    <td class="edit" align="center"></td>
+    <td class="status" align="center"></td>
+  </tr>
+</table>
+</div>
   <div class="setup-content" id="step-4">
-    <div class="innercontent">
-     
+<div class="innercontent">
+
+<h2 style="font-size:0.813em;"> <span class="breadcrumbs_1"> </span>  <img src="/images/chevron_black_right.png"> <span class="breadcrumbs_2">  </span> <img src="/images/chevron_black_right.png"> <span class="breadcrumbs_3"> </span></h2>
+
+  <div class="form-container-grid-table" style="padding-top:10px;">
+  <table>
+    <tbody class="tbody-geography-level">        
+    </tbody>
+  </table>
+  </div>
+
     </div>
     <button id="activate-step-finish" class="btn-right">Submit</button>
     <button id="backward-step-3" class="btn-right">Previous</button>
   </div>
+<div style="float:left;width:25%" id="geography-level-templates">
+  <table style="width:100%;">
+    <tr align="left">
+      <th style="overflow: hidden;" class="title"></th>
+    </tr>
+    <tr>
+      <td style="overflow: hidden;" class="levelvalue">
+      </td>
+    </tr>
+  </table>
+</div>
       </div>
     </div>
   </div>
 </div>
-
+</div>
 
 <script type="text/javascript">
   $(document).ready(function() {
@@ -562,23 +1035,25 @@ $(function() {
     });
 
     $('ul.setup-panel li.active a').trigger('click');
-
-    // DEMO ONLY //
     $('#activate-step-2').on('click', function(e) {
+      if (validate_firsttab()){
       $('ul.setup-panel li:eq(1)').removeClass('disabled');
       $('ul.setup-panel li a[href="#step-2"]').trigger('click');
+      }
       
     }) 
     $('#activate-step-3').on('click', function(e) {
+      if (validate_secondtab()){
       $('ul.setup-panel li:eq(2)').removeClass('disabled');
       $('ul.setup-panel li a[href="#step-3"]').trigger('click');
-      
+    }
     })  
 
     $('#activate-step-4').on('click', function(e) {
+      if (validate_thirdtab()){
       $('ul.setup-panel li:eq(3)').removeClass('disabled');
       $('ul.setup-panel li a[href="#step-4"]').trigger('click');
-      
+    }
     })  
 
     $('#backward-step-1').on('click', function(e) {
@@ -596,13 +1071,15 @@ $(function() {
       $('ul.setup-panel li a[href="#step-3"]').trigger('click');
       
     })  
-
     $('#activate-step-finish').on('click', function(e) {
-      alert("submit");      
+      getGeographyResult();
+      if (validate_fourthtab()){
+        savestatutorymapping();
+      }   
     })  
 
-       
 });
+
 </script>
 
 
@@ -616,7 +1093,7 @@ $(function() {
 <script type="text/javascript">
   $(function()
         {
-            $('#myTextarea').keyup(function(e)
+            $('#compliance_description').keyup(function(e)
             {
                 var maxLength = 500;
                 var textlength = this.value.length;
@@ -630,6 +1107,25 @@ $(function() {
                 {
                     $('#counter').html((maxLength - textlength) + ' characters left.');
                 }
+            });
+
+            $('#duration').keyup(function()
+            {
+                 $("#summary").html("To Complete within " + $('#duration').val() + " " + $('#duration_type').val().charAt(0).toUpperCase() + $('#duration_type').val().slice(1)+"(s)" );
+            });
+            $('#duration_type').change(function()
+            {
+                $("#summary").html("To Complete within " + $('#duration').val() + " " + $('#duration_type').val().charAt(0).toUpperCase() + $('#duration_type').val().slice(1)+"(s)" );
+            });
+
+            $('#repeats_every').change(function()
+            {
+                $(".summary_repeat").html("Every " + $('#repeats_every').val() + " " + $('#repeats_type').val().charAt(0).toUpperCase() + $('#repeats_type').val().slice(1)+"(s)");
+            });
+
+            $('#repeats_type').change(function()
+            {
+                $(".summary_repeat").html("Every " + $('#repeats_every').val() + " " + $('#repeats_type').val().charAt(0).toUpperCase() + $('#repeats_type').val().slice(1)+"(s)");
             });
         });
 </script>

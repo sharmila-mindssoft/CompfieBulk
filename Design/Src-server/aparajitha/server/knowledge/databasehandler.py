@@ -840,8 +840,9 @@ class DatabaseHandler(object) :
     def updateCompliance(self, mappingId, datas, updatedBy) :
         complianceIds = []
         for data in datas :
+            print data
             complianceId = data.get("compliance_id")
-            if (complianceId == "") :
+            if (complianceId == ""):
                 ids = self.saveCompliance(mappingId, [data], updatedBy)
                 complianceIds.extend(ids)
                 continue
@@ -978,6 +979,8 @@ class DatabaseHandler(object) :
 
 
     def updateStatutoryMapping(self, data, updatedBy) :
+        print data
+        print
         statutoryMappingId = data.get("statutory_mapping_id")
         countryId =data.get("country_id")
         domainId =data.get("domain_id")
@@ -994,7 +997,10 @@ class DatabaseHandler(object) :
                 countryId, domainId, industryIds, natureId, statutoryIds, geographyIds,
                 updatedBy, statutoryMappingId
             )
+        print query
+        print 
         if (self.dataInsertUpdate(query)) :
+            print "update mapping"
             self.updateStatutoryMappingId(data.get("statutory_ids"), statutoryMappingId, updatedBy)
             ids = self.updateCompliance(statutoryMappingId, compliances, updatedBy)
             complianceIds = ','.join(str(x) for x in ids) + ","
