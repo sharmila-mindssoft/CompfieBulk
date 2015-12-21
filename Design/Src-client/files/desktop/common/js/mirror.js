@@ -411,7 +411,7 @@ function initMirror() {
         compliance["document_name"] = documentName;
         compliance["format_file_name"] = fileFormat;
         compliance["penal_consequences"] = penalConsequence;
-        compliance["compliance_frequency"] = complianceFrequency;
+        compliance["frequency_id"] = complianceFrequency;
         compliance["statutory_dates"] = statutoryDates;
         compliance["repeats_type_id"] = repeatsTypeId;
         compliance["repeats_every"] = repeatsEvery;

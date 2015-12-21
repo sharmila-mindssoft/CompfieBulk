@@ -778,8 +778,8 @@ class DatabaseHandler(object) :
 
         query = "SELECT t1.compliance_id, t1.statutory_provision, t1.compliance_task, \
             t1.compliance_description, t1.document_name, t1.format_file, t1.penal_consequences, \
-            t1.compliance_frequency, t1.statutory_dates, t1.repeats_every, t1.repeats_type, \
-            t1.duration, t1.duration_type, t1.is_active \
+            t1.frequency_id, t1.statutory_dates, t1.repeats_every, t1.repeats_type_id, \
+            t1.duration, t1.duration_type_id, t1.is_active \
             FROM tbl_compliances t1 %s" % qry
         return self.dataSelect(query)
 
@@ -795,28 +795,28 @@ class DatabaseHandler(object) :
             documentName = data.get("document_name")
             formatFile = ','.join(str(x) for x in data.get("format_file_name"))
             penalConsequences = data.get("penal_consequences")
-            complianceFrequency = data.get("compliance_frequency")
+            complianceFrequency = data.get("frequency_id")
             statutoryDates =  json.dumps(data.get("statutory_dates"))
             repeatsEvery = data.get("repeats_every")
-            repeatsType = data.get("repeats_type")
+            repeatsType = data.get("repeats_type_id")
             duration = data.get("duration")
-            durationType = data.get("duration_type")
+            durationType = data.get("duration_type_id")
             isActive = data.get("is_active")
 
-            if complianceFrequency == "OneTime" :
+            if complianceFrequency == 1 :
                 query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
                     compliance_task, compliance_description, document_name, format_file, \
-                    penal_consequences, compliance_frequency, statutory_dates, statutory_mapping_id, \
+                    penal_consequences, frequency_id, statutory_dates, statutory_mapping_id, \
                     is_active, created_by, created_on) VALUES (%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', \
                     '%s', %s, %s, %s, '%s')" % (complianceId, statutoryProvision, complianceTask, 
                     complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
                     statutoryDates, mappingId, isActive, createdBy, createdOn)
 
-            elif complianceFrequency == "OnOccurrence" :
+            elif complianceFrequency == 4 :
                 query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
                     compliance_task, compliance_description, document_name, format_file, \
-                    penal_consequences, compliance_frequency, statutory_dates, duration, \
-                    duration_type, statutory_mapping_id, \
+                    penal_consequences, frequency_id, statutory_dates, duration, \
+                    duration_type_id, statutory_mapping_id, \
                     is_active, created_by, created_on) VALUES (%s,'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, \
                     '%s', %s, %s, %s, '%s')" % (complianceId, statutoryProvision, complianceTask, 
                     complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
@@ -825,8 +825,8 @@ class DatabaseHandler(object) :
             else :
                 query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
                     compliance_task, compliance_description, document_name, format_file, \
-                    penal_consequences, compliance_frequency, statutory_dates, repeats_every, \
-                    repeats_type, statutory_mapping_id, \
+                    penal_consequences, frequency_id, statutory_dates, repeats_every, \
+                    repeats_type_id, statutory_mapping_id, \
                     is_active, created_by, created_on) VALUES (%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', \
                     %s, '%s', %s, %s, %s, '%s')"  % (complianceId, statutoryProvision, complianceTask, 
                     complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
@@ -840,7 +840,6 @@ class DatabaseHandler(object) :
     def updateCompliance(self, mappingId, datas, updatedBy) :
         complianceIds = []
         for data in datas :
-            print data
             complianceId = data.get("compliance_id")
             if (complianceId == ""):
                 ids = self.saveCompliance(mappingId, [data], updatedBy)
@@ -852,29 +851,29 @@ class DatabaseHandler(object) :
             documentName = data.get("document_name")
             formatFile = ','.join(str(x) for x in data.get("format_file_name"))
             penalConsequences = data.get("penal_consequences")
-            complianceFrequency = data.get("compliance_frequency")
+            complianceFrequency = data.get("frequency_id")
             statutoryDates =  json.dumps(data.get("statutory_dates"))
             repeatsEvery = data.get("repeats_every")
-            repeatsType = data.get("repeats_type")
+            repeatsType = data.get("repeats_type_id")
             duration = data.get("duration")
-            durationType = data.get("duration_type")
+            durationType = data.get("duration_type_id")
             isActive = data.get("is_active")
 
-            if complianceFrequency == "OneTime" :
+            if complianceFrequency == 1 :
                 query = "UPDATE tbl_compliances set statutory_provision = '%s', \
                     compliance_task = '%s', compliance_description = '%s', document_name = '%s' , format_file = '%s', \
-                    penal_consequences = '%s', compliance_frequency = '%s', statutory_dates = '%s', statutory_mapping_id = %s, \
+                    penal_consequences = '%s', frequency_id = '%s', statutory_dates = '%s', statutory_mapping_id = %s, \
                     is_active = %s, updated_by = %s WHERE compliance_id = %s "  % (
                         statutoryProvision, complianceTask, 
                         complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
                         statutoryDates, mappingId, isActive, updatedBy, complianceId
                     )
 
-            elif complianceFrequency == "OnOccurrence" :
+            elif complianceFrequency == 4 :
                 query = "UPDATE tbl_compliances set statutory_provision='%s', \
                     compliance_task='%s', compliance_description='%s', document_name='%s', format_file='%s', \
-                    penal_consequences='%s', compliance_frequency='%s', statutory_dates='%s', duration=%s, \
-                    duration_type='%s', statutory_mapping_id = %s, \
+                    penal_consequences='%s', frequency_id='%s', statutory_dates='%s', duration=%s, \
+                    duration_type_id='%s', statutory_mapping_id = %s, \
                     is_active = %s, updated_by = %s WHERE compliance_id = %s "% (
                         statutoryProvision, complianceTask, 
                         complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
@@ -884,8 +883,8 @@ class DatabaseHandler(object) :
             else :
                 query = "UPDATE tbl_compliances set statutory_provision ='%s', \
                     compliance_task ='%s', compliance_description='%s', document_name='%s', format_file='%s', \
-                    penal_consequences='%s', compliance_frequency='%s', statutory_dates='%s', repeats_every=%s, \
-                    repeats_type='%s', statutory_mapping_id=%s, \
+                    penal_consequences='%s', frequency_id='%s', statutory_dates='%s', repeats_every=%s, \
+                    repeats_type_id='%s', statutory_mapping_id=%s, \
                     is_active=%s, updated_by=%s WHERE compliance_id = %s "  % (
                         statutoryProvision, complianceTask, 
                         complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
@@ -968,6 +967,7 @@ class DatabaseHandler(object) :
             self.updateStatutoryMappingId(data.get("statutory_ids"), statutoryMappingId, createdBy)
             ids = self.saveCompliance(statutoryMappingId, compliances, createdBy)
             complianceIds = ','.join(str(x) for x in ids) + ","
+            print complianceIds
             qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
                 where statutory_mapping_id = %s" % (complianceIds, statutoryMappingId)
             self.dataInsertUpdate(qry)
@@ -1084,11 +1084,11 @@ class DatabaseHandler(object) :
         if (self.dataInsertUpdate(query)) :
             qry = " INSERT INTO tbl_compliances_backup(statutory_backup_id, statutory_provision, \
                 compliance_task, compliance_description, document_name, format_file, \
-                penal_consequences, compliance_frequency, statutory_dates, repeats_every, \
-                repeats_type, duration, duration_type)  \
+                penal_consequences, frequency_id, statutory_dates, repeats_every, \
+                repeats_type_id, duration, duration_type_id)  \
                 SELECT %s,t1.statutory_provision, t1.compliance_task, t1.compliance_description, \
-                t1.document_name, t1.format_file, t1.penal_consequences, t1.compliance_frequency, \
-                t1.statutory_dates, t1.repeats_every, t1.repeats_type, t1.duration, t1.duration_type \
+                t1.document_name, t1.format_file, t1.penal_consequences, t1.frequency_id, \
+                t1.statutory_dates, t1.repeats_every, t1.repeats_type_id, t1.duration, t1.duration_type_id \
                 FROM tbl_compliances t1 WHERE statutory_mapping_id=%s" % (backupId, statutoryMappingId)
             self.dataInsertUpdate(qry)
 

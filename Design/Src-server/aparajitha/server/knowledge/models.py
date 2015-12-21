@@ -1340,9 +1340,9 @@ class StatutoryMapping(object) :
             if len(row[5]) >1 :
                 formatFileName = [int(x) for x in row[5].split(',')]
             compliance =  Compliance(
-                    int(row[0]), row[1], row[2], row[3], row[4], 
-                    formatFileName, row[6], row[7], 
-                    json.loads(row[8]), row[9], 
+                    int(row[0]), row[1], row[2], str(row[3]), row[4], 
+                    formatFileName, str(row[6]), str(row[7]), 
+                    json.loads(str(row[8])), row[9], 
                     row[10], row[11], row[12], row[13]
                 )
             self.compliances.append(compliance.toStructure())
