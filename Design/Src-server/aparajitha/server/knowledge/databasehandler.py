@@ -71,7 +71,7 @@ class DatabaseHandler(object) :
 
     def validateSessionToken(self, sessionToken) :
         query = "SELECT user_id FROM tbl_user_sessions \
-        WHERE session_id = '%s'" % sessionToken
+        WHERE session_token = '%s'" % (sessionToken)
         rows = self.dataSelect(query)
         row = rows[0]
         return row[0]
@@ -89,13 +89,13 @@ class DatabaseHandler(object) :
     def getDateTime(self) :
         return datetime.datetime.now()
 
-    def saveActivity(self, userId, formId, action, notificationText=None, notificationLink=None):
+    def saveActivity(self, userId, formId, action):
         createdOn = self.getDateTime()
         activityId = self.getNewId("activity_log_id", "tbl_activity_log")
         query = "INSERT INTO tbl_activity_log(activity_log_id, user_id, form_id, \
-            action, ticker_text, ticker_link, created_on) \
-            VALUES (%s, %s, %s, '%s', '%s', '%s', '%s')" % (
-                activityId, userId, formId, action, str(notificationText), str(notificationLink), createdOn
+            action, created_on) \
+            VALUES (%s, %s, %s, '%s', '%s')" % (
+                activityId, userId, formId, action, createdOn
             )
         self.dataInsertUpdate(query)
 
@@ -928,6 +928,20 @@ class DatabaseHandler(object) :
         rows = self.dataSelect(query)
         return rows[0]
 
+    def getComplianceDuration(self):
+        query = "SELECT duration_type_id, duration_type FROM tbl_compliance_duration_type"
+        rows = self.dataSelect(query)
+        return rows
+
+    def getComplianceRepeat(self):
+        query = "SELECT repeat_type_id, repeat_type FROM tbl_compliance_repeat_type"
+        rows = self.dataSelect(query)
+        return rows
+
+    def getComplianceFrequency(self):
+        query = "SELECT frequency_id, frequency FROM tbl_compliance_frequency"
+        rows = self.dataSelect(query)
+        return rows
 
     def saveStatutoryMapping(self, data, createdBy) :
         countryId =data.get("country_id")
