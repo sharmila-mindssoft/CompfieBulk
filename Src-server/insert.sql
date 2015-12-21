@@ -163,3 +163,22 @@ INSERT INTO tbl_session_types VALUES(1, "web");
 INSERT INTO tbl_session_types VALUES(2, "andoird");
 INSERT INTO tbl_session_types VALUES(3, "ios");
 INSERT INTO tbl_session_types VALUES(4, "blackberry");
+
+--tbl_user
+INSERT INTO tbl_users(user_id, email_id, password, employee_name ) 
+VALUES (1, 'usha@mindssoft.com', 'e10adc3949ba59abbe56e057f20f883e', 'dummy')
+
+--tbl_compliance_duration_type
+INSERT INTO tbl_compliance_duration_type VALUES(1, "Day(s)");
+INSERT INTO tbl_compliance_duration_type VALUES(2, "Hour(s)");
+
+--tbl_compliance_repeat_type
+INSERT INTO tbl_compliance_repeat_type VALUES(1, "Day(s)");
+INSERT INTO tbl_compliance_repeat_type VALUES(2, "Month(s)");
+INSERT INTO tbl_compliance_repeat_type VALUES(3, "Year(s)");
+
+--tbl_compliance_frequency
+INSERT INTO tbl_compliance_frequency VALUES(1, "One Time");
+INSERT INTO tbl_compliance_frequency VALUES(2, "Periodical");
+INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
+INSERT INTO tbl_compliance_frequency VALUES(4, "On Occurrence");

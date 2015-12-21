@@ -139,8 +139,7 @@ CREATE TABLE `tbl_user_sessions` (
   `session_type_id` int(11) DEFAULT NULL,
   `last_accessed_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`session_token`),
-  CONSTRAINT `fk_tbl_user_sessions_id_1` FOREIGN KEY (`session_type_id`) REFERENCES `tbl_session_types` (`session_type_id`),
-  CONSTRAINT `fk_user_sessions_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+  CONSTRAINT `fk_tbl_user_sessions_id_1` FOREIGN KEY (`session_type_id`) REFERENCES `tbl_session_types` (`session_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_industries`;
@@ -491,10 +490,10 @@ DROP TABLE IF EXISTS `tbl_statutory_notifications_log`;
 CREATE TABLE `tbl_statutory_notifications_log` (
   `statutory_notification_id` int(11) NOT NULL,
   `statutory_backup_id` int(11) NOT NULL,
-  `country_id` int(11) NOT NULL,
-  `domain_id` int(11) NOT NULL,
-  `industry_id` int(11) NOT NULL,
-  `statutory_nature_id` int(11) NOT NULL,
+  `country_name` int(11) NOT NULL,
+  `domain_name` int(11) NOT NULL,
+  `industry_name` int(11) NOT NULL,
+  `statutory_nature` int(11) NOT NULL,
   `statutory_provision` longtext,
   `applicable_location` longtext,
   `notification_text` longtext,
@@ -515,7 +514,7 @@ CREATE TABLE `tbl_activity_log` (
   `created_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`activity_log_id`),
   CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`),
-  CONSTRAINT `fk_activity_log_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+  --CONSTRAINT `fk_activity_log_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_notifications`;
