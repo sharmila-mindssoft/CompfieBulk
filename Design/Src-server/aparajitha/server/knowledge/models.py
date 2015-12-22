@@ -1275,7 +1275,7 @@ class Compliance(object) :
             "document_name": self.documentName,
             "format_file_name": self.formatFileName,
             "penal_consequences": self.penalDescription,
-            "compliance_frequency": self.complianceFrequency,
+            "frequency_id": self.complianceFrequency,
             "statutory_dates": self.statutoryDates,
             "repeats_every": self.repeatsEvery, 
             "repeats_type_id": self.repeatsTypeId,
@@ -1660,6 +1660,7 @@ class StatutoryMappingReport(object) :
         # frame all mapping in structured format.
         # look framed mapping for report.
         requestData = self.request[1]
+        print requestData
         assertType(requestData, DictType)
         countryId = requestData["country_id"]
         domainId = requestData["domain_id"]
