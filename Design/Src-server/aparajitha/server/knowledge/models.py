@@ -1439,6 +1439,16 @@ class StatutoryMappingApi(object):
             repeatList.append(repeat)
         return repeatList
 
+    def getApprovalStatus(self):
+        apprvalList = []
+        statusList = enumerate(("Pending", "Approve", "Reject", "Approve & Notify"))
+        for sts in statusList :
+            status = {}
+            status["approval_status_id"] = sts[0]
+            status["approval_status"] = sts[1]
+            apprvalList.append(status)
+        return apprvalList
+
 
     def getStatutoryMappings(self) :
         DH = DatabaseHandler.instance()
@@ -1483,7 +1493,8 @@ class StatutoryMappingApi(object):
                 "statutory_mappings": self.statutoryMappings,
                 "compliance_duration_type": self.getComplianceDurations(),
                 "compliance_repeat_type": self.getComplianceRepeats(),
-                "compliance_frequency": self.getComplianceFrequencies()
+                "compliance_frequency": self.getComplianceFrequencies(),
+                "approval_status": self.getApprovalStatus()
             }
         ]
 
