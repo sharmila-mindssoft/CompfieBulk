@@ -313,6 +313,7 @@ CREATE TABLE `tbl_compliances` (
 DROP TABLE IF EXISTS `tbl_statutories_backup`;
 CREATE TABLE `tbl_statutories_backup` (
   `statutory_backup_id` int(11) NOT NULL,
+  `statutory_mapping_id` int(11) NOT NULL,
   `country_name` varchar(50) NOT NULL,
   `domain_name` varchar(50) NOT NULL,
   `industry_name` varchar(50) NOT NULL,
@@ -321,7 +322,8 @@ CREATE TABLE `tbl_statutories_backup` (
   `applicable_location` longtext,
   `created_by` int(11) NOT NULL,
   `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`statutory_backup_id`)
+  PRIMARY KEY (`statutory_backup_id`),
+  CONSTRAINT `fk_statutories_backup` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_compliances_backup`;
@@ -487,17 +489,17 @@ CREATE TABLE `tbl_client_users` (
 DROP TABLE IF EXISTS `tbl_statutory_notifications_log`;
 CREATE TABLE `tbl_statutory_notifications_log` (
   `statutory_notification_id` int(11) NOT NULL,
-  `statutory_backup_id` int(11) NOT NULL,
-  `country_name` int(11) NOT NULL,
-  `domain_name` int(11) NOT NULL,
-  `industry_name` int(11) NOT NULL,
-  `statutory_nature` int(11) NOT NULL,
+  `statutory_mapping_id` int(11) NOT NULL,
+  `country_name` varchar(50) NOT NULL,
+  `domain_name` varchar(50) NOT NULL,
+  `industry_name` varchar(250) NOT NULL,
+  `statutory_nature` varchar(50) NOT NULL,
   `statutory_provision` longtext,
   `applicable_location` longtext,
   `notification_text` longtext,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`statutory_notification_id`),
-  CONSTRAINT `fk_statutory_notifications_log_statutories_backup` FOREIGN KEY (`statutory_backup_id`) REFERENCES `tbl_statutories_backup` (`statutory_backup_id`)
+  CONSTRAINT `fk_statutory_notifications_log_statutory_mapping` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -520,7 +522,7 @@ CREATE TABLE `tbl_notifications` (
   `notification_id` int(11) NOT NULL,
   `notification_text` varchar(250) DEFAULT NULL,
   `link` varchar(100) DEFAULT NULL,
-  `created_on` timestamp NULL DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

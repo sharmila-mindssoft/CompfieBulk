@@ -1251,7 +1251,7 @@ class Compliance(object) :
         assertType(self.documentName, StringType)
         assertType(self.formatFileName, ListType)
         assertType(self.penalDescription, StringType)
-        assertType(self.complianceFrequency, StringType)
+        assertType(self.complianceFrequency, IntType)
         assertType(self.statutoryDates, ListType)
         # assertType(self.repeatsType, StringType)
         # assertType(self.repeatsEvery, IntType)
@@ -1275,7 +1275,7 @@ class Compliance(object) :
             "document_name": self.documentName,
             "format_file_name": self.formatFileName,
             "penal_consequences": self.penalDescription,
-            "compliance_frequency": self.complianceFrequency,
+            "frequency_id": self.complianceFrequency,
             "statutory_dates": self.statutoryDates,
             "repeats_every": self.repeatsEvery, 
             "repeats_type_id": self.repeatsTypeId,
@@ -1341,7 +1341,7 @@ class StatutoryMapping(object) :
                 formatFileName = [int(x) for x in row[5].split(',')]
             compliance =  Compliance(
                     int(row[0]), row[1], row[2], str(row[3]), row[4], 
-                    formatFileName, str(row[6]), str(row[7]), 
+                    formatFileName, str(row[6]), int(row[7]), 
                     json.loads(str(row[8])), row[9], 
                     row[10], row[11], row[12], row[13]
                 )
@@ -1660,6 +1660,7 @@ class StatutoryMappingReport(object) :
         # frame all mapping in structured format.
         # look framed mapping for report.
         requestData = self.request[1]
+        print requestData
         assertType(requestData, DictType)
         countryId = requestData["country_id"]
         domainId = requestData["domain_id"]
