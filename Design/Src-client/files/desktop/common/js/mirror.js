@@ -476,11 +476,12 @@ function initMirror() {
         apiRequest("ChangeStatutoryMappingStatus", request, callback, failure_callback);
     }
 
-    function approveStatutoryMapping(mappingId, approveStatus, reason, notification, callback, failure_callback) {
+    function approveStatutoryMapping(mappingId, provision, approveStatus, reason, notification, callback, failure_callback) {
         var request = [
             "ApproveStatutoryMapping",
             {
                 "statutory_mapping_id": mappingId,
+                "statutory_provision": provision,
                 "approval_status": approveStatus,
                 "rejected_reason": reason,
                 "notification_text": notification

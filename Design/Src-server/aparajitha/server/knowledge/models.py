@@ -1251,7 +1251,7 @@ class Compliance(object) :
         assertType(self.documentName, StringType)
         assertType(self.formatFileName, ListType)
         assertType(self.penalDescription, StringType)
-        assertType(self.complianceFrequency, StringType)
+        assertType(self.complianceFrequency, IntType)
         assertType(self.statutoryDates, ListType)
         # assertType(self.repeatsType, StringType)
         # assertType(self.repeatsEvery, IntType)
@@ -1341,7 +1341,7 @@ class StatutoryMapping(object) :
                 formatFileName = [int(x) for x in row[5].split(',')]
             compliance =  Compliance(
                     int(row[0]), row[1], row[2], str(row[3]), row[4], 
-                    formatFileName, str(row[6]), str(row[7]), 
+                    formatFileName, str(row[6]), int(row[7]), 
                     json.loads(str(row[8])), row[9], 
                     row[10], row[11], row[12], row[13]
                 )

@@ -976,7 +976,6 @@ class DatabaseHandler(object) :
         else :
             return False
 
-
     def updateStatutoryMapping(self, data, updatedBy) :
         statutoryMappingId = data.get("statutory_mapping_id")
         countryId =data.get("country_id")
@@ -989,7 +988,7 @@ class DatabaseHandler(object) :
 
         self.saveStatutoryBackup(statutoryMappingId, updatedBy)
         query = "UPDATE tbl_statutory_mappings set country_id=%s, domain_id=%s, industry_ids='%s', \
-            statutory_nature_id=%s, statutory_ids='%s', geography_ids='%s', updated_by=%s \
+            statutory_nature_id=%s, statutory_ids='%s', geography_ids='%s', approval_status=0, rejected_reason=NULL, updated_by=%s \
             WHERE statutory_mapping_id=%s" % (
                 countryId, domainId, industryIds, natureId, statutoryIds, geographyIds,
                 updatedBy, statutoryMappingId
@@ -1029,6 +1028,7 @@ class DatabaseHandler(object) :
 
     def changeApprovalStatus(self, data, updatedBy) :
         statutoryMappingId = data.get("statutory_mapping_id")
+        statutoryProvision = data.get("statutory_provision")
         approvalStatus = data.get("approval_status")
         rejectedReason = data.get("rejected_reason")
         notificationText = data.get("notification_text")
@@ -1040,28 +1040,21 @@ class DatabaseHandler(object) :
                     approvalStatus, rejectedReason, updatedBy, statutoryMappingId
                 )
             self.dataInsertUpdate(query)
-            # notification_text = "Statutory Mapping: %s has been Rejected" % (statutoryProvision)
-            # link = "/statutorymapping/list"
-            # self.saveNotification(notification_text, link)
-        elif approvalStatus == 1 :
-            #Approved
-            query = "UPDATE tbl_statutory_mappings set approval_status='%s', \
-                updated_by=%s WHERE statutory_mapping_id = %s" % (
-                    approvalStatus, updatedBy, statutoryMappingId
-                )
-            # notification_text = "Statutory Mapping: %s has been Approved" % (statutoryProvision)
-            # link = "/statutorymapping/list"
-            # self.saveNotification(notification_text, link)
+            notification_log_text = "Statutory Mapping: %s has been Rejected" % (statutoryProvision)
         else :
-            #Notify
+            
             query = "UPDATE tbl_statutory_mappings set approval_status='%s', \
                 updated_by=%s WHERE statutory_mapping_id = %s" % (
                     approvalStatus, updatedBy, statutoryMappingId
                 )
             self.dataInsertUpdate(query)
-            # if (self.dataInsertUpdate(query)) :
-
-        # self.dataInsertUpdate(query)
+            notification_log_text = "Statutory Mapping: %s has been Approved" % (statutoryProvision)            
+            if approvalStatus == 3 :
+                self.saveStatutoryNotifications(statutoryMappingId, notificationText)
+                notification_log_text = "Statutory Mapping: %s has been Approve & Notified" % (statutoryProvision)
+        
+        link = "/statutorymapping/list"
+        self.saveNotification(notification_log_text, link)
         action = "Statutory Mapping approval status changed"
         self.saveActivity(updatedBy, 17, action)
         return True
@@ -1073,9 +1066,32 @@ class DatabaseHandler(object) :
             VALUES (%s, '%s', '%s')" % (notificationId, notification_text, link)
         self.dataInsertUpdate(query)
 
-    def saveStatutoryNotifications(self ):
+    def saveStatutoryNotifications(self, statutoryMappingId, notificationText ):
         # client notification
-        pass
+        oldRecord = self.getStatutoryMappingsById(statutoryMappingId)
+        industryName = self.getIndustryByIndustryId(oldRecord[4])
+
+        statutoryProvision = []
+        for sid in oldRecord[7][:-1].split(',') :
+            data = self.allStatutories.get(int(sid))
+            statutoryProvision.append(data[3])
+        mappings = ','.join(str(x) for x in statutoryProvision)
+        geoMap = []
+        for gid in oldRecord[8][:-1].split(',') :
+            data = self.allGeographies.get(int(gid))
+            geoMap.append(data[1])
+        geoMappings = ','.join(str(x) for x in geoMap)
+
+        notificationId = self.getNewId("statutory_notification_id", "tbl_statutory_notifications_log")
+
+        query = " INSERT INTO tbl_statutory_notifications_log (statutory_notification_id,\
+            statutory_mapping_id, country_name, domain_name, industry_name, statutory_nature,\
+            statutory_provision, applicable_location, notification_text) \
+            VALUES(%s, %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s') " % (
+                notificationId, statutoryMappingId, oldRecord[1], oldRecord[3], 
+                industryName, oldRecord[6], mappings, geoMappings,notificationText
+            )
+        self.dataInsertUpdate(query)
 
     def saveStatutoryBackup(self, statutoryMappingId, createdBy):
         oldRecord = self.getStatutoryMappingsById(statutoryMappingId)
