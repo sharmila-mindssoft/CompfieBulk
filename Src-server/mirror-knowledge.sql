@@ -139,8 +139,7 @@ CREATE TABLE `tbl_user_sessions` (
   `session_type_id` int(11) DEFAULT NULL,
   `last_accessed_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`session_token`),
-  CONSTRAINT `fk_tbl_user_sessions_id_1` FOREIGN KEY (`session_type_id`) REFERENCES `tbl_session_types` (`session_type_id`),
-  CONSTRAINT `fk_user_sessions_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+  CONSTRAINT `fk_tbl_user_sessions_id_1` FOREIGN KEY (`session_type_id`) REFERENCES `tbl_session_types` (`session_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_industries`;
@@ -221,8 +220,8 @@ CREATE TABLE `tbl_statutory_mappings` (
   `domain_id` int(11) NOT NULL,
   `industry_ids` varchar(50) NOT NULL,
   `statutory_nature_id` int(11) NOT NULL,
-  `statutory_ids` varchar(50) NOT NULL,
-  `compliance_ids` varchar(50) NOT NULL,
+  `statutory_ids` varchar(50) DEFAULT NULL,
+  `compliance_ids` varchar(50) DEFAULT NULL,
   `geography_ids` varchar(100) NOT NULL,
   `approval_status` tinyint(4) DEFAULT 0,
   `rejected_reason` varchar(500) DEFAULT NULL,
@@ -284,32 +283,30 @@ CREATE TABLE `tbl_compliance_duration_type` (
 DROP TABLE IF EXISTS `tbl_compliances`;
 CREATE TABLE `tbl_compliances` (
   `compliance_id` int(11) NOT NULL,
-  `statutory_mapping_id` int(11) DEFAULT NULL,
+  `statutory_mapping_id` int(11) NOT NULL,
   `frequency_id` int(11) NOT NULL,
-  `repeats_type _id` int(11) NOT NULL,
-  `duration_type_id` int(11) NOT NULL,
+  `repeats_type_id` int(11) DEFAULT NULL,
+  `duration_type_id` int(11) DEFAULT NULL,
   `statutory_provision` varchar(250) NOT NULL,
   `compliance_task` varchar(100) NOT NULL,
   `compliance_description` longtext,
   `document_name` varchar(100) DEFAULT NULL,
   `format_file` varchar(100) DEFAULT NULL,
-  `format_file_size` float NOT NULL,
+  `format_file_size` float DEFAULT NULL,
   `penal_consequences` longtext,
-  `compliance_frequency` varchar(20) DEFAULT NULL,
   `statutory_dates` longtext,
   `repeats_every` int(11) DEFAULT NULL,
-  `repeats_type` varchar(20) DEFAULT NULL,
   `duration` int(11) DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT '1',
-  `created_by` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created_on` int(11) NOT NULL,
-  `updated_by` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `updated_on` int(11) NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`compliance_id`),
   CONSTRAINT `fk_compliances_statutory_mappings` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`),
   CONSTRAINT `fk_compliance_duration_id_1` FOREIGN KEY (`duration_type_id`) REFERENCES `tbl_compliance_duration_type` (`duration_type_id`),
   CONSTRAINT `fk_compliance_frequency_id` FOREIGN KEY (`frequency_id`) REFERENCES `tbl_compliance_frequency` (`frequency_id`),
-  CONSTRAINT `fk_complioance_repeat_id_1` FOREIGN KEY (`repeats_type _id`) REFERENCES `tbl_compliance_repeat_type` (`repeat_type_id`)
+  CONSTRAINT `fk_complioance_repeat_id_1` FOREIGN KEY (`repeats_type_id`) REFERENCES `tbl_compliance_repeat_type` (`repeat_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -322,8 +319,8 @@ CREATE TABLE `tbl_statutories_backup` (
   `statutory_nature` varchar(50) NOT NULL,
   `statutory_provision` longtext,
   `applicable_location` longtext,
-  `created_by` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created_on` int(11) NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`statutory_backup_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -331,14 +328,14 @@ DROP TABLE IF EXISTS `tbl_compliances_backup`;
 CREATE TABLE `tbl_compliances_backup` (
   `statutory_backup_id` int(11) NOT NULL,
   `frequency_id` int(11) NOT NULL,
-  `repeats_type _id` int(11) NOT NULL,
-  `duration_type_id` int(11) NOT NULL,
+  `repeats_type_id` int(11) DEFAULT NULL,
+  `duration_type_id` int(11) DEFAULT NULL,
   `statutory_provision` varchar(250) NOT NULL,
   `compliance_task` varchar(100) DEFAULT NULL,
   `compliance_description` longtext,
   `document_name` varchar(100) DEFAULT NULL,
   `format_file` varchar(100) DEFAULT NULL,
-  `format_file_size` float NOT NULL,
+  `format_file_size` float DEFAULT NULL,
   `penal_consequences` longtext,
   `statutory_dates` longtext,
   `repeats_every` int(11) DEFAULT NULL,
@@ -491,10 +488,10 @@ DROP TABLE IF EXISTS `tbl_statutory_notifications_log`;
 CREATE TABLE `tbl_statutory_notifications_log` (
   `statutory_notification_id` int(11) NOT NULL,
   `statutory_backup_id` int(11) NOT NULL,
-  `country_id` int(11) NOT NULL,
-  `domain_id` int(11) NOT NULL,
-  `industry_id` int(11) NOT NULL,
-  `statutory_nature_id` int(11) NOT NULL,
+  `country_name` int(11) NOT NULL,
+  `domain_name` int(11) NOT NULL,
+  `industry_name` int(11) NOT NULL,
+  `statutory_nature` int(11) NOT NULL,
   `statutory_provision` longtext,
   `applicable_location` longtext,
   `notification_text` longtext,
@@ -515,7 +512,7 @@ CREATE TABLE `tbl_activity_log` (
   `created_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`activity_log_id`),
   CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`),
-  CONSTRAINT `fk_activity_log_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+  --CONSTRAINT `fk_activity_log_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_notifications`;

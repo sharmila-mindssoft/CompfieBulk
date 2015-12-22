@@ -1225,7 +1225,7 @@ class Compliance(object) :
             self, complianceId, statutoryProvition, complianceTask,
             description, documentName, formatFileName, penalDescription,
             complianceFrequency, statutoryDates,
-            repeatsEvery, repeatsType, duration, durationType, isActive
+            repeatsEvery, repeatsTypeId, duration, durationTypeId, isActive
         ):
         self.complianceId = complianceId
         self.statutoryProvition = statutoryProvition
@@ -1236,9 +1236,9 @@ class Compliance(object) :
         self.penalDescription = penalDescription
         self.complianceFrequency = complianceFrequency
         self.statutoryDates = statutoryDates
-        self.repeatsType = repeatsType
+        self.repeatsTypeId = repeatsTypeId
         self.repeatsEvery = repeatsEvery
-        self.durationType = durationType
+        self.durationTypeId = durationTypeId
         self.duration = duration
         self.isActive = isActive
         self.verify()
@@ -1278,8 +1278,8 @@ class Compliance(object) :
             "compliance_frequency": self.complianceFrequency,
             "statutory_dates": self.statutoryDates,
             "repeats_every": self.repeatsEvery, 
-            "repeats_type": self.repeatsType,
-            "duration_type": self.durationType,
+            "repeats_type_id": self.repeatsTypeId,
+            "duration_type_id": self.durationTypeId,
             "duration": self.duration,
             "is_active": self.isActive
         }
@@ -1340,9 +1340,9 @@ class StatutoryMapping(object) :
             if len(row[5]) >1 :
                 formatFileName = [int(x) for x in row[5].split(',')]
             compliance =  Compliance(
-                    int(row[0]), row[1], row[2], row[3], row[4], 
-                    formatFileName, row[6], row[7], 
-                    json.loads(row[8]), row[9], 
+                    int(row[0]), row[1], row[2], str(row[3]), row[4], 
+                    formatFileName, str(row[6]), str(row[7]), 
+                    json.loads(str(row[8])), row[9], 
                     row[10], row[11], row[12], row[13]
                 )
             self.compliances.append(compliance.toStructure())
@@ -1406,6 +1406,50 @@ class StatutoryMappingApi(object):
         self.geographies= GeographyAPI(request, userId).getGeographyList()
         self.statutoryMappings = {}
 
+    def getComplianceDurations(self):
+        DH = DatabaseHandler.instance()
+        rows = DH.getComplianceDuration()
+        durationList = []
+        for row in rows :
+            duration = {}
+            duration["duration_type_id"] = row[0]
+            duration["duration_type"] = row[1]
+            durationList.append(duration)
+        return durationList
+
+    def getComplianceRepeats(self):
+        DH = DatabaseHandler.instance()
+        rows = DH.getComplianceRepeat()
+        repeatList = []
+        for row in rows :
+            repeat = {}
+            repeat["repeat_type_id"] = row[0]
+            repeat["repeat_type"] = row[1]
+            repeatList.append(repeat)
+        return repeatList
+
+    def getComplianceFrequencies(self):
+        DH = DatabaseHandler.instance()
+        rows = DH.getComplianceFrequency()
+        repeatList = []
+        for row in rows :
+            repeat = {}
+            repeat["frequency_id"] = row[0]
+            repeat["frequency"] = row[1]
+            repeatList.append(repeat)
+        return repeatList
+
+    def getApprovalStatus(self):
+        apprvalList = []
+        statusList = enumerate(("Pending", "Approve", "Reject", "Approve & Notify"))
+        for sts in statusList :
+            status = {}
+            status["approval_status_id"] = sts[0]
+            status["approval_status"] = sts[1]
+            apprvalList.append(status)
+        return apprvalList
+
+
     def getStatutoryMappings(self) :
         DH = DatabaseHandler.instance()
         _statutoryMapList = DH.getStautoryMappings(self.userId)
@@ -1446,7 +1490,11 @@ class StatutoryMappingApi(object):
                 "statutories": self.statutories,
                 "geography_levels": self.geographyLevelList,
                 "geographies": self.geographies,
-                "statutory_mappings": self.statutoryMappings
+                "statutory_mappings": self.statutoryMappings,
+                "compliance_duration_type": self.getComplianceDurations(),
+                "compliance_repeat_type": self.getComplianceRepeats(),
+                "compliance_frequency": self.getComplianceFrequencies(),
+                "approval_status": self.getApprovalStatus()
             }
         ]
 
@@ -1512,7 +1560,7 @@ class StatutoryMappingReport(object) :
         # self.statutoryLevelList = StatutoryLevelsList().getStatutoryLevels()
         # self.statutories= StatutoryApi(request, userId).getStatutories()
         # self.geographyLevelList = GeographyLevelList().getGeographyLevels()
-
+        DH = DatabaseHandler.instance()
         self._geographyMappings = DH.allGeographies
         self._statutoryMappings = DH.allStatutories
     
@@ -1543,7 +1591,7 @@ class StatutoryMappingReport(object) :
         self.domainList = DomainList().getUserDomains(self.userId)
         self.industryList = IndustryList().getIndustries()
         self.statutoryNatureList = StatutoryNatureList().getStatutoryNatures()
-        self.geographies= GeographyAPI(request, userId).getGeographyList()
+        self.geographies= GeographyAPI(self.request, self.userId).getGeographyList()
         return [
             "GetStatutoryMappingReportFiltersSuccess",
             {
@@ -1581,7 +1629,7 @@ class StatutoryMappingReport(object) :
         )
         setMappingReport(mappingId, mapping.toStructure())
 
-    def lookupAndFrameMappingData(rows):
+    def lookupAndFrameMappingData(self, rows):
         savedMapping = {}
         for row in rows :
             mappingId = int(row[0])
@@ -1590,7 +1638,8 @@ class StatutoryMappingReport(object) :
             savedMapping[mappingId] = StatutoryMappingReport.get(mappingId)
         return savedMapping
 
-    def frameReportData(countryId, domainId, reportData):
+    def frameReportData(self, countryId, domainId, reportData):
+        DH = DatabaseHandler.instance()
         level1Statutory = self.getLevel1Statutories()
         level1s = level1Statutory[countryId][domainId]
         level1Mappings = {}
@@ -1624,10 +1673,9 @@ class StatutoryMappingReport(object) :
         if geographyId is None :
             geographyId = '%'
         level1Id = requestData["level_1_statutory_id"]
-
         DH = DatabaseHandler.instance()
         mappingData = DH.getStatutoryMappingReport(countryId, domainId, industryId, statutoryNatureId, geographyId)
-        level1Mappings = frameReportData(countryId, domainId, lookupAndFrameMappingData(mappingData))
+        level1Mappings = self.frameReportData(countryId, domainId, self.lookupAndFrameMappingData(mappingData))
         statutory_mappings = {}
         if level1Id is None :
             statutory_mappings = level1Mappings

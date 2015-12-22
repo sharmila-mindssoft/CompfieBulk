@@ -163,3 +163,30 @@ INSERT INTO tbl_session_types VALUES(1, "web");
 INSERT INTO tbl_session_types VALUES(2, "andoird");
 INSERT INTO tbl_session_types VALUES(3, "ios");
 INSERT INTO tbl_session_types VALUES(4, "blackberry");
+
+
+--tbl_compliance_duration_type
+INSERT INTO tbl_compliance_duration_type VALUES(1, "Day(s)");
+INSERT INTO tbl_compliance_duration_type VALUES(2, "Hour(s)");
+
+--tbl_compliance_repeat_type
+INSERT INTO tbl_compliance_repeat_type VALUES(1, "Day(s)");
+INSERT INTO tbl_compliance_repeat_type VALUES(2, "Month(s)");
+INSERT INTO tbl_compliance_repeat_type VALUES(3, "Year(s)");
+
+--tbl_compliance_frequency
+INSERT INTO tbl_compliance_frequency VALUES(1, "One Time");
+INSERT INTO tbl_compliance_frequency VALUES(2, "Periodical");
+INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
+INSERT INTO tbl_compliance_frequency VALUES(4, "On Occurrence");
+
+--tbl_user_groups
+INSERT INTO tbl_user_groups(user_group_id, form_category_id, user_group_name, form_ids, is_active) VALUES(1, 2, "knowledge", "5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16", 1)
+
+--tbl_users
+INSERT INTO tbl_users(user_id, user_group_id, email_id, password, employee_name ) 
+VALUES (1, 1, 'usha@mindssoft.com', 'e10adc3949ba59abbe56e057f20f883e', 'dummy')
+
+--tbl_user_sessions
+INSERT INTO tbl_user_sessions(session_token, user_id, session_type_id) VALUES ("12c94b934d5f4b5ebebd4471d8b29cb8", 0, 1);
+INSERT INTO tbl_user_sessions(session_token, user_id, session_type_id) VALUES ("b4c59894336c4ee3b598f5e4bd2b276b", 1, 1);
