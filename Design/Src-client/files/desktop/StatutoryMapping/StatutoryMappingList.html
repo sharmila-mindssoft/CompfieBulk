@@ -180,12 +180,12 @@ $(document).ready(function(){
 
 $(function() {
   $(".dayhour").change(function(){
-    if($(this).val()=="day")
+    if($(this).val()=="1")
     {
       $('#days').show();
       $('#hours').hide();
       $("#trigger_every").show();
-    }else if($(this).val()=="hour"){
+    }else if($(this).val()=="2"){
       $('#days').hide();
       $('#hours').show();
       $("#trigger_every").show();
@@ -193,21 +193,21 @@ $(function() {
   });
 
   $('.tasktype').change(function(){
-    if($(this).val()=="Periodical" || $(this).val()=="Review")
+    if($(this).val()=="2" || $(this).val()=="3")
     {
       $('#Recurring').show();
       $('#Occasional').hide();
       $('#One_Time').hide();
     }
    
-    else if($(this).val() == "OnOccurrence" )
+    else if($(this).val() == "4" )
     {
       $('#Recurring').hide();
       $('#Occasional').show();
       $('#One_Time').hide();
     }
     
-    else if($(this).val() == "OneTime")
+    else if($(this).val() == "1")
     {
       $('#Recurring').hide();
       $('#Occasional').hide();
@@ -223,7 +223,7 @@ $(function() {
 
   $('.multipleinput').change(function() {
     if ($(this).is(':checked')) {
-      if($('#repeats_type').val() == 'month'){
+      if($('#repeats_type').val() == '2'){
         $('.multipleselectnone').hide();
         $('.multipleselect').show();
         load_stautorydates();
@@ -239,7 +239,7 @@ $(function() {
   });
 
   $('#repeats_type').change(function() {
-      if($('#repeats_type').val() == 'month' && $('.multipleinput').prop("checked") == 'true'){
+      if($('#repeats_type').val() == '2' && $('.multipleinput').prop("checked") == true){
         $('.multipleselectnone').hide();
         $('.multipleselect').show();
         load_stautorydates();
@@ -249,7 +249,7 @@ $(function() {
       }
   });
    $('#repeats_every').change(function() {
-      if($('#repeats_type').val() == 'month' && $('.multipleinput').prop("checked") == 'true'){
+      if($('#repeats_type').val() == '2' && $('.multipleinput').prop("checked") == true){
         $('.multipleselectnone').hide();
         $('.multipleselect').show();
         load_stautorydates();
@@ -572,10 +572,10 @@ function load_stautorydates(){
                     <div class="field-input">
                       <select class="input-box tasktype" id="compliance_frequency">
                         <option value="">Select</option>
-                        <option value="Periodical">Periodical</option>
+                        <!-- <option value="Periodical">Periodical</option>
                         <option value="Review">Review</option>
                         <option value="OneTime">One Time</option>
-                        <option value="OnOccurrence">On Occurrence</option>
+                        <option value="OnOccurrence">On Occurrence</option> -->
                     </select>
                   </div>
                 </div>
@@ -654,8 +654,8 @@ function load_stautorydates(){
           <div class="field-input">
             <input class="input-box " value="" style="width:55px; float:left;" id="duration">
             <select class="input-box dayhour" style="width:100px; margin-left:10px; float:left;" id="duration_type">
-              <option value="day">Days</option>
-              <option value="hour">Hours</option>
+              <!-- <option value="day">Days</option>
+              <option value="hour">Hours</option> -->
             </select>
           </div>
         </div>
@@ -693,9 +693,9 @@ function load_stautorydates(){
         </select>
         <select class="input-box" style="width:100px; margin-left:10px; float:left;" id="repeats_type">
           <option value="">Select</option>
-          <option value="day">Day(s)</option>
+          <!-- <option value="day">Day(s)</option>
           <option value="month">Month(s)</option>
-          <option value="year">Year(s)</option>
+          <option value="year">Year(s)</option> -->
         </select>
         <div class="clearfix"></div>
         <label style="font-size:0.8em; padding-top:5px;"></label>
@@ -1109,7 +1109,7 @@ function load_stautorydates(){
                 }
             });
 
-            $('#duration').keyup(function()
+            /*$('#duration').keyup(function()
             {
                  $("#summary").html("To Complete within " + $('#duration').val() + " " + $('#duration_type').val().charAt(0).toUpperCase() + $('#duration_type').val().slice(1)+"(s)" );
             });
@@ -1126,7 +1126,7 @@ function load_stautorydates(){
             $('#repeats_type').change(function()
             {
                 $(".summary_repeat").html("Every " + $('#repeats_every').val() + " " + $('#repeats_type').val().charAt(0).toUpperCase() + $('#repeats_type').val().slice(1)+"(s)");
-            });
+            });*/
         });
 </script>
 {% endblock %} 
