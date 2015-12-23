@@ -8,7 +8,7 @@ import os
 import hashlib
 import json
 
-from databasehandler import DatabaseHandler 
+from databasehandler import DatabaseHandler
 from aparajitha.server.constants import ROOT_PATH
 
 __all__ = [
@@ -16,7 +16,7 @@ __all__ = [
     "Menu",
     "assertType",
     "listToString",
-    "getCurrentTimeStamp",
+    
     "JSONHelper",
     "convertToString",
     "generatePassword",
@@ -27,7 +27,8 @@ __all__ = [
     "timestampToDatetime",
     "stringToDatetime",
     "datetimeToString",
-    "getClientId"
+    "getClientId",
+    "FormCategory"
 ]
 
 clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
@@ -210,19 +211,39 @@ class JSONHelper(object) :
         return JSONHelper.long(data.get(name))
 
    
+class FormCategory(object):
+    def __init__(self, form_category_id = None, form_category = None):
+        self.db = DatabaseHandler.instance()
+        self.form_category_id = form_category_id
+        self.form_category = form_category
+
+    def toStructure(self):
+        return {
+            "form_category_id" : self.form_category_id,
+            "form_category" : self.form_category
+        }
+
+    def getFormCategories(self): 
+        formCategoryList = []
+        columns = "form_category_id, form_category"
+        condition = " form_category_id in (2,3)"
+        rows = self.db.getData(columns, self.db.tblFormCategory, condition)
+        for row in rows:
+            formCategory = FormCategory(row[0], row[1])
+            formCategoryList.append(formCategory.toStructure())
+        return formCategoryList
 
 class Form(object) :
-    tblName = "tbl_forms"
 
-    def __init__(self, formId, formName, formUrl, formOrder, formType, 
-        Category, isAdminForm, parentMenu) :
+    def __init__(self, formId = None, formName = None, formUrl = None, formOrder = None, formType = None, 
+        Category = None, parentMenu = None) :
+        self.db = DatabaseHandler.instance()
         self.formId = formId
         self.formName = formName
         self.formUrl = formUrl
         self.formOrder = formOrder
         self.formType = formType
         self.category = Category
-        self.isAdminForm = isAdminForm
         self.parentMenu = parentMenu
 
     def toStructure(self) :
@@ -230,40 +251,45 @@ class Form(object) :
             "form_id": self.formId,
             "form_name": self.formName,
             "form_url": self.formUrl,
-            "form_type": self.formType,
             "parent_menu": self.parentMenu
         }
 
-    @classmethod
-    def getForms(self, type):
-    	print "inside get forms"
-    	forms = []
+    def getForms(self):
+        forms = []
 
-        columns = "form_id, form_name, form_url, form_order, form_type,"+\
-                 "category, admin_form, parent_menu"
+        columns = "tf.form_id, tf.form_category_id, tfc.form_category, tf.form_type_id, tft.form_type,"+\
+        "tf.form_name, tf.form_url, tf.form_order, tf.parent_menu"
+        tables = [self.db.tblForms, self.db.tblFormCategory, self.db.tblFormType]
+        aliases = ["tf", "tfc", "tft"]
+        joinConditions = ["tf.form_catEgory_id = tfc.form_category_id", "tf.form_type_id = tft.form_type_id"]
+        whereCondition = " tf.form_category_id in (3,2,4) order by tf.form_order"
+        joinType = "left join"
 
-        if type == "knowledge".lower():
-        	condition = " category = 'knowledge' "
-        elif type == "techno".lower():
-        	condition = " category = 'techno' "
-        else :
-        	condition = " category = 'client' "
+        rows = self.db.getDataFromMultipleTables(columns, tables, aliases, joinType, 
+            joinConditions, whereCondition)
+        return rows
 
-        rows = DatabaseHandler.instance().getData(Form.tblName, columns, condition)
-
+    def getUserForms(self, formIds):
+        formList = []
+        rows = self.db.getUserForms(formIds)
         for row in rows:
-            formObj = Form(int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6], row[7])
-            forms.append(formObj)
+            form = Form(formId = row[0], formName = row[5], formUrl = row[6], formOrder = row[7], 
+                    formType = row[4], Category = row[2], parentMenu = row[8])
+            formList.append(form)
+        menu = Menu()
+        result = menu.generateMenu(formList)
+        return result
 
-        return forms
+
             
 class Menu(object):
-    structuredForm = {}
-    def __init__(self, masterForms, transactionForms, reportForms, settingForms):
-        self.masterForms = masterForms
-        self.transactionForms = transactionForms
-        self.reportForms = reportForms
-        self.settingForms = settingForms
+    masterForms = []
+    transactionForms = []
+    reportForms = []
+    settingForms = []
+
+    def __init__(self):
+        print "constructor"
 
     def toStructure(self):
         return {
@@ -273,21 +299,22 @@ class Menu(object):
             "settings": self.settingForms
         }
 
-    @classmethod
-    def getMenu(self, formList) :
-	    masters = []
-	    transactions = []
-	    reports = []
-	    settings = []
-	    for form in formList:
-	        self.structuredForm = form.toStructure()
-	        if form.formType == "master".lower():
-	            masters.append(self.structuredForm)
-	        elif form.formType == "transaction".lower():
-	            transactions.append(self.structuredForm)
-	        elif form.formType == "report".lower():
-	            reports.append(self.structuredForm)    
-	        elif form.formType == "setting".lower():
-	            settings.append(self.structuredForm)
-	    menu = Menu(masters, transactions,reports, settings)
-	    return menu.toStructure()
+    def clearLists(self):
+        self.masterForms = []
+        self.transactionForms = []
+        self.reportForms = []
+        self.settingForms = []
+
+    def generateMenu(self, formList) :
+        self.clearLists()
+        for form in formList:
+            structuredForm = form.toStructure()
+            if form.formType == "Master":
+                self.masterForms.append(structuredForm)
+            elif form.formType == "Transaction":
+                self.transactionForms.append(structuredForm)
+            elif form.formType == "Report":
+                self.reportForms.append(structuredForm)    
+            elif form.formType == "Settings":
+                self.settingForms.append(structuredForm)
+        return self.toStructure()

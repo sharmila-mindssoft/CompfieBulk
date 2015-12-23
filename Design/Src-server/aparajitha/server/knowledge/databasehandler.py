@@ -841,7 +841,7 @@ class DatabaseHandler(object) :
         complianceIds = []
         for data in datas :
             complianceId = data.get("compliance_id")
-            if (complianceId == ""):
+            if (complianceId == "") :
                 ids = self.saveCompliance(mappingId, [data], updatedBy)
                 complianceIds.extend(ids)
                 continue
