@@ -165,7 +165,7 @@ function getStatutoryMappings(){
 		geographiesList = data["geographies"];
 		statutoryMappingsList = data["statutory_mappings"];
     tempstatutoryMappingsList = data["statutory_mappings"];
-    complianceFrequencyList = data["frequency_id"];
+    complianceFrequencyList = data["compliance_frequency"];
     complianceDurationTypeList = data["compliance_duration_type"];
     complianceRepeatTypeList = data["compliance_repeat_type"];
 
@@ -727,6 +727,29 @@ function temp_addcompliance(){
         duration = parseInt($('#duration').val());
         duration_type = parseInt($('#duration_type').val());
       }
+
+        /*var duplicate_provision = [];
+        var duplicate_task = [];
+        var duplicate_name = [];
+        $.each(compliances, function(index, value) {
+        if ($.inArray(value.statutory_provision, duplicate_provision)== -1) {
+            duplicate_provision.push(value.statutory_provision);
+        }
+        if ($.inArray(value.compliance_task, duplicate_task)>= 0) {
+            duplicate_task.push(value.compliance_task);
+        }
+        if ($.inArray(value.document_name, duplicate_name)>= 0) {
+            duplicate_name.push(value.document_name);
+        }
+        });*/
+        var check_duplicate_status= true;
+        $.each(compliances, function(index, value) {
+        if (((value.statutory_provision == statutory_provision) || (value.compliance_task == compliance_task) || (value.document_name == compliance_document)) &&  comp_id == '') {
+            check_duplicate_status = false;
+        }
+        });
+
+        if(check_duplicate_status){
         if(comp_id == ''){         
           compliance = mirror.complianceDetails(statutory_provision, compliance_task, description, compliance_document, file_format, penal_consequences, parseInt(compliance_frequency),
             statutory_dates, repeats_type, repeats_every, duration_type, duration, is_active, comp_id);
@@ -759,6 +782,7 @@ function temp_addcompliance(){
       $('#One_Time').hide();
       $('#repeats_every').val('');
       $('#repeats_type').val('');
+      $('#duration').val('');
       $('#statutory_date').val('');
       $('#single_statutory_date').val('');
       $('#multiple_statutory_date1').val('');
@@ -784,9 +808,11 @@ function temp_addcompliance(){
       $('#multiple_triggerbefore5').val('');
       $('#multiple_triggerbefore6').val('');
       //$('.multipleinput').prop("checked") == false;
-
       $('#complianceid').val('');
       load_compliance();
+      }else{
+        $("#error").text("Duplicate Compliance");
+      }
   }     
 }
 
@@ -837,7 +863,7 @@ function temp_editcompliance(edit_id){
     $('#statutory_provision').val(compliances[edit_id]["statutory_provision"]);
     $('#compliance_task').val(compliances[edit_id]["compliance_task"]);
     $('#compliance_description').val(compliances[edit_id]["description"]);
-    $('#compliance_frequency').val(compliances[edit_id]["compliance_frequency"]);
+    $('#compliance_frequency').val(compliances[edit_id]["frequency_id"]);
     $('#compliance_document').val(compliances[edit_id]["document_name"]);
     $('#upload_file').val(compliances[edit_id]["format_file_name"]);
     $('#penal_consequences').val(compliances[edit_id]["penal_consequences"]);
@@ -851,7 +877,6 @@ function temp_editcompliance(edit_id){
       var compliance_frequency = compliances[edit_id]["frequency_id"];
       statutory_dates = compliances[edit_id]["statutory_dates"];
 
-      alert(compliance_frequency);
       if(compliance_frequency == "1"){
         $('#statutory_date').val(statutory_dates[0]["statutory_date"]);
         $('#statutory_month').val(statutory_dates[0]["statutory_month"]);

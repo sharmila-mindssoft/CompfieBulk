@@ -1109,24 +1109,24 @@ function load_stautorydates(){
                 }
             });
 
-            /*$('#duration').keyup(function()
+            $('#duration').keyup(function()
             {
-                 $("#summary").html("To Complete within " + $('#duration').val() + " " + $('#duration_type').val().charAt(0).toUpperCase() + $('#duration_type').val().slice(1)+"(s)" );
+                 $("#summary").html("To Complete within " + $('#duration').val() + " " + $('#duration_type option:selected').text() );
             });
             $('#duration_type').change(function()
             {
-                $("#summary").html("To Complete within " + $('#duration').val() + " " + $('#duration_type').val().charAt(0).toUpperCase() + $('#duration_type').val().slice(1)+"(s)" );
+                $("#summary").html("To Complete within " + $('#duration').val() + " " + $('#duration_type option:selected').text() );
             });
 
             $('#repeats_every').change(function()
             {
-                $(".summary_repeat").html("Every " + $('#repeats_every').val() + " " + $('#repeats_type').val().charAt(0).toUpperCase() + $('#repeats_type').val().slice(1)+"(s)");
+                $(".summary_repeat").html("Every " + $('#repeats_every').val() + " " + $('#repeats_type option:selected').text());
             });
 
             $('#repeats_type').change(function()
             {
-                $(".summary_repeat").html("Every " + $('#repeats_every').val() + " " + $('#repeats_type').val().charAt(0).toUpperCase() + $('#repeats_type').val().slice(1)+"(s)");
-            });*/
+                $(".summary_repeat").html("Every " + $('#repeats_every').val() + " " + $('#repeats_type option:selected').text());
+            });
         });
 </script>
 {% endblock %} 
