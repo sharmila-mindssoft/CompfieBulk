@@ -1,6 +1,7 @@
 import datetime
 import os
 import MySQLdb as mysql
+from commonfunctions import getCurrentTimeStamp
 
 __all__ = [
     "DatabaseHandler"
@@ -8,58 +9,60 @@ __all__ = [
 
 _databaseHandlerInstance = None
 
-tblActivityLog = "tbl_activity_log"
-tblAdmin = "tbl_admin"
-tblBusinessGroups = "tbl_business_groups"
-tblClientCompliances = "tbl_client_compliances"
-tblClientConfigurations = "tbl_client_configurations"
-tblClientCountries = "tbl_client_countries"
-tblClientDatabase = "tbl_client_database"
-tblClientDomains = "tbl_client_domains"
-tblClientGroups = "tbl_client_groups"
-tblClientSavedCompliances = "tbl_client_saved_compliances"
-tblClientSavedStatutories = "tbl_client_saved_statutories"
-tblClientStatutories = "tbl_client_statutories"
-tblClientUsers = "tbl_client_users"
-tblComplianceDurationType = "tbl_compliance_duration_type"
-tblComplianceFrequency = "tbl_compliance_frequency"
-tblComplianceRepeatype = "tbl_compliance_repeat_type"
-tblCompliances = "tbl_compliances"
-tblCompliancesBackup = "tbl_compliances_backup"
-tblCountries = "tbl_countries"
-tblDatabaseServer = "tbl_database_server"
-tblDivisions = "tbl_divisions"
-tblDomains = "tbl_domains"
-tblEmailVerification = "tbl_email_verification"
-tblFormCategory = "tbl_form_category"
-tblFormType = "tbl_form_type"
-tblForms = "tbl_forms"
-tblGeographies = "tbl_geographies"
-tblGeographyLevels = "tbl_geography_levels"
-tblIndustries = "tbl_industries"
-tblLegalEntities = "tbl_legal_entities"
-tblMachines = "tbl_machines"
-tblMobileRegistration = "tbl_mobile_registration"
-tblNotifications = "tbl_notifications"
-tblNotificationsStatus = "tbl_notifications_status"
-tblSessionTypes = "tbl_session_types"
-tblStatutories = "tbl_statutories"
-tblStatutoriesBackup = "tbl_statutories_backup"
-tblStatutoryGeographies = "tbl_statutory_geographies"
-tblStatutoryLevels = "tbl_statutory_levels"
-tblStatutoryMappings = "tbl_statutory_mappings"
-tblStatutoryNatures = "tbl_statutory_natures"
-tblStatutoryNotificationsLog = "tbl_statutory_notifications_log"
-tblUnits = "tbl_units"
-tblUserClients = "tbl_user_clients"
-tblUserCountries = "tbl_user_countries"
-tblUserDomains = "tbl_user_domains"
-tblUserGroups = "tbl_user_groups"
-tblUserLoginHistory = "tbl_user_login_history"
-tblUserSessions = "tbl_user_sessions"
-tblUsers = "tbl_users"
-
 class DatabaseHandler(object) :
+
+    tblActivityLog = "tbl_activity_log"
+    tblAdmin = "tbl_admin"
+    tblBusinessGroups = "tbl_business_groups"
+    tblClientCompliances = "tbl_client_compliances"
+    tblClientConfigurations = "tbl_client_configurations"
+    tblClientCountries = "tbl_client_countries"
+    tblClientDatabase = "tbl_client_database"
+    tblClientDomains = "tbl_client_domains"
+    tblClientGroups = "tbl_client_groups"
+    tblClientSavedCompliances = "tbl_client_saved_compliances"
+    tblClientSavedStatutories = "tbl_client_saved_statutories"
+    tblClientStatutories = "tbl_client_statutories"
+    tblClientUsers = "tbl_client_users"
+    tblComplianceDurationType = "tbl_compliance_duration_type"
+    tblComplianceFrequency = "tbl_compliance_frequency"
+    tblComplianceRepeatype = "tbl_compliance_repeat_type"
+    tblCompliances = "tbl_compliances"
+    tblCompliancesBackup = "tbl_compliances_backup"
+    tblCountries = "tbl_countries"
+    tblDatabaseServer = "tbl_database_server"
+    tblDivisions = "tbl_divisions"
+    tblDomains = "tbl_domains"
+    tblEmailVerification = "tbl_email_verification"
+    tblFormCategory = "tbl_form_category"
+    tblFormType = "tbl_form_type"
+    tblForms = "tbl_forms"
+    tblGeographies = "tbl_geographies"
+    tblGeographyLevels = "tbl_geography_levels"
+    tblIndustries = "tbl_industries"
+    tblLegalEntities = "tbl_legal_entities"
+    tblMachines = "tbl_machines"
+    tblMobileRegistration = "tbl_mobile_registration"
+    tblNotifications = "tbl_notifications"
+    tblNotificationsStatus = "tbl_notifications_status"
+    tblSessionTypes = "tbl_session_types"
+    tblStatutories = "tbl_statutories"
+    tblStatutoriesBackup = "tbl_statutories_backup"
+    tblStatutoryGeographies = "tbl_statutory_geographies"
+    tblStatutoryLevels = "tbl_statutory_levels"
+    tblStatutoryMappings = "tbl_statutory_mappings"
+    tblStatutoryNatures = "tbl_statutory_natures"
+    tblStatutoryNotificationsLog = "tbl_statutory_notifications_log"
+    tblUnits = "tbl_units"
+    tblUserClients = "tbl_user_clients"
+    tblUserCountries = "tbl_user_countries"
+    tblUserDomains = "tbl_user_domains"
+    tblUserGroups = "tbl_user_groups"
+    tblUserLoginHistory = "tbl_user_login_history"
+    tblUserSessions = "tbl_user_sessions"
+    tblUsers = "tbl_users"
+
+
     def __init__(self) :
         self.mysqlHost = "localhost"
         self.mysqlUser = "root"
@@ -145,6 +148,8 @@ class DatabaseHandler(object) :
         return result
 
     def insert(self, table, columns, values) :
+        # columns = 
+        query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, values)
         query = "INSERT INTO "+table+" ("+columns+")" + \
             " VALUES ("+values+")"
         return self.execute(query)
@@ -223,30 +228,27 @@ class DatabaseHandler(object) :
             return False
 
     def getData(self, table, columns, condition):
-        # query = "SELECT "+columns+" FROM "+table+" WHERE "+condition 
         query = "SELECT %s FROM %s WHERE %s "  % (table, columns, condition)
         return self.executeAndReturn(query)
 
-    def getDataFromMultipleTables(self, columns, tables, conditions, joinType):
+    def getDataFromMultipleTables(self, columns, tables, aliases, joinType, joinConditions, whereCondition):
 
         query = "SELECT %s FROM " % columns
 
         for index,table in enumerate(tables):
             if index == 0:
-                query += "%s alias%d  %s" % (table, index, joinType)
+                query += "%s  %s  %s" % (table, aliases[index], joinType)
             elif index <= len(tables) -2:
-                query += " %s alias%d on (alias%d.%s = alias%d.%s) %s " % (table, 
-                    index, index-1, conditions[index-1][0], index, 
-                    conditions[index-1][1], joinType)
+                query += " %s %s on (%s) %s " % (table, aliases[index], joinConditions[index-1], joinType)
             else:
-                query += " %s alias%d on (alias%d.%s = alias%d.%s)" % (table, index,
-                    index-1, conditions[index-1][0], index, conditions[index-1][1])
+                query += " %s %s on (%s)" % (table, aliases[index],joinConditions[index-1])
 
+        query += " where %s" % whereCondition
         return self.executeAndReturn(query)
 
     def validateSessionToken(self, sessionToken) :
         query = "SELECT user_id FROM tbl_user_sessions \
-        WHERE session_id = '%s'" % sessionToken
+        WHERE session_token = '%s'" % sessionToken
         rows = self.executeAndReturn(query)
         row = rows[0]
         return row[0]
@@ -297,6 +299,41 @@ class DatabaseHandler(object) :
             qry = " WHERE t1.form_id in '%s' " % str(tuple(ids))
 
         return self.executeAndReturn(query + qry)
+
+    def getUserForms(self, formIds):
+        forms = []
+
+        columns = "tf.form_id, tf.form_category_id, tfc.form_category, tf.form_type_id, tft.form_type,"+\
+        "tf.form_name, tf.form_url, tf.form_order, tf.parent_menu"
+        tables = [self.tblForms, self.tblFormCategory, self.tblFormType]
+        aliases = ["tf", "tfc", "tft"]
+        joinConditions = ["tf.form_category_id = tfc.form_category_id", "tf.form_type_id = tft.form_type_id"]
+        whereCondition = " tf.form_id in ("+formIds+") order by tf.form_order"
+        joinType = "left join"
+
+        rows = self.getDataFromMultipleTables(columns, tables, aliases, joinType, 
+            joinConditions, whereCondition)
+        return rows    
+
+    def getUserGroupDetailedList(self) :
+        userGroupList = []
+
+        columns = "user_group_id, user_group_name, form_category_id, "+\
+                    "form_ids, is_active"
+        tables = self.tblUserGroups
+        whereCondition = "1"
+
+        rows = self.getData(columns, tables, whereCondition)
+        return rows    
+
+    def saveUserGroup(self, userGroup, sessionUser):
+        print "inside saveUserGroup"
+        columns = ["user_group_id", "user_group_name","form_category", "form_ids", "is_active",
+                  "created_on", "created_by", "updated_on", "updated_by"]
+        valuesList =  [userGroup.userGroupId, userGroup.userGroupName, userGroup.formCategoryId, 
+                        ",".join(str(x) for x in userGroup.formIds), userGroup.isActive, getCurrentTimeStamp(), 
+                        sessionUser,getCurrentTimeStamp(), sessionUser]
+        return self.insert(self.db.tblUserGroups,columns,valuesList)
 
     def truncate(self, table):
         query = "TRUNCATE TABLE  %s;" % table
