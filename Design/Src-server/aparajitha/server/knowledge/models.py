@@ -1315,9 +1315,9 @@ class StatutoryMapping(object) :
     
     def verify(self) :
         assertType(self.countryId, IntType)
-        assertType(self.countryName, StringType)
+        # assertType(self.countryName, StringType)
         assertType(self.domainId, IntType)
-        assertType(self.domainName, StringType)
+        # assertType(self.domainName, StringType)
         assertType(self.industryIds, ListType)
         # assertType(self.industryNames, ListType)
         assertType(self.statutoryNatureId, IntType)
@@ -1327,7 +1327,7 @@ class StatutoryMapping(object) :
         assertType(self.complianceIds, ListType)
         # assertType(self.complianceNames, ListType)
         assertType(self.geographyIds, ListType)
-        assertType(self.approvalStatus, StringType)
+        # assertType(self.approvalStatus, StringType)
         assertType(self.isActive, IntType)
         self.getData()
 
@@ -1539,17 +1539,19 @@ class StatutoryMappingApi(object):
 
     def changeApprovalStatus(self) :
         DH = DatabaseHandler.instance()
-        requestData = self.request[1]
-        if (DH.changeApprovalStatus(requestData, self.userId)) :
-            self.responseData = "success"
-        else :
-            self.responseData = "StatusUpdateFailed"
+        requestData = self.request[1]["statutory_mappings"]
+        for data in requestData :
+            if (DH.changeApprovalStatus(data, self.userId)) :
+                self.responseData = "success"
+            else :
+                self.responseData = "StatusUpdateFailed"
+                break
         return [
             str(self.responseData),
             {}
         ]
 
-StatutoryMappingReport = {}
+StatutoryMappingReportData = {}
 
 class StatutoryMappingReport(object) :
     def __init__(self, request, userId):
@@ -1604,11 +1606,11 @@ class StatutoryMappingReport(object) :
             }
         ]
 
-    def setMappingReport (mappingId, mappingData):
-        global StatutoryMappingReport;
-        StatutoryMappingReport[mappingId] = mappingData
+    def setMappingReport (self, mappingId, mappingData):
+        global StatutoryMappingReportData;
+        StatutoryMappingReportData[mappingId] = mappingData
 
-    def frameMappings(row):
+    def frameMappings(self, row):
         mappingId = int(row[0])
         countryId = int(row[1])
         domainId = int(row[2])
@@ -1627,20 +1629,21 @@ class StatutoryMappingReport(object) :
             statutoryIds, statutoryProvision, complianceIds, 
             geographyIds, geographyMappings, None, isActive
         )
-        setMappingReport(mappingId, mapping.toStructure())
+        self.setMappingReport(mappingId, mapping.toStructure())
 
     def lookupAndFrameMappingData(self, rows):
         savedMapping = {}
         for row in rows :
             mappingId = int(row[0])
-            if StatutoryMappingReport.get(mappingId) is None :
-                frameMappings(row)
-            savedMapping[mappingId] = StatutoryMappingReport.get(mappingId)
+            if StatutoryMappingReportData.get(mappingId) is None :
+                self.frameMappings(row)
+            savedMapping[mappingId] = StatutoryMappingReportData[mappingId]
         return savedMapping
 
     def frameReportData(self, countryId, domainId, reportData):
         DH = DatabaseHandler.instance()
         level1Statutory = self.getLevel1Statutories()
+
         level1s = level1Statutory[countryId][domainId]
         level1Mappings = {}
         for x in level1s :
@@ -1648,8 +1651,10 @@ class StatutoryMappingReport(object) :
             rows = DH.getMappingIds(statutoryId)
             mapping_list = []
             for row in rows :
+                if row[0] is None:
+                    continue
                 def getData(i) :
-                    return reportData.get(int(i))
+                    return reportData[int(i)]
                 mapping_list.extend(
                     [getData(x) for x in row[0][:-1].split(',') if getData(x) is not None]  
                 )
@@ -1660,7 +1665,6 @@ class StatutoryMappingReport(object) :
         # frame all mapping in structured format.
         # look framed mapping for report.
         requestData = self.request[1]
-        print requestData
         assertType(requestData, DictType)
         countryId = requestData["country_id"]
         domainId = requestData["domain_id"]
