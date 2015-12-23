@@ -476,15 +476,21 @@ function initMirror() {
         apiRequest("ChangeStatutoryMappingStatus", request, callback, failure_callback);
     }
 
-    function approveStatutoryMapping(mappingId, provision, approveStatus, reason, notification, callback, failure_callback) {
+    function approveStatutoryList(statutoryMappingId, statutoryProvision, approvalStatus, reason, notificationText) {
+        var dict = {}
+        dict["statutory_mapping_id"] = statutoryMappingId;
+        dict["statutory_provision"] = statutoryProvision;
+        dict["approval_status"] = approvalStatus;
+        dict["rejected_reason"] = reason;
+        dict["notification_text"] = notificationText;
+        return dict;
+    }
+
+    function approveStatutoryMapping(approvalList, callback, failure_callback) {
         var request = [
             "ApproveStatutoryMapping",
             {
-                "statutory_mapping_id": mappingId,
-                "statutory_provision": provision,
-                "approval_status": approveStatus,
-                "rejected_reason": reason,
-                "notification_text": notification
+                "statutory_mappings": approvalList
             }
         ]
         apiRequest("ApproveStatutoryMapping", request, callback, failure_callback);
@@ -1127,6 +1133,7 @@ function initMirror() {
         updateStatutoryMapping: updateStatutoryMapping,
         getStatutoryMappings: getStatutoryMappings,
         changeStatutoryMappingStatus: changeStatutoryMappingStatus,
+        approveStatutoryList: approveStatutoryList,
         approveStatutoryMapping: approveStatutoryMapping,
         getStatutoryMappingsReportFilter: getStatutoryMappingsReportFilter,
         getStatutoryMappingsReportData: getStatutoryMappingsReportData,
