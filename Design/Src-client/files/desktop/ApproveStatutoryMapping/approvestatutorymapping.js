@@ -190,7 +190,7 @@ function loadresult(){
         $('.industry', clone).text(industryName);
         $('.statutorynature', clone).text(statutoryNatureName);
         $('.statutory', clone).html(statutoryMappings);
-        $('.compliancetask', clone).html('<a href="#">'+complianceNames+'</a>');
+        $('.compliancetask', clone).html('<a href="#popup1" onclick="disppopup('+j+')">'+complianceNames+'</a>');
         $('.applicablelocation', clone).text(applicableLocation);
         $('.action', clone).html('<input type="hidden" id="mapping_id'+j+'" value="'+statutorymappingId+'" /> <select class="input-box" id="action'+j+'" onchange="dispreason('+j+')"><option value="">Select</option><option value="approve">Approve</option><option value="reject">Reject</option><option value="notify">Approve & Notify</option></select>');
         $('.reason', clone).html('<textarea class="input-box" id="notifyreason'+j+'" placeholder="Enter notification text" style="height:50px;display:none;"></textarea><br><span style="font-size:0.75em;display:none;" id="notifynote'+j+'">(max 500 characters)</span> <input type="text" style="display:none;" id="reason'+j+'" class="input-box" placeholder="Enter reason" />');
@@ -198,6 +198,32 @@ function loadresult(){
         j = j + 1;
       }
     }
+}
+
+function disppopup(j){
+
+
+var statutoryMappings='';
+for(var i=0; i<statutoryMappingsList[j]["statutory_mappings"].length; i++){
+  statutoryMappings = statutoryMappings + statutoryMappingsList[j]["statutory_mappings"][i] + " <br>";
+}
+
+var complianceNames='';
+for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
+  complianceNames = complianceNames + statutoryMappingsList[entity]["compliance_names"][i] + " <br>";
+}
+        
+
+$(".popup_statutory").html(statutoryMappings);
+$(".popup_statutorynature").text(statutoryMappingsList[i]["statutory_nature_name"]);
+$(".popup_compliancetask").html(complianceNames);
+$(".popup_compliancedescription").html(statutoryMappings);
+$(".popup_penalconsequences").html(statutoryMappings);
+$(".popup_compliancefrequency").html(statutoryMappings);
+$(".popup_complianceoccurance").html(statutoryMappings);
+$(".popup_applicablelocation").html(statutoryMappings);
+
+
 }
 
 function dispreason(j){
@@ -219,13 +245,10 @@ function dispreason(j){
 function saveRecord(){
   
   for(var i=1; i<j; i++){
-    
     var statutory_mapping_id = parseInt($("#mapping_id"+i).val()); 
     var approval_status = $("#action"+i).val(); 
     var rejected_reason = $("#reason"+i).val(); 
     var notification_text = $("#notifyreason"+i).val(); 
-
-    
     if(approval_status != ''){
       function success(status,data){
       if(status == "success"){
