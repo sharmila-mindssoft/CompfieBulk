@@ -2,7 +2,7 @@ import datetime
 import os
 import uuid
 import MySQLdb as mysql
-
+from commonfunctions import getCurrentTimeStamp, generatePassword
 
 __all__ = [
     "DatabaseHandler"
@@ -149,20 +149,24 @@ class DatabaseHandler(object) :
         return result
 
     def insert(self, table, columns, values) :
-        # columns = 
-        query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, values)
-        query = "INSERT INTO "+table+" ("+columns+")" + \
-            " VALUES ("+values+")"
+        columns = ",".join(columns)
+        stringValue = ""
+        for index,value in enumerate(values):
+            if(index < len(values)-1):
+                stringValue = stringValue+"'"+str(value)+"',"
+            else:
+                stringValue = stringValue+"'"+str(value)+"'"
+        query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
         return self.execute(query)
 
     def bulkInsert(self, table, columns, valueList) :
-        query = "INSERT INTO %s (%s)  VALUES" % (table, columns)
-
+        query = "INSERT INTO %s (%s)  VALUES" % (table, ",".join(str(x) for x in columns))
         for index, value in enumerate(valueList):
             if index < len(valueList)-1:
-                query += +"%s," % str(value)
+                query += "%s," % str(value)
             else:
                 query += str(value)
+        print query
         return self.execute(query)
 
     def update(self, table, columns, values, condition) :
@@ -246,6 +250,7 @@ class DatabaseHandler(object) :
                 query += " %s %s on (%s)" % (table, aliases[index],joinConditions[index-1])
 
         query += " where %s" % whereCondition
+        print query
         return self.executeAndReturn(query)
 
     def validateSessionToken(self, sessionToken) :
@@ -321,7 +326,12 @@ class DatabaseHandler(object) :
 
         rows = self.getDataFromMultipleTables(columns, tables, aliases, joinType, 
             joinConditions, whereCondition)
-        return rows    
+        return rows 
+
+
+#
+#  Admin User Group
+#    
 
     def getUserGroupDetailedList(self) :
         userGroupList = []
@@ -334,14 +344,128 @@ class DatabaseHandler(object) :
         rows = self.getData(columns, tables, whereCondition)
         return rows    
 
-    def saveUserGroup(self, userGroup, sessionUser):
-        print "inside saveUserGroup"
-        columns = ["user_group_id", "user_group_name","form_category", "form_ids", "is_active",
+    def getUserGroupList(self) :
+        userGroupList = []
+
+        columns = "user_group_id, user_group_name, is_active"
+        tables = self.tblUserGroups
+        whereCondition = "1"
+
+        rows = self.getData(columns, tables, whereCondition)
+        return rows
+
+    def saveUserGroup(self, userGroup):
+        columns = ["user_group_id", "user_group_name","form_category_id", "form_ids", "is_active",
                   "created_on", "created_by", "updated_on", "updated_by"]
         valuesList =  [userGroup.userGroupId, userGroup.userGroupName, userGroup.formCategoryId, 
                         ",".join(str(x) for x in userGroup.formIds), userGroup.isActive, getCurrentTimeStamp(), 
-                        sessionUser,getCurrentTimeStamp(), sessionUser]
-        return self.insert(self.db.tblUserGroups,columns,valuesList)
+                        0, getCurrentTimeStamp(), 0]
+        return self.insert(self.tblUserGroups,columns,valuesList)
+
+    def updateUserGroup(self, userGroup):
+        columns = ["user_group_name","form_category_id","form_ids", "updated_on", "updated_by"]
+        values =  [ userGroup.userGroupName, userGroup.formCategoryId, 
+                    ",".join(str(x) for x in userGroup.formIds), getCurrentTimeStamp(),0]
+        condition = "user_group_id='%d'" % userGroup.userGroupId
+        return self.update(self.tblUserGroups, columns, values, condition)
+
+    def updateUserGroupStatus(self, userGroupId, isActive):
+        columns = ["is_active", "updated_by", "updated_on"]
+        values = [isActive, 0, getCurrentTimeStamp()]
+        condition = "user_group_id='%d'" % userGroupId
+        return self.update(self.tblUserGroups, columns, values, condition)
+
+#
+#   Admin User
+#
+
+    def getDetailedUserList(self):
+        columns = "tu.user_id, tu.email_id, tu.user_group_id, tu.employee_name, tu.employee_code,"+\
+                "tu.contact_no, tu.address, tu.designation,  tu.is_active, tuc.country_id, "+\
+                "tud.domain_id, tcu.client_id"
+        tables = [self.tblUsers, self.tblUserCountries, self.tblUserDomains, self.tblUserClients]
+        aliases = ["tu", "tuc", "tud", "tcu"]
+        joinConditions = ["tu.user_id = tuc.user_id", "tu.user_id = tud.user_id", 
+                        "tu.user_id = tcu.user_id"]
+        whereCondition = "1"
+        joinType = "left join"
+
+        rows = self.getDataFromMultipleTables(columns, tables, aliases, joinType, 
+            joinConditions, whereCondition)
+        return rows
+
+    def getList(self):
+        columns = "user_id, employee_name, employee_code"
+        rows = self.getData(self.tblUsers, columns, "1")
+        return rows
+
+    def saveUser(self, user):
+        result1 = False
+        result2 = False
+        result3 = False
+        currentTimeStamp = getCurrentTimeStamp()
+        userColumns = ["user_id", "email_id", "user_group_id", "password", "employee_name", 
+                    "employee_code", "contact_no", "address", "designation", "is_active", 
+                    "created_on", "created_by", "updated_on", "updated_by"]
+        userValues = [user.userId, user.emailId, user.userGroupId, generatePassword(),
+                user.employeeName, user.employeeCode, user.contactNo, user.address,
+                user.designation, user.isActive, currentTimeStamp, 0, currentTimeStamp, 0]
+        result1 = self.insert(self.tblUsers, userColumns, userValues)
+
+        countryColumns = ["user_id", "country_id"]
+        countryValuesList = []
+        for countryId in user.countryIds:
+            countryValueTuple = (user.userId, int(countryId))
+            countryValuesList.append(countryValueTuple)
+        result2 = self.bulkInsert(self.tblUserCountries, countryColumns, countryValuesList)
+
+        domainColumns = ["user_id", "domain_id"]
+        domainValuesList = []
+        for domainId in user.domainIds:
+            domainValueTuple = (user.userId, int(domainId))
+            domainValuesList.append(domainValueTuple)
+        result3 = self.bulkInsert(self.tblUserDomains, domainColumns, domainValuesList)
+
+        return (result1 and result2 and result3)
+
+    def updateUser(self, user):
+        result1 = False
+        result2 = False
+        result3 = False
+
+        currentTimeStamp = getCurrentTimeStamp()
+        userColumns = [ "user_group_id", "employee_name", "employee_code", 
+                    "contact_no", "address", "designation",
+                    "updated_on", "updated_by"]
+        userValues = [user.userGroupId, user.employeeName, user.employeeCode, 
+                    user.contactNo, user.address, user.designation, 
+                    currentTimeStamp, 0]
+        userCondition = "user_id = '%d'" % user.userId
+        result1 = self.update(self.tblUsers,userColumns,userValues, userCondition)
+        self.delete(self.tblUserCountries, userCondition)
+        self.delete(self.tblUserDomains, userCondition)
+
+        countryColumns = ["user_id", "country_id"]
+        countryValuesList = []
+        for countryId in user.countryIds:
+            countryValueTuple = (user.userId, int(countryId))
+            countryValuesList.append(countryValueTuple)
+        result2 = self.bulkInsert(self.tblUserCountries, countryColumns, countryValuesList)
+
+        domainColumns = ["user_id", "domain_id"]
+        domainValuesList = []
+        for domainId in user.domainIds:
+            domainValueTuple = (user.userId, int(domainId))
+            domainValuesList.append(domainValueTuple)
+        result3 = self.bulkInsert(self.tblUserDomains, domainColumns, domainValuesList)
+
+        return (result1 and result2 and result3)    
+
+    def updateUserStatus(self, userId, isActive):
+        columns = ["is_active", "updated_on" , "updated_by"]
+        values = [isActive, getCurrentTimeStamp(), 0]
+        condition = "user_id='%d'" % userId
+        return self.update(self.tblUsers, columns, values, condition)    
 
     def truncate(self, table):
         query = "TRUNCATE TABLE  %s;" % table

@@ -282,9 +282,6 @@ class Form(object) :
         menu = Menu()
         result = menu.generateMenu(formList)
         return result
-        
-
-
             
 class Menu(object):
     masterForms = []

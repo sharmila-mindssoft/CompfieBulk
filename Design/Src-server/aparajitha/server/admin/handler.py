@@ -2,7 +2,6 @@ import json
 
 import tornado.ioloop
 import tornado.web
-from models import *
 from controllers import *
 from aparajitha.server.common import JSONHelper
 from aparajitha.server.databasehandler import DatabaseHandler
@@ -27,26 +26,26 @@ class AdminAPIRequestHandler(tornado.web.RequestHandler) :
             if userId is None :
                 response = PossibleError("InvalidSessionToken")
             else :
-                userGroupController = UserGroupController()
-                userController = UserController()
+                userGroup = UserGroup()
+                user = User()
                 changePassword = ChangePassword()
                 forgotPassword = ForgotPassword()
                 if request[0] == "GetUserGroups" :
-                    response = userGroupController.getUserGroups()
+                    response = userGroup.getUserGroups()
                 elif request[0] == "SaveUserGroup" :
-                    response = userGroupController.saveUserGroup(request[1], userId)
+                    response = userGroup.saveUserGroup(request[1], userId)
                 elif request[0] == "UpdateUserGroup" :
-                    response = userGroupController.updateUserGroup(request[1], userId)
+                    response = userGroup.updateUserGroup(request[1], userId)
                 elif request[0] == "ChangeUserGroupStatus" :
-                    response = userGroupController.changeUserGroupStatus(request[1], userId)
+                    response = userGroup.changeUserGroupStatus(request[1], userId)
                 elif request[0] == "GetUsers" :
-                    response = userController.getUsers()
+                    response = user.getUsers()
                 elif request[0] == "SaveUser" :
-                    response = userController.saveUser(request[1], userId)
+                    response = user.saveUser(request[1], userId)
                 elif request[0] == "UpdateUser" :
-                    response = userController.updateUser(request[1], userId)
+                    response = user.updateUser(request[1], userId)
                 elif request[0] == "ChangeUserStatus" :
-                    response = userController.changeUserStatus(request[1], userId)
+                    response = user.changeUserStatus(request[1], userId)
                 elif request[0] == "ChangePassword" :
                     response = changePassword.changePassword(request[1], userId)
                 elif request[0] == "ForgotPassword" :

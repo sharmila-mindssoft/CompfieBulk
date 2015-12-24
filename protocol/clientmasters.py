@@ -149,9 +149,6 @@ SaveServiceProviderSuccess = RecordType("SaveServiceProviderSuccess", [
 ServiceProviderNameAlreadyExists = RecordType("ServiceProviderNameAlreadyExists", [
 ])
 
-ContactNumberAlreadyExists = RecordType("ContactNumberAlreadyExists", [
-])
-
 UpdateServiceProviderSuccess = RecordType("UpdateServiceProviderSuccess", [
 ])
 
@@ -198,6 +195,9 @@ EmployeeCodeAlreadyExists = RecordType("EmployeeCodeAlreadyExists", [
 EmployeeCodeAlreadyExists = RecordType("EmployeeCodeAlreadyExists", [
 ])
 
+ContactNumberAlreadyExists = RecordType("ContactNumberAlreadyExistss", [
+])
+
 UpdateClientUserSuccess = RecordType("UpdateClientUserSuccess", [
 ])
 
@@ -224,14 +224,14 @@ InvalidPassword = RecordType("InvalidPassword", [
 
 Response = VariantType("Response", [
 	GetServiceProvidersSuccess, SaveServiceProviderSuccess,
-	ServiceProviderNameAlreadyExists, ContactNumberAlreadyExists,
+	ServiceProviderNameAlreadyExists,
 	UpdateServiceProviderSuccess,  ChangeServiceProviderStatusSuccess,
 	GetUserPrivilegesSuccess, UserGroupNameAlreadyExists, 
 	InvalidUserGroupId, SaveUserPrivilegesSuccess, 
 	UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess,
 	GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists,
 	UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess,
-	GetUnitsSuccess, InvalidPassword, CloseUnitSuccess
+	GetUnitsSuccess, InvalidPassword, CloseUnitSuccess,ContactNumberAlreadyExists
 ])
 
 

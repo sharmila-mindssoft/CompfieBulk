@@ -526,8 +526,8 @@ function initMirror() {
     }
 
 
-    function getAdminUserGroupList(callerName, 
-        callback, failure_callback) {
+    function getAdminUserGroupList(callback, failure_callback) {
+        callerName = "AdminAPI"
         var request = [
             "GetUserGroups",
             {}
@@ -535,58 +535,47 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function saveAdminUserGroup(callerName, userGroupDetail, 
-        callback, failure_callback) {
+    function getSaveAdminUserGroupDict(userGroupName, formCategoryId, formIds){
+        userGroup = {};
+        userGroup["user_group_name"] = userGroupName;
+        userGroup["form_category_id"] = formCategoryId;
+        userGroup["form_ids"] = formIds;
+        return userGroup;
+    }
+
+    function saveAdminUserGroup(userGroupDetail, callback, failure_callback) {
+        callerName = "AdminAPI"
         if (isNull(userGroupDetail))
             return null;
-        else if (userGroupDetail.length != 3)
-            return null;
-        $.each(userGroupDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var userGroupName= userGroupDetail[0] ;
-        var fromType= userGroupDetail[1] ;
-        var formIds= userGroupDetail[2].split(',') ;
         var request = [
             "SaveUserGroup",
-            {
-                "user_group_name": userGroupName,
-                "form_type": fromType,
-                "form_ids": formIds
-            }
+            userGroupDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateAdminUserGroup(callerName, userGroupDetail, 
-        callback, failure_callback) {
+    function getUpdateAdminUserGroupDict(userGroupId, userGroupName, formCategoryId, formIds){
+        userGroup = {};
+        userGroup["user_group_id"] = userGroupId;
+        userGroup["user_group_name"] = userGroupName;
+        userGroup["form_category_id"] = formCategoryId;
+        userGroup["form_ids"] = formIds;
+        return userGroup;
+    }
+
+    function updateAdminUserGroup(userGroupDetail, callback, failure_callback) {
+        callerName = "AdminAPI"
         if (isNull(userGroupDetail))
             return null;
-        else if (userGroupDetail.length != 4)
-            return null;
-        $.each(userGroupDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
-        var userGroupId= userGroupDetail[0] ;
-        var userGroupName= userGroupDetail[1] ;
-        var fromType= userGroupDetail[2] ;
-        var formIds= userGroupDetail[3].split(',') ;
         var request = [
             "UpdateUserGroup",
-            {
-                "user_group_id" : userGroupId,
-                "user_group_name": userGroupName,
-                "form_type": fromType,
-                "form_ids": formIds
-            }
+            userGroupDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeAdminUserGroupStatus(callerName, userGroupId, isActive, 
-        callback, failure_callback) {
+    function changeAdminUserGroupStatus(userGroupId, isActive, callback, failure_callback) {
+        callerName = "AdminAPI"
         if (isNull(userGroupId) || isNull(isActive) )
             return null;
         var request = [
@@ -602,7 +591,8 @@ function initMirror() {
 
     // Admin User Master
 
-    function getAdminUserList(callerName, callback, failure_callback) {
+    function getAdminUserList(callback, failure_callback) {
+        callerName = "AdminAPI"
         var request = [
             "GetUsers",
             {}
@@ -610,17 +600,7 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-
-    function saveAdminUser(callerName, userDetail, 
-        callback, failure_callback) {
-       if (isNull(userDetail))
-            return null;
-        else if (userDetail.length != 9)
-            return null;
-        $.each(userDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
+    function getSaveAdminUserDict(userDetail){
         var emailId = userDetail[0];
         var userGroupId = userDetail[1];
         var employeeName = userDetail[2];
@@ -630,9 +610,7 @@ function initMirror() {
         var designation = userDetail[6];
         var countryIds= userDetail[7].split(',') ;
         var domainIds= userDetail[8].split(',') ;
-        var request = [
-            "SaveUser",
-            {
+        return {
                 "email_id": emailId,
                 "user_group_id": userGroupId,
                 "employee_name": employeeName,
@@ -643,20 +621,20 @@ function initMirror() {
                 "country_ids": countryIds,
                 "domain_ids": domainIds
             }
+    }
+    
+    function saveAdminUser(userDetail, callback, failure_callback) {
+        callerName = "AdminAPI"
+        if (isNull(userDetail))
+            return null;
+        var request = [
+            "SaveUser",
+            userDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateAdminUser(callerName, userDetail, 
-        callback, failure_callback) {
-        if (isNull(userDetail))
-            return null;
-        else if (userDetail.length != 9)
-            return null;
-        $.each(userDetail, function( index, value ) {
-            if (isNull(value))
-                return null
-        });
+    function getUpdateAdminUserDict(userDetail){
         var userId = userDetail[0];
         var userGroupId = userDetail[1];
         var employeeName = userDetail[2];
@@ -666,9 +644,7 @@ function initMirror() {
         var designation = userDetail[6];
         var countryIds= userDetail[7].split(',') ;
         var domainIds= userDetail[8].split(',') ;
-        var request = [
-            "UpdateUser",
-            {
+        return {
                 "user_id": userId,
                 "user_group_id": userGroupId,
                 "employee_name": employeeName,
@@ -679,12 +655,23 @@ function initMirror() {
                 "country_ids": countryIds,
                 "domain_ids": domainIds
             }
+    }
+
+    function updateAdminUser(userDetail, callback, failure_callback) {
+        callerName = "AdminAPI"
+        if (isNull(userDetail))
+            return null;
+        
+        var request = [
+            "UpdateUser",
+            userDetail
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeAdminUserStatus(callerName, userId, isActive,
+    function changeAdminUserStatus(userId, isActive,
      callback, failure_callback) {
+        callerName = "AdminAPI"
         if (isNull(userId) || isNull(isActive) )
             return null;
         var request = [
@@ -1150,13 +1137,16 @@ function initMirror() {
         filterData: filterData,
         getStatutoryMappingsReportData: getStatutoryMappingsReportData,
 
-
+        getSaveAdminUserGroupDict: getSaveAdminUserGroupDict,
         saveAdminUserGroup: saveAdminUserGroup,
+        getUpdateAdminUserGroupDict: getUpdateAdminUserGroupDict,
         updateAdminUserGroup: updateAdminUserGroup,
         changeAdminUserGroupStatus: changeAdminUserGroupStatus,
         getAdminUserGroupList: getAdminUserGroupList,
 
+        getSaveAdminUserDict : getSaveAdminUserDict,
         saveAdminUser: saveAdminUser,
+        getUpdateAdminUserDict : getUpdateAdminUserDict,
         updateAdminUser: updateAdminUser,
         changeAdminUserStatus: changeAdminUserStatus,
         getAdminUserList: getAdminUserList,
