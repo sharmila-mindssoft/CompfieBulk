@@ -48,10 +48,6 @@ function showResult(){
     $(".error-message").html("Domain Required");  
   }
   else{
-    $(".country").text($("#countryval").val());
-    $(".domain").text($("#domainval").val());
-    $(".tbody-statutorymapping").find("tr").remove();
-
     var filterdata={};
     filterdata["country_id"]=parseInt(country);
     filterdata["domain_id"]=parseInt(domain);
@@ -59,9 +55,9 @@ function showResult(){
     filterdata["statutory_nature_id"]=parseInt(statutorynature);
     filterdata["geography_id"]=parseInt(geography);
     filterdata["level_1_statutory_id"]=parseInt(act);
-    
+
     function success(status, data){
-     //loadClientDetailsList(data);
+     loadresult(data["statutory_mappings"]);
     }
     function failure(status, data){
     }
@@ -226,7 +222,8 @@ function activate_statutory (element,checkval,checkname) {
   $("#statutory").val(checkval);
 }
 //Autocomplete Script ends
-function loadresult(){
+function loadresult(filterList){
+  $(".grid-table-rpt").show();
   var country = $("#countryval").val();
   var domain = $("#domainval").val();
   var industry = $("#industry").val();
@@ -235,11 +232,29 @@ function loadresult(){
   var act = $("#act").val();
   var statutorynature = $("#statutorynature").val();
   var compliance_frequency = $("#compliance_frequency").val();
-
   $(".country").text(country);
   $(".domain").text(domain);
 
-  $(".tbody-statutorymapping").find("tr").remove();
+  $(".tbody-act").find("tr").remove();
+
+  for(var entity in filterList){
+    var tableRow=$('#act-templates');
+    var clone=tableRow.clone();
+    $('.actname', clone).text(entity);
+    
+    var snature='';
+    /*for(var i=0; i<filterList[entity].length; i++){
+      statutoryMappings = statutoryMappings + filterList[entity]["statutory_mappings"][i] + " <br>";
+    }*/
+
+    var tableRow1=$('#compliance-templates');
+    var clone1=tableRow1.clone();
+    $('.tbl_industrytype', clone1).text("industrytype");
+    //$('.tbody-compliance').append(clone1);
+    
+    $('.tbody-act').append(clone);
+
+  }
       /*for(var entity in geographiesList) {
       var geographyList = geographiesList[entity];
       for(var list in geographyList) {
