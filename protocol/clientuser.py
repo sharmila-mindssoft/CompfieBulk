@@ -43,7 +43,7 @@ Request = VariantType("Request", [
 # Response
 #
 
-ComplianceDetail = RecordType("ComplianceDetails", [
+ComplianceDetail = RecordType("ComplianceDetail", [
 	Field("unit_id", UNIT_ID),
 	Field("current_compliances", VectorType(ActiveCompliance)),
 	Field("upcoming_compliances", VectorType(UpcomingCompliance))

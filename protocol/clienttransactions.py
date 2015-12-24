@@ -40,7 +40,7 @@ UpdateStatutorySettings = RecordType("UpdateStatutorySettings", [
 GetAssignCompliancesFormData = RecordType("GetAssignCompliancesFormData", [
 ])
 
-ASSINGED_COMPLIANCE =  RecordType("SaveAssignedCompliance", [
+ASSINGED_COMPLIANCE =  RecordType("ASSINGED_COMPLIANCE", [
 	Field("compliance_id" ,USER_ID),
 	Field("statutory_dates", StatutoryDateList),
 	Field("due_date", DATE),
@@ -61,7 +61,7 @@ SaveAssignedCompliance = RecordType("SaveAssignedCompliance", [
 GetUserwiseCompliances = RecordType("GetUserwiseCompliances", [
 ])
 
-REASSIGNED_COMPLIANCE = RecordType("ReassignCompliance", [
+REASSIGNED_COMPLIANCE = RecordType("REASSIGNED_COMPLIANCE", [
 	Field("compliance_history_id",COMPLIANCE_HISTORY_ID),
 	Field("due_date", DATE)
 ])
@@ -98,7 +98,7 @@ GetStatutoriesByUnit = RecordType("GetStatutoriesByUnit", [
 	Field("compliance_frequency", COMPLIANCE_FREQUENCY)
 ])
 
-PAST_RECORD_COMPLIANCE =  RecordType("SavePastRecords", [
+PAST_RECORD_COMPLIANCE =  RecordType("PAST_RECORD_COMPLIANCE", [
 	Field("compliance_id", COMPLIANCE_ID),
 	Field("due_date" , DATE),
 	Field("completion_date", DATE),
@@ -162,7 +162,7 @@ UNIT_WISE_STATUTORIES = RecordType("UNIT_WISE_STATUTORIES", [
 
 UNIT_WISE_STATUTORIES_LIST = VectorType(UNIT_WISE_STATUTORIES)
 
-UNIT_WISE_COMPLIANCE = RecordType("GetStatutorySettingsSuccess", [
+UNIT_WISE_COMPLIANCE = RecordType("UNIT_WISE_COMPLIANCE", [
 	Field("unit_id", UNIT_ID),
 	Field("unit_name", UNIT_NAME),
 	Field("address", ADDRESS),
@@ -204,7 +204,7 @@ SaveAssignedComplianceSuccess = RecordType("SaveAssignedComplianceSuccess", [
 
 ### Reassign Compliance
 
-STATUTORYWISECOMPLIANCE = RecordType("USERWISECOMPLIANCE", [
+STATUTORYWISECOMPLIANCE = RecordType("STATUTORYWISECOMPLIANCE", [
 	Field("compliance_history_id",COMPLIANCE_HISTORY_ID),
 	Field("compliance_id", COMPLIANCE_ID),
 	Field("compliance_name", COMPLIANCE_TASK_NAME),
@@ -214,12 +214,12 @@ STATUTORYWISECOMPLIANCE = RecordType("USERWISECOMPLIANCE", [
 	Field("due_date", DATE)
 ])
 
-USERWISESTATUTORIES = RecordType("USERWISECOMPLIANCE", [
+USERWISESTATUTORIES = RecordType("USERWISESTATUTORIES", [
 	Field("level_1_statutory_name", LEVEL_1_STATUTORY_NAME),
 	Field("compliances", VectorType(STATUTORYWISECOMPLIANCE))
 ])
 
-USERWISEUNITS = RecordType("USERWISECOMPLIANCE", [
+USERWISEUNITS = RecordType("USERWISEUNITS", [
 	Field("unit_id", UNIT_ID),
 	Field("unit_name", UNIT_NAME) ,
 	Field("address", ADDRESS),

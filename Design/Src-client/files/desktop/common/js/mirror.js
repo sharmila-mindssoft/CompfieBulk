@@ -501,8 +501,19 @@ function initMirror() {
         apiRequest("GetStatutoryMappingReportFilters", request, callback, failure_callback);
     }
 
-    function getStatutoryMappingsReportData(filterData, callback, failure_callback) {
-        var request = ["GetStatutoryMappingReportData", filterData];
+    function filterData(countryId, domainId, industryId, statutoryNatureId, geographyId, level1StatutoryId) {
+        var filter = {};
+        filter["country_id"] = countryId;
+        filter["domain_id"] = domainId;
+        filter["industry_id"] = industryId;
+        filter["statutory_nature_id"] = statutoryNatureId;
+        filter["geography_id"] = geographyId;
+        filter["level_1_statutory_id"] = level1StatutoryId;
+        return filter;
+    }
+
+    function getStatutoryMappingsReportData(filterDatas, callback, failure_callback) {
+        var request = ["GetStatutoryMappingReportData", filterDatas];
         apiRequest("getStatutoryMappingReportData", request, callback, failure_callback);
     }
 
@@ -1136,6 +1147,7 @@ function initMirror() {
         approveStatutoryList: approveStatutoryList,
         approveStatutoryMapping: approveStatutoryMapping,
         getStatutoryMappingsReportFilter: getStatutoryMappingsReportFilter,
+        filterData: filterData;
         getStatutoryMappingsReportData: getStatutoryMappingsReportData,
 
 

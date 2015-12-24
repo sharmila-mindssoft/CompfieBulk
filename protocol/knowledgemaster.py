@@ -166,8 +166,6 @@ InvalidStatutoryNatureId = RecordType("InvalidStatutoryNatureId", [])
 
 ChangeStatutoryNatureStatusSuccess = RecordType("ChangeStatutoryNatureStatusSuccess", [])
 
-InvalidStatutoryNatureId = RecordType("InvalidStatutoryNatureId", [])
-
 DomainLevelMap = MapType(DOMAIN_ID, VectorType(Level))
 
 GetStatutoryLevelsSuccess = RecordType("GetStatutoryLevelsSuccess", [

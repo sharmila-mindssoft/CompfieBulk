@@ -50,7 +50,7 @@ Request = VariantType("Request", [
 # Response
 #
 
-LoginSuccess = RecordType("LoginSucces", [
+LoginSuccess = RecordType("LoginSuccess", [
 	Field("user_id", USER_ID),
 	Field("client_id", CLIENT_ID),
 	Field("session_token", SESSION_TOKEN),
@@ -76,8 +76,6 @@ ResetSessionTokenValidationSuccess = RecordType("ResetSessionTokenValidationSucc
 InvalidResetToken = RecordType("InvalidResetToken", [])
 
 ResetPasswordSuccess = RecordType("ResetPasswordSuccess", [])
-
-InvalidResetToken = RecordType("InvalidResetToken", [])
 
 ChangePasswordSuccess = RecordType("ChangePasswordSuccess", [])
 
