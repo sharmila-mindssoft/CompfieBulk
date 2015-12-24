@@ -195,6 +195,9 @@ EmployeeCodeAlreadyExists = RecordType("EmployeeCodeAlreadyExists", [
 EmployeeCodeAlreadyExists = RecordType("EmployeeCodeAlreadyExists", [
 ])
 
+ContactNumberAlreadyExists = RecordType("ContactNumberAlreadyExistss", [
+])
+
 UpdateClientUserSuccess = RecordType("UpdateClientUserSuccess", [
 ])
 
@@ -228,7 +231,7 @@ Response = VariantType("Response", [
 	UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess,
 	GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists,
 	UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess,
-	GetUnitsSuccess, InvalidPassword, CloseUnitSuccess
+	GetUnitsSuccess, InvalidPassword, CloseUnitSuccess,ContactNumberAlreadyExists
 ])
 
 
