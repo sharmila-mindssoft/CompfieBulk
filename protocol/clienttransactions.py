@@ -311,5 +311,5 @@ Response = VariantType("Response", [
 	ApproveComplianceSuccess,
 	GetPastRecordsFormDataSuccess,
 	GetStatutoriesByUnitSuccess,
-	SavePastRecords
+	SavePastRecordsSuccess
 ])

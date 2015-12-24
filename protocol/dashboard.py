@@ -327,5 +327,4 @@ Response = VariantType("Response", [
 	GetEscalationsDrillDownDataSuccess,
 	GetComplianceApplicabilityStatusDrillDownSuccess,
 	GetNotCompliedDrillDownSuccess,
-	GetTrendChartSuccess,
 ])

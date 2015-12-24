@@ -269,7 +269,7 @@ class Field(Type) :
     def type(self) : return self._type
 
     def to_string(self) :
-        return "Field%s(%s)" % (
+        return "%s(%s)" % (
             self._name,
             self._type.to_string()
         )
@@ -278,17 +278,20 @@ class RecordType(NamedType) :
     def __init__(self, name, fields, base_class=None) :
         super(RecordType, self).__init__(name)
         self._fields = fields
-        self._field_names = (x.name() for x in self._fields)
+        self._field_names = [x.name() for x in self._fields]
         self._base_class = base_class
 
     def fields(self) : return self._fields
     def field_names(self) : return self._field_names
     def base_class(self) : return self._base_class
     def set_base_class(self, base_class):
+        assert self._base_class is None, (
+            self.base_class().name(), self.name()
+        )
         self._base_class = base_class
 
     def to_string(self) :
-        return "Record%s(%s)" % (
+        return "%s(%s)" % (
             self.name(),
             [x.to_string() for x in self._fields]
         )
@@ -310,7 +313,7 @@ class VariantType(NamedType) :
     def option_names(self) : return self._option_names
 
     def to_string(self) :
-        return "Variant%s(%s)" % (
+        return "%s(%s)" % (
             self.name(),
             ",".join([x.to_string() for x in self._options])
         )

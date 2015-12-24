@@ -1,4 +1,3 @@
-from types import VectorType
 from common import *
 from core import *
 

@@ -90,7 +90,7 @@ Response = VariantType("Response", [
 	LoginSuccess, InvalidCredentials,
 	ForgotPasswordSuccess, InvalidUserName,
 	ResetSessionTokenValidationSuccess, InvalidResetToken,
-	ResetPasswordSuccess, InvalidResetToken,
+	ResetPasswordSuccess,
 	ChangePasswordSuccess, InvalidCurrentPassword,
 	LogoutSuccess, InvalidSessionToken
 ])

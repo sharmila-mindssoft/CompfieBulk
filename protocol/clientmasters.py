@@ -1,6 +1,5 @@
 from core import *
 from common import *
-from types import VectorType
 
 __all__=  [
 	"Request", "Response"
@@ -110,7 +109,7 @@ UpdateClientUser = RecordType("UpdateClientUser", [
 	Field("service_provider_id", SERVICE_PROVIDER_ID)
 ])
 
-UpdateClientUser = RecordType("UpdateClientUser", [
+UpdateClientUserStatus = RecordType("UpdateClientUserStatus", [
 	Field("user_id", USER_ID),
 	Field("is_active", IS_ACTIVE)
 ])
@@ -131,7 +130,7 @@ Request = VariantType("Request", [
 	GetUserPrivileges, SaveUserPrivileges,
 	UpdateUserPrivileges, ChangeUserPrivilegeStatus,
 	GetClientUsers, SaveClientUser, UpdateClientUser,
-	UpdateClientUser, GetUnits, CloseUnit
+	UpdateClientUserStatus, GetUnits, CloseUnit
 ])
 
 #

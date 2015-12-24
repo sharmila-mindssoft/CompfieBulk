@@ -1,4 +1,4 @@
-from protocol.types import RecordType, VariantType, EnumType, CustomTextType, VectorType
+from protocol.basics.types import RecordType, VariantType, EnumType, CustomTextType, VectorType
 from protocol.common import *
 __all__ = [
 	"USER_TYPE", "APPROVAL_STATUS", "COMPLIANCE_APPROVAL_STATUS",

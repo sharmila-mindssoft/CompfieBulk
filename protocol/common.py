@@ -1,4 +1,4 @@
-from protocol.types import *
+from protocol.basics.types import *
 
 # SESSION_TOKEN = Text
 # USERNAME = Text

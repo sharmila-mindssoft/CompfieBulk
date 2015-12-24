@@ -1,6 +1,5 @@
 from core import *
 from common import *
-from types import VectorType
 
 __all__=  [
 	"Request", "Response"
