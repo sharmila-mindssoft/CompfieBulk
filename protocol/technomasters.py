@@ -198,7 +198,7 @@ LICENCE_HOLDER_DETAILS = RecordType("LICENCE_HOLDER_DETAILS", [
 	Field("used_disk_space", USED_DISK_SPACE)
 ])
 
-PROFILE_DETAIL = RecordType("PROFILES", [
+PROFILE_DETAIL = RecordType("PROFILE_DETAIL", [
 	Field("contract_from", DATE),
 	Field("contract_to", DATE),
 	Field("no_of_user_licence", NO_OF_USER_LICENCE),

@@ -93,7 +93,7 @@ NOTIFICATIONS = RecordType("NOTIFICATIONS", [
 	Field("date_and_time", TIMESTAMP)
 ])
 
-COUNTRY_WISE_NOTIFICATIONS = RecordType("NOTIFICATIONS", [
+COUNTRY_WISE_NOTIFICATIONS = RecordType("COUNTRY_WISE_NOTIFICATIONS", [
 	Field("country_id", CountryList),
 	Field("domain_id", DomainList),
 	Field("notifications", VectorType(NOTIFICATION_TEXT))
@@ -118,7 +118,7 @@ GetAssignedStatutoryReportFiltersSuccess = RecordType("GetAssignedStatutoryRepor
 	Field("level_1_statutories", MapType(COUNTRY_ID, Statutory)),
 ])
 
-UNIT_WISE_ASSIGNED_STATUTORIES = RecordType("GetStatutoryNotificationsSuccess", [
+UNIT_WISE_ASSIGNED_STATUTORIES = RecordType("UNIT_WISE_ASSIGNED_STATUTORIES", [
 	Field("unit_id", CountryList),
 	Field("address", DomainList),
 	Field("assigned_statutories", AssignedStatutoryList),
