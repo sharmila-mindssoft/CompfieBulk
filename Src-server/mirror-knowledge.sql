@@ -386,10 +386,10 @@ CREATE TABLE `tbl_client_domains` (
 
 DROP TABLE IF EXISTS `tbl_user_clients`;
 CREATE TABLE `tbl_user_clients` (
-  `cliend_id` int(11) NOT NULL,
+  `client_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`cliend_id`,`user_id`),
-  CONSTRAINT `fk_tbl_client_groups_user_clients_id` FOREIGN KEY (`cliend_id`) REFERENCES `tbl_client_groups` (`client_id`),
+  PRIMARY KEY (`client_id`,`user_id`),
+  CONSTRAINT `fk_tbl_client_groups_user_clients_id` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
   CONSTRAINT `fk_tbl_users_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

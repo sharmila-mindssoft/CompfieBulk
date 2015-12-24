@@ -149,9 +149,6 @@ SaveServiceProviderSuccess = RecordType("SaveServiceProviderSuccess", [
 ServiceProviderNameAlreadyExists = RecordType("ServiceProviderNameAlreadyExists", [
 ])
 
-ContactNumberAlreadyExists = RecordType("ContactNumberAlreadyExists", [
-])
-
 UpdateServiceProviderSuccess = RecordType("UpdateServiceProviderSuccess", [
 ])
 
