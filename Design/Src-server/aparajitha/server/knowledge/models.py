@@ -1664,10 +1664,10 @@ class StatutoryMappingReport(object) :
             rows = DH.getMappingIds(statutoryId)
             mapping_list = []
             for row in rows :
-                if row[0] is None:
+                if (row[0] is None) or (row[0] == "") :
                     continue
                 def getData(i) :
-                    return reportData[int(i)]
+                    return reportData.get(int(i))
                 mapping_list.extend(
                     [getData(x) for x in row[0][:-1].split(',') if getData(x) is not None]  
                 )

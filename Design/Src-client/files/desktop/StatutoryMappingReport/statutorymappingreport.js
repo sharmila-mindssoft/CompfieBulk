@@ -9,85 +9,61 @@ var statutoryLevelsList;
 var statutoriesList;
 
 $(function() {
+  $(".grid-table-rpt").hide();
 	getStatutoryMappings();
 });
 function getStatutoryMappings(){
   function success(status,data){
     industriesList = data["industries"];
-    statutoryLevelsList = data["statutory_levels"];
-    statutoriesList = data["statutories"];
+    statutoriesList = data["level_1_statutories"];
     countriesList = data["countries"];
     domainsList = data["domains"];
-    geographyLevelsList = data["geography_levels"];
     statutoryNaturesList = data["statutory_natures"];
     geographiesList = data["geographies"];
-    statutoryMappingsList = data["statutory_mappings"];
-    tempstatutoryMappingsList = data["statutory_mappings"];
-    
-    loadStatutoryMappingList(statutoryMappingsList);
+    //loadStatutoryMappingList(statutoryMappingsList);
   }
   function failure(data){
   }
   mirror.getStatutoryMappingsReportFilter(success, failure);
 }
 
-function loadStatutoryMappingList(statutoryMappingsList) {
-  /*var j = 1;
-  var imgName = '';
-  var passStatus = '';
-  var statutorymappingId = 0;
-  var isActive = 0;
-  var industryName = '';
-  var statutoryNatureName = '';
-  var countryName = '';
-  var domainName = '';
-  var approvalStatus = '';
+function showResult(){ 
+  var country = $("#country").val();
+  var domain = $("#domain").val();
+  var industry = null;
+  var statutorynature = null;
+  var geography = null;
+  var act = null;
+  var compliance_frequency = $("#compliance_frequency").val();
 
-  $(".tbody-statutorymapping-list").find("tr").remove();
-  for(var entity in statutoryMappingsList) {
-        statutorymappingId = entity;
-        industryName = statutoryMappingsList[entity]["industry_names"];
-        statutoryNatureName = statutoryMappingsList[entity]["geography_name"];        
-        var statutoryMappings='';
-        for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
-          statutoryMappings = statutoryMappings + statutoryMappingsList[entity]["statutory_mappings"][i] + " <br>";
-        }
-        var complianceNames='';
-        for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
-          complianceNames = complianceNames + statutoryMappingsList[entity]["compliance_names"][i] + " <br>";
-        }
-        statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
-        countryName = statutoryMappingsList[entity]["country_name"];
-        domainName = statutoryMappingsList[entity]["domain_name"];
-        isActive = statutoryMappingsList[entity]["is_active"];
-        approvalStatus = statutoryMappingsList[entity]["approval_status"];
-        if(isActive == 1) {
-          passStatus="0";
-          imgName="icon-active.png"
-        }
-        else {
-          passStatus="1";
-          imgName="icon-inactive.png"
-         }
-         if(approvalStatus == '0'){
-          approvalStatus = "Pending";
-         }
-        var tableRow=$('#templates .table-statutorymapping .table-row');
-        var clone=tableRow.clone();
-        $('.sno', clone).text(j);
-        $('.country', clone).text(countryName);
-        $('.domain', clone).text(domainName);
-        $('.industry', clone).text(industryName);
-        $('.statutorynature', clone).text(statutoryNatureName);
-        $('.statutory', clone).html(statutoryMappings);
-        $('.compliancetask', clone).html(complianceNames);
-        $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+statutorymappingId+')"/>');
-        $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+statutorymappingId+','+passStatus+')"/>');
-        $('.approvalstatus', clone).text(approvalStatus);
-        $('.tbody-statutorymapping-list').append(clone);
-        j = j + 1;
-        }*/
-      }
+  if($("#industry").val() != '') industry = $("#industry").val();
+  if($("#statutorynature").val() != '') statutorynature = $("#statutorynature").val();
+  if($("#geography").val() != '') geography = $("#geography").val();
+  if($("#act").val() != '') act = $("#act").val();
+
+  if(country==""){
+    $(".error-message").html("Country Required");
+  }
+  else if(domain==""){
+    $(".error-message").html("Domain Required");  
+  }
+  else{
+    var filterdata={};
+    filterdata["country_id"]=parseInt(country);
+    filterdata["domain_id"]=parseInt(domain);
+    filterdata["industry_id"]=parseInt(industry);
+    filterdata["statutory_nature_id"]=parseInt(statutorynature);
+    filterdata["geography_id"]=parseInt(geography);
+    filterdata["level_1_statutory_id"]=parseInt(act);
+
+    function success(status, data){
+     loadresult(data["statutory_mappings"]);
+    }
+    function failure(status, data){
+    }
+    mirror.getStatutoryMappingsReportData(filterdata, success, failure);
+  }
+}
 
 //Autocomplete Script Starts
 //Hide list items after select
@@ -246,7 +222,8 @@ function activate_statutory (element,checkval,checkname) {
   $("#statutory").val(checkval);
 }
 //Autocomplete Script ends
-function loadresult(){
+function loadresult(filterList){
+  $(".grid-table-rpt").show();
   var country = $("#countryval").val();
   var domain = $("#domainval").val();
   var industry = $("#industry").val();
@@ -255,11 +232,29 @@ function loadresult(){
   var act = $("#act").val();
   var statutorynature = $("#statutorynature").val();
   var compliance_frequency = $("#compliance_frequency").val();
-
   $(".country").text(country);
   $(".domain").text(domain);
 
-  $(".tbody-statutorymapping").find("tr").remove();
+  $(".tbody-act").find("tr").remove();
+
+  for(var entity in filterList){
+    var tableRow=$('#act-templates');
+    var clone=tableRow.clone();
+    $('.actname', clone).text(entity);
+    
+    var snature='';
+    /*for(var i=0; i<filterList[entity].length; i++){
+      statutoryMappings = statutoryMappings + filterList[entity]["statutory_mappings"][i] + " <br>";
+    }*/
+
+    var tableRow1=$('#compliance-templates');
+    var clone1=tableRow1.clone();
+    $('.tbl_industrytype', clone1).text("industrytype");
+    //$('.tbody-compliance').append(clone1);
+    
+    $('.tbody-act').append(clone);
+
+  }
       /*for(var entity in geographiesList) {
       var geographyList = geographiesList[entity];
       for(var list in geographyList) {
