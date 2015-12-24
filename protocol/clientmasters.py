@@ -221,7 +221,7 @@ InvalidPassword = RecordType("InvalidPassword", [
 
 Response = VariantType("Response", [
 	GetServiceProvidersSuccess, SaveServiceProviderSuccess,
-	ServiceProviderNameAlreadyExists, ContactNumberAlreadyExists,
+	ServiceProviderNameAlreadyExists,
 	UpdateServiceProviderSuccess,  ChangeServiceProviderStatusSuccess,
 	GetUserPrivilegesSuccess, UserGroupNameAlreadyExists, 
 	InvalidUserGroupId, SaveUserPrivilegesSuccess, 

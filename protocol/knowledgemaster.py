@@ -210,7 +210,6 @@ Response = VariantType("Response", [
 	ChangeStatutoryNatureStatusSuccess, InvalidStatutoryNatureId,
 	GetStatutoryLevelsSuccess,
 	SaveStatutoryLevelSuccess, DuplicateStatutoryLevelsExists,
-	GetStatutoriesSuccess,
-	SaveStatutorySuccess, StatutoryNameAlreadyExists,
+	GetStatutoriesSuccess, SaveStatutorySuccess, StatutoryNameAlreadyExists,
 	InvalidStatutoryId
 ])

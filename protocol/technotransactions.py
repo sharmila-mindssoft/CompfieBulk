@@ -91,7 +91,7 @@ GetAssignedStatutoriesByIdSuccess = RecordType("GetAssignedStatutoriesByIdSucces
 	Field("statutories", AssignedStatutoryList)
 ])
 
-UNIT = RecordType("ASSIGNED_STATUTORIES", [
+UNIT = RecordType("UNIT", [
 	Field("unit_id", UNIT_ID),
 	Field("unit_name", UNIT_NAME),
 	Field("division_id", DIVISION_ID),

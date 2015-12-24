@@ -1,5 +1,5 @@
-from common import *
 from core import *
+from common import *
 
 
 __all__=  [
@@ -42,7 +42,7 @@ SaveClientGroup = RecordType("SaveClientGroup", [
 	Field("DATE_configurations",ClientConfigurationList)
 ])
 
-UpDATEClientGroup = RecordType("UpDATEClientGroup", [
+UpdateClientGroup = RecordType("UpdateClientGroup", [
 	Field("client_id", CLIENT_ID),
 	Field("group_name",CLIENT_NAME),
 	Field("country_ids", CountryList),
@@ -76,7 +76,7 @@ SaveClient = RecordType("SaveClient", [
 	Field("country_wise_units", CountryWiseUnits)
 ])	
 
-UpDATEClient = RecordType("UpDATEClient", [
+UpdateClient = RecordType("UpdateClient", [
 	Field("client_id", CLIENT_ID),
 	Field("business_group", BusinessGroup),
 	Field("legal_entity", LegalEntity),
@@ -101,9 +101,9 @@ GetClientProfile = RecordType("GetClientProfile", [
 
 
 Request = VariantType("Request", [
-	GetClientGroups, SaveClientGroup, UpDATEClientGroup,
+	GetClientGroups, SaveClientGroup, UpdateClientGroup,
 	ChangeClientGroupStatus, GetClients, SaveClient,
-	UpDATEClient, ChangeClientStatus, ReactivateUnit,
+	UpdateClient, ChangeClientStatus, ReactivateUnit,
 	GetClientProfile
 ])
 
@@ -127,10 +127,7 @@ SaveClientGroupSuccess = RecordType("SaveClientGroupSuccess", [
 GroupNameAlreadyExists = RecordType("GroupNameAlreadyExists", [
 ])
 
-UsernameAlreadyExists = RecordType("UsernameAlreadyExists", [
-])
-
-UpDATEClientGroupSuccess = RecordType("UpDATEClientGroupSuccess", [
+UpdateClientGroupSuccess = RecordType("UpdateClientGroupSuccess", [
 ])
 
 ChangeClientGroupStatusSuccess = RecordType("ChangeClientGroupStatusSuccess", [
@@ -172,19 +169,13 @@ UnitCodeAlreadyExists = RecordType("UnitCodeAlreadyExists", [
 LogoSizeLimitExceeds = RecordType("LogoSizeLimitExceeds", [
 ])
 
-UpDATEClientSuccess = RecordType("UpDATEClientSuccess", [
+UpdateClientSuccess = RecordType("UpdateClientSuccess", [
 ])
 
 ChangeClientStatusSuccess = RecordType("ChangeClientStatusSuccess", [
 ])
 
 ReactivateUnitSuccess = RecordType("ReactivateUnitSuccess", [
-])
-
-InvalidPassword = RecordType("InvalidPassword", [
-])
-
-InvalidUnitId = RecordType("InvalidUnitId", [
 ])
 
 LICENCE_HOLDER_DETAILS = RecordType("LICENCE_HOLDER_DETAILS", [
@@ -220,13 +211,12 @@ GetClientProfileSuccess = RecordType("GetClientProfileSuccess", [
 
 Response = VariantType("Response", [
 	GetClientGroupsSuccess, SaveClientGroupSuccess,
-	GroupNameAlreadyExists, UsernameAlreadyExists,
-	UpDATEClientGroupSuccess, ChangeClientGroupStatusSuccess,
-	InvalidClientId, GetClientsSuccess, SaveClientSuccess, 
+	GroupNameAlreadyExists, UpdateClientGroupSuccess, 
+	ChangeClientGroupStatusSuccess, InvalidClientId, 
+	GetClientsSuccess, SaveClientSuccess, 
 	BusinessGroupNameAlreadyExists, LegalEntityNameAlreadyExists,
 	DivisionNameAlreadyExists, UnitNameAlreadyExists, 
 	UnitCodeAlreadyExists, LogoSizeLimitExceeds,
-	UpDATEClientSuccess, ChangeClientStatusSuccess,
-	ReactivateUnitSuccess, InvalidPassword, InvalidUnitId,
-	GetClientProfileSuccess
+	UpdateClientSuccess, ChangeClientStatusSuccess,
+	ReactivateUnitSuccess, GetClientProfileSuccess
 ])
