@@ -1588,6 +1588,18 @@ class StatutoryMappingReport(object) :
             statutories[countryId] = _countryWise
         return statutories
 
+    def getComplianceFrequencies(self):
+        DH = DatabaseHandler.instance()
+        rows = DH.getComplianceFrequency()
+        repeatList = []
+        for row in rows :
+            repeat = {}
+            repeat["frequency_id"] = row[0]
+            repeat["frequency"] = row[1]
+            repeatList.append(repeat)
+        return repeatList
+
+
     def getReportFilters(self) :
         self.countryList = CountryList().getUserCountry(self.userId)
         self.domainList = DomainList().getUserDomains(self.userId)
@@ -1602,7 +1614,8 @@ class StatutoryMappingReport(object) :
                 "industries": self.industryList,
                 "statutory_natures": self.statutoryNatureList,
                 "geographies": self.geographies,
-                "level_1_statutories": self.getLevel1Statutories()
+                "level_1_statutories": self.getLevel1Statutories(),
+                "compliance_frequency": self.getComplianceFrequencies()
             }
         ]
 
