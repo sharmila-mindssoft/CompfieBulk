@@ -269,16 +269,20 @@ class Form(object) :
             joinConditions, whereCondition)
         return rows
 
-    def getUserForms(self, formIds):
+    @classmethod
+    def getUserForms(klass, formIds):
         formList = []
-        rows = self.db.getUserForms(formIds)
+        DH = DatabaseHandler.instance()
+        rows = DH.getUserForms(formIds)
         for row in rows:
-            form = Form(formId = row[0], formName = row[5], formUrl = row[6], formOrder = row[7], 
+            form = klass(formId = row[0], formName = row[5], formUrl = row[6], formOrder = row[7], 
                     formType = row[4], Category = row[2], parentMenu = row[8])
             formList.append(form)
+        print formList
         menu = Menu()
         result = menu.generateMenu(formList)
         return result
+        
 
 
             
