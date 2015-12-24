@@ -1147,7 +1147,7 @@ function initMirror() {
         approveStatutoryList: approveStatutoryList,
         approveStatutoryMapping: approveStatutoryMapping,
         getStatutoryMappingsReportFilter: getStatutoryMappingsReportFilter,
-        filterData: filterData;
+        filterData: filterData,
         getStatutoryMappingsReportData: getStatutoryMappingsReportData,
 
 

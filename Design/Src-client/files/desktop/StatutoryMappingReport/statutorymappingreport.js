@@ -30,12 +30,16 @@ function getStatutoryMappings(){
 function showResult(){ 
   var country = $("#country").val();
   var domain = $("#domain").val();
-  var industry = $("#industry").val();
-  var statutorynature = $("#statutorynature").val();
-  var geography = $("#geography").val();
-  var act = $("#act").val();
-  //var statutorynature = $("#statutorynature").val();
+  var industry = null;
+  var statutorynature = null;
+  var geography = null;
+  var act = null;
   var compliance_frequency = $("#compliance_frequency").val();
+
+  if($("#industry").val() != '') industry = $("#industry").val();
+  if($("#statutorynature").val() != '') statutorynature = $("#statutorynature").val();
+  if($("#geography").val() != '') geography = $("#geography").val();
+  if($("#act").val() != '') act = $("#act").val();
 
   if(country==""){
     $(".error-message").html("Country Required");
@@ -48,12 +52,20 @@ function showResult(){
     $(".domain").text($("#domainval").val());
     $(".tbody-statutorymapping").find("tr").remove();
 
+    var filterdata={};
+    filterdata["country_id"]=parseInt(country);
+    filterdata["domain_id"]=parseInt(domain);
+    filterdata["industry_id"]=parseInt(industry);
+    filterdata["statutory_nature_id"]=parseInt(statutorynature);
+    filterdata["geography_id"]=parseInt(geography);
+    filterdata["level_1_statutory_id"]=parseInt(act);
+    
     function success(status, data){
      //loadClientDetailsList(data);
     }
     function failure(status, data){
     }
-    mirror.getStatutoryMappingsReportData(parseInt(country), parseInt(domain), industry, statutorynature, geography, act, success, failure);
+    mirror.getStatutoryMappingsReportData(filterdata, success, failure);
   }
 }
 
