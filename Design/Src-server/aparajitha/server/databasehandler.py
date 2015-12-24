@@ -1,7 +1,6 @@
 import datetime
 import os
 import MySQLdb as mysql
-from commonfunctions import getCurrentTimeStamp
 
 __all__ = [
     "DatabaseHandler"

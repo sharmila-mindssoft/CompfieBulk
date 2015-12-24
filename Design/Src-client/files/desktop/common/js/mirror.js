@@ -497,8 +497,8 @@ function initMirror() {
     }
 
     function getStatutoryMappingsReportFilter(callback, failure_callback) {
-        var request = ["GetStatutoryMappingReportFilter", {}];
-        apiRequest("GetStatutoryMappingReportFilter", request, callback, failure_callback);
+        var request = ["GetStatutoryMappingReportFilters", {}];
+        apiRequest("GetStatutoryMappingReportFilters", request, callback, failure_callback);
     }
 
     function getStatutoryMappingsReportData(filterData, callback, failure_callback) {

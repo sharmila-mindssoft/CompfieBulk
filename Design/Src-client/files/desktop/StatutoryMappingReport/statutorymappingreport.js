@@ -9,85 +9,53 @@ var statutoryLevelsList;
 var statutoriesList;
 
 $(function() {
+  $(".grid-table-rpt").hide();
 	getStatutoryMappings();
 });
 function getStatutoryMappings(){
   function success(status,data){
     industriesList = data["industries"];
-    statutoryLevelsList = data["statutory_levels"];
-    statutoriesList = data["statutories"];
+    statutoriesList = data["level_1_statutories"];
     countriesList = data["countries"];
     domainsList = data["domains"];
-    geographyLevelsList = data["geography_levels"];
     statutoryNaturesList = data["statutory_natures"];
     geographiesList = data["geographies"];
-    statutoryMappingsList = data["statutory_mappings"];
-    tempstatutoryMappingsList = data["statutory_mappings"];
-    
-    loadStatutoryMappingList(statutoryMappingsList);
+    //loadStatutoryMappingList(statutoryMappingsList);
   }
   function failure(data){
   }
   mirror.getStatutoryMappingsReportFilter(success, failure);
 }
 
-function loadStatutoryMappingList(statutoryMappingsList) {
-  /*var j = 1;
-  var imgName = '';
-  var passStatus = '';
-  var statutorymappingId = 0;
-  var isActive = 0;
-  var industryName = '';
-  var statutoryNatureName = '';
-  var countryName = '';
-  var domainName = '';
-  var approvalStatus = '';
+function showResult(){ 
+  var country = $("#country").val();
+  var domain = $("#domain").val();
+  var industry = $("#industry").val();
+  var statutorynature = $("#statutorynature").val();
+  var geography = $("#geography").val();
+  var act = $("#act").val();
+  //var statutorynature = $("#statutorynature").val();
+  var compliance_frequency = $("#compliance_frequency").val();
 
-  $(".tbody-statutorymapping-list").find("tr").remove();
-  for(var entity in statutoryMappingsList) {
-        statutorymappingId = entity;
-        industryName = statutoryMappingsList[entity]["industry_names"];
-        statutoryNatureName = statutoryMappingsList[entity]["geography_name"];        
-        var statutoryMappings='';
-        for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
-          statutoryMappings = statutoryMappings + statutoryMappingsList[entity]["statutory_mappings"][i] + " <br>";
-        }
-        var complianceNames='';
-        for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
-          complianceNames = complianceNames + statutoryMappingsList[entity]["compliance_names"][i] + " <br>";
-        }
-        statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
-        countryName = statutoryMappingsList[entity]["country_name"];
-        domainName = statutoryMappingsList[entity]["domain_name"];
-        isActive = statutoryMappingsList[entity]["is_active"];
-        approvalStatus = statutoryMappingsList[entity]["approval_status"];
-        if(isActive == 1) {
-          passStatus="0";
-          imgName="icon-active.png"
-        }
-        else {
-          passStatus="1";
-          imgName="icon-inactive.png"
-         }
-         if(approvalStatus == '0'){
-          approvalStatus = "Pending";
-         }
-        var tableRow=$('#templates .table-statutorymapping .table-row');
-        var clone=tableRow.clone();
-        $('.sno', clone).text(j);
-        $('.country', clone).text(countryName);
-        $('.domain', clone).text(domainName);
-        $('.industry', clone).text(industryName);
-        $('.statutorynature', clone).text(statutoryNatureName);
-        $('.statutory', clone).html(statutoryMappings);
-        $('.compliancetask', clone).html(complianceNames);
-        $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+statutorymappingId+')"/>');
-        $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+statutorymappingId+','+passStatus+')"/>');
-        $('.approvalstatus', clone).text(approvalStatus);
-        $('.tbody-statutorymapping-list').append(clone);
-        j = j + 1;
-        }*/
-      }
+  if(country==""){
+    $(".error-message").html("Country Required");
+  }
+  else if(domain==""){
+    $(".error-message").html("Domain Required");  
+  }
+  else{
+    $(".country").text($("#countryval").val());
+    $(".domain").text($("#domainval").val());
+    $(".tbody-statutorymapping").find("tr").remove();
+
+    function success(status, data){
+     //loadClientDetailsList(data);
+    }
+    function failure(status, data){
+    }
+    mirror.getStatutoryMappingsReportData(parseInt(country), parseInt(domain), industry, statutorynature, geography, act, success, failure);
+  }
+}
 
 //Autocomplete Script Starts
 //Hide list items after select
