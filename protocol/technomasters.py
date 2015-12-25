@@ -3,7 +3,8 @@ from common import *
 
 
 __all__=  [
-	"Request", "Response"
+	"Request", "Response", "LICENCE_HOLDER_DETAILS", "PROFILE_DETAIL",
+	"PROFILES"
 ]
 
 DomainList = VectorType(Domain)

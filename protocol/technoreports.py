@@ -2,7 +2,7 @@ from common import *
 from core import *
 
 __all__=  [
-	"Request", "Response"
+	"Request", "Response" ,"COUNTRY_WISE_NOTIFICATIONS", "UNIT_WISE_ASSIGNED_STATUTORIES"
 ]
 
 DomainIdList = VectorType(DOMAIN_ID)

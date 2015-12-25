@@ -1,5 +1,5 @@
-from protocol.common import *
-from protocol.core import Level, Industry, StatutoryNature, Country, Domain, Geography, Statutory
+from common import *
+from core import Level, Industry, StatutoryNature, Country, Domain, Geography, Statutory
 __all__ = [
 	"Request", "Response"
 ]

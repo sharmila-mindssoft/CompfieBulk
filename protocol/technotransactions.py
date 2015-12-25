@@ -2,7 +2,7 @@ from common import *
 from core import *
 
 __all__=  [
-	"Request", "Response"
+	"Request", "Response", "ASSIGNED_STATUTORIES", "UNIT"
 ]
 
 AssignedStatutoryList = VectorType(AssignedStatutory)
