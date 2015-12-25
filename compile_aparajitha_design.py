@@ -2,7 +2,8 @@ from protocol import (
     admin, clientadminsettings, clientmasters, clientreport,
     clienttransactions, clientuser, common, core, dashboard,
     general, knowledgemaster, knowledgereport, knowledgetransaction,
-    login, technomasters, technoreports, technotransactions
+    login, technomasters, technoreports, technotransactions,
+    mobileapi
 )
 from basics.validate import Validate
 from basics.module import Module
@@ -25,7 +26,8 @@ def main():
             Module(login, "login"),
             Module(technomasters, "technomasters"),
             Module(technoreports, "technoreports"),
-            Module(technotransactions, "technotransactions")
+            Module(technotransactions, "technotransactions"),
+            Module(mobileapi, "mobileapi")
         ]
     )
     v.validate(globals())
