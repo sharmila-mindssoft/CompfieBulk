@@ -1,5 +1,5 @@
 from basics.types import RecordType, VariantType, EnumType, CustomTextType, VectorType
-from protocol.common import *
+from common import *
 __all__ = [
 	"USER_TYPE", "APPROVAL_STATUS", "COMPLIANCE_APPROVAL_STATUS",
 	"ASSIGN_STATUTORY_SUBMISSION_STATUS", 

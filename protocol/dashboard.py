@@ -1,5 +1,8 @@
-from protocol.common import *
-from protocol.core import (
+from basics.types import VectorType, RecordType, VariantType, MapType, Field
+from common import (Text, Text20, Text50, Text100, Text500, Int8,
+	COUNTRY_ID, DOMAIN_ID, DATE, FILTER_ID, FILTER_NAME, USER_ID, ADDRESS, LEVEL_1_STATUTORY_NAME,
+	BUSINESS_GROUP_ID, LEGAL_ENTITY_ID, DIVISION_ID, UNIT_ID)
+from core import (
 	FILTER_TYPE, COMPLIANCE_STATUS,
 	APPLICABILITY_STATUS,
 	ChartFilters,

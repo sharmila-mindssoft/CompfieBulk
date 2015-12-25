@@ -1,5 +1,7 @@
-from protocol.common import *
-from protocol.core import Menu
+from basics.types import VectorType, RecordType, VariantType, MapType, Field
+from common import (USERNAME, PASSWORD, RESET_TOKEN, USER_ID, CLIENT_ID, SESSION_TOKEN,
+	EMAIL_ID, USER_GROUP_NAME, EMPLOYEE_NAME, EMPLOYEE_CODE, CONTACT_NUMBER, ADDRESS, DESIGNATION)
+from core import Menu
 
 __all__=  [
 	"Request", "Response"

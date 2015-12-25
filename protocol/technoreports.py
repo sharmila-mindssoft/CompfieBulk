@@ -1,5 +1,10 @@
-from common import *
-from core import *
+from basics.types import VectorType, RecordType, VariantType, MapType, Field
+from common import (COUNTRY_ID, GROUP_ID, BUSINESS_GROUP_ID, LEGAL_ENTITY_ID,
+	DIVISION_ID, UNIT_ID, DOMAIN_ID, LEVEL_1_STATUTORY_ID, STATUTORY_PROVISION,
+	NOTIFICATION_TEXT, TIMESTAMP)
+from core import (Country, Domain, GroupCompany, BusinessGroup, LegalEntity, Division, Statutory,
+	Unit, UnitDetails, AssignedStatutory,
+	APPLICABILITY_STATUS)
 
 __all__=  [
 	"Request", "Response" ,"COUNTRY_WISE_NOTIFICATIONS", "UNIT_WISE_ASSIGNED_STATUTORIES"

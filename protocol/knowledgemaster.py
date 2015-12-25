@@ -1,4 +1,9 @@
-from common import *
+from basics.types import VectorType, RecordType, VariantType, MapType, Field
+from common import (GEOGRAPHY_LEVEL_ID, GEOGRAPHY_NAME, 
+	GEOGRAPHY_ID, COUNTRY_ID, IS_ACTIVE, INDUSTRY_ID, INDUSTRY_NAME,
+	STATUTORY_NATURE_NAME, STATUTORY_NATURE_ID, DOMAIN_ID,
+	STATUTORY_LEVEL_ID, STATUTORY_ID, STATUTORY_NAME)
+
 from core import Level, Industry, StatutoryNature, Country, Domain, Geography, Statutory
 __all__ = [
 	"Request", "Response"

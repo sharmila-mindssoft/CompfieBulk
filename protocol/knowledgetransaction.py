@@ -1,5 +1,7 @@
-from protocol.common import *
-from protocol.core import (APPROVAL_STATUS, 
+from basics.types import VectorType, RecordType, VariantType, MapType, Field
+from common import (COUNTRY_ID, DOMAIN_ID, INDUSTRY_ID, STATUTORY_NATURE_ID, 
+	STATUTORY_ID, GEOGRAPHY_ID, STATUTORY_MAPPING_ID, NOTIFICATION_TEXT, Text, IS_ACTIVE)
+from core import (APPROVAL_STATUS, 
 	Compliance, Level, Statutory, 
 	Statutory, Country, Domain, StatutoryMapping,
 	Industry, StatutoryNature, Geography)

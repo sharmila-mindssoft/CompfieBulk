@@ -1,5 +1,11 @@
-from common import *
-from core import *
+from basics.types import VectorType, RecordType, VariantType, MapType, Field
+from common import (CLIENT_SAVED_STATUTORY_ID, CLIENT_ASSIGNED_STATUTORY_ID, CLIENT_NAME,
+	GEOGRAPHY_ID, INDUSTRY_ID, COUNTRY_ID, COUNTRY_NAME, DOMAIN_ID, DOMAIN_NAME, BUSINESS_GROUP_NAME,
+	BUSINESS_GROUP_ID, LEGAL_ENTITY_ID, LEGAL_ENTITY_NAME, DIVISION_ID, DIVISION_NAME, GROUP_ID,
+	UNIT_ID, UNIT_NAME, GEOGRAPHY_NAME)
+from core import (AssignedStatutory, Country, Domain, Industry, GeographyLevel, Geography,
+	GroupCompany, BusinessGroup, LegalEntity, Division, Domain, 
+	ASSIGN_STATUTORY_SUBMISSION_TYPE, ASSIGN_STATUTORY_SUBMISSION_STATUS)
 
 __all__=  [
 	"Request", "Response", "ASSIGNED_STATUTORIES", "UNIT"

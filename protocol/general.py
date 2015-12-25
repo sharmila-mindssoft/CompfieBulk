@@ -1,4 +1,7 @@
-from common import *
+from basics.types import VectorType, RecordType, VariantType, MapType, Field
+from common import (Text500, Text50, CONTACT_NUMBER, ADDRESS, DOMAIN_NAME, DOMAIN_ID, IS_ACTIVE,
+	COUNTRY_ID, COUNTRY_NAME, NOTIFICATION_ID, NOTIFICATION_TEXT, HAS_READ, NOTIFICATION_TYPE,
+	TIMESTAMP)
 from core import Domain, Country
 
 __all__ = [
