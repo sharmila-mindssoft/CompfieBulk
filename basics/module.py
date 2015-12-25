@@ -37,6 +37,9 @@ class Module(object):
     def module_name(self):
         return self._module_name
 
+    def module(self):
+        return self._module
+
     def is_cls_found(self, cls):
         if cls in self._classes:
             return True
