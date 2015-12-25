@@ -1,5 +1,6 @@
-from protocol.common import *
-from protocol.core import (
+from basics.types import VectorType, RecordType, Field, VariantType
+from common import (COMPLIANCE_HISTORY_ID, Text20, Text500, COMPLIANCE_ID, UNIT_ID, Int8, Text100)
+from core import (
 	ActiveCompliance,
 	UpcomingCompliance
 )

@@ -1,4 +1,6 @@
-from protocol.common import *
+from basics.types import RecordType, Field, Bool, VariantType, VectorType
+from common import (Int8, Text20, Text100, REMINDER_DAYS, USER_ID, EMAIL_ID,
+		CONTACT_NUMBER, ADDRESS)
 
 __all__ = [
 	"Request", "Response", "PROFILE_DETAIL", "LICENCE_HOLDER"

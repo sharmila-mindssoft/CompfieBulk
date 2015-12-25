@@ -1,13 +1,18 @@
-from protocol.common import *
-from protocol.core import (USER_TYPE,
+from basics.types import RecordType, VariantType, Field, MapType, VectorType
+from core import (USER_TYPE,
 	COMPLIANCE_STATUS, APPLICABILITY_STATUS, 
 	COMPLIANCE_ACTIVITY_STATUS, COMPLIANCE_FREQUENCY,
 	Country, Domain, Compliance, Statutory, Unit,
 	BusinessGroup, LegalEntity, Division, ServiceProvider,
 	StatutoryDates
 )
+from common import ( Text20, COUNTRY_ID, DOMAIN_ID, STATUTORY_ID, UNIT_ID, COMPLIANCE_ID, USER_ID,
+	BUSINESS_GROUP_ID, LEGAL_ENTITY_ID, DIVISION_ID, UNIT_ID, STATUTORY_ID, Int8, SERVICE_PROVIDER_ID,
+	COMPLIANCE_ID, Text20, LEVEL_1_STATUTORY_ID, Text100, EMPLOYEE_CODE, Text50, Text500, ADDRESS, 
+	LEVEL_1_STATUTORY_NAME, CONTACT_NUMBER, UNIT_NAME, FORM_ID, FORM_NAME)
 __all__ = [
-	"Request", "Response"
+	"Request", "Response", "ComplianceName", "User", "ComplianceDetails", "Level1Statutory", 
+	"ServiceProviderCompliance"
 ]
 
 #
