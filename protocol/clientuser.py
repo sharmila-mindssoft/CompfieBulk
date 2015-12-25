@@ -6,7 +6,7 @@ from core import (
 )
 
 __all__ = [
-	"Request", "Response"
+	"Request", "Response", "ComplianceDetail", "ComplianceOnOccurrence"
 ]
 
 #

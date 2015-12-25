@@ -10,9 +10,15 @@ from common import ( Text20, COUNTRY_ID, DOMAIN_ID, STATUTORY_ID, UNIT_ID, COMPL
 	BUSINESS_GROUP_ID, LEGAL_ENTITY_ID, DIVISION_ID, UNIT_ID, STATUTORY_ID, Int8, SERVICE_PROVIDER_ID,
 	COMPLIANCE_ID, Text20, LEVEL_1_STATUTORY_ID, Text100, EMPLOYEE_CODE, Text50, Text500, ADDRESS, 
 	LEVEL_1_STATUTORY_NAME, CONTACT_NUMBER, UNIT_NAME, FORM_ID, FORM_NAME)
+
+
 __all__ = [
 	"Request", "Response", "ComplianceName", "User", "ComplianceDetails", "Level1Statutory", 
-	"ServiceProviderCompliance"
+	"ServiceProviderCompliance", "Activities", "ActivityCompliance", "ActivityLog", 
+	"ApplicabilityCompliance", "AssigneeCompliance", "ComplianceForUnit", "ComplianceList",
+	"ComplianceUnit", "DomainWiseCompliance", "FormName", "LoginTrace", "ReassignCompliance",
+	"ReassignHistory", "StatutoryReassignCompliance", "UnitCompliance", "UnitWiseCompliance",
+	"UnitName", "UserName", "UserWiseCompliance"
 ]
 
 #
@@ -342,7 +348,7 @@ GetUnitwisecomplianceReportSuccess =  RecordType("GetUnitwisecomplianceReportSuc
 	Field("compliance_list", VectorType(UnitCompliance))
 ])
 
-UnitName = RecordType("Units", [
+UnitName = RecordType("UnitName", [
 	Field("unit_name", Text100),
 	Field("address", ADDRESS)
 ])

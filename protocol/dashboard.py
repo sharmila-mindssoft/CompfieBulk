@@ -16,8 +16,7 @@ __all__ = [
 	"Request", "Response", "ApplicableDrillDown", "DataMap", "ChartDataMap", 
 	"EscalationData", "CompliedMap", "TrendData", "RessignedCompliance", 
 	"DelayedCompliance", "DomainWise", "AssigneeWiseDetails", "AssigneeChartData",
-	"Level1Compliance", "UnitCompliance",
-	"DrillDownData", 
+	"Level1Compliance", "UnitCompliance", "DrillDownData", 
 ]
 
 #
