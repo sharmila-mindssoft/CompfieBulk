@@ -10,11 +10,7 @@ from protocol.core import (
 )
 
 __all__ = [
-	"Request", "Response", "ApplicableDrillDown", "DataMap", "ChartDataMap", 
-	"EscalationData", "CompliedMap", "TrendData", "RessignedCompliance", 
-	"DelayedCompliance", "DomainWise", "AssigneeWiseDetails", "AssigneeChartData",
-	"Level1Compliance", "UnitCompliance",
-	"DrillDownData", 
+	"Request", "Response"
 ]
 
 #
@@ -181,14 +177,14 @@ CompliedMap = RecordType("CompliedMap", [
 	Field("complied_compliances_count", Int8)
 ])
 
-TrendData = RecordType("TrendData", [
+TreandData = RecordType("TreandData", [
 	Field("filter_name", FILTER_NAME),
 	Field("complied_compliance", VectorType(CompliedMap))
 ])
 
 GetTrendChartSuccess = RecordType("GetTrendChartSuccess", [
 	Field("years", VectorType(Int8)),
-	Field("data", VectorType(TrendData))
+	Field("data", VectorType(TreandData))
 ])
 
 # Compliance Applicability
@@ -312,7 +308,7 @@ GetNotCompliedDrillDownSuccess = RecordType(
 	]
 )
 
-GetTrendChartDrillDownDataSuccess = RecordType("GetTrendChartDrillDownDataSuccess", [
+GetTrendChartDrillDownData = RecordType("GetTrendChartDrillDownData", [
 	Field("drill_down_data", VectorType(DrillDownData))
 ])
 
@@ -331,5 +327,4 @@ Response = VariantType("Response", [
 	GetEscalationsDrillDownDataSuccess,
 	GetComplianceApplicabilityStatusDrillDownSuccess,
 	GetNotCompliedDrillDownSuccess,
-	GetTrendChartDrillDownDataSuccess
 ])

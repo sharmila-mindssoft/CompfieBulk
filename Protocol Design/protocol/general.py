@@ -1,8 +1,8 @@
-from common import *
-from core import Domain, Country
+from protocol.common import *
+from protocol.core import Domain, Country
 
 __all__ = [
-	"Request", "Response", "Notification"
+	"Request", "Response"
 ]
 
 NOTIFICATION_TEXT = Text500

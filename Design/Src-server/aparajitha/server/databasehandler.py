@@ -1,6 +1,5 @@
 import datetime
 import os
-import uuid
 import MySQLdb as mysql
 from commonfunctions import getCurrentTimeStamp, generatePassword
 
@@ -271,22 +270,16 @@ class DatabaseHandler(object) :
         else:
             return True
 
-    def new_uuid(self) :
-        s = str(uuid.uuid4())
-        return s.replace("-", "")
-
-    def add_session(self, user_id, session_type_id) :
+    def add_session(self, user_id) :
         session_id = self.new_uuid()
-        updated_by = datetime.datetime.now()
-        query = "insert into tbl_user_sessions values ('%s', %s, %s, '%s');"
-        query = query % (session_id, user_id, session_type_id, updated_by)
-        self.execute(query)
+        query = "insert into tbl_user_sessions values ('%s', '%s', '%d');"
+        query = query % (session_id, user_id, current_timestamp())
+        self._db.execute(query)
         return session_id
 
     def verifyLogin(self, userName, password):
         tblAdminCondition = "password='%s' and user_name='%s'" % (password, userName)
-        adminDetails = self.getData("*", "tbl_admin", tblAdminCondition)
-        print adminDetails
+        adminDetails = self.getData("tbl_admin", "*", tblAdminCondition)
         if (len(adminDetails) == 0) :
             query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
                 t1.employee_name, t1.employee_code, t1.contact_no, t1.address, t1.designation \
@@ -380,19 +373,29 @@ class DatabaseHandler(object) :
 #
 
     def getDetailedUserList(self):
-        columns = "tu.user_id, tu.email_id, tu.user_group_id, tu.employee_name, tu.employee_code,"+\
-                "tu.contact_no, tu.address, tu.designation,  tu.is_active, tuc.country_id, "+\
-                "tud.domain_id, tcu.client_id"
-        tables = [self.tblUsers, self.tblUserCountries, self.tblUserDomains, self.tblUserClients]
-        aliases = ["tu", "tuc", "tud", "tcu"]
-        joinConditions = ["tu.user_id = tuc.user_id", "tu.user_id = tud.user_id", 
-                        "tu.user_id = tcu.user_id"]
-        whereCondition = "1"
-        joinType = "left join"
-
-        rows = self.getDataFromMultipleTables(columns, tables, aliases, joinType, 
-            joinConditions, whereCondition)
+        columns = "user_id, email_id, user_group_id, employee_name, employee_code,"+\
+                "contact_no, address, designation, is_active"
+        condition = "1"
+        rows = self.getData(columns, self.tblUsers, condition)
         return rows
+
+    def getUserCountries(self, userId):
+        columns = "group_concat(country_id)"
+        condition = " user_id = '%d'"% userId
+        rows = self.getData( columns, self.tblUserCountries, condition)
+        return rows[0][0]
+
+    def getUserDomains(self, userId):
+        columns = "group_concat(domain_id)"
+        condition = " user_id = '%d'"% userId
+        rows = self.getData(columns, self.tblUserDomains, condition)
+        return rows[0][0]
+
+    def getUserClients(self, userId):
+        columns = "group_concat(client_id)"
+        condition = " user_id = '%d'"% userId
+        rows = self.getData( columns, self.tblUserClients, condition)
+        return rows[0][0]
 
     def getList(self):
         columns = "user_id, employee_name, employee_code"

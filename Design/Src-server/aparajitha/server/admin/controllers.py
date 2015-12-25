@@ -178,7 +178,7 @@ class User() :
             "designation": self.designation,
             "country_ids": self.countryIds,
             "domain_ids": self.domainIds,
-            "client_id": self.clientIds,
+            "client_ids": self.clientIds,
             "is_active": self.isActive
         }
 
@@ -275,10 +275,13 @@ class User() :
             self.contactNo = row[5]
             self.address = row[6]
             self.designation = row[7]
-            self.countryIds = row[8]
-            self.domainIds = row[9]
-            self.clientIds = row[10]
-            self.isActive = row[11]
+            countryIds =  self.db.getUserCountries(self.userId)
+            domainIds = self.db.getUserDomains(self.userId)
+            clientIds = self.db.getUserClients(self.userId)
+            self.countryIds = None if countryIds == None else countryIds.split(",")
+            self.domainIds = None if domainIds == None else domainIds.split(",")
+            self.clientIds = None if clientIds == None else clientIds.split(",")
+            self.isActive = row[8]
             userList.append(self.toDetailedStructure())
         return userList
 
