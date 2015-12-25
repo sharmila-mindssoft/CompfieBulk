@@ -1,5 +1,7 @@
-from core import *
-from common import *
+from basics.types import RecordType, VectorType, Field, VariantType, MapType
+from core import Menu, UserGroup, Domain, Country, UserDetails,FORM_TYPE
+from common import (Text50, FORM_ID,  COUNTRY_ID, DOMAIN_ID, USER_GROUP_ID, USER_GROUP_NAME,  
+	IS_ACTIVE, USER_ID, EMAIL_ID, EMPLOYEE_NAME, EMPLOYEE_CODE, CONTACT_NUMBER, ADDRESS, DESIGNATION)
 
 __all__=  [
 	"Request", "Response"
