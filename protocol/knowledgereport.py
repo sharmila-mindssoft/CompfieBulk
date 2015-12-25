@@ -6,7 +6,7 @@ from core import (StatutoryMapping,
 	Industry, StatutoryNature, Geography)
 
 __all__ = [
-	"Request", "Response"
+	"Request", "Response", "GeographyMapping", "MappingReport"
 ]
 
 #

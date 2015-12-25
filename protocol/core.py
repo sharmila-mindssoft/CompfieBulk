@@ -15,7 +15,8 @@ __all__ = [
 	"ServiceProvider", "ClientUser", "AssignedStatutory", 
 	"ActiveCompliance", "UpcomingCompliance", "NumberOfCompliances", 
 	"ChartFilters", "ComplianceStatusDrillDown","EscalationsDrillDown", 
-	"UserGroupDetails", "User", "UserDetails", "CountryWiseUnits"
+	"UserGroupDetails", "User", "UserDetails", "CountryWiseUnits", 
+	"ComplianceApplicability", "ComplianceShortDescription","StatutoryDate"
 ]
 
 # frm = EnumType("FORM_TYPE", [
