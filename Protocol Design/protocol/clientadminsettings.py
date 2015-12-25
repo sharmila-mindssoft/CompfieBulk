@@ -1,7 +1,7 @@
 from protocol.common import *
 
 __all__ = [
-	"Request", "Response", "PROFILE_DETAIL", "LICENCE_HOLDER"
+	"Request", "Response"
 ]
 
 #
