@@ -32,7 +32,26 @@ class Validate(object):
         for module in self._modules:
             if module.is_cls_found(t):
                 return module.module_name()
-        assert False, "module not found: %s" % (t,)
+        possibilities = self._possibilities(t)
+        if len(possibilities) == 0:
+            print "emptuy"
+            possibilities = ""
+        else:
+            possibilities = ("\n".join(possibilities))
+        print "possibilities", possibilities
+        msg = "module not found: %s, \n\nPossible Modules: \n%s\n" % (
+            t,
+            possibilities
+        )
+        assert False, msg
+
+    def _possibilities(self, t):
+        names = []
+        for module in self._modules:
+            if t.name() in dir(module.module()):
+                names.append(module.module_name())
+        return names
+
 
     def validate(self, globals):
         self._verify_type_names(globals)
