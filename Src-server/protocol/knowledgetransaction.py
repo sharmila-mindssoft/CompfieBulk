@@ -2,6 +2,7 @@ import json
 from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
 parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
+    parse_structure_VariantType_knowledgetransaction_Request,
     parse_structure_VectorType_RecordType_core_Compliance,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
     parse_structure_EnumType_core_APPROVAL_STATUS,
@@ -14,10 +15,12 @@ parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorTy
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     parse_structure_Bool, parse_structure_Text,
     parse_structure_VectorType_RecordType_core_StatutoryNature,
+    parse_structure_CustomTextType_50,
     parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping
 )
 from protocol.to_structure import (
 to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
+    to_structure_VariantType_knowledgetransaction_Request,
     to_structure_VectorType_RecordType_core_Compliance,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
     to_structure_EnumType_core_APPROVAL_STATUS,
@@ -30,6 +33,7 @@ to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     to_structure_Bool, to_structure_Text,
     to_structure_VectorType_RecordType_core_StatutoryNature,
+    to_structure_CustomTextType_50,
     to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping
 )
 
@@ -354,4 +358,28 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
+
+#
+# RequestFormat
+#
+
+class RequestFormat(object):
+    def __init__(self, session_token, request):
+        self.session_token = session_token
+        self.request = request
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["session_token", "request"])
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+        request = data.get("request")
+        request = parse_structure_VariantType_knowledgetransaction_Request(request)
+        return RequestFormat(session_token, request)
+
+    def to_structure(self):
+        return {
+            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "request": to_structure_VariantType_knowledgetransaction_Request(self.request),
+        }
 

@@ -7,8 +7,10 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_500,
     parse_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence,
     parse_structure_SignedIntegerType_8,
+    parse_structure_CustomTextType_50,
     parse_structure_VectorType_RecordType_clientuser_ComplianceDetail,
     parse_structure_CustomTextType_20,
+    parse_structure_VariantType_clientuser_Request,
     parse_structure_VectorType_CustomTextType_20
 )
 from protocol.to_structure import (
@@ -17,9 +19,10 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_ActiveCompliance,
     to_structure_CustomTextType_500,
     to_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence,
-    to_structure_SignedIntegerType_8,
+    to_structure_SignedIntegerType_8, to_structure_CustomTextType_50,
     to_structure_VectorType_RecordType_clientuser_ComplianceDetail,
     to_structure_CustomTextType_20,
+    to_structure_VariantType_clientuser_Request,
     to_structure_VectorType_CustomTextType_20
 )
 
@@ -280,6 +283,30 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
+
+#
+# RequestFormat
+#
+
+class RequestFormat(object):
+    def __init__(self, session_token, request):
+        self.session_token = session_token
+        self.request = request
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["session_token", "request"])
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+        request = data.get("request")
+        request = parse_structure_VariantType_clientuser_Request(request)
+        return RequestFormat(session_token, request)
+
+    def to_structure(self):
+        return {
+            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "request": to_structure_VariantType_clientuser_Request(self.request),
+        }
 
 #
 # ComplianceDetail

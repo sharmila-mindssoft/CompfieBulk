@@ -2,6 +2,7 @@ import json
 from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
     parse_structure_CustomTextType_100,
+    parse_structure_VariantType_admin_Request,
     parse_structure_CustomTextType_250,
     parse_structure_MapType_CustomTextType_50_RecordType_core_Menu,
     parse_structure_VectorType_RecordType_core_UserGroup,
@@ -14,7 +15,9 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_50
 )
 from protocol.to_structure import (
-    to_structure_CustomTextType_100, to_structure_CustomTextType_250,
+    to_structure_CustomTextType_100,
+    to_structure_VariantType_admin_Request,
+    to_structure_CustomTextType_250,
     to_structure_MapType_CustomTextType_50_RecordType_core_Menu,
     to_structure_VectorType_RecordType_core_UserGroup,
     to_structure_VectorType_SignedIntegerType_8,
@@ -510,4 +513,28 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
+
+#
+# RequestFormat
+#
+
+class RequestFormat(object):
+    def __init__(self, session_token, request):
+        self.session_token = session_token
+        self.request = request
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["session_token", "request"])
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+        request = data.get("request")
+        request = parse_structure_VariantType_admin_Request(request)
+        return RequestFormat(session_token, request)
+
+    def to_structure(self):
+        return {
+            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "request": to_structure_VariantType_admin_Request(self.request),
+        }
 

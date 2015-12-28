@@ -29,9 +29,7 @@ class Request(object):
 
     @staticmethod
     def parse_structure(data):
-        print data
         data = parse_static_list(data, 2)
-        print data
         name, data = data
         if _Request_class_map.get(name) is None:
             msg = "invalid request: " + name
@@ -115,23 +113,27 @@ class ResetPassword(Request):
         }
 
 class ChangePassword(Request):
-    def __init__(self, current_password, new_password):
+    def __init__(self, current_password, new_password, session_token):
         self.current_password = current_password
         self.new_password = new_password
+        self.session_token = session_token
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["current_password", "new_password"])
+        data = parse_dictionary(data, ["current_password", "new_password", "session_token"])
         current_password = data.get("current_password")
         current_password = parse_structure_CustomTextType_20(current_password)
         new_password = data.get("new_password")
         new_password = parse_structure_CustomTextType_20(new_password)
-        return ChangePassword(current_password, new_password)
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+        return ChangePassword(current_password, new_password, session_token)
 
     def to_inner_structure(self):
         return {
             "current_password": to_structure_CustomTextType_20(self.current_password),
             "new_password": to_structure_CustomTextType_20(self.new_password),
+            "session_token": to_structure_CustomTextType_50(self.session_token),
         }
 
 class Logout(Request):
@@ -183,7 +185,7 @@ class Response(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
-class UserLoginSuccess(Response):
+class LoginSuccess(Response):
     def __init__(self, user_id, client_id, session_token, email_id, user_group_name, menu, employee_name, employee_code, contact_no, address, designation):
         self.user_id = user_id
         self.client_id = client_id
@@ -237,38 +239,6 @@ class UserLoginSuccess(Response):
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
             "address": to_structure_CustomTextType_250(self.address),
             "designation": to_structure_CustomTextType_50(self.designation),
-        }
-
-class AdminLoginSuccess(Response):
-    def __init__(self, user_id, session_token, email_id, menu, employee_name):
-        self.user_id = user_id
-        self.session_token = session_token
-        self.email_id = email_id
-        self.menu = menu
-        self.employee_name = employee_name
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "session_token", "email_id", "menu", "employee_name"])
-        user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
-        session_token = data.get("session_token")
-        session_token = parse_structure_CustomTextType_50(session_token)
-        email_id = data.get("email_id")
-        email_id = parse_structure_CustomTextType_100(email_id)
-        menu = data.get("menu")
-        menu = parse_structure_RecordType_core_Menu(menu)
-        employee_name = data.get("employee_name")
-        employee_name = parse_structure_CustomTextType_50(employee_name)
-        return LoginSuccess(user_id, session_token, email_id, menu, employee_name)
-
-    def to_inner_structure(self):
-        return {
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
-            "session_token": to_structure_CustomTextType_50(self.session_token),
-            "email_id": to_structure_CustomTextType_100(self.email_id),
-            "menu": to_structure_RecordType_core_Menu(self.menu),
-            "employee_name": to_structure_CustomTextType_50(self.employee_name),
         }
 
 class InvalidCredentials(Response):
@@ -403,7 +373,7 @@ class InvalidSessionToken(Response):
 
 
 def _init_Response_class_map():
-    classes = [UserLoginSuccess, AdminLoginSuccess, InvalidCredentials, ForgotPasswordSuccess, InvalidUserName, ResetSessionTokenValidationSuccess, InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess, InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken]
+    classes = [LoginSuccess, InvalidCredentials, ForgotPasswordSuccess, InvalidUserName, ResetSessionTokenValidationSuccess, InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess, InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

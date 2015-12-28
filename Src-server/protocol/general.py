@@ -5,7 +5,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_general_Notification,
     parse_structure_CustomTextType_250,
     parse_structure_VectorType_RecordType_core_Domain,
-    parse_structure_SignedIntegerType_8, parse_structure_Bool,
+    parse_structure_SignedIntegerType_8,
+    parse_structure_VariantType_general_Request, parse_structure_Bool,
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_500,
     parse_structure_CustomTextType_50
 )
@@ -14,7 +15,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_general_Notification,
     to_structure_CustomTextType_250,
     to_structure_VectorType_RecordType_core_Domain,
-    to_structure_SignedIntegerType_8, to_structure_Bool,
+    to_structure_SignedIntegerType_8,
+    to_structure_VariantType_general_Request, to_structure_Bool,
     to_structure_CustomTextType_20, to_structure_CustomTextType_500,
     to_structure_CustomTextType_50
 )
@@ -455,5 +457,29 @@ class Notification(object):
             "extra_details": to_structure_CustomTextType_500(self.extra_details),
             "has_read": to_structure_Bool(self.has_read),
             "date_and_time": to_structure_Float(self.date_and_time),
+        }
+
+#
+# RequestFormat
+#
+
+class RequestFormat(object):
+    def __init__(self, session_token, request):
+        self.session_token = session_token
+        self.request = request
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["session_token", "request"])
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+        request = data.get("request")
+        request = parse_structure_VariantType_general_Request(request)
+        return RequestFormat(session_token, request)
+
+    def to_structure(self):
+        return {
+            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "request": to_structure_VariantType_general_Request(self.request),
         }
 

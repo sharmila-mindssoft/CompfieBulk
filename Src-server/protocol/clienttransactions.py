@@ -19,6 +19,7 @@ parse_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE
     parse_structure_VectorType_RecordType_clienttransactions_APPROVALCOMPLIANCE,
     parse_structure_CustomTextType_50,
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit,
+    parse_structure_VariantType_clienttransactions_Request,
     parse_structure_VectorType_RecordType_core_AssignedStatutory,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_CustomTextType_50,
@@ -54,6 +55,7 @@ to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
     to_structure_VectorType_RecordType_clienttransactions_APPROVALCOMPLIANCE,
     to_structure_CustomTextType_50,
     to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit,
+    to_structure_VariantType_clienttransactions_Request,
     to_structure_VectorType_RecordType_core_AssignedStatutory,
     to_structure_VectorType_SignedIntegerType_8,
     to_structure_VectorType_CustomTextType_50,
@@ -659,6 +661,30 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
+
+#
+# RequestFormat
+#
+
+class RequestFormat(object):
+    def __init__(self, session_token, request):
+        self.session_token = session_token
+        self.request = request
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["session_token", "request"])
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+        request = data.get("request")
+        request = parse_structure_VariantType_clienttransactions_Request(request)
+        return RequestFormat(session_token, request)
+
+    def to_structure(self):
+        return {
+            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "request": to_structure_VariantType_clienttransactions_Request(self.request),
+        }
 
 #
 # ASSINGED_COMPLIANCE

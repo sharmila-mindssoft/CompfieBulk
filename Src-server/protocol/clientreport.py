@@ -47,6 +47,7 @@ parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_VectorType_RecordType_clientreport_ComplianceName,
     parse_structure_CustomTextType_20,
     parse_structure_VectorType_RecordType_clientreport_AssigneeCompliance,
+    parse_structure_VariantType_clientreport_Request,
     parse_structure_VectorType_RecordType_clientreport_ComplianceList,
     parse_structure_VectorType_RecordType_clientreport_Activities
 )
@@ -97,6 +98,7 @@ to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     to_structure_VectorType_RecordType_clientreport_ComplianceName,
     to_structure_CustomTextType_20,
     to_structure_VectorType_RecordType_clientreport_AssigneeCompliance,
+    to_structure_VariantType_clientreport_Request,
     to_structure_VectorType_RecordType_clientreport_ComplianceList,
     to_structure_VectorType_RecordType_clientreport_Activities
 )
@@ -1222,6 +1224,30 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
+
+#
+# RequestFormat
+#
+
+class RequestFormat(object):
+    def __init__(self, session_token, request):
+        self.session_token = session_token
+        self.request = request
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["session_token", "request"])
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+        request = data.get("request")
+        request = parse_structure_VariantType_clientreport_Request(request)
+        return RequestFormat(session_token, request)
+
+    def to_structure(self):
+        return {
+            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "request": to_structure_VariantType_clientreport_Request(self.request),
+        }
 
 #
 # ComplianceName

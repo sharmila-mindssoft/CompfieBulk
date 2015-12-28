@@ -21,7 +21,9 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_LegalEntity,
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_RecordType_technomasters_PROFILE_DETAIL,
-    parse_structure_CustomTextType_50, parse_structure_CustomTextType_20,
+    parse_structure_CustomTextType_50,
+    parse_structure_VariantType_technomasters_Request,
+    parse_structure_CustomTextType_20,
     parse_structure_VectorType_RecordType_core_GroupCompanyDetail
 )
 from protocol.to_structure import (
@@ -45,7 +47,9 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_LegalEntity,
     to_structure_VectorType_RecordType_core_Domain,
     to_structure_RecordType_technomasters_PROFILE_DETAIL,
-    to_structure_CustomTextType_50, to_structure_CustomTextType_20,
+    to_structure_CustomTextType_50,
+    to_structure_VariantType_technomasters_Request,
+    to_structure_CustomTextType_20,
     to_structure_VectorType_RecordType_core_GroupCompanyDetail
 )
 
@@ -698,6 +702,30 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
+
+#
+# RequestFormat
+#
+
+class RequestFormat(object):
+    def __init__(self, session_token, request):
+        self.session_token = session_token
+        self.request = request
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["session_token", "request"])
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+        request = data.get("request")
+        request = parse_structure_VariantType_technomasters_Request(request)
+        return RequestFormat(session_token, request)
+
+    def to_structure(self):
+        return {
+            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "request": to_structure_VariantType_technomasters_Request(self.request),
+        }
 
 #
 # LICENCE_HOLDER_DETAILS

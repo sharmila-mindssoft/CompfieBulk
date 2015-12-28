@@ -8,11 +8,13 @@ parse_structure_VectorType_RecordType_knowledgereport_MappingReport,
     parse_structure_SignedIntegerType_8,
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_core_Industry,
+    parse_structure_VariantType_knowledgereport_Request,
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
     parse_structure_Bool,
     parse_structure_VectorType_RecordType_core_StatutoryNature,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping,
+    parse_structure_CustomTextType_50
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_knowledgereport_MappingReport,
@@ -21,11 +23,13 @@ from protocol.to_structure import (
     to_structure_SignedIntegerType_8,
     to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     to_structure_VectorType_RecordType_core_Industry,
+    to_structure_VariantType_knowledgereport_Request,
     to_structure_VectorType_RecordType_core_Country,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
     to_structure_Bool,
     to_structure_VectorType_RecordType_core_StatutoryNature,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping
+    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping,
+    to_structure_CustomTextType_50
 )
 
 #
@@ -233,6 +237,30 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
+
+#
+# RequestFormat
+#
+
+class RequestFormat(object):
+    def __init__(self, session_token, request):
+        self.session_token = session_token
+        self.request = request
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["session_token", "request"])
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+        request = data.get("request")
+        request = parse_structure_VariantType_knowledgereport_Request(request)
+        return RequestFormat(session_token, request)
+
+    def to_structure(self):
+        return {
+            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "request": to_structure_VariantType_knowledgereport_Request(self.request),
+        }
 
 #
 # GeographyMapping

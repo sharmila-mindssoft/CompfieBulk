@@ -3,6 +3,7 @@ from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_
 from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_Compliance,
     parse_structure_VectorType_RecordType_dashboard_CompliedMap,
+    parse_structure_VariantType_dashboard_Request,
     parse_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails,
     parse_structure_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_dashboard_ChartDataMap,
@@ -36,6 +37,7 @@ from protocol.parse_structure import (
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
     to_structure_VectorType_RecordType_dashboard_CompliedMap,
+    to_structure_VariantType_dashboard_Request,
     to_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails,
     to_structure_SignedIntegerType_8,
     to_structure_VectorType_RecordType_dashboard_ChartDataMap,
@@ -771,6 +773,30 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
+
+#
+# RequestFormat
+#
+
+class RequestFormat(object):
+    def __init__(self, session_token, request):
+        self.session_token = session_token
+        self.request = request
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["session_token", "request"])
+        session_token = data.get("session_token")
+        session_token = parse_structure_CustomTextType_50(session_token)
+        request = data.get("request")
+        request = parse_structure_VariantType_dashboard_Request(request)
+        return RequestFormat(session_token, request)
+
+    def to_structure(self):
+        return {
+            "session_token": to_structure_CustomTextType_50(self.session_token),
+            "request": to_structure_VariantType_dashboard_Request(self.request),
+        }
 
 #
 # ApplicableDrillDown
