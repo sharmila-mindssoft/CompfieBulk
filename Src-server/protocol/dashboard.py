@@ -1,0 +1,1194 @@
+import json
+from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from protocol.parse_structure import (
+    parse_structure_VectorType_RecordType_core_Compliance,
+    parse_structure_VectorType_RecordType_dashboard_CompliedMap,
+    parse_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails,
+    parse_structure_SignedIntegerType_8,
+    parse_structure_VectorType_RecordType_dashboard_ChartDataMap,
+    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance,
+    parse_structure_VectorType_RecordType_core_BusinessGroup,
+    parse_structure_EnumType_core_FILTER_TYPE,
+    parse_structure_CustomTextType_500,
+    parse_structure_VectorType_RecordType_core_Country,
+    parse_structure_VectorType_RecordType_dashboard_ApplicableDrillDown,
+    parse_structure_CustomTextType_50,
+    parse_structure_EnumType_core_COMPLIANCE_STATUS,
+    parse_structure_CustomTextType_100,
+    parse_structure_EnumType_core_APPLICABILITY_STATUS,
+    parse_structure_VectorType_SignedIntegerType_8,
+    parse_structure_VectorType_RecordType_core_Unit,
+    parse_structure_VectorType_RecordType_dashboard_DataMap,
+    parse_structure_VectorType_RecordType_core_Division,
+    parse_structure_RecordType_dashboard_DelayedCompliance,
+    parse_structure_VectorType_RecordType_dashboard_DomainWise,
+    parse_structure_VectorType_RecordType_dashboard_RessignedCompliance,
+    parse_structure_CustomTextType_250, parse_structure_Text,
+    parse_structure_VectorType_RecordType_core_LegalEntity,
+    parse_structure_VectorType_RecordType_core_Domain,
+    parse_structure_VectorType_RecordType_dashboard_DrillDownData,
+    parse_structure_VectorType_RecordType_dashboard_TrendData,
+    parse_structure_CustomTextType_20,
+    parse_structure_VectorType_RecordType_dashboard_AssigneeChartData,
+    parse_structure_VectorType_RecordType_dashboard_UnitCompliance,
+    parse_structure_VectorType_RecordType_dashboard_EscalationData
+)
+from protocol.to_structure import (
+    to_structure_VectorType_RecordType_core_Compliance,
+    to_structure_VectorType_RecordType_dashboard_CompliedMap,
+    to_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails,
+    to_structure_SignedIntegerType_8,
+    to_structure_VectorType_RecordType_dashboard_ChartDataMap,
+    to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance,
+    to_structure_VectorType_RecordType_core_BusinessGroup,
+    to_structure_EnumType_core_FILTER_TYPE,
+    to_structure_CustomTextType_500,
+    to_structure_VectorType_RecordType_core_Country,
+    to_structure_VectorType_RecordType_dashboard_ApplicableDrillDown,
+    to_structure_CustomTextType_50,
+    to_structure_EnumType_core_COMPLIANCE_STATUS,
+    to_structure_CustomTextType_100,
+    to_structure_EnumType_core_APPLICABILITY_STATUS,
+    to_structure_VectorType_SignedIntegerType_8,
+    to_structure_VectorType_RecordType_core_Unit,
+    to_structure_VectorType_RecordType_dashboard_DataMap,
+    to_structure_VectorType_RecordType_core_Division,
+    to_structure_RecordType_dashboard_DelayedCompliance,
+    to_structure_VectorType_RecordType_dashboard_DomainWise,
+    to_structure_VectorType_RecordType_dashboard_RessignedCompliance,
+    to_structure_CustomTextType_250, to_structure_Text,
+    to_structure_VectorType_RecordType_core_LegalEntity,
+    to_structure_VectorType_RecordType_core_Domain,
+    to_structure_VectorType_RecordType_dashboard_DrillDownData,
+    to_structure_VectorType_RecordType_dashboard_TrendData,
+    to_structure_CustomTextType_20,
+    to_structure_VectorType_RecordType_dashboard_AssigneeChartData,
+    to_structure_VectorType_RecordType_dashboard_UnitCompliance,
+    to_structure_VectorType_RecordType_dashboard_EscalationData
+)
+
+#
+# Request
+#
+
+class Request(object):
+    def to_structure(self):
+        name = type(self).__name__
+        inner = self.to_inner_structure()
+        return [name, inner]
+
+    def to_inner_structure(self):
+        raise NotImplementedError
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_static_list(data, 2)
+        name, data = data
+        if _Request_class_map.get(name) is None:
+            msg = "invalid request: " + name
+            raise ValueError(msg)
+        return _Request_class_map[name].parse_inner_structure(data)
+
+    @staticmethod
+    def parse_inner_structure(data):
+        raise NotImplementedError
+
+class GetChartFilters(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetChartFilters()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class GetComplianceStatusChart(Request):
+    def __init__(self, country_ids, domain_ids, from_date, to_date, filter_type, filter_ids):
+        self.country_ids = country_ids
+        self.domain_ids = domain_ids
+        self.from_date = from_date
+        self.to_date = to_date
+        self.filter_type = filter_type
+        self.filter_ids = filter_ids
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["country_ids", "domain_ids", "from_date", "to_date", "filter_type", "filter_ids"])
+        country_ids = data.get("country_ids")
+        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
+        domain_ids = data.get("domain_ids")
+        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        from_date = data.get("from_date")
+        from_date = parse_structure_Text(from_date)
+        to_date = data.get("to_date")
+        to_date = parse_structure_Text(to_date)
+        filter_type = data.get("filter_type")
+        filter_type = parse_structure_Text(filter_type)
+        filter_ids = data.get("filter_ids")
+        filter_ids = parse_structure_VectorType_SignedIntegerType_8(filter_ids)
+        return GetComplianceStatusChart(country_ids, domain_ids, from_date, to_date, filter_type, filter_ids)
+
+    def to_inner_structure(self):
+        return {
+            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
+            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
+            "from_date": to_structure_Text(self.from_date),
+            "to_date": to_structure_Text(self.to_date),
+            "filter_type": to_structure_Text(self.filter_type),
+            "filter_ids": to_structure_VectorType_SignedIntegerType_8(self.filter_ids),
+        }
+
+class GetEscalationsChart(Request):
+    def __init__(self, country_id, domain_id, from_date, to_date, filter_type, filter_id):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.from_date = from_date
+        self.to_date = to_date
+        self.filter_type = filter_type
+        self.filter_id = filter_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["country_id", "domain_id", "from_date", "to_date", "filter_type", "filter_id"])
+        country_id = data.get("country_id")
+        country_id = parse_structure_SignedIntegerType_8(country_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        from_date = data.get("from_date")
+        from_date = parse_structure_CustomTextType_20(from_date)
+        to_date = data.get("to_date")
+        to_date = parse_structure_CustomTextType_20(to_date)
+        filter_type = data.get("filter_type")
+        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
+        filter_id = data.get("filter_id")
+        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        return GetEscalationsChart(country_id, domain_id, from_date, to_date, filter_type, filter_id)
+
+    def to_inner_structure(self):
+        return {
+            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "from_date": to_structure_CustomTextType_20(self.from_date),
+            "to_date": to_structure_CustomTextType_20(self.to_date),
+            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
+            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
+        }
+
+class GetNotCompliedChart(Request):
+    def __init__(self, country_id, domain_id, from_date, to_date, filter_type, filter_id):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.from_date = from_date
+        self.to_date = to_date
+        self.filter_type = filter_type
+        self.filter_id = filter_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["country_id", "domain_id", "from_date", "to_date", "filter_type", "filter_id"])
+        country_id = data.get("country_id")
+        country_id = parse_structure_SignedIntegerType_8(country_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        from_date = data.get("from_date")
+        from_date = parse_structure_CustomTextType_20(from_date)
+        to_date = data.get("to_date")
+        to_date = parse_structure_CustomTextType_20(to_date)
+        filter_type = data.get("filter_type")
+        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
+        filter_id = data.get("filter_id")
+        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        return GetNotCompliedChart(country_id, domain_id, from_date, to_date, filter_type, filter_id)
+
+    def to_inner_structure(self):
+        return {
+            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "from_date": to_structure_CustomTextType_20(self.from_date),
+            "to_date": to_structure_CustomTextType_20(self.to_date),
+            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
+            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
+        }
+
+class GetTrendChart(Request):
+    def __init__(self, country_id, domain_id, from_date, to_date, filter_type, filter_id):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.from_date = from_date
+        self.to_date = to_date
+        self.filter_type = filter_type
+        self.filter_id = filter_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["country_id", "domain_id", "from_date", "to_date", "filter_type", "filter_id"])
+        country_id = data.get("country_id")
+        country_id = parse_structure_SignedIntegerType_8(country_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        from_date = data.get("from_date")
+        from_date = parse_structure_CustomTextType_20(from_date)
+        to_date = data.get("to_date")
+        to_date = parse_structure_CustomTextType_20(to_date)
+        filter_type = data.get("filter_type")
+        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
+        filter_id = data.get("filter_id")
+        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        return GetTrendChart(country_id, domain_id, from_date, to_date, filter_type, filter_id)
+
+    def to_inner_structure(self):
+        return {
+            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "from_date": to_structure_CustomTextType_20(self.from_date),
+            "to_date": to_structure_CustomTextType_20(self.to_date),
+            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
+            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
+        }
+
+class GetComplianceApplicabilityStatusChart(Request):
+    def __init__(self, country_id, domain_id, from_date, to_date, filter_type, filter_id):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.from_date = from_date
+        self.to_date = to_date
+        self.filter_type = filter_type
+        self.filter_id = filter_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["country_id", "domain_id", "from_date", "to_date", "filter_type", "filter_id"])
+        country_id = data.get("country_id")
+        country_id = parse_structure_SignedIntegerType_8(country_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        from_date = data.get("from_date")
+        from_date = parse_structure_CustomTextType_20(from_date)
+        to_date = data.get("to_date")
+        to_date = parse_structure_CustomTextType_20(to_date)
+        filter_type = data.get("filter_type")
+        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
+        filter_id = data.get("filter_id")
+        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        return GetComplianceApplicabilityStatusChart(country_id, domain_id, from_date, to_date, filter_type, filter_id)
+
+    def to_inner_structure(self):
+        return {
+            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "from_date": to_structure_CustomTextType_20(self.from_date),
+            "to_date": to_structure_CustomTextType_20(self.to_date),
+            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
+            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
+        }
+
+class GetAssigneeWiseCompliancesChart(Request):
+    def __init__(self, country_id, business_group_id, legal_entity_id, division_id, unit_id):
+        self.country_id = country_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.division_id = division_id
+        self.unit_id = unit_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["country_id", "business_group_id", "legal_entity_id", "division_id", "unit_id"])
+        country_id = data.get("country_id")
+        country_id = parse_structure_SignedIntegerType_8(country_id)
+        business_group_id = data.get("business_group_id")
+        business_group_id = parse_structure_SignedIntegerType_8(business_group_id)
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = parse_structure_SignedIntegerType_8(legal_entity_id)
+        division_id = data.get("division_id")
+        division_id = parse_structure_SignedIntegerType_8(division_id)
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        return GetAssigneeWiseCompliancesChart(country_id, business_group_id, legal_entity_id, division_id, unit_id)
+
+    def to_inner_structure(self):
+        return {
+            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
+            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
+            "division_id": to_structure_SignedIntegerType_8(self.division_id),
+            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
+        }
+
+class GetAssigneeWiseComplianceDrillDown(Request):
+    def __init__(self, assignee_id, domain_id):
+        self.assignee_id = assignee_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["assignee_id", "domain_id"])
+        assignee_id = data.get("assignee_id")
+        assignee_id = parse_structure_SignedIntegerType_8(assignee_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        return GetAssigneeWiseComplianceDrillDown(assignee_id, domain_id)
+
+    def to_inner_structure(self):
+        return {
+            "assignee_id": to_structure_SignedIntegerType_8(self.assignee_id),
+            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+        }
+
+class GetComplianceStatusDrillDownData(Request):
+    def __init__(self, filter_type, filter_id, compliance_status):
+        self.filter_type = filter_type
+        self.filter_id = filter_id
+        self.compliance_status = compliance_status
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["filter_type", "filter_id", "compliance_status"])
+        filter_type = data.get("filter_type")
+        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
+        filter_id = data.get("filter_id")
+        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        compliance_status = data.get("compliance_status")
+        compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
+        return GetComplianceStatusDrillDownData(filter_type, filter_id, compliance_status)
+
+    def to_inner_structure(self):
+        return {
+            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
+            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
+            "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
+        }
+
+class GetEscalationsDrillDownData(Request):
+    def __init__(self, filter_type, filter_id, year):
+        self.filter_type = filter_type
+        self.filter_id = filter_id
+        self.year = year
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["filter_type", "filter_id", "year"])
+        filter_type = data.get("filter_type")
+        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
+        filter_id = data.get("filter_id")
+        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        year = data.get("year")
+        year = parse_structure_SignedIntegerType_8(year)
+        return GetEscalationsDrillDownData(filter_type, filter_id, year)
+
+    def to_inner_structure(self):
+        return {
+            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
+            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
+            "year": to_structure_SignedIntegerType_8(self.year),
+        }
+
+class GetComplianceApplicabilityStatusDrillDown(Request):
+    def __init__(self, filter_type, filter_id, applicability_status):
+        self.filter_type = filter_type
+        self.filter_id = filter_id
+        self.applicability_status = applicability_status
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["filter_type", "filter_id", "applicability_status"])
+        filter_type = data.get("filter_type")
+        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
+        filter_id = data.get("filter_id")
+        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        applicability_status = data.get("applicability_status")
+        applicability_status = parse_structure_EnumType_core_APPLICABILITY_STATUS(applicability_status)
+        return GetComplianceApplicabilityStatusDrillDown(filter_type, filter_id, applicability_status)
+
+    def to_inner_structure(self):
+        return {
+            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
+            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
+            "applicability_status": to_structure_EnumType_core_APPLICABILITY_STATUS(self.applicability_status),
+        }
+
+class GetNotCompliedDrillDown(Request):
+    def __init__(self, filter_type, filter_id):
+        self.filter_type = filter_type
+        self.filter_id = filter_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["filter_type", "filter_id"])
+        filter_type = data.get("filter_type")
+        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
+        filter_id = data.get("filter_id")
+        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        return GetNotCompliedDrillDown(filter_type, filter_id)
+
+    def to_inner_structure(self):
+        return {
+            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
+            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
+        }
+
+class GetTrendChartDrillDownData(Request):
+    def __init__(self, filter_type, filter_id):
+        self.filter_type = filter_type
+        self.filter_id = filter_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["filter_type", "filter_id"])
+        filter_type = data.get("filter_type")
+        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
+        filter_id = data.get("filter_id")
+        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        return GetTrendChartDrillDownData(filter_type, filter_id)
+
+    def to_inner_structure(self):
+        return {
+            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
+            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
+        }
+
+
+def _init_Request_class_map():
+    classes = [GetChartFilters, GetComplianceStatusChart, GetEscalationsChart, GetNotCompliedChart, GetTrendChart, GetComplianceApplicabilityStatusChart, GetAssigneeWiseCompliancesChart, GetAssigneeWiseComplianceDrillDown, GetComplianceStatusDrillDownData, GetEscalationsDrillDownData, GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown, GetTrendChartDrillDownData]
+    class_map = {}
+    for c in classes:
+        class_map[c.__name__] = c
+    return class_map
+
+_Request_class_map = _init_Request_class_map()
+
+#
+# Response
+#
+
+class Response(object):
+    def to_structure(self):
+        name = type(self).__name__
+        inner = self.to_inner_structure()
+        return [name, inner]
+
+    def to_inner_structure(self):
+        raise NotImplementedError
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_static_list(data, 2)
+        name, data = data
+        if _Response_class_map.get(name) is None:
+            msg = "invalid request: " + name
+            raise ValueError(msg)
+        return _Response_class_map[name].parse_inner_structure(data)
+
+    @staticmethod
+    def parse_inner_structure(data):
+        raise NotImplementedError
+
+class GetChartFiltersSuccess(Response):
+    def __init__(self, countries, domains, business_groups, legal_entities, divisions, units):
+        self.countries = countries
+        self.domains = domains
+        self.business_groups = business_groups
+        self.legal_entities = legal_entities
+        self.divisions = divisions
+        self.units = units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["countries", "domains", "business_groups", "legal_entities", "divisions", "units"])
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+        business_groups = data.get("business_groups")
+        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
+        legal_entities = data.get("legal_entities")
+        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        divisions = data.get("divisions")
+        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        units = data.get("units")
+        units = parse_structure_VectorType_RecordType_core_Unit(units)
+        return GetChartFiltersSuccess(countries, domains, business_groups, legal_entities, divisions, units)
+
+    def to_inner_structure(self):
+        return {
+            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
+            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
+            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
+            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
+        }
+
+class GetComplianceStatusChartSuccess(Response):
+    def __init__(self, chart_data):
+        self.chart_data = chart_data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["chart_data"])
+        chart_data = data.get("chart_data")
+        chart_data = parse_structure_VectorType_RecordType_dashboard_ChartDataMap(chart_data)
+        return GetComplianceStatusChartSuccess(chart_data)
+
+    def to_inner_structure(self):
+        return {
+            "chart_data": to_structure_VectorType_RecordType_dashboard_ChartDataMap(self.chart_data),
+        }
+
+class GetEscalationsChartSuccess(Response):
+    def __init__(self, chart_data):
+        self.chart_data = chart_data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["chart_data"])
+        chart_data = data.get("chart_data")
+        chart_data = parse_structure_VectorType_RecordType_dashboard_EscalationData(chart_data)
+        return GetEscalationsChartSuccess(chart_data)
+
+    def to_inner_structure(self):
+        return {
+            "chart_data": to_structure_VectorType_RecordType_dashboard_EscalationData(self.chart_data),
+        }
+
+class GetNotCompliedChartSuccess(Response):
+    def __init__(self, T_0_to_30_days_count, T_31_to_60_days_count, T_61_to_90_days_count, Above_90_days_count):
+        self.T_0_to_30_days_count = T_0_to_30_days_count
+        self.T_31_to_60_days_count = T_31_to_60_days_count
+        self.T_61_to_90_days_count = T_61_to_90_days_count
+        self.Above_90_days_count = Above_90_days_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["T_0_to_30_days_count", "T_31_to_60_days_count", "T_61_to_90_days_count", "Above_90_days_count"])
+        T_0_to_30_days_count = data.get("T_0_to_30_days_count")
+        T_0_to_30_days_count = parse_structure_SignedIntegerType_8(T_0_to_30_days_count)
+        T_31_to_60_days_count = data.get("T_31_to_60_days_count")
+        T_31_to_60_days_count = parse_structure_SignedIntegerType_8(T_31_to_60_days_count)
+        T_61_to_90_days_count = data.get("T_61_to_90_days_count")
+        T_61_to_90_days_count = parse_structure_SignedIntegerType_8(T_61_to_90_days_count)
+        Above_90_days_count = data.get("Above_90_days_count")
+        Above_90_days_count = parse_structure_SignedIntegerType_8(Above_90_days_count)
+        return GetNotCompliedChartSuccess(T_0_to_30_days_count, T_31_to_60_days_count, T_61_to_90_days_count, Above_90_days_count)
+
+    def to_inner_structure(self):
+        return {
+            "T_0_to_30_days_count": to_structure_SignedIntegerType_8(self.T_0_to_30_days_count),
+            "T_31_to_60_days_count": to_structure_SignedIntegerType_8(self.T_31_to_60_days_count),
+            "T_61_to_90_days_count": to_structure_SignedIntegerType_8(self.T_61_to_90_days_count),
+            "Above_90_days_count": to_structure_SignedIntegerType_8(self.Above_90_days_count),
+        }
+
+class GetTrendChartSuccess(Response):
+    def __init__(self, years, data):
+        self.years = years
+        self.data = data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["years", "data"])
+        years = data.get("years")
+        years = parse_structure_VectorType_SignedIntegerType_8(years)
+        data = data.get("data")
+        data = parse_structure_VectorType_RecordType_dashboard_TrendData(data)
+        return GetTrendChartSuccess(years, data)
+
+    def to_inner_structure(self):
+        return {
+            "years": to_structure_VectorType_SignedIntegerType_8(self.years),
+            "data": to_structure_VectorType_RecordType_dashboard_TrendData(self.data),
+        }
+
+class GetComplianceApplicabilityStatusChartSuccess(Response):
+    def __init__(self, applicable_count, not_applicable_count, not_opted_count):
+        self.applicable_count = applicable_count
+        self.not_applicable_count = not_applicable_count
+        self.not_opted_count = not_opted_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["applicable_count", "not_applicable_count", "not_opted_count"])
+        applicable_count = data.get("applicable_count")
+        applicable_count = parse_structure_SignedIntegerType_8(applicable_count)
+        not_applicable_count = data.get("not_applicable_count")
+        not_applicable_count = parse_structure_SignedIntegerType_8(not_applicable_count)
+        not_opted_count = data.get("not_opted_count")
+        not_opted_count = parse_structure_SignedIntegerType_8(not_opted_count)
+        return GetComplianceApplicabilityStatusChartSuccess(applicable_count, not_applicable_count, not_opted_count)
+
+    def to_inner_structure(self):
+        return {
+            "applicable_count": to_structure_SignedIntegerType_8(self.applicable_count),
+            "not_applicable_count": to_structure_SignedIntegerType_8(self.not_applicable_count),
+            "not_opted_count": to_structure_SignedIntegerType_8(self.not_opted_count),
+        }
+
+class GetAssigneeWiseCompliancesChartSuccess(Response):
+    def __init__(self, chart_data):
+        self.chart_data = chart_data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["chart_data"])
+        chart_data = data.get("chart_data")
+        chart_data = parse_structure_VectorType_RecordType_dashboard_AssigneeChartData(chart_data)
+        return GetAssigneeWiseCompliancesChartSuccess(chart_data)
+
+    def to_inner_structure(self):
+        return {
+            "chart_data": to_structure_VectorType_RecordType_dashboard_AssigneeChartData(self.chart_data),
+        }
+
+class GetAssigneeWiseComplianceDrillDownSuccess(Response):
+    def __init__(self, complied, delayed, inprogress, not_complied):
+        self.complied = complied
+        self.delayed = delayed
+        self.inprogress = inprogress
+        self.not_complied = not_complied
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["complied", "delayed", "inprogress", "not_complied"])
+        complied = data.get("complied")
+        complied = parse_structure_VectorType_RecordType_dashboard_UnitCompliance(complied)
+        delayed = data.get("delayed")
+        delayed = parse_structure_VectorType_RecordType_dashboard_UnitCompliance(delayed)
+        inprogress = data.get("inprogress")
+        inprogress = parse_structure_VectorType_RecordType_dashboard_UnitCompliance(inprogress)
+        not_complied = data.get("not_complied")
+        not_complied = parse_structure_VectorType_RecordType_dashboard_UnitCompliance(not_complied)
+        return GetAssigneeWiseComplianceDrillDownSuccess(complied, delayed, inprogress, not_complied)
+
+    def to_inner_structure(self):
+        return {
+            "complied": to_structure_VectorType_RecordType_dashboard_UnitCompliance(self.complied),
+            "delayed": to_structure_VectorType_RecordType_dashboard_UnitCompliance(self.delayed),
+            "inprogress": to_structure_VectorType_RecordType_dashboard_UnitCompliance(self.inprogress),
+            "not_complied": to_structure_VectorType_RecordType_dashboard_UnitCompliance(self.not_complied),
+        }
+
+class GetComplianceStatusDrillDownDataSuccess(Response):
+    def __init__(self, drill_down_data):
+        self.drill_down_data = drill_down_data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["drill_down_data"])
+        drill_down_data = data.get("drill_down_data")
+        drill_down_data = parse_structure_VectorType_RecordType_dashboard_DrillDownData(drill_down_data)
+        return GetComplianceStatusDrillDownDataSuccess(drill_down_data)
+
+    def to_inner_structure(self):
+        return {
+            "drill_down_data": to_structure_VectorType_RecordType_dashboard_DrillDownData(self.drill_down_data),
+        }
+
+class GetEscalationsDrillDownDataSuccess(Response):
+    def __init__(self, delayed, not_complied):
+        self.delayed = delayed
+        self.not_complied = not_complied
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["delayed", "not_complied"])
+        delayed = data.get("delayed")
+        delayed = parse_structure_VectorType_RecordType_dashboard_DrillDownData(delayed)
+        not_complied = data.get("not_complied")
+        not_complied = parse_structure_VectorType_RecordType_dashboard_DrillDownData(not_complied)
+        return GetEscalationsDrillDownDataSuccess(delayed, not_complied)
+
+    def to_inner_structure(self):
+        return {
+            "delayed": to_structure_VectorType_RecordType_dashboard_DrillDownData(self.delayed),
+            "not_complied": to_structure_VectorType_RecordType_dashboard_DrillDownData(self.not_complied),
+        }
+
+class GetComplianceApplicabilityStatusDrillDownSuccess(Response):
+    def __init__(self, filter_name, drill_down_data):
+        self.filter_name = filter_name
+        self.drill_down_data = drill_down_data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["filter_name", "drill_down_data"])
+        filter_name = data.get("filter_name")
+        filter_name = parse_structure_CustomTextType_100(filter_name)
+        drill_down_data = data.get("drill_down_data")
+        drill_down_data = parse_structure_VectorType_RecordType_dashboard_ApplicableDrillDown(drill_down_data)
+        return GetComplianceApplicabilityStatusDrillDownSuccess(filter_name, drill_down_data)
+
+    def to_inner_structure(self):
+        return {
+            "filter_name": to_structure_CustomTextType_100(self.filter_name),
+            "drill_down_data": to_structure_VectorType_RecordType_dashboard_ApplicableDrillDown(self.drill_down_data),
+        }
+
+class GetNotCompliedDrillDownSuccess(Response):
+    def __init__(self, filter_name, drill_down_data):
+        self.filter_name = filter_name
+        self.drill_down_data = drill_down_data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["filter_name", "drill_down_data"])
+        filter_name = data.get("filter_name")
+        filter_name = parse_structure_CustomTextType_100(filter_name)
+        drill_down_data = data.get("drill_down_data")
+        drill_down_data = parse_structure_VectorType_RecordType_dashboard_DrillDownData(drill_down_data)
+        return GetNotCompliedDrillDownSuccess(filter_name, drill_down_data)
+
+    def to_inner_structure(self):
+        return {
+            "filter_name": to_structure_CustomTextType_100(self.filter_name),
+            "drill_down_data": to_structure_VectorType_RecordType_dashboard_DrillDownData(self.drill_down_data),
+        }
+
+class GetTrendChartDrillDownDataSuccess(Response):
+    def __init__(self, drill_down_data):
+        self.drill_down_data = drill_down_data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["drill_down_data"])
+        drill_down_data = data.get("drill_down_data")
+        drill_down_data = parse_structure_VectorType_RecordType_dashboard_DrillDownData(drill_down_data)
+        return GetTrendChartDrillDownDataSuccess(drill_down_data)
+
+    def to_inner_structure(self):
+        return {
+            "drill_down_data": to_structure_VectorType_RecordType_dashboard_DrillDownData(self.drill_down_data),
+        }
+
+
+def _init_Response_class_map():
+    classes = [GetChartFiltersSuccess, GetComplianceStatusChartSuccess, GetEscalationsChartSuccess, GetNotCompliedChartSuccess, GetTrendChartSuccess, GetComplianceApplicabilityStatusChartSuccess, GetAssigneeWiseCompliancesChartSuccess, GetAssigneeWiseComplianceDrillDownSuccess, GetComplianceStatusDrillDownDataSuccess, GetEscalationsDrillDownDataSuccess, GetComplianceApplicabilityStatusDrillDownSuccess, GetNotCompliedDrillDownSuccess, GetTrendChartDrillDownDataSuccess]
+    class_map = {}
+    for c in classes:
+        class_map[c.__name__] = c
+    return class_map
+
+_Response_class_map = _init_Response_class_map()
+
+#
+# ApplicableDrillDown
+#
+
+class ApplicableDrillDown(object):
+    def __init__(self, level1_statutory_name, compliances):
+        self.level1_statutory_name = level1_statutory_name
+        self.compliances = compliances
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["level1_statutory_name", "compliances"])
+        level1_statutory_name = data.get("level1_statutory_name")
+        level1_statutory_name = parse_structure_CustomTextType_50(level1_statutory_name)
+        compliances = data.get("compliances")
+        compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
+        return ApplicableDrillDown(level1_statutory_name, compliances)
+
+    def to_structure(self):
+        return {
+            "level1_statutory_name": to_structure_CustomTextType_50(self.level1_statutory_name),
+            "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
+        }
+
+#
+# DataMap
+#
+
+class DataMap(object):
+    def __init__(self, filter_name, no_of_compliances):
+        self.filter_name = filter_name
+        self.no_of_compliances = no_of_compliances
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["filter_name", "no_of_compliances"])
+        filter_name = data.get("filter_name")
+        filter_name = parse_structure_CustomTextType_100(filter_name)
+        no_of_compliances = data.get("no_of_compliances")
+        no_of_compliances = parse_structure_SignedIntegerType_8(no_of_compliances)
+        return DataMap(filter_name, no_of_compliances)
+
+    def to_structure(self):
+        return {
+            "filter_name": to_structure_CustomTextType_100(self.filter_name),
+            "no_of_compliances": to_structure_SignedIntegerType_8(self.no_of_compliances),
+        }
+
+#
+# ChartDataMap
+#
+
+class ChartDataMap(object):
+    def __init__(self, year, data):
+        self.year = year
+        self.data = data
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["year", "data"])
+        year = data.get("year")
+        year = parse_structure_CustomTextType_20(year)
+        data = data.get("data")
+        data = parse_structure_VectorType_RecordType_dashboard_DataMap(data)
+        return ChartDataMap(year, data)
+
+    def to_structure(self):
+        return {
+            "year": to_structure_CustomTextType_20(self.year),
+            "data": to_structure_VectorType_RecordType_dashboard_DataMap(self.data),
+        }
+
+#
+# EscalationData
+#
+
+class EscalationData(object):
+    def __init__(self, year, delayed_compliance_count, not_complied_count):
+        self.year = year
+        self.delayed_compliance_count = delayed_compliance_count
+        self.not_complied_count = not_complied_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["year", "delayed_compliance_count", "not_complied_count"])
+        year = data.get("year")
+        year = parse_structure_CustomTextType_20(year)
+        delayed_compliance_count = data.get("delayed_compliance_count")
+        delayed_compliance_count = parse_structure_SignedIntegerType_8(delayed_compliance_count)
+        not_complied_count = data.get("not_complied_count")
+        not_complied_count = parse_structure_SignedIntegerType_8(not_complied_count)
+        return EscalationData(year, delayed_compliance_count, not_complied_count)
+
+    def to_structure(self):
+        return {
+            "year": to_structure_CustomTextType_20(self.year),
+            "delayed_compliance_count": to_structure_SignedIntegerType_8(self.delayed_compliance_count),
+            "not_complied_count": to_structure_SignedIntegerType_8(self.not_complied_count),
+        }
+
+#
+# CompliedMap
+#
+
+class CompliedMap(object):
+    def __init__(self, total_compliances, complied_compliances_count):
+        self.total_compliances = total_compliances
+        self.complied_compliances_count = complied_compliances_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["total_compliances", "complied_compliances_count"])
+        total_compliances = data.get("total_compliances")
+        total_compliances = parse_structure_SignedIntegerType_8(total_compliances)
+        complied_compliances_count = data.get("complied_compliances_count")
+        complied_compliances_count = parse_structure_SignedIntegerType_8(complied_compliances_count)
+        return CompliedMap(total_compliances, complied_compliances_count)
+
+    def to_structure(self):
+        return {
+            "total_compliances": to_structure_SignedIntegerType_8(self.total_compliances),
+            "complied_compliances_count": to_structure_SignedIntegerType_8(self.complied_compliances_count),
+        }
+
+#
+# TrendData
+#
+
+class TrendData(object):
+    def __init__(self, filter_name, complied_compliance):
+        self.filter_name = filter_name
+        self.complied_compliance = complied_compliance
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["filter_name", "complied_compliance"])
+        filter_name = data.get("filter_name")
+        filter_name = parse_structure_CustomTextType_100(filter_name)
+        complied_compliance = data.get("complied_compliance")
+        complied_compliance = parse_structure_VectorType_RecordType_dashboard_CompliedMap(complied_compliance)
+        return TrendData(filter_name, complied_compliance)
+
+    def to_structure(self):
+        return {
+            "filter_name": to_structure_CustomTextType_100(self.filter_name),
+            "complied_compliance": to_structure_VectorType_RecordType_dashboard_CompliedMap(self.complied_compliance),
+        }
+
+#
+# RessignedCompliance
+#
+
+class RessignedCompliance(object):
+    def __init__(self, compliance_name, reassigned_from, start_date, due_date, reassigned_date, completed_date):
+        self.compliance_name = compliance_name
+        self.reassigned_from = reassigned_from
+        self.start_date = start_date
+        self.due_date = due_date
+        self.reassigned_date = reassigned_date
+        self.completed_date = completed_date
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["compliance_name", "reassigned_from", "start_date", "due_date", "reassigned_date", "completed_date"])
+        compliance_name = data.get("compliance_name")
+        compliance_name = parse_structure_CustomTextType_50(compliance_name)
+        reassigned_from = data.get("reassigned_from")
+        reassigned_from = parse_structure_CustomTextType_50(reassigned_from)
+        start_date = data.get("start_date")
+        start_date = parse_structure_CustomTextType_20(start_date)
+        due_date = data.get("due_date")
+        due_date = parse_structure_CustomTextType_20(due_date)
+        reassigned_date = data.get("reassigned_date")
+        reassigned_date = parse_structure_CustomTextType_20(reassigned_date)
+        completed_date = data.get("completed_date")
+        completed_date = parse_structure_CustomTextType_20(completed_date)
+        return RessignedCompliance(compliance_name, reassigned_from, start_date, due_date, reassigned_date, completed_date)
+
+    def to_structure(self):
+        return {
+            "compliance_name": to_structure_CustomTextType_50(self.compliance_name),
+            "reassigned_from": to_structure_CustomTextType_50(self.reassigned_from),
+            "start_date": to_structure_CustomTextType_20(self.start_date),
+            "due_date": to_structure_CustomTextType_20(self.due_date),
+            "reassigned_date": to_structure_CustomTextType_20(self.reassigned_date),
+            "completed_date": to_structure_CustomTextType_20(self.completed_date),
+        }
+
+#
+# DelayedCompliance
+#
+
+class DelayedCompliance(object):
+    def __init__(self, assigned_count, reassigned_count, reassigned_compliances):
+        self.assigned_count = assigned_count
+        self.reassigned_count = reassigned_count
+        self.reassigned_compliances = reassigned_compliances
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["assigned_count", "reassigned_count", "reassigned_compliances"])
+        assigned_count = data.get("assigned_count")
+        assigned_count = parse_structure_SignedIntegerType_8(assigned_count)
+        reassigned_count = data.get("reassigned_count")
+        reassigned_count = parse_structure_SignedIntegerType_8(reassigned_count)
+        reassigned_compliances = data.get("reassigned_compliances")
+        reassigned_compliances = parse_structure_VectorType_RecordType_dashboard_RessignedCompliance(reassigned_compliances)
+        return DelayedCompliance(assigned_count, reassigned_count, reassigned_compliances)
+
+    def to_structure(self):
+        return {
+            "assigned_count": to_structure_SignedIntegerType_8(self.assigned_count),
+            "reassigned_count": to_structure_SignedIntegerType_8(self.reassigned_count),
+            "reassigned_compliances": to_structure_VectorType_RecordType_dashboard_RessignedCompliance(self.reassigned_compliances),
+        }
+
+#
+# DomainWise
+#
+
+class DomainWise(object):
+    def __init__(self, domain_id, domain_name, total_compliances, complied_count, delayed_compliance, inprogress_compliance_count, not_complied_count):
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+        self.total_compliances = total_compliances
+        self.complied_count = complied_count
+        self.delayed_compliance = delayed_compliance
+        self.inprogress_compliance_count = inprogress_compliance_count
+        self.not_complied_count = not_complied_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["domain_id", "domain_name", "total_compliances", "complied_count", "delayed_compliance", "inprogress_compliance_count", "not_complied_count"])
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_name = data.get("domain_name")
+        domain_name = parse_structure_CustomTextType_50(domain_name)
+        total_compliances = data.get("total_compliances")
+        total_compliances = parse_structure_SignedIntegerType_8(total_compliances)
+        complied_count = data.get("complied_count")
+        complied_count = parse_structure_SignedIntegerType_8(complied_count)
+        delayed_compliance = data.get("delayed_compliance")
+        delayed_compliance = parse_structure_RecordType_dashboard_DelayedCompliance(delayed_compliance)
+        inprogress_compliance_count = data.get("inprogress_compliance_count")
+        inprogress_compliance_count = parse_structure_SignedIntegerType_8(inprogress_compliance_count)
+        not_complied_count = data.get("not_complied_count")
+        not_complied_count = parse_structure_SignedIntegerType_8(not_complied_count)
+        return DomainWise(domain_id, domain_name, total_compliances, complied_count, delayed_compliance, inprogress_compliance_count, not_complied_count)
+
+    def to_structure(self):
+        return {
+            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "domain_name": to_structure_CustomTextType_50(self.domain_name),
+            "total_compliances": to_structure_SignedIntegerType_8(self.total_compliances),
+            "complied_count": to_structure_SignedIntegerType_8(self.complied_count),
+            "delayed_compliance": to_structure_RecordType_dashboard_DelayedCompliance(self.delayed_compliance),
+            "inprogress_compliance_count": to_structure_SignedIntegerType_8(self.inprogress_compliance_count),
+            "not_complied_count": to_structure_SignedIntegerType_8(self.not_complied_count),
+        }
+
+#
+# AssigneeWiseDetails
+#
+
+class AssigneeWiseDetails(object):
+    def __init__(self, user_id, assignee_name, domain_wise_details):
+        self.user_id = user_id
+        self.assignee_name = assignee_name
+        self.domain_wise_details = domain_wise_details
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "assignee_name", "domain_wise_details"])
+        user_id = data.get("user_id")
+        user_id = parse_structure_SignedIntegerType_8(user_id)
+        assignee_name = data.get("assignee_name")
+        assignee_name = parse_structure_CustomTextType_100(assignee_name)
+        domain_wise_details = data.get("domain_wise_details")
+        domain_wise_details = parse_structure_VectorType_RecordType_dashboard_DomainWise(domain_wise_details)
+        return AssigneeWiseDetails(user_id, assignee_name, domain_wise_details)
+
+    def to_structure(self):
+        return {
+            "user_id": to_structure_SignedIntegerType_8(self.user_id),
+            "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
+            "domain_wise_details": to_structure_VectorType_RecordType_dashboard_DomainWise(self.domain_wise_details),
+        }
+
+#
+# AssigneeChartData
+#
+
+class AssigneeChartData(object):
+    def __init__(self, unit_name, assignee_wise_details):
+        self.unit_name = unit_name
+        self.assignee_wise_details = assignee_wise_details
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_name", "assignee_wise_details"])
+        unit_name = data.get("unit_name")
+        unit_name = parse_structure_CustomTextType_50(unit_name)
+        assignee_wise_details = data.get("assignee_wise_details")
+        assignee_wise_details = parse_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(assignee_wise_details)
+        return AssigneeChartData(unit_name, assignee_wise_details)
+
+    def to_structure(self):
+        return {
+            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "assignee_wise_details": to_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(self.assignee_wise_details),
+        }
+
+#
+# Level1Compliance
+#
+
+class Level1Compliance(object):
+    def __init__(self, compliance_name, description, assignee_name, assigne_date, due_date, completion_date, compliance_status, ageing):
+        self.compliance_name = compliance_name
+        self.description = description
+        self.assignee_name = assignee_name
+        self.assigne_date = assigne_date
+        self.due_date = due_date
+        self.completion_date = completion_date
+        self.compliance_status = compliance_status
+        self.ageing = ageing
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["compliance_name", "description", "assignee_name", "assigne_date", "due_date", "completion_date", "compliance_status", "ageing"])
+        compliance_name = data.get("compliance_name")
+        compliance_name = parse_structure_CustomTextType_100(compliance_name)
+        description = data.get("description")
+        description = parse_structure_CustomTextType_500(description)
+        assignee_name = data.get("assignee_name")
+        assignee_name = parse_structure_CustomTextType_100(assignee_name)
+        assigne_date = data.get("assigne_date")
+        assigne_date = parse_structure_CustomTextType_20(assigne_date)
+        due_date = data.get("due_date")
+        due_date = parse_structure_CustomTextType_20(due_date)
+        completion_date = data.get("completion_date")
+        completion_date = parse_structure_CustomTextType_20(completion_date)
+        compliance_status = data.get("compliance_status")
+        compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
+        ageing = data.get("ageing")
+        ageing = parse_structure_SignedIntegerType_8(ageing)
+        return Level1Compliance(compliance_name, description, assignee_name, assigne_date, due_date, completion_date, compliance_status, ageing)
+
+    def to_structure(self):
+        return {
+            "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
+            "description": to_structure_CustomTextType_500(self.description),
+            "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
+            "assigne_date": to_structure_CustomTextType_20(self.assigne_date),
+            "due_date": to_structure_CustomTextType_20(self.due_date),
+            "completion_date": to_structure_CustomTextType_20(self.completion_date),
+            "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
+            "ageing": to_structure_SignedIntegerType_8(self.ageing),
+        }
+
+#
+# UnitCompliance
+#
+
+class UnitCompliance(object):
+    def __init__(self, unit_name, address, compliances):
+        self.unit_name = unit_name
+        self.address = address
+        self.compliances = compliances
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_name", "address", "compliances"])
+        unit_name = data.get("unit_name")
+        unit_name = parse_structure_CustomTextType_100(unit_name)
+        address = data.get("address")
+        address = parse_structure_CustomTextType_250(address)
+        compliances = data.get("compliances")
+        compliances = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance(compliances)
+        return UnitCompliance(unit_name, address, compliances)
+
+    def to_structure(self):
+        return {
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
+            "address": to_structure_CustomTextType_250(self.address),
+            "compliances": to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance(self.compliances),
+        }
+
+#
+# DrillDownData
+#
+
+class DrillDownData(object):
+    def __init__(self, business_group, legal_entity, division, unit_wise_compliances):
+        self.business_group = business_group
+        self.legal_entity = legal_entity
+        self.division = division
+        self.unit_wise_compliances = unit_wise_compliances
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["business_group", "legal_entity", "division", "unit_wise_compliances"])
+        business_group = data.get("business_group")
+        business_group = parse_structure_CustomTextType_50(business_group)
+        legal_entity = data.get("legal_entity")
+        legal_entity = parse_structure_CustomTextType_50(legal_entity)
+        division = data.get("division")
+        division = parse_structure_CustomTextType_50(division)
+        unit_wise_compliances = data.get("unit_wise_compliances")
+        unit_wise_compliances = parse_structure_VectorType_RecordType_dashboard_UnitCompliance(unit_wise_compliances)
+        return DrillDownData(business_group, legal_entity, division, unit_wise_compliances)
+
+    def to_structure(self):
+        return {
+            "business_group": to_structure_CustomTextType_50(self.business_group),
+            "legal_entity": to_structure_CustomTextType_50(self.legal_entity),
+            "division": to_structure_CustomTextType_50(self.division),
+            "unit_wise_compliances": to_structure_VectorType_RecordType_dashboard_UnitCompliance(self.unit_wise_compliances),
+        }
+
