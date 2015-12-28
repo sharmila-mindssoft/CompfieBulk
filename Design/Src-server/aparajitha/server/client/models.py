@@ -323,7 +323,6 @@ class User(object) :
             self.detailTblName, detailTblcolumns, detailTblValuesList, condition)
 
     def updateAdminStatus(self, sessionUser):
-        print "inside update Admin status in model"
         columns = ["is_admin", "updated_on" , "updated_by"]
         values = [self.isAdmin, getCurrentTimeStamp(), sessionUser]
         condition = "user_id='%d'" % self.userId

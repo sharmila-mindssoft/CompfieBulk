@@ -16,7 +16,6 @@ __all__ = [
     "Menu",
     "assertType",
     "listToString",
-    
     "JSONHelper",
     "convertToString",
     "generatePassword",

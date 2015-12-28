@@ -20,6 +20,17 @@ __all__ = [
 ]
 
 class UserPrivilegeController() :
+    db = None
+    clientId = None
+    userGroupId = None
+    userGroupName = None
+    formType = None
+    formIds = None
+    isActive = 1
+
+    def __init__(self) :
+        db = ClientDatabaseHandler.instance()
+
     def getUserGroupsFormData(self) :
     	ClientForms = Form.getForms("client")
         forms = Menu.getMenu(ClientForms)
@@ -36,127 +47,207 @@ class UserPrivilegeController() :
         response = commonResponseStructure("GetUserGroupsSuccess", response_data)
         return response
 
+    def toDetailedStructure(self) :
+        return {
+            "user_group_id": self.userGroupId,
+            "user_group_name": self.userGroupName,
+            "form_type": self.formType,
+            "form_ids": self.formIds,
+            "is_active": self.isActive
+        }
+
+    def toStructure(self):
+        return {
+            "user_group_id": self.userGroupId,
+            "user_group_name": self.userGroupName
+        }
+
+    def generateNewUserGroupId(self) :
+        return self.db.generateNewId(self.db.tblUserGroups, "user_group_id")
+
+    def isDuplicate(self):
+        condition = "user_group_name ='%s' AND user_group_id = '%d'" % (
+            self.userGroupName, self.userGroupId)
+        return self.db.isAlreadyExists(self.db.tblUserGroups, condition)
+
+    def isIdInvalid(self):
+        condition = "user_group_id = '%d'" % self.userGroupId
+        return not self.db.isAlreadyExists(self.tblUserGroups, condition)
+
     def saveUserPrivilege(self, requestData, sessionUser) :
-        userGroupName = JSONHelper.getString(requestData, "user_group_name")
-        formType = JSONHelper.getString(requestData, "form_type")
-        formIds =  JSONHelper.getList(requestData, "form_ids")
-        userPrivilege = UserPrivilege(getClientId(sessionUser), None, userGroupName, 
-            formType, formIds, None)
-        if userPrivilege.isDuplicate() :
+        self.userGroupName = JSONHelper.getString(requestData, "user_group_name")
+        self.formType = JSONHelper.getString(requestData, "form_type")
+        self.formIds =  JSONHelper.getList(requestData, "form_ids")
+        if self.isDuplicate() :
             return commonResponseStructure("GroupNameAlreadyExists",{})
-        elif userPrivilege.save(sessionUser) :
+        elif self.db.saveUserPrivilege(self, sessionUser) :
             return commonResponseStructure("SaveUserGroupSuccess",{})
         else:
             return commonResponseStructure("Error",{})
 
     def updateUserPrivilege(self, requestData, sessionUser) :
-        userGroupId = JSONHelper.getInt(requestData,"user_group_id")
-        userGroupName = JSONHelper.getString(requestData,"user_group_name")
-        formType = JSONHelper.getString(requestData,"form_type")
-        formIds =  JSONHelper.getList(requestData,"form_ids")
-        userPrivilege = UserPrivilege(getClientId(sessionUser), userGroupId, userGroupName, formType, formIds, None)
-        if userPrivilege.isIdInvalid() :
+        self.userGroupId = JSONHelper.getInt(requestData,"user_group_id")
+        self.userGroupName = JSONHelper.getString(requestData,"user_group_name")
+        self.formType = JSONHelper.getString(requestData,"form_type")
+        self.formIds =  JSONHelper.getList(requestData,"form_ids")
+        if self.isIdInvalid() :
             return commonResponseStructure("InvalidGroupId",{})
-        elif userPrivilege.isDuplicate() :
+        elif self.isDuplicate() :
             return commonResponseStructure("GroupNameAlreadyExists",{})
-        elif userPrivilege.update(sessionUser) :
+        elif self.db.updateUserPrivilege(self, sessionUser) :
             return commonResponseStructure("UpdateUserGroupSuccess",{})
         else:
             return commonResponseStructure("Error",{})
 
     def changeUserPrivilegeStatus(self, requestData, sessionUser) :
-        userGroupId = JSONHelper.getInt(requestData, "user_group_id")
-        isActive = JSONHelper.getInt(requestData, "is_active")
-        userPrivilege = UserPrivilege(getClientId(sessionUser), userGroupId, None, None, None, isActive)
-        if userPrivilege.isIdInvalid() :
+        self.userGroupId = JSONHelper.getInt(requestData, "user_group_id")
+        self.isActive = JSONHelper.getInt(requestData, "is_active")
+        if self.isIdInvalid() :
             return commonResponseStructure("InvalidGroupId",{})
-        elif userPrivilege.updateStatus(sessionUser):
+        elif self.db.updateUserPrivilegeStatus(self.userGroupId, self.isActive, sessionUser):
             return commonResponseStructure("ChangeUserGroupStatusSuccess",{})
 
 class UserController() :
-    def saveUser(self, requestData, sessionUser) :
-        emailId = JSONHelper.getString(requestData, "email_id")
-        userGroupId = JSONHelper.getInt(requestData,"user_group_id")
-        employeeName = JSONHelper.getString(requestData,"employee_name")
-        employeeCode = JSONHelper.getString(requestData,"employee_code")
-        contactNo = JSONHelper.getString(requestData,"contact_no")
-        seatingUnitId =  JSONHelper.getInt(requestData,"seating_unit_id")
-        userLevel =  JSONHelper.getInt(requestData,"user_level")
-        countryIds = JSONHelper.getList(requestData,"country_ids")
-        domainIds = JSONHelper.getList(requestData,"domain_ids")
-        unitIds = JSONHelper.getList(requestData,"unit_ids")
-        isAdmin = JSONHelper.getInt(requestData,"is_admin")
-        isServiceProvider = JSONHelper.getInt(requestData,"is_service_provider")
-        try:
-            serviceProviderId = JSONHelper.getInt(requestData,"service_provider_id")
-        except:
-            serviceProviderId = None
+    db = None
+    clientId = None
+    userId =  None
+    emailId =  None
+    userGroupId =  None
+    employeeName =  None
+    employeeCode =  None
+    contactNo =  None
+    seatingUnitId =  None
+    userLevel =  None
+    countryIds =  None
+    domainIds =  None
+    unitIds =  None
+    isAdmin =  None
+    isServiceProvider =  None
+    serviceProviderId =  None
 
-        user = User(getClientId(sessionUser), None, emailId, userGroupId, employeeName, 
-                    employeeCode, contactNo, seatingUnitId, userLevel, countryIds,
-                    domainIds, unitIds, isAdmin, isServiceProvider, serviceProviderId)
-        if user.isDuplicateEmail() :
+    def __init__(self) :
+        db = ClientDatabaseHandler.instance()
+        
+    def toDetailedStructure(self) :
+        employeeName = "%s - %s" % (self.employeeCode,self.employeeName)
+        return {
+            "user_id": self.userId,
+            "email_id": self.emailId,
+            "user_group_id": self.userGroupId,
+            "employee_name": employeeName,
+            "contact_no": self.contactNo,
+            "seating_unit_id": self.seatingUnitId, 
+            "user_level": self.userLevel,
+            "country_ids": self.countryIds,
+            "domain_ids": self.domainIds,
+            "unit_ids": self.unitIds,
+            "is_admin": self.isAdmin,
+            "is_service_provider": self.isServiceProvider,
+            "service_provider_id": self.serviceProviderId
+        }
+
+    def toStructure(self):
+        employeeName = None
+        if self.employeeCode == None:
+            employeeName = self.employeeName
+        else:
+            employeeName = "%s-%s" % (self.employeeCode, self.employeeName)
+        return {
+            "user_id": self.userId,
+            "employee_name": employeeName,
+            "user_level": self.userLevel
+        }
+
+    def generateNewUserId(self) :
+        return self.db.generateNewId(self.tblUsers, "user_id")
+
+    def isDuplicateEmail(self):
+        condition = "username ='%s' AND user_id != '%d'" % (self.emailId, self.userId)
+        return self.db.isAlreadyExists(self.tblUsers, condition)
+
+    def isDuplicateEmployeeCode(self):
+        condition = "employee_code ='%s' AND user_id != '%d'" % (self.employeeCode, self.userId)
+        return self.db.isAlreadyExists(self.tblUsers, condition)
+
+    def isDuplicateContactNo(self):
+        condition = "contact_no ='%s' AND user_id != '%d'" % (self.contactNo, self.userId)
+        return self.db.isAlreadyExists(self.tblUsers, condition)
+
+    def isIdInvalid(self):
+        condition = "user_id = '%d'" % self.userId
+        return not self.db.isAlreadyExists(self.tblUsers, condition)
+
+    def saveUser(self, requestData, sessionUser) :
+        self.emailId = JSONHelper.getString(requestData, "email_id")
+        self.userGroupId = JSONHelper.getInt(requestData,"user_group_id")
+        self.employeeName = JSONHelper.getString(requestData,"employee_name")
+        self.employeeCode = JSONHelper.getString(requestData,"employee_code")
+        self.contactNo = JSONHelper.getString(requestData,"contact_no")
+        self.seatingUnitId =  JSONHelper.getInt(requestData,"seating_unit_id")
+        self.userLevel =  JSONHelper.getInt(requestData,"user_level")
+        self.countryIds = JSONHelper.getList(requestData,"country_ids")
+        self.domainIds = JSONHelper.getList(requestData,"domain_ids")
+        self.unitIds = JSONHelper.getList(requestData,"unit_ids")
+        self.isAdmin = JSONHelper.getInt(requestData,"is_admin")
+        self.isServiceProvider = JSONHelper.getInt(requestData,"is_service_provider")
+        try:
+            self.serviceProviderId = JSONHelper.getInt(requestData,"service_provider_id")
+        except:
+            self.serviceProviderId = None
+        if self.isDuplicateEmail() :
             return commonResponseStructure("EmailIDAlreadyExists",{})
-        elif user.isDuplicateEmployeeCode() :
+        elif self.isDuplicateEmployeeCode() :
             return commonResponseStructure("EmployeeCodeAlreadyExists",{})
-        elif user.isDuplicateContactNo() :
+        elif self.isDuplicateContactNo() :
             return commonResponseStructure("ContactNumberAlreadyExists",{})
-        elif user.save(sessionUser) :
+        elif self.db.saveUser(sessionUser) :
             return commonResponseStructure("SaveClientUserSuccess",{})
         else:
             return commonResponseStructure("Error",{})
 
     def updateUser(self, requestData, sessionUser) :
-        userId = JSONHelper.getInt(requestData, "user_id")
-        userGroupId = JSONHelper.getInt(requestData,"user_group_id")
-        employeeName = JSONHelper.getString(requestData,"employee_name")
-        employeeCode = JSONHelper.getString(requestData,"employee_code")
-        contactNo = JSONHelper.getString(requestData,"contact_no")
-        seatingUnitId =  JSONHelper.getInt(requestData,"seating_unit_id")
-        userLevel =  JSONHelper.getInt(requestData,"user_level")
-        countryIds = JSONHelper.getList(requestData,"country_ids")
-        domainIds = JSONHelper.getList(requestData,"domain_ids")
-        unitIds = JSONHelper.getList(requestData,"unit_ids")
-        isAdmin = JSONHelper.getInt(requestData,"is_admin")
-        isServiceProvider = JSONHelper.getInt(requestData,"is_service_provider")
+        self.userId = JSONHelper.getInt(requestData, "user_id")
+        self.userGroupId = JSONHelper.getInt(requestData,"user_group_id")
+        self.employeeName = JSONHelper.getString(requestData,"employee_name")
+        self.employeeCode = JSONHelper.getString(requestData,"employee_code")
+        self.contactNo = JSONHelper.getString(requestData,"contact_no")
+        self.seatingUnitId =  JSONHelper.getInt(requestData,"seating_unit_id")
+        self.userLevel =  JSONHelper.getInt(requestData,"user_level")
+        self.countryIds = JSONHelper.getList(requestData,"country_ids")
+        self.domainIds = JSONHelper.getList(requestData,"domain_ids")
+        self.unitIds = JSONHelper.getList(requestData,"unit_ids")
+        self.isAdmin = JSONHelper.getInt(requestData,"is_admin")
+        self.isServiceProvider = JSONHelper.getInt(requestData,"is_service_provider")
         try:
-            serviceProviderId = JSONHelper.getInt(requestData,"service_provider_id")
+            self.serviceProviderId = JSONHelper.getInt(requestData,"service_provider_id")
         except:
-            serviceProviderId = None
+            self.serviceProviderId = None
 
-        user = User(getClientId(sessionUser), userId, None,userGroupId, employeeName, 
-                    employeeCode, contactNo, seatingUnitId, userLevel, countryIds,
-                    domainIds, unitIds, isAdmin, isServiceProvider, serviceProviderId)
-        if user.isIdInvalid() :
+        if self.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
-        elif user.isDuplicateEmployeeCode() :
+        elif self.isDuplicateEmployeeCode() :
             return commonResponseStructure("EmployeeCodeAlreadyExists",{})
-        elif user.isDuplicateContactNo() :
+        elif self.isDuplicateContactNo() :
             return commonResponseStructure("ContactNumberAlreadyExists",{})
-        elif user.update(sessionUser) :
+        elif self.db.updateUser(sessionUser) :
             return commonResponseStructure("UpdateUserSuccess",{})
         else:
             return commonResponseStructure("Error",{})
 
     def changeUserStatus(self, requestData, sessionUser):
-    	userId = JSONHelper.getInt(requestData, "user_id")
-        isActive = JSONHelper.getInt(requestData, "is_active")
-        user = AdminUser(userId, None, None, None, None, None,
-                    None, None, None, None, None,isActive)
-        if user.isIdInvalid() :
+    	self.userId = JSONHelper.getInt(requestData, "user_id")
+        self.isActive = JSONHelper.getInt(requestData, "is_active")
+        if self.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
-        elif user.updateStatus(sessionUser):
+        elif self.db.updateUserStatus(sessionUser):
             return commonResponseStructure("ChangeClientUserStatusSuccess",{})
 
     def changeAdminStatus(self, requestData, sessionUser):
-        print "inside change Admin status in controller"
-        userId = JSONHelper.getInt(requestData, "user_id")
-        isAdmin = JSONHelper.getInt(requestData, "is_admin")
-        user = User( getClientId(sessionUser), userId, None, None, None, None, None, None, None, 
-                    None, None, None, isAdmin, None, None )
-        if user.isIdInvalid() :
+        self.userId = JSONHelper.getInt(requestData, "user_id")
+        self.isAdmin = JSONHelper.getInt(requestData, "is_admin")
+        if self.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
-        elif user.updateAdminStatus(sessionUser):
+        elif self.db.updateAdminStatus(sessionUser):
             return commonResponseStructure("UpdateAdminStatusSuccess",{})
 
     def getUsers(self, sessionUser) :
@@ -202,7 +293,38 @@ class UserController() :
         return response
 
 class ServiceProviderController() :
-    tblName = " tbl_service_providers"
+    clientId = None
+    serviceProviderId =  None
+    serviceProviderName =  None
+    address =  None
+    contractFrom =  None
+    contractTo =  None
+    contactPerson =  None
+    contactNo =  None
+    isActive = 1
+    db = None
+
+    def __init__(self) :
+        self.db = ClientDatabaseHandler.instance()
+
+    def toDetailedStructure(self):
+        return {
+            "service_provider_id": self.serviceProviderId,
+            "service_provider_name": self.serviceProviderName, 
+            "address": self.address,
+            "contract_from": self.contractFrom,
+            "contract_to": self.contractTo, 
+            "contact_person": self.contactPerson,
+            "contact_no": self.contactNo,
+            "is_active": self.isActive
+        }
+
+    def toStructure(self):
+        return {
+            "service_provider_id": self.serviceProviderId,
+            "service_provider_name": self.serviceProviderName,
+            "is_active": self.isActive
+        }
 
     def getUserGroupsFormData(self) :
         ClientForms = Form.getForms("client")
@@ -218,59 +340,71 @@ class ServiceProviderController() :
         response = commonResponseStructure("GetServiceProvidersSuccess", response_data)
         return response
 
+    def generateNewId(self) :
+        return self.db.generateNewId(self.db.tblServiceProviders, "service_provider_id")
+
+    def isDuplicate(self):
+        print "Checking isDuplicate"
+        condition = "service_provider_name ='%s' AND service_provider_id != '%d'" %(
+            self.serviceProviderName, self.serviceProviderId)
+        return self.db.isAlreadyExists(self.db.tblServiceProviders, condition)
+
+    def isDuplicateContactNo(self):
+        print "Checking isDuplicateContactNo"
+        condition = "contact_no ='%s' AND service_provider_id != '%d'" % (self.contactNo, 
+            self.serviceProviderId)
+        return self.db.isAlreadyExists(self.db.tblServiceProviders, condition)
+
+    def isIdInvalid(self):
+        condition = "service_provider_id = '%d'" % self.serviceProviderId
+        return not self.db.isAlreadyExists(self.db.tblServiceProviders, condition)
+
     def saveServiceProvider(self, requestData, sessionUser) :
-        serviceProviderName = JSONHelper.getString(requestData, "service_provider_name")
-        address = JSONHelper.getString(requestData, "address")
-        contractFrom =  JSONHelper.getString(requestData, "contract_from")
-        contractTo =  JSONHelper.getString(requestData, "contract_to")
-        contactPerson =  JSONHelper.getString(requestData, "contact_person")
-        contactNo =  JSONHelper.getString(requestData, "contact_no")
-        contractFrom = datetimeToTimestamp(stringToDatetime(contractFrom))
-        contractTo = datetimeToTimestamp(stringToDatetime(contractTo))
-        serviceProvider = ServiceProvider(getClientId(sessionUser), None, serviceProviderName, 
-                                        address, contractFrom, contractTo, contactPerson, 
-                                        contactNo, None)
-        if serviceProvider.isDuplicate() :
+        self.serviceProviderId = self.generateNewId()
+        self.serviceProviderName = JSONHelper.getString(requestData, "service_provider_name")
+        self.address = JSONHelper.getString(requestData, "address")
+        self.contractFrom =  JSONHelper.getString(requestData, "contract_from")
+        self.contractTo =  JSONHelper.getString(requestData, "contract_to")
+        self.contactPerson =  JSONHelper.getString(requestData, "contact_person")
+        self.contactNo =  JSONHelper.getString(requestData, "contact_no")
+        self.contractFrom = stringToDatetime(self.contractFrom)
+        self.contractTo = stringToDatetime(self.contractTo)
+        if self.isDuplicate() :
             return commonResponseStructure("ServiceProviderNameAlreadyExists",{})
-        elif serviceProvider.isDuplicateContactNo() :
+        elif self.isDuplicateContactNo() :
             return commonResponseStructure("ContactNumberAlreadyExists",{})
-        elif serviceProvider.save(sessionUser) :
+        elif self.db.saveServiceProvider(self, sessionUser) :
             return commonResponseStructure("SaveServiceProviderSuccess",{})
         else:
             return commonResponseStructure("Error",{})
 
     def updateServiceProvider(self, requestData, sessionUser) :
-        serviceProviderId = JSONHelper.getInt(requestData,"service_provider_id")
-        serviceProviderName = JSONHelper.getString(requestData, "service_provider_name")
-        address = JSONHelper.getString(requestData, "address")
-        contractFrom =  JSONHelper.getString(requestData, "contract_from")
-        contractTo =  JSONHelper.getString(requestData, "contract_to")
-        contactPerson =  JSONHelper.getString(requestData, "contact_person")
-        contactNo =  JSONHelper.getString(requestData, "contact_no")
-        contractFrom = datetimeToTimestamp(stringToDatetime(contractFrom))
-        contractTo = datetimeToTimestamp(stringToDatetime(contractTo))
-        serviceProvider = ServiceProvider(getClientId(sessionUser), serviceProviderId, 
-                                        serviceProviderName, address, contractFrom, 
-                                        contractTo, contactPerson, contactNo, None)
-        if serviceProvider.isIdInvalid() :
+        self.serviceProviderId = JSONHelper.getInt(requestData,"service_provider_id")
+        self.serviceProviderName = JSONHelper.getString(requestData, "service_provider_name")
+        self.address = JSONHelper.getString(requestData, "address")
+        self.contractFrom =  JSONHelper.getString(requestData, "contract_from")
+        self.contractTo =  JSONHelper.getString(requestData, "contract_to")
+        self.contactPerson =  JSONHelper.getString(requestData, "contact_person")
+        self.contactNo =  JSONHelper.getString(requestData, "contact_no")
+        self.contractFrom = datetimeToTimestamp(stringToDatetime(self.contractFrom))
+        self.contractTo = datetimeToTimestamp(stringToDatetime(self.contractTo))
+        if self.isIdInvalid() :
             return commonResponseStructure("InvalidServiceProviderId",{})
-        elif serviceProvider.isDuplicate() :
+        elif self.isDuplicate() :
             return commonResponseStructure("ServiceProviderNameAlreadyExists",{})
-        elif serviceProvider.isDuplicateContactNo() :
+        elif self.isDuplicateContactNo() :
             return commonResponseStructure("ContactNumberAlreadyExists",{})
-        elif serviceProvider.update(sessionUser) :
+        elif self.updateServiceProvider(self, sessionUser) :
             return commonResponseStructure("UpdateServiceProviderSuccess",{})
         else:
             return commonResponseStructure("Error",{})
 
     def changeServiceProviderStatus(self, requestData, sessionUser) :
-        serviceProviderId = JSONHelper.getInt(requestData,"service_provider_id")
-        isActive = JSONHelper.getInt(requestData, "is_active")
-        serviceProvider = ServiceProvider(getClientId(sessionUser), serviceProviderId,
-                                        None, None, None, None, None, None, isActive )
-        if serviceProvider.isIdInvalid() :
+        self.serviceProviderId = JSONHelper.getInt(requestData,"service_provider_id")
+        self.isActive = JSONHelper.getInt(requestData, "is_active")
+        if self.isIdInvalid() :
             return commonResponseStructure("InvalidServiceProviderId",{})
-        elif serviceProvider.updateStatus(sessionUser):
+        elif self.db.updateServiceProviderStatus(sessionUser):
             return commonResponseStructure("ChangeServiceProviderStatusSuccess",{})
 
 class UnitClosure():

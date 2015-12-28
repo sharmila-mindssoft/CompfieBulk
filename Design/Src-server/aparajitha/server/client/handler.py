@@ -2,7 +2,6 @@ import json
 
 import tornado.ioloop
 import tornado.web
-from models import *
 from controllers import *
 from aparajitha.server.common import *
 from aparajitha.server.databasehandler import DatabaseHandler
@@ -28,6 +27,7 @@ class ClientAdminAPIRequestHandler(tornado.web.RequestHandler) :
                 response = PossibleError("InvalidSessionToken")
             else :
                 serviceProvider = ServiceProviderController()
+                print "Created service provider object in handler"
                 userPrivilege = UserPrivilegeController()
                 user = UserController()
                 unitClosure = UnitClosure()
@@ -45,6 +45,7 @@ class ClientAdminAPIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "GetServiceProviders" :
                     response = serviceProvider.getServiceProviders(userId)
                 elif request[0] == "SaveServiceProvider" :
+                    print "inside save service provider in controllers"
                     response = serviceProvider.saveServiceProvider(
                         request[1], userId)
                 elif request[0] == "UpdateServiceProvider" :
