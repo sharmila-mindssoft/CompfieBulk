@@ -8,6 +8,7 @@ from protocol import (
     login, technomasters, technoreports, technotransactions
 )
 
+import controller 
 
 #
 # cors_handler
@@ -45,11 +46,9 @@ def api_request(
 class API(object):
     def __init__(
         self,
-        io_loop,
-        controller
+        io_loop
     ):
         self._io_loop = io_loop
-        self._controller = controller
 
     def _send_response(
         self, response_data, response
@@ -66,7 +65,7 @@ class API(object):
         try:
             data = json.loads(request.body())
             request_data = request_data_type.parse_structure(
-                data["data"]
+                data
             )
         except Exception, e:
             response.set_status(400)
@@ -96,9 +95,10 @@ class API(object):
 
     @api_request(login.Request)
     def handle_login(self, request):
-        if type(request) is login.ForgotPassword:
+        if type(request) is login.Login:
             print "username=", request.username
-        return login.ResetPasswordSuccess()
+            return controller.process_login(request)
+        # return login.ResetPasswordSuccess()
 
     @api_request(admin.Request)
     def handle_admin(self, request):
@@ -136,9 +136,9 @@ def run_server(port):
 
         web_server.url("/", GET=handle_root)
 
-        controller = Controller()
+        # controller = Controller
 
-        api = API(io_loop, controller)
+        api = API(io_loop)
         api_urls_and_handlers = [
             ("/api/login", api.handle_login),
             ("/api/admin", api.handle_admin),
