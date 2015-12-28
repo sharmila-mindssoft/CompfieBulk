@@ -1,4 +1,4 @@
-var BASE_URL = "http://192.168.1.6:8080/";
+var BASE_URL = "http://localhost:8080/";
 function initMirror() {
     var DEBUG = true;
 
@@ -885,8 +885,15 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function saveClientUserGroup(callerName, userGroupDetail, 
-        callback, failure_callback) {
+    function getSaveClientUserGroupDict(userGroupDetail){
+        return {
+            "user_group_name": userGroupDetail[0],
+            "form_ids": userGroupDetail[1]
+        }
+    }
+
+    function saveClientUserGroup(userGroupDetail, callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         if (isNull(userGroupDetail))
             return null;   
         var request = [
@@ -896,8 +903,16 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateClientUserGroup(callerName, userGroupDetail, 
-        callback, failure_callback) {
+    function getUpdateClientUserGroupDict(userGroupDetail){
+        return {
+            "user_group_id": userGroupDetail[0],
+            "user_group_name": userGroupDetail[1],
+            "form_ids": userGroupDetail[2]
+        }
+    }
+
+    function updateClientUserGroup(userGroupDetail, callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         if (isNull(userGroupDetail))
             return null;
         var request = [
@@ -907,8 +922,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientUserGroupStatus(callerName, userGroupId, isActive, 
+    function changeClientUserGroupStatus(userGroupId, isActive, 
         callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         if (isNull(userGroupId) || isNull(isActive) )
             return null;
         var request = [
@@ -922,7 +938,8 @@ function initMirror() {
     }
 
      // Service Providers  
-    function getServiceProviders(callerName, callback, failure_callback) {
+    function getServiceProviders(callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         var request = [
             "GetServiceProviders",
             {}
@@ -930,8 +947,19 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function saveServiceProvider(callerName, serviceProviderDetail,
-     callback, failure_callback) {
+    function getSaveServiceProviderDict(serviceProviderDetail){
+        return {
+            "service_provider_name": serviceProviderDetail[0],
+            "address" : serviceProviderDetail[1],
+            "contract_from" : serviceProviderDetail[2],
+            "contract_to" : serviceProviderDetail[3],
+            "contact_person" : serviceProviderDetail[4],
+            "contact_no" : serviceProviderDetail[5]
+        }
+    }
+
+    function saveServiceProvider(serviceProviderDetail, callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         if (isNull(serviceProviderDetail))
             return null;
         var request = [
@@ -941,8 +969,21 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateServiceProvider(callerName, serviceProviderDetail, 
+    function getUpdateServiceProviderDict(serviceProviderDetail){
+        return {
+            "service_provider_id" : serviceProviderDetail[0],
+            "service_provider_name": serviceProviderDetail[1],
+            "address" : serviceProviderDetail[2],
+            "contract_from" : serviceProviderDetail[3],
+            "contract_to" : serviceProviderDetail[4],
+            "contact_person" : serviceProviderDetail[5],
+            "contact_no" : serviceProviderDetail[6]
+        }
+    }
+
+    function updateServiceProvider(serviceProviderDetail, 
         callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         if (isNull(serviceProviderDetail))
             return null;    
         var request = [
@@ -952,8 +993,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeServiceProviderStatus(callerName, serviceProviderId, 
+    function changeServiceProviderStatus(serviceProviderId, 
         isActive, callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         if (isNull(serviceProviderId) || isNull(isActive) )
             return null;
         var request = [
@@ -967,7 +1009,8 @@ function initMirror() {
     }
 
     // Client User
-    function getClientUsers(callerName, callback, failure_callback) {
+    function getClientUsers(callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         var request = [
             "GetClientUsers",
             {}
@@ -975,8 +1018,26 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function saveClientUser(callerName, clientUserDetail,
-     callback, failure_callback) {
+    function getSaveClientUserDict(clientUserDetail){
+        return {
+            "email_id" : clientUserDetail[0],
+            "user_group_id" : clientUserDetail[1],
+            "employee_name" : clientUserDetail[2],
+            "employee_code" : clientUserDetail[3],
+            "contact_no" : clientUserDetail[4],
+            "seating_unit_id" : clientUserDetail[5],
+            "user_level" : clientUserDetail[6],
+            "country_ids" : clientUserDetail[7],
+            "domain_ids" : clientUserDetail[8],
+            "unit_ids" : clientUserDetail[9],
+            "is_admin" : clientUserDetail[10],
+            "is_service_provider" : clientUserDetail[11],
+            "service_provider_id" : clientUserDetail[12]
+        }
+    }
+
+    function saveClientUser(clientUserDetail, callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         if (isNull(clientUserDetail))
             return null;
         var request = [
@@ -986,8 +1047,26 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateClientUser(callerName, clientUserDetail, 
-        callback, failure_callback) {
+    function getUpdateClientUserDict(clientUserDetail){
+        return {
+            "user_id": clientUserDetail[0],
+            "user_group_id" : clientUserDetail[1],
+            "employee_name" : clientUserDetail[2],
+            "employee_code" : clientUserDetail[3],
+            "contact_no" : clientUserDetail[4],
+            "seating_unit_id" : clientUserDetail[5],
+            "user_level" : clientUserDetail[6],
+            "country_ids" : clientUserDetail[7],
+            "domain_ids" : clientUserDetail[8],
+            "unit_ids" : clientUserDetail[9],
+            "is_admin" : clientUserDetail[10],
+            "is_service_provider" : clientUserDetail[11],
+            "service_provider_id" : clientUserDetail[12]
+        }
+    }
+
+    function updateClientUser(clientUserDetail, callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         if (isNull(clientUserDetail))
             return null;
         var request = [
@@ -997,8 +1076,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientUserStatus(callerName, userId, isActive, 
-        callback, failure_callback) {
+    function changeClientUserStatus(userId, isActive, callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         if (isNull(userId) || isNull(isActive) )
             return null;
         var request = [
@@ -1011,8 +1090,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeAdminStatus(callerName, userId, isAdmin, 
-        callback, failure_callback) {
+    function changeAdminStatus(userId, isAdmin, callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         if (isNull(userId) || isNull(isAdmin) )
             return null;
         var request = [
@@ -1167,18 +1246,24 @@ function initMirror() {
         changeClientStatus: changeClientStatus,
         reactivateUnit: reactivateUnit,
 
+        getSaveClientUserGroupDict: getSaveClientUserGroupDict,
         saveClientUserGroup: saveClientUserGroup,
+        getUpdateClientUserGroupDict: getUpdateClientUserGroupDict, 
         updateClientUserGroup: updateClientUserGroup,
         changeClientUserGroupStatus: changeClientUserGroupStatus,
         getClientUserGroups: getClientUserGroups,
 
+        getSaveServiceProviderDict: getSaveServiceProviderDict,
         saveServiceProvider: saveServiceProvider,
+        getUpdateServiceProviderDict: getUpdateServiceProviderDict,
         updateServiceProvider: updateServiceProvider,
         changeServiceProviderStatus: changeServiceProviderStatus,
         getServiceProviders: getServiceProviders,
 
         getClientUsers: getClientUsers,
+        getSaveClientUserDict: getSaveClientUserDict,
         saveClientUser: saveClientUser,
+        getUpdateClientUserDict:getUpdateClientUserDict,
         updateClientUser: updateClientUser,
         changeClientUserStatus: changeClientUserStatus,
         changeAdminStatus: changeAdminStatus,
