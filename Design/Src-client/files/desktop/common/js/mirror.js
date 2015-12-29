@@ -878,7 +878,8 @@ function initMirror() {
     }  
 
     // Client User Group  
-    function getClientUserGroups(callerName, callback, failure_callback) {
+    function getClientUserGroups(callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         var request = [
             "GetUserPrivileges",
             {}
@@ -886,17 +887,15 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function getSaveClientUserGroupDict(userGroupDetail){
+    function getSaveClientUserGroupDict(userGroupName, formIds){
         return {
-            "user_group_name": userGroupDetail[0],
-            "form_ids": userGroupDetail[1]
+            "user_group_name": userGroupName,
+            "form_ids": formIds
         }
     }
 
     function saveClientUserGroup(userGroupDetail, callback, failure_callback) {
-        callerName = "ClientAdminAPI"
-        if (isNull(userGroupDetail))
-            return null;   
+        callerName = "ClientAdminAPI"  
         var request = [
             "SaveUserPrivilege",
             userGroupDetail
@@ -904,18 +903,16 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function getUpdateClientUserGroupDict(userGroupDetail){
+    function getUpdateClientUserGroupDict(userGroupId, userGroupName, formIds){
         return {
-            "user_group_id": userGroupDetail[0],
-            "user_group_name": userGroupDetail[1],
-            "form_ids": userGroupDetail[2]
+            "user_group_id": userGroupId,
+            "user_group_name": userGroupName,
+            "form_ids": formIds
         }
     }
 
     function updateClientUserGroup(userGroupDetail, callback, failure_callback) {
         callerName = "ClientAdminAPI"
-        if (isNull(userGroupDetail))
-            return null;
         var request = [
             "UpdateUserPrivilege",
             userGroupDetail

@@ -242,19 +242,23 @@ class ClientDatabaseHandler(object) :
         query = "TRUNCATE TABLE  %s;" % table
         return self.execute(query)
 
+    def getUserPrivileges(self):
+        columns = "user_group_id, user_group_name, form_ids, is_active"
+        rows = self.getData(self.tblUserGroups, columns, "1")
+        return rows
+
     def saveUserPrivilege(self, userprivilege, sessionUser):
-        columns = ["user_group_id", "user_group_name","form_ids", "is_active"
+        columns = ["user_group_id", "user_group_name","form_ids", "is_active",
                   "created_on", "created_by", "updated_on", "updated_by"]
         valuesList =  [userprivilege.userGroupId, userprivilege.userGroupName, 
                         ",".join(str(x) for x in userprivilege.formIds), userprivilege.isActive, 
                         getCurrentTimeStamp(), sessionUser,getCurrentTimeStamp(), 
                         sessionUser]
-        return self.insert(self.tblUserGroups,columns,values)
+        return self.insert(self.tblUserGroups, columns, valuesList)
 
     def updateUserPrivilege(self, userPrivilege, sessionUser):
-        self.verify()
         columns = ["user_group_name","form_ids", "updated_on", "updated_by"]
-        values =  [ userPrivilege.userGroupName, ",".join(str(x) for x in self.formIds),
+        values =  [ userPrivilege.userGroupName, ",".join(str(x) for x in userPrivilege.formIds),
                     getCurrentTimeStamp(),sessionUser]
         condition = "user_group_id='%d'" % userPrivilege.userGroupId
         return self.update(self.tblUserGroups, columns, values, condition)
