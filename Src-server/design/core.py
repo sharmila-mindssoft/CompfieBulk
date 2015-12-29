@@ -140,6 +140,11 @@ FormatFilesList = VectorType(FORMAT_FILE_NAME)
 UserIdList = VectorType(USER_ID)
 UnitIdList = VectorType(UNIT_ID)
 
+FormCategory = RecordType("FormCategory", [
+	Field("form_category_id", FORM_CATEGORY_ID),
+	Field("form_category", FORM_CATEGORY_NAME)
+])
+
 Form = RecordType("Form", [
 	Field("form_id", FORM_ID),
 	Field("form_name", FORM_NAME),
@@ -167,6 +172,7 @@ Menu = RecordType("Menu", [
 UserGroupDetails = RecordType("UserGroupDetails", [
 	Field("user_group_id", USER_GROUP_ID),
 	Field("user_group_name", USER_GROUP_NAME),
+	Field("form_category_id", FORM_CATEGORY_ID),
 	Field("form_ids", FormIdList),
 	Field("is_active", IS_ACTIVE)
 ])

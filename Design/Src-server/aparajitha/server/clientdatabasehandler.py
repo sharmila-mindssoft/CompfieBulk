@@ -305,6 +305,12 @@ class ClientDatabaseHandler(object) :
         condition = "user_id='%d'" % userId
         return self.update(self.tblUsers, columns, values, condition)
 
+    def getServiceProviders(self):
+        columns = "service_provider_id, service_provider_name, address, contract_from,"+\
+                "contract_to, contact_person, contact_no, is_active"
+        rows = self.getData(self.tblServiceProviders, columns, "1")
+        return rows
+
     def saveServiceProvider(self, serviceProvider, sessionUser):
         currentTimeStamp = getCurrentTimeStamp()
         columns = ["service_provider_id", "service_provider_name", "address", "contract_from",
@@ -317,17 +323,17 @@ class ClientDatabaseHandler(object) :
 
         return self.insert(self.tblServiceProviders,columns, values)
 
-    def updateServiceProviders(self, serviceProvider, sessionUser):
+    def updateServiceProvider(self, serviceProvider, sessionUser):
         currentTimeStamp = getCurrentTimeStamp()
         columnsList = [ "service_provider_name", "address", "contract_from", "contract_to", 
                     "contact_person", "contact_no", "updated_on", "updated_by"]
         valuesList = [serviceProvider.serviceProviderName, serviceProvider.address, 
-                serviceProvider.contractFrom, self.contractTo, serviceProvider.contactPerson, 
+                serviceProvider.contractFrom, serviceProvider.contractTo, serviceProvider.contactPerson, 
                 serviceProvider.contactNo, currentTimeStamp, sessionUser]
         condition = "service_provider_id='%d'" % serviceProvider.serviceProviderId
         return self.update(self.tblServiceProviders, columnsList, valuesList, condition)
 
-    def updateServiceProvidersStatus(self, serviceProviderId,  isActive, sessionUser):
+    def updateServiceProviderStatus(self, serviceProviderId,  isActive, sessionUser):
         columns = ["is_active", "updated_on" , "updated_by"]
         values = [isActive, getCurrentTimeStamp(), sessionUser]
         condition = "service_provider_id='%d'" % serviceProviderId
@@ -339,5 +345,4 @@ class ClientDatabaseHandler(object) :
         _databaseHandlerInstance = None 
         if _databaseHandlerInstance is None :
             _databaseHandlerInstance = ClientDatabaseHandler("mirror_client")
-        print "returning instance {}".format(_databaseHandlerInstance)
         return _databaseHandlerInstance

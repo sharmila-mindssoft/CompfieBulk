@@ -120,8 +120,8 @@ def encrypt(value):
 
 def stringToDatetime(string):
     date = string.split("-")
-    datetimeVal = datetime.datetime(year=int(date[2]), 
-        month=IntegerMonths[date[1]], day=int(date[0]))
+    datetimeVal = datetime.datetime(year=int(date[2]),month=IntegerMonths[date[1]], day=int(date[0]))
+    print "datetimeVal:{}".format(datetimeVal)
     return datetimeVal
 
 def datetimeToString(datetimeVal):
