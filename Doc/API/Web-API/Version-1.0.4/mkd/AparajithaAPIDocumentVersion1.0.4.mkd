@@ -116,27 +116,12 @@ Note :
         {}  
     ]      
 
-## Request Format
-
-    {
-        "session_token": SESSION_TOKEN,
-        "request": will be any of the following requests
-    }
-
-    Possible Errors
-
-    [
-        "InvalidSessionToken",
-        {}  
-    ]
-
-  	Note : All Requests will be in the above format
-
 ## Change Password
 
     [
         "ChangePassword",
         {
+            "session_token": SESSION_TOKEN,
             "current_password": String,
             "new_password": String  
         }
@@ -155,6 +140,22 @@ Note :
         "InvalidCurrentPassword",
         {}
     ]
+
+# Request Format
+
+    {
+        "session_token": SESSION_TOKEN,
+        "request": will be any of the following requests
+    }
+
+    Possible Errors
+
+    [
+        "InvalidSessionToken",
+        {}  
+    ]
+
+    Note : All the following Requests will be in the above format
 
 # COMMON
 

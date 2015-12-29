@@ -608,8 +608,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var countryIds= userDetail[7].split(',') ;
-        var domainIds= userDetail[8].split(',') ;
+        var countryIds= userDetail[7] ;
+        var domainIds= userDetail[8];
         return {
                 "email_id": emailId,
                 "user_group_id": userGroupId,
@@ -642,8 +642,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var countryIds= userDetail[7].split(',') ;
-        var domainIds= userDetail[8].split(',') ;
+        var countryIds= userDetail[7] ;
+        var domainIds= userDetail[8] ;
         return {
                 "user_id": userId,
                 "user_group_id": userGroupId,
@@ -767,8 +767,9 @@ function initMirror() {
 
     // Forgot Password APIs
 
-    function forgotPassword(callerName, username, 
+    function forgotPassword(username, 
         callback, failure_callback) {
+        callerName = "api/login"
         var request = [
             "ForgotPassword",
             {
@@ -817,9 +818,9 @@ function initMirror() {
         return unit
     }
 
-    function saveClient(callerName, clientId, businessGroup, legalEntity, 
+    function saveClient(clientId, businessGroup, legalEntity, 
         division, countryWiseUnits, callback, failure_callback) {
-
+        callerName = "TechnoAPI"
         var request = [
             "SaveClient",
             {

@@ -36,7 +36,7 @@ class UserGroup() :
             "is_active": self.isActive
         }
 
-    def toDetailedStructure(self) :
+    def toStructure(self) :
         return {
             "user_group_id": self.userGroupId,
             "user_group_name": self.userGroupName,
@@ -87,7 +87,7 @@ class UserGroup() :
             self.userGroupId = int(row[0])
             self.userGroupName = row[1]
             self.isActive = row[2]
-            userGroupList.append(self.toDetailedStructure())
+            userGroupList.append(self.toStructure())
         return userGroupList
 
     def getUserGroups(self) :
@@ -278,9 +278,9 @@ class User() :
             countryIds =  self.db.getUserCountries(self.userId)
             domainIds = self.db.getUserDomains(self.userId)
             clientIds = self.db.getUserClients(self.userId)
-            self.countryIds = None if countryIds == None else countryIds.split(",")
-            self.domainIds = None if domainIds == None else domainIds.split(",")
-            self.clientIds = None if clientIds == None else clientIds.split(",")
+            self.countryIds = None if countryIds == None else [int(x) for x in countryIds.split(",")]
+            self.domainIds = None if domainIds == None else [int(x) for x in domainIds.split(",")]
+            self.clientIds = None if clientIds == None else [int(x) for x in clientIds.split(",")]
             self.isActive = row[8]
             userList.append(self.toDetailedStructure())
         return userList

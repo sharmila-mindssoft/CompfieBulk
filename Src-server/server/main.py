@@ -118,8 +118,9 @@ class API(object):
         # return login.ResetPasswordSuccess()
 
     @api_request(admin.Request)
-    def handle_admin(self, request, db):
-        pass
+    def handle_admin(self, request):
+        print "inside handle admin"
+        self._controller.processAdminRequest(request)
 
     @api_request(clientadminsettings.Request)
     def handle_client_admin_settings(self, request, db):
@@ -201,7 +202,10 @@ TEMPLATE_PATHS = [
 
 
 def handle_root(request, response):
-    response.send("Are you lost?")
+    # response.send("Are you lost?")
+    template = template_env.get_template("/")
+    output = template.render(**self.__parameters)
+    self.write(output)
 
 def run_server(port):
     io_loop = IOLoop()
@@ -214,8 +218,6 @@ def run_server(port):
         web_server = WebServer(io_loop)
 
         web_server.url("/", GET=handle_root)
-
-        # controller = Controller
 
         application_urls = []
 
