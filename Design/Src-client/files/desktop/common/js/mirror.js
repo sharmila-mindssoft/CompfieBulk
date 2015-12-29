@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8081/";
+var BASE_URL = "http://localhost:8080/";
 function initMirror() {
     var DEBUG = true;
 
@@ -78,12 +78,11 @@ function initMirror() {
     function apiRequest(callerName, request, callback, failure_callback) {
         // var sessionToken = getSessionToken();
         // if (sessionToken == null)
-        // sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
-        // var requestFrame = {
-        //     "session_token": sessionToken,
-        //     "request": request
-        // };
-        var requestFrame = request
+        sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
+        var requestFrame = {
+            "session_token": sessionToken,
+            "request": request
+        };
         jQuery.post(
             BASE_URL + callerName,
             toJSON(requestFrame),
@@ -528,7 +527,7 @@ function initMirror() {
 
 
     function getAdminUserGroupList(callback, failure_callback) {
-        callerName = "api/admin"
+        callerName = "AdminAPI"
         var request = [
             "GetUserGroups",
             {}
@@ -609,8 +608,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var countryIds= userDetail[7].split(',') ;
-        var domainIds= userDetail[8].split(',') ;
+        var countryIds= userDetail[7] ;
+        var domainIds= userDetail[8];
         return {
                 "email_id": emailId,
                 "user_group_id": userGroupId,
@@ -643,8 +642,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var countryIds= userDetail[7].split(',') ;
-        var domainIds= userDetail[8].split(',') ;
+        var countryIds= userDetail[7] ;
+        var domainIds= userDetail[8] ;
         return {
                 "user_id": userId,
                 "user_group_id": userGroupId,
@@ -819,9 +818,9 @@ function initMirror() {
         return unit
     }
 
-    function saveClient(callerName, clientId, businessGroup, legalEntity, 
+    function saveClient(clientId, businessGroup, legalEntity, 
         division, countryWiseUnits, callback, failure_callback) {
-
+        callerName = "TechnoAPI"
         var request = [
             "SaveClient",
             {
@@ -1154,23 +1153,10 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function postRequest(callback, failure_callback){
-        callerName = "AdminAPI"
-        request = [
-            "login",
-            {
-              "username" : "Hi",
-              "password" : "123456"
-            }
-        ]
-        apiRequest(callerName, request, callback, failure_callback);
-    }
-
     return {
         log: log,
         toJSON: toJSON, 
         parseJSON: parseJSON,
-        postRequest: postRequest,
 
         initSession: initSession,
         updateUser_Session: updateUser_Session,

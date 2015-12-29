@@ -21,8 +21,8 @@
       alert("failure_data"+data)
     }
     $(document).ready(function(){
-      
-      mirror.postRequest(callback, failure_callback)
+      mirror.getAdminUserGroupList(callback, failure_callback);
+      mirror.getAdminUserList(callback, failure_callback);
     });
 </script>
 </body>

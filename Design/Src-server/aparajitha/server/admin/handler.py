@@ -19,11 +19,10 @@ class AdminAPIRequestHandler(tornado.web.RequestHandler) :
     def post(self) :
         try:
             data = json.loads(self.request.body)
-            request = data
-            # sessionToken = JSONHelper.getString(data, "session_token")
-            # request = JSONHelper.getList(data, "request")
+            sessionToken = JSONHelper.getString(data, "session_token")
+            request = JSONHelper.getList(data, "request")
             response = None
-            userId = 1#DatabaseHandler.instance().validateSessionToken(sessionToken)
+            userId = DatabaseHandler.instance().validateSessionToken(sessionToken)
             if userId is None :
                 response = PossibleError("InvalidSessionToken")
             else :
@@ -33,10 +32,6 @@ class AdminAPIRequestHandler(tornado.web.RequestHandler) :
                 forgotPassword = ForgotPassword()
                 if request[0] == "GetUserGroups" :
                     response = userGroup.getUserGroups()
-                elif request[0] == "login" :
-                    responseData = {}
-                    responseData["helos"] = "hi"
-                    response = responseData
                 elif request[0] == "SaveUserGroup" :
                     response = userGroup.saveUserGroup(request[1], userId)
                 elif request[0] == "UpdateUserGroup" :
