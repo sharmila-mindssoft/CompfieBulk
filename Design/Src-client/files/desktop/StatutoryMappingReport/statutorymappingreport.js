@@ -7,10 +7,22 @@ var industriesList;
 var statutoryNaturesList;
 var statutoryLevelsList;
 var statutoriesList;
+var complianceFrequencyList;
 
 $(function() {
   $(".grid-table-rpt").hide();
-	getStatutoryMappings();
+  getStatutoryMappings();
+
+
+  //  Accordion Panels
+    $(".accordion div").show();
+    setTimeout("$('.accordion div').slideToggle('slow');", 10000);
+    $(".accordion h3").click(function () {
+        $(this).next(".pane").slideToggle("slow").siblings(".pane:visible").slideUp("slow");
+        $(this).toggleClass("current");
+        $(this).siblings("h3").removeClass("current");
+    });
+
 });
 function getStatutoryMappings(){
   function success(status,data){
@@ -20,7 +32,15 @@ function getStatutoryMappings(){
     domainsList = data["domains"];
     statutoryNaturesList = data["statutory_natures"];
     geographiesList = data["geographies"];
-    //loadStatutoryMappingList(statutoryMappingsList);
+    complianceFrequencyList = data["compliance_frequency"];
+
+    //load compliance frequency selectbox
+    for (var compliancefrequency in complianceFrequencyList) {
+    var option = $("<option></option>");
+    option.val(complianceFrequencyList[compliancefrequency]["frequency_id"]);
+    option.text(complianceFrequencyList[compliancefrequency]["frequency"]);
+    $("#compliance_frequency").append(option);
+    }
   }
   function failure(data){
   }
@@ -181,7 +201,6 @@ function loadauto_geography (textval) {
   $('#ulist_geography').empty();
   if(textval.length>0){
     for(var i in geographies){
-
       if (~geographies[i]["geography_name"].toLowerCase().indexOf(textval.toLowerCase()) && geographies[i]["is_active"] == 1) suggestions.push([geographies[i]["geography_id"],geographies[i]["geography_name"]]); 
     }
     var str='';
@@ -226,77 +245,103 @@ function loadresult(filterList){
   $(".grid-table-rpt").show();
   var country = $("#countryval").val();
   var domain = $("#domainval").val();
-  var industry = $("#industry").val();
-  var statutorynature = $("#statutorynature").val();
-  var geography = $("#geography").val();
-  var act = $("#act").val();
-  var statutorynature = $("#statutorynature").val();
   var compliance_frequency = $("#compliance_frequency").val();
   $(".country").text(country);
   $(".domain").text(domain);
 
-  $(".tbody-act").find("tr").remove();
-
+  $(".tbody-compliance").find("div").remove();
+  var compliance_count=0;
   for(var entity in filterList){
+    var actname = '';
+    var display_occurance1=true;
+    var display_occurance2=true;
+    var display_occurance3=true;
+    var display_occurance4=true;
+
+    $.each(statutoriesList[$("#country").val()][$("#domain").val()], function(index, value) {
+    if (value.statutory_id == entity) {
+        actname = value.statutory_name;
+    }
+    });
+
     var tableRow=$('#act-templates');
     var clone=tableRow.clone();
-    $('.actname', clone).text(entity);
-    
-    var snature='';
-    /*for(var i=0; i<filterList[entity].length; i++){
-      statutoryMappings = statutoryMappings + filterList[entity]["statutory_mappings"][i] + " <br>";
-    }*/
+    $('.actname', clone).html(actname);
+    $('.tbody-compliance').append(clone);
 
-    var tableRow1=$('#compliance-templates');
-    var clone1=tableRow1.clone();
-    $('.tbl_industrytype', clone1).text("industrytype");
-    //$('.tbody-compliance').append(clone1);
-    
-    $('.tbody-act').append(clone);
+    for(var j=0; j<complianceFrequencyList.length; j++){
 
-  }
-      /*for(var entity in geographiesList) {
-      var geographyList = geographiesList[entity];
-      for(var list in geographyList) {
-        geographyId = geographyList[list]["geography_id"];
-        geographyName = geographyList[list]["geography_name"];
-        isActive = geographyList[list]["is_active"];
-        var level = '';
-        var lposition=0;
-        var parentid = geographyList[list]["parent_id"];
-        var geographyLevelList = geographyLevelsList[entity];
-        for(var i in geographyLevelList){
-          if(geographyLevelList[i]["level_id"] == geographyList[list]["level_id"]){
-            level = geographyLevelList[i]["level_name"];
-            lposition = geographyLevelList[i]["level_position"];
-            break;
-          }
-        }
-        for(var countryList in countriesList){
-          if(countriesList[countryList]["country_id"] == entity){
-            countryName = countriesList[countryList]["country_name"];
-            break;
-          }
-        }
-        if(isActive == 1) {
-          passStatus="0";
-          imgName="icon-active.png"
-        }
-        else {
-          passStatus="1";
-          imgName="icon-inactive.png"
-         }
-        var tableRow=$('#templates .table-geography-master .table-row');
-        var clone=tableRow.clone();
-        $('.sno', clone).text(j);
-        $('.country', clone).text(countryName);
-        $('.level', clone).text(level);
-        $('.name', clone).text(geographyName);
-        $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+geographyId+',\''+geographyName+'\',\''+countryName+'\','+entity+','+lposition+','+parentid+')"/>');
-        $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+geographyId+','+passStatus+')"/>');
-        $('.tbody-geography-list').append(clone);
-        j = j + 1;
-        }
-        }*/
+      
+    for(var i=0; i<filterList[entity].length; i++){
+      for(var k=0; k<filterList[entity][i]["compliances"].length; k++){
 
+      if((compliance_frequency == 'All' || compliance_frequency == filterList[entity][i]["compliances"][k]["frequency_id"]) ){
+        var occurance = '';
+        var occuranceid;
+        $.each(complianceFrequencyList, function(index, value) {
+        if (value.frequency_id == filterList[entity][i]["compliances"][k]["frequency_id"]) {
+            occurance = value.frequency;
+            occuranceid = value.frequency_id;
+        }
+        });
+        if(occuranceid == 1 && (j+1)==1){
+
+          if(display_occurance1){
+            var tableRow2=$('#head-templates');
+            var clone2=tableRow2.clone();
+            $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;">'+occurance+'</div>');
+            $('.tbody-compliance').append(clone2);
+            display_occurance1 = false;}
+        }
+        if(occuranceid == 2 && (j+1)==2){
+
+          if(display_occurance2){
+            var tableRow2=$('#head-templates');
+            var clone2=tableRow2.clone();
+            $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;">'+occurance+'</div>');
+            $('.tbody-compliance').append(clone2);
+            display_occurance2 = false;}
+        }
+        if(occuranceid == 3 && (j+1)==3){
+
+          if(display_occurance3){
+            var tableRow2=$('#head-templates');
+            var clone2=tableRow2.clone();
+            $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;">'+occurance+'</div>');
+            $('.tbody-compliance').append(clone2);
+            display_occurance3 = false;}
+        }
+        if(occuranceid == 4 && (j+1)==4){
+
+          if(display_occurance4){
+            var tableRow2=$('#head-templates');
+            var clone2=tableRow2.clone();
+            $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;">'+occurance+'</div>');
+            $('.tbody-compliance').append(clone2);
+            display_occurance4 = false;}
+        }
+
+        if(occuranceid == 1 && (j+1)==1 || occuranceid == 2 && (j+1)==2 || occuranceid == 3 && (j+1)==3 || occuranceid == 4 && (j+1)==4){
+
+          var tableRow1=$('#compliance-templates');
+          var clone1=tableRow1.clone();
+          $('.tbody-compliance').append(clone1);
+          $('.tbl_sno', clone1).text(compliance_count+1);
+          $('.tbl_industrytype', clone1).text(filterList[entity][i]["industry_names"]);
+          $('.tbl_statutorynature',   clone1).text(filterList[entity][i]["statutory_nature_name"]);
+          $('.tbl_statutoryprovision', clone1).text(filterList[entity][i]["compliances"][k]["statutory_provision"]);
+          $('.tbl_compliancetask', clone1).text(filterList[entity][i]["compliance_names"][k]);
+          $('.tbl_description', clone1).text(filterList[entity][i]["compliances"][k]["description"]);
+          $('.tbl_penalconsequences', clone1).text(filterList[entity][i]["compliances"][k]["penal_consequences"]);
+          $('.tbl_occurance', clone1).text(occurance);
+          $('.tbl_applicablelocation', clone1).text(filterList[entity][i]["geography_mappings"]);
+          $('.tbody-compliance').append(clone1);
+          compliance_count = compliance_count + 1;
+        } 
+      }
+      }
+    }
+    }
+  }  
+  $('.compliance_count').text("Total : "+ (compliance_count) +" records");
 }
