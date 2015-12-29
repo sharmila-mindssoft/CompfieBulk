@@ -64,6 +64,7 @@ class API(object):
         assert response is not None
         data = response_data.to_structure()
         s = json.dumps(data, indent=2)
+        print s
         response.send(s)
 
     def _parse_request(
@@ -117,7 +118,23 @@ class API(object):
         pass
 
     @api_request(general.RequestFormat)
-    def handle_save_domain(self, request):
+    def handle_general(self, request):
+        session_token = request.session_token
+        request_frame = request.request
+        print session_token, request_frame
+        user_id = controller.validate_session_token(session_token)
+        if user_id is None:
+            return login.InvalidSessionToken()
+
+        if type(request_frame) is general.GetDomains :
+            return controller.process_get_domains(user_id)
+        if type(request_frame) is general.SaveDomain :
+            return controller.process_save_domain(request_frame, user_id)
+        if type(request_frame) is general.UpdateDomain :
+            return controller.process_update_domain(request_frame, user_id)
+        if type(request_frame) is general.ChangeDomainStatus :
+            return controller.process_change_domain_status(request_frame, user_id)
+
         # return self._controller.process_save_domain(
         #     request
         # )
@@ -208,6 +225,7 @@ def run_server(port):
                 "/api/handle_client_admin_settings",
                 api.handle_client_admin_settings
             ),
+            ("/api/general", api.handle_general),
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)
