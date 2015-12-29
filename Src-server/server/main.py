@@ -1,4 +1,10 @@
+import os
 import json
+import jinja2
+import mimetypes
+import tornado.web
+from tornado.web import StaticFileHandler
+from user_agents import parse
 from basics.webserver import WebServer
 from basics.ioloop import IOLoop
 from protocol import (
@@ -9,6 +15,8 @@ from protocol import (
 )
 
 import controller 
+
+ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
 #
 # cors_handler
@@ -120,10 +128,51 @@ class API(object):
         # )
         pass
 
+template_loader = jinja2.FileSystemLoader(
+    os.path.join(ROOT_PATH, "Src-client")
+)
+template_env = jinja2.Environment(loader=template_loader)
+
+class TemplateHandler(tornado.web.RequestHandler) :
+    def initialize(self, path_desktop, path_mobile,     parameters) :
+        # parameters = {"user":self.get_cookie("user"), "data":OrderedDict(sorted(countriesdb.countries.items(), key=lambda t: t[1])),}
+        self.__path_desktop = path_desktop
+        self.__path_mobile = path_mobile
+        self.__parameters = parameters
+
+    def get(self) :
+        path = self.__path_desktop
+        if self.__path_mobile is not None :
+            useragent = self.request.headers.get("User-Agent")
+            if useragent is None:
+                useragent = ""
+            user_agent = parse(useragent)
+            if user_agent.is_mobile :
+                path = self.__path_mobile
+        mime_type, encoding = mimetypes.guess_type(path)
+        self.set_header("Content-Type", mime_type)
+        template = template_env.get_template(path)
+        output = template.render(**self.__parameters)
+        self.write(output)
+
+    def options(self) :
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "Content-Type")
+        self.set_header("Access-Control-Allow-Methods", "GET, POST")
+        self.set_status(204)
+        self.write("")
 
 #
 # run_server
 #
+
+TEMPLATE_PATHS = [
+    ("/login", "files/desktop/login/login.html", "files/mobile/login/login.html", {}),
+    ("/test", "test_apis.html", "", {}),
+    ("/home", "files/desktop/home/home.html", None, {}),
+    ("/custom-controls", "files/desktop/custom-controls/custom-controls.html", None, {}),
+]
+
 
 def handle_root(request, response):
     response.send("Are you lost?")
@@ -138,6 +187,19 @@ def run_server(port):
 
         # controller = Controller
 
+        application_urls = []
+
+        for url, path_desktop, path_mobile, parameters in TEMPLATE_PATHS :
+            args = {
+                "path_desktop": path_desktop,
+                "path_mobile": path_mobile,
+                "parameters": parameters
+            }
+            # entry = (url, TemplateHandler, args)
+            # application_urls.append(entry)
+            web_server.low_level_url(url, TemplateHandler, args)
+
+
         api = API(io_loop)
         api_urls_and_handlers = [
             ("/api/login", api.handle_login),
@@ -149,6 +211,12 @@ def run_server(port):
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)
+
+        static_path = os.path.join(ROOT_PATH, "Src-client")
+        api_design_path = os.path.join(ROOT_PATH, "Doc", "API", "Web-API", "Version-1.0.4", "html")
+        web_server.low_level_url(r"/api-design/(.*)", tornado.web.StaticFileHandler, dict(path=api_design_path))
+        web_server.low_level_url(r"/(.*)", tornado.web.StaticFileHandler, dict(path=static_path))
+
 
         print "Local port: %s" % port
         web_server.start(port, backlog=1000)
