@@ -1,10 +1,10 @@
 import os
 import json
-import jinja2
 import mimetypes
 import tornado.web
 from tornado.web import StaticFileHandler
 from user_agents import parse
+import jinja2
 from basics.webserver import WebServer
 from basics.ioloop import IOLoop
 from protocol import (
@@ -13,8 +13,10 @@ from protocol import (
     general, knowledgemaster, knowledgereport, knowledgetransaction,
     login, technomasters, technoreports, technotransactions
 )
+from server.database import KnowledgeDatabase
 
 import controller 
+import MySQLdb as mysql
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
@@ -53,11 +55,11 @@ def api_request(
 
 class API(object):
     def __init__(
-        self,
-        io_loop
+        self, io_loop, db
     ):
         self._io_loop = io_loop
-
+        self._db = db
+    
     def _send_response(
         self, response_data, response
     ):
@@ -99,41 +101,48 @@ class API(object):
                 response_data, response
             )
 
-        response_data = unbound_method(self, request_data)
-        respond(response_data)
+        self._db.begin()
+        try:
+            response_data = unbound_method(self, request_data, self._db)
+            self._db.commit()
+            respond(response_data)
+        except Exception, e:
+            self._db.rollback()
+        
 
     @api_request(login.Request)
-    def handle_login(self, request):
+    def handle_login(self, request, db):
         if type(request) is login.Login:
             print "username=", request.username
             return controller.process_login(request)
         # return login.ResetPasswordSuccess()
 
     @api_request(admin.Request)
-    def handle_admin(self, request):
+    def handle_admin(self, request, db):
         pass
 
     @api_request(clientadminsettings.Request)
-    def handle_client_admin_settings(self, request):
+    def handle_client_admin_settings(self, request, db):
         pass
 
     @api_request(general.RequestFormat)
-    def handle_general(self, request):
+    def handle_general(self, request, db):
         session_token = request.session_token
         request_frame = request.request
         print session_token, request_frame
-        user_id = controller.validate_session_token(session_token)
+        user_id = controller.validate_session_token(db, session_token)
+        print user_id
         if user_id is None:
             return login.InvalidSessionToken()
 
         if type(request_frame) is general.GetDomains :
-            return controller.process_get_domains(user_id)
+            return controller.process_get_domains(db, user_id)
         if type(request_frame) is general.SaveDomain :
-            return controller.process_save_domain(request_frame, user_id)
+            return controller.process_save_domain(db, request_frame, user_id)
         if type(request_frame) is general.UpdateDomain :
-            return controller.process_update_domain(request_frame, user_id)
+            return controller.process_update_domain(db, request_frame, user_id)
         if type(request_frame) is general.ChangeDomainStatus :
-            return controller.process_change_domain_status(request_frame, user_id)
+            return controller.process_change_domain_status(db, request_frame, user_id)
 
         # return self._controller.process_save_domain(
         #     request
@@ -198,6 +207,10 @@ def run_server(port):
     io_loop = IOLoop()
 
     def delay_initialize():
+        db = KnowledgeDatabase(
+            "localhost", "root", "123456", "mirror_knowledge"
+        )
+        print db
         web_server = WebServer(io_loop)
 
         web_server.url("/", GET=handle_root)
@@ -217,7 +230,7 @@ def run_server(port):
             web_server.low_level_url(url, TemplateHandler, args)
 
 
-        api = API(io_loop)
+        api = API(io_loop, db)
         api_urls_and_handlers = [
             ("/api/login", api.handle_login),
             ("/api/admin", api.handle_admin),
