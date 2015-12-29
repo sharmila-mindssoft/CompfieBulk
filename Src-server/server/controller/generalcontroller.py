@@ -1,16 +1,14 @@
-from server.database import DatabaseHandler
 from protocol import general, core
 
 __all__ = [
-	"validate_session_token", "process_save_domain", "process_update_domain",
+	"validate_user_session", "process_save_domain", "process_update_domain",
 	"process_change_domain_status", "process_get_domains"
 ]
 
-db = DatabaseHandler.instance()
-def validate_session_token(session_token):
+def validate_user_session(db, session_token):
 	return db.validate_session_token(session_token)
 
-def process_save_domain(request, user_id):
+def process_save_domain(db, request, user_id):
 	domain_name = request.domain_name
 	isDuplicate = db.check_duplicate_domain(domain_name, domain_id = None)
 
@@ -20,7 +18,7 @@ def process_save_domain(request, user_id):
 	if (db.save_domain(domain_name, user_id)) :
 		return general.SaveDomainSuccess()
 
-def process_update_domain(request, user_id):
+def process_update_domain(db, request, user_id):
 	domain_name = request.domain_name
 	domain_id = request.domain_id
 	isDuplicate = db.check_duplicate_domain(domain_name, domain_id)
@@ -33,7 +31,7 @@ def process_update_domain(request, user_id):
 	else :
 		return general.InvalidDomainId()
 	
-def process_change_domain_status(request, user_id):
+def process_change_domain_status(db, request, user_id):
 	is_active = request.is_active
 	domain_id = request.domain_id
 
@@ -42,7 +40,7 @@ def process_change_domain_status(request, user_id):
 	else :
 		return general.InvalidDomainId()
 
-def process_get_domains(user_id):
+def process_get_domains(db, user_id):
 	data = db.get_domains_for_user(user_id)
 	results = []
 

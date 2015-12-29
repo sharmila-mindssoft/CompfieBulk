@@ -130,9 +130,7 @@ class API(object):
     def handle_general(self, request, db):
         session_token = request.session_token
         request_frame = request.request
-        print session_token, request_frame
-        user_id = controller.validate_session_token(db, session_token)
-        print user_id
+        user_id = controller.validate_user_session(db, session_token)
         if user_id is None:
             return login.InvalidSessionToken()
 
@@ -143,17 +141,8 @@ class API(object):
         if type(request_frame) is general.UpdateDomain :
             return controller.process_update_domain(db, request_frame, user_id)
         if type(request_frame) is general.ChangeDomainStatus :
+            print "ChangeDomainStatus"
             return controller.process_change_domain_status(db, request_frame, user_id)
-
-        # return self._controller.process_save_domain(
-        #     request
-        # )
-
-        # return Notification(
-        #     1, "test", "", True,
-
-        # )
-        pass
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
@@ -214,7 +203,6 @@ def run_server(port):
         db = KnowledgeDatabase(
             "localhost", "root", "123456", "mirror_knowledge"
         )
-        print db
         web_server = WebServer(io_loop)
 
         web_server.url("/", GET=handle_root)
