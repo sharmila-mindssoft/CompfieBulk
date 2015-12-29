@@ -1,6 +1,7 @@
 import json
 from basics.webserver import WebServer
 from basics.ioloop import IOLoop
+from controller import Controller
 from protocol import (
     admin, clientadminsettings, clientmasters, clientreport,
     clienttransactions, clientuser, core, dashboard,
@@ -66,7 +67,7 @@ class API(object):
         try:
             data = json.loads(request.body())
             request_data = request_data_type.parse_structure(
-                data["data"]
+               data["request"]
             )
         except Exception, e:
             response.set_status(400)
@@ -96,19 +97,21 @@ class API(object):
 
     @api_request(login.Request)
     def handle_login(self, request):
+        print "inside handle login"
         if type(request) is login.ForgotPassword:
             print "username=", request.username
         return login.ResetPasswordSuccess()
 
     @api_request(admin.Request)
     def handle_admin(self, request):
-        pass
+        print "inside handle admin"
+        self._controller.processAdminRequest(request)
 
     @api_request(clientadminsettings.Request)
     def handle_client_admin_settings(self, request):
         pass
 
-    @api_request(general.RequestFormat)
+    @api_request(general.Request)
     def handle_save_domain(self, request):
         # return self._controller.process_save_domain(
         #     request
@@ -126,7 +129,10 @@ class API(object):
 #
 
 def handle_root(request, response):
-    response.send("Are you lost?")
+    # response.send("Are you lost?")
+    template = template_env.get_template("/")
+    output = template.render(**self.__parameters)
+    self.write(output)
 
 def run_server(port):
     io_loop = IOLoop()

@@ -21,17 +21,8 @@
       alert("failure_data"+data)
     }
     $(document).ready(function(){
-        serviceProviderId = 1
-        serviceProviderName = "Test Service Provider Name 1 Update"
-        address = "Test Address 1 Update"
-        contractFrom = "12-Aug-2015"
-        contractTo = "11-Aug-2016"
-        contactPerson = "Test Contact Person 1 Update"
-        contactNo = "+9177293473452"
-        serviceProviderDetail = [serviceProviderId, serviceProviderName, address, 
-        contractFrom, contractTo, contactPerson, contactNo]
-        serviceProviderDetail = mirror.getUpdateServiceProviderDict(serviceProviderDetail)
-        mirror.updateServiceProvider(serviceProviderDetail, callback, failure_callback)
+      
+      mirror.postRequest(callback, failure_callback)
     });
 </script>
 </body>

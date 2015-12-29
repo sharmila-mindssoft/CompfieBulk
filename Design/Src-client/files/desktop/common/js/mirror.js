@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8080/";
+var BASE_URL = "http://localhost:8081/";
 function initMirror() {
     var DEBUG = true;
 
@@ -78,11 +78,12 @@ function initMirror() {
     function apiRequest(callerName, request, callback, failure_callback) {
         // var sessionToken = getSessionToken();
         // if (sessionToken == null)
-        sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
-        var requestFrame = {
-            "session_token": sessionToken,
-            "request": request
-        };
+        // sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
+        // var requestFrame = {
+        //     "session_token": sessionToken,
+        //     "request": request
+        // };
+        var requestFrame = request
         jQuery.post(
             BASE_URL + callerName,
             toJSON(requestFrame),
@@ -527,7 +528,7 @@ function initMirror() {
 
 
     function getAdminUserGroupList(callback, failure_callback) {
-        callerName = "AdminAPI"
+        callerName = "api/admin"
         var request = [
             "GetUserGroups",
             {}
@@ -767,8 +768,9 @@ function initMirror() {
 
     // Forgot Password APIs
 
-    function forgotPassword(callerName, username, 
+    function forgotPassword(username, 
         callback, failure_callback) {
+        callerName = "api/login"
         var request = [
             "ForgotPassword",
             {
@@ -1152,10 +1154,23 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
+    function postRequest(callback, failure_callback){
+        callerName = "AdminAPI"
+        request = [
+            "login",
+            {
+              "username" : "Hi",
+              "password" : "123456"
+            }
+        ]
+        apiRequest(callerName, request, callback, failure_callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
         parseJSON: parseJSON,
+        postRequest: postRequest,
 
         initSession: initSession,
         updateUser_Session: updateUser_Session,
