@@ -1,4 +1,4 @@
-from basics.types import RecordType, VariantType, Field, MapType, VectorType
+from basics.types import RecordType, VariantType, Field, MapType, VectorType, OptionalType
 from core import (USER_TYPE,
 	COMPLIANCE_STATUS, APPLICABILITY_STATUS, 
 	COMPLIANCE_ACTIVITY_STATUS, COMPLIANCE_FREQUENCY,
@@ -48,7 +48,7 @@ GetRiskReport = RecordType("GetRiskReport", [
 	Field("legal_entity_id", OptionalType(LEGAL_ENTITY_ID)),
 	Field("division_id", OptionalType(DIVISION_ID)),
 	Field("unit_id", OptionalType(UNIT_ID)),
-	Field("statutory_id",  OptionalType((STATUTORY_ID)),
+	Field("statutory_id",  OptionalType(STATUTORY_ID)),
 	Field("statutory_status", Int8)
 ])
 
