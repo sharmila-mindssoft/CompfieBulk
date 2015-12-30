@@ -1,5 +1,5 @@
 from basics.types import RecordType, VectorType, Field, VariantType, MapType
-from core import Menu, UserGroup, Domain, Country, UserDetails,FORM_TYPE
+from core import Menu, UserGroup, Domain, Country, UserDetails,FORM_TYPE, FormCategory
 from common import (Text50, FORM_ID, FORM_CATEGORY_ID, COUNTRY_ID, DOMAIN_ID, USER_GROUP_ID, USER_GROUP_NAME,  
 	IS_ACTIVE, USER_ID, EMAIL_ID, EMPLOYEE_NAME, EMPLOYEE_CODE, CONTACT_NUMBER, ADDRESS, DESIGNATION, SESSION_TOKEN)
 
@@ -33,7 +33,7 @@ SaveUserGroup = RecordType("SaveUserGroup", [
 UpdateUserGroup = RecordType("UpdateUserGroup", [
 	Field("user_group_id", USER_GROUP_ID),
 	Field("user_group_name", USER_GROUP_NAME),
-	Field("form_type", FORM_TYPE),
+	Field("form_category_id", FORM_CATEGORY_ID),
 	Field("form_ids", FormIdList)
 ])
 

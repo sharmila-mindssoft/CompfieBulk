@@ -67,7 +67,7 @@ UserLoginSuccess = RecordType("UserLoginSuccess", [
     Field("designation", DESIGNATION)
 ])
 
-AdminLoginSuccess = RecordType("AdminLoginSuccess"), [
+AdminLoginSuccess = RecordType("AdminLoginSuccess", [
 	Field("user_id", USER_ID),
 	Field("session_token", SESSION_TOKEN),
 	Field("email_id", EMAIL_ID),

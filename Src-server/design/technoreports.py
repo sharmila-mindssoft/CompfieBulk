@@ -1,4 +1,4 @@
-from basics.types import VectorType, RecordType, VariantType, MapType, Field
+from basics.types import VectorType, RecordType, VariantType, MapType, Field, OptionalType
 from common import (COUNTRY_ID, GROUP_ID, BUSINESS_GROUP_ID, LEGAL_ENTITY_ID,
 	DIVISION_ID, UNIT_ID, DOMAIN_ID, LEVEL_1_STATUTORY_ID, STATUTORY_PROVISION,
 	NOTIFICATION_TEXT, TIMESTAMP, SESSION_TOKEN)
@@ -33,11 +33,11 @@ GetClientDetailsReportFilters = RecordType("GetClientDetailsReportFilters", [
 GetClientDetailsReportData = RecordType("GetClientDetailsReportData", [
 	Field("country_id", COUNTRY_ID),
 	Field("group_id", GROUP_ID),
-	Field("business_group_id", BUSINESS_GROUP_ID),
-	Field("legal_entity_id", LEGAL_ENTITY_ID),
-	Field("division_id", DIVISION_ID),
-	Field("unit_id", UNIT_ID),
-	Field("domain_ids", DomainIdList)
+	Field("business_group_id", OptionalType(BUSINESS_GROUP_ID)),
+	Field("legal_entity_id", OptionalType(LEGAL_ENTITY_ID)),
+	Field("division_id", OptionalType(DIVISION_ID)),
+	Field("unit_id", OptionalType(UNIT_ID)),
+	Field("domain_ids", OptionalType(DomainIdList))
 
 ])
 
@@ -53,13 +53,13 @@ GetAssignedStatutoryReportFilters = RecordType("GetAssignedStatutoryReportFilter
 
 GetAssignedStatutoryReport = RecordType("GetAssignedStatutoryReport", [
 	Field("country_id", COUNTRY_ID),
-	Field("domain_ids" , DomainIdList),
-	Field("group_id", GROUP_ID),
-	Field("business_group_id", BUSINESS_GROUP_ID),
-	Field("legal_entity_id", LEGAL_ENTITY_ID),
-	Field("division_id", DIVISION_ID),
-	Field("unit_id", UNIT_ID),
-	Field("level_1_statutory_id", LEVEL_1_STATUTORY_ID),
+	Field("domain_id" , DOMAIN_ID),
+	Field("group_id", OptionalType(GROUP_ID)),
+	Field("business_group_id", OptionalType(BUSINESS_GROUP_ID)),
+	Field("legal_entity_id", OptionalType(LEGAL_ENTITY_ID)),
+	Field("division_id", OptionalType(DIVISION_ID)),
+	Field("unit_id", OptionalType(UNIT_ID)),
+	Field("level_1_statutory_id", OptionalType(LEVEL_1_STATUTORY_ID)),
 	Field("applicability_status", APPLICABILITY_STATUS)
 ])
 
@@ -85,9 +85,9 @@ GetClientDetailsReportFiltersSuccess = RecordType("GetClientDetailsReportFilters
 	Field("countries", CountryList),
 	Field("domains", DomainList),
 	Field("group_companies", ClientList),
-	Field("business_groups" , BusinessGroupList),
+	Field("business_groups" , OptionalType(BusinessGroupList)),
 	Field("legal_entities", LegalEntityList),
-	Field("divisions", DivisionList),
+	Field("divisions", OptionalType(DivisionList)),
 	Field("units", UnitList)
 ])
 
