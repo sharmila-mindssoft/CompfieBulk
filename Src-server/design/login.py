@@ -56,7 +56,6 @@ Request = VariantType("Request", [
 
 UserLoginSuccess = RecordType("UserLoginSuccess", [
 	Field("user_id", USER_ID),
-	Field("client_id", CLIENT_ID),
 	Field("session_token", SESSION_TOKEN),
 	Field("email_id", EMAIL_ID),
 	Field("user_group_name", USER_GROUP_NAME),
