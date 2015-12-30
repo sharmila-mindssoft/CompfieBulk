@@ -114,6 +114,26 @@ class KnowledgeDatabase(Database):
     #   )
     #   self.execute(query)
 
+
+    def convert_to_dict(self, data_list, columns) :
+        result_list = []
+        if len(data_list) > 1 :
+            if len(data_list[0]) == len(columns) :
+                for data in data_list:
+                    result = {}
+                    for d, i in enumerate(data):
+                        result[columns[i]] = d
+                    result_list.append(result)
+        else :
+            if len(data_list) == len(columns) :
+                result = {}
+                for d, i in enumerate(data_list):
+                    result[columns[i]] = d
+                result_list.append(result)
+
+        return result_list
+
+
     def validate_session_token(self, session_token) :
         # query = "CALL sp_validate_session_token ('%s');" % (session_token)
         query = "SELECT user_id FROM tbl_user_sessions \
@@ -146,13 +166,19 @@ class KnowledgeDatabase(Database):
         tblAdminCondition = "password='%s' and user_name='%s'" % (password, username)
         admin_details = self.get_data("tbl_admin", "*", tblAdminCondition)
         if (len(admin_details) == 0) :
+            data_columns = ["user_id", "user_group_id", "email_id", 
+                "employee_name", "employee_code", "contact_no", "address", "designation",
+                "user_group_name", "form_ids"
+            ]
             query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
                 t1.employee_name, t1.employee_code, t1.contact_no, t1.address, t1.designation \
                 t2.user_group_name, t2.form_ids \
                 FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
                 ON t1.user_group_id = t2.user_group_id \
                 WHERE t1.password='%s' and t1.email_id='%s'" % (password, username)
-            return self.select_one(query)
+            print query
+            data_list = self.select_one(query)
+            return self.convert_to_dict(data_list, data_columns)
         else :
             return True
 
@@ -290,7 +316,6 @@ class KnowledgeDatabase(Database):
 
         return isDuplicate
 
-
     def save_country(self, country_name, created_by) :
         createdOn = self.get_date_time()
         country_id = self.get_new_id("country_id", "tbl_countries")
@@ -337,8 +362,6 @@ class KnowledgeDatabase(Database):
             self.save_activity(updated_by, 3, action)
             return True
 
-
-
     def get_user_forms(self, form_ids):
         forms = []
 
@@ -352,4 +375,14 @@ class KnowledgeDatabase(Database):
 
         rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, 
             joinConditions, whereCondition)
-        return rows 
+        return self.convert_to_dict(rows, columns)
+
+
+    def get_form_types(self) :
+        query = "SELECT form_type_id, form_type_name FROM tbl_form_type"
+        rows = self.select_all(query)
+        columns = ["form_type_id", "form_type_name"]
+        data_list = self.convert_to_dict(rows, columns)
+        return data_list
+
+
