@@ -1,6 +1,6 @@
 from basics.types import RecordType, VectorType, Field, VariantType, MapType
-from core import Menu, UserGroup, Domain, Country, UserDetails,FORM_TYPE
-from common import (Text50, FORM_ID,  COUNTRY_ID, DOMAIN_ID, USER_GROUP_ID, USER_GROUP_NAME,  
+from core import Menu, UserGroup, Domain, Country, UserDetails,FORM_TYPE, FormCategory
+from common import (Text50, FORM_ID, FORM_CATEGORY_ID, COUNTRY_ID, DOMAIN_ID, USER_GROUP_ID, USER_GROUP_NAME,  
 	IS_ACTIVE, USER_ID, EMAIL_ID, EMPLOYEE_NAME, EMPLOYEE_CODE, CONTACT_NUMBER, ADDRESS, DESIGNATION, SESSION_TOKEN)
 
 __all__=  [
@@ -26,14 +26,14 @@ GetUserGroups = RecordType("GetUserGroups", [
 
 SaveUserGroup = RecordType("SaveUserGroup", [
 	Field("user_group_name", USER_GROUP_NAME),
-	Field("form_type", FORM_TYPE),
+	Field("form_category_id", FORM_CATEGORY_ID),
 	Field("form_ids", FormIdList)
 ])
 
 UpdateUserGroup = RecordType("UpdateUserGroup", [
 	Field("user_group_id", USER_GROUP_ID),
 	Field("user_group_name", USER_GROUP_NAME),
-	Field("form_type", FORM_TYPE),
+	Field("form_category_id", FORM_CATEGORY_ID),
 	Field("form_ids", FormIdList)
 ])
 
@@ -96,7 +96,8 @@ RequestFormat = RecordType("RequestFormat", [
 ### User Group
 
 GetUserGroupsSuccess = RecordType("GetUserGroupsSuccess", [
-	Field("forms", MapType(Text50, Menu)),
+	Field("form_categories", VectorType(FormCategory) ),
+	Field("forms", MapType(FORM_CATEGORY_ID, Menu)),
 	Field("user_groups", UserGroupList)
 ])
 
@@ -120,6 +121,7 @@ ChangeUserGroupStatusSuccess = RecordType("ChangeUserGroupStatusSuccess", [
 GetUsersSuccess = RecordType("GetUsersSuccess", [
 	Field("user_groups", UserGroupList),
 	Field("domains", DomainList),
+	Field("countries", CountryList),
 	Field("users", UserDetailsList)
 ])
 

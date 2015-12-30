@@ -58,17 +58,13 @@ GetUserPrivileges = RecordType("GetUserPrivileges", [
 ])
 
 SaveUserPrivileges = RecordType("SaveUserPrivileges", [
-	Field("client_id", CLIENT_ID),
 	Field("user_group_name", USER_GROUP_NAME),
-	Field("form_type", FORM_TYPE),
 	Field("form_ids", FormIdList)
 ])
 
 UpdateUserPrivileges = RecordType("UpdateUserPrivileges", [
 	Field("user_group_id", USER_GROUP_ID),
-	Field("client_id", CLIENT_ID),
 	Field("user_group_name", USER_GROUP_NAME),
-	Field("form_type", FORM_TYPE),
 	Field("form_ids", FormIdList)
 ])
 

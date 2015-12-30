@@ -1,4 +1,4 @@
-from basics.types import VectorType, RecordType, VariantType, MapType, Field
+from basics.types import VectorType, RecordType, VariantType, MapType, Field, OptionalType
 from common import (CLIENT_SAVED_STATUTORY_ID, CLIENT_ASSIGNED_STATUTORY_ID, CLIENT_NAME,
 	GEOGRAPHY_ID, INDUSTRY_ID, COUNTRY_ID, COUNTRY_NAME, DOMAIN_ID, DOMAIN_NAME, BUSINESS_GROUP_NAME,
 	BUSINESS_GROUP_ID, LEGAL_ENTITY_ID, LEGAL_ENTITY_NAME, DIVISION_ID, DIVISION_NAME, GROUP_ID,
@@ -77,9 +77,9 @@ ASSIGNED_STATUTORIES = RecordType("ASSIGNED_STATUTORIES", [
 	Field("client_assigned_statutory_id", CLIENT_ASSIGNED_STATUTORY_ID),
 	Field("country_name", COUNTRY_NAME),
 	Field("group_name", CLIENT_NAME),
-	Field("business_group_name", BUSINESS_GROUP_NAME ),
+	Field("business_group_name", OptionalType(BUSINESS_GROUP_NAME )),
 	Field("legal_entity_name", LEGAL_ENTITY_NAME),
-	Field("division_name", DIVISION_NAME),
+	Field("division_name", OptionalType(DIVISION_NAME)),
 	Field("unit_name", UNIT_NAME),
 	Field("geography_name", GEOGRAPHY_NAME),
 	Field("domain_name", DOMAIN_NAME)
@@ -92,9 +92,9 @@ GetAssignedStatutoriesListSuccess = RecordType("GetAssignedStatutoriesListSucces
 GetAssignedStatutoriesByIdSuccess = RecordType("GetAssignedStatutoriesByIdSuccess", [
 	Field("country_name",  COUNTRY_NAME),
 	Field("group_name",  CLIENT_NAME),
-	Field("business_group_name",  BUSINESS_GROUP_NAME),
+	Field("business_group_name",  OptionalType(BUSINESS_GROUP_NAME)),
 	Field("legal_entity_name",  LEGAL_ENTITY_NAME),
-	Field("division_name",  DIVISION_NAME),
+	Field("division_name",  OptionalType(DIVISION_NAME)),
 	Field("unit_name", UNIT_NAME),
 	Field("geography_name",  GEOGRAPHY_NAME),
 	Field("domain_name", DOMAIN_NAME),
@@ -104,9 +104,9 @@ GetAssignedStatutoriesByIdSuccess = RecordType("GetAssignedStatutoriesByIdSucces
 UNIT = RecordType("UNIT", [
 	Field("unit_id", UNIT_ID),
 	Field("unit_name", UNIT_NAME),
-	Field("division_id", DIVISION_ID),
+	Field("division_id", OptionalType(DIVISION_ID)),
 	Field("legal_entity_id", LEGAL_ENTITY_ID),
-	Field("business_group_id", BUSINESS_GROUP_ID),
+	Field("business_group_id", OptionalType(BUSINESS_GROUP_ID)),
 	Field("group_id", GROUP_ID),
 	Field("domain_ids", DomainIdList),
 	Field("industry_id", INDUSTRY_ID),

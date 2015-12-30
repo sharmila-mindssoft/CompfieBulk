@@ -1,4 +1,4 @@
-from basics.types import VectorType, RecordType, VariantType, MapType, Field
+from basics.types import VectorType, RecordType, VariantType, MapType, Field, OptionalType
 from common import (COUNTRY_ID, DOMAIN_ID, INDUSTRY_ID, STATUTORY_NATURE_ID, GEOGRAPHY_ID,
 	LEVEL_1_STATUTORY_ID, IS_ACTIVE, Text, SESSION_TOKEN)
 from core import (StatutoryMapping, 
@@ -18,10 +18,10 @@ GetStatutoryMappingReportFilters = RecordType("GetStatutoryMappingReportFilters"
 GetStatutoryMappingReportData = RecordType("GetStatutoryMappingReportData", [
 	Field("country_id" , COUNTRY_ID),
 	Field("domain_id" , DOMAIN_ID),
-	Field("industry_id", INDUSTRY_ID),
-	Field("statutory_nature_id", STATUTORY_NATURE_ID),
-	Field("geography_id", GEOGRAPHY_ID),
-	Field("level_1_statutory_id", LEVEL_1_STATUTORY_ID)
+	Field("industry_id", OptionalType(INDUSTRY_ID)),
+	Field("statutory_nature_id", OptionalType(STATUTORY_NATURE_ID)),
+	Field("geography_id", OptionalType(GEOGRAPHY_ID)),
+	Field("level_1_statutory_id", OptionalType(LEVEL_1_STATUTORY_ID))
 ])
 
 GetGeographyReport = RecordType("GetGeographyReport", [])

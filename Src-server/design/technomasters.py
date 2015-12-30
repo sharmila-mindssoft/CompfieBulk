@@ -1,4 +1,4 @@
-from basics.types import VectorType, RecordType, VariantType, MapType, Field
+from basics.types import VectorType, RecordType, VariantType, MapType, Field, OptionalType
 from common import (CLIENT_NAME, URL, DATE, NO_OF_USER_LICENCE, CLIENT_ID, USER_ID, CLIENT_NAME,
 	TOTAL_DISK_SPACE, STATUS, EMAIL_ID, IS_ACTIVE, LEGAL_ENTITY_ID, DIVISION_ID, UNIT_ID, GROUP_ID,
 	PASSWORD, EMPLOYEE_NAME, CONTACT_NUMBER, UNIT_NAME, ADDRESS, REMAINING_USER_LICENCE, USED_DISK_SPACE, SESSION_TOKEN)
@@ -46,7 +46,7 @@ SaveClientGroup = RecordType("SaveClientGroup", [
 	Field("file_space", TOTAL_DISK_SPACE),
 	Field("is_sms_subscribed", STATUS),
 	Field("email_id", EMAIL_ID),
-	Field("DATE_configurations",ClientConfigurationList)
+	Field("date_configurations",ClientConfigurationList)
 ])
 
 UpdateClientGroup = RecordType("UpdateClientGroup", [
@@ -61,8 +61,7 @@ UpdateClientGroup = RecordType("UpdateClientGroup", [
 	Field("no_of_user_licence", NO_OF_USER_LICENCE),
 	Field("file_space", TOTAL_DISK_SPACE),
 	Field("is_sms_subscribed", STATUS),
-	Field("email_id", EMAIL_ID),
-	Field("DATE_configurations",ClientConfigurationList)
+	Field("date_configurations",ClientConfigurationList)
 ])
 
 ChangeClientGroupStatus = RecordType("ChangeClientGroupStatus", [
@@ -77,24 +76,24 @@ GetClients = RecordType("GetClients", [
 
 SaveClient = RecordType("SaveClient", [
 	Field("client_id", CLIENT_ID),
-	Field("business_group", BusinessGroup),
+	Field("business_group", OptionalType(BusinessGroup)),
 	Field("legal_entity", LegalEntity),
-	Field("division", Division),
+	Field("division", OptionalType(Division)),
 	Field("country_wise_units", CountryWiseUnits)
 ])	
 
 UpdateClient = RecordType("UpdateClient", [
 	Field("client_id", CLIENT_ID),
-	Field("business_group", BusinessGroup),
+	Field("business_group", OptionalType(BusinessGroup)),
 	Field("legal_entity", LegalEntity),
-	Field("division", Division),
+	Field("division", OptionalType(Division)),
 	Field("country_wise_units", CountryWiseUnits)
 ])
 
 ChangeClientStatus = RecordType("ChangeClientStatus", [
 	Field("client_id", CLIENT_ID),
 	Field("legal_entity_id", LEGAL_ENTITY_ID),
-	Field("division_id", DIVISION_ID),
+	Field("division_id", OptionalType(DIVISION_ID)),
 	Field("is_active", IS_ACTIVE)
 ])
 
@@ -154,9 +153,9 @@ GetClientsSuccess = RecordType("GetClientsSuccess", [
 	Field("countries", CountryList),
 	Field("domains", DomainList),
 	Field("group_companies", ClientList),
-	Field("business_groups", BusinessGroupList),
+	Field("business_groups", OptionalType(BusinessGroupList)),
 	Field("legal_entities", LegalEntityList),
-	Field("divisions", DivisionList),
+	Field("divisions", OptionalType(DivisionList)),
 	Field("units", UnitDetailsList)
 ])
 

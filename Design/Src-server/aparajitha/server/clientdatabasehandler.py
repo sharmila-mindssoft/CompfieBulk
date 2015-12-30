@@ -242,19 +242,23 @@ class ClientDatabaseHandler(object) :
         query = "TRUNCATE TABLE  %s;" % table
         return self.execute(query)
 
+    def getUserPrivileges(self):
+        columns = "user_group_id, user_group_name, form_ids, is_active"
+        rows = self.getData(self.tblUserGroups, columns, "1")
+        return rows
+
     def saveUserPrivilege(self, userprivilege, sessionUser):
-        columns = ["user_group_id", "user_group_name","form_ids", "is_active"
+        columns = ["user_group_id", "user_group_name","form_ids", "is_active",
                   "created_on", "created_by", "updated_on", "updated_by"]
         valuesList =  [userprivilege.userGroupId, userprivilege.userGroupName, 
                         ",".join(str(x) for x in userprivilege.formIds), userprivilege.isActive, 
                         getCurrentTimeStamp(), sessionUser,getCurrentTimeStamp(), 
                         sessionUser]
-        return self.insert(self.tblUserGroups,columns,values)
+        return self.insert(self.tblUserGroups, columns, valuesList)
 
     def updateUserPrivilege(self, userPrivilege, sessionUser):
-        self.verify()
         columns = ["user_group_name","form_ids", "updated_on", "updated_by"]
-        values =  [ userPrivilege.userGroupName, ",".join(str(x) for x in self.formIds),
+        values =  [ userPrivilege.userGroupName, ",".join(str(x) for x in userPrivilege.formIds),
                     getCurrentTimeStamp(),sessionUser]
         condition = "user_group_id='%d'" % userPrivilege.userGroupId
         return self.update(self.tblUserGroups, columns, values, condition)
@@ -305,6 +309,12 @@ class ClientDatabaseHandler(object) :
         condition = "user_id='%d'" % userId
         return self.update(self.tblUsers, columns, values, condition)
 
+    def getServiceProviders(self):
+        columns = "service_provider_id, service_provider_name, address, contract_from,"+\
+                "contract_to, contact_person, contact_no, is_active"
+        rows = self.getData(self.tblServiceProviders, columns, "1")
+        return rows
+
     def saveServiceProvider(self, serviceProvider, sessionUser):
         currentTimeStamp = getCurrentTimeStamp()
         columns = ["service_provider_id", "service_provider_name", "address", "contract_from",
@@ -317,17 +327,17 @@ class ClientDatabaseHandler(object) :
 
         return self.insert(self.tblServiceProviders,columns, values)
 
-    def updateServiceProviders(self, serviceProvider, sessionUser):
+    def updateServiceProvider(self, serviceProvider, sessionUser):
         currentTimeStamp = getCurrentTimeStamp()
         columnsList = [ "service_provider_name", "address", "contract_from", "contract_to", 
                     "contact_person", "contact_no", "updated_on", "updated_by"]
         valuesList = [serviceProvider.serviceProviderName, serviceProvider.address, 
-                serviceProvider.contractFrom, self.contractTo, serviceProvider.contactPerson, 
+                serviceProvider.contractFrom, serviceProvider.contractTo, serviceProvider.contactPerson, 
                 serviceProvider.contactNo, currentTimeStamp, sessionUser]
         condition = "service_provider_id='%d'" % serviceProvider.serviceProviderId
         return self.update(self.tblServiceProviders, columnsList, valuesList, condition)
 
-    def updateServiceProvidersStatus(self, serviceProviderId,  isActive, sessionUser):
+    def updateServiceProviderStatus(self, serviceProviderId,  isActive, sessionUser):
         columns = ["is_active", "updated_on" , "updated_by"]
         values = [isActive, getCurrentTimeStamp(), sessionUser]
         condition = "service_provider_id='%d'" % serviceProviderId
@@ -339,5 +349,4 @@ class ClientDatabaseHandler(object) :
         _databaseHandlerInstance = None 
         if _databaseHandlerInstance is None :
             _databaseHandlerInstance = ClientDatabaseHandler("mirror_client")
-        print "returning instance {}".format(_databaseHandlerInstance)
         return _databaseHandlerInstance

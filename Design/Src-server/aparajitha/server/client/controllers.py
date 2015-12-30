@@ -29,16 +29,24 @@ class UserPrivilegeController() :
     isActive = 1
 
     def __init__(self) :
-        db = ClientDatabaseHandler.instance()
+        self.db = ClientDatabaseHandler.instance()
+        print "inside init:db:{}".format(self.db)
 
     def getUserGroupsFormData(self) :
-    	ClientForms = Form.getForms("client")
-        forms = Menu.getMenu(ClientForms)
-        return forms
+        form = Form()
+        resultRows = form.getForms()
+        clientForms = []
+        for row in resultRows:
+            form = Form(formId = row[0], formName = row[5], formUrl = row[6], formOrder = row[7], 
+                    formType = row[4], Category = row[2], parentMenu = row[8])
+            clientForms.append(form)
+        menu = Menu()
+        menuStructure = menu.generateMenu(clientForms)
+        return menuStructure
 
     def getUserPrivileges(self, sessionUser) :
     	forms = self.getUserGroupsFormData()
-    	userGroupList = UserPrivilege.getDetailedList(sessionUser)
+    	userGroupList = self.getDetailedList(sessionUser)
 
         response_data = {}
         response_data["forms"] = forms
@@ -51,7 +59,6 @@ class UserPrivilegeController() :
         return {
             "user_group_id": self.userGroupId,
             "user_group_name": self.userGroupName,
-            "form_type": self.formType,
             "form_ids": self.formIds,
             "is_active": self.isActive
         }
@@ -61,6 +68,17 @@ class UserPrivilegeController() :
             "user_group_id": self.userGroupId,
             "user_group_name": self.userGroupName
         }
+
+    def getDetailedList(self, sessionUser) :
+        userGroupList = []
+        rows = self.db.getUserPrivileges()
+        for row in rows:
+            self.userGroupId = int(row[0])
+            self.userGroupName = row[1]
+            self.formIds = [int(x) for x in row[2].split(",")]
+            self.isActive = row[3]
+            userGroupList.append(self.toDetailedStructure())
+        return userGroupList
 
     def generateNewUserGroupId(self) :
         return self.db.generateNewId(self.db.tblUserGroups, "user_group_id")
@@ -72,11 +90,11 @@ class UserPrivilegeController() :
 
     def isIdInvalid(self):
         condition = "user_group_id = '%d'" % self.userGroupId
-        return not self.db.isAlreadyExists(self.tblUserGroups, condition)
+        return not self.db.isAlreadyExists(self.db.tblUserGroups, condition)
 
     def saveUserPrivilege(self, requestData, sessionUser) :
+        self.userGroupId = self.generateNewUserGroupId()
         self.userGroupName = JSONHelper.getString(requestData, "user_group_name")
-        self.formType = JSONHelper.getString(requestData, "form_type")
         self.formIds =  JSONHelper.getList(requestData, "form_ids")
         if self.isDuplicate() :
             return commonResponseStructure("GroupNameAlreadyExists",{})
@@ -88,7 +106,6 @@ class UserPrivilegeController() :
     def updateUserPrivilege(self, requestData, sessionUser) :
         self.userGroupId = JSONHelper.getInt(requestData,"user_group_id")
         self.userGroupName = JSONHelper.getString(requestData,"user_group_name")
-        self.formType = JSONHelper.getString(requestData,"form_type")
         self.formIds =  JSONHelper.getList(requestData,"form_ids")
         if self.isIdInvalid() :
             return commonResponseStructure("InvalidGroupId",{})
@@ -326,13 +343,24 @@ class ServiceProviderController() :
             "is_active": self.isActive
         }
 
-    def getUserGroupsFormData(self) :
-        ClientForms = Form.getForms("client")
-        forms = Menu.getMenu(ClientForms)
-        return forms
+    def getList(self):
+        servcieProviderList = []
+        rows = self.db.getServiceProviders()
+        for row in rows:
+            self.serviceProviderId = int(row[0])
+            self.serviceProviderName = row[1]
+            self.address = row[2]
+            self.contractFrom = datetimeToString(row[3])
+            self.contractTo = datetimeToString(row[4])
+            self.contactPerson = row[5]
+            self.contactNo = row[6]
+            self.isActive = row[7]
+            servcieProviderList.append(self.toDetailedStructure())
 
-    def getServiceProviders(self, sessionUser) :
-        serviceProviderList = ServiceProvider.getList(sessionUser)
+        return servcieProviderList
+
+    def getServiceProviders(self) :
+        serviceProviderList = self.getList()
 
         response_data = {}
         response_data["service_providers"] = serviceProviderList
@@ -386,15 +414,15 @@ class ServiceProviderController() :
         self.contractTo =  JSONHelper.getString(requestData, "contract_to")
         self.contactPerson =  JSONHelper.getString(requestData, "contact_person")
         self.contactNo =  JSONHelper.getString(requestData, "contact_no")
-        self.contractFrom = datetimeToTimestamp(stringToDatetime(self.contractFrom))
-        self.contractTo = datetimeToTimestamp(stringToDatetime(self.contractTo))
+        self.contractFrom = stringToDatetime(self.contractFrom)
+        self.contractTo = stringToDatetime(self.contractTo)
         if self.isIdInvalid() :
             return commonResponseStructure("InvalidServiceProviderId",{})
         elif self.isDuplicate() :
             return commonResponseStructure("ServiceProviderNameAlreadyExists",{})
         elif self.isDuplicateContactNo() :
             return commonResponseStructure("ContactNumberAlreadyExists",{})
-        elif self.updateServiceProvider(self, sessionUser) :
+        elif self.db.updateServiceProvider(self, sessionUser) :
             return commonResponseStructure("UpdateServiceProviderSuccess",{})
         else:
             return commonResponseStructure("Error",{})
@@ -404,7 +432,7 @@ class ServiceProviderController() :
         self.isActive = JSONHelper.getInt(requestData, "is_active")
         if self.isIdInvalid() :
             return commonResponseStructure("InvalidServiceProviderId",{})
-        elif self.db.updateServiceProviderStatus(sessionUser):
+        elif self.db.updateServiceProviderStatus(self.serviceProviderId, self.isActive, sessionUser):
             return commonResponseStructure("ChangeServiceProviderStatusSuccess",{})
 
 class UnitClosure():

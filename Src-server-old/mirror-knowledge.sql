@@ -96,8 +96,6 @@ CREATE TABLE `tbl_users` (
   CONSTRAINT `fk_user_details_user_groups` FOREIGN KEY (`user_group_id`) REFERENCES `tbl_user_groups` (`user_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `tbl_user_details`;
-
 DROP TABLE IF EXISTS `tbl_user_countries`;
 CREATE TABLE `tbl_user_countries` (
   `user_id` int(11) NOT NULL,
@@ -351,8 +349,8 @@ CREATE TABLE `tbl_client_groups` (
   `group_name` varchar(50) NOT NULL,
   `logo_url` varchar(200) DEFAULT NULL,
   `logo_size` float NOT NULL,
-  `contract_from` int(11) DEFAULT NULL,
-  `contract_to` int(11) DEFAULT NULL,
+  `contract_from` DATE DEFAULT NULL,
+  `contract_to` DATE DEFAULT NULL,
   `no_of_user_licence` int(11) DEFAULT NULL,
   `total_disk_space` float DEFAULT NULL,
   `is_sms_subscribed` tinyint(4) DEFAULT NULL,
@@ -395,29 +393,34 @@ CREATE TABLE `tbl_user_clients` (
 
 DROP TABLE IF EXISTS `tbl_client_configurations`;
 CREATE TABLE `tbl_client_configurations` (
+  `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `period_from` tinyint(2) NOT NULL,
   `period_to` tinyint(2) NOT NULL,
   `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updated_by` int(11) NOT NULL,
+  CONSTRAINT `fk_tb_client_id_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_group` (`client_id`),
   CONSTRAINT `fk_tbl_countries_id_1` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `fk_tbl_domains_id_1` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_business_groups`;
 CREATE TABLE `tbl_business_groups` (
+  `client_id` int(11) NOT NULL,
   `business_group_id` int(11) NOT NULL,
   `business_group_name` varchar(100) NOT NULL,
   `created_by` int(11) NOT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) NOT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`business_group_id`)
+  PRIMARY KEY (`business_group_id`),
+  CONSTRAINT `fk_tbl_cg_bg` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_group` (`client_id`)  
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_legal_entities`;
 CREATE TABLE `tbl_legal_entities` (
+  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `legal_entity_name` varchar(100) DEFAULT NULL,
   `business_group_id` int(11) DEFAULT NULL,
@@ -426,12 +429,14 @@ CREATE TABLE `tbl_legal_entities` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`legal_entity_id`),
-  CONSTRAINT `fk_legal_entities_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`)
+  CONSTRAINT `fk_legal_entities_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
+  CONSTRAINT `fk_tbl_cg_le` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_group` (`client_id`)  
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 DROP TABLE IF EXISTS `tbl_divisions`;
 CREATE TABLE `tbl_divisions` (
+  `client_id` int(11) NOT NULL,
   `division_id` int(11) NOT NULL,
   `division_name` varchar(100) DEFAULT NULL,
   `legal_entity_id` int(11) DEFAULT NULL,
@@ -442,7 +447,8 @@ CREATE TABLE `tbl_divisions` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`division_id`),
   CONSTRAINT `fk_divisions_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
-  CONSTRAINT `fk_divisions_legal_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`)
+  CONSTRAINT `fk_divisions_legal_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
+  CONSTRAINT `fk_tbl_cg_div` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_group` (`client_id`)  
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_units`;
@@ -457,6 +463,9 @@ CREATE TABLE `tbl_units` (
   `industry_id` int(11) NOT NULL,
   `unit_code` varchar(50) NOT NULL,
   `unit_name` varchar(50) NOT NULL,
+  `address` varchar(250) NOT NULL,
+  `postal_code` int(11) NOT NULL,
+  `domain_ids` varchar(50) NOT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
@@ -475,6 +484,7 @@ CREATE TABLE `tbl_units` (
 
 DROP TABLE IF EXISTS `tbl_client_users`;
 CREATE TABLE `tbl_client_users` (
+  `client_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `seating_unit_id` int(11) NOT NULL,
   `email_id` varchar(100) NOT NULL,
@@ -482,7 +492,9 @@ CREATE TABLE `tbl_client_users` (
   `employee_code` varchar(50) NOT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `is_admin` tinyint(1) NOT NULL,
-  `is_active` tinyint(1) NOT NULL
+  `is_active` tinyint(1) NOT NULL,
+  CONSTRAINT `fk_tbl_client_users_cg` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_group` (`client_id`)  
+
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -502,8 +514,6 @@ CREATE TABLE `tbl_statutory_notifications_log` (
   CONSTRAINT `fk_statutory_notifications_log_statutory_mapping` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
-DROP TABLE IF EXISTS `tbl_statutory_notification_units`;
 
 DROP TABLE IF EXISTS `tbl_activity_log`;
 CREATE TABLE `tbl_activity_log` (

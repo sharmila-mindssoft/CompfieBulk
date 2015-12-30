@@ -16,7 +16,8 @@ __all__ = [
 	"ActiveCompliance", "UpcomingCompliance", "NumberOfCompliances", 
 	"ChartFilters", "ComplianceStatusDrillDown","EscalationsDrillDown", 
 	"UserGroupDetails", "User", "UserDetails", "CountryWiseUnits", 
-	"ComplianceApplicability", "ComplianceShortDescription","StatutoryDate"
+	"ComplianceApplicability", "ComplianceShortDescription","StatutoryDate",
+	"FormCategory", "FormType"
 ]
 
 # frm = EnumType("FORM_TYPE", [
@@ -140,14 +141,28 @@ FormatFilesList = VectorType(FORMAT_FILE_NAME)
 UserIdList = VectorType(USER_ID)
 UnitIdList = VectorType(UNIT_ID)
 
+FormCategory = RecordType("FormCategory", [
+	Field("form_category_id", FORM_CATEGORY_ID),
+	Field("form_category", FORM_CATEGORY_NAME)
+])
+
+FormType = RecordType("FormType", [
+	Field("form_type_id", FORM_TYPE_ID),
+	Field("form_type", FORM_TYPE_NAME)
+])
+
 Form = RecordType("Form", [
 	Field("form_id", FORM_ID),
 	Field("form_name", FORM_NAME),
 	Field("form_url", URL),
-	Field("form_type", FORM_TYPE)
+	Field("parent_menu", Text50)
 ])
 
 FormList = VectorType(Form)
+
+Menu = RecordType("Menu", [
+	Field("menus", MapType(FORM_TYPE_ID, FormList)),
+])
 
 StatutoryDate = RecordType("StatutoryDate", [
 	Field("statutory_date", STATUTORY_DATE),
@@ -157,16 +172,12 @@ StatutoryDate = RecordType("StatutoryDate", [
 
 StatutoryDates = VectorType(StatutoryDate)
 
-Menu = RecordType("Menu", [
-	Field("masters", FormList),
-	Field("transactions", FormList),
-	Field("reports", FormList),
-	Field("settings", FormList)
-])
+
 
 UserGroupDetails = RecordType("UserGroupDetails", [
 	Field("user_group_id", USER_GROUP_ID),
 	Field("user_group_name", USER_GROUP_NAME),
+	Field("form_category_id", FORM_CATEGORY_ID),
 	Field("form_ids", FormIdList),
 	Field("is_active", IS_ACTIVE)
 ])
@@ -323,20 +334,20 @@ ClientConfiguration = RecordType("ClientConfiguration", [
 ])
 
 BusinessGroup = RecordType("BusinessGroup", [
-	Field("business_group_id", BUSINESS_GROUP_ID),
+	Field("business_group_id", OptionalType(BUSINESS_GROUP_ID)),
     Field("business_group_name", BUSINESS_GROUP_NAME),
     Field("client_id", GROUP_ID)
 ])
 
 LegalEntity = RecordType("LegalEntity", [
-	Field("legal_entity_id", LEGAL_ENTITY_ID),
-    Field("legal_entity_name", BUSINESS_GROUP_NAME),
-    Field("business_group_id", BUSINESS_GROUP_ID),
+	Field("legal_entity_id", OptionalType(LEGAL_ENTITY_ID)),
+    Field("legal_entity_name", LEGAL_ENTITY_NAME),
+    Field("business_group_id", OptionalType(BUSINESS_GROUP_ID)),
     Field("client_id", GROUP_ID)
 ])
 
 Division = RecordType("Division", [
-	Field("division_id", DIVISION_ID),
+	Field("division_id", OptionalType(DIVISION_ID)),
 	Field("division_name", DIVISION_NAME),
 	Field("legal_entity_id", LEGAL_ENTITY_ID),
     Field("business_group_id", BUSINESS_GROUP_ID),
@@ -344,10 +355,10 @@ Division = RecordType("Division", [
 ])
 
 UnitDetails = RecordType("UnitDetails", [
-	Field("unit_id", UNIT_ID),
-	Field("division_id", DIVISION_ID),
+	Field("unit_id", OptionalType(UNIT_ID)),
+	Field("division_id", OptionalType(DIVISION_ID)),
 	Field("legal_entity_id", LEGAL_ENTITY_ID),
-    Field("business_group_id", BUSINESS_GROUP_ID),
+    Field("business_group_id", OptionalType(BUSINESS_GROUP_ID)),
     Field("client_id", GROUP_ID),
     Field("country_id", COUNTRY_ID),
     Field("geography_id", GEOGRAPHY_ID),
@@ -363,10 +374,10 @@ UnitDetails = RecordType("UnitDetails", [
 UnitDetailsList = VectorType(UnitDetails)
 
 Unit = RecordType("Unit", [
-	Field("unit_id", UNIT_ID),
-	Field("division_id", DIVISION_ID),
+	Field("unit_id", OptionalType(UNIT_ID)),
+	Field("division_id", OptionalType(DIVISION_ID)),
 	Field("legal_entity_id", LEGAL_ENTITY_ID),
-    Field("business_group_id", BUSINESS_GROUP_ID),
+    Field("business_group_id",OptionalType(BUSINESS_GROUP_ID)),
     Field("client_id", GROUP_ID),
     Field("unit_code", UNIT_CODE),
     Field("unit_name", UNIT_NAME),

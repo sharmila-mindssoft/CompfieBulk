@@ -1,4 +1,4 @@
-from basics.types import RecordType, VariantType, Field, MapType, VectorType
+from basics.types import RecordType, VariantType, Field, MapType, VectorType, OptionalType
 from core import (USER_TYPE,
 	COMPLIANCE_STATUS, APPLICABILITY_STATUS, 
 	COMPLIANCE_ACTIVITY_STATUS, COMPLIANCE_FREQUENCY,
@@ -30,12 +30,12 @@ GetComplianceDetailsReportFilters = RecordType("GetComplianceDetailsReportFilter
 GetComplianceDetailsReport = RecordType("GetComplianceDetailsReport", [
 	Field("country_id", COUNTRY_ID),
 	Field("domain_id", DOMAIN_ID),
-	Field("statutory_id", STATUTORY_ID),
-	Field("unit_id", UNIT_ID),
-	Field("compliance_id", COMPLIANCE_ID),
-	Field("assignee_id", USER_ID),
-	Field("from_date", Text20),
-	Field("to_date", Text20),
+	Field("statutory_id", OptionalType(STATUTORY_ID)),
+	Field("unit_id", OptionalType(UNIT_ID)),
+	Field("compliance_id", OptionalType(COMPLIANCE_ID)),
+	Field("assignee_id", OptionalType(USER_ID)),
+	Field("from_date", OptionalType(Text20)),
+	Field("to_date", OptionalType(Text20)),
 	Field("compliance_status", COMPLIANCE_STATUS)
 ])
 
@@ -44,11 +44,11 @@ GetRiskReportFilters = RecordType("GetRiskReportFilters", [])
 GetRiskReport = RecordType("GetRiskReport", [
 	Field("country_id", COUNTRY_ID),
 	Field("domain_id", DOMAIN_ID),
-	Field("business_group_id", BUSINESS_GROUP_ID),
-	Field("legal_entity_id", LEGAL_ENTITY_ID),
-	Field("division_id", DIVISION_ID),
-	Field("unit_id", UNIT_ID),
-	Field("statutory_id",  STATUTORY_ID),
+	Field("business_group_id", OptionalType(BUSINESS_GROUP_ID)),
+	Field("legal_entity_id", OptionalType(LEGAL_ENTITY_ID)),
+	Field("division_id", OptionalType(DIVISION_ID)),
+	Field("unit_id", OptionalType(UNIT_ID)),
+	Field("statutory_id",  OptionalType(STATUTORY_ID)),
 	Field("statutory_status", Int8)
 ])
 
@@ -58,8 +58,8 @@ GetServiceProviderWiseCompliance = RecordType("GetServiceProviderWiseCompliance"
 	Field("country_id", COUNTRY_ID),
 	Field("domain_id", DOMAIN_ID),
 	Field("statutory_id", STATUTORY_ID),
-	Field("unit_id",  UNIT_ID),
-	Field("service_provider_id", SERVICE_PROVIDER_ID)
+	Field("unit_id",  OptionalType(UNIT_ID)),
+	Field("service_provider_id", OptionalType(SERVICE_PROVIDER_ID))
 ])
 
 GetClientReportFilters = RecordType("GetClientReportFilters", [])
@@ -69,11 +69,11 @@ GetAssigneewisecomplianceReport = RecordType(
 	[
 		Field("country_id", COUNTRY_ID),
 		Field("domain_id", DOMAIN_ID),
-		Field("business_group_id", BUSINESS_GROUP_ID),
-		Field("legal_entity_id", LEGAL_ENTITY_ID),
-		Field("division_id"  , DIVISION_ID),
-		Field("unit_id", UNIT_ID),
-		Field("user_id", USER_ID),
+		Field("business_group_id", OptionalType(BUSINESS_GROUP_ID)),
+		Field("legal_entity_id", OptionalType(LEGAL_ENTITY_ID)),
+		Field("division_id"  , OptionalType(DIVISION_ID)),
+		Field("unit_id", OptionalType(UNIT_ID)),
+		Field("user_id", OptionalType(USER_ID)),
 	]
 )
 
@@ -81,11 +81,11 @@ GetUnitwisecomplianceReport = RecordType(
 	"GetUnitwisecomplianceReport", [
 		Field("country_id", COUNTRY_ID),
 		Field("domain_id", DOMAIN_ID),
-		Field("business_group_id", BUSINESS_GROUP_ID),
-		Field("legal_entity_id", LEGAL_ENTITY_ID),
-		Field("division_id"  , DIVISION_ID),
-		Field("unit_id", UNIT_ID),
-		Field("user_id", USER_ID),
+		Field("business_group_id",OptionalType(BUSINESS_GROUP_ID)),
+		Field("legal_entity_id", OptionalType(LEGAL_ENTITY_ID)),
+		Field("division_id"  , OptionalType(DIVISION_ID)),
+		Field("unit_id", OptionalType(UNIT_ID)),
+		Field("user_id", OptionalType(USER_ID)),
 	]
 )
 
@@ -95,12 +95,12 @@ GetReassignComplianceTaskDetails = RecordType(
 	"GetReassignComplianceTaskDetails", [
 		Field("country_id", COUNTRY_ID),
 		Field("domain_id", DOMAIN_ID),
-		Field("unit_id", UNIT_ID),
-		Field("statutory_id", STATUTORY_ID),
-		Field("compliance_id", COMPLIANCE_ID),
-		Field("user_id", USER_ID),
-		Field("from_date", Text20),
-		Field("to_date", Text20),
+		Field("unit_id", OptionalType(UNIT_ID)),
+		Field("statutory_id", OptionalType(STATUTORY_ID)),
+		Field("compliance_id", OptionalType(COMPLIANCE_ID)),
+		Field("user_id", OptionalType(USER_ID)),
+		Field("from_date", OptionalType(Text20)),
+		Field("to_date", OptionalType(Text20)),
 	]
 )
 
@@ -110,12 +110,12 @@ GetComplianceTaskApplicabilityStatusReport = RecordType(
 	"GetComplianceTaskApplicabilityStatusReport", [
 		Field("country_id", COUNTRY_ID),
 		Field("domain_id", DOMAIN_ID),
-		Field("business_group_id", BUSINESS_GROUP_ID),
-		Field("legal_entity_id", LEGAL_ENTITY_ID),
-		Field("division_id", DIVISION_ID),
-		Field("unit_id", UNIT_ID),
-		Field("statutory_id", STATUTORY_ID),
-		Field("applicable_status", APPLICABILITY_STATUS)
+		Field("business_group_id", OptionalType(BUSINESS_GROUP_ID)),
+		Field("legal_entity_id", OptionalType(LEGAL_ENTITY_ID)),
+		Field("division_id", OptionalType(DIVISION_ID)),
+		Field("unit_id", OptionalType(UNIT_ID)),
+		Field("statutory_id", OptionalType(STATUTORY_ID)),
+		Field("applicable_status", OptionalType(APPLICABILITY_STATUS))
 	]
 )
 
@@ -124,13 +124,13 @@ GetComplianceActivityReportFilters = RecordType("GetComplianceActivityReportFilt
 GetComplianceActivityReport = RecordType(
 	"GetComplianceActivityReport", [
 		Field("user_type", USER_TYPE),
-		Field("user_id", USER_ID),
-		Field("domain_id", DOMAIN_ID),
-		Field("statutory_id", STATUTORY_ID),
-		Field("unit_id", UNIT_ID),
-		Field("compliance_id", COMPLIANCE_ID),
-		Field("from_date", Text20),
-		Field("to_date", Text20)
+		Field("user_id", OptionalType(USER_ID)),
+		Field("domain_id", OptionalType(DOMAIN_ID)),
+		Field("statutory_id", OptionalType(STATUTORY_ID)),
+		Field("unit_id", OptionalType(UNIT_ID)),
+		Field("compliance_id", OptionalType(COMPLIANCE_ID)),
+		Field("from_date", OptionalType(Text20)),
+		Field("to_date", OptionalType(Text20))
 	]
 )
 
@@ -140,10 +140,10 @@ GetReassignedHistoryReport = RecordType(
 	"GetReassignedHistoryReport", [
 		Field("country_id", COUNTRY_ID),
 		Field("domain_id", DOMAIN_ID),
-		Field("unit_id", UNIT_ID),
-		Field("level_1_statutory_id", LEVEL_1_STATUTORY_ID),
-		Field("compliance_id", COMPLIANCE_ID),
-		Field("user_id", USER_ID)
+		Field("unit_id", OptionalType(UNIT_ID)),
+		Field("level_1_statutory_id", OptionalType(LEVEL_1_STATUTORY_ID)),
+		Field("compliance_id", OptionalType(COMPLIANCE_ID)),
+		Field("user_id", OptionalType(USER_ID))
 	]
 )
 
@@ -152,8 +152,8 @@ GetActivityLogFilters = RecordType("GetActivityLogFilters", [])
 GetActivityLogReport = RecordType("GetActivityLogReport", [
 	Field("from_date", Text20),
 	Field("to_date", Text20),
-	Field("form_name", Text20),
-	Field("action", Text100)
+	Field("form_name", OptionalType(Text20)),
+	Field("action", OptionalType(Text100))
 ])
 
 GetLoginTrace = RecordType("GetLoginTrace", [])
