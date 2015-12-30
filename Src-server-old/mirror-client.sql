@@ -312,6 +312,7 @@ CREATE TABLE `tbl_assigned_compliances` (
   `country_id` int(11) NOT NULL,
   `unit_id` int(11) DEFAULT NULL,
   `compliance_id` int(11) DEFAULT NULL,
+  `statutory_dates` longtext NOT NULL,
   `assignee` int(11) DEFAULT NULL,
   `concurrence_person` int(11) DEFAULT NULL,
   `approval_person` int(11) DEFAULT NULL,
