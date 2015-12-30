@@ -37,6 +37,7 @@ ChangePassword = RecordType("ChangePassword", [
 ])
 
 Logout = RecordType("Logout", [
+	Field("session_token", SESSION_TOKEN)	
 ])
 
 Request = VariantType("Request", [
