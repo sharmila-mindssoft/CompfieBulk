@@ -114,7 +114,22 @@ class API(object):
     def handle_login(self, request, db):
         if type(request) is login.Login:
             print "username=", request.username
-            return controller.process_login(request)
+            return controller.process_login(db, request)
+
+        if type(request) is login.ForgotPassword :
+            return controller.process_forgot_password(db, request)
+
+        if type(request) is login.ResetTokenValidation :
+            return controller.process_reset_token(db, request)
+
+        if type(request) is login.ResetPassword :
+            return controller.process_reset_password(db, request)
+
+        if type(request) is login.ChangePassword :
+            return controller.process_change_password(db, request)
+
+        if type(request) is login.Logout:
+            return controller.process_logout(db, request)
         # return login.ResetPasswordSuccess()
 
     @api_request(admin.Request)
@@ -216,18 +231,13 @@ def run_server(port):
 
         web_server.url("/", GET=handle_root)
 
-        application_urls = []
-
         for url, path_desktop, path_mobile, parameters in TEMPLATE_PATHS :
             args = {
                 "path_desktop": path_desktop,
                 "path_mobile": path_mobile,
                 "parameters": parameters
             }
-            # entry = (url, TemplateHandler, args)
-            # application_urls.append(entry)
             web_server.low_level_url(url, TemplateHandler, args)
-
 
         api = API(io_loop, db)
         api_urls_and_handlers = [
