@@ -229,7 +229,6 @@ class KnowledgeDatabase(Database):
         domain_name = row[0]
         return domain_name
 
-
     def update_domain(self, domain_id, domain_name, updated_by) :
         oldData = self.get_domain_by_id(domain_id)
         if oldData is None :
@@ -262,20 +261,83 @@ class KnowledgeDatabase(Database):
             self.save_activity(updated_by, 4, action)
             return True
 
+    #
+    # Country
+    #
 
-    def save_country(self, countryName, createdBy) :
+    def get_countries_for_user(self, user_id) :
+        query = "SELECT distinct t1.country_id, t1.country_name, t1.is_active FROM tbl_domains t1 "
+        if user_id > 0 :
+            query = query + " INNER JOIN tbl_user_countries t2 ON t1.domain_id = t2.domain_id WHERE t2.user_id = %s" % (user_id)
+        result = self.select_all(query)
+        return result
+    
+    def get_country_by_id(self, country_id) :
+        q = "SELECT country_name FROM tbl_countries WHERE country_id=%s" % country_id
+        row = self.select_one(q)
+        country_name = row[0]
+        return country_name
+
+    def check_duplicate_country(self, country_name, country_id) :
+        isDuplicate = False
+        query = "SELECT count(*) FROM tbl_countries \
+        WHERE LOWER(country_name) = LOWER('%s') " % country_name
+        if country_id is not None :
+            query = query + " AND country_id != %s" % country_id
+        row = self.select_one(query)
+        if row[0] > 0 :
+            isDuplicate = True
+
+        return isDuplicate
+
+
+    def save_country(self, country_name, created_by) :
         createdOn = self.get_date_time()
-        countryId = self.get_new_id("country_id", "tbl_countries")
+        country_id = self.get_new_id("country_id", "tbl_countries")
         is_active = 1
 
         query = "INSERT INTO tbl_countries(country_id, country_name, \
             is_active, created_by, created_on) VALUES (%s, '%s', %s, %s, '%s') " % (
-            countryId, countryName, is_active, createdBy, createdOn
+            country_id, country_name, is_active, created_by, createdOn
         )
         self.execute(query)
-        action = "Add Country - \"%s\"" % countryName
-        self.save_activity(createdBy, 4, action)
+        action = "Add Country - \"%s\"" % country_name
+        self.save_activity(created_by, 4, action)
         return True
+
+    def update_country(self, country_id, country_name, updated_by) :
+        oldData = self.get_country_by_id(country_id)
+        if oldData is None :
+            return False
+        else :
+            query = "UPDATE tbl_countries SET country_name = '%s', \
+            updated_by = %s WHERE country_id = %s" % (
+                country_name, updated_by, country_id
+            )
+            self.execute(query)
+            action = "Edit Country - \"%s\"" % country_name
+            self.save_activity(updated_by, 3, action)
+            return True
+
+    def update_country_status(self, country_id, is_active, updated_by) :
+        oldData = self.get_country_by_id(country_id)
+        if oldData is None :
+            return False
+        else :
+            query = "UPDATE tbl_countries SET is_active = %s, \
+            updated_by = %s WHERE country_id = %s" % (
+                is_active, updated_by, country_id
+            )
+            if is_active == 0:
+                status = "deactivated"
+            else:
+                status = "activated"
+            self.execute(query)
+            action = "Country %s status  - %s" % (oldData, status)
+            self.save_activity(updated_by, 3, action)
+            return True
+
+
 
     def get_user_forms(self, form_ids):
         forms = []

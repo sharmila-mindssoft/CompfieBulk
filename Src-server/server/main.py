@@ -134,6 +134,8 @@ class API(object):
         if user_id is None:
             return login.InvalidSessionToken()
 
+        if type(request_frame) is general.UpdateUserProfile :
+            return controller.procees_update_user_profile(db, request_frame, user_id)
         if type(request_frame) is general.GetDomains :
             return controller.process_get_domains(db, user_id)
         if type(request_frame) is general.SaveDomain :
@@ -141,8 +143,15 @@ class API(object):
         if type(request_frame) is general.UpdateDomain :
             return controller.process_update_domain(db, request_frame, user_id)
         if type(request_frame) is general.ChangeDomainStatus :
-            print "ChangeDomainStatus"
             return controller.process_change_domain_status(db, request_frame, user_id)
+        if type(request_frame) is general.GetCountries :
+            return controller.process_get_countries(db, user_id)
+        if type(request_frame) is general.SaveCountry :
+            return controller.process_save_country(db, request_frame, user_id)
+        if type(request_frame) is general.UpdateCountry :
+            return controller.process_update_country(db, request_frame, user_id)
+        if type(request_frame) is general.ChangeCountryStatus :
+            return controller.process_change_country_status(db, request_frame, user_id)
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
