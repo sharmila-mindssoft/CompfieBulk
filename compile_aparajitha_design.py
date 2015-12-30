@@ -1,4 +1,4 @@
-from protocol import (
+from design import (
     admin, clientadminsettings, clientmasters, clientreport,
     clienttransactions, clientuser, common, core, dashboard,
     general, knowledgemaster, knowledgereport, knowledgetransaction,

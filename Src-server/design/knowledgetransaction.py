@@ -4,7 +4,10 @@ from common import (COUNTRY_ID, DOMAIN_ID, INDUSTRY_ID, STATUTORY_NATURE_ID,
 from core import (APPROVAL_STATUS, 
 	Compliance, Level, Statutory, 
 	Statutory, Country, Domain, StatutoryMapping,
-	Industry, StatutoryNature, Geography)
+	Industry, StatutoryNature, Geography, 
+	ComplianceFrequency, ComplianceRepeatType,
+	ComplianceDurationType, ComplianceApprovalStatus
+)
 
 __all__ = [
 	"Request", "Response", "RequestFormat"
@@ -45,6 +48,7 @@ ApproveStatutoryMapping = RecordType("ApproveStatutoryMapping", [
 	Field("statutory_mapping_id", STATUTORY_MAPPING_ID),
 	Field("approval_status", APPROVAL_STATUS),
 	Field("rejected_reason", Text),
+	Field("statutory_provision", Text),
 	Field("notification_text", NOTIFICATION_TEXT)
 ])
 
@@ -76,6 +80,10 @@ GetStatutoryMappingsSuccess = RecordType("GetStatutoryMappingsSuccess", [
 	Field("statutories", MapType(COUNTRY_ID, DomainStatutoryMap)),
 	Field("geography_levels", MapType(COUNTRY_ID, VectorType(Level))),
 	Field("geographies", MapType(COUNTRY_ID, VectorType(Geography))),
+	Field("compliance_frequency", VectorType(ComplianceFrequency)),
+	Field("compliance_repeat_type", VectorType(ComplianceRepeatType)),
+	Field("compliance_approval_status", VectorType(ComplianceApprovalStatus)),
+	Field("compliance_duration_type", VectorType(ComplianceDurationType)),
 	Field("statutory_mappings", MapType(STATUTORY_MAPPING_ID, StatutoryMapping))
 ])
 

@@ -1,6 +1,7 @@
 from basics.types import RecordType, VariantType, EnumType, CustomTextType, VectorType
 from common import *
 __all__ = [
+	"SESSION_TYPE",
 	"USER_TYPE", "APPROVAL_STATUS", "COMPLIANCE_APPROVAL_STATUS",
 	"ASSIGN_STATUTORY_SUBMISSION_STATUS", 
 	"ASSIGN_STATUTORY_SUBMISSION_TYPE", "NOTIFICATION_TYPE",
@@ -17,7 +18,8 @@ __all__ = [
 	"ChartFilters", "ComplianceStatusDrillDown","EscalationsDrillDown", 
 	"UserGroupDetails", "User", "UserDetails", "CountryWiseUnits", 
 	"ComplianceApplicability", "ComplianceShortDescription","StatutoryDate",
-	"FormCategory", "FormType"
+	"FormCategory", "FormType", "ComplianceFrequency", "ComplianceRepeatType",
+	"ComplianceDurationType", "ComplianceApprovalStatus"
 ]
 
 # frm = EnumType("FORM_TYPE", [
@@ -43,6 +45,13 @@ __all__ = [
 # 	Field("masters3", Maptype(Text50, Form)),
 # 	Field("geographies", Maptype(COUNTry_ID, VectorType(Geography)))
 # ])
+
+SESSION_TYPE = EnumType ("SESSION_TYPE", [
+	"Web",
+	"Android",
+	"IOS",
+	"BlackBerry"
+])
 
 USER_TYPE = EnumType("USER_TYPE", [
 	"Inhouse", 
@@ -222,6 +231,7 @@ Geography = RecordType("Geography", [
 	Field("geography_name", GEOGRAPHY_NAME),
 	Field("level_id", GEOGRAPHY_LEVEL_ID),
 	Field("parent_ids", GeographyIdList),
+	Field("parent_id", Int8),
 	Field("is_active", IS_ACTIVE),
 ])
 
@@ -250,7 +260,8 @@ Statutory = RecordType("Statutory", [
 	Field("statutory_name", STATUTORY_NAME),
 	Field("level_id", STATUTORY_LEVEL_ID),
 	Field("parent_ids", StatutoryIdList),
-	Field("is_active", IS_ACTIVE),
+	Field("parent_id", Int8),
+	Field("parent_mappings", Text),
 ])
 
 StatutoryList = VectorType(Statutory)
@@ -263,11 +274,11 @@ Compliance = RecordType("Compliance", [
     Field("document_name", DOCUMENT_NAME), 
     Field("format_file_name", FormatFilesList), 
     Field("penal_description", DESCRIPTION), 
-    Field("compliance_frequency", COMPLIANCE_FREQUENCY), 
+    Field("frequency_id", COMPLIANCE_FREQUENCY), 
     Field("statutory_dates", StatutoryDates),
-    Field("repeats_type", REPEATS_TYPE), 
+    Field("repeats_type_id", REPEATS_TYPE_ID), 
     Field("repeats_every", Int8), 
-    Field("duration_type", DURATION_TYPE),
+    Field("duration_type_id", DURATION_TYPE_ID),
     Field("duration", Int8),
     Field("is_active", IS_ACTIVE)
 ])
@@ -300,8 +311,10 @@ StatutoryMapping = RecordType("StatutoryMapping", [
 	Field("statutory_mappings", VectorType(Text)),
 	Field("compliances", VectorType(Compliance)),
 	Field("compliance_names", VectorType(Text)),
-	Field("geographies", VectorType(GEOGRAPHY_ID)),
+	Field("geography_ids", VectorType(GEOGRAPHY_ID)),
+	Field("geography_mappings", Text),
 	Field("approval_status", APPROVAL_STATUS),
+	Field("is_active", IS_ACTIVE)
 ])
 
 
@@ -507,4 +520,24 @@ EscalationsDrillDown = RecordType("EscalationsDrillDown", [
 	Field("unit_name", COUNTRY_ID),
     Field("address", DOMAIN_ID),
     Field("compliances", VectorType(ComplianceShortDescription))
+])
+
+ComplianceFrequency = RecordType("ComplianceFrequency", [
+	Field("frequency_id", FREQUENCY_ID),
+	Field("frequency", COMPLIANCE_FREQUENCY)
+])
+
+ComplianceRepeatType = RecordType("ComplianceRepeatType", [
+	Field("repeat_type_id", REPEATS_TYPE_ID),
+	Field("repeat_type", REPEATS_TYPE)
+])
+
+ComplianceDurationType = RecordType("ComplianceDurationType", [
+	Field("duration_type_id", DURATION_TYPE_ID),
+	Field("duration_type", DURATION_TYPE)
+])
+
+ComplianceApprovalStatus = RecordType("ComplianceApprovalStatus", [
+	Field("approval_status_id", APPROVAL_STATUS_ID),
+	Field("approval_status", APPROVAL_STATUS)
 ])
