@@ -4,22 +4,21 @@ import tornado.ioloop
 import tornado.web
 import uuid
 
-from models import *
 from aparajitha.server.common import *
 from aparajitha.server.admin.models import User as AdminUser
-from aparajitha.server.techno.models import GroupCompany, BusinessGroup,LegalEntity,Division,Unit
+from aparajitha.server.techno.controllers import GroupCompany, BusinessGroup,LegalEntity,Division,Unit
 from aparajitha.server.knowledge.models import DomainList, CountryList
 from aparajitha.server.databasehandler import DatabaseHandler
 from aparajitha.server.clientdatabasehandler import ClientDatabaseHandler
 
 __all__ = [
-    "UserPrivilegeController",
-    "UserController",
-    "ServiceProviderController",
+    "UserPrivilege",
+    "User",
+    "ServiceProvider",
     "UnitClosure"
 ]
 
-class UserPrivilegeController() :
+class UserPrivilege() :
     db = None
     clientId = None
     userGroupId = None
@@ -66,12 +65,13 @@ class UserPrivilegeController() :
     def toStructure(self):
         return {
             "user_group_id": self.userGroupId,
-            "user_group_name": self.userGroupName
+            "user_group_name": self.userGroupName,
+            "is_active": self.isActive
         }
 
     def getDetailedList(self, sessionUser) :
         userGroupList = []
-        rows = self.db.getUserPrivileges()
+        rows = self.db.getUserPrivilegeDetailsList()
         for row in rows:
             self.userGroupId = int(row[0])
             self.userGroupName = row[1]
@@ -79,6 +79,16 @@ class UserPrivilegeController() :
             self.isActive = row[3]
             userGroupList.append(self.toDetailedStructure())
         return userGroupList
+
+    def getList(self, clientId):
+        userGroupList = []
+        rows = self.db.getUserPrivileges()
+        for row in rows:
+            self.userGroupId = int(row[0])
+            self.userGroupName = row[1]
+            self.isActive = row[2]
+            userGroupList.append(self.toStructure())
+        return userGroupList 
 
     def generateNewUserGroupId(self) :
         return self.db.generateNewId(self.db.tblUserGroups, "user_group_id")
@@ -124,7 +134,7 @@ class UserPrivilegeController() :
         elif self.db.updateUserPrivilegeStatus(self.userGroupId, self.isActive, sessionUser):
             return commonResponseStructure("ChangeUserGroupStatusSuccess",{})
 
-class UserController() :
+class User():
     db = None
     clientId = None
     userId =  None
@@ -143,7 +153,7 @@ class UserController() :
     serviceProviderId =  None
 
     def __init__(self) :
-        db = ClientDatabaseHandler.instance()
+        self.db = ClientDatabaseHandler.instance()
         
     def toDetailedStructure(self) :
         employeeName = "%s - %s" % (self.employeeCode,self.employeeName)
@@ -159,6 +169,7 @@ class UserController() :
             "domain_ids": self.domainIds,
             "unit_ids": self.unitIds,
             "is_admin": self.isAdmin,
+            "is_active": self.isActive,
             "is_service_provider": self.isServiceProvider,
             "service_provider_id": self.serviceProviderId
         }
@@ -176,25 +187,26 @@ class UserController() :
         }
 
     def generateNewUserId(self) :
-        return self.db.generateNewId(self.tblUsers, "user_id")
+        return self.db.generateNewId(self.db.tblUsers, "user_id")
 
     def isDuplicateEmail(self):
-        condition = "username ='%s' AND user_id != '%d'" % (self.emailId, self.userId)
-        return self.db.isAlreadyExists(self.tblUsers, condition)
+        condition = "email_id ='%s' AND user_id != '%d'" % (self.emailId, self.userId)
+        return self.db.isAlreadyExists(self.db.tblUsers, condition)
 
     def isDuplicateEmployeeCode(self):
         condition = "employee_code ='%s' AND user_id != '%d'" % (self.employeeCode, self.userId)
-        return self.db.isAlreadyExists(self.tblUsers, condition)
+        return self.db.isAlreadyExists(self.db.tblUsers, condition)
 
     def isDuplicateContactNo(self):
         condition = "contact_no ='%s' AND user_id != '%d'" % (self.contactNo, self.userId)
-        return self.db.isAlreadyExists(self.tblUsers, condition)
+        return self.db.isAlreadyExists(self.db.tblUsers, condition)
 
     def isIdInvalid(self):
         condition = "user_id = '%d'" % self.userId
-        return not self.db.isAlreadyExists(self.tblUsers, condition)
+        return not self.db.isAlreadyExists(self.db.tblUsers, condition)
 
     def saveUser(self, requestData, sessionUser) :
+        self.userId = self.generateNewUserId()
         self.emailId = JSONHelper.getString(requestData, "email_id")
         self.userGroupId = JSONHelper.getInt(requestData,"user_group_id")
         self.employeeName = JSONHelper.getString(requestData,"employee_name")
@@ -217,7 +229,7 @@ class UserController() :
             return commonResponseStructure("EmployeeCodeAlreadyExists",{})
         elif self.isDuplicateContactNo() :
             return commonResponseStructure("ContactNumberAlreadyExists",{})
-        elif self.db.saveUser(sessionUser) :
+        elif self.db.saveUser(self, sessionUser) :
             return commonResponseStructure("SaveClientUserSuccess",{})
         else:
             return commonResponseStructure("Error",{})
@@ -246,7 +258,7 @@ class UserController() :
             return commonResponseStructure("EmployeeCodeAlreadyExists",{})
         elif self.isDuplicateContactNo() :
             return commonResponseStructure("ContactNumberAlreadyExists",{})
-        elif self.db.updateUser(sessionUser) :
+        elif self.db.updateUser(self, sessionUser) :
             return commonResponseStructure("UpdateUserSuccess",{})
         else:
             return commonResponseStructure("Error",{})
@@ -256,7 +268,7 @@ class UserController() :
         self.isActive = JSONHelper.getInt(requestData, "is_active")
         if self.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
-        elif self.db.updateUserStatus(sessionUser):
+        elif self.db.updateUserStatus(self.userId, self.isActive,sessionUser):
             return commonResponseStructure("ChangeClientUserStatusSuccess",{})
 
     def changeAdminStatus(self, requestData, sessionUser):
@@ -264,40 +276,59 @@ class UserController() :
         self.isAdmin = JSONHelper.getInt(requestData, "is_admin")
         if self.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
-        elif self.db.updateAdminStatus(sessionUser):
+        elif self.db.updateAdminStatus(self.userId, self.isAdmin, sessionUser):
             return commonResponseStructure("UpdateAdminStatusSuccess",{})
 
+    def getDetailedList(self, clientId):
+        userList = []
+        rows = self.db.getUserDetails()
+        for row in rows:
+            self.userId = row[0]
+            self.emailId = row[1]
+            self.userGroupId = row[2]
+            self.employeeName = row[3]
+            self.employeeCode = row[4]
+            self.contactNo = row[5]
+            self.seatingUnitId = row[6]
+            self.userLevel = row[7]
+            self.isAdmin = row[8]
+            self.isServiceProvider = row[9]
+            self.serviceProviderId = row[10]
+            self.isActive = row[11]
+            countryIds = self.db.getUserCountries(self.userId)
+            domainIds = self.db.getUserDomains(self.userId)
+            unitIds = self.db.getUserUnitIds(self.userId)   
+            self.countryIds = [int(x) for x in countryIds.split(",")]
+            self.domainIds = [int(x) for x in domainIds.split(",")]
+            self.unitIds = [int(x) for x in unitIds.split(",")]
+            userList.append(self.toDetailedStructure())
+        return userList
+
     def getUsers(self, sessionUser) :
-        clientId = str(getClientId(sessionUser))
+        countryList= CountryList().getUserCountry(sessionUser)
+        domainList = DomainList().getUserDomains(sessionUser)
+        DetailsTuple = self.db.getUserCompanyDetails(sessionUser)
+        unitIds = DetailsTuple[0]
+        divisionIds = DetailsTuple[1]
+        legalEntityIds = DetailsTuple[2]
+        businessGroupIds = DetailsTuple[3]
 
-        countryList = CountryList.getCountryList()
-        domainList = DomainList.getDomainList()
-        businessGroupList = BusinessGroup.getList(clientId)
-        legalEntityList = LegalEntity.getList(clientId)
-        divisionList = Division.getList(clientId)
-        unitList = Unit.getList(clientId)
-        userGroupList = UserPrivilege.getList(clientId)
-        userList = User.getDetailedList(clientId)
-        groupDetails = GroupCompany.getDetailedClientList()
-        serviceProvidersList = ServiceProvider.getSimpleList(sessionUser)
-
-
-        countryIds =groupDetails[0]["country_ids"]
-        domainIds =groupDetails[0]["domain_ids"]
-
-        newCountryList = []
-        newDomainList = []
-        for country in countryList:
-            if str(country["country_id"]) in countryIds:
-                newCountryList.append(country) 
-
-        for domain in domainList:
-            if str(domain["domain_id"]) in domainIds:
-                newDomainList.append(domain)
+        clientId = 1
+        divisionList = None
+        businessGroupList = None
+        if businessGroupIds != None:
+            businessGroupList = BusinessGroup(clientId, self.db).getBusinessGroupById(businessGroupIds)
+        legalEntityList = LegalEntity(clientId, self.db).getLegalEntitiesById(legalEntityIds)
+        if divisionIds != None:
+            divisionList = Division(clientId, self.db).getDivisionsById(divisionIds)
+        unitList = Unit(clientId, self.db).getUnitsById(unitIds)
+        userGroupList = UserPrivilege().getList(clientId)
+        userList = User().getDetailedList(clientId)
+        serviceProvidersList = ServiceProvider().getList()
 
         response_data = {}
-        response_data["domains"] = newDomainList
-        response_data["countries"] = newCountryList
+        response_data["domains"] = domainList
+        response_data["countries"] = countryList
         response_data["business_groups"] = businessGroupList
         response_data["legal_entities"] = legalEntityList
         response_data["divisions"] = divisionList
@@ -309,7 +340,7 @@ class UserController() :
         response = commonResponseStructure("GetClientUsersSuccess", response_data)
         return response
 
-class ServiceProviderController() :
+class ServiceProvider() :
     clientId = None
     serviceProviderId =  None
     serviceProviderName =  None
@@ -343,9 +374,9 @@ class ServiceProviderController() :
             "is_active": self.isActive
         }
 
-    def getList(self):
+    def getDetailedList(self):
         servcieProviderList = []
-        rows = self.db.getServiceProviders()
+        rows = self.db.getServiceProviderDetailsList()
         for row in rows:
             self.serviceProviderId = int(row[0])
             self.serviceProviderName = row[1]
@@ -359,8 +390,18 @@ class ServiceProviderController() :
 
         return servcieProviderList
 
+    def getList(self):
+        servcieProviderList = []
+        rows = self.db.getServiceProviders()
+        for row in rows:
+            self.serviceProviderId = int(row[0])
+            self.serviceProviderName = row[1]
+            self.isActive = row[2]
+            servcieProviderList.append(self.toStructure())
+        return servcieProviderList
+
     def getServiceProviders(self) :
-        serviceProviderList = self.getList()
+        serviceProviderList = self.getDetailedList()
 
         response_data = {}
         response_data["service_providers"] = serviceProviderList

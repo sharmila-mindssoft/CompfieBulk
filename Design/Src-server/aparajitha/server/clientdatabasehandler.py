@@ -138,11 +138,10 @@ class ClientDatabaseHandler(object) :
         return self.execute(query)
 
     def bulkInsert(self, table, columns, valueList) :
-        query = "INSERT INTO %s (%s) VALUES" % (table, columns)
-
+        query = "INSERT INTO %s (%s)  VALUES" % (table, ",".join(str(x) for x in columns))
         for index, value in enumerate(valueList):
             if index < len(valueList)-1:
-                query += +"%s," % str(value)
+                query += "%s," % str(value)
             else:
                 query += str(value)
         return self.execute(query)
@@ -242,11 +241,16 @@ class ClientDatabaseHandler(object) :
         query = "TRUNCATE TABLE  %s;" % table
         return self.execute(query)
 
-    def getUserPrivileges(self):
+    def getUserPrivilegeDetailsList(self):
         columns = "user_group_id, user_group_name, form_ids, is_active"
         rows = self.getData(self.tblUserGroups, columns, "1")
         return rows
 
+    def getUserPrivileges(self):
+        columns = "user_group_id, user_group_name, is_active"
+        rows = self.getData(self.tblUserGroups, columns, "1")
+        return rows        
+    
     def saveUserPrivilege(self, userprivilege, sessionUser):
         columns = ["user_group_id", "user_group_name","form_ids", "is_active",
                   "created_on", "created_by", "updated_on", "updated_by"]
@@ -269,9 +273,18 @@ class ClientDatabaseHandler(object) :
         condition = "user_group_id='%d'" % userGroupId
         return self.update(self.tblUserGroups, columns, values, condition)
 
+    def getUserDetails(self):
+        columns = "user_id, email_id, user_group_id, employee_name,"+\
+        "employee_code, contact_no, seating_unit_id, user_level, "+\
+        " is_admin, is_service_provider, service_provider_id, is_active"
+        condition = "1"
+        return self.getData(self.tblUsers,columns, condition)
+
     def saveUser(self, user, sessionUser):
+        result1 = None
+        result2 = None
+        result3 = None
         currentTimeStamp = getCurrentTimeStamp()
-        
         columns = ["user_id", "user_group_id", "email_id", "password", "employee_name", 
                 "employee_code", "contact_no", "seating_unit_id", "user_level", 
                 "is_admin", "is_service_provider","created_by", "created_on", 
@@ -280,18 +293,45 @@ class ClientDatabaseHandler(object) :
                 user.employeeCode, user.contactNo, user.seatingUnitId, user.userLevel, 
                 user.isAdmin, user.isServiceProvider, sessionUser,currentTimeStamp,
                 sessionUser, currentTimeStamp]
-
-        if self.isServiceProvider == 1:
-            columns += ", service_provider_id" 
+        if user.isServiceProvider == 1:
+            columns.append("service_provider_id")
             values.append(user.serviceProviderId)
-        return self.insert(self.tblUsers, columns, values)
+
+        result1 = self.insert(self.tblUsers, columns, values)
+
+        countryColumns = ["user_id", "country_id"]
+        countryValuesList = []
+        for countryId in user.countryIds:
+            countryValueTuple = (user.userId, int(countryId))
+            countryValuesList.append(countryValueTuple)
+        result2 = self.bulkInsert(self.tblUserCountries, countryColumns, countryValuesList)
+
+        domainColumns = ["user_id", "domain_id"]
+        domainValuesList = []
+        for domainId in user.domainIds:
+            domainValueTuple = (user.userId, int(domainId))
+            domainValuesList.append(domainValueTuple)
+        result3 = self.bulkInsert(self.tblUserDomains, domainColumns, domainValuesList)
+        
+        unitColumns = ["user_id", "unit_id"]
+        unitValuesList = []
+        for unitId in user.unitIds:
+            unitValueTuple = (user.userId, int(unitId))
+            unitValuesList.append(unitValueTuple)
+        result4 = self.bulkInsert(self.tblUserUnits, unitColumns, unitValuesList)
+
+        return (result1 and result2 and result3 and result4)
 
     def updateUser(self, user, sessionUser):
+        result1 = None
+        result2 = None
+        result3 = None
+        result4 = None
+
         currentTimeStamp = getCurrentTimeStamp()
         columns = [ "user_group_id", "employee_name", "employee_code",
-                "contact_no", "seating_unit_id", "user_level", "country_ids",
-                "domain_ids", "unit_ids", "is_admin", "is_service_provider",
-                "updated_on", "updated_by"]
+                "contact_no", "seating_unit_id", "user_level", "is_admin", 
+                "is_service_provider", "updated_on", "updated_by"]
         values = [ user.userGroupId, user.employeeName, user.employeeCode,
                 user.contactNo, user.seatingUnitId, user.userLevel, 
                 user.isAdmin, user.isServiceProvider, currentTimeStamp, sessionUser ]
@@ -301,6 +341,38 @@ class ClientDatabaseHandler(object) :
             columns.append("service_provider_id")
             values.append(user.serviceProviderId)
 
+        result1 = self.update(self.tblUsers, columns, values, condition)
+        self.delete(self.tblUserCountries, condition)
+        self.delete(self.tblUserDomains, condition)
+        self.delete(self.tblUserUnits, condition)
+
+        countryColumns = ["user_id", "country_id"]
+        countryValuesList = []
+        for countryId in user.countryIds:
+            countryValueTuple = (user.userId, int(countryId))
+            countryValuesList.append(countryValueTuple)
+        result2 = self.bulkInsert(self.tblUserCountries, countryColumns, countryValuesList)
+
+        domainColumns = ["user_id", "domain_id"]
+        domainValuesList = []
+        for domainId in user.domainIds:
+            domainValueTuple = (user.userId, int(domainId))
+            domainValuesList.append(domainValueTuple)
+        result3 = self.bulkInsert(self.tblUserDomains, domainColumns, domainValuesList)
+        
+        unitColumns = ["user_id", "unit_id"]
+        unitValuesList = []
+        for unitId in user.unitIds:
+            unitValueTuple = (user.userId, int(unitId))
+            unitValuesList.append(unitValueTuple)
+        result4 = self.bulkInsert(self.tblUserUnits, unitColumns, unitValuesList)
+
+        return (result1 and result2 and result3 and result4)
+
+    def updateUserStatus(self, userId, isActive, sessionUser):
+        columns = ["is_active", "updated_on", "updated_by"]
+        values = [isActive, getCurrentTimeStamp(), sessionUser]
+        condition = "user_id = '%d'"% userId
         return self.update(self.tblUsers, columns, values, condition)
 
     def updateAdminStatus(self, userId, isAdmin, sessionUser):
@@ -309,11 +381,71 @@ class ClientDatabaseHandler(object) :
         condition = "user_id='%d'" % userId
         return self.update(self.tblUsers, columns, values, condition)
 
-    def getServiceProviders(self):
+    def getUserCompanyDetails(self, userId):
+        columns = "group_concat(unit_id)"
+        condition = " user_id = '%d'"% userId
+        rows = self.getData(self.tblUserUnits, columns, condition)
+        unitIds = rows[0][0]
+
+        columns = "group_concat(division_id), group_concat(legal_entity_id), "+\
+        "group_concat(business_group_id)"
+        unitCondition = "unit_id in (%s)" % unitIds
+        rows = self.getData(self.tblUnits , columns, unitCondition)
+
+        divisionIds = rows[0][0]
+        legalEntityIds = rows[0][1]
+        businessGroupIds = rows[0][2]
+        return unitIds, divisionIds, legalEntityIds, businessGroupIds
+        
+    def getUserCountries(self, userId):
+        columns = "group_concat(country_id)"
+        condition = " user_id = '%d'"% userId
+        rows = self.getData( self.tblUserCountries,columns, condition)
+        return rows[0][0]
+
+    def getUserDomains(self, userId):
+        columns = "group_concat(domain_id)"
+        condition = " user_id = '%d'"% userId
+        rows = self.getData(self.tblUserDomains, columns, condition)
+        return rows[0][0]
+
+    def getUserUnitIds(self, userId):
+        columns = "group_concat(unit_id)"
+        condition = " user_id = '%d'"% userId
+        rows = self.getData(self.tblUserUnits, columns, condition)
+        return rows[0][0]
+
+    def getUserUnits(self, unitIds):
+        unitColumns = "unit_id, division_id, legal_entity_id, business_group_id, unit_code,"+\
+        "unit_name, address, is_active"
+        unitCondition = "unit_id in (%s)"% unitIds
+        return self.getData(self.tblUnits, unitColumns,  unitCondition)
+
+    def getUserDivisions(self, divisionIds):
+        divisionColumns = " division_id, legal_entity_id, business_group_id, division_name"
+        divisionCondition = "division_id in (%s)"% divisionIds
+        return self.getData(self.tblDivisions, divisionColumns, divisionCondition)
+    
+    def getUserLegalEntities(self, legalEntityIds):
+        legalEntityColumns = "legal_entity_id, business_group_id, legal_entity_name"
+        legalEntityCondition = "legal_entity_id in (%s)"% legalEntityIds
+        return self.getData(self.tblLegalEntities, legalEntityColumns,legalEntityCondition)        
+
+    def getUserBusinessGroups(self, businessGroupIds):
+        businessGroupColumns = "business_group_id, business_group_name"
+        businessGroupCondition = "business_group_id in (%s)"% businessGroupIds
+        return self.getData(self.tblBusinessGroups, businessGroupColumns, businessGroupCondition)
+
+    def getServiceProviderDetailsList(self):
         columns = "service_provider_id, service_provider_name, address, contract_from,"+\
                 "contract_to, contact_person, contact_no, is_active"
         rows = self.getData(self.tblServiceProviders, columns, "1")
         return rows
+
+    def getServiceProviders(self):
+        columns = "service_provider_id, service_provider_name, is_active"
+        rows = self.getData(self.tblServiceProviders, columns, "1")
+        return rows          
 
     def saveServiceProvider(self, serviceProvider, sessionUser):
         currentTimeStamp = getCurrentTimeStamp()

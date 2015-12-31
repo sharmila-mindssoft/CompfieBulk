@@ -209,7 +209,6 @@ class JSONHelper(object) :
     def getLong(data, name) :
         return JSONHelper.long(data.get(name))
 
-   
 class FormCategory(object):
     def __init__(self, form_category_id = None, form_category = None):
         self.db = DatabaseHandler.instance()
@@ -277,19 +276,17 @@ class Form(object) :
             form = klass(formId = row[0], formName = row[5], formUrl = row[6], formOrder = row[7], 
                     formType = row[4], Category = row[2], parentMenu = row[8])
             formList.append(form)
-        print formList
         menu = Menu()
         result = menu.generateMenu(formList)
         return result
             
 class Menu(object):
-    masterForms = []
-    transactionForms = []
-    reportForms = []
-    settingForms = []
 
     def __init__(self):
-        print "constructor"
+        self.masterForms = []
+        self.transactionForms = []
+        self.reportForms = []
+        self.settingForms = []
 
     def toStructure(self):
         return {

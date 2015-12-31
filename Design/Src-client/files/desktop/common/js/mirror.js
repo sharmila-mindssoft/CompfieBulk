@@ -1036,8 +1036,6 @@ function initMirror() {
 
     function saveClientUser(clientUserDetail, callback, failure_callback) {
         callerName = "ClientAdminAPI"
-        if (isNull(clientUserDetail))
-            return null;
         var request = [
             "SaveClientUser",
             clientUserDetail
@@ -1065,8 +1063,6 @@ function initMirror() {
 
     function updateClientUser(clientUserDetail, callback, failure_callback) {
         callerName = "ClientAdminAPI"
-        if (isNull(clientUserDetail))
-            return null;
         var request = [
             "UpdateClientUser",
             clientUserDetail
@@ -1076,8 +1072,6 @@ function initMirror() {
 
     function changeClientUserStatus(userId, isActive, callback, failure_callback) {
         callerName = "ClientAdminAPI"
-        if (isNull(userId) || isNull(isActive) )
-            return null;
         var request = [
             "ChangeClientUserStatus",
             {

@@ -12,12 +12,7 @@ from aparajitha.server.knowledge.models import IndustryList, Geography
 from aparajitha.server.common import *
 
 __all__ = [
-    "GroupCompany",
     "ClientConfiguration",
-    "BusinessGroup",
-    "LegalEntity",
-    "Division",
-    "Unit",
     "Client"
 ]
 clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
@@ -48,22 +43,6 @@ class GroupCompany(object):
         self.dateConfigurations = dateConfigurations
         self.username = username
         self.isActive = isActive
-
-    def verify(self) :
-        assertType(self.clientId, IntType)
-        assertType(self.groupName, StringType)
-        assertType(self.inchargePersons, ListType)
-        assertType(self.countryIds, ListType)
-        assertType(self.domainIds, ListType)
-        assertType(self.logo, StringType)
-        assertType(self.contractFrom, StringType)
-        assertType(self.contractTo, StringType)
-        assertType(self.noOfUserLicence, IntType)
-        assertType(self.fileSpace, FloatType)
-        assertType(self.isSmsSubscribed, IntType)
-        assertType(self.dateConfigurations, ListType)
-        assertType(self.username, StringType)
-        assertType(self.isActive, IntType)
 
     def toDetailedStructure(self) :
         return {
@@ -252,14 +231,6 @@ class ClientConfiguration(object):
         self.periodFrom = periodFrom
         self.periodTo = periodTo
 
-        self.verify()
-
-    def verify(self):
-        assertType(self.countryId, IntType)
-        assertType(self.domainId, IntType)
-        assertType(self.periodFrom, IntType)
-        assertType(self.periodTo, IntType)
-
     def toStructure(self):
         return {
             "country_id": self.countryId,
@@ -269,8 +240,6 @@ class ClientConfiguration(object):
         }
 
 class BusinessGroup(object):
-    businessGroupTblName = "tbl_business_groups"
-
     def __init__(self, businessGroupId, businessGroupName, clientId):
         self.clientId = clientId
         self.businessGroupId = int(businessGroupId) if businessGroupId != None else self.generateNewBusinessGroupId()

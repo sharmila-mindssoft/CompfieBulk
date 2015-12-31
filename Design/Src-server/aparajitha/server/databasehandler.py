@@ -165,7 +165,6 @@ class DatabaseHandler(object) :
                 query += "%s," % str(value)
             else:
                 query += str(value)
-        print query
         return self.execute(query)
 
     def update(self, table, columns, values, condition) :
@@ -233,7 +232,7 @@ class DatabaseHandler(object) :
 
     def getData(self, table, columns, condition):
         # query = "SELECT "+columns+" FROM "+table+" WHERE "+condition 
-        query = "SELECT %s FROM %s WHERE %s "  % (table, columns, condition)
+        query = "SELECT %s FROM %s WHERE %s "  % (columns, table, condition)
         return self.executeAndReturn(query)
 
     def getDataFromMultipleTables(self, columns, tables, aliases, joinType, joinConditions, whereCondition):
@@ -264,7 +263,7 @@ class DatabaseHandler(object) :
         condition = "password='%s' and user_id='%d'" % (password, userId)
         if clientId != None:
             condition += " and client_id='%d'" % clientId
-        rows = self.getData("tbl_users", columns, condition)
+        rows = self.getData(self.tblUsers, columns, condition)
         if(int(rows[0][0]) <= 0):
             return False
         else:
@@ -334,7 +333,7 @@ class DatabaseHandler(object) :
         tables = self.tblUserGroups
         whereCondition = "1"
 
-        rows = self.getData(columns, tables, whereCondition)
+        rows = self.getData( tables, columns, whereCondition)
         return rows    
 
     def getUserGroupList(self) :
@@ -344,7 +343,7 @@ class DatabaseHandler(object) :
         tables = self.tblUserGroups
         whereCondition = "1"
 
-        rows = self.getData(columns, tables, whereCondition)
+        rows = self.getData(tables, columns, whereCondition)
         return rows
 
     def saveUserGroup(self, userGroup):
@@ -376,25 +375,25 @@ class DatabaseHandler(object) :
         columns = "user_id, email_id, user_group_id, employee_name, employee_code,"+\
                 "contact_no, address, designation, is_active"
         condition = "1"
-        rows = self.getData(columns, self.tblUsers, condition)
+        rows = self.getData(self.tblUsers, columns, condition)
         return rows
 
     def getUserCountries(self, userId):
         columns = "group_concat(country_id)"
         condition = " user_id = '%d'"% userId
-        rows = self.getData( columns, self.tblUserCountries, condition)
+        rows = self.getData( self.tblUserCountries, columns, condition)
         return rows[0][0]
 
     def getUserDomains(self, userId):
         columns = "group_concat(domain_id)"
         condition = " user_id = '%d'"% userId
-        rows = self.getData(columns, self.tblUserDomains, condition)
+        rows = self.getData(self.tblUserDomains, columns, condition)
         return rows[0][0]
 
     def getUserClients(self, userId):
         columns = "group_concat(client_id)"
         condition = " user_id = '%d'"% userId
-        rows = self.getData( columns, self.tblUserClients, condition)
+        rows = self.getData( self.tblUserClients, columns,  condition)
         return rows[0][0]
 
     def getList(self):
@@ -469,6 +468,52 @@ class DatabaseHandler(object) :
         values = [isActive, getCurrentTimeStamp(), 0]
         condition = "user_id='%d'" % userId
         return self.update(self.tblUsers, columns, values, condition)    
+
+    def getClientIds(self, sessionUser):
+        columns = "group_concat(client_id)"
+        condition = "user_id = '%d'" % sessionUser
+        return self.getData(self.tblUserClients, columns, condition)
+
+    def getGroupCompanyDetails(self, clientIds):
+        columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
+        " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
+        " is_active"
+        condition = "client_id in (%s)" % clientIds
+        return self.getData(self.tblClientGroups, columns, condition)
+
+    def getClientConfigurations(self, clientId):
+        columns = "country_id, domain_id, period_from, period_to"
+        condition = "client_id = '%d'"% clientId
+        return self.getData(self.tblClientConfigurations, columns, condition)
+
+    def getBusinessGroups(self, clientId):
+        columns = "business_group_id, business_group_name"
+        condition = "client_id = '%d'" % clientId
+        return self.getData(self.tblBusinessGroups, columns, condition)
+
+    def getLegalEntites(self, clientId):
+        columns = "legal_entity_id, legal_entity_name, business_group_id"
+        condition = "client_id = '%d'" % clientId
+        return self.getData(self.tblLegalEntities, columns, condition)
+
+    def getDivisions(self, clientId):
+        columns = "division_id, division_name, legal_entity_id, business_group_id"
+        condition = "client_id = '%d'"% clientId
+        return self.getData(self.tblDivisions,columns, condition)
+
+    def getUnitDetails(self, clientId):
+        columns = "unit_id, division_id, legal_entity_id, business_group_id, "+\
+                "unit_code, unit_name, country_id,  address,"+\
+                "postal_code, domain_ids, industry_id, geography_id, is_active"
+        condition = "client_id = '%d'"% clientId
+        return self.getData(self.tblUnits, columns, condition)
+
+    def getUnits(self, clientId):
+        columns = "unit_id, division_id, legal_entity_id, "+\
+                "business_group_id, unit_code, unit_name,"+\
+                " address, is_active"
+        condition = "client_id = '%d'" % clientId
+        return self.getData(self.tblUnits, colums, condition)
 
     def truncate(self, table):
         query = "TRUNCATE TABLE  %s;" % table

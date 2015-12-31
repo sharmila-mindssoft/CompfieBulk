@@ -4,8 +4,7 @@ import re
 import os
 
 from aparajitha.server.constants import ROOT_PATH
-from aparajitha.server.databasehandler import DatabaseHandler 
-from aparajitha.server.clientdatabasehandler import ClientDatabaseHandler 
+from aparajitha.server.databasehandler import DatabaseHandler
 from aparajitha.server.admin.models import User
 from aparajitha.server.knowledge.models import DomainList, CountryList, GeographyLevelList
 from aparajitha.server.knowledge.models import IndustryList, Geography, GeographyAPI
@@ -13,12 +12,339 @@ from aparajitha.server.common import *
 from models import *
 
 __all__ = [
+    "GroupCompany",
+    "BusinessGroup",
+    "LegalEntity",
+    "Division",
+    "Unit",
     "ClientGroupController",
     "ClientController",
     "ClientProfile"
 ]
 clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
     "Src-client/files/desktop/common/clientdatabase/clientdatabasemapping.txt")
+
+class GroupCompany(object):
+    db = None
+    clientId = None
+    groupName = None
+    inchargePersons = None
+    countryIds = None
+    domainIds = None
+    logo = None
+    contractFrom = None
+    contractTo = None
+    noOfUserLicence = None
+    fileSpace = None
+    isSmsSubscribed = None
+    dateConfigurations = None
+    username = None
+    isActive = None
+
+    def __init__(self, db):
+        self.db = db if db != None else DatabaseHandler.instance()
+
+    def toDetailedStructure(self) :
+        return {
+            "client_id": self.clientId,
+            "client_name": self.groupName,
+            "incharge_persons": self.inchargePersons,
+            "country_ids": self.countryIds,
+            "domain_ids": self.domainIds,
+            "logo" : self.logo,
+            "contract_from": self.contractFrom,
+            "contract_to": self.contractTo,
+            "no_of_user_licence": self.noOfUserLicence,
+            "file_space": self.fileSpace,
+            "is_sms_subscribed": self.isSmsSubscribed,
+            "date_configurations": self.dateConfigurations,
+            "username": self.username,
+            "is_active": self.isActive
+        }
+
+    def toStructure(self):
+        return {
+            "client_id": self.clientId,
+            "group_name": self.groupName,
+            "country_ids": self.countryIds,
+            "domain_ids": self.domainIds,
+            "is_active": self.isActive
+        }
+
+    def getGroupCompanyDetails(self, sessionUser, clientIds):
+        clientRows = None
+        if sessionUser != None:
+            clientRows = self.db.getClientIds(sessionUser)
+        clientIds = clientRows[0][0] if clientIds == None else clientIds
+        clientRows = self.db.getGroupCompanyDetails(clientIds)
+        clientList = []
+        for row in clientRows:
+            self.clientId = row[0]
+            self.groupName = row[1]
+            self.username = row[2]
+            self.logo = row[3]
+            self.contractFrom = row[4]
+            self.contractTo = row[5]
+            self.noOfUserLicence = row[6]
+            self.fileSpace = row[7]
+            self.isSmsSubscribed = row[8]
+            self.inchargePersons = row[9]
+            self.isActive = row[10]
+            self.dateConfigurations = ClientConfiguration(
+                self.clientId, self.db).getClientConfigurations()
+            clientList.append(self.toDetailedStructure())
+        return clientList
+
+class ClientConfiguration(object):
+    db = None
+    clientId = None
+    countryId = None
+    domainId = None
+    periodFrom = None
+    periodTo = None
+    def __init__(self, clientId, db):
+        self.db = db if db != None else DatabaseHandler.instance()
+        self.clientId = clientId
+
+    def toStructure(self):
+        return {
+            "country_id": self.countryId,
+            "domain_id": self.domainId,
+            "period_from": self.periodFrom,
+            "period_to": self.periodTo
+        }
+
+    def getClientConfigurations(self):
+        configurationsList = []
+        configRows = self.db.getClientConfigurations(self.clientId)
+        for row in configRows:
+            self.countryId = row[0]
+            self.domainId = row[1]
+            self.periodFrom = row[2]
+            self.periodTo = row[3]
+            configurationsList.append(self.toStructure())
+        return configurationsList
+
+class BusinessGroup(object):
+    db = None
+    businessGroupId = None
+    businessGroupName = None
+    clientId = None
+    def __init__(self, clientId, db):
+        self.db = db if db != None else DatabaseHandler.instance()
+        self.clientId = clientId
+
+    def toStructure(self) :
+        return {
+            "business_group_id": self.businessGroupId,
+            "business_group_name": self.businessGroupName,
+            "client_id": self.clientId
+        }
+
+    def getBusinessGroups(self):
+        businessGroupList = []
+        rows = self.db.getBusinessGroups(self.clientId)
+        for row in rows:
+            self.businessGroupId = row[0]
+            self.businessGroupName = row[1]
+            businessGroupList.append(self.toStructure())
+        return businessGroupList
+
+    def getBusinessGroupById(self, businessGroupIds):
+        businessGroupList = []
+        rows = self.db.getUserBusinessGroups(businessGroupIds)
+        for row in rows:
+            self.businessGroupId = row[0]
+            self.businessGroupName = row[1]
+            businessGroupList.append(self.toStructure())
+        return businessGroupList
+
+class LegalEntity(object):
+    db = None
+    legalEntityId = None
+    legalEntityName = None
+    businessGroupId = None
+    clientId = None
+
+    def __init__(self, clientId, db):
+        self.db = db if db != None else DatabaseHandler.instance()
+        self.clientId = clientId
+
+    def toStructure(self) :
+        return {
+            "legal_entity_id": self.legalEntityId,
+            "legal_entity_name": self.legalEntityName,
+            "business_group_id": self.businessGroupId,
+            "client_id": self.clientId
+        }
+
+    def getLegalEntities(self):
+        legalEntitiesList = []
+        rows = self.db.getLegalEntities(self.clientId)
+        for row in rows:
+            self.businessGroupId = row[2]
+            self.legalEntityName = row[1]
+            self.legalEntityId = row[0]
+            legalEntitiesList.append(self.toStructure())
+        return legalEntitiesList
+
+    def getLegalEntitiesById(self, legalEntityIds):
+        legalEntitiesList = []
+        rows = self.db.getUserLegalEntities(legalEntityIds)
+        for row in rows:
+            self.businessGroupId = row[2]
+            self.legalEntityName = row[1]
+            self.legalEntityId = row[0]
+            legalEntitiesList.append(self.toStructure())
+        return legalEntitiesList
+
+class Division(object):
+    db = None
+    legalEntityId = None
+    divisionId = None
+    divisionName = None
+    businessGroupId = None
+    clientId = None
+
+    def __init__(self, clientId, db):
+        self.db = db if db != None else DatabaseHandler.instance()
+        self.clientId = clientId
+
+    def toStructure(self, clientId) :
+        return {
+            "division_id": self.divisionId,
+            "division_name": self.divisionName,
+            "legal_entity_id": self.legalEntityId,
+            "business_group_id": self.businessGroupId,
+            "client_id": self.clientId
+        }
+
+    def getDivisions(self):
+        divisionsList = []
+        rows = self.db.getDivisions(self.clientId)
+        for row in rows:
+            self.divisionId = row[0]
+            self.divisionName = row[1]
+            self.legalEntityId = row[2]
+            self.businessGroupId = row[3]
+            divisionsList.append(self.toStructure())
+        return divisionsList
+
+    def getDivisionsById(self, divisionIds):
+        divisionsList = []
+        rows = self.db.getUserDivisions(divisionIds)
+        for row in rows:
+            self.divisionId = row[0]
+            self.divisionName = row[1]
+            self.legalEntityId = row[2]
+            self.businessGroupId = row[3]
+            divisionsList.append(self.toStructure())
+        return divisionsList        
+
+class Unit(object):
+    db = None
+    unitId = None
+    divisionId = None
+    legalEntityId = None
+    businessGroupId = None
+    clientId = None
+    countryId = None
+    geographyId = None
+    unitCode = None
+    unitName = None
+    industryId = None
+    address = None
+    postalCode = None
+    domainIds = None
+    isActive = None
+    industryName = None
+    geography = None
+
+    def __init__(self, clientId, db):
+        self.clientId = clientId
+        self.db = db if db != None else DatabaseHandler.instance()
+
+    def toDetailedStructure(self) :
+        return {
+            "unit_id": self.unitId,
+            "division_id": self.divisionId,
+            "legal_entity_id": self.legalEntityId,
+            "business_group_id": self.businessGroupId,
+            "client_id"  : self.clientId,
+            "country_id": self.countryId,
+            "geography_id": self.geographyId,
+            "unit_code": self.unitCode,
+            "unit_name": self.unitName,
+            "industry_id": self.industryId,
+            "unit_address": self.address,
+            "postal_code": self.postalCode,
+            "domain_ids": self.domainIds,
+            "is_active": self.isActive
+        }
+
+    def toStructure(self):
+        unitName = "%s - %s" % (self.unitCode, self.unitName)
+        return{
+            "unit_id": self.unitId,
+            "division_id": self.divisionId,
+            "legal_entity_id": self.legalEntityId,
+            "business_group_id": self.businessGroupId,
+            "client_id": self.clientId,
+            "unit_code":self.unitCode,
+            "unit_name": self.unitName,
+            "unit_address": self.address,
+            "is_active": self.isActive
+        }
+
+    def getUnitDetails(self):
+        unitList = []
+        rows = self.db.getUnitDetails(self.clientId)
+        for row in rows:
+            self.unitId = row[0]
+            self.divisionId = row[1]
+            self.legalEntityId = row[2]
+            self.businessGroupId = row[3]
+            self.unitCode = row[4]
+            self.unitName = row[5]
+            self.countryId = row[6]
+            self.address = row[7]
+            self.postalCode = row[8]
+            self.domainIds = row[9]
+            self.industryId = row[10]
+            self.geographyId = row[11]
+            self.isActive = row[12]
+            unitList.append(self.toDetailedStructure())
+        return unitList
+
+    def getUnits(self):
+        unitList = []
+        rows = self.db.getUnits(self.clientId)
+        for row in rows:
+            self.unitId = row[0]
+            self.divisionId = row[1]
+            self.legalEntityId = row[2]
+            self.businessGroupId = row[3]
+            self.unitCode = row[4]
+            self.unitName = row[5]
+            self.address = row[6]
+            self.isActive = row[7]
+            unitList.append(self.toStructure())
+        return unitList
+
+    def getUnitsById(self, unitIds):
+        unitList = []
+        rows = self.db.getUserUnits(unitIds)
+        for row in rows:
+            self.unitId = row[0]
+            self.divisionId = row[1]
+            self.legalEntityId = row[2]
+            self.businessGroupId = row[3]
+            self.unitCode = row[4]
+            self.unitName = row[5]
+            self.address = row[6]
+            self.isActive = row[7]
+            unitList.append(self.toStructure())
+        return unitList
 
 class ClientGroupController(object) :
     clientTblName = "tbl_client_groups"
