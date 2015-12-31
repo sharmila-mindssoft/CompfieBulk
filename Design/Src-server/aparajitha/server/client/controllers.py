@@ -477,11 +477,13 @@ class ServiceProvider() :
             return commonResponseStructure("ChangeServiceProviderStatusSuccess",{})
 
 class UnitClosure():
-    unitTblName = "tbl_units"
+
+    def __init__(self):
+        self.db = ClientDatabaseHandler.instance()
 
     def getList(self, sessionUser):
-        self.clientId = getClientId(sessionUser)
-        unitList = Unit.getUnitListForClosure(self.clientId)
+        clientId = 1
+        unitList = Unit(clientId, self.db).getUnitListForClosure(clientId)
         unitStructure = {}
         unitStructure["units"] = unitList
         return commonResponseStructure("GetUnitClosureListSuccess", unitStructure)
@@ -490,15 +492,11 @@ class UnitClosure():
         self.sessionUser = sessionUser
         self.unitId = JSONHelper.getInt(requestData, "unit_id")
         self.password = JSONHelper.getString(requestData, "password")
-        self.clientId = getClientId(sessionUser)
+        self.clientId = 1
 
         if self.verifyPassword():
-            if self.deactivateUnitInClientDB():
-                if self.deactivateUnitInKnowledgeDB():
-                    return commonResponseStructure("CloseUnitSuccess", {})
-                else:
-                    print "Error : While deactivating Unit in Knowledge DB"    
-                    return False
+            if self.db.deactivateUnit(self.unitId):
+                return commonResponseStructure("CloseUnitSuccess", {})
             else:
                 print "Error : While deactivating Unit in client DB"
                 return False
@@ -507,24 +505,7 @@ class UnitClosure():
 
     def verifyPassword(self):
         encryptedPassword = encrypt(self.password)
-        return DatabaseHandler.instance().verifyPassword(encryptedPassword, 
-            self.sessionUser, self.clientId)
-
-    def deactivateUnitInClientDB(self):
-        columns = ["is_active"]
-        values = [0]
-        condition = "unit_id ='%d'" % self.unitId
-        return ClientDatabaseHandler.instance(
-            getClientDatabase(self.clientId)).update(
-            self.unitTblName, columns, values, condition)
-
-    def deactivateUnitInKnowledgeDB(self):    
-        columns = ["is_active", "updated_by", "updated_on"]
-        values = [0, self.sessionUser, getCurrentTimeStamp()]
-        condition = "unit_id = {unitId} and client_id={clientId}".format(
-            unitId = self.unitId, clientId = self.clientId)
-        return DatabaseHandler.instance().update(
-            self.unitTblName, columns, values, condition)
+        return self.db.verifyPassword(encryptedPassword, self.sessionUser)
 
 
 

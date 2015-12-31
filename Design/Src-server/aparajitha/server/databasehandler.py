@@ -258,11 +258,9 @@ class DatabaseHandler(object) :
         row = rows[0]
         return row[0]
 
-    def verifyPassword(self, password, userId, clientId):
+    def verifyPassword(self, password, userId):
         columns = "count(*)"
         condition = "password='%s' and user_id='%d'" % (password, userId)
-        if clientId != None:
-            condition += " and client_id='%d'" % clientId
         rows = self.getData(self.tblUsers, columns, condition)
         if(int(rows[0][0]) <= 0):
             return False

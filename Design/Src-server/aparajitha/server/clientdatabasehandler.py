@@ -198,21 +198,19 @@ class ClientDatabaseHandler(object) :
         query = "SELECT %s FROM %s WHERE %s" %(columns, table, condition)
         return self.executeAndReturn(query)
 
-    def getDataFromMultipleTables(self, columns, tables, conditions, joinType):
-
+    def getDataFromMultipleTables(self, columns, tables, aliases, joinType, joinConditions, whereCondition):
         query = "SELECT %s FROM " % columns
 
         for index,table in enumerate(tables):
             if index == 0:
-                query += "%s alias%d  %s" % (table, index, joinType)
+                query += "%s  %s  %s" % (table, aliases[index], joinType)
             elif index <= len(tables) -2:
-                query += " %s alias%d on (alias%d.%s = alias%d.%s) %s " % (table, 
-                    index, index-1, conditions[index-1][0], index, 
-                    conditions[index-1][1], joinType)
+                query += " %s %s on (%s) %s " % (table, aliases[index], joinConditions[index-1], joinType)
             else:
-                query += " %s alias%d on (alias%d.%s = alias%d.%s)" % (table, index,
-                    index-1, conditions[index-1][0], index, conditions[index-1][1])
+                query += " %s %s on (%s)" % (table, aliases[index],joinConditions[index-1])
 
+        query += " where %s" % whereCondition
+        print query
         return self.executeAndReturn(query)
 
     def validateSessionToken(self, sessionToken) :
@@ -240,6 +238,15 @@ class ClientDatabaseHandler(object) :
     def truncate(self, table):
         query = "TRUNCATE TABLE  %s;" % table
         return self.execute(query)
+
+    def verifyPassword(self, password, userId):
+        columns = "count(*)"
+        condition = "password='%s' and user_id='%d'" % (password, userId)
+        rows = self.getData(self.tblUsers, columns, condition)
+        if(int(rows[0][0]) <= 0):
+            return False
+        else:
+            return True
 
     def getUserPrivilegeDetailsList(self):
         columns = "user_group_id, user_group_name, form_ids, is_active"
@@ -414,6 +421,28 @@ class ClientDatabaseHandler(object) :
         condition = " user_id = '%d'"% userId
         rows = self.getData(self.tblUserUnits, columns, condition)
         return rows[0][0]
+
+    def deactivateUnit(self, unitId):
+        columns = ["is_active"]
+        values = [0]
+        condition = "unit_id ='%d'" % unitId
+        return self.update(self.tblUnits, columns, values, condition)
+
+    def getUnitClosureList(self):
+        columns = "tu.unit_id, tu.unit_name, tu.unit_code, td.division_name, tle.legal_entity_name,"+\
+        "tbg.business_group_name, tu.address, tu.is_active"
+        tables = [self.tblUnits, self.tblDivisions, self.tblLegalEntities, 
+                self.tblBusinessGroups]
+        aliases = ["tu", "td", "tle", "tbg"]
+        joinConditions = ["tu.division_id = td.division_id", "tu.legal_entity_id = tle.legal_entity_id",
+        "tu.business_group_id =tbg.business_group_id" ]
+        whereCondition = "1"
+        joinType = "left join"
+
+        rows = self.getDataFromMultipleTables(columns, tables, aliases, joinType, 
+            joinConditions, whereCondition)
+
+        return rows
 
     def getUserUnits(self, unitIds):
         unitColumns = "unit_id, division_id, legal_entity_id, business_group_id, unit_code,"+\

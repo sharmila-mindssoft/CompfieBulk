@@ -9,7 +9,6 @@ from aparajitha.server.admin.models import User
 from aparajitha.server.knowledge.models import DomainList, CountryList, GeographyLevelList
 from aparajitha.server.knowledge.models import IndustryList, Geography, GeographyAPI
 from aparajitha.server.common import *
-from models import *
 
 __all__ = [
     "GroupCompany",
@@ -344,6 +343,21 @@ class Unit(object):
             self.address = row[6]
             self.isActive = row[7]
             unitList.append(self.toStructure())
+        return unitList
+
+    def getUnitListForClosure(self, clientId):
+        unitList = []
+        rows = self.db.getUnitClosureList()
+        for row in rows:
+            unitStructure = {}
+            unitStructure["unit_id"] = row[0]
+            unitStructure["unit_name"] = "%s - %s" % (row[2], row[1])
+            unitStructure["division_name"] = row[3]
+            unitStructure["legal_entity_name"] = row[4]
+            unitStructure["business_group_name"] = row[5]
+            unitStructure["address"] = row[6]
+            unitStructure["is_active"] = row[7]
+            unitList.append(unitStructure)
         return unitList
 
 class ClientGroupController(object) :

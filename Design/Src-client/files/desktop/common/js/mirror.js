@@ -1097,7 +1097,8 @@ function initMirror() {
     }
 
     // Unit Closure
-    function getUnitClosureList(callerName, callback, failure_callback) {
+    function getUnitClosureList(callback, failure_callback) {
+        callerName = "ClientAdminAPI"
         var request = [
             "GetUnitClosureList",
             {}
@@ -1105,8 +1106,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function closeUnit(callerName, unitId, password, callback, 
+    function closeUnit(unitId, password, callback, 
         failure_callback){
+        callerName = "ClientAdminAPI"
         var request = [
             "CloseUnit",
             {

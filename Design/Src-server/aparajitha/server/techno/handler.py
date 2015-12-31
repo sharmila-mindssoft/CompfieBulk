@@ -2,7 +2,6 @@ import json
 
 import tornado.ioloop
 import tornado.web
-from models import *
 from controllers import *
 from aparajitha.server.common import *
 from aparajitha.server.databasehandler import DatabaseHandler 
