@@ -11,12 +11,11 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_Unit,
     parse_structure_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_core_ServiceProvider,
-    parse_structure_VectorType_RecordType_core_Division,
     parse_structure_Bool, parse_structure_CustomIntegerType_1_10,
     parse_structure_CustomTextType_20,
     parse_structure_VectorType_RecordType_core_BusinessGroup,
     parse_structure_VariantType_clientmasters_Request,
-    parse_structure_EnumType_core_FORM_TYPE,
+    parse_structure_VectorType_RecordType_core_Division,
     parse_structure_CustomTextType_50
 )
 from protocol.to_structure import (
@@ -29,11 +28,12 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Unit,
     to_structure_SignedIntegerType_8,
     to_structure_VectorType_RecordType_core_ServiceProvider,
-    to_structure_VectorType_RecordType_core_Division, to_structure_Bool,
-    to_structure_CustomIntegerType_1_10, to_structure_CustomTextType_20,
+    to_structure_Bool, to_structure_CustomIntegerType_1_10,
+    to_structure_CustomTextType_20,
     to_structure_VectorType_RecordType_core_BusinessGroup,
     to_structure_VariantType_clientmasters_Request,
-    to_structure_EnumType_core_FORM_TYPE, to_structure_CustomTextType_50
+    to_structure_VectorType_RecordType_core_Division,
+    to_structure_CustomTextType_50
 )
 
 #
@@ -185,62 +185,46 @@ class GetUserPrivileges(Request):
         }
 
 class SaveUserPrivileges(Request):
-    def __init__(self, client_id, user_group_name, form_type, form_ids):
-        self.client_id = client_id
+    def __init__(self, user_group_name, form_ids):
         self.user_group_name = user_group_name
-        self.form_type = form_type
         self.form_ids = form_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["client_id", "user_group_name", "form_type", "form_ids"])
-        client_id = data.get("client_id")
-        client_id = parse_structure_SignedIntegerType_8(client_id)
+        data = parse_dictionary(data, ["user_group_name", "form_ids"])
         user_group_name = data.get("user_group_name")
         user_group_name = parse_structure_CustomTextType_50(user_group_name)
-        form_type = data.get("form_type")
-        form_type = parse_structure_EnumType_core_FORM_TYPE(form_type)
         form_ids = data.get("form_ids")
         form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
-        return SaveUserPrivileges(client_id, user_group_name, form_type, form_ids)
+        return SaveUserPrivileges(user_group_name, form_ids)
 
     def to_inner_structure(self):
         return {
-            "client_id": to_structure_SignedIntegerType_8(self.client_id),
             "user_group_name": to_structure_CustomTextType_50(self.user_group_name),
-            "form_type": to_structure_EnumType_core_FORM_TYPE(self.form_type),
             "form_ids": to_structure_VectorType_SignedIntegerType_8(self.form_ids),
         }
 
 class UpdateUserPrivileges(Request):
-    def __init__(self, user_group_id, client_id, user_group_name, form_type, form_ids):
+    def __init__(self, user_group_id, user_group_name, form_ids):
         self.user_group_id = user_group_id
-        self.client_id = client_id
         self.user_group_name = user_group_name
-        self.form_type = form_type
         self.form_ids = form_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_group_id", "client_id", "user_group_name", "form_type", "form_ids"])
+        data = parse_dictionary(data, ["user_group_id", "user_group_name", "form_ids"])
         user_group_id = data.get("user_group_id")
         user_group_id = parse_structure_SignedIntegerType_8(user_group_id)
-        client_id = data.get("client_id")
-        client_id = parse_structure_SignedIntegerType_8(client_id)
         user_group_name = data.get("user_group_name")
         user_group_name = parse_structure_CustomTextType_50(user_group_name)
-        form_type = data.get("form_type")
-        form_type = parse_structure_EnumType_core_FORM_TYPE(form_type)
         form_ids = data.get("form_ids")
         form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
-        return UpdateUserPrivileges(user_group_id, client_id, user_group_name, form_type, form_ids)
+        return UpdateUserPrivileges(user_group_id, user_group_name, form_ids)
 
     def to_inner_structure(self):
         return {
             "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
-            "client_id": to_structure_SignedIntegerType_8(self.client_id),
             "user_group_name": to_structure_CustomTextType_50(self.user_group_name),
-            "form_type": to_structure_EnumType_core_FORM_TYPE(self.form_type),
             "form_ids": to_structure_VectorType_SignedIntegerType_8(self.form_ids),
         }
 

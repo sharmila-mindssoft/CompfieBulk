@@ -5,15 +5,20 @@ parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorTy
     parse_structure_VariantType_knowledgetransaction_Request,
     parse_structure_VectorType_RecordType_core_Compliance,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
+    parse_structure_VectorType_RecordType_core_ComplianceDurationType,
     parse_structure_EnumType_core_APPROVAL_STATUS,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_SignedIntegerType_8,
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_core_Industry,
+    parse_structure_VectorType_RecordType_core_ComplianceApprovalStatus,
+    parse_structure_VectorType_RecordType_core_ComplianceRepeatType,
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
-    parse_structure_Bool, parse_structure_Text,
+    parse_structure_Bool,
+    parse_structure_VectorType_RecordType_core_ComplianceFrequency,
+    parse_structure_Text,
     parse_structure_VectorType_RecordType_core_StatutoryNature,
     parse_structure_CustomTextType_50,
     parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping
@@ -23,15 +28,20 @@ to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_
     to_structure_VariantType_knowledgetransaction_Request,
     to_structure_VectorType_RecordType_core_Compliance,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
+    to_structure_VectorType_RecordType_core_ComplianceDurationType,
     to_structure_EnumType_core_APPROVAL_STATUS,
     to_structure_VectorType_SignedIntegerType_8,
     to_structure_VectorType_RecordType_core_Domain,
     to_structure_SignedIntegerType_8,
     to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     to_structure_VectorType_RecordType_core_Industry,
+    to_structure_VectorType_RecordType_core_ComplianceApprovalStatus,
+    to_structure_VectorType_RecordType_core_ComplianceRepeatType,
     to_structure_VectorType_RecordType_core_Country,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
-    to_structure_Bool, to_structure_Text,
+    to_structure_Bool,
+    to_structure_VectorType_RecordType_core_ComplianceFrequency,
+    to_structure_Text,
     to_structure_VectorType_RecordType_core_StatutoryNature,
     to_structure_CustomTextType_50,
     to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping
@@ -173,30 +183,34 @@ class ChangeStatutoryMappingStatus(Request):
         }
 
 class ApproveStatutoryMapping(Request):
-    def __init__(self, statutory_mapping_id, approval_status, rejected_reason, notification_text):
+    def __init__(self, statutory_mapping_id, approval_status, rejected_reason, statutory_provision, notification_text):
         self.statutory_mapping_id = statutory_mapping_id
         self.approval_status = approval_status
         self.rejected_reason = rejected_reason
+        self.statutory_provision = statutory_provision
         self.notification_text = notification_text
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_mapping_id", "approval_status", "rejected_reason", "notification_text"])
+        data = parse_dictionary(data, ["statutory_mapping_id", "approval_status", "rejected_reason", "statutory_provision", "notification_text"])
         statutory_mapping_id = data.get("statutory_mapping_id")
         statutory_mapping_id = parse_structure_SignedIntegerType_8(statutory_mapping_id)
         approval_status = data.get("approval_status")
         approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(approval_status)
         rejected_reason = data.get("rejected_reason")
         rejected_reason = parse_structure_Text(rejected_reason)
+        statutory_provision = data.get("statutory_provision")
+        statutory_provision = parse_structure_Text(statutory_provision)
         notification_text = data.get("notification_text")
         notification_text = parse_structure_Text(notification_text)
-        return ApproveStatutoryMapping(statutory_mapping_id, approval_status, rejected_reason, notification_text)
+        return ApproveStatutoryMapping(statutory_mapping_id, approval_status, rejected_reason, statutory_provision, notification_text)
 
     def to_inner_structure(self):
         return {
             "statutory_mapping_id": to_structure_SignedIntegerType_8(self.statutory_mapping_id),
             "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
             "rejected_reason": to_structure_Text(self.rejected_reason),
+            "statutory_provision": to_structure_Text(self.statutory_provision),
             "notification_text": to_structure_Text(self.notification_text),
         }
 
@@ -237,7 +251,7 @@ class Response(object):
         raise NotImplementedError
 
 class GetStatutoryMappingsSuccess(Response):
-    def __init__(self, countries, domains, industries, statutory_natures, statutory_levels, statutories, geography_levels, geographies, statutory_mappings):
+    def __init__(self, countries, domains, industries, statutory_natures, statutory_levels, statutories, geography_levels, geographies, compliance_frequency, compliance_repeat_type, compliance_approval_status, compliance_duration_type, statutory_mappings):
         self.countries = countries
         self.domains = domains
         self.industries = industries
@@ -246,11 +260,15 @@ class GetStatutoryMappingsSuccess(Response):
         self.statutories = statutories
         self.geography_levels = geography_levels
         self.geographies = geographies
+        self.compliance_frequency = compliance_frequency
+        self.compliance_repeat_type = compliance_repeat_type
+        self.compliance_approval_status = compliance_approval_status
+        self.compliance_duration_type = compliance_duration_type
         self.statutory_mappings = statutory_mappings
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "industries", "statutory_natures", "statutory_levels", "statutories", "geography_levels", "geographies", "statutory_mappings"])
+        data = parse_dictionary(data, ["countries", "domains", "industries", "statutory_natures", "statutory_levels", "statutories", "geography_levels", "geographies", "compliance_frequency", "compliance_repeat_type", "compliance_approval_status", "compliance_duration_type", "statutory_mappings"])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
@@ -267,9 +285,17 @@ class GetStatutoryMappingsSuccess(Response):
         geography_levels = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(geography_levels)
         geographies = data.get("geographies")
         geographies = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(geographies)
+        compliance_frequency = data.get("compliance_frequency")
+        compliance_frequency = parse_structure_VectorType_RecordType_core_ComplianceFrequency(compliance_frequency)
+        compliance_repeat_type = data.get("compliance_repeat_type")
+        compliance_repeat_type = parse_structure_VectorType_RecordType_core_ComplianceRepeatType(compliance_repeat_type)
+        compliance_approval_status = data.get("compliance_approval_status")
+        compliance_approval_status = parse_structure_VectorType_RecordType_core_ComplianceApprovalStatus(compliance_approval_status)
+        compliance_duration_type = data.get("compliance_duration_type")
+        compliance_duration_type = parse_structure_VectorType_RecordType_core_ComplianceDurationType(compliance_duration_type)
         statutory_mappings = data.get("statutory_mappings")
         statutory_mappings = parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping(statutory_mappings)
-        return GetStatutoryMappingsSuccess(countries, domains, industries, statutory_natures, statutory_levels, statutories, geography_levels, geographies, statutory_mappings)
+        return GetStatutoryMappingsSuccess(countries, domains, industries, statutory_natures, statutory_levels, statutories, geography_levels, geographies, compliance_frequency, compliance_repeat_type, compliance_approval_status, compliance_duration_type, statutory_mappings)
 
     def to_inner_structure(self):
         return {
@@ -281,6 +307,10 @@ class GetStatutoryMappingsSuccess(Response):
             "statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.statutories),
             "geography_levels": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(self.geography_levels),
             "geographies": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(self.geographies),
+            "compliance_frequency": to_structure_VectorType_RecordType_core_ComplianceFrequency(self.compliance_frequency),
+            "compliance_repeat_type": to_structure_VectorType_RecordType_core_ComplianceRepeatType(self.compliance_repeat_type),
+            "compliance_approval_status": to_structure_VectorType_RecordType_core_ComplianceApprovalStatus(self.compliance_approval_status),
+            "compliance_duration_type": to_structure_VectorType_RecordType_core_ComplianceDurationType(self.compliance_duration_type),
             "statutory_mappings": to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping(self.statutory_mappings),
         }
 

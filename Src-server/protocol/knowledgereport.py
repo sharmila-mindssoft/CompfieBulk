@@ -11,10 +11,10 @@ parse_structure_VectorType_RecordType_knowledgereport_MappingReport,
     parse_structure_VariantType_knowledgereport_Request,
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
-    parse_structure_Bool,
-    parse_structure_VectorType_RecordType_core_StatutoryNature,
+    parse_structure_Bool, parse_structure_CustomTextType_50,
+    parse_structure_OptionalType_SignedIntegerType_8,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping,
-    parse_structure_CustomTextType_50
+    parse_structure_VectorType_RecordType_core_StatutoryNature
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_knowledgereport_MappingReport,
@@ -26,10 +26,10 @@ from protocol.to_structure import (
     to_structure_VariantType_knowledgereport_Request,
     to_structure_VectorType_RecordType_core_Country,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
-    to_structure_Bool,
-    to_structure_VectorType_RecordType_core_StatutoryNature,
+    to_structure_Bool, to_structure_CustomTextType_50,
+    to_structure_OptionalType_SignedIntegerType_8,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping,
-    to_structure_CustomTextType_50
+    to_structure_VectorType_RecordType_core_StatutoryNature
 )
 
 #
@@ -88,23 +88,23 @@ class GetStatutoryMappingReportData(Request):
         domain_id = data.get("domain_id")
         domain_id = parse_structure_SignedIntegerType_8(domain_id)
         industry_id = data.get("industry_id")
-        industry_id = parse_structure_SignedIntegerType_8(industry_id)
+        industry_id = parse_structure_OptionalType_SignedIntegerType_8(industry_id)
         statutory_nature_id = data.get("statutory_nature_id")
-        statutory_nature_id = parse_structure_SignedIntegerType_8(statutory_nature_id)
+        statutory_nature_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_nature_id)
         geography_id = data.get("geography_id")
-        geography_id = parse_structure_SignedIntegerType_8(geography_id)
+        geography_id = parse_structure_OptionalType_SignedIntegerType_8(geography_id)
         level_1_statutory_id = data.get("level_1_statutory_id")
-        level_1_statutory_id = parse_structure_SignedIntegerType_8(level_1_statutory_id)
+        level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
         return GetStatutoryMappingReportData(country_id, domain_id, industry_id, statutory_nature_id, geography_id, level_1_statutory_id)
 
     def to_inner_structure(self):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "industry_id": to_structure_SignedIntegerType_8(self.industry_id),
-            "statutory_nature_id": to_structure_SignedIntegerType_8(self.statutory_nature_id),
-            "geography_id": to_structure_SignedIntegerType_8(self.geography_id),
-            "level_1_statutory_id": to_structure_SignedIntegerType_8(self.level_1_statutory_id),
+            "industry_id": to_structure_OptionalType_SignedIntegerType_8(self.industry_id),
+            "statutory_nature_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_nature_id),
+            "geography_id": to_structure_OptionalType_SignedIntegerType_8(self.geography_id),
+            "level_1_statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
         }
 
 class GetGeographyReport(Request):

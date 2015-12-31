@@ -18,11 +18,13 @@ parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_MapType_SignedIntegerType_8_VectorType_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_VectorType_RecordType_clientreport_StatutoryReassignCompliance,
+    parse_structure_VectorType_RecordType_clientreport_ComplianceUnit,
     parse_structure_VectorType_RecordType_clientreport_FormName,
+    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ApplicabilityCompliance,
+    parse_structure_OptionalType_SignedIntegerType_8,
     parse_structure_CustomTextType_50,
     parse_structure_EnumType_core_COMPLIANCE_STATUS,
     parse_structure_CustomTextType_100,
-    parse_structure_EnumType_core_APPLICABILITY_STATUS,
     parse_structure_EnumType_core_USER_TYPE,
     parse_structure_VectorType_RecordType_clientreport_ActivityLog,
     parse_structure_VectorType_RecordType_core_Unit,
@@ -32,7 +34,7 @@ parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ComplianceUnit,
     parse_structure_VectorType_RecordType_core_Division,
     parse_structure_VectorType_RecordType_clientreport_UnitCompliance,
-    parse_structure_VectorType_RecordType_clientreport_ComplianceUnit,
+    parse_structure_OptionalType_CustomTextType_20,
     parse_structure_VectorType_RecordType_clientreport_ServiceProviderCompliance,
     parse_structure_VectorType_RecordType_clientreport_UnitName,
     parse_structure_EnumType_core_COMPLIANCE_ACTIVITY_STATUS,
@@ -42,8 +44,9 @@ parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_VectorType_RecordType_core_LegalEntity,
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory,
+    parse_structure_OptionalType_EnumType_core_APPLICABILITY_STATUS,
     parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ApplicabilityCompliance,
+    parse_structure_OptionalType_CustomTextType_100,
     parse_structure_VectorType_RecordType_clientreport_ComplianceName,
     parse_structure_CustomTextType_20,
     parse_structure_VectorType_RecordType_clientreport_AssigneeCompliance,
@@ -69,12 +72,13 @@ to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     to_structure_MapType_SignedIntegerType_8_VectorType_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     to_structure_VectorType_RecordType_core_Country,
     to_structure_VectorType_RecordType_clientreport_StatutoryReassignCompliance,
+    to_structure_VectorType_RecordType_clientreport_ComplianceUnit,
     to_structure_VectorType_RecordType_clientreport_FormName,
+    to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ApplicabilityCompliance,
+    to_structure_OptionalType_SignedIntegerType_8,
     to_structure_CustomTextType_50,
     to_structure_EnumType_core_COMPLIANCE_STATUS,
-    to_structure_CustomTextType_100,
-    to_structure_EnumType_core_APPLICABILITY_STATUS,
-    to_structure_EnumType_core_USER_TYPE,
+    to_structure_CustomTextType_100, to_structure_EnumType_core_USER_TYPE,
     to_structure_VectorType_RecordType_clientreport_ActivityLog,
     to_structure_VectorType_RecordType_core_Unit,
     to_structure_VectorType_RecordType_clientreport_UnitWiseCompliance,
@@ -83,7 +87,7 @@ to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ComplianceUnit,
     to_structure_VectorType_RecordType_core_Division,
     to_structure_VectorType_RecordType_clientreport_UnitCompliance,
-    to_structure_VectorType_RecordType_clientreport_ComplianceUnit,
+    to_structure_OptionalType_CustomTextType_20,
     to_structure_VectorType_RecordType_clientreport_ServiceProviderCompliance,
     to_structure_VectorType_RecordType_clientreport_UnitName,
     to_structure_EnumType_core_COMPLIANCE_ACTIVITY_STATUS,
@@ -93,8 +97,9 @@ to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     to_structure_VectorType_RecordType_core_LegalEntity,
     to_structure_VectorType_RecordType_core_Domain,
     to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory,
+    to_structure_OptionalType_EnumType_core_APPLICABILITY_STATUS,
     to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ApplicabilityCompliance,
+    to_structure_OptionalType_CustomTextType_100,
     to_structure_VectorType_RecordType_clientreport_ComplianceName,
     to_structure_CustomTextType_20,
     to_structure_VectorType_RecordType_clientreport_AssigneeCompliance,
@@ -162,17 +167,17 @@ class GetComplianceDetailsReport(Request):
         domain_id = data.get("domain_id")
         domain_id = parse_structure_SignedIntegerType_8(domain_id)
         statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_SignedIntegerType_8(statutory_id)
+        statutory_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_id)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_SignedIntegerType_8(compliance_id)
+        compliance_id = parse_structure_OptionalType_SignedIntegerType_8(compliance_id)
         assignee_id = data.get("assignee_id")
-        assignee_id = parse_structure_SignedIntegerType_8(assignee_id)
+        assignee_id = parse_structure_OptionalType_SignedIntegerType_8(assignee_id)
         from_date = data.get("from_date")
-        from_date = parse_structure_CustomTextType_20(from_date)
+        from_date = parse_structure_OptionalType_CustomTextType_20(from_date)
         to_date = data.get("to_date")
-        to_date = parse_structure_CustomTextType_20(to_date)
+        to_date = parse_structure_OptionalType_CustomTextType_20(to_date)
         compliance_status = data.get("compliance_status")
         compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
         return GetComplianceDetailsReport(country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status)
@@ -181,12 +186,12 @@ class GetComplianceDetailsReport(Request):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "statutory_id": to_structure_SignedIntegerType_8(self.statutory_id),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
-            "assignee_id": to_structure_SignedIntegerType_8(self.assignee_id),
-            "from_date": to_structure_CustomTextType_20(self.from_date),
-            "to_date": to_structure_CustomTextType_20(self.to_date),
+            "statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_id),
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "compliance_id": to_structure_OptionalType_SignedIntegerType_8(self.compliance_id),
+            "assignee_id": to_structure_OptionalType_SignedIntegerType_8(self.assignee_id),
+            "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
+            "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date),
             "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
         }
 
@@ -222,15 +227,15 @@ class GetRiskReport(Request):
         domain_id = data.get("domain_id")
         domain_id = parse_structure_SignedIntegerType_8(domain_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_SignedIntegerType_8(business_group_id)
+        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_SignedIntegerType_8(legal_entity_id)
+        legal_entity_id = parse_structure_OptionalType_SignedIntegerType_8(legal_entity_id)
         division_id = data.get("division_id")
-        division_id = parse_structure_SignedIntegerType_8(division_id)
+        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_SignedIntegerType_8(statutory_id)
+        statutory_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_id)
         statutory_status = data.get("statutory_status")
         statutory_status = parse_structure_SignedIntegerType_8(statutory_status)
         return GetRiskReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_id, statutory_status)
@@ -239,11 +244,11 @@ class GetRiskReport(Request):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
-            "division_id": to_structure_SignedIntegerType_8(self.division_id),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "statutory_id": to_structure_SignedIntegerType_8(self.statutory_id),
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
+            "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
+            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_id),
             "statutory_status": to_structure_SignedIntegerType_8(self.statutory_status),
         }
 
@@ -278,9 +283,9 @@ class GetServiceProviderWiseCompliance(Request):
         statutory_id = data.get("statutory_id")
         statutory_id = parse_structure_SignedIntegerType_8(statutory_id)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         service_provider_id = data.get("service_provider_id")
-        service_provider_id = parse_structure_SignedIntegerType_8(service_provider_id)
+        service_provider_id = parse_structure_OptionalType_SignedIntegerType_8(service_provider_id)
         return GetServiceProviderWiseCompliance(country_id, domain_id, statutory_id, unit_id, service_provider_id)
 
     def to_inner_structure(self):
@@ -288,8 +293,8 @@ class GetServiceProviderWiseCompliance(Request):
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
             "statutory_id": to_structure_SignedIntegerType_8(self.statutory_id),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "service_provider_id": to_structure_SignedIntegerType_8(self.service_provider_id),
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "service_provider_id": to_structure_OptionalType_SignedIntegerType_8(self.service_provider_id),
         }
 
 class GetClientReportFilters(Request):
@@ -323,26 +328,26 @@ class GetAssigneewisecomplianceReport(Request):
         domain_id = data.get("domain_id")
         domain_id = parse_structure_SignedIntegerType_8(domain_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_SignedIntegerType_8(business_group_id)
+        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_SignedIntegerType_8(legal_entity_id)
+        legal_entity_id = parse_structure_OptionalType_SignedIntegerType_8(legal_entity_id)
         division_id = data.get("division_id")
-        division_id = parse_structure_SignedIntegerType_8(division_id)
+        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_OptionalType_SignedIntegerType_8(user_id)
         return GetAssigneewisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id)
 
     def to_inner_structure(self):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
-            "division_id": to_structure_SignedIntegerType_8(self.division_id),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
+            "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
+            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "user_id": to_structure_OptionalType_SignedIntegerType_8(self.user_id),
         }
 
 class GetUnitwisecomplianceReport(Request):
@@ -363,26 +368,26 @@ class GetUnitwisecomplianceReport(Request):
         domain_id = data.get("domain_id")
         domain_id = parse_structure_SignedIntegerType_8(domain_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_SignedIntegerType_8(business_group_id)
+        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_SignedIntegerType_8(legal_entity_id)
+        legal_entity_id = parse_structure_OptionalType_SignedIntegerType_8(legal_entity_id)
         division_id = data.get("division_id")
-        division_id = parse_structure_SignedIntegerType_8(division_id)
+        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_OptionalType_SignedIntegerType_8(user_id)
         return GetUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id)
 
     def to_inner_structure(self):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
-            "division_id": to_structure_SignedIntegerType_8(self.division_id),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
+            "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
+            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "user_id": to_structure_OptionalType_SignedIntegerType_8(self.user_id),
         }
 
 class GetReassignComplianceTaskReportFilters(Request):
@@ -417,29 +422,29 @@ class GetReassignComplianceTaskDetails(Request):
         domain_id = data.get("domain_id")
         domain_id = parse_structure_SignedIntegerType_8(domain_id)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_SignedIntegerType_8(statutory_id)
+        statutory_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_id)
         compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_SignedIntegerType_8(compliance_id)
+        compliance_id = parse_structure_OptionalType_SignedIntegerType_8(compliance_id)
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_OptionalType_SignedIntegerType_8(user_id)
         from_date = data.get("from_date")
-        from_date = parse_structure_CustomTextType_20(from_date)
+        from_date = parse_structure_OptionalType_CustomTextType_20(from_date)
         to_date = data.get("to_date")
-        to_date = parse_structure_CustomTextType_20(to_date)
+        to_date = parse_structure_OptionalType_CustomTextType_20(to_date)
         return GetReassignComplianceTaskDetails(country_id, domain_id, unit_id, statutory_id, compliance_id, user_id, from_date, to_date)
 
     def to_inner_structure(self):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "statutory_id": to_structure_SignedIntegerType_8(self.statutory_id),
-            "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
-            "from_date": to_structure_CustomTextType_20(self.from_date),
-            "to_date": to_structure_CustomTextType_20(self.to_date),
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_id),
+            "compliance_id": to_structure_OptionalType_SignedIntegerType_8(self.compliance_id),
+            "user_id": to_structure_OptionalType_SignedIntegerType_8(self.user_id),
+            "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
+            "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date),
         }
 
 class GetTaskApplicabilityStatusFilters(Request):
@@ -474,29 +479,29 @@ class GetComplianceTaskApplicabilityStatusReport(Request):
         domain_id = data.get("domain_id")
         domain_id = parse_structure_SignedIntegerType_8(domain_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_SignedIntegerType_8(business_group_id)
+        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_SignedIntegerType_8(legal_entity_id)
+        legal_entity_id = parse_structure_OptionalType_SignedIntegerType_8(legal_entity_id)
         division_id = data.get("division_id")
-        division_id = parse_structure_SignedIntegerType_8(division_id)
+        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_SignedIntegerType_8(statutory_id)
+        statutory_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_id)
         applicable_status = data.get("applicable_status")
-        applicable_status = parse_structure_EnumType_core_APPLICABILITY_STATUS(applicable_status)
+        applicable_status = parse_structure_OptionalType_EnumType_core_APPLICABILITY_STATUS(applicable_status)
         return GetComplianceTaskApplicabilityStatusReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_id, applicable_status)
 
     def to_inner_structure(self):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
-            "division_id": to_structure_SignedIntegerType_8(self.division_id),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "statutory_id": to_structure_SignedIntegerType_8(self.statutory_id),
-            "applicable_status": to_structure_EnumType_core_APPLICABILITY_STATUS(self.applicable_status),
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
+            "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
+            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_id),
+            "applicable_status": to_structure_OptionalType_EnumType_core_APPLICABILITY_STATUS(self.applicable_status),
         }
 
 class GetComplianceActivityReportFilters(Request):
@@ -529,31 +534,31 @@ class GetComplianceActivityReport(Request):
         user_type = data.get("user_type")
         user_type = parse_structure_EnumType_core_USER_TYPE(user_type)
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_OptionalType_SignedIntegerType_8(user_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_OptionalType_SignedIntegerType_8(domain_id)
         statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_SignedIntegerType_8(statutory_id)
+        statutory_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_id)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_SignedIntegerType_8(compliance_id)
+        compliance_id = parse_structure_OptionalType_SignedIntegerType_8(compliance_id)
         from_date = data.get("from_date")
-        from_date = parse_structure_CustomTextType_20(from_date)
+        from_date = parse_structure_OptionalType_CustomTextType_20(from_date)
         to_date = data.get("to_date")
-        to_date = parse_structure_CustomTextType_20(to_date)
+        to_date = parse_structure_OptionalType_CustomTextType_20(to_date)
         return GetComplianceActivityReport(user_type, user_id, domain_id, statutory_id, unit_id, compliance_id, from_date, to_date)
 
     def to_inner_structure(self):
         return {
             "user_type": to_structure_EnumType_core_USER_TYPE(self.user_type),
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "statutory_id": to_structure_SignedIntegerType_8(self.statutory_id),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
-            "from_date": to_structure_CustomTextType_20(self.from_date),
-            "to_date": to_structure_CustomTextType_20(self.to_date),
+            "user_id": to_structure_OptionalType_SignedIntegerType_8(self.user_id),
+            "domain_id": to_structure_OptionalType_SignedIntegerType_8(self.domain_id),
+            "statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_id),
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "compliance_id": to_structure_OptionalType_SignedIntegerType_8(self.compliance_id),
+            "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
+            "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date),
         }
 
 class GetReassignedHistoryReportFilters(Request):
@@ -586,23 +591,23 @@ class GetReassignedHistoryReport(Request):
         domain_id = data.get("domain_id")
         domain_id = parse_structure_SignedIntegerType_8(domain_id)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         level_1_statutory_id = data.get("level_1_statutory_id")
-        level_1_statutory_id = parse_structure_SignedIntegerType_8(level_1_statutory_id)
+        level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
         compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_SignedIntegerType_8(compliance_id)
+        compliance_id = parse_structure_OptionalType_SignedIntegerType_8(compliance_id)
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_OptionalType_SignedIntegerType_8(user_id)
         return GetReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id)
 
     def to_inner_structure(self):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "level_1_statutory_id": to_structure_SignedIntegerType_8(self.level_1_statutory_id),
-            "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "level_1_statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
+            "compliance_id": to_structure_OptionalType_SignedIntegerType_8(self.compliance_id),
+            "user_id": to_structure_OptionalType_SignedIntegerType_8(self.user_id),
         }
 
 class GetActivityLogFilters(Request):
@@ -633,17 +638,17 @@ class GetActivityLogReport(Request):
         to_date = data.get("to_date")
         to_date = parse_structure_CustomTextType_20(to_date)
         form_name = data.get("form_name")
-        form_name = parse_structure_CustomTextType_20(form_name)
+        form_name = parse_structure_OptionalType_CustomTextType_20(form_name)
         action = data.get("action")
-        action = parse_structure_CustomTextType_100(action)
+        action = parse_structure_OptionalType_CustomTextType_100(action)
         return GetActivityLogReport(from_date, to_date, form_name, action)
 
     def to_inner_structure(self):
         return {
             "from_date": to_structure_CustomTextType_20(self.from_date),
             "to_date": to_structure_CustomTextType_20(self.to_date),
-            "form_name": to_structure_CustomTextType_20(self.form_name),
-            "action": to_structure_CustomTextType_100(self.action),
+            "form_name": to_structure_OptionalType_CustomTextType_20(self.form_name),
+            "action": to_structure_OptionalType_CustomTextType_100(self.action),
         }
 
 class GetLoginTrace(Request):

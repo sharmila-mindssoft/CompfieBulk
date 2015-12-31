@@ -1,44 +1,48 @@
 import json
 from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
+    parse_structure_VectorType_Text,
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_EnumType_core_APPLICABILITY_STATUS,
     parse_structure_VectorType_RecordType_core_AssignedStatutory,
-    parse_structure_VectorType_SignedIntegerType_8,
-    parse_structure_VectorType_RecordType_core_LegalEntity,
-    parse_structure_VectorType_RecordType_core_GroupCompany,
-    parse_structure_SignedIntegerType_8,
-    parse_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory,
     parse_structure_VariantType_technoreports_Request,
-    parse_structure_VectorType_Text,
+    parse_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory,
+    parse_structure_VectorType_RecordType_core_LegalEntity,
+    parse_structure_OptionalType_VectorType_SignedIntegerType_8,
+    parse_structure_SignedIntegerType_8,
+    parse_structure_VectorType_RecordType_core_Unit,
+    parse_structure_OptionalType_VectorType_RecordType_core_BusinessGroup,
+    parse_structure_VectorType_RecordType_core_GroupCompany,
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_VectorType_RecordType_core_Division,
-    parse_structure_VectorType_RecordType_technoreports_COUNTRY_WISE_NOTIFICATIONS,
     parse_structure_VectorType_RecordType_core_UnitDetails,
-    parse_structure_VectorType_RecordType_core_BusinessGroup,
-    parse_structure_VectorType_RecordType_core_Unit,
+    parse_structure_VectorType_RecordType_technoreports_COUNTRY_WISE_NOTIFICATIONS,
+    parse_structure_OptionalType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_technoreports_UNIT_WISE_ASSIGNED_STATUTORIES,
-    parse_structure_CustomTextType_50
+    parse_structure_CustomTextType_50,
+    parse_structure_OptionalType_VectorType_RecordType_core_Division
 )
 from protocol.to_structure import (
+    to_structure_VectorType_Text,
     to_structure_VectorType_RecordType_core_Domain,
     to_structure_EnumType_core_APPLICABILITY_STATUS,
     to_structure_VectorType_RecordType_core_AssignedStatutory,
-    to_structure_VectorType_SignedIntegerType_8,
-    to_structure_VectorType_RecordType_core_LegalEntity,
-    to_structure_VectorType_RecordType_core_GroupCompany,
-    to_structure_SignedIntegerType_8,
-    to_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory,
     to_structure_VariantType_technoreports_Request,
-    to_structure_VectorType_Text,
+    to_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory,
+    to_structure_VectorType_RecordType_core_LegalEntity,
+    to_structure_OptionalType_VectorType_SignedIntegerType_8,
+    to_structure_SignedIntegerType_8,
+    to_structure_VectorType_RecordType_core_Unit,
+    to_structure_OptionalType_VectorType_RecordType_core_BusinessGroup,
+    to_structure_VectorType_RecordType_core_GroupCompany,
     to_structure_VectorType_RecordType_core_Country,
     to_structure_VectorType_RecordType_core_Division,
-    to_structure_VectorType_RecordType_technoreports_COUNTRY_WISE_NOTIFICATIONS,
     to_structure_VectorType_RecordType_core_UnitDetails,
-    to_structure_VectorType_RecordType_core_BusinessGroup,
-    to_structure_VectorType_RecordType_core_Unit,
+    to_structure_VectorType_RecordType_technoreports_COUNTRY_WISE_NOTIFICATIONS,
+    to_structure_OptionalType_SignedIntegerType_8,
     to_structure_VectorType_RecordType_technoreports_UNIT_WISE_ASSIGNED_STATUTORIES,
-    to_structure_CustomTextType_50
+    to_structure_CustomTextType_50,
+    to_structure_OptionalType_VectorType_RecordType_core_Division
 )
 
 #
@@ -98,26 +102,26 @@ class GetClientDetailsReportData(Request):
         group_id = data.get("group_id")
         group_id = parse_structure_SignedIntegerType_8(group_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_SignedIntegerType_8(business_group_id)
+        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_SignedIntegerType_8(legal_entity_id)
+        legal_entity_id = parse_structure_OptionalType_SignedIntegerType_8(legal_entity_id)
         division_id = data.get("division_id")
-        division_id = parse_structure_SignedIntegerType_8(division_id)
+        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        domain_ids = parse_structure_OptionalType_VectorType_SignedIntegerType_8(domain_ids)
         return GetClientDetailsReportData(country_id, group_id, business_group_id, legal_entity_id, division_id, unit_id, domain_ids)
 
     def to_inner_structure(self):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "group_id": to_structure_SignedIntegerType_8(self.group_id),
-            "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
-            "division_id": to_structure_SignedIntegerType_8(self.division_id),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
+            "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
+            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "domain_ids": to_structure_OptionalType_VectorType_SignedIntegerType_8(self.domain_ids),
         }
 
 class GetStatutoryNotifications(Request):
@@ -147,9 +151,9 @@ class GetAssignedStatutoryReportFilters(Request):
         }
 
 class GetAssignedStatutoryReport(Request):
-    def __init__(self, country_id, domain_ids, group_id, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_id, applicability_status):
+    def __init__(self, country_id, domain_id, group_id, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_id, applicability_status):
         self.country_id = country_id
-        self.domain_ids = domain_ids
+        self.domain_id = domain_id
         self.group_id = group_id
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
@@ -160,37 +164,37 @@ class GetAssignedStatutoryReport(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_ids", "group_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "level_1_statutory_id", "applicability_status"])
+        data = parse_dictionary(data, ["country_id", "domain_id", "group_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "level_1_statutory_id", "applicability_status"])
         country_id = data.get("country_id")
         country_id = parse_structure_SignedIntegerType_8(country_id)
-        domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_SignedIntegerType_8(domain_id)
         group_id = data.get("group_id")
-        group_id = parse_structure_SignedIntegerType_8(group_id)
+        group_id = parse_structure_OptionalType_SignedIntegerType_8(group_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_SignedIntegerType_8(business_group_id)
+        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_SignedIntegerType_8(legal_entity_id)
+        legal_entity_id = parse_structure_OptionalType_SignedIntegerType_8(legal_entity_id)
         division_id = data.get("division_id")
-        division_id = parse_structure_SignedIntegerType_8(division_id)
+        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         level_1_statutory_id = data.get("level_1_statutory_id")
-        level_1_statutory_id = parse_structure_SignedIntegerType_8(level_1_statutory_id)
+        level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
         applicability_status = data.get("applicability_status")
         applicability_status = parse_structure_EnumType_core_APPLICABILITY_STATUS(applicability_status)
-        return GetAssignedStatutoryReport(country_id, domain_ids, group_id, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_id, applicability_status)
+        return GetAssignedStatutoryReport(country_id, domain_id, group_id, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_id, applicability_status)
 
     def to_inner_structure(self):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "group_id": to_structure_SignedIntegerType_8(self.group_id),
-            "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
-            "division_id": to_structure_SignedIntegerType_8(self.division_id),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "level_1_statutory_id": to_structure_SignedIntegerType_8(self.level_1_statutory_id),
+            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "group_id": to_structure_OptionalType_SignedIntegerType_8(self.group_id),
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
+            "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
+            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "level_1_statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
             "applicability_status": to_structure_EnumType_core_APPLICABILITY_STATUS(self.applicability_status),
         }
 
@@ -250,11 +254,11 @@ class GetClientDetailsReportFiltersSuccess(Response):
         group_companies = data.get("group_companies")
         group_companies = parse_structure_VectorType_RecordType_core_GroupCompany(group_companies)
         business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
+        business_groups = parse_structure_OptionalType_VectorType_RecordType_core_BusinessGroup(business_groups)
         legal_entities = data.get("legal_entities")
         legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
         divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        divisions = parse_structure_OptionalType_VectorType_RecordType_core_Division(divisions)
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_core_Unit(units)
         return GetClientDetailsReportFiltersSuccess(countries, domains, group_companies, business_groups, legal_entities, divisions, units)
@@ -264,9 +268,9 @@ class GetClientDetailsReportFiltersSuccess(Response):
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
             "group_companies": to_structure_VectorType_RecordType_core_GroupCompany(self.group_companies),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
+            "business_groups": to_structure_OptionalType_VectorType_RecordType_core_BusinessGroup(self.business_groups),
             "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
+            "divisions": to_structure_OptionalType_VectorType_RecordType_core_Division(self.divisions),
             "units": to_structure_VectorType_RecordType_core_Unit(self.units),
         }
 
