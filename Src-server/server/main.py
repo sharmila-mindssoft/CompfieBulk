@@ -143,30 +143,12 @@ class API(object):
 
     @api_request(general.RequestFormat)
     def handle_general(self, request, db):
-        session_token = request.session_token
-        request_frame = request.request
-        user_id = controller.validate_user_session(db, session_token)
-        if user_id is None:
-            return login.InvalidSessionToken()
+        return controller.process_general_request(request, db)
 
-        if type(request_frame) is general.UpdateUserProfile :
-            return controller.procees_update_user_profile(db, request_frame, user_id)
-        if type(request_frame) is general.GetDomains :
-            return controller.process_get_domains(db, user_id)
-        if type(request_frame) is general.SaveDomain :
-            return controller.process_save_domain(db, request_frame, user_id)
-        if type(request_frame) is general.UpdateDomain :
-            return controller.process_update_domain(db, request_frame, user_id)
-        if type(request_frame) is general.ChangeDomainStatus :
-            return controller.process_change_domain_status(db, request_frame, user_id)
-        if type(request_frame) is general.GetCountries :
-            return controller.process_get_countries(db, user_id)
-        if type(request_frame) is general.SaveCountry :
-            return controller.process_save_country(db, request_frame, user_id)
-        if type(request_frame) is general.UpdateCountry :
-            return controller.process_update_country(db, request_frame, user_id)
-        if type(request_frame) is general.ChangeCountryStatus :
-            return controller.process_change_country_status(db, request_frame, user_id)
+    @api_request(knowledgemaster. RequestFormat)
+    def handle_knowledge_master(self, request, db) :
+        return controller.process_knowledge_master_request(request, db)
+
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
@@ -248,6 +230,7 @@ def run_server(port):
                 api.handle_client_admin_settings
             ),
             ("/api/general", api.handle_general),
+            ("/api/knowledge_master", api.handle_knowledge_master),
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

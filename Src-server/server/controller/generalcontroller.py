@@ -1,4 +1,4 @@
-from protocol import general, core
+from protocol import login, general, core
 
 __all__ = [
 	"validate_user_session", "process_save_domain", "process_update_domain",
@@ -9,6 +9,33 @@ __all__ = [
 	"process_get_notifications",
 	"process_update_notification_status"
 ]
+
+def process_general_request(request, db) :
+	session_token = request.session_token
+    request_frame = request.request
+    user_id = validate_user_session(db, session_token)
+    if user_id is None:
+        return login.InvalidSessionToken()
+
+    if type(request_frame) is general.UpdateUserProfile :
+        return procees_update_user_profile(db, request_frame, user_id)
+    if type(request_frame) is general.GetDomains :
+        return process_get_domains(db, user_id)
+    if type(request_frame) is general.SaveDomain :
+        return process_save_domain(db, request_frame, user_id)
+    if type(request_frame) is general.UpdateDomain :
+        return process_update_domain(db, request_frame, user_id)
+    if type(request_frame) is general.ChangeDomainStatus :
+        return process_change_domain_status(db, request_frame, user_id)
+    if type(request_frame) is general.GetCountries :
+        return process_get_countries(db, user_id)
+    if type(request_frame) is general.SaveCountry :
+        return process_save_country(db, request_frame, user_id)
+    if type(request_frame) is general.UpdateCountry :
+        return process_update_country(db, request_frame, user_id)
+    if type(request_frame) is general.ChangeCountryStatus :
+        return process_change_country_status(db, request_frame, user_id)
+
 
 def validate_user_session(db, session_token):
 	return db.validate_session_token(session_token)
