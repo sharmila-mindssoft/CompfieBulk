@@ -21,7 +21,20 @@
       alert("failure_data"+data)
     }
     $(document).ready(function(){
-      mirror.getClientGroups(callback, failure_callback)
+        businessGroup = null  //mirror.getBusinessGroupDict(4,"Test Business Group 3");
+        legalEntity = mirror.getLegalEntityDict(2,"Test Legal Entity 1");
+        division = null//mirror.getDivisionDict(11, "Test Division 11");
+        domainIds = [1]
+        unit1 = mirror.getUnitDict(null, "Test Unit 17", "UN017", "Test Address 17", "668234", 1, "Test location 17", 1, "Test Industry 17", domainIds)
+        unit2 = mirror.getUnitDict(null, "Test Unit 18", "UN018", "Test Address 18", "668234", 1, "Test location 18", 1, "Test Industry 18", domainIds)
+
+        Units = [unit1, unit2]
+        countryId = 1
+        countryWiseUnits = []
+        countryWiseUnits.push(mirror.mapUnitsToCountry(countryId, Units))
+
+        mirror.saveClient(2, businessGroup, legalEntity, 
+        division, countryWiseUnits, callback, failure_callback) 
     });
 </script>
 </body>

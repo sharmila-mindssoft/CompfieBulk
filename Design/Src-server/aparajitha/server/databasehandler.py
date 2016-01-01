@@ -688,6 +688,63 @@ class DatabaseHandler(object) :
 #   Unit creation
 #
     
+    def saveBusinessGroup(self, clientId, busienssGroupId, businessGroupName, sessionUser):
+        currentTimeStamp = getCurrentTimeStamp()
+        columns = ["client_id", "business_group_id", "business_group_name", 
+        "created_by", "created_on", "updated_by", "updated_on"]
+        values = [clientId, busienssGroupId, businessGroupName, sessionUser, currentTimeStamp,
+        sessionUser, currentTimeStamp]
+        return self.insert(self.tblBusinessGroups, columns, values)
+
+    def saveLegalEntity(self, clientId, legalEntityId, legalEntityName, businessGroupId, sessionUser):
+        currentTimeStamp = getCurrentTimeStamp()
+        columns = ["client_id", "legal_entity_id", "legal_entity_name", "business_group_id", 
+        "created_by", "created_on", "updated_by", "updated_on"]
+        values = [clientId, legalEntityId, legalEntityName, businessGroupId, 
+        sessionUser, currentTimeStamp, sessionUser, currentTimeStamp]
+        return self.insert(self.tblLegalEntities, columns, values)
+    
+    def saveDivision(self, clientId, divisionId, divisionName, businessGroupId, legalEntityId, sessionUser):
+        currentTimeStamp = getCurrentTimeStamp()
+        columns = ["client_id", "division_id", "division_name", "business_group_id", "legal_entity_id",
+        "created_by", "created_on", "updated_by", "updated_on"]
+        values = [clientId, divisionId, divisionName, businessGroupId, legalEntityId,
+        sessionUser, currentTimeStamp, sessionUser, currentTimeStamp]
+        return self.insert(self.tblDivisions, columns, values)
+
+    def saveUnit(self, clientId,  units, businessGroupId, legalEntityId, divisionId, sessionUser):
+        currentTimeStamp = str(getCurrentTimeStamp())
+        columns = ["unit_id", "client_id", "legal_entity_id", "country_id", "geography_id", "industry_id", 
+        "domain_ids", "unit_code", "unit_name", "address", "postal_code", "is_active", "created_by", 
+        "created_on", "updated_by", "updated_on"]
+        if businessGroupId != None:
+            columns.append("business_group_id")
+        if divisionId != None:
+            columns.append("division_id")
+        valuesList = []
+        for unit in units:
+            domainIds = ",".join(str(x) for x in unit["domain_ids"])
+            if businessGroupId != None and divisionId != None:
+                valuesTuple = (str(unit["unit_id"]), clientId, legalEntityId, str(unit["country_id"]), str(unit["geography_id"]),
+                    str(unit["industry_id"]), domainIds, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
+                    str(unit["postal_code"]), 1, sessionUser, currentTimeStamp, sessionUser, currentTimeStamp, 
+                    businessGroupId, divisionId)
+            elif businessGroupId != None:
+                valuesTuple = (str(unit["unit_id"]), clientId, legalEntityId, str(unit["country_id"]), str(unit["geography_id"]),
+                    str(unit["industry_id"]), domainIds, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
+                    str(unit["postal_code"]), 1, sessionUser, currentTimeStamp, sessionUser, currentTimeStamp, 
+                    businessGroupId)    
+            elif divisionId != None :
+                valuesTuple = (str(unit["unit_id"]), clientId, legalEntityId, str(unit["country_id"]), str(unit["geography_id"]),
+                    str(unit["industry_id"]), domainIds, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
+                    str(unit["postal_code"]), 1, sessionUser, currentTimeStamp, sessionUser, currentTimeStamp, 
+                    divisionId)   
+            else: 
+                valuesTuple = (str(unit["unit_id"]), clientId, legalEntityId, str(unit["country_id"]), str(unit["geography_id"]),
+                        str(unit["industry_id"]), domainIds, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
+                        str(unit["postal_code"]), 1, sessionUser, currentTimeStamp, sessionUser, currentTimeStamp)
+            valuesList.append(valuesTuple)
+        return self.bulkInsert(self.tblUnits, columns, valuesList)
 
     def truncate(self, table):
         query = "TRUNCATE TABLE  %s;" % table

@@ -838,10 +838,49 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function getUnit(){
-        unit = {}
-        unit["a"] = a
-        return unit
+    function getBusinessGroupDict(businessGroupId, busienssGroupName){
+        return {
+            "business_group_id" : businessGroupId,
+            "business_group_name" : busienssGroupName
+        }
+    }
+
+    function getLegalEntityDict(legalEntityId, legalEntityName){
+        return {
+            "legal_entity_id" : legalEntityId,
+            "legal_entity_name" : legalEntityName
+        }
+    }
+
+    function getDivisionDict(divisionId, divisionName){
+        return {
+            "division_id" : divisionId,
+            "division_name" : divisionName
+        }
+    }
+
+    function getUnitDict(unitId, unitName, unitCode, unitAddress,
+        postalCode, geographyId, unitLocation, industryId, industryName,
+        domainIds){
+        return {
+            "unit_id" : unitId,
+            "unit_name" : unitName,
+            "unit_code" : unitCode,
+            "unit_address" : unitAddress,
+            "postal_code" : postalCode,
+            "geography_id" : geographyId,
+            "unit_location" : unitLocation,
+            "industry_id" : industryId,
+            "industry_name" : industryName,
+            "domain_ids" : domainIds
+        }
+    }
+
+    function mapUnitsToCountry(countryId, units){
+        return {
+            "country_id" : countryId,
+            "units" : units
+        }
     }
 
     function saveClient(clientId, businessGroup, legalEntity, 
@@ -1264,6 +1303,11 @@ function initMirror() {
         resetPassword: resetPassword,
 
         getClients: getClients,
+        getBusinessGroupDict :getBusinessGroupDict , 
+        getLegalEntityDict :getLegalEntityDict , 
+        getDivisionDict :getDivisionDict , 
+        getUnitDict :getUnitDict , 
+        mapUnitsToCountry : mapUnitsToCountry,
         saveClient: saveClient,
         updateClient : updateClient,
         changeClientStatus: changeClientStatus,
