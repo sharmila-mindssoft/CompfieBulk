@@ -727,25 +727,30 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateClientGroup(clientGroupDetails, 
-        dateConfigurations, callback, failure_callback) {
+    function getUpdateClientGroupDict(clientId, groupName, countryIds, domainIds, logo,
+        contractFrom, contractTo, inchargePersons, noOfUserLicence, fileSpace,
+        isSmsSubscribed, dateConfigurations){
+        return {
+            "client_id": clientId,
+            "group_name": groupName,
+            "country_ids": countryIds,
+            "domain_ids": domainIds,
+            "logo" : logo,
+            "contract_from": contractFrom,
+            "contract_to": contractTo,
+            "incharge_persons": inchargePersons,
+            "no_of_user_licence": noOfUserLicence,
+            "file_space": fileSpace,
+            "is_sms_subscribed": isSmsSubscribed,
+            "date_configurations":dateConfigurations
+        }
+    } 
+
+    function updateClientGroup(clientGroupDetails, callback, failure_callback) {
         callerName = "TechnoAPI"
         var request = [
             "UpdateClientGroup",
-            {
-                "client_id": clientGroupDetails["client_id"],
-                "group_name": clientGroupDetails["group_name"],
-                "country_ids": clientGroupDetails["country_ids"],
-                "domain_ids":clientGroupDetails["domain_ids"],
-                "logo" : clientGroupDetails["logo"],
-                "contract_from": clientGroupDetails["contract_from"],
-                "contract_to": clientGroupDetails["contract_to"],
-                "incharge_persons": clientGroupDetails["incharge_persons"],
-                "no_of_user_licence": clientGroupDetails["no_of_user_licence"],
-                "file_space": clientGroupDetails["file_space"],
-                "is_sms_subscribed": clientGroupDetails["is_sms_subscribed"],
-                "date_configurations":dateConfigurations
-            }
+            clientGroupDetails
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }
@@ -1248,6 +1253,7 @@ function initMirror() {
         getDateConfigurations: getDateConfigurations,
         getSaveClientGroupDict: getSaveClientGroupDict,
         saveClientGroup: saveClientGroup,
+        getUpdateClientGroupDict: getUpdateClientGroupDict,
         updateClientGroup: updateClientGroup,
         getClientGroups: getClientGroups,
         changeClientGroupStatus: changeClientGroupStatus,

@@ -504,7 +504,10 @@ class DatabaseHandler(object) :
     def saveDateConfigurations(self, clientId, dateConfigurations, sessionUser):
         valuesList = []
         currentTimeStamp = getCurrentTimeStamp()
-        columns = "client_id, country_id ,domain_id, period_from, period_to, updated_by, updated_on"
+        columns = ["client_id", "country_id" ,"domain_id", "period_from", 
+        "period_to", "updated_by", "updated_on"]
+        condition = "client_id='%d'"%clientId
+        self.delete(self.tblClientConfigurations, condition)
         for configuration in dateConfigurations:
             countryId = configuration["country_id"]
             domainId = configuration["domain_id"]
@@ -513,9 +516,7 @@ class DatabaseHandler(object) :
             valuesTuple = (clientId, countryId, domainId, periodFrom, periodTo, 
                  int(sessionUser), str(currentTimeStamp))
             valuesList.append(valuesTuple)
-        updateColums = ["period_from", "period_to"]
-        return self.onDuplicateKeyUpdate(self.tblClientConfigurations,columns,valuesList, 
-            updateColums)
+        return self.bulkInsert(self.tblClientConfigurations,columns,valuesList)
 
     def saveClientCountries(self, clientId, countryIds):
         valuesList = []
@@ -632,6 +633,18 @@ class DatabaseHandler(object) :
         clientGroup.shortName, ','.join(str(x) for x in clientGroup.inchargePersons),1, sessionUser,
         currentTimeStamp, sessionUser, currentTimeStamp]
         return self.insert(self.tblClientGroups, columns, values)
+
+    def updateClientGroup(self, clientGroup, sessionUser):
+        currentTimeStamp = getCurrentTimeStamp()
+        columns = ["group_name", "logo_url", "logo_size", "contract_from", 
+        "contract_to", "no_of_user_licence", "total_disk_space", "is_sms_subscribed", 
+        "incharge_persons", "is_active", "updated_by", "updated_on"]
+        values = [clientGroup.groupName, clientGroup.logo,1200, clientGroup.contractFrom, clientGroup.contractTo,
+        clientGroup.noOfLicence, clientGroup.fileSpace, clientGroup.isSmsSubscribed,
+        ','.join(str(x) for x in clientGroup.inchargePersons),1, sessionUser,
+        currentTimeStamp]
+        condition = "client_id = '%d'" % clientGroup.clientId
+        return self.update(self.tblClientGroups, columns, values, condition)
 
     def saveClientUser(self, clientGroup, sessionUser):
         columns = ["client_id", "user_id",  "email_id", 

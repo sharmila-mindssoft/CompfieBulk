@@ -382,6 +382,10 @@ class ClientGroup(object) :
     def generateNewClientId(self) :
         return self.db.generateNewId(self.db.tblClientGroups, "client_id")
 
+    def isIdInvalid(self):
+        condition = "client_id = '%d'" % self.clientId
+        return not self.db.isAlreadyExists(self.db.tblClientGroups, condition)
+
     def isDuplicateGroupName(self):
         condition = "group_name ='%s' AND client_id != '%d'" % (self.groupName, self.clientId)
         return self.db.isAlreadyExists(self.db.tblClientGroups, condition)   
@@ -407,6 +411,8 @@ class ClientGroup(object) :
         self.username = JSONHelper.getString(requestData, "email_id")     
         self.shortName = JSONHelper.getString(requestData, "short_name")     
         self.dateConfigurations = JSONHelper.getList(requestData, "date_configurations")
+        self.contractFrom = stringToDatetime(self.contractFrom)
+        self.contractTo = stringToDatetime(self.contractTo)
 
         self.clientId = self.generateNewClientId()
         if self.isDuplicateGroupName():
@@ -424,6 +430,38 @@ class ClientGroup(object) :
 
         return commonResponseStructure(self.response,{})
 
+    def updateClientGroup(self, requestData, sessionUser):
+        self.sessionUser = int(sessionUser)
+        self.response = ""
+
+        self.clientId = JSONHelper.getInt(requestData, "client_id")
+        self.groupName = JSONHelper.getString(requestData, "group_name")
+        self.countryIds = JSONHelper.getList(requestData, "country_ids")
+        self.domainIds = JSONHelper.getList(requestData, "domain_ids")
+        self.logo = JSONHelper.getString(requestData, "logo")
+        self.contractFrom = JSONHelper.getString(requestData, "contract_from")
+        self.contractTo = JSONHelper.getString(requestData, "contract_to")
+        self.inchargePersons = JSONHelper.getList(requestData, "incharge_persons")
+        self.noOfLicence = JSONHelper.getInt(requestData, "no_of_user_licence")
+        self.fileSpace = JSONHelper.getInt(requestData, "file_space") * 1000000000
+        self.isSmsSubscribed = JSONHelper.getInt(requestData, "is_sms_subscribed")    
+        self.dateConfigurations = JSONHelper.getList(requestData, "date_configurations")
+        self.contractFrom = stringToDatetime(self.contractFrom)
+        self.contractTo = stringToDatetime(self.contractTo)
+
+        if self.isIdInvalid():
+            self.response = "InvalidClientId"
+        elif self.isDuplicateGroupName():
+            self.response = "GroupNameAlreadyExists"
+        else:
+            self.db.updateClientGroup(self, sessionUser)
+            self.db.saveDateConfigurations(self.clientId, self.dateConfigurations, sessionUser)
+            self.db.saveClientCountries(self.clientId, self.countryIds)
+            self.db.saveClientDomains(self.clientId, self.domainIds)
+            self.db.saveInchargePersons(self)
+            self.response = "UpdateClientGroupSuccess"
+
+        return commonResponseStructure(self.response,{})
      
 class ClientController(object):
     businessGroupTblName = "tbl_business_groups"

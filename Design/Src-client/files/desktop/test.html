@@ -24,28 +24,27 @@
         dateConfigurations = []
 
         configuration1 = mirror.getDateConfigurations(1,1,1,12)
-        configuration2 = mirror.getDateConfigurations(1,1,6,5)
+        configuration2 = mirror.getDateConfigurations(1,2,6,5)
         dateConfigurations.push(configuration1)
         dateConfigurations.push(configuration2)
 
-        group_name = "Client Test Group 1";
-        country_ids = [1];
-        domain_ids = [1];
+        client_id = 3
+        group_name = "Client Test Group 2 Update";
+        country_ids = [2];
+        domain_ids = [2];
         logo = "logo.png";
-        contract_from = "02-Nov-2015";
-        contract_to = "01-Nov-2016";
-        incharge_persons = [1];
+        contract_from = "02-Nov-2016";
+        contract_to = "01-Nov-2017";
+        incharge_persons = [2];
         no_of_user_licence = 10;
         file_space = 4;
         is_sms_subscribed = 1;
-        email_id = "ClientTestGroup1@domain.com";
-        shortName = "test1"
-        clientGroupDetails = mirror.getSaveClientGroupDict(group_name,
+        clientGroupDetails = mirror.getUpdateClientGroupDict(client_id, group_name,
             country_ids, domain_ids, logo, contract_from, contract_to,
             incharge_persons, no_of_user_licence,file_space,
-            is_sms_subscribed, email_id, dateConfigurations, shortName)
+            is_sms_subscribed, dateConfigurations)
 
-        mirror.saveClientGroup(clientGroupDetails, callback,failure_callback);
+        mirror.updateClientGroup(clientGroupDetails, callback,failure_callback);
     });
 </script>
 </body>
