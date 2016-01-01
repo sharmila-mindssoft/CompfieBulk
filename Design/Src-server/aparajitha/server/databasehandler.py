@@ -663,6 +663,12 @@ class DatabaseHandler(object) :
             valuesList.append(valuesTuple)
         return self.bulkInsert(self.tblUserClients, columns, valuesList)
 
+    def updateClientGroupStatus(self, clientId, isActive, sessionUser):
+        columns = ["is_active", "updated_by", "updated_on"]
+        values = [ isActive, int(sessionUser), getCurrentTimeStamp()]
+        condition = "client_id='%d'" % clientId
+        return self.update(self.tblClientGroups, columns, values, condition)
+
     def truncate(self, table):
         query = "TRUNCATE TABLE  %s;" % table
         return self.execute(query)

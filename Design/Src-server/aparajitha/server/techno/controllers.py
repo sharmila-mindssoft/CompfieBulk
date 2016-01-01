@@ -397,7 +397,6 @@ class ClientGroup(object) :
     def saveClientGroup(self, requestData, sessionUser):
         self.sessionUser = int(sessionUser)
         self.response = ""
-
         self.groupName = JSONHelper.getString(requestData, "group_name")
         self.countryIds = JSONHelper.getList(requestData, "country_ids")
         self.domainIds = JSONHelper.getList(requestData, "domain_ids")
@@ -413,7 +412,6 @@ class ClientGroup(object) :
         self.dateConfigurations = JSONHelper.getList(requestData, "date_configurations")
         self.contractFrom = stringToDatetime(self.contractFrom)
         self.contractTo = stringToDatetime(self.contractTo)
-
         self.clientId = self.generateNewClientId()
         if self.isDuplicateGroupName():
             self.response = "GroupNameAlreadyExists"
@@ -427,13 +425,11 @@ class ClientGroup(object) :
             self.db.createAndSaveClientDatabase(self.groupName, self.clientId, self.shortName, self.username)
             self.db.saveInchargePersons(self)
             self.response = "SaveClientGroupSuccess"
-
         return commonResponseStructure(self.response,{})
 
     def updateClientGroup(self, requestData, sessionUser):
         self.sessionUser = int(sessionUser)
         self.response = ""
-
         self.clientId = JSONHelper.getInt(requestData, "client_id")
         self.groupName = JSONHelper.getString(requestData, "group_name")
         self.countryIds = JSONHelper.getList(requestData, "country_ids")
@@ -448,7 +444,6 @@ class ClientGroup(object) :
         self.dateConfigurations = JSONHelper.getList(requestData, "date_configurations")
         self.contractFrom = stringToDatetime(self.contractFrom)
         self.contractTo = stringToDatetime(self.contractTo)
-
         if self.isIdInvalid():
             self.response = "InvalidClientId"
         elif self.isDuplicateGroupName():
@@ -460,8 +455,19 @@ class ClientGroup(object) :
             self.db.saveClientDomains(self.clientId, self.domainIds)
             self.db.saveInchargePersons(self)
             self.response = "UpdateClientGroupSuccess"
-
         return commonResponseStructure(self.response,{})
+
+    def changeClientGroupStatus(self, requestData, sessionUser):
+        self.sessionUser = int(sessionUser)
+        self.response = ""
+        self.clientId = JSONHelper.getInt(requestData, "client_id")
+        self.isActive = JSONHelper.getInt(requestData, "is_active")
+        if self.isIdInvalid():
+            self.response = "InvalidClientId"
+        else:
+            self.db.updateClientGroupStatus(self.clientId, self.isActive, sessionUser)
+            self.response = "ChangeClientGroupStatusSuccess"
+        return commonResponseStructure(self.response, {})
      
 class ClientController(object):
     businessGroupTblName = "tbl_business_groups"
