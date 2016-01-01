@@ -5,7 +5,7 @@ import os
 
 from aparajitha.server.constants import ROOT_PATH
 from aparajitha.server.databasehandler import DatabaseHandler
-from aparajitha.server.admin.models import User
+from aparajitha.server.admin.controllers import User
 from aparajitha.server.knowledge.models import DomainList, CountryList, GeographyLevelList
 from aparajitha.server.knowledge.models import IndustryList, Geography, GeographyAPI
 from aparajitha.server.common import *
@@ -70,11 +70,14 @@ class GroupCompany(object):
             "is_active": self.isActive
         }
 
-    def getGroupCompanyDetails(self, sessionUser, clientIds):
+    def getGroupCompanyDetails(self, sessionUser = None, clientIds = None):
         clientRows = None
         if sessionUser != None:
             clientRows = self.db.getClientIds(sessionUser)
-        clientIds = clientRows[0][0] if clientIds == None else clientIds
+            clientIds = clientRows[0][0]
+        elif clientIds == None:
+            clientRows = self.db.getAllClientIds()
+            clientIds = clientRows[0][0]
         clientRows = self.db.getGroupCompanyDetails(clientIds)
         clientList = []
         for row in clientRows:
@@ -82,13 +85,15 @@ class GroupCompany(object):
             self.groupName = row[1]
             self.username = row[2]
             self.logo = row[3]
-            self.contractFrom = row[4]
-            self.contractTo = row[5]
+            self.contractFrom = datetimeToString(row[4])
+            self.contractTo = datetimeToString(row[5])
             self.noOfUserLicence = row[6]
             self.fileSpace = row[7]
             self.isSmsSubscribed = row[8]
             self.inchargePersons = row[9]
             self.isActive = row[10]
+            self.countryIds = [int(x) for x in self.db.getClientCountries(self.clientId).split(",")]
+            self.domainIds = [int(x) for x in self.db.getClientDomains(self.clientId).split(",")]
             self.dateConfigurations = ClientConfiguration(
                 self.clientId, self.db).getClientConfigurations()
             clientList.append(self.toDetailedStructure())
@@ -369,14 +374,13 @@ class ClientGroup(object) :
         responseData = {}
         domainList = DomainList.getDomainList()
         countryList = CountryList.getCountryList()
-        userList = User.getList()
-        clientList = GroupCompany.getDetailedClientList()
+        userList = User().getList()
+        clientList = GroupCompany(self.db).getGroupCompanyDetails()
 
         responseData["domains"] = domainList
         responseData["countries"] = countryList
         responseData["users"] = userList
         responseData["client_list"] = clientList
-
         return commonResponseStructure("GetClientGroupsSuccess",responseData)
 
     def generateNewClientId(self) :

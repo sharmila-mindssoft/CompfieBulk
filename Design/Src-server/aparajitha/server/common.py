@@ -126,7 +126,7 @@ def stringToDatetime(string):
     return datetimeVal
 
 def datetimeToString(datetimeVal):
-    return "%d-%s-%d" % (datetimeVal.day, StringMonths[datetimeVal.month], datetimeVal.year)
+    return "%d-%s-%d"% (datetimeVal.day, StringMonths[datetimeVal.month], datetimeVal.year)
 
 def datetimeToTimestamp(d) :
     return calendar.timegm(d.timetuple())

@@ -379,8 +379,8 @@ class DatabaseHandler(object) :
         rows = self.getData( self.tblUserClients, columns,  condition)
         return rows[0][0]
 
-    def getList(self):
-        columns = "user_id, employee_name, employee_code"
+    def getUserList(self):
+        columns = "user_id, employee_name, employee_code, is_active"
         rows = self.getData(self.tblUsers, columns, "1")
         return rows
 
@@ -668,6 +668,26 @@ class DatabaseHandler(object) :
         values = [ isActive, int(sessionUser), getCurrentTimeStamp()]
         condition = "client_id='%d'" % clientId
         return self.update(self.tblClientGroups, columns, values, condition)
+
+    def getAllClientIds(self):
+        columns = "group_concat(client_id)"
+        return self.getData(self.tblClientGroups, columns, "1")
+
+    def getClientCountries(self, clientId):
+        columns = "group_concat(country_id)"
+        condition = "client_id ='%d'" % clientId
+        rows = self.getData(self.tblClientCountries, columns, condition)
+        return rows[0][0]
+
+    def getClientDomains(self, clientId):
+        columns = "group_concat(domain_id)"
+        condition = "client_id ='%d'" % clientId
+        rows = self.getData(self.tblClientDomains, columns, condition)
+        return rows[0][0]
+#
+#   Unit creation
+#
+    
 
     def truncate(self, table):
         query = "TRUNCATE TABLE  %s;" % table

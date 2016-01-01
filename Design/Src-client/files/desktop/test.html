@@ -21,10 +21,7 @@
       alert("failure_data"+data)
     }
     $(document).ready(function(){
-      clientId = 2
-      isActive = 0
-      mirror.changeClientGroupStatus( clientId, isActive, 
-        callback, failure_callback)
+      mirror.getClientGroups(callback, failure_callback)
     });
 </script>
 </body>
