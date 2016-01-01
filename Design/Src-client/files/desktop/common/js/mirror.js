@@ -686,31 +686,50 @@ function initMirror() {
 
     // Client Group Master
 
-    function saveClientGroup(callerName, clientGroupDetails, 
-        dateConfigurations, callback, failure_callback) {
+    function getDateConfigurations(countryId, domainId, periodFrom, 
+        periodTo){
+        return {
+            "country_id": countryId,
+            "domain_id": domainId,
+            "period_from": periodFrom,
+            "period_to": periodTo
+        }
+    }
+    
+    function getSaveClientGroupDict(groupName, countryIds, domainIds, logo,
+        contractFrom, contractTo, inchargePersons, noOfUserLicence, fileSpace,
+        isSmsSubscribed, emailId, dateConfigurations, shortName){
+        return {
+            "group_name": groupName,
+            "country_ids": countryIds,
+            "domain_ids": domainIds,
+            "logo" : logo,
+            "contract_from": contractFrom,
+            "contract_to": contractTo,
+            "incharge_persons": inchargePersons,
+            "no_of_user_licence": noOfUserLicence,
+            "file_space": fileSpace,
+            "is_sms_subscribed": isSmsSubscribed,
+            "email_id": emailId,
+            "date_configurations":dateConfigurations,
+            "short_name": shortName
+        }
+    }
+
+    function saveClientGroup(clientGroupDetails, 
+        callback, failure_callback) {
+        callerName = "TechnoAPI"
         var request = [
             "SaveClientGroup",
-            {
-                "group_name": clientGroupDetails["group_name"],
-                "country_ids": clientGroupDetails["country_ids"],
-                "domain_ids":clientGroupDetails["domain_ids"],
-                "logo" : clientGroupDetails["logo"],
-                "contract_from": clientGroupDetails["contract_from"],
-                "contract_to": clientGroupDetails["contract_to"],
-                "incharge_persons": clientGroupDetails["incharge_persons"],
-                "no_of_user_licence": clientGroupDetails["no_of_user_licence"],
-                "file_space": clientGroupDetails["file_space"],
-                "is_sms_subscribed": clientGroupDetails["is_sms_subscribed"],
-                "email_id": clientGroupDetails["email_id"],
-                "date_configurations":dateConfigurations
-            }
+            clientGroupDetails
         ];
        
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateClientGroup(callerName, clientGroupDetails, 
+    function updateClientGroup(clientGroupDetails, 
         dateConfigurations, callback, failure_callback) {
+        callerName = "TechnoAPI"
         var request = [
             "UpdateClientGroup",
             {
@@ -731,8 +750,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientGroupStatus(callerName, clientId, isActive, 
+    function changeClientGroupStatus( clientId, isActive, 
         callback, failure_callback) {
+        callerName = "TechnoAPI"
         var request = [
             "ChangeClientGroupStatus",
             {
@@ -743,7 +763,8 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function getClientGroups(callerName, callback, failure_callback) {
+    function getClientGroups(callback, failure_callback) {
+        callerName = "TechnoAPI"
         var request = [
             "GetClientGroups",
             {}
@@ -1224,6 +1245,8 @@ function initMirror() {
         changeAdminUserStatus: changeAdminUserStatus,
         getAdminUserList: getAdminUserList,
 
+        getDateConfigurations: getDateConfigurations,
+        getSaveClientGroupDict: getSaveClientGroupDict,
         saveClientGroup: saveClientGroup,
         updateClientGroup: updateClientGroup,
         getClientGroups: getClientGroups,

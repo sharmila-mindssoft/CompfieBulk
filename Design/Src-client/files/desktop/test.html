@@ -21,7 +21,31 @@
       alert("failure_data"+data)
     }
     $(document).ready(function(){
-      mirror.getUnitClosureList(callback, failure_callback)
+        dateConfigurations = []
+
+        configuration1 = mirror.getDateConfigurations(1,1,1,12)
+        configuration2 = mirror.getDateConfigurations(1,1,6,5)
+        dateConfigurations.push(configuration1)
+        dateConfigurations.push(configuration2)
+
+        group_name = "Client Test Group 1";
+        country_ids = [1];
+        domain_ids = [1];
+        logo = "logo.png";
+        contract_from = "02-Nov-2015";
+        contract_to = "01-Nov-2016";
+        incharge_persons = [1];
+        no_of_user_licence = 10;
+        file_space = 4;
+        is_sms_subscribed = 1;
+        email_id = "ClientTestGroup1@domain.com";
+        shortName = "test1"
+        clientGroupDetails = mirror.getSaveClientGroupDict(group_name,
+            country_ids, domain_ids, logo, contract_from, contract_to,
+            incharge_persons, no_of_user_licence,file_space,
+            is_sms_subscribed, email_id, dateConfigurations, shortName)
+
+        mirror.saveClientGroup(clientGroupDetails, callback,failure_callback);
     });
 </script>
 </body>

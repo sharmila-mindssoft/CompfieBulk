@@ -27,7 +27,8 @@ __all__ = [
     "stringToDatetime",
     "datetimeToString",
     "getClientId",
-    "FormCategory"
+    "FormCategory",
+    "generateRandom"
 ]
 
 clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
@@ -106,11 +107,12 @@ def getClientDatabase(clientId):
         print "Error: Database Not exists for the client %d" % clientId
     return databaseName
 
-def generatePassword() : 
+def generateRandom():
     characters = string.ascii_uppercase + string.digits
-    password = ''.join(random.SystemRandom().choice(characters) for _ in range(7))
-    print password
-    print encrypt(password)
+    return ''.join(random.SystemRandom().choice(characters) for _ in range(7))
+
+def generatePassword() : 
+    password = generateRandom()
     return encrypt(password)
 
 def encrypt(value):

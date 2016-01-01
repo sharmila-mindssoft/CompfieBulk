@@ -26,18 +26,18 @@ class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
             if userId is None :
                 response = PossibleError("InvalidSessionToken")
             else :
-                clientGroupController = ClientGroupController()
+                clientGroup = ClientGroup()
                 clientController = ClientController()
                 clientProfile = ClientProfile()
                 if request[0] == "SaveClientGroup" :
-                    response = clientGroupController.saveClientGroup(request[1], userId)
+                    response = clientGroup.saveClientGroup(request[1], userId)
                 elif request[0] == "GetClientGroups" :
-                    response = clientGroupController.getClientGroups()
+                    response = clientGroup.getClientGroups()
                 elif request[0] == "ChangeClientGroupStatus" :
-                    response = clientGroupController.changeClientGroupStatus(
+                    response = clientGroup.changeClientGroupStatus(
                         request[1], userId)
                 elif request[0] == "UpdateClientGroup" :
-                    response = clientGroupController.updateClientGroup(request[1], userId)
+                    response = clientGroup.updateClientGroup(request[1], userId)
                 elif request[0] == "GetClients" :
                     response = clientController.getClients(userId)
                 elif request[0] == "SaveClient" :

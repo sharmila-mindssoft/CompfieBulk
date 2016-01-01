@@ -1,7 +1,9 @@
 import datetime
 import os
+import re
 import MySQLdb as mysql
-from commonfunctions import getCurrentTimeStamp, generatePassword
+from aparajitha.server.constants import ROOT_PATH
+from commonfunctions import getCurrentTimeStamp, generatePassword, generateRandom
 
 __all__ = [
     "DatabaseHandler"
@@ -69,40 +71,11 @@ class DatabaseHandler(object) :
         self.mysqlPassword = "123456"
         self.mysqlDatabase = "mirror_knowledge"
 
-    def mysqlServerConnect(self):
-        return mysql.connect(
-            self.mysqlHost, self.mysqlUser, 
-            self.mysqlPassword
-        )
-
     def dbConnect(self) :
         return mysql.connect(
             self.mysqlHost, self.mysqlUser, 
             self.mysqlPassword, self.mysqlDatabase
         )
-
-    def createDatabase(self, databaseName):
-        con = None
-        cursor = None
-        isComplete = True
-        try:
-            con = self.mysqlServerConnect()
-            cursor = con.cursor()
-            query = "CREATE DATABASE "+databaseName
-            cursor.execute(query)
-            con.commit()
-
-        except mysql.Error, e:
-            print ("Error:%s - %s" % (query, e))
-            isComplete = False
-
-        finally:
-            if cursor is not None :
-                cursor.close()
-            if con is not None :
-                con.close()
-
-        return isComplete
 
     def execute(self, query):
         con = None
@@ -213,6 +186,18 @@ class DatabaseHandler(object) :
         values = [newValue]
         return self.update(table, columns, values, condition)
 
+    def increment(self, table, column, condition):
+        rows = self.getData(table, column, condition)
+        currentValue = rows[0][0]
+        if currentValue != None:
+            newValue = int(currentValue)+1
+        else:
+            newValue = 1
+        columns = [column]
+        values = [newValue]
+        return self.update(table, columns, values, condition)        
+
+    
     def generateNewId(self, table, column):
         query = "SELECT max("+column+") FROM "+table
         rows = self.executeAndReturn(query)
@@ -512,6 +497,158 @@ class DatabaseHandler(object) :
                 " address, is_active"
         condition = "client_id = '%d'" % clientId
         return self.getData(self.tblUnits, colums, condition)
+
+#
+#   Group Company
+#
+    def saveDateConfigurations(self, clientId, dateConfigurations, sessionUser):
+        valuesList = []
+        currentTimeStamp = getCurrentTimeStamp()
+        columns = "client_id, country_id ,domain_id, period_from, period_to, updated_by, updated_on"
+        for configuration in dateConfigurations:
+            countryId = configuration["country_id"]
+            domainId = configuration["domain_id"]
+            periodFrom = configuration["period_from"]
+            periodTo = configuration["period_to"]
+            valuesTuple = (clientId, countryId, domainId, periodFrom, periodTo, 
+                 int(sessionUser), str(currentTimeStamp))
+            valuesList.append(valuesTuple)
+        updateColums = ["period_from", "period_to"]
+        return self.onDuplicateKeyUpdate(self.tblClientConfigurations,columns,valuesList, 
+            updateColums)
+
+    def saveClientCountries(self, clientId, countryIds):
+        valuesList = []
+        columns = ["client_id", "country_id"]
+        condition = "client_id = '%d'" % clientId
+        self.delete(self.tblClientCountries, condition)
+        for countryId in countryIds:
+            valuesTuple = (clientId, countryId)
+            valuesList.append(valuesTuple)
+        return self.bulkInsert(self.tblClientCountries, columns, valuesList)
+
+    def saveClientDomains(self, clientId, domainIds):
+        valuesList = []
+        columns = ["client_id", "domain_id"]
+        condition = "client_id = '%d'" % clientId
+        self.delete(self.tblClientDomains, condition)
+        for domainId in domainIds:
+            valuesTuple = (clientId, domainId)
+            valuesList.append(valuesTuple)
+        return self.bulkInsert(self.tblClientDomains, columns, valuesList)
+
+    def _mysqlServerConnect(self, host, username, password):
+        return mysql.connect(host, username, password)
+
+    def _dbConnect(self, host, username, password, database) :
+        return mysql.connect(host, username, password, 
+            database)
+
+    def _createDatabase(self, host, username, password, 
+        databaseName, dbUsername, dbPassword, emailId):
+        con = self._mysqlServerConnect(host, username, password)
+        cursor = con.cursor()
+        query = "CREATE DATABASE %s" % databaseName
+        cursor.execute(query)
+        query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" %(
+            databaseName, dbUsername, host, dbPassword)
+        con.commit()
+
+        con = self._dbConnect(host, username, password, databaseName)
+        cursor = con.cursor()
+        sqlScriptPath = os.path.join(ROOT_PATH, 
+        "Src-client/files/desktop/common/clientdatabase/client-tables.sql")
+        fileObj = open(sqlScriptPath, 'r')
+        sqlFile = fileObj.read()
+        fileObj.close()
+        sqlCommands = sqlFile.split(';')
+        size = len(sqlCommands)
+        for index,command in enumerate(sqlCommands):
+            if (index < size-1):
+                cursor.execute(command)
+            else:
+                break
+        query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
+            emailId, generatePassword())        
+        cursor.execute(query)
+        con.commit()
+
+    def _getServerDetails(self):
+        columns = "ip, server_username,server_password"
+        condition = "server_full = 0 order by length ASC limit 1"
+        rows = self.getData(self.tblDatabaseServer, columns, condition)
+        return rows[0]
+
+    def createAndSaveClientDatabase(self, groupName, clientId, shortName, emailId):
+        print "inside create and save client database"
+        groupName = re.sub('[^a-zA-Z0-9 \n\.]', '', groupName)
+        groupName = groupName.replace (" ", "")
+        databaseName = "mirror_%s_%d" %(groupName.lower(),clientId)
+        row = self._getServerDetails()
+        host = row[0]
+        username = row[1]
+        password = row[2]
+        dbUsername = generateRandom()
+        dbPassword = generateRandom()
+
+        if self._createDatabase(host, username, password, databaseName, dbUsername, 
+            dbPassword, emailId):
+            print "database created"
+            dbServerColumn = "company_ids"
+            dbServerValue = clientId
+            dbServerCondition = "ip='%s'"% host
+            self.append(self.tblDatabaseServer, dbServercolumn, dbServerValue,
+                dbServerCondition)
+            dbServercolumn = "length"
+            self.increment(self.tblDatabaseServer, dbServerColumn,
+                dbServerCondition)
+
+            machineColumns = "client_ids"
+            machineValue = dbServerValue
+            machineCondition = dbServerCondition
+            self.append(self.tblMachines, machineColumns, machineValue,
+                machineCondition)
+
+            rows = self.getData(self.tblMachines, "machin_id", machineCondition)
+            machineId = rows[0][0]
+
+            clientDbColumns = ["client_id", "machine_id", "database_ip", 
+                    "database_port", "database_username", "database_password",
+                    "client_short_name", "database_name"]
+            clientDBValues = [clientId, machineId, host, 90, dbUsername,
+            dbPassword, shortName, databaseName]
+            return self.insert(self.tblClientDatabase, clientDbColumns, clientDBValues)
+
+    def saveClientGroup(self, clientGroup, sessionUser):
+        currentTimeStamp = getCurrentTimeStamp()
+        columns = ["client_id", "group_name", "email_id", "logo_url", 
+        "logo_size", "contract_from", "contract_to", "no_of_user_licence", 
+        "total_disk_space", "is_sms_subscribed", "url_short_name", 
+        "incharge_persons", "is_active", "created_by", "created_on", 
+        "updated_by", "updated_on"]
+        values = [clientGroup.clientId, clientGroup.groupName, clientGroup.username,
+        clientGroup.logo,1200, clientGroup.contractFrom, clientGroup.contractTo,
+        clientGroup.noOfLicence, clientGroup.fileSpace, clientGroup.isSmsSubscribed,
+        clientGroup.shortName, ','.join(str(x) for x in clientGroup.inchargePersons),1, sessionUser,
+        currentTimeStamp, sessionUser, currentTimeStamp]
+        return self.insert(self.tblClientGroups, columns, values)
+
+    def saveClientUser(self, clientGroup, sessionUser):
+        columns = ["client_id", "user_id",  "email_id", 
+        "employee_name", "created_on", "is_admin", "is_active"]
+        values = [clientGroup.clientId, 0, self.username, "Admin",
+        getCurrentTimeStamp(), 1, 1]
+        return self.insert(self.tblClientUsers, columns, values)
+
+    def saveInchargePersons(self, clientGroup):
+        columns = ["client_id", "user_id"]
+        valuesList = []
+        condition = "client_id='%d'" % clientGroup.clientId
+        self.delete(self.tblUserClients, condition)
+        for inchargePerson in clientGroup.inchargePersons:
+            valuesTuple = (clientGroup.clientId, inchargePerson)
+            valuesList.append(valuesTuple)
+        return self.bulkInsert(self.tblUserClients, columns, valuesList)
 
     def truncate(self, table):
         query = "TRUNCATE TABLE  %s;" % table

@@ -210,7 +210,6 @@ class ClientDatabaseHandler(object) :
                 query += " %s %s on (%s)" % (table, aliases[index],joinConditions[index-1])
 
         query += " where %s" % whereCondition
-        print query
         return self.executeAndReturn(query)
 
     def validateSessionToken(self, sessionToken) :

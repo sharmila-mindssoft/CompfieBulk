@@ -4,7 +4,6 @@ import tornado.ioloop
 import tornado.web
 import uuid
 
-from models import *
 from aparajitha.server.common import *
 from aparajitha.server.knowledge.models import DomainList, CountryList
 from aparajitha.server.databasehandler import DatabaseHandler
