@@ -400,6 +400,7 @@ CREATE TABLE `tbl_client_configurations` (
   `period_to` tinyint(2) NOT NULL,
   `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updated_by` int(11) NOT NULL,
+  PRIMARY Key (client_id, country_id, domain_id),
   CONSTRAINT `fk_tb_client_id_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_group` (`client_id`),
   CONSTRAINT `fk_tbl_countries_id_1` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `fk_tbl_domains_id_1` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`)
@@ -673,7 +674,7 @@ CREATE TABLE `tbl_client_database` (
 
 DROP TABLE IF EXISTS `tbl_database_server`;
 CREATE TABLE `tbl_database_server` (
-  `ip` int(11) NOT NULL,
+  `ip` varchar(20) NOT NULL,
   `server_username` varchar(50) NOT NULL,
   `server_password` varchar(50) NOT NULL,
   `company_ids` varchar(50) NOT NULL,
