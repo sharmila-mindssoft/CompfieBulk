@@ -94,7 +94,7 @@ class UserController() :
 
         user = User(getClientId(sessionUser), None, emailId, userGroupId, employeeName, 
                     employeeCode, contactNo, seatingUnitId, userLevel, countryIds,
-                    domainIds, unitIds, isAdmin, isServiceProvider, serviceProviderId)
+                    domainIds, unitIds, isAdmin, isServiceProvider, serviceProviderId, None)
         if user.isDuplicateEmail() :
             return commonResponseStructure("EmailIDAlreadyExists",{})
         elif user.isDuplicateEmployeeCode() :
@@ -126,7 +126,7 @@ class UserController() :
 
         user = User(getClientId(sessionUser), userId, None,userGroupId, employeeName, 
                     employeeCode, contactNo, seatingUnitId, userLevel, countryIds,
-                    domainIds, unitIds, isAdmin, isServiceProvider, serviceProviderId)
+                    domainIds, unitIds, isAdmin, isServiceProvider, serviceProviderId, None)
         if user.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
         elif user.isDuplicateEmployeeCode() :
@@ -153,7 +153,7 @@ class UserController() :
         userId = JSONHelper.getInt(requestData, "user_id")
         isAdmin = JSONHelper.getInt(requestData, "is_admin")
         user = User( getClientId(sessionUser), userId, None, None, None, None, None, None, None, 
-                    None, None, None, isAdmin, None, None )
+                    None, None, None, isAdmin, None, None, None )
         if user.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
         elif user.updateAdminStatus(sessionUser):

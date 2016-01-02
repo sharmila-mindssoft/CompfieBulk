@@ -1,6 +1,3 @@
-$(function() {
-	initialize();
-});
 function initialize(){
 	function success(status, data){
 		console.log(data);
@@ -12,7 +9,7 @@ function initialize(){
 }
 
 function loadDomainList(domainList){
-  	var sno=0;
+	var sno=0;
 	var title;	
 	for(var i in domainList){
 		var domains=domainList[i];
@@ -34,12 +31,15 @@ function loadDomainList(domainList){
 }
 $("#search-domain-name").keyup(function() { 
 	var count=0;
-    var value = this.value.toLowerCase();
-    $("table").find("tr:not(:first):not(:last)").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".domain-name").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-    count = $('tr:visible').length-3;
-    $("#total-records").html('Total : '+count+' records');
+  var value = this.value.toLowerCase();
+  $("table").find("tr:not(:first):not(:last)").each(function(index) {
+      if (index === 0) return;
+      var id = $(this).find(".domain-name").text().toLowerCase();       
+      $(this).toggle(id.indexOf(value) !== -1);;
+  });
+  count = $('tr:visible').length-3;
+  $("#total-records").html('Total : '+count+' records');
+});
+$(function() {
+	initialize();
 });

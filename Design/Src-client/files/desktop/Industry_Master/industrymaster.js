@@ -100,7 +100,6 @@ function changeStatus (industryId,isActive) {
 }
 
 function getIndustries () {
-
   function success(status,data){
     tempIndustryList = data["industries"];
     industriesList = data["industries"];
@@ -112,15 +111,6 @@ function getIndustries () {
 }
 
 function filter (term, cellNr){
- /* var filterkey = term.value.toLowerCase();
-  var table = document.getElementById("tableToModify");
-  var ele;
-  for (var r = 1; r < table.rows.length; r++){
-    ele = table.rows[r].cells[cellNr].innerHTML.replace(/<[^>]+>/g,"");
-    if (ele.toLowerCase().indexOf(filterkey)>=0 )
-      table.rows[r].style.display = '';
-    else table.rows[r].style.display = 'none';
-  }*/
   var filterkey = term.value.toLowerCase();
   var filteredList=[];
     for(var entity in tempIndustryList) {

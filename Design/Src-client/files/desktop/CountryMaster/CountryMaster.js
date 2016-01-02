@@ -1,13 +1,9 @@
-$(function() {
-	$("#country-add").hide();
-	initialize();
-});
 $(".btn-country-add").click(function(){
 	$("#country-add").show();
 	$("#country-view").hide();
 	$("#country-name").val('');
-  	$("#country-id").val('');
-  	$(".error-message").html('');
+  $("#country-id").val('');
+  $(".error-message").html('');
 });
 $(".btn-country-cancel").click(function(){
 	$("#country-add").hide();
@@ -21,17 +17,22 @@ function initialize(){
 	}
 	mirror.getCountryList(success, failure);
 }
+function validate(countryNameValue){
+	if(countryNameValue.length==0){
+		$(".error-message").html('Country Name Required');
+	}
+}
 function loadCountriesList(countriesList){
  	$(".tbody-countries-list").find("tr").remove();
-  	var sno=0;
-	var imageName, title;	
-	for(var i in countriesList){
+  var sno=0;
+	var imageName=null;
+	var title=null;	
+	$.each(countriesList, function(i, value){
 		var countries=countriesList[i];
-		for(var j in countries){
+		$.each(countries, function(j, value){
 			var countryId=countries[j]["country_id"];
 			var countryName=countries[j]["country_name"];
 			var isActive=countries[j]["is_active"];
-					
 			if(isActive==1){
 				imageName="icon-active.png";
 				title="Click here to deactivate"
@@ -50,17 +51,26 @@ function loadCountriesList(countriesList){
 			$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="country_edit('+countryId+',\''+countryName+'\')"/>');
 			$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="country_active('+countryId+', '+statusVal+')"/>');
 			$('.tbody-countries-list').append(clone);
-		}
-	}
+		});
+	});
 }
+$('#country-name').keypress(function (e) {
+	var countryNameValue = $("#country-name").val();
+  if (e.which == 13) {
+		if(countryNameValue==''){
+			$(".error-message").html('Country Name Required');
+		}
+		else{
+			jQuery('#submit').focus().click();
+		}
+  }
+});
 
 $("#submit").click(function(){
 	var countryIdValue = $("#country-id").val();
 	var countryNameValue = $("#country-name").val();
-	if(countryNameValue=='' || countryNameValue==null){
-		$(".error-message").html('Country Name Required');
-	}
-	else if(countryIdValue==''){		
+	validate(countryNameValue);
+	if(countryIdValue==''){		
 		function success(status, data){
 			if(status == 'success') {
 		    	$("#country-add").hide();
@@ -117,4 +127,8 @@ $("#search-country-name").keyup(function() {
         var id = $(this).find(".country-name").text().toLowerCase();       
         $(this).toggle(id.indexOf(value) !== -1);;
     });
+});
+
+$(function() {
+	initialize();
 });

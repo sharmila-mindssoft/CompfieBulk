@@ -969,8 +969,7 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function saveClientUser(callerName, clientUserDetail,
-     callback, failure_callback) {
+    function saveClientUser(callerName, clientUserDetail, callback, failure_callback) {
         if (isNull(clientUserDetail))
             return null;
         var request = [
@@ -980,8 +979,7 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function updateClientUser(callerName, clientUserDetail, 
-        callback, failure_callback) {
+    function updateClientUser(callerName, clientUserDetail, callback, failure_callback) {
         if (isNull(clientUserDetail))
             return null;
         var request = [
@@ -1028,8 +1026,7 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function closeUnit(callerName, unitId, password, callback, 
-        failure_callback){
+    function closeUnit(callerName, unitId, password, callback, failure_callback){
         var request = [
             "CloseUnit",
             {

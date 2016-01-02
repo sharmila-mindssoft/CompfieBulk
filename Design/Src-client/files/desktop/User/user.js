@@ -9,9 +9,9 @@ $(document).ready(function(){
 	$('#contactno').keydown(function (e) {
     var key = e.keyCode;
     if (!((key == 8) || (key >= 48 && key <= 57))) {
-    e.preventDefault();
-  }
-});
+  	  e.preventDefault();
+  	}
+	});
 });
 
 function GetUsers(){
@@ -30,64 +30,64 @@ function GetUsers(){
 function loadUserList(usersList) {
 	var j = 1;
 	var imgName = '';
-    var passStatus = '';
-    var userId = 0;
-    var employeeName = '';
-    var isActive = 0;
-    var designation = '';
-    var userList;
+  var passStatus = '';
+  var userId = 0;
+  var employeeName = '';
+  var isActive = 0;
+  var designation = '';
+  var userList;
 
-   $(".tbody-user-list").find("tr").remove();
-    for(var entity in usersList) {
-    	userId = usersList[entity]["user_id"];
-        employeeName = usersList[entity]["employee_name"];
-        isActive = usersList[entity]["is_active"];
-        designation = usersList[entity]["designation"];
-        for(var k in userGroupsList){
-        	if(userGroupsList[k]["user_group_id"] == usersList[entity]["user_group_id"]){
-        		usergroup = userGroupsList[k]["user_group_name"];
-        		break;
-        	}
-        }
-        if(isActive == 1) {
-        	passStatus="0";
-        	imgName="icon-active.png"
-        }
-        else {
-        	passStatus="1";
-       	 	imgName="icon-inactive.png"
-       	 }
-       	  var tableRow=$('#templates .table-user-master .table-row');
-	      var clone=tableRow.clone();
-	      $('.sno', clone).text(j);
-	      $('.employee-name', clone).text(employeeName);
-	      $('.user-group', clone).text(usergroup);
-	      $('.designation', clone).text(designation);
-	      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+userId+',\''+employeeName+'\')"/>');
-	      $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+userId+','+passStatus+')"/>');
-	      $('.tbody-user-list').append(clone);
-	      j = j + 1;
+ $(".tbody-user-list").find("tr").remove();
+  for(var entity in usersList) {
+  	userId = usersList[entity]["user_id"];
+      employeeName = usersList[entity]["employee_name"];
+      isActive = usersList[entity]["is_active"];
+      designation = usersList[entity]["designation"];
+      for(var k in userGroupsList){
+      	if(userGroupsList[k]["user_group_id"] == usersList[entity]["user_group_id"]){
+      		usergroup = userGroupsList[k]["user_group_name"];
+      		break;
       	}
       }
+      if(isActive == 1) {
+      	passStatus="0";
+      	imgName="icon-active.png"
+      }
+      else {
+      	passStatus="1";
+     	 	imgName="icon-inactive.png"
+     	 }
+     	  var tableRow=$('#templates .table-user-master .table-row');
+      var clone=tableRow.clone();
+      $('.sno', clone).text(j);
+      $('.employee-name', clone).text(employeeName);
+      $('.user-group', clone).text(usergroup);
+      $('.designation', clone).text(designation);
+      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+userId+',\''+employeeName+'\')"/>');
+      $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+userId+','+passStatus+')"/>');
+      $('.tbody-user-list').append(clone);
+      j = j + 1;
+    	}
+    }
 
-      function displayAdd () {
-      	$("#listview").hide();
-	    $("#addview").show();
-	    $("#userid").val('');
+  function displayAdd () {
+   	$("#listview").hide();
+    $("#addview").show();
+    $("#userid").val('');
 		$("#employeename").val('');
-	    $("#employeeid").val('');
-	    $("#address").val('');
-	    $("#countrycode").val('');
-	    $("#areacode").val('');
-	    $("#contactno").val('');
-	    $("#usergroup").val('');
-	    $("#designation").val('');
-	    $("#domain").val('');
-	    $("#domainselected").val('');
-	    $("#country").val('');
-	    $("#countryselected").val('');
-	    $("#emailid").val('');
-	    $("#error").text('');
+    $("#employeeid").val('');
+    $("#address").val('');
+    $("#countrycode").val('');
+    $("#areacode").val('');
+    $("#contactno").val('');
+    $("#usergroup").val('');
+    $("#designation").val('');
+    $("#domain").val('');
+    $("#domainselected").val('');
+    $("#country").val('');
+    $("#countryselected").val('');
+    $("#emailid").val('');
+    $("#error").text('');
 	}
 
 	function changeStatus (userId,isActive) {

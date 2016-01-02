@@ -845,7 +845,7 @@ class ClientProfile(object):
     def getClientDetailsReport(self, requestData, sessionUser):
 
         countryId = requestData["country_id"]
-        clientId = requestData["group_id"]
+        clientId = requestData["group_id"] if requestData["group_id"] != None else getClientId(sessionUser)
         businessGroupId = requestData["business_group_id"]
         legalEntityId = requestData["legal_entity_id"]
         divisionId = requestData["division_id"]

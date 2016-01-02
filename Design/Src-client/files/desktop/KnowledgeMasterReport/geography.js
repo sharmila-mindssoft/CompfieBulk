@@ -7,7 +7,6 @@ $(function() {
 });
 function getGeography(){
 	function success(status, data){
-		console.log(data);
 		geographiesList = data["geographies"];
 		countriesList = data["countries"];
 		tempGeographiesList = data["geographies"];

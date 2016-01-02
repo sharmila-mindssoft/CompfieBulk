@@ -1,23 +1,29 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+<style>
+.ac-textbox li
+{
+list-style-type:none; line-height:25px;
+}
+.ac-textbox ul {
+  border:1px solid gray;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+}
+.ac-textbox ul li {
+  font-size: 0.8em;
+  padding-right: 0.3em;
+  padding-left:0.3em;
+  vertical-align: center;
+  cursor: pointer;
+}
+.ac-textbox ul li:hover{
+  background: #EAE8E8;  
+}
+</style>
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
 <script src="/files/desktop/common/js/tooltip/tipso.js"></script>
-<script>
-  $(document).ready(function() {
-    $("#insert-level").hide();
-  });
-
-  function loadForm(){
-   $("#insert-level").show();
-   $("#add").hide();
- }
-
- function hideForm(){
-   $("#insert-level").hide();
-   $("#add").show();
- }
-
-</script>
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
@@ -28,11 +34,16 @@
           <div class="input-row">
             <div class="single-column-field-label">Client:<span class="mandatory">*</span></div>
             <div class="single-column-field-input">
-              <input type="text" class="input-box icon-autocomplete" style="width:200px" value="RG Groups"/>
+                <input type="text" class="input-box icon-autocomplete" id="groupsval" value="" style="width:200px;"  onkeyup="loadauto_text(this.value)"> 
+                <input type="hidden" id="group-id"> 
+                <div id="autocompleteview" class="ac-textbox" style="display:none;"  onclick="hidelist();">
+                  <ul style="width:195px;"></ul> 
+                </div>
             </div>
           </div>
         </div>
-        <div class="grid-table" width="100%" style="margin-top:20px">
+        <div class="list-container" style="display:none;">
+        <div class="grid-table" width="100%" style="margin-top:20px; ">
           <table style="float:left;width:45%;margin-left:40px">
             <tr>
               <th colspan="2" style="background:#ccc;color:black;font-weight:bold">
@@ -43,16 +54,14 @@
               <td>
                 Contract Start Date : 
               </td>
-              <td>
-                01-Jun-2013
+              <td class="contract-start">
               </td>
             </tr>
-            <tr>
+            <tr style="background:none repeat scroll 0 0 #f1e9f6;">
               <td>
                 Contract Expires on : 
               </td>
-              <td>
-                01-Jun-2016
+              <td class="contract-expires">                
               </td>
             </tr>
           </table>
@@ -67,12 +76,12 @@
                 <div id="container-space" style="padding-right:10px">
                   <table width="100%" style="border-width:2px;border-color:black;color:white">
                     <tr width="100%" height="40px" style="padding:10px">
-                      <td align="center" style="width:48%;background-color:#662D91;color:white;font-weight:bold">48%</td>
-                      <td align="center" style="width:52%;background-color:#aaa;color:white">52%</td>
+                      <td align="center" class="usedspace" style="width:48%;background-color:#662D91;color:white;font-weight:bold;vertical-align: middle; "></td>
+                      <td align="center" class="totalspace" style="width:52%;background-color:#aaa;color:white; vertical-align: middle; "></td>
                     </tr>
                     <tr>
-                      <td align="center" colspan="2" style="font-weight:bold">
-                        4.8 GB of 10 GB used
+                      <td align="center" colspan="2" style="font-weight:bold" class="space-summary">
+                        
                       </td>
                     </tr>
                   </table>
@@ -88,7 +97,7 @@
               Licence Holders list
               </th>
               <th align="right" colspan="4" style="background:#ccc;color:black;font-weight:bold;padding-right:10px;">
-              Remaining Licence : 7 
+              Remaining Licence : <span class="remaining-licence"></span>
               </th>
             </tr>
           <tr >
@@ -102,91 +111,18 @@
         </tr> 
         <tr>
           <td align="center">&nbsp;</td>
-          <td><input type="text" name="location-name" class="filter-text-box"></td>
-          <td><input type="text" name="district-name" class="filter-text-box"></td>
-          <td><input type="text" name="region-name" class="filter-text-box"></td>
-          <td><input type="text" name="region-name" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box" id="search-employee"></td>
+          <td><input type="text" class="filter-text-box"  id="search-email"></td>
+          <td><input type="text" class="filter-text-box"  id="search-mobile-number"></td>
+          <td><input type="text" class="filter-text-box"  id="search-seating-unit"></td>
           <td align="center">&nbsp;</td>
           <td align="center">&nbsp;</td>
         </tr>
-        <tr >
-          <td align="center" style="height:40px">1</td>
-          <td>Client Admin</td>
-          <td>admin@domain.com</td>
-          <td></td>
-          <td>
-            
-          </td>
-          <td align="center"><img src="/images/icon-active.png" title="Click here to activate" id="inactiveid"/></td>
-                  <td align="center">
-                    <a="#">
-                      <img src="/images/promote-active.png" title="Click here to inactivate" id="inactiveid" class="active"/>
-                      </a="#">
-                  </td>
-        </tr>
-        <tr >
-          <td align="center" style="height:40px">2</td>
-          <td>EMP0010 - Hariharan</td>
-          <td>hariharn@domain.com</td>
-          <td>9632587410</td>
-          <td>
-            <abbr class="page-load tipso_style" title="26, West Steet, New Delhi">
-            <img src="/images/icon-info.png" style="margin-right:10px"/>VBM1001 - Corporate Office
-          </td>
-          <td align="center"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid"/></td>
-                  <td align="center">
-                    <a="#">
-                      <img src="/images/promote-inactive.png" title="Click here to inactivate" id="inactiveid" class="active"/>
-                      </a="#">
-                  </td>
-        </tr>
-        <tr>
-          <td align="center" style="height:40px">3</td>
-          <td>EMP0012 - Sivaraman</td>
-          <td>sivaraman@domain.com</td>
-          <td>9345678912</td>
-          <td>
-            <abbr class="page-load tipso_style" title="12 South car street, Bangalore">
-            <img src="/images/icon-info.png" style="margin-right:10px"/>VBM1002 - Regional Office - South
-          </td>
-           <td align="center"><img src="/images/icon-active.png" title="Click here to activate" id="inactiveid"/></td>
-                  <td align="center">
-                    <a="#">
-                      <img src="/images/promote-inactive.png" title="Click here to inactivate" id="inactiveid" class="inactive"/>
-                      </a="#">
-                  </td>
-        </tr>
-        <tr>
-          <td align="center" style="height:40px">4</td>
-          <td>EMP0015 - Srinivasan</td>
-          <td>srinivasan@domain.com</td>
-          <td>9876543210</td>
-          <td><abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai"><img src="/images/icon-info.png" style="margin-right:10px"/>VBM1003 - Branch Office - Chennai</td>
-         <td align="center"><img src="/images/icon-active.png" title="Click here to activate" id="inactiveid"/></td>
-                  <td align="center">
-                    <a="#">
-                      <img src="/images/promote-inactive.png" title="Click here to inactivate" id="inactiveid" class="inactive"/>
-                      </a="#">
-                  </td>
-          
-        </tr>
-          <tr>
-          <td align="center" style="height:40px">5</td>
-          <td>ARM Solutions</td>
-          <td>armsolutions@domain.com</td>
-          <td>8520147963</td>
-          <td>-</td>
-         <td align="center"><img src="/images/icon-active.png" title="Click here to activate" id="inactiveid"/></td>
-                  <td align="center">
-                    <a="#">
-                      <img src="/images/promote-inactive.png" title="Click here to inactivate" id="inactiveid" class="inactive"/>
-                      </a="#">
-                  </td>
-          
-        </tr>
-          </table>
+        <tbody class="tbody-clientprofile-list">
+        </tbody>
+        </table>
         </div> 
-
+      </div>
 
         </div>
         
@@ -195,20 +131,29 @@
     </div>
   </div>
 </div>
-
+<div id="templates">
+  <table class="table-clientprofile-list">
+    <tr class="table-row">
+      <td align="center" style="height:40px" class="sno">5</td>
+      <td class="employee"></td>
+      <td class="email"></td>
+      <td class="mobile-number"></td>
+      <td class="seating-unit"></td>
+      <td align="center" class="is-active"></td>
+      <td align="center" class="promote-admin"> </td>
+    </tr>
+  </table>
+</div>
+<script type="text/javascript" src="/files/desktop/ClientUsersList/clientuserslist.js"></script>
 <script type="text/javascript">
-$(document).ready(function() {
+jQuery(window).load(function(){
+  jQuery('.page-load').tipso({
+    tooltipHover: true
+  });
 });
-
-    jQuery(window).load(function(){
-      jQuery('.page-load').tipso({
-        tooltipHover: true
-      });
-    });
-    $('.toggleModal').on('click', function (e) {
-      $('.modal').toggleClass('active');
-    });
-
-  </script> 
-  {% endblock %}
+$('.toggleModal').on('click', function (e) {
+  $('.modal').toggleClass('active');
+});
+</script> 
+{% endblock %}
 

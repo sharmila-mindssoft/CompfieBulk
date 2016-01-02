@@ -1,32 +1,30 @@
 var usersList;
 var domainsList;
 var countriesList;
-$(function() {
-	$("#clientgroup-add").hide();
-	initialize();
-});
 $(".btn-clientgroup-add").click(function(){
-	$("#clientgroup-add").show();
 	$("#clientgroup-view").hide();
+	$("#clientgroup-add").show();
 	$("#clientgroup-name").val('');
-  	$("#clientgroup-id").val('');
+ 	$("#clientgroup-id").val('');
  	$(".error-message").html('');
  	$("#upload-logo-img").hide();
  	var x=document.getElementsByTagName("input");
  	for(i = 0; i<=x.length-1; i++){
-  		if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
-  	}
-  	
-  	$('.tbody-dateconfiguration-list').empty();
-  	function success(status, data){
-  		userList = data["users"];
+ 		if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
+ 	}
+
+ 	loadautocountry();
+ 	hidemenu();
+ 	$('.tbody-dateconfiguration-list').empty();
+	function success(status, data){
+		userList = data["users"];
 		domainsList = data["domains"];
 		countriesList = data["countries"];  	
-  	}
-  	function failure(status, data){
-  		console.log(status);
-  	}
-  	mirror.getClientGroups("TechnoAPI", success, failure);
+	}
+	function failure(status, data){
+		console.log(status);
+	}
+	mirror.getClientGroups("TechnoAPI", success, failure);
 });
 $("#btn-clientgroup-cancel").click(function(){
 	$("#clientgroup-add").hide();
@@ -75,8 +73,7 @@ function loadFormListUpdate(clientListData, clientGroupId){
 			//$("#upload-logo-img").attr("src",clientListData[clientList]['logo']);
 			$("#upload-logo-img").show();
 			$("#no-of-user-licence").val(clientListData[clientList]['no_of_user_licence']);
-			$("#file-space").val(clientListData[clientList]['file_space']);
-			console.log(clientListData[clientList]['is_sms_subscribed']);
+			$("#file-space").val(clientListData[clientList]['file_space']);			
 			if(clientListData[clientList]['is_sms_subscribed']==1){ $('#subscribe-sms').prop("checked", true); }
 			var userListArray=clientListData[clientList]['incharge_persons'];
 			$("#users").val(userListArray);
@@ -170,8 +167,8 @@ $("#btn-clientgroup-submit").click(function(){
 	var usernameVal = $("#username").val();
 	var uploadLogoVal = $("#upload-logo").val();
 	var licenceVal = parseInt($("#no-of-user-licence").val());
-	var intFilesSpace=Number($("#file-space").val());
-	var fileSpaceVal =parseFloat(intFilesSpace);
+	var fileSpaceVal = parseFloat(Number($("#file-space").val()*100)/100).toFixed(2);
+	
 	//var subscribeSmsVal = $("#subscribe-sms").val();
 	var arrayinchargePersonVal=$("#users").val().split(",");
 	var arrayinchargePerson= [];
@@ -245,12 +242,12 @@ $("#btn-clientgroup-submit").click(function(){
         clientGroupDetails["contract_to"] = contractToVal;
         clientGroupDetails["incharge_persons"] = inchargePersonVal;
         clientGroupDetails["no_of_user_licence"] = licenceVal;
-        clientGroupDetails["file_space"] = fileSpaceVal;
+        clientGroupDetails["file_space"] = Number(fileSpaceVal);
         clientGroupDetails["is_sms_subscribed"] = subscribeSmsVal;
         clientGroupDetails["email_id"] = usernameVal;
 		//console.log(dateConfigurations);
 		//console.log(clientGroupDetails);
-		mirror.saveClientGroup("TechnoAPI", clientGroupDetails, dateConfigurations,success, failure);
+		mirror.saveClientGroup("TechnoAPI", clientGroupDetails, dateConfigurations, success, failure);
 	}
 	else if($('#clientgroup-id').val()!=''){		
 		function success(status, data){
@@ -270,16 +267,16 @@ $("#btn-clientgroup-submit").click(function(){
 		var clientGroupDetails = {}
 		clientGroupDetails["client_id"] = parseInt(clientGroupIdVal);
 		clientGroupDetails["group_name"] = clientGroupNameVal ;
-        clientGroupDetails["country_ids"] = countriesVal;
-        clientGroupDetails["domain_ids"] = domainsVal;
-        clientGroupDetails["logo"] = uploadLogoVal;
-        clientGroupDetails["contract_from"] = contractFromVal;
-        clientGroupDetails["contract_to"] = contractToVal;
-        clientGroupDetails["incharge_persons"] = inchargePersonVal;
-        clientGroupDetails["no_of_user_licence"] = licenceVal;
-        clientGroupDetails["file_space"] = fileSpaceVal;
-        clientGroupDetails["is_sms_subscribed"] = subscribeSmsVal;
-        clientGroupDetails["email_id"] = usernameVal;
+    clientGroupDetails["country_ids"] = countriesVal;
+    clientGroupDetails["domain_ids"] = domainsVal;
+    clientGroupDetails["logo"] = uploadLogoVal;
+    clientGroupDetails["contract_from"] = contractFromVal;
+    clientGroupDetails["contract_to"] = contractToVal;
+    clientGroupDetails["incharge_persons"] = inchargePersonVal;
+    clientGroupDetails["no_of_user_licence"] = licenceVal;
+    clientGroupDetails["file_space"] = Number(fileSpaceVal);
+    clientGroupDetails["is_sms_subscribed"] = subscribeSmsVal;
+    clientGroupDetails["email_id"] = usernameVal;
 		//console.log(dateConfigurations);
 		//console.log(clientGroupDetails);
 		mirror.updateClientGroup("TechnoAPI", clientGroupDetails, dateConfigurations,success, failure);
@@ -473,6 +470,9 @@ function dateconfig(){
 			}
 		}
 	}
+	if($("#clientgroup-id").val()!=''){
+
+	}
 }
 function loadAutoUsers () {
 	document.getElementById('selectboxview-users').style.display = 'block';
@@ -523,3 +523,6 @@ function activateUsers(element){
 function gototop(){
 	$("html, body").animate({ scrollTop: 0 }, "slow");
 }
+$(function() {
+	initialize();
+});

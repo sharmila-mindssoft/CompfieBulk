@@ -1,22 +1,10 @@
-$(function() {
-	$("#userGroupAdd").hide();
-	initialize();
-});
 $("#btnUserGroupAdd").click(function(){
-	$("#userGroupAdd").show();
 	$("#userGroupView").hide();
+	$("#userGroupAdd").show();
 	$("#formList").hide();
-  	$(".error-message").html('');
-  	$("#groupName").val('');
-  	$("#groupId").val('');
-  	
-	function success(status, data){
-		loadUserGroupdata(data['user_groups']);		
-	}
-	function failure(status, data){
-		
-	}
-	mirror.getAdminUserGroupList("AdminAPI", success, failure);
+	$(".error-message").html('');
+	$("#groupName").val('');
+	$("#groupId").val('');
 });
 $("#btnUserGroupCancel").click(function(){
 	$("#userGroupAdd").hide();
@@ -24,21 +12,17 @@ $("#btnUserGroupCancel").click(function(){
 });
 function initialize(){
 	function success(status, data){
-		for(var i in data){
-			loadUserGroupdata(data['user_groups'])
-		}
+		loadUserGroupdata(data['user_groups']);
 	}
 	function failure(status, data){
-		for(var i in data){
-			//alert(data[i]);
-		}
+		console.log(status);
 	}
 	mirror.getAdminUserGroupList("AdminAPI", success, failure);
 }
 
 function loadUserGroupdata(userGroupList){
 	$(".tbody-usergroups-list").find("tr").remove();
-  	var sno=0;
+ 	var sno=0;
 	var imageName, title;
 	for(var j in userGroupList){
 		var form_type=userGroupList[j]["form_type"];
@@ -85,50 +69,56 @@ $("#btnUserGroupShow").click(function(){
 			}
 		}
 		function failure(status, data){
+			console.log(status);
 		}
 		mirror.getAdminUserGroupList("AdminAPI", success, failure);
 	}
 });
 function loadFormList(formList,categoryNameVal){
-	$("#tableFormList").find("tr:gt(0)").remove();
+	$(".tableFormList").find("tr:gt(0)").remove();
 	$('.checkedFormId').prop("checked", false);
 	var i_incre;
-	var tableFormList=document.getElementById("tableFormList");
-	var tableRowFormList=document.getElementById("tableRowFormList");
-	for(var headingList in formList[categoryNameVal]){
-		var cloneFormList=tableRowFormList.cloneNode(true);
-		cloneFormList.id = i_incre; 
-		cloneFormList.cells[0].innerHTML = '<span class="formHeading">'+headingList+'<span>';
-		tableFormList.appendChild(cloneFormList);	
-		for(var list in formList[categoryNameVal][headingList]){
-			var cloneList=tableRowFormList.cloneNode(true);
-			cloneList.cells[0].innerHTML = '<input type="checkbox" class="checkedFormId" value="'+formList[categoryNameVal][headingList][list]['form_id']+'">';
-			cloneList.cells[1].innerHTML = '<span class="formName">'+formList[categoryNameVal][headingList][list]['form_name']+'</span>';
-			tableFormList.appendChild(cloneList);
-			//$('#tableFormList tr:first').appendChild(cloneList);
+	var tableRowList=$('#templates-form-heading .table-form-heading .table-row-form-heading');
+	var clone1=tableRowList.clone();	
+	$.each(formList[categoryNameVal], function(key, value){
+		$('.formHeading', clone1).text(key);
+		if(value.length!=0){
+			$('.tableFormList').append(clone1);
 		}
-	}
+		$.each(value, function(i) { 
+			var formName=value[i]['form_name'];
+			var formId=value[i]['form_id'];
+			var tableRowForms=$('#templates-form-list .table-form-list .table-row-form');
+			var clone2=tableRowForms.clone();
+			$('.checkbox-val', clone2).html('<input type="checkbox" class="checkedFormId" value="'+value[i]['form_id']+'">');
+			$('.form-name', clone2).html(formName);		
+			$('.tableFormList').append(clone2);	
+		});
+	});
 }
 function loadFormListUpdate(formList, userGroupList, categoryNameVal, userGroupId){
-	$("#tableFormList").find("tr:gt(0)").remove();
+	$(".tableFormList").find("tr:gt(0)").remove();
 	$('.checkedFormId').prop("checked", false);
 
 	var i_incre;
-	var tableFormList=document.getElementById("tableFormList");
-	var tableRowFormList=document.getElementById("tableRowFormList");
-	for(var headingList in formList[categoryNameVal]){
-		var cloneFormList=tableRowFormList.cloneNode(true);
-		cloneFormList.id = i_incre; 
-		cloneFormList.cells[0].innerHTML = '<span class="formHeading">'+headingList+'<span>';
-		tableFormList.appendChild(cloneFormList);	
-		for(var list in formList[categoryNameVal][headingList]){
-			var cloneList=tableRowFormList.cloneNode(true);
-			cloneList.cells[0].innerHTML = '<input type="checkbox" class="checkedFormId" value="'+formList[categoryNameVal][headingList][list]['form_id']+'">';
-			cloneList.cells[1].innerHTML = '<span class="formName">'+formList[categoryNameVal][headingList][list]['form_name']+'</span>';
-			tableFormList.appendChild(cloneList);
-			//$('#tableFormList tr:first').appendChild(cloneList);
+	var tableRowList=$('#templates-form-heading .table-form-heading .table-row-form-heading');
+	var clone1=tableRowList.clone();	
+	$.each(formList[categoryNameVal], function(key, value){
+		$('.formHeading', clone1).text(key);
+		if(value.length!=0){
+			$('.tableFormList').append(clone1);
 		}
-	}
+		$.each(value, function(i) { 
+			var formName=value[i]['form_name'];
+			var formId=value[i]['form_id'];
+			var tableRowForms=$('#templates-form-list .table-form-list .table-row-form');
+			var clone2=tableRowForms.clone();
+			$('.checkbox-val', clone2).html('<input type="checkbox" class="checkedFormId" value="'+value[i]['form_id']+'">');
+			$('.form-name', clone2).text(formName);		
+			$('.tableFormList').append(clone2);	
+		});
+	});
+
 	for(var userGroupDetails in userGroupList){	
 		if(userGroupList[userGroupDetails]['user_group_id'] == userGroupId){
 			var formIds=userGroupList[userGroupDetails]['form_ids'];
@@ -236,4 +226,19 @@ $("#categoryNameSearch").keyup(function() {
         $(this).toggle(id.indexOf(value) !== -1);;
     });
    
+});
+$('.checkbox-full-check').click(function(event) {  
+	if(this.checked) { 
+	  $('.checkedFormId').each(function() { 
+	    this.checked = true;  
+	  });
+	}else{
+	  $('.checkedFormId').each(function() {
+	    this.checked = false; 
+	  });        
+	}
+});
+
+$(function() {
+	initialize();
 });
