@@ -23,40 +23,27 @@ list-style-type:none; line-height:25px;
   background: #EAE8E8;  
 }
 /*siva ends*/
-
-.accordion {
-    margin:1em 0
+.accordion-toggle {
+  cursor: pointer;
 }
-.accordion h3 {
-    background:#B8B8B8;
-    color:#fff;
-    cursor:pointer;
-    margin:0 0 1px 0;
-    padding:4px 10px
+.accordion-content {
+  display: none;
 }
-.accordion h3.current {
-    background:#E0E0E0;
-    cursor:default
-}
-.accordion div.pane {
-    padding:5px 10px
+.accordion-content.default {
+  display: block;
 }
 </style>
-
-<script type="text/javascript" src="/files/desktop/StatutoryMappingReport/statutorymappingreport.js"></script>
-<script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
 
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
       <div class="add-container-heading">Statutory Mappings<span class="error-message"></span></div>
       <div class="input-row-left">
-
         <div class="input-row">
           <div class="field-label">Country:<span class="mandatory">*</span></div>
           <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" id="countryval" onkeyup="loadauto_text(this.value)" placeholder="Enter Country"> 
-          <input type="hidden" id="country"> 
+          <input type="text" class="input-box icon-autocomplete" id="countryval" onkeyup="loadauto_text(this.value)" placeholder="Enter Country" value=""> 
+          <input type="hidden" id="country" value=""> 
           <div id="autocompleteview" class="ac-textbox" style="display:none;">
                 <ul id="ulist_text" onclick="hidemenu();" style="width:215px;"></ul>
           </div>
@@ -67,13 +54,11 @@ list-style-type:none; line-height:25px;
         <div class="field-label">Domain:<span class="mandatory">*</span></div>
         <div class="field-input">
 
-         <input type="text" class="input-box icon-autocomplete" id="domainval" onkeyup="loadauto_domain(this.value)" placeholder="Enter Domain"> 
-          <input type="hidden" id="domain"> 
+         <input type="text" class="input-box icon-autocomplete" id="domainval" onkeyup="loadauto_domain(this.value)" placeholder="Enter Domain" value=""> 
+          <input type="hidden" id="domain" value=""> 
           <div id="autocomplete_domain" class="ac-textbox" style="display:none;">
                 <ul id="ulist_domain" onclick="hidemenu();" style="width:215px;"></ul>
           </div>
-
-          
         </div>
       </div> 
       <div class="input-row">
@@ -135,6 +120,7 @@ list-style-type:none; line-height:25px;
   <input type="submit" value="Show" class="btn-submit" onclick="showResult()">
 </div>
 <div class="clearfix"></div>
+
 <div class="grid-table-rpt" style="padding-bottom:0em;">
   <h1>Statutory Mappings</h1>
 
@@ -149,136 +135,68 @@ list-style-type:none; line-height:25px;
 
 
   <div class="clearfix"></div>
-      <!-- <table class="font1" style="width:100%;height:30px; ">
-        <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-          <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Batteries Act</span><span><img src="/images/chevron_black_down.png"></span></span></th>
-        </tr>
-      </table> -->
-      <table>
-        <tbody class="tbody-compliance">        
-        </tbody>
+      <table class="tbody-compliance" id="accordion">  
+       
       </table>
-
       <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
     </div>
   </div>
 </div>
 
 <div id="act-templates">
-<table class="font1" style="width:100%;height:30px; ">
-        <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-          <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%" class="actname"></span><span>
-          <img src="/images/chevron_black_down.png"></span></span></th>
-        </tr>
+<table class="font1 table-act-list" style="width:100%;height:30px; ">
+<tbody class=" table-row-act-list accordion-toggle">
+  <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+    <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="5"  class="actname" >
+    </th>
+  </tr>
+  </tbody>
 </table>
 </div>
-
-<div id="compliance-templates">
-<table width="100%" style="border:1px dotted #CCCCCC;">
-          <tr align="left" class="sub-head">
-            <th width="3%" align="center">#</th>
-            <th width="12%">Industry Type</th>
-            <th width="12%">Statutory Nature</th>
-            <th width="12%">Statutory Provision</th>
-            <th width="12%">Compliance Task</th>
-          </tr>
-          <tr>
-            <td align="center" class="tbl_sno"></td>
-            <td class="tbl_industrytype"></td>
-            <td class="tbl_statutorynature"></td>
-            <td class="tbl_statutoryprovision"></td>
-            <td class="tbl_compliancetask"><a href="#"></a></td>
-          </tr>
-
-          <tr align="left">
-            <th align="center">&nbsp;</th>
-            <th width="15%">Compliance Description</th>
-            <th width="15%">Penal Consequences</th>
-            <th>Compliance Occurence</th>          
-            <th colspan="2" >Applicable Location</th>
-          </tr>
-          <tr>
-            <td></td>
-            <td class="tbl_description"></td>
-            <td class="tbl_penalconsequences"></td>
-            <td class="tbl_occurance"> <br>(Trigger : 20 days)</td>
-            <td colspan="2" class="tbl_applicablelocation"> </td>
-          </tr>
-  </table>
-
-</div>
-
 
 <div id="head-templates">
-<table>
-   <tr>
-    <td align="center" class="tbl_heading"></td>
-  </tr>     
-</table>
-<div class="clearfix"></div>
-</div>
-
-<!-- <div id="head2-templates">
-<table>
-   <tr>
-    <td align="center" class="tbl_heading2"></td>
-  </tr>     
-</table>
-<div class="clearfix"></div>
-</div>
-
-<div id="head3-templates">
-<table>
-   <tr>
-    <td align="center" class="tbl_heading3"></td>
-  </tr>     
-</table>
-<div class="clearfix"></div>
-</div>
-
-<div id="head4-templates">
-<table>
-   <tr>
-    <td align="center" class="tbl_heading4"></td>
-  </tr>     
-</table>
-<div class="clearfix"></div>
-</div> -->
-<!-- <div id="compliance-templates">
-  <table width="100%" style="border:1px dotted #CCCCCC;">
-          <tr align="left" class="sub-head">
-            <th width="3%" align="center">#</th>
-            <th width="12%">Industry Type</th>
-            <th width="12%">Statutory Nature</th>
-            <th width="12%">Statutory Provision</th>
-            <th width="12%">Compliance Task</th>
-          </tr>
-          <tr>
-            <td align="center" class="tbl_sno"></td>
-            <td class="tbl_industrytype"></td>
-            <td class="tbl_statutorynature"></td>
-            <td class="tbl_statutoryprovision"></td>
-            <td class="tbl_compliancetask"><a href="#"></a></td>
-          </tr>
-
-          <tr align="left">
-            <th align="center">&nbsp;</th>
-            <th width="15%">Compliance Description</th>
-            <th width="15%">Penal Consequences</th>
-            <th>Compliance Occurence</th>          
-            <th colspan="2" >Applicable Location</th>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td> <br>(Trigger : 20 days)</td>
-            <td colspan="2" > </td>
-          </tr>
+  <table class="table-compliance-frequency-list">
+    <tr class="table-row-com-frequency">
+      <td align="center" class="tbl_heading" ></td>
+    </tr>     
   </table>
-  </div> -->
-  
+  <div class="clearfix"></div>
+</div>
 
+<div id="compliance-templates" style="display:none;">
+  <table width="100%" style="border:1px dotted #CCCCCC;" class="table-compliances-list">
+    <tr align="left" class="sub-head table-row">
+      <th width="3%" align="center">#</th>
+      <th width="12%">Industry Type</th>
+      <th width="12%">Statutory Nature</th>
+      <th width="12%">Statutory Provision</th>
+      <th width="12%">Compliance Task</th>
+    </tr>
+    <tr class="table-row" >
+      <td align="center" class="tbl_sno"></td>
+      <td class="tbl_industrytype"></td>
+      <td class="tbl_statutorynature"></td>
+      <td class="tbl_statutoryprovision"></td>
+      <td class="tbl_compliancetask"><a href="#"></a></td>
+    </tr>
 
+    <tr align="left" class="sub-head table-row">
+      <th align="center">&nbsp;</th>
+      <th width="15%">Compliance Description</th>
+      <th width="15%">Penal Consequences</th>
+      <th>Compliance Occurence</th>          
+      <th colspan="2" >Applicable Location</th>
+    </tr>
+    <tr class="table-row">
+      <td></td>
+      <td class="tbl_description"></td>
+      <td class="tbl_penalconsequences"></td>
+      <td class="tbl_occurance"> <br>(Trigger : 20 days)</td>
+      <td colspan="2" class="tbl_applicablelocation"> </td>
+    </tr>          
+  </table>
+</div>
 
+<script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
+<script type="text/javascript" src="/files/desktop/StatutoryMappingReport/statutorymappingreport.js"></script>
 {% endblock %}

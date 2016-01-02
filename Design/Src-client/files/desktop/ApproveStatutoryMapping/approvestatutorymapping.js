@@ -10,7 +10,6 @@ var statutoriesList;
 var complianceFrequencyList;
 var approvalStatusList;
 var approvelist = [];
-
 var j;
 
 $(function() {

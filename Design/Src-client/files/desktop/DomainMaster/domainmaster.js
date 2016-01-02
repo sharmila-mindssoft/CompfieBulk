@@ -1,10 +1,32 @@
-var tempDomainList;
+var domainsList;
+$(".btn-domain-add").click(function(){
+  $("#domain-view").hide();
+  $("#domain-add").show();
+  $("#domainname").val('');
+  $("#domainid").val('');
+  $(".error-message").html('');
+});
+$(".btn-domain-cancel").click(function(){
+  $("#domain-add").hide();
+  $("#domain-view").show();
+});
+
+function getDomains () {
+  function success(status,data){
+    domainsList = data["domains"];
+    loadDomainList(domainsList);
+  }
+  function failure(data){
+  }
+  mirror.getDomainList(success, failure);
+}
+
 function loadDomainList (domainsList) {
   var j = 1;
-  var imgName = '';
-  var passStatus = '';
+  var imgName = null;
+  var passStatus = null;
   var domainId = 0;
-  var domainName = '';
+  var domainName = null;
   var isActive = 0;
   var domainList;
   $(".tbody-domain-list").find("tr").remove();
@@ -30,60 +52,65 @@ function loadDomainList (domainsList) {
       j = j + 1;
     }
 }
-function displayAdd () {
-  $("#error").text("");
-  $("#listview").hide();
-  $("#addview").show();
-  $("#domainname").val('');
-  $("#domainid").val('');
+
+function validate(){
+  if($("#domainname").val().length==0){
+    $(".error-message").html('Domain Name Required');
+  }else{
+    $(".error-message").html('');
+    return true
+  }
 }
 
-function saveRecord () {
-  domainId = parseInt($("#domainid").val());
-  domainName = $("#domainname").val();
+$("#submit").click(function(){
+  var domainId = $("#domainid").val();
+  var domainName = $("#domainname").val();
 
-if(domainName == ''){
-  $("#error").text("Domain Name Required");
-}else{
+if(validate()){
   if($("#domainid").val() == ''){
     function success(status,data) {
       if(status == 'success') {
+        $("#domain-add").hide();
+        $("#domain-view").show();
         getDomains ();
-        $("#listview").show();
-        $("#addview").hide();
-        $("#error").text("Record Added Successfully");
       } else {
-        $("#error").text(status);
+        $(".error-message").html(status);
       }
     }
     function failure(data){
-
+      $(".error-message").html(status);
     }
     mirror.saveDomain(domainName, success, failure);
   }
   else{
-
     function success(status,data){
       if(status == 'success') {
-        getDomains()
-        $("#listview").show();
-        $("#addview").hide();
-        $("#error").text("Record Updated Successfully");
+        $("#domain-add").hide();
+        $("#domain-view").show();
+        getDomains ();
       } else {
-        $("#error").text(status);
+        $(".error-message").html(status);
       }
     }
     function failure(data) {
     }
-    mirror.updateDomain(domainId, domainName, success, failure);
+    mirror.updateDomain(parseInt(domainId), domainName, success, failure);
   }
 }
-}   
+});   
+
+$('#domainname').keypress(function (e) {
+  if (e.which == 13) {
+    if(validate()){
+      jQuery('#submit').focus().click();
+    }
+  }
+});
 
 function displayEdit (domainId,domainName) {
-  $("#error").text("");
-  $("#listview").hide();
-  $("#addview").show();
+  $(".error-message").text("");
+  $("#domain-view").hide();
+  $("#domain-add").show();
   $("#domainname").val(domainName);
   $("#domainid").val(domainId);
 }
@@ -91,33 +118,21 @@ function displayEdit (domainId,domainName) {
 function changeStatus (domainId,isActive) {
   function success(status,data){
     getDomains ();
-    $("#error").text("Status Changed Successfully");
   }
   function failure(data){
   }
-  mirror.changeDomainStatus(domainId, isActive, success, failure);
+  mirror.changeDomainStatus(parseInt(domainId), isActive, success, failure);
 }
 
-function getDomains () {
-  function success(status,data){
-    tempDomainList = data["domains"];
-    domainsList = data["domains"];
-    loadDomainList(domainsList);
-  }
-  function failure(data){
-  }
-  mirror.getDomainList(success, failure);
-}
-
-function filter (term, cellNr){
-  var filterkey = term.value.toLowerCase();
+$("#search-domain-name").keyup(function() { 
+  var filterkey = this.value.toLowerCase();
   var filteredList=[];
-    for(var entity in tempDomainList) {
-      domainName = tempDomainList[entity]["domain_name"];
-      if (~domainName.toLowerCase().indexOf(filterkey)) filteredList.push(tempDomainList[entity]);
+    for(var entity in domainsList) {
+      domainName = domainsList[entity]["domain_name"];
+      if (~domainName.toLowerCase().indexOf(filterkey)) filteredList.push(domainsList[entity]);
     }
   loadDomainList(filteredList);
-}
+});
 
 $(document).ready(function () {
   getDomains ();
