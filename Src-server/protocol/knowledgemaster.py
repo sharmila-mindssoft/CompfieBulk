@@ -562,6 +562,20 @@ class SaveGeographySuccess(Response):
         return {
         }
 
+class UpdateGeographySuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UpdateGeographySuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 class GeographyNameAlreadyExists(Response):
     def __init__(self):
         pass
@@ -812,6 +826,23 @@ class DuplicateStatutoryLevelsExists(Response):
     def to_inner_structure(self):
         return {
         }
+
+class LevelIdCannotBeNull(Response):
+    def __init__(self, level_name):
+        self.level_name = level_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["level_name"])
+        level_name = data.get("level_name")
+        level_name = parse_structure_CustomTextType_50(level_name)
+        return LevelIdCannotBeNull(level_name)
+
+    def to_inner_structure(self):
+        return {
+            "level_name": to_structure_CustomTextType_50(level_name)
+        }
+
 
 class GetStatutoriesSuccess(Response):
     def __init__(self, countries, domains, statutory_levels, statutories):

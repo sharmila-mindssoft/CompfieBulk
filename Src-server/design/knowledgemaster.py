@@ -1,7 +1,7 @@
 from basics.types import VectorType, RecordType, VariantType, MapType, Field
 from common import (GEOGRAPHY_LEVEL_ID, GEOGRAPHY_NAME, 
 	GEOGRAPHY_ID, COUNTRY_ID, IS_ACTIVE, INDUSTRY_ID, INDUSTRY_NAME,
-	STATUTORY_NATURE_NAME, STATUTORY_NATURE_ID, DOMAIN_ID,
+	STATUTORY_NATURE_NAME, STATUTORY_NATURE_ID, DOMAIN_ID, Text50,
 	STATUTORY_LEVEL_ID, STATUTORY_ID, STATUTORY_NAME, SESSION_TOKEN)
 
 from core import Level, Industry, StatutoryNature, Country, Domain, Geography, Statutory
@@ -147,6 +147,8 @@ GeographyNameAlreadyExists = RecordType("GeographyNameAlreadyExists", [])
 
 InvalidGeographyId = RecordType("InvalidGeographyId", [])
 
+UpdateGeographySuccess = RecordType("UpdateGeographySuccess", [])
+
 ChangeGeographyStatusSuccess = RecordType("ChangeGeographyStatusSuccess", [])
 
 GetIndustriesSuccess = RecordType("GetIndustriesSuccess", [
@@ -189,6 +191,10 @@ SaveStatutoryLevelSuccess = RecordType("SaveStatutoryLevelSuccess", [])
 
 DuplicateStatutoryLevelsExists = RecordType("DuplicateStatutoryLevelsExists", [])
 
+LevelIdCannotBeNull = RecordType("LevelIdCannotBeNull", [
+	Field("level_name", Text50)
+])
+
 DomainStatutoryMap = MapType(DOMAIN_ID, VectorType(Statutory))
 
 GetStatutoriesSuccess = RecordType("GetStatutoriesSuccess", [
@@ -220,7 +226,7 @@ Response = VariantType("Response", [
 	UpdateStatutoryNatureSuccess,
 	ChangeStatutoryNatureStatusSuccess, InvalidStatutoryNatureId,
 	GetStatutoryLevelsSuccess,
-	SaveStatutoryLevelSuccess, DuplicateStatutoryLevelsExists,
+	SaveStatutoryLevelSuccess, DuplicateStatutoryLevelsExists, LevelIdCannotBeNull,
 	GetStatutoriesSuccess, SaveStatutorySuccess, StatutoryNameAlreadyExists,
 	InvalidStatutoryId
 ])
