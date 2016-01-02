@@ -99,6 +99,25 @@ class GroupCompany(object):
             clientList.append(self.toDetailedStructure())
         return clientList
 
+    def getGroupCompanies(self, sessionUser = None, clientIds = None):
+        clientRows = None
+        if sessionUser != None:
+            clientRows = self.db.getClientIds(sessionUser)
+            clientIds = clientRows[0][0]
+        elif clientIds == None:
+            clientRows = self.db.getAllClientIds()
+            clientIds = clientRows[0][0]
+        clientRows = self.db.getGroupCompanies(clientIds)
+        clientList = []
+        for row in clientRows:
+            self.clientId = row[0]
+            self.groupName = row[1]
+            self.isActive = row[2]
+            self.countryIds = [int(x) for x in self.db.getClientCountries(self.clientId).split(",")]
+            self.domainIds = [int(x) for x in self.db.getClientDomains(self.clientId).split(",")]
+            clientList.append(self.toStructure())
+        return clientList
+
 class ClientConfiguration(object):
     db = None
     clientId = None
@@ -214,7 +233,7 @@ class Division(object):
         self.db = db if db != None else DatabaseHandler.instance()
         self.clientId = clientId
 
-    def toStructure(self, clientId) :
+    def toStructure(self) :
         return {
             "division_id": self.divisionId,
             "division_name": self.divisionName,
@@ -721,15 +740,22 @@ class ClientController(object):
         industryList = IndustryList.getList()
         geographyList = GeographyAPI.getList()
 
-        clientIds = User.getClientIds(sessionUser)
+        clientIds =  self.db.getUserClients(sessionUser)
         if clientIds ==  None:
             print "Error : User is not responsible for any client"
         else:
-            groupCompanyList = GroupCompany.getClientList(clientIds)
-            businessGroupList = BusinessGroup.getList(clientIds)
-            legalEntityList = LegalEntity.getList(clientIds)
-            divisionList = Division.getList(clientIds)
-            unitList = Unit.getDetailedList(clientIds)
+            groupCompanyList = GroupCompany(self.db).getGroupCompanies(
+                sessionUser = sessionUser, clientIds = clientIds)
+            businessGroupList = []
+            legalEntityList = []
+            divisionList = []
+            unitList = []
+            for clientId in [int(x) for x in clientIds.split(",")]:
+                businessGroupList = businessGroupList + BusinessGroup(clientId, self.db).getBusinessGroups()
+                legalEntityList = legalEntityList + LegalEntity(clientId, self.db).getLegalEntities()
+                divisionList = divisionList + Division(clientId, self.db).getDivisions()
+                unitList = unitList + Unit(clientId, self.db).getUnitDetails()
+
             responseData["group_companies"] = groupCompanyList
             responseData["business_groups"] = businessGroupList
             responseData["legal_entities"] = legalEntityList

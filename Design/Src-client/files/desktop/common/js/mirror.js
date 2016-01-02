@@ -830,7 +830,8 @@ function initMirror() {
 
     // Client Unit APIs
 
-    function getClients(callerName, callback, failure_callback) {
+    function getClients(callback, failure_callback) {
+        callerName = "TechnoAPI"
         var request = [
             "GetClients",
             {}

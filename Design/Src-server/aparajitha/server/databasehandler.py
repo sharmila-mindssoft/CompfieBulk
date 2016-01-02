@@ -464,6 +464,11 @@ class DatabaseHandler(object) :
         condition = "client_id in (%s)" % clientIds
         return self.getData(self.tblClientGroups, columns, condition)
 
+    def getGroupCompanies(self, clientIds):
+        columns = "client_id, group_name,  is_active"
+        condition = "client_id in (%s)" % clientIds
+        return self.getData(self.tblClientGroups, columns, condition)        
+
     def getClientConfigurations(self, clientId):
         columns = "country_id, domain_id, period_from, period_to"
         condition = "client_id = '%d'"% clientId
@@ -474,7 +479,7 @@ class DatabaseHandler(object) :
         condition = "client_id = '%d'" % clientId
         return self.getData(self.tblBusinessGroups, columns, condition)
 
-    def getLegalEntites(self, clientId):
+    def getLegalEntities(self, clientId):
         columns = "legal_entity_id, legal_entity_name, business_group_id"
         condition = "client_id = '%d'" % clientId
         return self.getData(self.tblLegalEntities, columns, condition)
