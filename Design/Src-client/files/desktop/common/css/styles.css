@@ -1387,3 +1387,83 @@ textarea.heightsmall{ height: 40px; }
 {
 	display: none;	
 }
+.default-display-none
+{
+	display: none;	
+}
+
+.grid-table .input-box{
+    height: 2.2em;
+    font-size: 0.9em;
+ }
+.ac-textbox li
+{
+list-style-type:none; line-height:25px;
+}
+.ac-textbox ul {
+  border:1px solid gray;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+}
+.ac-textbox ul li {
+  font-size: 0.8em;
+  padding-right: 0.3em;
+  padding-left:0.3em;
+  vertical-align: center;
+  cursor: pointer;
+}
+.ac-textbox ul li:hover{
+  background: #EAE8E8;  
+}
+
+/* Autocomplete selectbox Style */
+.ac-selectbox ul {
+  background: none repeat scroll 0 0 #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.11);
+  box-sizing: border-box;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+  transition: opacity 200ms ease-out 0s, top 200ms ease-out 0s, visibility 200ms ease-out 0s;
+}
+.ac-selectbox ul li {
+  font-size: 0.8em;
+  list-style-type:none; 
+  padding: 6px;
+  padding-left: 2em;
+  vertical-align: center;
+  cursor: pointer;
+  background: url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li:hover{
+  background:  #EAE8E8 url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox {
+  background: url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox:hover {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox_country {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+
+/*siva starts*/
+.form-container-grid-table table tr td ul a{
+  text-decoration: none;
+  color:black;
+  width:100%;
+  height:100%;  
+}
+.form-container-grid-table table tr td ul li:hover{
+  background: #EAE8E8;  
+}
+.form-container-grid-table table tr td ul li.active:hover {
+  background: #f1e9f6 url(../images/tick1.png) no-repeat right center;
+  background-size: 1em;
+  border-right: 3px solid #f1e9f6
+}
+/*siva ends*/
