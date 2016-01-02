@@ -1,32 +1,81 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
+<style type="text/css">
+/* Autocomplete textbox Style */
+.ac-textbox li
+{
+list-style-type:none; line-height:25px;
+}
+.ac-textbox ul {
+  border:1px solid gray;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+}
+.ac-textbox ul li {
+  font-size: 0.8em;
+  padding-right: 0.3em;
+  padding-left:0.3em;
+  vertical-align: center;
+  cursor: pointer;
+}
+.ac-textbox ul li:hover{
+  background: #EAE8E8;  
+}
+/*siva ends*/
+</style>
+
+<script type="text/javascript" src="/files/desktop/StatutoryMappingReport/statutorymappingreport.js"></script>
+<script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
+
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
       <div class="add-container-heading">Statutory Mappings<span class="error-message"></span></div>
       <div class="input-row-left">
+
         <div class="input-row">
           <div class="field-label">Country:<span class="mandatory">*</span></div>
           <div class="field-input">
-           <input type="text" class="input-box icon-autocomplete" value="India" placeholder="Enter Country	" />
+          <input type="text" class="input-box icon-autocomplete" id="countryval" onkeyup="loadauto_text(this.value)" placeholder="Enter Country"> 
+          <input type="hidden" id="country"> 
+          <div id="autocompleteview" class="ac-textbox" style="display:none;">
+                <ul id="ulist_text" onclick="hidemenu();" style="width:215px;"></ul>
+          </div>
          </div>
        </div> 
+
        <div class="input-row">
         <div class="field-label">Domain:<span class="mandatory">*</span></div>
         <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" value="Industrial Law" placeholder="Enter Domain" />
+
+         <input type="text" class="input-box icon-autocomplete" id="domainval" onkeyup="loadauto_domain(this.value)" placeholder="Enter Domain"> 
+          <input type="hidden" id="domain"> 
+          <div id="autocomplete_domain" class="ac-textbox" style="display:none;">
+                <ul id="ulist_domain" onclick="hidemenu();" style="width:215px;"></ul>
+          </div>
+
+          
         </div>
       </div> 
       <div class="input-row">
         <div class="field-label">Industry:</div>
         <div class="field-input">
-         <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Industry" />
+         <input type="text" class="input-box icon-autocomplete" id="industryval" onkeyup="loadauto_industry(this.value)" placeholder="Enter Industry"> 
+          <input type="hidden" id="industry"> 
+          <div id="autocomplete_industry" class="ac-textbox" style="display:none;">
+                <ul id="ulist_industry" onclick="hidemenu();" style="width:215px;"></ul>
+          </div>
        </div>
      </div>
      <div class="input-row">
       <div class="field-label">Statutory Nature:</div>
       <div class="field-input">
-        <input type="text" class="input-box icon-autocomplete" placeholder="Enter Statutory Nature" value="">
+        <input type="text" class="input-box icon-autocomplete" id="statutorynatureval" onkeyup="loadauto_statutorynature(this.value)" placeholder="Enter Statutory Nature"> 
+          <input type="hidden" id="statutorynature"> 
+          <div id="autocomplete_statutorynature" class="ac-textbox" style="display:none;">
+                <ul id="ulist_statutorynature" onclick="hidemenu();" style="width:215px;"></ul>
+          </div>
       </div>
     </div>
   </div>
@@ -34,23 +83,34 @@
    <div class="input-row">
     <div class="field-label">Geography:</div>
     <div class="field-input">
-     <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Geography" />
+     <input type="text" class="input-box icon-autocomplete" id="geographyval" onkeyup="loadauto_geography(this.value)" placeholder="Enter Geography"> 
+          <input type="hidden" id="geography"> 
+          <div id="autocomplete_geography" class="ac-textbox" style="display:none;">
+                <ul id="ulist_geography" onclick="hidemenu();" style="width:215px;"></ul>
+          </div>
    </div>
  </div>     
  <div class="input-row">
   <div class="field-label">Act:</div>
   <div class="field-input">
-   <input type="text" class="input-box icon-autocomplete" value="" placeholder="Enter Act  " />
+
+  <input type="text" class="input-box icon-autocomplete" id="statutoryval" onkeyup="loadauto_statutory(this.value)" placeholder="Enter Act"> 
+          <input type="hidden" id="statutory"> 
+          <div id="autocomplete_statutory" class="ac-textbox" style="display:none;">
+                <ul id="ulist_statutory" onclick="hidemenu();" style="width:215px;"></ul>
+          </div>
+
+   
  </div>
 </div> 
 <div class="input-row">
   <div class="field-label">Compliance Frequency:</div>
   <div class="field-input">
-   <select class="input-box tasktype" >
+   <select class="input-box tasktype" id="compliance_frequency">
      <option value="All" Selected="selected">All</option>
-     <option value="Recurring">Periodical</option>
-     <option value="Review">Review</option>
-     <option value="One_Time" >One Time</option>
+     <option value="periodical">Periodical</option>
+     <option value="review">Review</option>
+     <option value="onetime" >One Time</option>
      <option value="onoccur">On Occurrence</option>     
    </select>
  </div>
@@ -58,8 +118,7 @@
 </div>   
 </div>
 <div class="submit-button-container">
-  <input type="submit" name="cancel" value="Show" class="btn-submit">
-  <!-- <input type="button"  class="btn-submit" value="Export" /> -->
+  <input type="submit" value="Show" class="btn-submit" onclick="showResult()">
 </div>
 <div class="clearfix"></div>
 <div class="grid-table-rpt" style="padding-bottom:0em;">
@@ -67,134 +126,89 @@
 
   <div style="margin-left:15%;">
     <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
-      <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>           
+      <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;" class="country"></span> </div>           
     </div>
     <div style="float:right; margin-right:20%;">
-      <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;">Industrial Law</span> </div>
+      <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;" class="domain"></span> </div>
     </div>
   </div>
 
 
   <div class="clearfix"></div>
-       <!--  <div style="background:#C4C0C0; height:30px; margin-top:0px;">
-          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em; ">
-            <div style="margin-left:10px; font-size:0.8em; padding-top:7px; font-weight:bold;">Batteries Act</div>
-          </div> 
-          <div style="margin-right:10px; font-size:0.8em; padding-top:7px; font-weight:bold;float:right"><span style="float:right">Industry type : Factory </div>
-        </div>
-      -->
-      <table class="font1" style="width:100%;height:30px; ">
+      <!-- <table class="font1" style="width:100%;height:30px; ">
         <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
           <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">The Batteries Act</span><span><img src="/images/chevron_black_down.png"></span></span></th>
         </tr>
+      </table> -->
+      <table>
+        <tbody class="tbody-act">        
+        </tbody>
       </table>
 
-      <div class="heading" style="margin-top:5px;">One Time</div><div class="clearfix"></div>
-       <!--  <div style="background:#ddd; height:30px; margin-top:0px;">
-          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em; ">
-            <div style="margin-left:10px; font-size:0.8em; padding-top:7px; font-weight:bold;">Section 1 <img src="/images/right_arrow.png"> Rule 4</div>
-          </div> 
-          <div style="margin-right:10px; font-size:0.8em; padding-top:7px; font-weight:bold;float:right"><span style="float:right">Statutory Nature : Central</span></div>
-        </div> -->
+      <table>
+        <tbody class="tbody-compliance">        
+        </tbody>
+      </table>
 
-        <table width="100%" style="border:1px dotted #CCCCCC;">
-          <tr align="left"  class="sub-head">
+
+      <!-- <div class="heading" style="margin-top:5px;">One Time</div>
+      <div class="clearfix">
+      </div> -->
+
+      <!-- <table>
+        <tbody class="tbody-statutorymapping">        
+        </tbody>
+      </table> -->
+
+
+      <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;">Total : 3 records</p>
+    </div>
+  </div>
+</div>
+
+<div id="act-templates">
+<table class="font1" style="width:100%;height:30px; ">
+        <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+          <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%" class="actname"></span><span>
+          <img src="/images/chevron_black_down.png"></span></span></th>
+        </tr>
+</table>
+
+<div id="compliance-templates">
+  <table width="100%" style="border:1px dotted #CCCCCC;">
+          <tr align="left" class="sub-head">
             <th width="3%" align="center">#</th>
             <th width="12%">Industry Type</th>
             <th width="12%">Statutory Nature</th>
             <th width="12%">Statutory Provision</th>
             <th width="12%">Compliance Task</th>
-           
-            
-            
-            
           </tr>
           <tr>
-            <td align="center">1</td>
-            <td>Factory</td>
-            
-            <td>Central</td>
-            <td>Section 1 <img src="/images/right_arrow.png"> Rule 4</td>
-            <td><a href="#">FORM VIII - Notice of Opening</a></td>
-          
-            
-            
-
-
+            <td align="center" class="tbl_sno"></td>
+            <td class="tbl_industrytype"></td>
+            <td class="tbl_statutorynature"></td>
+            <td class="tbl_statutoryprovision"></td>
+            <td class="tbl_compliancetask"><a href="#"></a></td>
           </tr>
+
           <tr align="left">
             <th align="center">&nbsp;</th>
-             <th width="15%">Compliance Description</th>
+            <th width="15%">Compliance Description</th>
             <th width="15%">Penal Consequences</th>
-            
-            <th >Compliance Occurence</th>          
+            <th>Compliance Occurence</th>          
             <th colspan="2" >Applicable Location</th>
           </tr>
           <tr>
             <td></td>
-              <td>Within 30 days of opening a branch</td>
-            <td>Imprisonment With Fine</td>
-        
-            <td>1st September <br>(Trigger : 20 days)</td>
-
-            <td colspan="2" >India >> South >> Tamil Nadu >> Madurai<br>
-              India >> South >> Tamil Nadu >> Dindigul....</td>
-
-            </tr>
-          </table>
-          <div class="heading" style="margin-top:5px;">Periodical</div><div class="clearfix"></div>
-         <!-- <div style="background:#ddd; height:30px; margin-top:0px;">
-          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em; ">
-            <div style="margin-left:10px; font-size:0.8em; padding-top:7px; font-weight:bold;">Section 2 <img src="/images/right_arrow.png"> Rule 3(i) </div>
-          </div>
-          <div style="margin-right:10px; font-size:0.8em; padding-top:7px; font-weight:bold;float:right"><span style="float:right">Statutory Nature : State</span></div>
-        </div> -->
-
-        <table width="100%" style="border:1px dotted #CCCCCC;" >
-          <tr align="left">
-            <th width="3%" align="center">#</th>    
-            <th width="12%">Industry Type</th>      
-            <th width="12%">Statutory Nature</th>
-            <th width="12%">Statutory Provision</th>
-            <th width="12%">Compliance Task</th>
-          
+            <td></td>
+            <td></td>
+            <td> <br>(Trigger : 20 days)</td>
+            <td colspan="2" > </td>
           </tr>
-          <tr>
-            <td align="center">2</td>
-            <td>Factory</td>            
-            <td>State</td>
-            <td>Section 2 <img src="/images/right_arrow.png"> Rule 3(i)</td>
-            <td><a href="#">FORM I - Dealer Registration</a> </td>
-           
-          </tr>
-          <tr align="left">
-            <th align="center">&nbsp;</th>
-              <th width="15%">Compliance Description</th>
-            <th width="15%">Penal Consequences</th>
-            
-            <th >Compliance Occurence</th>
-            <th >Applicable Location</th>         
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-             <td>Within 30 days of opening a branch</td>
-            <td>Imprisonment With Fine</td>
-          
-            <td>Every Year 10th March and 10th September <br>(Trigger: 15 days and 10 days)</td>             
-            <td colspan="2">India >> South >> Tamilnadu</td>
-          </tr>
-
-        </table>
-        
-      </div>
-
-      <table class="font1" style="width:100%;height:30px; ">
-        <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-          <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;padding-top:7px; padding-left:5px;" width="95%">Indian Partnership Act, 1932</span><span><img src="/images/chevron_black_right.png"></span></span></th>
-        </tr>
-      </table>
-      <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;">Total : 3 records</p>
-    </div>
+  </table>
   </div>
+  
 </div>
+
+
 {% endblock %}

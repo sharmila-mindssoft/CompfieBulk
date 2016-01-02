@@ -15,18 +15,12 @@
     "Welcome to Aparajitha!"
   </div>
   <script>
-    function success(data){
+    function callback(data){
       alert("success_data"+data);
     }
-    function failure(data){
-      alert("failure_data"+data)
-    }
     $(document).ready(function(){
-      clientId = 1;
-      divisionId = 1;
-      isActive = 0;
-          
-      mirror.changeClientStatus("TechnoAPI", clientId, divisionId, isActive, success, failure);
+      alert("inside document ready")
+      mirror.getAdminUserGroupList(callback);
     });
 </script>
 </body>

@@ -71,7 +71,7 @@ class DatabaseHandler(object) :
 
     def validateSessionToken(self, sessionToken) :
         query = "SELECT user_id FROM tbl_user_sessions \
-        WHERE session_id = '%s'" % sessionToken
+        WHERE session_token = '%s'" % (sessionToken)
         rows = self.dataSelect(query)
         row = rows[0]
         return row[0]
@@ -89,13 +89,13 @@ class DatabaseHandler(object) :
     def getDateTime(self) :
         return datetime.datetime.now()
 
-    def saveActivity(self, userId, formId, action, notificationText=None, notificationLink=None):
+    def saveActivity(self, userId, formId, action):
         createdOn = self.getDateTime()
         activityId = self.getNewId("activity_log_id", "tbl_activity_log")
         query = "INSERT INTO tbl_activity_log(activity_log_id, user_id, form_id, \
-            action, ticker_text, ticker_link, created_on) \
-            VALUES (%s, %s, %s, '%s', '%s', '%s', '%s')" % (
-                activityId, userId, formId, action, str(notificationText), str(notificationLink), createdOn
+            action, created_on) \
+            VALUES (%s, %s, %s, '%s', '%s')" % (
+                activityId, userId, formId, action, createdOn
             )
         self.dataInsertUpdate(query)
 
@@ -114,9 +114,15 @@ class DatabaseHandler(object) :
             isDuplicate = True
 
         return isDuplicate
-            
+
     def getDomains(self) :
         query = "SELECT domain_id, domain_name, is_active FROM tbl_domains "
+        return self.dataSelect(query)
+
+    def getDomainsForUser(self, userId) :
+        query = "SELECT distinct t1.domain_id, t1.domain_name, t1.is_active FROM tbl_domains t1 \
+            INNER JOIN tbl_user_domains t2 ON t1.domain_id = t2.domain_id \
+            WHERE t2.user_id = %s" % (userId)
         return self.dataSelect(query)
 
     def saveDomain(self, domainName, createdBy) :
@@ -177,6 +183,12 @@ class DatabaseHandler(object) :
 
     def getCountries(self) :
         query = "SELECT country_id, country_name, is_active FROM tbl_countries "
+        return self.dataSelect(query)
+
+    def getCountriesForUser(self, userId) :
+        query = "SELECT distinct t1.country_id, t1.country_name, t1.is_active FROM tbl_countries t1 \
+            INNER JOIN tbl_user_countries t2 ON t1.country_id = t2.country_id \
+            WHERE t2.user_id = %s" % (userId)
         return self.dataSelect(query)
 
     def checkDuplicateCountry(self, countryName, countryId) :
@@ -766,8 +778,8 @@ class DatabaseHandler(object) :
 
         query = "SELECT t1.compliance_id, t1.statutory_provision, t1.compliance_task, \
             t1.compliance_description, t1.document_name, t1.format_file, t1.penal_consequences, \
-            t1.compliance_frequency, t1.statutory_dates, t1.repeats_every, t1.repeats_type, \
-            t1.duration, t1.duration_type, t1.is_active \
+            t1.frequency_id, t1.statutory_dates, t1.repeats_every, t1.repeats_type_id, \
+            t1.duration, t1.duration_type_id, t1.is_active \
             FROM tbl_compliances t1 %s" % qry
         return self.dataSelect(query)
 
@@ -780,31 +792,31 @@ class DatabaseHandler(object) :
             statutoryProvision = data.get("statutory_provision")
             complianceTask = data.get("compliance_task")
             complianceDescription = data.get("description")
-            documentName = data.get("document")
-            formatFile = data.get("format_file_name")
+            documentName = data.get("document_name")
+            formatFile = ','.join(str(x) for x in data.get("format_file_name"))
             penalConsequences = data.get("penal_consequences")
-            complianceFrequency = data.get("compliance_frequency")
+            complianceFrequency = data.get("frequency_id")
             statutoryDates =  json.dumps(data.get("statutory_dates"))
             repeatsEvery = data.get("repeats_every")
-            repeatsType = data.get("repeats_type")
+            repeatsType = data.get("repeats_type_id")
             duration = data.get("duration")
-            durationType = data.get("duration_type")
+            durationType = data.get("duration_type_id")
             isActive = data.get("is_active")
 
-            if complianceFrequency == "OneTime" :
+            if complianceFrequency == 1 :
                 query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
                     compliance_task, compliance_description, document_name, format_file, \
-                    penal_consequences, compliance_frequency, statutory_dates, statutory_mapping_id, \
+                    penal_consequences, frequency_id, statutory_dates, statutory_mapping_id, \
                     is_active, created_by, created_on) VALUES (%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', \
                     '%s', %s, %s, %s, '%s')" % (complianceId, statutoryProvision, complianceTask, 
                     complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
                     statutoryDates, mappingId, isActive, createdBy, createdOn)
 
-            elif complianceFrequency == "OnOccurrence" :
+            elif complianceFrequency == 4 :
                 query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
                     compliance_task, compliance_description, document_name, format_file, \
-                    penal_consequences, compliance_frequency, statutory_dates, duration, \
-                    duration_type, statutory_mapping_id, \
+                    penal_consequences, frequency_id, statutory_dates, duration, \
+                    duration_type_id, statutory_mapping_id, \
                     is_active, created_by, created_on) VALUES (%s,'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, \
                     '%s', %s, %s, %s, '%s')" % (complianceId, statutoryProvision, complianceTask, 
                     complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
@@ -813,8 +825,8 @@ class DatabaseHandler(object) :
             else :
                 query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
                     compliance_task, compliance_description, document_name, format_file, \
-                    penal_consequences, compliance_frequency, statutory_dates, repeats_every, \
-                    repeats_type, statutory_mapping_id, \
+                    penal_consequences, frequency_id, statutory_dates, repeats_every, \
+                    repeats_type_id, statutory_mapping_id, \
                     is_active, created_by, created_on) VALUES (%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', \
                     %s, '%s', %s, %s, %s, '%s')"  % (complianceId, statutoryProvision, complianceTask, 
                     complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
@@ -829,35 +841,39 @@ class DatabaseHandler(object) :
         complianceIds = []
         for data in datas :
             complianceId = data.get("compliance_id")
+            if (complianceId == "") :
+                ids = self.saveCompliance(mappingId, [data], updatedBy)
+                complianceIds.extend(ids)
+                continue
             statutoryProvision = data.get("statutory_provision")
             complianceTask = data.get("compliance_task")
             complianceDescription = data.get("description")
-            documentName = data.get("document")
-            formatFile = data.get("format_file_name")
+            documentName = data.get("document_name")
+            formatFile = ','.join(str(x) for x in data.get("format_file_name"))
             penalConsequences = data.get("penal_consequences")
-            complianceFrequency = data.get("compliance_frequency")
+            complianceFrequency = data.get("frequency_id")
             statutoryDates =  json.dumps(data.get("statutory_dates"))
             repeatsEvery = data.get("repeats_every")
-            repeatsType = data.get("repeats_type")
+            repeatsType = data.get("repeats_type_id")
             duration = data.get("duration")
-            durationType = data.get("duration_type")
+            durationType = data.get("duration_type_id")
             isActive = data.get("is_active")
 
-            if complianceFrequency == "OneTime" :
+            if complianceFrequency == 1 :
                 query = "UPDATE tbl_compliances set statutory_provision = '%s', \
                     compliance_task = '%s', compliance_description = '%s', document_name = '%s' , format_file = '%s', \
-                    penal_consequences = '%s', compliance_frequency = '%s', statutory_dates = '%s', statutory_mapping_id = %s, \
+                    penal_consequences = '%s', frequency_id = '%s', statutory_dates = '%s', statutory_mapping_id = %s, \
                     is_active = %s, updated_by = %s WHERE compliance_id = %s "  % (
                         statutoryProvision, complianceTask, 
                         complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
                         statutoryDates, mappingId, isActive, updatedBy, complianceId
                     )
 
-            elif complianceFrequency == "OnOccurrence" :
+            elif complianceFrequency == 4 :
                 query = "UPDATE tbl_compliances set statutory_provision='%s', \
                     compliance_task='%s', compliance_description='%s', document_name='%s', format_file='%s', \
-                    penal_consequences='%s', compliance_frequency='%s', statutory_dates='%s', duration=%s, \
-                    duration_type='%s', statutory_mapping_id = %s, \
+                    penal_consequences='%s', frequency_id='%s', statutory_dates='%s', duration=%s, \
+                    duration_type_id='%s', statutory_mapping_id = %s, \
                     is_active = %s, updated_by = %s WHERE compliance_id = %s "% (
                         statutoryProvision, complianceTask, 
                         complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
@@ -867,8 +883,8 @@ class DatabaseHandler(object) :
             else :
                 query = "UPDATE tbl_compliances set statutory_provision ='%s', \
                     compliance_task ='%s', compliance_description='%s', document_name='%s', format_file='%s', \
-                    penal_consequences='%s', compliance_frequency='%s', statutory_dates='%s', repeats_every=%s, \
-                    repeats_type='%s', statutory_mapping_id=%s, \
+                    penal_consequences='%s', frequency_id='%s', statutory_dates='%s', repeats_every=%s, \
+                    repeats_type_id='%s', statutory_mapping_id=%s, \
                     is_active=%s, updated_by=%s WHERE compliance_id = %s "  % (
                         statutoryProvision, complianceTask, 
                         complianceDescription, documentName, formatFile, penalConsequences, complianceFrequency,
@@ -888,14 +904,16 @@ class DatabaseHandler(object) :
         return self.dataInsertUpdate(query)
 
     ### Stautory Mapping ###
-    def getStautoryMappings(self) :
+    def getStautoryMappings(self, userId) :
         query = "SELECT t1.statutory_mapping_id, t1.country_id, t2.country_name, t1.domain_id,  \
             t3.domain_name, t1.industry_ids, t1.statutory_nature_id, t4.statutory_nature_name, \
             t1.statutory_ids, t1.compliance_ids, t1.geography_ids, t1.approval_status, t1.is_active  \
             FROM tbl_statutory_mappings t1 \
             INNER JOIN tbl_countries t2 on t1.country_id = t2.country_id \
             INNER JOIN tbl_domains t3 on t1.domain_id = t3.domain_id \
-            INNER JOIN tbl_statutory_natures t4 on t1.statutory_nature_id = t4.statutory_nature_id "
+            INNER JOIN tbl_statutory_natures t4 on t1.statutory_nature_id = t4.statutory_nature_id \
+            INNER JOIN tbl_user_domains t5 on t1.domain_id = t5.domain_id and t5.user_id = %s \
+            INNER JOIN tbl_user_countries t6 on t1.country_id = t6.country_id and t6.user_id = %s" %(userId, userId)
         return self.dataSelect(query)
 
     def getStatutoryMappingsById (self, mappingId) :
@@ -910,6 +928,20 @@ class DatabaseHandler(object) :
         rows = self.dataSelect(query)
         return rows[0]
 
+    def getComplianceDuration(self):
+        query = "SELECT duration_type_id, duration_type FROM tbl_compliance_duration_type"
+        rows = self.dataSelect(query)
+        return rows
+
+    def getComplianceRepeat(self):
+        query = "SELECT repeat_type_id, repeat_type FROM tbl_compliance_repeat_type"
+        rows = self.dataSelect(query)
+        return rows
+
+    def getComplianceFrequency(self):
+        query = "SELECT frequency_id, frequency FROM tbl_compliance_frequency"
+        rows = self.dataSelect(query)
+        return rows
 
     def saveStatutoryMapping(self, data, createdBy) :
         countryId =data.get("country_id")
@@ -944,7 +976,6 @@ class DatabaseHandler(object) :
         else :
             return False
 
-
     def updateStatutoryMapping(self, data, updatedBy) :
         statutoryMappingId = data.get("statutory_mapping_id")
         countryId =data.get("country_id")
@@ -957,12 +988,14 @@ class DatabaseHandler(object) :
 
         self.saveStatutoryBackup(statutoryMappingId, updatedBy)
         query = "UPDATE tbl_statutory_mappings set country_id=%s, domain_id=%s, industry_ids='%s', \
-            statutory_nature_id=%s, statutory_ids='%s', geography_ids='%s', updated_by=%s \
+            statutory_nature_id=%s, statutory_ids='%s', geography_ids='%s', approval_status=0, rejected_reason=NULL, updated_by=%s \
             WHERE statutory_mapping_id=%s" % (
                 countryId, domainId, industryIds, natureId, statutoryIds, geographyIds,
                 updatedBy, statutoryMappingId
             )
+
         if (self.dataInsertUpdate(query)) :
+            print "update mapping"
             self.updateStatutoryMappingId(data.get("statutory_ids"), statutoryMappingId, updatedBy)
             ids = self.updateCompliance(statutoryMappingId, compliances, updatedBy)
             complianceIds = ','.join(str(x) for x in ids) + ","
@@ -970,7 +1003,7 @@ class DatabaseHandler(object) :
                 where statutory_mapping_id = %s" % (complianceIds, statutoryMappingId)
             self.dataInsertUpdate(qry)
             action = "Edit Statutory Mappings"
-            self.saveActivity(userId, 17, action)
+            self.saveActivity(updatedBy, 17, action)
             return True
         else :
             return False
@@ -995,31 +1028,70 @@ class DatabaseHandler(object) :
 
     def changeApprovalStatus(self, data, updatedBy) :
         statutoryMappingId = data.get("statutory_mapping_id")
+        statutoryProvision = data.get("statutory_provision")
         approvalStatus = data.get("approval_status")
-        rejectedReason = data.get("rejected_ reason")
+        rejectedReason = data.get("rejected_reason")
         notificationText = data.get("notification_text")
 
-        if approvalStatus == "Reject" :
+        if approvalStatus == 2 :
+            #Rejected
             query = "UPDATE tbl_statutory_mappings set approval_status='%s', rejected_reason='%s', \
                 updated_by=%s WHERE statutory_mapping_id = %s" % (
                     approvalStatus, rejectedReason, updatedBy, statutoryMappingId
                 )
-        elif approvalStatus == "Approve" :
-            query = "UPDATE tbl_statutory_mappings set approval_status='%s', \
-                updated_by=%s WHERE statutory_mapping_id = %s" % (
-                    approvalStatus, updatedBy, statutoryMappingId
-                )
+            self.dataInsertUpdate(query)
+            notification_log_text = "Statutory Mapping: %s has been Rejected" % (statutoryProvision)
         else :
+            
             query = "UPDATE tbl_statutory_mappings set approval_status='%s', \
                 updated_by=%s WHERE statutory_mapping_id = %s" % (
                     approvalStatus, updatedBy, statutoryMappingId
                 )
-            # if (self.dataInsertUpdate(query)) :
-
-        self.dataInsertUpdate(query)
+            self.dataInsertUpdate(query)
+            notification_log_text = "Statutory Mapping: %s has been Approved" % (statutoryProvision)            
+            if approvalStatus == 3 :
+                self.saveStatutoryNotifications(statutoryMappingId, notificationText)
+                notification_log_text = "Statutory Mapping: %s has been Approve & Notified" % (statutoryProvision)
+        
+        link = "/statutorymapping/list"
+        self.saveNotification(notification_log_text, link)
         action = "Statutory Mapping approval status changed"
         self.saveActivity(updatedBy, 17, action)
         return True
+
+    def saveNotification(self, notification_text, link):
+        #internal notification
+        notificationId = self.getNewId("notification_id", "tbl_notifications")
+        query = "INSERT INTO tbl_notifications (notification_id, notification_text, link) \
+            VALUES (%s, '%s', '%s')" % (notificationId, notification_text, link)
+        self.dataInsertUpdate(query)
+
+    def saveStatutoryNotifications(self, statutoryMappingId, notificationText ):
+        # client notification
+        oldRecord = self.getStatutoryMappingsById(statutoryMappingId)
+        industryName = self.getIndustryByIndustryId(oldRecord[4])
+
+        statutoryProvision = []
+        for sid in oldRecord[7][:-1].split(',') :
+            data = self.allStatutories.get(int(sid))
+            statutoryProvision.append(data[3])
+        mappings = ','.join(str(x) for x in statutoryProvision)
+        geoMap = []
+        for gid in oldRecord[8][:-1].split(',') :
+            data = self.allGeographies.get(int(gid))
+            geoMap.append(data[1])
+        geoMappings = ','.join(str(x) for x in geoMap)
+
+        notificationId = self.getNewId("statutory_notification_id", "tbl_statutory_notifications_log")
+
+        query = " INSERT INTO tbl_statutory_notifications_log (statutory_notification_id,\
+            statutory_mapping_id, country_name, domain_name, industry_name, statutory_nature,\
+            statutory_provision, applicable_location, notification_text) \
+            VALUES(%s, %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s') " % (
+                notificationId, statutoryMappingId, oldRecord[1], oldRecord[3], 
+                industryName, oldRecord[6], mappings, geoMappings,notificationText
+            )
+        self.dataInsertUpdate(query)
 
     def saveStatutoryBackup(self, statutoryMappingId, createdBy):
         oldRecord = self.getStatutoryMappingsById(statutoryMappingId)
@@ -1037,20 +1109,20 @@ class DatabaseHandler(object) :
             data = self.allGeographies.get(int(gid))
             geoMap.append(data[1])
         geoMappings = ','.join(str(x) for x in geoMap)
-        query = "INSERT INTO tbl_statutories_backup(statutory_backup_id, country_name, domain_name, industry_name, \
-            statutory_nature, statutory_provision, applicable_location, updated_by, updated_on) \
-            VALUES(%s, '%s', '%s', '%s', '%s', '%s', '%s', %s, '%s') " % (
-                backupId, oldRecord[1], oldRecord[3], industryName, oldRecord[6], mappings, geoMappings,
+        query = "INSERT INTO tbl_statutories_backup(statutory_backup_id, statutory_mapping_id, country_name, domain_name, industry_name, \
+            statutory_nature, statutory_provision, applicable_location, created_by, created_on) \
+            VALUES(%s, %s, '%s', '%s', '%s', '%s', '%s', '%s', %s, '%s') " % (
+                backupId, statutoryMappingId, oldRecord[1], oldRecord[3], industryName, oldRecord[6], mappings, geoMappings,
                 createdBy, createdOn
             )
         if (self.dataInsertUpdate(query)) :
             qry = " INSERT INTO tbl_compliances_backup(statutory_backup_id, statutory_provision, \
                 compliance_task, compliance_description, document_name, format_file, \
-                penal_consequences, compliance_frequency, statutory_dates, repeats_every, \
-                repeats_type, duration, duration_type)  \
+                penal_consequences, frequency_id, statutory_dates, repeats_every, \
+                repeats_type_id, duration, duration_type_id)  \
                 SELECT %s,t1.statutory_provision, t1.compliance_task, t1.compliance_description, \
-                t1.document_name, t1.format_file, t1.penal_consequences, t1.compliance_frequency, \
-                t1.statutory_dates, t1.repeats_every, t1.repeats_type, t1.duration, t1.duration_type \
+                t1.document_name, t1.format_file, t1.penal_consequences, t1.frequency_id, \
+                t1.statutory_dates, t1.repeats_every, t1.repeats_type_id, t1.duration, t1.duration_type_id \
                 FROM tbl_compliances t1 WHERE statutory_mapping_id=%s" % (backupId, statutoryMappingId)
             self.dataInsertUpdate(qry)
 
