@@ -1,6 +1,8 @@
 import datetime
 import MySQLdb as mysql
 
+from protocol import core
+
 __all__ = [
     "KnowledgeDatabase", "ClientDatabase"
 ]
@@ -98,23 +100,6 @@ class KnowledgeDatabase(Database):
             mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase
         )
 
-    # def get_user(self, user_id):
-    #   query = "select * from users"
-    #   return self.select_all(query)
-
-    # def insert_user(self, username, user_id):
-    #   query = "INSERT INTO USERS(username, user_id) VALUES (%s, %s)" % (
-    #       username, user_id
-    #   )
-    #   self.execute(query)
-
-    # def update_user(self, username, user_id):
-    #   query = "UPDATE USERS SET username= %s WHERE user_id = %s" % (
-    #       username, user_id
-    #   )
-    #   self.execute(query)
-
-
     def convert_to_dict(self, data_list, columns) :
         result_list = []
         if len(data_list) > 1 :
@@ -210,6 +195,7 @@ class KnowledgeDatabase(Database):
                 activityId, user_id, form_id, action, createdOn
             )
         self.execute(query)
+        return True
 
   #
   # Domain
@@ -220,8 +206,16 @@ class KnowledgeDatabase(Database):
         query = "SELECT distinct t1.domain_id, t1.domain_name, t1.is_active FROM tbl_domains t1 "
         if user_id > 0 :
             query = query + " INNER JOIN tbl_user_domains t2 ON t1.domain_id = t2.domain_id WHERE t2.user_id = %s" % (user_id)
-        result = self.select_all(query)
-        return result
+        rows = self.select_all(query)
+        columns = ["domain_id", "domain_name", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_domains(result)
+    
+    def return_domains(self, data):
+        results = []
+        for d in data :
+            results.append(core.Domain(d["domain_id"], d["domain_name"], d["is_active"]))
+        return results
     
     def save_domain(self, domain_name, user_id) :
         createdOn = self.get_date_time()
@@ -234,7 +228,7 @@ class KnowledgeDatabase(Database):
         )
         self.execute(query)
         action = "Add Domain - \"%s\"" % domain_name
-        self.save_activity(user_id, 4, action)
+        self.save_activity(user_id, 2, action)
         return True
 
     def check_duplicate_domain(self, domain_name, domain_id) :
@@ -266,7 +260,7 @@ class KnowledgeDatabase(Database):
             )
             self.execute(query)
             action = "Edit Domain - \"%s\"" % domain_name
-            self.save_activity(updated_by, 4, action)
+            self.save_activity(updated_by, 2, action)
             return True
 
     def update_domain_status(self, domain_id, is_active, updated_by) :
@@ -284,7 +278,7 @@ class KnowledgeDatabase(Database):
             else:
                 status = "activated"
             action = "Domain %s status  - %s" % (oldData, status)
-            self.save_activity(updated_by, 4, action)
+            self.save_activity(updated_by, 2, action)
             return True
 
     #
@@ -295,8 +289,19 @@ class KnowledgeDatabase(Database):
         query = "SELECT distinct t1.country_id, t1.country_name, t1.is_active FROM tbl_domains t1 "
         if user_id > 0 :
             query = query + " INNER JOIN tbl_user_countries t2 ON t1.domain_id = t2.domain_id WHERE t2.user_id = %s" % (user_id)
-        result = self.select_all(query)
-        return result
+        rows = self.select_all(query)
+        columns = ["country_id", "country_name", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return return_countries(result)
+
+    def return_countries(self, data) :
+        results = []
+
+        for d in data :
+            results.append(core.Country(d["country_id"], d["country_name"], d["is_active"]))
+        return results
+
+
     
     def get_country_by_id(self, country_id) :
         q = "SELECT country_name FROM tbl_countries WHERE country_id=%s" % country_id
@@ -327,7 +332,7 @@ class KnowledgeDatabase(Database):
         )
         self.execute(query)
         action = "Add Country - \"%s\"" % country_name
-        self.save_activity(created_by, 4, action)
+        self.save_activity(created_by, 1, action)
         return True
 
     def update_country(self, country_id, country_name, updated_by) :
@@ -341,7 +346,7 @@ class KnowledgeDatabase(Database):
             )
             self.execute(query)
             action = "Edit Country - \"%s\"" % country_name
-            self.save_activity(updated_by, 3, action)
+            self.save_activity(updated_by, 1, action)
             return True
 
     def update_country_status(self, country_id, is_active, updated_by) :
@@ -359,7 +364,7 @@ class KnowledgeDatabase(Database):
                 status = "activated"
             self.execute(query)
             action = "Country %s status  - %s" % (oldData, status)
-            self.save_activity(updated_by, 3, action)
+            self.save_activity(updated_by, 1, action)
             return True
 
     def get_user_forms(self, form_ids):
@@ -377,7 +382,6 @@ class KnowledgeDatabase(Database):
             joinConditions, whereCondition)
         return self.convert_to_dict(rows, columns)
 
-
     def get_form_types(self) :
         query = "SELECT form_type_id, form_type_name FROM tbl_form_type"
         rows = self.select_all(query)
@@ -385,4 +389,540 @@ class KnowledgeDatabase(Database):
         data_list = self.convert_to_dict(rows, columns)
         return data_list
 
+    def save_data(self, table_name, field, data):
+        query = "INSERT INTO %s '%s' VALUES '%s'" % (
+            table_name, str(field), str(data)
+        )
+        self.execute(query)
+        return True
 
+    def update_data(self, table_name, field_with_data, where_condition) :
+        query = "UPDATE %s SET %s WHERE %s" % (
+            table_name, field_with_data, where_condition
+        )
+        self.execute(query)
+        return True
+
+    def get_industries(self) :
+        query = "SELECT industry_id, industry_name, is_active FROM tbl_industries "
+        rows = self.select_all(query)
+        columns = ["industry_id", "industry_name", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_industry(result)
+
+    def return_industry(self, data) :
+        results = []
+        for d in data :
+            industry_id = d["industry_id"]
+            industry_name = d["industry_name"]
+            is_active = bool(d["is_active"])
+            results.append(core.Industry(industry_id, industry_name, is_active))
+        return results
+
+
+
+    def get_industry_by_id(self, industry_id) :
+        q = "SELECT industry_name FROM tbl_industries WHERE industry_id=%s" % industry_id
+        row = self.select_one(q)
+        industry_name = row[0]
+        return industry_name
+
+    def check_duplicate_industry(self, industry_name, industry_id) :
+        isDuplicate = False
+        query = "SELECT count(*) FROM tbl_industries \
+            WHERE LOWER(industry_name) = LOWER('%s') " % industry_name
+
+        if industry_id is not None :
+            query = query + " AND industry_id != %s" % industry_id
+        row = self.select_one(query)
+
+        if row[0] > 0 :
+            isDuplicate = True
+
+        return isDuplicate
+
+    def save_industry(self, industry_name, user_id):
+        table_name = "tbl_industries"
+        created_on = self.get_date_time()
+        industry_id = self.get_new_id("industry_id", table_name)
+        field = ("industry_id", "industry_name", "created_by", "created_on")
+        data = (industry_id, industry_name, user_id, created_on)
+        if (self.save_data(table_name, field, data)):
+            action = "New Industry type %s added" % (industry_name)
+            self.save_activity(user_id, 7, action)
+            return True
+        return False
+
+    def update_industry(self, industry_id, industry_name, user_id):
+        oldData = self.get_industry_by_id(industry_id)
+        if oldData is None :
+            return False
+
+        table_name = "tbl_industries"
+        field_with_data = " industry_name = '%s', updated_by = %s" % (
+            industry_name, updated_by
+        )
+        where_condition = "industry_id = %s " % industry_id
+        if (self.update_data(table_name, field_with_data, where_condition)) :
+            action = "Industry type %s updated" % (industry_name)
+            self.save_activity(user_id, 7, action)
+            return True
+        else :
+            return False
+
+    def update_industry_status(self, industry_id, is_active, user_id) :
+        oldData = self.get_industry_by_id(industry_id)
+        if oldData is None:
+            return False
+
+        table_name = "tbl_industries"
+        field_with_data = "is_active = %s, updated_by = %s" % (
+            is_active, user_id
+        )
+        where_condition = "industry_id = %s " % industry_id
+
+        if (self.update_data(table_name, field_with_data, where_condition)):
+            if is_active == 0:
+                status = "deactivated"
+            else:
+                status = "activated"
+            
+            action = "Industry type %s status  - %s" % (oldData, status)
+            self.save_activity(user_id, 7, action)
+            return True
+        else :
+            return False
+
+    def get_statutory_nature(self) :
+        query = "SELECT statutory_nature_id, statutory_nature_name, is_active \
+            FROM tbl_statutory_natures "
+        rows = self.select_all(query)
+        columns = ["statutory_nature_id", "statutory_nature_name", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_statutory_nature(result)
+
+    def return_statutory_nature(self, data) :
+        results = []
+        for d in data :
+            nature_id = d["statutory_nature_id"]
+            nature_name = d["statutory_nature_name"]
+            is_active = bool(d["is_active"])
+            results.append(core.StatutoryNature(nature_id, nature_name, is_active))
+        return results
+
+
+    def get_nature_by_id(self, nature_id) :
+        q = "SELECT sttautory_nature_name FROM tbl_statutory_natures WHERE statutory_nature_id=%s" % nature_id
+        row = self.select_one(q)
+        nature_name = row[0]
+        return nature_name
+
+    def check_duplicate_statutory_nature(self, nature_name, nature_id) :
+        isDuplicate = False
+        query = "SELECT count(*) FROM tbl_statutory_natures \
+            WHERE LOWER(statutory_nature_name) = LOWER('%s') " % nature_name
+
+        if nature_id is not None :
+            query = query + " AND statutory_nature_id != %s" % nature_id
+        row = self.select_one(query)
+
+        if row[0] > 0 :
+            isDuplicate = True
+
+        return isDuplicate
+
+
+    def save_statutory_nature(self, nature_name, user_id) :
+        table_name = "tbl_statutory_natures"
+        created_on = self.get_date_time()
+        nature_id = self.get_new_id("statutory_nature_id", table_name)
+        field = ("statutory_nature_id", "statutory_nature_name", "created_by", "created_on")
+        data = (nature_id, nature_name, user_id, created_on)
+        if (self.save_data(table_name, field, data)):
+            action = "New Statutory Nature %s added" % (nature_name)
+            self.save_activity(user_id, 8, action)
+            return True
+        return False
+
+    def update_statutory_nature(self, nature_id, nature_name, user_id):
+        oldData = self.get_nature_by_id(nature_id)
+        if oldData is None :
+            return False
+
+        table_name = "tbl_statutory_natures"
+        field_with_data = " nature_name = '%s', updated_by = %s" % (
+            nature_name, updated_by
+        )
+        where_condition = "statutory_nature_id = %s " % nature_id
+        if (self.update_data(table_name, field_with_data, where_condition)) :
+            action = "Statutory Nature %s updated" % (nature_name)
+            self.save_activity(user_id, 8, action)
+            return True
+        else :
+            return False
+
+    def update_statutory_nature_status(self, nature_id, is_active, user_id) :
+        oldData = self.get_nature_by_id(nature_id)
+        if oldData is None:
+            return False
+
+        table_name = "tbl_statutory_natures"
+        field_with_data = "is_active = %s, updated_by = %s" % (
+            is_active, user_id
+        )
+        where_condition = "statutory_nature_id = %s " % (nature_id)
+
+        if (self.update_data(table_name, field_with_data, where_condition)):
+            if is_active == 0:
+                status = "deactivated"
+            else:
+                status = "activated"
+            
+            action = "Statutory nature %s status  - %s" % (oldData, status)
+            self.save_activity(user_id, 8, action)
+            return True
+        else :
+            return False
+
+    def get_statutory_levels(self):
+        query = "SELECT level_id, level_position, level_name, country_id, domain_id \
+            FROM tbl_statutory_levels ORDER BY level_position"
+
+        rows = self.select_all(query)
+        columns = ["level_id", "level_position", "level_name", "country_id", "domain_id"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_statutory_levels(result)
+
+    def return_statutory_levels(self, data):
+        statutory_levels = {}
+        for d in data :
+            country_id = d["country_id"]
+            domain_id = d["domain_id"]
+            levels = core.Level(d["level_id"], d["level_position"], d["level_name"])
+            country_wise = statutory_levels.get(country_id)
+            _list = []
+            if country_wise is None :
+                country_wise = {}
+            else :
+                _list = country_wise.get(domain_id)
+                if _list is None :
+                    _list = []
+            _list.append(levels)
+            country_wise[domain_id] = _list
+            statutory_levels[country_id] = country_wise
+        return statutory_levels
+
+    def get_levels_for_country_domain(self, country_id, domainId) :
+        query = "SELECT level_id, level_position, level_name \
+            FROM tbl_statutory_levels WHERE country_id = %s and domain_id = %s ORDER BY level_position" % (
+                country_id, domainId
+            )
+        rows = self.select_all(query)
+        columns = ["level_id", "level_position", "level_name"]
+        result = self.convert_to_dict(rows, columns)
+        return result
+
+    def check_duplicate_levels(self, country_id, domain_id, levels) :
+        saved_names = [row["level_name"] for row in self.get_levels_for_country_domain(country_id, domainId)]
+
+        level_names = []
+        level_positions = []
+        for level in levels :
+            name = level.level_name
+            position = level.level_position
+            if level.level_id  is None :
+                if (saved_names.count(name) > 0) :
+                    print "LevelIdCannotNullFor '%s'" % name
+                    return name
+            level_names.append(name)
+            level_positions.append(position)
+
+        duplicate_names = [x for i, x in enumerate(level_names) if level_names.count(x) > 1]
+        duplicate_position = [x for i, x in enumerate(level_positions) if level_positions.count(x) > 1]
+        if len(duplicate_names) > 0 :
+            # self.responseData = "DuplicateStatutoryLevelNamesExists"
+            return True
+        elif len(duplicate_position) > 0 :
+            # self.responseData = "DuplicateStatutoryLevelPositionsExists"
+            return True
+        return False
+
+    def save_statutory_levels(self, country_id, domain_id, levels, user_id) :
+
+        table_name = "tbl_statutory_levels"
+        created_on = self.get_date_time()
+        for level in levels :
+            name = level.level_name
+            position = level.level_position
+            if (level.level_id is None) :
+                level_id = self.get_new_id("level_id", table_name)
+                field = ("level_id", "level_position", "level_name", "country_id", "domain_id", "created_by", "created_on")
+                data = (level_id, position, name, country_id, domain_id, user_id, created_on)
+                if (self.save_data(table_name, field, data)):
+                    action = "New Statutory levels added"
+                    self.save_activity(user_id, 9, action)
+            else :
+                field_with_data = "level_position=%s, level_name='%s', updated_by=%s" % (
+                    position, name, user_id
+                )
+                where_condition = "level_id=%s" % (level.level_id)
+                if (self. update_data(table_name, field_with_data, where_condition)):
+                    action = "Statutory levels updated"
+                    self.save_activity(user_id, 9, action)
+        return True
+
+    def get_geography_levels(self):
+        query = "SELECT level_id, level_position, level_name, country_id \
+            FROM tbl_geography_levels ORDER BY level_position"
+        rows = self.select_all(query)
+        columns = ["level_id", "level_position", "level_name", "country_id"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_geography_levels(result)
+
+    def return_geography_levels(self, data):
+        geography_levels = {}
+        results = []
+        for d in data:
+            country_id = d["country_id"]
+            level = core.Level(d["level_id"], d["level_position"], d["level_name"])
+            _list = geography_levels.get(country_id) = {}
+            if _list is None :
+                _list = []
+            _list.append(level)
+            geography_levels[country_id] = _list
+        return geography_levels
+
+    def get_geography_levels_for_country(self, country_id) :
+        query = "SELECT level_id, level_position, level_name \
+            FROM tbl_geography_levels WHERE country_id = %s ORDER BY level_position" % country_id
+        rows = self.select_all(query)
+        columns = ["level_id", "level_position", "level_name"]
+        result = self.convert_to_dict(rows, columns)
+        return result
+
+    def check_duplicate_gepgrahy_levels(self, country_id, levels) :
+        saved_names = [row["level_name"] for row in self.get_geography_levels_for_country(country_id)]
+
+        level_names = []
+        level_positions = []
+        for level in levels :
+            name = level.level_name
+            position = level.level_position
+            if level.level_id  is None :
+                if (saved_names.count(name) > 0) :
+                    print "LevelIdCannotNullFor '%s'" % name
+                    return name
+            level_names.append(name)
+            level_positions.append(position)
+
+        duplicate_names = [x for i, x in enumerate(level_names) if level_names.count(x) > 1]
+        duplicate_position = [x for i, x in enumerate(level_positions) if level_positions.count(x) > 1]
+        if len(duplicate_names) > 0 :
+            # self.responseData = "DuplicateStatutoryLevelNamesExists"
+            return True
+        elif len(duplicate_position) > 0 :
+            # self.responseData = "DuplicateStatutoryLevelPositionsExists"
+            return True
+        return False
+
+    def save_geography_levels(self, country_id, levels):
+        table_name = "tbl_geography_levels"
+        created_on = self.get_date_time()
+        for level in levels :
+            name = level.level_name
+            position = lavel.level_position
+            if level.level_id is None :
+                level_id = self.get_new_id("level_id", table_name)
+                field = ("level_id", "level_position", "level_name", "country_id", "created_by", "created_on")
+                data = (level_id, position, name, country_id, user_id, created_on)
+                if (self.save_data(table_name, field, data)):
+                    action = "New Geography levels added"
+                    self.save_activity(user_id, 5, action)
+            else :
+                field_with_data = "level_position=%s, level_name='%s', updated_by=%s" % (
+                    position, name, user_id
+                )
+                where_condition = "level_id=%s" % (level.level_id)
+                if (self. update_data(table_name, field_with_data, where_condition)):
+                    action = "Geography levels updated"
+                    self.save_activity(user_id, 5, action)
+        return True
+
+    def get_geographies(self) :
+        query = "SELECT t1.geography_id, t1.geography_name, t1.level_id, \
+            t1.parent_ids, t1.is_active, t2.country_id, t3.country_name FROM tbl_geographies t1 \
+            INNER JOIN tbl_geography_levels t2 on t1.level_id = t2.level_id \
+            INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id"
+        rows = self.select_all(query)
+        columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_geographies(result)
+
+    def return_geographies(self, data):
+        geographies = {}
+        for d in data :
+            parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
+            geography = core.Geography(d["geography_id"], d["geography_name"], d["level_id"], parent_ids, parent_ids[-1], d["is_active"])
+            country_id = d["country_id"]
+            _list = geographies.get(country_id)
+            if _list is None :
+                _list = []
+            _list.append(geography)
+            geographies[country_id] = _list
+        return geographies
+
+    def get_geography_by_id(self, geography_id):
+        query = "SELECT geography_id, geography_name, level_id, parent_ids, is_active \
+            FROM tbl_geographies WHERE geography_id = %s" % (geography_id)
+        rows = self.select_one(query)
+        columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return result
+
+    def check_duplicate_geography(self, parent_ids, geography_id) :
+        query = "SELECT geography_id, geography_name, level_id, is_active \
+            FROM tbl_geographies WHERE parent_ids='%s' " % (parent_ids)
+        if geography_id is not None :
+            query = query + " AND geography_id != %s" % geography_id
+        
+        rows = self.select_all(query)
+        columns = ["geography_id", "geography_name", "level_id", "is_active"]
+        return self.convert_to_dict(rows, columns)
+
+
+    def save_geography(self, geography_level_id, geography_name, parent_ids, user_id) :
+        is_saved = False
+        table_name = "tbl_geographies"
+        created_on = self.get_date_time()
+        geography_id = self.get_new_id("geography_id", table_name)
+        field = ("geography_id", "geography_name", "level_id", "parent_ids", "created_by", "created_on") 
+        data = (geography_id, geography_name, geography_level_id, parent_ids, user_id, created_on)
+        if (self.save_data(table_name, field, data)) :
+            action = "New Geography %s added" % (geography_id)
+            self.save_activity(user_id, 6, action)
+            is_saved = True
+        return is_saved
+
+    def update_geography(self, geography_id, name, parent_ids, updated_by) :
+        oldData = self.get_geography_by_id(geography_id)
+        if bool(oldData) is False:
+            return False
+        oldparent_ids = oldData["parent_ids"]
+
+        table_name = "tbl_geographies"
+        field_with_data = "geography_name='%s', parent_ids='%s', updated_by=%s " % (
+            name, parent_ids, updated_by
+        )
+
+        where_condition = "geography_id = %s" % (geography_id)
+        
+        self.update_data(table_name, field_with_data, where_condition)
+        action = "Geography - %s updated" % name
+        self.save_activity(updated_by, 6, action)
+        return True
+
+        # if oldparent_ids != parent_ids :
+        #     oldPId = str(oldparent_ids) + str(geography_id)
+        #     newPId = str(parent_ids) + str(geography_id)
+        #     qry = "SELECT geography_id, geography_name, parent_ids from tbl_geographies \
+        #         WHERE parent_ids like '%s'" % str("%" + str(oldPId) + ",%")
+        #     rows = self.dataSelect(qry)
+        #     for row in rows :
+        #         newParentId = str(row[2]).replace(oldPId, newPId)
+        #         q = "UPDATE tbl_geographies set parent_ids='%s', updated_by=%s where geography_id=%s" % (
+        #             newParentId, updated_by, row[0]
+        #         )
+        #         self.dataInsertUpdate(q)
+        #     action = "Edit Geography Mappings Parent"
+        #     self.saveActivity(updated_by, 7, action)
+        # self.getAllGeographies()
+        # return True
+
+    def change_geography_status(self,geography_id, is_active, updated_by) :
+        oldData = self.get_geography_by_id(geography_id)
+        if bool(oldData) is False:
+            return False
+        table_name = "tbl_geographies"
+        field_with_data = "is_active=%s, updated_by=%s"  % (
+            int(is_active), updated_by
+        )
+        where_condition = "geography_id = %s" %  (geography_id)
+        if (self. update_data(table_name, field_with_data, where_condition)) :
+            if is_active == 0:
+                status = "deactivated"
+            else:
+                status = "activated"
+            action = "Geography %s status  - %s" % (name, status)
+            self.save_activity(updated_by, 6, action)
+            return True
+
+    def get_statutory_by_id(self, statutory_id):
+        query = "SELECT statutory_id, statutory_name, level_id, parent_ids, is_active \
+            FROM tbl_statutories WHERE statutory_id = %s" % (statutory_id)
+        rows = self.select_one(query)
+        columns = ["statutory_id", "statutory_name", "level_id", "parent_ids", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return result
+
+    def check_duplicate_statutory(self, parent_ids, statutory_id) :
+        query = "SELECT statutory_id, statutory_name, level_id, is_active \
+            FROM tbl_statutories WHERE parent_ids='%s' " % (parent_ids)
+        if statutory_id is not None :
+            query = query + " AND statutory_id != %s" % statutory_id
+        
+        rows = self.select_all(query)
+        columns = ["statutory_id", "statutory_name", "level_id", "is_active"]
+        return self.convert_to_dict(rows, columns)
+
+
+    def save_statutory(self, name, level_id, parent_ids, user_id) :
+        is_saved = False
+        statutory_id = self.get_new_id("statutory_id", "tbl_statutories")
+        created_on = self.get_date_time()
+        table_name = "tbl_statutories"
+        field = ("statutory_id", "statutory_name", "level_id", "parent_ids", "created_by", "created_on")
+        data = (statutory_id, name, level_id, parent_ids, user_id, created_on)
+
+        if (self.save_data(db, field, data)) :
+            action = "Statutory - %s added" % name
+            self.save_activity(user_id, 12, action)
+            is_saved = True
+        return is_saved
+
+    def update_statutory(self, statutory_id, name, parent_ids, updated_by) :
+        oldData = self.get_statutory_by_id(statutory_id)
+        if bool(oldData) is False:
+            return False
+        oldparent_ids = oldData["parent_ids"]
+
+        table_name = "tbl_statutories"
+        field_with_data = "statutory_name='%s', parent_ids='%s', updated_by=%s " % (
+            name, parent_ids, updated_by
+        )
+
+        where_condition = "statutory_id = %s" % (statutory_id)
+        
+        self.update_data(table_name, field_with_data, where_condition)
+        action = "Statutory - %s updated" % name
+        self.save_activity(updated_by, 6, action)
+        return True
+
+        # if oldparent_ids != parent_ids :
+        #     oldPId = str(oldparent_ids) + str(statutory_id)
+        #     newPId = str(parent_ids) + str(statutory_id)
+        #     qry = "SELECT statutory_id, geography_name, parent_ids from tbl_geographies \
+        #         WHERE parent_ids like '%s'" % str("%" + str(oldPId) + ",%")
+        #     rows = self.dataSelect(qry)
+        #     for row in rows :
+        #         newParentId = str(row[2]).replace(oldPId, newPId)
+        #         q = "UPDATE tbl_geographies set parent_ids='%s', updated_by=%s where geography_id=%s" % (
+        #             newParentId, updated_by, row[0]
+        #         )
+        #         self.dataInsertUpdate(q)
+        #     action = "Edit Geography Mappings Parent"
+        #     self.saveActivity(updated_by, 7, action)
+        # self.getAllGeographies()
+        # return True
+
+
+        

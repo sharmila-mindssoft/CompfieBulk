@@ -2,7 +2,8 @@ from protocol import login, general, core
 
 __all__ = [
 	"validate_user_session", "process_save_domain", "process_update_domain",
-	"process_change_domain_status", "process_get_domains",
+	"process_change_domain_status", 
+	"process_get_domains",
 	"procees_update_user_profile",
 	"process_save_country", "process_update_country",
 	"process_change_country_status", "process_get_countries",
@@ -73,15 +74,7 @@ def process_change_domain_status(db, request, user_id):
 		return general.InvalidDomainId()
 
 def process_get_domains(db, user_id):
-	data = db.get_domains_for_user(user_id)
-	results = []
-
-	for d in data :
-		domain_id = d[0]
-		domain_name = d[1]
-		is_active = bool(d[2])
-		results.append(core.Domain(domain_id, domain_name, is_active))
-
+	results = db.get_domains_for_user(user_id)
 	success = general.GetDomainsSuccess(domains=results)
 	return success
 
@@ -118,21 +111,13 @@ def process_change_country_status(db, request, user_id):
 	is_active = request.is_active
 	country_id = request.country_id
 
-	if (db.update_country_status(country_id, is_active, user_id)) :
+	if (db.update_country_status(country_id, int(is_active), user_id)) :
 		return general.ChangeCountryStatusSuccess()
 	else :
 		return general.InvalidCountryId()
 
 def process_get_countries(db, user_id):
-	data = db.get_countries_for_user(user_id)
-	results = []
-
-	for d in data :
-		country_id = d[0]
-		country_name = d[1]
-		is_active = bool(d[2])
-		results.append(core.Country(country_id, country_name, is_active))
-
+	results = db.get_countries_for_user(user_id)
 	success = general.GetCountriesSuccess(countries=results)
 	return success
 
