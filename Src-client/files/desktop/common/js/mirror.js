@@ -17,19 +17,16 @@ function initMirror() {
     }
 
     function initSession(userProfile){
-        var info = {
-            "userProfile": userProfile
-        };
-        windows.localStorage["userInfo"] = toJSON(info);
+        window.localStorage["userInfo"] = toJSON(userProfile);
     }
 
-    function updateUser_Session(user) {
-        var info = parseJSON(window.localStorage["userInfo"])
-        delete window.localStorage["userInfo"];
+    // function updateUser_Session(user) {
+    //     var info = parseJSON(window.localStorage["userInfo"])
+    //     delete window.localStorage["userInfo"];
 
-        info.userProfile = user;
-        window.localStorage["userInfo"] = toJSON(info);
-    }
+    //     info.userProfile = user;
+    //     window.localStorage["userInfo"] = toJSON(info);
+    // }
 
     function clearSession() {
         delete window.localStorage["userInfo"];
@@ -40,11 +37,11 @@ function initMirror() {
         if (typeof(info) === "undefined")
             return null;
         user = parseJSON(info)
-        return user["userProfile"];
+        return user
     }
 
     function getUserProfile() {
-        var info = getUserProfile();
+        var info = getUserInfo();
         if (info === null)
             return null
         var userDetails = {
@@ -108,7 +105,36 @@ function initMirror() {
     }
 
     // Login function 
-
+    function login(username, password, callback) {
+        var request = [
+            "Login", {
+                "login_type": "Web",
+                "username": username,
+                "password": password
+            }
+        ]
+        jQuery.post(
+            BASE_URL + "api/login",
+            toJSON(request),
+            function (data) {
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                if (status.toLowerCase().indexOf(matchString) != -1){
+                    callback(null, response);
+                }
+                callback(status, null) 
+            }
+        )
+    }
+    function verifyLoggedIn() {
+        sessionToken = getSessionToken()
+        if (sessionToken == null)
+            return false
+        else 
+            return true
+    }
     //Domain Master
 
     function saveDomain(domainName, callback) {
@@ -1076,8 +1102,10 @@ function initMirror() {
         parseJSON: parseJSON,
 
         initSession: initSession,
-        updateUser_Session: updateUser_Session,
+        // updateUser_Session: updateUser_Session,
         clearSession: clearSession,
+        verifyLoggedIn: verifyLoggedIn,
+        login: login,
 
         getUserInfo: getUserInfo,
         getUserProfile: getUserProfile,
