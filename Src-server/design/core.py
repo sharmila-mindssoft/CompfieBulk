@@ -164,7 +164,8 @@ Form = RecordType("Form", [
 	Field("form_id", FORM_ID),
 	Field("form_name", FORM_NAME),
 	Field("form_url", URL),
-	Field("parent_menu", Text50)
+	Field("parent_menu", OptionalType(Text50)),
+	Field("form_type_id", FORM_TYPE_ID)
 ])
 
 FormList = VectorType(Form)

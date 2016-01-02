@@ -6,14 +6,16 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_250,
     parse_structure_SignedIntegerType_8,
     parse_structure_EnumType_core_SESSION_TYPE,
-    parse_structure_CustomTextType_20, parse_structure_CustomTextType_50
+    parse_structure_CustomTextType_20, parse_structure_CustomTextType_50,
+    parse_structure_OptionalType_CustomTextType_100
 )
 from protocol.to_structure import (
     to_structure_CustomTextType_100,
     to_structure_RecordType_core_Menu, to_structure_CustomTextType_250,
     to_structure_SignedIntegerType_8,
     to_structure_EnumType_core_SESSION_TYPE,
-    to_structure_CustomTextType_20, to_structure_CustomTextType_50
+    to_structure_CustomTextType_20, to_structure_CustomTextType_50,
+    to_structure_OptionalType_CustomTextType_100
 )
 
 #
@@ -262,7 +264,7 @@ class AdminLoginSuccess(Response):
         session_token = data.get("session_token")
         session_token = parse_structure_CustomTextType_50(session_token)
         email_id = data.get("email_id")
-        email_id = parse_structure_CustomTextType_100(email_id)
+        email_id = parse_structure_OptionalType_CustomTextType_100(email_id)
         menu = data.get("menu")
         menu = parse_structure_RecordType_core_Menu(menu)
         employee_name = data.get("employee_name")
@@ -273,7 +275,7 @@ class AdminLoginSuccess(Response):
         return {
             "user_id": to_structure_SignedIntegerType_8(self.user_id),
             "session_token": to_structure_CustomTextType_50(self.session_token),
-            "email_id": to_structure_CustomTextType_100(self.email_id),
+            "email_id": to_structure_OptionalType_CustomTextType_100(self.email_id),
             "menu": to_structure_RecordType_core_Menu(self.menu),
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
         }
