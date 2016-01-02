@@ -1189,7 +1189,8 @@ function initMirror() {
     }
 
     //Client Profile
-    function getClientProfile(callerName, callback, failure_callback){
+    function getClientProfile(callback, failure_callback){
+        callerName = "TechnoAPI"
         var request = [
             "GetClientProfile",
             {}
@@ -1198,7 +1199,8 @@ function initMirror() {
     }
 
     // Client Details Report
-    function getClientDetailsReportFilters(callerName, callback, failure_callback){
+    function getClientDetailsReportFilters(callback, failure_callback){
+        callerName = "TechnoAPI"
         var request = [
             "GetClientDetailsReportFilters",
             {}
@@ -1206,11 +1208,20 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function getClientDetailsReport(callerName, reportFilters, 
-        callback, failure_callback){
+    function getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId, 
+        unitId, domainIds, callback, failure_callback){
+        callerName = "TechnoAPI"
         var request = [
             "GetClientDetailsReport",
-            reportFilters
+            {
+                "country_id": countryId,
+                "group_id" : clientId,
+                "business_group_id": businessGroupId,
+                "legal_entity_id" : legalEntityId,
+                "division_id" : divisionId,
+                "unit_id": unitId,
+                "domain_ids" : domainIds
+            }
         ];
         apiRequest(callerName, request, callback, failure_callback);
     }

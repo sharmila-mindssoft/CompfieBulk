@@ -233,7 +233,6 @@ class DatabaseHandler(object) :
                 query += " %s %s on (%s)" % (table, aliases[index],joinConditions[index-1])
 
         query += " where %s" % whereCondition
-        print query
         return self.executeAndReturn(query)
 
     def validateSessionToken(self, sessionToken) :
@@ -802,6 +801,69 @@ class DatabaseHandler(object) :
         values = [1, currentTimeStamp, sessionUser]
         condition = "unit_id = '%d' and client_id = '%d' "% (unitId, clientId)
         return self.update(self.tblUnits, columns, values, condition)
+
+#
+#   Client profile
+#    
+
+    def getSettings(self, clientId):
+        settingsColumns = "contract_from, contract_to, no_of_user_licence, total_disk_space"
+        condition = "client_id = '%d'" % clientId                            
+        return  self.getData(self.tblClientGroups, settingsColumns, "1")
+
+    def getLicenceHolderDetails(self, clientId):
+        columns = "tcu.user_id, tcu.email_id, tcu.employee_name, tcu.employee_code, tcu.contact_no,"+\
+        "tcu.is_admin, tu.unit_code, tu.unit_name, tu.address, tcu.is_active"
+        tables = [self.tblClientUsers, self.tblUnits]
+        aliases = ["tcu", "tu"]
+        joinType = "left join"
+        joinConditions = ["tcu.seating_unit_id = tu.unit_id"]
+        whereCondition = "tcu.client_id = '%d'" % clientId
+        return self.getDataFromMultipleTables(columns, tables, aliases, joinType, joinConditions, whereCondition)
+
+#
+#   Client Details Report
+#    
+
+    def getClientDetailsReport(self, countryId, clientId, businessGroupId, 
+            legalEntityId, divisionId, unitId, domainIds):
+        columns = "business_group_id, legal_entity_id, division_id,"+\
+                "unit_code, unit_name, geography_id, address, domain_ids, postal_code"
+        condition = "1 "
+
+        if businessGroupId != None:
+            condition += " AND business_group_id = '%d'" % businessGroupId
+        if legalEntityId != None:
+            condition += " AND legal_entity_id = '%d'" % legalEntityId
+        if divisionId != None:
+            condition += " AND division_id = '%d'" % divisionId
+        if unitId != None:
+            condition += " AND unit_id = '%d'" % unitId
+        if domainIds != None:
+            for domainId in domainIds:
+                condition += " AND  ( domain_ids LIKE  '%,"+str(domainId)+",%' "+\
+                            "or domain_ids LIKE  '%,"+str(domainId)+"' "+\
+                            "or domain_ids LIKE  '"+str(domainId)+",%'"+\
+                            " or domain_ids LIKE '"+str(domainId)+"') "
+
+        return self.getData(self.tblUnits, columns, condition)
+
+    def getGeography(self, geographyId):
+        columns = "parent_ids, geography_name"
+        condition = "geography_id = '%d'" % geographyId
+        rows = self.getData(self.tblGeographies, columns, condition)
+        parentIds = rows[0][0]
+        geoName = rows[0][1]
+        
+        geoColumns = "group_concat(geography_name)"
+        condition = "geography_id in (%s)" % parentIds[:-1]
+        rows = self.getData(self.tblGeographies, geoColumns, condition)
+        result = None
+        if rows[0][0] == None:
+            result = geoName
+        else:
+            result = "%s, %s"%(rows[0][0], geoName)
+        return result
 
     def truncate(self, table):
         query = "TRUNCATE TABLE  %s;" % table

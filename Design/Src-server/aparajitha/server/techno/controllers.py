@@ -797,15 +797,64 @@ class ClientController(object):
 
 class ClientProfile(object):
 
+    def __init__(self):
+        self.db = DatabaseHandler.instance()
+
+    def getProfiles(self, clientIds):
+        clientIdsList = [int(x) for x in clientIds.split(",")]
+        profiles = {}
+        for clientId in clientIdsList:
+            settingsRows = self.db.getSettings(clientId)
+            contractFrom = settingsRows[0][0]
+            contractTo = settingsRows[0][1]
+            noOfUserLicence = settingsRows[0][2]
+            fileSpace = settingsRows[0][3]
+            usedSpace = 34
+            licenceHolderRows = self.db.getLicenceHolderDetails(clientId)
+            licenceHolders = []
+            for row in licenceHolderRows:
+                employeeName = None
+                unitName = None
+                if(row[3] == None):
+                    employeeName = row[2]
+                else:
+                    employeeName = "%s - %s" % (row[3], row[2])
+
+                if row[7] == None:
+                    unitName = "-"
+                else:
+                    unitName =  "%s - %s" % (row[6], row[7])
+                licenceHolderDetails = {}
+                licenceHolderDetails["user_id"] = row[0]
+                licenceHolderDetails["email_id"] = row[1]
+                licenceHolderDetails["employee_name"] = employeeName
+                licenceHolderDetails["contact_no"] = row[4]
+                licenceHolderDetails["is_admin"] = row[5]
+                licenceHolderDetails["unit_name"] =unitName
+                licenceHolderDetails["address"] = row[8]
+                licenceHolderDetails["is_active"] = row[9]
+                licenceHolders.append(licenceHolderDetails)
+
+            profileDetails = {}
+            profileDetails["contract_from"] = str(contractFrom)
+            profileDetails["contract_to"] = str(contractTo)
+            profileDetails["no_of_user_licence"] = noOfUserLicence
+            profileDetails["remaining_licence"] = (noOfUserLicence) - len(licenceHolderRows)
+            profileDetails["total_disk_space"] = fileSpace
+            profileDetails["used_disk_space"] = usedSpace
+            profileDetails["licence_holders"] = licenceHolders
+            profiles[clientId] = profileDetails
+        return profiles
+
     def getClientProfile(self, sessionUser):
-        clientIds = User.getClientIds(sessionUser)
+        clientIds = self.db.getUserClients(sessionUser)
 
         if clientIds ==  None:
             print "Error : User is not responsible for any client"
         else:
-            client = Client()
-            profiles = client.getProfiles(clientIds)
-            groupCompanies = GroupCompany.getClientList(clientIds)
+            profiles = self.getProfiles(clientIds)
+            groupCompanies = GroupCompany(self.db).getGroupCompanies(
+                sessionUser = sessionUser, clientIds = clientIds)
 
             responseData = {}
             responseData["group_companies"] = groupCompanies
@@ -813,33 +862,37 @@ class ClientProfile(object):
             return commonResponseStructure("GetClientProfileSuccess", responseData)
 
     def getClientDetailsReportFilters(self, sessionUser):
-        clientIds = User.getClientIds(sessionUser)
-
+        countryList = CountryList.getCountryList()
+        domainList = DomainList.getDomainList()
+        clientIds =  self.db.getUserClients(sessionUser)
         if clientIds ==  None:
             print "Error : User is not responsible for any client"
         else:
-            countryList = CountryList.getCountryList()
-            domainList = DomainList.getDomainList()
-            groupCompanyList = GroupCompany.getClientList(clientIds)
-            businessGroupList = BusinessGroup.getList(clientIds)
-            legalEntityList = LegalEntity.getList(clientIds)
-            divisionList = Division.getList(clientIds)
-            unitList = Unit.getList(clientIds)
+            groupCompanyList = GroupCompany(self.db).getGroupCompanies(
+                sessionUser = sessionUser, clientIds = clientIds)
+            businessGroupList = []
+            legalEntityList = []
+            divisionList = []
+            unitList = []
+            for clientId in [int(x) for x in clientIds.split(",")]:
+                businessGroupList = businessGroupList + BusinessGroup(clientId, self.db).getBusinessGroups()
+                legalEntityList = legalEntityList + LegalEntity(clientId, self.db).getLegalEntities()
+                divisionList = divisionList + Division(clientId, self.db).getDivisions()
+                unitList = unitList + Unit(clientId, self.db).getUnitDetails()
 
-            responseData = {}
-            responseData["countries"] = countryList
-            responseData["domains"] = domainList
-            responseData["group_companies"] = groupCompanyList
-            responseData["business_groups"] = businessGroupList
-            responseData["legal_entities"] = legalEntityList
-            responseData["divisions"] = divisionList
-            responseData["units"] = unitList
+        responseData = {}
+        responseData["countries"] = countryList
+        responseData["domains"] = domainList
+        responseData["group_companies"] = groupCompanyList
+        responseData["business_groups"] = businessGroupList
+        responseData["legal_entities"] = legalEntityList
+        responseData["divisions"] = divisionList
+        responseData["units"] = unitList
 
-            return commonResponseStructure(
-                "GetClientDetailsReportFiltersSuccess", responseData)
+        return commonResponseStructure(
+            "GetClientDetailsReportFiltersSuccess", responseData)
 
     def getClientDetailsReport(self, requestData, sessionUser):
-
         countryId = requestData["country_id"]
         clientId = requestData["group_id"]
         businessGroupId = requestData["business_group_id"]
@@ -848,10 +901,25 @@ class ClientProfile(object):
         unitId = requestData["unit_id"]
         domainIds = requestData["domain_ids"]
 
-        client = Client()
-        divisionWiseUnitDetails = client.getReport(
-                countryId, clientId, businessGroupId, legalEntityId, 
-                divisionId, unitId, domainIds)
+        rows = self.db.getClientDetailsReport(countryId, clientId, businessGroupId, 
+            legalEntityId, divisionId, unitId, domainIds)
+        divisionWiseUnitDetails={}
+
+        for row in rows:
+            geography_id = row[5]
+            geography = self.db.getGeography(geography_id)
+            unitDetails = {}
+            unitDetails["unit_name"] = "%s - %s" % (row[3], row[4])
+            unitDetails["unit_location_and_address"] = "%s - %s" % (
+                geography, row[6])
+            unitDetails["domain_ids"] = [int(x) for x in row[7].split(",")]
+            unitDetails["postal_code"] = row[8]
+            divisionId = row[2]
+            if divisionId in divisionWiseUnitDetails:
+                divisionWiseUnitDetails[divisionId].append(unitDetails)
+            else:
+                divisionWiseUnitDetails[divisionId] = []
+                divisionWiseUnitDetails[divisionId].append(unitDetails)
 
         responseData = {}
         responseData["units"] = divisionWiseUnitDetails
