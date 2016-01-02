@@ -696,6 +696,13 @@ class DatabaseHandler(object) :
         sessionUser, currentTimeStamp]
         return self.insert(self.tblBusinessGroups, columns, values)
 
+    def updateBusinessGroup(self, clientId, businessGroupId, businessGroupName, sessionUser):
+        currentTimeStamp = getCurrentTimeStamp()
+        columns = ["business_group_name", "updated_by", "updated_on"]
+        values = [businessGroupName, sessionUser, currentTimeStamp]
+        condition = "business_group_id = '%d' and client_id = '%d'"%(businessGroupId, clientId)
+        return self.update(self.tblBusinessGroups, columns, values, condition)
+
     def saveLegalEntity(self, clientId, legalEntityId, legalEntityName, businessGroupId, sessionUser):
         currentTimeStamp = getCurrentTimeStamp()
         columns = ["client_id", "legal_entity_id", "legal_entity_name", "business_group_id", 
@@ -704,6 +711,13 @@ class DatabaseHandler(object) :
         sessionUser, currentTimeStamp, sessionUser, currentTimeStamp]
         return self.insert(self.tblLegalEntities, columns, values)
     
+    def updateLegalEntity(self, clientId, legalEntityId, legalEntityName, businessGroupId, sessionUser):
+        currentTimeStamp = getCurrentTimeStamp()
+        columns = ["legal_entity_name", "updated_by", "updated_on"]
+        values = [legalEntityName, businessGroupId, sessionUser, currentTimeStamp]
+        condition = "legal_entity_id = '%d' and client_id = '%d'"%(legalEntityId, clientId)
+        return self.update(self.tblLegalEntities, columns, values, condition)
+
     def saveDivision(self, clientId, divisionId, divisionName, businessGroupId, legalEntityId, sessionUser):
         currentTimeStamp = getCurrentTimeStamp()
         columns = ["client_id", "division_id", "division_name", "business_group_id", "legal_entity_id",
@@ -711,6 +725,13 @@ class DatabaseHandler(object) :
         values = [clientId, divisionId, divisionName, businessGroupId, legalEntityId,
         sessionUser, currentTimeStamp, sessionUser, currentTimeStamp]
         return self.insert(self.tblDivisions, columns, values)
+
+    def updateDivision(self, clientId, divisionId, divisionName, businessGroupId, legalEntityId, sessionUser):
+        currentTimeStamp = getCurrentTimeStamp()
+        columns = ["division_name", "updated_by", "updated_on"]
+        values = [divisionName, sessionUser, currentTimeStamp]
+        condition = "division_id = '%d' and client_id = '%d'"%(divisionId, clientId)
+        return self.update(self.tblDivisions, columns, values, condition)
 
     def saveUnit(self, clientId,  units, businessGroupId, legalEntityId, divisionId, sessionUser):
         currentTimeStamp = str(getCurrentTimeStamp())
@@ -745,6 +766,30 @@ class DatabaseHandler(object) :
                         str(unit["postal_code"]), 1, sessionUser, currentTimeStamp, sessionUser, currentTimeStamp)
             valuesList.append(valuesTuple)
         return self.bulkInsert(self.tblUnits, columns, valuesList)
+
+
+    def updateUnit(self, clientId,  units, businessGroupId, legalEntityId, divisionId, sessionUser):
+        currentTimeStamp = str(getCurrentTimeStamp())
+        columns = ["country_id", "geography_id", "industry_id", "domain_ids", "unit_code", "unit_name", 
+        "address", "postal_code", "updated_by", "updated_on"]
+        valuesList = []
+        for unit in units:
+            domainIds = ",".join(str(x) for x in unit["domain_ids"])
+            values= [unit["country_id"], unit["geography_id"],unit["industry_id"], domainIds, 
+                        str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
+                        str(unit["postal_code"]), sessionUser, currentTimeStamp]
+            condition = "client_id='%d' and unit_id = '%d'" % (clientId, unit["unit_id"])
+            self.update(self.tblUnits, columns, values, condition)
+        return True
+
+    def changeClientStatus(self, clientId, legalEntityId, divisionId, isActive, sessionUser):
+        currentTimeStamp = str(getCurrentTimeStamp())
+        columns = ["is_active", "updated_on" , "updated_by"]
+        values = [isActive, currentTimeStamp, sessionUser]
+        condition = "legal_entity_id = '%d' and client_id = '%d' "% (legalEntityId, clientId)
+        if divisionId != None:
+            condition += " and division_id='%d' "% divisionId
+        return self.update(self.tblUnits, columns, values, condition)
 
     def truncate(self, table):
         query = "TRUNCATE TABLE  %s;" % table

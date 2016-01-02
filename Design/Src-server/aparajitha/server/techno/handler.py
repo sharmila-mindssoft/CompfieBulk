@@ -43,7 +43,7 @@ class TechnoAPIRequestHandler(tornado.web.RequestHandler) :
                 elif request[0] == "SaveClient" :
                     response = clientController.saveClient(request[1], userId)
                 elif request[0] == "UpdateClient" :
-                    response = clientController.saveClient(request[1], userId, )
+                    response = clientController.updateClient(request[1], userId)
                 elif request[0] == "ChangeClientStatus" :
                     response = clientController.changeClientStatus(request[1], userId)
                 elif request[0] == "ReactivateUnit" :

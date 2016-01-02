@@ -900,8 +900,9 @@ function initMirror() {
     }
 
 
-    function updateClient(callerName, clientId, businessGroup, legalEntity, 
+    function updateClient(clientId, businessGroup, legalEntity, 
         division, countryWiseUnits, callback, failure_callback) {
+        callerName = "TechnoAPI"
         var request = [
             "UpdateClient",
             {
@@ -915,8 +916,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }
 
-    function changeClientStatus(callerName, clientId, legalEntityId, divisionId, isActive, 
+    function changeClientStatus(clientId, legalEntityId, divisionId, isActive, 
         callback, failure_callback) {
+        callerName = "TechnoAPI"
         var request = [
             "ChangeClientStatus",
             {

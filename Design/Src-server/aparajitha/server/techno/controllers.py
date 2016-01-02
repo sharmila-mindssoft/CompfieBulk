@@ -490,7 +490,7 @@ class ClientController(object):
         return self.db.generateNewId(self.db.tblUnits, "unit_id")
 
     def isBusinessGroupIdInvalid(self, businessGroupId):
-        condition = "busienss_group_id = '%d'" % businessGroupId
+        condition = "business_group_id = '%d'" % businessGroupId
         return not self.db.isAlreadyExists(self.db.tblBusinessGroups, condition)
 
     def isLegalEntityIdInvalid(self, legalEntityId):
@@ -620,6 +620,98 @@ class ClientController(object):
         if result1 and result2 and result3 and result4:
             return commonResponseStructure("SaveClientSuccess", {})
 
+    def updateClient(self, requestData, sessionUser):
+        sessionUser = int(sessionUser)
+        clientId = requestData["client_id"]
+        businessGroup = requestData["business_group"]
+        legalEntity = requestData["legal_entity"]
+        division = requestData["division"]
+        countryWiseUnits = requestData["country_wise_units"]
+
+        businessGroupId = None
+        businessGroupName = None
+        divisionId = None
+        divisionName = None
+        optionalBusinessGroup = False
+        optionalDivision = False
+        result1 = False
+        result2 = False
+        result3 = False
+        result4 = False
+        result5 = False
+
+        if businessGroup == None:
+            optionalBusinessGroup = True
+            result1 = True
+        else:
+            businessGroupId = businessGroup["business_group_id"]
+            businessGroupName = businessGroup["business_group_name"]
+            if self.isBusinessGroupIdInvalid(businessGroupId):
+                return commonResponseStructure("InvalidBusinessGroupId", {})
+            elif self.isDuplicateBusinessGroup(businessGroupId, businessGroupName, clientId):
+                return commonResponseStructure("BusinessGroupNameAlreadyExists", {})
+
+        legalEntityId = legalEntity["legal_entity_id"]
+        legalEntityName = legalEntity["legal_entity_name"]
+        if self.isLegalEntityIdInvalid(legalEntityId):
+            return commonResponseStructure("InvalidLegalEntityId", {})
+        elif self.isDuplicateLegalEntity(legalEntityId, legalEntityName, clientId):
+            return commonResponseStructure("LegalEntityNameAlreadyExists", {})
+
+        if division == None:
+            optionalDivision = True
+            result3 = True
+        else:
+            divisionId = division["division_id"]
+            divisionName = division["division_name"] 
+            if self.isDivisionIdInvalid(divisionId):
+                return commonResponseStructure("InvalidDivisionId", {})
+            elif self.isDuplicateDivision(divisionId, divisionName, clientId):
+                return commonResponseStructure("DivisionNameAlreadyExists", {})
+        
+        newUnitsList = []
+        existingUnitsList = []
+        unitId = None
+        for country in countryWiseUnits:
+            countryId = country["country_id"]
+            units = country["units"]
+            for unit in units:
+                domainIds = ",".join(str(x) for x in unit["domain_ids"])
+                if unit["unit_id"] == None:
+                    unitId = (unitId+1) if unitId != None else self.generateNewUnitId()
+                    if self.isDuplicateUnitName(unitId, unit["unit_name"], clientId):
+                        return commonResponseStructure("UnitNameAlreadyExists",{})
+                    elif self.isDuplicateUnitCode(unitId, unit["unit_code"], clientId):
+                        return commonResponseStructure("UnitCodeAlreadyExists",{})
+                    else:
+                        unit["unit_id"] = unitId
+                        unit["country_id"] = countryId
+                        newUnitsList.append(unit)
+                else:
+                    if self.isUnitIdInvalid(unit["unit_id"]):
+                        return commonResponseStructure("InvalidUnitId", {})
+                    elif self.isDuplicateUnitName(unit["unit_id"], unit["unit_name"], clientId):
+                        return commonResponseStructure("UnitNameAlreadyExists",{})
+                    elif self.isDuplicateUnitCode(unit["unit_id"], unit["unit_code"], clientId):
+                        return commonResponseStructure("UnitCodeAlreadyExists",{})
+                    else:
+                        unit["country_id"] = countryId
+                        existingUnitsList.append(unit)
+
+        if not optionalBusinessGroup:
+            result1 = self.db.updateBusinessGroup(clientId, businessGroupId, businessGroupName, sessionUser)
+        result2 = self.db.updateLegalEntity(clientId, legalEntityId, legalEntityName, businessGroupId, sessionUser)
+        if not optionalDivision:
+            result3 = self.db.updateDivision(clientId, divisionId, divisionName, businessGroupId, legalEntityId, sessionUser)
+        if len(newUnitsList) > 0:
+            result4 = self.db.saveUnit(clientId, newUnitsList, businessGroupId, legalEntityId, divisionId, sessionUser)
+        else:
+            result4 = True
+        result5 = self.db.updateUnit(clientId, existingUnitsList, businessGroupId, legalEntityId, divisionId, sessionUser)
+        if result1 and result2 and result3 and result4 and result5:
+            return commonResponseStructure("UpdateClientSuccess", {})
+
+
     def getClients(self, sessionUser):
         responseData = {}
 
@@ -653,25 +745,17 @@ class ClientController(object):
         return commonResponseStructure("GetClientsSuccess", responseData)
     
     def changeClientStatus(self, requestData, sessionUser):
-        self.sessionUser = int(sessionUser)
+        sessionUser = int(sessionUser)
 
-        assertType(requestData, DictType)
-        assertType(sessionUser, LongType)
+        clientId = requestData["client_id"]
+        legalEntityId = requestData["legal_entity_id"]
+        isActive = requestData["is_active"]
+        divisionId = requestData["division_id"]
 
-        self.clientId = JSONHelper.getInt(requestData, "client_id")
-        self.legalEntityId = JSONHelper.getInt(requestData, "legal_entity_id")
-        self.isActive = JSONHelper.getInt(requestData, "is_active")
-        try:
-            self.divisionId = JSONHelper.getInt(requestData, "division_id")
-        except:
-            self.divisionId = None
-
-        client = Client()
-        if client.changeClientStatus(self.clientId, self.legalEntityId, self.divisionId, 
-            self.isActive, self.sessionUser):
+        if self.db.changeClientStatus(clientId, legalEntityId, divisionId, 
+            isActive, sessionUser):
             return commonResponseStructure("ChangeClientStatusSuccess",{})
-        else:
-            print "Error: Failed to change status of unit"
+        
 
     def reactivateUnit(self, requestData, sessionUser):
         print "inside reactivate unit"
