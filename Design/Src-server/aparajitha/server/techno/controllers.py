@@ -758,30 +758,16 @@ class ClientController(object):
         
 
     def reactivateUnit(self, requestData, sessionUser):
-        print "inside reactivate unit"
-        self.sessionUser = int(sessionUser)
-
-        assertType(requestData, DictType)
-        assertType(sessionUser, LongType)
-
-        self.clientId = JSONHelper.getInt(requestData, "client_id")
-        self.unitId = JSONHelper.getInt(requestData, "unit_id")
-        self.password = JSONHelper.getString(requestData, "password")
-        self.isActive = 1
-        if self.verifyPassword():
-            client = Client()
-            if client.changeClientStatus(self.clientId, self.divisionId, 
-                self.isActive, self.sessionUser):
+        sessionUser = int(sessionUser)
+        clientId = requestData["client_id"]
+        unitId = requestData["unit_id"]
+        password = requestData["password"]
+        encryptedPassword = encrypt(password)
+        if self.db.verifyPassword(encryptedPassword, sessionUser):
+            if self.db.reactivateUnit(clientId, unitId, sessionUser):
                 return commonResponseStructure("ReactivateUnitSuccess", {})
-            else:
-                print "Error: Failed to activate unit"
         else:
             return commonResponseStructure("InvalidPassword", {})
-
-    def verifyPassword(self):
-        encryptedPassword = encrypt(self.password)
-        return DatabaseHandler.instance().verifyPassword(
-            encryptedPassword, self.sessionUser, self.clientId)
 
 class ClientProfile(object):
 

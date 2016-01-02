@@ -791,6 +791,13 @@ class DatabaseHandler(object) :
             condition += " and division_id='%d' "% divisionId
         return self.update(self.tblUnits, columns, values, condition)
 
+    def reactivateUnit(self, clientId, unitId, sessionUser):
+        currentTimeStamp = str(getCurrentTimeStamp())
+        columns = ["is_active", "updated_on" , "updated_by"]
+        values = [1, currentTimeStamp, sessionUser]
+        condition = "unit_id = '%d' and client_id = '%d' "% (unitId, clientId)
+        return self.update(self.tblUnits, columns, values, condition)
+
     def truncate(self, table):
         query = "TRUNCATE TABLE  %s;" % table
         return self.execute(query)

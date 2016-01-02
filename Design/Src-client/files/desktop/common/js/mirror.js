@@ -931,8 +931,9 @@ function initMirror() {
         apiRequest(callerName, request, callback, failure_callback);
     }  
 
-    function reactivateUnit(callerName, clientId, unitId, password, 
+    function reactivateUnit(clientId, unitId, password, 
         callback, failure_callback) {
+        callerName = "TechnoAPI"
         var request = [
             "ReactivateUnit",
             {
