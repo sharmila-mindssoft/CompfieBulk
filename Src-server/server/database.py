@@ -2,6 +2,8 @@ import datetime
 import MySQLdb as mysql
 
 from protocol import core
+import hashlib
+import uuid
 
 __all__ = [
     "KnowledgeDatabase", "ClientDatabase"
@@ -100,23 +102,29 @@ class KnowledgeDatabase(Database):
             mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase
         )
 
+    def encrypt(self, value):
+        m = hashlib.md5()
+        m.update(value)
+        return m.hexdigest()
+
     def convert_to_dict(self, data_list, columns) :
-        result_list = []
-        if len(data_list) > 1 :
+        print data_list
+        print len(data_list), len(columns)
+        if type(data_list[0]) is tuple :
+            result_list = []
             if len(data_list[0]) == len(columns) :
                 for data in data_list:
                     result = {}
-                    for d, i in enumerate(data):
+                    for i, d in enumerate(data):
                         result[columns[i]] = d
                     result_list.append(result)
+            return result_list
         else :
             if len(data_list) == len(columns) :
                 result = {}
-                for d, i in enumerate(data_list):
+                for i, d in enumerate(data_list):
                     result[columns[i]] = d
-                result_list.append(result)
-
-        return result_list
+            return result
 
 
     def validate_session_token(self, session_token) :
@@ -129,7 +137,7 @@ class KnowledgeDatabase(Database):
 
     def get_data(self, table, columns, condition):
         # query = "SELECT "+columns+" FROM "+table+" WHERE "+condition 
-        query = "SELECT %s FROM %s WHERE %s "  % (table, columns, condition)
+        query = "SELECT %s FROM %s WHERE %s "  % (columns, table, condition)
         return self.select_all(query)
 
     def get_data_from_multiple_tables(self, columns, tables, aliases, joinType, joinConditions, whereCondition):
@@ -150,13 +158,14 @@ class KnowledgeDatabase(Database):
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and user_name='%s'" % (password, username)
         admin_details = self.get_data("tbl_admin", "*", tblAdminCondition)
+        print admin_details
         if (len(admin_details) == 0) :
             data_columns = ["user_id", "user_group_id", "email_id", 
                 "employee_name", "employee_code", "contact_no", "address", "designation",
                 "user_group_name", "form_ids"
             ]
             query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
-                t1.employee_name, t1.employee_code, t1.contact_no, t1.address, t1.designation \
+                t1.employee_name, t1.employee_code, t1.contact_no, t1.address, t1.designation, \
                 t2.user_group_name, t2.form_ids \
                 FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
                 ON t1.user_group_id = t2.user_group_id \
@@ -167,10 +176,19 @@ class KnowledgeDatabase(Database):
         else :
             return True
 
-    def add_session(self, user_id) :
+    def get_date_time(self) :
+        return datetime.datetime.now()
+
+    def new_uuid(self) :
+        s = str(uuid.uuid4())
+        return s.replace("-", "")
+
+    def add_session(self, user_id, session_type_id) :
         session_id = self.new_uuid()
-        query = "insert into tbl_user_sessions values ('%s', '%s', '%d');"
-        query = query % (session_id, user_id, current_timestamp())
+        updated_on = self.get_date_time()
+        query = "INSERT INTO tbl_user_sessions (session_token, user_id, session_type_id, last_accessed_time) \
+            VALUES ('%s', %s, %s, '%s');"
+        query = query % (session_id, user_id, session_type_id, updated_on)
         self.execute(query)
         return session_id
 
@@ -182,10 +200,7 @@ class KnowledgeDatabase(Database):
         if row[0] is not None :
             newId = int(row[0]) + 1
         return newId
-
-    def get_date_time(self) :
-        return datetime.datetime.now()
-
+    
     def save_activity(self, user_id, form_id, action):
         createdOn = self.get_date_time()
         activityId = self.get_new_id("activity_log_id", "tbl_activity_log")
@@ -214,7 +229,7 @@ class KnowledgeDatabase(Database):
     def return_domains(self, data):
         results = []
         for d in data :
-            results.append(core.Domain(d["domain_id"], d["domain_name"], d["is_active"]))
+            results.append(core.Domain(d["domain_id"], d["domain_name"], bool(d["is_active"])))
         return results
     
     def save_domain(self, domain_name, user_id) :
@@ -298,7 +313,7 @@ class KnowledgeDatabase(Database):
         results = []
 
         for d in data :
-            results.append(core.Country(d["country_id"], d["country_name"], d["is_active"]))
+            results.append(core.Country(d["country_id"], d["country_name"], bool(d["is_active"])))
         return results
 
 
@@ -372,15 +387,14 @@ class KnowledgeDatabase(Database):
 
         columns = "tf.form_id, tf.form_category_id, tfc.form_category, tf.form_type_id, tft.form_type,"+\
         "tf.form_name, tf.form_url, tf.form_order, tf.parent_menu"
-        tables = [self.tblForms, self.tblFormCategory, self.tblFormType]
+        tables = ["tbl_forms", "tbl_form_category", "tbl_form_type"]
         aliases = ["tf", "tfc", "tft"]
         joinConditions = ["tf.form_category_id = tfc.form_category_id", "tf.form_type_id = tft.form_type_id"]
-        whereCondition = " tf.form_id in ('%s') order by tf.form_order" % (form_ids)
+        whereCondition = " tf.form_id in (%s) order by tf.form_order" % (form_ids)
         joinType = "left join"
-
-        rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, 
-            joinConditions, whereCondition)
-        return self.convert_to_dict(rows, columns)
+        rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, joinConditions, whereCondition)
+        row_columns = ["form_id", "form_category_id", "form_category", "form_type_id", "form_type", "form_name", "form_url", "form_order", "parent_menu"]
+        return self.convert_to_dict(rows, row_columns)
 
     def get_form_types(self) :
         query = "SELECT form_type_id, form_type_name FROM tbl_form_type"
@@ -685,7 +699,7 @@ class KnowledgeDatabase(Database):
         for d in data:
             country_id = d["country_id"]
             level = core.Level(d["level_id"], d["level_position"], d["level_name"])
-            _list = geography_levels.get(country_id) = {}
+            _list = geography_levels.get(country_id)
             if _list is None :
                 _list = []
             _list.append(level)
@@ -762,7 +776,7 @@ class KnowledgeDatabase(Database):
         geographies = {}
         for d in data :
             parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
-            geography = core.Geography(d["geography_id"], d["geography_name"], d["level_id"], parent_ids, parent_ids[-1], d["is_active"])
+            geography = core.Geography(d["geography_id"], d["geography_name"], d["level_id"], parent_ids, parent_ids[-1], bool(d["is_active"]))
             country_id = d["country_id"]
             _list = geographies.get(country_id)
             if _list is None :
