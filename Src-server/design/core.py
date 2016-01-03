@@ -165,13 +165,13 @@ Form = RecordType("Form", [
 	Field("form_name", FORM_NAME),
 	Field("form_url", URL),
 	Field("parent_menu", OptionalType(Text50)),
-	Field("form_type_id", FORM_TYPE_ID)
+	Field("form_type", FORM_TYPE_NAME)
 ])
 
 FormList = VectorType(Form)
 
 Menu = RecordType("Menu", [
-	Field("menus", MapType(FORM_TYPE_ID, FormList)),
+	Field("menus", MapType(FORM_TYPE_NAME, FormList)),
 ])
 
 StatutoryDate = RecordType("StatutoryDate", [
