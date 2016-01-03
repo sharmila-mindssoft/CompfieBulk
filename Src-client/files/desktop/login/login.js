@@ -51,14 +51,19 @@ function performLogin(e_button, e_email, e_password) {
     e_password.attr("disabled", "disabled");
 
     function onFailure (status) {
+        console.log(status)
+        console.log("calling onFailure")
         displayLoginMessage("Unable to login. Incorrect email / password?");
         $("input").val("");
         resetLoginUI(e_button, e_email, e_password);
     }
 
     function onSuccess (response) {
-        mirror.initSession(response)
-        mirror.getRedirectUrl();
+        console.log(response);
+        mirror.initSession(response);
+        console.log(mirror.getUserMenu())
+        window.location.href = "/home";
+        // mirror.getRedirectUrl();
         // if (status == "LoginSuccess") {
         //     window.location.href = mirror.getRedirectUrl();
         // }
@@ -70,12 +75,14 @@ function performLogin(e_button, e_email, e_password) {
     mirror.login(
         e_email.val(),
         e_password.val(),
-        function (status, response) {
-            if (status == null){
+        function (error, response) {
+            console.log(error)
+            console.log(response)
+            if (error == null){
                 onSuccess(response)
             }
             else {
-                onFailure(status)
+                onFailure(error)
             }
         }
     );
@@ -109,7 +116,7 @@ function initializeLogin () {
 
 $(document).ready(function () {
     if (mirror.verifyLoggedIn()) {
-        window.location.href = "/home";
+        // window.location.href = "/home";
         return;
     }
 

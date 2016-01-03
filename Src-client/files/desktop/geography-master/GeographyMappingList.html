@@ -1,0 +1,140 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<style type="text/css">
+/* Autocomplete textbox Style */
+.ac-textbox li
+{
+list-style-type:none; line-height:25px;
+}
+.ac-textbox ul {
+  border:1px solid gray;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+}
+.ac-textbox ul li {
+  font-size: 0.8em;
+  padding-right: 0.3em;
+  padding-left:0.3em;
+  vertical-align: center;
+  cursor: pointer;
+}
+.ac-textbox ul li:hover{
+  background: #EAE8E8;  
+}
+
+/*siva starts*/
+.form-container-grid-table table tr td ul a{
+  text-decoration: none;
+  color:black;
+  width:100%;
+  height:100%;  
+}
+.form-container-grid-table table tr td ul li:hover{
+  background: #EAE8E8;  
+}
+.form-container-grid-table table tr td ul li.active:hover {
+  background: #f1e9f6 url(../images/tick1.png) no-repeat right center;
+  background-size: 1em;
+  border-right: 3px solid #f1e9f6
+}
+/*siva ends*/
+</style>
+<script type="text/javascript" src="/files/desktop/GeographyMaster/geographymaster.js"></script>
+<script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
+
+<div id="listview" style="display:block">
+<div class="content-container width40">
+  <div class="content-area">
+    <h1>Geography</h1>
+    <div class="filters-and-search">
+      <div class="btn-add" onclick="displayAdd();" formtarget="_self">Add</div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="grid-table" >
+      <table >
+        <tr align="left" >
+          <th align="center">#</th>
+          <th>Country</th>
+          <th>Level</th>
+          <th>Name</th>
+          <th align="center">Edit</th>
+          <th align="center" style="padding-right:10px">Status</th>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td><input type="text"  id="countryfilter" class="filter-text-box" onkeyup="filter(this, 1)"></td>
+          <td><input type="text"  id="levelfilter" class="filter-text-box" onkeyup="filter(this, 2)"></td>
+          <td><input type="text"  id="namefilter" class="filter-text-box" onkeyup="filter(this, 3)"></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tbody class="tbody-geography-list" id="tableToModify">        
+        </tbody>
+       
+      </table>
+    </div>
+    
+  </div>
+</div>
+</div>
+
+<div id="templates">
+<table class="table-geography-master">
+  <tr class="table-row">
+    <td class="sno" align="center"></td>
+    <td class="country"></td>
+    <td class="level"></td>
+    <td class="name"></td>
+    <td class="edit" align="center"></td>
+    <td class="status" align="center"></td>
+  </tr>
+</table>
+</div>
+
+<div id="addview" style="display:none">
+<div class="content-container width75">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Geography Master<span id="error" class="error-message"></span></div>
+       <div class="single-column-input-row" style="margin-top:10px">
+        <div class="input-row">
+          <div class="single-column-field-label">Country:<span class="mandatory">*</span></div>
+          <div class="single-column-field-input">
+            <input type="text" class="input-box icon-autocomplete" id="countryval" value=""  onkeyup="loadauto_text(this.value)" style="width:200px"> 
+              <input type="hidden" id="country"> 
+              <input type="hidden" id="geographyid"> 
+             <div id="autocompleteview" class="ac-textbox" style="display:none;">
+                <ul id="ulist_text" onclick="hidemenu();" style="width:195px;"></ul>
+            </div>
+          </div>
+        </div>
+       </div>
+       <br>
+       <div class="form-container-outer">
+      <!--grid Panchayat-->
+      <div id="grid-panchayat" class="form-container-grid-table" >
+      <table>
+        <tbody class="tbody-geography-level">        
+        </tbody>
+      </table>
+      </div>
+      </div>
+  </div>
+</div>
+</div>
+</div>
+
+<div style="float:left;width:25%" id="geography-level-templates">
+  <table style="width:100%;">
+    <tr align="left">
+      <th style="overflow: hidden;" class="title"></th>
+    </tr>
+    <tr>
+      <td style="overflow: hidden;" class="levelvalue">
+      </td>
+    </tr>
+  </table>
+</div>
+    
+{% endblock %}
