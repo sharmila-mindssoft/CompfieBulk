@@ -28,9 +28,10 @@ function initializeNavBar () {
 	}
 
 	var navBarItems = mirror.getUserMenu();
+	console.log(navBarItems)
 	if (navBarItems === null)
 		return;
-	var menus = ["masters", "transactions", "reports"];
+	var menus = ["Master", "Transaction", "Report"];
 	for (var i = 0; i < menus.length; i++) {
 		var key = menus[i];
 		if (!(key in navBarItems))
@@ -79,7 +80,7 @@ function initializeNavBar () {
 		$("#cssmenu .menu-ul").append(liObject);
 	}
 
-	var user = mirror.getUser();
+	var user = mirror.getUserInfo();
 	var settingsMenu = navBarItems["settings"];
 	var settingsMenuObject = $("#nav-bar-templates .settings-menu .user-icon").clone();
 	$(".username", settingsMenuObject).text(user["employee_name"]);
@@ -90,10 +91,10 @@ function initializeNavBar () {
 		$("ul", settingsMenuObject).append(item);
 	}
 
-	if (mirror.getUserCategory() !== "it") {
-		var item = getItemObject("/profile", "View Profile");
-		$("ul", settingsMenuObject).append(item);
-	}
+	// if (mirror.getUserCategory() !== "it") {
+	// 	var item = getItemObject("/profile", "View Profile");
+	// 	$("ul", settingsMenuObject).append(item);
+	// }
 
 	var item = getItemObject("/change-password", "Change Password");
 	$("ul", settingsMenuObject).append(item);
