@@ -1,3 +1,4 @@
+
 var statutoryMappingsList;
 var tempstatutoryMappingsList;
 var geographyLevelsList;
@@ -373,7 +374,7 @@ function loadStatutoryMappingList(statutoryMappingsList) {
       sm_domainval='';
       sm_statutorynatureval='';
       sm_statutoryids=[];
-
+      compliances = [];
       load_selectdomain_master();
 
       $(".tbody-statutory-list").find("tr").remove();
