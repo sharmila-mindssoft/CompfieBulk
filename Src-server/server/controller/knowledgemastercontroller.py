@@ -10,58 +10,58 @@ __all__=[
 #
 def process_knowledge_master_request(request, db) :
 	session_token = request.session_token
-  request_frame = request.request
-  user_id = validate_user_session(db, session_token)
-  if user_id is None:
-      return login.InvalidSessionToken()
+	request_frame = request.request
+	user_id = validate_user_session(db, session_token)
+	if user_id is None:
+		return login.InvalidSessionToken()
 
-  if type(request_frame) is knowledgemaster.GetGeographyLevels:
-      return process_get_geography_level(db, user_id)
+	if type(request_frame) is knowledgemaster.GetGeographyLevels:
+		return process_get_geography_level(db, user_id)
 
-  if type(request_frame) is knowledgemaster.SaveGeographyLevel:
-      return process_save_geography_level(db, request_frame, user_id)
+	if type(request_frame) is knowledgemaster.SaveGeographyLevel:
+		return process_save_geography_level(db, request_frame, user_id)
 
-  if type(request_frame) is knowledgemaster.GetGeographies:
-      return process_get_geographies(db, user_id)
+	if type(request_frame) is knowledgemaster.GetGeographies:
+		return process_get_geographies(db, user_id)
 
-  if type(request_frame) is knowledgemaster.SaveGeography:
-      return process_save_geography(db, request_frame, user_id)
+	if type(request_frame) is knowledgemaster.SaveGeography:
+		return process_save_geography(db, request_frame, user_id)
 
-  if type(request_frame) is knowledgemaster.UpdateGeography:
-      return process_update_geography(db, request_frame, user_id)
+	if type(request_frame) is knowledgemaster.UpdateGeography:
+		return process_update_geography(db, request_frame, user_id)
 
-  if type(request_frame) is knowledgemaster.ChangeGeographyStatus:
-      return process_change_geography_status(db, request_frame, user_id)
+	if type(request_frame) is knowledgemaster.ChangeGeographyStatus:
+		return process_change_geography_status(db, request_frame, user_id)
 
-  if type(request_frame) is knowledgemaster.GetIndustries:
-  	return process_get_industry(db)
+	if type(request_frame) is knowledgemaster.GetIndustries:
+		return process_get_industry(db)
 
-  if type(request_frame) is knowledgemaster.SaveIndustry:
-  	return process_save_industry(db, request_frame, user_id)
+	if type(request_frame) is knowledgemaster.SaveIndustry:
+		return process_save_industry(db, request_frame, user_id)
 
-  if type(request_frame) is knowledgemaster.UpdateIndustry:
-  	return process_update_industry(db, request_frame, user_id)
+	if type(request_frame) is knowledgemaster.UpdateIndustry:
+		return process_update_industry(db, request_frame, user_id)
 
-  if type(request_frame) is knowledgemaster.ChangeIndustryStatus:
-  	return process_change_industry_status(db, request_frame, user_id)
+	if type(request_frame) is knowledgemaster.ChangeIndustryStatus:
+		return process_change_industry_status(db, request_frame, user_id)
 
-  if type(request_frame) is knowledgemaster.GetStatutoryNatures:
-  	return process_get_statutory_nature(db)
+	if type(request_frame) is knowledgemaster.GetStatutoryNatures:
+		return process_get_statutory_nature(db)
 
-  if type(request_frame) is knowledgemaster.SaveStatutoryNature:
-  	return process_save_statutory_nature(db, request_frame, user_id)
+	if type(request_frame) is knowledgemaster.SaveStatutoryNature:
+		return process_save_statutory_nature(db, request_frame, user_id)
 
-  if type(request_frame) is knowledgemaster.UpdateStatutoryNature:
-  	return process_update_statutory_nature(db, request_frame, user_id)
+	if type(request_frame) is knowledgemaster.UpdateStatutoryNature:
+		return process_update_statutory_nature(db, request_frame, user_id)
 
-  if type(request_frame) is knowledgemaster.ChangeStatutoryNatureStatus :
-  	return process_change_statutory_nature_status(db, request_frame, user_id)
+	if type(request_frame) is knowledgemaster.ChangeStatutoryNatureStatus :
+		return process_change_statutory_nature_status(db, request_frame, user_id)
 
-  if type(request_frame) is knowledgemaster.GetStatutoryLevels:
-  	return process_get_statutory_level(db, user_id)
+	if type(request_frame) is knowledgemaster.GetStatutoryLevels:
+		return process_get_statutory_level(db, user_id)
 
-  if type(request_frame) is knowledgemaster.SaveStatutoryLevel:
-  	return process_save_statutory_level(db, request_frame, user_id)
+	if type(request_frame) is knowledgemaster.SaveStatutoryLevel:
+		return process_save_statutory_level(db, request_frame, user_id)
 
 	if type(request_frame) is knowledgemaster.SaveStatutory:
 		return process_save_statutory(db, request_frame, user_id)
@@ -156,9 +156,7 @@ def process_get_statutory_level(db, user_id):
 	domains = db.get_domains_for_user(user_id)
 	statutory_levels = db.get_statutory_levels()
 	return knowledgemaster.GetStatutoryLevelsSuccess(
-		"countries" = countries,
-		"domains" = domains
-		"statutory_levels" = statutory_levels
+		countries, domains, statutory_levels
 	)
 
 
@@ -181,8 +179,7 @@ def process_get_geography_level(db, user_id):
 	countries = db.get_countries_for_user(user_id)
 	geography_levels = db.get_geography_levels()
 	return knowledgemaster.GetGeographyLevelsSuccess(
-		"countries" = countries,
-		"geography_levels" = geography_levels
+		countries, geography_levels
 	)
 
 def process_save_geography_level(db, request_frame, user_id):
@@ -204,9 +201,9 @@ def process_get_geographies(db, user_id):
 	geography_levels = db.get_geography_levels()
 	geographies = db.get_geographies()
 	return knowledgemaster.GetGeographiesSuccess(
-		"countries" = countries,
-		"geography_levels" = geography_levels,
-		"geographies" = geographies
+		countries,
+		geography_levels,
+		geographies
 	)
 
 def process_save_geography(db, request_frame, user_id):
@@ -277,8 +274,8 @@ def process_update_statutory(db, request_frame, user_id):
 	if saved_names.count(saved_names.lower()) > 0 :
 		return knowledgemaster.StatutoryNameAlreadyExists()
 	else :
-		if (db.update_statutory(statutory_id, statutory_name, parent_ids, user_id))
-		return knowledgemaster.SaveStatutorySuccess()
+		if (db.update_statutory(statutory_id, statutory_name, parent_ids, user_id)):
+			return knowledgemaster.SaveStatutorySuccess()
 
 
 
