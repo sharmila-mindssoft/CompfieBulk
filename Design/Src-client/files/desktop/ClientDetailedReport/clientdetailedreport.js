@@ -35,7 +35,7 @@ function initialize(){
 	function failure(status, data){
 		console.log(data);
 	}
-	mirror.getClientDetailsReportFilters("TechnoAPI", success, failure);
+	mirror.getClientDetailsReportFilters(success, failure);
 }
 $("#show-button").click(function(){	
 
@@ -44,12 +44,16 @@ $("#show-button").click(function(){
 	var groupid=$("#group-id").val();
 	groupsval=$("#groupsval").val();
 	var bgroups=$("#businessgroupid").val();
+	if(bgroups!=''){ var businessgroupid=parseInt(bgroups); } else { var businessgroupid=null; }
 	businessgroupsval=$("#businessgroupsval").val();
 	var legalentity=$("#legalentityid").val();
+	if(legalentity!=''){ var lentityid=parseInt(legalentity); } else { var lentityid=null; }
 	legalentityval=$("#legalentityval").val();
 	var division=$("#divisionid").val();
+	if(division!=''){ var divisionid=parseInt(division); } else { var divisionid=null; }
 	divisionval=$("#divisionval").val();
 	var units=$("#unitid").val();
+	if(units!=''){ var unitid=parseInt(units); } else { var unitid=null; }
 	unitval=$("#unitval").val();
 	var domain=$("#domain").val();
 	if(domain!=''){
@@ -69,33 +73,21 @@ $("#show-button").click(function(){
 		$(".error-message").html("Please Enter Groups");	
 	}
 	else{
-
-		var clientdetails={};
-		clientdetails["country_id"]=parseInt(countries);
-		clientdetails["group_id"]=parseInt(groupid);
-		clientdetails["business_group_id"]=parseInt(bgroups);
-		clientdetails["legal_entity_id"]=parseInt(legalentity);
-		clientdetails["division_id"]=parseInt(division);
-		clientdetails["unit_id"]=parseInt(units);
-		clientdetails["domain_ids"]=domainsVal;
-
 		function success(status, data){
 			if(status=='GetClientDetailsReportSuccess'){
 				$(".grid-table-rpt").show();
 				$(".countryval").text(countriesText);
 				$(".groupsval").text(groupsval);
-
 				$(".bgroupsval").text(businessgroupsval);
 				$(".lentityval").text(legalentityval);
 				$(".divisionval").text(divisionval);
-
 				loadClientDetailsList(data['units']);
 			}		
 		}
 		function failure(status, data){
 			console.log(status);
 		}
-		mirror.getClientDetailsReport("TechnoAPI", clientdetails, success, failure);
+		mirror.getClientDetailsReport(parseInt(countries), parseInt(groupid), businessgroupid,	lentityid, divisionid, unitid,  domainsVal,  success, failure);
 	}
 });
 function loadClientDetailsList(data){
@@ -120,7 +112,7 @@ function loadClientDetailsList(data){
 				}
 			});					
 			$('.domain-name', clone).html(domainsNames);
-			$('.unit-address', clone).text(list[k]['unit_address']+" "+list[k]['unit_location']);
+			$('.unit-address', clone).text(list[k]['unit_location_and_address']);
 			$('.pincode', clone).html(list[k]['postal_code']);
 			$('.tbody-clientdetails-list').append(clone);
 		});

@@ -14,6 +14,7 @@ $(".btn-clientgroup-add").click(function(){
  	}
 
  	loadautocountry();
+ 	loadauto();
  	hidemenu();
  	$('.tbody-dateconfiguration-list').empty();
 	function success(status, data){
@@ -24,7 +25,7 @@ $(".btn-clientgroup-add").click(function(){
 	function failure(status, data){
 		console.log(status);
 	}
-	mirror.getClientGroups("TechnoAPI", success, failure);
+	mirror.getClientGroups(success, failure);
 });
 $("#btn-clientgroup-cancel").click(function(){
 	$("#clientgroup-add").hide();
@@ -36,7 +37,7 @@ function initialize(){
 	}
 	function failure(status, data){	
 	}
-	mirror.getClientGroups("TechnoAPI", success, failure);
+	mirror.getClientGroups(success, failure);
 }
 function clientgroup_edit(clientGroupId){
 	$("#clientgroup-add").show();
@@ -52,7 +53,7 @@ function clientgroup_edit(clientGroupId){
 	}
 	function failure(status, data){
 	}
-	mirror.getClientGroups("TechnoAPI", success, failure);
+	mirror.getClientGroups(success, failure);
 }
 function loadFormListUpdate(clientListData, clientGroupId){
 	for(clientList in clientListData){
@@ -102,7 +103,7 @@ function loadFormListUpdate(clientListData, clientGroupId){
 }
 function loadClientGroupList(clientGroupList){
 	$(".tbody-clientgroup-list").find("tr").remove();
-  	var sno=0;
+  var sno=0;
 	var imageName, title;	
 	for(var i in clientGroupList){
 		var clientGroups=clientGroupList[i];
@@ -142,11 +143,9 @@ $("#btn-clientgroup-submit").click(function(){
 			}
 			for(var ccount=0;ccount < arrayCountries.length; ccount++){
 				for(var dcount=0;dcount < arrayDomains.length; dcount++){
-					var configuration = {};
-					configuration["country_id"] =parseInt(arrayCountries[ccount]);
-					configuration["domain_id"] = parseInt(arrayDomains[dcount]);
-					configuration["period_from"] = parseInt($(".tl-from-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val());
-					configuration["period_to"] = parseInt($(".tl-to-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val());
+					var configuration;
+					configuration=mirror.getDateConfigurations(parseInt(arrayCountries[ccount]), parseInt(arrayDomains[dcount]), parseInt($(".tl-from-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val()), parseInt($(".tl-to-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val()) );
+					console.log(configuration);		
 					dateConfigurations.push(configuration);
 				}
 			}
@@ -178,13 +177,14 @@ $("#btn-clientgroup-submit").click(function(){
 	 var subscribeSmsVal=1;	 
 	}
 	else{ var subscribeSmsVal=0; }
+	var shortname=$("#short-name").val();
 	if(clientGroupNameVal==''){
 		$(".error-message").html('Group Required');
 	}
-	else if(countriesVal==''){
+	else if(countriesList==''){
 		$(".error-message").html('Country Required');
 	}
-	else if(domainsVal==''){
+	else if(domainsList==''){
 		$(".error-message").html('Domain Required');
 	}
 	else if(contractFromVal==''){
@@ -214,6 +214,9 @@ $("#btn-clientgroup-submit").click(function(){
 	else if(inchargePersonVal==''){
 		$(".error-message").html('Incharge Person Required');
 	}
+	else if(shortname==''){
+		$(".error-message").html('Short Name Required');
+	}
 	else if($('#clientgroup-id').val()==''){	
 		if(uploadLogoVal==''){
 			$(".error-message").html('Logo Required');	
@@ -233,21 +236,8 @@ $("#btn-clientgroup-submit").click(function(){
 			$(".error-message").html(status);
 		}
 		
-		var clientGroupDetails = {}
-		clientGroupDetails["group_name"] = clientGroupNameVal ;
-        clientGroupDetails["country_ids"] = countriesVal;
-        clientGroupDetails["domain_ids"] = domainsVal;
-        clientGroupDetails["logo"] = uploadLogoVal;
-        clientGroupDetails["contract_from"] = contractFromVal;
-        clientGroupDetails["contract_to"] = contractToVal;
-        clientGroupDetails["incharge_persons"] = inchargePersonVal;
-        clientGroupDetails["no_of_user_licence"] = licenceVal;
-        clientGroupDetails["file_space"] = Number(fileSpaceVal);
-        clientGroupDetails["is_sms_subscribed"] = subscribeSmsVal;
-        clientGroupDetails["email_id"] = usernameVal;
-		//console.log(dateConfigurations);
-		//console.log(clientGroupDetails);
-		mirror.saveClientGroup("TechnoAPI", clientGroupDetails, dateConfigurations, success, failure);
+		var clientGroupDetails = mirror.getSaveClientGroupDict(clientGroupNameVal, countriesVal, domainsVal, uploadLogoVal, contractFromVal, contractToVal,inchargePersonVal, licenceVal, parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal, usernameVal, dateConfigurations, shortname);
+		mirror.saveClientGroup(clientGroupDetails, success, failure);
 	}
 	else if($('#clientgroup-id').val()!=''){		
 		function success(status, data){
@@ -263,23 +253,9 @@ $("#btn-clientgroup-submit").click(function(){
 		function failure(status, data){
 			$(".error-message").html(status);
 		}
-		
-		var clientGroupDetails = {}
-		clientGroupDetails["client_id"] = parseInt(clientGroupIdVal);
-		clientGroupDetails["group_name"] = clientGroupNameVal ;
-    clientGroupDetails["country_ids"] = countriesVal;
-    clientGroupDetails["domain_ids"] = domainsVal;
-    clientGroupDetails["logo"] = uploadLogoVal;
-    clientGroupDetails["contract_from"] = contractFromVal;
-    clientGroupDetails["contract_to"] = contractToVal;
-    clientGroupDetails["incharge_persons"] = inchargePersonVal;
-    clientGroupDetails["no_of_user_licence"] = licenceVal;
-    clientGroupDetails["file_space"] = Number(fileSpaceVal);
-    clientGroupDetails["is_sms_subscribed"] = subscribeSmsVal;
-    clientGroupDetails["email_id"] = usernameVal;
-		//console.log(dateConfigurations);
-		//console.log(clientGroupDetails);
-		mirror.updateClientGroup("TechnoAPI", clientGroupDetails, dateConfigurations,success, failure);
+	
+		var clientGroupDetails = mirror.getSaveClientGroupDict(clientGroupNameVal, countriesVal, domainsVal, uploadLogoVal, contractFromVal, contractToVal,inchargePersonVal, licenceVal, parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal, usernameVal, dateConfigurations, shortname);
+		mirror.updateClientGroup( clientGroupDetails, dateConfigurations,success, failure);
 	}
 	else{
 		console.log("all fails");
@@ -297,7 +273,7 @@ function clientgroup_active(clientId, isActive){
   	}
   	function failure(status, data){
   	}
-  	mirror.changeClientGroupStatus("TechnoAPI", parseInt(clientId), isActive, success, failure);
+  	mirror.changeClientGroupStatus( parseInt(clientId), isActive, success, failure);
 }
 
 
