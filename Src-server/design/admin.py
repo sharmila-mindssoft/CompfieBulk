@@ -95,10 +95,18 @@ RequestFormat = RecordType("RequestFormat", [
 
 ### User Group
 
+UserGroupDetail = RecordType("UserGroupDetail", [
+	Field("user_group_id", USER_GROUP_ID),
+	Field("user_group_name", USER_GROUP_NAME),
+	Field("form_category_id", FORM_CATEGORY_ID),
+	Field("form_ids", VectorType(FORM_ID)),
+	Field("is_active", IS_ACTIVE)
+])
+
 GetUserGroupsSuccess = RecordType("GetUserGroupsSuccess", [
 	Field("form_categories", VectorType(FormCategory) ),
 	Field("forms", MapType(FORM_CATEGORY_ID, Menu)),
-	Field("user_groups", UserGroupList)
+	Field("user_groups", VectorType(UserGroupDetail))
 ])
 
 SaveUserGroupSuccess = RecordType("SaveUserGroupSuccess", [

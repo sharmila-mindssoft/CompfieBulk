@@ -2580,7 +2580,7 @@ def to_structure_RecordType_clientadminsettings_RequestFormat(data):
 
 def to_structure_RecordType_core_Form(data):
     from protocol import core
-    return core.Form.to_structure(data)
+    return core.KnowledgeForm.to_structure(data)
 
 def to_structure_RecordType_core_Level(data):
     from protocol import core
@@ -2939,3 +2939,13 @@ def to_structure_RecordType_clientmasters_Response_ServiceProviderNameAlreadyExi
     from protocol import clientmasters
     return clientmasters.Response.to_structure(data)
 
+def to_structure_RecordType_admin_UserGroup(data):
+    from protocol import admin
+    return admin.UserGroup.to_structure(data)
+
+def to_structure_VectorType_RecordType_admin_UserGroup(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_admin_UserGroup(item))
+    return lst

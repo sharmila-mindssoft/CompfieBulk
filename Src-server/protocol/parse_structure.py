@@ -2939,3 +2939,13 @@ def parse_structure_RecordType_clientmasters_Response_ServiceProviderNameAlready
     from protocol import clientmasters
     return clientmasters.Response.parse_structure(data)
 
+def parse_structure_RecordType_admin_UserGroup(data):
+    from protocol import admin
+    return admin.UserGroup.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_admin_UserGroup(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_admin_UserGroup(item))
+    return lst

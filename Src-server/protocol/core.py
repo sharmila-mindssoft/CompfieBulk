@@ -26,7 +26,8 @@ from protocol.parse_structure import (
     parse_structure_CustomIntegerType_1_10,
     parse_structure_CustomIntegerType_1_12,
     parse_structure_CustomTextType_20,
-    parse_structure_CustomIntegerType_1_31
+    parse_structure_CustomIntegerType_1_31,
+    parse_structure_OptionalType_CustomTextType_50
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -52,7 +53,8 @@ from protocol.to_structure import (
     to_structure_Text, to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     to_structure_CustomIntegerType_1_10,
     to_structure_CustomIntegerType_1_12, to_structure_CustomTextType_20,
-    to_structure_CustomIntegerType_1_31
+    to_structure_CustomIntegerType_1_31,
+    to_structure_OptionalType_CustomTextType_50
 )
 
 #
@@ -450,19 +452,23 @@ class COMPLIANCE_ACTIVITY_STATUS(object):
         return parse_enum(self._value, COMPLIANCE_ACTIVITY_STATUS.values())
 
 #
-# Form
+#  Knowledge Form
 #
 
-class Form(object):
-    def __init__(self, form_id, form_name, form_url, parent_menu):
+class KnowledgeForm(object):
+    def __init__(self, form_id, form_name, form_url, parent_menu, 
+        form_category_id, form_type_id):
         self.form_id = form_id
         self.form_name = form_name
         self.form_url = form_url
+        self.form_category_id = form_category_id
+        self.form_type_id = form_type_id
         self.parent_menu = parent_menu
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["form_id", "form_name", "form_url", "parent_menu"])
+        data = parse_dictionary(data, ["form_id", "form_name", "form_url", "parent_menu",
+            "form_category_id", "form_type_id"])
         form_id = data.get("form_id")
         form_id = parse_structure_SignedIntegerType_8(form_id)
         form_name = data.get("form_name")
@@ -470,8 +476,13 @@ class Form(object):
         form_url = data.get("form_url")
         form_url = parse_structure_CustomTextType_250(form_url)
         parent_menu = data.get("parent_menu")
-        parent_menu = parse_structure_CustomTextType_50(parent_menu)
-        return Form(form_id, form_name, form_url, parent_menu)
+        parent_menu = parse_structure_OptionalType_CustomTextType_50(parent_menu)
+        form_category_id = data.get("form_category_id")
+        form_category_id = parse_structure_SignedIntegerType_8(form_category_id)
+        form_type_id = data.get("form_type_id")
+        form_type_id = parse_structure_SignedIntegerType_8(form_type_id)
+        return Form(form_id, form_name, form_url, parent_menu, 
+            form_category_id, form_type_id)
 
     def to_structure(self):
         return {
@@ -479,6 +490,8 @@ class Form(object):
             "form_name": to_structure_CustomTextType_50(self.form_name),
             "form_url": to_structure_CustomTextType_250(self.form_url),
             "parent_menu": to_structure_CustomTextType_50(self.parent_menu),
+            "form_category_id" : to_structure_SignedIntegerType_8(self.form_category_id),
+            "form_type_id" : to_structure_SignedIntegerType_8(self.form_type_id)
         }
 
 #

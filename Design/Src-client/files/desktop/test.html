@@ -21,14 +21,7 @@
       alert("failure_data"+data)
     }
     $(document).ready(function(){
-        countryId = 1;
-        clientId = 2;
-        businessGroupId = 4;
-        legalEntityId = 2;
-        divisionId = 11;
-        unitId = null;
-        domainIds = [1];
-        mirror.getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId,unitId, domainIds, callback, failure_callback);
+        mirror.getAdminUserGroupList(callback, failure_callback);
     });
 </script>
 </body>

@@ -160,9 +160,11 @@ FormType = RecordType("FormType", [
 	Field("form_type", FORM_TYPE_NAME)
 ])
 
-Form = RecordType("Form", [
+KnowledgeForm = RecordType("Form", [
 	Field("form_id", FORM_ID),
 	Field("form_name", FORM_NAME),
+	Field("form_category_id", FORM_CATEGORY_ID),
+	Field("form_type_id", FORM_TYPE_ID),
 	Field("form_url", URL),
 	Field("parent_menu", Text50)
 ])

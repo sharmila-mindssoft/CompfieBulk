@@ -1,7 +1,8 @@
 from protocol import core
 
 __all__ = [
-	"process_user_forms", "process_user_menus"
+	"process_user_forms", "process_user_menus", 
+	"generate_menu_from_forms"
 ]
 
 def process_user_forms(db, form_ids):
@@ -30,4 +31,3 @@ def process_user_menus(form_list):
 			menus[form_type].append(form)
 
 	return core.Menu(menus)
-

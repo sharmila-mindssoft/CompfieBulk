@@ -26,8 +26,8 @@ def process_login(db, request):
 def user_login_response(data):
 	user_id = data["user_id"]
 	email_id = data["email_id"]
-    session_type = 1 #web
-    session_token = db.add_session(user_id, session_type)
+	session_type = 1 #web
+	session_token = db.add_session(user_id, session_type)
    	employee_name = data["employee_name"]
    	employee_code = data["employee_code"]
    	contact_no = data["contact_no"]
@@ -45,11 +45,11 @@ def user_login_response(data):
 def admin_login_response():
 	user_id = 0
 	email_id = None
-    session_type = 1 #web
-    session_token = db.add_session(user_id, session_type)
-    menu = process_user_forms("1,2,3,4")
-   	employee_name = "Administrator"
-   	return login.AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name)
+	session_type = 1 #web
+	session_token = db.add_session(user_id, session_type)
+	menu = process_user_forms("1,2,3,4")
+	employee_name = "Administrator"
+	return login.AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name)
 
 def process_forgot_password(db, request):
 	return login.ForgotPasswordSuccess()

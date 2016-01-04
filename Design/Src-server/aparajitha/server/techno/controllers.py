@@ -911,7 +911,7 @@ class ClientProfile(object):
             unitDetails = {}
             unitDetails["unit_name"] = "%s - %s" % (row[3], row[4])
             unitDetails["unit_location_and_address"] = "%s - %s" % (
-                geography, row[6])
+                row[6], geography )
             unitDetails["domain_ids"] = [int(x) for x in row[7].split(",")]
             unitDetails["postal_code"] = row[8]
             divisionId = row[2]
