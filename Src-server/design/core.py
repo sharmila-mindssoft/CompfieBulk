@@ -313,7 +313,7 @@ StatutoryMapping = RecordType("StatutoryMapping", [
 	Field("compliances", VectorType(Compliance)),
 	Field("compliance_names", VectorType(Text)),
 	Field("geography_ids", VectorType(GEOGRAPHY_ID)),
-	Field("geography_mappings", Text),
+	Field("geography_mappings", VectorType(Text)),
 	Field("approval_status", APPROVAL_STATUS),
 	Field("is_active", IS_ACTIVE)
 ])

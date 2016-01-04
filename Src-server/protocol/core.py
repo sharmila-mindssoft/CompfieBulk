@@ -938,7 +938,7 @@ class StatutoryMapping(object):
         geography_ids = data.get("geography_ids")
         geography_ids = parse_structure_VectorType_SignedIntegerType_8(geography_ids)
         geography_mappings = data.get("geography_mappings")
-        geography_mappings = parse_structure_Text(geography_mappings)
+        geography_mappings = parse_structure_VectorType_Text(geography_mappings)
         approval_status = data.get("approval_status")
         approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(approval_status)
         is_active = data.get("is_active")
@@ -960,7 +960,7 @@ class StatutoryMapping(object):
             "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
             "compliance_names": to_structure_VectorType_Text(self.compliance_names),
             "geography_ids": to_structure_VectorType_SignedIntegerType_8(self.geography_ids),
-            "geography_mappings": to_structure_Text(self.geography_mappings),
+            "geography_mappings": to_structure_VectorType_Text(self.geography_mappings),
             "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
             "is_active": to_structure_Bool(self.is_active),
         }
