@@ -13,7 +13,9 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_Bool,
     parse_structure_VectorType_RecordType_core_UserDetails,
-    parse_structure_CustomTextType_20, parse_structure_CustomTextType_50
+    parse_structure_CustomTextType_20, parse_structure_CustomTextType_50,
+    parse_structure_RecordType_admin_UserGroup,
+    parse_structure_VectorType_RecordType_admin_UserGroup
 )
 from protocol.to_structure import (
     to_structure_MapType_SignedIntegerType_8_RecordType_core_Menu,
@@ -27,7 +29,9 @@ from protocol.to_structure import (
     to_structure_SignedIntegerType_8,
     to_structure_VectorType_RecordType_core_Country, to_structure_Bool,
     to_structure_VectorType_RecordType_core_UserDetails,
-    to_structure_CustomTextType_20, to_structure_CustomTextType_50
+    to_structure_CustomTextType_20, to_structure_CustomTextType_50,
+    to_structure_RecordType_admin_UserGroup,
+    to_structure_VectorType_RecordType_admin_UserGroup
 )
 
 #
@@ -306,11 +310,50 @@ class Response(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
+class UserGroup(object):
+    def __init__(self, user_group_id, user_group_name, form_category_id, 
+        form_ids, is_active):
+        self.user_group_id = user_group_id
+        self.user_group_name = user_group_name
+        self.form_category_id = form_category_id
+        self.form_ids = form_ids
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_group_id", "user_group_name", 
+            "form_category_id", "form_ids", "is_active"])
+        user_group_id = data.get("user_group_id")
+        user_group_id = parse_structure_SignedIntegerType_8(user_group_id)
+        user_group_name = data.get("user_group_name")
+        user_group_name = parse_structure_CustomTextType_50(user_group_name)
+        form_category_id = data.get("form_category_id")
+        form_category_id = parse_structure_SignedIntegerType_8(form_category_id)
+        form_ids = data.get("form_ids")
+        form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        return UserGroup(user_group_id, user_group_name, form_category_id,
+            form_ids, is_active)
+
+    def to_structure(self):
+        return {
+            "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
+            "user_group_name": to_structure_CustomTextType_50(self.user_group_name),
+            "form_category_id": to_structure_SignedIntegerType_8(self.form_category_id),
+            "form_ids": to_structure_VectorType_SignedIntegerType_8(self.form_ids),
+            "is_active": to_structure_Bool(self.is_active),
+        }
+
 class GetUserGroupsSuccess(Response):
     def __init__(self, form_categories, forms, user_groups):
+        print "inside get user groups success constructor"
         self.form_categories = form_categories
+        print "crossed form_categories assignment"
         self.forms = forms
+        print "crossed forms assignment"
         self.user_groups = user_groups
+        print "crossed user groups assignment"
 
     @staticmethod
     def parse_inner_structure(data):
@@ -320,18 +363,22 @@ class GetUserGroupsSuccess(Response):
         forms = data.get("forms")
         forms = parse_structure_MapType_SignedIntegerType_8_RecordType_core_Menu(forms)
         user_groups = data.get("user_groups")
-        user_groups = parse_structure_VectorType_RecordType_core_UserGroup(user_groups)
+        user_groups = parse_structure_VectorType_RecordType_admin_UserGroup(user_groups)
         return GetUserGroupsSuccess(form_categories, forms, user_groups)
 
     def to_inner_structure(self):
+        print "form_categories : {}".format(to_structure_VectorType_RecordType_core_FormCategory(self.form_categories))
+        print "forms : {}".format(to_structure_MapType_SignedIntegerType_8_RecordType_core_Menu(self.forms))
+        print "user_groups : {}".format(to_structure_VectorType_RecordType_admin_UserGroup(self.user_groups))
         return {
             "form_categories": to_structure_VectorType_RecordType_core_FormCategory(self.form_categories),
             "forms": to_structure_MapType_SignedIntegerType_8_RecordType_core_Menu(self.forms),
-            "user_groups": to_structure_VectorType_RecordType_core_UserGroup(self.user_groups),
+            "user_groups": to_structure_VectorType_RecordType_admin_UserGroup(self.user_groups),
         }
 
 class SaveUserGroupSuccess(Response):
     def __init__(self):
+        print "inside save user group success"
         pass
 
     @staticmethod
@@ -340,6 +387,7 @@ class SaveUserGroupSuccess(Response):
         return SaveUserGroupSuccess()
 
     def to_inner_structure(self):
+        print "inside save user group inner structure"
         return {
         }
 

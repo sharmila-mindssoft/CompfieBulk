@@ -29,6 +29,7 @@ from protocol.parse_structure import (
     parse_structure_CustomIntegerType_1_31,
     parse_structure_OptionalType_CustomTextType_50,
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form
+
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -454,14 +455,17 @@ class COMPLIANCE_ACTIVITY_STATUS(object):
         return parse_enum(self._value, COMPLIANCE_ACTIVITY_STATUS.values())
 
 #
-# Form
+#  Knowledge Form
 #
 
 class Form(object):
     def __init__(self, form_id, form_name, form_url, parent_menu, form_type):
+
         self.form_id = form_id
         self.form_name = form_name
         self.form_url = form_url
+        self.form_category_id = form_category_id
+        self.form_type_id = form_type_id
         self.parent_menu = parent_menu
         self.form_type = form_type
 

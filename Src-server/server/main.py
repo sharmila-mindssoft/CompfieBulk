@@ -79,6 +79,7 @@ class API(object):
                 data
             )
         except Exception, e:
+            print e
             response.set_status(400)
             response.send(str(e))
             return None
@@ -116,15 +117,19 @@ class API(object):
         return controller.process_login_request(request, db)
         # return login.ResetPasswordSuccess()
 
-    @api_request(admin.Request)
-    def handle_admin(self, request):
-        print "inside handle admin"
-        self._controller.processAdminRequest(request)
+    @api_request(admin.RequestFormat)
+    def handle_admin(self, request, db):
+        return controller.process_admin_request(request, db)
+
+    @api_request(technomasters.RequestFormat)
+    def handle_techno(self, request, db):
+        print "inside handle techno requests"
+        return controller.process_techno_request(request, db)
 
     @api_request(clientadminsettings.Request)
     def handle_client_admin_settings(self, request, db):
         pass
-
+                         
     @api_request(general.RequestFormat)
     def handle_general(self, request, db):
         return controller.process_general_request(request, db)
@@ -223,9 +228,11 @@ def run_server(port):
             web_server.low_level_url(url, TemplateHandler, args)
 
         api = API(io_loop, db)
+
         api_urls_and_handlers = [
             ("/api/login", api.handle_login),
             ("/api/admin", api.handle_admin),
+            ("/api/techno", api.handle_techno),
             (
                 "/api/handle_client_admin_settings",
                 api.handle_client_admin_settings
