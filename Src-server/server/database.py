@@ -1,8 +1,10 @@
+import os
 import datetime
 import MySQLdb as mysql
 import hashlib
 import string
 import random
+import re
 
 from protocol import core
 import hashlib
@@ -12,18 +14,55 @@ __all__ = [
     "KnowledgeDatabase", "ClientDatabase"
 ]
 
-def generateRandom():
+integer_months = {
+    "Jan": 1,
+    "Feb": 2,
+    "Mar": 3,
+    "Apr": 4,
+    "May": 5,
+    "Jun": 6,
+    "Jul": 7,
+    "Aug": 8,
+    "Sep": 9,
+    "Oct": 10,
+    "Nov": 11,
+    "Dec": 12,
+}
+
+string_months = {
+     1 : "Jan",
+     2 : "Feb",
+     3 : "Mar",
+     4 : "Apr",
+     5 : "May",
+     6 : "Jun",
+     7 : "Jul",
+     8 : "Aug",
+     9 : "Sep",
+     10 : "Oct",
+     11 : "Nov",
+     12 : "Dec",
+}
+
+_client_db_connections = {}
+
+def generate_random():
     characters = string.ascii_uppercase + string.digits
     return ''.join(random.SystemRandom().choice(characters) for _ in range(7))
 
-def generatePassword() : 
-    password = generateRandom()
+def generate_password() : 
+    password = generate_random()
     return encrypt(password)
 
 def encrypt(value):
     m = hashlib.md5()
     m.update(value)
     return m.hexdigest()
+
+def string_to_datetime(string):
+    date = string.split("-")
+    datetime_val = datetime.datetime(year=int(date[2]),month=integer_months[date[1]], day=int(date[0]))
+    return datetime_val
     
 class Database(object) :
     def __init__(
@@ -107,103 +146,7 @@ class Database(object) :
         result = cursor.fetchall()
         return result
 
-class KnowledgeDatabase(Database):
-
-    tblActivityLog = "tbl_activity_log"
-    tblAdmin = "tbl_admin"
-    tblBusinessGroups = "tbl_business_groups"
-    tblClientCompliances = "tbl_client_compliances"
-    tblClientConfigurations = "tbl_client_configurations"
-    tblClientCountries = "tbl_client_countries"
-    tblClientDatabase = "tbl_client_database"
-    tblClientDomains = "tbl_client_domains"
-    tblClientGroups = "tbl_client_groups"
-    tblClientSavedCompliances = "tbl_client_saved_compliances"
-    tblClientSavedStatutories = "tbl_client_saved_statutories"
-    tblClientStatutories = "tbl_client_statutories"
-    tblClientUsers = "tbl_client_users"
-    tblComplianceDurationType = "tbl_compliance_duration_type"
-    tblComplianceFrequency = "tbl_compliance_frequency"
-    tblComplianceRepeatype = "tbl_compliance_repeat_type"
-    tblCompliances = "tbl_compliances"
-    tblCompliancesBackup = "tbl_compliances_backup"
-    tblCountries = "tbl_countries"
-    tblDatabaseServer = "tbl_database_server"
-    tblDivisions = "tbl_divisions"
-    tblDomains = "tbl_domains"
-    tblEmailVerification = "tbl_email_verification"
-    tblFormCategory = "tbl_form_category"
-    tblFormType = "tbl_form_type"
-    tblForms = "tbl_forms"
-    tblGeographies = "tbl_geographies"
-    tblGeographyLevels = "tbl_geography_levels"
-    tblIndustries = "tbl_industries"
-    tblLegalEntities = "tbl_legal_entities"
-    tblMachines = "tbl_machines"
-    tblMobileRegistration = "tbl_mobile_registration"
-    tblNotifications = "tbl_notifications"
-    tblNotificationsStatus = "tbl_notifications_status"
-    tblSessionTypes = "tbl_session_types"
-    tblStatutories = "tbl_statutories"
-    tblStatutoriesBackup = "tbl_statutories_backup"
-    tblStatutoryGeographies = "tbl_statutory_geographies"
-    tblStatutoryLevels = "tbl_statutory_levels"
-    tblStatutoryMappings = "tbl_statutory_mappings"
-    tblStatutoryNatures = "tbl_statutory_natures"
-    tblStatutoryNotificationsLog = "tbl_statutory_notifications_log"
-    tblUnits = "tbl_units"
-    tblUserClients = "tbl_user_clients"
-    tblUserCountries = "tbl_user_countries"
-    tblUserDomains = "tbl_user_domains"
-    tblUserGroups = "tbl_user_groups"
-    tblUserLoginHistory = "tbl_user_login_history"
-    tblUserSessions = "tbl_user_sessions"
-    tblUsers = "tbl_users"
-
-    def __init__(
-        self, 
-        mysqlHost, mysqlUser, 
-        mysqlPassword, mysqlDatabase
-    ):
-        super(KnowledgeDatabase, self).__init__(
-            mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase
-        )
-
-    def encrypt(self, value):
-        m = hashlib.md5()
-        m.update(value)
-        return m.hexdigest()
-
-    def convert_to_dict(self, data_list, columns) :
-        print data_list
-        print len(data_list), len(columns)
-        if type(data_list[0]) is tuple :
-            result_list = []
-            if len(data_list[0]) == len(columns) :
-                for data in data_list:
-                    result = {}
-                    for i, d in enumerate(data):
-                        result[columns[i]] = d
-                    result_list.append(result)
-            return result_list
-        else :
-            if len(data_list) == len(columns) :
-                result = {}
-                for i, d in enumerate(data_list):
-                    result[columns[i]] = d
-            return result
-
-
-    def validate_session_token(self, session_token) :
-        # query = "CALL sp_validate_session_token ('%s');" % (session_token)
-        query = "SELECT user_id FROM tbl_user_sessions \
-            WHERE session_token = '%s'" % (session_token)
-        row = self.select_one(query)
-        user_id = row[0]
-        return user_id
-
     def get_data(self, table, columns, condition):
-
         query = "SELECT %s FROM %s WHERE %s "  % (columns, table, condition)
         return self.select_all(query)
 
@@ -308,7 +251,95 @@ class KnowledgeDatabase(Database):
 
     def is_invalid_id(self, table, field, value):
         condition = "%s = '%d'" % (field, value)
-        return not self.is_already_exists(table, condition) 
+        return not self.is_already_exists(table, condition)
+
+class KnowledgeDatabase(Database):
+    tblActivityLog = "tbl_activity_log"
+    tblAdmin = "tbl_admin"
+    tblBusinessGroups = "tbl_business_groups"
+    tblClientCompliances = "tbl_client_compliances"
+    tblClientConfigurations = "tbl_client_configurations"
+    tblClientCountries = "tbl_client_countries"
+    tblClientDatabase = "tbl_client_database"
+    tblClientDomains = "tbl_client_domains"
+    tblClientGroups = "tbl_client_groups"
+    tblClientSavedCompliances = "tbl_client_saved_compliances"
+    tblClientSavedStatutories = "tbl_client_saved_statutories"
+    tblClientStatutories = "tbl_client_statutories"
+    tblClientUsers = "tbl_client_users"
+    tblComplianceDurationType = "tbl_compliance_duration_type"
+    tblComplianceFrequency = "tbl_compliance_frequency"
+    tblComplianceRepeatype = "tbl_compliance_repeat_type"
+    tblCompliances = "tbl_compliances"
+    tblCompliancesBackup = "tbl_compliances_backup"
+    tblCountries = "tbl_countries"
+    tblDatabaseServer = "tbl_database_server"
+    tblDivisions = "tbl_divisions"
+    tblDomains = "tbl_domains"
+    tblEmailVerification = "tbl_email_verification"
+    tblFormCategory = "tbl_form_category"
+    tblFormType = "tbl_form_type"
+    tblForms = "tbl_forms"
+    tblGeographies = "tbl_geographies"
+    tblGeographyLevels = "tbl_geography_levels"
+    tblIndustries = "tbl_industries"
+    tblLegalEntities = "tbl_legal_entities"
+    tblMachines = "tbl_machines"
+    tblMobileRegistration = "tbl_mobile_registration"
+    tblNotifications = "tbl_notifications"
+    tblNotificationsStatus = "tbl_notifications_status"
+    tblSessionTypes = "tbl_session_types"
+    tblStatutories = "tbl_statutories"
+    tblStatutoriesBackup = "tbl_statutories_backup"
+    tblStatutoryGeographies = "tbl_statutory_geographies"
+    tblStatutoryLevels = "tbl_statutory_levels"
+    tblStatutoryMappings = "tbl_statutory_mappings"
+    tblStatutoryNatures = "tbl_statutory_natures"
+    tblStatutoryNotificationsLog = "tbl_statutory_notifications_log"
+    tblUnits = "tbl_units"
+    tblUserClients = "tbl_user_clients"
+    tblUserCountries = "tbl_user_countries"
+    tblUserDomains = "tbl_user_domains"
+    tblUserGroups = "tbl_user_groups"
+    tblUserLoginHistory = "tbl_user_login_history"
+    tblUserSessions = "tbl_user_sessions"
+    tblUsers = "tbl_users"
+
+    def __init__(
+        self, 
+        mysqlHost, mysqlUser, 
+        mysqlPassword, mysqlDatabase
+    ):
+        super(KnowledgeDatabase, self).__init__(
+            mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase
+        )
+
+    def convert_to_dict(self, data_list, columns) :
+        result_list = []
+        if len(data_list) > 1 :
+            if len(data_list[0]) == len(columns) :
+                for data in data_list:
+                    result = {}
+                    for d, i in enumerate(data):
+                        result[columns[i]] = d
+                    result_list.append(result)
+        else :
+            if len(data_list) == len(columns) :
+                result = {}
+                for d, i in enumerate(data_list):
+                    result[columns[i]] = d
+                result_list.append(result)
+
+        return result_list
+
+
+    def validate_session_token(self, session_token) :
+        # query = "CALL sp_validate_session_token ('%s');" % (session_token)
+        query = "SELECT user_id FROM tbl_user_sessions \
+            WHERE session_token = '%s'" % (session_token)
+        row = self.select_one(query)
+        user_id = row[0]
+        return user_id 
 
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and user_name='%s'" % (password, username)
@@ -1239,7 +1270,7 @@ class KnowledgeDatabase(Database):
         user_columns = ["user_id", "email_id", "user_group_id", "password", "employee_name", 
                     "employee_code", "contact_no", "address", "designation", "is_active", 
                     "created_on", "created_by", "updated_on", "updated_by"]
-        user_values = [user_id, email_id, user_group_id, generatePassword(),
+        user_values = [user_id, email_id, user_group_id, generate_password(),
                 employee_name, employee_code, contact_no, address,
                 designation, 1, current_time_stamp, 0, current_time_stamp, 0]
         result1 = self.insert(self.tblUsers, user_columns, user_values)
@@ -1304,6 +1335,17 @@ class KnowledgeDatabase(Database):
 #
 #   Group Company
 #
+    def generate_new_client_id(self):
+        return self.get_new_id("client_id", self.tblClientGroups)
+
+    def is_duplicate_group_name(self, group_name, client_id):
+        condition = "group_name ='%s' AND client_id != '%d'" % (group_name, client_id)
+        return self.is_already_exists(self.tblClientGroups, condition)   
+
+    def is_duplicate_group_username(self, username, client_id):
+        condition = "email_id ='%s' AND client_id != '%d'" % (username, client_id)
+        return self.is_already_exists(self.tblClientGroups, condition)     
+
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
         " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
@@ -1322,3 +1364,204 @@ class KnowledgeDatabase(Database):
         condition = "client_id ='%d'" % client_id
         rows = self.get_data(self.tblClientDomains, columns, condition)
         return rows[0][0]
+
+    def save_date_configurations(self, client_id, date_configurations, session_user):
+        values_list = []
+        current_time_stamp = self.get_date_time()
+        columns = ["client_id", "country_id" ,"domain_id", "period_from", 
+        "period_to", "updated_by", "updated_on"]
+        condition = "client_id='%d'"%client_id
+        self.delete(self.tblClientConfigurations, condition)
+        for configuration in date_configurations:
+            country_id = configuration.country_id
+            domain_id = configuration.domain_id
+            period_from = configuration.period_from
+            period_to = configuration.period_to
+            values_tuple = (client_id, country_id, domain_id, period_from, period_to, 
+                 int(session_user), str(current_time_stamp))
+            values_list.append(values_tuple)
+        return self.bulk_insert(self.tblClientConfigurations,columns,values_list)
+
+    def save_client_countries(self, client_id, country_ids):
+        values_list = []
+        columns = ["client_id", "country_id"]
+        condition = "client_id = '%d'" % client_id
+        self.delete(self.tblClientCountries, condition)
+        for country_id in country_ids:
+            values_tuple = (client_id, country_id)
+            values_list.append(values_tuple)
+        return self.bulk_insert(self.tblClientCountries, columns, values_list)
+
+    def save_client_domains(self, client_id, domain_ids):
+        values_list = []
+        columns = ["client_id", "domain_id"]
+        condition = "client_id = '%d'" % client_id
+        self.delete(self.tblClientDomains, condition)
+        for domain_id in domain_ids:
+            values_tuple = (client_id, domain_id)
+            values_list.append(values_tuple)
+        return self.bulk_insert(self.tblClientDomains, columns, values_list)
+
+    def _mysql_server_connect(self, host, username, password):
+        return mysql.connect(host, username, password)
+
+    def _db_connect(self, host, username, password, database) :
+        return mysql.connect(host, username, password, 
+            database)
+
+    def _create_database(self, host, username, password, 
+        database_name, db_username, db_password, email_id, client_id):
+        con = self._mysql_server_connect(host, username, password)
+        cursor = con.cursor()
+        query = "CREATE DATABASE %s" % database_name
+        cursor.execute(query)
+        query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" %(
+            database_name, db_username, host, db_password)
+        con.commit()
+
+        con = self._db_connect(host, username, password, database_name)
+        _client_db_connections[client_id] = con
+        cursor = con.cursor()
+        sql_script_path = os.path.join(os.path.join(os.path.split(__file__)[0]), 
+        "scripts/mirror-client.sql")
+        file_obj = open(sql_script_path, 'r')
+        sql_file = file_obj.read()
+        file_obj.close()
+        sql_commands = sql_file.split(';')
+        size = len(sql_commands)
+        for index,command in enumerate(sql_commands):
+            if (index < size-1):
+                cursor.execute(command)
+            else:
+                break
+        query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
+            email_id, generate_password())        
+        cursor.execute(query)
+        return True
+
+    def _get_server_details(self):
+        columns = "ip, server_username,server_password"
+        condition = "server_full = 0 order by length ASC limit 1"
+        rows = self.get_data(self.tblDatabaseServer, columns, condition)
+        return rows[0]
+
+    def create_and_save_client_database(self, group_name, client_id, short_name, email_id):
+        group_name = re.sub('[^a-zA-Z0-9 \n\.]', '', group_name)
+        group_name = group_name.replace (" ", "")
+        database_name = "mirror_%s_%d" %(group_name.lower(),client_id)
+        row = self._get_server_details()
+        host = row[0]
+        username = row[1]
+        password = row[2]
+        db_username = generate_random()
+        db_password = generate_random()
+
+        if self._create_database(host, username, password, database_name, db_username, 
+            db_password, email_id, client_id):
+            db_server_column = "company_ids"
+            db_server_value = client_id
+            db_server_condition = "ip='%s'"% host
+            self.append(self.tblDatabaseServer, db_server_column, db_server_value,
+                db_server_condition)
+            db_server_column = "length"
+            self.increment(self.tblDatabaseServer, db_server_column,
+                db_server_condition)
+
+            machine_columns = "client_ids"
+            machine_value = db_server_value
+            machine_condition = db_server_condition
+            self.append(self.tblMachines, machine_columns, machine_value,
+                machine_condition)
+
+            rows = self.get_data(self.tblMachines, "machine_id", machine_condition)
+            machine_id = rows[0][0]
+
+            client_db_columns = ["client_id", "machine_id", "database_ip", 
+                    "database_port", "database_username", "database_password",
+                    "client_short_name", "database_name"]
+            client_dB_values = [client_id, machine_id, host, 90, db_username,
+            db_password, short_name, database_name]
+
+            return self.insert(self.tblClientDatabase, client_db_columns, client_dB_values)
+
+    def save_client_group(self, client_id, client_group, session_user):
+        current_time_stamp = self.get_date_time()
+        contract_from = string_to_datetime(client_group.contract_from)
+        contract_to = string_to_datetime(client_group.contract_to)
+        is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
+
+        columns = ["client_id", "group_name", "email_id", "logo_url", 
+        "logo_size", "contract_from", "contract_to", "no_of_user_licence", 
+        "total_disk_space", "is_sms_subscribed", "url_short_name", 
+        "incharge_persons", "is_active", "created_by", "created_on", 
+        "updated_by", "updated_on"]
+        values = [client_id, client_group.group_name, client_group.email_id,
+        client_group.logo, 1200, contract_from, contract_to,
+        client_group.no_of_user_licence, client_group.file_space * 10000, 
+        is_sms_subscribed, client_group.short_name, 
+        ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
+        current_time_stamp, session_user, current_time_stamp]
+        result = self.insert(self.tblClientGroups, columns, values)
+        return result
+
+    def update_client_group(self, client_group, session_user):
+        current_time_stamp = self.get_date_time()
+        contract_from = string_to_datetime(client_group.contract_from)
+        contract_to = string_to_datetime(client_group.contract_to)
+        is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
+
+        columns = ["group_name", "logo_url", "logo_size", "contract_from", 
+        "contract_to", "no_of_user_licence", "total_disk_space", "is_sms_subscribed", 
+        "incharge_persons", "is_active", "updated_by", "updated_on"]
+        values = [client_group.group_name, client_group.logo,1200, contract_from, contract_to,
+        client_group.no_of_user_licence, client_group.file_space, is_sms_subscribed,
+        ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
+        current_time_stamp]
+        condition = "client_id = '%d'" % client_group.client_id
+        return self.update(self.tblClientGroups, columns, values, condition)
+
+    def save_client_user(self, client_group, session_user):
+        columns = ["client_id", "user_id",  "email_id", 
+        "employee_name", "created_on", "is_admin", "is_active"]
+        values = [client_group.client_id, 0, self.username, "Admin",
+        self.get_date_time(), 1, 1]
+        return self.insert(self.tblClientUsers, columns, values)
+
+    def save_incharge_persons(self, client_group, client_id):
+        columns = ["client_id", "user_id"]
+        values_list = []
+        condition = "client_id='%d'" % client_id
+        self.delete(self.tblUserClients, condition)
+        for incharge_person in client_group.incharge_persons:
+            values_tuple = (client_id, incharge_person)
+            values_list.append(values_tuple)
+        return self.bulk_insert(self.tblUserClients, columns, values_list)
+
+    def update_client_group_status(self, client_id, isActive, session_user):
+        columns = ["is_active", "updated_by", "updated_on"]
+        values = [ isActive, int(session_user), self.get_date_time()]
+        condition = "client_id='%d'" % client_id
+        return self.update(self.tblClientGroups, columns, values, condition)
+
+    def get_client_db_info(self):
+        columns = "database_ip, client_id, database_username, "+\
+        "database_password, database_name"
+        condition = "1"
+        return self.get_data(self.tblClientDatabase, columns, condition)
+
+
+class ClientDatabase(Database):
+
+    def __init__(self, knowledge_db):
+        rows = knowledge_db.get_client_db_info()
+        global _client_db_connections
+        _client_db_connections = {}
+        for row in rows:
+            host = row[0]
+            client_id = row[1]
+            username = row[2]
+            password = row[3]
+            database = row[4]
+            _client_db_connections[client_id] = super(ClientDatabase, self).__init__(
+                host, username, password, database
+            )

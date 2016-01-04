@@ -1,7 +1,8 @@
 from basics.types import VectorType, RecordType, VariantType, MapType, Field, OptionalType
 from common import (CLIENT_NAME, URL, DATE, NO_OF_USER_LICENCE, CLIENT_ID, USER_ID, CLIENT_NAME,
 	TOTAL_DISK_SPACE, STATUS, EMAIL_ID, IS_ACTIVE, LEGAL_ENTITY_ID, DIVISION_ID, UNIT_ID, GROUP_ID,
-	PASSWORD, EMPLOYEE_NAME, CONTACT_NUMBER, UNIT_NAME, ADDRESS, REMAINING_USER_LICENCE, USED_DISK_SPACE, SESSION_TOKEN)
+	PASSWORD, EMPLOYEE_NAME, CONTACT_NUMBER, UNIT_NAME, ADDRESS, REMAINING_USER_LICENCE, USED_DISK_SPACE, 
+	SESSION_TOKEN, COUNTRY_ID, DOMAIN_ID)
 from core import (Domain, Country, User, GroupCompany, BusinessGroup, Division,
 	UnitDetails, GroupCompanyDetail, ClientConfiguration, LegalEntity, CountryWiseUnits)
 
@@ -36,8 +37,8 @@ GetClientGroups = RecordType("GetClientGroups", [
 
 SaveClientGroup = RecordType("SaveClientGroup", [
 	Field("group_name",CLIENT_NAME),
-	Field("country_ids", CountryList),
-	Field("domain_ids", DomainList),
+	Field("country_ids", VectorType(COUNTRY_ID)),
+	Field("domain_ids", VectorType(DOMAIN_ID)),
 	Field("logo", URL),
 	Field("contract_from",DATE),
 	Field("contract_to",DATE),
@@ -46,14 +47,15 @@ SaveClientGroup = RecordType("SaveClientGroup", [
 	Field("file_space", TOTAL_DISK_SPACE),
 	Field("is_sms_subscribed", STATUS),
 	Field("email_id", EMAIL_ID),
-	Field("date_configurations",ClientConfigurationList)
+	Field("date_configurations",ClientConfigurationList),
+	Field("short_name", SHORT_NAME),
 ])
 
 UpdateClientGroup = RecordType("UpdateClientGroup", [
 	Field("client_id", CLIENT_ID),
 	Field("group_name",CLIENT_NAME),
-	Field("country_ids", CountryList),
-	Field("domain_ids", DomainList),
+	Field("country_ids", VectorType(COUNTRY_ID)),
+	Field("domain_ids", VectorType(DOMAIN_ID)),
 	Field("logo", URL),
 	Field("contract_from",DATE),
 	Field("contract_to",DATE),
@@ -160,6 +162,9 @@ GetClientsSuccess = RecordType("GetClientsSuccess", [
 ])
 
 SaveClientSuccess = RecordType("SaveClientSuccess", [
+])
+
+EmailIDAlreadyExists = RecordType("EmailIDAlreadyExists", [
 ])
 
 BusinessGroupNameAlreadyExists = RecordType("BusinessGroupNameAlreadyExists", [

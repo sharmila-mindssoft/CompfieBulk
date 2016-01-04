@@ -87,6 +87,7 @@ class GetClientGroups(Request):
 
     @staticmethod
     def parse_inner_structure(data):
+        print "inside get client group parse inner structure:{}".format(data)
         data = parse_dictionary(data)
         return GetClientGroups()
 
@@ -95,7 +96,7 @@ class GetClientGroups(Request):
         }
 
 class SaveClientGroup(Request):
-    def __init__(self, group_name, country_ids, domain_ids, logo, contract_from, contract_to, incharge_persons, no_of_user_licence, file_space, is_sms_subscribed, email_id, date_configurations):
+    def __init__(self, group_name, country_ids, domain_ids, logo, contract_from, contract_to, incharge_persons, no_of_user_licence, file_space, is_sms_subscribed, email_id, date_configurations, short_name):
         self.group_name = group_name
         self.country_ids = country_ids
         self.domain_ids = domain_ids
@@ -108,16 +109,17 @@ class SaveClientGroup(Request):
         self.is_sms_subscribed = is_sms_subscribed
         self.email_id = email_id
         self.date_configurations = date_configurations
+        self.short_name = short_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["group_name", "country_ids", "domain_ids", "logo", "contract_from", "contract_to", "incharge_persons", "no_of_user_licence", "file_space", "is_sms_subscribed", "email_id", "date_configurations"])
+        data = parse_dictionary(data, ["group_name", "country_ids", "domain_ids", "logo", "contract_from", "contract_to", "incharge_persons", "no_of_user_licence", "file_space", "is_sms_subscribed", "email_id", "date_configurations", "short_name"])
         group_name = data.get("group_name")
         group_name = parse_structure_CustomTextType_50(group_name)
         country_ids = data.get("country_ids")
-        country_ids = parse_structure_VectorType_RecordType_core_Country(country_ids)
+        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
         domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_RecordType_core_Domain(domain_ids)
+        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         logo = data.get("logo")
         logo = parse_structure_CustomTextType_250(logo)
         contract_from = data.get("contract_from")
@@ -136,13 +138,15 @@ class SaveClientGroup(Request):
         email_id = parse_structure_CustomTextType_100(email_id)
         date_configurations = data.get("date_configurations")
         date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
-        return SaveClientGroup(group_name, country_ids, domain_ids, logo, contract_from, contract_to, incharge_persons, no_of_user_licence, file_space, is_sms_subscribed, email_id, date_configurations)
+        short_name = data.get("short_name")
+        short_name = parse_structure_CustomTextType_20(short_name)
+        return SaveClientGroup(group_name, country_ids, domain_ids, logo, contract_from, contract_to, incharge_persons, no_of_user_licence, file_space, is_sms_subscribed, email_id, date_configurations, short_name)
 
     def to_inner_structure(self):
         return {
             "group_name": to_structure_CustomTextType_50(self.group_name),
-            "country_ids": to_structure_VectorType_RecordType_core_Country(self.country_ids),
-            "domain_ids": to_structure_VectorType_RecordType_core_Domain(self.domain_ids),
+            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
+            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "logo": to_structure_CustomTextType_250(self.logo),
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
@@ -152,6 +156,7 @@ class SaveClientGroup(Request):
             "is_sms_subscribed": to_structure_Bool(self.is_sms_subscribed),
             "email_id": to_structure_CustomTextType_100(self.email_id),
             "date_configurations": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations),
+            "short_name" : to_structure_CustomTextType_20(self.short_name)
         }
 
 class UpdateClientGroup(Request):
@@ -177,9 +182,9 @@ class UpdateClientGroup(Request):
         group_name = data.get("group_name")
         group_name = parse_structure_CustomTextType_50(group_name)
         country_ids = data.get("country_ids")
-        country_ids = parse_structure_VectorType_RecordType_core_Country(country_ids)
+        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
         domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_RecordType_core_Domain(domain_ids)
+        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         logo = data.get("logo")
         logo = parse_structure_CustomTextType_250(logo)
         contract_from = data.get("contract_from")
@@ -202,8 +207,8 @@ class UpdateClientGroup(Request):
         return {
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
             "group_name": to_structure_CustomTextType_50(self.group_name),
-            "country_ids": to_structure_VectorType_RecordType_core_Country(self.country_ids),
-            "domain_ids": to_structure_VectorType_RecordType_core_Domain(self.domain_ids),
+            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
+            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "logo": to_structure_CustomTextType_250(self.logo),
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
@@ -549,6 +554,19 @@ class SaveClientSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data)
         return SaveClientSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class EmailIDAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return EmailIDAlreadyExists()
 
     def to_inner_structure(self):
         return {
