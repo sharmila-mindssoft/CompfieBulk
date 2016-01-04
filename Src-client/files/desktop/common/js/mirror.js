@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8080/";
+var BASE_URL = "http://localhost:8090/";
 function initMirror() {
     var DEBUG = true;
 
@@ -17,19 +17,16 @@ function initMirror() {
     }
 
     function initSession(userProfile){
-        var info = {
-            "userProfile": userProfile
-        };
-        windows.localStorage["userInfo"] = toJSON(info);
+        window.localStorage["userInfo"] = toJSON(userProfile);
     }
 
-    function updateUser_Session(user) {
-        var info = parseJSON(window.localStorage["userInfo"])
-        delete window.localStorage["userInfo"];
+    // function updateUser_Session(user) {
+    //     var info = parseJSON(window.localStorage["userInfo"])
+    //     delete window.localStorage["userInfo"];
 
-        info.userProfile = user;
-        window.localStorage["userInfo"] = toJSON(info);
-    }
+    //     info.userProfile = user;
+    //     window.localStorage["userInfo"] = toJSON(info);
+    // }
 
     function clearSession() {
         delete window.localStorage["userInfo"];
@@ -40,11 +37,11 @@ function initMirror() {
         if (typeof(info) === "undefined")
             return null;
         user = parseJSON(info)
-        return user["userProfile"];
+        return user
     }
 
     function getUserProfile() {
-        var info = getUserProfile();
+        var info = getUserInfo();
         if (info === null)
             return null
         var userDetails = {
@@ -72,7 +69,7 @@ function initMirror() {
         var info = getUserInfo();
         if (info === null)
             return null;
-        return info["menu"];
+        return info["menu"]["menus"];
     }
 
     function apiRequest(callerName, request, callback) {
@@ -108,7 +105,63 @@ function initMirror() {
     }
 
     // Login function 
-
+    function login(username, password, callback) {
+        var request = [
+            "Login", {
+                "login_type": "Web",
+                "username": username,
+                "password": password
+            }
+        ]
+        jQuery.post(
+            BASE_URL + "api/login",
+            toJSON(request),
+            function (data) {
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                if (status.toLowerCase().indexOf(matchString) != -1){
+                    console.log("status success");
+                    callback(null, response);
+                }
+                else {
+                    callback(status, null); 
+                }
+            }
+        )
+    }
+    function verifyLoggedIn() {
+        sessionToken = getSessionToken()
+        if (sessionToken == null)
+            return false
+        else 
+            return false
+    }
+    function logout(callback) {
+        sessionToken = getSessionToken()
+        var request = [
+            "Logout", {
+                "session_token": sessionToken
+            }
+        ]
+        jQuery.post(
+            BASE_URL + "api/login",
+            toJSON(request),
+            function (data) {
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                if (status.toLowerCase().indexOf(matchString) != -1){
+                    callback(null, response);
+                }
+                else {
+                    callback(status, null); 
+                }
+            }
+        )
+    }
     //Domain Master
 
     function saveDomain(domainName, callback) {
@@ -116,7 +169,7 @@ function initMirror() {
             "SaveDomain",
             { "domain_name" : domainName }
         ];
-        apiRequest("SaveDomain", request, callback);
+        apiRequest("api/general", request, callback);
     }
 
     function updateDomain(domainId, domainName, callback) {
@@ -124,7 +177,7 @@ function initMirror() {
             "UpdateDomain",
             { "domain_id" : domainId, "domain_name" : domainName }
         ];
-        apiRequest("UpdateDomain", request, callback);
+        apiRequest("api/general", request, callback);
     }
 
     function changeDomainStatus(domainId, isActive, callback) {
@@ -132,12 +185,12 @@ function initMirror() {
             "ChangeDomainStatus",
             {"domain_id" : domainId, "is_active" : isActive}
         ];
-        apiRequest("ChangeDomainStatus", request, callback);
+        apiRequest("api/general", request, callback);
     }
 
     function getDomainList(callback) {
         var request = ["GetDomains", {}];
-        apiRequest("GetDomains", request, callback);
+        apiRequest("api/general", request, callback);
     }
 
     //Country Master
@@ -147,7 +200,7 @@ function initMirror() {
             "SaveCountry",
             { "country_name" : countryName }
         ];
-        apiRequest("SaveCountry", request, callback);
+        apiRequest("api/general", request, callback);
     }
 
     function updateCountry(countryId, countryName, callback) {
@@ -155,7 +208,7 @@ function initMirror() {
             "UpdateCountry",
             { "country_id" : countryId, "country_name" : countryName }
         ];
-        apiRequest("UpdateCountry", request, callback);
+        apiRequest("api/general", request, callback);
     }
 
     function changeCountryStatus(countryId, isActive, callback) {
@@ -163,12 +216,12 @@ function initMirror() {
             "ChangeCountryStatus",
             {"country_id" : countryId, "is_active" : isActive}
         ];
-        apiRequest("ChangeCountryStatus", request, callback);
+        apiRequest("api/general", request, callback);
     }
 
     function getCountryList(callback) {
         var request = ["GetCountries", {}];
-        apiRequest("GetCountries", request, callback);
+        apiRequest("api/general", request, callback);
     }
 
     //Industry Master
@@ -177,7 +230,7 @@ function initMirror() {
             "SaveIndustry",
             { "industry_name" : industryName }
         ];
-        apiRequest("SaveIndustry", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function updateIndustry(industryId, industryName, callback) {
@@ -185,7 +238,7 @@ function initMirror() {
             "UpdateIndustry",
             { "industry_id" : industryId, "industry_name" : industryName }
         ];
-        apiRequest("UpdateIndustry", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function changeIndustryStatus(industryId, isActive, callback) {
@@ -193,12 +246,12 @@ function initMirror() {
             "ChangeIndustryStatus",
             {"industry_id" : industryId, "is_active" : isActive}
         ];
-        apiRequest("ChangeIndustryStatus", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function getIndustryList(callback) {
         var request = ["GetIndustries", {}];
-        apiRequest("GetIndustries", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     //Statutory Nature Master
@@ -208,7 +261,7 @@ function initMirror() {
             "SaveStatutoryNature",
             { "statutory_nature_name" : statutoryNatureName }
         ];
-        apiRequest("SaveStatutoryNature", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function updateStatutoryNature(statutoryNatureId, statutoryNatureName, 
@@ -226,18 +279,18 @@ function initMirror() {
             "ChangeStatutoryNatureStatus",
             {"statutory_nature_id" : statutoryNatureId, "is_active" : isActive}
         ];
-        apiRequest("ChangeStatutoryNatureStatus", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function getStatutoryNatureList(callback) {
         var request = ["GetStatutoryNatures", {}];
-        apiRequest("GetStatutoryNatures", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     // Geography Levels 
     function getGeographyLevels(callback) {
         var request = ["GetGeographyLevels", {}];
-        apiRequest("GetGeographyLevels", request, callback);   
+        apiRequest("api/knowledge_master", request, callback);   
     }
 
     function levelDetails(levelId, levelPosition, levelName) {
@@ -257,13 +310,13 @@ function initMirror() {
                 "levels" : levels
             }
         ];
-        apiRequest("SaveGeographyLevel", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     // Statutory Levels
     function getStatutoryLevels(callback) {
         var request = ["GetStatutoryLevels", {}];
-        apiRequest("GetStatutoryLevels", request, callback);   
+        apiRequest("api/knowledge_master", request, callback);   
     }
 
     function saveAndUpdateStatutoryLevels(countryId, domainId, levels, 
@@ -276,13 +329,13 @@ function initMirror() {
                 "levels" : levels
             }
         ];
-        apiRequest("SaveStatutoryLevel", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     //Geographies
     function getGeographies(callback) {
         var request = ["GetGeographies", {}];
-        apiRequest("GetGeographies", request, callback);   
+        apiRequest("api/knowledge_master", request, callback);   
     }
 
     function saveGeography(levelId, name, parentIds, callback) {
@@ -294,7 +347,7 @@ function initMirror() {
                 "parent_ids": parentIds
             }
         ];
-        apiRequest("SaveGeography", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function updateGeography(geographyId, levelId, name, parentIds,
@@ -308,7 +361,7 @@ function initMirror() {
                 "parent_ids": parentIds
             }
         ];
-        apiRequest("UpdateGeography", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function changeGeographyStatus(geographyId, isActive, callback) {
@@ -319,12 +372,12 @@ function initMirror() {
                 "is_active": isActive
             }
         ];
-        apiRequest("ChangeGeographyStatus", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function getGeographyReport(callback) {
         var request = ["GeographyReport", {}];
-        apiRequest("GeographyReport", request, callback);   
+        apiRequest("api/knowledge_report", request, callback);   
     }
 
     // statutory Mapping
@@ -338,7 +391,7 @@ function initMirror() {
                 "parent_ids": parentIds
             }
         ]
-        apiRequest("SaveStatutory", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function updateStatutory(statutoryId, levelId, name, parentIds, callback) {
@@ -351,7 +404,7 @@ function initMirror() {
                 "parent_ids": parentIds
             }
         ]
-        apiRequest("UpdateStatutory", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function statutoryDates(date, month, triggerBefore) {
@@ -413,7 +466,7 @@ function initMirror() {
             "SaveStatutoryMapping",
             mappingData
         ];
-        apiRequest("SaveStatutoryMapping", request, callback);
+        apiRequest("api/knowledge_transaction", request, callback);
     }
 
     function updateStatutoryMapping(mappingData, callback ) {
@@ -421,12 +474,12 @@ function initMirror() {
             "UpdateStatutoryMapping",
             mappingData
         ]
-        apiRequest("UpdateStatutoryMapping", request, callback);
+        apiRequest("api/knowledge_transaction", request, callback);
     }
     
     function getStatutoryMappings(callback) {
         var request = ["GetStatutoryMappings", {}];
-        apiRequest("GetStatutoryMappings", request, callback);
+        apiRequest("api/knowledge_transaction", request, callback);
     }
 
     function changeStatutoryMappingStatus(mappingId, isActive, callback) {
@@ -437,7 +490,7 @@ function initMirror() {
                 "is_active" : isActive
             }
         ]
-        apiRequest("ChangeStatutoryMappingStatus", request, callback);
+        apiRequest("api/knowledge_transaction", request, callback);
     }
 
     function approveStatutoryList(statutoryMappingId, statutoryProvision, approvalStatus, reason, notificationText) {
@@ -457,12 +510,12 @@ function initMirror() {
                 "statutory_mappings": approvalList
             }
         ]
-        apiRequest("ApproveStatutoryMapping", request, callback);
+        apiRequest("api/knowledge_transaction", request, callback);
     }
 
     function getStatutoryMappingsReportFilter(callback) {
         var request = ["GetStatutoryMappingReportFilters", {}];
-        apiRequest("GetStatutoryMappingReportFilters", request, callback);
+        apiRequest("api/knowledge_report", request, callback);
     }
 
     function filterData(countryId, domainId, industryId, statutoryNatureId, geographyId, level1StatutoryId) {
@@ -478,7 +531,7 @@ function initMirror() {
 
     function getStatutoryMappingsReportData(filterDatas, callback) {
         var request = ["GetStatutoryMappingReportData", filterDatas];
-        apiRequest("getStatutoryMappingReportData", request, callback);
+        apiRequest("api/knowledge_report", request, callback);
     }
 
     // Admin User Group Master
@@ -1076,8 +1129,11 @@ function initMirror() {
         parseJSON: parseJSON,
 
         initSession: initSession,
-        updateUser_Session: updateUser_Session,
+        // updateUser_Session: updateUser_Session,
         clearSession: clearSession,
+        verifyLoggedIn: verifyLoggedIn,
+        login: login,
+        logout: logout,
 
         getUserInfo: getUserInfo,
         getUserProfile: getUserProfile,

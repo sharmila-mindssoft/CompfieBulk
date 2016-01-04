@@ -1,5 +1,5 @@
 from protocol import login, core, knowledgemaster
-from general import validate_user_session
+from generalcontroller import validate_user_session
 
 __all__=[
 	"process_knowledge_master_request",

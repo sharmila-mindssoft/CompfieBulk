@@ -76,11 +76,11 @@ def to_structure_RecordType_technomasters_Request_ChangeClientStatus(data):
 
 def to_structure_OptionalType_VectorType_SignedIntegerType_8(data):
     if data is None: return data
-    return to_structure_('VectorType_SignedIntegerType_8',)(data)
+    return to_structure_VectorType_SignedIntegerType_8(data)
 
 def to_structure_OptionalType_CustomTextType_50(data):
     if data is None: return data
-    return to_structure_('CustomTextType_50',)(data)
+    return to_structure_CustomTextType_50(data)
 
 def to_structure_RecordType_technotransactions_Response_GetAssignedStatutoriesByIdSuccess(data):
     from protocol import technotransactions
@@ -96,7 +96,7 @@ def to_structure_RecordType_technoreports_Request_GetClientDetailsReportData(dat
 
 def to_structure_OptionalType_SignedIntegerType_8(data):
     if data is None: return data
-    return to_structure_('SignedIntegerType_8',)(data)
+    return to_structure_SignedIntegerType_8(data)
 
 def to_structure_RecordType_clientreport_ReassignHistory(data):
     from protocol import clientreport
@@ -132,6 +132,19 @@ def to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit(data)
         key = to_structure_CustomTextType_50(key)
         value = to_structure_VectorType_RecordType_core_Unit(value)
         dict.append([key, value])
+    return dict
+
+def to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(data):
+    data = parse_dictionary(data)
+    dict = {}
+    # for key, value in data.items():
+    #     key = to_structure_CustomTextType_50(key)
+    #     value = to_structure_VectorType_RecordType_core_Form(value)
+    #     dict.append([key, value])
+    for key, value in data.items():
+        key = to_structure_CustomTextType_50(key)
+        value = to_structure_VectorType_RecordType_core_Form(value)
+        dict[key] = value        
     return dict
 
 def to_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES(data):
@@ -546,7 +559,7 @@ def to_structure_RecordType_clienttransactions_Request_GetStatutoriesByUnit(data
 
 def to_structure_OptionalType_Bool(data):
     if data is None: return data
-    return to_structure_('Bool',)(data)
+    return to_structure_Bool(data)
 
 def to_structure_RecordType_clienttransactions_Response_SavePastRecordsSuccess(data):
     from protocol import clienttransactions
@@ -698,6 +711,14 @@ def to_structure_VectorType_RecordType_core_Unit(data):
     for item in data:
         lst.append(to_structure_RecordType_core_Unit(item))
     return lst
+
+def to_structure_VectorType_RecordType_core_Form(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_Form(item))
+    return lst
+
 
 def to_structure_RecordType_general_Response_UpdateDomainSuccess(data):
     from protocol import general
@@ -974,7 +995,7 @@ def to_structure_RecordType_technotransactions_Response_GetAssignedStatutoriesLi
 
 def to_structure_OptionalType_RecordType_core_Division(data):
     if data is None: return data
-    return to_structure_('RecordType_core_Division',)(data)
+    return to_structure_RecordType_core_Division(data)
 
 def to_structure_VectorType_RecordType_core_Compliance(data):
     data = parse_list(data, 0)

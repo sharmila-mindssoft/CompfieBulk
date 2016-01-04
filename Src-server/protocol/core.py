@@ -26,7 +26,9 @@ from protocol.parse_structure import (
     parse_structure_CustomIntegerType_1_10,
     parse_structure_CustomIntegerType_1_12,
     parse_structure_CustomTextType_20,
-    parse_structure_CustomIntegerType_1_31
+    parse_structure_CustomIntegerType_1_31,
+    parse_structure_OptionalType_CustomTextType_50,
+    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -52,7 +54,9 @@ from protocol.to_structure import (
     to_structure_Text, to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     to_structure_CustomIntegerType_1_10,
     to_structure_CustomIntegerType_1_12, to_structure_CustomTextType_20,
-    to_structure_CustomIntegerType_1_31
+    to_structure_CustomIntegerType_1_31,
+    to_structure_OptionalType_CustomTextType_50,
+    to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form
 )
 
 #
@@ -454,15 +458,16 @@ class COMPLIANCE_ACTIVITY_STATUS(object):
 #
 
 class Form(object):
-    def __init__(self, form_id, form_name, form_url, parent_menu):
+    def __init__(self, form_id, form_name, form_url, parent_menu, form_type):
         self.form_id = form_id
         self.form_name = form_name
         self.form_url = form_url
         self.parent_menu = parent_menu
+        self.form_type = form_type
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["form_id", "form_name", "form_url", "parent_menu"])
+        data = parse_dictionary(data, ["form_id", "form_name", "form_url", "parent_menu", "form_type"])
         form_id = data.get("form_id")
         form_id = parse_structure_SignedIntegerType_8(form_id)
         form_name = data.get("form_name")
@@ -470,15 +475,18 @@ class Form(object):
         form_url = data.get("form_url")
         form_url = parse_structure_CustomTextType_250(form_url)
         parent_menu = data.get("parent_menu")
-        parent_menu = parse_structure_CustomTextType_50(parent_menu)
-        return Form(form_id, form_name, form_url, parent_menu)
+        parent_menu = parse_structure_OptionalType_CustomTextType_50(parent_menu)
+        form_type = data.get("form_type")
+        form_type = parse_structure_CustomTextType_50(form_type)
+        return Form(form_id, form_name, form_url, parent_menu, form_type)
 
     def to_structure(self):
         return {
             "form_id": to_structure_SignedIntegerType_8(self.form_id),
             "form_name": to_structure_CustomTextType_50(self.form_name),
             "form_url": to_structure_CustomTextType_250(self.form_url),
-            "parent_menu": to_structure_CustomTextType_50(self.parent_menu),
+            "parent_menu": to_structure_OptionalType_CustomTextType_50(self.parent_menu),
+            "form_type": to_structure_CustomTextType_50(self.form_type)
         }
 
 #
@@ -493,12 +501,12 @@ class Menu(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["menus"])
         menus = data.get("menus")
-        menus = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Form(menus)
+        menus = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(menus)
         return Menu(menus)
 
     def to_structure(self):
         return {
-            "menus": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Form(self.menus),
+            "menus": to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(self.menus),
         }
 
 #

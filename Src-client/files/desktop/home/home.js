@@ -9,10 +9,12 @@ function initializeUI () {
 }
 
 $(document).ready(function () {
-    if (!mirror.verifyLoggedIn())
-        return;
+    // if (!mirror.verifyLoggedIn())
+    //     return;
 
-    var user = mirror.getUser();
+    var user = mirror.getUserProfile();
+    console.log(mirror.getUserMenu())
+    // mirror.clearSession()
     $(".welcome-msg").text("Welcome " + user["employee_name"] + "!");
 
     initializeUI();

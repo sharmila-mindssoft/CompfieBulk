@@ -134,6 +134,17 @@ def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit(da
         d[key] = value
     return d
 
+def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(data):
+    data = parse_list(data)
+    print data
+    d = {}
+    for key, value in data:
+        key = parse_structure_CustomTextType_50(key)
+        value = parse_structure_VectorType_RecordType_core_Form(value)
+        d[key] = value
+    print d
+    return d
+
 def parse_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES(data):
     data = parse_list(data, 0)
     lst = []
@@ -1515,6 +1526,7 @@ def parse_structure_RecordType_knowledgemaster_Response_InvalidStatutoryId(data)
 
 def parse_structure_RecordType_login_Response_UserLoginSuccess(data):
     from protocol import login
+    print "parse_structure_login"
     return login.Response.parse_structure(data)
 
 def parse_structure_RecordType_clientuser_RequestFormat(data):

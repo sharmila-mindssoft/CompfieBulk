@@ -50,29 +50,40 @@ function performLogin(e_button, e_email, e_password) {
     e_email.attr("disabled", "disabled");
     e_password.attr("disabled", "disabled");
 
-    function onFailure () {
+    function onFailure (status) {
+        console.log(status)
+        console.log("calling onFailure")
         displayLoginMessage("Unable to login. Incorrect email / password?");
         $("input").val("");
         resetLoginUI(e_button, e_email, e_password);
     }
 
-    function onSuccess (status, response) {
-        if (status == "LoginSuccess") {
-            window.location.href = mirror.getRedirectUrl();
-        }
-        else if (status == "LoginFailed") {
-            onFailure();
-        }
+    function onSuccess (response) {
+        console.log(response);
+        mirror.initSession(response);
+        console.log(mirror.getUserMenu())
+        window.location.href = "/home";
+        // mirror.getRedirectUrl();
+        // if (status == "LoginSuccess") {
+        //     window.location.href = mirror.getRedirectUrl();
+        // }
+        // else if (status == "LoginFailed") {
+        //     onFailure();
+        // }
     }
 
     mirror.login(
         e_email.val(),
         e_password.val(),
-        function (status, response) {
-            onSuccess(status, response);
-        },
-        function () {
-            onFailure();
+        function (error, response) {
+            console.log(error)
+            console.log(response)
+            if (error == null){
+                onSuccess(response)
+            }
+            else {
+                onFailure(error)
+            }
         }
     );
 }
@@ -104,8 +115,8 @@ function initializeLogin () {
 }
 
 $(document).ready(function () {
-    if (mirror.verifyLoggedIn(true)) {
-        window.location.href = "/home";
+    if (mirror.verifyLoggedIn()) {
+        // window.location.href = "/home";
         return;
     }
 

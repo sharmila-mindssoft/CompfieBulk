@@ -107,29 +107,13 @@ class API(object):
             self._db.commit()
             respond(response_data)
         except Exception, e:
+            print e
             self._db.rollback()
         
 
     @api_request(login.Request)
     def handle_login(self, request, db):
-        if type(request) is login.Login:
-            print "username=", request.username
-            return controller.process_login(db, request)
-
-        if type(request) is login.ForgotPassword :
-            return controller.process_forgot_password(db, request)
-
-        if type(request) is login.ResetTokenValidation :
-            return controller.process_reset_token(db, request)
-
-        if type(request) is login.ResetPassword :
-            return controller.process_reset_password(db, request)
-
-        if type(request) is login.ChangePassword :
-            return controller.process_change_password(db, request)
-
-        if type(request) is login.Logout:
-            return controller.process_logout(db, request)
+        return controller.process_login_request(request, db)
         # return login.ResetPasswordSuccess()
 
     @api_request(admin.Request)
@@ -193,6 +177,23 @@ TEMPLATE_PATHS = [
     ("/test", "test_apis.html", "", {}),
     ("/home", "files/desktop/home/home.html", None, {}),
     ("/custom-controls", "files/desktop/custom-controls/custom-controls.html", None, {}),
+    ("/domain/create", "files/desktop/domain-master/domainmaster.html", None, {}),
+    ("/domain/list", "files/desktop/domain-master/domainmasterlist.html", None, {}),
+    ("/country/list", "files/desktop/CountryMaster/CountryMasterList.html", None, {}),
+    ("/country/create", "files/desktop/CountryMaster/CountryMaster.html", None, {}),
+    ("/industry/create", "files/desktop/Industry_Master/IndustryMaster.html", None, {}),
+    ("/industry/list", "files/desktop/Industry_Master/IndustryMasterList.html", None, {}),
+    ("/applicability/create", "files/desktop/Applicability_master/ApplicabilityMaster.html", None, {}),
+    ("/applicability/list", "files/desktop/Applicability_master/ApplicabilityMasterList.html", None, {}),
+    ("/geographylevel/create", "files/desktop/GeographyLevel/GeographyLevelMaster.html", None, {}),
+    ("/geographylevel/list", "files/desktop/GeographyLevel/GeographyLevelList.html", None, {}),
+    ("/geographymapping", "files/desktop/GeographyMaster/GeographyMapping.html", None, {}),
+    ("/geographymapping/list", "files/desktop/GeographyMaster/GeographyMappingList.html", None, {}),
+    ("/statutorylevel/list", "files/desktop/StatutoryLevelMaster/StatutoryLevelMasterList.html", None, {}),
+    ("/statutorylevel/create", "files/desktop/StatutoryLevelMaster/StatutoryLevelMaster.html", None, {}),
+    ("/statutorymapping", "files/desktop/StatutoryMapping/StatutoryMapping.html", None, {}),
+    ("/statutorymapping/list", "files/desktop/StatutoryMapping/StatutoryMappingList.html", None, {}),
+
 ]
 
 
@@ -236,6 +237,15 @@ def run_server(port):
             web_server.url(url, POST=handler, OPTIONS=cors_handler)
 
         static_path = os.path.join(ROOT_PATH, "Src-client")
+        files_path = os.path.join(static_path, "files")
+        desktop_path = os.path.join(files_path, "desktop")
+        common_path = os.path.join(desktop_path, "common")
+        images_path = os.path.join(common_path, "images")
+        css_path = os.path.join(common_path, "css")
+        js_path = os.path.join(common_path, "js")
+
+        web_server.low_level_url(r"/images/(.*)", tornado.web.StaticFileHandler, dict(path=images_path))
+        
         api_design_path = os.path.join(ROOT_PATH, "Doc", "API", "Web-API", "Version-1.0.4", "html")
         web_server.low_level_url(r"/api-design/(.*)", tornado.web.StaticFileHandler, dict(path=api_design_path))
         web_server.low_level_url(r"/(.*)", tornado.web.StaticFileHandler, dict(path=static_path))
