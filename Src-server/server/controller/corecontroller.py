@@ -22,12 +22,10 @@ def process_user_menus(form_list):
 
 	for form in form_list:
 		form_type = form.form_type
-		print form_type
 		_forms = menus.get(form_type)
 		if _forms is None :
 			_forms = []
 		_forms.append(form)
 		menus[form_type] = _forms
-		print menus
 	return core.Menu(menus)
 
