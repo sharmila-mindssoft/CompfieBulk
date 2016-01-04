@@ -5,6 +5,9 @@ __all__=[
 	"process_knowledge_master_request",
 ]
 
+#
+# knowledge - master - request
+#
 def process_knowledge_master_request(request, db) :
 	session_token = request.session_token
     request_frame = request.request
