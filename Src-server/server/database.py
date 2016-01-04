@@ -1537,9 +1537,9 @@ class KnowledgeDatabase(Database):
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblUserClients, columns, values_list)
 
-    def update_client_group_status(self, client_id, isActive, session_user):
+    def update_client_group_status(self, client_id, is_active, session_user):
         columns = ["is_active", "updated_by", "updated_on"]
-        values = [ isActive, int(session_user), self.get_date_time()]
+        values = [ is_active, int(session_user), self.get_date_time()]
         condition = "client_id='%d'" % client_id
         return self.update(self.tblClientGroups, columns, values, condition)
 
@@ -1548,6 +1548,124 @@ class KnowledgeDatabase(Database):
         "database_password, database_name"
         condition = "1"
         return self.get_data(self.tblClientDatabase, columns, condition)
+
+#
+#   Client Unit
+#
+    
+    def save_business_group(self, client_id, business_group_id, business_group_name, 
+        session_user):
+        current_time_stamp = self.get_date_time()
+        columns = ["client_id", "business_group_id", "business_group_name", 
+        "created_by", "created_on", "updated_by", "updated_on"]
+        values = [client_id, business_group_id, business_group_name, session_user, current_time_stamp,
+        session_user, current_time_stamp]
+        return self.insert(self.tblBusinessGroups, columns, values)
+
+    def update_business_group(self, client_id, business_group_id, business_group_name, 
+        session_user):
+        current_time_stamp = self.get_date_time()
+        columns = ["business_group_name", "updated_by", "updated_on"]
+        values = [business_group_name, session_user, current_time_stamp]
+        condition = "business_group_id = '%d' and client_id = '%d'"%(business_group_id, client_id)
+        return self.update(self.tblBusinessGroups, columns, values, condition)
+
+    def save_legal_entity(self, client_id, legal_entity_id, legal_entity_name, 
+        business_group_id, session_user):
+        current_time_stamp = self.get_date_time()
+        columns = ["client_id", "legal_entity_id", "legal_entity_name", "business_group_id", 
+        "created_by", "created_on", "updated_by", "updated_on"]
+        values = [client_id, legal_entity_id, legal_entity_name, business_group_id, 
+        session_user, current_time_stamp, session_user, current_time_stamp]
+        return self.insert(self.tblLegalEntities, columns, values)
+    
+    def update_legal_entity(self, client_id, legal_entity_id, legal_entity_name, business_group_id, session_user):
+        current_time_stamp = self.get_date_time()
+        columns = ["legal_entity_name", "updated_by", "updated_on"]
+        values = [legal_entity_name, business_group_id, session_user, current_time_stamp]
+        condition = "legal_entity_id = '%d' and client_id = '%d'"%(legal_entity_id, client_id)
+        return self.update(self.tblLegalEntities, columns, values, condition)
+
+    def save_division(self, client_id, division_id, division_name, business_group_id, legal_entity_id, session_user):
+        current_time_stamp = self.get_date_time()
+        columns = ["client_id", "division_id", "division_name", "business_group_id", "legal_entity_id",
+        "created_by", "created_on", "updated_by", "updated_on"]
+        values = [client_id, division_id, division_name, business_group_id, legal_entity_id,
+        session_user, current_time_stamp, session_user, current_time_stamp]
+        return self.insert(self.tblDivisions, columns, values)
+
+    def update_division(self, client_id, division_id, division_name, business_group_id, legal_entity_id, session_user):
+        current_time_stamp = self.get_date_time()
+        columns = ["division_name", "updated_by", "updated_on"]
+        values = [division_name, session_user, current_time_stamp]
+        condition = "division_id = '%d' and client_id = '%d'"%(division_id, client_id)
+        return self.update(self.tblDivisions, columns, values, condition)
+
+    def save_unit(self, client_id,  units, business_group_id, legal_entity_id, division_id, session_user):
+        current_time_stamp = self.get_date_time()
+        columns = ["unit_id", "client_id", "legal_entity_id", "country_id", "geography_id", "industry_id", 
+        "domain_ids", "unit_code", "unit_name", "address", "postal_code", "is_active", "created_by", 
+        "created_on", "updated_by", "updated_on"]
+        if business_group_id != None:
+            columns.append("business_group_id")
+        if division_id != None:
+            columns.append("division_id")
+        values_list = []
+        for unit in units:
+            domain_ids = ",".join(str(x) for x in unit["domain_ids"])
+            if business_group_id != None and division_id != None:
+                values_tuple = (str(unit["unit_id"]), client_id, legal_entity_id, str(unit["country_id"]), str(unit["geography_id"]),
+                    str(unit["industry_id"]), domain_ids, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
+                    str(unit["postal_code"]), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
+                    business_group_id, division_id)
+            elif business_group_id != None:
+                values_tuple = (str(unit["unit_id"]), client_id, legal_entity_id, str(unit["country_id"]), str(unit["geography_id"]),
+                    str(unit["industry_id"]), domain_ids, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
+                    str(unit["postal_code"]), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
+                    business_group_id)    
+            elif division_id != None :
+                values_tuple = (str(unit["unit_id"]), client_id, legal_entity_id, str(unit["country_id"]), str(unit["geography_id"]),
+                    str(unit["industry_id"]), domain_ids, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
+                    str(unit["postal_code"]), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
+                    division_id)   
+            else: 
+                values_tuple = (str(unit["unit_id"]), client_id, legal_entity_id, str(unit["country_id"]), str(unit["geography_id"]),
+                        str(unit["industry_id"]), domain_ids, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
+                        str(unit["postal_code"]), 1, session_user, current_time_stamp, session_user, current_time_stamp)
+            values_list.append(values_tuple)
+        return self.bulk_insert(self.tblUnits, columns, values_list)
+
+
+    def update_unit(self, client_id,  units, business_group_id, legal_entity_id, division_id, session_user):
+        current_time_stamp = str(self.get_date_time())
+        columns = ["country_id", "geography_id", "industry_id", "domain_ids", "unit_code", "unit_name", 
+        "address", "postal_code", "updated_by", "updated_on"]
+        values_list = []
+        for unit in units:
+            domain_ids = ",".join(str(x) for x in unit["domain_ids"])
+            values= [unit["country_id"], unit["geography_id"],unit["industry_id"], domain_ids, 
+                        str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
+                        str(unit["postal_code"]), session_user, current_time_stamp]
+            condition = "client_id='%d' and unit_id = '%d'" % (client_id, unit["unit_id"])
+            self.update(self.tblUnits, columns, values, condition)
+        return True
+
+    def change_client_status(self, client_id, legal_entity_id, division_id, is_active, session_user):
+        current_time_stamp = str(self.get_date_time())
+        columns = ["is_active", "updated_on" , "updated_by"]
+        values = [is_active, current_time_stamp, session_user]
+        condition = "legal_entity_id = '%d' and client_id = '%d' "% (legal_entity_id, client_id)
+        if division_id != None:
+            condition += " and division_id='%d' "% division_id
+        return self.update(self.tblUnits, columns, values, condition)
+
+    def reactivateUnit(self, client_id, unit_id, session_user):
+        current_time_stamp = str(self.get_date_time())
+        columns = ["is_active", "updated_on" , "updated_by"]
+        values = [1, current_time_stamp, session_user]
+        condition = "unit_id = '%d' and client_id = '%d' "% (unit_id, client_id)
+        return self.update(self.tblUnits, columns, values, condition)
+
 
 
 class ClientDatabase(Database):
