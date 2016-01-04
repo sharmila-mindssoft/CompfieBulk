@@ -10,58 +10,58 @@ __all__=[
 #
 def process_knowledge_master_request(request, db) :
 	session_token = request.session_token
-    request_frame = request.request
-    user_id = validate_user_session(db, session_token)
-    if user_id is None:
-        return login.InvalidSessionToken()
+  request_frame = request.request
+  user_id = validate_user_session(db, session_token)
+  if user_id is None:
+      return login.InvalidSessionToken()
 
-    if type(request_frame) is knowledgemaster.GetGeographyLevels:
-        return process_get_geography_level(db, user_id)
+  if type(request_frame) is knowledgemaster.GetGeographyLevels:
+      return process_get_geography_level(db, user_id)
 
-    if type(request_frame) is knowledgemaster.SaveGeographyLevel:
-        return process_save_geography_level(db, request_frame, user_id)
+  if type(request_frame) is knowledgemaster.SaveGeographyLevel:
+      return process_save_geography_level(db, request_frame, user_id)
 
-    if type(request_frame) is knowledgemaster.GetGeographies:
-        return process_get_geographies(db, user_id)
+  if type(request_frame) is knowledgemaster.GetGeographies:
+      return process_get_geographies(db, user_id)
 
-    if type(request_frame) is knowledgemaster.SaveGeography:
-        return process_save_geography(db, request_frame, user_id)
+  if type(request_frame) is knowledgemaster.SaveGeography:
+      return process_save_geography(db, request_frame, user_id)
 
-    if type(request_frame) is knowledgemaster.UpdateGeography:
-        return process_update_geography(db, request_frame, user_id)
+  if type(request_frame) is knowledgemaster.UpdateGeography:
+      return process_update_geography(db, request_frame, user_id)
 
-    if type(request_frame) is knowledgemaster.ChangeGeographyStatus:
-        return process_change_geography_status(db, request_frame, user_id)
+  if type(request_frame) is knowledgemaster.ChangeGeographyStatus:
+      return process_change_geography_status(db, request_frame, user_id)
 
-    if type(request_frame) is knowledgemaster.GetIndustries:
-    	return process_get_industry(db)
+  if type(request_frame) is knowledgemaster.GetIndustries:
+  	return process_get_industry(db)
 
-    if type(request_frame) is knowledgemaster.SaveIndustry:
-    	return process_save_industry(db, request_frame, user_id)
+  if type(request_frame) is knowledgemaster.SaveIndustry:
+  	return process_save_industry(db, request_frame, user_id)
 
-    if type(request_frame) is knowledgemaster.UpdateIndustry:
-    	return process_update_industry(db, request_frame, user_id)
+  if type(request_frame) is knowledgemaster.UpdateIndustry:
+  	return process_update_industry(db, request_frame, user_id)
 
-    if type(request_frame) is knowledgemaster.ChangeIndustryStatus:
-    	return process_change_industry_status(db, request_frame, user_id)
+  if type(request_frame) is knowledgemaster.ChangeIndustryStatus:
+  	return process_change_industry_status(db, request_frame, user_id)
 
-    if type(request_frame) is knowledgemaster.GetStatutoryNatures:
-    	return process_get_statutory_nature(db)
+  if type(request_frame) is knowledgemaster.GetStatutoryNatures:
+  	return process_get_statutory_nature(db)
 
-    if type(request_frame) is knowledgemaster.SaveStatutoryNature:
-    	return process_save_statutory_nature(db, request_frame, user_id)
+  if type(request_frame) is knowledgemaster.SaveStatutoryNature:
+  	return process_save_statutory_nature(db, request_frame, user_id)
 
-    if type(request_frame) is knowledgemaster.UpdateStatutoryNature:
-    	return process_update_statutory_nature(db, request_frame, user_id)
+  if type(request_frame) is knowledgemaster.UpdateStatutoryNature:
+  	return process_update_statutory_nature(db, request_frame, user_id)
 
-    if type(request_frame) is knowledgemaster.ChangeStatutoryNatureStatus :
-    	return process_change_statutory_nature_status(db, request_frame, user_id)
+  if type(request_frame) is knowledgemaster.ChangeStatutoryNatureStatus :
+  	return process_change_statutory_nature_status(db, request_frame, user_id)
 
-    if type(request_frame) is knowledgemaster.GetStatutoryLevels:
-    	return process_get_statutory_level(db, user_id)
+  if type(request_frame) is knowledgemaster.GetStatutoryLevels:
+  	return process_get_statutory_level(db, user_id)
 
-    if type(request_frame) is knowledgemaster.SaveStatutoryLevel:
-    	return process_save_statutory_level(db, request_frame, user_id)
+  if type(request_frame) is knowledgemaster.SaveStatutoryLevel:
+  	return process_save_statutory_level(db, request_frame, user_id)
 
 	if type(request_frame) is knowledgemaster.SaveStatutory:
 		return process_save_statutory(db, request_frame, user_id)
