@@ -138,6 +138,30 @@ function initMirror() {
         else 
             return false
     }
+    function logout(callback) {
+        sessionToken = getSessionToken()
+        var request = [
+            "Logout", {
+                "session_token": sessionToken
+            }
+        ]
+        jQuery.post(
+            BASE_URL + "api/login",
+            toJSON(request),
+            function (data) {
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                if (status.toLowerCase().indexOf(matchString) != -1){
+                    callback(null, response);
+                }
+                else {
+                    callback(status, null); 
+                }
+            }
+        )
+    }
     //Domain Master
 
     function saveDomain(domainName, callback) {
@@ -1109,6 +1133,7 @@ function initMirror() {
         clearSession: clearSession,
         verifyLoggedIn: verifyLoggedIn,
         login: login,
+        logout: logout,
 
         getUserInfo: getUserInfo,
         getUserProfile: getUserProfile,

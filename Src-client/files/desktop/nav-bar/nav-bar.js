@@ -101,8 +101,14 @@ function initializeNavBar () {
 
 	var item = getItemObject(null, "Logout");
 	item.on("click", function () {
-		mirror.logout();
-		window.location.href = "/login";
+		mirror.logout( function (error, response) {
+			if (error == null) {
+				window.location.href = "/login";
+			}
+			else {
+				window.location.href = "/login";
+			}
+		});
 	});
 
 	$("ul", settingsMenuObject).append(item);
