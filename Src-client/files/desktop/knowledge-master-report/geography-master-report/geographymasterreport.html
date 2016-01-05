@@ -1,0 +1,57 @@
+{% extends "files/desktop/home/container.html" %}
+{% block content %}
+  <div class="content-container width50">
+    <div class="content-area">
+      <div class="add-container">
+        <div class="add-container-heading">Geography<span class="error-message"></span></div>
+        <div class="input-row-left margin-l120 width60" >
+          <div class="input-row">
+            <div class="field-label">Country:<span class="mandatory">*</span></div>
+            <div class="field-input">
+              <input type="text" class="input-box icon-autocomplete width200" id="countryval" value="" onkeyup="loadauto_text(this.value)" >
+              <input type="hidden" id="country">
+              <div id="autocompleteview" class="ac-textbox" style="display:none;">
+              <ul id="ulist_text" onclick="hidemenu();" class="width200"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="clearfix"></div>
+      <br> 
+      
+      <div class="grid-table">
+        <table>
+          
+          <tr>
+            <th width="5%"  class="grid-table-heading">#</th>            
+            <th width="69%" class="grid-table-heading" align="left">Geography</th>            
+            <th width="13%" class="grid-table-heading" align="center">Status</th>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>            
+            <td><input type="text" name="location-name" class="filter-text-box" id="search-geography-name" onkeyup="filter()"></td>        
+            <td>&nbsp;</td>
+          </tr>          
+          <tbody class="tbody-geography-list">
+          </tbody>         
+          <tr>
+            <td colspan="3" class="border-dashed"><p id="total-records"></p></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="templates">
+  <table class="table-geography-report">
+    <tr class="table-row">
+      <td class="sno" align="center"></td>
+      <td class="geography-name"></td>
+      <td class="is-active" align="center"></td>
+    </tr>
+  </table>
+</div>
+
+<script type="text/javascript" src="/files/desktop/knowledge-master-report/geography-master-report/geographymasterreport.js"></script>
+{% endblock %}

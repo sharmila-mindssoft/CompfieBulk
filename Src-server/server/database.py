@@ -467,13 +467,13 @@ class KnowledgeDatabase(Database):
         return self.get_data(self.tblCountries, columns, condition)
 
     def get_countries_for_user(self, user_id) :
-        query = "SELECT distinct t1.country_id, t1.country_name, t1.is_active FROM tbl_domains t1 "
+        query = "SELECT distinct t1.country_id, t1.country_name, t1.is_active FROM tbl_countries t1 "
         if user_id > 0 :
-            query = query + " INNER JOIN tbl_user_countries t2 ON t1.domain_id = t2.domain_id WHERE t2.user_id = %s" % (user_id)
+            query = query + " INNER JOIN tbl_user_countries t2 ON t1.country_id = t2.country_id WHERE t2.user_id = %s" % (user_id)
         rows = self.select_all(query)
         columns = ["country_id", "country_name", "is_active"]
         result = self.convert_to_dict(rows, columns)
-        return return_countries(result)
+        return self.return_countries(result)
 
     def return_countries(self, data) :
         results = []

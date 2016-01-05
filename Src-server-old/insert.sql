@@ -1,7 +1,7 @@
 USE `mirror_knowledge`;
 
 -- -- DELETE FROM tbl_forms;
--- INSERT INTO tbl_forms VALUES(1, 'User Group Master', '/user-group-master', 1, 'master', 'it', 0, null);
+-- INSERT INTO tbl_forms VALUES(1, 'User Group Master', '/user-group-e', 1, 'master', 'it', 0, null);
 -- INSERT INTO tbl_forms VALUES(2, 'User Master', '/user-master', 2, 'master', 'it', 0, null);
 -- INSERT INTO tbl_forms VALUES(3, 'Country Master', '/country-master', 3, 'master', 'it', 0, null);
 -- INSERT INTO tbl_forms VALUES(4, 'Domain Master', '/domain-master', 4, 'master', 'it', 0, null);
@@ -80,10 +80,10 @@ INSERT INTO tbl_form_type VALUES(4, "Settings");
 
 --mirror_knowledge
 #Admin
-INSERT INTO tbl_forms VALUES(1, 4, 1,  'Country', '/user-group-master', 1,  null);
-INSERT INTO tbl_forms VALUES(2, 4, 1,  'Domain', '/user-group-master', 2, null);
+INSERT INTO tbl_forms VALUES(1, 4, 1,  'Country', '/country-master', 1,  null);
+INSERT INTO tbl_forms VALUES(2, 4, 1,  'Domain', '/domain-master', 2, null);
 INSERT INTO tbl_forms VALUES(3, 1, 1,  'User Group', '/user-group-master', 3, null);
-INSERT INTO tbl_forms VALUES(4, 1, 1,  'User', '/user-group-master', 4, null);
+INSERT INTO tbl_forms VALUES(4, 1, 1,  'User', '/user-master', 4, null);
 #knowledge
 INSERT INTO tbl_forms VALUES(5, 2, 1, 'Geography Levels Master', '/geography-levels-master', 5, 'Geography');
 INSERT INTO tbl_forms VALUES(6, 2, 1, 'Geography Master', '/geography-master', 6, 'Geography');

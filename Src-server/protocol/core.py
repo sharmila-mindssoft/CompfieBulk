@@ -464,8 +464,6 @@ class Form(object):
         self.form_id = form_id
         self.form_name = form_name
         self.form_url = form_url
-        self.form_category_id = form_category_id
-        self.form_type_id = form_type_id
         self.parent_menu = parent_menu
         self.form_type = form_type
 

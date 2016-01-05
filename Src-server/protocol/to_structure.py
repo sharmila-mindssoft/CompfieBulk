@@ -2601,7 +2601,7 @@ def to_structure_RecordType_clientadminsettings_RequestFormat(data):
 
 def to_structure_RecordType_core_Form(data):
     from protocol import core
-    return core.KnowledgeForm.to_structure(data)
+    return core.Form.to_structure(data)
 
 def to_structure_RecordType_core_Level(data):
     from protocol import core
