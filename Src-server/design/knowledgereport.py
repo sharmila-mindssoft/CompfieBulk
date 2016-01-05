@@ -1,7 +1,7 @@
 from basics.types import VectorType, RecordType, VariantType, MapType, Field, OptionalType
 from common import (COUNTRY_ID, DOMAIN_ID, INDUSTRY_ID, STATUTORY_NATURE_ID, GEOGRAPHY_ID,
 	LEVEL_1_STATUTORY_ID, IS_ACTIVE, Text, SESSION_TOKEN)
-from core import (StatutoryMapping, 
+from core import (StatutoryMapping, ComplianceFrequency,
 	Statutory, Country, Domain, Statutory,
 	Industry, StatutoryNature, Geography)
 
@@ -49,6 +49,7 @@ GetStatutoryMappingReportFiltersSuccess = RecordType("GetStatutoryMappingReportF
 	Field("statutory_natures", VectorType(StatutoryNature)),
 	Field("geographies", MapType(COUNTRY_ID, VectorType(Geography))),
 	Field("level_1_statutories", MapType(COUNTRY_ID, DomainStatutoryMap)),
+	Field("compliance_frequency", VectorType(ComplianceFrequency)),
 ])
 
 MappingReport = RecordType("MappingReport", [

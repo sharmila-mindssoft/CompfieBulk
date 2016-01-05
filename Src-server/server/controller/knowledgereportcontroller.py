@@ -22,13 +22,29 @@ def process_knowledge_report_request(request, db) :
         return process_get_geography_report(db, request_frame, user_id)
 
 def process_get_statutory_mapping_filters(db, request_frame, user_id):
-    pass
+    countries = db.get_countries_for_user(user_id)
+    domains = db.get_domains_for_user(user_id)
+    industries = db.get_industries()
+    statutory_nature = db.get_statutory_nature()
+    geographies = db.get_geographies()
+    level_1_statutories = db.get_country_wise_level_1_statutoy()
+    compliance_frequency = db.get_compliance_frequency()
+    return knowledgereport.GetStatutoryMappingReportFiltersSuccess (
+        countries, domains, industries, statutory_nature,
+        geographies, level_1_statutories, compliance_frequency
+    )
 
 def process_get_statutory_mapping_report_data(db, request_frame, user_id):
     pass
 
 def process_get_geography_report(db, request_frame, user_id):
-    pass
+    countries = db.get_countries_for_user(user_id)
+    geography_data = get_geography_report()
+
+    return knowledgereport.GetGeographyReportSuccess(
+        countries, geography_data
+    )
+
 
 
 

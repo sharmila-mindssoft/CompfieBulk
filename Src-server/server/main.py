@@ -134,11 +134,11 @@ class API(object):
     def handle_general(self, request, db):
         return controller.process_general_request(request, db)
 
-    @api_request(knowledgemaster. RequestFormat)
+    @api_request(knowledgemaster.RequestFormat)
     def handle_knowledge_master(self, request, db) :
         return controller.process_knowledge_master_request(request, db)
 
-    @api_request(knowledgemaster, RequestFormat)
+    @api_request(knowledgetransaction.RequestFormat)
     def handle_knowledge_transaction(self, request, db) :
         return controller.process_knowledge_transaction_request(request, db)
 
