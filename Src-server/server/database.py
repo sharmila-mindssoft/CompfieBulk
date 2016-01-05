@@ -174,11 +174,6 @@ class KnowledgeDatabase(Database):
         )
         self.statutory_parent_mapping = {}
         self.geography_parent_mapping = {}
-        # self.store_mappings()
-
-    def store_mappings (self):
-        self.set_stautory_parent_mappings()
-        self.set_geography_parent_mapping()
 
     def encrypt(self, value):
         m = hashlib.md5()
@@ -211,7 +206,6 @@ class KnowledgeDatabase(Database):
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
         row = self.select_one(query)
-        print row
         user_id = row[0]
         return user_id
 
@@ -424,11 +418,9 @@ class KnowledgeDatabase(Database):
         if user_id > 0 :
             query = query + " INNER JOIN tbl_user_domains t2 ON \
                 t1.domain_id = t2.domain_id WHERE t2.user_id = %s" % (user_id)
-        print query
         rows = self.select_all(query)
         columns = ["domain_id", "domain_name", "is_active"]
         result = self.convert_to_dict(rows, columns)
-        print result
         return self.return_domains(result)
     
     def return_domains(self, data):
@@ -1018,7 +1010,7 @@ class KnowledgeDatabase(Database):
                     self.save_activity(user_id, 5, action)
         return True
 
-    def get_geography_master(self) :
+    def get_geographies(self) :
         query = "SELECT t1.geography_id, t1.geography_name, t1.level_id, \
             t1.parent_ids, t1.is_active, t2.country_id, t3.country_name FROM tbl_geographies t1 \
             INNER JOIN tbl_geography_levels t2 on t1.level_id = t2.level_id \
@@ -1026,10 +1018,10 @@ class KnowledgeDatabase(Database):
         rows = self.select_all(query)
         columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
         result = self.convert_to_dict(rows, columns)
-        return result
+        self.set_geography_parent_mapping(result)
+        return self.return_geographies(result)
 
-    def get_geographies(self):
-        data = self.get_geography_master()
+    def return_geographies(self, data):
         geographies = {}
         for d in data :
             parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
@@ -1056,7 +1048,7 @@ class KnowledgeDatabase(Database):
             return mapping_list
 
         if bool(self.geography_parent_mapping) is False :
-            self.set_geography_parent_mapping()
+            data = self.get_geographies()
 
         return return_report_data(self.geography_parent_mapping)
 
@@ -1168,7 +1160,7 @@ class KnowledgeDatabase(Database):
         columns = ["statutory_id", "statutory_name", "level_id", "is_active"]
         return self.convert_to_dict(rows, columns)
 
-    def get_statutories(self, statutory_id = None): 
+    def get_statutory_master(self, statutory_id = None): 
         columns = [
             "statutory_id", "statutory_name", 
             "level_id", "parent_ids",
@@ -1191,10 +1183,10 @@ class KnowledgeDatabase(Database):
             )
         rows = self.select_all(query)
         result = convert_to_dict(rows, columns)
-        return result
+        self.set_statutory_parent_mappings(result)
+        return self.return_statutory_master(result)
 
-    def get_statutory_master(self, statutory_id = None):
-        data = self.get_statutories(statutory_id)
+    def return_statutory_master(data):
         statutory_list = []
         for d in data :
             statutory_id = int(d["statutory_id"])
@@ -1291,15 +1283,16 @@ class KnowledgeDatabase(Database):
     #
     # statutory mappings
     #
-    def set_stautory_parent_mappings(self) :
-        rows = self.get_statutory_master()
+    def set_statutory_parent_mappings(self, rows) :
         _tempDict = {}
         for row in rows :
             _tempDict[row["statutory_id"]] = row["statutory_name"]
         
         for row in rows :
             statutory_id = row["statutory_id"]
-            parent_ids = row["parent_ids"]
+            parent_ids = [
+                int(x) for x in row["parent_ids"][-1].split(',')
+            ]
             statutory_name = row["statutory_name"]
             names = []
             for id in parent_ids :
@@ -1308,19 +1301,18 @@ class KnowledgeDatabase(Database):
             names.append(statutory_name)
             mappings = '>>'.join(str(x) for x in names)
             self.statutory_parent_mapping[statutory_id] = [
-                mappings
+                statutory_name, mappings
             ]
 
     def set_geography_parent_mapping(self, rows):
-        rows = self.get_geographies()
         _tempDict = {}
         for row in rows :
-            _tempDict[row["geography_id"]] = row["geography_name"]
+            _tempDict[int(row["geography_id"])] = row["geography_name"]
 
         for row in rows :
-            geography_id = row["geography_id"]
-            is_active = row["is_active"]
-            parent_ids = row["parent_ids"]
+            geography_id = int(row["geography_id"])
+            is_active = bool(row["is_active"])
+            parent_ids = [int(x) for x in row["parent_ids"][:-1].split(',')]
             names = []
             names.append(row["country_name"])
             for id in parent_ids :
