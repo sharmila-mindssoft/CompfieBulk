@@ -202,21 +202,49 @@ class GetStatutoryMappingReportFiltersSuccess(Response):
             "compliance_frequency": to_structure_VectorType_RecordType_core_ComplianceFrequency(self.compliance_frequency),
         }
 
-class GetStatutoryMappingReportDataSuccess(Response):
-    def __init__(self, country_wise_statutory_mappings):
-        self.country_wise_statutory_mappings = country_wise_statutory_mappings
+# class GetStatutoryMappingReportDataSuccess(Response):
+#     def __init__(self, country_wise_statutory_mappings):
+#         self.country_wise_statutory_mappings = country_wise_statutory_mappings
+
+#     @staticmethod
+#     def parse_inner_structure(data):
+#         data = parse_dictionary(data, ["country_wise_statutory_mappings"])
+#         country_wise_statutory_mappings = data.get("country_wise_statutory_mappings")
+#         country_wise_statutory_mappings = parse_structure_VectorType_RecordType_knowledgereport_MappingReport(country_wise_statutory_mappings)
+#         return GetStatutoryMappingReportDataSuccess(country_wise_statutory_mappings)
+
+#     def to_inner_structure(self):
+#         return {
+#             "country_wise_statutory_mappings": to_structure_VectorType_RecordType_knowledgereport_MappingReport(self.country_wise_statutory_mappings),
+#         }
+
+class GetStatutoryMappingReportDataSuccess(object):
+    def __init__(self, country_id, domain_id, statutory_mappings):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.statutory_mappings = statutory_mappings
 
     @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_wise_statutory_mappings"])
-        country_wise_statutory_mappings = data.get("country_wise_statutory_mappings")
-        country_wise_statutory_mappings = parse_structure_VectorType_RecordType_knowledgereport_MappingReport(country_wise_statutory_mappings)
-        return GetStatutoryMappingReportDataSuccess(country_wise_statutory_mappings)
+    def parse_structure(data):
+        data = parse_dictionary(data, ["country_id", "domain_id", "statutory_mappings"])
+        country_id = data.get("country_id")
+        country_id = parse_structure_SignedIntegerType_8(country_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        statutory_mappings = data.get("statutory_mappings")
+        statutory_mappings = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping(statutory_mappings)
+        return GetStatutoryMappingReportDataSuccess(
+            country_id, domain_id, statutory_mappings
+        )
 
-    def to_inner_structure(self):
+    def to_structure(self):
         return {
-            "country_wise_statutory_mappings": to_structure_VectorType_RecordType_knowledgereport_MappingReport(self.country_wise_statutory_mappings),
+            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "statutory_mappings": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping(self.statutory_mappings),
         }
+
+
 
 class GetGeographyReportSuccess(Response):
     def __init__(self, countries, geographies):
@@ -296,31 +324,4 @@ class GeographyMapping(object):
             "is_active": to_structure_Bool(self.is_active),
         }
 
-#
-# MappingReport
-#
-
-class MappingReport(object):
-    def __init__(self, country_id, domain_id, statutory_mappings):
-        self.country_id = country_id
-        self.domain_id = domain_id
-        self.statutory_mappings = statutory_mappings
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "statutory_mappings"])
-        country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
-        domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
-        statutory_mappings = data.get("statutory_mappings")
-        statutory_mappings = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping(statutory_mappings)
-        return MappingReport(country_id, domain_id, statutory_mappings)
-
-    def to_structure(self):
-        return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "statutory_mappings": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping(self.statutory_mappings),
-        }
 

@@ -35,7 +35,27 @@ def process_get_statutory_mapping_filters(db, request_frame, user_id):
     )
 
 def process_get_statutory_mapping_report_data(db, request_frame, user_id):
-    pass
+    country_id = request_frame.country_id
+    domain_id = request_frame.domain_id
+    industry_id = request_frame.industry_id
+    nature_id = request_frame.nature_id
+    geography_id = request_frame.geography_id
+    level_1_id = request_frame.level_1_statutories
+    report_data = db.get_statutory_mapping_report(
+        country_id, domain_id, industry_id, 
+        nature_id, geography_id
+    )
+    statutory_mappings = {}
+    if level_1_id is None:
+        statutory_mappings = report_data
+    else :
+        statutory_mappings[level_1_id] = report_data[level_1_id]
+
+    return knowledgereport.GetStatutoryMappingReportDataSuccess(
+        country_id, domain_id, statutory_mappings
+    )
+
+
 
 def process_get_geography_report(db, request_frame, user_id):
     countries = db.get_countries_for_user(user_id)

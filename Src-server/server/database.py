@@ -1457,6 +1457,7 @@ class KnowledgeDatabase(Database):
             "approval_status", "is_active"
         ]
         result = self.convert_to_dict(rows, columns)
+        return self.return_statutory_mappings(result)
 
     def return_statutory_mappings(self, data):
         mapping_data_list = []
@@ -1506,24 +1507,83 @@ class KnowledgeDatabase(Database):
         statutory_nature_id, geography_id
     ) :
         q = "SELECT t1.statutory_mapping_id, t1.country_id, \
-            t1.domain_id, t1.industry_ids, \
-            t1.statutory_nature_id, t2.statutory_nature_name, \
-            t1.statutory_ids, t1.compliance_ids, \
-            t1.geography_ids, t1.is_active  \
+            t2.country_name, t1.domain_id, t3.domain_name, \
+            t1.industry_ids, t1.statutory_nature_id, \
+            t4.statutory_nature_name, t1.statutory_ids, \
+            t1.compliance_ids, t1.geography_ids, \
+            t1.approval_status, t1.is_active  \
             FROM tbl_statutory_mappings t1 \
-            INNER JOIN tbl_statutory_natures t2 \
-            on t1.statutory_nature_id = t2.statutory_nature_id \
+            INNER JOIN tbl_countries t2 \
+            ON t1.country_id = t2.country_id \
+            INNER JOIN tbl_domains t3 \
+            ON t1.domain_id = t3.domain_id \
+            INNER JOIN tbl_statutory_natures t4 \
+            ON t1.statutory_nature_id = t4.statutory_nature_id \
+            INNER JOIN tbl_user_domains t5 \
+            ON t1.domain_id = t5.domain_id \
+            and t5.user_id = %s \
+            INNER JOIN tbl_user_countries t6 \
+            ON t1.country_id = t6.country_id \
+            and t6.user_id = %s \
             WHERE t1.country_id = %s \
             and t1.domain_id = %s \
             and t1.industry_ids like '%s' \
             and t1.statutory_nature_id like '%s' \
             and t1.geography_ids like '%s'" % (
+                user_id, user_id,
                 country_id, domain_id, 
                 str("%" + str(industry_id) + ",%"), 
                 str(statutory_nature_id),
                 str("%" + str(geography_id) + ",%")
             )
-        return self.select_all(q)
+
+        rows = self.select_all(q)
+        columns = [
+            "statutory_mapping_id", "country_id", 
+            "country_name", "domain_name", "industry_ids", 
+            "statutory_nature_id", "statutory_nature_name", 
+            "statutory_ids", "compliance_ids", "geography_ids",
+            "approval_status", "is_active"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        report_data = {}
+        for r in result :
+            report_data[r.statutory_mapping_id] = r
+        return self.return_knowledge_report(
+            country_id, domain_id, report_data
+        )
+
+
+    def get_mappings_id(self, statutory_id) :
+        query = "SELECT t1.statutory_mapping_ids from tbl_statutories t1 \
+            WHERE t1.parent_ids like '%0%' OR t1.parent_ids like '%s'" % str("%" + str(statutory_id) + ",%")
+        rows = self.select_all(query)
+        return self.convert_to_dict(
+            rows, ["statutory_mapping_ids"]
+        )
+
+
+    def return_knowledge_report(self, country_id, domain_id, report_data):
+        level_1_statutory = self.get_country_wise_level_1_statutoy()
+
+        level1s = level_1_statutory[country_id][domain_id]
+        level_1_mappings = {}
+        for x in level1s :
+            statutory_id = x.statutory_id
+            rows = self.get_mappings_id(statutory_id)
+            mapping_list = []
+            for row in rows :
+                mapping_ids = row["statutory_mapping_ids"]
+                if (mapping_ids is None) or (mapping_ids == "") :
+                    continue
+                def getData(i) :
+                    return report_data.get(int(i))
+                mapping_list.extend(
+                    [getData(x) for x in mapping_ids[:-1].split(',') if getData(x) is not None]  
+                )
+            level_1_mappings[statutory_id] = mapping_list
+        return level_1_mappings
+
 
     #
     # compliance

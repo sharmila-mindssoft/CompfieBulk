@@ -52,14 +52,17 @@ GetStatutoryMappingReportFiltersSuccess = RecordType("GetStatutoryMappingReportF
 	Field("compliance_frequency", VectorType(ComplianceFrequency)),
 ])
 
-MappingReport = RecordType("MappingReport", [
+# MappingReport = RecordType("MappingReport", [
+# 	Field("country_id", COUNTRY_ID),
+#     Field("domain_id",  DOMAIN_ID),
+#     Field("statutory_mappings", MapType(LEVEL_1_STATUTORY_ID, VectorType(StatutoryMapping)))
+# ])
+
+GetStatutoryMappingReportDataSuccess = RecordType("GetStatutoryMappingReportDataSuccess", [
+	# Field("country_wise_statutory_mappings", VectorType(MappingReport))
 	Field("country_id", COUNTRY_ID),
     Field("domain_id",  DOMAIN_ID),
     Field("statutory_mappings", MapType(LEVEL_1_STATUTORY_ID, VectorType(StatutoryMapping)))
-])
-
-GetStatutoryMappingReportDataSuccess = RecordType("GetStatutoryMappingReportDataSuccess", [
-	Field("country_wise_statutory_mappings", VectorType(MappingReport))
 ])
 
 GeographyMapping = RecordType("GeographyMapping", [
