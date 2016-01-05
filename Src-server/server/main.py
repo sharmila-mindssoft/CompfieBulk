@@ -206,13 +206,15 @@ TEMPLATE_PATHS = [
     ("/geography-report", "files/desktop/knowledge-master-report/geography-master-report/geographymasterreport.html", None, {}),
     ("/industry-report", "files/desktop/knowledge-master-report/industry-master-report/industrymasterreport.html", None, {}),
     ("/statutory-nature-report", "files/desktop/knowledge-master-report/statutory-nature-master-report/statutorynaturemasterreport.html", None, {}),
-    #Techno transaction
-    ("/client", "files/desktop/client/client.html", None, {}),
+    #Techno Manager master
+    ("/client-master", "files/desktop/client-master/clientmaster.html", None, {}),
     #Techno user master
-    ("/client-user", "files/desktop/client-user/clientuser.html", None, {}), 
+    ("/client-unit", "files/desktop/client-unit/clientunit.html", None, {}), 
     ("/client-profile", "files/desktop/client-profile/clientprofile.html", None, {}),
+    #Techno User Transaction
+    ("/assign-statutory", "files/desktop/assign-statutory/assignstatutory.html", None, {}),
     #Techno reports
-    ("/client-details-report", "files/desktop/client-user-master/clientusermaster.html", None, {}),
+    ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {}),
     #client admin
     ("/service-provider", "files/desktop/service-provider/serviceprovider.html", None, {}),   
     ("/client-user-privilege", "files/desktop/client-user-privilege/clientuserprivilege.html", None, {}),  
