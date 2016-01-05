@@ -5,7 +5,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_general_Notification,
     parse_structure_CustomTextType_250,
     parse_structure_VectorType_RecordType_core_Domain,
-    parse_structure_SignedIntegerType_8,
+    parse_structure_UnsignedIntegerType_32,
     parse_structure_VariantType_general_Request, parse_structure_Bool,
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_500,
     parse_structure_CustomTextType_50
@@ -105,7 +105,7 @@ class UpdateDomain(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["domain_id", "domain_name"])
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         domain_name = data.get("domain_name")
         domain_name = parse_structure_CustomTextType_50(domain_name)
         return UpdateDomain(domain_id, domain_name)
@@ -125,7 +125,7 @@ class ChangeDomainStatus(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["domain_id", "is_active"])
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return ChangeDomainStatus(domain_id, is_active)
@@ -174,7 +174,7 @@ class UpdateCountry(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "country_name"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         country_name = data.get("country_name")
         country_name = parse_structure_CustomTextType_50(country_name)
         return UpdateCountry(country_id, country_name)
@@ -194,7 +194,7 @@ class ChangeCountryStatus(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "is_active"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return ChangeCountryStatus(country_id, is_active)
@@ -230,7 +230,7 @@ class UpdateNotificationStatus(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["notification_id", "has_read"])
         notification_id = data.get("notification_id")
-        notification_id = parse_structure_SignedIntegerType_8(notification_id)
+        notification_id = parse_structure_UnsignedIntegerType_32(notification_id)
         has_read = data.get("has_read")
         has_read = parse_structure_Bool(has_read)
         return UpdateNotificationStatus(notification_id, has_read)
@@ -520,7 +520,7 @@ class Notification(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["notification_id", "notification_text", "extra_details", "has_read", "date_and_time"])
         notification_id = data.get("notification_id")
-        notification_id = parse_structure_SignedIntegerType_8(notification_id)
+        notification_id = parse_structure_UnsignedIntegerType_32(notification_id)
         notification_text = data.get("notification_text")
         notification_text = parse_structure_CustomTextType_500(notification_text)
         extra_details = data.get("extra_details")

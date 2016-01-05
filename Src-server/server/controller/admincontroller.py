@@ -6,7 +6,6 @@ __all__ = [
 ]
 
 def process_admin_request(request, db) :
-	print "inside admin request"
 	session_token = request.session_token
 	request_frame = request.request
 	session_user = db.validate_session_token(session_token)
@@ -44,12 +43,12 @@ def get_forms(db) :
 	for row in result_rows:
 		parent_menu = "" if row[8] == None else row[8]
 		if int(row[1]) == 2:
-			form = core.KnowledgeForm(form_id = row[0], form_name = row[5], form_url = row[6], 
-				parent_menu = parent_menu, form_category_id = row[1], form_type_id = row[3])
+			form = core.Form(form_id = row[0], form_name = row[5], form_url = row[6], 
+				parent_menu = parent_menu, form_type = row[4])
 			knowledge_forms.append(form)
 		elif int(row[1]) == 3: 
-			form = core.KnowledgeForm(form_id = row[0], form_name = row[5], form_url = row[6], 
-				parent_menu = parent_menu, form_category_id = row[1], form_type_id = row[3])
+			form = core.Form(form_id = row[0], form_name = row[5], form_url = row[6], 
+				parent_menu = parent_menu, form_type = row[4])
 			techno_forms.append(form)
 	result = {}
 	result[2] = process_user_menus(knowledge_forms)
@@ -117,24 +116,10 @@ def change_user_group_status(db, request, session_user):
 		return admin.ChangeUserGroupStatusSuccess()
 
 def get_users(db, request_frame, session_user):
-	domain_list = []
-	country_list = []
+	domain_list = db.get_domains_for_user(0)
+	country_list = db.get_countries_for_user(0)
 	user_group_list = []
 	user_list = []
-
-	domain_rows = db.get_domains()
-	for domain_row in domain_rows:
-		domain_id = domain_row[0]
-		domain_name = domain_row[1]
-		is_active = True if domain_row[2] == 1 else False
-		domain_list.append(core.Domain(domain_id, domain_name, is_active))
-
-	country_rows = db.get_countries()
-	for country_row in country_rows:
-		country_id = country_row[0]
-		country_name = country_row[1]
-		is_active = True if country_row[2] == 1 else False
-		country_list.append(core.Country(country_id, country_name, is_active))
 
 	user_group_rows = db.get_user_groups()
 	for user_group_row in user_group_rows:

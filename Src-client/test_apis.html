@@ -294,27 +294,28 @@
 				mirror.getClientGroups(callback)
 			}
 			function saveClient(){
-				businessGroup = mirror.getBusinessGroupDict(null,"Test Business Group 1");
+				businessGroup = mirror.getBusinessGroupDict(null,"Test Business Group 11");
 		        legalEntity = mirror.getLegalEntityDict(null,"Test Legal Entity 1");
-		        division = mirror.getDivisionDict(null, "Test Division 1");
+		        division = mirror.getDivisionDict(null, "Test Division 11");
 		        domainIds = [1]
-		        unit1 = mirror.getUnitDict(null, "Test Unit 1", "UN001", "Test Address 1", "668234", 1, "Test location 1", 1, "Test Industry 1", domainIds)
-		        unit2 = mirror.getUnitDict(null, "Test Unit 2", "UN002", "Test Address2", "668234", 1, "Test location 1", 1, "Test Industry 2", domainIds)
+		        unit1 = mirror.getUnitDict(null, "Test Unit 11", "UN001", "Test Address 1", 668234, 1, "Test location 1", 1, "Test Industry 1", domainIds)
+		        unit2 = mirror.getUnitDict(null, "Test Unit 21", "UN002", "Test Address2", 668234, 1, "Test location 1", 1, "Test Industry 2", domainIds)
 
 		        Units = [unit1, unit2]
 		        countryId = 1
-		        countryWiseUnits = mirror.mapUnitsToCountry(countryId, Units)
+		        countryWiseUnits = []
+		        countryWiseUnits.push(mirror.mapUnitsToCountry(countryId, Units))
 
 		        mirror.saveClient(1, businessGroup, legalEntity, 
 		        division, countryWiseUnits, callback) 
 			}
 			function updateClient(){
 				businessGroup = mirror.getBusinessGroupDict(4,"Test Business Group 3");
-		        legalEntity = mirror.getLegalEntityDict(2,"Test Legal Entity 1");
+		        legalEntity = mirror.getLegalEntityDict(120,"Test Legal Entity 1");
 		        division = mirror.getDivisionDict(11, "Test Division 11");
 		        domainIds = [1]
-		        unit1 = mirror.getUnitDict(18, "Test Unit 17 update", "UNUP017", "Test Address 17 update", "668234", 1, "Test location 17 update", 1, "Test Industry 17 update", domainIds)
-		        unit2 = mirror.getUnitDict(19, "Test Unit 18 update", "UNUP018", "Test Address 18 update", "668234", 1, "Test location 18 update", 1, "Test Industry 18 update", domainIds)
+		        unit1 = mirror.getUnitDict(18, "Test Unit 17 update", "UNUP017", "Test Address 17 update", 668234, 1, "Test location 17 update", 1, "Test Industry 17 update", domainIds)
+		        unit2 = mirror.getUnitDict(19, "Test Unit 18 update", "UNUP018", "Test Address 18 update", 668234, 1, "Test location 18 update", 1, "Test Industry 18 update", domainIds)
 
 		        Units = [unit1, unit2]
 		        countryId = 1
@@ -329,8 +330,8 @@
 			}
 			function changeClientStatus(){
 				clientId = 2
-		        legalEntityId = 2
-		        divisionId = 2
+		        legalEntityId = 101
+		        divisionId = 9
 		        isActive = false
 		        mirror.changeClientStatus(clientId, legalEntityId, divisionId, isActive, callback)
 			}

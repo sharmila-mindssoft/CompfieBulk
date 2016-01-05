@@ -6,7 +6,7 @@ parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_VectorType_RecordType_clientreport_LoginTrace,
     parse_structure_VectorType_RecordType_clientreport_ReassignHistory,
     parse_structure_VectorType_RecordType_clientreport_ReassignCompliance,
-    parse_structure_SignedIntegerType_8,
+    parse_structure_UnsignedIntegerType_32,
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_clientreport_DomainWiseCompliance,
     parse_structure_VectorType_RecordType_core_BusinessGroup,
@@ -163,9 +163,9 @@ class GetComplianceDetailsReport(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "statutory_id", "unit_id", "compliance_id", "assignee_id", "from_date", "to_date", "compliance_status"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         statutory_id = data.get("statutory_id")
         statutory_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_id)
         unit_id = data.get("unit_id")
@@ -223,9 +223,9 @@ class GetRiskReport(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "statutory_id", "statutory_status"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
@@ -237,7 +237,7 @@ class GetRiskReport(Request):
         statutory_id = data.get("statutory_id")
         statutory_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_id)
         statutory_status = data.get("statutory_status")
-        statutory_status = parse_structure_SignedIntegerType_8(statutory_status)
+        statutory_status = parse_structure_UnsignedIntegerType_32(statutory_status)
         return GetRiskReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_id, statutory_status)
 
     def to_inner_structure(self):
@@ -277,11 +277,11 @@ class GetServiceProviderWiseCompliance(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "statutory_id", "unit_id", "service_provider_id"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_SignedIntegerType_8(statutory_id)
+        statutory_id = parse_structure_UnsignedIntegerType_32(statutory_id)
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         service_provider_id = data.get("service_provider_id")
@@ -324,9 +324,9 @@ class GetAssigneewisecomplianceReport(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "user_id"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
@@ -364,9 +364,9 @@ class GetUnitwisecomplianceReport(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "user_id"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
@@ -418,9 +418,9 @@ class GetReassignComplianceTaskDetails(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "unit_id", "statutory_id", "compliance_id", "user_id", "from_date", "to_date"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         statutory_id = data.get("statutory_id")
@@ -475,9 +475,9 @@ class GetComplianceTaskApplicabilityStatusReport(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "statutory_id", "applicable_status"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
@@ -587,9 +587,9 @@ class GetReassignedHistoryReport(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "unit_id", "level_1_statutory_id", "compliance_id", "user_id"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         level_1_statutory_id = data.get("level_1_statutory_id")
@@ -747,7 +747,7 @@ class GetComplianceDetailsReportSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["unit_id", "unit_name", "address", "Compliances"])
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_100(unit_name)
         address = data.get("address")
@@ -1267,7 +1267,7 @@ class ComplianceName(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_id", "compliance_name"])
         compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_SignedIntegerType_8(compliance_id)
+        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_100(compliance_name)
         return ComplianceName(compliance_id, compliance_name)
@@ -1292,7 +1292,7 @@ class User(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["employee_id", "employee_code", "employee_name"])
         employee_id = data.get("employee_id")
-        employee_id = parse_structure_SignedIntegerType_8(employee_id)
+        employee_id = parse_structure_UnsignedIntegerType_32(employee_id)
         employee_code = data.get("employee_code")
         employee_code = parse_structure_CustomTextType_50(employee_code)
         employee_name = data.get("employee_name")
@@ -1687,7 +1687,7 @@ class ComplianceUnit(object):
         statutory_dates = data.get("statutory_dates")
         statutory_dates = parse_structure_VectorType_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         trigger_before = data.get("trigger_before")
-        trigger_before = parse_structure_SignedIntegerType_8(trigger_before)
+        trigger_before = parse_structure_UnsignedIntegerType_32(trigger_before)
         due_date = data.get("due_date")
         due_date = parse_structure_CustomTextType_20(due_date)
         validity_date = data.get("validity_date")
@@ -1743,7 +1743,7 @@ class FormName(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["form_id", "form_name"])
         form_id = data.get("form_id")
-        form_id = parse_structure_SignedIntegerType_8(form_id)
+        form_id = parse_structure_UnsignedIntegerType_32(form_id)
         form_name = data.get("form_name")
         form_name = parse_structure_CustomTextType_50(form_name)
         return FormName(form_id, form_name)
@@ -1860,7 +1860,7 @@ class StatutoryReassignCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["level_1_statutory_id", "level_1_statutory_name", "compliance"])
         level_1_statutory_id = data.get("level_1_statutory_id")
-        level_1_statutory_id = parse_structure_SignedIntegerType_8(level_1_statutory_id)
+        level_1_statutory_id = parse_structure_UnsignedIntegerType_32(level_1_statutory_id)
         level_1_statutory_name = data.get("level_1_statutory_name")
         level_1_statutory_name = parse_structure_CustomTextType_50(level_1_statutory_name)
         compliance = data.get("compliance")
@@ -1975,7 +1975,7 @@ class UserName(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["user_id", "user_name"])
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         user_name = data.get("user_name")
         user_name = parse_structure_CustomTextType_100(user_name)
         return UserName(user_id, user_name)

@@ -197,6 +197,7 @@ class Database(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
+        print query
         return self.execute(query)
 
     def on_duplicate_key_update(self, table, columns, valueList, updateColumnsList):
@@ -326,16 +327,15 @@ class KnowledgeDatabase(Database):
             if len(data_list[0]) == len(columns) :
                 for data in data_list:
                     result = {}
-                    for d, i in enumerate(data):
+                    for i, d in enumerate(data):
                         result[columns[i]] = d
                     result_list.append(result)
         else :
             if len(data_list) == len(columns) :
                 result = {}
-                for d, i in enumerate(data_list):
+                for i, d in enumerate(data_list):
                     result[columns[i]] = d
                 result_list.append(result)
-
         return result_list
 
 
@@ -423,11 +423,6 @@ class KnowledgeDatabase(Database):
   #
   # Domain
   #
-
-    def get_domains(self):
-        columns = "domain_id, domain_name, is_active"
-        condition = "1"
-        return self.get_data(self.tblDomains, columns, condition)
 
     def get_domains_for_user(self, user_id) :
         # query = "CALL sp_get_domains_for_user (%s)" % (user_id)
@@ -518,12 +513,8 @@ class KnowledgeDatabase(Database):
     # Country
     #
 
-    def get_countries(self):
-        columns = "country_id, country_name, is_active"
-        condition = "1"
-        return self.get_data(self.tblCountries, columns, condition)
-
     def get_countries_for_user(self, user_id) :
+        print "inside get_countries for users"
         query = "SELECT distinct t1.country_id, t1.country_name, \
             t1.is_active FROM tbl_countries t1 "
         if user_id > 0 :
@@ -967,6 +958,15 @@ class KnowledgeDatabase(Database):
             geography_levels[country_id] = _list
         return geography_levels
 
+    def get_geograhpy_levels_for_user(self, user_id):
+        country_ids = self.get_user_countries(user_id)
+        columns = "level_id, level_position, level_name, country_id"
+        condition = "country_id in (%s)"% country_ids
+        rows = self.get_data(self.tblGeographyLevels, columns, condition)
+        columns = ["level_id", "level_position", "level_name", "country_id"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_geography_levels(result)
+
     def get_geography_levels_for_country(self, country_id) :
         query = "SELECT level_id, level_position, level_name \
             FROM tbl_geography_levels WHERE country_id = %s ORDER BY level_position" % country_id
@@ -1039,6 +1039,7 @@ class KnowledgeDatabase(Database):
         return self.return_geographies(result)
 
     def return_geographies(self, data):
+        print "inside return_geographies"
         geographies = {}
         for d in data :
             parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
@@ -1050,6 +1051,22 @@ class KnowledgeDatabase(Database):
             _list.append(geography)
             geographies[country_id] = _list
         return geographies
+
+    def get_geographies_for_user(self, user_id):
+        coutry_ids = self.get_user_countries(user_id)
+        columns = "t1.geography_id, t1.geography_name, "+\
+        "t1.level_id,t1.parent_ids, t1.is_active, t2.country_id, t3.country_name"
+        tables = [self.tblGeographies, self.tblGeographyLevels, self.tblCountries]
+        aliases = ["t1", "t2", "t3"]
+        joinType = " INNER JOIN"
+        joinConditions = ["t1.level_id = t2.level_id", "t2.country_id = t3.country_id"]
+        whereCondition = "1"
+        rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, 
+            joinConditions, whereCondition)
+        columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
+        result = self.convert_to_dict(rows, columns)
+        # self.geography_parent_mapping(result)
+        return self.return_geographies(result)
 
     def get_geography_by_id(self, geography_id):
         query = "SELECT geography_id, geography_name, level_id, parent_ids, is_active \
@@ -1443,7 +1460,7 @@ class KnowledgeDatabase(Database):
         statutory_ids = ','.join(str(x) for x in data.get("statutory_ids")) + ","
         compliances = data.get("compliances")
         geography_ids = ','.join(str(x) for x in data.get("geography_ids")) + ","
-                statutory_mapping_id = self.get_new_id("statutory_mapping_id", "tbl_statutory_mappings")
+        statutory_mapping_id = self.get_new_id("statutory_mapping_id", "tbl_statutory_mappings")
         created_on = self.get_date_time()
         is_active = 1
 
@@ -1712,6 +1729,12 @@ class KnowledgeDatabase(Database):
         rows = self.get_data(self.tblUserDomains, columns, condition)
         return rows[0][0]
 
+    def get_user_clients(self, user_id):
+        columns = "group_concat(client_id)"
+        condition = " user_id = '%d'"% user_id
+        rows = self.get_data(self.tblUserClients, columns, condition)
+        return rows[0][0]
+
     def save_user(self, user_id, email_id, user_group_id, employee_name,
      employee_code, contact_no, address, designation, country_ids, domain_ids):
         result1 = False
@@ -1803,6 +1826,26 @@ class KnowledgeDatabase(Database):
         " is_active"
         condition = "1"
         return self.get_data(self.tblClientGroups, columns, condition)
+
+    def get_group_companies_for_user(self, user_id):
+        client_ids = self.get_user_clients(user_id)
+        columns = "client_id, group_name,  is_active"
+        condition = "client_id in (%s)" % client_ids
+        rows = self.get_data(self.tblClientGroups, columns, condition) 
+        columns = ["client_id", "group_name", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_group_companies(result)
+
+    def return_group_companies(self, group_companies):
+        results = []
+        for group_company in group_companies :
+            results.append(core.GroupCompany(
+                group_company["client_id"], group_company["group_name"], 
+                bool(group_company["is_active"]), self.get_client_countries(
+                group_company["client_id"]),self.get_client_domains(
+                group_company["client_id"])
+            ))
+        return results       
 
     def get_client_countries(self, client_id):
         columns = "group_concat(country_id)"
@@ -2004,6 +2047,43 @@ class KnowledgeDatabase(Database):
 #   Client Unit
 #
     
+    def generate_new_business_group_id(self) :
+        return self.get_new_id("business_group_id", self.tblBusinessGroups)
+
+    def generate_new_legal_entity_id(self) :
+        return self.get_new_id("legal_entity_id", self.tblLegalEntities)
+
+    def generate_new_division_id(self) :
+        return self.get_new_id("division_id", self.tblDivisions)
+
+    def generate_new_unit_id(self) :
+        return self.get_new_id("unit_id", self.tblUnits)
+
+    def is_duplicate_business_group(self, business_group_id, business_group_name, client_id):
+        condition = "business_group_name ='%s' AND business_group_id != '%d' and client_id = '%d'" % (
+            business_group_name, business_group_id, client_id)
+        return self.is_already_exists(self.tblBusinessGroups, condition)
+
+    def is_duplicate_legal_entity(self, legal_entity_id, legal_entity_name, client_id):
+        condition = "legal_entity_name ='%s' AND legal_entity_id != '%d' and client_id = '%d'" % (
+            legal_entity_name, legal_entity_id, client_id)
+        return self.is_already_exists(self.tblLegalEntities, condition)
+
+    def is_duplicate_division(self, division_id, division_name, client_id):
+        condition = "division_name ='%s' AND division_id != '%d' and client_id = '%d'" % (
+            division_name, division_id, client_id)
+        return self.is_already_exists(self.tblDivisions, condition)        
+
+    def is_duplicate_unit_name(self, unit_id, unit_name, client_id):
+        condition = "unit_name ='%s' AND unit_id != '%d' and client_id = '%d'" % (
+            unit_name, unit_id, client_id)
+        return self.is_already_exists(self.tblUnits, condition)
+
+    def is_duplicate_unit_code(self, unit_id, unit_code, client_id):
+        condition = "unit_code ='%s' AND unit_id != '%d' and client_id = '%d'" % (
+            unit_code, unit_id, client_id)
+        return self.is_already_exists(self.tblUnits, condition)
+
     def save_business_group(self, client_id, business_group_id, business_group_name, 
         session_user):
         current_time_stamp = self.get_date_time()
@@ -2033,7 +2113,7 @@ class KnowledgeDatabase(Database):
     def update_legal_entity(self, client_id, legal_entity_id, legal_entity_name, business_group_id, session_user):
         current_time_stamp = self.get_date_time()
         columns = ["legal_entity_name", "updated_by", "updated_on"]
-        values = [legal_entity_name, business_group_id, session_user, current_time_stamp]
+        values = [legal_entity_name, session_user, self.get_date_time()]
         condition = "legal_entity_id = '%d' and client_id = '%d'"%(legal_entity_id, client_id)
         return self.update(self.tblLegalEntities, columns, values, condition)
 
@@ -2053,7 +2133,7 @@ class KnowledgeDatabase(Database):
         return self.update(self.tblDivisions, columns, values, condition)
 
     def save_unit(self, client_id,  units, business_group_id, legal_entity_id, division_id, session_user):
-        current_time_stamp = self.get_date_time()
+        current_time_stamp = str(self.get_date_time())
         columns = ["unit_id", "client_id", "legal_entity_id", "country_id", "geography_id", "industry_id", 
         "domain_ids", "unit_code", "unit_name", "address", "postal_code", "is_active", "created_by", 
         "created_on", "updated_by", "updated_on"]
@@ -2063,26 +2143,26 @@ class KnowledgeDatabase(Database):
             columns.append("division_id")
         values_list = []
         for unit in units:
-            domain_ids = ",".join(str(x) for x in unit["domain_ids"])
+            domain_ids = ",".join(str(x) for x in unit.domain_ids)
             if business_group_id != None and division_id != None:
-                values_tuple = (str(unit["unit_id"]), client_id, legal_entity_id, str(unit["country_id"]), str(unit["geography_id"]),
-                    str(unit["industry_id"]), domain_ids, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
-                    str(unit["postal_code"]), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
+                values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
+                    str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                    str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
                     business_group_id, division_id)
             elif business_group_id != None:
-                values_tuple = (str(unit["unit_id"]), client_id, legal_entity_id, str(unit["country_id"]), str(unit["geography_id"]),
-                    str(unit["industry_id"]), domain_ids, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
-                    str(unit["postal_code"]), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
+                values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
+                    str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                    str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
                     business_group_id)    
             elif division_id != None :
-                values_tuple = (str(unit["unit_id"]), client_id, legal_entity_id, str(unit["country_id"]), str(unit["geography_id"]),
-                    str(unit["industry_id"]), domain_ids, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
-                    str(unit["postal_code"]), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
+                values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
+                    str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                    str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
                     division_id)   
             else: 
-                values_tuple = (str(unit["unit_id"]), client_id, legal_entity_id, str(unit["country_id"]), str(unit["geography_id"]),
-                        str(unit["industry_id"]), domain_ids, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
-                        str(unit["postal_code"]), 1, session_user, current_time_stamp, session_user, current_time_stamp)
+                values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
+                        str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                        str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp)
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblUnits, columns, values_list)
 
@@ -2093,11 +2173,11 @@ class KnowledgeDatabase(Database):
         "address", "postal_code", "updated_by", "updated_on"]
         values_list = []
         for unit in units:
-            domain_ids = ",".join(str(x) for x in unit["domain_ids"])
-            values= [unit["country_id"], unit["geography_id"],unit["industry_id"], domain_ids, 
-                        str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
-                        str(unit["postal_code"]), session_user, current_time_stamp]
-            condition = "client_id='%d' and unit_id = '%d'" % (client_id, unit["unit_id"])
+            domain_ids = ",".join(str(x) for x in unit.domain_ids)
+            values= [unit.country_id, unit.geography_id,unit.industry_id, domain_ids, 
+                        str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                        str(unit.postal_code), session_user, current_time_stamp]
+            condition = "client_id='%d' and unit_id = '%d'" % (client_id, unit.unit_id)
             self.update(self.tblUnits, columns, values, condition)
         return True
 
@@ -2110,14 +2190,106 @@ class KnowledgeDatabase(Database):
             condition += " and division_id='%d' "% division_id
         return self.update(self.tblUnits, columns, values, condition)
 
-    def reactivateUnit(self, client_id, unit_id, session_user):
+    def reactivate_unit(self, client_id, unit_id, session_user):
         current_time_stamp = str(self.get_date_time())
         columns = ["is_active", "updated_on" , "updated_by"]
         values = [1, current_time_stamp, session_user]
         condition = "unit_id = '%d' and client_id = '%d' "% (unit_id, client_id)
         return self.update(self.tblUnits, columns, values, condition)
 
+    def verify_password(self, password, userId):
+        columns = "count(*)"
+        encrypted_password = encrypt(password)
+        condition = "password='%s' and user_id='%d'" % (encrypted_password, userId)
+        rows = self.get_data(self.tblUsers, columns, condition)
+        if(int(rows[0][0]) <= 0):
+            return False
+        else:
+            return True
 
+    def get_business_groups_for_user(self, user_id):
+        client_ids = self.get_user_clients(user_id)
+        columns = "business_group_id, business_group_name, client_id"
+        condition = "client_id in (%s)" % client_ids
+        rows = self.get_data(self.tblBusinessGroups, columns, condition) 
+        columns = ["business_group_id", "business_group_name", "client_id"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_business_groups(result)
+
+    def return_business_groups(self, business_groups):
+        results = []
+        for business_group in business_groups :
+            results.append(core.BusinessGroup(
+                business_group["business_group_id"], business_group["business_group_name"],
+                business_group["client_id"]
+            ))
+        return results 
+
+    def get_legal_entities_for_user(self, user_id):
+        client_ids = self.get_user_clients(user_id)
+        columns = "legal_entity_id, legal_entity_name, business_group_id, client_id"
+        condition = "client_id in (%s)" % client_ids
+        rows = self.get_data(self.tblLegalEntities, columns, condition) 
+        columns = ["legal_entity_id", "legal_entity_name", "business_group_id", 
+        "client_id"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_legal_entities(result)
+
+    def return_legal_entities(self, legal_entities):
+        results = []
+        for legal_entity in legal_entities :
+            results.append(core.LegalEntity(
+                legal_entity["legal_entity_id"], legal_entity["legal_entity_name"],
+                legal_entity["business_group_id"], legal_entity["client_id"]
+            ))
+        return results
+
+    def get_divisions_for_user(self, user_id):
+        client_ids = self.get_user_clients(user_id)
+        columns = "division_id, division_name, legal_entity_id, business_group_id,"+\
+        "client_id"
+        condition = "client_id in (%s)" % client_ids
+        rows = self.get_data(self.tblDivisions, columns, condition) 
+        columns = ["division_id", "division_name", "legal_entity_id", 
+        "business_group_id", "client_id"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_divisions(result)
+
+    def return_divisions(self, divisions):
+        results = []
+        for division in divisions :
+            print "division:{}".format(division)
+            print "division[division_id]:{}".format(division["division_id"])
+            division_obj = core.Division(
+                division["division_id"], division["division_name"], 
+                divisions["legal_entity_id"], division["business_group_id"],
+                divisions["client_id"]
+            )
+            print "division_obj:{}".format(division_obj)
+            results.append(division_obj)
+            print results
+        return results
+
+    def get_units_for_user(self, user_id):
+        client_ids = self.get_user_clients(user_id)
+        columns = "unit_id, unit_code, unit_name, unit_address, division_id,"+\
+        " legal_entity_id, business_group_id, client_id, is_active"
+        condition = "client_id in (%s)" % client_ids
+        rows = self.get_data(self.tblUnits, columns, condition) 
+        columns = ["unit_id", "unit_code", "unit_name", "unit_address", "division_id", 
+        "legal_entity_id", "business_group_id", "client_id", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_units(result)
+
+    def return_units(self, units):
+        results = []
+        for unit in units :
+            results.append(core.Unit(
+                unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
+                unit["business_group_id"], unit["client_id"], unit["unit_code"],
+                unit["unit_name"], unit["unit_address"], bool(unit["is_active"])
+            ))
+        return results
 
 class ClientDatabase(Database):
 

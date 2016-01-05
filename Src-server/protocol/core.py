@@ -4,7 +4,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_Compliance,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Form,
     parse_structure_EnumType_core_DURATION_TYPE,
-    parse_structure_SignedIntegerType_8, parse_structure_Bool,
+    parse_structure_UnsignedIntegerType_32, parse_structure_Bool,
     parse_structure_VectorType_RecordType_core_ComplianceShortDescription,
     parse_structure_EnumType_core_FILTER_TYPE,
     parse_structure_EnumType_core_REPEATS_TYPE,
@@ -456,7 +456,7 @@ class COMPLIANCE_ACTIVITY_STATUS(object):
         return parse_enum(self._value, COMPLIANCE_ACTIVITY_STATUS.values())
 
 #
-#  Knowledge Form
+#  Form
 #
 
 class Form(object):
@@ -465,8 +465,6 @@ class Form(object):
         self.form_id = form_id
         self.form_name = form_name
         self.form_url = form_url
-        self.form_category_id = form_category_id
-        self.form_type_id = form_type_id
         self.parent_menu = parent_menu
         self.form_type = form_type
 
@@ -474,7 +472,7 @@ class Form(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["form_id", "form_name", "form_url", "parent_menu", "form_type"])
         form_id = data.get("form_id")
-        form_id = parse_structure_SignedIntegerType_8(form_id)
+        form_id = parse_structure_UnsignedIntegerType_32(form_id)
         form_name = data.get("form_name")
         form_name = parse_structure_CustomTextType_50(form_name)
         form_url = data.get("form_url")
@@ -528,7 +526,7 @@ class UserGroup(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["user_group_id", "user_group_name", "is_active"])
         user_group_id = data.get("user_group_id")
-        user_group_id = parse_structure_SignedIntegerType_8(user_group_id)
+        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
         user_group_name = data.get("user_group_name")
         user_group_name = parse_structure_CustomTextType_50(user_group_name)
         is_active = data.get("is_active")
@@ -556,7 +554,7 @@ class Country(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["country_id", "country_name", "is_active"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         country_name = data.get("country_name")
         country_name = parse_structure_CustomTextType_50(country_name)
         is_active = data.get("is_active")
@@ -584,7 +582,7 @@ class Domain(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["domain_id", "domain_name", "is_active"])
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         domain_name = data.get("domain_name")
         domain_name = parse_structure_CustomTextType_50(domain_name)
         is_active = data.get("is_active")
@@ -640,7 +638,7 @@ class GeographyLevel(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["level_id", "level_position", "level_name"])
         level_id = data.get("level_id")
-        level_id = parse_structure_SignedIntegerType_8(level_id)
+        level_id = parse_structure_UnsignedIntegerType_32(level_id)
         level_position = data.get("level_position")
         level_position = parse_structure_CustomIntegerType_1_10(level_position)
         level_name = data.get("level_name")
@@ -671,15 +669,15 @@ class Geography(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["geography_id", "geography_name", "level_id", "parent_ids", "parent_id", "is_active"])
         geography_id = data.get("geography_id")
-        geography_id = parse_structure_SignedIntegerType_8(geography_id)
+        geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
         geography_name = data.get("geography_name")
         geography_name = parse_structure_CustomTextType_50(geography_name)
         level_id = data.get("level_id")
-        level_id = parse_structure_SignedIntegerType_8(level_id)
+        level_id = parse_structure_UnsignedIntegerType_32(level_id)
         parent_ids = data.get("parent_ids")
         parent_ids = parse_structure_VectorType_SignedIntegerType_8(parent_ids)
         parent_id = data.get("parent_id")
-        parent_id = parse_structure_SignedIntegerType_8(parent_id)
+        parent_id = parse_structure_UnsignedIntegerType_32(parent_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return Geography(geography_id, geography_name, level_id, parent_ids, parent_id, is_active)
@@ -708,7 +706,7 @@ class Industry(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["industry_id", "industry_name", "is_active"])
         industry_id = data.get("industry_id")
-        industry_id = parse_structure_SignedIntegerType_8(industry_id)
+        industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         industry_name = data.get("industry_name")
         industry_name = parse_structure_CustomTextType_50(industry_name)
         is_active = data.get("is_active")
@@ -736,7 +734,7 @@ class StatutoryNature(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["statutory_nature_id", "statutory_nature_name", "is_active"])
         statutory_nature_id = data.get("statutory_nature_id")
-        statutory_nature_id = parse_structure_SignedIntegerType_8(statutory_nature_id)
+        statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_nature_name = data.get("statutory_nature_name")
         statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
         is_active = data.get("is_active")
@@ -764,7 +762,7 @@ class StatutoryLevel(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["level_id", "level_position", "level_name"])
         level_id = data.get("level_id")
-        level_id = parse_structure_SignedIntegerType_8(level_id)
+        level_id = parse_structure_UnsignedIntegerType_32(level_id)
         level_position = data.get("level_position")
         level_position = parse_structure_CustomIntegerType_1_10(level_position)
         level_name = data.get("level_name")
@@ -795,15 +793,15 @@ class Statutory(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["statutory_id", "statutory_name", "level_id", "parent_ids", "parent_id", "parent_mappings"])
         statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_SignedIntegerType_8(statutory_id)
+        statutory_id = parse_structure_UnsignedIntegerType_32(statutory_id)
         statutory_name = data.get("statutory_name")
         statutory_name = parse_structure_CustomTextType_50(statutory_name)
         level_id = data.get("level_id")
-        level_id = parse_structure_SignedIntegerType_8(level_id)
+        level_id = parse_structure_UnsignedIntegerType_32(level_id)
         parent_ids = data.get("parent_ids")
         parent_ids = parse_structure_VectorType_SignedIntegerType_8(parent_ids)
         parent_id = data.get("parent_id")
-        parent_id = parse_structure_SignedIntegerType_8(parent_id)
+        parent_id = parse_structure_UnsignedIntegerType_32(parent_id)
         parent_mappings = data.get("parent_mappings")
         parent_mappings = parse_structure_Text(parent_mappings)
         return Statutory(statutory_id, statutory_name, level_id, parent_ids, parent_id, parent_mappings)
@@ -861,13 +859,13 @@ class Compliance(object):
         statutory_dates = data.get("statutory_dates")
         statutory_dates = parse_structure_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         repeats_type_id = data.get("repeats_type_id")
-        repeats_type_id = parse_structure_SignedIntegerType_8(repeats_type_id)
+        repeats_type_id = parse_structure_UnsignedIntegerType_32(repeats_type_id)
         repeats_every = data.get("repeats_every")
-        repeats_every = parse_structure_SignedIntegerType_8(repeats_every)
+        repeats_every = parse_structure_UnsignedIntegerType_32(repeats_every)
         duration_type_id = data.get("duration_type_id")
-        duration_type_id = parse_structure_SignedIntegerType_8(duration_type_id)
+        duration_type_id = parse_structure_UnsignedIntegerType_32(duration_type_id)
         duration = data.get("duration")
-        duration = parse_structure_SignedIntegerType_8(duration)
+        duration = parse_structure_UnsignedIntegerType_32(duration)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return Compliance(compliance_id, statutory_provision, compliance_task, description, document_name, format_file_name, penal_description, frequency_id, statutory_dates, repeats_type_id, repeats_every, duration_type_id, duration, is_active)
@@ -917,11 +915,11 @@ class StatutoryMapping(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["country_id", "country_name", "domain_id", "domain_name", "industry_ids", "industry_names", "statutory_nature_id", "statutory_nature_name", "statutory_ids", "statutory_mappings", "compliances", "compliance_names", "geography_ids", "geography_mappings", "approval_status", "is_active"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         country_name = data.get("country_name")
         country_name = parse_structure_CustomTextType_50(country_name)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         domain_name = data.get("domain_name")
         domain_name = parse_structure_CustomTextType_50(domain_name)
         industry_ids = data.get("industry_ids")
@@ -929,7 +927,7 @@ class StatutoryMapping(object):
         industry_names = data.get("industry_names")
         industry_names = parse_structure_Text(industry_names)
         statutory_nature_id = data.get("statutory_nature_id")
-        statutory_nature_id = parse_structure_SignedIntegerType_8(statutory_nature_id)
+        statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_nature_name = data.get("statutory_nature_name")
         statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
         statutory_ids = data.get("statutory_ids")
@@ -975,23 +973,37 @@ class StatutoryMapping(object):
 #
 
 class GroupCompany(object):
-    def __init__(self, client_id, group_name):
+    def __init__(self, client_id, group_name, is_active, country_ids, domain_ids):
         self.client_id = client_id
         self.group_name = group_name
+        self.is_active = is_active
+        self.country_ids = country_ids
+        self.domain_ids = domain_ids
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "group_name"])
+        data = parse_dictionary(data, ["client_id", "group_name", "is_active", 
+            "country_ids", "domain_ids"])
         client_id = data.get("client_id")
-        client_id = parse_structure_SignedIntegerType_8(client_id)
+        client_id = parse_structure_UnsignedIntegerType_32(client_id)
         group_name = data.get("group_name")
         group_name = parse_structure_CustomTextType_50(group_name)
-        return GroupCompany(client_id, group_name)
+        is_active = data.get("is_active")
+        is_active = parse_structure_SignedIntegerType_8(is_active)
+        domain_ids = data.get("domain_ids")
+        domain_ids = parse_structure_VectorType_UnsignedIntegerType_32(domain_ids)
+        country_ids = data.get("country_ids")
+        country_ids = parse_structure_VectorType_UnsignedIntegerType_32(country_ids)
+
+        return GroupCompany(client_id, group_name, is_active, country_ids, domain_ids)
 
     def to_structure(self):
         return {
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
             "group_name": to_structure_CustomTextType_50(self.group_name),
+            "is_active": to_structure_CustomTextType_50(self.is_active),
+            "country_ids": to_structure_CustomTextType_50(self.country_ids),
+            "domain_ids": to_structure_CustomTextType_50(self.domain_ids),
         }
 
 #
@@ -1018,7 +1030,7 @@ class GroupCompanyDetail(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["client_id", "client_name", "domain_ids", "country_ids", "incharge_persons", "logo", "contract_from", "contract_to", "no_of_user_licence", "total_disk_space", "is_sms_subscribed", "username", "is_active"])
         client_id = data.get("client_id")
-        client_id = parse_structure_SignedIntegerType_8(client_id)
+        client_id = parse_structure_UnsignedIntegerType_32(client_id)
         client_name = data.get("client_name")
         client_name = parse_structure_CustomTextType_50(client_name)
         domain_ids = data.get("domain_ids")
@@ -1034,7 +1046,7 @@ class GroupCompanyDetail(object):
         contract_to = data.get("contract_to")
         contract_to = parse_structure_CustomTextType_20(contract_to)
         no_of_user_licence = data.get("no_of_user_licence")
-        no_of_user_licence = parse_structure_SignedIntegerType_8(no_of_user_licence)
+        no_of_user_licence = parse_structure_UnsignedIntegerType_32(no_of_user_licence)
         total_disk_space = data.get("total_disk_space")
         total_disk_space = parse_structure_UnsignedIntegerType_32(total_disk_space)
         is_sms_subscribed = data.get("is_sms_subscribed")
@@ -1077,13 +1089,13 @@ class ClientConfiguration(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "period_from", "period_to"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         period_from = data.get("period_from")
-        period_from = parse_structure_SignedIntegerType_8(period_from)
+        period_from = parse_structure_UnsignedIntegerType_32(period_from)
         period_to = data.get("period_to")
-        period_to = parse_structure_SignedIntegerType_8(period_to)
+        period_to = parse_structure_UnsignedIntegerType_32(period_to)
         return ClientConfiguration(country_id, domain_id, period_from, period_to)
 
     def to_structure(self):
@@ -1112,7 +1124,7 @@ class BusinessGroup(object):
         business_group_name = data.get("business_group_name")
         business_group_name = parse_structure_CustomTextType_50(business_group_name)
         client_id = data.get("client_id")
-        client_id = parse_structure_SignedIntegerType_8(client_id)
+        client_id = parse_structure_UnsignedIntegerType_32(client_id)
         return BusinessGroup(business_group_id, business_group_name, client_id)
 
     def to_structure(self):
@@ -1143,7 +1155,7 @@ class LegalEntity(object):
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         client_id = data.get("client_id")
-        client_id = parse_structure_SignedIntegerType_8(client_id)
+        client_id = parse_structure_UnsignedIntegerType_32(client_id)
         return LegalEntity(legal_entity_id, legal_entity_name, business_group_id, client_id)
 
     def to_structure(self):
@@ -1174,11 +1186,11 @@ class Division(object):
         division_name = data.get("division_name")
         division_name = parse_structure_CustomTextType_50(division_name)
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_SignedIntegerType_8(legal_entity_id)
+        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_SignedIntegerType_8(business_group_id)
+        business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
         client_id = data.get("client_id")
-        client_id = parse_structure_SignedIntegerType_8(client_id)
+        client_id = parse_structure_UnsignedIntegerType_32(client_id)
         return Division(division_id, division_name, legal_entity_id, business_group_id, client_id)
 
     def to_structure(self):
@@ -1214,11 +1226,11 @@ class Unit(object):
         division_id = data.get("division_id")
         division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_SignedIntegerType_8(legal_entity_id)
+        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         client_id = data.get("client_id")
-        client_id = parse_structure_SignedIntegerType_8(client_id)
+        client_id = parse_structure_UnsignedIntegerType_32(client_id)
         unit_code = data.get("unit_code")
         unit_code = parse_structure_CustomTextType_20(unit_code)
         unit_name = data.get("unit_name")
@@ -1271,25 +1283,25 @@ class UnitDetails(object):
         division_id = data.get("division_id")
         division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_SignedIntegerType_8(legal_entity_id)
+        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         client_id = data.get("client_id")
-        client_id = parse_structure_SignedIntegerType_8(client_id)
+        client_id = parse_structure_UnsignedIntegerType_32(client_id)
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         geography_id = data.get("geography_id")
-        geography_id = parse_structure_SignedIntegerType_8(geography_id)
+        geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
         unit_code = data.get("unit_code")
         unit_code = parse_structure_CustomTextType_20(unit_code)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_50(unit_name)
         industry_id = data.get("industry_id")
-        industry_id = parse_structure_SignedIntegerType_8(industry_id)
+        industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         unit_address = data.get("unit_address")
         unit_address = parse_structure_CustomTextType_250(unit_address)
         postal_code = data.get("postal_code")
-        postal_code = parse_structure_SignedIntegerType_8(postal_code)
+        postal_code = parse_structure_UnsignedIntegerType_32(postal_code)
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         is_active = data.get("is_active")
@@ -1389,11 +1401,11 @@ class ClientUser(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["user_id", "email_id", "user_group_id", "employee_name", "employee_code", "contact_no", "seating_unit_id", "seating_unit_name", "user_level", "country_ids", "domain_ids", "unit_ids", "is_admin", "is_service_provider", "service_provider_id", "is_active"])
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         email_id = data.get("email_id")
         email_id = parse_structure_CustomTextType_100(email_id)
         user_group_id = data.get("user_group_id")
-        user_group_id = parse_structure_SignedIntegerType_8(user_group_id)
+        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
         employee_name = data.get("employee_name")
         employee_name = parse_structure_CustomTextType_50(employee_name)
         employee_code = data.get("employee_code")
@@ -1401,7 +1413,7 @@ class ClientUser(object):
         contact_no = data.get("contact_no")
         contact_no = parse_structure_CustomTextType_20(contact_no)
         seating_unit_id = data.get("seating_unit_id")
-        seating_unit_id = parse_structure_SignedIntegerType_8(seating_unit_id)
+        seating_unit_id = parse_structure_UnsignedIntegerType_32(seating_unit_id)
         seating_unit_name = data.get("seating_unit_name")
         seating_unit_name = parse_structure_CustomTextType_50(seating_unit_name)
         user_level = data.get("user_level")
@@ -1417,7 +1429,7 @@ class ClientUser(object):
         is_service_provider = data.get("is_service_provider")
         is_service_provider = parse_structure_Bool(is_service_provider)
         service_provider_id = data.get("service_provider_id")
-        service_provider_id = parse_structure_SignedIntegerType_8(service_provider_id)
+        service_provider_id = parse_structure_UnsignedIntegerType_32(service_provider_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return ClientUser(user_id, email_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, seating_unit_name, user_level, country_ids, domain_ids, unit_ids, is_admin, is_service_provider, service_provider_id, is_active)
@@ -1458,7 +1470,7 @@ class AssignedStatutory(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["level_1_statutory_id", "level_1_statutory_name", "compliances", "applicable_status", "not_applicable_remarks"])
         level_1_statutory_id = data.get("level_1_statutory_id")
-        level_1_statutory_id = parse_structure_SignedIntegerType_8(level_1_statutory_id)
+        level_1_statutory_id = parse_structure_UnsignedIntegerType_32(level_1_statutory_id)
         level_1_statutory_name = data.get("level_1_statutory_name")
         level_1_statutory_name = parse_structure_CustomTextType_50(level_1_statutory_name)
         compliances = data.get("compliances")
@@ -1500,7 +1512,7 @@ class ActiveCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_history_id", "compliance_name", "compliance_frequency", "domain_name", "start_date", "due_date", "compliance_status", "validity_date", "next_due_date", "ageing", "format_file_name"])
         compliance_history_id = data.get("compliance_history_id")
-        compliance_history_id = parse_structure_SignedIntegerType_8(compliance_history_id)
+        compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_50(compliance_name)
         compliance_frequency = data.get("compliance_frequency")
@@ -1518,7 +1530,7 @@ class ActiveCompliance(object):
         next_due_date = data.get("next_due_date")
         next_due_date = parse_structure_CustomTextType_20(next_due_date)
         ageing = data.get("ageing")
-        ageing = parse_structure_SignedIntegerType_8(ageing)
+        ageing = parse_structure_UnsignedIntegerType_32(ageing)
         format_file_name = data.get("format_file_name")
         format_file_name = parse_structure_VectorType_CustomTextType_50(format_file_name)
         return ActiveCompliance(compliance_history_id, compliance_name, compliance_frequency, domain_name, start_date, due_date, compliance_status, validity_date, next_due_date, ageing, format_file_name)
@@ -1556,7 +1568,7 @@ class UpcomingCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_history_id", "compliance_name", "compliance_frequency", "domain_name", "start_date", "due_date", "format_file_name"])
         compliance_history_id = data.get("compliance_history_id")
-        compliance_history_id = parse_structure_SignedIntegerType_8(compliance_history_id)
+        compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_50(compliance_name)
         compliance_frequency = data.get("compliance_frequency")
@@ -1597,13 +1609,13 @@ class NumberOfCompliances(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["complied_count", "delayed_compliance_count", "inprogress_compliance_count", "not_complied_count"])
         complied_count = data.get("complied_count")
-        complied_count = parse_structure_SignedIntegerType_8(complied_count)
+        complied_count = parse_structure_UnsignedIntegerType_32(complied_count)
         delayed_compliance_count = data.get("delayed_compliance_count")
-        delayed_compliance_count = parse_structure_SignedIntegerType_8(delayed_compliance_count)
+        delayed_compliance_count = parse_structure_UnsignedIntegerType_32(delayed_compliance_count)
         inprogress_compliance_count = data.get("inprogress_compliance_count")
-        inprogress_compliance_count = parse_structure_SignedIntegerType_8(inprogress_compliance_count)
+        inprogress_compliance_count = parse_structure_UnsignedIntegerType_32(inprogress_compliance_count)
         not_complied_count = data.get("not_complied_count")
-        not_complied_count = parse_structure_SignedIntegerType_8(not_complied_count)
+        not_complied_count = parse_structure_UnsignedIntegerType_32(not_complied_count)
         return NumberOfCompliances(complied_count, delayed_compliance_count, inprogress_compliance_count, not_complied_count)
 
     def to_structure(self):
@@ -1631,9 +1643,9 @@ class ChartFilters(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "from_date", "to_date", "filter_type", "filter_id"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         from_date = data.get("from_date")
         from_date = parse_structure_CustomTextType_20(from_date)
         to_date = data.get("to_date")
@@ -1641,7 +1653,7 @@ class ChartFilters(object):
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
         return ChartFilters(country_id, domain_id, from_date, to_date, filter_type, filter_id)
 
     def to_structure(self):
@@ -1668,9 +1680,9 @@ class ComplianceStatusDrillDown(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["unit_name", "address", "compliances"])
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_SignedIntegerType_8(unit_name)
+        unit_name = parse_structure_UnsignedIntegerType_32(unit_name)
         address = data.get("address")
-        address = parse_structure_SignedIntegerType_8(address)
+        address = parse_structure_UnsignedIntegerType_32(address)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_core_ComplianceShortDescription(compliances)
         return ComplianceStatusDrillDown(unit_name, address, compliances)
@@ -1696,9 +1708,9 @@ class EscalationsDrillDown(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["unit_name", "address", "compliances"])
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_SignedIntegerType_8(unit_name)
+        unit_name = parse_structure_UnsignedIntegerType_32(unit_name)
         address = data.get("address")
-        address = parse_structure_SignedIntegerType_8(address)
+        address = parse_structure_UnsignedIntegerType_32(address)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_core_ComplianceShortDescription(compliances)
         return EscalationsDrillDown(unit_name, address, compliances)
@@ -1726,11 +1738,11 @@ class UserGroupDetails(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["user_group_id", "user_group_name", "form_category_id", "form_ids", "is_active"])
         user_group_id = data.get("user_group_id")
-        user_group_id = parse_structure_SignedIntegerType_8(user_group_id)
+        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
         user_group_name = data.get("user_group_name")
         user_group_name = parse_structure_CustomTextType_50(user_group_name)
         form_category_id = data.get("form_category_id")
-        form_category_id = parse_structure_SignedIntegerType_8(form_category_id)
+        form_category_id = parse_structure_UnsignedIntegerType_32(form_category_id)
         form_ids = data.get("form_ids")
         form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
         is_active = data.get("is_active")
@@ -1760,7 +1772,7 @@ class User(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["user_id", "employee_name", "is_active"])
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         employee_name = data.get("employee_name")
         employee_name = parse_structure_CustomTextType_50(employee_name)
         is_active = data.get("is_active")
@@ -1796,11 +1808,11 @@ class UserDetails(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["user_id", "email_id", "user_group_id", "employee_name", "employee_code", "contact_no", "address", "designation", "country_ids", "domain_ids", "is_active"])
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         email_id = data.get("email_id")
         email_id = parse_structure_CustomTextType_100(email_id)
         user_group_id = data.get("user_group_id")
-        user_group_id = parse_structure_SignedIntegerType_8(user_group_id)
+        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
         employee_name = data.get("employee_name")
         employee_name = parse_structure_CustomTextType_50(employee_name)
         employee_code = data.get("employee_code")
@@ -1847,7 +1859,7 @@ class CountryWiseUnits(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["country_id", "units"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_core_UnitDetails(units)
         return CountryWiseUnits(country_id, units)
@@ -1877,7 +1889,7 @@ class ComplianceApplicability(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_id", "compliance_name", "description", "statutory_provision", "statutory_nature", "compliance_applicable_status", "compliance_opted_status", "compliance_remarks"])
         compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_SignedIntegerType_8(compliance_id)
+        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_50(compliance_name)
         description = data.get("description")
@@ -1930,7 +1942,7 @@ class ComplianceShortDescription(object):
         compliance_status = data.get("compliance_status")
         compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
         ageing = data.get("ageing")
-        ageing = parse_structure_SignedIntegerType_8(ageing)
+        ageing = parse_structure_UnsignedIntegerType_32(ageing)
         return ComplianceShortDescription(compliance_name, description, assignee_name, compliance_status, ageing)
 
     def to_structure(self):
@@ -1960,7 +1972,7 @@ class StatutoryDate(object):
         statutory_month = data.get("statutory_month")
         statutory_month = parse_structure_CustomIntegerType_1_12(statutory_month)
         trigger_before_days = data.get("trigger_before_days")
-        trigger_before_days = parse_structure_SignedIntegerType_8(trigger_before_days)
+        trigger_before_days = parse_structure_UnsignedIntegerType_32(trigger_before_days)
         return StatutoryDate(statutory_date, statutory_month, trigger_before_days)
 
     def to_structure(self):
@@ -1983,7 +1995,7 @@ class FormCategory(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["form_category_id", "form_category"])
         form_category_id = data.get("form_category_id")
-        form_category_id = parse_structure_SignedIntegerType_8(form_category_id)
+        form_category_id = parse_structure_UnsignedIntegerType_32(form_category_id)
         form_category = data.get("form_category")
         form_category = parse_structure_CustomTextType_50(form_category)
         return FormCategory(form_category_id, form_category)
@@ -2007,7 +2019,7 @@ class FormType(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["form_type_id", "form_type"])
         form_type_id = data.get("form_type_id")
-        form_type_id = parse_structure_SignedIntegerType_8(form_type_id)
+        form_type_id = parse_structure_UnsignedIntegerType_32(form_type_id)
         form_type = data.get("form_type")
         form_type = parse_structure_CustomTextType_50(form_type)
         return FormType(form_type_id, form_type)
@@ -2031,7 +2043,7 @@ class ComplianceFrequency(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["frequency_id", "frequency"])
         frequency_id = data.get("frequency_id")
-        frequency_id = parse_structure_SignedIntegerType_8(frequency_id)
+        frequency_id = parse_structure_UnsignedIntegerType_32(frequency_id)
         frequency = data.get("frequency")
         frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(frequency)
         return ComplianceFrequency(frequency_id, frequency)
@@ -2055,7 +2067,7 @@ class ComplianceRepeatType(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["repeat_type_id", "repeat_type"])
         repeat_type_id = data.get("repeat_type_id")
-        repeat_type_id = parse_structure_SignedIntegerType_8(repeat_type_id)
+        repeat_type_id = parse_structure_UnsignedIntegerType_32(repeat_type_id)
         repeat_type = data.get("repeat_type")
         repeat_type = parse_structure_EnumType_core_REPEATS_TYPE(repeat_type)
         return ComplianceRepeatType(repeat_type_id, repeat_type)
@@ -2079,7 +2091,7 @@ class ComplianceDurationType(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["duration_type_id", "duration_type"])
         duration_type_id = data.get("duration_type_id")
-        duration_type_id = parse_structure_SignedIntegerType_8(duration_type_id)
+        duration_type_id = parse_structure_UnsignedIntegerType_32(duration_type_id)
         duration_type = data.get("duration_type")
         duration_type = parse_structure_EnumType_core_DURATION_TYPE(duration_type)
         return ComplianceDurationType(duration_type_id, duration_type)
@@ -2103,7 +2115,7 @@ class ComplianceApprovalStatus(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["approval_status_id", "approval_status"])
         approval_status_id = data.get("approval_status_id")
-        approval_status_id = parse_structure_SignedIntegerType_8(approval_status_id)
+        approval_status_id = parse_structure_UnsignedIntegerType_32(approval_status_id)
         approval_status = data.get("approval_status")
         approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(approval_status)
         return ComplianceApprovalStatus(approval_status_id, approval_status)

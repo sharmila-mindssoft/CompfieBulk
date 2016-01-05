@@ -8,7 +8,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_technotransactions_UNIT,
     parse_structure_VectorType_RecordType_core_LegalEntity,
     parse_structure_OptionalType_CustomTextType_50,
-    parse_structure_SignedIntegerType_8,
+    parse_structure_UnsignedIntegerType_32,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyLevel,
     parse_structure_VectorType_RecordType_core_Industry,
     parse_structure_VectorType_RecordType_core_GroupCompany,
@@ -94,9 +94,9 @@ class GetAssignedStatutoriesById(Request):
         submission_status = data.get("submission_status")
         submission_status = parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE(submission_status)
         client_saved_statutory_id = data.get("client_saved_statutory_id")
-        client_saved_statutory_id = parse_structure_SignedIntegerType_8(client_saved_statutory_id)
+        client_saved_statutory_id = parse_structure_UnsignedIntegerType_32(client_saved_statutory_id)
         client_assigned_statutory_id = data.get("client_assigned_statutory_id")
-        client_assigned_statutory_id = parse_structure_SignedIntegerType_8(client_assigned_statutory_id)
+        client_assigned_statutory_id = parse_structure_UnsignedIntegerType_32(client_assigned_statutory_id)
         return GetAssignedStatutoriesById(submission_status, client_saved_statutory_id, client_assigned_statutory_id)
 
     def to_inner_structure(self):
@@ -129,11 +129,11 @@ class GetStatutoryWizardTwoData(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["geography_id", "industry_id", "domain_id"])
         geography_id = data.get("geography_id")
-        geography_id = parse_structure_SignedIntegerType_8(geography_id)
+        geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
         industry_id = data.get("industry_id")
-        industry_id = parse_structure_SignedIntegerType_8(industry_id)
+        industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         return GetStatutoryWizardTwoData(geography_id, industry_id, domain_id)
 
     def to_inner_structure(self):
@@ -156,9 +156,9 @@ class SaveAssignedStatutory(Request):
         submission_type = data.get("submission_type")
         submission_type = parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE(submission_type)
         client_saved_statutory_id = data.get("client_saved_statutory_id")
-        client_saved_statutory_id = parse_structure_SignedIntegerType_8(client_saved_statutory_id)
+        client_saved_statutory_id = parse_structure_UnsignedIntegerType_32(client_saved_statutory_id)
         client_assigned_statutory_id = data.get("client_assigned_statutory_id")
-        client_assigned_statutory_id = parse_structure_SignedIntegerType_8(client_assigned_statutory_id)
+        client_assigned_statutory_id = parse_structure_UnsignedIntegerType_32(client_assigned_statutory_id)
         assigned_statutories = data.get("assigned_statutories")
         assigned_statutories = parse_structure_VectorType_RecordType_core_AssignedStatutory(assigned_statutories)
         return SaveAssignedStatutory(submission_type, client_saved_statutory_id, client_assigned_statutory_id, assigned_statutories)
@@ -410,9 +410,9 @@ class ASSIGNED_STATUTORIES(object):
         submission_status = data.get("submission_status")
         submission_status = parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_STATUS(submission_status)
         client_saved_statutory_id = data.get("client_saved_statutory_id")
-        client_saved_statutory_id = parse_structure_SignedIntegerType_8(client_saved_statutory_id)
+        client_saved_statutory_id = parse_structure_UnsignedIntegerType_32(client_saved_statutory_id)
         client_assigned_statutory_id = data.get("client_assigned_statutory_id")
-        client_assigned_statutory_id = parse_structure_SignedIntegerType_8(client_assigned_statutory_id)
+        client_assigned_statutory_id = parse_structure_UnsignedIntegerType_32(client_assigned_statutory_id)
         country_name = data.get("country_name")
         country_name = parse_structure_CustomTextType_50(country_name)
         group_name = data.get("group_name")
@@ -466,23 +466,23 @@ class UNIT(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["unit_id", "unit_name", "division_id", "legal_entity_id", "business_group_id", "group_id", "domain_ids", "industry_id", "geography_id"])
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_50(unit_name)
         division_id = data.get("division_id")
         division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_SignedIntegerType_8(legal_entity_id)
+        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         group_id = data.get("group_id")
-        group_id = parse_structure_SignedIntegerType_8(group_id)
+        group_id = parse_structure_UnsignedIntegerType_32(group_id)
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_RecordType_core_Domain(domain_ids)
         industry_id = data.get("industry_id")
-        industry_id = parse_structure_SignedIntegerType_8(industry_id)
+        industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         geography_id = data.get("geography_id")
-        geography_id = parse_structure_SignedIntegerType_8(geography_id)
+        geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
         return UNIT(unit_id, unit_name, division_id, legal_entity_id, business_group_id, group_id, domain_ids, industry_id, geography_id)
 
     def to_structure(self):

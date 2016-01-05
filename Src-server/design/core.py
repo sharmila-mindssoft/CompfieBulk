@@ -8,7 +8,7 @@ __all__ = [
 	"FILTER_TYPE", "COMPLIANCE_FREQUENCY", "COMPLIANCE_STATUS",
 	"APPLICABILITY_STATUS", "FORM_TYPE", "REPEATS_TYPE",
 	"DURATION_TYPE", "COMPLIANCE_ACTIVITY_STATUS",
-	"Form", "Menu", "UserGroup", "Country", "Domain", "Level",
+	"KnowledgeForm", "Menu", "UserGroup", "Country", "Domain", "Level",
 	"GeographyLevel", "Geography", "Industry", "StatutoryNature",
 	"StatutoryLevel", "Statutory", "Compliance", "StatutoryMapping",
 	"GroupCompany", "GroupCompanyDetail", "ClientConfiguration", 
@@ -170,7 +170,7 @@ KnowledgeForm = RecordType("Form", [
 	Field("form_type", FORM_TYPE_NAME)
 ])
 
-FormList = VectorType(Form)
+FormList = VectorType(KnowledgeForm)
 
 Menu = RecordType("Menu", [
 	Field("menus", MapType(FORM_TYPE_NAME, FormList)),
@@ -324,6 +324,9 @@ StatutoryMapping = RecordType("StatutoryMapping", [
 GroupCompany = RecordType("GroupCompany", [
 	Field("client_id", GROUP_ID),
     Field("group_name", CLIENT_NAME),
+    Field("is_active", IS_ACTIVE),
+    Field("country_ids", VectorType(COUNTRY_ID)),
+    Field("domain_ids", VectorType(DOMAIN_ID)),
 ])
 
 GroupCompanyDetail = RecordType("GroupCompanyDetail", [
@@ -384,7 +387,7 @@ UnitDetails = RecordType("UnitDetails", [
     Field("unit_address", ADDRESS),
     Field("postal_code", Int8),
     Field("domain_ids", DomainIdList),
-    Field("is_active", IS_ACTIVE),
+    Field("is_active", IS_ACTIVE)
 ])
 
 UnitDetailsList = VectorType(UnitDetails)

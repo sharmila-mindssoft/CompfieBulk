@@ -2221,11 +2221,11 @@ def to_structure_RecordType_clientreport_Request_GetServiceProviderReportFilters
 
 def to_structure_MapType_SignedIntegerType_8_RecordType_core_Menu(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_RecordType_core_Menu(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_RecordType_core_Statutory(data):
@@ -2604,7 +2604,7 @@ def to_structure_RecordType_clientadminsettings_RequestFormat(data):
 
 def to_structure_RecordType_core_Form(data):
     from protocol import core
-    return core.KnowledgeForm.to_structure(data)
+    return core.Form.to_structure(data)
 
 def to_structure_RecordType_core_Level(data):
     from protocol import core
