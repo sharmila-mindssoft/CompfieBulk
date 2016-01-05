@@ -50,12 +50,12 @@ string_months = {
 
 _client_db_connections = {}
 
-def generate_random():
+def generateRandom():
     characters = string.ascii_uppercase + string.digits
     return ''.join(random.SystemRandom().choice(characters) for _ in range(7))
 
-def generate_password() : 
-    password = generate_random()
+def generatePassword() : 
+    password = generateRandom()
     return encrypt(password)
 
 def encrypt(value):
@@ -150,6 +150,104 @@ class Database(object) :
         result = cursor.fetchall()
         return result
 
+class KnowledgeDatabase(Database):
+
+    tblActivityLog = "tbl_activity_log"
+    tblAdmin = "tbl_admin"
+    tblBusinessGroups = "tbl_business_groups"
+    tblClientCompliances = "tbl_client_compliances"
+    tblClientConfigurations = "tbl_client_configurations"
+    tblClientCountries = "tbl_client_countries"
+    tblClientDatabase = "tbl_client_database"
+    tblClientDomains = "tbl_client_domains"
+    tblClientGroups = "tbl_client_groups"
+    tblClientSavedCompliances = "tbl_client_saved_compliances"
+    tblClientSavedStatutories = "tbl_client_saved_statutories"
+    tblClientStatutories = "tbl_client_statutories"
+    tblClientUsers = "tbl_client_users"
+    tblComplianceDurationType = "tbl_compliance_duration_type"
+    tblComplianceFrequency = "tbl_compliance_frequency"
+    tblComplianceRepeatype = "tbl_compliance_repeat_type"
+    tblCompliances = "tbl_compliances"
+    tblCompliancesBackup = "tbl_compliances_backup"
+    tblCountries = "tbl_countries"
+    tblDatabaseServer = "tbl_database_server"
+    tblDivisions = "tbl_divisions"
+    tblDomains = "tbl_domains"
+    tblEmailVerification = "tbl_email_verification"
+    tblFormCategory = "tbl_form_category"
+    tblFormType = "tbl_form_type"
+    tblForms = "tbl_forms"
+    tblGeographies = "tbl_geographies"
+    tblGeographyLevels = "tbl_geography_levels"
+    tblIndustries = "tbl_industries"
+    tblLegalEntities = "tbl_legal_entities"
+    tblMachines = "tbl_machines"
+    tblMobileRegistration = "tbl_mobile_registration"
+    tblNotifications = "tbl_notifications"
+    tblNotificationsStatus = "tbl_notifications_status"
+    tblSessionTypes = "tbl_session_types"
+    tblStatutories = "tbl_statutories"
+    tblStatutoriesBackup = "tbl_statutories_backup"
+    tblStatutoryGeographies = "tbl_statutory_geographies"
+    tblStatutoryLevels = "tbl_statutory_levels"
+    tblStatutoryMappings = "tbl_statutory_mappings"
+    tblStatutoryNatures = "tbl_statutory_natures"
+    tblStatutoryNotificationsLog = "tbl_statutory_notifications_log"
+    tblUnits = "tbl_units"
+    tblUserClients = "tbl_user_clients"
+    tblUserCountries = "tbl_user_countries"
+    tblUserDomains = "tbl_user_domains"
+    tblUserGroups = "tbl_user_groups"
+    tblUserLoginHistory = "tbl_user_login_history"
+    tblUserSessions = "tbl_user_sessions"
+    tblUsers = "tbl_users"
+
+    def __init__(
+        self, 
+        mysqlHost, mysqlUser, 
+        mysqlPassword, mysqlDatabase
+    ):
+        super(KnowledgeDatabase, self).__init__(
+            mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase
+        )
+        self.statutory_parent_mapping = {}
+        self.geography_parent_mapping = {}
+
+    def encrypt(self, value):
+        m = hashlib.md5()
+        m.update(value)
+        return m.hexdigest()
+
+    def convert_to_dict(self, data_list, columns) :
+        print data_list
+        print len(data_list), len(columns)
+        if type(data_list[0]) is tuple :
+            result_list = []
+            if len(data_list[0]) == len(columns) :
+                for data in data_list:
+                    result = {}
+                    for i, d in enumerate(data):
+                        result[columns[i]] = d
+                    result_list.append(result)
+            return result_list
+        else :
+            if len(data_list) == len(columns) :
+                result = {}
+                for i, d in enumerate(data_list):
+                    result[columns[i]] = d
+            return result
+
+
+    def validate_session_token(self, session_token) :
+        # query = "CALL sp_validate_session_token ('%s');" 
+        #% (session_token)
+        query = "SELECT user_id FROM tbl_user_sessions \
+            WHERE session_token = '%s'" % (session_token)
+        row = self.select_one(query)
+        user_id = row[0]
+        return user_id
+
     def get_data(self, table, columns, condition):
         # query = "SELECT "+columns+" FROM "+table+" \
         #WHERE "+condition 
@@ -159,16 +257,26 @@ class Database(object) :
 
         return self.select_all(query)
 
-    def get_data_from_multiple_tables(self, columns, tables, aliases, joinType, joinConditions, whereCondition):
+    def get_data_from_multiple_tables(self, columns, tables, aliases, joinType, 
+            joinConditions, whereCondition
+        ):
         query = "SELECT %s FROM " % columns
 
         for index,table in enumerate(tables):
             if index == 0:
-                query += "%s  %s  %s" % (table, aliases[index], joinType)
+                query += "%s  %s  %s" % (
+                    table, aliases[index], joinType
+                )
             elif index <= len(tables) -2:
-                query += " %s %s on (%s) %s " % (table, aliases[index], joinConditions[index-1], joinType)
+                query += " %s %s on (%s) %s " % (
+                    table, aliases[index], 
+                    joinConditions[index-1], joinType
+                )
             else:
-                query += " %s %s on (%s)" % (table, aliases[index],joinConditions[index-1])
+                query += " %s %s on (%s)" % (
+                    table, aliases[index], 
+                    joinConditions[index-1]
+                )
 
         query += " where %s" % whereCondition
         return self.select_all(query)
@@ -1124,7 +1232,7 @@ class KnowledgeDatabase(Database):
         #         )
         #         self.dataInsertUpdate(q)
         #     action = "Edit Geography Mappings Parent"
-        #     self.saveActivity(updated_by, 7, action)
+        #     self.save_activity(updated_by, 7, action)
         # self.getAllGeographies()
         # return True
 
@@ -1228,7 +1336,7 @@ class KnowledgeDatabase(Database):
         #         )
         #         self.dataInsertUpdate(q)
         #     action = "Edit Geography Mappings Parent"
-        #     self.saveActivity(updated_by, 7, action)
+        #     self.save_activity(updated_by, 7, action)
         # self.getAllGeographies()
         # return True
 
@@ -1442,13 +1550,15 @@ class KnowledgeDatabase(Database):
     #
 
     def save_statutory_mapping(self, data, created_by) :
-        country_id =data.get("country_id")
-        domain_id =data.get("domain_id")
-        industry_ids = ','.join(str(x) for x in data.get("industry_ids")) + ","
-        nature_id =data.get("statutory_nature_id")
-        statutory_ids = ','.join(str(x) for x in data.get("statutory_ids")) + ","
-        compliances = data.get("compliances")
-        geography_ids = ','.join(str(x) for x in data.get("geography_ids")) + ","
+
+        country_id =data.country_id
+        domain_id =data.domain_id
+        industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
+        nature_id =data.statutory_nature_id
+        statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
+        compliances = data.compliances
+        geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
+        
 
         statutory_mapping_id = self.get_new_id("statutory_mapping_id", "tbl_statutory_mappings")
         created_on = self.get_date_time()
@@ -1838,16 +1948,16 @@ class KnowledgeDatabase(Database):
         )
         if (self.save_data(statutory_table, field, data)) :            
             self.update_statutory_mapping_id(
-                data.get("statutory_ids"), 
+                data.statutory_ids, 
                 statutory_mapping_id, created_by
             )
             ids = self.save_compliance(
                 statutory_mapping_id, compliances, created_by
             )
             compliance_ids = ','.join(str(x) for x in ids) + ","
-            # qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
-            #     where statutory_mapping_id = %s" % (compliance_ids, statutory_mapping_id)
-            # self.execute(qry)
+            qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
+                where statutory_mapping_id = %s" % (compliance_ids, statutory_mapping_id)
+            self.execute(qry)
             action = "New statutory mappings added"
             self.save_activity(created_by, 17, action)
             return True
@@ -1988,7 +2098,7 @@ class KnowledgeDatabase(Database):
 
             return self.insert(self.tblClientDatabase, client_db_columns, client_dB_values)
 
-    def save_client_group(self, client_id, client_group, session_user):
+    def save_compliance(self, mapping_id, datas, created_by) :
         current_time_stamp = self.get_date_time()
         contract_from = string_to_datetime(client_group.contract_from)
         contract_to = string_to_datetime(client_group.contract_to)
@@ -2033,77 +2143,35 @@ class KnowledgeDatabase(Database):
 
     def save_incharge_persons(self, client_group, client_id):
         columns = ["client_id", "user_id"]
-        values_list = []
-        condition = "client_id='%d'" % client_id
-        self.delete(self.tblUserClients, condition)
-        for incharge_person in client_group.incharge_persons:
-            values_tuple = (client_id, incharge_person)
-            values_list.append(values_tuple)
-        return self.bulk_insert(self.tblUserClients, columns, values_list)
+        compliance_ids = []
+        for data in datas :
+            compliance_id = self.get_new_id(
+                "compliance_id", "tbl_compliances"
+            )
+            created_on = self.get_date_time()
 
-    def update_client_group_status(self, client_id, is_active, session_user):
-        columns = ["is_active", "updated_by", "updated_on"]
-        values = [ is_active, int(session_user), self.get_date_time()]
-        condition = "client_id='%d'" % client_id
-        return self.update(self.tblClientGroups, columns, values, condition)
+            provision = data.statutory_provision
+            compliance_task = data.compliance_task
+            compliance_description = data.description
+            document_name = data.document_name
+            format_file = ','.join(str(x) for x in data.format_file_name)
+            penal_consequences = data.penal_consequences
+            compliance_frequency = data.frequency_id
+            statutory_dates =  json.dumps(data.statutory_dates)
+            repeats_every = data.repeats_every
+            repeats_type = data.repeats_type_id
+            duration = data.duration
+            duration_type = data.duration_type_id
+            is_active = data.is_active
 
-    def get_client_db_info(self):
-        columns = "database_ip, client_id, database_username, "+\
-        "database_password, database_name"
-        condition = "1"
-        return self.get_data(self.tblClientDatabase, columns, condition)
-
-#
-#   Client Unit
-#
-    
-    def save_business_group(self, client_id, business_group_id, business_group_name, 
-        session_user):
-        current_time_stamp = self.get_date_time()
-        columns = ["client_id", "business_group_id", "business_group_name", 
-        "created_by", "created_on", "updated_by", "updated_on"]
-        values = [client_id, business_group_id, business_group_name, session_user, current_time_stamp,
-        session_user, current_time_stamp]
-        return self.insert(self.tblBusinessGroups, columns, values)
-
-    def update_business_group(self, client_id, business_group_id, business_group_name, 
-        session_user):
-        current_time_stamp = self.get_date_time()
-        columns = ["business_group_name", "updated_by", "updated_on"]
-        values = [business_group_name, session_user, current_time_stamp]
-        condition = "business_group_id = '%d' and client_id = '%d'"%(business_group_id, client_id)
-        return self.update(self.tblBusinessGroups, columns, values, condition)
-
-    def save_legal_entity(self, client_id, legal_entity_id, legal_entity_name, 
-        business_group_id, session_user):
-        current_time_stamp = self.get_date_time()
-        columns = ["client_id", "legal_entity_id", "legal_entity_name", "business_group_id", 
-        "created_by", "created_on", "updated_by", "updated_on"]
-        values = [client_id, legal_entity_id, legal_entity_name, business_group_id, 
-        session_user, current_time_stamp, session_user, current_time_stamp]
-        return self.insert(self.tblLegalEntities, columns, values)
-    
-    def update_legal_entity(self, client_id, legal_entity_id, legal_entity_name, business_group_id, session_user):
-        current_time_stamp = self.get_date_time()
-        columns = ["legal_entity_name", "updated_by", "updated_on"]
-        values = [legal_entity_name, business_group_id, session_user, current_time_stamp]
-        condition = "legal_entity_id = '%d' and client_id = '%d'"%(legal_entity_id, client_id)
-        return self.update(self.tblLegalEntities, columns, values, condition)
-
-    def save_division(self, client_id, division_id, division_name, business_group_id, legal_entity_id, session_user):
-        current_time_stamp = self.get_date_time()
-        columns = ["client_id", "division_id", "division_name", "business_group_id", "legal_entity_id",
-        "created_by", "created_on", "updated_by", "updated_on"]
-        values = [client_id, division_id, division_name, business_group_id, legal_entity_id,
-        session_user, current_time_stamp, session_user, current_time_stamp]
-        return self.insert(self.tblDivisions, columns, values)
-
-    def update_division(self, client_id, division_id, division_name, business_group_id, legal_entity_id, session_user):
-        current_time_stamp = self.get_date_time()
-        columns = ["division_name", "updated_by", "updated_on"]
-        values = [division_name, session_user, current_time_stamp]
-        condition = "division_id = '%d' and client_id = '%d'"%(division_id, client_id)
-        return self.update(self.tblDivisions, columns, values, condition)
+            if compliance_frequency == 1 :
+                query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
+                    compliance_task, compliance_description, document_name, format_file, \
+                    penal_consequences, frequency_id, statutory_dates, statutory_mapping_id, \
+                    is_active, created_by, created_on) VALUES (%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', \
+                    '%s', %s, %s, %s, '%s')" % (compliance_id, provision, compliance_task, 
+                    compliance_description, document_name, format_file, penal_consequences, compliance_frequency,
+                    statutory_dates, mapping_id, is_active, created_by, created_on)
 
     def save_unit(self, client_id,  units, business_group_id, legal_entity_id, division_id, session_user):
         current_time_stamp = self.get_date_time()
@@ -2127,41 +2195,28 @@ class KnowledgeDatabase(Database):
                     str(unit["industry_id"]), domain_ids, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
                     str(unit["postal_code"]), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
                     business_group_id)    
-            elif division_id != None :
-                values_tuple = (str(unit["unit_id"]), client_id, legal_entity_id, str(unit["country_id"]), str(unit["geography_id"]),
-                    str(unit["industry_id"]), domain_ids, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
-                    str(unit["postal_code"]), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
-                    division_id)   
-            else: 
-                values_tuple = (str(unit["unit_id"]), client_id, legal_entity_id, str(unit["country_id"]), str(unit["geography_id"]),
-                        str(unit["industry_id"]), domain_ids, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
-                        str(unit["postal_code"]), 1, session_user, current_time_stamp, session_user, current_time_stamp)
-            values_list.append(values_tuple)
-        return self.bulk_insert(self.tblUnits, columns, values_list)
+            elif compliance_frequency == 4 :
+                query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
+                    compliance_task, compliance_description, document_name, format_file, \
+                    penal_consequences, frequency_id, statutory_dates, duration, \
+                    duration_type_id, statutory_mapping_id, \
+                    is_active, created_by, created_on) VALUES (%s,'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, \
+                    '%s', %s, %s, %s, '%s')" % (compliance_id, provision, compliance_task, 
+                    compliance_description, document_name, format_file, penal_consequences, compliance_frequency,
+                    statutory_dates, int(duration), duration_type, mapping_id, is_active, created_by, created_on)
 
+            else :
+                query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
+                    compliance_task, compliance_description, document_name, format_file, \
+                    penal_consequences, frequency_id, statutory_dates, repeats_every, \
+                    repeats_type_id, statutory_mapping_id, \
+                    is_active, created_by, created_on) VALUES (%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', \
+                    %s, '%s', %s, %s, %s, '%s')"  % (compliance_id, provision, compliance_task, 
+                    compliance_description, document_name, format_file, penal_consequences, compliance_frequency,
+                    statutory_dates, int(repeats_every), repeats_type, mapping_id, is_active, created_by, created_on)
 
-    def update_unit(self, client_id,  units, business_group_id, legal_entity_id, division_id, session_user):
-        current_time_stamp = str(self.get_date_time())
-        columns = ["country_id", "geography_id", "industry_id", "domain_ids", "unit_code", "unit_name", 
-        "address", "postal_code", "updated_by", "updated_on"]
-        values_list = []
-        for unit in units:
-            domain_ids = ",".join(str(x) for x in unit["domain_ids"])
-            values= [unit["country_id"], unit["geography_id"],unit["industry_id"], domain_ids, 
-                        str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
-                        str(unit["postal_code"]), session_user, current_time_stamp]
-            condition = "client_id='%d' and unit_id = '%d'" % (client_id, unit["unit_id"])
-            self.update(self.tblUnits, columns, values, condition)
-        return True
-
-    def change_client_status(self, client_id, legal_entity_id, division_id, is_active, session_user):
-        current_time_stamp = str(self.get_date_time())
-        columns = ["is_active", "updated_on" , "updated_by"]
-        values = [is_active, current_time_stamp, session_user]
-        condition = "legal_entity_id = '%d' and client_id = '%d' "% (legal_entity_id, client_id)
-        if division_id != None:
-            condition += " and division_id='%d' "% division_id
-        return self.update(self.tblUnits, columns, values, condition)
+            if (self.execute(query)) :
+                compliance_ids.append(compliance_id)
 
     def reactivateUnit(self, client_id, unit_id, session_user):
         current_time_stamp = str(self.get_date_time())
@@ -2172,19 +2227,299 @@ class KnowledgeDatabase(Database):
 
 
 
-class ClientDatabase(Database):
+        return compliance_ids
 
-    def __init__(self, knowledge_db):
-        rows = knowledge_db.get_client_db_info()
-        global _client_db_connections
-        _client_db_connections = {}
-        for row in rows:
-            host = row[0]
-            client_id = row[1]
-            username = row[2]
-            password = row[3]
-            database = row[4]
-            _client_db_connections[client_id] = super(ClientDatabase, self).__init__(
-                host, username, password, database
+    def update_statutory_mapping(self, data, updated_by) :
+        statutory_mapping_id = data.statutory_mapping_id
+        country_id =data.country_id
+        domain_id =data.domain_id
+        industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
+        nature_id =data.statutory_nature_id
+        statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
+        compliances = data.compliances
+        geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
+
+        self.save_statutory_backup(statutory_mapping_id, updated_by)
+        query = "UPDATE tbl_statutory_mappings set country_id=%s, domain_id=%s, industry_ids='%s', \
+            statutory_nature_id=%s, statutory_ids='%s', geography_ids='%s', approval_status=0, rejected_reason=NULL, updated_by=%s \
+            WHERE statutory_mapping_id=%s" % (
+                country_id, domain_id, industry_ids, nature_id, statutory_ids, geography_ids,
+                updated_by, statutory_mapping_id
             )
+
+        if (self.execute(query)) :
+            print "update mapping"
+            self.update_statutory_mapping_id(data.statutory_ids, statutory_mapping_id, updated_by)
+            ids = self.update_compliance(statutory_mapping_id, compliances, updated_by)
+            compliance_ids = ','.join(str(x) for x in ids) + ","
+            qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
+                where statutory_mapping_id = %s" % (compliance_ids, statutory_mapping_id)
+            self.execute(qry)
+            action = "Edit Statutory Mappings"
+            self.save_activity(updated_by, 17, action)
+            return True
+        else :
+            return False
+
+    def update_compliance(self, mapping_id, datas, updated_by) :
+        compliance_ids = []
+        for data in datas :
+            compliance_id = data.compliance_id
+            if (compliance_id == "") :
+                ids = self.save_compliance(mapping_id, [data], updated_by)
+                compliance_ids.extend(ids)
+                continue
+            provision = data.statutory_provision
+            compliance_task = data.compliance_task
+            description = data.description
+            document_name = data.document_name
+            format_file = ','.join(str(x) for x in data.format_file_name)
+            penal_consequences = data.penal_consequences
+            compliance_frequency = data.frequency_id
+            statutory_dates =  json.dumps(data.statutory_dates)
+            repeats_every = data.repeats_every
+            repeats_type = data.repeats_type_id
+            duration = data.duration
+            duration_type = data.duration_type_id
+            is_active = int(data.is_active)
+
+            if compliance_frequency == 1 :
+                query = "UPDATE tbl_compliances set statutory_provision = '%s', \
+                    compliance_task = '%s', compliance_description = '%s', document_name = '%s' , format_file = '%s', \
+                    penal_consequences = '%s', frequency_id = '%s', statutory_dates = '%s', statutory_mapping_id = %s, \
+                    is_active = %s, updated_by = %s WHERE compliance_id = %s "  % (
+                        provision, compliance_task, 
+                        description, document_name, format_file, penal_consequences, compliance_frequency,
+                        statutory_dates, mapping_id, is_active, updated_by, compliance_id
+                    )
+
+            elif compliance_frequency == 4 :
+                query = "UPDATE tbl_compliances set statutory_provision='%s', \
+                    compliance_task='%s', compliance_description='%s', document_name='%s', format_file='%s', \
+                    penal_consequences='%s', frequency_id='%s', statutory_dates='%s', duration=%s, \
+                    duration_type_id='%s', statutory_mapping_id = %s, \
+                    is_active = %s, updated_by = %s WHERE compliance_id = %s "% (
+                        provision, compliance_task, 
+                        description, document_name, format_file, penal_consequences, compliance_frequency,
+                        statutory_dates, int(duration), duration_type, mapping_id, is_active, updated_by, compliance_id
+                    )
+
+            else :
+                query = "UPDATE tbl_compliances set statutory_provision ='%s', \
+                    compliance_task ='%s', compliance_description='%s', document_name='%s', format_file='%s', \
+                    penal_consequences='%s', frequency_id='%s', statutory_dates='%s', repeats_every=%s, \
+                    repeats_type_id='%s', statutory_mapping_id=%s, \
+                    is_active=%s, updated_by=%s WHERE compliance_id = %s "  % (
+                        provision, compliance_task, 
+                        description, document_name, format_file, penal_consequences, compliance_frequency,
+                        statutory_dates, int(repeats_every), repeats_type, mapping_id, is_active, updated_by, compliance_id
+                    )
+
+            if (self.execute(query)) :
+                compliance_ids.append(compliance_id)
+
+        return compliance_ids
+
+    def change_compliance_status(self, mapping_id, is_active, updated_by) :
+        query = "UPDATE tbl_compliances set is_active=%s, \
+            updated_by=%s WHERE statutory_mapping_id=%s" % (
+                is_active, updated_by, mapping_id
+            )
+        return self.execute(query)
+
+    def chenge_statutory_mapping_status(self, data, updated_by):
+        statutory_mapping_id = data.statutory_mapping_id
+        is_active = data.is_active
+
+        query = "UPDATE tbl_statutory_mappings set is_active=%s, updated_by=%s \
+            WHERE statutory_mapping_id=%s" % (
+            is_active, updated_by, statutory_mapping_id
+        )
+        if (self.execute(query)) :
+            self.change_compliance_status(statutory_mapping_id, is_active, updated_by)
+            if is_active == 0:
+                status = "deactivated"
+            else:
+                status = "activated"
+            action = "Statutory Mapping status changed"
+            self.save_activity(updated_by, 17, action)
+            return True
+
+    def save_statutory_backup(self, statutory_mapping_id, created_by):
+        old_record = self.get_statutory_mapping_by_id(statutory_mapping_id)
+        backup_id = self.get_new_id("statutory_backup_id", "tbl_statutories_backup")
+        created_on = self.get_date_time()
+        industry_ids = [
+            int(x) for x in old_record["industry_ids"][-1].split(',')
+        ]
+        industry_name = self.get_industry_by_id(industry_ids)
+
+        provision = []
+        for sid in old_record["statutory_ids"][:-1].split(',') :
+            data = self.statutory_parent_mapping.get(int(sid))
+            provision.append(data)
+        mappings = ','.join(str(x) for x in provision)
+        
+        geo_map = []
+        for gid in old_record["geography_ids"][:-1].split(',') :
+            data = self.geography_parent_mapping.get(int(geo_map))
+            geo_map.append(data)
+        geo_mappings = ','.join(str(x) for x in geo_map)
+        
+        q = "INSERT INTO tbl_statutories_backup \
+            (statutory_backup_id, statutory_mapping_id, \
+            country_name, domain_name, industry_name, \
+            statutory_nature, statutory_provision, \
+            applicable_location, created_by, created_on) \
+            VALUES(%s, %s, '%s', '%s', '%s', '%s', '%s', \
+                '%s', %s, '%s') " % (
+                backup_id, statutory_mapping_id, 
+                old_record["country_name"], 
+                old_record["domain_name"], 
+                industry_name, old_record["statutory_nature"], 
+                mappings, 
+                geo_mappings, created_by, created_on
+            )
+        if (self.execute(q)) :
+            qry = " INSERT INTO tbl_compliances_backup \
+                (statutory_backup_id, statutory_provision, \
+                compliance_task, compliance_description, \
+                document_name, format_file, \
+                penal_consequences, frequency_id, \
+                statutory_dates, repeats_every, \
+                repeats_type_id, duration, duration_type_id)  \
+                SELECT \
+                %s,t1.statutory_provision, t1.compliance_task, \
+                t1.compliance_description, t1.document_name, \
+                t1.format_file, t1.penal_consequences, \
+                t1.frequency_id, t1.statutory_dates, \
+                t1.repeats_every, t1.repeats_type_id, \
+                t1.duration, t1.duration_type_id \
+                FROM tbl_compliances t1 \
+                WHERE statutory_mapping_id=%s" % (
+                    backup_id, statutory_mapping_id
+                )
+            self.execute(qry)
+
+    def get_statutory_mapping_by_id (self, mapping_id) :
+        q = "SELECT t1.country_id, t2.country_name, \
+            t1.domain_id, t3.domain_name, t1.industry_ids, \
+            t1.statutory_nature_id, t4.statutory_nature_name, \
+            t1.statutory_ids, t1.compliance_ids, \
+            t1.geography_ids, t1.approval_status  \
+            FROM tbl_statutory_mappings t1 \
+            INNER JOIN tbl_countries t2 \
+            on t1.country_id = t2.country_id \
+            INNER JOIN tbl_domains t3 \
+            on t1.domain_id = t3.domain_id \
+            INNER JOIN tbl_statutory_natures t4 \
+            on t1.statutory_nature_id = t4.statutory_nature_id \
+            WHERE t1.statutory_mapping_id=%s" % mapping_id
+        rows = self.select_all(q)
+        columns = [
+            "country_id", "country_name", "domain_id",
+            "domain_name", "industry_ids", "statutory_nature_id",
+            "statutory_nature_name", "statutory_ids",
+            "compliance_ids", "geography_ids",
+            "approval_status"            
+        ]
+        result = self.convert_to_dict(rows, columns)
+        return result
+
+    def change_approval_status(self, data, updated_by) :
+        statutory_mapping_id = data.statutory_mapping_id
+        provision = data.statutory_provision
+        approval_status = data.approval_status
+        rejected_reason = data.rejected_reason
+        notification_text = data.notification_text
+
+        if approval_status == 2 :
+            #Rejected
+            query = "UPDATE tbl_statutory_mappings set \
+                approval_status='%s', rejected_reason='%s', \
+                updated_by=%s WHERE \
+                statutory_mapping_id = %s" % (
+                    approval_status, rejected_reason, updated_by, statutory_mapping_id
+                )
+            self.execute(query)
+            notification_log_text = "Statutory Mapping: %s \
+                has been Rejected" % (provision)
+        else :
+            
+            query = "UPDATE tbl_statutory_mappings set \
+                approval_status='%s', \
+                updated_by=%s WHERE \
+                statutory_mapping_id = %s" % (
+                    approval_status, updated_by, 
+                    statutory_mapping_id
+                )
+            self.execute(query)
+            notification_log_text = "Statutory Mapping: %s \
+                has been Approved" % (provision)            
+            if approval_status == 3 :
+                self.save_statutory_notifications(
+                    statutory_mapping_id, notification_text
+                )
+                notification_log_text = "Statutory Mapping: %s \
+                    has been Approve & Notified" % (provision)
+        
+        link = "/statutorymapping/list"
+        self.save_notifications(notification_log_text, link)
+        action = "Statutory Mapping approval status changed"
+        self.save_activity(updated_by, 17, action)
+        return True
+
+    def save_notifications(self, notification_text, link):
+        #internal notification
+        notification_id = self.get_new_id(
+            "notification_id", "tbl_notifications"
+        )
+        query = "INSERT INTO tbl_notifications \
+            (notification_id, notification_text, link) \
+            VALUES (%s, '%s', '%s')" % (
+                notification_id, notification_text, link
+            )
+        self.execute(query)
+
+    def save_statutory_notifications(self, mapping_id, notification_text ):
+        # client notification
+        old_record = self.get_statutory_mapping_by_id(
+            mapping_id
+        )
+        industry_ids = [
+            int(x) for x in old_record["industry_ids"][-1].split(',')
+        ]
+        industry_name = self.get_industry_by_id(industry_ids)
+
+        provision = []
+        for sid in old_record["statutory_ids"][:-1].split(',') :
+            data = self.statutory_parent_mapping.get(int(sid))
+            provision.append(data)
+        mappings = ','.join(str(x) for x in provision)
+        geo_map = []
+        for gid in old_record["geography_ids"][:-1].split(',') :
+            data = self.geography_parent_mapping.get(int(gid))
+            geo_map.append(data)
+        geo_mappings = ','.join(str(x) for x in geo_map)
+
+        notification_id = self.get_new_id(
+            "statutory_notification_id", 
+            "tbl_statutory_notifications_log"
+        )
+
+        query = " INSERT INTO tbl_statutory_notifications_log \
+            (statutory_notification_id, statutory_mapping_id, \
+            country_name, domain_name, industry_name, \
+            statutory_nature, statutory_provision, \
+            applicable_location, notification_text) \
+            VALUES \
+            (%s, %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s') \
+            " % (
+                notification_id, mapping_id, 
+                old_record["country_name"], 
+                old_record["domain_name"], industry_name, 
+                old_record["statutory_nature"], 
+                mappings, geo_mappings,notification_text
+            )
+        self.execute(query)
 
