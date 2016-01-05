@@ -1,13 +1,11 @@
-import os
-import datetime
 import MySQLdb as mysql
 import hashlib
 import string
 import random
-import re
 
 from protocol import core, knowledgereport
 
+import datetime
 import uuid
 from types import *
 
@@ -17,38 +15,6 @@ from protocol import core
 __all__ = [
     "KnowledgeDatabase", "ClientDatabase"
 ]
-
-integer_months = {
-    "Jan": 1,
-    "Feb": 2,
-    "Mar": 3,
-    "Apr": 4,
-    "May": 5,
-    "Jun": 6,
-    "Jul": 7,
-    "Aug": 8,
-    "Sep": 9,
-    "Oct": 10,
-    "Nov": 11,
-    "Dec": 12,
-}
-
-string_months = {
-     1 : "Jan",
-     2 : "Feb",
-     3 : "Mar",
-     4 : "Apr",
-     5 : "May",
-     6 : "Jun",
-     7 : "Jul",
-     8 : "Aug",
-     9 : "Sep",
-     10 : "Oct",
-     11 : "Nov",
-     12 : "Dec",
-}
-
-_client_db_connections = {}
 
 def generateRandom():
     characters = string.ascii_uppercase + string.digits
@@ -62,11 +28,6 @@ def encrypt(value):
     m = hashlib.md5()
     m.update(value)
     return m.hexdigest()
-
-def string_to_datetime(string):
-    date = string.split("-")
-    datetime_val = datetime.datetime(year=int(date[2]),month=integer_months[date[1]], day=int(date[0]))
-    return datetime_val
     
 class Database(object) :
     def __init__(
@@ -254,7 +215,6 @@ class KnowledgeDatabase(Database):
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-
         return self.select_all(query)
 
     def get_data_from_multiple_tables(self, columns, tables, aliases, joinType, 
@@ -369,97 +329,6 @@ class KnowledgeDatabase(Database):
     def is_invalid_id(self, table, field, value):
         condition = "%s = '%d'" % (field, value)
         return not self.is_already_exists(table, condition) 
-
-class KnowledgeDatabase(Database):
-    tblActivityLog = "tbl_activity_log"
-    tblAdmin = "tbl_admin"
-    tblBusinessGroups = "tbl_business_groups"
-    tblClientCompliances = "tbl_client_compliances"
-    tblClientConfigurations = "tbl_client_configurations"
-    tblClientCountries = "tbl_client_countries"
-    tblClientDatabase = "tbl_client_database"
-    tblClientDomains = "tbl_client_domains"
-    tblClientGroups = "tbl_client_groups"
-    tblClientSavedCompliances = "tbl_client_saved_compliances"
-    tblClientSavedStatutories = "tbl_client_saved_statutories"
-    tblClientStatutories = "tbl_client_statutories"
-    tblClientUsers = "tbl_client_users"
-    tblComplianceDurationType = "tbl_compliance_duration_type"
-    tblComplianceFrequency = "tbl_compliance_frequency"
-    tblComplianceRepeatype = "tbl_compliance_repeat_type"
-    tblCompliances = "tbl_compliances"
-    tblCompliancesBackup = "tbl_compliances_backup"
-    tblCountries = "tbl_countries"
-    tblDatabaseServer = "tbl_database_server"
-    tblDivisions = "tbl_divisions"
-    tblDomains = "tbl_domains"
-    tblEmailVerification = "tbl_email_verification"
-    tblFormCategory = "tbl_form_category"
-    tblFormType = "tbl_form_type"
-    tblForms = "tbl_forms"
-    tblGeographies = "tbl_geographies"
-    tblGeographyLevels = "tbl_geography_levels"
-    tblIndustries = "tbl_industries"
-    tblLegalEntities = "tbl_legal_entities"
-    tblMachines = "tbl_machines"
-    tblMobileRegistration = "tbl_mobile_registration"
-    tblNotifications = "tbl_notifications"
-    tblNotificationsStatus = "tbl_notifications_status"
-    tblSessionTypes = "tbl_session_types"
-    tblStatutories = "tbl_statutories"
-    tblStatutoriesBackup = "tbl_statutories_backup"
-    tblStatutoryGeographies = "tbl_statutory_geographies"
-    tblStatutoryLevels = "tbl_statutory_levels"
-    tblStatutoryMappings = "tbl_statutory_mappings"
-    tblStatutoryNatures = "tbl_statutory_natures"
-    tblStatutoryNotificationsLog = "tbl_statutory_notifications_log"
-    tblUnits = "tbl_units"
-    tblUserClients = "tbl_user_clients"
-    tblUserCountries = "tbl_user_countries"
-    tblUserDomains = "tbl_user_domains"
-    tblUserGroups = "tbl_user_groups"
-    tblUserLoginHistory = "tbl_user_login_history"
-    tblUserSessions = "tbl_user_sessions"
-    tblUsers = "tbl_users"
-
-    def __init__(
-        self, 
-        mysqlHost, mysqlUser, 
-        mysqlPassword, mysqlDatabase
-    ):
-        super(KnowledgeDatabase, self).__init__(
-            mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase
-        )
-        self.statutory_parent_mapping = {}
-        self.geography_parent_mapping = {}
-
-    def convert_to_dict(self, data_list, columns) :
-        result_list = []
-        if len(data_list) > 1 :
-            if len(data_list[0]) == len(columns) :
-                for data in data_list:
-                    result = {}
-                    for d, i in enumerate(data):
-                        result[columns[i]] = d
-                    result_list.append(result)
-        else :
-            if len(data_list) == len(columns) :
-                result = {}
-                for d, i in enumerate(data_list):
-                    result[columns[i]] = d
-                result_list.append(result)
-
-        return result_list
-
-
-    def validate_session_token(self, session_token) :
-        # query = "CALL sp_validate_session_token ('%s');" 
-        #% (session_token)
-        query = "SELECT user_id FROM tbl_user_sessions \
-            WHERE session_token = '%s'" % (session_token)
-        row = self.select_one(query)
-        user_id = row[0]
-        return user_id
 
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and user_name='%s'" % (
@@ -1685,7 +1554,6 @@ class KnowledgeDatabase(Database):
     #
 
     def save_statutory_mapping(self, data, created_by) :
-
         country_id =data.country_id
         domain_id =data.domain_id
         industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
@@ -1813,28 +1681,6 @@ class KnowledgeDatabase(Database):
                     compliance_description, document_name, format_file, penal_consequences, compliance_frequency,
                     statutory_dates, mapping_id, is_active, created_by, created_on)
 
-    def save_unit(self, client_id,  units, business_group_id, legal_entity_id, division_id, session_user):
-        current_time_stamp = self.get_date_time()
-        columns = ["unit_id", "client_id", "legal_entity_id", "country_id", "geography_id", "industry_id", 
-        "domain_ids", "unit_code", "unit_name", "address", "postal_code", "is_active", "created_by", 
-        "created_on", "updated_by", "updated_on"]
-        if business_group_id != None:
-            columns.append("business_group_id")
-        if division_id != None:
-            columns.append("division_id")
-        values_list = []
-        for unit in units:
-            domain_ids = ",".join(str(x) for x in unit["domain_ids"])
-            if business_group_id != None and division_id != None:
-                values_tuple = (str(unit["unit_id"]), client_id, legal_entity_id, str(unit["country_id"]), str(unit["geography_id"]),
-                    str(unit["industry_id"]), domain_ids, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
-                    str(unit["postal_code"]), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
-                    business_group_id, division_id)
-            elif business_group_id != None:
-                values_tuple = (str(unit["unit_id"]), client_id, legal_entity_id, str(unit["country_id"]), str(unit["geography_id"]),
-                    str(unit["industry_id"]), domain_ids, str(unit["unit_code"]), str(unit["unit_name"]), str(unit["unit_address"]),
-                    str(unit["postal_code"]), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
-                    business_group_id)    
             elif compliance_frequency == 4 :
                 query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
                     compliance_task, compliance_description, document_name, format_file, \
@@ -1857,15 +1703,6 @@ class KnowledgeDatabase(Database):
 
             if (self.execute(query)) :
                 compliance_ids.append(compliance_id)
-
-    def reactivateUnit(self, client_id, unit_id, session_user):
-        current_time_stamp = str(self.get_date_time())
-        columns = ["is_active", "updated_on" , "updated_by"]
-        values = [1, current_time_stamp, session_user]
-        condition = "unit_id = '%d' and client_id = '%d' "% (unit_id, client_id)
-        return self.update(self.tblUnits, columns, values, condition)
-
-
 
         return compliance_ids
 
