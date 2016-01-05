@@ -327,18 +327,19 @@ class KnowledgeDatabase(Database):
         self.geography_parent_mapping = {}
 
     def convert_to_dict(self, data_list, columns) :
+        assert type(data_list) in (list, tuple)
         result_list = []
         if len(data_list) > 1 :
             if len(data_list[0]) == len(columns) :
                 for data in data_list:
                     result = {}
-                    for d, i in enumerate(data):
+                    for i, d in enumerate(data):
                         result[columns[i]] = d
                     result_list.append(result)
         else :
             if len(data_list) == len(columns) :
                 result = {}
-                for d, i in enumerate(data_list):
+                for i, d in enumerate(data_list):
                     result[columns[i]] = d
                 result_list.append(result)
 
@@ -353,6 +354,12 @@ class KnowledgeDatabase(Database):
         row = self.select_one(query)
         user_id = row[0]
         return user_id
+
+    def encrypt(self, value):
+        m = hashlib.md5()
+        m.update(value)
+        return m.hexdigest()
+
 
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and user_name='%s'" % (
