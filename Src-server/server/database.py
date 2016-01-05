@@ -366,7 +366,7 @@ class KnowledgeDatabase(Database):
             password, username
         )
         admin_details = self.get_data("tbl_admin", "*", tblAdminCondition)
-        print admin_details
+
         if (len(admin_details) == 0) :
             data_columns = ["user_id", "user_group_id", "email_id", 
                 "employee_name", "employee_code", "contact_no", "address", 
@@ -381,9 +381,11 @@ class KnowledgeDatabase(Database):
                 WHERE t1.password='%s' and t1.email_id='%s'" % (
                     password, username
                 )
-            print query
             data_list = self.select_one(query)
-            return self.convert_to_dict(data_list, data_columns)
+            if data_list is None :
+                return False
+            else :
+                return self.convert_to_dict(data_list, data_columns)
         else :
             return True
 
