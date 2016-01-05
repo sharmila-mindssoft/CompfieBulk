@@ -1,10 +1,10 @@
 var industriesList;
 $(".btn-industry-add").click(function(){
-$("#industry-view").hide();
-$("#industry-add").show();
-$("#industryname").val('');
-$("#industryid").val('');
-$(".error-message").html('');
+  $("#industry-view").hide();
+  $("#industry-add").show();
+  $("#industryname").val('');
+  $("#industryid").val('');
+  $(".error-message").html('');
 });
 $(".btn-industry-cancel").click(function(){
   $("#industry-add").hide();
@@ -123,6 +123,18 @@ function changeStatus (industryId,isActive) {
   function failure(data){
   }
   mirror.changeIndustryStatus(industryId, isActive, success, failure);
+}
+
+
+function getIndustries () {
+  function success(status,data){
+    tempIndustryList = data["industries"];
+    industriesList = data["industries"];
+    loadIndustryList(industriesList);
+  }
+  function failure(data){
+  }
+  mirror.getIndustryList(success, failure);
 }
 
 $("#search-industry-name").keyup(function() { 

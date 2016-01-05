@@ -4,139 +4,304 @@ import tornado.ioloop
 import tornado.web
 import uuid
 
-from models import *
 from aparajitha.server.common import *
 from aparajitha.server.knowledge.models import DomainList, CountryList
 from aparajitha.server.databasehandler import DatabaseHandler
 
 __all__ = [
-    "UserGroupController",
-    "UserController",
+    "UserGroup",
+    "User",
     "ChangePassword",
     "ForgotPassword"
 ]
 
-class UserGroupController() :
-    def getUserGroupsFormData(self) :
-    	knowledgeForms = Form.getForms("knowledge")
-    	technoForms = Form.getForms("techno")
+class UserGroup() :
+    db = None
+    userGroupId =  None
+    userGroupName = None
+    formCategoryId = None
+    formIds = None
+    isActive = 1
+
+    def __init__(self) :
+        self.db = DatabaseHandler.instance()
+
+    def toDetailedStructure(self) :
+        return {
+            "user_group_id": self.userGroupId,
+            "user_group_name": self.userGroupName,
+            "form_category_id": self.formCategoryId,
+            "form_ids": self.formIds,
+            "is_active": self.isActive
+        }
+
+    def toStructure(self) :
+        return {
+            "user_group_id": self.userGroupId,
+            "user_group_name": self.userGroupName,
+            "is_active": self.isActive
+        }
+
+    def getForms(self) :
+        form = Form()
+    	resultRows = form.getForms()
+
+        knowledgeForms = []
+        technoForms = []
+
+        for row in resultRows:
+            if int(row[1]) == 2:
+                form = Form(formId = row[0], formName = row[5], formUrl = row[6], formOrder = row[7], 
+                    formType = row[4], Category = row[2], parentMenu = row[8])
+                knowledgeForms.append(form)
+            elif int(row[1]) == 3: 
+                form = Form(formId = row[0], formName = row[5], formUrl = row[6], formOrder = row[7], 
+                    formType = row[4], Category = row[2], parentMenu = row[8])
+                technoForms.append(form)
 
         result = {}
-        result["knowledge"] = Menu.getMenu(knowledgeForms)
-        result["techno"] = Menu.getMenu(technoForms)
+        knowledgeMenu = Menu()
+        technoMenu = Menu()
+        result[2] = knowledgeMenu.generateMenu(knowledgeForms)
+        result[3] = technoMenu.generateMenu(technoForms)
 
         return result
 
-    def getUserGroups(self) :
-    	forms = self.getUserGroupsFormData()
-    	userGroupList = UserGroup.getDetailedList()
+    def getUserGroupDetailedList(self):
+        userGroupList = []
+        rows = self.db.getUserGroupDetailedList()
+        for row in rows:
+            self.userGroupId = int(row[0])
+            self.userGroupName = row[1]
+            self.formCategoryId = row[2]
+            self.formIds = [int(x) for x in row[3].split(",")]
+            self.isActive = row[4]
+            userGroupList.append(self.toDetailedStructure())
+        return userGroupList
 
+    def getUserGroupList(self):
+        userGroupList = []
+        rows = self.db.getUserGroupList()
+        for row in rows:
+            self.userGroupId = int(row[0])
+            self.userGroupName = row[1]
+            self.isActive = row[2]
+            userGroupList.append(self.toStructure())
+        return userGroupList
+
+    def getUserGroups(self) :
+    	forms = self.getForms()
+    	userGroupList = self.getUserGroupDetailedList()
+        formCategory =  FormCategory()
+        formCategories = formCategory.getFormCategories()
         response_data = {}
         response_data["forms"] = forms
         response_data["user_groups"] = userGroupList
-
+        response_data["form_categories"] = formCategories
         response = commonResponseStructure("GetUserGroupsSuccess", response_data)
         return response
 
+    def isIdInvalid(self):
+        condition = "user_group_id = '%d'" % self.userGroupId
+        return not self.db.isAlreadyExists(self.db.tblUserGroups, condition)
+
+    def generateNewUserGroupId(self) :
+        return self.db.generateNewId(self.db.tblUserGroups, "user_group_id")
+
+    def isDuplicate(self):
+        condition = "user_group_name ='"+self.userGroupName+\
+                "' AND user_group_id != '"+str(self.userGroupId)+"'"
+        return self.db.isAlreadyExists(self.db.tblUserGroups, condition)
+
     def saveUserGroup(self, requestData, sessionUser) :
-        userGroupName = JSONHelper.getString(requestData, "user_group_name")
-        formType = JSONHelper.getString(requestData, "form_type")
-        formIds =  JSONHelper.getList(requestData, "form_ids")
-        userGroup = UserGroup(None, userGroupName, formType, formIds, None)
-        if userGroup.isDuplicate() :
+        self.userGroupName = JSONHelper.getString(requestData, "user_group_name")
+        self.formCategoryId = JSONHelper.getInt(requestData, "form_category_id")
+        self.formIds =  JSONHelper.getList(requestData, "form_ids")
+        self.userGroupId = self.generateNewUserGroupId()
+        if self.isDuplicate() :
             return commonResponseStructure("GroupNameAlreadyExists",{})
-        elif userGroup.save(sessionUser) :
+        elif self.db.saveUserGroup(self) :
             return commonResponseStructure("SaveUserGroupSuccess",{})
         else:
             return commonResponseStructure("Error",{})
 
     def updateUserGroup(self, requestData, sessionUser) :
-        userGroupId = JSONHelper.getInt(requestData,"user_group_id")
-        userGroupName = JSONHelper.getString(requestData,"user_group_name")
-        formType = JSONHelper.getString(requestData,"form_type")
-        formIds =  JSONHelper.getList(requestData,"form_ids")
-        userGroup = UserGroup(userGroupId, userGroupName, formType, formIds, None)
-        if userGroup.isIdInvalid() :
+        self.userGroupId = JSONHelper.getInt(requestData,"user_group_id")
+        self.userGroupName = JSONHelper.getString(requestData,"user_group_name")
+        self.formCategoryId = JSONHelper.getInt(requestData,"form_category_id")
+        self.formIds =  JSONHelper.getList(requestData,"form_ids")
+        if self.isIdInvalid() :
             return commonResponseStructure("InvalidGroupId",{})
-        elif userGroup.isDuplicate() :
+        elif self.isDuplicate() :
             return commonResponseStructure("GroupNameAlreadyExists",{})
-        elif userGroup.update(sessionUser) :
+        elif self.db.updateUserGroup(self) :
             return commonResponseStructure("UpdateUserGroupSuccess",{})
         else:
             return commonResponseStructure("Error",{})
 
     def changeUserGroupStatus(self, requestData, sessionUser) :
-        userGroupId = JSONHelper.getInt(requestData, "user_group_id")
-        isActive = JSONHelper.getInt(requestData, "is_active")
-        userGroup = UserGroup(userGroupId, None, None, None, isActive)
-        if userGroup.isIdInvalid() :
+        self.userGroupId = JSONHelper.getInt(requestData, "user_group_id")
+        self.isActive = JSONHelper.getInt(requestData, "is_active")
+        if self.isIdInvalid() :
             return commonResponseStructure("InvalidGroupId",{})
-        elif userGroup.updateStatus(sessionUser):
+        elif self.db.updateUserGroupStatus(self.userGroupId, self.isActive):
             return commonResponseStructure("ChangeUserGroupStatusSuccess",{})
 
 
-class UserController() :
+class User() :
+
+    userId = None
+    emailId = None
+    userGroupId = None
+    employeeName = None
+    employeeCode = None
+    contactNumber = None
+    address = None
+    designation = None
+    countryIds = None
+    domainIds = None
+    isActive = 1
+
+    def __init__(self):
+        self.db = DatabaseHandler.instance()
+
+    def toDetailedStructure(self) :
+        return {
+            "user_id": self.userId,
+            "email_id": self.emailId,
+            "user_group_id": self.userGroupId,
+            "employee_name": self.employeeName,
+            "employee_code": self.employeeCode,
+            "contact_no": self.contactNo,
+            "address": self.address, 
+            "designation": self.designation,
+            "country_ids": self.countryIds,
+            "domain_ids": self.domainIds,
+            "client_ids": self.clientIds,
+            "is_active": self.isActive
+        }
+
+    def toStructure(self):
+        employeeName = None
+        if self.employeeCode == None:
+            employeeName = self.employeeName
+        else:
+            employeeName = "%s-%s" % (self.employeeCode, self.employeeName)
+        return {
+            "user_id": self.userId,
+            "employee_name": employeeName,
+            "is_active":self.isActive
+        }
+
+    def generateNewUserId(self) :
+        return self.db.generateNewId(self.db.tblUsers, "user_id")
+
+    def isDuplicateEmail(self):
+        condition = "email_id ='%s' AND user_id != '%d'" % (self.emailId, self.userId)
+        return self.db.isAlreadyExists(self.db.tblUsers, condition)
+
+    def isDuplicateEmployeeCode(self):
+        condition = "employee_code ='%s' AND user_id != '%d'" % (self.employeeCode, self.userId)
+        return self.db.isAlreadyExists(self.db.tblUsers, condition)
+
+    def isDuplicateContactNo(self):
+        condition = "contact_no ='%s' AND user_id != '%d'" % (self.contactNo, self.userId)
+        return self.db.isAlreadyExists(self.db.tblUsers, condition)
+
+    def isIdInvalid(self):
+        condition = "user_id = '%d'" % self.userId
+        return not self.db.isAlreadyExists(self.db.tblUsers, condition)
+
     def saveUser(self, requestData, sessionUser) :
-        emailId = JSONHelper.getString(requestData, "email_id")
-        userGroupId = JSONHelper.getInt(requestData,"user_group_id")
-        employeeName = JSONHelper.getString(requestData,"employee_name")
-        employeeCode = JSONHelper.getString(requestData,"employee_code")
-        contactNo = JSONHelper.getString(requestData,"contact_no")
-        address =  JSONHelper.getString(requestData,"address")
-        designation =  JSONHelper.getString(requestData,"designation")
-        countryIds = JSONHelper.getList(requestData,"country_ids")
-        domainIds = JSONHelper.getList(requestData,"domain_ids")
-        user = User(None, emailId, userGroupId, employeeName, employeeCode, contactNo, 
-                    address, designation, countryIds, domainIds, None,None)
-        if user.isDuplicateEmail() :
+        self.userId = self.generateNewUserId()
+        self.emailId = JSONHelper.getString(requestData, "email_id")
+        self.userGroupId = JSONHelper.getInt(requestData,"user_group_id")
+        self.employeeName = JSONHelper.getString(requestData,"employee_name")
+        self.employeeCode = JSONHelper.getString(requestData,"employee_code")
+        self.contactNo = JSONHelper.getString(requestData,"contact_no")
+        self.address =  JSONHelper.getString(requestData,"address")
+        self.designation =  JSONHelper.getString(requestData,"designation")
+        self.countryIds = JSONHelper.getList(requestData,"country_ids")
+        self.domainIds = JSONHelper.getList(requestData,"domain_ids")
+        if self.isDuplicateEmail() :
             return commonResponseStructure("EmailIDAlreadyExists",{})
-        elif user.isDuplicateEmployeeCode() :
+        elif self.isDuplicateEmployeeCode() :
             return commonResponseStructure("EmployeeCodeAlreadyExists",{})
-        elif user.isDuplicateContactNo() :
+        elif self.isDuplicateContactNo() :
             return commonResponseStructure("ContactNumberAlreadyExists",{})
-        elif user.save(sessionUser) :
+        elif self.db.saveUser(self) :
             return commonResponseStructure("SaveUserSuccess",{})
         else:
             return commonResponseStructure("Error",{})
 
     def updateUser(self, requestData, sessionUser) :
-        userId = JSONHelper.getInt(requestData,"user_id")
-        userGroupId = JSONHelper.getInt(requestData,"user_group_id")
-        employeeName = JSONHelper.getString(requestData,"employee_name")
-        employeeCode = JSONHelper.getString(requestData,"employee_code")
-        contactNo = JSONHelper.getString(requestData,"contact_no")
-        address =  JSONHelper.getString(requestData,"address")
-        designation =  JSONHelper.getString(requestData,"designation")
-        countryIds = JSONHelper.getList(requestData,"country_ids")
-        domainIds = JSONHelper.getList(requestData,"domain_ids")
-        user = User(userId, None, userGroupId, employeeName, employeeCode, contactNo,
-                    address, designation, countryIds, domainIds, None, None)
-        if user.isIdInvalid() :
+        self.userId = JSONHelper.getInt(requestData,"user_id")
+        self.userGroupId = JSONHelper.getInt(requestData,"user_group_id")
+        self.employeeName = JSONHelper.getString(requestData,"employee_name")
+        self.employeeCode = JSONHelper.getString(requestData,"employee_code")
+        self.contactNo = JSONHelper.getString(requestData,"contact_no")
+        self.address =  JSONHelper.getString(requestData,"address")
+        self.designation =  JSONHelper.getString(requestData,"designation")
+        self.countryIds = JSONHelper.getList(requestData,"country_ids")
+        self.domainIds = JSONHelper.getList(requestData,"domain_ids")
+        if self.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
-        elif user.isDuplicateEmployeeCode() :
+        elif self.isDuplicateEmployeeCode() :
             return commonResponseStructure("EmployeeCodeAlreadyExists",{})
-        elif user.isDuplicateContactNo() :
+        elif self.isDuplicateContactNo() :
             return commonResponseStructure("ContactNumberAlreadyExists",{})
-        elif user.update(sessionUser) :
+        elif self.db.updateUser(self) :
             return commonResponseStructure("UpdateUserSuccess",{})
         else:
             return commonResponseStructure("Error",{})
 
     def changeUserStatus(self, requestData, sessionUser):
-    	userId = JSONHelper.getInt(requestData, "user_id")
-        isActive = JSONHelper.getInt(requestData, "is_active")
-        user = User(userId, None, None, None, None, None,
-                    None, None, None, None, None,isActive)
-        if user.isIdInvalid() :
+    	self.userId = JSONHelper.getInt(requestData, "user_id")
+        self.isActive = JSONHelper.getInt(requestData, "is_active")
+        if self.isIdInvalid() :
             return commonResponseStructure("InvalidUserId",{})
-        elif user.updateStatus(sessionUser):
+        elif self.db.updateUserStatus(self.userId, self.isActive):
             return commonResponseStructure("ChangeUserStatusSuccess",{})
+
+    def getDetailedList(self):
+        userList = []
+        rows = self.db.getDetailedUserList()
+        for row in rows:
+            self.userId = row[0]
+            self.emailId = row[1]
+            self.userGroupId = row[2]
+            self.employeeName = row[3]
+            self.employeeCode = row[4]
+            self.contactNo = row[5]
+            self.address = row[6]
+            self.designation = row[7]
+            countryIds =  self.db.getUserCountries(self.userId)
+            domainIds = self.db.getUserDomains(self.userId)
+            clientIds = self.db.getUserClients(self.userId)
+            self.countryIds = None if countryIds == None else [int(x) for x in countryIds.split(",")]
+            self.domainIds = None if domainIds == None else [int(x) for x in domainIds.split(",")]
+            self.clientIds = None if clientIds == None else [int(x) for x in clientIds.split(",")]
+            self.isActive = row[8]
+            userList.append(self.toDetailedStructure())
+        return userList
+
+    def getList(self):
+        userList = []
+        rows = self.db.getUserList()
+        for row in rows:
+            self.userId = int(row[0])
+            self.employeeName = row[1]
+            self.employeeCode = row[2]
+            self.isActive = row[3]
+            userList.append(self.toStructure())
+        return userList
+
 
     def getUsers(self) :
     	domainList = DomainList.getDomainList()
         countryList = CountryList.getCountryList()
-    	userGroupList = UserGroup.getList()
-    	userList = User.getDetailedList()
+    	userGroupList = UserGroup().getUserGroupList()
+    	userList = self.getDetailedList()
 
         response_data = {}
         response_data["domains"] = domainList

@@ -17,9 +17,23 @@ function createDivElement (value, className) {
 	return divElement;
 }
 
+function sortItems (items) {
+	items.sort(function(a, b) {
+		if (a.item_name > b.item_name) {
+			return 1;
+		}
+		if (a.item_name < b.item_name) {
+			return -1;
+		}
+		return 0;
+	});
+	return items;
+}
+
 function initializeMultiCheckBox (
 	parent, items, OnItemsClickCallback
 ) {
+	items = sortItems(items);
 	var multiCheckBox = $(".multi-check-box", parent);
 	var selectedDiv = $(".multi-check-box-selected", multiCheckBox);
 	selectedDiv.empty();
@@ -187,6 +201,7 @@ function initializeMultiCheckBox (
 	}
 
 	function setSelected (all_items) {
+		all_items = sortItems(all_items);
 		selectedDiv.empty();
 		for (var i = 0; i < all_items.length; i++) {
 			var item = all_items[i];

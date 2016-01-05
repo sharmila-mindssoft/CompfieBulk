@@ -1,58 +1,91 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %} 
-<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
-<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
-<script type="text/javascript">
-        $(document).ready(function () {
-            window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:false });
-            $("#group-new").click(function(){
-              $("#group-text").show();
-              $("#group-select").hide();
-              $("#group-new").hide();
-            });
-            $("#division-new").click(function(){
-              $("#division-text").show();
-              $("#division-select").hide();
-              $("#division-new").hide();
-            });
-            $("#entity-new").click(function(){
-              $("#entity-text").show();
-              $("#entity-select").hide();
-              $("#entity-new").hide();
-            });
-        });
-</script>
+<style>
+.ac-textbox li
+{
+list-style-type:none; line-height:25px;
+}
+.ac-textbox ul {
+  border:1px solid gray;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+}
+.ac-textbox ul li {
+  font-size: 0.8em;
+  padding-right: 0.3em;
+  padding-left:0.3em;
+  vertical-align: center;
+  cursor: pointer;
+}
+.ac-textbox ul li:hover{
+  background: #EAE8E8;  
+}
+/* Autocomplete selectbox Style */
+.ac-selectbox ul {
+  background: none repeat scroll 0 0 #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.11);
+  box-sizing: border-box;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+  transition: opacity 200ms ease-out 0s, top 200ms ease-out 0s, visibility 200ms ease-out 0s;
+}
+.ac-selectbox ul li {
+  font-size: 0.8em;
+  list-style-type:none; 
+  padding: 6px;
+  padding-left: 2em;
+  vertical-align: center;
+  cursor: pointer;
+  background: url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li:hover{
+  
+  background:  #EAE8E8 url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox {
+  background: url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox:hover {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+</style>
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
       <div class="add-container-heading">Unit Details <span class="error-message"></span></div>
-      <h2>RG Groups</h2>
+      <!-- <h2>RG Groups</h2> -->
       <div class="input-row-left">
        <div class="input-row">
           <div class="field-label">Country<span class="mandatory">*</span>:</div>
           <div class="field-input">
-            <select class="input-box">
-              <option selected="selected">India</option>
-              <option>Sri Lanka</option>
-              <option>Singapore</option>
-              <option>Malaysia</option>
+            <select class="input-box" id="countries" >
+              <option value="">Select</option>
+        
             </select>
           </div>
         </div>
          <div class="input-row">
           <div class="field-label">Domain:</div>
           <div class="field-input">
-            <select multiple="multiple" style="height:2em;font-size:13px" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box">
-              <option value="Labour Law" >Labour Law</option>
-              <option value="Industrial Law" >Industrial Law</option>
-              <option value="Finance">Finance</option>
-            </select>
+            <input type="hidden" id="domain"> 
+            <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto_domains()"> 
+            <div id="selectboxview-domains" class="ac-selectbox" style="display:none;" onmouseleave="hidedomainmenu();">
+              <ul style="width:213px;"></ul> 
+            </div>
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">Business Group:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="businessgroup" value="RG Business Group" placeholder="Enter Business Group" />
+          <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" style="width:213px;"  onkeyup="loadauto_businessgroups(this.value)"> 
+            <input type="hidden" id="businessgroupid"> 
+            <div id="autocompleteview-bgroups" class="ac-textbox" style="display:none;"  onclick="hidebgroupslist();">
+              <ul style="width:195px;"></ul> 
+            </div>
           </div>
         </div>           
       </div>
@@ -61,26 +94,37 @@
         <div class="input-row">
           <div class="field-label">Legal Entity:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="entity" value="RG Entity" placeholder="Enter Legal Entity" />
+           <input type="text" class="input-box icon-autocomplete" id="legalentityval" value="" style="width:213px;"  onkeyup="loadauto_lentity(this.value)"> 
+            <input type="hidden" id="legalentityid"> 
+            <div id="autocompleteview-lentity" class="ac-textbox" style="display:none;"  onclick="hidelentitylist();">
+              <ul style="width:195px;"></ul> 
+            </div>
           </div>
         </div>
          <div class="input-row">
           <div class="field-label">Division:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="division" value="RG Division" placeholder="Enter Division Name" />
+            <input type="text" class="input-box icon-autocomplete" id="divisionval" value="" style="width:213px;"  onkeyup="loadauto_division(this.value)"> 
+            <input type="hidden" id="divisionid"> 
+            <div id="autocompleteview-division" class="ac-textbox" style="display:none;"  onclick="hidedivisionlist();">
+              <ul style="width:195px;"></ul> 
+            </div>
           </div>
         </div>
            <div class="input-row">
           <div class="field-label"> Unit:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" autofocus id="unit" value="" placeholder="Unit" />
+              <input type="text" class="input-box icon-autocomplete" id="unitval" value="" style="width:213px;"  onkeyup="loadauto_unit(this.value)"> 
+            <input type="hidden" id="unitid"> 
+            <div id="autocompleteview-unit" class="ac-textbox" style="display:none;"  onclick="hideunitlist();">
+              <ul style="width:195px;"></ul> 
+            </div>
           </div>
-        </div>
-        
+        </div>      
        
       </div>
       <div class="submit-button-container">
-        <input type="submit" name="cancel" value="Show" class="btn-submit">
+        <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit">
         <input type="submit" name="cancel" value="Export" class="btn-submit">
       </div>
       <div class="clearfix"></div>
@@ -88,15 +132,16 @@
         <h1>Unit Details</h1>
         <div style="margin-left:15%;">
           <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
-           <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Business Group  :<span style="margin-left:10px; font-weight:bold;">RG Business Group</span> </div>
-        
+
+           <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;" class="countryval"
+           ></span> </div>
+            
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Business Group :<span style="margin-left:10px; font-weight:bold;" class="bgroupsval"> </span> </div>
           </div>
           <div style="float:right; margin-right:20%;">
-             
-              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Legal Entity :<span style="margin-left:10px; font-weight:bold;">RG Entity</span> </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Legal Entity  :<span style="margin-left:10px; font-weight:bold;" class="lentityval"></span> </div>
            
-           <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Division :<span style="margin-left:10px; font-weight:bold;">RG Division</span> </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Division :<span style="margin-left:10px; font-weight:bold;" class="divisionval"></span> </div>
             
           </div>
         </div>
@@ -104,85 +149,32 @@
           <tr align="left">
             <th width="3%" align="center" class="header-bg">#</th>
             <th width="15%" class="header-bg">Unit</th>
-            <th width="15%" class="header-bg">Domain</th>
-            <th width="22%"  class="header-bg">Unit Location</th>
+            <th width="15%" class="header-bg">Domain</th>            
             <th width="20%" class="header-bg">Unit Address</th>
+            <th width="22%" class="header-bg">Unit Location</th>
             <th class="header-bg" width="10%">Postal Code</th>
           </tr>
-          <tr>
-            <td align="center">1</td>
-            <td>RG1001 - Corporate Office</td>
-            <td>Labour Law, Industrial Law</td>
-            <td>New Delhi, North Region, India</td>
-            <td>33, New Friends Colony, Tamoor Nagar, New Delhi</td>
-           <td>110022</td>
-            
-          </tr>
-          <tr>
-            <td align="center">2</td>
-            <td>RG1002 - Regional Office</td>
-            <td>Labour Law, Industrial Law</td>
-            <td>Chennai, Tamil Nadu, South Region, India</td>
-            <td>152, Anna Nagar, Chennai</td>
-         <td>600001</td>
-            
-          </tr>
-          <tr>
-            <td align="center">3</td>
-            <td>RG1003 - Branch Office - 1</td>
-            <td>Labour Law</td>
-            <td>Madurai Corporation, Madurai, Tamil Nadu, South Region, India</td>
-            <td>124, South Gate, Madurai</td>
-           <td>625005</td>
-            
-          </tr>
-    
-          <tr>
-            <td align="center">4</td>
-            <td>RG1004 - Branch Office - 2</td>
-            <td>Labour Law, Industrial Law</td>
-            <td>Chennai, Tamil Nadu, South Region, India</td>
-             <td>33, New Friends Colony, KK Nagar, Chennai</td>
-        <td>600002</td>
-           
-          </tr>
-          <tr>
-            <td align="center">5</td>
-            <td>RG1005 - Branch Office - 3</td>
-            <td>Labour Law</td>
-            <td>Aviyur, Madurai, Tamil Nadu, South Region, India</td>
-            <td>24, Aviyur, Madurai</td>
-<td>625032</td>
-          
-                      </tr>
+          <tbody class="tbody-unitdetails-list">
+          </tbody>
         </table>
-         <p>Total : 5 records</p>
+        <p style="border-top:1px dashed #ccc;" class="total-records"></p>
       </div>
     </div>
   </div>
 </div>
-<script>
-$(function(){
-  $('#client').autoComplete({
-      minChars: 1,
-      source: function(term, suggest){
-          term = term.toLowerCase();
-          var choices = ['TVS', 'PRG', 'ART'];
-          var suggestions = [];
-          for (i=0;i<choices.length;i++)
-              if (~choices[i].toLowerCase().indexOf(term)) suggestions.push(choices[i]);
-          suggest(suggestions);
-      }
-  });
- 
-});
-</script> 
 
-<script type="text/javascript">
-  jQuery(window).load(function(){
-    jQuery('.page-load').tipso({
-      tooltipHover: true
-    });
-  });
-</script>
+<div id="templates">
+  <table class="table-unitdetails-list">
+    <tr class="table-row" >
+      <td align="center" class="sno"></td>
+      <td class="unit-name"></td>
+      <td class="domain-name"></td>  
+      <td class="unit-address"></td>
+      <td class="unit-location"></td>
+      <td class="pincode"></td>
+    </tr>
+  </table>
+</div>
+
+<script type="text/javascript" src="/files/desktop/ClientGroupReport/clientgroupreport.js"></script>
 {% endblock %}

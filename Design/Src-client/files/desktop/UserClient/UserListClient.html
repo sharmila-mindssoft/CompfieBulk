@@ -5,6 +5,27 @@
 <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/popup/popup.css">
 <script type="text/javascript" src="/files/desktop/common/js/popup/modernizr.js"></script>
 <style>
+.ac-textbox li
+{
+list-style-type:none; line-height:25px;
+}
+.ac-textbox ul {
+  border:1px solid gray;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+}
+.ac-textbox ul li {
+  font-size: 0.8em;
+  padding-right: 0.3em;
+  padding-left:0.3em;
+  vertical-align: center;
+  cursor: pointer;
+}
+.ac-textbox ul li:hover{
+  background: #EAE8E8;  
+}
+
 .modaltable th
 {
   padding: 5px;
@@ -17,6 +38,126 @@
  #inactiveid{
   cursor:pointer;
 }  
+.ac-selectbox ul {
+  background: none repeat scroll 0 0 #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.11);
+  box-sizing: border-box;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+  transition: opacity 200ms ease-out 0s, top 200ms ease-out 0s, visibility 200ms ease-out 0s;
+  max-height: 240px;
+  overflow-y: scroll;
+
+}
+.ac-selectbox ul li {
+  font-size: 0.8em;
+  list-style-type:none; 
+  padding: 6px;
+  padding-left: 2em;
+  vertical-align: center;
+  cursor: pointer;
+  background: url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li:hover{
+  
+  background:  #EAE8E8 url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox {
+  background: url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox:hover {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox_country {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox_bgroups {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox_legal_entities{
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox_division{
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox_domains{
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.heading{
+  color: #000;
+  font-size: 1em;
+  height: 2.25em;
+  margin-bottom:0px;
+}
+.date-configuration{
+  max-height: 270px;
+  overflow: auto;
+}
+.li-heading{  
+  background: #ddd !important;
+  padding-left: 6px !important;
+  font-size: 0.813em !important;
+  font-weight: bold;
+}
+.li-unit-heading{
+  background: #ddd !important;
+  padding-left: 6px !important;
+  font-size: 0.813em !important;
+  font-weight: bold;
+}
+/*Modal Popup*/
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 30%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup .close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  transition: all 200ms;
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: orange;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+}
+
 </style>
 <div class="content-container" id="user-view">
   <div class="content-area">
@@ -84,12 +225,11 @@
     <td class="group-name"></td>
     <td class="level-name"></td>
     <td class="seating-unit">
-      <abbr class="page-load tipso_style" title="26, West Steet, New Delhi, 110001">
-      <img src="/images/icon-info.png" style="margin-right:10px"/>VBM1001 - Corporate Office
+    
     </td>
     <td align="center" class="edit"></td>
-    <td align="center" class="is-active"><img src="/images/icon-inactive.png" title="Click here to activate" id="inactiveid"/></td>
-    <td align="center" class="promote-admin"><a href="#"><img src="/images/promote-active.png" title="Click here to Promote Admin" id="promoteadminid" /></a></td>
+    <td align="center" class="is-active"></td>
+    <td align="center" class="promote-admin"></td>
   </tr>
 </table>
 </div>
@@ -100,7 +240,7 @@
     <div class="add-container">
       <div class="add-container-heading">Users<span class="error-message"></span></div>
       <div class="input-row-left">
-        <div class="input-row">
+        <div class="input-row"><input type="hidden" id="client-user-id" value="">
           <div class="field-label">User Type:<span class="mandatory">*</span></div>
           <div class="field-input">
             <select class="input-box" id="usertype" ><option selected="selected">Inhouse</option><option>Service Provider</option></select>
@@ -108,45 +248,63 @@
         </div>
            <div class="input-row service_provider">
           <div class="field-label">Service Provider:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="service-provider"></div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="serviceproviderval" value=""  onkeyup="loadauto_serviceprovider(this.value)"> 
+            <input type="hidden" id="serviceprovider"> 
+            <div id="serviceproviderview" class="ac-textbox" style="display:none;"  onclick="hidemenuserviceprovider();">
+              <ul style="width:195px;"></ul> 
+            </div>
+          </div>
         </div>
             <div class="input-row seatingunit">
           <div class="field-label">Seating Unit:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="seatingunit" autofocus value=""></div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="seatingunitval" value=""  onkeyup="loadauto_text(this.value)"> 
+            <input type="hidden" id="seatingunit"> 
+            <div id="autocompleteview" class="ac-textbox" style="display:none;"  onclick="hidemenuseatingunit();">
+              <ul style="width:195px;"></ul> 
+            </div>
+          </div>
         </div>
         <div class="input-row">
           <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box" id="employee-name"></div>
+          <div class="field-input"><input type="text" class="input-box" id="employee-name" value=""></div>
         </div>
         <div class="input-row">
           <div class="field-label">Employee ID:<span class="mandatory star">*</span></div>
-          <div class="field-input"><input type="text" class="input-box" id="employee-id"></div>
+          <div class="field-input"><input type="text" class="input-box" id="employee-id" value=""></div>
         </div>      
       </div>  
       <div class="input-row-right">
          <div class="input-row">
           <div class="field-label">Contact No:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box countrycode" id="country-code" value=""> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" id="mobile-number" value=""></div>
+          <div class="field-input"><input type="text" class="input-box countrycode" id="country-code" value=""> <input type="text" class="input-box areacode" value="" id="area-code"> <input type="text" class="input-box mobile" id="mobile-number" value=""></div>
         </div>
         <div class="input-row">
           <div class="field-label">User Group:<span class="mandatory">*</span></div>
-          <div class="field-input"><input type="text" class="input-box icon-autocomplete" id="usergroup" autofocus value=""></div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="usergroupval" value=""  onkeyup="loadauto_usergroup(this.value)"> 
+            <input type="hidden" id="usergroup"> 
+            <div id="usergroupview" class="ac-textbox" style="display:none;" onclick="hidemenuusergroup();" >
+              <ul style="width:195px;"></ul> 
+            </div>
+          </div>
         </div>
         <div class="input-row">
           <div class="field-label">User Level:<span class="mandatory">*</span></div>
           <div class="field-input">
            <select class="input-box" id="user-level">
             <option value="">Select</option>
-            <option>Level 1</option>
-            <option>Level 2</option>
-            <option>Level 3</option>
-            <option>Level 4</option>
-            <option>Level 5</option>
-            <option>Level 6</option>
-            <option>Level 7</option>
-            <option>Level 8</option>
-            <option>Level 9</option>
-            <option>Level 10</option>
+            <option value="1">Level 1</option>
+            <option value="2">Level 2</option>
+            <option value="3">Level 3</option>
+            <option value="4">Level 4</option>
+            <option value="5">Level 5</option>
+            <option value="6">Level 6</option>
+            <option value="7">Level 7</option>
+            <option value="8">Level 8</option>
+            <option value="9">Level 9</option>
+            <option value="10">Level 10</option>
           </select>
         </div>
       </div>
@@ -165,59 +323,53 @@
       <div class="input-row">
         <div class="field-label">Country:<span class="mandatory">*</span></div>
         <div class="field-input">
-          
-        
-          <select id="country" multiple="multiple" placeholder="Select Country" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
-            <option value="australia" >Australia</option>
-            <option value="china" >China</option>
-            <option value="india" selected>India</option>
-            <option value="malaysia" >Malaysia</option>
-            <option value="singapore" selected>Singapore</option>
-          </select>
+          <input type="hidden" id="country">
+          <input type="text" class="input-box icon-autocomplete" id="countryselected" value="" readonly="readonly" onclick="loadautocountry()"> 
+          <div id="selectboxview-country" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenu();">
+            <ul style=" width:195px;"></ul> 
+          </div>
         </div>
     </div>
     <div class="input-row">
       <div class="field-label">Business Group:<span class="mandatory">*</span></div>
       <div class="field-input">
-        <select id="legal-entity" multiple="multiple" placeholder="Select Business Group" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
-        <option value="KG Business Group 1" selected>KG Business Group 1</option>
-        <option value="KG Business Group 1" selected>KG Business Group 2</option>
-        <option value="KG Business Group 1" selected>KG Business Group 3</option>
-        </select>
+           <input type="hidden" id="business-groups">
+          <input type="text" class="input-box icon-autocomplete" id="bgroupsselected" value="" readonly="readonly" onclick="loadautobusinessgroups()"> 
+          <div id="selectboxview-businessgroup" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenubgroup();">
+            <ul style=" width:195px;"></ul> 
+          </div>
       </div>
     </div>
     <div class="input-row">
       <div class="field-label">Legal Entity:<span class="mandatory">*</span></div>
       <div class="field-input">
-        <select id="legal-entity" multiple="multiple" placeholder="Select Legal Entity" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
-          <option value="kgauto" selected>KG Autoparts</option>
-          <option value="kgtrans" selected>KG Transports</option>
-          <option value="kgbooking" selected>KG Booking</option>
-          <option value="kgservices" selected>KG Services</option>
-        </select>
+        <input type="hidden" id="legal-entities">
+        <input type="text" class="input-box icon-autocomplete" id="legal-entities-selected" value="" readonly="readonly" onclick="loadautolegalentities()"> 
+        <div id="selectboxview-legal-entities" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenulegalentities();">
+          <ul style=" width:195px;"></ul> 
+        </div>
       </div>
     </div>
   </div>
   <div class="input-row-right">           
     <div class="input-row">
       <div class="field-label">Division:<span class="mandatory">*</span></div>
-      <div class="field-input">
-        <select id="legal-entity" multiple="multiple" placeholder="Select Division" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
-          <option value="australia" >KG Manufacturing</option>
-          <option value="china" selected>KG Sales</option>
-          <option value="india" selected>KG Testing</option>
-          <option value="malaysia" selected>KG Quality Checking</option>
-        </select>
+      <div class="field-input">     
+        <input type="hidden" id="division">
+        <input type="text" class="input-box icon-autocomplete" id="division-selected" value="" readonly="readonly" onclick="loadautodivision()"> 
+        <div id="selectboxview-division" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenudivision();">
+          <ul style=" width:195px;"></ul> 
+        </div>
       </div>
       </div>
       <div class="input-row">
         <div class="field-label">Domain:<span class="mandatory">*</span></div>
         <div class="field-input">
-         <select id="legal-entity" multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box" style="120px">
-          <option value="finance" selected>Finance</option>
-          <option value="labour" selected>Labour Law</option>
-          <option value="industrial" selected>Industrial Law</option>
-        </select>
+          <input type="hidden" id="domains">
+          <input type="text" class="input-box icon-autocomplete" id="domainsselected" value="" readonly="readonly" onclick="loadautodomains()"> 
+          <div id="selectboxview-domains" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenudomains();">
+            <ul style=" width:195px;"></ul> 
+          </div>
       </div>
     </div>
   </div> 
@@ -227,21 +379,14 @@
     <table>
       <tr>
         <td style="padding-left:18px;">
+        <input type="hidden" id="units">
+        <div id="unitList">
           <ul style="height:183px; font-size:1em;">
             <li>
               <input type="text" class="filter-text-box">
-            </li>
-            <li style="font-weight:bold;background:#ddd;">KG Autoparts </li>
-            <li>VRM1001 - Corporate Office, 871, South street, Delhi</li>
-            <li>VRM1002 - Regional Office - North, 18, Main road, Simla</li>
-            <li class="active">VRM1003 - Regional Office - South, 16, North Street, Mambalam, Chennai</li>
-            <li>VRM1004 - Branch Office - 1, 85, First Floor, Hani Complex, Bangalore</li>
-            <li class="active">VRM1005 - Branch Office - 2, KK nagar, Madurai</li>
-            <li >VRM1006 - Branch Office - 3, 28,Ramnagar, Delhi</li>
-             <li style="font-weight:bold;background:#ddd">KG Transports</li>
-            <li>VRM1007 - Branch Office - 4, 28 West Street, Hydrabad</li>
-            <li class="active">VRM1008 - Branch Office - 5, 12 RJ Complex, Main road, T.Nagar, Chennai</li>
+            </li>            
           </ul>
+          </div>
           </td>
       </tr>
     </table>
@@ -249,7 +394,7 @@
   </div>
   <div class="submit-button-container">
     <input type="reset" name="cancel" value="Cancel" class="btn-cancel"  id="btn-user-cancel">&nbsp;&nbsp;
-    <input type="submit" name="submit" value="Submit" class="btn-submit">
+    <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit">
   </div>
 </div>
 </div>

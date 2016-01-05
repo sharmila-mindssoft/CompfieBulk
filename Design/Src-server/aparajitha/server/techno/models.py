@@ -233,8 +233,8 @@ class GroupCompany(object):
 
             clientDetail = clientDetails[clientId]
             groupName = clientDetail[0]
-            countryIds = settingsRows[0][0]
-            domainIds = settingsRows[0][1]
+            countryIds = [int(x) for x in settingsRows[0][0].split(",")]
+            domainIds = [int(x) for x in settingsRows[0][1].split(",")]
             isActive = clientDetail[1]
                 
             groupCompany = GroupCompany(int(clientId), groupName, None, countryIds ,domainIds, None, 
@@ -539,16 +539,16 @@ class Unit(object):
         self.unitId = unitId
         self.divisionId = int(divisionId) if divisionId != None else None
         self.legalEntityId = int(legalEntityId)
-        self.businessGroupId = int(businessGroupId) if businessGroupId != None else None
-        self.countryId = int(countryId)
-        self.geographyId = int(geographyId) if isActive != None else None
+        self.businessGroupId = int(businessGroupId)  if businessGroupId != None else None
+        self.countryId = int(countryId) 
+        self.geographyId = geographyId if businessGroupId != None else None
         self.unitCode = str(unitCode)
         self.unitName = str(unitName)
-        self.industryId = int(industryId) if isActive != None else None
+        self.industryId = industryId if businessGroupId != None else None
         self.address = str(address)
         self.postalCode = str(postalCode)
         self.domainIds = domainIds
-        self.isActive = int(isActive) if isActive != None else 1
+        self.isActive = isActive if isActive != None else 1
         self.industryName = str(industryName)
         self.geography = str(geography)
 
@@ -648,11 +648,11 @@ class Unit(object):
                             ",".join(str(x) for x in self.domainIds)]
 
         if self.businessGroupId != None:
-            columns += ", business_group_id"
-            valuesList.append(self.businessGroupId)
+            clientDbColumns += ", business_group_id"
+            clientValuesList.append(self.businessGroupId)
         if self.divisionId != None:
-            columns += ", division_id"
-            valuesList.append(self.divisionId)
+            clientDbColumns += ", division_id"
+            clientValuesList.append(self.divisionId)
         knowledgeValues = listToString(knowledgeValuesList)
         clientValues = listToString(clientValuesList)
         if ClientDatabaseHandler.instance(
@@ -696,9 +696,8 @@ class Unit(object):
     @classmethod
     def getList(self,clientIds):
         unitList = []
-        print clientIds
+
         for index, clientId in enumerate(clientIds.split(",")):
-                print clientId
             # try:
                 clientDBName = getClientDatabase(clientId)
                 clientColumns = "unit_id, division_id, legal_entity_id, "+\
@@ -717,7 +716,7 @@ class Unit(object):
                     unitName = row[5]
                     countryId = row[6]
                     address = row[7]
-                    domainIds = row[8]
+                    domainIds = [int(x) for x in row[8].split(",")] if row[8] != None else None
                     unit = Unit(unitId, divisionId, legalEntityId, businessGroupId, 
                             int(clientId), countryId, None, unitCode, unitName,
                             None, address, None, domainIds, None, None, None)
@@ -740,7 +739,7 @@ class Unit(object):
                             ("legal_entity_id","legal_entity_id"),
                             ("business_group_id","business_group_id")]
 
-        clientDBName = self.getClientDatabaseName(clientId)
+        clientDBName = getClientDatabase(clientId)
         rows = ClientDatabaseHandler.instance(clientDBName).getDataFromMultipleTables(
             columns, tables, conditionColumns, "left join")
         
@@ -922,11 +921,11 @@ class Client(object):
             rows = ClientDatabaseHandler.instance(clientDBName).getDataFromMultipleTables(
             userDetailsColumns, userDetailsTables, userDetailsConditions, "left join")
 
-            contractFrom = settingsRows[0][0]
-            contractTo = settingsRows[0][1]
+            contractFrom = datetimeToString(timestampToDatetime(settingsRows[0][0]))
+            contractTo = datetimeToString(timestampToDatetime(settingsRows[0][1]))
             noOfUserLicence = settingsRows[0][2]
             fileSpace = settingsRows[0][3]
-            usedSpace = 34
+            usedSpace = 1.2
 
             licenceHolders = []
             for row in rows:
@@ -989,11 +988,7 @@ class Client(object):
         if unitId != None:
             condition += " AND unit_id = '%d'" % unitId
         if domainIds != None:
-            for domainId in domainIds:
-                condition += " AND  ( domain_ids LIKE  '%,"+str(domainId)+",%' "+\
-                            "or domain_ids LIKE  '%,"+str(domainId)+"' "+\
-                            "or domain_ids LIKE  '"+str(domainId)+",%'"+\
-                            " or domain_ids LIKE '"+str(domainId)+"') "
+            condition += " AND domain_ids in ({})".format(",".join(str(x) for x in domainIds))
 
         rows = ClientDatabaseHandler.instance(clientDBName).getData(self.unitTblName,
             columns, condition)
@@ -1003,9 +998,9 @@ class Client(object):
         for row in rows:
             unitDetails = {}
             unitDetails["unit_name"] = "%s - %s" % (row[3], row[4])
-            unitDetails["unit_location_and_address"] = "%s - %s" % (
-                row[5], row[6])
-            unitDetails["domain_ids"] = row[7]
+            unitDetails["unit_location"] =  row[5]
+            unitDetails["unit_address"] =  row[6]
+            unitDetails["domain_ids"] = [int(x) for x in row[7].split(",")]
             unitDetails["postal_code"] = row[8]
             divisionId = row[2]
             if divisionId in divisionWiseUnitDetails:

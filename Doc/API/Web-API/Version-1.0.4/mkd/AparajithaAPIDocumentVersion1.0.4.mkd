@@ -116,27 +116,12 @@ Note :
         {}  
     ]      
 
-## Request Format
-
-    {
-        "session_token": SESSION_TOKEN,
-        "request": will be any of the following requests
-    }
-
-    Possible Errors
-
-    [
-        "InvalidSessionToken",
-        {}  
-    ]
-
-  	Note : All Requests will be in the above format
-
 ## Change Password
 
     [
         "ChangePassword",
         {
+            "session_token": SESSION_TOKEN,
             "current_password": String,
             "new_password": String  
         }
@@ -156,14 +141,23 @@ Note :
         {}
     ]
 
-# COMMON
+# Request Format
 
-## General Success response
+    {
+        "session_token": SESSION_TOKEN,
+        "request": will be any of the following requests
+    }
+
+    Possible Errors
 
     [
-        "Success",
-        {}
+        "InvalidSessionToken",
+        {}  
     ]
+
+    Note : All the following Requests will be in the above format
+
+# COMMON
 
 ## General Error response
 
@@ -350,10 +344,10 @@ Note :
     [
       	"GetUserGroupsSuccess",
       	{
-        	"forms": {
-          		"knowledge": Menu,
-          		"techno": Menu
-        	},
+        	"form_categories": [FormCategory,],
+          "forms": {
+            FORM_CATEGORY_ID : [Form,],
+          }
         	"user_groups": [UserGroup,]
       	}
     ]
@@ -364,7 +358,7 @@ Note :
         "SaveUserGroup",
         {
           	"user_group_name": USER_GROUP_NAME,
-          	"form_type": FORM_TYPE,
+          	"form_category_id": FORM_CATEGORY_ID,
           	"form_ids": [FORM_ID, ]
         }
     ]
@@ -390,7 +384,7 @@ Note :
         {
           "user_group_id" : USER_GROUP_ID,
           "user_group_name": USER_GROUP_NAME,
-          "form_type": FORM_TYPE,
+          "form_category_id": FORM_CATEGORY_ID,
           "form_ids": [FORM_ID, ]
         }
     ]

@@ -14,6 +14,7 @@ from knowledge import handler as knowledge_handler
 from client import handler as client_admin_handler
 from admin import handler as admin_handler
 from techno import handler as techno_handler
+from login import handler as login_handler
 
 TEMPLATE_PATHS = [
     ("/", "files/desktop/Login/Login.html", "files/mobile/Login/Login.html", {}),
@@ -685,6 +686,14 @@ def run_server() :
         entry = (url, handler, args)
         application_urls.append(entry)
 
+    for url, handler in login_handler.initializeLoginHandler():
+        args = {
+            "url": url,
+            "handler": handler
+        }
+        entry = (url, handler, args)
+        application_urls.append(entry)
+
     for url, handler in knowledge_handler.initializeKnowledgeHandler() :
         args = {
             "url": url,
@@ -692,6 +701,7 @@ def run_server() :
         }
         entry = (url, handler, args)
         application_urls.append(entry)
+
 
     static_path = os.path.join(ROOT_PATH, "Src-client")
     files_path = os.path.join(static_path, "files")

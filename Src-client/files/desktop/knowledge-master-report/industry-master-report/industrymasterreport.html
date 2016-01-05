@@ -1,0 +1,40 @@
+{% extends "files/desktop/home/container.html" %}
+{% block content %}
+<div class="content-container width40">
+  <div class="content-area">
+    <h1>Industries</h1>
+    <div class="clearfix"></div>
+    <div class="grid-table">
+      <table>
+        <tr align="left">
+          <th width="10%" align="center">#</th>
+          <th width="70%">Industry</th>          
+          <th width="20%" align="center">Status</th>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td><input type="text" id="search-industry-name" class="filter-text-box"></td>
+          
+          <td>&nbsp;</td>
+        </tr>
+          <tbody class="tbody-industry-list">        
+        </tbody>
+       
+        
+         <tr>
+          <td colspan="3" style="border-top:1px dashed #ccc;"><p id="total-records"></p></td>
+        </tr> 
+      </table>
+    </div>
+  </div>
+</div>
+<div id="templates">
+<table class="table-industry-report">
+  <tr class="table-row">
+    <td align="center" class="sno"></td>
+    <td class="industry-name"></td>         
+    <td align="center" class="is-active"></td>
+  </tr>
+</table>
+</div>
+<script type="text/javascript" src="/files/desktop/knowledge-master-report/industry-master-report/industrymasterreport.js"></script>{% endblock %} 

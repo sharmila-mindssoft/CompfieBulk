@@ -1,1 +1,1 @@
-{"1": "mirror_ClientTestGroup1_1"}
+{"1": "mirror_PRPGroups_1", "3": "mirror_test_3", "2": "mirror_VMLGroups_2", "4": "mirror_HPGroups_4"}

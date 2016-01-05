@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<head>
+  <title>Aparajitha</title>
+  <meta http-equiv="Cache-control" content="no-cache">
+  <meta http-equiv="Expires" content="-1">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="" />
+  <meta name="keywords" content="" />
+  <meta property="og:title" content=""/>
+  <meta property="og:description" content="" />
+  <meta property="og:url" content="" />
+  <meta property="og:site_name" content="" />
+  <meta property="og:image" content="" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="316" />
+  <meta property="og:image:height" content="316" />
+  <meta property="og:type" content="Website" />
+  <meta name="twitter:card" content="Summary" /> 
+  <meta name="twitter:site" content="" />
+  <meta name="twitter:title" content="" />
+  <meta name="twitter:description" content="" />
+  <meta name="twitter:url" content="" />
+  <meta name="twitter:image:src" content="" />
+  <link rel="shortcut icon" href="/files/desktop/common/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="icon" href="/files/desktop/common/images/favicon.ico" type="image/x-icon" property="icon">
+  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/reset.css">
+  <link rel="stylesheet" type="text/css" href="/files/desktop/home/dashboard.css">
+  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/styles.css">
+  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/navigation.css">
+  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/styles-report.css">
+  <script type="text/javascript" src="/files/desktop/common/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/js/html5.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/js/menu-script.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/js/highcharts.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/js/highcharts-3d.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/js/exporting.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/js/standalone-framework.js"></script>
+  <script src="/files/desktop/common/js/mirror.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#my-account").click(function() {
+        $(".top-nav ul li ul").slideToggle(); 
+      })
+    })
+  </script>
+</head>
+<body>
+  <div id="wrapper">
+    <div class="main-content-area">
+      <div class="header-section">
+        <!-- {% if user == "business@domain.com" %} 
+          {% include "files/desktop/NavBar/BusinessNavBar.html" %}
+        {% elif user == "itManager@domain.com" %}
+          {% include "files/desktop/NavBar/ITManagerNavBar.html" %}
+        {% elif user == "itUser@domain.com" %}
+          {% include "files/desktop/NavBar/ITUserNavBar.html" %}
+        {% elif user == "serviceproviderManager@domain.com" %}
+          {% include "files/desktop/NavBar/ServiceManagerNavBar.html" %}
+        {% elif user == "serviceproviderUser@domain.com" %}
+          {% include "files/desktop/NavBar/ServiceUserNavBar.html" %}
+        {% elif user == "knowledgeManager@domain.com" %}
+          {% include "files/desktop/NavBar/KnowledgeManagerNavBar.html" %}
+        {% elif user == "knowledgeUser@domain.com" %}
+          {% include "files/desktop/NavBar/KnowledgeUserNavBar.html" %}
+        {% elif user == "client@domain.com" %}
+          {% include "files/desktop/NavBar/InhouseNavBar.html" %}
+        {% elif user == "clientadmin@domain.com" %}
+          {% include "files/desktop/NavBar/ClientNavBar.html" %}
+        {% elif user == "inhouse@domain.com" %}
+          {% include "files/desktop/NavBar/InhouseNavBar.html" %}
+        {% elif user == "technoManager@domain.com" %}
+          {% include "files/desktop/NavBar/TechnoManagerNavBar.html" %}
+        {% elif user == "technoUser@domain.com" %}
+          {% include "files/desktop/NavBar/TechnoUserNavBar.html" %}
+        {% elif user == "bmanager@domain.com" %}
+          {% include "files/desktop/NavBar/BManagerNavBar.html" %}
+        {% elif user == "sales@domain.com" %}
+          {% include "files/desktop/NavBar/SalesNavBar.html" %}
+        {% endif %}
+        {% block menu %} {% endblock %} -->
+      </div>
+      {% block content %} {% endblock %}
+    </div>
+    <!-- <div class="clearfix"></div> -->
+    <div class="push"></div>
+  </div>
+  {% extends "files/desktop/footer/footer.html" %}
