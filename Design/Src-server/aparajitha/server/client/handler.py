@@ -26,9 +26,9 @@ class ClientAdminAPIRequestHandler(tornado.web.RequestHandler) :
             if userId is None :
                 response = PossibleError("InvalidSessionToken")
             else :
-                serviceProvider = ServiceProviderController()
-                userPrivilege = UserPrivilegeController()
-                user = UserController()
+                serviceProvider = ServiceProvider()
+                userPrivilege = UserPrivilege()
+                user = User()
                 unitClosure = UnitClosure()
                 if request[0] == "GetUserPrivileges" :
                     response = userPrivilege.getUserPrivileges(userId)

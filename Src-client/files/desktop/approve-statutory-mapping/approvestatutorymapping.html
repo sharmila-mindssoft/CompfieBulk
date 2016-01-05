@@ -1,0 +1,236 @@
+{% extends "files/desktop/home/container.html" %}
+{% block content %}
+<style type="text/css">
+/* Autocomplete textbox Style */
+.ac-textbox li
+{
+list-style-type:none; line-height:25px;
+}
+.ac-textbox ul {
+  border:1px solid gray;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+
+}
+.ac-textbox ul li {
+  font-size: 0.8em;
+  padding-right: 0.3em;
+  padding-left:0.3em;
+  vertical-align: center;
+  cursor: pointer;
+}
+.ac-textbox ul li:hover{
+  background: #EAE8E8;  
+}
+/*siva ends*/
+
+/* popup window */
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 3px;
+  width: 50%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+/*.popup h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}*/
+.popup .close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  transition: all 200ms;
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: orange;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+  line-height: 30px;
+  font-size: 0.8em;
+}
+
+</style>
+
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Approve Statutory Mapping<span class="error-message"></span></div>
+      <div class="input-row-left">
+        <div class="input-row">
+          <div class="field-label">Country:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="countryval" onkeyup="loadauto_text(this.value)" placeholder="Enter Country"> 
+          <input type="hidden" id="country"> 
+          <div id="autocompleteview" class="ac-textbox" style="display:none;">
+                <ul id="ulist_text" onclick="hidemenu();" style="width:215px;"></ul>
+          </div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Industry:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="industryval" onkeyup="loadauto_industry(this.value)" placeholder="Enter Industry"> 
+          <input type="hidden" id="industry"> 
+          <div id="autocomplete_industry" class="ac-textbox" style="display:none;">
+                <ul id="ulist_industry" onclick="hidemenu();" style="width:215px;"></ul>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+        <div class="input-row">
+          <div class="field-label">Domain:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="domainval" onkeyup="loadauto_domain(this.value)" placeholder="Enter Domain"> 
+          <input type="hidden" id="domain"> 
+          <div id="autocomplete_domain" class="ac-textbox" style="display:none;">
+                <ul id="ulist_domain" onclick="hidemenu();" style="width:215px;"></ul>
+          </div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Statutory Nature:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="statutorynatureval" onkeyup="loadauto_statutorynature(this.value)" placeholder="Enter Statutory Nature"> 
+          <input type="hidden" id="statutorynature"> 
+          <div id="autocomplete_statutorynature" class="ac-textbox" style="display:none;">
+                <ul id="ulist_statutorynature" onclick="hidemenu();" style="width:215px;"></ul>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" class="btn-submit" onclick="loadresult()">
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table" style="display:none">
+        <table>
+          <tr align="left">
+            <th width="10%">Industry</th>
+            <th width="10%">Statutory Nature</th>
+            <th width="20%">Statutory Provision</th>
+            <th width="20%">Compliance Task</th>
+            <th width="15%">Applicable Location</th>
+            <th width="10%">Action</th>
+            <th width="15%">Reason</th>
+          </tr>
+          <tbody class="tbody-statutorymapping-list" id="filter_statutorymapping">        
+          </tbody>
+          </table>
+
+          <div class="submit-button-container" style="padding-top:10px;">
+            <input type="submit" name="cancel" value="Save" onclick="saveRecord()" class="btn-submit" >
+          </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+<div id="popup1" class="overlay">
+  <div class="popup">
+    <a class="close" href="#">x</a>
+    <div class="content">
+
+     <table width="100%">
+        <tr align="left">
+          <td width="40%" >Statutory</td>
+          <!-- <td>Section 2 <img src="/images/right_arrow.png"> Rule 3(i)</td> -->
+          <td class="popup_statutory"> </td>
+        </tr>
+        <tr align="left">
+          <td width="40%" >Statutory Nature</td>
+          <!-- <td>State</td> -->
+          <td class="popup_statutorynature"> </td>
+
+        </tr>
+        <tr>
+          <td width="40%" >Compliance Task</td>          
+          <!-- <td>FORM I - Halfyearly returns submission</td> -->
+          <td class="popup_compliancetask"> </td>
+
+        </tr>
+        <tr align="left">
+          <td width="40%" >Compliance Description</td>
+          <!-- <td>Within 30 days of opening a branch</td> -->
+          <td class="popup_compliancedescription"> </td>
+        </tr>
+        <tr align="left">
+          <td >Penal Consequences</td>
+          <!-- <td>Imprisonment With Fine</td> -->
+          <td class="popup_penalconsequences"> </td>
+
+        </tr>   
+        <tr>
+        <td >Compliance Frequency</td>
+        <!-- <td>Periodical</td> -->
+        <td class="popup_compliancefrequency"> </td>
+
+        </tr>   
+        <tr>
+        <td >Compliance Occurence</td>
+        <!-- <td>Every Year 10th March and 10th September <br>(Trigger: 15 days and 10 days)</td> -->
+        <td class="popup_complianceoccurance"> </td>
+
+        </tr>   
+        <tr>
+        <td >Applicable Location</td>
+        <!-- <td colspan="4">India >> South >> Tamilnadu</td> -->
+        <td class="popup_applicablelocation"> </td>
+
+        </tr>
+    </table>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+<div id="templates">
+<table class="table-statutorymapping">
+  <tr class="table-row">
+    <td class="industry"></td>
+    <td class="statutorynature"></td>
+    <td class="statutory"></td>
+    <td class="compliancetask"></td>
+    <td class="applicablelocation"></td>
+    <td class="action"></td>
+    <td class="reason" style="vertical-align: middle;"></td>
+  </tr>
+</table>
+</div>
+
+<script type="text/javascript" src="/files/desktop/approve-statutory-mapping/approvestatutorymapping.js"></script>
+
+
+{% endblock %}

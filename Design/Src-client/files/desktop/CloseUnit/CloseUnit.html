@@ -1,28 +1,68 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
-<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/popup/popup.css">
-<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
-<script type="text/javascript" src="/files/desktop/common/js/popup/modernizr.js"></script>
-<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
 <style>
-  .modaltable th
-  {
-    padding: 5px;
-  }
-  .modaltable td
-  {
-    padding: 10px 0px;
-    font-size: 0.813em;
-  }
+  
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 1000;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 30%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup .close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  transition: all 200ms;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: Arial;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: orange;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+}
+.popup-error-msg{
+  font-size: 0.813em;
+  color: red;
+}
 </style>
-  <div class="content-container width75">
+<div class="content-container width75">
   <div class="content-area">
-      <h1> Unit Closure</h1>
-      <div class="filters-and-search">
-      <!-- <div class="btn-add" onclick="location.href='/group_company/create'" formtarget="_self">Add</div> -->
-    </div>
-      <div class="clearfix"></div>
-      <div class="grid-table">
+   <h1> Unit Closure</h1>
+    <div class="clearfix"></div>
+    <div class="grid-table">
       <table>
           <tr align="left">
             <th align="center">#</th>
@@ -30,93 +70,52 @@
             <th>Legal Entity</th>
             <th>Division</th>
             <th width="22%">Unit</th>
-             <th width="22%">Unit Address</th>
+            <th width="22%">Unit Address</th>
             <th align="center" style="padding-right:5px;">
               Closure
             </th>
         </tr>
          <tr>
           <td align="center"></td>
-          <td><input type="text" class="filter-text-box"></td>
-          <td><input type="text" class="filter-text-box"></td>
-          <td><input type="text" class="filter-text-box"></td>
-          <td><input type="text" class="filter-text-box"></td>
-          <td><input type="text" class="filter-text-box"></td>
+          <td><input type="text" class="filter-text-box" id="business-group-search"></td>
+          <td><input type="text" class="filter-text-box" id="legalentity-search"></td>
+          <td><input type="text" class="filter-text-box" id="division-search"></td>
+          <td><input type="text" class="filter-text-box" id="unit-search"></td>
+          <td><input type="text" class="filter-text-box" id="address-search"></td>
           <td align="center"></td>
         </tr>
-        <tr>
-          <td align="center">1</td>
-          <td>RG Business Group 1</td>
-          <td>RG Entity 1</td>
-          <td>RG Division 1</td>
-          <td>RG1034 - RG Madurai Unit</td>
-           <td>142, North Street, Madurai-625001</td>
-          <td align="center"><img src="images/deletebold.png" title="close" onClick="$('.modal').toggleClass('active');"/></td>          
-        </tr>
-        <tr>
-          <td align="center">2</td>
-          <td>RG Business Group 1</td>
-          <td>RG Entity 2</td>
-          <td>RG Division 2</td>
-          <td>RG1035 - RG Dindugal Unit</td>
-           <td>8/69, Collectorate Road, Dindugal-624015</td>
-          <td>Closed</td>          
-        </tr>
-        <tr>
-          <td align="center">3</td>
-          <td>RG Business Group 1</td>
-          <td>RG Entity 2</td>
-          <td>RG Division 3</td>
-          <td>RG1036 - RG Chennai Unit</td>
-           <td>5-55, North Street, Chennai-600002</td>
-          <td align="center"><img src="images/deletebold.png" title="close" onClick="$('.modal').toggleClass('active');"/></td>               
-        </tr>
-        <tr>
-          <td align="center">4</td>
-          <td>RG Business Group 2</td>
-          <td>RG Entity 3</td>
-          <td>RG Division 4</td>
-          <td> RG1036 - RG Bangalore Unit</td>
-           <td>8/699, West Street,  Bangalore-560001</td>
-           <td align="center"><img src="images/deletebold.png" title="close" onClick="$('.modal').toggleClass('active');"/></td>         
-        </tr>
+        <tbody class="tbody-unitclosure-list">
+        </tbody>
       </table>
     </div>
-      
-    </div>
+  </div>
 </div>
-<div class="modal" style="width:20%; margin-left: -12.5%;">
-  <header>
-     <div class="close toggleModal" onClick="$('.modal').toggleClass('active');"></div>
-  </header>  
-  <section>
-  <p style="font-size:0.8em; padding-top:10px;">
+<div id="templates">
+  <table class="table-unitclosure-list">
+    <tr class="table-row">
+      <td align="center" class="sno"></td>
+      <td class="business-group"></td>
+      <td class="legal-entity"></td>
+      <td class="division"></td>
+      <td class="unit"></td>
+      <td class="unit-address"></td>
+      <td class="is-active" align="center" ></td>          
+    </tr>
+  </table>
+</div>
+ 
+<div id="popup" class="overlay" >
+  <div class="popup">
+    <a class="close" href="#">X</a>
+    <div class="content">
+      Password<br>
+      <input type="hidden" id="unitidval"> 
+     <input type="password" name="password" class="input-box" id="password" style="margin-top:10px;"><br>
+     <input type="submit" name="submit" class="btn-submit" id="popup-submit" value="Submit" onclick="unit_close()" style="margin-top:10px;">
+     <span class="popup-error-msg"></span>
+    </div>
+  </div>
+</div>
 
-      <table width="100%">
-        <tr style="height:30px">
-          <td>
-            Enter Password
-          </td>
-        </tr>
-        <tr style="height:30px">
-          <td>
-            <input type="password" class="input-box" placeholder="Password" stsyle="margin-bottom:20px"/>
-          </td>
-        </tr>
-        <tr style="height:30px;padding-top:20px">
-          <td>
-            <input type="submit" name="cancel" value="Submit" class="btn-submit" >
-          </td>
-        </tr>
-      </table>
-    </p>
-  </section>
-</div>
-<script type="text/javascript">
-jQuery(window).load(function(){
-  jQuery('.page-load').tipso({
-    tooltipHover: true
-  });
-});
-</script> 
+<script type="text/javascript" src="/files/desktop/CloseUnit/closeunit.js"></script>
 {% endblock %} 

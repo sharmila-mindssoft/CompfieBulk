@@ -1,6 +1,11 @@
 import MySQLdb as mysql
-import datetime
 import hashlib
+import string
+import random
+
+from protocol import core
+
+import datetime
 import uuid
 from types import *
 
@@ -11,7 +16,19 @@ __all__ = [
     "KnowledgeDatabase", "ClientDatabase"
 ]
 
+def generateRandom():
+    characters = string.ascii_uppercase + string.digits
+    return ''.join(random.SystemRandom().choice(characters) for _ in range(7))
 
+def generatePassword() : 
+    password = generateRandom()
+    return encrypt(password)
+
+def encrypt(value):
+    m = hashlib.md5()
+    m.update(value)
+    return m.hexdigest()
+    
 class Database(object) :
     def __init__(
         self, 
@@ -81,7 +98,7 @@ class Database(object) :
     def execute(self, query) :
         cursor = self.cursor()
         assert cursor is not None
-        cursor.execute(query)
+        return cursor.execute(query)
 
 
     def call_proc(self, procedure_name, args):
@@ -95,6 +112,58 @@ class Database(object) :
         return result
 
 class KnowledgeDatabase(Database):
+
+    tblActivityLog = "tbl_activity_log"
+    tblAdmin = "tbl_admin"
+    tblBusinessGroups = "tbl_business_groups"
+    tblClientCompliances = "tbl_client_compliances"
+    tblClientConfigurations = "tbl_client_configurations"
+    tblClientCountries = "tbl_client_countries"
+    tblClientDatabase = "tbl_client_database"
+    tblClientDomains = "tbl_client_domains"
+    tblClientGroups = "tbl_client_groups"
+    tblClientSavedCompliances = "tbl_client_saved_compliances"
+    tblClientSavedStatutories = "tbl_client_saved_statutories"
+    tblClientStatutories = "tbl_client_statutories"
+    tblClientUsers = "tbl_client_users"
+    tblComplianceDurationType = "tbl_compliance_duration_type"
+    tblComplianceFrequency = "tbl_compliance_frequency"
+    tblComplianceRepeatype = "tbl_compliance_repeat_type"
+    tblCompliances = "tbl_compliances"
+    tblCompliancesBackup = "tbl_compliances_backup"
+    tblCountries = "tbl_countries"
+    tblDatabaseServer = "tbl_database_server"
+    tblDivisions = "tbl_divisions"
+    tblDomains = "tbl_domains"
+    tblEmailVerification = "tbl_email_verification"
+    tblFormCategory = "tbl_form_category"
+    tblFormType = "tbl_form_type"
+    tblForms = "tbl_forms"
+    tblGeographies = "tbl_geographies"
+    tblGeographyLevels = "tbl_geography_levels"
+    tblIndustries = "tbl_industries"
+    tblLegalEntities = "tbl_legal_entities"
+    tblMachines = "tbl_machines"
+    tblMobileRegistration = "tbl_mobile_registration"
+    tblNotifications = "tbl_notifications"
+    tblNotificationsStatus = "tbl_notifications_status"
+    tblSessionTypes = "tbl_session_types"
+    tblStatutories = "tbl_statutories"
+    tblStatutoriesBackup = "tbl_statutories_backup"
+    tblStatutoryGeographies = "tbl_statutory_geographies"
+    tblStatutoryLevels = "tbl_statutory_levels"
+    tblStatutoryMappings = "tbl_statutory_mappings"
+    tblStatutoryNatures = "tbl_statutory_natures"
+    tblStatutoryNotificationsLog = "tbl_statutory_notifications_log"
+    tblUnits = "tbl_units"
+    tblUserClients = "tbl_user_clients"
+    tblUserCountries = "tbl_user_countries"
+    tblUserDomains = "tbl_user_domains"
+    tblUserGroups = "tbl_user_groups"
+    tblUserLoginHistory = "tbl_user_login_history"
+    tblUserSessions = "tbl_user_sessions"
+    tblUsers = "tbl_users"
+
     def __init__(
         self, 
         mysqlHost, mysqlUser, 
@@ -172,6 +241,94 @@ class KnowledgeDatabase(Database):
         query += " where %s" % whereCondition
         return self.select_all(query)
 
+    def insert(self, table, columns, values) :
+        columns = ",".join(columns)
+        stringValue = ""
+        for index,value in enumerate(values):
+            if(index < len(values)-1):
+                stringValue = stringValue+"'"+str(value)+"',"
+            else:
+                stringValue = stringValue+"'"+str(value)+"'"
+        query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
+        return self.execute(query)
+
+    def bulk_insert(self, table, columns, valueList) :
+        query = "INSERT INTO %s (%s)  VALUES" % (table, ",".join(str(x) for x in columns))
+        for index, value in enumerate(valueList):
+            if index < len(valueList)-1:
+                query += "%s," % str(value)
+            else:
+                query += str(value)
+        return self.execute(query)
+
+    def update(self, table, columns, values, condition) :
+        query = "UPDATE "+table+" set "
+        for index,column in enumerate(columns):
+            if index < len(columns)-1:
+                query += column+" = '"+str(values[index])+"', "
+            else:
+                query += column+" = '"+str(values[index])+"' "
+
+        query += " WHERE "+condition
+        return self.execute(query)
+
+    def on_duplicate_key_update(self, table, columns, valueList, updateColumnsList):
+        query = "INSERT INTO %s (%s) VALUES " % (table, columns)
+
+        for index, value in enumerate(valueList):
+            if index < len(valueList)-1:
+                query += "%s," % str(value)
+            else:
+                query += "%s" % str(value)
+
+        query += " ON DUPLICATE KEY UPDATE "
+
+        for index, updateColumn in enumerate(updateColumnsList):
+
+            if index < len(updateColumnsList)-1:
+                query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
+            else:
+                query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
+
+        return self.execute(query)
+
+    def delete(self, table, condition):
+        query = "DELETE from "+table+" WHERE "+condition
+        return self.execute(query)        
+
+    def append(self, table, column, value, condition):
+        rows = self.get_data(table, column, condition)
+        currentValue = rows[0][0]
+        if currentValue != None:
+            newValue = currentValue+","+str(value)
+        else:
+            newValue = str(value)
+        columns = [column]
+        values = [newValue]
+        return self.update(table, columns, values, condition)
+
+    def increment(self, table, column, condition):
+        rows = self.get_data(table, column, condition)
+        currentValue = rows[0][0]
+        if currentValue != None:
+            newValue = int(currentValue)+1
+        else:
+            newValue = 1
+        columns = [column]
+        values = [newValue]
+        return self.update(table, columns, values, condition)        
+
+    def is_already_exists(self, table, condition) :
+        query = "SELECT count(*) FROM "+table+" WHERE "+condition
+        rows = self.select_all(query)     
+        if rows[0][0] > 0:
+            return True
+        else : 
+            return False
+
+    def is_invalid_id(self, table, field, value):
+        condition = "%s = '%d'" % (field, value)
+        return not self.is_already_exists(table, condition) 
 
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and user_name='%s'" % (
@@ -221,6 +378,7 @@ class KnowledgeDatabase(Database):
             (session_token, user_id, session_type_id, last_accessed_time) \
             VALUES ('%s', %s, %s, '%s');"
         query = query % (session_id, user_id, session_type_id, updated_on)
+
         self.execute(query)
         return session_id
 
@@ -247,6 +405,11 @@ class KnowledgeDatabase(Database):
   #
   # Domain
   #
+
+    def get_domains(self):
+        columns = "domain_id, domain_name, is_active"
+        condition = "1"
+        return self.get_data(self.tblDomains, columns, condition)
 
     def get_domains_for_user(self, user_id) :
         # query = "CALL sp_get_domains_for_user (%s)" % (user_id)
@@ -337,7 +500,13 @@ class KnowledgeDatabase(Database):
     # Country
     #
 
+    def get_countries(self):
+        columns = "country_id, country_name, is_active"
+        condition = "1"
+        return self.get_data(self.tblCountries, columns, condition)
+
     def get_countries_for_user(self, user_id) :
+
         query = "SELECT distinct t1.country_id, t1.country_name, \
             t1.is_active FROM tbl_countries t1 "
         if user_id > 0 :
@@ -1258,6 +1427,223 @@ class KnowledgeDatabase(Database):
         compliances = data.compliances
         geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
         
+
+#
+#   Forms
+#
+    def get_forms(self):
+        columns = "tf.form_id, tf.form_category_id, tfc.form_category, "+\
+        "tf.form_type_id, tft.form_type, tf.form_name, tf.form_url, "+\
+        "tf.form_order, tf.parent_menu"
+        tables = [self.tblForms, self.tblFormCategory, self.tblFormType]
+        aliases = ["tf", "tfc", "tft"]
+        joinConditions = ["tf.form_catEgory_id = tfc.form_category_id", 
+        "tf.form_type_id = tft.form_type_id"]
+        whereCondition = " tf.form_category_id in (3,2,4) order by tf.form_order"
+        joinType = "left join"
+
+        rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, 
+            joinConditions, whereCondition)
+        return rows
+
+    def get_form_categories(self): 
+        columns = "form_category_id, form_category"
+        condition = " form_category_id in (2,3)"
+        rows = self.get_data(self.tblFormCategory, columns, condition)
+        return rows
+
+#
+#   Admin User Group
+#
+    def is_duplicate_user_group_name(self, user_group_id, user_group_name):
+        condition = "user_group_name ='%s' AND user_group_id != '%d'"%(
+            user_group_name, user_group_id)
+        return self.is_already_exists(self.tblUserGroups, condition)
+
+    def generate_new_user_group_id(self) :
+        return self.get_new_id("user_group_id", self.tblUserGroups)
+
+    def get_user_group_detailed_list(self) :
+        columns = "user_group_id, user_group_name, form_category_id, "+\
+                    "form_ids, is_active"
+        tables = self.tblUserGroups
+        where_condition = "1"
+        rows = self.get_data( tables, columns, where_condition)
+        return rows
+
+    def get_user_groups(self):
+        columns = "user_group_id, user_group_name, is_active"
+        where_condition = "1"
+        rows = self.get_data(self.tblUserGroups, columns, where_condition)
+        return rows
+
+    def save_user_group(self, user_group_id, user_group_name,
+            form_category_id, form_ids):
+        time_stamp = self.get_date_time()
+        columns = ["user_group_id", "user_group_name","form_category_id", 
+                    "form_ids", "is_active", "created_on", "created_by", 
+                    "updated_on", "updated_by"]
+        values =  [user_group_id, user_group_name, form_category_id, 
+                ",".join(str(x) for x in form_ids), 1, time_stamp, 
+                0, time_stamp, 0]
+        result = self.insert(self.tblUserGroups,columns,values)
+        return result
+
+    def update_user_group(self, user_group_id, user_group_name,
+            form_category_id, form_ids):
+        time_stamp = self.get_date_time()
+        columns = ["user_group_name","form_category_id","form_ids", "updated_on",
+                 "updated_by"]
+        values =  [user_group_name, form_category_id, 
+                ",".join(str(x) for x in form_ids), time_stamp, 0]
+        condition = "user_group_id='%d'" % user_group_id
+        return self.update(self.tblUserGroups, columns, values, condition)
+
+    def update_user_group_status(self, user_group_id, is_active):
+        time_stamp = self.get_date_time()
+        columns = ["is_active", "updated_by", "updated_on"]
+        values = [is_active, 0, time_stamp]
+        condition = "user_group_id='%d'" % user_group_id
+        result =  self.update(self.tblUserGroups, columns, values, condition)
+        return result
+
+#
+#   Admin User
+#
+    def generate_new_user_id(self):
+        return self.get_new_id("user_id", self.tblUsers)
+
+    def is_duplicate_email(self, email_id, user_id):
+        condition = "email_id ='%s' AND user_id != '%d'" % (
+            email_id, user_id)
+        return self.is_already_exists(self.tblUsers, condition)
+
+    def is_duplicate_employee_code(self, employee_code, user_id):
+        condition = "employee_code ='%s' AND user_id != '%d'" % (
+            employee_code, user_id)
+        return self.is_already_exists(self.tblUsers, condition)
+
+    def is_duplicate_contact_no(self, contact_no, user_id):
+        condition = "contact_no ='%s' AND user_id != '%d'" % (contact_no, user_id)
+        return self.is_already_exists(self.tblUsers, condition)
+
+    def get_detailed_user_list(self):
+        columns = "user_id, email_id, user_group_id, employee_name, employee_code,"+\
+                "contact_no, address, designation, is_active"
+        condition = "1"
+        rows = self.get_data(self.tblUsers, columns, condition)
+        return rows
+
+    def get_users(self):
+        columns = "user_id, employee_name, employee_code, is_active"
+        condition = "1"
+        rows = self.get_data(self.tblUsers, columns, condition)
+        return rows
+
+    def get_user_countries(self, user_id):
+        columns = "group_concat(country_id)"
+        condition = " user_id = '%d'"% user_id
+        rows = self.get_data( self.tblUserCountries, columns, condition)
+        return rows[0][0]
+
+    def get_user_domains(self, user_id):
+        columns = "group_concat(domain_id)"
+        condition = " user_id = '%d'"% user_id
+        rows = self.get_data(self.tblUserDomains, columns, condition)
+        return rows[0][0]
+
+    def save_user(self, user_id, email_id, user_group_id, employee_name,
+     employee_code, contact_no, address, designation, country_ids, domain_ids):
+        result1 = False
+        result2 = False
+        result3 = False
+        current_time_stamp = self.get_date_time()
+        user_columns = ["user_id", "email_id", "user_group_id", "password", "employee_name", 
+                    "employee_code", "contact_no", "address", "designation", "is_active", 
+                    "created_on", "created_by", "updated_on", "updated_by"]
+        user_values = [user_id, email_id, user_group_id, generatePassword(),
+                employee_name, employee_code, contact_no, address,
+                designation, 1, current_time_stamp, 0, current_time_stamp, 0]
+        result1 = self.insert(self.tblUsers, user_columns, user_values)
+
+        country_columns = ["user_id", "country_id"]
+        country_values_list = []
+        for country_id in country_ids:
+            country_value_tuple = (user_id, int(country_id))
+            country_values_list.append(country_value_tuple)
+        result2 = self.bulk_insert(self.tblUserCountries, country_columns, country_values_list)
+
+        domain_columns = ["user_id", "domain_id"]
+        domain_values_list = []
+        for domain_id in domain_ids:
+            domain_value_tuple = (user_id, int(domain_id))
+            domain_values_list.append(domain_value_tuple)
+        result3 = self.bulk_insert(self.tblUserDomains, domain_columns, domain_values_list)
+
+        return (result1 and result2 and result3)
+
+    def update_user(self, user_id, user_group_id, employee_name, employee_code, contact_no,
+        address, designation, country_ids, domain_ids):
+        result1 = False
+        result2 = False
+        result3 = False
+
+        current_time_stamp = self.get_date_time()
+        user_columns = [ "user_group_id", "employee_name", "employee_code", 
+                    "contact_no", "address", "designation",
+                    "updated_on", "updated_by"]
+        user_values = [user_group_id, employee_name, employee_code, contact_no,
+                    address, designation, current_time_stamp, 0]
+        user_condition = "user_id = '%d'" % user_id
+        result1 = self.update(self.tblUsers, user_columns, user_values, user_condition)
+        self.delete(self.tblUserCountries, user_condition)
+        self.delete(self.tblUserDomains, user_condition)
+
+        country_columns = ["user_id", "country_id"]
+        country_values_list = []
+        for country_id in country_ids:
+            country_value_tuple = (user_id, int(country_id))
+            country_values_list.append(country_value_tuple)
+        result2 = self.bulk_insert(self.tblUserCountries, country_columns, 
+            country_values_list)
+
+        domain_columns = ["user_id", "domain_id"]
+        domain_values_list = []
+        for domain_id in domain_ids:
+            domain_value_tuple = (user_id, int(domain_id))
+            domain_values_list.append(domain_value_tuple)
+        result3 = self.bulk_insert(self.tblUserDomains, domain_columns, 
+            domain_values_list)
+
+        return (result1 and result2 and result3)    
+
+    def update_user_status(self, user_id, is_active):
+        columns = ["is_active", "updated_on" , "updated_by"]
+        values = [is_active, self.get_date_time(), 0]
+        condition = "user_id='%d'" % user_id
+        return self.update(self.tblUsers, columns, values, condition)
+
+#
+#   Group Company
+#
+    def get_group_company_details(self):
+        columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
+        " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
+        " is_active"
+        condition = "1"
+        return self.get_data(self.tblClientGroups, columns, condition)
+
+    def get_client_countries(self, client_id):
+        columns = "group_concat(country_id)"
+        condition = "client_id ='%d'" % client_id
+        rows = self.get_data(self.tblClientCountries, columns, condition)
+        return rows[0][0]
+
+    def get_client_domains(self, client_id):
+        columns = "group_concat(domain_id)"
+        condition = "client_id ='%d'" % client_id
+        rows = self.get_data(self.tblClientDomains, columns, condition)
+        return rows[0][0]
         statutory_mapping_id = self.get_new_id("statutory_mapping_id", "tbl_statutory_mappings")
         created_on = self.get_date_time()
         is_active = 1
@@ -1697,5 +2083,4 @@ class KnowledgeDatabase(Database):
                 mappings, geo_mappings,notification_text
             )
         self.execute(query)
-
 

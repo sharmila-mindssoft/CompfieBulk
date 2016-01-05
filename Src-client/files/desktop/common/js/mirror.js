@@ -73,9 +73,9 @@ function initMirror() {
     }
 
     function apiRequest(callerName, request, callback) {
-        var sessionToken = getSessionToken();
-        if (sessionToken == null)
-            sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
+        // var sessionToken = getSessionToken();
+        // if (sessionToken == null)
+        sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
         var requestFrame = {
             "session_token": sessionToken,
             "request": request
@@ -88,6 +88,7 @@ function initMirror() {
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
+                log("API STATUS :"+status)
                 if (status.toLowerCase().indexOf(matchString) != -1){
                     callback(null, response);
                 }
@@ -165,6 +166,8 @@ function initMirror() {
     //Domain Master
 
     function saveDomain(domainName, callback) {
+        if (domainName == null)
+            return null;
         var request = [
             "SaveDomain",
             { "domain_name" : domainName }
@@ -173,6 +176,8 @@ function initMirror() {
     }
 
     function updateDomain(domainId, domainName, callback) {
+        if ((domainId == null) || (domainName == null))
+            return null;
         var request = [
             "UpdateDomain",
             { "domain_id" : domainId, "domain_name" : domainName }
@@ -181,6 +186,8 @@ function initMirror() {
     }
 
     function changeDomainStatus(domainId, isActive, callback) {
+        if ((domainId == null) || (isActive == null))
+            return null;
         var request = [
             "ChangeDomainStatus",
             {"domain_id" : domainId, "is_active" : isActive}
@@ -196,6 +203,8 @@ function initMirror() {
     //Country Master
 
     function saveCountry(countryName, callback) {
+        if (countryName == null)
+            return null;
         var request = [
             "SaveCountry",
             { "country_name" : countryName }
@@ -204,6 +213,8 @@ function initMirror() {
     }
 
     function updateCountry(countryId, countryName, callback) {
+        if ((countryId == null) || (countryName == null))
+            return null;
         var request = [
             "UpdateCountry",
             { "country_id" : countryId, "country_name" : countryName }
@@ -212,6 +223,8 @@ function initMirror() {
     }
 
     function changeCountryStatus(countryId, isActive, callback) {
+        if ((countryId == null) || (isActive == null))
+            return null;
         var request = [
             "ChangeCountryStatus",
             {"country_id" : countryId, "is_active" : isActive}
@@ -226,6 +239,8 @@ function initMirror() {
 
     //Industry Master
     function saveIndustry(industryName, callback) {
+        if (industryName == null)
+            return null;
         var request = [
             "SaveIndustry",
             { "industry_name" : industryName }
@@ -234,6 +249,8 @@ function initMirror() {
     }
 
     function updateIndustry(industryId, industryName, callback) {
+        if ((industryId == null) || (industryName == null))
+            return null;
         var request = [
             "UpdateIndustry",
             { "industry_id" : industryId, "industry_name" : industryName }
@@ -242,6 +259,8 @@ function initMirror() {
     }
 
     function changeIndustryStatus(industryId, isActive, callback) {
+        if ((industryId == null) || (isActive == null))
+            return null;
         var request = [
             "ChangeIndustryStatus",
             {"industry_id" : industryId, "is_active" : isActive}
@@ -257,6 +276,8 @@ function initMirror() {
     //Statutory Nature Master
 
     function saveStatutoryNature(statutoryNatureName, callback) {
+        if (statutoryNatureName == null)
+            return null;
         var request = [
             "SaveStatutoryNature",
             { "statutory_nature_name" : statutoryNatureName }
@@ -266,6 +287,8 @@ function initMirror() {
 
     function updateStatutoryNature(statutoryNatureId, statutoryNatureName, 
         callback) {
+        if ((statutoryNatureId == null) || (statutoryNatureName == null))
+            return null;
         var request = [
             "UpdateStatutoryNature",
             { "statutory_nature_id" : statutoryNatureId, "statutory_nature_name" : statutoryNatureName }
@@ -275,6 +298,8 @@ function initMirror() {
 
     function changeStatutoryNatureStatus(statutoryNatureId, isActive, 
         callback) {
+        if ((statutoryNatureId == null) || (isActive == null))
+            return null;
         var request = [
             "ChangeStatutoryNatureStatus",
             {"statutory_nature_id" : statutoryNatureId, "is_active" : isActive}
@@ -303,6 +328,8 @@ function initMirror() {
 
     function saveAndUpdateGeographyLevels(countryId, levels, 
         callback) {
+        if ((countryId == null) || (levels == null))
+            return null;
         var request = [
             "SaveGeographyLevel",
             { 
@@ -321,6 +348,8 @@ function initMirror() {
 
     function saveAndUpdateStatutoryLevels(countryId, domainId, levels, 
         callback) {
+        if ((countryId == null) || (domainId == null) || (levels == null))
+            return null;
         var request = [
             "SaveStatutoryLevel",
             { 
@@ -339,6 +368,8 @@ function initMirror() {
     }
 
     function saveGeography(levelId, name, parentIds, callback) {
+        if ((levelId == null) || (name == null) || (parentIds == null))
+            return null;
         var request = [
             "SaveGeography",
             { 
@@ -352,6 +383,9 @@ function initMirror() {
 
     function updateGeography(geographyId, levelId, name, parentIds,
      callback) {
+        if ((geographyId == null) || (levelId == null) || (name == null) || 
+            (parentIds == null))
+            return null;
         var request = [
             "UpdateGeography",
             { 
@@ -365,6 +399,8 @@ function initMirror() {
     }
 
     function changeGeographyStatus(geographyId, isActive, callback) {
+        if ((geographyId == null) || (isActive == null))
+            return null;
         var request = [
             "ChangeGeographyStatus",
             { 
@@ -535,9 +571,8 @@ function initMirror() {
     }
 
     // Admin User Group Master
-
     function getAdminUserGroupList(callback) {
-        callerName = "AdminAPI"
+        callerName = "api/admin"
         var request = [
             "GetUserGroups",
             {}
@@ -554,7 +589,7 @@ function initMirror() {
     }
 
     function saveAdminUserGroup(userGroupDetail, callback) {
-        callerName = "AdminAPI"
+        callerName = "api/admin"
         var request = [
             "SaveUserGroup",
             userGroupDetail
@@ -572,7 +607,7 @@ function initMirror() {
     }
 
     function updateAdminUserGroup(userGroupDetail, callback) {
-        callerName = "AdminAPI"
+        callerName = "api/admin"
         var request = [
             "UpdateUserGroup",
             userGroupDetail
@@ -581,7 +616,7 @@ function initMirror() {
     }
 
     function changeAdminUserGroupStatus(userGroupId, isActive, callback) {
-        callerName = "AdminAPI"
+        callerName = "api/admin"
         var request = [
             "ChangeUserGroupStatus",
             {
@@ -596,7 +631,7 @@ function initMirror() {
     // Admin User Master
 
     function getAdminUserList(callback) {
-        callerName = "AdminAPI"
+        callerName = "api/admin"
         var request = [
             "GetUsers",
             {}
@@ -612,8 +647,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var countryIds= userDetail[7].split(',') ;
-        var domainIds= userDetail[8].split(',') ;
+        var countryIds= userDetail[7] ;
+        var domainIds= userDetail[8];
         return {
                 "email_id": emailId,
                 "user_group_id": userGroupId,
@@ -628,7 +663,7 @@ function initMirror() {
     }
     
     function saveAdminUser(userDetail, callback) {
-        callerName = "AdminAPI"
+        callerName = "api/admin"
         var request = [
             "SaveUser",
             userDetail
@@ -644,8 +679,8 @@ function initMirror() {
         var contactNo = userDetail[4];
         var address = userDetail[5];
         var designation = userDetail[6];
-        var countryIds= userDetail[7].split(',') ;
-        var domainIds= userDetail[8].split(',') ;
+        var countryIds= userDetail[7] ;
+        var domainIds= userDetail[8] ;
         return {
                 "user_id": userId,
                 "user_group_id": userGroupId,
@@ -660,7 +695,7 @@ function initMirror() {
     }
 
     function updateAdminUser(userDetail, callback) {
-        callerName = "AdminAPI"        
+        callerName = "api/admin"        
         var request = [
             "UpdateUser",
             userDetail
@@ -670,7 +705,7 @@ function initMirror() {
 
     function changeAdminUserStatus(userId, isActive,
      callback) {
-        callerName = "AdminAPI"
+        callerName = "api/admin"
         var request = [
             "ChangeUserStatus",
             {
@@ -683,53 +718,78 @@ function initMirror() {
 
     // Client Group Master
 
-    function saveClientGroup(callerName, clientGroupDetails, 
-        dateConfigurations, callback) {
+    function getDateConfigurations(countryId, domainId, periodFrom, 
+        periodTo){
+        return {
+            "country_id": countryId,
+            "domain_id": domainId,
+            "period_from": periodFrom,
+            "period_to": periodTo
+        }
+    }
+    
+    function getSaveClientGroupDict(groupName, countryIds, domainIds, logo,
+        contractFrom, contractTo, inchargePersons, noOfUserLicence, fileSpace,
+        isSmsSubscribed, emailId, dateConfigurations, shortName){
+        return {
+            "group_name": groupName,
+            "country_ids": countryIds,
+            "domain_ids": domainIds,
+            "logo" : logo,
+            "contract_from": contractFrom,
+            "contract_to": contractTo,
+            "incharge_persons": inchargePersons,
+            "no_of_user_licence": noOfUserLicence,
+            "file_space": fileSpace,
+            "is_sms_subscribed": isSmsSubscribed,
+            "email_id": emailId,
+            "date_configurations":dateConfigurations,
+            "short_name": shortName
+        }
+    }
+
+    function saveClientGroup(clientGroupDetails, 
+        callback) {
+        callerName = "api/techno"
         var request = [
             "SaveClientGroup",
-            {
-                "group_name": clientGroupDetails["group_name"],
-                "country_ids": clientGroupDetails["country_ids"],
-                "domain_ids":clientGroupDetails["domain_ids"],
-                "logo" : clientGroupDetails["logo"],
-                "contract_from": clientGroupDetails["contract_from"],
-                "contract_to": clientGroupDetails["contract_to"],
-                "incharge_persons": clientGroupDetails["incharge_persons"],
-                "no_of_user_licence": clientGroupDetails["no_of_user_licence"],
-                "file_space": clientGroupDetails["file_space"],
-                "is_sms_subscribed": clientGroupDetails["is_sms_subscribed"],
-                "email_id": clientGroupDetails["email_id"],
-                "date_configurations":dateConfigurations
-            }
+            clientGroupDetails
         ];
        
         apiRequest(callerName, request, callback);
     }
 
-    function updateClientGroup(callerName, clientGroupDetails, 
-        dateConfigurations, callback) {
+    function getUpdateClientGroupDict(clientId, groupName, countryIds, domainIds, logo,
+        contractFrom, contractTo, inchargePersons, noOfUserLicence, fileSpace,
+        isSmsSubscribed, dateConfigurations){
+        return {
+            "client_id": clientId,
+            "group_name": groupName,
+            "country_ids": countryIds,
+            "domain_ids": domainIds,
+            "logo" : logo,
+            "contract_from": contractFrom,
+            "contract_to": contractTo,
+            "incharge_persons": inchargePersons,
+            "no_of_user_licence": noOfUserLicence,
+            "file_space": fileSpace,
+            "is_sms_subscribed": isSmsSubscribed,
+            "date_configurations":dateConfigurations
+        }
+    } 
+
+    function updateClientGroup(clientGroupDetails, callback) {
+        callerName = "api/techno"
         var request = [
             "UpdateClientGroup",
-            {
-                "client_id": clientGroupDetails["client_id"],
-                "group_name": clientGroupDetails["group_name"],
-                "country_ids": clientGroupDetails["country_ids"],
-                "domain_ids":clientGroupDetails["domain_ids"],
-                "logo" : clientGroupDetails["logo"],
-                "contract_from": clientGroupDetails["contract_from"],
-                "contract_to": clientGroupDetails["contract_to"],
-                "incharge_persons": clientGroupDetails["incharge_persons"],
-                "no_of_user_licence": clientGroupDetails["no_of_user_licence"],
-                "file_space": clientGroupDetails["file_space"],
-                "is_sms_subscribed": clientGroupDetails["is_sms_subscribed"],
-                "date_configurations":dateConfigurations
-            }
+            clientGroupDetails
         ];
         apiRequest(callerName, request, callback);
     }
 
-    function changeClientGroupStatus(callerName, clientId, isActive, 
+    function changeClientGroupStatus( clientId, isActive, 
         callback) {
+        callerName = "api/techno"
         var request = [
             "ChangeClientGroupStatus",
             {
@@ -740,7 +800,8 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getClientGroups(callerName, callback) {
+    function getClientGroups(callback) {
+        callerName = "api/techno"
         var request = [
             "GetClientGroups",
             {}
@@ -750,8 +811,9 @@ function initMirror() {
 
     // Change Password APIs
 
-    function changePassword(callerName, currentPassword, newPassword,
+    function changePassword(currentPassword, newPassword,
      callback) {
+        callerName = "api/login"
         var request = [
             "ChangePassword",
             {
@@ -764,8 +826,9 @@ function initMirror() {
 
     // Forgot Password APIs
 
-    function forgotPassword(callerName, username, 
+    function forgotPassword(username, 
         callback) {
+        callerName = "api/login"
         var request = [
             "ForgotPassword",
             {
@@ -800,7 +863,8 @@ function initMirror() {
 
     // Client Unit APIs
 
-    function getClients(callerName, callback) {
+    function getClients(callback) {
+        callerName = "api/techno"
         var request = [
             "GetClients",
             {}
@@ -808,9 +872,54 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function saveClient(callerName, clientId, businessGroup, legalEntity, 
-        division, countryWiseUnits, callback) {
+    function getBusinessGroupDict(businessGroupId, busienssGroupName){
+        return {
+            "business_group_id" : businessGroupId,
+            "business_group_name" : busienssGroupName
+        }
+    }
 
+    function getLegalEntityDict(legalEntityId, legalEntityName){
+        return {
+            "legal_entity_id" : legalEntityId,
+            "legal_entity_name" : legalEntityName
+        }
+    }
+
+    function getDivisionDict(divisionId, divisionName){
+        return {
+            "division_id" : divisionId,
+            "division_name" : divisionName
+        }
+    }
+
+    function getUnitDict(unitId, unitName, unitCode, unitAddress,
+        postalCode, geographyId, unitLocation, industryId, industryName,
+        domainIds){
+        return {
+            "unit_id" : unitId,
+            "unit_name" : unitName,
+            "unit_code" : unitCode,
+            "unit_address" : unitAddress,
+            "postal_code" : postalCode,
+            "geography_id" : geographyId,
+            "unit_location" : unitLocation,
+            "industry_id" : industryId,
+            "industry_name" : industryName,
+            "domain_ids" : domainIds
+        }
+    }
+
+    function mapUnitsToCountry(countryId, units){
+        return {
+            "country_id" : countryId,
+            "units" : units
+        }
+    }
+
+    function saveClient(clientId, businessGroup, legalEntity, 
+        division, countryWiseUnits, callback) {
+        callerName = "api/techno"
         var request = [
             "SaveClient",
             {
@@ -825,8 +934,9 @@ function initMirror() {
     }
 
 
-    function updateClient(callerName, clientId, businessGroup, legalEntity, 
+    function updateClient(clientId, businessGroup, legalEntity, 
         division, countryWiseUnits, callback) {
+        callerName = "api/techno"
         var request = [
             "UpdateClient",
             {
@@ -840,8 +950,9 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function changeClientStatus(callerName, clientId, legalEntityId, divisionId, isActive, 
+    function changeClientStatus(clientId, legalEntityId, divisionId, isActive, 
         callback) {
+        callerName = "api/techno"
         var request = [
             "ChangeClientStatus",
             {
@@ -854,8 +965,9 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }  
 
-    function reactivateUnit(callerName, clientId, unitId, password, 
+    function reactivateUnit(clientId, unitId, password, 
         callback) {
+        callerName = "api/techno"
         var request = [
             "ReactivateUnit",
             {
@@ -868,7 +980,8 @@ function initMirror() {
     }  
 
     // Client User Group  
-    function getClientUserGroups(callerName, callback) {
+    function getClientUserGroups(callback) {
+        callerName = "ClientAdminAPI"
         var request = [
             "GetUserPrivileges",
             {}
@@ -876,15 +989,15 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getSaveClientUserGroupDict(userGroupDetail){
+    function getSaveClientUserGroupDict(userGroupName, formIds){
         return {
-            "user_group_name": userGroupDetail[0],
-            "form_ids": userGroupDetail[1]
+            "user_group_name": userGroupName,
+            "form_ids": formIds
         }
     }
 
     function saveClientUserGroup(userGroupDetail, callback) {
-        callerName = "ClientAdminAPI"
+        callerName = "ClientAdminAPI"  
         var request = [
             "SaveUserPrivilege",
             userGroupDetail
@@ -892,11 +1005,11 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getUpdateClientUserGroupDict(userGroupDetail){
+    function getUpdateClientUserGroupDict(userGroupId, userGroupName, formIds){
         return {
-            "user_group_id": userGroupDetail[0],
-            "user_group_name": userGroupDetail[1],
-            "form_ids": userGroupDetail[2]
+            "user_group_id": userGroupId,
+            "user_group_name": userGroupName,
+            "form_ids": formIds
         }
     }
 
@@ -912,6 +1025,8 @@ function initMirror() {
     function changeClientUserGroupStatus(userGroupId, isActive, 
         callback) {
         callerName = "ClientAdminAPI"
+        if (isNull(userGroupId) || isNull(isActive) )
+            return null;
         var request = [
             "ChangeUserPrivilegeStatus",
             {
@@ -945,6 +1060,8 @@ function initMirror() {
 
     function saveServiceProvider(serviceProviderDetail, callback) {
         callerName = "ClientAdminAPI"
+        if (isNull(serviceProviderDetail))
+            return null;
         var request = [
             "SaveServiceProvider",
             serviceProviderDetail
@@ -967,6 +1084,8 @@ function initMirror() {
     function updateServiceProvider(serviceProviderDetail, 
         callback) {
         callerName = "ClientAdminAPI"
+        if (isNull(serviceProviderDetail))
+            return null;    
         var request = [
             "UpdateServiceProvider",
             serviceProviderDetail
@@ -977,6 +1096,8 @@ function initMirror() {
     function changeServiceProviderStatus(serviceProviderId, 
         isActive, callback) {
         callerName = "ClientAdminAPI"
+        if (isNull(serviceProviderId) || isNull(isActive) )
+            return null;
         var request = [
             "ChangeServiceProviderStatus",
             {
@@ -1065,6 +1186,8 @@ function initMirror() {
 
     function changeAdminStatus(userId, isAdmin, callback) {
         callerName = "ClientAdminAPI"
+        if (isNull(userId) || isNull(isAdmin) )
+            return null;
         var request = [
             "ChangeAdminStatus",
             {
@@ -1076,7 +1199,8 @@ function initMirror() {
     }
 
     // Unit Closure
-    function getUnitClosureList(callerName, callback) {
+    function getUnitClosureList(callback) {
+        callerName = "ClientAdminAPI"
         var request = [
             "GetUnitClosureList",
             {}
@@ -1084,8 +1208,9 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function closeUnit(callerName, unitId, password, callback, 
+    function closeUnit(unitId, password, callback, 
         failure_callback){
+        callerName = "ClientAdminAPI"
         var request = [
             "CloseUnit",
             {
@@ -1097,7 +1222,8 @@ function initMirror() {
     }
 
     //Client Profile
-    function getClientProfile(callerName, callback){
+    function getClientProfile(callback){
+        callerName = "api/techno"
         var request = [
             "GetClientProfile",
             {}
@@ -1106,7 +1232,8 @@ function initMirror() {
     }
 
     // Client Details Report
-    function getClientDetailsReportFilters(callerName, callback){
+    function getClientDetailsReportFilters(callback){
+        callerName = "api/techno"
         var request = [
             "GetClientDetailsReportFilters",
             {}
@@ -1114,11 +1241,20 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getClientDetailsReport(callerName, reportFilters, 
-        callback){
+    function getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId, 
+        unitId, domainIds, callback){
+        callerName = "api/techno"
         var request = [
             "GetClientDetailsReport",
-            reportFilters
+            {
+                "country_id": countryId,
+                "group_id" : clientId,
+                "business_group_id": businessGroupId,
+                "legal_entity_id" : legalEntityId,
+                "division_id" : divisionId,
+                "unit_id": unitId,
+                "domain_ids" : domainIds
+            }
         ];
         apiRequest(callerName, request, callback);
     }
@@ -1204,7 +1340,10 @@ function initMirror() {
         changeAdminUserStatus: changeAdminUserStatus,
         getAdminUserList: getAdminUserList,
 
+        getDateConfigurations: getDateConfigurations,
+        getSaveClientGroupDict: getSaveClientGroupDict,
         saveClientGroup: saveClientGroup,
+        getUpdateClientGroupDict: getUpdateClientGroupDict,
         updateClientGroup: updateClientGroup,
         getClientGroups: getClientGroups,
         changeClientGroupStatus: changeClientGroupStatus,
@@ -1215,6 +1354,11 @@ function initMirror() {
         resetPassword: resetPassword,
 
         getClients: getClients,
+        getBusinessGroupDict :getBusinessGroupDict , 
+        getLegalEntityDict :getLegalEntityDict , 
+        getDivisionDict :getDivisionDict , 
+        getUnitDict :getUnitDict , 
+        mapUnitsToCountry : mapUnitsToCountry,
         saveClient: saveClient,
         updateClient : updateClient,
         changeClientStatus: changeClientStatus,

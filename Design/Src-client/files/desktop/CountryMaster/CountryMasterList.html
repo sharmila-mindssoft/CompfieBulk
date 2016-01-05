@@ -1,6 +1,5 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
-<!-- view Country-->
 <div class="content-container width40" id="country-view">
   <div class="content-area">
     <h1>Countries</h1>
@@ -24,24 +23,23 @@
           <td width="10%">&nbsp;</td>
         </tr>
       </thead>
-      <tbody class="tbody-countries-list" style="max-height:400px;">
+      <tbody class="tbody-countries-list">
       </tbody>
       </table>
     </div>    
   </div>
 </div>
 <div id="templates">
-<table class="table-countries-list">
-  <tr class="table-row">
-    <td class="sno" align="center"></td>
-    <td class="country-name"></td>
-    <td class="edit" align="center"></td>
-    <td class="is-active" align="center"></td>
-  </tr>
-</table>
+  <table class="table-countries-list">
+    <tr class="table-row">
+      <td class="sno" align="center"></td>
+      <td class="country-name"></td>
+      <td class="edit" align="center"></td>
+      <td class="is-active" align="center"></td>
+    </tr>
+  </table>
 </div>
-<!-- Add Country-->
-<div class="single-column-form-outer width40" id="country-add">
+<div class="single-column-form-outer width40 default-display-none" id="country-add">
   <div class="content-area">
     <div class="single-column-form-inner">
       <div class="single-column-header">Country Master<span class="error-message"></span></div>

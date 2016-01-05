@@ -129,7 +129,7 @@ class User(object) :
 
     def __init__(self, clientId ,userId, emailId, userGroupId, employeeName, employeeCode, 
         contactNo, seatingUnitId, userLevel, countryIds, domainIds, unitIds, 
-        isAdmin, isServiceProvider, serviceProviderId ) :
+        isAdmin, isServiceProvider, serviceProviderId, isActive ) :
         self.clientId = clientId
         self.userId =  userId if userId != None else self.generateNewUserId()
         self.emailId =  emailId
@@ -144,7 +144,8 @@ class User(object) :
         self.unitIds =  unitIds
         self.isAdmin =  isAdmin
         self.isServiceProvider =  isServiceProvider
-        self.serviceProviderId =  serviceProviderId
+        self.serviceProviderId =  serviceProviderId if userId != None else 0
+        self.isActive =  isActive
 
     def verify(self) :
         assertType(self.userId, IntType)
@@ -163,12 +164,13 @@ class User(object) :
         assertType(self.serviceProviderId, IntType)
 
     def toDetailedStructure(self) :
-        employeeName = "%s - %s" % (self.employeeCode,self.employeeName)
+        # employeeName = "%s - %s" % (self.employeeCode,self.employeeName)
         return {
             "user_id": self.userId,
             "email_id": self.emailId,
             "user_group_id": self.userGroupId,
-            "employee_name": employeeName,
+            "employee_code": self.employeeCode,
+            "employee_name": self.employeeName,
             "contact_no": self.contactNo,
             "seating_unit_id": self.seatingUnitId, 
             "user_level": self.userLevel,
@@ -177,7 +179,8 @@ class User(object) :
             "unit_ids": self.unitIds,
             "is_admin": self.isAdmin,
             "is_service_provider": self.isServiceProvider,
-            "service_provider_id": self.serviceProviderId
+            "service_provider_id": self.serviceProviderId,
+            "is_active": self.isActive
         }
 
     def toStructure(self):
@@ -204,7 +207,7 @@ class User(object) :
             isActive = row[1]
             subColumns = "email_id, user_group_id, employee_name, employee_code,"+\
                         " contact_no, seating_unit_id, user_level, country_ids,"+\
-                        " domain_ids, unit_ids, is_admin, is_service_provider"
+                        " domain_ids, unit_ids, is_admin, is_service_provider, service_provider_id"
             condition = " user_id ='%d'" % int(userId)                               
             subRows = ClientDatabaseHandler.instance(
                         getClientDatabase(clientId)).getData(
@@ -217,16 +220,17 @@ class User(object) :
                 contactNo =  subRow[4]
                 seatingUnitId = subRow[5]
                 userLevel = subRow[6]
-                countryIds = subRow[7]
-                domainIds = subRow[8]
-                unitIds = subRow[9]
+                countryIds = [int(x) for x in subRow[7].split(",")] if subRow[7] != None else None
+                domainIds = [int(x) for x in subRow[8].split(",")] if subRow[8] != None else None
+                unitIds = [int(x) for x in subRow[9].split(",")] if subRow[9] != None else None
                 isAdmin = subRow[10]
                 isServiceProvider = subRow[11]
+                serviceProviderId = subRow[12]
                 user = User(clientId,userId, emailId, userGroupId, 
                             employeeName, employeeCode, contactNo, 
                             seatingUnitId, userLevel, countryIds, 
                             domainIds, unitIds, isAdmin, isServiceProvider, 
-                            None )
+                            serviceProviderId, isActive )
                 userList.append(user.toDetailedStructure())
         return userList
 
@@ -240,7 +244,7 @@ class User(object) :
 
         for row in rows:
             user = User(int(row[0]),None,None, row[1], row[2],
-                 None, None, None, None, None, None, None)
+                 None, None, None, None, None, None, None, None, None, None, None)
             userList.append(user.toStructure())
 
         return userList
@@ -323,6 +327,7 @@ class User(object) :
             self.detailTblName, detailTblcolumns, detailTblValuesList, condition)
 
     def updateAdminStatus(self, sessionUser):
+        print "inside update Admin status in model"
         columns = ["is_admin", "updated_on" , "updated_by"]
         values = [self.isAdmin, getCurrentTimeStamp(), sessionUser]
         condition = "user_id='%d'" % self.userId
@@ -367,31 +372,6 @@ class ServiceProvider(object):
         "contact_no": self.contactNo,
         "is_active": self.isActive
     }
-
-    def toSimpleStructure(self):
-        return {
-        "service_provider_id": self.serviceProviderId,
-        "service_provider_name": self.serviceProviderName,
-        "is_active": self.isActive
-    }
-
-    @classmethod
-    def getSimpleList(self, sessionUser):
-        servcieProviderList = []
-        columns = "service_provider_id, service_provider_name, is_active"
-        clientId = getClientId(sessionUser)
-        rows = ClientDatabaseHandler.instance(getClientDatabase(clientId)).getData(
-            ServiceProvider.tblName, columns, "1")
-
-        for row in rows:
-            serviceProviderId = int(row[0])
-            serviceProviderName = row[1]
-            isActive = row[2]
-            serviceProvider = ServiceProvider(None, serviceProviderId, serviceProviderName, None, 
-                None, None, None, None, isActive)
-            servcieProviderList.append(serviceProvider.toSimpleStructure())
-
-        return servcieProviderList
 
     @classmethod
     def getList(self, sessionUser):

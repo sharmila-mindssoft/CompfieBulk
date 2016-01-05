@@ -27,7 +27,8 @@ __all__ = [
     "stringToDatetime",
     "datetimeToString",
     "getClientId",
-    "FormCategory"
+    "FormCategory",
+    "generateRandom"
 ]
 
 clientDatabaseMappingFilePath = os.path.join(ROOT_PATH, 
@@ -106,11 +107,12 @@ def getClientDatabase(clientId):
         print "Error: Database Not exists for the client %d" % clientId
     return databaseName
 
-def generatePassword() : 
+def generateRandom():
     characters = string.ascii_uppercase + string.digits
-    password = ''.join(random.SystemRandom().choice(characters) for _ in range(7))
-    print password
-    print encrypt(password)
+    return ''.join(random.SystemRandom().choice(characters) for _ in range(7))
+
+def generatePassword() : 
+    password = generateRandom()
     return encrypt(password)
 
 def encrypt(value):
@@ -121,11 +123,10 @@ def encrypt(value):
 def stringToDatetime(string):
     date = string.split("-")
     datetimeVal = datetime.datetime(year=int(date[2]),month=IntegerMonths[date[1]], day=int(date[0]))
-    print "datetimeVal:{}".format(datetimeVal)
     return datetimeVal
 
 def datetimeToString(datetimeVal):
-    return "%d-%s-%d" % (datetimeVal.day, StringMonths[datetimeVal.month], datetimeVal.year)
+    return "%d-%s-%d"% (datetimeVal.day, StringMonths[datetimeVal.month], datetimeVal.year)
 
 def datetimeToTimestamp(d) :
     return calendar.timegm(d.timetuple())
@@ -209,7 +210,6 @@ class JSONHelper(object) :
     def getLong(data, name) :
         return JSONHelper.long(data.get(name))
 
-   
 class FormCategory(object):
     def __init__(self, form_category_id = None, form_category = None):
         self.db = DatabaseHandler.instance()
@@ -277,19 +277,17 @@ class Form(object) :
             form = klass(formId = row[0], formName = row[5], formUrl = row[6], formOrder = row[7], 
                     formType = row[4], Category = row[2], parentMenu = row[8])
             formList.append(form)
-        print formList
         menu = Menu()
         result = menu.generateMenu(formList)
         return result
             
 class Menu(object):
-    masterForms = []
-    transactionForms = []
-    reportForms = []
-    settingForms = []
 
     def __init__(self):
-        print "constructor"
+        self.masterForms = []
+        self.transactionForms = []
+        self.reportForms = []
+        self.settingForms = []
 
     def toStructure(self):
         return {

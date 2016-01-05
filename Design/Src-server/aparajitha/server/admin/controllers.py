@@ -4,7 +4,6 @@ import tornado.ioloop
 import tornado.web
 import uuid
 
-from models import *
 from aparajitha.server.common import *
 from aparajitha.server.knowledge.models import DomainList, CountryList
 from aparajitha.server.databasehandler import DatabaseHandler
@@ -191,6 +190,7 @@ class User() :
         return {
             "user_id": self.userId,
             "employee_name": employeeName,
+            "is_active":self.isActive
         }
 
     def generateNewUserId(self) :
@@ -287,11 +287,12 @@ class User() :
 
     def getList(self):
         userList = []
-        rows = self.db.getList()
+        rows = self.db.getUserList()
         for row in rows:
             self.userId = int(row[0])
             self.employeeName = row[1]
             self.employeeCode = row[2]
+            self.isActive = row[3]
             userList.append(self.toStructure())
         return userList
 

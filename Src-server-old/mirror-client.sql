@@ -192,7 +192,7 @@ CREATE TABLE `tbl_user_groups` (
 
 DROP TABLE IF EXISTS `tbl_admin`;
 CREATE TABLE `tbl_admin` (
-  `user_name` varchar(50) NOT NULL,
+  `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

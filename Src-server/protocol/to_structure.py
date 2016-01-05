@@ -2960,3 +2960,13 @@ def to_structure_RecordType_clientmasters_Response_ServiceProviderNameAlreadyExi
     from protocol import clientmasters
     return clientmasters.Response.to_structure(data)
 
+def to_structure_RecordType_admin_UserGroup(data):
+    from protocol import admin
+    return admin.UserGroup.to_structure(data)
+
+def to_structure_VectorType_RecordType_admin_UserGroup(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_admin_UserGroup(item))
+    return lst

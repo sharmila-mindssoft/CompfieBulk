@@ -5,7 +5,8 @@ import random
 
 __all__=[
 	"getCurrentTimeStamp",
-	"generatePassword"
+	"generatePassword",
+    "generateRandom"
 ]
 
 def getCurrentTimeStamp() :
@@ -16,11 +17,12 @@ def getCurrentTimeStamp() :
 #   Password Generation
 #
 
-def generatePassword() : 
+def generateRandom():
     characters = string.ascii_uppercase + string.digits
-    password = ''.join(random.SystemRandom().choice(characters) for _ in range(7))
-    print password
-    print encrypt(password)
+    return ''.join(random.SystemRandom().choice(characters) for _ in range(7))
+
+def generatePassword() : 
+    password = generateRandom()
     return encrypt(password)
 
 def encrypt(value):

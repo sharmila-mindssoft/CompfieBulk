@@ -1,10 +1,10 @@
 var domainsList;
 $(".btn-domain-add").click(function(){
-$("#domain-view").hide();
-$("#domain-add").show();
-$("#domainname").val('');
-$("#domainid").val('');
-$(".error-message").html('');
+  $("#domain-view").hide();
+  $("#domain-add").show();
+  $("#domainname").val('');
+  $("#domainid").val('');
+  $(".error-message").html('');
 });
 $(".btn-domain-cancel").click(function(){
   $("#domain-add").hide();
