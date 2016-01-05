@@ -76,7 +76,7 @@ def parse_structure_RecordType_technomasters_Request_ChangeClientStatus(data):
 
 def parse_structure_OptionalType_VectorType_SignedIntegerType_8(data):
     if data is None: return data
-    return parse_structure__VectorType_SignedIntegerType_8(data)
+    return parse_structure_VectorType_SignedIntegerType_8(data)
 
 def parse_structure_OptionalType_CustomTextType_50(data):
     if data is None: return data
@@ -937,7 +937,7 @@ def parse_structure_RecordType_clientuser_Response_StartOnOccurrenceComplianceSu
 
 def parse_structure_OptionalType_CustomTextType_20(data):
     if data is None: return data
-    return parse_structure_('CustomTextType_20',)(data)
+    return parse_structure_CustomTextType_20(data)
 
 def parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_STATUS(data):
     from protocol import core
@@ -988,7 +988,7 @@ def parse_structure_RecordType_technotransactions_Response_GetAssignedStatutorie
 
 def parse_structure_OptionalType_RecordType_core_Division(data):
     if data is None: return data
-    return parse_structure_('RecordType_core_Division',)(data)
+    return parse_structure_RecordType_core_Division(data)
 
 def parse_structure_VectorType_RecordType_core_Compliance(data):
     data = parse_list(data, 0)
@@ -1034,7 +1034,7 @@ def parse_structure_RecordType_clientmasters_Request_GetServiceProviders(data):
 
 def parse_structure_OptionalType_EnumType_core_APPLICABILITY_STATUS(data):
     if data is None: return data
-    return parse_structure_('EnumType_core_APPLICABILITY_STATUS',)(data)
+    return parse_structure_EnumType_core_APPLICABILITY_STATUS(data)
 
 def parse_structure_RecordType_dashboard_Response_GetEscalationsChartSuccess(data):
     from protocol import dashboard
@@ -1292,7 +1292,7 @@ def parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance(data):
 
 def parse_structure_OptionalType_VectorType_RecordType_core_BusinessGroup(data):
     if data is None: return data
-    return parse_structure_('VectorType_RecordType_core_BusinessGroup',)(data)
+    return parse_structure_VectorType_RecordType_core_BusinessGroup(data)
 
 def parse_structure_VectorType_RecordType_technomasters_LICENCE_HOLDER_DETAILS(data):
     data = parse_list(data, 0)
@@ -1407,7 +1407,7 @@ def parse_structure_RecordType_clientreport_Request_GetComplianceDetailsReport(d
 
 def parse_structure_OptionalType_VectorType_RecordType_core_Division(data):
     if data is None: return data
-    return parse_structure_('VectorType_RecordType_core_Division',)(data)
+    return parse_structure_VectorType_RecordType_core_Division(data)
 
 def parse_structure_RecordType_dashboard_Response_GetComplianceApplicabilityStatusDrillDownSuccess(data):
     from protocol import dashboard
@@ -2614,7 +2614,7 @@ def parse_structure_RecordType_admin_Response_InvalidUserId(data):
 
 def parse_structure_OptionalType_CustomTextType_100(data):
     if data is None: return data
-    return parse_structure_('CustomTextType_100',)(data)
+    return parse_structure_CustomTextType_100(data)
 
 def parse_structure_VectorType_RecordType_technoreports_UNIT_WISE_ASSIGNED_STATUTORIES(data):
     data = parse_list(data, 0)

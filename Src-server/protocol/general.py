@@ -384,6 +384,87 @@ class ChangeDomainStatusSuccess(Response):
         return {
         }
 
+class GetCountriesSuccess(Response):
+    def __init__(self, countries):
+        self.countries = countries
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["countries"])
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        return GetCountriesSuccess(countries)
+
+    def to_inner_structure(self):
+        return {
+            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
+        }
+
+class SaveCountrySuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveCountrySuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class CountryNameAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CountryNameAlreadyExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class UpdateCountrySuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UpdateCountrySuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class InvalidCountryId(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidCountryId()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class ChangeCountryStatusSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ChangeCountryStatusSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class GetNotificationsSuccess(Response):
     def __init__(self, notifications):
         self.notifications = notifications
