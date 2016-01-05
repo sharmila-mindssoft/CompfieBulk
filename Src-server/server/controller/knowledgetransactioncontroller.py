@@ -58,13 +58,24 @@ def process_update_statutory_mapping(db, request_frame, user_id):
 	else :
 		return knowledgetransaction.InvalidStatutoryMappingId()
 
-def process_change_statutory_mapping_status(db, request_frame, user_id):
+def process_change_statutory_mapping_status(db, request_frame, user_id):	
+	if (db.change_statutory_mapping_status(request_frame, user_id)) :
+		return knowledgetransaction.ChangeStatutoryMappingStatusSuccess()
+	else :	
+		return knowledgetransaction.InvalidStatutoryMappingId()
 	
-	return knowledgetransaction.InvalidStatutoryMappingId()
-	return knowledgetransaction.ChangeStatutoryMappingStatusSuccess()
-
 def process_approve_statutory_mapping(db, request_frame, user_id):
-	pass
-	return knowledgetransaction.InvalidStatutoryMappingId()
-	return knowledgetransaction.ApproveStatutoryMappingSuccess()
+	is_approved = False
+	for data in request_frame :
+		if (db.change_approval_status(data, user_id)):
+			is_approved = True
+		else :
+			is_approved = False
+			break
+
+	if is_approved :
+		return knowledgetransaction.ApproveStatutoryMappingSuccess()
+	else :	
+		return knowledgetransaction.InvalidStatutoryMappingId()
+	
 
