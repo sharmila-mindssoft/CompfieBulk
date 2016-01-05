@@ -1,0 +1,39 @@
+{% extends "files/desktop/home/container.html" %}
+{% block content %}
+<div class="content-container width40">
+  <div class="content-area">
+    <h1>Statutory Natures</h1>
+    <div class="clearfix"></div>
+    <div class="grid-table">
+      <table>
+        <tr>
+          <th align="center">#</th>
+          <th align="left">Statutory Nature</th>          
+          <th align="center">Status</th>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td><input type="text" id="search-stat-nature-name" class="filter-text-box"></td>
+          <td>&nbsp;</td>
+        </tr>
+       <tbody class="tbody-stat-nature-list">        
+        </tbody>
+         <tr>
+          <td colspan="3" style="border-top:1px dashed #ccc;"><p id="total-records"></p></td>
+        </tr> 
+      </table>
+    </div>
+    
+  </div>
+</div>
+<div id="templates">
+<table class="table-stat-nature-report">
+  <tr class="table-row">
+    <td class="sno" align="center"></td>
+    <td class="stat-nature-name"></td>
+    <td class="is-active" align="center"></td>
+  </tr>
+</table>
+</div>
+<script type="text/javascript" src="/files/desktop/knowledge-master-report/staturory-nature-master-report/staturorynaturemasterreport.js"></script>
+{% endblock %}

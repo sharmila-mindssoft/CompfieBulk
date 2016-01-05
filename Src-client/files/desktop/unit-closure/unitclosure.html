@@ -1,0 +1,121 @@
+{% extends "files/desktop/home/container.html" %}
+{% block content %}
+<style>
+  
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 1000;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 30%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup .close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  transition: all 200ms;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: Arial;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: orange;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+}
+.popup-error-msg{
+  font-size: 0.813em;
+  color: red;
+}
+</style>
+<div class="content-container width75">
+  <div class="content-area">
+   <h1> Unit Closure</h1>
+    <div class="clearfix"></div>
+    <div class="grid-table">
+      <table>
+          <tr align="left">
+            <th align="center">#</th>
+            <th>Business Group</th>
+            <th>Legal Entity</th>
+            <th>Division</th>
+            <th width="22%">Unit</th>
+            <th width="22%">Unit Address</th>
+            <th align="center" style="padding-right:5px;">
+              Closure
+            </th>
+        </tr>
+         <tr>
+          <td align="center"></td>
+          <td><input type="text" class="filter-text-box" id="business-group-search"></td>
+          <td><input type="text" class="filter-text-box" id="legalentity-search"></td>
+          <td><input type="text" class="filter-text-box" id="division-search"></td>
+          <td><input type="text" class="filter-text-box" id="unit-search"></td>
+          <td><input type="text" class="filter-text-box" id="address-search"></td>
+          <td align="center"></td>
+        </tr>
+        <tbody class="tbody-unitclosure-list">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div id="templates">
+  <table class="table-unitclosure-list">
+    <tr class="table-row">
+      <td align="center" class="sno"></td>
+      <td class="business-group"></td>
+      <td class="legal-entity"></td>
+      <td class="division"></td>
+      <td class="unit"></td>
+      <td class="unit-address"></td>
+      <td class="is-active" align="center" ></td>          
+    </tr>
+  </table>
+</div>
+ 
+<div id="popup" class="overlay" >
+  <div class="popup">
+    <a class="close" href="#">X</a>
+    <div class="content">
+      Password<br>
+      <input type="hidden" id="unitidval"> 
+     <input type="password" name="password" class="input-box" id="password" style="margin-top:10px;"><br>
+     <input type="submit" name="submit" class="btn-submit" id="popup-submit" value="Submit" onclick="unit_close()" style="margin-top:10px;">
+     <span class="popup-error-msg"></span>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="/files/desktop/unit-closure/unitclosure.js"></script>
+{% endblock %} 

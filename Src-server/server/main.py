@@ -1,5 +1,6 @@
 import os
 import json
+import traceback
 import mimetypes
 import tornado.web
 from tornado.web import StaticFileHandler
@@ -110,9 +111,10 @@ class API(object):
             self._db.commit()
             respond(response_data)
         except Exception, e:
+            print(traceback.format_exc())
             print e
             self._db.rollback()
-        
+
 
     @api_request(login.Request)
     def handle_login(self, request, db):
@@ -136,9 +138,13 @@ class API(object):
     def handle_general(self, request, db):
         return controller.process_general_request(request, db)
 
-    @api_request(knowledgemaster. RequestFormat)
+    @api_request(knowledgemaster.RequestFormat)
     def handle_knowledge_master(self, request, db) :
         return controller.process_knowledge_master_request(request, db)
+
+    @api_request(knowledgetransaction.RequestFormat)
+    def handle_knowledge_transaction(self, request, db) :
+        return controller.process_knowledge_transaction_request(request, db)
 
 
 template_loader = jinja2.FileSystemLoader(
@@ -184,23 +190,45 @@ TEMPLATE_PATHS = [
     ("/test", "test_apis.html", "", {}),
     ("/home", "files/desktop/home/home.html", None, {}),
     ("/custom-controls", "files/desktop/custom-controls/custom-controls.html", None, {}),
-    ("/domain/create", "files/desktop/domain-master/domainmaster.html", None, {}),
-    ("/domain/list", "files/desktop/domain-master/domainmasterlist.html", None, {}),
-    ("/country/list", "files/desktop/CountryMaster/CountryMasterList.html", None, {}),
-    ("/country/create", "files/desktop/CountryMaster/CountryMaster.html", None, {}),
-    ("/industry/create", "files/desktop/Industry_Master/IndustryMaster.html", None, {}),
-    ("/industry/list", "files/desktop/Industry_Master/IndustryMasterList.html", None, {}),
-    ("/applicability/create", "files/desktop/Applicability_master/ApplicabilityMaster.html", None, {}),
-    ("/applicability/list", "files/desktop/Applicability_master/ApplicabilityMasterList.html", None, {}),
-    ("/geographylevel/create", "files/desktop/GeographyLevel/GeographyLevelMaster.html", None, {}),
-    ("/geographylevel/list", "files/desktop/GeographyLevel/GeographyLevelList.html", None, {}),
-    ("/geographymapping", "files/desktop/GeographyMaster/GeographyMapping.html", None, {}),
-    ("/geographymapping/list", "files/desktop/GeographyMaster/GeographyMappingList.html", None, {}),
-    ("/statutorylevel/list", "files/desktop/StatutoryLevelMaster/StatutoryLevelMasterList.html", None, {}),
-    ("/statutorylevel/create", "files/desktop/StatutoryLevelMaster/StatutoryLevelMaster.html", None, {}),
-    ("/statutorymapping", "files/desktop/StatutoryMapping/StatutoryMapping.html", None, {}),
-    ("/statutorymapping/list", "files/desktop/StatutoryMapping/StatutoryMappingList.html", None, {}),
-
+    #common
+    ("/change-password", "files/desktop/change-password/changepassword.html", None, {}),
+    #IT Admin Master
+    ("/domain-master", "files/desktop/domain-master/domainmaster.html", None, {}),
+    ("/country-master", "files/desktop/country-master/countrymaster.html", None, {}),
+    ("/user-group-master", "files/desktop/user-group-master/usergroupmaster.html", None, {}),
+    ("/user-master", "files/desktop/user-master/usermaster.html", None, {}),    
+    #knowledge manager transaction
+    ("/approve-statutory-mapping", "files/desktop/approve-statutory-mapping/approvestatutorymapping.html", None, {}),
+    #knowledge user master
+    ("/geography-master", "files/desktop/geography-master/geographymaster.html", None, {}),
+    ("/geography-level-master", "files/desktop/geography-level-master/geographylevelmaster.html", None, {}),
+    ("/industry-master", "files/desktop/industry-master/industrymaster.html", None, {}),   
+    ("/statutory-nature-master", "files/desktop/statutory-nature-master/statutorynaturemaster.html", None, {}),
+    ("/statutory-level-master", "files/desktop/statutory-level-master/statutorylevelmaster.html", None, {}),
+    #knowledge user Transaction
+    ("/statutory-mapping", "files/desktop/statutory-mapping/statutorymapping.html", None, {}),    
+    #knowledge Reports
+    ("/statutory-mapping-report", "files/desktop/statutory-mapping-report/statutorymappingreport.html", None, {}),
+    ("/country-report", "files/desktop/knowledge-master-report/country-master-report/countrymasterreport.html", None, {}),
+    ("/domain-report", "files/desktop/knowledge-master-report/domain-master-report/domainmasterreport.html", None, {}),
+    ("/geography-report", "files/desktop/knowledge-master-report/geography-master-report/geographymasterreport.html", None, {}),
+    ("/industry-report", "files/desktop/knowledge-master-report/industry-master-report/industrymasterreport.html", None, {}),
+    ("/statutory-nature-report", "files/desktop/knowledge-master-report/statutory-nature-master-report/statutorynaturemasterreport.html", None, {}),
+    #Techno Manager master
+    ("/client-master", "files/desktop/client-master/clientmaster.html", None, {}),
+    #Techno user master
+    ("/client-unit", "files/desktop/client-unit/clientunit.html", None, {}), 
+    ("/client-profile", "files/desktop/client-profile/clientprofile.html", None, {}),
+    #Techno User Transaction
+    ("/assign-statutory", "files/desktop/assign-statutory/assignstatutory.html", None, {}),
+    #Techno reports
+    ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {}),
+    #client admin
+    ("/service-provider", "files/desktop/service-provider/serviceprovider.html", None, {}),   
+    ("/client-user-privilege", "files/desktop/client-user-privilege/clientuserprivilege.html", None, {}),  
+    ("/client-user-master", "files/desktop/client-user-master/clientusermaster.html", None, {}),  
+    ("/unit-closure", "files/desktop/unit-closure/unitclosure.html", None, {}),
+    
 ]
 
 
@@ -241,6 +269,7 @@ def run_server(port):
             ),
             ("/api/general", api.handle_general),
             ("/api/knowledge_master", api.handle_knowledge_master),
+            ("/api/knowledge_transaction", api.handle_knowledge_transaction)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

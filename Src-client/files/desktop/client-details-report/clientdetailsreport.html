@@ -1,0 +1,184 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %} 
+<style>
+.ac-textbox li
+{
+list-style-type:none; line-height:25px;
+}
+.ac-textbox ul {
+  border:1px solid gray;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+}
+.ac-textbox ul li {
+  font-size: 0.8em;
+  padding-right: 0.3em;
+  padding-left:0.3em;
+  vertical-align: center;
+  cursor: pointer;
+}
+.ac-textbox ul li:hover{
+  background: #EAE8E8;  
+}
+/* Autocomplete selectbox Style */
+.ac-selectbox ul {
+  background: none repeat scroll 0 0 #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.11);
+  box-sizing: border-box;
+  position: absolute;
+  padding-left: 0em;
+  background: #ffffff;
+  transition: opacity 200ms ease-out 0s, top 200ms ease-out 0s, visibility 200ms ease-out 0s;
+}
+.ac-selectbox ul li {
+  font-size: 0.8em;
+  list-style-type:none; 
+  padding: 6px;
+  padding-left: 2em;
+  vertical-align: center;
+  cursor: pointer;
+  background: url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li:hover{
+  
+  background:  #EAE8E8 url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox {
+  background: url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox:hover {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+</style>
+<div class="content-container">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="add-container-heading">Client Details<span class="error-message"></span></div>
+      <div class="input-row-left">
+       <div class="input-row">
+          <div class="field-label">Country<span class="mandatory">*</span>:</div>
+          <div class="field-input">
+            <select class="input-box" id="countries" >
+              <option value="">Select</option>
+        
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Group<span class="mandatory">*</span>:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="groupsval" value="" style="width:213px;"  onkeyup="loadauto_text(this.value)"> 
+            <input type="hidden" id="group-id"> 
+            <div id="autocompleteview" class="ac-textbox" style="display:none;"  onclick="hidegroupslist();">
+              <ul style="width:195px;"></ul> 
+            </div>
+          </div>
+          </div>
+       
+        <div class="input-row">
+          <div class="field-label">Business Group:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" style="width:213px;"  onkeyup="loadauto_businessgroups(this.value)"> 
+            <input type="hidden" id="businessgroupid"> 
+            <div id="autocompleteview-bgroups" class="ac-textbox" style="display:none;"  onclick="hidebgroupslist();">
+              <ul style="width:195px;"></ul> 
+            </div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Legal Entity:</div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="legalentityval" value="" style="width:213px;"  onkeyup="loadauto_lentity(this.value)"> 
+            <input type="hidden" id="legalentityid"> 
+            <div id="autocompleteview-lentity" class="ac-textbox" style="display:none;"  onclick="hidelentitylist();">
+              <ul style="width:195px;"></ul> 
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="input-row-right">
+         <div class="input-row">
+          <div class="field-label">Division:</div>
+          <div class="field-input">
+             <input type="text" class="input-box icon-autocomplete" id="divisionval" value="" style="width:213px;"  onkeyup="loadauto_division(this.value)"> 
+            <input type="hidden" id="divisionid"> 
+            <div id="autocompleteview-division" class="ac-textbox" style="display:none;"  onclick="hidedivisionlist();">
+              <ul style="width:195px;"></ul> 
+            </div>
+          </div>
+        </div>
+         <div class="input-row">
+          <div class="field-label"> Unit:</div>
+          <div class="field-input">
+             <input type="text" class="input-box icon-autocomplete" id="unitval" value="" style="width:213px;"  onkeyup="loadauto_unit(this.value)"> 
+            <input type="hidden" id="unitid"> 
+            <div id="autocompleteview-unit" class="ac-textbox" style="display:none;"  onclick="hideunitlist();">
+              <ul style="width:195px;"></ul> 
+            </div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Domain:</div>
+          <div class="field-input">
+            <input type="hidden" id="domain"> 
+            <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto_domains()"> 
+            <div id="selectboxview-domains" class="ac-selectbox" style="display:none;" onmouseleave="hidedomainmenu();">
+              <ul style="width:213px;"></ul> 
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="submit-button-container">
+        <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit">       
+      </div>
+      <div class="clearfix"></div>
+      <div class="grid-table-rpt">
+        <h1>Client Details</h1>
+        <div style="margin-left:15%;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+
+           <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;" class="countryval"
+           ></span> </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Group  :<span style="margin-left:10px; font-weight:bold;" class="groupsval"> </span> </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Business Group :<span style="margin-left:10px; font-weight:bold;" class="bgroupsval"> </span> </div>
+          </div>
+          <div style="float:right; margin-right:20%;">
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Legal Entity  :<span style="margin-left:10px; font-weight:bold;" class="lentityval"></span> </div>
+           
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Division :<span style="margin-left:10px; font-weight:bold;" class="divisionval"></span> </div>
+            
+          </div>
+        </div>
+        <table style="border-bottom:dotted 1px #999999;">
+          <tr align="left">
+            <th width="3%" align="center" class="header-bg">#</th>
+            <th class="header-bg">Unit</th>
+            <th class="header-bg">Domain</th>
+            <th width="40%"  class="header-bg">Unit Location &  Address</th>
+            <th class="header-bg">Postal Code</th>           
+          </tr>
+          <tbody class="tbody-clientdetails-list">
+          </tbody>
+        </table>
+        <p style="border-top:1px dashed #ccc;" class="total-records"></p>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="templates">
+  <table class="table-clientdetails-list">
+    <tr class="table-row" >
+      <td align="center" class="sno"></td>
+      <td class="unit-name"></td>
+      <td class="domain-name"></td>  
+      <td class="unit-address"></td>
+      <td class="pincode"></td>
+    </tr>
+  </table>
+</div>
+
+<script type="text/javascript" src="/files/desktop/ClientDetailedReport/clientdetailedreport.js"></script>
+{% endblock %}

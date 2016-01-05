@@ -5,14 +5,10 @@ import hashlib
 import string
 import random
 import re
-
-from protocol import core
-import hashlib
 import uuid
+
 from types import *
-
-from protocol import core
-
+from protocol import core, knowledgereport
 
 __all__ = [
     "KnowledgeDatabase", "ClientDatabase"
@@ -131,7 +127,12 @@ class Database(object) :
         return result
 
     def get_data(self, table, columns, condition):
-        query = "SELECT %s FROM %s WHERE %s "  % (columns, table, condition)
+        # query = "SELECT "+columns+" FROM "+table+" \
+        #WHERE "+condition 
+        query = "SELECT %s FROM %s "  % (columns, table)
+        if condition is not None :
+            query += " WHERE %s" % (condition)
+
         return self.select_all(query)
 
     def get_data_from_multiple_tables(self, columns, tables, aliases, joinType, joinConditions, whereCondition):
@@ -322,6 +323,7 @@ class KnowledgeDatabase(Database):
         self.tblUsers = "tbl_users"
 
     def convert_to_dict(self, data_list, columns) :
+        assert type(data_list) in (list, tuple)
         result_list = []
         if len(data_list) > 1 :
             if len(data_list[0]) == len(columns) :
@@ -348,12 +350,18 @@ class KnowledgeDatabase(Database):
         user_id = row[0]
         return user_id
 
+    def encrypt(self, value):
+        m = hashlib.md5()
+        m.update(value)
+        return m.hexdigest()
+
+
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and user_name='%s'" % (
             password, username
         )
         admin_details = self.get_data("tbl_admin", "*", tblAdminCondition)
-        print admin_details
+
         if (len(admin_details) == 0) :
             data_columns = ["user_id", "user_group_id", "email_id", 
                 "employee_name", "employee_code", "contact_no", "address", 
@@ -368,9 +376,11 @@ class KnowledgeDatabase(Database):
                 WHERE t1.password='%s' and t1.email_id='%s'" % (
                     password, username
                 )
-            print query
             data_list = self.select_one(query)
-            return self.convert_to_dict(data_list, data_columns)
+            if data_list is None :
+                return False
+            else :
+                return self.convert_to_dict(data_list, data_columns)
         else :
             return True
 
@@ -514,7 +524,6 @@ class KnowledgeDatabase(Database):
     #
 
     def get_countries_for_user(self, user_id) :
-        print "inside get_countries for users"
         query = "SELECT distinct t1.country_id, t1.country_name, \
             t1.is_active FROM tbl_countries t1 "
         if user_id > 0 :
@@ -1035,7 +1044,7 @@ class KnowledgeDatabase(Database):
         rows = self.select_all(query)
         columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
         result = self.convert_to_dict(rows, columns)
-        self.geography_parent_mapping(result)
+        self.set_geography_parent_mapping(result)
         return self.return_geographies(result)
 
     def return_geographies(self, data):
@@ -1067,6 +1076,24 @@ class KnowledgeDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         # self.geography_parent_mapping(result)
         return self.return_geographies(result)
+
+    def get_geography_report(self):
+        def return_report_data(result) :
+            mapping_list = []
+            for key, value in result.iteritems():
+                mappings = value[0]
+                is_active = value[1]
+                mapping_list.append(
+                    knowledgereport.GeographyMapping(
+                        mappings, is_active
+                    )
+                )
+            return mapping_list
+
+        if bool(self.geography_parent_mapping) is False :
+            data = self.get_geographies()
+
+        return return_report_data(self.geography_parent_mapping)
 
     def get_geography_by_id(self, geography_id):
         query = "SELECT geography_id, geography_name, level_id, parent_ids, is_active \
@@ -1135,7 +1162,7 @@ class KnowledgeDatabase(Database):
         #         )
         #         self.dataInsertUpdate(q)
         #     action = "Edit Geography Mappings Parent"
-        #     self.saveActivity(updated_by, 7, action)
+        #     self.save_activity(updated_by, 7, action)
         # self.getAllGeographies()
         # return True
 
@@ -1175,20 +1202,72 @@ class KnowledgeDatabase(Database):
         columns = ["statutory_id", "statutory_name", "level_id", "is_active"]
         return self.convert_to_dict(rows, columns)
 
-    def get_statutory_master(self): 
-        columns = ["statutory_id", "statutory_name", "level_id", "parent_ids",
-            "country_id", "country_name", "domain_id", "domain_name"
+    def get_statutory_master(self, statutory_id = None): 
+        columns = [
+            "statutory_id", "statutory_name", 
+            "level_id", "parent_ids",
+            "country_id", "country_name", 
+            "domain_id", "domain_name"
         ]
-        query = "SELECT t1.statutory_id, t1.statutory_name, t1.level_id, t1.parent_ids, \
-            t2.country_id, t3.country_name, t2.domain_id, t4.domain_name \
+        query = "SELECT t1.statutory_id, t1.statutory_name, \
+            t1.level_id, t1.parent_ids, t2.country_id, \
+            t3.country_name, t2.domain_id, t4.domain_name \
             FROM tbl_statutories t1 \
-            INNER JOIN tbl_statutory_levels t2 on t1.level_id = t2.level_id \
-            INNER JOIN tbl_countries t3 on t2.country_id = t3.country_id \
-            INNER JOIN tbl_domains t4 on t2.domain_id = t4.domain_id"
+            INNER JOIN tbl_statutory_levels t2 \
+            on t1.level_id = t2.level_id \
+            INNER JOIN tbl_countries t3 \
+            on t2.country_id = t3.country_id \
+            INNER JOIN tbl_domains t4 \
+            on t2.domain_id = t4.domain_id"
+        if statutory_id is not None :
+            query = query + " WHERE t1.statutory_id = %s" % (
+                statutory_id
+            )
         rows = self.select_all(query)
         result = convert_to_dict(rows, columns)
-        self.set_stautory_parent_mappings(result)
-        return result
+        self.set_statutory_parent_mappings(result)
+        return self.return_statutory_master(result)
+
+    def return_statutory_master(data):
+        statutory_list = []
+        for d in data :
+            statutory_id = int(d["statutory_id"])
+            mappings = self.statutory_parent_mapping.get(
+                statutory_id
+            )
+            parent_ids = [
+                int(x) for x in d["parent_ids"][-1].split(',')
+            ]
+            statutory = core.Statutory(
+                statutory_id, d["statutory_name"],
+                d["level_id"], parent_ids, parent_ids[-1],
+                mappings
+            )
+            statutory_list.append(statutory)
+        return statutory_list
+
+    def get_country_wise_level_1_statutoy(self) :
+        query = "SELECT t1.statutory_id, t1.statutory_name, \
+            t1.level_id, t1.parent_ids, t2.country_id, \
+            t3.country_name, t2.domain_id, t4.domain_name \
+            FROM tbl_statutories t1 \
+            INNER JOIN tbl_statutory_levels t2 \
+            on t1.level_id = t2.level_id \
+            INNER JOIN tbl_countries t3 \
+            on t2.country_id = t3.country_id \
+            INNER JOIN tbl_domains t4 \
+            on t2.domain_id = t4.domain_id \
+            WHERE t2.level_position=1"
+        row = self.select_all(query)
+        columns = [
+            "statutory_id", "statutory_name", "level_id",
+            "parent_ids", "country_id", "country_name",
+            "domain_id", "domain_name"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_statutory_master(result)
+
+
 
     def save_statutory(self, name, level_id, parent_ids, user_id) :
         is_saved = False
@@ -1239,85 +1318,124 @@ class KnowledgeDatabase(Database):
         #         )
         #         self.dataInsertUpdate(q)
         #     action = "Edit Geography Mappings Parent"
-        #     self.saveActivity(updated_by, 7, action)
+        #     self.save_activity(updated_by, 7, action)
         # self.getAllGeographies()
         # return True
 
     #
     # statutory mappings
     #
-    def set_stautory_parent_mappings(self, rows) :
+    def set_statutory_parent_mappings(self, rows) :
         _tempDict = {}
         for row in rows :
-            _tempDict[int(row["statutory_id"])] = row["statutory_name"]
-
+            _tempDict[row["statutory_id"]] = row["statutory_name"]
+        
         for row in rows :
-            statutory_id = int(row["statutory_id"])
-            parent_ids = [int(x) for x in row["parent_ids"][:-1].split(',')]
+            statutory_id = row["statutory_id"]
+            parent_ids = [
+                int(x) for x in row["parent_ids"][-1].split(',')
+            ]
+            statutory_name = row["statutory_name"]
             names = []
             for id in parent_ids :
                 if id > 0 :
                     names.append(_tempDict.get(id))
-            names.append(row["statutory_name"])
+            names.append(statutory_name)
             mappings = '>>'.join(str(x) for x in names)
-            self.statutory_parent_mapping[statutory_id] = mappings
-        
+            self.statutory_parent_mapping[statutory_id] = [
+                statutory_name, mappings
+            ]
 
-    def geography_parent_mapping(self, rows):
+    def set_geography_parent_mapping(self, rows):
         _tempDict = {}
         for row in rows :
             _tempDict[int(row["geography_id"])] = row["geography_name"]
 
         for row in rows :
             geography_id = int(row["geography_id"])
-            parentIds = [int(x) for x in row["parent_ids"][:-1].split(',')]
+            is_active = bool(row["is_active"])
+            parent_ids = [int(x) for x in row["parent_ids"][:-1].split(',')]
             names = []
             names.append(row["country_name"])
-            for id in parentIds :
+            for id in parent_ids :
                 if id > 0 :
                     names.append(_tempDict.get(id))
             names.append(row["geography_name"])
             mappings = '>>'.join(str(x) for x in names)
-            self.geography_parent_mapping[geography_id] = mappings
+            self.geography_parent_mapping[geography_id] = [
+                mappings, is_active
+            ]
 
 
     def get_compliance_duration(self):
+
+        def return_compliance_duration(data):
+            duration_list = []
+            for d in data :
+                duration_list.append(
+                    core.ComplianceDurationType(
+                        d["duration_type_id"], d["duration_type"]
+                    )
+                )
+            return duration_list
+
         columns = ["duration_type_id", "duration_type"]
         rows = self.get_data("tbl_compliance_duration_type", "*", None)
         result = self.convert_to_dict(rows, columns)
-        # query = "SELECT duration_type_id, duration_type FROM tbl_compliance_duration_type"
-        # rows = self.select_all(query)
-        return result
+        return return_compliance_duration(result)
 
     def get_compliance_repeat(self):
+
+        def return_compliance_repeat(data):
+            repeat_list = []
+            for d in data :
+                repeat_list.append(
+                    core.ComplianceRepeatType(
+                        d["repeat_type_id"], d["repeat_type"]
+                    )
+                )
+            return repeat_list
+
         columns = ["repeat_type_id", "repeat_type"]
         rows = self.get_data("tbl_compliance_repeat_type", "*", None)
         result = self.convert_to_dict(rows, columns)
-        # query = "SELECT repeat_type_id, repeat_type FROM tbl_compliance_repeat_type"
-        # rows = self.select_all(query)
-        return result
+        return return_compliance_repeat(result)
 
     def get_compliance_frequency(self):
+
+        def return_compliance_frequency(data) :
+            frequency_list = []
+            for d in data :
+                frequency_list.append(
+                    core.ComplianceFrequency(
+                        d["frequency_id"], d["frequency"]
+                    )
+                )
+            return frequency_list
+
         columns = ["frequency_id", "frequency"]
         rows = self.get_data("tbl_compliance_frequency", "*", None)
-        # query = "SELECT frequency_id, frequency FROM tbl_compliance_frequency"
-        # rows = self.select_all(query)
         result = self.convert_to_dict(rows, columns)
-        return result
+        return return_compliance_frequency(result)
 
     def get_approval_status(self, approval_id=None):
-        approval_list = []
-        status_list = enumerate(("Pending", "Approve", "Reject", "Approve & Notify"))
-        for sts in status_list :
-            status = {}
-            status["approval_status_id"] = sts[0]
-            status["approval_status"] = sts[1]
-            approval_list.append(status)
-        if approval_id is None :
-            return approval_list
-        else :
-            return approval_list.get(approval_id)
 
+        def return_approval_status(data):
+            approval_list = []
+            for sts in enumerate(data) :
+                approval_list.append(
+                    core.ComplianceApprovalStatus(
+                        sts[0], sts[1]
+                    )
+                )
+            return approval_list
+
+        status = ("Pending", "Approve", "Reject", "Approve & Notify")
+        
+        if approval_id is None :
+            return return_approval_status(status)
+        else :
+            return status[int(approval_id)]
 
     def get_statutory_mappings(self, user_id) :
         q = "SELECT t1.statutory_mapping_id, t1.country_id, \
@@ -1348,6 +1466,7 @@ class KnowledgeDatabase(Database):
             "approval_status", "is_active"
         ]
         result = self.convert_to_dict(rows, columns)
+        return self.return_statutory_mappings(result)
 
     def return_statutory_mappings(self, data):
         mapping_data_list = []
@@ -1364,9 +1483,10 @@ class KnowledgeDatabase(Database):
             ]
             geography_mapping_list = []
             for g_id in geography_ids :
-                geography_mapping_list.append(
-                    self.geography_parent_mapping.get(int(g_id))
-                )
+                map_data = self.geography_parent_mapping.get(int(g_id))
+                if map_data is not None:
+                    map_data = map_data[0]
+                geography_mapping_list.append(map_data)
             statutory_ids = [
                 int(x) for x in d["statutory_ids"][:-1].split(',')
             ]
@@ -1390,6 +1510,89 @@ class KnowledgeDatabase(Database):
             )
             mapping_data_list.append(statutory)
         return mapping_data_list
+
+    def get_statutory_mapping_report(
+        self, country_id, domain_id, industry_id, 
+        statutory_nature_id, geography_id
+    ) :
+        q = "SELECT t1.statutory_mapping_id, t1.country_id, \
+            t2.country_name, t1.domain_id, t3.domain_name, \
+            t1.industry_ids, t1.statutory_nature_id, \
+            t4.statutory_nature_name, t1.statutory_ids, \
+            t1.compliance_ids, t1.geography_ids, \
+            t1.approval_status, t1.is_active  \
+            FROM tbl_statutory_mappings t1 \
+            INNER JOIN tbl_countries t2 \
+            ON t1.country_id = t2.country_id \
+            INNER JOIN tbl_domains t3 \
+            ON t1.domain_id = t3.domain_id \
+            INNER JOIN tbl_statutory_natures t4 \
+            ON t1.statutory_nature_id = t4.statutory_nature_id \
+            INNER JOIN tbl_user_domains t5 \
+            ON t1.domain_id = t5.domain_id \
+            and t5.user_id = %s \
+            INNER JOIN tbl_user_countries t6 \
+            ON t1.country_id = t6.country_id \
+            and t6.user_id = %s \
+            WHERE t1.country_id = %s \
+            and t1.domain_id = %s \
+            and t1.industry_ids like '%s' \
+            and t1.statutory_nature_id like '%s' \
+            and t1.geography_ids like '%s'" % (
+                user_id, user_id,
+                country_id, domain_id, 
+                str("%" + str(industry_id) + ",%"), 
+                str(statutory_nature_id),
+                str("%" + str(geography_id) + ",%")
+            )
+
+        rows = self.select_all(q)
+        columns = [
+            "statutory_mapping_id", "country_id", 
+            "country_name", "domain_name", "industry_ids", 
+            "statutory_nature_id", "statutory_nature_name", 
+            "statutory_ids", "compliance_ids", "geography_ids",
+            "approval_status", "is_active"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        report_data = {}
+        for r in result :
+            report_data[r.statutory_mapping_id] = r
+        return self.return_knowledge_report(
+            country_id, domain_id, report_data
+        )
+
+
+    def get_mappings_id(self, statutory_id) :
+        query = "SELECT t1.statutory_mapping_ids from tbl_statutories t1 \
+            WHERE t1.parent_ids like '%0%' OR t1.parent_ids like '%s'" % str("%" + str(statutory_id) + ",%")
+        rows = self.select_all(query)
+        return self.convert_to_dict(
+            rows, ["statutory_mapping_ids"]
+        )
+
+
+    def return_knowledge_report(self, country_id, domain_id, report_data):
+        level_1_statutory = self.get_country_wise_level_1_statutoy()
+
+        level1s = level_1_statutory[country_id][domain_id]
+        level_1_mappings = {}
+        for x in level1s :
+            statutory_id = x.statutory_id
+            rows = self.get_mappings_id(statutory_id)
+            mapping_list = []
+            for row in rows :
+                mapping_ids = row["statutory_mapping_ids"]
+                if (mapping_ids is None) or (mapping_ids == "") :
+                    continue
+                def getData(i) :
+                    return report_data.get(int(i))
+                mapping_list.extend(
+                    [getData(x) for x in mapping_ids[:-1].split(',') if getData(x) is not None]  
+                )
+            level_1_mappings[statutory_id] = mapping_list
+        return level_1_mappings
+
 
     #
     # compliance
@@ -1453,13 +1656,13 @@ class KnowledgeDatabase(Database):
     #
 
     def save_statutory_mapping(self, data, created_by) :
-        country_id =data.get("country_id")
-        domain_id =data.get("domain_id")
-        industry_ids = ','.join(str(x) for x in data.get("industry_ids")) + ","
-        nature_id =data.get("statutory_nature_id")
-        statutory_ids = ','.join(str(x) for x in data.get("statutory_ids")) + ","
-        compliances = data.get("compliances")
-        geography_ids = ','.join(str(x) for x in data.get("geography_ids")) + ","
+        country_id =data.country_id
+        domain_id =data.domain_id
+        industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
+        nature_id =data.statutory_nature_id
+        statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
+        compliances = data.compliances
+        geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
         statutory_mapping_id = self.get_new_id("statutory_mapping_id", "tbl_statutory_mappings")
         created_on = self.get_date_time()
         is_active = 1
@@ -1475,23 +1678,22 @@ class KnowledgeDatabase(Database):
         )
         if (self.save_data(statutory_table, field, data)) :            
             self.update_statutory_mapping_id(
-                data.get("statutory_ids"), 
+                data.statutory_ids, 
                 statutory_mapping_id, created_by
             )
             ids = self.save_compliance(
                 statutory_mapping_id, compliances, created_by
             )
             compliance_ids = ','.join(str(x) for x in ids) + ","
-            # qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
-            #     where statutory_mapping_id = %s" % (compliance_ids, statutory_mapping_id)
-            # self.execute(qry)
+            qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
+                where statutory_mapping_id = %s" % (compliance_ids, statutory_mapping_id)
+            self.execute(qry)
             action = "New statutory mappings added"
             self.save_activity(created_by, 17, action)
             return True
         else :
             return False
 
-            
     def update_statutory_mapping_id(
         self, statutory_id, mapping_id, user_id
     ) :
@@ -1558,19 +1760,19 @@ class KnowledgeDatabase(Database):
             )
             created_on = self.get_date_time()
 
-            provision = data.get("statutory_provision")
-            compliance_task = data.get("compliance_task")
-            compliance_description = data.get("description")
-            document_name = data.get("document_name")
-            format_file = ','.join(str(x) for x in data.get("format_file_name"))
-            penal_consequences = data.get("penal_consequences")
-            compliance_frequency = data.get("frequency_id")
-            statutory_dates =  json.dumps(data.get("statutory_dates"))
-            repeats_every = data.get("repeats_every")
-            repeats_type = data.get("repeats_type_id")
-            duration = data.get("duration")
-            duration_type = data.get("duration_type_id")
-            is_active = data.get("is_active")
+            provision = data.statutory_provision
+            compliance_task = data.compliance_task
+            compliance_description = data.description
+            document_name = data.document_name
+            format_file = ','.join(str(x) for x in data.format_file_name)
+            penal_consequences = data.penal_consequences
+            compliance_frequency = data.frequency_id
+            statutory_dates =  json.dumps(data.statutory_dates)
+            repeats_every = data.repeats_every
+            repeats_type = data.repeats_type_id
+            duration = data.duration
+            duration_type = data.duration_type_id
+            is_active = data.is_active
 
             if compliance_frequency == 1 :
                 query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
@@ -1605,6 +1807,306 @@ class KnowledgeDatabase(Database):
                 compliance_ids.append(compliance_id)
 
         return compliance_ids
+
+    def update_statutory_mapping(self, data, updated_by) :
+        statutory_mapping_id = data.statutory_mapping_id
+        country_id =data.country_id
+        domain_id =data.domain_id
+        industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
+        nature_id =data.statutory_nature_id
+        statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
+        compliances = data.compliances
+        geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
+
+        self.save_statutory_backup(statutory_mapping_id, updated_by)
+        query = "UPDATE tbl_statutory_mappings set country_id=%s, domain_id=%s, industry_ids='%s', \
+            statutory_nature_id=%s, statutory_ids='%s', geography_ids='%s', approval_status=0, rejected_reason=NULL, updated_by=%s \
+            WHERE statutory_mapping_id=%s" % (
+                country_id, domain_id, industry_ids, nature_id, statutory_ids, geography_ids,
+                updated_by, statutory_mapping_id
+            )
+
+        if (self.execute(query)) :
+            print "update mapping"
+            self.update_statutory_mapping_id(data.statutory_ids, statutory_mapping_id, updated_by)
+            ids = self.update_compliance(statutory_mapping_id, compliances, updated_by)
+            compliance_ids = ','.join(str(x) for x in ids) + ","
+            qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
+                where statutory_mapping_id = %s" % (compliance_ids, statutory_mapping_id)
+            self.execute(qry)
+            action = "Edit Statutory Mappings"
+            self.save_activity(updated_by, 17, action)
+            return True
+        else :
+            return False
+
+    def update_compliance(self, mapping_id, datas, updated_by) :
+        compliance_ids = []
+        for data in datas :
+            compliance_id = data.compliance_id
+            if (compliance_id == "") :
+                ids = self.save_compliance(mapping_id, [data], updated_by)
+                compliance_ids.extend(ids)
+                continue
+            provision = data.statutory_provision
+            compliance_task = data.compliance_task
+            description = data.description
+            document_name = data.document_name
+            format_file = ','.join(str(x) for x in data.format_file_name)
+            penal_consequences = data.penal_consequences
+            compliance_frequency = data.frequency_id
+            statutory_dates =  json.dumps(data.statutory_dates)
+            repeats_every = data.repeats_every
+            repeats_type = data.repeats_type_id
+            duration = data.duration
+            duration_type = data.duration_type_id
+            is_active = int(data.is_active)
+
+            if compliance_frequency == 1 :
+                query = "UPDATE tbl_compliances set statutory_provision = '%s', \
+                    compliance_task = '%s', compliance_description = '%s', document_name = '%s' , format_file = '%s', \
+                    penal_consequences = '%s', frequency_id = '%s', statutory_dates = '%s', statutory_mapping_id = %s, \
+                    is_active = %s, updated_by = %s WHERE compliance_id = %s "  % (
+                        provision, compliance_task, 
+                        description, document_name, format_file, penal_consequences, compliance_frequency,
+                        statutory_dates, mapping_id, is_active, updated_by, compliance_id
+                    )
+
+            elif compliance_frequency == 4 :
+                query = "UPDATE tbl_compliances set statutory_provision='%s', \
+                    compliance_task='%s', compliance_description='%s', document_name='%s', format_file='%s', \
+                    penal_consequences='%s', frequency_id='%s', statutory_dates='%s', duration=%s, \
+                    duration_type_id='%s', statutory_mapping_id = %s, \
+                    is_active = %s, updated_by = %s WHERE compliance_id = %s "% (
+                        provision, compliance_task, 
+                        description, document_name, format_file, penal_consequences, compliance_frequency,
+                        statutory_dates, int(duration), duration_type, mapping_id, is_active, updated_by, compliance_id
+                    )
+
+            else :
+                query = "UPDATE tbl_compliances set statutory_provision ='%s', \
+                    compliance_task ='%s', compliance_description='%s', document_name='%s', format_file='%s', \
+                    penal_consequences='%s', frequency_id='%s', statutory_dates='%s', repeats_every=%s, \
+                    repeats_type_id='%s', statutory_mapping_id=%s, \
+                    is_active=%s, updated_by=%s WHERE compliance_id = %s "  % (
+                        provision, compliance_task, 
+                        description, document_name, format_file, penal_consequences, compliance_frequency,
+                        statutory_dates, int(repeats_every), repeats_type, mapping_id, is_active, updated_by, compliance_id
+                    )
+
+            if (self.execute(query)) :
+                compliance_ids.append(compliance_id)
+
+        return compliance_ids
+
+    def change_compliance_status(self, mapping_id, is_active, updated_by) :
+        query = "UPDATE tbl_compliances set is_active=%s, \
+            updated_by=%s WHERE statutory_mapping_id=%s" % (
+                is_active, updated_by, mapping_id
+            )
+        return self.execute(query)
+
+    def chenge_statutory_mapping_status(self, data, updated_by):
+        statutory_mapping_id = data.statutory_mapping_id
+        is_active = data.is_active
+
+        query = "UPDATE tbl_statutory_mappings set is_active=%s, updated_by=%s \
+            WHERE statutory_mapping_id=%s" % (
+            is_active, updated_by, statutory_mapping_id
+        )
+        if (self.execute(query)) :
+            self.change_compliance_status(statutory_mapping_id, is_active, updated_by)
+            if is_active == 0:
+                status = "deactivated"
+            else:
+                status = "activated"
+            action = "Statutory Mapping status changed"
+            self.save_activity(updated_by, 17, action)
+            return True
+
+    def save_statutory_backup(self, statutory_mapping_id, created_by):
+        old_record = self.get_statutory_mapping_by_id(statutory_mapping_id)
+        backup_id = self.get_new_id("statutory_backup_id", "tbl_statutories_backup")
+        created_on = self.get_date_time()
+        industry_ids = [
+            int(x) for x in old_record["industry_ids"][-1].split(',')
+        ]
+        industry_name = self.get_industry_by_id(industry_ids)
+
+        provision = []
+        for sid in old_record["statutory_ids"][:-1].split(',') :
+            data = self.statutory_parent_mapping.get(int(sid))
+            provision.append(data)
+        mappings = ','.join(str(x) for x in provision)
+        
+        geo_map = []
+        for gid in old_record["geography_ids"][:-1].split(',') :
+            data = self.geography_parent_mapping.get(int(geo_map))
+            if data is not None :
+                data = data[0]
+            geo_map.append(data)
+        geo_mappings = ','.join(str(x) for x in geo_map)
+        
+        q = "INSERT INTO tbl_statutories_backup \
+            (statutory_backup_id, statutory_mapping_id, \
+            country_name, domain_name, industry_name, \
+            statutory_nature, statutory_provision, \
+            applicable_location, created_by, created_on) \
+            VALUES(%s, %s, '%s', '%s', '%s', '%s', '%s', \
+                '%s', %s, '%s') " % (
+                backup_id, statutory_mapping_id, 
+                old_record["country_name"], 
+                old_record["domain_name"], 
+                industry_name, old_record["statutory_nature"], 
+                mappings, 
+                geo_mappings, created_by, created_on
+            )
+        if (self.execute(q)) :
+            qry = " INSERT INTO tbl_compliances_backup \
+                (statutory_backup_id, statutory_provision, \
+                compliance_task, compliance_description, \
+                document_name, format_file, \
+                penal_consequences, frequency_id, \
+                statutory_dates, repeats_every, \
+                repeats_type_id, duration, duration_type_id)  \
+                SELECT \
+                %s,t1.statutory_provision, t1.compliance_task, \
+                t1.compliance_description, t1.document_name, \
+                t1.format_file, t1.penal_consequences, \
+                t1.frequency_id, t1.statutory_dates, \
+                t1.repeats_every, t1.repeats_type_id, \
+                t1.duration, t1.duration_type_id \
+                FROM tbl_compliances t1 \
+                WHERE statutory_mapping_id=%s" % (
+                    backup_id, statutory_mapping_id
+                )
+            self.execute(qry)
+
+    def get_statutory_mapping_by_id (self, mapping_id) :
+        q = "SELECT t1.country_id, t2.country_name, \
+            t1.domain_id, t3.domain_name, t1.industry_ids, \
+            t1.statutory_nature_id, t4.statutory_nature_name, \
+            t1.statutory_ids, t1.compliance_ids, \
+            t1.geography_ids, t1.approval_status  \
+            FROM tbl_statutory_mappings t1 \
+            INNER JOIN tbl_countries t2 \
+            on t1.country_id = t2.country_id \
+            INNER JOIN tbl_domains t3 \
+            on t1.domain_id = t3.domain_id \
+            INNER JOIN tbl_statutory_natures t4 \
+            on t1.statutory_nature_id = t4.statutory_nature_id \
+            WHERE t1.statutory_mapping_id=%s" % mapping_id
+        rows = self.select_all(q)
+        columns = [
+            "country_id", "country_name", "domain_id",
+            "domain_name", "industry_ids", "statutory_nature_id",
+            "statutory_nature_name", "statutory_ids",
+            "compliance_ids", "geography_ids",
+            "approval_status"            
+        ]
+        result = self.convert_to_dict(rows, columns)
+        return result
+
+    def change_approval_status(self, data, updated_by) :
+        statutory_mapping_id = data.statutory_mapping_id
+        provision = data.statutory_provision
+        approval_status = data.approval_status
+        rejected_reason = data.rejected_reason
+        notification_text = data.notification_text
+
+        if approval_status == 2 :
+            #Rejected
+            query = "UPDATE tbl_statutory_mappings set \
+                approval_status='%s', rejected_reason='%s', \
+                updated_by=%s WHERE \
+                statutory_mapping_id = %s" % (
+                    approval_status, rejected_reason, updated_by, statutory_mapping_id
+                )
+            self.execute(query)
+            notification_log_text = "Statutory Mapping: %s \
+                has been Rejected" % (provision)
+        else :
+            
+            query = "UPDATE tbl_statutory_mappings set \
+                approval_status='%s', \
+                updated_by=%s WHERE \
+                statutory_mapping_id = %s" % (
+                    approval_status, updated_by, 
+                    statutory_mapping_id
+                )
+            self.execute(query)
+            notification_log_text = "Statutory Mapping: %s \
+                has been Approved" % (provision)            
+            if approval_status == 3 :
+                self.save_statutory_notifications(
+                    statutory_mapping_id, notification_text
+                )
+                notification_log_text = "Statutory Mapping: %s \
+                    has been Approve & Notified" % (provision)
+        
+        link = "/statutorymapping/list"
+        self.save_notifications(notification_log_text, link)
+        action = "Statutory Mapping approval status changed"
+        self.save_activity(updated_by, 17, action)
+        return True
+
+    def save_notifications(self, notification_text, link):
+        #internal notification
+        notification_id = self.get_new_id(
+            "notification_id", "tbl_notifications"
+        )
+        query = "INSERT INTO tbl_notifications \
+            (notification_id, notification_text, link) \
+            VALUES (%s, '%s', '%s')" % (
+                notification_id, notification_text, link
+            )
+        self.execute(query)
+
+    def save_statutory_notifications(self, mapping_id, notification_text ):
+        # client notification
+        old_record = self.get_statutory_mapping_by_id(
+            mapping_id
+        )
+        industry_ids = [
+            int(x) for x in old_record["industry_ids"][-1].split(',')
+        ]
+        industry_name = self.get_industry_by_id(industry_ids)
+
+        provision = []
+        for sid in old_record["statutory_ids"][:-1].split(',') :
+            data = self.statutory_parent_mapping.get(int(sid))
+            provision.append(data)
+        mappings = ','.join(str(x) for x in provision)
+        geo_map = []
+        for gid in old_record["geography_ids"][:-1].split(',') :
+            data = self.geography_parent_mapping.get(int(gid))
+            if data is not None :
+                data = data[0]
+            geo_map.append(data)
+        geo_mappings = ','.join(str(x) for x in geo_map)
+
+        notification_id = self.get_new_id(
+            "statutory_notification_id", 
+            "tbl_statutory_notifications_log"
+        )
+
+        query = " INSERT INTO tbl_statutory_notifications_log \
+            (statutory_notification_id, statutory_mapping_id, \
+            country_name, domain_name, industry_name, \
+            statutory_nature, statutory_provision, \
+            applicable_location, notification_text) \
+            VALUES \
+            (%s, %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s') \
+            " % (
+                notification_id, mapping_id, 
+                old_record["country_name"], 
+                old_record["domain_name"], industry_name, 
+                old_record["statutory_nature"], 
+                mappings, geo_mappings,notification_text
+            )
+        self.execute(query)
+
+
 #
 #   Forms
 #
@@ -1614,7 +2116,7 @@ class KnowledgeDatabase(Database):
         "tf.form_order, tf.parent_menu"
         tables = [self.tblForms, self.tblFormCategory, self.tblFormType]
         aliases = ["tf", "tfc", "tft"]
-        joinConditions = ["tf.form_catEgory_id = tfc.form_category_id", 
+        joinConditions = ["tf.form_category_id = tfc.form_category_id", 
         "tf.form_type_id = tft.form_type_id"]
         whereCondition = " tf.form_category_id in (3,2,4) order by tf.form_order"
         joinType = "left join"
