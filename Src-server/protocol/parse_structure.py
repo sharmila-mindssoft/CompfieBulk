@@ -76,11 +76,11 @@ def parse_structure_RecordType_technomasters_Request_ChangeClientStatus(data):
 
 def parse_structure_OptionalType_VectorType_SignedIntegerType_8(data):
     if data is None: return data
-    return parse_structure_('VectorType_SignedIntegerType_8',)(data)
+    return parse_structure__VectorType_SignedIntegerType_8(data)
 
 def parse_structure_OptionalType_CustomTextType_50(data):
     if data is None: return data
-    return parse_structure_('CustomTextType_50',)(data)
+    return parse_structure_CustomTextType_50(data)
 
 def parse_structure_RecordType_technotransactions_Response_GetAssignedStatutoriesByIdSuccess(data):
     from protocol import technotransactions
@@ -96,7 +96,7 @@ def parse_structure_RecordType_technoreports_Request_GetClientDetailsReportData(
 
 def parse_structure_OptionalType_SignedIntegerType_8(data):
     if data is None: return data
-    return parse_structure_('SignedIntegerType_8',)(data)
+    return parse_structure_SignedIntegerType_8(data)
 
 def parse_structure_RecordType_clientreport_ReassignHistory(data):
     from protocol import clientreport
@@ -560,7 +560,7 @@ def parse_structure_RecordType_clienttransactions_Request_GetStatutoriesByUnit(d
 
 def parse_structure_OptionalType_Bool(data):
     if data is None: return data
-    return parse_structure_('Bool',)(data)
+    return parse_structure_Bool(data)
 
 def parse_structure_RecordType_clienttransactions_Response_SavePastRecordsSuccess(data):
     from protocol import clienttransactions
@@ -925,7 +925,7 @@ def parse_structure_VectorType_RecordType_core_Statutory(data):
 
 def parse_structure_OptionalType_RecordType_core_BusinessGroup(data):
     if data is None: return data
-    return parse_structure_('RecordType_core_BusinessGroup',)(data)
+    return parse_structure_RecordType_core_BusinessGroup(data)
 
 def parse_structure_RecordType_clientuser_Response_GetOnOccurrenceCompliancesSuccess(data):
     from protocol import clientuser

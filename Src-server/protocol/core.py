@@ -28,7 +28,7 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_20,
     parse_structure_CustomIntegerType_1_31,
     parse_structure_OptionalType_CustomTextType_50,
-    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form
+    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form,
     parse_structure_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
@@ -57,7 +57,7 @@ from protocol.to_structure import (
     to_structure_CustomIntegerType_1_12, to_structure_CustomTextType_20,
     to_structure_CustomIntegerType_1_31,
     to_structure_OptionalType_CustomTextType_50,
-    to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form
+    to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form,
     to_structure_UnsignedIntegerType_32
 )
 
