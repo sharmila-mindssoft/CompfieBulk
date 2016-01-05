@@ -138,6 +138,10 @@ class API(object):
     def handle_knowledge_master(self, request, db) :
         return controller.process_knowledge_master_request(request, db)
 
+    @api_request(knowledgemaster, RequestFormat)
+    def handle_knowledge_transaction(self, request, db) :
+        return controller.process_knowledge_transaction_request(request, db)
+
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
@@ -261,6 +265,7 @@ def run_server(port):
             ),
             ("/api/general", api.handle_general),
             ("/api/knowledge_master", api.handle_knowledge_master),
+            ("/api/knowledge_transaction", api.handle_knowledge_transaction)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

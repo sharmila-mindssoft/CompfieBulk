@@ -3,3 +3,4 @@ from logincontroller import *
 from generalcontroller import *
 from admincontroller import *
 from technocontroller import *
+from knowledgetransactioncontroller import *
