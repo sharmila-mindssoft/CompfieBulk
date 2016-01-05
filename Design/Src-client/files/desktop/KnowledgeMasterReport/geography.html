@@ -1,28 +1,6 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
-<style type="text/css">
-/* Autocomplete textbox Style */
-.ac-textbox li
-{
-list-style-type:none; line-height:25px;
-}
-.ac-textbox ul {
-  border:1px solid gray;
-  position: absolute;
-  padding-left: 0em;
-  background: #ffffff;
-}
-.ac-textbox ul li {
-  font-size: 0.8em;
-  padding-right: 0.3em;
-  padding-left:0.3em;
-  vertical-align: center;
-  cursor: pointer;
-}
-.ac-textbox ul li:hover{
-  background: #EAE8E8;  
-}
-</style>
+
 <div class="content-container width50">
   <div class="content-area">
     <div class="add-container">
@@ -31,10 +9,10 @@ list-style-type:none; line-height:25px;
         <div class="input-row">
           <div class="field-label">Country:<span class="mandatory">*</span></div>
           <div class="field-input">
-           <input type="text" class="input-box icon-autocomplete" id="countryval" value=""  onkeyup="loadauto_text(this.value)" style="width:200px"> 
-              <input type="hidden" id="country"> 
-             <div id="autocompleteview" class="ac-textbox" style="display:none;">
-                <ul id="ulist_text" onclick="hidemenu();" style="width:195px;"></ul>
+              <input type="text" class="input-box icon-autocomplete" id="countryval" value="" style="width:200px">
+              <input type="hidden" id="country">
+              <div id="autocompleteview" class="ac-textbox default-display-none">
+              <ul id="ulist_text" class="hidemenu" style="width:195px;"></ul>
             </div>
           </div>
         </div>
@@ -42,8 +20,6 @@ list-style-type:none; line-height:25px;
       
       <div class="clearfix"></div>
       <br>
-       
-     
       <div class="grid-table">
       <table>
     
@@ -57,9 +33,7 @@ list-style-type:none; line-height:25px;
 
         <tr>
           <td>&nbsp;</td>
-           
-          <td><input type="text" name="location-name" class="filter-text-box" id="search-geography-name" onkeyup="filter()"></td>
-          
+          <td><input type="text" name="location-name" class="filter-text-box" id="search-geography-name"></td>
           <td>&nbsp;</td>
         </tr>
        

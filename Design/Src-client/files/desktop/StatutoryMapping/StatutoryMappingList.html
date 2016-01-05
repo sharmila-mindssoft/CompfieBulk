@@ -1,321 +1,10 @@
 {% extends "files/desktop/Header/Header.html" %}
 {% block content %}
-  <style type="text/css">
-  /*siva starts*/
-  .form-container-grid-table table tr td ul a{
-  text-decoration: none;
-  color:black;
-  width:100%;
-  height:100%;
-  }
-  .form-container-grid-table table tr td ul li{
-  cursor:pointer;
-  }
-  .form-container-grid-table table tr td ul li:hover{
-  background: #EAE8E8;
-  }
-  .form-container-grid-table table tr td ul li.active:hover {
-  background: #f1e9f6 url(../images/tick1.png) no-repeat right center;
-  background-size: 1em;
-  border-right: 3px solid #f1e9f6
-  }
-  .form-container-grid-table-sm table tr td ul li:hover{
-  background: #EAE8E8;
-  cursor:pointer;
-  }
-  .form-container-grid-table-sm table tr td ul li.active:hover {
-  background: #f1e9f6 url(../images/tick1.png) no-repeat right center;
-  background-size: 1em;
-  border-right: 3px solid #f1e9f6
-  }
-  .text-center
-  {
-  text-align: center;
-  }
-  .nav > li {
-  background-color: #a381bd;
-  position: relative;
-  display: block;
-  border-radius: 6px;
-  -webkit-transition: all 0.2s ease-in-out;
-  transition: all 0.2s ease-in-out;
-  }
-  .nav > li > a {
-  color: #ffffff;
-  position: relative;
-  display: block;
-  padding: 10px 15px;
-  text-decoration: none;
-  }
-  .nav > li > a:focus {
-  text-decoration: none;
-  background-color: #eeeeee;
-  }
-  .nav > li.disabled > a {
-  color: #999999;
-  background-color: #eee;
-  border-radius:6px;
-  }
-  .nav > li.disabled > a:focus {
-  color: #999999;
-  background-color: #eee;
-  text-decoration: none;
-  cursor: not-allowed;
-  }
-  .nav .open > a,
-  .nav .open > a:focus {
-  background-color: #eeeeee;
-  border-color: #662d91;
-  }
-  .nav .nav-divider {
-  height: 1px;
-  margin: 9px 0;
-  overflow: hidden;
-  background-color: #e5e5e5;
-  }
-  .nav > li > a > img {
-  max-width: none;
-  }
-  .nav-pills > li {
-  float: left;
-  }
-  .nav-pills > li > a {
-  border-radius: 5px;
-  }
-  .nav-pills > li + li {
-  
-  }
-  .nav-pills > li.active > a,
-  .nav-pills > li.active > a:focus {
-  color: #ffffff;
-  background-color: #662d91;
-  }
-  .nav-justified {
-  width: 100%;
-  }
-  .nav-justified > li {
-  margin-right: 0.5%;
-  float: left;
-  width: 24.5%;
-  
-  }
-  .nav-justified > li > a {
-  text-align: left;
-  }
-  .thumbnail {
-  display: inline-block;
-  display: block;
-  height: auto;
-  max-width: 100%;
-  padding: 4px;
-  line-height: 1.428571429;
-  background-color: #ffffff;
-  border: 0px solid #dddddd;
-  border-radius: 6px;
-  -webkit-transition: all 0.2s ease-in-out;
-  transition: all 0.2s ease-in-out;
-  }
-  .setup-content
-  {
-  border:0px solid #ccc ;
-  border-radius: 5px;
-  }
-  .innercontent
-  {
-  width: 100%;
-  min-height: 530px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  }
-  .btn-right
-  {
-  float:right;
-  color: #ffffff;
-  background-color: #662d91;
-  border: 0px;
-  border-radius: 4px;
-  -webkit-transition: all 0.2s ease-in-out;
-  transition: all 0.2s ease-in-out;
-  padding: 5px 10px 5px 10px;
-  font-size:12px;
-  margin-right: 10px;
-  margin-top: 10px;
-  }
-  </style>
-  <script type="text/javascript">
-  $(document).ready(function(){
-  $('#days').hide();
-  $('#hours').show();
-  $("#trigger_every").show();
-  })
-  $(function() {
-  $(".dayhour").change(function(){
-  if($(this).val()=="1")
-  {
-  $('#days').show();
-  $('#hours').hide();
-  $("#trigger_every").show();
-  }else if($(this).val()=="2"){
-  $('#days').hide();
-  $('#hours').show();
-  $("#trigger_every").show();
-  }
-  });
-  $('.tasktype').change(function(){
-  if($(this).val()=="2" || $(this).val()=="3")
-  {
-  $('#Recurring').show();
-  $('#Occasional').hide();
-  $('#One_Time').hide();
-  }
-  
-  else if($(this).val() == "4" )
-  {
-  $('#Recurring').hide();
-  $('#Occasional').show();
-  $('#One_Time').hide();
-  }
-  
-  else if($(this).val() == "1")
-  {
-  $('#Recurring').hide();
-  $('#Occasional').hide();
-  $('#One_Time').show();
-  }
-  else
-  {
-  $('#Recurring').hide();
-  $('#Occasional').hide();
-  $('#One_Time').hide();
-  }
-  });
-  $('.multipleinput').change(function() {
-  if ($(this).is(':checked')) {
-  if($('#repeats_type').val() == '2'){
-  $('.multipleselectnone').hide();
-  $('.multipleselect').show();
-  load_stautorydates();
-  }else{
-  $('.multipleselect').hide();
-  $('.multipleselectnone').show();
-  }
-  
-  } else {
-  $('.multipleselect').hide();
-  $('.multipleselectnone').show();
-  }
-  });
-  $('#repeats_type').change(function() {
-  if($('#repeats_type').val() == '2' && $('.multipleinput').prop("checked") == true){
-  $('.multipleselectnone').hide();
-  $('.multipleselect').show();
-  load_stautorydates();
-  }else{
-  $('.multipleselect').hide();
-  $('.multipleselectnone').show();
-  }
-  });
-  $('#repeats_every').change(function() {
-  if($('#repeats_type').val() == '2' && $('.multipleinput').prop("checked") == true){
-  $('.multipleselectnone').hide();
-  $('.multipleselect').show();
-  load_stautorydates();
-  }else{
-  $('.multipleselect').hide();
-  $('.multipleselectnone').show();
-  }
-  });
-  $('.repeatlabelday').click(function(){
-  $('#single_statutory_date').show();
-  $('#multiple_statutory_date1').show();
-  $('#multiple_statutory_date2').show();
-  $('#multiple_statutory_date3').show();
-  $('#multiple_statutory_date4').show();
-  $('#multiple_statutory_date5').show();
-  $('#multiple_statutory_date6').show();
-  $('#single_statutory_date').val('');
-  $('#multiple_statutory_date1').val('');
-  $('#multiple_statutory_date2').val('');
-  $('#multiple_statutory_date3').val('');
-  $('#multiple_statutory_date4').val('');
-  $('#multiple_statutory_date5').val('');
-  $('#multiple_statutory_date6').val('');
-  });
-  $('.repeatlabelendday').click(function(){
-  $('#single_statutory_date').hide();
-  $('#multiple_statutory_date1').hide();
-  $('#multiple_statutory_date2').hide();
-  $('#multiple_statutory_date3').hide();
-  $('#multiple_statutory_date4').hide();
-  $('#multiple_statutory_date5').hide();
-  $('#multiple_statutory_date6').hide();
-  $('#single_statutory_date').val('30');
-  $('#multiple_statutory_date1').val('30');
-  $('#multiple_statutory_date2').val('30');
-  $('#multiple_statutory_date3').val('30');
-  $('#multiple_statutory_date4').val('30');
-  $('#multiple_statutory_date5').val('30');
-  $('#multiple_statutory_date6').val('30');
-  });
-  });
-  function load_stautorydates(){
-  var rep_every = parseInt($('#repeats_every').val());
-  if(rep_every == 1 || rep_every == 12){
-  $('.input-row1').show();
-  $('.input-row2').hide();
-  $('.input-row3').hide();
-  $('.input-row4').hide();
-  $('.input-row5').hide();
-  $('.input-row6').hide();
-  }else if (rep_every == 2){
-  $('.input-row1').show();
-  $('.input-row2').show();
-  $('.input-row3').show();
-  $('.input-row4').show();
-  $('.input-row5').show();
-  $('.input-row6').show();
-  }else if (rep_every == 3){
-  $('.input-row1').show();
-  $('.input-row2').show();
-  $('.input-row3').show();
-  $('.input-row4').show();
-  $('.input-row5').hide();
-  $('.input-row6').hide();
-  }else if (rep_every == 4){
-  $('.input-row1').show();
-  $('.input-row2').show();
-  $('.input-row3').show();
-  $('.input-row4').hide();
-  $('.input-row5').hide();
-  $('.input-row6').hide();
-  }else if (rep_every == 5){
-  $('.input-row1').show();
-  $('.input-row2').show();
-  $('.input-row3').show();
-  $('.input-row4').hide();
-  $('.input-row5').hide();
-  $('.input-row6').hide();
-  }else{
-  $('.input-row1').show();
-  $('.input-row2').show();
-  $('.input-row3').hide();
-  $('.input-row4').hide();
-  $('.input-row5').hide();
-  $('.input-row6').hide();
-  }
-  }
-  </script>
-  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
-  <script src="/files/desktop/common/js/tooltip/tipso.js"></script>
-  <script type="text/javascript" src="/files/desktop/StatutoryMapping/statutorymapping.js"></script>
-  <script type="text/javascript" src="/files/desktop/StatutoryMapping/statutorymapping.js"></script>
-  <script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
-  <div id="listview" style="display:block">
-    <div class="content-container width75" >
+    <div class="content-container width75" id="statutorymapping-view">
       <div class="content-area">
         <h1>Statutory Mapping List</h1>
         <div class="filters-and-search">
-          <div class="btn-add" onclick="displayAdd();">Add</div>
+          <div class="btn-add btn-geography-add">Add</div>
         </div>
         <div class="clearfix"></div>
         <div class="grid-table">
@@ -334,12 +23,12 @@
             </tr>
             <tr>
               <td align="center"></td>
-              <td><input type="text" class="filter-text-box" id="filter1" onkeyup="filter()"></td>
-              <td><input type="text" class="filter-text-box" id="filter2" onkeyup="filter()"></td>
-              <td><input type="text" class="filter-text-box" id="filter3" onkeyup="filter()"></td>
-              <td><input type="text" class="filter-text-box" id="filter4" onkeyup="filter()"></td>
-              <td><input type="text" class="filter-text-box" id="filter5" onkeyup="filter()"></td>
-              <td><input type="text" class="filter-text-box" id="filter6" onkeyup="filter()"></td>
+              <td><input type="text" class="filter-text-box listfilter" id="filter1"></td>
+              <td><input type="text" class="filter-text-box listfilter" id="filter2" ></td>
+              <td><input type="text" class="filter-text-box listfilter" id="filter3" ></td>
+              <td><input type="text" class="filter-text-box listfilter" id="filter4" ></td>
+              <td><input type="text" class="filter-text-box listfilter" id="filter5" ></td>
+              <td><input type="text" class="filter-text-box listfilter" id="filter6" ></td>
               <td align="center"></td>
               <td align="center"></td>
               <td align="center"></td>
@@ -351,7 +40,6 @@
         
       </div>
     </div>
-  </div>
   <div id="templates">
     <table class="table-statutorymapping">
       <tr class="table-row">
@@ -368,8 +56,7 @@
       </tr>
     </table>
   </div>
-  <div id="addview" style="display:none">
-    <div class="content-container width75">
+    <div class="content-container width75 default-display-none" id="statutorymapping-add">
       <div class="content-area">
         <h1>Statutory Mapping</h1>
         <span id="error" class="error-message" style="color:black;"></span>
@@ -450,7 +137,7 @@
                 </table>
               </div>
               <div class="clearfix"></div>
-              <div style="padding-top:3px;padding-bottom:5px;" align="center"><input type="submit" class="btn-submit" value="Add" onclick="temp_addstatutories()" /></div>
+              <div style="padding-top:3px;padding-bottom:5px;" align="center"><input type="submit" class="btn-submit" value="Add" id="temp_addstatutories" /></div>
               
               <div class="grid-table">
                 <table width="100%">
@@ -883,7 +570,7 @@
                   </div>
                   <div class="clearfix"></div>
                   <div align="center" style="padding-top:5px; padding-bottom:5px;">
-                    <input type="submit" name="submit" value="Add" onclick="temp_addcompliance()" class="btn-submit">
+                    <input type="submit" name="submit" value="Add" id="temp_addcompliance" class="btn-submit">
                     <input type="hidden" id="complianceid" value=""/>
                   </div>
                 </div>
@@ -949,108 +636,7 @@
         </div>
       </div>
     </div>
-  </div>
-  <script type="text/javascript">
-  $(document).ready(function() {
-  var navListItems = $('ul.setup-panel li a'),
-  allWells = $('.setup-content');
-  allWells.hide();
-  navListItems.click(function(e)
-  {
-  e.preventDefault();
-  var $target = $($(this).attr('href')),
-  $item = $(this).closest('li');
-  if (!$item.hasClass('disabled')) {
-  navListItems.closest('li').removeClass('active');
-  $item.addClass('active');
-  allWells.hide();
-  $target.show();
-  }
-  });
-  $('ul.setup-panel li.active a').trigger('click');
-  $('#activate-step-2').on('click', function(e) {
-  if (validate_firsttab()){
-  $('ul.setup-panel li:eq(1)').removeClass('disabled');
-  $('ul.setup-panel li a[href="#step-2"]').trigger('click');
-  }
   
-  })
-  $('#activate-step-3').on('click', function(e) {
-  if (validate_secondtab()){
-  $('ul.setup-panel li:eq(2)').removeClass('disabled');
-  $('ul.setup-panel li a[href="#step-3"]').trigger('click');
-  }
-  })
-  $('#activate-step-4').on('click', function(e) {
-  if (validate_thirdtab()){
-  $('ul.setup-panel li:eq(3)').removeClass('disabled');
-  $('ul.setup-panel li a[href="#step-4"]').trigger('click');
-  }
-  })
-  $('#backward-step-1').on('click', function(e) {
-  $('ul.setup-panel li:eq(1)').removeClass('disabled');
-  $('ul.setup-panel li a[href="#step-1"]').trigger('click');
-  
-  })
-  $('#backward-step-2').on('click', function(e) {
-  $('ul.setup-panel li:eq(2)').removeClass('disabled');
-  $('ul.setup-panel li a[href="#step-2"]').trigger('click');
-  
-  })
-  $('#backward-step-3').on('click', function(e) {
-  $('ul.setup-panel li:eq(3)').removeClass('disabled');
-  $('ul.setup-panel li a[href="#step-3"]').trigger('click');
-  
-  })
-  $('#activate-step-finish').on('click', function(e) {
-  getGeographyResult();
-  if (validate_fourthtab()){
-  savestatutorymapping();
-  }
-  })
-  });
-  </script>
-  <script type="text/javascript">
-  jQuery(window).load(function(){
-  jQuery('.page-load').tipso({
-  tooltipHover: true
-  });
-  });
-  </script>
-  <script type="text/javascript">
-  $(function()
-  {
-  $('#compliance_description').keyup(function(e)
-  {
-  var maxLength = 500;
-  var textlength = this.value.length;
-  if (textlength >= maxLength)
-  {
-  $('#counter').html('You cannot write more then ' + maxLength + ' characters!');
-  this.value = this.value.substring(0, maxLength);
-  e.preventDefault();
-  }
-  else
-  {
-  $('#counter').html((maxLength - textlength) + ' characters left.');
-  }
-  });
-  $('#duration').keyup(function()
-  {
-  $("#summary").html("To Complete within " + $('#duration').val() + " " + $('#duration_type option:selected').text() );
-  });
-  $('#duration_type').change(function()
-  {
-  $("#summary").html("To Complete within " + $('#duration').val() + " " + $('#duration_type option:selected').text() );
-  });
-  $('#repeats_every').change(function()
-  {
-  $(".summary_repeat").html("Every " + $('#repeats_every').val() + " " + $('#repeats_type option:selected').text());
-  });
-  $('#repeats_type').change(function()
-  {
-  $(".summary_repeat").html("Every " + $('#repeats_every').val() + " " + $('#repeats_type option:selected').text());
-  });
-  });
-  </script>
+  <script type="text/javascript" src="/files/desktop/StatutoryMapping/statutorymapping.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
 {% endblock %}
