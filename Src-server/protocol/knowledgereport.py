@@ -14,7 +14,8 @@ parse_structure_VectorType_RecordType_knowledgereport_MappingReport,
     parse_structure_Bool, parse_structure_CustomTextType_50,
     parse_structure_OptionalType_SignedIntegerType_8,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping,
-    parse_structure_VectorType_RecordType_core_StatutoryNature
+    parse_structure_VectorType_RecordType_core_StatutoryNature,
+    parse_structure_VectorType_RecordType_core_ComplianceFrequency
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_knowledgereport_MappingReport,
@@ -29,7 +30,8 @@ from protocol.to_structure import (
     to_structure_Bool, to_structure_CustomTextType_50,
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping,
-    to_structure_VectorType_RecordType_core_StatutoryNature
+    to_structure_VectorType_RecordType_core_StatutoryNature,
+    to_structure_VectorType_RecordType_core_ComplianceFrequency
 )
 
 #
@@ -157,13 +159,18 @@ class Response(object):
         raise NotImplementedError
 
 class GetStatutoryMappingReportFiltersSuccess(Response):
-    def __init__(self, countries, domains, industries, statutory_natures, geographies, level_1_statutories):
+    def __init__(
+        self, countries, domains, 
+        industries, statutory_natures, geographies, 
+        level_1_statutories, compliance_frequency
+    ):
         self.countries = countries
         self.domains = domains
         self.industries = industries
         self.statutory_natures = statutory_natures
         self.geographies = geographies
         self.level_1_statutories = level_1_statutories
+        self.compliance_frequency = compliance_frequency
 
     @staticmethod
     def parse_inner_structure(data):
@@ -180,6 +187,8 @@ class GetStatutoryMappingReportFiltersSuccess(Response):
         geographies = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(geographies)
         level_1_statutories = data.get("level_1_statutories")
         level_1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level_1_statutories)
+        compliance_frequency = data.get("compliance_frequency")
+        compliance_frequency = parse_structure_VectorType_RecordType_core_ComplianceFrequency(compliance_frequency)
         return GetStatutoryMappingReportFiltersSuccess(countries, domains, industries, statutory_natures, geographies, level_1_statutories)
 
     def to_inner_structure(self):
@@ -190,6 +199,7 @@ class GetStatutoryMappingReportFiltersSuccess(Response):
             "statutory_natures": to_structure_VectorType_RecordType_core_StatutoryNature(self.statutory_natures),
             "geographies": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(self.geographies),
             "level_1_statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level_1_statutories),
+            "compliance_frequency": to_structure_VectorType_RecordType_core_ComplianceFrequency(self.compliance_frequency),
         }
 
 class GetStatutoryMappingReportDataSuccess(Response):
