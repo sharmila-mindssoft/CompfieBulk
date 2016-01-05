@@ -371,7 +371,6 @@ class GetUserGroupsSuccess(Response):
 
 class SaveUserGroupSuccess(Response):
     def __init__(self):
-        print "inside save user group success"
         pass
 
     @staticmethod
@@ -380,7 +379,6 @@ class SaveUserGroupSuccess(Response):
         return SaveUserGroupSuccess()
 
     def to_inner_structure(self):
-        print "inside save user group inner structure"
         return {
         }
 

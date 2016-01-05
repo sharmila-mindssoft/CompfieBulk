@@ -58,7 +58,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_technomasters_PROFILES,
     to_structure_VariantType_technomasters_Request,
     to_structure_CustomTextType_20,
-    to_structure_VectorType_RecordType_core_GroupCompanyDetail
+    to_structure_VectorType_RecordType_core_GroupCompanyDetail,
+    to_structure_VectorType_RecordType_core_Unit
 )
 
 #
@@ -93,7 +94,6 @@ class GetClientGroups(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        print "inside get client group parse inner structure:{}".format(data)
         data = parse_dictionary(data)
         return GetClientGroups()
 
@@ -265,14 +265,11 @@ class BUSINESS_GROUP(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        print "inside Business_group parse structure"
         data = parse_dictionary(data, ["business_group_id", "business_group_name"])
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_OptionalType_UnsignedIntegerType_32(business_group_id)
-        print "got business_group_id: {}".format(business_group_id)
         business_group_name = data.get("business_group_name")
         business_group_name = parse_structure_CustomTextType_50(business_group_name)
-        print "got business_group_name:{}".format(business_group_name)
         return BUSINESS_GROUP(business_group_id, business_group_name)
 
     def to_inner_structure(self):
@@ -340,7 +337,6 @@ class UNIT(object):
 
     @staticmethod
     def parse_structure(data):
-        print "inside  units parse structure"
         data = parse_dictionary(data, ["unit_id", "geography_id", "unit_code", "unit_name", "industry_id", "industry_name", "unit_address", "unit_location", "postal_code", "domain_ids"])
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_UnsignedIntegerType_32(unit_id)
@@ -386,7 +382,6 @@ class COUNTRYWISEUNITS(object):
 
     @staticmethod
     def parse_structure(data):
-        print "inside country wise units parse structure"
         data = parse_dictionary(data, ["country_id", "units"])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
@@ -747,7 +742,7 @@ class GetClientsSuccess(Response):
             "business_groups": to_structure_OptionalType_VectorType_RecordType_core_BusinessGroup(self.business_groups),
             "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
             "divisions": to_structure_OptionalType_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_UnitDetails(self.units),
+            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
         }
 
 class SaveClientSuccess(Response):
@@ -864,7 +859,6 @@ class UpdateClientSuccess(Response):
         return UpdateClientSuccess()
 
     def to_inner_structure(self):
-        print "inside update client success to structure"
         return {
         }
 

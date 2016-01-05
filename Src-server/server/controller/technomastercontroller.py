@@ -58,7 +58,6 @@ def get_client_groups(db, request, session_user):
 		domains = domain_list, users = user_list, client_list = client_list)
 
 def save_client_group(db, request, session_user):
-	print "inside save client group"
 	session_user = int(session_user)
 	client_id = db.generate_new_client_id()
 	if db.is_duplicate_group_name(request.group_name, client_id):

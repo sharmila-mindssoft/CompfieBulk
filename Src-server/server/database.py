@@ -17,56 +17,6 @@ from protocol import core
 __all__ = [
     "KnowledgeDatabase", "ClientDatabase"
 ]
-
-integer_months = {
-    "Jan": 1,
-    "Feb": 2,
-    "Mar": 3,
-    "Apr": 4,
-    "May": 5,
-    "Jun": 6,
-    "Jul": 7,
-    "Aug": 8,
-    "Sep": 9,
-    "Oct": 10,
-    "Nov": 11,
-    "Dec": 12,
-}
-
-string_months = {
-     1 : "Jan",
-     2 : "Feb",
-     3 : "Mar",
-     4 : "Apr",
-     5 : "May",
-     6 : "Jun",
-     7 : "Jul",
-     8 : "Aug",
-     9 : "Sep",
-     10 : "Oct",
-     11 : "Nov",
-     12 : "Dec",
-}
-
-_client_db_connections = {}
-
-def generate_random():
-    characters = string.ascii_uppercase + string.digits
-    return ''.join(random.SystemRandom().choice(characters) for _ in range(7))
-
-def generate_password() : 
-    password = generate_random()
-    return encrypt(password)
-
-def encrypt(value):
-    m = hashlib.md5()
-    m.update(value)
-    return m.hexdigest()
-
-def string_to_datetime(string):
-    date = string.split("-")
-    datetime_val = datetime.datetime(year=int(date[2]),month=integer_months[date[1]], day=int(date[0]))
-    return datetime_val
     
 class Database(object) :
     def __init__(
@@ -80,6 +30,36 @@ class Database(object) :
         self._mysqlDatabase = mysqlDatabase
         self._connection = None
         self._cursor = None 
+
+    integer_months = {
+        "Jan": 1,
+        "Feb": 2,
+        "Mar": 3,
+        "Apr": 4,
+        "May": 5,
+        "Jun": 6,
+        "Jul": 7,
+        "Aug": 8,
+        "Sep": 9,
+        "Oct": 10,
+        "Nov": 11,
+        "Dec": 12,
+    }
+
+    string_months = {
+         1 : "Jan",
+         2 : "Feb",
+         3 : "Mar",
+         4 : "Apr",
+         5 : "May",
+         6 : "Jun",
+         7 : "Jul",
+         8 : "Aug",
+         9 : "Sep",
+         10 : "Oct",
+         11 : "Nov",
+         12 : "Dec",
+    }
 
     def cursor(self):
         return self._cursor
@@ -258,58 +238,25 @@ class Database(object) :
         condition = "%s = '%d'" % (field, value)
         return not self.is_already_exists(table, condition)
 
-class KnowledgeDatabase(Database):
-    tblActivityLog = "tbl_activity_log"
-    tblAdmin = "tbl_admin"
-    tblBusinessGroups = "tbl_business_groups"
-    tblClientCompliances = "tbl_client_compliances"
-    tblClientConfigurations = "tbl_client_configurations"
-    tblClientCountries = "tbl_client_countries"
-    tblClientDatabase = "tbl_client_database"
-    tblClientDomains = "tbl_client_domains"
-    tblClientGroups = "tbl_client_groups"
-    tblClientSavedCompliances = "tbl_client_saved_compliances"
-    tblClientSavedStatutories = "tbl_client_saved_statutories"
-    tblClientStatutories = "tbl_client_statutories"
-    tblClientUsers = "tbl_client_users"
-    tblComplianceDurationType = "tbl_compliance_duration_type"
-    tblComplianceFrequency = "tbl_compliance_frequency"
-    tblComplianceRepeatype = "tbl_compliance_repeat_type"
-    tblCompliances = "tbl_compliances"
-    tblCompliancesBackup = "tbl_compliances_backup"
-    tblCountries = "tbl_countries"
-    tblDatabaseServer = "tbl_database_server"
-    tblDivisions = "tbl_divisions"
-    tblDomains = "tbl_domains"
-    tblEmailVerification = "tbl_email_verification"
-    tblFormCategory = "tbl_form_category"
-    tblFormType = "tbl_form_type"
-    tblForms = "tbl_forms"
-    tblGeographies = "tbl_geographies"
-    tblGeographyLevels = "tbl_geography_levels"
-    tblIndustries = "tbl_industries"
-    tblLegalEntities = "tbl_legal_entities"
-    tblMachines = "tbl_machines"
-    tblMobileRegistration = "tbl_mobile_registration"
-    tblNotifications = "tbl_notifications"
-    tblNotificationsStatus = "tbl_notifications_status"
-    tblSessionTypes = "tbl_session_types"
-    tblStatutories = "tbl_statutories"
-    tblStatutoriesBackup = "tbl_statutories_backup"
-    tblStatutoryGeographies = "tbl_statutory_geographies"
-    tblStatutoryLevels = "tbl_statutory_levels"
-    tblStatutoryMappings = "tbl_statutory_mappings"
-    tblStatutoryNatures = "tbl_statutory_natures"
-    tblStatutoryNotificationsLog = "tbl_statutory_notifications_log"
-    tblUnits = "tbl_units"
-    tblUserClients = "tbl_user_clients"
-    tblUserCountries = "tbl_user_countries"
-    tblUserDomains = "tbl_user_domains"
-    tblUserGroups = "tbl_user_groups"
-    tblUserLoginHistory = "tbl_user_login_history"
-    tblUserSessions = "tbl_user_sessions"
-    tblUsers = "tbl_users"
+    def generate_random(self):
+        characters = string.ascii_uppercase + string.digits
+        return ''.join(random.SystemRandom().choice(characters) for _ in range(7))
 
+    def generate_password(self) : 
+        password = self.generate_random()
+        return self.encrypt(password)
+
+    def encrypt(self, value):
+        m = hashlib.md5()
+        m.update(value)
+        return m.hexdigest()
+
+    def string_to_datetime(self, string):
+        date = string.split("-")
+        datetime_val = datetime.datetime(year=int(date[2]),month=self.integer_months[date[1]], day=int(date[0]))
+        return datetime_val
+
+class KnowledgeDatabase(Database):
     def __init__(
         self, 
         mysqlHost, mysqlUser, 
@@ -320,6 +267,59 @@ class KnowledgeDatabase(Database):
         )
         self.statutory_parent_mapping = {}
         self.geography_parent_mapping = {}
+        self.initialize_table_names()
+
+    def initialize_table_names(self):
+        self.tblActivityLog = "tbl_activity_log"
+        self.tblAdmin = "tbl_admin"
+        self.tblBusinessGroups = "tbl_business_groups"
+        self.tblClientCompliances = "tbl_client_compliances"
+        self.tblClientConfigurations = "tbl_client_configurations"
+        self.tblClientCountries = "tbl_client_countries"
+        self.tblClientDatabase = "tbl_client_database"
+        self.tblClientDomains = "tbl_client_domains"
+        self.tblClientGroups = "tbl_client_groups"
+        self.tblClientSavedCompliances = "tbl_client_saved_compliances"
+        self.tblClientSavedStatutories = "tbl_client_saved_statutories"
+        self.tblClientStatutories = "tbl_client_statutories"
+        self.tblClientUsers = "tbl_client_users"
+        self.tblComplianceDurationType = "tbl_compliance_duration_type"
+        self.tblComplianceFrequency = "tbl_compliance_frequency"
+        self.tblComplianceRepeatype = "tbl_compliance_repeat_type"
+        self.tblCompliances = "tbl_compliances"
+        self.tblCompliancesBackup = "tbl_compliances_backup"
+        self.tblCountries = "tbl_countries"
+        self.tblDatabaseServer = "tbl_database_server"
+        self.tblDivisions = "tbl_divisions"
+        self.tblDomains = "tbl_domains"
+        self.tblEmailVerification = "tbl_email_verification"
+        self.tblFormCategory = "tbl_form_category"
+        self.tblFormType = "tbl_form_type"
+        self.tblForms = "tbl_forms"
+        self.tblGeographies = "tbl_geographies"
+        self.tblGeographyLevels = "tbl_geography_levels"
+        self.tblIndustries = "tbl_industries"
+        self.tblLegalEntities = "tbl_legal_entities"
+        self.tblMachines = "tbl_machines"
+        self.tblMobileRegistration = "tbl_mobile_registration"
+        self.tblNotifications = "tbl_notifications"
+        self.tblNotificationsStatus = "tbl_notifications_status"
+        self.tblSessionTypes = "tbl_session_types"
+        self.tblStatutories = "tbl_statutories"
+        self.tblStatutoriesBackup = "tbl_statutories_backup"
+        self.tblStatutoryGeographies = "tbl_statutory_geographies"
+        self.tblStatutoryLevels = "tbl_statutory_levels"
+        self.tblStatutoryMappings = "tbl_statutory_mappings"
+        self.tblStatutoryNatures = "tbl_statutory_natures"
+        self.tblStatutoryNotificationsLog = "tbl_statutory_notifications_log"
+        self.tblUnits = "tbl_units"
+        self.tblUserClients = "tbl_user_clients"
+        self.tblUserCountries = "tbl_user_countries"
+        self.tblUserDomains = "tbl_user_domains"
+        self.tblUserGroups = "tbl_user_groups"
+        self.tblUserLoginHistory = "tbl_user_login_history"
+        self.tblUserSessions = "tbl_user_sessions"
+        self.tblUsers = "tbl_users"
 
     def convert_to_dict(self, data_list, columns) :
         result_list = []
@@ -1744,7 +1744,7 @@ class KnowledgeDatabase(Database):
         user_columns = ["user_id", "email_id", "user_group_id", "password", "employee_name", 
                     "employee_code", "contact_no", "address", "designation", "is_active", 
                     "created_on", "created_by", "updated_on", "updated_by"]
-        user_values = [user_id, email_id, user_group_id, generate_password(),
+        user_values = [user_id, email_id, user_group_id, self.generate_password(),
                 employee_name, employee_code, contact_no, address,
                 designation, 1, current_time_stamp, 0, current_time_stamp, 0]
         result1 = self.insert(self.tblUsers, user_columns, user_values)
@@ -1929,7 +1929,7 @@ class KnowledgeDatabase(Database):
             else:
                 break
         query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
-            email_id, generate_password())        
+            email_id, self.generate_password())        
         cursor.execute(query)
         return True
 
@@ -1947,8 +1947,8 @@ class KnowledgeDatabase(Database):
         host = row[0]
         username = row[1]
         password = row[2]
-        db_username = generate_random()
-        db_password = generate_random()
+        db_username = self.generate_random()
+        db_password = self.generate_random()
 
         if self._create_database(host, username, password, database_name, db_username, 
             db_password, email_id, client_id):
@@ -1980,8 +1980,8 @@ class KnowledgeDatabase(Database):
 
     def save_client_group(self, client_id, client_group, session_user):
         current_time_stamp = self.get_date_time()
-        contract_from = string_to_datetime(client_group.contract_from)
-        contract_to = string_to_datetime(client_group.contract_to)
+        contract_from = self.string_to_datetime(client_group.contract_from)
+        contract_to = self.string_to_datetime(client_group.contract_to)
         is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
 
         columns = ["client_id", "group_name", "email_id", "logo_url", 
@@ -2000,8 +2000,8 @@ class KnowledgeDatabase(Database):
 
     def update_client_group(self, client_group, session_user):
         current_time_stamp = self.get_date_time()
-        contract_from = string_to_datetime(client_group.contract_from)
-        contract_to = string_to_datetime(client_group.contract_to)
+        contract_from = self.string_to_datetime(client_group.contract_from)
+        contract_to = self.string_to_datetime(client_group.contract_to)
         is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
 
         columns = ["group_name", "logo_url", "logo_size", "contract_from", 
@@ -2036,12 +2036,6 @@ class KnowledgeDatabase(Database):
         values = [ is_active, int(session_user), self.get_date_time()]
         condition = "client_id='%d'" % client_id
         return self.update(self.tblClientGroups, columns, values, condition)
-
-    def get_client_db_info(self):
-        columns = "database_ip, client_id, database_username, "+\
-        "database_password, database_name"
-        condition = "1"
-        return self.get_data(self.tblClientDatabase, columns, condition)
 
 #
 #   Client Unit
@@ -2199,7 +2193,7 @@ class KnowledgeDatabase(Database):
 
     def verify_password(self, password, userId):
         columns = "count(*)"
-        encrypted_password = encrypt(password)
+        encrypted_password = self.encrypt(password)
         condition = "password='%s' and user_id='%d'" % (encrypted_password, userId)
         rows = self.get_data(self.tblUsers, columns, condition)
         if(int(rows[0][0]) <= 0):
@@ -2258,21 +2252,14 @@ class KnowledgeDatabase(Database):
     def return_divisions(self, divisions):
         results = []
         for division in divisions :
-            print "division:{}".format(division)
-            print "division[division_id]:{}".format(division["division_id"])
-            division_obj = core.Division(
-                division["division_id"], division["division_name"], 
-                divisions["legal_entity_id"], division["business_group_id"],
-                divisions["client_id"]
-            )
-            print "division_obj:{}".format(division_obj)
+            division_obj = core.Division(division["division_id"], division["division_name"],
+                division["legal_entity_id"],division["business_group_id"],division["client_id"])
             results.append(division_obj)
-            print results
         return results
 
     def get_units_for_user(self, user_id):
         client_ids = self.get_user_clients(user_id)
-        columns = "unit_id, unit_code, unit_name, unit_address, division_id,"+\
+        columns = "unit_id, unit_code, unit_name, address, division_id,"+\
         " legal_entity_id, business_group_id, client_id, is_active"
         condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblUnits, columns, condition) 
@@ -2290,19 +2277,3 @@ class KnowledgeDatabase(Database):
                 unit["unit_name"], unit["unit_address"], bool(unit["is_active"])
             ))
         return results
-
-class ClientDatabase(Database):
-
-    def __init__(self, knowledge_db):
-        rows = knowledge_db.get_client_db_info()
-        global _client_db_connections
-        _client_db_connections = {}
-        for row in rows:
-            host = row[0]
-            client_id = row[1]
-            username = row[2]
-            password = row[3]
-            database = row[4]
-            _client_db_connections[client_id] = super(ClientDatabase, self).__init__(
-                host, username, password, database
-            )
