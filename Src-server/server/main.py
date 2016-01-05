@@ -1,5 +1,6 @@
 import os
 import json
+import traceback
 import mimetypes
 import tornado.web
 from tornado.web import StaticFileHandler
@@ -110,9 +111,10 @@ class API(object):
             self._db.commit()
             respond(response_data)
         except Exception, e:
+            print(traceback.format_exc())
             print e
             self._db.rollback()
-        
+
 
     @api_request(login.Request)
     def handle_login(self, request, db):
