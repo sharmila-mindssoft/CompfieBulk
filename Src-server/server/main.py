@@ -79,6 +79,8 @@ class API(object):
                 data
             )
         except Exception, e:
+            print "request_data_type:{}".format(request_data_type)
+            print "request_data:{}".format(request_data)
             print e
             response.set_status(400)
             response.send(str(e))

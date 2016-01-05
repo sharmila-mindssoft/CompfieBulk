@@ -48,7 +48,7 @@
 				}
 				mirror.saveServiceProvider(
 					serviceProviderDetail,
-     				callback, failure_callback);
+     				callback);
 			}
 			function updateServiceProvider() {
 				serviceProviderDetail = {
@@ -62,15 +62,15 @@
 				}
 				mirror.updateServiceProvider(
 					serviceProviderDetail,
-					callback, failure_callback);
+					callback);
 			}
 			function changeServiceProviderStatus() {
 				serviceProviderId = 2
 				isActive = 1
-				mirror.changeServiceProviderStatus(serviceProviderId, isActive, callback, failure_callback)
+				mirror.changeServiceProviderStatus(serviceProviderId, isActive, callback)
 			}
 			function getServiceProvidersList() {
-				mirror.getServiceProviders(callback, failure_callback)
+				mirror.getServiceProviders(callback)
 			}
 			function saveClientUserGroup(){
 				userGroupDetails = {
@@ -78,7 +78,7 @@
 			        "form_type": "client",
 			        "form_ids": [1,2]
 			    }
-			    mirror.saveClientUserGroup(userGroupDetails,callback, failure_callback);
+			    mirror.saveClientUserGroup(userGroupDetails,callback);
 			}
 			function updateClientUserGroup(){
 				userGroupDetails = {
@@ -87,18 +87,18 @@
 			        "form_type": "client",
 			        "form_ids": [5,6]
 			    }
-			    mirror.updateClientUserGroup(userGroupDetails,callback, failure_callback);
+			    mirror.updateClientUserGroup(userGroupDetails,callback);
 			}
 			function changeClientUserGroupStatus(){
 				userGroupId = 2
 				isActive = 0
-				mirror.changeClientUserGroupStatus(userGroupId,isActive, callback,failure_callback) ;
+				mirror.changeClientUserGroupStatus(userGroupId,isActive, callback) ;
 			}
 			function getClientUserGroupList(){
-				mirror.getClientUserGroups(callback, failure_callback);
+				mirror.getClientUserGroups(callback);
 			}
 			function getClientUsers(){
-				mirror.getClientUsers(callback, failure_callback)	
+				mirror.getClientUsers(callback)	
 			}
 			function saveClientUser(){
 				clientUserDetail = {
@@ -117,7 +117,7 @@
 			        "service_provider_id": null
 			    }
 				mirror.saveClientUser(clientUserDetail,
-     					callback, failure_callback)
+     					callback)
 			}
 			function updateClientUser(){
 				clientUserDetail = {
@@ -136,33 +136,33 @@
 			        "service_provider_id": null
 			    }
 				mirror.updateClientUser(clientUserDetail,
-     					callback, failure_callback)
+     					callback)
 			}
 			function changeClientUserStatus(){
 				userId = 18
 				isActive = 1
-				mirror.changeClientUserStatus(userId, isActive, callback, failure_callback)
+				mirror.changeClientUserStatus(userId, isActive, callback)
 			}
 			function changeAdminStatus(){
 				userId = 18
 				isAdmin = 1
 				mirror.changeAdminStatus(userId, isAdmin, 
-        				callback, failure_callback)
+        				callback)
 			}
 			function getUnitClosureList(){
-				mirror.getUnitClosureList(callback, failure_callback)
+				mirror.getUnitClosureList(callback)
 			}
 			function closeUnit(){
 				unitId = 2
 				password = "123456"
-				mirror.closeUnit(unitId, password, callback, failure_callback)
+				mirror.closeUnit(unitId, password, callback)
 			}
 			function saveAdminUserGroup(){
 				userGroupName = "Test User Group Name 7"
 		        formCategoryId = 1
 		        formIds = [5,6]
           		userGroupDetail = mirror.getSaveAdminUserGroupDict(userGroupName, formCategoryId, formIds);
-          		mirror.saveAdminUserGroup(userGroupDetail, callback, failure_callback) 
+          		mirror.saveAdminUserGroup(userGroupDetail, callback) 
 			}
 			function updateAdminUserGroup(){
 				userGroupId = 10
@@ -171,19 +171,19 @@
 		        formIds = [4,5]
 		        userGroupDetail = mirror.getUpdateAdminUserGroupDict(userGroupId, userGroupName, formCategoryId, formIds);
 		        mirror.updateAdminUserGroup(userGroupDetail, 
-		          callback, failure_callback)
+		          callback)
 			}
 			function changeAdminUserGroupStatus(){
 				userGroupId = 2
                 Status = false
-                mirror.changeAdminUserGroupStatus(userGroupId, Status, callback, failure_callback);
+                mirror.changeAdminUserGroupStatus(userGroupId, Status, callback);
 			}
 			function getAdminUserGroupList(){
 				mirror.getAdminUserGroupList(callback, 
 					failure_callback);
 			}
 			function getAdminUsers(){
-				mirror.getAdminUserList(callback, failure_callback);
+				mirror.getAdminUserList(callback);
 			}
 			function saveAdminUser(){
 				emailId =  "testUser11@domain.com"
@@ -197,7 +197,7 @@
 		        domainIds = [1,2]
 		        userDetail = [emailId, userGroupId, employeeName, employeeCode, contactNo, address, designation, countryIds, domainIds]
 		        userDetailDict = mirror.getSaveAdminUserDict(userDetail);
-		        mirror.saveAdminUser(userDetailDict, callback, failure_callback)
+		        mirror.saveAdminUser(userDetailDict, callback)
 			}
 			function updateAdminUser(){
 				userId = 111
@@ -211,67 +211,65 @@
 		        domainIds = [1,2]
 		        userDetail = [userId, userGroupId, employeeName, employeeCode, contactNo, address, designation, countryIds, domainIds]
 		        userDetailDict = mirror.getUpdateAdminUserDict(userDetail);
-		        mirror.updateAdminUser(userDetailDict, callback, failure_callback);
+		        mirror.updateAdminUser(userDetailDict, callback);
 			}
 			function changeAdminUserStatus(){
 				userId = 11
 		        isActive = false
-		        mirror.changeAdminUserStatus(userId, isActive, callback, failure_callback); 
+		        mirror.changeAdminUserStatus(userId, isActive, callback); 
 			}
 			function changePassword(){
 				currentPassword = "1234567"
 				newPassword = "123456"
-				mirror.changePassword(currentPassword, newPassword,callback, failure_callback)
+				mirror.changePassword(currentPassword, newPassword,callback)
 			}
 			function forgotPassword(){
 				username = "Testclientser24@domain.com"
-				mirror.forgotPassword(username, callback, failure_callback)
+				mirror.forgotPassword(username, callback)
 			}
 			function validateResetToken(){
 				resetToken = "1"
-				mirror.validateResetToken(resetToken, callback, failure_callback)
+				mirror.validateResetToken(resetToken, callback)
 			}
 			function resetPassword(){
 				resetToken = "158350839976395462222620754547803639110"
 				newPassword = "1234567"
-				mirror.resetPassword(resetToken, newPassword, callback, failure_callback) 
+				mirror.resetPassword(resetToken, newPassword, callback) 
 			}
 			function saveClientGroup(){
 				dateConfigurations = []
 
 		        configuration1 = mirror.getDateConfigurations(1,1,1,12)
-		        configuration2 = mirror.getDateConfigurations(1,1,6,5)
+		        configuration2 = mirror.getDateConfigurations(1,2,6,5)
 		        dateConfigurations.push(configuration1)
 		        dateConfigurations.push(configuration2)
 
-			    group_name = "Client Test Group 1";
-		        country_ids = [1];
-		        domain_ids = [1];
+			    group_name = "Client Test Group 6";
+		        country_ids = [1,2];
+		        domain_ids = [1,2];
 		        logo = "logo.png";
 		        contract_from = "02-Nov-2015";
 		        contract_to = "01-Nov-2016";
-		        incharge_persons = [1];
+		        incharge_persons = [1,2];
 		        no_of_user_licence = 10;
 		        file_space = 4;
-		        is_sms_subscribed = 1;
-		        email_id = "ClientTestGroup1@domain.com";
-		        shortName = "test1"
+		        is_sms_subscribed = true;
+		        email_id = "ClientTestGroup6@domain.com";
+		        shortName = "test6"
 			    clientGroupDetails = mirror.getSaveClientGroupDict(group_name,
 		            country_ids, domain_ids, logo, contract_from, contract_to,
 		            incharge_persons, no_of_user_licence,file_space,
 		            is_sms_subscribed, email_id, dateConfigurations, shortName)
 
-			   mirror.saveClientGroup(clientGroupDetails, callback,failure_callback);
+			   mirror.saveClientGroup(clientGroupDetails, callback);
 			}
 			function updateClientGroup(){
 				dateConfigurations = []
 
 		        configuration1 = mirror.getDateConfigurations(1,1,1,12)
-		        configuration2 = mirror.getDateConfigurations(1,1,6,5)
 		        dateConfigurations.push(configuration1)
-		        dateConfigurations.push(configuration2)
 
-		        client_id = 3
+		        client_id = 7
 		        group_name = "Client Test Group 2 Update";
 		        country_ids = [1];
 		        domain_ids = [1];
@@ -281,19 +279,66 @@
 		        incharge_persons = [1];
 		        no_of_user_licence = 10;
 		        file_space = 4;
-		        is_sms_subscribed = 1;
+		        is_sms_subscribed = true;
 		        clientGroupDetails = mirror.getUpdateClientGroupDict(client_id,group_name,country_ids, domain_ids, logo, contract_from, contract_to,
 		        incharge_persons, no_of_user_licence,file_space,is_sms_subscribed, dateConfigurations)
 
-		        mirror.updateClientGroup(clientGroupDetails, callback,failure_callback);
+		        mirror.updateClientGroup(clientGroupDetails, callback);
 			}
 			function changeClientGroupStatus(){
-				clientId = 2
-		        isActive = 0
-		        mirror.changeClientGroupStatus( clientId, isActive, callback, failure_callback)
+				clientId = 23
+		        isActive = false
+		        mirror.changeClientGroupStatus( clientId, isActive, callback)
 			}
 			function getClientGroups(){
-				mirror.getClientGroups(callback, failure_callback)
+				mirror.getClientGroups(callback)
+			}
+			function saveClient(){
+				businessGroup = mirror.getBusinessGroupDict(null,"Test Business Group 1");
+		        legalEntity = mirror.getLegalEntityDict(null,"Test Legal Entity 1");
+		        division = mirror.getDivisionDict(null, "Test Division 1");
+		        domainIds = [1]
+		        unit1 = mirror.getUnitDict(null, "Test Unit 1", "UN001", "Test Address 1", "668234", 1, "Test location 1", 1, "Test Industry 1", domainIds)
+		        unit2 = mirror.getUnitDict(null, "Test Unit 2", "UN002", "Test Address2", "668234", 1, "Test location 1", 1, "Test Industry 2", domainIds)
+
+		        Units = [unit1, unit2]
+		        countryId = 1
+		        countryWiseUnits = mirror.mapUnitsToCountry(countryId, Units)
+
+		        mirror.saveClient(1, businessGroup, legalEntity, 
+		        division, countryWiseUnits, callback) 
+			}
+			function updateClient(){
+				businessGroup = mirror.getBusinessGroupDict(4,"Test Business Group 3");
+		        legalEntity = mirror.getLegalEntityDict(2,"Test Legal Entity 1");
+		        division = mirror.getDivisionDict(11, "Test Division 11");
+		        domainIds = [1]
+		        unit1 = mirror.getUnitDict(18, "Test Unit 17 update", "UNUP017", "Test Address 17 update", "668234", 1, "Test location 17 update", 1, "Test Industry 17 update", domainIds)
+		        unit2 = mirror.getUnitDict(19, "Test Unit 18 update", "UNUP018", "Test Address 18 update", "668234", 1, "Test location 18 update", 1, "Test Industry 18 update", domainIds)
+
+		        Units = [unit1, unit2]
+		        countryId = 1
+		        countryWiseUnits = []
+		        countryWiseUnits.push(mirror.mapUnitsToCountry(countryId, Units))
+
+		        mirror.updateClient(2, businessGroup, legalEntity, 
+		        division, countryWiseUnits, callback) 
+			}
+			function getClients(){
+				mirror.getClients(callback)
+			}
+			function changeClientStatus(){
+				clientId = 2
+		        legalEntityId = 2
+		        divisionId = 2
+		        isActive = false
+		        mirror.changeClientStatus(clientId, legalEntityId, divisionId, isActive, callback)
+			}
+			function reactivateUnit(){
+				clientId = 2
+		        unitId = 2
+		        password = "123456"
+		        mirror.reactivateUnit(clientId, unitId, password, callback)
 			}
 		</script>
 	</head>
@@ -414,6 +459,23 @@
 			</button>
 			<button onclick="getClientGroups()">
 				Get Client Groups
+			</button>
+		</div>
+		<div>
+			<button onclick="saveClient()">
+				Save Client 
+			</button>
+			<button onclick="updateClient()">
+				Update Client 
+			</button>
+			<button onclick="changeClientStatus()">
+				Change Client  Status
+			</button>
+			<button onclick="getClients()">
+				Get Clients
+			</button>
+			<button onclick="reactivateUnit()">
+				Reactivate Unit
 			</button>
 		</div>
 		<br>

@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8090/";
+var BASE_URL = "http://localhost:8080/";
 function initMirror() {
     var DEBUG = true;
 
@@ -34,16 +34,12 @@ function initMirror() {
 
     function getUserInfo() {
         var info = window.localStorage["userInfo"];
-        if (typeof(info) === "undefined")
-            return null;
         user = parseJSON(info)
         return user
     }
 
     function getUserProfile() {
         var info = getUserInfo();
-        if (info === null)
-            return null
         var userDetails = {
             "user_id": info["user_id"],
             "client_id": info["client_id"],
@@ -60,15 +56,11 @@ function initMirror() {
 
     function getSessionToken() {
         var info = getUserInfo();
-        if (info === null)
-            return null;
         return info["session_token"];
     }
 
     function getUserMenu(){
         var info = getUserInfo();
-        if (info === null)
-            return null;
         return info["menu"]["menus"];
     }
 
@@ -166,8 +158,6 @@ function initMirror() {
     //Domain Master
 
     function saveDomain(domainName, callback) {
-        if (domainName == null)
-            return null;
         var request = [
             "SaveDomain",
             { "domain_name" : domainName }
@@ -176,8 +166,6 @@ function initMirror() {
     }
 
     function updateDomain(domainId, domainName, callback) {
-        if ((domainId == null) || (domainName == null))
-            return null;
         var request = [
             "UpdateDomain",
             { "domain_id" : domainId, "domain_name" : domainName }
@@ -186,8 +174,6 @@ function initMirror() {
     }
 
     function changeDomainStatus(domainId, isActive, callback) {
-        if ((domainId == null) || (isActive == null))
-            return null;
         var request = [
             "ChangeDomainStatus",
             {"domain_id" : domainId, "is_active" : isActive}
@@ -203,8 +189,6 @@ function initMirror() {
     //Country Master
 
     function saveCountry(countryName, callback) {
-        if (countryName == null)
-            return null;
         var request = [
             "SaveCountry",
             { "country_name" : countryName }
@@ -213,8 +197,6 @@ function initMirror() {
     }
 
     function updateCountry(countryId, countryName, callback) {
-        if ((countryId == null) || (countryName == null))
-            return null;
         var request = [
             "UpdateCountry",
             { "country_id" : countryId, "country_name" : countryName }
@@ -223,8 +205,6 @@ function initMirror() {
     }
 
     function changeCountryStatus(countryId, isActive, callback) {
-        if ((countryId == null) || (isActive == null))
-            return null;
         var request = [
             "ChangeCountryStatus",
             {"country_id" : countryId, "is_active" : isActive}
@@ -239,8 +219,6 @@ function initMirror() {
 
     //Industry Master
     function saveIndustry(industryName, callback) {
-        if (industryName == null)
-            return null;
         var request = [
             "SaveIndustry",
             { "industry_name" : industryName }
@@ -249,8 +227,6 @@ function initMirror() {
     }
 
     function updateIndustry(industryId, industryName, callback) {
-        if ((industryId == null) || (industryName == null))
-            return null;
         var request = [
             "UpdateIndustry",
             { "industry_id" : industryId, "industry_name" : industryName }
@@ -259,8 +235,6 @@ function initMirror() {
     }
 
     function changeIndustryStatus(industryId, isActive, callback) {
-        if ((industryId == null) || (isActive == null))
-            return null;
         var request = [
             "ChangeIndustryStatus",
             {"industry_id" : industryId, "is_active" : isActive}
@@ -276,8 +250,6 @@ function initMirror() {
     //Statutory Nature Master
 
     function saveStatutoryNature(statutoryNatureName, callback) {
-        if (statutoryNatureName == null)
-            return null;
         var request = [
             "SaveStatutoryNature",
             { "statutory_nature_name" : statutoryNatureName }
@@ -287,8 +259,6 @@ function initMirror() {
 
     function updateStatutoryNature(statutoryNatureId, statutoryNatureName, 
         callback) {
-        if ((statutoryNatureId == null) || (statutoryNatureName == null))
-            return null;
         var request = [
             "UpdateStatutoryNature",
             { "statutory_nature_id" : statutoryNatureId, "statutory_nature_name" : statutoryNatureName }
@@ -298,8 +268,6 @@ function initMirror() {
 
     function changeStatutoryNatureStatus(statutoryNatureId, isActive, 
         callback) {
-        if ((statutoryNatureId == null) || (isActive == null))
-            return null;
         var request = [
             "ChangeStatutoryNatureStatus",
             {"statutory_nature_id" : statutoryNatureId, "is_active" : isActive}
@@ -328,8 +296,6 @@ function initMirror() {
 
     function saveAndUpdateGeographyLevels(countryId, levels, 
         callback) {
-        if ((countryId == null) || (levels == null))
-            return null;
         var request = [
             "SaveGeographyLevel",
             { 
@@ -348,8 +314,6 @@ function initMirror() {
 
     function saveAndUpdateStatutoryLevels(countryId, domainId, levels, 
         callback) {
-        if ((countryId == null) || (domainId == null) || (levels == null))
-            return null;
         var request = [
             "SaveStatutoryLevel",
             { 
@@ -368,8 +332,6 @@ function initMirror() {
     }
 
     function saveGeography(levelId, name, parentIds, callback) {
-        if ((levelId == null) || (name == null) || (parentIds == null))
-            return null;
         var request = [
             "SaveGeography",
             { 
@@ -383,9 +345,6 @@ function initMirror() {
 
     function updateGeography(geographyId, levelId, name, parentIds,
      callback) {
-        if ((geographyId == null) || (levelId == null) || (name == null) || 
-            (parentIds == null))
-            return null;
         var request = [
             "UpdateGeography",
             { 
@@ -399,8 +358,6 @@ function initMirror() {
     }
 
     function changeGeographyStatus(geographyId, isActive, callback) {
-        if ((geographyId == null) || (isActive == null))
-            return null;
         var request = [
             "ChangeGeographyStatus",
             { 
@@ -1025,8 +982,6 @@ function initMirror() {
     function changeClientUserGroupStatus(userGroupId, isActive, 
         callback) {
         callerName = "ClientAdminAPI"
-        if (isNull(userGroupId) || isNull(isActive) )
-            return null;
         var request = [
             "ChangeUserPrivilegeStatus",
             {
@@ -1083,9 +1038,7 @@ function initMirror() {
 
     function updateServiceProvider(serviceProviderDetail, 
         callback) {
-        callerName = "ClientAdminAPI"
-        if (isNull(serviceProviderDetail))
-            return null;    
+        callerName = "ClientAdminAPI"  
         var request = [
             "UpdateServiceProvider",
             serviceProviderDetail
@@ -1096,8 +1049,6 @@ function initMirror() {
     function changeServiceProviderStatus(serviceProviderId, 
         isActive, callback) {
         callerName = "ClientAdminAPI"
-        if (isNull(serviceProviderId) || isNull(isActive) )
-            return null;
         var request = [
             "ChangeServiceProviderStatus",
             {

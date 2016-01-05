@@ -19,7 +19,6 @@ __all__ = [
 #
 
 def get_client_groups(db, request, session_user):
-	print "inside get Client groups"
 	domain_list = []
 	country_list = []
 	user_list = []
@@ -32,7 +31,6 @@ def get_client_groups(db, request, session_user):
 		is_active = True if domain_row[2] == 1 else False
 		domain_list.append(core.Domain(domain_id, domain_name, is_active))
 
-	print "got domain list"
 	country_rows = db.get_countries()
 	for country_row in country_rows:
 		country_id = country_row[0]
@@ -40,19 +38,17 @@ def get_client_groups(db, request, session_user):
 		is_active = True if country_row[2] == 1 else False
 		country_list.append(core.Country(country_id, country_name, is_active))
 
-	print "got country list"
 	user_rows = db.get_users()
 	for user_row in user_rows:
 		employee_name = None
-        if user_row[2] == None:
-            employee_name = user_row[1]
-        else:
-            employee_name = "%s-%s" % (user_row[2], user_row[1])
-        user_id = user_row[0]
-        is_active = True if user_row[3]==1 else False
-        user_list.append(core.User(user_id, employee_name, is_active))
+		if user_row[2] == None:
+			employee_name = user_row[1]
+		else:
+			employee_name = "%s-%s" % (user_row[2], user_row[1])
+		user_id = user_row[0]
+		is_active = True if user_row[3]==1 else False
+		user_list.append(core.User(user_id, employee_name, is_active))
 
-	print "got user list"
 	client_rows = db.get_group_company_details()
 	for client_row in client_rows:
 		client_id = client_row[0]
@@ -70,79 +66,50 @@ def get_client_groups(db, request, session_user):
 		domain_ids = [int(x) for x in db.get_client_domains(client_id).split(",")]
 		client_list.append(core.GroupCompanyDetail(client_id, group_name, domain_ids, 
 			country_ids, incharge_persons, logo_url, contract_from, contract_to, 
-			no_of_user_licence, total_disk_space, is_sms_subscribed, email_id, 1))
-	print "got client list"
+			no_of_user_licence, total_disk_space, is_sms_subscribed, email_id, is_active))
+
 	return technomasters.GetClientGroupsSuccess(countries = country_list, 
 		domains = domain_list, users = user_list, client_list = client_list)
 
 def save_client_group(db, request, session_user):
+	print "inside save client group"
 	session_user = int(session_user)
-	group_name = request.group_name
-	country_ids = request.country_ids
-	domain_ids = request.domain_ids
-	logo = request.logo
-	contract_from = request.contract_from
-	contract_to = request.contract_to
-	incharge_persons = request.incharge_persons
-	no_of_licence = request.no_of_user_licence
-	file_space = request.file_space * 1000000000
-	is_sms_subscribed = request.is_sms_subscribed
-	username = request.email_id     
-	short_name = request.short_name     
-	date_configurations = request.date_configurations
-	contract_from = stringToDatetime(contract_from)
-	contract_to = stringToDatetime(contract_to)
-	client_id = generate_new_client_id()
-	if db.is_duplicate_group_name(group_name, client_id):
+	client_id = db.generate_new_client_id()
+	if db.is_duplicate_group_name(request.group_name, client_id):
 		return technomasters.GroupNameAlreadyExists()
-	elif db.is_duplicate_group_username(username, client_id):
-		return technomasters.EmailIdAlreadyExists()
+	elif db.is_duplicate_group_username(request.email_id, client_id):
+		return technomasters.EmailIDAlreadyExists()
 	else:
-		db.save_client_group(session_user)
-		db.save_date_configurations(client_id, date_configurations, 
+		db.save_client_group(client_id, request, session_user)
+		db.save_date_configurations(client_id, request.date_configurations, 
 			session_user)
-		db.save_client_countries(client_id, countr_ids)
-		db.save_client_domains(client_id, domain_ids)
-		db.create_and_save_client_database(group_name, client_id, 
-			short_name, username)
-		db.save_incharge_persons()
+		db.save_client_countries(client_id, request.country_ids)
+		db.save_client_domains(client_id, request.domain_ids)
+		db.create_and_save_client_database(request.group_name, client_id, 
+			request.short_name, request.email_id)
+		db.save_incharge_persons(request, client_id)
 		return technomasters.SaveClientGroupSuccess()
 
 def update_client_group(db, request, session_user):
 	session_user = int(session_user)
-	response = ""
-	client_id = request.client_id
-	group_name = request.group_name
-	country_ids = request.country_ids
-	domain_ids = request.domain_ids
-	logo = request.logo
-	contract_from = request.contract_from
-	contract_to = request.contract_to
-	incharge_persons = request.incharge_persons
-	no_of_licence = request.no_of_user_licence
-	file_space = request.file_space * 1000000000
-	is_sms_subscribed = request.is_sms_subscribed    
-	date_configurations = request.date_configurations
-	contract_from = stringToDatetime(contract_from)
-	contract_to = stringToDatetime(contract_to)
-	if db.is_invalid_id(db.tblClientGroups, "client_d", client_id) :
+	if db.is_invalid_id(db.tblClientGroups, "client_id", request.client_id) :
 		return technomasters.InvalidClientId()
-	elif db.is_duplicate_group_name(group_name, group_id):
+	elif db.is_duplicate_group_name(request.group_name, request.client_id):
 		return technomasters.GroupNameAlreadyExists()
 	else:
-		db.update_client_group(session_user)
-		db.save_date_configurations(client_id, date_configurations, session_user)
-		db.save_client_countries(client_id, country_ids)
-		db.save_client_domains(client_id, domain_ids)
-		db.save_incharge_persons()
+		db.update_client_group(request, session_user)
+		db.save_date_configurations(request.client_id, request.date_configurations,
+		 session_user)
+		db.save_client_countries(request.client_id, request.country_ids)
+		db.save_client_domains(request.client_id, request.domain_ids)
+		db.save_incharge_persons(request, request.client_id)
 		return technomasters.UpdateClientSuccess()
 
 def change_client_group_status(db, request, session_user):
 	session_user = int(session_user)
-	response = ""
 	client_id = request.client_id
 	is_active = request.is_active
-	if db.is_invalid_id(db.tblClientGroups, "client_d", client_id) :
+	if db.is_invalid_id(db.tblClientGroups, "client_id", client_id) :
 		return technomasters.InvalidClientId()
 	else:
 		db.update_client_group_status(client_id, is_active, session_user)
