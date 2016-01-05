@@ -7,7 +7,6 @@ import random
 import re
 
 from protocol import core
-import datetime
 
 import uuid
 from types import *
@@ -1450,11 +1449,8 @@ class KnowledgeDatabase(Database):
         statutory_ids = ','.join(str(x) for x in data.get("statutory_ids")) + ","
         compliances = data.get("compliances")
         geography_ids = ','.join(str(x) for x in data.get("geography_ids")) + ","
-<<<<<<< HEAD
-        
 
-=======
-                statutory_mapping_id = self.get_new_id("statutory_mapping_id", "tbl_statutory_mappings")
+        statutory_mapping_id = self.get_new_id("statutory_mapping_id", "tbl_statutory_mappings")
         created_on = self.get_date_time()
         is_active = 1
 
@@ -1826,7 +1822,7 @@ class KnowledgeDatabase(Database):
         condition = "client_id ='%d'" % client_id
         rows = self.get_data(self.tblClientDomains, columns, condition)
         return rows[0][0]
-<<<<<<< HEAD
+
         statutory_mapping_id = self.get_new_id("statutory_mapping_id", "tbl_statutory_mappings")
         created_on = self.get_date_time()
         is_active = 1

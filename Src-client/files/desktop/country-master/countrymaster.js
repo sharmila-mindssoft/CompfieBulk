@@ -2,29 +2,49 @@ $(".btn-country-add").click(function(){
 	$("#country-add").show();
 	$("#country-view").hide();
 	$("#country-name").val('');
-  $("#country-id").val('');
-  $(".error-message").html('');
+	$("#country-id").val('');
+  	displayMessage('');
 });
+function clearMessage() {
+    $(".error-message").hide();
+    $(".error-message").text("");
+}
+
+function displayMessage(message) {
+    $(".error-message").text(message);
+    $(".error-message").show();
+}
 $(".btn-country-cancel").click(function(){
 	$("#country-add").hide();
 	$("#country-view").show();
 });
+
 function initialize(){
-	function success(status, data){
+	function onSuccess(response){
 		loadCountriesList(data);
 	}
-	function failure(status, data){
+	function onFailure(response){
+		displayMessage(response);
 	}
-	mirror.getCountryList(success, failure);
+	mirror.getCountryList(
+		function (error, response) {
+            if (error == null){
+                onSuccess(response);
+            }
+            else {
+                onFailure(error);
+            }
+        }
+	);
 }
 function validate(countryNameValue){
 	if(countryNameValue.length==0){
-		$(".error-message").html('Country Name Required');
+		displayMessage('Country Name Required');
 	}
 }
 function loadCountriesList(countriesList){
  	$(".tbody-countries-list").find("tr").remove();
-  var sno=0;
+	var sno=0;
 	var imageName=null;
 	var title=null;	
 	$.each(countriesList, function(i, value){
@@ -56,13 +76,9 @@ function loadCountriesList(countriesList){
 }
 $('#country-name').keypress(function (e) {
 	var countryNameValue = $("#country-name").val();
-  if (e.which == 13) {
-		if(countryNameValue==''){
-			$(".error-message").html('Country Name Required');
-		}
-		else{
-			jQuery('#submit').focus().click();
-		}
+	if (e.which == 13 && && $(this).val() != "") {
+		jQuery('#submit').focus().click();
+		
   }
 });
 
@@ -71,35 +87,52 @@ $("#submit").click(function(){
 	var countryNameValue = $("#country-name").val();
 	validate(countryNameValue);
 	if(countryIdValue==''){		
-		function success(status, data){
-			if(status == 'success') {
+		function onSuccess(response){
+			if(response == 'SaveCountrySuccess') {
 		    	$("#country-add").hide();
 	  			$("#country-view").show();
 	  			initialize();
 	  		}
-	  		 else {
-      			$(".error-message").html(status);
-      		}	
 	    }
-		function failure(status, data){
-			$(".error-message").html(status);
+		function onFailure(error){
+			if(error == 'CountryNameAlreadyExists'){
+				displayMessage(error);	
+			}			
 		}
-		mirror.saveCountry(countryNameValue, success, failure);
+		mirror.saveCountry(countryNameValue, 
+			function (error, response) {
+	            if (error == null){
+	                onSuccess(response);
+	            }
+	            else {
+	                onFailure(error);
+	            }
+	        }
+		);
 	}
 	else{		
-		function success(status, data){
-			if(status == 'success') {
+		function onSuccess(response){
+			if(response == 'UpdateCountrySuccess') {
 				$("#country-add").hide();
 	  			$("#country-view").show();
 	  			initialize();
-  			}
-  			if(status == 'CountryNameAlreadyExists') {
-  				$(".error-message").html(status);
+  			}  			
+		}
+		function onFailure(error){			
+			if(error == 'InvalidCountryId') {
+  				displayMessage("Invalid Country Id");
   			}	
 		}
-		function failure(status, data){
-		}
-		mirror.updateCountry(parseInt(countryIdValue), countryNameValue, success, failure);
+		mirror.updateCountry(parseInt(countryIdValue), countryNameValue, 
+			function (error, response) {
+	            if (error == null){
+	                onSuccess(response);
+	            }
+	            else {
+	                onFailure(error);
+	            }
+	        }
+		);
 	}
 });
 function country_edit(countryId, countryName){
@@ -110,12 +143,20 @@ function country_edit(countryId, countryName){
 }
 function country_active(countryId, isActive){
   	$("#country-id").val(countryId);
-  	function success(status, data){
-	  initialize();
+  	function onSuccess(response){
+  		initialize();		  
   	}
-  	function failure(status, data){
-  	}
-  	mirror.changeCountryStatus( parseInt(countryId), isActive, success, failure);
+  	
+  	mirror.changeCountryStatus( parseInt(countryId), isActive, 
+		function (error, response) {
+	        if (error == null){
+	            onSuccess(response);
+	        }
+	        else {
+	            onFailure(error);
+	        }
+	    }
+	);
 }
 
 

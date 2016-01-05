@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8080/";
+var BASE_URL = "http://localhost:8090/";
 function initMirror() {
     var DEBUG = true;
 
@@ -73,9 +73,9 @@ function initMirror() {
     }
 
     function apiRequest(callerName, request, callback) {
-        // var sessionToken = getSessionToken();
-        // if (sessionToken == null)
-        sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
+        var sessionToken = getSessionToken();
+        if (sessionToken == null)
+            sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
         var requestFrame = {
             "session_token": sessionToken,
             "request": request
