@@ -2,22 +2,40 @@ $("#btnUserGroupAdd").click(function(){
 	$("#userGroupView").hide();
 	$("#userGroupAdd").show();
 	$("#formList").hide();
-	$(".error-message").html('');
+	clearMessage();
 	$("#groupName").val('');
 	$("#groupId").val('');
 });
+function clearMessage() {
+    $(".error-message").hide();
+    $(".error-message").text("");
+}
+
+function displayMessage(message) {
+    $(".error-message").text(message);
+    $(".error-message").show();
+}
 $("#btnUserGroupCancel").click(function(){
 	$("#userGroupAdd").hide();
 	$("#userGroupView").show();
 });
 function initialize(){
-	function success(status, data){
+	function onSuccess(data){
 		loadUserGroupdata(data['user_groups']);
 	}
-	function failure(status, data){
-		console.log(status);
+	function onFailure(error){
+		console.log(error);
 	}
-	mirror.getAdminUserGroupList("AdminAPI", success, failure);
+	mirror.getAdminUserGroupList(
+		function (error, response) {
+            if (error == null){
+                onSuccess(response);
+            }
+            else {
+                onFailure(error);
+            }
+        }
+	);
 }
 
 function loadUserGroupdata(userGroupList){
@@ -63,15 +81,24 @@ $("#btnUserGroupShow").click(function(){
 	else{
 		$(".error-message").html('');
 		$("#formList").show();
-		function success(status, data){
-			if(status=="GetUserGroupsSuccess"){
-				loadFormList(data['forms'], categoryNameVal);			
+		function onSuccess( data){
+			loadFormList(data['forms'], categoryNameVal);			
+		}
+		function onFailure(error){
+			if(error == "GroupNameAlreadyExists"){
+				displayMessage("Group Name Already Exists")
 			}
 		}
-		function failure(status, data){
-			console.log(status);
-		}
-		mirror.getAdminUserGroupList("AdminAPI", success, failure);
+		mirror.getAdminUserGroupList(
+			function (error, response) {
+	            if (error == null){
+	                onSuccess(response);
+	            }
+	            else {
+	                onFailure(error);
+	            }
+	        }
+		);
 	}
 });
 function loadFormList(formList,categoryNameVal){
@@ -153,7 +180,16 @@ $("#btnUserGroupSubmit").click(function(){
 		function failure(status, data){
 		}
 		var userGroupInsertDetails=[groupNameVal,categoryNameVal, selectedVal];
-		mirror.saveAdminUserGroup("AdminAPI", userGroupInsertDetails, success, failure);
+		mirror.saveAdminUserGroup(userGroupInsertDetails, 
+		   function (error, response) {
+                if (error == null){
+                  onSuccess(response);
+                }
+                else {
+                  onFailure(error);
+                }
+            }
+        );
 	}
 	if(groupIdVal!=''){
 		$(".checkedFormId:checked").each(function() {
@@ -162,22 +198,30 @@ $("#btnUserGroupSubmit").click(function(){
 		/* join array separated by comma*/
 		var selectedVal;
 		selectedVal = chkArray.join(',') + ",";
-		function success(status, data){
-			console.log(status);
+		function onSuccess(status){
 			if(status=="UpdateUserGroupSuccess"){
 				$("#userGroupAdd").hide();
 		  		$("#userGroupView").show();
 				initialize();
 			}
-			if(status=="GroupNameAlreadyExists"){
-				$(".error-message").html(status);
+			
+		}
+		function onFailure(error){
+			if(error=="GroupNameAlreadyExists"){
+				displayMessage("Group Name Already Exists");
 			}
 		}
-		function failure(status, data){
-			console.log(status);
-		}
 		var userGroupInsertDetails=[parseInt(groupIdVal), groupNameVal, categoryNameVal, selectedVal];
-		mirror.updateAdminUserGroup("AdminAPI", userGroupInsertDetails, success, failure);
+		mirror.updateAdminUserGroup(userGroupInsertDetails,
+		    function (error, response) {
+                if (error == null){
+                  onSuccess(response);
+                }
+                else {
+                  onFailure(error);
+                }
+            }
+        );
 	}
 	
 });

@@ -97,13 +97,13 @@ function saveRecord () {
     }
     mirror.updateDomain(domainId, domainName,
         function (error, response) {
-                    if (error == null){
-                      onSuccess(response);
-                    }
-                    else {
-                      onFailure(error);
-                    }
-                });
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      });
   }
 }
 }   

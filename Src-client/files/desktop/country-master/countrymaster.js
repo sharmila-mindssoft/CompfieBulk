@@ -76,7 +76,7 @@ function loadCountriesList(countriesList){
 }
 $('#country-name').keypress(function (e) {
 	var countryNameValue = $("#country-name").val();
-	if (e.which == 13 && && $(this).val() != "") {
+	if (e.which == 13 && $(this).val() != "") {
 		jQuery('#submit').focus().click();
 		
   }
