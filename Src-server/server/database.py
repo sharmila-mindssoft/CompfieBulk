@@ -1413,7 +1413,7 @@ class KnowledgeDatabase(Database):
             compalinaces.append(compliance)
         return [compliance_names, compalinaces]
 
-
+    
     #
     # save statutory mapping
     #
@@ -1426,224 +1426,6 @@ class KnowledgeDatabase(Database):
         statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
         compliances = data.compliances
         geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
-        
-
-#
-#   Forms
-#
-    def get_forms(self):
-        columns = "tf.form_id, tf.form_category_id, tfc.form_category, "+\
-        "tf.form_type_id, tft.form_type, tf.form_name, tf.form_url, "+\
-        "tf.form_order, tf.parent_menu"
-        tables = [self.tblForms, self.tblFormCategory, self.tblFormType]
-        aliases = ["tf", "tfc", "tft"]
-        joinConditions = ["tf.form_catEgory_id = tfc.form_category_id", 
-        "tf.form_type_id = tft.form_type_id"]
-        whereCondition = " tf.form_category_id in (3,2,4) order by tf.form_order"
-        joinType = "left join"
-
-        rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, 
-            joinConditions, whereCondition)
-        return rows
-
-    def get_form_categories(self): 
-        columns = "form_category_id, form_category"
-        condition = " form_category_id in (2,3)"
-        rows = self.get_data(self.tblFormCategory, columns, condition)
-        return rows
-
-#
-#   Admin User Group
-#
-    def is_duplicate_user_group_name(self, user_group_id, user_group_name):
-        condition = "user_group_name ='%s' AND user_group_id != '%d'"%(
-            user_group_name, user_group_id)
-        return self.is_already_exists(self.tblUserGroups, condition)
-
-    def generate_new_user_group_id(self) :
-        return self.get_new_id("user_group_id", self.tblUserGroups)
-
-    def get_user_group_detailed_list(self) :
-        columns = "user_group_id, user_group_name, form_category_id, "+\
-                    "form_ids, is_active"
-        tables = self.tblUserGroups
-        where_condition = "1"
-        rows = self.get_data( tables, columns, where_condition)
-        return rows
-
-    def get_user_groups(self):
-        columns = "user_group_id, user_group_name, is_active"
-        where_condition = "1"
-        rows = self.get_data(self.tblUserGroups, columns, where_condition)
-        return rows
-
-    def save_user_group(self, user_group_id, user_group_name,
-            form_category_id, form_ids):
-        time_stamp = self.get_date_time()
-        columns = ["user_group_id", "user_group_name","form_category_id", 
-                    "form_ids", "is_active", "created_on", "created_by", 
-                    "updated_on", "updated_by"]
-        values =  [user_group_id, user_group_name, form_category_id, 
-                ",".join(str(x) for x in form_ids), 1, time_stamp, 
-                0, time_stamp, 0]
-        result = self.insert(self.tblUserGroups,columns,values)
-        return result
-
-    def update_user_group(self, user_group_id, user_group_name,
-            form_category_id, form_ids):
-        time_stamp = self.get_date_time()
-        columns = ["user_group_name","form_category_id","form_ids", "updated_on",
-                 "updated_by"]
-        values =  [user_group_name, form_category_id, 
-                ",".join(str(x) for x in form_ids), time_stamp, 0]
-        condition = "user_group_id='%d'" % user_group_id
-        return self.update(self.tblUserGroups, columns, values, condition)
-
-    def update_user_group_status(self, user_group_id, is_active):
-        time_stamp = self.get_date_time()
-        columns = ["is_active", "updated_by", "updated_on"]
-        values = [is_active, 0, time_stamp]
-        condition = "user_group_id='%d'" % user_group_id
-        result =  self.update(self.tblUserGroups, columns, values, condition)
-        return result
-
-#
-#   Admin User
-#
-    def generate_new_user_id(self):
-        return self.get_new_id("user_id", self.tblUsers)
-
-    def is_duplicate_email(self, email_id, user_id):
-        condition = "email_id ='%s' AND user_id != '%d'" % (
-            email_id, user_id)
-        return self.is_already_exists(self.tblUsers, condition)
-
-    def is_duplicate_employee_code(self, employee_code, user_id):
-        condition = "employee_code ='%s' AND user_id != '%d'" % (
-            employee_code, user_id)
-        return self.is_already_exists(self.tblUsers, condition)
-
-    def is_duplicate_contact_no(self, contact_no, user_id):
-        condition = "contact_no ='%s' AND user_id != '%d'" % (contact_no, user_id)
-        return self.is_already_exists(self.tblUsers, condition)
-
-    def get_detailed_user_list(self):
-        columns = "user_id, email_id, user_group_id, employee_name, employee_code,"+\
-                "contact_no, address, designation, is_active"
-        condition = "1"
-        rows = self.get_data(self.tblUsers, columns, condition)
-        return rows
-
-    def get_users(self):
-        columns = "user_id, employee_name, employee_code, is_active"
-        condition = "1"
-        rows = self.get_data(self.tblUsers, columns, condition)
-        return rows
-
-    def get_user_countries(self, user_id):
-        columns = "group_concat(country_id)"
-        condition = " user_id = '%d'"% user_id
-        rows = self.get_data( self.tblUserCountries, columns, condition)
-        return rows[0][0]
-
-    def get_user_domains(self, user_id):
-        columns = "group_concat(domain_id)"
-        condition = " user_id = '%d'"% user_id
-        rows = self.get_data(self.tblUserDomains, columns, condition)
-        return rows[0][0]
-
-    def save_user(self, user_id, email_id, user_group_id, employee_name,
-     employee_code, contact_no, address, designation, country_ids, domain_ids):
-        result1 = False
-        result2 = False
-        result3 = False
-        current_time_stamp = self.get_date_time()
-        user_columns = ["user_id", "email_id", "user_group_id", "password", "employee_name", 
-                    "employee_code", "contact_no", "address", "designation", "is_active", 
-                    "created_on", "created_by", "updated_on", "updated_by"]
-        user_values = [user_id, email_id, user_group_id, generatePassword(),
-                employee_name, employee_code, contact_no, address,
-                designation, 1, current_time_stamp, 0, current_time_stamp, 0]
-        result1 = self.insert(self.tblUsers, user_columns, user_values)
-
-        country_columns = ["user_id", "country_id"]
-        country_values_list = []
-        for country_id in country_ids:
-            country_value_tuple = (user_id, int(country_id))
-            country_values_list.append(country_value_tuple)
-        result2 = self.bulk_insert(self.tblUserCountries, country_columns, country_values_list)
-
-        domain_columns = ["user_id", "domain_id"]
-        domain_values_list = []
-        for domain_id in domain_ids:
-            domain_value_tuple = (user_id, int(domain_id))
-            domain_values_list.append(domain_value_tuple)
-        result3 = self.bulk_insert(self.tblUserDomains, domain_columns, domain_values_list)
-
-        return (result1 and result2 and result3)
-
-    def update_user(self, user_id, user_group_id, employee_name, employee_code, contact_no,
-        address, designation, country_ids, domain_ids):
-        result1 = False
-        result2 = False
-        result3 = False
-
-        current_time_stamp = self.get_date_time()
-        user_columns = [ "user_group_id", "employee_name", "employee_code", 
-                    "contact_no", "address", "designation",
-                    "updated_on", "updated_by"]
-        user_values = [user_group_id, employee_name, employee_code, contact_no,
-                    address, designation, current_time_stamp, 0]
-        user_condition = "user_id = '%d'" % user_id
-        result1 = self.update(self.tblUsers, user_columns, user_values, user_condition)
-        self.delete(self.tblUserCountries, user_condition)
-        self.delete(self.tblUserDomains, user_condition)
-
-        country_columns = ["user_id", "country_id"]
-        country_values_list = []
-        for country_id in country_ids:
-            country_value_tuple = (user_id, int(country_id))
-            country_values_list.append(country_value_tuple)
-        result2 = self.bulk_insert(self.tblUserCountries, country_columns, 
-            country_values_list)
-
-        domain_columns = ["user_id", "domain_id"]
-        domain_values_list = []
-        for domain_id in domain_ids:
-            domain_value_tuple = (user_id, int(domain_id))
-            domain_values_list.append(domain_value_tuple)
-        result3 = self.bulk_insert(self.tblUserDomains, domain_columns, 
-            domain_values_list)
-
-        return (result1 and result2 and result3)    
-
-    def update_user_status(self, user_id, is_active):
-        columns = ["is_active", "updated_on" , "updated_by"]
-        values = [is_active, self.get_date_time(), 0]
-        condition = "user_id='%d'" % user_id
-        return self.update(self.tblUsers, columns, values, condition)
-
-#
-#   Group Company
-#
-    def get_group_company_details(self):
-        columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
-        " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
-        " is_active"
-        condition = "1"
-        return self.get_data(self.tblClientGroups, columns, condition)
-
-    def get_client_countries(self, client_id):
-        columns = "group_concat(country_id)"
-        condition = "client_id ='%d'" % client_id
-        rows = self.get_data(self.tblClientCountries, columns, condition)
-        return rows[0][0]
-
-    def get_client_domains(self, client_id):
-        columns = "group_concat(domain_id)"
-        condition = "client_id ='%d'" % client_id
-        rows = self.get_data(self.tblClientDomains, columns, condition)
-        return rows[0][0]
         statutory_mapping_id = self.get_new_id("statutory_mapping_id", "tbl_statutory_mappings")
         created_on = self.get_date_time()
         is_active = 1
@@ -1675,7 +1457,6 @@ class KnowledgeDatabase(Database):
         else :
             return False
 
-            
     def update_statutory_mapping_id(
         self, statutory_id, mapping_id, user_id
     ) :
@@ -2084,3 +1865,220 @@ class KnowledgeDatabase(Database):
             )
         self.execute(query)
 
+
+#
+#   Forms
+#
+    def get_forms(self):
+        columns = "tf.form_id, tf.form_category_id, tfc.form_category, "+\
+        "tf.form_type_id, tft.form_type, tf.form_name, tf.form_url, "+\
+        "tf.form_order, tf.parent_menu"
+        tables = [self.tblForms, self.tblFormCategory, self.tblFormType]
+        aliases = ["tf", "tfc", "tft"]
+        joinConditions = ["tf.form_catEgory_id = tfc.form_category_id", 
+        "tf.form_type_id = tft.form_type_id"]
+        whereCondition = " tf.form_category_id in (3,2,4) order by tf.form_order"
+        joinType = "left join"
+
+        rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, 
+            joinConditions, whereCondition)
+        return rows
+
+    def get_form_categories(self): 
+        columns = "form_category_id, form_category"
+        condition = " form_category_id in (2,3)"
+        rows = self.get_data(self.tblFormCategory, columns, condition)
+        return rows
+
+#
+#   Admin User Group
+#
+    def is_duplicate_user_group_name(self, user_group_id, user_group_name):
+        condition = "user_group_name ='%s' AND user_group_id != '%d'"%(
+            user_group_name, user_group_id)
+        return self.is_already_exists(self.tblUserGroups, condition)
+
+    def generate_new_user_group_id(self) :
+        return self.get_new_id("user_group_id", self.tblUserGroups)
+
+    def get_user_group_detailed_list(self) :
+        columns = "user_group_id, user_group_name, form_category_id, "+\
+                    "form_ids, is_active"
+        tables = self.tblUserGroups
+        where_condition = "1"
+        rows = self.get_data( tables, columns, where_condition)
+        return rows
+
+    def get_user_groups(self):
+        columns = "user_group_id, user_group_name, is_active"
+        where_condition = "1"
+        rows = self.get_data(self.tblUserGroups, columns, where_condition)
+        return rows
+
+    def save_user_group(self, user_group_id, user_group_name,
+            form_category_id, form_ids):
+        time_stamp = self.get_date_time()
+        columns = ["user_group_id", "user_group_name","form_category_id", 
+                    "form_ids", "is_active", "created_on", "created_by", 
+                    "updated_on", "updated_by"]
+        values =  [user_group_id, user_group_name, form_category_id, 
+                ",".join(str(x) for x in form_ids), 1, time_stamp, 
+                0, time_stamp, 0]
+        result = self.insert(self.tblUserGroups,columns,values)
+        return result
+
+    def update_user_group(self, user_group_id, user_group_name,
+            form_category_id, form_ids):
+        time_stamp = self.get_date_time()
+        columns = ["user_group_name","form_category_id","form_ids", "updated_on",
+                 "updated_by"]
+        values =  [user_group_name, form_category_id, 
+                ",".join(str(x) for x in form_ids), time_stamp, 0]
+        condition = "user_group_id='%d'" % user_group_id
+        return self.update(self.tblUserGroups, columns, values, condition)
+
+    def update_user_group_status(self, user_group_id, is_active):
+        time_stamp = self.get_date_time()
+        columns = ["is_active", "updated_by", "updated_on"]
+        values = [is_active, 0, time_stamp]
+        condition = "user_group_id='%d'" % user_group_id
+        result =  self.update(self.tblUserGroups, columns, values, condition)
+        return result
+
+#
+#   Admin User
+#
+    def generate_new_user_id(self):
+        return self.get_new_id("user_id", self.tblUsers)
+
+    def is_duplicate_email(self, email_id, user_id):
+        condition = "email_id ='%s' AND user_id != '%d'" % (
+            email_id, user_id)
+        return self.is_already_exists(self.tblUsers, condition)
+
+    def is_duplicate_employee_code(self, employee_code, user_id):
+        condition = "employee_code ='%s' AND user_id != '%d'" % (
+            employee_code, user_id)
+        return self.is_already_exists(self.tblUsers, condition)
+
+    def is_duplicate_contact_no(self, contact_no, user_id):
+        condition = "contact_no ='%s' AND user_id != '%d'" % (contact_no, user_id)
+        return self.is_already_exists(self.tblUsers, condition)
+
+    def get_detailed_user_list(self):
+        columns = "user_id, email_id, user_group_id, employee_name, employee_code,"+\
+                "contact_no, address, designation, is_active"
+        condition = "1"
+        rows = self.get_data(self.tblUsers, columns, condition)
+        return rows
+
+    def get_users(self):
+        columns = "user_id, employee_name, employee_code, is_active"
+        condition = "1"
+        rows = self.get_data(self.tblUsers, columns, condition)
+        return rows
+
+    def get_user_countries(self, user_id):
+        columns = "group_concat(country_id)"
+        condition = " user_id = '%d'"% user_id
+        rows = self.get_data( self.tblUserCountries, columns, condition)
+        return rows[0][0]
+
+    def get_user_domains(self, user_id):
+        columns = "group_concat(domain_id)"
+        condition = " user_id = '%d'"% user_id
+        rows = self.get_data(self.tblUserDomains, columns, condition)
+        return rows[0][0]
+
+    def save_user(self, user_id, email_id, user_group_id, employee_name,
+     employee_code, contact_no, address, designation, country_ids, domain_ids):
+        result1 = False
+        result2 = False
+        result3 = False
+        current_time_stamp = self.get_date_time()
+        user_columns = ["user_id", "email_id", "user_group_id", "password", "employee_name", 
+                    "employee_code", "contact_no", "address", "designation", "is_active", 
+                    "created_on", "created_by", "updated_on", "updated_by"]
+        user_values = [user_id, email_id, user_group_id, generatePassword(),
+                employee_name, employee_code, contact_no, address,
+                designation, 1, current_time_stamp, 0, current_time_stamp, 0]
+        result1 = self.insert(self.tblUsers, user_columns, user_values)
+
+        country_columns = ["user_id", "country_id"]
+        country_values_list = []
+        for country_id in country_ids:
+            country_value_tuple = (user_id, int(country_id))
+            country_values_list.append(country_value_tuple)
+        result2 = self.bulk_insert(self.tblUserCountries, country_columns, country_values_list)
+
+        domain_columns = ["user_id", "domain_id"]
+        domain_values_list = []
+        for domain_id in domain_ids:
+            domain_value_tuple = (user_id, int(domain_id))
+            domain_values_list.append(domain_value_tuple)
+        result3 = self.bulk_insert(self.tblUserDomains, domain_columns, domain_values_list)
+
+        return (result1 and result2 and result3)
+
+    def update_user(self, user_id, user_group_id, employee_name, employee_code, contact_no,
+        address, designation, country_ids, domain_ids):
+        result1 = False
+        result2 = False
+        result3 = False
+
+        current_time_stamp = self.get_date_time()
+        user_columns = [ "user_group_id", "employee_name", "employee_code", 
+                    "contact_no", "address", "designation",
+                    "updated_on", "updated_by"]
+        user_values = [user_group_id, employee_name, employee_code, contact_no,
+                    address, designation, current_time_stamp, 0]
+        user_condition = "user_id = '%d'" % user_id
+        result1 = self.update(self.tblUsers, user_columns, user_values, user_condition)
+        self.delete(self.tblUserCountries, user_condition)
+        self.delete(self.tblUserDomains, user_condition)
+
+        country_columns = ["user_id", "country_id"]
+        country_values_list = []
+        for country_id in country_ids:
+            country_value_tuple = (user_id, int(country_id))
+            country_values_list.append(country_value_tuple)
+        result2 = self.bulk_insert(self.tblUserCountries, country_columns, 
+            country_values_list)
+
+        domain_columns = ["user_id", "domain_id"]
+        domain_values_list = []
+        for domain_id in domain_ids:
+            domain_value_tuple = (user_id, int(domain_id))
+            domain_values_list.append(domain_value_tuple)
+        result3 = self.bulk_insert(self.tblUserDomains, domain_columns, 
+            domain_values_list)
+
+        return (result1 and result2 and result3)    
+
+    def update_user_status(self, user_id, is_active):
+        columns = ["is_active", "updated_on" , "updated_by"]
+        values = [is_active, self.get_date_time(), 0]
+        condition = "user_id='%d'" % user_id
+        return self.update(self.tblUsers, columns, values, condition)
+
+#
+#   Group Company
+#
+    def get_group_company_details(self):
+        columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
+        " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
+        " is_active"
+        condition = "1"
+        return self.get_data(self.tblClientGroups, columns, condition)
+
+    def get_client_countries(self, client_id):
+        columns = "group_concat(country_id)"
+        condition = "client_id ='%d'" % client_id
+        rows = self.get_data(self.tblClientCountries, columns, condition)
+        return rows[0][0]
+
+    def get_client_domains(self, client_id):
+        columns = "group_concat(domain_id)"
+        condition = "client_id ='%d'" % client_id
+        rows = self.get_data(self.tblClientDomains, columns, condition)
+        return rows[0][0]
