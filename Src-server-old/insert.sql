@@ -85,11 +85,12 @@ INSERT INTO tbl_forms VALUES(2, 4, 1,  'Domain', '/domain-master', 2, null);
 INSERT INTO tbl_forms VALUES(3, 1, 1,  'User Group', '/user-group-master', 3, null);
 INSERT INTO tbl_forms VALUES(4, 1, 1,  'User', '/user-master', 4, null);
 #knowledge
-INSERT INTO tbl_forms VALUES(5, 2, 1, 'Geography Levels Master', '/geography-level-master', 5, 'Geography');
+
+INSERT INTO tbl_forms VALUES(5, 2, 1, 'Geography Level Master', '/geography-level-master', 5, 'Geography');
 INSERT INTO tbl_forms VALUES(6, 2, 1, 'Geography Master', '/geography-master', 6, 'Geography');
 INSERT INTO tbl_forms VALUES(7, 2, 1, 'Industry Master', '/industry-master', 7, null);
 INSERT INTO tbl_forms VALUES(8, 2, 1, 'Statutory Nature Master', '/statutory-nature-master', 8, 'Statutory');
-INSERT INTO tbl_forms VALUES(9, 2, 1, 'Statutory Levels Master', '/statutory-level-master', 9, 'Statutory');
+INSERT INTO tbl_forms VALUES(9, 2, 1, 'Statutory Level Master', '/statutory-level-master', 9, 'Statutory');
 INSERT INTO tbl_forms VALUES(10, 2, 2, 'Statutory Mapping', '/statutory-mapping', 10, null);
 INSERT INTO tbl_forms VALUES(11, 2, 2, 'Approve Statutory Mapping', '/approve-statutory-mapping', 11, null);
 INSERT INTO tbl_forms VALUES(12, 2, 3, 'Statutory Mapping Report', '/statutory-mapping-report', 12, null);
@@ -100,7 +101,7 @@ INSERT INTO tbl_forms VALUES(16, 2, 3, 'Industry Report', '/industry-report', 16
 INSERT INTO tbl_forms VALUES(17, 2, 3, 'Statutory Nature Report', '/statutory-nature-report', 17, 'Master');
 #Techno
 INSERT INTO tbl_forms VALUES(18, 3, 1, 'Client Master', '/client-master', 18, null);
-INSERT INTO tbl_forms VALUES(19, 3, 1, 'Client Unit Creation', '/client-unit-creation', 19, null);
+INSERT INTO tbl_forms VALUES(19, 3, 1, 'Client Unit', '/client-unit', 19, null);
 INSERT INTO tbl_forms VALUES(20, 3, 1, 'Client Profile', '/client-profile', 20, null);
 INSERT INTO tbl_forms VALUES(21, 3, 2, 'Assign Statutory', '/assign-statutory', 21, null);
 INSERT INTO tbl_forms VALUES(22, 3, 3, 'Client Details Report', '/client-details-report', 22, null);
