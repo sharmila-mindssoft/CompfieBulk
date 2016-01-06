@@ -380,7 +380,7 @@ function initMirror() {
     }
 
     function getGeographyReport(callback) {
-        var request = ["GeographyReport", {}];
+        var request = ["GetGeographyReport", {}];
         apiRequest("api/knowledge_report", request, callback);   
     }
 

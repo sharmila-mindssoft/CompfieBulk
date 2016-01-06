@@ -2,14 +2,24 @@ var countriesList;
 var geographiesList;
 
 function getGeography(){
-  function success(status, data){
+  function onSuccess(data){
     geographiesList = data["geographies"];
     countriesList = data["countries"];
   }
-  function failure(status, data){
+  function onFailure(error){
   }
-  mirror.getGeographyReport(success, failure);
+  mirror.getGeographyReport(
+    function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
 }
+
 
 function loadGeographyList(geographyList){
   var sno=0;
