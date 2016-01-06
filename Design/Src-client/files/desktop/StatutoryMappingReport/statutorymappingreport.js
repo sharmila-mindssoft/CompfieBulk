@@ -39,8 +39,8 @@ function getStatutoryMappings(){
 }
 
 $("#submit").click(function(){
-  var country = $("#country").val();
-  var domain = $("#domain").val();
+  var country = $("#country").val().trim();
+  var domain = $("#domain").val().trim();
   var industry = null;
   var statutorynature = null;
   var geography = null;
@@ -52,10 +52,10 @@ $("#submit").click(function(){
   if($("#geography").val() != '') geography = $("#geography").val();
   if($("#act").val() != '') act = $("#act").val();
 
-  if(country==""){
+  if(country.length == 0){
     $(".error-message").html("Country Required");
   }
-  else if(domain==""){
+  else if(domain.length == 0){
     $(".error-message").html("Domain Required");  
   }
   else{

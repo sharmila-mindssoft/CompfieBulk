@@ -103,9 +103,9 @@ function loadstatutoryLevelsList() {
 }
 
 function validate(){
-    if($("#country").val().length==0){
+    if($("#country").val().trim().length==0){
       $(".error-message").html("Country Required");
-    } else if($("#domain").val().length==0) {
+    } else if($("#domain").val().trim().length==0) {
       $(".error-message").text("Domain Required");
     }
     else {
@@ -120,13 +120,13 @@ $("#submit").click(function(){
     var domain = $("#domain").val();
     if(validate()){
        for(var k=1; k<=10; k++) {
-          if($("#level"+k).val() != ''){
+          if($("#level"+k).val().trim().length > 0){
             var maxlevel = k;
           }
          }
          var result="true";
          for(var k=1; k<=maxlevel; k++) {
-          if($("#level"+k).val() == ''){
+          if($("#level"+k).val().trim().length==0){
             result = "false";
           }
          }
@@ -134,8 +134,8 @@ $("#submit").click(function(){
          if( result == "true") {
           var passlevellist = [];
          for(var k=1; k<=10; k++) {
-          if($("#level"+k).val() != ''){
-            if($("#levelid"+k).val() != ''){
+          if($("#level"+k).val().trim().length > 0){
+            if($("#levelid"+k).val().trim().length==0){
               passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val(), "level_id" : parseInt($("#levelid"+k).val())});
             }else{
               passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val()});

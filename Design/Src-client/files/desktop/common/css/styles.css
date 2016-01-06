@@ -1538,7 +1538,6 @@ list-style-type:none; line-height:25px;
   background: #f1e9f6 url(../images/tick1.png) no-repeat right center;
   background-size: 1em;
   border-right: 3px solid #f1e9f6
-<<<<<<< HEAD
 }
 
 .form-container-grid-table table tr td ul a{
@@ -1636,7 +1635,6 @@ list-style-type:none; line-height:25px;
   margin-right: 0.5%;
   float: left;
   width: 24.5%;
-  
   }
   .nav-justified > li > a {
   text-align: left;
@@ -1736,4 +1734,19 @@ list-style-type:none; line-height:25px;
   line-height: 30px;
   font-size: 0.8em;
 }
+
+.gt input[type="checkbox"] {
+display: none !important;
+}
+.gt input[type="checkbox"]+label {
+background: url('/images/deletebold.png') no-repeat;
+height:17px;
+padding-left: 18px;
+cursor: pointer;
+}
+.gt input[type="checkbox"]:checked + label {
+background: url('/images/tick1bold.png') no-repeat;
+height:17px;
+cursor: pointer;
+  
 /*siva ends*/

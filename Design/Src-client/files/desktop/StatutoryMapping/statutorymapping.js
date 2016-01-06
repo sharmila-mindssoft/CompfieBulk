@@ -1,5 +1,4 @@
 var statutoryMappingsList;
-var tempstatutoryMappingsList;
 var geographyLevelsList;
 var geographiesList;
 var countriesList;
@@ -25,7 +24,7 @@ var statutory_dates = [];
 var sm_geographyids = [];
 var compliances = [];
  
-$(".btn-geography-add").click(function(){
+$(".btn-statutorymapping-add").click(function(){
 $("#statutorymapping-view").hide();
 $("#statutorymapping-add").show();
 $("#edit_sm_id").val('');
@@ -56,7 +55,6 @@ function getStatutoryMappings(){
 		statutoryNaturesList = data["statutory_natures"];
 		geographiesList = data["geographies"];
 		statutoryMappingsList = data["statutory_mappings"];
-    tempstatutoryMappingsList = data["statutory_mappings"];
     complianceFrequencyList = data["compliance_frequency"];
     complianceDurationTypeList = data["compliance_duration_type"];
     complianceRepeatTypeList = data["compliance_repeat_type"];
@@ -144,11 +142,11 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     var filter6 = $("#filter6").val().toLowerCase();
    
     var filteredList=[];
-    for(var entity in tempstatutoryMappingsList) {
-      var filter1val = tempstatutoryMappingsList[entity]["country_name"];
-      var filter2val = tempstatutoryMappingsList[entity]["domain_name"];
-      var filter3val = tempstatutoryMappingsList[entity]["industry_names"];
-      var filter4val = tempstatutoryMappingsList[entity]["statutory_nature_name"];
+    for(var entity in statutoryMappingsList) {
+      var filter1val = statutoryMappingsList[entity]["country_name"];
+      var filter2val = statutoryMappingsList[entity]["domain_name"];
+      var filter3val = statutoryMappingsList[entity]["industry_names"];
+      var filter4val = statutoryMappingsList[entity]["statutory_nature_name"];
 
       var filter5val='';
       for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
@@ -161,7 +159,7 @@ function loadStatutoryMappingList(statutoryMappingsList) {
 
       if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2) && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4) && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6)) 
       {
-        filteredList.push(tempstatutoryMappingsList[entity]);
+        filteredList.push(statutoryMappingsList[entity]);
       }   
     }
     loadStatutoryMappingList(filteredList);
@@ -511,14 +509,14 @@ function temp_removestatutories(remove_id){
 
 $("#temp_addcompliance").click(function() {
   var comp_id=$('#complianceid').val();
-  var statutory_provision = $('#statutory_provision').val();
-  var compliance_task = $('#compliance_task').val();
-  var description = $('#compliance_description').val();
-  var compliance_document = $('#compliance_document').val();
+  var statutory_provision = $('#statutory_provision').val().trim();
+  var compliance_task = $('#compliance_task').val().trim();
+  var description = $('#compliance_description').val().trim();
+  var compliance_document = $('#compliance_document').val().trim();
   var file_format = [];
   //file_format = $('#upload_file').val()
-  var penal_consequences = $('#penal_consequences').val();
-  var compliance_frequency = $('#compliance_frequency').val();
+  var penal_consequences = $('#penal_consequences').val().trim();
+  var compliance_frequency = $('#compliance_frequency').val().trim();
   var repeats_type = null;
   var repeats_every = null;
   var duration = null;
@@ -529,13 +527,13 @@ $("#temp_addcompliance").click(function() {
   var is_active = 1;
   statutory_dates = [];
 
-  if(statutory_provision == ''){
+  if(statutory_provision.length == 0){
     $(".error-message").html("Statutory Provision Required");
-  }else if (compliance_task == ''){
+  }else if (compliance_task.length == 0){
     $(".error-message").html("Compliance Task Required");
-  }else if (description == ''){
+  }else if (description.length == 0){
     $(".error-message").html("Compliance Description Required");
-  }else if (compliance_frequency == ''){
+  }else if (compliance_frequency.length == 0){
     $(".error-message").html("Compliance Frequency Required");
   }else if ((compliance_frequency == "2" || compliance_frequency == "3") && $('#repeats_type').val()==''){
      $(".error-message").html("Repeats Type Required");
@@ -550,7 +548,7 @@ $("#temp_addcompliance").click(function() {
       if($('#statutory_month').val() != '')
       statutory_month = parseInt($('#statutory_month').val());
 
-      if($('#triggerbefore').val() != '')
+      if($('#triggerbefore').val().trim().length > 0)
       trigger_before_days = parseInt($('#triggerbefore').val());
 
       statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
@@ -565,7 +563,7 @@ $("#temp_addcompliance").click(function() {
             statutory_date = parseInt($('#multiple_statutory_date'+i).val());
             if($('#multiple_statutory_month'+i).val() != '')
             statutory_month = parseInt($('#multiple_statutory_month'+i).val());
-            if($('#multiple_triggerbefore'+i).val() != '')
+            if($('#multiple_triggerbefore'+i).val().trim().length > 0)
             trigger_before_days = parseInt($('#multiple_triggerbefore'+i).val());
             statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
             statutory_dates.push(statutory_date);
@@ -576,7 +574,7 @@ $("#temp_addcompliance").click(function() {
       statutory_date = parseInt($('#single_statutory_date').val());
       if($('#single_statutory_month').val() != '')
       statutory_month = parseInt($('#single_statutory_month').val());
-      if($('#single_triggerbefore').val() != '')
+      if($('#single_triggerbefore').val().trim().length > 0)
       trigger_before_days = parseInt($('#single_triggerbefore').val());
       statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
       statutory_dates.push(statutory_date);
@@ -1443,10 +1441,10 @@ $(document).ready(function(){
   var $target = $($(this).attr('href')),
   $item = $(this).closest('li');
   if (!$item.hasClass('disabled')) {
-  navListItems.closest('li').removeClass('active');
-  $item.addClass('active');
-  allWells.hide();
-  $target.show();
+    navListItems.closest('li').removeClass('active');
+    $item.addClass('active');
+    allWells.hide();
+    $target.show();
   }
   });
   $('ul.setup-panel li.active a').trigger('click');
