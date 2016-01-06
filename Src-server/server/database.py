@@ -324,21 +324,24 @@ class KnowledgeDatabase(Database):
 
     def convert_to_dict(self, data_list, columns) :
         assert type(data_list) in (list, tuple)
-        result_list = []
-        if len(data_list) > 1 :
+
+        if type(data_list[0]) is tuple :
+            result_list = []
             if len(data_list[0]) == len(columns) :
                 for data in data_list:
                     result = {}
                     for i, d in enumerate(data):
                         result[columns[i]] = d
                     result_list.append(result)
+            return result_list
         else :
+            result = {}
             if len(data_list) == len(columns) :
-                result = {}
                 for i, d in enumerate(data_list):
                     result[columns[i]] = d
-                result_list.append(result)
-        return result_list
+            return result
+
+        
 
 
     def validate_session_token(self, session_token) :
@@ -631,12 +634,15 @@ class KnowledgeDatabase(Database):
         rows = self.get_data_from_multiple_tables(
             columns, tables, aliases, joinType, joinConditions, whereCondition
         )
+        print rows
         row_columns = [
             "form_id", "form_category_id", "form_category", 
             "form_type_id", "form_type", "form_name", "form_url", 
             "form_order", "parent_menu"
         ]
-        return self.convert_to_dict(rows, row_columns)
+        result = self.convert_to_dict(rows, row_columns)
+        print result
+        return result
 
     def get_form_types(self) :
         query = "SELECT form_type_id, form_type_name FROM tbl_form_type"
@@ -646,9 +652,10 @@ class KnowledgeDatabase(Database):
         return data_list
 
     def save_data(self, table_name, field, data):
-        query = "INSERT INTO %s '%s' VALUES '%s'" % (
+        query = "INSERT INTO %s %s VALUES %s" % (
             table_name, field, str(data)
         )
+        print query
         self.execute(query)
         return True
 
@@ -714,7 +721,7 @@ class KnowledgeDatabase(Database):
         industry_id = self.get_new_id("industry_id", table_name)
         field = "(industry_id, industry_name, created_by, \
             created_on)"
-        data = (industry_id, industry_name, user_id, created_on)
+        data = (industry_id, industry_name, int(user_id), str(created_on))
         if (self.save_data(table_name, field, data)):
             action = "New Industry type %s added" % (industry_name)
             self.save_activity(user_id, 7, action)
@@ -728,7 +735,7 @@ class KnowledgeDatabase(Database):
 
         table_name = "tbl_industries"
         field_with_data = " industry_name = '%s', updated_by = %s" % (
-            industry_name, updated_by
+            industry_name, int(user_id)
         )
         where_condition = "industry_id = %s " % industry_id
         if (self.update_data(table_name, field_with_data, where_condition)) :

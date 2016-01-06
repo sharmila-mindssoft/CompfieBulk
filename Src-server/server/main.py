@@ -83,6 +83,7 @@ class API(object):
             print "request_data_type:{}".format(request_data_type)
             print "request_data:{}".format(request_data)
             print e
+            print(traceback.format_exc())
             response.set_status(400)
             response.send(str(e))
             return None

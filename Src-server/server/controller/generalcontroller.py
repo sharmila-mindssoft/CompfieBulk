@@ -16,6 +16,7 @@ def process_general_request(request, db) :
 	session_token = request.session_token
 	request_frame = request.request
 	user_id = validate_user_session(db, session_token)
+	print request_frame
 	if user_id is None:
 		return login.InvalidSessionToken()
 
