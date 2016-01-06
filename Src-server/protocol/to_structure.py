@@ -264,11 +264,11 @@ def to_structure_VectorType_RecordType_core_GeographyLevel(data):
 
 def to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_VectorType_RecordType_core_Industry(data):
@@ -606,11 +606,11 @@ def to_structure_RecordType_admin_Response_InvalidUserGroupId(data):
 
 def to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_CustomTextType_50(data):
@@ -796,11 +796,15 @@ def to_structure_RecordType_knowledgemaster_Response_SaveIndustrySuccess(data):
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
+    # for key, value in data.items():
+    #     key = to_structure_SignedIntegerType_8(key)
+    #     value = to_structure_VectorType_RecordType_core_Level(value)
+    #     dict.append([key, value])
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_core_Level(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_RecordType_admin_Response_GetUsersSuccess(data):
