@@ -40,10 +40,8 @@ def cors_handler(request, response):
 def api_request(
     request_data_type
 ):
-    print "request_data_type:{}".format(request_data_type)
     def wrapper(f):
         def wrapped(self, request, response):
-            print "request inside wrapper {}".format(request)
             self.handle_api_request(
                 f, request, response,
                 request_data_type
@@ -69,7 +67,6 @@ class API(object):
         assert response is not None
         data = response_data.to_structure()
         s = json.dumps(data, indent=2)
-        #print s
         response.send(s)
 
     def _parse_request(
@@ -78,13 +75,10 @@ class API(object):
         request_data = None
         try:
             data = json.loads(request.body())
-            print "data:{}".format(data)
             request_data = request_data_type.parse_structure(
                 data
             )
         except Exception, e:
-            print "request_data_type:{}".format(request_data_type)
-            print "request_data:{}".format(request_data)
             print e
             response.set_status(400)
             response.send(str(e))
@@ -95,7 +89,6 @@ class API(object):
         self, unbound_method, request, response,
         request_data_type
     ):
-        print "reuqest inside handle_api_request : {}".format(request)
         response.set_default_header("Access-Control-Allow-Origin", "*")
         ip_address = unicode(request.remote_ip())
         request_data = self._parse_request(
@@ -131,7 +124,6 @@ class API(object):
 
     @api_request(technomasters.RequestFormat)
     def handle_techno(self, request, db):
-        print "inside handle techno requests"
         return controller.process_techno_request(request, db)
 
     @api_request(clientadminsettings.Request)
