@@ -82,6 +82,11 @@ def to_structure_OptionalType_CustomTextType_50(data):
     if data is None: return data
     return to_structure_CustomTextType_50(data)
 
+def to_structure_OptionalType_CustomTextType_500(data):
+    if data is None: return data
+    return to_structure_CustomTextType_500(data)
+
+
 def to_structure_RecordType_technotransactions_Response_GetAssignedStatutoriesByIdSuccess(data):
     from protocol import technotransactions
     return technotransactions.Response.to_structure(data)
@@ -239,6 +244,10 @@ def to_structure_SignedIntegerType_8(data):
 
 def to_structure_UnsignedIntegerType_32(data):
     return parse_number(data, 0, 4294967295)
+
+def to_structure_OptionalType_UnsignedIntegerType_32(data):
+    if data is None : return data
+    return to_structure_UnsignedIntegerType_32(data)
 
 def to_structure_VectorType_RecordType_core_Division(data):
     data = parse_list(data, 0)
@@ -1709,6 +1718,10 @@ def to_structure_VectorType_RecordType_core_StatutoryDate(data):
     for item in data:
         lst.append(to_structure_RecordType_core_StatutoryDate(item))
     return lst
+
+def to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(data):
+    if data is None : return None
+    return to_structure_VectorType_RecordType_core_StatutoryDate(data)
 
 def to_structure_RecordType_clientmasters_Request_ChangeServiceProviderStatus(data):
     from protocol import clientmasters

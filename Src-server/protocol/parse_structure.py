@@ -147,13 +147,11 @@ def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit(da
 
 def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(data):
     data = parse_list(data)
-    print data
     d = {}
     for key, value in data:
         key = parse_structure_CustomTextType_50(key)
         value = parse_structure_VectorType_RecordType_core_Form(value)
         d[key] = value
-    print d
     return d
 
 def parse_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES(data):
@@ -1733,6 +1731,10 @@ def parse_structure_VectorType_RecordType_core_StatutoryDate(data):
         lst.append(parse_structure_RecordType_core_StatutoryDate(item))
     return lst
 
+def parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(data):
+    if data is None : return None
+    return parse_structure_VectorType_RecordType_core_StatutoryDate(data)    
+
 def parse_structure_RecordType_clientmasters_Request_ChangeServiceProviderStatus(data):
     from protocol import clientmasters
     return clientmasters.Request.parse_structure(data)
@@ -2676,6 +2678,10 @@ def parse_structure_RecordType_admin_Response_InvalidUserId(data):
 def parse_structure_OptionalType_CustomTextType_100(data):
     if data is None: return data
     return parse_structure_CustomTextType_100(data)
+
+def parse_structure_OptionalType_CustomTextType_500(data):
+    if data is None: return data
+    return parse_structure_CustomTextType_500(data)
 
 def parse_structure_VectorType_RecordType_technoreports_UNIT_WISE_ASSIGNED_STATUTORIES(data):
     data = parse_list(data, 0)
