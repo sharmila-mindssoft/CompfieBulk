@@ -1,5 +1,6 @@
 import os
 import json
+import traceback
 import mimetypes
 import tornado.web
 from tornado.web import StaticFileHandler
@@ -79,6 +80,8 @@ class API(object):
                 data
             )
         except Exception, e:
+            print "request_data_type:{}".format(request_data_type)
+            print "request_data:{}".format(request_data)
             print e
             response.set_status(400)
             response.send(str(e))
@@ -108,9 +111,10 @@ class API(object):
             self._db.commit()
             respond(response_data)
         except Exception, e:
+            print(traceback.format_exc())
             print e
             self._db.rollback()
-        
+
 
     @api_request(login.Request)
     def handle_login(self, request, db):
@@ -134,9 +138,13 @@ class API(object):
     def handle_general(self, request, db):
         return controller.process_general_request(request, db)
 
-    @api_request(knowledgemaster. RequestFormat)
+    @api_request(knowledgemaster.RequestFormat)
     def handle_knowledge_master(self, request, db) :
         return controller.process_knowledge_master_request(request, db)
+
+    @api_request(knowledgetransaction.RequestFormat)
+    def handle_knowledge_transaction(self, request, db) :
+        return controller.process_knowledge_transaction_request(request, db)
 
 
 template_loader = jinja2.FileSystemLoader(
@@ -261,6 +269,7 @@ def run_server(port):
             ),
             ("/api/general", api.handle_general),
             ("/api/knowledge_master", api.handle_knowledge_master),
+            ("/api/knowledge_transaction", api.handle_knowledge_transaction)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

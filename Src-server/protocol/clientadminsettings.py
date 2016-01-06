@@ -5,7 +5,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER,
     parse_structure_CustomTextType_250,
     parse_structure_VectorType_RecordType_clientadminsettings_PROFILE_DETAIL,
-    parse_structure_SignedIntegerType_8,
+    parse_structure_UnsignedIntegerType_32,
     parse_structure_CustomTextType_100, parse_structure_Bool,
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_50,
     parse_structure_VariantType_clientadminsettings_Request
@@ -138,11 +138,11 @@ class GetSettingsSuccess(Response):
         is_two_levels_of_approval = data.get("is_two_levels_of_approval")
         is_two_levels_of_approval = parse_structure_Bool(is_two_levels_of_approval)
         assignee_reminder_days = data.get("assignee_reminder_days")
-        assignee_reminder_days = parse_structure_SignedIntegerType_8(assignee_reminder_days)
+        assignee_reminder_days = parse_structure_UnsignedIntegerType_32(assignee_reminder_days)
         escalation_reminder_In_advance_days = data.get("escalation_reminder_In_advance_days")
-        escalation_reminder_In_advance_days = parse_structure_SignedIntegerType_8(escalation_reminder_In_advance_days)
+        escalation_reminder_In_advance_days = parse_structure_UnsignedIntegerType_32(escalation_reminder_In_advance_days)
         escalation_reminder_days = data.get("escalation_reminder_days")
-        escalation_reminder_days = parse_structure_SignedIntegerType_8(escalation_reminder_days)
+        escalation_reminder_days = parse_structure_UnsignedIntegerType_32(escalation_reminder_days)
         profile_detail = data.get("profile_detail")
         profile_detail = parse_structure_VectorType_RecordType_clientadminsettings_PROFILE_DETAIL(profile_detail)
         return GetSettingsSuccess(is_two_levels_of_approval, assignee_reminder_days, escalation_reminder_In_advance_days, escalation_reminder_days, profile_detail)
@@ -223,9 +223,9 @@ class PROFILE_DETAIL(object):
         contract_to = data.get("contract_to")
         contract_to = parse_structure_CustomTextType_20(contract_to)
         no_of_user_licence = data.get("no_of_user_licence")
-        no_of_user_licence = parse_structure_SignedIntegerType_8(no_of_user_licence)
+        no_of_user_licence = parse_structure_UnsignedIntegerType_32(no_of_user_licence)
         remaining_licence = data.get("remaining_licence")
-        remaining_licence = parse_structure_SignedIntegerType_8(remaining_licence)
+        remaining_licence = parse_structure_UnsignedIntegerType_32(remaining_licence)
         licence_holders = data.get("licence_holders")
         licence_holders = parse_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER(licence_holders)
         return PROFILE_DETAIL(contract_from, contract_to, no_of_user_licence, remaining_licence, licence_holders)
@@ -258,7 +258,7 @@ class LICENCE_HOLDER(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["user_id", "user_name", "email_id", "contact_no", "seating_unit_name", "address", "total_disk_space", "used_disk_space"])
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         user_name = data.get("user_name")
         user_name = parse_structure_CustomTextType_100(user_name)
         email_id = data.get("email_id")
@@ -270,9 +270,9 @@ class LICENCE_HOLDER(object):
         address = data.get("address")
         address = parse_structure_CustomTextType_250(address)
         total_disk_space = data.get("total_disk_space")
-        total_disk_space = parse_structure_SignedIntegerType_8(total_disk_space)
+        total_disk_space = parse_structure_UnsignedIntegerType_32(total_disk_space)
         used_disk_space = data.get("used_disk_space")
-        used_disk_space = parse_structure_SignedIntegerType_8(used_disk_space)
+        used_disk_space = parse_structure_UnsignedIntegerType_32(used_disk_space)
         return LICENCE_HOLDER(user_id, user_name, email_id, contact_no, seating_unit_name, address, total_disk_space, used_disk_space)
 
     def to_structure(self):

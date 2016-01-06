@@ -1,16 +1,17 @@
-from basics.types import VectorType, RecordType, VariantType, MapType, Field, OptionalType
+from basics.types import VectorType, RecordType, VariantType, MapType, Field, OptionalType, Int8
 from common import (CLIENT_NAME, URL, DATE, NO_OF_USER_LICENCE, CLIENT_ID, USER_ID, CLIENT_NAME,
 	TOTAL_DISK_SPACE, STATUS, EMAIL_ID, IS_ACTIVE, LEGAL_ENTITY_ID, DIVISION_ID, UNIT_ID, GROUP_ID,
-	PASSWORD, EMPLOYEE_NAME, CONTACT_NUMBER, UNIT_NAME, ADDRESS, REMAINING_USER_LICENCE, USED_DISK_SPACE, SESSION_TOKEN)
+	PASSWORD, EMPLOYEE_NAME, CONTACT_NUMBER, UNIT_NAME, ADDRESS, REMAINING_USER_LICENCE, USED_DISK_SPACE, 
+	SESSION_TOKEN, COUNTRY_ID, DOMAIN_ID, SHORT_NAME, BUSINESS_GROUP_ID, BUSINESS_GROUP_NAME,
+	LEGAL_ENTITY_NAME, DIVISION_NAME , LOCATION, INDUSTRY_NAME, GEOGRAPHY_ID, UNIT_CODE,
+	INDUSTRY_ID)
 from core import (Domain, Country, User, GroupCompany, BusinessGroup, Division,
-	UnitDetails, GroupCompanyDetail, ClientConfiguration, LegalEntity, CountryWiseUnits)
-
-
-
+	UnitDetails, GroupCompanyDetail, ClientConfiguration, LegalEntity, CountryWiseUnits,
+	Unit)
 
 __all__=  [
 	"Request", "Response", "RequestFormat", "LICENCE_HOLDER_DETAILS", "PROFILE_DETAIL",
-	"PROFILES"
+	"PROFILES", "BUSINESS_GROUP", "LEGAL_ENTITY", "DIVISION", "UNIT", "COUNTRYWISEUNITS"
 ]
 
 DomainList = VectorType(Domain)
@@ -36,8 +37,8 @@ GetClientGroups = RecordType("GetClientGroups", [
 
 SaveClientGroup = RecordType("SaveClientGroup", [
 	Field("group_name",CLIENT_NAME),
-	Field("country_ids", CountryList),
-	Field("domain_ids", DomainList),
+	Field("country_ids", VectorType(COUNTRY_ID)),
+	Field("domain_ids", VectorType(DOMAIN_ID)),
 	Field("logo", URL),
 	Field("contract_from",DATE),
 	Field("contract_to",DATE),
@@ -46,14 +47,15 @@ SaveClientGroup = RecordType("SaveClientGroup", [
 	Field("file_space", TOTAL_DISK_SPACE),
 	Field("is_sms_subscribed", STATUS),
 	Field("email_id", EMAIL_ID),
-	Field("date_configurations",ClientConfigurationList)
+	Field("date_configurations",ClientConfigurationList),
+	Field("short_name", SHORT_NAME),
 ])
 
 UpdateClientGroup = RecordType("UpdateClientGroup", [
 	Field("client_id", CLIENT_ID),
 	Field("group_name",CLIENT_NAME),
-	Field("country_ids", CountryList),
-	Field("domain_ids", DomainList),
+	Field("country_ids", VectorType(COUNTRY_ID)),
+	Field("domain_ids", VectorType(DOMAIN_ID)),
 	Field("logo", URL),
 	Field("contract_from",DATE),
 	Field("contract_to",DATE),
@@ -74,11 +76,44 @@ ChangeClientGroupStatus = RecordType("ChangeClientGroupStatus", [
 GetClients = RecordType("GetClients", [
 ])
 
+BUSINESS_GROUP = RecordType("BUSINESS_GROUP", [
+	Field("business_group_id", OptionalType(BUSINESS_GROUP_ID)),
+	Field("business_name",BUSINESS_GROUP_NAME)
+])
+
+LEGAL_ENTITY = RecordType("LEGAL_ENTITY", [
+	Field("legal_entity_id", OptionalType(LEGAL_ENTITY_ID)),
+	Field("legal_entity_name",LEGAL_ENTITY_NAME)
+])
+
+DIVISION = RecordType("DIVISION", [
+	Field("division_id", OptionalType(DIVISION_ID)),
+	Field("division_name",DIVISION_NAME)
+])
+
+UNIT = RecordType("UNIT", [
+	Field("unit_id", OptionalType(UNIT_ID)),
+    Field("geography_id", GEOGRAPHY_ID),
+    Field("unit_code", UNIT_CODE),
+    Field("unit_name", UNIT_NAME),
+    Field("industry_id", INDUSTRY_ID),
+    Field("industry_name", INDUSTRY_NAME),
+    Field("unit_address", ADDRESS),
+    Field("unit_location", LOCATION),
+    Field("postal_code", Int8),
+    Field("domain_ids", VectorType(DOMAIN_ID))
+])
+
+COUNTRYWISEUNITS = RecordType("CountryWiseUnits", [
+	Field("country_id", COUNTRY_ID),
+	Field("units", VectorType(UNIT)),
+])
+
 SaveClient = RecordType("SaveClient", [
 	Field("client_id", CLIENT_ID),
-	Field("business_group", OptionalType(BusinessGroup)),
-	Field("legal_entity", LegalEntity),
-	Field("division", OptionalType(Division)),
+	Field("business_group", OptionalType(BUSINESS_GROUP)),
+	Field("legal_entity", LEGAL_ENTITY),
+	Field("division", OptionalType(DIVISION)),
 	Field("country_wise_units", CountryWiseUnits)
 ])	
 
@@ -98,6 +133,7 @@ ChangeClientStatus = RecordType("ChangeClientStatus", [
 ])
 
 ReactivateUnit = RecordType("ReactivateUnit", [
+	Field("client_id", CLIENT_ID),
 	Field("unit_id", UNIT_ID),
 	Field("passsword", PASSWORD)
 ])
@@ -156,10 +192,13 @@ GetClientsSuccess = RecordType("GetClientsSuccess", [
 	Field("business_groups", OptionalType(BusinessGroupList)),
 	Field("legal_entities", LegalEntityList),
 	Field("divisions", OptionalType(DivisionList)),
-	Field("units", UnitDetailsList)
+	Field("units", VectorType(Unit))
 ])
 
 SaveClientSuccess = RecordType("SaveClientSuccess", [
+])
+
+EmailIDAlreadyExists = RecordType("EmailIDAlreadyExists", [
 ])
 
 BusinessGroupNameAlreadyExists = RecordType("BusinessGroupNameAlreadyExists", [
@@ -187,6 +226,18 @@ ChangeClientStatusSuccess = RecordType("ChangeClientStatusSuccess", [
 ])
 
 ReactivateUnitSuccess = RecordType("ReactivateUnitSuccess", [
+])
+
+InvalidBusinessGroupId = RecordType("InvalidBusinessGroupId", [
+])
+
+InvalidLegalEntityId = RecordType("InvalidLegalEntityId", [
+])
+
+InvalidDivisionId = RecordType("InvalidDivisionId", [
+])
+
+InvalidUnitId = RecordType("InvalidUnitId", [
 ])
 
 LICENCE_HOLDER_DETAILS = RecordType("LICENCE_HOLDER_DETAILS", [
@@ -229,5 +280,7 @@ Response = VariantType("Response", [
 	DivisionNameAlreadyExists, UnitNameAlreadyExists, 
 	UnitCodeAlreadyExists, LogoSizeLimitExceeds,
 	UpdateClientSuccess, ChangeClientStatusSuccess,
-	ReactivateUnitSuccess, GetClientProfileSuccess
-])
+	ReactivateUnitSuccess, GetClientProfileSuccess,
+	InvalidBusinessGroupId,InvalidLegalEntityId,InvalidDivisionId,
+	InvalidUnitId]
+)

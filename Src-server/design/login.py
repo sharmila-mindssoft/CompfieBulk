@@ -1,4 +1,4 @@
-from basics.types import VectorType, RecordType, VariantType, MapType, Field
+from basics.types import VectorType, RecordType, VariantType, MapType, Field, OptionalType
 from common import (USERNAME, PASSWORD, RESET_TOKEN, USER_ID, CLIENT_ID, SESSION_TOKEN,
 	EMAIL_ID, USER_GROUP_NAME, EMPLOYEE_NAME, EMPLOYEE_CODE, CONTACT_NUMBER, ADDRESS, DESIGNATION, SESSION_TOKEN)
 from core import Menu, SESSION_TYPE

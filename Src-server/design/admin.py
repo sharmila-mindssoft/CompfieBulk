@@ -4,7 +4,7 @@ from common import (Text50, FORM_ID, FORM_CATEGORY_ID, COUNTRY_ID, DOMAIN_ID, US
 	IS_ACTIVE, USER_ID, EMAIL_ID, EMPLOYEE_NAME, EMPLOYEE_CODE, CONTACT_NUMBER, ADDRESS, DESIGNATION, SESSION_TOKEN)
 
 __all__=  [
-	"Request", "Response", "RequestFormat"
+	"Request", "Response", "RequestFormat", "UserGroupDetail"
 ]
 
 FormIdList = VectorType(FORM_ID)

@@ -4,7 +4,7 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_100,
     parse_structure_RecordType_core_Menu,
     parse_structure_CustomTextType_250,
-    parse_structure_SignedIntegerType_8,
+    parse_structure_UnsignedIntegerType_32,
     parse_structure_EnumType_core_SESSION_TYPE,
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_50,
     parse_structure_OptionalType_CustomTextType_100
@@ -213,7 +213,7 @@ class UserLoginSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["user_id", "session_token", "email_id", "user_group_name", "menu", "employee_name", "employee_code", "contact_no", "address", "designation"])
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         session_token = data.get("session_token")
         session_token = parse_structure_CustomTextType_50(session_token)
         email_id = data.get("email_id")
@@ -260,7 +260,7 @@ class AdminLoginSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["user_id", "session_token", "email_id", "menu", "employee_name"])
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         session_token = data.get("session_token")
         session_token = parse_structure_CustomTextType_50(session_token)
         email_id = data.get("email_id")

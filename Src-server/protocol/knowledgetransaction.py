@@ -9,7 +9,7 @@ parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorTy
     parse_structure_EnumType_core_APPROVAL_STATUS,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_core_Domain,
-    parse_structure_SignedIntegerType_8,
+    parse_structure_UnsignedIntegerType_32,
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_core_Industry,
     parse_structure_VectorType_RecordType_core_ComplianceApprovalStatus,
@@ -100,13 +100,13 @@ class SaveStatutoryMapping(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "industry_ids", "statutory_nature_id", "statutory_ids", "compliances", "geography_ids"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         industry_ids = data.get("industry_ids")
         industry_ids = parse_structure_VectorType_SignedIntegerType_8(industry_ids)
         statutory_nature_id = data.get("statutory_nature_id")
-        statutory_nature_id = parse_structure_SignedIntegerType_8(statutory_nature_id)
+        statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_ids = data.get("statutory_ids")
         statutory_ids = parse_structure_VectorType_SignedIntegerType_8(statutory_ids)
         compliances = data.get("compliances")
@@ -139,11 +139,11 @@ class UpdateStatutoryMapping(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["statutory_mapping_id", "industry_ids", "statutory_nature_id", "statutory_ids", "compliances", "geography_ids"])
         statutory_mapping_id = data.get("statutory_mapping_id")
-        statutory_mapping_id = parse_structure_SignedIntegerType_8(statutory_mapping_id)
+        statutory_mapping_id = parse_structure_UnsignedIntegerType_32(statutory_mapping_id)
         industry_ids = data.get("industry_ids")
         industry_ids = parse_structure_VectorType_SignedIntegerType_8(industry_ids)
         statutory_nature_id = data.get("statutory_nature_id")
-        statutory_nature_id = parse_structure_SignedIntegerType_8(statutory_nature_id)
+        statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_ids = data.get("statutory_ids")
         statutory_ids = parse_structure_VectorType_SignedIntegerType_8(statutory_ids)
         compliances = data.get("compliances")
@@ -171,7 +171,7 @@ class ChangeStatutoryMappingStatus(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["statutory_mapping_id", "is_active"])
         statutory_mapping_id = data.get("statutory_mapping_id")
-        statutory_mapping_id = parse_structure_SignedIntegerType_8(statutory_mapping_id)
+        statutory_mapping_id = parse_structure_UnsignedIntegerType_32(statutory_mapping_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return ChangeStatutoryMappingStatus(statutory_mapping_id, is_active)
@@ -194,7 +194,7 @@ class ApproveStatutoryMapping(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["statutory_mapping_id", "approval_status", "rejected_reason", "statutory_provision", "notification_text"])
         statutory_mapping_id = data.get("statutory_mapping_id")
-        statutory_mapping_id = parse_structure_SignedIntegerType_8(statutory_mapping_id)
+        statutory_mapping_id = parse_structure_UnsignedIntegerType_32(statutory_mapping_id)
         approval_status = data.get("approval_status")
         approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(approval_status)
         rejected_reason = data.get("rejected_reason")

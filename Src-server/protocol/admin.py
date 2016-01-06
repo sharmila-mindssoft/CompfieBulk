@@ -9,7 +9,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_UserGroup,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_core_FormCategory,
-    parse_structure_SignedIntegerType_8,
+    parse_structure_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_core_Country,
     parse_structure_Bool,
     parse_structure_VectorType_RecordType_core_UserDetails,
@@ -85,7 +85,7 @@ class SaveUserGroup(Request):
         user_group_name = data.get("user_group_name")
         user_group_name = parse_structure_CustomTextType_50(user_group_name)
         form_category_id = data.get("form_category_id")
-        form_category_id = parse_structure_SignedIntegerType_8(form_category_id)
+        form_category_id = parse_structure_UnsignedIntegerType_32(form_category_id)
         form_ids = data.get("form_ids")
         form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
         return SaveUserGroup(user_group_name, form_category_id, form_ids)
@@ -108,11 +108,11 @@ class UpdateUserGroup(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["user_group_id", "user_group_name", "form_category_id", "form_ids"])
         user_group_id = data.get("user_group_id")
-        user_group_id = parse_structure_SignedIntegerType_8(user_group_id)
+        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
         user_group_name = data.get("user_group_name")
         user_group_name = parse_structure_CustomTextType_50(user_group_name)
         form_category_id = data.get("form_category_id")
-        form_category_id = parse_structure_SignedIntegerType_8(form_category_id)
+        form_category_id = parse_structure_UnsignedIntegerType_32(form_category_id)
         form_ids = data.get("form_ids")
         form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
         return UpdateUserGroup(user_group_id, user_group_name, form_category_id, form_ids)
@@ -134,7 +134,7 @@ class ChangeUserGroupStatus(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["user_group_id", "is_active"])
         user_group_id = data.get("user_group_id")
-        user_group_id = parse_structure_SignedIntegerType_8(user_group_id)
+        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return ChangeUserGroupStatus(user_group_id, is_active)
@@ -176,7 +176,7 @@ class SaveUser(Request):
         email_id = data.get("email_id")
         email_id = parse_structure_CustomTextType_100(email_id)
         user_group_id = data.get("user_group_id")
-        user_group_id = parse_structure_SignedIntegerType_8(user_group_id)
+        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
         employee_name = data.get("employee_name")
         employee_name = parse_structure_CustomTextType_50(employee_name)
         employee_code = data.get("employee_code")
@@ -222,9 +222,9 @@ class UpdateUser(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["user_id", "user_group_id", "employee_name", "employee_code", "contact_no", "address", "designation", "country_ids", "domain_ids"])
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         user_group_id = data.get("user_group_id")
-        user_group_id = parse_structure_SignedIntegerType_8(user_group_id)
+        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
         employee_name = data.get("employee_name")
         employee_name = parse_structure_CustomTextType_50(employee_name)
         employee_code = data.get("employee_code")
@@ -263,7 +263,7 @@ class ChangeUserStatus(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["user_id", "is_active"])
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return ChangeUserStatus(user_id, is_active)
@@ -324,11 +324,11 @@ class UserGroup(object):
         data = parse_dictionary(data, ["user_group_id", "user_group_name", 
             "form_category_id", "form_ids", "is_active"])
         user_group_id = data.get("user_group_id")
-        user_group_id = parse_structure_SignedIntegerType_8(user_group_id)
+        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
         user_group_name = data.get("user_group_name")
         user_group_name = parse_structure_CustomTextType_50(user_group_name)
         form_category_id = data.get("form_category_id")
-        form_category_id = parse_structure_SignedIntegerType_8(form_category_id)
+        form_category_id = parse_structure_UnsignedIntegerType_32(form_category_id)
         form_ids = data.get("form_ids")
         form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
         is_active = data.get("is_active")
@@ -347,13 +347,9 @@ class UserGroup(object):
 
 class GetUserGroupsSuccess(Response):
     def __init__(self, form_categories, forms, user_groups):
-        print "inside get user groups success constructor"
         self.form_categories = form_categories
-        print "crossed form_categories assignment"
         self.forms = forms
-        print "crossed forms assignment"
         self.user_groups = user_groups
-        print "crossed user groups assignment"
 
     @staticmethod
     def parse_inner_structure(data):
@@ -367,9 +363,6 @@ class GetUserGroupsSuccess(Response):
         return GetUserGroupsSuccess(form_categories, forms, user_groups)
 
     def to_inner_structure(self):
-        print "form_categories : {}".format(to_structure_VectorType_RecordType_core_FormCategory(self.form_categories))
-        print "forms : {}".format(to_structure_MapType_SignedIntegerType_8_RecordType_core_Menu(self.forms))
-        print "user_groups : {}".format(to_structure_VectorType_RecordType_admin_UserGroup(self.user_groups))
         return {
             "form_categories": to_structure_VectorType_RecordType_core_FormCategory(self.form_categories),
             "forms": to_structure_MapType_SignedIntegerType_8_RecordType_core_Menu(self.forms),
@@ -378,7 +371,6 @@ class GetUserGroupsSuccess(Response):
 
 class SaveUserGroupSuccess(Response):
     def __init__(self):
-        print "inside save user group success"
         pass
 
     @staticmethod
@@ -387,7 +379,6 @@ class SaveUserGroupSuccess(Response):
         return SaveUserGroupSuccess()
 
     def to_inner_structure(self):
-        print "inside save user group inner structure"
         return {
         }
 
