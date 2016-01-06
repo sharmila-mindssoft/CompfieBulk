@@ -252,7 +252,9 @@ def process_update_geography(db, request_frame, user_id):
 	if saved_names.count(geography_name.lower()) > 0 :
 		return knowledgemaster.GeographyNameAlreadyExists()
 	else :
-		if (db.update_geography(geography_id, name, parent_ids, user_id)):
+		if (db.update_geography(
+			geography_id, geography_name, parent_ids, user_id
+		)):
 			return knowledgemaster.UpdateGeographySuccess()
 		else :
 			return knowledgemaster.InvalidGeographyId()
