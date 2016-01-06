@@ -297,11 +297,11 @@ def to_structure_VariantType_technomasters_Request(data):
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_core_Geography(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_RecordType_knowledgemaster_Request_SaveGeography(data):
