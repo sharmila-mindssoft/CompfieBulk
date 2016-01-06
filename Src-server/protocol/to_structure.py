@@ -1867,11 +1867,11 @@ def to_structure_RecordType_technoreports_Response_GetAssignedStatutoryReportSuc
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_knowledgereport_GeographyMapping(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_knowledgereport_GeographyMapping(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST(data):

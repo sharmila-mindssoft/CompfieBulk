@@ -1100,16 +1100,22 @@ class KnowledgeDatabase(Database):
 
     def get_geography_report(self):
         def return_report_data(result) :
-            mapping_list = []
+            mapping_dict = {}
             for key, value in result.iteritems():
                 mappings = value[0]
                 is_active = value[1]
-                mapping_list.append(
+                country_id = value[2]
+                _list = mapping_dict.get(country_id)
+                if _list is None:
+                    _list = []
+
+                _list.append(
                     knowledgereport.GeographyMapping(
                         mappings, is_active
                     )
                 )
-            return mapping_list
+                mapping_dict[country_id] = _list
+            return mapping_dict
 
         if bool(self.geography_parent_mapping) is False :
             data = self.get_geographies()
@@ -1395,6 +1401,7 @@ class KnowledgeDatabase(Database):
             _tempDict[int(row["geography_id"])] = row["geography_name"]
 
         for row in rows :
+            country_id = int(row["country_id"])
             geography_id = int(row["geography_id"])
             is_active = bool(row["is_active"])
             parent_ids = [int(x) for x in row["parent_ids"][:-1].split(',')]
@@ -1406,7 +1413,7 @@ class KnowledgeDatabase(Database):
             names.append(row["geography_name"])
             mappings = '>>'.join(str(x) for x in names)
             self.geography_parent_mapping[geography_id] = [
-                mappings, is_active
+                mappings, is_active, country_id
             ]
 
 
