@@ -18,7 +18,8 @@ from protocol.to_structure import (
     to_structure_SignedIntegerType_8,
     to_structure_VariantType_general_Request, to_structure_Bool,
     to_structure_CustomTextType_20, to_structure_CustomTextType_500,
-    to_structure_CustomTextType_50
+    to_structure_CustomTextType_50,
+    to_structure_VectorType_RecordType_core_Country
 )
 
 #
