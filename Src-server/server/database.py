@@ -2,32 +2,16 @@ import MySQLdb as mysql
 import hashlib
 import string
 import random
-
-from protocol import core, knowledgereport
-
 import datetime
+import re
 import uuid
+
 from types import *
-
-from protocol import core
-
+from protocol import core, knowledgereport
 
 __all__ = [
     "KnowledgeDatabase", "ClientDatabase"
 ]
-
-def generateRandom():
-    characters = string.ascii_uppercase + string.digits
-    return ''.join(random.SystemRandom().choice(characters) for _ in range(7))
-
-def generatePassword() : 
-    password = generateRandom()
-    return encrypt(password)
-
-def encrypt(value):
-    m = hashlib.md5()
-    m.update(value)
-    return m.hexdigest()
     
 class Database(object) :
     def __init__(
@@ -41,6 +25,36 @@ class Database(object) :
         self._mysqlDatabase = mysqlDatabase
         self._connection = None
         self._cursor = None 
+
+    integer_months = {
+        "Jan": 1,
+        "Feb": 2,
+        "Mar": 3,
+        "Apr": 4,
+        "May": 5,
+        "Jun": 6,
+        "Jul": 7,
+        "Aug": 8,
+        "Sep": 9,
+        "Oct": 10,
+        "Nov": 11,
+        "Dec": 12,
+    }
+
+    string_months = {
+         1 : "Jan",
+         2 : "Feb",
+         3 : "Mar",
+         4 : "Apr",
+         5 : "May",
+         6 : "Jun",
+         7 : "Jul",
+         8 : "Aug",
+         9 : "Sep",
+         10 : "Oct",
+         11 : "Nov",
+         12 : "Dec",
+    }
 
     def cursor(self):
         return self._cursor
@@ -233,58 +247,25 @@ class Database(object) :
         condition = "%s = '%d'" % (field, value)
         return not self.is_already_exists(table, condition)
 
-class KnowledgeDatabase(Database):
-    tblActivityLog = "tbl_activity_log"
-    tblAdmin = "tbl_admin"
-    tblBusinessGroups = "tbl_business_groups"
-    tblClientCompliances = "tbl_client_compliances"
-    tblClientConfigurations = "tbl_client_configurations"
-    tblClientCountries = "tbl_client_countries"
-    tblClientDatabase = "tbl_client_database"
-    tblClientDomains = "tbl_client_domains"
-    tblClientGroups = "tbl_client_groups"
-    tblClientSavedCompliances = "tbl_client_saved_compliances"
-    tblClientSavedStatutories = "tbl_client_saved_statutories"
-    tblClientStatutories = "tbl_client_statutories"
-    tblClientUsers = "tbl_client_users"
-    tblComplianceDurationType = "tbl_compliance_duration_type"
-    tblComplianceFrequency = "tbl_compliance_frequency"
-    tblComplianceRepeatype = "tbl_compliance_repeat_type"
-    tblCompliances = "tbl_compliances"
-    tblCompliancesBackup = "tbl_compliances_backup"
-    tblCountries = "tbl_countries"
-    tblDatabaseServer = "tbl_database_server"
-    tblDivisions = "tbl_divisions"
-    tblDomains = "tbl_domains"
-    tblEmailVerification = "tbl_email_verification"
-    tblFormCategory = "tbl_form_category"
-    tblFormType = "tbl_form_type"
-    tblForms = "tbl_forms"
-    tblGeographies = "tbl_geographies"
-    tblGeographyLevels = "tbl_geography_levels"
-    tblIndustries = "tbl_industries"
-    tblLegalEntities = "tbl_legal_entities"
-    tblMachines = "tbl_machines"
-    tblMobileRegistration = "tbl_mobile_registration"
-    tblNotifications = "tbl_notifications"
-    tblNotificationsStatus = "tbl_notifications_status"
-    tblSessionTypes = "tbl_session_types"
-    tblStatutories = "tbl_statutories"
-    tblStatutoriesBackup = "tbl_statutories_backup"
-    tblStatutoryGeographies = "tbl_statutory_geographies"
-    tblStatutoryLevels = "tbl_statutory_levels"
-    tblStatutoryMappings = "tbl_statutory_mappings"
-    tblStatutoryNatures = "tbl_statutory_natures"
-    tblStatutoryNotificationsLog = "tbl_statutory_notifications_log"
-    tblUnits = "tbl_units"
-    tblUserClients = "tbl_user_clients"
-    tblUserCountries = "tbl_user_countries"
-    tblUserDomains = "tbl_user_domains"
-    tblUserGroups = "tbl_user_groups"
-    tblUserLoginHistory = "tbl_user_login_history"
-    tblUserSessions = "tbl_user_sessions"
-    tblUsers = "tbl_users"
+    def generate_random(self):
+        characters = string.ascii_uppercase + string.digits
+        return ''.join(random.SystemRandom().choice(characters) for _ in range(7))
 
+    def generate_password(self) : 
+        password = self.generate_random()
+        return self.encrypt(password)
+
+    def encrypt(self, value):
+        m = hashlib.md5()
+        m.update(value)
+        return m.hexdigest()
+
+    def string_to_datetime(self, string):
+        date = string.split("-")
+        datetime_val = datetime.datetime(year=int(date[2]),month=self.integer_months[date[1]], day=int(date[0]))
+        return datetime_val
+
+class KnowledgeDatabase(Database):
     def __init__(
         self, 
         mysqlHost, mysqlUser, 
@@ -295,8 +276,62 @@ class KnowledgeDatabase(Database):
         )
         self.statutory_parent_mapping = {}
         self.geography_parent_mapping = {}
+        self.initialize_table_names()
+
+    def initialize_table_names(self):
+        self.tblActivityLog = "tbl_activity_log"
+        self.tblAdmin = "tbl_admin"
+        self.tblBusinessGroups = "tbl_business_groups"
+        self.tblClientCompliances = "tbl_client_compliances"
+        self.tblClientConfigurations = "tbl_client_configurations"
+        self.tblClientCountries = "tbl_client_countries"
+        self.tblClientDatabase = "tbl_client_database"
+        self.tblClientDomains = "tbl_client_domains"
+        self.tblClientGroups = "tbl_client_groups"
+        self.tblClientSavedCompliances = "tbl_client_saved_compliances"
+        self.tblClientSavedStatutories = "tbl_client_saved_statutories"
+        self.tblClientStatutories = "tbl_client_statutories"
+        self.tblClientUsers = "tbl_client_users"
+        self.tblComplianceDurationType = "tbl_compliance_duration_type"
+        self.tblComplianceFrequency = "tbl_compliance_frequency"
+        self.tblComplianceRepeatype = "tbl_compliance_repeat_type"
+        self.tblCompliances = "tbl_compliances"
+        self.tblCompliancesBackup = "tbl_compliances_backup"
+        self.tblCountries = "tbl_countries"
+        self.tblDatabaseServer = "tbl_database_server"
+        self.tblDivisions = "tbl_divisions"
+        self.tblDomains = "tbl_domains"
+        self.tblEmailVerification = "tbl_email_verification"
+        self.tblFormCategory = "tbl_form_category"
+        self.tblFormType = "tbl_form_type"
+        self.tblForms = "tbl_forms"
+        self.tblGeographies = "tbl_geographies"
+        self.tblGeographyLevels = "tbl_geography_levels"
+        self.tblIndustries = "tbl_industries"
+        self.tblLegalEntities = "tbl_legal_entities"
+        self.tblMachines = "tbl_machines"
+        self.tblMobileRegistration = "tbl_mobile_registration"
+        self.tblNotifications = "tbl_notifications"
+        self.tblNotificationsStatus = "tbl_notifications_status"
+        self.tblSessionTypes = "tbl_session_types"
+        self.tblStatutories = "tbl_statutories"
+        self.tblStatutoriesBackup = "tbl_statutories_backup"
+        self.tblStatutoryGeographies = "tbl_statutory_geographies"
+        self.tblStatutoryLevels = "tbl_statutory_levels"
+        self.tblStatutoryMappings = "tbl_statutory_mappings"
+        self.tblStatutoryNatures = "tbl_statutory_natures"
+        self.tblStatutoryNotificationsLog = "tbl_statutory_notifications_log"
+        self.tblUnits = "tbl_units"
+        self.tblUserClients = "tbl_user_clients"
+        self.tblUserCountries = "tbl_user_countries"
+        self.tblUserDomains = "tbl_user_domains"
+        self.tblUserGroups = "tbl_user_groups"
+        self.tblUserLoginHistory = "tbl_user_login_history"
+        self.tblUserSessions = "tbl_user_sessions"
+        self.tblUsers = "tbl_users"
 
     def convert_to_dict(self, data_list, columns) :
+        assert type(data_list) in (list, tuple)
         result_list = []
         if len(data_list) > 1 :
             if len(data_list[0]) == len(columns) :
@@ -323,12 +358,18 @@ class KnowledgeDatabase(Database):
         user_id = row[0]
         return user_id
 
+    def encrypt(self, value):
+        m = hashlib.md5()
+        m.update(value)
+        return m.hexdigest()
+
+
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and user_name='%s'" % (
             password, username
         )
         admin_details = self.get_data("tbl_admin", "*", tblAdminCondition)
-        print admin_details
+
         if (len(admin_details) == 0) :
             data_columns = ["user_id", "user_group_id", "email_id", 
                 "employee_name", "employee_code", "contact_no", "address", 
@@ -343,9 +384,11 @@ class KnowledgeDatabase(Database):
                 WHERE t1.password='%s' and t1.email_id='%s'" % (
                     password, username
                 )
-            print query
             data_list = self.select_one(query)
-            return self.convert_to_dict(data_list, data_columns)
+            if data_list is None :
+                return False
+            else :
+                return self.convert_to_dict(data_list, data_columns)
         else :
             return True
 
@@ -489,7 +532,6 @@ class KnowledgeDatabase(Database):
     #
 
     def get_countries_for_user(self, user_id) :
-
         query = "SELECT distinct t1.country_id, t1.country_name, \
             t1.is_active FROM tbl_countries t1 "
         if user_id > 0 :
@@ -1027,6 +1069,22 @@ class KnowledgeDatabase(Database):
             geographies[country_id] = _list
         return geographies
 
+    def get_geographies_for_user(self, user_id):
+        coutry_ids = self.get_user_countries(user_id)
+        columns = "t1.geography_id, t1.geography_name, "+\
+        "t1.level_id,t1.parent_ids, t1.is_active, t2.country_id, t3.country_name"
+        tables = [self.tblGeographies, self.tblGeographyLevels, self.tblCountries]
+        aliases = ["t1", "t2", "t3"]
+        joinType = " INNER JOIN"
+        joinConditions = ["t1.level_id = t2.level_id", "t2.country_id = t3.country_id"]
+        whereCondition = "1"
+        rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, 
+            joinConditions, whereCondition)
+        columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
+        result = self.convert_to_dict(rows, columns)
+        # self.geography_parent_mapping(result)
+        return self.return_geographies(result)
+
     def get_geography_report(self):
         def return_report_data(result) :
             mapping_list = []
@@ -1044,22 +1102,6 @@ class KnowledgeDatabase(Database):
             data = self.get_geographies()
 
         return return_report_data(self.geography_parent_mapping)
-
-    def get_geographies_for_user(self, user_id):
-        coutry_ids = self.get_user_countries(user_id)
-        columns = "t1.geography_id, t1.geography_name, "+\
-        "t1.level_id,t1.parent_ids, t1.is_active, t2.country_id, t3.country_name"
-        tables = [self.tblGeographies, self.tblGeographyLevels, self.tblCountries]
-        aliases = ["t1", "t2", "t3"]
-        joinType = " INNER JOIN"
-        joinConditions = ["t1.level_id = t2.level_id", "t2.country_id = t3.country_id"]
-        whereCondition = "1"
-        rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, 
-            joinConditions, whereCondition)
-        columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
-        result = self.convert_to_dict(rows, columns)
-        # self.geography_parent_mapping(result)
-        return self.return_geographies(result)
 
     def get_geography_by_id(self, geography_id):
         query = "SELECT geography_id, geography_name, level_id, parent_ids, is_active \
@@ -1432,6 +1474,7 @@ class KnowledgeDatabase(Database):
             "approval_status", "is_active"
         ]
         result = self.convert_to_dict(rows, columns)
+        return self.return_statutory_mappings(result)
 
     def return_statutory_mappings(self, data):
         mapping_data_list = []
@@ -1481,24 +1524,83 @@ class KnowledgeDatabase(Database):
         statutory_nature_id, geography_id
     ) :
         q = "SELECT t1.statutory_mapping_id, t1.country_id, \
-            t1.domain_id, t1.industry_ids, \
-            t1.statutory_nature_id, t2.statutory_nature_name, \
-            t1.statutory_ids, t1.compliance_ids, \
-            t1.geography_ids, t1.is_active  \
+            t2.country_name, t1.domain_id, t3.domain_name, \
+            t1.industry_ids, t1.statutory_nature_id, \
+            t4.statutory_nature_name, t1.statutory_ids, \
+            t1.compliance_ids, t1.geography_ids, \
+            t1.approval_status, t1.is_active  \
             FROM tbl_statutory_mappings t1 \
-            INNER JOIN tbl_statutory_natures t2 \
-            on t1.statutory_nature_id = t2.statutory_nature_id \
+            INNER JOIN tbl_countries t2 \
+            ON t1.country_id = t2.country_id \
+            INNER JOIN tbl_domains t3 \
+            ON t1.domain_id = t3.domain_id \
+            INNER JOIN tbl_statutory_natures t4 \
+            ON t1.statutory_nature_id = t4.statutory_nature_id \
+            INNER JOIN tbl_user_domains t5 \
+            ON t1.domain_id = t5.domain_id \
+            and t5.user_id = %s \
+            INNER JOIN tbl_user_countries t6 \
+            ON t1.country_id = t6.country_id \
+            and t6.user_id = %s \
             WHERE t1.country_id = %s \
             and t1.domain_id = %s \
             and t1.industry_ids like '%s' \
             and t1.statutory_nature_id like '%s' \
             and t1.geography_ids like '%s'" % (
+                user_id, user_id,
                 country_id, domain_id, 
                 str("%" + str(industry_id) + ",%"), 
                 str(statutory_nature_id),
                 str("%" + str(geography_id) + ",%")
             )
-        return self.select_all(q)
+
+        rows = self.select_all(q)
+        columns = [
+            "statutory_mapping_id", "country_id", 
+            "country_name", "domain_name", "industry_ids", 
+            "statutory_nature_id", "statutory_nature_name", 
+            "statutory_ids", "compliance_ids", "geography_ids",
+            "approval_status", "is_active"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        report_data = {}
+        for r in result :
+            report_data[r.statutory_mapping_id] = r
+        return self.return_knowledge_report(
+            country_id, domain_id, report_data
+        )
+
+
+    def get_mappings_id(self, statutory_id) :
+        query = "SELECT t1.statutory_mapping_ids from tbl_statutories t1 \
+            WHERE t1.parent_ids like '%0%' OR t1.parent_ids like '%s'" % str("%" + str(statutory_id) + ",%")
+        rows = self.select_all(query)
+        return self.convert_to_dict(
+            rows, ["statutory_mapping_ids"]
+        )
+
+
+    def return_knowledge_report(self, country_id, domain_id, report_data):
+        level_1_statutory = self.get_country_wise_level_1_statutoy()
+
+        level1s = level_1_statutory[country_id][domain_id]
+        level_1_mappings = {}
+        for x in level1s :
+            statutory_id = x.statutory_id
+            rows = self.get_mappings_id(statutory_id)
+            mapping_list = []
+            for row in rows :
+                mapping_ids = row["statutory_mapping_ids"]
+                if (mapping_ids is None) or (mapping_ids == "") :
+                    continue
+                def getData(i) :
+                    return report_data.get(int(i))
+                mapping_list.extend(
+                    [getData(x) for x in mapping_ids[:-1].split(',') if getData(x) is not None]  
+                )
+            level_1_mappings[statutory_id] = mapping_list
+        return level_1_mappings
+
 
     #
     # compliance
@@ -2152,7 +2254,7 @@ class KnowledgeDatabase(Database):
         user_columns = ["user_id", "email_id", "user_group_id", "password", "employee_name", 
                     "employee_code", "contact_no", "address", "designation", "is_active", 
                     "created_on", "created_by", "updated_on", "updated_by"]
-        user_values = [user_id, email_id, user_group_id, generatePassword(),
+        user_values = [user_id, email_id, user_group_id, self.generate_password(),
                 employee_name, employee_code, contact_no, address,
                 designation, 1, current_time_stamp, 0, current_time_stamp, 0]
         result1 = self.insert(self.tblUsers, user_columns, user_values)
@@ -2326,7 +2428,7 @@ class KnowledgeDatabase(Database):
             else:
                 break
         query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
-            email_id, generate_password())        
+            email_id, self.generate_password())        
         cursor.execute(query)
         return True
 
@@ -2344,8 +2446,8 @@ class KnowledgeDatabase(Database):
         host = row[0]
         username = row[1]
         password = row[2]
-        db_username = generate_random()
-        db_password = generate_random()
+        db_username = self.generate_random()
+        db_password = self.generate_random()
 
         if self._create_database(host, username, password, database_name, db_username, 
             db_password, email_id, client_id):
@@ -2377,8 +2479,8 @@ class KnowledgeDatabase(Database):
 
     def save_client_group(self, client_id, client_group, session_user):
         current_time_stamp = self.get_date_time()
-        contract_from = string_to_datetime(client_group.contract_from)
-        contract_to = string_to_datetime(client_group.contract_to)
+        contract_from = self.string_to_datetime(client_group.contract_from)
+        contract_to = self.string_to_datetime(client_group.contract_to)
         is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
 
         columns = ["client_id", "group_name", "email_id", "logo_url", 
@@ -2397,8 +2499,8 @@ class KnowledgeDatabase(Database):
 
     def update_client_group(self, client_group, session_user):
         current_time_stamp = self.get_date_time()
-        contract_from = string_to_datetime(client_group.contract_from)
-        contract_to = string_to_datetime(client_group.contract_to)
+        contract_from = self.string_to_datetime(client_group.contract_from)
+        contract_to = self.string_to_datetime(client_group.contract_to)
         is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
 
         columns = ["group_name", "logo_url", "logo_size", "contract_from", 
@@ -2434,16 +2536,10 @@ class KnowledgeDatabase(Database):
         condition = "client_id='%d'" % client_id
         return self.update(self.tblClientGroups, columns, values, condition)
 
-    def get_client_db_info(self):
-        columns = "database_ip, client_id, database_username, "+\
-        "database_password, database_name"
-        condition = "1"
-        return self.get_data(self.tblClientDatabase, columns, condition)
-
-    #
-    #   Client Unit
-    #
-
+#
+#   Client Unit
+#
+    
     def generate_new_business_group_id(self) :
         return self.get_new_id("business_group_id", self.tblBusinessGroups)
 
@@ -2596,7 +2692,7 @@ class KnowledgeDatabase(Database):
 
     def verify_password(self, password, userId):
         columns = "count(*)"
-        encrypted_password = encrypt(password)
+        encrypted_password = self.encrypt(password)
         condition = "password='%s' and user_id='%d'" % (encrypted_password, userId)
         rows = self.get_data(self.tblUsers, columns, condition)
         if(int(rows[0][0]) <= 0):
@@ -2655,21 +2751,14 @@ class KnowledgeDatabase(Database):
     def return_divisions(self, divisions):
         results = []
         for division in divisions :
-            print "division:{}".format(division)
-            print "division[division_id]:{}".format(division["division_id"])
-            division_obj = core.Division(
-                division["division_id"], division["division_name"], 
-                divisions["legal_entity_id"], division["business_group_id"],
-                divisions["client_id"]
-            )
-            print "division_obj:{}".format(division_obj)
+            division_obj = core.Division(division["division_id"], division["division_name"],
+                division["legal_entity_id"],division["business_group_id"],division["client_id"])
             results.append(division_obj)
-            print results
         return results
 
     def get_units_for_user(self, user_id):
         client_ids = self.get_user_clients(user_id)
-        columns = "unit_id, unit_code, unit_name, unit_address, division_id,"+\
+        columns = "unit_id, unit_code, unit_name, address, division_id,"+\
         " legal_entity_id, business_group_id, client_id, is_active"
         condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblUnits, columns, condition) 
@@ -2687,19 +2776,3 @@ class KnowledgeDatabase(Database):
                 unit["unit_name"], unit["unit_address"], bool(unit["is_active"])
             ))
         return results
-
-class ClientDatabase(Database):
-
-    def __init__(self, knowledge_db):
-        rows = knowledge_db.get_client_db_info()
-        global _client_db_connections
-        _client_db_connections = {}
-        for row in rows:
-            host = row[0]
-            client_id = row[1]
-            username = row[2]
-            password = row[3]
-            database = row[4]
-            _client_db_connections[client_id] = super(ClientDatabase, self).__init__(
-                host, username, password, database
-            )

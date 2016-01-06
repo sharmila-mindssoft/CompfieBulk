@@ -6,10 +6,8 @@ from common import (CLIENT_NAME, URL, DATE, NO_OF_USER_LICENCE, CLIENT_ID, USER_
 	LEGAL_ENTITY_NAME, DIVISION_NAME , LOCATION, INDUSTRY_NAME, GEOGRAPHY_ID, UNIT_CODE,
 	INDUSTRY_ID)
 from core import (Domain, Country, User, GroupCompany, BusinessGroup, Division,
-	UnitDetails, GroupCompanyDetail, ClientConfiguration, LegalEntity, CountryWiseUnits)
-
-
-
+	UnitDetails, GroupCompanyDetail, ClientConfiguration, LegalEntity, CountryWiseUnits,
+	Unit)
 
 __all__=  [
 	"Request", "Response", "RequestFormat", "LICENCE_HOLDER_DETAILS", "PROFILE_DETAIL",
@@ -194,7 +192,7 @@ GetClientsSuccess = RecordType("GetClientsSuccess", [
 	Field("business_groups", OptionalType(BusinessGroupList)),
 	Field("legal_entities", LegalEntityList),
 	Field("divisions", OptionalType(DivisionList)),
-	Field("units", UnitDetailsList)
+	Field("units", VectorType(Unit))
 ])
 
 SaveClientSuccess = RecordType("SaveClientSuccess", [

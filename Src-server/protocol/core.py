@@ -989,7 +989,7 @@ class GroupCompany(object):
         group_name = data.get("group_name")
         group_name = parse_structure_CustomTextType_50(group_name)
         is_active = data.get("is_active")
-        is_active = parse_structure_SignedIntegerType_8(is_active)
+        is_active = parse_structure_Bool(is_active)
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_UnsignedIntegerType_32(domain_ids)
         country_ids = data.get("country_ids")
@@ -1001,7 +1001,7 @@ class GroupCompany(object):
         return {
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
             "group_name": to_structure_CustomTextType_50(self.group_name),
-            "is_active": to_structure_CustomTextType_50(self.is_active),
+            "is_active": to_structure_Bool(self.is_active),
             "country_ids": to_structure_CustomTextType_50(self.country_ids),
             "domain_ids": to_structure_CustomTextType_50(self.domain_ids),
         }
@@ -1251,7 +1251,7 @@ class Unit(object):
             "unit_code": to_structure_CustomTextType_20(self.unit_code),
             "unit_name": to_structure_CustomTextType_50(self.unit_name),
             "unit_address": to_structure_CustomTextType_250(self.unit_address),
-            "is_active": to_structure_Bool(self.is_active),
+            "is_active": to_structure_Bool(self.is_active)
         }
 
 #
