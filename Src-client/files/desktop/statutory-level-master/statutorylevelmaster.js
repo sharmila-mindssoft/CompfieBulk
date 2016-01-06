@@ -2,31 +2,57 @@ var countriesList;
 var domainsList;
 var statutoryLevelsList;
 
-$(document).ready(function(){
-  GetStatutoryLevels();
+function clearMessage() {
+  $(".error-message").hide();
+  $(".error-message").text("");
+}
+function displayMessage(message) {
+  $(".error-message").text(message);
+  $(".error-message").show();
+}
+
+$(".btn-statutorylevel-cancel").click(function(){
+  $(".fieldvalue").val("");
+  $(".hiddenvalue").val("");
+  $("#countryval").val("");
+  $("#country").val("");
+  $("#domainval").val("");
+  $("#domain").val("");
 });
 
 function GetStatutoryLevels(){
-  function success(status,data){
+
+  function onSuccess(data){
     statutoryLevelsList = data["statutory_levels"];
     countriesList = data["countries"];
     domainsList = data["domains"];
   }
-  function failure(data){
+  function onFailure(error){
+    
   }
-  mirror.getStatutoryLevels(success, failure);
+  mirror.getStatutoryLevels(
+        function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+        }
+    );
 }
 
 //Autocomplete Script Starts
 //Hide list items after select
-function hidemenu() {
-  document.getElementById('autocompleteview').style.display = 'none';
-  document.getElementById('autocompleteview-domain').style.display = 'none';
-}
+$(".hidemenu").click(function(){
+  $("#autocompleteview").hide(); 
+  $("#autocompleteview-domain").hide(); 
+});
 
 //load country list in autocomplete text box  
-function loadauto_text (textval) {
-  document.getElementById('autocompleteview').style.display = 'block';
+$("#countryval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocompleteview").show(); 
   var countries = countriesList;
   var suggestions = [];
   $('#ulist_text').empty();
@@ -41,7 +67,7 @@ function loadauto_text (textval) {
     $('#ulist_text').append(str);
     $("#country").val('');
     }
-}
+});
 
 //set selected autocomplte value to textbox
 function activate_text (element,checkval,checkname) {
@@ -50,9 +76,10 @@ function activate_text (element,checkval,checkname) {
   loadstatutoryLevelsList();
 }
 
-//load domain list in autocomplete text box  
-function loadauto_text_domain (textval) {
-  document.getElementById('autocompleteview-domain').style.display = 'block';
+//load domain list in autocomplete textbox  
+$("#domainval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocompleteview-domain").show(); 
   var domains = domainsList;
   var suggestions = [];
   $('#ulist_text_domain').empty();
@@ -67,7 +94,7 @@ function loadauto_text_domain (textval) {
     $('#ulist_text_domain').append(str);
     $("#domain").val('');
     }
-}
+});
 //set selected autocomplte value to textbox
 function activate_text_domain (element,checkval,checkname) {
   $("#domainval").val(checkname);
@@ -77,34 +104,12 @@ function activate_text_domain (element,checkval,checkname) {
 //Autocomplete Script ends
 
 function loadstatutoryLevelsList() {
-  $("#error").text("");
-  $("#level1").val("");
-  $("#level2").val("");
-  $("#level3").val("");
-  $("#level4").val("");
-  $("#level5").val("");
-  $("#level6").val("");
-  $("#level7").val("");
-  $("#level8").val("");
-  $("#level9").val("");
-  $("#level10").val("");
-
-  $("#levelid1").val("");
-  $("#levelid2").val("");
-  $("#levelid3").val("");
-  $("#levelid4").val("");
-  $("#levelid5").val("");
-  $("#levelid6").val("");
-  $("#levelid7").val("");
-  $("#levelid8").val("");
-  $("#levelid9").val("");
-  $("#levelid10").val("");
-
+  $(".error-message").html('');
+  $(".fieldvalue").val("");
+  $(".hiddenvalue").val("");
   var countryval = $("#country").val();
   var domainval = $("#domain").val();
-
   var levellist;
-
   if( statutoryLevelsList[countryval][domainval] != undefined ){
   levellist = statutoryLevelsList[countryval][domainval];
    for(var entity in levellist) {
@@ -117,52 +122,88 @@ function loadstatutoryLevelsList() {
  }
 }
 
-function saveRecord () { 
-    $("#error").text("");
-    var country = $("#country").val();
-    var domain = $("#domain").val();
-    if(country == '') {
-      $("#error").text("Country Required");
-    } else if(domain == '') {
-      $("#error").text("Domain Required");
+function validate(){
+    if($("#country").val().trim().length==0){
+      displayMessage("Country Required");
+    } else if($("#domain").val().trim().length==0) {
+      displayMessage("Domain Required");
     }
     else {
+      displayMessage('');
+      return true
+    }
+}
+
+$("#submit").click(function(){ 
+    displayMessage('');
+    var country = $("#country").val();
+    var domain = $("#domain").val();
+    if(validate()){
        for(var k=1; k<=10; k++) {
-          if($("#level"+k).val() != ''){
+          if($("#level"+k).val().trim().length > 0){
             var maxlevel = k;
           }
          }
          var result="true";
          for(var k=1; k<=maxlevel; k++) {
-          if($("#level"+k).val() == ''){
+          if($("#level"+k).val().trim().length==0){
             result = "false";
           }
          }
 
          if( result == "true") {
           var passlevellist = [];
-        for(var k=1; k<=10; k++) {
-          if($("#level"+k).val() != ''){
-            if($("#levelid"+k).val() != ''){
+         for(var k=1; k<=10; k++) {
+          if($("#level"+k).val().trim().length > 0){
+            if($("#levelid"+k).val().trim().length > 0){
               passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val(), "level_id" : parseInt($("#levelid"+k).val())});
             }else{
-              passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val()});
+              passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val(), "level_id" : null});
             }
           }
          }
-        function success(status,data) {
-          if(status == 'success') {
-            $("#error").text("Record Added Successfully");
-            GetStatutoryLevels();
-          } else {
-            $("#error").text(status);
+        function onSuccess(response) {
+          displayMessage("Record Added Successfully");
+          GetStatutoryLevels();
+        }
+        function onFailure(error){             
+          if(error == "DuplicateStatutoryLevelsExists"){
+              displayMessage("Statutory Level Already Exists");
           }
         }
-        function failure(data){
-        }
-        mirror.saveAndUpdateStatutoryLevels(parseInt(country), parseInt(domain), passlevellist, success, failure);
+        mirror.saveAndUpdateStatutoryLevels(parseInt(country), parseInt(domain), passlevellist, 
+          function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+          });
          }else{
-          $("#error").text("Intermediate Level's should not be Empty");
+          displayMessage("Intermediate Level's should not be Empty");
          }
       }
+  });
+
+$(".fieldvalue").keyup(function (evt) {
+ var element = $(evt.target);
+ var tabIndex = element.attr('tabIndex');
+ if (evt.keyCode == 13){
+  if(tabIndex == 10){
+    if(validate()){
+      jQuery('#submit').focus().click();
+    }
+  }else{
+    var nextElement = $("input[tabIndex=" + (parseInt(tabIndex) + 1) + "]");
+     if (nextElement) {
+         nextElement.focus();
+     }
+  return false;
   }
+ }
+});
+
+$(document).ready(function(){
+  GetStatutoryLevels();
+});
