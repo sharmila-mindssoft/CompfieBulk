@@ -1,3 +1,4 @@
+import os
 import MySQLdb as mysql
 import hashlib
 import string
@@ -131,6 +132,7 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
+        print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(self, columns, tables, aliases, joinType, 
@@ -2319,6 +2321,17 @@ class KnowledgeDatabase(Database):
     #
     #   Group Company
     #
+    def generate_new_client_id(self):
+        return self.get_new_id("client_id", self.tblClientGroups)
+    
+    def is_duplicate_group_name(self, group_name, client_id):
+        condition = "group_name ='%s' AND client_id != '%d'" % (group_name, client_id)
+        return self.is_already_exists(self.tblClientGroups, condition)
+    
+    def is_duplicate_group_username(self, username, client_id):
+        condition = "email_id ='%s' AND client_id != '%d'" % (username, client_id)
+        return self.is_already_exists(self.tblClientGroups, condition) 
+
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
         " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
@@ -2413,7 +2426,6 @@ class KnowledgeDatabase(Database):
         con.commit()
 
         con = self._db_connect(host, username, password, database_name)
-        _client_db_connections[client_id] = con
         cursor = con.cursor()
         sql_script_path = os.path.join(os.path.join(os.path.split(__file__)[0]), 
         "scripts/mirror-client.sql")
