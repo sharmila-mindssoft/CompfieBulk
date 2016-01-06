@@ -28,6 +28,7 @@ function getDomains () {
     }
     mirror.getDomainList(
         function (error, response) {
+           alert(error);
             if (error == null){
               onSuccess(response);
             }

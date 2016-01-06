@@ -28,10 +28,11 @@ function GetStatutoryLevels(){
     domainsList = data["domains"];
   }
   function onFailure(error){
-    
+    //displayMessage(error);
   }
   mirror.getStatutoryLevels(
         function (error, response) {
+          alert(error);
             if (error == null){
               onSuccess(response);
             }
@@ -165,10 +166,11 @@ $("#submit").click(function(){
         function onSuccess(response) {
           displayMessage("Record Added Successfully");
           GetStatutoryLevels();
+          jQuery('.btn-statutorylevel-cancel').focus().click();
         }
         function onFailure(error){             
           if(error == "DuplicateStatutoryLevelsExists"){
-              displayMessage("Statutory Level Already Exists");
+            displayMessage("Statutory Level Already Exists");
           }
         }
         mirror.saveAndUpdateStatutoryLevels(parseInt(country), parseInt(domain), passlevellist, 
