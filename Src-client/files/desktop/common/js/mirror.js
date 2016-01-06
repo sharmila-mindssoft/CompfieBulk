@@ -93,7 +93,9 @@ function initMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1){
                     callback(null, response);
                 }
-                callback(status, null) 
+                else {
+                    callback(status, null) 
+                }
             }
         )
         .fail(
