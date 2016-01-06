@@ -848,7 +848,7 @@ class Compliance(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_id", "statutory_provision", "compliance_task", "description", "document_name", "format_file_name", "penal_description", "frequency_id", "statutory_dates", "repeats_type_id", "repeats_every", "duration_type_id", "duration", "is_active"])
+        data = parse_dictionary(data, ["compliance_id", "statutory_provision", "compliance_task", "description", "document_name", "format_file_name", "penal_consequences", "frequency_id", "statutory_dates", "repeats_type_id", "repeats_every", "duration_type_id", "duration", "is_active"])
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_OptionalType_SignedIntegerType_8(compliance_id)
         statutory_provision = data.get("statutory_provision")
@@ -861,7 +861,7 @@ class Compliance(object):
         document_name = parse_structure_OptionalType_CustomTextType_50(document_name)
         format_file_name = data.get("format_file_name")
         format_file_name = parse_structure_OptionalType_VectorType_CustomTextType_50(format_file_name)
-        penal_description = data.get("penal_description")
+        penal_description = data.get("penal_consequences")
         penal_description = parse_structure_OptionalType_CustomTextType_500(penal_description)
         frequency_id = data.get("frequency_id")
         frequency_id = parse_structure_OptionalType_SignedIntegerType_8(frequency_id)
@@ -887,7 +887,7 @@ class Compliance(object):
             "description": to_structure_CustomTextType_500(self.description),
             "document_name": to_structure_OptionalType_CustomTextType_50(self.document_name),
             "format_file_name": to_structure_OptionalType_VectorType_CustomTextType_50(self.format_file_name),
-            "penal_description": to_structure_OptionalType_CustomTextType_500(self.penal_description),
+            "penal_consequences": to_structure_OptionalType_CustomTextType_500(self.penal_description),
             "frequency_id": to_structure_OptionalType_SignedIntegerType_8(self.frequency_id),
             "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
             "repeats_type_id": to_structure_OptionalType_UnsignedIntegerType_32(self.repeats_type_id),

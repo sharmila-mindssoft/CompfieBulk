@@ -1122,11 +1122,11 @@ def to_structure_RecordType_technoreports_Request_GetAssignedStatutoryReport(dat
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_core_Statutory(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_RecordType_technomasters_Response_GetClientGroupsSuccess(data):
@@ -1518,11 +1518,11 @@ def to_structure_RecordType_dashboard_Request_GetTrendChartDrillDownData(data):
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_core_StatutoryMapping(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_VectorType_RecordType_clientreport_LoginTrace(data):
@@ -2795,11 +2795,11 @@ def to_structure_RecordType_technomasters_Request_UpdateClient(data):
 
 def to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_RecordType_core_StatutoryMapping(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_RecordType_general_Response_ContactNumberAlreadyExists(data):
