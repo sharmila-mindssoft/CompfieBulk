@@ -118,16 +118,17 @@ class USER_TYPE(object):
 #
 
 class APPROVAL_STATUS(object):
+    Pending = "Pending"
     Approve = "Approve"
     Reject = "Reject"
-    ApproveAndNotify = "ApproveAndNotify"
+    ApproveAndNotify = "Approve & Notify"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Approve", "Reject", "ApproveAndNotify"]
+        return ["Pending", "Approve", "Reject", "Approve & Notify"]
 
     def value(self):
         return self._value
@@ -275,17 +276,17 @@ class FILTER_TYPE(object):
 #
 
 class COMPLIANCE_FREQUENCY(object):
-    OneTime = "OneTime"
+    OneTime = "One Time"
     Periodical = "Periodical"
     Review = "Review"
-    OnOccurrence = "OnOccurrence"
+    OnOccurrence = "On Occurrence"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["OneTime", "Periodical", "Review", "OnOccurrence"]
+        return ["One Time", "Periodical", "Review", "On Occurrence"]
 
     def value(self):
         return self._value
@@ -383,16 +384,16 @@ class FORM_TYPE(object):
 #
 
 class REPEATS_TYPE(object):
-    Year = "Year"
-    Month = "Month"
-    Day = "Day"
+    Year = "Year(s)"
+    Month = "Month(s)"
+    Day = "Day(s)"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Year", "Month", "Day"]
+        return ["Year(s)", "Month(s)", "Day(s)"]
 
     def value(self):
         return self._value
@@ -409,15 +410,15 @@ class REPEATS_TYPE(object):
 #
 
 class DURATION_TYPE(object):
-    Day = "Day"
-    Hour = "Hour"
+    Day = "Day(s)"
+    Hour = "Hour(s)"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Day", "Hour"]
+        return ["Day(s)", "Hour(s)"]
 
     def value(self):
         return self._value
