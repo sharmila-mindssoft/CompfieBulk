@@ -6,6 +6,7 @@ import string
 import random
 import re
 import uuid
+import json
 
 from types import *
 from protocol import core, knowledgereport
@@ -326,7 +327,6 @@ class KnowledgeDatabase(Database):
         assert type(data_list) in (list, tuple)
         if type(data_list[0]) is tuple :
             result_list = []
-            print len(data_list[0]), len(columns)
             if len(data_list[0]) == len(columns) :
                 for data in data_list:
                     result = {}
@@ -1403,11 +1403,10 @@ class KnowledgeDatabase(Database):
                 frequency = core.COMPLIANCE_FREQUENCY(
                     d["frequency"]
                 )
-                frequency_list.append(
-                    core.ComplianceFrequency(
-                        d["frequency_id"], frequency
-                    )
+                c_frequency = core.ComplianceFrequency(
+                    d["frequency_id"], frequency
                 )
+                frequency_list.append(c_frequency)
             return frequency_list
 
         columns = ["frequency_id", "frequency"]
@@ -1454,9 +1453,7 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t1.country_id = t6.country_id \
             and t6.user_id = %s" %(user_id, user_id)
-        print q
         rows = self.select_all(q)
-        print rows
         columns = [
             "statutory_mapping_id", "country_id", 
             "country_name", "domain_id", "domain_name", "industry_ids", 
@@ -1465,7 +1462,6 @@ class KnowledgeDatabase(Database):
             "approval_status", "is_active"
         ]
         result = self.convert_to_dict(rows, columns)
-        print result
         return self.return_statutory_mappings(result)
 
     def return_statutory_mappings(self, data):
@@ -1496,7 +1492,6 @@ class KnowledgeDatabase(Database):
                 statutory_mapping_list.append(
                     self.statutory_parent_mapping.get(int(g_id))[1]
                 )
-            print statutory_mapping_list
             approval_status = self.get_approval_status(
                 int(d["approval_status"])
             )
@@ -1510,7 +1505,7 @@ class KnowledgeDatabase(Database):
                 d["statutory_nature_id"], d["statutory_nature_name"],
                 statutory_ids, statutory_mapping_list,
                 compliances, compliance_names, geography_ids,
-                geography_mapping_list, approval_status,
+                geography_mapping_list, int(d["approval_status"]),
                 bool(d["is_active"]),
             )
             mapping_data_list[mapping_id] = statutory
@@ -1637,18 +1632,34 @@ class KnowledgeDatabase(Database):
         compalinaces = []
         for d in data :
             statutory_dates = d["statutory_dates"]
+            statutory_dates = json.loads(statutory_dates)
+            date_list = []
+            for date in statutory_dates :
+                s_date = core.StatutoryDate(
+                    date["statutory_date"],
+                    date["statutory_month"],
+                    date["trigger_before_days"]
+                )
+                date_list.append(s_date)
+
+
+
             compliance_task = d["compliance_task"]
             document_name = d["document_name"]
             name = "%s - %s" % (
                 document_name, compliance_task
             )
+            format_file = d["format_file"]
+            if not format_file :
+                format_file = None
+
             compliance_names.append(name)
             compliance = core.Compliance(
                 d["compliance_id"], d["statutory_provision"],
                 compliance_task, d["compliance_description"],
-                document_name, d["format_file"],
+                document_name, format_file,
                 d["penal_consequences"], d["frequency_id"],
-                statutory_dates, d["repeats_type_id"],
+                date_list, d["repeats_type_id"],
                 d["repeats_every"], d["duration_type_id"],
                 d["duration"], bool(d["is_active"])
             )
