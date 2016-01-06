@@ -14,7 +14,6 @@ __all__ = [
 
 def process_login_request(request, db) :
 	if type(request) is login.Login:
-		print "username=", request.username
 		return process_login(db, request)
 
 	if type(request) is login.ForgotPassword :
@@ -63,7 +62,7 @@ def user_login_response(db, data):
 	menu = process_user_forms(db, form_ids)
 	print menu
 	return login.UserLoginSuccess(
-		user_id, session_token, email_id, user_group_name, 
+		int(user_id), session_token, email_id, user_group_name, 
 		menu, employee_name, employee_code, contact_no, address, designation
 	)
 
