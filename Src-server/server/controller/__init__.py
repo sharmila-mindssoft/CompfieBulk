@@ -4,3 +4,4 @@ from generalcontroller import *
 from admincontroller import *
 from technocontroller import *
 from knowledgetransactioncontroller import *
+from knowledgereportcontroller import *
