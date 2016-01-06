@@ -240,7 +240,7 @@ function saverecord(j,e){
     var last_level = 0;
     for(k=1;k<j;k++){
       $(".list"+k+".active").each( function( index, el ) {
-        map_gm_id.push(el.id);
+        map_gm_id.push(parseInt(el.id));
         last_geography_id = el.id;
         last_level = k;
         });
@@ -376,7 +376,7 @@ function updaterecord(j,e){
     var last_level = 0;
     for(k=1;k<j;k++){
       $(".list"+k+".active").each( function( index, el ) {
-        map_gm_id.push(el.id);
+        map_gm_id.push(parseInt(el.id));
         last_geography_id = el.id;
         last_level = k;
         });
