@@ -101,8 +101,8 @@ def process_update_industry(db, request_frame, user_id):
 		return knowledgemaster.InvalidIndustryId()
 
 def process_change_industry_status(db, request_frame, user_id):
-	is_active = request.is_active
-	industry_id = request.industry_id
+	is_active = request_frame.is_active
+	industry_id = request_frame.industry_id
 
 	if (db.update_industry_status(industry_id, int(is_active), user_id)) :
 		return knowledgemaster.ChangeIndustryStatusSuccess()
@@ -142,8 +142,8 @@ def process_update_statutory_nature(db, request_frame, user_id):
 
 
 def process_change_statutory_nature_status(db, request_frame, user_id):
-	is_active = request.is_active
-	nature_id = request.statutory_nature_id
+	is_active = request_frame.is_active
+	nature_id = request_frame.statutory_nature_id
 
 	if (db.update_statutory_nature_status(nature_id, int(is_active), user_id)) :
 		return knowledgemaster.ChangeStatutoryNatureStatusSuccess()
@@ -168,10 +168,13 @@ def process_save_statutory_level(db, request_frame, user_id):
 	if is_duplicate is True:
 		return knowledgemaster.DuplicateStatutoryLevelsExists()
 	elif is_duplicate is False :
-		db.save_statutory_levels(country_id, domain_id, levels, user_id)
-		return knowledgemaster.SaveStatutoryLevelSuccess()
-	else :
-		return knowledgemaster.LevelIdCannotBeNull(result)
+		result = db.save_statutory_levels(
+			country_id, domain_id, levels, user_id
+		)
+		if result :
+			return knowledgemaster.SaveStatutoryLevelSuccess()
+		else :
+			return knowledgemaster.LevelIdCannotBeNull(result)
 
 
 #geography level
@@ -186,13 +189,16 @@ def process_save_geography_level(db, request_frame, user_id):
 	country_id = request_frame.country_id
 	levels = request_frame.levels
 	is_duplicate = db.check_duplicate_gepgrahy_levels(country_id, levels)
+	print is_duplicate
 	if is_duplicate is True:
 		return knowledgemaster.DuplicateStatutoryLevelsExists()
 	elif is_duplicate is False :
-		db.save_geography_levels(country_id, levels, user_id)
+		db.save_geography_levels(
+			country_id, levels, user_id
+		)
 		return knowledgemaster.SaveStatutoryLevelSuccess()
 	else :
-		return knowledgemaster.LevelIdCannotBeNull(result)
+		return knowledgemaster.LevelIdCannotBeNull(is_duplicate)
 
 
 #geography

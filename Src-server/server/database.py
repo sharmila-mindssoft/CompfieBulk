@@ -324,7 +324,6 @@ class KnowledgeDatabase(Database):
 
     def convert_to_dict(self, data_list, columns) :
         assert type(data_list) in (list, tuple)
-
         if type(data_list[0]) is tuple :
             result_list = []
             if len(data_list[0]) == len(columns) :
@@ -988,7 +987,9 @@ class KnowledgeDatabase(Database):
             FROM tbl_geography_levels WHERE country_id = %s ORDER BY level_position" % country_id
         rows = self.select_all(query)
         columns = ["level_id", "level_position", "level_name"]
-        result = self.convert_to_dict(rows, columns)
+        result = []
+        if rows :
+            result = self.convert_to_dict(rows, columns)
         return result
 
     def check_duplicate_gepgrahy_levels(self, country_id, levels) :
@@ -1005,7 +1006,7 @@ class KnowledgeDatabase(Database):
                     return name
             level_names.append(name)
             level_positions.append(position)
-
+        print "after for"
         duplicate_names = [x for i, x in enumerate(level_names) if level_names.count(x) > 1]
         duplicate_position = [x for i, x in enumerate(level_positions) if level_positions.count(x) > 1]
         if len(duplicate_names) > 0 :
@@ -1016,26 +1017,26 @@ class KnowledgeDatabase(Database):
             return True
         return False
 
-    def save_geography_levels(self, country_id, levels):
+    def save_geography_levels(self, country_id, levels, user_id):
         table_name = "tbl_geography_levels"
         created_on = self.get_date_time()
         for level in levels :
             name = level.level_name
-            position = lavel.level_position
+            position = level.level_position
             if level.level_id is None :
                 level_id = self.get_new_id("level_id", table_name)
                 field = "(level_id, level_position, level_name, \
                     country_id, created_by, created_on)"
                 data = (
-                    level_id, position, name, country_id, 
-                    user_id, created_on
+                    level_id, position, name, int(country_id), 
+                    int(user_id), str(created_on)
                 )
                 if (self.save_data(table_name, field, data)):
                     action = "New Geography levels added"
                     self.save_activity(user_id, 5, action)
             else :
                 field_with_data = "level_position=%s, level_name='%s', updated_by=%s" % (
-                    position, name, user_id
+                    position, name, int(user_id)
                 )
                 where_condition = "level_id=%s" % (level.level_id)
                 if (self. update_data(table_name, field_with_data, where_condition)):
@@ -1055,7 +1056,6 @@ class KnowledgeDatabase(Database):
         return self.return_geographies(result)
 
     def return_geographies(self, data):
-        print "inside return_geographies"
         geographies = {}
         for d in data :
             parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
@@ -1066,6 +1066,7 @@ class KnowledgeDatabase(Database):
                 _list = []
             _list.append(geography)
             geographies[country_id] = _list
+        print geographies
         return geographies
 
     def get_geographies_for_user(self, user_id):
@@ -1231,27 +1232,43 @@ class KnowledgeDatabase(Database):
                 statutory_id
             )
         rows = self.select_all(query)
-        result = convert_to_dict(rows, columns)
+        result = self.convert_to_dict(rows, columns)
         self.set_statutory_parent_mappings(result)
         return self.return_statutory_master(result)
 
-    def return_statutory_master(data):
-        statutory_list = []
+    def return_statutory_master(self, data):
+        statutories = {}
         for d in data :
+            country_id = d["country_id"]
+            domain_id = d["domain_id"]
             statutory_id = int(d["statutory_id"])
             mappings = self.statutory_parent_mapping.get(
                 statutory_id
             )
+            print mappings[1]
             parent_ids = [
-                int(x) for x in d["parent_ids"][-1].split(',')
+                int(x) for x in d["parent_ids"][:-1].split(',')
             ]
+
             statutory = core.Statutory(
                 statutory_id, d["statutory_name"],
                 d["level_id"], parent_ids, parent_ids[-1],
-                mappings
+                mappings[1]
             )
-            statutory_list.append(statutory)
-        return statutory_list
+
+            country_wise = statutories.get(country_id)
+            _list = []
+            if country_wise is None :
+                country_wise = {}
+            else :
+                _list = country_wise.get(domain_id)
+                if _list is None :
+                    _list = []
+            _list.append(statutory)
+            country_wise[domain_id] = _list
+            statutories[country_id] = country_wise
+        print statutories
+        return statutories
 
     def get_country_wise_level_1_statutoy(self) :
         query = "SELECT t1.statutory_id, t1.statutory_name, \
@@ -1340,7 +1357,7 @@ class KnowledgeDatabase(Database):
         for row in rows :
             statutory_id = row["statutory_id"]
             parent_ids = [
-                int(x) for x in row["parent_ids"][-1].split(',')
+                int(x) for x in row["parent_ids"][:-1].split(',')
             ]
             statutory_name = row["statutory_name"]
             names = []
@@ -1936,7 +1953,7 @@ class KnowledgeDatabase(Database):
         backup_id = self.get_new_id("statutory_backup_id", "tbl_statutories_backup")
         created_on = self.get_date_time()
         industry_ids = [
-            int(x) for x in old_record["industry_ids"][-1].split(',')
+            int(x) for x in old_record["industry_ids"][:-1].split(',')
         ]
         industry_name = self.get_industry_by_id(industry_ids)
 
@@ -2075,7 +2092,7 @@ class KnowledgeDatabase(Database):
             mapping_id
         )
         industry_ids = [
-            int(x) for x in old_record["industry_ids"][-1].split(',')
+            int(x) for x in old_record["industry_ids"][:-1].split(',')
         ]
         industry_name = self.get_industry_by_id(industry_ids)
 
