@@ -9,13 +9,21 @@ var statutoryLevelsList;
 var statutoriesList;
 var complianceFrequencyList;
 
+function clearMessage() {
+  $(".error-message").hide();
+  $(".error-message").text("");
+}
+function displayMessage(message) {
+  $(".error-message").text(message);
+  $(".error-message").show();
+}
 
 $(function() {
   $(".grid-table-rpt").hide();
   getStatutoryMappings();
 });
 function getStatutoryMappings(){
-  function success(status,data){
+  function onSuccess(data){
     industriesList = data["industries"];
     statutoriesList = data["level_1_statutories"];
     countriesList = data["countries"];
@@ -32,14 +40,24 @@ function getStatutoryMappings(){
     $("#compliance_frequency").append(option);
     }
   }
-  function failure(data){
+  function onFailure(error){
+    displayMessage(error);
   }
-  mirror.getStatutoryMappingsReportFilter(success, failure);
+  mirror.getStatutoryMappingsReportFilter(
+    function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
 }
 
-function showResult(){ 
-  var country = $("#country").val();
-  var domain = $("#domain").val();
+$("#submit").click(function(){
+  var country = $("#country").val().trim();
+  var domain = $("#domain").val().trim();
   var industry = null;
   var statutorynature = null;
   var geography = null;
@@ -51,11 +69,11 @@ function showResult(){
   if($("#geography").val() != '') geography = $("#geography").val();
   if($("#act").val() != '') act = $("#act").val();
 
-  if(country==""){
-    $(".error-message").html("Country Required");
+  if(country.length == 0){
+    displayMessage("Country Required");
   }
-  else if(domain==""){
-    $(".error-message").html("Domain Required");  
+  else if(domain.length == 0){
+    displayMessage("Domain Required");  
   }
   else{
     var filterdata={};
@@ -66,29 +84,39 @@ function showResult(){
     filterdata["geography_id"]=parseInt(geography);
     filterdata["level_1_statutory_id"]=parseInt(act);
 
-    function success(status, data){
+    function onSuccess(response) {
      loadresult(data["statutory_mappings"]);
     }
-    function failure(status, data){
+    function onFailure(error){
+      onFailure(error);
     }
-    mirror.getStatutoryMappingsReportData(filterdata, success, failure);
+    mirror.getStatutoryMappingsReportData(filterdata, 
+      function (error, response) {
+        if (error == null){
+          onSuccess(response);
+        }
+        else {
+          onFailure(error);
+        }
+      });
   }
-}
+});
 
 //Autocomplete Script Starts
 //Hide list items after select
-function hidemenu() {
-  document.getElementById('autocompleteview').style.display = 'none';
-  document.getElementById('autocomplete_domain').style.display = 'none';
-  document.getElementById('autocomplete_industry').style.display = 'none';
-  document.getElementById('autocomplete_statutorynature').style.display = 'none';
-  document.getElementById('autocomplete_geography').style.display = 'none';
-  document.getElementById('autocomplete_statutory').style.display = 'none';
-}
+$(".hidemenu").click(function(){
+  $("#autocompleteview").hide(); 
+  $("#autocomplete_domain").hide();
+  $("#autocomplete_industry").hide();
+  $("#autocomplete_statutorynature").hide();
+  $("#autocomplete_geography").hide();
+  $("#autocomplete_statutory").hide();
+});
 
 //load country list in autocomplete text box  
-function loadauto_text (textval) {
-  document.getElementById('autocompleteview').style.display = 'block';
+$("#countryval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocompleteview").show();
   var countries = countriesList;
   var suggestions = [];
   $('#ulist_text').empty();
@@ -103,7 +131,7 @@ function loadauto_text (textval) {
     $('#ulist_text').append(str);
     $("#country").val('');
     }
-}
+});
 //set selected autocomplte value to textbox
 function activate_text (element,checkval,checkname) {
   $("#countryval").val(checkname);
@@ -111,8 +139,9 @@ function activate_text (element,checkval,checkname) {
 }
 
 //load domain list in autocomplete text box  
-function loadauto_domain (textval) {
-  document.getElementById('autocomplete_domain').style.display = 'block';
+$("#domainval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocomplete_domain").show();
   var domains = domainsList;
   var suggestions = [];
   $('#ulist_domain').empty();
@@ -127,7 +156,7 @@ function loadauto_domain (textval) {
     $('#ulist_domain').append(str);
     $("#domain").val('');
     }
-}
+});
 //set selected autocomplte value to textbox
 function activate_domain (element,checkval,checkname) {
   $("#domainval").val(checkname);
@@ -135,8 +164,9 @@ function activate_domain (element,checkval,checkname) {
 }
 
 //load domain list in autocomplete text box  
-function loadauto_industry (textval) {
-  document.getElementById('autocomplete_industry').style.display = 'block';
+$("#industryval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocomplete_industry").show();
   var industries = industriesList;
   var suggestions = [];
   $('#ulist_industry').empty();
@@ -151,7 +181,7 @@ function loadauto_industry (textval) {
     $('#ulist_industry').append(str);
     $("#industry").val('');
     }
-}
+});
 //set selected autocomplte value to textbox
 function activate_industry (element,checkval,checkname) {
   $("#industryval").val(checkname);
@@ -160,8 +190,9 @@ function activate_industry (element,checkval,checkname) {
 
 
 //load statutorynature list in autocomplete text box  
-function loadauto_statutorynature (textval) {
-  document.getElementById('autocomplete_statutorynature').style.display = 'block';
+$("#statutorynatureval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocomplete_statutorynature").show();
   var statutorynatures = statutoryNaturesList;
   var suggestions = [];
   $('#ulist_statutorynature').empty();
@@ -176,7 +207,7 @@ function loadauto_statutorynature (textval) {
     $('#ulist_statutorynature').append(str);
     $("#statutorynature").val('');
     }
-}
+});
 //set selected autocomplte value to textbox
 function activate_statutorynature (element,checkval,checkname) {
   $("#statutorynatureval").val(checkname);
@@ -184,8 +215,9 @@ function activate_statutorynature (element,checkval,checkname) {
 }
 
 //load statutorynature list in autocomplete text box  
-function loadauto_geography (textval) {
-  document.getElementById('autocomplete_geography').style.display = 'block';
+$("#geographyval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocomplete_geography").show();
   var geographies = geographiesList[$("#country").val()];
   var suggestions = [];
   $('#ulist_geography').empty();
@@ -200,7 +232,7 @@ function loadauto_geography (textval) {
     $('#ulist_geography').append(str);
     $("#geography").val('');
     }
-}
+});
 //set selected autocomplte value to textbox
 function activate_geography (element,checkval,checkname) {
   $("#geographyval").val(checkname);
@@ -208,8 +240,9 @@ function activate_geography (element,checkval,checkname) {
 }
 
 //load statutorynature list in autocomplete text box  
-function loadauto_statutory (textval) {
-  document.getElementById('autocomplete_statutory').style.display = 'block';
+$("#statutoryval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocomplete_statutory").show();
   var statutories = statutoriesList[$("#country").val()][$("#domain").val()];
   var suggestions = [];
   $('#ulist_statutory').empty();
@@ -224,7 +257,7 @@ function loadauto_statutory (textval) {
     $('#ulist_statutory').append(str);
     $("#statutory").val('');
     }
-}
+});
 //set selected autocomplte value to textbox
 function activate_statutory (element,checkval,checkname) {
   $("#statutoryval").val(checkname);

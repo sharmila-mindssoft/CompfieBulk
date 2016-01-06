@@ -91,9 +91,7 @@ if(validate()){
       $("#domain-view").show();
     }
     function onFailure(error){
-        if(error == "InvalidDomainId"){
-            displayMessage("Invalid Domain Id");
-        }                
+                      
         if(error == "DomainNameAlreadyExists"){
             displayMessage("Domain Name Already Exists");
         }
@@ -115,6 +113,10 @@ if(validate()){
       $("#domain-view").show();
       }
     function onFailure(error) {
+        if(error == "InvalidDomainId"){
+            displayMessage("Invalid Domain Id");
+        }  
+
         if(error == 'DomainNameAlreadyExists'){
             displayMessage("Domain Name Already Exists");
         }
