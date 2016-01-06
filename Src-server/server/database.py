@@ -11,7 +11,7 @@ from types import *
 from protocol import core, knowledgereport
 
 __all__ = [
-    "KnowledgeDatabase", "ClientDatabase"
+    "KnowledgeDatabase", "Database"
 ]
     
 class Database(object) :
@@ -256,6 +256,12 @@ class Database(object) :
         date = string.split("-")
         datetime_val = datetime.datetime(year=int(date[2]),month=self.integer_months[date[1]], day=int(date[0]))
         return datetime_val
+
+    def get_client_db_info(self):
+        columns = "database_ip, client_id, database_username, "+\
+        "database_password, database_name"
+        condition = "1"
+        return self.get_data("tbl_client_database", columns, condition)
 
 class KnowledgeDatabase(Database):
     def __init__(
@@ -2416,7 +2422,6 @@ class KnowledgeDatabase(Database):
         con.commit()
 
         con = self._db_connect(host, username, password, database_name)
-        _client_db_connections[client_id] = con
         cursor = con.cursor()
         sql_script_path = os.path.join(os.path.join(os.path.split(__file__)[0]), 
         "scripts/mirror-client.sql")
