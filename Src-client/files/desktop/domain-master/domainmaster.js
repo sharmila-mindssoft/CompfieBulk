@@ -1,4 +1,12 @@
 var tempDomainList;
+function clearMessage() {
+    $("#error").hide();
+    $("#error").text("");
+}
+function displayMessage(message) {
+    $("#error").text(message);
+    $("#error").show();
+}
 function loadDomainList (domainsList) {
   var j = 1;
   var imgName = '';
@@ -31,51 +39,71 @@ function loadDomainList (domainsList) {
     }
 }
 function displayAdd () {
-  $("#error").text("");
-  $("#listview").hide();
-  $("#addview").show();
-  $("#domainname").val('');
-  $("#domainid").val('');
+    displayMessage("");
+    $("#listview").hide();
+    $("#addview").show();
+    $("#domainname").val('');
+    $("#domainid").val('');
 }
 
 function saveRecord () {
-  domainId = parseInt($("#domainid").val());
-  domainName = $("#domainname").val();
+    domainId = parseInt($("#domainid").val());
+    domainName = $("#domainname").val();
 
-if(domainName == ''){
-  $("#error").text("Domain Name Required");
-}else{
-  if($("#domainid").val() == ''){
-    function success(status,data) {
-      if(status == 'success') {
-        getDomains ();
-        $("#listview").show();
-        $("#addview").hide();
-        $("#error").text("Record Added Successfully");
-      } else {
-        $("#error").text(status);
-      }
+    if(domainName == ''){
+        displayMessage("Domain Name Required");
     }
-    function failure(data){
+    else{
+        if($("#domainid").val() == ''){
+            function onSuccess(response) {
+                getDomains ();
+                $("#listview").show();
+                $("#addview").hide();
+                displayMessage("Record Added Successfully");
+            }
+            function onFailure(error){
+                if(error == "InvalidDomainId"){
+                    displayMessage("Invalid Domain Id");
+                }                
+                if(error == "DomainNameAlreadyExists"){
+                    displayMessage("Domain Name Already Exists");
+                }
+            }
+            mirror.saveDomain(domainName,
+                function (error, response) {
+                    if (error == null){
+                      onSuccess(response);
+                    }
+                    else {
+                      onFailure(error);
+                    }
+                }
+            );
+        }
+        else{
 
-    }
-    mirror.saveDomain(domainName, success, failure);
-  }
-  else{
-
-    function success(status,data){
-      if(status == 'success') {
+    function onSuccess(response){
+     
         getDomains()
         $("#listview").show();
         $("#addview").hide();
         $("#error").text("Record Updated Successfully");
-      } else {
-        $("#error").text(status);
-      }
+     
     }
-    function failure(data) {
+    function onFailure(error) {
+        if(error == 'DomainNameAlreadyExists'){
+            displayMessage("Domain Name Already Exists");
+        }
     }
-    mirror.updateDomain(domainId, domainName, success, failure);
+    mirror.updateDomain(domainId, domainName,
+        function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      });
   }
 }
 }   
@@ -89,24 +117,42 @@ function displayEdit (domainId,domainName) {
 }
 
 function changeStatus (domainId,isActive) {
-  function success(status,data){
+  function onSuccess(response){
     getDomains ();
     $("#error").text("Status Changed Successfully");
   }
-  function failure(data){
+  function onFailure(error){
   }
-  mirror.changeDomainStatus(domainId, isActive, success, failure);
+  mirror.changeDomainStatus(domainId, isActive,
+    function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+        }
+    );
 }
 
 function getDomains () {
-  function success(status,data){
-    tempDomainList = data["domains"];
-    domainsList = data["domains"];
-    loadDomainList(domainsList);
-  }
-  function failure(data){
-  }
-  mirror.getDomainList(success, failure);
+    function onSuccess(data){
+        tempDomainList = data["domains"];
+        domainsList = data["domains"];
+        loadDomainList(domainsList);
+    }
+    function onFailure(error){
+    }
+    mirror.getDomainList(
+        function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+        }
+    );
 }
 
 function filter (term, cellNr){
