@@ -1,23 +1,62 @@
-var tempDomainList;
+var domainsList;
+function clearMessage() {
+  $(".error-message").hide();
+  $(".error-message").text("");
+}
+function displayMessage(message) {
+  $(".error-message").text(message);
+  $(".error-message").show();
+}
+$(".btn-domain-add").click(function(){
+  $("#domain-view").hide();
+  $("#domain-add").show();
+  $("#domainname").val('');
+  $("#domainid").val('');
+  $(".error-message").html('');
+});
+$(".btn-domain-cancel").click(function(){
+  $("#domain-add").hide();
+  $("#domain-view").show();
+});
+
+function getDomains () {
+  function onSuccess(data){
+    domainsList = data["domains"];
+    loadDomainList(domainsList);
+  }
+  function onFailure(error){
+    displayMessage(error);
+  }
+  mirror.getDomainList(
+      function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
+}
+
 function loadDomainList (domainsList) {
   var j = 1;
-  var imgName = '';
-  var passStatus = '';
+  var imgName = null;
+  var passStatus = null;
   var domainId = 0;
-  var domainName = '';
-  var isActive = 0;
-  var domainList;
+  var domainName = null;
+  var isActive = false;
   $(".tbody-domain-list").find("tr").remove();
     for(var entity in domainsList) {
       domainId = domainsList[entity]["domain_id"];
       domainName = domainsList[entity]["domain_name"];
       isActive = domainsList[entity]["is_active"];
-      if(isActive == 1) {
-        passStatus="0";
+      if(isActive == true) {
+        passStatus=false;
         imgName="icon-active.png"
       }
       else {
-        passStatus="1";
+        passStatus=true;
         imgName="icon-inactive.png"
       }
       var tableRow=$('#templates .table-domain-master .table-row');
@@ -30,94 +69,115 @@ function loadDomainList (domainsList) {
       j = j + 1;
     }
 }
-function displayAdd () {
-  $("#error").text("");
-  $("#listview").hide();
-  $("#addview").show();
-  $("#domainname").val('');
-  $("#domainid").val('');
+
+function validate(){
+  if($("#domainname").val().trim().length==0){
+    displayMessage('Domain Name Required');
+  }else{
+    displayMessage('');
+    return true
+  }
 }
 
-function saveRecord () {
-  domainId = parseInt($("#domainid").val());
-  domainName = $("#domainname").val();
+$("#submit").click(function(){
+  var domainId = $("#domainid").val();
+  var domainName = $("#domainname").val();
 
-if(domainName == ''){
-  $("#error").text("Domain Name Required");
-}else{
+if(validate()){
   if($("#domainid").val() == ''){
-    function success(status,data) {
-      if(status == 'success') {
-        getDomains ();
-        $("#listview").show();
-        $("#addview").hide();
-        $("#error").text("Record Added Successfully");
-      } else {
-        $("#error").text(status);
-      }
+    function onSuccess(response) {
+      getDomains ();
+      $("#domain-add").hide();
+      $("#domain-view").show();
     }
-    function failure(data){
-
+    function onFailure(error){
+                      
+        if(error == "DomainNameAlreadyExists"){
+            displayMessage("Domain Name Already Exists");
+        }
     }
-    mirror.saveDomain(domainName, success, failure);
+    mirror.saveDomain(domainName,
+    function (error, response) {
+        if (error == null){
+          onSuccess(response);
+        }
+        else {
+          onFailure(error);
+        }
+      });
   }
   else{
-
-    function success(status,data){
-      if(status == 'success') {
-        getDomains()
-        $("#listview").show();
-        $("#addview").hide();
-        $("#error").text("Record Updated Successfully");
-      } else {
-        $("#error").text(status);
+    function onSuccess(response){
+      getDomains();
+      $("#domain-add").hide();
+      $("#domain-view").show();
       }
+    function onFailure(error) {
+        if(error == "InvalidDomainId"){
+            displayMessage("Invalid Domain Id");
+        }  
+
+        if(error == 'DomainNameAlreadyExists'){
+            displayMessage("Domain Name Already Exists");
+        }
     }
-    function failure(data) {
-    }
-    mirror.updateDomain(domainId, domainName, success, failure);
+    mirror.updateDomain(parseInt(domainId), domainName,
+        function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      });
   }
 }
-}   
+});   
+
+$('#domainname').keypress(function (e) {
+  if (e.which == 13) {
+    if(validate()){
+      jQuery('#submit').focus().click();
+    }
+  }
+});
 
 function displayEdit (domainId,domainName) {
-  $("#error").text("");
-  $("#listview").hide();
-  $("#addview").show();
+  $(".error-message").text("");
+  $("#domain-view").hide();
+  $("#domain-add").show();
   $("#domainname").val(domainName);
   $("#domainid").val(domainId);
 }
 
 function changeStatus (domainId,isActive) {
-  function success(status,data){
+  function onSuccess(response){
     getDomains ();
-    $("#error").text("Status Changed Successfully");
+    displayMessage("Status Changed Successfully");
   }
-  function failure(data){
+  function onFailure(error){
   }
-  mirror.changeDomainStatus(domainId, isActive, success, failure);
+  mirror.changeDomainStatus(domainId, isActive,
+    function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+        }
+    );
 }
 
-function getDomains () {
-  function success(status,data){
-    tempDomainList = data["domains"];
-    domainsList = data["domains"];
-    loadDomainList(domainsList);
-  }
-  function failure(data){
-  }
-  mirror.getDomainList(success, failure);
-}
-
-function filter (term, cellNr){
-  var filterkey = term.value.toLowerCase();
+$("#search-domain-name").keyup(function() { 
+  var filterkey = this.value.toLowerCase();
   var filteredList=[];
-    for(var entity in tempDomainList) {
-      domainName = tempDomainList[entity]["domain_name"];
-      if (~domainName.toLowerCase().indexOf(filterkey)) filteredList.push(tempDomainList[entity]);
+    for(var entity in domainsList) {
+      domainName = domainsList[entity]["domain_name"];
+      if (~domainName.toLowerCase().indexOf(filterkey)) filteredList.push(domainsList[entity]);
     }
   loadDomainList(filteredList);
-}
+});
 
 $(document).ready(function () {
   getDomains ();

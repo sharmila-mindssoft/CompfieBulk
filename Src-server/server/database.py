@@ -1,9 +1,9 @@
 import os
-import datetime
 import MySQLdb as mysql
 import hashlib
 import string
 import random
+import datetime
 import re
 import uuid
 import json
@@ -133,19 +133,29 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-
+        print query
         return self.select_all(query)
 
-    def get_data_from_multiple_tables(self, columns, tables, aliases, joinType, joinConditions, whereCondition):
+    def get_data_from_multiple_tables(self, columns, tables, aliases, joinType, 
+            joinConditions, whereCondition
+        ):
         query = "SELECT %s FROM " % columns
 
         for index,table in enumerate(tables):
             if index == 0:
-                query += "%s  %s  %s" % (table, aliases[index], joinType)
+                query += "%s  %s  %s" % (
+                    table, aliases[index], joinType
+                )
             elif index <= len(tables) -2:
-                query += " %s %s on (%s) %s " % (table, aliases[index], joinConditions[index-1], joinType)
+                query += " %s %s on (%s) %s " % (
+                    table, aliases[index], 
+                    joinConditions[index-1], joinType
+                )
             else:
-                query += " %s %s on (%s)" % (table, aliases[index],joinConditions[index-1])
+                query += " %s %s on (%s)" % (
+                    table, aliases[index], 
+                    joinConditions[index-1]
+                )
 
         query += " where %s" % whereCondition
         return self.select_all(query)
@@ -433,9 +443,9 @@ class KnowledgeDatabase(Database):
         self.execute(query)
         return True
 
-  #
-  # Domain
-  #
+    #
+    # Domain
+    #
 
     def get_domains_for_user(self, user_id) :
         # query = "CALL sp_get_domains_for_user (%s)" % (user_id)
@@ -450,8 +460,7 @@ class KnowledgeDatabase(Database):
             columns = ["domain_id", "domain_name", "is_active"]
             result = self.convert_to_dict(rows, columns)
         return self.return_domains(result)
-        
-    
+
     def return_domains(self, data):
         results = []
         for d in data :
@@ -459,7 +468,7 @@ class KnowledgeDatabase(Database):
                 d["domain_id"], d["domain_name"], bool(d["is_active"])
             ))
         return results
-    
+
     def save_domain(self, domain_name, user_id) :
         created_on = self.get_date_time()
         domain_id = self.get_new_id("domain_id", "tbl_domains")
@@ -556,7 +565,7 @@ class KnowledgeDatabase(Database):
         return results
 
 
-    
+
     def get_country_by_id(self, country_id) :
         q = "SELECT country_name FROM tbl_countries \
             WHERE country_id=%s" % country_id
@@ -2190,9 +2199,9 @@ class KnowledgeDatabase(Database):
         self.execute(query)
 
 
-#
-#   Forms
-#
+    #
+    #   Forms
+    #
     def get_forms(self):
         columns = "tf.form_id, tf.form_category_id, tfc.form_category, "+\
         "tf.form_type_id, tft.form_type, tf.form_name, tf.form_url, "+\
@@ -2214,9 +2223,9 @@ class KnowledgeDatabase(Database):
         rows = self.get_data(self.tblFormCategory, columns, condition)
         return rows
 
-#
-#   Admin User Group
-#
+    #
+    #   Admin User Group
+    #
     def is_duplicate_user_group_name(self, user_group_id, user_group_name):
         condition = "user_group_name ='%s' AND user_group_id != '%d'"%(
             user_group_name, user_group_id)
@@ -2269,9 +2278,9 @@ class KnowledgeDatabase(Database):
         result =  self.update(self.tblUserGroups, columns, values, condition)
         return result
 
-#
-#   Admin User
-#
+    #
+    #   Admin User
+    #
     def generate_new_user_id(self):
         return self.get_new_id("user_id", self.tblUsers)
 
@@ -2391,19 +2400,19 @@ class KnowledgeDatabase(Database):
         condition = "user_id='%d'" % user_id
         return self.update(self.tblUsers, columns, values, condition)
 
-#
-#   Group Company
-#
+    #
+    #   Group Company
+    #
     def generate_new_client_id(self):
         return self.get_new_id("client_id", self.tblClientGroups)
-
+    
     def is_duplicate_group_name(self, group_name, client_id):
         condition = "group_name ='%s' AND client_id != '%d'" % (group_name, client_id)
-        return self.is_already_exists(self.tblClientGroups, condition)   
-
+        return self.is_already_exists(self.tblClientGroups, condition)
+    
     def is_duplicate_group_username(self, username, client_id):
         condition = "email_id ='%s' AND client_id != '%d'" % (username, client_id)
-        return self.is_already_exists(self.tblClientGroups, condition)     
+        return self.is_already_exists(self.tblClientGroups, condition) 
 
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
@@ -2499,7 +2508,6 @@ class KnowledgeDatabase(Database):
         con.commit()
 
         con = self._db_connect(host, username, password, database_name)
-        _client_db_connections[client_id] = con
         cursor = con.cursor()
         sql_script_path = os.path.join(os.path.join(os.path.split(__file__)[0]), 
         "scripts/mirror-client.sql")
@@ -2688,7 +2696,7 @@ class KnowledgeDatabase(Database):
         values = [client_id, legal_entity_id, legal_entity_name, business_group_id, 
         session_user, current_time_stamp, session_user, current_time_stamp]
         return self.insert(self.tblLegalEntities, columns, values)
-    
+
     def update_legal_entity(self, client_id, legal_entity_id, legal_entity_name, business_group_id, session_user):
         current_time_stamp = self.get_date_time()
         columns = ["legal_entity_name", "updated_by", "updated_on"]

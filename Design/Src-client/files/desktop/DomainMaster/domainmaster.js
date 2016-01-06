@@ -28,7 +28,6 @@ function loadDomainList (domainsList) {
   var domainId = 0;
   var domainName = null;
   var isActive = 0;
-  var domainList;
   $(".tbody-domain-list").find("tr").remove();
     for(var entity in domainsList) {
       domainId = domainsList[entity]["domain_id"];
@@ -54,7 +53,7 @@ function loadDomainList (domainsList) {
 }
 
 function validate(){
-  if($("#domainname").val().length==0){
+  if($("#domainname").val().trim().length==0){
     $(".error-message").html('Domain Name Required');
   }else{
     $(".error-message").html('');

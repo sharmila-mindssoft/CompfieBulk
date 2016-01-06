@@ -153,30 +153,30 @@ function changeStatus (userId,isActive) {
 }
 
 function validate(){
-	var employeeName = $("#employeename").val();
-	var employeeId = $("#employeeid").val();
-	var contactNo = $("#contactno").val();
+	var employeeName = $("#employeename").val().trim();
+	var employeeId = $("#employeeid").val().trim();
+	var contactNo = $("#contactno").val().trim();
 	var userGroup = parseInt($("#usergroup").val());
-	var domain = $("#domain").val();
-	var country = $("#country").val();
-	var emailId = $("#emailid").val();
+	var domain = $("#domain").val().trim();
+	var country = $("#country").val().trim();
+	var emailId = $("#emailid").val().trim();
 	var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 
-	if(employeeName == '') {
+	if(employeeName.length == 0) {
 		$(".error-message").html("Employee Name Required");
-	} else if(employeeId == '') {
+	} else if(employeeId.length == 0) {
 		$(".error-message").html("Employee Id Required");
-	} else if(contactNo == '') {
+	} else if(contactNo.length == 0) {
 		$(".error-message").html("Contact Number Required");
-	} else if(userGroup == '') {
+	} else if(userGroup.length == 0) {
 		$(".error-message").html("User Group Required");
-	} else if(domain == '') {
+	} else if(domain.length == 0) {
 		$(".error-message").html("Domain Required");
-	} else if(emailId == '') {
+	} else if(emailId.length == 0) {
 		$(".error-message").html("Email Id Required");
 	} else if(reg.test(emailId) == false) {
 		$(".error-message").html("Invalid Email Address");
-	} else if(country == '') {
+	} else if(country.length == 0) {
 		$(".error-message").html("Country Required");
   }else{
     $(".error-message").html('');
