@@ -21,22 +21,22 @@ $(".btn-domain-cancel").click(function(){
 
 function getDomains () {
   function onSuccess(data){
-        domainsList = data["domains"];
-        loadDomainList(domainsList);
-    }
-    function onFailure(error){
-    }
-    mirror.getDomainList(
-        function (error, response) {
-           alert(error);
-            if (error == null){
-              onSuccess(response);
-            }
-            else {
-              onFailure(error);
-            }
-        }
-    );
+    domainsList = data["domains"];
+    loadDomainList(domainsList);
+  }
+  function onFailure(error){
+    displayMessage(error);
+  }
+  mirror.getDomainList(
+      function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
 }
 
 function loadDomainList (domainsList) {

@@ -22,22 +22,22 @@ $(".btn-industry-cancel").click(function(){
 
 function getIndustries () {
   function onSuccess(data){
-
       industriesList = data["industries"];
       loadIndustryList(industriesList);
-    }
-    function onFailure(error){
-    }
-    mirror.getIndustryList(
-        function (error, response) {
-            if (error == null){
-              onSuccess(response);
-            }
-            else {
-              onFailure(error);
-            }
-        }
-    );
+  }
+  function onFailure(error){
+    displayMessage(error);
+  }
+  mirror.getIndustryList(
+      function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
 }
 
 function loadIndustryList (industriesList) {

@@ -28,19 +28,18 @@ function GetStatutoryLevels(){
     domainsList = data["domains"];
   }
   function onFailure(error){
-    //displayMessage(error);
+    displayMessage(error);
   }
   mirror.getStatutoryLevels(
-        function (error, response) {
-          alert(error);
-            if (error == null){
-              onSuccess(response);
-            }
-            else {
-              onFailure(error);
-            }
+    function (error, response) {
+        if (error == null){
+          onSuccess(response);
         }
-    );
+        else {
+          onFailure(error);
+        }
+    }
+);
 }
 
 //Autocomplete Script Starts
