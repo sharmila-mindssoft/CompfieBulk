@@ -440,6 +440,7 @@ class KnowledgeDatabase(Database):
             VALUES (%s, %s, %s, '%s', '%s')" % (
                 activityId, user_id, form_id, action, created_on
             )
+        print query
         self.execute(query)
         return True
 
@@ -677,6 +678,7 @@ class KnowledgeDatabase(Database):
         query = "UPDATE %s SET %s WHERE %s" % (
             table_name, field_with_data, where_condition
         )
+        print query
         self.execute(query)
         return True
 
@@ -1201,15 +1203,16 @@ class KnowledgeDatabase(Database):
             return False
         table_name = "tbl_geographies"
         field_with_data = "is_active=%s, updated_by=%s"  % (
-            int(is_active), updated_by
+            int(is_active), int(updated_by)
         )
-        where_condition = "geography_id = %s" %  (geography_id)
-        if (self. update_data(table_name, field_with_data, where_condition)) :
+        where_condition = "geography_id = %s" %  (int(geography_id))
+        if (self.update_data(table_name, field_with_data, where_condition)) :
+            print "update status"
             if is_active == 0:
                 status = "deactivated"
             else:
                 status = "activated"
-            action = "Geography %s status  - %s" % (name, status)
+            action = "Geography %s status  - %s" % (oldData["geography_name"], status)
             self.save_activity(updated_by, 6, action)
             return True
 
