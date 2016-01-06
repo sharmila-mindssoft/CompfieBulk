@@ -40,8 +40,10 @@ def cors_handler(request, response):
 def api_request(
     request_data_type
 ):
+    print "request_data_type:{}".format(request_data_type)
     def wrapper(f):
         def wrapped(self, request, response):
+            print "request inside wrapper {}".format(request)
             self.handle_api_request(
                 f, request, response,
                 request_data_type
@@ -76,6 +78,7 @@ class API(object):
         request_data = None
         try:
             data = json.loads(request.body())
+            print "data:{}".format(data)
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -92,6 +95,7 @@ class API(object):
         self, unbound_method, request, response,
         request_data_type
     ):
+        print "reuqest inside handle_api_request : {}".format(request)
         response.set_default_header("Access-Control-Allow-Origin", "*")
         ip_address = unicode(request.remote_ip())
         request_data = self._parse_request(

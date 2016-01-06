@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-from server.clientmain import run_server
+from server.main import run_server
 
 args_parser = argparse.ArgumentParser()
 args_parser.add_argument(
