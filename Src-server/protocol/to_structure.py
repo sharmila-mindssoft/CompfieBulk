@@ -353,6 +353,11 @@ def to_structure_VectorType_CustomTextType_50(data):
         lst.append(to_structure_CustomTextType_50(item))
     return lst
 
+def to_structure_OptionalType_VectorType_CustomTextType_50(data):
+    if data is None: return data
+    return to_structure_VectorType_CustomTextType_50(data)
+
+
 def to_structure_VectorType_RecordType_clientreport_ComplianceList(data):
     data = parse_list(data, 0)
     lst = []
