@@ -329,7 +329,6 @@ class KnowledgeDatabase(Database):
             print len(data_list[0]), len(columns)
             if len(data_list[0]) == len(columns) :
                 for data in data_list:
-                    print data
                     result = {}
                     for i, d in enumerate(data):
                         result[columns[i]] = d
@@ -902,27 +901,13 @@ class KnowledgeDatabase(Database):
     def check_duplicate_levels(self, country_id, domain_id, levels) :
         saved_names = [row["level_name"] for row in self.get_levels_for_country_domain(country_id, domain_id)]
 
-        level_names = []
-        level_positions = []
         for level in levels :
             name = level.level_name
-            position = level.level_position
             if level.level_id  is None :
                 if (saved_names.count(name) > 0) :
                     print "LevelIdCannotNullFor '%s'" % name
                     return name
-            level_names.append(name)
-            level_positions.append(position)
-
-        duplicate_names = [x for i, x in enumerate(level_names) if level_names.count(x) > 1]
-        duplicate_position = [x for i, x in enumerate(level_positions) if level_positions.count(x) > 1]
-        if len(duplicate_names) > 0 :
-            # self.responseData = "DuplicateStatutoryLevelNamesExists"
-            return True
-        elif len(duplicate_position) > 0 :
-            # self.responseData = "DuplicateStatutoryLevelPositionsExists"
-            return True
-        return False
+        return None
 
     def save_statutory_levels(self, country_id, domain_id, levels, user_id) :
 
@@ -995,26 +980,13 @@ class KnowledgeDatabase(Database):
     def check_duplicate_gepgrahy_levels(self, country_id, levels) :
         saved_names = [row["level_name"] for row in self.get_geography_levels_for_country(country_id)]
 
-        level_names = []
-        level_positions = []
         for level in levels :
             name = level.level_name
-            position = level.level_position
             if level.level_id  is None :
                 if (saved_names.count(name) > 0) :
                     print "LevelIdCannotNullFor '%s'" % name
                     return name
-            level_names.append(name)
-            level_positions.append(position)
-        duplicate_names = [x for i, x in enumerate(level_names) if level_names.count(x) > 1]
-        duplicate_position = [x for i, x in enumerate(level_positions) if level_positions.count(x) > 1]
-        if len(duplicate_names) > 0 :
-            # self.responseData = "DuplicateStatutoryLevelNamesExists"
-            return True
-        elif len(duplicate_position) > 0 :
-            # self.responseData = "DuplicateStatutoryLevelPositionsExists"
-            return True
-        return False
+        return None
 
     def save_geography_levels(self, country_id, levels, user_id):
         table_name = "tbl_geography_levels"
@@ -1522,8 +1494,9 @@ class KnowledgeDatabase(Database):
             statutory_mapping_list = []
             for s_id in statutory_ids :
                 statutory_mapping_list.append(
-                    self.statutory_parent_mapping.get(int(g_id))
+                    self.statutory_parent_mapping.get(int(g_id))[1]
                 )
+            print statutory_mapping_list
             approval_status = self.get_approval_status(
                 int(d["approval_status"])
             )
@@ -1538,7 +1511,7 @@ class KnowledgeDatabase(Database):
                 statutory_ids, statutory_mapping_list,
                 compliances, compliance_names, geography_ids,
                 geography_mapping_list, approval_status,
-                d["is_active"],
+                bool(d["is_active"]),
             )
             mapping_data_list[mapping_id] = statutory
         return mapping_data_list
