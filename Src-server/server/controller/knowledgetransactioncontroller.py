@@ -46,7 +46,8 @@ def process_get_statutory_mappings(db, user_id):
         countries, domains, industries, statutory_natures, 
         statutory_levels, statutories, geography_levels, geographies,
         compliance_frequency, compliance_repeat_type,
-        compliance_duration_type, compliance_approval_status,
+        compliance_approval_status,
+        compliance_duration_type, 
         statutory_mappings
     )
 

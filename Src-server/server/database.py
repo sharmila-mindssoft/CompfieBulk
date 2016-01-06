@@ -336,8 +336,10 @@ class KnowledgeDatabase(Database):
         assert type(data_list) in (list, tuple)
         if type(data_list[0]) is tuple :
             result_list = []
+            print len(data_list[0]), len(columns)
             if len(data_list[0]) == len(columns) :
                 for data in data_list:
+                    print data
                     result = {}
                     for i, d in enumerate(data):
                         result[columns[i]] = d
@@ -643,14 +645,12 @@ class KnowledgeDatabase(Database):
         rows = self.get_data_from_multiple_tables(
             columns, tables, aliases, joinType, joinConditions, whereCondition
         )
-        print rows
         row_columns = [
             "form_id", "form_category_id", "form_category", 
             "form_type_id", "form_type", "form_name", "form_url", 
             "form_order", "parent_menu"
         ]
         result = self.convert_to_dict(rows, row_columns)
-        print result
         return result
 
     def get_form_types(self) :
@@ -824,7 +824,7 @@ class KnowledgeDatabase(Database):
         nature_id = self.get_new_id("statutory_nature_id", table_name)
         field = "(statutory_nature_id, statutory_nature_name, \
             created_by, created_on)"
-        data = (nature_id, nature_name, user_id, created_on)
+        data = (nature_id, nature_name, int(user_id), str(created_on))
         if (self.save_data(table_name, field, data)):
             action = "New Statutory Nature %s added" % (nature_name)
             self.save_activity(user_id, 8, action)
@@ -946,8 +946,8 @@ class KnowledgeDatabase(Database):
                 field = "(level_id, level_position, level_name, \
                     country_id, domain_id, created_by, created_on)"
                 data = (
-                    level_id, position, name, country_id, 
-                    domain_id, user_id, created_on
+                    int(level_id), position, name, int(country_id), 
+                    int(domain_id), int(user_id), str(created_on)
                 )
                 if (self.save_data(table_name, field, data)):
                     action = "New Statutory levels added"
@@ -1016,7 +1016,6 @@ class KnowledgeDatabase(Database):
                     return name
             level_names.append(name)
             level_positions.append(position)
-        print "after for"
         duplicate_names = [x for i, x in enumerate(level_names) if level_names.count(x) > 1]
         duplicate_position = [x for i, x in enumerate(level_positions) if level_positions.count(x) > 1]
         if len(duplicate_names) > 0 :
@@ -1076,7 +1075,6 @@ class KnowledgeDatabase(Database):
                 _list = []
             _list.append(geography)
             geographies[country_id] = _list
-        print geographies
         return geographies
 
     def get_geographies_for_user(self, user_id):
@@ -1140,8 +1138,8 @@ class KnowledgeDatabase(Database):
         field = "(geography_id, geography_name, level_id, \
             parent_ids, created_by, created_on)"
         data = (
-            geography_id, geography_name, geography_level_id, 
-            parent_ids, user_id, created_on
+            geography_id, geography_name, int(geography_level_id), 
+            parent_ids, int(user_id), str(created_on)
         )
         if (self.save_data(table_name, field, data)) :
             action = "New Geography %s added" % (geography_id)
@@ -1255,7 +1253,6 @@ class KnowledgeDatabase(Database):
             mappings = self.statutory_parent_mapping.get(
                 statutory_id
             )
-            print mappings[1]
             parent_ids = [
                 int(x) for x in d["parent_ids"][:-1].split(',')
             ]
@@ -1277,7 +1274,6 @@ class KnowledgeDatabase(Database):
             _list.append(statutory)
             country_wise[domain_id] = _list
             statutories[country_id] = country_wise
-        print statutories
         return statutories
 
     def get_country_wise_level_1_statutoy(self) :
@@ -1311,8 +1307,8 @@ class KnowledgeDatabase(Database):
         field = "(statutory_id, statutory_name, level_id, \
             parent_ids, created_by, created_on)"
         data = (
-            statutory_id, name, level_id, parent_ids, 
-            user_id, created_on
+            statutory_id, name, int(level_id), parent_ids, 
+            int(user_id), str(created_on)
         )
 
         if (self.save_data(db, field, data)) :
@@ -1406,9 +1402,10 @@ class KnowledgeDatabase(Database):
         def return_compliance_duration(data):
             duration_list = []
             for d in data :
+                duration = core.DURATION_TYPE(d["duration_type"])
                 duration_list.append(
                     core.ComplianceDurationType(
-                        d["duration_type_id"], d["duration_type"]
+                        d["duration_type_id"], duration
                     )
                 )
             return duration_list
@@ -1423,9 +1420,10 @@ class KnowledgeDatabase(Database):
         def return_compliance_repeat(data):
             repeat_list = []
             for d in data :
+                repeat = core.REPEATS_TYPE(d["repeat_type"])
                 repeat_list.append(
                     core.ComplianceRepeatType(
-                        d["repeat_type_id"], d["repeat_type"]
+                        d["repeat_type_id"], repeat
                     )
                 )
             return repeat_list
@@ -1440,9 +1438,12 @@ class KnowledgeDatabase(Database):
         def return_compliance_frequency(data) :
             frequency_list = []
             for d in data :
+                frequency = core.COMPLIANCE_FREQUENCY(
+                    d["frequency"]
+                )
                 frequency_list.append(
                     core.ComplianceFrequency(
-                        d["frequency_id"], d["frequency"]
+                        d["frequency_id"], frequency
                     )
                 )
             return frequency_list
@@ -1457,11 +1458,11 @@ class KnowledgeDatabase(Database):
         def return_approval_status(data):
             approval_list = []
             for sts in enumerate(data) :
-                approval_list.append(
-                    core.ComplianceApprovalStatus(
-                        sts[0], sts[1]
-                    )
+                approve = core.APPROVAL_STATUS(sts[1])
+                c_approval = core.ComplianceApprovalStatus(
+                    sts[0], approve
                 )
+                approval_list.append(c_approval)
             return approval_list
 
         status = ("Pending", "Approve", "Reject", "Approve & Notify")
@@ -1491,20 +1492,24 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t1.country_id = t6.country_id \
             and t6.user_id = %s" %(user_id, user_id)
+        print q
         rows = self.select_all(q)
+        print rows
         columns = [
             "statutory_mapping_id", "country_id", 
-            "country_name", "domain_name", "industry_ids", 
+            "country_name", "domain_id", "domain_name", "industry_ids", 
             "statutory_nature_id", "statutory_nature_name", 
             "statutory_ids", "compliance_ids", "geography_ids",
             "approval_status", "is_active"
         ]
         result = self.convert_to_dict(rows, columns)
+        print result
         return self.return_statutory_mappings(result)
 
     def return_statutory_mappings(self, data):
-        mapping_data_list = []
+        mapping_data_list = {}
         for d in data :
+            mapping_id = int(d["statutory_mapping_id"])
             industry_names = ""
             compliance_ids = d["compliance_ids"]
             compliances_data = self.get_compliance_by_id (
@@ -1532,17 +1537,20 @@ class KnowledgeDatabase(Database):
             approval_status = self.get_approval_status(
                 int(d["approval_status"])
             )
+            industry_ids = [
+                int(x) for x in d["industry_ids"][:-1].split(',')
+            ]
             statutory = core.StatutoryMapping(
                 d["country_id"], d["country_name"],
                 d["domain_id"], d["domain_name"],
-                d["industry_ids"], industry_names,
+                industry_ids, industry_names,
                 d["statutory_nature_id"], d["statutory_nature_name"],
                 statutory_ids, statutory_mapping_list,
                 compliances, compliance_names, geography_ids,
                 geography_mapping_list, approval_status,
                 d["is_active"],
             )
-            mapping_data_list.append(statutory)
+            mapping_data_list[mapping_id] = statutory
         return mapping_data_list
 
     def get_statutory_mapping_report(
@@ -1583,7 +1591,7 @@ class KnowledgeDatabase(Database):
         rows = self.select_all(q)
         columns = [
             "statutory_mapping_id", "country_id", 
-            "country_name", "domain_name", "industry_ids", 
+            "country_name", "domain_id", "domain_name", "industry_ids", 
             "statutory_nature_id", "statutory_nature_name", 
             "statutory_ids", "compliance_ids", "geography_ids",
             "approval_status", "is_active"
@@ -1659,7 +1667,7 @@ class KnowledgeDatabase(Database):
             "is_active"
         ]
         result = self.convert_to_dict(rows, columns)
-        return return_compliance(result)
+        return self.return_compliance(result)
 
     def return_compliance(self, data):
         compliance_names =  []
@@ -1678,7 +1686,7 @@ class KnowledgeDatabase(Database):
                 document_name, d["format_file"],
                 d["penal_consequences"], d["frequency_id"],
                 statutory_dates, d["repeats_type_id"],
-                d["repeats_type"], d["duration_type_id"],
+                d["repeats_every"], d["duration_type_id"],
                 d["duration"], bool(d["is_active"])
             )
             compalinaces.append(compliance)
@@ -1706,9 +1714,10 @@ class KnowledgeDatabase(Database):
             industry_ids, statutory_nature_id, statutory_ids, \
             geography_ids, is_active, created_by, created_on)"
         data = (
-            statutory_mapping_id, country_id, domain_id, 
-            industry_ids, nature_id, statutory_ids, 
-            geography_ids, is_active, created_by, created_on
+            statutory_mapping_id, int(country_id), int(domain_id), 
+            industry_ids, int(nature_id), statutory_ids, 
+            geography_ids, int(is_active), 
+            int(created_by), str(created_on)
         )
         if (self.save_data(statutory_table, field, data)) :            
             self.update_statutory_mapping_id(
