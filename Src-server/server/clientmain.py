@@ -15,7 +15,7 @@ from protocol import (
 )
 from server.clientdatabase import ClientDatabase
 
-import controller 
+import clientcontroller as controller 
 import MySQLdb as mysql
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
@@ -79,8 +79,6 @@ class API(object):
                 data
             )
         except Exception, e:
-            print "request_data_type:{}".format(request_data_type)
-            print "request_data:{}".format(request_data)
             print e
             response.set_status(400)
             response.send(str(e))
@@ -104,15 +102,15 @@ class API(object):
                 response_data, response
             )
 
-        self._db.begin()
+        # self._db.begin()
         try:
             response_data = unbound_method(self, request_data, self._db)
-            self._db.commit()
+            # self._db.commit()
             respond(response_data)
         except Exception, e:
             print(traceback.format_exc())
             print e
-            self._db.rollback()
+            # self._db.rollback()
 
 
     @api_request(login.Request)
@@ -120,6 +118,9 @@ class API(object):
         return controller.process_login_request(request, db)
         # return login.ResetPasswordSuccess()
 
+    @api_request(clientmasters.RequestFormat)
+    def handle_client_masters(self, request, db):
+        return controller.process_client_master_requests(request, db)
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
@@ -192,6 +193,7 @@ def run_server(port):
 
         api_urls_and_handlers = [
             ("/api/login", api.handle_login),
+            ("/api/client_masters", api.handle_client_masters),
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)
