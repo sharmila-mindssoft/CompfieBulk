@@ -1142,7 +1142,10 @@ class KnowledgeDatabase(Database):
         
         rows = self.select_all(query)
         columns = ["geography_id", "geography_name", "level_id", "is_active"]
-        return self.convert_to_dict(rows, columns)
+        result = []
+        if rows :
+            result = self.convert_to_dict(rows, columns)
+        return result
 
 
     def save_geography(self, geography_level_id, geography_name, parent_ids, user_id) :
