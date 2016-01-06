@@ -34,13 +34,14 @@ def process_get_statutory_mappings(db, user_id):
     statutory_natures = db.get_statutory_nature()
     statutory_levels = db.get_statutory_levels()
     statutories = db.get_statutory_master()
-    geography_levels = db.get_get_geography_levels()
+    geography_levels = db.get_geography_levels()
     geographies = db.get_geographies()
     compliance_frequency = db.get_compliance_frequency()
     compliance_repeat_type = db.get_compliance_repeat()
     compliance_duration_type = db.get_compliance_duration()
     compliance_approval_status = db.get_approval_status()
     statutory_mappings = db.get_statutory_mappings(user_id)
+    print "return statutory_mappings"
     return knowledgetransaction.GetStatutoryMappingsSuccess(
         countries, domains, industries, statutory_natures, 
         statutory_levels, statutories, geography_levels, geographies,
