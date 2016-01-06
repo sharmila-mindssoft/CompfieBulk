@@ -852,7 +852,7 @@ class Compliance(object):
         document_name = data.get("document_name")
         document_name = parse_structure_CustomTextType_50(document_name)
         format_file_name = data.get("format_file_name")
-        format_file_name = parse_structure_VectorType_CustomTextType_50(format_file_name)
+        format_file_name = parse_structure_OptionalType_VectorType_CustomTextType_50(format_file_name)
         penal_description = data.get("penal_description")
         penal_description = parse_structure_CustomTextType_500(penal_description)
         frequency_id = data.get("frequency_id")
@@ -878,7 +878,7 @@ class Compliance(object):
             "compliance_task": to_structure_CustomTextType_50(self.compliance_task),
             "description": to_structure_CustomTextType_500(self.description),
             "document_name": to_structure_CustomTextType_50(self.document_name),
-            "format_file_name": to_structure_VectorType_CustomTextType_50(self.format_file_name),
+            "format_file_name": to_structure_OptionalType_VectorType_CustomTextType_50(self.format_file_name),
             "penal_description": to_structure_CustomTextType_500(self.penal_description),
             "frequency_id": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.frequency_id),
             "statutory_dates": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
