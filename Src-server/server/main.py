@@ -66,7 +66,7 @@ class API(object):
         assert response is not None
         data = response_data.to_structure()
         s = json.dumps(data, indent=2)
-        print s
+        #print s
         response.send(s)
 
     def _parse_request(

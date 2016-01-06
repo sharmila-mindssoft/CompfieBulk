@@ -5,7 +5,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_dashboard_CompliedMap,
     parse_structure_VariantType_dashboard_Request,
     parse_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails,
-    parse_structure_SignedIntegerType_8,
+    parse_structure_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_dashboard_ChartDataMap,
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance,
     parse_structure_VectorType_RecordType_core_BusinessGroup,
@@ -157,9 +157,9 @@ class GetEscalationsChart(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "from_date", "to_date", "filter_type", "filter_id"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         from_date = data.get("from_date")
         from_date = parse_structure_CustomTextType_20(from_date)
         to_date = data.get("to_date")
@@ -167,7 +167,7 @@ class GetEscalationsChart(Request):
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
         return GetEscalationsChart(country_id, domain_id, from_date, to_date, filter_type, filter_id)
 
     def to_inner_structure(self):
@@ -193,9 +193,9 @@ class GetNotCompliedChart(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "from_date", "to_date", "filter_type", "filter_id"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         from_date = data.get("from_date")
         from_date = parse_structure_CustomTextType_20(from_date)
         to_date = data.get("to_date")
@@ -203,7 +203,7 @@ class GetNotCompliedChart(Request):
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
         return GetNotCompliedChart(country_id, domain_id, from_date, to_date, filter_type, filter_id)
 
     def to_inner_structure(self):
@@ -229,9 +229,9 @@ class GetTrendChart(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "from_date", "to_date", "filter_type", "filter_id"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         from_date = data.get("from_date")
         from_date = parse_structure_CustomTextType_20(from_date)
         to_date = data.get("to_date")
@@ -239,7 +239,7 @@ class GetTrendChart(Request):
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
         return GetTrendChart(country_id, domain_id, from_date, to_date, filter_type, filter_id)
 
     def to_inner_structure(self):
@@ -265,9 +265,9 @@ class GetComplianceApplicabilityStatusChart(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "from_date", "to_date", "filter_type", "filter_id"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         from_date = data.get("from_date")
         from_date = parse_structure_CustomTextType_20(from_date)
         to_date = data.get("to_date")
@@ -275,7 +275,7 @@ class GetComplianceApplicabilityStatusChart(Request):
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
         return GetComplianceApplicabilityStatusChart(country_id, domain_id, from_date, to_date, filter_type, filter_id)
 
     def to_inner_structure(self):
@@ -300,15 +300,15 @@ class GetAssigneeWiseCompliancesChart(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "business_group_id", "legal_entity_id", "division_id", "unit_id"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_SignedIntegerType_8(business_group_id)
+        business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_SignedIntegerType_8(legal_entity_id)
+        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
         division_id = data.get("division_id")
-        division_id = parse_structure_SignedIntegerType_8(division_id)
+        division_id = parse_structure_UnsignedIntegerType_32(division_id)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         return GetAssigneeWiseCompliancesChart(country_id, business_group_id, legal_entity_id, division_id, unit_id)
 
     def to_inner_structure(self):
@@ -329,9 +329,9 @@ class GetAssigneeWiseComplianceDrillDown(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["assignee_id", "domain_id"])
         assignee_id = data.get("assignee_id")
-        assignee_id = parse_structure_SignedIntegerType_8(assignee_id)
+        assignee_id = parse_structure_UnsignedIntegerType_32(assignee_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         return GetAssigneeWiseComplianceDrillDown(assignee_id, domain_id)
 
     def to_inner_structure(self):
@@ -352,7 +352,7 @@ class GetComplianceStatusDrillDownData(Request):
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
         compliance_status = data.get("compliance_status")
         compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
         return GetComplianceStatusDrillDownData(filter_type, filter_id, compliance_status)
@@ -376,9 +376,9 @@ class GetEscalationsDrillDownData(Request):
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
         year = data.get("year")
-        year = parse_structure_SignedIntegerType_8(year)
+        year = parse_structure_UnsignedIntegerType_32(year)
         return GetEscalationsDrillDownData(filter_type, filter_id, year)
 
     def to_inner_structure(self):
@@ -400,7 +400,7 @@ class GetComplianceApplicabilityStatusDrillDown(Request):
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
         applicability_status = data.get("applicability_status")
         applicability_status = parse_structure_EnumType_core_APPLICABILITY_STATUS(applicability_status)
         return GetComplianceApplicabilityStatusDrillDown(filter_type, filter_id, applicability_status)
@@ -423,7 +423,7 @@ class GetNotCompliedDrillDown(Request):
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
         return GetNotCompliedDrillDown(filter_type, filter_id)
 
     def to_inner_structure(self):
@@ -443,7 +443,7 @@ class GetTrendChartDrillDownData(Request):
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
         return GetTrendChartDrillDownData(filter_type, filter_id)
 
     def to_inner_structure(self):
@@ -567,13 +567,13 @@ class GetNotCompliedChartSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["T_0_to_30_days_count", "T_31_to_60_days_count", "T_61_to_90_days_count", "Above_90_days_count"])
         T_0_to_30_days_count = data.get("T_0_to_30_days_count")
-        T_0_to_30_days_count = parse_structure_SignedIntegerType_8(T_0_to_30_days_count)
+        T_0_to_30_days_count = parse_structure_UnsignedIntegerType_32(T_0_to_30_days_count)
         T_31_to_60_days_count = data.get("T_31_to_60_days_count")
-        T_31_to_60_days_count = parse_structure_SignedIntegerType_8(T_31_to_60_days_count)
+        T_31_to_60_days_count = parse_structure_UnsignedIntegerType_32(T_31_to_60_days_count)
         T_61_to_90_days_count = data.get("T_61_to_90_days_count")
-        T_61_to_90_days_count = parse_structure_SignedIntegerType_8(T_61_to_90_days_count)
+        T_61_to_90_days_count = parse_structure_UnsignedIntegerType_32(T_61_to_90_days_count)
         Above_90_days_count = data.get("Above_90_days_count")
-        Above_90_days_count = parse_structure_SignedIntegerType_8(Above_90_days_count)
+        Above_90_days_count = parse_structure_UnsignedIntegerType_32(Above_90_days_count)
         return GetNotCompliedChartSuccess(T_0_to_30_days_count, T_31_to_60_days_count, T_61_to_90_days_count, Above_90_days_count)
 
     def to_inner_structure(self):
@@ -614,11 +614,11 @@ class GetComplianceApplicabilityStatusChartSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["applicable_count", "not_applicable_count", "not_opted_count"])
         applicable_count = data.get("applicable_count")
-        applicable_count = parse_structure_SignedIntegerType_8(applicable_count)
+        applicable_count = parse_structure_UnsignedIntegerType_32(applicable_count)
         not_applicable_count = data.get("not_applicable_count")
-        not_applicable_count = parse_structure_SignedIntegerType_8(not_applicable_count)
+        not_applicable_count = parse_structure_UnsignedIntegerType_32(not_applicable_count)
         not_opted_count = data.get("not_opted_count")
-        not_opted_count = parse_structure_SignedIntegerType_8(not_opted_count)
+        not_opted_count = parse_structure_UnsignedIntegerType_32(not_opted_count)
         return GetComplianceApplicabilityStatusChartSuccess(applicable_count, not_applicable_count, not_opted_count)
 
     def to_inner_structure(self):
@@ -837,7 +837,7 @@ class DataMap(object):
         filter_name = data.get("filter_name")
         filter_name = parse_structure_CustomTextType_100(filter_name)
         no_of_compliances = data.get("no_of_compliances")
-        no_of_compliances = parse_structure_SignedIntegerType_8(no_of_compliances)
+        no_of_compliances = parse_structure_UnsignedIntegerType_32(no_of_compliances)
         return DataMap(filter_name, no_of_compliances)
 
     def to_structure(self):
@@ -886,9 +886,9 @@ class EscalationData(object):
         year = data.get("year")
         year = parse_structure_CustomTextType_20(year)
         delayed_compliance_count = data.get("delayed_compliance_count")
-        delayed_compliance_count = parse_structure_SignedIntegerType_8(delayed_compliance_count)
+        delayed_compliance_count = parse_structure_UnsignedIntegerType_32(delayed_compliance_count)
         not_complied_count = data.get("not_complied_count")
-        not_complied_count = parse_structure_SignedIntegerType_8(not_complied_count)
+        not_complied_count = parse_structure_UnsignedIntegerType_32(not_complied_count)
         return EscalationData(year, delayed_compliance_count, not_complied_count)
 
     def to_structure(self):
@@ -911,9 +911,9 @@ class CompliedMap(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["total_compliances", "complied_compliances_count"])
         total_compliances = data.get("total_compliances")
-        total_compliances = parse_structure_SignedIntegerType_8(total_compliances)
+        total_compliances = parse_structure_UnsignedIntegerType_32(total_compliances)
         complied_compliances_count = data.get("complied_compliances_count")
-        complied_compliances_count = parse_structure_SignedIntegerType_8(complied_compliances_count)
+        complied_compliances_count = parse_structure_UnsignedIntegerType_32(complied_compliances_count)
         return CompliedMap(total_compliances, complied_compliances_count)
 
     def to_structure(self):
@@ -1000,9 +1000,9 @@ class DelayedCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["assigned_count", "reassigned_count", "reassigned_compliances"])
         assigned_count = data.get("assigned_count")
-        assigned_count = parse_structure_SignedIntegerType_8(assigned_count)
+        assigned_count = parse_structure_UnsignedIntegerType_32(assigned_count)
         reassigned_count = data.get("reassigned_count")
-        reassigned_count = parse_structure_SignedIntegerType_8(reassigned_count)
+        reassigned_count = parse_structure_UnsignedIntegerType_32(reassigned_count)
         reassigned_compliances = data.get("reassigned_compliances")
         reassigned_compliances = parse_structure_VectorType_RecordType_dashboard_RessignedCompliance(reassigned_compliances)
         return DelayedCompliance(assigned_count, reassigned_count, reassigned_compliances)
@@ -1032,19 +1032,19 @@ class DomainWise(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["domain_id", "domain_name", "total_compliances", "complied_count", "delayed_compliance", "inprogress_compliance_count", "not_complied_count"])
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         domain_name = data.get("domain_name")
         domain_name = parse_structure_CustomTextType_50(domain_name)
         total_compliances = data.get("total_compliances")
-        total_compliances = parse_structure_SignedIntegerType_8(total_compliances)
+        total_compliances = parse_structure_UnsignedIntegerType_32(total_compliances)
         complied_count = data.get("complied_count")
-        complied_count = parse_structure_SignedIntegerType_8(complied_count)
+        complied_count = parse_structure_UnsignedIntegerType_32(complied_count)
         delayed_compliance = data.get("delayed_compliance")
         delayed_compliance = parse_structure_RecordType_dashboard_DelayedCompliance(delayed_compliance)
         inprogress_compliance_count = data.get("inprogress_compliance_count")
-        inprogress_compliance_count = parse_structure_SignedIntegerType_8(inprogress_compliance_count)
+        inprogress_compliance_count = parse_structure_UnsignedIntegerType_32(inprogress_compliance_count)
         not_complied_count = data.get("not_complied_count")
-        not_complied_count = parse_structure_SignedIntegerType_8(not_complied_count)
+        not_complied_count = parse_structure_UnsignedIntegerType_32(not_complied_count)
         return DomainWise(domain_id, domain_name, total_compliances, complied_count, delayed_compliance, inprogress_compliance_count, not_complied_count)
 
     def to_structure(self):
@@ -1072,7 +1072,7 @@ class AssigneeWiseDetails(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["user_id", "assignee_name", "domain_wise_details"])
         user_id = data.get("user_id")
-        user_id = parse_structure_SignedIntegerType_8(user_id)
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         assignee_name = data.get("assignee_name")
         assignee_name = parse_structure_CustomTextType_100(assignee_name)
         domain_wise_details = data.get("domain_wise_details")
@@ -1143,7 +1143,7 @@ class Level1Compliance(object):
         compliance_status = data.get("compliance_status")
         compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
         ageing = data.get("ageing")
-        ageing = parse_structure_SignedIntegerType_8(ageing)
+        ageing = parse_structure_UnsignedIntegerType_32(ageing)
         return Level1Compliance(compliance_name, description, assignee_name, assigne_date, due_date, completion_date, compliance_status, ageing)
 
     def to_structure(self):

@@ -1,3 +1,4 @@
+var categoryList;
 $("#btnUserGroupAdd").click(function(){
 	$("#userGroupView").hide();
 	$("#userGroupAdd").show();
@@ -21,6 +22,7 @@ $("#btnUserGroupCancel").click(function(){
 });
 function initialize(){
 	function onSuccess(data){
+		categoryList=data['form_categories'];
 		loadUserGroupdata(data['user_groups']);
 	}
 	function onFailure(error){
@@ -32,7 +34,7 @@ function initialize(){
                 onSuccess(response);
             }
             else {
-                onFailure(error);
+                onFailure(error);	
             }
         }
 	);
@@ -43,8 +45,8 @@ function loadUserGroupdata(userGroupList){
  	var sno=0;
 	var imageName, title;
 	for(var j in userGroupList){
-		var form_type=userGroupList[j]["form_type"];
-		var user_group_name=userGroupList[j]["user_group_name"];
+		var catgid=userGroupList[j]["form_category_id"];
+		var userGroupName=userGroupList[j]["user_group_name"];
 		var isActive=userGroupList[j]["is_active"];
 		var userGroupId=userGroupList[j]["user_group_id"];
 				
@@ -58,14 +60,21 @@ function loadUserGroupdata(userGroupList){
 			title="Click here to Activate"
 			statusVal=1;
 		}
-
+		function getCategoryName(catgId){
+			$.each(categoryList, function(key,value){
+				if(categoryList[key]['form_category_id']==catgId){
+					return categoryList[key]['form_category'];
+				}
+			});
+		}
+		console.log(getCategoryName(catgid));
 		var tableRow=$('#templates .table-usergroup-list .table-row');
 		var clone=tableRow.clone();
 		sno = sno + 1;
 		$('.sno', clone).text(sno);
-		$('.group-name', clone).text(user_group_name);
-		$('.catg-name', clone).text(form_type);
-		$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="userGroupEdit('+userGroupId+',\''+user_group_name+'\', \''+form_type+'\')"/>');
+		$('.group-name', clone).text(userGroupName);
+		$('.catg-name', clone).text();
+		$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="userGroupEdit('+userGroupId+',\''+userGroupName+'\', \''+catgid+'\')"/>');
 		$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="userGroupActive('+userGroupId+', '+statusVal+')"/>');
 		$('.tbody-usergroups-list').append(clone);			
 	}
@@ -167,17 +176,15 @@ $("#btnUserGroupSubmit").click(function(){
 		/* join array separated by comma*/
 		var selectedVal;
 		selectedVal = chkArray.join(',') + ",";
-		function success(status, data){
-			if(status=="SaveUserGroupSuccess"){
-				$("#userGroupAdd").hide();
-		  		$("#userGroupView").show();
-				initialize();
-			}
-			if(status=="GroupNameAlreadyExists"){
-				$(".error-message").html(status);
-			}
+		function onSuccess(response){
+			$("#userGroupAdd").hide();
+		  	$("#userGroupView").show();
+			initialize();		
 		}
-		function failure(status, data){
+		function onFailure(error){
+			if(error=="GroupNameAlreadyExists"){
+				displayMessage("Group Name Already Exists");
+			}
 		}
 		var userGroupInsertDetails=[groupNameVal,categoryNameVal, selectedVal];
 		mirror.saveAdminUserGroup(userGroupInsertDetails, 
@@ -243,12 +250,21 @@ function userGroupEdit(userGroupId, userGroupName, formType){
 }
 function userGroupActive(userGroupId, isActive){
   	$("#userGroupId").val(userGroupId);
-  	function success(status, data){
+  	function onSuccess(response){
 		initialize();
 	}
-	function failure(status, data){
+	function onFailure(error){
 	}
-	mirror.changeAdminUserGroupStatus("AdminAPI", userGroupId, isActive, success, failure);
+	mirror.changeAdminUserGroupStatus(userGroupId, isActive,
+		function (error, response) {
+            if (error == null){
+                onSuccess(response);
+            }
+            else {
+                onFailure(error);
+            }
+        }
+	);
 }
 
 $("#groupNameSearch").keyup(function() { 

@@ -19,24 +19,10 @@ __all__ = [
 #
 
 def get_client_groups(db, request, session_user):
-	domain_list = []
-	country_list = []
+	domain_list = db.get_domains_for_user(session_user)
+	country_list = db.get_countries_for_user(session_user)
 	user_list = []
 	client_list = []
-
-	domain_rows = db.get_domains()
-	for domain_row in domain_rows:
-		domain_id = domain_row[0]
-		domain_name = domain_row[1]
-		is_active = True if domain_row[2] == 1 else False
-		domain_list.append(core.Domain(domain_id, domain_name, is_active))
-
-	country_rows = db.get_countries()
-	for country_row in country_rows:
-		country_id = country_row[0]
-		country_name = country_row[1]
-		is_active = True if country_row[2] == 1 else False
-		country_list.append(core.Country(country_id, country_name, is_active))
 
 	user_rows = db.get_users()
 	for user_row in user_rows:
@@ -147,7 +133,7 @@ def save_client(db, request, session_user):
 	    business_group_id = business_group.business_group_id
 	    business_group_name = business_group.business_group_name
 	    if business_group_id == None:
-	        business_group_id = generate_new_business_group_id()
+	        business_group_id = db.generate_new_business_group_id()
 	    else:
 	        existing_business_group = True
 	    if db.is_duplicate_business_group(business_group_id, business_group_name, client_id):
@@ -156,7 +142,7 @@ def save_client(db, request, session_user):
 	legal_entity_id = legal_entity.legal_entity_id
 	legal_entity_name = legal_entity.legal_entity_name
 	if legal_entity_id == None:
-	    legal_entity_id = generate_new_legal_entity_id()
+	    legal_entity_id = db.generate_new_legal_entity_id()
 	else:
 	    existing_entity = True
 	if db.is_duplicate_legal_entity(legal_entity_id, legal_entity_name, client_id):
@@ -169,7 +155,7 @@ def save_client(db, request, session_user):
 	    division_id = division.division_id
 	    division_name = division.division_name 
 	    if division_id == None:
-	        division_id = generate_new_division_id()
+	        division_id = db.generate_new_division_id()
 	    else:
 	        existing_division = True
 	    if db.is_duplicate_division(division_id, division_name, client_id):
@@ -181,16 +167,16 @@ def save_client(db, request, session_user):
 	    country_id = country.country_id
 	    units = country.units
 	    for unit in units:
-	        unit_id = (unit_id+1) if unit_id != None else generate_new_unit_id()
+	        unit_id = (unit_id+1) if unit_id != None else db.generate_new_unit_id()
 	        domain_ids = ",".join(str(x) for x in unit.domain_ids)
 	        if db.is_duplicate_unit_name(unit_id, unit.unit_name, client_id):
-	            return technomasters.UnitNameAlreadyExists
+	            return technomasters.UnitNameAlreadyExists()
 	        elif db.is_duplicate_unit_code(unit_id, unit.unit_code, client_id):
-	            return technomasters.UnitCodeAlreadyExists
+	            return technomasters.UnitCodeAlreadyExists()
 	        else:
-	            unit.unit_id = unit_id
-	            unit.country_id = country_id
-	            units_list.append(unit)
+				unit.unit_id = unit_id
+				unit.country_id = country_id
+				units_list.append(unit)
 	if not optional_business_group:
 	    if not existing_business_group:
 	        result1 = db.save_business_group(client_id, business_group_id, business_group_name, session_user)
@@ -233,9 +219,9 @@ def update_client(db, request, session_user):
 	    optional_business_group = True
 	    result1 = True
 	else:
-	    business_group_id = business_group["business_group_id"]
-	    business_group_name = business_group["business_group_name"]
-	    if db.is_business_group_idInvalid(business_group_id):
+	    business_group_id = business_group.business_group_id
+	    business_group_name = business_group.business_group_name
+	    if db.is_invalid_id(db.tblBusinessGroups, "business_group_id", business_group_id):
 	        return technomasters.InvalidBusinessGroupId()
 	    elif db.is_duplicate_business_group(business_group_id, 
 	    	business_group_name, client_id):
@@ -243,9 +229,9 @@ def update_client(db, request, session_user):
 
 	legal_entity_id = legal_entity.legal_entity_id
 	legal_entity_name = legal_entity.legal_entity_name
-	if db.is_legal_entity_id_invalid(legal_entity_id):
+	if db.is_invalid_id( db.tblLegalEntities, "legal_entity_id", legal_entity_id):
 	    return technomasters.InvalidLegalEntityId()
-	elif db.is_duplicat_legal_entity(legal_entity_id, legal_entity_name, client_id):
+	elif db.is_duplicate_legal_entity(legal_entity_id, legal_entity_name, client_id):
 	    return technomasters.LegalEntityNameAlreadyExists()
 
 	if division == None:
@@ -254,7 +240,7 @@ def update_client(db, request, session_user):
 	else:
 	    division_id = division.division_id
 	    division_name = division.division_name 
-	    if db.is_division_id_invalid(division_id):
+	    if db.is_invalid_id(db.tblDivisions, "division_id", division_id):
 	        return technomasters.InvalidDivisionId()
 	    elif db.is_duplicate_division(division_id, division_name, client_id):
 	        return technomasters.DivisionNameAlreadyExists()
@@ -268,7 +254,7 @@ def update_client(db, request, session_user):
 	    for unit in units:
 	        domain_ids = ",".join(str(x) for x in unit.domain_ids)
 	        if unit.unit_id == None:
-	            unit_id = (unit_id+1) if unit_id != None else generate_new_unit_id()
+	            unit_id = (unit_id+1) if unit_id != None else db.generate_new_unit_id()
 	            if db.is_duplicate_unit_name(unit_id, unit.unit_name, client_id):
 	                return technomasters.UnitNameAlreadyExists()
 	            elif db.is_duplicate_unit_code(unit_id, unit.unit_code, client_id):
@@ -278,8 +264,8 @@ def update_client(db, request, session_user):
 	                unit.country_id = country_id
 	                new_units_list.append(unit)
 	        else:
-	            if db.is_unit_id_invalid(unit.unit_id):
-	                return technomasters.InvalidUnitId
+	            if db.is_invalid_id(db.tblUnits, "unit_id", unit.unit_id):
+	                return technomasters.InvalidUnitId()
 	            elif db.is_duplicate_unit_name(unit.unit_id, unit.unit_name, client_id):
 	                return technomasters.UnitNameAlreadyExists()
 	            elif db.is_duplicate_unit_code(unit.unit_id, unit.unit_code, client_id):
@@ -303,68 +289,60 @@ def update_client(db, request, session_user):
 
 
 def get_clients(db, request, session_user):
-	responseData = {}
-
-	countryList = CountryList.getCountryList()
-	domainList = DomainList.getDomainList()
-	geographyLevelList = GeographyLevelList.getCountryWiseList()
-	industryList = IndustryList.getList()
-	geographyList = GeographyAPI.getList()
-
-	client_ids =  db.getUserClients(session_user)
-	if client_ids ==  None:
-	    print "Error : User is not responsible for any client"
-	else:
-		groupCompanyList = GroupCompany(db).getGroupCompanies(
-		    session_user = session_user, client_ids = client_ids)
-		business_groupList = []
-		legal_entityList = []
-		divisionList = []
-		unitList = []
-		for client_id in [int(x) for x in client_ids.split(",")]:
-			business_groupList = business_groupList + BusinessGroup(client_id, db).getBusinessGroups()
-			legal_entityList = legal_entityList + LegalEntity(client_id, db).getLegalEntities()
-			divisionList = divisionList + Division(client_id, db).getDivisions()
-			unitList = unitList + Unit(client_id, db).getUnitDetails()
-
-		responseData["group_companies"] = groupCompanyList
-		responseData["business_groups"] = business_groupList
-		responseData["legal_entities"] = legal_entityList
-		responseData["divisions"] = divisionList
-		responseData["units"] = unitList
-	    
-	responseData["countries"] = countryList
-	responseData["domains"] = domainList
-	responseData["geography_levels"] = geographyLevelList
-	responseData["geographies"] =geographyList
-	responseData["industries"] = industryList
-
-	return commonResponseStructure("GetClientsSuccess", responseData)
+	country_list = db.get_countries_for_user(session_user)
+	print "got country list"
+	domain_list = db.get_domains_for_user(session_user)
+	print "got domain list"
+	geography_level_list = db.get_geograhpy_levels_for_user(session_user)
+	print "got geography level list"
+	industry_list = db.get_industries()
+	print "got industry list"
+	geography_list = db.get_geographies_for_user(session_user)
+	print "got geography list"
+	group_company_list = db.get_group_companies_for_user(session_user)
+	print "got group company list"
+	business_group_list = db.get_business_groups_for_user(session_user)
+	print "got business_group list"
+	legal_entity_list = db.get_legal_entities_for_user(session_user)
+	print "got legal entity list"
+	division_list = db.get_divisions_for_user(session_user)
+	print "got division 4list"
+	unit_list = db.get_units_for_user(session_user)
+	print "got unit list"
+	return technomasters.GetClientsSuccess(countries=country_list, 
+		domains = domain_list, group_companies = group_company_list, 
+		business_groups = business_group_list, legal_entities = legal_entity_list, 
+		divisions = division_list, units = unit_list)
 
 def change_client_status(db, request, session_user):
 	session_user = int(session_user)
 
 	client_id = request.client_id
 	legal_entity_id = request.legal_entity_id
-	isActive = request.is_active
+	is_active = request.is_active
 	division_id = request.division_id
 
-	if db.changeClientStatus(client_id, legal_entity_id, division_id, 
-	    isActive, session_user):
-	    return commonResponseStructure("ChangeClientStatusSuccess",{})
+	if db.is_invalid_id(db.tblClientGroups, "client_id", client_id):
+		return technomasters.InvalidClientId()
+	elif db.is_invalid_id(db.tblLegalEntities, "legal_entity_id", legal_entity_id):
+		return technomasters.InvalidLegalEntityId()
+	elif db.is_invalid_id(db.tblDivisions, "division_id", division_id):
+		return technomasters.InvalidDivisionId()
+	elif db.change_client_status(client_id, legal_entity_id, division_id, 
+	    is_active, session_user):
+	    return technomasters.ChangeClientStatusSuccess()
     
 
 def reactivate_unit(db, request, session_user):
 	session_user = int(session_user)
 	client_id = request.client_id
-	unitId = request.unit_id
+	unit_id = request.unit_id
 	password = request.password
-	encryptedPassword = encrypt(password)
-	if db.verifyPassword(encryptedPassword, session_user):
-	    if db.reactivateUnit(client_id, unitId, session_user):
-	        return commonResponseStructure("ReactivateUnitSuccess", {})
+	if db.verify_password(password, session_user):
+	    if db.reactivate_unit(client_id, unit_id, session_user):
+	        return technomasters.ReactivateUnitSuccess()
 	else:
-	    return commonResponseStructure("InvalidPassword", {})
+	    return technomasters.InvalidPassword()
 
 def get_profiles(client_ids):
 	client_idsList = [int(x) for x in client_ids.split(",")]

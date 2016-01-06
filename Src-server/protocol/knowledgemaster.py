@@ -5,7 +5,7 @@ parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorTy
     parse_structure_VectorType_RecordType_core_Level,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_core_Domain,
-    parse_structure_SignedIntegerType_8,
+    parse_structure_UnsignedIntegerType_32,
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_core_Industry,
     parse_structure_VectorType_RecordType_core_Country,
@@ -81,7 +81,7 @@ class SaveGeographyLevel(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "levels"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         levels = data.get("levels")
         levels = parse_structure_VectorType_RecordType_core_Level(levels)
         return SaveGeographyLevel(country_id, levels)
@@ -115,7 +115,7 @@ class SaveGeography(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["geography_level_id", "geography_name", "parent_ids"])
         geography_level_id = data.get("geography_level_id")
-        geography_level_id = parse_structure_SignedIntegerType_8(geography_level_id)
+        geography_level_id = parse_structure_UnsignedIntegerType_32(geography_level_id)
         geography_name = data.get("geography_name")
         geography_name = parse_structure_CustomTextType_50(geography_name)
         parent_ids = data.get("parent_ids")
@@ -140,9 +140,9 @@ class UpdateGeography(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["geography_id", "geography_level_id", "geography_name", "parent_ids"])
         geography_id = data.get("geography_id")
-        geography_id = parse_structure_SignedIntegerType_8(geography_id)
+        geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
         geography_level_id = data.get("geography_level_id")
-        geography_level_id = parse_structure_SignedIntegerType_8(geography_level_id)
+        geography_level_id = parse_structure_UnsignedIntegerType_32(geography_level_id)
         geography_name = data.get("geography_name")
         geography_name = parse_structure_CustomTextType_50(geography_name)
         parent_ids = data.get("parent_ids")
@@ -166,7 +166,7 @@ class ChangeGeographyStatus(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["geography_id", "is_active"])
         geography_id = data.get("geography_id")
-        geography_id = parse_structure_SignedIntegerType_8(geography_id)
+        geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return ChangeGeographyStatus(geography_id, is_active)
@@ -215,7 +215,7 @@ class UpdateIndustry(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["industry_id", "industry_name"])
         industry_id = data.get("industry_id")
-        industry_id = parse_structure_SignedIntegerType_8(industry_id)
+        industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         industry_name = data.get("industry_name")
         industry_name = parse_structure_CustomTextType_50(industry_name)
         return UpdateIndustry(industry_id, industry_name)
@@ -235,7 +235,7 @@ class ChangeIndustryStatus(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["industry_id", "is_active"])
         industry_id = data.get("industry_id")
-        industry_id = parse_structure_SignedIntegerType_8(industry_id)
+        industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return ChangeIndustryStatus(industry_id, is_active)
@@ -284,7 +284,7 @@ class UpdateStatutoryNature(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["statutory_nature_id", "statutory_nature_name"])
         statutory_nature_id = data.get("statutory_nature_id")
-        statutory_nature_id = parse_structure_SignedIntegerType_8(statutory_nature_id)
+        statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_nature_name = data.get("statutory_nature_name")
         statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
         return UpdateStatutoryNature(statutory_nature_id, statutory_nature_name)
@@ -304,7 +304,7 @@ class ChangeStatutoryNatureStatus(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["statutory_nature_id", "is_active"])
         statutory_nature_id = data.get("statutory_nature_id")
-        statutory_nature_id = parse_structure_SignedIntegerType_8(statutory_nature_id)
+        statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return ChangeStatutoryNatureStatus(statutory_nature_id, is_active)
@@ -338,9 +338,9 @@ class SaveStatutoryLevel(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "levels"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         levels = data.get("levels")
         levels = parse_structure_VectorType_RecordType_core_Level(levels)
         return SaveStatutoryLevel(country_id, domain_id, levels)
@@ -375,7 +375,7 @@ class SaveStatutory(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["statutory_level_id", "statutory_name", "parent_ids"])
         statutory_level_id = data.get("statutory_level_id")
-        statutory_level_id = parse_structure_SignedIntegerType_8(statutory_level_id)
+        statutory_level_id = parse_structure_UnsignedIntegerType_32(statutory_level_id)
         statutory_name = data.get("statutory_name")
         statutory_name = parse_structure_CustomTextType_50(statutory_name)
         parent_ids = data.get("parent_ids")
@@ -400,9 +400,9 @@ class UpdateStatutory(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["statutory_id", "statutory_level_id", "statutory_name", "parent_ids"])
         statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_SignedIntegerType_8(statutory_id)
+        statutory_id = parse_structure_UnsignedIntegerType_32(statutory_id)
         statutory_level_id = data.get("statutory_level_id")
-        statutory_level_id = parse_structure_SignedIntegerType_8(statutory_level_id)
+        statutory_level_id = parse_structure_UnsignedIntegerType_32(statutory_level_id)
         statutory_name = data.get("statutory_name")
         statutory_name = parse_structure_CustomTextType_50(statutory_name)
         parent_ids = data.get("parent_ids")

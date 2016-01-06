@@ -9,7 +9,7 @@ from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_core_LegalEntity,
     parse_structure_OptionalType_VectorType_SignedIntegerType_8,
-    parse_structure_SignedIntegerType_8,
+    parse_structure_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_core_Unit,
     parse_structure_OptionalType_VectorType_RecordType_core_BusinessGroup,
     parse_structure_VectorType_RecordType_core_GroupCompany,
@@ -98,9 +98,9 @@ class GetClientDetailsReportData(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "group_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "domain_ids"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         group_id = data.get("group_id")
-        group_id = parse_structure_SignedIntegerType_8(group_id)
+        group_id = parse_structure_UnsignedIntegerType_32(group_id)
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
@@ -166,9 +166,9 @@ class GetAssignedStatutoryReport(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "group_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "level_1_statutory_id", "applicability_status"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         group_id = data.get("group_id")
         group_id = parse_structure_OptionalType_SignedIntegerType_8(group_id)
         business_group_id = data.get("business_group_id")

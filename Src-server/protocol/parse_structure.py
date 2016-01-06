@@ -98,6 +98,10 @@ def parse_structure_OptionalType_SignedIntegerType_8(data):
     if data is None: return data
     return parse_structure_SignedIntegerType_8(data)
 
+def parse_structure_OptionalType_UnsignedIntegerType_32(data):
+    if data is None: return data
+    return parse_structure_UnsignedIntegerType_32(data)
+
 def parse_structure_RecordType_clientreport_ReassignHistory(data):
     from protocol import clientreport
     return clientreport.ReassignHistory.parse_structure(data)
@@ -123,6 +127,13 @@ def parse_structure_VectorType_SignedIntegerType_8(data):
     lst = []
     for item in data:
         lst.append(parse_structure_SignedIntegerType_8(item))
+    return lst
+
+def parse_structure_VectorType_UnsignedIntegerType_32(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_UnsignedIntegerType_32(item))
     return lst
 
 def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit(data):
@@ -243,6 +254,13 @@ def parse_structure_VectorType_RecordType_core_Division(data):
     lst = []
     for item in data:
         lst.append(parse_structure_RecordType_core_Division(item))
+    return lst
+
+def parse_structure_VectorType_RecordType_techno_master_COUNTRYWISEUNITS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_techno_master_COUNTRYWISEUNITS(item))
     return lst
 
 def parse_structure_RecordType_knowledgemaster_Response_InvalidGeographyId(data):
@@ -927,6 +945,18 @@ def parse_structure_OptionalType_RecordType_core_BusinessGroup(data):
     if data is None: return data
     return parse_structure_RecordType_core_BusinessGroup(data)
 
+def parse_structure_OptionalType_RecordType_techno_master_BUSINESSGROUP(data):
+    if data is None: return data
+    return parse_structure_RecordType_techno_master_BUSINESSGROUP(data)
+
+def parse_structure_OptionalType_RecordType_techno_master_LEGALENTITY(data):
+    if data is None: return data
+    return parse_structure_RecordType_techno_master_LEGALENTITY(data)
+
+def parse_structure_OptionalType_RecordType_techno_master_DIVISION(data):
+    if data is None: return data
+    return parse_structure_RecordType_techno_master_DIVISION(data)
+
 def parse_structure_RecordType_clientuser_Response_GetOnOccurrenceCompliancesSuccess(data):
     from protocol import clientuser
     return clientuser.Response.parse_structure(data)
@@ -1337,6 +1367,13 @@ def parse_structure_VectorType_RecordType_core_UnitDetails(data):
         lst.append(parse_structure_RecordType_core_UnitDetails(item))
     return lst
 
+def parse_structure_VectorType_RecordType_techno_master_UNIT(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_techno_master_UNIT(item))
+    return lst
+
 def parse_structure_VectorType_RecordType_technotransactions_UNIT(data):
     data = parse_list(data, 0)
     lst = []
@@ -1734,6 +1771,22 @@ def parse_structure_RecordType_core_BusinessGroup(data):
     from protocol import core
     return core.BusinessGroup.parse_structure(data)
 
+def parse_structure_RecordType_techno_master_BUSINESSGROUP(data):
+    from protocol import technomasters
+    return technomasters.BUSINESS_GROUP.parse_inner_structure(data)
+
+def parse_structure_RecordType_techno_master_LEGALENTITY(data):
+    from protocol import technomasters
+    return technomasters.LEGAL_ENTITY.parse_inner_structure(data)
+
+def parse_structure_RecordType_techno_master_DIVISION(data):
+    from protocol import technomasters
+    return technomasters.DIVISION.parse_inner_structure(data)
+
+def parse_structure_RecordType_techno_master_UNIT(data):
+    from protocol import technomasters
+    return technomasters.UNIT.parse_structure(data)
+
 def parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(data):
     from protocol import core
     return core.COMPLIANCE_FREQUENCY.parse_structure(data)
@@ -1912,6 +1965,10 @@ def parse_structure_RecordType_knowledgemaster_RequestFormat(data):
 def parse_structure_RecordType_core_CountryWiseUnits(data):
     from protocol import core
     return core.CountryWiseUnits.parse_structure(data)
+
+def parse_structure_RecordType_techno_master_COUNTRYWISEUNITS(data):
+    from protocol import technomasters
+    return technomasters.COUNTRYWISEUNITS.parse_structure(data)
 
 def parse_structure_RecordType_clientuser_Response_UpdateComplianceDetailSuccess(data):
     from protocol import clientuser

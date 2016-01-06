@@ -111,8 +111,129 @@ class Database(object) :
         result = cursor.fetchall()
         return result
 
-class KnowledgeDatabase(Database):
+    def get_data(self, table, columns, condition):
+        # query = "SELECT "+columns+" FROM "+table+" \
+        #WHERE "+condition 
+        query = "SELECT %s FROM %s "  % (columns, table)
+        if condition is not None :
+            query += " WHERE %s" % (condition)
+        return self.select_all(query)
 
+    def get_data_from_multiple_tables(self, columns, tables, aliases, joinType, 
+            joinConditions, whereCondition
+        ):
+        query = "SELECT %s FROM " % columns
+
+        for index,table in enumerate(tables):
+            if index == 0:
+                query += "%s  %s  %s" % (
+                    table, aliases[index], joinType
+                )
+            elif index <= len(tables) -2:
+                query += " %s %s on (%s) %s " % (
+                    table, aliases[index], 
+                    joinConditions[index-1], joinType
+                )
+            else:
+                query += " %s %s on (%s)" % (
+                    table, aliases[index], 
+                    joinConditions[index-1]
+                )
+
+        query += " where %s" % whereCondition
+        return self.select_all(query)
+
+    def insert(self, table, columns, values) :
+        columns = ",".join(columns)
+        stringValue = ""
+        for index,value in enumerate(values):
+            if(index < len(values)-1):
+                stringValue = stringValue+"'"+str(value)+"',"
+            else:
+                stringValue = stringValue+"'"+str(value)+"'"
+        query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
+        return self.execute(query)
+
+    def bulk_insert(self, table, columns, valueList) :
+        query = "INSERT INTO %s (%s)  VALUES" % (table, ",".join(str(x) for x in columns))
+        for index, value in enumerate(valueList):
+            if index < len(valueList)-1:
+                query += "%s," % str(value)
+            else:
+                query += str(value)
+        return self.execute(query)
+
+    def update(self, table, columns, values, condition) :
+        query = "UPDATE "+table+" set "
+        for index,column in enumerate(columns):
+            if index < len(columns)-1:
+                query += column+" = '"+str(values[index])+"', "
+            else:
+                query += column+" = '"+str(values[index])+"' "
+
+        query += " WHERE "+condition
+        print query
+        return self.execute(query)
+
+    def on_duplicate_key_update(self, table, columns, valueList, updateColumnsList):
+        query = "INSERT INTO %s (%s) VALUES " % (table, columns)
+
+        for index, value in enumerate(valueList):
+            if index < len(valueList)-1:
+                query += "%s," % str(value)
+            else:
+                query += "%s" % str(value)
+
+        query += " ON DUPLICATE KEY UPDATE "
+
+        for index, updateColumn in enumerate(updateColumnsList):
+
+            if index < len(updateColumnsList)-1:
+                query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
+            else:
+                query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
+
+        return self.execute(query)
+
+    def delete(self, table, condition):
+        query = "DELETE from "+table+" WHERE "+condition
+        return self.execute(query)        
+
+    def append(self, table, column, value, condition):
+        rows = self.get_data(table, column, condition)
+        currentValue = rows[0][0]
+        if currentValue != None:
+            newValue = currentValue+","+str(value)
+        else:
+            newValue = str(value)
+        columns = [column]
+        values = [newValue]
+        return self.update(table, columns, values, condition)
+
+    def increment(self, table, column, condition):
+        rows = self.get_data(table, column, condition)
+        currentValue = rows[0][0]
+        if currentValue != None:
+            newValue = int(currentValue)+1
+        else:
+            newValue = 1
+        columns = [column]
+        values = [newValue]
+        return self.update(table, columns, values, condition)        
+
+    def is_already_exists(self, table, condition) :
+        query = "SELECT count(*) FROM "+table+" WHERE "+condition
+        rows = self.select_all(query)     
+        if rows[0][0] > 0:
+            return True
+        else : 
+            return False
+
+    def is_invalid_id(self, table, field, value):
+        condition = "%s = '%d'" % (field, value)
+        return not self.is_already_exists(table, condition)
+
+class KnowledgeDatabase(Database):
     tblActivityLog = "tbl_activity_log"
     tblAdmin = "tbl_admin"
     tblBusinessGroups = "tbl_business_groups"
@@ -175,29 +296,22 @@ class KnowledgeDatabase(Database):
         self.statutory_parent_mapping = {}
         self.geography_parent_mapping = {}
 
-    def encrypt(self, value):
-        m = hashlib.md5()
-        m.update(value)
-        return m.hexdigest()
-
     def convert_to_dict(self, data_list, columns) :
-        print data_list
-        print len(data_list), len(columns)
-        if type(data_list[0]) is tuple :
-            result_list = []
+        result_list = []
+        if len(data_list) > 1 :
             if len(data_list[0]) == len(columns) :
                 for data in data_list:
                     result = {}
                     for i, d in enumerate(data):
                         result[columns[i]] = d
                     result_list.append(result)
-            return result_list
         else :
             if len(data_list) == len(columns) :
                 result = {}
                 for i, d in enumerate(data_list):
                     result[columns[i]] = d
-            return result
+                result_list.append(result)
+        return result_list
 
 
     def validate_session_token(self, session_token) :
@@ -208,127 +322,6 @@ class KnowledgeDatabase(Database):
         row = self.select_one(query)
         user_id = row[0]
         return user_id
-
-    def get_data(self, table, columns, condition):
-        # query = "SELECT "+columns+" FROM "+table+" \
-        #WHERE "+condition 
-        query = "SELECT %s FROM %s "  % (columns, table)
-        if condition is not None :
-            query += " WHERE %s" % (condition)
-        return self.select_all(query)
-
-    def get_data_from_multiple_tables(self, columns, tables, aliases, joinType, 
-            joinConditions, whereCondition
-        ):
-        query = "SELECT %s FROM " % columns
-
-        for index,table in enumerate(tables):
-            if index == 0:
-                query += "%s  %s  %s" % (
-                    table, aliases[index], joinType
-                )
-            elif index <= len(tables) -2:
-                query += " %s %s on (%s) %s " % (
-                    table, aliases[index], 
-                    joinConditions[index-1], joinType
-                )
-            else:
-                query += " %s %s on (%s)" % (
-                    table, aliases[index], 
-                    joinConditions[index-1]
-                )
-
-        query += " where %s" % whereCondition
-        return self.select_all(query)
-
-    def insert(self, table, columns, values) :
-        columns = ",".join(columns)
-        stringValue = ""
-        for index,value in enumerate(values):
-            if(index < len(values)-1):
-                stringValue = stringValue+"'"+str(value)+"',"
-            else:
-                stringValue = stringValue+"'"+str(value)+"'"
-        query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
-        return self.execute(query)
-
-    def bulk_insert(self, table, columns, valueList) :
-        query = "INSERT INTO %s (%s)  VALUES" % (table, ",".join(str(x) for x in columns))
-        for index, value in enumerate(valueList):
-            if index < len(valueList)-1:
-                query += "%s," % str(value)
-            else:
-                query += str(value)
-        return self.execute(query)
-
-    def update(self, table, columns, values, condition) :
-        query = "UPDATE "+table+" set "
-        for index,column in enumerate(columns):
-            if index < len(columns)-1:
-                query += column+" = '"+str(values[index])+"', "
-            else:
-                query += column+" = '"+str(values[index])+"' "
-
-        query += " WHERE "+condition
-        return self.execute(query)
-
-    def on_duplicate_key_update(self, table, columns, valueList, updateColumnsList):
-        query = "INSERT INTO %s (%s) VALUES " % (table, columns)
-
-        for index, value in enumerate(valueList):
-            if index < len(valueList)-1:
-                query += "%s," % str(value)
-            else:
-                query += "%s" % str(value)
-
-        query += " ON DUPLICATE KEY UPDATE "
-
-        for index, updateColumn in enumerate(updateColumnsList):
-
-            if index < len(updateColumnsList)-1:
-                query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
-            else:
-                query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
-
-        return self.execute(query)
-
-    def delete(self, table, condition):
-        query = "DELETE from "+table+" WHERE "+condition
-        return self.execute(query)        
-
-    def append(self, table, column, value, condition):
-        rows = self.get_data(table, column, condition)
-        currentValue = rows[0][0]
-        if currentValue != None:
-            newValue = currentValue+","+str(value)
-        else:
-            newValue = str(value)
-        columns = [column]
-        values = [newValue]
-        return self.update(table, columns, values, condition)
-
-    def increment(self, table, column, condition):
-        rows = self.get_data(table, column, condition)
-        currentValue = rows[0][0]
-        if currentValue != None:
-            newValue = int(currentValue)+1
-        else:
-            newValue = 1
-        columns = [column]
-        values = [newValue]
-        return self.update(table, columns, values, condition)        
-
-    def is_already_exists(self, table, condition) :
-        query = "SELECT count(*) FROM "+table+" WHERE "+condition
-        rows = self.select_all(query)     
-        if rows[0][0] > 0:
-            return True
-        else : 
-            return False
-
-    def is_invalid_id(self, table, field, value):
-        condition = "%s = '%d'" % (field, value)
-        return not self.is_already_exists(table, condition) 
 
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and user_name='%s'" % (
@@ -402,14 +395,9 @@ class KnowledgeDatabase(Database):
         self.execute(query)
         return True
 
-  #
-  # Domain
-  #
-
-    def get_domains(self):
-        columns = "domain_id, domain_name, is_active"
-        condition = "1"
-        return self.get_data(self.tblDomains, columns, condition)
+    #
+    # Domain
+    #
 
     def get_domains_for_user(self, user_id) :
         # query = "CALL sp_get_domains_for_user (%s)" % (user_id)
@@ -422,7 +410,7 @@ class KnowledgeDatabase(Database):
         columns = ["domain_id", "domain_name", "is_active"]
         result = self.convert_to_dict(rows, columns)
         return self.return_domains(result)
-    
+
     def return_domains(self, data):
         results = []
         for d in data :
@@ -430,7 +418,7 @@ class KnowledgeDatabase(Database):
                 d["domain_id"], d["domain_name"], bool(d["is_active"])
             ))
         return results
-    
+
     def save_domain(self, domain_name, user_id) :
         created_on = self.get_date_time()
         domain_id = self.get_new_id("domain_id", "tbl_domains")
@@ -500,11 +488,6 @@ class KnowledgeDatabase(Database):
     # Country
     #
 
-    def get_countries(self):
-        columns = "country_id, country_name, is_active"
-        condition = "1"
-        return self.get_data(self.tblCountries, columns, condition)
-
     def get_countries_for_user(self, user_id) :
 
         query = "SELECT distinct t1.country_id, t1.country_name, \
@@ -529,7 +512,7 @@ class KnowledgeDatabase(Database):
         return results
 
 
-    
+
     def get_country_by_id(self, country_id) :
         q = "SELECT country_name FROM tbl_countries \
             WHERE country_id=%s" % country_id
@@ -950,6 +933,15 @@ class KnowledgeDatabase(Database):
             geography_levels[country_id] = _list
         return geography_levels
 
+    def get_geograhpy_levels_for_user(self, user_id):
+        country_ids = self.get_user_countries(user_id)
+        columns = "level_id, level_position, level_name, country_id"
+        condition = "country_id in (%s)"% country_ids
+        rows = self.get_data(self.tblGeographyLevels, columns, condition)
+        columns = ["level_id", "level_position", "level_name", "country_id"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_geography_levels(result)
+
     def get_geography_levels_for_country(self, country_id) :
         query = "SELECT level_id, level_position, level_name \
             FROM tbl_geography_levels WHERE country_id = %s ORDER BY level_position" % country_id
@@ -1022,6 +1014,7 @@ class KnowledgeDatabase(Database):
         return self.return_geographies(result)
 
     def return_geographies(self, data):
+        print "inside return_geographies"
         geographies = {}
         for d in data :
             parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
@@ -1052,6 +1045,21 @@ class KnowledgeDatabase(Database):
 
         return return_report_data(self.geography_parent_mapping)
 
+    def get_geographies_for_user(self, user_id):
+        coutry_ids = self.get_user_countries(user_id)
+        columns = "t1.geography_id, t1.geography_name, "+\
+        "t1.level_id,t1.parent_ids, t1.is_active, t2.country_id, t3.country_name"
+        tables = [self.tblGeographies, self.tblGeographyLevels, self.tblCountries]
+        aliases = ["t1", "t2", "t3"]
+        joinType = " INNER JOIN"
+        joinConditions = ["t1.level_id = t2.level_id", "t2.country_id = t3.country_id"]
+        whereCondition = "1"
+        rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, 
+            joinConditions, whereCondition)
+        columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
+        result = self.convert_to_dict(rows, columns)
+        # self.geography_parent_mapping(result)
+        return self.return_geographies(result)
 
     def get_geography_by_id(self, geography_id):
         query = "SELECT geography_id, geography_name, level_id, parent_ids, is_active \
@@ -2005,9 +2013,9 @@ class KnowledgeDatabase(Database):
         self.execute(query)
 
 
-#
-#   Forms
-#
+    #
+    #   Forms
+    #
     def get_forms(self):
         columns = "tf.form_id, tf.form_category_id, tfc.form_category, "+\
         "tf.form_type_id, tft.form_type, tf.form_name, tf.form_url, "+\
@@ -2029,9 +2037,9 @@ class KnowledgeDatabase(Database):
         rows = self.get_data(self.tblFormCategory, columns, condition)
         return rows
 
-#
-#   Admin User Group
-#
+    #
+    #   Admin User Group
+    #
     def is_duplicate_user_group_name(self, user_group_id, user_group_name):
         condition = "user_group_name ='%s' AND user_group_id != '%d'"%(
             user_group_name, user_group_id)
@@ -2084,9 +2092,9 @@ class KnowledgeDatabase(Database):
         result =  self.update(self.tblUserGroups, columns, values, condition)
         return result
 
-#
-#   Admin User
-#
+    #
+    #   Admin User
+    #
     def generate_new_user_id(self):
         return self.get_new_id("user_id", self.tblUsers)
 
@@ -2127,6 +2135,12 @@ class KnowledgeDatabase(Database):
         columns = "group_concat(domain_id)"
         condition = " user_id = '%d'"% user_id
         rows = self.get_data(self.tblUserDomains, columns, condition)
+        return rows[0][0]
+
+    def get_user_clients(self, user_id):
+        columns = "group_concat(client_id)"
+        condition = " user_id = '%d'"% user_id
+        rows = self.get_data(self.tblUserClients, columns, condition)
         return rows[0][0]
 
     def save_user(self, user_id, email_id, user_group_id, employee_name,
@@ -2200,15 +2214,35 @@ class KnowledgeDatabase(Database):
         condition = "user_id='%d'" % user_id
         return self.update(self.tblUsers, columns, values, condition)
 
-#
-#   Group Company
-#
+    #
+    #   Group Company
+    #
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
         " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
         " is_active"
         condition = "1"
         return self.get_data(self.tblClientGroups, columns, condition)
+
+    def get_group_companies_for_user(self, user_id):
+        client_ids = self.get_user_clients(user_id)
+        columns = "client_id, group_name,  is_active"
+        condition = "client_id in (%s)" % client_ids
+        rows = self.get_data(self.tblClientGroups, columns, condition) 
+        columns = ["client_id", "group_name", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_group_companies(result)
+
+    def return_group_companies(self, group_companies):
+        results = []
+        for group_company in group_companies :
+            results.append(core.GroupCompany(
+                group_company["client_id"], group_company["group_name"], 
+                bool(group_company["is_active"]), self.get_client_countries(
+                group_company["client_id"]),self.get_client_domains(
+                group_company["client_id"])
+            ))
+        return results       
 
     def get_client_countries(self, client_id):
         columns = "group_concat(country_id)"
@@ -2221,3 +2255,451 @@ class KnowledgeDatabase(Database):
         condition = "client_id ='%d'" % client_id
         rows = self.get_data(self.tblClientDomains, columns, condition)
         return rows[0][0]
+
+    def save_date_configurations(self, client_id, date_configurations, session_user):
+        values_list = []
+        current_time_stamp = self.get_date_time()
+        columns = ["client_id", "country_id" ,"domain_id", "period_from", 
+        "period_to", "updated_by", "updated_on"]
+        condition = "client_id='%d'"%client_id
+        self.delete(self.tblClientConfigurations, condition)
+        for configuration in date_configurations:
+            country_id = configuration.country_id
+            domain_id = configuration.domain_id
+            period_from = configuration.period_from
+            period_to = configuration.period_to
+            values_tuple = (client_id, country_id, domain_id, period_from, period_to, 
+                 int(session_user), str(current_time_stamp))
+            values_list.append(values_tuple)
+        return self.bulk_insert(self.tblClientConfigurations,columns,values_list)
+
+    def save_client_countries(self, client_id, country_ids):
+        values_list = []
+        columns = ["client_id", "country_id"]
+        condition = "client_id = '%d'" % client_id
+        self.delete(self.tblClientCountries, condition)
+        for country_id in country_ids:
+            values_tuple = (client_id, country_id)
+            values_list.append(values_tuple)
+        return self.bulk_insert(self.tblClientCountries, columns, values_list)
+
+    def save_client_domains(self, client_id, domain_ids):
+        values_list = []
+        columns = ["client_id", "domain_id"]
+        condition = "client_id = '%d'" % client_id
+        self.delete(self.tblClientDomains, condition)
+        for domain_id in domain_ids:
+            values_tuple = (client_id, domain_id)
+            values_list.append(values_tuple)
+        return self.bulk_insert(self.tblClientDomains, columns, values_list)
+
+    def _mysql_server_connect(self, host, username, password):
+        return mysql.connect(host, username, password)
+
+    def _db_connect(self, host, username, password, database) :
+        return mysql.connect(host, username, password, 
+            database)
+
+    def _create_database(self, host, username, password, 
+        database_name, db_username, db_password, email_id, client_id):
+        con = self._mysql_server_connect(host, username, password)
+        cursor = con.cursor()
+        query = "CREATE DATABASE %s" % database_name
+        cursor.execute(query)
+        query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" %(
+            database_name, db_username, host, db_password)
+        con.commit()
+
+        con = self._db_connect(host, username, password, database_name)
+        _client_db_connections[client_id] = con
+        cursor = con.cursor()
+        sql_script_path = os.path.join(os.path.join(os.path.split(__file__)[0]), 
+        "scripts/mirror-client.sql")
+        file_obj = open(sql_script_path, 'r')
+        sql_file = file_obj.read()
+        file_obj.close()
+        sql_commands = sql_file.split(';')
+        size = len(sql_commands)
+        for index,command in enumerate(sql_commands):
+            if (index < size-1):
+                cursor.execute(command)
+            else:
+                break
+        query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
+            email_id, generate_password())        
+        cursor.execute(query)
+        return True
+
+    def _get_server_details(self):
+        columns = "ip, server_username,server_password"
+        condition = "server_full = 0 order by length ASC limit 1"
+        rows = self.get_data(self.tblDatabaseServer, columns, condition)
+        return rows[0]
+
+    def create_and_save_client_database(self, group_name, client_id, short_name, email_id):
+        group_name = re.sub('[^a-zA-Z0-9 \n\.]', '', group_name)
+        group_name = group_name.replace (" ", "")
+        database_name = "mirror_%s_%d" %(group_name.lower(),client_id)
+        row = self._get_server_details()
+        host = row[0]
+        username = row[1]
+        password = row[2]
+        db_username = generate_random()
+        db_password = generate_random()
+
+        if self._create_database(host, username, password, database_name, db_username, 
+            db_password, email_id, client_id):
+            db_server_column = "company_ids"
+            db_server_value = client_id
+            db_server_condition = "ip='%s'"% host
+            self.append(self.tblDatabaseServer, db_server_column, db_server_value,
+                db_server_condition)
+            db_server_column = "length"
+            self.increment(self.tblDatabaseServer, db_server_column,
+                db_server_condition)
+
+            machine_columns = "client_ids"
+            machine_value = db_server_value
+            machine_condition = db_server_condition
+            self.append(self.tblMachines, machine_columns, machine_value,
+                machine_condition)
+
+            rows = self.get_data(self.tblMachines, "machine_id", machine_condition)
+            machine_id = rows[0][0]
+
+            client_db_columns = ["client_id", "machine_id", "database_ip", 
+                    "database_port", "database_username", "database_password",
+                    "client_short_name", "database_name"]
+            client_dB_values = [client_id, machine_id, host, 90, db_username,
+            db_password, short_name, database_name]
+
+            return self.insert(self.tblClientDatabase, client_db_columns, client_dB_values)
+
+    def save_client_group(self, client_id, client_group, session_user):
+        current_time_stamp = self.get_date_time()
+        contract_from = string_to_datetime(client_group.contract_from)
+        contract_to = string_to_datetime(client_group.contract_to)
+        is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
+
+        columns = ["client_id", "group_name", "email_id", "logo_url", 
+        "logo_size", "contract_from", "contract_to", "no_of_user_licence", 
+        "total_disk_space", "is_sms_subscribed", "url_short_name", 
+        "incharge_persons", "is_active", "created_by", "created_on", 
+        "updated_by", "updated_on"]
+        values = [client_id, client_group.group_name, client_group.email_id,
+        client_group.logo, 1200, contract_from, contract_to,
+        client_group.no_of_user_licence, client_group.file_space * 10000, 
+        is_sms_subscribed, client_group.short_name, 
+        ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
+        current_time_stamp, session_user, current_time_stamp]
+        result = self.insert(self.tblClientGroups, columns, values)
+        return result
+
+    def update_client_group(self, client_group, session_user):
+        current_time_stamp = self.get_date_time()
+        contract_from = string_to_datetime(client_group.contract_from)
+        contract_to = string_to_datetime(client_group.contract_to)
+        is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
+
+        columns = ["group_name", "logo_url", "logo_size", "contract_from", 
+        "contract_to", "no_of_user_licence", "total_disk_space", "is_sms_subscribed", 
+        "incharge_persons", "is_active", "updated_by", "updated_on"]
+        values = [client_group.group_name, client_group.logo,1200, contract_from, contract_to,
+        client_group.no_of_user_licence, client_group.file_space, is_sms_subscribed,
+        ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
+        current_time_stamp]
+        condition = "client_id = '%d'" % client_group.client_id
+        return self.update(self.tblClientGroups, columns, values, condition)
+
+    def save_client_user(self, client_group, session_user):
+        columns = ["client_id", "user_id",  "email_id", 
+        "employee_name", "created_on", "is_admin", "is_active"]
+        values = [client_group.client_id, 0, self.username, "Admin",
+        self.get_date_time(), 1, 1]
+        return self.insert(self.tblClientUsers, columns, values)
+
+    def save_incharge_persons(self, client_group, client_id):
+        columns = ["client_id", "user_id"]
+        values_list = []
+        condition = "client_id='%d'" % client_id
+        self.delete(self.tblUserClients, condition)
+        for incharge_person in client_group.incharge_persons:
+            values_tuple = (client_id, incharge_person)
+            values_list.append(values_tuple)
+        return self.bulk_insert(self.tblUserClients, columns, values_list)
+
+    def update_client_group_status(self, client_id, is_active, session_user):
+        columns = ["is_active", "updated_by", "updated_on"]
+        values = [ is_active, int(session_user), self.get_date_time()]
+        condition = "client_id='%d'" % client_id
+        return self.update(self.tblClientGroups, columns, values, condition)
+
+    def get_client_db_info(self):
+        columns = "database_ip, client_id, database_username, "+\
+        "database_password, database_name"
+        condition = "1"
+        return self.get_data(self.tblClientDatabase, columns, condition)
+
+    #
+    #   Client Unit
+    #
+
+    def generate_new_business_group_id(self) :
+        return self.get_new_id("business_group_id", self.tblBusinessGroups)
+
+    def generate_new_legal_entity_id(self) :
+        return self.get_new_id("legal_entity_id", self.tblLegalEntities)
+
+    def generate_new_division_id(self) :
+        return self.get_new_id("division_id", self.tblDivisions)
+
+    def generate_new_unit_id(self) :
+        return self.get_new_id("unit_id", self.tblUnits)
+
+    def is_duplicate_business_group(self, business_group_id, business_group_name, client_id):
+        condition = "business_group_name ='%s' AND business_group_id != '%d' and client_id = '%d'" % (
+            business_group_name, business_group_id, client_id)
+        return self.is_already_exists(self.tblBusinessGroups, condition)
+
+    def is_duplicate_legal_entity(self, legal_entity_id, legal_entity_name, client_id):
+        condition = "legal_entity_name ='%s' AND legal_entity_id != '%d' and client_id = '%d'" % (
+            legal_entity_name, legal_entity_id, client_id)
+        return self.is_already_exists(self.tblLegalEntities, condition)
+
+    def is_duplicate_division(self, division_id, division_name, client_id):
+        condition = "division_name ='%s' AND division_id != '%d' and client_id = '%d'" % (
+            division_name, division_id, client_id)
+        return self.is_already_exists(self.tblDivisions, condition)        
+
+    def is_duplicate_unit_name(self, unit_id, unit_name, client_id):
+        condition = "unit_name ='%s' AND unit_id != '%d' and client_id = '%d'" % (
+            unit_name, unit_id, client_id)
+        return self.is_already_exists(self.tblUnits, condition)
+
+    def is_duplicate_unit_code(self, unit_id, unit_code, client_id):
+        condition = "unit_code ='%s' AND unit_id != '%d' and client_id = '%d'" % (
+            unit_code, unit_id, client_id)
+        return self.is_already_exists(self.tblUnits, condition)
+
+    def save_business_group(self, client_id, business_group_id, business_group_name, 
+        session_user):
+        current_time_stamp = self.get_date_time()
+        columns = ["client_id", "business_group_id", "business_group_name", 
+        "created_by", "created_on", "updated_by", "updated_on"]
+        values = [client_id, business_group_id, business_group_name, session_user, current_time_stamp,
+        session_user, current_time_stamp]
+        return self.insert(self.tblBusinessGroups, columns, values)
+
+    def update_business_group(self, client_id, business_group_id, business_group_name, 
+        session_user):
+        current_time_stamp = self.get_date_time()
+        columns = ["business_group_name", "updated_by", "updated_on"]
+        values = [business_group_name, session_user, current_time_stamp]
+        condition = "business_group_id = '%d' and client_id = '%d'"%(business_group_id, client_id)
+        return self.update(self.tblBusinessGroups, columns, values, condition)
+
+    def save_legal_entity(self, client_id, legal_entity_id, legal_entity_name, 
+        business_group_id, session_user):
+        current_time_stamp = self.get_date_time()
+        columns = ["client_id", "legal_entity_id", "legal_entity_name", "business_group_id", 
+        "created_by", "created_on", "updated_by", "updated_on"]
+        values = [client_id, legal_entity_id, legal_entity_name, business_group_id, 
+        session_user, current_time_stamp, session_user, current_time_stamp]
+        return self.insert(self.tblLegalEntities, columns, values)
+
+    def update_legal_entity(self, client_id, legal_entity_id, legal_entity_name, business_group_id, session_user):
+        current_time_stamp = self.get_date_time()
+        columns = ["legal_entity_name", "updated_by", "updated_on"]
+        values = [legal_entity_name, session_user, self.get_date_time()]
+        condition = "legal_entity_id = '%d' and client_id = '%d'"%(legal_entity_id, client_id)
+        return self.update(self.tblLegalEntities, columns, values, condition)
+
+    def save_division(self, client_id, division_id, division_name, business_group_id, legal_entity_id, session_user):
+        current_time_stamp = self.get_date_time()
+        columns = ["client_id", "division_id", "division_name", "business_group_id", "legal_entity_id",
+        "created_by", "created_on", "updated_by", "updated_on"]
+        values = [client_id, division_id, division_name, business_group_id, legal_entity_id,
+        session_user, current_time_stamp, session_user, current_time_stamp]
+        return self.insert(self.tblDivisions, columns, values)
+
+    def update_division(self, client_id, division_id, division_name, business_group_id, legal_entity_id, session_user):
+        current_time_stamp = self.get_date_time()
+        columns = ["division_name", "updated_by", "updated_on"]
+        values = [division_name, session_user, current_time_stamp]
+        condition = "division_id = '%d' and client_id = '%d'"%(division_id, client_id)
+        return self.update(self.tblDivisions, columns, values, condition)
+
+    def save_unit(self, client_id,  units, business_group_id, legal_entity_id, division_id, session_user):
+        current_time_stamp = str(self.get_date_time())
+        columns = ["unit_id", "client_id", "legal_entity_id", "country_id", "geography_id", "industry_id", 
+        "domain_ids", "unit_code", "unit_name", "address", "postal_code", "is_active", "created_by", 
+        "created_on", "updated_by", "updated_on"]
+        if business_group_id != None:
+            columns.append("business_group_id")
+        if division_id != None:
+            columns.append("division_id")
+        values_list = []
+        for unit in units:
+            domain_ids = ",".join(str(x) for x in unit.domain_ids)
+            if business_group_id != None and division_id != None:
+                values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
+                    str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                    str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
+                    business_group_id, division_id)
+            elif business_group_id != None:
+                values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
+                    str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                    str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
+                    business_group_id)    
+            elif division_id != None :
+                values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
+                    str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                    str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
+                    division_id)   
+            else: 
+                values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
+                        str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                        str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp)
+            values_list.append(values_tuple)
+        return self.bulk_insert(self.tblUnits, columns, values_list)
+
+
+    def update_unit(self, client_id,  units, business_group_id, legal_entity_id, division_id, session_user):
+        current_time_stamp = str(self.get_date_time())
+        columns = ["country_id", "geography_id", "industry_id", "domain_ids", "unit_code", "unit_name", 
+        "address", "postal_code", "updated_by", "updated_on"]
+        values_list = []
+        for unit in units:
+            domain_ids = ",".join(str(x) for x in unit.domain_ids)
+            values= [unit.country_id, unit.geography_id,unit.industry_id, domain_ids, 
+                        str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
+                        str(unit.postal_code), session_user, current_time_stamp]
+            condition = "client_id='%d' and unit_id = '%d'" % (client_id, unit.unit_id)
+            self.update(self.tblUnits, columns, values, condition)
+        return True
+
+    def change_client_status(self, client_id, legal_entity_id, division_id, is_active, session_user):
+        current_time_stamp = str(self.get_date_time())
+        columns = ["is_active", "updated_on" , "updated_by"]
+        values = [is_active, current_time_stamp, session_user]
+        condition = "legal_entity_id = '%d' and client_id = '%d' "% (legal_entity_id, client_id)
+        if division_id != None:
+            condition += " and division_id='%d' "% division_id
+        return self.update(self.tblUnits, columns, values, condition)
+
+    def reactivate_unit(self, client_id, unit_id, session_user):
+        current_time_stamp = str(self.get_date_time())
+        columns = ["is_active", "updated_on" , "updated_by"]
+        values = [1, current_time_stamp, session_user]
+        condition = "unit_id = '%d' and client_id = '%d' "% (unit_id, client_id)
+        return self.update(self.tblUnits, columns, values, condition)
+
+    def verify_password(self, password, userId):
+        columns = "count(*)"
+        encrypted_password = encrypt(password)
+        condition = "password='%s' and user_id='%d'" % (encrypted_password, userId)
+        rows = self.get_data(self.tblUsers, columns, condition)
+        if(int(rows[0][0]) <= 0):
+            return False
+        else:
+            return True
+
+    def get_business_groups_for_user(self, user_id):
+        client_ids = self.get_user_clients(user_id)
+        columns = "business_group_id, business_group_name, client_id"
+        condition = "client_id in (%s)" % client_ids
+        rows = self.get_data(self.tblBusinessGroups, columns, condition) 
+        columns = ["business_group_id", "business_group_name", "client_id"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_business_groups(result)
+
+    def return_business_groups(self, business_groups):
+        results = []
+        for business_group in business_groups :
+            results.append(core.BusinessGroup(
+                business_group["business_group_id"], business_group["business_group_name"],
+                business_group["client_id"]
+            ))
+        return results 
+
+    def get_legal_entities_for_user(self, user_id):
+        client_ids = self.get_user_clients(user_id)
+        columns = "legal_entity_id, legal_entity_name, business_group_id, client_id"
+        condition = "client_id in (%s)" % client_ids
+        rows = self.get_data(self.tblLegalEntities, columns, condition) 
+        columns = ["legal_entity_id", "legal_entity_name", "business_group_id", 
+        "client_id"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_legal_entities(result)
+
+    def return_legal_entities(self, legal_entities):
+        results = []
+        for legal_entity in legal_entities :
+            results.append(core.LegalEntity(
+                legal_entity["legal_entity_id"], legal_entity["legal_entity_name"],
+                legal_entity["business_group_id"], legal_entity["client_id"]
+            ))
+        return results
+
+    def get_divisions_for_user(self, user_id):
+        client_ids = self.get_user_clients(user_id)
+        columns = "division_id, division_name, legal_entity_id, business_group_id,"+\
+        "client_id"
+        condition = "client_id in (%s)" % client_ids
+        rows = self.get_data(self.tblDivisions, columns, condition) 
+        columns = ["division_id", "division_name", "legal_entity_id", 
+        "business_group_id", "client_id"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_divisions(result)
+
+    def return_divisions(self, divisions):
+        results = []
+        for division in divisions :
+            print "division:{}".format(division)
+            print "division[division_id]:{}".format(division["division_id"])
+            division_obj = core.Division(
+                division["division_id"], division["division_name"], 
+                divisions["legal_entity_id"], division["business_group_id"],
+                divisions["client_id"]
+            )
+            print "division_obj:{}".format(division_obj)
+            results.append(division_obj)
+            print results
+        return results
+
+    def get_units_for_user(self, user_id):
+        client_ids = self.get_user_clients(user_id)
+        columns = "unit_id, unit_code, unit_name, unit_address, division_id,"+\
+        " legal_entity_id, business_group_id, client_id, is_active"
+        condition = "client_id in (%s)" % client_ids
+        rows = self.get_data(self.tblUnits, columns, condition) 
+        columns = ["unit_id", "unit_code", "unit_name", "unit_address", "division_id", 
+        "legal_entity_id", "business_group_id", "client_id", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_units(result)
+
+    def return_units(self, units):
+        results = []
+        for unit in units :
+            results.append(core.Unit(
+                unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
+                unit["business_group_id"], unit["client_id"], unit["unit_code"],
+                unit["unit_name"], unit["unit_address"], bool(unit["is_active"])
+            ))
+        return results
+
+class ClientDatabase(Database):
+
+    def __init__(self, knowledge_db):
+        rows = knowledge_db.get_client_db_info()
+        global _client_db_connections
+        _client_db_connections = {}
+        for row in rows:
+            host = row[0]
+            client_id = row[1]
+            username = row[2]
+            password = row[3]
+            database = row[4]
+            _client_db_connections[client_id] = super(ClientDatabase, self).__init__(
+                host, username, password, database
+            )

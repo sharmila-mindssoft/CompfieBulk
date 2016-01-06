@@ -6,7 +6,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_ActiveCompliance,
     parse_structure_CustomTextType_500,
     parse_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence,
-    parse_structure_SignedIntegerType_8,
+    parse_structure_UnsignedIntegerType_32,
     parse_structure_CustomTextType_50,
     parse_structure_VectorType_RecordType_clientuser_ComplianceDetail,
     parse_structure_CustomTextType_20,
@@ -91,7 +91,7 @@ class UpdateComplianceDetail(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["compliance_history_id", "documents", "completion_date", "validity_date", "next_due_date", "remarks"])
         compliance_history_id = data.get("compliance_history_id")
-        compliance_history_id = parse_structure_SignedIntegerType_8(compliance_history_id)
+        compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         documents = data.get("documents")
         documents = parse_structure_VectorType_CustomTextType_20(documents)
         completion_date = data.get("completion_date")
@@ -136,7 +136,7 @@ class StartOnOccurrenceCompliance(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["compliance_id", "start_date"])
         compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_SignedIntegerType_8(compliance_id)
+        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         start_date = data.get("start_date")
         start_date = parse_structure_CustomTextType_20(start_date)
         return StartOnOccurrenceCompliance(compliance_id, start_date)
@@ -208,9 +208,9 @@ class CheckDiskSpaceSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["total_disk_space", "available_disk_space"])
         total_disk_space = data.get("total_disk_space")
-        total_disk_space = parse_structure_SignedIntegerType_8(total_disk_space)
+        total_disk_space = parse_structure_UnsignedIntegerType_32(total_disk_space)
         available_disk_space = data.get("available_disk_space")
-        available_disk_space = parse_structure_SignedIntegerType_8(available_disk_space)
+        available_disk_space = parse_structure_UnsignedIntegerType_32(available_disk_space)
         return CheckDiskSpaceSuccess(total_disk_space, available_disk_space)
 
     def to_inner_structure(self):
@@ -322,7 +322,7 @@ class ComplianceDetail(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["unit_id", "current_compliances", "upcoming_compliances"])
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         current_compliances = data.get("current_compliances")
         current_compliances = parse_structure_VectorType_RecordType_core_ActiveCompliance(current_compliances)
         upcoming_compliances = data.get("upcoming_compliances")
@@ -352,7 +352,7 @@ class ComplianceOnOccurrence(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_id", "statutory_provision", "compliance_name", "description", "complete_within_days"])
         compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_SignedIntegerType_8(compliance_id)
+        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         statutory_provision = data.get("statutory_provision")
         statutory_provision = parse_structure_CustomTextType_500(statutory_provision)
         compliance_name = data.get("compliance_name")
@@ -360,7 +360,7 @@ class ComplianceOnOccurrence(object):
         description = data.get("description")
         description = parse_structure_CustomTextType_500(description)
         complete_within_days = data.get("complete_within_days")
-        complete_within_days = parse_structure_SignedIntegerType_8(complete_within_days)
+        complete_within_days = parse_structure_UnsignedIntegerType_32(complete_within_days)
         return ComplianceOnOccurrence(compliance_id, statutory_provision, compliance_name, description, complete_within_days)
 
     def to_structure(self):

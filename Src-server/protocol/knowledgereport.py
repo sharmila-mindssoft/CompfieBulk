@@ -5,7 +5,7 @@ parse_structure_VectorType_RecordType_knowledgereport_MappingReport,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_knowledgereport_GeographyMapping,
     parse_structure_Text,
     parse_structure_VectorType_RecordType_core_Domain,
-    parse_structure_SignedIntegerType_8,
+    parse_structure_UnsignedIntegerType_32,
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_core_Industry,
     parse_structure_VariantType_knowledgereport_Request,
@@ -86,9 +86,9 @@ class GetStatutoryMappingReportData(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "industry_id", "statutory_nature_id", "geography_id", "level_1_statutory_id"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         industry_id = data.get("industry_id")
         industry_id = parse_structure_OptionalType_SignedIntegerType_8(industry_id)
         statutory_nature_id = data.get("statutory_nature_id")
@@ -310,9 +310,9 @@ class MappingReport(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "statutory_mappings"])
         country_id = data.get("country_id")
-        country_id = parse_structure_SignedIntegerType_8(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_SignedIntegerType_8(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         statutory_mappings = data.get("statutory_mappings")
         statutory_mappings = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping(statutory_mappings)
         return MappingReport(country_id, domain_id, statutory_mappings)
