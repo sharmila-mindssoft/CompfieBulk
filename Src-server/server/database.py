@@ -841,7 +841,7 @@ class KnowledgeDatabase(Database):
 
 
     def get_nature_by_id(self, nature_id) :
-        q = "SELECT sttautory_nature_name FROM tbl_statutory_natures WHERE statutory_nature_id=%s" % nature_id
+        q = "SELECT stautory_nature_name FROM tbl_statutory_natures WHERE statutory_nature_id=%s" % nature_id
         row = self.select_one(q)
         nature_name = None
         if row :
@@ -882,8 +882,8 @@ class KnowledgeDatabase(Database):
             return False
 
         table_name = "tbl_statutory_natures"
-        field_with_data = " nature_name = '%s', updated_by = %s" % (
-            nature_name, updated_by
+        field_with_data = " statutory_nature_name = '%s', updated_by = %s" % (
+            nature_name, int(user_id)
         )
         where_condition = "statutory_nature_id = %s " % nature_id
         if (self.update_data(table_name, field_with_data, where_condition)) :
@@ -900,7 +900,7 @@ class KnowledgeDatabase(Database):
 
         table_name = "tbl_statutory_natures"
         field_with_data = "is_active = %s, updated_by = %s" % (
-            is_active, user_id
+            int(is_active), int(user_id)
         )
         where_condition = "statutory_nature_id = %s " % (nature_id)
 
