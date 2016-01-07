@@ -86,6 +86,7 @@ function initMirror() {
             toJSON(requestFrame),
             function (data) {
                 var data = parseJSON(data);
+                console.log(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -380,7 +381,7 @@ function initMirror() {
     }
 
     function getGeographyReport(callback) {
-        var request = ["GeographyReport", {}];
+        var request = ["GetGeographyReport", {}];
         apiRequest("api/knowledge_report", request, callback);   
     }
 

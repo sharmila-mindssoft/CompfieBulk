@@ -1664,9 +1664,7 @@ class KnowledgeDatabase(Database):
                 str(statutory_nature_id),
                 str("%" + str(geography_id) + ",%")
             )
-        print q
         rows = self.select_all(q)
-        print rows
         columns = [
             "statutory_mapping_id", "country_id", 
             "country_name", "domain_id", "domain_name", "industry_ids", 
