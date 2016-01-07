@@ -567,9 +567,9 @@ $("#temp_addcompliance").click(function() {
   var repeats_every = null;
   var duration = null;
   var duration_type= null;
-  var statutory_date = '';
-  var statutory_month = '';
-  var trigger_before_days = '';
+  var statutory_date = null;
+  var statutory_month = null;
+  var trigger_before_days = null;
   var is_active = true;
   statutory_dates = [];
 
@@ -588,14 +588,13 @@ $("#temp_addcompliance").click(function() {
   }else{
     displayMessage("");
     if(compliance_frequency == "1"){
-      if($('#statutory_date').val() != '')
-      statutory_date = parseInt($('#statutory_date').val());
-
-      if($('#statutory_month').val() != '')
-      statutory_month = parseInt($('#statutory_month').val());
-
+      if($('#statutory_date').val() != '' && $('#statutory_month').val() != ''){
+        statutory_date = parseInt($('#statutory_date').val());
+        statutory_month = parseInt($('#statutory_month').val());
+      }
+      
       if($('#triggerbefore').val().trim().length > 0)
-      trigger_before_days = parseInt($('#triggerbefore').val());
+        trigger_before_days = parseInt($('#triggerbefore').val());
 
       statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
       statutory_dates.push(statutory_date);
@@ -605,23 +604,28 @@ $("#temp_addcompliance").click(function() {
         if(repeats_type == '2' && $('.multipleinput').prop("checked") == true){
           for(var i=1;i<=6;i++){
             if($('#multiple_statutory_month'+i).val() != ""){
-            if($('#multiple_statutory_date'+i).val() != '')
-            statutory_date = parseInt($('#multiple_statutory_date'+i).val());
-            if($('#multiple_statutory_month'+i).val() != '')
-            statutory_month = parseInt($('#multiple_statutory_month'+i).val());
+
+            if($('#multiple_statutory_date'+i).val() != '' && $('#multiple_statutory_month'+i).val() != ''){
+              statutory_date = parseInt($('#multiple_statutory_date'+i).val());
+              statutory_month = parseInt($('#multiple_statutory_month'+i).val());
+            }
+            
             if($('#multiple_triggerbefore'+i).val().trim().length > 0)
             trigger_before_days = parseInt($('#multiple_triggerbefore'+i).val());
+          
             statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
             statutory_dates.push(statutory_date);
         }
       }
     }else{
-      if($('#single_statutory_date').val() != '')
-      statutory_date = parseInt($('#single_statutory_date').val());
-      if($('#single_statutory_month').val() != '')
-      statutory_month = parseInt($('#single_statutory_month').val());
+      if($('#single_statutory_date').val() != '' && $('#single_statutory_month').val() != ''){
+        statutory_date = parseInt($('#single_statutory_date').val());
+        statutory_month = parseInt($('#single_statutory_month').val());
+      }
+      
       if($('#single_triggerbefore').val().trim().length > 0)
-      trigger_before_days = parseInt($('#single_triggerbefore').val());
+        trigger_before_days = parseInt($('#single_triggerbefore').val());
+
       statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
       statutory_dates.push(statutory_date);
     }
@@ -1060,8 +1064,9 @@ function savestatutorymapping(){
   if($("#edit_sm_id").val().length > 0){
     sm_id = parseInt($("#edit_sm_id").val());
   }
-  statutorymappingData = mirror.statutoryMapping(sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, sm_id)
+  
   if(sm_id == null){
+    statutorymappingData = mirror.statutoryMapping(sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, sm_id);
     mirror.saveStatutoryMapping(statutorymappingData,
       function (error, response) {
           if (error == null){
@@ -1073,6 +1078,7 @@ function savestatutorymapping(){
       }
   );
   }else{
+    statutorymappingData = mirror.statutoryMapping(sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, sm_id)
     mirror.updateStatutoryMapping(statutorymappingData, 
       function (error, response) {
           if (error == null){

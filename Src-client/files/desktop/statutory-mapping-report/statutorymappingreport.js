@@ -85,7 +85,7 @@ $("#submit").click(function(){
     filterdata["level_1_statutory_id"]=parseInt(act);
 
     function onSuccess(response) {
-     loadresult(data["statutory_mappings"]);
+      loadresult(data["statutory_mappings"]);
     }
     function onFailure(error){
       onFailure(error);
