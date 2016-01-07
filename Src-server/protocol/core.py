@@ -34,7 +34,10 @@ from protocol.parse_structure import (
     parse_structure_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_CustomTextType_50,
     parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
-    parse_structure_OptionalType_VectorType_RecordType_core_FileList
+    parse_structure_OptionalType_VectorType_RecordType_core_FileList,
+    parse_structure_OptionalType_CustomIntegerType_1_100,
+    parse_structure_OptionalType_CustomIntegerType_1_12,
+    parse_structure_OptionalType_CustomIntegerType_1_31
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -68,7 +71,10 @@ from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
     to_structure_OptionalType_VectorType_CustomTextType_50,
     to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
-    to_structure_OptionalType_VectorType_RecordType_core_FileList
+    to_structure_OptionalType_VectorType_RecordType_core_FileList,
+    to_structure_OptionalType_CustomIntegerType_1_100,
+    to_structure_OptionalType_CustomIntegerType_1_12,
+    to_structure_OptionalType_CustomIntegerType_1_31
 )
 
 #
@@ -860,14 +866,14 @@ class FileList(object):
 #
 
 class Compliance(object):
-    def __init__(self, compliance_id, statutory_provision, compliance_task, description, document_name, format_file_list, penal_description, frequency_id, statutory_dates, repeats_type_id, repeats_every, duration_type_id, duration, is_active):
+    def __init__(self, compliance_id, statutory_provision, compliance_task, description, document_name, format_file_list, penal_consequences, frequency_id, statutory_dates, repeats_type_id, repeats_every, duration_type_id, duration, is_active):
         self.compliance_id = compliance_id
         self.statutory_provision = statutory_provision
         self.compliance_task = compliance_task
         self.description = description
         self.document_name = document_name
         self.format_file_list = format_file_list
-        self.penal_description = penal_description
+        self.penal_consequences = penal_consequences
         self.frequency_id = frequency_id
         self.statutory_dates = statutory_dates
         self.repeats_type_id = repeats_type_id
@@ -891,8 +897,8 @@ class Compliance(object):
         document_name = parse_structure_OptionalType_CustomTextType_50(document_name)
         format_file_list = data.get("format_file_list")
         format_file_list = parse_structure_OptionalType_VectorType_RecordType_core_FileList(format_file_list)
-        penal_description = data.get("penal_consequences")
-        penal_description = parse_structure_OptionalType_CustomTextType_500(penal_description)
+        penal_consequences = data.get("penal_consequences")
+        penal_consequences = parse_structure_OptionalType_CustomTextType_500(penal_consequences)
         frequency_id = data.get("frequency_id")
         frequency_id = parse_structure_OptionalType_SignedIntegerType_8(frequency_id)
         statutory_dates = data.get("statutory_dates")
@@ -907,7 +913,7 @@ class Compliance(object):
         duration = parse_structure_OptionalType_UnsignedIntegerType_32(duration)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
-        return Compliance(compliance_id, statutory_provision, compliance_task, description, document_name, format_file_list, penal_description, frequency_id, statutory_dates, repeats_type_id, repeats_every, duration_type_id, duration, is_active)
+        return Compliance(compliance_id, statutory_provision, compliance_task, description, document_name, format_file_list, penal_consequences, frequency_id, statutory_dates, repeats_type_id, repeats_every, duration_type_id, duration, is_active)
 
     def to_structure(self):
         return {
@@ -917,7 +923,7 @@ class Compliance(object):
             "description": to_structure_CustomTextType_500(self.description),
             "document_name": to_structure_OptionalType_CustomTextType_50(self.document_name),
             "format_file_list": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.format_file_list),
-            "penal_consequences": to_structure_OptionalType_CustomTextType_500(self.penal_description),
+            "penal_consequences": to_structure_OptionalType_CustomTextType_500(self.penal_consequences),
             "frequency_id": to_structure_OptionalType_SignedIntegerType_8(self.frequency_id),
             "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
             "repeats_type_id": to_structure_OptionalType_UnsignedIntegerType_32(self.repeats_type_id),
@@ -2007,11 +2013,11 @@ class StatutoryDate(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["statutory_date", "statutory_month", "trigger_before_days"])
         statutory_date = data.get("statutory_date")
-        statutory_date = parse_structure_CustomIntegerType_1_31(statutory_date)
+        statutory_date = parse_structure_OptionalType_CustomIntegerType_1_31(statutory_date)
         statutory_month = data.get("statutory_month")
-        statutory_month = parse_structure_CustomIntegerType_1_12(statutory_month)
+        statutory_month = parse_structure_OptionalType_CustomIntegerType_1_12(statutory_month)
         trigger_before_days = data.get("trigger_before_days")
-        trigger_before_days = parse_structure_UnsignedIntegerType_32(trigger_before_days)
+        trigger_before_days = parse_structure_OptionalType_CustomIntegerType_1_100(trigger_before_days)
         return StatutoryDate(statutory_date, statutory_month, trigger_before_days)
 
     def to_structure(self):
