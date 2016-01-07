@@ -9,14 +9,13 @@ import jinja2
 from basics.webserver import WebServer
 from basics.ioloop import IOLoop
 from protocol import (
-    admin, clientadminsettings, clientmasters, clientreport,
+    clientadminsettings, clientmasters, clientreport,
     clienttransactions, clientuser, core, dashboard,
-    general, knowledgemaster, knowledgereport, knowledgetransaction,
-    login, technomasters, technoreports, technotransactions
+    login
 )
-from server.database import KnowledgeDatabase
+from server.clientdatabase import ClientDatabase
 
-import controller 
+import clientcontroller as controller 
 import MySQLdb as mysql
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
@@ -67,6 +66,7 @@ class API(object):
         assert response is not None
         data = response_data.to_structure()
         s = json.dumps(data, indent=2)
+        print s
         response.send(s)
 
     def _parse_request(
@@ -80,7 +80,6 @@ class API(object):
             )
         except Exception, e:
             print e
-            print(traceback.format_exc())
             response.set_status(400)
             response.send(str(e))
             return None
@@ -103,15 +102,15 @@ class API(object):
                 response_data, response
             )
 
-        self._db.begin()
+        # self._db.begin()
         try:
             response_data = unbound_method(self, request_data, self._db)
-            self._db.commit()
+            # self._db.commit()
             respond(response_data)
         except Exception, e:
             print(traceback.format_exc())
             print e
-            self._db.rollback()
+            # self._db.rollback()
 
 
     @api_request(login.Request)
@@ -119,33 +118,9 @@ class API(object):
         return controller.process_login_request(request, db)
         # return login.ResetPasswordSuccess()
 
-    @api_request(admin.RequestFormat)
-    def handle_admin(self, request, db):
-        return controller.process_admin_request(request, db)
-
-    @api_request(technomasters.RequestFormat)
-    def handle_techno(self, request, db):
-        return controller.process_techno_request(request, db)
-
-    @api_request(clientadminsettings.Request)
-    def handle_client_admin_settings(self, request, db):
-        pass
-                         
-    @api_request(general.RequestFormat)
-    def handle_general(self, request, db):
-        return controller.process_general_request(request, db)
-
-    @api_request(knowledgemaster.RequestFormat)
-    def handle_knowledge_master(self, request, db) :
-        return controller.process_knowledge_master_request(request, db)
-
-    @api_request(knowledgetransaction.RequestFormat)
-    def handle_knowledge_transaction(self, request, db) :
-        return controller.process_knowledge_transaction_request(request, db)
-
-    @api_request(knowledgereport.RequestFormat)
-    def handle_knowledge_report(self, request, db) :
-        return controller.process_knowledge_report_request(request, db)
+    @api_request(clientmasters.RequestFormat)
+    def handle_client_masters(self, request, db):
+        return controller.process_client_master_requests(request, db)
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
@@ -187,47 +162,7 @@ class TemplateHandler(tornado.web.RequestHandler) :
 
 TEMPLATE_PATHS = [
     ("/login", "files/desktop/login/login.html", "files/mobile/login/login.html", {}),
-    ("/test", "test_apis.html", "", {}),
-    ("/home", "files/desktop/home/home.html", None, {}),
-    ("/custom-controls", "files/desktop/custom-controls/custom-controls.html", None, {}),
-    #common
-    ("/change-password", "files/desktop/change-password/changepassword.html", None, {}),
-    #IT Admin Master
-    ("/domain-master", "files/desktop/domain-master/domainmaster.html", None, {}),
-    ("/country-master", "files/desktop/country-master/countrymaster.html", None, {}),
-    ("/user-group-master", "files/desktop/user-group-master/usergroupmaster.html", None, {}),
-    ("/user-master", "files/desktop/user-master/usermaster.html", None, {}),    
-    #knowledge manager transaction
-    ("/approve-statutory-mapping", "files/desktop/approve-statutory-mapping/approvestatutorymapping.html", None, {}),
-    #knowledge user master
-    ("/geography-master", "files/desktop/geography-master/geographymaster.html", None, {}),
-    ("/geography-level-master", "files/desktop/geography-level-master/geographylevelmaster.html", None, {}),
-    ("/industry-master", "files/desktop/industry-master/industrymaster.html", None, {}),   
-    ("/statutory-nature-master", "files/desktop/statutory-nature-master/statutorynaturemaster.html", None, {}),
-    ("/statutory-level-master", "files/desktop/statutory-level-master/statutorylevelmaster.html", None, {}),
-    #knowledge user Transaction
-    ("/statutory-mapping", "files/desktop/statutory-mapping/statutorymapping.html", None, {}),    
-    #knowledge Reports
-    ("/statutory-mapping-report", "files/desktop/statutory-mapping-report/statutorymappingreport.html", None, {}),
-    ("/country-report", "files/desktop/knowledge-master-report/country-master-report/countrymasterreport.html", None, {}),
-    ("/domain-report", "files/desktop/knowledge-master-report/domain-master-report/domainmasterreport.html", None, {}),
-    ("/geography-report", "files/desktop/knowledge-master-report/geography-master-report/geographymasterreport.html", None, {}),
-    ("/industry-report", "files/desktop/knowledge-master-report/industry-master-report/industrymasterreport.html", None, {}),
-    ("/statutory-nature-report", "files/desktop/knowledge-master-report/statutory-nature-master-report/statutorynaturemasterreport.html", None, {}),
-    #Techno Manager master
-    ("/client-master", "files/desktop/client-master/clientmaster.html", None, {}),
-    #Techno user master
-    ("/client-unit", "files/desktop/client-unit/clientunit.html", None, {}), 
-    ("/client-profile", "files/desktop/client-profile/clientprofile.html", None, {}),
-    #Techno User Transaction
-    ("/assign-statutory", "files/desktop/assign-statutory/assignstatutory.html", None, {}),
-    #Techno reports
-    ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {}),
-    #client admin
-    ("/service-provider", "files/desktop/service-provider/serviceprovider.html", None, {}),   
-    ("/client-user-privilege", "files/desktop/client-user-privilege/clientuserprivilege.html", None, {}),  
-    ("/client-user-master", "files/desktop/client-user-master/clientusermaster.html", None, {}),  
-    ("/unit-closure", "files/desktop/unit-closure/unitclosure.html", None, {}),    
+    ("/test", "test_apis.html", "", {})    
 ]
 
 
@@ -241,9 +176,7 @@ def run_server(port):
     io_loop = IOLoop()
 
     def delay_initialize():
-        db = KnowledgeDatabase(
-            "localhost", "root", "123456", "mirror_knowledge"
-        )
+        db = ClientDatabase()
         web_server = WebServer(io_loop)
 
         web_server.url("/", GET=handle_root)
@@ -260,16 +193,7 @@ def run_server(port):
 
         api_urls_and_handlers = [
             ("/api/login", api.handle_login),
-            ("/api/admin", api.handle_admin),
-            ("/api/techno", api.handle_techno),
-            (
-                "/api/handle_client_admin_settings",
-                api.handle_client_admin_settings
-            ),
-            ("/api/general", api.handle_general),
-            ("/api/knowledge_master", api.handle_knowledge_master),
-            ("/api/knowledge_transaction", api.handle_knowledge_transaction),
-            ("/api/knowledge_report", api.handle_knowledge_report)
+            ("/api/client_masters", api.handle_client_masters),
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

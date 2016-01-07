@@ -227,6 +227,13 @@ def parse_structure_VectorType_RecordType_core_UserGroup(data):
         lst.append(parse_structure_RecordType_core_UserGroup(item))
     return lst
 
+def parse_structure_VectorType_RecordType_client_masters_ClientUserGroup(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_client_masters_ClientUserGroup(item))
+    return lst
+
 def parse_structure_VectorType_RecordType_core_LegalEntity(data):
     data = parse_list(data, 0)
     lst = []
@@ -1594,6 +1601,10 @@ def parse_structure_RecordType_admin_Response_EmailIDAlreadyExists(data):
 def parse_structure_RecordType_core_UserGroup(data):
     from protocol import core
     return core.UserGroup.parse_structure(data)
+
+def parse_structure_RecordType_client_masters_ClientUserGroup(data):
+    from protocol import clientmasters
+    return clientmasters.ClientUserGroup.parse_structure(data)
 
 def parse_structure_RecordType_login_Response_InvalidCredentials(data):
     from protocol import login

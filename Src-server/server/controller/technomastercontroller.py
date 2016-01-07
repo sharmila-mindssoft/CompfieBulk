@@ -41,10 +41,10 @@ def get_client_groups(db, request, session_user):
 		group_name = client_row[1]
 		email_id = client_row[2]
 		logo_url = client_row[3]
-		contract_from = str(client_row[4])
-		contract_to  = str(client_row[5])
-		no_of_user_licence = client_row[6]
-		total_disk_space = int(client_row[7])
+		contract_from = db.datetime_to_string(client_row[4])
+		contract_to  = db.datetime_to_string(client_row[5])
+		no_of_user_licence = client_row[6] 
+		total_disk_space = client_row[7]/ 1000000000
 		is_sms_subscribed = True if client_row[8]==1 else False
 		incharge_persons = [int(x) for x in client_row[9].split(",")]
 		is_active = True if client_row[10]==1 else False
@@ -289,25 +289,15 @@ def update_client(db, request, session_user):
 
 def get_clients(db, request, session_user):
 	country_list = db.get_countries_for_user(session_user)
-	print "got country list"
 	domain_list = db.get_domains_for_user(session_user)
-	print "got domain list"
 	geography_level_list = db.get_geograhpy_levels_for_user(session_user)
-	print "got geography level list"
 	industry_list = db.get_industries()
-	print "got industry list"
 	geography_list = db.get_geographies_for_user(session_user)
-	print "got geography list"
 	group_company_list = db.get_group_companies_for_user(session_user)
-	print "got group company list"
 	business_group_list = db.get_business_groups_for_user(session_user)
-	print "got business_group list"
 	legal_entity_list = db.get_legal_entities_for_user(session_user)
-	print "got legal entity list"
 	division_list = db.get_divisions_for_user(session_user)
-	print "got division 4list"
 	unit_list = db.get_units_for_user(session_user)
-	print "got unit list"
 	return technomasters.GetClientsSuccess(countries=country_list, 
 		domains = domain_list, group_companies = group_company_list, 
 		business_groups = business_group_list, legal_entities = legal_entity_list, 

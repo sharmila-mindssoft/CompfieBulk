@@ -238,7 +238,8 @@ Response = VariantType("Response", [
 	UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess,
 	GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists,
 	UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess,
-	GetUnitsSuccess, InvalidPassword, CloseUnitSuccess,ContactNumberAlreadyExists
+	GetUnitsSuccess, InvalidPassword, CloseUnitSuccess,ContactNumberAlreadyExists,
+	InvalidServiceProviderId
 ])
 
 

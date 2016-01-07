@@ -1087,7 +1087,7 @@ class GroupCompanyDetail(object):
         no_of_user_licence = data.get("no_of_user_licence")
         no_of_user_licence = parse_structure_UnsignedIntegerType_32(no_of_user_licence)
         total_disk_space = data.get("total_disk_space")
-        total_disk_space = parse_structure_UnsignedIntegerType_32(total_disk_space)
+        total_disk_space = parse_structure_Float(total_disk_space)
         is_sms_subscribed = data.get("is_sms_subscribed")
         is_sms_subscribed = parse_structure_Bool(is_sms_subscribed)
         username = data.get("username")
@@ -1107,7 +1107,7 @@ class GroupCompanyDetail(object):
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
             "no_of_user_licence": to_structure_SignedIntegerType_8(self.no_of_user_licence),
-            "total_disk_space": to_structure_UnsignedIntegerType_32(self.total_disk_space),
+            "total_disk_space": to_structure_Float(self.total_disk_space),
             "is_sms_subscribed": to_structure_Bool(self.is_sms_subscribed),
             "username": to_structure_CustomTextType_100(self.username),
             "is_active": to_structure_Bool(self.is_active),
