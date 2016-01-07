@@ -1705,8 +1705,11 @@ class KnowledgeDatabase(Database):
             mapping_list = []
             for row in rows :
                 mapping_ids = row["statutory_mapping_ids"]
-                if (mapping_ids is None) or (mapping_ids == "") :
+                if mapping_ids is None:
                     continue
+                if mapping_ids == "" :
+                    continue
+
                 def getData(i) :
                     return report_data.get(int(i))
                 mapping_list.extend(
