@@ -94,15 +94,15 @@
 		          client_mirror.saveClientUserGroup(userGroupDetails,callback);
 			}
 			function updateClientUserGroup(){
-				userGroupId = 1
+				userGroupId = 2
 		          userGroupName = "Test Client User Group 1 update"
 		          formIds = [4,5]
 		          userGroupDetails = client_mirror.getUpdateClientUserGroupDict(userGroupId, userGroupName, formIds)
 		          client_mirror.updateClientUserGroup(userGroupDetails,callback);
 			}
 			function changeClientUserGroupStatus(){
-				 userGroupId = 111
-				    isActive = 0
+				 userGroupId = 1
+				    isActive = false
 				    client_mirror.changeClientUserGroupStatus(userGroupId,isActive, callback) ;
 			}
 			function getClientUserGroupList(){
@@ -259,8 +259,7 @@
 		        dateConfigurations.push(configuration1)
 		        dateConfigurations.push(configuration2)
 
-			    group_name = "Client Test Group 612";
-
+			    group_name = "Test Client 21";
 		        country_ids = [1,2];
 		        domain_ids = [1,2];
 		        logo = "logo.png";
@@ -268,9 +267,9 @@
 		        contract_to = "01-Nov-2016";
 		        incharge_persons = [1,2];
 		        no_of_user_licence = 10;
-		        file_space = 4.2
+		        file_space = 4.6;
 		        is_sms_subscribed = true;
-		        email_id = "testclient2@domain.com";
+		        email_id = "testclient21@domain.com";
 		        shortName = "test2"
 		        
 			    clientGroupDetails = mirror.getSaveClientGroupDict(group_name,
@@ -287,7 +286,7 @@
 		        dateConfigurations.push(configuration1)
 
 		        client_id = 7
-		        group_name = "Client Test Group 2 Update";
+		        group_name = "Client Test Group 21 Update";
 		        country_ids = [1];
 		        domain_ids = [1];
 		        logo = "logo.png";
@@ -295,7 +294,7 @@
 		        contract_to = "01-Nov-2016";
 		        incharge_persons = [1];
 		        no_of_user_licence = 10;
-		        file_space = 4;
+		        file_space = 4.6;
 		        is_sms_subscribed = true;
 		        clientGroupDetails = mirror.getUpdateClientGroupDict(client_id,group_name,country_ids, domain_ids, logo, contract_from, contract_to,
 		        incharge_persons, no_of_user_licence,file_space,is_sms_subscribed, dateConfigurations)

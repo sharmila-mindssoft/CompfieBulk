@@ -31,7 +31,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_RecordType_techno_master_DIVISION,
     parse_structure_VectorType_RecordType_techno_master_UNIT,
     parse_structure_RecordType_techno_master_COUNTRYWISEUNITS,
-    parse_structure_VectorType_RecordType_techno_master_COUNTRYWISEUNITS
+    parse_structure_VectorType_RecordType_techno_master_COUNTRYWISEUNITS,
+    parse_structure_Float
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -59,7 +60,9 @@ from protocol.to_structure import (
     to_structure_VariantType_technomasters_Request,
     to_structure_CustomTextType_20,
     to_structure_VectorType_RecordType_core_GroupCompanyDetail,
-    to_structure_VectorType_RecordType_core_Unit
+    to_structure_VectorType_RecordType_core_Unit,
+    to_structure_Float
+
 )
 
 #
@@ -137,7 +140,7 @@ class SaveClientGroup(Request):
         no_of_user_licence = data.get("no_of_user_licence")
         no_of_user_licence = parse_structure_UnsignedIntegerType_32(no_of_user_licence)
         file_space = data.get("file_space")
-        file_space = parse_structure_UnsignedIntegerType_32(file_space)
+        file_space = parse_structure_Float(file_space)
         is_sms_subscribed = data.get("is_sms_subscribed")
         is_sms_subscribed = parse_structure_Bool(is_sms_subscribed)
         email_id = data.get("email_id")
@@ -158,7 +161,7 @@ class SaveClientGroup(Request):
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
             "incharge_persons": to_structure_VectorType_SignedIntegerType_8(self.incharge_persons),
             "no_of_user_licence": to_structure_SignedIntegerType_8(self.no_of_user_licence),
-            "file_space": to_structure_SignedIntegerType_8(self.file_space),
+            "file_space": to_structure_Float(self.file_space),
             "is_sms_subscribed": to_structure_Bool(self.is_sms_subscribed),
             "email_id": to_structure_CustomTextType_100(self.email_id),
             "date_configurations": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations),
@@ -202,7 +205,7 @@ class UpdateClientGroup(Request):
         no_of_user_licence = data.get("no_of_user_licence")
         no_of_user_licence = parse_structure_UnsignedIntegerType_32(no_of_user_licence)
         file_space = data.get("file_space")
-        file_space = parse_structure_UnsignedIntegerType_32(file_space)
+        file_space = parse_structure_Float(file_space)
         is_sms_subscribed = data.get("is_sms_subscribed")
         is_sms_subscribed = parse_structure_Bool(is_sms_subscribed)
         date_configurations = data.get("date_configurations")
@@ -220,7 +223,7 @@ class UpdateClientGroup(Request):
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
             "incharge_persons": to_structure_VectorType_SignedIntegerType_8(self.incharge_persons),
             "no_of_user_licence": to_structure_SignedIntegerType_8(self.no_of_user_licence),
-            "file_space": to_structure_SignedIntegerType_8(self.file_space),
+            "file_space": to_structure_Float(self.file_space),
             "is_sms_subscribed": to_structure_Bool(self.is_sms_subscribed),
             "date_configurations": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations),
         }

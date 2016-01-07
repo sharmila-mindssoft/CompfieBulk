@@ -111,6 +111,30 @@ class ClientDatabase(Database):
 		user_id = row[0]
 		return user_id
 
+	def get_forms(self):
+		columns = "tf.form_id, tf.form_category_id, tfc.form_category, "+\
+		"tf.form_type_id, tft.form_type, tf.form_name, tf.form_url, "+\
+		"tf.form_order, tf.parent_menu"
+		tables = [self.tblForms, self.tblFormCategory, self.tblFormType]
+		aliases = ["tf", "tfc", "tft"]
+		joinConditions = ["tf.form_category_id = tfc.form_category_id", 
+		"tf.form_type_id = tft.form_type_id"]
+		whereCondition = " tf.form_category_id in (3,2,4) order by tf.form_order"
+		joinType = "left join"
+
+		rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, 
+		    joinConditions, whereCondition)
+		return rows
+
+	def generate_new_user_privilege_id(self, client_id) :
+		return self.get_new_id("user_group_id",self.tblUserGroups, client_id)
+
+	def is_duplicate_user_privilege(self, user_group_id, user_privilege_name, 
+		client_id):
+		condition = "user_group_name ='%s' AND user_group_id != '%d'" %(
+		    user_privilege_name, user_group_id)
+		return self.is_already_exists(self.tblUserGroups, condition, client_id)
+
 	def get_user_privilege_details_list(self, client_id):
 		columns = "user_group_id, user_group_name, form_ids, is_active"
 		rows = self.get_data(self.tblUserGroups, columns, "1", client_id)
@@ -121,11 +145,11 @@ class ClientDatabase(Database):
 		rows = self.get_data(self.tblUserGroups, columns, "1", client_id)
 		return rows        
 
-	def save_user_privilege(self, user_privilege, session_user, client_id):
+	def save_user_privilege(self, user_group_id, user_privilege, session_user, client_id):
 		columns = ["user_group_id", "user_group_name","form_ids", "is_active",
 		          "created_on", "created_by", "updated_on", "updated_by"]
-		values_list =  [user_privilege.user_group_id, user_privilege.user_group_name, 
-		                ",".join(str(x) for x in user_privilege.form_ids), user_privilege.is_active, 
+		values_list =  [user_group_id, user_privilege.user_group_name, 
+		                ",".join(str(x) for x in user_privilege.form_ids), 1, 
 		                self.get_date_time(), session_user,self.get_date_time(), 
 		                session_user]
 		return self.insert(self.tblUserGroups, columns, values_list, client_id)

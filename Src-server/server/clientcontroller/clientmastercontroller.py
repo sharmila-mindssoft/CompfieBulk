@@ -95,40 +95,58 @@ def change_service_provider_status(db, request, session_user, client_id):
 		is_active, session_user, client_id):
 	    return clientmasters.ChangeServiceProviderStatusSuccess()
 
+def get_forms(db, client_id) :
+	result_rows = db.get_forms(client_id)
+	forms = []
+	for row in result_rows:
+		parent_menu = "" if row[8] == None else row[8]
+		form = core.Form(form_id = row[0], form_name = row[5], form_url = row[6], 
+				parent_menu = parent_menu, form_type = row[4])
+		forms.append(form)
+	result[4] = process_user_menus(forms)
+	return result
+
+def get_user_privilege_details_list(db, client_id):
+	user_group_list = []
+	rows = db.get_user_privilege_details_list(client_id)
+	for row in rows:
+		user_group_id = int(row[0])
+		user_group_name = row[1]
+		form_ids = [int(x) for x in row[2].split(",")]
+		is_active = bool(row[3])
+		user_group_list.append(admin.UserGroup(user_group_id, user_group_name, 
+			form_category_id, form_ids, is_active))
+	return user_group_list
+
 def get_user_privileges(db, request, session_user, client_id):
-	forms = getUserGroupsFormData()
-	userGroupList = getDetailedList(session_user)
-
-	response_data = {}
-	response_data["forms"] = forms
-	response_data["user_groups"] = userGroupList
-
-	response = commonResponseStructure("GetUserGroupsSuccess", response_data)
-	return response
+	forms = get_forms(db, client_id)
+	user_group_list = get_user_privilege_details_list(db, client_id)
+	return clientmasters.GetUserPrivilegesSuccess(forms=forms, 
+		user_groups=user_group_list)
 
 def save_user_privileges(db, request, session_user, client_id):
-	user_group_id = db.generate_new_user_privilege_id()
+	user_group_id = db.generate_new_user_privilege_id(client_id)
 	if db.is_duplicate_user_privilege(user_group_id, 
-		request.user_privilege_name, client_id) :
-	    return clientmasters.GroupNameAlreadyExists()
-	elif db.save_user_privilege(request, session_user, client_id) :
-	    return clientmasters.SaveUserGroupSuccess()
+		request.user_group_name, client_id) :
+	    return clientmasters.UserGroupNameAlreadyExists()
+	elif db.save_user_privilege(user_group_id, request, session_user, client_id) :
+	    return clientmasters.SaveUserPrivilegesSuccess()
 
 def update_user_privileges(db, request, session_user, client_id):
 	if db.is_invalid_id(db.tblUserGroups, "user_group_id",
 		request.user_group_id, client_id):
-	    return clientmasters.InvalidGroupId()
-	elif db.is_duplicate_user_privilege(user_group_id, 
-		request.user_privilege_name, client_id) :
-	    return clientmasters.GroupNameAlreadyExists()
+	    return clientmasters.InvalidUserGroupId()
+	elif db.is_duplicate_user_privilege(request.user_group_id, 
+		request.user_group_name, client_id) :
+	    return clientmasters.UserGroupNameAlreadyExists()
 	elif db.update_user_privilege(request, session_user, client_id) :
-	    return clientmasters.UpdateUserGroupSuccess()
+	    return clientmasters.UpdateUserPrivilegesSuccess()
 
 def change_user__privilege_status(db, request, session_user, client_id):
 	if db.is_invalid_id(db.tblUserGroups, "user_group_id", 
 		request.user_group_id, client_id):
-	    return clientmasters.InvalidGroupId()
-	elif db.update_user_privilege_status(user_group_id, is_active, 
+	    return clientmasters.InvalidUserGroupId()
+	elif db.update_user_privilege_status(request.user_group_id, request.is_active, 
 		session_user, client_id):
 	    return clientmasters.ChangeUserPrivilegeStatusSuccess()
 

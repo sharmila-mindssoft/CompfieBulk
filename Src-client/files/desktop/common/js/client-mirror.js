@@ -234,7 +234,7 @@ function initClientMirror() {
     function saveClientUserGroup(userGroupDetail, callback) {
         callerName = "api/client_masters"  
         var request = [
-            "SaveUserPrivilege",
+            "SaveUserPrivileges",
             userGroupDetail
         ];
         clientApiRequest(callerName, request, callback);
@@ -251,7 +251,7 @@ function initClientMirror() {
     function updateClientUserGroup(userGroupDetail, callback) {
         callerName = "api/client_masters"
         var request = [
-            "UpdateUserPrivilege",
+            "UpdateUserPrivileges",
             userGroupDetail
         ];
         clientApiRequest(callerName, request, callback);

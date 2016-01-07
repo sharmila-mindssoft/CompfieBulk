@@ -223,7 +223,7 @@ class Database(object) :
             return self.execute(query, client_id)
         return self.execute(query)
 
-    def delete(self, table, condition):
+    def delete(self, table, condition, client_id = None):
         query = "DELETE from "+table+" WHERE "+condition
         if client_id != None:
             return self.execute(query, client_id)
@@ -315,21 +315,21 @@ class Database(object) :
 
     def convert_to_dict(self, data_list, columns) :
         assert type(data_list) in (list, tuple)
-        result_list = []
-        if len(data_list) > 1 :
+        if type(data_list[0]) is tuple :
+            result_list = []
             if len(data_list[0]) == len(columns) :
                 for data in data_list:
                     result = {}
                     for i, d in enumerate(data):
                         result[columns[i]] = d
                     result_list.append(result)
+            return result_list
         else :
+            result = {}
             if len(data_list) == len(columns) :
-                result = {}
                 for i, d in enumerate(data_list):
                     result[columns[i]] = d
-                result_list.append(result)
-        return result_list
+            return result
 
 class KnowledgeDatabase(Database):
     def __init__(
@@ -760,7 +760,7 @@ class KnowledgeDatabase(Database):
                 WHERE industry_id=%s" % industry_id
 
         else :
-            qry = " SELECT (GROUP_CONCAT(industry_name SEPARATOR ', ')) as \
+            q = " SELECT (GROUP_CONCAT(industry_name SEPARATOR ', ')) as \
                 industry_name FROM tbl_industries \
                 WHERE industry_id in %s" % str(tuple(industry_id))
 
@@ -861,7 +861,8 @@ class KnowledgeDatabase(Database):
 
 
     def get_nature_by_id(self, nature_id) :
-        q = "SELECT statutory_nature_name FROM tbl_statutory_natures WHERE statutory_nature_id=%s" % nature_id
+
+        q = "SELECT stautory_nature_name FROM tbl_statutory_natures WHERE statutory_nature_id=%s" % nature_id
         row = self.select_one(q)
         nature_name = None
         if row :
@@ -902,8 +903,8 @@ class KnowledgeDatabase(Database):
             return False
 
         table_name = "tbl_statutory_natures"
-        field_with_data = " nature_name = '%s', updated_by = %s" % (
-            nature_name, updated_by
+        field_with_data = " statutory_nature_name = '%s', updated_by = %s" % (
+            nature_name, int(user_id)
         )
         where_condition = "statutory_nature_id = %s " % nature_id
         if (self.update_data(table_name, field_with_data, where_condition)) :
@@ -920,7 +921,7 @@ class KnowledgeDatabase(Database):
 
         table_name = "tbl_statutory_natures"
         field_with_data = "is_active = %s, updated_by = %s" % (
-            is_active, user_id
+            int(is_active), int(user_id)
         )
         where_condition = "statutory_nature_id = %s " % (nature_id)
 
@@ -1632,6 +1633,7 @@ class KnowledgeDatabase(Database):
             industry_ids = [
                 int(x) for x in d["industry_ids"][:-1].split(',')
             ]
+            industry_names = self.get_industry_by_id(industry_ids)
             statutory = core.StatutoryMapping(
                 d["country_id"], d["country_name"],
                 d["domain_id"], d["domain_name"],
@@ -2063,7 +2065,7 @@ class KnowledgeDatabase(Database):
             )
         return self.execute(query)
 
-    def chenge_statutory_mapping_status(self, data, updated_by):
+    def change_statutory_mapping_status(self, data, updated_by):
         statutory_mapping_id = data.statutory_mapping_id
         is_active = data.is_active
 
@@ -2656,7 +2658,7 @@ class KnowledgeDatabase(Database):
         "updated_by", "updated_on"]
         values = [client_id, client_group.group_name, client_group.email_id,
         client_group.logo, 1200, contract_from, contract_to,
-        client_group.no_of_user_licence, client_group.file_space * 10000, 
+        client_group.no_of_user_licence, client_group.file_space * 1000000000, 
         is_sms_subscribed, client_group.short_name, 
         ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
         current_time_stamp, session_user, current_time_stamp]
@@ -2673,7 +2675,8 @@ class KnowledgeDatabase(Database):
         "contract_to", "no_of_user_licence", "total_disk_space", "is_sms_subscribed", 
         "incharge_persons", "is_active", "updated_by", "updated_on"]
         values = [client_group.group_name, client_group.logo,1200, contract_from, contract_to,
-        client_group.no_of_user_licence, client_group.file_space, is_sms_subscribed,
+        client_group.no_of_user_licence, client_group.file_space * 1000000000, 
+        is_sms_subscribed,
         ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
         current_time_stamp]
         condition = "client_id = '%d'" % client_group.client_id
