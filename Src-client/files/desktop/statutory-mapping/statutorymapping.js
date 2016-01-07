@@ -10,6 +10,7 @@ var statutoriesList;
 var complianceFrequencyList;
 var complianceDurationTypeList;
 var complianceRepeatTypeList;
+var complianceApprovalStatusList;
 var sm_countryid='';
 var sm_domainid='';
 var sm_statutorynatureid='';
@@ -67,6 +68,8 @@ function getStatutoryMappings(){
     complianceFrequencyList = data["compliance_frequency"];
     complianceDurationTypeList = data["compliance_duration_type"];
     complianceRepeatTypeList = data["compliance_repeat_type"];
+    complianceApprovalStatusList = data["compliance_approval_status"];
+    
     loadStatutoryMappingList(statutoryMappingsList);
   }
   function onFailure(error){
@@ -107,11 +110,17 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
       complianceNames = complianceNames + statutoryMappingsList[entity]["compliance_names"][i] + " <br>";
     }
+
+    for(approvalstatuslist in complianceApprovalStatusList){
+      if(statutoryMappingsList[entity]["approval_status"] == complianceApprovalStatusList[approvalstatuslist]["approval_status_id"]){
+        approvalStatus = complianceApprovalStatusList[approvalstatuslist]["approval_status"];
+      }
+    }
+
     statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
     countryName = statutoryMappingsList[entity]["country_name"];
     domainName = statutoryMappingsList[entity]["domain_name"];
     isActive = statutoryMappingsList[entity]["is_active"];
-    approvalStatus = statutoryMappingsList[entity]["approval_status"];
     if(isActive == true) {
       passStatus= false;
       imgName="icon-active.png"
@@ -141,13 +150,22 @@ function loadStatutoryMappingList(statutoryMappingsList) {
   }
 
   function changeStatus (statutorymappingId,isActive) {
-    function success(status,data){
+    function onSuccess(data){
       getStatutoryMappings();
       displayMessage("Status Changed Successfully");
     }
-    function failure(data){
+    function onFailure(error){
     }
-    mirror.changeStatutoryMappingStatus(statutorymappingId, isActive, success, failure);
+    mirror.changeStatutoryMappingStatus(statutorymappingId, isActive,
+      function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
   }
 
   //filter process
@@ -411,39 +429,49 @@ function saverecord(j,e){
       displayMessage("Level-"+levelstage+" Value Should not be Empty");
     }else{
       if($("#statutoryid").val() == ''){
-          function success(status,data){
-        if(status == "success"){
+        function onSuccess(data){
           displayMessage("Record Added Successfully");
           reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
-         
-        }else{
-          displayMessage(status)
         }
-      }
-      function failure(data){
-      }
-      if(map_statutory_id.length == 0){
-        map_statutory_id.push(0);
-      }
-      mirror.saveStatutory(parseInt(statutorylevel_id), datavalue, map_statutory_id, success, failure);
+        function onFailure(error){
+          displayMessage(error)
+        }
+        if(map_statutory_id.length == 0){
+          map_statutory_id.push(0);
+        }
+        mirror.saveStatutory(parseInt(statutorylevel_id), datavalue, map_statutory_id, 
+          function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+        }
+        );
       }else{
-          function success_update(status,data){
-            if(status == "success"){
-              displayMessage("Record Updated Successfully");
-              reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
-             
-            }else{
-              displayMessage(status)
-            }
-      }
-      function failure_update(data){
-      }
-      if(map_statutory_id.length == 0){
-        map_statutory_id.push(0);
-      }
-      mirror.updateStatutory(parseInt($("#statutoryid").val()), parseInt(statutorylevel_id), datavalue, map_statutory_id, success_update, failure_update);
-      $("#statutoryid").val('');
-      $('#datavalue'+j).val('');
+        function onSuccessUpdate(data){
+          displayMessage("Record Updated Successfully");
+          reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
+        }
+        function onFailureUpdate(error){
+          onFailure(error);
+        }
+        if(map_statutory_id.length == 0){
+          map_statutory_id.push(0);
+        }
+        mirror.updateStatutory(parseInt($("#statutoryid").val()), parseInt(statutorylevel_id), datavalue, map_statutory_id,
+        function (error, response) {
+          if (error == null){
+            onSuccessUpdate(response);
+          }
+          else {
+            onFailureUpdate(error);
+          }
+        }
+        );
+        $("#statutoryid").val('');
+        $('#datavalue'+j).val('');
       }    
     }
   }
@@ -695,8 +723,8 @@ function load_compliance(){
     $('.frequency', clone).text(compliances[entity]["frequency_id"]);
     $('.repeats', clone).text(display_repeats);
     $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="temp_editcompliance(\''+complianceid+'\')"/>');
-
-    if(edit_compliance_id != ''){
+     
+    if(edit_compliance_id != null){
       if(isActive == 1) {
         display_image="icon-active.png"
         passStatus = "0";
@@ -1014,8 +1042,7 @@ function filter_geography(position){
 }
 
 function savestatutorymapping(){
-  function success(status,data){
-    if(status == "success"){
+  function onSuccess(data){
       getStatutoryMappings();
       //displayMessage("Record Added Successfully");
       $("#statutorymapping-add").hide();
@@ -1025,11 +1052,8 @@ function savestatutorymapping(){
       $('ul.setup-panel li:eq(3)').addClass('disabled');
       $('ul.setup-panel li a[href="#step-1"]').trigger('click')
       $("#statutorymapping-view").show();
-    }else{
-      displayMessage(status)
-    }
   }
-  function failure(data){
+  function onFailure(error){
 
   }
   var sm_id = null;
@@ -1038,9 +1062,27 @@ function savestatutorymapping(){
   }
   statutorymappingData = mirror.statutoryMapping(sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, sm_id)
   if(sm_id == null){
-    mirror.saveStatutoryMapping(statutorymappingData, success, failure);
+    mirror.saveStatutoryMapping(statutorymappingData,
+      function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
   }else{
-    mirror.updateStatutoryMapping(statutorymappingData, success, failure);
+    mirror.updateStatutoryMapping(statutorymappingData, 
+      function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
   }  
 }
 
@@ -1201,7 +1243,7 @@ function displayEdit (sm_Id) {
   sm_statutorynatureval = statutoryMappingsList[sm_Id]["statutory_nature_name"];
   sm_statutoryids = statutoryMappingsList[sm_Id]["statutory_ids"];
   compliances = statutoryMappingsList[sm_Id]["compliances"];
-  sm_geographyids = statutoryMappingsList[sm_Id]["geographies_ids"];
+  sm_geographyids = statutoryMappingsList[sm_Id]["geography_ids"];
   load_edit_selectdomain_master(sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid);
   load_statories();
   load_compliance();
