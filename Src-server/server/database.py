@@ -1585,7 +1585,9 @@ class KnowledgeDatabase(Database):
         for d in data :
             mapping_id = int(d["statutory_mapping_id"])
             industry_names = ""
-            compliance_ids = d["compliance_ids"]
+            compliance_ids = [
+                int(x) for x in d["compliance_ids"][:-1].split(',')
+            ]
             compliances_data = self.get_compliance_by_id (
                 compliance_ids
             )
@@ -1836,7 +1838,7 @@ class KnowledgeDatabase(Database):
             return False
 
     def update_statutory_mapping_id(
-        self, statutory_id, mapping_id, user_id
+        self, statutory_ids, mapping_id, updated_by
     ) :
         # remove mapping id
         map_id = str("%" + str(mapping_id) + ",%")
@@ -1905,10 +1907,14 @@ class KnowledgeDatabase(Database):
             compliance_task = data.compliance_task
             compliance_description = data.description
             document_name = data.document_name
-            format_file = ','.join(str(x) for x in data.format_file_name)
+            # format_file = ','.join(str(x) for x in data.format_file_list)
+            format_file = ''
             penal_consequences = data.penal_consequences
             compliance_frequency = data.frequency_id
-            statutory_dates =  json.dumps(data.statutory_dates)
+            statutory_dates = []
+            for s_d in data.statutory_dates :
+                statutory_dates.append(s_d.to_structure())
+            statutory_dates = json.dumps(statutory_dates)
             repeats_every = data.repeats_every
             repeats_type = data.repeats_type_id
             duration = data.duration
@@ -1919,10 +1925,16 @@ class KnowledgeDatabase(Database):
                 query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
                     compliance_task, compliance_description, document_name, format_file, \
                     penal_consequences, frequency_id, statutory_dates, statutory_mapping_id, \
-                    is_active, created_by, created_on) VALUES (%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', \
-                    '%s', %s, %s, %s, '%s')" % (compliance_id, provision, compliance_task, 
-                    compliance_description, document_name, format_file, penal_consequences, compliance_frequency,
-                    statutory_dates, mapping_id, is_active, created_by, created_on)
+                    is_active, created_by, created_on) \
+                    VALUES (%s, '%s', '%s', '%s', '%s', \
+                        '%s', '%s', '%s', \
+                        '%s', %s, %s, %s, '%s')" % (
+                        compliance_id, provision, compliance_task, 
+                        compliance_description, document_name, 
+                        format_file, penal_consequences, compliance_frequency,
+                        statutory_dates, mapping_id, is_active, 
+                        created_by, created_on
+                    )
 
             elif compliance_frequency == 4 :
                 query = "INSERT INTO tbl_compliances (compliance_id, statutory_provision, \
@@ -1950,9 +1962,8 @@ class KnowledgeDatabase(Database):
         return compliance_ids
 
     def update_statutory_mapping(self, data, updated_by) :
+        print data
         statutory_mapping_id = data.statutory_mapping_id
-        country_id =data.country_id
-        domain_id =data.domain_id
         industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
         nature_id =data.statutory_nature_id
         statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
@@ -1960,10 +1971,10 @@ class KnowledgeDatabase(Database):
         geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
 
         self.save_statutory_backup(statutory_mapping_id, updated_by)
-        query = "UPDATE tbl_statutory_mappings set country_id=%s, domain_id=%s, industry_ids='%s', \
+        query = "UPDATE tbl_statutory_mappings set industry_ids='%s', \
             statutory_nature_id=%s, statutory_ids='%s', geography_ids='%s', approval_status=0, rejected_reason=NULL, updated_by=%s \
             WHERE statutory_mapping_id=%s" % (
-                country_id, domain_id, industry_ids, nature_id, statutory_ids, geography_ids,
+                industry_ids, nature_id, statutory_ids, geography_ids,
                 updated_by, statutory_mapping_id
             )
 
@@ -1985,7 +1996,7 @@ class KnowledgeDatabase(Database):
         compliance_ids = []
         for data in datas :
             compliance_id = data.compliance_id
-            if (compliance_id == "") :
+            if (compliance_id is None) :
                 ids = self.save_compliance(mapping_id, [data], updated_by)
                 compliance_ids.extend(ids)
                 continue
@@ -1993,10 +2004,17 @@ class KnowledgeDatabase(Database):
             compliance_task = data.compliance_task
             description = data.description
             document_name = data.document_name
-            format_file = ','.join(str(x) for x in data.format_file_name)
+            # format_file = ','.join(str(x) for x in data.format_file_list)
+            format_file = None
             penal_consequences = data.penal_consequences
             compliance_frequency = data.frequency_id
-            statutory_dates =  json.dumps(data.statutory_dates)
+            statutory_dates = []
+            for s_d in data.statutory_dates :
+                statutory_dates.append(s_d.to_structure())
+            # statutory_dates =  json.dumps(
+            #     data.statutory_dates.to_structure()
+            # )
+            statutory_dates = json.dumps(statutory_dates)
             repeats_every = data.repeats_every
             repeats_type = data.repeats_type_id
             duration = data.duration
@@ -2082,7 +2100,7 @@ class KnowledgeDatabase(Database):
         
         geo_map = []
         for gid in old_record["geography_ids"][:-1].split(',') :
-            data = self.geography_parent_mapping.get(int(geo_map))
+            data = self.geography_parent_mapping.get(int(gid))
             if data is not None :
                 data = data[0]
             geo_map.append(data)
@@ -2098,7 +2116,7 @@ class KnowledgeDatabase(Database):
                 backup_id, statutory_mapping_id, 
                 old_record["country_name"], 
                 old_record["domain_name"], 
-                industry_name, old_record["statutory_nature"], 
+                industry_name, old_record["statutory_nature_name"], 
                 mappings, 
                 geo_mappings, created_by, created_on
             )
@@ -2137,7 +2155,8 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_statutory_natures t4 \
             on t1.statutory_nature_id = t4.statutory_nature_id \
             WHERE t1.statutory_mapping_id=%s" % mapping_id
-        rows = self.select_all(q)
+        rows = self.select_one(q)
+        print rows
         columns = [
             "country_id", "country_name", "domain_id",
             "domain_name", "industry_ids", "statutory_nature_id",
@@ -2148,6 +2167,7 @@ class KnowledgeDatabase(Database):
         result = []
         if rows :
             result = self.convert_to_dict(rows, columns)
+        print result
         return result
 
     def change_approval_status(self, data, updated_by) :
