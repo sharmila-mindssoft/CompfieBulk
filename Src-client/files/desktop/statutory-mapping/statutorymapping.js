@@ -612,7 +612,7 @@ $("#temp_addcompliance").click(function() {
             
             if($('#multiple_triggerbefore'+i).val().trim().length > 0)
             trigger_before_days = parseInt($('#multiple_triggerbefore'+i).val());
-          
+
             statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
             statutory_dates.push(statutory_date);
         }
@@ -1078,7 +1078,7 @@ function savestatutorymapping(){
       }
   );
   }else{
-    statutorymappingData = mirror.statutoryMapping(sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, sm_id)
+    statutorymappingData = mirror.UpdateStatutoryMappingData(sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, sm_id)
     mirror.updateStatutoryMapping(statutorymappingData, 
       function (error, response) {
           if (error == null){
