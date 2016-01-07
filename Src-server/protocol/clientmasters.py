@@ -33,7 +33,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_BusinessGroup,
     to_structure_VariantType_clientmasters_Request,
     to_structure_VectorType_RecordType_core_Division,
-    to_structure_CustomTextType_50
+    to_structure_CustomTextType_50,
+    to_structure_VectorType_RecordType_client_masters_ClientUserGroup
 )
 
 #
@@ -591,7 +592,7 @@ class GetUserPrivilegesSuccess(Response):
     def to_inner_structure(self):
         return {
             "forms": to_structure_RecordType_core_Menu(self.forms),
-            "user_groups": to_structure_VectorType_RecordType_core_UserGroup(self.user_groups),
+            "user_groups": to_structure_VectorType_RecordType_client_masters_ClientUserGroup(self.user_groups),
         }
 
 class UserGroupNameAlreadyExists(Response):

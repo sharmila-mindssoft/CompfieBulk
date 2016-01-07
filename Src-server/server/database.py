@@ -156,6 +156,7 @@ class Database(object) :
                 )
 
         query += " where %s" % whereCondition
+        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)

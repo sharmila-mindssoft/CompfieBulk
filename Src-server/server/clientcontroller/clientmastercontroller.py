@@ -99,12 +99,11 @@ def get_forms(db, client_id) :
 	result_rows = db.get_forms(client_id)
 	forms = []
 	for row in result_rows:
-		parent_menu = "" if row[8] == None else row[8]
-		form = core.Form(form_id = row[0], form_name = row[5], form_url = row[6], 
-				parent_menu = parent_menu, form_type = row[4])
+		parent_menu = "" if row[6] == None else row[6]
+		form = core.Form(form_id = row[0], form_name = row[3], form_url = row[4], 
+				parent_menu = parent_menu, form_type = row[2])
 		forms.append(form)
-	result[4] = process_user_menus(forms)
-	return result
+	return process_user_menus(forms)
 
 def get_user_privilege_details_list(db, client_id):
 	user_group_list = []
@@ -114,8 +113,8 @@ def get_user_privilege_details_list(db, client_id):
 		user_group_name = row[1]
 		form_ids = [int(x) for x in row[2].split(",")]
 		is_active = bool(row[3])
-		user_group_list.append(admin.UserGroup(user_group_id, user_group_name, 
-			form_category_id, form_ids, is_active))
+		user_group_list.append(clientmasters.ClientUserGroup(user_group_id, 
+			user_group_name, form_ids, is_active))
 	return user_group_list
 
 def get_user_privileges(db, request, session_user, client_id):

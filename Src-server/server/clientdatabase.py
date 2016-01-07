@@ -111,19 +111,16 @@ class ClientDatabase(Database):
 		user_id = row[0]
 		return user_id
 
-	def get_forms(self):
-		columns = "tf.form_id, tf.form_category_id, tfc.form_category, "+\
-		"tf.form_type_id, tft.form_type, tf.form_name, tf.form_url, "+\
-		"tf.form_order, tf.parent_menu"
-		tables = [self.tblForms, self.tblFormCategory, self.tblFormType]
-		aliases = ["tf", "tfc", "tft"]
-		joinConditions = ["tf.form_category_id = tfc.form_category_id", 
-		"tf.form_type_id = tft.form_type_id"]
-		whereCondition = " tf.form_category_id in (3,2,4) order by tf.form_order"
+	def get_forms(self, client_id):
+		columns = "tf.form_id, tf.form_type_id, tft.form_type, "+\
+		"tf.form_name, tf.form_url, tf.form_order, tf.parent_menu"
+		tables = [self.tblForms, self.tblFormType]
+		aliases = ["tf",  "tft"]
+		joinConditions = ["tf.form_type_id = tft.form_type_id"]
+		whereCondition = " 1 order by tf.form_order"
 		joinType = "left join"
-
 		rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, 
-		    joinConditions, whereCondition)
+		    joinConditions, whereCondition, client_id)
 		return rows
 
 	def generate_new_user_privilege_id(self, client_id) :
