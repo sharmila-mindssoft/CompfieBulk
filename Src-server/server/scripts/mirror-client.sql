@@ -73,8 +73,6 @@ CREATE TABLE `tbl_compliances` (
 DROP TABLE IF EXISTS `tbl_client_settings`;
 CREATE TABLE `tbl_client_settings` (
   `group_name` varchar(50) NOT NULL,
-  `country_ids` varchar(250) NOT NULL,
-  `domain_ids` varchar(250) NOT NULL,
   `logo_url` varchar(200) NOT NULL,
   `logo_size` float(11) NOT NULL,
   `contract_from` date NOT NULL,
@@ -82,6 +80,7 @@ CREATE TABLE `tbl_client_settings` (
   `no_of_user_licence` int(11) NOT NULL,
   `total_disk_space` float(11) NOT NULL,
   `total_disk_space_used` float(11) DEFAULT 0.0,
+  `url_short_name` varchar(20) DEFAULT NULL,
   `is_sms_subscribed` tinyint(1) DEFAULT 0,
   `two_levels_of_approval` tinyint(1) DEFAULT 1,
   `assignee_reminder` int(11) DEFAULT 7,
@@ -180,7 +179,7 @@ DROP TABLE IF EXISTS `tbl_users`;
 CREATE TABLE `tbl_users` (
   `user_id` int(11) NOT NULL,
   `user_group_id` int(11) NOT NULL,
-  `service_provider_id` int(11) NOT NULL,
+  `service_provider_id` int(11) DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,
   `password` varchar(50) NOT NULL,
   `employee_name` varchar(50) DEFAULT NULL,
@@ -245,7 +244,6 @@ CREATE TABLE `tbl_user_sessions` (
   `last_accessed_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`session_token`),
   CONSTRAINT `fk_tbl_user_sessions_id_1` FOREIGN KEY (`session_type_id`) REFERENCES `tbl_session_types` (`session_type_id`),
-  CONSTRAINT `fk_user_sessions_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_client_statutories`;
 CREATE TABLE `tbl_client_statutories` (
@@ -263,7 +261,6 @@ DROP TABLE IF EXISTS `tbl_client_compliances`;
 CREATE TABLE `tbl_client_compliances` (
   `client_statutory_id` int(11) NOT NULL,
   `compliance_id` int(11) NOT NULL,
-  `unit_id` int(11) NOT NULL,
   `statutory_provision` VARCHAR(50) NOT NULL,
   `applicable` tinyint(4) DEFAULT NULL,
   `not_applicable_remarks` varchar(250) DEFAULT NULL,

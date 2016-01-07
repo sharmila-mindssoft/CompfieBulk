@@ -156,7 +156,6 @@ class Database(object) :
                 )
 
         query += " where %s" % whereCondition
-        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
@@ -194,6 +193,7 @@ class Database(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
+        print query
         if client_id != None:
             return self.execute(query, client_id)
         return self.execute(query)
@@ -2587,6 +2587,7 @@ class KnowledgeDatabase(Database):
         return self.bulk_insert(self.tblUserClients, columns, values_list)
 
     def update_client_group_status(self, client_id, is_active, session_user):
+        is_active = 1 if is_active != False else 0
         columns = ["is_active", "updated_by", "updated_on"]
         values = [ is_active, int(session_user), self.get_date_time()]
         condition = "client_id='%d'" % client_id

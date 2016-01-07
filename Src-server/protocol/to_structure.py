@@ -247,6 +247,10 @@ def to_structure_SignedIntegerType_8(data):
 def to_structure_UnsignedIntegerType_32(data):
     return parse_number(data, 0, 4294967295)
 
+def to_structure_OptionalType_UnsignedIntegerType_32(data):
+    if data is None: return data
+    return parse_number(data, 0, 4294967295)
+
 def to_structure_VectorType_RecordType_core_Division(data):
     data = parse_list(data, 0)
     lst = []
@@ -417,6 +421,13 @@ def to_structure_VectorType_RecordType_core_ServiceProvider(data):
         lst.append(to_structure_RecordType_core_ServiceProvider(item))
     return lst
 
+def to_structure_VectorType_RecordType_core_ServiceProviderDetails(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_ServiceProviderDetails(item))
+    return lst
+
 def to_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory(data):
     data = parse_dictionary(data)
     dict = []
@@ -582,6 +593,10 @@ def to_structure_RecordType_general_Request_SaveCountry(data):
 def to_structure_RecordType_core_ServiceProvider(data):
     from protocol import core
     return core.ServiceProvider.to_structure(data)
+
+def to_structure_RecordType_core_ServiceProviderDetails(data):
+    from protocol import core
+    return core.ServiceProviderDetails.to_structure(data)
 
 def to_structure_RecordType_technomasters_LICENCE_HOLDER_DETAILS(data):
     from protocol import technomasters

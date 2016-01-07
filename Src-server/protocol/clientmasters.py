@@ -16,7 +16,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_BusinessGroup,
     parse_structure_VariantType_clientmasters_Request,
     parse_structure_VectorType_RecordType_core_Division,
-    parse_structure_CustomTextType_50
+    parse_structure_CustomTextType_50,
+    parse_structure_OptionalType_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
     to_structure_CustomTextType_100,
@@ -34,7 +35,8 @@ from protocol.to_structure import (
     to_structure_VariantType_clientmasters_Request,
     to_structure_VectorType_RecordType_core_Division,
     to_structure_CustomTextType_50,
-    to_structure_VectorType_RecordType_client_masters_ClientUserGroup
+    to_structure_VectorType_RecordType_client_masters_ClientUserGroup,
+    to_structure_OptionalType_UnsignedIntegerType_32
 )
 
 #
@@ -263,14 +265,16 @@ class GetClientUsers(Request):
         }
 
 class SaveClientUser(Request):
-    def __init__(self, email_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, seating_unit_name, user_level, country_ids, domain_ids, unit_ids, is_service_provider, service_provider_id):
+    def __init__(self, email_id, user_group_id, employee_name, 
+        employee_code, contact_no, seating_unit_id, user_level, 
+        country_ids, domain_ids, unit_ids, is_service_provider, 
+        service_provider_id):
         self.email_id = email_id
         self.user_group_id = user_group_id
         self.employee_name = employee_name
         self.employee_code = employee_code
         self.contact_no = contact_no
         self.seating_unit_id = seating_unit_id
-        self.seating_unit_name = seating_unit_name
         self.user_level = user_level
         self.country_ids = country_ids
         self.domain_ids = domain_ids
@@ -280,7 +284,10 @@ class SaveClientUser(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["email_id", "user_group_id", "employee_name", "employee_code", "contact_no", "seating_unit_id", "seating_unit_name", "user_level", "country_ids", "domain_ids", "unit_ids", "is_service_provider", "service_provider_id"])
+        data = parse_dictionary(data, ["email_id", "user_group_id", 
+            "employee_name", "employee_code", "contact_no", "seating_unit_id", 
+            "user_level", "country_ids", "domain_ids", "unit_ids", 
+            "is_service_provider", "service_provider_id"])
         email_id = data.get("email_id")
         email_id = parse_structure_CustomTextType_100(email_id)
         user_group_id = data.get("user_group_id")
@@ -293,8 +300,6 @@ class SaveClientUser(Request):
         contact_no = parse_structure_CustomTextType_20(contact_no)
         seating_unit_id = data.get("seating_unit_id")
         seating_unit_id = parse_structure_UnsignedIntegerType_32(seating_unit_id)
-        seating_unit_name = data.get("seating_unit_name")
-        seating_unit_name = parse_structure_CustomTextType_50(seating_unit_name)
         user_level = data.get("user_level")
         user_level = parse_structure_CustomIntegerType_1_10(user_level)
         country_ids = data.get("country_ids")
@@ -306,8 +311,8 @@ class SaveClientUser(Request):
         is_service_provider = data.get("is_service_provider")
         is_service_provider = parse_structure_Bool(is_service_provider)
         service_provider_id = data.get("service_provider_id")
-        service_provider_id = parse_structure_UnsignedIntegerType_32(service_provider_id)
-        return SaveClientUser(email_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, seating_unit_name, user_level, country_ids, domain_ids, unit_ids, is_service_provider, service_provider_id)
+        service_provider_id = parse_structure_OptionalType_UnsignedIntegerType_32(service_provider_id)
+        return SaveClientUser(email_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, user_level, country_ids, domain_ids, unit_ids, is_service_provider, service_provider_id)
 
     def to_inner_structure(self):
         return {
@@ -317,24 +322,25 @@ class SaveClientUser(Request):
             "employee_code": to_structure_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
             "seating_unit_id": to_structure_SignedIntegerType_8(self.seating_unit_id),
-            "seating_unit_name": to_structure_CustomTextType_50(self.seating_unit_name),
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "unit_ids": to_structure_VectorType_SignedIntegerType_8(self.unit_ids),
             "is_service_provider": to_structure_Bool(self.is_service_provider),
-            "service_provider_id": to_structure_SignedIntegerType_8(self.service_provider_id),
+            "service_provider_id": to_structure_OptionalType_UnsignedIntegerType_32(self.service_provider_id),
         }
 
 class UpdateClientUser(Request):
-    def __init__(self, user_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, seating_unit_name, user_level, country_ids, domain_ids, unit_ids, is_service_provider, service_provider_id):
+    def __init__(self, user_id, user_group_id, employee_name, 
+        employee_code, contact_no, seating_unit_id, 
+        user_level, country_ids, domain_ids, unit_ids, is_service_provider, 
+        service_provider_id):
         self.user_id = user_id
         self.user_group_id = user_group_id
         self.employee_name = employee_name
         self.employee_code = employee_code
         self.contact_no = contact_no
         self.seating_unit_id = seating_unit_id
-        self.seating_unit_name = seating_unit_name
         self.user_level = user_level
         self.country_ids = country_ids
         self.domain_ids = domain_ids
@@ -344,7 +350,10 @@ class UpdateClientUser(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "user_group_id", "employee_name", "employee_code", "contact_no", "seating_unit_id", "seating_unit_name", "user_level", "country_ids", "domain_ids", "unit_ids", "is_service_provider", "service_provider_id"])
+        data = parse_dictionary(data, ["user_id", "user_group_id", 
+            "employee_name", "employee_code", "contact_no", "seating_unit_id", 
+            "user_level", "country_ids", "domain_ids", "unit_ids", 
+            "is_service_provider", "service_provider_id"])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         user_group_id = data.get("user_group_id")
@@ -357,8 +366,6 @@ class UpdateClientUser(Request):
         contact_no = parse_structure_CustomTextType_20(contact_no)
         seating_unit_id = data.get("seating_unit_id")
         seating_unit_id = parse_structure_UnsignedIntegerType_32(seating_unit_id)
-        seating_unit_name = data.get("seating_unit_name")
-        seating_unit_name = parse_structure_CustomTextType_50(seating_unit_name)
         user_level = data.get("user_level")
         user_level = parse_structure_CustomIntegerType_1_10(user_level)
         country_ids = data.get("country_ids")
@@ -370,8 +377,8 @@ class UpdateClientUser(Request):
         is_service_provider = data.get("is_service_provider")
         is_service_provider = parse_structure_Bool(is_service_provider)
         service_provider_id = data.get("service_provider_id")
-        service_provider_id = parse_structure_UnsignedIntegerType_32(service_provider_id)
-        return UpdateClientUser(user_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, seating_unit_name, user_level, country_ids, domain_ids, unit_ids, is_service_provider, service_provider_id)
+        service_provider_id = parse_structure_OptionalType_UnsignedIntegerType_32(service_provider_id)
+        return UpdateClientUser(user_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, user_level, country_ids, domain_ids, unit_ids, is_service_provider, service_provider_id)
 
     def to_inner_structure(self):
         return {
@@ -381,13 +388,12 @@ class UpdateClientUser(Request):
             "employee_code": to_structure_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
             "seating_unit_id": to_structure_SignedIntegerType_8(self.seating_unit_id),
-            "seating_unit_name": to_structure_CustomTextType_50(self.seating_unit_name),
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "unit_ids": to_structure_VectorType_SignedIntegerType_8(self.unit_ids),
             "is_service_provider": to_structure_Bool(self.is_service_provider),
-            "service_provider_id": to_structure_SignedIntegerType_8(self.service_provider_id),
+            "service_provider_id": to_structure_OptionalType_UnsignedIntegerType_32(self.service_provider_id),
         }
 
 class UpdateClientUserStatus(Request):
@@ -409,6 +415,47 @@ class UpdateClientUserStatus(Request):
             "user_id": to_structure_SignedIntegerType_8(self.user_id),
             "is_active": to_structure_Bool(self.is_active),
         }
+
+class ChangeClientUserStatus(Request):
+    def __init__(self, user_id, is_active):
+        self.user_id = user_id
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_id", "is_active"])
+        user_id = data.get("user_id")
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        return ChangeClientUserStatus(user_id, is_active)
+
+    def to_inner_structure(self):
+        return {
+            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
+            "is_active": to_structure_Bool(self.is_active),
+        }
+
+class ChangeAdminStatus(Request):
+    def __init__(self, user_id, is_admin):
+        self.user_id = user_id
+        self.is_admin = is_admin
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_id", "is_admin"])
+        user_id = data.get("user_id")
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
+        is_admin = data.get("is_admin")
+        is_admin = parse_structure_Bool(is_admin)
+        return ChangeAdminStatus(user_id, is_admin)
+
+    def to_inner_structure(self):
+        return {
+            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
+            "is_admin": to_structure_Bool(self.is_admin),
+        }
+
 
 class GetUnits(Request):
     def __init__(self):
@@ -445,7 +492,7 @@ class CloseUnit(Request):
 
 
 def _init_Request_class_map():
-    classes = [GetServiceProviders, SaveServiceProvider, UpdateServiceProvider, ChangeServiceProviderStatus, GetUserPrivileges, SaveUserPrivileges, UpdateUserPrivileges, ChangeUserPrivilegeStatus, GetClientUsers, SaveClientUser, UpdateClientUser, UpdateClientUserStatus, GetUnits, CloseUnit]
+    classes = [GetServiceProviders, ChangeClientUserStatus, ChangeAdminStatus, SaveServiceProvider, UpdateServiceProvider, ChangeServiceProviderStatus, GetUserPrivileges, SaveUserPrivileges, UpdateUserPrivileges, ChangeUserPrivilegeStatus, GetClientUsers, SaveClientUser, UpdateClientUser, UpdateClientUserStatus, GetUnits, CloseUnit]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -487,12 +534,12 @@ class GetServiceProvidersSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["service_providers"])
         service_providers = data.get("service_providers")
-        service_providers = parse_structure_VectorType_RecordType_core_ServiceProvider(service_providers)
+        service_providers = parse_structure_VectorType_RecordType_core_ServiceProviderDetails(service_providers)
         return GetServiceProvidersSuccess(service_providers)
 
     def to_inner_structure(self):
         return {
-            "service_providers": to_structure_VectorType_RecordType_core_ServiceProvider(self.service_providers),
+            "service_providers": to_structure_VectorType_RecordType_core_ServiceProviderDetails(self.service_providers),
         }
 
 class SaveServiceProviderSuccess(Response):
@@ -660,20 +707,69 @@ class ChangeUserPrivilegeStatusSuccess(Response):
         return {
         }
 
-class GetClientUsersSuccess(Response):
-    def __init__(self, client_users):
-        self.client_users = client_users
+class ChangeAdminStatusSuccess(Response):
+    def __init__(self):
+        pass
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["client_users"])
-        client_users = data.get("client_users")
-        client_users = parse_structure_VectorType_RecordType_core_ClientUser(client_users)
-        return GetClientUsersSuccess(client_users)
+        data = parse_dictionary(data)
+        return ChangeAdminStatusSuccess()
 
     def to_inner_structure(self):
         return {
-            "client_users": to_structure_VectorType_RecordType_core_ClientUser(self.client_users),
+        }
+
+class GetClientUsersSuccess(Response):
+    def __init__(self, countries,domains, business_groups, legal_entities, 
+        divisions,units, user_groups, users,service_providers):
+        self.countries = countries
+        self.domains = domains
+        self.business_groups = business_groups
+        self.legal_entities = legal_entities
+        self.divisions = divisions
+        self.units = units
+        self.user_groups = user_groups
+        self.users = users
+        self.service_providers = service_providers
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["countries","domains", "business_groups", "legal_entities", 
+        "divisions", "units", "user_groups", "users","service_providers"])
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+        business_groups = data.get("business_groups")
+        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
+        legal_entities= data.get("legal_entities")
+        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        divisions = data.get("divisions")
+        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        units = data.get("units")
+        units = parse_structure_VectorType_RecordType_core_Unit(units)
+        user_groups = data.get("user_groups")
+        user_groups = parse_structure_VectorType_RecordType_core_UserGroup(user_groups)
+        users = data.get("users")
+        users = parse_structure_VectorType_RecordType_core_User(users)
+        service_providers = data.get("service_providers")
+        service_providers = parse_structure_VectorType_RecordType_core_ServiceProvider(service_providers)
+        
+        return GetClientUsersSuccess(countries,domains, business_groups, legal_entities, 
+        divisions,units, user_groups, users,service_providers)
+
+    def to_inner_structure(self):
+        return {
+            "countries" : to_structure_VectorType_RecordType_core_Country(countries),
+            "domains" : to_structure_VectorType_RecordType_core_Domain(domains),
+            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(business_groups),
+            "legal_entities" : to_structure_VectorType_RecordType_core_LegalEntity(legal_entities),
+            "divisions" : to_structure_VectorType_RecordType_core_Division(divisions),
+            "units" : to_structure_VectorType_RecordType_core_Unit(units),
+            "user_groups" : to_structure_VectorType_RecordType_core_UserGroup(user_groups),
+            "users" : to_structure_VectorType_RecordType_core_User(users),
+            "service_providers" : to_structure_VectorType_RecordType_core_ServiceProvider(service_providers)
         }
 
 class SaveClientUserSuccess(Response):
@@ -684,6 +780,20 @@ class SaveClientUserSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data)
         return SaveClientUserSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
+class EmailIdAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return EmailIdAlreadyExists()
 
     def to_inner_structure(self):
         return {
@@ -830,8 +940,9 @@ def _init_Response_class_map():
     UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess, 
     GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists, 
     UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess, 
+    ChangeAdminStatusSuccess,
     GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists, 
-    InvalidServiceProviderId]
+    InvalidServiceProviderId, EmailIdAlreadyExists]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

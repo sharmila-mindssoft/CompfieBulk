@@ -50,6 +50,9 @@ def process_client_master_requests(request, db) :
 	if type(request) is clientmasters.UpdateClientUserStatus:
 		return change_client_user_status(db, request, session_user, client_id)
 
+	if type(request) is clientmasters.ChangeAdminStatus:
+		return change_admin_status(db, request, session_user, client_id)
+
 	if type(request) is clientmasters.GetUnits:
 		return get_units(db, request, session_user, client_id)
 
@@ -150,40 +153,25 @@ def change_user__privilege_status(db, request, session_user, client_id):
 	    return clientmasters.ChangeUserPrivilegeStatusSuccess()
 
 def get_client_users(db, request, session_user, client_id):
-	countryList= CountryList().getUserCountry(session_user)
-	domainList = DomainList().getUserDomains(session_user)
-	DetailsTuple = db.getUserCompanyDetails(session_user)
-	unitIds = DetailsTuple[0]
-	divisionIds = DetailsTuple[1]
-	legalEntityIds = DetailsTuple[2]
-	businessGroupIds = DetailsTuple[3]
-
-	clientId = 1
-	divisionList = None
-	businessGroupList = None
-	if businessGroupIds != None:
-	    businessGroupList = BusinessGroup(clientId, db).getBusinessGroupById(businessGroupIds)
-	legalEntityList = LegalEntity(clientId, db).getLegalEntitiesById(legalEntityIds)
-	if divisionIds != None:
-	    divisionList = Division(clientId, db).getDivisionsById(divisionIds)
-	unitList = Unit(clientId, db).getUnitsById(unitIds)
-	userGroupList = UserPrivilege().getList(clientId)
-	userList = User().getDetailedList(clientId)
-	serviceProvidersList = ServiceProvider().getList()
-
-	response_data = {}
-	response_data["domains"] = domainList
-	response_data["countries"] = countryList
-	response_data["business_groups"] = businessGroupList
-	response_data["legal_entities"] = legalEntityList
-	response_data["divisions"] = divisionList
-	response_data["units"] = unitList
-	response_data["user_groups"] = userGroupList
-	response_data["users"] = userList
-	response_data["service_providers"] = serviceProvidersList
-
-	response = commonResponseStructure("GetClientUsersSuccess", response_data)
-	return response
+	user_company_info = db.get_user_company_details( session_user, client_id)
+	unit_ids = user_company_info[0]
+	division_ids = user_company_info[1]
+	legal_entity_ids = user_company_info[2]
+	business_group_ids = user_company_info[3]
+	country_list = db.get_countries_for_user(session_user, client_id)
+	domain_list = db.get_domains_for_user(session_user, client_id)
+	business_group_list = db.get_business_groups_for_user(business_group_ids, client_id)
+	legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids, client_id)
+	division_list =  db.get_divisions_for_user(division_ids, client_id)
+	unit_list = db.get_units_for_user(unit_ids, client_id)
+	user_group_list = db.get_user_privileges(client_id)
+	user_list = db.get_user_details(client_id)
+	service_provider_list = db.get_service_providers(client_id)
+	return clientmasters.GetClientUsersSuccess(countries = country_list,
+		domains = domain_list, business_groups = business_group_list,
+		legal_entities = legal_entity_list, divisions = division_list,
+		units = unit_list, user_groups= user_group_list, users = user_list,
+		service_providers = service_provider_list)
 
 def save_client_user(db, request, session_user, client_id):
 	user_id = db.generate_new_user_id(client_id)
@@ -192,22 +180,22 @@ def save_client_user(db, request, session_user, client_id):
 	elif db.is_duplicate_employee_code(user_id, 
 		request.employee_code, client_id):
 	    return clientmasters.EmployeeCodeAlreadyExists()
-	elif is_duplicate_user_contact_no(user_id, request.contact_no, client_id):
+	elif db.is_duplicate_user_contact_no(user_id, request.contact_no, client_id):
 	    return clientmasters.ContactNumberAlreadyExists()
-	elif db.save_user(request, session_user, client_id) :
+	elif db.save_user(user_id, request, session_user, client_id) :
 	    return clientmasters.SaveClientUserSuccess()
 
 def update_client_user(db, request, session_user, client_id):
 	if db.is_invalid_id(db.tblUsers, "user_id", request.user_id, client_id) :
 	    return clientmasters.InvalidUserId()
-	elif db.is_duplicate_employee_code(user_id, 
+	elif db.is_duplicate_employee_code(request.user_id, 
 		request.employee_code, client_id):
 	    return clientmasters.EmployeeCodeAlreadyExists()
-	elif is_duplicate_user_contact_no(user_id, 
+	elif db.is_duplicate_user_contact_no(request.user_id, 
 		request.contact_no, client_id):
 	    return clientmasters.ContactNumberAlreadyExists()
 	elif db.update_user(request, session_user, client_id) :
-	    return clientmasters.UpdateUserSuccess()
+	    return clientmasters.UpdateClientUserSuccess()
 
 def change_client_user_status(db, request, session_user, client_id):
 	if db.is_invalid_id(db.tblUsers, "user_id", request.user_id, client_id) :
@@ -215,6 +203,13 @@ def change_client_user_status(db, request, session_user, client_id):
 	elif db.update_user_status(request.user_id, 
 		request.is_active, session_user, client_id):
 	    return clientmasters.ChangeClientUserStatusSuccess()
+
+def change_admin_status(db, request, session_user, client_id):
+	if db.is_invalid_id(db.tblUsers, "user_id", request.user_id, client_id) :
+	    return clientmasters.InvalidUserId()
+	elif db.update_admin_status(request.user_id, 
+		request.is_admin, session_user, client_id):
+	    return clientmasters.ChangeAdminStatusSuccess()
 
 def get_units(db, request, session_user, client_id):
 	clientId = 1
