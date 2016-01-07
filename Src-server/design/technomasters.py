@@ -240,6 +240,9 @@ InvalidDivisionId = RecordType("InvalidDivisionId", [
 InvalidUnitId = RecordType("InvalidUnitId", [
 ])
 
+InvalidPassword = RecordType("InvalidPassword", [
+])
+
 LICENCE_HOLDER_DETAILS = RecordType("LICENCE_HOLDER_DETAILS", [
 	Field("user_id", USER_ID),
 	Field("user_name", EMPLOYEE_NAME),
@@ -282,5 +285,5 @@ Response = VariantType("Response", [
 	UpdateClientSuccess, ChangeClientStatusSuccess,
 	ReactivateUnitSuccess, GetClientProfileSuccess,
 	InvalidBusinessGroupId,InvalidLegalEntityId,InvalidDivisionId,
-	InvalidUnitId]
+	InvalidUnitId, InvalidPassword]
 )

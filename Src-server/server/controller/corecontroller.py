@@ -11,7 +11,6 @@ def process_user_forms(db, form_ids):
 	print forms
 	form_list = []
 	for f in forms :
-		print f
 		form_id = int(f["form_id"])
 		form_name = f["form_name"]
 		form_url = f["form_url"]
@@ -31,5 +30,4 @@ def process_user_menus(form_list):
 			_forms = []
 		_forms.append(form)
 		menus[form_type] = _forms
-	print menus
 	return core.Menu(menus)

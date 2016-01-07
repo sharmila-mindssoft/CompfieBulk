@@ -227,6 +227,13 @@ def parse_structure_VectorType_RecordType_core_UserGroup(data):
         lst.append(parse_structure_RecordType_core_UserGroup(item))
     return lst
 
+def parse_structure_VectorType_RecordType_client_masters_ClientUserGroup(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_client_masters_ClientUserGroup(item))
+    return lst
+
 def parse_structure_VectorType_RecordType_core_LegalEntity(data):
     data = parse_list(data, 0)
     lst = []
@@ -1595,6 +1602,10 @@ def parse_structure_RecordType_core_UserGroup(data):
     from protocol import core
     return core.UserGroup.parse_structure(data)
 
+def parse_structure_RecordType_client_masters_ClientUserGroup(data):
+    from protocol import clientmasters
+    return clientmasters.ClientUserGroup.parse_structure(data)
+
 def parse_structure_RecordType_login_Response_InvalidCredentials(data):
     from protocol import login
     return login.Response.parse_structure(data)
@@ -1734,6 +1745,21 @@ def parse_structure_VectorType_RecordType_core_StatutoryDate(data):
 def parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(data):
     if data is None : return None
     return parse_structure_VectorType_RecordType_core_StatutoryDate(data)    
+
+def parse_structure_RecordType_core_FileList(data):
+    from protocol import core
+    return core.FileList.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_core_FileLst(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_core_FileList(item))
+    return lst        
+
+def parse_structure_OptionalType_VectorType_RecordType_core_FileList(data):
+    if data is None : return None
+    return parse_structure_VectorType_RecordType_core_FileLst(data)
 
 def parse_structure_RecordType_clientmasters_Request_ChangeServiceProviderStatus(data):
     from protocol import clientmasters

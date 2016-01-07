@@ -546,6 +546,34 @@ class ChangeServiceProviderStatusSuccess(Response):
         return {
         }
 
+class ClientUserGroup(object):
+    def __init__(self, user_group_id, user_group_name, form_ids, is_active):
+        self.user_group_id = user_group_id
+        self.user_group_name = user_group_name
+        self.form_ids = form_ids
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_group_id", "user_group_name", "is_active"])
+        user_group_id = data.get("user_group_id")
+        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
+        user_group_name = data.get("user_group_name")
+        user_group_name = parse_structure_CustomTextType_50(user_group_name)
+        form_ids = data.get("form_ids")
+        form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        return UserGroup(user_group_id, user_group_name, form_ids, is_active)
+
+    def to_structure(self):
+        return {
+            "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
+            "user_group_name": to_structure_CustomTextType_50(self.user_group_name),
+            "form_ids": to_structure_VectorType_SignedIntegerType_8(self.form_ids), 
+            "is_active": to_structure_Bool(self.is_active),
+        }
+
 class GetUserPrivilegesSuccess(Response):
     def __init__(self, forms, user_groups):
         self.forms = forms
@@ -557,7 +585,7 @@ class GetUserPrivilegesSuccess(Response):
         forms = data.get("forms")
         forms = parse_structure_RecordType_core_Menu(forms)
         user_groups = data.get("user_groups")
-        user_groups = parse_structure_VectorType_RecordType_core_UserGroup(user_groups)
+        user_groups = parse_structure_VectorType_RecordType_client_masters_ClientUserGroup(user_groups)
         return GetUserPrivilegesSuccess(forms, user_groups)
 
     def to_inner_structure(self):
@@ -753,6 +781,19 @@ class InvalidPassword(Response):
         return {
         }
 
+class InvalidServiceProviderId(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidServiceProviderId()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class CloseUnitSuccess(Response):
     def __init__(self):
         pass
@@ -766,14 +807,14 @@ class CloseUnitSuccess(Response):
         return {
         }
 
-class ContactNumberAlreadyExistss(Response):
+class ContactNumberAlreadyExists(Response):
     def __init__(self):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data)
-        return ContactNumberAlreadyExistss()
+        return ContactNumberAlreadyExists()
 
     def to_inner_structure(self):
         return {
@@ -781,7 +822,15 @@ class ContactNumberAlreadyExistss(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetServiceProvidersSuccess, SaveServiceProviderSuccess, ServiceProviderNameAlreadyExists, UpdateServiceProviderSuccess, ChangeServiceProviderStatusSuccess, GetUserPrivilegesSuccess, UserGroupNameAlreadyExists, InvalidUserGroupId, SaveUserPrivilegesSuccess, UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess, GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists, UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess, GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExistss]
+    classes = [GetServiceProvidersSuccess, SaveServiceProviderSuccess, 
+    ServiceProviderNameAlreadyExists, UpdateServiceProviderSuccess, 
+    ChangeServiceProviderStatusSuccess, GetUserPrivilegesSuccess, 
+    UserGroupNameAlreadyExists, InvalidUserGroupId, SaveUserPrivilegesSuccess, 
+    UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess, 
+    GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists, 
+    UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess, 
+    GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists, 
+    InvalidServiceProviderId]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

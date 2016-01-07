@@ -1723,6 +1723,22 @@ def to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(data):
     if data is None : return None
     return to_structure_VectorType_RecordType_core_StatutoryDate(data)
 
+def to_structure_RecordType_core_FileList(data):
+    from protocol import core
+    return core.FileList.to_structure(data)
+
+def to_structure_VectorType_RecordType_core_FileLst(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_core_FileList(item))
+    return lst        
+
+def to_structure_OptionalType_VectorType_RecordType_core_FileList(data):
+    if data is None : return None
+    return to_structure_VectorType_RecordType_core_FileLst(data)
+
+
 def to_structure_RecordType_clientmasters_Request_ChangeServiceProviderStatus(data):
     from protocol import clientmasters
     return clientmasters.Request.to_structure(data)
