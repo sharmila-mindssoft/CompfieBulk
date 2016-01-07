@@ -1,44 +1,24 @@
 {% extends "files/desktop/home/container.html" %}
 {% block content %}
-<script>
-  $(document).ready(function() {
-    $("#insert-level").hide();
-  });
-
-  function loadForm(){
-     $("#insert-level").show();
-      $("#add").hide();
-  }
-
-  function hideForm(){
-     $("#insert-level").hide();
-      $("#add").show();
-  }
-
-</script>
-
-
-
-
 <div class="content-container width60">
   <div class="content-area">
     <div class="add-container">
-      <div class="add-container-heading">Geography Level Master<span id="error" class="error-message"></span></div>
+      <div class="add-container-heading">Geography Level Master<span class="error-message"></span></div>
        <div class="form-container-outer">
             <div class="single-column-input-row">
               <br>
               <div class="input-row">
                 <div class="single-column-field-label">Country:<span class="mandatory">*</span></div>
                 <div class="single-column-field-input">
-                   <input type="text" class="input-box icon-autocomplete" id="countryval" value=""  onkeyup="loadauto_text(this.value)" style="width:200px"> 
-              <input type="hidden" id="country"> 
-             <div id="autocompleteview" class="ac-textbox" style="display:none;">
-                <ul id="ulist_text" onclick="hidemenu();" style="width:195px;"></ul>
+                   <input type="text" class="input-box icon-autocomplete" id="countryval" value="" style="width:200px">
+                <input type="hidden" id="country">
+                <div id="autocompleteview" class="ac-textbox default-display-none">
+                <ul id="ulist_text" class="hidemenu" style="width:195px;"></ul>
             </div>
                 </div>
               </div>
             </div>
-            <div id="insert-level" class="input-row">
+            <div class="input-row default-display-none" id="view-insert-level">
               <br>
               <div class="input-row-left">
                 <div class="field-label">Level</div>
@@ -64,12 +44,12 @@
                 </div>
               </div>
               <div class="submit-button-container" style="margin-top:10px">
-                <input type="reset" name="cancel" value="Cancel" class="btn-cancel"  onclick="hideForm()" >&nbsp;&nbsp;
-                <input type="submit" name="submit" value="Insert" onclick="insertRecord()" class="btn-submit">
+                <input type="reset" name="cancel" value="Cancel" class="btn-cancel insert-level-cancel">&nbsp;&nbsp;
+                <input type="submit" name="submit" value="Insert" id="insert-record" class="btn-submit">
               </div>
             </div>
             <div id="add" class="filters-and-search">
-              <div class="btn-add" onclick="loadForm()" style="width:110px" formtarget="_self">Insert Level</div>
+              <div class="btn-add add-insert-level" style="width:110px">Insert Level</div>
             </div>
             <div class="grid-table">
               <table>
@@ -84,29 +64,29 @@
                     1
                   </td>
                   <td>
-                  <input type="text" id="level1" class="input-box" value=""/>
-                  <input type="hidden" id="levelid1" class="input-box" value=""/>
+                  <input type="text" id="level1" class="input-box fieldvalue" tabindex="1"/>
+                  <input type="hidden" id="levelid1" class="input-box hiddenvalue"/>
                   </td>
                   <td>
                    6
                   </td>
-                  <td><input type="text" id="level6" class="input-box" value=""/>
-                <input type="hidden" id="levelid6" class="input-box" value=""/>
+                  <td><input type="text" id="level6" class="input-box fieldvalue" tabindex="6"/>
+                <input type="hidden" id="levelid6" class="input-box hiddenvalue"/>
                   </td>
                 </tr>
                  <tr>
                   <td style="height:50px">
                     2
                   </td>
-                  <td><input type="text" id="level2" class="input-box" value=""/>
-                  <input type="hidden" id="levelid2" class="input-box" value=""/>
+                  <td><input type="text" id="level2" class="input-box fieldvalue" tabindex="2"/>
+                  <input type="hidden" id="levelid2" class="input-box hiddenvalue"/>
 
                   </td>
                   <td>
                    7
                   </td>
-                  <td><input type="text" id="level7" class="input-box" value=""/>
-                  <input type="hidden" id="levelid7" class="input-box" value=""/>
+                  <td><input type="text" id="level7" class="input-box fieldvalue" tabindex="7"/>
+                  <input type="hidden" id="levelid7" class="input-box hiddenvalue" value=""/>
 
                   </td>
                 </tr>
@@ -114,49 +94,49 @@
                   <td style="height:50px">
                     3
                   </td>
-                  <td><input type="text" id="level3" class="input-box" value=""/>
-                  <input type="hidden" id="levelid3" class="input-box" value=""/>
+                  <td><input type="text" id="level3" class="input-box fieldvalue" tabindex="3"/>
+                  <input type="hidden" id="levelid3" class="input-box hiddenvalue" />
                   </td>
                   <td>
                    8
                   </td>
-                  <td><input type="text" id="level8" class="input-box" value=""/>
-                  <input type="hidden" id="levelid8" class="input-box" value=""/></td>
+                  <td><input type="text" id="level8" class="input-box fieldvalue" tabindex="8"/>
+                  <input type="hidden" id="levelid8" class="input-box hiddenvalue" /></td>
 
                 </tr>
                 <tr>
                   <td style="height:50px">
                     4
                   </td>
-                  <td><input type="text" id="level4" class="input-box" value=""/>
-                  <input type="hidden" id="levelid4" class="input-box" value=""/>
+                  <td><input type="text" id="level4" class="input-box fieldvalue" tabindex="4"/>
+                  <input type="hidden" id="levelid4" class="input-box hiddenvalue" />
                   </td>
                   <td>
                    9
                   </td>
-                  <td><input type="text" id="level9" class="input-box" value=""/>
-                  <input type="hidden" id="levelid9" class="input-box" value=""/></td>
+                  <td><input type="text" id="level9" class="input-box fieldvalue" tabindex="9"/>
+                  <input type="hidden" id="levelid9" class="input-box hiddenvalue" /></td>
 
                 </tr>
                 <tr>
                   <td style="height:50px">
                     5
                   </td>
-                  <td><input type="text" id="level5" class="input-box" value=""/>
-                  <input type="hidden" id="levelid5" class="input-box" value=""/>
+                  <td><input type="text" id="level5" class="input-box fieldvalue" tabindex="5"/>
+                  <input type="hidden" id="levelid5" class="input-box hiddenvalue" />
                   </td>
                   <td>
                    10
                   </td>
-                  <td><input type="text" id="level10" class="input-box" value=""/>
-                  <input type="hidden" id="levelid10" class="input-box" value=""/>
+                  <td><input type="text" id="level10" class="input-box fieldvalue" tabindex="10"/>
+                  <input type="hidden" id="levelid10" class="input-box hiddenvalue" />
                   </td>
                 </tr>
               </table>
             </div> 
             <div class="submit-button-container">
-              <input type="reset" name="cancel" value="Cancel" class="btn-cancel"  onclick="location.href='/geographylevel/list'" >&nbsp;&nbsp;
-              <input type="submit" name="submit" value="Submit" class="btn-submit" onclick="saveRecord()">
+              <input type="reset" name="cancel" value="Cancel" class="btn-cancel btn-geographylevel-cancel">&nbsp;&nbsp;
+              <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit">
             </div>
         </div>
     <div class="clearfix"></div>
@@ -164,7 +144,9 @@
     </div>
   </div>
 </div>
+
 <script type="text/javascript" src="/files/desktop/geography-level-master/geographylevelmaster.js"></script>
 {% endblock %}
+
 
 

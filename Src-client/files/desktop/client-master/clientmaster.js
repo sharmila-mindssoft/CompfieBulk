@@ -1,4 +1,4 @@
-var usersList;
+var userList;
 var domainsList;
 var countriesList;
 function clearMessage() {
@@ -175,8 +175,7 @@ $("#btn-clientgroup-submit").click(function(){
 						parseInt(arrayCountries[ccount]), parseInt(arrayDomains[dcount]), 
 						parseInt($(".tl-from-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val()), 
 						parseInt($(".tl-to-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val())
-					);
-					console.log(configuration);		
+					);	
 					dateConfigurations.push(configuration);
 				}
 			}

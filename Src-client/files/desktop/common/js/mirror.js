@@ -35,8 +35,13 @@ function initMirror() {
 
     function getUserInfo() {
         var info = window.localStorage["userInfo"];
-        user = parseJSON(info)
-        return user
+        if (typeof info === "undefined") {
+            user = null;
+        }
+        else {
+            user = parseJSON(info);
+        }
+        return user;
     }
 
     function getUserProfile() {
@@ -57,7 +62,10 @@ function initMirror() {
 
     function getSessionToken() {
         var info = getUserInfo();
-        return info["session_token"];
+        if (info !== null)
+            return info["session_token"];
+        else 
+            return null;
     }
 
     function getUserMenu(){
@@ -67,6 +75,7 @@ function initMirror() {
 
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
+        console.log(sessionToken)
         if (sessionToken == null)
             sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
         var requestFrame = {
@@ -85,7 +94,9 @@ function initMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1){
                     callback(null, response);
                 }
-                callback(status, null) 
+                else {
+                    callback(status, null) 
+                }
             }
         )
         .fail(
@@ -429,9 +440,13 @@ function initMirror() {
         compliance["duration_type_id"] = durationTypeId;
         compliance["duration"] = duration;
         compliance["is_active"] = isActive;
-        if (complianceId !== null) {
+        if ((complianceId !== null) && (complianceId !== '')) {
             compliance["compliance_id"] = complianceId;
         }
+        else {
+            compliance["compliance_id"] = null
+        }
+
 
         return compliance;
     }

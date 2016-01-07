@@ -85,6 +85,7 @@ INSERT INTO tbl_forms VALUES(2, 4, 1,  'Domain', '/domain-master', 2, null);
 INSERT INTO tbl_forms VALUES(3, 1, 1,  'User Group', '/user-group-master', 3, null);
 INSERT INTO tbl_forms VALUES(4, 1, 1,  'User', '/user-master', 4, null);
 #knowledge
+
 INSERT INTO tbl_forms VALUES(5, 2, 1, 'Geography Level Master', '/geography-level-master', 5, 'Geography');
 INSERT INTO tbl_forms VALUES(6, 2, 1, 'Geography Master', '/geography-master', 6, 'Geography');
 INSERT INTO tbl_forms VALUES(7, 2, 1, 'Industry Master', '/industry-master', 7, null);
@@ -185,7 +186,7 @@ INSERT INTO tbl_user_groups(user_group_id, form_category_id, user_group_name, fo
 
 --tbl_users
 INSERT INTO tbl_users(user_id, user_group_id, email_id, password, employee_name ) 
-VALUES (1, 1, 'usha@mindssoft.com', 'e10adc3949ba59abbe56e057f20f883e', 'dummy')
+VALUES (1, 1, 'usha@mindssoft.com', 'e10adc3949ba59abbe56e057f20f883e', 'Test-user')
 
 --tbl_user_sessions
 INSERT INTO tbl_user_sessions(session_token, user_id, session_type_id) VALUES ("12c94b934d5f4b5ebebd4471d8b29cb8", 0, 1);

@@ -6,7 +6,9 @@ __all__ = [
 ]
 
 def process_user_forms(db, form_ids):
+	print "process_user_forms", form_ids
 	forms = db.get_user_forms(form_ids)
+	print forms
 	form_list = []
 	for f in forms :
 		form_id = int(f["form_id"])

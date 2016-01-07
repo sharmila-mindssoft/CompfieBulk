@@ -840,7 +840,7 @@ class LevelIdCannotBeNull(Response):
 
     def to_inner_structure(self):
         return {
-            "level_name": to_structure_CustomTextType_50(level_name)
+            "level_name": to_structure_CustomTextType_50(self.level_name)
         }
 
 

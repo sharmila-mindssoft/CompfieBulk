@@ -1444,6 +1444,10 @@ def parse_structure_OptionalType_VectorType_RecordType_core_Division(data):
     if data is None: return data
     return parse_structure_VectorType_RecordType_core_Division(data)
 
+def parse_structure_OptionalType_VectorType_CustomTextType_50(data):
+    if data is None: return data
+    return parse_structure_VectorType_CustomTextType_50(data)
+
 def parse_structure_RecordType_dashboard_Response_GetComplianceApplicabilityStatusDrillDownSuccess(data):
     from protocol import dashboard
     return dashboard.Response.parse_structure(data)
@@ -1725,6 +1729,10 @@ def parse_structure_VectorType_RecordType_core_StatutoryDate(data):
     for item in data:
         lst.append(parse_structure_RecordType_core_StatutoryDate(item))
     return lst
+
+def parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(data):
+    if data is None : return None
+    return parse_structure_VectorType_RecordType_core_StatutoryDate(data)    
 
 def parse_structure_RecordType_clientmasters_Request_ChangeServiceProviderStatus(data):
     from protocol import clientmasters
@@ -2669,6 +2677,10 @@ def parse_structure_RecordType_admin_Response_InvalidUserId(data):
 def parse_structure_OptionalType_CustomTextType_100(data):
     if data is None: return data
     return parse_structure_CustomTextType_100(data)
+
+def parse_structure_OptionalType_CustomTextType_500(data):
+    if data is None: return data
+    return parse_structure_CustomTextType_500(data)
 
 def parse_structure_VectorType_RecordType_technoreports_UNIT_WISE_ASSIGNED_STATUTORIES(data):
     data = parse_list(data, 0)

@@ -82,6 +82,11 @@ def to_structure_OptionalType_CustomTextType_50(data):
     if data is None: return data
     return to_structure_CustomTextType_50(data)
 
+def to_structure_OptionalType_CustomTextType_500(data):
+    if data is None: return data
+    return to_structure_CustomTextType_500(data)
+
+
 def to_structure_RecordType_technotransactions_Response_GetAssignedStatutoriesByIdSuccess(data):
     from protocol import technotransactions
     return technotransactions.Response.to_structure(data)
@@ -240,6 +245,10 @@ def to_structure_SignedIntegerType_8(data):
 def to_structure_UnsignedIntegerType_32(data):
     return parse_number(data, 0, 4294967295)
 
+def to_structure_OptionalType_UnsignedIntegerType_32(data):
+    if data is None : return data
+    return to_structure_UnsignedIntegerType_32(data)
+
 def to_structure_VectorType_RecordType_core_Division(data):
     data = parse_list(data, 0)
     lst = []
@@ -264,11 +273,11 @@ def to_structure_VectorType_RecordType_core_GeographyLevel(data):
 
 def to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_VectorType_RecordType_core_Industry(data):
@@ -288,11 +297,11 @@ def to_structure_VariantType_technomasters_Request(data):
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_core_Geography(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_RecordType_knowledgemaster_Request_SaveGeography(data):
@@ -352,6 +361,11 @@ def to_structure_VectorType_CustomTextType_50(data):
     for item in data:
         lst.append(to_structure_CustomTextType_50(item))
     return lst
+
+def to_structure_OptionalType_VectorType_CustomTextType_50(data):
+    if data is None: return data
+    return to_structure_VectorType_CustomTextType_50(data)
+
 
 def to_structure_VectorType_RecordType_clientreport_ComplianceList(data):
     data = parse_list(data, 0)
@@ -606,11 +620,11 @@ def to_structure_RecordType_admin_Response_InvalidUserGroupId(data):
 
 def to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_CustomTextType_50(data):
@@ -796,11 +810,15 @@ def to_structure_RecordType_knowledgemaster_Response_SaveIndustrySuccess(data):
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
+    # for key, value in data.items():
+    #     key = to_structure_SignedIntegerType_8(key)
+    #     value = to_structure_VectorType_RecordType_core_Level(value)
+    #     dict.append([key, value])
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_core_Level(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_RecordType_admin_Response_GetUsersSuccess(data):
@@ -1104,11 +1122,11 @@ def to_structure_RecordType_technoreports_Request_GetAssignedStatutoryReport(dat
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_core_Statutory(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_RecordType_technomasters_Response_GetClientGroupsSuccess(data):
@@ -1500,11 +1518,11 @@ def to_structure_RecordType_dashboard_Request_GetTrendChartDrillDownData(data):
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_core_StatutoryMapping(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_VectorType_RecordType_clientreport_LoginTrace(data):
@@ -1701,6 +1719,10 @@ def to_structure_VectorType_RecordType_core_StatutoryDate(data):
         lst.append(to_structure_RecordType_core_StatutoryDate(item))
     return lst
 
+def to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(data):
+    if data is None : return None
+    return to_structure_VectorType_RecordType_core_StatutoryDate(data)
+
 def to_structure_RecordType_clientmasters_Request_ChangeServiceProviderStatus(data):
     from protocol import clientmasters
     return clientmasters.Request.to_structure(data)
@@ -1845,11 +1867,11 @@ def to_structure_RecordType_technoreports_Response_GetAssignedStatutoryReportSuc
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_knowledgereport_GeographyMapping(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_knowledgereport_GeographyMapping(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST(data):
@@ -2773,11 +2795,11 @@ def to_structure_RecordType_technomasters_Request_UpdateClient(data):
 
 def to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_RecordType_core_StatutoryMapping(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_RecordType_general_Response_ContactNumberAlreadyExists(data):

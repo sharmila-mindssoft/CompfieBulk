@@ -233,7 +233,8 @@ $("#btnUserGroupSubmit").click(function(){
 				displayMessage("Group Name Already Exists");
 			}
 		}
-		var userGroupInsertDetails = mirror.getUpdateAdminUserGroupDict(parseInt(groupIdVal), groupNameVal, parseInt(categoryNameVal), chkArrayInt);
+		var userGroupInsertDetails = mirror.getUpdateAdminUserGroupDict(parseInt(groupIdVal), groupNameVal, 
+			parseInt(categoryNameVal), chkArrayInt);
        	mirror.updateAdminUserGroup(userGroupInsertDetails,
 		    function (error, response) {
                 if (error == null){

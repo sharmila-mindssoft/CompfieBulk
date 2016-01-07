@@ -10,6 +10,7 @@ var statutoriesList;
 var complianceFrequencyList;
 
 
+
 $(function() {
   $(".grid-table-rpt").hide();
   getStatutoryMappings();
@@ -37,9 +38,9 @@ function getStatutoryMappings(){
   mirror.getStatutoryMappingsReportFilter(success, failure);
 }
 
-function showResult(){ 
-  var country = $("#country").val();
-  var domain = $("#domain").val();
+$("#submit").click(function(){
+  var country = $("#country").val().trim();
+  var domain = $("#domain").val().trim();
   var industry = null;
   var statutorynature = null;
   var geography = null;
@@ -51,10 +52,10 @@ function showResult(){
   if($("#geography").val() != '') geography = $("#geography").val();
   if($("#act").val() != '') act = $("#act").val();
 
-  if(country==""){
+  if(country.length == 0){
     $(".error-message").html("Country Required");
   }
-  else if(domain==""){
+  else if(domain.length == 0){
     $(".error-message").html("Domain Required");  
   }
   else{
@@ -73,22 +74,23 @@ function showResult(){
     }
     mirror.getStatutoryMappingsReportData(filterdata, success, failure);
   }
-}
+});
 
 //Autocomplete Script Starts
 //Hide list items after select
-function hidemenu() {
-  document.getElementById('autocompleteview').style.display = 'none';
-  document.getElementById('autocomplete_domain').style.display = 'none';
-  document.getElementById('autocomplete_industry').style.display = 'none';
-  document.getElementById('autocomplete_statutorynature').style.display = 'none';
-  document.getElementById('autocomplete_geography').style.display = 'none';
-  document.getElementById('autocomplete_statutory').style.display = 'none';
-}
+$(".hidemenu").click(function(){
+  $("#autocompleteview").hide(); 
+  $("#autocomplete_domain").hide();
+  $("#autocomplete_industry").hide();
+  $("#autocomplete_statutorynature").hide();
+  $("#autocomplete_geography").hide();
+  $("#autocomplete_statutory").hide();
+});
 
 //load country list in autocomplete text box  
-function loadauto_text (textval) {
-  document.getElementById('autocompleteview').style.display = 'block';
+$("#countryval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocompleteview").show();
   var countries = countriesList;
   var suggestions = [];
   $('#ulist_text').empty();
@@ -103,7 +105,7 @@ function loadauto_text (textval) {
     $('#ulist_text').append(str);
     $("#country").val('');
     }
-}
+});
 //set selected autocomplte value to textbox
 function activate_text (element,checkval,checkname) {
   $("#countryval").val(checkname);
@@ -111,8 +113,9 @@ function activate_text (element,checkval,checkname) {
 }
 
 //load domain list in autocomplete text box  
-function loadauto_domain (textval) {
-  document.getElementById('autocomplete_domain').style.display = 'block';
+$("#domainval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocomplete_domain").show();
   var domains = domainsList;
   var suggestions = [];
   $('#ulist_domain').empty();
@@ -127,7 +130,7 @@ function loadauto_domain (textval) {
     $('#ulist_domain').append(str);
     $("#domain").val('');
     }
-}
+});
 //set selected autocomplte value to textbox
 function activate_domain (element,checkval,checkname) {
   $("#domainval").val(checkname);
@@ -135,8 +138,9 @@ function activate_domain (element,checkval,checkname) {
 }
 
 //load domain list in autocomplete text box  
-function loadauto_industry (textval) {
-  document.getElementById('autocomplete_industry').style.display = 'block';
+$("#industryval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocomplete_industry").show();
   var industries = industriesList;
   var suggestions = [];
   $('#ulist_industry').empty();
@@ -151,7 +155,7 @@ function loadauto_industry (textval) {
     $('#ulist_industry').append(str);
     $("#industry").val('');
     }
-}
+});
 //set selected autocomplte value to textbox
 function activate_industry (element,checkval,checkname) {
   $("#industryval").val(checkname);
@@ -160,8 +164,9 @@ function activate_industry (element,checkval,checkname) {
 
 
 //load statutorynature list in autocomplete text box  
-function loadauto_statutorynature (textval) {
-  document.getElementById('autocomplete_statutorynature').style.display = 'block';
+$("#statutorynatureval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocomplete_statutorynature").show();
   var statutorynatures = statutoryNaturesList;
   var suggestions = [];
   $('#ulist_statutorynature').empty();
@@ -176,7 +181,7 @@ function loadauto_statutorynature (textval) {
     $('#ulist_statutorynature').append(str);
     $("#statutorynature").val('');
     }
-}
+});
 //set selected autocomplte value to textbox
 function activate_statutorynature (element,checkval,checkname) {
   $("#statutorynatureval").val(checkname);
@@ -184,8 +189,9 @@ function activate_statutorynature (element,checkval,checkname) {
 }
 
 //load statutorynature list in autocomplete text box  
-function loadauto_geography (textval) {
-  document.getElementById('autocomplete_geography').style.display = 'block';
+$("#geographyval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocomplete_geography").show();
   var geographies = geographiesList[$("#country").val()];
   var suggestions = [];
   $('#ulist_geography').empty();
@@ -200,7 +206,7 @@ function loadauto_geography (textval) {
     $('#ulist_geography').append(str);
     $("#geography").val('');
     }
-}
+});
 //set selected autocomplte value to textbox
 function activate_geography (element,checkval,checkname) {
   $("#geographyval").val(checkname);
@@ -208,8 +214,9 @@ function activate_geography (element,checkval,checkname) {
 }
 
 //load statutorynature list in autocomplete text box  
-function loadauto_statutory (textval) {
-  document.getElementById('autocomplete_statutory').style.display = 'block';
+$("#statutoryval").keyup(function(){
+  var textval = $(this).val();
+  $("#autocomplete_statutory").show();
   var statutories = statutoriesList[$("#country").val()][$("#domain").val()];
   var suggestions = [];
   $('#ulist_statutory').empty();
@@ -224,7 +231,7 @@ function loadauto_statutory (textval) {
     $('#ulist_statutory').append(str);
     $("#statutory").val('');
     }
-}
+});
 //set selected autocomplte value to textbox
 function activate_statutory (element,checkval,checkname) {
   $("#statutoryval").val(checkname);
