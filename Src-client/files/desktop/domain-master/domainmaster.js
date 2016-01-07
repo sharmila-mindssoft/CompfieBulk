@@ -57,8 +57,8 @@ function saveRecord () {
         if($("#domainid").val() == ''){
             function onSuccess(response) {
                 getDomains ();
-                $("#listview").show();
                 $("#addview").hide();
+                $("#listview").show();                
                 displayMessage("Record Added Successfully");
             }
             function onFailure(error){
@@ -82,13 +82,11 @@ function saveRecord () {
         }
         else{
 
-    function onSuccess(response){
-     
+    function onSuccess(response){     
         getDomains()
         $("#listview").show();
         $("#addview").hide();
-        $("#error").text("Record Updated Successfully");
-     
+        $("#error").text("Record Updated Successfully");     
     }
     function onFailure(error) {
         if(error == 'DomainNameAlreadyExists'){
@@ -125,14 +123,13 @@ function changeStatus (domainId,isActive) {
   }
   mirror.changeDomainStatus(domainId, isActive,
     function (error, response) {
-            if (error == null){
-              onSuccess(response);
-            }
-            else {
-              onFailure(error);
-            }
-        }
-    );
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    });
 }
 
 function getDomains () {

@@ -120,9 +120,7 @@ class Database(object) :
         # args is tuple e.g, (parm1, parm2)
         cursor = self.cursor()
         assert cursor is not None
-        print "calling proc", procedure_name, args
         cursor.callproc(procedure_name, args)
-        print "end proc", procedure_name
         result = cursor.fetchall()
         return result
 
@@ -132,7 +130,6 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(self, columns, tables, aliases, joinType, 
@@ -188,7 +185,6 @@ class Database(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
-        print query
         return self.execute(query)
 
     def on_duplicate_key_update(self, table, columns, valueList, updateColumnsList):
@@ -913,7 +909,6 @@ class KnowledgeDatabase(Database):
             position = level.level_position
             if level.level_id  is None :
                 if (saved_names.count(name) > 0) :
-                    print "LevelIdCannotNullFor '%s'" % name
                     return name
             level_names.append(name)
             level_positions.append(position)
@@ -1004,7 +999,6 @@ class KnowledgeDatabase(Database):
             position = level.level_position
             if level.level_id  is None :
                 if (saved_names.count(name) > 0) :
-                    print "LevelIdCannotNullFor '%s'" % name
                     return name
             level_names.append(name)
             level_positions.append(position)
@@ -1058,7 +1052,6 @@ class KnowledgeDatabase(Database):
         return self.return_geographies(result)
 
     def return_geographies(self, data):
-        print "inside return_geographies"
         geographies = {}
         for d in data :
             parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
@@ -1837,7 +1830,6 @@ class KnowledgeDatabase(Database):
             )
 
         if (self.execute(query)) :
-            print "update mapping"
             self.update_statutory_mapping_id(data.statutory_ids, statutory_mapping_id, updated_by)
             ids = self.update_compliance(statutory_mapping_id, compliances, updated_by)
             compliance_ids = ','.join(str(x) for x in ids) + ","

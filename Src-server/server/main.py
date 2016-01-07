@@ -80,8 +80,6 @@ class API(object):
                 data
             )
         except Exception, e:
-            print "request_data_type:{}".format(request_data_type)
-            print "request_data:{}".format(request_data)
             print e
             response.set_status(400)
             response.send(str(e))
@@ -224,10 +222,10 @@ TEMPLATE_PATHS = [
     #Techno reports
     ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {}),
     #client admin
-    ("/service-provider", "files/desktop/service-provider/serviceprovider.html", None, {}),   
-    ("/client-user-privilege", "files/desktop/client-user-privilege/clientuserprivilege.html", None, {}),  
-    ("/client-user-master", "files/desktop/client-user-master/clientusermaster.html", None, {}),  
-    ("/unit-closure", "files/desktop/unit-closure/unitclosure.html", None, {}),    
+    ("/service-provider", "files/desktop/client/service-provider/serviceprovider.html", None, {}),   
+    ("/client-user-privilege", "files/desktop/client/client-user-privilege/clientuserprivilege.html", None, {}),  
+    ("/client-user-master", "files/desktop/client/client-user-master/clientusermaster.html", None, {}),  
+    ("/unit-closure", "files/desktop/client/unit-closure/unitclosure.html", None, {}),    
 ]
 
 

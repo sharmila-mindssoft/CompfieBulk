@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8090/";
+var BASE_URL = "http://192.168.1.9:8090/";
 function initMirror() {
     var DEBUG = true;
 

@@ -1,17 +1,8 @@
 var categoryList;
-$("#btnUserGroupAdd").click(function(){
-	$("#userGroupView").hide();
-	$("#userGroupAdd").show();
-	$("#formList").hide();
-	clearMessage();
-	$("#groupName").val('');
-	$("#groupId").val('');
-});
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
 }
-
 function displayMessage(message) {
     $(".error-message").text(message);
     $(".error-message").show();
@@ -20,6 +11,24 @@ $("#btnUserGroupCancel").click(function(){
 	$("#userGroupAdd").hide();
 	$("#userGroupView").show();
 });
+$("#btnUserGroupAdd").click(function(){
+	$("#userGroupView").hide();
+	$("#userGroupAdd").show();
+	$("#formList").hide();
+	clearMessage();
+	$("#groupName").val('');
+	$("#groupId").val('');
+	loadFormCategories();
+});
+function loadFormCategories(){
+	var categoryName = $('#categoryName');
+	$.each(categoryList, function(key, value) {
+    	categoryName.append(
+    		$('<option></option>').val(categoryList[key]['form_category_id']).html(categoryList[key]['form_category'])
+	    );
+	});
+}
+
 function initialize(){
 	function onSuccess(data){
 		categoryList=data['form_categories'];
@@ -53,28 +62,30 @@ function loadUserGroupdata(userGroupList){
 		if(isActive==1){
 			imageName="icon-active.png";
 			title="Click here to deactivate"
-			statusVal=0;
+			statusVal=false;
 		}
 		else{
 			imageName="icon-inactive.png";	
 			title="Click here to Activate"
-			statusVal=1;
+			statusVal=true;
 		}
 		function getCategoryName(catgId){
+			var catgname
 			$.each(categoryList, function(key,value){
 				if(categoryList[key]['form_category_id']==catgId){
-					return categoryList[key]['form_category'];
+					catgname = categoryList[key]['form_category'];
+					return false;
 				}
 			});
+			return catgname;
 		}
-		console.log(getCategoryName(catgid));
 		var tableRow=$('#templates .table-usergroup-list .table-row');
 		var clone=tableRow.clone();
 		sno = sno + 1;
 		$('.sno', clone).text(sno);
 		$('.group-name', clone).text(userGroupName);
-		$('.catg-name', clone).text();
-		$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="userGroupEdit('+userGroupId+',\''+userGroupName+'\', \''+catgid+'\')"/>');
+		$('.catg-name', clone).text(getCategoryName(catgid));
+		$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="userGroupEdit('+userGroupId+',\''+userGroupName+'\', '+catgid+')"/>');
 		$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="userGroupActive('+userGroupId+', '+statusVal+')"/>');
 		$('.tbody-usergroups-list').append(clone);			
 	}
@@ -83,12 +94,11 @@ function loadUserGroupdata(userGroupList){
 $("#btnUserGroupShow").click(function(){
 	var groupNameVal = $("#groupName").val();
 	var categoryNameVal = $("#categoryName").val();
-
-	if(groupNameVal=='' || groupNameVal==null){
-		$(".error-message").html('Group Name Required');
+	if(groupNameVal==''){
+		displayMessage('Group Name Required');
 	}
 	else{
-		$(".error-message").html('');
+		clearMessage();
 		$("#formList").show();
 		function onSuccess( data){
 			loadFormList(data['forms'], categoryNameVal);			
@@ -114,47 +124,51 @@ function loadFormList(formList,categoryNameVal){
 	$(".tableFormList").find("tr:gt(0)").remove();
 	$('.checkedFormId').prop("checked", false);
 	var i_incre;
-	var tableRowList=$('#templates-form-heading .table-form-heading .table-row-form-heading');
-	var clone1=tableRowList.clone();	
-	$.each(formList[categoryNameVal], function(key, value){
-		$('.formHeading', clone1).text(key);
-		if(value.length!=0){
-			$('.tableFormList').append(clone1);
+	
+	var list = formList[categoryNameVal]['menus'];
+	$.each(list, function(key, value){
+		if(jQuery.isEmptyObject(key)==false){
+			var tableRowList=$('#templates-form-heading .table-form-heading .table-row-form-heading');
+			var clone1 = tableRowList.clone();		
+			$('.formHeading', clone1).text(key);
+			$('.tableFormList').append(clone1);		
+			$.each(value, function(i) { 
+				var formName=value[i]['form_name'];
+				var formId=value[i]['form_id'];
+				var tableRowForms=$('#templates-form-list .table-form-list .table-row-form');
+				var clone2=tableRowForms.clone();
+				$('.checkbox-val', clone2).html('<input type="checkbox" class="checkedFormId" value="'+value[i]['form_id']+'">');
+				$('.form-name', clone2).html(formName);		
+				$('.tableFormList').append(clone2);	
+			});
 		}
-		$.each(value, function(i) { 
-			var formName=value[i]['form_name'];
-			var formId=value[i]['form_id'];
-			var tableRowForms=$('#templates-form-list .table-form-list .table-row-form');
-			var clone2=tableRowForms.clone();
-			$('.checkbox-val', clone2).html('<input type="checkbox" class="checkedFormId" value="'+value[i]['form_id']+'">');
-			$('.form-name', clone2).html(formName);		
-			$('.tableFormList').append(clone2);	
-		});
 	});
 }
-function loadFormListUpdate(formList, userGroupList, categoryNameVal, userGroupId){
+function loadFormListUpdate(formList, userGroupList, catgid, userGroupId){
 	$(".tableFormList").find("tr:gt(0)").remove();
 	$('.checkedFormId').prop("checked", false);
 
 	var i_incre;
-	var tableRowList=$('#templates-form-heading .table-form-heading .table-row-form-heading');
-	var clone1=tableRowList.clone();	
-	$.each(formList[categoryNameVal], function(key, value){
-		$('.formHeading', clone1).text(key);
-		if(value.length!=0){
+	
+	var list = formList[catgid]['menus'];
+	$.each(list, function(key, value){
+		if(jQuery.isEmptyObject(key)==false){
+			var tableRowList=$('#templates-form-heading .table-form-heading .table-row-form-heading');
+			var clone1=tableRowList.clone();	
+			$('.formHeading', clone1).text(key);
 			$('.tableFormList').append(clone1);
+			
+			$.each(value, function(i) { 
+				var formName=value[i]['form_name'];
+				var formId=value[i]['form_id'];
+				var tableRowForms=$('#templates-form-list .table-form-list .table-row-form');
+				var clone2=tableRowForms.clone();
+				$('.checkbox-val', clone2).html('<input type="checkbox" class="checkedFormId" value="'+value[i]['form_id']+'">');
+				$('.form-name', clone2).text(formName);		
+				$('.tableFormList').append(clone2);	
+			});
 		}
-		$.each(value, function(i) { 
-			var formName=value[i]['form_name'];
-			var formId=value[i]['form_id'];
-			var tableRowForms=$('#templates-form-list .table-form-list .table-row-form');
-			var clone2=tableRowForms.clone();
-			$('.checkbox-val', clone2).html('<input type="checkbox" class="checkedFormId" value="'+value[i]['form_id']+'">');
-			$('.form-name', clone2).text(formName);		
-			$('.tableFormList').append(clone2);	
-		});
 	});
-
 	for(var userGroupDetails in userGroupList){	
 		if(userGroupList[userGroupDetails]['user_group_id'] == userGroupId){
 			var formIds=userGroupList[userGroupDetails]['form_ids'];
@@ -169,13 +183,12 @@ $("#btnUserGroupSubmit").click(function(){
 	var groupNameVal = $("#groupName").val();
 	var categoryNameVal = $("#categoryName").val();
 	var chkArray = [];
+	var chkArrayInt = [];
 	if(groupIdVal==''){
 		$(".checkedFormId:checked").each(function() {
 			chkArray.push($(this).val());
 		});	
-		/* join array separated by comma*/
-		var selectedVal;
-		selectedVal = chkArray.join(',') + ",";
+		
 		function onSuccess(response){
 			$("#userGroupAdd").hide();
 		  	$("#userGroupView").show();
@@ -186,7 +199,11 @@ $("#btnUserGroupSubmit").click(function(){
 				displayMessage("Group Name Already Exists");
 			}
 		}
-		var userGroupInsertDetails=[groupNameVal,categoryNameVal, selectedVal];
+		chkArrayInt = chkArray.map(function(item) {
+		    return parseInt(item, 10);
+		});		
+		var userGroupInsertDetails = mirror.getSaveAdminUserGroupDict(groupNameVal, parseInt(categoryNameVal), chkArrayInt);
+
 		mirror.saveAdminUserGroup(userGroupInsertDetails, 
 		   function (error, response) {
                 if (error == null){
@@ -203,23 +220,21 @@ $("#btnUserGroupSubmit").click(function(){
 			chkArray.push($(this).val());
 		});	
 		/* join array separated by comma*/
-		var selectedVal;
-		selectedVal = chkArray.join(',') + ",";
+		chkArrayInt = chkArray.map(function(item) {
+		    return parseInt(item, 10);
+		});	
 		function onSuccess(status){
-			if(status=="UpdateUserGroupSuccess"){
-				$("#userGroupAdd").hide();
-		  		$("#userGroupView").show();
-				initialize();
-			}
-			
+			$("#userGroupAdd").hide();
+	  		$("#userGroupView").show();
+			initialize();			
 		}
 		function onFailure(error){
 			if(error=="GroupNameAlreadyExists"){
 				displayMessage("Group Name Already Exists");
 			}
 		}
-		var userGroupInsertDetails=[parseInt(groupIdVal), groupNameVal, categoryNameVal, selectedVal];
-		mirror.updateAdminUserGroup(userGroupInsertDetails,
+		var userGroupInsertDetails = mirror.getUpdateAdminUserGroupDict(parseInt(groupIdVal), groupNameVal, parseInt(categoryNameVal), chkArrayInt);
+       	mirror.updateAdminUserGroup(userGroupInsertDetails,
 		    function (error, response) {
                 if (error == null){
                   onSuccess(response);
@@ -232,21 +247,29 @@ $("#btnUserGroupSubmit").click(function(){
 	}
 	
 });
-function userGroupEdit(userGroupId, userGroupName, formType){
+function userGroupEdit(userGroupId, userGroupName, catgid){
 	$("#userGroupAdd").show();
 	$("#userGroupView").hide();
 	$("#groupId").val(userGroupId);
 	$("#groupName").val(userGroupName);
- 	$("#userGroupId").val(formType);  
- 	//$("#formList").show();	
- 	function success(status, data){
-		if(status=="GetUserGroupsSuccess"){
-			loadFormListUpdate(data['forms'],data['user_groups'], formType, userGroupId);			
-		}
+ 	loadFormCategories();
+ 	$('#categoryName option[value='+catgid+']').attr('selected','selected');
+	function onSuccess(data){
+		loadFormListUpdate(data['forms'], data['user_groups'], catgid, userGroupId);	
 	}
-	function failure(status, data){
+	function onFailure(error){
+		console.log(error);
 	}
-	mirror.getAdminUserGroupList("AdminAPI", success, failure);
+	mirror.getAdminUserGroupList(
+		function (error, response) {
+            if (error == null){
+                onSuccess(response);
+            }
+            else {
+                onFailure(error);	
+            }
+        }
+	);
 }
 function userGroupActive(userGroupId, isActive){
   	$("#userGroupId").val(userGroupId);

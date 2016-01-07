@@ -13,7 +13,6 @@ $(document).ready(function () {
     //     return;
 
     var user = mirror.getUserProfile();
-    console.log(mirror.getUserMenu())
     // mirror.clearSession()
     $(".welcome-msg").text("Welcome " + user["employee_name"] + "!");
 
