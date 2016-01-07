@@ -326,7 +326,25 @@ class ClientDatabase(Database):
 		columns = "service_provider_id, service_provider_name, address, contract_from,"+\
 		        "contract_to, contact_person, contact_no, is_active"
 		rows = self.get_data(self.tblServiceProviders, columns, "1", client_id)
-		return rows
+		columns = ["service_provider_id", "service_provider_name", "address", "contract_from",
+		"contract_to", "contact_person", "contact_no", "is_active"]
+		result = self.convert_to_dict(rows, columns)
+		return self.return_service_provider_details(result)
+
+	def return_service_provider_details(self, service_providers):
+		results = []
+		for service_provider in service_providers :
+		    service_provider_obj = core.ServiceProvider(
+		    	service_provider["service_provider_id"], 
+		    	service_provider["service_provider_name"], 
+		    	service_provider["address"], 
+		    	self.datetime_to_string(service_provider["contract_from"]), 
+		    	self.datetime_to_string(service_provider["contract_to"]), 
+		    	service_provider["contact_person"], 
+		    	service_provider["contact_no"], 
+		    	bool(service_provider["is_active"]))
+		    results.append(service_provider_obj)
+		return results
 
 	def get_service_providers(self, client_id):
 		columns = "service_provider_id, service_provider_name, is_active"
@@ -337,17 +355,14 @@ class ClientDatabase(Database):
 		current_time_stamp = self.get_date_time()
 		contract_from = self.string_to_datetime(service_provider.contract_from)
 		contract_to = self.string_to_datetime(service_provider.contract_to)
-		print contract_from
-		print contract_to
 		columns = ["service_provider_id", "service_provider_name", "address", "contract_from",
 		        "contract_to", "contact_person", "contact_no", "created_on", "created_by", 
 		        "updated_on", "updated_by"]
 		values = [service_provider_id, service_provider.service_provider_name, 
-		            service_provider.address, service_provider.contract_from, service_provider.contract_to, 
+		            service_provider.address, contract_from, contract_to, 
 		            service_provider.contact_person, service_provider.contact_no,
 		            current_time_stamp, session_user, current_time_stamp, session_user]
 		result = self.insert(self.tblServiceProviders,columns, values, client_id)
-		print "insert result : {}".format(result)
 		return result
 
 	def update_service_provider(self, service_provider, session_user, client_id):

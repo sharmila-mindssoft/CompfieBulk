@@ -58,12 +58,9 @@ def process_client_master_requests(request, db) :
 
 
 def get_service_providers(db, request, session_user, client_id):
-	service_provider_list = getDetailedList()
-	response_data = {}
-	response_data["service_providers"] = service_provider_list
-
-	response = commonResponseStructure("GetServiceProvidersSuccess", response_data)
-	return response
+	service_provider_list = db.get_service_provider_details_list(client_id)
+	return clientmasters.GetServiceProvidersSuccess(
+		service_providers=service_provider_list)
 
 def save_service_provider(db, request, session_user, client_id):
 	service_provider_id = db.generate_new_service_provider_id(client_id)
@@ -80,7 +77,7 @@ def update_service_provider(db, request, session_user, client_id):
 	if db.is_invalid_id(db.tblServiceProviders, 
 		"service_provider_id", request.service_provider_id, client_id):
 		return clientmasters.InvalidServiceProviderId()
-	elif is_duplicate_service_provider(request.service_provider_id, 
+	elif db.is_duplicate_service_provider(request.service_provider_id, 
 		request.service_provider_name, client_id) :
 		return clientmasters.ServiceProviderNameAlreadyExists()
 	elif db.is_duplicate_service_provider_contact_no(request.service_provider_id,
@@ -90,11 +87,12 @@ def update_service_provider(db, request, session_user, client_id):
 		return clientmasters.UpdateServiceProviderSuccess()
 
 def change_service_provider_status(db, request, session_user, client_id):
+	is_active = 0 if request.is_active == False else 1
 	if db.is_invalid_id(db.tblServiceProviders, 
 		"service_provider_id", request.service_provider_id, client_id):
 	    return clientmasters.InvalidServiceProviderId()
-	elif db.update_service_provider_status(rquest.service_provider_id, 
-		request.is_active, session_user, client_id):
+	elif db.update_service_provider_status(request.service_provider_id, 
+		is_active, session_user, client_id):
 	    return clientmasters.ChangeServiceProviderStatusSuccess()
 
 def get_user_privileges(db, request, session_user, client_id):

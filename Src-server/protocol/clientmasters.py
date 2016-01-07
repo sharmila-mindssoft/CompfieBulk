@@ -753,6 +753,19 @@ class InvalidPassword(Response):
         return {
         }
 
+class InvalidServiceProviderId(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidServiceProviderId()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class CloseUnitSuccess(Response):
     def __init__(self):
         pass
@@ -781,7 +794,15 @@ class ContactNumberAlreadyExists(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetServiceProvidersSuccess, SaveServiceProviderSuccess, ServiceProviderNameAlreadyExists, UpdateServiceProviderSuccess, ChangeServiceProviderStatusSuccess, GetUserPrivilegesSuccess, UserGroupNameAlreadyExists, InvalidUserGroupId, SaveUserPrivilegesSuccess, UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess, GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists, UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess, GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists]
+    classes = [GetServiceProvidersSuccess, SaveServiceProviderSuccess, 
+    ServiceProviderNameAlreadyExists, UpdateServiceProviderSuccess, 
+    ChangeServiceProviderStatusSuccess, GetUserPrivilegesSuccess, 
+    UserGroupNameAlreadyExists, InvalidUserGroupId, SaveUserPrivilegesSuccess, 
+    UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess, 
+    GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists, 
+    UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess, 
+    GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists, 
+    InvalidServiceProviderId]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

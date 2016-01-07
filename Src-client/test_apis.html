@@ -54,12 +54,12 @@
 				console.log(status, response);
 			}
 			function saveServiceProvider() {
-				serviceProviderName = "Test Service Provider Name 5"
-		         address = "Test Address 2"
+				serviceProviderName = "Test Service Provider Name 6"
+		         address = "Test Address 6"
 		          contractFrom = "12-Aug-2015"
 		          contractTo = "11-Aug-2016"
-		          contactPerson = "Test Contact Person 2"
-		          contactNo = "+9179293473452"
+		          contactPerson = "Test Contact Person 6"
+		          contactNo = "+917293473452"
 		          serviceProviderDetail = [serviceProviderName, address, 
 		          contractFrom, contractTo, contactPerson, contactNo]
 		          serviceProviderDetail = client_mirror.getSaveServiceProviderDict(serviceProviderDetail)
@@ -79,8 +79,8 @@
 		        client_mirror.updateServiceProvider(serviceProviderDetail, callback)
 			}
 			function changeServiceProviderStatus() {
-				serviceProviderId = 1
-			      isActive = 0
+				serviceProviderId = 111
+			      isActive = false
 			      client_mirror.changeServiceProviderStatus(serviceProviderId, isActive,
 			        callback)
 			}

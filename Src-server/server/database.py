@@ -260,8 +260,10 @@ class Database(object) :
         else : 
             return False
 
-    def is_invalid_id(self, table, field, value):
+    def is_invalid_id(self, table, field, value, client_id = None):
         condition = "%s = '%d'" % (field, value)
+        if client_id != None:
+            return not self.is_already_exists(table, condition, client_id)    
         return not self.is_already_exists(table, condition)
 
     def generate_random(self):
@@ -307,6 +309,24 @@ class Database(object) :
 
     def get_date_time(self) :
         return datetime.datetime.now()
+
+    def convert_to_dict(self, data_list, columns) :
+        assert type(data_list) in (list, tuple)
+        result_list = []
+        if len(data_list) > 1 :
+            if len(data_list[0]) == len(columns) :
+                for data in data_list:
+                    result = {}
+                    for i, d in enumerate(data):
+                        result[columns[i]] = d
+                    result_list.append(result)
+        else :
+            if len(data_list) == len(columns) :
+                result = {}
+                for i, d in enumerate(data_list):
+                    result[columns[i]] = d
+                result_list.append(result)
+        return result_list
 
 class KnowledgeDatabase(Database):
     def __init__(
@@ -372,25 +392,6 @@ class KnowledgeDatabase(Database):
         self.tblUserLoginHistory = "tbl_user_login_history"
         self.tblUserSessions = "tbl_user_sessions"
         self.tblUsers = "tbl_users"
-
-    def convert_to_dict(self, data_list, columns) :
-        assert type(data_list) in (list, tuple)
-        result_list = []
-        if len(data_list) > 1 :
-            if len(data_list[0]) == len(columns) :
-                for data in data_list:
-                    result = {}
-                    for i, d in enumerate(data):
-                        result[columns[i]] = d
-                    result_list.append(result)
-        else :
-            if len(data_list) == len(columns) :
-                result = {}
-                for i, d in enumerate(data_list):
-                    result[columns[i]] = d
-                result_list.append(result)
-        return result_list
-
 
     def validate_session_token(self, session_token) :
         # query = "CALL sp_validate_session_token ('%s');" 
