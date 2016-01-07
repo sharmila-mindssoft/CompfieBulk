@@ -218,7 +218,7 @@ class GetStatutoryMappingReportFiltersSuccess(Response):
 #             "country_wise_statutory_mappings": to_structure_VectorType_RecordType_knowledgereport_MappingReport(self.country_wise_statutory_mappings),
 #         }
 
-class GetStatutoryMappingReportDataSuccess(object):
+class GetStatutoryMappingReportDataSuccess(Response):
     def __init__(self, country_id, domain_id, statutory_mappings):
         self.country_id = country_id
         self.domain_id = domain_id
@@ -237,7 +237,7 @@ class GetStatutoryMappingReportDataSuccess(object):
             country_id, domain_id, statutory_mappings
         )
 
-    def to_structure(self):
+    def to_inner_structure(self):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
