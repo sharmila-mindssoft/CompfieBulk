@@ -1796,6 +1796,7 @@ class KnowledgeDatabase(Database):
     #
 
     def save_statutory_mapping(self, data, created_by) :
+        print data.to_structure()
         country_id =data.country_id
         domain_id =data.domain_id
         industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
@@ -1811,13 +1812,13 @@ class KnowledgeDatabase(Database):
         field = "(statutory_mapping_id, country_id, domain_id, \
             industry_ids, statutory_nature_id, statutory_ids, \
             geography_ids, is_active, created_by, created_on)"
-        data = (
+        data_save = (
             statutory_mapping_id, int(country_id), int(domain_id), 
             industry_ids, int(nature_id), statutory_ids, 
             geography_ids, int(is_active), 
             int(created_by), str(created_on)
         )
-        if (self.save_data(statutory_table, field, data)) :            
+        if (self.save_data(statutory_table, field, data_save)) :            
             self.update_statutory_mapping_id(
                 data.statutory_ids, 
                 statutory_mapping_id, created_by
@@ -1960,7 +1961,6 @@ class KnowledgeDatabase(Database):
         return compliance_ids
 
     def update_statutory_mapping(self, data, updated_by) :
-        print data
         statutory_mapping_id = data.statutory_mapping_id
         industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
         nature_id =data.statutory_nature_id
@@ -1977,7 +1977,6 @@ class KnowledgeDatabase(Database):
             )
 
         if (self.execute(query)) :
-            print "update mapping"
             self.update_statutory_mapping_id(data.statutory_ids, statutory_mapping_id, updated_by)
             ids = self.update_compliance(statutory_mapping_id, compliances, updated_by)
             compliance_ids = ','.join(str(x) for x in ids) + ","
@@ -2154,7 +2153,6 @@ class KnowledgeDatabase(Database):
             on t1.statutory_nature_id = t4.statutory_nature_id \
             WHERE t1.statutory_mapping_id=%s" % mapping_id
         rows = self.select_one(q)
-        print rows
         columns = [
             "country_id", "country_name", "domain_id",
             "domain_name", "industry_ids", "statutory_nature_id",
@@ -2165,7 +2163,6 @@ class KnowledgeDatabase(Database):
         result = []
         if rows :
             result = self.convert_to_dict(rows, columns)
-        print result
         return result
 
     def change_approval_status(self, data, updated_by) :
