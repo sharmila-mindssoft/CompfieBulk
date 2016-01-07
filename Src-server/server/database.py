@@ -712,7 +712,7 @@ class KnowledgeDatabase(Database):
                 WHERE industry_id=%s" % industry_id
 
         else :
-            qry = " SELECT (GROUP_CONCAT(industry_name SEPARATOR ', ')) as \
+            q = " SELECT (GROUP_CONCAT(industry_name SEPARATOR ', ')) as \
                 industry_name FROM tbl_industries \
                 WHERE industry_id in %s" % str(tuple(industry_id))
 
@@ -1579,6 +1579,7 @@ class KnowledgeDatabase(Database):
             industry_ids = [
                 int(x) for x in d["industry_ids"][:-1].split(',')
             ]
+            industry_names = self.get_industry_by_id(industry_ids)
             statutory = core.StatutoryMapping(
                 d["country_id"], d["country_name"],
                 d["domain_id"], d["domain_name"],
@@ -2011,7 +2012,7 @@ class KnowledgeDatabase(Database):
             )
         return self.execute(query)
 
-    def chenge_statutory_mapping_status(self, data, updated_by):
+    def change_statutory_mapping_status(self, data, updated_by):
         statutory_mapping_id = data.statutory_mapping_id
         is_active = data.is_active
 
