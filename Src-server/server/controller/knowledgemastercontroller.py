@@ -275,12 +275,17 @@ def process_save_statutory(db, request_frame, user_id):
 	parent_ids_list = request_frame.parent_ids
 	parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
 
-	saved_names = [row["statutory_name"].lower() for row in db.check_duplicate_geography(parent_ids, None)]
+	saved_names = [
+		row["statutory_name"].lower() for row in db.check_duplicate_statutory(parent_ids, None)
+	]
 
 	if saved_names.count(statutory_name.lower()) > 0 :
 		return knowledgemaster.StatutoryNameAlreadyExists()
 	else :
-		db.save_geography(statutory_level_id, statutory_name, parent_ids, user_id)
+		db.save_statutory(
+			statutory_name, statutory_level_id, 
+			parent_ids, user_id
+		)
 		return knowledgemaster.SaveStatutorySuccess()
 
 

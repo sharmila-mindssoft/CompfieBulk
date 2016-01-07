@@ -439,9 +439,13 @@ function initMirror() {
         compliance["duration_type_id"] = durationTypeId;
         compliance["duration"] = duration;
         compliance["is_active"] = isActive;
-        if (complianceId !== null) {
+        if ((complianceId !== null) && (complianceId !== '')) {
             compliance["compliance_id"] = complianceId;
         }
+        else {
+            compliance["compliance_id"] = null
+        }
+
 
         return compliance;
     }

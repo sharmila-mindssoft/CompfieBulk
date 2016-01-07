@@ -1230,14 +1230,17 @@ class KnowledgeDatabase(Database):
         return result
 
     def check_duplicate_statutory(self, parent_ids, statutory_id) :
-        query = "SELECT statutory_id, statutory_name, level_id, is_active \
+        query = "SELECT statutory_id, statutory_name, level_id \
             FROM tbl_statutories WHERE parent_ids='%s' " % (parent_ids)
         if statutory_id is not None :
             query = query + " AND statutory_id != %s" % statutory_id
         
         rows = self.select_all(query)
-        columns = ["statutory_id", "statutory_name", "level_id", "is_active"]
-        return self.convert_to_dict(rows, columns)
+        columns = ["statutory_id", "statutory_name", "level_id"]
+        result = []
+        if rows :
+            result = self.convert_to_dict(rows, columns)
+        return result
 
     def get_statutory_master(self, statutory_id = None): 
         columns = [
@@ -1269,6 +1272,8 @@ class KnowledgeDatabase(Database):
 
     def return_statutory_master(self, data):
         statutories = {}
+        if bool(self.statutory_parent_mapping) is False :
+            self.set_statutory_parent_mappings(data)
         for d in data :
             country_id = d["country_id"]
             domain_id = d["domain_id"]
@@ -1332,11 +1337,11 @@ class KnowledgeDatabase(Database):
         field = "(statutory_id, statutory_name, level_id, \
             parent_ids, created_by, created_on)"
         data = (
-            statutory_id, name, int(level_id), parent_ids, 
+            int(statutory_id), name, int(level_id), parent_ids, 
             int(user_id), str(created_on)
         )
 
-        if (self.save_data(db, field, data)) :
+        if (self.save_data(table_name, field, data)) :
             action = "Statutory - %s added" % name
             self.save_activity(user_id, 12, action)
             is_saved = True
@@ -1537,6 +1542,10 @@ class KnowledgeDatabase(Database):
         return self.return_statutory_mappings(result)
 
     def return_statutory_mappings(self, data):
+        if bool(self.statutory_parent_mapping) is False :
+            s_data = self.get_statutory_master()
+        if bool(self.geography_parent_mapping) is False :
+            g_data = self.get_geographies()
         mapping_data_list = {}
         for d in data :
             mapping_id = int(d["statutory_mapping_id"])
@@ -1585,7 +1594,7 @@ class KnowledgeDatabase(Database):
 
     def get_statutory_mapping_report(
         self, country_id, domain_id, industry_id, 
-        statutory_nature_id, geography_id
+        statutory_nature_id, geography_id, user_id
     ) :
         q = "SELECT t1.statutory_mapping_id, t1.country_id, \
             t2.country_name, t1.domain_id, t3.domain_name, \
@@ -1617,8 +1626,9 @@ class KnowledgeDatabase(Database):
                 str(statutory_nature_id),
                 str("%" + str(geography_id) + ",%")
             )
-
+        print q
         rows = self.select_all(q)
+        print rows
         columns = [
             "statutory_mapping_id", "country_id", 
             "country_name", "domain_id", "domain_name", "industry_ids", 
@@ -1629,9 +1639,8 @@ class KnowledgeDatabase(Database):
         result = []
         if rows :
             result = self.convert_to_dict(rows, columns)
-        report_data = {}
-        for r in result :
-            report_data[r.statutory_mapping_id] = r
+        report_data = self.return_statutory_mappings(result)
+        
         return self.return_knowledge_report(
             country_id, domain_id, report_data
         )
