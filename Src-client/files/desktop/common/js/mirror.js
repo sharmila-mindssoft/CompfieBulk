@@ -478,6 +478,24 @@ function initMirror() {
         apiRequest("api/knowledge_transaction", request, callback);
     }
 
+    function UpdateStatutoryMappingData(
+        industryIds, statutoryNatureId, 
+        statutoryIds, compliances, geographyIds, mappingId
+    ) {
+        var mappingData = {};
+        mappingData["industry_ids"] = industryIds;
+        mappingData["statutory_nature_id"] = statutoryNatureId;
+        mappingData["statutory_ids"] = statutoryIds;
+        mappingData["compliances"] = compliances;
+        mappingData["geography_ids"] = geographyIds;
+        if (mappingId !== null) {
+            mappingData["statutory_mapping_id"] = mappingId
+        }
+
+        return mappingData;
+    }
+
+
     function updateStatutoryMapping(mappingData, callback ) {
         var request = [
             "UpdateStatutoryMapping",
@@ -1046,6 +1064,7 @@ function initMirror() {
         statutoryDates: statutoryDates,
         complianceDetails: complianceDetails,
         statutoryMapping: statutoryMapping,
+        UpdateStatutoryMappingData: UpdateStatutoryMappingData,
 
         saveStatutoryMapping: saveStatutoryMapping,
         updateStatutoryMapping: updateStatutoryMapping,
