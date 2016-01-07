@@ -19,7 +19,8 @@ __all__ = [
 	"UserGroupDetails", "User", "UserDetails", "CountryWiseUnits", 
 	"ComplianceApplicability", "ComplianceShortDescription","StatutoryDate",
 	"FormCategory", "FormType", "ComplianceFrequency", "ComplianceRepeatType",
-	"ComplianceDurationType", "ComplianceApprovalStatus"
+	"ComplianceDurationType", "ComplianceApprovalStatus",
+	"FileList"
 ]
 
 # frm = EnumType("FORM_TYPE", [
@@ -267,6 +268,12 @@ Statutory = RecordType("Statutory", [
 	Field("parent_mappings", Text),
 ])
 
+FileList = RecordType("FileList", [
+	Field("file_type", Text20),
+	Field("file_content", Text)
+])
+FileListFormat = VectorType(FileList)
+
 StatutoryList = VectorType(Statutory)
 
 Compliance = RecordType("Compliance", [
@@ -275,7 +282,8 @@ Compliance = RecordType("Compliance", [
     Field("compliance_task", COMPLIANCE_NAME), 
     Field("description", DESCRIPTION), 
     Field("document_name", OptionalType(DOCUMENT_NAME)), 
-    Field("format_file_name", OptionalType(FormatFilesList)), 
+    Field("format_file_list", OptionalType(FileListFormat)),
+    #Field("file_name_download", OptionalType(Text)),
     Field("penal_description", OptionalType(DESCRIPTION)), 
     Field("frequency_id", COMPLIANCE_FREQUENCY), 
     Field("statutory_dates", OptionalType(StatutoryDates)),

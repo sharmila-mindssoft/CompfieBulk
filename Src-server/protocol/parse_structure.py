@@ -1735,6 +1735,21 @@ def parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(data):
     if data is None : return None
     return parse_structure_VectorType_RecordType_core_StatutoryDate(data)    
 
+def parse_structure_RecordType_core_FileList(data):
+    from protocol import core
+    return core.FileList.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_core_FileLst(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_core_FileList(item))
+    return lst        
+
+def parse_structure_OptionalType_VectorType_RecordType_core_FileList(data):
+    if data is None : return None
+    return parse_structure_VectorType_RecordType_core_FileLst(data)
+
 def parse_structure_RecordType_clientmasters_Request_ChangeServiceProviderStatus(data):
     from protocol import clientmasters
     return clientmasters.Request.parse_structure(data)
