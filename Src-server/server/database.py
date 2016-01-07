@@ -11,7 +11,7 @@ from types import *
 from protocol import core, knowledgereport
 
 __all__ = [
-    "KnowledgeDatabase", "ClientDatabase"
+    "KnowledgeDatabase", "Database"
 ]
     
 class Database(object) :
@@ -124,16 +124,18 @@ class Database(object) :
         result = cursor.fetchall()
         return result
 
-    def get_data(self, table, columns, condition):
-        # query = "SELECT "+columns+" FROM "+table+" \
-        #WHERE "+condition 
+    def get_data(self, table, columns, condition, client_id = None):
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
+
+        if client_id != None:
+            return self.select_all(query, client_id)
+
         return self.select_all(query)
 
     def get_data_from_multiple_tables(self, columns, tables, aliases, joinType, 
-            joinConditions, whereCondition
+            joinConditions, whereCondition, client_id = None
         ):
         query = "SELECT %s FROM " % columns
 
@@ -154,9 +156,11 @@ class Database(object) :
                 )
 
         query += " where %s" % whereCondition
+        if client_id != None:
+            return self.select_all(query, client_id)
         return self.select_all(query)
 
-    def insert(self, table, columns, values) :
+    def insert(self, table, columns, values, client_id = None) :
         columns = ",".join(columns)
         stringValue = ""
         for index,value in enumerate(values):
@@ -165,18 +169,22 @@ class Database(object) :
             else:
                 stringValue = stringValue+"'"+str(value)+"'"
         query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
+        if client_id != None:
+            return self.execute(query, client_id)
         return self.execute(query)
 
-    def bulk_insert(self, table, columns, valueList) :
+    def bulk_insert(self, table, columns, valueList, client_id = None) :
         query = "INSERT INTO %s (%s)  VALUES" % (table, ",".join(str(x) for x in columns))
         for index, value in enumerate(valueList):
             if index < len(valueList)-1:
                 query += "%s," % str(value)
             else:
                 query += str(value)
+        if client_id != None:
+            return self.execute(query, client_id)
         return self.execute(query)
 
-    def update(self, table, columns, values, condition) :
+    def update(self, table, columns, values, condition, client_id = None) :
         query = "UPDATE "+table+" set "
         for index,column in enumerate(columns):
             if index < len(columns)-1:
@@ -185,9 +193,14 @@ class Database(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
+
+        if client_id != None:
+            return self.execute(query, client_id)
+
         return self.execute(query)
 
-    def on_duplicate_key_update(self, table, columns, valueList, updateColumnsList):
+    def on_duplicate_key_update(self, table, columns, valueList, 
+        updateColumnsList, client_id = None):
         query = "INSERT INTO %s (%s) VALUES " % (table, columns)
 
         for index, value in enumerate(valueList):
@@ -205,10 +218,14 @@ class Database(object) :
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
 
+        if client_id != None:
+            return self.execute(query, client_id)
         return self.execute(query)
 
     def delete(self, table, condition):
         query = "DELETE from "+table+" WHERE "+condition
+        if client_id != None:
+            return self.execute(query, client_id)
         return self.execute(query)        
 
     def append(self, table, column, value, condition):
@@ -233,16 +250,22 @@ class Database(object) :
         values = [newValue]
         return self.update(table, columns, values, condition)        
 
-    def is_already_exists(self, table, condition) :
+    def is_already_exists(self, table, condition, client_id = None) :
         query = "SELECT count(*) FROM "+table+" WHERE "+condition
-        rows = self.select_all(query)     
+        rows = None
+        if client_id != None:
+            rows = self.select_all(query, client_id)
+        else:
+            rows = self.select_all(query)     
         if rows[0][0] > 0:
             return True
         else : 
             return False
 
-    def is_invalid_id(self, table, field, value):
+    def is_invalid_id(self, table, field, value, client_id = None):
         condition = "%s = '%d'" % (field, value)
+        if client_id != None:
+            return not self.is_already_exists(table, condition, client_id)    
         return not self.is_already_exists(table, condition)
 
     def generate_random(self):
@@ -261,7 +284,51 @@ class Database(object) :
     def string_to_datetime(self, string):
         date = string.split("-")
         datetime_val = datetime.datetime(year=int(date[2]),month=self.integer_months[date[1]], day=int(date[0]))
-        return datetime_val
+        return datetime_val.date()
+
+    def datetime_to_string(self, datetime_val):
+        return "%d-%s-%d"% (datetime_val.day, self.string_months[datetime_val.month], 
+            datetime_val.year)
+
+    def get_client_db_info(self):
+        columns = "database_ip, client_id, database_username, "+\
+        "database_password, database_name"
+        condition = "1"
+        return self.get_data("tbl_client_database", columns, condition)
+
+    def get_new_id(self, field , table_name, client_id = None) :
+        newId = 1
+        query = "SELECT max(%s) from %s " % (field, table_name)
+
+        row = None
+        if client_id != None:
+            row = self.select_one(query, client_id)
+        else:
+            row = self.select_one(query)
+        if row[0] is not None :
+            newId = int(row[0]) + 1
+        return newId
+
+    def get_date_time(self) :
+        return datetime.datetime.now()
+
+    def convert_to_dict(self, data_list, columns) :
+        assert type(data_list) in (list, tuple)
+        result_list = []
+        if len(data_list) > 1 :
+            if len(data_list[0]) == len(columns) :
+                for data in data_list:
+                    result = {}
+                    for i, d in enumerate(data):
+                        result[columns[i]] = d
+                    result_list.append(result)
+        else :
+            if len(data_list) == len(columns) :
+                result = {}
+                for i, d in enumerate(data_list):
+                    result[columns[i]] = d
+                result_list.append(result)
+        return result_list
 
 class KnowledgeDatabase(Database):
     def __init__(
@@ -328,25 +395,6 @@ class KnowledgeDatabase(Database):
         self.tblUserSessions = "tbl_user_sessions"
         self.tblUsers = "tbl_users"
 
-    def convert_to_dict(self, data_list, columns) :
-        assert type(data_list) in (list, tuple)
-        result_list = []
-        if len(data_list) > 1 :
-            if len(data_list[0]) == len(columns) :
-                for data in data_list:
-                    result = {}
-                    for i, d in enumerate(data):
-                        result[columns[i]] = d
-                    result_list.append(result)
-        else :
-            if len(data_list) == len(columns) :
-                result = {}
-                for i, d in enumerate(data_list):
-                    result[columns[i]] = d
-                result_list.append(result)
-        return result_list
-
-
     def validate_session_token(self, session_token) :
         # query = "CALL sp_validate_session_token ('%s');" 
         #% (session_token)
@@ -390,9 +438,6 @@ class KnowledgeDatabase(Database):
         else :
             return True
 
-    def get_date_time(self) :
-        return datetime.datetime.now()
-
     def new_uuid(self) :
         s = str(uuid.uuid4())
         return s.replace("-", "")
@@ -415,15 +460,6 @@ class KnowledgeDatabase(Database):
 
         self.execute(query)
         return session_id
-
-    def get_new_id(self, field , table_name) :
-        newId = 1
-        query = "SELECT max(%s) from %s " % (field, table_name)
-
-        row = self.select_one(query)
-        if row[0] is not None :
-            newId = int(row[0]) + 1
-        return newId
     
     def save_activity(self, user_id, form_id, action):
         created_on = self.get_date_time()
@@ -973,9 +1009,12 @@ class KnowledgeDatabase(Database):
         return geography_levels
 
     def get_geograhpy_levels_for_user(self, user_id):
-        country_ids = self.get_user_countries(user_id)
+        country_ids = None
+        if ((user_id != None) and (user_id != 0)):
+            country_ids = self.get_user_countries(user_id)
         columns = "level_id, level_position, level_name, country_id"
-        condition = "country_id in (%s)"% country_ids
+        if country_ids != None:
+            condition = "country_id in (%s)"% country_ids
         rows = self.get_data(self.tblGeographyLevels, columns, condition)
         columns = ["level_id", "level_position", "level_name", "country_id"]
         result = self.convert_to_dict(rows, columns)
@@ -1065,7 +1104,9 @@ class KnowledgeDatabase(Database):
         return geographies
 
     def get_geographies_for_user(self, user_id):
-        coutry_ids = self.get_user_countries(user_id)
+        country_ids = None
+        if ((user_id != None) and (user_id != 0)):
+            coutry_ids = self.get_user_countries(user_id)
         columns = "t1.geography_id, t1.geography_name, "+\
         "t1.level_id,t1.parent_ids, t1.is_active, t2.country_id, t3.country_name"
         tables = [self.tblGeographies, self.tblGeographyLevels, self.tblCountries]
@@ -1073,6 +1114,8 @@ class KnowledgeDatabase(Database):
         joinType = " INNER JOIN"
         joinConditions = ["t1.level_id = t2.level_id", "t2.country_id = t3.country_id"]
         whereCondition = "1"
+        if country_ids != None:
+            whereCondition = "t1.country_id in (%s)" % country_ids
         rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, 
             joinConditions, whereCondition)
         columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
@@ -2332,9 +2375,12 @@ class KnowledgeDatabase(Database):
         return self.get_data(self.tblClientGroups, columns, condition)
 
     def get_group_companies_for_user(self, user_id):
-        client_ids = self.get_user_clients(user_id)
+        client_ids = None
+        if ((user_id != None) and (user_id != 0)):
+            client_ids = self.get_user_clients(user_id)
         columns = "client_id, group_name,  is_active"
-        condition = "client_id in (%s)" % client_ids
+        if client_ids != None:
+            condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblClientGroups, columns, condition) 
         columns = ["client_id", "group_name", "is_active"]
         result = self.convert_to_dict(rows, columns)
@@ -2415,6 +2461,8 @@ class KnowledgeDatabase(Database):
         cursor.execute(query)
         query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" %(
             database_name, db_username, host, db_password)
+        cursor.execute(query)
+        print query
         con.commit()
 
         con = self._db_connect(host, username, password, database_name)
@@ -2705,9 +2753,12 @@ class KnowledgeDatabase(Database):
             return True
 
     def get_business_groups_for_user(self, user_id):
-        client_ids = self.get_user_clients(user_id)
+        client_ids = None
+        if ((user_id != None) and (user_id != 0)):
+            client_ids = self.get_user_clients(user_id)
         columns = "business_group_id, business_group_name, client_id"
-        condition = "client_id in (%s)" % client_ids
+        if client_ids != None:
+            condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblBusinessGroups, columns, condition) 
         columns = ["business_group_id", "business_group_name", "client_id"]
         result = self.convert_to_dict(rows, columns)
@@ -2723,9 +2774,12 @@ class KnowledgeDatabase(Database):
         return results 
 
     def get_legal_entities_for_user(self, user_id):
-        client_ids = self.get_user_clients(user_id)
+        client_ids = None
+        if ((user_id != None) and (user_id != 0)):
+            client_ids = self.get_user_clients(user_id)
         columns = "legal_entity_id, legal_entity_name, business_group_id, client_id"
-        condition = "client_id in (%s)" % client_ids
+        if client_ids != None:
+            condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblLegalEntities, columns, condition) 
         columns = ["legal_entity_id", "legal_entity_name", "business_group_id", 
         "client_id"]
@@ -2742,10 +2796,13 @@ class KnowledgeDatabase(Database):
         return results
 
     def get_divisions_for_user(self, user_id):
-        client_ids = self.get_user_clients(user_id)
+        client_ids = None
+        if ((user_id != None) and (user_id != 0)):
+            client_ids = self.get_user_clients(user_id)
         columns = "division_id, division_name, legal_entity_id, business_group_id,"+\
         "client_id"
-        condition = "client_id in (%s)" % client_ids
+        if client_ids != None:
+            condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblDivisions, columns, condition) 
         columns = ["division_id", "division_name", "legal_entity_id", 
         "business_group_id", "client_id"]
@@ -2761,10 +2818,13 @@ class KnowledgeDatabase(Database):
         return results
 
     def get_units_for_user(self, user_id):
-        client_ids = self.get_user_clients(user_id)
+        client_ids = None
+        if ((user_id != None) and (user_id != 0)):
+            client_ids = self.get_user_clients(user_id)
         columns = "unit_id, unit_code, unit_name, address, division_id,"+\
         " legal_entity_id, business_group_id, client_id, is_active"
-        condition = "client_id in (%s)" % client_ids
+        if client_ids != None:
+            condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblUnits, columns, condition) 
         columns = ["unit_id", "unit_code", "unit_name", "unit_address", "division_id", 
         "legal_entity_id", "business_group_id", "client_id", "is_active"]
