@@ -1426,7 +1426,7 @@ class KnowledgeDatabase(Database):
             _tempDict[row["statutory_id"]] = row["statutory_name"]
         
         for row in rows :
-            statutory_id = row["statutory_id"]
+            statutory_id = int(row["statutory_id"])
             parent_ids = [
                 int(x) for x in row["parent_ids"][:-1].split(',')
             ]
@@ -1608,7 +1608,7 @@ class KnowledgeDatabase(Database):
             statutory_mapping_list = []
             for s_id in statutory_ids :
                 statutory_mapping_list.append(
-                    self.statutory_parent_mapping.get(int(g_id))[1]
+                    self.statutory_parent_mapping.get(int(s_id))[1]
                 )
             approval_status = self.get_approval_status(
                 int(d["approval_status"])
@@ -1664,9 +1664,7 @@ class KnowledgeDatabase(Database):
                 str(statutory_nature_id),
                 str("%" + str(geography_id) + ",%")
             )
-        print q
         rows = self.select_all(q)
-        print rows
         columns = [
             "statutory_mapping_id", "country_id", 
             "country_name", "domain_id", "domain_name", "industry_ids", 

@@ -84,7 +84,8 @@ $("#submit").click(function(){
     filterdata["geography_id"]=parseInt(geography);
     filterdata["level_1_statutory_id"]=parseInt(act);
 
-    function onSuccess(response) {
+    function onSuccess(data){
+      
       loadresult(data["statutory_mappings"]);
     }
     function onFailure(error){
