@@ -559,7 +559,7 @@ $("#temp_addcompliance").click(function() {
   var compliance_task = $('#compliance_task').val().trim();
   var description = $('#compliance_description').val().trim();
   var compliance_document = $('#compliance_document').val().trim();
-  var file_format = [];
+  var file_format = null;
   //file_format = $('#upload_file').val()
   var penal_consequences = $('#penal_consequences').val().trim();
   var compliance_frequency = $('#compliance_frequency').val().trim();
@@ -650,7 +650,7 @@ $("#temp_addcompliance").click(function() {
     compliances[comp_id]["compliance_task"] = compliance_task;
     compliances[comp_id]["description"] = description;
     compliances[comp_id]["document_name"] = compliance_document;
-    compliances[comp_id]["format_file_name"] = file_format;
+    compliances[comp_id]["format_file_list"] = file_format;
     compliances[comp_id]["penal_consequences"] = penal_consequences;
     compliances[comp_id]["frequency_id"] = parseInt(compliance_frequency);
     compliances[comp_id]["statutory_dates"] = statutory_dates;
@@ -755,7 +755,7 @@ function temp_editcompliance(edit_id){
   $('#compliance_description').val(compliances[edit_id]["description"]);
   $('#compliance_frequency').val(compliances[edit_id]["frequency_id"]);
   $('#compliance_document').val(compliances[edit_id]["document_name"]);
-  $('#upload_file').val(compliances[edit_id]["format_file_name"]);
+  $('#upload_file').val(compliances[edit_id]["format_file_list"]);
   $('#penal_consequences').val(compliances[edit_id]["penal_consequences"]);
   $('#duration_type').val(compliances[edit_id]["duration_type_id"]);
   $('#duration').val(compliances[edit_id]["duration"]);
