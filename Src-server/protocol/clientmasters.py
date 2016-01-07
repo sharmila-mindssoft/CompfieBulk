@@ -17,7 +17,9 @@ from protocol.parse_structure import (
     parse_structure_VariantType_clientmasters_Request,
     parse_structure_VectorType_RecordType_core_Division,
     parse_structure_CustomTextType_50,
-    parse_structure_OptionalType_UnsignedIntegerType_32
+    parse_structure_OptionalType_UnsignedIntegerType_32,
+    parse_structure_VectorType_RecordType_core_Country,
+    parse_structure_VectorType_RecordType_core_Domain
 )
 from protocol.to_structure import (
     to_structure_CustomTextType_100,
@@ -36,7 +38,10 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Division,
     to_structure_CustomTextType_50,
     to_structure_VectorType_RecordType_client_masters_ClientUserGroup,
-    to_structure_OptionalType_UnsignedIntegerType_32
+    to_structure_OptionalType_UnsignedIntegerType_32,
+    to_structure_VectorType_RecordType_core_Country,
+    to_structure_VectorType_RecordType_core_Domain,
+    to_structure_VectorType_RecordType_core_ServiceProviderDetails
 )
 
 #
@@ -761,15 +766,15 @@ class GetClientUsersSuccess(Response):
 
     def to_inner_structure(self):
         return {
-            "countries" : to_structure_VectorType_RecordType_core_Country(countries),
-            "domains" : to_structure_VectorType_RecordType_core_Domain(domains),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(business_groups),
-            "legal_entities" : to_structure_VectorType_RecordType_core_LegalEntity(legal_entities),
-            "divisions" : to_structure_VectorType_RecordType_core_Division(divisions),
-            "units" : to_structure_VectorType_RecordType_core_Unit(units),
-            "user_groups" : to_structure_VectorType_RecordType_core_UserGroup(user_groups),
-            "users" : to_structure_VectorType_RecordType_core_User(users),
-            "service_providers" : to_structure_VectorType_RecordType_core_ServiceProvider(service_providers)
+            "countries" : to_structure_VectorType_RecordType_core_Country(self.countries),
+            "domains" : to_structure_VectorType_RecordType_core_Domain(self.domains),
+            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
+            "legal_entities" : to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
+            "divisions" : to_structure_VectorType_RecordType_core_Division(self.divisions),
+            "units" : to_structure_VectorType_RecordType_core_Unit(self.units),
+            "user_groups" : to_structure_VectorType_RecordType_core_UserGroup(self.user_groups),
+            "users" : to_structure_VectorType_RecordType_core_ClientUser(self.users),
+            "service_providers" : to_structure_VectorType_RecordType_core_ServiceProvider(self.service_providers)
         }
 
 class SaveClientUserSuccess(Response):

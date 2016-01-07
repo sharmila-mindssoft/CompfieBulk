@@ -36,7 +36,7 @@ def process_client_master_requests(request, db) :
 		return update_user_privileges(db, request, session_user, client_id)
 
 	if type(request) is clientmasters.ChangeUserPrivilegeStatus:
-		return change_user__privilege_status(db, request, session_user, client_id)
+		return change_user_privilege_status(db, request, session_user, client_id)
 
 	if type(request) is clientmasters.GetClientUsers:
 		return get_client_users(db, request, session_user, client_id)
@@ -47,7 +47,7 @@ def process_client_master_requests(request, db) :
 	if type(request) is clientmasters.UpdateClientUser:
 		return update_client_user(db, request, session_user, client_id)
 
-	if type(request) is clientmasters.UpdateClientUserStatus:
+	if type(request) is clientmasters.ChangeClientUserStatus:
 		return change_client_user_status(db, request, session_user, client_id)
 
 	if type(request) is clientmasters.ChangeAdminStatus:
@@ -144,7 +144,7 @@ def update_user_privileges(db, request, session_user, client_id):
 	elif db.update_user_privilege(request, session_user, client_id) :
 	    return clientmasters.UpdateUserPrivilegesSuccess()
 
-def change_user__privilege_status(db, request, session_user, client_id):
+def change_user_privilege_status(db, request, session_user, client_id):
 	if db.is_invalid_id(db.tblUserGroups, "user_group_id", 
 		request.user_group_id, client_id):
 	    return clientmasters.InvalidUserGroupId()

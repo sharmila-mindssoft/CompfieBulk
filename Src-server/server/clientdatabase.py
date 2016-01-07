@@ -289,6 +289,7 @@ class ClientDatabase(Database):
 		return self.update(self.tblUserGroups, columns, values, condition, client_id)
 
 	def update_user_privilege_status(self, user_group_id, is_active, session_user, client_id):
+		is_active = 0 if is_active != True else 1
 		columns = ["is_active", "updated_by", "updated_on"]
 		values = [is_active, session_user, self.get_date_time()]
 		condition = "user_group_id='%d'" % user_group_id
@@ -327,17 +328,18 @@ class ClientDatabase(Database):
 	def return_user_details(self, users, client_id):
 		results = []
 		for user in users :
-		    results.append(core.ClientUser(
-		        user["user_id"], user["email_id"], user["user_group_id"], 
-		        user["employee_name"], user["employee_code"], user["contact_no"], 
-		        user["seating_unit_id"], user["user_level"], 
-		        self.get_user_countries(user["user_id"], client_id),
-		        self.get_user_domains(user["user_id"], client_id),
-		        self.get_user_unit_ids(user["user_id"], client_id),
-		        user["is_admin"], 
-		        user["is_service_provider"], user["service_provider_id"], 
-		        bool(user["is_active"])
-		    ))
+			countries = self.get_user_countries(user["user_id"], client_id)
+			domains = self.get_user_domains(user["user_id"], client_id)
+			units = self.get_user_unit_ids(user["user_id"], client_id)
+			results.append(core.ClientUser(user["user_id"], user["email_id"], 
+				user["user_group_id"], user["employee_name"], 
+				user["employee_code"], user["contact_no"], 
+				user["seating_unit_id"], user["user_level"], 
+				[int(x) for x in countries.split(",")] if countries != None else [],
+				[int(x) for x in domains.split(",")] if domains != None else [],
+				[int(x) for x in units.split(",")] if units != None else [],
+				bool(user["is_admin"]), bool(user["is_service_provider"]),
+				user["service_provider_id"], bool(user["is_active"])))
 		return results
 
 	def save_user(self, user_id, user, session_user, client_id):
@@ -528,7 +530,7 @@ class ClientDatabase(Database):
 	def return_service_provider_details(self, service_providers):
 		results = []
 		for service_provider in service_providers :
-		    service_provider_obj = core.ServiceProvider(
+		    service_provider_obj = core.ServiceProviderDetails(
 		    	service_provider["service_provider_id"], 
 		    	service_provider["service_provider_name"], 
 		    	service_provider["address"], 
@@ -573,10 +575,12 @@ class ClientDatabase(Database):
 
 	def update_service_provider(self, service_provider, session_user, client_id):
 		current_time_stamp = self.get_date_time()
+		contract_from = self.string_to_datetime(service_provider.contract_from)
+		contract_to = self.string_to_datetime(service_provider.contract_to)
 		columns_list = [ "service_provider_name", "address", "contract_from", "contract_to", 
 		            "contact_person", "contact_no", "updated_on", "updated_by"]
 		values_list = [service_provider.service_provider_name, service_provider.address, 
-		        service_provider.contract_from, service_provider.contract_to, service_provider.contact_person, 
+		        contract_from, contract_to, service_provider.contact_person, 
 		        service_provider.contact_no, current_time_stamp, session_user]
 		condition = "service_provider_id='%d'" % service_provider.service_provider_id
 		return self.update(self.tblServiceProviders, columns_list, values_list, condition, client_id)

@@ -1334,6 +1334,30 @@ class UnitDetails(object):
 # ServiceProvider
 #
 
+class ServiceProvider(object):
+    def __init__(self, service_provider_id, service_provider_name, is_active):
+        self.service_provider_id = service_provider_id
+        self.service_provider_name = service_provider_name
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["service_provider_id", "service_provider_name","is_active"])
+        service_provider_id = data.get("service_provider_id")
+        service_provider_id = parse_structure_OptionalType_SignedIntegerType_8(service_provider_id)
+        service_provider_name = data.get("service_provider_name")
+        service_provider_name = parse_structure_CustomTextType_50(service_provider_name)
+        is_active = data.get("is_active")
+        is_active = parse_structure_OptionalType_Bool(is_active)
+        return ServiceProvider(service_provider_id, service_provider_name, is_active)
+
+    def to_structure(self):
+        return {
+            "service_provider_id": to_structure_OptionalType_SignedIntegerType_8(self.service_provider_id),
+            "service_provider_name": to_structure_CustomTextType_50(self.service_provider_name),
+            "is_active": to_structure_OptionalType_Bool(self.is_active),
+        }
+
 class ServiceProviderDetails(object):
     def __init__(self, service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no, is_active):
         self.service_provider_id = service_provider_id
@@ -1436,6 +1460,7 @@ class ClientUser(object):
         return ClientUser(user_id, email_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, seating_unit_name, user_level, country_ids, domain_ids, unit_ids, is_admin, is_service_provider, service_provider_id, is_active)
 
     def to_structure(self):
+        print "inside core client users inner structure"
         return {
             "user_id": to_structure_SignedIntegerType_8(self.user_id),
             "email_id": to_structure_CustomTextType_100(self.email_id),
