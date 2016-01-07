@@ -220,7 +220,7 @@ class Database(object) :
             return self.execute(query, client_id)
         return self.execute(query)
 
-    def delete(self, table, condition):
+    def delete(self, table, condition, client_id = None):
         query = "DELETE from "+table+" WHERE "+condition
         if client_id != None:
             return self.execute(query, client_id)
@@ -2544,7 +2544,7 @@ class KnowledgeDatabase(Database):
         "updated_by", "updated_on"]
         values = [client_id, client_group.group_name, client_group.email_id,
         client_group.logo, 1200, contract_from, contract_to,
-        client_group.no_of_user_licence, client_group.file_space * 10000, 
+        client_group.no_of_user_licence, client_group.file_space * 1000000000, 
         is_sms_subscribed, client_group.short_name, 
         ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
         current_time_stamp, session_user, current_time_stamp]
@@ -2561,7 +2561,8 @@ class KnowledgeDatabase(Database):
         "contract_to", "no_of_user_licence", "total_disk_space", "is_sms_subscribed", 
         "incharge_persons", "is_active", "updated_by", "updated_on"]
         values = [client_group.group_name, client_group.logo,1200, contract_from, contract_to,
-        client_group.no_of_user_licence, client_group.file_space, is_sms_subscribed,
+        client_group.no_of_user_licence, client_group.file_space * 1000000000, 
+        is_sms_subscribed,
         ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
         current_time_stamp]
         condition = "client_id = '%d'" % client_group.client_id

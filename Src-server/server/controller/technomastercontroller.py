@@ -43,8 +43,8 @@ def get_client_groups(db, request, session_user):
 		logo_url = client_row[3]
 		contract_from = db.datetime_to_string(client_row[4])
 		contract_to  = db.datetime_to_string(client_row[5])
-		no_of_user_licence = client_row[6]
-		total_disk_space = int(client_row[7])
+		no_of_user_licence = client_row[6] 
+		total_disk_space = client_row[7]/ 1000000000
 		is_sms_subscribed = True if client_row[8]==1 else False
 		incharge_persons = [int(x) for x in client_row[9].split(",")]
 		is_active = True if client_row[10]==1 else False
