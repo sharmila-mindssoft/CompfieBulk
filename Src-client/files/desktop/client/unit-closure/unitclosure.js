@@ -1,13 +1,20 @@
-$(function() {
-	initialize();
-});
 function initialize(){
-	function success(status, data){
+	function onSuccess(data){
 		loadUnitClosureList(data);
 	}
-	function failure(status, data){
+	function onFailure(error){
+		console.log(error);
 	}
-	mirror.getUnitClosureList("ClientAdminAPI", success, failure);
+	client_mirror.getUnitClosureList(
+		function (error, response){
+			if(error == null){
+				onSuccess(response);
+			}
+			else{
+				onFailure(error);
+			}
+		}
+	);
 }
 
 function showPopup(unitId){
@@ -30,28 +37,28 @@ function unit_close(){
 		$('.popup-error-msg').html("Please Enter password");
 	}
 	else{
-		function success(status, data){
-			if(status=='CloseUnitSuccess'){
-				$('#unitidval').val("");
-				$('.overlay').css("visibility","hidden");
-				$('.overlay').css("opacity","0");
-				initialize();	
-			}
-			if(status=='InvalidPassword'){
+		function onSuccess(data){
+			$('#unitidval').val("");
+			$('.overlay').css("visibility","hidden");
+			$('.overlay').css("opacity","0");
+			initialize();
+		}
+		function onFailure(error){
+			if(error == 'InvalidPassword'){
 				$('.popup-error-msg').html("Enter Correct password");
 				$('#password').val("");
 			}
 		}
-		function failure(status, data){
-			if(status=='InvalidPassword'){
-				$('.popup-error-msg').html("Enter Correct password");
-				$('#password').val("");
+		client_mirror.closeUnit(parseInt(unitidval), password,
+			function (error, response){
+				if(error == null){
+					onSuccess(response);
+				}
+				else{
+					onFailure(error);
+				}
 			}
-			else{
-				$('.popup-error-msg').html(status);	
-			}
-		}
-		mirror.closeUnit("ClientAdminAPI", parseInt(unitidval), password, success, failure);
+		);
 	}
 }
 
@@ -146,4 +153,7 @@ $("#address-search").keyup(function() {
         var id = $(this).find(".unit-address").text().toLowerCase();       
         $(this).toggle(id.indexOf(value) !== -1);;
     });
+});
+$(function() {
+	initialize();
 });

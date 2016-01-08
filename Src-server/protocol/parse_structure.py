@@ -3086,3 +3086,14 @@ def parse_structure_VectorType_RecordType_admin_UserGroup(data):
     for item in data:
         lst.append(parse_structure_RecordType_admin_UserGroup(item))
     return lst
+
+def parse_structure_RecordType_knowledgetransaction_ApproveMapping(data):
+    from protocol import knowledgetransaction
+    return knowledgetransaction.ApproveMapping.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_knowledgetransaction_ApproveMapping(item))
+    return lst

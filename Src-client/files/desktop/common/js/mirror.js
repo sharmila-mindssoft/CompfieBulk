@@ -110,6 +110,32 @@ function initMirror() {
         );
     }
 
+    function LoginApiRequest(callerName, request, callback) {
+        jQuery.post(
+            BASE_URL + callerName,
+            toJSON(request),
+            function (data) {
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                log("API STATUS :"+status)
+                if (status.toLowerCase().indexOf(matchString) != -1){
+                    callback(null, response);
+                }
+                callback(status, null) 
+            }
+        )
+        .fail(
+            function (jqXHR, textStatus, errorThrown) {
+                // alert("jqXHR:"+jqXHR.status);
+                // alert("textStatus:"+textStatus);
+                // alert("errorThrown:"+errorThrown);
+                // callback(error, null);
+            }
+        );
+    }
+
     // Login function 
     function login(username, password, callback) {
         var request = [
@@ -809,11 +835,12 @@ function initMirror() {
         var request = [
             "ChangePassword",
             {
+                "session_token": getSessionToken(),
                 "current_password": currentPassword,
                 "new_password": newPassword
             }
         ];
-        apiRequest(callerName, request, callback);
+        LoginApiRequest(callerName, request, callback);
     }
 
     // Forgot Password APIs
@@ -827,7 +854,7 @@ function initMirror() {
                 "username": username
             }
         ];
-        apiRequest(callerName, request, callback);
+        LoginApiRequest(callerName, request, callback);
     }
 
     function validateResetToken(callerName, resetToken, 
@@ -838,7 +865,7 @@ function initMirror() {
                 "reset_token": resetToken
             }
         ];
-        apiRequest(callerName, request, callback);
+        LoginApiRequest(callerName, request, callback);
     }
 
     function resetPassword(callerName, resetToken, newPassword, 
@@ -850,7 +877,7 @@ function initMirror() {
                 "new_password": newPassword
             }
         ];
-        apiRequest(callerName, request, callback);
+        LoginApiRequest(callerName, request, callback);
     }
 
     // Client Unit APIs
@@ -1026,6 +1053,7 @@ function initMirror() {
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
         apiRequest: apiRequest,
+        LoginApiRequest : LoginApiRequest,
 
         saveDomain: saveDomain,
         updateDomain: updateDomain,

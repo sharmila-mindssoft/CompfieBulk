@@ -21,7 +21,10 @@ parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorTy
     parse_structure_Text,
     parse_structure_VectorType_RecordType_core_StatutoryNature,
     parse_structure_CustomTextType_50,
-    parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping
+    parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping,
+    parse_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping,
+parse_structure_SignedIntegerType_8
+    
 )
 from protocol.to_structure import (
 to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
@@ -44,7 +47,9 @@ to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_
     to_structure_Text,
     to_structure_VectorType_RecordType_core_StatutoryNature,
     to_structure_CustomTextType_50,
-    to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping
+    to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping,
+    to_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping,
+    to_structure_UnsignedIntegerType_32
 )
 
 #
@@ -117,10 +122,10 @@ class SaveStatutoryMapping(Request):
 
     def to_inner_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "industry_ids": to_structure_VectorType_SignedIntegerType_8(self.industry_ids),
-            "statutory_nature_id": to_structure_SignedIntegerType_8(self.statutory_nature_id),
+            "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
             "statutory_ids": to_structure_VectorType_SignedIntegerType_8(self.statutory_ids),
             "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
             "geography_ids": to_structure_VectorType_SignedIntegerType_8(self.geography_ids),
@@ -154,9 +159,9 @@ class UpdateStatutoryMapping(Request):
 
     def to_inner_structure(self):
         return {
-            "statutory_mapping_id": to_structure_SignedIntegerType_8(self.statutory_mapping_id),
+            "statutory_mapping_id": to_structure_UnsignedIntegerType_32(self.statutory_mapping_id),
             "industry_ids": to_structure_VectorType_SignedIntegerType_8(self.industry_ids),
-            "statutory_nature_id": to_structure_SignedIntegerType_8(self.statutory_nature_id),
+            "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
             "statutory_ids": to_structure_VectorType_SignedIntegerType_8(self.statutory_ids),
             "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
             "geography_ids": to_structure_VectorType_SignedIntegerType_8(self.geography_ids),
@@ -178,11 +183,11 @@ class ChangeStatutoryMappingStatus(Request):
 
     def to_inner_structure(self):
         return {
-            "statutory_mapping_id": to_structure_SignedIntegerType_8(self.statutory_mapping_id),
+            "statutory_mapping_id": to_structure_UnsignedIntegerType_32(self.statutory_mapping_id),
             "is_active": to_structure_Bool(self.is_active),
         }
 
-class ApproveStatutoryMapping(Request):
+class ApproveMapping(object):
     def __init__(self, statutory_mapping_id, approval_status, rejected_reason, statutory_provision, notification_text):
         self.statutory_mapping_id = statutory_mapping_id
         self.approval_status = approval_status
@@ -191,27 +196,44 @@ class ApproveStatutoryMapping(Request):
         self.notification_text = notification_text
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data, ["statutory_mapping_id", "approval_status", "rejected_reason", "statutory_provision", "notification_text"])
         statutory_mapping_id = data.get("statutory_mapping_id")
         statutory_mapping_id = parse_structure_UnsignedIntegerType_32(statutory_mapping_id)
         approval_status = data.get("approval_status")
-        approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(approval_status)
+        approval_status = parse_structure_SignedIntegerType_8(approval_status)
         rejected_reason = data.get("rejected_reason")
         rejected_reason = parse_structure_Text(rejected_reason)
         statutory_provision = data.get("statutory_provision")
         statutory_provision = parse_structure_Text(statutory_provision)
         notification_text = data.get("notification_text")
         notification_text = parse_structure_Text(notification_text)
-        return ApproveStatutoryMapping(statutory_mapping_id, approval_status, rejected_reason, statutory_provision, notification_text)
+        return ApproveMapping(statutory_mapping_id, approval_status, rejected_reason, statutory_provision, notification_text)
 
-    def to_inner_structure(self):
+    def to_structure(self):
         return {
-            "statutory_mapping_id": to_structure_SignedIntegerType_8(self.statutory_mapping_id),
-            "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
+            "statutory_mapping_id": to_structure_UnsignedIntegerType_32(self.statutory_mapping_id),
+            "approval_status": to_structure_SignedIntegerType_8(self.approval_status),
             "rejected_reason": to_structure_Text(self.rejected_reason),
             "statutory_provision": to_structure_Text(self.statutory_provision),
             "notification_text": to_structure_Text(self.notification_text),
+        }
+
+
+class ApproveStatutoryMapping(Request):
+    def __init__(self, statutory_mappings):
+        self.statutory_mappings = statutory_mappings
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["statutory_mappings"])
+        statutory_mappings = data.get("statutory_mappings")
+        statutory_mappings = parse_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping(statutory_mappings)
+        return ApproveStatutoryMapping(statutory_mappings)
+
+    def to_inner_structure(self):
+        return {
+            "statutory_mappings": to_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping(self.statutory_mappings),
         }
 
 

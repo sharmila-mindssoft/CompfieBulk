@@ -194,7 +194,6 @@ class Database(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
-
         if client_id != None:
             return self.execute(query, client_id)
 
@@ -1173,7 +1172,7 @@ class KnowledgeDatabase(Database):
             return mapping_dict
 
         if bool(self.geography_parent_mapping) is False :
-            data = self.get_geographies()
+            self.get_geographies()
 
         return return_report_data(self.geography_parent_mapping)
 
@@ -1325,8 +1324,6 @@ class KnowledgeDatabase(Database):
 
     def return_statutory_master(self, data):
         statutories = {}
-        if bool(self.statutory_parent_mapping) is False :
-            self.set_statutory_parent_mappings(data)
         for d in data :
             country_id = d["country_id"]
             domain_id = d["domain_id"]
@@ -1358,6 +1355,8 @@ class KnowledgeDatabase(Database):
         return statutories
 
     def get_country_wise_level_1_statutoy(self) :
+        if bool(self.statutory_parent_mapping) is False:
+            self.get_statutory_master()
         query = "SELECT t1.statutory_id, t1.statutory_name, \
             t1.level_id, t1.parent_ids, t2.country_id, \
             t3.country_name, t2.domain_id, t4.domain_name \
@@ -1596,9 +1595,9 @@ class KnowledgeDatabase(Database):
 
     def return_statutory_mappings(self, data):
         if bool(self.statutory_parent_mapping) is False :
-            s_data = self.get_statutory_master()
+            self.get_statutory_master()
         if bool(self.geography_parent_mapping) is False :
-            g_data = self.get_geographies()
+            self.get_geographies()
         mapping_data_list = {}
         for d in data :
             mapping_id = int(d["statutory_mapping_id"])
@@ -1627,8 +1626,11 @@ class KnowledgeDatabase(Database):
             ]
             statutory_mapping_list = []
             for s_id in statutory_ids :
+                s_map_data = self.statutory_parent_mapping.get(int(s_id))
+                if s_map_data is not None :
+                    s_map_data = s_map_data[1]
                 statutory_mapping_list.append(
-                    self.statutory_parent_mapping.get(int(s_id))[1]
+                    s_map_data
                 )
             approval_status = self.get_approval_status(
                 int(d["approval_status"])
@@ -1700,7 +1702,7 @@ class KnowledgeDatabase(Database):
         if rows :
             result = self.convert_to_dict(rows, columns)
         report_data = self.return_statutory_mappings(result)
-        
+
         return self.return_knowledge_report(
             country_id, domain_id, report_data
         )
@@ -1708,7 +1710,10 @@ class KnowledgeDatabase(Database):
 
     def get_mappings_id(self, statutory_id) :
         query = "SELECT t1.statutory_mapping_ids from tbl_statutories t1 \
-            WHERE t1.parent_ids like '%0%' OR t1.parent_ids like '%s'" % str("%" + str(statutory_id) + ",%")
+            WHERE t1.statutory_id = %s OR t1.parent_ids like '%s'" % (
+                    int(statutory_id),
+                    str("%" + str(statutory_id) + ",%")
+                )
         rows = self.select_all(query)
         result = []
         if rows :
@@ -1733,7 +1738,6 @@ class KnowledgeDatabase(Database):
                     continue
                 if mapping_ids == "" :
                     continue
-
                 def getData(i) :
                     return report_data.get(int(i))
                 mapping_list.extend(
@@ -2078,10 +2082,6 @@ class KnowledgeDatabase(Database):
         return compliance_ids
 
     def change_compliance_status(self, mapping_id, is_active, updated_by) :
-        query = "UPDATE tbl_compliances set is_active=%s, \
-            updated_by=%s WHERE statutory_mapping_id=%s" % (
-                is_active, updated_by, mapping_id
-            )
         tbl_name = "tbl_compliances"
         columns = ["is_active", "updated_by"]
         values = [is_active, int(updated_by)]
@@ -2197,41 +2197,52 @@ class KnowledgeDatabase(Database):
         return result
 
     def change_approval_status(self, data, updated_by) :
-        statutory_mapping_id = data.statutory_mapping_id
+        statutory_mapping_id = int(data.statutory_mapping_id)
         provision = data.statutory_provision
-        approval_status = data.approval_status
+        approval_status = int(data.approval_status)
         rejected_reason = data.rejected_reason
         notification_text = data.notification_text
+        tbl_name = "tbl_statutory_mappings"
+        columns = [
+            "approval_status", "updated_by"
+        ]
+        values = [
+            approval_status, int(updated_by)
+        ]
+        where = "statutory_mapping_id=%s" % (statutory_mapping_id)
 
         if approval_status == 2 :
             #Rejected
-            query = "UPDATE tbl_statutory_mappings set \
-                approval_status='%s', rejected_reason='%s', \
-                updated_by=%s WHERE \
-                statutory_mapping_id = %s" % (
-                    approval_status, rejected_reason, updated_by, statutory_mapping_id
-                )
-            self.execute(query)
+            columns.extend(["rejected_reason"])
+            values.extend(["rejected_reason"])
+            # query = "UPDATE tbl_statutory_mappings set \
+            #     approval_status='%s', rejected_reason='%s', \
+            #     updated_by=%s WHERE \
+            #     statutory_mapping_id = %s" % (
+            #         approval_status, rejected_reason, updated_by, statutory_mapping_id
+            #     )
+            # self.execute(query)
             notification_log_text = "Statutory Mapping: %s \
                 has been Rejected" % (provision)
         else :
             
-            query = "UPDATE tbl_statutory_mappings set \
-                approval_status='%s', \
-                updated_by=%s WHERE \
-                statutory_mapping_id = %s" % (
-                    approval_status, updated_by, 
-                    statutory_mapping_id
-                )
-            self.execute(query)
+            # query = "UPDATE tbl_statutory_mappings set \
+            #     approval_status='%s', \
+            #     updated_by=%s WHERE \
+            #     statutory_mapping_id = %s" % (
+            #         approval_status, updated_by, 
+            #         statutory_mapping_id
+            #     )
             notification_log_text = "Statutory Mapping: %s \
-                has been Approved" % (provision)            
-            if approval_status == 3 :
-                self.save_statutory_notifications(
-                    statutory_mapping_id, notification_text
-                )
-                notification_log_text = "Statutory Mapping: %s \
-                    has been Approve & Notified" % (provision)
+                has been Approved" % (provision)
+
+        self.update(tbl_name, columns, values, where)
+        if approval_status == 3 :
+            self.save_statutory_notifications(
+                statutory_mapping_id, notification_text
+            )
+            notification_log_text = "Statutory Mapping: %s \
+                has been Approve & Notified" % (provision)
         
         link = "/statutorymapping/list"
         self.save_notifications(notification_log_text, link)
@@ -2269,7 +2280,7 @@ class KnowledgeDatabase(Database):
         provision = []
         for sid in old_record["statutory_ids"][:-1].split(',') :
             data = self.statutory_parent_mapping.get(int(sid))
-            provision.append(data)
+            provision.append(data[1])
         mappings = ','.join(str(x) for x in provision)
         geo_map = []
         for gid in old_record["geography_ids"][:-1].split(',') :
@@ -2297,23 +2308,6 @@ class KnowledgeDatabase(Database):
             mappings, geo_mappings, notification_text
         ]
         self.insert(tbl_statutory_notification, columns, values)
-
-        # query = " INSERT INTO tbl_statutory_notifications_log \
-        #     (statutory_notification_id, statutory_mapping_id, \
-        #     country_name, domain_name, industry_name, \
-        #     statutory_nature, statutory_provision, \
-        #     applicable_location, notification_text) \
-        #     VALUES \
-        #     (%s, %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s') \
-        #     " % (
-        #         notification_id, mapping_id, 
-        #         old_record["country_name"], 
-        #         old_record["domain_name"], industry_name, 
-        #         old_record["statutory_nature"], 
-        #         mappings, geo_mappings,notification_text
-        #     )
-        # self.execute(query)
-
 
     #
     #   Forms
@@ -2533,7 +2527,7 @@ class KnowledgeDatabase(Database):
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
         " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
-        " is_active"
+        " is_active, url_short_name"
         condition = "1"
         return self.get_data(self.tblClientGroups, columns, condition)
 
@@ -2571,6 +2565,23 @@ class KnowledgeDatabase(Database):
         condition = "client_id ='%d'" % client_id
         rows = self.get_data(self.tblClientDomains, columns, condition)
         return rows[0][0]
+
+    def get_date_configurations(self, client_id):
+        columns = "country_id, domain_id, period_from, period_to"
+        condition = "client_id='%d'"%client_id
+        rows = self.get_data(self.tblClientConfigurations, columns, condition)
+        columns = ["country_id" ,"domain_id", "period_from", "period_to"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_client_configuration(result)
+
+    def return_client_configuration(self, configurations):
+        results = []
+        for configuration in configurations :
+            results.append(core.ClientConfiguration(
+                configuration["country_id"], configuration["domain_id"],
+                configuration["period_from"], configuration["period_to"]
+            ))
+        return results  
 
     def save_date_configurations(self, client_id, date_configurations, session_user):
         values_list = []
@@ -2906,15 +2917,24 @@ class KnowledgeDatabase(Database):
         condition = "unit_id = '%d' and client_id = '%d' "% (unit_id, client_id)
         return self.update(self.tblUnits, columns, values, condition)
 
-    def verify_password(self, password, userId):
+    def verify_password(self, password, user_id):
         columns = "count(*)"
         encrypted_password = self.encrypt(password)
-        condition = "password='%s' and user_id='%d'" % (encrypted_password, userId)
+        condition = "password='%s' and user_id='%d'" % (encrypted_password, user_id)
         rows = self.get_data(self.tblUsers, columns, condition)
         if(int(rows[0][0]) <= 0):
             return False
         else:
             return True
+
+    def update_password(self, password, user_id):
+        columns = ["password"]
+        values = [self.encrypt(password)]
+        condition = " user_id='%d'" % user_id
+        if self.update(self.tblUsers, columns, values, condition):
+            return True
+        else:
+            return False
 
     def get_business_groups_for_user(self, user_id):
         client_ids = None
