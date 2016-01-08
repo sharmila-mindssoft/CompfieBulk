@@ -1636,7 +1636,11 @@ class KnowledgeDatabase(Database):
             industry_ids = [
                 int(x) for x in d["industry_ids"][:-1].split(',')
             ]
-            industry_names = self.get_industry_by_id(industry_ids)
+            if len(industry_ids) == 1:
+                industry_names = self.get_industry_by_id(industry_ids[0])
+            else :
+                industry_names = self.get_industry_by_id(industry_ids)
+
             statutory = core.StatutoryMapping(
                 d["country_id"], d["country_name"],
                 d["domain_id"], d["domain_name"],
@@ -2009,7 +2013,6 @@ class KnowledgeDatabase(Database):
         self.save_activity(updated_by, 17, action)
         return True
 
-
     def update_compliance(self, mapping_id, datas, updated_by) :
         compliance_ids = []
         for data in datas :
@@ -2109,7 +2112,11 @@ class KnowledgeDatabase(Database):
         industry_ids = [
             int(x) for x in old_record["industry_ids"][:-1].split(',')
         ]
-        industry_name = self.get_industry_by_id(industry_ids)
+
+        if len(industry_ids) == 1:
+            industry_name = self.get_industry_by_id(industry_ids[0])
+        else :
+            industry_name = self.get_industry_by_id(industry_ids)
 
         provision = []
         for sid in old_record["statutory_ids"][:-1].split(',') :
@@ -2124,41 +2131,43 @@ class KnowledgeDatabase(Database):
                 data = data[0]
             geo_map.append(data)
         geo_mappings = ','.join(geo_map)
-        
-        q = "INSERT INTO tbl_statutories_backup \
-            (statutory_backup_id, statutory_mapping_id, \
-            country_name, domain_name, industry_name, \
-            statutory_nature, statutory_provision, \
-            applicable_location, created_by, created_on) \
-            VALUES(%s, %s, '%s', '%s', '%s', '%s', '%s', \
-                '%s', %s, '%s') " % (
-                backup_id, statutory_mapping_id, 
-                old_record["country_name"], 
-                old_record["domain_name"], 
-                industry_name, old_record["statutory_nature_name"], 
-                mappings, 
-                geo_mappings, created_by, created_on
+
+        tbl_statutory_backup = "tbl_statutories_backup"
+        columns = [
+            "statutory_backup_id", "statutory_mapping_id",
+            "country_name", "domain_name", "industry_name",
+            "statutory_nature", "statutory_provision",
+            "applicable_location", "created_by",
+            "created_on"
+        ]
+        values = [
+            backup_id, statutory_mapping_id,
+            old_record["country_name"], old_record["domain_name"],
+            industry_name, old_record["statutory_nature_name"],
+            mappings,
+            geo_mappings, int(created_by), created_on
+        ]
+        self.insert(tbl_statutory_backup, columns, values)
+
+        qry = " INSERT INTO tbl_compliances_backup \
+            (statutory_backup_id, statutory_provision, \
+            compliance_task, compliance_description, \
+            document_name, format_file, \
+            penal_consequences, frequency_id, \
+            statutory_dates, repeats_every, \
+            repeats_type_id, duration, duration_type_id)  \
+            SELECT \
+            %s,t1.statutory_provision, t1.compliance_task, \
+            t1.compliance_description, t1.document_name, \
+            t1.format_file, t1.penal_consequences, \
+            t1.frequency_id, t1.statutory_dates, \
+            t1.repeats_every, t1.repeats_type_id, \
+            t1.duration, t1.duration_type_id \
+            FROM tbl_compliances t1 \
+            WHERE statutory_mapping_id=%s" % (
+                backup_id, statutory_mapping_id
             )
-        if (self.execute(q)) :
-            qry = " INSERT INTO tbl_compliances_backup \
-                (statutory_backup_id, statutory_provision, \
-                compliance_task, compliance_description, \
-                document_name, format_file, \
-                penal_consequences, frequency_id, \
-                statutory_dates, repeats_every, \
-                repeats_type_id, duration, duration_type_id)  \
-                SELECT \
-                %s,t1.statutory_provision, t1.compliance_task, \
-                t1.compliance_description, t1.document_name, \
-                t1.format_file, t1.penal_consequences, \
-                t1.frequency_id, t1.statutory_dates, \
-                t1.repeats_every, t1.repeats_type_id, \
-                t1.duration, t1.duration_type_id \
-                FROM tbl_compliances t1 \
-                WHERE statutory_mapping_id=%s" % (
-                    backup_id, statutory_mapping_id
-                )
-            self.execute(qry)
+        self.execute(qry)
 
     def get_statutory_mapping_by_id (self, mapping_id) :
         q = "SELECT t1.country_id, t2.country_name, \
@@ -2250,7 +2259,12 @@ class KnowledgeDatabase(Database):
         industry_ids = [
             int(x) for x in old_record["industry_ids"][:-1].split(',')
         ]
-        industry_name = self.get_industry_by_id(industry_ids)
+        if len(industry_ids) == 1:
+            industry_name = self.get_industry_by_id(industry_ids[0])
+        else :
+            industry_name = self.get_industry_by_id(industry_ids)
+
+
 
         provision = []
         for sid in old_record["statutory_ids"][:-1].split(',') :
@@ -2269,22 +2283,36 @@ class KnowledgeDatabase(Database):
             "statutory_notification_id", 
             "tbl_statutory_notifications_log"
         )
+        tbl_statutory_notification = "tbl_statutory_notifications_log"
+        columns = [
+            "statutory_notification_id", "statutory_mapping_id",
+            "country_name", "domain_name", "industry_name",
+            "statutory_nature", "statutory_provision",
+            "applicable_location", "notification_text"
+        ]
+        values = [
+            notification_id, int(mapping_id),
+            old_record["country_name"], old_record["domain_name"],
+            industry_name, old_record["statutory_nature_name"],
+            mappings, geo_mappings, notification_text
+        ]
+        self.insert(tbl_statutory_notification, columns, values)
 
-        query = " INSERT INTO tbl_statutory_notifications_log \
-            (statutory_notification_id, statutory_mapping_id, \
-            country_name, domain_name, industry_name, \
-            statutory_nature, statutory_provision, \
-            applicable_location, notification_text) \
-            VALUES \
-            (%s, %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s') \
-            " % (
-                notification_id, mapping_id, 
-                old_record["country_name"], 
-                old_record["domain_name"], industry_name, 
-                old_record["statutory_nature"], 
-                mappings, geo_mappings,notification_text
-            )
-        self.execute(query)
+        # query = " INSERT INTO tbl_statutory_notifications_log \
+        #     (statutory_notification_id, statutory_mapping_id, \
+        #     country_name, domain_name, industry_name, \
+        #     statutory_nature, statutory_provision, \
+        #     applicable_location, notification_text) \
+        #     VALUES \
+        #     (%s, %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s') \
+        #     " % (
+        #         notification_id, mapping_id, 
+        #         old_record["country_name"], 
+        #         old_record["domain_name"], industry_name, 
+        #         old_record["statutory_nature"], 
+        #         mappings, geo_mappings,notification_text
+        #     )
+        # self.execute(query)
 
 
     #
@@ -2597,7 +2625,6 @@ class KnowledgeDatabase(Database):
         query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" %(
             database_name, db_username, host, db_password)
         cursor.execute(query)
-        print query
         con.commit()
 
         con = self._db_connect(host, username, password, database_name)
@@ -2719,6 +2746,7 @@ class KnowledgeDatabase(Database):
         return self.bulk_insert(self.tblUserClients, columns, values_list)
 
     def update_client_group_status(self, client_id, is_active, session_user):
+        is_active = 1 if is_active != False else 0
         columns = ["is_active", "updated_by", "updated_on"]
         values = [ is_active, int(session_user), self.get_date_time()]
         condition = "client_id='%d'" % client_id
