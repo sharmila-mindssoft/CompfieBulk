@@ -1,3 +1,11 @@
+function clearMessage() {
+    $(".error-message").hide();
+    $(".error-message").text("");
+}
+function displayMessage(message) {
+    $(".error-message").text(message);
+    $(".error-message").show();
+}
 $(".btn-country-add").click(function(){
 	$("#country-add").show();
 	$("#country-view").hide();
@@ -5,26 +13,18 @@ $(".btn-country-add").click(function(){
 	$("#country-id").val('');
   	displayMessage('');
 });
-function clearMessage() {
-    $(".error-message").hide();
-    $(".error-message").text("");
-}
 
-function displayMessage(message) {
-    $(".error-message").text(message);
-    $(".error-message").show();
-}
 $(".btn-country-cancel").click(function(){
 	$("#country-add").hide();
 	$("#country-view").show();
 });
 
 function initialize(){
-	function onSuccess(response){
+	function onSuccess(data){
 		loadCountriesList(data);
 	}
-	function onFailure(response){
-		displayMessage(response);
+	function onFailure(error){
+		displayMessage(error);
 	}
 	mirror.getCountryList(
 		function (error, response) {
@@ -38,33 +38,33 @@ function initialize(){
 	);
 }
 function validate(countryNameValue){
-	if(countryNameValue.length==0){
+	if(countryNameValue.length == 0){
 		displayMessage('Country Name Required');
 	}
 }
 function loadCountriesList(countriesList){
  	$(".tbody-countries-list").find("tr").remove();
-	var sno=0;
-	var imageName=null;
-	var title=null;	
+	var sno = 0;
+	var imageName = null;
+	var title = null;	
 	$.each(countriesList, function(i, value){
-		var countries=countriesList[i];
+		var countries = countriesList[i];
 		$.each(countries, function(j, value){
-			var countryId=countries[j]["country_id"];
-			var countryName=countries[j]["country_name"];
-			var isActive=countries[j]["is_active"];
-			if(isActive==1){
-				imageName="icon-active.png";
-				title="Click here to deactivate"
-				statusVal=0;
+			var countryId = countries[j]["country_id"];
+			var countryName = countries[j]["country_name"];
+			var isActive = countries[j]["is_active"];
+			if(isActive == true){
+				imageName = "icon-active.png";
+				title = "Click here to deactivate"
+				statusVal = false;
 			}
 			else{
-				imageName="icon-inactive.png";	
-				title="Click here to Activate"
-				statusVal=1;
+				imageName = "icon-inactive.png";	
+				title = "Click here to Activate"
+				statusVal = true;
 			}
-			var tableRow=$('#templates .table-countries-list .table-row');
-			var clone=tableRow.clone();
+			var tableRow = $('#templates .table-countries-list .table-row');
+			var clone = tableRow.clone();
 			sno = sno + 1;
 			$('.sno', clone).text(sno);
 			$('.country-name', clone).text(countryName);
@@ -86,13 +86,11 @@ $("#submit").click(function(){
 	var countryIdValue = $("#country-id").val();
 	var countryNameValue = $("#country-name").val();
 	validate(countryNameValue);
-	if(countryIdValue==''){		
+	if(countryIdValue == ''){		
 		function onSuccess(response){
-			if(response == 'SaveCountrySuccess') {
-		    	$("#country-add").hide();
-	  			$("#country-view").show();
-	  			initialize();
-	  		}
+	    	$("#country-add").hide();
+	  		$("#country-view").show();
+	  		initialize();
 	    }
 		function onFailure(error){
 			if(error == 'CountryNameAlreadyExists'){
@@ -112,11 +110,9 @@ $("#submit").click(function(){
 	}
 	else{		
 		function onSuccess(response){
-			if(response == 'UpdateCountrySuccess') {
-				$("#country-add").hide();
-	  			$("#country-view").show();
-	  			initialize();
-  			}  			
+			$("#country-add").hide();
+	  		$("#country-view").show();
+	  		initialize();
 		}
 		function onFailure(error){			
 			if(error == 'InvalidCountryId') {
@@ -146,7 +142,9 @@ function country_active(countryId, isActive){
   	function onSuccess(response){
   		initialize();		  
   	}
-  	
+  	function onFailure(error){
+  		console.log(error);
+  	}
   	mirror.changeCountryStatus( parseInt(countryId), isActive, 
 		function (error, response) {
 	        if (error == null){
@@ -159,9 +157,8 @@ function country_active(countryId, isActive){
 	);
 }
 
-
 $("#search-country-name").keyup(function() { 
-	var count=0;
+	var count = 0;
     var value = this.value.toLowerCase();
     $("table").find("tr:not(:first)").each(function(index) {
         if (index === 0) return;

@@ -89,8 +89,7 @@ if(validate()){
       getDomains ();
       $("#domain-add").hide();
       $("#domain-view").show();
-    }
-    function onFailure(error){
+    }    function onFailure(error){
                       
         if(error == "DomainNameAlreadyExists"){
             displayMessage("Domain Name Already Exists");
@@ -159,14 +158,13 @@ function changeStatus (domainId,isActive) {
   }
   mirror.changeDomainStatus(domainId, isActive,
     function (error, response) {
-            if (error == null){
-              onSuccess(response);
-            }
-            else {
-              onFailure(error);
-            }
-        }
-    );
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    });
 }
 
 $("#search-domain-name").keyup(function() { 

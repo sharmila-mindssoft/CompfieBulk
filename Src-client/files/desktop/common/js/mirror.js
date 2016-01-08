@@ -1,4 +1,5 @@
 var BASE_URL = "http://localhost:8080/";
+
 function initMirror() {
     var DEBUG = true;
 
@@ -275,7 +276,7 @@ function initMirror() {
             "UpdateStatutoryNature",
             { "statutory_nature_id" : statutoryNatureId, "statutory_nature_name" : statutoryNatureName }
         ];
-        apiRequest("UpdateStatutoryNature", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function changeStatutoryNatureStatus(statutoryNatureId, isActive, 

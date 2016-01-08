@@ -37,7 +37,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_RecordType_core_FileList,
     parse_structure_OptionalType_CustomIntegerType_1_100,
     parse_structure_OptionalType_CustomIntegerType_1_12,
-    parse_structure_OptionalType_CustomIntegerType_1_31
+    parse_structure_OptionalType_CustomIntegerType_1_31,
+    parse_structure_Float
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -74,7 +75,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_RecordType_core_FileList,
     to_structure_OptionalType_CustomIntegerType_1_100,
     to_structure_OptionalType_CustomIntegerType_1_12,
-    to_structure_OptionalType_CustomIntegerType_1_31
+    to_structure_OptionalType_CustomIntegerType_1_31,
+    to_structure_Float
 )
 
 #

@@ -1,29 +1,43 @@
+function clearMessage() {
+  $(".error-message").hide();
+  $(".error-message").text("");
+}
+function displayMessage(message) {
+  $(".error-message").text(message);
+  $(".error-message").show();
+}
+
 $("#submit").click(function(){
-  $(".error-message").html("");
+  displayMessage("");
   var currentpassword = $("#currentpassword").val();
   var newpassword = $("#newpassword").val();
   var confirmpassword = $("#confirmpassword").val();
   if(currentpassword == '') {
-    $(".error-message").html("Current Password Required");
+    displayMessage("Current Password Required");
   } else if(newpassword == '') {
-    $(".error-message").html("New Password Required");
+    displayMessage("New Password Required");
   } else if(confirmpassword == '') {
-    $(".error-message").html("Confirm Password Required");
+    displayMessage("Confirm Password Required");
   } else if(confirmpassword != newpassword) {
-    $(".error-message").html("New Password & Confirm Password is Not Match");
+    displayMessage("New Password & Confirm Password is Not Match");
   } else {
-      function success(status,data) {
-        if(status == 'ChangePasswordSuccess') {
-          $(".error-message").html("Password Changed Successfully");
+      function onSuccess(data){
+          displayMessage("Password Changed Successfully");
           $("#currentpassword").val("");
           $("#newpassword").val("");
           $("#confirmpassword").val("");
-        } else {
-          $(".error-message").html(status);
-        }
       }
-      function failure(data){
+      function onFailure(error){
       }
-      mirror.changePassword("AdminAPI", currentpassword, newpassword, success, failure);
+      mirror.changePassword(currentpassword, newpassword, 
+        function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+    );
     }
   });
