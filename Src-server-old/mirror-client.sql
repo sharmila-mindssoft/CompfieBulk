@@ -12,6 +12,7 @@ CREATE TABLE `tbl_forms` (
   `form_url` varchar(50) NOT NULL,
   `form_order` int(11) NOT NULL,
   `parent_menu` varchar(50) DEFAULT NULL,
+  `is_admin` tinyint(4) NOT NULL,
   PRIMARY KEY (`form_id`),
   CONSTRAINT `fk_form_type` FOREIGN KEY (`form_type_id`) REFERENCES `tbl_form_type` (`form_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

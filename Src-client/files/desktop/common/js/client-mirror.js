@@ -132,12 +132,14 @@ function initClientMirror() {
 
 
     // Login function 
-    function login(username, password, callback) {
+    function login(username, password, short_name, callback) {
+        alert("inside client mirror login function");
         var request = [
             "Login", {
                 "login_type": "Web",
                 "username": username,
-                "password": password
+                "password": password,
+                "short_name": short_name
             }
         ]
         jQuery.post(

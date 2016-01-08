@@ -14,6 +14,8 @@ class ClientDatabase(Database):
 		self._client_db_connections = {}
 		self._client_db_cursors = {}
 		rows = self.get_client_db_info()
+		self._client_db_connections[0] = self._connection
+		self._client_db_cursors[0] = self._cursor
 		for row in rows:
 			host = row[0]
 			client_id = row[1]
@@ -27,6 +29,7 @@ class ClientDatabase(Database):
 			self.begin()
 			self._client_db_connections[int(client_id)] = self._connection
 			self._client_db_cursors[int(client_id)] = self._cursor
+		print self._client_db_cursors
 		self.initialize_table_names()
 
 	def execute(self, query, client_id = None) :
@@ -37,7 +40,8 @@ class ClientDatabase(Database):
 			cursor = self.cursor()
 		assert cursor is not None
 		result = cursor.execute(query)
-		self._client_db_connections[client_id].commit()
+		if client_id != None:
+			self._client_db_connections[client_id].commit()
 		return result
 
 	def select_one(self, query, client_id = None) :
@@ -103,6 +107,60 @@ class ClientDatabase(Database):
 		self.tblUserSessions = "tbl_user_sessions"
 		self.tblUserUnits = "tbl_user_units"
 		self.tblUsers = "tbl_users"
+
+	def verify_login(self, username, password, client_id):
+		tblAdminCondition = "password='%s' and username='%s'" % (
+		    password, username
+		)
+		admin_details = self.get_data("tbl_admin", "*", tblAdminCondition, client_id)
+
+		if (len(admin_details) == 0) :
+			data_columns = ["user_id", "user_group_id", "email_id", 
+			    "employee_name", "employee_code", "contact_no", 
+			    "user_group_name", "form_ids"
+			]
+			query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
+			    t1.employee_name, t1.employee_code, t1.contact_no, \
+			    t2.user_group_name, t2.form_ids \
+			    FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
+			    ON t1.user_group_id = t2.user_group_id \
+			    WHERE t1.password='%s' and t1.email_id='%s'" % (
+			        password, username
+			    )
+			data_list = self.select_one(query, client_id)
+			if data_list is None :
+			    return False
+			else :
+			    return self.convert_to_dict(data_list, data_columns)
+		else :
+		    return True
+
+	def get_user_forms(self, form_ids, client_id, is_admin):
+		columns = "tf.form_id, tf.form_type_id, tft.form_type, tf.form_name, "+\
+		"tf.form_url, tf.form_order, tf.parent_menu"
+		tables = [self.tblForms, self.tblFormType]
+		aliases = ["tf",  "tft"]
+		joinConditions = ["tf.form_type_id = tft.form_type_id"]
+		if is_admin != 0:
+			whereCondition = " is_admin = 1 order by tf.form_order"
+		else:
+			whereCondition = " form_id in (%s) order by tf.form_order" % form_ids
+		joinType = "left join"
+
+		rows = self.get_data_from_multiple_tables(columns, tables, aliases, joinType, 
+		    joinConditions, whereCondition, client_id)
+		row_columns = [
+		    "form_id", "form_type_id", "form_type", "form_name", "form_url", 
+		    "form_order", "parent_menu"
+		]
+		result = self.convert_to_dict(rows, row_columns)
+		return result
+
+	def get_client_id_from_short_name(self, short_name):
+		columns = "client_id"
+		condition = "url_short_name = '%s'"% short_name
+		rows = self.get_data("tbl_client_groups", columns, condition, 0)
+		return rows[0][0]
 
 	def verify_password(self, password, userId, client_id):
 		columns = "count(*)"

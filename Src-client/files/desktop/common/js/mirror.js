@@ -75,7 +75,6 @@ function initMirror() {
 
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
-        console.log(sessionToken)
         if (sessionToken == null)
             sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
         var requestFrame = {
@@ -137,12 +136,14 @@ function initMirror() {
     }
 
     // Login function 
-    function login(username, password, callback) {
+    function login(username, password, short_name, callback) {
+        alert("inside mirror login");
         var request = [
             "Login", {
                 "login_type": "Web",
                 "username": username,
-                "password": password
+                "password": password,
+                "short_name": short_name
             }
         ]
         jQuery.post(
