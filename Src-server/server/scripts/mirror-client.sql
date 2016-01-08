@@ -397,10 +397,10 @@ CREATE TABLE `tbl_mobile_registration` (
 DROP TABLE IF EXISTS `tbl_statutory_notifications_log`;
 CREATE TABLE `tbl_statutory_notifications_log` (
   `statutory_notification_id` int(11) NOT NULL,
-  `country_id` int(11) NOT NULL,
-  `domain_id` int(11) NOT NULL,
-  `industry_id` int(11) NOT NULL,
-  `statutory_nature_id` int(11) NOT NULL,
+  `country_name` VARCHAR(50) NOT NULL,
+  `domain_name` VARCHAR(50) NOT NULL,
+  `industry_name` VARCHAR(50) NOT NULL,
+  `statutory_nature` VARCHAR(50) NOT NULL,
   `statutory_provision` longtext,
   `applicable_location` longtext,
   `notification_text` longtext,

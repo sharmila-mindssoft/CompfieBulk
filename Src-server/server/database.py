@@ -120,9 +120,7 @@ class Database(object) :
         # args is tuple e.g, (parm1, parm2)
         cursor = self.cursor()
         assert cursor is not None
-        print "calling proc", procedure_name, args
         cursor.callproc(procedure_name, args)
-        print "end proc", procedure_name
         result = cursor.fetchall()
         return result
 
@@ -193,7 +191,6 @@ class Database(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
-        print query
         if client_id != None:
             return self.execute(query, client_id)
         return self.execute(query)
@@ -322,11 +319,12 @@ class Database(object) :
                         result[columns[i]] = d
                     result_list.append(result)
         else :
-            if len(data_list) == len(columns) :
-                result = {}
-                for i, d in enumerate(data_list):
-                    result[columns[i]] = d
-                result_list.append(result)
+            if len(data_list) > 0:
+                if len(data_list[0]) == len(columns) :
+                    result = {}
+                    for i, d in enumerate(data_list[0]):
+                        result[columns[i]] = d
+                    result_list.append(result)
         return result_list
 
 class KnowledgeDatabase(Database):
@@ -1092,7 +1090,6 @@ class KnowledgeDatabase(Database):
         return self.return_geographies(result)
 
     def return_geographies(self, data):
-        print "inside return_geographies"
         geographies = {}
         for d in data :
             parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
@@ -1875,7 +1872,6 @@ class KnowledgeDatabase(Database):
             )
 
         if (self.execute(query)) :
-            print "update mapping"
             self.update_statutory_mapping_id(data.statutory_ids, statutory_mapping_id, updated_by)
             ids = self.update_compliance(statutory_mapping_id, compliances, updated_by)
             compliance_ids = ','.join(str(x) for x in ids) + ","
@@ -2465,7 +2461,6 @@ class KnowledgeDatabase(Database):
         query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" %(
             database_name, db_username, host, db_password)
         cursor.execute(query)
-        print query
         con.commit()
 
         con = self._db_connect(host, username, password, database_name)

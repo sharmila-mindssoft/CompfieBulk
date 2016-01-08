@@ -212,24 +212,27 @@ def change_admin_status(db, request, session_user, client_id):
 	    return clientmasters.ChangeAdminStatusSuccess()
 
 def get_units(db, request, session_user, client_id):
-	clientId = 1
-	unitList = Unit(clientId, db).getUnitListForClosure(clientId)
-	unitStructure = {}
-	unitStructure["units"] = unitList
-	return commonResponseStructure("GetUnitClosureListSuccess", unitStructure)
+	user_company_info = db.get_user_company_details( session_user, client_id)
+	unit_ids = user_company_info[0]
+	division_ids = user_company_info[1]
+	legal_entity_ids = user_company_info[2]
+	business_group_ids = user_company_info[3]
+	business_group_list = db.get_business_groups_for_user(business_group_ids, client_id)
+	legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids, client_id)
+	division_list =  db.get_divisions_for_user(division_ids, client_id)
+	unit_list = db.get_units_for_user(unit_ids, client_id)
+	return clientmasters.GetUnitsSuccess(business_groups= business_group_list, 
+		legal_entities=legal_entity_list, divisions = division_list, 
+		units = unit_list)
 
 def close_unit(db, request, session_user, client_id):
 	session_user = session_user
-	unitId = request.unit_id
+	unit_id = request.unit_id
 	password = request.password
-	clientId = 1
 
-	if db.verify_password():
-	    if db.deactivate_unit(request.unitId, client_id):
-	        return clientmasters.CloseUnitSuccess()
-	    else:
-	        print "Error : While deactivating Unit in client DB"
-	        return False
+	if db.verify_password(password, session_user, client_id):
+	    db.deactivate_unit(request.unit_id, client_id)
+	    return clientmasters.CloseUnitSuccess()
 	else:
 	    return clientmasters.InvalidPassword()
 

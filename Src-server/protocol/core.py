@@ -61,7 +61,11 @@ from protocol.to_structure import (
     to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form,
     to_structure_UnsignedIntegerType_32,
     to_structure_Float,
-    to_structure_OptionalType_UnsignedIntegerType_32
+    to_structure_OptionalType_UnsignedIntegerType_32,
+    to_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    to_structure_VectorType_RecordType_core_ClientLegalEntity,
+    to_structure_VectorType_RecordType_core_ClientDivision,
+    to_structure_VectorType_RecordType_core_ClientUnit
 
 )
 
@@ -1138,6 +1142,26 @@ class BusinessGroup(object):
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
         }
 
+class ClientBusinessGroup(object):
+    def __init__(self, business_group_id, business_group_name):
+        self.business_group_id = business_group_id
+        self.business_group_name = business_group_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["business_group_id", "business_group_name"])
+        business_group_id = data.get("business_group_id")
+        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
+        business_group_name = data.get("business_group_name")
+        business_group_name = parse_structure_CustomTextType_50(business_group_name)
+        return BusinessGroup(business_group_id, business_group_name)
+
+    def to_structure(self):
+        return {
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
+            "business_group_name": to_structure_CustomTextType_50(self.business_group_name),
+        }
+
 #
 # LegalEntity
 #
@@ -1168,6 +1192,30 @@ class LegalEntity(object):
             "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
             "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
+        }
+
+class ClientLegalEntity(object):
+    def __init__(self, legal_entity_id, legal_entity_name, business_group_id):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_id = business_group_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["legal_entity_id", "legal_entity_name", "business_group_id"])
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = parse_structure_OptionalType_SignedIntegerType_8(legal_entity_id)
+        legal_entity_name = data.get("legal_entity_name")
+        legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
+        business_group_id = data.get("business_group_id")
+        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
+        return ClientLegalEntity(legal_entity_id, legal_entity_name, business_group_id)
+
+    def to_structure(self):
+        return {
+            "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
+            "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
         }
 
 #
@@ -1204,6 +1252,34 @@ class Division(object):
             "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
             "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
+        }
+
+class ClientDivision(object):
+    def __init__(self, division_id, division_name, legal_entity_id, business_group_id):
+        self.division_id = division_id
+        self.division_name = division_name
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["division_id", "division_name", "legal_entity_id", "business_group_id"])
+        division_id = data.get("division_id")
+        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
+        division_name = data.get("division_name")
+        division_name = parse_structure_CustomTextType_50(division_name)
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
+        business_group_id = data.get("business_group_id")
+        business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
+        return Division(division_id, division_name, legal_entity_id, business_group_id)
+
+    def to_structure(self):
+        return {
+            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "division_name": to_structure_CustomTextType_50(self.division_name),
+            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
+            "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
         }
 
 #
@@ -1252,6 +1328,50 @@ class Unit(object):
             "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
             "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
+            "unit_code": to_structure_CustomTextType_20(self.unit_code),
+            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_address": to_structure_CustomTextType_250(self.unit_address),
+            "is_active": to_structure_Bool(self.is_active)
+        }
+
+class ClientUnit(object):
+    def __init__(self, unit_id, division_id, legal_entity_id, business_group_id, unit_code, unit_name, unit_address, is_active):
+        self.unit_id = unit_id
+        self.division_id = division_id
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.unit_address = unit_address
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "division_id", "legal_entity_id", "business_group_id", "unit_code", "unit_name", "unit_address", "is_active"])
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
+        division_id = data.get("division_id")
+        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
+        business_group_id = data.get("business_group_id")
+        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
+        unit_code = data.get("unit_code")
+        unit_code = parse_structure_CustomTextType_20(unit_code)
+        unit_name = data.get("unit_name")
+        unit_name = parse_structure_CustomTextType_50(unit_name)
+        unit_address = data.get("unit_address")
+        unit_address = parse_structure_CustomTextType_250(unit_address)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        return Unit(unit_id, division_id, legal_entity_id, business_group_id, unit_code, unit_name, unit_address, is_active)
+
+    def to_structure(self):
+        return {
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
             "unit_code": to_structure_CustomTextType_20(self.unit_code),
             "unit_name": to_structure_CustomTextType_50(self.unit_name),
             "unit_address": to_structure_CustomTextType_250(self.unit_address),

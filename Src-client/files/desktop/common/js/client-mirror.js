@@ -427,7 +427,7 @@ function initClientMirror() {
     function getUnitClosureList(callback) {
         callerName = "api/client_masters"
         var request = [
-            "GetUnitClosureList",
+            "GetUnits",
             {}
         ];
         clientApiRequest(callerName, request, callback);

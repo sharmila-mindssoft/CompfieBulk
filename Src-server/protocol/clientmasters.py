@@ -41,7 +41,11 @@ from protocol.to_structure import (
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_VectorType_RecordType_core_Country,
     to_structure_VectorType_RecordType_core_Domain,
-    to_structure_VectorType_RecordType_core_ServiceProviderDetails
+    to_structure_VectorType_RecordType_core_ServiceProviderDetails,
+    to_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    to_structure_VectorType_RecordType_core_ClientLegalEntity,
+    to_structure_VectorType_RecordType_core_ClientDivision,
+    to_structure_VectorType_RecordType_core_ClientUnit
 )
 
 #
@@ -867,21 +871,21 @@ class GetUnitsSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["business_groups", "legal_entities", "divisions", "units"])
         business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
+        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
         legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_Unit(units)
+        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
         return GetUnitsSuccess(business_groups, legal_entities, divisions, units)
 
     def to_inner_structure(self):
         return {
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
         }
 
 class InvalidPassword(Response):
