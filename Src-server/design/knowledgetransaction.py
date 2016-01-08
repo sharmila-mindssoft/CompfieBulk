@@ -10,7 +10,7 @@ from core import (APPROVAL_STATUS,
 )
 
 __all__ = [
-	"Request", "Response", "RequestFormat"
+	"Request", "Response", "RequestFormat", "ApproveMapping"
 ]
 
 #
@@ -44,12 +44,16 @@ ChangeStatutoryMappingStatus = RecordType("ChangeStatutoryMappingStatus", [
 	
 ])
 
-ApproveStatutoryMapping = RecordType("ApproveStatutoryMapping", [
+ApproveMapping = RecordType("ApproveMapping", [
 	Field("statutory_mapping_id", STATUTORY_MAPPING_ID),
 	Field("approval_status", APPROVAL_STATUS),
 	Field("rejected_reason", Text),
 	Field("statutory_provision", Text),
 	Field("notification_text", NOTIFICATION_TEXT)
+])
+
+ApproveStatutoryMapping = RecordType("ApproveStatutoryMapping", [
+	Field("statutory_mappings", VectorType(ApproveMapping))
 ])
 
 Request = VariantType("Request", [
