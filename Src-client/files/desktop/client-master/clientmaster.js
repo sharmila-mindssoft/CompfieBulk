@@ -1,43 +1,70 @@
-var usersList;
+var userList;
 var domainsList;
 var countriesList;
+function clearMessage() {
+    $(".error-message").hide();
+    $(".error-message").text("");
+}
+function displayMessage(message) {
+    $(".error-message").text(message);
+    $(".error-message").show();
+}
 $(".btn-clientgroup-add").click(function(){
 	$("#clientgroup-view").hide();
 	$("#clientgroup-add").show();
 	$("#clientgroup-name").val('');
  	$("#clientgroup-id").val('');
- 	$(".error-message").html('');
+ 	clearMessage();
  	$("#upload-logo-img").hide();
  	var x=document.getElementsByTagName("input");
  	for(i = 0; i<=x.length-1; i++){
  		if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
  	}
-
  	loadautocountry();
  	loadauto();
+	loadAutoUsers(); 	
  	hidemenu();
  	$('.tbody-dateconfiguration-list').empty();
-	function success(status, data){
+	function onSuccess(data){
 		userList = data["users"];
 		domainsList = data["domains"];
 		countriesList = data["countries"];  	
+	}	
+	function onFailure(error){	
+		console.log(error);
 	}
-	function failure(status, data){
-		console.log(status);
-	}
-	mirror.getClientGroups(success, failure);
+	mirror.getClientGroups(
+		function (error, response) {
+            if (error == null){
+                onSuccess(response);
+            }
+            else {
+                onFailure(error);	
+            }
+        }
+	);
 });
 $("#btn-clientgroup-cancel").click(function(){
 	$("#clientgroup-add").hide();
 	$("#clientgroup-view").show();
 });
 function initialize(){	
-	function success(status, data){
+	function onSuccess(data){
 		loadClientGroupList(data['client_list']);
 	}
-	function failure(status, data){	
+	function onFailure(error){	
+		console.log(error);
 	}
-	mirror.getClientGroups(success, failure);
+	mirror.getClientGroups(
+		function (error, response) {
+            if (error == null){
+                onSuccess(response);
+            }
+            else {
+                onFailure(error);	
+            }
+        }
+	);
 }
 function clientgroup_edit(clientGroupId){
 	$("#clientgroup-add").show();
@@ -128,7 +155,7 @@ function loadClientGroupList(clientGroupList){
 		$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientgroup_active('+clientId+', '+statusVal+')"/>');
 		$('.tbody-clientgroup-list').append(clone);			
 	}
-	$("#total-records").html('Total : '+sno+' records');
+	//$("#total-records").html('Total : '+sno+' records');
 }
 
 $("#btn-clientgroup-submit").click(function(){
@@ -144,8 +171,11 @@ $("#btn-clientgroup-submit").click(function(){
 			for(var ccount=0;ccount < arrayCountries.length; ccount++){
 				for(var dcount=0;dcount < arrayDomains.length; dcount++){
 					var configuration;
-					configuration=mirror.getDateConfigurations(parseInt(arrayCountries[ccount]), parseInt(arrayDomains[dcount]), parseInt($(".tl-from-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val()), parseInt($(".tl-to-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val()) );
-					console.log(configuration);		
+					configuration=mirror.getDateConfigurations(
+						parseInt(arrayCountries[ccount]), parseInt(arrayDomains[dcount]), 
+						parseInt($(".tl-from-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val()), 
+						parseInt($(".tl-to-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val())
+					);	
 					dateConfigurations.push(configuration);
 				}
 			}
@@ -174,88 +204,114 @@ $("#btn-clientgroup-submit").click(function(){
 	for(var k=0; k<arrayinchargePersonVal.length; k++) { arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]); } 
 	var inchargePersonVal = arrayinchargePerson;
 	if ($('#subscribe-sms').is(":checked")){
-	 var subscribeSmsVal=1;	 
+	 var subscribeSmsVal=true;	 
 	}
-	else{ var subscribeSmsVal=0; }
+	else{ var subscribeSmsVal=false; }
 	var shortname=$("#short-name").val();
 	if(clientGroupNameVal==''){
-		$(".error-message").html('Group Required');
+		displayMessage('Group Required');
 	}
 	else if(countriesList==''){
-		$(".error-message").html('Country Required');
+		displayMessage('Country Required');
 	}
 	else if(domainsList==''){
-		$(".error-message").html('Domain Required');
+		displayMessage('Domain Required');
 	}
 	else if(contractFromVal==''){
-		$(".error-message").html('Contract From Required');		
+		displayMessage('Contract From Required');		
 	}
 	else if(contractToVal==''){
-		$(".error-message").html('Contract To Required');		
+		displayMessage('Contract To Required');		
 	}
 	else if(usernameVal==''){
-		$(".error-message").html('Username Required');		
+		displayMessage('Username Required');		
 	}
 	else if(validateEmail(usernameVal)==''){
-		$(".error-message").html('Username Invalid Format');		
+		displayMessage('Username Invalid Format');		
 	}
 	else if(licenceVal==''){
-		$(".error-message").html('No. Of User Licence Required');
+		displayMessage('No. Of User Licence Required');
 	}
 	else if(isNaN(licenceVal)){
-		$(".error-message").html('Invalid No. Of User Licence');
+		displayMessage('Invalid No. Of User Licence');
 	}
 	else if(fileSpaceVal==''){
-		$(".error-message").html('File Space Required');
+		displayMessage('File Space Required');
 	}
 	else if(!$.isNumeric(fileSpaceVal)){
-		$(".error-message").html('File Space Value Invalid');
+		displayMessage('File Space Value Invalid');
 	}
 	else if(inchargePersonVal==''){
-		$(".error-message").html('Incharge Person Required');
+		displayMessage('Incharge Person Required');
 	}
 	else if(shortname==''){
-		$(".error-message").html('Short Name Required');
+		displayMessage('Short Name Required');
 	}
-	else if($('#clientgroup-id').val()==''){	
+	else if(clientGroupIdVal==''){	
 		if(uploadLogoVal==''){
-			$(".error-message").html('Logo Required');	
+			displayMessage('Logo Required');	
 			return false;	
 		}	
-		function success(status, data){
-			if(status == 'SaveClientGroupSuccess') {
-		    	$("#clientgroup-add").hide();
-	  			$("#clientgroup-view").show();
-	  			initialize();
-	  		}
-	  		 else {
-      			$(".error-message").html(status);
-      		}	
+		function onSuccess(data){
+	    	$("#clientgroup-add").hide();
+  			$("#clientgroup-view").show();
+  			initialize();
 	    }
-		function failure(status, data){
-			$(".error-message").html(status);
+		function onFailure(error){
+			if(error == 'GroupNameAlreadyExists'){
+				displayMessage('Group Name Already Exists');	
+			}
+			if(error == 'UsernameAlreadyExists'){
+				displayMessage('Username Already Exists');	
+			}
 		}
 		
-		var clientGroupDetails = mirror.getSaveClientGroupDict(clientGroupNameVal, countriesVal, domainsVal, uploadLogoVal, contractFromVal, contractToVal,inchargePersonVal, licenceVal, parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal, usernameVal, dateConfigurations, shortname);
-		mirror.saveClientGroup(clientGroupDetails, success, failure);
+		var clientGroupDetails = mirror.getSaveClientGroupDict(
+			clientGroupNameVal, countriesVal, domainsVal, uploadLogoVal,
+			contractFromVal, contractToVal,inchargePersonVal, licenceVal, 
+			parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal, 
+			usernameVal, dateConfigurations, shortname);
+		mirror.saveClientGroup(clientGroupDetails,
+			function (error, response) {
+	            if (error == null){
+	                onSuccess(response);
+	            }
+	            else {
+	                onFailure(error);	
+	            }
+	        }	
+		);
 	}
-	else if($('#clientgroup-id').val()!=''){		
-		function success(status, data){
-			if(status == 'UpdateClientGroupSuccess') {
-		    	$("#clientgroup-add").hide();
-	  			$("#clientgroup-view").show();
-	  			initialize();
-	  		}
-	  		 else {
-      			$(".error-message").html(status);
-      		}
+	else if(clientGroupIdVal!=''){		
+		function onSuccess(data){
+		    $("#clientgroup-add").hide();
+	  		$("#clientgroup-view").show();
+	  		initialize();
 	    }
-		function failure(status, data){
-			$(".error-message").html(status);
+		function onFailure(error){
+			if(error == 'GroupNameAlreadyExists'){
+				displayMessage('Group Name Already Exists');
+			}
+			if(error == 'UsernameAlreadyExists'){
+				displayMessage('Username Already Exists');	
+			}
 		}
 	
-		var clientGroupDetails = mirror.getSaveClientGroupDict(clientGroupNameVal, countriesVal, domainsVal, uploadLogoVal, contractFromVal, contractToVal,inchargePersonVal, licenceVal, parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal, usernameVal, dateConfigurations, shortname);
-		mirror.updateClientGroup( clientGroupDetails, dateConfigurations,success, failure);
+		var clientGroupDetails = mirror.getUpdateClientGroupDict(
+			clientGroupIdVal, clientGroupNameVal, countriesVal, domainsVal, uploadLogoVal,
+			contractFromVal, contractToVal,inchargePersonVal, licenceVal,
+			parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal,
+			 usernameVal, dateConfigurations, shortname);
+		mirror.updateClientGroup( clientGroupDetails, 
+			function (error, response) {
+	            if (error == null){
+	                onSuccess(response);
+	            }
+	            else {
+	                onFailure(error);	
+	            }
+        	}
+        );
 	}
 	else{
 		console.log("all fails");

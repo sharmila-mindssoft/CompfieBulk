@@ -121,9 +121,7 @@ class Database(object) :
         # args is tuple e.g, (parm1, parm2)
         cursor = self.cursor()
         assert cursor is not None
-        print "calling proc", procedure_name, args
         cursor.callproc(procedure_name, args)
-        print "end proc", procedure_name
         result = cursor.fetchall()
         return result
 
@@ -131,8 +129,10 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
+
         if client_id != None:
             return self.select_all(query, client_id)
+
         return self.select_all(query)
 
     def get_data_from_multiple_tables(self, columns, tables, aliases, joinType, 
@@ -194,8 +194,10 @@ class Database(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
+
         if client_id != None:
             return self.execute(query, client_id)
+
         return self.execute(query)
 
     def on_duplicate_key_update(self, table, columns, valueList, 
@@ -393,6 +395,24 @@ class KnowledgeDatabase(Database):
         self.tblUserLoginHistory = "tbl_user_login_history"
         self.tblUserSessions = "tbl_user_sessions"
         self.tblUsers = "tbl_users"
+
+    def convert_to_dict(self, data_list, columns) :
+        assert type(data_list) in (list, tuple)
+        if type(data_list[0]) is tuple :
+            result_list = []
+            if len(data_list[0]) == len(columns) :
+                for data in data_list:
+                    result = {}
+                    for i, d in enumerate(data):
+                        result[columns[i]] = d
+                    result_list.append(result)
+            return result_list
+        else :
+            result = {}
+            if len(data_list) == len(columns) :
+                for i, d in enumerate(data_list):
+                    result[columns[i]] = d
+            return result
 
     def validate_session_token(self, session_token) :
         # query = "CALL sp_validate_session_token ('%s');" 
@@ -841,6 +861,7 @@ class KnowledgeDatabase(Database):
 
 
     def get_nature_by_id(self, nature_id) :
+
         q = "SELECT stautory_nature_name FROM tbl_statutory_natures WHERE statutory_nature_id=%s" % nature_id
         row = self.select_one(q)
         nature_name = None
@@ -967,7 +988,6 @@ class KnowledgeDatabase(Database):
             name = level.level_name
             if level.level_id  is None :
                 if (saved_names.count(name) > 0) :
-                    print "LevelIdCannotNullFor '%s'" % name
                     return name
         return None
 
@@ -1055,7 +1075,6 @@ class KnowledgeDatabase(Database):
             name = level.level_name
             if level.level_id  is None :
                 if (saved_names.count(name) > 0) :
-                    print "LevelIdCannotNullFor '%s'" % name
                     return name
         return None
 

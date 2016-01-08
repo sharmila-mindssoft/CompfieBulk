@@ -1586,7 +1586,6 @@ def parse_structure_RecordType_knowledgemaster_Response_InvalidStatutoryId(data)
 
 def parse_structure_RecordType_login_Response_UserLoginSuccess(data):
     from protocol import login
-    print "parse_structure_login"
     return login.Response.parse_structure(data)
 
 def parse_structure_RecordType_clientuser_RequestFormat(data):
