@@ -774,6 +774,7 @@ function initMirror() {
         var request = [
             "ChangePassword",
             {
+                "session_token": getSessionToken(),
                 "current_password": currentPassword,
                 "new_password": newPassword
             }

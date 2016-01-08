@@ -65,8 +65,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_ClientBusinessGroup,
     to_structure_VectorType_RecordType_core_ClientLegalEntity,
     to_structure_VectorType_RecordType_core_ClientDivision,
-    to_structure_VectorType_RecordType_core_ClientUnit
-
+    to_structure_VectorType_RecordType_core_ClientUnit,
+    to_structure_VectorType_RecordType_core_ClientConfiguration
 )
 
 #
@@ -1019,7 +1019,10 @@ class GroupCompany(object):
 #
 
 class GroupCompanyDetail(object):
-    def __init__(self, client_id, client_name, domain_ids, country_ids, incharge_persons, logo, contract_from, contract_to, no_of_user_licence, total_disk_space, is_sms_subscribed, username, is_active, short_name):
+    def __init__(self, client_id, client_name, domain_ids, country_ids, 
+        incharge_persons, logo, contract_from, contract_to, no_of_user_licence, 
+        total_disk_space, is_sms_subscribed, username, is_active, short_name,
+        date_configurations):
         self.client_id = client_id
         self.client_name = client_name
         self.domain_ids = domain_ids
@@ -1034,6 +1037,7 @@ class GroupCompanyDetail(object):
         self.username = username
         self.is_active = is_active
         self.short_name = short_name
+        self.date_configurations = date_configurations
 
     @staticmethod
     def parse_structure(data):
@@ -1066,10 +1070,14 @@ class GroupCompanyDetail(object):
         is_active = parse_structure_Bool(is_active)
         short_name = data.get("short_name")
         short_name = parse_structure_CustomTextType_100(short_name)
-        return GroupCompanyDetail(client_id, client_name, domain_ids, country_ids, incharge_persons, logo, contract_from, contract_to, no_of_user_licence, total_disk_space, is_sms_subscribed, username, is_active, short_name)
+        date_configurations = data.get("date_configurations")
+        date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
+        return GroupCompanyDetail(client_id, client_name, domain_ids, 
+            country_ids, incharge_persons, logo, contract_from, contract_to, 
+            no_of_user_licence, total_disk_space, is_sms_subscribed, 
+            username, is_active, short_name, date_configurations)
 
     def to_structure(self):
-        print "inside group company detail to structure"
         return {
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
             "client_name": to_structure_CustomTextType_50(self.client_name),
@@ -1085,6 +1093,7 @@ class GroupCompanyDetail(object):
             "username": to_structure_CustomTextType_100(self.username),
             "is_active": to_structure_Bool(self.is_active),
             "short_name": to_structure_CustomTextType_100(self.short_name),
+            "date_configurations": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations),
         }
 
 #

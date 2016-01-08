@@ -14,7 +14,6 @@ __all__ = [
 
 def process_login_request(request, db) :
 	if type(request) is login.Login:
-		print "username=", request.username
 		return process_login(db, request)
 
 	if type(request) is login.ForgotPassword :
@@ -87,15 +86,12 @@ def process_reset_password(db, request):
 	return login.ResetPasswordSuccess()
 
 def process_change_password(db, request):
-    self.sessionUser = sessionUser
-    self.currentPassword = JSONHelper.getString(requestData, "current_password")
-    self.newPassword = JSONHelper.getString(requestData, "new_password")
-
-    if self.validateCurrentPassword() :
-        db.update_password()
-        return login.ChangePasswordSuccess()
-    else :
-        return login.InvalidCurrentPassword()
+	session_user = db.validate_session_token(request.session_token)
+	if db.verify_password(request.current_password, session_user):
+		db.update_password(request.new_password, session_user)
+		return login.ChangePasswordSuccess()
+	else :
+		return login.InvalidCurrentPassword()
 	
 
 def process_logout(db, request):

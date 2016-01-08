@@ -20,7 +20,8 @@
 		            "email_id": "admin@domain.com",
 		            "contact_no": null,
 		            "address": null,
-		            "designation": null
+		            "designation": null,
+		            "session_token": "b4c59894336c4ee3b598f5e4bd2b276b"
 		        }
 		        client_mirror.initSession(userDetails)
 			}
@@ -236,20 +237,20 @@
 			function changePassword(){
 				currentPassword = "1234567"
 				newPassword = "123456"
-				mirror.changePassword(currentPassword, newPassword,callback)
+				client_mirror.changePassword(currentPassword, newPassword,callback)
 			}
 			function forgotPassword(){
 				username = "Testclientser24@domain.com"
-				mirror.forgotPassword(username, callback)
+				client_mirror.forgotPassword(username, callback)
 			}
 			function validateResetToken(){
 				resetToken = "1"
-				mirror.validateResetToken(resetToken, callback)
+				client_mirror.validateResetToken(resetToken, callback)
 			}
 			function resetPassword(){
 				resetToken = "158350839976395462222620754547803639110"
 				newPassword = "1234567"
-				mirror.resetPassword(resetToken, newPassword, callback) 
+				client_mirror.resetPassword(resetToken, newPassword, callback) 
 			}
 			function saveClientGroup(){
 				dateConfigurations = []
