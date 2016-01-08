@@ -84,8 +84,9 @@ $("#submit").click(function(){
     filterdata["geography_id"]=parseInt(geography);
     filterdata["level_1_statutory_id"]=parseInt(act);
 
-    function onSuccess(response) {
-     loadresult(data["statutory_mappings"]);
+    function onSuccess(data){
+      
+      loadresult(data["statutory_mappings"]);
     }
     function onFailure(error){
       onFailure(error);
@@ -122,7 +123,7 @@ $("#countryval").keyup(function(){
   $('#ulist_text').empty();
   if(textval.length>0){
     for(var i in countries){
-      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == 1) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
+      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
     }
     var str='';
     for(var i in suggestions){
@@ -147,7 +148,7 @@ $("#domainval").keyup(function(){
   $('#ulist_domain').empty();
   if(textval.length>0){
     for(var i in domains){
-      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == 1) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
+      if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == true) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
     }
     var str='';
     for(var i in suggestions){
@@ -172,7 +173,7 @@ $("#industryval").keyup(function(){
   $('#ulist_industry').empty();
   if(textval.length>0){
     for(var i in industries){
-      if (~industries[i]["industry_name"].toLowerCase().indexOf(textval.toLowerCase()) && industries[i]["is_active"] == 1) suggestions.push([industries[i]["industry_id"],industries[i]["industry_name"]]); 
+      if (~industries[i]["industry_name"].toLowerCase().indexOf(textval.toLowerCase()) && industries[i]["is_active"] == true) suggestions.push([industries[i]["industry_id"],industries[i]["industry_name"]]); 
     }
     var str='';
     for(var i in suggestions){
@@ -198,7 +199,7 @@ $("#statutorynatureval").keyup(function(){
   $('#ulist_statutorynature').empty();
   if(textval.length>0){
     for(var i in statutorynatures){
-      if (~statutorynatures[i]["statutory_nature_name"].toLowerCase().indexOf(textval.toLowerCase()) && statutorynatures[i]["is_active"] == 1) suggestions.push([statutorynatures[i]["statutory_nature_id"],statutorynatures[i]["statutory_nature_name"]]); 
+      if (~statutorynatures[i]["statutory_nature_name"].toLowerCase().indexOf(textval.toLowerCase()) && statutorynatures[i]["is_active"] == true) suggestions.push([statutorynatures[i]["statutory_nature_id"],statutorynatures[i]["statutory_nature_name"]]); 
     }
     var str='';
     for(var i in suggestions){
@@ -223,7 +224,7 @@ $("#geographyval").keyup(function(){
   $('#ulist_geography').empty();
   if(textval.length>0){
     for(var i in geographies){
-      if (~geographies[i]["geography_name"].toLowerCase().indexOf(textval.toLowerCase()) && geographies[i]["is_active"] == 1) suggestions.push([geographies[i]["geography_id"],geographies[i]["geography_name"]]); 
+      if (~geographies[i]["geography_name"].toLowerCase().indexOf(textval.toLowerCase()) && geographies[i]["is_active"] == true) suggestions.push([geographies[i]["geography_id"],geographies[i]["geography_name"]]); 
     }
     var str='';
     for(var i in suggestions){

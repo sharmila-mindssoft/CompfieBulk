@@ -21,13 +21,13 @@
             <tr>
               <td>&nbsp;</td>
               <td>
-                <input type="text" id="search-employee-name" class="filter-text-box">
+                <input type="text"  id="search-employee-name" class="filter-text-box">
               </td>
               <td>
-                <input type="text" id="search-usergroup" class="filter-text-box">
+                <input type="text"  id="search-usergroup" class="filter-text-box">
               </td>
               <td>
-                <input type="text" id="search-designation" class="filter-text-box">
+                <input type="text"  id="search-designation" class="filter-text-box">
               </td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>
@@ -74,17 +74,17 @@
             <div class="input-row">
               <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="text" id="employeename" class="input-box" tabindex="1" >
+                <input type="text" id="employeename" class="input-box fieldvalue" tabindex="1" >
                 <input type="hidden" id="userid" value="">
               </div>
             </div>
             <div class="input-row">
               <div class="field-label">Employee ID:<span class="mandatory">*</span></div>
-              <div class="field-input"><input type="text" id="employeeid" class="input-box" tabindex="2"></div>
+              <div class="field-input"><input type="text" id="employeeid" class="input-box fieldvalue" tabindex="2"></div>
             </div>
             <div class="input-row">
               <div class="field-label">Address:</div>
-              <div class="field-input"><textarea class="input-box" id="address" style="height:70px;" tabindex="3"></textarea></div>
+              <div class="field-input"><textarea class="input-box fieldvalue" id="address" style="height:70px;" tabindex="3"></textarea></div>
             </div>
             
           </div>
@@ -92,7 +92,7 @@
             
             <div class="input-row" style="padding-bottom:0px;">
               <div class="field-label">Email ID:<span class="mandatory">*</span></div>
-              <div class="field-input"><input type="text" id="emailid" class="input-box" placeholder="Email ID" tabindex="4">
+              <div class="field-input"><input type="text" id="emailid" class="input-box fieldvalue" placeholder="Email ID" tabindex="4">
             </div>
           </div>
           <div class="input-row" style="padding-bottom:0px;">
@@ -103,7 +103,7 @@
           </div>
           <div class="input-row" style="padding-bottom:0px;">
             <div class="field-label">Contact No.:<span class="mandatory">*</span></div>
-            <div class="field-input"><input type="text" id="countrycode" class="input-box countrycode" value="+91" tabindex="5"> <input type="text" id="areacode" class="input-box areacode" tabindex="6" > <input type="text" id="contactno" class="input-box mobile" tabindex="7"></div>
+            <div class="field-input"><input type="text" id="countrycode" class="input-box countrycode fieldvaluefieldvalue" value="+91" tabindex="5"> <input type="text" id="areacode" class="input-box areacode fieldvalue" tabindex="6" > <input type="text" id="contactno" class="input-box mobile fieldvalue" tabindex="7"></div>
           </div>
           
           <div class="input-row" style="padding-bottom:0px;">
@@ -115,7 +115,7 @@
           <div class="input-row">
             <div class="field-label">User Group:<span class="mandatory">*</span></div>
             <div class="field-input">
-              <input type="text" class="input-box icon-autocomplete" id="usergroupval" tabindex="8">
+              <input type="text" class="input-box icon-autocomplete fieldvalue" id="usergroupval" tabindex="8">
               <input type="hidden" id="usergroup">
               <div id="autocompleteview" class="ac-textbox default-display-none">
               <ul id="ulist_text" class="hidemenu" style="width:195px;"></ul>
@@ -124,7 +124,7 @@
         </div>
         <div class="input-row">
           <div class="field-label">Designation:</div>
-          <div class="field-input"><input type="text" id="designation" class="input-box" tabindex="9"></div>
+          <div class="field-input"><input type="text" id="designation" class="input-box fieldvalue" tabindex="9"></div>
         </div>
         
       </div>
@@ -133,20 +133,19 @@
         <div class="input-row" >
           <div class="field-label">Countries:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="hidden" id="country">
-            <input type="text" class="input-box icon-autocomplete" id="countryselected" readonly="readonly">
+            <input type="text" class="input-box icon-autocomplete fieldvalue" id="countryselected" readonly="readonly" tabindex="10">
             <div id="selectboxview-country" class="ac-selectbox" style="display:none;">
             <ul id="ulist-country" class="hideselect" style="width:195px;"></ul>
           </div>
         </div>
       </div>
     </div>
-    <div class="input-row-right">      
+    <div class="input-row-right">
+      
       <div class="input-row" >
         <div class="field-label">Domain:<span class="mandatory">*</span></div>
         <div class="field-input">
-          <input type="hidden" id="domain">
-          <input type="text" class="input-box icon-autocomplete" id="domainselected" readonly="readonly">
+          <input type="text" class="input-box icon-autocomplete fieldvalue" id="domainselected" readonly="readonly" tabindex="11">
           <div id="selectboxview" class="ac-selectbox" style="display:none;">
           <ul id="ulist" class="hideselect" style="width:195px;"></ul>
         </div>
@@ -157,13 +156,13 @@
   <div class="submit-button-container" style="text-align:left;">
   </div>
   <div class="submit-button-container">
-    <input type="reset" name="cancel" value="Cancel" class="btn-cancel btn-domain-cancel">&nbsp;&nbsp;
+    <input type="reset" name="cancel" value="Cancel" class="btn-cancel btn-user-cancel">&nbsp;&nbsp;
     <input type="submit" name="submit" value="Submit" class="btn-submit" id="submit">
   </div>
 </div>
 </div>
 
 </div>
-
 <script type="text/javascript" src="/files/desktop/user-master/usermaster.js"></script>
 {% endblock %}
+

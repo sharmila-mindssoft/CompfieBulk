@@ -2,56 +2,63 @@ var usersList;
 var domainsList;
 var userGroupsList;
 var countriesList;
-$('#contactno').keydown(function (e) {
-    var key = e.keyCode;
-    if (!((key == 8) || (key >= 48 && key <= 57))) {
-  	  e.preventDefault();
-  	}
-});
-$(".btn-user-add").click(function(){
-	$("#user-view").hide();
-	$("#user-add").show();
-	$("#userid").val('');
-	$("#employeename").val('');
-	$("#employeeid").val('');
-	$("#address").val('');
-	$("#areacode").val('');
-	$("#contactno").val('');
-	$("#usergroup").val('');
-	$("#designation").val('');
-	$("#domain").val('');
-	$("#domainselected").val('');
-	$("#country").val('');
-	$("#countryselected").val('');
-	$("#emailid").val('');
-	$(".error-message").html('');
-});
+var domainIds = [];
+var countryIds = [];
+
+function clearMessage() {
+  $(".error-message").hide();
+  $(".error-message").text("");
+}
+function displayMessage(message) {
+  $(".error-message").text(message);
+  $(".error-message").show();
+}
 
 $(".btn-user-cancel").click(function(){
   $("#user-add").hide();
   $("#user-view").show();
 });
 
+$(".btn-user-add").click(function(){
+  $("#user-view").hide();
+  $("#user-add").show();
+  $(".fieldvalue").val('');
+  $("#userid").val('');
+  domainIds = [];
+  countryIds = []
+  displayMessage('');
 
-function GetUsers(){
-	function success(status,data){
+});
+
+function getUsers(){
+	function onSuccess(data){
 		usersList = data["users"];
 		domainsList = data["domains"];
 		userGroupsList = data["user_groups"];
 		countriesList = data["countries"];
 		loadUserList(usersList);
 	}
-	function failure(data){
+	function onFailure(error){
 	}
-	mirror.getAdminUserList("AdminAPI", success, failure);
+	mirror.getAdminUserList(
+		function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
 }
+
 function loadUserList(usersList) {
 	var j = 1;
 	var imgName = '';
   var passStatus = '';
   var userId = 0;
   var employeeName = '';
-  var isActive = 0;
+  var isActive = false;
   var designation = '';
   var userList;
 
@@ -67,15 +74,15 @@ function loadUserList(usersList) {
     		break;
     	}
     }
-    if(isActive == 1) {
-    	passStatus="0";
+    if(isActive == true) {
+    	passStatus=false;
     	imgName="icon-active.png"
     }
     else {
-    	passStatus="1";
+    	passStatus=true;
    	 	imgName="icon-inactive.png"
    	 }
-   	  var tableRow=$('#templates .table-user-master .table-row');
+   	var tableRow=$('#templates .table-user-master .table-row');
     var clone=tableRow.clone();
     $('.sno', clone).text(j);
     $('.employee-name', clone).text(employeeName);
@@ -87,97 +94,66 @@ function loadUserList(usersList) {
     j = j + 1;
   }
 }
-function displayAdd () {
- 	$("#listview").hide();
-  	$("#addview").show();
-  	$("#userid").val('');
-	$("#employeename").val('');
-	$("#employeeid").val('');
-	$("#address").val('');
-	$("#countrycode").val('');
-	$("#areacode").val('');
-	$("#contactno").val('');
-	$("#usergroup").val('');
-	$("#designation").val('');
-	$("#domain").val('');
-	$("#domainselected").val('');
-	$("#country").val('');
-	$("#countryselected").val('');
-	$("#emailid").val('');
-	$("#error").text('');
-
-	$(".tbody-user-list").find("tr").remove();
-	for(var entity in usersList) {
-		userId = usersList[entity]["user_id"];
-		employeeName = usersList[entity]["employee_name"];
-		isActive = usersList[entity]["is_active"];
-		designation = usersList[entity]["designation"];
-		for(var k in userGroupsList){
-			if(userGroupsList[k]["user_group_id"] == usersList[entity]["user_group_id"]){
-				usergroup = userGroupsList[k]["user_group_name"];
-				break;
-			}
-		}
-		if(isActive == 1) {
-			passStatus="0";
-			imgName="icon-active.png"
-		}
-		else {
-			passStatus="1";
-			imgName="icon-inactive.png"
-		}
-		var tableRow=$('#templates .table-user-master .table-row');
-		var clone=tableRow.clone();
-		$('.sno', clone).text(j);
-		$('.employee-name', clone).text(employeeName);
-		$('.user-group', clone).text(usergroup);
-		$('.designation', clone).text(designation);
-		$('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+userId+',\''+employeeName+'\')"/>');
-		$('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+userId+','+passStatus+')"/>');
-		$('.tbody-user-list').append(clone);
-		j = j + 1;
-	}
-}
 
 function changeStatus (userId,isActive) {
-	mirror.changeAdminUserStatus("AdminAPI", userId, isActive, success, failure);
-	function success(status,data){
-		GetUsers();
-		$(".error-message").html("Status Changed Successfully");
+	function onSuccess(response){
+		getUsers();
+		displayMessage("Status Changed Successfully");
 	}
-	function failure(data){
+	function onFailure(error){
+		displayMessage(error);
 	}
+
+	mirror.changeAdminUserStatus(userId, isActive, 
+		function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+        }
+    );
 }
 
 function validate(){
-	var employeeName = $("#employeename").val();
-	var employeeId = $("#employeeid").val();
-	var contactNo = $("#contactno").val();
-	var userGroup = parseInt($("#usergroup").val());
-	var domain = $("#domain").val();
-	var country = $("#country").val();
-	var emailId = $("#emailid").val();
+	var employeeName = $("#employeename").val().trim();
+	var employeeId = $("#employeeid").val().trim();
+	var contactNo = $("#contactno").val().trim();
+	var userGroup = '';
+	if($("#usergroup").val()!='')
+		userGroup = parseInt($("#usergroup").val());
+
+	var emailId = $("#emailid").val().trim();
 	var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 
-	if(employeeName == '') {
-		$(".error-message").html("Employee Name Required");
-	} else if(employeeId == '') {
-		$(".error-message").html("Employee Id Required");
-	} else if(contactNo == '') {
-		$(".error-message").html("Contact Number Required");
-	} else if(userGroup == '') {
-		$(".error-message").html("User Group Required");
-	} else if(domain == '') {
-		$(".error-message").html("Domain Required");
-	} else if(emailId == '') {
-		$(".error-message").html("Email Id Required");
+	if(employeeName.length == 0) {
+		displayMessage("Employee Name Required");
+		$("#employeename").focus();
+	} else if(employeeId.length == 0) {
+		displayMessage("Employee Id Required");
+		$("#employeeid").focus();
+	} else if(emailId.length == 0) {
+		displayMessage("Email Id Required");
+		$("#emailid").focus();
+	} else if(contactNo.length == 0) {
+		displayMessage("Contact Number Required");
+		$("#contactno").focus();
+	} else if(userGroup.length == 0) {
+		displayMessage("User Group Required");
+		$("#usergroupval").focus();
 	} else if(reg.test(emailId) == false) {
-		$(".error-message").html("Invalid Email Address");
-	} else if(country == '') {
-		$(".error-message").html("Country Required");
-  }else{
-    $(".error-message").html('');
-    return true
+		displayMessage("Invalid Email Address");
+		$("#emailid").focus();
+	} else if(countryIds.length == 0) {
+		displayMessage("Country Required");
+		$("#countryselected").focus().click();
+	} else if(domainIds.length == 0) {
+		displayMessage("Domain Required");
+		$("#domainselected").focus().click();
+  	}else{
+    	displayMessage('');
+    	return true
   }
 }
 
@@ -191,48 +167,73 @@ $("#submit").click(function(){
 	var contactNo = $("#contactno").val();
 	var userGroup = parseInt($("#usergroup").val());
 	var designation = $("#designation").val();
-	var domain = $("#domain").val();
-	var country = $("#country").val();
 	var emailId = $("#emailid").val();
 	if(validate()){
-
 		if($("#userid").val() == '') {
-			saveUserDetail = [emailId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,country,domain];
-			function success1(status,data) {
-				if(status == 'SaveUserSuccess') {
-					GetUsers();
+			function onSuccess(response) {
+					getUsers();
 					$("#user-view").show();
    				$("#user-add").hide();
-					$(".error-message").html("Record Added Successfully");
-				} else {
-					$(".error-message").html(status);
-				}
 			}
-			function failure1(data){
-		
+			function onFailure(error){
+				if(error == "EmailIDAlreadyExists"){
+            	displayMessage("Email ID Already Exists");
+        }
+        if(error == "ContactNumberAlreadyExists"){
+            displayMessage("Contact Number Already Exists");
+        }
+        if(error == "EmployeeCodeAlreadyExists"){
+            displayMessage("Employee ID Already Exists");
+        }
 			}
-			mirror.saveAdminUser("AdminAPI", saveUserDetail, success1, failure1);
+			userDetail = [emailId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,countryIds,domainIds];
+			userDetailDict = mirror.getSaveAdminUserDict(userDetail);
+			mirror.saveAdminUser(userDetailDict,
+				function (error, response) {
+        if (error == null){
+          onSuccess(response);
+        }
+        else {
+          onFailure(error);
+        }
+      });
 		} else {
-			updateUserDetail = [userId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,country,domain];
-			function success(status,data){
-				if(status == 'UpdateUserSuccess') {
-					GetUsers();
+			function onSuccess(response) {
+					getUsers();
+					$("#user-add").hide();
 					$("#user-view").show();
-    			$("#user-add").hide();
-					$(".error-message").html("Record Updated Successfully");
-				} else {
-					$(".error-message").html(status);
-				}
-			}
+ 			}
 			function failure(data) {
+				if(error == "EmailIDAlreadyExists"){
+            	displayMessage("Email ID Already Exists");
+        }
+        if(error == "ContactNumberAlreadyExists"){
+            displayMessage("Contact Number Already Exists");
+        }
+        if(error == "EmployeeCodeAlreadyExists"){
+            displayMessage("Employee ID Already Exists");
+        }
+        if(error == "InvalidUserId"){
+            displayMessage("Invalid User Id");
+        }
 			}
-			mirror.updateAdminUser("AdminAPI", updateUserDetail, success, failure);
+			userDetail = [userId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,countryIds,domainIds];
+			userDetailDict = mirror.getUpdateAdminUserDict(userDetail);
+			mirror.updateAdminUser(userDetailDict,
+				function (error, response) {
+        if (error == null){
+          onSuccess(response);
+        }
+        else {
+          onFailure(error);
+        }
+      });
 		}
 	}
 });
 
 function displayEdit (userId) {
-	$(".error-message").html("");
+	displayMessage("");
 	$("#user-view").hide();
 	$("#user-add").show();
 	$("#userid").val(userId);
@@ -249,8 +250,8 @@ function displayEdit (userId) {
 			var userGroup = usersList[entity]["user_group_id"];
 			var userGroupval;
 			var designation = usersList[entity]["designation"];
-			var domain = usersList[entity]["domain_ids"]; 
-			var country = usersList[entity]["country_ids"];
+			domainIds = usersList[entity]["domain_ids"]; 
+			countryIds = usersList[entity]["country_ids"];
 			var emailId = usersList[entity]["email_id"];
 			for(var k in userGroupsList){
 				if(userGroupsList[k]["user_group_id"] == userGroup){
@@ -267,12 +268,8 @@ function displayEdit (userId) {
 		$("#usergroupval").val(userGroupval);
 		$("#usergroup").val(userGroup);
 		$("#designation").val(designation);
-		$("#domain").val(domain);
-		var editdomainval = domain.split(",");
-		$("#domainselected").val(editdomainval.length+" Selected");
-		$("#country").val(country);
-		var editcountryval = country.split(",");
-		$("#countryselected").val(editcountryval.length+" Selected");
+		$("#domainselected").val(domainIds.length+" Selected");
+		$("#countryselected").val(countryIds.length+" Selected");
 		$("#emailid").val(emailId);
 		break;
 		}
@@ -316,22 +313,12 @@ $(".hideselect").mouseleave(function(){
 //load domain list in multi select box
 $("#domainselected").click(function(){
 	$("#selectboxview").show();
-	var editdomainval=[];
-	if($("#domain").val() != ''){
-		editdomainval = $("#domain").val().split(",");
-	}
 	var domains = domainsList;
 	$('#ulist').empty();
 	var str='';
 	for(var i in domains){
-		if(domains[i]["is_active"] == 1){
-  		var selectdomainstatus='';
-  		for(var j=0; j<editdomainval.length; j++){
-  			if(editdomainval[j]==domains[i]["domain_id"]){
-  				selectdomainstatus='checked';
-  			}
-  		}
-  		if(selectdomainstatus == 'checked'){
+		if(domains[i]["is_active"] == true){
+  		if($.inArray(domains[i]["domain_id"], domainIds) >= 0){
   			str += '<li id="'+domains[i]["domain_id"]+'" class="active_selectbox" onclick="activate(this)" >'+domains[i]["domain_name"]+'</li> ';
   		}else{
  			str += '<li id="'+domains[i]["domain_id"]+'" onclick="activate(this)" >'+domains[i]["domain_name"]+'</li> ';
@@ -339,48 +326,31 @@ $("#domainselected").click(function(){
 		}
 	}
   $('#ulist').append(str);
-  $("#domainselected").val(editdomainval.length+" Selected")
 });
 //check & uncheck process
 function activate(element){
 	var chkstatus = $(element).attr('class');
 	if(chkstatus == 'active_selectbox'){
 		$(element).removeClass("active_selectbox");
+		remove = domainIds.indexOf(element.id);
+    domainIds.splice(remove,1);
 	}else{
-	$(element).addClass("active_selectbox");
+		$(element).addClass("active_selectbox");
+		domainIds.push(parseInt(element.id));
 	}  
-	var selids='';
-	var totalcount =  $(".active_selectbox").length;
-	$(".active_selectbox").each( function( index, el ) {
-		if (index === totalcount - 1) {
-			selids = selids+el.id;
-		}else{
-			selids = selids+el.id+",";
-		}    
-	});
-	$("#domainselected").val(totalcount+" Selected");
-	$("#domain").val(selids);
+	$("#domainselected").val(domainIds.length+" Selected");
  }
 
 //load country list in multi select box
 $("#countryselected").click(function(){
 	$("#selectboxview-country").show();
-	var editcountryval=[];
-	if($("#country").val() != ''){
-		editcountryval = $("#country").val().split(",");
-	}
+	
 	var countries = countriesList;
 	$('#ulist-country').empty();
 	var str='';
 	for(var i in countries){
-		if(countries[i]["is_active"] == 1){
-		var selectcountrystatus='';
-		for(var j=0; j<editcountryval.length; j++){
-			if(editcountryval[j]==countries[i]["country_id"]){
-				selectcountrystatus='checked';
-			}
-		}
-		if(selectcountrystatus == 'checked'){
+		if(countries[i]["is_active"] == true){
+		if($.inArray(countries[i]["country_id"], countryIds) >= 0){
 			str += '<li id="'+countries[i]["country_id"]+'" class="active_selectbox_country" onclick="activatecountry(this)" >'+countries[i]["country_name"]+'</li> ';
 		}else{
 			str += '<li id="'+countries[i]["country_id"]+'" onclick="activatecountry(this)" >'+countries[i]["country_name"]+'</li> ';
@@ -388,47 +358,40 @@ $("#countryselected").click(function(){
 	 	}
 	}
   $('#ulist-country').append(str);
-  $("#countryselected").val(editcountryval.length+" Selected")
 });
 //check & uncheck process
 function activatecountry(element){
    var chkstatus = $(element).attr('class');
    if(chkstatus == 'active_selectbox_country'){
    	$(element).removeClass("active_selectbox_country");
+   	remove = countryIds.indexOf(element.id);
+    countryIds.splice(remove,1);
    }else{
     $(element).addClass("active_selectbox_country");
+     countryIds.push(parseInt(element.id))
    }  
-   var selids='';
-   var totalcount =  $(".active_selectbox_country").length;
-   $(".active_selectbox_country").each( function( index, el ) {
-   	if (index === totalcount - 1) {
-   		selids = selids+el.id;
-   	}else{
-   		selids = selids+el.id+",";
-   	}    
-    });
-   $("#countryselected").val(totalcount+" Selected");
-   $("#country").val(selids);
+   
+   $("#countryselected").val(countryIds.length+" Selected");
   }
 
 //load usergroup list in autocomplete text box  
 $("#usergroupval").keyup(function(){
 	var textval = $(this).val();
-	$("#autocompleteview").show();
-	var usergroups = userGroupsList;
-	var suggestions = [];
-	$('#ulist_text').empty();
-	if(textval.length>0){
-		for(var i in usergroups){
-		 	if (~usergroups[i]["user_group_name"].toLowerCase().indexOf(textval.toLowerCase()) && usergroups[i]["is_active"] == 1) suggestions.push([usergroups[i]["user_group_id"],usergroups[i]["user_group_name"]]); 
-		}
-		var str='';
-		for(var i in suggestions){
-		    str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-		}
-		$('#ulist_text').append(str);
-		$("#usergroup").val('');
-	}
+  $("#autocompleteview").show();
+  var usergroups = userGroupsList;
+  var suggestions = [];
+  $('#ulist_text').empty();
+  if(textval.length>0){
+    for(var i in usergroups){
+      if (~usergroups[i]["user_group_name"].toLowerCase().indexOf(textval.toLowerCase()) && usergroups[i]["is_active"] == true) suggestions.push([usergroups[i]["user_group_id"],usergroups[i]["user_group_name"]]); 
+    }
+    var str='';
+    for(var i in suggestions){
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+    }
+    $('#ulist_text').append(str);
+    $("#usergroup").val('');
+    }
 });
 //set selected autocomplte value to textbox
 function activate_text (element,checkval,checkname) {
@@ -436,10 +399,30 @@ function activate_text (element,checkval,checkname) {
   $("#usergroup").val(checkval);
 }
 
-$('#contactno').keydown(function (e) {
-	var key = e.keyCode;
-	if (!((key == 8) || (key >= 48 && key <= 57))) {
-		e.preventDefault();
-	}
+$(".fieldvalue").keyup(function (evt) {
+ var element = $(evt.target);
+ var tabIndex = element.attr('tabIndex');
+ if (evt.keyCode == 13){
+  if(tabIndex == 11){
+    if(validate()){
+      jQuery('#submit').focus().click();
+    }
+  }else{
+    var nextElement = $("input[tabIndex=" + (parseInt(tabIndex) + 1) + "]");
+     if (nextElement) {
+         nextElement.focus().click();
+     }
+  return false;
+  }
+ }
 });
 
+$(document).ready(function(){
+	getUsers();
+	$('#contactno').keydown(function (e) {
+    var key = e.keyCode;
+    if (!((key == 8) || (key >= 48 && key <= 57))) {
+  	  e.preventDefault();
+  	}
+	});
+});

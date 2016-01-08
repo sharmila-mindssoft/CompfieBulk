@@ -695,6 +695,13 @@ def to_structure_RecordType_clienttransactions_RequestFormat(data):
 def to_structure_CustomIntegerType_1_10(data):
     return parse_number(data, 1, 10)
 
+def to_structure_CustomIntegerType_1_100(data):
+    return parse_number(data, 1, 100)
+
+def to_structure_OptionalType_CustomIntegerType_1_100(data):
+    if data is None: return None
+    return to_structure_CustomIntegerType_1_100(data)
+
 def to_structure_VectorType_RecordType_technotransactions_ASSIGNED_STATUTORIES(data):
     data = parse_list(data, 0)
     lst = []
@@ -789,6 +796,10 @@ def to_structure_RecordType_general_Response_UpdateDomainSuccess(data):
 
 def to_structure_CustomIntegerType_1_12(data):
     return parse_number(data, 1, 12)
+
+def to_structure_OptionalType_CustomIntegerType_1_12(data):
+    if data is None: return None
+    return to_structure_CustomIntegerType_1_12(data)
 
 def to_structure_RecordType_general_Response_InvalidDomainId(data):
     from protocol import general
@@ -2701,6 +2712,10 @@ def to_structure_RecordType_clientreport_Request_GetComplianceDetailsReportFilte
 
 def to_structure_CustomIntegerType_1_31(data):
     return parse_number(data, 1, 31)
+
+def to_structure_OptionalType_CustomIntegerType_1_31(data):
+    if data is None : return None
+    return to_structure_CustomIntegerType_1_31(data)
 
 def to_structure_RecordType_clientreport_ActivityCompliance(data):
     from protocol import clientreport

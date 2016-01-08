@@ -77,7 +77,13 @@ def admin_login_response(db):
 	return login.AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name)
 
 def process_forgot_password(db, request):
-	return login.ForgotPasswordSuccess()
+	self.url = url
+	if db.validate_username(request.username):
+		send_reset_link()
+		return login.ForgotPasswordSuccess()
+	else:
+	    return login.InvalidUsername()
+	
 
 def process_reset_token(db, request):
 	return login.ResetSessionTokenValidationSuccess()

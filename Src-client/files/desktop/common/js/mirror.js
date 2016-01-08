@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8090/";
+var BASE_URL = "http://localhost:8080/";
 
 function initMirror() {
     var DEBUG = true;
@@ -87,6 +87,7 @@ function initMirror() {
             toJSON(requestFrame),
             function (data) {
                 var data = parseJSON(data);
+                console.log(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -407,7 +408,7 @@ function initMirror() {
     }
 
     function getGeographyReport(callback) {
-        var request = ["GeographyReport", {}];
+        var request = ["GetGeographyReport", {}];
         apiRequest("api/knowledge_report", request, callback);   
     }
 
@@ -457,7 +458,7 @@ function initMirror() {
         compliance["compliance_task"] = complianceTask;
         compliance["description"] = description;
         compliance["document_name"] = documentName;
-        compliance["format_file_name"] = fileFormat;
+        compliance["format_file_list"] = fileFormat;
         compliance["penal_consequences"] = penalConsequence;
         compliance["frequency_id"] = complianceFrequency;
         compliance["statutory_dates"] = statutoryDates;
@@ -503,6 +504,24 @@ function initMirror() {
         ];
         apiRequest("api/knowledge_transaction", request, callback);
     }
+
+    function UpdateStatutoryMappingData(
+        industryIds, statutoryNatureId, 
+        statutoryIds, compliances, geographyIds, mappingId
+    ) {
+        var mappingData = {};
+        mappingData["industry_ids"] = industryIds;
+        mappingData["statutory_nature_id"] = statutoryNatureId;
+        mappingData["statutory_ids"] = statutoryIds;
+        mappingData["compliances"] = compliances;
+        mappingData["geography_ids"] = geographyIds;
+        if (mappingId !== null) {
+            mappingData["statutory_mapping_id"] = mappingId
+        }
+
+        return mappingData;
+    }
+
 
     function updateStatutoryMapping(mappingData, callback ) {
         var request = [
@@ -1074,6 +1093,7 @@ function initMirror() {
         statutoryDates: statutoryDates,
         complianceDetails: complianceDetails,
         statutoryMapping: statutoryMapping,
+        UpdateStatutoryMappingData: UpdateStatutoryMappingData,
 
         saveStatutoryMapping: saveStatutoryMapping,
         updateStatutoryMapping: updateStatutoryMapping,

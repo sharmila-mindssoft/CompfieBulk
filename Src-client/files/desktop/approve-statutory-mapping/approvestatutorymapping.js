@@ -34,7 +34,7 @@ function getStatutoryMappings(){
     statutoryMappingsList = data["statutory_mappings"];
     tempstatutoryMappingsList = data["statutory_mappings"];
     complianceFrequencyList = data["compliance_frequency"];
-    approvalStatusList = data["approval_status"]
+    approvalStatusList = data["compliance_approval_status"]
   }
   function onFailure(error){
   }
@@ -226,6 +226,7 @@ $("#submit").click(function(){
       $('.reason', clone).html('<textarea class="input-box" id="notifyreason'+j+'" placeholder="Enter notification text" style="height:50px;display:none;"></textarea><br><span style="font-size:0.75em;display:none;" id="notifynote'+j+'">(max 500 characters)</span> <input type="text" style="display:none;" id="reason'+j+'" class="input-box" placeholder="Enter reason" />');
       $('.tbody-statutorymapping-list').append(clone);
       //load compliance frequency selectbox
+
       for (var status in approvalStatusList) {
       var option = $("<option></option>");
       option.val(approvalStatusList[status]["approval_status_id"]);
