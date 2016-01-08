@@ -2662,6 +2662,7 @@ class KnowledgeDatabase(Database):
         query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
             email_id, self.generate_password())        
         cursor.execute(query)
+        con.commit()
         return True
 
     def _get_server_details(self):
