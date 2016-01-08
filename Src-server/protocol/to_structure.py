@@ -225,6 +225,13 @@ def to_structure_VectorType_RecordType_core_UserGroup(data):
         lst.append(to_structure_RecordType_core_UserGroup(item))
     return lst
 
+def to_structure_VectorType_RecordType_client_masters_ClientUserGroup(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_client_masters_ClientUserGroup(item))
+    return lst    
+
 def to_structure_VectorType_RecordType_core_LegalEntity(data):
     data = parse_list(data, 0)
     lst = []
@@ -424,6 +431,13 @@ def to_structure_VectorType_RecordType_core_ServiceProvider(data):
         lst.append(to_structure_RecordType_core_ServiceProvider(item))
     return lst
 
+def to_structure_VectorType_RecordType_core_ServiceProviderDetails(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_ServiceProviderDetails(item))
+    return lst
+
 def to_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory(data):
     data = parse_dictionary(data)
     dict = []
@@ -589,6 +603,10 @@ def to_structure_RecordType_general_Request_SaveCountry(data):
 def to_structure_RecordType_core_ServiceProvider(data):
     from protocol import core
     return core.ServiceProvider.to_structure(data)
+
+def to_structure_RecordType_core_ServiceProviderDetails(data):
+    from protocol import core
+    return core.ServiceProviderDetails.to_structure(data)
 
 def to_structure_RecordType_technomasters_LICENCE_HOLDER_DETAILS(data):
     from protocol import technomasters
@@ -1582,6 +1600,10 @@ def to_structure_RecordType_admin_Response_EmailIDAlreadyExists(data):
 def to_structure_RecordType_core_UserGroup(data):
     from protocol import core
     return core.UserGroup.to_structure(data)
+
+def to_structure_RecordType_client_masters_ClientUserGroup(data):
+    from protocol import clientmasters
+    return clientmasters.ClientUserGroup.to_structure(data)
 
 def to_structure_RecordType_login_Response_InvalidCredentials(data):
     from protocol import login
