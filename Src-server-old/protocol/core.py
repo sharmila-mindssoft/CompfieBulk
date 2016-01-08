@@ -312,7 +312,8 @@ GroupCompanyDetail = RecordType("GroupCompanyDetail", [
     Field("total_disk_space", TOTAL_DISK_SPACE),
     Field("is_sms_subscribed", Bool),
     Field("username", USERNAME),
-    Field("is_active", IS_ACTIVE)
+    Field("is_active", IS_ACTIVE),
+    Field("short_name", SHORT_NAME)
 ])
 
 ClientConfiguration = RecordType("ClientConfiguration", [

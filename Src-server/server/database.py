@@ -2369,7 +2369,7 @@ class KnowledgeDatabase(Database):
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
         " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
-        " is_active"
+        " is_active, url_short_name"
         condition = "1"
         return self.get_data(self.tblClientGroups, columns, condition)
 
