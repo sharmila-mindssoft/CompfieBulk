@@ -12,7 +12,16 @@
 		<script type="text/javascript">
 			function createSession(){
 				var userDetails = {
-		            "client_id": 11
+		            "user_id": 0,
+		            "client_id": 11,
+		            "user_group": null,
+		            "employee_name": "Admin",
+		            "employee_code": null,
+		            "email_id": "admin@domain.com",
+		            "contact_no": null,
+		            "address": null,
+		            "designation": null,
+		            "session_token": "b4c59894336c4ee3b598f5e4bd2b276b"
 		        }
 		        client_mirror.initSession(userDetails)
 			}
@@ -226,8 +235,8 @@
 		        mirror.changeAdminUserStatus(userId, isActive, callback); 
 			}
 			function changePassword(){
-				currentPassword = "1234567"
-				newPassword = "123456"
+				currentPassword = "123456"
+				newPassword = "1234567"
 				mirror.changePassword(currentPassword, newPassword,callback)
 			}
 			function forgotPassword(){

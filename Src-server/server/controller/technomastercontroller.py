@@ -51,9 +51,11 @@ def get_client_groups(db, request, session_user):
 		short_name = client_row[11]
 		country_ids = [int(x) for x in db.get_client_countries(client_id).split(",")]
 		domain_ids = [int(x) for x in db.get_client_domains(client_id).split(",")]
+		date_configurations = db.get_date_configurations(client_id)
 		client_list.append(core.GroupCompanyDetail(client_id, group_name, domain_ids, 
 			country_ids, incharge_persons, logo_url, contract_from, contract_to, 
-			no_of_user_licence, total_disk_space, is_sms_subscribed, email_id, is_active, short_name))
+			no_of_user_licence, total_disk_space, is_sms_subscribed, email_id, 
+			is_active, short_name, date_configurations))
 
 	return technomasters.GetClientGroupsSuccess(countries = country_list, 
 		domains = domain_list, users = user_list, client_list = client_list)
