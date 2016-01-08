@@ -2771,7 +2771,7 @@ class KnowledgeDatabase(Database):
 
     def update_password(self, password, user_id):
         columns = ["password"]
-        values = [encrypt(password)]
+        values = [self.encrypt(password)]
         condition = " user_id='%d'" % user_id
         if self.update(self.tblUsers, columns, values, condition):
             return True

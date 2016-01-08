@@ -235,22 +235,22 @@
 		        mirror.changeAdminUserStatus(userId, isActive, callback); 
 			}
 			function changePassword(){
-				currentPassword = "1234567"
-				newPassword = "123456"
-				client_mirror.changePassword(currentPassword, newPassword,callback)
+				currentPassword = "123456"
+				newPassword = "1234567"
+				mirror.changePassword(currentPassword, newPassword,callback)
 			}
 			function forgotPassword(){
 				username = "Testclientser24@domain.com"
-				client_mirror.forgotPassword(username, callback)
+				mirror.forgotPassword(username, callback)
 			}
 			function validateResetToken(){
 				resetToken = "1"
-				client_mirror.validateResetToken(resetToken, callback)
+				mirror.validateResetToken(resetToken, callback)
 			}
 			function resetPassword(){
 				resetToken = "158350839976395462222620754547803639110"
 				newPassword = "1234567"
-				client_mirror.resetPassword(resetToken, newPassword, callback) 
+				mirror.resetPassword(resetToken, newPassword, callback) 
 			}
 			function saveClientGroup(){
 				dateConfigurations = []
