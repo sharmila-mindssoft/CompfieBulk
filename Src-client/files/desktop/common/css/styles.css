@@ -1534,3 +1534,267 @@ list-style-type:none; line-height:25px;
   background-size: 1em;
   border-right: 3px solid #f1e9f6
 }
+
+
+/*siva starts*/
+.grid-table .input-box{
+    height: 2.2em;
+    font-size: 0.9em;
+ }
+.heading{
+  color: #000;
+  font-size: 1em;
+  height: 2.25em;
+  margin-bottom:0px;
+}
+.date-configuration{
+  max-height: 270px;
+  overflow: auto;
+}
+.grid-table table tr td {
+	vertical-align: top;
+}
+.unit-error-msg {
+	color: #f00000;
+	float: right;
+	text-align: right;
+	padding-right: 10px;
+}
+.formHeading{
+  font-weight: bold;
+  text-transform: capitalize;
+}
+.formName
+{
+ text-transform: capitalize; 
+}
+.formNameList{
+	overflow-y:scroll;
+	height:240px;
+}
+
+.form-container-grid-table table tr td ul a{
+  text-decoration: none;
+  color:black;
+  width:100%;
+  height:100%;  
+}
+.form-container-grid-table table tr td ul li:hover{
+  background: #EAE8E8;  
+}
+.form-container-grid-table table tr td ul li.active:hover {
+  background: #f1e9f6 url(../images/tick1.png) no-repeat right center;
+  background-size: 1em;
+  border-right: 3px solid #f1e9f6
+}
+
+.form-container-grid-table table tr td ul a{
+  text-decoration: none;
+  color:black;
+  width:100%;
+  height:100%;
+  }
+  .form-container-grid-table table tr td ul li{
+  cursor:pointer;
+  }
+  .form-container-grid-table table tr td ul li:hover{
+  background: #EAE8E8;
+  }
+  .form-container-grid-table table tr td ul li.active:hover {
+  background: #f1e9f6 url(../images/tick1.png) no-repeat right center;
+  background-size: 1em;
+  border-right: 3px solid #f1e9f6
+  }
+  .form-container-grid-table-sm table tr td ul li:hover{
+  background: #EAE8E8;
+  cursor:pointer;
+  }
+  .form-container-grid-table-sm table tr td ul li.active:hover {
+  background: #f1e9f6 url(../images/tick1.png) no-repeat right center;
+  background-size: 1em;
+  border-right: 3px solid #f1e9f6
+  }
+  .text-center
+  {
+  text-align: center;
+  }
+  .nav > li {
+  background-color: #a381bd;
+  position: relative;
+  display: block;
+  border-radius: 6px;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  }
+  .nav > li > a {
+  color: #ffffff;
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+  text-decoration: none;
+  }
+  .nav > li > a:focus {
+  text-decoration: none;
+  background-color: #eeeeee;
+  }
+  .nav > li.disabled > a {
+  color: #999999;
+  background-color: #eee;
+  border-radius:6px;
+  }
+  .nav > li.disabled > a:focus {
+  color: #999999;
+  background-color: #eee;
+  text-decoration: none;
+  cursor: not-allowed;
+  }
+  .nav .open > a,
+  .nav .open > a:focus {
+  background-color: #eeeeee;
+  border-color: #662d91;
+  }
+  .nav .nav-divider {
+  height: 1px;
+  margin: 9px 0;
+  overflow: hidden;
+  background-color: #e5e5e5;
+  }
+  .nav > li > a > img {
+  max-width: none;
+  }
+  .nav-pills > li {
+  float: left;
+  }
+  .nav-pills > li > a {
+  border-radius: 5px;
+  }
+  .nav-pills > li + li {
+  
+  }
+  .nav-pills > li.active > a,
+  .nav-pills > li.active > a:focus {
+  color: #ffffff;
+  background-color: #662d91;
+  }
+  .nav-justified {
+  width: 100%;
+  }
+  .nav-justified > li {
+  margin-right: 0.5%;
+  float: left;
+  width: 24.5%;
+  }
+  .nav-justified > li > a {
+  text-align: left;
+  }
+  .thumbnail {
+  display: inline-block;
+  display: block;
+  height: auto;
+  max-width: 100%;
+  padding: 4px;
+  line-height: 1.428571429;
+  background-color: #ffffff;
+  border: 0px solid #dddddd;
+  border-radius: 6px;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  }
+  .setup-content
+  {
+  border:0px solid #ccc ;
+  border-radius: 5px;
+  }
+  .innercontent
+  {
+  width: 100%;
+  min-height: 530px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  }
+  .btn-right
+  {
+  float:right;
+  color: #ffffff;
+  background-color: #662d91;
+  border: 0px;
+  border-radius: 4px;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  padding: 5px 10px 5px 10px;
+  font-size:12px;
+  margin-right: 10px;
+  margin-top: 10px;
+  }
+
+.accordion-toggle {
+  cursor: pointer;
+}
+.accordion-content {
+  display: none;
+}
+.accordion-content.default {
+  display: block;
+}
+
+/* popup window */
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 3px;
+  width: 50%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+.popup .close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  transition: all 200ms;
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: orange;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+  line-height: 30px;
+  font-size: 0.8em;
+}
+
+.gt input[type="checkbox"] {
+display: none !important;
+}
+.gt input[type="checkbox"]+label {
+background: url('/images/deletebold.png') no-repeat;
+height:17px;
+padding-left: 18px;
+cursor: pointer;
+}
+.gt input[type="checkbox"]:checked + label {
+background: url('/images/tick1bold.png') no-repeat;
+height:17px;
+cursor: pointer;
+  
+/*siva ends*/

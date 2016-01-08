@@ -80,6 +80,7 @@ class API(object):
             )
         except Exception, e:
             print e
+            print(traceback.format_exc())
             response.set_status(400)
             response.send(str(e))
             return None
@@ -142,6 +143,9 @@ class API(object):
     def handle_knowledge_transaction(self, request, db) :
         return controller.process_knowledge_transaction_request(request, db)
 
+    @api_request(knowledgereport.RequestFormat)
+    def handle_knowledge_report(self, request, db) :
+        return controller.process_knowledge_report_request(request, db)
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
@@ -220,10 +224,10 @@ TEMPLATE_PATHS = [
     #Techno reports
     ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {}),
     #client admin
-    ("/service-provider", "files/desktop/service-provider/serviceprovider.html", None, {}),   
-    ("/client-user-privilege", "files/desktop/client-user-privilege/clientuserprivilege.html", None, {}),  
-    ("/client-user-master", "files/desktop/client-user-master/clientusermaster.html", None, {}),  
-    ("/unit-closure", "files/desktop/unit-closure/unitclosure.html", None, {}),    
+    ("/service-provider", "files/desktop/client/service-provider/serviceprovider.html", None, {}),   
+    ("/client-user-privilege", "files/desktop/client/client-user-privilege/clientuserprivilege.html", None, {}),  
+    ("/client-user-master", "files/desktop/client/client-user-master/clientusermaster.html", None, {}),  
+    ("/unit-closure", "files/desktop/client/unit-closure/unitclosure.html", None, {}),    
 ]
 
 
@@ -264,7 +268,8 @@ def run_server(port):
             ),
             ("/api/general", api.handle_general),
             ("/api/knowledge_master", api.handle_knowledge_master),
-            ("/api/knowledge_transaction", api.handle_knowledge_transaction)
+            ("/api/knowledge_transaction", api.handle_knowledge_transaction),
+            ("/api/knowledge_report", api.handle_knowledge_report)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

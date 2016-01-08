@@ -1,24 +1,64 @@
-var tempIndustryList;
+var industriesList;
+function clearMessage() {
+  $(".error-message").hide();
+  $(".error-message").text("");
+}
+function displayMessage(message) {
+  $(".error-message").text(message);
+  $(".error-message").show();
+}
+
+$(".btn-industry-add").click(function(){
+  $("#industry-view").hide();
+  $("#industry-add").show();
+  $("#industryname").val('');
+  $("#industryid").val('');
+  $(".error-message").html('');
+});
+$(".btn-industry-cancel").click(function(){
+  $("#industry-add").hide();
+  $("#industry-view").show();
+});
+
+function getIndustries () {
+  function onSuccess(data){
+      industriesList = data["industries"];
+      loadIndustryList(industriesList);
+  }
+  function onFailure(error){
+    displayMessage(error);
+  }
+  mirror.getIndustryList(
+      function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
+}
+
 function loadIndustryList (industriesList) {
   var j = 1;
-  var imgName = '';
-  var passStatus = '';
+  var imgName = null;
+  var passStatus = null;
   var industryId = 0;
-  var industryName = '';
-  var isActive = 0;
-  var industryList;
+  var industryName = null;
+  var isActive = false;
 
   $(".tbody-industry-list").find("tr").remove();
     for(var entity in industriesList) {
       industryId = industriesList[entity]["industry_id"];
       industryName = industriesList[entity]["industry_name"];
       isActive = industriesList[entity]["is_active"];
-      if(isActive == 1) {
-        passStatus="0";
+      if(isActive == true) {
+        passStatus=false;
         imgName="icon-active.png"
       }
       else {
-        passStatus="1";
+        passStatus=true;
         imgName="icon-inactive.png"
       }
       var tableRow=$('#templates .table-industry-master .table-row');
@@ -31,104 +71,113 @@ function loadIndustryList (industriesList) {
       j = j + 1;
     }
 }
-function displayAdd () {
-  $("#error").text("");
-  $("#listview").hide();
-  $("#addview").show();
-  $("#industryname").val('');
-  $("#industryid").val('');
+
+function validate(){
+  if($("#industryname").val().trim().length==0){
+    displayMessage('Industry Name Required');
+  }else{
+    displayMessage('');
+    return true
+  }
 }
 
-function saveRecord () {
-  industryId = parseInt($("#industryid").val());
-  industryName = $("#industryname").val();
-
-
-if(industryName == ''){
-  $("#error").text("Industry Name Required");
-}else{
-  if($("#industryid").val() == ''){
-  function success(status,data) {
-    if(status == 'success') {
-      getIndustries ();
-      $("#listview").show();
-      $("#addview").hide();
-      $("#error").text("Record Added Successfully");
-    } else {
-      $("#error").text(status);
+$('#industryname').keypress(function (e) {
+  if (e.which == 13) {
+    if(validate()){
+      jQuery('#submit').focus().click();
     }
   }
-  function failure(data){
+});
 
-  }
-  mirror.saveIndustry(industryName, success, failure);
+$("#submit").click(function(){
+  var industryId = $("#industryid").val();
+  var industryName = $("#industryname").val();
+
+if(validate()){
+  if($("#industryid").val() == ''){
+    function onSuccess(response) {
+      getIndustries ();
+      $("#industry-add").hide();
+      $("#industry-view").show();
+    }
+    function onFailure(error){
+        if(error == "InvalidIndustryId"){
+            displayMessage("Invalid Industry Id");
+        }                
+        if(error == "IndustryNameAlreadyExists"){
+            displayMessage("Industry Name Already Exists");
+        }
+    }
+    mirror.saveIndustry(industryName,
+    function (error, response) {
+        if (error == null){
+          onSuccess(response);
+        }
+        else {
+          onFailure(error);
+        }
+      });
   }
   else{
-    function success(status,data){
-      if(status == 'success') {
-         getIndustries ();
-        $("#listview").show();
-        $("#addview").hide();
-        $("#error").text("Record Updated Successfully");
-      } else {
-        $("#error").text(status);
-      }
+    function onSuccess(response) {
+      getIndustries ();
+      $("#industry-add").hide();
+      $("#industry-view").show();
     }
-    function failure(data) {
+    function onFailure(error){            
+        if(error == "IndustryNameAlreadyExists"){
+            displayMessage("Industry Name Already Exists");
+        }
     }
-    mirror.updateIndustry(industryId, industryName, success, failure);
+    mirror.updateIndustry(parseInt(industryId), industryName,
+    function (error, response) {
+        if (error == null){
+          onSuccess(response);
+        }
+        else {
+          onFailure(error);
+        }
+      });
   }
 }
-}
+}); 
 
 function displayEdit (industryId,industryName) {
-  $("#listview").hide();
-  $("#addview").show();
+  $(".error-message").text("");
+  $("#industry-view").hide();
+  $("#industry-add").show();
   $("#industryname").val(industryName);
   $("#industryid").val(industryId);
-  $("#error").text("");
 }
 
 function changeStatus (industryId,isActive) {
-  function success(status,data){
+  function onSuccess(response){
     getIndustries ();
-    $("#error").text("Status Changed Successfully");
+    displayMessage("Status Changed Successfully");
   }
-  function failure(data){
+  function onFailure(error){
   }
-  mirror.changeIndustryStatus(industryId, isActive, success, failure);
+  mirror.changeIndustryStatus(industryId, isActive,
+    function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    }
+    );
 }
 
-function getIndustries () {
-
-  function success(status,data){
-    tempIndustryList = data["industries"];
-    industriesList = data["industries"];
-    loadIndustryList(industriesList);
-  }
-  function failure(data){
-  }
-  mirror.getIndustryList(success, failure);
-}
-
-function filter (term, cellNr){
- /* var filterkey = term.value.toLowerCase();
-  var table = document.getElementById("tableToModify");
-  var ele;
-  for (var r = 1; r < table.rows.length; r++){
-    ele = table.rows[r].cells[cellNr].innerHTML.replace(/<[^>]+>/g,"");
-    if (ele.toLowerCase().indexOf(filterkey)>=0 )
-      table.rows[r].style.display = '';
-    else table.rows[r].style.display = 'none';
-  }*/
-  var filterkey = term.value.toLowerCase();
+$("#search-industry-name").keyup(function() { 
+  var filterkey = this.value.toLowerCase();
   var filteredList=[];
-    for(var entity in tempIndustryList) {
-      industryName = tempIndustryList[entity]["industry_name"];
-      if (~industryName.toLowerCase().indexOf(filterkey)) filteredList.push(tempIndustryList[entity]);
+    for(var entity in industriesList) {
+      industryName = industriesList[entity]["industry_name"];
+      if (~industryName.toLowerCase().indexOf(filterkey)) filteredList.push(industriesList[entity]);
     }
   loadIndustryList(filteredList);
-}
+});
 
 $(document).ready(function () {
   getIndustries ();

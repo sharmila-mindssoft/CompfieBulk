@@ -84,7 +84,7 @@ function loadGeographyLevelsList(countryval) {
 	}
 }
 function validate(){
-    if($("#country").val().length==0){
+    if($("#country").val().trim().length==0){
       $(".error-message").html("Country Required");
     }
     else {
@@ -97,13 +97,13 @@ $("#submit").click(function(){
 	var country = $("#country").val();
 	if(validate()){
 		for(var k=1; k<=10; k++) {
-			if($("#level"+k).val() != ''){
+			if($("#level"+k).val().trim().length > 0){
 				var maxlevel = k;
 			}
 		}
 	    var result=true;
 	    for(var k=1; k<=maxlevel; k++) {
-	    	if($("#level"+k).val() == ''){
+	    	if($("#level"+k).val().trim().length==0){
 			result = false;
 			}
 		}
@@ -139,8 +139,8 @@ $("#submit").click(function(){
 
 $("#insert-record").click(function(){
 	var insertlevel = parseInt($("#insertlevel").val());
-	var insertvalue = $("#insertvalue").val();
-	if(insertvalue != ''){
+	var insertvalue = $("#insertvalue").val().trim();
+	if(insertvalue.length > 0){
 		for(var x=10; x >= insertlevel; x--){
 	   		var s = x-1;
 	   		if( x == insertlevel){

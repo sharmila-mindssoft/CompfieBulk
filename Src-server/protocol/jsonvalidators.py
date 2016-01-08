@@ -133,7 +133,7 @@ def parse_enum(x, items):
         raise empty_error()
     x = parse_string(x)
     if x not in items:
-        msg = "a string value any one of " % (
+        msg = "a string value any one of  %s" % (
             ",".join(items)
         )
         raise expectation_error(msg, x)

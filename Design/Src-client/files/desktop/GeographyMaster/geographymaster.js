@@ -210,7 +210,7 @@ function saverecord(j,e){
     $(".error-message").html("");
     var levelstage = $('#level'+j).val();
     var glm_id = $('#glmid'+j).val();
-    var datavalue = $('#datavalue'+j).val();
+    var datavalue = $('#datavalue'+j).val().trim();
     var map_gm_id=[];
     var last_geography_id=0;
     var last_level = 0;
@@ -223,7 +223,7 @@ function saverecord(j,e){
     }
     if(map_gm_id==0 && levelstage>1 ){
       $(".error-message").html("Level Selection Should not be Empty");
-    }else if(datavalue==""){
+    }else if(datavalue.length == 0){
       $(".error-message").html("Level-"+levelstage+" Value Should not be Empty");
     }else{
       function success(status,data){
@@ -327,7 +327,7 @@ function updaterecord(j,e){
     var levelstage = $('#level'+j).val();
     var glm_id = $('#glmid'+j).val();
     var geographyid = $('#geographyid').val();
-    var datavalue = $('#datavalue'+j).val();
+    var datavalue = $('#datavalue'+j).val().trim();
     var map_gm_id=[];
     var last_geography_id=0;
     var last_level = 0;
@@ -340,7 +340,7 @@ function updaterecord(j,e){
     }
     if(map_gm_id==0 && levelstage>1 ){
       $(".error-message").html("Level Selection Should not be Empty");
-    }else if(datavalue==""){
+    }else if(datavalue.length == 0){
       $(".error-message").html("Level-"+levelstage+" Value Should not be Empty");
     }else{
      function success(status,data){

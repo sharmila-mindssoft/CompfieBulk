@@ -116,7 +116,7 @@ function initializeLogin () {
 
 $(document).ready(function () {
     if (mirror.verifyLoggedIn()) {
-        // window.location.href = "/home";
+        window.location.href = "/home";
         return;
     }
 

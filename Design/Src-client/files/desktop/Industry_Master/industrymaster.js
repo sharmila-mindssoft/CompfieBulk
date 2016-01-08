@@ -28,7 +28,6 @@ function loadIndustryList (industriesList) {
   var industryId = 0;
   var industryName = null;
   var isActive = 0;
-  var industryList;
 
   $(".tbody-industry-list").find("tr").remove();
     for(var entity in industriesList) {
@@ -55,7 +54,7 @@ function loadIndustryList (industriesList) {
 }
 
 function validate(){
-  if($("#industryname").val().length==0){
+  if($("#industryname").val().trim().length==0){
     $(".error-message").html('Industry Name Required');
   }else{
     $(".error-message").html('');

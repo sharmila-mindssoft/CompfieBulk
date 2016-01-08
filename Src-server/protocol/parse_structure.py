@@ -147,13 +147,11 @@ def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit(da
 
 def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(data):
     data = parse_list(data)
-    print data
     d = {}
     for key, value in data:
         key = parse_structure_CustomTextType_50(key)
         value = parse_structure_VectorType_RecordType_core_Form(value)
         d[key] = value
-    print d
     return d
 
 def parse_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES(data):
@@ -680,6 +678,13 @@ def parse_structure_RecordType_clienttransactions_RequestFormat(data):
 def parse_structure_CustomIntegerType_1_10(data):
     return parse_number(data, 1, 10)
 
+def parse_structure_CustomIntegerType_1_100(data):
+    return parse_number(data, 1, 100)
+
+def parse_structure_OptionalType_CustomIntegerType_1_100(data):
+    if data is None : return None
+    return parse_structure_CustomIntegerType_1_100(data)
+
 def parse_structure_VectorType_RecordType_technotransactions_ASSIGNED_STATUTORIES(data):
     data = parse_list(data, 0)
     lst = []
@@ -759,6 +764,10 @@ def parse_structure_RecordType_general_Response_UpdateDomainSuccess(data):
 
 def parse_structure_CustomIntegerType_1_12(data):
     return parse_number(data, 1, 12)
+
+def parse_structure_OptionalType_CustomIntegerType_1_12(data):
+    if data is None: return None
+    return parse_structure_CustomIntegerType_1_12(data)
 
 def parse_structure_RecordType_general_Response_InvalidDomainId(data):
     from protocol import general
@@ -1468,6 +1477,10 @@ def parse_structure_OptionalType_VectorType_RecordType_core_Division(data):
     if data is None: return data
     return parse_structure_VectorType_RecordType_core_Division(data)
 
+def parse_structure_OptionalType_VectorType_CustomTextType_50(data):
+    if data is None: return data
+    return parse_structure_VectorType_CustomTextType_50(data)
+
 def parse_structure_RecordType_dashboard_Response_GetComplianceApplicabilityStatusDrillDownSuccess(data):
     from protocol import dashboard
     return dashboard.Response.parse_structure(data)
@@ -1588,7 +1601,6 @@ def parse_structure_RecordType_knowledgemaster_Response_InvalidStatutoryId(data)
 
 def parse_structure_RecordType_login_Response_UserLoginSuccess(data):
     from protocol import login
-    print "parse_structure_login"
     return login.Response.parse_structure(data)
 
 def parse_structure_RecordType_clientuser_RequestFormat(data):
@@ -1754,6 +1766,25 @@ def parse_structure_VectorType_RecordType_core_StatutoryDate(data):
     for item in data:
         lst.append(parse_structure_RecordType_core_StatutoryDate(item))
     return lst
+
+def parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(data):
+    if data is None : return None
+    return parse_structure_VectorType_RecordType_core_StatutoryDate(data)    
+
+def parse_structure_RecordType_core_FileList(data):
+    from protocol import core
+    return core.FileList.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_core_FileLst(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_core_FileList(item))
+    return lst        
+
+def parse_structure_OptionalType_VectorType_RecordType_core_FileList(data):
+    if data is None: return None
+    return parse_structure_VectorType_RecordType_core_FileLst(data)
 
 def parse_structure_RecordType_clientmasters_Request_ChangeServiceProviderStatus(data):
     from protocol import clientmasters
@@ -2664,6 +2695,10 @@ def parse_structure_RecordType_clientreport_Request_GetComplianceDetailsReportFi
 def parse_structure_CustomIntegerType_1_31(data):
     return parse_number(data, 1, 31)
 
+def parse_structure_OptionalType_CustomIntegerType_1_31(data):
+    if data is None: return None
+    return parse_structure_CustomIntegerType_1_31(data)
+
 def parse_structure_RecordType_clientreport_ActivityCompliance(data):
     from protocol import clientreport
     return clientreport.ActivityCompliance.parse_structure(data)
@@ -2698,6 +2733,10 @@ def parse_structure_RecordType_admin_Response_InvalidUserId(data):
 def parse_structure_OptionalType_CustomTextType_100(data):
     if data is None: return data
     return parse_structure_CustomTextType_100(data)
+
+def parse_structure_OptionalType_CustomTextType_500(data):
+    if data is None: return data
+    return parse_structure_CustomTextType_500(data)
 
 def parse_structure_VectorType_RecordType_technoreports_UNIT_WISE_ASSIGNED_STATUTORIES(data):
     data = parse_list(data, 0)

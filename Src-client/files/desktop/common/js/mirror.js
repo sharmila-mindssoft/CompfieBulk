@@ -1,4 +1,5 @@
 var BASE_URL = "http://localhost:8080/";
+
 function initMirror() {
     var DEBUG = true;
 
@@ -34,8 +35,13 @@ function initMirror() {
 
     function getUserInfo() {
         var info = window.localStorage["userInfo"];
-        user = parseJSON(info)
-        return user
+        if (typeof info === "undefined") {
+            user = null;
+        }
+        else {
+            user = parseJSON(info);
+        }
+        return user;
     }
 
     function getUserProfile() {
@@ -56,7 +62,10 @@ function initMirror() {
 
     function getSessionToken() {
         var info = getUserInfo();
-        return info["session_token"];
+        if (info !== null)
+            return info["session_token"];
+        else 
+            return null;
     }
 
     function getUserMenu(){
@@ -66,6 +75,7 @@ function initMirror() {
 
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
+        console.log(sessionToken)
         if (sessionToken == null)
             sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
         var requestFrame = {
@@ -77,6 +87,7 @@ function initMirror() {
             toJSON(requestFrame),
             function (data) {
                 var data = parseJSON(data);
+                console.log(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -84,7 +95,9 @@ function initMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1){
                     callback(null, response);
                 }
-                callback(status, null) 
+                else {
+                    callback(status, null) 
+                }
             }
         )
         .fail(
@@ -289,7 +302,7 @@ function initMirror() {
             "UpdateStatutoryNature",
             { "statutory_nature_id" : statutoryNatureId, "statutory_nature_name" : statutoryNatureName }
         ];
-        apiRequest("UpdateStatutoryNature", request, callback);
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function changeStatutoryNatureStatus(statutoryNatureId, isActive, 
@@ -395,7 +408,7 @@ function initMirror() {
     }
 
     function getGeographyReport(callback) {
-        var request = ["GeographyReport", {}];
+        var request = ["GetGeographyReport", {}];
         apiRequest("api/knowledge_report", request, callback);   
     }
 
@@ -445,7 +458,7 @@ function initMirror() {
         compliance["compliance_task"] = complianceTask;
         compliance["description"] = description;
         compliance["document_name"] = documentName;
-        compliance["format_file_name"] = fileFormat;
+        compliance["format_file_list"] = fileFormat;
         compliance["penal_consequences"] = penalConsequence;
         compliance["frequency_id"] = complianceFrequency;
         compliance["statutory_dates"] = statutoryDates;
@@ -454,9 +467,13 @@ function initMirror() {
         compliance["duration_type_id"] = durationTypeId;
         compliance["duration"] = duration;
         compliance["is_active"] = isActive;
-        if (complianceId !== null) {
+        if ((complianceId !== null) && (complianceId !== '')) {
             compliance["compliance_id"] = complianceId;
         }
+        else {
+            compliance["compliance_id"] = null
+        }
+
 
         return compliance;
     }
@@ -487,6 +504,24 @@ function initMirror() {
         ];
         apiRequest("api/knowledge_transaction", request, callback);
     }
+
+    function UpdateStatutoryMappingData(
+        industryIds, statutoryNatureId, 
+        statutoryIds, compliances, geographyIds, mappingId
+    ) {
+        var mappingData = {};
+        mappingData["industry_ids"] = industryIds;
+        mappingData["statutory_nature_id"] = statutoryNatureId;
+        mappingData["statutory_ids"] = statutoryIds;
+        mappingData["compliances"] = compliances;
+        mappingData["geography_ids"] = geographyIds;
+        if (mappingId !== null) {
+            mappingData["statutory_mapping_id"] = mappingId
+        }
+
+        return mappingData;
+    }
+
 
     function updateStatutoryMapping(mappingData, callback ) {
         var request = [
@@ -1058,6 +1093,7 @@ function initMirror() {
         statutoryDates: statutoryDates,
         complianceDetails: complianceDetails,
         statutoryMapping: statutoryMapping,
+        UpdateStatutoryMappingData: UpdateStatutoryMappingData,
 
         saveStatutoryMapping: saveStatutoryMapping,
         updateStatutoryMapping: updateStatutoryMapping,

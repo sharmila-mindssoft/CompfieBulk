@@ -62,7 +62,7 @@ def user_login_response(db, data):
 	menu = process_user_forms(db, form_ids)
 	print menu
 	return login.UserLoginSuccess(
-		user_id, session_token, email_id, user_group_name, 
+		int(user_id), session_token, email_id, user_group_name, 
 		menu, employee_name, employee_code, contact_no, address, designation
 	)
 

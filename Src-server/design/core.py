@@ -19,7 +19,8 @@ __all__ = [
 	"UserGroupDetails", "User", "UserDetails", "CountryWiseUnits", 
 	"ComplianceApplicability", "ComplianceShortDescription","StatutoryDate",
 	"FormCategory", "FormType", "ComplianceFrequency", "ComplianceRepeatType",
-	"ComplianceDurationType", "ComplianceApprovalStatus"
+	"ComplianceDurationType", "ComplianceApprovalStatus",
+	"FileList"
 ]
 
 # frm = EnumType("FORM_TYPE", [
@@ -267,6 +268,12 @@ Statutory = RecordType("Statutory", [
 	Field("parent_mappings", Text),
 ])
 
+FileList = RecordType("FileList", [
+	Field("file_type", Text20),
+	Field("file_content", Text)
+])
+FileListFormat = VectorType(FileList)
+
 StatutoryList = VectorType(Statutory)
 
 Compliance = RecordType("Compliance", [
@@ -274,15 +281,16 @@ Compliance = RecordType("Compliance", [
     Field("statutory_provision", STATUTORY_PROVISION),
     Field("compliance_task", COMPLIANCE_NAME), 
     Field("description", DESCRIPTION), 
-    Field("document_name", DOCUMENT_NAME), 
-    Field("format_file_name", FormatFilesList), 
-    Field("penal_description", DESCRIPTION), 
+    Field("document_name", OptionalType(DOCUMENT_NAME)), 
+    Field("format_file_list", OptionalType(FileListFormat)),
+    #Field("file_name_download", OptionalType(Text)),
+    Field("penal_description", OptionalType(DESCRIPTION)), 
     Field("frequency_id", COMPLIANCE_FREQUENCY), 
-    Field("statutory_dates", StatutoryDates),
-    Field("repeats_type_id", REPEATS_TYPE_ID), 
-    Field("repeats_every", Int8), 
-    Field("duration_type_id", DURATION_TYPE_ID),
-    Field("duration", Int8),
+    Field("statutory_dates", OptionalType(StatutoryDates)),
+    Field("repeats_type_id", OptionalType(REPEATS_TYPE_ID)), 
+    Field("repeats_every", OptionalType(Int8)), 
+    Field("duration_type_id", OptionalType(DURATION_TYPE_ID)),
+    Field("duration", OptionalType(Int8)),
     Field("is_active", IS_ACTIVE)
 ])
 

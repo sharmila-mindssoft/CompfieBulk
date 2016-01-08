@@ -19,6 +19,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_CustomTextType_50,
     parse_structure_VectorType_RecordType_core_StatutoryDate,
     parse_structure_OptionalType_SignedIntegerType_8,
+    parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_CustomTextType_250,
     parse_structure_VectorType_RecordType_core_ComplianceApplicability,
     parse_structure_Text,
@@ -28,9 +29,17 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_20,
     parse_structure_CustomIntegerType_1_31,
     parse_structure_OptionalType_CustomTextType_50,
+    parse_structure_OptionalType_CustomTextType_500,
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form,
     parse_structure_UnsignedIntegerType_32,
-    parse_structure_OptionalType_UnsignedIntegerType_32
+    parse_structure_OptionalType_VectorType_CustomTextType_50,
+    parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
+    parse_structure_OptionalType_VectorType_RecordType_core_FileList,
+    parse_structure_OptionalType_CustomIntegerType_1_100,
+    parse_structure_OptionalType_CustomIntegerType_1_12,
+    parse_structure_OptionalType_CustomIntegerType_1_31,
+    parse_structure_Float,
+    parse_structure_OptionalType_UnsignedIntegerType_32,
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -51,6 +60,7 @@ from protocol.to_structure import (
     to_structure_VectorType_CustomTextType_50,
     to_structure_VectorType_RecordType_core_StatutoryDate,
     to_structure_OptionalType_SignedIntegerType_8,
+    to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_CustomTextType_250,
     to_structure_VectorType_RecordType_core_ComplianceApplicability,
     to_structure_Text, to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
@@ -58,8 +68,15 @@ from protocol.to_structure import (
     to_structure_CustomIntegerType_1_12, to_structure_CustomTextType_20,
     to_structure_CustomIntegerType_1_31,
     to_structure_OptionalType_CustomTextType_50,
+    to_structure_OptionalType_CustomTextType_500,
     to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form,
     to_structure_UnsignedIntegerType_32,
+    to_structure_OptionalType_VectorType_CustomTextType_50,
+    to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
+    to_structure_OptionalType_VectorType_RecordType_core_FileList,
+    to_structure_OptionalType_CustomIntegerType_1_100,
+    to_structure_OptionalType_CustomIntegerType_1_12,
+    to_structure_OptionalType_CustomIntegerType_1_31,
     to_structure_Float,
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_VectorType_RecordType_core_ClientBusinessGroup,
@@ -126,16 +143,17 @@ class USER_TYPE(object):
 #
 
 class APPROVAL_STATUS(object):
+    Pending = "Pending"
     Approve = "Approve"
     Reject = "Reject"
-    ApproveAndNotify = "ApproveAndNotify"
+    ApproveAndNotify = "Approve & Notify"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Approve", "Reject", "ApproveAndNotify"]
+        return ["Pending", "Approve", "Reject", "Approve & Notify"]
 
     def value(self):
         return self._value
@@ -283,17 +301,17 @@ class FILTER_TYPE(object):
 #
 
 class COMPLIANCE_FREQUENCY(object):
-    OneTime = "OneTime"
+    OneTime = "One Time"
     Periodical = "Periodical"
     Review = "Review"
-    OnOccurrence = "OnOccurrence"
+    OnOccurrence = "On Occurrence"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["OneTime", "Periodical", "Review", "OnOccurrence"]
+        return ["One Time", "Periodical", "Review", "On Occurrence"]
 
     def value(self):
         return self._value
@@ -391,16 +409,16 @@ class FORM_TYPE(object):
 #
 
 class REPEATS_TYPE(object):
-    Year = "Year"
-    Month = "Month"
-    Day = "Day"
+    Year = "Year(s)"
+    Month = "Month(s)"
+    Day = "Day(s)"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Year", "Month", "Day"]
+        return ["Year(s)", "Month(s)", "Day(s)"]
 
     def value(self):
         return self._value
@@ -417,15 +435,15 @@ class REPEATS_TYPE(object):
 #
 
 class DURATION_TYPE(object):
-    Day = "Day"
-    Hour = "Hour"
+    Day = "Day(s)"
+    Hour = "Hour(s)"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Day", "Hour"]
+        return ["Day(s)", "Hour(s)"]
 
     def value(self):
         return self._value
@@ -825,18 +843,46 @@ class Statutory(object):
         }
 
 #
+# FileList
+#
+
+class FileList(object):
+    def __init__(self, file_size, file_type, file_content):
+        self.file_size = file_size
+        self.file_type = file_type
+        self.file_content = file_content
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["file_size", "file_type", "file_content"])
+        file_size = data.get("file_size")
+        file_size = parse_structure_OptionalType_UnsignedIntegerType_32(file_size)
+        file_type = data.get("file_type")
+        file_type = parse_structure_CustomTextType_20(file_type)
+        file_content = data.get("file_content")
+        file_content = parse_structure_Text(file_content)
+        return FileList(file_size, file_type, file_content)
+
+    def to_structure(self):
+        return {
+            "file_size":to_structure_OptionalType_UnsignedIntegerType_32(self.file_size),
+            "file_type": to_structure_CustomTextType_20(self.file_type),
+            "file_content": to_structure_Text(self.file_content)
+        }
+
+#
 # Compliance
 #
 
 class Compliance(object):
-    def __init__(self, compliance_id, statutory_provision, compliance_task, description, document_name, format_file_name, penal_description, frequency_id, statutory_dates, repeats_type_id, repeats_every, duration_type_id, duration, is_active):
+    def __init__(self, compliance_id, statutory_provision, compliance_task, description, document_name, format_file_list, penal_consequences, frequency_id, statutory_dates, repeats_type_id, repeats_every, duration_type_id, duration, is_active):
         self.compliance_id = compliance_id
         self.statutory_provision = statutory_provision
         self.compliance_task = compliance_task
         self.description = description
         self.document_name = document_name
-        self.format_file_name = format_file_name
-        self.penal_description = penal_description
+        self.format_file_list = format_file_list
+        self.penal_consequences = penal_consequences
         self.frequency_id = frequency_id
         self.statutory_dates = statutory_dates
         self.repeats_type_id = repeats_type_id
@@ -847,7 +893,7 @@ class Compliance(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_id", "statutory_provision", "compliance_task", "description", "document_name", "format_file_name", "penal_description", "frequency_id", "statutory_dates", "repeats_type_id", "repeats_every", "duration_type_id", "duration", "is_active"])
+        data = parse_dictionary(data, ["compliance_id", "statutory_provision", "compliance_task", "description", "document_name", "format_file_list", "penal_consequences", "frequency_id", "statutory_dates", "repeats_type_id", "repeats_every", "duration_type_id", "duration", "is_active"])
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_OptionalType_SignedIntegerType_8(compliance_id)
         statutory_provision = data.get("statutory_provision")
@@ -857,26 +903,26 @@ class Compliance(object):
         description = data.get("description")
         description = parse_structure_CustomTextType_500(description)
         document_name = data.get("document_name")
-        document_name = parse_structure_CustomTextType_50(document_name)
-        format_file_name = data.get("format_file_name")
-        format_file_name = parse_structure_VectorType_CustomTextType_50(format_file_name)
-        penal_description = data.get("penal_description")
-        penal_description = parse_structure_CustomTextType_500(penal_description)
+        document_name = parse_structure_OptionalType_CustomTextType_50(document_name)
+        format_file_list = data.get("format_file_list")
+        format_file_list = parse_structure_OptionalType_VectorType_RecordType_core_FileList(format_file_list)
+        penal_consequences = data.get("penal_consequences")
+        penal_consequences = parse_structure_OptionalType_CustomTextType_500(penal_consequences)
         frequency_id = data.get("frequency_id")
-        frequency_id = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(frequency_id)
+        frequency_id = parse_structure_OptionalType_SignedIntegerType_8(frequency_id)
         statutory_dates = data.get("statutory_dates")
-        statutory_dates = parse_structure_VectorType_RecordType_core_StatutoryDate(statutory_dates)
+        statutory_dates = parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         repeats_type_id = data.get("repeats_type_id")
-        repeats_type_id = parse_structure_UnsignedIntegerType_32(repeats_type_id)
+        repeats_type_id = parse_structure_OptionalType_UnsignedIntegerType_32(repeats_type_id)
         repeats_every = data.get("repeats_every")
-        repeats_every = parse_structure_UnsignedIntegerType_32(repeats_every)
+        repeats_every = parse_structure_OptionalType_UnsignedIntegerType_32(repeats_every)
         duration_type_id = data.get("duration_type_id")
-        duration_type_id = parse_structure_UnsignedIntegerType_32(duration_type_id)
+        duration_type_id = parse_structure_OptionalType_UnsignedIntegerType_32(duration_type_id)
         duration = data.get("duration")
-        duration = parse_structure_UnsignedIntegerType_32(duration)
+        duration = parse_structure_OptionalType_UnsignedIntegerType_32(duration)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
-        return Compliance(compliance_id, statutory_provision, compliance_task, description, document_name, format_file_name, penal_description, frequency_id, statutory_dates, repeats_type_id, repeats_every, duration_type_id, duration, is_active)
+        return Compliance(compliance_id, statutory_provision, compliance_task, description, document_name, format_file_list, penal_consequences, frequency_id, statutory_dates, repeats_type_id, repeats_every, duration_type_id, duration, is_active)
 
     def to_structure(self):
         return {
@@ -884,15 +930,15 @@ class Compliance(object):
             "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
             "compliance_task": to_structure_CustomTextType_50(self.compliance_task),
             "description": to_structure_CustomTextType_500(self.description),
-            "document_name": to_structure_CustomTextType_50(self.document_name),
-            "format_file_name": to_structure_VectorType_CustomTextType_50(self.format_file_name),
-            "penal_description": to_structure_CustomTextType_500(self.penal_description),
-            "frequency_id": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.frequency_id),
-            "statutory_dates": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
-            "repeats_type_id": to_structure_SignedIntegerType_8(self.repeats_type_id),
-            "repeats_every": to_structure_SignedIntegerType_8(self.repeats_every),
-            "duration_type_id": to_structure_SignedIntegerType_8(self.duration_type_id),
-            "duration": to_structure_SignedIntegerType_8(self.duration),
+            "document_name": to_structure_OptionalType_CustomTextType_50(self.document_name),
+            "format_file_list": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.format_file_list),
+            "penal_consequences": to_structure_OptionalType_CustomTextType_500(self.penal_consequences),
+            "frequency_id": to_structure_OptionalType_SignedIntegerType_8(self.frequency_id),
+            "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
+            "repeats_type_id": to_structure_OptionalType_UnsignedIntegerType_32(self.repeats_type_id),
+            "repeats_every": to_structure_OptionalType_UnsignedIntegerType_32(self.repeats_every),
+            "duration_type_id": to_structure_OptionalType_UnsignedIntegerType_32(self.duration_type_id),
+            "duration": to_structure_OptionalType_UnsignedIntegerType_32(self.duration),
             "is_active": to_structure_Bool(self.is_active),
         }
 
@@ -951,7 +997,7 @@ class StatutoryMapping(object):
         geography_mappings = data.get("geography_mappings")
         geography_mappings = parse_structure_VectorType_Text(geography_mappings)
         approval_status = data.get("approval_status")
-        approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(approval_status)
+        approval_status = parse_structure_SignedIntegerType_8(approval_status)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return StatutoryMapping(country_id, country_name, domain_id, domain_name, industry_ids, industry_names, statutory_nature_id, statutory_nature_name, statutory_ids, statutory_mappings, compliances, compliance_names, geography_ids, geography_mappings, approval_status, is_active)
@@ -972,7 +1018,7 @@ class StatutoryMapping(object):
             "compliance_names": to_structure_VectorType_Text(self.compliance_names),
             "geography_ids": to_structure_VectorType_SignedIntegerType_8(self.geography_ids),
             "geography_mappings": to_structure_VectorType_Text(self.geography_mappings),
-            "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
+            "approval_status": to_structure_SignedIntegerType_8(self.approval_status),
             "is_active": to_structure_Bool(self.is_active),
         }
 
@@ -2127,11 +2173,11 @@ class StatutoryDate(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["statutory_date", "statutory_month", "trigger_before_days"])
         statutory_date = data.get("statutory_date")
-        statutory_date = parse_structure_CustomIntegerType_1_31(statutory_date)
+        statutory_date = parse_structure_OptionalType_CustomIntegerType_1_31(statutory_date)
         statutory_month = data.get("statutory_month")
-        statutory_month = parse_structure_CustomIntegerType_1_12(statutory_month)
+        statutory_month = parse_structure_OptionalType_CustomIntegerType_1_12(statutory_month)
         trigger_before_days = data.get("trigger_before_days")
-        trigger_before_days = parse_structure_UnsignedIntegerType_32(trigger_before_days)
+        trigger_before_days = parse_structure_OptionalType_CustomIntegerType_1_100(trigger_before_days)
         return StatutoryDate(statutory_date, statutory_month, trigger_before_days)
 
     def to_structure(self):
