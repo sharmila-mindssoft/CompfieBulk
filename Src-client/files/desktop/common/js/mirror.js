@@ -431,7 +431,7 @@ function initMirror() {
         compliance["compliance_task"] = complianceTask;
         compliance["description"] = description;
         compliance["document_name"] = documentName;
-        compliance["format_file_name"] = fileFormat;
+        compliance["format_file_list"] = fileFormat;
         compliance["penal_consequences"] = penalConsequence;
         compliance["frequency_id"] = complianceFrequency;
         compliance["statutory_dates"] = statutoryDates;

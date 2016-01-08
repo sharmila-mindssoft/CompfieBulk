@@ -1769,7 +1769,7 @@ def parse_structure_VectorType_RecordType_core_FileLst(data):
     return lst        
 
 def parse_structure_OptionalType_VectorType_RecordType_core_FileList(data):
-    if data is None : return None
+    if data is None: return None
     return parse_structure_VectorType_RecordType_core_FileLst(data)
 
 def parse_structure_RecordType_clientmasters_Request_ChangeServiceProviderStatus(data):
