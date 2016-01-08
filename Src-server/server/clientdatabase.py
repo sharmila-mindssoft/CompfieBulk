@@ -104,6 +104,16 @@ class ClientDatabase(Database):
 		self.tblUserUnits = "tbl_user_units"
 		self.tblUsers = "tbl_users"
 
+	def verify_password(self, password, userId, client_id):
+		columns = "count(*)"
+		encrypted_password = self.encrypt(password)
+		condition = "password='%s' and user_id='%d'" % (encrypted_password, userId)
+		rows = self.get_data(self.tblUsers, columns, condition, client_id)
+		if(int(rows[0][0]) <= 0):
+		    return False
+		else:
+		    return True
+
 	def validate_session_token(self, client_id, session_token) :
 		query = "SELECT user_id FROM tbl_user_sessions \
 		    WHERE session_token = '%s'" % (session_token)
@@ -177,7 +187,7 @@ class ClientDatabase(Database):
 	def return_business_groups(self, business_groups):
 		results = []
 		for business_group in business_groups :
-		    results.append(core.BusinessGroup(
+		    results.append(core.ClientBusinessGroup(
 		        business_group["business_group_id"], business_group["business_group_name"]
 		    ))
 		return results 
@@ -195,7 +205,7 @@ class ClientDatabase(Database):
 	def return_legal_entities(self, legal_entities):
 		results = []
 		for legal_entity in legal_entities :
-		    results.append(core.LegalEntity(
+		    results.append(core.ClientLegalEntity(
 		        legal_entity["legal_entity_id"], legal_entity["legal_entity_name"],
 		        legal_entity["business_group_id"]
 		    ))
@@ -215,7 +225,7 @@ class ClientDatabase(Database):
 	def return_divisions(self, divisions):
 		results = []
 		for division in divisions :
-		    division_obj = core.Division(division["division_id"], division["division_name"],
+		    division_obj = core.ClientDivision(division["division_id"], division["division_name"],
 		        division["legal_entity_id"],division["business_group_id"])
 		    results.append(division_obj)
 		return results
@@ -226,7 +236,7 @@ class ClientDatabase(Database):
 		condition = "1"
 		if unit_ids != None:
 			condition = "unit_id in (%s)" % unit_ids
-		rows = self.get_data(self.tblUnits, columns, condition) 
+		rows = self.get_data(self.tblUnits, columns, condition, client_id) 
 		columns = ["unit_id", "unit_code", "unit_name", "unit_address", "division_id", 
 		"legal_entity_id", "business_group_id", "is_active"]
 		result = self.convert_to_dict(rows, columns)
@@ -235,7 +245,7 @@ class ClientDatabase(Database):
 	def return_units(self, units):
 		results = []
 		for unit in units :
-		    results.append(core.Unit(
+		    results.append(core.ClientUnit(
 		        unit["unit_id"], unit["division_id"], unit["legal_entity_id"],
 		        unit["business_group_id"], unit["unit_code"],
 		        unit["unit_name"], unit["unit_address"], bool(unit["is_active"])
@@ -483,25 +493,9 @@ class ClientDatabase(Database):
 
 	def deactivate_unit(self, unit_id, client_id):
 		columns = ["is_active"]
-		values = [0]
+		values = [1]
 		condition = "unit_id ='%d'" % unit_id
 		return self.update(self.tblUnits, columns, values, condition, client_id)
-
-	def get_unit_closure_list(self, client_id):
-		columns = "tu.unit_id, tu.unit_name, tu.unit_code, td.division_name, tle.legal_entity_name,"+\
-		"tbg.business_group_name, tu.address, tu.is_active"
-		tables = [self.tblUnits, self.tblDivisions, self.tblLegalEntities, 
-		        self.tblBusinessGroups]
-		aliases = ["tu", "td", "tle", "tbg"]
-		join_conditions = ["tu.division_id = td.division_id", "tu.legal_entity_id = tle.legal_entity_id",
-		"tu.business_group_id =tbg.business_group_id" ]
-		where_condition = "1"
-		join_type = "left join"
-
-		rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type, 
-		    join_conditions, where_condition, client_id)
-
-		return rows
 
 	def generate_new_service_provider_id(self, client_id) :
 		return self.get_new_id("service_provider_id",self.tblServiceProviders,  client_id)

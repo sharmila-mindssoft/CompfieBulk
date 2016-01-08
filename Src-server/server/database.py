@@ -324,11 +324,14 @@ class Database(object) :
                     result_list.append(result)
             return result_list
         else :
-            result = {}
-            if len(data_list) == len(columns) :
-                for i, d in enumerate(data_list):
-                    result[columns[i]] = d
-            return result
+            if len(data_list) > 0:
+                if len(data_list[0]) == len(columns) :
+                    result = {}
+                    for i, d in enumerate(data_list[0]):
+                        result[columns[i]] = d
+                    result_list.append(result)
+            return result_list
+
 
 class KnowledgeDatabase(Database):
     def __init__(
@@ -2485,7 +2488,7 @@ class KnowledgeDatabase(Database):
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
         " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
-        " is_active"
+        " is_active, url_short_name"
         condition = "1"
         return self.get_data(self.tblClientGroups, columns, condition)
 
@@ -2577,7 +2580,6 @@ class KnowledgeDatabase(Database):
         query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" %(
             database_name, db_username, host, db_password)
         cursor.execute(query)
-        print query
         con.commit()
 
         con = self._db_connect(host, username, password, database_name)

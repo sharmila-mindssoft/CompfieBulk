@@ -86,7 +86,16 @@ def process_reset_password(db, request):
 	return login.ResetPasswordSuccess()
 
 def process_change_password(db, request):
-	return login.ChangePasswordSuccess()
+    self.sessionUser = sessionUser
+    self.currentPassword = JSONHelper.getString(requestData, "current_password")
+    self.newPassword = JSONHelper.getString(requestData, "new_password")
+
+    if self.validateCurrentPassword() :
+        db.update_password()
+        return login.ChangePasswordSuccess()
+    else :
+        return login.InvalidCurrentPassword()
+	
 
 def process_logout(db, request):
 	return login.LogoutSuccess()

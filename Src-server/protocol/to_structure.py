@@ -218,6 +218,13 @@ def to_structure_VectorType_RecordType_core_BusinessGroup(data):
         lst.append(to_structure_RecordType_core_BusinessGroup(item))
     return lst
 
+def to_structure_VectorType_RecordType_core_ClientBusinessGroup(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_ClientBusinessGroup(item))
+    return lst
+
 def to_structure_VectorType_RecordType_core_UserGroup(data):
     data = parse_list(data, 0)
     lst = []
@@ -237,6 +244,13 @@ def to_structure_VectorType_RecordType_core_LegalEntity(data):
     lst = []
     for item in data:
         lst.append(to_structure_RecordType_core_LegalEntity(item))
+    return lst
+
+def to_structure_VectorType_RecordType_core_ClientLegalEntity(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_ClientLegalEntity(item))
     return lst
 
 def to_structure_VectorType_RecordType_core_ClientConfiguration(data):
@@ -261,6 +275,13 @@ def to_structure_VectorType_RecordType_core_Division(data):
     lst = []
     for item in data:
         lst.append(to_structure_RecordType_core_Division(item))
+    return lst
+
+def to_structure_VectorType_RecordType_core_ClientDivision(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_ClientDivision(item))
     return lst
 
 def to_structure_RecordType_knowledgemaster_Response_InvalidGeographyId(data):
@@ -747,6 +768,13 @@ def to_structure_VectorType_RecordType_core_Unit(data):
         lst.append(to_structure_RecordType_core_Unit(item))
     return lst
 
+def to_structure_VectorType_RecordType_core_ClientUnit(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_ClientUnit(item))
+    return lst
+
 def to_structure_VectorType_RecordType_core_Form(data):
     data = parse_list(data, 0)
     lst = []
@@ -973,6 +1001,10 @@ def to_structure_OptionalType_RecordType_core_BusinessGroup(data):
     if data is None: return data
     return to_structure_RecordType_core_BusinessGroup(data)
 
+def to_structure_OptionalType_RecordType_core_ClientBusinessGroup(data):
+    if data is None: return data
+    return to_structure_RecordType_core_ClientBusinessGroup(data)
+
 def to_structure_RecordType_clientuser_Response_GetOnOccurrenceCompliancesSuccess(data):
     from protocol import clientuser
     return clientuser.Response.to_structure(data)
@@ -1035,6 +1067,10 @@ def to_structure_RecordType_technotransactions_Response_GetAssignedStatutoriesLi
 def to_structure_OptionalType_RecordType_core_Division(data):
     if data is None: return data
     return to_structure_RecordType_core_Division(data)
+
+def to_structure_OptionalType_RecordType_core_ClientDivision(data):
+    if data is None: return data
+    return to_structure_RecordType_core_ClientDivision(data)
 
 def to_structure_VectorType_RecordType_core_Compliance(data):
     data = parse_list(data, 0)
@@ -1208,6 +1244,10 @@ def to_structure_VectorType_RecordType_dashboard_DrillDownData(data):
 def to_structure_RecordType_core_LegalEntity(data):
     from protocol import core
     return core.LegalEntity.to_structure(data)
+
+def to_structure_RecordType_core_ClientLegalEntity(data):
+    from protocol import core
+    return core.ClientLegalEntity.to_structure(data)
 
 def to_structure_RecordType_core_GroupCompany(data):
     from protocol import core
@@ -1803,6 +1843,10 @@ def to_structure_RecordType_core_BusinessGroup(data):
     from protocol import core
     return core.BusinessGroup.to_structure(data)
 
+def to_structure_RecordType_core_ClientBusinessGroup(data):
+    from protocol import core
+    return core.ClientBusinessGroup.to_structure(data)
+
 def to_structure_EnumType_core_COMPLIANCE_FREQUENCY(data):
     from protocol import core
     return core.COMPLIANCE_FREQUENCY.to_structure(data)
@@ -2271,6 +2315,10 @@ def to_structure_RecordType_core_Division(data):
     from protocol import core
     return core.Division.to_structure(data)
 
+def to_structure_RecordType_core_ClientDivision(data):
+    from protocol import core
+    return core.ClientDivision.to_structure(data)
+
 def to_structure_RecordType_core_Country(data):
     from protocol import core
     return core.Country.to_structure(data)
@@ -2315,6 +2363,10 @@ def to_structure_RecordType_dashboard_Response_GetChartFiltersSuccess(data):
 def to_structure_RecordType_core_Unit(data):
     from protocol import core
     return core.Unit.to_structure(data)
+
+def to_structure_RecordType_core_ClientUnit(data):
+    from protocol import core
+    return core.ClientUnit.to_structure(data)
 
 def to_structure_RecordType_core_UpcomingCompliance(data):
     from protocol import core
