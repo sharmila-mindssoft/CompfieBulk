@@ -7,7 +7,8 @@ from protocol.parse_structure import (
     parse_structure_UnsignedIntegerType_32,
     parse_structure_EnumType_core_SESSION_TYPE,
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_50,
-    parse_structure_OptionalType_CustomTextType_100
+    parse_structure_OptionalType_CustomTextType_100,
+    parse_structure_OptionalType_CustomTextType_20
 )
 from protocol.to_structure import (
     to_structure_CustomTextType_100,
@@ -15,7 +16,8 @@ from protocol.to_structure import (
     to_structure_SignedIntegerType_8,
     to_structure_EnumType_core_SESSION_TYPE,
     to_structure_CustomTextType_20, to_structure_CustomTextType_50,
-    to_structure_OptionalType_CustomTextType_100
+    to_structure_OptionalType_CustomTextType_100,
+    to_structure_OptionalType_CustomTextType_20
 )
 
 #
@@ -45,10 +47,11 @@ class Request(object):
         raise NotImplementedError
 
 class Login(Request):
-    def __init__(self, login_type, username, password):
+    def __init__(self, login_type, username, password, short_name):
         self.login_type = login_type
         self.username = username
         self.password = password
+        self.short_name = short_name
 
     @staticmethod
     def parse_inner_structure(data):
@@ -59,13 +62,16 @@ class Login(Request):
         username = parse_structure_CustomTextType_100(username)
         password = data.get("password")
         password = parse_structure_CustomTextType_20(password)
-        return Login(login_type, username, password)
+        short_name = data.get("short_name")
+        short_name = parse_structure_OptionalType_CustomTextType_20(short_name)
+        return Login(login_type, username, password, short_name)
 
     def to_inner_structure(self):
         return {
             "login_type": to_structure_EnumType_core_SESSION_TYPE(self.login_type),
             "username": to_structure_CustomTextType_100(self.username),
             "password": to_structure_CustomTextType_20(self.password),
+            "short_name": to_structure_OptionalType_CustomTextType_20(self.short_name),
         }
 
 class ForgotPassword(Request):

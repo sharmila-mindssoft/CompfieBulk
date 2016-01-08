@@ -5,9 +5,13 @@ __all__ = [
 	"generate_menu_from_forms"
 ]
 
-def process_user_forms(db, form_ids):
+def process_user_forms(db, form_ids, client_id = None, is_admin = None):
 	print "process_user_forms", form_ids
-	forms = db.get_user_forms(form_ids)
+	forms = None
+	if client_id != None:
+		forms = db.get_user_forms(form_ids, client_id, is_admin)
+	else:
+		forms = db.get_user_forms(form_ids)
 	print forms
 	form_list = []
 	for f in forms :

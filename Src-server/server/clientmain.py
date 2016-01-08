@@ -14,6 +14,7 @@ from protocol import (
     login
 )
 from server.clientdatabase import ClientDatabase
+from server.database import KnowledgeDatabase
 
 import clientcontroller as controller 
 import MySQLdb as mysql
@@ -105,7 +106,7 @@ class API(object):
         # self._db.begin()
         try:
             response_data = unbound_method(self, request_data, self._db)
-            # self._db.commit()
+            # self._db.commit() 
             respond(response_data)
         except Exception, e:
             print(traceback.format_exc())
@@ -116,7 +117,6 @@ class API(object):
     @api_request(login.Request)
     def handle_login(self, request, db):
         return controller.process_login_request(request, db)
-        # return login.ResetPasswordSuccess()
 
     @api_request(clientmasters.RequestFormat)
     def handle_client_masters(self, request, db):
@@ -128,13 +128,20 @@ template_loader = jinja2.FileSystemLoader(
 template_env = jinja2.Environment(loader=template_loader)
 
 class TemplateHandler(tornado.web.RequestHandler) :
-    def initialize(self, path_desktop, path_mobile,     parameters) :
+    def initialize(self, path_desktop, path_mobile, parameters) :
+        print "inside template handler initialize"
         # parameters = {"user":self.get_cookie("user"), "data":OrderedDict(sorted(countriesdb.countries.items(), key=lambda t: t[1])),}
         self.__path_desktop = path_desktop
         self.__path_mobile = path_mobile
         self.__parameters = parameters
 
-    def get(self) :
+    def get(self, url = None) :
+        if url != None:
+            db = KnowledgeDatabase("localhost", "root", "123456", "mirror_knowledge")
+            con = db.begin()
+            if not db.validate_short_name(url):
+                print "Invalid URL"
+                return
         path = self.__path_desktop
         if self.__path_mobile is not None :
             useragent = self.request.headers.get("User-Agent")
@@ -161,8 +168,9 @@ class TemplateHandler(tornado.web.RequestHandler) :
 #
 
 TEMPLATE_PATHS = [
-    ("/login", "files/desktop/login/login.html", "files/mobile/login/login.html", {}),
-    ("/test", "test_apis.html", "", {})    
+    (r"/login/([a-zA-Z-0-9]+)", "files/desktop/login/login.html", "files/mobile/login/login.html", {}),
+    ("/test", "test_apis.html", "", {}),
+    ("/home", "files/desktop/home/home.html", None, {}),
 ]
 
 
