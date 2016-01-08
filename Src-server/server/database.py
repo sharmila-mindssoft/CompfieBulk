@@ -314,21 +314,26 @@ class Database(object) :
 
     def convert_to_dict(self, data_list, columns) :
         assert type(data_list) in (list, tuple)
-        if type(data_list[0]) is tuple :
-            result_list = []
-            if len(data_list[0]) == len(columns) :
-                for data in data_list:
-                    result = {}
-                    for i, d in enumerate(data):
+        if len(data_list) > 0:
+            if type(data_list[0]) is tuple :
+                result_list = []
+                if len(data_list[0]) == len(columns) :
+                    for data in data_list:
+                        result = {}
+                        for i, d in enumerate(data):
+                            result[columns[i]] = d
+                        result_list.append(result)
+                return result_list
+            else :
+                result = {}
+                if len(data_list) == len(columns) :
+                    for i, d in enumerate(data_list):
                         result[columns[i]] = d
-                    result_list.append(result)
-            return result_list
-        else :
-            result = {}
-            if len(data_list) == len(columns) :
-                for i, d in enumerate(data_list):
-                    result[columns[i]] = d
-            return result
+                return result
+        else:
+            return []
+
+            
 
 class KnowledgeDatabase(Database):
     def __init__(
@@ -394,24 +399,6 @@ class KnowledgeDatabase(Database):
         self.tblUserLoginHistory = "tbl_user_login_history"
         self.tblUserSessions = "tbl_user_sessions"
         self.tblUsers = "tbl_users"
-
-    def convert_to_dict(self, data_list, columns) :
-        assert type(data_list) in (list, tuple)
-        if type(data_list[0]) is tuple :
-            result_list = []
-            if len(data_list[0]) == len(columns) :
-                for data in data_list:
-                    result = {}
-                    for i, d in enumerate(data):
-                        result[columns[i]] = d
-                    result_list.append(result)
-            return result_list
-        else :
-            result = {}
-            if len(data_list) == len(columns) :
-                for i, d in enumerate(data_list):
-                    result[columns[i]] = d
-            return result
 
     def validate_session_token(self, session_token) :
         # query = "CALL sp_validate_session_token ('%s');" 

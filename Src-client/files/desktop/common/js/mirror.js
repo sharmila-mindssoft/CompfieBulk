@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8080/";
+var BASE_URL = "http://localhost:8090/";
 
 function initMirror() {
     var DEBUG = true;
@@ -75,7 +75,6 @@ function initMirror() {
 
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
-        console.log(sessionToken)
         if (sessionToken == null)
             sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
         var requestFrame = {
@@ -87,7 +86,6 @@ function initMirror() {
             toJSON(requestFrame),
             function (data) {
                 var data = parseJSON(data);
-                console.log(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';

@@ -307,6 +307,7 @@ function clientgroup_edit(clientGroupId){
 		});
 }
 function loadFormListUpdate(clientListData, clientGroupId){
+	var dateconfigList;
 	for(clientList in clientListData){
 		if(clientGroupId == clientListData[clientList]['client_id']){
 			$("#clientgroup-name").val(clientListData[clientList]['client_name']);
@@ -334,6 +335,7 @@ function loadFormListUpdate(clientListData, clientGroupId){
 			$("#usersSelected").val(userListArray.length+" Selected");
 			$("#short-name").val(clientListData[clientList]['short_name']);
 			$("#short-name").attr("readonly", "true");
+			var dateconfigList=clientListData[clientList]['date_configurations'];
 		}
 	}	
 	var countryNamesList = '';
@@ -354,7 +356,65 @@ function loadFormListUpdate(clientListData, clientGroupId){
 		}
 	}
 	$("#domainNames").val(domainNamesList);
-	dateconfig();	
+	var value;
+	dateconfig(dateconfigList);	
+}
+
+function dateconfig(dateconfigList){
+	alert("hi");
+	$('.tbody-dateconfiguration-list').empty();
+	var countriesList = $('#country').val();
+	var domainsList = $('#domain').val();
+	alert("hi2");
+	console.log("list===="+dateconfigList);
+	alert("hi3");
+	if(countriesList != '' && domainsList != ''){
+		if(countriesList != ''){ 
+			var arrayCountries = countriesList.split(",");
+			if(domainsList != ''){
+				var arrayDomains = domainsList.split(",");
+			}
+			for(var ccount = 0;ccount < arrayCountries.length; ccount++){
+				var tableRow = $('#templates .table-dconfig-list .table-dconfig-countries-row');
+				var clone = tableRow.clone();
+				$('.inputCountry', clone).val(arrayCountries[ccount]);
+				$('.dconfig-country-name', clone).text(getCountriesName(arrayCountries[ccount]));
+				$('.dconfig-country-name', clone).addClass("heading");
+				$('.tbody-dateconfiguration-list').append(clone);
+
+				for(var dcount = 0;dcount < arrayDomains.length; dcount++){
+					var tableRowDomains = $('#templates .table-dconfig-list .table-dconfig-domain-row');
+					var clone1 = tableRowDomains.clone();
+					$('.inputDomain', clone1).val(arrayDomains[dcount]);
+					$('.dconfig-domain-name', clone1).text(getDomainName(arrayDomains[dcount]));
+
+					$('.tl-from', clone1).addClass('tl-from-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]);
+					$('.tl-to', clone1).addClass('tl-to-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]);
+					$('.tbody-dateconfiguration-list').append(clone1);
+				}
+			}
+		}
+	}
+}
+function getCountriesName(countryId){
+	var countryName;
+	$.each(countriesList, function (key, value){
+		if(countriesList[key]['country_id'] == countryId){
+			countryName = countriesList[key]['country_name'];
+			return false;
+		}
+	});
+	return countryName;
+}
+function getDomainName(doaminId){
+	var domainName;
+	$.each(domainsList, function (key, value){
+		if(domainList[key][domain_id] == doaminId){
+			domainName = domainList[key]['domain_name'];
+			return false;
+		}
+	});
+	return domainName;
 }
 $("#search-clientgroup-name").keyup(function() { 
 	var count = 0;
@@ -521,9 +581,6 @@ function dateconfig(){
 				}
 			}
 		}
-	}
-	if($("#clientgroup-id").val() != ''){
-
 	}
 }
 function loadAutoUsers () {
