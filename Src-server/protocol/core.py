@@ -38,7 +38,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomIntegerType_1_100,
     parse_structure_OptionalType_CustomIntegerType_1_12,
     parse_structure_OptionalType_CustomIntegerType_1_31,
-    parse_structure_Float
+    parse_structure_Float,
+    parse_structure_OptionalType_UnsignedIntegerType_32,
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -76,7 +77,13 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomIntegerType_1_100,
     to_structure_OptionalType_CustomIntegerType_1_12,
     to_structure_OptionalType_CustomIntegerType_1_31,
-    to_structure_Float
+    to_structure_Float,
+    to_structure_OptionalType_UnsignedIntegerType_32,
+    to_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    to_structure_VectorType_RecordType_core_ClientLegalEntity,
+    to_structure_VectorType_RecordType_core_ClientDivision,
+    to_structure_VectorType_RecordType_core_ClientUnit
+
 )
 
 #
@@ -1181,6 +1188,26 @@ class BusinessGroup(object):
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
         }
 
+class ClientBusinessGroup(object):
+    def __init__(self, business_group_id, business_group_name):
+        self.business_group_id = business_group_id
+        self.business_group_name = business_group_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["business_group_id", "business_group_name"])
+        business_group_id = data.get("business_group_id")
+        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
+        business_group_name = data.get("business_group_name")
+        business_group_name = parse_structure_CustomTextType_50(business_group_name)
+        return BusinessGroup(business_group_id, business_group_name)
+
+    def to_structure(self):
+        return {
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
+            "business_group_name": to_structure_CustomTextType_50(self.business_group_name),
+        }
+
 #
 # LegalEntity
 #
@@ -1211,6 +1238,30 @@ class LegalEntity(object):
             "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
             "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
+        }
+
+class ClientLegalEntity(object):
+    def __init__(self, legal_entity_id, legal_entity_name, business_group_id):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_id = business_group_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["legal_entity_id", "legal_entity_name", "business_group_id"])
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = parse_structure_OptionalType_SignedIntegerType_8(legal_entity_id)
+        legal_entity_name = data.get("legal_entity_name")
+        legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
+        business_group_id = data.get("business_group_id")
+        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
+        return ClientLegalEntity(legal_entity_id, legal_entity_name, business_group_id)
+
+    def to_structure(self):
+        return {
+            "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
+            "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
         }
 
 #
@@ -1247,6 +1298,34 @@ class Division(object):
             "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
             "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
+        }
+
+class ClientDivision(object):
+    def __init__(self, division_id, division_name, legal_entity_id, business_group_id):
+        self.division_id = division_id
+        self.division_name = division_name
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["division_id", "division_name", "legal_entity_id", "business_group_id"])
+        division_id = data.get("division_id")
+        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
+        division_name = data.get("division_name")
+        division_name = parse_structure_CustomTextType_50(division_name)
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
+        business_group_id = data.get("business_group_id")
+        business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
+        return Division(division_id, division_name, legal_entity_id, business_group_id)
+
+    def to_structure(self):
+        return {
+            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "division_name": to_structure_CustomTextType_50(self.division_name),
+            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
+            "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
         }
 
 #
@@ -1295,6 +1374,50 @@ class Unit(object):
             "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
             "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
+            "unit_code": to_structure_CustomTextType_20(self.unit_code),
+            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_address": to_structure_CustomTextType_250(self.unit_address),
+            "is_active": to_structure_Bool(self.is_active)
+        }
+
+class ClientUnit(object):
+    def __init__(self, unit_id, division_id, legal_entity_id, business_group_id, unit_code, unit_name, unit_address, is_active):
+        self.unit_id = unit_id
+        self.division_id = division_id
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.unit_address = unit_address
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "division_id", "legal_entity_id", "business_group_id", "unit_code", "unit_name", "unit_address", "is_active"])
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
+        division_id = data.get("division_id")
+        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
+        business_group_id = data.get("business_group_id")
+        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
+        unit_code = data.get("unit_code")
+        unit_code = parse_structure_CustomTextType_20(unit_code)
+        unit_name = data.get("unit_name")
+        unit_name = parse_structure_CustomTextType_50(unit_name)
+        unit_address = data.get("unit_address")
+        unit_address = parse_structure_CustomTextType_250(unit_address)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        return Unit(unit_id, division_id, legal_entity_id, business_group_id, unit_code, unit_name, unit_address, is_active)
+
+    def to_structure(self):
+        return {
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
             "unit_code": to_structure_CustomTextType_20(self.unit_code),
             "unit_name": to_structure_CustomTextType_50(self.unit_name),
             "unit_address": to_structure_CustomTextType_250(self.unit_address),
@@ -1378,6 +1501,30 @@ class UnitDetails(object):
 #
 
 class ServiceProvider(object):
+    def __init__(self, service_provider_id, service_provider_name, is_active):
+        self.service_provider_id = service_provider_id
+        self.service_provider_name = service_provider_name
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["service_provider_id", "service_provider_name","is_active"])
+        service_provider_id = data.get("service_provider_id")
+        service_provider_id = parse_structure_OptionalType_SignedIntegerType_8(service_provider_id)
+        service_provider_name = data.get("service_provider_name")
+        service_provider_name = parse_structure_CustomTextType_50(service_provider_name)
+        is_active = data.get("is_active")
+        is_active = parse_structure_OptionalType_Bool(is_active)
+        return ServiceProvider(service_provider_id, service_provider_name, is_active)
+
+    def to_structure(self):
+        return {
+            "service_provider_id": to_structure_OptionalType_SignedIntegerType_8(self.service_provider_id),
+            "service_provider_name": to_structure_CustomTextType_50(self.service_provider_name),
+            "is_active": to_structure_OptionalType_Bool(self.is_active),
+        }
+
+class ServiceProviderDetails(object):
     def __init__(self, service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no, is_active):
         self.service_provider_id = service_provider_id
         self.service_provider_name = service_provider_name
@@ -1407,7 +1554,7 @@ class ServiceProvider(object):
         contact_no = parse_structure_CustomTextType_20(contact_no)
         is_active = data.get("is_active")
         is_active = parse_structure_OptionalType_Bool(is_active)
-        return ServiceProvider(service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no, is_active)
+        return ServiceProviderDetails(service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no, is_active)
 
     def to_structure(self):
         return {
@@ -1426,7 +1573,7 @@ class ServiceProvider(object):
 #
 
 class ClientUser(object):
-    def __init__(self, user_id, email_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, seating_unit_name, user_level, country_ids, domain_ids, unit_ids, is_admin, is_service_provider, service_provider_id, is_active):
+    def __init__(self, user_id, email_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, user_level, country_ids, domain_ids, unit_ids, is_admin, is_service_provider, service_provider_id, is_active):
         self.user_id = user_id
         self.email_id = email_id
         self.user_group_id = user_group_id
@@ -1434,7 +1581,6 @@ class ClientUser(object):
         self.employee_code = employee_code
         self.contact_no = contact_no
         self.seating_unit_id = seating_unit_id
-        self.seating_unit_name = seating_unit_name
         self.user_level = user_level
         self.country_ids = country_ids
         self.domain_ids = domain_ids
@@ -1446,7 +1592,7 @@ class ClientUser(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "email_id", "user_group_id", "employee_name", "employee_code", "contact_no", "seating_unit_id", "seating_unit_name", "user_level", "country_ids", "domain_ids", "unit_ids", "is_admin", "is_service_provider", "service_provider_id", "is_active"])
+        data = parse_dictionary(data, ["user_id", "email_id", "user_group_id", "employee_name", "employee_code", "contact_no", "seating_unit_id", "user_level", "country_ids", "domain_ids", "unit_ids", "is_admin", "is_service_provider", "service_provider_id", "is_active"])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         email_id = data.get("email_id")
@@ -1461,8 +1607,6 @@ class ClientUser(object):
         contact_no = parse_structure_CustomTextType_20(contact_no)
         seating_unit_id = data.get("seating_unit_id")
         seating_unit_id = parse_structure_UnsignedIntegerType_32(seating_unit_id)
-        seating_unit_name = data.get("seating_unit_name")
-        seating_unit_name = parse_structure_CustomTextType_50(seating_unit_name)
         user_level = data.get("user_level")
         user_level = parse_structure_CustomIntegerType_1_10(user_level)
         country_ids = data.get("country_ids")
@@ -1476,12 +1620,13 @@ class ClientUser(object):
         is_service_provider = data.get("is_service_provider")
         is_service_provider = parse_structure_Bool(is_service_provider)
         service_provider_id = data.get("service_provider_id")
-        service_provider_id = parse_structure_UnsignedIntegerType_32(service_provider_id)
+        service_provider_id = parse_structure_OptionalType_UnsignedIntegerType_32(service_provider_id)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return ClientUser(user_id, email_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, seating_unit_name, user_level, country_ids, domain_ids, unit_ids, is_admin, is_service_provider, service_provider_id, is_active)
 
     def to_structure(self):
+        print "inside core client users inner structure"
         return {
             "user_id": to_structure_SignedIntegerType_8(self.user_id),
             "email_id": to_structure_CustomTextType_100(self.email_id),
@@ -1490,14 +1635,13 @@ class ClientUser(object):
             "employee_code": to_structure_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
             "seating_unit_id": to_structure_SignedIntegerType_8(self.seating_unit_id),
-            "seating_unit_name": to_structure_CustomTextType_50(self.seating_unit_name),
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "unit_ids": to_structure_VectorType_SignedIntegerType_8(self.unit_ids),
             "is_admin": to_structure_Bool(self.is_admin),
             "is_service_provider": to_structure_Bool(self.is_service_provider),
-            "service_provider_id": to_structure_SignedIntegerType_8(self.service_provider_id),
+            "service_provider_id": to_structure_OptionalType_UnsignedIntegerType_32(self.service_provider_id),
             "is_active": to_structure_Bool(self.is_active),
         }
 

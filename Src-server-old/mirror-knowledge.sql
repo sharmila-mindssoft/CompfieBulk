@@ -353,6 +353,7 @@ CREATE TABLE `tbl_client_groups` (
   `contract_to` DATE DEFAULT NULL,
   `no_of_user_licence` int(11) DEFAULT NULL,
   `total_disk_space` float DEFAULT NULL,
+  `total_disk_space_used` float(11) DEFAULT 0.0,
   `is_sms_subscribed` tinyint(4) DEFAULT NULL,
   `url_short_name` varchar(20) DEFAULT NULL,
   `incharge_persons` varchar(50) NOT NULL,

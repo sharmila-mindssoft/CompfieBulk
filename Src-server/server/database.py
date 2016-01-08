@@ -2009,7 +2009,6 @@ class KnowledgeDatabase(Database):
         self.save_activity(updated_by, 17, action)
         return True
 
-
     def update_compliance(self, mapping_id, datas, updated_by) :
         compliance_ids = []
         for data in datas :
@@ -2597,7 +2596,6 @@ class KnowledgeDatabase(Database):
         query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" %(
             database_name, db_username, host, db_password)
         cursor.execute(query)
-        print query
         con.commit()
 
         con = self._db_connect(host, username, password, database_name)
@@ -2719,6 +2717,7 @@ class KnowledgeDatabase(Database):
         return self.bulk_insert(self.tblUserClients, columns, values_list)
 
     def update_client_group_status(self, client_id, is_active, session_user):
+        is_active = 1 if is_active != False else 0
         columns = ["is_active", "updated_by", "updated_on"]
         values = [ is_active, int(session_user), self.get_date_time()]
         condition = "client_id='%d'" % client_id

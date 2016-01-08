@@ -85,13 +85,12 @@ SaveClientUser = RecordType("SaveClientUser", [
 	Field("employee_code", EMPLOYEE_CODE),
 	Field("contact_no", CONTACT_NUMBER),
 	Field("seating_unit_id", UNIT_ID),
-	Field("seating_unit_name", UNIT_NAME),
 	Field("user_level", USER_LEVEL),
 	Field("country_ids", CountryIdList),
 	Field("domain_ids", DomainIdList),
 	Field("unit_ids", UnitIdList),
 	Field("is_service_provider", STATUS),
-	Field("service_provider_id", SERVICE_PROVIDER_ID)
+	Field("service_provider_id", OptionalType(SERVICE_PROVIDER_ID))
 ])
 
 UpdateClientUser = RecordType("UpdateClientUser", [
@@ -101,18 +100,27 @@ UpdateClientUser = RecordType("UpdateClientUser", [
 	Field("employee_code", EMPLOYEE_CODE),
 	Field("contact_no", CONTACT_NUMBER),
 	Field("seating_unit_id", UNIT_ID),
-	Field("seating_unit_name", UNIT_NAME),
 	Field("user_level", USER_LEVEL),
 	Field("country_ids", CountryIdList),
 	Field("domain_ids", DomainIdList),
 	Field("unit_ids", UnitIdList),
 	Field("is_service_provider", STATUS),
-	Field("service_provider_id", SERVICE_PROVIDER_ID)
+	Field("service_provider_id", OptionalType(SERVICE_PROVIDER_ID))
 ])
 
 UpdateClientUserStatus = RecordType("UpdateClientUserStatus", [
 	Field("user_id", USER_ID),
 	Field("is_active", IS_ACTIVE)
+])
+
+ChangeUserStatus = RecordType("ChangeUserStatus", [
+	Field("user_id", USER_ID),
+	Field("is_active", IS_ACTIVE)
+])
+
+ChangeAdminStatus = RecordType("ChangeAdminStatus", [
+	Field("user_id", USER_ID),
+	Field("is_admin", IS_ADMIN)
 ])
 
 ### Close Unit
@@ -131,7 +139,8 @@ Request = VariantType("Request", [
 	GetUserPrivileges, SaveUserPrivileges,
 	UpdateUserPrivileges, ChangeUserPrivilegeStatus,
 	GetClientUsers, SaveClientUser, UpdateClientUser,
-	UpdateClientUserStatus, GetUnits, CloseUnit
+	UpdateClientUserStatus, GetUnits, CloseUnit, ChangeUserStatus,
+	ChangeAdminStatus
 ])
 
 RequestFormat = RecordType("RequestFormat", [
@@ -214,6 +223,8 @@ InvalidUserId = RecordType("InvalidUserId", [
 ChangeClientUserStatusSuccess = RecordType("ChangeClientUserStatusSuccess", [
 ])
 
+ChangeAdminStatusSuccess = RecordType("ChangeAdminStatusSuccess", [
+])
 ### Close Unit
 
 GetUnitsSuccess = RecordType("GetUnitsSuccess", [
@@ -239,7 +250,7 @@ Response = VariantType("Response", [
 	GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists,
 	UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess,
 	GetUnitsSuccess, InvalidPassword, CloseUnitSuccess,ContactNumberAlreadyExists,
-	InvalidServiceProviderId
+	InvalidServiceProviderId, ChangeAdminStatusSuccess
 ])
 
 

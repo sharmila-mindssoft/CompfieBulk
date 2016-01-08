@@ -112,18 +112,18 @@
 				client_mirror.getClientUsers(callback)	
 			}
 			function saveClientUser(){
-				emailId  = "TestClientUser2@domain.com"
+				emailId  = "TestClientUser5@domain.com"
 		        userGroupId = 1
-		        employeeName = "Test Employee 2"
-		        employeeCode = "TEMP002"
-		        contactNo = "+917845729583"
+		        employeeName = "Test Employee 5"
+		        employeeCode = "TEMP005"
+		        contactNo = "+919145729583"
 		        seatingUnitId = 1
 		        userLevel = 1
 		        countryIds = [1]
 		        domainIds = [1]
 		        unitIds = [1]
-		        isAdmin = 0
-		        isServiceProvider = 0
+		        isAdmin = false
+		        isServiceProvider = false
 		        serviceProviderId = null
 		        clientUserDetail = [emailId, userGroupId, employeeName, 
 		        employeeCode, contactNo, seatingUnitId, userLevel, 
@@ -138,14 +138,14 @@
 			      userGroupId = 1
 			      employeeName = "Test Employee 1 Update"
 			      employeeCode = "TEMPUP001"
-			      contactNo = "+917345729583"
+			      contactNo = "+917145729583"
 			      seatingUnitId = 1
 			      userLevel = 1
 			      countryIds = [1]
 			      domainIds = [1]
 			      unitIds = [1]
-			      isAdmin = 0
-			      isServiceProvider = 1
+			      isAdmin = false
+			      isServiceProvider = true
 			      serviceProviderId = 1
 			      clientUserDetail = [userId, userGroupId, employeeName, 
 			      employeeCode, contactNo, seatingUnitId, userLevel, 
@@ -155,13 +155,13 @@
 			      client_mirror.updateClientUser(clientUserDetailDict, callback) 
 			}
 			function changeClientUserStatus(){
-				userId = 1
-			      isActive = 0
+				userId = 11
+			      isActive = false
 			      client_mirror.changeClientUserStatus(userId, isActive, callback)
 			}
 			function changeAdminStatus(){
-				userId = 1
-			      isAdmin = 0
+				userId = 11
+			      isAdmin = false
 			      client_mirror.changeAdminStatus(userId, isAdmin, callback)
 			}
 			function getUnitClosureList(){
@@ -169,7 +169,7 @@
 			}
 			function closeUnit(){
 				unitId = 1;
-		        password = "sjfos";
+		        password = "123456";
 		        client_mirror.closeUnit(unitId, password, callback)
 			}
 			function saveAdminUserGroup(){
@@ -302,8 +302,8 @@
 		        mirror.updateClientGroup(clientGroupDetails, callback);
 			}
 			function changeClientGroupStatus(){
-				clientId = 23
-		        isActive = false
+				clientId = 2
+		        isActive = true
 		        mirror.changeClientGroupStatus( clientId, isActive, callback)
 			}
 			function getClientGroups(){

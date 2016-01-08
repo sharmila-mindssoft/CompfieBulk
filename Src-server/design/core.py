@@ -381,6 +381,24 @@ Division = RecordType("Division", [
     Field("client_id", GROUP_ID)
 ])
 
+ClientBusinessGroup = RecordType("ClientBusinessGroup", [
+	Field("business_group_id", OptionalType(BUSINESS_GROUP_ID)),
+    Field("business_group_name", BUSINESS_GROUP_NAME)
+])
+
+ClientLegalEntity = RecordType("ClientLegalEntity", [
+	Field("legal_entity_id", OptionalType(LEGAL_ENTITY_ID)),
+    Field("legal_entity_name", LEGAL_ENTITY_NAME),
+    Field("business_group_id", OptionalType(BUSINESS_GROUP_ID))
+])
+
+ClientDivision = RecordType("ClientDivision", [
+	Field("division_id", OptionalType(DIVISION_ID)),
+	Field("division_name", DIVISION_NAME),
+	Field("legal_entity_id", LEGAL_ENTITY_ID),
+    Field("business_group_id", BUSINESS_GROUP_ID)
+])
+
 UnitDetails = RecordType("UnitDetails", [
 	Field("unit_id", OptionalType(UNIT_ID)),
 	Field("division_id", OptionalType(DIVISION_ID)),
@@ -399,6 +417,17 @@ UnitDetails = RecordType("UnitDetails", [
 ])
 
 UnitDetailsList = VectorType(UnitDetails)
+
+ClientUnit = RecordType("ClientUnit", [
+	Field("unit_id", OptionalType(UNIT_ID)),
+	Field("division_id", OptionalType(DIVISION_ID)),
+	Field("legal_entity_id", LEGAL_ENTITY_ID),
+    Field("business_group_id",OptionalType(BUSINESS_GROUP_ID)),
+    Field("unit_code", UNIT_CODE),
+    Field("unit_name", UNIT_NAME),
+    Field("unit_address", ADDRESS),
+    Field("is_active", IS_ACTIVE),
+])
 
 Unit = RecordType("Unit", [
 	Field("unit_id", OptionalType(UNIT_ID)),
