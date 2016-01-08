@@ -314,7 +314,7 @@ function loadresult(filterList){
               if(display_occurance1){
                 var tableRow2=$('#head-templates .table-compliance-frequency-list .table-row-com-frequency');
                 var clone2=tableRow2.clone();
-                $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;">'+occurance+'</div>');
+                $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;width:150px;">'+occurance+'</div>');
                 $('.accordion-content'+count).append(clone2);
                 display_occurance1 = false;}
             }
@@ -322,7 +322,7 @@ function loadresult(filterList){
               if(display_occurance2){
                 var tableRow2=$('#head-templates .table-compliance-frequency-list .table-row-com-frequency');
                 var clone2=tableRow2.clone();
-                $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;">'+occurance+'</div>');
+                $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;width:150px;">'+occurance+'</div>');
                 $('.accordion-content'+count).append(clone2);
                 display_occurance2 = false;}
             }
@@ -330,7 +330,7 @@ function loadresult(filterList){
               if(display_occurance3){
                 var tableRow2=$('#head-templates  .table-compliance-frequency-list .table-row-com-frequency');
                 var clone2=tableRow2.clone();
-                $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;">'+occurance+'</div>');
+                $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;width:150px;">'+occurance+'</div>');
                 $('.accordion-content'+count).append(clone2);
                 display_occurance3 = false;}
             }
@@ -338,7 +338,7 @@ function loadresult(filterList){
               if(display_occurance4){
                 var tableRow2=$('#head-templates  .table-compliance-frequency-list .table-row-com-frequency');
                 var clone2=tableRow2.clone();
-                $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;">'+occurance+'</div>');
+                $('.tbl_heading', clone2).html('<div class="heading" style="margin-top:5px;width:150px;">'+occurance+'</div>');
                 $('.accordion-content'+count).append(clone2);
                 display_occurance4 = false;}
             }

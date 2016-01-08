@@ -10,6 +10,10 @@ var industriesList;
 var domainsList;
 var unitsList;
 
+var assignStatutoryCountryId = 0;
+var assignStatutoryCountryValue = null;
+
+
 function clearMessage() {
   $(".error-message").hide();
   $(".error-message").text("");
@@ -19,11 +23,96 @@ function displayMessage(message) {
   $(".error-message").show();
 }
 
+
+//check & uncheck list data for single selection
+  function activate(element, id, dispname, type){
+    alert($(element).attr('class'))
+    alert(type)
+    $(type).each( function( index, el ) {
+      $(el).removeClass( "active" );
+    });
+    $(element).addClass("active");
+
+    var checkbox_status = $(element).attr('class');
+    var clsval='';
+    var clsval1='';
+    var str='';
+
+    if(checkbox_status == 'countrylist active'){
+      assignStatutoryCountryId = id;
+      assignStatutoryCountryValue = dispname;
+
+      clsval='.grouplist';
+      clsval1='grouplist';
+      $('#group').empty();
+      for(var group in groupcompaniesList){
+        var groupid = groupcompaniesList[group]["client_id"];
+        var dispgroupname = groupcompaniesList[group]["group_name"];
+        if(groupcompaniesList[group]["is_active"] == true && $.inArray(id, groupcompaniesList[group]["country_ids"]) >= 0){
+          str += '<li id="'+groupid+'" class="'+clsval1+'" onclick="activate(this,'+groupid+',\''+dispgroupname+'\',\''+clsval+'\')" ><span class="filter2_name">'+dispgroupname+'</span></li>';
+        }
+      }
+      $('#group').append(str); 
+    }
+
+    if(checkbox_status == 'grouplist active'){
+      assignStatutoryGroupId = id;
+      assignStatutoryGroupValue = dispname;
+
+      clsval='.businessgrouplist';
+      clsval1='businessgrouplist';
+      $('#businessgroup').empty();
+      for(var businessgroup in businessgroupsList){
+        var businessgroupid = businessgroupsList[businessgroup]["business_group_id"];
+        var dispbusinessgroupname = businessgroupsList[businessgroup]["business_group_name"];
+        if(businessgroupsList[businessgroup]["client_id"] == id){
+          str += '<li id="'+businessgroupid+'" class="'+clsval1+'" onclick="activate(this,'+businessgroupid+',\''+dispbusinessgroupname+'\',\''+clsval+'\')" ><span class="filter2_name">'+dispbusinessgroupname+'</span></li>';
+        }
+      }
+      $('#businessgroup').append(str); 
+    }
+
+      /*if(checkbox_status == 'domainlist active'){
+        sm_domainid = id;
+        sm_domainval = dispname;
+      }
+
+      if(checkbox_status == 'statutorynaturelist active'){
+        sm_statutorynatureid = id;
+        sm_statutorynatureval = dispname;
+      }
+
+      if(sm_countryid != '' && sm_domainid !=''){
+        loadStatutoryLevels(sm_countryid,sm_domainid);
+      }
+      if(sm_countryid != ''){
+        loadGeographyLevels(sm_countryid);
+      }
+      make_breadcrumbs();*/
+  }
+
+function load_firstwizard(){
+  //load country details
+  var clsval='.countrylist';
+  var clsval1='countrylist';
+  var str='';
+  $('#country').empty();
+    for(var country in countriesList){
+      var countryid = countriesList[country]["country_id"];
+      var dispcountryname = countriesList[country]["country_name"];
+      if(countriesList[country]["is_active"] == true){
+      str += '<li id="'+countryid+'" class="'+clsval1+'" onclick="activate(this,'+countryid+',\''+dispcountryname+'\',\''+clsval+'\')" ><span class="filter1_name">'+dispcountryname+'</span></li>';
+    }
+  }
+  $('#country').append(str); 
+}
+
 $(".btn-assignstatutory-add").click(function(){
 $("#assignstatutory-view").hide();
 $("#assignstatutory-add").show();
 $("#edit_assignstatutory_id").val('');
 displayMessage('');
+load_firstwizard();
 
 /*sm_countryid='';
 sm_domainid='';
@@ -122,7 +211,7 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
 
 function getAssignedStatutories () {
 
-  /*function success(status,data){
+  /*function onSuccess(data){
     assignedStatutoriesList = data["assigned_statutories"];
     countriesList = data["countries"];
     groupcompaniesList = data["group_companies"];
@@ -137,9 +226,18 @@ function getAssignedStatutories () {
 
     loadAssignedStatutoriesList(assignedStatutoriesList);
   }
-  function failure(data){
+  function onFailure(error){
   }
-  mirror.GetAssignedStatutoriesList(success, failure);*/
+  mirror.GetAssignedStatutoriesList(
+    function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );*/
 
   assignedStatutoriesList = [
       {
@@ -172,7 +270,96 @@ function getAssignedStatutories () {
       }
     ];
 
-    countriesList = 
+    countriesList =  [
+      {
+        "country_name": "India", 
+        "is_active": true, 
+        "country_id": 1
+      }, 
+      {
+        "country_name": "United States", 
+        "is_active": true, 
+        "country_id": 2
+      }, 
+      {
+        "country_name": "Sri Lanka", 
+        "is_active": true, 
+        "country_id": 3
+      }, 
+      {
+        "country_name": "test country", 
+        "is_active": true, 
+        "country_id": 4
+      }
+    ];
+
+    domainsList =  [
+      {
+        "is_active": true, 
+        "domain_id": 1, 
+        "domain_name": "Finance Law"
+      }, 
+      {
+        "is_active": true, 
+        "domain_id": 2, 
+        "domain_name": "Industry Law"
+      }, 
+      {
+        "is_active": true, 
+        "domain_id": 4, 
+        "domain_name": "test domain2"
+      }
+    ];
+
+
+    groupcompaniesList = [
+    {
+        "country_ids":[1],
+        "is_active":true,
+        "domain_ids":"1",
+        "client_id":2,
+        "group_name":"Client Test Group 1"
+    },
+    {
+        "country_ids":[1],
+        "is_active":true,
+        "domain_ids":"1",
+        "client_id":7,
+        "group_name":"Client Test Group 21 Update"
+    },
+    {
+        "country_ids":[1,2],
+        "is_active":true,
+        "domain_ids":"1,2",
+        "client_id":11,
+        "group_name":"Test Client 1"
+    },
+    {
+        "country_ids":[1,2],
+        "is_active":true,
+        "domain_ids":"1,2",
+        "client_id":12,
+        "group_name":"Test Client 2"
+    },
+    {
+        "country_ids":[1,2],
+        "is_active":true,
+        "domain_ids":"1,2",
+        "client_id":13,
+        "group_name":"Test Client 21"
+    }
+
+];
+
+businessgroupsList = [
+
+    {
+        "business_group_id":1,
+        "client_id":2,
+        "business_group_name":"Test Business Group 1"
+    }
+
+];
 
 
   loadAssignedStatutoriesList(assignedStatutoriesList);
