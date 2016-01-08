@@ -15,6 +15,7 @@ $(".btn-clientgroup-add").click(function(){
 	$("#clientgroup-name").val('');
  	$("#clientgroup-id").val('');
  	clearMessage();
+ 	$("#short-name").removeAttr("readonly");
  	$("#upload-logo-img").hide();
  	var x=document.getElementsByTagName("input");
  	for(i = 0; i<=x.length-1; i++){
@@ -331,7 +332,8 @@ function loadFormListUpdate(clientListData, clientGroupId){
 			var userListArray = clientListData[clientList]['incharge_persons'];
 			$("#users").val(userListArray);
 			$("#usersSelected").val(userListArray.length+" Selected");
-			$("#short-name").val(clientListData[clientList][''])
+			$("#short-name").val(clientListData[clientList]['short_name']);
+			$("#short-name").attr("readonly", "true");
 		}
 	}	
 	var countryNamesList = '';
