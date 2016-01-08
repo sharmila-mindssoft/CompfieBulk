@@ -15,6 +15,7 @@ $(".btn-clientgroup-add").click(function(){
 	$("#clientgroup-name").val('');
  	$("#clientgroup-id").val('');
  	clearMessage();
+ 	$("#short-name").removeAttr("readonly");
  	$("#upload-logo-img").hide();
  	var x=document.getElementsByTagName("input");
  	for(i = 0; i<=x.length-1; i++){
@@ -66,68 +67,7 @@ function initialize(){
         }
 	);
 }
-function clientgroup_edit(clientGroupId){
-	$("#clientgroup-add").show();
-	$("#clientgroup-view").hide();
-	$("#clientgroup-id").val(clientGroupId);
-	function success(status, data){
-		if(status == "GetClientGroupsSuccess"){
-			userList = data["users"];
-			domainsList = data["domains"];	
-			countriesList = data["countries"];  	
-			loadFormListUpdate(data['client_list'],clientGroupId);
-		}
-	}
-	function failure(status, data){
-	}
-	mirror.getClientGroups(success, failure);
-}
-function loadFormListUpdate(clientListData, clientGroupId){
-	for(clientList in clientListData){
-		if(clientGroupId == clientListData[clientList]['client_id']){
-			$("#clientgroup-name").val(clientListData[clientList]['client_name']);
 
-			var countriesListArray = clientListData[clientList]['country_ids'];
-			$("#country").val(countriesListArray);
-			$("#countryselected").val(countriesListArray.length+" Selected");
-
-			var domainsListArray = clientListData[clientList]['domain_ids'];
-			$("#domain").val(domainsListArray);
-			$("#domainselected").val(domainsListArray.length+" Selected");
-
-			$("#contract-from").val(clientListData[clientList]['contract_from']);
-			$("#contract-to").val(clientListData[clientList]['contract_to']);
-			$("#username").val(clientListData[clientList]['username']);
-			//$("#upload-logo-img").attr("src",clientListData[clientList]['logo']);
-			$("#upload-logo-img").show();
-			$("#no-of-user-licence").val(clientListData[clientList]['no_of_user_licence']);
-			$("#file-space").val(clientListData[clientList]['file_space']);			
-			if(clientListData[clientList]['is_sms_subscribed'] == true){ $('#subscribe-sms').prop("checked", true); }
-			var userListArray = clientListData[clientList]['incharge_persons'];
-			$("#users").val(userListArray);
-			$("#usersSelected").val(userListArray.length+" Selected");
-		}
-	}	
-	var countryNamesList = '';
-	for (var countryselect in countriesList){
-		for(var i = 0;i<countriesListArray.length;i++){
-			if(countriesList[countryselect]['country_id'] == countriesListArray[i]){
-				countryNamesList = countryNamesList + countriesList[countryselect]['country_name'] + ',';
-			}
-		}
-	}
-	$("#countryNames").val(countryNamesList);
-	var domainNamesList = '';
-	for (var domainselect in domainsList){
-		for(var i = 0;i < domainsListArray.length;i++){
-			if(domainsList[domainselect]['domain_id'] == domainsListArray[i]){
-				domainNamesList = domainNamesList + domainsList[domainselect]['domain_name'] + ',';
-			}
-		}
-	}
-	$("#domainNames").val(domainNamesList);
-	dateconfig();	
-}
 function loadClientGroupList(clientGroupList){
 	$(".tbody-clientgroup-list").find("tr").remove();
 	var sno = 0;
@@ -144,7 +84,7 @@ function loadClientGroupList(clientGroupList){
 		else{
 			imageName = "icon-inactive.png";	
 			title = "Click here to Activate"
-				statusVal = true;
+			statusVal = true;
 		}
 		var tableRow = $('#templates .table-clientgroup-list .table-row');
 		var clone = tableRow.clone();
@@ -204,7 +144,7 @@ $("#btn-clientgroup-submit").click(function(){
 	for(var k = 0; k < arrayinchargePersonVal.length; k++) { arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]); } 
 	var inchargePersonVal = arrayinchargePerson;
 	if ($('#subscribe-sms').is(":checked")){
-		var subscribeSmsVal = f;	 
+		var subscribeSmsVal = true;	 
 	}
 	else{ 
 		var subscribeSmsVal = false;
@@ -237,12 +177,6 @@ $("#btn-clientgroup-submit").click(function(){
 	else if(isNaN(licenceVal)){
 		displayMessage('Invalid No. Of User Licence');
 	}
-	else if(licenceVal != ''){
-		var numericReg = /^\d*[0-9](|.\d*[0-9]|,\d*[0-9])?$/;
-	    if(!numericReg.test(licenceVal)) {
-	    	displayMessage('Invalid No. of User Licence')
-    	}
-	}
 	else if(fileSpaceVal == ''){
 		displayMessage('File Space Required');
 	}
@@ -254,6 +188,7 @@ $("#btn-clientgroup-submit").click(function(){
 	}
 	else if(shortname == ''){
 		displayMessage('Short Name Required');
+		gototop();
 	}
 	else if(clientGroupIdVal == ''){	
 		if(uploadLogoVal == ''){
@@ -348,7 +283,79 @@ function clientgroup_active(clientId, isActive){
   		}
   	);
 }
+function clientgroup_edit(clientGroupId){
+	$("#clientgroup-view").hide();
+	$("#clientgroup-add").show();
+	$("#clientgroup-id").val(clientGroupId);
+	function onSuccess(data){
+		userList = data["users"];
+		domainsList = data["domains"];	
+		countriesList = data["countries"];  	
+		loadFormListUpdate(data['client_list'],clientGroupId);
+	}
+	function onFailure(error){
+		console.log(error);
+	}
+	mirror.getClientGroups(
+		function (error, response){
+			if(error == null){
+				onSuccess(response);
+			}
+			else{
+				onFailure(error);
+			}
+		});
+}
+function loadFormListUpdate(clientListData, clientGroupId){
+	for(clientList in clientListData){
+		if(clientGroupId == clientListData[clientList]['client_id']){
+			$("#clientgroup-name").val(clientListData[clientList]['client_name']);
 
+			var countriesListArray = clientListData[clientList]['country_ids'];
+			$("#country").val(countriesListArray);
+			$("#countryselected").val(countriesListArray.length+" Selected");
+
+			var domainsListArray = clientListData[clientList]['domain_ids'];
+			$("#domain").val(domainsListArray);
+			$("#domainselected").val(domainsListArray.length+" Selected");
+
+			$("#contract-from").val(clientListData[clientList]['contract_from']);
+			$("#contract-to").val(clientListData[clientList]['contract_to']);
+			$("#username").val(clientListData[clientList]['username']);
+			//$("#upload-logo-img").attr("src",clientListData[clientList]['logo']);
+			$("#upload-logo-img").show();
+			$("#no-of-user-licence").val(clientListData[clientList]['no_of_user_licence']);
+			$("#file-space").val(clientListData[clientList]['total_disk_space']);			
+			if(clientListData[clientList]['is_sms_subscribed'] == true){
+				$('#subscribe-sms').prop("checked", true);
+			}
+			var userListArray = clientListData[clientList]['incharge_persons'];
+			$("#users").val(userListArray);
+			$("#usersSelected").val(userListArray.length+" Selected");
+			$("#short-name").val(clientListData[clientList]['short_name']);
+			$("#short-name").attr("readonly", "true");
+		}
+	}	
+	var countryNamesList = '';
+	for (var countryselect in countriesList){
+		for(var i = 0;i < countriesListArray.length;i++){
+			if(countriesList[countryselect]['country_id'] == countriesListArray[i]){
+				countryNamesList = countryNamesList + countriesList[countryselect]['country_name'] + ',';
+			}
+		}
+	}
+	$("#countryNames").val(countryNamesList);
+	var domainNamesList = '';
+	for (var domainselect in domainsList){
+		for(var i = 0;i < domainsListArray.length;i++){
+			if(domainsList[domainselect]['domain_id'] == domainsListArray[i]){
+				domainNamesList = domainNamesList + domainsList[domainselect]['domain_name'] + ',';
+			}
+		}
+	}
+	$("#domainNames").val(domainNamesList);
+	dateconfig();	
+}
 $("#search-clientgroup-name").keyup(function() { 
 	var count = 0;
     var value = this.value.toLowerCase();
@@ -455,13 +462,13 @@ function loadautocountry () {
 }
 //check & uncheck process
 function activateCountry(element){
-  var chkstatus = $(element).attr('class');
-  if(chkstatus == 'active_selectbox_country'){
+	var chkstatus = $(element).attr('class');
+	if(chkstatus == 'active_selectbox_country'){
 	 	$(element).removeClass("active_selectbox_country");
-  }
-  else{
-    $(element).addClass("active_selectbox_country");
-  }  
+	}
+	else{
+		$(element).addClass("active_selectbox_country");
+	}  
 	var selids = '';
 	var selNames = '';
 	var totalcount =  $(".active_selectbox_country").length;
@@ -471,7 +478,7 @@ function activateCountry(element){
 			selNames = selNames + $(this).text();
 		}else{
 			selids = selids + el.id + ",";
-				selNames = selNames + $(this).text() + ",";
+			selNames = selNames + $(this).text() + ",";
 		}    
 	});
 	$("#countryselected").val(totalcount+" Selected");

@@ -194,7 +194,6 @@ class Database(object) :
                 query += column+" = '"+str(values[index])+"' "
 
         query += " WHERE "+condition
-
         if client_id != None:
             return self.execute(query, client_id)
 
@@ -2528,7 +2527,7 @@ class KnowledgeDatabase(Database):
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
         " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
-        " is_active"
+        " is_active, url_short_name"
         condition = "1"
         return self.get_data(self.tblClientGroups, columns, condition)
 
@@ -2566,6 +2565,23 @@ class KnowledgeDatabase(Database):
         condition = "client_id ='%d'" % client_id
         rows = self.get_data(self.tblClientDomains, columns, condition)
         return rows[0][0]
+
+    def get_date_configurations(self, client_id):
+        columns = "country_id, domain_id, period_from, period_to"
+        condition = "client_id='%d'"%client_id
+        rows = self.get_data(self.tblClientConfigurations, columns, condition)
+        columns = ["country_id" ,"domain_id", "period_from", "period_to"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_client_configuration(result)
+
+    def return_client_configuration(self, configurations):
+        results = []
+        for configuration in configurations :
+            results.append(core.ClientConfiguration(
+                configuration["country_id"], configuration["domain_id"],
+                configuration["period_from"], configuration["period_to"]
+            ))
+        return results  
 
     def save_date_configurations(self, client_id, date_configurations, session_user):
         values_list = []
@@ -2901,15 +2917,24 @@ class KnowledgeDatabase(Database):
         condition = "unit_id = '%d' and client_id = '%d' "% (unit_id, client_id)
         return self.update(self.tblUnits, columns, values, condition)
 
-    def verify_password(self, password, userId):
+    def verify_password(self, password, user_id):
         columns = "count(*)"
         encrypted_password = self.encrypt(password)
-        condition = "password='%s' and user_id='%d'" % (encrypted_password, userId)
+        condition = "password='%s' and user_id='%d'" % (encrypted_password, user_id)
         rows = self.get_data(self.tblUsers, columns, condition)
         if(int(rows[0][0]) <= 0):
             return False
         else:
             return True
+
+    def update_password(self, password, user_id):
+        columns = ["password"]
+        values = [self.encrypt(password)]
+        condition = " user_id='%d'" % user_id
+        if self.update(self.tblUsers, columns, values, condition):
+            return True
+        else:
+            return False
 
     def get_business_groups_for_user(self, user_id):
         client_ids = None
