@@ -312,6 +312,34 @@ class Database(object) :
     def get_date_time(self) :
         return datetime.datetime.now()
 
+    def verify_login(self, username, password):
+        tblAdminCondition = "password='%s' and username='%s'" % (
+            password, username
+        )
+        admin_details = self.get_data("tbl_admin", "*", tblAdminCondition)
+
+        if (len(admin_details) == 0) :
+            data_columns = ["user_id", "user_group_id", "email_id", 
+                "employee_name", "employee_code", "contact_no", "address", 
+                "designation", "user_group_name", "form_ids"
+            ]
+            query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
+                t1.employee_name, t1.employee_code, t1.contact_no, \
+                t1.address, t1.designation, \
+                t2.user_group_name, t2.form_ids \
+                FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
+                ON t1.user_group_id = t2.user_group_id \
+                WHERE t1.password='%s' and t1.email_id='%s'" % (
+                    password, username
+                )
+            data_list = self.select_one(query)
+            if data_list is None :
+                return False
+            else :
+                return self.convert_to_dict(data_list, data_columns)
+        else :
+            return True
+
     def convert_to_dict(self, data_list, columns) :
         assert type(data_list) in (list, tuple)
         if len(data_list) > 0:
@@ -334,6 +362,39 @@ class Database(object) :
             return []
 
             
+
+    def add_session(self, user_id, session_type_id, client_id = None) :
+        if client_id != None:
+            self.clear_old_session(user_id, session_type_id, client_id)
+        else:
+            self.clear_old_session(user_id, session_type_id)
+        session_id = self.new_uuid()
+        updated_on = self.get_date_time()
+        query = "INSERT INTO tbl_user_sessions \
+            (session_token, user_id, session_type_id, last_accessed_time) \
+            VALUES ('%s', %s, %s, '%s');"
+        query = query % (session_id, user_id, session_type_id, updated_on)
+        if client_id != None:
+            print client_id
+            print query
+            self.execute(query, client_id)
+        else:
+            self.execute(query)
+        return session_id
+
+    def clear_old_session(self, user_id, session_type_id, client_id = None) :
+        query = "DELETE FROM tbl_user_sessions \
+            WHERE user_id=%s and session_type_id=%s" % (
+                user_id, session_type_id
+            )
+        if client_id != None:
+            self.execute(query, client_id)
+        else:
+            self.execute(query)
+
+    def new_uuid(self) :
+        s = str(uuid.uuid4())
+        return s.replace("-", "")
 
 class KnowledgeDatabase(Database):
     def __init__(
@@ -400,6 +461,10 @@ class KnowledgeDatabase(Database):
         self.tblUserSessions = "tbl_user_sessions"
         self.tblUsers = "tbl_users"
 
+    def validate_short_name(self, short_name):
+        condition = "url_short_name ='%s'"%(short_name)
+        return self.is_already_exists(self.tblClientGroups, condition)
+
     def validate_session_token(self, session_token) :
         # query = "CALL sp_validate_session_token ('%s');" 
         #% (session_token)
@@ -413,58 +478,6 @@ class KnowledgeDatabase(Database):
         m = hashlib.md5()
         m.update(value)
         return m.hexdigest()
-
-
-    def verify_login(self, username, password):
-        tblAdminCondition = "password='%s' and user_name='%s'" % (
-            password, username
-        )
-        admin_details = self.get_data("tbl_admin", "*", tblAdminCondition)
-
-        if (len(admin_details) == 0) :
-            data_columns = ["user_id", "user_group_id", "email_id", 
-                "employee_name", "employee_code", "contact_no", "address", 
-                "designation", "user_group_name", "form_ids"
-            ]
-            query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
-                t1.employee_name, t1.employee_code, t1.contact_no, \
-                t1.address, t1.designation, \
-                t2.user_group_name, t2.form_ids \
-                FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
-                ON t1.user_group_id = t2.user_group_id \
-                WHERE t1.password='%s' and t1.email_id='%s'" % (
-                    password, username
-                )
-            data_list = self.select_one(query)
-            if data_list is None :
-                return False
-            else :
-                return self.convert_to_dict(data_list, data_columns)
-        else :
-            return True
-
-    def new_uuid(self) :
-        s = str(uuid.uuid4())
-        return s.replace("-", "")
-
-    def clear_old_session(self, user_id, session_type_id) :
-        query = "DELETE FROM tbl_user_sessions \
-            WHERE user_id=%s and session_type_id=%s" % (
-                user_id, session_type_id
-            )
-        self.execute(query)
-
-    def add_session(self, user_id, session_type_id) :
-        self.clear_old_session(user_id, session_type_id)
-        session_id = self.new_uuid()
-        updated_on = self.get_date_time()
-        query = "INSERT INTO tbl_user_sessions \
-            (session_token, user_id, session_type_id, last_accessed_time) \
-            VALUES ('%s', %s, %s, '%s');"
-        query = query % (session_id, user_id, session_type_id, updated_on)
-
-        self.execute(query)
-        return session_id
     
     def save_activity(self, user_id, form_id, action):
         created_on = self.get_date_time()
@@ -1033,6 +1046,7 @@ class KnowledgeDatabase(Database):
         if ((user_id != None) and (user_id != 0)):
             country_ids = self.get_user_countries(user_id)
         columns = "level_id, level_position, level_name, country_id"
+        condition = "1"
         if country_ids != None:
             condition = "country_id in (%s)"% country_ids
         rows = self.get_data(self.tblGeographyLevels, columns, condition)
@@ -2528,6 +2542,7 @@ class KnowledgeDatabase(Database):
         if ((user_id != None) and (user_id != 0)):
             client_ids = self.get_user_clients(user_id)
         columns = "client_id, group_name,  is_active"
+        condition = "1"
         if client_ids != None:
             condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblClientGroups, columns, condition) 
@@ -2933,6 +2948,7 @@ class KnowledgeDatabase(Database):
         if ((user_id != None) and (user_id != 0)):
             client_ids = self.get_user_clients(user_id)
         columns = "business_group_id, business_group_name, client_id"
+        condition = "1"
         if client_ids != None:
             condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblBusinessGroups, columns, condition) 
@@ -2954,6 +2970,7 @@ class KnowledgeDatabase(Database):
         if ((user_id != None) and (user_id != 0)):
             client_ids = self.get_user_clients(user_id)
         columns = "legal_entity_id, legal_entity_name, business_group_id, client_id"
+        condition = "1"
         if client_ids != None:
             condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblLegalEntities, columns, condition) 
@@ -2977,6 +2994,7 @@ class KnowledgeDatabase(Database):
             client_ids = self.get_user_clients(user_id)
         columns = "division_id, division_name, legal_entity_id, business_group_id,"+\
         "client_id"
+        condition = "1"
         if client_ids != None:
             condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblDivisions, columns, condition) 
@@ -2999,6 +3017,7 @@ class KnowledgeDatabase(Database):
             client_ids = self.get_user_clients(user_id)
         columns = "unit_id, unit_code, unit_name, address, division_id,"+\
         " legal_entity_id, business_group_id, client_id, is_active"
+        condition = "1"
         if client_ids != None:
             condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblUnits, columns, condition) 
