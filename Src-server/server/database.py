@@ -862,7 +862,7 @@ class KnowledgeDatabase(Database):
 
     def get_nature_by_id(self, nature_id) :
 
-        q = "SELECT stautory_nature_name FROM tbl_statutory_natures WHERE statutory_nature_id=%s" % nature_id
+        q = "SELECT statutory_nature_name FROM tbl_statutory_natures WHERE statutory_nature_id=%s" % nature_id
         row = self.select_one(q)
         nature_name = None
         if row :
