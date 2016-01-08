@@ -418,7 +418,7 @@ function saverecord(j,e){
     var last_level = 0;
     for(k=1;k<j;k++){
       $(".slist"+k+".active").each( function( index, el ) {
-        map_statutory_id.push(el.id);
+        map_statutory_id.push(parseInt(el.id));
         last_statutory_id = el.id;
         last_level = k;
         });
