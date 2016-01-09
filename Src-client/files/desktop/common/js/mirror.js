@@ -857,8 +857,9 @@ function initMirror() {
         LoginApiRequest(callerName, request, callback);
     }
 
-    function validateResetToken(callerName, resetToken, 
+    function validateResetToken(resetToken, 
         callback) {
+        callerName = "api/login"
         var request = [
             "ResetTokenValidation",
             {
@@ -868,8 +869,9 @@ function initMirror() {
         LoginApiRequest(callerName, request, callback);
     }
 
-    function resetPassword(callerName, resetToken, newPassword, 
+    function resetPassword( resetToken, newPassword, 
         callback) {
+        callerName = "api/login"
         var request = [
             "ResetPassword",
             {

@@ -240,16 +240,16 @@
 				mirror.changePassword(currentPassword, newPassword,callback)
 			}
 			function forgotPassword(){
-				username = "usha@mindssoft.com"
+				username = "admin"
 				mirror.forgotPassword(username, callback)
 			}
 			function validateResetToken(){
-				resetToken = "1"
+				resetToken = "6b6e0f56a5ae4d59867b7e9a43683e0a"
 				mirror.validateResetToken(resetToken, callback)
 			}
 			function resetPassword(){
-				resetToken = "158350839976395462222620754547803639110"
-				newPassword = "1234567"
+				resetToken = "6b6e0f56a5ae4d59867b7e9a43683e0a"
+				newPassword = "admin"
 				mirror.resetPassword(resetToken, newPassword, callback) 
 			}
 			function saveClientGroup(){

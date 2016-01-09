@@ -634,8 +634,7 @@ DROP TABLE IF EXISTS `tbl_email_verification`;
 CREATE TABLE `tbl_email_verification` (
   `user_id` int(11) NOT NULL,
   `verification_code` varchar(50) NOT NULL,
-  PRIMARY KEY (`verification_code`),
-  CONSTRAINT `fk_email_verification_user_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+  PRIMARY KEY (`verification_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_mobile_registration`;

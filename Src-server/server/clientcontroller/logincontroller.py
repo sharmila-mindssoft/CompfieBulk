@@ -79,27 +79,55 @@ def admin_login_response(db, client_id):
 	employee_name = "Administrator"
 	return login.AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name, client_id)
 
-def process_forgot_password(db, request):
-	self.url = url
-	if db.validate_username(request.username):
-		send_reset_link()
+def process_forgot_password(db, request, client_id):
+	user_id = db.verify_username(request.username, client_id)
+	if user_id != None:
+		send_reset_link(db, user_id, client_id)
 		return login.ForgotPasswordSuccess()
 	else:
-	    return login.InvalidUsername()
+	    return login.InvalidUserName()
 	
-def send_reset_link():
-	return
+def send_reset_link(db, user_id, client_id):
+	reset_token = db.new_uuid()
+	print "http://localhost:8080/ForgotPassword?reset_token=%s" % reset_token
+	columns = ["user_id", "verification_code"]
+	values_list = [user_id, reset_token]
+	if db.insert(db.tblEmailVerification, columns, values_list, client_id):
+	    if send_email():
+	        return True
+	    else:
+	        print "Send email failed"
+	else:
+	    print "Saving reset token failed"
 
-def process_reset_token(db, request):
-	return login.ResetSessionTokenValidationSuccess()
+def send_email():
+	return True
 
-def process_reset_password(db, request):
-	return login.ResetPasswordSuccess()
+def process_reset_token(db, request, client_id):
+	user_id = db.validate_reset_token(request.reset_token, client_id)
+	if user_id != None:
+	    return login.ResetSessionTokenValidationSuccess()
+	else:
+	    return login.InvalidResetToken()
+	
 
-def process_change_password(db, request):
-	session_user = db.validate_session_token(request.session_token)
-	if db.verify_password(request.current_password, session_user):
-		db.update_password(request.new_password, session_user)
+def process_reset_password(db, request, client_id):
+	user_id = db.validate_reset_token(request.reset_token, client_id)
+	if user_id != None:
+		if db.update_password(request.new_password, user_id, client_id):
+			if db.delete_used_token(request.reset_token, client_id):
+				return login.ResetPasswordSuccess()
+			else:
+				print "Failed to delete used token"
+		else:
+			print "Failed to update password"
+	else:
+		return login.InvalidResetToken()
+
+def process_change_password(db, request, client_id):
+	session_user = db.validate_session_token(client_id, request.session_token)
+	if db.verify_password(request.current_password, session_user, client_id):
+		db.update_password(request.new_password, session_user, client_id)
 		return login.ChangePasswordSuccess()
 	else :
 		return login.InvalidCurrentPassword()
