@@ -43,7 +43,7 @@ def process_get_assigned_statutory_wizard_one(db, user_id):
     business_groups = db.get_business_groups_for_user(user_id)
     legal_entities = db.get_legal_entities_for_user(user_id)
     divisions = db.get_divisions_for_user(user_id)
-    units = db.get_units_for_user(user_id)
+    units = db.get_units_with_domains(user_id)
     return technotransactions.GetAssignedStatutoryWizardOneDataSuccess(
         countries, domains, industries, geography_levels,
         geographies, group_companies, business_groups,

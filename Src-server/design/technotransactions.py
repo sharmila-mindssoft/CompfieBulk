@@ -44,13 +44,14 @@ GetAssignedStatutoryWizardOneData = RecordType("GetAssignedStatutoryWizardOneDat
 GetStatutoryWizardTwoData = RecordType("GetStatutoryWizardTwoData", [
 	Field("geography_id", GEOGRAPHY_ID),
 	Field("industry_id", INDUSTRY_ID),
-	Field("domain_id", DOMAIN_ID)
+	Field("domain_id", DOMAIN_ID),
+	Field("unit_id", OptionalType(UNIT_ID))
 ])
 
 SaveAssignedStatutory = RecordType("SaveAssignedStatutory", [
 	Field("submission_type", ASSIGN_STATUTORY_SUBMISSION_TYPE),
-	Field("client_saved_statutory_id", CLIENT_SAVED_STATUTORY_ID),
-	Field("client_assigned_statutory_id", CLIENT_ASSIGNED_STATUTORY_ID),
+	Field("client_saved_statutory_id", OptionalType(CLIENT_SAVED_STATUTORY_ID)),
+	# Field("client_assigned_statutory_id", CLIENT_ASSIGNED_STATUTORY_ID),
 	Field("assigned_statutories", AssignedStatutoryList)
 ])
 

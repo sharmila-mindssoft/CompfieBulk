@@ -239,17 +239,35 @@
 				newPassword = "1234567"
 				mirror.changePassword(currentPassword, newPassword,callback)
 			}
+			function ClientChangePassword(){
+				currentPassword = "123456"
+				newPassword = "1234567"
+				client_mirror.changePassword(currentPassword, newPassword,callback)
+			}
 			function forgotPassword(){
-				username = "Testclientser24@domain.com"
+				username = "admin"
 				mirror.forgotPassword(username, callback)
 			}
+			function ClientForgotPassword(){
+				username = "sharmi"
+				client_mirror.forgotPassword(username, callback)
+			}
 			function validateResetToken(){
-				resetToken = "1"
+				resetToken = "6b6e0f56a5ae4d59867b7e9a43683e0a"
 				mirror.validateResetToken(resetToken, callback)
 			}
+			function validateClientResetToken(){
+				resetToken = "6b6e0f56a5ae4d59867b7e9a43683e0a"
+				client_mirror.validateResetToken(resetToken, callback)
+			}
 			function resetPassword(){
-				resetToken = "158350839976395462222620754547803639110"
-				newPassword = "1234567"
+				resetToken = "6b6e0f56a5ae4d59867b7e9a43683e0a"
+				newPassword = "admin"
+				mirror.resetPassword(resetToken, newPassword, callback) 
+			}
+			function resetClientPassword(){
+				resetToken = "6b6e0f56a5ae4d59867b7e9a43683e0a"
+				newPassword = "admin"
 				mirror.resetPassword(resetToken, newPassword, callback) 
 			}
 			function saveClientGroup(){
@@ -454,16 +472,32 @@
 			<button onclick="changePassword()">
 				Change Password
 			</button>
+			<button onclick="ClientChangePassword()">
+				Client Change Password
+			</button>
 		</div>
 		<div>
 			<button onclick="forgotPassword()">
 				Forgot Password
 			</button>
+			<button onclick="ClientForgotPassword()">
+				Client Forgot Password
+			</button>
+		</div>
+		<div>
 			<button onclick="validateResetToken()">
 				Validate Reset Token
 			</button>
+			<button onclick="validateClientResetToken()">
+				Validate Client Reset Token
+			</button>	
+		</div>
+		<div>
 			<button onclick="resetPassword()">
 				Reset password
+			</button>
+			<button onclick="resetClientPassword()">
+				Reset Client Password
 			</button>
 		</div>
 		<div>

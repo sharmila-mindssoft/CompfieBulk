@@ -78,6 +78,9 @@ def to_structure_OptionalType_VectorType_SignedIntegerType_8(data):
     if data is None: return data
     return to_structure_VectorType_SignedIntegerType_8(data)
 
+def to_structure_VectorType_UnsignedIntegerType_32(data):
+    return to_structure_VectorType_UnignedIntegerType_32(data)
+
 def to_structure_OptionalType_CustomTextType_50(data):
     if data is None: return data
     return to_structure_CustomTextType_50(data)
@@ -128,6 +131,13 @@ def to_structure_VectorType_SignedIntegerType_8(data):
     lst = []
     for item in data:
         lst.append(to_structure_SignedIntegerType_8(item))
+    return lst
+
+def to_structure_VectorType_UnignedIntegerType_32(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_UnsignedIntegerType_32(item))
     return lst
 
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit(data):
