@@ -14,6 +14,16 @@ function displayLoginLoader() {
     $(".loading-indicator-spin").show();
 }
 
+function getShortName(){
+    var pathArray = window.location.pathname.split( '/' );
+    if(typeof pathArray[2] === 'undefined'){
+        return null;
+    }else{
+        return pathArray[2]   
+    }
+    
+}
+
 //
 // isLoginValidated, resetLoginUI, performLogin
 //
@@ -71,21 +81,40 @@ function performLogin(e_button, e_email, e_password) {
         //     onFailure();
         // }
     }
-
-    mirror.login(
-        e_email.val(),
-        e_password.val(),
-        function (error, response) {
-            console.log(error)
-            console.log(response)
-            if (error == null){
-                onSuccess(response)
+    if (getShortName() === null){
+        mirror.login(
+            e_email.val(),
+            e_password.val(),
+            null,
+            function (error, response) {
+                console.log(error)
+                console.log(response)
+                if (error == null){
+                    onSuccess(response)
+                }
+                else {
+                    onFailure(error)
+                }
             }
-            else {
-                onFailure(error)
+        );    
+    }else{
+        client_mirror.login(
+            e_email.val(),
+            e_password.val(),
+            getShortName(),
+            function (error, response) {
+                console.log(error)
+                console.log(response)
+                if (error == null){
+                    onSuccess(response)
+                }
+                else {
+                    onFailure(error)
+                }
             }
-        }
-    );
+        ); 
+    }
+    
 }
 
 function initializeUI () {
