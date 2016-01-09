@@ -1037,6 +1037,15 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function getAssignStatutoryWizardOne(callback) {
+        var request = [
+            "GetAssignedStatutoryWizardOneData",
+            {}
+        ];
+        callerName = "api/techno_transaction"
+        apiRequest(callerName, request, callback)
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -1146,7 +1155,9 @@ function initMirror() {
 
         getClientProfile: getClientProfile,
         getClientDetailsReportFilters: getClientDetailsReportFilters,
-        getClientDetailsReport: getClientDetailsReport
+        getClientDetailsReport: getClientDetailsReport,
+
+        getAssignStatutoryWizardOne: getAssignStatutoryWizardOne
     }
 
 }
