@@ -86,6 +86,8 @@ def process_forgot_password(db, request):
 	else:
 	    return login.InvalidUsername()
 	
+def send_reset_link():
+	return
 
 def process_reset_token(db, request):
 	return login.ResetSessionTokenValidationSuccess()

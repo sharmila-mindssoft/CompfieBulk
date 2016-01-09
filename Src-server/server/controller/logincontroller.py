@@ -19,7 +19,7 @@ def process_login_request(request, db) :
 	if type(request) is login.ForgotPassword :
 		return process_forgot_password(db, request)
 
-	if type(request) is login.ResetTokenValidation :
+	if type(request) is login.Reset_tokenValidation :
 		return process_reset_token(db, request)
 
 	if type(request) is login.ResetPassword :
@@ -77,13 +77,28 @@ def admin_login_response(db):
 	return login.AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name)
 
 def process_forgot_password(db, request):
-	self.url = url
-	if db.validate_username(request.username):
-		send_reset_link()
+	user_id = db.verify_username(request.username)
+	if user_id != None:
+		send_reset_link(db, user_id)
 		return login.ForgotPasswordSuccess()
 	else:
-	    return login.InvalidUsername()
+	    return login.InvalidUserName()
 	
+def send_reset_link(db, user_id):
+	reset_token = db.new_uuid()
+	print "http://localhost:8080/ForgotPassword?reset_token=%s" % reset_token
+	columns = "user_id, verification_code"
+	values_list = [user_id, reset_token]
+	if db.insert(db.tblEmailVerification, columns, values_list):
+	    if send_email():
+	        return True
+	    else:
+	        print "Send email failed"
+	else:
+	    print "Saving reset token failed"
+
+def send_email():
+	return True
 
 def process_reset_token(db, request):
 	return login.ResetSessionTokenValidationSuccess()
