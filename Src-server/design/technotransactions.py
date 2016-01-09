@@ -113,11 +113,13 @@ UNIT = RecordType("UNIT", [
 	Field("geography_id", GEOGRAPHY_ID)
 ])
 
+LevelList = VectorType(Level)
+
 GetAssignedStatutoryWizardOneDataSuccess = RecordType("GetAssignedStatutoryWizardOneDataSuccess", [
 	Field("countries", CountryList),
 	Field("domains", DomainList),
 	Field("industries", IndustryList),
-	Field("geography_levels", MapType(COUNTRY_ID, GeographyLevelList)),
+	Field("geography_levels", MapType(COUNTRY_ID, LevelList)),
 	Field("geographies", MapType(COUNTRY_ID,GeographyList)),
 	Field("group_companies", GroupCompanyList),
 	Field("business_groups", BusinessGroupList),
