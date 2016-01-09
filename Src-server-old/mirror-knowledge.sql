@@ -249,13 +249,6 @@ CREATE TABLE `tbl_statutories` (
   CONSTRAINT `fk_statutories_statutory_levels` FOREIGN KEY (`level_id`) REFERENCES `tbl_statutory_levels` (`level_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `tbl_statutory_geographies`;
-CREATE TABLE `tbl_statutory_geographies` (
-  `statutory_mapping_id` int(11) NOT NULL,
-  `geography_id` int(11) NOT NULL,
-  CONSTRAINT `fk_statutory_geographies_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `tbl_compliance_frequency`;
 CREATE TABLE `tbl_compliance_frequency` (
   `frequency_id` int(11) NOT NULL,
@@ -685,3 +678,24 @@ CREATE TABLE `tbl_database_server` (
   `server_full` tinyint(1) NOT NULL,
   PRIMARY KEY (`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- DROP TABLE IF EXISTS `tbl_statutory_industry`;
+-- CREATE TABLE `tbl_statutory_industry` (
+--   `statutory_mapping_id` int(11) NOT NULL,
+--   `industry_id` int(11) NOT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- DROP TABLE IF EXISTS `tbl_statutory_geographies`;
+-- CREATE TABLE `tbl_statutory_geographies` (
+--   `statutory_mapping_id` int(11) NOT NULL,
+--   `geography_id` int(11) NOT NULL,
+--   CONSTRAINT `fk_statutory_geographies_geographies` FOREIGN KEY (`geography_id`) REFERENCES `tbl_geographies` (`geography_id`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+-- DROP TABLE IF EXISTS `tbl_statutory_statutories`;
+-- CREATE TABLE `tbl_statutory_statutories` (
+--   `statutory_mapping_id` int(11) NOT NULL,
+--   `statutory_id` int(11) NOT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
