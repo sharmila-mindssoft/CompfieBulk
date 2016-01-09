@@ -63,7 +63,7 @@ def user_login_response(db, data):
 	print menu
 	return login.UserLoginSuccess(
 		int(user_id), session_token, email_id, user_group_name, 
-		menu, employee_name, employee_code, contact_no, address, designation
+		menu, employee_name, employee_code, contact_no, address, designation, None
 	)
 
 def admin_login_response(db):
@@ -74,7 +74,7 @@ def admin_login_response(db):
 	menu = process_user_forms(db, "1,2,3,4")
 	print menu
 	employee_name = "Administrator"
-	return login.AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name)
+	return login.AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name, None)
 
 def process_forgot_password(db, request):
 	user_id = db.verify_username(request.username)

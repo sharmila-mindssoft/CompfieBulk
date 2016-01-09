@@ -8,7 +8,8 @@ from protocol.parse_structure import (
     parse_structure_EnumType_core_SESSION_TYPE,
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_50,
     parse_structure_OptionalType_CustomTextType_100,
-    parse_structure_OptionalType_CustomTextType_20
+    parse_structure_OptionalType_CustomTextType_20,
+    parse_structure_OptionalType_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
     to_structure_CustomTextType_100,
@@ -17,7 +18,8 @@ from protocol.to_structure import (
     to_structure_EnumType_core_SESSION_TYPE,
     to_structure_CustomTextType_20, to_structure_CustomTextType_50,
     to_structure_OptionalType_CustomTextType_100,
-    to_structure_OptionalType_CustomTextType_20
+    to_structure_OptionalType_CustomTextType_20,
+    to_structure_OptionalType_UnsignedIntegerType_32
 )
 
 #
@@ -203,7 +205,7 @@ class Response(object):
         raise NotImplementedError
 
 class UserLoginSuccess(Response):
-    def __init__(self, user_id, session_token, email_id, user_group_name, menu, employee_name, employee_code, contact_no, address, designation):
+    def __init__(self, user_id, session_token, email_id, user_group_name, menu, employee_name, employee_code, contact_no, address, designation, client_id):
         self.user_id = user_id
         self.session_token = session_token
         self.email_id = email_id
@@ -214,6 +216,7 @@ class UserLoginSuccess(Response):
         self.contact_no = contact_no
         self.address = address
         self.designation = designation
+        self.client_id = client_id
 
     @staticmethod
     def parse_inner_structure(data):
@@ -238,7 +241,9 @@ class UserLoginSuccess(Response):
         address = parse_structure_CustomTextType_250(address)
         designation = data.get("designation")
         designation = parse_structure_CustomTextType_50(designation)
-        return UserLoginSuccess(user_id, session_token, email_id, user_group_name, menu, employee_name, employee_code, contact_no, address, designation)
+        client_id = data.get("client_id")
+        client_id = parse_structure_OptionalType_UnsignedIntegerType_32(client_id)
+        return UserLoginSuccess(user_id, session_token, email_id, user_group_name, menu, employee_name, employee_code, contact_no, address, designation, client_id)
 
     def to_inner_structure(self):
         return {
@@ -252,15 +257,17 @@ class UserLoginSuccess(Response):
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
             "address": to_structure_CustomTextType_250(self.address),
             "designation": to_structure_CustomTextType_50(self.designation),
+            "client_id": to_structure_OptionalType_UnsignedIntegerType_32(self.client_id)
         }
 
 class AdminLoginSuccess(Response):
-    def __init__(self, user_id, session_token, email_id, menu, employee_name):
+    def __init__(self, user_id, session_token, email_id, menu, employee_name, client_id):
         self.user_id = user_id
         self.session_token = session_token
         self.email_id = email_id
         self.menu = menu
         self.employee_name = employee_name
+        self.client_id = client_id
 
     @staticmethod
     def parse_inner_structure(data):
@@ -275,6 +282,8 @@ class AdminLoginSuccess(Response):
         menu = parse_structure_RecordType_core_Menu(menu)
         employee_name = data.get("employee_name")
         employee_name = parse_structure_CustomTextType_50(employee_name)
+        client_id = data.get("client_id")
+        client_id = parse_structure_OptionalType_UnsignedIntegerType_32(client_id)
         return AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name)
 
     def to_inner_structure(self):
@@ -284,6 +293,7 @@ class AdminLoginSuccess(Response):
             "email_id": to_structure_OptionalType_CustomTextType_100(self.email_id),
             "menu": to_structure_RecordType_core_Menu(self.menu),
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
+            "client_id": to_structure_OptionalType_UnsignedIntegerType_32(self.client_id)
         }
 
 class InvalidCredentials(Response):
