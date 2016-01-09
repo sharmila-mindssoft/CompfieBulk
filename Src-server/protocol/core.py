@@ -83,7 +83,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_ClientLegalEntity,
     to_structure_VectorType_RecordType_core_ClientDivision,
     to_structure_VectorType_RecordType_core_ClientUnit,
-    to_structure_VectorType_RecordType_core_ClientConfiguration
+    to_structure_VectorType_RecordType_core_ClientConfiguration,
+    to_structure_VectorType_UnsignedIntegerType_32
 )
 
 #
@@ -1056,8 +1057,8 @@ class GroupCompany(object):
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
             "group_name": to_structure_CustomTextType_50(self.group_name),
             "is_active": to_structure_Bool(self.is_active),
-            "country_ids": to_structure_CustomTextType_50(self.country_ids),
-            "domain_ids": to_structure_CustomTextType_50(self.domain_ids),
+            "country_ids": to_structure_VectorType_UnsignedIntegerType_32(self.country_ids),
+            "domain_ids": to_structure_VectorType_UnsignedIntegerType_32(self.domain_ids),
         }
 
 #

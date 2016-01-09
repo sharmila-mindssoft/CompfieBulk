@@ -129,7 +129,7 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-
+        print query
         if client_id != None:
             return self.select_all(query, client_id)
 
@@ -340,24 +340,6 @@ class Database(object) :
         else :
             return True
 
-    def convert_to_dict(self, data_list, columns) :
-        assert type(data_list) in (list, tuple)
-        if type(data_list[0]) is tuple :
-            result_list = []
-            if len(data_list[0]) == len(columns) :
-                for data in data_list:
-                    result = {}
-                    for i, d in enumerate(data):
-                        result[columns[i]] = d
-                    result_list.append(result)
-            return result_list
-        else :
-            result = {}
-            if len(data_list) == len(columns) :
-                for i, d in enumerate(data_list):
-                    result[columns[i]] = d
-            return result
-
     def add_session(self, user_id, session_type_id, client_id = None) :
         if client_id != None:
             self.clear_old_session(user_id, session_type_id, client_id)
@@ -390,6 +372,45 @@ class Database(object) :
     def new_uuid(self) :
         s = str(uuid.uuid4())
         return s.replace("-", "")
+
+    def convert_to_dict(self, data_list, columns) :
+        assert type(data_list) in (list, tuple)
+        if len(data_list) > 0:
+            if type(data_list[0]) is tuple :
+                result_list = []
+                if len(data_list[0]) == len(columns) :
+                    for data in data_list:
+                        result = {}
+                        for i, d in enumerate(data):
+                            result[columns[i]] = d
+                        result_list.append(result)
+                return result_list
+            else :
+                result = {}
+                if len(data_list) == len(columns) :
+                    for i, d in enumerate(data_list):
+                        result[columns[i]] = d
+                return result
+        else:
+            return []
+
+    def validate_reset_token(self, reset_token):
+        column = "count(*), user_id"
+        condition = " verification_code='%s'" % reset_token
+        rows = self.get_data(self.tblEmailVerification, column, condition)
+        count = rows[0][0]
+        user_id = rows[0][1]
+        if count == 1:
+            return user_id
+        else:
+            return None
+
+    def delete_used_token(self, reset_token):
+        condition =" verification_code='%s'" % reset_token
+        if self.delete(self.tblEmailVerification, condition):
+            return True
+        else:
+            return False
 
 class KnowledgeDatabase(Database):
     def __init__(
@@ -455,27 +476,6 @@ class KnowledgeDatabase(Database):
         self.tblUserLoginHistory = "tbl_user_login_history"
         self.tblUserSessions = "tbl_user_sessions"
         self.tblUsers = "tbl_users"
-
-    def convert_to_dict(self, data_list, columns) :
-        assert type(data_list) in (list, tuple)
-        if len(data_list) > 0:
-            if type(data_list[0]) is tuple :
-                result_list = []
-                if len(data_list[0]) == len(columns) :
-                    for data in data_list:
-                        result = {}
-                        for i, d in enumerate(data):
-                            result[columns[i]] = d
-                        result_list.append(result)
-                return result_list
-            else :
-                result = {}
-                if len(data_list) == len(columns) :
-                    for i, d in enumerate(data_list):
-                        result[columns[i]] = d
-                return result
-        else:
-            return []
 
     def validate_short_name(self, short_name):
         condition = "url_short_name ='%s'"%(short_name)
@@ -2564,11 +2564,11 @@ class KnowledgeDatabase(Database):
     def return_group_companies(self, group_companies):
         results = []
         for group_company in group_companies :
+            countries = [int(x) for x in self.get_client_countries(group_company["client_id"]).split(",")]
+            domains = [int(x) for x in self.get_client_domains(group_company["client_id"]).split(",")]
             results.append(core.GroupCompany(
                 group_company["client_id"], group_company["group_name"], 
-                bool(group_company["is_active"]), self.get_client_countries(
-                group_company["client_id"]),self.get_client_domains(
-                group_company["client_id"])
+                bool(group_company["is_active"]), countries, domains
             ))
         return results       
 
@@ -2935,11 +2935,34 @@ class KnowledgeDatabase(Database):
         condition = "unit_id = '%d' and client_id = '%d' "% (unit_id, client_id)
         return self.update(self.tblUnits, columns, values, condition)
 
+    def verify_username(self, username):
+        columns = "count(*), user_id"
+        condition = "email_id='%s'" % (username)
+        rows = self.get_data(self.tblUsers, columns, condition)
+        count = rows[0][0]
+        if count == 1:
+            return rows[0][1]
+        else:
+            condition = "username='%s'" % username
+            columns = "count(*)"
+            rows = self.get_data(self.tblAdmin, columns, condition)
+            count = rows[0][0]
+            if count == 1:
+                return 0
+            else:
+                return None
+
     def verify_password(self, password, user_id):
         columns = "count(*)"
         encrypted_password = self.encrypt(password)
-        condition = "password='%s' and user_id='%d'" % (encrypted_password, user_id)
-        rows = self.get_data(self.tblUsers, columns, condition)
+        condition = "1"
+        rows= None
+        if user_id == 0:
+            condition = "password='%s'" % (encrypted_password)  
+            rows = self.get_data(self.tblAdmin, columns, condition)
+        else:  
+            condition = "password='%s' and user_id='%d'" % (encrypted_password, user_id)
+            rows = self.get_data(self.tblUsers, columns, condition)
         if(int(rows[0][0]) <= 0):
             return False
         else:
@@ -2948,8 +2971,14 @@ class KnowledgeDatabase(Database):
     def update_password(self, password, user_id):
         columns = ["password"]
         values = [self.encrypt(password)]
-        condition = " user_id='%d'" % user_id
-        if self.update(self.tblUsers, columns, values, condition):
+        condition = "1"
+        result = False
+        if user_id != 0:
+            condition = " user_id='%d'" % user_id
+            result = self.update(self.tblUsers, columns, values, condition)
+        else:
+            result = self.update(self.tblAdmin, columns, values, condition)
+        if result:
             return True
         else:
             return False

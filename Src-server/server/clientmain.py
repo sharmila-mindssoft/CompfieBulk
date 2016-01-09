@@ -129,8 +129,6 @@ template_env = jinja2.Environment(loader=template_loader)
 
 class TemplateHandler(tornado.web.RequestHandler) :
     def initialize(self, path_desktop, path_mobile, parameters) :
-        print "inside template handler initialize"
-        # parameters = {"user":self.get_cookie("user"), "data":OrderedDict(sorted(countriesdb.countries.items(), key=lambda t: t[1])),}
         self.__path_desktop = path_desktop
         self.__path_mobile = path_mobile
         self.__parameters = parameters
@@ -169,6 +167,9 @@ class TemplateHandler(tornado.web.RequestHandler) :
 
 TEMPLATE_PATHS = [
     (r"/login/([a-zA-Z-0-9]+)", "files/desktop/login/login.html", "files/mobile/login/login.html", {}),
+    (r"/forgot_password/([a-zA-Z-0-9]+)", "files/desktop/ForgotPassword/ForgotPassword.html", "", {}),
+    (r"/reset_password/([a-zA-Z-0-9]+)", "files/desktop/ForgotPassword/resetpassword.html", "", {}),
+    ("/change-password", "files/desktop/change-password/changepassword.html", None, {}),
     ("/test", "test_apis.html", "", {}),
     ("/home", "files/desktop/home/home.html", None, {}),
 ]
