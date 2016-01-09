@@ -5,11 +5,11 @@ from protocol.parse_structure import (
     parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_STATUS,
     parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE,
     parse_structure_VectorType_RecordType_core_AssignedStatutory,
-    parse_structure_VectorType_RecordType_technotransactions_UNIT,
+    parse_structure_VectorType_RecordType_core_Unit,
     parse_structure_VectorType_RecordType_core_LegalEntity,
     parse_structure_OptionalType_CustomTextType_50,
     parse_structure_UnsignedIntegerType_32,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyLevel,
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     parse_structure_VectorType_RecordType_core_Industry,
     parse_structure_VectorType_RecordType_core_GroupCompany,
     parse_structure_VectorType_RecordType_core_Country,
@@ -26,11 +26,11 @@ from protocol.to_structure import (
     to_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_STATUS,
     to_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE,
     to_structure_VectorType_RecordType_core_AssignedStatutory,
-    to_structure_VectorType_RecordType_technotransactions_UNIT,
+    to_structure_VectorType_RecordType_core_Unit,
     to_structure_VectorType_RecordType_core_LegalEntity,
     to_structure_OptionalType_CustomTextType_50,
     to_structure_SignedIntegerType_8,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyLevel,
+    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     to_structure_VectorType_RecordType_core_Industry,
     to_structure_VectorType_RecordType_core_GroupCompany,
     to_structure_VectorType_RecordType_core_Country,
@@ -294,7 +294,7 @@ class GetAssignedStatutoryWizardOneDataSuccess(Response):
         industries = data.get("industries")
         industries = parse_structure_VectorType_RecordType_core_Industry(industries)
         geography_levels = data.get("geography_levels")
-        geography_levels = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyLevel(geography_levels)
+        geography_levels = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(geography_levels)
         geographies = data.get("geographies")
         geographies = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(geographies)
         group_companies = data.get("group_companies")
@@ -306,7 +306,7 @@ class GetAssignedStatutoryWizardOneDataSuccess(Response):
         divisions = data.get("divisions")
         divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_technotransactions_UNIT(units)
+        units = parse_structure_VectorType_RecordType_core_Unit(units)
         return GetAssignedStatutoryWizardOneDataSuccess(countries, domains, industries, geography_levels, geographies, group_companies, business_groups, legal_entities, divisions, units)
 
     def to_inner_structure(self):
@@ -314,13 +314,13 @@ class GetAssignedStatutoryWizardOneDataSuccess(Response):
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
             "industries": to_structure_VectorType_RecordType_core_Industry(self.industries),
-            "geography_levels": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyLevel(self.geography_levels),
+            "geography_levels": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(self.geography_levels),
             "geographies": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(self.geographies),
             "group_companies": to_structure_VectorType_RecordType_core_GroupCompany(self.group_companies),
             "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
             "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
             "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_technotransactions_UNIT(self.units),
+            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
         }
 
 class GetStatutoryWizardTwoDataSuccess(Response):
