@@ -9,7 +9,10 @@ import uuid
 import json
 
 from types import *
-from protocol import core, knowledgereport
+from protocol import (
+    core, knowledgereport,
+    technotransactions
+)
 
 __all__ = [
     "KnowledgeDatabase", "Database"
@@ -3056,13 +3059,13 @@ class KnowledgeDatabase(Database):
         if ((user_id != None) and (user_id != 0)):
             client_ids = self.get_user_clients(user_id)
         columns = "unit_id, unit_code, unit_name, address, division_id,"+\
-        " legal_entity_id, business_group_id, client_id, is_active"
+        " legal_entity_id, business_group_id, client_id, is_active, geography_id, industry_id, domain_ids"
         condition = "1"
         if client_ids != None:
             condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblUnits, columns, condition) 
         columns = ["unit_id", "unit_code", "unit_name", "unit_address", "division_id", 
-        "legal_entity_id", "business_group_id", "client_id", "is_active"]
+        "legal_entity_id", "business_group_id", "client_id", "is_active", "geography_id", "industry_id", "domain_ids"]
         result = self.convert_to_dict(rows, columns)
         return self.return_units(result)
 
@@ -3075,3 +3078,43 @@ class KnowledgeDatabase(Database):
                 unit["unit_name"], unit["unit_address"], bool(unit["is_active"])
             ))
         return results
+
+    def get_units_with_domains(self, user_id):
+        def return_unit_details(units):
+            results = []
+            for unit in units :
+                domain_ids = [
+                    int(x) for x in unit["domain_ids"].split(',')
+                ]
+                unit_name = "%s - %s" % (unit["unit_code"], unit["unit_name"])
+                results.append(technotransactions.UNIT(
+                    unit["unit_id"], 
+                    unit_name,
+                    unit["division_id"], 
+                    unit["legal_entity_id"],
+                    unit["business_group_id"], 
+                    unit["client_id"], 
+                    domain_ids,
+                    unit["industry_id"],
+                    unit["geography_id"]
+                ))
+            return results
+
+        client_ids = None
+        if ((user_id != None) and (user_id != 0)):
+            client_ids = self.get_user_clients(user_id)
+        columns = "unit_id, unit_code, unit_name, division_id, \
+            legal_entity_id, business_group_id, \
+            client_id , geography_id, industry_id, domain_ids"
+        condition = "1"
+        if client_ids != None:
+            condition = "client_id in (%s)" % client_ids
+        rows = self.get_data(self.tblUnits, columns, condition) 
+        columns = [
+            "unit_id", "unit_code", "unit_name", "division_id", 
+            "legal_entity_id", "business_group_id", 
+            "client_id", "geography_id", 
+            "industry_id", "domain_ids"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        return return_unit_details(result)

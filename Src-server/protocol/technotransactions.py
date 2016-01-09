@@ -5,7 +5,7 @@ from protocol.parse_structure import (
     parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_STATUS,
     parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE,
     parse_structure_VectorType_RecordType_core_AssignedStatutory,
-    parse_structure_VectorType_RecordType_core_Unit,
+    parse_structure_VectorType_RecordType_technotransactions_UNIT,
     parse_structure_VectorType_RecordType_core_LegalEntity,
     parse_structure_OptionalType_CustomTextType_50,
     parse_structure_UnsignedIntegerType_32,
@@ -19,14 +19,16 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_technotransactions_ASSIGNED_STATUTORIES,
     parse_structure_CustomTextType_50,
-    parse_structure_VectorType_RecordType_core_Domain
+    parse_structure_VectorType_RecordType_core_Domain,
+    parse_structure_CustomTextType_100,
+    parse_structure_VectorType_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
     to_structure_VariantType_technotransactions_Request,
     to_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_STATUS,
     to_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE,
     to_structure_VectorType_RecordType_core_AssignedStatutory,
-    to_structure_VectorType_RecordType_core_Unit,
+    to_structure_VectorType_RecordType_technotransactions_UNIT,
     to_structure_VectorType_RecordType_core_LegalEntity,
     to_structure_OptionalType_CustomTextType_50,
     to_structure_SignedIntegerType_8,
@@ -40,7 +42,9 @@ from protocol.to_structure import (
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_VectorType_RecordType_technotransactions_ASSIGNED_STATUTORIES,
     to_structure_CustomTextType_50,
-    to_structure_VectorType_RecordType_core_Domain
+    to_structure_VectorType_RecordType_core_Domain,
+    to_structure_CustomTextType_100,
+    to_structure_VectorType_UnsignedIntegerType_32
 )
 
 #
@@ -306,7 +310,7 @@ class GetAssignedStatutoryWizardOneDataSuccess(Response):
         divisions = data.get("divisions")
         divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_Unit(units)
+        units = parse_structure_VectorType_RecordType_technotransactions_UNIT(units)
         return GetAssignedStatutoryWizardOneDataSuccess(countries, domains, industries, geography_levels, geographies, group_companies, business_groups, legal_entities, divisions, units)
 
     def to_inner_structure(self):
@@ -320,7 +324,7 @@ class GetAssignedStatutoryWizardOneDataSuccess(Response):
             "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
             "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
             "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
+            "units": to_structure_VectorType_RecordType_technotransactions_UNIT(self.units),
         }
 
 class GetStatutoryWizardTwoDataSuccess(Response):
@@ -451,49 +455,49 @@ class ASSIGNED_STATUTORIES(object):
 #
 
 class UNIT(object):
-    def __init__(self, unit_id, unit_name, division_id, legal_entity_id, business_group_id, group_id, domain_ids, industry_id, geography_id):
+    def __init__(self, unit_id, unit_name, division_id, legal_entity_id, business_group_id, client_id, domain_ids, industry_id, geography_id):
         self.unit_id = unit_id
         self.unit_name = unit_name
         self.division_id = division_id
         self.legal_entity_id = legal_entity_id
         self.business_group_id = business_group_id
-        self.group_id = group_id
+        self.client_id = client_id
         self.domain_ids = domain_ids
         self.industry_id = industry_id
         self.geography_id = geography_id
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "unit_name", "division_id", "legal_entity_id", "business_group_id", "group_id", "domain_ids", "industry_id", "geography_id"])
+        data = parse_dictionary(data, ["unit_id", "unit_name", "division_id", "legal_entity_id", "business_group_id", "client_id", "domain_ids", "industry_id", "geography_id"])
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_50(unit_name)
+        unit_name = parse_structure_CustomTextType_100(unit_name)
         division_id = data.get("division_id")
         division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
         legal_entity_id = data.get("legal_entity_id")
         legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
-        group_id = data.get("group_id")
-        group_id = parse_structure_UnsignedIntegerType_32(group_id)
+        client_id = data.get("client_id")
+        client_id = parse_structure_UnsignedIntegerType_32(client_id)
         domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_RecordType_core_Domain(domain_ids)
+        domain_ids = parse_structure_VectorType_UnsignedIntegerType_32(domain_ids)
         industry_id = data.get("industry_id")
         industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         geography_id = data.get("geography_id")
         geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
-        return UNIT(unit_id, unit_name, division_id, legal_entity_id, business_group_id, group_id, domain_ids, industry_id, geography_id)
+        return UNIT(unit_id, unit_name, division_id, legal_entity_id, business_group_id, client_id, domain_ids, industry_id, geography_id)
 
     def to_structure(self):
         return {
             "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
             "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
             "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
-            "group_id": to_structure_SignedIntegerType_8(self.group_id),
-            "domain_ids": to_structure_VectorType_RecordType_core_Domain(self.domain_ids),
+            "client_id": to_structure_SignedIntegerType_8(self.client_id),
+            "domain_ids": to_structure_VectorType_UnsignedIntegerType_32(self.domain_ids),
             "industry_id": to_structure_SignedIntegerType_8(self.industry_id),
             "geography_id": to_structure_SignedIntegerType_8(self.geography_id),
         }
