@@ -220,7 +220,7 @@ $("#search-service-provider").keyup(function() {
   $("table").f0ind("tr:not(:first)").each(function(index) {
     if (index === 0) return;
     var id = $(this).find(".service-provider-name").text().toLowerCase();       
-    $(this).toggle(id.indexOf(value) !== -1);;
+    $(this).toggle(id.indexOf(value) !== -1);
   });
 });
 $("#search-contact-person").keyup(function() { 
