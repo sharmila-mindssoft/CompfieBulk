@@ -277,7 +277,7 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
 
 function getAssignedStatutories () {
 
-  /*function onSuccess(data){
+  function onSuccess(data){
     assignedStatutoriesList = data["assigned_statutories"];
     countriesList = data["countries"];
     groupcompaniesList = data["group_companies"];
@@ -294,7 +294,7 @@ function getAssignedStatutories () {
   }
   function onFailure(error){
   }
-  mirror.GetAssignedStatutoriesList(
+  mirror.getAssignedStatutoriesList(
     function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -303,9 +303,9 @@ function getAssignedStatutories () {
             onFailure(error);
           }
       }
-  );*/
+  );
 
-  assignedStatutoriesList = [
+  /*assignedStatutoriesList = [
       {
         "submission_status": "Pending",
         "client_saved_statutory_id": 1,
@@ -481,7 +481,7 @@ unitsList = [
         "unit_id":2
     }
 
-];
+];*/
 
   loadAssignedStatutoriesList(assignedStatutoriesList);
 }
