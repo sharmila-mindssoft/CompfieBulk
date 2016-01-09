@@ -222,13 +222,8 @@ TEMPLATE_PATHS = [
     #Techno User Transaction
     ("/assign-statutory", "files/desktop/assign-statutory/assignstatutory.html", None, {}),
     #Techno reports
-    ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {}),
-    #client admin
-    ("/service-provider", "files/desktop/client/service-provider/serviceprovider.html", None, {}),   
-    ("/client-user-privilege", "files/desktop/client/client-user-privilege/clientuserprivilege.html", None, {}),  
-    ("/client-user-master", "files/desktop/client/client-user-master/clientusermaster.html", None, {}),  
-    ("/unit-closure", "files/desktop/client/unit-closure/unitclosure.html", None, {}),    
-]
+    ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {})
+   ]
 
 
 def handle_root(request, response):

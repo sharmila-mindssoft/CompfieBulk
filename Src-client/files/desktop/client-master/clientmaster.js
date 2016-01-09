@@ -1,6 +1,7 @@
 var userList;
 var domainsList;
 var countriesList;
+var dateconfigList;
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
@@ -241,10 +242,9 @@ $("#btn-clientgroup-submit").click(function(){
 		}
 	
 		var clientGroupDetails = mirror.getUpdateClientGroupDict(
-			clientGroupIdVal, clientGroupNameVal, countriesVal, domainsVal, uploadLogoVal,
+			parseInt(clientGroupIdVal), clientGroupNameVal, countriesVal, domainsVal, uploadLogoVal,
 			contractFromVal, contractToVal,inchargePersonVal, licenceVal,
-			parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal,
-			 usernameVal, dateConfigurations, shortname);
+			parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal, dateConfigurations);
 		mirror.updateClientGroup( clientGroupDetails, 
 			function (error, response) {
 	            if (error == null){
@@ -307,7 +307,6 @@ function clientgroup_edit(clientGroupId){
 		});
 }
 function loadFormListUpdate(clientListData, clientGroupId){
-	var dateconfigList;
 	for(clientList in clientListData){
 		if(clientGroupId == clientListData[clientList]['client_id']){
 			$("#clientgroup-name").val(clientListData[clientList]['client_name']);
@@ -335,44 +334,21 @@ function loadFormListUpdate(clientListData, clientGroupId){
 			$("#usersSelected").val(userListArray.length+" Selected");
 			$("#short-name").val(clientListData[clientList]['short_name']);
 			$("#short-name").attr("readonly", "true");
-			var dateconfigList=clientListData[clientList]['date_configurations'];
+			dateconfigList = clientListData[clientList]['date_configurations'];
 		}
 	}	
-	var countryNamesList = '';
-	for (var countryselect in countriesList){
-		for(var i = 0;i < countriesListArray.length;i++){
-			if(countriesList[countryselect]['country_id'] == countriesListArray[i]){
-				countryNamesList = countryNamesList + countriesList[countryselect]['country_name'] + ',';
-			}
-		}
-	}
-	$("#countryNames").val(countryNamesList);
-	var domainNamesList = '';
-	for (var domainselect in domainsList){
-		for(var i = 0;i < domainsListArray.length;i++){
-			if(domainsList[domainselect]['domain_id'] == domainsListArray[i]){
-				domainNamesList = domainNamesList + domainsList[domainselect]['domain_name'] + ',';
-			}
-		}
-	}
-	$("#domainNames").val(domainNamesList);
-	var value;
-	dateconfig(dateconfigList);	
+	dateConfigurations(dateconfigList);	
 }
 
-function dateconfig(dateconfigList){
-	alert("hi");
+function dateConfigurations(dateconfigList){
 	$('.tbody-dateconfiguration-list').empty();
-	var countriesList = $('#country').val();
-	var domainsList = $('#domain').val();
-	alert("hi2");
-	console.log("list===="+dateconfigList);
-	alert("hi3");
-	if(countriesList != '' && domainsList != ''){
-		if(countriesList != ''){ 
-			var arrayCountries = countriesList.split(",");
-			if(domainsList != ''){
-				var arrayDomains = domainsList.split(",");
+	var countriesValue = $('#country').val();
+	var domainsValue = $('#domain').val();
+	if(countriesValue != '' && domainsValue != ''){
+		if(countriesValue != ''){ 
+			var arrayCountries = countriesValue.split(",");
+			if(domainsValue != ''){
+				var arrayDomains = domainsValue.split(",");
 			}
 			for(var ccount = 0;ccount < arrayCountries.length; ccount++){
 				var tableRow = $('#templates .table-dconfig-list .table-dconfig-countries-row');
@@ -395,6 +371,14 @@ function dateconfig(dateconfigList){
 			}
 		}
 	}
+	$.each(dateconfigList, function (key, value){
+		var fromMonth = dateconfigList[key]['period_from'];
+		var toMonth = dateconfigList[key]['period_to'];
+		var countryIdDateConfig = dateconfigList[key]['country_id'];
+		var domainIdDateConfig = dateconfigList[key]['domain_id'];
+		$(".tl-from-"+countryIdDateConfig+"-"+domainIdDateConfig+" [value="+fromMonth+"]" ).prop("selected", true);
+		$(".tl-to-"+countryIdDateConfig+"-"+domainIdDateConfig+" [value="+toMonth+"]" ).prop("selected", true);
+	});
 }
 function getCountriesName(countryId){
 	var countryName;
@@ -409,8 +393,8 @@ function getCountriesName(countryId){
 function getDomainName(doaminId){
 	var domainName;
 	$.each(domainsList, function (key, value){
-		if(domainList[key][domain_id] == doaminId){
-			domainName = domainList[key]['domain_name'];
+		if(domainsList[key]['domain_id'] == doaminId){
+			domainName = domainsList[key]['domain_name'];
 			return false;
 		}
 	});
@@ -486,7 +470,13 @@ function activate(element){
 	$("#domainselected").val(totalCount+" Selected");
 	$("#domain").val(selIds);
 	$("#domainNames").val(selNames);
-	dateconfig();
+	if($("#clientgroup-id").val() == ''){
+		dateconfig();	
+	}
+	else{
+		dateConfigurations(dateconfigList);
+	}
+	
 }
 
 function loadautocountry () {
@@ -544,7 +534,12 @@ function activateCountry(element){
 	$("#countryselected").val(totalcount+" Selected");
 	$("#country").val(selids);
 	$("#countryNames").val(selNames);
-  	dateconfig();
+  	if($("#clientgroup-id").val() == ''){
+		dateconfig();	
+	}
+	else{
+		dateConfigurations(dateconfigList);
+	}
 }
 function dateconfig(){
 	$('.tbody-dateconfiguration-list').empty();
@@ -565,7 +560,7 @@ function dateconfig(){
 				var tableRow = $('#templates .table-dconfig-list .table-dconfig-countries-row');
 				var clone = tableRow.clone();
 				$('.inputCountry', clone).val(arrayCountries[ccount]);
-				$('.dconfig-country-name', clone).text(arrayCountriesName[ccount]);
+				$('.dconfig-country-name', clone).text(getCountriesName(arrayCountries[ccount]));
 				$('.dconfig-country-name', clone).addClass("heading");
 				$('.tbody-dateconfiguration-list').append(clone);
 
@@ -573,7 +568,7 @@ function dateconfig(){
 					var tableRowDomains = $('#templates .table-dconfig-list .table-dconfig-domain-row');
 					var clone1 = tableRowDomains.clone();
 					$('.inputDomain', clone1).val(arrayDomains[dcount]);
-					$('.dconfig-domain-name', clone1).text(arrayDomainName[dcount]);
+					$('.dconfig-domain-name', clone1).text(getDomainName(arrayDomains[dcount]));
 
 					$('.tl-from', clone1).addClass('tl-from-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]);
 					$('.tl-to', clone1).addClass('tl-to-'+arrayCountries[ccount]+'-'+arrayDomains[dcount]);

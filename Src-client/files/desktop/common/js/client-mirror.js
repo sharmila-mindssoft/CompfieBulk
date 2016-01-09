@@ -103,37 +103,8 @@ function initClientMirror() {
         );
     }
 
-    function clientLoginApiRequest(callerName, request, callback) {
-        jQuery.post(
-            CLIENT_BASE_URL + callerName,
-            toJSON(request),
-            function (data) {
-                var data = parseJSON(data);
-                var status = data[0];
-                var response = data[1];
-                matchString = 'success';
-                log("API STATUS :"+status)
-                if (status.toLowerCase().indexOf(matchString) != -1){
-                    callback(null, response);
-                }
-                callback(status, null) 
-            }
-        )
-        .fail(
-            function (jqXHR, textStatus, errorThrown) {
-                // alert("jqXHR:"+jqXHR.status);
-                // alert("textStatus:"+textStatus);
-                // alert("errorThrown:"+errorThrown);
-                // callback(error, null);
-            }
-        );
-    }
-
-
-
     // Login function 
     function login(username, password, short_name, callback) {
-        alert("inside client mirror login function");
         var request = [
             "Login", {
                 "login_type": "Web",
@@ -192,23 +163,19 @@ function initClientMirror() {
         )
     }
 
-// Change Password APIs
+    // Change Password APIs
 
     function changePassword(currentPassword, newPassword,
      callback) {
         callerName = "api/login"
-        alert("inside chnage password client mirror");
-        alert(getSessionToken());
         var request = [
             "ChangePassword",
             {
-                "session_token" : getSessionToken(),
                 "current_password": currentPassword,
                 "new_password": newPassword
             }
         ];
-        alert(request);
-        clientLoginApiRequest(callerName, request, callback);
+        clientApiRequest(callerName, request, callback);
     }
 
     // Forgot Password APIs
@@ -222,7 +189,7 @@ function initClientMirror() {
                 "username": username
             }
         ];
-        clientLoginApiRequest(callerName, request, callback);
+        clientApiRequest(callerName, request, callback);
     }
 
     function validateResetToken(resetToken, 
@@ -234,7 +201,7 @@ function initClientMirror() {
                 "reset_token": resetToken
             }
         ];
-        clientLoginApiRequest(callerName, request, callback);
+        clientApiRequest(callerName, request, callback);
     }
 
     function resetPassword(resetToken, newPassword, 
@@ -247,7 +214,7 @@ function initClientMirror() {
                 "new_password": newPassword
             }
         ];
-        clientLoginApiRequest(callerName, request, callback);
+        clientApiRequest(callerName, request, callback);
     }
 
     // Client User Group  
@@ -537,7 +504,6 @@ function initClientMirror() {
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
         clientApiRequest: clientApiRequest,
-        clientLoginApiRequest: clientLoginApiRequest,
         getClientId: getClientId,
 
         changePassword: changePassword,

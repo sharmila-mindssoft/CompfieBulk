@@ -171,6 +171,12 @@ TEMPLATE_PATHS = [
     (r"/login/([a-zA-Z-0-9]+)", "files/desktop/login/login.html", "files/mobile/login/login.html", {}),
     ("/test", "test_apis.html", "", {}),
     ("/home", "files/desktop/home/home.html", None, {}),
+     #client admin
+    ("/service-provider", "files/desktop/client/service-provider/serviceprovider.html", None, {}),   
+    ("/client-user-privilege", "files/desktop/client/client-user-privilege/clientuserprivilege.html", None, {}),  
+    ("/client-user-master", "files/desktop/client/client-user-master/clientusermaster.html", None, {}),  
+    ("/unit-closure", "files/desktop/client/unit-closure/unitclosure.html", None, {}),    
+
 ]
 
 
