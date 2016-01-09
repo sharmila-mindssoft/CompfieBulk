@@ -164,71 +164,71 @@ class ClientDatabase(Database):
 		rows = self.get_data("tbl_client_groups", columns, condition, 0)
 		return rows[0][0]
 
-    def verify_username(self, username, client_id):
-        columns = "count(*), user_id"
-        condition = "email_id='%s'" % (username)
-        rows = self.get_data(self.tblUsers, columns, condition, client_id)
-        count = rows[0][0]
-        if count == 1:
-            return rows[0][1]
-        else:
-            condition = "username='%s'" % username
-            columns = "count(*)"
-            rows = self.get_data(self.tblAdmin, columns, condition, client_id)
-            count = rows[0][0]
-            if count == 1:
-                return 0
-            else:
-                return None
+	def verify_username(self, username, client_id):
+		columns = "count(*), user_id"
+		condition = "email_id='%s'" % (username)
+		rows = self.get_data(self.tblUsers, columns, condition, client_id)
+		count = rows[0][0]
+		if count == 1:
+			return rows[0][1]
+		else:
+			condition = "username='%s'" % username
+			columns = "count(*)"
+			rows = self.get_data(self.tblAdmin, columns, condition, client_id)
+			count = rows[0][0]
+			if count == 1:
+				return 0
+			else:
+				return None
 
 	def verify_password(self, password, user_id, client_id):
-        columns = "count(*)"
-        encrypted_password = self.encrypt(password)
-        condition = "1"
-        rows= None
-        if user_id == 0:
-            condition = "password='%s'" % (encrypted_password)  
-            rows = self.get_data(self.tblAdmin, columns, condition, client_id)
-        else:  
-            condition = "password='%s' and user_id='%d'" % (encrypted_password, user_id)
-            rows = self.get_data(self.tblUsers, columns, condition, client_id)
-        if(int(rows[0][0]) <= 0):
-            return False
-        else:
-            return True
+		columns = "count(*)"
+		encrypted_password = self.encrypt(password)
+		condition = "1"
+		rows= None
+		if user_id == 0:
+			condition = "password='%s'" % (encrypted_password)  
+			rows = self.get_data(self.tblAdmin, columns, condition, client_id)
+		else:  
+			condition = "password='%s' and user_id='%d'" % (encrypted_password, user_id)
+			rows = self.get_data(self.tblUsers, columns, condition, client_id)
+		if(int(rows[0][0]) <= 0):
+			return False
+		else:
+			return True
 
 	def update_password(self, password, user_id, client_id):
-        columns = ["password"]
-        values = [self.encrypt(password)]
-        condition = "1"
-        result = False
-        if user_id != 0:
-            condition = " user_id='%d'" % user_id
-            result = self.update(self.tblUsers, columns, values, condition, client_id)
-        else:
-            result = self.update(self.tblAdmin, columns, values, condition, client_id)
-        if result:
-            return True
-        else:
-            return False
+		columns = ["password"]
+		values = [self.encrypt(password)]
+		condition = "1"
+		result = False
+		if user_id != 0:
+			condition = " user_id='%d'" % user_id
+			result = self.update(self.tblUsers, columns, values, condition, client_id)
+		else:
+			result = self.update(self.tblAdmin, columns, values, condition, client_id)
+		if result:
+			return True
+		else:
+			return False
 
 	def delete_used_token(self, reset_token, client_id):
-        condition = " verification_code='%s'" % reset_token
-        if self.delete(self.tblEmailVerification, condition, client_id):
-            return True
-        else:
-            return False
+		condition = " verification_code='%s'" % reset_token
+		if self.delete(self.tblEmailVerification, condition, client_id):
+			return True
+		else:
+			return False
 
 	def validate_reset_token(self, reset_token, client_id):
-        column = "count(*), user_id"
-        condition = " verification_code='%s'" % reset_token
-        rows = self.get_data(self.tblEmailVerification, column, condition, client_id)
-        count = rows[0][0]
-        user_id = rows[0][1]
-        if count == 1:
-            return user_id
-        else:
-            return None
+		column = "count(*), user_id"
+		condition = " verification_code='%s'" % reset_token
+		rows = self.get_data(self.tblEmailVerification, column, condition, client_id)
+		count = rows[0][0]
+		user_id = rows[0][1]
+		if count == 1:
+			return user_id
+		else:
+			return None
 
 	def validate_session_token(self, client_id, session_token) :
 		query = "SELECT user_id FROM tbl_user_sessions \

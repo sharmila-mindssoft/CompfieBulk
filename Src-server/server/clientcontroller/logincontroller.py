@@ -13,6 +13,7 @@ __all__ = [
 ]
 
 def process_login_request(request, db) :
+	print "inside process login request"
 	if type(request) is login.Login:
 		return process_login(db, request)
 
@@ -40,7 +41,6 @@ def process_login(db, request):
 	encrypt_password = db.encrypt(password)
 	client_id = db.get_client_id_from_short_name(short_name)
 	response = db.verify_login(username, encrypt_password, int(client_id))
-	print response
 	if response is True:
 		return admin_login_response(db, client_id)
 	else :
@@ -75,11 +75,11 @@ def admin_login_response(db, client_id):
 	session_type = 1 #web
 	session_token = db.add_session(user_id, session_type, client_id)
 	menu = process_user_forms(db, "1,2,3,4", client_id, 1)
-	print menu
 	employee_name = "Administrator"
 	return login.AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name, client_id)
 
-def process_forgot_password(db, request, client_id):
+def process_forgot_password(db, request):
+	client_id = db.get_client_id_from_short_name(request.short_name)
 	user_id = db.verify_username(request.username, client_id)
 	if user_id != None:
 		send_reset_link(db, user_id, client_id)
@@ -103,7 +103,9 @@ def send_reset_link(db, user_id, client_id):
 def send_email():
 	return True
 
-def process_reset_token(db, request, client_id):
+def process_reset_token(db, request):
+	print "inside process reset token"
+	client_id = db.get_client_id_from_short_name(request.short_name)
 	user_id = db.validate_reset_token(request.reset_token, client_id)
 	if user_id != None:
 	    return login.ResetSessionTokenValidationSuccess()
@@ -111,7 +113,8 @@ def process_reset_token(db, request, client_id):
 	    return login.InvalidResetToken()
 	
 
-def process_reset_password(db, request, client_id):
+def process_reset_password(db, request):
+	client_id = db.get_client_id_from_short_name(request.short_name)
 	user_id = db.validate_reset_token(request.reset_token, client_id)
 	if user_id != None:
 		if db.update_password(request.new_password, user_id, client_id):
@@ -124,8 +127,11 @@ def process_reset_password(db, request, client_id):
 	else:
 		return login.InvalidResetToken()
 
-def process_change_password(db, request, client_id):
-	session_user = db.validate_session_token(client_id, request.session_token)
+def process_change_password(db, request):
+	client_info = request.session_token.split("-")
+	session_token = client_info[1]
+	client_id = int(client_info[0])
+	session_user = db.validate_session_token(client_id, session_token)
 	if db.verify_password(request.current_password, session_user, client_id):
 		db.update_password(request.new_password, session_user, client_id)
 		return login.ChangePasswordSuccess()
