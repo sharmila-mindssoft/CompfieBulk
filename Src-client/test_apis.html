@@ -376,6 +376,9 @@
 		        password = "1234567"
 		        mirror.reactivateUnit(clientId, unitId, password, callback)
 			}
+			function getClientProfile(){
+				mirror.getClientProfile(callback)
+			}
 		</script>
 	</head>
 	<body>
@@ -529,6 +532,11 @@
 			</button>
 			<button onclick="reactivateUnit()">
 				Reactivate Unit
+			</button>
+		</div>
+		<div>
+			<button onclick="getClientProfile()">
+				Get Client Profile
 			</button>
 		</div>
 		<br>
