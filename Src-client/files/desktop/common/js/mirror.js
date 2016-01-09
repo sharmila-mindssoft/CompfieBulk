@@ -136,7 +136,6 @@ function initMirror() {
 
     // Login function 
     function login(username, password, short_name, callback) {
-        alert("inside mirror login");
         var request = [
             "Login", {
                 "login_type": "Web",

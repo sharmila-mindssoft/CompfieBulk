@@ -132,7 +132,9 @@ class ClientDatabase(Database):
 			if data_list is None :
 			    return False
 			else :
-			    return self.convert_to_dict(data_list, data_columns)
+				result = self.convert_to_dict(data_list, data_columns)
+				result["client_id"] = client_id
+				return result
 		else :
 		    return True
 

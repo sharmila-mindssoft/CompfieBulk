@@ -40,6 +40,7 @@ def process_login(db, request):
 	encrypt_password = db.encrypt(password)
 	client_id = db.get_client_id_from_short_name(short_name)
 	response = db.verify_login(username, encrypt_password, int(client_id))
+	print response
 	if response is True:
 		return admin_login_response(db, client_id)
 	else :
@@ -62,10 +63,10 @@ def user_login_response(db, data, client_id):
 	user_group_name = data["user_group_name"]
 	form_ids = data["form_ids"]
 	menu = process_user_forms(db, form_ids, client_id, 0)
-	print menu
 	return login.UserLoginSuccess(
 		user_id, session_token, email_id, user_group_name, 
-		menu, employee_name, employee_code, contact_no, address, designation
+		menu, employee_name, employee_code, contact_no, address, designation,
+		client_id
 	)
 
 def admin_login_response(db, client_id):
@@ -76,7 +77,7 @@ def admin_login_response(db, client_id):
 	menu = process_user_forms(db, "1,2,3,4", client_id, 1)
 	print menu
 	employee_name = "Administrator"
-	return login.AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name)
+	return login.AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name, client_id)
 
 def process_forgot_password(db, request):
 	self.url = url
@@ -86,6 +87,8 @@ def process_forgot_password(db, request):
 	else:
 	    return login.InvalidUsername()
 	
+def send_reset_link():
+	return
 
 def process_reset_token(db, request):
 	return login.ResetSessionTokenValidationSuccess()

@@ -339,6 +339,7 @@ class Database(object) :
         else :
             return True
 
+
     def convert_to_dict(self, data_list, columns) :
         assert type(data_list) in (list, tuple)
         if len(data_list) > 0:
@@ -359,8 +360,6 @@ class Database(object) :
                 return result
         else:
             return []
-
-            
 
     def add_session(self, user_id, session_type_id, client_id = None) :
         if client_id != None:
@@ -394,6 +393,27 @@ class Database(object) :
     def new_uuid(self) :
         s = str(uuid.uuid4())
         return s.replace("-", "")
+
+    def convert_to_dict(self, data_list, columns) :
+        assert type(data_list) in (list, tuple)
+        if len(data_list) > 0:
+            if type(data_list[0]) is tuple :
+                result_list = []
+                if len(data_list[0]) == len(columns) :
+                    for data in data_list:
+                        result = {}
+                        for i, d in enumerate(data):
+                            result[columns[i]] = d
+                        result_list.append(result)
+                return result_list
+            else :
+                result = {}
+                if len(data_list) == len(columns) :
+                    for i, d in enumerate(data_list):
+                        result[columns[i]] = d
+                return result
+        else:
+            return []
 
 class KnowledgeDatabase(Database):
     def __init__(
@@ -2552,11 +2572,11 @@ class KnowledgeDatabase(Database):
     def return_group_companies(self, group_companies):
         results = []
         for group_company in group_companies :
+            countries = [int(x) for x in self.get_client_countries(group_company["client_id"]).split(",")]
+            domains = [int(x) for x in self.get_client_domains(group_company["client_id"]).split(",")]
             results.append(core.GroupCompany(
                 group_company["client_id"], group_company["group_name"], 
-                bool(group_company["is_active"]), self.get_client_countries(
-                group_company["client_id"]),self.get_client_domains(
-                group_company["client_id"])
+                bool(group_company["is_active"]), countries, domains
             ))
         return results       
 
@@ -2923,6 +2943,16 @@ class KnowledgeDatabase(Database):
         values = [1, current_time_stamp, session_user]
         condition = "unit_id = '%d' and client_id = '%d' "% (unit_id, client_id)
         return self.update(self.tblUnits, columns, values, condition)
+
+    def verify_username(self, username):
+        columns = "count(*), user_id"
+        condition = "email_id='%s'" % (username)
+        rows = self.get_data(self.tblUsers, columns, condition)
+        count = rows[0][0]
+        if count == 1:
+            return rows[0][1]
+        else:
+            return None
 
     def verify_password(self, password, user_id):
         columns = "count(*)"

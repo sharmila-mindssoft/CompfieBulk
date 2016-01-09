@@ -66,6 +66,7 @@ function initClientMirror() {
 
     function getClientId(){
         var info = getUserInfo();
+        console.log(info)
         return info["client_id"];
     }
 
