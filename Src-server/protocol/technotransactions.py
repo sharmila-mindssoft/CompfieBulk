@@ -111,16 +111,19 @@ class GetAssignedStatutoriesById(Request):
         }
 
 class GetAssignedStatutoryWizardOneData(Request):
-    def __init__(self):
-        pass
+    def __init__(self, country_id):
+        self.country_id = country_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetAssignedStatutoryWizardOneData()
+        data = parse_dictionary(data, ["country_id"])
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        return GetAssignedStatutoryWizardOneData(country_id)
 
     def to_inner_structure(self):
         return {
+            "country_id": to_structure_UnSignedIntegerType_32(self.country_id)
         }
 
 class GetStatutoryWizardTwoData(Request):
@@ -276,8 +279,7 @@ class GetAssignedStatutoriesByIdSuccess(Response):
         }
 
 class GetAssignedStatutoryWizardOneDataSuccess(Response):
-    def __init__(self, countries, domains, industries, geography_levels, geographies, group_companies, business_groups, legal_entities, divisions, units):
-        self.countries = countries
+    def __init__(self, domains, industries, geography_levels, geographies, group_companies, business_groups, legal_entities, divisions, units):
         self.domains = domains
         self.industries = industries
         self.geography_levels = geography_levels
@@ -290,9 +292,7 @@ class GetAssignedStatutoryWizardOneDataSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "industries", "geography_levels", "geographies", "group_companies", "business_groups", "legal_entities", "divisions", "units"])
-        countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        data = parse_dictionary(data, ["domains", "industries", "geography_levels", "geographies", "group_companies", "business_groups", "legal_entities", "divisions", "units"])
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         industries = data.get("industries")
@@ -311,11 +311,10 @@ class GetAssignedStatutoryWizardOneDataSuccess(Response):
         divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_technotransactions_UNIT(units)
-        return GetAssignedStatutoryWizardOneDataSuccess(countries, domains, industries, geography_levels, geographies, group_companies, business_groups, legal_entities, divisions, units)
+        return GetAssignedStatutoryWizardOneDataSuccess(domains, industries, geography_levels, geographies, group_companies, business_groups, legal_entities, divisions, units)
 
     def to_inner_structure(self):
         return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
             "industries": to_structure_VectorType_RecordType_core_Industry(self.industries),
             "geography_levels": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(self.geography_levels),
@@ -455,7 +454,7 @@ class ASSIGNED_STATUTORIES(object):
 #
 
 class UNIT(object):
-    def __init__(self, unit_id, unit_name, division_id, legal_entity_id, business_group_id, client_id, domain_ids, industry_id, geography_id):
+    def __init__(self, unit_id, unit_name, division_id, legal_entity_id, business_group_id, client_id, domain_ids, industry_id, geography_ids):
         self.unit_id = unit_id
         self.unit_name = unit_name
         self.division_id = division_id
@@ -464,11 +463,11 @@ class UNIT(object):
         self.client_id = client_id
         self.domain_ids = domain_ids
         self.industry_id = industry_id
-        self.geography_id = geography_id
+        self.geography_ids = geography_ids
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "unit_name", "division_id", "legal_entity_id", "business_group_id", "client_id", "domain_ids", "industry_id", "geography_id"])
+        data = parse_dictionary(data, ["unit_id", "unit_name", "division_id", "legal_entity_id", "business_group_id", "client_id", "domain_ids", "industry_id", "geography_ids"])
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
@@ -485,9 +484,9 @@ class UNIT(object):
         domain_ids = parse_structure_VectorType_UnsignedIntegerType_32(domain_ids)
         industry_id = data.get("industry_id")
         industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
-        geography_id = data.get("geography_id")
-        geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
-        return UNIT(unit_id, unit_name, division_id, legal_entity_id, business_group_id, client_id, domain_ids, industry_id, geography_id)
+        geography_ids = data.get("geography_ids")
+        geography_ids = parse_structure_VectorType_UnsignedIntegerType_32(geography_ids)
+        return UNIT(unit_id, unit_name, division_id, legal_entity_id, business_group_id, client_id, domain_ids, industry_id, geography_ids)
 
     def to_structure(self):
         return {
@@ -499,6 +498,6 @@ class UNIT(object):
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
             "domain_ids": to_structure_VectorType_UnsignedIntegerType_32(self.domain_ids),
             "industry_id": to_structure_SignedIntegerType_8(self.industry_id),
-            "geography_id": to_structure_SignedIntegerType_8(self.geography_id),
+            "geography_ids": to_structure_VectorType_UnsignedIntegerType_32(self.geography_ids),
         }
 

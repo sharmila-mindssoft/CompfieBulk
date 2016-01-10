@@ -39,6 +39,7 @@ GetAssignedStatutoriesById = RecordType("GetAssignedStatutoriesById", [
 ])
 
 GetAssignedStatutoryWizardOneData = RecordType("GetAssignedStatutoryWizardOneData", [
+	Field("country_id", COUNTRY_ID)
 ])
 
 GetStatutoryWizardTwoData = RecordType("GetStatutoryWizardTwoData", [
@@ -108,16 +109,15 @@ UNIT = RecordType("UNIT", [
 	Field("division_id", OptionalType(DIVISION_ID)),
 	Field("legal_entity_id", LEGAL_ENTITY_ID),
 	Field("business_group_id", OptionalType(BUSINESS_GROUP_ID)),
-	Field("group_id", GROUP_ID),
+	Field("client_id", GROUP_ID),
 	Field("domain_ids", DomainIdList),
 	Field("industry_id", INDUSTRY_ID),
-	Field("geography_id", GEOGRAPHY_ID)
+	Field("geography_ids", VectorType(GEOGRAPHY_ID))
 ])
 
 LevelList = VectorType(Level)
 
 GetAssignedStatutoryWizardOneDataSuccess = RecordType("GetAssignedStatutoryWizardOneDataSuccess", [
-	Field("countries", CountryList),
 	Field("domains", DomainList),
 	Field("industries", IndustryList),
 	Field("geography_levels", MapType(COUNTRY_ID, LevelList)),
