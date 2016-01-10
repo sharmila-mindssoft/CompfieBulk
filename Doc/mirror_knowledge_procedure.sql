@@ -31,10 +31,20 @@ WHERE t1.domain_id = p_domain_id
 AND t2.industry_id = p_industry_id
 AND t3.geography_id
 IN (
-
 SELECT g.geography_id
 FROM tbl_geographies g
 WHERE g.geography_id = p_geography_id
 OR g.parent_ids LIKE CONCAT(  '%', p_geography_id,  ',%' )
 );
+
+sp_get_units_with_location
+SELECT t1.unit_id, t1.unit_code, t1.unit_name, t1.division_id,
+    t1.legal_entity_id, t1.business_group_id,
+    t1.client_id , t1.geography_id, t1.industry_id, t1.domain_ids,
+    t3.parent_ids
+FROM tbl_units t1
+INNER JOIN tbl_user_clients t2 ON t1.client_id = t2.client_id
+INNER JOIN tbl_geographies t3 ON t1.geography_id = t3.geography_id
+WHERE t2.user_id = 2
+
 
