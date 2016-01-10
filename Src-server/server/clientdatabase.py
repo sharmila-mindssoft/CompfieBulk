@@ -1,4 +1,4 @@
-from protocol import core
+from protocol import (core, general)
 from database import Database
 
 __all__ = [
@@ -249,6 +249,14 @@ class ClientDatabase(Database):
 		    joinConditions, whereCondition, client_id)
 		return rows
 
+	def return_forms(self, client_id):
+		columns = "form_id, form_name"
+		forms = self.get_data(self.tblForms, columns, "1", client_id)
+		results = []
+		for form in forms:
+			results.append(general.AuditTrailForm(form[0], form[1]))
+		return results
+
 	def get_countries_for_user(self, user_id, client_id) :
 		query = "SELECT distinct t1.country_id, t1.country_name, \
 		    t1.is_active FROM tbl_countries t1 "
@@ -368,6 +376,21 @@ class ClientDatabase(Database):
 		    ))
 		return results
 
+	def save_activity(self, user_id, form_id, action, client_id):
+		created_on = self.get_date_time()
+		activityId = self.get_new_id("activity_log_id", "tbl_activity_log", client_id)
+		query = "INSERT INTO tbl_activity_log \
+		    (activity_log_id, user_id, form_id, action, created_on) \
+		    VALUES (%s, %s, %s, '%s', '%s')" % (
+		        activityId, user_id, form_id, action, created_on
+		    )
+		self.execute(query, client_id)
+		return True
+
+#
+# User Privilege
+#
+
 	def generate_new_user_privilege_id(self, client_id) :
 		return self.get_new_id("user_group_id",self.tblUserGroups, client_id)
 
@@ -405,21 +428,46 @@ class ClientDatabase(Database):
 		                ",".join(str(x) for x in user_privilege.form_ids), 1, 
 		                self.get_date_time(), session_user,self.get_date_time(), 
 		                session_user]
-		return self.insert(self.tblUserGroups, columns, values_list, client_id)
+		result = self.insert(self.tblUserGroups, columns, values_list, client_id) 
+
+		action = "Created User Group \"%s\"" % user_privilege.user_group_name
+		self.save_activity(session_user, 3, action, client_id)
+
+		return result
 
 	def update_user_privilege(self, user_privilege, session_user, client_id):
 		columns = ["user_group_name","form_ids", "updated_on", "updated_by"]
 		values =  [ user_privilege.user_group_name, ",".join(str(x) for x in user_privilege.form_ids),
 		            self.get_date_time(),session_user]
 		condition = "user_group_id='%d'" % user_privilege.user_group_id
-		return self.update(self.tblUserGroups, columns, values, condition, client_id)
+		result = self.update(self.tblUserGroups, columns, values, condition, client_id) 
+
+		action = "Updated User Group \"%s\"" % user_privilege.user_group_name
+		self.save_activity(session_user, 3, action, client_id)		
+
+		return result
 
 	def update_user_privilege_status(self, user_group_id, is_active, session_user, client_id):
 		is_active = 0 if is_active != True else 1
 		columns = ["is_active", "updated_by", "updated_on"]
 		values = [is_active, session_user, self.get_date_time()]
 		condition = "user_group_id='%d'" % user_group_id
-		return self.update(self.tblUserGroups, columns, values, condition, client_id)
+		result = self.update(self.tblUserGroups, columns, values, condition, client_id)
+
+		action_column = "user_group_name"
+		rows = self.get_data(self.tblUserGroups, action_column, condition, client_id)
+		user_group_name = rows[0][0]
+		action = None
+		if is_active == 0:
+			action = "Deactivated user group \"%s\"" % user_group_name
+		else:
+			action = "Activated user group \"%s\"" % user_group_name
+		self.save_activity(session_user, 3, action, client_id)
+		return result
+
+#
+#	User
+#
 
 	def generate_new_user_id(self, client_id):
 		return self.get_new_id("user_id",self.tblUsers, client_id)
@@ -468,6 +516,31 @@ class ClientDatabase(Database):
 				user["service_provider_id"], bool(user["is_active"])))
 		return results
 
+	def get_users(self, client_id):
+		columns = "user_id, employee_name, employee_code, is_active"
+		condition = "1"
+		rows = self.get_data(self.tblUsers, columns, condition, client_id)
+		columns = ["user_id", "employee_name", "employee_code", "is_active"]
+		result = self.convert_to_dict(rows, columns)
+		return self.return_users(result)
+
+	def get_users_by_id(self, user_ids, client_id):
+		columns = "user_id, employee_name, employee_code, is_active"
+		condition = " user_id in (%s)" % user_ids
+		rows = self.get_data(self.tblUsers, columns, condition, client_id)
+		columns = ["user_id", "employee_name", "employee_code", "is_active"]
+		result = self.convert_to_dict(rows, columns)
+		return self.return_users(result)
+
+	def return_users(self, users):
+		results = []
+		for user in users :
+			employee_name = "%s - %s"% (user["employee_code"],user["employee_name"])
+			results.append(core.User(
+			    user["user_id"], employee_name, bool(user["is_active"])
+			))
+		return results
+
 	def save_user(self, user_id, user, session_user, client_id):
 		result1 = None
 		result2 = None
@@ -507,6 +580,9 @@ class ClientDatabase(Database):
 		    unit_value_tuple = (user_id, int(unit_id))
 		    unit_values_list.append(unit_value_tuple)
 		result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
+
+		action = "Created user \"%s - %s\"" % (user.employee_code, user.employee_name)
+		self.save_activity(session_user, 4, action, client_id)
 
 		return (result1 and result2 and result3 and result4)
 
@@ -555,6 +631,9 @@ class ClientDatabase(Database):
 		    unit_values_list.append(unit_value_tuple)
 		result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
 
+		action = "Updated user \"%s - %s\"" % (user.employee_code, user.employee_name)
+		self.save_activity(session_user, 4, action, client_id)
+
 		return (result1 and result2 and result3 and result4)
 
 	def update_user_status(self, user_id, is_active, session_user, client_id):
@@ -562,6 +641,17 @@ class ClientDatabase(Database):
 		is_active = 1 if is_active != False else 0
 		values = [is_active, self.get_date_time(), session_user]
 		condition = "user_id = '%d'"% user_id
+
+		action_column = "employee_code, employee_name"
+		rows = self.get_data(self.tblUsers, action_column, condition, client_id)
+		employee_code = rows [0][0]
+		employee_name = rows[0][1]
+		if is_active == 1:
+			action = "Activated user \"%s - %s\"" % (employee_code, employee_name)
+		else:
+			action = "Dectivated user \"%s - %s\"" % (employee_code, employee_name)
+		self.save_activity(session_user, 4, action, client_id)
+
 		return self.update(self.tblUsers, columns, values, condition, client_id)
 
 	def update_admin_status(self, user_id, is_admin, session_user, client_id):
@@ -569,7 +659,21 @@ class ClientDatabase(Database):
 		is_admin = 1 if is_admin != False else 0
 		values = [is_admin, self.get_date_time(), session_user]
 		condition = "user_id='%d'" % user_id
-		return self.update(self.tblUsers, columns, values, condition, client_id)
+		result = self.update(self.tblUsers, columns, values, condition, client_id)
+
+		action_column = "employee_code, employee_name"
+		rows = self.get_data(self.tblUsers, action_column, condition, client_id)
+		employee_code = rows[0][0]
+		employee_name = rows[0][1]
+
+		action = None
+		if is_admin == 0:
+			action = "User \"%s - %s\" was demoted from admin status" % (employee_code, employee_name)
+		else:
+			action = "User \"%s - %s\" was promoted to admin status" % (employee_code, employee_name)
+		self.save_activity(session_user, 4, action, client_id)
+
+		return result
 
 	def get_user_company_details(self, user_id, client_id):
 		columns = "group_concat(unit_id)"
@@ -607,11 +711,22 @@ class ClientDatabase(Database):
 		rows = self.get_data(self.tblUserUnits, columns, condition, client_id)
 		return rows[0][0]
 
-	def deactivate_unit(self, unit_id, client_id):
+	def deactivate_unit(self, unit_id, client_id, session_user):
 		columns = ["is_active"]
 		values = [1]
 		condition = "unit_id ='%d'" % unit_id
-		return self.update(self.tblUnits, columns, values, condition, client_id)
+		result = self.update(self.tblUnits, columns, values, condition, client_id) 
+
+		action_column = "unit_code, unit_name"
+		rows = self.get_data(self.tblUnits, action_column, condition, client_id)
+		action = "Closed Unit \"%s - %s\"" % (rows[0][0], rows[0][1])
+		self.save_activity(session_user, 5, action, client_id)
+
+		return result
+
+#
+#	Service Provider
+#
 
 	def generate_new_service_provider_id(self, client_id) :
 		return self.get_new_id("service_provider_id",self.tblServiceProviders,  client_id)
@@ -681,6 +796,10 @@ class ClientDatabase(Database):
 		            service_provider.contact_person, service_provider.contact_no,
 		            current_time_stamp, session_user, current_time_stamp, session_user]
 		result = self.insert(self.tblServiceProviders,columns, values, client_id)
+
+		action = "Created Service Provider \"%s\"" % service_provider.service_provider_name
+		self.save_activity(session_user, 2, action, client_id)
+
 		return result
 
 	def update_service_provider(self, service_provider, session_user, client_id):
@@ -693,10 +812,74 @@ class ClientDatabase(Database):
 		        contract_from, contract_to, service_provider.contact_person, 
 		        service_provider.contact_no, current_time_stamp, session_user]
 		condition = "service_provider_id='%d'" % service_provider.service_provider_id
-		return self.update(self.tblServiceProviders, columns_list, values_list, condition, client_id)
+		result = self.update(self.tblServiceProviders, columns_list, values_list, condition, client_id) 
+
+		action = "Updated Service Provider \"%s\"" % service_provider.service_provider_name
+		self.save_activity(session_user, 2, action, client_id)
+
+		return result
 
 	def update_service_provider_status(self, service_provider_id,  is_active, session_user, client_id):
+		is_active= 1 if is_active != False else 0
 		columns = ["is_active", "updated_on" , "updated_by"]
 		values = [is_active, self.get_date_time(), session_user]
 		condition = "service_provider_id='%d'" % service_provider_id
-		return self.update(self.tblServiceProviders, columns, values, condition, client_id)
+		result = self.update(self.tblServiceProviders, columns, values, condition, client_id)
+
+		action_column = "service_provider_name"
+		rows = self.get_data(self.tblServiceProviders, action_column, condition, client_id)
+		service_provider_name = rows[0][0]
+		action = None
+		if is_active == 1:
+			action = "Activated Service Provider \"%s\"" % service_provider_name
+		else:
+			action = "Deactivated Service Provider \"%s\"" % service_provider_name
+		self.save_activity(session_user, 2, action, client_id)
+
+		return result 
+
+#
+#   Audit Trail
+#
+
+	def get_audit_trails(self, user_id, client_id):
+		user_ids = ""
+		if user_id != 0:
+			column = "user_group_id"
+			condition = "user_id = '%d'" % user_id
+			rows = self.get_data(self.tblUsers, column, condition, client_id)
+			user_group_id = rows[0][0]
+
+			column = "form_category_id"
+			condition = "user_group_id = '%d'" % user_group_id
+			rows = self.get_data(self.tblUserGroups, column, condition, client_id)
+			form_category_id = rows[0][0]
+
+			column = "group_concat(user_group_id)"
+			condition = "form_category_id = '%d'" % form_category_id
+			rows = self.get_data(self.tblUserGroups, column, condition, client_id)
+			user_group_ids = rows[0][0]
+
+			column = "group_concat(user_id)"
+			condition = "user_group_id in (%s)" % user_group_ids
+			rows = self.get_data(self.tblUsers, column, condition, client_id)
+			user_ids = rows[0][0]
+			condition = "user_id in (%s)"% user_ids
+		else:
+			condition = "1"
+		columns = "user_id, form_id, action, created_on"
+		rows = self.get_data(self.tblActivityLog, columns, condition, client_id)
+		audit_trail_details = []
+		for row in rows:
+			user_id = row[0]
+			form_id = row[1]
+			action = row[2]
+			date = self.datetime_to_string(row[3])
+			audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
+		users = None
+		if user_id != 0:
+			users = self.get_users_by_id(user_ids, client_id)
+		else:
+			users = self.get_users(client_id)
+		forms = self.return_forms(client_id)
+		return general.GetAuditTrailSuccess(audit_trail_details, users, forms)

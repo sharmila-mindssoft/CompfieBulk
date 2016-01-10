@@ -127,6 +127,9 @@ def save_client(db, request, session_user):
 	existing_entity = False
 	existing_division = False
 
+	if db.is_invalid_id(db.tblClientGroups, "client_id", client_id) :
+		return technomasters.InvalidClientId()
+
 	if business_group == None:
 	    optional_business_group = True
 	    result1 = True
@@ -215,6 +218,9 @@ def update_client(db, request, session_user):
 	result3 = False
 	result4 = False
 	result5 = False
+
+	if db.is_invalid_id(db.tblClientGroups, "client_id", client_id) :
+		return technomasters.InvalidClientId()
 
 	if business_group == None:
 	    optional_business_group = True
@@ -329,11 +335,16 @@ def reactivate_unit(db, request, session_user):
 	client_id = request.client_id
 	unit_id = request.unit_id
 	password = request.password
-	if db.verify_password(password, session_user):
-	    if db.reactivate_unit(client_id, unit_id, session_user):
-	        return technomasters.ReactivateUnitSuccess()
+	if db.is_invalid_id(db.tblClientGroups, "client_id", client_id):
+		return technomasters.InvalidClientId()
+	elif db.is_invalid_id(db.tblUnits, "unit_id", unit_id):
+		return technomasters.InvalidUnitId()
 	else:
-	    return technomasters.InvalidPassword()
+		if db.verify_password(password, session_user):
+		    if db.reactivate_unit(client_id, unit_id, session_user):
+		        return technomasters.ReactivateUnitSuccess()
+		else:
+		    return technomasters.InvalidPassword()
 
 def get_client_profile(db, request, session_user):
 	client_ids = db.get_user_clients(session_user)

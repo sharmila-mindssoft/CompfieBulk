@@ -9,7 +9,7 @@ import uuid
 import json
 
 from types import *
-from protocol import core, knowledgereport, technomasters
+from protocol import core, knowledgereport, technomasters, general
 
 __all__ = [
     "KnowledgeDatabase", "Database"
@@ -129,9 +129,9 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
+        print query
         if client_id != None:
             return self.select_all(query, client_id)
-
         return self.select_all(query)
 
     def get_data_from_multiple_tables(self, columns, tables, aliases, join_type, 
@@ -352,8 +352,6 @@ class Database(object) :
             VALUES ('%s', %s, %s, '%s');"
         query = query % (session_id, user_id, session_type_id, updated_on)
         if client_id != None:
-            print client_id
-            print query
             self.execute(query, client_id)
         else:
             self.execute(query)
@@ -1277,7 +1275,6 @@ class KnowledgeDatabase(Database):
         )
         where_condition = "geography_id = %s" %  (int(geography_id))
         if (self.update_data(table_name, field_with_data, where_condition)) :
-            print "update status"
             if is_active == 0:
                 status = "deactivated"
             else:
@@ -2347,6 +2344,14 @@ class KnowledgeDatabase(Database):
             join_conditions, where_condition)
         return rows
 
+    def return_forms(self):
+        columns = "form_id, form_name"
+        forms = self.get_data(self.tblForms, columns, "1")
+        results = []
+        for form in forms:
+            results.append(general.AuditTrailForm(form[0], form[1]))
+        return results
+
     def get_form_categories(self): 
         columns = "form_category_id, form_category"
         condition = " form_category_id in (2,3)"
@@ -2388,7 +2393,7 @@ class KnowledgeDatabase(Database):
                 ",".join(str(x) for x in form_ids), 1, time_stamp, 
                 0, time_stamp, 0]
         result = self.insert(self.tblUserGroups,columns,values)
-        action = "Created User Group '%s'" % user_group_name
+        action = "Created User Group \"%s\"" % user_group_name
         self.save_activity(0, 3, action)
         return result
 
@@ -2400,7 +2405,7 @@ class KnowledgeDatabase(Database):
         values =  [user_group_name, form_category_id, 
                 ",".join(str(x) for x in form_ids), time_stamp, 0]
         condition = "user_group_id='%d'" % user_group_id
-        action = "Updated User Group '%s'" % user_group_name
+        action = "Updated User Group \"%s\"" % user_group_name
         self.save_activity(0, 3, action)
         return self.update(self.tblUserGroups, columns, values, condition)
 
@@ -2416,9 +2421,9 @@ class KnowledgeDatabase(Database):
         user_group_name = rows[0][0]
         action = ""
         if is_active == 0:
-            action = "Deactivated User Group '%s'" % user_group_name
+            action = "Deactivated User Group \"%s\"" % user_group_name
         else:
-            action = "Activated User Group '%s'" % user_group_name
+            action = "Activated User Group \"%s\"" % user_group_name
         self.save_activity(0, 3, action)
         return result
 
@@ -2449,11 +2454,24 @@ class KnowledgeDatabase(Database):
         rows = self.get_data(self.tblUsers, columns, condition)
         return rows
 
-    def get_users(self):
+    def get_users(self, condition = "1"):
         columns = "user_id, employee_name, employee_code, is_active"
-        condition = "1"
         rows = self.get_data(self.tblUsers, columns, condition)
         return rows
+
+    def return_users(self, condition = "1"):
+        user_rows = self.get_users(condition)
+        print "user_rows:{}".format(user_rows)
+        columns = ["user_id", "employee_name", "employee_code", "is_active"]
+        users = self.convert_to_dict(user_rows, columns)
+        print "users : {}".format(users)
+        results = []
+        for user in users :
+            employee_name = "%s - %s"% (user["employee_code"],user["employee_name"])
+            results.append(core.User(
+                user["user_id"], employee_name, bool(user["is_active"])
+            ))
+        return results  
 
     def get_user_countries(self, user_id):
         columns = "group_concat(country_id)"
@@ -2501,7 +2519,7 @@ class KnowledgeDatabase(Database):
             domain_values_list.append(domain_value_tuple)
         result3 = self.bulk_insert(self.tblUserDomains, domain_columns, domain_values_list)
 
-        action = "Created User '%s - %s'" % (employee_code, employee_name)
+        action = "Created User \"%s - %s\"" % (employee_code, employee_name)
         self.save_activity(0, 4, action)
 
         return (result1 and result2 and result3)
@@ -2539,7 +2557,7 @@ class KnowledgeDatabase(Database):
         result3 = self.bulk_insert(self.tblUserDomains, domain_columns, 
             domain_values_list)
 
-        action = "Updated User '%s - %s'" % (employee_code, employee_name)
+        action = "Updated User \"%s - %s\"" % (employee_code, employee_name)
         self.save_activity(0, 4, action)
 
         return (result1 and result2 and result3)    
@@ -2556,9 +2574,9 @@ class KnowledgeDatabase(Database):
         employee_code = rows[0][1]
         action = ""
         if is_active == 1:
-            action = "Activated User '%s - %s'" % (employee_code, employee_name)
+            action = "Activated User \"%s - %s\"" % (employee_code, employee_name)
         else:
-            action = "Dectivated User '%s - %s'" % (employee_code, employee_name)
+            action = "Dectivated User \"%s - %s\"" % (employee_code, employee_name)
         self.save_activity(0, 4, action)
         return result
 
@@ -2773,7 +2791,7 @@ class KnowledgeDatabase(Database):
         ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
         current_time_stamp, session_user, current_time_stamp]
         result = self.insert(self.tblClientGroups, columns, values)
-        action = "Created Client '%s'" % client_group.group_name
+        action = "Created Client \"%s\"" % client_group.group_name
         self.save_activity(session_user, 18, action)
         return result
 
@@ -2793,7 +2811,7 @@ class KnowledgeDatabase(Database):
         current_time_stamp]
         condition = "client_id = '%d'" % client_group.client_id
 
-        action = "Updated Client '%s'" % client_group.group_name
+        action = "Updated Client \"%s\"" % client_group.group_name
         self.save_activity(session_user, 18, action)
 
         return self.update(self.tblClientGroups, columns, values, condition)
@@ -2826,9 +2844,9 @@ class KnowledgeDatabase(Database):
         rows = self.get_data(self.tblClientGroups, action_columns, condition)
         group_name = rows[0][0]
         if is_active == 1:
-            action = "Activated Client '%s'" % group_name
+            action = "Activated Client \"%s\"" % group_name
         else:
-            action = "Deactivated Client '%s'" % group_name
+            action = "Deactivated Client \"%s\"" % group_name
         self.save_activity(session_user, 18, action)
 
         return self.update(self.tblClientGroups, columns, values, condition)
@@ -2883,7 +2901,7 @@ class KnowledgeDatabase(Database):
         session_user, current_time_stamp]
         result = self.insert(self.tblBusinessGroups, columns, values)
 
-        action = "Created Business Group '%s'" % business_group_name
+        action = "Created Business Group \"%s\"" % business_group_name
         self.save_activity(session_user, 19, action)
 
         return result 
@@ -2896,7 +2914,7 @@ class KnowledgeDatabase(Database):
         condition = "business_group_id = '%d' and client_id = '%d'"%(business_group_id, client_id)
         result = self.update(self.tblBusinessGroups, columns, values, condition) 
 
-        action = "Updated Business Group '%s'" % business_group_name
+        action = "Updated Business Group \"%s\"" % business_group_name
         self.save_activity(session_user, 19, action)
 
         return result
@@ -2910,7 +2928,7 @@ class KnowledgeDatabase(Database):
         session_user, current_time_stamp, session_user, current_time_stamp]
         result = self.insert(self.tblLegalEntities, columns, values)
 
-        action = "Created Legal Entity '%s'" % legal_entity_name
+        action = "Created Legal Entity \"%s\"" % legal_entity_name
         self.save_activity(session_user, 19, action)
 
         return result 
@@ -2922,7 +2940,7 @@ class KnowledgeDatabase(Database):
         condition = "legal_entity_id = '%d' and client_id = '%d'"%(legal_entity_id, client_id)
         result = self.update(self.tblLegalEntities, columns, values, condition)
 
-        action = "Updated Legal Entity '%s'" % legal_entity_name
+        action = "Updated Legal Entity \"%s\"" % legal_entity_name
         self.save_activity(session_user, 19, action)
 
         return result
@@ -2935,7 +2953,7 @@ class KnowledgeDatabase(Database):
         session_user, current_time_stamp, session_user, current_time_stamp]
         result = self.insert(self.tblDivisions, columns, values)
 
-        action = "Created Division '%s'" % division_name
+        action = "Created Division \"%s\"" % division_name
         self.save_activity(session_user, 19, action)
 
         return result
@@ -2947,7 +2965,7 @@ class KnowledgeDatabase(Database):
         condition = "division_id = '%d' and client_id = '%d'"%(division_id, client_id)
         result = self.update(self.tblDivisions, columns, values, condition)
 
-        action = "Updated Division '%s'" % division_name
+        action = "Updated Division \"%s\"" % division_name
         self.save_activity(session_user, 19, action)
 
         return result
@@ -2984,11 +3002,12 @@ class KnowledgeDatabase(Database):
                         str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
                         str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp)
             values_list.append(values_tuple)
+        result = self.bulk_insert(self.tblUnits, columns, values_list)
 
-        action = "Updated Division '%s'" % unit_name
+        action = "Created Unit \"%s - %s\"" % (unit.unit_code, unit.unit_name)
         self.save_activity(session_user, 19, action)            
 
-        return self.bulk_insert(self.tblUnits, columns, values_list)
+        return result
 
 
     def update_unit(self, client_id,  units, business_group_id, legal_entity_id, division_id, session_user):
@@ -3003,6 +3022,10 @@ class KnowledgeDatabase(Database):
                         str(unit.postal_code), session_user, current_time_stamp]
             condition = "client_id='%d' and unit_id = '%d'" % (client_id, unit.unit_id)
             self.update(self.tblUnits, columns, values, condition)
+
+        action = "Updated Unit \"%s - %s\"" % (unit.unit_code, unit.unit_name)
+        self.save_activity(session_user, 19, action) 
+
         return True
 
     def change_client_status(self, client_id, legal_entity_id, division_id, is_active, session_user):
@@ -3010,16 +3033,48 @@ class KnowledgeDatabase(Database):
         columns = ["is_active", "updated_on" , "updated_by"]
         values = [is_active, current_time_stamp, session_user]
         condition = "legal_entity_id = '%d' and client_id = '%d' "% (legal_entity_id, client_id)
+        result = self.update(self.tblUnits, columns, values, condition)
+
+        division_name = None
+        legal_entity_name = None
+        rows = None
         if division_id != None:
             condition += " and division_id='%d' "% division_id
-        return self.update(self.tblUnits, columns, values, condition)
+            action_column = "division_name"
+            action_condition = "division_id='%d' and client_id = '%d' "% (division_id, client_id)
+            rows = self.get_data(self.tblDivisions, action_column, action_condition)
+            division_name = rows[0][0]
+        else:
+            action_column = "legal_entity_name"
+            action_condition = "legal_entity_name='%d' and client_id = '%d' "% (legal_entity_id, client_id)
+            rows = self.get_data(self.tblLegalEntities, action_column, action_condition)
+            legal_entity_name = rows[0][0]
+
+        if is_active == 0:
+            if division_id != None:
+                action = "Deactivated Division \"%s\" " % division_name
+            else:
+                action = "Deactivated Legal Entity \"%s\" " % legal_entity_name
+        else:
+            if division_id != None:
+                action = "Activated Division \"%s\" " % division_name
+            else:
+                action = "Activated Legal Entity \"%s\" " % legal_entity_name
+        return result
 
     def reactivate_unit(self, client_id, unit_id, session_user):
         current_time_stamp = str(self.get_date_time())
         columns = ["is_active", "updated_on" , "updated_by"]
         values = [1, current_time_stamp, session_user]
         condition = "unit_id = '%d' and client_id = '%d' "% (unit_id, client_id)
-        return self.update(self.tblUnits, columns, values, condition)
+        result = self.update(self.tblUnits, columns, values, condition)
+
+        action_column = "unit_code, unit_name"
+        rows = self.get_data(self.tblUnits, action_column, condition)
+        action = "Reactivated Unit \"%s-%s\"" % (rows[0][0], rows[0][1])
+        self.save_activity(session_user, 19, action) 
+
+        return result
 
     def verify_username(self, username):
         columns = "count(*), user_id"
@@ -3220,3 +3275,52 @@ class KnowledgeDatabase(Database):
                 file_space/1000000000, used_space/1000000000, licence_holders)
             profiles.append(technomasters.PROFILES(client_id, profile_detail))
         return profiles
+
+#
+#   Audit Trail
+#
+
+    def get_audit_trails(self, user_id):
+        user_ids = ""
+        if user_id != 0:
+            column = "user_group_id"
+            condition = "user_id = '%d'" % user_id
+            rows = self.get_data(self.tblUsers, column, condition)
+            user_group_id = rows[0][0]
+
+            column = "form_category_id"
+            condition = "user_group_id = '%d'" % user_group_id
+            rows = self.get_data(self.tblUserGroups, column, condition)
+            form_category_id = rows[0][0]
+
+            column = "group_concat(user_group_id)"
+            condition = "form_category_id = '%d'" % form_category_id
+            rows = self.get_data(self.tblUserGroups, column, condition)
+            user_group_ids = rows[0][0]
+
+            column = "group_concat(user_id)"
+            condition = "user_group_id in (%s)" % user_group_ids
+            rows = self.get_data(self.tblUsers, column, condition)
+            user_ids = rows[0][0]
+            condition = "user_id in (%s)"% user_ids
+        else:
+            condition = "1"
+        columns = "user_id, form_id, action, created_on"
+        rows = self.get_data(self.tblActivityLog, columns, condition)
+        audit_trail_details = []
+        for row in rows:
+            user_id = row[0]
+            form_id = row[1]
+            action = row[2]
+            date = self.datetime_to_string(row[3])
+            audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
+        users = None
+        if user_id != 0:
+            condition = "user_id in (%s)" % user_ids
+            users = self.return_users(condition)
+        else:
+            users = self.return_users()
+        forms = self.return_forms()
+        return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
+
+

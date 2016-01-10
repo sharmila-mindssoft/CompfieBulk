@@ -17,6 +17,7 @@ function initClientMirror() {
     }
 
     function initSession(userProfile){
+        console.log(toJSON(userProfile))
         window.localStorage["userInfo"] = toJSON(userProfile);
     }
 
@@ -76,6 +77,7 @@ function initClientMirror() {
 
     function getClientId(){
         var info = getUserInfo();
+        console.log(info)
         return info["client_id"];
     }
 
@@ -530,6 +532,24 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getAuditTrail(callback){
+        callerName = "api/client_masters"
+        var request = [
+            "GetAuditTrails",
+            {}
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getComplianceDetailsReportFilters(callback){
+        callerName = "api/client_reports"
+        var request = [
+            "GetComplianceDetailsReportFilters",
+            {}
+        ];
+        clientApiRequest(callerName, request, callback);   
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -582,7 +602,10 @@ function initClientMirror() {
 
         getClientProfile: getClientProfile,
         getClientDetailsReportFilters: getClientDetailsReportFilters,
-        getClientDetailsReport: getClientDetailsReport
+        getClientDetailsReport: getClientDetailsReport,
+        getAuditTrail: getAuditTrail,
+
+        getComplianceDetailsReportFilters: getComplianceDetailsReportFilters
     }
 
 }

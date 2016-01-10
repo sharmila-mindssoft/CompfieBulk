@@ -1050,6 +1050,15 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function getAuditTrail(callback){
+        callerName = "api/general"
+        var request = [
+            "GetAuditTrails",
+            {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -1159,7 +1168,8 @@ function initMirror() {
 
         getClientProfile: getClientProfile,
         getClientDetailsReportFilters: getClientDetailsReportFilters,
-        getClientDetailsReport: getClientDetailsReport
+        getClientDetailsReport: getClientDetailsReport,
+        getAuditTrail: getAuditTrail
     }
 
 }

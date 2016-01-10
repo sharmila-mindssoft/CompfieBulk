@@ -499,9 +499,26 @@ class CloseUnit(Request):
             "password": to_structure_CustomTextType_20(self.password),
         }
 
+class GetAuditTrails(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetAuditTrails()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 
 def _init_Request_class_map():
-    classes = [GetServiceProviders, ChangeClientUserStatus, ChangeAdminStatus, SaveServiceProvider, UpdateServiceProvider, ChangeServiceProviderStatus, GetUserPrivileges, SaveUserPrivileges, UpdateUserPrivileges, ChangeUserPrivilegeStatus, GetClientUsers, SaveClientUser, UpdateClientUser, UpdateClientUserStatus, GetUnits, CloseUnit]
+    classes = [GetServiceProviders, ChangeClientUserStatus, ChangeAdminStatus, 
+    SaveServiceProvider, UpdateServiceProvider, ChangeServiceProviderStatus, 
+    GetUserPrivileges, SaveUserPrivileges, UpdateUserPrivileges, 
+    ChangeUserPrivilegeStatus, GetClientUsers, SaveClientUser, UpdateClientUser, 
+    UpdateClientUserStatus, GetUnits, CloseUnit, GetAuditTrails]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -772,10 +789,10 @@ class GetClientUsersSuccess(Response):
         return {
             "countries" : to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains" : to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "legal_entities" : to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "divisions" : to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units" : to_structure_VectorType_RecordType_core_Unit(self.units),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities" : to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions" : to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units" : to_structure_VectorType_RecordType_core_ClientUnit(self.units),
             "user_groups" : to_structure_VectorType_RecordType_core_UserGroup(self.user_groups),
             "users" : to_structure_VectorType_RecordType_core_ClientUser(self.users),
             "service_providers" : to_structure_VectorType_RecordType_core_ServiceProvider(self.service_providers)
@@ -940,6 +957,23 @@ class ContactNumberAlreadyExists(Response):
         return {
         }
 
+class GetAuditTrailSuccess(Response):
+    def __init__(self, audit_trails):
+        self.audit_trails = audit_trails
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["audit_trails"])
+        audit_trails = data.get("audit_trails")
+        audit_trails = parse_structure_VectorType_RecordType_general_AuditTrail(audit_trails)
+        return GetAuditTrailSuccess(audit_trails)
+
+    def to_inner_structure(self):
+        return {
+            "audit_trail_details": to_structure_VectorType_RecordType_general_AuditTrail(self.audit_trails),
+        }
+
+
 
 def _init_Response_class_map():
     classes = [GetServiceProvidersSuccess, SaveServiceProviderSuccess, 
@@ -949,7 +983,7 @@ def _init_Response_class_map():
     UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess, 
     GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists, 
     UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess, 
-    ChangeAdminStatusSuccess,
+    ChangeAdminStatusSuccess, GetAuditTrailSuccess,
     GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists, 
     InvalidServiceProviderId, EmailIdAlreadyExists]
     class_map = {}
@@ -958,6 +992,38 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
+
+#
+# Audit Trail
+#
+class AuditTrail(object):
+    def __init__(self, user_id, form_id, action, date):
+        self.user_id = user_id
+        self.form_id = form_id
+        self.action = action
+        self.date = date
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "form_id", "action", "date"])
+        user_id = data.get("user_id")
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
+        form_id = data.get("form_id")
+        form_id = parse_structure_UnsignedIntegerType_32(form_id)
+        action = data.get("action")
+        action = parse_structure_CustomTextType_500(action)
+        date = data.get("date")
+        date = parse_structure_CustomTextType_20(date)
+        return AuditTrail(user_id, form_id, action, date)
+
+    def to_structure(self):
+        return {
+            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
+            "form_id": to_structure_UnsignedIntegerType_32(self.form_id),
+            "action": to_structure_CustomTextType_500(self.action),
+            "date": to_structure_CustomTextType_20(self.date)
+        }
+
 
 #
 # RequestFormat
