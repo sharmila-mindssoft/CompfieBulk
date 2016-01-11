@@ -1050,10 +1050,12 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getAssignStatutoryWizardOne(callback) {
+    function getAssignStatutoryWizardOne(countryId, callback) {
         var request = [
             "GetAssignedStatutoryWizardOneData",
-            {}
+            {
+                "country_id": countryId
+            }
         ];
         callerName = "api/techno_transaction"
         apiRequest(callerName, request, callback)
