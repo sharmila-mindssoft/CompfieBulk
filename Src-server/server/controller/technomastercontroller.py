@@ -306,10 +306,14 @@ def get_clients(db, request, session_user):
 	legal_entity_list = db.get_legal_entities_for_user(session_user)
 	division_list = db.get_divisions_for_user(session_user)
 	unit_list = db.get_units_for_user(session_user)
+	geography_levels = db.get_geograhpy_levels_for_user(session_user)
+	geographies = db.get_geographies_for_user(session_user)
+	industries = db.get_industries()
 	return technomasters.GetClientsSuccess(countries=country_list, 
 		domains = domain_list, group_companies = group_company_list, 
 		business_groups = business_group_list, legal_entities = legal_entity_list, 
-		divisions = division_list, units = unit_list)
+		divisions = division_list, units = unit_list, geography_levels = geography_levels,
+		geographies = geographies, industries = industries)
 
 def change_client_status(db, request, session_user):
 	session_user = int(session_user)

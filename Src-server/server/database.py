@@ -1057,8 +1057,7 @@ class KnowledgeDatabase(Database):
         if rows :
             columns = ["level_id", "level_position", "level_name", "country_id"]
             result = self.convert_to_dict(rows, columns)
-        return self.return_geography_levels(result)
-
+        return self.return_geography_levels(result)    
 
     def return_geography_levels(self, data):
         geography_levels = {}
@@ -2481,10 +2480,8 @@ class KnowledgeDatabase(Database):
 
     def return_users(self, condition = "1"):
         user_rows = self.get_users(condition)
-        print "user_rows:{}".format(user_rows)
         columns = ["user_id", "employee_name", "employee_code", "is_active"]
         users = self.convert_to_dict(user_rows, columns)
-        print "users : {}".format(users)
         results = []
         for user in users :
             employee_name = "%s - %s"% (user["employee_code"],user["employee_name"])
