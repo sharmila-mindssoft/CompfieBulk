@@ -129,7 +129,6 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
@@ -373,8 +372,6 @@ class Database(object) :
             VALUES ('%s', %s, %s, '%s');"
         query = query % (session_id, user_id, session_type_id, updated_on)
         if client_id != None:
-            print client_id
-            print query
             self.execute(query, client_id)
         else:
             self.execute(query)
@@ -735,7 +732,6 @@ class KnowledgeDatabase(Database):
         query = "INSERT INTO %s %s VALUES %s" % (
             table_name, field, str(data)
         )
-        print query
         self.execute(query)
         return True
 
@@ -743,7 +739,6 @@ class KnowledgeDatabase(Database):
         query = "UPDATE %s SET %s WHERE %s" % (
             table_name, field_with_data, where_condition
         )
-        print query
         self.execute(query)
         return True
 
@@ -1282,7 +1277,6 @@ class KnowledgeDatabase(Database):
         )
         where_condition = "geography_id = %s" %  (int(geography_id))
         if (self.update_data(table_name, field_with_data, where_condition)) :
-            print "update status"
             if is_active == 0:
                 status = "deactivated"
             else:

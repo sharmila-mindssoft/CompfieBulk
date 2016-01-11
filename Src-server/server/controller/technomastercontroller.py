@@ -383,7 +383,7 @@ def get_profiles(client_ids):
 	return profiles
 
 def get_client_profile(db, request, session_user):
-	client_ids = db.getUserClients(session_user)
+	client_ids = db.get_user_clients(session_user)
 
 	if client_ids ==  None:
 		print "Error : User is not responsible for any client"
