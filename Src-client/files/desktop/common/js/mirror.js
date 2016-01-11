@@ -1061,6 +1061,20 @@ function initMirror() {
         apiRequest(callerName, request, callback)
     }
 
+    function getAssignStatutoryWizardTwo(countryId, domainId, industryId, geographyId, callback) {
+        var request = [
+            "GetStatutoryWizardTwoData",
+            {
+                "country_id": countryId,
+                "domain_id": domainId,
+                "industry_id": industryId,
+                "geography_id": geographyId
+            }
+        ]
+        callerName = "api/techno_transaction"
+        apiRequest(callerName, request, callback)
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -1172,7 +1186,8 @@ function initMirror() {
         getClientDetailsReportFilters: getClientDetailsReportFilters,
         getClientDetailsReport: getClientDetailsReport,
 
-        getAssignStatutoryWizardOne: getAssignStatutoryWizardOne
+        getAssignStatutoryWizardOne: getAssignStatutoryWizardOne,
+        getAssignStatutoryWizardTwo: getAssignStatutoryWizardTwo
     }
 
 }
