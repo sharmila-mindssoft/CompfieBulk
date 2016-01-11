@@ -1485,7 +1485,7 @@ class KnowledgeDatabase(Database):
             names.append(statutory_name)
             mappings = '>>'.join(str(x) for x in names)
             self.statutory_parent_mapping[statutory_id] = [
-                statutory_name, mappings
+                statutory_name, mappings, parent_ids
             ]
 
     def set_geography_parent_mapping(self, rows):
@@ -3248,6 +3248,7 @@ class KnowledgeDatabase(Database):
                 parent_ids = [
                     int(x) for x in unit["parent_ids"][:-1].split(',')
                 ]
+                parent_ids.append(int(unit["geography_id"]))
                 unit_name = "%s - %s" % (unit["unit_code"], unit["unit_name"])
                 results.append(technotransactions.UNIT(
                     unit["unit_id"], 
@@ -3286,3 +3287,108 @@ class KnowledgeDatabase(Database):
         ]
         result = self.convert_to_dict(rows, columns)
         return return_unit_details(result)
+
+    def get_assign_statutory_wizard_two(self, country_id, geography_id, industry_id, domain_id, user_id):
+        query = "SELECT distinct t1.statutory_mapping_id, \
+            t1.statutory_nature_id, t2.statutory_nature_name, \
+            t5.statutory_id\
+            FROM tbl_statutory_mappings t1 \
+            INNER JOIN tbl_statutory_natures t2 \
+            ON t1.statutory_nature_id = t2.statutory_nature_id\
+            INNER JOIN tbl_statutory_industry t3 \
+            ON t1.statutory_mapping_id = t3.statutory_mapping_id\
+            INNER JOIN tbl_statutory_geographies t4 \
+            ON t1.statutory_mapping_id = t4.statutory_mapping_id \
+            INNER JOIN tbl_statutory_statutories t5 \
+            ON t1.statutory_mapping_id = t5.statutory_mapping_id\
+            WHERE t1.domain_id = %s \
+            AND t1.country_id = %s \
+            AND t3.industry_id = %s \
+            AND t4.geography_id\
+            IN ( \
+                SELECT g.geography_id \
+                FROM tbl_geographies g \
+                WHERE g.geography_id = %s \
+                OR g.parent_ids LIKE '%s' )" % (
+                    domain_id, country_id, industry_id, geography_id, 
+                    str("%" + str(geography_id) + ",%"), 
+                )
+        rows = self.select_all(query)
+        columns = [
+            "statutory_mapping_id", "statutory_nature_id", 
+            "statutory_nature_name", "statutory_id"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_assign_statutory_wizard_two(country_id, domain_id, result)
+
+    def get_compliance_by_mapping_id(self, mapping_id):
+        
+        qry = "SELECT t1.compliance_id, t1.statutory_provision, \
+            t1.compliance_task, t1.compliance_description, \
+            t1.document_name \
+            FROM tbl_compliances t1 \
+            WHERE t1.is_active = 1 AND t1.statutory_mapping_id = %s" % (
+                mapping_id
+            )
+        rows = self.select_all(qry)
+        columns = [
+            "compliance_id", "statutory_provision", 
+            "compliance_task", "compliance_description", 
+            "document_name"
+        ]
+        result = []
+        if rows :
+            result = self.convert_to_dict(rows, columns)
+        return result
+
+
+    def return_assign_statutory_wizard_two(self, country_id, domain_id, data):
+        if bool(self.statutory_parent_mapping) is False:
+            self.get_statutory_master()
+        level_1_compliance = {}
+        for d in data :
+            mapping_id = int(d["statutory_mapping_id"])
+            statutory_nature_name  = d["statutory_nature_name"]
+            statutory_id = int(d["statutory_id"])
+            compliance_list = self.get_compliance_by_mapping_id(mapping_id)
+            statutory_data = self.statutory_parent_mapping.get(statutory_id)
+            s_mapping = statutory_data[1] 
+            statutory_parents = statutory_data[2]
+            level_1 = statutory_parents[0]
+            compliance_applicable_status = bool(1)
+            compliance_opted_status = None
+            compliance_remarks = None
+            compliance_applicable_list = level_1_compliance.get(level_1)
+            if compliance_applicable_list is None:
+                compliance_applicable_list = []
+            for c in compliance_list :
+                provision = "%s - %s" % (s_mapping, c["statutory_provision"])
+                name = "%s - %s" % (c["document_name"], c["compliance_task"])
+                c_data = core.ComplianceApplicability(
+                    c["compliance_id"],
+                    name,
+                    c["compliance_description"],
+                    provision,
+                    statutory_nature_name,
+                    compliance_applicable_status,
+                    compliance_opted_status,
+                    compliance_remarks
+                )
+                compliance_applicable_list.append(c_data)
+            level_1_compliance[level_1] = compliance_applicable_list
+
+        assigned_statutory_list = []
+        for key, value in level_1_compliance.iteritems() :
+            name = self.statutory_parent_mapping[int(key)][0]
+            compliances = value
+            applicable_status = bool(1)
+            not_applicable_remarks = None
+            assigned_statutory_list.append(
+                core.AssignedStatutory(
+                    key, name, compliances, applicable_status, 
+                    not_applicable_remarks
+                )
+            )
+        return technotransactions.GetStatutoryWizardTwoDataSuccess(
+            assigned_statutory_list
+        )

@@ -1684,7 +1684,7 @@ class AssignedStatutory(object):
         applicable_status = data.get("applicable_status")
         applicable_status = parse_structure_Bool(applicable_status)
         not_applicable_remarks = data.get("not_applicable_remarks")
-        not_applicable_remarks = parse_structure_CustomTextType_500(not_applicable_remarks)
+        not_applicable_remarks = parse_structure_OptionalType_CustomTextType_500(not_applicable_remarks)
         return AssignedStatutory(level_1_statutory_id, level_1_statutory_name, compliances, applicable_status, not_applicable_remarks)
 
     def to_structure(self):
@@ -1693,7 +1693,7 @@ class AssignedStatutory(object):
             "level_1_statutory_name": to_structure_CustomTextType_50(self.level_1_statutory_name),
             "compliances": to_structure_VectorType_RecordType_core_ComplianceApplicability(self.compliances),
             "applicable_status": to_structure_Bool(self.applicable_status),
-            "not_applicable_remarks": to_structure_CustomTextType_500(self.not_applicable_remarks),
+            "not_applicable_remarks": to_structure_OptionalType_CustomTextType_500(self.not_applicable_remarks),
         }
 
 #
@@ -2107,9 +2107,9 @@ class ComplianceApplicability(object):
         compliance_applicable_status = data.get("compliance_applicable_status")
         compliance_applicable_status = parse_structure_Bool(compliance_applicable_status)
         compliance_opted_status = data.get("compliance_opted_status")
-        compliance_opted_status = parse_structure_Bool(compliance_opted_status)
+        compliance_opted_status = parse_structure_OptionalType_Bool(compliance_opted_status)
         compliance_remarks = data.get("compliance_remarks")
-        compliance_remarks = parse_structure_CustomTextType_500(compliance_remarks)
+        compliance_remarks = parse_structure_OptionalType_CustomTextType_500(compliance_remarks)
         return ComplianceApplicability(compliance_id, compliance_name, description, statutory_provision, statutory_nature, compliance_applicable_status, compliance_opted_status, compliance_remarks)
 
     def to_structure(self):
@@ -2120,8 +2120,8 @@ class ComplianceApplicability(object):
             "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
             "statutory_nature": to_structure_CustomTextType_50(self.statutory_nature),
             "compliance_applicable_status": to_structure_Bool(self.compliance_applicable_status),
-            "compliance_opted_status": to_structure_Bool(self.compliance_opted_status),
-            "compliance_remarks": to_structure_CustomTextType_500(self.compliance_remarks),
+            "compliance_opted_status": to_structure_OptionalType_Bool(self.compliance_opted_status),
+            "compliance_remarks": to_structure_OptionalType_CustomTextType_500(self.compliance_remarks),
         }
 
 #

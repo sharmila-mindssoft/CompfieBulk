@@ -51,5 +51,10 @@ def process_get_assigned_statutory_wizard_one(db, request_frame, user_id):
     )
 
 def process_get_assigned_statutory_wizard_two(db, request_frame, user_id):
+    geography_id = request_frame.geography_id
+    industry_id = request_frame.industry_id
+    domain_id = request_frame.domain_id
+    country_id = request_frame.country_id
+    return db.get_assign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, user_id)
     pass
 
