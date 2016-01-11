@@ -34,88 +34,6 @@ function displayMessage(message) {
   $(".error-message").show();
 }
 
-function load_selectdomain_master(){
-    //load country details
-    var clsval='.countrylist';
-    var clsval1='countrylist';
-    var str='';
-    $('#country').empty();
-      for(var country in countriesList){
-        var countryid = countriesList[country]["country_id"];
-        var dispcountryname = countriesList[country]["country_name"];
-        if(countriesList[country]["is_active"] == true){
-        str += '<li id="'+countryid+'" class="'+clsval1+'" onclick="activate(this,'+countryid+',\''+dispcountryname+'\',\''+clsval+'\')" ><span class="filter1_name">'+dispcountryname+'</span></li>';
-      }
-    }
-    $('#country').append(str); 
-
-    //load domain details
-    var clsval='.domainlist';
-    var clsval1='domainlist';
-    var str='';
-    $('#domain').empty();
-    for(var domain in domainsList){
-      var domainid = domainsList[domain]["domain_id"];
-      var dispdomainname = domainsList[domain]["domain_name"];
-      if(domainsList[domain]["is_active"] == true){
-      str += '<li id="'+domainid+'" class="'+clsval1+'" onclick="activate(this,'+domainid+',\''+dispdomainname+'\',\''+clsval+'\')" ><span class="filter2_name">'+dispdomainname+'</span></li>';
-    }
-    }
-    $('#domain').append(str);
-
-    //load industry details
-    var clsval='.industrylist';
-    var clsval1='industrylist';
-    var str='';
-    $('#industry').empty();
-    for(var industry in industriesList){
-      var industryid = industriesList[industry]["industry_id"];
-      var dispindustryname = industriesList[industry]["industry_name"];
-      if(industriesList[industry]["is_active"] == true){
-      str += '<li id="'+industryid+'" class="'+clsval1+'" onclick="multiactivate(this,'+industryid+',\''+dispindustryname+'\',\''+clsval+'\')" ><span class="filter3_name">'+dispindustryname+'</span></li>';
-    }
-    }
-    $('#industry').append(str);
-
-    //load statutorynature details
-    var clsval='.statutorynaturelist';
-    var clsval1='statutorynaturelist';
-    var str='';
-    $('#statutorynature').empty();
-    for(var statutorynature in statutoryNaturesList){
-      var statutorynatureid = statutoryNaturesList[statutorynature]["statutory_nature_id"];
-          var dispstatutoryname = statutoryNaturesList[statutorynature]["statutory_nature_name"];
-      if(statutoryNaturesList[statutorynature]["is_active"] == true){
-      str += '<li id="'+statutorynatureid+'" class="'+clsval1+'" onclick="activate(this,'+statutorynatureid+',\''+dispstatutoryname+'\',\''+clsval+'\')" ><span class="filter4_name">'+dispstatutoryname+'</span></li>';
-    }
-    }
-    $('#statutorynature').append(str);
-
-    //load compliance frequency selectbox
-    for (var compliancefrequency in complianceFrequencyList) {
-    var option = $("<option></option>");
-    option.val(complianceFrequencyList[compliancefrequency]["frequency_id"]);
-    option.text(complianceFrequencyList[compliancefrequency]["frequency"]);
-    $("#compliance_frequency").append(option);
-    }
-
-    //load compliance duration type selectbox
-    for (var compliancedurationtype in complianceDurationTypeList) {
-    var option = $("<option></option>");
-    option.val(complianceDurationTypeList[compliancedurationtype]["duration_type_id"]);
-    option.text(complianceDurationTypeList[compliancedurationtype]["duration_type"]);
-    $("#duration_type").append(option);
-    }
-
-    //load compliance repeat type selectbox
-    for (var compliancerepeattype in complianceRepeatTypeList) {
-    var option = $("<option></option>");
-    option.val(complianceRepeatTypeList[compliancerepeattype]["repeat_type_id"]);
-    option.text(complianceRepeatTypeList[compliancerepeattype]["repeat_type"]);
-    $("#repeats_type").append(option);
-    }
-  }
-  
 $(".btn-statutorymapping-add").click(function(){
 $("#statutorymapping-view").hide();
 $("#statutorymapping-add").show();
@@ -284,7 +202,87 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     loadStatutoryMappingList(filteredList);
   });
 
-  
+  function load_selectdomain_master(){
+    //load country details
+    var clsval='.countrylist';
+    var clsval1='countrylist';
+    var str='';
+    $('#country').empty();
+      for(var country in countriesList){
+        var countryid = countriesList[country]["country_id"];
+        var dispcountryname = countriesList[country]["country_name"];
+        if(countriesList[country]["is_active"] == true){
+        str += '<li id="'+countryid+'" class="'+clsval1+'" onclick="activate(this,'+countryid+',\''+dispcountryname+'\',\''+clsval+'\')" ><span class="filter1_name">'+dispcountryname+'</span></li>';
+      }
+    }
+    $('#country').append(str); 
+
+    //load domain details
+    var clsval='.domainlist';
+    var clsval1='domainlist';
+    var str='';
+    $('#domain').empty();
+    for(var domain in domainsList){
+      var domainid = domainsList[domain]["domain_id"];
+      var dispdomainname = domainsList[domain]["domain_name"];
+      if(domainsList[domain]["is_active"] == true){
+      str += '<li id="'+domainid+'" class="'+clsval1+'" onclick="activate(this,'+domainid+',\''+dispdomainname+'\',\''+clsval+'\')" ><span class="filter2_name">'+dispdomainname+'</span></li>';
+    }
+    }
+    $('#domain').append(str);
+
+    //load industry details
+    var clsval='.industrylist';
+    var clsval1='industrylist';
+    var str='';
+    $('#industry').empty();
+    for(var industry in industriesList){
+      var industryid = industriesList[industry]["industry_id"];
+      var dispindustryname = industriesList[industry]["industry_name"];
+      if(industriesList[industry]["is_active"] == true){
+      str += '<li id="'+industryid+'" class="'+clsval1+'" onclick="multiactivate(this,'+industryid+',\''+dispindustryname+'\',\''+clsval+'\')" ><span class="filter3_name">'+dispindustryname+'</span></li>';
+    }
+    }
+    $('#industry').append(str);
+
+    //load statutorynature details
+    var clsval='.statutorynaturelist';
+    var clsval1='statutorynaturelist';
+    var str='';
+    $('#statutorynature').empty();
+    for(var statutorynature in statutoryNaturesList){
+      var statutorynatureid = statutoryNaturesList[statutorynature]["statutory_nature_id"];
+          var dispstatutoryname = statutoryNaturesList[statutorynature]["statutory_nature_name"];
+      if(statutoryNaturesList[statutorynature]["is_active"] == true){
+      str += '<li id="'+statutorynatureid+'" class="'+clsval1+'" onclick="activate(this,'+statutorynatureid+',\''+dispstatutoryname+'\',\''+clsval+'\')" ><span class="filter4_name">'+dispstatutoryname+'</span></li>';
+    }
+    }
+    $('#statutorynature').append(str);
+
+    //load compliance frequency selectbox
+    for (var compliancefrequency in complianceFrequencyList) {
+    var option = $("<option></option>");
+    option.val(complianceFrequencyList[compliancefrequency]["frequency_id"]);
+    option.text(complianceFrequencyList[compliancefrequency]["frequency"]);
+    $("#compliance_frequency").append(option);
+    }
+
+    //load compliance duration type selectbox
+    for (var compliancedurationtype in complianceDurationTypeList) {
+    var option = $("<option></option>");
+    option.val(complianceDurationTypeList[compliancedurationtype]["duration_type_id"]);
+    option.text(complianceDurationTypeList[compliancedurationtype]["duration_type"]);
+    $("#duration_type").append(option);
+    }
+
+    //load compliance repeat type selectbox
+    for (var compliancerepeattype in complianceRepeatTypeList) {
+    var option = $("<option></option>");
+    option.val(complianceRepeatTypeList[compliancerepeattype]["repeat_type_id"]);
+    option.text(complianceRepeatTypeList[compliancerepeattype]["repeat_type"]);
+    $("#repeats_type").append(option);
+    }
+  }
 
   
   //check & uncheck list data for single selection
