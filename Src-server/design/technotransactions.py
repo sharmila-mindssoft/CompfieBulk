@@ -2,7 +2,7 @@ from basics.types import VectorType, RecordType, VariantType, MapType, Field, Op
 from common import (CLIENT_SAVED_STATUTORY_ID, CLIENT_ASSIGNED_STATUTORY_ID, CLIENT_NAME,
 	GEOGRAPHY_ID, INDUSTRY_ID, COUNTRY_ID, COUNTRY_NAME, DOMAIN_ID, DOMAIN_NAME, BUSINESS_GROUP_NAME,
 	BUSINESS_GROUP_ID, LEGAL_ENTITY_ID, LEGAL_ENTITY_NAME, DIVISION_ID, DIVISION_NAME, GROUP_ID,
-	UNIT_ID, UNIT_NAME, GEOGRAPHY_NAME, SESSION_TOKEN)
+	UNIT_ID, UNIT_NAME, GEOGRAPHY_NAME, SESSION_TOKEN, STATUTORY_ID)
 from core import (AssignedStatutory, Country, Domain, Industry, GeographyLevel, Geography,
 	GroupCompany, BusinessGroup, LegalEntity, Division, Domain, 
 	ASSIGN_STATUTORY_SUBMISSION_TYPE, ASSIGN_STATUTORY_SUBMISSION_STATUS)
@@ -50,11 +50,28 @@ GetStatutoryWizardTwoData = RecordType("GetStatutoryWizardTwoData", [
 	Field("unit_id", OptionalType(UNIT_ID))
 ])
 
+# SaveAssignedCompliance = RecordType("SaveAssignedCompliance", [
+# 	Field("compliance_id", COMPLIANCE_ID),
+#     Field("compliance_applicable_status", STATUS), 
+# ])
+
+AssignedStatutoryCompliance = RecordType ("AssignedStatutoryCompliance", [
+	Field("level_1_statutory_id", STATUTORY_ID),
+	Field("compliances", MapType(COMPLIANCE_ID, STATUS)),
+	Field("applicable_status", STATUS),
+    Field("not_applicable_remarks", OptionalType(DESCRIPTION))
+])
+
 SaveAssignedStatutory = RecordType("SaveAssignedStatutory", [
+	Field("country_id", COUNTRY_ID),
+	Field("geography_id", GEOGRAPHY_ID),
+	Field("industry_id", INDUSTRY_ID),
+	Field("unit_ids", VectorType(UNIT_ID)),
+	Field("domain_id", DOMAIN_ID),
 	Field("submission_type", ASSIGN_STATUTORY_SUBMISSION_TYPE),
 	Field("client_saved_statutory_id", OptionalType(CLIENT_SAVED_STATUTORY_ID)),
 	# Field("client_assigned_statutory_id", CLIENT_ASSIGNED_STATUTORY_ID),
-	Field("assigned_statutories", AssignedStatutoryList)
+	Field("assigned_statutories", VectorType(AssignedStatutoryCompliance))
 ])
 
 Request = VariantType("Request", [

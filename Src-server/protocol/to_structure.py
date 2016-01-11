@@ -3121,3 +3121,23 @@ def to_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping(data)
     for item in data:
         lst.append(parse_structure_RecordType_knowledgetransaction_ApproveMapping(item))
     return lst
+
+def to_structure_MapType_UnsignedIntegerType_32_Bool(data):
+    data = parse_dictionary(data)
+    d = {}
+    for key, value in data.items():
+        key = to_structure_UnsignedIntegerType_32(key)
+        value = to_structure_Bool(value)
+        d[key] = value
+    return d
+
+def to_structure_RecordType_technotransactions_AssignedStatutoryCompliance(data):
+    from protocol import technotransactions
+    return technotransactions.AssignedStatutoryCompliance.to_structure(data)
+
+def to_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCompliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_technotransactions_AssignedStatutoryCompliance(item))
+    return lst
