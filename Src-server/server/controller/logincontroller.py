@@ -19,7 +19,7 @@ def process_login_request(request, db) :
 	if type(request) is login.ForgotPassword :
 		return process_forgot_password(db, request)
 
-	if type(request) is login.Reset_tokenValidation :
+	if type(request) is login.ResetTokenValidation :
 		return process_reset_token(db, request)
 
 	if type(request) is login.ResetPassword :
