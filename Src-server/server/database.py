@@ -432,7 +432,6 @@ class KnowledgeDatabase(Database):
         self.tblActivityLog = "tbl_activity_log"
         self.tblAdmin = "tbl_admin"
         self.tblBusinessGroups = "tbl_business_groups"
-        self.tblClientCompliances = "tbl_client_compliances"
         self.tblClientConfigurations = "tbl_client_configurations"
         self.tblClientCountries = "tbl_client_countries"
         self.tblClientDatabase = "tbl_client_database"
@@ -441,6 +440,7 @@ class KnowledgeDatabase(Database):
         self.tblClientSavedCompliances = "tbl_client_saved_compliances"
         self.tblClientSavedStatutories = "tbl_client_saved_statutories"
         self.tblClientStatutories = "tbl_client_statutories"
+        self.tblClientCompliances = "tbl_client_compliances"
         self.tblClientUsers = "tbl_client_users"
         self.tblComplianceDurationType = "tbl_compliance_duration_type"
         self.tblComplianceFrequency = "tbl_compliance_frequency"
@@ -3395,9 +3395,19 @@ class KnowledgeDatabase(Database):
     def save_assigned_statutories(self, data, user_id):
         
         submission_type = data.submission_type
-        client_saved_statutory_id = data.client_saved_statutory_id
+        client_statutory_id = data.client_statutory_id
         if submission_type == "Save" :
-            self.save_client_statutories(data, user_id)
+            if client_statutory_id is None:
+                self.save_client_statutories(data, user_id)
+            else :
+                assigned_statutories = data.assigned_statutories
+                self.update_client_compliances(
+                    client_statutory_id, 
+                    assigned_statutories, user_id
+                )
+        elif submission_type == "Submit" :
+            assigned_statutories = data.assigned_statutories
+            self.submit_client_statutories_compliances(client_statutory_id, assigned_statutories, user_id)
 
         return technotransactions.SaveAssignedStatutorySuccess()
 
@@ -3405,25 +3415,26 @@ class KnowledgeDatabase(Database):
         country_id = data.country_id
         client_id = data.client_id
         geography_id = data.geography_id
-        industry_id = data.industry_id
-        unit_ids =','.join(str(x) for x in data.unit_ids)
+        unit_ids = data.unit_ids
         domain_id = data.domain_id
-        saved_statutory_id = self.get_new_id("client_saved_statutory_id", self.tblClientSavedStatutories)
-        created_on = str(self.get_date_time())
+        submission_type = 1
 
-        field = "(client_saved_statutory_id, client_id, geography_id,\
-            country_id, domain_id, industry_id, unit_ids, \
+        field = "(client_statutory_id, client_id, geography_id,\
+            country_id, domain_id, unit_id, submission_type,\
             created_by, created_on)"
-        values = (
-            saved_statutory_id, client_id, geography_id, country_id,
-            domain_id, industry_id, unit_ids , int(user_id), created_on
-        )
-        if (self.save_data(self.tblClientSavedStatutories, field, values)) :
-            assigned_statutories = data.assigned_statutories
-            self.save_client_compliances(saved_statutory_id, assigned_statutories, user_id, created_on)
+        for unit_id in unit_ids :
+            client_statutory_id = self.get_new_id("client_statutory_id", self.tblClientStatutories)
+            created_on = str(self.get_date_time())
+            values = (
+                client_statutory_id, client_id, geography_id, country_id,
+                domain_id, int(unit_id) , submission_type, int(user_id), created_on
+            )
+            if (self.save_data(self.tblClientStatutories, field, values)) :
+                assigned_statutories = data.assigned_statutories
+                self.save_client_compliances(client_statutory_id, assigned_statutories, user_id, created_on)
 
-    def save_client_compliances(self, saved_statutory_id, data, user_id, created_on):
-        field = "(client_saved_statutory_id, compliance_id, \
+    def save_client_compliances(self, client_statutory_id, data, user_id, created_on):
+        field = "(client_statutory_id, compliance_id, \
             statutory_id, applicable, not_applicable_remarks, \
             compliance_applicable, created_by, created_on)"
         for d in data :
@@ -3436,10 +3447,112 @@ class KnowledgeDatabase(Database):
                 compliance_id = int(key)
                 compliance_applicable_status = int(value)
                 values = (
-                    saved_statutory_id, compliance_id,
+                    client_statutory_id, compliance_id,
                     level_1_id, int(applicable_status), not_applicable_remarks,
                     compliance_applicable_status, int(user_id), created_on
                 )
-                self.save_data(self.tblClientSavedCompliances, field, values)
+                self.save_data(self.tblClientCompliances, field, values)
         return True
 
+    def update_client_compliances(self, client_statutory_id, data, user_id, submited_on = None):
+        for d in data :
+            level_1_id = d.level_1_statutory_id
+            applicable_status = int(d.applicable_status)
+            not_applicable_remarks = d.not_applicable_remarks
+            if not_applicable_remarks is None :
+                not_applicable_remarks = ""
+            for key, value in d.compliances.iteritems():
+                compliance_id = int(key)
+                compliance_applicable_status = int(value)
+
+                field_with_data = "applicable = %s, \
+                    not_applicable_remarks = '%s', \
+                    compliance_applicable = %s, updated_by = %s" % (
+                        applicable_status, not_applicable_remarks,
+                        compliance_applicable_status, int(user_id)
+                    )
+                if submited_on is not None :
+                    field_with_data = field_with_data + " , submitted_on ='%s'" % (submited_on)
+                where_condition = " client_statutory_id = %s \
+                    AND statutory_id = %s AND compliance_id = %s" % (
+                        client_statutory_id, level_1_id, compliance_id
+                    )
+                self.update_data(self.tblClientCompliances, field_with_data, where_condition)
+        return True
+    
+    def submit_client_statutories_compliances(self, client_statutory_id, data, user_id) :
+        submited_on = self.get_date_time()
+        query = "UPDATE tbl_client_statutories SET submission_type = 2, \
+            updated_by=%s WHERE client_statutory_id = %s" % (
+                int(user_id), client_statutory_id
+            )
+        self.execute(query)
+        self.update_client_compliances(client_statutory_id, data, user_id, submited_on)
+
+
+    def get_assigned_statutories_list(self, user_id):
+        query = "SELECT t1.client_statutory_id, t1.client_id, \
+            t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, \
+            t1.submission_type, t2.group_name, t3.geography_name, \
+            t4.country_name, t5.domain_name, t6.unit_name, \
+            t7.business_group_name, t8.legal_entity_name,\
+            t9.division_name, t10.industry_name \
+            FROM tbl_client_statutories t1 \
+            INNER JOIN tbl_client_groups t2 \
+            ON t1.client_id = t2.client_id \
+            INNER JOIN tbl_geographies t3 \
+            ON t1.geography_id = t3.geography_id \
+            INNER JOIN tbl_countries t4 \
+            ON t1.country_id = t4.country_id \
+            INNER JOIN tbl_domains t5 \
+            ON  t1.domain_id = t5.domain_id \
+            INNER JOIN tbl_units t6 \
+            ON t1.unit_id = t6.unit_id \
+            INNER JOIN tbl_business_groups t7 \
+            ON t6.business_group_id = t7.business_group_id \
+            INNER JOIN tbl_legal_entities t8 \
+            ON t6.legal_entity_id = t8.legal_entity_id \
+            INNER JOIN tbl_divisions t9 \
+            ON t6.division_id = t9.division_id \
+            INNER JOIN tbl_industries t10 \
+            ON t6.industry_id = t10.industry_id \
+            INNER JOIN tbl_user_countries t11 \
+            ON t1.country_id = t11.country_id \
+            INNER JOIN tbl_user_domains t12 \
+            ON t1.domain_id = t12.domain_id  AND t11.user_id = t12.user_id\
+            INNER JOIN tbl_user_clients t13 \
+            ON t1.client_id = t13.client_id  AND t12.user_id = t13.user_id\
+            WHERE t13.user_id = %s"  % (user_id)
+        print query
+        rows = self.select_all(query)
+        columns = ["client_statutory_id", "client_id", "geography_id",
+            "country_id", "domain_id", "unit_id", "submission_type",
+            "group_name", "geography_name", "country_name",
+            "domain_name", "unit_name", "business_group_name", "legal_entity_name",
+            "division_name", "industry_name"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_assign_statutory_list(result)
+
+    def return_assign_statutory_list(self, assigned_list):
+        ASSIGNED_STATUTORIES_list = []
+        for data in assigned_list :
+            ASSIGNED_STATUTORIES_list.append(
+                technotransactions.ASSIGNED_STATUTORIES(
+                    int(data["submission_type"]),
+                    int(data["client_statutory_id"]),
+                    data["country_name"],
+                    data["group_name"],
+                    data["business_group_name"],
+                    data["legal_entity_name"],
+                    data["division_name"],
+                    data["unit_name"],
+                    data["geography_name"],
+                    data["domain_name"],
+                    data["industry_name"]
+                )
+            )
+
+        return technotransactions.GetAssignedStatutoriesListSuccess(
+            ASSIGNED_STATUTORIES_list
+        )
