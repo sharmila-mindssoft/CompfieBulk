@@ -995,9 +995,9 @@ class LICENCE_HOLDER_DETAILS(object):
         address = data.get("address")
         address = parse_structure_CustomTextType_250(address)
         total_disk_space = data.get("total_disk_space")
-        total_disk_space = parse_structure_UnsignedIntegerType_32(total_disk_space)
+        total_disk_space = parse_structure_Float(total_disk_space)
         used_disk_space = data.get("used_disk_space")
-        used_disk_space = parse_structure_UnsignedIntegerType_32(used_disk_space)
+        used_disk_space = parse_structure_Float(used_disk_space)
         return LICENCE_HOLDER_DETAILS(user_id, user_name, email_id, contact_no, seating_unit_name, address, total_disk_space, used_disk_space)
 
     def to_structure(self):
@@ -1008,8 +1008,8 @@ class LICENCE_HOLDER_DETAILS(object):
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
             "seating_unit_name": to_structure_CustomTextType_50(self.seating_unit_name),
             "address": to_structure_CustomTextType_250(self.address),
-            "total_disk_space": to_structure_SignedIntegerType_8(self.total_disk_space),
-            "used_disk_space": to_structure_SignedIntegerType_8(self.used_disk_space),
+            "total_disk_space": to_structure_Float(self.total_disk_space),
+            "used_disk_space": to_structure_Float(self.used_disk_space),
         }
 
 #
@@ -1038,9 +1038,9 @@ class PROFILE_DETAIL(object):
         remaining_licence = data.get("remaining_licence")
         remaining_licence = parse_structure_UnsignedIntegerType_32(remaining_licence)
         total_disk_space = data.get("total_disk_space")
-        total_disk_space = parse_structure_UnsignedIntegerType_32(total_disk_space)
+        total_disk_space = parse_structure_Float(total_disk_space)
         used_disk_space = data.get("used_disk_space")
-        used_disk_space = parse_structure_UnsignedIntegerType_32(used_disk_space)
+        used_disk_space = parse_structure_Float(used_disk_space)
         licence_holders = data.get("licence_holders")
         licence_holders = parse_structure_VectorType_RecordType_technomasters_LICENCE_HOLDER_DETAILS(licence_holders)
         return PROFILE_DETAIL(contract_from, contract_to, no_of_user_licence, remaining_licence, total_disk_space, used_disk_space, licence_holders)
@@ -1051,8 +1051,8 @@ class PROFILE_DETAIL(object):
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
             "no_of_user_licence": to_structure_SignedIntegerType_8(self.no_of_user_licence),
             "remaining_licence": to_structure_SignedIntegerType_8(self.remaining_licence),
-            "total_disk_space": to_structure_SignedIntegerType_8(self.total_disk_space),
-            "used_disk_space": to_structure_SignedIntegerType_8(self.used_disk_space),
+            "total_disk_space": to_structure_Float(self.total_disk_space),
+            "used_disk_space": to_structure_Float(self.used_disk_space),
             "licence_holders": to_structure_VectorType_RecordType_technomasters_LICENCE_HOLDER_DETAILS(self.licence_holders),
         }
 

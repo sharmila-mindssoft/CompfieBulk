@@ -59,6 +59,8 @@ def process_client_master_requests(request, db) :
 	if type(request) is clientmasters.CloseUnit:
 		return close_unit(db, request, session_user, client_id)
 
+	if type(request) is clientmasters.GetAuditTrails:
+		return get_audit_trails(db, request, session_user, client_id)
 
 def get_service_providers(db, request, session_user, client_id):
 	service_provider_list = db.get_service_provider_details_list(client_id)
@@ -231,8 +233,13 @@ def close_unit(db, request, session_user, client_id):
 	password = request.password
 
 	if db.verify_password(password, session_user, client_id):
-	    db.deactivate_unit(request.unit_id, client_id)
+	    db.deactivate_unit(request.unit_id, client_id, session_user)
 	    return clientmasters.CloseUnitSuccess()
 	else:
 	    return clientmasters.InvalidPassword()
+
+def get_audit_trails(db, request, session_user, client_id):
+	audit_trails = db.get_audit_trails(session_user, client_id)
+	return audit_trails
+
 

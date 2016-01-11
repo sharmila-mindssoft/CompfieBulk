@@ -10,7 +10,6 @@ __all__ = [
 	"get_clients",
 	"change_client_status",
 	"reactivate_unit",
-	"get_profiles",
 	"get_client_profile"
 ]
 
@@ -128,6 +127,9 @@ def save_client(db, request, session_user):
 	existing_entity = False
 	existing_division = False
 
+	if db.is_invalid_id(db.tblClientGroups, "client_id", client_id) :
+		return technomasters.InvalidClientId()
+
 	if business_group == None:
 	    optional_business_group = True
 	    result1 = True
@@ -216,6 +218,9 @@ def update_client(db, request, session_user):
 	result3 = False
 	result4 = False
 	result5 = False
+
+	if db.is_invalid_id(db.tblClientGroups, "client_id", client_id) :
+		return technomasters.InvalidClientId()
 
 	if business_group == None:
 	    optional_business_group = True
@@ -330,57 +335,16 @@ def reactivate_unit(db, request, session_user):
 	client_id = request.client_id
 	unit_id = request.unit_id
 	password = request.password
-	if db.verify_password(password, session_user):
-	    if db.reactivate_unit(client_id, unit_id, session_user):
-	        return technomasters.ReactivateUnitSuccess()
+	if db.is_invalid_id(db.tblClientGroups, "client_id", client_id):
+		return technomasters.InvalidClientId()
+	elif db.is_invalid_id(db.tblUnits, "unit_id", unit_id):
+		return technomasters.InvalidUnitId()
 	else:
-	    return technomasters.InvalidPassword()
-
-def get_profiles(client_ids):
-	client_idsList = [int(x) for x in client_ids.split(",")]
-	profiles = {}
-	for client_id in client_idsList:
-		settingsRows = db.getSettings(client_id)
-		contractFrom = settingsRows[0][0]
-		contractTo = settingsRows[0][1]
-		noOfUserLicence = settingsRows[0][2]
-		fileSpace = settingsRows[0][3]
-		usedSpace = 34
-		licenceHolderRows = db.getLicenceHolderDetails(client_id)
-		licenceHolders = []
-		for row in licenceHolderRows:
-			employeeName = None
-			unitName = None
-			if(row[3] == None):
-			    employeeName = row[2]
-			else:
-			    employeeName = "%s - %s" % (row[3], row[2])
-
-			if row[7] == None:
-			    unitName = "-"
-			else:
-			    unitName =  "%s - %s" % (row[6], row[7])
-			licenceHolderDetails = {}
-			licenceHolderDetails["user_id"] = row[0]
-			licenceHolderDetails["email_id"] = row[1]
-			licenceHolderDetails["employee_name"] = employeeName
-			licenceHolderDetails["contact_no"] = row[4]
-			licenceHolderDetails["is_admin"] = row[5]
-			licenceHolderDetails["unit_name"] =unitName
-			licenceHolderDetails["address"] = row[8]
-			licenceHolderDetails["is_active"] = row[9]
-			licenceHolders.append(licenceHolderDetails)
-
-		profileDetails = {}
-		profileDetails["contract_from"] = str(contractFrom)
-		profileDetails["contract_to"] = str(contractTo)
-		profileDetails["no_of_user_licence"] = noOfUserLicence
-		profileDetails["remaining_licence"] = (noOfUserLicence) - len(licenceHolderRows)
-		profileDetails["total_disk_space"] = fileSpace
-		profileDetails["used_disk_space"] = usedSpace
-		profileDetails["licence_holders"] = licenceHolders
-		profiles[client_id] = profileDetails
-	return profiles
+		if db.verify_password(password, session_user):
+		    if db.reactivate_unit(client_id, unit_id, session_user):
+		        return technomasters.ReactivateUnitSuccess()
+		else:
+		    return technomasters.InvalidPassword()
 
 def get_client_profile(db, request, session_user):
 	client_ids = db.get_user_clients(session_user)
@@ -388,11 +352,8 @@ def get_client_profile(db, request, session_user):
 	if client_ids ==  None:
 		print "Error : User is not responsible for any client"
 	else:
-		profiles = getProfiles(client_ids)
-		groupCompanies = GroupCompany(db).getGroupCompanies(
-		    session_user = session_user, client_ids = client_ids)
-
-		responseData = {}
-		responseData["group_companies"] = groupCompanies
-		responseData["profiles"] = profiles
-		return commonResponseStructure("GetClientProfileSuccess", responseData)	    
+		profiles = db.get_profiles(client_ids)
+		group_companies = db.get_group_companies_for_user(session_user)
+		return technomasters.GetClientProfileSuccess(
+			group_companies = group_companies,
+			profiles = profiles)

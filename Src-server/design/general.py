@@ -5,7 +5,7 @@ from common import (Text500, Text50, CONTACT_NUMBER, ADDRESS, DOMAIN_NAME, DOMAI
 from core import Domain, Country
 
 __all__ = [
-	"Request", "Response", "Notification", "RequestFormat"
+	"Request", "Response", "Notification", "RequestFormat", "AuditTrail"
 ]
 
 NOTIFICATION_TEXT = Text500
@@ -68,19 +68,24 @@ UpdateNotificationStatus = RecordType("UpdateNotificationStatus", [
     Field("has_read", HAS_READ)
 ])
 
+RequestFormat = RecordType("GetAuditTrails", [
+])
+
 Request = VariantType("Request", [
 	UpdateUserProfile,
 	GetDomains, SaveDomain,
 	UpdateDomain, ChangeDomainStatus,
 	GetCountries, SaveCountry,
 	UpdateCountry, ChangeCountryStatus,
-	GetNotifications, UpdateNotificationStatus
+	GetNotifications, UpdateNotificationStatus,
+	GetAuditTrails
 ])
 
 RequestFormat = RecordType("RequestFormat", [
 	Field("session_token", SESSION_TOKEN),
 	Field("request", Request)
 ])
+
 
 #
 # Response
@@ -138,6 +143,17 @@ GetNotificationsSuccess = RecordType("GetNotificationsSuccess", [
 
 UpdateNotificationStatusSuccess = RecordType("UpdateNotificationStatusSuccess", [])
 
+AuditTrail = RecordType("AuditTrail",[
+	Field("user_id", USER_ID),	
+	Field("form_id", FORM_ID),
+	Field("action", Text500),
+	Field("date", DATE)
+])
+
+GetAuditTrailSuccess = RecordType("GetAuditTrailSuccess",[
+	Field("audit_trail_details", VectorType(AuditTrail))
+])
+
 Response = VariantType("Response", [
 	UpdateUserProfileSuccess, ContactNumberAlreadyExists,
 	GetDomainsSuccess,
@@ -145,5 +161,6 @@ Response = VariantType("Response", [
 	UpdateDomainSuccess, InvalidDomainId,
 	ChangeDomainStatusSuccess,
 	GetNotificationsSuccess,
-	UpdateNotificationStatusSuccess
+	UpdateNotificationStatusSuccess,
+	GetAuditTrailSuccess
 ])

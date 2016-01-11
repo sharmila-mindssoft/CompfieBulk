@@ -347,6 +347,7 @@ DROP TABLE IF EXISTS `tbl_client_groups`;
 CREATE TABLE `tbl_client_groups` (
   `client_id` int(11) NOT NULL,
   `group_name` varchar(50) NOT NULL,
+  `email_id` varchar(50) NOT NULL,
   `logo_url` varchar(200) DEFAULT NULL,
   `logo_size` float NOT NULL,
   `contract_from` DATE DEFAULT NULL,
@@ -457,9 +458,9 @@ DROP TABLE IF EXISTS `tbl_units`;
 CREATE TABLE `tbl_units` (
   `unit_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
-  `business_group_id` int(11) NOT NULL,
+  `business_group_id` int(11) NULL,
   `legal_entity_id` int(11) NOT NULL,
-  `division_id` int(11) NOT NULL,
+  `division_id` int(11)  NULL,
   `country_id` int(11) NOT NULL,
   `geography_id` int(11) NOT NULL,
   `industry_id` int(11) NOT NULL,
@@ -633,8 +634,7 @@ DROP TABLE IF EXISTS `tbl_email_verification`;
 CREATE TABLE `tbl_email_verification` (
   `user_id` int(11) NOT NULL,
   `verification_code` varchar(50) NOT NULL,
-  PRIMARY KEY (`verification_code`),
-  CONSTRAINT `fk_email_verification_user_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+  PRIMARY KEY (`verification_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_mobile_registration`;

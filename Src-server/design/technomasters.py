@@ -265,13 +265,12 @@ PROFILE_DETAIL = RecordType("PROFILE_DETAIL", [
 ])
 
 PROFILES = RecordType("PROFILES", [
-	Field("client_id", GROUP_ID),
-	Field("profile_detail", PROFILE_DETAIL),
+	Field(GROUP_ID, PROFILE_DETAIL)
 ])
 
 GetClientProfileSuccess = RecordType("GetClientProfileSuccess", [
 	Field("group_companies", ClientList),
-	Field("profiles", VectorType(PROFILES))
+	Field("profiles", PROFILES)
 ])
 
 Response = VariantType("Response", [

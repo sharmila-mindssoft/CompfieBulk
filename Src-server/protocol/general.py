@@ -8,7 +8,10 @@ from protocol.parse_structure import (
     parse_structure_UnsignedIntegerType_32,
     parse_structure_VariantType_general_Request, parse_structure_Bool,
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_500,
-    parse_structure_CustomTextType_50
+    parse_structure_CustomTextType_50,
+    parse_structure_VectorType_RecordType_general_AuditTrail,
+    parse_structure_VectorType_RecordType_general_User,
+    parse_structure_VectorType_RecordType_general_AuditTrailForm
 )
 from protocol.to_structure import (
     to_structure_Float,
@@ -19,7 +22,11 @@ from protocol.to_structure import (
     to_structure_VariantType_general_Request, to_structure_Bool,
     to_structure_CustomTextType_20, to_structure_CustomTextType_500,
     to_structure_CustomTextType_50,
-    to_structure_VectorType_RecordType_core_Country
+    to_structure_VectorType_RecordType_core_Country,
+    to_structure_VectorType_RecordType_general_AuditTrail,
+    to_structure_UnsignedIntegerType_32,
+    to_structure_VectorType_RecordType_general_User,
+    to_structure_VectorType_RecordType_general_AuditTrailForm
 )
 
 #
@@ -242,9 +249,24 @@ class UpdateNotificationStatus(Request):
             "has_read": to_structure_Bool(self.has_read),
         }
 
+class GetAuditTrails(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetAuditTrails()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 def _init_Request_class_map():
-    classes = [UpdateUserProfile, GetDomains, SaveDomain, UpdateDomain, ChangeDomainStatus, GetCountries, SaveCountry, UpdateCountry, ChangeCountryStatus, GetNotifications, UpdateNotificationStatus]
+    classes = [UpdateUserProfile, GetDomains, SaveDomain, UpdateDomain, 
+    ChangeDomainStatus, GetCountries, SaveCountry, UpdateCountry, 
+    ChangeCountryStatus, GetNotifications, UpdateNotificationStatus,
+    GetAuditTrails]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -495,9 +517,37 @@ class UpdateNotificationStatusSuccess(Response):
         return {
         }
 
+class GetAuditTrailSuccess(Response):
+    def __init__(self, audit_trails, users, forms):
+        self.audit_trails = audit_trails
+        self.users = users
+        self.forms = forms
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["audit_trails"])
+        audit_trails = data.get("audit_trails")
+        audit_trails = parse_structure_VectorType_RecordType_general_AuditTrail(audit_trails)
+        users = data.get("users")
+        users = parse_structure_VectorType_RecordType_general_User(users)
+        forms = data.get("forms")
+        forms = parse_structure_VectorType_RecordType_general_AuditTrailForm(forms)
+        return GetAuditTrailSuccess(audit_trails)
+
+    def to_inner_structure(self):
+        return {
+            "audit_trail_details": to_structure_VectorType_RecordType_general_AuditTrail(self.audit_trails),
+            "users": to_structure_VectorType_RecordType_general_User(self.users),
+            "forms": to_structure_VectorType_RecordType_general_AuditTrailForm(self.forms)
+        }
+
+
 
 def _init_Response_class_map():
-    classes = [UpdateUserProfileSuccess, ContactNumberAlreadyExists, GetDomainsSuccess, SaveDomainSuccess, DomainNameAlreadyExists, UpdateDomainSuccess, InvalidDomainId, ChangeDomainStatusSuccess, GetNotificationsSuccess, UpdateNotificationStatusSuccess]
+    classes = [UpdateUserProfileSuccess, ContactNumberAlreadyExists, 
+    GetDomainsSuccess, SaveDomainSuccess, DomainNameAlreadyExists, 
+    UpdateDomainSuccess, InvalidDomainId, ChangeDomainStatusSuccess, 
+    GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -539,6 +589,58 @@ class Notification(object):
             "extra_details": to_structure_CustomTextType_500(self.extra_details),
             "has_read": to_structure_Bool(self.has_read),
             "date_and_time": to_structure_Float(self.date_and_time),
+        }
+
+#
+# Audit Trail
+#
+class AuditTrail(object):
+    def __init__(self, user_id, form_id, action, date):
+        self.user_id = user_id
+        self.form_id = form_id
+        self.action = action
+        self.date = date
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "form_id", "action", "date"])
+        user_id = data.get("user_id")
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
+        form_id = data.get("form_id")
+        form_id = parse_structure_UnsignedIntegerType_32(form_id)
+        action = data.get("action")
+        action = parse_structure_CustomTextType_500(action)
+        date = data.get("date")
+        date = parse_structure_CustomTextType_20(date)
+        return AuditTrail(user_id, form_id, action, date)
+
+    def to_structure(self):
+        return {
+            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
+            "form_id": to_structure_UnsignedIntegerType_32(self.form_id),
+            "action": to_structure_CustomTextType_500(self.action),
+            "date": to_structure_CustomTextType_20(self.date)
+        }
+
+class AuditTrailForm(object):
+    def __init__(self, form_id, form_name):
+
+        self.form_id = form_id
+        self.form_name = form_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["form_id", "form_name"])
+        form_id = data.get("form_id")
+        form_id = parse_structure_UnsignedIntegerType_32(form_id)
+        form_name = data.get("form_name")
+        form_name = parse_structure_CustomTextType_50(form_name)
+        return Form(form_id, form_name)
+
+    def to_structure(self):
+        return {
+            "form_id": to_structure_SignedIntegerType_8(self.form_id),
+            "form_name": to_structure_CustomTextType_50(self.form_name)
         }
 
 #

@@ -77,55 +77,67 @@ class Login(Request):
         }
 
 class ForgotPassword(Request):
-    def __init__(self, username):
+    def __init__(self, username, short_name):
         self.username = username
+        self.short_name = short_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["username"])
+        data = parse_dictionary(data, ["username", "short_name"])
         username = data.get("username")
         username = parse_structure_CustomTextType_100(username)
-        return ForgotPassword(username)
+        short_name = data.get("short_name")
+        short_name = parse_structure_CustomTextType_100(short_name)
+        return ForgotPassword(username, short_name)
 
     def to_inner_structure(self):
         return {
             "username": to_structure_CustomTextType_100(self.username),
+            "short_name" : to_structure_CustomTextType_100(self.short_name)
         }
 
 class ResetTokenValidation(Request):
-    def __init__(self, reset_token):
+    def __init__(self, reset_token, short_name):
         self.reset_token = reset_token
+        self.short_name = short_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["reset_token"])
+        data = parse_dictionary(data, ["reset_token", "short_name"])
         reset_token = data.get("reset_token")
         reset_token = parse_structure_CustomTextType_50(reset_token)
+        short_name = data.get("short_name")
+        short_name = parse_structure_CustomTextType_50(short_name)
         return ResetTokenValidation(reset_token)
 
     def to_inner_structure(self):
         return {
             "reset_token": to_structure_CustomTextType_50(self.reset_token),
+            "short_name":to_structure_CustomTextType_50(self.short_name)
         }
 
 class ResetPassword(Request):
-    def __init__(self, reset_token, new_password):
+    def __init__(self, reset_token, new_password, short_name):
         self.reset_token = reset_token
         self.new_password = new_password
+        self.short_name = short_name
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["reset_token", "new_password"])
+        data = parse_dictionary(data, ["reset_token", "new_password", "short_name"])
         reset_token = data.get("reset_token")
         reset_token = parse_structure_CustomTextType_50(reset_token)
         new_password = data.get("new_password")
         new_password = parse_structure_CustomTextType_20(new_password)
-        return ResetPassword(reset_token, new_password)
+        short_name = data.get("short_name")
+        short_name = parse_structure_CustomTextType_20(short_name)
+        return ResetPassword(reset_token, new_password, short_name)
 
     def to_inner_structure(self):
         return {
             "reset_token": to_structure_CustomTextType_50(self.reset_token),
             "new_password": to_structure_CustomTextType_20(self.new_password),
+            "short_name": to_structure_CustomTextType_20(self.short_name)
         }
 
 class ChangePassword(Request):

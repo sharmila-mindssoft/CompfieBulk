@@ -87,7 +87,7 @@ def process_forgot_password(db, request):
 def send_reset_link(db, user_id):
 	reset_token = db.new_uuid()
 	print "http://localhost:8080/ForgotPassword?reset_token=%s" % reset_token
-	columns = "user_id, verification_code"
+	columns = ["user_id", "verification_code"]
 	values_list = [user_id, reset_token]
 	if db.insert(db.tblEmailVerification, columns, values_list):
 	    if send_email():
@@ -101,10 +101,25 @@ def send_email():
 	return True
 
 def process_reset_token(db, request):
-	return login.ResetSessionTokenValidationSuccess()
+	user_id = db.validate_reset_token(request.reset_token)
+	if user_id != None:
+	    return login.ResetSessionTokenValidationSuccess()
+	else:
+	    return login.InvalidResetToken()
+	
 
 def process_reset_password(db, request):
-	return login.ResetPasswordSuccess()
+	user_id = db.validate_reset_token(request.reset_token)
+	if user_id != None:
+		if db.update_password(request.new_password, user_id):
+			if db.delete_used_token(request.reset_token):
+				return login.ResetPasswordSuccess()
+			else:
+				print "Failed to delete used token"
+		else:
+			print "Failed to update password"
+	else:
+		return login.InvalidResetToken()
 
 def process_change_password(db, request):
 	session_user = db.validate_session_token(request.session_token)

@@ -21,6 +21,16 @@ function initMirror() {
         window.localStorage["userInfo"] = toJSON(userProfile);
     }
 
+    function getShortName(){
+        var pathArray = window.location.pathname.split( '/' );
+        if(typeof pathArray[2] === 'undefined'){
+            return null;
+        }else{
+            return pathArray[2]   
+        }
+        
+    }
+
     // function updateUser_Session(user) {
     //     var info = parseJSON(window.localStorage["userInfo"])
     //     delete window.localStorage["userInfo"];
@@ -844,36 +854,40 @@ function initMirror() {
 
     // Forgot Password APIs
 
-    function forgotPassword(username, 
-        callback) {
+    function forgotPassword(username, callback) {
         callerName = "api/login"
         var request = [
             "ForgotPassword",
             {
-                "username": username
+                "username": username,
+                "short_name": getShortName()
             }
         ];
         LoginApiRequest(callerName, request, callback);
     }
 
-    function validateResetToken(callerName, resetToken, 
+    function validateResetToken(resetToken, 
         callback) {
+        callerName = "api/login"
         var request = [
             "ResetTokenValidation",
             {
-                "reset_token": resetToken
+                "reset_token": resetToken,
+                "short_name": getShortName()
             }
         ];
         LoginApiRequest(callerName, request, callback);
     }
 
-    function resetPassword(callerName, resetToken, newPassword, 
+    function resetPassword( resetToken, newPassword, 
         callback) {
+        callerName = "api/login"
         var request = [
             "ResetPassword",
             {
                 "reset_token": resetToken,
-                "new_password": newPassword
+                "new_password": newPassword,
+                "short_name": getShortName()
             }
         ];
         LoginApiRequest(callerName, request, callback);
@@ -1035,6 +1049,15 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function getAuditTrail(callback){
+        callerName = "api/general"
+        var request = [
+            "GetAuditTrails",
+            {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -1144,7 +1167,8 @@ function initMirror() {
 
         getClientProfile: getClientProfile,
         getClientDetailsReportFilters: getClientDetailsReportFilters,
-        getClientDetailsReport: getClientDetailsReport
+        getClientDetailsReport: getClientDetailsReport,
+        getAuditTrail: getAuditTrail
     }
 
 }

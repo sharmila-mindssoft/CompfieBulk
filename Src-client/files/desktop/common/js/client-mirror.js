@@ -17,7 +17,18 @@ function initClientMirror() {
     }
 
     function initSession(userProfile){
+        console.log(toJSON(userProfile))
         window.localStorage["userInfo"] = toJSON(userProfile);
+    }
+
+    function getShortName(){
+        var pathArray = window.location.pathname.split( '/' );
+        if(typeof pathArray[2] === 'undefined'){
+            return null;
+        }else{
+            return pathArray[2]   
+        }
+        
     }
 
     // function updateUser_Session(user) {
@@ -169,25 +180,28 @@ function initClientMirror() {
     function changePassword(currentPassword, newPassword,
      callback) {
         callerName = "api/login"
+        var sessionToken = getSessionToken();
+        var client_id = getClientId()
         var request = [
             "ChangePassword",
             {
+                "session_token" : client_id+"-"+sessionToken,
                 "current_password": currentPassword,
                 "new_password": newPassword
             }
         ];
-        clientApiRequest(callerName, request, callback);
+        clientLoginApiRequest(callerName, request, callback);
     }
 
     // Forgot Password APIs
 
-    function forgotPassword(username, 
-        callback) {
+    function forgotPassword(username, callback) {
         callerName = "api/login"
         var request = [
             "ForgotPassword",
             {
-                "username": username
+                "username": username,
+                "short_name": getShortName()
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -199,7 +213,8 @@ function initClientMirror() {
         var request = [
             "ResetTokenValidation",
             {
-                "reset_token": resetToken
+                "reset_token": resetToken,
+                "short_name": getShortName()
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -212,7 +227,8 @@ function initClientMirror() {
             "ResetPassword",
             {
                 "reset_token": resetToken,
-                "new_password": newPassword
+                "new_password": newPassword,
+                "short_name": getShortName()
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -488,6 +504,24 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getAuditTrail(callback){
+        callerName = "api/client_masters"
+        var request = [
+            "GetAuditTrails",
+            {}
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getComplianceDetailsReportFilters(callback){
+        callerName = "api/client_reports"
+        var request = [
+            "GetComplianceDetailsReportFilters",
+            {}
+        ];
+        clientApiRequest(callerName, request, callback);   
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -539,7 +573,10 @@ function initClientMirror() {
 
         getClientProfile: getClientProfile,
         getClientDetailsReportFilters: getClientDetailsReportFilters,
-        getClientDetailsReport: getClientDetailsReport
+        getClientDetailsReport: getClientDetailsReport,
+        getAuditTrail: getAuditTrail,
+
+        getComplianceDetailsReportFilters: getComplianceDetailsReportFilters
     }
 
 }
