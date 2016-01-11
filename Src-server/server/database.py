@@ -3341,7 +3341,6 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return result
 
-
     def return_assign_statutory_wizard_two(self, country_id, domain_id, data):
         if bool(self.statutory_parent_mapping) is False:
             self.get_statutory_master()
@@ -3392,3 +3391,55 @@ class KnowledgeDatabase(Database):
         return technotransactions.GetStatutoryWizardTwoDataSuccess(
             assigned_statutory_list
         )
+
+    def save_assigned_statutories(self, data, user_id):
+        
+        submission_type = data.submission_type
+        client_saved_statutory_id = data.client_saved_statutory_id
+        if submission_type == "Save" :
+            self.save_client_statutories(data, user_id)
+
+        return technotransactions.SaveAssignedStatutorySuccess()
+
+    def save_client_statutories(self, data, user_id):
+        country_id = data.country_id
+        client_id = data.client_id
+        geography_id = data.geography_id
+        industry_id = data.industry_id
+        unit_ids =','.join(str(x) for x in data.unit_ids)
+        domain_id = data.domain_id
+        saved_statutory_id = self.get_new_id("client_saved_statutory_id", self.tblClientSavedStatutories)
+        created_on = str(self.get_date_time())
+
+        field = "(client_saved_statutory_id, client_id, geography_id,\
+            country_id, domain_id, industry_id, unit_ids, \
+            created_by, created_on)"
+        values = (
+            saved_statutory_id, client_id, geography_id, country_id,
+            domain_id, industry_id, unit_ids , int(user_id), created_on
+        )
+        if (self.save_data(self.tblClientSavedStatutories, field, values)) :
+            assigned_statutories = data.assigned_statutories
+            self.save_client_compliances(saved_statutory_id, assigned_statutories, user_id, created_on)
+
+    def save_client_compliances(self, saved_statutory_id, data, user_id, created_on):
+        field = "(client_saved_statutory_id, compliance_id, \
+            statutory_id, applicable, not_applicable_remarks, \
+            compliance_applicable, created_by, created_on)"
+        for d in data :
+            level_1_id = d.level_1_statutory_id
+            applicable_status = d.applicable_status
+            not_applicable_remarks = d.not_applicable_remarks
+            if not_applicable_remarks is None :
+                not_applicable_remarks = ""
+            for key, value in d.compliances.iteritems():
+                compliance_id = int(key)
+                compliance_applicable_status = int(value)
+                values = (
+                    saved_statutory_id, compliance_id,
+                    level_1_id, int(applicable_status), not_applicable_remarks,
+                    compliance_applicable_status, int(user_id), created_on
+                )
+                self.save_data(self.tblClientSavedCompliances, field, values)
+        return True
+
