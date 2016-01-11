@@ -93,8 +93,7 @@ RequestFormat = RecordType("RequestFormat", [
 
 ASSIGNED_STATUTORIES = RecordType("ASSIGNED_STATUTORIES", [
 	Field("submission_status", ASSIGN_STATUTORY_SUBMISSION_STATUS),
-	Field("client_saved_statutory_id", CLIENT_SAVED_STATUTORY_ID),
-	Field("client_assigned_statutory_id", CLIENT_ASSIGNED_STATUTORY_ID),
+	Field("client_statutory_id", CLIENT_ASSIGNED_STATUTORY_ID),
 	Field("country_name", COUNTRY_NAME),
 	Field("group_name", CLIENT_NAME),
 	Field("business_group_name", OptionalType(BUSINESS_GROUP_NAME )),
