@@ -1,6 +1,6 @@
 {% extends "files/desktop/home/container.html" %}
 {% block content %}
-  <div class="content-container width60" id="clientunit-view">
+  <div class="content-container width80" id="clientunit-view">
     <div class="content-area">
       <h1>Clients Unit</h1>
       <div class="filters-and-search">
@@ -168,39 +168,38 @@
 <td colspan="9" align="right"><div style="float:right" class="add-unit-row" onclick="addNewUnitRow(this)" ><img src="/images/icon-plus.png" alt="Add New Unit" />Add Unit</div></td>
 </tr>
 </table>
+</div>
+</div>
 
-</div>
-</div>
 <div id="templatesUnitRow" style="display:none;">
 <table class="table-UnitRow-list">
-<tr class="table-row" style="vertical-align:top;"d>
-<td><select class="input-box geography-levels" onfocus="loadglevels(this.className);" >
-<option value="">Select</option>
-</select>
-</td>
-<td><input type="text" class="input-box icon-autocomplete unit-location" onkeyup="loadlocation(this.value, this.className);" style="width:150px;">
-<input type="hidden" class="unit-location-ids">
-<div class="auto-complete-unit-location ac-textbox" style="display:none;" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);" >
-<ul class="unitlocationlist-text" style="width:195px;"></ul>
-</div>
-<span class="full-location-list"></span></td>
-<td><input type="text" class="input-box unit-code"  ></td>
-<td><input type="text" class="input-box unit-name"  ></td>
-<td><select class="input-box industry" onfocus="industrytype(this.className);">
-</select>
-</td>
-<td><input type="text" class="input-box unit-address" /></td>
-<td><input type="text" class="input-box postal-code" ></td>
-<td> <input type="text" class="input-box icon-autocomplete domainselected" value="" readonly="readonly" onclick="loaddomain(this.className)">
-<input type="hidden" class="domain">
-<div class="domain-selectbox-view ac-selectbox" style="display:none;">
-<ul class="ul-domain-list" onmouseleave="hidedomain(this.className);" style="width:170px;"></ul>
-</div>
-</td>
-<td align="center">Active</td>
-
-</tr>
+    <tr class="table-row" style="vertical-align:top;">
+        <td><select class="input-box geography-levels" onfocus="loadglevels(this.className);" >
+            <option value="">Select</option>
+        </select>
+        </td>
+        <td><input type="text" class="input-box icon-autocomplete unit-location" onkeyup="loadlocation(this.value, this.className);" style="width:150px;">
+        <input type="hidden" class="unit-location-ids">
+        <div class="auto-complete-unit-location ac-textbox" style="display:none;" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);" >
+            <ul class="unitlocationlist-text" style="width:195px;"></ul>
+        </div>
+        <span class="full-location-list"></span></td>
+        <td><input type="text" class="input-box unit-code"  ></td>
+        <td><input type="text" class="input-box unit-name"  ></td>
+        <td><select class="input-box industry" onfocus="industrytype(this.className);">
+        </select>
+        </td>
+        <td><input type="text" class="input-box unit-address" /></td>
+        <td><input type="text" class="input-box postal-code" ></td>
+        <td> <input type="text" class="input-box icon-autocomplete domainselected" value="" readonly="readonly" onclick="loaddomain(this.className)">
+        <input type="hidden" class="domain">
+        <div class="domain-selectbox-view ac-selectbox" style="display:none;">
+        <ul class="ul-domain-list" onmouseleave="hidedomain(this.className);" style="width:170px;"></ul>
+        </div>
+        </td>
+        <td align="center">Active</td>
+    </tr>
 </table>
 </div>
-<script type="text/javascript" src="/files/desktop/client-user/clientuser.js"></script>
+<script type="text/javascript" src="/files/desktop/client-unit/clientunit.js"></script>
 {% endblock %}

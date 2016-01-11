@@ -6,11 +6,11 @@ $(function() {
 $("#btn-service-provider-add").click(function(){
 	$("#service-provider-add").show();
 	$("#service-provider-view").hide();
-  $("#service-provider-id").val('');
-  $(".error-message").html('');
-  var x=document.getElementsByTagName("input");
- 	for(i = 0; i<=x.length-1; i++){
-  	if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
+  	$("#service-provider-id").val('');
+  	$(".error-message").html('');
+  	var x = document.getElementsByTagName("input");
+ 	for(i = 0; i <= x.length-1; i++){
+  	if(x.item(i).type != "submit" ){ x.item(i).value = ""; }
   }
 });
 $("#btn-service-provider-cancel").click(function(){
@@ -19,7 +19,7 @@ $("#btn-service-provider-cancel").click(function(){
 });
 function initialize(){
 	function success(status, data){
-		splist=data;
+		splist = data;
 		loadServiceProviderList(data);
 
 	}
@@ -29,29 +29,29 @@ function initialize(){
 }
 function loadServiceProviderList(serviceProviderList){
  	$(".tbody-service-provider-list").find("tr").remove();
-  var sno=0;
+  	var sno = 0;
 	var imageName, title;	
 	for(var i in serviceProviderList){
-		var serviceProvider=serviceProviderList[i];
+		var serviceProvider = serviceProviderList[i];
 		for(var j in serviceProvider){
-			var serviceProviderId=serviceProvider[j]["service_provider_id"];
-			var serviceProviderName=serviceProvider[j]["service_provider_name"];
-			var contactPerson=serviceProvider[j]["contact_person"];
-			var contactNo=serviceProvider[j]["contact_no"];			
-			var isActive=serviceProvider[j]["is_active"];
+			var serviceProviderId = serviceProvider[j]["service_provider_id"];
+			var serviceProviderName = serviceProvider[j]["service_provider_name"];
+			var contactPerson = serviceProvider[j]["contact_person"];
+			var contactNo = serviceProvider[j]["contact_no"];			
+			var isActive = serviceProvider[j]["is_active"];
 					
-			if(isActive==1){
-				imageName="icon-active.png";
-				title="Click here to deactivate"
-				statusVal=0;
+			if(isActive == true){
+				imageName = "icon-active.png";
+				title = "Click here to deactivate"
+				statusVal = false;
 			}
 			else{
-				imageName="icon-inactive.png";	
-				title="Click here to Activate"
-				statusVal=1;
+				imageName = "icon-inactive.png";	
+				title = "Click here to Activate"
+				statusVal = true;
 			}
-			var tableRow=$('#templates .table-service-provider-list .table-row');
-			var clone=tableRow.clone();
+			var tableRow = $('#templates .table-service-provider-list .table-row');
+			var clone = tableRow.clone();
 			sno = sno + 1;
 			$('.sno', clone).text(sno);
 			$('.service-provider-name', clone).text(serviceProviderName);
@@ -74,29 +74,28 @@ $("#submit").click(function(){
 	var addressValue = $("#address").val();
 	var contractFromValue = $("#contract-from").val();
 	var contractToValue = $("#contract-to").val();
-	if(serviceProviderNameValue==''){
+	if(serviceProviderNameValue == ''){
 		$(".error-message").html('Please Enter Service Provider Name ');
 	}
-	else if(contactPersonValue==''){
+	else if(contactPersonValue == ''){
 		$(".error-message").html('Please Enter Contact Person Name ');
 	}
-	else if(countryCodeValue==''){
+	else if(countryCodeValue == ''){
 		$(".error-message").html('Please Enter Country Code');
 	}
-	else if(mobileNumberValue==''){
+	else if(mobileNumberValue == ''){
 		$(".error-message").html('Please Enter Mobile Number');
 	}
-	else if(addressValue==''){
+	else if(addressValue == ''){
 		$(".error-message").html('Please Enter Address ');
 	}
-	else if(contractFromValue==''){
+	else if(contractFromValue == ''){
 		$(".error-message").html('Please Enter Contract From ');
 	}
-	else if(contractToValue==''){
+	else if(contractToValue == ''){
 		$(".error-message").html('Please Enter Contract To');
 	}
-
-	else if(serviceProviderIdValue==''){		
+	else if(serviceProviderIdValue == ''){		
 		function success(status, data){
 			if(status == 'SaveServiceProviderSuccess') {
 		    	$("#service-provider-add").hide();

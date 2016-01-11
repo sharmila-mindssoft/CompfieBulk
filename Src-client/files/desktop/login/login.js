@@ -83,7 +83,6 @@ function performLogin(e_button, e_email, e_password) {
     }
     console.log(getShortName());
     if (getShortName() === null){
-        console.log("inside if")
         mirror.login(
             e_email.val(),
             e_password.val(),
@@ -100,7 +99,6 @@ function performLogin(e_button, e_email, e_password) {
             }
         );    
     }else{
-        console.log("inside else")
         client_mirror.login(
             e_email.val(),
             e_password.val(),

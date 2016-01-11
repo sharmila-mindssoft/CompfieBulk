@@ -1,92 +1,134 @@
 var profiles;
 var groupList;
 
+function clearMessage() {
+    $(".error-message").hide();
+    $(".error-message").text("");
+}
+function displayMessage(message) {
+    $(".error-message").text(message);
+    $(".error-message").show();
+}
 function initialize(){
   $('#groupsval').val('');
-	function success(status, data){
-		groupList=data['group_companies'];
-		profiles=data['profiles'];
+	function onSuccess(data){
+		groupList = data['group_companies'];
+		profiles = data['profiles'];
 	}
-	function failure(status, data){
+	function onFailure(error){
 	}
-	mirror.getClientProfile("TechnoAPI", success, failure);
+	mirror.getClientProfile(
+        function(error, response){
+            if(error == null){
+                onSuccess(response);
+            }
+            else{
+                onFailure(error);
+            }
+        }
+
+    );
 }
 function loadClientProfileList(groupId){
-  $(".tbody-clientprofile-list").find("tr").remove();
- 	var sno=0;
+    $(".tbody-clientprofile-list").find("tr").remove();
+ 	var sno = 0;
 	var imageName, title;	
-  var list=profiles[groupId];
-  //var list=profiles[groupId];
-  var contractFrom=list['contract_from'];
-  var contractTo=list['contract_to'];
-  var noLicence=list['no_of_user_licence'];
-  var remaininglicence=list['remaining_licence'];
-  var totaldiskspace=list["total_disk_space"];
-  var useddiskspace=list["used_disk_space"];    
-  $('.contract-start').html(contractFrom);
-  $('.contract-expires').html(contractTo);    
-  $('.space-summary').html(useddiskspace+" GB of "+totaldiskspace+" GB used");
-  var calculate =((useddiskspace/totaldiskspace)*100).toFixed(2);
-  var balance=100-calculate;
-  $('.usedspace').css("width", calculate);
-  $('.totalspace').css("width", balance);
-  $('.totalspace').html(balance+"%");
-  $('.usedspace').html(calculate+"%");
-  $('.remaining-licence').html(remaininglicence);
-  var lists=list['licence_holders'];
-  $.each(lists, function(key, val) { 
-
-    var tableRow=$('#templates .table-clientprofile-list .table-row');
-    var clone=tableRow.clone();
-    sno = sno + 1;
-    $('.sno', clone).text(sno);
-    $('.employee', clone).text(lists[key]['employee_name']);
-    $('.email', clone).text(lists[key]['email_id']);
-    if(lists[key]['contact_no']==null){
-      $('.mobile-number', clone).text("-");  
-    }
-    else{
-      $('.mobile-number', clone).text(lists[key]['contact_no']);
-    }     
-    $('.seating-unit', clone).text(lists[key]['unit_name']);
-    $('.unit-address', clone).text(lists[key]['address']);      
-    var userId=lists[key]['user_id'];
-    var isAdmin=lists[key]["is_admin"];
-    var isActive=lists[key]["is_active"];
-    if(isActive==1){
-      imageName="icon-active.png";
-      title="Click here to deactivate"
-      statusVal=0;
-    }
-    else{
-      imageName="icon-inactive.png";  
-      title="Click here to Activate"
-      statusVal=1;
-    }
-    if(isAdmin==1){ adminstatus=0; imageadminName="promote-active.png"; admintitle="Click here to deactivate Promote Admin" }
-    else{ adminstatus=1; imageadminName="promote-inactive.png"; admintitle="Click here to Promote Admin"}
-    $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientprofile_active('+userId+','+groupId+', '+statusVal+')"/>');
-    $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="clientprofile_isadmin('+userId+', '+adminstatus+')" />');
-    
-    $('.tbody-clientprofile-list').append(clone);
-  });  
+    var list = profiles[groupId];
+    //var list=profiles[groupId];
+    var contractFrom = list['contract_from'];
+    var contractTo = list['contract_to'];
+    var noLicence = list['no_of_user_licence'];
+    var remaininglicence = list['remaining_licence'];
+    var totaldiskspace = list["total_disk_space"];
+    var useddiskspace = list["used_disk_space"];    
+    $('.contract-start').html(contractFrom);
+    $('.contract-expires').html(contractTo);    
+    $('.space-summary').html(useddiskspace+" GB of "+totaldiskspace+" GB used");
+    var calculate = ((useddiskspace/totaldiskspace)*100).toFixed(2);
+    var balance = 100-calculate;
+    $('.usedspace').css("width", calculate);
+    $('.totalspace').css("width", balance);
+    $('.totalspace').html(balance+"%");
+    $('.usedspace').html(calculate+"%");
+    $('.remaining-licence').html(remaininglicence);
+    var lists = list['licence_holders'];
+    $.each(lists, function(key, val) { 
+        var tableRow = $('#templates .table-clientprofile-list .table-row');
+        var clone = tableRow.clone();
+        sno = sno + 1;
+        $('.sno', clone).text(sno);
+        $('.employee', clone).text(lists[key]['employee_name']);
+        $('.email', clone).text(lists[key]['email_id']);
+        if(lists[key]['contact_no'] == null){
+          $('.mobile-number', clone).text("-");  
+        }
+        else{
+          $('.mobile-number', clone).text(lists[key]['contact_no']);
+        }     
+        $('.seating-unit', clone).text(lists[key]['unit_name']);
+        $('.unit-address', clone).text(lists[key]['address']);      
+        var userId = lists[key]['user_id'];
+        var isAdmin = lists[key]["is_admin"];
+        var isActive = lists[key]["is_active"];
+        if(isActive == true){
+            imageName = "icon-active.png";
+            title = "Click here to deactivate"
+            statusVal = false;
+        }
+        else{
+          imageName = "icon-inactive.png";  
+          title = "Click here to Activate"
+          statusVal = true;
+        }
+        if(isAdmin == true){
+            adminstatus = false;
+            imageadminName = "promote-active.png";
+            admintitle = "Click here to deactivate Promote Admin";
+        }
+        else{
+            adminstatus = true; 
+            imageadminName = "promote-inactive.png";
+            admintitle = "Click here to Promote Admin";
+        }
+        $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientprofile_active('+userId+','+groupId+', '+statusVal+')"/>');
+        $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="clientprofile_isadmin('+userId+', '+adminstatus+')" />');
+        $('.tbody-clientprofile-list').append(clone);
+    });  
     
 }
 function clientprofile_active(userId, clientId, status){
-  function success(status, data){
-    initialize();
-  }
-  function failure(status, data){
-  }
-  mirror.changeClientUserStatus("ClientAdminAPI", userId, status, success, failure);
+    function onSuccess(data){
+        initialize();
+    }
+    function onFailure(error){
+    }
+    mirror.changeClientUserStatus(userId, status,
+        function(error, response){
+            if(error == null){
+                onSuccess(response);
+            }
+            else{
+                onFailure(error);
+            }
+        }
+    );
 }
 function clientprofile_isadmin(userId, isAdmin){
-  function success(status, data){
-    initialize();
-  }
-  function failure(status, data){
-  }
-  mirror.changeAdminStatus("ClientAdminAPI", userId, isAdmin, success, failure);
+    function onSuccess(data){
+        initialize();
+    }
+    function failure(error){
+    }
+    mirror.changeAdminStatus(userId, isAdmin,
+        function(error, response){
+            if(error == null){
+                onSuccess(response);
+            }
+            else{
+                onFailure(error);
+            }
+        }
+    );
 }
 function hidelist(){
 	document.getElementById('autocompleteview').style.display = 'none';
@@ -115,7 +157,6 @@ function activate_text (element,checkval,checkname) {
   $('.list-container').show();
   loadClientProfileList(checkval);
 }
-
 
 $("#search-employee").keyup(function() { 
 	var count=0;

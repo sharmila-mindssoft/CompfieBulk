@@ -59,7 +59,7 @@ function loadUserGroupdata(userGroupList){
 		var isActive=userGroupList[j]["is_active"];
 		var userGroupId=userGroupList[j]["user_group_id"];
 				
-		if(isActive==1){
+		if(isActive==true){
 			imageName="icon-active.png";
 			title="Click here to deactivate"
 			statusVal=false;
@@ -70,7 +70,7 @@ function loadUserGroupdata(userGroupList){
 			statusVal=true;
 		}
 		function getCategoryName(catgId){
-			var catgname
+			var catgname;
 			$.each(categoryList, function(key,value){
 				if(categoryList[key]['form_category_id']==catgId){
 					catgname = categoryList[key]['form_category'];

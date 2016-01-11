@@ -147,7 +147,7 @@ $("#submit").click(function(){
 	  		initialize();
   		}
   			
-		function failure(error){
+		function onFailure(error){
 			if(error == 'ServiceProviderNameAlreadyExists') {
   				displayMessage('Service Provider Name Already Exists');
   			}	
@@ -177,6 +177,7 @@ $("#submit").click(function(){
 function serviceprovider_edit(serviceProviderId){
 	$("#service-provider-view").hide();
 	$("#service-provider-add").show();
+	clearMessage();
 	$("#service-provider-id").val(serviceProviderId);
 	for(var i in splist){
 		var lists = splist[i];
