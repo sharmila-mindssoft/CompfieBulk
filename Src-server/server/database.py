@@ -129,7 +129,6 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
@@ -2460,10 +2459,8 @@ class KnowledgeDatabase(Database):
 
     def return_users(self, condition = "1"):
         user_rows = self.get_users(condition)
-        print "user_rows:{}".format(user_rows)
         columns = ["user_id", "employee_name", "employee_code", "is_active"]
         users = self.convert_to_dict(user_rows, columns)
-        print "users : {}".format(users)
         results = []
         for user in users :
             employee_name = "%s - %s"% (user["employee_code"],user["employee_name"])
