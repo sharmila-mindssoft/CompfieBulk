@@ -43,6 +43,7 @@ GetAssignedStatutoryWizardOneData = RecordType("GetAssignedStatutoryWizardOneDat
 ])
 
 GetStatutoryWizardTwoData = RecordType("GetStatutoryWizardTwoData", [
+	Field("country_id", COUNTRY_ID),
 	Field("geography_id", GEOGRAPHY_ID),
 	Field("industry_id", INDUSTRY_ID),
 	Field("domain_id", DOMAIN_ID),
