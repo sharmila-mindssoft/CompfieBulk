@@ -275,11 +275,19 @@
 
 		        configuration1 = mirror.getDateConfigurations(1,1,1,12)
 		        configuration2 = mirror.getDateConfigurations(1,2,6,5)
+		        configuration3 = mirror.getDateConfigurations(2,1,1,12)
+		        configuration4 = mirror.getDateConfigurations(2,2,6,5)
+		        configuration5 = mirror.getDateConfigurations(4,1,1,12)
+		        configuration6 = mirror.getDateConfigurations(4,2,6,5)
 		        dateConfigurations.push(configuration1)
 		        dateConfigurations.push(configuration2)
+		        dateConfigurations.push(configuration3)
+		        dateConfigurations.push(configuration4)
+		        dateConfigurations.push(configuration5)
+		        dateConfigurations.push(configuration6)
 
-			    group_name = "Test Client 23";
-		        country_ids = [1,2];
+			    group_name = "Moto Groups";
+		        country_ids = [1,2, 4];
 		        domain_ids = [1,2];
 		        logo = "logo.png";
 		        contract_from = "02-Nov-2015";
@@ -288,8 +296,8 @@
 		        no_of_user_licence = 10;
 		        file_space = 4.6;
 		        is_sms_subscribed = true;
-		        email_id = "testclient23@domain.com";
-		        shortName = "test23"
+		        email_id = "info@moto.com";
+		        shortName = "moto"
 		        
 			    clientGroupDetails = mirror.getSaveClientGroupDict(group_name,
 		            country_ids, domain_ids, logo, contract_from, contract_to,

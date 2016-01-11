@@ -1037,8 +1037,7 @@ class KnowledgeDatabase(Database):
         if rows :
             columns = ["level_id", "level_position", "level_name", "country_id"]
             result = self.convert_to_dict(rows, columns)
-        return self.return_geography_levels(result)
-
+        return self.return_geography_levels(result)    
 
     def return_geography_levels(self, data):
         geography_levels = {}

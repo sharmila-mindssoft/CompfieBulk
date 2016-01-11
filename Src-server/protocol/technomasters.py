@@ -32,7 +32,10 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_techno_master_UNIT,
     parse_structure_RecordType_techno_master_COUNTRYWISEUNITS,
     parse_structure_VectorType_RecordType_techno_master_COUNTRYWISEUNITS,
-    parse_structure_Float
+    parse_structure_Float,
+    parse_structure_VectorType_RecordType_core_Industry,
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -61,7 +64,10 @@ from protocol.to_structure import (
     to_structure_CustomTextType_20,
     to_structure_VectorType_RecordType_core_GroupCompanyDetail,
     to_structure_VectorType_RecordType_core_Unit,
-    to_structure_Float
+    to_structure_Float,
+    to_structure_VectorType_RecordType_core_Industry,
+    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
+    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography
 
 )
 
@@ -722,7 +728,7 @@ class InvalidUnitId(Response):
         }
 
 class GetClientsSuccess(Response):
-    def __init__(self, countries, domains, group_companies, business_groups, legal_entities, divisions, units):
+    def __init__(self, countries, domains, group_companies, business_groups, legal_entities, divisions, units, geography_levels, geographies, industries):
         self.countries = countries
         self.domains = domains
         self.group_companies = group_companies
@@ -730,10 +736,13 @@ class GetClientsSuccess(Response):
         self.legal_entities = legal_entities
         self.divisions = divisions
         self.units = units
+        self.geography_levels = geography_levels
+        self.geographies = geographies
+        self.industries = industries
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "group_companies", "business_groups", "legal_entities", "divisions", "units"])
+        data = parse_dictionary(data, ["countries", "domains", "group_companies", "business_groups", "legal_entities", "divisions", "units", "geography_levels", "geographies", "industries"])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
@@ -748,7 +757,13 @@ class GetClientsSuccess(Response):
         divisions = parse_structure_OptionalType_VectorType_RecordType_core_Division(divisions)
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_core_UnitDetails(units)
-        return GetClientsSuccess(countries, domains, group_companies, business_groups, legal_entities, divisions, units)
+        geography_levels = data.get("geography_levels")
+        geography_levels = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(geography_levels)
+        geographies = data.get("geographies")
+        geographies = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(geographies)
+        industries = data.get("industries")
+        industries = parse_structure_VectorType_RecordType_core_Industry(industries)
+        return GetClientsSuccess(countries, domains, group_companies, business_groups, legal_entities, divisions, units, geography_levels, geographies, industries)
 
     def to_inner_structure(self):
         return {
@@ -759,6 +774,9 @@ class GetClientsSuccess(Response):
             "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
             "divisions": to_structure_OptionalType_VectorType_RecordType_core_Division(self.divisions),
             "units": to_structure_VectorType_RecordType_core_Unit(self.units),
+            "industries": to_structure_VectorType_RecordType_core_Industry(self.industries),
+            "geography_levels": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(self.geography_levels),
+            "geographies": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(self.geographies)
         }
 
 class SaveClientSuccess(Response):
