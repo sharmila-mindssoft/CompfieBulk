@@ -162,7 +162,7 @@ $("#legalentity").click(function(event){
   var str1='';
   $('#unit').empty();
   for(var unit in unitsList){
-    if(unitsList[unit]["is_active"] == true && unitsList[unit]["division_id"] == null && unitsList[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && unitsList[unit]["client_id"] == assignStatutoryGroupId){
+    if(unitsList[unit]["division_id"] == null && unitsList[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && unitsList[unit]["client_id"] == assignStatutoryGroupId){
       str1 += '<li id="'+unitsList[unit]["unit_id"]+'" class="unitlist" ><span class="filter2_name">'+unitsList[unit]["unit_name"]+'</span></li>';
     }
   }
@@ -181,7 +181,7 @@ $("#division").click(function(event){
   assignStatutoryDivisionValue = $(event.target).text();
   $('#unit').empty();
   for(var unit in unitsList){
-    if(unitsList[unit]["is_active"] == true && unitsList[unit]["division_id"] == assignStatutoryDivisionId && unitsList[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && unitsList[unit]["client_id"] == assignStatutoryGroupId){
+    if(unitsList[unit]["division_id"] == assignStatutoryDivisionId && unitsList[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && unitsList[unit]["client_id"] == assignStatutoryGroupId){
       str += '<li id="'+unitsList[unit]["unit_id"]+'" class="unitlist" ><span class="filter2_name">'+unitsList[unit]["unit_name"]+'</span></li>';
     }
   }
@@ -210,7 +210,7 @@ $("#industry").click(function(event){
 $("#unit").click(function(event){
 
   var chkstatus = $(event.target).attr('class');
-  if(chkstatus == 'unit active'){
+  if(chkstatus == 'unitlist active'){
     $(event.target).removeClass("active");
     var removeid = assignStatutoryUnitIds.indexOf(event.target.id);
     assignStatutoryUnitIds.splice(removeid,1);
@@ -218,7 +218,7 @@ $("#unit").click(function(event){
     assignStatutoryUnitValues.splice(removename,1);
   }else{
     $(event.target).addClass("active");
-    assignStatutoryUnitIds.push(event.target.id);
+    assignStatutoryUnitIds.push(parseInt(event.target.id));
     assignStatutoryUnitValues.push($(event.target).text());
   }
   
@@ -228,8 +228,9 @@ $("#unit").click(function(event){
       domainArray.push(unitsList[unit]["domain_ids"]);
     }
   }
-
-  var applicableDomains = domainArray.shift().filter(function(v) {
+  
+  if(domainArray.length > 0){
+    var applicableDomains = domainArray.shift().filter(function(v) {
     return domainArray.every(function(a) {
         return a.indexOf(v) !== -1;
     });
@@ -238,11 +239,24 @@ $("#unit").click(function(event){
   var str=''; 
   $('#domain').empty();
   for(var domain in domainsList){
-    if(domainsList[domain]["is_active"] == true && $.inArray(domainsList[domain]["domain"], applicableDomains) >= 0){
+    if(domainsList[domain]["is_active"] == true && $.inArray(domainsList[domain]["domain_id"], applicableDomains) >= 0){
       str += '<li id="'+domainsList[domain]["domain_id"]+'" class="domainlist" ><span class="filter2_name">'+domainsList[domain]["domain_name"]+'</span></li>';
     }
   }
   $('#domain').append(str);
+  }else{
+     $('#domain').empty();
+  }
+});
+
+$("#domain").click(function(event){
+  $('.'+$(event.target).attr('class')).each( function( index, el ) {
+    $(el).removeClass( "active" );
+  });
+  $(event.target).addClass("active");
+  assignStatutoryDomainId = parseInt(event.target.id);
+  assignStatutoryDomainValue = $(event.target).text();
+  
 });
 
 
