@@ -4306,7 +4306,7 @@ class KnowledgeDatabase(Database):
             user_ids = rows[0][0]
             condition = "user_id in (%s)"% user_ids
         else:
-            condition = "1"
+            condition = "1" 
         columns = "user_id, form_id, action, created_on"
         rows = self.get_data(self.tblActivityLog, columns, condition)
         audit_trail_details = []
