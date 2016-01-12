@@ -4156,8 +4156,7 @@ class KnowledgeDatabase(Database):
             action = row[2]
             date = self.datetime_to_string(row[3])
             audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
-        users = None
-        
+        users = None       
         if session_user != 0:
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
