@@ -1,7 +1,7 @@
 from basics.types import VectorType, RecordType, VariantType, MapType, Field, OptionalType
 from common import (COUNTRY_ID, GROUP_ID, BUSINESS_GROUP_ID, LEGAL_ENTITY_ID,
 	DIVISION_ID, UNIT_ID, DOMAIN_ID, LEVEL_1_STATUTORY_ID, STATUTORY_PROVISION,
-	NOTIFICATION_TEXT, TIMESTAMP, SESSION_TOKEN)
+	NOTIFICATION_TEXT, TIMESTAMP, SESSION_TOKEN, UNIT_NAME, ADDRESS)
 from core import (Country, Domain, GroupCompany, BusinessGroup, LegalEntity, Division, Statutory,
 	Unit, UnitDetails, AssignedStatutory,
 	APPLICABILITY_STATUS)
@@ -129,8 +129,13 @@ GetAssignedStatutoryReportFiltersSuccess = RecordType("GetAssignedStatutoryRepor
 ])
 
 UNIT_WISE_ASSIGNED_STATUTORIES = RecordType("UNIT_WISE_ASSIGNED_STATUTORIES", [
-	Field("unit_id", CountryList),
-	Field("address", DomainList),
+	Field("unit_id", UNIT_ID),
+	Field("unit_name", UNIT_NAME),
+	Field("group_name", UNIT_NAME),
+	Field("business_group_name", UNIT_NAME),
+	Field("legal_entity_name", UNIT_NAME),
+	Field("division_name", UNIT_NAME)
+	Field("address", ADDRESS),
 	Field("assigned_statutories", AssignedStatutoryList),
 ])
 

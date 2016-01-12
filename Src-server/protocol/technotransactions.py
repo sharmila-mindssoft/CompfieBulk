@@ -99,27 +99,19 @@ class GetAssignedStatutoriesList(Request):
         }
 
 class GetAssignedStatutoriesById(Request):
-    def __init__(self, submission_status, client_saved_statutory_id, client_assigned_statutory_id):
-        self.submission_status = submission_status
-        self.client_saved_statutory_id = client_saved_statutory_id
-        self.client_assigned_statutory_id = client_assigned_statutory_id
+    def __init__(self, client_statutory_id):
+        self.client_statutory_id = client_statutory_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["submission_status", "client_saved_statutory_id", "client_assigned_statutory_id"])
-        submission_status = data.get("submission_status")
-        submission_status = parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE(submission_status)
-        client_saved_statutory_id = data.get("client_saved_statutory_id")
-        client_saved_statutory_id = parse_structure_UnsignedIntegerType_32(client_saved_statutory_id)
-        client_assigned_statutory_id = data.get("client_assigned_statutory_id")
-        client_assigned_statutory_id = parse_structure_UnsignedIntegerType_32(client_assigned_statutory_id)
-        return GetAssignedStatutoriesById(submission_status, client_saved_statutory_id, client_assigned_statutory_id)
+        data = parse_dictionary(data, ["client_statutory_id"])
+        client_statutory_id = data.get("client_statutory_id")
+        client_statutory_id = parse_structure_UnsignedIntegerType_32(client_statutory_id)
+        return GetAssignedStatutoriesById(client_statutory_id)
 
     def to_inner_structure(self):
         return {
-            "submission_status": to_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE(self.submission_status),
-            "client_saved_statutory_id": to_structure_SignedIntegerType_8(self.client_saved_statutory_id),
-            "client_assigned_statutory_id": to_structure_SignedIntegerType_8(self.client_assigned_statutory_id),
+            "client_statutory_id": to_structure_SignedIntegerType_8(self.client_statutory_id),
         }
 
 class GetAssignedStatutoryWizardOneData(Request):
