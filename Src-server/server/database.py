@@ -1933,7 +1933,7 @@ class KnowledgeDatabase(Database):
 
     def save_statutory_statutories_id(self, mapping_id, statutory_ids, is_new) :
         tbl_name = "tbl_statutory_statutories"
-        columns = ["statutory_mapping_id", "geography_id"]
+        columns = ["statutory_mapping_id", "statutory_id"]
 
         if is_new is False :
             qry = "DELETE FROM tbl_statutory_statutories \
