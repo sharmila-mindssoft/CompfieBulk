@@ -4325,7 +4325,7 @@ class KnowledgeDatabase(Database):
         forms = self.return_forms()
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
 
-#
+# 
 #   Update Profile
 #
 
