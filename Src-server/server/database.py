@@ -4098,7 +4098,12 @@ class KnowledgeDatabase(Database):
 #   Audit Trail
 #
 
+<<<<<<< HEAD
     def get_audit_trails(self, session_user):
+=======
+    def get_audit_trails(self, user_id):
+        print "user_id : {}".format(user_id)
+>>>>>>> Checked audit trail api
         user_ids = ""
         if session_user != 0:
             column = "user_group_id"
@@ -4133,6 +4138,7 @@ class KnowledgeDatabase(Database):
             date = self.datetime_to_string(row[3])
             audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
         users = None
+
         if session_user != 0:
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
