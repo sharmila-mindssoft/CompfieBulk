@@ -129,6 +129,7 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
+        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
@@ -2474,12 +2475,16 @@ class KnowledgeDatabase(Database):
         return rows
 
     def get_users(self, condition = "1"):
+        print "inside get_users"
         columns = "user_id, employee_name, employee_code, is_active"
+        print "condition = {}".format(condition)
         rows = self.get_data(self.tblUsers, columns, condition)
+        print "rows : {}".format(rows)
         return rows
 
     def return_users(self, condition = "1"):
         user_rows = self.get_users(condition)
+        print "inside return users:{}".format(user_rows)
         columns = ["user_id", "employee_name", "employee_code", "is_active"]
         users = self.convert_to_dict(user_rows, columns)
         results = []
@@ -3299,6 +3304,7 @@ class KnowledgeDatabase(Database):
 #
 
     def get_audit_trails(self, user_id):
+        print "user_id : {}".format(user_id)
         user_ids = ""
         if user_id != 0:
             column = "user_group_id"
@@ -3334,7 +3340,7 @@ class KnowledgeDatabase(Database):
             audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
         users = None
         if user_id != 0:
-            condition = "user_id in (%s)" % user_ids
+            # condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
         else:
             users = self.return_users()

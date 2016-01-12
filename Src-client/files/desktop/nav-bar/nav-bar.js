@@ -28,7 +28,6 @@ function initializeNavBar () {
 	}
 
 	var navBarItems = mirror.getUserMenu();
-	console.log(navBarItems);
 	if (navBarItems === null)
 		return;
 	var menus = ["Home", "Master", "Transaction", "Report"];
