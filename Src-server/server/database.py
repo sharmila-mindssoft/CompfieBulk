@@ -11,7 +11,7 @@ import json
 from types import *
 from protocol import (
     core, knowledgereport,
-    technotransactions
+    technotransactions, technoreports
 )
 
 __all__ = [
@@ -3684,3 +3684,116 @@ class KnowledgeDatabase(Database):
             data["domain_name"],
             statutories
         )
+
+    def get_assigned_statutories_report(self, request_data, user_id):
+        country_id = request_data.country_id
+        domain_id = request_data.domain_id
+        group_id = request_data.group_id
+        if group_id is None :
+            group_id = '%'
+        business_group_id = request_data.business_group_id
+        if business_group_id is None :
+            business_group_id = '%'
+        legal_entity_id = request_data.legal_entity_id
+        if legal_entity_id is None :
+            legal_entity_id = '%'
+        division_id = request_data.division_id
+        if division_id is None :
+            division_id = '%'
+        unit_id = request_data.unit_id
+        if unit_id is None :
+            unit_id = '%'
+        level_1_statutory_id = request_data.level_1_statutory_id
+        if level_1_statutory_id is None :
+            level_1_statutory_id = '%'
+        applicable_status = request_data.applicability_status
+        if applicable_status is None :
+            applicable_status = '%'
+        else :
+            applicable_status = int(applicable_status)
+
+        query = "SELECT distinct t1.client_statutory_id, t1.client_id, \
+            t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, \
+            t1.submission_type, t2.group_name, t3.unit_name, \
+            t4.business_group_name, t5.legal_entity_name,\
+            t6.division_name, t3.address, t3.postal_code, t3.unit_code \
+            FROM tbl_client_statutories t1 \
+            INNER JOIN tbl_client_groups t2 \
+            ON t1.client_id = t2.client_id \
+            INNER JOIN tbl_units t3 \
+            ON t1.unit_id = t3.unit_id \
+            INNER JOIN tbl_business_groups t4 \
+            ON t3.business_group_id = t4.business_group_id \
+            INNER JOIN tbl_legal_entities t5 \
+            ON t3.legal_entity_id = t5.legal_entity_id \
+            INNER JOIN tbl_divisions t6 \
+            ON t3.division_id = t6.division_id \
+            WHERE t1.country_id = %s \
+            AND t1.domain_id = %s \
+            AND t1.client_id like '%s' \
+            AND t3.business_group_id like '%s' \
+            AND t3.legal_entity_id like '%s' \
+            AND t3.division_id like '%s' \
+            AND t3.unit_id like '%s' " % (
+                country_id, domain_id, group_id,
+                business_group_id, legal_entity_id,
+                division_id, unit_id
+            )
+        print query
+        rows = self.select_all(query)
+        columns = ["client_statutory_id", "client_id", "geography_id",
+            "country_id", "domain_id", "unit_id", "submission_type",
+            "group_name", "unit_name", 
+            "business_group_name", "legal_entity_name",
+            "division_name", "address", "postal_code", "unit_code"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_assigned_statutory_report(result)
+
+    def return_assigned_statutory_report(self, report_data):
+        if bool(self.geography_parent_mapping) is False:
+            self.get_geographies()
+
+        unit_wise_statutories_dict = {}
+        for data in report_data :
+            client_statutory_id = data["client_statutory_id"]
+            unit_id = int(data["unit_id"])
+            unit_statutories = unit_wise_statutories_dict.get(unit_id)
+            if unit_statutories is None :
+                geography_id = int(data["geography_id"])
+                geography_parents = self.geography_parent_mapping.get(geography_id)
+                temp_parents = geography_parents[0].split(">>")
+                ordered = temp_parents[::-1]
+                unit_name  = "%s - %s" % (data["unit_code"], data["unit_name"])
+                unit_address = "%s, %s, %s" % (
+                    data["address"], ', '.join(ordered), data["postal_code"]
+                )
+                statutories = self.return_assigned_compliances_by_id(client_statutory_id)
+                unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
+                    data["unit_id"],
+                    data["unit_name"],
+                    data["group_name"],
+                    data["business_group_name"],
+                    data["legal_entity_name"],
+                    data["division_name"],
+                    unit_address,
+                    statutories
+                )
+            else :
+                statutories = unit_statutories.statutories
+                statutories.append(
+                    self.return_assigned_compliances_by_id(client_statutory_id)
+                )
+                unit_statutories.statutories = statutories
+
+            unit_wise_statutories_dict[unit_id] = unit_statutories
+
+        final_unit_wise_statutories_list = []
+        for key, value in unit_wise_statutories_dict.iteritems() :
+            final_unit_wise_statutories_list.append(value)
+
+        return technoreports.GetAssignedStatutoryReportSuccess(
+            final_unit_wise_statutories_list
+        )
+
+
