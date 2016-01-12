@@ -1,5 +1,4 @@
 var assignedStatutoriesList;
-//var countriesList;
 var groupcompaniesList;
 var businessgroupsList;
 var legalentitiesList;
@@ -9,6 +8,7 @@ var geographiesList;
 var industriesList;
 var domainsList;
 var unitsList;
+var statutoriesList;
 
 var assignStatutoryCountryId = 0;
 var assignStatutoryCountryValue = null;
@@ -174,10 +174,54 @@ function clearValues(levelvalue) {
   }
 }
 
+function actstatus(element){
+  var remarkbox = '.remark'+$(element).val();
+  if ($(element).is(":checked"))
+  {
+    $(remarkbox).hide();
+  }else{
+    $(remarkbox).show();
+  }
+}
 
 function make_breadcrumbs(){
     var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
     $(".breadcrumbs").html(assignStatutoryCountryValue + arrowimage + assignStatutoryGroupValue + arrowimage + assignStatutoryBusinessGroupValue + arrowimage + assignStatutoryLegalEntityValue + arrowimage + assignStatutoryDivisionValue + arrowimage + assignStatutoryGeographyLevelValue + arrowimage + assignStatutoryLocationValue + arrowimage + assignStatutoryIndustryValue + arrowimage + assignStatutoryUnitValues + arrowimage + assignStatutoryDomainValue);
+}
+
+function load_secondwizard(){
+
+  var statutoriesCount= 1;
+  var actCount = 1;
+  for(var statutory in statutoriesList){
+    var actname = statutoriesList[statutory]["level_1_statutory_name"];
+    var complianceslist = statutoriesList[statutory]["compliances"];
+
+
+    var acttableRow=$('#act-templates');
+    var clone=acttableRow.clone();
+    $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:10px;"> <label for="act'+actCount+'" style="margin-top:10px;"></label>');
+    $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+'" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:5px;"> Remarks</div></div>');
+    $('.tbody-assignstatutory').append(clone);
+
+    var complianceHeadingtableRow=$('#statutory-templates .compliance-heading');
+    var clone1=complianceHeadingtableRow.clone();
+    $('.tbody-assignstatutory').append(clone1);
+
+    for(var compliance in complianceslist){
+      var statutoryprovision = '';
+      var complianceDetailtableRow=$('#statutory-templates .compliance-details');
+      var clone2=complianceDetailtableRow.clone();
+      $('.sno', clone2).text(statutoriesCount);
+      $('.statutoryprovision', clone2).text(complianceslist[compliance]["statutory_provision"]);
+      $('.compliancetask', clone2).text(complianceslist[compliance]["compliance_name"]);
+      $('.compliancedescription', clone2).text(complianceslist[compliance]["description"]);
+      $('.complianceapplicable', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'"><label for="statutory'+statutoriesCount+'"></label>');
+      $('.tbody-assignstatutory').append(clone2);
+      statutoriesCount = statutoriesCount + 1;
+    }  
+    actCount = actCount + 1;
+  }
 }
 
 function loadunit(){
@@ -513,6 +557,29 @@ function validate_firsttab(){
     displayMessage("Domain Required");
     return false;*/
   }else{
+
+    function onSuccess(data){
+      statutoriesList = data["statutories"];
+      load_secondwizard();
+    }
+    function onFailure(error){
+    }
+    assignStatutoryCountryId = 1;
+    assignStatutoryDomainId = 1;
+    assignStatutoryIndustryId = 1;
+    assignStatutoryLocationId = 14;
+
+    mirror.getAssignStatutoryWizardTwo(assignStatutoryCountryId, assignStatutoryDomainId, assignStatutoryIndustryId, assignStatutoryLocationId,
+      function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+        }
+  );
+
     displayMessage("");
     return true;
   }
