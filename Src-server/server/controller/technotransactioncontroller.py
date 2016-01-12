@@ -16,7 +16,7 @@ def process_techno_transaction_request(request, db):
         return process_get_assigned_statutories(db, user_id)
 
     elif type(request_frame) is technotransactions.GetAssignedStatutoriesById:
-        return process_get_assigned_statutories_by_id(db, request_frame, user_id)
+        return process_get_assigned_statutories_by_id(db, request_frame)
 
     elif type(request_frame) is technotransactions.GetAssignedStatutoryWizardOneData:
         return process_get_assigned_statutory_wizard_one(db, request_frame, user_id)
@@ -30,8 +30,9 @@ def process_techno_transaction_request(request, db):
 def process_get_assigned_statutories(db, user_id):
     return db.get_assigned_statutories_list(user_id)
 
-def process_get_assigned_statutories_by_id(db, request_frame, user_id):
-    pass
+def process_get_assigned_statutories_by_id(db, request_frame):
+    client_statutory_id = request_frame.client_statutory_id
+    return db.get_assigned_statutories_by_id(client_statutory_id)
 
 def process_get_assigned_statutory_wizard_one(db, request_frame, user_id):
     country_id = request_frame.country_id

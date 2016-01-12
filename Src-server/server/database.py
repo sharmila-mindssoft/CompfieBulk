@@ -3556,3 +3556,131 @@ class KnowledgeDatabase(Database):
         return technotransactions.GetAssignedStatutoriesListSuccess(
             ASSIGNED_STATUTORIES_list
         )
+
+
+    def get_assigned_statutories_by_id(self, client_statutory_id):
+        query = "SELECT t1.client_statutory_id, t1.client_id, \
+            t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, \
+            t1.submission_type, t2.group_name, t3.geography_name, \
+            t4.country_name, t5.domain_name, t6.unit_name, \
+            t7.business_group_name, t8.legal_entity_name,\
+            t9.division_name, t10.industry_name \
+            FROM tbl_client_statutories t1 \
+            INNER JOIN tbl_client_groups t2 \
+            ON t1.client_id = t2.client_id \
+            INNER JOIN tbl_geographies t3 \
+            ON t1.geography_id = t3.geography_id \
+            INNER JOIN tbl_countries t4 \
+            ON t1.country_id = t4.country_id \
+            INNER JOIN tbl_domains t5 \
+            ON  t1.domain_id = t5.domain_id \
+            INNER JOIN tbl_units t6 \
+            ON t1.unit_id = t6.unit_id \
+            INNER JOIN tbl_business_groups t7 \
+            ON t6.business_group_id = t7.business_group_id \
+            INNER JOIN tbl_legal_entities t8 \
+            ON t6.legal_entity_id = t8.legal_entity_id \
+            INNER JOIN tbl_divisions t9 \
+            ON t6.division_id = t9.division_id \
+            INNER JOIN tbl_industries t10 \
+            ON t6.industry_id = t10.industry_id \
+            WHERE t1.client_statutory_id = %s"  % (client_statutory_id)
+        rows = self.select_one(query)
+        columns = ["client_statutory_id", "client_id", "geography_id",
+            "country_id", "domain_id", "unit_id", "submission_type",
+            "group_name", "geography_name", "country_name",
+            "domain_name", "unit_name", "business_group_name", "legal_entity_name",
+            "division_name", "industry_name"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_assigned_statutories_by_id(result)
+
+    def return_assigned_compliances_by_id(self, client_statutory_id):
+        if bool(self.statutory_parent_mapping) is False:
+            self.get_statutory_master()
+        query = "SELECT t1.client_statutory_id, t1.compliance_id, \
+            t1.statutory_id, t1.applicable, t1.not_applicable_remarks, \
+            t1.compliance_applicable, t1.compliance_opted, \
+            t1.compliance_remarks, \
+            t2.statutory_name, t3.compliance_task, t3.document_name, \
+            t3.statutory_provision, t3.compliance_description, \
+            t5.statutory_nature_name\
+            FROM tbl_client_compliances t1 \
+            INNER JOIN tbl_statutories t2 \
+            ON t1.statutory_id = t2.statutory_id \
+            INNER JOIN tbl_compliances t3 \
+            ON t1.compliance_id = t3.compliance_id \
+            INNER JOIN tbl_statutory_mappings t4 \
+            ON t3.statutory_mapping_id = t4.statutory_mapping_id \
+            INNER JOIN tbl_statutory_natures t5 \
+            ON t4.statutory_nature_id = t5.statutory_nature_id \
+            WHERE \
+            t1.client_statutory_id = %s" % (
+                client_statutory_id
+            )
+        rows = self.select_all(query)
+        columns = [
+            "client_statutory_id", "compliance_id", "statutory_id", "applicable",
+            "not_applicable_remarks", "compliance_applicable",
+            "compliance_opted", "compliance_remarks",
+            "statutory_name", "compliance_task", "document_name",
+            "statutory_provision", "compliance_description",
+            "statutory_nature_name"
+        ]
+        results = self.convert_to_dict(rows, columns)
+        compliance_opted = None
+        compliance_remarks = None
+        level_1_statutory_compliance = {}
+        for r in results :
+            statutory_id = int(r["statutory_id"])
+            statutory_data = self.statutory_parent_mapping.get(statutory_id)
+            s_mapping = statutory_data[1] 
+            provision = "%s - %s" % (s_mapping, r["statutory_provision"])
+            name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            compliance = core.ComplianceApplicability(
+                r["compliance_id"],
+                name,
+                r['compliance_description'],
+                provision,
+                r["statutory_nature_name"],
+                bool(r["compliance_applicable"]),
+                compliance_opted,
+                compliance_remarks
+            )
+            compliance_list = []
+            saved_data = level_1_statutory_compliance.get(statutory_id)
+            if saved_data is None :
+                compliance_list.append(compliance)
+                s_data = core.AssignedStatutory(
+                    statutory_id,
+                    r["statutory_name"],
+                    compliance_list,
+                    bool(r["applicable"]),
+                    r["not_applicable_remarks"]
+                )
+                level_1_statutory_compliance[statutory_id] = s_data
+            else :
+                compliance_list = saved_data.compliances
+                compliance_list.append(compliance)
+                saved_data.compliances = compliance_list
+                level_1_statutory_compliance[statutory_id] = saved_data
+
+        final_statutory_list = []
+        for key, value in level_1_statutory_compliance.iteritems() :
+            final_statutory_list.append(value)
+
+        return final_statutory_list
+
+    def return_assigned_statutories_by_id(self, data):
+        statutories = self.return_assigned_compliances_by_id(data["client_statutory_id"])
+        return technotransactions.GetAssignedStatutoriesByIdSuccess (
+            data["country_name"],
+            data["group_name"],
+            data["business_group_name"],
+            data["legal_entity_name"],
+            data["division_name"],
+            data["unit_name"],
+            data["geography_name"],
+            data["domain_name"],
+            statutories
+        )
