@@ -28,7 +28,7 @@ def process_techno_transaction_request(request, db):
         return process_save_assigned_statutory(db, request_frame, user_id)
 
 def process_get_assigned_statutories(db, user_id):
-    pass
+    return db.get_assigned_statutories_list(user_id)
 
 def process_get_assigned_statutories_by_id(db, request_frame, user_id):
     pass
