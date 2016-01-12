@@ -4304,7 +4304,6 @@ class KnowledgeDatabase(Database):
 #
 #   Audit Trail
 #
-
     def get_audit_trails(self, session_user):
         user_ids = ""
         if session_user != 0:
