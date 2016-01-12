@@ -4020,6 +4020,7 @@ class KnowledgeDatabase(Database):
 #
 
     def get_audit_trails(self, user_id):
+        print "user_id : {}".format(user_id)
         user_ids = ""
         if user_id != 0:
             column = "user_group_id"
@@ -4055,9 +4056,11 @@ class KnowledgeDatabase(Database):
             audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
         users = None
         if user_id != 0:
+            print "inside if"
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
         else:
+            print "inside else"
             users = self.return_users()
         forms = self.return_forms()
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
