@@ -190,38 +190,51 @@ function make_breadcrumbs(){
 }
 
 function load_secondwizard(){
-
+  var count=1;
   var statutoriesCount= 1;
   var actCount = 1;
+  $(".tbody-assignstatutory").find("tr").remove();
   for(var statutory in statutoriesList){
     var actname = statutoriesList[statutory]["level_1_statutory_name"];
     var complianceslist = statutoriesList[statutory]["compliances"];
 
-
-    var acttableRow=$('#act-templates');
+    var acttableRow=$('#act-templates .font1 .tbody-heading');
     var clone=acttableRow.clone();
-    $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:10px;"> <label for="act'+actCount+'" style="margin-top:10px;"></label>');
+    $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;"></label>');
     $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+'" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:5px;"> Remarks</div></div>');
     $('.tbody-assignstatutory').append(clone);
 
+    $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
+    if(count==1){
+      $('.accordion-content'+count).addClass("default");
+    }
     var complianceHeadingtableRow=$('#statutory-templates .compliance-heading');
     var clone1=complianceHeadingtableRow.clone();
-    $('.tbody-assignstatutory').append(clone1);
-
-    for(var compliance in complianceslist){
+    $('.accordion-content'+count).append(clone1);
+   
+    for(var compliance in complianceslist){    
       var statutoryprovision = '';
-      var complianceDetailtableRow=$('#statutory-templates .compliance-details');
+      var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
       var clone2=complianceDetailtableRow.clone();
       $('.sno', clone2).text(statutoriesCount);
       $('.statutoryprovision', clone2).text(complianceslist[compliance]["statutory_provision"]);
       $('.compliancetask', clone2).text(complianceslist[compliance]["compliance_name"]);
       $('.compliancedescription', clone2).text(complianceslist[compliance]["description"]);
       $('.complianceapplicable', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'"><label for="statutory'+statutoriesCount+'"></label>');
-      $('.tbody-assignstatutory').append(clone2);
+      $('.accordion-content'+count).append(clone2);
       statutoriesCount = statutoriesCount + 1;
     }  
     actCount = actCount + 1;
+    count++;
   }
+  $(document).ready(function($) {
+    $('#accordion').find('.accordion-toggle').click(function(){
+      //Expand or collapse this panel
+      $(this).next().slideToggle('fast');
+      //Hide the other panels
+      $(".accordion-content").not($(this).next()).slideUp('fast');
+    });
+  });
 }
 
 function loadunit(){
@@ -626,8 +639,28 @@ $('#activate-step-finish').on('click', function(e) {
 if (validate_secondtab()){
 savestatutorymapping();
 }*/
-})
-
+if (validate_secondtab()){
+  function onSuccess(data){
+    getAssignedStatutoriesList ();
+    $("#assignstatutory-add").hide();
+    $("#assignstatutory-view").show();
+  }
+  function onFailure(error){
+    displayMessage(error)
+  }
+  
+  mirror.saveOrSubmitAssignStatutory(parseInt(statutorylevel_id), datavalue, map_statutory_id, 
+    function (error, response) {
+    if (error == null){
+      onSuccess(response);
+    }
+    else {
+      onFailure(error);
+    }
+  }
+  );
+  })
+}
 function loadAssignedStatutoriesList(assignedStatutoriesList){
   var j = 1;
   var client_saved_statutory_id = 0;
@@ -649,7 +682,11 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
       $('.tbl_industry', clone).text(assignedStatutoriesList[entity]["industry_name"]);
       $('.tbl_unit', clone).text(assignedStatutoriesList[entity]["unit_name"]);
       $('.tbl_domain', clone).text(assignedStatutoriesList[entity]["domain_name"]);
-      $('.tbl_status', clone).text(assignedStatutoriesList[entity]["submission_status"]);
+      if(assignedStatutoriesList[entity]["submission_status"] == 2)
+        $('.tbl_status', clone).text('Submitted');
+      else
+        $('.tbl_status', clone).text("Pending");
+
 
       $('.tbl_edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+client_saved_statutory_id+')"/>');
       $('.tbl_view', clone).html('<img src=\'/images/icon-viewsubmit.png\' onclick="changeStatus('+client_saved_statutory_id+')"/>');
@@ -660,7 +697,7 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
 
 function getAssignedStatutories () {
 
-  /*function onSuccess(data){
+  function onSuccess(data){
   assignedStatutoriesList = data["assigned_statutories"];
   loadAssignedStatutoriesList(assignedStatutoriesList);
   }
@@ -675,38 +712,7 @@ function getAssignedStatutories () {
             onFailure(error);
           }
       }
-  );*/
-
-      assignedStatutoriesList = [
-      {
-        "submission_status": "Pending",
-        "client_saved_statutory_id": 1,
-        "client_assigned_statutory_id": 1,
-        "country_name" : "India",
-        "group_name" : "India Group",
-        "business_group_name" : "India Business Group",
-        "legal_entity_name" : "India Legal Entity",
-        "industry_name" : "India Industry",
-        "division_name" : "India Division",
-        "unit_name": "IND - TN",
-        "geography_name" : "Tamilnadu",
-        "domain_name": "India Domain"
-      }, 
-      {
-        "submission_status": "Submitted",
-        "client_saved_statutory_id": 2,
-        "client_assigned_statutory_id": 2,
-        "country_name" : "Singapore",
-        "group_name" : "Singapore Group",
-        "business_group_name" : "Singapore Business Group",
-        "legal_entity_name" : "Singapore Legal Entity",
-        "industry_name" : "Singapore Industry",
-        "division_name" : "Singapore Division",
-        "unit_name": "IND - TN",
-        "geography_name" : "Tamilnadu",
-        "domain_name": "Singapore Domain"
-      }
-    ];
+  );
   loadAssignedStatutoriesList(assignedStatutoriesList);
 }
 
@@ -734,7 +740,11 @@ $(".listfilter").keyup(function() {
     var filter7val = assignedStatutoriesList[entity]["industry_name"];
     var filter8val = assignedStatutoriesList[entity]["unit_name"];
     var filter9val = assignedStatutoriesList[entity]["domain_name"];
-    var filter10val = assignedStatutoriesList[entity]["submission_status"];
+    var filter10val = null;
+    if(assignedStatutoriesList[entity]["submission_status"] == 2)
+        filter10val = 'Submitted';
+      else
+        filter10val = "Pending";
     
     if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2) && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4) && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6) && ~filter7val.toLowerCase().indexOf(filter7) && ~filter8val.toLowerCase().indexOf(filter8) && ~filter9val.toLowerCase().indexOf(filter9) && ~filter10val.toLowerCase().indexOf(filter10)) 
     {

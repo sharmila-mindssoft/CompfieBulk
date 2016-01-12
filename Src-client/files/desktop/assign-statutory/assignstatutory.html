@@ -114,7 +114,7 @@
       </tr>
     </table>
   </div>
-  <div class="content-container width75 default-display-none;" id="assignstatutory-add">
+  <div class="content-container width75 default-display-none" id="assignstatutory-add" >
     <div class="content-area">
       <h1>Assign Statutory</h1>
       <div class="add-container">
@@ -266,41 +266,45 @@
     </div>
   </div>
 </div>
-<div id="act-templates">
+<div id="act-templates" class="default-display-none">
   <table class="font1" >
-    <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"
+  <tbody class="accordion-toggle tbody-heading">
+    <tr align="left" class="rightside tableRow " style="margin-bottom:1em; border:1px solid #ccc;">
+      <!-- <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="5%"
         class="gt actapplicable">
-      </th>
-      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%" class="actname" colspan="4">
-        <!--  <span><img src="/images/chevron_black_down.png"></span> -->
+      </th> -->
+      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="100%" colspan="5"><div class="actapplicable gt" style="float:left; width:5%;"></div><div class="actname" style="float:left; width:95%;margin-top:0px;"></div>
 
+      <!--<span><img src="/images/chevron_black_down.png"></span> -->
       </th>
     </tr>
+    </tbody>
   </table>
 </div>
-<div id="statutory-templates">
-  <table cellpadding="0" cellspacing="0" width="100%" class="checkedtable">
-    <tr align="left" class="compliance-heading">
-      <td width="2%"><span style="font-weight:bold;">#</span></td>
-      <td width="20%" ><span style="font-weight:bold;">Statutory Provision</span>
-    </td>
-    <td width="30%"><span style="font-weight:bold;">Compliance Task</span></td>
-    <td width="38%">
-      <span style="font-weight:bold; ">Compliance Description</span>
+<div id="statutory-templates" class="default-display-none">
+  <table cellpadding="0" cellspacing="0" width="100%" class="checkedtable">  
+    <tr class="compliance-heading">
+      <td width="5%"><span style="font-weight:bold;">#</span></td>
+      <td width="20%" ><span style="font-weight:bold;">Statutory Provision</span></td>
+      <td width="30%"><span style="font-weight:bold;">Compliance Task</span></td>
+      <td width="35%"> <span style="font-weight:bold; ">Compliance Description</span></td>
       <td width="10%" align="center">
         <span style="font-weight:bold;">
           <img src="/images/icon-client-comply.png" title="Applicable" >
         </span>
       </td>
     </tr>
+  </table>
+</div>
+
+ <div id="statutory-values" class="default-display-none">
+  <table class="table-statutory-values">
     <tr class="compliance-details">
       <td class="sno"></td>
       <td class="statutoryprovision"></td>
       <td class="compliancetask"></td>
       <td class="compliancedescription"></td>
-      <td align="center" class="gt complianceapplicable">
-      </td>
+      <td align="center" class="gt complianceapplicable"></td>
     </tr>
   </table>
 </div>
