@@ -33,9 +33,7 @@ GetAssignedStatutoriesList = RecordType("GetAssignedStatutoriesList", [
 ])
 
 GetAssignedStatutoriesById = RecordType("GetAssignedStatutoriesById", [
-	Field("submission_status", ASSIGN_STATUTORY_SUBMISSION_TYPE),
-	Field("client_saved_statutory_id", CLIENT_SAVED_STATUTORY_ID),
-	Field("client_assigned_statutory_id", CLIENT_ASSIGNED_STATUTORY_ID)
+	Field("client_statutory_id", CLIENT_SAVED_STATUTORY_ID)
 ])
 
 GetAssignedStatutoryWizardOneData = RecordType("GetAssignedStatutoryWizardOneData", [
