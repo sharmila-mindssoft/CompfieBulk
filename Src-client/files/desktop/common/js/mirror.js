@@ -1050,6 +1050,7 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    // Assign statutories
     function getAssignStatutoryWizardOne(countryId, callback) {
         var request = [
             "GetAssignedStatutoryWizardOneData",
@@ -1111,6 +1112,16 @@ function initMirror() {
             }
         ];
         callerName = "api/techno_transaction";
+        apiRequest(callerName, request, callback);
+    }
+    function getAssignedStatutoryById(clientStatutoryId, callback) {
+        var request = [
+            "GetAssignedStatutoriesById",
+            {
+                "client_statutory_id": clientStatutoryId
+            }
+        ];
+        callerName = "api/techno_transaction"
         apiRequest(callerName, request, callback);
     }
 
@@ -1229,6 +1240,7 @@ function initMirror() {
         getAssignStatutoryWizardTwo: getAssignStatutoryWizardTwo,
         getAssignedStatutoriesList: getAssignedStatutoriesList,
         saveOrSubmitAssignStatutory: saveOrSubmitAssignStatutory,
+        getAssignedStatutoryById: getAssignedStatutoryById
     }
 
 }
