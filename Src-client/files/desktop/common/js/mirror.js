@@ -1124,6 +1124,35 @@ function initMirror() {
         callerName = "api/techno_transaction"
         apiRequest(callerName, request, callback);
     }
+    function getAssignedStatutoryReportFilters(callback) {
+        var request = [
+            "GetAssignedStatutoryReportFilters",
+            {}
+        ];
+        callerName = "api/techno_report";
+        apiRequest(callerName, request, callback);
+    }
+    function getAssignedStatutoryReport(countryId, domainId, 
+        clientId, businessGroupId, legalEntityId, divisionId, 
+        unitId, level1StatutoryId, applicableStatus, callback
+    ) {
+        var request = [
+            "GetAssignedStatutoryReport",
+            {
+                "country_id": countryId,
+                "domain_id": domainId,
+                "group_id": clientId,
+                "business_group_id": businessGroupId,
+                "legal_entity_id": legalEntityId,
+                "division_id": divisionId,
+                "unit_id": unitId,
+                "level_1_statutory_id": level1StatutoryId,
+                "applicability_status": applicableStatus
+            }
+        ];
+        callerName = "api/techno_report";
+        apiRequest(callerName, request, callback);
+    }
 
     return {
         log: log,
@@ -1240,7 +1269,9 @@ function initMirror() {
         getAssignStatutoryWizardTwo: getAssignStatutoryWizardTwo,
         getAssignedStatutoriesList: getAssignedStatutoriesList,
         saveOrSubmitAssignStatutory: saveOrSubmitAssignStatutory,
-        getAssignedStatutoryById: getAssignedStatutoryById
+        getAssignedStatutoryById: getAssignedStatutoryById,
+        getAssignedStatutoryReportFilters: getAssignedStatutoryReportFilters,
+        getAssignedStatutoryReport: getAssignedStatutoryReport,
     }
 
 }
