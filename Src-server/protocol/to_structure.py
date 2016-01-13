@@ -37,6 +37,27 @@ def to_structure_VectorType_RecordType_general_Notification(data):
         lst.append(to_structure_RecordType_general_Notification(item))
     return lst
 
+def to_structure_VectorType_RecordType_general_User(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_general_User(item))
+    return lst
+
+def to_structure_VectorType_RecordType_general_AuditTrail(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_general_AuditTrail(item))
+    return lst
+
+def to_structure_VectorType_RecordType_general_AuditTrailForm(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_general_AuditTrailForm(item))
+    return lst
+
 def to_structure_VectorType_RecordType_clientreport_ComplianceName(data):
     data = parse_list(data, 0)
     lst = []
@@ -117,6 +138,18 @@ def to_structure_RecordType_knowledgemaster_Request_UpdateStatutory(data):
 def to_structure_RecordType_general_Notification(data):
     from protocol import general
     return general.Notification.to_structure(data)
+
+def to_structure_RecordType_general_User(data):
+    from protocol import core
+    return core.User.to_structure(data)
+
+def to_structure_RecordType_general_AuditTrail(data):
+    from protocol import general
+    return general.AuditTrail.to_structure(data)
+
+def to_structure_RecordType_general_AuditTrailForm(data):
+    from protocol import general
+    return general.AuditTrailForm.to_structure(data)
 
 def to_structure_RecordType_technoreports_Request_GetAssignedStatutoryReportFilters(data):
     from protocol import technoreports

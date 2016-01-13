@@ -81,6 +81,7 @@ function performLogin(e_button, e_email, e_password) {
         //     onFailure();
         // }
     }
+    console.log(getShortName());
     if (getShortName() === null){
         mirror.login(
             e_email.val(),

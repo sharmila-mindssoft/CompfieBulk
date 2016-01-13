@@ -17,6 +17,7 @@ function initClientMirror() {
     }
 
     function initSession(userProfile){
+        console.log(toJSON(userProfile))
         window.localStorage["userInfo"] = toJSON(userProfile);
     }
 
@@ -76,6 +77,7 @@ function initClientMirror() {
 
     function getClientId(){
         var info = getUserInfo();
+        console.log(info)
         return info["client_id"];
     }
 
@@ -112,34 +114,6 @@ function initClientMirror() {
             }
         );
     }
-
-    function clientLoginApiRequest(callerName, request, callback) {
-        jQuery.post(
-            CLIENT_BASE_URL + callerName,
-            toJSON(request),
-            function (data) {
-                var data = parseJSON(data);
-                var status = data[0];
-                var response = data[1];
-                matchString = 'success';
-                log("API STATUS :"+status)
-                if (status.toLowerCase().indexOf(matchString) != -1){
-                    callback(null, response);
-                }
-                callback(status, null) 
-            }
-        )
-        .fail(
-            function (jqXHR, textStatus, errorThrown) {
-                // alert("jqXHR:"+jqXHR.status);
-                // alert("textStatus:"+textStatus);
-                // alert("errorThrown:"+errorThrown);
-                // callback(error, null);
-            }
-        );
-    }
-
-
 
     // Login function 
     function login(username, password, short_name, callback) {
@@ -201,7 +175,7 @@ function initClientMirror() {
         )
     }
 
-// Change Password APIs
+    // Change Password APIs
 
     function changePassword(currentPassword, newPassword,
      callback) {
@@ -230,7 +204,7 @@ function initClientMirror() {
                 "short_name": getShortName()
             }
         ];
-        clientLoginApiRequest(callerName, request, callback);
+        clientApiRequest(callerName, request, callback);
     }
 
     function validateResetToken(resetToken, 
@@ -243,7 +217,7 @@ function initClientMirror() {
                 "short_name": getShortName()
             }
         ];
-        clientLoginApiRequest(callerName, request, callback);
+        clientApiRequest(callerName, request, callback);
     }
 
     function resetPassword(resetToken, newPassword, 
@@ -257,7 +231,7 @@ function initClientMirror() {
                 "short_name": getShortName()
             }
         ];
-        clientLoginApiRequest(callerName, request, callback);
+        clientApiRequest(callerName, request, callback);
     }
 
     // Client User Group  
@@ -530,6 +504,24 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getAuditTrail(callback){
+        callerName = "api/client_masters"
+        var request = [
+            "GetAuditTrails",
+            {}
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getComplianceDetailsReportFilters(callback){
+        callerName = "api/client_reports"
+        var request = [
+            "GetComplianceDetailsReportFilters",
+            {}
+        ];
+        clientApiRequest(callerName, request, callback);   
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -547,7 +539,6 @@ function initClientMirror() {
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
         clientApiRequest: clientApiRequest,
-        clientLoginApiRequest: clientLoginApiRequest,
         getClientId: getClientId,
 
         changePassword: changePassword,
@@ -582,7 +573,10 @@ function initClientMirror() {
 
         getClientProfile: getClientProfile,
         getClientDetailsReportFilters: getClientDetailsReportFilters,
-        getClientDetailsReport: getClientDetailsReport
+        getClientDetailsReport: getClientDetailsReport,
+        getAuditTrail: getAuditTrail,
+
+        getComplianceDetailsReportFilters: getComplianceDetailsReportFilters
     }
 
 }

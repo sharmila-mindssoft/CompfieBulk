@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8080/";
+var BASE_URL = "http://localhost:8090/";
 
 function initMirror() {
     var DEBUG = true;
@@ -96,7 +96,6 @@ function initMirror() {
             toJSON(requestFrame),
             function (data) {
                 var data = parseJSON(data);
-                console.log(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -1093,6 +1092,7 @@ function initMirror() {
         };
         return statutories;
     }
+
     function saveOrSubmitAssignStatutory(
         countryId, clientId, geographyId, unitIds, 
         domainId, submissionType, clientStatutoryId, 
@@ -1114,6 +1114,7 @@ function initMirror() {
         callerName = "api/techno_transaction";
         apiRequest(callerName, request, callback);
     }
+    
     function getAssignedStatutoryById(clientStatutoryId, callback) {
         var request = [
             "GetAssignedStatutoriesById",
@@ -1124,6 +1125,7 @@ function initMirror() {
         callerName = "api/techno_transaction"
         apiRequest(callerName, request, callback);
     }
+    
     function getAssignedStatutoryReportFilters(callback) {
         var request = [
             "GetAssignedStatutoryReportFilters",
@@ -1132,10 +1134,11 @@ function initMirror() {
         callerName = "api/techno_report";
         apiRequest(callerName, request, callback);
     }
+    
     function getAssignedStatutoryReport(countryId, domainId, 
         clientId, businessGroupId, legalEntityId, divisionId, 
         unitId, level1StatutoryId, applicableStatus, callback
-    ) {
+    ){
         var request = [
             "GetAssignedStatutoryReport",
             {
@@ -1151,6 +1154,15 @@ function initMirror() {
             }
         ];
         callerName = "api/techno_report";
+        apiRequest(callerName, request, callback);
+    }
+
+    function getAuditTrail(callback){
+        callerName = "api/general"
+        var request = [
+            "GetAuditTrails",
+            {}
+        ];
         apiRequest(callerName, request, callback);
     }
 
@@ -1273,6 +1285,8 @@ function initMirror() {
         getAssignedStatutoryById: getAssignedStatutoryById,
         getAssignedStatutoryReportFilters: getAssignedStatutoryReportFilters,
         getAssignedStatutoryReport: getAssignedStatutoryReport,
+
+        getAuditTrail: getAuditTrail
     }
 
 }

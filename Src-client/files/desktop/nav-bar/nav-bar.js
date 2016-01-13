@@ -28,9 +28,10 @@ function initializeNavBar () {
 	}
 
 	var navBarItems = mirror.getUserMenu();
+	console.log(navBarItems);
 	if (navBarItems === null)
 		return;
-	var menus = ["Master", "Transaction", "Report"];
+	var menus = ["Home", "Master", "Transaction", "Report"];
 	for (var i = 0; i < menus.length; i++) {
 		var key = menus[i];
 		if (!(key in navBarItems))

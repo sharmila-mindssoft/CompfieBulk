@@ -1,35 +1,51 @@
-$(function() {
-	$("#userprivilege-add").hide();
-	initialize();
-});
+function clearMessage() {
+    $(".error-message").hide();
+    $(".error-message").text("");
+}
+function displayMessage(message) {
+    $(".error-message").text(message);
+    $(".error-message").show();
+}
 $("#btn-userprivilege-add").click(function(){
-	$("#userprivilege-add").show();
 	$("#userprivilege-view").hide();
-  $(".error-message").html('');  
-  $("#user-privilege-id").val('');
-  	
-	function success(status, data){
+	$("#userprivilege-add").show();
+	clearMessage(); 
+  	$("#user-privilege-id").val('');
+  	$("#user-privilege-name").val('');
+	$('.form-checkbox').each(function() {
+		this.checked = false; 
+	});  	
+	function onSuccess(data){
 		loadUserGroupdata(data['user_groups']);
-		loadFormData(data['forms'])		
+		loadFormData(data['forms']['menus'])		
 	}
-	function failure(status, data){
+	function onFailure(error){
 		console.log(status);
 	}
-	mirror.getClientUserGroups("ClientAdminAPI", success, failure);
+	client_mirror.getClientUserGroups(
+		function (error, response){
+			if(error == null){
+				onSuccess(response);
+			}
+			else{
+				onFailure(error);
+			}
+		}
+	);
 });
 function loadFormData(formlist){
 	$.each(formlist, function(key, value) {  
-		var tableRowHeading=$('#templates-form-list .table-userprivilege-form-list .table-row-heading');
+		var tableRowHeading = $('#templates-form-list .table-userprivilege-form-list .table-row-heading');
 		var clone=tableRowHeading.clone();
 		$('.heading-name', clone).text(key);
-		if(value.length!=0){
+		if(value.length != 0){
 			$('.tbody-userprivilege-form-list').append(clone);
 		}
 		$.each(value, function(i) { 
-			var formName=value[i]['form_name'];
-			var formId=value[i]['form_id'];
-			var tableRowForms=$('#templates-form-list .table-userprivilege-form-list .table-row-form-list');
-			var clone1=tableRowForms.clone();
+			var formName = value[i]['form_name'];
+			var formId = value[i]['form_id'];
+			var tableRowForms = $('#templates-form-list .table-userprivilege-form-list .table-row-form-list');
+			var clone1 = tableRowForms.clone();
 			$('.form-checkbox', clone1).val(formId);
 			$('.form-name', clone1).text(formName);		
 			$('.tbody-userprivilege-form-list').append(clone1);	
@@ -41,39 +57,46 @@ $("#btn-userprivilege-cancel").click(function(){
 	$("#userprivilege-view").show();
 });
 function initialize(){
-	function success(status, data){
-		for(var i in data){
-			loadUserGroupdata(data['user_groups'])
-		}
+	function onSuccess(data){
+		loadUserGroupdata(data['user_groups']);
 	}
-	function failure(status, data){
+	function onFailure(status, data){
 		console.log(status);
 	}
-	mirror.getClientUserGroups("ClientAdminAPI", success, failure);
+	client_mirror.getClientUserGroups(
+		function (error, response){
+			if(error == null){
+				onSuccess(response);
+			}
+			else{
+				onFailure(error);
+			}
+		}
+	);
 }
 
 function loadUserGroupdata(userGroupList){
 	$(".tbody-userprivilege-list").find("tr").remove();
- 	var sno=0;
+ 	var sno = 0;
 	var imageName, title;
 	for(var j in userGroupList){
-		var user_group_name=userGroupList[j]["user_group_name"];
-		var isActive=userGroupList[j]["is_active"];
-		var userGroupId=userGroupList[j]["user_group_id"];
+		var user_group_name = userGroupList[j]["user_group_name"];
+		var isActive = userGroupList[j]["is_active"];
+		var userGroupId = userGroupList[j]["user_group_id"];
 				
-		if(isActive==1){
-			imageName="icon-active.png";
-			title="Click here to deactivate"
-			statusVal=0;
+		if(isActive == true){
+			imageName = "icon-active.png";
+			title = "Click here to deactivate"
+			statusVal = false;
 		}
 		else{
-			imageName="icon-inactive.png";	
-			title="Click here to Activate"
-			statusVal=1;
+			imageName = "icon-inactive.png";	
+			title = "Click here to Activate"
+			statusVal = true;
 		}
 
-		var tableRow=$('#templates .table-userprivilege-list .table-row');
-		var clone=tableRow.clone();
+		var tableRow = $('#templates .table-userprivilege-list .table-row');
+		var clone = tableRow.clone();
 		sno = sno + 1;
 		$('.sno', clone).text(sno);
 		$('.usergroup-name', clone).text(user_group_name);
@@ -84,78 +107,96 @@ function loadUserGroupdata(userGroupList){
 }
 
 $("#submit").click(function(){
-  var groupIdVal = $("#user-privilege-id").val();
-  var groupNameVal = $("#user-privilege-name").val();
-  var chkArray = [];
-  $(".form-checkbox:checked").each(function() {
-    chkArray.push($(this).val());
-  }); 
-  
-  if(groupNameVal==''){
-	  $(".error-message").html("Please Enter Group Name ");  	
-  }
-  else if(chkArray.length==0){
- 		$(".error-message").html("Please select atlease on form name ");  	 	
-  }
-  else if(groupIdVal==''){
-    var selectedVal;
-    selectedVal = chkArray.join(',') + ",";
-    function success(status, data){  
-      if(status=="SaveUserGroupSuccess"){
-        $("#userprivilege-add").hide();
-        $("#userprivilege-view").show();
-        initialize();
-      }
-      if(status=="userGroupNameAlreadyExists"){
-        $(".error-message").html(status);
-      }
-    }
-    function failure(status, data){
-    }
-    var userGroupInsertDetails={};
-    userGroupInsertDetails['user_group_name']=groupNameVal;
-    userGroupInsertDetails['form_type']="client";
-    userGroupInsertDetails['form_ids']=chkArray;
-    mirror.saveClientUserGroup("ClientAdminAPI", userGroupInsertDetails, success, failure);
-  }
-  if(groupIdVal!=''){
-    var selectedVal;
-    selectedVal = chkArray.join(',') + ",";
-    function success(status, data){
-      if(status=="UpdateUserGroupSuccess"){
-        $("#userprivilege-add").hide();
-        $("#userprivilege-view").show();
-        initialize();
-      }
-      if(status=="GroupNameAlreadyExists"){
-        $(".error-message").html(status);
-      }
-    }
-    function failure(status, data){
-      console.log(status);
-    }
-    var userGroupUpdateDetails={};
-    userGroupUpdateDetails['user_group_id']=parseInt(groupIdVal);
-    userGroupUpdateDetails['user_group_name']=groupNameVal;
-    userGroupUpdateDetails['form_type']="client";
-    userGroupUpdateDetails['form_ids']=chkArray;
-    mirror.updateClientUserGroup("ClientAdminAPI", userGroupUpdateDetails, success, failure);
-  }
-  
+	var groupIdVal = $("#user-privilege-id").val();
+	var groupNameVal = $("#user-privilege-name").val();
+	var chkArray = [];
+	$(".form-checkbox:checked").each(function() {
+		chkArray.push($(this).val());
+	}); 
+	
+	if(groupNameVal == ''){
+	  	displayMessage("Please Enter Group Name ");  	
+	}
+	else if(chkArray.length == 0){
+		displayMessage("Please select atleast on form name ");  	 	
+	}
+	else if(groupIdVal == ''){
+		chkArrayInt = chkArray.map(function(item) {
+			return parseInt(item, 10);
+		});
+		function onSuccess(data){  
+	    	$("#userprivilege-add").hide();
+	   		$("#userprivilege-view").show();
+	   		initialize();
+	 	}
+		function onFailure(error){
+			if(error == "userGroupNameAlreadyExists"){
+	   			displayMessage(error);
+	  		}
+		}
+		var userGroupInsertDetails;
+		userGroupInsertDetails = client_mirror.getSaveClientUserGroupDict(groupNameVal, chkArrayInt)
+		client_mirror.saveClientUserGroup(userGroupInsertDetails,
+			function (error, response){
+				if(error == null){
+					onSuccess(response);
+				}
+				else{
+					onFailure(error);
+				}
+			}
+		);
+	}
+	if(groupIdVal != ''){
+		chkArrayInt = chkArray.map(function(item) {
+	   		return parseInt(item, 10);
+		});
+		function onSuccess(data){
+		    $("#userprivilege-add").hide();
+		    $("#userprivilege-view").show();
+		    initialize();
+		}
+		function onFailure(error){
+			if(error == "GroupNameAlreadyExists"){
+				displayMessage("Group Name Already Exists");
+			}
+		}
+		var userGroupUpdateDetails;
+		userGroupUpdateDetails = client_mirror.getUpdateClientUserGroupDict(parseInt(groupIdVal), groupNameVal, chkArrayInt);
+		client_mirror.updateClientUserGroup(userGroupUpdateDetails,
+			function (error, response){
+				if(error == null){
+					onSuccess(response);
+				}
+				else{
+					onFailure(error);
+				}
+			}
+		);
+	}
+
 });
 function userPrivilegeEdit(userGroupId, userGroupName){
-  $("#userprivilege-add").show();
-  $("#userprivilege-view").hide();
-  $("#user-privilege-name").val(userGroupName);
-  $("#user-privilege-id").val(userGroupId);  
-  function success(status, data){
-    if(status=="GetUserGroupsSuccess"){
-      loadFormListUpdate(data['forms'],data['user_groups'], userGroupId);     
-    }
-  }
-  function failure(status, data){
-  }
-  mirror.getClientUserGroups("ClientAdminAPI", success, failure);
+	$("#userprivilege-add").show();
+	$("#userprivilege-view").hide();
+	$("#user-privilege-name").val(userGroupName);
+	$("#user-privilege-id").val(userGroupId);  
+	function onSuccess(data){
+		loadFormListUpdate(data['forms']['menus'], data['user_groups'], userGroupId);     
+	}
+	function onFailure(error){
+		console.log(error);
+	}
+	client_mirror.getClientUserGroups(
+		function (error, response){
+			if(error == null){
+				onSuccess(response);
+			}
+			else{
+				onFailure(error);
+			}
+		}
+	);
 }
 function loadFormListUpdate(formList, userGroupList, userGroupId){
 	$.each(formList, function(key, value) {  
@@ -185,12 +226,21 @@ function loadFormListUpdate(formList, userGroupList, userGroupId){
 	});
 }
 function userPrivilegeActive(userGroupId, isActive){
-  function success(status, data){
-    initialize();
-  }
-  function failure(status, data){
-  }
-  mirror.changeClientUserGroupStatus("ClientAdminAPI", userGroupId, isActive, success, failure);
+  	function onSuccess(data){
+   		initialize();
+  	}
+  	function onFailure(error){
+ 	}
+  	client_mirror.changeClientUserGroupStatus(userGroupId, isActive, 
+  		function (error, response){
+			if(error == null){
+				onSuccess(response);
+			}
+			else{
+				onFailure(error);
+			}
+		}
+	);
 }
 $("#search-user-group-name").keyup(function() { 
   var count=0;
@@ -201,4 +251,20 @@ $("#search-user-group-name").keyup(function() {
         $(this).toggle(id.indexOf(value) !== -1);;
     });
    
+});
+
+$('.checkbox-full-check').click(function(event) {  
+	if(this.checked) { 
+		$('.form-checkbox').each(function() { 
+			this.checked = true;  
+	  	});
+	}
+	else{
+	  $('.form-checkbox').each(function() {
+	    this.checked = false; 
+	  });        
+	}
+});
+$(function() {
+	initialize();
 });

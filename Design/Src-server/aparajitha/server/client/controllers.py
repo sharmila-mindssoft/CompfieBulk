@@ -5,7 +5,6 @@ import tornado.web
 import uuid
 
 from aparajitha.server.common import *
-from aparajitha.server.admin.models import User as AdminUser
 from aparajitha.server.techno.controllers import GroupCompany, BusinessGroup,LegalEntity,Division,Unit
 from aparajitha.server.knowledge.models import DomainList, CountryList
 from aparajitha.server.databasehandler import DatabaseHandler

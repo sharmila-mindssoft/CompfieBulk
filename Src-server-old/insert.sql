@@ -124,8 +124,8 @@ INSERT INTO tbl_form_type VALUES(5, "Settings");
 -- fields(form_id, form_type_id, form_name, form_url, form_order, parent_menu, is_admin)
 INSERT INTO tbl_forms VALUES(1, 1, 'Dashboard', '/home', 1, null, 0);
 INSERT INTO tbl_forms VALUES(2, 2, 'Service Provider', '/service-provider', 2, null, 1);
-INSERT INTO tbl_forms VALUES(3, 2, 'User Privilege', '/user-privilege', 3, null, 1);
-INSERT INTO tbl_forms VALUES(4, 2, 'User', '/user', 4, null, 1);
+INSERT INTO tbl_forms VALUES(3, 2, 'User Privilege', '/client-user-privilege', 3, null, 1);
+INSERT INTO tbl_forms VALUES(4, 2, 'User', '/client-user-master', 4, null, 1);
 INSERT INTO tbl_forms VALUES(5, 2, 'Unit Closure', '/unit-closure', 5, null, 1);
 INSERT INTO tbl_forms VALUES(6, 3, 'Statutory Settings', '/statutory-settings', 6, null, 1);
 INSERT INTO tbl_forms VALUES(7, 3, 'Assign Compliance', '/assign-compliance', 7, null, 1);
@@ -159,7 +159,7 @@ INSERT INTO tbl_admin  VALUES("admin", "e10adc3949ba59abbe56e057f20f883e");
 
 --tbl_session_types
 --DELETE FROM tbl_session_types
--- values = session_type_id, session_type
+-- values = session_type_id, snession_type
 INSERT INTO tbl_session_types VALUES(1, "web");
 INSERT INTO tbl_session_types VALUES(2, "andoird");
 INSERT INTO tbl_session_types VALUES(3, "ios");
@@ -185,8 +185,8 @@ INSERT INTO tbl_compliance_frequency VALUES(4, "On Occurrence");
 INSERT INTO tbl_user_groups(user_group_id, form_category_id, user_group_name, form_ids, is_active) VALUES(1, 2, "knowledge", "5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16", 1)
 
 --tbl_users
-INSERT INTO tbl_users(user_id, user_group_id, email_id, password, employee_name ) 
-VALUES (1, 1, 'usha@mindssoft.com', 'e10adc3949ba59abbe56e057f20f883e', 'Test-user')
+INSERT INTO tbl_users(user_id, user_group_id, email_id, password, employee_name, contact_no, designation, address, employee_code ) 
+VALUES (1, 1, 'usha@mindssoft.com', 'e10adc3949ba59abbe56e057f20f883e', 'Test-user', "9876543210", "Manager", "KK Nagar", "TEST001")
 
 --tbl_user_sessions
 INSERT INTO tbl_user_sessions(session_token, user_id, session_type_id) VALUES ("12c94b934d5f4b5ebebd4471d8b29cb8", 0, 1);

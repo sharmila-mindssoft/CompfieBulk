@@ -1,58 +1,5 @@
-{% extends "files/desktop/Header/Header.html" %}
+{% extends "files/desktop/home/container.html" %}
 {% block content %} 
-<style>
-.ac-textbox li
-{
-list-style-type:none; line-height:25px;
-}
-.ac-textbox ul {
-  border:1px solid gray;
-  position: absolute;
-  padding-left: 0em;
-  background: #ffffff;
-}
-.ac-textbox ul li {
-  font-size: 0.8em;
-  padding-right: 0.3em;
-  padding-left:0.3em;
-  vertical-align: center;
-  cursor: pointer;
-}
-.ac-textbox ul li:hover{
-  background: #EAE8E8;  
-}
-/* Autocomplete selectbox Style */
-.ac-selectbox ul {
-  background: none repeat scroll 0 0 #fff;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.11);
-  box-sizing: border-box;
-  position: absolute;
-  padding-left: 0em;
-  background: #ffffff;
-  transition: opacity 200ms ease-out 0s, top 200ms ease-out 0s, visibility 200ms ease-out 0s;
-}
-.ac-selectbox ul li {
-  font-size: 0.8em;
-  list-style-type:none; 
-  padding: 6px;
-  padding-left: 2em;
-  vertical-align: center;
-  cursor: pointer;
-  background: url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
-}
-.ac-selectbox ul li:hover{
-  
-  background:  #EAE8E8 url(/files/desktop/common/images/tick_1_inactive.png) no-repeat left 5px center;
-}
-.ac-selectbox ul li.active_selectbox {
-  background: url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
-}
-.ac-selectbox ul li.active_selectbox:hover {
-  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
-}
-</style>
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
@@ -62,8 +9,7 @@ list-style-type:none; line-height:25px;
           <div class="field-label">Country<span class="mandatory">*</span>:</div>
           <div class="field-input">
             <select class="input-box" id="countries" >
-              <option value="">Select</option>
-        
+                <option value="">Select</option>
             </select>
           </div>
         </div>
@@ -180,5 +126,5 @@ list-style-type:none; line-height:25px;
   </table>
 </div>
 
-<script type="text/javascript" src="/files/desktop/ClientDetailedReport/clientdetailedreport.js"></script>
+<script type="text/javascript" src="/files/desktop/client-details-report/clientdetailsreport.js"></script>
 {% endblock %}
