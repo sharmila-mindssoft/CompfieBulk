@@ -739,6 +739,66 @@ function saveorsubmit(submissionType){
 
   function onSuccess(data){
     getAssignedStatutories ();
+$('#activate-step-finish').on('click', function(e) {
+/*getGeographyResult();
+if (validate_secondtab()){
+savestatutorymapping();
+}*/
+if (validate_secondtab()){
+
+  //siva
+  var assignedStatutories = [];
+
+  var statutoriesCount= 1;
+  var actCount = 1;
+  for(var statutory in statutoriesList){
+    var level1StatutoryId = statutoriesList[statutory]["level_1_statutory_id"];
+    var applicableStatus = null;
+    var notApplicableRemarks = null;
+   
+    if($('#act1').is(":checked")){
+      applicableStatus = true;
+    }
+    else{
+      applicableStatus = false;
+      notApplicableRemarks = $('#remarkvalue1').val();
+    }
+
+    
+    var complianceslist = statutoriesList[statutory]["compliances"];
+    //var compliances = "{";
+   /* for(var compliance in complianceslist){    
+      var complianceId = complianceslist[compliance]["compliance_id"];*/
+
+      compliances = { }
+        for (x in complianceslist)
+            compliances[x["compliance_id"]] =+ false
+
+
+     /* jsonval = "{"
+      for index, x in enumerate(complianceslist):
+      #for x in complianceslist:
+          if index==(len(loaddata)-1):
+              jsonval += '\"'+str(x["compliance_id"])+"\":\""+true+"\""
+          else:
+              jsonval += '\"'+str(x["compliance_id"])+"\":\""+true+"\","
+      jsonval +="}"*/
+
+      console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCC: "+compliances);
+     /* compliances += 
+      statutoriesCount++;
+    }  */
+    actCount++;
+
+    assignedstatutoriesData = mirror.assignedStatutories(level1StatutoryId,compliances, applicableStatus, notApplicableRemarks);
+    assignedStatutories.push(assignedstatutoriesData);
+    console.log(assignedStatutories)
+  }
+
+  
+  /*function onSuccess(data){
+    getAssignedStatutoriesList ();
+>>>>>>> update assignstatuto save - incomplete
     $("#assignstatutory-add").hide();
     $("#assignstatutory-view").show();
     $('ul.setup-panel li:eq(0)').addClass('active');
@@ -749,7 +809,14 @@ function saveorsubmit(submissionType){
   function onFailure(error){
     displayMessage(error)
   }
+<<<<<<< HEAD
   mirror.saveOrSubmitAssignStatutory(assignStatutoryCountryId, assignStatutoryGroupId, assignStatutoryLocationId, assignStatutoryUnitIds, assignStatutoryDomainId, submissionType, clientStatutoryId, assignedStatutories, 
+=======
+  
+
+ 
+  mirror.saveOrSubmitAssignStatutory(assignStatutoryCountryId, assignStatutoryGroupId, assignStatutoryLocationId, assignStatutoryUnitIds, assignStatutoryDomainId, "Save", null, assignedStatutories, 
+>>>>>>> update assignstatuto save - incomplete
     function (error, response) {
     if (error == null){
       onSuccess(response);
@@ -758,6 +825,7 @@ function saveorsubmit(submissionType){
       onFailure(error);
     }
   }
+<<<<<<< HEAD
   );
   }
 }
@@ -821,6 +889,10 @@ function displayEdit(client_statutory_id, country_id, group_id, location_id, dom
 }
 
 
+=======
+  );*/
+  }
+})
 function loadAssignedStatutoriesList(assignedStatutoriesList){
   var j = 1;
   var client_statutory_id = 0;
