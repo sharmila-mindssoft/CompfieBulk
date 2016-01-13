@@ -4228,4 +4228,4 @@ class KnowledgeDatabase(Database):
                     result_row[2], result_row[4], result_row[6], 
                     [int(x) for x in result_row[5].split(",")]))
             GroupedUnits.append(technoreports.GroupedUnits(row[2], row[1], row[0], units))
-        return GroupedUnits  
+        return GroupedUnits   
