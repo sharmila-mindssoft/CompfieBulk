@@ -197,11 +197,12 @@ function load_secondwizard(){
   for(var statutory in statutoriesList){
     var actname = statutoriesList[statutory]["level_1_statutory_name"];
     var complianceslist = statutoriesList[statutory]["compliances"];
+    var level_1_statutory_id = statutoriesList[statutory]["level_1_statutory_id"];
 
     var acttableRow=$('#act-templates .font1 .tbody-heading');
     var clone=acttableRow.clone();
-    $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;"></label>');
-    $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+'" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:5px;"> Remarks</div></div>');
+    $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;"></label> ');
+    $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+'" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" id="remarkvalue'+actCount+'" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:5px;"> Remarks</div></div>');
     $('.tbody-assignstatutory').append(clone);
 
     $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
@@ -214,6 +215,7 @@ function load_secondwizard(){
    
     for(var compliance in complianceslist){    
       var statutoryprovision = '';
+      var compliance_id = complianceslist[compliance]["compliance_id"];
       var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
       var clone2=complianceDetailtableRow.clone();
       $('.sno', clone2).text(statutoriesCount);
@@ -605,6 +607,8 @@ function validate_secondtab(){
     displayMessage("");
     return true;
   }*/
+
+  return true;
 }
 
 var navListItems = $('ul.setup-panel li a'),
@@ -640,7 +644,58 @@ if (validate_secondtab()){
 savestatutorymapping();
 }*/
 if (validate_secondtab()){
-  function onSuccess(data){
+
+  //siva
+  var assignedStatutories = [];
+
+  var statutoriesCount= 1;
+  var actCount = 1;
+  for(var statutory in statutoriesList){
+    var level1StatutoryId = statutoriesList[statutory]["level_1_statutory_id"];
+    var applicableStatus = null;
+    var notApplicableRemarks = null;
+   
+    if($('#act1').is(":checked")){
+      applicableStatus = true;
+    }
+    else{
+      applicableStatus = false;
+      notApplicableRemarks = $('#remarkvalue1').val();
+    }
+
+    
+    var complianceslist = statutoriesList[statutory]["compliances"];
+    //var compliances = "{";
+   /* for(var compliance in complianceslist){    
+      var complianceId = complianceslist[compliance]["compliance_id"];*/
+
+      compliances = { }
+        for (x in complianceslist)
+            compliances[x["compliance_id"]] =+ false
+
+
+     /* jsonval = "{"
+      for index, x in enumerate(complianceslist):
+      #for x in complianceslist:
+          if index==(len(loaddata)-1):
+              jsonval += '\"'+str(x["compliance_id"])+"\":\""+true+"\""
+          else:
+              jsonval += '\"'+str(x["compliance_id"])+"\":\""+true+"\","
+      jsonval +="}"*/
+
+      console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCC: "+compliances);
+     /* compliances += 
+      statutoriesCount++;
+    }  */
+    actCount++;
+
+    assignedstatutoriesData = mirror.assignedStatutories(level1StatutoryId,compliances, applicableStatus, notApplicableRemarks);
+    assignedStatutories.push(assignedstatutoriesData);
+    console.log(assignedStatutories)
+  }
+
+  
+  /*function onSuccess(data){
     getAssignedStatutoriesList ();
     $("#assignstatutory-add").hide();
     $("#assignstatutory-view").show();
@@ -649,7 +704,9 @@ if (validate_secondtab()){
     displayMessage(error)
   }
   
-  mirror.saveOrSubmitAssignStatutory(parseInt(statutorylevel_id), datavalue, map_statutory_id, 
+
+ 
+  mirror.saveOrSubmitAssignStatutory(assignStatutoryCountryId, assignStatutoryGroupId, assignStatutoryLocationId, assignStatutoryUnitIds, assignStatutoryDomainId, "Save", null, assignedStatutories, 
     function (error, response) {
     if (error == null){
       onSuccess(response);
@@ -658,9 +715,9 @@ if (validate_secondtab()){
       onFailure(error);
     }
   }
-  );
-  })
-}
+  );*/
+  }
+})
 function loadAssignedStatutoriesList(assignedStatutoriesList){
   var j = 1;
   var client_saved_statutory_id = 0;
