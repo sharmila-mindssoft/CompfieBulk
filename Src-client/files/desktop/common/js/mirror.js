@@ -1268,6 +1268,7 @@ function initMirror() {
         getAssignStatutoryWizardOne: getAssignStatutoryWizardOne,
         getAssignStatutoryWizardTwo: getAssignStatutoryWizardTwo,
         getAssignedStatutoriesList: getAssignedStatutoriesList,
+        assignedStatutories: assignedStatutories,
         saveOrSubmitAssignStatutory: saveOrSubmitAssignStatutory,
         getAssignedStatutoryById: getAssignedStatutoryById,
         getAssignedStatutoryReportFilters: getAssignedStatutoryReportFilters,
