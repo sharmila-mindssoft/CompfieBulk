@@ -3213,9 +3213,10 @@ def to_structure_VectorType_RecordType_clienttransactions_AssignedStatutory(data
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_AssignedStatutory(data):
     data = parse_dictionary(data)    
     d = {}
-    for key, value in data:
-        key = parse_structure_SignedIntegerType_8(key)
-        value = parse_structure_VectorType_RecordType_clienttransactions_AssignedStatutory(value)
+    print data
+    for key, value in data.items():
+        key = to_structure_SignedIntegerType_8(key)
+        value = to_structure_VectorType_RecordType_clienttransactions_AssignedStatutory(value)
         d[key] = value
     return d
 
