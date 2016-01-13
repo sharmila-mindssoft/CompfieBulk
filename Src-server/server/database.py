@@ -3276,12 +3276,11 @@ class KnowledgeDatabase(Database):
 #   Audit Trail
 #
 
-    def get_audit_trails(self, user_id):
-        print "user_id : {}".format(user_id)
+    def get_audit_trails(self, session_user):
         user_ids = ""
-        if user_id != 0:
+        if session_user != 0:
             column = "user_group_id"
-            condition = "user_id = '%d'" % user_id
+            condition = "user_id = '%d'" % session_user
             rows = self.get_data(self.tblUsers, column, condition)
             user_group_id = rows[0][0]
 
@@ -3312,12 +3311,10 @@ class KnowledgeDatabase(Database):
             date = self.datetime_to_string(row[3])
             audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
         users = None
-        if user_id != 0:
-            print "inside if"
+        if session_user != 0:
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
         else:
-            print "inside else"
             users = self.return_users()
         forms = self.return_forms()
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
