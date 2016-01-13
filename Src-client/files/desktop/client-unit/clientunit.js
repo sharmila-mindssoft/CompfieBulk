@@ -102,7 +102,7 @@ function loadClientsList(clientunitsList){
 		unitVal['lentitiesId'] = unitList[units]['legal_entity_id'];
 		unitVal['divisionId'] = unitList[units]['division_id'];
 		console.log(unitVal)
-		alert(jQuery.grep(getAllArrayValues, function(unitVal) { return unitVal; }));
+		alert(jQuery.ina);
 		// if (){
 		// 	alert("entering inside if");
 		// 	getAllArrayValues.push(unitVal);

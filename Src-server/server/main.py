@@ -222,7 +222,9 @@ TEMPLATE_PATHS = [
     #Techno User Transaction
     ("/assign-statutory", "files/desktop/assign-statutory/assignstatutory.html", None, {}),
     #Techno reports
-    ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {})
+    ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {}),
+    #audit trial
+    ("/audit-trail", "files/desktop/audit-trail/audittrail.html", None, {}),
    ]
 
 
