@@ -3650,7 +3650,7 @@ class KnowledgeDatabase(Database):
             t1.submission_type, t2.group_name, t3.geography_name, \
             t4.country_name, t5.domain_name, t6.unit_name, \
             t7.business_group_name, t8.legal_entity_name,\
-            t9.division_name, t10.industry_name \
+            t9.division_name, t10.industry_name, t6.unit_code \
             FROM tbl_client_statutories t1 \
             INNER JOIN tbl_client_groups t2 \
             ON t1.client_id = t2.client_id \
@@ -3683,7 +3683,7 @@ class KnowledgeDatabase(Database):
             "country_id", "domain_id", "unit_id", "submission_type",
             "group_name", "geography_name", "country_name",
             "domain_name", "unit_name", "business_group_name", "legal_entity_name",
-            "division_name", "industry_name"
+            "division_name", "industry_name", "unit_code"
         ]
         result = self.convert_to_dict(rows, columns)
         return self.return_assign_statutory_list(result)
@@ -3691,6 +3691,7 @@ class KnowledgeDatabase(Database):
     def return_assign_statutory_list(self, assigned_list):
         ASSIGNED_STATUTORIES_list = []
         for data in assigned_list :
+            name = "%s - %s" % (data["unit_code"], data["unit_name"])
             ASSIGNED_STATUTORIES_list.append(
                 technotransactions.ASSIGNED_STATUTORIES(
                     int(data["submission_type"]),
@@ -3700,7 +3701,7 @@ class KnowledgeDatabase(Database):
                     data["business_group_name"],
                     data["legal_entity_name"],
                     data["division_name"],
-                    data["unit_name"],
+                    name,
                     data["geography_name"],
                     data["domain_name"],
                     data["industry_name"]
