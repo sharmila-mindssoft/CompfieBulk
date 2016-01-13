@@ -348,7 +348,7 @@ function loadStatutoryLevels(countryval,domainval){
       var tableRow=$('#statutory-level-templates');
       var clone=tableRow.clone();
       $('.statutory_title', clone).text(statutoryLevelList[j]["level_name"]);
-      $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="filter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" class="input-box addleft" placeholder="" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+      $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" class="input-box addleft" placeholder="" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
       $('.tbody-statutory-level').append(clone);
     }   
 
@@ -491,7 +491,7 @@ function reload(last_statutory_id,last_level,country,domain){
 function filter_statutory(position){  
   var slist_filter = document.getElementsByClassName('slist'+position);
   var eslist_filter = document.getElementsByClassName('eslist-filter'+position);
-  var filter = $('#filter'+position).val().toLowerCase();
+  var filter = $('#statutoryfilter'+position).val().toLowerCase();
   for (var i = 0; i < slist_filter.length; i++) {
     name = slist_filter[i].innerHTML.trim();
     if (name.toLowerCase().indexOf(filter) == 0) {

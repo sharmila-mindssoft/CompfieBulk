@@ -90,7 +90,7 @@ $("#domainval").keyup(function(){
   $("#autocomplete_domain").show();
   var domains = domainsList;
   var suggestions = [];
-  $('#ulist_text').empty();
+  $('#ulist_domain').empty();
   if(textval.length>0){
     for(var i in domains){
       if (~domains[i]["domain_name"].toLowerCase().indexOf(textval.toLowerCase()) && domains[i]["is_active"] == 1) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
@@ -115,7 +115,7 @@ $("#industryval").keyup(function(){
   $("#autocomplete_industry").show();
   var industries = industriesList;
   var suggestions = [];
-  $('#ulist_text').empty();
+  $('#ulist_industry').empty();
   if(textval.length>0){
     for(var i in industries){
       if (~industries[i]["industry_name"].toLowerCase().indexOf(textval.toLowerCase()) && industries[i]["is_active"] == 1) suggestions.push([industries[i]["industry_id"],industries[i]["industry_name"]]); 
@@ -240,6 +240,7 @@ $("#submit").click(function(){
 });
 
 function disppopup(sm_id,compliance_id){
+  $("#popup1").show();
   var compliances = statutoryMappingsList[sm_id]["compliances"];
   var statutoryMappings='';
   for(var i=0; i<statutoryMappingsList[sm_id]["statutory_mappings"].length; i++){
