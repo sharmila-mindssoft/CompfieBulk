@@ -4304,6 +4304,7 @@ class KnowledgeDatabase(Database):
 #
 #   Audit Trail
 #
+
     def get_audit_trails(self, session_user):
         user_ids = ""
         if session_user != 0:
@@ -4343,7 +4344,6 @@ class KnowledgeDatabase(Database):
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
         else:
-            print "inside else"
             users = self.return_users()
         forms = self.return_forms()
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
