@@ -971,6 +971,7 @@ class ClientDatabase(Database):
             level_1_statutories = statutory_wise_compliances.get(statutory_name)
             if level_1_statutories is None :
                 level_1_statutories = clienttransactions.AssignedStatutory(
+                    r["client_statutory_id"],
                     statutory_name,
                     [compliance],
                     bool(r["applicable"]),
@@ -1030,3 +1031,39 @@ class ClientDatabase(Database):
             unit_wise_statutories.values()
         )
 
+    def update_statutory_settings(self, data, session_user, client_id):
+        unit_id = data.unit_id
+        statutories = data.statutories
+        updated_on = self.get_date_time()
+        for s in statutories :
+            client_statutory_id = s.client_statutory_id
+            applicable_status = int(s.applicable_status)
+            not_applicable_remarks = s.not_applicable_remarks
+            if not_applicable_remarks is None :
+                not_applicable_remarks = ""
+            compliances = s.compliances
+            for c in compliances :
+                compliance_id = c.compliance_id
+                opted_status = int(c.compliance_opted_status)
+                remarks = c.compliance_remarks
+
+                query = "UPDATE tbl_client_compliances t1 \
+                    INNER JOIN tbl_client_statutories t2 \
+                    ON t1.client_statutory_id = t2.client_statutory_id \
+                    SET \
+                    t1.applicable=%s, \
+                    t1.not_applicable_remarks='%s', \
+                    t1.compliance_opted=%s, \
+                    t1.compliance_remarks='%s',\
+                    t1.updated_by=%s, \
+                    t1.updated_on='%s' \
+                    WHERE t2.unit_id = %s \
+                    AND t1.client_statutory_id = %s \
+                    AND t1.compliance_id = %s" % (
+                        applicable_status, not_applicable_remarks,
+                        opted_status, remarks, session_user, updated_on,
+                        unit_id, client_statutory_id, compliance_id
+                    )
+                self.execute(query, client_id)
+
+        return clienttransactions.UpdateStatutorySettingsSuccess()

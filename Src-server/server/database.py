@@ -3696,13 +3696,18 @@ class KnowledgeDatabase(Database):
                 technotransactions.ASSIGNED_STATUTORIES(
                     int(data["submission_type"]),
                     int(data["client_statutory_id"]),
+                    data["country_id"],
                     data["country_name"],
+                    data["client_id"],
                     data["group_name"],
                     data["business_group_name"],
                     data["legal_entity_name"],
                     data["division_name"],
+                    data["unit_id"],
                     name,
+                    data["geography_id"],
                     data["geography_name"],
+                    data["domain_id"],
                     data["domain_name"],
                     data["industry_name"]
                 )

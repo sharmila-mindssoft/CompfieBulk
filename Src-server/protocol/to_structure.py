@@ -3231,3 +3231,30 @@ def to_structure_VectorType_RecordType_clienttransactions_UnitStatutoryComplianc
     for item in data :
         lst.append(to_structure_RecordType_clienttransactions_UnitStatutoryCompliances(item))
     return lst
+
+
+# Clienttransaction ApplicableCompliance
+def to_structure_RecordType_clienttransactions_ApplicableCompliance(data):
+    from protocol import clienttransactions
+    return clienttransactions.ApplicableCompliance.to_structure(data)
+
+
+def to_structure_VectorType_RecordType_clienttransactions_ApplicableCompliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_clienttransactions_ApplicableCompliance(item))
+    return lst
+
+# clienttransaction UpdateStatutoryCompliance
+def to_structure_RecordType_clienttransactions_UpdateStatutoryCompliance(data):
+    from protocol import clienttransactions
+    return clienttransactions.UpdateStatutoryCompliance.to_structure(data)
+
+
+def to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_clienttransactions_UpdateStatutoryCompliance(item))
+    return lst

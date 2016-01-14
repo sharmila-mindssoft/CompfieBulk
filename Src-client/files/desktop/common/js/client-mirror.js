@@ -522,6 +522,18 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);   
     }
 
+    // 
+    // Statutory settings
+    // 
+    function getStatutorySettings(callback) {
+        callerName = "api/client_transaction";
+        var request = [
+            "GetStatutorySettings",
+            {}
+        ]
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -576,7 +588,9 @@ function initClientMirror() {
         getClientDetailsReport: getClientDetailsReport,
         getAuditTrail: getAuditTrail,
 
-        getComplianceDetailsReportFilters: getComplianceDetailsReportFilters
+        getComplianceDetailsReportFilters: getComplianceDetailsReportFilters,
+
+        getStatutorySettings: getStatutorySettings
     }
 
 }

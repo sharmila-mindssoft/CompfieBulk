@@ -453,28 +453,51 @@ class RequestFormat(object):
 #
 
 class ASSIGNED_STATUTORIES(object):
-    def __init__(self, submission_status, client_statutory_id, country_name, group_name, business_group_name, legal_entity_name, division_name, unit_name, geography_name, domain_name, industry_name):
+    def __init__(
+        self, submission_status, client_statutory_id, 
+        country_id, country_name, 
+        client_id, group_name, business_group_name, 
+        legal_entity_name, division_name, 
+        unit_id, unit_name, 
+        geography_id, geography_name, domain_id, domain_name, industry_name
+    ):
         self.submission_status = submission_status
         self.client_statutory_id = client_statutory_id
+        self.country_id = country_id
         self.country_name = country_name
+        self.client_id = client_id
         self.group_name = group_name
         self.business_group_name = business_group_name
         self.legal_entity_name = legal_entity_name
         self.division_name = division_name
+        self.unit_id = unit_id
         self.unit_name = unit_name
+        self.geography_id = geography_id
         self.geography_name = geography_name
+        self.domain_id = domain_id
         self.domain_name = domain_name
         self.industry_name = industry_name
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["submission_status", "client_statutory_id", "country_name", "group_name", "business_group_name", "legal_entity_name", "division_name", "unit_name", "geography_name", "domain_name", "industry_name"])
+        data = parse_dictionary(data, [
+            "submission_status", "client_statutory_id", 
+            "country_id", "country_name", "client_id",
+            "group_name", "business_group_name", "legal_entity_name", 
+            "division_name", "unit_id", "unit_name", 
+            "geography_id", "geography_name", 
+            "domain_id", "domain_name", "industry_name"
+        ])
         submission_status = data.get("submission_status")
         submission_status = parse_structure_SignedIntegerType_8(submission_status)
         client_statutory_id = data.get("client_statutory_id")
         client_statutory_id = parse_structure_UnsignedIntegerType_32(client_statutory_id)
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         country_name = data.get("country_name")
         country_name = parse_structure_CustomTextType_50(country_name)
+        client_id = data.get("client_id")
+        client_id = parse_structure_UnsignedIntegerType_32(client_id)
         group_name = data.get("group_name")
         group_name = parse_structure_CustomTextType_50(group_name)
         business_group_name = data.get("business_group_name")
@@ -483,27 +506,44 @@ class ASSIGNED_STATUTORIES(object):
         legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
         division_name = data.get("division_name")
         division_name = parse_structure_OptionalType_CustomTextType_50(division_name)
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_50(unit_name)
+        geography_id = data.get("geography_id")
+        geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
         geography_name = data.get("geography_name")
         geography_name = parse_structure_CustomTextType_50(geography_name)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         domain_name = data.get("domain_name")
         domain_name = parse_structure_CustomTextType_50(domain_name)
         industry_name = data.get("industry_name")
         industry_name = parse_structure_CustomTextType_50(industry_name)
-        return ASSIGNED_STATUTORIES(submission_status, client_statutory_id, country_name, group_name, business_group_name, legal_entity_name, division_name, unit_name, geography_name, domain_name, industry_name)
+        return ASSIGNED_STATUTORIES(
+            submission_status, client_statutory_id, 
+            country_id, country_name, client_id, group_name, 
+            business_group_name, legal_entity_name, 
+            division_name, unit_id, unit_name, geography_id,
+            geography_name, domain_id, domain_name, industry_name
+        )
 
     def to_structure(self):
         return {
             "submission_status": to_structure_SignedIntegerType_8(self.submission_status),
             "client_statutory_id": to_structure_SignedIntegerType_8(self.client_statutory_id),
+            "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "country_name": to_structure_CustomTextType_50(self.country_name),
+            "client_id": to_structure_SignedIntegerType_8(self.client_id),
             "group_name": to_structure_CustomTextType_50(self.group_name),
             "business_group_name": to_structure_OptionalType_CustomTextType_50(self.business_group_name),
             "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
             "division_name": to_structure_OptionalType_CustomTextType_50(self.division_name),
+            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
             "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "geography_id": to_structure_SignedIntegerType_8(self.geography_id),
             "geography_name": to_structure_CustomTextType_50(self.geography_name),
+            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "industry_name": to_structure_CustomTextType_50(self.industry_name)
         }
