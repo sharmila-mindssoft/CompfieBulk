@@ -1,4 +1,4 @@
-var BASE_URL = "http://192.168.1.6:8090/";
+var BASE_URL = "http://localhost:8090/";
 
 function initMirror() {
     var DEBUG = true;
@@ -59,7 +59,7 @@ function initMirror() {
         var userDetails = {
             "user_id": info["user_id"],
             "client_id": info["client_id"],
-            "user_group": info["user_group"],
+            "user_group": info["user_group_name"],
             "employee_name": info["employee_name"],
             "employee_code": info["employee_code"],
             "email_id": info["email_id"],

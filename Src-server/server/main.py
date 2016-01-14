@@ -191,6 +191,7 @@ TEMPLATE_PATHS = [
     ("/home", "files/desktop/home/home.html", None, {}),
     ("/custom-controls", "files/desktop/custom-controls/custom-controls.html", None, {}),
     #common
+    ("/profile", "files/desktop/profile/profile.html", None, {}),
     ("/change-password", "files/desktop/change-password/changepassword.html", None, {}),
     #IT Admin Master
     ("/domain-master", "files/desktop/domain-master/domainmaster.html", None, {}),

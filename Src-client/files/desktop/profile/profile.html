@@ -1,56 +1,58 @@
 {% extends "files/desktop/home/container.html" %}
 {% block content %}
-<div class="content-container width60">
-  <div class="content-area">
-    <div class="add-container">
-      <div class="add-container-heading">Profile<span class="error-message"></span></div>
-      <div class="input-row-left">
-        <div class="input-row">
-          <div class="field-label">Employee Name:</div>
-          <div class="input-label">Sundarrajan</div>
+  <div class="content-container width80">
+    <div class="content-area">
+      <div class="add-container">
+        <div class="add-container-heading">Profile<span class="error-message"></span></div>
+        <div class="input-row-left">
+          <div class="input-row">
+            <div class="field-label">Employee Name:</div>
+            <div class="input-label employee-name"></div>
+          </div>
+          <div class="input-row">
+            <div class="field-label">Designation:</div>
+            <div class="input-label designation"></div>
+          </div>
+          <div class="input-row">
+            <div class="field-label">Email ID:<span class="mandatory">*</span></div>
+            <div class="input-label email-id"></div>
+          </div>
+          
+          <div class="input-row" style="padding-bottom:0px;">
+            <div class="field-label">Contact No.:<span class="mandatory">*</span></div>
+            <div class="field-input"><input type="text" class="input-box countrycode"  value="+91"> <input type="text" class="input-box areacode"  value=""> <input type="text" class="input-box mobile"  value=""></div>
+          </div>
+          <div class="input-row">
+            <div class="field-label">&nbsp;</div>
+            <div class="field-input">
+              <span style="font-size:10px;">[+91 452 1234567]</span>
+            </div>
+          </div>
+          
         </div>
-        <div class="input-row">
-          <div class="field-label">Designation:</div>
-          <div class="input-label">Manager</div>
+        <div class="input-row-right">
+          <div class="input-row">
+            <div class="field-label">Employee ID:</div>
+            <div class="input-label employee-id"></div>
+          </div>
+          <div class="input-row">
+            <div class="field-label">User Group:</div>
+            <div class="input-label usergroup"></div>
+          </div>
+          <div class="input-row">
+            <div class="field-label">Address:</div>
+            <div class="field-input"><textarea class="input-box address" style="height:70px;" ></textarea></div>
+          </div>
         </div>
-        <div class="input-row">
-          <div class="field-label">Email ID:<span class="mandatory">*</span></div>
-          <div class="input-label">sundarrajan@domain.com</div>
+        <input type="hidden" class="userid">
+        <div class="submit-button-container">
+          <input type="submit" name="save" value="Save" class="btn-submit">
+          &nbsp;&nbsp;
+          <input type="submit" name="change_pwd" value="Change Password" onclick="location.href='/change_password'" class="btn-submit">
         </div>
-        
-        <div class="input-row" style="padding-bottom:0px;">
-                <div class="field-label">Contact No.:<span class="mandatory">*</span></div>
-                <div class="field-input"><input type="text" class="input-box countrycode" value="+91"> <input type="text" class="input-box areacode" value="" > <input type="text" class="input-box mobile" value="9876543210"></div>
-              </div>
-              <div class="input-row">
-                <div class="field-label">&nbsp;</div>
-                <div class="field-input">
-                <span style="font-size:10px;">[+91 452 1234567]</span>
-                </div>
-              </div>
-         
+        <div class="clearfix"></div>
       </div>
-      <div class="input-row-right">
-        <div class="input-row">
-          <div class="field-label">Employee ID:</div>
-          <div class="input-label">EMP302</div>
-        </div>
-        <div class="input-row">
-          <div class="field-label">User Group:</div>
-          <div class="input-label">Knowledge Manager</div>
-        </div>
-        <div class="input-row">
-          <div class="field-label">Address:</div>
-          <div class="field-input"><textarea class="input-box" style="height:70px;">242, West Street, K.K. Nagar, Madurai, Tamil Nadu, India</textarea></div>
-        </div>
-      </div>
-      <div class="submit-button-container">
-        <input type="submit" name="save" value="Save" class="btn-submit">
-       &nbsp;&nbsp;
-        <input type="submit" name="change_pwd" value="Change Password" onclick="location.href='/change_password'" class="btn-submit">
-      </div>
-      <div class="clearfix"></div>
     </div>
   </div>
-</div>
+  <script type="text/javascript" src="/files/desktop/profile/profile.js"></script>
 {% endblock %}
