@@ -17,7 +17,7 @@ def process_client_transaction_requests(request, db) :
 		return process_get_statutory_settings(db, session_user, client_id)
 
 	elif type(request) is clienttransactions.UpdateStatutorySettings :
-		pass
+		return process_update_statutory_settings(db, request, session_user, client_id)
 
 	elif type(request) is clienttransactions.GetAssignCompliancesFormData:
 		pass
@@ -33,3 +33,7 @@ def process_client_transaction_requests(request, db) :
 
 def process_get_statutory_settings(db, session_user, client_id):
 	return db.get_statutory_settings(session_user, client_id)
+
+def process_update_statutory_settings(db, request, session_user, client_id):
+	return db.update_statutory_settings(request, session_user, client_id)
+	 
