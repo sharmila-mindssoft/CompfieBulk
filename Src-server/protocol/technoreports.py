@@ -23,7 +23,9 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_RecordType_core_Division,
     parse_structure_OptionalType_Bool,
     parse_structure_CustomTextType_100,
-    parse_structure_CustomTextType_250
+    parse_structure_CustomTextType_250,
+    parse_structure_VectorType_RecordType_core_BusinessGroup,
+    parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory
 )
 from protocol.to_structure import (
     to_structure_VectorType_Text,
@@ -48,7 +50,9 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_RecordType_core_Division,
     to_structure_OptionalType_Bool,
     to_structure_CustomTextType_100,
-    to_structure_CustomTextType_250
+    to_structure_CustomTextType_250,
+    to_structure_VectorType_RecordType_core_BusinessGroup,
+    to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory
 )
 
 #
@@ -325,10 +329,11 @@ class GetStatutoryNotificationsSuccess(Response):
         }
 
 class GetAssignedStatutoryReportFiltersSuccess(Response):
-    def __init__(self, countries, domains, groups, legal_entities, divisions, units, level_1_statutories):
+    def __init__(self, countries, domains, groups, business_groups, legal_entities, divisions, units, level_1_statutories):
         self.countries = countries
         self.domains = domains
         self.groups = groups
+        self.business_groups = business_groups
         self.legal_entities = legal_entities
         self.divisions = divisions
         self.units = units
@@ -336,13 +341,15 @@ class GetAssignedStatutoryReportFiltersSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "groups", "legal_entities", "divisions", "units", "level_1_statutories"])
+        data = parse_dictionary(data, ["countries", "domains", "groups", "business_groups", "legal_entities", "divisions", "units", "level_1_statutories"])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         groups = data.get("groups")
         groups = parse_structure_VectorType_RecordType_core_GroupCompany(groups)
+        business_groups = data.get("business_groups")
+        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup()
         legal_entities = data.get("legal_entities")
         legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
         divisions = data.get("divisions")
@@ -350,18 +357,19 @@ class GetAssignedStatutoryReportFiltersSuccess(Response):
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_core_Unit(units)
         level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory(level_1_statutories)
-        return GetAssignedStatutoryReportFiltersSuccess(countries, domains, groups, legal_entities, divisions, units, level_1_statutories)
+        level_1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level_1_statutories)
+        return GetAssignedStatutoryReportFiltersSuccess(countries, domains, groups, business_groups, legal_entities, divisions, units, level_1_statutories)
 
     def to_inner_structure(self):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
             "groups": to_structure_VectorType_RecordType_core_GroupCompany(self.groups),
+            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
             "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
             "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
             "units": to_structure_VectorType_RecordType_core_Unit(self.units),
-            "level_1_statutories": to_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory(self.level_1_statutories),
+            "level_1_statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level_1_statutories),
         }
 
 class GetAssignedStatutoryReportSuccess(Response):
