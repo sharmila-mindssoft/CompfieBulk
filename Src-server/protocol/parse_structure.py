@@ -37,6 +37,27 @@ def parse_structure_VectorType_RecordType_general_Notification(data):
         lst.append(parse_structure_RecordType_general_Notification(item))
     return lst
 
+def parse_structure_VectorType_RecordType_general_User(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_general_User(item))
+    return lst
+
+def parse_structure_VectorType_RecordType_general_AuditTrail(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_general_AuditTrail(item))
+    return lst
+
+def parse_structure_VectorType_RecordType_general_AuditTrailForm(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_general_AuditTrailForm(item))
+    return lst
+
 def parse_structure_VectorType_RecordType_clientreport_ComplianceName(data):
     data = parse_list(data, 0)
     lst = []
@@ -113,6 +134,18 @@ def parse_structure_RecordType_knowledgemaster_Request_UpdateStatutory(data):
 def parse_structure_RecordType_general_Notification(data):
     from protocol import general
     return general.Notification.parse_structure(data)
+
+def parse_structure_RecordType_general_User(data):
+    from protocol import core
+    return core.User.parse_structure(data)
+
+def parse_structure_RecordType_general_AuditTrail(data):
+    from protocol import general
+    return general.AuditTrail.parse_structure(data)
+
+def parse_structure_RecordType_general_AuditTrailForm(data):
+    from protocol import general
+    return general.AuditTrailForm.parse_structure(data)
 
 def parse_structure_RecordType_technoreports_Request_GetAssignedStatutoryReportFilters(data):
     from protocol import technoreports
@@ -1745,6 +1778,15 @@ def parse_structure_VectorType_RecordType_core_AssignedStatutory(data):
         lst.append(parse_structure_RecordType_core_AssignedStatutory(item))
     return lst
 
+def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_AssignedStatutory(data):
+    data = parse_dictionary(data)    
+    d = {}
+    for key, value in data:
+        key = parse_structure_SignedIntegerType_8(key)
+        value = parse_structure_VectorType_RecordType_core_AssignedStatutory(value)
+        d[key] = value
+    return d
+
 def parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_COMPLIANCE(data):
     data = parse_list(data, 0)
     lst = []
@@ -3116,4 +3158,49 @@ def parse_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCo
     lst = []
     for item in data:
         lst.append(parse_structure_RecordType_technotransactions_AssignedStatutoryCompliance(item))
+    return lst
+
+# clienttransactions ComplianceApplicability
+def parse_structure_RecordType_clienttransactions_ComplianceApplicability(data):
+    from protocol import clienttransactions
+    return clienttransactions.ComplianceApplicability.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_clienttransactions_ComplianceApplicability(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clienttransactions_ComplianceApplicability(item))
+    return lst
+
+# clienttransactions AssignedStatutory
+def parse_structure_RecordType_clienttransactions_AssignedStatutory(data):
+    from protocol import clienttransactions
+    return clienttransactions.AssignedStatutory.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_clienttransactions_AssignedStatutory(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clienttransactions_AssignedStatutory(item))
+    return lst
+
+def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_AssignedStatutory(data):
+    data = parse_dictionary(data)    
+    d = {}
+    for key, value in data:
+        key = parse_structure_SignedIntegerType_8(key)
+        value = parse_structure_VectorType_RecordType_clienttransactions_AssignedStatutory(value)
+        d[key] = value
+    return d
+
+# UnitStatutoryCompliances
+def parse_structure_RecordType_clienttransactions_UnitStatutoryCompliances(data):
+    from protocol import clienttransactions
+    return clienttransactions.UnitStatutoryCompliances.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_clienttransactions_UnitStatutoryCompliances(data):
+    data = parse_list(data, 0)    
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_clienttransactions_UnitStatutoryCompliances(item))
     return lst

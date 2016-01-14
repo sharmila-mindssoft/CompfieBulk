@@ -376,8 +376,7 @@ CREATE TABLE `tbl_activity_log` (
   `action` varchar(500) NOT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`activity_log_id`),
-  CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`),
-  CONSTRAINT `fk_activity_log_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+  CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_email_verification`;
 CREATE TABLE `tbl_email_verification` (

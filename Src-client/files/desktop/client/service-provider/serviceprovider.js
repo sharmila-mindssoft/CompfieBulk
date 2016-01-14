@@ -1,57 +1,70 @@
 var splist;
-$(function() {
-	$("#service-provider-add").hide();
-	initialize();
-});
+function clearMessage() {
+    $(".error-message").hide();
+    $(".error-message").text("");
+}
+function displayMessage(message) {
+    $(".error-message").text(message);
+    $(".error-message").show();
+}
 $("#btn-service-provider-add").click(function(){
-	$("#service-provider-add").show();
 	$("#service-provider-view").hide();
-  $("#service-provider-id").val('');
-  $(".error-message").html('');
-  var x=document.getElementsByTagName("input");
- 	for(i = 0; i<=x.length-1; i++){
-  	if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
-  }
+	$("#service-provider-add").show();	
+	$("#service-provider-id").val('');
+	clearMessage();
+  	var x = document.getElementsByTagName("input");
+ 	for(i = 0; i <= x.length-1; i++){
+  		if(x.item(i).type != "submit" ){ x.item(i).value = ""; }
+  	}
 });
 $("#btn-service-provider-cancel").click(function(){
 	$("#service-provider-add").hide();
 	$("#service-provider-view").show();
 });
 function initialize(){
-	function success(status, data){
-		splist=data;
+	function onSuccess(data){
+		splist = data;
 		loadServiceProviderList(data);
-
 	}
-	function failure(status, data){
+	function onFailure(error){
+		console.log(error);
 	}
-	mirror.getServiceProviders("ClientAdminAPI", success, failure);
+	client_mirror.getServiceProviders(
+		function(error, response){
+			if(error == null){
+				onSuccess(response);
+			}
+			else{
+				onFailure(error);
+			}
+		}
+	);
 }
 function loadServiceProviderList(serviceProviderList){
  	$(".tbody-service-provider-list").find("tr").remove();
-  var sno=0;
+	var sno = 0;
 	var imageName, title;	
 	for(var i in serviceProviderList){
-		var serviceProvider=serviceProviderList[i];
+		var serviceProvider = serviceProviderList[i];
 		for(var j in serviceProvider){
-			var serviceProviderId=serviceProvider[j]["service_provider_id"];
-			var serviceProviderName=serviceProvider[j]["service_provider_name"];
-			var contactPerson=serviceProvider[j]["contact_person"];
-			var contactNo=serviceProvider[j]["contact_no"];			
-			var isActive=serviceProvider[j]["is_active"];
+			var serviceProviderId = serviceProvider[j]["service_provider_id"];
+			var serviceProviderName = serviceProvider[j]["service_provider_name"];
+			var contactPerson = serviceProvider[j]["contact_person"];
+			var contactNo = serviceProvider[j]["contact_no"];			
+			var isActive = serviceProvider[j]["is_active"];
 					
-			if(isActive==1){
-				imageName="icon-active.png";
-				title="Click here to deactivate"
-				statusVal=0;
+			if(isActive == true){
+				imageName = "icon-active.png";
+				title = "Click here to deactivate"
+				statusVal = false;
 			}
 			else{
-				imageName="icon-inactive.png";	
-				title="Click here to Activate"
-				statusVal=1;
+				imageName = "icon-inactive.png";	
+				title = "Click here to Activate"
+				statusVal = true;
 			}
-			var tableRow=$('#templates .table-service-provider-list .table-row');
-			var clone=tableRow.clone();
+			var tableRow = $('#templates .table-service-provider-list .table-row');
+			var clone = tableRow.clone();
 			sno = sno + 1;
 			$('.sno', clone).text(sno);
 			$('.service-provider-name', clone).text(serviceProviderName);
@@ -74,95 +87,108 @@ $("#submit").click(function(){
 	var addressValue = $("#address").val();
 	var contractFromValue = $("#contract-from").val();
 	var contractToValue = $("#contract-to").val();
-	if(serviceProviderNameValue==''){
-		$(".error-message").html('Please Enter Service Provider Name ');
+	if(serviceProviderNameValue == ''){
+		displayMessage('Please Enter Service Provider Name ');
 	}
-	else if(contactPersonValue==''){
-		$(".error-message").html('Please Enter Contact Person Name ');
+	else if(contactPersonValue == ''){
+		displayMessage('Please Enter Contact Person Name ');
 	}
-	else if(countryCodeValue==''){
-		$(".error-message").html('Please Enter Country Code');
+	else if(countryCodeValue == ''){
+		displayMessage('Please Enter Country Code');
 	}
-	else if(mobileNumberValue==''){
-		$(".error-message").html('Please Enter Mobile Number');
+	else if(mobileNumberValue == ''){
+		displayMessage('Please Enter Mobile Number');
 	}
-	else if(addressValue==''){
-		$(".error-message").html('Please Enter Address ');
+	else if(addressValue == ''){
+		displayMessage('Please Enter Address ');
 	}
-	else if(contractFromValue==''){
-		$(".error-message").html('Please Enter Contract From ');
+	else if(contractFromValue == ''){
+		displayMessage('Please Enter Contract From ');
 	}
-	else if(contractToValue==''){
-		$(".error-message").html('Please Enter Contract To');
+	else if(contractToValue == ''){
+		displayMessage('Please Enter Contract To');
 	}
-
-	else if(serviceProviderIdValue==''){		
-		function success(status, data){
-			if(status == 'SaveServiceProviderSuccess') {
-		    	$("#service-provider-add").hide();
-	  			$("#service-provider-view").show();
-	  			initialize();
-	  		}
-	  		if(status == 'ServiceProviderNameAlreadyExists') {
-  				$(".error-message").html('Service Provider Name Already Exists');
-  			}	
-  			if(status == 'ContactNumberAlreadyExists') {
-	  			$(".error-message").html('Contact Number Already Exists');
-  			}	
+	else if(serviceProviderIdValue == ''){		
+		function onSuccess(data){
+		    $("#service-provider-add").hide();
+	  		$("#service-provider-view").show();
+	  		initialize();
 	    }
-		function failure(status, data){
-			$(".error-message").html(status);
+		function onFailure(error){
+			if(error == 'ServiceProviderNameAlreadyExists') {
+  				displayMessage('Service Provider Name Already Exists');
+  			}	
+  			if(error == 'ContactNumberAlreadyExists') {
+	  			displayMessage('Contact Number Already Exists');
+  			}	
+	 
 		}
-		var serviceProviderDetail = {}
-		serviceProviderDetail["service_provider_name"]=serviceProviderNameValue;
-		serviceProviderDetail["address"]=addressValue;
-		serviceProviderDetail["contract_from"]=contractFromValue;
-		serviceProviderDetail["contract_to"]=contractToValue;
-		serviceProviderDetail["contact_person"]=contactPersonValue;
-		serviceProviderDetail["contact_no"]=countryCodeValue+'-'+areaCodeValue+'-'+mobileNumberValue;
-		mirror.saveServiceProvider("ClientAdminAPI", serviceProviderDetail, success, failure);
+		var serviceProviderDetail;
+		var contactNo = countryCodeValue+'-'+areaCodeValue+'-'+mobileNumberValue;
+        serviceProviderDetail = [serviceProviderNameValue, addressValue, contractFromValue, 
+        contractToValue, contactPersonValue, contactNo];
+        serviceProviderDetail = client_mirror.getSaveServiceProviderDict(serviceProviderDetail);
+
+		client_mirror.saveServiceProvider( serviceProviderDetail, 
+			function (error, response){
+				if(error == null){
+					onSuccess(response);
+				}
+				else{
+					onFailure(error);
+				}
+			}
+		);
 	}
 	else{		
-		function success(status, data){
-			if(status == 'UpdateServiceProviderSuccess') {
-				$("#service-provider-add").hide();
-	  			$("#service-provider-view").show();
-	  			initialize();
+		function onSuccess(data){	
+			$("#service-provider-add").hide();
+	  		$("#service-provider-view").show();
+	  		initialize();
   		}
-  		if(status == 'ServiceProviderNameAlreadyExists') {
-  			$(".error-message").html('Service Provider Name Already Exists');
-  		}	
-  		if(status == 'ContactNumberAlreadyExists') {
-  			$(".error-message").html('Contact Number Already Exists');
-  		}	
+  			
+		function onFailure(error){
+			if(error == 'ServiceProviderNameAlreadyExists') {
+  				displayMessage('Service Provider Name Already Exists');
+  			}	
+  			if(error == 'ContactNumberAlreadyExists') {
+  				displayMessage('Contact Number Already Exists');
+  			}
 		}
-		function failure(status, data){
-		}
-		var serviceProviderDetail = {}
-		serviceProviderDetail["service_provider_id"]=parseInt(serviceProviderIdValue);
-		serviceProviderDetail["service_provider_name"]=serviceProviderNameValue;
-		serviceProviderDetail["address"]=addressValue;
-		serviceProviderDetail["contract_from"]=contractFromValue;
-		serviceProviderDetail["contract_to"]=contractToValue;
-		serviceProviderDetail["contact_person"]=contactPersonValue;
-		serviceProviderDetail["contact_no"]=countryCodeValue+'-'+areaCodeValue+'-'+mobileNumberValue;
-		mirror.updateServiceProvider("ClientAdminAPI", serviceProviderDetail, success, failure);
+		var serviceProviderDetail;
+		var contactNo = countryCodeValue+'-'+areaCodeValue+'-'+mobileNumberValue;
+
+        serviceProviderDetail = [parseInt(serviceProviderIdValue), serviceProviderNameValue, addressValue, 
+        contractFromValue, contractToValue, contactPersonValue, contactNo]
+        serviceProviderDetail = client_mirror.getUpdateServiceProviderDict(serviceProviderDetail)
+
+		client_mirror.updateServiceProvider(serviceProviderDetail, 
+			function (error, response){
+				if(error == null){
+					onSuccess(response);
+				}
+				else{
+					onFailure(error);
+				}
+			}
+		);
 	}
 });
 function serviceprovider_edit(serviceProviderId){
-	$("#service-provider-add").show();
 	$("#service-provider-view").hide();
+	$("#service-provider-add").show();
+	clearMessage();
 	$("#service-provider-id").val(serviceProviderId);
 	for(var i in splist){
-		var lists=splist[i];
+		var lists = splist[i];
 		for(var j in lists){
-			if(lists[j]['service_provider_id']==serviceProviderId){
+			if(lists[j]['service_provider_id'] == serviceProviderId){
 				$('#service-provider-name').val(lists[j]['service_provider_name']);
 				$('#contact-person').val(lists[j]['contact_person']);
 				$('#address').val(lists[j]['address']);
 				$('#contract-from').val(lists[j]['contract_from']);
 				$('#contract-to').val(lists[j]['contract_to']);
-				var mobileno=(lists[j]['contact_no']).split("-");
+				var mobileno = (lists[j]['contact_no']).split("-");
 				$('#country-code').val(mobileno[0]);
 				$('#area-code').val(mobileno[1]);
 				$('#mobile-number').val(mobileno[2]);
@@ -171,21 +197,31 @@ function serviceprovider_edit(serviceProviderId){
 	}
 }
 function serviceprovider_active(serviceProviderId, isActive){
-  	function success(status, data){
-	  initialize();
+  	function onSuccess(data){
+		initialize();
   	}
-  	function failure(status, data){
+  	function onFailure(error){
+  		console.log(error);
   	}
-  	mirror.changeServiceProviderStatus("ClientAdminAPI", parseInt(serviceProviderId), isActive, success, failure);
+  	client_mirror.changeServiceProviderStatus(parseInt(serviceProviderId), isActive, 
+  		function (error, response){
+			if(error == null){
+				onSuccess(response);
+			}
+			else{
+				onFailure(error);
+			}
+		}
+	);
 }
 
 
 $("#search-service-provider").keyup(function() { 
   var value = this.value.toLowerCase();
-  $("table").find("tr:not(:first)").each(function(index) {
+  $("table").f0ind("tr:not(:first)").each(function(index) {
     if (index === 0) return;
     var id = $(this).find(".service-provider-name").text().toLowerCase();       
-    $(this).toggle(id.indexOf(value) !== -1);;
+    $(this).toggle(id.indexOf(value) !== -1);
   });
 });
 $("#search-contact-person").keyup(function() { 
@@ -205,5 +241,7 @@ $("#search-contact-no").keyup(function() {
     $(this).toggle(id.indexOf(value) !== -1);;
   });
 });
-
+$(function() {
+	initialize();
+});
 

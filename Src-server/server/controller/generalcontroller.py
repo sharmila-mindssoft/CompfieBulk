@@ -2,7 +2,8 @@ from protocol import login, general, core
 
 __all__ = [
 	"process_general_request",
-	"validate_user_session", "process_save_domain", "process_update_domain",
+	"validate_user_session", "process_save_domain", 
+	"process_update_domain",
 	"process_change_domain_status", 
 	"process_get_domains",
 	"procees_update_user_profile",
@@ -38,6 +39,8 @@ def process_general_request(request, db) :
 		return process_update_country(db, request_frame, user_id)
 	if type(request_frame) is general.ChangeCountryStatus :
 		return process_change_country_status(db, request_frame, user_id)
+	if type(request_frame) is general.GetAuditTrails :
+		return process_get_audit_trails(db, request_frame, user_id)
 
 
 def validate_user_session(db, session_token):
@@ -142,3 +145,7 @@ def process_update_notification_status(db, request, user_id):
 	notification_id = request.notification_id
 	has_read = request.has_read
 	return general.UpdateNotificationStatusSuccess()
+
+def process_get_audit_trails(db, request_frame, user_id):
+	audit_trails = db.get_audit_trails(user_id)
+	return audit_trails

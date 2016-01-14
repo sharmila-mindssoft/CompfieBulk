@@ -1,10 +1,10 @@
 from protocol import (clienttransactions, core)
 
 __all__ = [
-	"process_client_master_requests"
+	"process_client_transaction_requests"
 ]
 
-def process_client_master_requests(request, db) :
+def process_client_transaction_requests(request, db) :
 	client_info = request.session_token.split("-")
 	request = request.request
 	client_id = int(client_info[0])
@@ -14,7 +14,7 @@ def process_client_master_requests(request, db) :
 		return login.InvalidSessionToken()
 
 	if type(request) is clienttransactions.GetStatutorySettings :
-		pass
+		return process_get_statutory_settings(db, session_user, client_id)
 
 	elif type(request) is clienttransactions.UpdateStatutorySettings :
 		pass
@@ -30,4 +30,6 @@ def process_client_master_requests(request, db) :
 
 	elif type(request) is clienttransactions.ReassignCompliance :
 		pass
-	
+
+def process_get_statutory_settings(db, session_user, client_id):
+	return db.get_statutory_settings(session_user, client_id)

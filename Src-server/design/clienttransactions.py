@@ -15,7 +15,8 @@ __all__=  [
 	"PAST_RECORD_COMPLIANCE", "UNIT_WISE_STATUTORIES", 
 	"UNIT_WISE_COMPLIANCE","ASSIGNCOMPLIANCEUSERS","STATUTORYWISECOMPLIANCE",
 	"USERWISESTATUTORIES","USERWISEUNITS","USERWISECOMPLIANCE","APPROVALCOMPLIANCE",
-	"APPORVALCOMPLIANCELIST", "STATUTORY_WISE_COMPLIANCES"
+	"APPORVALCOMPLIANCELIST", "STATUTORY_WISE_COMPLIANCES",
+	"UnitStatutoryCompliances"
 ]
 
 AssignedStatutoryList = VectorType(AssignedStatutory)
@@ -40,8 +41,7 @@ GetStatutorySettings = RecordType("GetStatutorySettings", [
 
 UpdateStatutorySettings = RecordType("UpdateStatutorySettings", [
 	Field("unit_id", UNIT_ID),
-	Field("domain_id", DOMAIN_ID),
-	Field("statutories", AssignedStatutoryList)
+	Field("statutories", MapType(DOMAIN_ID, AssignedStatutoryList))
 ])
 
 ### Assign Compliance
@@ -145,17 +145,20 @@ RequestFormat = RecordType("RequestFormat", [
 
 ### Statutory Settings
 
-GetStatutorySettingsSuccess = RecordType("GetStatutorySettingsSuccess", [
+UnitStatutoryCompliances = RecordType("UnitStatutoryCompliances", [
 	Field("unit_id", UNIT_ID),
 	Field("unit_name", UNIT_NAME),
 	Field("address", ADDRESS),
 	Field("country_name", COUNTRY_NAME),
-	Field("domain_id", DOMAIN_ID),
-	Field("domain_name", DOMAIN_NAME),
+	Field("domain_names", VectorType(DOMAIN_NAME))
 	Field("business_group_name", BUSINESS_GROUP_NAME),
 	Field("legal_entity_name", LEGAL_ENTITY_NAME),
 	Field("division_name", DIVISION_NAME),
-	Field("statutories", AssignedStatutoryList)
+	Field("statutories", MapType(DOMAIN_ID, AssignedStatutoryList))
+])
+
+GetStatutorySettingsSuccess = RecordType("GetStatutorySettingsSuccess", [
+	Field("statutories", VectorType(UnitStatutoryCompliances))
 ])
 
 UpdateStatutorySettingsSuccess = RecordType("UpdateStatutorySettingsSuccess", [

@@ -10,7 +10,6 @@ from technomastercontroller import (
 	get_clients,
 	change_client_status,
 	reactivate_unit,
-	get_profiles,
 	get_client_profile
 )
 

@@ -7,7 +7,8 @@ from common import (CLIENT_NAME, URL, DATE, NO_OF_USER_LICENCE, CLIENT_ID, USER_
 	INDUSTRY_ID)
 from core import (Domain, Country, User, GroupCompany, BusinessGroup, Division,
 	UnitDetails, GroupCompanyDetail, ClientConfiguration, LegalEntity, CountryWiseUnits,
-	Unit)
+	Unit, Industry, Geography, Level)
+
 
 __all__=  [
 	"Request", "Response", "RequestFormat", "LICENCE_HOLDER_DETAILS", "PROFILE_DETAIL",
@@ -25,6 +26,7 @@ BusinessGroupList= VectorType(BusinessGroup)
 LegalEntityList = VectorType(LegalEntity)
 DivisionList = VectorType(Division)
 UnitDetailsList = VectorType(UnitDetails)
+LevelList = VectorType(Level)
 
 #	
 #	Request
@@ -187,6 +189,9 @@ InvalidClientId = RecordType("InvalidClientId", [
 
 GetClientsSuccess = RecordType("GetClientsSuccess", [
 	Field("countries", CountryList),
+	Field("geography_levels", MapType(COUNTRY_ID, LevelList)),
+	Field("geographies", MapType(COUNTRY_ID, VectorType(Geography))),
+	Field("industries", VectorType(Industry))
 	Field("domains", DomainList),
 	Field("group_companies", ClientList),
 	Field("business_groups", OptionalType(BusinessGroupList)),
@@ -265,13 +270,12 @@ PROFILE_DETAIL = RecordType("PROFILE_DETAIL", [
 ])
 
 PROFILES = RecordType("PROFILES", [
-	Field("client_id", GROUP_ID),
-	Field("profile_detail", PROFILE_DETAIL),
+	Field(GROUP_ID, PROFILE_DETAIL)
 ])
 
 GetClientProfileSuccess = RecordType("GetClientProfileSuccess", [
 	Field("group_companies", ClientList),
-	Field("profiles", VectorType(PROFILES))
+	Field("profiles", PROFILES)
 ])
 
 Response = VariantType("Response", [

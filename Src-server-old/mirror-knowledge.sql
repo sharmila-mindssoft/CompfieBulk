@@ -451,9 +451,9 @@ DROP TABLE IF EXISTS `tbl_units`;
 CREATE TABLE `tbl_units` (
   `unit_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
-  `business_group_id` int(11) NOT NULL,
+  `business_group_id` int(11) NULL,
   `legal_entity_id` int(11) NOT NULL,
-  `division_id` int(11) NOT NULL,
+  `division_id` int(11)  NULL,
   `country_id` int(11) NOT NULL,
   `geography_id` int(11) NOT NULL,
   `industry_id` int(11) NOT NULL,
@@ -521,7 +521,6 @@ CREATE TABLE `tbl_activity_log` (
   `created_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`activity_log_id`),
   CONSTRAINT `fk_activity_log_forms` FOREIGN KEY (`form_id`) REFERENCES `tbl_forms` (`form_id`)
-  --CONSTRAINT `fk_activity_log_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_notifications`;
