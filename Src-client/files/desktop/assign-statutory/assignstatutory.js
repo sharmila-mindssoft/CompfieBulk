@@ -24,8 +24,26 @@ function displayMessage(message) {
 
 function clearValues(levelvalue) {
   if(levelvalue == 'all'){
+    assignStatutoryCountryId = 0;
+    assignStatutoryCountryValue = null;
+    assignStatutoryGroupId = 0;
+    assignStatutoryGroupValue = null;
+    assignStatutoryBusinessGroupId = 0;
+    assignStatutoryBusinessGroupValue = null;
+    assignStatutoryLegalEntityId = 0;
+    assignStatutoryLegalEntityValue = null;
+    assignStatutoryDivisionId = 0;
+    assignStatutoryDivisionValue = null;
+    assignStatutoryGeographyLevelId = 0;
+    assignStatutoryGeographyLevelValue = null;
+    assignStatutoryLocationId = 0;
+    assignStatutoryLocationValue = null;
+    assignStatutoryIndustryId = 0;
+    assignStatutoryIndustryValue = null;
     assignStatutoryUnitIds = [];
     assignStatutoryUnitValues = [];
+    assignStatutoryDomainId = 0;
+    assignStatutoryDomainValue = null;
 
     $('#group').empty();
     $('#businessgroup').empty();
@@ -543,6 +561,7 @@ clearValues('all');
 $(".breadcrumbs").html('');
 $("#activate-step-submit").hide();
 
+
 function onSuccess(data){
   loadCountriesList(data);
 }
@@ -619,6 +638,7 @@ function validate_firsttab(){
       }
       function onFailure(error){
       }
+
       mirror.getAssignStatutoryWizardTwo(parseInt($('.countrylist.active').attr('id')), parseInt($('.domainlist.active').attr('id')), parseInt($('.industrylist.active').attr('id')), parseInt($('.locationlist.active').attr('id')), unitIdTab2, 
         function (error, response) {
               if (error == null){
@@ -629,6 +649,7 @@ function validate_firsttab(){
               }
           }
     );
+
       displayMessage("");
       return true;
     }    
@@ -740,157 +761,45 @@ function saveorsubmit(submissionType){
   function onSuccess(data){
     getAssignedStatutories ();
 $('#activate-step-finish').on('click', function(e) {
-/*getGeographyResult();
-if (validate_secondtab()){
-savestatutorymapping();
-}*/
+
 if (validate_secondtab()){
 
   //siva
   var assignedStatutories = [];
-
   var statutoriesCount= 1;
   var actCount = 1;
   for(var statutory in statutoriesList){
     var level1StatutoryId = statutoriesList[statutory]["level_1_statutory_id"];
     var applicableStatus = null;
     var notApplicableRemarks = null;
-   
-    if($('#act1').is(":checked")){
+    
+    if($('#act'+actCount).is(":checked")){
       applicableStatus = true;
     }
     else{
       applicableStatus = false;
       notApplicableRemarks = $('#remarkvalue1').val();
+      if(notApplicableRemarks.length==0){
+        displayMessage("Remarks required for not applicable Act");
+        return false;
+      }
     }
 
-    
     var complianceslist = statutoriesList[statutory]["compliances"];
-    //var compliances = "{";
-   /* for(var compliance in complianceslist){    
-      var complianceId = complianceslist[compliance]["compliance_id"];*/
+    var compliances = { };
+    for(var compliance in complianceslist){    
+      var complianceId = complianceslist[compliance]["compliance_id"];
+      var complianceApplicableStatus = false;
+      if($('#statutory'+statutoriesCount).is(":checked"))
+        complianceApplicableStatus = true;
 
-      compliances = { }
-        for (x in complianceslist)
-            compliances[x["compliance_id"]] =+ false
-
-
-     /* jsonval = "{"
-      for index, x in enumerate(complianceslist):
-      #for x in complianceslist:
-          if index==(len(loaddata)-1):
-              jsonval += '\"'+str(x["compliance_id"])+"\":\""+true+"\""
-          else:
-              jsonval += '\"'+str(x["compliance_id"])+"\":\""+true+"\","
-      jsonval +="}"*/
-
-      console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCC: "+compliances);
-     /* compliances += 
+      compliances[complianceId] = complianceApplicableStatus;
       statutoriesCount++;
-    }  */
+    } 
     actCount++;
-
     assignedstatutoriesData = mirror.assignedStatutories(level1StatutoryId,compliances, applicableStatus, notApplicableRemarks);
     assignedStatutories.push(assignedstatutoriesData);
-    console.log(assignedStatutories)
   }
-
-  
-  /*function onSuccess(data){
-    getAssignedStatutoriesList ();
->>>>>>> update assignstatuto save - incomplete
-    $("#assignstatutory-add").hide();
-    $("#assignstatutory-view").show();
-    $('ul.setup-panel li:eq(0)').addClass('active');
-    $('ul.setup-panel li:eq(1)').addClass('disabled');
-    $('ul.setup-panel li a[href="#step-1"]').trigger('click');
-    $(".tbody-assignstatutory").find("tbody").remove();
-  }
-  function onFailure(error){
-    displayMessage(error)
-  }
-<<<<<<< HEAD
-  mirror.saveOrSubmitAssignStatutory(assignStatutoryCountryId, assignStatutoryGroupId, assignStatutoryLocationId, assignStatutoryUnitIds, assignStatutoryDomainId, submissionType, clientStatutoryId, assignedStatutories, 
-=======
-  
-
- 
-  mirror.saveOrSubmitAssignStatutory(assignStatutoryCountryId, assignStatutoryGroupId, assignStatutoryLocationId, assignStatutoryUnitIds, assignStatutoryDomainId, "Save", null, assignedStatutories, 
->>>>>>> update assignstatuto save - incomplete
-    function (error, response) {
-    if (error == null){
-      onSuccess(response);
-    }
-    else {
-      onFailure(error);
-    }
-  }
-<<<<<<< HEAD
-  );
-  }
-}
-$('#activate-step-finish').on('click', function(e) {
-  saveorsubmit("Save")
-})
-$('#activate-step-submit').on('click', function(e) {
-  saveorsubmit("Submit")
-})
-
-
-function displayEdit(client_statutory_id, country_id, group_id, location_id, domain_id, unit_id, submit_type){
-   function onSuccess(data){
-      clearValues('all');
-      $('ul.setup-panel li:eq(0)').hide();
-      $("#step-1").hide();
-      $("#step-2").show();
-      $('ul.setup-panel li:eq(1)').css({'width': '100%'});
-      $('ul.setup-panel li:eq(1)').html('<a href="#step-2"><h4 class="list-group-item-heading">Select Statutory</h4></a>');
-      $('ul.setup-panel li:eq(1)').addClass('active');
-      $("#assignstatutory-view").hide();
-      $("#assignstatutory-add").show();
-      if(submit_type == 'edit'){
-        $("#backward-step-1").hide();
-        $("#activate-step-finish").show();
-        $("#activate-step-submit").hide();
-      }else{
-        $("#backward-step-1").hide();
-        $("#activate-step-finish").hide();
-        $("#activate-step-submit").show();
-      }
-      
-      var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
-      $(".breadcrumbs").html(data["country_name"] + arrowimage + data["group_name"] + arrowimage + data["business_group_name"] + arrowimage + data["legal_entity_name"] + arrowimage + data["division_name"] + arrowimage + data["geography_name"] + arrowimage + data["unit_name"] + arrowimage + data["domain_name"]);
-      
-      statutoriesList = data["statutories"];
-      newCompliancesList = data["new_compliances"];
-      $("#ascountry").val(country_id);
-      $("#asgroup").val(group_id);
-      $("#aslocation").val(location_id);
-      $("#asdomain").val(domain_id);
-      assignStatutoryUnitIds = [];
-      assignStatutoryUnitIds.push(unit_id);
-      $("#clientstatutoryid").val(client_statutory_id);
-
-      load_secondwizard();
-      }
-      function onFailure(error){
-        displayMessage(error)
-      }
-      mirror.getAssignedStatutoryById(parseInt(client_statutory_id),
-        function (error, response) {
-              if (error == null){
-                onSuccess(response);
-              }
-              else {
-                onFailure(error);
-              }
-          }
-    );
-}
-
-
-=======
-  );*/
   }
 })
 function loadAssignedStatutoriesList(assignedStatutoriesList){
