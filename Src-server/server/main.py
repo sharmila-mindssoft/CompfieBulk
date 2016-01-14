@@ -232,6 +232,7 @@ TEMPLATE_PATHS = [
     ("/assign-statutory", "files/desktop/assign-statutory/assignstatutory.html", None, {}),
     #Techno reports
     ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {}),
+    ("/assigned-statutory-report", "files/desktop/assigned-statutory-report/assignedstatutoryreport.html", None, {}),
     #audit trial
     ("/audit-trail", "files/desktop/audit-trail/audittrail.html", None, {}),
    ]
@@ -244,12 +245,13 @@ def handle_root(request, response):
     self.write(output)
 
 def run_server(port):
-    io_loop = IOLoop()
+    io_loop = IOLoop()  
 
     def delay_initialize():
         db = KnowledgeDatabase(
-            "localhost", "root", "123456", "mirror_knowledge"
+            "localhost", "root", "123456", "mirror_knowledge_siva"
         )
+        print db
         web_server = WebServer(io_loop)
 
         web_server.url("/", GET=handle_root)
