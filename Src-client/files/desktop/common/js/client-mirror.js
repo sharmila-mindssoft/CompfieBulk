@@ -534,6 +534,35 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function updateCompliances(complianceId, optedStatus, remarks) {
+        return {
+            "compliance_id": complianceId,
+            "compliance_opted_status": optedStatus,
+            "compliance_remarks": remarks
+        }
+    }
+
+    function updateStatutory(clientStatutoryId, compliances, applicableStatus, applicableRemarks) {
+        return {
+            "client_statutory_id": clientStatutoryId,
+            "compliances": compliances,
+            "applicable_status": applicableStatus,
+            "not_applicable_remarks": applicableRemarks
+        };
+    }
+
+    function updateStatutorySettings(unitId, statutories, callback){
+        var request = [
+            "UpdateStatutorySettings", 
+            {
+                "unit_id": unitId,
+                "statutories": statutories
+            }
+        ];
+        var callerName = "api/client_transaction";
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -590,7 +619,10 @@ function initClientMirror() {
 
         getComplianceDetailsReportFilters: getComplianceDetailsReportFilters,
 
-        getStatutorySettings: getStatutorySettings
+        getStatutorySettings: getStatutorySettings,
+        updateCompliances: updateCompliances,
+        updateStatutory: updateStatutory,
+        updateStatutorySettings: updateStatutorySettings
     }
 
 }
