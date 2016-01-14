@@ -42,7 +42,6 @@ function displayMessage(message) {
 }
 
 function clearValues(levelvalue) {
-
   if(levelvalue == 'all'){
     assignStatutoryCountryId = 0;
     assignStatutoryCountryValue = null;
@@ -227,14 +226,14 @@ function actstatus(element){
 
 function make_breadcrumbs(){
     var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
-    $(".breadcrumbs").html(assignStatutoryCountryValue + arrowimage + assignStatutoryGroupValue + arrowimage + assignStatutoryBusinessGroupValue + arrowimage + assignStatutoryLegalEntityValue + arrowimage + assignStatutoryDivisionValue + arrowimage + assignStatutoryGeographyLevelValue + arrowimage + assignStatutoryLocationValue + arrowimage + assignStatutoryIndustryValue + arrowimage + assignStatutoryUnitValues + arrowimage + assignStatutoryDomainValue);
+    $(".breadcrumbs").html(assignStatutoryCountryValue + arrowimage + assignStatutoryGroupValue + arrowimage + assignStatutoryBusinessGroupValue + arrowimage + assignStatutoryLegalEntityValue + arrowimage + assignStatutoryDivisionValue + arrowimage + assignStatutoryLocationValue + arrowimage + assignStatutoryUnitValues + arrowimage + assignStatutoryDomainValue);
 }
 
 function load_secondwizard(){
   var count=1;
   var statutoriesCount= 1;
   var actCount = 1;
-  $(".tbody-assignstatutory").find("tr").remove();
+  $(".tbody-assignstatutory").find("tbody").remove();
   for(var statutory in statutoriesList){
     var actname = statutoriesList[statutory]["level_1_statutory_name"];
     var complianceslist = statutoriesList[statutory]["compliances"];
@@ -519,7 +518,6 @@ $("#country").click(function(event){
   assignStatutoryCountryValue = $(event.target).text();
 
   function onSuccess(data){
-  //countriesList = data["countries"];
   groupcompaniesList = data["group_companies"];
   businessgroupsList = data["business_groups"];
   legalentitiesList = data["legal_entities"];
@@ -560,10 +558,11 @@ function loadCountriesList(data){
 $(".btn-assignstatutory-add").click(function(){
 $("#assignstatutory-view").hide();
 $("#assignstatutory-add").show();
-$("#edit_assignstatutory_id").val('');
+$("#clientstatutoryid").val('');
 displayMessage('');
-clearValues("all");
+clearValues('all');
 $(".breadcrumbs").html('');
+$("#activate-step-submit").hide();
 
 function onSuccess(data){
   loadCountriesList(data);
@@ -590,14 +589,8 @@ function validate_firsttab(){
   }else if (assignStatutoryGroupId == 0){
     displayMessage("Group Required");
     return false;
-  }else if (assignStatutoryBusinessGroupId == 0){
-    displayMessage("Business Group Required");
-    return false;
   }else if (assignStatutoryLegalEntityId == 0){
     displayMessage("Legal Entity Required");
-    return false;
-  }else if (assignStatutoryDivisionId == 0){
-    displayMessage("Division Required");
     return false;
   }else if (assignStatutoryGeographyLevelId == 0){
     displayMessage("Geography Level Required");
@@ -654,13 +647,6 @@ function validate_firsttab(){
 }
 
 function validate_secondtab(){
-  /*if (sm_geographyids.length == 0){
-    displayMessage("Atleast one Location should be selected");
-  }else{
-    displayMessage("");
-    return true;
-  }*/
-
   return true;
 }
 
@@ -691,11 +677,14 @@ $('ul.setup-panel li:eq(1)').removeClass('disabled');
 $('ul.setup-panel li a[href="#step-1"]').trigger('click');
 
 })
-$('#activate-step-finish').on('click', function(e) {
 
-if (validate_secondtab()){
-
-  //siva
+function saveorsubmit(submissionType){
+  if (validate_secondtab()){
+  var clientStatutoryId = null;
+  if($("#clientstatutoryid").val() != ''){
+    clientStatutoryId = parseInt($("#clientstatutoryid").val());
+    
+  }
   var assignedStatutories = [];
   var statutoriesCount= 1;
   var actCount = 1;
@@ -744,7 +733,7 @@ if (validate_secondtab()){
   function onFailure(error){
     displayMessage(error)
   }
-  mirror.saveOrSubmitAssignStatutory(assignStatutoryCountryId, assignStatutoryGroupId, assignStatutoryLocationId, assignStatutoryUnitIds, assignStatutoryDomainId, "Save", null, assignedStatutories, 
+  mirror.saveOrSubmitAssignStatutory(assignStatutoryCountryId, assignStatutoryGroupId, assignStatutoryLocationId, assignStatutoryUnitIds, assignStatutoryDomainId, submissionType, clientStatutoryId, assignedStatutories, 
     function (error, response) {
     if (error == null){
       onSuccess(response);
@@ -755,16 +744,92 @@ if (validate_secondtab()){
   }
   );
   }
+}
+$('#activate-step-finish').on('click', function(e) {
+  saveorsubmit("Save")
 })
+$('#activate-step-submit').on('click', function(e) {
+  saveorsubmit("Submit")
+})
+
+function displayEdit(client_statutory_id){
+   function onSuccess(data){
+        clearValues('all');
+        statutoriesList = data["statutories"];
+        $("#assignstatutory-view").hide();
+        $("#assignstatutory-add").show();
+        $("#clientstatutoryid").val(client_statutory_id);
+        $('ul.setup-panel li:eq(0)').removeClass('active');
+        $('ul.setup-panel li:eq(0)').addClass('disabled');
+        $('ul.setup-panel li:eq(1)').removeClass('disabled');
+        $('ul.setup-panel li:eq(1)').addClass('active');
+        $("#step-1").hide();
+        $("#step-2").show();
+        $("#backward-step-1").hide();
+        $("#activate-step-submit").hide();
+        
+        var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
+        $(".breadcrumbs").html(data["country_name"] + arrowimage + data["group_name"] + arrowimage + data["business_group_name"] + arrowimage + data["legal_entity_name"] + arrowimage + data["division_name"] + arrowimage + data["geography_name"] + arrowimage + data["unit_name"] + arrowimage + data["domain_name"]);
+        load_secondwizard();
+      }
+      function onFailure(error){
+        displayMessage(error)
+      }
+      mirror.getAssignedStatutoryById(parseInt(client_statutory_id),
+        function (error, response) {
+              if (error == null){
+                onSuccess(response);
+              }
+              else {
+                onFailure(error);
+              }
+          }
+    );
+}
+
+function displayView(client_statutory_id){
+   function onSuccess(data){
+      clearValues('all');
+      $('ul.setup-panel li:eq(0)').hide();
+      $("#step-1").hide();
+      $("#step-2").show();
+      $('ul.setup-panel li:eq(1)').css({'width': '100%'});
+      $('ul.setup-panel li:eq(1)').html('<a href="#step-2"><h4 class="list-group-item-heading">Select Statutory</h4></a>');
+      $('ul.setup-panel li:eq(1)').addClass('active');
+      $("#assignstatutory-view").hide();
+      $("#assignstatutory-add").show();
+      $("#backward-step-1").hide();
+      $("#activate-step-finish").hide();
+      $("#activate-step-submit").show();
+      $(".breadcrumbs").hide();
+
+      statutoriesList = data["statutories"];
+      $("#clientstatutoryid").val(client_statutory_id);
+
+      load_secondwizard();
+      }
+      function onFailure(error){
+        displayMessage(error)
+      }
+      mirror.getAssignedStatutoryById(parseInt(client_statutory_id),
+        function (error, response) {
+              if (error == null){
+                onSuccess(response);
+              }
+              else {
+                onFailure(error);
+              }
+          }
+    );
+}
+
+
 function loadAssignedStatutoriesList(assignedStatutoriesList){
   var j = 1;
-  var client_saved_statutory_id = 0;
-  var client_assigned_statutory_id = 0;
+  var client_statutory_id = 0;
   $(".tbody-assignstatutory-list").find("tr").remove();
     for(var entity in assignedStatutoriesList) {
-      client_saved_statutory_id = assignedStatutoriesList[entity]["client_saved_statutory_id"];
-      client_assigned_statutory_id = assignedStatutoriesList[entity]["client_assigned_statutory_id"];
-      
+      client_statutory_id = assignedStatutoriesList[entity]["client_statutory_id"];
       var tableRow=$('#templates .table-assignstatutory .table-row');
       var clone=tableRow.clone();
       $('.tbl_sno', clone).text(j);
@@ -782,8 +847,8 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
       }
       else{
         $('.tbl_status', clone).text("Pending");
-        $('.tbl_edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+client_saved_statutory_id+')"/>');
-      $('.tbl_view', clone).html('<img src=\'/images/icon-viewsubmit.png\' onclick="changeStatus('+client_saved_statutory_id+')"/>');
+        $('.tbl_edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+client_statutory_id+')"/>');
+      $('.tbl_view', clone).html('<img src=\'/images/icon-viewsubmit.png\' onclick="displayView('+client_statutory_id+')"/>');
       }
       $('.tbody-assignstatutory-list').append(clone);
       j = j + 1;
@@ -791,7 +856,6 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
 }
 
 function getAssignedStatutories () {
-
   function onSuccess(data){
   assignedStatutoriesList = data["assigned_statutories"];
   loadAssignedStatutoriesList(assignedStatutoriesList);
@@ -810,7 +874,6 @@ function getAssignedStatutories () {
   );
   loadAssignedStatutoriesList(assignedStatutoriesList);
 }
-
 
 $(".listfilter").keyup(function() {
   var filter1 = $("#filter1").val().toLowerCase();
@@ -840,7 +903,6 @@ $(".listfilter").keyup(function() {
         filter10val = 'Submitted';
       else
         filter10val = "Pending";
-    
     if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2) && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4) && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6) && ~filter7val.toLowerCase().indexOf(filter7) && ~filter8val.toLowerCase().indexOf(filter8) && ~filter9val.toLowerCase().indexOf(filter9) && ~filter10val.toLowerCase().indexOf(filter10)) 
     {
       filteredList.push(assignedStatutoriesList[entity]);
@@ -851,7 +913,6 @@ $(".listfilter").keyup(function() {
 
 $(document).ready(function () {
   getAssignedStatutories ();
-
   $("#filter_country").keyup( function() {
     var filter = $("#filter_country").val().toLowerCase();
     var lis = document.getElementsByClassName('countrylist');
