@@ -27,9 +27,11 @@ def process_get_assigned_statutory_report_filters(db, user_id):
 	legal_entities = db.get_legal_entities_for_user(user_id)
 	divisions = db.get_divisions_for_user(user_id)
 	units = db.get_units_for_user(user_id)
-	return technoreports.GetClientDetailsReportFiltersSuccess(
+	level_1_statutories = db.get_country_wise_level_1_statutoy()
+	return technoreports.GetAssignedStatutoryReportFiltersSuccess(
 		countries, domains, group_companies,
-		business_groups, legal_entities, divisions, units
+		business_groups, legal_entities, divisions, units,
+		level_1_statutories
 	)
 
 def process_get_assigned_statutory_report_data(db, request_frame, user_id):
