@@ -1813,6 +1813,16 @@ def to_structure_VectorType_RecordType_core_AssignedStatutory(data):
         lst.append(to_structure_RecordType_core_AssignedStatutory(item))
     return lst
 
+def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_AssignedStatutory(data):
+    data = parse_dictionary(data)    
+    d = {}
+    for key, value in data:
+        key = to_structure_SignedIntegerType_8(key)
+        value = to_structure_VectorType_RecordType_core_AssignedStatutory(value)
+        d[key] = value
+    return d
+
+
 def to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_COMPLIANCE(data):
     data = parse_list(data, 0)
     lst = []
@@ -3142,4 +3152,109 @@ def to_structure_VectorType_RecordType_admin_UserGroup(data):
     lst = []
     for item in data:
         lst.append(to_structure_RecordType_admin_UserGroup(item))
+    return lst
+
+def to_structure_RecordType_knowledgetransaction_ApproveMapping(data):
+    from protocol import knowledgetransaction
+    return knowledgetransaction.ApproveMapping.parse_structure(data)
+
+def to_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_knowledgetransaction_ApproveMapping(item))
+    return lst
+
+def to_structure_MapType_UnsignedIntegerType_32_Bool(data):
+    data = parse_dictionary(data)
+    d = {}
+    for key, value in data.items():
+        key = to_structure_UnsignedIntegerType_32(key)
+        value = to_structure_Bool(value)
+        d[key] = value
+    return d
+
+def to_structure_RecordType_technotransactions_AssignedStatutoryCompliance(data):
+    from protocol import technotransactions
+    return technotransactions.AssignedStatutoryCompliance.to_structure(data)
+
+def to_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCompliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_technotransactions_AssignedStatutoryCompliance(item))
+    return lst
+
+
+# clienttransactions ComplianceApplicability
+def to_structure_RecordType_clienttransactions_ComplianceApplicability(data):
+    from protocol import clienttransactions
+    return clienttransactions.ComplianceApplicability.to_structure(data)
+
+def to_structure_VectorType_RecordType_clienttransactions_ComplianceApplicability(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_clienttransactions_ComplianceApplicability(item))
+    return lst
+
+# clienttransactions AssignedStatutory
+def to_structure_RecordType_clienttransactions_AssignedStatutory(data):
+    from protocol import clienttransactions
+    return clienttransactions.AssignedStatutory.to_structure(data)
+
+def to_structure_VectorType_RecordType_clienttransactions_AssignedStatutory(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_clienttransactions_AssignedStatutory(item))
+    return lst
+
+def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_AssignedStatutory(data):
+    data = parse_dictionary(data)    
+    d = {}
+    print data
+    for key, value in data.items():
+        key = to_structure_SignedIntegerType_8(key)
+        value = to_structure_VectorType_RecordType_clienttransactions_AssignedStatutory(value)
+        d[key] = value
+    return d
+
+# UnitStatutoryCompliances
+def to_structure_RecordType_clienttransactions_UnitStatutoryCompliances(data):
+    from protocol import clienttransactions
+    return clienttransactions.UnitStatutoryCompliances.to_structure(data)
+
+def to_structure_VectorType_RecordType_clienttransactions_UnitStatutoryCompliances(data):
+    data = parse_list(data, 0)    
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_clienttransactions_UnitStatutoryCompliances(item))
+    return lst
+
+
+# Clienttransaction ApplicableCompliance
+def to_structure_RecordType_clienttransactions_ApplicableCompliance(data):
+    from protocol import clienttransactions
+    return clienttransactions.ApplicableCompliance.to_structure(data)
+
+
+def to_structure_VectorType_RecordType_clienttransactions_ApplicableCompliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_clienttransactions_ApplicableCompliance(item))
+    return lst
+
+# clienttransaction UpdateStatutoryCompliance
+def to_structure_RecordType_clienttransactions_UpdateStatutoryCompliance(data):
+    from protocol import clienttransactions
+    return clienttransactions.UpdateStatutoryCompliance.to_structure(data)
+
+
+def to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_clienttransactions_UpdateStatutoryCompliance(item))
     return lst

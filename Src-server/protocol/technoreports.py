@@ -20,7 +20,10 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_technoreports_UNIT_WISE_ASSIGNED_STATUTORIES,
     parse_structure_CustomTextType_50,
-    parse_structure_OptionalType_VectorType_RecordType_core_Division
+    parse_structure_OptionalType_VectorType_RecordType_core_Division,
+    parse_structure_OptionalType_Bool,
+    parse_structure_CustomTextType_100,
+    parse_structure_CustomTextType_250
 )
 from protocol.to_structure import (
     to_structure_VectorType_Text,
@@ -42,7 +45,10 @@ from protocol.to_structure import (
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_VectorType_RecordType_technoreports_UNIT_WISE_ASSIGNED_STATUTORIES,
     to_structure_CustomTextType_50,
-    to_structure_OptionalType_VectorType_RecordType_core_Division
+    to_structure_OptionalType_VectorType_RecordType_core_Division,
+    to_structure_OptionalType_Bool,
+    to_structure_CustomTextType_100,
+    to_structure_CustomTextType_250
 )
 
 #
@@ -182,7 +188,7 @@ class GetAssignedStatutoryReport(Request):
         level_1_statutory_id = data.get("level_1_statutory_id")
         level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
         applicability_status = data.get("applicability_status")
-        applicability_status = parse_structure_EnumType_core_APPLICABILITY_STATUS(applicability_status)
+        applicability_status = parse_structure_OptionalType_Bool(applicability_status)
         return GetAssignedStatutoryReport(country_id, domain_id, group_id, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_id, applicability_status)
 
     def to_inner_structure(self):
@@ -195,7 +201,7 @@ class GetAssignedStatutoryReport(Request):
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "level_1_statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
-            "applicability_status": to_structure_EnumType_core_APPLICABILITY_STATUS(self.applicability_status),
+            "applicability_status": to_structure_OptionalType_Bool(self.applicability_status),
         }
 
 
@@ -441,26 +447,46 @@ class COUNTRY_WISE_NOTIFICATIONS(object):
 #
 
 class UNIT_WISE_ASSIGNED_STATUTORIES(object):
-    def __init__(self, unit_id, address, assigned_statutories):
+    def __init__(self, unit_id, unit_name, group_name, business_group_name, legal_entity_name, division_name, address, assigned_statutories):
         self.unit_id = unit_id
+        self.unit_name = unit_name
+        self.group_name = group_name
+        self.business_group_name = business_group_name
+        self.legal_entity_name = legal_entity_name
+        self.division_name = division_name
         self.address = address
         self.assigned_statutories = assigned_statutories
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "address", "assigned_statutories"])
+        data = parse_dictionary(data, ["unit_id", "unit_name", "group_name", "business_group_name", "legal_entity_name", "division_name", "address", "assigned_statutories"])
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_VectorType_RecordType_core_Country(unit_id)
+        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_name = data.get("unit_name")
+        unit_name = parse_structure_CustomTextType_100(unit_name)
+        group_name = data.get("group_name")
+        group_name = parse_structure_CustomTextType_50(group_name)
+        business_group_name = data.get("business_group_name")
+        business_group_name = parse_structure_CustomTextType_50(business_group_name)
+        legal_entity_name = data.get("parse_structure_CustomTextType_50")
+        legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
+        division_name = data.get("division_name")
+        division_name = parse_structure_CustomTextType_50(division_name)
         address = data.get("address")
-        address = parse_structure_VectorType_RecordType_core_Domain(address)
+        address = parse_structure_CustomTextType_500(address)
         assigned_statutories = data.get("assigned_statutories")
         assigned_statutories = parse_structure_VectorType_RecordType_core_AssignedStatutory(assigned_statutories)
-        return UNIT_WISE_ASSIGNED_STATUTORIES(unit_id, address, assigned_statutories)
+        return UNIT_WISE_ASSIGNED_STATUTORIES(unit_id, unit_name, group_name, business_group_name, legal_entity_name, division_name, address, assigned_statutories)
 
     def to_structure(self):
         return {
-            "unit_id": to_structure_VectorType_RecordType_core_Country(self.unit_id),
-            "address": to_structure_VectorType_RecordType_core_Domain(self.address),
+            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
+            "group_name": to_structure_CustomTextType_50(self.group_name),
+            "business_group_name": to_structure_CustomTextType_50(self.business_group_name),
+            "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
+            "division_name": to_structure_CustomTextType_50(self.division_name),
+            "address": to_structure_CustomTextType_250(self.address),
             "assigned_statutories": to_structure_VectorType_RecordType_core_AssignedStatutory(self.assigned_statutories),
         }
 

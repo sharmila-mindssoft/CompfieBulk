@@ -1,4 +1,4 @@
-var CLIENT_BASE_URL = "http://localhost:8080/";
+var CLIENT_BASE_URL = "http://localhost:8085/";
 function initClientMirror() {
     var DEBUG = true;
 
@@ -522,6 +522,18 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);   
     }
 
+    // 
+    // Statutory settings
+    // 
+    function getStatutorySettings(callback) {
+        callerName = "api/client_transaction";
+        var request = [
+            "GetStatutorySettings",
+            {}
+        ]
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -576,7 +588,9 @@ function initClientMirror() {
         getClientDetailsReport: getClientDetailsReport,
         getAuditTrail: getAuditTrail,
 
-        getComplianceDetailsReportFilters: getComplianceDetailsReportFilters
+        getComplianceDetailsReportFilters: getComplianceDetailsReportFilters,
+
+        getStatutorySettings: getStatutorySettings
     }
 
 }

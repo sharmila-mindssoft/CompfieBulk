@@ -147,6 +147,14 @@ class API(object):
     def handle_knowledge_report(self, request, db) :
         return controller.process_knowledge_report_request(request, db)
 
+    @api_request(technotransactions.RequestFormat)
+    def handle_techno_transaction(self, request, db):
+        return controller.process_techno_transaction_request(request, db)
+
+    @api_request(technoreports.RequestFormat)
+    def handle_techno_report(self, request, db):
+        return controller.process_techno_report_request(request, db)
+
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
 )
@@ -267,7 +275,9 @@ def run_server(port):
             ("/api/general", api.handle_general),
             ("/api/knowledge_master", api.handle_knowledge_master),
             ("/api/knowledge_transaction", api.handle_knowledge_transaction),
-            ("/api/knowledge_report", api.handle_knowledge_report)
+            ("/api/knowledge_report", api.handle_knowledge_report),
+            ("/api/techno_transaction", api.handle_techno_transaction),
+            ("/api/techno_report", api.handle_techno_report)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

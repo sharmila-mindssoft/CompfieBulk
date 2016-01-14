@@ -303,11 +303,19 @@ ComplianceApplicability = RecordType("ComplianceApplicability", [
     Field("statutory_provision", STATUTORY_PROVISION),
     Field("statutory_nature", STATUTORY_NATURE_NAME), 
     Field("compliance_applicable_status", STATUS), 
-    Field("compliance_opted_status", STATUS), 
-    Field("compliance_remarks", DESCRIPTION)
+    Field("compliance_opted_status", OptionalType(STATUS)), 
+    Field("compliance_remarks", OptionalType(DESCRIPTION))
 ])
 
 ComplianceApplicabilityList = VectorType(ComplianceApplicability)
+
+AssignedStatutory = RecordType("AssignedStatutory", [
+	Field("level_1_statutory_id", USER_ID),
+    Field("level_1_statutory_name", LEVEL_1_STATUTORY_NAME),
+    Field("compliances", ComplianceApplicabilityList), 
+    Field("applicable_status", STATUS,
+    Field("not_applicable_remarks", OptionalType(DESCRIPTION))
+])
 
 StatutoryMapping = RecordType("StatutoryMapping", [
 	Field("country_id", COUNTRY_ID),
@@ -496,14 +504,6 @@ ClientUser = RecordType("ClientUser", [
     Field("is_service_provider", STATUS),
     Field("service_provider_id", SERVICE_PROVIDER_ID),
     Field("is_active", IS_ACTIVE)
-])
-
-AssignedStatutory = RecordType("AssignedStatutory", [
-	Field("level_1_statutory_id", USER_ID),
-    Field("level_1_statutory_name", LEVEL_1_STATUTORY_NAME),
-    Field("compliances", ComplianceApplicabilityList), 
-    Field("applicable_status", STATUS),
-    Field("not_applicable_remarks", DESCRIPTION)
 ])
 
 ActiveCompliance = RecordType("ActiveCompliance", [

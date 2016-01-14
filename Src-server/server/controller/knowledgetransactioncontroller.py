@@ -69,7 +69,7 @@ def process_change_statutory_mapping_status(db, request_frame, user_id):
     
 def process_approve_statutory_mapping(db, request_frame, user_id):
     is_approved = False
-    for data in request_frame :
+    for data in request_frame.statutory_mappings :
         if (db.change_approval_status(data, user_id)):
             is_approved = True
         else :

@@ -122,6 +122,10 @@ class API(object):
     def handle_client_masters(self, request, db):
         return controller.process_client_master_requests(request, db)
 
+    @api_request(clienttransactions.RequestFormat)
+    def handle_client_transaction(self, request, db):
+        return controller.process_client_transaction_requests(request, db)
+
     @api_request(clientreport.RequestFormat)
     def handle_client_reports(self, request, db):
         return controller.process_client_report_requests(request, db)
@@ -216,6 +220,7 @@ def run_server(port):
         api_urls_and_handlers = [
             ("/api/login", api.handle_login),
             ("/api/client_masters", api.handle_client_masters),
+            ("/api/client_transaction", api.handle_client_transaction),
             ("/api/client_reports", api.handle_client_reports)
         ]
         for url, handler in api_urls_and_handlers:

@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8090/";
+var BASE_URL = "http://localhost:8080/";
 
 function initMirror() {
     var DEBUG = true;
@@ -1049,6 +1049,114 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    // Assign statutories
+    function getAssignStatutoryWizardOne(countryId, callback) {
+        var request = [
+            "GetAssignedStatutoryWizardOneData",
+            {
+                "country_id": countryId
+            }
+        ];
+        callerName = "api/techno_transaction"
+        apiRequest(callerName, request, callback)
+    }
+
+    function getAssignStatutoryWizardTwo(countryId, domainId, industryId, geographyId, callback) {
+        var request = [
+            "GetStatutoryWizardTwoData",
+            {
+                "country_id": countryId,
+                "domain_id": domainId,
+                "industry_id": industryId,
+                "geography_id": geographyId
+            }
+        ]
+        callerName = "api/techno_transaction"
+        apiRequest(callerName, request, callback)
+    }
+
+    function getAssignedStatutoriesList(callback) {
+        var request = [
+            "GetAssignedStatutoriesList", {}
+        ];
+        callerName = "api/techno_transaction";
+        apiRequest(callerName, request, callback);
+    }
+
+    function assignedStatutories(level1ID, compliances, applicableStatus, remarks) {
+        var statutories = {
+            "level_1_statutory_id": level1ID,
+            "compliances": compliances,
+            "applicable_status": applicableStatus,
+            "not_applicable_remarks": remarks
+        };
+        return statutories;
+    }
+
+    function saveOrSubmitAssignStatutory(
+        countryId, clientId, geographyId, unitIds, 
+        domainId, submissionType, clientStatutoryId, 
+        assignStatutories, callback
+    ){
+        var request = [
+            "SaveAssignedStatutory",
+            {
+                "country_id": countryId,
+                "client_id": clientId,
+                "geography_id": geographyId,
+                "unit_ids": unitIds,
+                "domain_id": domainId,
+                "submission_type": submissionType,
+                "client_statutory_id": clientStatutoryId,
+                "assigned_statutories": assignStatutories
+            }
+        ];
+        callerName = "api/techno_transaction";
+        apiRequest(callerName, request, callback);
+    }
+    
+    function getAssignedStatutoryById(clientStatutoryId, callback) {
+        var request = [
+            "GetAssignedStatutoriesById",
+            {
+                "client_statutory_id": clientStatutoryId
+            }
+        ];
+        callerName = "api/techno_transaction"
+        apiRequest(callerName, request, callback);
+    }
+    
+    function getAssignedStatutoryReportFilters(callback) {
+        var request = [
+            "GetAssignedStatutoryReportFilters",
+            {}
+        ];
+        callerName = "api/techno_report";
+        apiRequest(callerName, request, callback);
+    }
+    
+    function getAssignedStatutoryReport(countryId, domainId, 
+        clientId, businessGroupId, legalEntityId, divisionId, 
+        unitId, level1StatutoryId, applicableStatus, callback
+    ){
+        var request = [
+            "GetAssignedStatutoryReport",
+            {
+                "country_id": countryId,
+                "domain_id": domainId,
+                "group_id": clientId,
+                "business_group_id": businessGroupId,
+                "legal_entity_id": legalEntityId,
+                "division_id": divisionId,
+                "unit_id": unitId,
+                "level_1_statutory_id": level1StatutoryId,
+                "applicability_status": applicableStatus
+            }
+        ];
+        callerName = "api/techno_report";
+        apiRequest(callerName, request, callback);
+    }
+
     function getAuditTrail(callback){
         callerName = "api/general"
         var request = [
@@ -1168,6 +1276,16 @@ function initMirror() {
         getClientProfile: getClientProfile,
         getClientDetailsReportFilters: getClientDetailsReportFilters,
         getClientDetailsReport: getClientDetailsReport,
+
+        getAssignStatutoryWizardOne: getAssignStatutoryWizardOne,
+        getAssignStatutoryWizardTwo: getAssignStatutoryWizardTwo,
+        getAssignedStatutoriesList: getAssignedStatutoriesList,
+        assignedStatutories: assignedStatutories,
+        saveOrSubmitAssignStatutory: saveOrSubmitAssignStatutory,
+        getAssignedStatutoryById: getAssignedStatutoryById,
+        getAssignedStatutoryReportFilters: getAssignedStatutoryReportFilters,
+        getAssignedStatutoryReport: getAssignedStatutoryReport,
+
         getAuditTrail: getAuditTrail
     }
 
