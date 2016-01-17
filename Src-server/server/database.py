@@ -132,6 +132,7 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
+        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
@@ -4042,7 +4043,6 @@ class KnowledgeDatabase(Database):
             country_rows = self.get_data(self.tblUnits, detail_columns, country_condition)
             country_wise_units = {}
             division_is_active = bool(1)
-
             for country_row in country_rows:
                 unit_columns = "unit_id, geography_id, unit_code, unit_name, industry_id, address, "+\
                 "postal_code, domain_ids, is_active"

@@ -41,7 +41,6 @@ from protocol.parse_structure import (
     parse_structure_RecordType_technomasters_CountryWiseUnits,
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping
-
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -766,7 +765,6 @@ class Unit(object):
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
         return Unit(business_group_id, legal_entity_id, division_id, client_id, units, is_active)
-
 
     def to_structure(self):
         return {
