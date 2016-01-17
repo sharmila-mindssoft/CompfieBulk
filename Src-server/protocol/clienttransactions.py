@@ -112,7 +112,7 @@ from protocol.to_structure import (
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     to_structure_OptionalType_SignedIntegerType_8
 )
-
+ 
 #
 # Request
 #
