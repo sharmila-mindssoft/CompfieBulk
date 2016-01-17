@@ -84,7 +84,7 @@ def process_approve_compliance(db, request, session_user, client_id):
 	compliance_history_id = request.compliance_history_id
 	pass
 
-def process_get_assign_compliance_form_data(db, session_user, client_id):
+def process_get_assign_compliance_form_data(db, session_user, client_id): 
 	countries = db.get_countries_for_user(session_user, client_id)
 	business_group_ids = None
 	business_groups = db.get_business_groups_for_user(business_group_ids, client_id)
