@@ -183,7 +183,6 @@ class Logout(Request):
             "session_token": to_structure_CustomTextType_50(self.session_token),
         }
 
-
 def _init_Request_class_map():
     classes = [Login, ForgotPassword, ResetTokenValidation, ResetPassword, ChangePassword, Logout]
     class_map = {}

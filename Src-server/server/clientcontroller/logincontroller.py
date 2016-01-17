@@ -13,7 +13,6 @@ __all__ = [
 ]
 
 def process_login_request(request, db) :
-	print "inside process login request"
 	if type(request) is login.Login:
 		return process_login(db, request)
 
@@ -104,7 +103,6 @@ def send_email():
 	return True
 
 def process_reset_token(db, request):
-	print "inside process reset token"
 	client_id = db.get_client_id_from_short_name(request.short_name)
 	user_id = db.validate_reset_token(request.reset_token, client_id)
 	if user_id != None:
@@ -117,13 +115,9 @@ def process_reset_password(db, request):
 	client_id = db.get_client_id_from_short_name(request.short_name)
 	user_id = db.validate_reset_token(request.reset_token, client_id)
 	if user_id != None:
-		if db.update_password(request.new_password, user_id, client_id):
-			if db.delete_used_token(request.reset_token, client_id):
-				return login.ResetPasswordSuccess()
-			else:
-				print "Failed to delete used token"
-		else:
-			print "Failed to update password"
+		db.update_password(request.new_password, user_id, client_id):
+		db.delete_used_token(request.reset_token, client_id):
+		return login.ResetPasswordSuccess()
 	else:
 		return login.InvalidResetToken()
 

@@ -1166,6 +1166,18 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function updateUserProfile(contact_no, address, callback){
+        callerName = "api/general"
+        var request = [
+            "UpdateUserProfile",
+            {
+                "contact_no" : contact_no,
+                "address" : address
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -1286,7 +1298,8 @@ function initMirror() {
         getAssignedStatutoryReportFilters: getAssignedStatutoryReportFilters,
         getAssignedStatutoryReport: getAssignedStatutoryReport,
 
-        getAuditTrail: getAuditTrail
+        getAuditTrail: getAuditTrail,
+        updateUserProfile: updateUserProfile
     }
 
 }

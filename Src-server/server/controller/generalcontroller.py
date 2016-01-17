@@ -17,7 +17,6 @@ def process_general_request(request, db) :
 	session_token = request.session_token
 	request_frame = request.request
 	user_id = validate_user_session(db, session_token)
-	print request_frame
 	if user_id is None:
 		return login.InvalidSessionToken()
 
@@ -83,10 +82,8 @@ def process_get_domains(db, user_id):
 	success = general.GetDomainsSuccess(domains=results)
 	return success
 
-def procees_update_user_profile(db, request, user_id):
-	contact_no = request.contact_no
-	address = request.address
-
+def procees_update_user_profile(db, request, session_user):
+	db.update_profile(request.contact_no, request.address, session_user)
 	return general.UpdateUserProfileSuccess()
 
 def process_save_country(db, request, user_id):
@@ -149,3 +146,4 @@ def process_update_notification_status(db, request, user_id):
 def process_get_audit_trails(db, request_frame, user_id):
 	audit_trails = db.get_audit_trails(user_id)
 	return audit_trails
+

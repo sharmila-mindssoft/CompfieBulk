@@ -132,7 +132,6 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
@@ -194,7 +193,6 @@ class Database(object) :
                 query += column+" = '"+str(values[index])+"', "
             else:
                 query += column+" = '"+str(values[index])+"' "
-
         query += " WHERE "+condition
         if client_id != None:
             return self.execute(query, client_id)
@@ -1153,7 +1151,6 @@ class KnowledgeDatabase(Database):
             query = query + " AND t4.user_id=%s" % (user_id)
         if country_id :
             query = query + " AND t3.country_id=%s" % (country_id)
-        print query
         rows = self.select_all(query)
         result = []
         if rows :
@@ -2695,8 +2692,6 @@ class KnowledgeDatabase(Database):
         rows = self.get_data(self.tblClientGroups, columns, condition) 
         columns = ["client_id", "group_name", "is_active"]
         result = self.convert_to_dict(rows, columns)
-        print
-        print result
         return self.return_group_companies(result)
 
 
@@ -3677,7 +3672,6 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_clients t13 \
             ON t1.client_id = t13.client_id  AND t12.user_id = t13.user_id\
             WHERE t13.user_id = %s"  % (user_id)
-        print query
         rows = self.select_all(query)
         columns = ["client_statutory_id", "client_id", "geography_id",
             "country_id", "domain_id", "unit_id", "submission_type",
@@ -3899,7 +3893,6 @@ class KnowledgeDatabase(Database):
                 business_group_id, legal_entity_id,
                 division_id, unit_id
             )
-        print query
         rows = self.select_all(query)
         columns = ["client_statutory_id", "client_id", "geography_id",
             "country_id", "domain_id", "unit_id", "submission_type",
@@ -4104,4 +4097,12 @@ class KnowledgeDatabase(Database):
         forms = self.return_forms()
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
 
+#
+#   Update Profile
+#
 
+    def update_profile(self, contact_no, address, session_user):
+        columns = ["contact_no", "address"]
+        values = [contact_no, address]
+        condition = "user_id= '%d'" % session_user
+        self.update(self.tblUsers, columns, values, condition)

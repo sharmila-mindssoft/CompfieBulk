@@ -395,6 +395,11 @@
 			function getComplianceDetailsReportFilters(){
 				client_mirror.getComplianceDetailsReportFilters(callback)
 			}
+			function updateUserProfile(){
+				contact_no = "935783773453"
+				address = "Test address"
+				mirror.updateUserProfile(contact_no, address,callback)
+			}
 		</script>
 	</head>
 	<body>
@@ -567,7 +572,11 @@
 			<button onclick="getComplianceDetailsReportFilters()">
 				Get Compliance Details Report Filters
 			</button>
-			
+		</div>
+		<div>
+			<button onclick="updateUserProfile()">
+				Update User Profile
+			</button>
 		</div>
 		<br>
 		<br>
