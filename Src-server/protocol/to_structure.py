@@ -182,6 +182,15 @@ def to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit(data)
         dict.append([key, value])
     return dict
 
+def to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_UnitDetails(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items():
+        key = to_structure_UnsignedIntegerType_32(key)
+        value = to_structure_VectorType_RecordType_techno_master_UnitDetails(value)
+        dict[key] = value
+    return dict
+
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(data):
     data = parse_dictionary(data)
     dict = {}
@@ -1477,6 +1486,27 @@ def to_structure_VectorType_RecordType_core_UnitDetails(data):
         lst.append(to_structure_RecordType_core_UnitDetails(item))
     return lst
 
+def to_structure_VectorType_RecordType_techno_master_UnitDetails(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_techno_master_UnitDetails(item))
+    return lst
+
+def to_structure_VectorType_RecordType_technomasters_Unit(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_technomasters_Unit(item))
+    return lst
+
+def to_structure_VectorType_RecordType_technomasters_CountryWiseUnits(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_technomasters_CountryWiseUnits(item))
+    return lst
+
 def to_structure_VectorType_RecordType_technotransactions_UNIT(data):
     data = parse_list(data, 0)
     lst = []
@@ -1580,6 +1610,18 @@ def to_structure_RecordType_clientmasters_Request_UpdateClientUserStatus(data):
 def to_structure_RecordType_core_UnitDetails(data):
     from protocol import core
     return core.UnitDetails.to_structure(data)
+
+def to_structure_RecordType_techno_master_UnitDetails(data):
+    from protocol import technomasters
+    return technomasters.UnitDetails.to_structure(data)
+
+def to_structure_RecordType_technomasters_Unit(data):
+    from protocol import technomasters
+    return technomasters.Unit.to_structure(data)
+
+def to_structure_RecordType_technomasters_CountryWiseUnits(data):
+    from protocol import technomasters
+    return technomasters.CountryWiseUnits.to_structure(data)
 
 def to_structure_RecordType_knowledgemaster_Response_SaveGeographySuccess(data):
     from protocol import knowledgemaster
