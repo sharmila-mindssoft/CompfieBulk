@@ -1187,13 +1187,15 @@ class ClientDatabase(Database):
 #
     
     def get_units_for_assign_compliance(self, session_user, client_id):
+        if session_user == 0 :
+            session_user = '%'
         query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, \
             t1.division_id, t1.legal_entity_id, t1.business_group_id, \
             t1.address \
             FROM tbl_units t1 \
             INNER JOIN tbl_user_units t2 \
             ON t1.unit_id = t2.unit_id \
-            AND t2.user_id = %s " % (
+            AND t2.user_id like '%s' " % (
                 session_user
             )
         rows = self.select_all(query, client_id)
@@ -1236,9 +1238,7 @@ class ClientDatabase(Database):
         if session_user > 0 :
             query = query + where_condition
 
-        print query
         rows = self.select_all(query, client_id)
-        print rows
         columns = [
             "user_id", "employee_name", "employee_code",
             "seating_unit_id", "user_level",

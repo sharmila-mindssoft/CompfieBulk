@@ -3312,3 +3312,26 @@ def parse_structure_VectorType_RecordType_core_ClientBusinessGroup(data):
         lst.append(parse_structure_RecordType_core_ClientBusinessGroup(item))
     return lst
 
+# client Legal Entity
+def parse_structure_RecordType_core_ClientLegalEntity(data):
+    from protocol import core
+    return core.ClientLegalEntity.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_core_ClientLegalEntity(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_ClientLegalEntity(item))
+    return lst
+
+#client Division
+def parse_structure_RecordType_core_ClientDivision(data):
+    from protocol import core
+    return core.ClientDivision.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_core_ClientDivision(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_ClientDivision(item))
+    return lst

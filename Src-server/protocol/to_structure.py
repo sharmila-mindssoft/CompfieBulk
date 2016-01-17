@@ -2806,7 +2806,7 @@ def to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(data):
     data = parse_dictionary(data)
     d = {}
-    for key, value in data :
+    for key, value in data.items() :
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(value)
         d[key] = value

@@ -7,7 +7,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
     parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
-    parse_structure_VectorType_RecordType_core_BusinessGroup,
+    parse_structure_VectorType_RecordType_core_ClientBusinessGroup,
     parse_structure_VectorType_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE,
     parse_structure_VectorType_RecordType_clienttransactions_USERWISEUNITS,
@@ -24,14 +24,14 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_AssignedStatutory,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_CustomTextType_50,
-    parse_structure_VectorType_RecordType_core_Division,
+    parse_structure_VectorType_RecordType_core_ClientDivision,
     parse_structure_VectorType_RecordType_core_StatutoryDate,
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE,
     parse_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST,
     parse_structure_CustomTextType_250,
     parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS,
-    parse_structure_VectorType_RecordType_core_LegalEntity,
+    parse_structure_VectorType_RecordType_core_ClientLegalEntity,
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     parse_structure_CustomIntegerType_1_10,
@@ -44,7 +44,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_VectorType_RecordType_clienttransactions_ApplicableCompliance,
     parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance,
-    parse_structure_VectorType_RecordType_core_ComplianceFrequency
+    parse_structure_VectorType_RecordType_core_ComplianceFrequency,
+    parse_structure_CustomTextType_100
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -53,7 +54,7 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES,
     to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
-    to_structure_VectorType_RecordType_core_BusinessGroup,
+    to_structure_VectorType_RecordType_core_ClientBusinessGroup,
     to_structure_VectorType_RecordType_core_Statutory,
     to_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE,
     to_structure_VectorType_RecordType_clienttransactions_USERWISEUNITS,
@@ -70,14 +71,14 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_AssignedStatutory,
     to_structure_VectorType_SignedIntegerType_8,
     to_structure_VectorType_CustomTextType_50,
-    to_structure_VectorType_RecordType_core_Division,
+    to_structure_VectorType_RecordType_core_ClientDivision,
     to_structure_VectorType_RecordType_core_StatutoryDate,
     to_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE,
     to_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST,
     to_structure_CustomTextType_250,
     to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS,
-    to_structure_VectorType_RecordType_core_LegalEntity,
+    to_structure_VectorType_RecordType_core_ClientLegalEntity,
     to_structure_VectorType_RecordType_core_Domain,
     to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     to_structure_CustomIntegerType_1_10, to_structure_CustomTextType_20,
@@ -98,7 +99,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_ClientUnit,
     to_structure_RecordType_client_transactions_IndustryWiseUnits,
     to_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits,
-    to_structure_VectorType_RecordType_core_ComplianceFrequency
+    to_structure_VectorType_RecordType_core_ComplianceFrequency,
+    to_structure_CustomTextType_100
 )
 
 #
@@ -562,9 +564,9 @@ class GetAssignCompliancesFormDataSuccess(Response):
         business_groups = data.get("business_groups")
         business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
         legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(units)
         users = data.get("users")
@@ -575,8 +577,8 @@ class GetAssignCompliancesFormDataSuccess(Response):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
             "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units),
             "users": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users),
         }
