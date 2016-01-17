@@ -3264,6 +3264,28 @@ def parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryComp
         lst.append(parse_structure_RecordType_clienttransactions_UpdateStatutoryCompliance(item))
     return lst
 
+#clienttransaction getcompliancforunit
+def parse_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    from protocol import clienttransactions
+    return clienttransactions.UNIT_WISE_STATUTORIES.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(item))
+    return lst
+
+def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_list(data)
+    d = {}
+    for key, value in data:
+        key = parse_structure_SignedIntegerType_8(key)
+        value = parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
+        d[key] = value
+    return d
+
+
 # Client Business Group
 
 def parse_structure_RecordType_core_ClientBusinessGroup(data):
