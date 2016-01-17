@@ -1640,6 +1640,7 @@ def to_structure_RecordType_core_UnitDetails(data):
     from protocol import core
     return core.UnitDetails.to_structure(data)
 
+
 def to_structure_RecordType_techno_report_UnitDetails(data):
     from protocol import technoreports
     return technoreports.UnitDetails.to_structure(data)
