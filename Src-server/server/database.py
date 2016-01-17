@@ -4185,8 +4185,9 @@ class KnowledgeDatabase(Database):
                             break
                     if is_exists is False :
                         statutories.append(new_s)
-
-
+                statutories.append(
+                    self.return_assigned_compliances_by_id(client_statutory_id)
+                )
                 unit_statutories.assigned_statutories = statutories
 
             unit_wise_statutories_dict[unit_id] = unit_statutories
