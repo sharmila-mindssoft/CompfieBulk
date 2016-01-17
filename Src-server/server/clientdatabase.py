@@ -1,5 +1,7 @@
 from protocol import (core, general, clienttransactions)
 from database import Database
+import json
+import datetime
 
 __all__ = [
     "ClientDatabase"
@@ -1158,4 +1160,105 @@ class ClientDatabase(Database):
         return seating_unit_users
             
 
+    def get_assign_compliance_statutories_for_units(
+        self, unit_ids, session_user, client_id
+    ):
+        if session_user == 0 :
+            session_user = '%'
+
+        query = "SELECT group_concat(distinct t1.client_statutory_id) client_statutory_ids, \
+            t1.domain_id,group_concat(distinct t1.unit_id) unit_ids, \
+            t2.compliance_id, \
+            t2.applicable, t2.not_applicable_remarks, \
+            t2.compliance_applicable, t2.compliance_opted, \
+            t2.compliance_remarks, \
+            t3.compliance_task, t3.document_name, t3.compliance_description,\
+            t3.statutory_mapping, t3.statutory_provision, \
+            t3.statutory_dates, t4.frequency \
+            FROM tbl_client_statutories t1 \
+            INNER JOIN tbl_client_compliances t2 \
+            ON t1.client_statutory_id = t2.client_statutory_id \
+            INNER JOIN tbl_compliances t3 \
+            ON t2.compliance_id = t3.compliance_id \
+            INNER JOIN tbl_compliance_frequency t4\
+            ON t3.frequency_id = t4.frequency_id\
+            INNER JOIN tbl_user_domains t5\
+            ON t1.domain_id = t5.domain_id\
+            AND t5.user_id LIKE '%s'  \
+            AND t1.unit_id IN %s \
+            AND t2.compliance_opted = 1 \
+            AND t3.is_active = 1 \
+            AND t2.compliance_id NOT \
+            IN ( SELECT a.compliance_id \
+                FROM tbl_assigned_compliances a WHERE a.unit_id in %s ) " % (
+                session_user,
+                str(tuple(unit_ids)),
+                str(tuple(unit_ids))
+            )
+        rows = self.select_all(query, client_id)
+        columns = ["client_statutory_ids", "domain_id", "unit_ids",
+            "compliance_id", "applicable", "not_applicable_remarks",
+            "compliance_applicable", "compliance_opted",
+            "compliance_remarks", "compliance_task",
+            "document_name", "compliance_description",
+            "statutory_mapping", "statutory_provision",
+            "statutory_dates", "frequency"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_assign_compliance_data(result)
+
+    def return_assign_compliance_data(self, result):
+        now = datetime.datetime.now()
+        current_month = now.month
+        domain_wise_compliance = {}
+        for r in result:
+            domain_id = int(r["domain_id"])
+            unit_ids = [
+                int(x) for x in r["unit_ids"].split(',')
+            ]
+            compliance_list = domain_wise_compliance.get(domain_id)
+            if compliance_list is None :
+                compliance_list = []
+            name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            statutory_dates = r["statutory_dates"]
+            statutory_dates = json.loads(statutory_dates)
+            date_list = []
+            due_date = None
+            for date in statutory_dates :
+                s_date = core.StatutoryDate(
+                    date["statutory_date"],
+                    date["statutory_month"],
+                    date["trigger_before_days"]
+                )
+                date_list.append(s_date)
+
+            add_month = 0
+            for date in statutory_dates:
+                month = date["statutory_month"]
+                s_day = date["statutory_date"]
+                if current_month < month :
+                    add_month = month - current_month
+                    n_date = (datetime.date.today() + datetime.timedelta(add_month*365/12)).isoformat()
+                    n_date = datetime.datetime.strptime(n_date, "%Y-%m-%d")
+                    new_date = n_date.replace(day = s_day)
+                    due_date = new_date.strftime("%d-%m-%Y")
+                    break;
             
+            compliance = clienttransactions.UNIT_WISE_STATUTORIES(
+                r["compliance_id"],
+                name,
+                r["compliance_description"],
+                core.COMPLIANCE_FREQUENCY(r["frequency"]),
+                date_list,
+                due_date,
+                unit_ids
+            )
+            compliance_list.append(compliance)
+            domain_wise_compliance[domain_id] = compliance_list
+        return domain_wise_compliance
+
+
+
+
+
+
