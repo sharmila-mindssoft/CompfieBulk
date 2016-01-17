@@ -17,7 +17,8 @@ def process_client_transaction_requests(request, db) :
 	elif type(request) is clienttransactions.UpdateStatutorySettings :
 		return process_update_statutory_settings(db, request, session_user, client_id)
 	elif type(request) is clienttransactions.GetAssignCompliancesFormData:
-		pass
+		return process_get_assign_compliance_form_data(db, session_user, client_id)
+
 	elif type(request) is clienttransactions.SaveAssignedCompliance :
 		pass
 	elif type(request) is clienttransactions.GetUserwiseCompliances :
@@ -66,3 +67,17 @@ def process_get_compliance_approval_list(db, request, session_user, client_id):
 	compliance_approval_list = db.get_compliance_approval_list(session_user, client_id)
 	return GetComplianceApprovalListSuccess(approval_list = compliance_approval_list)
 	 
+def process_get_assign_compliance_form_data(db, session_user, client_id):
+	countries = db.get_countries_for_user(session_user, client_id)
+	business_group_ids = None
+	business_groups = db.get_business_groups_for_user(business_group_ids, client_id)
+	legal_entity_ids = None
+	legal_entities = db.get_legal_entities_for_user(legal_entity_ids, client_id)
+	division_ids = None
+	divisions = db.get_divisions_for_user(division_ids, client_id)
+	units = db.get_units_for_assign_compliance(session_user, client_id)
+	users = db.get_users_for_seating_units(session_user, client_id)
+	return clienttransactions.GetAssignCompliancesFormDataSuccess(
+		countries, business_groups, legal_entities,
+		divisions, units, users
+	)

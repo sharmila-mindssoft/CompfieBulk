@@ -1182,12 +1182,93 @@ class ClientDatabase(Database):
                 " tbl_client_statutories where compliance_id ='%d'))" % compliance_id 
                 domain_name_row =  self.get_data()
 
+#
+# Assign Compliance
+#
+    
+    def get_units_for_assign_compliance(self, session_user, client_id):
+        query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, \
+            t1.division_id, t1.legal_entity_id, t1.business_group_id, \
+            t1.address \
+            FROM tbl_units t1 \
+            INNER JOIN tbl_user_units t2 \
+            ON t1.unit_id = t2.unit_id \
+            AND t2.user_id = %s " % (
+                session_user
+            )
+        rows = self.select_all(query, client_id)
+        columns = [
+            "unit_id", "unit_code", "unit_name", 
+            "division_id", "legal_entity_id",
+            "business_group_id", "address"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        unit_list = []
+        for r in result :
+            name = "%s - %s" % (r["unit_code"], r["unit_name"])
+            unit_list.append(
+                clienttransactions.ASSIGN_COMPLIANCE_UNITS(
+                    r["unit_id"], name,
+                    r["address"],
+                    r["division_id"],
+                    r["legal_entity_id"],
+                    r["business_group_id"]
+                )
+            )
+        return unit_list
 
+    def get_users_for_seating_units(self, session_user, client_id):
+        where_condition = " WHERE t1.seating_unit_id In \
+            (SELECT t.unit_id FROM tbl_user_units t \
+            WHERE t.user_id = %s)" % (
+                session_user
+            )
+        query = "SELECT t1.user_id, t1.employee_name, t1.employee_code, \
+            t1.seating_unit_id, t1.user_level, \
+            group_concat(distinct t2.domain_id) domain_ids, \
+            group_concat(distinct t3.unit_id) unit_ids \
+            FROM tbl_users t1 \
+            INNER JOIN tbl_user_domains t2\
+            ON t1.user_id = t2.user_id \
+            INNER JOIN tbl_user_units t3\
+            ON t1.user_id = t3.user_id "
 
+        if session_user > 0 :
+            query = query + where_condition
 
+        print query
+        rows = self.select_all(query, client_id)
+        print rows
+        columns = [
+            "user_id", "employee_name", "employee_code",
+            "seating_unit_id", "user_level",
+            "domain_ids", "unit_ids"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        seating_unit_users = {}
+        for r in result :
+            name = "%s - %s" % (r["employee_code"], r["employee_name"])
+            unit_id = int(r["seating_unit_id"])
+            domain_ids = [
+                int(x) for x in r["domain_ids"].split(',')
+            ]
+            unit_ids = [
+                int(y) for y in r["unit_ids"].split(',')
+            ]
+            user = clienttransactions.ASSIGN_COMPLIANCE_USER(
+                r["user_id"],
+                name,
+                r["user_level"],
+                unit_id,
+                unit_ids,
+                domain_ids
+            )
+            user_list = seating_unit_users.get(unit_id)
+            if user_list is None :
+                user_list = []
+            user_list.append(user)
+            seating_unit_users[unit_id] = user_list
 
-
-
-
+        return seating_unit_users
 
             
