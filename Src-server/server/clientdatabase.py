@@ -1259,8 +1259,6 @@ class ClientDatabase(Database):
             print "inside outer else"
         return employee_name
 
-
-
     # def calculate_next_due_date(self, completion_date, due_date, compliance_id):
     #     compliance_columns = "statutory_date, repeat_type_id, duration_type_id,"+\
     #     " repeats_every, duration"
@@ -1278,8 +1276,6 @@ class ClientDatabase(Database):
 
     #             elif repeat_type_id = 2:
     #             elif repeat_type_id = 3:
-
-
 
 
 #
@@ -1337,7 +1333,6 @@ class ClientDatabase(Database):
 
         if session_user > 0 :
             query = query + where_condition
-
         rows = self.select_all(query, client_id)
         columns = [
             "user_id", "employee_name", "employee_code",
