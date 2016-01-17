@@ -1512,3 +1512,4 @@ class ClientDatabase(Database):
                 " tbl_client_statutories where compliance_id ='%d'))" % compliance_id 
                 domain_name_row =  self.get_data()
 
+
