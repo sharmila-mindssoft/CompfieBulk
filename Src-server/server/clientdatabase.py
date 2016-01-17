@@ -1438,3 +1438,4 @@ class ClientDatabase(Database):
                 unit_value_tuple = (int(user_id), int(unit_id))
                 unit_values_list.append(unit_value_tuple)
             result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
+
