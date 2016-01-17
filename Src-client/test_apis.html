@@ -349,19 +349,19 @@
 				mirror.getClientGroups(callback)
 			}
 			function saveClient(){
-				businessGroup = mirror.getBusinessGroupDict(null,"Test Business Group 11");
-		        legalEntity = mirror.getLegalEntityDict(null,"Test Legal Entity 1");
-		        division = mirror.getDivisionDict(null, "Test Division 11");
+				businessGroup = null;//mirror.getBusinessGroupDict(1,"Test Business Group 11");
+		        legalEntity = mirror.getLegalEntityDict(1,"Test Legal Entity 11");
+		        division = null;//mirror.getDivisionDict(null, "Test Division 111");
 		        domainIds = [1]
-		        unit1 = mirror.getUnitDict(null, "Test Unit 11", "UN001", "Test Address 1", 668234, 1, "Test location 1", 1, "Test Industry 1", domainIds)
-		        unit2 = mirror.getUnitDict(null, "Test Unit 21", "UN002", "Test Address2", 668234, 1, "Test location 1", 1, "Test Industry 2", domainIds)
+		        unit1 = mirror.getUnitDict(null, "Test Unit 122", "UN0112", "Test Address 11", 668234, 1, "Test location 11", 1, "Test Industry 11", domainIds)
+		        unit2 = mirror.getUnitDict(null, "Test Unit 123", "UN0122", "Test Address 21", 668234, 1, "Test location 12", 1, "Test Industry 12", domainIds)
 
 		        Units = [unit1, unit2]
 		        countryId = 1
 		        countryWiseUnits = []
 		        countryWiseUnits.push(mirror.mapUnitsToCountry(countryId, Units))
 
-		        mirror.saveClient(11, businessGroup, legalEntity, 
+		        mirror.saveClient(1, businessGroup, legalEntity, 
 		        division, countryWiseUnits, callback) 
 			}
 			function updateClient(){
@@ -377,7 +377,7 @@
 		        countryWiseUnits = []
 		        countryWiseUnits.push(mirror.mapUnitsToCountry(countryId, Units))
 
-		        mirror.updateClient(11, businessGroup, legalEntity, 
+		        mirror.updateClient(1, businessGroup, legalEntity, 
 		        division, countryWiseUnits, callback) 
 			}
 			function getClients(){
