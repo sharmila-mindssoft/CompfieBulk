@@ -3320,8 +3320,6 @@ def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttran
         value = parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
         d[key] = value
     return d
-
-
 #
 #   Get Clients
 #
