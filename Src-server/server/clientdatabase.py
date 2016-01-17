@@ -304,7 +304,9 @@ class ClientDatabase(Database):
         condition = "1"
         if business_group_ids != None:
             condition = "business_group_id in (%s)" % business_group_ids
+        print condition
         rows = self.get_data(self.tblBusinessGroups, columns, condition, client_id) 
+        print rows
         columns = ["business_group_id", "business_group_name"]
         result = self.convert_to_dict(rows, columns)
         return self.return_business_groups(result)
@@ -366,6 +368,30 @@ class ClientDatabase(Database):
         "legal_entity_id", "business_group_id", "is_active"]
         result = self.convert_to_dict(rows, columns)
         return self.return_units(result)
+
+    def get_units_for_user_grouped_by_industry(self, unit_ids, client_id):
+        condition = "1"
+        if unit_ids != None:
+            condition = "unit_id in (%s)" % unit_ids
+        industry_column = "industry_name"
+        industry_condition = condition + " group by industry_name"
+        industry_rows = self.get_data(self.tblUnits, industry_column, industry_condition)
+
+        columns = "unit_id, unit_code, unit_name, address, division_id,"+\
+        " legal_entity_id, business_group_id, is_active"
+        industry_wise_units =[]
+        for industry in industry_rows:
+            industry_name = industry[0]
+            units = []
+            condition += " and industry_name = '%s'" % industry_name
+            rows = self.get_data(self.tblUnits, columns, condition, client_id)
+            for unit in rows:
+                units.append(core.ClientUnit(
+                    unit[0], unit[4], unit[5],unit[6], unit[1],
+                    unit[2], unit[3], bool(unit[7])
+                ))
+            industry_wise_units.append(clienttransactions.IndustryWiseUnits(industry_name, units))
+        return industry_wise_units
 
     def return_units(self, units):
         results = []
@@ -1067,3 +1093,29 @@ class ClientDatabase(Database):
                 self.execute(query, client_id)
 
         return clienttransactions.UpdateStatutorySettingsSuccess()
+
+    def get_level_1_statutory(self, client_id):
+        columns = "client_statutory_id, statutory_provision"
+        condition = "compliance_applicable is Null AND compliance_opted is null"
+        rows = self.get_data(self.tblClientCompliances, columns, condition, client_id)
+        columns = ["level_1_statutory_id" , "level_1_statutory_name"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_level_1_statutories(result)
+
+    def return_level_1_statutories(self, statutories):
+        results = []
+        for statutory in statutories :
+            statutory_obj = core.Level1Statutory(
+                statutory["level_1_statutory_id"], 
+                statutory["level_1_statutory_name"])
+            results.append(statutory_obj)
+        return results 
+
+    def get_compliance_frequency(self, client_id):
+        columns = "frequency_id, frequency"
+        rows = self.get_data(self.tblComplianceFrequency, columns, "1", client_id)
+        compliance_frequency = []
+        for row in rows:
+            compliance_frequency.append(core.ComplianceFrequency(row[0],
+             core.COMPLIANCE_FREQUENCY(row[1])))
+        return compliance_frequency

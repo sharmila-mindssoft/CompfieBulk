@@ -1,4 +1,4 @@
-var CLIENT_BASE_URL = "http://localhost:8085/";
+var CLIENT_BASE_URL = "http://localhost:8090/";
 function initClientMirror() {
     var DEBUG = true;
 
@@ -563,6 +563,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getPastRecordsFormData(callback){
+       var request = [
+            "GetPastRecordsFormData",
+            {}
+       ];
+       clientApiRequest("api/client_transaction", request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -622,7 +630,9 @@ function initClientMirror() {
         getStatutorySettings: getStatutorySettings,
         updateCompliances: updateCompliances,
         updateStatutory: updateStatutory,
-        updateStatutorySettings: updateStatutorySettings
+        updateStatutorySettings: updateStatutorySettings,
+
+        getPastRecordsFormData: getPastRecordsFormData
     }
 
 }
