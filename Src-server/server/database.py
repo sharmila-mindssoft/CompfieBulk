@@ -4106,3 +4106,58 @@ class KnowledgeDatabase(Database):
         values = [contact_no, address]
         condition = "user_id= '%d'" % session_user
         self.update(self.tblUsers, columns, values, condition)
+
+#
+#   Get Details Report
+#
+
+    def get_client_details_report(self, country_id, client_id, business_group_id, 
+            legal_entity_id, division_id, unit_id, domain_ids):
+
+        condition = "country_id = '%d' AND client_id = '%d' "%(country_id, client_id)
+        if business_group_id != None:
+            condition += " AND business_group_id = '%d'" % business_group_id
+        if legal_entity_id != None:
+            condition += " AND legal_entity_id = '%d'" % legal_entity_id
+        if division_id != None:
+            condition += " AND division_id = '%d'" % division_id
+        if unit_id != None:
+            condition += " AND unit_id = '%d'" % unit_id
+        if domain_ids != None:
+            for domain_id in domain_ids:
+                condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
+                            "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
+                            "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
+                            " or domain_ids LIKE '"+str(domain_id)+"') "
+
+        group_by_columns = "business_group_id, legal_entity_id, division_id"
+        group_by_condition = condition+" group by business_group_id, legal_entity_id, division_id"
+        group_by_rows = self.get_data(self.tblUnits, group_by_columns, group_by_condition)
+        GroupedUnits = []
+        for row in group_by_rows:
+            columns = "tu.unit_id, tu.unit_code, tu.unit_name, tg.geography_name, "\
+            "tu.address, tu.domain_ids, tu.postal_code"
+            tables = [self.tblUnits, self.tblGeographies]
+            aliases = ["tu", "tg"]
+            join_type = " left join "
+            join_conditions = ["tu.geography_id = tg.geography_id"]
+            where_condition = "tu.legal_entity_id = '%d' "% row[1]
+            if row[0] == None:
+                where_condition += " And tu.business_group_id is NULL"
+            else:
+                where_condition += " And tu.business_group_id = '%d'" % row[0]
+            if row[2] == None:
+                where_condition += " And tu.division_id is NULL"
+            else:
+                where_condition += " And tu.division_id = '%d'" % row[2]
+            if unit_id != None:
+                where_condition += " AND tu.unit_id = '%d'" % unit_id
+            result_rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type, 
+            join_conditions, where_condition)
+            units = []
+            for result_row in result_rows:
+                units.append(technoreports.UnitDetails(result_row[0], result_row[3], result_row[1], 
+                    result_row[2], result_row[4], result_row[6], 
+                    [int(x) for x in result_row[5].split(",")]))
+            GroupedUnits.append(technoreports.GroupedUnits(row[2], row[1], row[0], units))
+        return GroupedUnits  

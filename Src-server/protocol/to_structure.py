@@ -1486,6 +1486,20 @@ def to_structure_VectorType_RecordType_core_UnitDetails(data):
         lst.append(to_structure_RecordType_core_UnitDetails(item))
     return lst
 
+def to_structure_VectorType_RecordType_techno_report_UnitDetails(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_techno_report_UnitDetails(item))
+    return lst
+
+def to_structure_VectorType_RecordType_techno_report_GroupedUnits(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_techno_report_GroupedUnits(item))
+    return lst
+
 def to_structure_VectorType_RecordType_techno_master_UnitDetails(data):
     data = parse_list(data, 0)
     lst = []
@@ -1610,6 +1624,14 @@ def to_structure_RecordType_clientmasters_Request_UpdateClientUserStatus(data):
 def to_structure_RecordType_core_UnitDetails(data):
     from protocol import core
     return core.UnitDetails.to_structure(data)
+
+def to_structure_RecordType_techno_report_UnitDetails(data):
+    from protocol import technoreports
+    return technoreports.UnitDetails.to_structure(data)
+
+def to_structure_RecordType_techno_report_GroupedUnits(data):
+    from protocol import technoreports
+    return technoreports.GroupedUnits.to_structure(data)
 
 def to_structure_RecordType_techno_master_UnitDetails(data):
     from protocol import technomasters

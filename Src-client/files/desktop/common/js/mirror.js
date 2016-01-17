@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8090/";
+var BASE_URL = "http://localhost:8080/";
 
 function initMirror() {
     var DEBUG = true;
@@ -1023,7 +1023,7 @@ function initMirror() {
 
     // Client Details Report
     function getClientDetailsReportFilters(callback){
-        callerName = "api/techno"
+        callerName = "api/techno_report"
         var request = [
             "GetClientDetailsReportFilters",
             {}
@@ -1033,9 +1033,9 @@ function initMirror() {
 
     function getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId, 
         unitId, domainIds, callback){
-        callerName = "api/techno"
+        callerName = "api/techno_report"
         var request = [
-            "GetClientDetailsReport",
+            "GetClientDetailsReportData",
             {
                 "country_id": countryId,
                 "group_id" : clientId,

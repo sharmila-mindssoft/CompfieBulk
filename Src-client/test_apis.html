@@ -400,6 +400,12 @@
 				address = "Test address"
 				mirror.updateUserProfile(contact_no, address,callback)
 			}
+			function getClientDetailsReportFilters(){
+				mirror.getClientDetailsReportFilters(callback);
+			}
+			function getClientDetailsReport(){
+				mirror.getClientDetailsReport(1, 1, 1, 1, 1, 1, [1], callback);
+			}
 		</script>
 	</head>
 	<body>
@@ -576,6 +582,14 @@
 		<div>
 			<button onclick="updateUserProfile()">
 				Update User Profile
+			</button>
+		</div>
+		<div>
+			<button onclick="getClientDetailsReportFilters()">
+				Get Client Details Report Filters
+			</button>
+			<button onclick="getClientDetailsReport()">
+				Get Client Details Report 
 			</button>
 		</div>
 		<br>
