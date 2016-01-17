@@ -3309,8 +3309,6 @@ def parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryComp
         lst.append(parse_structure_RecordType_clienttransactions_UpdateStatutoryCompliance(item))
     return lst
 
-#clienttransaction getcompliancforunit
-
 
 def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
     data = parse_list(data)

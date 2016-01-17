@@ -115,7 +115,6 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_50,
     to_structure_VectorType_RecordType_core_ComplianceApprovalStatus
 ) 
- 
 #
 # Request 
 #
@@ -625,7 +624,6 @@ class GetComplianceForUnitsSuccess(Response):
         return {
             "statutories": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(self.statutories)
         }
-
 
 class SaveAssignedComplianceSuccess(Response):
     def __init__(self):
