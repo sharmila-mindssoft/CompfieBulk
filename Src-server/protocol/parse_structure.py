@@ -3383,3 +3383,4 @@ def parse_structure_VectorType_RecordType_core_ClientDivision(data):
     for item in data:
         lst.append(parse_structure_RecordType_core_ClientDivision(item))
     return lst
+
