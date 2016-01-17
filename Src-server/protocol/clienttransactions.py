@@ -627,8 +627,6 @@ class GetComplianceForUnitsSuccess(Response):
         }
 
 
-
-
 class SaveAssignedComplianceSuccess(Response):
     def __init__(self):
         pass
