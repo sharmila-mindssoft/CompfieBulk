@@ -1891,4 +1891,3 @@ class ClientDatabase(Database):
         not_complied = self.get_status_wise_compliances(request, client_id, 4)
         result = self.get_status_wise_compliances_count(request, client_id)
         return dashboard.GetComplianceStatusChartSuccess(result)        
-
