@@ -3940,11 +3940,11 @@ class KnowledgeDatabase(Database):
                     statutories
                 )
             else :
-                statutories = unit_statutories.statutories
+                statutories = unit_statutories.assigned_statutories
                 statutories.append(
                     self.return_assigned_compliances_by_id(client_statutory_id)
                 )
-                unit_statutories.statutories = statutories
+                unit_statutories.assigned_statutories = statutories
 
             unit_wise_statutories_dict[unit_id] = unit_statutories
 
