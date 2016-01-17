@@ -2,7 +2,6 @@ from protocol import (core, general, clienttransactions, dashboard)
 from database import Database
 import json
 import datetime
-
 from types import *
 
 __all__ = [
