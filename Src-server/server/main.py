@@ -162,7 +162,6 @@ template_env = jinja2.Environment(loader=template_loader)
 
 class TemplateHandler(tornado.web.RequestHandler) :
     def initialize(self, path_desktop, path_mobile,     parameters) :
-        # parameters = {"user":self.get_cookie("user"), "data":OrderedDict(sorted(countriesdb.countries.items(), key=lambda t: t[1])),}
         self.__path_desktop = path_desktop
         self.__path_mobile = path_mobile
         self.__parameters = parameters

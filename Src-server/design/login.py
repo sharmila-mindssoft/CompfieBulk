@@ -1,5 +1,5 @@
 from basics.types import VectorType, RecordType, VariantType, MapType, Field, OptionalType
-from common import (USERNAME, PASSWORD, RESET_TOKEN, USER_ID, CLIENT_ID, SESSION_TOKEN,
+from common import (USERNAME, PASSWORD, RESET_TOKEN, USER_ID, CLIENT_ID, SESSION_TOKEN, SHORT_NAME,
 	EMAIL_ID, USER_GROUP_NAME, EMPLOYEE_NAME, EMPLOYEE_CODE, CONTACT_NUMBER, ADDRESS, DESIGNATION, SESSION_TOKEN)
 from core import Menu, SESSION_TYPE
 
@@ -19,7 +19,8 @@ Login = RecordType("Login", [
 ])
 
 ForgotPassword = RecordType("ForgotPassword", [
-	Field("username", USERNAME)
+	Field("username", USERNAME),
+	Field("short_name", SHORT_NAME)
 ])
 
 ResetTokenValidation = RecordType("ResetTokenValidation", [

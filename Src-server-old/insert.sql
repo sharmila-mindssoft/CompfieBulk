@@ -182,7 +182,7 @@ INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
 INSERT INTO tbl_compliance_frequency VALUES(4, "On Occurrence");
 
 --tbl_user_groups
-INSERT INTO tbl_user_groups(user_group_id, form_category_id, user_group_name, form_ids, is_active) VALUES(1, 2, "knowledge", "5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16", 1)
+INSERT INTO tbl_user_groups(user_group_id, form_category_id, user_group_name, form_ids, is_active) VALUES(1, 2, "knowledge", "5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16", 1);
 
 --tbl_users
 INSERT INTO tbl_users(user_id, user_group_id, email_id, password, employee_name, contact_no, designation, address, employee_code ) 

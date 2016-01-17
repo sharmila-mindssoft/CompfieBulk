@@ -1438,6 +1438,20 @@ def parse_structure_VectorType_RecordType_techno_master_UNIT(data):
         lst.append(parse_structure_RecordType_techno_master_UNIT(item))
     return lst
 
+def parse_structure_VectorType_RecordType_technomasters_Unit(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_technomasters_Unit(item))
+    return lst
+
+def parse_structure_VectorType_RecordType_technomasters_CountryWiseUnits(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_technomasters_CountryWiseUnits(item))
+    return lst
+
 def parse_structure_VectorType_RecordType_technotransactions_UNIT(data):
     data = parse_list(data, 0)
     lst = []
@@ -1885,6 +1899,14 @@ def parse_structure_RecordType_techno_master_DIVISION(data):
 def parse_structure_RecordType_techno_master_UNIT(data):
     from protocol import technomasters
     return technomasters.UNIT.parse_structure(data)
+
+def parse_structure_RecordType_technomasters_Unit(data):
+    from protocol import technomasters
+    return technomasters.Unit.parse_structure(data)
+
+def parse_structure_RecordType_technomasters_CountryWiseUnits(data):
+    from protocol import technomasters
+    return technomasters.CountryWiseUnits.parse_structure(data)
 
 def parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(data):
     from protocol import core

@@ -132,6 +132,7 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
+        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
@@ -1194,7 +1195,6 @@ class KnowledgeDatabase(Database):
         if rows :        
             columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
             result = self.convert_to_dict(rows, columns)
-            # self.geography_parent_mapping(result)
         return self.return_geographies(result)
 
     def get_geography_report(self):
@@ -3956,6 +3956,48 @@ class KnowledgeDatabase(Database):
             final_unit_wise_statutories_list
         )
 
+    def get_unit_details_for_user(self, user_id):
+        client_ids = None
+        if ((user_id != None) and (user_id != 0)):
+            client_ids = self.get_user_clients(user_id)
+
+        condition = "1"
+        if client_ids != None:
+            condition = "client_id in (%s)" % client_ids
+
+        columns = "business_group_id, legal_entity_id, division_id, client_id"
+        condition = " 1 group by business_group_id, legal_entity_id, division_id, client_id"
+        rows = self.get_data(self.tblUnits, columns, condition)
+        unit_details = []
+        for row in rows:
+            detail_columns = "country_id"
+            detail_condition = "legal_entity_id = '%d' "% row[1]
+            if row[0] == None:
+                detail_condition += " And business_group_id is NULL"
+            else:
+                detail_condition += " And business_group_id = '%d'" % row[0]
+            if row[2] == None:
+                detail_condition += " And division_id is NULL"
+            else:
+                detail_condition += " And division_id = '%d'" % row[2]
+            detail_condition += " group by country_id"
+            country_rows = self.get_data(self.tblUnits, detail_columns, detail_condition)
+            country_wise_units = {}
+            for country_row in country_rows:
+                unit_columns = "unit_id, geography_id, unit_code, unit_name, industry_id, address, "+\
+                "postal_code, domain_ids, is_active"
+                unit_condition = detail_condition +" and country_id = '%d'" % country_row[0]
+                detail_rows = self.get_data(self.tblUnits, unit_columns, unit_condition)
+                units = []
+                for unit_detail  in detail_rows:
+                    units.append(technomasters.UnitDetails(unit_detail[0], unit_detail[1], 
+                        unit_detail[2], unit_detail[3], unit_detail[4], unit_detail[5], 
+                        unit_detail[6], [int(x) for x in unit_detail[7].split(",")], bool(unit_detail[8])))
+                # country_wise_units.append(technomasters.CountryWiseUnits(country_row[0], units))
+                country_wise_units[country_row[0]] = units
+            unit_details.append(technomasters.Unit(row[0], row[1], row[2], row[3], country_wise_units))
+        return unit_details
+
     def get_settings(self, client_id):
         settings_columns = "contract_from, contract_to, no_of_user_licence, total_disk_space"
         condition = "client_id = '%d'" % client_id                            
@@ -4019,11 +4061,11 @@ class KnowledgeDatabase(Database):
 #   Audit Trail
 #
 
-    def get_audit_trails(self, user_id):
+    def get_audit_trails(self, session_user):
         user_ids = ""
-        if user_id != 0:
+        if session_user != 0:
             column = "user_group_id"
-            condition = "user_id = '%d'" % user_id
+            condition = "user_id = '%d'" % session_user
             rows = self.get_data(self.tblUsers, column, condition)
             user_group_id = rows[0][0]
 
@@ -4054,7 +4096,7 @@ class KnowledgeDatabase(Database):
             date = self.datetime_to_string(row[3])
             audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
         users = None
-        if user_id != 0:
+        if session_user != 0:
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
         else:
