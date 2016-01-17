@@ -1511,3 +1511,4 @@ class ClientDatabase(Database):
                 " where client_statutory_id = (select client_statutory_id from "+\
                 " tbl_client_statutories where compliance_id ='%d'))" % compliance_id 
                 domain_name_row =  self.get_data()
+

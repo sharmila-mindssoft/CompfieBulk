@@ -18,13 +18,10 @@ def process_client_transaction_requests(request, db) :
 		return process_update_statutory_settings(db, request, session_user, client_id)
 	elif type(request) is clienttransactions.GetAssignCompliancesFormData:
 		return process_get_assign_compliance_form_data(db, session_user, client_id)
-
 	elif type(request) is clienttransactions.GetComplianceForUnits:
 		return process_get_compliance_for_units(db, request, session_user, client_id)
-
 	elif type(request) is clienttransactions.SaveAssignedCompliance :
 		return process_save_assigned_compliance(db, request, session_user, client_id)
-
 	elif type(request) is clienttransactions.GetUserwiseCompliances :
 		pass
 	elif type(request) is clienttransactions.ReassignCompliance :
