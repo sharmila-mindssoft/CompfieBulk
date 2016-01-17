@@ -3321,7 +3321,6 @@ def parse_structure_RecordType_core_GeographyWithMapping(data):
     from protocol import core
     return core.GeographyWithMapping.parse_structure(data)
 
-
 # Client Business Group
 
 def parse_structure_RecordType_core_ClientBusinessGroup(data):
