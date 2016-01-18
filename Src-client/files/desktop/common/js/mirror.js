@@ -1149,10 +1149,11 @@ function initMirror() {
                 "legal_entity_id": legalEntityId,
                 "division_id": divisionId,
                 "unit_id": unitId,
-                "level_1_statutory_id": level1StatutoryId,
-                "applicability_status": applicableStatus
+                "level_1_statutory_id" : level1StatutoryId,
+                "applicability_status" : applicableStatus
             }
         ];
+        console.log(request)
         callerName = "api/techno_report";
         apiRequest(callerName, request, callback);
     }
