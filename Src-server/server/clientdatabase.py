@@ -1140,7 +1140,7 @@ class ClientDatabase(Database):
         client_statutory_rows = self.get_data(self.tblClientStatutories, client_statutory_columns,
             client_statutory_condition)
         client_statutory_ids = None
-        if len(client_statutory_rows) > 0:
+        if len(client_statutory_rows) > 0: 
             client_statutory_ids = client_statutory_rows[0][0]
         else:
             print "Assign Compliances to the Unit first"
