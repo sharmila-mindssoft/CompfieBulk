@@ -3573,10 +3573,12 @@ class KnowledgeDatabase(Database):
             name = self.statutory_parent_mapping[int(key)][0]
             compliances = value
             applicable_status = bool(1)
+            statutory_opted_status = None
             not_applicable_remarks = None
             assigned_statutory_list.append(
                 core.AssignedStatutory(
                     key, name, compliances, applicable_status, 
+                    statutory_opted_status,
                     not_applicable_remarks
                 )
             )
@@ -3792,9 +3794,11 @@ class KnowledgeDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return self.return_assigned_statutories_by_id(result)
 
-    def return_assigned_compliances_by_id(self, client_statutory_id):
+    def return_assigned_compliances_by_id(self, client_statutory_id, statutory_id=None):
         if bool(self.statutory_parent_mapping) is False:
             self.get_statutory_master()
+        if statutory_id is None :
+            statutory_id = '%'
         query = "SELECT t1.client_statutory_id, t1.compliance_id, \
             t1.statutory_id, t1.statutory_applicable, \
             t1.statutory_opted, \
@@ -3814,8 +3818,9 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_statutory_natures t5 \
             ON t4.statutory_nature_id = t5.statutory_nature_id \
             WHERE \
-            t1.client_statutory_id = %s" % (
-                client_statutory_id
+            t1.client_statutory_id = %s \
+            AND t1.statutory_id like '%s' " % (
+                client_statutory_id, statutory_id
             )
         rows = self.select_all(query)
         columns = [
@@ -3831,11 +3836,11 @@ class KnowledgeDatabase(Database):
         level_1_statutory_compliance = {}
         for r in results :
             compliance_opted = r["compliance_opted"]
-            if compliance_opted :
+            if compliance_opted is not None:
                 compliance_opted = bool(compliance_opted)
             compliance_remarks = r["compliance_remarks"]
             statutory_opted = r["statutory_opted"]
-            if statutory_opted :
+            if statutory_opted is not None :
                 statutory_opted = bool(statutory_opted)
             statutory_id = int(r["statutory_id"])
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
@@ -3934,17 +3939,24 @@ class KnowledgeDatabase(Database):
             ON t3.legal_entity_id = t5.legal_entity_id \
             INNER JOIN tbl_divisions t6 \
             ON t3.division_id = t6.division_id \
+            INNER JOIN tbl_client_compliances t7 \
+            ON t1.client_statutory_id = t7.client_statutory_id \
             WHERE t1.country_id = %s \
             AND t1.domain_id = %s \
             AND t1.client_id like '%s' \
             AND t3.business_group_id like '%s' \
             AND t3.legal_entity_id like '%s' \
             AND t3.division_id like '%s' \
-            AND t3.unit_id like '%s' " % (
+            AND t3.unit_id like '%s' \
+            AND t7.statutory_id like '%s' \
+            AND t7.statutory_applicable like '%s' \
+            AND t7.compliance_applicable like '%s' " % (
                 country_id, domain_id, group_id,
                 business_group_id, legal_entity_id,
-                division_id, unit_id
+                division_id, unit_id, level_1_statutory_id,
+                applicable_status, applicable_status
             )
+        print query
         rows = self.select_all(query)
         columns = ["client_statutory_id", "client_id", "geography_id",
             "country_id", "domain_id", "unit_id", "submission_type",
@@ -3953,9 +3965,9 @@ class KnowledgeDatabase(Database):
             "division_name", "address", "postal_code", "unit_code"
         ]
         result = self.convert_to_dict(rows, columns)
-        return self.return_assigned_statutory_report(result)
+        return self.return_assigned_statutory_report(result, level_1_statutory_id)
 
-    def return_assigned_statutory_report(self, report_data):
+    def return_assigned_statutory_report(self, report_data, level_1_statutory_id):
         if bool(self.geography_parent_mapping) is False:
             self.get_geographies()
 
@@ -3973,7 +3985,7 @@ class KnowledgeDatabase(Database):
                 unit_address = "%s, %s, %s" % (
                     data["address"], ', '.join(ordered), data["postal_code"]
                 )
-                statutories = self.return_assigned_compliances_by_id(client_statutory_id)
+                statutories = self.return_assigned_compliances_by_id(client_statutory_id, level_1_statutory_id)
                 unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
                     data["unit_id"],
                     unit_name,
