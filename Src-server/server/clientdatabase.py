@@ -1519,9 +1519,7 @@ class ClientDatabase(Database):
             else :
                 date_list = []
                 due_date = ""
-                validity_date = ""
-
-            
+                validity_date = ""            
             unit_ids = c.unit_ids
             for unit_id in unit_ids:
                 query = "INSERT INTO tbl_assigned_compliances \
