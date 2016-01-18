@@ -23,7 +23,8 @@ def process_client_transaction_requests(request, db) :
 		return process_get_compliance_for_units(db, request, session_user, client_id)
 
 	elif type(request) is clienttransactions.SaveAssignedCompliance :
-		pass
+		return process_save_assigned_compliance(db, request, session_user, client_id)
+
 	elif type(request) is clienttransactions.GetUserwiseCompliances :
 		pass
 	elif type(request) is clienttransactions.ReassignCompliance :
@@ -89,3 +90,6 @@ def process_get_compliance_for_units(db, request, session_user, client_id):
 	unit_ids = request.unit_ids
 	statutories = db.get_assign_compliance_statutories_for_units(unit_ids, session_user, client_id)
 	return clienttransactions.GetComplianceForUnitsSuccess(statutories)
+
+def process_save_assigned_compliance(db, request, session_user, client_id):
+	return 	db.save_assigned_compliance(request, session_user, client_id)
