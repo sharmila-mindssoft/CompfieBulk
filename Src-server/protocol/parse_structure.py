@@ -1438,6 +1438,20 @@ def parse_structure_VectorType_RecordType_techno_master_UNIT(data):
         lst.append(parse_structure_RecordType_techno_master_UNIT(item))
     return lst
 
+def parse_structure_VectorType_RecordType_technomasters_Unit(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_technomasters_Unit(item))
+    return lst
+
+def parse_structure_VectorType_RecordType_technomasters_CountryWiseUnits(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_technomasters_CountryWiseUnits(item))
+    return lst
+
 def parse_structure_VectorType_RecordType_technotransactions_UNIT(data):
     data = parse_list(data, 0)
     lst = []
@@ -1787,11 +1801,11 @@ def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Assig
         d[key] = value
     return d
 
-def parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_COMPLIANCE(data):
+def parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
-        lst.append(parse_structure_RecordType_clienttransactions_UNIT_WISE_COMPLIANCE(item))
+        lst.append(parse_structure_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(item))
     return lst
 
 def parse_structure_RecordType_knowledgereport_Response_GetStatutoryMappingReportDataSuccess(data):
@@ -1885,6 +1899,14 @@ def parse_structure_RecordType_techno_master_DIVISION(data):
 def parse_structure_RecordType_techno_master_UNIT(data):
     from protocol import technomasters
     return technomasters.UNIT.parse_structure(data)
+
+def parse_structure_RecordType_technomasters_Unit(data):
+    from protocol import technomasters
+    return technomasters.Unit.parse_structure(data)
+
+def parse_structure_RecordType_technomasters_CountryWiseUnits(data):
+    from protocol import technomasters
+    return technomasters.CountryWiseUnits.parse_structure(data)
 
 def parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(data):
     from protocol import core
@@ -2687,12 +2709,23 @@ def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransa
         d[key] = value
     return d
 
-def parse_structure_VectorType_RecordType_clienttransactions_ASSIGNCOMPLIANCEUSERS(data):
+def parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
-        lst.append(parse_structure_RecordType_clienttransactions_ASSIGNCOMPLIANCEUSERS(item))
+        lst.append(parse_structure_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(item))
     return lst
+
+def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(data):
+    data = parse_dictionary(data)
+    d = {}
+    for key, value in data :
+        key = parse_structure_SignedIntegerType_8(key)
+        value = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(value)
+        d[key] = value
+    return d
+
+
 
 def parse_structure_RecordType_clientreport_Response_GetComplianceActivityReportFiltersSuccess(data):
     from protocol import clientreport
@@ -2726,9 +2759,9 @@ def parse_structure_RecordType_clientreport_Request_GetReassignedHistoryReport(d
     from protocol import clientreport
     return clientreport.Request.parse_structure(data)
 
-def parse_structure_RecordType_clienttransactions_ASSIGNCOMPLIANCEUSERS(data):
+def parse_structure_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(data):
     from protocol import clienttransactions
-    return clienttransactions.ASSIGNCOMPLIANCEUSERS.parse_structure(data)
+    return clienttransactions.ASSIGN_COMPLIANCE_USER.parse_structure(data)
 
 def parse_structure_RecordType_clientreport_Request_GetComplianceDetailsReportFilters(data):
     from protocol import clientreport
@@ -2852,7 +2885,7 @@ def parse_structure_RecordType_dashboard_Request_GetEscalationsDrillDownData(dat
     from protocol import dashboard
     return dashboard.Request.parse_structure(data)
 
-def parse_structure_RecordType_clienttransactions_UNIT_WISE_COMPLIANCE(data):
+def parse_structure_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(data):
     from protocol import clienttransactions
     return clienttransactions.UNIT_WISE_COMPLIANCE.parse_structure(data)
 
@@ -3230,3 +3263,17 @@ def parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryComp
     for item in data :
         lst.append(parse_structure_RecordType_clienttransactions_UpdateStatutoryCompliance(item))
     return lst
+
+# Client Business Group
+
+def parse_structure_RecordType_core_ClientBusinessGroup(data):
+    from protocol import core
+    return core.ClientBusinessGroup.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_core_ClientBusinessGroup(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_ClientBusinessGroup(item))
+    return lst
+

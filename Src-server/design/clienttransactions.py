@@ -49,6 +49,10 @@ UpdateStatutorySettings = RecordType("UpdateStatutorySettings", [
 GetAssignCompliancesFormData = RecordType("GetAssignCompliancesFormData", [
 ])
 
+GetComplianceForUnits = RecordType("GetComplianceForUnits", [
+	Field("unit_ids", VectorType(UNIT_ID))
+])
+
 ASSINGED_COMPLIANCE =  RecordType("ASSINGED_COMPLIANCE", [
 	Field("compliance_id" ,USER_ID),
 	Field("statutory_dates", StatutoryDateList),
@@ -123,6 +127,7 @@ Request = VariantType("Request", [
 	GetStatutorySettings,
 	UpdateStatutorySettings,
 	GetAssignCompliancesFormData,
+	GetComplianceForUnits,
 	SaveAssignedCompliance,
 	GetUserwiseCompliances,
 	ReassignCompliance,
@@ -169,26 +174,18 @@ InvalidPassword = RecordType("InvalidPassword", [
 
 ### Assign Compliance
 
-UNIT_WISE_STATUTORIES = RecordType("UNIT_WISE_STATUTORIES", [
-	Field("compliance_id", COMPLIANCE_ID),
-	Field("compliance_name", COMPLIANCE_TASK_NAME),
-	Field("description", DESCRIPTION),
-	Field("frequency", COMPLIANCE_FREQUENCY),
-	Field("statutory_date", StatutoryDateList),
-	Field("due_date", DATE)
-])
 
-UNIT_WISE_STATUTORIES_LIST = VectorType(UNIT_WISE_STATUTORIES)
+# UNIT_WISE_STATUTORIES_LIST = VectorType(UNIT_WISE_STATUTORIES)
 
-UNIT_WISE_COMPLIANCE = RecordType("UNIT_WISE_COMPLIANCE", [
-	Field("unit_id", UNIT_ID),
-	Field("unit_name", UNIT_NAME),
-	Field("address", ADDRESS),
-	Field("division_id", DIVISION_ID),
-	Field("legal_entity_id", LEGAL_ENTITY_ID),
-	Field("business_group_id", BUSINESS_GROUP_ID),
-	Field("group_id", GROUP_ID),
-	Field("statutories", MapType(LEVEL_1_STATUTORY_NAME, UNIT_WISE_STATUTORIES_LIST))
+# UNIT_WISE_COMPLIANCE = RecordType("UNIT_WISE_COMPLIANCE", [
+# 	Field("unit_id", UNIT_ID),
+# 	Field("unit_name", UNIT_NAME),
+# 	Field("address", ADDRESS),
+# 	Field("division_id", DIVISION_ID),
+# 	Field("legal_entity_id", LEGAL_ENTITY_ID),
+# 	Field("business_group_id", BUSINESS_GROUP_ID),
+# 	Field("group_id", GROUP_ID),
+# 	Field("statutories", MapType(LEVEL_1_STATUTORY_NAME, UNIT_WISE_STATUTORIES_LIST))
 ])
 
 ASSIGNCOMPLIANCEUSERS =  RecordType("ASSIGNCOMPLIANCEUSERS", [
@@ -196,7 +193,8 @@ ASSIGNCOMPLIANCEUSERS =  RecordType("ASSIGNCOMPLIANCEUSERS", [
 	Field("user_name", EMPLOYEE_NAME),
 	Field("user_level", USER_LEVEL),
 	Field("seating_unit_id", UNIT_ID),
-	Field("unit_ids", UnitIdList)
+	Field("unit_ids", UnitIdList),
+	Field("domain_ids", VectorType(DOMAIN_ID))
 ])
 
 GetAssignCompliancesFormDataSuccess = RecordType("GetAssignCompliancesFormDataSuccess", [
@@ -204,8 +202,22 @@ GetAssignCompliancesFormDataSuccess = RecordType("GetAssignCompliancesFormDataSu
 	Field("business_groups", BusinessGroupList),
 	Field("legal_entities", LegalEntityList),
 	Field("divisions", DivisionList),
-	Field("units", VectorType(UNIT_WISE_COMPLIANCE)),
-	Field("users", VectorType(ASSIGNCOMPLIANCEUSERS))
+	Field("units", UnitList),
+	Field("users", MapType(UNIT_ID, VectorType(ASSIGNCOMPLIANCEUSERS)))
+])
+
+UNIT_WISE_STATUTORIES = RecordType("UNIT_WISE_STATUTORIES", [
+	Field("compliance_id", COMPLIANCE_ID),
+	Field("compliance_name", COMPLIANCE_TASK_NAME),
+	Field("description", DESCRIPTION),
+	Field("frequency", COMPLIANCE_FREQUENCY),
+	Field("statutory_date", StatutoryDateList),
+	Field("due_date", DATE),
+	Field("applicable_units", VectorType(UNIT_ID))
+])
+
+GetComplianceForUnitsSuccess = RecordType("GetComplianceForUnitsSuccess", [
+	Field("statutories", MapType(DOMAIN_ID, VectorType(UNIT_WISE_STATUTORIES)))
 ])
 
 AssigneeNotBelongToUnit = RecordType("AssigneeNotBelongToUnit", [
@@ -319,6 +331,7 @@ Response = VariantType("Response", [
 	UpdateStatutorySettingsSuccess,
 	InvalidPassword,
 	GetAssignCompliancesFormDataSuccess,
+	GetComplianceForUnitsSuccess,
 	SaveAssignedComplianceSuccess,
 	AssigneeNotBelongToUnit,
 	ConcurrenceNotBelongToUnit,

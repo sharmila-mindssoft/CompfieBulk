@@ -18,7 +18,6 @@ __all__=[
 ]
 
 def process_techno_request(request, db) :
-	print "inside process techno request"
 	session_token = request.session_token
 	request_frame = request.request
 	session_user = validate_user_session(db, session_token)
