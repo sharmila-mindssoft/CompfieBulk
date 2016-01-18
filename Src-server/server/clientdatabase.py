@@ -1258,7 +1258,21 @@ class ClientDatabase(Database):
         return domain_wise_compliance
 
 
-
+    def save_assigned_compliance(request, session_user, client_id):
+        country_id = request.country_id
+        assignee = request.assignee
+        concurrence = request.concurrence_person
+        approval = request.approval_person
+        compliances = request.compliances
+        for c in compliances:
+            compliance_id = c["compliance_id"]
+            statutory_dates = c["statutory_dates"]
+            due_date = c["due_date"]
+            validity_date = c["validity_date"]
+            unit_ids = c["unit_ids"]
+            for unit in unit_ids:
+                query = "INSERT INTO tbl_assigned_compliances \
+                    ()"
 
 
 
