@@ -3976,6 +3976,7 @@ class KnowledgeDatabase(Database):
             detail_condition += " group by country_id"
             country_rows = self.get_data(self.tblUnits, detail_columns, detail_condition)
             country_wise_units = {}
+            division_is_active = bool(1)
             for country_row in country_rows:
                 unit_columns = "unit_id, geography_id, unit_code, unit_name, industry_id, address, "+\
                 "postal_code, domain_ids, is_active"
@@ -3986,9 +3987,10 @@ class KnowledgeDatabase(Database):
                     units.append(technomasters.UnitDetails(unit_detail[0], unit_detail[1], 
                         unit_detail[2], unit_detail[3], unit_detail[4], unit_detail[5], 
                         unit_detail[6], [int(x) for x in unit_detail[7].split(",")], bool(unit_detail[8])))
+                    division_is_active = division_is_active or bool(unit_detail[8])
                 # country_wise_units.append(technomasters.CountryWiseUnits(country_row[0], units))
                 country_wise_units[country_row[0]] = units
-            unit_details.append(technomasters.Unit(row[0], row[1], row[2], row[3], country_wise_units))
+            unit_details.append(technomasters.Unit(row[0], row[1], row[2], row[3], country_wise_units,division_is_active))
         return unit_details
 
     def get_settings(self, client_id):
