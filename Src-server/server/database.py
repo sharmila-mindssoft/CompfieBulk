@@ -3925,7 +3925,7 @@ class KnowledgeDatabase(Database):
                 statutories = self.return_assigned_compliances_by_id(client_statutory_id)
                 unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
                     data["unit_id"],
-                    data["unit_name"],
+                    unit_name,
                     data["group_name"],
                     data["business_group_name"],
                     data["legal_entity_name"],
