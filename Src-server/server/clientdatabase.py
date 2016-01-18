@@ -1396,7 +1396,6 @@ class ClientDatabase(Database):
             for dates in statutory_dates :
                 date_list.append(dates.to_structure())
             date_list = json.dumps(date_list)
-            # due_date = c["due_date"]
             due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
             validity_date = c.validity_date
             if validity_date is not None :
@@ -1419,5 +1418,73 @@ class ClientDatabase(Database):
                         int(session_user), created_on
                     )
                 self.execute(query, client_id)
+            self.update_user_units(assignee, unit_ids, client_id)
 
         return clienttransactions.SaveAssignedComplianceSuccess()
+
+    def update_user_units(self, user_id, unit_ids, client_id):
+        user_units = self.get_user_unit_ids(user_id, client_id)
+        user_units = [ int(x) for x in user_units.split(',')]
+        new_units = []
+        for u_id in unit_ids :
+            if u_id not in user_units :
+                new_units.append(u_id)
+
+        if len(new_units) > 0 :
+            unit_values_list = []
+            unit_columns = ["user_id", "unit_id"]
+            for unit_id in new_units:
+                unit_value_tuple = (int(user_id), int(unit_id))
+                unit_values_list.append(unit_value_tuple)
+            result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
+            print result4
+
+    def get_level_1_statutory(self, client_id):
+        columns = "client_statutory_id, statutory_provision"
+        condition = "compliance_applicable is Null AND compliance_opted is null"
+        rows = self.get_data(self.tblClientCompliances, columns, condition, client_id)
+        columns = ["level_1_statutory_id" , "level_1_statutory_name"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_level_1_statutories(result)
+
+    def return_level_1_statutories(self, statutories):
+        results = []
+        for statutory in statutories :
+            statutory_obj = core.Level1Statutory(
+                statutory["level_1_statutory_id"], 
+                statutory["level_1_statutory_name"])
+            results.append(statutory_obj)
+        return results 
+
+    def get_compliance_frequency(self, client_id):
+        columns = "frequency_id, frequency"
+        rows = self.get_data(self.tblComplianceFrequency, columns, "1", client_id)
+        compliance_frequency = []
+        for row in rows:
+            compliance_frequency.append(core.ComplianceFrequency(row[0],
+             core.COMPLIANCE_FREQUENCY(row[1])))
+        return compliance_frequency
+
+    def get_statutory_wise_compliances(unit_id, domain_id, level_1_statutory_id, 
+        frequecy_id):
+        client_statutory_columns = "group_concat(client_statutory_id)"
+        client_statutory_condition = " unit_id = '%d' and domain_id = '%d' "%(unit_id, domain_id)  
+        client_statutory_rows = self.get_data(self.tblClientStatutories, client_statutory_columns,
+            client_statutory_condition)
+        client_statutory_ids = None
+        if len(client_statutory_rows) > 0:
+            client_statutory_ids = client_statutory_rows[0][0]
+        else:
+            print "Assign Compliances to the Unit first"
+            return
+
+        client_compliances_columns = "group_concat(compliance_id)"
+        client_compliances_condition = " client_statutory_id in (%s)" % client_statutory_ids
+        client_compliances_rows = self.get_data(self.tblClientCompliances, client_compliances_columns,
+            client_compliances_condition)
+        client_compliance_ids = None
+        if len(client_compliance_rows) > 0:
+            client_compliance_ids = client_compliance_rows[0][0]
+        else:
+            print "Assign Compliances to the Unit first"
+            return
