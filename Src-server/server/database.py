@@ -3627,7 +3627,7 @@ class KnowledgeDatabase(Database):
 
     def save_client_compliances(self, client_statutory_id, data, user_id, created_on):
         field = "(client_statutory_id, compliance_id, \
-            statutory_id, applicable, not_applicable_remarks, \
+            statutory_id, statutory_applicable, not_applicable_remarks, \
             compliance_applicable, created_by, created_on)"
         for d in data :
             level_1_id = d.level_1_statutory_id
@@ -3657,7 +3657,7 @@ class KnowledgeDatabase(Database):
                 compliance_id = int(key)
                 compliance_applicable_status = int(value)
 
-                field_with_data = "applicable = %s, \
+                field_with_data = "statutory_applicable = %s, \
                     not_applicable_remarks = '%s', \
                     compliance_applicable = %s, updated_by = %s" % (
                         applicable_status, not_applicable_remarks,
@@ -3796,7 +3796,9 @@ class KnowledgeDatabase(Database):
         if bool(self.statutory_parent_mapping) is False:
             self.get_statutory_master()
         query = "SELECT t1.client_statutory_id, t1.compliance_id, \
-            t1.statutory_id, t1.applicable, t1.not_applicable_remarks, \
+            t1.statutory_id, t1.statutory_applicable, \
+            t1.statutory_opted, \
+            t1.not_applicable_remarks, \
             t1.compliance_applicable, t1.compliance_opted, \
             t1.compliance_remarks, \
             t2.statutory_name, t3.compliance_task, t3.document_name, \
@@ -3817,7 +3819,8 @@ class KnowledgeDatabase(Database):
             )
         rows = self.select_all(query)
         columns = [
-            "client_statutory_id", "compliance_id", "statutory_id", "applicable",
+            "client_statutory_id", "compliance_id", "statutory_id", 
+            "statutory_applicable", "statutory_opted",
             "not_applicable_remarks", "compliance_applicable",
             "compliance_opted", "compliance_remarks",
             "statutory_name", "compliance_task", "document_name",
@@ -3825,10 +3828,15 @@ class KnowledgeDatabase(Database):
             "statutory_nature_name"
         ]
         results = self.convert_to_dict(rows, columns)
-        compliance_opted = None
-        compliance_remarks = None
         level_1_statutory_compliance = {}
         for r in results :
+            compliance_opted = r["compliance_opted"]
+            if compliance_opted :
+                compliance_opted = bool(compliance_opted)
+            compliance_remarks = r["compliance_remarks"]
+            statutory_opted = r["statutory_opted"]
+            if statutory_opted :
+                statutory_opted = bool(statutory_opted)
             statutory_id = int(r["statutory_id"])
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
             s_mapping = statutory_data[1] 
@@ -3852,7 +3860,8 @@ class KnowledgeDatabase(Database):
                     statutory_id,
                     r["statutory_name"],
                     compliance_list,
-                    bool(r["applicable"]),
+                    bool(r["statutory_applicable"]),
+                    statutory_opted,
                     r["not_applicable_remarks"]
                 )
                 level_1_statutory_compliance[statutory_id] = s_data
