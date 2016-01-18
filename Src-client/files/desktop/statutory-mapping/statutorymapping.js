@@ -11,6 +11,7 @@ var complianceFrequencyList;
 var complianceDurationTypeList;
 var complianceRepeatTypeList;
 var complianceApprovalStatusList;
+
 var sm_countryid='';
 var sm_domainid='';
 var sm_statutorynatureid='';
@@ -284,7 +285,6 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     }
   }
 
-  
   //check & uncheck list data for single selection
   function activate(element, id, dispname, type){
     $(type).each( function( index, el ) {
