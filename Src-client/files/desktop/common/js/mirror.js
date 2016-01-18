@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8090/";
+var BASE_URL = "http://localhost:8080/";
 
 function initMirror() {
     var DEBUG = true;
@@ -1023,7 +1023,7 @@ function initMirror() {
 
     // Client Details Report
     function getClientDetailsReportFilters(callback){
-        callerName = "api/techno"
+        callerName = "api/techno_report"
         var request = [
             "GetClientDetailsReportFilters",
             {}
@@ -1033,9 +1033,9 @@ function initMirror() {
 
     function getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId, 
         unitId, domainIds, callback){
-        callerName = "api/techno"
+        callerName = "api/techno_report"
         var request = [
-            "GetClientDetailsReport",
+            "GetClientDetailsReportData",
             {
                 "country_id": countryId,
                 "group_id" : clientId,
@@ -1167,6 +1167,18 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function updateUserProfile(contact_no, address, callback){
+        callerName = "api/general"
+        var request = [
+            "UpdateUserProfile",
+            {
+                "contact_no" : contact_no,
+                "address" : address
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -1287,7 +1299,8 @@ function initMirror() {
         getAssignedStatutoryReportFilters: getAssignedStatutoryReportFilters,
         getAssignedStatutoryReport: getAssignedStatutoryReport,
 
-        getAuditTrail: getAuditTrail
+        getAuditTrail: getAuditTrail,
+        updateUserProfile: updateUserProfile
     }
 
 }

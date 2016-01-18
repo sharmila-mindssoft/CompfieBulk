@@ -25,7 +25,9 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_100,
     parse_structure_CustomTextType_250,
     parse_structure_VectorType_RecordType_core_BusinessGroup,
-    parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory
+    parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
+    parse_structure_OptionalType_UnsignedIntegerType_32,
+    parse_structure_VectorType_RecordType_techno_report_UnitDetails
 )
 from protocol.to_structure import (
     to_structure_VectorType_Text,
@@ -52,7 +54,13 @@ from protocol.to_structure import (
     to_structure_CustomTextType_100,
     to_structure_CustomTextType_250,
     to_structure_VectorType_RecordType_core_BusinessGroup,
-    to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory
+    to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
+    to_structure_VectorType_RecordType_techno_report_UnitDetails,
+    to_structure_CustomTextType_20,
+    to_structure_OptionalType_UnsignedIntegerType_32,
+    to_structure_UnsignedIntegerType_32,
+    to_structure_VectorType_SignedIntegerType_8,
+    to_structure_VectorType_RecordType_techno_report_GroupedUnits
 )
 
 #
@@ -284,6 +292,76 @@ class GetClientDetailsReportFiltersSuccess(Response):
             "units": to_structure_VectorType_RecordType_core_Unit(self.units),
         }
 
+class GroupedUnits(object):
+    def __init__(self, division_id, legal_entity_id, business_group_id, units):
+        self.division_id = division_id
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+        self.units = units
+    
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["division_id", "legal_entity_id", "business_group_id", "units"])
+        division_id = data.get("division_id")
+        division_id = parse_structure_UnsignedIntegerType_32(division_id)
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
+        business_group_id = data.get("business_group_id")
+        business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
+        units = data.get("units")
+        units = parse_structure_VectorType_RecordType_techno_report_UnitDetails(units)
+        return GroupedUnits(division_id, legal_entity_id, business_group_id, units)
+
+    def to_structure(self):
+        return {
+            "division_id": to_structure_UnsignedIntegerType_32(self.division_id),
+            "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id),
+            "business_group_id": to_structure_UnsignedIntegerType_32(self.business_group_id),
+            "units" : to_structure_VectorType_RecordType_techno_report_UnitDetails(self.units)
+        }
+
+
+class UnitDetails(object):
+    def __init__(self, unit_id, geography_name, unit_code, unit_name, unit_address, postal_code, domain_ids):
+        self.unit_id = unit_id
+        self.geography_name = geography_name
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.unit_address = unit_address
+        self.postal_code = postal_code
+        self.domain_ids = domain_ids
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "geography_name", "unit_code", "unit_name", "unit_address", "postal_code", "domain_ids"])
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
+        geography_name = data.get("geography_name")
+        geography_name = parse_structure_CustomTextType_250(geography_name)
+        unit_code = data.get("unit_code")
+        unit_code = parse_structure_CustomTextType_20(unit_code)
+        unit_name = data.get("unit_name")
+        unit_name = parse_structure_CustomTextType_50(unit_name)
+        unit_address = data.get("unit_address")
+        unit_address = parse_structure_CustomTextType_250(unit_address)
+        postal_code = data.get("postal_code")
+        postal_code = parse_structure_UnsignedIntegerType_32(postal_code)
+        domain_ids = data.get("domain_ids")
+        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        return UnitDetails(unit_id, geography_name, unit_code, unit_name, unit_address, postal_code, domain_ids)
+
+    def to_structure(self):
+        return {
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
+            "geography_name": to_structure_CustomTextType_250(self.geography_name),
+            "unit_code": to_structure_CustomTextType_20(self.unit_code),
+            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_address": to_structure_CustomTextType_250(self.unit_address),
+            "postal_code": to_structure_UnsignedIntegerType_32(self.postal_code),
+            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids)
+        }
+
+
 class GetClientDetailsReportDataSuccess(Response):
     def __init__(self, units):
         self.units = units
@@ -297,7 +375,7 @@ class GetClientDetailsReportDataSuccess(Response):
 
     def to_inner_structure(self):
         return {
-            "units": to_structure_VectorType_RecordType_core_UnitDetails(self.units),
+            "units": to_structure_VectorType_RecordType_techno_report_GroupedUnits(self.units)
         }
 
 class GetStatutoryNotificationsSuccess(Response):

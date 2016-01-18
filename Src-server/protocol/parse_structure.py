@@ -1431,6 +1431,13 @@ def parse_structure_VectorType_RecordType_core_UnitDetails(data):
         lst.append(parse_structure_RecordType_core_UnitDetails(item))
     return lst
 
+def parse_structure_VectorType_RecordType_techno_report_UnitDetails(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_techno_report_UnitDetails(item))
+    return lst
+
 def parse_structure_VectorType_RecordType_techno_master_UNIT(data):
     data = parse_list(data, 0)
     lst = []
@@ -1559,6 +1566,10 @@ def parse_structure_RecordType_clientmasters_Request_UpdateClientUserStatus(data
 def parse_structure_RecordType_core_UnitDetails(data):
     from protocol import core
     return core.UnitDetails.parse_structure(data)
+
+def parse_structure_RecordType_techno_report_UnitDetails(data):
+    from protocol import technoreports
+    return technoreports.UnitDetails.parse_structure(data)
 
 def parse_structure_RecordType_knowledgemaster_Response_SaveGeographySuccess(data):
     from protocol import knowledgemaster

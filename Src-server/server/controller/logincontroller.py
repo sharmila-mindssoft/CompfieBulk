@@ -30,7 +30,6 @@ def process_login_request(request, db) :
 
 	if type(request) is login.Logout:
 		return process_logout(db, request)
-	
 
 def process_login(db, request):
 	login_type = request.login_type
@@ -132,5 +131,6 @@ def process_change_password(db, request):
 
 def process_logout(db, request):
 	return login.LogoutSuccess()
+
 
 

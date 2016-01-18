@@ -6,18 +6,20 @@ __all__ =[
 ]
 
 def process_techno_report_request(request, db):
-    session_token = request.session_token
-    request_frame = request.request
-    user_id = validate_user_session(db, session_token)
-    if user_id is None:
-        return login.InvalidSessionToken()
+	session_token = request.session_token
+	request_frame = request.request
+	user_id = validate_user_session(db, session_token)
+	if user_id is None:
+		return login.InvalidSessionToken()
 
-    if type(request_frame) is technoreports.GetAssignedStatutoryReportFilters:
-        return process_get_assigned_statutory_report_filters(db, user_id)
-
-    elif type(request_frame) is technoreports.GetAssignedStatutoryReport:
-        return process_get_assigned_statutory_report_data(db, request_frame, user_id)
-
+	if type(request_frame) is technoreports.GetAssignedStatutoryReportFilters:
+		return process_get_assigned_statutory_report_filters(db, user_id)
+	elif type(request_frame) is technoreports.GetAssignedStatutoryReport:
+		return process_get_assigned_statutory_report_data(db, request_frame, user_id)
+	elif type(request_frame) is technoreports.GetClientDetailsReportFilters:
+		return process_get_client_details_report_filters(db, request_frame, user_id) 
+	elif type(request_frame) is technoreports.GetClientDetailsReportData:
+		return process_get_client_details_report_data(db, request_frame, user_id) 
     
 def process_get_assigned_statutory_report_filters(db, user_id):
 	countries = db.get_countries_for_user(user_id)
@@ -36,3 +38,20 @@ def process_get_assigned_statutory_report_filters(db, user_id):
 
 def process_get_assigned_statutory_report_data(db, request_frame, user_id):
 	return db.get_assigned_statutories_report(request_frame, user_id)
+
+def process_get_client_details_report_filters(db, request_frame, session_user):
+	countries = db.get_countries_for_user(session_user)
+	domains = db.get_domains_for_user(session_user)
+	group_companies = db.get_group_companies_for_user(session_user)
+	business_groups = db.get_business_groups_for_user(session_user)
+	legal_entities = db.get_legal_entities_for_user(session_user)
+	divisions = db.get_divisions_for_user(session_user)
+	units = db.get_units_for_user(session_user)
+	return technoreports.GetClientDetailsReportFiltersSuccess(countries = countries, domains = domains, 
+		group_companies = group_companies, business_groups = business_groups, 
+		legal_entities = legal_entities, divisions = divisions, units = units)
+
+def process_get_client_details_report_data(db, request, session_user):
+	units = db.get_client_details_report(request.country_id, request.group_id, request.business_group_id, 
+            request.legal_entity_id, request.division_id, request.unit_id, request.domain_ids)
+	return technoreports.GetClientDetailsReportDataSuccess(units = units)
