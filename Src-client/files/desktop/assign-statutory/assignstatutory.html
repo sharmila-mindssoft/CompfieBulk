@@ -1,5 +1,14 @@
 {% extends "files/desktop/home/container.html" %}
 {% block content %}
+<style type="text/css">
+  /*td, th {
+    border : 1px solid red;
+  }
+
+tbody {
+  border : 1px solid blue;
+}*/
+</style>
   <div class="content-container" id="assignstatutory-view">
     <div class="content-area">
       <h1>Assign Statutory </h1>
@@ -142,9 +151,11 @@
                 </tr>
                 <tr>
                   <td>
+                    <input type="hidden" id="ascountry">
                     <input type="text" class="filter-text-box" id="filter_country">
                   </td>
                   <td>
+                    <input type="hidden" id="asgroup">
                     <input type="text" class="filter-text-box" id="filter_group">
                   </td>
                   <td>
@@ -193,15 +204,18 @@
                     <input type="text" class="filter-text-box" id="filter_geographylevel">
                   </td>
                   <td>
+                    <input type="hidden" id="aslocation">
                     <input type="text" class="filter-text-box" id="filter_location">
                   </td>
                   <td>
+                    <input type="hidden" id="asindustry">
                     <input type="text" class="filter-text-box" id="filter_industry">
                   </td>
                   <td>
                     <input type="text" class="filter-text-box" id="filter_unit">
                   </td>
                   <td>
+                    <input type="hidden" id="asdomain">
                     <input type="text" class="filter-text-box" id="filter_domain">
                   </td>
                 </tr>
@@ -251,11 +265,15 @@
           </div>
           <table width="100%">
             <tr>
-              <td width="50%" valign="middle">
+              <td width="45%" valign="middle">
                 <span class="error-message" style="float:left;color:red;font-size: 1em;margin:10px;"></span>
               </td>
-              <td align="right" width="50%">
-                <button id="activate-step-finish" class="btn-right">Submit</button>
+              <td align="center" width="10%">
+                <button id="activate-step-submit" class="btn-right default-display-none">Submit</button>
+              </td>
+              <td align="right" width="45%">
+                <input type="hidden" id="clientstatutoryid" value="">
+                <button id="activate-step-finish" class="btn-right">Save</button>
                 <button id="backward-step-1" class="btn-right">Previous</button>
               </td>
             </tr>
@@ -283,7 +301,7 @@
 </div>
 <div id="statutory-templates" class="default-display-none">
   <table cellpadding="0" cellspacing="0" width="100%" class="checkedtable">  
-    <tr class="compliance-heading">
+    <tr class="compliance-heading" style="width:100%;">
       <td width="5%"><span style="font-weight:bold;">#</span></td>
       <td width="20%" ><span style="font-weight:bold;">Statutory Provision</span></td>
       <td width="30%"><span style="font-weight:bold;">Compliance Task</span></td>

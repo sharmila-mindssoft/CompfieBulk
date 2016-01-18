@@ -18,8 +18,13 @@ def process_client_transaction_requests(request, db) :
 		return process_update_statutory_settings(db, request, session_user, client_id)
 	elif type(request) is clienttransactions.GetAssignCompliancesFormData:
 		return process_get_assign_compliance_form_data(db, session_user, client_id)
+
+	elif type(request) is clienttransactions.GetComplianceForUnits:
+		return process_get_compliance_for_units(db, request, session_user, client_id)
+
 	elif type(request) is clienttransactions.SaveAssignedCompliance :
-		pass
+		return process_save_assigned_compliance(db, request, session_user, client_id)
+
 	elif type(request) is clienttransactions.GetUserwiseCompliances :
 		pass
 	elif type(request) is clienttransactions.ReassignCompliance :
@@ -49,6 +54,16 @@ def process_get_assign_compliance_form_data(db, session_user, client_id):
 		countries, business_groups, legal_entities,
 		divisions, units, users
 	)
+
+
+def process_get_compliance_for_units(db, request, session_user, client_id):
+	unit_ids = request.unit_ids
+	statutories = db.get_assign_compliance_statutories_for_units(unit_ids, session_user, client_id)
+	return clienttransactions.GetComplianceForUnitsSuccess(statutories)
+
+def process_save_assigned_compliance(db, request, session_user, client_id):
+	return 	db.save_assigned_compliance(request, session_user, client_id)
+
 
 def process_get_past_records_form_data(db, request, session_user, client_id): 
 	countries = db.get_countries_for_user(session_user, client_id)

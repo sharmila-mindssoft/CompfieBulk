@@ -2806,7 +2806,7 @@ def to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(data):
     data = parse_dictionary(data)
     d = {}
-    for key, value in data :
+    for key, value in data.items() :
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(value)
         d[key] = value
@@ -3355,3 +3355,24 @@ def to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryComplia
     for item in data :
         lst.append(to_structure_RecordType_clienttransactions_UpdateStatutoryCompliance(item))
     return lst
+
+#clienttransaction getcompliancforunit
+def to_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    from protocol import clienttransactions
+    return clienttransactions.UNIT_WISE_STATUTORIES.to_structure(data)
+
+def to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(item))
+    return lst
+
+def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_dictionary(data)
+    d = {}
+    for key, value in data.items():
+        key = to_structure_SignedIntegerType_8(key)
+        value = to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
+        d[key] = value
+    return d
