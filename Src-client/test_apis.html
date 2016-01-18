@@ -281,20 +281,14 @@
 		        configuration6 = mirror.getDateConfigurations(4,2,6,5)
 		        dateConfigurations.push(configuration1)
 		        dateConfigurations.push(configuration2)
-<<<<<<< HEAD
-			    group_name = "Test Client 21";
-		        country_ids = [1];
-		        domain_ids = [1];
-=======
 		        dateConfigurations.push(configuration3)
 		        dateConfigurations.push(configuration4)
 		        dateConfigurations.push(configuration5)
 		        dateConfigurations.push(configuration6)
 
-			    group_name = "Moto Groups";
+			    group_name = "TVS Groups";
 		        country_ids = [1,2, 4];
 		        domain_ids = [1,2];
->>>>>>> b78ce478c36d2f008c12def095621ef8543d283c
 		        logo = "logo.png";
 		        contract_from = "02-Nov-2015";
 		        contract_to = "01-Nov-2016";
@@ -302,15 +296,8 @@
 		        no_of_user_licence = 10;
 		        file_space = 4.6;
 		        is_sms_subscribed = true;
-<<<<<<< HEAD
-		        email_id = "testclient21@domain.com";
-		        shortName = "test21"
-
-=======
-		        email_id = "info@moto.com";
-		        shortName = "moto"
-		        
->>>>>>> b78ce478c36d2f008c12def095621ef8543d283c
+		        email_id = "info@tvs.com";
+		        shortName = "tvs"
 			    clientGroupDetails = mirror.getSaveClientGroupDict(group_name,
 		            country_ids, domain_ids, logo, contract_from, contract_to,
 		            incharge_persons, no_of_user_licence,file_space,
@@ -407,6 +394,28 @@
 			}
 			function getComplianceDetailsReportFilters(){
 				client_mirror.getComplianceDetailsReportFilters(callback)
+			}
+			function updateUserProfile(){
+				contact_no = "935783773453"
+				address = "Test address"
+				mirror.updateUserProfile(contact_no, address,callback)
+			}
+			function getClientDetailsReportFilters(){
+				mirror.getClientDetailsReportFilters(callback);
+			}
+			function getClientDetailsReport(){
+				mirror.getClientDetailsReport(1, 1, 1, 1, 1, 1, [1], callback);
+			}
+			function getPastRecordsFormData(){
+				client_mirror.getPastRecordsFormData(callback);
+			}
+			function getStatutoriesByUnit(){
+				unit_id = 1
+				domain_id = 1
+				level_1_statutory_id = 1
+				frequency_id = 1
+				client_mirror.getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_id, 
+					frequency_id, callback);
 			}
 		</script>
 	</head>
@@ -580,7 +589,27 @@
 			<button onclick="getComplianceDetailsReportFilters()">
 				Get Compliance Details Report Filters
 			</button>
-			
+		</div>
+		<div>
+			<button onclick="updateUserProfile()">
+				Update User Profile
+			</button>
+		</div>
+		<div>
+			<button onclick="getClientDetailsReportFilters()">
+				Get Client Details Report Filters
+			</button>
+			<button onclick="getClientDetailsReport()">
+				Get Client Details Report 
+			</button>
+		</div>
+		<div>
+			<button onclick="getPastRecordsFormData()">
+				Get Past Records form data
+			</button>
+			<button onclick="getStatutoriesByUnit()">
+				Get Statutories by Unit
+			</button>
 		</div>
 		<br>
 		<br>

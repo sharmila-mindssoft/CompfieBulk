@@ -59,7 +59,7 @@ function initMirror() {
         var userDetails = {
             "user_id": info["user_id"],
             "client_id": info["client_id"],
-            "user_group": info["user_group"],
+            "user_group": info["user_group_name"],
             "employee_name": info["employee_name"],
             "employee_code": info["employee_code"],
             "email_id": info["email_id"],
@@ -1024,7 +1024,7 @@ function initMirror() {
 
     // Client Details Report
     function getClientDetailsReportFilters(callback){
-        callerName = "api/techno"
+        callerName = "api/techno_report"
         var request = [
             "GetClientDetailsReportFilters",
             {}
@@ -1034,9 +1034,9 @@ function initMirror() {
 
     function getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId, 
         unitId, domainIds, callback){
-        callerName = "api/techno"
+        callerName = "api/techno_report"
         var request = [
-            "GetClientDetailsReport",
+            "GetClientDetailsReportData",
             {
                 "country_id": countryId,
                 "group_id" : clientId,
@@ -1167,6 +1167,18 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function updateUserProfile(contact_no, address, callback){
+        callerName = "api/general"
+        var request = [
+            "UpdateUserProfile",
+            {
+                "contact_no" : contact_no,
+                "address" : address
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -1287,7 +1299,8 @@ function initMirror() {
         getAssignedStatutoryReportFilters: getAssignedStatutoryReportFilters,
         getAssignedStatutoryReport: getAssignedStatutoryReport,
 
-        getAuditTrail: getAuditTrail
+        getAuditTrail: getAuditTrail,
+        updateUserProfile: updateUserProfile
     }
 
 }

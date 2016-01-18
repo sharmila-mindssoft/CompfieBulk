@@ -76,6 +76,21 @@ def to_structure_VectorType_RecordType_clientreport_Level1Statutory(data):
         lst.append(to_structure_RecordType_clientreport_Level1Statutory(item))
     return lst
 
+def to_structure_VectorType_RecordType_core_Level1Statutory(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_Level1Statutory(item))
+    return lst
+
+def to_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_client_transactions_IndustryWiseUnits(item))
+    return lst
+
+
 def to_structure_VectorType_RecordType_clientreport_UserName(data):
     data = parse_list(data, 0)
     lst = []
@@ -1486,6 +1501,20 @@ def to_structure_VectorType_RecordType_core_UnitDetails(data):
         lst.append(to_structure_RecordType_core_UnitDetails(item))
     return lst
 
+def to_structure_VectorType_RecordType_techno_report_UnitDetails(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_techno_report_UnitDetails(item))
+    return lst
+
+def to_structure_VectorType_RecordType_techno_report_GroupedUnits(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_techno_report_GroupedUnits(item))
+    return lst
+
 def to_structure_VectorType_RecordType_techno_master_UnitDetails(data):
     data = parse_list(data, 0)
     lst = []
@@ -1610,6 +1639,14 @@ def to_structure_RecordType_clientmasters_Request_UpdateClientUserStatus(data):
 def to_structure_RecordType_core_UnitDetails(data):
     from protocol import core
     return core.UnitDetails.to_structure(data)
+
+def to_structure_RecordType_techno_report_UnitDetails(data):
+    from protocol import technoreports
+    return technoreports.UnitDetails.to_structure(data)
+
+def to_structure_RecordType_techno_report_GroupedUnits(data):
+    from protocol import technoreports
+    return technoreports.GroupedUnits.to_structure(data)
 
 def to_structure_RecordType_techno_master_UnitDetails(data):
     from protocol import technomasters
@@ -3189,6 +3226,14 @@ def to_structure_VectorType_RecordType_clientreport_ActivityLog(data):
 def to_structure_RecordType_clientreport_Level1Statutory(data):
     from protocol import clientreport
     return clientreport.Level1Statutory.to_structure(data)
+
+def to_structure_RecordType_core_Level1Statutory(data):
+    from protocol import core
+    return core.Level1Statutory.to_structure(data)
+
+def to_structure_RecordType_client_transactions_IndustryWiseUnits(data):
+    from protocol import clienttransactions
+    return clienttransactions.IndustryWiseUnits.to_structure(data)
 
 def to_structure_RecordType_clientmasters_Response_ServiceProviderNameAlreadyExists(data):
     from protocol import clientmasters

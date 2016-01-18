@@ -147,6 +147,7 @@ INSERT INTO tbl_forms VALUES(22, 4, 'Statutory Notifications List', '/statutory-
 INSERT INTO tbl_forms VALUES(23, 4, 'Login Trace', '/login-trace', 23, null, 1);
 INSERT INTO tbl_forms VALUES(24, 4, 'Audit Trail', '/audit-trail', 24, null, 1);
 INSERT INTO tbl_forms VALUES(25, 4, 'Settings', '/settings',  25, null, 1);
+INSERT INTO tbl_forms VALUES(26, 5, 'View Profile', '/view-profile',  26, null, 1);
 
 --tbl_admin
 -- username, password -- 123456
@@ -161,7 +162,7 @@ INSERT INTO tbl_admin  VALUES("admin", "e10adc3949ba59abbe56e057f20f883e");
 --DELETE FROM tbl_session_types
 -- values = session_type_id, snession_type
 INSERT INTO tbl_session_types VALUES(1, "web");
-INSERT INTO tbl_session_types VALUES(2, "andoird");
+INSERT INTO tbl_session_types VALUES(2, "android");
 INSERT INTO tbl_session_types VALUES(3, "ios");
 INSERT INTO tbl_session_types VALUES(4, "blackberry");
 

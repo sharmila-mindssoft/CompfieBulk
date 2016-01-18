@@ -184,7 +184,10 @@ TEMPLATE_PATHS = [
     ("/service-provider", "files/desktop/client/service-provider/serviceprovider.html", None, {}),   
     ("/client-user-privilege", "files/desktop/client/client-user-privilege/clientuserprivilege.html", None, {}),  
     ("/client-user-master", "files/desktop/client/client-user-master/clientusermaster.html", None, {}),  
-    ("/unit-closure", "files/desktop/client/unit-closure/unitclosure.html", None, {}),    
+    ("/unit-closure", "files/desktop/client/unit-closure/unitclosure.html", None, {}), 
+    #reports
+    ("/compliance", "files/desktop/client/audit-trail/audittrail.html", None, {}),
+    ("/audit-trail", "files/desktop/client/audit-trail/audittrail.html", None, {}),       
 
 ]
 

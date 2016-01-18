@@ -198,6 +198,7 @@ TEMPLATE_PATHS = [
     ("/home", "files/desktop/home/home.html", None, {}),
     ("/custom-controls", "files/desktop/custom-controls/custom-controls.html", None, {}),
     #common
+    ("/profile", "files/desktop/profile/profile.html", None, {}),
     ("/change-password", "files/desktop/change-password/changepassword.html", None, {}),
     #IT Admin Master
     ("/domain-master", "files/desktop/domain-master/domainmaster.html", None, {}),
@@ -229,7 +230,10 @@ TEMPLATE_PATHS = [
     #Techno User Transaction
     ("/assign-statutory", "files/desktop/assign-statutory/assignstatutory.html", None, {}),
     #Techno reports
-    ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {})
+    ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {}),
+    ("/assigned-statutory-report", "files/desktop/assigned-statutory-report/assignedstatutoryreport.html", None, {}),
+    #audit trial
+    ("/audit-trail", "files/desktop/audit-trail/audittrail.html", None, {}),
    ]
 
 
@@ -240,7 +244,7 @@ def handle_root(request, response):
     self.write(output)
 
 def run_server(port):
-    io_loop = IOLoop()
+    io_loop = IOLoop()  
 
     def delay_initialize():
         db = KnowledgeDatabase(
