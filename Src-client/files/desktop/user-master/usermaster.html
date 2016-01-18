@@ -74,17 +74,17 @@
             <div class="input-row">
               <div class="field-label">Employee Name:<span class="mandatory">*</span></div>
               <div class="field-input">
-                <input type="text" id="employeename" class="input-box fieldvalue" tabindex="1" >
+                <input type="text" maxlength="50" id="employeename" class="input-box fieldvalue" tabindex="1" >
                 <input type="hidden" id="userid" value="">
               </div>
             </div>
             <div class="input-row">
               <div class="field-label">Employee ID:<span class="mandatory">*</span></div>
-              <div class="field-input"><input type="text" id="employeeid" class="input-box fieldvalue" tabindex="2"></div>
+              <div class="field-input"><input type="text" maxlength="50" id="employeeid" class="input-box fieldvalue" tabindex="2"></div>
             </div>
             <div class="input-row">
               <div class="field-label">Address:</div>
-              <div class="field-input"><textarea class="input-box fieldvalue" id="address" style="height:70px;" tabindex="3"></textarea></div>
+              <div class="field-input"><textarea class="input-box fieldvalue" id="address" style="height:70px;" tabindex="3" maxlength="250"></textarea></div>
             </div>
             
           </div>
@@ -92,7 +92,7 @@
             
             <div class="input-row" style="padding-bottom:0px;">
               <div class="field-label">Email ID:<span class="mandatory">*</span></div>
-              <div class="field-input"><input type="text" id="emailid" class="input-box fieldvalue" placeholder="Email ID" tabindex="4">
+              <div class="field-input"><input type="text" maxlength="100" id="emailid" class="input-box fieldvalue" placeholder="Email ID" tabindex="4">
             </div>
           </div>
           <div class="input-row" style="padding-bottom:0px;">
@@ -103,7 +103,7 @@
           </div>
           <div class="input-row" style="padding-bottom:0px;">
             <div class="field-label">Contact No.:<span class="mandatory">*</span></div>
-            <div class="field-input"><input type="text" id="countrycode" class="input-box countrycode fieldvaluefieldvalue" value="+91" tabindex="5"> <input type="text" id="areacode" class="input-box areacode fieldvalue" tabindex="6" > <input type="text" id="contactno" class="input-box mobile fieldvalue" tabindex="7"></div>
+            <div class="field-input"><input type="text" maxlength="3" id="countrycode" class="input-box countrycode fieldvaluefieldvalue" value="+91" tabindex="5"> <input type="text" maxlength="5" id="areacode" class="input-box areacode fieldvalue" tabindex="6" > <input type="text" maxlength="10" id="contactno" class="input-box mobile fieldvalue" tabindex="7"></div>
           </div>
           
           <div class="input-row" style="padding-bottom:0px;">
@@ -124,7 +124,7 @@
         </div>
         <div class="input-row">
           <div class="field-label">Designation:</div>
-          <div class="field-input"><input type="text" id="designation" class="input-box fieldvalue" tabindex="9"></div>
+          <div class="field-input"><input type="text" maxlength="50" id="designation" class="input-box fieldvalue" tabindex="9"></div>
         </div>
         
       </div>
