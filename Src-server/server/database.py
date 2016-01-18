@@ -3720,7 +3720,6 @@ class KnowledgeDatabase(Database):
                 not_applicable_remarks = ""
             for key, value in d.compliances.iteritems():
                 compliance_id = int(key)
-                
                 if compliance_id not in saved_compliance_ids :
                     created_on = str(self.get_date_time())
                     new_data = d

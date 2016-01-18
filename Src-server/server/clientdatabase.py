@@ -990,13 +990,11 @@ class ClientDatabase(Database):
         results = self.convert_to_dict(rows, columns)
         statutory_wise_compliances = {}
         for r in results :
-
             statutory_opted = r["statutory_opted"]                
             if type(statutory_opted) is int :
                 statutory_opted = bool(statutory_opted)
             else :
                 statutory_opted = bool(r["statutory_applicable"])
-
             compliance_opted = r["compliance_opted"]
             print compliance_opted
             if compliance_opted is None :
@@ -1384,7 +1382,6 @@ class ClientDatabase(Database):
     ):
         if session_user == 0 :
             session_user = '%'
-
         query = "SELECT distinct t2.compliance_id,\
             t1.domain_id,\
             UC.units,\
