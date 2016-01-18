@@ -12,6 +12,7 @@ var legalentityval;
 var divisionval;
 var unitval;
 var level1val;
+var applicableStatus;
 
 function clearMessage() {
     $(".error-message").hide();
@@ -29,7 +30,7 @@ function initialize(){
 		businessgroupsList = data['business_groups'];
 		divisionsList = data['divisions'];
 		domainsList = data['domains'];
-		groupList = data['group_companies'];
+		groupList = data['groups'];
 		legalEntityList = data['legal_entities'];
 		unitList = data['units'];
 		level1List = data['level_1_statutories'];
@@ -53,13 +54,15 @@ $("#show-button").click(function(){
 	var countries = $("#countries").val();
 	countriesText = $("#countries  option:selected").text();
 	//Domain
+	
 	var domain = $("#domain").val();
 	if(domain != ''){ 
 		var domainsVal = parseInt(domain);
 	}
-	if(domain == ''){
+	else{
 		var domainsVal = null;
 	}	
+	var domainName = $("#domainval").val();
 	//Groups
 	var groups = $("#group-id").val();
 	if(groups != ''){ 
@@ -116,8 +119,7 @@ $("#show-button").click(function(){
 	}
 	level1val = $("#level1val").val();
 
-	var applicableStatus = $(".appliability-status").val();
-	applicableStatus = null
+	applicableStatus = $(".appliability-status").val();
 
 	if(countries == ""){
 		displayMessage("Please Select Country");
@@ -131,10 +133,11 @@ $("#show-button").click(function(){
 			$(".grid-table-rpt").show();
 			$(".countryval").text(countriesText);
 			$(".groupsval").text(groupsval);
+			$(".domainval").text(domainName);
 			$(".bgroupsval").text(businessgroupsval);
 			$(".lentityval").text(legalentityval);
 			$(".divisionval").text(divisionval);
-			loadClientDetailsList(data['units']);		
+			loadAssignedStatutoryList(data['unit_wise_assigned_statutories']);		
 		}
 		function onFailure(error){
 			console.log(error);
@@ -153,32 +156,88 @@ $("#show-button").click(function(){
 		);
 	}
 });
-function loadClientDetailsList(data){
+function loadAssignedStatutoryList(data){
 	$('.grid-table-rpt').show();
-	$('.tbody-clientdetails-list tr').remove();
+	$('.tbody-assigned-statutory-list tr').remove();
 	var sno = 0;
 	$.each(data, function(key, value) {
 	  	var list = data[key];
-	  	$.each(list, function(k, val) { 
-		  	var arr = [];
-			var tableRow = $('#templates .table-clientdetails-list .table-row');
-			var clone = tableRow.clone();
-			sno = sno + 1;
-			$('.sno', clone).text(sno);
-			$('.unit-name', clone).html(list[k]['unit_name']);
-			var domainsNames = '';
-			arr = list[k]['domain_ids'];
-			$.each(domainsList, function(key, value){
-				var domianid = domainsList[key]['domain_id'];
-				var domainname = domainsList[key]['domain_name']
-				if(jQuery.inArray(domianid, arr ) > -1){
-					domainsNames += domainname + ", ";
+	  	var tableRow = $('#unit-details-list .table-unit-details-list .tablerow');
+		var clone = tableRow.clone();
+		var unitNameAddress = list['unit_name']+", "+list['address'];
+		$('.unit-name-address', clone).text(unitNameAddress);
+		$('.tbody-assigned-statutory-list').append(clone);
+		var assignedList = list['assigned_statutories'];
+		//Assigned Act List
+	  	$.each(assignedList, function(k, val) { 
+	  		var asImageName;
+	  		var optedImageName;
+	  		var tableRowAssigned = $('#act-heading .table-act-heading-list .tablerow');
+			var cloneAssigned = tableRowAssigned.clone();
+			var appStatus = assignedList[k]['applicable_status']
+			if(appStatus == true){
+				asImageName = "<img src='/images/tick1bold.png'>";
+			}
+			else{
+				asImageName = "<img src='/images/deletebold.png'>";  
+			}
+			var optedStatus = assignedList[k]['compliance_opted_status']
+			if(optedStatus == true){
+				optedImageName = "<img src='/images/tick1bold.png'>";
+			}
+			else if(optedStatus == false){
+				optedImageName = "<img src='/images/deletebold.png'>";  
+			}
+			else{
+				optedImageName = "Nil";
+			}
+			var remarks = assignedList[k]['compliance_remarks'];
+			if(remarks == null){
+				remarks = "Nil";
+			}
+
+			$('.heading', cloneAssigned).text(assignedList[k]['level_1_statutory_name']);
+			$('.act-applicable', cloneAssigned).html(asImageName);
+			$('.act-opted', cloneAssigned).html(optedImageName);
+			$('.act-remarks', cloneAssigned).text(remarks);
+			var assignedRecord = assignedList[k]['compliances']; 
+			$('.tbody-assigned-statutory-list').append(cloneAssigned);		
+			$.each(assignedRecord, function(ke, valu) {
+				var appStatus = assignedRecord[ke]['compliance_applicable_status']
+				if(appStatus == true){
+					asImageName = "<img src='/images/tick1bold.png'>";
 				}
-			});					
-			$('.domain-name', clone).html(domainsNames);
-			$('.unit-address', clone).text(list[k]['unit_location_and_address']);
-			$('.pincode', clone).html(list[k]['postal_code']);
-			$('.tbody-clientdetails-list').append(clone);
+				else{
+					asImageName = "<img src='/images/deletebold.png'>";  
+				}
+				var optedStatus = assignedRecord[ke]['compliance_opted_status']
+				if(optedStatus == true){
+					optedImageName = "<img src='/images/tick1bold.png'>";
+				}
+				else if(optedStatus == false){
+					optedImageName = "<img src='/images/deletebold.png'>";  
+				}
+				else{
+					optedImageName = "Nil";
+				}
+				var remarks = assignedRecord[ke]['compliance_remarks'];
+				if(remarks == null){
+					remarks = "Nil";
+				}
+				sno++; 
+		  		var tableRowAssignedRecord = $('#statutory-list .table-statutory-list .tablerow');
+				var cloneAssignedRecord = tableRowAssignedRecord.clone();
+				$('.sno', cloneAssignedRecord).text(sno);
+				$('.statutory-provision', cloneAssignedRecord).text(assignedRecord[ke]['statutory_provision']);
+				$('.compliance-task', cloneAssignedRecord).text(assignedRecord[ke]['compliance_name']);
+				$('.compliance-description', cloneAssignedRecord).text(assignedRecord[ke]['description']);
+				$('.statutory-nature', cloneAssignedRecord).text(assignedRecord[ke]['statutory_nature']);
+				$('.applicability-status', cloneAssignedRecord).html(asImageName);
+				$('.opted', cloneAssignedRecord).html(optedImageName);
+				$('.remarks', cloneAssignedRecord).text(remarks);
+				$('.tbody-assigned-statutory-list').append(cloneAssignedRecord);
+
+			});			
 		});
 	});
 	$(".total-records").html("Total : "+sno+" records")
@@ -192,6 +251,32 @@ function loadCountries(countriesList){
 		$('#countries').append($('<option value="'+countryId+'">'+countryName+'</option>'));
 	});
 }
+//Domains------------------------------------------------------------------------------------------------
+function hidedomainslist(){
+	document.getElementById('selectboxview-domains').style.display = 'none';
+}
+function loadauto_domains (textval) {
+  document.getElementById('selectboxview-domains').style.display = 'block';
+  var domains = domainsList;
+  var suggestions = [];
+  $('#selectboxview-domains ul').empty();
+  if(textval.length>0){
+    for(var i in domains){
+      if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
+    }
+    var str='';
+    for(var i in suggestions){
+      str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+    }
+    $('#selectboxview-domains ul').append(str);
+    $("#domains").val('');
+    }
+}
+//set selected autocomplte value to textbox
+function activate_text (element,checkval,checkname) {
+  $("#domainval").val(checkname);
+  $("#domain").val(checkval);  
+}
 //Groups----------------------------------------------------------------------------------------------------------------------
 function hidegroupslist(){
 	document.getElementById('autocompleteview').style.display = 'none';
@@ -203,18 +288,18 @@ function loadauto_text (textval) {
   $('#autocompleteview ul').empty();
   if(textval.length>0){
     for(var i in groups){
-      if (~groups[i]['group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([groups[i]["client.._id"],groups[i]["group_name"]]); 
+      if (~groups[i]['group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([groups[i]["client_id"],groups[i]["group_name"]]); 
     }
     var str='';
     for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+      str += '<li id="'+suggestions[i][0]+'" onclick="activate_groups(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
     }
     $('#autocompleteview ul').append(str);
     $("#group-id").val('');
     }
 }
 //set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
+function activate_groups (element,checkval,checkname) {
   $("#groupsval").val(checkname);
   $("#group-id").val(checkval);  
 }
@@ -321,57 +406,61 @@ function loadauto_unit (textval) {
   $('#autocompleteview-unit ul').empty();
   if(textval.length>0){
     for(var i in unit){
+    	var getunitidname = unit[i]['unit_code']+"-"+unit[i]['unit_name'];
     	if($("#divisionid").val()==''){
+
     		if(unit[i]['legal_entity_id']==$("#legalentityid").val()){
-    			if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"]]); 	
+    			if (~getunitidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]); 	
     		}      	
     	}
     	else{
     		if(unit[i]['division_id']==$("#divisionid").val()){
-    			if (~unit[i]['unit_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"]]); 	
+    			if (~getunitidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([unit[i]["unit_id"],unit[i]["unit_name"],unit[i]["unit_code"]]); 	
     		}      	
     	}
     	
     }
     var str='';
     for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_unit(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+      str += '<li id="'+suggestions[i][0]+'" onclick="activate_unit(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\', \''+suggestions[i][2]+'\')">'+suggestions[i][2]+'-'+suggestions[i][1]+'</li>';
     }
     $('#autocompleteview-unit ul').append(str);
     $("#unitid").val('');
     }
 }
-function activate_unit (element,checkval,checkname) {
-  $("#unitval").val(checkname);
+function activate_unit (element,checkval,checkname, concatunit) {
+  $("#unitval").val(concatunit+'-'+checkname);
   $("#unitid").val(checkval);
 }
-//Domains------------------------------------------------------------------------------------------------
-function hidedomainslist(){
-	document.getElementById('selectboxview-domains').style.display = 'none';
+//Level 1 Statutories
+
+//Legal Entity---------------------------------------------------------------------------------------------------------------
+function hidelevel1list(){
+	document.getElementById('autocompleteview-level1').style.display = 'none';
 }
-function loadauto_domains (textval) {
-  document.getElementById('selectboxview-domains').style.display = 'block';
-  var domains = domainsList;
+function loadauto_level1 (textval) {
+  document.getElementById('autocompleteview-level1').style.display = 'block';
+  var countryId = $("#countries").val();
+  var domainId = $("#domain").val();
+  var level1 = level1List[countryId][domainId];
   var suggestions = [];
-  $('#selectboxview-domains ul').empty();
+  $('#autocompleteview-level1 ul').empty();
   if(textval.length>0){
-    for(var i in domains){
-      if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]); 
-    }
+    $.each(level1, function(i, value){    
+    	if (~level1[i]['statutory_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([level1[i]["statutory_id"],level1[i]["statutory_name"]]); 	
+    });
     var str='';
     for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+      str += '<li id="'+suggestions[i][0]+'" onclick="activate_level1(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
     }
-    $('#selectboxview-domains ul').append(str);
-    $("#domains").val('');
+    $('#autocompleteview-level1 ul').append(str);
+    $("#legalentityid").val('');
     }
 }
-//set selected autocomplte value to textbox
-function activate_text (element,checkval,checkname) {
-  $("#domainval").val(checkname);
-  $("#domain").val(checkval);  
+function activate_level1 (element,checkval,checkname) {
+  $("#level1val").val(checkname);
+  $("#level1id").val(checkval);
 }
-
 
 $(function() {
 	initialize();
