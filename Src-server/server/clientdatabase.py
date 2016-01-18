@@ -1679,7 +1679,6 @@ class ClientDatabase(Database):
                 AND T1.completion_date != NULL\
                 AND T1.approve_status = 1"
 
-<<<<<<< HEAD
         not_complied_qry = " AND T1.due_date < CURDATE() \
                 AND T1.approve_status is NULL "
 
@@ -1698,23 +1697,6 @@ class ClientDatabase(Database):
             group_by_name = "T4.country_id"
             # filter_type_ids = country_ids
             filter_type_ids = filter_ids
-=======
-    def save_assigned_compliance(request, session_user, client_id):
-        country_id = request.country_id
-        assignee = request.assignee
-        concurrence = request.concurrence_person
-        approval = request.approval_person
-        compliances = request.compliances
-        for c in compliances:
-            compliance_id = c["compliance_id"]
-            statutory_dates = c["statutory_dates"]
-            due_date = c["due_date"]
-            validity_date = c["validity_date"]
-            unit_ids = c["unit_ids"]
-            for unit in unit_ids:
-                query = "INSERT INTO tbl_assigned_compliances \
-                    ()"
->>>>>>> save assigned compliance inprogress
 
         elif filter_type == "BusinessGroup" :
             group_by_name = "T4.business_group_id"
