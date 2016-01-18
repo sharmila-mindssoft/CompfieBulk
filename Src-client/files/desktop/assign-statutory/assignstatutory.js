@@ -24,26 +24,8 @@ function displayMessage(message) {
 
 function clearValues(levelvalue) {
   if(levelvalue == 'all'){
-    assignStatutoryCountryId = 0;
-    assignStatutoryCountryValue = null;
-    assignStatutoryGroupId = 0;
-    assignStatutoryGroupValue = null;
-    assignStatutoryBusinessGroupId = 0;
-    assignStatutoryBusinessGroupValue = null;
-    assignStatutoryLegalEntityId = 0;
-    assignStatutoryLegalEntityValue = null;
-    assignStatutoryDivisionId = 0;
-    assignStatutoryDivisionValue = null;
-    assignStatutoryGeographyLevelId = 0;
-    assignStatutoryGeographyLevelValue = null;
-    assignStatutoryLocationId = 0;
-    assignStatutoryLocationValue = null;
-    assignStatutoryIndustryId = 0;
-    assignStatutoryIndustryValue = null;
     assignStatutoryUnitIds = [];
     assignStatutoryUnitValues = [];
-    assignStatutoryDomainId = 0;
-    assignStatutoryDomainValue = null;
 
     $('#group').empty();
     $('#businessgroup').empty();
@@ -403,7 +385,6 @@ $("#location").click(function(event){
       $(el).removeClass( "active" );
     });
     $(event.target).addClass("active");
-
     loadunit();
   }
 });
@@ -638,7 +619,6 @@ function validate_firsttab(){
       }
       function onFailure(error){
       }
-
       mirror.getAssignStatutoryWizardTwo(parseInt($('.countrylist.active').attr('id')), parseInt($('.domainlist.active').attr('id')), parseInt($('.industrylist.active').attr('id')), parseInt($('.locationlist.active').attr('id')), unitIdTab2, 
         function (error, response) {
               if (error == null){
@@ -690,30 +670,44 @@ $('ul.setup-panel li a[href="#step-1"]').trigger('click');
 
 function saveorsubmit(submissionType){
   if (validate_secondtab()){
-  var clientStatutoryId = null;
-  if($("#clientstatutoryid").val() != ''){
-    clientStatutoryId = parseInt($("#clientstatutoryid").val());
-    
-  }
-  var assignedStatutories = [];
-  var statutoriesCount= 1;
-  var actCount = 1;
-  for(var statutory in statutoriesList){
-    var level1StatutoryId = statutoriesList[statutory]["level_1_statutory_id"];
-    var applicableStatus = null;
-    var notApplicableRemarks = null;
-    
-    if($('#act'+actCount).is(":checked")){
-      applicableStatus = true;
+
+    var assignStatutoryCountryId = 0;
+    var assignStatutoryGroupId = 0;
+    var assignStatutoryLocationId = 0;
+    var assignStatutoryDomainId = 0;
+    var clientStatutoryId = null;
+    if($("#clientstatutoryid").val() == ''){
+      assignStatutoryCountryId = parseInt($('.countrylist.active').attr('id'));
+      assignStatutoryGroupId = parseInt($('.grouplist.active').attr('id'));
+      assignStatutoryLocationId = parseInt($('.locationlist.active').attr('id'));
+      assignStatutoryDomainId = parseInt($('.domainlist.active').attr('id'));
+    }else{
+      clientStatutoryId = parseInt($("#clientstatutoryid").val());
+      assignStatutoryCountryId = parseInt($("#ascountry").val());
+      assignStatutoryGroupId = parseInt($("#asgroup").val());
+      assignStatutoryLocationId = parseInt($("#aslocation").val());
+      assignStatutoryDomainId = parseInt($("#asdomain").val());
     }
-    else{
-      applicableStatus = false;
-      notApplicableRemarks = $('#remarkvalue1').val();
-      if(notApplicableRemarks.length==0){
-        displayMessage("Remarks required for not applicable Act");
-        return false;
+
+    var assignedStatutories = [];
+    var statutoriesCount= 1;
+    var actCount = 1;
+    for(var statutory in statutoriesList){
+      var level1StatutoryId = statutoriesList[statutory]["level_1_statutory_id"];
+      var applicableStatus = null;
+      var notApplicableRemarks = null;
+      
+      if($('#act'+actCount).is(":checked")){
+        applicableStatus = true;
       }
-    }
+      else{
+        applicableStatus = false;
+        notApplicableRemarks = $('#remarkvalue1').val();
+        if(notApplicableRemarks.length==0){
+          displayMessage("Remarks required for not applicable Act");
+          return false;
+        }
+      }
 
     var complianceslist = statutoriesList[statutory]["compliances"];
     var compliances = { };
@@ -762,10 +756,18 @@ $('#activate-step-submit').on('click', function(e) {
   saveorsubmit("Submit")
 })
 
-function displayEdit(client_statutory_id){
+function displayEdit(client_statutory_id,country_id,group_id,location_id,domain_id,unit_id){
    function onSuccess(data){
         clearValues('all');
         statutoriesList = data["statutories"];
+        $("#ascountry").val(country_id);
+        $("#asgroup").val(group_id);
+        $("#aslocation").val(location_id);
+        $("#asdomain").val(domain_id);
+        assignStatutoryUnitIds = [];
+        assignStatutoryUnitIds.push(unit_id);
+
+
         $("#assignstatutory-view").hide();
         $("#assignstatutory-add").show();
         $("#clientstatutoryid").val(client_statutory_id);
@@ -797,7 +799,7 @@ function displayEdit(client_statutory_id){
     );
 }
 
-function displayView(client_statutory_id){
+function displayView(client_statutory_id,country_id,group_id,location_id,domain_id,unit_id){
    function onSuccess(data){
       clearValues('all');
       $('ul.setup-panel li:eq(0)').hide();
@@ -814,6 +816,12 @@ function displayView(client_statutory_id){
       $(".breadcrumbs").hide();
 
       statutoriesList = data["statutories"];
+      $("#ascountry").val(country_id);
+      $("#asgroup").val(group_id);
+      $("#aslocation").val(location_id);
+      $("#asdomain").val(domain_id);
+      assignStatutoryUnitIds = [];
+      assignStatutoryUnitIds.push(unit_id);
       $("#clientstatutoryid").val(client_statutory_id);
 
       load_secondwizard();
