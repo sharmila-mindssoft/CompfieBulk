@@ -1171,7 +1171,6 @@ class ClientDatabase(Database):
         else:
             print "Assign Compliances to the Unit first"
             return
-
         compliance_columns = "compliance_id, compliance_task, document_name, statutory_dates"
         compliance_condition = " compliance_id in (%s) " % client_compliance_ids
         compliance_rows = self.get_data(self.tblCompliances, compliance_columns, compliance_condition)
