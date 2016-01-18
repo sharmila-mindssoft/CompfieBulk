@@ -122,6 +122,7 @@ GetAssignedStatutoryReportFiltersSuccess = RecordType("GetAssignedStatutoryRepor
 	Field("countries", CountryList),
 	Field("domains", DomainList),
 	Field("groups", ClientList),
+	Field("business_groups", BusinessGroupList),
 	Field("legal_entities", LegalEntityList),
 	Field("divisions", DivisionList),
 	Field("units", UnitList),

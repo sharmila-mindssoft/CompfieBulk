@@ -10,7 +10,7 @@ import json
 
 from types import *
 from protocol import (
-    core, knowledgereport,
+    core, knowledgereport, technomasters,
     technotransactions, technoreports,general
 )
 
@@ -132,6 +132,7 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
+        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
@@ -193,7 +194,6 @@ class Database(object) :
                 query += column+" = '"+str(values[index])+"', "
             else:
                 query += column+" = '"+str(values[index])+"' "
-
         query += " WHERE "+condition
         if client_id != None:
             return self.execute(query, client_id)
@@ -1152,7 +1152,6 @@ class KnowledgeDatabase(Database):
             query = query + " AND t4.user_id=%s" % (user_id)
         if country_id :
             query = query + " AND t3.country_id=%s" % (country_id)
-        print query
         rows = self.select_all(query)
         result = []
         if rows :
@@ -1187,14 +1186,13 @@ class KnowledgeDatabase(Database):
         join_conditions = ["t1.level_id = t2.level_id", "t2.country_id = t3.country_id"]
         where_condition = "1"
         if country_ids != None:
-            where_condition = "t1.country_id in (%s)" % country_ids
+            where_condition = "t2.country_id in (%s)" % country_ids
         rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type, 
             join_conditions, where_condition)
         result = []
         if rows :        
             columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
             result = self.convert_to_dict(rows, columns)
-            # self.geography_parent_mapping(result)
         return self.return_geographies(result)
 
     def get_geography_report(self):
@@ -2695,8 +2693,6 @@ class KnowledgeDatabase(Database):
         rows = self.get_data(self.tblClientGroups, columns, condition) 
         columns = ["client_id", "group_name", "is_active"]
         result = self.convert_to_dict(rows, columns)
-        print
-        print result
         return self.return_group_companies(result)
 
 
@@ -3677,7 +3673,6 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_clients t13 \
             ON t1.client_id = t13.client_id  AND t12.user_id = t13.user_id\
             WHERE t13.user_id = %s"  % (user_id)
-        print query
         rows = self.select_all(query)
         columns = ["client_statutory_id", "client_id", "geography_id",
             "country_id", "domain_id", "unit_id", "submission_type",
@@ -3899,7 +3894,6 @@ class KnowledgeDatabase(Database):
                 business_group_id, legal_entity_id,
                 division_id, unit_id
             )
-        print query
         rows = self.select_all(query)
         columns = ["client_statutory_id", "client_id", "geography_id",
             "country_id", "domain_id", "unit_id", "submission_type",
@@ -3940,11 +3934,11 @@ class KnowledgeDatabase(Database):
                     statutories
                 )
             else :
-                statutories = unit_statutories.statutories
+                statutories = unit_statutories.assigned_statutories
                 statutories.append(
                     self.return_assigned_compliances_by_id(client_statutory_id)
                 )
-                unit_statutories.statutories = statutories
+                unit_statutories.assigned_statutories = statutories
 
             unit_wise_statutories_dict[unit_id] = unit_statutories
 
@@ -3955,6 +3949,48 @@ class KnowledgeDatabase(Database):
         return technoreports.GetAssignedStatutoryReportSuccess(
             final_unit_wise_statutories_list
         )
+
+    def get_unit_details_for_user(self, user_id):
+        client_ids = None
+        if ((user_id != None) and (user_id != 0)):
+            client_ids = self.get_user_clients(user_id)
+
+        condition = "1"
+        if client_ids != None:
+            condition = "client_id in (%s)" % client_ids
+
+        columns = "business_group_id, legal_entity_id, division_id, client_id"
+        condition = " 1 group by business_group_id, legal_entity_id, division_id, client_id"
+        rows = self.get_data(self.tblUnits, columns, condition)
+        unit_details = []
+        for row in rows:
+            detail_columns = "country_id"
+            detail_condition = "legal_entity_id = '%d' "% row[1]
+            if row[0] == None:
+                detail_condition += " And business_group_id is NULL"
+            else:
+                detail_condition += " And business_group_id = '%d'" % row[0]
+            if row[2] == None:
+                detail_condition += " And division_id is NULL"
+            else:
+                detail_condition += " And division_id = '%d'" % row[2]
+            detail_condition += " group by country_id"
+            country_rows = self.get_data(self.tblUnits, detail_columns, detail_condition)
+            country_wise_units = {}
+            for country_row in country_rows:
+                unit_columns = "unit_id, geography_id, unit_code, unit_name, industry_id, address, "+\
+                "postal_code, domain_ids, is_active"
+                unit_condition = detail_condition +" and country_id = '%d'" % country_row[0]
+                detail_rows = self.get_data(self.tblUnits, unit_columns, unit_condition)
+                units = []
+                for unit_detail  in detail_rows:
+                    units.append(technomasters.UnitDetails(unit_detail[0], unit_detail[1], 
+                        unit_detail[2], unit_detail[3], unit_detail[4], unit_detail[5], 
+                        unit_detail[6], [int(x) for x in unit_detail[7].split(",")], bool(unit_detail[8])))
+                # country_wise_units.append(technomasters.CountryWiseUnits(country_row[0], units))
+                country_wise_units[country_row[0]] = units
+            unit_details.append(technomasters.Unit(row[0], row[1], row[2], row[3], country_wise_units))
+        return unit_details
 
     def get_settings(self, client_id):
         settings_columns = "contract_from, contract_to, no_of_user_licence, total_disk_space"
@@ -4019,11 +4055,11 @@ class KnowledgeDatabase(Database):
 #   Audit Trail
 #
 
-    def get_audit_trails(self, user_id):
+    def get_audit_trails(self, session_user):
         user_ids = ""
-        if user_id != 0:
+        if session_user != 0:
             column = "user_group_id"
-            condition = "user_id = '%d'" % user_id
+            condition = "user_id = '%d'" % session_user
             rows = self.get_data(self.tblUsers, column, condition)
             user_group_id = rows[0][0]
 
@@ -4054,7 +4090,7 @@ class KnowledgeDatabase(Database):
             date = self.datetime_to_string(row[3])
             audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
         users = None
-        if user_id != 0:
+        if session_user != 0:
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
         else:
@@ -4062,4 +4098,67 @@ class KnowledgeDatabase(Database):
         forms = self.return_forms()
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
 
+#
+#   Update Profile
+#
 
+    def update_profile(self, contact_no, address, session_user):
+        columns = ["contact_no", "address"]
+        values = [contact_no, address]
+        condition = "user_id= '%d'" % session_user
+        self.update(self.tblUsers, columns, values, condition)
+
+#
+#   Get Details Report
+#
+
+    def get_client_details_report(self, country_id, client_id, business_group_id, 
+            legal_entity_id, division_id, unit_id, domain_ids):
+
+        condition = "country_id = '%d' AND client_id = '%d' "%(country_id, client_id)
+        if business_group_id != None:
+            condition += " AND business_group_id = '%d'" % business_group_id
+        if legal_entity_id != None:
+            condition += " AND legal_entity_id = '%d'" % legal_entity_id
+        if division_id != None:
+            condition += " AND division_id = '%d'" % division_id
+        if unit_id != None:
+            condition += " AND unit_id = '%d'" % unit_id
+        if domain_ids != None:
+            for domain_id in domain_ids:
+                condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
+                            "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
+                            "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
+                            " or domain_ids LIKE '"+str(domain_id)+"') "
+
+        group_by_columns = "business_group_id, legal_entity_id, division_id"
+        group_by_condition = condition+" group by business_group_id, legal_entity_id, division_id"
+        group_by_rows = self.get_data(self.tblUnits, group_by_columns, group_by_condition)
+        GroupedUnits = []
+        for row in group_by_rows:
+            columns = "tu.unit_id, tu.unit_code, tu.unit_name, tg.geography_name, "\
+            "tu.address, tu.domain_ids, tu.postal_code"
+            tables = [self.tblUnits, self.tblGeographies]
+            aliases = ["tu", "tg"]
+            join_type = " left join "
+            join_conditions = ["tu.geography_id = tg.geography_id"]
+            where_condition = "tu.legal_entity_id = '%d' "% row[1]
+            if row[0] == None:
+                where_condition += " And tu.business_group_id is NULL"
+            else:
+                where_condition += " And tu.business_group_id = '%d'" % row[0]
+            if row[2] == None:
+                where_condition += " And tu.division_id is NULL"
+            else:
+                where_condition += " And tu.division_id = '%d'" % row[2]
+            if unit_id != None:
+                where_condition += " AND tu.unit_id = '%d'" % unit_id
+            result_rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type, 
+            join_conditions, where_condition)
+            units = []
+            for result_row in result_rows:
+                units.append(technoreports.UnitDetails(result_row[0], result_row[3], result_row[1], 
+                    result_row[2], result_row[4], result_row[6], 
+                    [int(x) for x in result_row[5].split(",")]))
+            GroupedUnits.append(technoreports.GroupedUnits(row[2], row[1], row[0], units))
+        return GroupedUnits  

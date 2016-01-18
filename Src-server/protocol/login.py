@@ -6,7 +6,9 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_250,
     parse_structure_UnsignedIntegerType_32,
     parse_structure_EnumType_core_SESSION_TYPE,
-    parse_structure_CustomTextType_20, parse_structure_CustomTextType_50,
+    parse_structure_CustomTextType_20, 
+    parse_structure_CustomTextType_50,
+    parse_structure_OptionalType_CustomTextType_50,
     parse_structure_OptionalType_CustomTextType_100,
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_OptionalType_UnsignedIntegerType_32
@@ -16,6 +18,7 @@ from protocol.to_structure import (
     to_structure_RecordType_core_Menu, to_structure_CustomTextType_250,
     to_structure_SignedIntegerType_8,
     to_structure_EnumType_core_SESSION_TYPE,
+    to_structure_OptionalType_CustomTextType_50,
     to_structure_CustomTextType_20, to_structure_CustomTextType_50,
     to_structure_OptionalType_CustomTextType_100,
     to_structure_OptionalType_CustomTextType_20,
@@ -87,13 +90,13 @@ class ForgotPassword(Request):
         username = data.get("username")
         username = parse_structure_CustomTextType_100(username)
         short_name = data.get("short_name")
-        short_name = parse_structure_CustomTextType_100(short_name)
+        short_name = parse_structure_OptionalType_CustomTextType_100(short_name)
         return ForgotPassword(username, short_name)
 
     def to_inner_structure(self):
         return {
             "username": to_structure_CustomTextType_100(self.username),
-            "short_name" : to_structure_CustomTextType_100(self.short_name)
+            "short_name" : to_structure_OptionalType_CustomTextType_100(self.short_name)
         }
 
 class ResetTokenValidation(Request):
@@ -107,13 +110,13 @@ class ResetTokenValidation(Request):
         reset_token = data.get("reset_token")
         reset_token = parse_structure_CustomTextType_50(reset_token)
         short_name = data.get("short_name")
-        short_name = parse_structure_CustomTextType_50(short_name)
-        return ResetTokenValidation(reset_token)
+        short_name = parse_structure_OptionalType_CustomTextType_50(short_name)
+        return ResetTokenValidation(reset_token, short_name)
 
     def to_inner_structure(self):
         return {
             "reset_token": to_structure_CustomTextType_50(self.reset_token),
-            "short_name":to_structure_CustomTextType_50(self.short_name)
+            "short_name":to_structure_OptionalType_CustomTextType_50(self.short_name)
         }
 
 class ResetPassword(Request):
@@ -130,14 +133,14 @@ class ResetPassword(Request):
         new_password = data.get("new_password")
         new_password = parse_structure_CustomTextType_20(new_password)
         short_name = data.get("short_name")
-        short_name = parse_structure_CustomTextType_20(short_name)
+        short_name = parse_structure_OptionalType_CustomTextType_50(short_name)
         return ResetPassword(reset_token, new_password, short_name)
 
     def to_inner_structure(self):
         return {
             "reset_token": to_structure_CustomTextType_50(self.reset_token),
             "new_password": to_structure_CustomTextType_20(self.new_password),
-            "short_name": to_structure_CustomTextType_20(self.short_name)
+            "short_name": to_structure_OptionalType_CustomTextType_50(self.short_name)
         }
 
 class ChangePassword(Request):
@@ -179,7 +182,6 @@ class Logout(Request):
         return {
             "session_token": to_structure_CustomTextType_50(self.session_token),
         }
-
 
 def _init_Request_class_map():
     classes = [Login, ForgotPassword, ResetTokenValidation, ResetPassword, ChangePassword, Logout]

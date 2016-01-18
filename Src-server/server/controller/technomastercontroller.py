@@ -301,11 +301,12 @@ def get_clients(db, request, session_user):
 	geography_level_list = db.get_geograhpy_levels_for_user(session_user)
 	industry_list = db.get_industries()
 	geography_list = db.get_geographies_for_user(session_user)
+	print geography_list
 	group_company_list = db.get_group_companies_for_user(session_user)
 	business_group_list = db.get_business_groups_for_user(session_user)
 	legal_entity_list = db.get_legal_entities_for_user(session_user)
 	division_list = db.get_divisions_for_user(session_user)
-	unit_list = db.get_units_for_user(session_user)
+	unit_list = db.get_unit_details_for_user(session_user)
 	geography_levels = db.get_geograhpy_levels_for_user(session_user)
 	geographies = db.get_geographies_for_user(session_user)
 	industries = db.get_industries()

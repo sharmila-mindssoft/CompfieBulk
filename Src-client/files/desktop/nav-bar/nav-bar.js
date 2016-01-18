@@ -28,7 +28,6 @@ function initializeNavBar () {
 	}
 
 	var navBarItems = mirror.getUserMenu();
-	console.log(navBarItems);
 	if (navBarItems === null)
 		return;
 	var menus = ["Home", "Master", "Transaction", "Report"];
@@ -91,10 +90,8 @@ function initializeNavBar () {
 		$("ul", settingsMenuObject).append(item);
 	}
 
-	// if (mirror.getUserCategory() !== "it") {
-	// 	var item = getItemObject("/profile", "View Profile");
-	// 	$("ul", settingsMenuObject).append(item);
-	// }
+ 	var item = getItemObject("/profile", "View Profile");
+ 	$("ul", settingsMenuObject).append(item);
 
 	var item = getItemObject("/change-password", "Change Password");
 	$("ul", settingsMenuObject).append(item);

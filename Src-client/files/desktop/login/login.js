@@ -61,17 +61,13 @@ function performLogin(e_button, e_email, e_password) {
     e_password.attr("disabled", "disabled");
 
     function onFailure (status) {
-        console.log(status)
-        console.log("calling onFailure")
         displayLoginMessage("Unable to login. Incorrect email / password?");
         $("input").val("");
         resetLoginUI(e_button, e_email, e_password);
     }
 
     function onSuccess (response) {
-        console.log(response);
         mirror.initSession(response);
-        console.log(mirror.getUserMenu())
         window.location.href = "/home";
         // mirror.getRedirectUrl();
         // if (status == "LoginSuccess") {

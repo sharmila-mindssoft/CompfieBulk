@@ -281,20 +281,14 @@
 		        configuration6 = mirror.getDateConfigurations(4,2,6,5)
 		        dateConfigurations.push(configuration1)
 		        dateConfigurations.push(configuration2)
-<<<<<<< HEAD
-			    group_name = "Test Client 21";
-		        country_ids = [1];
-		        domain_ids = [1];
-=======
 		        dateConfigurations.push(configuration3)
 		        dateConfigurations.push(configuration4)
 		        dateConfigurations.push(configuration5)
 		        dateConfigurations.push(configuration6)
 
-			    group_name = "Moto Groups";
+			    group_name = "TVS Groups";
 		        country_ids = [1,2, 4];
 		        domain_ids = [1,2];
->>>>>>> b78ce478c36d2f008c12def095621ef8543d283c
 		        logo = "logo.png";
 		        contract_from = "02-Nov-2015";
 		        contract_to = "01-Nov-2016";
@@ -302,15 +296,8 @@
 		        no_of_user_licence = 10;
 		        file_space = 4.6;
 		        is_sms_subscribed = true;
-<<<<<<< HEAD
-		        email_id = "testclient21@domain.com";
-		        shortName = "test21"
-
-=======
-		        email_id = "info@moto.com";
-		        shortName = "moto"
-		        
->>>>>>> b78ce478c36d2f008c12def095621ef8543d283c
+		        email_id = "info@tvs.com";
+		        shortName = "tvs"
 			    clientGroupDetails = mirror.getSaveClientGroupDict(group_name,
 		            country_ids, domain_ids, logo, contract_from, contract_to,
 		            incharge_persons, no_of_user_licence,file_space,
@@ -349,19 +336,19 @@
 				mirror.getClientGroups(callback)
 			}
 			function saveClient(){
-				businessGroup = mirror.getBusinessGroupDict(null,"Test Business Group 11");
-		        legalEntity = mirror.getLegalEntityDict(null,"Test Legal Entity 1");
-		        division = mirror.getDivisionDict(null, "Test Division 11");
+				businessGroup = null;//mirror.getBusinessGroupDict(1,"Test Business Group 11");
+		        legalEntity = mirror.getLegalEntityDict(1,"Test Legal Entity 11");
+		        division = null;//mirror.getDivisionDict(null, "Test Division 111");
 		        domainIds = [1]
-		        unit1 = mirror.getUnitDict(null, "Test Unit 11", "UN001", "Test Address 1", 668234, 1, "Test location 1", 1, "Test Industry 1", domainIds)
-		        unit2 = mirror.getUnitDict(null, "Test Unit 21", "UN002", "Test Address2", 668234, 1, "Test location 1", 1, "Test Industry 2", domainIds)
+		        unit1 = mirror.getUnitDict(null, "Test Unit 122", "UN0112", "Test Address 11", 668234, 1, "Test location 11", 1, "Test Industry 11", domainIds)
+		        unit2 = mirror.getUnitDict(null, "Test Unit 123", "UN0122", "Test Address 21", 668234, 1, "Test location 12", 1, "Test Industry 12", domainIds)
 
 		        Units = [unit1, unit2]
 		        countryId = 1
 		        countryWiseUnits = []
 		        countryWiseUnits.push(mirror.mapUnitsToCountry(countryId, Units))
 
-		        mirror.saveClient(11, businessGroup, legalEntity, 
+		        mirror.saveClient(1, businessGroup, legalEntity, 
 		        division, countryWiseUnits, callback) 
 			}
 			function updateClient(){
@@ -377,7 +364,7 @@
 		        countryWiseUnits = []
 		        countryWiseUnits.push(mirror.mapUnitsToCountry(countryId, Units))
 
-		        mirror.updateClient(11, businessGroup, legalEntity, 
+		        mirror.updateClient(1, businessGroup, legalEntity, 
 		        division, countryWiseUnits, callback) 
 			}
 			function getClients(){
@@ -407,6 +394,28 @@
 			}
 			function getComplianceDetailsReportFilters(){
 				client_mirror.getComplianceDetailsReportFilters(callback)
+			}
+			function updateUserProfile(){
+				contact_no = "935783773453"
+				address = "Test address"
+				mirror.updateUserProfile(contact_no, address,callback)
+			}
+			function getClientDetailsReportFilters(){
+				mirror.getClientDetailsReportFilters(callback);
+			}
+			function getClientDetailsReport(){
+				mirror.getClientDetailsReport(1, 1, 1, 1, 1, 1, [1], callback);
+			}
+			function getPastRecordsFormData(){
+				client_mirror.getPastRecordsFormData(callback);
+			}
+			function getStatutoriesByUnit(){
+				unit_id = 1
+				domain_id = 1
+				level_1_statutory_id = 1
+				frequency_id = 1
+				client_mirror.getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_id, 
+					frequency_id, callback);
 			}
 		</script>
 	</head>
@@ -580,7 +589,27 @@
 			<button onclick="getComplianceDetailsReportFilters()">
 				Get Compliance Details Report Filters
 			</button>
-			
+		</div>
+		<div>
+			<button onclick="updateUserProfile()">
+				Update User Profile
+			</button>
+		</div>
+		<div>
+			<button onclick="getClientDetailsReportFilters()">
+				Get Client Details Report Filters
+			</button>
+			<button onclick="getClientDetailsReport()">
+				Get Client Details Report 
+			</button>
+		</div>
+		<div>
+			<button onclick="getPastRecordsFormData()">
+				Get Past Records form data
+			</button>
+			<button onclick="getStatutoriesByUnit()">
+				Get Statutories by Unit
+			</button>
 		</div>
 		<br>
 		<br>

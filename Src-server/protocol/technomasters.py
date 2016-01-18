@@ -35,7 +35,11 @@ from protocol.parse_structure import (
     parse_structure_Float,
     parse_structure_VectorType_RecordType_core_Industry,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
+    parse_structure_VectorType_RecordType_technomasters_Unit,
+    parse_structure_VectorType_RecordType_technomasters_CountryWiseUnits,
+    parse_structure_RecordType_technomasters_CountryWiseUnits,
+    parse_structure_OptionalType_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -67,8 +71,14 @@ from protocol.to_structure import (
     to_structure_Float,
     to_structure_VectorType_RecordType_core_Industry,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography
-
+    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
+    to_structure_VectorType_RecordType_technomasters_Unit,
+    to_structure_VectorType_RecordType_technomasters_CountryWiseUnits,
+    to_structure_RecordType_technomasters_CountryWiseUnits,
+    to_structure_VectorType_RecordType_techno_master_UnitDetails,
+    to_structure_OptionalType_UnsignedIntegerType_32,
+    to_structure_UnsignedIntegerType_32,
+    to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_UnitDetails
 )
 
 #
@@ -727,6 +737,114 @@ class InvalidUnitId(Response):
         return {
         }
 
+
+class Unit(object):
+    def __init__(self, business_group_id, legal_entity_id, division_id, client_id, units):
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.division_id = division_id
+        self.client_id = client_id
+        self.units = units
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["business_group_id", "legal_entity_id", "division_id", "client_id", "units"])
+        business_group_id = data.get("business_group_id")
+        business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
+        division_id = data.get("division_id")
+        division_id = parse_structure_UnsignedIntegerType_32(division_id)
+        client_id = data.get("client_id")
+        client_id = parse_structure_UnsignedIntegerType_32(client_id)
+        units = data.get("units")
+        units = parse_structure_VectorType_RecordType_technomasters_CountryWiseUnits(units)
+        return CountryWiseUnits(country_id, units)
+
+    def to_structure(self):
+        return {
+            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
+            "client_id": to_structure_SignedIntegerType_8(self.client_id),
+            "units" : to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_UnitDetails(self.units)
+        }
+
+#
+# CountryWiseUnits
+#
+
+class CountryWiseUnits(object):
+    def __init__(self, country_id, units):
+        self.country_id = country_id
+        self.units = units
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["country_id", "units"])
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        units = data.get("units")
+        units = parse_structure_VectorType_RecordType_technomasters_UnitDetails(units)
+        return CountryWiseUnits(country_id, units)
+
+    def to_structure(self):
+        return {
+            to_structure_SignedIntegerType_8(self.country_id) : to_structure_VectorType_RecordType_techno_master_UnitDetails(self.units),
+        }
+
+class UnitDetails(object):
+    def __init__(self, unit_id, geography_id, unit_code, unit_name, industry_id, unit_address, postal_code, domain_ids, is_active):
+        self.unit_id = unit_id
+        self.geography_id = geography_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.industry_id = industry_id
+        self.unit_address = unit_address
+        self.postal_code = postal_code
+        self.domain_ids = domain_ids
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "geography_id", "unit_code", "unit_name", "industry_id", "unit_address", "postal_code", "domain_ids", "is_active"])
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_OptionalType_UnsignedIntegerType_32(unit_id)
+        geography_id = data.get("geography_id")
+        geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
+        unit_code = data.get("unit_code")
+        unit_code = parse_structure_CustomTextType_20(unit_code)
+        unit_name = data.get("unit_name")
+        unit_name = parse_structure_CustomTextType_50(unit_name)
+        industry_id = data.get("industry_id")
+        industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
+        unit_address = data.get("unit_address")
+        unit_address = parse_structure_CustomTextType_250(unit_address)
+        postal_code = data.get("postal_code")
+        postal_code = parse_structure_UnsignedIntegerType_32(postal_code)
+        domain_ids = data.get("domain_ids")
+        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        return UnitDetails(unit_id, geography_id, unit_code, unit_name, industry_id, unit_address, postal_code, domain_ids, is_active)
+
+    def to_structure(self):
+        return {
+            "unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.unit_id),
+            "geography_id": to_structure_UnsignedIntegerType_32(self.geography_id),
+            "unit_code": to_structure_CustomTextType_20(self.unit_code),
+            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "industry_id": to_structure_SignedIntegerType_8(self.industry_id),
+            "unit_address": to_structure_CustomTextType_250(self.unit_address),
+            "postal_code": to_structure_UnsignedIntegerType_32(self.postal_code),
+            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
+            "is_active": to_structure_Bool(self.is_active),
+        }
+
+
+
+
+
 class GetClientsSuccess(Response):
     def __init__(self, countries, domains, group_companies, business_groups, legal_entities, divisions, units, geography_levels, geographies, industries):
         self.countries = countries
@@ -756,7 +874,7 @@ class GetClientsSuccess(Response):
         divisions = data.get("divisions")
         divisions = parse_structure_OptionalType_VectorType_RecordType_core_Division(divisions)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_UnitDetails(units)
+        units = parse_structure_VectorType_RecordType_technomasters_Unit(units)
         geography_levels = data.get("geography_levels")
         geography_levels = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(geography_levels)
         geographies = data.get("geographies")
@@ -773,7 +891,7 @@ class GetClientsSuccess(Response):
             "business_groups": to_structure_OptionalType_VectorType_RecordType_core_BusinessGroup(self.business_groups),
             "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
             "divisions": to_structure_OptionalType_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
+            "units": to_structure_VectorType_RecordType_technomasters_Unit(self.units),
             "industries": to_structure_VectorType_RecordType_core_Industry(self.industries),
             "geography_levels": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(self.geography_levels),
             "geographies": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(self.geographies)

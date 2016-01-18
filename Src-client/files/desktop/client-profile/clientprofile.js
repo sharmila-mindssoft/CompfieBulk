@@ -10,7 +10,7 @@ function displayMessage(message) {
     $(".error-message").show();
 }
 function initialize(){
-  $('#groupsval').val('');
+    $('#groupsval').val('');
 	function onSuccess(data){
 		groupList = data['group_companies'];
 		profiles = data['profiles'];
@@ -118,6 +118,7 @@ function clientprofile_isadmin(userId, isAdmin){
         initialize();
     }
     function failure(error){
+        console.log(error);
     }
     mirror.changeAdminStatus(userId, isAdmin,
         function(error, response){

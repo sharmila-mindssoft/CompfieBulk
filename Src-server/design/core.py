@@ -259,6 +259,11 @@ StatutoryLevel = RecordType("StatutoryLevel", [
 	Field("level_name", LEVEL_NAME)
 ])
 
+Level1Statutory = RecordType("Level1Statutory", [
+	Field("level_1_statutory_id", STATUTORY_ID),
+	Field("level_1_statutory_name", STATUTORY_NAME)
+])
+
 Statutory = RecordType("Statutory", [
 	Field("statutory_id", STATUTORY_ID),
 	Field("statutory_name", STATUTORY_NAME),

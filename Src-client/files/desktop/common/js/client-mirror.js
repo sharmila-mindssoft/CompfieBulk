@@ -1,4 +1,4 @@
-var CLIENT_BASE_URL = "http://localhost:8085/";
+var CLIENT_BASE_URL = "http://localhost:8090/";
 function initClientMirror() {
     var DEBUG = true;
 
@@ -534,6 +534,56 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function updateCompliances(complianceId, optedStatus, remarks) {
+        return {
+            "compliance_id": complianceId,
+            "compliance_opted_status": optedStatus,
+            "compliance_remarks": remarks
+        }
+    }
+
+    function updateStatutory(clientStatutoryId, compliances, applicableStatus, applicableRemarks) {
+        return {
+            "client_statutory_id": clientStatutoryId,
+            "compliances": compliances,
+            "applicable_status": applicableStatus,
+            "not_applicable_remarks": applicableRemarks
+        };
+    }
+
+    function updateStatutorySettings(unitId, statutories, callback){
+        var request = [
+            "UpdateStatutorySettings", 
+            {
+                "unit_id": unitId,
+                "statutories": statutories
+            }
+        ];
+        var callerName = "api/client_transaction";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getPastRecordsFormData(callback){
+       var request = [
+            "GetPastRecordsFormData",
+            {}
+       ];
+       clientApiRequest("api/client_transaction", request, callback);
+    }
+
+    function getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_id, 
+                    frequency_id, callback){
+        var request = [
+            "GetStatutoriesByUnit",
+            {
+                "unit_id" : unit_id,
+                "domain_id" : domain_id,
+                "level_1_statutory_id": level_1_statutory_id,
+                "compliance_frequency" : frequency_id
+            }
+        ]
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -590,7 +640,13 @@ function initClientMirror() {
 
         getComplianceDetailsReportFilters: getComplianceDetailsReportFilters,
 
-        getStatutorySettings: getStatutorySettings
+        getStatutorySettings: getStatutorySettings,
+        updateCompliances: updateCompliances,
+        updateStatutory: updateStatutory,
+        updateStatutorySettings: updateStatutorySettings,
+
+        getPastRecordsFormData: getPastRecordsFormData,
+        getStatutoriesByUnit: getStatutoriesByUnit,
     }
 
 }

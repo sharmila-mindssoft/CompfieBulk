@@ -5,8 +5,9 @@ from protocol.parse_structure import (
     parse_structure_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_clienttransactions_USERWISECOMPLIANCE,
     parse_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES,
-    parse_structure_VectorType_RecordType_clienttransactions_ASSIGNCOMPLIANCEUSERS,
-    parse_structure_VectorType_RecordType_core_BusinessGroup,
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
+    parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
+    parse_structure_VectorType_RecordType_core_ClientBusinessGroup,
     parse_structure_VectorType_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE,
     parse_structure_VectorType_RecordType_clienttransactions_USERWISEUNITS,
@@ -14,7 +15,7 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_500,
     parse_structure_VectorType_RecordType_clienttransactions_PAST_RECORD_COMPLIANCE,
     parse_structure_VectorType_RecordType_core_Country,
-    parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_COMPLIANCE,
+    parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
     parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     parse_structure_VectorType_RecordType_clienttransactions_APPROVALCOMPLIANCE,
     parse_structure_CustomTextType_50,
@@ -23,14 +24,14 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_AssignedStatutory,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_CustomTextType_50,
-    parse_structure_VectorType_RecordType_core_Division,
+    parse_structure_VectorType_RecordType_core_ClientDivision,
     parse_structure_VectorType_RecordType_core_StatutoryDate,
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE,
     parse_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST,
     parse_structure_CustomTextType_250,
     parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS,
-    parse_structure_VectorType_RecordType_core_LegalEntity,
+    parse_structure_VectorType_RecordType_core_ClientLegalEntity,
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     parse_structure_CustomIntegerType_1_10,
@@ -42,15 +43,20 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_Bool,
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_VectorType_RecordType_clienttransactions_ApplicableCompliance,
-    parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance
+    parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance,
+    parse_structure_CustomTextType_100,
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
+    parse_structure_OptionalType_CustomTextType_20
+    parse_structure_VectorType_RecordType_core_ComplianceFrequency
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
     to_structure_SignedIntegerType_8,
     to_structure_VectorType_RecordType_clienttransactions_USERWISECOMPLIANCE,
     to_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES,
-    to_structure_VectorType_RecordType_clienttransactions_ASSIGNCOMPLIANCEUSERS,
-    to_structure_VectorType_RecordType_core_BusinessGroup,
+    to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
+    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
+    to_structure_VectorType_RecordType_core_ClientBusinessGroup,
     to_structure_VectorType_RecordType_core_Statutory,
     to_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE,
     to_structure_VectorType_RecordType_clienttransactions_USERWISEUNITS,
@@ -58,7 +64,7 @@ from protocol.to_structure import (
     to_structure_CustomTextType_500,
     to_structure_VectorType_RecordType_clienttransactions_PAST_RECORD_COMPLIANCE,
     to_structure_VectorType_RecordType_core_Country,
-    to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_COMPLIANCE,
+    to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
     to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     to_structure_VectorType_RecordType_clienttransactions_APPROVALCOMPLIANCE,
     to_structure_CustomTextType_50,
@@ -67,14 +73,14 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_AssignedStatutory,
     to_structure_VectorType_SignedIntegerType_8,
     to_structure_VectorType_CustomTextType_50,
-    to_structure_VectorType_RecordType_core_Division,
+    to_structure_VectorType_RecordType_core_ClientDivision,
     to_structure_VectorType_RecordType_core_StatutoryDate,
     to_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE,
     to_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST,
     to_structure_CustomTextType_250,
     to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS,
-    to_structure_VectorType_RecordType_core_LegalEntity,
+    to_structure_VectorType_RecordType_core_ClientLegalEntity,
     to_structure_VectorType_RecordType_core_Domain,
     to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
     to_structure_CustomIntegerType_1_10, to_structure_CustomTextType_20,
@@ -86,8 +92,19 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_500,
     to_structure_VectorType_RecordType_clienttransactions_ApplicableCompliance,
     to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance,
-    to_structure_UnsignedIntegerType_32
-
+    to_structure_UnsignedIntegerType_32,
+    to_structure_CustomTextType_100,
+    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
+    to_structure_OptionalType_CustomTextType_20
+    to_structure_VectorType_RecordType_core_Unit,
+    to_structure_VectorType_RecordType_core_Level1Statutory,
+    to_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    to_structure_VectorType_RecordType_core_ClientLegalEntity,
+    to_structure_VectorType_RecordType_core_ClientDivision,
+    to_structure_VectorType_RecordType_core_ClientUnit,
+    to_structure_RecordType_client_transactions_IndustryWiseUnits,
+    to_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits,
+    to_structure_VectorType_RecordType_core_ComplianceFrequency
 )
 
 #
@@ -116,6 +133,9 @@ class Request(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
+#
+# Statutory Settings Request
+#
 class GetStatutorySettings(Request):
     def __init__(self):
         pass
@@ -202,6 +222,10 @@ class UpdateStatutorySettings(Request):
             "statutories": to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance(self.statutories)
         }
 
+#
+# Assign Compliance Request
+#
+
 class GetAssignCompliancesFormData(Request):
     def __init__(self):
         pass
@@ -212,11 +236,27 @@ class GetAssignCompliancesFormData(Request):
         return GetAssignCompliancesFormData()
 
     def to_inner_structure(self):
+        return {}
+
+class GetComplianceForUnits(Request):
+    def __init__(self, unit_ids):
+        self.unit_ids = unit_ids
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["unit_ids"])
+        unit_ids = data.get("unit_ids")
+        unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
+        return GetComplianceForUnits(unit_ids)
+
+    def to_inner_structure(data):
         return {
+            "unit_ids": to_structure_VectorType_SignedIntegerType_8(self.unit_ids)
         }
 
 class SaveAssignedCompliance(Request):
-    def __init__(self, assignee, concurrence_person, approval_person, compliances):
+    def __init__(self, country_id, assignee, concurrence_person, approval_person, compliances):
+        self.country_id = country_id
         self.assignee = assignee
         self.concurrence_person = concurrence_person
         self.approval_person = approval_person
@@ -224,7 +264,9 @@ class SaveAssignedCompliance(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["assignee", "concurrence_person", "approval_person", "compliances"])
+        data = parse_dictionary(data, ["country_id", "assignee", "concurrence_person", "approval_person", "compliances"])
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         assignee = data.get("assignee")
         assignee = parse_structure_UnsignedIntegerType_32(assignee)
         concurrence_person = data.get("concurrence_person")
@@ -233,10 +275,11 @@ class SaveAssignedCompliance(Request):
         approval_person = parse_structure_UnsignedIntegerType_32(approval_person)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(compliances)
-        return SaveAssignedCompliance(assignee, concurrence_person, approval_person, compliances)
+        return SaveAssignedCompliance(country_id, assignee, concurrence_person, approval_person, compliances)
 
     def to_inner_structure(self):
         return {
+            "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "assignee": to_structure_SignedIntegerType_8(self.assignee),
             "concurrence_person": to_structure_SignedIntegerType_8(self.concurrence_person),
             "approval_person": to_structure_SignedIntegerType_8(self.approval_person),
@@ -388,7 +431,7 @@ class SavePastRecords(Request):
 
 
 def _init_Request_class_map():
-    classes = [GetStatutorySettings, UpdateStatutorySettings, GetAssignCompliancesFormData, SaveAssignedCompliance, GetUserwiseCompliances, ReassignCompliance, GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData, GetStatutoriesByUnit, SavePastRecords]
+    classes = [GetStatutorySettings, UpdateStatutorySettings, GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance, GetUserwiseCompliances, ReassignCompliance, GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData, GetStatutoriesByUnit, SavePastRecords]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -527,26 +570,45 @@ class GetAssignCompliancesFormDataSuccess(Response):
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
+        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
         legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_COMPLIANCE(units)
+        units = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(units)
         users = data.get("users")
-        users = parse_structure_VectorType_RecordType_clienttransactions_ASSIGNCOMPLIANCEUSERS(users)
+        users = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(users)
         return GetAssignCompliancesFormDataSuccess(countries, business_groups, legal_entities, divisions, units, users)
 
     def to_inner_structure(self):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_COMPLIANCE(self.units),
-            "users": to_structure_VectorType_RecordType_clienttransactions_ASSIGNCOMPLIANCEUSERS(self.users),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units),
+            "users": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users),
         }
+
+class GetComplianceForUnitsSuccess(Response):
+    def __init__(self, statutories):
+        self.statutories = statutories
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["statutories"])
+        statutories = data.get("statutories")
+        statutories = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(statutories)
+        return GetComplianceForUnitsSuccess(statutories)
+
+    def to_inner_structure(self):
+        return {
+            "statutories": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(self.statutories)
+        }
+
+
+
 
 class SaveAssignedComplianceSuccess(Response):
     def __init__(self):
@@ -611,13 +673,13 @@ class GetUserwiseCompliancesSuccess(Response):
         user_wise_compliances = data.get("user_wise_compliances")
         user_wise_compliances = parse_structure_VectorType_RecordType_clienttransactions_USERWISECOMPLIANCE(user_wise_compliances)
         users = data.get("users")
-        users = parse_structure_VectorType_RecordType_clienttransactions_ASSIGNCOMPLIANCEUSERS(users)
+        users = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(users)
         return GetUserwiseCompliancesSuccess(user_wise_compliances, users)
 
     def to_inner_structure(self):
         return {
             "user_wise_compliances": to_structure_VectorType_RecordType_clienttransactions_USERWISECOMPLIANCE(self.user_wise_compliances),
-            "users": to_structure_VectorType_RecordType_clienttransactions_ASSIGNCOMPLIANCEUSERS(self.users),
+            "users": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users),
         }
 
 class ReassignComplianceSuccess(Response):
@@ -662,44 +724,72 @@ class ApproveComplianceSuccess(Response):
         return {
         }
 
+class IndustryWiseUnits(object):
+    def __init__(self, industry_name, units):
+        self.industry_name = industry_name
+        self.units = units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["industry_name", "units"])
+        industry_name = data.get("industry_name")
+        industry_name = parse_structure_CustomTextType_20(industry_name)
+        units = data.get("units")
+        units = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_ClientUnit(units)
+
+    def to_structure(self):
+        return {
+            "industry_name": to_structure_CustomTextType_20(self.industry_name),
+            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units)
+        }
+
+
+
 class GetPastRecordsFormDataSuccess(Response):
-    def __init__(self, countries, business_groups, legal_entites, divisions, units, domains, level_1_statutories):
+    def __init__(self, countries, business_groups, legal_entities, divisions, units, 
+        domains, level_1_statutories, compliance_frequency):
         self.countries = countries
         self.business_groups = business_groups
-        self.legal_entites = legal_entites
+        self.legal_entities = legal_entities
         self.divisions = divisions
         self.units = units
         self.domains = domains
         self.level_1_statutories = level_1_statutories
+        self.compliance_frequency = compliance_frequency
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "business_groups", "legal_entites", "divisions", "units", "domains", "level_1_statutories"])
+        data = parse_dictionary(data, ["countries", "business_groups", "legal_entites", 
+            "divisions", "units", "domains", "level_1_statutories", "compliance_frequency"])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
-        legal_entites = data.get("legal_entites")
-        legal_entites = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entites)
+        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
+        legal_entities = data.get("legal_entities")
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         units = data.get("units")
-        units = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit(units)
+        units = parse_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits(units)
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_VectorType_RecordType_core_Statutory(level_1_statutories)
-        return GetPastRecordsFormDataSuccess(countries, business_groups, legal_entites, divisions, units, domains, level_1_statutories)
+        level_1_statutories = parse_structure_VectorType_RecordType_core_Level1Statutory(level_1_statutories)
+        compliance_frequency = data.get("compliance_frequency")
+        compliance_frequency = parse_structure_VectorType_RecordType_core_ComplianceFrequency(compliance_frequency)
+        return GetPastRecordsFormDataSuccess(countries, business_groups, legal_entites, divisions, 
+            units, domains, level_1_statutories, compliance_frequency)
 
     def to_inner_structure(self):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "legal_entites": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entites),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit(self.units),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units": to_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits(self.units),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "level_1_statutories": to_structure_VectorType_RecordType_core_Statutory(self.level_1_statutories),
+            "level_1_statutories": to_structure_VectorType_RecordType_core_Level1Statutory(self.level_1_statutories),
+            "compliance_frequency" : to_structure_VectorType_RecordType_core_ComplianceFrequency(self.compliance_frequency)
         }
 
 class GetStatutoriesByUnitSuccess(Response):
@@ -733,7 +823,7 @@ class SavePastRecordsSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetStatutorySettingsSuccess, UpdateStatutorySettingsSuccess, InvalidPassword, GetAssignCompliancesFormDataSuccess, SaveAssignedComplianceSuccess, AssigneeNotBelongToUnit, ConcurrenceNotBelongToUnit, ApprovalPersonNotBelongToUnit, GetUserwiseCompliancesSuccess, ReassignComplianceSuccess, GetComplianceApprovalListSuccess, ApproveComplianceSuccess, GetPastRecordsFormDataSuccess, GetStatutoriesByUnitSuccess, SavePastRecordsSuccess]
+    classes = [GetStatutorySettingsSuccess, UpdateStatutorySettingsSuccess, InvalidPassword, GetAssignCompliancesFormDataSuccess, GetComplianceForUnitsSuccess, SaveAssignedComplianceSuccess, AssigneeNotBelongToUnit, ConcurrenceNotBelongToUnit, ApprovalPersonNotBelongToUnit, GetUserwiseCompliancesSuccess, ReassignComplianceSuccess, GetComplianceApprovalListSuccess, ApproveComplianceSuccess, GetPastRecordsFormDataSuccess, GetStatutoriesByUnitSuccess, SavePastRecordsSuccess]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -866,17 +956,18 @@ class PAST_RECORD_COMPLIANCE(object):
 #
 
 class UNIT_WISE_STATUTORIES(object):
-    def __init__(self, compliance_id, compliance_name, description, frequency, statutory_date, due_date):
+    def __init__(self, compliance_id, compliance_name, description, frequency, statutory_date, due_date, applicable_units):
         self.compliance_id = compliance_id
         self.compliance_name = compliance_name
         self.description = description
         self.frequency = frequency
         self.statutory_date = statutory_date
         self.due_date = due_date
+        self.applicable_units = applicable_units
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_id", "compliance_name", "description", "frequency", "statutory_date", "due_date"])
+        data = parse_dictionary(data, ["compliance_id", "compliance_name", "description", "frequency", "statutory_date", "due_date", "applicable_units"])
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         compliance_name = data.get("compliance_name")
@@ -888,8 +979,9 @@ class UNIT_WISE_STATUTORIES(object):
         statutory_date = data.get("statutory_date")
         statutory_date = parse_structure_VectorType_RecordType_core_StatutoryDate(statutory_date)
         due_date = data.get("due_date")
-        due_date = parse_structure_CustomTextType_20(due_date)
-        return UNIT_WISE_STATUTORIES(compliance_id, compliance_name, description, frequency, statutory_date, due_date)
+        due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
+        applicable_units = parse_structure_VectorType_SignedIntegerType_8(applicable_units)
+        return UNIT_WISE_STATUTORIES(compliance_id, compliance_name, description, frequency, statutory_date, due_date, applicable_units)
 
     def to_structure(self):
         return {
@@ -898,31 +990,30 @@ class UNIT_WISE_STATUTORIES(object):
             "description": to_structure_CustomTextType_500(self.description),
             "frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.frequency),
             "statutory_date": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_date),
-            "due_date": to_structure_CustomTextType_20(self.due_date),
+            "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
+            "applicable_units": to_structure_VectorType_SignedIntegerType_8(self.applicable_units)
         }
 
 #
-# UNIT_WISE_COMPLIANCE
+# ASSIGN_COMPLIANCE_UNITS
 #
 
-class UNIT_WISE_COMPLIANCE(object):
-    def __init__(self, unit_id, unit_name, address, division_id, legal_entity_id, business_group_id, group_id, statutories):
+class ASSIGN_COMPLIANCE_UNITS(object):
+    def __init__(self, unit_id, unit_name, address, division_id, legal_entity_id, business_group_id):
         self.unit_id = unit_id
         self.unit_name = unit_name
         self.address = address
         self.division_id = division_id
         self.legal_entity_id = legal_entity_id
         self.business_group_id = business_group_id
-        self.group_id = group_id
-        self.statutories = statutories
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "unit_name", "address", "division_id", "legal_entity_id", "business_group_id", "group_id", "statutories"])
+        data = parse_dictionary(data, ["unit_id", "unit_name", "address", "division_id", "legal_entity_id", "business_group_id"])
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_50(unit_name)
+        unit_name = parse_structure_CustomTextType_100(unit_name)
         address = data.get("address")
         address = parse_structure_CustomTextType_250(address)
         division_id = data.get("division_id")
@@ -931,39 +1022,34 @@ class UNIT_WISE_COMPLIANCE(object):
         legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
-        group_id = data.get("group_id")
-        group_id = parse_structure_UnsignedIntegerType_32(group_id)
-        statutories = data.get("statutories")
-        statutories = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(statutories)
-        return UNIT_WISE_COMPLIANCE(unit_id, unit_name, address, division_id, legal_entity_id, business_group_id, group_id, statutories)
+        return ASSIGN_COMPLIANCE_UNITS(unit_id, unit_name, address, division_id, legal_entity_id, business_group_id)
 
     def to_structure(self):
         return {
             "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
             "division_id": to_structure_SignedIntegerType_8(self.division_id),
             "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
             "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
-            "group_id": to_structure_SignedIntegerType_8(self.group_id),
-            "statutories": to_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(self.statutories),
         }
 
 #
-# ASSIGNCOMPLIANCEUSERS
+# ASSIGN_COMPLIANCE_USER
 #
 
-class ASSIGNCOMPLIANCEUSERS(object):
-    def __init__(self, user_id, user_name, user_level, seating_unit_id, unit_ids):
+class ASSIGN_COMPLIANCE_USER(object):
+    def __init__(self, user_id, user_name, user_level, seating_unit_id, unit_ids, domain_ids):
         self.user_id = user_id
         self.user_name = user_name
         self.user_level = user_level
         self.seating_unit_id = seating_unit_id
         self.unit_ids = unit_ids
+        self.domain_ids = domain_ids
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "user_name", "user_level", "seating_unit_id", "unit_ids"])
+        data = parse_dictionary(data, ["user_id", "user_name", "user_level", "seating_unit_id", "unit_ids", "domain_ids"])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         user_name = data.get("user_name")
@@ -974,7 +1060,9 @@ class ASSIGNCOMPLIANCEUSERS(object):
         seating_unit_id = parse_structure_UnsignedIntegerType_32(seating_unit_id)
         unit_ids = data.get("unit_ids")
         unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
-        return ASSIGNCOMPLIANCEUSERS(user_id, user_name, user_level, seating_unit_id, unit_ids)
+        domain_ids = data.get("domain_ids")
+        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        return ASSIGN_COMPLIANCE_USER(user_id, user_name, user_level, seating_unit_id, unit_ids, domain_ids)
 
     def to_structure(self):
         return {
@@ -983,6 +1071,7 @@ class ASSIGNCOMPLIANCEUSERS(object):
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
             "seating_unit_id": to_structure_SignedIntegerType_8(self.seating_unit_id),
             "unit_ids": to_structure_VectorType_SignedIntegerType_8(self.unit_ids),
+            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids)
         }
 
 #
