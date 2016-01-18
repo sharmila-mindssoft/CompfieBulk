@@ -756,50 +756,8 @@ $('#activate-step-submit').on('click', function(e) {
   saveorsubmit("Submit")
 })
 
-function displayEdit(client_statutory_id,country_id,group_id,location_id,domain_id,unit_id){
-   function onSuccess(data){
-        clearValues('all');
-        statutoriesList = data["statutories"];
-        $("#ascountry").val(country_id);
-        $("#asgroup").val(group_id);
-        $("#aslocation").val(location_id);
-        $("#asdomain").val(domain_id);
-        assignStatutoryUnitIds = [];
-        assignStatutoryUnitIds.push(unit_id);
 
-
-        $("#assignstatutory-view").hide();
-        $("#assignstatutory-add").show();
-        $("#clientstatutoryid").val(client_statutory_id);
-        $('ul.setup-panel li:eq(0)').removeClass('active');
-        $('ul.setup-panel li:eq(0)').addClass('disabled');
-        $('ul.setup-panel li:eq(1)').removeClass('disabled');
-        $('ul.setup-panel li:eq(1)').addClass('active');
-        $("#step-1").hide();
-        $("#step-2").show();
-        $("#backward-step-1").hide();
-        $("#activate-step-submit").hide();
-        
-        var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
-        $(".breadcrumbs").html(data["country_name"] + arrowimage + data["group_name"] + arrowimage + data["business_group_name"] + arrowimage + data["legal_entity_name"] + arrowimage + data["division_name"] + arrowimage + data["geography_name"] + arrowimage + data["unit_name"] + arrowimage + data["domain_name"]);
-        load_secondwizard();
-      }
-      function onFailure(error){
-        displayMessage(error)
-      }
-      mirror.getAssignedStatutoryById(parseInt(client_statutory_id),
-        function (error, response) {
-              if (error == null){
-                onSuccess(response);
-              }
-              else {
-                onFailure(error);
-              }
-          }
-    );
-}
-
-function displayView(client_statutory_id,country_id,group_id,location_id,domain_id,unit_id){
+function displayEdit(client_statutory_id, country_id, group_id, location_id, domain_id, unit_id, submit_type){
    function onSuccess(data){
       clearValues('all');
       $('ul.setup-panel li:eq(0)').hide();
@@ -810,10 +768,19 @@ function displayView(client_statutory_id,country_id,group_id,location_id,domain_
       $('ul.setup-panel li:eq(1)').addClass('active');
       $("#assignstatutory-view").hide();
       $("#assignstatutory-add").show();
-      $("#backward-step-1").hide();
-      $("#activate-step-finish").hide();
-      $("#activate-step-submit").show();
-      $(".breadcrumbs").hide();
+      if(submit_type == 'edit'){
+        $("#backward-step-1").hide();
+        $("#activate-step-finish").show();
+        $("#activate-step-submit").hide();
+      }else{
+        $("#backward-step-1").hide();
+        $("#activate-step-finish").hide();
+        $("#activate-step-submit").show();
+      }
+      
+      var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
+      $(".breadcrumbs").html(data["country_name"] + arrowimage + data["group_name"] + arrowimage + data["business_group_name"] + arrowimage + data["legal_entity_name"] + arrowimage + data["division_name"] + arrowimage + data["geography_name"] + arrowimage + data["unit_name"] + arrowimage + data["domain_name"]);
+      load_secondwizard();
 
       statutoriesList = data["statutories"];
       $("#ascountry").val(country_id);

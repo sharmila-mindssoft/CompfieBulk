@@ -382,7 +382,6 @@ function make_breadcrumbs(){
     $(".breadcrumbs_1").html(sm_countryval + arrowimage + sm_domainval + arrowimage + sm_industryvals + arrowimage + sm_statutorynatureval);
 }
 
-
 //check & uncheck list data
 function activate_statutorylist(element,id,type,country,domain,level){
   $(type).each( function( index, el ) {

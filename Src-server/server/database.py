@@ -3905,7 +3905,7 @@ class KnowledgeDatabase(Database):
         results = self.convert_to_dict(rows, columns)
         level_1_statutory_compliance = {}
         for r in results :
-            compliance_opted = r["compliance_opted"]
+        compliance_opted = r["compliance_opted"]
             if compliance_opted is not None:
                 compliance_opted = bool(compliance_opted)
             compliance_remarks = r["compliance_remarks"]
