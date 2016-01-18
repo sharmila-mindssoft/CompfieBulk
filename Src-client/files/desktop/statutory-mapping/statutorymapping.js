@@ -11,6 +11,7 @@ var complianceFrequencyList;
 var complianceDurationTypeList;
 var complianceRepeatTypeList;
 var complianceApprovalStatusList;
+
 var sm_countryid='';
 var sm_domainid='';
 var sm_statutorynatureid='';
@@ -284,7 +285,6 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     }
   }
 
-  
   //check & uncheck list data for single selection
   function activate(element, id, dispname, type){
     $(type).each( function( index, el ) {
@@ -1063,7 +1063,7 @@ function savestatutorymapping(){
       $('ul.setup-panel li:eq(1)').addClass('disabled');
       $('ul.setup-panel li:eq(2)').addClass('disabled');
       $('ul.setup-panel li:eq(3)').addClass('disabled');
-      $('ul.setup-panel li a[href="#step-1"]').trigger('click')
+      $('ul.setup-panel li a[href="#step-1"]').trigger('click');
       $("#statutorymapping-view").show();
   }
   function onFailure(error){
