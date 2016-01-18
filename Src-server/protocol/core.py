@@ -2251,9 +2251,9 @@ class StatutoryDate(object):
 
     def to_structure(self):
         return {
-            "statutory_date": to_structure_CustomIntegerType_1_31(self.statutory_date),
-            "statutory_month": to_structure_CustomIntegerType_1_12(self.statutory_month),
-            "trigger_before_days": to_structure_SignedIntegerType_8(self.trigger_before_days),
+            "statutory_date": to_structure_OptionalType_CustomIntegerType_1_31(self.statutory_date),
+            "statutory_month": to_structure_OptionalType_CustomIntegerType_1_12(self.statutory_month),
+            "trigger_before_days": to_structure_OptionalType_CustomIntegerType_1_100(self.trigger_before_days),
         }
 
 #
