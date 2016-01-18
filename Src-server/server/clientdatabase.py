@@ -1684,7 +1684,6 @@ class ClientDatabase(Database):
 
         date_qry = ""
 
-
         if filter_ids == None :
             filter_ids = country_ids
 
