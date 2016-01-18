@@ -399,7 +399,7 @@ function activate_text (element,checkval,checkname) {
   $("#usergroup").val(checkval);
 }
 
-$(".fieldvalue").keyup(function (evt) {
+/*$(".fieldvalue").keyup(function (evt) {
  var element = $(evt.target);
  var tabIndex = element.attr('tabIndex');
  if (evt.keyCode == 13){
@@ -415,7 +415,7 @@ $(".fieldvalue").keyup(function (evt) {
   return false;
   }
  }
-});
+});*/
 
 $(document).ready(function(){
 	getUsers();

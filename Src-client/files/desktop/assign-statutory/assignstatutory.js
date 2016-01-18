@@ -153,7 +153,7 @@ function load_secondwizard(){
     var acttableRow=$('#act-templates .font1 .tbody-heading');
     var clone=acttableRow.clone();
     $('.actapplicable', clone).html('<input type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)" style="margin-top:100px;"> <label for="act'+actCount+'" style="margin-top:100px;"></label> ');
-    $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+'" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" id="remarkvalue'+actCount+'" value="'+not_applicable_remarks+'" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:5px;"> Remarks</div></div>');
+    $('.actname', clone).html('<div style="float:left;margin-top:5px;">'+actname+'</div> <div style="float:right; width:500px;" class="default-display-none remark'+actCount+'" ><div style="float:right;  width:250px;margin-top:-3px;"> <input type="text" maxlength="250" id="remarkvalue'+actCount+'" value="'+not_applicable_remarks+'" class="input-box" style="width:200px;" placeholder="Enter Remarks" ></div><div style="float:right; width:70px;margin-top:5px;"> Remarks</div></div>');
     $('.tbody-assignstatutory').append(clone);
 
     if(applicable_status == false){
@@ -698,50 +698,8 @@ $('#activate-step-submit').on('click', function(e) {
   saveorsubmit("Submit")
 })
 
-function displayEdit(client_statutory_id,country_id,group_id,location_id,domain_id,unit_id){
-   function onSuccess(data){
-        clearValues('all');
-        statutoriesList = data["statutories"];
-        $("#ascountry").val(country_id);
-        $("#asgroup").val(group_id);
-        $("#aslocation").val(location_id);
-        $("#asdomain").val(domain_id);
-        assignStatutoryUnitIds = [];
-        assignStatutoryUnitIds.push(unit_id);
 
-
-        $("#assignstatutory-view").hide();
-        $("#assignstatutory-add").show();
-        $("#clientstatutoryid").val(client_statutory_id);
-        $('ul.setup-panel li:eq(0)').removeClass('active');
-        $('ul.setup-panel li:eq(0)').addClass('disabled');
-        $('ul.setup-panel li:eq(1)').removeClass('disabled');
-        $('ul.setup-panel li:eq(1)').addClass('active');
-        $("#step-1").hide();
-        $("#step-2").show();
-        $("#backward-step-1").hide();
-        $("#activate-step-submit").hide();
-        
-        var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
-        $(".breadcrumbs").html(data["country_name"] + arrowimage + data["group_name"] + arrowimage + data["business_group_name"] + arrowimage + data["legal_entity_name"] + arrowimage + data["division_name"] + arrowimage + data["geography_name"] + arrowimage + data["unit_name"] + arrowimage + data["domain_name"]);
-        load_secondwizard();
-      }
-      function onFailure(error){
-        displayMessage(error)
-      }
-      mirror.getAssignedStatutoryById(parseInt(client_statutory_id),
-        function (error, response) {
-              if (error == null){
-                onSuccess(response);
-              }
-              else {
-                onFailure(error);
-              }
-          }
-    );
-}
-
-function displayView(client_statutory_id,country_id,group_id,location_id,domain_id,unit_id){
+function displayEdit(client_statutory_id, country_id, group_id, location_id, domain_id, unit_id, submit_type){
    function onSuccess(data){
       clearValues('all');
       $('ul.setup-panel li:eq(0)').hide();
@@ -752,10 +710,19 @@ function displayView(client_statutory_id,country_id,group_id,location_id,domain_
       $('ul.setup-panel li:eq(1)').addClass('active');
       $("#assignstatutory-view").hide();
       $("#assignstatutory-add").show();
-      $("#backward-step-1").hide();
-      $("#activate-step-finish").hide();
-      $("#activate-step-submit").show();
-      $(".breadcrumbs").hide();
+      if(submit_type == 'edit'){
+        $("#backward-step-1").hide();
+        $("#activate-step-finish").show();
+        $("#activate-step-submit").hide();
+      }else{
+        $("#backward-step-1").hide();
+        $("#activate-step-finish").hide();
+        $("#activate-step-submit").show();
+      }
+      
+      var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
+      $(".breadcrumbs").html(data["country_name"] + arrowimage + data["group_name"] + arrowimage + data["business_group_name"] + arrowimage + data["legal_entity_name"] + arrowimage + data["division_name"] + arrowimage + data["geography_name"] + arrowimage + data["unit_name"] + arrowimage + data["domain_name"]);
+      load_secondwizard();
 
       statutoriesList = data["statutories"];
       $("#ascountry").val(country_id);
@@ -819,8 +786,8 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
       }
       else{
         $('.tbl_status', clone).text("Pending");
-        $('.tbl_edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+client_statutory_id+','+country_id+','+group_id+','+location_id+','+domain_id+','+unit_id+')"/>');
-      $('.tbl_view', clone).html('<img src=\'/images/icon-viewsubmit.png\' onclick="displayView('+client_statutory_id+','+country_id+','+group_id+','+location_id+','+domain_id+','+unit_id+')"/>');
+        $('.tbl_edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+client_statutory_id+','+country_id+','+group_id+','+location_id+','+domain_id+','+unit_id+',\'edit\''+')"/>');
+      $('.tbl_view', clone).html('<img src=\'/images/icon-viewsubmit.png\' onclick="displayEdit('+client_statutory_id+','+country_id+','+group_id+','+location_id+','+domain_id+','+unit_id+',\'submit\''+')"/>');
       }
       $('.tbody-assignstatutory-list').append(clone);
       j = j + 1;
