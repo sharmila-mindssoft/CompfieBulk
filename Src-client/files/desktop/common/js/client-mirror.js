@@ -1,4 +1,4 @@
-var CLIENT_BASE_URL = "http://localhost:8090/";
+var CLIENT_BASE_URL = "http://localhost:8085/";
 function initClientMirror() {
     var DEBUG = true;
 
@@ -562,6 +562,67 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    // 
+    // Assign compliance
+    // 
+
+    function getAssignComplianceFormData(callback){
+        var request = [
+            "GetAssignCompliancesFormData",
+            {}
+        ];
+        var callerName = "api/client_transaction";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getAssignComplianceForUnits(unitIds, callback) {
+        var request = [
+            "GetComplianceForUnits",
+            {
+                "unit_ids": unitIds
+            }
+        ];
+        var callerName = "api/client_transaction";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function statutoryDates(date, month, triggerBefore) {
+        var statutoryDate = {};
+        statutoryDate["statutory_date"] = date;
+        statutoryDate["statutory_month"] = month;
+        statutoryDate["trigger_before_days"] = triggerBefore;
+        return statutoryDate;
+    }
+
+    function assignCompliances(complianceId, statutoryDateList, dueDate, validityDate, unitIds, callback) {
+        return {
+            "compliance_id": complianceId,
+            "statutory_dates": statutoryDateList,
+            "due_date": dueDate,
+            "validity_date": validityDate,
+            "unit_ids": unitIds
+        }
+    }
+
+    function saveAssignedComplianceFormData(countryId, assignee, concurrence, approval, compliances, callback) {
+        var request = [
+            "SaveAssignedCompliance",
+            {
+                "country_id": countryId,
+                "assignee": assignee,
+                "concurrence_person": concurrence,
+                "approval_person": approval,
+                "compliances": compliances
+            }
+        ];
+        var callerName = "api/client_transaction";
+        clientApiRequest(callerName, request, callback);   
+    }
+
+    // 
+    // Past Records
+    // 
+
     function getPastRecordsFormData(callback){
        var request = [
             "GetPastRecordsFormData",
@@ -652,6 +713,12 @@ function initClientMirror() {
         updateCompliances: updateCompliances,
         updateStatutory: updateStatutory,
         updateStatutorySettings: updateStatutorySettings,
+
+        getAssignComplianceFormData: getAssignComplianceFormData,
+        getAssignComplianceForUnits: getAssignComplianceForUnits,
+        statutoryDates: statutoryDates,
+        assignCompliances: assignCompliances,
+        saveAssignedComplianceFormData: saveAssignedComplianceFormData,
 
         getPastRecordsFormData: getPastRecordsFormData,
         getStatutoriesByUnit: getStatutoriesByUnit,
