@@ -179,7 +179,7 @@ function initMirror() {
         else 
             return false
     }
-    function logout(callback) {
+    function logout() {
         sessionToken = getSessionToken()
         var request = [
             "Logout", {
@@ -193,9 +193,10 @@ function initMirror() {
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
+                clearSession()
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1){
-                    callback(null, response);
+                    callback(null, response)
                 }
                 else {
                     callback(status, null); 
