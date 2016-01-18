@@ -1272,7 +1272,13 @@ class ClientDatabase(Database):
             unit_ids = c["unit_ids"]
             for unit in unit_ids:
                 query = "INSERT INTO tbl_assigned_compliances \
-                    ()"
+                    (country_id, unit_id, compliance_id, \
+                    statutory_dates, assignee, \
+                    concurrence_person, approval_person, \
+                    due_date, validity_date) VALUES \
+                    (%s, %s, %s, '%s', %s, %s, %s, '%s', '%s')" % (
+                        country_id, unit_id, compliance_id, 
+                    )
 
 
 
