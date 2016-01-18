@@ -119,7 +119,7 @@ from protocol.to_structure import (
 
 class Request(object):
     def to_structure(self):
-        name = type(self).__name__
+        name = type(self).__name__ 
         inner = self.to_inner_structure()
         return [name, inner]
 
