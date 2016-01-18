@@ -204,7 +204,6 @@ function loadAssignedStatutoryList(data){
 			if(remarks == null){
 				remarks = "Nil";
 			}
-
 			$('.heading', cloneAssigned).text(assignedList[k]['level_1_statutory_name']);
 			$('.act-applicable', cloneAssigned).html(asImageName);
 			$('.act-opted', cloneAssigned).html(optedImageName);
