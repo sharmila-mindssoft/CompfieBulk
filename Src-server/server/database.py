@@ -10,7 +10,7 @@ import json
 
 from types import *
 from protocol import (
-    core, knowledgereport,
+    core, knowledgereport, technomasters,
     technotransactions, technoreports,general
 )
 
@@ -1186,7 +1186,7 @@ class KnowledgeDatabase(Database):
         join_conditions = ["t1.level_id = t2.level_id", "t2.country_id = t3.country_id"]
         where_condition = "1"
         if country_ids != None:
-            where_condition = "t1.country_id in (%s)" % country_ids
+            where_condition = "t2.country_id in (%s)" % country_ids
         rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type, 
             join_conditions, where_condition)
         result = []

@@ -76,6 +76,21 @@ def to_structure_VectorType_RecordType_clientreport_Level1Statutory(data):
         lst.append(to_structure_RecordType_clientreport_Level1Statutory(item))
     return lst
 
+def to_structure_VectorType_RecordType_core_Level1Statutory(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_Level1Statutory(item))
+    return lst
+
+def to_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_client_transactions_IndustryWiseUnits(item))
+    return lst
+
+
 def to_structure_VectorType_RecordType_clientreport_UserName(data):
     data = parse_list(data, 0)
     lst = []
@@ -3212,6 +3227,14 @@ def to_structure_VectorType_RecordType_clientreport_ActivityLog(data):
 def to_structure_RecordType_clientreport_Level1Statutory(data):
     from protocol import clientreport
     return clientreport.Level1Statutory.to_structure(data)
+
+def to_structure_RecordType_core_Level1Statutory(data):
+    from protocol import core
+    return core.Level1Statutory.to_structure(data)
+
+def to_structure_RecordType_client_transactions_IndustryWiseUnits(data):
+    from protocol import clienttransactions
+    return clienttransactions.IndustryWiseUnits.to_structure(data)
 
 def to_structure_RecordType_clientmasters_Response_ServiceProviderNameAlreadyExists(data):
     from protocol import clientmasters

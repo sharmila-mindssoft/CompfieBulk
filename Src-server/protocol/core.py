@@ -138,7 +138,6 @@ class USER_TYPE(object):
 
     def to_structure(self):
         return parse_enum(self._value, USER_TYPE.values())
-
 #
 # APPROVAL_STATUS
 #
@@ -802,6 +801,31 @@ class StatutoryLevel(object):
             "level_position": to_structure_CustomIntegerType_1_10(self.level_position),
             "level_name": to_structure_CustomTextType_50(self.level_name),
         }
+
+#
+# Statutory
+#
+
+class Level1Statutory(object):
+    def __init__(self, level_1_statutory_id, level_1_statutory_name):
+        self.level_1_statutory_id = level_1_statutory_id
+        self.level_1_statutory_name = level_1_statutory_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["level_1_statutory_id", "level_1_statutory_name"])
+        level_1_statutory_id = data.get("level_1_statutory_id")
+        level_1_statutory_id = parse_structure_UnsignedIntegerType_32(level_1_statutory_id)
+        level_1_statutory_name = data.get("level_1_statutory_name")
+        level_1_statutory_name = parse_structure_CustomTextType_50(level_1_statutory_name)
+        return Statutory(level_1_statutory_id, level_1_statutory_name)
+
+    def to_structure(self):
+        return {
+            "level_1_statutory_id": to_structure_UnsignedIntegerType_32(self.level_1_statutory_id),
+            "level_1_statutory_name": to_structure_CustomTextType_50(self.level_1_statutory_name)
+        }
+
 
 #
 # Statutory

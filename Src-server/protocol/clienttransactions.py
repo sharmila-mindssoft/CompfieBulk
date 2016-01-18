@@ -43,7 +43,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_Bool,
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_VectorType_RecordType_clienttransactions_ApplicableCompliance,
-    parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance
+    parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance,
+    parse_structure_VectorType_RecordType_core_ComplianceFrequency
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -88,8 +89,16 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_500,
     to_structure_VectorType_RecordType_clienttransactions_ApplicableCompliance,
     to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance,
-    to_structure_UnsignedIntegerType_32
-
+    to_structure_UnsignedIntegerType_32,
+    to_structure_VectorType_RecordType_core_Unit,
+    to_structure_VectorType_RecordType_core_Level1Statutory,
+    to_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    to_structure_VectorType_RecordType_core_ClientLegalEntity,
+    to_structure_VectorType_RecordType_core_ClientDivision,
+    to_structure_VectorType_RecordType_core_ClientUnit,
+    to_structure_RecordType_client_transactions_IndustryWiseUnits,
+    to_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits,
+    to_structure_VectorType_RecordType_core_ComplianceFrequency
 )
 
 #
@@ -686,44 +695,72 @@ class ApproveComplianceSuccess(Response):
         return {
         }
 
+class IndustryWiseUnits(object):
+    def __init__(self, industry_name, units):
+        self.industry_name = industry_name
+        self.units = units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["industry_name", "units"])
+        industry_name = data.get("industry_name")
+        industry_name = parse_structure_CustomTextType_20(industry_name)
+        units = data.get("units")
+        units = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_ClientUnit(units)
+
+    def to_structure(self):
+        return {
+            "industry_name": to_structure_CustomTextType_20(self.industry_name),
+            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units)
+        }
+
+
+
 class GetPastRecordsFormDataSuccess(Response):
-    def __init__(self, countries, business_groups, legal_entites, divisions, units, domains, level_1_statutories):
+    def __init__(self, countries, business_groups, legal_entities, divisions, units, 
+        domains, level_1_statutories, compliance_frequency):
         self.countries = countries
         self.business_groups = business_groups
-        self.legal_entites = legal_entites
+        self.legal_entities = legal_entities
         self.divisions = divisions
         self.units = units
         self.domains = domains
         self.level_1_statutories = level_1_statutories
+        self.compliance_frequency = compliance_frequency
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "business_groups", "legal_entites", "divisions", "units", "domains", "level_1_statutories"])
+        data = parse_dictionary(data, ["countries", "business_groups", "legal_entites", 
+            "divisions", "units", "domains", "level_1_statutories", "compliance_frequency"])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
-        legal_entites = data.get("legal_entites")
-        legal_entites = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entites)
+        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
+        legal_entities = data.get("legal_entities")
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         units = data.get("units")
-        units = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit(units)
+        units = parse_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits(units)
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_VectorType_RecordType_core_Statutory(level_1_statutories)
-        return GetPastRecordsFormDataSuccess(countries, business_groups, legal_entites, divisions, units, domains, level_1_statutories)
+        level_1_statutories = parse_structure_VectorType_RecordType_core_Level1Statutory(level_1_statutories)
+        compliance_frequency = data.get("compliance_frequency")
+        compliance_frequency = parse_structure_VectorType_RecordType_core_ComplianceFrequency(compliance_frequency)
+        return GetPastRecordsFormDataSuccess(countries, business_groups, legal_entites, divisions, 
+            units, domains, level_1_statutories, compliance_frequency)
 
     def to_inner_structure(self):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "legal_entites": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entites),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit(self.units),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units": to_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits(self.units),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "level_1_statutories": to_structure_VectorType_RecordType_core_Statutory(self.level_1_statutories),
+            "level_1_statutories": to_structure_VectorType_RecordType_core_Level1Statutory(self.level_1_statutories),
+            "compliance_frequency" : to_structure_VectorType_RecordType_core_ComplianceFrequency(self.compliance_frequency)
         }
 
 class GetStatutoriesByUnitSuccess(Response):

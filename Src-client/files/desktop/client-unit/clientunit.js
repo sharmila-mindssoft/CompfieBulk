@@ -93,25 +93,38 @@ function loadClientsList(clientunitsList){
 	var imageName, title;
 	var getAllArrayValues = [];
 
-	for(var units in unitList){
-		var isActive = unitList[units]['is_active'];	
-		var unitId = unitList[units]['unit_id'];
+	$.each(unitList, function (key, value){
+		var isActive = unitList[key]['is_active'];	
+		var unitId = unitList[key]['unit_id'];
 		var unitVal = {};
-		unitVal['clientId'] = unitList[units]['client_id'];
-		unitVal['bgroupId']  = unitList[units]['business_group_id'];
-		unitVal['lentitiesId'] = unitList[units]['legal_entity_id'];
-		unitVal['divisionId'] = unitList[units]['division_id'];
-		console.log(unitVal)
-		alert(jQuery.ina);
-		// if (){
-		// 	alert("entering inside if");
-		// 	getAllArrayValues.push(unitVal);
-		// }else{
-		// 	continue;
-		// }
-	}
-	console.log(getAllArrayValues);
-
+		clientId = unitList[key]['client_id'];
+		bgroupId = unitList[key]['business_group_id'];
+		lentitiesId = unitList[key]['legal_entity_id'];
+		divisionId = unitList[key]['division_id'];
+		if(isActive == true){
+			imageName = "icon-active.png";
+			title = "Click here to deactivate"
+			statusVal = false;
+		}
+		else{
+			imageName = "icon-inactive.png";  
+			title = "Click here to Activate"
+			statusVal = true;
+		}
+		var tableRow = $('#templates .table-clientunit-list .table-row');
+		var clone = tableRow.clone();
+		sno = sno + 1;
+		$('.sno', clone).text(sno);
+		$('.group-name', clone).text(getGroupName(clientId));
+		$('.business-group-name', clone).text(getBusinessGroupName(bgroupId));
+		$('.legal-entity-name', clone).text(getLegalEntityName(lentitiesId)); 
+		$('.division-name', clone).text(getDivisionName(divisionId));
+		$('.edit', clone).html('<img src = "/images/icon-edit.png" id = "editid" onclick = "clientunit_edit('+clientId+','+bgroupId+','+lentitiesId+','+divisionId+','+unitId+')"/>');
+		$('.is-active', clone).html('<img src = "/images/'+imageName+'" title = "'+title+'" onclick = "clientunit_active('+clientId+','+lentitiesId+', '+divisionId+', '+statusVal+','+unitId+')"/>');
+		$('.tbody-clientunit-list').append(clone);	
+	});
+		
+	
 
 
 		// if((jQuery.inArray(clientId, clientArray) == -1) &&  

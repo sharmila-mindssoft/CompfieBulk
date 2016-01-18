@@ -115,8 +115,8 @@ def process_reset_password(db, request):
 	client_id = db.get_client_id_from_short_name(request.short_name)
 	user_id = db.validate_reset_token(request.reset_token, client_id)
 	if user_id != None:
-		db.update_password(request.new_password, user_id, client_id):
-		db.delete_used_token(request.reset_token, client_id):
+		db.update_password(request.new_password, user_id, client_id)
+		db.delete_used_token(request.reset_token, client_id)
 		return login.ResetPasswordSuccess()
 	else:
 		return login.InvalidResetToken()
