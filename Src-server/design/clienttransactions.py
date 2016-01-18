@@ -63,6 +63,7 @@ ASSINGED_COMPLIANCE =  RecordType("ASSINGED_COMPLIANCE", [
 
 
 SaveAssignedCompliance = RecordType("SaveAssignedCompliance", [
+	Field("country_id", COUNTRY_ID),
 	Field("assignee" ,USER_ID),
 	Field("concurrence_person", USER_ID),
 	Field("approval_person", USER_ID),

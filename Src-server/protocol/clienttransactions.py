@@ -255,7 +255,8 @@ class GetComplianceForUnits(Request):
         }
 
 class SaveAssignedCompliance(Request):
-    def __init__(self, assignee, concurrence_person, approval_person, compliances):
+    def __init__(self, country_id, assignee, concurrence_person, approval_person, compliances):
+        self.country_id = country_id
         self.assignee = assignee
         self.concurrence_person = concurrence_person
         self.approval_person = approval_person
@@ -263,7 +264,9 @@ class SaveAssignedCompliance(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["assignee", "concurrence_person", "approval_person", "compliances"])
+        data = parse_dictionary(data, ["country_id", "assignee", "concurrence_person", "approval_person", "compliances"])
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         assignee = data.get("assignee")
         assignee = parse_structure_UnsignedIntegerType_32(assignee)
         concurrence_person = data.get("concurrence_person")
@@ -272,10 +275,11 @@ class SaveAssignedCompliance(Request):
         approval_person = parse_structure_UnsignedIntegerType_32(approval_person)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(compliances)
-        return SaveAssignedCompliance(assignee, concurrence_person, approval_person, compliances)
+        return SaveAssignedCompliance(country_id, assignee, concurrence_person, approval_person, compliances)
 
     def to_inner_structure(self):
         return {
+            "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "assignee": to_structure_SignedIntegerType_8(self.assignee),
             "concurrence_person": to_structure_SignedIntegerType_8(self.concurrence_person),
             "approval_person": to_structure_SignedIntegerType_8(self.approval_person),
