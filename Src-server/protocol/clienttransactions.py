@@ -48,7 +48,8 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_100,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     parse_structure_OptionalType_CustomTextType_20,
-    parse_structure_VectorType_RecordType_core_ComplianceFrequency
+    parse_structure_VectorType_RecordType_core_ComplianceFrequency,
+    parse_structure_OptionalType_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -107,7 +108,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits,
     to_structure_VectorType_RecordType_core_ComplianceFrequency,
     to_structure_CustomTextType_100,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES
+    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
+    to_structure_OptionalType_SignedIntegerType_8
 )
 
 #
@@ -273,7 +275,7 @@ class SaveAssignedCompliance(Request):
         assignee = data.get("assignee")
         assignee = parse_structure_UnsignedIntegerType_32(assignee)
         concurrence_person = data.get("concurrence_person")
-        concurrence_person = parse_structure_UnsignedIntegerType_32(concurrence_person)
+        concurrence_person = parse_structure_OptionalType_UnsignedIntegerType_32(concurrence_person)
         approval_person = data.get("approval_person")
         approval_person = parse_structure_UnsignedIntegerType_32(approval_person)
         compliances = data.get("compliances")
@@ -284,7 +286,7 @@ class SaveAssignedCompliance(Request):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "assignee": to_structure_SignedIntegerType_8(self.assignee),
-            "concurrence_person": to_structure_SignedIntegerType_8(self.concurrence_person),
+            "concurrence_person": to_structure_OptionalType_SignedIntegerType_8(self.concurrence_person),
             "approval_person": to_structure_SignedIntegerType_8(self.approval_person),
             "compliances": to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(self.compliances),
         }
@@ -880,7 +882,7 @@ class ASSINGED_COMPLIANCE(object):
         due_date = data.get("due_date")
         due_date = parse_structure_CustomTextType_20(due_date)
         validity_date = data.get("validity_date")
-        validity_date = parse_structure_CustomTextType_20(validity_date)
+        validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         unit_ids = data.get("unit_ids")
         unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
         return ASSINGED_COMPLIANCE(compliance_id, statutory_dates, due_date, validity_date, unit_ids)
@@ -890,7 +892,7 @@ class ASSINGED_COMPLIANCE(object):
             "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
             "statutory_dates": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
             "due_date": to_structure_CustomTextType_20(self.due_date),
-            "validity_date": to_structure_CustomTextType_20(self.validity_date),
+            "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
             "unit_ids": to_structure_VectorType_SignedIntegerType_8(self.unit_ids),
         }
 

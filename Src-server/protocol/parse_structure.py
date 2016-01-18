@@ -120,7 +120,7 @@ def parse_structure_OptionalType_SignedIntegerType_8(data):
     return parse_structure_SignedIntegerType_8(data)
 
 def parse_structure_OptionalType_UnsignedIntegerType_32(data):
-    if data is None: return data
+    if data is None: return None
     return parse_structure_UnsignedIntegerType_32(data)
 
 def parse_structure_RecordType_clientreport_ReassignHistory(data):
