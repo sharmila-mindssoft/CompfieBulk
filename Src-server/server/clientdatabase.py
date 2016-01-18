@@ -119,7 +119,7 @@ class ClientDatabase(Database):
         if (len(admin_details) == 0) :
             data_columns = ["user_id", "user_group_id", "email_id", 
                 "employee_name", "employee_code", "contact_no", 
-                "user_group_name", "form_ids"
+                "user_group_name", "form_ids" 
             ]
             query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
                 t1.employee_name, t1.employee_code, t1.contact_no, \
