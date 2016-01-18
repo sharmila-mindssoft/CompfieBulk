@@ -1420,7 +1420,6 @@ class ClientDatabase(Database):
                     )
                 self.execute(query, client_id)
             self.update_user_units(assignee, unit_ids, client_id)
-
         return clienttransactions.SaveAssignedComplianceSuccess()
 
     def update_user_units(self, user_id, unit_ids, client_id):
