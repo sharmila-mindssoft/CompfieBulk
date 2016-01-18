@@ -154,7 +154,10 @@ $("#submit").click(function(){
          if( result == "true") {
           var passlevellist = [];
          for(var k=1; k<=10; k++) {
-          if($("#level"+k).val().trim().length > 0){
+          if($("#levelid"+k).val().trim().length > 0 && $("#level"+k).val().trim().length == 0){
+            displayMessage("Level "+ k + " Should not be Empty")
+            return false;
+          }else if($("#level"+k).val().trim().length > 0){
             if($("#levelid"+k).val().trim().length > 0){
               passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val(), "level_id" : parseInt($("#levelid"+k).val())});
             }else{
