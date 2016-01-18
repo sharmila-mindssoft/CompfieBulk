@@ -1574,7 +1574,7 @@ class ClientDatabase(Database):
         domain_ids = request.domain_ids
         from_date = request.from_date
         to_date = request.to_date
-        date_qry = ""
+        date_qry = "" 
         if from_date is not None and to_date is not None :
             date_qry = "AND T1.due_date >= '%s' AND T1.due_date <= '%s' " % (from_date, to_date)
         query = "SELECT \
