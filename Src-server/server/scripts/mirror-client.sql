@@ -297,7 +297,6 @@ CREATE TABLE `tbl_assigned_compliances` (
   CONSTRAINT `fk_assigned_compliances_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
   CONSTRAINT `fk_assigned_compliances_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_client_compliances` (`compliance_id`),
   CONSTRAINT `fk_assigned_compliances_assignee_client_user_details` FOREIGN KEY (`assignee`) REFERENCES `tbl_users` (`user_id`),
-  CONSTRAINT `fk_assigned_compliances_concurrence_client_user_details` FOREIGN KEY (`concurrence_person`) REFERENCES `tbl_users` (`user_id`),
   CONSTRAINT `fk_assigned_compliances_approve_client_user_details` FOREIGN KEY (`approval_person`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_reassigned_compliances_history`;
