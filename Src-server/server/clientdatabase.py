@@ -1284,27 +1284,47 @@ class ClientDatabase(Database):
         return domain_wise_compliance
 
 
-    def save_assigned_compliance(request, session_user, client_id):
-        country_id = request.country_id
-        assignee = request.assignee
+    def save_assigned_compliance(self, request, session_user, client_id):
+        created_on = self.get_date_time()
+        country_id = int(request.country_id)
+        assignee = int(request.assignee)
         concurrence = request.concurrence_person
-        approval = request.approval_person
+        if concurrence is None :
+            concurrence = ""
+        approval = int(request.approval_person)
         compliances = request.compliances
         for c in compliances:
-            compliance_id = c["compliance_id"]
-            statutory_dates = c["statutory_dates"]
-            due_date = c["due_date"]
-            validity_date = c["validity_date"]
-            unit_ids = c["unit_ids"]
-            for unit in unit_ids:
+            compliance_id = int(c.compliance_id)
+            statutory_dates = c.statutory_dates
+            date_list = []
+            for dates in statutory_dates :
+                date_list.append(dates.to_structure())
+            date_list = json.dumps(date_list)
+            # due_date = c["due_date"]
+            due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+            validity_date = c.validity_date
+            if validity_date is not None :
+                validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
+            else :
+                validity_date = ""
+            
+            unit_ids = c.unit_ids
+            for unit_id in unit_ids:
                 query = "INSERT INTO tbl_assigned_compliances \
                     (country_id, unit_id, compliance_id, \
                     statutory_dates, assignee, \
                     concurrence_person, approval_person, \
-                    due_date, validity_date) VALUES \
-                    (%s, %s, %s, '%s', %s, %s, %s, '%s', '%s')" % (
+                    due_date, validity_date, created_by, \
+                    created_on) VALUES \
+                    (%s, %s, %s, '%s', %s, '%s', %s, '%s', '%s', %s, '%s')" % (
                         country_id, unit_id, compliance_id, 
+                        date_list, assignee, concurrence,
+                        approval, due_date, validity_date,
+                        int(session_user), created_on
                     )
+                self.execute(query, client_id)
+
+        return clienttransactions.SaveAssignedComplianceSuccess()
 
 
     def get_level_1_statutory(self, client_id):
@@ -1361,3 +1381,4 @@ class ClientDatabase(Database):
         compliance_condition = " compliance_id in (%s) " % client_compliance_ids
         compliance_rows = self.get_data(self.tblCompliances, compliance_columns, compliance_condition)
         for compliance in compliance_rows:
+            pass
