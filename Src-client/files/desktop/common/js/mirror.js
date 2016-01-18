@@ -189,7 +189,7 @@ function initMirror() {
         else 
             return false
     }
-    function logout(callback) {
+    function logout() {
         sessionToken = getSessionToken()
         var request = [
             "Logout", {
