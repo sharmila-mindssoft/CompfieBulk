@@ -949,7 +949,8 @@ class ClientDatabase(Database):
 
     def return_compliance_for_statutory_settings(self, domain_id, client_statutory_id, client_id):
         query = "SELECT t1.client_statutory_id, t1.compliance_id, \
-            t1.applicable, t1.not_applicable_remarks, \
+            t1.statutory_applicable, t1.statutory_opted,\
+            t1.not_applicable_remarks, \
             t1.compliance_applicable, t1.compliance_opted, \
             t1.compliance_remarks, \
             t2.compliance_task, t2.document_name, t2.statutory_mapping,\
@@ -965,7 +966,8 @@ class ClientDatabase(Database):
             )
         rows = self.select_all(query, client_id)
         columns = [
-            "client_statutory_id", "compliance_id", "applicable",
+            "client_statutory_id", "compliance_id", 
+            "statutory_applicable", "statutory_opted",
             "not_applicable_remarks", "compliance_applicable",
             "compliance_opted", "compliance_remarks",
             "compliance_task", "document_name", "statutory_mapping",
@@ -974,6 +976,9 @@ class ClientDatabase(Database):
         results = self.convert_to_dict(rows, columns)
         statutory_wise_compliances = {}
         for r in results :
+            statutory_opted = r["statutory_opted"]
+            if statutory_opted is None :
+                statutory_opted = bool(r["statutory_applicable"])
             compliance_opted = r["compliance_opted"]
             if compliance_opted is None :
                 compliance_opted = bool(r["compliance_applicable"])
@@ -1002,7 +1007,8 @@ class ClientDatabase(Database):
                     r["client_statutory_id"],
                     statutory_name,
                     [compliance],
-                    bool(r["applicable"]),
+                    bool(r["statutory_applicable"]),
+                    statutory_opted,
                     r["not_applicable_remarks"]
                 )
             else :
@@ -1065,7 +1071,7 @@ class ClientDatabase(Database):
         updated_on = self.get_date_time()
         for s in statutories :
             client_statutory_id = s.client_statutory_id
-            applicable_status = int(s.applicable_status)
+            statutory_opted_status = int(s.applicable_status)
             not_applicable_remarks = s.not_applicable_remarks
             if not_applicable_remarks is None :
                 not_applicable_remarks = ""
@@ -1079,7 +1085,7 @@ class ClientDatabase(Database):
                     INNER JOIN tbl_client_statutories t2 \
                     ON t1.client_statutory_id = t2.client_statutory_id \
                     SET \
-                    t1.applicable=%s, \
+                    t1.statutory_opted=%s, \
                     t1.not_applicable_remarks='%s', \
                     t1.compliance_opted=%s, \
                     t1.compliance_remarks='%s',\
@@ -1088,7 +1094,7 @@ class ClientDatabase(Database):
                     WHERE t2.unit_id = %s \
                     AND t1.client_statutory_id = %s \
                     AND t1.compliance_id = %s" % (
-                        applicable_status, not_applicable_remarks,
+                        statutory_opted_status, not_applicable_remarks,
                         opted_status, remarks, session_user, updated_on,
                         unit_id, client_statutory_id, compliance_id
                     )
@@ -1195,7 +1201,8 @@ class ClientDatabase(Database):
         query = "SELECT group_concat(distinct t1.client_statutory_id) client_statutory_ids, \
             t1.domain_id,group_concat(distinct t1.unit_id) unit_ids, \
             t2.compliance_id, \
-            t2.applicable, t2.not_applicable_remarks, \
+            t2.statutory_applicable, t2.statutory_opted, \
+            t2.not_applicable_remarks, \
             t2.compliance_applicable, t2.compliance_opted, \
             t2.compliance_remarks, \
             t3.compliance_task, t3.document_name, t3.compliance_description,\
@@ -1212,6 +1219,7 @@ class ClientDatabase(Database):
             ON t1.domain_id = t5.domain_id\
             AND t5.user_id LIKE '%s'  \
             AND t1.unit_id IN %s \
+            AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
             AND t3.is_active = 1 \
             AND t2.compliance_id NOT \
@@ -1223,7 +1231,8 @@ class ClientDatabase(Database):
             )
         rows = self.select_all(query, client_id)
         columns = ["client_statutory_ids", "domain_id", "unit_ids",
-            "compliance_id", "applicable", "not_applicable_remarks",
+            "compliance_id", "statutory_applicable", "statutory_opted",
+            "not_applicable_remarks",
             "compliance_applicable", "compliance_opted",
             "compliance_remarks", "compliance_task",
             "document_name", "compliance_description",
@@ -1284,27 +1293,47 @@ class ClientDatabase(Database):
         return domain_wise_compliance
 
 
-    def save_assigned_compliance(request, session_user, client_id):
-        country_id = request.country_id
-        assignee = request.assignee
+    def save_assigned_compliance(self, request, session_user, client_id):
+        created_on = self.get_date_time()
+        country_id = int(request.country_id)
+        assignee = int(request.assignee)
         concurrence = request.concurrence_person
-        approval = request.approval_person
+        if concurrence is None :
+            concurrence = ""
+        approval = int(request.approval_person)
         compliances = request.compliances
         for c in compliances:
-            compliance_id = c["compliance_id"]
-            statutory_dates = c["statutory_dates"]
-            due_date = c["due_date"]
-            validity_date = c["validity_date"]
-            unit_ids = c["unit_ids"]
-            for unit in unit_ids:
+            compliance_id = int(c.compliance_id)
+            statutory_dates = c.statutory_dates
+            date_list = []
+            for dates in statutory_dates :
+                date_list.append(dates.to_structure())
+            date_list = json.dumps(date_list)
+            # due_date = c["due_date"]
+            due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+            validity_date = c.validity_date
+            if validity_date is not None :
+                validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
+            else :
+                validity_date = ""
+            
+            unit_ids = c.unit_ids
+            for unit_id in unit_ids:
                 query = "INSERT INTO tbl_assigned_compliances \
                     (country_id, unit_id, compliance_id, \
                     statutory_dates, assignee, \
                     concurrence_person, approval_person, \
-                    due_date, validity_date) VALUES \
-                    (%s, %s, %s, '%s', %s, %s, %s, '%s', '%s')" % (
+                    due_date, validity_date, created_by, \
+                    created_on) VALUES \
+                    (%s, %s, %s, '%s', %s, '%s', %s, '%s', '%s', %s, '%s')" % (
                         country_id, unit_id, compliance_id, 
+                        date_list, assignee, concurrence,
+                        approval, due_date, validity_date,
+                        int(session_user), created_on
                     )
+                self.execute(query, client_id)
+
+        return clienttransactions.SaveAssignedComplianceSuccess()
 
 
     def get_level_1_statutory(self, client_id):
@@ -1361,3 +1390,4 @@ class ClientDatabase(Database):
         compliance_condition = " compliance_id in (%s) " % client_compliance_ids
         compliance_rows = self.get_data(self.tblCompliances, compliance_columns, compliance_condition)
         for compliance in compliance_rows:
+            pass
