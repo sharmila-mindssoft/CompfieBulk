@@ -54,7 +54,6 @@ $("#show-button").click(function(){
 	var countries = $("#countries").val();
 	countriesText = $("#countries  option:selected").text();
 	//Domain
-	
 	var domain = $("#domain").val();
 	if(domain != ''){ 
 		var domainsVal = parseInt(domain);
@@ -163,6 +162,7 @@ $("#show-button").click(function(){
 		);
 	}
 });
+
 function loadAssignedStatutoryList(data){
 	$('.grid-table-rpt').show();
 	$('.tbody-assigned-statutory-list tr').remove();
@@ -246,6 +246,33 @@ function loadAssignedStatutoryList(data){
 				$('.tbody-assigned-statutory-list').append(cloneAssignedRecord);
 
 			});			
+
+function loadClientDetailsList(data){
+	$('.grid-table-rpt').show();
+	$('.tbody-clientdetails-list tr').remove();
+	var sno = 0;
+	$.each(data, function(key, value) {
+	  	var list = data[key];
+	  	$.each(list, function(k, val) { 
+		  	var arr = [];
+			var tableRow = $('#templates .table-clientdetails-list .table-row');
+			var clone = tableRow.clone();
+			sno = sno + 1;
+			$('.sno', clone).text(sno);
+			$('.unit-name', clone).html(list[k]['unit_name']);
+			var domainsNames = '';
+			arr = list[k]['domain_ids'];
+			$.each(domainsList, function(key, value){
+				var domianid = domainsList[key]['domain_id'];
+				var domainname = domainsList[key]['domain_name']
+				if(jQuery.inArray(domianid, arr ) > -1){
+					domainsNames += domainname + ", ";
+				}
+			});					
+			$('.domain-name', clone).html(domainsNames);
+			$('.unit-address', clone).text(list[k]['unit_location_and_address']);
+			$('.pincode', clone).html(list[k]['postal_code']);
+			$('.tbody-clientdetails-list').append(clone);
 		});
 	});
 	$(".total-records").html("Total : "+sno+" records")
@@ -297,7 +324,7 @@ function loadauto_text (textval) {
   $('#autocompleteview ul').empty();
   if(textval.length>0){
     for(var i in groups){
-      if (~groups[i]['group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([groups[i]["client_id"],groups[i]["group_name"]]); 
+      if (~groups[i]['group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([groups[i]["client.._id"],groups[i]["group_name"]]); 
     }
     var str='';
     for(var i in suggestions){
