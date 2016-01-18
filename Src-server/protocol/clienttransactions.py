@@ -114,7 +114,7 @@ from protocol.to_structure import (
 )
  
 #
-# Request
+# Request 
 #
 
 class Request(object):
