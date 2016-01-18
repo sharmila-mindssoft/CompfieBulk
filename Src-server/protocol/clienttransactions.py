@@ -122,7 +122,7 @@ class Request(object):
     def to_inner_structure(self):
         raise NotImplementedError
 
-    @staticmethod
+    @staticmethod 
     def parse_structure(data):
         data = parse_static_list(data, 2)
         name, data = data
