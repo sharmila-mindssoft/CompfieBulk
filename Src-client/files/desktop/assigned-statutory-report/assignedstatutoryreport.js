@@ -119,6 +119,7 @@ $("#show-button").click(function(){
 	}
 	level1val = $("#level1val").val();
 
+
 	applicableStatus = $("#appliability-status option:selected").val();
 	if(applicableStatus == "null"){
 		applicableStatus = null;
@@ -129,6 +130,7 @@ $("#show-button").click(function(){
 	if(applicableStatus == 0){
 		applicableStatus = false;
 	}
+
 	if(countries == ""){
 		displayMessage("Please Select Country");
 	}
