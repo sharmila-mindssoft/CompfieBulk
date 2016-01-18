@@ -486,7 +486,6 @@ function activate_level1 (element,checkval,checkname) {
   $("#level1id").val(checkval);
 }
 
-
 $(function() {
 	initialize();
 });
