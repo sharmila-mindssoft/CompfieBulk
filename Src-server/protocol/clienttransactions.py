@@ -46,7 +46,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance,
     parse_structure_CustomTextType_100,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
-    parse_structure_OptionalType_CustomTextType_20
+    parse_structure_OptionalType_CustomTextType_20,
     parse_structure_VectorType_RecordType_core_ComplianceFrequency
 )
 from protocol.to_structure import (
@@ -95,7 +95,7 @@ from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
     to_structure_CustomTextType_100,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
-    to_structure_OptionalType_CustomTextType_20
+    to_structure_OptionalType_CustomTextType_20,
     to_structure_VectorType_RecordType_core_Unit,
     to_structure_VectorType_RecordType_core_Level1Statutory,
     to_structure_VectorType_RecordType_core_ClientBusinessGroup,

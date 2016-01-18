@@ -15,7 +15,7 @@
         <div class="input-row">
           <div class="field-label"> Domain<span class="mandatory">*</span>:</div>
           <div class="field-input">
-            <input type="hidden" id="domain"> 
+            <input type="hidden" id="domain" value=""> 
             <input type="text" class="input-box icon-autocomplete" id="domainval" value=""  onkeyup="loadauto_domains(this.value)"> 
             <div id="selectboxview-domains" class="ac-textbox" style="display:none;" onclick="hidedomainslist();">
               <ul style="width:195px;"></ul> 
@@ -79,7 +79,7 @@
           <div class="field-input">
            <input type="text" class="input-box icon-autocomplete" id="level1val" value="" style="width:213px;"  onkeyup="loadauto_level1(this.value)"> 
             <input type="hidden" id="level1id"> 
-            <div id="autocompleteview-level1id" class="ac-textbox" style="display:none;"  onclick="hidelevel1idlist();">
+            <div id="autocompleteview-level1" class="ac-textbox" style="display:none;"  onclick="hidelevel1list();">
               <ul style="width:195px;"></ul> 
             </div>
           </div>
@@ -107,14 +107,14 @@
       <br>
         <div style="margin-left:15%;">
           <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
-              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>
-              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Group :<span style="margin-left:10px; font-weight:bold;">RG Groups</span> </div>
-              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Legal Entity :<span style="margin-left:10px; font-weight:bold;">RG Entity 1</span> </div>
+              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;" class="countryval"></span> </div>
+              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Group :<span style="margin-left:10px; font-weight:bold;" class="groupsval"></span> </div>
+              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Legal Entity :<span style="margin-left:10px; font-weight:bold;" class="lentityval"></span> </div>
           </div>
           <div style="float:right; margin-right:20%;">
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;">Industrial Law</span> </div>
-              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Business Group :<span style="margin-left:10px; font-weight:bold;">RG Business Group 1</span> </div>
-              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Division :<span style="margin-left:10px; font-weight:bold;">RG Division 1</span> </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;" class= "domainval"></span> </div>
+              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Business Group :<span style="margin-left:10px; font-weight:bold;" class="bgroupsval"></span> </div>
+              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Division :<span style="margin-left:10px; font-weight:bold;" class="divisionval"></span> </div>
 
           </div>
         </div>
@@ -136,7 +136,7 @@
           <tbody class="tbody-assigned-statutory-list">
           </tbody>
         </table>
-        <p style="border-top:1px dashed #ccc;">Total : 5 records</p>
+        <p style="border-top:1px dashed #ccc;" class="total-records"></p>
       </div>
     </div>
   </div>
@@ -144,30 +144,30 @@
 <div id="act-heading" class="default-display-none">
 <table class="table-act-heading-list">
   <tr class="tablerow">
-    <td colspan="5"><span class="heading" style="font-size:1.0em;">Batteries Act</span></td>
-    <td><img src="/images/tick1bold.png"></td>
-    <td><img src="/images/tick1bold.png"></td>
-    <td>Nil</td>
+    <td colspan="5"><span class="heading" style="font-size:1.0em;"></span></td>
+    <td class="act-applicable"></td>
+    <td class="act-opted"></td>
+    <td class="act-remarks"></td>
 </tr>
 </table>
 </div>
 <div id="statutory-list" class="default-display-none">
 <table class="table-statutory-list">
  <tr class="tablerow">
-    <td align="center">4</td>            
-    <td>Rule 6(iii)</td>
-    <td>FORM III - Undertaking submission </td>
-    <td>Whether undertaking submitted by importer to authority.</td>
-     <td>Central</td>
-     <td><img src="/images/tick1bold.png"></td>
-     <td><img src="/images/tick1bold.png"></td>
-    <td>Nil</td><!-- <td>22-Sep</td> -->
+    <td align="center" class="sno"></td>            
+    <td class="statutory-provision"></td>
+    <td class="compliance-task"> </td>
+    <td class="compliance-description"></td>
+     <td class="statutory-nature"></td>
+     <td class="applicability-status"><img src="/images/tick1bold.png"></td>
+     <td class="opted"><img src="/images/tick1bold.png"></td>
+    <td class="remarks"></td><!-- <td>22-Sep</td> -->
   </tr>
   </table></div>
 <div id="unit-details-list" class="default-display-none">
 <table class="table-unit-details-list">
   <tr class="tablerow">
-  <td colspan="8" style="background:#D4B7EB; padding:10px 5px;font-weight:bold; font-size:0.8em;">RG1001 - Corporate Office, 12, KK nagar, Chennai, Tamil Nadu, South Region, 600011</td>
+  <td colspan="8" style="background:#D4B7EB; padding:10px 5px;font-weight:bold; font-size:0.8em;" class="unit-name-address"></td>
   </tr>
 </table>
 </div>
