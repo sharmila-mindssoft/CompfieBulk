@@ -409,6 +409,14 @@
 			function getPastRecordsFormData(){
 				client_mirror.getPastRecordsFormData(callback);
 			}
+			function getStatutoriesByUnit(){
+				unit_id = 1
+				domain_id = 1
+				level_1_statutory_id = 1
+				frequency_id = 1
+				client_mirror.getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_id, 
+					frequency_id, callback);
+			}
 		</script>
 	</head>
 	<body>
@@ -599,8 +607,8 @@
 			<button onclick="getPastRecordsFormData()">
 				Get Past Records form data
 			</button>
-			<button onclick="">
-				
+			<button onclick="getStatutoriesByUnit()">
+				Get Statutories by Unit
 			</button>
 		</div>
 		<br>

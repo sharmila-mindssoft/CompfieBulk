@@ -12,27 +12,22 @@ def process_client_transaction_requests(request, db) :
 	session_user = db.validate_session_token(client_id, session_token)
 	if session_user is None:
 		return login.InvalidSessionToken()
-
 	if type(request) is clienttransactions.GetStatutorySettings :
 		return process_get_statutory_settings(db, session_user, client_id)
-
 	elif type(request) is clienttransactions.UpdateStatutorySettings :
 		return process_update_statutory_settings(db, request, session_user, client_id)
-
 	elif type(request) is clienttransactions.GetAssignCompliancesFormData:
 		pass
-
 	elif type(request) is clienttransactions.SaveAssignedCompliance :
 		pass
-
 	elif type(request) is clienttransactions.GetUserwiseCompliances :
 		pass
-
 	elif type(request) is clienttransactions.ReassignCompliance :
 		pass
-
 	elif type(request) is clienttransactions.GetPastRecordsFormData :
 		return process_get_past_records_form_data(db, request, session_user, client_id)
+	elif type(request) is clienttransactions.GetStatutoriesByUnit :
+		return process_get_statutories_by_unit(db, request, session_user, client_id)
 
 def process_get_statutory_settings(db, session_user, client_id):
 	return db.get_statutory_settings(session_user, client_id)
@@ -40,7 +35,7 @@ def process_get_statutory_settings(db, session_user, client_id):
 def process_update_statutory_settings(db, request, session_user, client_id):
 	return db.update_statutory_settings(request, session_user, client_id)
 
-def process_get_past_records_form_data(db, request, session_user, client_id):
+def process_get_past_records_form_data(db, request, session_user, client_id): 
 	countries = db.get_countries_for_user(session_user, client_id)
 	row = db.get_user_company_details(session_user, client_id)
 	business_groups = db.get_business_groups_for_user(row[3], client_id)
@@ -54,4 +49,14 @@ def process_get_past_records_form_data(db, request, session_user, client_id):
 		business_groups = business_groups, legal_entities = legal_entities, divisions = divisions,
 		units = units, domains = domains, level_1_statutories = level1_statutories,
 		compliance_frequency = compliance_frequency)
+
+def process_get_statutories_by_unit(db, request, session_user, client_id):
+	unit_id = request.unit_id
+	domain_id = request.domain_id
+	level_1_statutory_id = request.level_1_statutory_id
+	frequecy_id = request.frequecy_id
+	statutory_wise_compliances = db.get_statutory_wise_compliances(unit_id, 
+		domain_id, level_1_statutory_id, frequecy_id)
+	return clienttransactions.GetStatutoriesByUnitSuccess(statutory_wise_compliances = 
+		statutory_wise_compliances)
 	 

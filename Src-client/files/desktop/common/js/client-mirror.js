@@ -571,6 +571,19 @@ function initClientMirror() {
        clientApiRequest("api/client_transaction", request, callback);
     }
 
+    function getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_id, 
+                    frequency_id, callback){
+        var request = [
+            "GetStatutoriesByUnit",
+            {
+                "unit_id" : unit_id,
+                "domain_id" : domain_id,
+                "level_1_statutory_id": level_1_statutory_id,
+                "compliance_frequency" : frequency_id
+            }
+        ]
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -632,7 +645,8 @@ function initClientMirror() {
         updateStatutory: updateStatutory,
         updateStatutorySettings: updateStatutorySettings,
 
-        getPastRecordsFormData: getPastRecordsFormData
+        getPastRecordsFormData: getPastRecordsFormData,
+        getStatutoriesByUnit: getStatutoriesByUnit,
     }
 
 }
