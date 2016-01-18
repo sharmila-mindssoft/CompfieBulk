@@ -64,7 +64,7 @@ def process_get_statutories_by_unit(db, request, session_user, client_id):
 	statutory_wise_compliances = db.get_statutory_wise_compliances(unit_id, 
 		domain_id, level_1_statutory_id, frequecy_id)
 	return clienttransactions.GetStatutoriesByUnitSuccess(statutory_wise_compliances = 
-		statutory_wise_compliances)
+		statutory_wise_compliances) 
 
 def process_get_compliance_approval_list(db, request, session_user, client_id):
 	compliance_approval_list = db.get_compliance_approval_list(session_user, client_id)
