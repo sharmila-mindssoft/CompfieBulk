@@ -739,16 +739,17 @@ class InvalidUnitId(Response):
 
 
 class Unit(object):
-    def __init__(self, business_group_id, legal_entity_id, division_id, client_id, units):
+    def __init__(self, business_group_id, legal_entity_id, division_id, client_id, units, is_active):
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
         self.division_id = division_id
         self.client_id = client_id
         self.units = units
+        self.is_active = is_active
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["business_group_id", "legal_entity_id", "division_id", "client_id", "units"])
+        data = parse_dictionary(data, ["business_group_id", "legal_entity_id", "division_id", "client_id", "units", "is_active"])
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
@@ -759,7 +760,9 @@ class Unit(object):
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_technomasters_CountryWiseUnits(units)
-        return CountryWiseUnits(country_id, units)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        return Unit(business_group_id, legal_entity_id, division_id, client_id, units, is_active)
 
     def to_structure(self):
         return {
@@ -767,7 +770,8 @@ class Unit(object):
             "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
             "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
-            "units" : to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_UnitDetails(self.units)
+            "units" : to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_UnitDetails(self.units),
+            "is_active": to_structure_Bool(self.is_active)
         }
 
 #
