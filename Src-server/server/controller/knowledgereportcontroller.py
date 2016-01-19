@@ -53,10 +53,11 @@ def process_get_statutory_mapping_report_data(db, request_frame, user_id):
         nature_id, geography_id, user_id
     )
     statutory_mappings = {}
-    if level_1_id is None:
-        statutory_mappings = report_data
-    else :
-        statutory_mappings[level_1_id] = report_data[level_1_id]
+    statutory_mappings = report_data
+    # if level_1_id is None:
+    #     statutory_mappings = report_data
+    # else :
+    #     statutory_mappings[level_1_id] = report_data[level_1_id]
 
     return knowledgereport.GetStatutoryMappingReportDataSuccess(
         country_id, domain_id, statutory_mappings
