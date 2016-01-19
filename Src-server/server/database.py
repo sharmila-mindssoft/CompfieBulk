@@ -1229,9 +1229,14 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return result
 
-    def check_duplicate_geography(self, parent_ids, geography_id) :
-        query = "SELECT geography_id, geography_name, level_id, is_active \
-            FROM tbl_geographies WHERE parent_ids='%s' " % (parent_ids)
+    def check_duplicate_geography(self, country_id, parent_ids, geography_id) :
+        query = "SELECT t1.geography_id, t1.geography_name, \
+            t1.level_id, t1.is_active \
+            FROM tbl_geographies t1 \
+            INNER JOIN tbl_geography_levels t2 \
+            ON t1.level_id = t2.level_id \
+            WHERE t1.parent_ids='%s' \
+            AND t2.country_id = %s" % (parent_ids, country_id)
         if geography_id is not None :
             query = query + " AND geography_id != %s" % geography_id
         
