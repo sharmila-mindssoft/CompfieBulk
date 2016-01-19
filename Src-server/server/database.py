@@ -133,7 +133,6 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
