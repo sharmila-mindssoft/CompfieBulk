@@ -719,6 +719,46 @@ class Geography(object):
         }
 
 #
+# Geography With Mapping
+#
+
+class GeographyWithMapping(object):
+    def __init__(self, geography_id, geography_name, level_id, mapping, parent_id, is_active):
+        self.geography_id = geography_id
+        self.geography_name = geography_name
+        self.level_id = level_id
+        self.mapping = mapping
+        self.parent_id = parent_id
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["geography_id", "geography_name", "level_id", "mapping", "parent_id", "is_active"])
+        geography_id = data.get("geography_id")
+        geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
+        geography_name = data.get("geography_name")
+        geography_name = parse_structure_CustomTextType_50(geography_name)
+        level_id = data.get("level_id")
+        level_id = parse_structure_UnsignedIntegerType_32(level_id)
+        mapping = data.get("mapping")
+        mapping = parse_structure_CustomTextType_250(mapping)
+        parent_id = data.get("parent_id")
+        parent_id = parse_structure_UnsignedIntegerType_32(parent_id)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        return Geography(geography_id, geography_name, level_id, mapping, parent_id, is_active)
+
+    def to_structure(self):
+        return {
+            "geography_id": to_structure_SignedIntegerType_8(self.geography_id),
+            "geography_name": to_structure_CustomTextType_50(self.geography_name),
+            "level_id": to_structure_SignedIntegerType_8(self.level_id),
+            "mapping": to_structure_CustomTextType_250(self.mapping),
+            "parent_id": to_structure_SignedIntegerType_8(self.parent_id),
+            "is_active": to_structure_Bool(self.is_active),
+        }
+
+#
 # Industry
 #
 

@@ -54,6 +54,19 @@ function initMirror() {
         return user;
     }
 
+    function updateUserInfo(response){
+        var info = window.localStorage["userInfo"];
+        console.log(info);
+        console.log(info["contact_no"])
+        console.log(info["address"])
+        info["contact_no"] = response["contact_no"]
+        info["address"] = response["address"]
+        console.log(info["contact_no"])
+        console.log(info["address"])
+        console.log(info);
+        window.localStorage["userInfo"] = info
+    }
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -101,6 +114,9 @@ function initMirror() {
                 matchString = 'success';
                 log("API STATUS :"+status)
                 if (status.toLowerCase().indexOf(matchString) != -1){
+                    if(status == "UpdateUserProfileSuccess"){
+                        updateUserInfo(response);
+                    }
                     callback(null, response);
                 }
                 else {
@@ -1191,6 +1207,7 @@ function initMirror() {
         logout: logout,
 
         getUserInfo: getUserInfo,
+        updateUserInfo: updateUserInfo,
         getUserProfile: getUserProfile,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,

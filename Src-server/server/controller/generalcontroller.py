@@ -84,7 +84,7 @@ def process_get_domains(db, user_id):
 
 def procees_update_user_profile(db, request, session_user):
 	db.update_profile(request.contact_no, request.address, session_user)
-	return general.UpdateUserProfileSuccess()
+	return general.UpdateUserProfileSuccess(request.contact_no, request.address)
 
 def process_save_country(db, request, user_id):
 	country_name = request.country_name

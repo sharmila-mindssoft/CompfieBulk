@@ -1194,6 +1194,38 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return self.return_geographies(result)
 
+    def get_geographies_for_user_with_mapping(self, user_id):
+        if bool(self.geography_parent_mapping) is False :
+            self.get_geographies()
+        country_ids = None
+        if ((user_id != None) and (user_id != 0)):
+            country_ids = self.get_user_countries(user_id)
+        columns = "t1.geography_id, t1.geography_name, "+\
+        "t1.level_id,t1.parent_ids, t1.is_active, t2.country_id, t3.country_name"
+        tables = [self.tblGeographies, self.tblGeographyLevels, self.tblCountries]
+        aliases = ["t1", "t2", "t3"]
+        join_type = " INNER JOIN"
+        join_conditions = ["t1.level_id = t2.level_id", "t2.country_id = t3.country_id"]
+        where_condition = "1"
+        if country_ids != None:
+            where_condition = "t2.country_id in (%s)" % country_ids
+        rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type, 
+            join_conditions, where_condition)
+        geographies = {}
+        if rows :        
+            columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
+            result = self.convert_to_dict(rows, columns)
+            for d in result:
+                parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
+                geography = core.GeographyWithMapping(d["geography_id"], d["geography_name"], d["level_id"], self.geography_parent_mapping[d["geography_id"]][0], parent_ids[-1], bool(d["is_active"]))
+                country_id = d["country_id"]
+                _list = geographies.get(country_id)
+                if _list is None :
+                    _list = []
+                _list.append(geography)
+                geographies[country_id] = _list
+        return geographies
+
     def get_geography_report(self):
         def return_report_data(result) :
             mapping_dict = {}
