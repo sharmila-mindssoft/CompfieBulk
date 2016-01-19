@@ -2589,7 +2589,6 @@ def parse_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicabil
     if data is None: return None
     return parse_structure_VectorType_RecordType_core_ComplianceApplicability(data)
 
-
 def parse_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability(data):
     data = parse_dictionary(data)
     dict = {}
