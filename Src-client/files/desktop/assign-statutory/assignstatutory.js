@@ -403,7 +403,7 @@ $("#industry").click(function(event){
 
 
 $("#unit").click(function(event){
-  
+  if($(event.target).attr('class') == 'unitlist'){
     clearValues('unit');
     var chkstatus = $(event.target).attr('class');
     if(chkstatus == 'unitlist active'){
@@ -432,7 +432,6 @@ $("#unit").click(function(event){
           return a.indexOf(v) !== -1;
       });
     });
-     
     var str=''; 
     $('#domain').empty();
     for(var domain in domainsList){
@@ -444,7 +443,6 @@ $("#unit").click(function(event){
     }else{
        $('#domain').empty();
     }
-  
 });
 
 $("#domain").click(function(event){
@@ -702,9 +700,9 @@ function saveorsubmit(submissionType){
       }
       else{
         applicableStatus = false;
-        notApplicableRemarks = $('#remarkvalue1').val();
+        notApplicableRemarks = $('#remarkvalue'+actCount).val();
         if(notApplicableRemarks.length==0){
-          displayMessage("Remarks required for not applicable Act");
+          displayMessage("Remarks required for not applicable act");
           return false;
         }
       }

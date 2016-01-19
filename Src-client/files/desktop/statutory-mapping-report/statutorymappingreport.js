@@ -7,12 +7,7 @@ var statutoryNaturesList;
 var statutoriesList;
 var complianceFrequencyList;
 
-/*var temp_country = 0;
-var temp_domain = 0;
-var temp_industry = null;
-var temp_statutorynature = null;
-var temp_geography = null;
-var temp_act = null;*/
+var temp_act = null;
 
 function clearMessage() {
   $(".error-message").hide();
@@ -67,6 +62,7 @@ $("#submit").click(function(){
   sec  = currentTime.getSeconds();
   ms = currentTime.getMilliseconds();
   console.log("Start Progress : "+ hour + ":" + min + ":" + sec + ":" + ms  );
+
   var country = $("#country").val();
   var domain = $("#domain").val();
   var industry = null;
@@ -87,10 +83,10 @@ $("#submit").click(function(){
     displayMessage("Domain Required");  
   }
   else{
-    /*if((country == temp_country) && (domain == temp_domain) && (temp_industry == null || industry == temp_industry) && (temp_statutorynature == null || statutorynature == temp_statutorynature) &&
-     (temp_geography == null || geography == temp_geography)){
+    if((country == temp_country) && (domain == temp_domain) && (temp_industry == null || industry == temp_industry) && (temp_statutorynature == null || statutorynature == temp_statutorynature) &&
+     (temp_geography == null || geography == temp_geography) && (temp_act == null || act == temp_act)){
       loadresult(statutoryMappingDataList);
-    }else{*/
+    }else{
       var filterdata={};
       filterdata["country_id"]=parseInt(country);
       filterdata["domain_id"]=parseInt(domain);
@@ -120,6 +116,7 @@ $("#submit").click(function(){
       sec  = currentTime.getSeconds();
       ms = currentTime.getMilliseconds();
       console.log("Call API : "+ hour + ":" + min + ":" + sec + ":" + ms  );
+
       mirror.getStatutoryMappingsReportData(filterdata, 
         function (error, response) {
           if (error == null){
@@ -129,14 +126,7 @@ $("#submit").click(function(){
             onFailure(error);
           }
         });
-   /* }
-
-    temp_country = country;
-    temp_domain = domain;
-    temp_industry = industry;
-    temp_statutorynature = statutorynature;
-    temp_geography = geography;
-    temp_act = act;*/
+    temp_act = act;
   }
 });
 
@@ -348,7 +338,6 @@ function loadresult(filterList){
         actname = value.statutory_name;
     }
     });
-
     var tableRow=$('#act-templates .table-act-list .table-row-act-list');
     var clone=tableRow.clone();
     $('.actname', clone).html(actname +'<span><img src="/images/chevron_black_down.png"></span>');
