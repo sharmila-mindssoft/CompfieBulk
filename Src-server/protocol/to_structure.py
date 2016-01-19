@@ -2625,13 +2625,13 @@ def to_structure_VectorType_RecordType_core_ComplianceApprovalStatus(data):
         lst.append(to_structure_RecordType_core_ComplianceApprovalStatus(item))
     return lst
 
-def to_structure_RecordType_core_ComplianceApplicability(data):
-    from protocol import core
-    return core.ComplianceApplicability.to_structure(data)
-
 def to_structure_RecordType_knowledgemaster_Response_UpdateStatutoryNatureSuccess(data):
     from protocol import knowledgemaster
     return knowledgemaster.Response.to_structure(data)
+
+def to_structure_RecordType_core_ComplianceApplicability(data):
+    from protocol import core
+    return core.ComplianceApplicability.to_structure(data)
 
 def to_structure_VectorType_RecordType_core_ComplianceApplicability(data):
     data = parse_list(data, 0)
@@ -2639,6 +2639,16 @@ def to_structure_VectorType_RecordType_core_ComplianceApplicability(data):
     for item in data:
         lst.append(to_structure_RecordType_core_ComplianceApplicability(item))
     return lst
+
+def to_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items() :
+        key  = to_structure_SignedIntegerType_8(key)
+        value = to_structure_VectorType_RecordType_core_ComplianceApplicability(value)
+        dict[key] = value
+    return dict
+
 
 def to_structure_VectorType_RecordType_core_ComplianceShortDescription(data):
     data = parse_list(data, 0)

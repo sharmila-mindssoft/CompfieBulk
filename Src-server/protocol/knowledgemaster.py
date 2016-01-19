@@ -14,7 +14,8 @@ parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorTy
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
     parse_structure_VariantType_knowledgemaster_Request,
     parse_structure_VectorType_RecordType_core_StatutoryNature,
-    parse_structure_CustomTextType_50
+    parse_structure_CustomTextType_50,
+    parse_structure_SignedIntegerType_8
 )
 from protocol.to_structure import (
 to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
@@ -106,39 +107,44 @@ class GetGeographies(Request):
         }
 
 class SaveGeography(Request):
-    def __init__(self, geography_level_id, geography_name, parent_ids):
+    def __init__(self, geography_level_id, geography_name, parent_ids, country_id):
         self.geography_level_id = geography_level_id
         self.geography_name = geography_name
         self.parent_ids = parent_ids
+        self.country_id = country_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["geography_level_id", "geography_name", "parent_ids"])
+        data = parse_dictionary(data, ["geography_level_id", "geography_name", "parent_ids", "country_id"])
         geography_level_id = data.get("geography_level_id")
         geography_level_id = parse_structure_UnsignedIntegerType_32(geography_level_id)
         geography_name = data.get("geography_name")
         geography_name = parse_structure_CustomTextType_50(geography_name)
         parent_ids = data.get("parent_ids")
         parent_ids = parse_structure_VectorType_SignedIntegerType_8(parent_ids)
-        return SaveGeography(geography_level_id, geography_name, parent_ids)
+        country_id = data.get("country_id")
+        country_id = parse_structure_SignedIntegerType_8(country_id)
+        return SaveGeography(geography_level_id, geography_name, parent_ids, country_id)
 
     def to_inner_structure(self):
         return {
             "geography_level_id": to_structure_SignedIntegerType_8(self.geography_level_id),
             "geography_name": to_structure_CustomTextType_50(self.geography_name),
             "parent_ids": to_structure_VectorType_SignedIntegerType_8(self.parent_ids),
+            "country_id": to_structure_SignedIntegerType_8(self.country_id)
         }
 
 class UpdateGeography(Request):
-    def __init__(self, geography_id, geography_level_id, geography_name, parent_ids):
+    def __init__(self, geography_id, geography_level_id, geography_name, parent_ids, country_id):
         self.geography_id = geography_id
         self.geography_level_id = geography_level_id
         self.geography_name = geography_name
         self.parent_ids = parent_ids
+        self.country_id = country_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["geography_id", "geography_level_id", "geography_name", "parent_ids"])
+        data = parse_dictionary(data, ["geography_id", "geography_level_id", "geography_name", "parent_ids", "country_id"])
         geography_id = data.get("geography_id")
         geography_id = parse_structure_UnsignedIntegerType_32(geography_id)
         geography_level_id = data.get("geography_level_id")
@@ -147,7 +153,9 @@ class UpdateGeography(Request):
         geography_name = parse_structure_CustomTextType_50(geography_name)
         parent_ids = data.get("parent_ids")
         parent_ids = parse_structure_VectorType_SignedIntegerType_8(parent_ids)
-        return UpdateGeography(geography_id, geography_level_id, geography_name, parent_ids)
+        country_id = data.get("country_id")
+        country_id = parse_structure_SignedIntegerType_8(country_id)
+        return UpdateGeography(geography_id, geography_level_id, geography_name, parent_ids, country_id)
 
     def to_inner_structure(self):
         return {
@@ -155,6 +163,7 @@ class UpdateGeography(Request):
             "geography_level_id": to_structure_SignedIntegerType_8(self.geography_level_id),
             "geography_name": to_structure_CustomTextType_50(self.geography_name),
             "parent_ids": to_structure_VectorType_SignedIntegerType_8(self.parent_ids),
+            "country_id": to_structure_SignedIntegerType_8(self.country_id)
         }
 
 class ChangeGeographyStatus(Request):
