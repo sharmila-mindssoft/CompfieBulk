@@ -3486,7 +3486,12 @@ class KnowledgeDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return return_unit_details(result)
 
-    def get_assign_statutory_wizard_two(self, country_id, geography_id, industry_id, domain_id, user_id):
+    def get_assign_statutory_wizard_two(
+        self, country_id, geography_id, industry_id, 
+        domain_id, client_statutory_id, user_id
+    ):
+        if client_statutory_id is not None :
+            return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, client_statutory_id)
         query = "SELECT distinct t1.statutory_mapping_id, \
             t1.statutory_nature_id, t2.statutory_nature_name, \
             t5.statutory_id\
@@ -3539,6 +3544,33 @@ class KnowledgeDatabase(Database):
         if rows :
             result = self.convert_to_dict(rows, columns)
         return result
+
+    def return_unassign_statutory_wizard_two(
+        self, country_id, geography_id, industry_id, 
+        domain_id, client_statutory_id
+    ):
+        new_compliance = self.get_unassigned_compliances(
+            country_id, domain_id, industry_id, 
+            geography_id, client_statutory_id
+        )
+        assigned_statutory_list = []
+        for key, value in new_compliance.items() :
+            name = self.statutory_parent_mapping[int(key)][0]
+            compliances = value
+            applicable_status = bool(1)
+            statutory_opted_status = None
+            not_applicable_remarks = None
+            assigned_statutory_list.append(
+                core.AssignedStatutory(
+                    key, name, compliances, applicable_status, 
+                    statutory_opted_status,
+                    not_applicable_remarks
+                )
+            )
+        return technotransactions.GetStatutoryWizardTwoDataSuccess(
+            assigned_statutory_list
+        )
+
 
     def return_assign_statutory_wizard_two(self, country_id, domain_id, data):
         if bool(self.statutory_parent_mapping) is False:

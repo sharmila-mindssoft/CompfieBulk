@@ -249,7 +249,7 @@ def run_server(port):
 
     def delay_initialize():
         db = KnowledgeDatabase(
-            "localhost", "root", "123456", "mirror_knowledge"
+            "192.168.1.3", "root", "123456", "mirror_knowledge"
         )
         web_server = WebServer(io_loop)
 
