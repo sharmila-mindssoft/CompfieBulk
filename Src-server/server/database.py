@@ -1547,7 +1547,7 @@ class KnowledgeDatabase(Database):
                 if id > 0 :
                     names.append(_tempDict.get(id))
             names.append(row["geography_name"])
-            mappings = '>>'.join(str(x) for x in names)
+            mappings = ' >> '.join(str(x) for x in names)
             self.geography_parent_mapping[geography_id] = [
                 mappings, is_active, country_id
             ]
@@ -4026,8 +4026,8 @@ class KnowledgeDatabase(Database):
                 detail_condition += " And division_id is NULL"
             else:
                 detail_condition += " And division_id = '%d'" % row[2]
-            detail_condition += " group by country_id"
-            country_rows = self.get_data(self.tblUnits, detail_columns, detail_condition)
+            country_condition = detail_condition + " group by country_id"
+            country_rows = self.get_data(self.tblUnits, detail_columns, country_condition)
             country_wise_units = {}
             division_is_active = bool(1)
             for country_row in country_rows:
