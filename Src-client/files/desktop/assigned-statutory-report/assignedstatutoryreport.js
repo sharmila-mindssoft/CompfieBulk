@@ -129,7 +129,6 @@ $("#show-button").click(function(){
 	if(applicableStatus == 0){
 		applicableStatus = false;
 	}
-
 	if(countries == ""){
 		displayMessage("Please Select Country");
 	}
