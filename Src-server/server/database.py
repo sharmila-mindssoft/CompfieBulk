@@ -132,7 +132,6 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
@@ -3914,7 +3913,7 @@ class KnowledgeDatabase(Database):
                 division_id, unit_id, level_1_statutory_id,
                 applicable_status, applicable_status
             )
-        print query
+        
         rows = self.select_all(query)
         columns = ["client_statutory_id", "client_id", "geography_id",
             "country_id", "domain_id", "unit_id", "submission_type",
