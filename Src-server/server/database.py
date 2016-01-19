@@ -3951,7 +3951,11 @@ class KnowledgeDatabase(Database):
 
         return final_statutory_list
 
-    def get_unassigned_compliances(self, country_id, domain_id, industry_id, geography_id, unit_id) :
+
+    def get_unassigned_compliances(
+        self, country_id, domain_id, industry_id, 
+        geography_id, client_statutory_id
+    ) :
         query = "SELECT distinct \
             t6.compliance_id, t6.compliance_task, t6.document_name,\
             t6.statutory_provision, t6.compliance_description, t2.statutory_id, \
@@ -3978,18 +3982,11 @@ class KnowledgeDatabase(Database):
                 WHERE g.geography_id = %s \
                 OR g.parent_ids LIKE '%s' )\
             AND t6.compliance_id NOT IN ( \
-                SELECT distinct c.compliance_id \
-                FROM tbl_client_compliances c \
-                INNER JOIN tbl_client_statutories s\
-                ON c.client_statutory_id = s.client_statutory_id\
-                AND s.geography_id = %s \
-                AND s.domain_id = %s \
-                AND s.unit_id = %s \
-                ) \
+                SELECT c.compliance_id FROM tbl_client_compliances c \
+                WHERE c.client_statutory_id = %s ) \
             " % (
                     domain_id, country_id, industry_id, geography_id, 
-                    str("%" + str(geography_id) + ",%"), 
-                    geography_id, domain_id, unit_id
+                    str("%" + str(geography_id) + ",%"), client_statutory_id
                 )
         rows = self.select_all(query)
         columns = ["compliance_id", "compliance_task",
@@ -4052,7 +4049,7 @@ class KnowledgeDatabase(Database):
                     key,
                     statutory_name,
                     None,
-                    True,
+                    True, 
                     None,
                     None
                 )
