@@ -8,6 +8,7 @@ function displayMessage(message) {
 }
 function initialize(){
 	var userprofile = mirror.getUserProfile();
+	clearMessage();
 	var contactNo = (userprofile['contact_no']).split('-');
 	$('.employee-name').text(userprofile['employee_name']);
 	$('.designation').text(userprofile['designation']);
@@ -20,6 +21,42 @@ function initialize(){
 	$('textarea.address').text(userprofile['address']);	
 	$('.userid').val(userprofile['user_id']);
 }
+$("#submit").click(function(){
+	var countrycode = $(".countrycode").val();
+	var areacode = $(".areacode").val();
+	var mobile = $(".mobile").val();
+	var address = $(".address").val();
+	if(countrycode == ''){
+		displayMessage("Please Enter country code");
+	}
+	if(mobile == ''){
+		displayMessage("Please Enter Contact Number");
+	}
+	if(isNaN(mobile)){
+		displayMessage("Invalid Contact Number");
+	}
+	if(address == ''){
+		displayMessage("Please Enter address")
+	}
+	function onSuccess(data){
+		initialize();
+		displayMessage("Updated Successfully");
+	}
+	function onFailure(error){
+		console.log(error);
+	}
+	mirror.updateUserProfile( countrycode+"-"+areacode+"-"+mobile, address,
+	    	function(error, response){
+	            if(error == null){
+	                onSuccess(response);
+	            }
+	            else{
+	                onFailure(error);
+	            }
+	        }
+	    );
+});
+
 $(function() {
 	initialize();
 });

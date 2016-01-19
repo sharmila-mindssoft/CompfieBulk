@@ -119,8 +119,16 @@ $("#show-button").click(function(){
 	}
 	level1val = $("#level1val").val();
 
-	applicableStatus = $(".appliability-status").val();
-
+	applicableStatus = $("#appliability-status option:selected").val();
+	if(applicableStatus == "null"){
+		applicableStatus = null;
+	}
+	if(applicableStatus == 1){
+		applicableStatus = true;
+	}
+	if(applicableStatus == 0){
+		applicableStatus = false;
+	}
 	if(countries == ""){
 		displayMessage("Please Select Country");
 	}
@@ -129,7 +137,6 @@ $("#show-button").click(function(){
 	}
 	else{
 		function onSuccess(data){
-			console.log(data);
 			$(".grid-table-rpt").show();
 			$(".countryval").text(countriesText);
 			$(".groupsval").text(groupsval);
@@ -160,6 +167,7 @@ function loadAssignedStatutoryList(data){
 	$('.grid-table-rpt').show();
 	$('.tbody-assigned-statutory-list tr').remove();
 	var sno = 0;
+	
 	$.each(data, function(key, value) {
 	  	var list = data[key];
 	  	var tableRow = $('#unit-details-list .table-unit-details-list .tablerow');
@@ -282,6 +290,7 @@ function hidegroupslist(){
 	document.getElementById('autocompleteview').style.display = 'none';
 }
 function loadauto_text (textval) {
+
   document.getElementById('autocompleteview').style.display = 'block';
   var groups = groupList;
   var suggestions = [];
@@ -309,6 +318,9 @@ function hidebgroupslist(){
 	document.getElementById('autocompleteview-bgroups').style.display = 'none';
 }
 function loadauto_businessgroups (textval) {
+	if($("#businessgroupsval").val() == ''){
+		$("#businessgroupid").val('');
+	}
   document.getElementById('autocompleteview-bgroups').style.display = 'block';
   var bgroups = businessgroupsList;
   var suggestions = [];
@@ -336,6 +348,9 @@ function hidelentitylist(){
 	document.getElementById('autocompleteview-lentity').style.display = 'none';
 }
 function loadauto_lentity (textval) {
+	if($("#legalentityval").val() == ''){
+		$("#legalentityid").val('');
+	}
   document.getElementById('autocompleteview-lentity').style.display = 'block';
   var lentity = legalEntityList;
   var suggestions = [];
@@ -372,6 +387,9 @@ function hidedivisionlist(){
 	document.getElementById('autocompleteview-division').style.display = 'none';
 }
 function loadauto_division (textval) {
+	if($("#divisionval").val() == ''){
+		$("#divisionid").val('');
+	}
   document.getElementById('autocompleteview-division').style.display = 'block';
   var division = divisionsList;
   var suggestions = [];
@@ -400,6 +418,9 @@ function hideunitlist(){
 	document.getElementById('autocompleteview-unit').style.display = 'none';
 }
 function loadauto_unit (textval) {
+	if($("#unitval").val() == ''){
+		$("#unitid").val('');
+	}
   document.getElementById('autocompleteview-unit').style.display = 'block';
   var unit = unitList;
   var suggestions = [];
@@ -439,6 +460,9 @@ function hidelevel1list(){
 	document.getElementById('autocompleteview-level1').style.display = 'none';
 }
 function loadauto_level1 (textval) {
+	if($("#level1val").val() == ''){
+		$("#level1id").val('');
+	}
   document.getElementById('autocompleteview-level1').style.display = 'block';
   var countryId = $("#countries").val();
   var domainId = $("#domain").val();
@@ -461,6 +485,7 @@ function activate_level1 (element,checkval,checkname) {
   $("#level1val").val(checkname);
   $("#level1id").val(checkval);
 }
+
 
 $(function() {
 	initialize();

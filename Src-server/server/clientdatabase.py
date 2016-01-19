@@ -30,7 +30,7 @@ class ClientDatabase(Database):
             self.begin()
             self._client_db_connections[int(client_id)] = self._connection
             self._client_db_cursors[int(client_id)] = self._cursor
-        print self._client_db_cursors
+        #print self._client_db_cursors
         self.initialize_table_names()
 
     def execute(self, query, client_id = None) :
@@ -305,9 +305,7 @@ class ClientDatabase(Database):
         condition = "1"
         if business_group_ids != None:
             condition = "business_group_id in (%s)" % business_group_ids
-        print condition
         rows = self.get_data(self.tblBusinessGroups, columns, condition, client_id) 
-        print rows
         columns = ["business_group_id", "business_group_name"]
         result = self.convert_to_dict(rows, columns)
         return self.return_business_groups(result)
@@ -1437,7 +1435,7 @@ class ClientDatabase(Database):
                 unit_value_tuple = (int(user_id), int(unit_id))
                 unit_values_list.append(unit_value_tuple)
             result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
-            print result4
+           
 
     def get_level_1_statutory(self, client_id):
         columns = "client_statutory_id, statutory_provision"
