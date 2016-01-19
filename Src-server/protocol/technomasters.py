@@ -39,7 +39,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_technomasters_Unit,
     parse_structure_VectorType_RecordType_technomasters_CountryWiseUnits,
     parse_structure_RecordType_technomasters_CountryWiseUnits,
-    parse_structure_OptionalType_UnsignedIntegerType_32
+    parse_structure_OptionalType_UnsignedIntegerType_32,
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -78,7 +79,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_techno_master_UnitDetails,
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_UnsignedIntegerType_32,
-    to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_UnitDetails
+    to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_UnitDetails,
+    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping
 )
 
 #
@@ -882,7 +884,7 @@ class GetClientsSuccess(Response):
         geography_levels = data.get("geography_levels")
         geography_levels = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(geography_levels)
         geographies = data.get("geographies")
-        geographies = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(geographies)
+        geographies = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping(geographies)
         industries = data.get("industries")
         industries = parse_structure_VectorType_RecordType_core_Industry(industries)
         return GetClientsSuccess(countries, domains, group_companies, business_groups, legal_entities, divisions, units, geography_levels, geographies, industries)
@@ -898,7 +900,7 @@ class GetClientsSuccess(Response):
             "units": to_structure_VectorType_RecordType_technomasters_Unit(self.units),
             "industries": to_structure_VectorType_RecordType_core_Industry(self.industries),
             "geography_levels": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(self.geography_levels),
-            "geographies": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(self.geographies)
+            "geographies": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping(self.geographies)
         }
 
 class SaveClientSuccess(Response):

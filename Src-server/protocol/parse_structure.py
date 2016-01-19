@@ -3296,7 +3296,6 @@ def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttran
         d[key] = value
     return d
 
-
 # Client Business Group
 
 def parse_structure_RecordType_core_ClientBusinessGroup(data):
@@ -3333,3 +3332,27 @@ def parse_structure_VectorType_RecordType_core_ClientDivision(data):
     for item in data:
         lst.append(parse_structure_RecordType_core_ClientDivision(item))
     return lst
+
+#
+#   Get Clients
+#
+
+def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping(data):
+    data = parse_list(data)
+    d = {}
+    for key, value in data:
+        key = parse_structure_SignedIntegerType_8(key)
+        value = parse_structure_VectorType_RecordType_core_GeographyWithMapping(value)
+        d[key] = value
+    return d
+
+def parse_structure_VectorType_RecordType_core_GeographyWithMapping(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_GeographyWithMapping(item))
+    return lst
+
+def parse_structure_RecordType_core_GeographyWithMapping(data):
+    from protocol import core
+    return core.GeographyWithMapping.parse_structure(data)
