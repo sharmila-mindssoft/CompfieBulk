@@ -129,7 +129,6 @@ $("#show-button").click(function(){
 	if(applicableStatus == 0){
 		applicableStatus = false;
 	}
-
 	if(countries == ""){
 		displayMessage("Please Select Country");
 	}
@@ -486,6 +485,7 @@ function activate_level1 (element,checkval,checkname) {
   $("#level1val").val(checkname);
   $("#level1id").val(checkval);
 }
+
 
 $(function() {
 	initialize();
