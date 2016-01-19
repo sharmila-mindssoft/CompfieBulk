@@ -1354,12 +1354,12 @@ class KnowledgeDatabase(Database):
             return True
 
     def get_statutory_by_id(self, statutory_id):
-        query = "SELECT statutory_id, statutory_name, level_id, parent_ids, is_active \
+        query = "SELECT statutory_id, statutory_name, level_id, parent_ids \
             FROM tbl_statutories WHERE statutory_id = %s" % (statutory_id)
         rows = self.select_one(query)
         result = []
         if rows :
-            columns = ["statutory_id", "statutory_name", "level_id", "parent_ids", "is_active"]
+            columns = ["statutory_id", "statutory_name", "level_id", "parent_ids"]
             result = self.convert_to_dict(rows, columns)
         return result
 
