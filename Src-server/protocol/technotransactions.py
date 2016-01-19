@@ -135,16 +135,17 @@ class GetAssignedStatutoryWizardOneData(Request):
         }
 
 class GetStatutoryWizardTwoData(Request):
-    def __init__(self, country_id, geography_id, industry_id, domain_id, unit_id):
+
+    def __init__(self, country_id, geography_id, industry_id, domain_id, client_statutory_id):
         self.country_id = country_id
         self.geography_id = geography_id
         self.industry_id = industry_id
         self.domain_id = domain_id
-        self.unit_id = unit_id
+        self.client_statutory_id = client_statutory_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "geography_id", "industry_id", "domain_id", "unit_id"])
+        data = parse_dictionary(data, ["country_id", "geography_id", "industry_id", "domain_id", "client_statutory_id"])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         geography_id = data.get("geography_id")
@@ -153,9 +154,9 @@ class GetStatutoryWizardTwoData(Request):
         industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        unit_id = data.get("unit_id")
-        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
-        return GetStatutoryWizardTwoData(country_id, geography_id, industry_id, domain_id, unit_id)
+        client_statutory_id = data.get("client_statutory_id")
+        client_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(client_statutory_id)
+        return GetStatutoryWizardTwoData(country_id, geography_id, industry_id, domain_id, client_statutory_id)
 
     def to_inner_structure(self):
         return {
@@ -163,7 +164,7 @@ class GetStatutoryWizardTwoData(Request):
             "geography_id": to_structure_SignedIntegerType_8(self.geography_id),
             "industry_id": to_structure_SignedIntegerType_8(self.industry_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id)
+            "client_statutory_id": to_structure_SignedIntegerType_8(self.client_statutory_id)
         }
 
 class AssignedStatutoryCompliance(object):
