@@ -988,7 +988,7 @@ class ClientDatabase(Database):
             if compliance_remarks == "" :
                 compliance_remarks = None
             mappings = r["statutory_mapping"].split('>>')
-            statutory_name = mappings[0]
+            statutory_name = mappings[0].strip()
             provision = "%s - %s" % (','.join(mappings[1:]), r["statutory_provision"])
             name ="%s - %s" % (r["document_name"], r["compliance_task"])
             compliance = clienttransactions.ComplianceApplicability(
@@ -1198,7 +1198,7 @@ class ClientDatabase(Database):
         if session_user == 0 :
             session_user = '%'
 
-        query = "SELECT group_concat(distinct t1.client_statutory_id) client_statutory_ids, \
+        query = "SELECT group_concat(distinct t2.client_statutory_id) client_statutory_ids, \
             t1.domain_id,group_concat(distinct t1.unit_id) unit_ids, \
             t2.compliance_id, \
             t2.statutory_applicable, t2.statutory_opted, \
@@ -1208,9 +1208,9 @@ class ClientDatabase(Database):
             t3.compliance_task, t3.document_name, t3.compliance_description,\
             t3.statutory_mapping, t3.statutory_provision, \
             t3.statutory_dates, t4.frequency \
-            FROM tbl_client_statutories t1 \
-            INNER JOIN tbl_client_compliances t2 \
-            ON t1.client_statutory_id = t2.client_statutory_id \
+            FROM tbl_client_compliances t2 \
+            INNER JOIN tbl_client_statutories t1 \
+            ON t2.client_statutory_id = t1.client_statutory_id \
             INNER JOIN tbl_compliances t3 \
             ON t2.compliance_id = t3.compliance_id \
             INNER JOIN tbl_compliance_frequency t4\
@@ -1229,6 +1229,7 @@ class ClientDatabase(Database):
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids))
             )
+        print query
         rows = self.select_all(query, client_id)
         columns = ["client_statutory_ids", "domain_id", "unit_ids",
             "compliance_id", "statutory_applicable", "statutory_opted",
