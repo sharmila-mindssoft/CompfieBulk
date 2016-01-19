@@ -1,13 +1,18 @@
-var statutoryMappingsList;
-var geographyLevelsList;
+var statutoryMappingDataList;
 var geographiesList;
 var countriesList;
 var domainsList;
 var industriesList;
 var statutoryNaturesList;
-var statutoryLevelsList;
 var statutoriesList;
 var complianceFrequencyList;
+
+var temp_country = 0;
+var temp_domain = 0;
+var temp_industry = null;
+var temp_statutorynature = null;
+var temp_geography = null;
+var temp_act = null;
 
 function clearMessage() {
   $(".error-message").hide();
@@ -56,8 +61,8 @@ function getStatutoryMappings(){
 }
 
 $("#submit").click(function(){
-  var country = $("#country").val().trim();
-  var domain = $("#domain").val().trim();
+  var country = $("#country").val();
+  var domain = $("#domain").val();
   var industry = null;
   var statutorynature = null;
   var geography = null;
@@ -76,30 +81,42 @@ $("#submit").click(function(){
     displayMessage("Domain Required");  
   }
   else{
-    var filterdata={};
-    filterdata["country_id"]=parseInt(country);
-    filterdata["domain_id"]=parseInt(domain);
-    filterdata["industry_id"]=parseInt(industry);
-    filterdata["statutory_nature_id"]=parseInt(statutorynature);
-    filterdata["geography_id"]=parseInt(geography);
-    filterdata["level_1_statutory_id"]=parseInt(act);
+    if((country == temp_country) && (domain == temp_domain) && (temp_industry == null || industry == temp_industry) && (temp_statutorynature == null || statutorynature == temp_statutorynature) &&
+     (temp_geography == null || geography == temp_geography) && (temp_act == null || act == temp_act)){
+      loadresult(statutoryMappingDataList);
+    }else{
+      var filterdata={};
+      filterdata["country_id"]=parseInt(country);
+      filterdata["domain_id"]=parseInt(domain);
+      filterdata["industry_id"]=parseInt(industry);
+      filterdata["statutory_nature_id"]=parseInt(statutorynature);
+      filterdata["geography_id"]=parseInt(geography);
+      filterdata["level_1_statutory_id"]=parseInt(act);
 
-    function onSuccess(data){
-      
-      loadresult(data["statutory_mappings"]);
+      function onSuccess(data){
+        statutoryMappingDataList = data["statutory_mappings"];
+        loadresult(statutoryMappingDataList);
+      }
+      function onFailure(error){
+        onFailure(error);
+      }
+      mirror.getStatutoryMappingsReportData(filterdata, 
+        function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+        });
     }
-    function onFailure(error){
-      onFailure(error);
-    }
-    mirror.getStatutoryMappingsReportData(filterdata, 
-      function (error, response) {
-        if (error == null){
-          onSuccess(response);
-        }
-        else {
-          onFailure(error);
-        }
-      });
+
+    temp_country = country;
+    temp_domain = domain;
+    temp_industry = industry;
+    temp_statutorynature = statutorynature;
+    temp_geography = geography;
+    temp_act = act;
   }
 });
 
@@ -131,6 +148,9 @@ $("#countryval").keyup(function(){
     }
     $('#ulist_text').append(str);
     $("#country").val('');
+    }else{
+      $("#country").val('');
+      $("#autocompleteview").hide();
     }
 });
 //set selected autocomplte value to textbox
@@ -156,6 +176,9 @@ $("#domainval").keyup(function(){
     }
     $('#ulist_domain').append(str);
     $("#domain").val('');
+    }else{
+      $("#domain").val('');
+      $("#autocomplete_domain").hide();
     }
 });
 //set selected autocomplte value to textbox
@@ -181,6 +204,9 @@ $("#industryval").keyup(function(){
     }
     $('#ulist_industry').append(str);
     $("#industry").val('');
+    }else{
+      $("#industry").val('');
+      $("#autocomplete_industry").hide();
     }
 });
 //set selected autocomplte value to textbox
@@ -207,6 +233,9 @@ $("#statutorynatureval").keyup(function(){
     }
     $('#ulist_statutorynature').append(str);
     $("#statutorynature").val('');
+    }else{
+      $("#statutorynature").val('');
+      $("#autocomplete_statutorynature").hide();
     }
 });
 //set selected autocomplte value to textbox
@@ -232,6 +261,9 @@ $("#geographyval").keyup(function(){
     }
     $('#ulist_geography').append(str);
     $("#geography").val('');
+    }else{
+      $("#geography").val('');
+       $("#autocomplete_geography").hide();
     }
 });
 //set selected autocomplte value to textbox
@@ -257,6 +289,9 @@ $("#statutoryval").keyup(function(){
     }
     $('#ulist_statutory').append(str);
     $("#statutory").val('');
+    }else{
+      $("#statutory").val('');
+      $("#autocomplete_statutory").hide();
     }
 });
 //set selected autocomplte value to textbox
@@ -288,7 +323,6 @@ function loadresult(filterList){
         actname = value.statutory_name;
     }
     });
-
     var tableRow=$('#act-templates .table-act-list .table-row-act-list');
     var clone=tableRow.clone();
     $('.actname', clone).html(actname +'<span><img src="/images/chevron_black_down.png"></span>');
