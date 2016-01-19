@@ -300,7 +300,7 @@ def process_update_statutory(db, request_frame, user_id):
 
 
 	saved_names = [row["statutory_name"].lower() for row in db.check_duplicate_statutory(parent_ids, statutory_id)]
-	if saved_names.count(saved_names.lower()) > 0 :
+	if saved_names.count(statutory_name.lower()) > 0 :
 		return knowledgemaster.StatutoryNameAlreadyExists()
 	else :
 		if (db.update_statutory(statutory_id, statutory_name, parent_ids, user_id)):
