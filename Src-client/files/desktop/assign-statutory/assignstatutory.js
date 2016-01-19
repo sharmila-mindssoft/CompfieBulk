@@ -403,7 +403,7 @@ $("#industry").click(function(event){
 
 
 $("#unit").click(function(event){
-  if($(event.target).attr('class') == 'unitlist'){
+  
     clearValues('unit');
     var chkstatus = $(event.target).attr('class');
     if(chkstatus == 'unitlist active'){
@@ -778,9 +778,9 @@ function displayEdit(client_statutory_id, country_id, group_id, location_id, dom
       
       var arrowimage = " <img src=\'/images/chevron_black_right.png\'/> ";
       $(".breadcrumbs").html(data["country_name"] + arrowimage + data["group_name"] + arrowimage + data["business_group_name"] + arrowimage + data["legal_entity_name"] + arrowimage + data["division_name"] + arrowimage + data["geography_name"] + arrowimage + data["unit_name"] + arrowimage + data["domain_name"]);
-      load_secondwizard();
-
+      
       statutoriesList = data["statutories"];
+      newCompliancesList = data["new_compliances"];
       $("#ascountry").val(country_id);
       $("#asgroup").val(group_id);
       $("#aslocation").val(location_id);
