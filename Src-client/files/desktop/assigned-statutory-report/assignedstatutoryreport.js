@@ -547,7 +547,6 @@ function loadauto_level1 (textval) {
 	if($("#level1val").val() == ''){
 		$("#level1id").val('');
 	}
-
   document.getElementById('autocompleteview-level1').style.display = 'block';
   var countryId = $("#countries").val();
   var domainId = $("#domain").val();
@@ -570,6 +569,7 @@ function activate_level1 (element,checkval,checkname) {
   $("#level1val").val(checkname);
   $("#level1id").val(checkval);
 }
+
 
 $(function() {
 	initialize();
