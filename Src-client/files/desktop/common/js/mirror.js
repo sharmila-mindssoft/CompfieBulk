@@ -390,27 +390,30 @@ function initMirror() {
         apiRequest("api/knowledge_master", request, callback);   
     }
 
-    function saveGeography(levelId, name, parentIds, callback) {
+    function saveGeography(levelId, name, parentIds, countryId, callback) {
         var request = [
             "SaveGeography",
             { 
                 "geography_level_id": levelId,
                 "geography_name": name,
-                "parent_ids": parentIds
+                "parent_ids": parentIds,
+                "country_id": countryId
             }
         ];
         apiRequest("api/knowledge_master", request, callback);
     }
 
-    function updateGeography(geographyId, levelId, name, parentIds,
-     callback) {
+    function updateGeography(
+        geographyId, levelId, name, parentIds, countryId, callback
+    ) {
         var request = [
             "UpdateGeography",
             { 
                 "geography_id": geographyId,
                 "geography_level_id": levelId,
                 "geography_name": name,
-                "parent_ids": parentIds
+                "parent_ids": parentIds,
+                "country_id": countryId
             }
         ];
         apiRequest("api/knowledge_master", request, callback);
