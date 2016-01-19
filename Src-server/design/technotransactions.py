@@ -120,7 +120,8 @@ GetAssignedStatutoriesByIdSuccess = RecordType("GetAssignedStatutoriesByIdSucces
 	Field("unit_name", UNIT_NAME),
 	Field("geography_name",  GEOGRAPHY_NAME),
 	Field("domain_name", DOMAIN_NAME),
-	Field("statutories", AssignedStatutoryList)
+	Field("statutories", AssignedStatutoryList),
+	Field("new_compliances", MapType(STATUTORY_ID, VectorType(ComplianceApplicability)))
 ])
 
 UNIT = RecordType("UNIT", [
