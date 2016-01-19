@@ -266,7 +266,7 @@ function saverecord(j,e){
       if(map_gm_id.length == 0){
         map_gm_id.push(0);
       }
-      mirror.saveGeography(parseInt(glm_id), datavalue, map_gm_id,
+      mirror.saveGeography(parseInt(glm_id), datavalue, map_gm_id, parseInt($("#country").val()),
         function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -407,7 +407,7 @@ function updaterecord(j,e){
       if(map_gm_id.length == 0){
         map_gm_id.push(0);
       }
-      mirror.updateGeography(parseInt(geographyid), parseInt(glm_id), datavalue, map_gm_id,
+      mirror.updateGeography(parseInt(geographyid), parseInt(glm_id), datavalue, map_gm_id, parseInt($("#country").val()),
         function (error, response) {
           if (error == null){
             onSuccess(response);
