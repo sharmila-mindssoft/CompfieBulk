@@ -1425,7 +1425,6 @@ class ClientDatabase(Database):
                 str(tuple(unit_ids)),
                 session_user
             )
-
         rows = self.select_all(query, client_id)
         columns = ["compliance_id", "domain_id", "units",
             "statutory_applicable", "statutory_opted",
