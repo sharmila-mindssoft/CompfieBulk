@@ -55,16 +55,10 @@ function initMirror() {
     }
 
     function updateUserInfo(response){
-        var info = window.localStorage["userInfo"];
-        console.log(info);
-        console.log(info["contact_no"])
-        console.log(info["address"])
+        var info = getUserInfo();
         info["contact_no"] = response["contact_no"]
         info["address"] = response["address"]
-        console.log(info["contact_no"])
-        console.log(info["address"])
-        console.log(info);
-        window.localStorage["userInfo"] = info
+        window.localStorage["userInfo"] = toJSON(info)
     }
 
     function getUserProfile() {
