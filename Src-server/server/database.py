@@ -3499,10 +3499,10 @@ class KnowledgeDatabase(Database):
 
     def get_assign_statutory_wizard_two(
         self, country_id, geography_id, industry_id, 
-        domain_id, unit_id, user_id
+        domain_id, client_statutory_id, user_id
     ):
-        if unit_id is not None :
-            return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, unit_id)
+        if client_statutory_id is not None :
+            return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, client_statutory_id)
         query = "SELECT distinct t1.statutory_mapping_id, \
             t1.statutory_nature_id, t2.statutory_nature_name, \
             t5.statutory_id\
@@ -3558,11 +3558,11 @@ class KnowledgeDatabase(Database):
 
     def return_unassign_statutory_wizard_two(
         self, country_id, geography_id, industry_id, 
-        domain_id, unit_id
+        domain_id, client_statutory_id
     ):
         new_compliance = self.get_unassigned_compliances(
             country_id, domain_id, industry_id, 
-            geography_id, unit_id
+            geography_id, client_statutory_id
         )
         assigned_statutory_list = []
         for key, value in new_compliance.items() :

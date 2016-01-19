@@ -1075,7 +1075,9 @@ function initMirror() {
         apiRequest(callerName, request, callback)
     }
 
-    function getAssignStatutoryWizardTwo(countryId, domainId, industryId, geographyId, unitId, callback) {
+
+    function getAssignStatutoryWizardTwo(countryId, domainId, industryId, geographyId, clientStatutoryId, callback) {
+        clientStatutoryId = null
         var request = [
             "GetStatutoryWizardTwoData",
             {
@@ -1083,7 +1085,7 @@ function initMirror() {
                 "domain_id": domainId,
                 "industry_id": industryId,
                 "geography_id": geographyId,
-                "unit_id": unitId
+                "client_statutory_id": clientStatutoryId
             }
         ]
         callerName = "api/techno_transaction"
