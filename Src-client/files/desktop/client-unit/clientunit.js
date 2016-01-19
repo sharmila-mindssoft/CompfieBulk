@@ -153,6 +153,7 @@ function loadClientsList(clientunitsList){
 		$('.is-active', clone).html('<img src = "/images/'+imageName+'" title = "'+title+'" onclick = "clientunit_active('+clientId+','+lentitiesId+', '+divisionId+', '+statusVal+','+unitId+')"/>');
 		$('.tbody-clientunit-list').append(clone);	
 	});
+
 }
 //Add Button-------------------------------------------------------------------------------------------------
 $("#btn-clientunit-add").click(function(){

@@ -36,7 +36,7 @@ class ClientDatabase(Database):
             self.begin()
             self._client_db_connections[int(client_id)] = self._connection
             self._client_db_cursors[int(client_id)] = self._cursor
-        print self._client_db_cursors
+        #print self._client_db_cursors
         self.initialize_table_names()
 
     def execute(self, query, client_id = None) :
