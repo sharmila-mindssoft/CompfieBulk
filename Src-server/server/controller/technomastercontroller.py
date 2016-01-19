@@ -320,6 +320,8 @@ def change_client_status(db, request, session_user):
 	is_active = request.is_active
 	division_id = request.division_id
 
+	is_active = 1 if is_active == True else 0
+
 	if db.is_invalid_id(db.tblClientGroups, "client_id", client_id):
 		return technomasters.InvalidClientId()
 	elif db.is_invalid_id(db.tblLegalEntities, "legal_entity_id", legal_entity_id):
