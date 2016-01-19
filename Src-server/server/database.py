@@ -4108,7 +4108,6 @@ class KnowledgeDatabase(Database):
                 division_id, unit_id, level_1_statutory_id,
                 applicable_status, applicable_status
             )
-
         rows = self.select_all(query)
         columns = ["client_statutory_id", "client_id", "geography_id",
             "country_id", "domain_id", "unit_id", "submission_type",
