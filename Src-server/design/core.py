@@ -230,6 +230,15 @@ GeographyLevel = RecordType("GeographyLevel", [
 	Field("level_name", LEVEL_NAME)
 ])
 
+GeographyWithMapping = RecordType("GeographyWithMapping", [
+	Field("geography_id", GEOGRAPHY_ID),
+	Field("geography_name", GEOGRAPHY_NAME),
+	Field("level_id", GEOGRAPHY_LEVEL_ID),
+	Field("mapping", MAPPING_NAME),
+	Field("parent_id", Int8),
+	Field("is_active", IS_ACTIVE),
+])
+
 Geography = RecordType("Geography", [
 	Field("geography_id", GEOGRAPHY_ID),
 	Field("geography_name", GEOGRAPHY_NAME),

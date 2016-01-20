@@ -49,6 +49,7 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_VectorType_RecordType_core_ComplianceFrequency,
     parse_structure_OptionalType_UnsignedIntegerType_32
+
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,

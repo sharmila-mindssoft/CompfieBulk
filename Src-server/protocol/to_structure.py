@@ -1515,6 +1515,7 @@ def to_structure_VectorType_RecordType_techno_report_GroupedUnits(data):
         lst.append(to_structure_RecordType_techno_report_GroupedUnits(item))
     return lst
 
+
 def to_structure_VectorType_RecordType_techno_master_UnitDetails(data):
     data = parse_list(data, 0)
     lst = []
@@ -3365,6 +3366,7 @@ def to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryComplia
         lst.append(to_structure_RecordType_clienttransactions_UpdateStatutoryCompliance(item))
     return lst
 
+
 #clienttransaction getcompliancforunit
 def to_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
     from protocol import clienttransactions
@@ -3385,3 +3387,27 @@ def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransac
         value = to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
         d[key] = value
     return d
+
+#
+#   Get Clients
+#
+
+def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items():
+        key = to_structure_SignedIntegerType_8(key)
+        value = to_structure_VectorType_RecordType_core_GeographyWithMapping(value)
+        dict[key] = value
+    return dict
+
+def to_structure_VectorType_RecordType_core_GeographyWithMapping(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_GeographyWithMapping(item))
+    return lst
+
+def to_structure_RecordType_core_GeographyWithMapping(data):
+    from protocol import core
+    return core.GeographyWithMapping.to_structure(data)

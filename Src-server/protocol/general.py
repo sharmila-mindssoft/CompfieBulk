@@ -301,16 +301,23 @@ class Response(object):
         raise NotImplementedError
 
 class UpdateUserProfileSuccess(Response):
-    def __init__(self):
-        pass
+    def __init__(self, contact_no, address):
+        self.contact_no = contact_no
+        self.address = address
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return UpdateUserProfileSuccess()
+        data = parse_dictionary(data, ["contact_no", "address"])
+        contact_no = data.get("contact_no")
+        contact_no = parse_structure_CustomTextType_20(contact_no)
+        address = data.get("address")
+        address = parse_structure_CustomTextType_250(address)
+        return UpdateUserProfile(contact_no, address)
 
     def to_inner_structure(self):
         return {
+            "contact_no": to_structure_CustomTextType_20(self.contact_no),
+            "address": to_structure_CustomTextType_250(self.address),
         }
 
 class ContactNumberAlreadyExists(Response):

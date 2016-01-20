@@ -132,7 +132,6 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
@@ -1195,6 +1194,38 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return self.return_geographies(result)
 
+    def get_geographies_for_user_with_mapping(self, user_id):
+        if bool(self.geography_parent_mapping) is False :
+            self.get_geographies()
+        country_ids = None
+        if ((user_id != None) and (user_id != 0)):
+            country_ids = self.get_user_countries(user_id)
+        columns = "t1.geography_id, t1.geography_name, "+\
+        "t1.level_id,t1.parent_ids, t1.is_active, t2.country_id, t3.country_name"
+        tables = [self.tblGeographies, self.tblGeographyLevels, self.tblCountries]
+        aliases = ["t1", "t2", "t3"]
+        join_type = " INNER JOIN"
+        join_conditions = ["t1.level_id = t2.level_id", "t2.country_id = t3.country_id"]
+        where_condition = "1"
+        if country_ids != None:
+            where_condition = "t2.country_id in (%s)" % country_ids
+        rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type, 
+            join_conditions, where_condition)
+        geographies = {}
+        if rows :        
+            columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
+            result = self.convert_to_dict(rows, columns)
+            for d in result:
+                parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
+                geography = core.GeographyWithMapping(d["geography_id"], d["geography_name"], d["level_id"], self.geography_parent_mapping[d["geography_id"]][0], parent_ids[-1], bool(d["is_active"]))
+                country_id = d["country_id"]
+                _list = geographies.get(country_id)
+                if _list is None :
+                    _list = []
+                _list.append(geography)
+                geographies[country_id] = _list
+        return geographies
+
     def get_geography_report(self):
         def return_report_data(result) :
             mapping_dict = {}
@@ -1521,7 +1552,7 @@ class KnowledgeDatabase(Database):
                 if id > 0 :
                     names.append(_tempDict.get(id))
             names.append(row["geography_name"])
-            mappings = '>>'.join(str(x) for x in names)
+            mappings = ' >> '.join(str(x) for x in names)
             self.geography_parent_mapping[geography_id] = [
                 mappings, is_active, country_id
             ]
@@ -4039,7 +4070,7 @@ class KnowledgeDatabase(Database):
                 division_id, unit_id, level_1_statutory_id,
                 applicable_status, applicable_status
             )
-        print query
+        
         rows = self.select_all(query)
         columns = ["client_statutory_id", "client_id", "geography_id",
             "country_id", "domain_id", "unit_id", "submission_type",
@@ -4120,9 +4151,10 @@ class KnowledgeDatabase(Database):
                 detail_condition += " And division_id is NULL"
             else:
                 detail_condition += " And division_id = '%d'" % row[2]
-            detail_condition += " group by country_id"
-            country_rows = self.get_data(self.tblUnits, detail_columns, detail_condition)
+            country_condition = detail_condition + " group by country_id"
+            country_rows = self.get_data(self.tblUnits, detail_columns, country_condition)
             country_wise_units = {}
+            division_is_active = bool(1)
             for country_row in country_rows:
                 unit_columns = "unit_id, geography_id, unit_code, unit_name, industry_id, address, "+\
                 "postal_code, domain_ids, is_active"
@@ -4133,9 +4165,10 @@ class KnowledgeDatabase(Database):
                     units.append(technomasters.UnitDetails(unit_detail[0], unit_detail[1], 
                         unit_detail[2], unit_detail[3], unit_detail[4], unit_detail[5], 
                         unit_detail[6], [int(x) for x in unit_detail[7].split(",")], bool(unit_detail[8])))
+                    division_is_active = division_is_active or bool(unit_detail[8])
                 # country_wise_units.append(technomasters.CountryWiseUnits(country_row[0], units))
                 country_wise_units[country_row[0]] = units
-            unit_details.append(technomasters.Unit(row[0], row[1], row[2], row[3], country_wise_units))
+            unit_details.append(technomasters.Unit(row[0], row[1], row[2], row[3], country_wise_units,division_is_active))
         return unit_details
 
     def get_settings(self, client_id):
