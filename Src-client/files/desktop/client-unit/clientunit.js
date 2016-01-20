@@ -836,7 +836,6 @@ $("#btn-clientunit-submit").click(function(){
 	}
 });
 
-
 function unitListByCountryId(clientunitId, businessgroupId, legalEntityId, divisionId, countryArray){
 	for(units in unitList){
 		for(var c = 0; c<countryArray.length; c++){
@@ -857,6 +856,7 @@ function unitListByCountryId(clientunitId, businessgroupId, legalEntityId, divis
 		}
 	});
 }
+
 //Active or inactive Client Unit List --------------------------------------------------------------------------
 function clientunit_active(clientunitId, lentityId, divisionId, isActive){
  	function onSuccess(data) {
