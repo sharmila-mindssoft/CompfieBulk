@@ -403,7 +403,7 @@ function loadresult(filterList){
             }
           }
         }
-        alert(filterList[entity][i]["compliances"].length)
+        //alert(filterList[entity][i]["compliances"].length)
         /*if(filterList[entity][i]["compliances"].length == 0){
           alert("empty")
         }*/
