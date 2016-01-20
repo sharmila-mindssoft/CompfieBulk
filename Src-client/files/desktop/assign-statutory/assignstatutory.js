@@ -588,14 +588,24 @@ function validate_firsttab(){
     return false;
   }else{
     var checkDuplicateAssignStauttory = true;
+    var clientStatutoryIdTab2 = null;
     for(var entity in assignedStatutoriesList) {
       if($('.locationlist.active').text() == assignedStatutoriesList[entity]["geography_name"] && $('.industrylist.active').text() == assignedStatutoriesList[entity]["industry_name"] && $('.domainlist.active').text() == assignedStatutoriesList[entity]["domain_name"]){
         for(var j=0;j<assignStatutoryUnitValues.length;j++){
           if(assignStatutoryUnitValues[j] == assignedStatutoriesList[entity]["unit_name"] && assignedStatutoriesList[entity]["submission_status"] == 1){
-            displayMessage("Already Statutory Assigned for this "+assignStatutoryUnitValues[j]);
+            displayMessage("Statutory already assigned for '"+assignStatutoryUnitValues[j]+"' unit");
             checkDuplicateAssignStauttory = false;
             break;
             return false;
+          }
+          if(assignStatutoryUnitValues[j] == assignedStatutoriesList[entity]["unit_name"] && assignedStatutoriesList[entity]["submission_status"] == 2 && assignStatutoryUnitValues.length > 1){
+            displayMessage("Please select individual unit, Statutory already submitted for '"+assignStatutoryUnitValues[j] + "' unit");
+            checkDuplicateAssignStauttory = false;
+            break;
+            return false;
+          }
+          if(assignStatutoryUnitValues[j] == assignedStatutoriesList[entity]["unit_name"] && assignedStatutoriesList[entity]["submission_status"] == 2 && assignStatutoryUnitValues.length == 1){
+            clientStatutoryIdTab2 = assignedStatutoriesList[entity]["client_statutory_id"];
           }
         }
       }
@@ -609,7 +619,7 @@ function validate_firsttab(){
       }
       function onFailure(error){
       }
-      mirror.getAssignStatutoryWizardTwo(parseInt($('.countrylist.active').attr('id')), parseInt($('.domainlist.active').attr('id')), parseInt($('.industrylist.active').attr('id')), parseInt($('.locationlist.active').attr('id')),
+      mirror.getAssignStatutoryWizardTwo(parseInt($('.countrylist.active').attr('id')), parseInt($('.domainlist.active').attr('id')), parseInt($('.industrylist.active').attr('id')), parseInt($('.locationlist.active').attr('id')), clientStatutoryIdTab2, 
         function (error, response) {
               if (error == null){
                 onSuccess(response);
@@ -619,7 +629,6 @@ function validate_firsttab(){
               }
           }
     );
-
       displayMessage("");
       return true;
     }    
