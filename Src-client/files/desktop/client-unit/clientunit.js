@@ -855,6 +855,7 @@ function unitListByCountryId(clientunitId, businessgroupId, legalEntityId, divis
 
 		}
 	});
+
 }
 
 //Active or inactive Client Unit List --------------------------------------------------------------------------
