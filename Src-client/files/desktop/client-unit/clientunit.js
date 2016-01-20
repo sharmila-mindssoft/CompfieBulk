@@ -842,27 +842,6 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisi
 		}
 	});
 }
-
-function unitListByCountryId(clientunitId, businessgroupId, legalEntityId, divisionId, countryArray){
-	for(units in unitList){
-		for(var c = 0; c<countryArray.length; c++){
-			if(clientunitId == unitList[units]['client_id'] && 
-				businessgroupId == unitList[units]['business_group_id'] && 
-				legalEntityId == unitList[units]['legal_entity_id'] && 
-				divisionId == unitList[units]['division_id']){	
-			}
-		}
-	}
-
-	//Load Countries
-	$.each(unitList, function(key,value){
-		if( (unitList[key]['client_id'] == clientunitId) && (unitList[key]['business_group_id'] == businessgroupId) && 
-		(unitList[key]['legal_entity_id'] == legalEntityId ) &&  (unitList[key]['division_id'] == divisionId)){
-			var unitValues = unitList[key]['units'];
-
-		}
-	});
-}
 function unitListByCountryId(clientunitId, businessgroupId, legalEntityId, divisionId, countryArray){
 	for(units in unitList){
 		for(var c = 0; c<countryArray.length; c++){
