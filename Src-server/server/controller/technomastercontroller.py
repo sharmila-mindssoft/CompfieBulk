@@ -298,17 +298,13 @@ def update_client(db, request, session_user):
 def get_clients(db, request, session_user):
 	country_list = db.get_countries_for_user(session_user)
 	domain_list = db.get_domains_for_user(session_user)
-	geography_level_list = db.get_geograhpy_levels_for_user(session_user)
-	industry_list = db.get_industries()
-	geography_list = db.get_geographies_for_user(session_user)
-	print geography_list
 	group_company_list = db.get_group_companies_for_user(session_user)
 	business_group_list = db.get_business_groups_for_user(session_user)
 	legal_entity_list = db.get_legal_entities_for_user(session_user)
 	division_list = db.get_divisions_for_user(session_user)
 	unit_list = db.get_unit_details_for_user(session_user)
 	geography_levels = db.get_geograhpy_levels_for_user(session_user)
-	geographies = db.get_geographies_for_user(session_user)
+	geographies = db.get_geographies_for_user_with_mapping(session_user)
 	industries = db.get_industries()
 	return technomasters.GetClientsSuccess(countries=country_list, 
 		domains = domain_list, group_companies = group_company_list, 
@@ -323,6 +319,8 @@ def change_client_status(db, request, session_user):
 	legal_entity_id = request.legal_entity_id
 	is_active = request.is_active
 	division_id = request.division_id
+
+	is_active = 1 if is_active == True else 0
 
 	if db.is_invalid_id(db.tblClientGroups, "client_id", client_id):
 		return technomasters.InvalidClientId()

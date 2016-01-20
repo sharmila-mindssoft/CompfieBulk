@@ -93,58 +93,36 @@ function loadClientsList(clientunitsList){
 	var imageName, title;
 	var getAllArrayValues = [];
 
-	for(var units in unitList){
-		var isActive = unitList[units]['is_active'];	
-		var unitId = unitList[units]['unit_id'];
+	$.each(unitList, function (key, value){
+		var isActive = unitList[key]['is_active'];	
+		var unitId = unitList[key]['unit_id'];
 		var unitVal = {};
-		unitVal['clientId'] = unitList[units]['client_id'];
-		unitVal['bgroupId']  = unitList[units]['business_group_id'];
-		unitVal['lentitiesId'] = unitList[units]['legal_entity_id'];
-		unitVal['divisionId'] = unitList[units]['division_id'];
-		console.log(unitVal)
-		alert(jQuery.ina);
-		// if (){
-		// 	alert("entering inside if");
-		// 	getAllArrayValues.push(unitVal);
-		// }else{
-		// 	continue;
-		// }
-	}
-	console.log(getAllArrayValues);
-
-
-
-		// if((jQuery.inArray(clientId, clientArray) == -1) &&  
-		// 	(jQuery.inArray(bgroupId, businessGroupArray) == -1) &&
-		// 	 (jQuery.inArray(lentitiesId, legalEntityArray) == -1)  && 
-		// 	 (jQuery.inArray(divisionId, divisionArray) == -1)){
-		// 	clientArray.push(clientId);
-		// 	businessGroupArray.push(bgroupId);
-		// 	legalEntityArray.push(lentitiesId);
-		// 	divisionArray.push(divisionId);
-		// 	if(isActive == true){
-		// 		imageName = "icon-active.png";
-		// 		title = "Click here to deactivate"
-		// 		statusVal = false;
-		// 	}
-		// 	else{
-		// 		imageName = "icon-inactive.png";  
-		// 		title = "Click here to Activate"
-		// 		statusVal = true;
-		// 	}
-		// 	var tableRow = $('#templates .table-clientunit-list .table-row');
-		// 	var clone = tableRow.clone();
-		// 	sno = sno + 1;
-		// 	$('.sno', clone).text(sno);
-		// 	$('.group-name', clone).text(getGroupName(clientId));
-		// 	$('.business-group-name', clone).text(getBusinessGroupName(bgroupId));
-		// 	$('.legal-entity-name', clone).text(getLegalEntityName(lentitiesId)); 
-		// 	$('.division-name', clone).text(getDivisionName(divisionId));
-		// 	$('.edit', clone).html('<img src = "/images/icon-edit.png" id = "editid" onclick = "clientunit_edit('+clientId+','+bgroupId+','+lentitiesId+','+divisionId+','+unitId+')"/>');
-		// 	$('.is-active', clone).html('<img src = "/images/'+imageName+'" title = "'+title+'" onclick = "clientunit_active('+clientId+','+lentitiesId+', '+divisionId+', '+statusVal+','+unitId+')"/>');
-		// 	$('.tbody-clientunit-list').append(clone);			
-		// }
-	//}
+		clientId = unitList[key]['client_id'];
+		bgroupId = unitList[key]['business_group_id'];
+		lentitiesId = unitList[key]['legal_entity_id'];
+		divisionId = unitList[key]['division_id'];
+		if(isActive == true){
+			imageName = "icon-active.png";
+			title = "Click here to deactivate"
+			statusVal = false;
+		}
+		else{
+			imageName = "icon-inactive.png";  
+			title = "Click here to Activate"
+			statusVal = true;
+		}
+		var tableRow = $('#templates .table-clientunit-list .table-row');
+		var clone = tableRow.clone();
+		sno = sno + 1;
+		$('.sno', clone).text(sno);
+		$('.group-name', clone).text(getGroupName(clientId));
+		$('.business-group-name', clone).text(getBusinessGroupName(bgroupId));
+		$('.legal-entity-name', clone).text(getLegalEntityName(lentitiesId)); 
+		$('.division-name', clone).text(getDivisionName(divisionId));
+		$('.edit', clone).html('<img src = "/images/icon-edit.png" id = "editid" onclick = "clientunit_edit('+clientId+','+bgroupId+','+lentitiesId+','+divisionId+')"/>');
+		$('.is-active', clone).html('<img src = "/images/'+imageName+'" title = "'+title+'" onclick = "clientunit_active('+clientId+','+lentitiesId+', '+divisionId+', '+statusVal+')"/>');
+		$('.tbody-clientunit-list').append(clone);	
+	});
 }
 //Add Button-------------------------------------------------------------------------------------------------
 $("#btn-clientunit-add").click(function(){
@@ -161,6 +139,7 @@ $("#btn-clientunit-add").click(function(){
 	$('#entity-select:gt(0)').empty();
 	$('#division-select:gt(0)').empty();
 	$('.industry').empty();
+	$('.add-country-unit-list').empty();
 	loadClientGroups(groupList);
 });
 
@@ -172,6 +151,7 @@ $("#btn-clientunit-cancel").click(function(){
 
 //Load All Groups---------------------------------------------------------------------------------------------
 function loadClientGroups(groupsList){
+	$('#group-select').find('option:gt(0)').remove();
 	for(var groupList in groupsList){
 		var groupId = groupsList[groupList]['client_id'];
 		var groupName = groupsList[groupList]['group_name'];
@@ -180,7 +160,7 @@ function loadClientGroups(groupsList){
 }
 
 //Load Business Groups  ---------------------------------------------------------------------------------------------
-function getBusinessGroups(groupId) {
+function loadBusinessGroups(groupId) {
 	$('#businessgroup-select').find('option:gt(0)').remove();
 	for (var i in businessGroupList){
 		if(businessGroupList[i]['client_id'] == groupId){
@@ -199,7 +179,7 @@ function getBusinessGroups(groupId) {
 	}
 }
 //Load LegalEntities ---------------------------------------------------------------------------------------------
-function getLegalEntity(busgroupId) {
+function loadLegalEntity(busgroupId) {
 	$('#entity-select').find('option:gt(0)').remove();
 	for (var i in legalEntitiesList){
 		if(legalEntitiesList[i]['business_group_id'] == busgroupId){
@@ -211,7 +191,7 @@ function getLegalEntity(busgroupId) {
 }
 
 //Load Divisions ---------------------------------------------------------------------------------------------
-function getDivision(lentityId) {
+function loadDivision(lentityId) {
 	$('#division-select').find('option:gt(0)').remove();
 	for (var i in divisionList){
 		if(divisionList[i]['legal_entity_id'] == lentityId){
@@ -455,6 +435,7 @@ function industrytype(classval){
 
 //Submit Record -----------------------------------------------------------------------------------------
 $("#btn-clientunit-submit").click(function(){
+	console.log("enter 1");
 	clearMessage();
 	var clientunitIdValue = $("#client-unit-id").val();
 	var groupNameValue = $("#group-select").val();
@@ -469,22 +450,28 @@ $("#btn-clientunit-submit").click(function(){
 	var divisionName = $("#division-select :selected").text();
 	var unitCountValue = $("#unitcount").val();
 	var countryVal = $(".country").val();
-	
+	console.log("enter 2");
+	console.log(lentitytextValue.length+"--"+legalEntityValue.length+"--"+unitCountValue.length+"--"+countryVal.length);
 	if(groupNameValue.length == 0){
 		displayMessage("Please Select Group");
+		return false;
 	}
-	else if(lentitytextValue.length == 0){
+	if(lentitytextValue.length == 0){
 		if(legalEntityValue.length == 0){
 			displayMessage("Please Select Legal Entity or Create New One");
+			return false;
 		}
 	}
-	else if(unitCountValue.length == 0){
-		displayMessage("Please Add Atleast One Unit in a Group!")
+	if(unitCountValue.length == 0){
+		displayMessage("Please Add Atleast One Unit in a Group!");
+		return false;
 	}
-	else if(countryVal.length == 0){
+	if(countryVal.length == 0){
 		displayMessage("Please Enter Country");
+		return false;
 	}
-	else if(clientunitIdValue == ''){		
+	if(clientunitIdValue == ''){	
+		console.log("enter 3");	
 		function onSuccess(data) {
 		   	$("#clientunit-add").hide();
 	  		$("#clientunit-view").show();
@@ -515,7 +502,7 @@ $("#btn-clientunit-submit").click(function(){
 	 	var leIdValue;
 	 	var leNameValue;
 	 	if(lentitytextValue == ''){
-	 		leIdValue["legal_entity_id"] = parseInt(legalEntityValue);
+	 		leIdValue = parseInt(legalEntityValue);
 	    	if(legalEntityValue != ''){
 	    		leNameValue = legalEntityName;	
 	    	}
@@ -550,7 +537,7 @@ $("#btn-clientunit-submit").click(function(){
 
 	    var countryWiseUnits = [];
 	    var numItemsCountry = $('.country').length;
-	    for(var i = 1; i<numItemsCountry;i++){
+	    for(var i = 1; i < numItemsCountry;i++){
 	    	if($('.country-'+i).val() != ''){
 		    	countryUnits = parseInt($('.country-'+i).val());
 		    	var unitcount = $('.no-of-units-'+i).val();
@@ -690,10 +677,11 @@ $("#btn-clientunit-submit").click(function(){
 });
 
 //Edit client Unit -----------------------------------------------------------------------------------------------
-function clientunit_edit(clientunitId, businessgroupId, legalentityId, divisionId, unitId){
+function clientunit_edit(clientunitId, businessgroupId, legalentityId, divisionId){
+	console.log(clientunitId+"-"+businessgroupId+"-"+legalentityId+"-"+divisionId);
 	$("#clientunit-view").hide();	
 	$("#clientunit-add").show();
-	$("#client-unit-id").val(unitId);
+	$("#client-unit-id").val(clientunitId);
 	$("#businessgroup-text").hide();
 	$("#businessgroup-select").show();
 	$("#businessgroup-new").show();
@@ -717,19 +705,17 @@ function clientunit_edit(clientunitId, businessgroupId, legalentityId, divisionI
 	$('#division-select').empty();
 	$('.industry').empty();
 	function onSuccess(data) {
-		if(status == "GetClientsSuccess"){
-			groupList = data['group_companies'];
-			businessGroupList = data['business_groups'];
-			legalEntitiesList = data['legal_entities'];
-			divisionList = data['divisions'];
-			countryFulList = data['countries'];
-			geographyLevelList = data['geography_levels'];		
-			geographyList = data['geographies'];
-			industryList = data['industries'];
-			domainList = data['domains'];
-			unitList = data['units'];
-			loadFormListUpdate(clientunitId, businessgroupId, legalentityId, divisionId);
-		}
+		groupList = data['group_companies'];
+		businessGroupList = data['business_groups'];
+		legalEntitiesList = data['legal_entities'];
+		divisionList = data['divisions'];
+		countryFulList = data['countries'];
+		geographyLevelList = data['geography_levels'];		
+		geographyList = data['geographies'];
+		industryList = data['industries'];
+		domainList = data['domains'];
+		unitList = data['units'];
+		loadFormListUpdate(clientunitId, businessgroupId, legalentityId, divisionId);
 	}
 	function onFailure(error) {
 		console.log(status);
@@ -747,44 +733,20 @@ function clientunit_edit(clientunitId, businessgroupId, legalentityId, divisionI
 }
 //Update load form cal------------------------------------------------------------------------------------------
 function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisionId){
+	console.log("loadFormListUpdate--->"+clientunitId+"-"+businessgroupId+"-"+legalEntityId+"-"+divisionId);
+	//Values Put in 4 Fields
 	loadClientGroups(groupList);
-	for(var clients in groupList){
-		if(groupList[clients]['client_id'] == clientunitId){
-			$('#group-select option[value = '+clientunitId+']').attr('selected','selected');
-			getBusinessGroups(clientunitId);
-			$('#businessgroup-select option[value = '+businessgroupId+']').attr('selected','selected');
-			getLegalEntity(clientunitId);
-			$('#entity-select option[value = '+legalEntityId+']').attr('selected','selected');
-			getDivision(legalEntityId);
-			$('#division-select option[value = '+divisionId+']').attr('selected','selected');
-		}			
-	}	
-	for(units in unitList){
-		if(divisionId != ''){
-			var countryArray = [];
-			if(clientunitId == unitList[units]['client_id'] && 
-				businessgroupId == unitList[units]['business_group_id'] && 
-				legalEntityId == unitList[units]['legal_entity_id'] && 
-				divisionId == unitList[units]['division_id']){				
-				countryArray.push(unitList[units]['country_id']);
-			}			
-		}
-	}
-	unitListByCountryId(clientunitId, businessgroupId, legalEntityId, divisionId, countryArray);
-	//addcountryrowupdate(countryArrayunique[arr], unitArrayunique);   
-}
-function unitListByCountryId(clientunitId, businessgroupId, legalEntityId, divisionId, countryArray){
-	for(units in unitList){
-		for(var c = 0; c<countryArray.length; c++){
-			if(clientunitId == unitList[units]['client_id'] && 
-				businessgroupId == unitList[units]['business_group_id'] && 
-				legalEntityId == unitList[units]['legal_entity_id'] && 
-				divisionId == unitList[units]['division_id']){	
-			}
-		}
-	}
-}
+	$('#group-select option[value = '+clientunitId+']').attr('selected','selected');
+	loadBusinessGroups(clientunitId);
+	$('#businessgroup-select option[value = '+businessgroupId+']').attr('selected','selected');
+	loadLegalEntity(clientunitId);
+	$('#entity-select option[value = '+legalEntityId+']').attr('selected','selected');
+	loadDivision(legalEntityId);
+	$('#division-select option[value = '+divisionId+']').attr('selected','selected');
 
+	//Load Countries
+	
+}
 
 //Active or inactive Client Unit List --------------------------------------------------------------------------
 function clientunit_active(clientunitId, lentityId, divisionId, isActive){
@@ -794,7 +756,7 @@ function clientunit_active(clientunitId, lentityId, divisionId, isActive){
   	function onFailure(error) {
   		console.log(error);	
   	}
-  	mirror.changeClientStatus( parseInt(clientunitId), parseInt(lentityId), parseInt(divisionId), parseInt(isActive), 
+  	mirror.changeClientStatus( parseInt(clientunitId), parseInt(lentityId), divisionId, isActive, 
 		function(error, response){
             if(error == null){
                 onSuccess(response);
@@ -873,16 +835,16 @@ function hideunitlocation(classname) {
 //autocomplete location -----------------------------------------------------------------------------------------------
 function loadlocation(textval, classval){
 	var lastClass = classval.split(' ').pop();
-	var ccount=lastClass.split('-');
-	var countval='-'+ccount[1]+'-'+ccount[2];
-	var glevelval=$('.glevel'+countval).val();
+	var ccount = lastClass.split('-');
+	var countval = '-'+ccount[1]+'-'+ccount[2];
+	var glevelval = $('.glevel'+countval).val();
 	$('.auto-complete-unit-location'+countval).css("display", "block");
 	var suggestions = [];
 	$('.unitlocationlist-text'+countval).empty();
 	
 	if(textval.length>0){
 		for(var geography in geographyList){
-			var geolist=geographyList[geography];
+			var geolist = geographyList[geography];
 			for(var glist in geolist){
 				if(geolist[glist]['level_id'] == glevelval){
 					if (~geolist[glist]["geography_name"].toLowerCase().indexOf(textval.toLowerCase()) && geolist[glist]["is_active"] == 1) suggestions.push([geolist[glist]["geography_id"],geolist[glist]["geography_name"], geolist[glist]["mapping"]]); 	

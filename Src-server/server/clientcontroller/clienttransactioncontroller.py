@@ -55,6 +55,7 @@ def process_get_assign_compliance_form_data(db, session_user, client_id):
 		divisions, units, users
 	)
 
+
 def process_get_compliance_for_units(db, request, session_user, client_id):
 	unit_ids = request.unit_ids
 	statutories = db.get_assign_compliance_statutories_for_units(unit_ids, session_user, client_id)
@@ -62,6 +63,7 @@ def process_get_compliance_for_units(db, request, session_user, client_id):
 
 def process_save_assigned_compliance(db, request, session_user, client_id):
 	return 	db.save_assigned_compliance(request, session_user, client_id)
+
 
 def process_get_past_records_form_data(db, request, session_user, client_id): 
 	countries = db.get_countries_for_user(session_user, client_id)
@@ -87,4 +89,3 @@ def process_get_statutories_by_unit(db, request, session_user, client_id):
 		domain_id, level_1_statutory_id, frequecy_id)
 	return clienttransactions.GetStatutoriesByUnitSuccess(statutory_wise_compliances = 
 		statutory_wise_compliances)
-	 

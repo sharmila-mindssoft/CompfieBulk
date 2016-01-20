@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8080/";
+var BASE_URL = "http://localhost:8090/";
 
 function initMirror() {
     var DEBUG = true;
@@ -54,6 +54,13 @@ function initMirror() {
         return user;
     }
 
+    function updateUserInfo(response){
+        var info = getUserInfo();
+        info["contact_no"] = response["contact_no"]
+        info["address"] = response["address"]
+        window.localStorage["userInfo"] = toJSON(info)
+    }
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -101,6 +108,9 @@ function initMirror() {
                 matchString = 'success';
                 log("API STATUS :"+status)
                 if (status.toLowerCase().indexOf(matchString) != -1){
+                    if(status == "UpdateUserProfileSuccess"){
+                        updateUserInfo(response);
+                    }
                     callback(null, response);
                 }
                 else {
@@ -1154,10 +1164,11 @@ function initMirror() {
                 "legal_entity_id": legalEntityId,
                 "division_id": divisionId,
                 "unit_id": unitId,
-                "level_1_statutory_id": level1StatutoryId,
-                "applicability_status": applicableStatus
+                "level_1_statutory_id" : level1StatutoryId,
+                "applicability_status" : applicableStatus
             }
         ];
+        console.log(request)
         callerName = "api/techno_report";
         apiRequest(callerName, request, callback);
     }
@@ -1196,6 +1207,7 @@ function initMirror() {
         logout: logout,
 
         getUserInfo: getUserInfo,
+        updateUserInfo: updateUserInfo,
         getUserProfile: getUserProfile,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
