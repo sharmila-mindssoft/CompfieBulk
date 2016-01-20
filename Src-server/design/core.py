@@ -326,7 +326,7 @@ ComplianceApplicabilityList = VectorType(ComplianceApplicability)
 AssignedStatutory = RecordType("AssignedStatutory", [
 	Field("level_1_statutory_id", USER_ID),
     Field("level_1_statutory_name", LEVEL_1_STATUTORY_NAME),
-    Field("compliances", ComplianceApplicabilityList), 
+    Field("compliances", OptionalType(ComplianceApplicabilityList)), 
     Field("applicable_status", STATUS),
     Field("opted_status", STATUS),
     Field("not_applicable_remarks", OptionalType(DESCRIPTION))
