@@ -56,10 +56,10 @@ def process_get_assigned_statutory_wizard_two(db, request_frame, user_id):
     industry_id = request_frame.industry_id
     domain_id = request_frame.domain_id
     country_id = request_frame.country_id
-    client_statutory_id = request_frame.client_statutory_id
+    unit_id = request_frame.unit_id
     return db.get_assign_statutory_wizard_two(
         country_id, geography_id, industry_id, 
-        domain_id, client_statutory_id, user_id
+        domain_id, unit_id, user_id
     )
 
 def process_save_assigned_statutory(db, request_frame, user_id):

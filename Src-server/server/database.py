@@ -3445,10 +3445,10 @@ class KnowledgeDatabase(Database):
 
     def get_assign_statutory_wizard_two(
         self, country_id, geography_id, industry_id, 
-        domain_id, client_statutory_id, user_id
+        domain_id, unit_id, user_id
     ):
         if client_statutory_id is not None :
-            return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, client_statutory_id)
+            return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, unit_id)
         query = "SELECT distinct t1.statutory_mapping_id, \
             t1.statutory_nature_id, t2.statutory_nature_name, \
             t5.statutory_id\
@@ -3504,11 +3504,11 @@ class KnowledgeDatabase(Database):
 
     def return_unassign_statutory_wizard_two(
         self, country_id, geography_id, industry_id, 
-        domain_id, client_statutory_id
+        domain_id, unit_id
     ):
         new_compliance = self.get_unassigned_compliances(
             country_id, domain_id, industry_id, 
-            geography_id, client_statutory_id
+            geography_id, unit_id
         )
         assigned_statutory_list = []
         for key, value in new_compliance.items() :
@@ -3878,10 +3878,7 @@ class KnowledgeDatabase(Database):
 
         return final_statutory_list
 
-    def get_unassigned_compliances(
-        self, country_id, domain_id, industry_id, 
-        geography_id, client_statutory_id
-    ) :
+    def get_unassigned_compliances(self, country_id, domain_id, industry_id, geography_id, unit_id) :
         query = "SELECT distinct \
             t6.compliance_id, t6.compliance_task, t6.document_name,\
             t6.statutory_provision, t6.compliance_description, t2.statutory_id, \
@@ -3908,11 +3905,18 @@ class KnowledgeDatabase(Database):
                 WHERE g.geography_id = %s \
                 OR g.parent_ids LIKE '%s' )\
             AND t6.compliance_id NOT IN ( \
-                SELECT c.compliance_id FROM tbl_client_compliances c \
-                WHERE c.client_statutory_id = %s ) \
+                SELECT distinct c.compliance_id \
+                FROM tbl_client_compliances c \
+                INNER JOIN tbl_client_statutories s\
+                ON c.client_statutory_id = s.client_statutory_id\
+                AND s.geography_id = %s \
+                AND s.domain_id = %s \
+                AND s.unit_id = %s \
+                ) \
             " % (
                     domain_id, country_id, industry_id, geography_id, 
-                    str("%" + str(geography_id) + ",%"), client_statutory_id
+                    str("%" + str(geography_id) + ",%"), 
+                    geography_id, domain_id, unit_id
                 )
         rows = self.select_all(query)
         columns = ["compliance_id", "compliance_task",
@@ -3959,7 +3963,8 @@ class KnowledgeDatabase(Database):
         statutories = self.return_assigned_compliances_by_id(client_statutory_id)
         new_compliances = self.get_unassigned_compliances(
             data["country_id"], data["domain_id"],
-            data["industry_id"], data["geography_id"], client_statutory_id
+            data["industry_id"], data["geography_id"], 
+            data["unit_id"]
         )
         return technotransactions.GetAssignedStatutoriesByIdSuccess (
             data["country_name"],
