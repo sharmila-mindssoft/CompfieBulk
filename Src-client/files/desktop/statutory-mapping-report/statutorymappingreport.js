@@ -83,10 +83,10 @@ $("#submit").click(function(){
     displayMessage("Domain Required");  
   }
   else{
-    if((country == temp_country) && (domain == temp_domain) && (temp_industry == null || industry == temp_industry) && (temp_statutorynature == null || statutorynature == temp_statutorynature) &&
-     (temp_geography == null || geography == temp_geography) && (temp_act == null || act == temp_act)){
+    /*if((country == temp_country) && (domain == temp_domain) && (temp_industry == null || industry == temp_industry) && (temp_statutorynature == null || statutorynature == temp_statutorynature) &&
+     (temp_geography == null || geography == temp_geography)){
       loadresult(statutoryMappingDataList);
-    }else{
+    }else{*/
       var filterdata={};
       filterdata["country_id"]=parseInt(country);
       filterdata["domain_id"]=parseInt(domain);
@@ -338,6 +338,7 @@ function loadresult(filterList){
         actname = value.statutory_name;
     }
     });
+
     var tableRow=$('#act-templates .table-act-list .table-row-act-list');
     var clone=tableRow.clone();
     $('.actname', clone).html(actname +'<span><img src="/images/chevron_black_down.png"></span>');
