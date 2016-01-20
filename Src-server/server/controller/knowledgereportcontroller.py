@@ -53,7 +53,6 @@ def process_get_statutory_mapping_report_data(db, request_frame, user_id):
         nature_id, geography_id, user_id
     )
     statutory_mappings = {}
-    statutory_mappings = report_data
     if level_1_id is None:
         statutory_mappings = report_data
     else :
