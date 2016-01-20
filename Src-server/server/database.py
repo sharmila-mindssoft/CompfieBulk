@@ -3490,7 +3490,7 @@ class KnowledgeDatabase(Database):
         self, country_id, geography_id, industry_id, 
         domain_id, unit_id, user_id
     ):
-        if client_statutory_id is not None :
+        if unit_id is not None :
             return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, unit_id)
         query = "SELECT distinct t1.statutory_mapping_id, \
             t1.statutory_nature_id, t2.statutory_nature_name, \
