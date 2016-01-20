@@ -30,7 +30,7 @@ class ClientDatabase(Database):
             self.begin()
             self._client_db_connections[int(client_id)] = self._connection
             self._client_db_cursors[int(client_id)] = self._cursor
-        #print self._client_db_cursors
+        print self._client_db_cursors
         self.initialize_table_names()
 
     def execute(self, query, client_id = None) :
@@ -164,6 +164,7 @@ class ClientDatabase(Database):
         columns = "client_id"
         condition = "url_short_name = '%s'"% short_name
         rows = self.get_data("tbl_client_groups", columns, condition, 0)
+        print rows
         return rows[0][0]
 
     def verify_username(self, username, client_id):
@@ -305,7 +306,9 @@ class ClientDatabase(Database):
         condition = "1"
         if business_group_ids != None:
             condition = "business_group_id in (%s)" % business_group_ids
+        print condition
         rows = self.get_data(self.tblBusinessGroups, columns, condition, client_id) 
+        print rows
         columns = ["business_group_id", "business_group_name"]
         result = self.convert_to_dict(rows, columns)
         return self.return_business_groups(result)
@@ -985,10 +988,13 @@ class ClientDatabase(Database):
             if statutory_opted is None :
                 statutory_opted = bool(r["statutory_applicable"])
             compliance_opted = r["compliance_opted"]
+            print compliance_opted
             if compliance_opted is None :
                 compliance_opted = bool(r["compliance_applicable"])
             if compliance_opted == "" :
                 compliance_opted = True
+            print compliance_opted
+
             compliance_remarks = r["compliance_remarks"]
             if compliance_remarks == "" :
                 compliance_remarks = None
@@ -1002,7 +1008,7 @@ class ClientDatabase(Database):
                 r["compliance_description"],
                 provision,
                 bool(r["compliance_applicable"]),
-                compliance_opted,
+                bool(compliance_opted),
                 compliance_remarks
             )
 
@@ -1438,8 +1444,7 @@ class ClientDatabase(Database):
             result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
 =======
             result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
-           
-
+            print result4
 
     def get_level_1_statutory(self, client_id):
         columns = "client_statutory_id, statutory_provision"
@@ -1494,7 +1499,6 @@ class ClientDatabase(Database):
         compliance_columns = "compliance_id, compliance_task, document_name, statutory_dates"
         compliance_condition = " compliance_id in (%s) " % client_compliance_ids
         compliance_rows = self.get_data(self.tblCompliances, compliance_columns, compliance_condition)
-
         for compliance in compliance_rows:
             pass
 >>>>>>> pull Sharmia and incomplete Client Unit
