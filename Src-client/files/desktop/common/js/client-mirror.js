@@ -1,4 +1,4 @@
-var CLIENT_BASE_URL = "http://localhost:8085/";
+var CLIENT_BASE_URL = "http://localhost:8080/";
 function initClientMirror() {
     var DEBUG = true;
 
