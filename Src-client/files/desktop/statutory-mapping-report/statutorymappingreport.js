@@ -336,6 +336,7 @@ function loadresult(filterList){
     if(count==1){
       $('.accordion-content'+count).addClass("default");
     }
+
     for(var j=0; j<complianceFrequencyList.length; j++){             
       for(var i=0; i<filterList[entity].length; i++){
         for(var k=0; k<filterList[entity][i]["compliances"].length; k++){
@@ -400,7 +401,7 @@ function loadresult(filterList){
             }
           }
         }
-        alert(filterList[entity][i]["compliances"].length)
+        //alert(filterList[entity][i]["compliances"].length)
         /*if(filterList[entity][i]["compliances"].length == 0){
           alert("empty")
         }*/
