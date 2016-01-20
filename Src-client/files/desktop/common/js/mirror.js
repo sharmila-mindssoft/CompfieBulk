@@ -1076,7 +1076,6 @@ function initMirror() {
     }
 
     function getAssignStatutoryWizardTwo(countryId, domainId, industryId, geographyId, clientStatutoryId, callback) {
-        clientStatutoryId = null
         var request = [
             "GetStatutoryWizardTwoData",
             {
