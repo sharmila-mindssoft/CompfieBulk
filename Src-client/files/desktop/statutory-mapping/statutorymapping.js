@@ -261,6 +261,7 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     $('#statutorynature').append(str);
 
     //load compliance frequency selectbox
+    $('#compliance_frequency').empty();
     for (var compliancefrequency in complianceFrequencyList) {
     var option = $("<option></option>");
     option.val(complianceFrequencyList[compliancefrequency]["frequency_id"]);
@@ -269,6 +270,7 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     }
 
     //load compliance duration type selectbox
+    $('#duration_type').empty();
     for (var compliancedurationtype in complianceDurationTypeList) {
     var option = $("<option></option>");
     option.val(complianceDurationTypeList[compliancedurationtype]["duration_type_id"]);
@@ -277,6 +279,7 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     }
 
     //load compliance repeat type selectbox
+    $('#repeats_type').empty();
     for (var compliancerepeattype in complianceRepeatTypeList) {
     var option = $("<option></option>");
     option.val(complianceRepeatTypeList[compliancerepeattype]["repeat_type_id"]);
@@ -535,7 +538,7 @@ $("#temp_addstatutories").click(function() {
   var last_statutory_id=0;
   for(k=1;k<=10;k++){
     $(".slist"+k+".active").each( function( index, el ) {
-      last_statutory_id = el.id;
+      last_statutory_id = parseInt(el.id);
       });
   }
   if(last_statutory_id==0){

@@ -311,11 +311,8 @@ function loadresult(filterList){
   $(".tbody-compliance").find("tbody").remove();
   var count=1;
   var compliance_count=0;
-
-  if($("#statutory").val() != ''){
-    filterList = filterList[parseInt($("#statutory").val())]
-  }
   for(var entity in filterList){
+    var checkNoCompliance = true;
     var actname = '';
     var display_occurance1=true;
     var display_occurance2=true;
@@ -348,6 +345,7 @@ function loadresult(filterList){
             if (value.frequency_id == filterList[entity][i]["compliances"][k]["frequency_id"]) {
                 occurance = value.frequency;
                 occuranceid = value.frequency_id;
+                checkNoCompliance = false;
             }
             });
             if(occuranceid == 1 && (j+1)==1){
@@ -401,11 +399,14 @@ function loadresult(filterList){
             }
           }
         }
-        //alert(filterList[entity][i]["compliances"].length)
-        /*if(filterList[entity][i]["compliances"].length == 0){
-          alert("empty")
-        }*/
       }
+    }
+    if(checkNoCompliance){
+      var tableRow1=$('#nocompliance-templates .table-nocompliances-list .table-row');
+      var clone1=tableRow1.clone();
+      $('.tbody-compliance').append(clone1);
+      $('.tbl_norecords', clone1).text("No Records");
+      $('.accordion-content'+count).append(clone1);
     }
     count++;
   }  
