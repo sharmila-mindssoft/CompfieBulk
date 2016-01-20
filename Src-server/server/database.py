@@ -171,7 +171,6 @@ class Database(object) :
             else:
                 stringValue = stringValue+"'"+str(value)+"'"
         query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
-        print query
         if client_id != None:
             return self.execute(query, client_id)
         return self.execute(query)
@@ -195,7 +194,6 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
-        print query
         if client_id != None:
             return self.execute(query, client_id)
 
@@ -4143,10 +4141,19 @@ class KnowledgeDatabase(Database):
                 )
             else :
                 statutories = unit_statutories.assigned_statutories
+                new_stautory = self.return_assigned_compliances_by_id(client_statutory_id)
+                for new_s in new_stautory :
+                    new_id = new_s.level_1_statutory_id
+                    is_exists = False
+                    for x in statutories :
+                        if x.level_1_statutory_id == new_id :
+                            x.compliances.extend(new_s.compliances)
+                            is_exists = True
+                            break
+                    if is_exists is False :
+                        statutories.append(new_s)
 
-                statutories.extend(
-                    self.return_assigned_compliances_by_id(client_statutory_id)
-                )
+
                 unit_statutories.assigned_statutories = statutories
 
             unit_wise_statutories_dict[unit_id] = unit_statutories
