@@ -311,6 +311,10 @@ function loadresult(filterList){
   $(".tbody-compliance").find("tbody").remove();
   var count=1;
   var compliance_count=0;
+
+  if($("#statutory").val() != ''){
+    filterList = filterList[parseInt($("#statutory").val())]
+  }
   for(var entity in filterList){
     var checkNoCompliance = true;
     var actname = '';
@@ -399,6 +403,10 @@ function loadresult(filterList){
             }
           }
         }
+        alert(filterList[entity][i]["compliances"].length)
+        /*if(filterList[entity][i]["compliances"].length == 0){
+          alert("empty")
+        }*/
       }
     }
     if(checkNoCompliance){
