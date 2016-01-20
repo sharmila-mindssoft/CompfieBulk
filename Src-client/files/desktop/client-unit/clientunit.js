@@ -180,7 +180,6 @@ function getBusinessGroups(groupId) {
 	}
 }
 //Load LegalEntities ---------------------------------------------------------------------------------------------
-
 function loadLegalEntity(clientId, businessGroupId) {
 	console.log(clientId+"--"+businessGroupId);
 	if(businessGroupId != null){
@@ -192,7 +191,6 @@ function loadLegalEntity(clientId, businessGroupId) {
 				$('#entity-select').append($('<option value = "'+lentityId+'">'+lentityName+'</option>'));
 			}
 		}	
-
 	}
 	if(businessGroupId == null){
 		$('#entity-select').find('option:gt(0)').remove();
@@ -819,7 +817,6 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisi
 
 		}
 	});
-
 }
 function unitListByCountryId(clientunitId, businessgroupId, legalEntityId, divisionId, countryArray){
 	for(units in unitList){
