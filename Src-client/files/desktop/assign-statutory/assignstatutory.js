@@ -719,6 +719,19 @@ function saveorsubmit(submissionType){
       compliances[complianceId] = complianceApplicableStatus;
       statutoriesCount++;
     } 
+
+    if($("#clientstatutoryid").val() != ''){
+      var newCompliances = newCompliancesList[statutoriesList[statutory]["level_1_statutory_id"]];
+      for(var newCompliance in newCompliances){
+        var complianceId = newCompliances[newCompliance]["compliance_id"];
+        var complianceApplicableStatus = false;
+        if($('#statutory'+statutoriesCount).is(":checked"))
+          complianceApplicableStatus = true;
+          compliances[complianceId] = complianceApplicableStatus;
+          statutoriesCount++;
+      }
+    }
+
     actCount++;
     assignedstatutoriesData = mirror.assignedStatutories(level1StatutoryId,compliances, applicableStatus, notApplicableRemarks);
     assignedStatutories.push(assignedstatutoriesData);
