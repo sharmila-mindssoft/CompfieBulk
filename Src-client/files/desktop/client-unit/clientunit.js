@@ -805,6 +805,7 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisi
 		loadDivision(legalEntityId);
 		$('#division-select option[value = '+divisionId+']').attr('selected','selected');
 	}
+
 	if(divisionId != null){
 		$('#division-select').append($('<option value = "">select</option>'));
 	}
@@ -828,8 +829,17 @@ function unitListByCountryId(clientunitId, businessgroupId, legalEntityId, divis
 			}
 		}
 	}
-}
 
+	//Load Countries
+	$.each(unitList, function(key,value){
+		if( (unitList[key]['client_id'] == clientunitId) && (unitList[key]['business_group_id'] == businessgroupId) && 
+		(unitList[key]['legal_entity_id'] == legalEntityId ) &&  (unitList[key]['division_id'] == divisionId)){
+			var unitValues = unitList[key]['units'];
+
+		}
+	});
+
+}
 
 //Active or inactive Client Unit List --------------------------------------------------------------------------
 function clientunit_active(clientunitId, lentityId, divisionId, isActive){
