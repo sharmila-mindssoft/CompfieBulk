@@ -16,6 +16,7 @@ function initialize(){
 		profiles = data['profiles'];
 	}
 	function onFailure(error){
+        console.log(error);
 	}
 	mirror.getClientProfile(
         function(error, response){
@@ -32,68 +33,82 @@ function initialize(){
 function loadClientProfileList(groupId){
     $(".tbody-clientprofile-list").find("tr").remove();
  	var sno = 0;
-	var imageName, title;	
-    var list = profiles[groupId];
-    //var list=profiles[groupId];
-    var contractFrom = list['contract_from'];
-    var contractTo = list['contract_to'];
-    var noLicence = list['no_of_user_licence'];
-    var remaininglicence = list['remaining_licence'];
-    var totaldiskspace = list["total_disk_space"];
-    var useddiskspace = list["used_disk_space"];    
-    $('.contract-start').html(contractFrom);
-    $('.contract-expires').html(contractTo);    
-    $('.space-summary').html(useddiskspace+" GB of "+totaldiskspace+" GB used");
-    var calculate = ((useddiskspace/totaldiskspace)*100).toFixed(2);
-    var balance = 100-calculate;
-    $('.usedspace').css("width", calculate);
-    $('.totalspace').css("width", balance);
-    $('.totalspace').html(balance+"%");
-    $('.usedspace').html(calculate+"%");
-    $('.remaining-licence').html(remaininglicence);
-    var lists = list['licence_holders'];
-    $.each(lists, function(key, val) { 
-        var tableRow = $('#templates .table-clientprofile-list .table-row');
-        var clone = tableRow.clone();
-        sno = sno + 1;
-        $('.sno', clone).text(sno);
-        $('.employee', clone).text(lists[key]['employee_name']);
-        $('.email', clone).text(lists[key]['email_id']);
-        if(lists[key]['contact_no'] == null){
-          $('.mobile-number', clone).text("-");  
+	var imageName, title;
+    $.each(profiles, function(key, value){
+        if(profiles[key]['client_id'] == groupId){
+            var list=profiles[key]['profile_detail'];
+            var contractFrom = list['contract_from'];
+            var contractTo = list['contract_to'];
+            var noLicence = list['no_of_user_licence'];
+            var remaininglicence = list['remaining_licence'];
+            var totaldiskspace = list["total_disk_space"];
+            var useddiskspace = list["used_disk_space"];    
+            $('.contract-start').html(contractFrom);
+            $('.contract-expires').html(contractTo);    
+            $('.space-summary').html(useddiskspace+" GB of "+totaldiskspace+" GB used");
+            var calculate = ((useddiskspace/totaldiskspace)*100).toFixed(2);
+            
+            var balance = 100-calculate;
+            if(calculate !='0.00'){
+                $('.usedspace').css("width", calculate+"%");
+                $('.totalspace').css("width", balance+"%");
+                $('.totalspace').html(balance+"%");
+                $('.usedspace').html(calculate+"%");
+            }
+            else{
+                $('.usedspace').hide();
+                $('.totalspace').css("width", balance+"%");
+                $('.totalspace').html(balance+"%");
+            }
+            $('.remaining-licence').html(remaininglicence);
+
+            var lists = list['licence_holders'];
+            $.each(lists, function(key, val) { 
+                var tableRow = $('#templates .table-clientprofile-list .table-row');
+                var clone = tableRow.clone();
+                sno = sno + 1;
+                $('.sno', clone).text(sno);
+                $('.employee', clone).text(lists[key]['employee_name']);
+                $('.email', clone).text(lists[key]['email_id']);
+                if(lists[key]['contact_no'] == null){
+                  $('.mobile-number', clone).text("-");  
+                }
+                else{
+                  $('.mobile-number', clone).text(lists[key]['contact_no']);
+                }     
+                $('.seating-unit', clone).text(lists[key]['unit_name']);
+                $('.unit-address', clone).text(lists[key]['address']);      
+                var userId = lists[key]['user_id'];
+                var isAdmin = lists[key]["is_admin"];
+                var isActive = lists[key]["is_active"];
+                if(isActive == true){
+                    imageName = "icon-active.png";
+                    title = "Click here to deactivate"
+                    statusVal = false;
+                }
+                else{
+                  imageName = "icon-inactive.png";  
+                  title = "Click here to Activate"
+                  statusVal = true;
+                }
+                if(isAdmin == true){
+                    adminstatus = false;
+                    imageadminName = "promote-active.png";
+                    admintitle = "Click here to deactivate Promote Admin";
+                }
+                else{
+                    adminstatus = true; 
+                    imageadminName = "promote-inactive.png";
+                    admintitle = "Click here to Promote Admin";
+                }
+                $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientprofile_active('+userId+','+groupId+', '+statusVal+')"/>');
+                $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="clientprofile_isadmin('+userId+', '+adminstatus+')" />');
+                $('.tbody-clientprofile-list').append(clone);
+            });
         }
-        else{
-          $('.mobile-number', clone).text(lists[key]['contact_no']);
-        }     
-        $('.seating-unit', clone).text(lists[key]['unit_name']);
-        $('.unit-address', clone).text(lists[key]['address']);      
-        var userId = lists[key]['user_id'];
-        var isAdmin = lists[key]["is_admin"];
-        var isActive = lists[key]["is_active"];
-        if(isActive == true){
-            imageName = "icon-active.png";
-            title = "Click here to deactivate"
-            statusVal = false;
-        }
-        else{
-          imageName = "icon-inactive.png";  
-          title = "Click here to Activate"
-          statusVal = true;
-        }
-        if(isAdmin == true){
-            adminstatus = false;
-            imageadminName = "promote-active.png";
-            admintitle = "Click here to deactivate Promote Admin";
-        }
-        else{
-            adminstatus = true; 
-            imageadminName = "promote-inactive.png";
-            admintitle = "Click here to Promote Admin";
-        }
-        $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientprofile_active('+userId+','+groupId+', '+statusVal+')"/>');
-        $('.promote-admin', clone).html('<img src="/images/'+imageadminName+'" title="'+admintitle+'" onclick="clientprofile_isadmin('+userId+', '+adminstatus+')" />');
-        $('.tbody-clientprofile-list').append(clone);
-    });  
+         
+    });	
+      
     
 }
 function clientprofile_active(userId, clientId, status){
