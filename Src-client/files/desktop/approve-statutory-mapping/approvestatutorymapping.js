@@ -325,7 +325,6 @@ $("#saverecord").click(function(){
     displayMessage("Atleast one action required");
     return false;
   }
-
   function onSuccess(response) {
     $(".grid-table").hide();
     reloadStatutoryMapping();
