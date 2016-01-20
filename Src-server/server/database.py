@@ -3681,7 +3681,7 @@ class KnowledgeDatabase(Database):
 
 
     def get_assigned_statutories_list(self, user_id):
-        query = "SELECT t1.client_statutory_id, t1.client_id, \
+        query = "SELECT distinct t1.client_statutory_id, t1.client_id, \
             t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, \
             t1.submission_type, t2.group_name, t3.geography_name, \
             t4.country_name, t5.domain_name, t6.unit_name, \
