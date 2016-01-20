@@ -718,15 +718,17 @@ function saveorsubmit(submissionType){
       statutoriesCount++;
     } 
 
-    var newCompliances = newCompliancesList[statutoriesList[statutory]["level_1_statutory_id"]];
-      for(var newCompliance in newCompliances){    
-        var complianceId = complianceslist[compliance]["compliance_id"];
+    if($("#clientstatutoryid").val() != ''){
+      var newCompliances = newCompliancesList[statutoriesList[statutory]["level_1_statutory_id"]];
+      for(var newCompliance in newCompliances){
+        var complianceId = newCompliances[newCompliance]["compliance_id"];
         var complianceApplicableStatus = false;
         if($('#statutory'+statutoriesCount).is(":checked"))
           complianceApplicableStatus = true;
-        compliances[complianceId] = complianceApplicableStatus;
-        statutoriesCount++;
-      }  
+          compliances[complianceId] = complianceApplicableStatus;
+          statutoriesCount++;
+      }
+    }
 
     actCount++;
     assignedstatutoriesData = mirror.assignedStatutories(level1StatutoryId,compliances, applicableStatus, notApplicableRemarks);
