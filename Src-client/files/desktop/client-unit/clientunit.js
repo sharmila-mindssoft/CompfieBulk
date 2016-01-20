@@ -829,6 +829,7 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisi
 		loadDivision(legalEntityId);
 		$('#division-select option[value = '+divisionId+']').attr('selected','selected');
 	}
+
 	if(divisionId != null){
 		$('#division-select').append($('<option value = "">select</option>'));
 	}
