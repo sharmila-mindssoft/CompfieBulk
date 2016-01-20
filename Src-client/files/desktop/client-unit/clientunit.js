@@ -806,6 +806,30 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisi
 		loadDivision(legalEntityId);
 		$('#division-select option[value = '+divisionId+']').attr('selected','selected');
 	}
+	unitListByCountryId(clientunitId, businessgroupId, legalEntityId, divisionId, countryArray);
+	//addcountryrowupdate(countryArrayunique[arr], unitArrayunique);   f
+	console.log("loadFormListUpdate--->"+clientunitId+"-"+businessgroupId+"-"+legalEntityId+"-"+divisionId);
+
+	//Values Put in 4 Fields
+	//group
+	loadClientGroups(groupList);
+	$('#group-select option[value = '+clientunitId+']').attr('selected','selected');
+	//businessgroup
+	if(businessgroupId != null){
+		loadBusinessGroups(clientunitId);
+		$('#businessgroup-select option[value = '+businessgroupId+']').attr('selected','selected');	
+	}
+	if(businessgroupId != null){
+		$('#businessgroup-select').append($('<option value = "">select</option>'));
+	}	
+	//legalentity
+	loadLegalEntity(clientunitId, businessgroupId);
+	$('#entity-select option[value = '+legalEntityId+']').attr('selected','selected');
+	//Division 
+	if(divisionId !=''){
+		loadDivision(legalEntityId);
+		$('#division-select option[value = '+divisionId+']').attr('selected','selected');
+	}
 	if(divisionId != null){
 		$('#division-select').append($('<option value = "">select</option>'));
 	}
@@ -839,6 +863,27 @@ function unitListByCountryId(clientunitId, businessgroupId, legalEntityId, divis
 
 		}
 	});
+}
+function unitListByCountryId(clientunitId, businessgroupId, legalEntityId, divisionId, countryArray){
+	for(units in unitList){
+		for(var c = 0; c<countryArray.length; c++){
+			if(clientunitId == unitList[units]['client_id'] && 
+				businessgroupId == unitList[units]['business_group_id'] && 
+				legalEntityId == unitList[units]['legal_entity_id'] && 
+				divisionId == unitList[units]['division_id']){	
+			}
+		}
+	}
+
+	//Load Countries
+	$.each(unitList, function(key,value){
+		if( (unitList[key]['client_id'] == clientunitId) && (unitList[key]['business_group_id'] == businessgroupId) && 
+		(unitList[key]['legal_entity_id'] == legalEntityId ) &&  (unitList[key]['division_id'] == divisionId)){
+			var unitValues = unitList[key]['units'];
+
+		}
+	});
+
 }
 
 //Active or inactive Client Unit List --------------------------------------------------------------------------

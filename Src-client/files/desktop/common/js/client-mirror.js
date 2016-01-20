@@ -651,7 +651,6 @@ function initClientMirror() {
             {}
         ];
         clientApiRequest("api/client_transaction", request, callback);
-<<<<<<< HEAD
     }
 
     function approveCompliance(compliance_history_id, compliance_approval_status, 
@@ -666,8 +665,6 @@ function initClientMirror() {
                 "next_due_date":next_due_date
             }
         ];
-=======
->>>>>>> Changed Client side session token format and changed seating_unit to optional type
     }
 
     function getChartFilters(callback) {
