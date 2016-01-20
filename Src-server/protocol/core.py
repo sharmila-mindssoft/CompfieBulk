@@ -40,6 +40,7 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomIntegerType_1_31,
     parse_structure_Float,
     parse_structure_OptionalType_UnsignedIntegerType_32,
+    parse_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -84,7 +85,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_ClientDivision,
     to_structure_VectorType_RecordType_core_ClientUnit,
     to_structure_VectorType_RecordType_core_ClientConfiguration,
-    to_structure_VectorType_UnsignedIntegerType_32
+    to_structure_VectorType_UnsignedIntegerType_32,
+    to_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability
 )
 
 #
@@ -1745,7 +1747,7 @@ class AssignedStatutory(object):
         level_1_statutory_name = data.get("level_1_statutory_name")
         level_1_statutory_name = parse_structure_CustomTextType_50(level_1_statutory_name)
         compliances = data.get("compliances")
-        compliances = parse_structure_VectorType_RecordType_core_ComplianceApplicability(compliances)
+        compliances = parse_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability(compliances)
         applicable_status = data.get("applicable_status")
         applicable_status = parse_structure_Bool(applicable_status)
         opted_status = data.get(opted_status)
@@ -1758,7 +1760,7 @@ class AssignedStatutory(object):
         return {
             "level_1_statutory_id": to_structure_SignedIntegerType_8(self.level_1_statutory_id),
             "level_1_statutory_name": to_structure_CustomTextType_50(self.level_1_statutory_name),
-            "compliances": to_structure_VectorType_RecordType_core_ComplianceApplicability(self.compliances),
+            "compliances": to_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability(self.compliances),
             "applicable_status": to_structure_Bool(self.applicable_status),
             "opted_status": to_structure_OptionalType_Bool(self.opted_status),
             "not_applicable_remarks": to_structure_OptionalType_CustomTextType_500(self.not_applicable_remarks),

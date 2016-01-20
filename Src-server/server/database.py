@@ -4009,6 +4009,25 @@ class KnowledgeDatabase(Database):
             data["industry_id"], data["geography_id"], 
             data["unit_id"]
         )
+        for key, value in new_compliances.iteritems():
+            key = int(key)
+            key_exists = False
+            for item in statutories :
+                if key == item.level_1_statutory_id:
+                    key_exists = True
+                    break
+            if key_exists is False :
+                statutory_name = self.statutory_parent_mapping.get(key)[0]
+                s_data = core.AssignedStatutory(
+                    key,
+                    statutory_name,
+                    None,
+                    True,
+                    None,
+                    None
+                )
+                statutories.append(s_data)
+
         return technotransactions.GetAssignedStatutoriesByIdSuccess (
             data["country_name"],
             data["group_name"],
@@ -4082,7 +4101,7 @@ class KnowledgeDatabase(Database):
                 division_id, unit_id, level_1_statutory_id,
                 applicable_status, applicable_status
             )
-        
+
         rows = self.select_all(query)
         columns = ["client_statutory_id", "client_id", "geography_id",
             "country_id", "domain_id", "unit_id", "submission_type",
@@ -4124,7 +4143,8 @@ class KnowledgeDatabase(Database):
                 )
             else :
                 statutories = unit_statutories.assigned_statutories
-                statutories.append(
+
+                statutories.extend(
                     self.return_assigned_compliances_by_id(client_statutory_id)
                 )
                 unit_statutories.assigned_statutories = statutories
