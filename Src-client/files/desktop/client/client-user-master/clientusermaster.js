@@ -7,98 +7,125 @@ var unitList;
 var userGroupsList;
 var serviceProviderList;
 var userList;
-$(function() {
-	$("#user-add").hide();
-	initialize();
-});
+
+function clearMessage() {
+    $(".error-message").hide();
+    $(".error-message").text("");
+}
+function displayMessage(message) {
+    $(".error-message").text(message);
+    $(".error-message").show();
+}
 $(function() {
  	$('.service_provider').hide();
 	$('#usertype').change(function () {
-		if($("#usertype").val()=='Service Provider'){
-		  $('.service_provider').show();
-		  $('.star').hide();
-		  $('.seatingunit').hide();      
+		if($("#usertype").val() == 'Service Provider'){
+			$('.service_provider').show();
+			$('.star').hide();
+			$('.seatingunit').hide();      
 		}
 		else{
-	  	$('.service_provider').hide();
-	  	$('.seatingunit').show();   
-	  	$('.star').show();  
+		  	$('.service_provider').hide();
+		  	$('.seatingunit').show();   
+		  	$('.star').show();  
 		}
 	});
 });
 $("#btn-user-add").click(function(){
 	$("#user-add").show();
 	$("#user-view").hide();
-  $(".error-message").html('');  
-  $("#user-privilege-id").val('');
-  loadautocountry();	
-  loadautobusinessgroups();	
-  loadautolegalentities();
-	function success(status, data){		
-	
-	}
-	function failure(status, data){
-		console.log(status);
-	}
-	mirror.getClientUsers("ClientAdminAPI", success, failure);
+	clearMessage();
+	$("#user-privilege-id").val('');
+	loadautocountry();	
+	hidemenu();
+	loadautobusinessgroups();	
+	hidemenubgroup();
+	loadautolegalentities();
+	hidemenulegalentities();
+	loadautodivision();
+	hidemenudivision();
+	loadautodomains();
+	hidemenudomains();
 });
 $("#btn-user-cancel").click(function(){
 	$("#user-add").hide();
 	$("#user-view").show();
 });
 function initialize(){
-	function success(status, data){
-		countriesList=data['countries'];
-		businessGroupsList=data['business_groups'];
-		legalEntitiesList=data['legal_entities'];
-		divisionList=data['divisions'];
-		domainList=data['domains'];
-		unitList=data['units'];
-		userGroupsList=data['user_groups'];
-		serviceProviderList=data['service_provider'];
-		userList=data['users'];
+	function onSuccess(data){
+		countriesList = data['countries'];
+		businessGroupsList = data['business_groups'];
+		legalEntitiesList = data['legal_entities'];
+		divisionList = data['divisions'];
+		domainList = data['domains'];
+		unitList = data['units'];
+		userGroupsList = data['user_groups'];
+		serviceProviderList = data['service_providers'];
+		userList = data['users'];
 		loadClientUserList();
 	}
-	function failure(status, data){
-		console.log(status);
+	function onFailure(error){
+		console.log(error);
 	}
-	mirror.getClientUsers("ClientAdminAPI", success, failure);
+	client_mirror.getClientUsers(
+		function(error, response){
+			if(error == null){
+				onSuccess(response);
+			}
+			else{
+				onFailure(error);
+			}
+		}
+	);
+}
+function getUserGroupName(userGroupId){
+	var usergroupname;
+	$.each(userGroupsList, function(key, value) {  //usergroupname
+		if(userGroupsList[key]['user_group_id'] == userList[i]['user_group_id']){
+			usergroupname = userGroupsList[key]['user_group_name'];
+		}
+	});
+	return usergroupname;
 }
 function loadClientUserList(){
 	$(".tbody-users-list").find("tr").remove();
-	var sno=0;
+	var sno = 0;
 	var imageName, title, usergroupname, seatingunitname, seatingunitaddress;	
 	for(var i in userList){
-		var users=userList[i];
-		var userId=users["user_id"];
-		var isActive=users["is_active"];
-		var isAdmin=users["is_admin"];
-		if(isActive==1){
-			imageName="icon-active.png";
-			title="Click here to deactivate"
-			statusVal=0;
+		var users = userList[i];
+		var userId = users["user_id"];
+		var isActive = users["is_active"];
+		var isAdmin = users["is_admin"];
+		if(isActive == 1){
+			imageName = "icon-active.png";
+			title = "Click here to deactivate"
+			statusVal = 0;
 		}
 		else{
-			imageName="icon-inactive.png";	
-			title="Click here to Activate"
-			statusVal=1;
+			imageName = "icon-inactive.png";	
+			title = "Click here to Activate"
+			statusVal = 1;
 		}
-		if(isAdmin==1){ adminstatus=0; imageadminName="promote-active.png";	admintitle="Click here to deactivate Promote Admin" }
-		else{ adminstatus=1; imageadminName="promote-inactive.png";	admintitle="Click here to Promote Admin"}
-		$.each(userGroupsList, function(key, value) {  //usergroupname
-			if(userGroupsList[key]['user_group_id']==userList[i]['user_group_id']){
-				usergroupname=userGroupsList[key]['user_group_name'];
-			}
-		});
+		if(isAdmin == 1){ 
+			adminstatus = 0;
+			imageadminName = "promote-active.png";
+			admintitle = "Click here to deactivate Promote Admin";
+		}
+		else{
+			adminstatus = 1;
+			imageadminName = "promote-inactive.png";
+			admintitle = "Click here to Promote Admin";
+		}
+		
 		$.each(unitList, function(key, value) { //unit name
-			if(unitList[key]['unit_id']==userList[i]['seating_unit_id']){
-				seatingunitname=unitList[key]['unit_name'];
-				seatingunitaddress=unitList[key]['unit_address'];
+			if(unitList[key]['unit_id'] == userList[i]['seating_unit_id']){
+				seatingunitname = unitList[key]['unit_name'];
+				seatingunitaddress = unitList[key]['unit_address'];
 			}
 		});
-		if(users["user_group_id"]!=null){
-			var tableRow=$('#templates .table-users-list .table-row');
-			var clone=tableRow.clone();
+		if(users["user_group_id"] != null){
+			var tableRow = $('#templates .table-users-list .table-row');
+			var clone = tableRow.clone();
 			sno = sno + 1;
 			$('.sno', clone).text(sno);
 			$('.employee-code-name', clone).text(users["employee_code"]+" - "+users["employee_name"]);
@@ -115,40 +142,44 @@ function loadClientUserList(){
 }
 function user_edit(userId){
 	$("#user-add").show();
-  $("#user-view").hide();
-  $("#client-user-id").val(userId);  
-  function success(status, data){
-    if(status=="GetClientUsersSuccess"){
-      loadUserUpdate(userId);   
-
-    }
-    else{
-    	console.log(status);
-    }
-  }
-  function failure(status, data){
-  	console.log(status);
-  }
-  mirror.getClientUsers("ClientAdminAPI", success, failure);
+	$("#user-view").hide();
+	$("#client-user-id").val(userId);  
+	function onSuccess(data){
+		loadUserUpdate(userId);  
+	}
+	function onFailure(error){
+		console.log(status);
+	}
+	client_mirror.getClientUsers(
+		function(error, response){
+			if(error == null){
+				onSuccess(response);
+			}
+			else{
+				onFailure(error);
+			}
+		});
 }
 function loadUserUpdate(userId){
-	var bgroups=[];
-	var lentities=[];
-	var divisions=[];
-	var bgroupslist; var lentitieslist; var divisionlist;
+	var bgroups = [];
+	var lentities = [];
+	var divisions = [];
+	var bgroupslist;
+	var lentitieslist;
+	var divisionlist;
 	for(var user in userList){
-		if(userList[user]['user_id']==userId){
+		if(userList[user]['user_id'] == userId){
 			$.each(userGroupsList, function(key, value) {  //usergroupname
-				if(userGroupsList[key]['user_group_id']==userList[user]['user_group_id']){
-					usergroupname=userGroupsList[key]['user_group_name'];
+				if(userGroupsList[key]['user_group_id'] == userList[user]['user_group_id']){
+					usergroupname = userGroupsList[key]['user_group_name'];
 				}
 			});
 			$.each(unitList, function(key, value) { //unit name
-				if(unitList[key]['unit_id']==userList[user]['seating_unit_id']){
-					seatingunitname=unitList[key]['unit_name'];
+				if(unitList[key]['unit_id'] == userList[user]['seating_unit_id']){
+					seatingunitname = unitList[key]['unit_name'];
 				}
 			});
-			var contactno=userList[user]['contact_no'].split("-");
+			var contactno = userList[user]['contact_no'].split("-");
 			$("#service-provider").val(userList[user]['service_provider']);
 			$("#employee-name").val(userList[user]['employee_name']);
 			$("#employee-id").val(userList[user]['employee_code']);
@@ -157,7 +188,7 @@ function loadUserUpdate(userId){
 			$("#mobile-number").val(contactno[2]);
 			$("#usergroupval").val(usergroupname);
 			$("#usergroup").val(userList[user]['user_group_id']);
-			$("#user-level option[value="+userList[user]['user_level']+"]").attr('selected','selected');
+			$("#user-level option[value = "+userList[user]['user_level']+"]").attr('selected','selected');
 			$("#seatingunitval").val(seatingunitname);
 			$("#seatingunit").val(userList[user]['seating_unit_id']);
 			$("#service-provider").val(userList[user]['service_provider']);
@@ -166,8 +197,8 @@ function loadUserUpdate(userId){
 			$("#units").val(userList[user]['unit_ids']);
 			$("#domains").val(userList[user]['domain_ids']);
 			for(var units in unitList){
-				var unitid=unitList[units]['unit_id'];
-				var user_unitids=userList[user]['unit_ids'];			
+				var unitid = unitList[units]['unit_id'];
+				var user_unitids = userList[user]['unit_ids'];			
 				if ($.inArray(unitid, user_unitids) != -1){
 					bgroups.push(unitList[units]['business_group_id']);
 					lentities.push(unitList[units]['legal_entity_id']);
@@ -201,96 +232,100 @@ function loadUserUpdate(userId){
 }
 
 $("#submit").click(function(){
-	var usertype=$('#usertype').val();
-	var employeename=$('#employee-name').val();	
-	var employeeid=$('#employee-id').val();
-	var countrycode=$('#country-code').val();
-	var areacode=$('#area-code').val();
-	var mobilenumber=$('#mobile-number').val();
-	var usergroup=$('#usergroup').val();
-	var userlevel=$('#user-level').val();
-	var emailid=$('#email-id').val();
-	var country=$('#country').val();
-	var businessgroups=$('#business-groups').val();
-	var legalentities=$('#legal-entities').val();
-	var division=$('#division').val();
-	var domains=$('#domains').val();
-	var units=$('#units').val();
+	var usertype = $('#usertype').val();
+	var employeename = $('#employee-name').val();	
+	var employeeid = $('#employee-id').val();
+	var countrycode = $('#country-code').val();
+	var areacode = $('#area-code').val();
+	var mobilenumber = $('#mobile-number').val();
+	var usergroup = $('#usergroup').val();
+	var userlevel = $('#user-level').val();
+	var emailid = $('#email-id').val();
+	var country = $('#country').val();
+	var businessgroups = $('#business-groups').val();
+	var legalentities = $('#legal-entities').val();
+	var division = $('#division').val();
+	var domains = $('#domains').val();
+	var units = $('#units').val();
 	var isserviceprovider, serviceprovider;
-	if(usertype=='Inhouse'){
-		isserviceprovider=0;
-		serviceprovider=null;
-		var seatingunit=$('#seatingunit').val();	
-		var seatingunitname=$('#seatingunitval').val();		
-		if(seatingunit==''){
-			$('.error-message').html("Please Enter seating Unit");	
+	if(usertype == 'Inhouse'){
+		isserviceprovider = 0;
+		serviceprovider = null;
+		var seatingunit = $('#seatingunit').val();	
+		var seatingunitname = $('#seatingunitval').val();		
+		if(seatingunit == ''){
+			displayMessage("Please Enter seating Unit");	
 		}	
-		if(employeeid==''){
-			$('.error-message').html("Please Enter Employee Code");	
+		if(employeeid == ''){
+			displayMessage("Please Enter Employee Code");	
 		}	
-		if(seatingunitname==''){
-			$('.error-message').html("Please Enter seating Unit");	
+		if(seatingunitname == ''){
+			displayMessage("Please Enter seating Unit");	
 		}
 	}
-	if(usertype=='Service Provider'){
-		isserviceprovider=1;
-		serviceprovider=$('#service-provider').val();
-		if(serviceprovider.length==0){
-			$('.error-message').html("Please Enter service provider");	
+	if(usertype == 'Service Provider'){
+		isserviceprovider = 1;
+		serviceprovider = $('#service-provider').val();
+		if(serviceprovider.length == 0){
+			displayMessage("Please Enter service provider");	
 		}
 	}	
-	if(employeename==''){
-		$('.error-message').html("Please Enter Employee Name");
+	if(employeename == ''){
+		displayMessage("Please Enter Employee Name");
 	}
-	if(countrycode==''){
-		$('.error-message').html("Please Enter Country Code");
+	if(countrycode == ''){
+		displayMessage("Please Enter Country Code");
 	}
-	if(mobilenumber==''){
-		$('.error-message').html("Please Enter Mobile Number");
+	if(mobilenumber == ''){
+		displayMessage("Please Enter Mobile Number");
 	}
-	if(usergroup==''){
-		$('.error-message').html("Please Enter usergroup");
+	if(usergroup == ''){
+		displayMessage("Please Enter usergroup");
 	}
-	if(userlevel==''){
-		$('.error-message').html("Please Select User Level");
+	if(userlevel == ''){
+		displayMessage("Please Select User Level");
 	}
-	if(emailid==''){
-		$('.error-message').html("Please Enter Email Id");
+	if(emailid == ''){
+		displayMessage("Please Enter Email Id");
 	}
-	if(country==''){
-		$('.error-message').html("Please select Country");
+	if(country == ''){
+		displayMessage("Please select Country");
 	}
-	if(businessgroups==''){
-		$('.error-message').html("Please select businessgroups");
+	if(businessgroups == ''){
+		displayMessage("Please select businessgroups");
 	}
-	if(legalentities==''){
-		$('.error-message').html("Please select legalentities");
+	if(legalentities == ''){
+		displayMessage("Please select legalentities");
 	}
-	if(division==''){
-		$('.error-message').html("Please select division");
+	if(division == ''){
+		displayMessage("Please select division");
 	}
-	if(domains==''){
-		$('.error-message').html("Please select domains");
+	if(domains == ''){
+		displayMessage("Please select domains");
 	}
-	if(units==''){
-		$('.error-message').html("Please Select Units")
+	if(units == ''){
+		displayMessage("Please Select Units")
 	}
 
-	if($('#client-user-id').val()==''){
-		var isAdmin=0;
+	if($('#client-user-id').val() == ''){
+		var isAdmin = 0;
 
-		var arrayCountriesVal=country.split(",");
-		var arrayCountries= [];
-		for(var i=0; i<arrayCountriesVal.length; i++){ arrayCountries[i] = parseInt(arrayCountriesVal[i]); } 
+		var arrayCountriesVal = country.split(",");
+		var arrayCountries = [];
+		for(var i = 0; i<arrayCountriesVal.length; i++){
+			arrayCountries[i] = parseInt(arrayCountriesVal[i]);
+		} 
 
-		var arrayDomainsVal=domains.split(",");
-		var arrayDomains= [];
-		for(var j=0; j<arrayDomainsVal.length; j++){ arrayDomains[j] = parseInt(arrayDomainsVal[j]); } 
+		var arrayDomainsVal = domains.split(",");
+		var arrayDomains = [];
+		for(var j = 0; j<arrayDomainsVal.length; j++){
+			arrayDomains[j] = parseInt(arrayDomainsVal[j]);
+		} 
 
-		var arrayUnitVal=units.split(",");
+		var arrayUnitVal = units.split(",");
 
-		var arrayUnits= [];
-		for(var k=0; k<arrayUnitVal.length; k++){ 
+		var arrayUnits = [];
+		for(var k = 0; k<arrayUnitVal.length; k++){ 
 			if(arrayUnitVal[k]){
 				arrayUnits[k] = parseInt(arrayUnitVal[k]);
 			}
@@ -312,35 +347,39 @@ $("#submit").click(function(){
 		userDetails["is_service_provider"] = isserviceprovider;
 		userDetails["is_admin"] = isAdmin;
 		userDetails["service_provider_id"] = serviceprovider;
-		function success(status, data){
-		if(status == 'SaveClientUserSuccess') {
+		function onSuccess(data){		
 	    	$("#user-add").hide();
   			$("#user-view").show();
   			initialize();
-  		}
-  		 else {
-    			$(".error-message").html(status);
-    		}
-    }
-		function failure(status, data){
-			$(".error-message").html(status);
+  	    }
+		function onFailure(error){
+			displayMessage(error);
 		}
-		mirror.saveClientUser("ClientAdminAPI", userDetails, success, failure);
+		client_mirror.saveClientUser(userDetails,
+			function(error, response){
+				if(error == null){
+					onSuccess(response);
+				}
+				else{
+					onFailure(error);
+				}
+			}
+		);
 	}
-	if($('#client-user-id').val()!=''){
-		var isAdmin=0;
+	if($('#client-user-id').val() != ''){
+		var isAdmin = 0;
 
-		var arrayCountriesVal=country.split(",");
-		var arrayCountries= [];
+		var arrayCountriesVal = country.split(",");
+		var arrayCountries = [];
 		for(var i=0; i<arrayCountriesVal.length; i++){ arrayCountries[i] = parseInt(arrayCountriesVal[i]); } 
 
-		var arrayDomainsVal=domains.split(",");
-		var arrayDomains= [];
+		var arrayDomainsVal = domains.split(",");
+		var arrayDomains = [];
 		for(var j=0; j<arrayDomainsVal.length; j++){ arrayDomains[j] = parseInt(arrayDomainsVal[j]); } 
 
-		var arrayUnitVal=units.split(",");
+		var arrayUnitVal = units.split(",");
 
-		var arrayUnits= [];
+		var arrayUnits = [];
 		for(var k=0; k<arrayUnitVal.length; k++){ 
 			if(arrayUnitVal[k]){
 				arrayUnits[k] = parseInt(arrayUnitVal[k]);
@@ -363,40 +402,61 @@ $("#submit").click(function(){
 		userDetails["is_service_provider"] = isserviceprovider;
 		userDetails["is_admin"] = isAdmin;
 		userDetails["service_provider_id"] = serviceprovider;
-		function success(status, data){
-			if(status == 'UpdateClientUserSuccess') {
-				$("#user-add").hide();
-				$("#user-view").show();
-				initialize();
-			}
-			else {
-				$(".error-message").html(status);
-			}
-    }
-		function failure(status, data){
-			$(".error-message").html(status);
+		function onSuccess(data){
+			$("#user-add").hide();
+			$("#user-view").show();
+			initialize();
+    	}
+		function onFailure(status, data){
+			displayMessage(status);
 		}
-		mirror.updateClientUser("ClientAdminAPI", userDetails, success, failure);
+		client_mirror.updateClientUser(userDetails,
+			function(error, response){
+				if(error == null){
+					onSuccess(response);
+				}
+				else{
+					onFailure(error);
+				}
+			}
+		);
 	}
 	else{
 		alert("all fails");
 	}
 });
 function user_active(userId, isActive){
-  function success(status, data){
-    initialize();
-  }
-  function failure(status, data){
-  }
-  mirror.changeClientUserStatus("ClientAdminAPI", userId, isActive, success, failure);
+	function onSuccess(data){
+		initialize();
+	}
+	function onFailure(error){
+	}
+	client_mirror.changeClientUserStatus(userId, isActive, 
+  		function(error, response){
+			if(error == null){
+				onSuccess(response);
+			}
+			else{
+				onFailure(error);
+			}
+		}
+	);
 }
 function user_isadmin(userId, isAdmin){
-  function success(status, data){
-    initialize();
-  }
-  function failure(status, data){
-  }
-  mirror.changeAdminStatus("ClientAdminAPI", userId, isAdmin, success, failure);
+	function onSuccess(data){
+		initialize();
+	}
+	function onFailure(error){
+	}
+	client_mirror.changeAdminStatus(userId, isAdmin,
+  		function(error, response){
+			if(error == null){
+				onSuccess(response);
+			}
+			else{
+				onFailure(error);
+			}
+		});
 }
 
 
@@ -407,7 +467,7 @@ function hidemenu() {
 
 function loadautocountry () {
 	document.getElementById('selectboxview-country').style.display = 'block';
-	var editcountryval=[];
+	var editcountryval = [];
 	if($("#country").val() != ''){
 		editcountryval = $("#country").val().split(",");
 	}
@@ -415,7 +475,7 @@ function loadautocountry () {
 	var countries = countriesList;
 
 	$('#selectboxview-country ul').empty();
-	var str='';
+	var str = '';
 	for(var i in countries){
 		var selectcountrystatus='';
 		for(var j=0; j<editcountryval.length; j++){
@@ -582,10 +642,8 @@ function activatelegalentities(element){
 
 		if (index === totalcount - 1) {
 			selids = selids+el.id;
-			selNames = selNames+$(this).text();
 		}else{
 			selids = selids+el.id+",";
-			selNames = selNames+$(this).text()+",";
 		}    
 	});
 	$("#legal-entities-selected").val(totalcount+" Selected");
@@ -837,15 +895,16 @@ function hidemenuserviceprovider(){
 function loadauto_serviceprovider (textval) {
   document.getElementById('serviceproviderview').style.display = 'block';
   var serviceprovider = serviceProviderList;
+  console.log(serviceProviderList);
   var suggestions = [];
   $('#serviceproviderview ul').empty();
   if(textval.length>0){
     for(var i in serviceprovider){
-      if (~serviceprovider[i]["user_group_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([serviceprovider[i]["service_provider_id"],service_provider[i]["serviceprovider_name"]]); 
+      if (~serviceprovider[i]["service_provider_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([serviceprovider[i]["service_provider_id"],serviceprovider[i]["service_provider_name"]]); 
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text_sp(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+        str += '<li id="'+suggestions[i][0]+'"onclick="activate_text_sp(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
     }
     $('#serviceproviderview ul').append(str);
     $("#serviceprovider").val('');
@@ -856,3 +915,6 @@ function activate_text_sp (element,checkval,checkname) {
   $("#serviceproviderval").val(checkname);
   $("#serviceprovider").val(checkval);
 }
+$(function() {
+	initialize();
+});

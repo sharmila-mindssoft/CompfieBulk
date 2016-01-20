@@ -225,7 +225,8 @@ TEMPLATE_PATHS = [
     #Techno Manager master
     ("/client-master", "files/desktop/client-master/clientmaster.html", None, {}),
     #Techno user master
-    ("/client-unit", "files/desktop/client-unit/clientunit.html", None, {}), 
+    ("/client-unit", "files/desktop/client-unit/clientunit.html", None, {}),
+    ("/unit-closure", "files/desktop/unit-closure/unitclosure.html", None, {}), 
     ("/client-profile", "files/desktop/client-profile/clientprofile.html", None, {}),
     #Techno User Transaction
     ("/assign-statutory", "files/desktop/assign-statutory/assignstatutory.html", None, {}),

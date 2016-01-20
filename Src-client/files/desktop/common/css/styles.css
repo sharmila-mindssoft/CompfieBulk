@@ -1486,6 +1486,19 @@ list-style-type:none; line-height:25px;
   background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 }
 
+.ac-selectbox ul li.active_selectbox_bgroups {
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox_legal_entities{
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox_division{
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+.ac-selectbox ul li.active_selectbox_domains{
+  background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
+}
+
 .ac-selectbox ul li.active_selectbox_users {
   background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 }
@@ -1796,5 +1809,40 @@ cursor: pointer;
 background: url('/images/tick1bold.png') no-repeat;
 height:17px;
 cursor: pointer;
-  
+}
 /*siva ends*/
+
+.heading{
+  color: #000;
+  font-size: 1em;
+  height: 2.25em;
+  margin-bottom:0px;
+}
+.date-configuration{
+  max-height: 270px;
+  overflow: auto;
+}
+.li-heading{  
+  background: #ddd !important;
+  padding-left: 6px !important;
+  font-size: 0.813em !important;
+  font-weight: bold;
+}
+.li-unit-heading{
+  background: #ddd !important;
+  padding-left: 6px !important;
+  font-size: 0.813em !important;
+  font-weight: bold;
+}
+.modaltable th
+{
+  padding: 5px;
+}
+.modaltable td
+{
+  padding: 10px 0px;
+  font-size: 0.813em;
+}
+ #inactiveid{
+  cursor:pointer;
+}  

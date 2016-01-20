@@ -105,7 +105,7 @@ INSERT INTO tbl_forms VALUES(19, 3, 1, 'Client Unit', '/client-unit', 19, null);
 INSERT INTO tbl_forms VALUES(20, 3, 1, 'Client Profile', '/client-profile', 20, null);
 INSERT INTO tbl_forms VALUES(21, 3, 2, 'Assign Statutory', '/assign-statutory', 21, null);
 INSERT INTO tbl_forms VALUES(22, 3, 3, 'Client Details Report', '/client-details-report', 22, null);
-INSERT INTO tbl_forms VALUES(23, 3, 3, 'Assigned Statutory', '/assigned-statutory', 23, null);
+INSERT INTO tbl_forms VALUES(23, 3, 3, 'Assigned Statutory', '/assigned-statutory-report', 23, null);
 INSERT INTO tbl_forms VALUES(24, 3, 3, 'Compliance List', '/compliance-task-list', 24, null);
 INSERT INTO tbl_forms VALUES(25, 3, 3, 'Statutory Notifications List', '/statutory-notifications-list', 25, null);
 
