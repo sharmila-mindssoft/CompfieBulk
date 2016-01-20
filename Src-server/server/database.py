@@ -171,6 +171,7 @@ class Database(object) :
             else:
                 stringValue = stringValue+"'"+str(value)+"'"
         query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
+        print query
         if client_id != None:
             return self.execute(query, client_id)
         return self.execute(query)
@@ -194,6 +195,7 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
+        print query
         if client_id != None:
             return self.execute(query, client_id)
 
