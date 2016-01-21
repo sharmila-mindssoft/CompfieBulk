@@ -79,14 +79,29 @@ function initialize(){
 	);
 }
 function getUserGroupName(userGroupId){
-	var usergroupname;
-	$.each(userGroupsList, function(key, value) {  //usergroupname
-		if(userGroupsList[key]['user_group_id'] == userList[i]['user_group_id']){
-			usergroupname = userGroupsList[key]['user_group_name'];
-		}
-	});
+	var usergroupname;                                                                                                                                                                                                                                                                                                              
+	if(userGroupId != null){
+		$.each(userGroupsList, function(key, value) {  //usergroupname
+			if(userGroupsList[key]['user_group_id'] == userGroupId){
+				usergroupname = userGroupsList[key]['user_group_name'];
+	 		}
+		});
+	}
 	return usergroupname;
 }
+function getUnitNameAndAddress(unitId){
+	var unit = {};
+	if(unitId != null){
+		$.each(unitList, function(key, value) { //unit name
+			if(unitList[key]['unit_id'] == unitId){
+				unit['unitName'] = unitList[key]['unit_name'];
+				unit['unitAddress'] = unitList[key]['unit_address'];
+			}
+		});	
+	}
+	return unit;
+}
+
 function loadClientUserList(){
 	$(".tbody-users-list").find("tr").remove();
 	var sno = 0;
@@ -96,42 +111,39 @@ function loadClientUserList(){
 		var userId = users["user_id"];
 		var isActive = users["is_active"];
 		var isAdmin = users["is_admin"];
-		if(isActive == 1){
+		if(isActive == true){
 			imageName = "icon-active.png";
 			title = "Click here to deactivate"
-			statusVal = 0;
+			statusVal = false;
 		}
 		else{
 			imageName = "icon-inactive.png";	
 			title = "Click here to Activate"
-			statusVal = 1;
+			statusVal = true;
 		}
-		if(isAdmin == 1){ 
-			adminstatus = 0;
+		if(isAdmin == true){ 
+			adminstatus = false;
 			imageadminName = "promote-active.png";
 			admintitle = "Click here to deactivate Promote Admin";
 		}
 		else{
-			adminstatus = 1;
+			adminstatus = true;
 			imageadminName = "promote-inactive.png";
 			admintitle = "Click here to Promote Admin";
 		}
 		
-		$.each(unitList, function(key, value) { //unit name
-			if(unitList[key]['unit_id'] == userList[i]['seating_unit_id']){
-				seatingunitname = unitList[key]['unit_name'];
-				seatingunitaddress = unitList[key]['unit_address'];
-			}
-		});
+		var seatingUnitId = userList[i]['seating_unit_id']
+		var userGroupId = userList[i]['user_group_id'];
+		
 		if(users["user_group_id"] != null){
 			var tableRow = $('#templates .table-users-list .table-row');
 			var clone = tableRow.clone();
 			sno = sno + 1;
 			$('.sno', clone).text(sno);
 			$('.employee-code-name', clone).text(users["employee_code"]+" - "+users["employee_name"]);
-			$('.group-name', clone).text(usergroupname);
+			$('.group-name', clone).text(getUserGroupName(userGroupId));
 			$('.level-name', clone).text("Level "+users["user_level"]);
-			$('.seating-unit', clone).html('<abbr class="page-load tipso_style" title="'+seatingunitaddress+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+seatingunitname);
+			$('.seating-unit', clone).html('<abbr class="page-load tipso_style" title="'+getUnitNameAndAddress(seatingUnitId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId)['unitName']);
 			
 			$('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
 			$('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+')"/>');
@@ -249,7 +261,7 @@ $("#submit").click(function(){
 	var units = $('#units').val();
 	var isserviceprovider, serviceprovider;
 	if(usertype == 'Inhouse'){
-		isserviceprovider = 0;
+		isserviceprovider = false;
 		serviceprovider = null;
 		var seatingunit = $('#seatingunit').val();	
 		var seatingunitname = $('#seatingunitval').val();		
@@ -264,8 +276,8 @@ $("#submit").click(function(){
 		}
 	}
 	if(usertype == 'Service Provider'){
-		isserviceprovider = 1;
-		serviceprovider = $('#service-provider').val();
+		isserviceprovider = true;
+		serviceprovider = $('#serviceprovider').val();
 		if(serviceprovider.length == 0){
 			displayMessage("Please Enter service provider");	
 		}
@@ -308,7 +320,7 @@ $("#submit").click(function(){
 	}
 
 	if($('#client-user-id').val() == ''){
-		var isAdmin = 0;
+		var isAdmin = false;
 
 		var arrayCountriesVal = country.split(",");
 		var arrayCountries = [];
@@ -332,21 +344,15 @@ $("#submit").click(function(){
 		}
 		arrayUnits = arrayUnits.filter(function(n){ return n != undefined });  
 		
-		var userDetails = {}
-		userDetails["email_id"] = emailid ;
-		userDetails["user_group_id"] = parseInt(usergroup);
-		userDetails["employee_name"] = employeename;
-		userDetails["employee_code"] = employeeid;
-		userDetails["contact_no"] = countrycode+"-"+areacode+"-"+mobilenumber;
-		userDetails["seating_unit_id"] = parseInt(seatingunit);
-		userDetails["seating_unit_name"] = seatingunitname;
-		userDetails["user_level"] = parseInt(userlevel);
-		userDetails["country_ids"] = arrayCountries;
-		userDetails["domain_ids"] = arrayDomains;
-		userDetails["unit_ids"] = arrayUnits;
-		userDetails["is_service_provider"] = isserviceprovider;
-		userDetails["is_admin"] = isAdmin;
-		userDetails["service_provider_id"] = serviceprovider;
+		var clientUserDetail = [];
+		var contactNo = countrycode+"-"+areacode+"-"+mobilenumber;
+
+		clientUserDetail = [emailid, parseInt(usergroup), employeename, 
+		        employeeid, contactNo, parseInt(seatingunit), parseInt(userlevel), 
+		        arrayCountries, arrayDomains, arrayUnits, isAdmin, isserviceprovider,
+		        serviceprovider];
+		var clientUserDetailDict = client_mirror.getSaveClientUserDict(clientUserDetail);
+
 		function onSuccess(data){		
 	    	$("#user-add").hide();
   			$("#user-view").show();
@@ -355,7 +361,7 @@ $("#submit").click(function(){
 		function onFailure(error){
 			displayMessage(error);
 		}
-		client_mirror.saveClientUser(userDetails,
+		client_mirror.saveClientUser(clientUserDetailDict,
 			function(error, response){
 				if(error == null){
 					onSuccess(response);
@@ -366,8 +372,8 @@ $("#submit").click(function(){
 			}
 		);
 	}
-	if($('#client-user-id').val() != ''){
-		var isAdmin = 0;
+	else if($('#client-user-id').val() != ''){
+		var isAdmin = false;
 
 		var arrayCountriesVal = country.split(",");
 		var arrayCountries = [];
@@ -636,7 +642,6 @@ function activatelegalentities(element){
     $(element).addClass("active_selectbox_legal_entities");
   }  
 	var selids='';
-	var selNames='';
 	var totalcount =  $(".active_selectbox_legal_entities").length;
 	$(".active_selectbox_legal_entities").each( function( index, el ) {
 

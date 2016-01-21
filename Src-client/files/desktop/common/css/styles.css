@@ -1845,4 +1845,7 @@ cursor: pointer;
 }
  #inactiveid{
   cursor:pointer;
-}  
+}
+.menu-url {
+	cursor: pointer;
+}
