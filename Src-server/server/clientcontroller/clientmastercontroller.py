@@ -6,10 +6,10 @@ __all__ = [
 ]
 
 def process_client_master_requests(request, db) :
-	client_info = request.session_token.split("-")
+	session_token = request.session_token
+	client_info = session_token.split("-")
 	request = request.request
 	client_id = int(client_info[0])
-	session_token = client_info[1]
 	session_user = db.validate_session_token(client_id, session_token)
 	if session_user is None:
 		return login.InvalidSessionToken()

@@ -370,6 +370,8 @@ class Database(object) :
         else:
             self.clear_old_session(user_id, session_type_id)
         session_id = self.new_uuid()
+        if client_id != None:
+            session_id = "%s-%s" % (client_id, session_id)
         updated_on = self.get_date_time()
         query = "INSERT INTO tbl_user_sessions \
             (session_token, user_id, session_type_id, last_accessed_time) \
@@ -3038,15 +3040,18 @@ class KnowledgeDatabase(Database):
     def save_legal_entity(self, client_id, legal_entity_id, legal_entity_name, 
         business_group_id, session_user):
         current_time_stamp = self.get_date_time()
-        columns = ["client_id", "legal_entity_id", "legal_entity_name", "business_group_id", 
+        columns = ["client_id", "legal_entity_id", "legal_entity_name", 
         "created_by", "created_on", "updated_by", "updated_on"]
         values = [client_id, legal_entity_id, legal_entity_name, business_group_id, 
         session_user, current_time_stamp, session_user, current_time_stamp]
-        result = self.insert(self.tblLegalEntities, columns, values)
 
+        if business_group_id != None:
+            columns.append("business_group_id")
+            values.append(business_group_id)
+
+        result = self.insert(self.tblLegalEntities, columns, values)
         action = "Created Legal Entity \"%s\"" % legal_entity_name
         self.save_activity(session_user, 19, action)
-
         return result 
 
     def update_legal_entity(self, client_id, legal_entity_id, legal_entity_name, business_group_id, session_user):
@@ -3061,14 +3066,19 @@ class KnowledgeDatabase(Database):
 
         return result
 
-    def save_division(self, client_id, division_id, division_name, business_group_id, legal_entity_id, session_user):
+    def save_division(self, client_id, division_id, division_name, business_group_id, 
+        legal_entity_id, session_user):
         current_time_stamp = self.get_date_time()
-        columns = ["client_id", "division_id", "division_name", "business_group_id", "legal_entity_id",
+        columns = ["client_id", "division_id", "division_name", "legal_entity_id",
         "created_by", "created_on", "updated_by", "updated_on"]
-        values = [client_id, division_id, division_name, business_group_id, legal_entity_id,
+        values = [client_id, division_id, division_name, legal_entity_id,
         session_user, current_time_stamp, session_user, current_time_stamp]
-        result = self.insert(self.tblDivisions, columns, values)
 
+        if business_group_id != None:
+            columns.append("business_group_id")
+            values.append(business_group_id)
+
+        result = self.insert(self.tblDivisions, columns, values)
         action = "Created Division \"%s\"" % division_name
         self.save_activity(session_user, 19, action)
 

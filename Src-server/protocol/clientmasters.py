@@ -308,7 +308,7 @@ class SaveClientUser(Request):
         contact_no = data.get("contact_no")
         contact_no = parse_structure_CustomTextType_20(contact_no)
         seating_unit_id = data.get("seating_unit_id")
-        seating_unit_id = parse_structure_UnsignedIntegerType_32(seating_unit_id)
+        seating_unit_id = parse_structure_OptionalType_UnsignedIntegerType_32(seating_unit_id)
         user_level = data.get("user_level")
         user_level = parse_structure_CustomIntegerType_1_10(user_level)
         country_ids = data.get("country_ids")
@@ -330,7 +330,7 @@ class SaveClientUser(Request):
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
             "employee_code": to_structure_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "seating_unit_id": to_structure_SignedIntegerType_8(self.seating_unit_id),
+            "seating_unit_id": to_structure_OptionalType_SignedIntegerType_8(self.seating_unit_id),
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
@@ -374,7 +374,7 @@ class UpdateClientUser(Request):
         contact_no = data.get("contact_no")
         contact_no = parse_structure_CustomTextType_20(contact_no)
         seating_unit_id = data.get("seating_unit_id")
-        seating_unit_id = parse_structure_UnsignedIntegerType_32(seating_unit_id)
+        seating_unit_id = parse_structure_OptionalType_UnsignedIntegerType_32(seating_unit_id)
         user_level = data.get("user_level")
         user_level = parse_structure_CustomIntegerType_1_10(user_level)
         country_ids = data.get("country_ids")
@@ -396,7 +396,7 @@ class UpdateClientUser(Request):
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
             "employee_code": to_structure_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "seating_unit_id": to_structure_SignedIntegerType_8(self.seating_unit_id),
+            "seating_unit_id": to_structure_OptionalType_SignedIntegerType_8(self.seating_unit_id),
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
