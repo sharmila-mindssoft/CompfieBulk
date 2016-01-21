@@ -94,6 +94,7 @@ function displayMessage(message) {
 
     //load compliance frequency selectbox
     $('#compliance_frequency').empty();
+    $("#compliance_frequency").append('<option value=""> Select </option>');
     for (var compliancefrequency in complianceFrequencyList) {
     var option = $("<option></option>");
     option.val(complianceFrequencyList[compliancefrequency]["frequency_id"]);
@@ -103,6 +104,7 @@ function displayMessage(message) {
 
     //load compliance duration type selectbox
     $('#duration_type').empty();
+    $("#duration_type").append('<option value=""> Select </option>');
     for (var compliancedurationtype in complianceDurationTypeList) {
     var option = $("<option></option>");
     option.val(complianceDurationTypeList[compliancedurationtype]["duration_type_id"]);
@@ -112,6 +114,7 @@ function displayMessage(message) {
 
     //load compliance repeat type selectbox
     $('#repeats_type').empty();
+    $("#repeats_type").append('<option value=""> Select </option>');
     for (var compliancerepeattype in complianceRepeatTypeList) {
     var option = $("<option></option>");
     option.val(complianceRepeatTypeList[compliancerepeattype]["repeat_type_id"]);
@@ -1228,6 +1231,8 @@ function load_edit_selectdomain_master(sm_countryid,sm_domainid,sm_industryids,s
         make_breadcrumbs();
 
     //load compliance frequency selectbox
+    $('#compliance_frequency').empty();
+    $("#compliance_frequency").append('<option value=""> Select </option>');
     for (var compliancefrequency in complianceFrequencyList) {
     var option = $("<option></option>");
     option.val(complianceFrequencyList[compliancefrequency]["frequency_id"]);
@@ -1236,6 +1241,8 @@ function load_edit_selectdomain_master(sm_countryid,sm_domainid,sm_industryids,s
     }
 
     //load compliance duration type selectbox
+    $('#duration_type').empty();
+    $("#duration_type").append('<option value=""> Select </option>');
     for (var compliancedurationtype in complianceDurationTypeList) {
     var option = $("<option></option>");
     option.val(complianceDurationTypeList[compliancedurationtype]["duration_type_id"]);
@@ -1244,6 +1251,8 @@ function load_edit_selectdomain_master(sm_countryid,sm_domainid,sm_industryids,s
     }
 
     //load compliance repeat type selectbox
+    $("#repeats_type").empty();
+    $("#repeats_type").append('<option value=""> Select </option>');
     for (var compliancerepeattype in complianceRepeatTypeList) {
     var option = $("<option></option>");
     option.val(complianceRepeatTypeList[compliancerepeattype]["repeat_type_id"]);
@@ -1589,7 +1598,7 @@ $(document).ready(function(){
   $("#trigger_every").show();
   }
   });
-  $('.tasktype').change(function(){
+  $('.tasktype').on('keyup change', function() {
   if($(this).val()=="2" || $(this).val()=="3")
   {
   $('#Recurring').show();
