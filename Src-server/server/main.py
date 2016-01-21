@@ -233,6 +233,7 @@ TEMPLATE_PATHS = [
     #Techno reports
     ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {}),
     ("/assigned-statutory-report", "files/desktop/assigned-statutory-report/assignedstatutoryreport.html", None, {}),
+    ("/compliance-task-list", "files/desktop/compliance-task-list/compliancetasklist.html", None, {}),
     #audit trial
     ("/audit-trail", "files/desktop/audit-trail/audittrail.html", None, {}),
    ]

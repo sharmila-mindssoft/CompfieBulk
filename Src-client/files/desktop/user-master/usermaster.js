@@ -30,47 +30,90 @@ $(".btn-user-add").click(function(){
 
 });
 
-function getUsers(){
-	function onSuccess(data){
-		usersList = data["users"];
-		domainsList = data["domains"];
-		userGroupsList = data["user_groups"];
-		countriesList = data["countries"];
-		loadUserList(usersList);
+function displayEdit (userId) {
+	displayMessage("");
+	$("#user-view").hide();
+	$("#user-add").show();
+	$("#userid").val(userId);
+	for(var entity in usersList) {
+		if(usersList[entity]["user_id"] == userId){
+			var userId = usersList[entity]["user_id"];
+			var employeeName = usersList[entity]["employee_name"];
+			var employeeId = usersList[entity]["employee_code"];
+			var address = usersList[entity]["address"];
+			var mergeContactNo = usersList[entity]["contact_no"].split("-");
+			var countryCode = mergeContactNo[0];
+			var areaCode = mergeContactNo[1];
+			var contactNo = mergeContactNo[2];
+			var userGroup = usersList[entity]["user_group_id"];
+			var userGroupval;
+			var designation = usersList[entity]["designation"];
+			domainIds = usersList[entity]["domain_ids"]; 
+			countryIds = usersList[entity]["country_ids"];
+			var emailId = usersList[entity]["email_id"];
+			for(var k in userGroupsList){
+				if(userGroupsList[k]["user_group_id"] == userGroup){
+					userGroupval = userGroupsList[k]["user_group_name"];
+					break;
+				}
+		}
+		$("#employeename").val(employeeName);
+	    $("#employeeid").val(employeeId);
+	  	$("#address").val(address);
+	 	$("#countrycode").val(countryCode);
+		$("#areacode").val(areaCode);
+		$("#contactno").val(contactNo);
+		$("#usergroupval").val(userGroupval);
+		$("#usergroup").val(userGroup);
+		$("#designation").val(designation);
+		$("#domainselected").val(domainIds.length+" Selected");
+		$("#countryselected").val(countryIds.length+" Selected");
+		$("#emailid").val(emailId);
+		break;
+		}
+	}
+}
+
+function changeStatus (userId,isActive) {
+	function onSuccess(response){
+		getUsers();
+		displayMessage("Status Changed Successfully");
 	}
 	function onFailure(error){
+		displayMessage(error);
 	}
-	mirror.getAdminUserList(
+
+	mirror.changeAdminUserStatus(userId, isActive, 
 		function (error, response) {
-          if (error == null){
-            onSuccess(response);
-          }
-          else {
-            onFailure(error);
-          }
-      }
-  );
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
+        }
+    );
 }
 
 function loadUserList(usersList) {
 	var j = 1;
 	var imgName = '';
-  var passStatus = '';
-  var userId = 0;
-  var employeeName = '';
-  var isActive = false;
-  var designation = '';
-  var userList;
+  	var passStatus = '';
+  	var userId = 0;
+  	var employeeName = '';
+  	var isActive = false;
+  	var designation = '';
+  	var userList;
 
-  $(".tbody-user-list").find("tr").remove();
-  for(var entity in usersList) {
-  	userId = usersList[entity]["user_id"];
-    employeeName = usersList[entity]["employee_name"];
-    isActive = usersList[entity]["is_active"];
-    designation = usersList[entity]["designation"];
-    for(var k in userGroupsList){
-    	if(userGroupsList[k]["user_group_id"] == usersList[entity]["user_group_id"]){
-    		usergroup = userGroupsList[k]["user_group_name"];
+  	$(".tbody-user-list").find("tr").remove();
+  	for(var entity in usersList) {
+  		userId = usersList[entity]["user_id"];
+    	employeeName = usersList[entity]["employee_name"];
+    	isActive = usersList[entity]["is_active"];
+    	designation = usersList[entity]["designation"];
+    	for(var k in userGroupsList){
+    		if(userGroupsList[k]["user_group_id"] == usersList[entity]["user_group_id"]){
+    			usergroup = userGroupsList[k]["user_group_name"];
     		break;
     	}
     }
@@ -95,26 +138,28 @@ function loadUserList(usersList) {
   }
 }
 
-function changeStatus (userId,isActive) {
-	function onSuccess(response){
-		getUsers();
-		displayMessage("Status Changed Successfully");
+function getUsers(){
+	function onSuccess(data){
+		usersList = data["users"];
+		domainsList = data["domains"];
+		userGroupsList = data["user_groups"];
+		countriesList = data["countries"];
+		loadUserList(usersList);
 	}
 	function onFailure(error){
-		displayMessage(error);
 	}
-
-	mirror.changeAdminUserStatus(userId, isActive, 
+	mirror.getAdminUserList(
 		function (error, response) {
-            if (error == null){
-              onSuccess(response);
-            }
-            else {
-              onFailure(error);
-            }
-        }
-    );
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
 }
+
 
 function validate(){
 	var employeeName = $("#employeename").val().trim();
@@ -231,50 +276,6 @@ $("#submit").click(function(){
 		}
 	}
 });
-
-function displayEdit (userId) {
-	displayMessage("");
-	$("#user-view").hide();
-	$("#user-add").show();
-	$("#userid").val(userId);
-	for(var entity in usersList) {
-		if(usersList[entity]["user_id"] == userId){
-			var userId = usersList[entity]["user_id"];
-			var employeeName = usersList[entity]["employee_name"];
-			var employeeId = usersList[entity]["employee_code"];
-			var address = usersList[entity]["address"];
-			var mergeContactNo = usersList[entity]["contact_no"].split("-");
-			var countryCode = mergeContactNo[0];
-			var areaCode = mergeContactNo[1];
-			var contactNo = mergeContactNo[2];
-			var userGroup = usersList[entity]["user_group_id"];
-			var userGroupval;
-			var designation = usersList[entity]["designation"];
-			domainIds = usersList[entity]["domain_ids"]; 
-			countryIds = usersList[entity]["country_ids"];
-			var emailId = usersList[entity]["email_id"];
-			for(var k in userGroupsList){
-				if(userGroupsList[k]["user_group_id"] == userGroup){
-					userGroupval = userGroupsList[k]["user_group_name"];
-					break;
-				}
-		}
-		$("#employeename").val(employeeName);
-	    $("#employeeid").val(employeeId);
-	  	$("#address").val(address);
-	 	$("#countrycode").val(countryCode);
-		$("#areacode").val(areaCode);
-		$("#contactno").val(contactNo);
-		$("#usergroupval").val(userGroupval);
-		$("#usergroup").val(userGroup);
-		$("#designation").val(designation);
-		$("#domainselected").val(domainIds.length+" Selected");
-		$("#countryselected").val(countryIds.length+" Selected");
-		$("#emailid").val(emailId);
-		break;
-		}
-	}
-}
 
 //filter process
 $(".filter-text-box").keyup(function() { 

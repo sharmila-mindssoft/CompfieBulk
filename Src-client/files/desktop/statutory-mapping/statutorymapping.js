@@ -35,174 +35,6 @@ function displayMessage(message) {
   $(".error-message").show();
 }
 
-$(".btn-statutorymapping-add").click(function(){
-$("#statutorymapping-view").hide();
-$("#statutorymapping-add").show();
-$("#edit_sm_id").val('');
-displayMessage('');
-sm_countryid='';
-sm_domainid='';
-sm_statutorynatureid='';
-sm_countryval='';
-sm_domainval='';
-sm_statutorynatureval='';
-sm_statutoryids=[];
-sm_industryids=[];
-compliances = [];
-load_selectdomain_master();
-$(".tbody-statutory-list").find("tr").remove();
-$(".tbody-compliance-list").find("tr").remove();
-$(".tbody-statutory-level").find("div").remove();
-$(".tbody-geography-level").find("div").remove();
-});
-
-function getStatutoryMappings(){
-  function onSuccess(data){
-    industriesList = data["industries"];
-    statutoryLevelsList = data["statutory_levels"];
-    statutoriesList = data["statutories"];
-    countriesList = data["countries"];
-    domainsList = data["domains"];
-    geographyLevelsList = data["geography_levels"];
-    statutoryNaturesList = data["statutory_natures"];
-    geographiesList = data["geographies"];
-    statutoryMappingsList = data["statutory_mappings"];
-    complianceFrequencyList = data["compliance_frequency"];
-    complianceDurationTypeList = data["compliance_duration_type"];
-    complianceRepeatTypeList = data["compliance_repeat_type"];
-    complianceApprovalStatusList = data["compliance_approval_status"];
-    
-    loadStatutoryMappingList(statutoryMappingsList);
-  }
-  function onFailure(error){
-  }
-  mirror.getStatutoryMappings(
-    function (error, response) {
-          if (error == null){
-            onSuccess(response);
-          }
-          else {
-            onFailure(error);
-          }
-      }
-  );
-}
-function loadStatutoryMappingList(statutoryMappingsList) {
-  var j = 1;
-  var imgName = '';
-  var passStatus = '';
-  var statutorymappingId = 0;
-  var isActive = false;
-  var industryName = '';
-  var statutoryNatureName = '';
-  var countryName = '';
-  var domainName = '';
-  var approvalStatus = '';
-
-  $(".tbody-statutorymapping-list").find("tr").remove();
-  for(var entity in statutoryMappingsList) {
-    statutorymappingId = entity;
-    industryName = statutoryMappingsList[entity]["industry_names"];
-    statutoryNatureName = statutoryMappingsList[entity]["statutory_nature_name"];        
-    var statutoryMappings='';
-    for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
-      statutoryMappings = statutoryMappings + statutoryMappingsList[entity]["statutory_mappings"][i] + " <br>";
-    }
-    var complianceNames='';
-    for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
-      complianceNames = complianceNames + statutoryMappingsList[entity]["compliance_names"][i] + " <br>";
-    }
-
-    for(approvalstatuslist in complianceApprovalStatusList){
-      if(statutoryMappingsList[entity]["approval_status"] == complianceApprovalStatusList[approvalstatuslist]["approval_status_id"]){
-        approvalStatus = complianceApprovalStatusList[approvalstatuslist]["approval_status"];
-      }
-    }
-
-    statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
-    countryName = statutoryMappingsList[entity]["country_name"];
-    domainName = statutoryMappingsList[entity]["domain_name"];
-    isActive = statutoryMappingsList[entity]["is_active"];
-    if(isActive == true) {
-      passStatus= false;
-      imgName="icon-active.png"
-    }
-    else {
-      passStatus=true;
-      imgName="icon-inactive.png"
-     }
-     if(approvalStatus == '0'){
-      approvalStatus = "Pending";
-     }
-    var tableRow=$('#templates .table-statutorymapping .table-row');
-    var clone=tableRow.clone();
-    $('.sno', clone).text(j);
-    $('.country', clone).text(countryName);
-    $('.domain', clone).text(domainName);
-    $('.industry', clone).text(industryName);
-    $('.statutorynature', clone).text(statutoryNatureName);
-    $('.statutory', clone).html(statutoryMappings);
-    $('.compliancetask', clone).html(complianceNames);
-    $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+statutorymappingId+')"/>');
-    $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+statutorymappingId+','+passStatus+')"/>');
-    $('.approvalstatus', clone).text(approvalStatus);
-    $('.tbody-statutorymapping-list').append(clone);
-    j = j + 1;
-    }
-  }
-
-  function changeStatus (statutorymappingId,isActive) {
-    function onSuccess(data){
-      getStatutoryMappings();
-      displayMessage("Status Changed Successfully");
-    }
-    function onFailure(error){
-    }
-    mirror.changeStatutoryMappingStatus(statutorymappingId, isActive,
-      function (error, response) {
-          if (error == null){
-            onSuccess(response);
-          }
-          else {
-            onFailure(error);
-          }
-      }
-  );
-  }
-
-  //filter process
-  $(".listfilter").keyup(function() {
-    var filter1 = $("#filter1").val().toLowerCase();
-    var filter2 = $("#filter2").val().toLowerCase();
-    var filter3 = $("#filter3").val().toLowerCase();
-    var filter4 = $("#filter4").val().toLowerCase();
-    var filter5 = $("#filter5").val().toLowerCase();
-    var filter6 = $("#filter6").val().toLowerCase();
-   
-    var filteredList=[];
-    for(var entity in statutoryMappingsList) {
-      var filter1val = statutoryMappingsList[entity]["country_name"];
-      var filter2val = statutoryMappingsList[entity]["domain_name"];
-      var filter3val = statutoryMappingsList[entity]["industry_names"];
-      var filter4val = statutoryMappingsList[entity]["statutory_nature_name"];
-
-      var filter5val='';
-      for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
-        filter5val = filter5val + statutoryMappingsList[entity]["statutory_mappings"][i] + " <br>";
-      }
-      var filter6val='';
-      for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
-        filter6val = filter6val + statutoryMappingsList[entity]["compliance_names"][i] + " <br>";
-      }
-
-      if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2) && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4) && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6)) 
-      {
-        filteredList.push(statutoryMappingsList[entity]);
-      }   
-    }
-    loadStatutoryMappingList(filteredList);
-  });
-
   function load_selectdomain_master(){
     //load country details
     var clsval='.countrylist';
@@ -287,6 +119,178 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     $("#repeats_type").append(option);
     }
   }
+
+$(".btn-statutorymapping-add").click(function(){
+$("#statutorymapping-view").hide();
+$("#statutorymapping-add").show();
+$("#edit_sm_id").val('');
+displayMessage('');
+sm_countryid='';
+sm_domainid='';
+sm_statutorynatureid='';
+sm_countryval='';
+sm_domainval='';
+sm_statutorynatureval='';
+sm_statutoryids=[];
+sm_industryids=[];
+compliances = [];
+load_selectdomain_master();
+$(".tbody-statutory-list").find("tr").remove();
+$(".tbody-compliance-list").find("tr").remove();
+$(".tbody-statutory-level").find("div").remove();
+$(".tbody-geography-level").find("div").remove();
+});
+
+
+function loadStatutoryMappingList(statutoryMappingsList) {
+  var j = 1;
+  var imgName = '';
+  var passStatus = '';
+  var statutorymappingId = 0;
+  var isActive = false;
+  var industryName = '';
+  var statutoryNatureName = '';
+  var countryName = '';
+  var domainName = '';
+  var approvalStatus = '';
+
+  $(".tbody-statutorymapping-list").find("tr").remove();
+  for(var entity in statutoryMappingsList) {
+    statutorymappingId = entity;
+    industryName = statutoryMappingsList[entity]["industry_names"];
+    statutoryNatureName = statutoryMappingsList[entity]["statutory_nature_name"];        
+    var statutoryMappings='';
+    for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
+      statutoryMappings = statutoryMappings + statutoryMappingsList[entity]["statutory_mappings"][i] + " <br>";
+    }
+    var complianceNames='';
+    for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
+      complianceNames = complianceNames + statutoryMappingsList[entity]["compliance_names"][i] + " <br>";
+    }
+
+    for(approvalstatuslist in complianceApprovalStatusList){
+      if(statutoryMappingsList[entity]["approval_status"] == complianceApprovalStatusList[approvalstatuslist]["approval_status_id"]){
+        approvalStatus = complianceApprovalStatusList[approvalstatuslist]["approval_status"];
+      }
+    }
+
+    statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
+    countryName = statutoryMappingsList[entity]["country_name"];
+    domainName = statutoryMappingsList[entity]["domain_name"];
+    isActive = statutoryMappingsList[entity]["is_active"];
+    if(isActive == true) {
+      passStatus= false;
+      imgName="icon-active.png"
+    }
+    else {
+      passStatus=true;
+      imgName="icon-inactive.png"
+     }
+     if(approvalStatus == '0'){
+      approvalStatus = "Pending";
+     }
+    var tableRow=$('#templates .table-statutorymapping .table-row');
+    var clone=tableRow.clone();
+    $('.sno', clone).text(j);
+    $('.country', clone).text(countryName);
+    $('.domain', clone).text(domainName);
+    $('.industry', clone).text(industryName);
+    $('.statutorynature', clone).text(statutoryNatureName);
+    $('.statutory', clone).html(statutoryMappings);
+    $('.compliancetask', clone).html(complianceNames);
+    $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+statutorymappingId+')"/>');
+    $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+statutorymappingId+','+passStatus+')"/>');
+    $('.approvalstatus', clone).text(approvalStatus);
+    $('.tbody-statutorymapping-list').append(clone);
+    j = j + 1;
+    }
+  }
+  
+function getStatutoryMappings(){
+  function onSuccess(data){
+    industriesList = data["industries"];
+    statutoryLevelsList = data["statutory_levels"];
+    statutoriesList = data["statutories"];
+    countriesList = data["countries"];
+    domainsList = data["domains"];
+    geographyLevelsList = data["geography_levels"];
+    statutoryNaturesList = data["statutory_natures"];
+    geographiesList = data["geographies"];
+    statutoryMappingsList = data["statutory_mappings"];
+    complianceFrequencyList = data["compliance_frequency"];
+    complianceDurationTypeList = data["compliance_duration_type"];
+    complianceRepeatTypeList = data["compliance_repeat_type"];
+    complianceApprovalStatusList = data["compliance_approval_status"];
+    
+    loadStatutoryMappingList(statutoryMappingsList);
+  }
+  function onFailure(error){
+  }
+  mirror.getStatutoryMappings(
+    function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
+}
+
+
+  function changeStatus (statutorymappingId,isActive) {
+    function onSuccess(data){
+      getStatutoryMappings();
+      displayMessage("Status Changed Successfully");
+    }
+    function onFailure(error){
+    }
+    mirror.changeStatutoryMappingStatus(statutorymappingId, isActive,
+      function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
+  }
+
+  //filter process
+  $(".listfilter").keyup(function() {
+    var filter1 = $("#filter1").val().toLowerCase();
+    var filter2 = $("#filter2").val().toLowerCase();
+    var filter3 = $("#filter3").val().toLowerCase();
+    var filter4 = $("#filter4").val().toLowerCase();
+    var filter5 = $("#filter5").val().toLowerCase();
+    var filter6 = $("#filter6").val().toLowerCase();
+   
+    var filteredList=[];
+    for(var entity in statutoryMappingsList) {
+      var filter1val = statutoryMappingsList[entity]["country_name"];
+      var filter2val = statutoryMappingsList[entity]["domain_name"];
+      var filter3val = statutoryMappingsList[entity]["industry_names"];
+      var filter4val = statutoryMappingsList[entity]["statutory_nature_name"];
+
+      var filter5val='';
+      for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
+        filter5val = filter5val + statutoryMappingsList[entity]["statutory_mappings"][i] + " <br>";
+      }
+      var filter6val='';
+      for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
+        filter6val = filter6val + statutoryMappingsList[entity]["compliance_names"][i] + " <br>";
+      }
+
+      if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2) && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4) && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6)) 
+      {
+        filteredList.push(statutoryMappingsList[entity]);
+      }   
+    }
+    loadStatutoryMappingList(filteredList);
+  });
+
 
   //check & uncheck list data for single selection
   function activate(element, id, dispname, type){
