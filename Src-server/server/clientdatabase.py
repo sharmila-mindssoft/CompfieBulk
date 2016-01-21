@@ -171,7 +171,6 @@ class ClientDatabase(Database):
         columns = "client_id"
         condition = "url_short_name = '%s'"% short_name
         rows = self.get_data("tbl_client_groups", columns, condition, 0)
-        print rows
         return rows[0][0]
 
     def verify_username(self, username, client_id):
