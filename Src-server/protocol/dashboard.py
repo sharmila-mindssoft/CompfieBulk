@@ -32,7 +32,11 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_20,
     parse_structure_VectorType_RecordType_dashboard_AssigneeChartData,
     parse_structure_VectorType_RecordType_dashboard_UnitCompliance,
-    parse_structure_VectorType_RecordType_dashboard_EscalationData
+    parse_structure_VectorType_RecordType_dashboard_EscalationData,
+    parse_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    parse_structure_VectorType_RecordType_core_ClientLegalEntity,
+    parse_structure_VectorType_RecordType_core_ClientDivision,
+    parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -66,7 +70,11 @@ from protocol.to_structure import (
     to_structure_CustomTextType_20,
     to_structure_VectorType_RecordType_dashboard_AssigneeChartData,
     to_structure_VectorType_RecordType_dashboard_UnitCompliance,
-    to_structure_VectorType_RecordType_dashboard_EscalationData
+    to_structure_VectorType_RecordType_dashboard_EscalationData,
+    to_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    to_structure_VectorType_RecordType_core_ClientLegalEntity,
+    to_structure_VectorType_RecordType_core_ClientDivision,
+    to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS
 )
 
 #
@@ -505,23 +513,23 @@ class GetChartFiltersSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
+        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
         legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_Unit(units)
+        units = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(units)
         return GetChartFiltersSuccess(countries, domains, business_groups, legal_entities, divisions, units)
 
     def to_inner_structure(self):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units),
         }
 
 class GetComplianceStatusChartSuccess(Response):
