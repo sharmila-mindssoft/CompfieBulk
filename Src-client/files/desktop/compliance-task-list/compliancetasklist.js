@@ -311,10 +311,6 @@ function loadresult(filterList){
   $(".tbody-compliance").find("tbody").remove();
   var count=1;
   var compliance_count=0;
-
-  if($("#statutory").val() != ''){
-    filterList = filterList[parseInt($("#statutory").val())]
-  }
   for(var entity in filterList){
     var checkNoCompliance = true;
     var actname = '';
@@ -390,23 +386,19 @@ function loadresult(filterList){
               var clone1=tableRow1.clone();
               $('.tbody-compliance').append(clone1);
               $('.tbl_sno', clone1).text(compliance_count+1);
-              $('.tbl_industrytype', clone1).text(filterList[entity][i]["industry_names"]);
+              $('.tbl_compliancefrequency', clone1).text(occurance);
               $('.tbl_statutorynature',   clone1).text(filterList[entity][i]["statutory_nature_name"]);
               $('.tbl_statutoryprovision', clone1).text(filterList[entity][i]["compliances"][k]["statutory_provision"]);
-              $('.tbl_compliancetask', clone1)html('<a href="#">'+filterList[entity][i]["compliance_names"][k]+'</a>');
+              $('.tbl_compliancetask', clone1).html('<a href="#">'+filterList[entity][i]["compliance_names"][k]+'</a>');
               $('.tbl_description', clone1).text(filterList[entity][i]["compliances"][k]["description"]);
               $('.tbl_penalconsequences', clone1).text(filterList[entity][i]["compliances"][k]["penal_consequences"]);
-              $('.tbl_occurance', clone1).text(occurance);
+              $('.tbl_occurance', clone1).text("occurance");
               $('.tbl_applicablelocation', clone1).text(filterList[entity][i]["geography_mappings"]);
               $('.accordion-content'+count).append(clone1);
               compliance_count = compliance_count + 1;
             }
           }
         }
-        //alert(filterList[entity][i]["compliances"].length)
-        /*if(filterList[entity][i]["compliances"].length == 0){
-          alert("empty")
-        }*/
       }
     }
     if(checkNoCompliance){
