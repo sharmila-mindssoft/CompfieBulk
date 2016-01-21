@@ -83,11 +83,10 @@ function initClientMirror() {
 
     function clientApiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
-        var client_id = getClientId();
         if (sessionToken == null)
             sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
         var requestFrame = {
-            "session_token": client_id+"-"+sessionToken,
+            "session_token": sessionToken,
             "request": request
         };
         jQuery.post(
@@ -582,6 +581,15 @@ function initClientMirror() {
                 "compliance_frequency" : frequency_id
             }
         ]
+        clientApiRequest("api/client_transaction", request, callback);  
+    } 
+
+    function getComplianceApprovalList(callback){
+        var request = [
+            "GetComplianceApprovalList",
+            {}
+        ];
+        clientApiRequest("api/client_transaction", request, callback);
     }
 
     return {

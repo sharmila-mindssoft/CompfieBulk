@@ -28,6 +28,8 @@ def process_client_transaction_requests(request, db) :
 		return process_get_past_records_form_data(db, request, session_user, client_id)
 	elif type(request) is clienttransactions.GetStatutoriesByUnit :
 		return process_get_statutories_by_unit(db, request, session_user, client_id)
+	elif type(request) is clienttransactions.GetComplianceApprovalList :
+		return process_get_compliance_approval_list(db, request, session_user, client_id)
 
 def process_get_statutory_settings(db, session_user, client_id):
 	return db.get_statutory_settings(session_user, client_id)
@@ -59,4 +61,8 @@ def process_get_statutories_by_unit(db, request, session_user, client_id):
 		domain_id, level_1_statutory_id, frequecy_id)
 	return clienttransactions.GetStatutoriesByUnitSuccess(statutory_wise_compliances = 
 		statutory_wise_compliances)
+
+def process_get_compliance_approval_list(db, request, session_user, client_id):
+	compliance_approval_list = db.get_compliance_approval_list(session_user, client_id)
+	return GetComplianceApprovalListSuccess(approval_list = compliance_approval_list)
 	 

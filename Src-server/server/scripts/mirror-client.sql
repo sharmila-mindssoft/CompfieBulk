@@ -109,8 +109,7 @@ CREATE TABLE `tbl_legal_entities` (
   `legal_entity_id` int(11) NOT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   `legal_entity_name` varchar(100) NOT NULL,
-  PRIMARY KEY (`legal_entity_id`),
-  CONSTRAINT `fk_legal_entities_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`)
+  PRIMARY KEY (`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_divisions`;
 CREATE TABLE `tbl_divisions` (
@@ -118,8 +117,7 @@ CREATE TABLE `tbl_divisions` (
   `business_group_id` int(11) DEFAULT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `division_name` varchar(100) NOT NULL,
-  PRIMARY KEY (`division_id`),
-  CONSTRAINT `fk_divisions_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
+  PRIMARY KEY (`division_id`)
   CONSTRAINT `fk_divisions_legal_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_units`;
@@ -137,10 +135,8 @@ CREATE TABLE `tbl_units` (
   `postal_code` int(11) NOT NULL,
   `domain_ids` varchar(100) NOT NULL,
   `is_active` tinyint(1) DEFAULT '1',
-  PRIMARY KEY (`unit_id`),
-  CONSTRAINT `fk_units_divisions` FOREIGN KEY (`division_id`) REFERENCES `tbl_divisions` (`division_id`),
-  CONSTRAINT `fk_units_legel_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
-  CONSTRAINT `fk_units_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
+  PRIMARY KEY (`unit_id`)
+  CONSTRAINT `fk_units_legel_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`)
   CONSTRAINT `fk_units_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_service_providers`;
@@ -336,19 +332,19 @@ CREATE TABLE `tbl_compliance_history` (
   `compliance_id` int(11) DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `due_date` date DEFAULT NULL,
-  `completion_date` float DEFAULT NULL,
+  `completion_date` date DEFAULT NULL,
   `documents` longtext,
   `validity_date` date DEFAULT NULL,
   `next_due_date` date DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   `completed_by` int(11) DEFAULT NULL,
-  `completed_on` float DEFAULT NULL,
+  `completed_on` date DEFAULT NULL,
   `concurrence_status` varchar(20) DEFAULT NULL,
   `concurred_by` int(11) DEFAULT NULL,
-  `concurred_on` float DEFAULT NULL,
+  `concurred_on` date DEFAULT NULL,
   `approve_status` varchar(20) DEFAULT NULL,
   `approved_by` int(11) DEFAULT NULL,
-  `approved_on` float DEFAULT NULL,
+  `approved_on` date DEFAULT NULL,
   PRIMARY KEY (`compliance_history_id`),
   CONSTRAINT `fk_compliance_history_user_details` FOREIGN KEY (`completed_by`) REFERENCES `tbl_users` (`user_id`),
   CONSTRAINT `fk_compliance_history_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
@@ -390,8 +386,7 @@ CREATE TABLE `tbl_mobile_registration` (
   `device_type_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`registration_key`),
-  CONSTRAINT `fk_tbl_session_type_id` FOREIGN KEY (`device_type_id`) REFERENCES `tbl_session_types` (`session_type_id`),
-  CONSTRAINT `fk_tbl_user_id` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`)
+  CONSTRAINT `fk_tbl_session_type_id` FOREIGN KEY (`device_type_id`) REFERENCES `tbl_session_types` (`session_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_statutory_notifications_log`;
 CREATE TABLE `tbl_statutory_notifications_log` (
@@ -448,10 +443,8 @@ CREATE TABLE `tbl_notifications_log` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`notification_id`),
   CONSTRAINT `fk_notifications_log_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
-  CONSTRAINT `fk_notifications_log_domains` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
-  CONSTRAINT `fk_notifications_log_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
-  CONSTRAINT `fk_notifications_log_legal_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
-  CONSTRAINT `fk_notifications_log_divisions` FOREIGN KEY (`division_id`) REFERENCES `tbl_divisions` (`division_id`),
+  CONSTRAINT `fk_notifications_log_domains` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`)
+  CONSTRAINT `fk_notifications_log_legal_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`)
   CONSTRAINT `fk_notifications_log_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
   CONSTRAINT `fk_notifications_log_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
   CONSTRAINT `fk_notifications_log_assignee_units` FOREIGN KEY (`assignee`) REFERENCES `tbl_users` (`user_id`),
@@ -466,3 +459,47 @@ CREATE TABLE `tbl_notification_user_log` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+INSERT INTO tbl_form_type VALUES(1, "Home");
+INSERT INTO tbl_form_type VALUES(2, "Master");
+INSERT INTO tbl_form_type VALUES(3, "Transaction");
+INSERT INTO tbl_form_type VALUES(4, "Report");
+INSERT INTO tbl_form_type VALUES(5, "Settings");
+INSERT INTO tbl_forms VALUES(1, 1, 'Dashboard', '/home', 1, null, 0);
+INSERT INTO tbl_forms VALUES(2, 2, 'Service Provider', '/service-provider', 2, null, 1);
+INSERT INTO tbl_forms VALUES(3, 2, 'User Privilege', '/client-user-privilege', 3, null, 1);
+INSERT INTO tbl_forms VALUES(4, 2, 'User', '/client-user-master', 4, null, 1);
+INSERT INTO tbl_forms VALUES(5, 2, 'Unit Closure', '/unit-closure', 5, null, 1);
+INSERT INTO tbl_forms VALUES(6, 3, 'Statutory Settings', '/statutory-settings', 6, null, 1);
+INSERT INTO tbl_forms VALUES(7, 3, 'Assign Compliance', '/assign-compliance', 7, null, 1);
+INSERT INTO tbl_forms VALUES(8, 3, 'Reassign Compliance', '/reassign-compliance', 8, null, 1);
+INSERT INTO tbl_forms VALUES(9, 3, 'Compliance Approval', '/compliance-approval', 9, null, 0);
+INSERT INTO tbl_forms VALUES(10, 3, 'Completed Tasks - Current Year', '/completed-tasks-current-year', 10, null, 0);
+INSERT INTO tbl_forms VALUES(11, 3, 'Compliance Task Details', '/compliance-task-details',11, null, 0);
+INSERT INTO tbl_forms VALUES(12, 3, 'On Occurrence Compliances', '/on-occurrence-compliances', 12, null, 0);
+INSERT INTO tbl_forms VALUES(13, 4, 'Compliance Details', '/compliance-details', 13, null, 0);
+INSERT INTO tbl_forms VALUES(14, 4, 'Risk Report', '/risk-report', 14, null, 0);
+INSERT INTO tbl_forms VALUES(15, 4, 'Service Provider wise Compliance', '/service-provider-wise-compliance', 15, "Compliance List", 0);
+INSERT INTO tbl_forms VALUES(16, 4, 'Assignee wise Compliance', '/assignee-wise-compliance', 16, "Compliance List", 0);
+INSERT INTO tbl_forms VALUES(17, 4, 'Unit wise Compliance', '/unit-wise-compliance', 17, "Compliance List", 0);
+INSERT INTO tbl_forms VALUES(18, 4, 'Compliance Task Applicability Status', '/compliance-task-applicability-status', 18, null, 0);
+INSERT INTO tbl_forms VALUES(19, 4, 'Unit Details', '/unit-details', 19, null, 0);
+INSERT INTO tbl_forms VALUES(20, 4, 'Compliance Activity Report', '/compliance-activity-report', 20, null, 0);
+INSERT INTO tbl_forms VALUES(21, 4, 'Reassigned History', '/reassigned-history', 21, null, 0);
+INSERT INTO tbl_forms VALUES(22, 4, 'Statutory Notifications List', '/statutory-notifications-list', 22, null, 0);
+INSERT INTO tbl_forms VALUES(23, 4, 'Login Trace', '/login-trace', 23, null, 1);
+INSERT INTO tbl_forms VALUES(24, 4, 'Audit Trail', '/audit-trail', 24, null, 1);
+INSERT INTO tbl_forms VALUES(25, 4, 'Settings', '/settings',  25, null, 1);
+INSERT INTO tbl_forms VALUES(26, 5, 'View Profile', '/view-profile',  26, null, 1);
+INSERT INTO tbl_session_types VALUES(1, "web");
+INSERT INTO tbl_session_types VALUES(2, "android");
+INSERT INTO tbl_session_types VALUES(3, "ios");
+INSERT INTO tbl_session_types VALUES(4, "blackberry");
+INSERT INTO tbl_compliance_duration_type VALUES(1, "Day(s)");
+INSERT INTO tbl_compliance_duration_type VALUES(2, "Hour(s)");
+INSERT INTO tbl_compliance_repeat_type VALUES(1, "Day(s)");
+INSERT INTO tbl_compliance_repeat_type VALUES(2, "Month(s)");
+INSERT INTO tbl_compliance_repeat_type VALUES(3, "Year(s)");
+INSERT INTO tbl_compliance_frequency VALUES(1, "One Time");
+INSERT INTO tbl_compliance_frequency VALUES(2, "Periodical");
+INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
+INSERT INTO tbl_compliance_frequency VALUES(4, "On Occurrence");
