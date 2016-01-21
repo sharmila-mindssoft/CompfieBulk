@@ -144,7 +144,7 @@ class ClientDatabase(Database):
                 result["client_id"] = client_id
                 return result
         else :
-            return True
+            return True 
 
     def get_user_forms(self, form_ids, client_id, is_admin):
         columns = "tf.form_id, tf.form_type_id, tft.form_type, tf.form_name, "+\
