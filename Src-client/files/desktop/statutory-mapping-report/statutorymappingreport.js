@@ -66,7 +66,7 @@ $("#submit").click(function(){
   min  = currentTime.getMinutes();
   sec  = currentTime.getSeconds();
   ms = currentTime.getMilliseconds();
-  console.log("Click submit button time : "+ hour + ":" + min + ":" + sec + ":" + ms  );
+  console.log("Start Progress : "+ hour + ":" + min + ":" + sec + ":" + ms  );
   var country = $("#country").val();
   var domain = $("#domain").val();
   var industry = null;
@@ -101,6 +101,13 @@ $("#submit").click(function(){
 
       function onSuccess(data){
         statutoryMappingDataList = data["statutory_mappings"];
+        var currentTime = new Date();
+        hour = currentTime.getHours();
+        min  = currentTime.getMinutes();
+        sec  = currentTime.getSeconds();
+        ms = currentTime.getMilliseconds();
+        console.log("API Response: "+ hour + ":" + min + ":" + sec + ":" + ms  );
+
         loadresult(statutoryMappingDataList);
       }
       function onFailure(error){
