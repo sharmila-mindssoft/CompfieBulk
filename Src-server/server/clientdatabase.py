@@ -350,10 +350,11 @@ class ClientDatabase(Database):
         condition = "1"
         if division_ids != None:
             condition = "division_id in (%s)" % division_ids
-        rows = self.get_data(self.tblDivisions, columns, condition) 
+        rows = self.get_data(self.tblDivisions, columns, condition, client_id) 
         columns = ["division_id", "division_name", "legal_entity_id", 
         "business_group_id"]
         result = self.convert_to_dict(rows, columns)
+        print result
         return self.return_divisions(result)
 
     def return_divisions(self, divisions):

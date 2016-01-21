@@ -103,8 +103,8 @@ function getDivisionName(divisionid){
 	var divisionName;
 	if(divisionid != null){
 		$.each(divisionsList, function(key, value){
-			if(divisionsList[key]['legal_entity_id'] == divisionid){
-				divisionName = divisionsList[key]['legal_entity_name'];
+			if(divisionsList[key]['division_id'] == divisionid){
+				divisionName = divisionsList[key]['division_name'];
 			}
 		});	
 	}
