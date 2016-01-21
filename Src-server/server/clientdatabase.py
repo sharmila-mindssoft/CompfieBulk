@@ -172,7 +172,6 @@ class ClientDatabase(Database):
         columns = "client_id"
         condition = "url_short_name = '%s'"% short_name
         rows = self.get_data("tbl_client_groups", columns, condition, 0)
-        print rows
         return rows[0][0]
 
     def verify_username(self, username, client_id):
@@ -1896,4 +1895,3 @@ class ClientDatabase(Database):
         not_complied = self.get_status_wise_compliances(request, client_id, 4)
         result = self.get_status_wise_compliances_count(request, client_id)
         return dashboard.GetComplianceStatusChartSuccess(result)        
-        
