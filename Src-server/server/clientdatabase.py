@@ -1140,7 +1140,7 @@ class ClientDatabase(Database):
         return results 
 
     def get_compliance_frequency(self, client_id):
-        columns = "frequency_id, frequency"
+        columns = "frequency_id, frequency" 
         rows = self.get_data(self.tblComplianceFrequency, columns, "1", client_id)
         compliance_frequency = []
         for row in rows:
