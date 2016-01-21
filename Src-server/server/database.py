@@ -3684,7 +3684,16 @@ class KnowledgeDatabase(Database):
                 self.save_data(self.tblClientCompliances, field, values)
         return True
 
+    def get_compliance_ids(self, client_statutory_id):
+        query = "SELECT group_concat(distinct compliance_id) \
+            FROM tbl_client_compliances \
+            WHERE client_statutory_id = %s" % (client_statutory_id)
+        row = self.select_one(query)
+        return row[0]
+
     def update_client_compliances(self, client_statutory_id, data, user_id, submited_on = None):
+        saved_compliance_ids = self.get_compliance_ids(client_statutory_id)
+        saved_compliance_ids = [int(x) for x in saved_compliance_ids.split(',')]
         for d in data :
             level_1_id = d.level_1_statutory_id
             applicable_status = int(d.applicable_status)
@@ -3693,21 +3702,29 @@ class KnowledgeDatabase(Database):
                 not_applicable_remarks = ""
             for key, value in d.compliances.iteritems():
                 compliance_id = int(key)
-                compliance_applicable_status = int(value)
+                
+                if compliance_id not in saved_compliance_ids :
+                    created_on = str(self.get_date_time())
+                    new_data = d
+                    new_data.compliances = {key: value}
+                    self.save_client_compliances(client_statutory_id, [new_data], user_id, created_on)
+                    saved_compliance_ids.append(compliance_id)
+                else :
+                    compliance_applicable_status = int(value)
 
-                field_with_data = "statutory_applicable = %s, \
-                    not_applicable_remarks = '%s', \
-                    compliance_applicable = %s, updated_by = %s" % (
-                        applicable_status, not_applicable_remarks,
-                        compliance_applicable_status, int(user_id)
-                    )
-                if submited_on is not None :
-                    field_with_data = field_with_data + " , submitted_on ='%s'" % (submited_on)
-                where_condition = " client_statutory_id = %s \
-                    AND statutory_id = %s AND compliance_id = %s" % (
-                        client_statutory_id, level_1_id, compliance_id
-                    )
-                self.update_data(self.tblClientCompliances, field_with_data, where_condition)
+                    field_with_data = "statutory_applicable = %s, \
+                        not_applicable_remarks = '%s', \
+                        compliance_applicable = %s, updated_by = %s" % (
+                            applicable_status, not_applicable_remarks,
+                            compliance_applicable_status, int(user_id)
+                        )
+                    if submited_on is not None :
+                        field_with_data = field_with_data + " , submitted_on ='%s'" % (submited_on)
+                    where_condition = " client_statutory_id = %s \
+                        AND statutory_id = %s AND compliance_id = %s" % (
+                            client_statutory_id, level_1_id, compliance_id
+                        )
+                    self.update_data(self.tblClientCompliances, field_with_data, where_condition)
         return True
     
     def submit_client_statutories_compliances(self, client_statutory_id, data, user_id) :

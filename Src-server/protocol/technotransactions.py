@@ -58,7 +58,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCompliance,
     to_structure_Bool,
     to_structure_OptionalType_CustomTextType_500,
-    to_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability
+    to_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability,
+    to_structure_UnsignedIntegerType_32
 )
 
 #
