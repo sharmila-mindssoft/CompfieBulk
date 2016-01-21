@@ -3,6 +3,8 @@ from database import Database
 import json
 import datetime
 
+from types import *
+
 __all__ = [
     "ClientDatabase"
 ]
@@ -974,20 +976,23 @@ class ClientDatabase(Database):
         results = self.convert_to_dict(rows, columns)
         statutory_wise_compliances = {}
         for r in results :
-            statutory_opted = r["statutory_opted"]
-            if statutory_opted is None :
+
+            statutory_opted = r["statutory_opted"]                
+            if type(statutory_opted) is int :
+                statutory_opted = bool(statutory_opted)
+            else :
                 statutory_opted = bool(r["statutory_applicable"])
+
             compliance_opted = r["compliance_opted"]
-            print compliance_opted
-            if compliance_opted is None :
+            if type(compliance_opted) is int :
+                compliance_opted = bool(compliance_opted)
+            else :
                 compliance_opted = bool(r["compliance_applicable"])
-            if compliance_opted == "" :
-                compliance_opted = True
-            print compliance_opted
 
             compliance_remarks = r["compliance_remarks"]
             if compliance_remarks == "" :
                 compliance_remarks = None
+
             mappings = r["statutory_mapping"].split('>>')
             statutory_name = mappings[0].strip()
             provision = "%s - %s" % (','.join(mappings[1:]), r["statutory_provision"])
@@ -1199,41 +1204,55 @@ class ClientDatabase(Database):
         if session_user == 0 :
             session_user = '%'
 
-        query = "SELECT group_concat(distinct t2.client_statutory_id) client_statutory_ids, \
-            t1.domain_id,group_concat(distinct t1.unit_id) unit_ids, \
-            t2.compliance_id, \
-            t2.statutory_applicable, t2.statutory_opted, \
-            t2.not_applicable_remarks, \
-            t2.compliance_applicable, t2.compliance_opted, \
-            t2.compliance_remarks, \
-            t3.compliance_task, t3.document_name, t3.compliance_description,\
-            t3.statutory_mapping, t3.statutory_provision, \
-            t3.statutory_dates, t4.frequency \
+        query = "SELECT distinct t2.compliance_id,\
+            t1.domain_id,\
+            UC.units,\
+            t2.statutory_applicable, \
+            t2.statutory_opted,\
+            t2.not_applicable_remarks,\
+            t2.compliance_applicable,\
+            t2.compliance_opted,\
+            t2.compliance_remarks,\
+            t3.compliance_task,\
+            t3.document_name,\
+            t3.compliance_description,\
+            t3.statutory_mapping,\
+            t3.statutory_provision,\
+            t3.statutory_dates,\
+            t4.frequency\
             FROM tbl_client_compliances t2 \
             INNER JOIN tbl_client_statutories t1 \
             ON t2.client_statutory_id = t1.client_statutory_id \
             INNER JOIN tbl_compliances t3 \
             ON t2.compliance_id = t3.compliance_id \
-            INNER JOIN tbl_compliance_frequency t4\
-            ON t3.frequency_id = t4.frequency_id\
-            INNER JOIN tbl_user_domains t5\
-            ON t1.domain_id = t5.domain_id\
-            AND t5.user_id LIKE '%s'  \
+            INNER JOIN tbl_compliance_frequency t4 \
+            ON t3.frequency_id = t4.frequency_id \
+            INNER JOIN tbl_user_domains t5 \
+            ON t1.domain_id = t5.domain_id \
+            INNER JOIN \
+            (SELECT distinct U.compliance_id, group_concat(distinct U.unit_id) units FROM  \
+            (SELECT A.unit_id, A.client_statutory_id, B.compliance_id FROM tbl_client_statutories A \
+            INNER JOIN tbl_client_compliances B \
+            ON A.client_statutory_id = B.client_statutory_id) U \
+            group by U.compliance_id )UC \
+            ON t2.compliance_id = UC.compliance_id \
+            WHERE \
+            t2.compliance_id NOT IN (SELECT C.compliance_id \
+            FROM tbl_assigned_compliances C WHERE \
+            C.unit_id IN %s ) \
             AND t1.unit_id IN %s \
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
             AND t3.is_active = 1 \
-            AND t2.compliance_id NOT \
-            IN ( SELECT a.compliance_id \
-                FROM tbl_assigned_compliances a WHERE a.unit_id in %s ) " % (
-                session_user,
+            AND t5.user_id LIKE '%s'; " % (
                 str(tuple(unit_ids)),
-                str(tuple(unit_ids))
+                str(tuple(unit_ids)),
+                session_user
             )
-        print query
+
         rows = self.select_all(query, client_id)
-        columns = ["client_statutory_ids", "domain_id", "unit_ids",
-            "compliance_id", "statutory_applicable", "statutory_opted",
+        columns = ["compliance_id", "domain_id", "units",
+            "statutory_applicable", "statutory_opted",
             "not_applicable_remarks",
             "compliance_applicable", "compliance_opted",
             "compliance_remarks", "compliance_task",
@@ -1251,7 +1270,7 @@ class ClientDatabase(Database):
         for r in result:
             domain_id = int(r["domain_id"])
             unit_ids = [
-                int(x) for x in r["unit_ids"].split(',')
+                int(x) for x in r["units"].split(',')
             ]
             compliance_list = domain_wise_compliance.get(domain_id)
             if compliance_list is None :
