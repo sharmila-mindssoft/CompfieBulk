@@ -61,6 +61,12 @@ function getStatutoryMappings(){
 }
 
 $("#submit").click(function(){
+  var currentTime = new Date();
+  hour = currentTime.getHours();
+  min  = currentTime.getMinutes();
+  sec  = currentTime.getSeconds();
+  ms = currentTime.getMilliseconds();
+  console.log("Click submit button time : "+ hour + ":" + min + ":" + sec + ":" + ms  );
   var country = $("#country").val();
   var domain = $("#domain").val();
   var industry = null;
@@ -100,6 +106,13 @@ $("#submit").click(function(){
       function onFailure(error){
         onFailure(error);
       }
+
+      var currentTime = new Date();
+      hour = currentTime.getHours();
+      min  = currentTime.getMinutes();
+      sec  = currentTime.getSeconds();
+      ms = currentTime.getMilliseconds();
+      console.log("Call API : "+ hour + ":" + min + ":" + sec + ":" + ms  );
       mirror.getStatutoryMappingsReportData(filterdata, 
         function (error, response) {
           if (error == null){
@@ -389,7 +402,7 @@ function loadresult(filterList){
               $('.tbl_industrytype', clone1).text(filterList[entity][i]["industry_names"]);
               $('.tbl_statutorynature',   clone1).text(filterList[entity][i]["statutory_nature_name"]);
               $('.tbl_statutoryprovision', clone1).text(filterList[entity][i]["compliances"][k]["statutory_provision"]);
-              $('.tbl_compliancetask', clone1)html('<a href="#">'+filterList[entity][i]["compliance_names"][k]+'</a>');
+              $('.tbl_compliancetask', clone1).html('<a href="#">'+filterList[entity][i]["compliance_names"][k]+'</a>');
               $('.tbl_description', clone1).text(filterList[entity][i]["compliances"][k]["description"]);
               $('.tbl_penalconsequences', clone1).text(filterList[entity][i]["compliances"][k]["penal_consequences"]);
               $('.tbl_occurance', clone1).text(occurance);
@@ -419,5 +432,11 @@ function loadresult(filterList){
       $(".accordion-content").not($(this).next()).slideUp('fast');
     });
   });
+  var currentTime = new Date();
+  hour = currentTime.getHours();
+  min  = currentTime.getMinutes();
+  sec  = currentTime.getSeconds();
+  ms = currentTime.getMilliseconds();
+  console.log("End progress : "+ hour + ":" + min + ":" + sec + ":" + ms  );
 
 }
