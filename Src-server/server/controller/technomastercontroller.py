@@ -326,8 +326,12 @@ def change_client_status(db, request, session_user):
 		return technomasters.InvalidClientId()
 	elif db.is_invalid_id(db.tblLegalEntities, "legal_entity_id", legal_entity_id):
 		return technomasters.InvalidLegalEntityId()
-	elif db.is_invalid_id(db.tblDivisions, "division_id", division_id):
-		return technomasters.InvalidDivisionId()
+	elif division_id != None:
+		if db.is_invalid_id(db.tblDivisions, "division_id", division_id):
+			return technomasters.InvalidDivisionId()
+		elif db.change_client_status(client_id, legal_entity_id, division_id, 
+			is_active, session_user):
+			return technomasters.ChangeClientStatusSuccess()	
 	elif db.change_client_status(client_id, legal_entity_id, division_id, 
 	    is_active, session_user):
 	    return technomasters.ChangeClientStatusSuccess()

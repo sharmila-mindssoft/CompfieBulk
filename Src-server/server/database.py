@@ -172,7 +172,6 @@ class Database(object) :
             else:
                 stringValue = stringValue+"'"+str(value)+"'"
         query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
-        print query
         if client_id != None:
             return self.execute(query, client_id)
         return self.execute(query)
@@ -196,7 +195,6 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
-        print query
         if client_id != None:
             return self.execute(query, client_id)
 
@@ -3173,7 +3171,7 @@ class KnowledgeDatabase(Database):
         columns = ["is_active", "updated_on" , "updated_by"]
         values = [is_active, current_time_stamp, session_user]
         condition = "legal_entity_id = '%d' and client_id = '%d' "% (legal_entity_id, client_id)
-        result = self.update(self.tblUnits, columns, values, condition)
+        self.update(self.tblUnits, columns, values, condition)
 
         division_name = None
         legal_entity_name = None
@@ -3186,7 +3184,7 @@ class KnowledgeDatabase(Database):
             division_name = rows[0][0]
         else:
             action_column = "legal_entity_name"
-            action_condition = "legal_entity_name='%d' and client_id = '%d' "% (legal_entity_id, client_id)
+            action_condition = "legal_entity_id='%d' and client_id = '%d' "% (legal_entity_id, client_id)
             rows = self.get_data(self.tblLegalEntities, action_column, action_condition)
             legal_entity_name = rows[0][0]
 
@@ -3200,7 +3198,8 @@ class KnowledgeDatabase(Database):
                 action = "Activated Division \"%s\" " % division_name
             else:
                 action = "Activated Legal Entity \"%s\" " % legal_entity_name
-        return result
+
+        return True
 
     def reactivate_unit(self, client_id, unit_id, session_user):
         current_time_stamp = str(self.get_date_time())
