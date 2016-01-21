@@ -4239,8 +4239,8 @@ class KnowledgeDatabase(Database):
         profiles = []
         for client_id in client_ids_list:
             settings_rows = self.get_settings(client_id)
-            contract_from = settings_rows[0][0]
-            contract_to = settings_rows[0][1]
+            contract_from = self.datetime_to_string(settings_rows[0][0])
+            contract_to = self.datetime_to_string(settings_rows[0][1])
             no_of_user_licence = settings_rows[0][2]
             file_space = settings_rows[0][3]
             used_space = 34
