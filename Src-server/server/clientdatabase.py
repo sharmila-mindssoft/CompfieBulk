@@ -1486,3 +1486,28 @@ class ClientDatabase(Database):
         else:
             print "Assign Compliances to the Unit first"
             return
+
+    def get_compliance_approval_list(session_user, client_id):
+        assignee_columns = "completed_by"
+        assignee_condition = "approved_by = '%d' or concurred_by = '%d'" % (session_user, session_user)
+        assignee_rows = self.get_data(self.tbl_compliance_history, assingee_columns, assignee_condition)
+        for assignee in assignee_rows:
+            compliance_history_columns = "compliance_history_id, compliance_id, start_date, due_date,"+\
+            " documents, upload_date, completed_on, next_due_date, concurred_by, remarks"
+            compliance_history_condition = "%s and completed_by = '%d'"% (
+                assignee_condition, assignee[0])
+            compliance_history_rows = self.get_data(self.tbl_compliance_history, compliance_history_columns,
+                compliance_history_condition)
+            for compliance_history in compliance_history_rows:
+                compliance_id = compliance_history[1]
+                compliance_columns = "compliance_id, compliance_task, compliance_description,"+\
+                "frequency_id"
+                compliance_condition = "compliance_id = '%d'" % compliance_history[1]
+                compliance_row = self.get_data(self.tblCompliances, compliance_columns, 
+                    compliance_condition)
+                
+                domain_name_column = "domain_name"
+                condition = " domain_id = (select domain_id from tbl_client_statutories "+\
+                " where client_statutory_id = (select client_statutory_id from "+\
+                " tbl_client_statutories where compliance_id ='%d'))" % compliance_id 
+                domain_name_row =  self.get_data()
