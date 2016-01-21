@@ -1297,7 +1297,7 @@ class ClientDatabase(Database):
                     n_date = (datetime.date.today() + datetime.timedelta(add_month*365/12)).isoformat()
                     n_date = datetime.datetime.strptime(n_date, "%Y-%m-%d")
                     new_date = n_date.replace(day = s_day)
-                    due_date = new_date.strftime("%d-%m-%Y")
+                    due_date = new_date.strftime("%d-%b-%Y")
                     break;
             
             compliance = clienttransactions.UNIT_WISE_STATUTORIES(
