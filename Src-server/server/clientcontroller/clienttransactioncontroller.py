@@ -1,4 +1,4 @@
-from protocol import (clienttransactions, core)
+from protocol import (clienttransactions, login, core)
 
 __all__ = [
 	"process_client_transaction_requests"
