@@ -67,8 +67,9 @@ class Database(object) :
     def connect(self):
         assert self._connection is None
         connection = mysql.connect(
-            self._mysqlHost, self._mysqlUser, 
-            self._mysqlPassword, self._mysqlDatabase
+            host=self._mysqlHost, user=self._mysqlUser, 
+            passwd=self._mysqlPassword, db=self._mysqlDatabase,
+            port=3306
         )
         connection.autocommit(False)
         self._connection = connection
@@ -2097,10 +2098,18 @@ class KnowledgeDatabase(Database):
                 pass
 
             elif compliance_frequency == 4 :
+                if duration is None :
+                    duration = ""
+                if duration_type is None:
+                    duration_type = ""
                 columns.extend(["duration", "duration_type_id"])
                 values.extend([duration, duration_type])
 
             else :
+                if repeats_every is None :
+                    repeats_every = ""
+                if repeats_type is None :
+                    repeats_type = ""
                 columns.extend(["repeats_every", "repeats_type_id"])
                 values.extend([repeats_every, repeats_type])
             self.insert(table_name, columns, values)
