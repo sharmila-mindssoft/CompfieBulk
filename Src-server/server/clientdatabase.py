@@ -1617,7 +1617,7 @@ class ClientDatabase(Database):
                 group_by_name,
                 group_by_name
             )
-        print
+        print 
         print query
         print
         rows = self.select_all(query, client_id)
