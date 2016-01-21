@@ -130,7 +130,11 @@ $("#submit").click(function(){
 	  if(result) {
 	   	var passlevellist = [];
 		for(var k=1; k<=10; k++) {
-			if($("#level"+k).val() != ''){
+
+			if($("#levelid"+k).val() != '' && $("#level"+k).val() == ''){
+				displayMessage("Geography Level "+ k + " Should not be Empty")
+				return false;
+			}else if($("#level"+k).val() != ''){
 				if($("#levelid"+k).val() != ''){
 					passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val(), "level_id" : parseInt($("#levelid"+k).val())});
 				}else{

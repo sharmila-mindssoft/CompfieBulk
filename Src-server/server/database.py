@@ -1264,9 +1264,14 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return result
 
-    def check_duplicate_geography(self, parent_ids, geography_id) :
-        query = "SELECT geography_id, geography_name, level_id, is_active \
-            FROM tbl_geographies WHERE parent_ids='%s' " % (parent_ids)
+    def check_duplicate_geography(self, country_id, parent_ids, geography_id) :
+        query = "SELECT t1.geography_id, t1.geography_name, \
+            t1.level_id, t1.is_active \
+            FROM tbl_geographies t1 \
+            INNER JOIN tbl_geography_levels t2 \
+            ON t1.level_id = t2.level_id \
+            WHERE t1.parent_ids='%s' \
+            AND t2.country_id = %s" % (parent_ids, country_id)
         if geography_id is not None :
             query = query + " AND geography_id != %s" % geography_id
         
@@ -1349,12 +1354,12 @@ class KnowledgeDatabase(Database):
             return True
 
     def get_statutory_by_id(self, statutory_id):
-        query = "SELECT statutory_id, statutory_name, level_id, parent_ids, is_active \
+        query = "SELECT statutory_id, statutory_name, level_id, parent_ids \
             FROM tbl_statutories WHERE statutory_id = %s" % (statutory_id)
         rows = self.select_one(query)
         result = []
         if rows :
-            columns = ["statutory_id", "statutory_name", "level_id", "parent_ids", "is_active"]
+            columns = ["statutory_id", "statutory_name", "level_id", "parent_ids"]
             result = self.convert_to_dict(rows, columns)
         return result
 
@@ -3481,7 +3486,12 @@ class KnowledgeDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return return_unit_details(result)
 
-    def get_assign_statutory_wizard_two(self, country_id, geography_id, industry_id, domain_id, user_id):
+    def get_assign_statutory_wizard_two(
+        self, country_id, geography_id, industry_id, 
+        domain_id, unit_id, user_id
+    ):
+        if unit_id is not None :
+            return self.return_unassign_statutory_wizard_two(country_id, geography_id, industry_id, domain_id, unit_id)
         query = "SELECT distinct t1.statutory_mapping_id, \
             t1.statutory_nature_id, t2.statutory_nature_name, \
             t5.statutory_id\
@@ -3494,7 +3504,8 @@ class KnowledgeDatabase(Database):
             ON t1.statutory_mapping_id = t4.statutory_mapping_id \
             INNER JOIN tbl_statutory_statutories t5 \
             ON t1.statutory_mapping_id = t5.statutory_mapping_id\
-            WHERE t1.domain_id = %s \
+            WHERE t1.approval_status IN (1, 3) \
+            AND t1.domain_id = %s \
             AND t1.country_id = %s \
             AND t3.industry_id = %s \
             AND t4.geography_id\
@@ -3533,6 +3544,33 @@ class KnowledgeDatabase(Database):
         if rows :
             result = self.convert_to_dict(rows, columns)
         return result
+
+    def return_unassign_statutory_wizard_two(
+        self, country_id, geography_id, industry_id, 
+        domain_id, unit_id
+    ):
+        new_compliance = self.get_unassigned_compliances(
+            country_id, domain_id, industry_id, 
+            geography_id, unit_id
+        )
+        assigned_statutory_list = []
+        for key, value in new_compliance.items() :
+            name = self.statutory_parent_mapping[int(key)][0]
+            compliances = value
+            applicable_status = bool(1)
+            statutory_opted_status = None
+            not_applicable_remarks = None
+            assigned_statutory_list.append(
+                core.AssignedStatutory(
+                    key, name, compliances, applicable_status, 
+                    statutory_opted_status,
+                    not_applicable_remarks
+                )
+            )
+        return technotransactions.GetStatutoryWizardTwoDataSuccess(
+            assigned_statutory_list
+        )
+
 
     def return_assign_statutory_wizard_two(self, country_id, domain_id, data):
         if bool(self.statutory_parent_mapping) is False:
@@ -3686,7 +3724,7 @@ class KnowledgeDatabase(Database):
 
 
     def get_assigned_statutories_list(self, user_id):
-        query = "SELECT t1.client_statutory_id, t1.client_id, \
+        query = "SELECT distinct t1.client_statutory_id, t1.client_id, \
             t1.geography_id, t1.country_id, t1.domain_id, t1.unit_id, \
             t1.submission_type, t2.group_name, t3.geography_name, \
             t4.country_name, t5.domain_name, t6.unit_name, \
@@ -3764,7 +3802,7 @@ class KnowledgeDatabase(Database):
             t1.submission_type, t2.group_name, t3.geography_name, \
             t4.country_name, t5.domain_name, t6.unit_name, \
             t7.business_group_name, t8.legal_entity_name,\
-            t9.division_name, t10.industry_name \
+            t9.division_name, t10.industry_name, t6.industry_id \
             FROM tbl_client_statutories t1 \
             INNER JOIN tbl_client_groups t2 \
             ON t1.client_id = t2.client_id \
@@ -3790,7 +3828,7 @@ class KnowledgeDatabase(Database):
             "country_id", "domain_id", "unit_id", "submission_type",
             "group_name", "geography_name", "country_name",
             "domain_name", "unit_name", "business_group_name", "legal_entity_name",
-            "division_name", "industry_name"
+            "division_name", "industry_name", "industry_id"
         ]
         result = self.convert_to_dict(rows, columns)
         return self.return_assigned_statutories_by_id(result)
@@ -3883,8 +3921,113 @@ class KnowledgeDatabase(Database):
 
         return final_statutory_list
 
+    def get_unassigned_compliances(self, country_id, domain_id, industry_id, geography_id, unit_id) :
+        query = "SELECT distinct \
+            t6.compliance_id, t6.compliance_task, t6.document_name,\
+            t6.statutory_provision, t6.compliance_description, t2.statutory_id, \
+            t.statutory_nature_name \
+            FROM tbl_compliances t6 \
+            INNER JOIN tbl_statutory_industry t3 \
+            ON t6.statutory_mapping_id = t3.statutory_mapping_id\
+            INNER JOIN tbl_statutory_geographies t4 \
+            ON t6.statutory_mapping_id = t4.statutory_mapping_id \
+            INNER JOIN tbl_statutory_mappings t1 \
+            ON t6.statutory_mapping_id = t1.statutory_mapping_id \
+            INNER JOIN tbl_statutory_statutories t2 \
+            ON t1.statutory_mapping_id = t2.statutory_mapping_id \
+            INNER JOIN tbl_statutory_natures t\
+            ON t1.statutory_nature_id = t.statutory_nature_id\
+            WHERE t1.approval_status IN (1, 3) \
+            AND t1.domain_id = %s \
+            AND t1.country_id = %s \
+            AND t3.industry_id = %s \
+            AND t4.geography_id\
+            IN ( \
+                SELECT g.geography_id \
+                FROM tbl_geographies g \
+                WHERE g.geography_id = %s \
+                OR g.parent_ids LIKE '%s' )\
+            AND t6.compliance_id NOT IN ( \
+                SELECT distinct c.compliance_id \
+                FROM tbl_client_compliances c \
+                INNER JOIN tbl_client_statutories s\
+                ON c.client_statutory_id = s.client_statutory_id\
+                AND s.geography_id = %s \
+                AND s.domain_id = %s \
+                AND s.unit_id = %s \
+                ) \
+            " % (
+                    domain_id, country_id, industry_id, geography_id, 
+                    str("%" + str(geography_id) + ",%"), 
+                    geography_id, domain_id, unit_id
+                )
+        rows = self.select_all(query)
+        columns = ["compliance_id", "compliance_task",
+            "document_name", "statutory_provision",
+            "compliance_description", "statutory_id", "statutory_nature_name"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        # New compliances to_structure
+        if bool(self.statutory_parent_mapping) is False:
+            self.get_statutory_master()
+        level_1_compliance = {}
+        for d in result :
+            statutory_nature_name  = d["statutory_nature_name"]
+            statutory_id = int(d["statutory_id"])
+            statutory_data = self.statutory_parent_mapping.get(statutory_id)
+            s_mapping = statutory_data[1] 
+            statutory_parents = statutory_data[2]
+            level_1 = statutory_parents[0]
+            compliance_applicable_status = bool(1)
+            compliance_opted_status = None
+            compliance_remarks = None
+            compliance_applicable_list = level_1_compliance.get(level_1)
+            if compliance_applicable_list is None:
+                compliance_applicable_list = []
+            provision = "%s - %s" % (s_mapping, d["statutory_provision"])
+            name = "%s - %s" % (d["document_name"], d["compliance_task"])
+            c_data = core.ComplianceApplicability(
+                d["compliance_id"],
+                name,
+                d["compliance_description"],
+                provision,
+                statutory_nature_name,
+                compliance_applicable_status,
+                compliance_opted_status,
+                compliance_remarks
+            )
+            compliance_applicable_list.append(c_data)
+            level_1_compliance[level_1] = compliance_applicable_list
+
+        return level_1_compliance
+
     def return_assigned_statutories_by_id(self, data):
-        statutories = self.return_assigned_compliances_by_id(data["client_statutory_id"])
+        client_statutory_id = data["client_statutory_id"]
+        statutories = self.return_assigned_compliances_by_id(client_statutory_id)
+        new_compliances = self.get_unassigned_compliances(
+            data["country_id"], data["domain_id"],
+            data["industry_id"], data["geography_id"], 
+            data["unit_id"]
+        )
+        for key, value in new_compliances.iteritems():
+            key = int(key)
+            key_exists = False
+            for item in statutories :
+                if key == item.level_1_statutory_id:
+                    key_exists = True
+                    break
+            if key_exists is False :
+                statutory_name = self.statutory_parent_mapping.get(key)[0]
+                s_data = core.AssignedStatutory(
+                    key,
+                    statutory_name,
+                    None,
+                    True,
+                    None,
+                    None
+                )
+                statutories.append(s_data)
+
         return technotransactions.GetAssignedStatutoriesByIdSuccess (
             data["country_name"],
             data["group_name"],
@@ -3894,7 +4037,8 @@ class KnowledgeDatabase(Database):
             data["unit_name"],
             data["geography_name"],
             data["domain_name"],
-            statutories
+            statutories,
+            new_compliances
         )
 
     def get_assigned_statutories_report(self, request_data, user_id):
@@ -3957,7 +4101,7 @@ class KnowledgeDatabase(Database):
                 division_id, unit_id, level_1_statutory_id,
                 applicable_status, applicable_status
             )
-        
+
         rows = self.select_all(query)
         columns = ["client_statutory_id", "client_id", "geography_id",
             "country_id", "domain_id", "unit_id", "submission_type",
@@ -3999,7 +4143,8 @@ class KnowledgeDatabase(Database):
                 )
             else :
                 statutories = unit_statutories.assigned_statutories
-                statutories.append(
+
+                statutories.extend(
                     self.return_assigned_compliances_by_id(client_statutory_id)
                 )
                 unit_statutories.assigned_statutories = statutories

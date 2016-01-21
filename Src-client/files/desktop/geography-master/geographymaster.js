@@ -89,7 +89,8 @@ function loadGeographiesList(geographiesList) {
       $('.country', clone).text(countryName);
       $('.level', clone).text(level);
       $('.name', clone).text(geographyName);
-      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+geographyId+',\''+geographyName+'\',\''+countryName+'\','+entity+','+lposition+','+parentid+')"/>');
+      $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+geographyId+',\''+geographyName+'\',\''+
+        countryName+'\','+entity+','+lposition+','+parentid+')"/>');
       $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+geographyId+','+passStatus+')"/>');
       $('.tbody-geography-list').append(clone);
       j = j + 1;
@@ -131,11 +132,13 @@ $("#countryval").keyup(function(){
   $('#ulist_text').empty();
   if(textval.length>0){
     for(var i in countries){
-      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true) suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
+      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true) 
+        suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_text(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+
+              suggestions[i][1]+'</li>';
     }
     $('#ulist_text').append(str);
     $("#country").val('');
@@ -263,7 +266,7 @@ function saverecord(j,e){
       if(map_gm_id.length == 0){
         map_gm_id.push(0);
       }
-      mirror.saveGeography(parseInt(glm_id), datavalue, map_gm_id,
+      mirror.saveGeography(parseInt(glm_id), datavalue, map_gm_id, parseInt($("#country").val()),
         function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -404,7 +407,7 @@ function updaterecord(j,e){
       if(map_gm_id.length == 0){
         map_gm_id.push(0);
       }
-      mirror.updateGeography(parseInt(geographyid), parseInt(glm_id), datavalue, map_gm_id,
+      mirror.updateGeography(parseInt(geographyid), parseInt(glm_id), datavalue, map_gm_id, parseInt($("#country").val()),
         function (error, response) {
           if (error == null){
             onSuccess(response);

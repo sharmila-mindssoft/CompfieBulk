@@ -1346,16 +1346,17 @@ class STATUTORY_WISE_COMPLIANCES(object):
 #
 
 class AssignedStatutory(object):
-    def __init__(self, client_statutory_id, level_1_statutory_name, compliances, applicable_status, not_applicable_remarks):
+    def __init__(self, client_statutory_id, level_1_statutory_name, compliances, applicable_status, opted_status, not_applicable_remarks):
         self.client_statutory_id = client_statutory_id
         self.level_1_statutory_name = level_1_statutory_name
         self.compliances = compliances
         self.applicable_status = applicable_status
+        self.opted_status = opted_status
         self.not_applicable_remarks = not_applicable_remarks
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_statutory_id", "level_1_statutory_name", "compliances", "applicable_status", "not_applicable_remarks"])
+        data = parse_dictionary(data, ["client_statutory_id", "level_1_statutory_name", "compliances", "applicable_status", "opted_status", "not_applicable_remarks"])
         client_statutory_id = data.get("client_statutory_id")
         client_statutory_id = parse_structure_UnsignedIntegerType_32(client_statutory_id)
         level_1_statutory_name = data.get("level_1_statutory_name")
@@ -1364,9 +1365,11 @@ class AssignedStatutory(object):
         compliances = parse_structure_VectorType_RecordType_clienttransactions_ComplianceApplicability(compliances)
         applicable_status = data.get("applicable_status")
         applicable_status = parse_structure_Bool(applicable_status)
+        opted_status = data.get("opted_status")
+        opted_status = parse_structure_Bool(opted_status)
         not_applicable_remarks = data.get("not_applicable_remarks")
         not_applicable_remarks = parse_structure_OptionalType_CustomTextType_500(not_applicable_remarks)
-        return AssignedStatutory(client_statutory_id, level_1_statutory_name, compliances, applicable_status, not_applicable_remarks)
+        return AssignedStatutory(client_statutory_id, level_1_statutory_name, compliances, applicable_status, opted_status, not_applicable_remarks)
 
     def to_structure(self):
         return {
@@ -1374,6 +1377,7 @@ class AssignedStatutory(object):
             "level_1_statutory_name": to_structure_CustomTextType_50(self.level_1_statutory_name),
             "compliances": to_structure_VectorType_RecordType_clienttransactions_ComplianceApplicability(self.compliances),
             "applicable_status": to_structure_Bool(self.applicable_status),
+            "opted_status": to_structure_Bool(self.opted_status),
             "not_applicable_remarks": to_structure_OptionalType_CustomTextType_500(self.not_applicable_remarks),
         }
 

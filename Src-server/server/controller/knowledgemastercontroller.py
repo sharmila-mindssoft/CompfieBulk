@@ -231,8 +231,9 @@ def process_save_geography(db, request_frame, user_id):
 	geography_name = request_frame.geography_name
 	parent_ids_list = request_frame.parent_ids
 	parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
+	country_id = request_frame.country_id
 
-	saved_names = [row["geography_name"].lower() for row in db.check_duplicate_geography(parent_ids, None)]
+	saved_names = [row["geography_name"].lower() for row in db.check_duplicate_geography(country_id, parent_ids, None)]
 
 	if saved_names.count(geography_name.lower()) > 0 :
 		return knowledgemaster.GeographyNameAlreadyExists()
@@ -247,8 +248,9 @@ def process_update_geography(db, request_frame, user_id):
 	geography_name = request_frame.geography_name
 	parent_ids_list = request_frame.parent_ids
 	parent_ids = ','.join(str(x) for x in parent_ids_list) + ","
+	country_id = request_frame.country_id
 
-	saved_names = [row["geography_name"].lower() for row in db.check_duplicate_geography(parent_ids, geography_id)]
+	saved_names = [row["geography_name"].lower() for row in db.check_duplicate_geography(country_id, parent_ids, geography_id)]
 	if saved_names.count(geography_name.lower()) > 0 :
 		return knowledgemaster.GeographyNameAlreadyExists()
 	else :
@@ -298,7 +300,7 @@ def process_update_statutory(db, request_frame, user_id):
 
 
 	saved_names = [row["statutory_name"].lower() for row in db.check_duplicate_statutory(parent_ids, statutory_id)]
-	if saved_names.count(saved_names.lower()) > 0 :
+	if saved_names.count(statutory_name.lower()) > 0 :
 		return knowledgemaster.StatutoryNameAlreadyExists()
 	else :
 		if (db.update_statutory(statutory_id, statutory_name, parent_ids, user_id)):

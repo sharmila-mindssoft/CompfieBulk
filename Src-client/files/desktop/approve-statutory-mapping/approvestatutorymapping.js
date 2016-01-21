@@ -229,10 +229,10 @@ function loadApproveStatutory(){
         //load compliance frequency selectbox
 
         for (var status in approvalStatusList) {
-        var option = $("<option></option>");
-        option.val(approvalStatusList[status]["approval_status_id"]);
-        option.text(approvalStatusList[status]["approval_status"]);
-        $("#action"+j).append(option);
+          var option = $("<option></option>");
+          option.val(approvalStatusList[status]["approval_status_id"]);
+          option.text(   approvalStatusList[status]["approval_status"].replace("Pending", "Select") );
+          $("#action"+j).append(option);
         }
         j = j + 1;
       }
@@ -319,6 +319,11 @@ $("#saverecord").click(function(){
       approveStatutoryList = mirror.approveStatutoryList(statutory_mapping_id, statutory_provision, approval_status, rejected_reason, notification_text);
       approvelist.push(approveStatutoryList);
     }
+  }
+
+  if(approvelist.length == 0){
+    displayMessage("Atleast one action required");
+    return false;
   }
   function onSuccess(response) {
     $(".grid-table").hide();

@@ -27,7 +27,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCompliance,
     parse_structure_Bool,
     parse_structure_OptionalType_CustomTextType_500,
-    parse_structure_SignedIntegerType_8
+    parse_structure_SignedIntegerType_8,
+    parse_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability
 
 )
 from protocol.to_structure import (
@@ -56,7 +57,8 @@ from protocol.to_structure import (
     to_structure_MapType_UnsignedIntegerType_32_Bool,
     to_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCompliance,
     to_structure_Bool,
-    to_structure_OptionalType_CustomTextType_500
+    to_structure_OptionalType_CustomTextType_500,
+    to_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability
 )
 
 #
@@ -131,15 +133,16 @@ class GetAssignedStatutoryWizardOneData(Request):
         }
 
 class GetStatutoryWizardTwoData(Request):
-    def __init__(self, country_id, geography_id, industry_id, domain_id):
+    def __init__(self, country_id, geography_id, industry_id, domain_id, unit_id):
         self.country_id = country_id
         self.geography_id = geography_id
         self.industry_id = industry_id
         self.domain_id = domain_id
+        self.unit_id = unit_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "geography_id", "industry_id", "domain_id"])
+        data = parse_dictionary(data, ["country_id", "geography_id", "industry_id", "domain_id", "unit_id"])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         geography_id = data.get("geography_id")
@@ -148,7 +151,9 @@ class GetStatutoryWizardTwoData(Request):
         industry_id = parse_structure_UnsignedIntegerType_32(industry_id)
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        return GetStatutoryWizardTwoData(country_id, geography_id, industry_id, domain_id)
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
+        return GetStatutoryWizardTwoData(country_id, geography_id, industry_id, domain_id, unit_id)
 
     def to_inner_structure(self):
         return {
@@ -156,6 +161,7 @@ class GetStatutoryWizardTwoData(Request):
             "geography_id": to_structure_SignedIntegerType_8(self.geography_id),
             "industry_id": to_structure_SignedIntegerType_8(self.industry_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "unit_id": to_structure_SignedIntegerType_8(self.unit_id)
         }
 
 class AssignedStatutoryCompliance(object):
@@ -290,7 +296,7 @@ class GetAssignedStatutoriesListSuccess(Response):
         }
 
 class GetAssignedStatutoriesByIdSuccess(Response):
-    def __init__(self, country_name, group_name, business_group_name, legal_entity_name, division_name, unit_name, geography_name, domain_name, statutories):
+    def __init__(self, country_name, group_name, business_group_name, legal_entity_name, division_name, unit_name, geography_name, domain_name, statutories, new_compliances):
         self.country_name = country_name
         self.group_name = group_name
         self.business_group_name = business_group_name
@@ -300,10 +306,11 @@ class GetAssignedStatutoriesByIdSuccess(Response):
         self.geography_name = geography_name
         self.domain_name = domain_name
         self.statutories = statutories
+        self.new_compliances = new_compliances
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_name", "group_name", "business_group_name", "legal_entity_name", "division_name", "unit_name", "geography_name", "domain_name", "statutories"])
+        data = parse_dictionary(data, ["country_name", "group_name", "business_group_name", "legal_entity_name", "division_name", "unit_name", "geography_name", "domain_name", "statutories", "new_compliances"])
         country_name = data.get("country_name")
         country_name = parse_structure_CustomTextType_50(country_name)
         group_name = data.get("group_name")
@@ -322,7 +329,9 @@ class GetAssignedStatutoriesByIdSuccess(Response):
         domain_name = parse_structure_CustomTextType_50(domain_name)
         statutories = data.get("statutories")
         statutories = parse_structure_VectorType_RecordType_core_AssignedStatutory(statutories)
-        return GetAssignedStatutoriesByIdSuccess(country_name, group_name, business_group_name, legal_entity_name, division_name, unit_name, geography_name, domain_name, statutories)
+        new_compliances = data.get("new_compliances")
+        new_compliances = parse_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability(new_compliances)
+        return GetAssignedStatutoriesByIdSuccess(country_name, group_name, business_group_name, legal_entity_name, division_name, unit_name, geography_name, domain_name, statutories, new_compliances)
 
     def to_inner_structure(self):
         return {
@@ -335,6 +344,7 @@ class GetAssignedStatutoriesByIdSuccess(Response):
             "geography_name": to_structure_CustomTextType_50(self.geography_name),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "statutories": to_structure_VectorType_RecordType_core_AssignedStatutory(self.statutories),
+            "new_compliances": to_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability(self.new_compliances),
         }
 
 class GetAssignedStatutoryWizardOneDataSuccess(Response):

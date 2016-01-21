@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8090/";
+var BASE_URL = "http://localhost:8080/";
 
 function initMirror() {
     var DEBUG = true;
@@ -390,27 +390,30 @@ function initMirror() {
         apiRequest("api/knowledge_master", request, callback);   
     }
 
-    function saveGeography(levelId, name, parentIds, callback) {
+    function saveGeography(levelId, name, parentIds, countryId, callback) {
         var request = [
             "SaveGeography",
             { 
                 "geography_level_id": levelId,
                 "geography_name": name,
-                "parent_ids": parentIds
+                "parent_ids": parentIds,
+                "country_id": countryId
             }
         ];
         apiRequest("api/knowledge_master", request, callback);
     }
 
-    function updateGeography(geographyId, levelId, name, parentIds,
-     callback) {
+    function updateGeography(
+        geographyId, levelId, name, parentIds, countryId, callback
+    ) {
         var request = [
             "UpdateGeography",
             { 
                 "geography_id": geographyId,
                 "geography_level_id": levelId,
                 "geography_name": name,
-                "parent_ids": parentIds
+                "parent_ids": parentIds,
+                "country_id": countryId
             }
         ];
         apiRequest("api/knowledge_master", request, callback);
@@ -1072,14 +1075,15 @@ function initMirror() {
         apiRequest(callerName, request, callback)
     }
 
-    function getAssignStatutoryWizardTwo(countryId, domainId, industryId, geographyId, callback) {
+    function getAssignStatutoryWizardTwo(countryId, domainId, industryId, geographyId, unitId, callback) {
         var request = [
             "GetStatutoryWizardTwoData",
             {
                 "country_id": countryId,
                 "domain_id": domainId,
                 "industry_id": industryId,
-                "geography_id": geographyId
+                "geography_id": geographyId,
+                "unit_id": unitId
             }
         ]
         callerName = "api/techno_transaction"

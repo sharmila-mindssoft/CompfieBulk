@@ -30,7 +30,7 @@ class ClientDatabase(Database):
             self.begin()
             self._client_db_connections[int(client_id)] = self._connection
             self._client_db_cursors[int(client_id)] = self._cursor
-        #print self._client_db_cursors
+        print self._client_db_cursors
         self.initialize_table_names()
 
     def execute(self, query, client_id = None) :
@@ -164,6 +164,7 @@ class ClientDatabase(Database):
         columns = "client_id"
         condition = "url_short_name = '%s'"% short_name
         rows = self.get_data("tbl_client_groups", columns, condition, 0)
+        print rows
         return rows[0][0]
 
     def verify_username(self, username, client_id):
@@ -305,7 +306,9 @@ class ClientDatabase(Database):
         condition = "1"
         if business_group_ids != None:
             condition = "business_group_id in (%s)" % business_group_ids
+        print condition
         rows = self.get_data(self.tblBusinessGroups, columns, condition, client_id) 
+        print rows
         columns = ["business_group_id", "business_group_name"]
         result = self.convert_to_dict(rows, columns)
         return self.return_business_groups(result)
@@ -986,15 +989,18 @@ class ClientDatabase(Database):
             if statutory_opted is None :
                 statutory_opted = bool(r["statutory_applicable"])
             compliance_opted = r["compliance_opted"]
+            print compliance_opted
             if compliance_opted is None :
                 compliance_opted = bool(r["compliance_applicable"])
             if compliance_opted == "" :
                 compliance_opted = True
+            print compliance_opted
+
             compliance_remarks = r["compliance_remarks"]
             if compliance_remarks == "" :
                 compliance_remarks = None
             mappings = r["statutory_mapping"].split('>>')
-            statutory_name = mappings[0]
+            statutory_name = mappings[0].strip()
             provision = "%s - %s" % (','.join(mappings[1:]), r["statutory_provision"])
             name ="%s - %s" % (r["document_name"], r["compliance_task"])
             compliance = clienttransactions.ComplianceApplicability(
@@ -1003,7 +1009,7 @@ class ClientDatabase(Database):
                 r["compliance_description"],
                 provision,
                 bool(r["compliance_applicable"]),
-                compliance_opted,
+                bool(compliance_opted),
                 compliance_remarks
             )
 
@@ -1204,7 +1210,7 @@ class ClientDatabase(Database):
         if session_user == 0 :
             session_user = '%'
 
-        query = "SELECT group_concat(distinct t1.client_statutory_id) client_statutory_ids, \
+        query = "SELECT group_concat(distinct t2.client_statutory_id) client_statutory_ids, \
             t1.domain_id,group_concat(distinct t1.unit_id) unit_ids, \
             t2.compliance_id, \
             t2.statutory_applicable, t2.statutory_opted, \
@@ -1214,9 +1220,9 @@ class ClientDatabase(Database):
             t3.compliance_task, t3.document_name, t3.compliance_description,\
             t3.statutory_mapping, t3.statutory_provision, \
             t3.statutory_dates, t4.frequency \
-            FROM tbl_client_statutories t1 \
-            INNER JOIN tbl_client_compliances t2 \
-            ON t1.client_statutory_id = t2.client_statutory_id \
+            FROM tbl_client_compliances t2 \
+            INNER JOIN tbl_client_statutories t1 \
+            ON t2.client_statutory_id = t1.client_statutory_id \
             INNER JOIN tbl_compliances t3 \
             ON t2.compliance_id = t3.compliance_id \
             INNER JOIN tbl_compliance_frequency t4\
@@ -1235,6 +1241,7 @@ class ClientDatabase(Database):
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids))
             )
+        print query
         rows = self.select_all(query, client_id)
         columns = ["client_statutory_ids", "domain_id", "unit_ids",
             "compliance_id", "statutory_applicable", "statutory_opted",
@@ -1356,8 +1363,7 @@ class ClientDatabase(Database):
                 unit_value_tuple = (int(user_id), int(unit_id))
                 unit_values_list.append(unit_value_tuple)
             result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
-           
-
+            print result4
 
     def get_level_1_statutory(self, client_id):
         columns = "client_statutory_id, statutory_provision"
@@ -1412,7 +1418,6 @@ class ClientDatabase(Database):
         compliance_columns = "compliance_id, compliance_task, document_name, statutory_dates"
         compliance_condition = " compliance_id in (%s) " % client_compliance_ids
         compliance_rows = self.get_data(self.tblCompliances, compliance_columns, compliance_condition)
-
         for compliance in compliance_rows:
             pass
 
