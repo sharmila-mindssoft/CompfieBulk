@@ -491,4 +491,3 @@ $(function() {
 	// });
 	initialize();
 });
-

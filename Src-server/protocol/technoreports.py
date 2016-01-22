@@ -303,20 +303,20 @@ class GroupedUnits(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["division_id", "legal_entity_id", "business_group_id", "units"])
         division_id = data.get("division_id")
-        division_id = parse_structure_UnsignedIntegerType_32(division_id)
+        division_id = parse_structure_OptionalType_UnsignedIntegerType_32(division_id)
         legal_entity_id = data.get("legal_entity_id")
         legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
+        business_group_id = parse_structure_OptionalType_UnsignedIntegerType_32(business_group_id)
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_techno_report_UnitDetails(units)
         return GroupedUnits(division_id, legal_entity_id, business_group_id, units)
 
     def to_structure(self):
         return {
-            "division_id": to_structure_UnsignedIntegerType_32(self.division_id),
+            "division_id": to_structure_OptionalType_UnsignedIntegerType_32(self.division_id),
             "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id),
-            "business_group_id": to_structure_UnsignedIntegerType_32(self.business_group_id),
+            "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
             "units" : to_structure_VectorType_RecordType_techno_report_UnitDetails(self.units)
         }
 

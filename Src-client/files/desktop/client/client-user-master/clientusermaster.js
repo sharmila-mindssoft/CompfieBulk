@@ -111,6 +111,7 @@ function loadClientUserList(){
 		var userId = users["user_id"];
 		var isActive = users["is_active"];
 		var isAdmin = users["is_admin"];
+
 		if(isActive == true){
 			imageName = "icon-active.png";
 			title = "Click here to deactivate"
@@ -134,7 +135,6 @@ function loadClientUserList(){
 		
 		var seatingUnitId = userList[i]['seating_unit_id']
 		var userGroupId = userList[i]['user_group_id'];
-		
 		if(users["user_group_id"] != null){
 			var tableRow = $('#templates .table-users-list .table-row');
 			var clone = tableRow.clone();

@@ -8,6 +8,7 @@ from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
     parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
     parse_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    parse_structure_VectorType_RecordType_core_BusinessGroup,
     parse_structure_VectorType_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE,
     parse_structure_VectorType_RecordType_clienttransactions_USERWISEUNITS,
@@ -44,13 +45,17 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_VectorType_RecordType_clienttransactions_ApplicableCompliance,
     parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance,
+    parse_structure_VectorType_RecordType_core_ComplianceFrequency,
     parse_structure_CustomTextType_100,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_VectorType_RecordType_core_ComplianceFrequency,
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate
-
+    parse_structure_CustomTextType_100,
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
+    parse_structure_OptionalType_CustomTextType_20,
+    parse_structure_OptionalType_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -60,6 +65,7 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER,
     to_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    to_structure_VectorType_RecordType_core_BusinessGroup,
     to_structure_VectorType_RecordType_core_Statutory,
     to_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE,
     to_structure_VectorType_RecordType_clienttransactions_USERWISEUNITS,
@@ -111,14 +117,14 @@ from protocol.to_structure import (
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate
 )
-
+ 
 #
-# Request
+# Request 
 #
 
 class Request(object):
     def to_structure(self):
-        name = type(self).__name__
+        name = type(self).__name__ 
         inner = self.to_inner_structure()
         return [name, inner]
 

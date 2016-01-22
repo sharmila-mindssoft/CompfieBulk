@@ -3171,7 +3171,7 @@ class KnowledgeDatabase(Database):
         columns = ["is_active", "updated_on" , "updated_by"]
         values = [is_active, current_time_stamp, session_user]
         condition = "legal_entity_id = '%d' and client_id = '%d' "% (legal_entity_id, client_id)
-        result = self.update(self.tblUnits, columns, values, condition)
+        self.update(self.tblUnits, columns, values, condition)
 
         division_name = None
         legal_entity_name = None
@@ -3184,7 +3184,7 @@ class KnowledgeDatabase(Database):
             division_name = rows[0][0]
         else:
             action_column = "legal_entity_name"
-            action_condition = "legal_entity_name='%d' and client_id = '%d' "% (legal_entity_id, client_id)
+            action_condition = "legal_entity_id='%d' and client_id = '%d' "% (legal_entity_id, client_id)
             rows = self.get_data(self.tblLegalEntities, action_column, action_condition)
             legal_entity_name = rows[0][0]
 
@@ -3198,7 +3198,8 @@ class KnowledgeDatabase(Database):
                 action = "Activated Division \"%s\" " % division_name
             else:
                 action = "Activated Legal Entity \"%s\" " % legal_entity_name
-        return result
+
+        return True
 
     def reactivate_unit(self, client_id, unit_id, session_user):
         current_time_stamp = str(self.get_date_time())
@@ -3715,7 +3716,6 @@ class KnowledgeDatabase(Database):
                 not_applicable_remarks = ""
             for key, value in d.compliances.iteritems():
                 compliance_id = int(key)
-                
                 if compliance_id not in saved_compliance_ids :
                     created_on = str(self.get_date_time())
                     new_data = d
@@ -4259,8 +4259,8 @@ class KnowledgeDatabase(Database):
         profiles = []
         for client_id in client_ids_list:
             settings_rows = self.get_settings(client_id)
-            contract_from = settings_rows[0][0]
-            contract_to = settings_rows[0][1]
+            contract_from = self.datetime_to_string(settings_rows[0][0])
+            contract_to = self.datetime_to_string(settings_rows[0][1])
             no_of_user_licence = settings_rows[0][2]
             file_space = settings_rows[0][3]
             used_space = 34
@@ -4326,7 +4326,7 @@ class KnowledgeDatabase(Database):
             user_ids = rows[0][0]
             condition = "user_id in (%s)"% user_ids
         else:
-            condition = "1"
+            condition = "1" 
         columns = "user_id, form_id, action, created_on"
         rows = self.get_data(self.tblActivityLog, columns, condition)
         audit_trail_details = []
@@ -4336,7 +4336,7 @@ class KnowledgeDatabase(Database):
             action = row[2]
             date = self.datetime_to_string(row[3])
             audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
-        users = None
+        users = None       
         if session_user != 0:
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
@@ -4408,4 +4408,5 @@ class KnowledgeDatabase(Database):
                     result_row[2], result_row[4], result_row[6], 
                     [int(x) for x in result_row[5].split(",")]))
             GroupedUnits.append(technoreports.GroupedUnits(row[2], row[1], row[0], units))
-        return GroupedUnits  
+        return GroupedUnits   
+
