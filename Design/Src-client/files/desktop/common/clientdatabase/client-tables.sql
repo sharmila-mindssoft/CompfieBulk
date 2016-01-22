@@ -333,7 +333,7 @@ CREATE TABLE `tbl_compliance_history` (
   `compliance_id` int(11) DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `due_date` date DEFAULT NULL,
-  `completion_date` float DEFAULT NULL,
+  `completion_date` date DEFAULT NULL,
   `documents` longtext,
   `validity_date` date DEFAULT NULL,
   `next_due_date` date DEFAULT NULL,
