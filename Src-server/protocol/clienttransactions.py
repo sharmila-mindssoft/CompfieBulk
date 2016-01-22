@@ -48,7 +48,8 @@ from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_VectorType_RecordType_core_ComplianceFrequency,
-    parse_structure_OptionalType_UnsignedIntegerType_32
+    parse_structure_OptionalType_UnsignedIntegerType_32,
+    parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate
 
 )
 from protocol.to_structure import (
@@ -107,7 +108,8 @@ from protocol.to_structure import (
     to_structure_RecordType_client_transactions_IndustryWiseUnits,
     to_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits,
     to_structure_VectorType_RecordType_core_ComplianceFrequency,
-    to_structure_OptionalType_SignedIntegerType_8
+    to_structure_OptionalType_SignedIntegerType_8,
+    to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate
 )
 
 #
@@ -876,9 +878,9 @@ class ASSINGED_COMPLIANCE(object):
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         statutory_dates = data.get("statutory_dates")
-        statutory_dates = parse_structure_VectorType_RecordType_core_StatutoryDate(statutory_dates)
+        statutory_dates = parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         due_date = data.get("due_date")
-        due_date = parse_structure_CustomTextType_20(due_date)
+        due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
         validity_date = data.get("validity_date")
         validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         unit_ids = data.get("unit_ids")
@@ -888,8 +890,8 @@ class ASSINGED_COMPLIANCE(object):
     def to_structure(self):
         return {
             "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
-            "statutory_dates": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
-            "due_date": to_structure_CustomTextType_20(self.due_date),
+            "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
+            "due_date": parse_structure_OptionalType_CustomTextType_20(self.due_date),
             "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
             "unit_ids": to_structure_VectorType_SignedIntegerType_8(self.unit_ids),
         }

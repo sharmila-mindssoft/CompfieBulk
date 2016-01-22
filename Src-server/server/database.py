@@ -3582,6 +3582,8 @@ class KnowledgeDatabase(Database):
             s_mapping = statutory_data[1] 
             statutory_parents = statutory_data[2]
             level_1 = statutory_parents[0]
+            if level_1 == 0 :
+                level_1 = statutory_id
             compliance_applicable_status = bool(1)
             compliance_opted_status = None
             compliance_remarks = None
@@ -3606,7 +3608,8 @@ class KnowledgeDatabase(Database):
 
         assigned_statutory_list = []
         for key, value in level_1_compliance.iteritems() :
-            name = self.statutory_parent_mapping[int(key)][0]
+            name = self.statutory_parent_mapping.get(int(key))
+            name = name[0]
             compliances = value
             applicable_status = bool(1)
             statutory_opted_status = None
