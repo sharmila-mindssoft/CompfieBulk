@@ -450,6 +450,10 @@ def to_structure_VectorType_CustomTextType_20(data):
 def to_structure_Text(data):
     return parse_string(data)
 
+def to_structure_OptionalType_Text(data):
+    if data is None: return None
+    return to_structure_Text(data)
+
 def to_structure_VectorType_CustomTextType_50(data):
     data = parse_list(data, 0)
     lst = []
@@ -2533,9 +2537,18 @@ def to_structure_VectorType_RecordType_core_ComplianceRepeatType(data):
         lst.append(to_structure_RecordType_core_ComplianceRepeatType(item))
     return lst
 
+# Core Number of compliances
+
 def to_structure_RecordType_core_NumberOfCompliances(data):
     from protocol import core
     return core.NumberOfCompliances.to_structure(data)
+
+def to_structure_VectorType_RecordType_core_NumberOfCompliances(data):
+    data = parse_list(data, 0)    
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_NumberOfCompliances(item))
+    return lst 
 
 def to_structure_VectorType_RecordType_dashboard_ChartDataMap(data):
     data = parse_list(data, 0)

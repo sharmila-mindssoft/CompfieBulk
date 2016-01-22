@@ -36,7 +36,10 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_ClientBusinessGroup,
     parse_structure_VectorType_RecordType_core_ClientLegalEntity,
     parse_structure_VectorType_RecordType_core_ClientDivision,
-    parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS
+    parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
+    parse_structure_VectorType_RecordType_core_NumberOfCompliances,
+    parse_structure_OptionalType_VectorType_SignedIntegerType_8,
+    parse_structure_OptionalType_Text
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -74,7 +77,10 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_ClientBusinessGroup,
     to_structure_VectorType_RecordType_core_ClientLegalEntity,
     to_structure_VectorType_RecordType_core_ClientDivision,
-    to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS
+    to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
+    to_structure_VectorType_RecordType_core_NumberOfCompliances,
+    to_structure_OptionalType_VectorType_SignedIntegerType_8,
+    to_structure_OptionalType_Text
 )
 
 #
@@ -133,23 +139,23 @@ class GetComplianceStatusChart(Request):
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         from_date = data.get("from_date")
-        from_date = parse_structure_Text(from_date)
+        from_date = parse_structure_OptionalType_Text(from_date)
         to_date = data.get("to_date")
-        to_date = parse_structure_Text(to_date)
+        to_date = parse_structure_OptionalType_Text(to_date)
         filter_type = data.get("filter_type")
         filter_type = parse_structure_Text(filter_type)
         filter_ids = data.get("filter_ids")
-        filter_ids = parse_structure_VectorType_SignedIntegerType_8(filter_ids)
+        filter_ids = parse_structure_OptionalType_VectorType_SignedIntegerType_8(filter_ids)
         return GetComplianceStatusChart(country_ids, domain_ids, from_date, to_date, filter_type, filter_ids)
 
     def to_inner_structure(self):
         return {
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "from_date": to_structure_Text(self.from_date),
-            "to_date": to_structure_Text(self.to_date),
+            "from_date": to_structure_OptionalType_Text(self.from_date),
+            "to_date": to_structure_OptionalType_Text(self.to_date),
             "filter_type": to_structure_Text(self.filter_type),
-            "filter_ids": to_structure_VectorType_SignedIntegerType_8(self.filter_ids),
+            "filter_ids": to_structure_OptionalType_VectorType_SignedIntegerType_8(self.filter_ids),
         }
 
 class GetEscalationsChart(Request):
@@ -845,13 +851,13 @@ class DataMap(object):
         filter_name = data.get("filter_name")
         filter_name = parse_structure_CustomTextType_100(filter_name)
         no_of_compliances = data.get("no_of_compliances")
-        no_of_compliances = parse_structure_UnsignedIntegerType_32(no_of_compliances)
+        no_of_compliances = parse_structure_VectorType_RecordType_core_NumberOfCompliances(no_of_compliances)
         return DataMap(filter_name, no_of_compliances)
 
     def to_structure(self):
         return {
             "filter_name": to_structure_CustomTextType_100(self.filter_name),
-            "no_of_compliances": to_structure_SignedIntegerType_8(self.no_of_compliances),
+            "no_of_compliances": to_structure_VectorType_RecordType_core_NumberOfCompliances(self.no_of_compliances),
         }
 
 #
