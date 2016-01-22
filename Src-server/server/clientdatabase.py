@@ -345,10 +345,11 @@ class ClientDatabase(Database):
         condition = "1"
         if division_ids != None:
             condition = "division_id in (%s)" % division_ids
-        rows = self.get_data(self.tblDivisions, columns, condition) 
+        rows = self.get_data(self.tblDivisions, columns, condition, client_id) 
         columns = ["division_id", "division_name", "legal_entity_id", 
         "business_group_id"]
         result = self.convert_to_dict(rows, columns)
+        print result
         return self.return_divisions(result)
 
     def return_divisions(self, divisions):
@@ -575,17 +576,21 @@ class ClientDatabase(Database):
         result2 = None
         result3 = None
         current_time_stamp = self.get_date_time()
+        user.is_service_provider = 0 if user.is_service_provider== False else 1
         columns = ["user_id", "user_group_id", "email_id", "password", "employee_name", 
-                "employee_code", "contact_no", "seating_unit_id", "user_level", 
+                "employee_code", "contact_no", "user_level", 
                 "is_admin", "is_service_provider","created_by", "created_on", 
                 "updated_by", "updated_on"]
         values = [ user_id, user.user_group_id, user.email_id, self.generate_password(), user.employee_name,
-                user.employee_code, user.contact_no, user.seating_unit_id, user.user_level, 
+                user.employee_code, user.contact_no, user.user_level, 
                 0, user.is_service_provider, session_user,current_time_stamp,
                 session_user, current_time_stamp]
         if user.is_service_provider == 1:
             columns.append("service_provider_id")
             values.append(user.service_provider_id)
+        else:
+            columns.append("seating_unit_id")
+            values.append(user.seating_unit_id)
 
         result1 = self.insert(self.tblUsers, columns, values, client_id)
 
@@ -622,6 +627,7 @@ class ClientDatabase(Database):
         result4 = None
 
         current_time_stamp = self.get_date_time()
+        user.is_service_provider = 0 if user.is_service_provider == False else 1
         columns = [ "user_group_id", "employee_name", "employee_code",
                 "contact_no", "seating_unit_id", "user_level", 
                 "is_service_provider", "updated_on", "updated_by"]
@@ -633,6 +639,9 @@ class ClientDatabase(Database):
         if user.is_service_provider == 1:
             columns.append("service_provider_id")
             values.append(user.service_provider_id)
+        else:
+            columns.append("seating_unit_id")
+            values.append(user.seating_unit_id)
 
         result1 = self.update(self.tblUsers, columns, values, condition, client_id)
         self.delete(self.tblUserCountries, condition, client_id)
@@ -1411,3 +1420,30 @@ class ClientDatabase(Database):
         compliance_rows = self.get_data(self.tblCompliances, compliance_columns, compliance_condition)
         for compliance in compliance_rows:
             pass
+
+
+    def get_compliance_approval_list(session_user, client_id):
+        assignee_columns = "completed_by"
+        assignee_condition = "approved_by = '%d' or concurred_by = '%d'" % (session_user, session_user)
+        assignee_rows = self.get_data(self.tbl_compliance_history, assingee_columns, assignee_condition)
+        for assignee in assignee_rows:
+            compliance_history_columns = "compliance_history_id, compliance_id, start_date, due_date,"+\
+            " documents, upload_date, completed_on, next_due_date, concurred_by, remarks"
+            compliance_history_condition = "%s and completed_by = '%d'"% (
+                assignee_condition, assignee[0])
+            compliance_history_rows = self.get_data(self.tbl_compliance_history, compliance_history_columns,
+                compliance_history_condition)
+            for compliance_history in compliance_history_rows:
+                compliance_id = compliance_history[1]
+                compliance_columns = "compliance_id, compliance_task, compliance_description,"+\
+                "frequency_id"
+                compliance_condition = "compliance_id = '%d'" % compliance_history[1]
+                compliance_row = self.get_data(self.tblCompliances, compliance_columns, 
+                    compliance_condition)
+                
+                domain_name_column = "domain_name"
+                condition = " domain_id = (select domain_id from tbl_client_statutories "+\
+                " where client_statutory_id = (select client_statutory_id from "+\
+                " tbl_client_statutories where compliance_id ='%d'))" % compliance_id 
+                domain_name_row =  self.get_data()
+
