@@ -1969,7 +1969,8 @@ class ClientDatabase(Database):
             "due_date", "year", "month", "compliances"
         ]
         result = self.convert_to_dict(rows, columns)
-        
+
+
     def get_compliance_status_chart(self, request, session_user, client_id):
         print "inprogress"
         inprogress = self.get_status_wise_compliances(request, client_id, 1)
@@ -1979,5 +1980,4 @@ class ClientDatabase(Database):
         delayed = self.get_status_wise_compliances(request, client_id, 3)
         print "not_complied"
         not_complied = self.get_status_wise_compliances(request, client_id, 4)
-        result = self.get_status_wise_compliances_count(request, client_id)
-        return dashboard.GetComplianceStatusChartSuccess(result)
+        return 
