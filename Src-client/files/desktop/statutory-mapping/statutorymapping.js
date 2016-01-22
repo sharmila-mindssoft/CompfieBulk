@@ -560,7 +560,7 @@ $("#temp_addstatutories").click(function() {
 });
 
 function temp_removestatutories(remove_id){
-  remove = sm_statutoryids.indexOf(remove_id)
+  remove = sm_statutoryids.indexOf(parseInt(remove_id));
   sm_statutoryids.splice(remove,1);
   load_statories();
 }
@@ -749,9 +749,9 @@ function load_compliance(){
     $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="temp_editcompliance(\''+complianceid+'\')"/>');
      
     if(edit_compliance_id != null){
-      if(isActive == 1) {
+      if(isActive == true) {
         display_image="icon-active.png"
-        passStatus = "0";
+        passStatus = false;
       }
       else {
         display_image="icon-inactive.png";
@@ -828,7 +828,7 @@ function temp_editcompliance(edit_id){
 }
 
 function temp_removecompliance(remove_id){
-  compliances.splice(remove_id,1);
+  compliances.splice(parseInt(remove_id),1);
   load_compliance();
 }
 
