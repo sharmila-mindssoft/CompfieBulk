@@ -1425,6 +1425,7 @@ class ClientDatabase(Database):
                 str(tuple(unit_ids)),
                 session_user
             )
+        print query
 
         rows = self.select_all(query, client_id)
         columns = ["compliance_id", "domain_id", "units",
@@ -1501,16 +1502,22 @@ class ClientDatabase(Database):
         for c in compliances:
             compliance_id = int(c.compliance_id)
             statutory_dates = c.statutory_dates
-            date_list = []
-            for dates in statutory_dates :
-                date_list.append(dates.to_structure())
-            date_list = json.dumps(date_list)
-            due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
-            validity_date = c.validity_date
-            if validity_date is not None :
-                validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
+            if statutory_dates is not None :
+                date_list = []
+                for dates in statutory_dates :
+                    date_list.append(dates.to_structure())
+                date_list = json.dumps(date_list)
+                due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+                validity_date = c.validity_date
+                if validity_date is not None :
+                    validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
+                else :
+                    validity_date = ""
             else :
+                date_list = []
+                due_date = ""
                 validity_date = ""
+
             
             unit_ids = c.unit_ids
             for unit_id in unit_ids:
@@ -1559,3 +1566,108 @@ class ClientDatabase(Database):
             result_compliance_status.append(core.ComplianceApprovalStatus(
                 compliance_status[0], core.COMPLIANCE_APPROVAL_STATUS(compliance_status[1])))
         return result_compliance_status
+
+#
+#   Chart Api
+#
+    def get_status_wise_compliances(self, request, client_id, status):
+        country_ids = request.country_ids
+        domain_ids = request.domain_ids
+        from_date =request.from_date
+        to_date = request.to_date
+        filter_type = request.filter_type
+        filter_ids = request.filter_ids
+        _bgroup_ids = '%'
+        _lentity_ids = '%'
+        _division_ids = '%'
+        _unit_ids = '%'
+        
+
+        if filter_type ==  "Group" :
+            where_qry = " "
+        elif filter_type == "BusinessGroup" :
+            where_qry = " AND T4.business_group_id IN %s" % (
+                str(tuple(filter_ids))
+            )
+        elif filter_type == "LegalEntity" :
+            where_qry = " AND T4.legal_entity_id IN %s" % (
+                str(tuple(filter_ids))
+            )
+        elif filter_type == "Division" :
+            where_qry = " AND T4.division_id IN %s" % (
+                str(tuple(filter_ids))
+            )
+        elif filter_type == "Unit" :
+            where_qry = " AND T4.unit_id IN %s" % (
+                str(tuple(filter_ids))
+            )
+
+        # compliance status
+        if status == 1 :
+            # inprogress
+            status_qry = " AND T1.due_date > CURDATE() \
+                AND T1.approve_status is NULL"
+        elif status == 2 :
+            # complied
+            status_qry = " AND T1.due_date >= T1.completion_date \
+                AND T1.completion_date != NULL \
+                AND T1.approve_status = 1"
+        elif status == 3 :
+            # delayed compliances
+            status_qry = " AND T1.due_date < T1.completion_date \
+                AND T1.completion_date != NULL\
+                AND T1.approve_status = 1"
+        elif status == 4 :
+            # Not Compliend
+            status_qry = " AND T1.due_date < CURDATE() \
+                AND T1.approve_status is NULL "
+
+        query = "SELECT \
+            T3.domain_id, \
+            %s, \
+            T3.country_id, \
+            T1.due_date, \
+            SUBSTRING_INDEX(T1.due_date, '-', 1) as year, \
+            SUBSTRING_INDEX(SUBSTRING_INDEX(T1.due_date , '-', -2 ),'-',1) as month,  \
+            count(SUBSTRING_INDEX(SUBSTRING_INDEX(T1.due_date , '-', -2 ),'-',1)) as compliances \
+            FROM tbl_compliance_history T1 \
+            INNER JOIN tbl_client_compliances T2 \
+            ON T1.compliance_id = T2.compliance_id \
+            INNER JOIN tbl_client_statutories T3 \
+            ON T2.client_statutory_id = T3.client_statutory_id \
+            AND T1.unit_id = T3.unit_id \
+            INNER JOIN tbl_units T4 \
+            ON T1.unit_id = T4.unit_id \
+            WHERE T3.country_id IN %s \
+            AND T3.domain_id IN %s  \
+            %s \
+            %s \
+            GROUP BY month, year, T3.domain_id, %s, T3.country_id" % (
+                str("T3.unit_id"),
+                str(tuple(country_ids)),
+                str(tuple(domain_ids)),
+                where_qry,
+                status_qry,
+                str("T3.unit_id")                
+            )
+    
+        print query
+        print
+        rows = self.select_all(query, client_id)
+        columns = [
+            "domain_id", "filter_type_name", "country_id",
+            "due_date", "year", "month", "compliances"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        print result
+
+    def get_compliance_status_chart(self, request, session_user, client_id):
+        print "inprogress"
+        inprogress = self.get_status_wise_compliances(request, client_id, 1)
+        print "complied"
+        complied = self.get_status_wise_compliances(request, client_id, 2)
+        print "delayed"
+        delayed = self.get_status_wise_compliances(request, client_id, 3)
+        print "not_complied"
+        not_complied = self.get_status_wise_compliances(request, client_id, 4)
+        return 
