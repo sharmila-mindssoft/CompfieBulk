@@ -115,7 +115,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_50,
     to_structure_VectorType_RecordType_core_ComplianceApprovalStatus,
     to_structure_VectorType_RecordType_core_ComplianceFrequency,
-    to_structure_OptionalType_SignedIntegerType_8
+    to_structure_OptionalType_SignedIntegerType_8,
+    to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate
 )
 
 #
