@@ -858,7 +858,7 @@ class DataMap(object):
 
     def to_structure(self):
         return {
-            "filter_name": parse_structure_SignedIntegerType_8(self.filter_name),
+            "filter_name": to_structure_CustomTextType_100(self.filter_name),
             "no_of_compliances": to_structure_VectorType_RecordType_core_NumberOfCompliances(self.no_of_compliances),
         }
 
