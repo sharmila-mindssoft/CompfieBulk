@@ -67,8 +67,9 @@ class Database(object) :
     def connect(self):
         assert self._connection is None
         connection = mysql.connect(
-            self._mysqlHost, self._mysqlUser, 
-            self._mysqlPassword, self._mysqlDatabase
+            host=self._mysqlHost, user=self._mysqlUser, 
+            passwd=self._mysqlPassword, db=self._mysqlDatabase,
+            port=3306
         )
         connection.autocommit(False)
         self._connection = connection
@@ -171,7 +172,6 @@ class Database(object) :
             else:
                 stringValue = stringValue+"'"+str(value)+"'"
         query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
-        print query
         if client_id != None:
             return self.execute(query, client_id)
         return self.execute(query)
@@ -195,7 +195,6 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
-        print query
         if client_id != None:
             return self.execute(query, client_id)
 
@@ -2101,10 +2100,18 @@ class KnowledgeDatabase(Database):
                 pass
 
             elif compliance_frequency == 4 :
+                if duration is None :
+                    duration = ""
+                if duration_type is None:
+                    duration_type = ""
                 columns.extend(["duration", "duration_type_id"])
                 values.extend([duration, duration_type])
 
             else :
+                if repeats_every is None :
+                    repeats_every = ""
+                if repeats_type is None :
+                    repeats_type = ""
                 columns.extend(["repeats_every", "repeats_type_id"])
                 values.extend([repeats_every, repeats_type])
             self.insert(table_name, columns, values)
@@ -3585,6 +3592,8 @@ class KnowledgeDatabase(Database):
             s_mapping = statutory_data[1] 
             statutory_parents = statutory_data[2]
             level_1 = statutory_parents[0]
+            if level_1 == 0 :
+                level_1 = statutory_id
             compliance_applicable_status = bool(1)
             compliance_opted_status = None
             compliance_remarks = None
@@ -3609,7 +3618,8 @@ class KnowledgeDatabase(Database):
 
         assigned_statutory_list = []
         for key, value in level_1_compliance.iteritems() :
-            name = self.statutory_parent_mapping[int(key)][0]
+            name = self.statutory_parent_mapping.get(int(key))
+            name = name[0]
             compliances = value
             applicable_status = bool(1)
             statutory_opted_status = None
@@ -3687,7 +3697,16 @@ class KnowledgeDatabase(Database):
                 self.save_data(self.tblClientCompliances, field, values)
         return True
 
+    def get_compliance_ids(self, client_statutory_id):
+        query = "SELECT group_concat(distinct compliance_id) \
+            FROM tbl_client_compliances \
+            WHERE client_statutory_id = %s" % (client_statutory_id)
+        row = self.select_one(query)
+        return row[0]
+
     def update_client_compliances(self, client_statutory_id, data, user_id, submited_on = None):
+        saved_compliance_ids = self.get_compliance_ids(client_statutory_id)
+        saved_compliance_ids = [int(x) for x in saved_compliance_ids.split(',')]
         for d in data :
             level_1_id = d.level_1_statutory_id
             applicable_status = int(d.applicable_status)
@@ -3696,21 +3715,29 @@ class KnowledgeDatabase(Database):
                 not_applicable_remarks = ""
             for key, value in d.compliances.iteritems():
                 compliance_id = int(key)
-                compliance_applicable_status = int(value)
+                
+                if compliance_id not in saved_compliance_ids :
+                    created_on = str(self.get_date_time())
+                    new_data = d
+                    new_data.compliances = {key: value}
+                    self.save_client_compliances(client_statutory_id, [new_data], user_id, created_on)
+                    saved_compliance_ids.append(compliance_id)
+                else :
+                    compliance_applicable_status = int(value)
 
-                field_with_data = "statutory_applicable = %s, \
-                    not_applicable_remarks = '%s', \
-                    compliance_applicable = %s, updated_by = %s" % (
-                        applicable_status, not_applicable_remarks,
-                        compliance_applicable_status, int(user_id)
-                    )
-                if submited_on is not None :
-                    field_with_data = field_with_data + " , submitted_on ='%s'" % (submited_on)
-                where_condition = " client_statutory_id = %s \
-                    AND statutory_id = %s AND compliance_id = %s" % (
-                        client_statutory_id, level_1_id, compliance_id
-                    )
-                self.update_data(self.tblClientCompliances, field_with_data, where_condition)
+                    field_with_data = "statutory_applicable = %s, \
+                        not_applicable_remarks = '%s', \
+                        compliance_applicable = %s, updated_by = %s" % (
+                            applicable_status, not_applicable_remarks,
+                            compliance_applicable_status, int(user_id)
+                        )
+                    if submited_on is not None :
+                        field_with_data = field_with_data + " , submitted_on ='%s'" % (submited_on)
+                    where_condition = " client_statutory_id = %s \
+                        AND statutory_id = %s AND compliance_id = %s" % (
+                            client_statutory_id, level_1_id, compliance_id
+                        )
+                    self.update_data(self.tblClientCompliances, field_with_data, where_condition)
         return True
     
     def submit_client_statutories_compliances(self, client_statutory_id, data, user_id) :
@@ -4143,10 +4170,19 @@ class KnowledgeDatabase(Database):
                 )
             else :
                 statutories = unit_statutories.assigned_statutories
+                new_stautory = self.return_assigned_compliances_by_id(client_statutory_id)
+                for new_s in new_stautory :
+                    new_id = new_s.level_1_statutory_id
+                    is_exists = False
+                    for x in statutories :
+                        if x.level_1_statutory_id == new_id :
+                            x.compliances.extend(new_s.compliances)
+                            is_exists = True
+                            break
+                    if is_exists is False :
+                        statutories.append(new_s)
 
-                statutories.extend(
-                    self.return_assigned_compliances_by_id(client_statutory_id)
-                )
+
                 unit_statutories.assigned_statutories = statutories
 
             unit_wise_statutories_dict[unit_id] = unit_statutories

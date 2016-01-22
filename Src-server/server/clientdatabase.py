@@ -3,6 +3,8 @@ from database import Database
 import json
 import datetime
 
+from types import *
+
 __all__ = [
     "ClientDatabase"
 ]
@@ -306,9 +308,7 @@ class ClientDatabase(Database):
         condition = "1"
         if business_group_ids != None:
             condition = "business_group_id in (%s)" % business_group_ids
-        print condition
         rows = self.get_data(self.tblBusinessGroups, columns, condition, client_id) 
-        print rows
         columns = ["business_group_id", "business_group_name"]
         result = self.convert_to_dict(rows, columns)
         return self.return_business_groups(result)
@@ -985,20 +985,23 @@ class ClientDatabase(Database):
         results = self.convert_to_dict(rows, columns)
         statutory_wise_compliances = {}
         for r in results :
-            statutory_opted = r["statutory_opted"]
-            if statutory_opted is None :
+
+            statutory_opted = r["statutory_opted"]                
+            if type(statutory_opted) is int :
+                statutory_opted = bool(statutory_opted)
+            else :
                 statutory_opted = bool(r["statutory_applicable"])
+
             compliance_opted = r["compliance_opted"]
-            print compliance_opted
-            if compliance_opted is None :
+            if type(compliance_opted) is int :
+                compliance_opted = bool(compliance_opted)
+            else :
                 compliance_opted = bool(r["compliance_applicable"])
-            if compliance_opted == "" :
-                compliance_opted = True
-            print compliance_opted
 
             compliance_remarks = r["compliance_remarks"]
             if compliance_remarks == "" :
                 compliance_remarks = None
+
             mappings = r["statutory_mapping"].split('>>')
             statutory_name = mappings[0].strip()
             provision = "%s - %s" % (','.join(mappings[1:]), r["statutory_provision"])
@@ -1210,41 +1213,56 @@ class ClientDatabase(Database):
         if session_user == 0 :
             session_user = '%'
 
-        query = "SELECT group_concat(distinct t2.client_statutory_id) client_statutory_ids, \
-            t1.domain_id,group_concat(distinct t1.unit_id) unit_ids, \
-            t2.compliance_id, \
-            t2.statutory_applicable, t2.statutory_opted, \
-            t2.not_applicable_remarks, \
-            t2.compliance_applicable, t2.compliance_opted, \
-            t2.compliance_remarks, \
-            t3.compliance_task, t3.document_name, t3.compliance_description,\
-            t3.statutory_mapping, t3.statutory_provision, \
-            t3.statutory_dates, t4.frequency \
+        query = "SELECT distinct t2.compliance_id,\
+            t1.domain_id,\
+            UC.units,\
+            t2.statutory_applicable, \
+            t2.statutory_opted,\
+            t2.not_applicable_remarks,\
+            t2.compliance_applicable,\
+            t2.compliance_opted,\
+            t2.compliance_remarks,\
+            t3.compliance_task,\
+            t3.document_name,\
+            t3.compliance_description,\
+            t3.statutory_mapping,\
+            t3.statutory_provision,\
+            t3.statutory_dates,\
+            t4.frequency\
             FROM tbl_client_compliances t2 \
             INNER JOIN tbl_client_statutories t1 \
             ON t2.client_statutory_id = t1.client_statutory_id \
             INNER JOIN tbl_compliances t3 \
             ON t2.compliance_id = t3.compliance_id \
-            INNER JOIN tbl_compliance_frequency t4\
-            ON t3.frequency_id = t4.frequency_id\
-            INNER JOIN tbl_user_domains t5\
-            ON t1.domain_id = t5.domain_id\
-            AND t5.user_id LIKE '%s'  \
+            INNER JOIN tbl_compliance_frequency t4 \
+            ON t3.frequency_id = t4.frequency_id \
+            INNER JOIN tbl_user_domains t5 \
+            ON t1.domain_id = t5.domain_id \
+            INNER JOIN \
+            (SELECT distinct U.compliance_id, group_concat(distinct U.unit_id) units FROM  \
+            (SELECT A.unit_id, A.client_statutory_id, B.compliance_id FROM tbl_client_statutories A \
+            INNER JOIN tbl_client_compliances B \
+            ON A.client_statutory_id = B.client_statutory_id) U \
+            group by U.compliance_id )UC \
+            ON t2.compliance_id = UC.compliance_id \
+            WHERE \
+            t2.compliance_id NOT IN (SELECT C.compliance_id \
+            FROM tbl_assigned_compliances C WHERE \
+            C.unit_id IN %s ) \
             AND t1.unit_id IN %s \
             AND t2.statutory_opted = 1 \
             AND t2.compliance_opted = 1 \
             AND t3.is_active = 1 \
-            AND t2.compliance_id NOT \
-            IN ( SELECT a.compliance_id \
-                FROM tbl_assigned_compliances a WHERE a.unit_id in %s ) " % (
-                session_user,
+            AND t5.user_id LIKE '%s'; " % (
                 str(tuple(unit_ids)),
-                str(tuple(unit_ids))
+                str(tuple(unit_ids)),
+                session_user
             )
         print query
+
         rows = self.select_all(query, client_id)
-        columns = ["client_statutory_ids", "domain_id", "unit_ids",
-            "compliance_id", "statutory_applicable", "statutory_opted",
+        columns = ["compliance_id", "domain_id", "units",
+            "statutory_applicable", "statutory_opted",
             "not_applicable_remarks",
             "compliance_applicable", "compliance_opted",
             "compliance_remarks", "compliance_task",
@@ -1262,7 +1280,7 @@ class ClientDatabase(Database):
         for r in result:
             domain_id = int(r["domain_id"])
             unit_ids = [
-                int(x) for x in r["unit_ids"].split(',')
+                int(x) for x in r["units"].split(',')
             ]
             compliance_list = domain_wise_compliance.get(domain_id)
             if compliance_list is None :
@@ -1289,7 +1307,7 @@ class ClientDatabase(Database):
                     n_date = (datetime.date.today() + datetime.timedelta(add_month*365/12)).isoformat()
                     n_date = datetime.datetime.strptime(n_date, "%Y-%m-%d")
                     new_date = n_date.replace(day = s_day)
-                    due_date = new_date.strftime("%d-%m-%Y")
+                    due_date = new_date.strftime("%d-%b-%Y")
                     break;
             
             compliance = clienttransactions.UNIT_WISE_STATUTORIES(
@@ -1318,16 +1336,22 @@ class ClientDatabase(Database):
         for c in compliances:
             compliance_id = int(c.compliance_id)
             statutory_dates = c.statutory_dates
-            date_list = []
-            for dates in statutory_dates :
-                date_list.append(dates.to_structure())
-            date_list = json.dumps(date_list)
-            due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
-            validity_date = c.validity_date
-            if validity_date is not None :
-                validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
+            if statutory_dates is not None :
+                date_list = []
+                for dates in statutory_dates :
+                    date_list.append(dates.to_structure())
+                date_list = json.dumps(date_list)
+                due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+                validity_date = c.validity_date
+                if validity_date is not None :
+                    validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
+                else :
+                    validity_date = ""
             else :
+                date_list = []
+                due_date = ""
                 validity_date = ""
+
             
             unit_ids = c.unit_ids
             for unit_id in unit_ids:
@@ -1446,4 +1470,109 @@ class ClientDatabase(Database):
                 " where client_statutory_id = (select client_statutory_id from "+\
                 " tbl_client_statutories where compliance_id ='%d'))" % compliance_id 
                 domain_name_row =  self.get_data()
+
+#
+#   Chart Api
+#
+    def get_status_wise_compliances(self, request, client_id, status):
+        country_ids = request.country_ids
+        domain_ids = request.domain_ids
+        from_date =request.from_date
+        to_date = request.to_date
+        filter_type = request.filter_type
+        filter_ids = request.filter_ids
+        _bgroup_ids = '%'
+        _lentity_ids = '%'
+        _division_ids = '%'
+        _unit_ids = '%'
+        
+
+        if filter_type ==  "Group" :
+            where_qry = " "
+        elif filter_type == "BusinessGroup" :
+            where_qry = " AND T4.business_group_id IN %s" % (
+                str(tuple(filter_ids))
+            )
+        elif filter_type == "LegalEntity" :
+            where_qry = " AND T4.legal_entity_id IN %s" % (
+                str(tuple(filter_ids))
+            )
+        elif filter_type == "Division" :
+            where_qry = " AND T4.division_id IN %s" % (
+                str(tuple(filter_ids))
+            )
+        elif filter_type == "Unit" :
+            where_qry = " AND T4.unit_id IN %s" % (
+                str(tuple(filter_ids))
+            )
+
+        # compliance status
+        if status == 1 :
+            # inprogress
+            status_qry = " AND T1.due_date > CURDATE() \
+                AND T1.approve_status is NULL"
+        elif status == 2 :
+            # complied
+            status_qry = " AND T1.due_date >= T1.completion_date \
+                AND T1.completion_date != NULL \
+                AND T1.approve_status = 1"
+        elif status == 3 :
+            # delayed compliances
+            status_qry = " AND T1.due_date < T1.completion_date \
+                AND T1.completion_date != NULL\
+                AND T1.approve_status = 1"
+        elif status == 4 :
+            # Not Compliend
+            status_qry = " AND T1.due_date < CURDATE() \
+                AND T1.approve_status is NULL "
+
+        query = "SELECT \
+            T3.domain_id, \
+            %s, \
+            T3.country_id, \
+            T1.due_date, \
+            SUBSTRING_INDEX(T1.due_date, '-', 1) as year, \
+            SUBSTRING_INDEX(SUBSTRING_INDEX(T1.due_date , '-', -2 ),'-',1) as month,  \
+            count(SUBSTRING_INDEX(SUBSTRING_INDEX(T1.due_date , '-', -2 ),'-',1)) as compliances \
+            FROM tbl_compliance_history T1 \
+            INNER JOIN tbl_client_compliances T2 \
+            ON T1.compliance_id = T2.compliance_id \
+            INNER JOIN tbl_client_statutories T3 \
+            ON T2.client_statutory_id = T3.client_statutory_id \
+            AND T1.unit_id = T3.unit_id \
+            INNER JOIN tbl_units T4 \
+            ON T1.unit_id = T4.unit_id \
+            WHERE T3.country_id IN %s \
+            AND T3.domain_id IN %s  \
+            %s \
+            %s \
+            GROUP BY month, year, T3.domain_id, %s, T3.country_id" % (
+                str("T3.unit_id"),
+                str(tuple(country_ids)),
+                str(tuple(domain_ids)),
+                where_qry,
+                status_qry,
+                str("T3.unit_id")                
+            )
+    
+        print query
+        print
+        rows = self.select_all(query, client_id)
+        columns = [
+            "domain_id", "filter_type_name", "country_id",
+            "due_date", "year", "month", "compliances"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        print result
+
+    def get_compliance_status_chart(self, request, session_user, client_id):
+        print "inprogress"
+        inprogress = self.get_status_wise_compliances(request, client_id, 1)
+        print "complied"
+        complied = self.get_status_wise_compliances(request, client_id, 2)
+        print "delayed"
+        delayed = self.get_status_wise_compliances(request, client_id, 3)
+        print "not_complied"
+        not_complied = self.get_status_wise_compliances(request, client_id, 4)
+        return 
 

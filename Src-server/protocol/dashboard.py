@@ -32,7 +32,14 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_20,
     parse_structure_VectorType_RecordType_dashboard_AssigneeChartData,
     parse_structure_VectorType_RecordType_dashboard_UnitCompliance,
-    parse_structure_VectorType_RecordType_dashboard_EscalationData
+    parse_structure_VectorType_RecordType_dashboard_EscalationData,
+    parse_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    parse_structure_VectorType_RecordType_core_ClientLegalEntity,
+    parse_structure_VectorType_RecordType_core_ClientDivision,
+    parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
+    parse_structure_VectorType_RecordType_core_NumberOfCompliances,
+    parse_structure_OptionalType_VectorType_SignedIntegerType_8,
+    parse_structure_OptionalType_Text
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -66,7 +73,14 @@ from protocol.to_structure import (
     to_structure_CustomTextType_20,
     to_structure_VectorType_RecordType_dashboard_AssigneeChartData,
     to_structure_VectorType_RecordType_dashboard_UnitCompliance,
-    to_structure_VectorType_RecordType_dashboard_EscalationData
+    to_structure_VectorType_RecordType_dashboard_EscalationData,
+    to_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    to_structure_VectorType_RecordType_core_ClientLegalEntity,
+    to_structure_VectorType_RecordType_core_ClientDivision,
+    to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
+    to_structure_VectorType_RecordType_core_NumberOfCompliances,
+    to_structure_OptionalType_VectorType_SignedIntegerType_8,
+    to_structure_OptionalType_Text
 )
 
 #
@@ -125,23 +139,23 @@ class GetComplianceStatusChart(Request):
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         from_date = data.get("from_date")
-        from_date = parse_structure_Text(from_date)
+        from_date = parse_structure_OptionalType_Text(from_date)
         to_date = data.get("to_date")
-        to_date = parse_structure_Text(to_date)
+        to_date = parse_structure_OptionalType_Text(to_date)
         filter_type = data.get("filter_type")
         filter_type = parse_structure_Text(filter_type)
         filter_ids = data.get("filter_ids")
-        filter_ids = parse_structure_VectorType_SignedIntegerType_8(filter_ids)
+        filter_ids = parse_structure_OptionalType_VectorType_SignedIntegerType_8(filter_ids)
         return GetComplianceStatusChart(country_ids, domain_ids, from_date, to_date, filter_type, filter_ids)
 
     def to_inner_structure(self):
         return {
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "from_date": to_structure_Text(self.from_date),
-            "to_date": to_structure_Text(self.to_date),
+            "from_date": to_structure_OptionalType_Text(self.from_date),
+            "to_date": to_structure_OptionalType_Text(self.to_date),
             "filter_type": to_structure_Text(self.filter_type),
-            "filter_ids": to_structure_VectorType_SignedIntegerType_8(self.filter_ids),
+            "filter_ids": to_structure_OptionalType_VectorType_SignedIntegerType_8(self.filter_ids),
         }
 
 class GetEscalationsChart(Request):
@@ -505,23 +519,23 @@ class GetChartFiltersSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
+        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
         legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_Unit(units)
+        units = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(units)
         return GetChartFiltersSuccess(countries, domains, business_groups, legal_entities, divisions, units)
 
     def to_inner_structure(self):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units),
         }
 
 class GetComplianceStatusChartSuccess(Response):
@@ -837,13 +851,13 @@ class DataMap(object):
         filter_name = data.get("filter_name")
         filter_name = parse_structure_CustomTextType_100(filter_name)
         no_of_compliances = data.get("no_of_compliances")
-        no_of_compliances = parse_structure_UnsignedIntegerType_32(no_of_compliances)
+        no_of_compliances = parse_structure_VectorType_RecordType_core_NumberOfCompliances(no_of_compliances)
         return DataMap(filter_name, no_of_compliances)
 
     def to_structure(self):
         return {
             "filter_name": to_structure_CustomTextType_100(self.filter_name),
-            "no_of_compliances": to_structure_SignedIntegerType_8(self.no_of_compliances),
+            "no_of_compliances": to_structure_VectorType_RecordType_core_NumberOfCompliances(self.no_of_compliances),
         }
 
 #
