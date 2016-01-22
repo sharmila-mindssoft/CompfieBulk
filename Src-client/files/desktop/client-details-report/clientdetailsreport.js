@@ -56,7 +56,7 @@ $("#show-button").click(function(){
 		var businessgroupid = parseInt(bgroups);
 	}
 	else{
-	 var businessgroupid = null;
+		var businessgroupid = null;
 	}
 	businessgroupsval = $("#businessgroupsval").val();
 	var legalentity = $("#legalentityid").val();
@@ -104,6 +104,7 @@ $("#show-button").click(function(){
 	}
 	else{
 		function onSuccess(data){
+			console.log(data);
 			$(".grid-table-rpt").show();
 			$(".countryval").text(countriesText);
 			$(".groupsval").text(groupsval);

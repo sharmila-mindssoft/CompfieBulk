@@ -485,8 +485,10 @@ function activate_level1 (element,checkval,checkname) {
   $("#level1val").val(checkname);
   $("#level1id").val(checkval);
 }
-
-
 $(function() {
+	// $( "#accordion" ).accordion({
+	// 	heightStyle: "content"
+	// });
 	initialize();
 });
+
