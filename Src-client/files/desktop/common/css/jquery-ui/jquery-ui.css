@@ -1,3 +1,6 @@
+/*! jQuery UI - v1.11.4
+* Includes: core.css, accordion.css, autocomplete.css, button.css, datepicker.css, dialog.css, draggable.css, menu.css, progressbar.css, resizable.css, selectable.css, selectmenu.css, slider.css, sortable.css, spinner.css, tabs.css, tooltip.css, theme.css
+
 /* Layout helpers
 ----------------------------------*/
 .ui-helper-hidden {
@@ -217,10 +220,9 @@ button.ui-button::-moz-focus-inner {
 	padding: 0;
 }
 .ui-datepicker {
-	width: 14em;
+	width: 17em;
 	padding: .2em .2em 0;
 	display: none;
-	
 }
 .ui-datepicker .ui-datepicker-header {
 	position: relative;
@@ -282,12 +284,10 @@ button.ui-button::-moz-focus-inner {
 	text-align: center;
 	font-weight: bold;
 	border: 0;
-	font-size:0.7em; 
 }
 .ui-datepicker td {
 	border: 0;
 	padding: 1px;
-	font-size:0.7em; 
 }
 .ui-datepicker td span,
 .ui-datepicker td a {
@@ -613,7 +613,7 @@ button.ui-button::-moz-focus-inner {
 	padding-bottom: 1px;
 }
 .ui-selectmenu-menu .ui-menu .ui-selectmenu-optgroup {
-	font-size: 1em;
+	font-size: 0.813em;
 	font-weight: bold;
 	line-height: 1.5;
 	padding: 2px 0.4em;
@@ -828,7 +828,7 @@ body .ui-tooltip {
 ----------------------------------*/
 .ui-widget {
 	font-family: Verdana,Arial,sans-serif;
-	font-size: 1em;
+	font-size: 0.9em;
 }
 .ui-widget .ui-widget {
 	font-size: 1em;
