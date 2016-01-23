@@ -444,6 +444,7 @@ class KnowledgeDatabase(Database):
         )
         self.statutory_parent_mapping = {}
         self.geography_parent_mapping = {}
+        self.begin()
         self.initialize_table_names()
 
     def initialize_table_names(self):

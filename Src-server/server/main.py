@@ -103,15 +103,15 @@ class API(object):
                 response_data, response
             )
 
-        self._db.begin()
+        # self._db.begin()
         try:
             response_data = unbound_method(self, request_data, self._db)
-            self._db.commit()
+            # self._db.commit()
             respond(response_data)
         except Exception, e:
             print(traceback.format_exc())
             print e
-            self._db.rollback()
+            # self._db.rollback()
 
 
     @api_request(login.Request)
@@ -249,12 +249,12 @@ def run_server(port):
     io_loop = IOLoop()  
 
     def delay_initialize():
-        # db = KnowledgeDatabase(
-        #     "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
-        # )
         db = KnowledgeDatabase(
-            "localhost", "root", "123456", "mirror_knowledge"
+            "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
         )
+        # db = KnowledgeDatabase(
+        #     "localhost", "root", "123456", "mirror_knowledge"
+        # )
         web_server = WebServer(io_loop)
 
         web_server.url("/", GET=handle_root)
