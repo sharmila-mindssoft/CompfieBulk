@@ -1,4 +1,4 @@
-from protocol import (core, general, clienttransactions)
+from protocol import (core, general, clienttransactions, clientreport)
 from database import Database
 import json
 import datetime
@@ -236,6 +236,8 @@ class ClientDatabase(Database):
     def validate_session_token(self, client_id, session_token) :
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
+
+        print query
         row = self.select_one(query, client_id)
         user_id = row[0]
         return user_id
@@ -748,6 +750,22 @@ class ClientDatabase(Database):
         condition = " user_id = '%d'"% user_id
         rows = self.get_data(self.tblUserUnits, columns, condition, client_id)
         return rows[0][0]
+
+    def get_client_users(self, client_id):
+        columns = "user_id, employee_name, employee_code, is_active"
+        condition = "1"
+        rows = self.get_data(self.tblUsers, columns, condition, client_id)
+        columns = ["user_id", "employee_name", "employee_code", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_client_users(result)
+
+    def return_client_users(self, users):
+        results = []
+        for user in users :
+            results.append(clientreport.User(
+                user["user_id"], user["employee_name"], user["employee_code"]
+            ))
+        return results
 
     def deactivate_unit(self, unit_id, client_id, session_user):
         columns = ["is_active"]

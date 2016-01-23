@@ -1,4 +1,4 @@
-var CLIENT_BASE_URL = "http://localhost:8080/";
+var CLIENT_BASE_URL = "http://localhost:8090/";
 function initClientMirror() {
     var DEBUG = true;
 
@@ -98,10 +98,15 @@ function initClientMirror() {
                 var response = data[1];
                 matchString = 'success';
                 log("API STATUS :"+status)
+
                 if (status.toLowerCase().indexOf(matchString) != -1){
+                    alert(response);
                     callback(null, response);
                 }
-                callback(status, null) 
+                else{
+                    callback(status, null) 
+                }
+                
             }
         )
         .fail(
@@ -653,6 +658,16 @@ function initClientMirror() {
         clientApiRequest("api/client_transaction", request, callback);
     }
 
+    function getClientReportFilters(callback) {
+        var request = [
+            "GetClientReportFilters",
+            {}
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -722,6 +737,8 @@ function initClientMirror() {
 
         getPastRecordsFormData: getPastRecordsFormData,
         getStatutoriesByUnit: getStatutoriesByUnit,
+
+        getClientReportFilters: getClientReportFilters,
     }
 
 }
