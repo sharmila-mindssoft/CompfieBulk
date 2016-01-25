@@ -1253,7 +1253,7 @@ class ClientDatabase(Database):
             assignee_name = "{} - {}".format(assignee[1], assignee[2])
             approved_compliances.append(clienttransactions.APPORVALCOMPLIANCELIST(
                 assignee_id, assignee_name, compliances))
-        return approved_compliances
+        return approved_compliances 
 
     def get_user_name_by_id(self, user_id, client_id):
         employee_name = None
