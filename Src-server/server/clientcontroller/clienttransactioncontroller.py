@@ -98,4 +98,3 @@ def process_get_assign_compliance_form_data(db, session_user, client_id):
 		countries, business_groups, legal_entities,
 		divisions, units, users
 	)
-

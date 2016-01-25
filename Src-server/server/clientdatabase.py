@@ -1288,7 +1288,6 @@ class ClientDatabase(Database):
     #             elif repeat_type_id = 2:
     #             elif repeat_type_id = 3:
 
-
 #
 # Assign Compliance
 #
