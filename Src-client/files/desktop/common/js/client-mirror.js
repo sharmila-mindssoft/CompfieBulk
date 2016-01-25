@@ -768,6 +768,7 @@ function initClientMirror() {
 
         getChartFilters: getChartFilters,
         getComplianceStatusChartData : getComplianceStatusChartData,
+        getComplianceApprovalList: getComplianceApprovalList
     }
 
 }
