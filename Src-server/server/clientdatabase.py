@@ -1130,7 +1130,7 @@ class ClientDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return self.return_level_1_statutories(result)
 
-    def return_level_1_statutories(self, statutories):
+    def return_level_1_statutories(self, statutories): 
         results = []
         for statutory in statutories :
             statutory_obj = core.Level1Statutory(
