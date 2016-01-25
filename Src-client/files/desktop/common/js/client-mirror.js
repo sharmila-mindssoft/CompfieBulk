@@ -722,6 +722,7 @@ function initClientMirror() {
 
         getPastRecordsFormData: getPastRecordsFormData,
         getStatutoriesByUnit: getStatutoriesByUnit,
+        getComplianceApprovalList: getComplianceApprovalList
     }
 
 }

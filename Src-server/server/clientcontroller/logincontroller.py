@@ -57,14 +57,12 @@ def user_login_response(db, data, client_id):
 	employee_name = data["employee_name"]
 	employee_code = data["employee_code"]
 	contact_no = data["contact_no"]
-	address = data["address"]
-	designation = data["designation"]
 	user_group_name = data["user_group_name"]
 	form_ids = data["form_ids"]
 	menu = process_user_forms(db, form_ids, client_id, 0)
 	return login.UserLoginSuccess(
 		user_id, session_token, email_id, user_group_name, 
-		menu, employee_name, employee_code, contact_no, address, designation,
+		menu, employee_name, employee_code, contact_no, None, None,
 		client_id
 	)
 

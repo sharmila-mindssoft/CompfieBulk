@@ -1166,30 +1166,119 @@ class ClientDatabase(Database):
         for compliance in compliance_rows:
             pass
 
-    def get_compliance_approval_list(session_user, client_id):
-        assignee_columns = "completed_by"
-        assignee_condition = "approved_by = '%d' or concurred_by = '%d'" % (session_user, session_user)
-        assignee_rows = self.get_data(self.tbl_compliance_history, assingee_columns, assignee_condition)
+    def get_compliance_approval_list(self, session_user, client_id):
+        # Getting Assignees
+        assignee_columns = "completed_by, employee_code, employee_name"
+        join_type = "left join"
+        tables = [self.tblComplianceHistory, self.tblUsers]
+        aliases = ["tch", "tu"]
+        join_condition = ["tch.completed_by = tu.user_id"]
+        assignee_condition = "completion_date is not Null and approved_on is Null and "+\
+        "(approved_by = '%d' or concurred_by = '%d')" % (session_user, session_user)
+        assignee_rows = self.get_data_from_multiple_tables(assignee_columns, tables, 
+            aliases, join_type,  join_condition, assignee_condition, client_id)
+        
+        approved_compliances = []
         for assignee in assignee_rows:
-            compliance_history_columns = "compliance_history_id, compliance_id, start_date, due_date,"+\
-            " documents, upload_date, completed_on, next_due_date, concurred_by, remarks"
+            # Getting Compliance History for assignee
+            compliance_history_columns = "compliance_history_id, compliance_id, start_date,"+\
+            " due_date, documents, completion_date, completed_on, next_due_date, "+\
+            "concurred_by, remarks, datediff(due_date, completion_date )"
             compliance_history_condition = "%s and completed_by = '%d'"% (
                 assignee_condition, assignee[0])
-            compliance_history_rows = self.get_data(self.tbl_compliance_history, compliance_history_columns,
+            compliance_history_rows = self.get_data(self.tblComplianceHistory, compliance_history_columns,
                 compliance_history_condition)
+            compliances = []
             for compliance_history in compliance_history_rows:
+                # Getting Compliance details
                 compliance_id = compliance_history[1]
                 compliance_columns = "compliance_id, compliance_task, compliance_description,"+\
-                "frequency_id"
+                "tc.frequency_id, frequency"
+                join_type = "left join"
+                compliance_tables = [self.tblCompliances, self.tblComplianceFrequency]
+                aliases = ["tc", "tcf"]
+                join_condition = ["tc.frequency_id = tcf.frequency_id"]
                 compliance_condition = "compliance_id = '%d'" % compliance_history[1]
-                compliance_row = self.get_data(self.tblCompliances, compliance_columns, 
-                    compliance_condition)
-                
+                compliance_row = self.get_data_from_multiple_tables(compliance_columns,
+                    compliance_tables, aliases, join_type, join_condition, compliance_condition,
+                    client_id)
+
+                # Getting Domain of Compliance
                 domain_name_column = "domain_name"
                 condition = " domain_id = (select domain_id from tbl_client_statutories "+\
                 " where client_statutory_id = (select client_statutory_id from "+\
-                " tbl_client_statutories where compliance_id ='%d'))" % compliance_id 
-                domain_name_row =  self.get_data()
+                " tbl_client_compliances where compliance_id ='%d'))" % compliance_id 
+                domain_name_row =  self.get_data(self.tblDomains, domain_name_column, condition)
+
+                due_date = compliance_history[3]
+                completion_date = compliance_history[5]
+                delayed_by = None if compliance_history[10] < 0 else compliance_history[10]
+                frequency = int(compliance_row[0][3])
+                concurred_by = int(compliance_history[8])
+                if ((frequency == 1) or (frequency == 4)):
+                    next_due_date = 0
+                else:
+                    next_due_date = self.calculate_next_due_date(completion_date, due_date, compliance_id)
+
+                action = None
+                if concurred_by == session_user:
+                    action = "Concur"
+                else:
+                    action = "Approve"
+
+                compliances.append(clienttransactions.APPROVALCOMPLIANCE(
+                    compliance_history[0], compliance_row[0][1], compliance_row[0][2], 
+                    domain_name_row[0][0], self.datetime_to_string(compliance_history[2]), 
+                    self.datetime_to_string(compliance_history[3]), 
+                    delayed_by, core.COMPLIANCE_FREQUENCY(compliance_row[0][4]), 
+                    compliance_history[4].split(","), 
+                    self.datetime_to_string(completion_date), 
+                    self.datetime_to_string(compliance_history[6]), 
+                    self.datetime_to_string(compliance_history[7]), 
+                    self.get_user_name_by_id(concurred_by, client_id), 
+                    compliance_history[9], action))
+            assignee_id = assignee[0]
+            assignee_name = "{} - {}".format(assignee[1], assignee[2])
+            approved_compliances.append(clienttransactions.APPORVALCOMPLIANCELIST(
+                assignee_id, assignee_name, compliances))
+        return approved_compliances
+
+    def get_user_name_by_id(self, user_id, client_id):
+        employee_name = None
+        if user_id != None:
+            columns = "employee_code, employee_name"
+            condition = "user_id ='{}'".format(user_id)
+            rows = self.get_data(self.tblUsers, columns, condition, client_id)
+            if len(rows) > 0:
+                employee_name = "{} - {}".format(rows[0][0], rows[0][1])
+            else:
+                print "inside inner else"
+        else:
+            print "inside outer else"
+        return employee_name
+
+
+
+    # def calculate_next_due_date(self, completion_date, due_date, compliance_id):
+    #     compliance_columns = "statutory_date, repeat_type_id, duration_type_id,"+\
+    #     " repeats_every, duration"
+    #     condition = "compliance_id = '%d'" % compliance_id
+    #     compliance_rows = self.get_data(self.tblCompliances, compliance_columns,
+    #         condition)
+    #     if len(compliance_rows) > 0:
+    #         statutory_date = compliance_rows[0][0]
+    #         repeat_type_id = compliance_rows[0][1]
+    #         duration_type_id = compliance_rows[0][2]
+    #         repeats_every = compliance_rows[0][3]
+    #         duration = compliance_rows[0][4]
+    #         if statutory_date == None:
+    #             if repeat_type_id = 1:
+
+    #             elif repeat_type_id = 2:
+    #             elif repeat_type_id = 3:
+
+
+
 
 #
 # Assign Compliance

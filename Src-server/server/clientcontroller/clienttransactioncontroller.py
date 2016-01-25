@@ -6,9 +6,9 @@ __all__ = [
 
 def process_client_transaction_requests(request, db) :
 	client_info = request.session_token.split("-")
+	session_token = request.session_token
 	request = request.request
 	client_id = int(client_info[0])
-	session_token = client_info[1]
 	session_user = db.validate_session_token(client_id, session_token)
 	if session_user is None:
 		return login.InvalidSessionToken()
@@ -66,7 +66,8 @@ def process_get_statutories_by_unit(db, request, session_user, client_id):
 
 def process_get_compliance_approval_list(db, request, session_user, client_id):
 	compliance_approval_list = db.get_compliance_approval_list(session_user, client_id)
-	return GetComplianceApprovalListSuccess(approval_list = compliance_approval_list)
+	return clienttransactions.GetComplianceApprovalListSuccess(
+		approval_list = compliance_approval_list)
 
 def process_get_compliance_for_units(db, request, session_user, client_id):
 	unit_ids = request.unit_ids
