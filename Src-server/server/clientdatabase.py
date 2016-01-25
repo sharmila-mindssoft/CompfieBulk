@@ -1874,7 +1874,6 @@ class ClientDatabase(Database):
             chart = dashboard.ChartDataMap(k, v)
             final_result_list.append(chart)
         return final_result_list
-        
 
 #
 #   Chart Api
