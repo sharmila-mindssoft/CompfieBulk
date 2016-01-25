@@ -1167,7 +1167,6 @@ class ClientDatabase(Database):
             pass
 
     def get_compliance_approval_list(self, session_user, client_id):
-        # Getting Assignees
         assignee_columns = "completed_by, employee_code, employee_name"
         join_type = "left join"
         tables = [self.tblComplianceHistory, self.tblUsers]
@@ -1180,45 +1179,54 @@ class ClientDatabase(Database):
         
         approved_compliances = []
         for assignee in assignee_rows:
-            # Getting Compliance History for assignee
-            compliance_history_columns = "compliance_history_id, compliance_id, start_date,"+\
+            query_columns = "compliance_history_id, tch.compliance_id, start_date,"+\
             " due_date, documents, completion_date, completed_on, next_due_date, "+\
-            "concurred_by, remarks, datediff(due_date, completion_date )"
-            compliance_history_condition = "%s and completed_by = '%d'"% (
-                assignee_condition, assignee[0])
-            compliance_history_rows = self.get_data(self.tblComplianceHistory, compliance_history_columns,
-                compliance_history_condition)
+            "concurred_by, remarks, datediff(due_date, completion_date ),compliance_task,"+\
+            " compliance_description, tc.frequency_id, frequency, document_name"
+            join_type = "left join"
+            query_tables = [
+                    self.tblComplianceHistory, 
+                    self.tblCompliances, 
+                    self.tblComplianceFrequency
+            ]
+            aliases = ["tch", "tc", "tcf"]
+            join_condition = [
+                    "tch.compliance_id = tc.compliance_id",
+                    "tc.frequency_id = tcf.frequency_id"
+            ]
+            where_condition = "%s and completed_by = '%d'"% (
+                assignee_condition, assignee[0]
+            )
+            rows = self.get_data_from_multiple_tables(
+                query_columns, query_tables, aliases, join_type, join_condition,
+                where_condition, client_id
+            )
             compliances = []
-            for compliance_history in compliance_history_rows:
-                # Getting Compliance details
-                compliance_id = compliance_history[1]
-                compliance_columns = "compliance_id, compliance_task, compliance_description,"+\
-                "tc.frequency_id, frequency"
-                join_type = "left join"
-                compliance_tables = [self.tblCompliances, self.tblComplianceFrequency]
-                aliases = ["tc", "tcf"]
-                join_condition = ["tc.frequency_id = tcf.frequency_id"]
-                compliance_condition = "compliance_id = '%d'" % compliance_history[1]
-                compliance_row = self.get_data_from_multiple_tables(compliance_columns,
-                    compliance_tables, aliases, join_type, join_condition, compliance_condition,
-                    client_id)
+            for row in rows:
+                compliance_history_id = row[0]
+                compliance_id = row[1]
+                start_date = self.datetime_to_string(row[2])
+                due_date = self.datetime_to_string(row[3])
+                documents = row[4].split(",")
+                completion_date = self.datetime_to_string(row[5])
+                completed_on = self.datetime_to_string(row[6])
+                next_due_date = self.datetime_to_string(row[7])
+                concurred_by = self.get_user_name_by_id(int(row[8]), client_id)
+                remarks = row[9]
+                delayed_by = None if row[10] < 0 else row[10]
+                compliance_name = "%s - %s"%(row[15], row[11])
+                compliance_description = row[12]
+                frequency_id = int(row[13])
+                frequency = core.COMPLIANCE_FREQUENCY(row[14])
+                description = row[12]
 
-                # Getting Domain of Compliance
                 domain_name_column = "domain_name"
                 condition = " domain_id = (select domain_id from tbl_client_statutories "+\
                 " where client_statutory_id = (select client_statutory_id from "+\
                 " tbl_client_compliances where compliance_id ='%d'))" % compliance_id 
-                domain_name_row =  self.get_data(self.tblDomains, domain_name_column, condition)
-
-                due_date = compliance_history[3]
-                completion_date = compliance_history[5]
-                delayed_by = None if compliance_history[10] < 0 else compliance_history[10]
-                frequency = int(compliance_row[0][3])
-                concurred_by = int(compliance_history[8])
-                if ((frequency == 1) or (frequency == 4)):
-                    next_due_date = 0
-                else:
-                    next_due_date = self.calculate_next_due_date(completion_date, due_date, compliance_id)
+                domain_name_row =  self.get_data(self.tblDomains, domain_name_column, 
+                    condition)
+                domain_name = domain_name_row[0][0]
 
                 action = None
                 if concurred_by == session_user:
@@ -1227,16 +1235,10 @@ class ClientDatabase(Database):
                     action = "Approve"
 
                 compliances.append(clienttransactions.APPROVALCOMPLIANCE(
-                    compliance_history[0], compliance_row[0][1], compliance_row[0][2], 
-                    domain_name_row[0][0], self.datetime_to_string(compliance_history[2]), 
-                    self.datetime_to_string(compliance_history[3]), 
-                    delayed_by, core.COMPLIANCE_FREQUENCY(compliance_row[0][4]), 
-                    compliance_history[4].split(","), 
-                    self.datetime_to_string(completion_date), 
-                    self.datetime_to_string(compliance_history[6]), 
-                    self.datetime_to_string(compliance_history[7]), 
-                    self.get_user_name_by_id(concurred_by, client_id), 
-                    compliance_history[9], action))
+                    compliance_history_id, compliance_name, description, domain_name, 
+                    start_date, due_date, delayed_by, frequency, documents, 
+                    completion_date, completed_on, next_due_date, concurred_by, 
+                    remarks, action))
             assignee_id = assignee[0]
             assignee_name = "{} - {}".format(assignee[1], assignee[2])
             approved_compliances.append(clienttransactions.APPORVALCOMPLIANCELIST(
