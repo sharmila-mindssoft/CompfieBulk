@@ -78,7 +78,7 @@ def process_get_compliance_for_units(db, request, session_user, client_id):
 	return clienttransactions.GetComplianceForUnitsSuccess(statutories)
 
 def process_save_assigned_compliance(db, request, session_user, client_id):
-	return 	db.save_assigned_compliance(request, session_user, client_id):
+	return 	db.save_assigned_compliance(request, session_user, client_id)
 
 def process_approve_compliance(db, request, session_user, client_id):
 	compliance_history_id = request.compliance_history_id

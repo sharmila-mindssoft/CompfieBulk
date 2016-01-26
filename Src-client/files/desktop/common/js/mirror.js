@@ -1344,6 +1344,5 @@ function initMirror() {
         getAuditTrail: getAuditTrail,
         updateUserProfile: updateUserProfile
     }
-
 }
 var mirror = initMirror();
