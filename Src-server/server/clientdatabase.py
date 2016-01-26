@@ -23,8 +23,6 @@ class ClientDatabase(Database):
         self._client_db_connections[0] = self._connection
         self._client_db_cursors[0] = self._cursor
         for row in rows:
-            print row
-            print
 
             host = row[0]
             client_id = row[1]
@@ -34,7 +32,6 @@ class ClientDatabase(Database):
             super(ClientDatabase, self).__init__(
                 host, username, password, database
             )
-            print "_connection success"
             self.begin()
             self._client_db_connections[int(client_id)] = self._connection
             self._client_db_cursors[int(client_id)] = self._cursor
@@ -1491,9 +1488,6 @@ class ClientDatabase(Database):
                 group_by_name,
                 group_by_name
             )
-        print
-        print query
-        print
         rows = self.select_all(query, client_id)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return self.convert_to_dict(rows, columns)
@@ -1568,7 +1562,7 @@ class ClientDatabase(Database):
         if filter_type ==  "Group" :
             group_by_name = "T4.country_id"
             # filter_type_ids = country_ids
-            filter_type_ids = filter_ids
+            filter_type_ids = ""
 
         elif filter_type == "BusinessGroup" :
             group_by_name = "T4.business_group_id"
@@ -1606,7 +1600,7 @@ class ClientDatabase(Database):
         if from_date is None and to_date is None :
             return self.frame_compliance_status_count(inprogress, complied, delayed, not_complied, filter_ids, client_id)
         else :
-            return self.frame_compliance_status_count(inprogress, complied, delayed, not_complied, filter_ids, client_id)
+            return self.frame_compliance_status_yearwise_count(inprogress, complied, delayed, not_complied, filter_ids, client_id)
 
     def get_client_domain_configuration(self, client_id) :
         query = "SELECT country_id, domain_id, \
@@ -1626,6 +1620,7 @@ class ClientDatabase(Database):
             years_range.append(info)
         return years_range
 
+
     def calculate_year_wise_count(self, calculated_data, years_info, compliances, status, filter_ids):
         def month_range(period_from, period_to):
             if period_from == 1 and period_to == 12:
@@ -1642,7 +1637,7 @@ class ClientDatabase(Database):
                 country_id = y["country_id"]
                 
                 domain_id = y["domain_id"]
-                
+
 
                 country = calculated_data.get(filter_type)
                 if country is None :
@@ -1716,7 +1711,73 @@ class ClientDatabase(Database):
 
         return calculated_data
 
-    def frame_compliance_status_count(self, inprogress, complied, delayed, not_complied, filter_type_ids, client_id):
+    def frame_compliance_status_count(self, inprogress, complied, delayed, not_complied, filter_ids, client_id):
+        calculated_data = {}
+
+        def compliance_count(compliances, status):
+            for i in compliances :
+                filter_type = int(i["filter_type"])
+                domain_id = int(i["domain_id"])
+                domain_wise = calculated_data.get(filter_type)
+
+                # domain_wise = country.get(domain_id)
+                if domain_wise is None :
+                    domain_wise = {}
+
+                compliance_sum = domain_wise.get(domain_id)
+                if compliance_sum is None :
+                    compliance_sum = [0, 0, 0, 0]
+                    compliance_count = 0
+                else :
+                    compliance_count = compliance_sum[status]
+                
+                compliance_count += int(i["compliances"])
+                compliance_sum[status] = compliance_count
+                domain_wise[domain_id] = compliance_sum
+                calculated_data[filter_type] = domain_wise
+            return calculated_data
+
+        calculated_data = compliance_count(inprogress, 0)
+        calculated_data = compliance_count(complied, 1)
+        calculated_data = compliance_count(delayed, 2)
+        calculated_data = compliance_count(not_complied, 3)
+
+        current_year = datetime.datetime.now().year
+        filter_type_wise = {}
+        for key, value in calculated_data.iteritems() :
+            domain_wise = {}
+            compliance_list = []
+            for k, v in value.iteritems() :
+                dict = {}
+                year = current_year
+                inprogress = v[0]
+                complied = v[1]
+                delayed = v[2]
+                not_complied = v[3]
+                if len(compliance_list) == 0 :
+                    compliance_count = core.NumberOfCompliances(
+                        str(year), complied,
+                        delayed, inprogress, not_complied
+                    )
+                    compliance_list.append(compliance_count)
+                else :
+                    compliance_count = compliance_list[0]
+                    compliance_count.inprogress_compliance_count += v[0]
+                    compliance_count.complied_count += v[1]
+                    compliance_count.delayed_compliance_count += v[2]
+                    compliance_count.not_complied_count += v[3]
+
+                domain_wise[k] = compliance_list
+                compliance_list = []
+            filter_type_wise[key] = domain_wise
+        final_result_list = []
+        for k, v in filter_type_wise.items():
+            chart = dashboard.ChartDataMap(k, v)
+            final_result_list.append(chart)
+        return final_result_list
+
+
+    def frame_compliance_status_yearwise_count(self, inprogress, complied, delayed, not_complied, filter_type_ids, client_id):
         year_info = self.get_client_domain_configuration(client_id)
         calculated_data = {}
         calculated_data = self.calculate_year_wise_count(calculated_data, year_info, inprogress, "inprogress", filter_type_ids)
