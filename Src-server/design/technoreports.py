@@ -43,7 +43,15 @@ GetClientDetailsReportData = RecordType("GetClientDetailsReportData", [
 
 ### Statutory Notifications Report
 
-GetStatutoryNotifications = RecordType("GetStatutoryNotifications", [
+GetStatutoryNotificationsFilters = RecordType("GetStatutoryNotificationsFilters", [
+])
+
+GetStatutoryNotificationsReportData = RecordType("GetStatutoryNotificationsReportData", [
+	Field("country_id", COUNTRY_ID),
+	Field("domain_id", DOMAIN_ID),
+	Field("level_1_statutory_id", OptionalType(LEVEL_1_STATUTORY_ID)),
+	Field("from_date", DATE),
+	Field("to_date", DATE)
 ])
 
 ### Assigned Statutory Report
@@ -65,15 +73,14 @@ GetAssignedStatutoryReport = RecordType("GetAssignedStatutoryReport", [
 
 Request = VariantType("Request", [
 	GetClientDetailsReportFilters, GetClientDetailsReportData,
-	GetStatutoryNotifications, GetAssignedStatutoryReportFilters,
-	GetAssignedStatutoryReport	
+	getStatutoryNotificationsFilters, GetStatutoryNotificationsReportData,
+	GetAssignedStatutoryReportFilters, GetAssignedStatutoryReport	
 ])
 
 RequestFormat = RecordType("RequestFormat", [
 	Field("session_token", SESSION_TOKEN),
 	Field("request", Request)
 ])
-
 
 #
 # Response
@@ -96,6 +103,11 @@ GetClientDetailsReportDataSuccess = RecordType("GetClientDetailsReportDataSucces
 ])
 
 ### Statutory Notifications
+GetStatutoryNotificationsFiltersSuccess = RecordType("GetStatutoryNotificationsFiltersSuccess", [
+	Field("countries", CountryList),
+	Field("domains", DomainList),
+	Field("level_1_statutories", MapType(COUNTRY_ID, Statutory))
+])
 
 NOTIFICATIONS = RecordType("NOTIFICATIONS", [
 	Field("statutory_provision", STATUTORY_PROVISION),
@@ -106,10 +118,10 @@ NOTIFICATIONS = RecordType("NOTIFICATIONS", [
 COUNTRY_WISE_NOTIFICATIONS = RecordType("COUNTRY_WISE_NOTIFICATIONS", [
 	Field("country_id", CountryList),
 	Field("domain_id", DomainList),
-	Field("notifications", VectorType(NOTIFICATION_TEXT))
+	Field("notifications", VectorType(NOTIFICATIONS))
 ])
 
-GetStatutoryNotificationsSuccess = RecordType("GetStatutoryNotificationsSuccess", [
+GetStatutoryNotificationsReportDataSuccess = RecordType("GetStatutoryNotificationsReportDataSuccess", [
 	Field("countries", CountryList),
 	Field("domains", DomainList),
 	Field("level_1_statutories", MapType(COUNTRY_ID, Statutory)),
@@ -147,6 +159,6 @@ GetAssignedStatutoryReportSuccess = RecordType("GetAssignedStatutoryReportSucces
 
 Response = VariantType("Response", [
 	GetClientDetailsReportFiltersSuccess, GetClientDetailsReportDataSuccess,
-	GetStatutoryNotificationsSuccess, GetAssignedStatutoryReportFiltersSuccess,
-	GetAssignedStatutoryReportSuccess
+	GetStatutoryNotificationsFiltersSuccess, GetStatutoryNotificationsReportDataSuccess,
+	GetAssignedStatutoryReportFiltersSuccess, GetAssignedStatutoryReportSuccess
 ])

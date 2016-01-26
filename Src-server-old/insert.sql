@@ -192,3 +192,30 @@ VALUES (1, 1, 'usha@mindssoft.com', 'e10adc3949ba59abbe56e057f20f883e', 'Test-us
 --tbl_user_sessions
 INSERT INTO tbl_user_sessions(session_token, user_id, session_type_id) VALUES ("12c94b934d5f4b5ebebd4471d8b29cb8", 0, 1);
 INSERT INTO tbl_user_sessions(session_token, user_id, session_type_id) VALUES ("b4c59894336c4ee3b598f5e4bd2b276b", 1, 1);
+
+
+--Get Statutory Notifications Log
+
+SELECT tsnl.statutory_notification_id,
+	   tsm.country_id,
+	 tsm.domain_id, ts.statutory_name, tsnl.statutory_provision,
+	 tsnl.notification_text, tsnl.updated_on
+	 from `tbl_statutory_notifications_log` tsnl 	
+	INNER JOIN `tbl_statutory_statutories` tss ON 
+	tsnl.statutory_mapping_id = tss.statutory_mapping_id
+	INNER JOIN `tbl_statutory_mappings` tsm ON 
+	tsm.statutory_mapping_id = tsnl.statutory_mapping_id
+	INNER JOIN  `tbl_statutories` ts ON 
+	tss.statutory_id = ts.statutory_id
+	WHERE 
+	tsm.country_id = 1 
+	and
+	tsm.domain_id = 1
+	and
+	tsnl.updated_on between
+	'2016-01-18 05:37:51' and '2016-01-20 05:37:51'
+
+
+
+
+

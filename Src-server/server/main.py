@@ -232,6 +232,7 @@ TEMPLATE_PATHS = [
     ("/assign-statutory", "files/desktop/assign-statutory/assignstatutory.html", None, {}),
     #Techno reports
     ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {}),
+    ("/statutory-notifications-list", "files/desktop/statutory-notifications-list-report/statutorynotificationslistreport.html", None, {}),
     ("/assigned-statutory-report", "files/desktop/assigned-statutory-report/assignedstatutoryreport.html", None, {}),
     ("/compliance-task-list", "files/desktop/compliance-task-list/compliancetasklist.html", None, {}),
     #audit trial
@@ -253,7 +254,7 @@ def run_server(port):
         #    "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
         #)
         db = KnowledgeDatabase(
-            "localhost", "root", "123456", "mirror_knowledge"
+            "localhost", "root", "123456", "mirror_knowledge_usha"
         )
         web_server = WebServer(io_loop)
 
