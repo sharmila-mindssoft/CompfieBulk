@@ -39,7 +39,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
     parse_structure_VectorType_RecordType_core_NumberOfCompliances,
     parse_structure_OptionalType_VectorType_SignedIntegerType_8,
-    parse_structure_OptionalType_Text
+    parse_structure_OptionalType_Text,
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -80,7 +81,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
     to_structure_VectorType_RecordType_core_NumberOfCompliances,
     to_structure_OptionalType_VectorType_SignedIntegerType_8,
-    to_structure_OptionalType_Text
+    to_structure_OptionalType_Text,
+    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances
 )
 
 #
@@ -547,7 +549,7 @@ class GetComplianceStatusChartSuccess(Response):
         data = parse_dictionary(data, ["chart_data"])
         chart_data = data.get("chart_data")
         chart_data = parse_structure_VectorType_RecordType_dashboard_ChartDataMap(chart_data)
-        return GetComplianceStatusChartSuccess(chart_data)
+        return ChartDataMap(chart_data)
 
     def to_inner_structure(self):
         return {
@@ -856,7 +858,7 @@ class DataMap(object):
 
     def to_structure(self):
         return {
-            "filter_name": to_structure_CustomTextType_100(self.filter_name),
+            "filter_name": parse_structure_SignedIntegerType_8(self.filter_name),
             "no_of_compliances": to_structure_VectorType_RecordType_core_NumberOfCompliances(self.no_of_compliances),
         }
 
@@ -865,23 +867,23 @@ class DataMap(object):
 #
 
 class ChartDataMap(object):
-    def __init__(self, year, data):
-        self.year = year
+    def __init__(self, filter_type_id, data):
+        self.filter_type_id = filter_type_id
         self.data = data
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["year", "data"])
-        year = data.get("year")
-        year = parse_structure_CustomTextType_20(year)
+        data = parse_dictionary(data, ["filter_type_id", "data"])
+        filter_type_id = data.get("filter_type_id")
+        filter_type_id = parse_structure_SignedIntegerType_8(filter_type_id)
         data = data.get("data")
-        data = parse_structure_VectorType_RecordType_dashboard_DataMap(data)
-        return ChartDataMap(year, data)
+        data = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances(data)
+        return ChartDataMap(filter_type, data)
 
     def to_structure(self):
         return {
-            "year": to_structure_CustomTextType_20(self.year),
-            "data": to_structure_VectorType_RecordType_dashboard_DataMap(self.data),
+            "filter_type_id": to_structure_SignedIntegerType_8(self.filter_type_id),
+            "data": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances(self.data),
         }
 
 #

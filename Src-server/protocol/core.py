@@ -1875,7 +1875,8 @@ class UpcomingCompliance(object):
 #
 
 class NumberOfCompliances(object):
-    def __init__(self, complied_count, delayed_compliance_count, inprogress_compliance_count, not_complied_count):
+    def __init__(self, year, complied_count, delayed_compliance_count, inprogress_compliance_count, not_complied_count):
+        self.year = year
         self.complied_count = complied_count
         self.delayed_compliance_count = delayed_compliance_count
         self.inprogress_compliance_count = inprogress_compliance_count
@@ -1883,7 +1884,9 @@ class NumberOfCompliances(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["complied_count", "delayed_compliance_count", "inprogress_compliance_count", "not_complied_count"])
+        data = parse_dictionary(data, ["year", "complied_count", "delayed_compliance_count", "inprogress_compliance_count", "not_complied_count"])
+        year = data.get("year")
+        year = parse_structure_CustomTextType_20(year)
         complied_count = data.get("complied_count")
         complied_count = parse_structure_UnsignedIntegerType_32(complied_count)
         delayed_compliance_count = data.get("delayed_compliance_count")
@@ -1892,10 +1895,11 @@ class NumberOfCompliances(object):
         inprogress_compliance_count = parse_structure_UnsignedIntegerType_32(inprogress_compliance_count)
         not_complied_count = data.get("not_complied_count")
         not_complied_count = parse_structure_UnsignedIntegerType_32(not_complied_count)
-        return NumberOfCompliances(complied_count, delayed_compliance_count, inprogress_compliance_count, not_complied_count)
+        return NumberOfCompliances(year, complied_count, delayed_compliance_count, inprogress_compliance_count, not_complied_count)
 
     def to_structure(self):
         return {
+            "year": to_structure_CustomTextType_20(self.year),
             "complied_count": to_structure_SignedIntegerType_8(self.complied_count),
             "delayed_compliance_count": to_structure_SignedIntegerType_8(self.delayed_compliance_count),
             "inprogress_compliance_count": to_structure_SignedIntegerType_8(self.inprogress_compliance_count),
