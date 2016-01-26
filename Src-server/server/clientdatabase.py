@@ -11,8 +11,11 @@ __all__ = [
 
 class ClientDatabase(Database):
     def __init__(self):
+        # super(ClientDatabase, self).__init__(
+        #     "localhost", "root", "123456", "mirror_knowledge")
         super(ClientDatabase, self).__init__(
-            "localhost", "root", "123456", "mirror_knowledge")
+            "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
+        )
         self.begin()
         self._client_db_connections = {}
         self._client_db_cursors = {}
@@ -1438,7 +1441,14 @@ class ClientDatabase(Database):
 #
 #   Chart Api
 #
-    def get_compliance_status(self, group_by_name, country_ids, domain_ids, status_type_qry, filter_type_ids, client_id) :
+    def get_compliance_status(self, group_by_name, status_type_qry, filter_type_ids, client_id, request) :
+        country_ids = request.country_ids
+        domain_ids = request.domain_ids
+        from_date = request.from_date
+        to_date = request.to_date
+        date_qry = ""
+        if from_date is not None and to_date is not None :
+            date_qry = "AND T1.due_date >= '%s' AND T1.due_date <= '%s' " % (from_date, to_date)
         query = "SELECT \
             %s, \
             T3.country_id, \
@@ -1466,6 +1476,7 @@ class ClientDatabase(Database):
             AND T3.domain_id IN %s  \
             %s \
             %s \
+            %s \
             GROUP BY month, year, T3.domain_id, %s\
             ORDER BY month desc, year desc, %s" % (
                 group_by_name,
@@ -1473,9 +1484,13 @@ class ClientDatabase(Database):
                 str(tuple(domain_ids)),
                 status_type_qry,
                 filter_type_ids,
+                date_qry,
                 group_by_name,
                 group_by_name
             )
+        print
+        print query
+        print
         rows = self.select_all(query, client_id)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return self.convert_to_dict(rows, columns)
@@ -1569,21 +1584,21 @@ class ClientDatabase(Database):
             filter_type_ids = "AND T4.unit_id in %s" % (filters)
 
         inprogress = self.get_compliance_status(
-                group_by_name, country_ids, domain_ids,
-                inprogress_qry, filter_type_ids, client_id
+                group_by_name, inprogress_qry, filter_type_ids, client_id,
+                request
             )
 
         complied = self.get_compliance_status(
-                group_by_name, country_ids, domain_ids,
-                complied_qry, filter_type_ids, client_id
+                group_by_name, complied_qry, filter_type_ids, client_id,
+                request
             )
         delayed = self.get_compliance_status(
-                group_by_name, country_ids, domain_ids,
-                delayed_qry, filter_type_ids, client_id
+                group_by_name, delayed_qry, filter_type_ids, client_id,
+                request
             )
         not_complied = self.get_compliance_status(
-                group_by_name, country_ids, domain_ids,
-                not_complied_qry, filter_type_ids, client_id
+                group_by_name, not_complied_qry, filter_type_ids, client_id,
+                request
             )
         return self.frame_compliance_status_count(inprogress, complied, delayed, not_complied, filter_ids, client_id)
 

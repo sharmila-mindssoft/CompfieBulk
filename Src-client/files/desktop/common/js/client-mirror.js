@@ -661,7 +661,7 @@ function initClientMirror() {
                 "country_ids": countryIds,
                 "domain_ids": domainIds,
                 "filter_type": filterType,
-                "filter_ids": filterIds
+                "filter_ids": filterIds,
                 "from_date": fromDate,
                 "to_date": toDate,
 
