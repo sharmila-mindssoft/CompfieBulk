@@ -1979,4 +1979,37 @@ class ClientDatabase(Database):
         print "not_complied"
         not_complied = self.get_status_wise_compliances(request, client_id, 4)
         result = self.get_status_wise_compliances_count(request, client_id)
-        return dashboard.GetComplianceStatusChartSuccess(result)        
+        return dashboard.GetComplianceStatusChartSuccess(result) 
+
+    def approveCompliance(compliance_history_id, remarks, next_due_date, client_id):
+        columns = ["approve_status", "approved_on", "remarks"]
+        condition = "compliance_history_id = '%d'" % compliance_history_id
+        values = [1, self.get_date_time(), remarks]
+        self.update(self.tblComplianceHistory, columns, values, condition, client_id)
+
+        columns = "unit_id, compliance_id"
+        rows = self.get_data(self.tblComplianceHistory, columns, condition, client_id)
+
+        columns = ["due_date"]
+        condition = " unit_id = '%d' and compliance_id = '%d'" %(
+            rows[0][0], rows[0][1])
+        values = [self.string_to_datetime(next_due_date)]
+        self.update(self.tblAssignedCompliances, columns, values, condition, client_id)
+
+    def rejectComplianceApproval(compliance_history_id, remarks,  next_due_date):
+        columns = ["approve_status", "remarks", "completion_date", "completed_on"]
+        condition = "compliance_history_id = '%d'" % compliance_history_id
+        values = [0, remarks, None, None]
+        self.update(self.tblComplianceHistory, columns, values, condition, client_id)
+
+    def concurCompliance(compliance_history_id, remarks, next_due_date):
+        columns = ["concurrence_status", "concurred_on", "remarks" ]
+        condition = "compliance_history_id = '%d'" % compliance_history_id
+        values = [1, self.get_date_time(), remarks]
+        self.update(self.tblComplianceHistory, columns, values, condition, client_id)
+
+    def rejectComplianceConcurrence(compliance_history_id, remarks,  next_due_date):
+        columns = ["concurrence_status", "remarks", "completion_date", "completed_on"]
+        condition = "compliance_history_id = '%d'" % compliance_history_id
+        values = [0,  remarks, None, None]
+        self.update(self.tblComplianceHistory, columns, values, condition, client_id)

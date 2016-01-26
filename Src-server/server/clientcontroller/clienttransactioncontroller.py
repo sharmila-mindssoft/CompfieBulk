@@ -82,7 +82,19 @@ def process_save_assigned_compliance(db, request, session_user, client_id):
 
 def process_approve_compliance(db, request, session_user, client_id):
 	compliance_history_id = request.compliance_history_id
-	pass
+	status = request.approval_status
+	remarks = request.remarks
+	next_due_date = request.next_due_date
+	if status == "Approve":
+		db.approveCompliance(compliance_history_id, remarks, next_due_date, client_id)
+	elif status == "RejectApproval":
+		db.rejectComplianceApproval(compliance_history_id, remarks,  next_due_date, client_id)
+	elif status == "Concur":
+		db.concurCompliance(compliance_history_id, remarks, next_due_date, client_id)
+	elif status == "RejectConcurrence":
+		db.rejectComplianceConcurrence(compliance_history_id, remarks, next_due_date, client_id)
+	return clienttransactions.ApproveComplianceSuccess()
+	
 
 def process_get_assign_compliance_form_data(db, session_user, client_id):  
 	countries = db.get_countries_for_user(session_user, client_id)
