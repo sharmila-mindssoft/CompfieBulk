@@ -667,6 +667,7 @@ function initClientMirror() {
         ];
     }
 
+<<<<<<< HEAD
     function getChartFilters(callback) {
         var request = [
             "GetChartFilters",
@@ -706,6 +707,8 @@ function initClientMirror() {
         ];
     }
 
+=======
+>>>>>>> Incomplete Approve Compliance Api
     return {
         log: log,
         toJSON: toJSON, 
@@ -777,7 +780,7 @@ function initClientMirror() {
         getStatutoriesByUnit: getStatutoriesByUnit,
 
         getComplianceApprovalList: getComplianceApprovalList,
-        approveCompliance: approveCompliance
+        approveCompliance: approveCompliance,
 
         getChartFilters: getChartFilters,
         getComplianceStatusChartData : getComplianceStatusChartData,
