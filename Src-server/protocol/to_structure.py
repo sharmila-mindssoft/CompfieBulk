@@ -2548,7 +2548,17 @@ def to_structure_VectorType_RecordType_core_NumberOfCompliances(data):
     lst = []
     for item in data:
         lst.append(to_structure_RecordType_core_NumberOfCompliances(item))
-    return lst 
+    return lst
+
+def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items() :
+        key = to_structure_SignedIntegerType_8(key)
+        value = to_structure_VectorType_RecordType_core_NumberOfCompliances(value)
+        dict[key] = value
+    return dict
+
 
 def to_structure_VectorType_RecordType_dashboard_ChartDataMap(data):
     data = parse_list(data, 0)
