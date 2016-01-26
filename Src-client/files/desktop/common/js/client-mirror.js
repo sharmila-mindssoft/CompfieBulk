@@ -667,6 +667,32 @@ function initClientMirror() {
         ];
     }
 
+    function getChartFilters(callback) {
+        var request = [
+            "GetChartFilters",
+            {}
+        ];
+        var callerName = "api/client_dashboard";
+        clientApiRequest(callerName, request, callback);         
+    }
+
+    function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate,  callback) {
+        var request = [
+            "GetComplianceStatusChart",
+            {
+                "country_ids": countryIds,
+                "domain_ids": domainIds,
+                "filter_type": filterType,
+                "filter_ids": filterIds
+                "from_date": fromDate,
+                "to_date": toDate,
+
+            }
+        ];
+        var callerName = "api/client_dashboard";
+        clientApiRequest(callerName, request, callback); 
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -736,8 +762,12 @@ function initClientMirror() {
 
         getPastRecordsFormData: getPastRecordsFormData,
         getStatutoriesByUnit: getStatutoriesByUnit,
+
         getComplianceApprovalList: getComplianceApprovalList,
         approveCompliance: approveCompliance
+
+        getChartFilters: getChartFilters,
+        getComplianceStatusChartData : getComplianceStatusChartData,
     }
 
 }
