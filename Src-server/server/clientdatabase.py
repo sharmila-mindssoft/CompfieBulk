@@ -23,15 +23,18 @@ class ClientDatabase(Database):
         self._client_db_connections[0] = self._connection
         self._client_db_cursors[0] = self._cursor
         for row in rows:
+            print row
+            print
+
             host = row[0]
             client_id = row[1]
             username = row[2]
             password = row[3]
             database = row[4]
-            super(
-                ClientDatabase, self).__init__(
+            super(ClientDatabase, self).__init__(
                 host, username, password, database
             )
+            print "_connection success"
             self.begin()
             self._client_db_connections[int(client_id)] = self._connection
             self._client_db_cursors[int(client_id)] = self._cursor
@@ -1600,7 +1603,10 @@ class ClientDatabase(Database):
                 group_by_name, not_complied_qry, filter_type_ids, client_id,
                 request
             )
-        return self.frame_compliance_status_count(inprogress, complied, delayed, not_complied, filter_ids, client_id)
+        if from_date is None and to_date is None :
+            return self.frame_compliance_status_count(inprogress, complied, delayed, not_complied, filter_ids, client_id)
+        else :
+            return self.frame_compliance_status_count(inprogress, complied, delayed, not_complied, filter_ids, client_id)
 
     def get_client_domain_configuration(self, client_id) :
         query = "SELECT country_id, domain_id, \
@@ -1620,7 +1626,7 @@ class ClientDatabase(Database):
             years_range.append(info)
         return years_range
 
-    def calculate_count(self, calculated_data, years_info, compliances, status, filter_ids):
+    def calculate_year_wise_count(self, calculated_data, years_info, compliances, status, filter_ids):
         def month_range(period_from, period_to):
             if period_from == 1 and period_to == 12:
                 return [int (x) for x in range(period_from, period_to + 1)]
@@ -1713,10 +1719,10 @@ class ClientDatabase(Database):
     def frame_compliance_status_count(self, inprogress, complied, delayed, not_complied, filter_type_ids, client_id):
         year_info = self.get_client_domain_configuration(client_id)
         calculated_data = {}
-        calculated_data = self.calculate_count(calculated_data, year_info, inprogress, "inprogress", filter_type_ids)
-        calculated_data = self.calculate_count(calculated_data, year_info, complied, "complied", filter_type_ids)
-        calculated_data = self.calculate_count(calculated_data, year_info, delayed, "delayed", filter_type_ids)
-        calculated_data = self.calculate_count(calculated_data, year_info, not_complied, "not_complied", filter_type_ids)
+        calculated_data = self.calculate_year_wise_count(calculated_data, year_info, inprogress, "inprogress", filter_type_ids)
+        calculated_data = self.calculate_year_wise_count(calculated_data, year_info, complied, "complied", filter_type_ids)
+        calculated_data = self.calculate_year_wise_count(calculated_data, year_info, delayed, "delayed", filter_type_ids)
+        calculated_data = self.calculate_year_wise_count(calculated_data, year_info, not_complied, "not_complied", filter_type_ids)
 
         # Sum compliance for filter_type wise
         filter_type_wise_list = []
