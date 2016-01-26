@@ -8,7 +8,7 @@ from core import (
 	COMPLIANCE_APPROVAL_STATUS, COMPLIANCE_FREQUENCY,
 	AssignedStatutory, Country, 
 	StatutoryDate, BusinessGroup, LegalEntity,
-	Division, Domain, Unit, Statutory
+	Division, Domain, Unit, Statutory, ApprovalStatus
 )
 __all__=  [
 	"Request", "Response", "RequestFormat", "ASSINGED_COMPLIANCE", "REASSIGNED_COMPLIANCE",
@@ -300,8 +300,10 @@ APPORVALCOMPLIANCELIST =  RecordType("APPORVALCOMPLIANCELIST", [
 	Field("compliances", VectorType(APPROVALCOMPLIANCE))
 ])
 
+
 GetComplianceApprovalListSuccess = RecordType("GetComplianceApprovalListSuccess", [
 	Field("approval_list", VectorType(APPORVALCOMPLIANCELIST)),
+	Field("approval_status", VectorType(ApprovalStatus))
 ])
 
 ApproveComplianceSuccess = RecordType("ApproveComplianceSuccess", [

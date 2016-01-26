@@ -420,6 +420,14 @@
 			function getComplianceApprovalList(){
 				client_mirror.getComplianceApprovalList(callback);
 			}
+			function approveCompliance(){
+				compliance_history_id = 1
+				compliance_approval_status = "Approve"
+				remarks = "Sample Remarks"
+				documents = ["document1","document2"]
+				next_due_date = "12-08-2016"
+				client_mirror.approveCompliance(approveCompliance(compliance_history_id, compliance_approval_status, remarks, documents, next_due_date,callback));
+			}
 		</script>
 	</head>
 	<body>
@@ -618,8 +626,8 @@
 			<button onclick="getComplianceApprovalList()">
 				Get Compliance Approval List
 			</button>
-			<button onclick="">
-				
+			<button onclick="approveCompliance()">
+				Approve Compliance
 			</button>
 		</div>
 		<br>

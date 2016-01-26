@@ -2625,6 +2625,13 @@ def to_structure_VectorType_RecordType_core_ComplianceApprovalStatus(data):
         lst.append(to_structure_RecordType_core_ComplianceApprovalStatus(item))
     return lst
 
+def to_structure_VectorType_RecordType_core_COMPLIANCE_APPROVAL_STATUS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(item))
+    return lst
+
 def to_structure_RecordType_knowledgemaster_Response_UpdateStatutoryNatureSuccess(data):
     from protocol import knowledgemaster
     return knowledgemaster.Response.to_structure(data)

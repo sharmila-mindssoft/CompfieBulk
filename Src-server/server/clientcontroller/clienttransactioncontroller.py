@@ -32,6 +32,8 @@ def process_client_transaction_requests(request, db) :
 		return process_get_statutories_by_unit(db, request, session_user, client_id)
 	elif type(request) is clienttransactions.GetComplianceApprovalList :
 		return process_get_compliance_approval_list(db, request, session_user, client_id)
+	elif type(request) is clienttransactions.ApproveCompliance:
+		return process_approve_compliance(db, request, session_user, client_id)
 
 def process_get_statutory_settings(db, session_user, client_id):
 	return db.get_statutory_settings(session_user, client_id)
@@ -66,8 +68,9 @@ def process_get_statutories_by_unit(db, request, session_user, client_id):
 
 def process_get_compliance_approval_list(db, request, session_user, client_id):
 	compliance_approval_list = db.get_compliance_approval_list(session_user, client_id)
+	approval_status = db.get_compliance_approval_status_list(session_user, client_id)
 	return clienttransactions.GetComplianceApprovalListSuccess(
-		approval_list = compliance_approval_list)
+		approval_list = compliance_approval_list, approval_status = approval_status)
 
 def process_get_compliance_for_units(db, request, session_user, client_id):
 	unit_ids = request.unit_ids
@@ -75,4 +78,8 @@ def process_get_compliance_for_units(db, request, session_user, client_id):
 	return clienttransactions.GetComplianceForUnitsSuccess(statutories)
 
 def process_save_assigned_compliance(db, request, session_user, client_id):
-	return 	db.save_assigned_compliance(request, session_user, client_id)
+	return 	db.save_assigned_compliance(request, session_user, client_id):
+
+def process_approve_compliance(db, request, session_user, client_id):
+	compliance_history_id = request.compliance_history_id
+	pass

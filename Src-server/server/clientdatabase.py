@@ -1528,3 +1528,17 @@ class ClientDatabase(Database):
                 unit_value_tuple = (int(user_id), int(unit_id))
                 unit_values_list.append(unit_value_tuple)
             result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
+
+    def get_compliance_approval_status_list(self, session_user, client_id):
+        columns = "compliance_status_id, compliance_status"
+        condition = "1"
+        rows = self.get_data(self.tblComplianceStatus, columns, condition)
+        columns = columns.split(",")
+        return self.return_compliance_approval_status_list(columns, rows)
+
+    def return_compliance_approval_status_list(self, columns, compliance_status_list):
+        result_compliance_status = []
+        for compliance_status in compliance_status_list:
+            result_compliance_status.append(core.ComplianceApprovalStatus(
+                compliance_status[0], core.COMPLIANCE_APPROVAL_STATUS(compliance_status[1])))
+        return result_compliance_status
