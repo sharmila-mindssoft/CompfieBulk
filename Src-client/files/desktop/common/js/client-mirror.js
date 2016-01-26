@@ -691,6 +691,19 @@ function initClientMirror() {
         ];
         var callerName = "api/client_dashboard";
         clientApiRequest(callerName, request, callback); 
+
+    function approveCompliance(compliance_history_id, compliance_approval_status, 
+        remarks, documents, next_due_date, callback){
+        var request = [
+            "ApproveCompliance",
+            {
+                "compliance_history_id": compliance_history_id,
+                "approval_status": compliance_approval_status,
+                "remarks": remarks,
+                "documents": documents,
+                "next_due_date":next_due_date
+            }
+        ];
     }
 
     return {
@@ -768,7 +781,9 @@ function initClientMirror() {
 
         getChartFilters: getChartFilters,
         getComplianceStatusChartData : getComplianceStatusChartData,
-        getComplianceApprovalList: getComplianceApprovalList
+
+        getComplianceApprovalList: getComplianceApprovalList,
+        approveCompliance: approveCompliance
     }
 
 }
