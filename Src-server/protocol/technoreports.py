@@ -142,17 +142,41 @@ class GetClientDetailsReportData(Request):
             "domain_ids": to_structure_OptionalType_BoolalType_VectorType_SignedIntegerType_8(self.domain_ids),
         }
 
-class GetStatutoryNotifications(Request):
+class GetStatutoryNotificationsFilters(Request):
     def __init__(self):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data)
-        return GetStatutoryNotifications()
+        return GetStatutoryNotificationsFilters()
 
     def to_inner_structure(self):
         return {
+        }
+
+class GetStatutoryNotificationsReportData(Request):
+    def __init__(self, country_id, domain_id, level_1_statutory_id):
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.level_1_statutory_id = level_1_statutory_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["country_id", "domain_id", "level_1_statutory_id" ])
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        level_1_statutory_id = data.get("level_1_statutory_id")
+        level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
+        return GetStatutoryNotificationsReportData(country_id, domain_id, level_1_statutory_id)
+
+    def to_inner_structure(self):
+        return {
+            "country_id" : to_structure_SignedIntegerType_8(self.country_id),
+            "domain_id" : to_structure_SignedIntegerType_8(self.domain_id),
+            "level_1_statutory_id" : to_structure_OptionalType_UnsignedIntegerType_32(self.level_1_statutory_id)
         }
 
 class GetAssignedStatutoryReportFilters(Request):
@@ -218,7 +242,7 @@ class GetAssignedStatutoryReport(Request):
 
 
 def _init_Request_class_map():
-    classes = [GetClientDetailsReportFilters, GetClientDetailsReportData, GetStatutoryNotifications, GetAssignedStatutoryReportFilters, GetAssignedStatutoryReport]
+    classes = [GetClientDetailsReportFilters, GetClientDetailsReportData, GetStatutoryNotificationsFilters, GetStatutoryNotificationsReportData,  GetAssignedStatutoryReportFilters, GetAssignedStatutoryReport]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -378,7 +402,32 @@ class GetClientDetailsReportDataSuccess(Response):
             "units": to_structure_VectorType_RecordType_techno_report_GroupedUnits(self.units)
         }
 
-class GetStatutoryNotificationsSuccess(Response):
+class GetStatutoryNotificationsFiltersSuccess(Response):
+    def __init__(self, countries, domains, level_1_statutories):
+        self.countries = countries
+        self.domains = domains
+        self.level_1_statutories = level_1_statutories
+ 
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["countries", "domains", "level_1_statutories"])
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+        level_1_statutories = data.get("level_1_statutories")
+        level_1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level_1_statutories)
+        return GetStatutoryNotificationsReportDataSuccess(countries, domains, level_1_statutories)
+
+    def to_inner_structure(self):
+        return {
+            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
+            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
+            "level_1_statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level_1_statutories)
+        }
+
+class GetStatutoryNotificationsReportDataSuccess(Response):
     def __init__(self, countries, domains, level_1_statutories, country_wise_notifications):
         self.countries = countries
         self.domains = domains
@@ -396,7 +445,7 @@ class GetStatutoryNotificationsSuccess(Response):
         level_1_statutories = parse_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory(level_1_statutories)
         country_wise_notifications = data.get("country_wise_notifications")
         country_wise_notifications = parse_structure_VectorType_RecordType_technoreports_COUNTRY_WISE_NOTIFICATIONS(country_wise_notifications)
-        return GetStatutoryNotificationsSuccess(countries, domains, level_1_statutories, country_wise_notifications)
+        return GetStatutoryNotificationsReportDataSuccess(countries, domains, level_1_statutories, country_wise_notifications)
 
     def to_inner_structure(self):
         return {
@@ -468,7 +517,7 @@ class GetAssignedStatutoryReportSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetClientDetailsReportFiltersSuccess, GetClientDetailsReportDataSuccess, GetStatutoryNotificationsSuccess, GetAssignedStatutoryReportFiltersSuccess, GetAssignedStatutoryReportSuccess]
+    classes = [GetClientDetailsReportFiltersSuccess, GetClientDetailsReportDataSuccess, GetStatutoryNotificationsFiltersSuccess, GetStatutoryNotificationsReportDataSuccess, GetAssignedStatutoryReportFiltersSuccess, GetAssignedStatutoryReportSuccess]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

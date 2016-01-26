@@ -1734,7 +1734,7 @@ Note :
 ### Get Statutory Notifications
 
     [
-        "GetStatutoryNotifications",
+        "GetStatutoryNotificationsFilters",
         {}
     ]
   

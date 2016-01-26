@@ -4415,3 +4415,36 @@ class KnowledgeDatabase(Database):
                     [int(x) for x in result_row[5].split(",")]))
             GroupedUnits.append(technoreports.GroupedUnits(row[2], row[1], row[0], units))
         return GroupedUnits   
+
+
+#
+#   Statutory_Notification_list
+#
+    def get_statutory_notifications_report_data(self, request_data):
+        country_id = request_data.country_id
+        domain_id = request_data.domain_id
+        level_1_statutory_id = request_data.level_1_statutory_id
+        if level_1_statutory_id is None :
+            level_1_statutory_id = '%'
+        query = "SELECT tsnl.statutory_notification_id, tsm.country_id, \
+             tsm.domain_id, ts.statutory_name, tsnl.statutory_provision,\
+             tsnl.notification_text, tsnl.updated_on \
+             from `tbl_statutory_notifications_log` tsnl    \
+            INNER JOIN `tbl_statutory_statutories` tss ON \
+            tsnl.statutory_mapping_id = tss.statutory_mapping_id \
+            INNER JOIN `tbl_statutory_mappings` tsm ON \
+            tsm.statutory_mapping_id = tsnl.statutory_mapping_id \
+            INNER JOIN  `tbl_statutories` ts ON \
+            tss.statutory_id = ts.statutory_id \
+            WHERE  \
+            tsm.country_id = %s and \
+            tsm.domain_id = %s " % (
+                country_id, domain_id
+            )
+
+        rows = self.select_all(query)
+        columns = ["statutory_notification_id", "country_id", "domain_id",
+          "statutory_name", "statutory_provision", "notification_text", "updated_on" ]
+        result = self.convert_to_dict(rows, columns)
+        print result
+        return result

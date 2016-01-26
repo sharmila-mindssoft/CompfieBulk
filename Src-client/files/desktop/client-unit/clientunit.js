@@ -389,40 +389,46 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
 	$('.add-country-unit-list').append(clone);
 	addunitrecordupdate(clientunitId, businessgroupId, legalEntityId, divisionId, countryid, unit_ids);			
 }
-function addunitrecordupdate(unitListByCountry){
-	$.each(unitListByCountry, function(key,value){		
-		console.log(unitListByCountry[key]["unit_name"]);
-		$('.countryval-'+countryid).val(getCountryName(countryid));
-		$('.country-'+countryid).val(countryid);
-		// for(var geography in geographyList[countryid]){
-		// 	var glist = geographyList[countryid][geography];
-		// 	if(glist['geography_id'] == unitList[units]['geography_id']){
-		// 	  $('.unitlocation-ids-'+countryid+'-'+1).val(glist['geography_id']);
-		// 	  $('.unitlocation-'+countryid+'-'+1).val(glist['geography_name']);
-		// 	  var levelid = glist['level_id'];
-		// 	  for(var glevel in geographyLevelList){
-		// 	    var glevelList = geographyLevelList[glevel];
-		// 	    for(var gllist in glevelList){
-		// 	      $('.glevel-'+countryid+'-'+1).append(
-		// 	      	$('<option value="'+glevelList[gllist]['level_id']+'">'+glevelList[gllist]['level_name']+'</option>')
-		// 	      );
-		// 	      $('.glevel-'+countryid+'-'+1+' option[value='+levelid+']').attr('selected','selected');
-		// 	    }
-		// 	  }
-		// 	}
-		// }
-		$('.unit-code-'+countryByCount+'-'+1).val(unitListByCountry[key]['unit_code']);
-		$('.unit-name-'+countryByCount+'-'+1).val(unitListByCountry[key]['unit_name']);
-		loadIndustry('industry-'+countryByCount+'-'+1);
-		$('.industry-'+countryByCount+'-'+1+' option[value='+unitListByCountry[key]['industry_id']+']').attr('selected','selected');
-		$('.industry-'+countryByCount).val();
-		$('.unit-address-'+countryByCount+'-'+1).val(unitListByCountry[key]['unit_address']);
-		$('.postal-code-'+countryByCount+'-'+1).val(unitListByCountry[key]['postal_code']);
-		var domainsVal = unitListByCountry[key]['domain_ids'];
-		var arrayDomains = domainsVal.split(",");
-		$('.domain-'+countryByCount+'-'+1).val(arrayDomains);
-		$('.domainselected-'+countryByCount+'-'+1).val(arrayDomains.length+" Selected");
-	});
+function addunitrecordupdate(clientunitId, businessgroupId, legalEntityId, divisionId, countryid, unit_ids){
+	$.each(unitList, function(key,value){
+		if( (unitList[key]['client_id'] == clientunitId) && (unitList[key]['business_group_id'] == businessgroupId) && 
+			(unitList[key]['legal_entity_id'] == legalEntityId ) &&  (unitList[key]['division_id'] == divisionId)){
+			var unitListByCountry = unitList[key]['units'][countryid]['units'];
+			$.each(unitListByCountry, function(key,value){		
+				console.log(unitListByCountry[key]["unit_name"]);
+				$('.countryval-'+countryid).val(getCountryName(countryid));
+				$('.country-'+countryid).val(countryid);
+				// for(var geography in geographyList[countryid]){
+				// 	var glist = geographyList[countryid][geography];
+				// 	if(glist['geography_id'] == unitList[units]['geography_id']){
+				// 	  $('.unitlocation-ids-'+countryid+'-'+1).val(glist['geography_id']);
+				// 	  $('.unitlocation-'+countryid+'-'+1).val(glist['geography_name']);
+				// 	  var levelid = glist['level_id'];
+				// 	  for(var glevel in geographyLevelList){
+				// 	    var glevelList = geographyLevelList[glevel];
+				// 	    for(var gllist in glevelList){
+				// 	      $('.glevel-'+countryid+'-'+1).append(
+				// 	      	$('<option value="'+glevelList[gllist]['level_id']+'">'+glevelList[gllist]['level_name']+'</option>')
+				// 	      );
+				// 	      $('.glevel-'+countryid+'-'+1+' option[value='+levelid+']').attr('selected','selected');
+				// 	    }
+				// 	  }
+				// 	}
+				// }
+				$('.unit-code-'+countryByCount+'-'+1).val(unitListByCountry[key]['unit_code']);
+				$('.unit-name-'+countryByCount+'-'+1).val(unitListByCountry[key]['unit_name']);
+				loadIndustry('industry-'+countryByCount+'-'+1);
+				$('.industry-'+countryByCount+'-'+1+' option[value='+unitListByCountry[key]['industry_id']+']').attr('selected','selected');
+				$('.industry-'+countryByCount).val();
+				$('.unit-address-'+countryByCount+'-'+1).val(unitListByCountry[key]['unit_address']);
+				$('.postal-code-'+countryByCount+'-'+1).val(unitListByCountry[key]['postal_code']);
+				var domainsVal = unitListByCountry[key]['domain_ids'];
+				var arrayDomains = domainsVal.split(",");
+				$('.domain-'+countryByCount+'-'+1).val(arrayDomains);
+				$('.domainselected-'+countryByCount+'-'+1).val(arrayDomains.length+" Selected");
+			});
+		}
+	});	
 }
 
 //Auto Generate Unit Code------------------------------------------------------------------------------------------
@@ -507,6 +513,7 @@ function clientunit_edit(clientunitId, businessgroupId, legalentityId, divisionI
 	$('#division-select').empty();
 	$('.industry').empty();
 	function onSuccess(data) {
+		console.log(data);
 		groupList = data['group_companies'];
 		businessGroupList = data['business_groups'];
 		legalEntitiesList = data['legal_entities'];
@@ -850,7 +857,6 @@ function unitListByCountryId(clientunitId, businessgroupId, legalEntityId, divis
 		}
 	});
 }
-
 //Active or inactive Client Unit List --------------------------------------------------------------------------
 function clientunit_active(clientunitId, lentityId, divisionId, isActive){
  	function onSuccess(data) {
