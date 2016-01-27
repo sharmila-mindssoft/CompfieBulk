@@ -1971,17 +1971,21 @@ class ClientDatabase(Database):
 
     # unitwise compliance report
     def get_unitwise_compliance_report(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, client_id, session_user) :
-       
+        
         unit_ids = self.get_user_unit_ids(session_user, client_id)
-        columns = "business_group_id, legal_entity_id, division_id"
-        condition = " 1 group by business_group_id, legal_entity_id, division_id"
-        rows = self.get_data(self.tblUnits, columns, condition, client_id)
+
+        query = "select u.business_group_id, u.legal_entity_id, u.division_id, bg.business_group_name, le.legal_entity_name, \
+                d.division_name from tbl_units u, tbl_business_groups bg, tbl_legal_entities le, tbl_divisions d \
+                where u.business_group_id = bg.business_group_id and u.legal_entity_id = le.legal_entity_id and \
+                u.division_id = d.division_id \
+                group by business_group_id, legal_entity_id, division_id"
+        rows = self.select_all(query, client_id)
 
         unit_wise_compliances_list = []
         for row in rows:
-            business_group_name = str(row[0])
-            legal_entity_name = str(row[1])
-            division_name = str(row[2])
+            business_group_name = row[3]
+            legal_entity_name = row[4]
+            division_name = row[5]
             unit_columns = "unit_id, unit_code, unit_name, address"
             domain_name = "Finance"
             country = "India"

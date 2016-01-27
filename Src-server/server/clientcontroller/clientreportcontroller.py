@@ -46,16 +46,16 @@ def get_unitwise_compliance(db, request, session_user, client_id):
 	division_id = request.division_id
 	unit_id = request.unit_id
 	user_id = request.user_id
-	# if business_group_id is None :
-	# 	business_group_id = '%'
-	# if legal_entity_id is None :
-	# 	legal_entity_id = '%'
-	# if division_id is None :
-	# 	division_id = '%'
-	# if unit_id is None :
-	# 	unit_id = '%'
-	# if user_id is None :
-	# 	user_id = '%'
+	if business_group_id is None :
+		business_group_id = '%'
+	if legal_entity_id is None :
+		legal_entity_id = '%'
+	if division_id is None :
+		division_id = '%'
+	if unit_id is None :
+		unit_id = '%'
+	if user_id is None :
+		user_id = '%'
 
 	unit_wise_compliances_list = db.get_unitwise_compliance_report(
 	    country_id, domain_id, business_group_id, 
