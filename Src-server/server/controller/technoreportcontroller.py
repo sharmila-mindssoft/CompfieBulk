@@ -56,7 +56,6 @@ def process_get_statutory_notifications_report_data(db, request, user_id):
 	level_1_statutories = db.get_country_wise_level_1_statutoy()
 	print "inside process_get_statutory_notifications_report_data: {}".format(request)
 	result = db.get_statutory_notifications_report_data(request)
-	print "Result Value process_get_statutory_notifications_report_data: {}".format(result)
 	return technoreports.GetStatutoryNotificationsReportDataSuccess(countries, domains, level_1_statutories, result)
 
 def process_get_client_details_report_filters(db, request_frame, session_user):
