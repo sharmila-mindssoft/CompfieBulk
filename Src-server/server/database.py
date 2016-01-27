@@ -4432,7 +4432,8 @@ class KnowledgeDatabase(Database):
             tss.statutory_id = ts.statutory_id \
             WHERE  \
             tsm.country_id = %s and \
-            tsm.domain_id = %s " % (
+            tsm.domain_id = %s \
+            group by tsm.country_id, tsm.domain_id " % (
                 country_id, domain_id
             )
 
@@ -4440,5 +4441,20 @@ class KnowledgeDatabase(Database):
         columns = ["statutory_notification_id", "country_id", "domain_id",
           "statutory_name", "statutory_provision", "notification_text", "updated_on" ]
         result = self.convert_to_dict(rows, columns)
-        print result
+        print "result from database: {} ".format(result)
         return result
+
+    def return_statutory_notifications(self, statutory_notifications):
+        country_wise_notifications = []
+        for row in rows:
+            notifications =[]
+            for notification in statutory_notifications:
+                notifications.append(clientreports.NOTIFICATIONS(
+                    statutory_provision = notification["statutory_provision"], 
+                    notification_text = notification["notification_text"],
+                    date_and_time = notification["date_and_time"]
+                ))
+        country_wise_notifications.append(
+            COUNTRY_WISE_NOTIFICATIONS(country_id = row["country_id"], domain_id = row["domain_id"], notifications = notifications))
+
+        return country_wise_notifications

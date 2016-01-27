@@ -578,6 +578,34 @@ class COUNTRY_WISE_NOTIFICATIONS(object):
         }
 
 #
+# NOTIFICATIONS
+#
+
+class NOTIFICATIONS(object):
+    def __init__(self, statutory_provision, notification_text, date_and_time):
+        self.statutory_provision = statutory_provision
+        self.notification_text = notification_text
+        self.date_and_time = date_and_time
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["statutory_provision", "notification_text", "date_and_time"])
+        statutory_provision = data.get("statutory_provision")
+        statutory_provision = parse_structure_CustomTextType_500(statutory_provision)
+        notification_text = data.get("notification_text")
+        notification_text = parse_structure_CustomTextType_500(notification_text)
+        date_and_time = data.get("date_and_time")
+        date_and_time = parse_structure_CustomTextType_20(date_and_time)
+        return NOTIFICATIONS(statutory_provision, notification_text, date_and_time)
+
+    def to_structure(self):
+        return {
+            "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
+            "notification_text": to_structure_CustomTextType_500(self.notification_text),
+            "date_and_time": to_structure_CustomTextType_20(self.date_and_time)
+        }
+
+#
 # UNIT_WISE_ASSIGNED_STATUTORIES
 #
 
