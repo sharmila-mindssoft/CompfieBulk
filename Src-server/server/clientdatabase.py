@@ -746,6 +746,7 @@ class ClientDatabase(Database):
         return rows[0][0]
 
     def get_user_unit_ids(self, user_id, client_id):
+        print user_id
         columns = "group_concat(unit_id)"
         condition = " user_id = '%d'"% user_id
         rows = self.get_data(self.tblUserUnits, columns, condition, client_id)
@@ -1464,4 +1465,70 @@ class ClientDatabase(Database):
                 " where client_statutory_id = (select client_statutory_id from "+\
                 " tbl_client_statutories where compliance_id ='%d'))" % compliance_id 
                 domain_name_row =  self.get_data()
+
+    # unitwise compliance report
+    def get_unitwise_compliance_report(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, client_id, session_user) :
+       
+        unit_ids = self.get_user_unit_ids(session_user, client_id)
+        columns = "business_group_id, legal_entity_id, division_id"
+        condition = " 1 group by business_group_id, legal_entity_id, division_id"
+        rows = self.get_data(self.tblUnits, columns, condition, client_id)
+
+        unit_wise_compliances_list = []
+        for row in rows:
+            business_group_name = str(row[0])
+            legal_entity_name = str(row[1])
+            division_name = str(row[2])
+            unit_columns = "unit_id, unit_code, unit_name, address"
+            domain_name = "Finance"
+            country = "India"
+            detail_condition = "legal_entity_id = '%d' "% row[1]
+            if row[0] == None:
+                detail_condition += " And business_group_id is NULL"
+            else:
+                detail_condition += " And business_group_id = '%d'" % row[0]
+            if row[2] == None:
+                detail_condition += " And division_id is NULL"
+            else:
+                detail_condition += " And division_id = '%d'" % row[2]
+            unit_condition = detail_condition +" and country_id = '%d' and unit_id in (%s)" % (country_id, unit_ids)
+            unit_rows = self.get_data(self.tblUnits, unit_columns, unit_condition)
+            unit_wise_compliances = {}
+            for unit in unit_rows:
+                unit_id = unit[0]
+                unit_name = "%s - %s "% (unit[1], unit[2])
+                query = "select cc.compliance_id, cs.unit_id, cs.domain_id, cs.country_id, u.unit_name, \
+                    u.address,c.compliance_task,ac.statutory_dates,ac.trigger_before_days,ac.validity_date,\
+                    ac.due_date, ac.assignee  from tbl_client_compliances cc, tbl_client_statutories cs, \
+                    tbl_compliances c, tbl_assigned_compliances ac, tbl_units u \
+                    where cc.client_statutory_id = cs.client_statutory_id and cs.country_id = %d \
+                    and cs.domain_id = %d \
+                    and cs.unit_id like '%d' \
+                    and cs.unit_id = u.unit_id and \
+                    c.compliance_id = cc.compliance_id" % (
+                        country_id, domain_id,  
+                        unit_id
+                    )
+                compliance_rows = self.select_all(query)
+                compliances_list = []
+                for compliance in compliance_rows:
+                    compliance_name = compliance[6]
+                    description = "Test description"
+                    statutory_date = []
+                    compliance_frequency = core.COMPLIANCE_FREQUENCY("One Time")
+                    trigger_before_days = int(compliance[8])
+                    due_date = self.datetime_to_string(compliance[10])
+                    validity_date = self.datetime_to_string(compliance[9])
+                    compliances_list.append(clientreport.ComplianceUnit(compliance_name, unit_name, 
+                        compliance_frequency, description, statutory_date, trigger_before_days, 
+                        due_date, validity_date))
+                unit_wise_compliances[unit_name] = compliances_list
+            unit_wise_compliances_list.append(clientreport.UnitCompliance(
+                business_group_name, legal_entity_name, division_name, domain_name, 
+                unit_wise_compliances))
+        return unit_wise_compliances_list
+
+
+
+
 
