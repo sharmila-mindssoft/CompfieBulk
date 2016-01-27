@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8080/";
+var BASE_URL = "http://localhost:8090/";
 
 function initMirror() {
     var DEBUG = true;
@@ -1063,6 +1063,29 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    //Statutory Notifications List
+    function getStatutoryNotificationsFilters(callback){
+        callerName = "api/techno_report"
+        var request = [
+            "GetStatutoryNotificationsFilters",
+            {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+    function getStatutoryNotificationsReportData(countryId, domainId, level1Id, callback){
+        callerName = "api/techno_report"
+        var request = [
+            "GetStatutoryNotificationsReportData",
+            {
+                "country_id": countryId,
+                "domain_id": domainId,
+                "level_1_statutory_id": level1Id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+    
+
     // Assign statutories
     function getAssignStatutoryWizardOne(countryId, callback) {
         var request = [
@@ -1314,6 +1337,9 @@ function initMirror() {
         getAssignedStatutoryById: getAssignedStatutoryById,
         getAssignedStatutoryReportFilters: getAssignedStatutoryReportFilters,
         getAssignedStatutoryReport: getAssignedStatutoryReport,
+        getStatutoryNotificationsFilters: getStatutoryNotificationsFilters,
+        getStatutoryNotificationsReportData: getStatutoryNotificationsReportData,
+
 
         getAuditTrail: getAuditTrail,
         updateUserProfile: updateUserProfile

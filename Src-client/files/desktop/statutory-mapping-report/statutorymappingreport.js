@@ -7,12 +7,12 @@ var statutoryNaturesList;
 var statutoriesList;
 var complianceFrequencyList;
 
-/*var temp_country = 0;
+var temp_country = 0;
 var temp_domain = 0;
 var temp_industry = null;
 var temp_statutorynature = null;
 var temp_geography = null;
-var temp_act = null;*/
+var temp_act = null;
 
 function clearMessage() {
   $(".error-message").hide();
@@ -192,6 +192,7 @@ $("#submit").click(function(){
   sec  = currentTime.getSeconds();
   ms = currentTime.getMilliseconds();
   console.log("Start Progress : "+ hour + ":" + min + ":" + sec + ":" + ms  );
+
   var country = $("#country").val();
   var domain = $("#domain").val();
   var industry = null;
@@ -232,7 +233,6 @@ $("#submit").click(function(){
         sec  = currentTime.getSeconds();
         ms = currentTime.getMilliseconds();
         console.log("API Response: "+ hour + ":" + min + ":" + sec + ":" + ms  );
-
         loadresult(statutoryMappingDataList);
       }
       function onFailure(error){

@@ -1132,7 +1132,8 @@ body .markdown-body
 <li><a href="#techno-functional-reports">TECHNO FUNCTIONAL REPORTS</a><ul>
 <li><a href="#get-client-details-report-filters">Get Client Details Report Filters</a></li>
 <li><a href="#get-client-details-report-data">Get Client details Report Data</a></li>
-<li><a href="#get-statutory-notifications">Get Statutory Notifications</a></li>
+<li><a href="#get-statutory-notifications-report-filters">Get Statutory Notifications Report Filters</a></li>
+<li><a href="#get-statutory-notifications-report-data">Get Statutory Notifications Report Data</a></li>
 <li><a href="#get-assigned-statutory-report-filters">Get assigned statutory Report Filters</a></li>
 <li><a href="#get-assigned-statutory-report">Get assigned statutory report</a></li>
 </ul>
@@ -2961,15 +2962,41 @@ On Success
     }   
 ]
 </code></pre>
-<h3 id="get-statutory-notifications"><a name="user-content-get-statutory-notifications" href="#get-statutory-notifications" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Statutory Notifications</h3>
+<h3 id="get-statutory-notifications-report-filters"><a name="user-content-get-statutory-notifications" href="#get-statutory-notifications" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Statutory Notifications List Filters</h3>
 <pre><code>[
-    "GetStatutoryNotifications",
-    {}
+    "GetStatutoryNotificationsFilters",
+    {    
+      
+    }
 ]
 </code></pre>
 <p>On Success</p>
 <pre><code>[
-    "GetStatutoryNotificationsSuccess"
+    "GetStatutoryNotificationsFiltersSuccess"
+    {
+        "countries": [Country,],
+        "domains": [Domain,],
+        "level_1_statutories":{
+            COUNTRY_ID :[ Statutory,],
+        }
+    }
+]
+</code></pre>
+<h3 id="get-statutory-notifications-report-data"><a name="user-content-get-statutory-notifications" href="#get-statutory-notifications" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Statutory Notifications List Filters</h3>
+<pre><code>[
+    "GetStatutoryNotificationsReportData",
+    {    
+        "countries": COUNTRY_ID,
+        "domains": DOMAIN_ID,
+        "level_1_statutories":  LEVEL_1_STATUTORY_ID,
+        "from_date": DATE,
+        "to_date": DATE,
+    }
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "GetStatutoryNotificationsReportDataSuccess"
     {
         "countries": [COUNTRY,],
         "domains": [DOMAIN,],

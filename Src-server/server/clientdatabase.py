@@ -16,6 +16,7 @@ class ClientDatabase(Database):
         super(ClientDatabase, self).__init__(
             "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
         )
+
         self.begin()
         self._client_db_connections = {}
         self._client_db_cursors = {}
@@ -35,7 +36,7 @@ class ClientDatabase(Database):
             self.begin()
             self._client_db_connections[int(client_id)] = self._connection
             self._client_db_cursors[int(client_id)] = self._cursor
-        print self._client_db_cursors
+        #print self._client_db_cursors
         self.initialize_table_names()
 
     def execute(self, query, client_id = None) :
@@ -124,7 +125,7 @@ class ClientDatabase(Database):
         if (len(admin_details) == 0) :
             data_columns = ["user_id", "user_group_id", "email_id", 
                 "employee_name", "employee_code", "contact_no", 
-                "user_group_name", "form_ids"
+                "user_group_name", "form_ids" 
             ]
             query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
                 t1.employee_name, t1.employee_code, t1.contact_no, \
@@ -1443,7 +1444,7 @@ class ClientDatabase(Database):
         client_statutory_rows = self.get_data(self.tblClientStatutories, client_statutory_columns,
             client_statutory_condition)
         client_statutory_ids = None
-        if len(client_statutory_rows) > 0:
+        if len(client_statutory_rows) > 0: 
             client_statutory_ids = client_statutory_rows[0][0]
         else:
             print "Assign Compliances to the Unit first"
@@ -1846,8 +1847,8 @@ class ClientDatabase(Database):
     def get_compliance_status_chart(self, request, session_user, client_id):
         result = self.get_status_wise_compliances_count(request, client_id)
         return dashboard.GetComplianceStatusChartSuccess(result)        
-        
-   
+
+
     # unitwise compliance report
     def get_unitwise_compliance_report(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, client_id, session_user) :
        
@@ -1909,6 +1910,4 @@ class ClientDatabase(Database):
                 business_group_name, legal_entity_name, division_name, domain_name, 
                 unit_wise_compliances))
         return unit_wise_compliances_list
-
-
 
