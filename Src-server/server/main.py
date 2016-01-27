@@ -106,7 +106,7 @@ class API(object):
         # self._db.begin()
         try:
             response_data = unbound_method(self, request_data, self._db)
-            # self._db.commit()
+            self._db.commit()
             respond(response_data)
         except Exception, e:
             print(traceback.format_exc())
@@ -257,6 +257,8 @@ def run_server(port):
         # db = KnowledgeDatabase(
         #     "localhost", "root", "123456", "mirror_knowledge"
         # )
+        db.begin()
+
         web_server = WebServer(io_loop)
 
         web_server.url("/", GET=handle_root)
