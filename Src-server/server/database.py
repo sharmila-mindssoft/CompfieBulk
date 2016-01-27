@@ -87,12 +87,12 @@ class Database(object) :
         return self._cursor
 
     def commit(self):
-        assert self._connection is not None
-        assert self._cursor is not None
-        self._cursor.close()
+        # assert self._connection is not None
+        # assert self._cursor is not None
+        # self._cursor.close()
         self._connection.commit()
-        self._cursor = None
-        self.close()
+        # self._cursor = None
+        # self.close()
 
     def rollback(self):
         assert self._connection is not None
@@ -119,7 +119,6 @@ class Database(object) :
         cursor = self.cursor()
         assert cursor is not None
         return cursor.execute(query)
-
 
     def call_proc(self, procedure_name, args):
         # args is tuple e.g, (parm1, parm2)
@@ -375,14 +374,12 @@ class Database(object) :
         if client_id != None:
             session_id = "%s-%s" % (client_id, session_id)
         updated_on = self.get_date_time()
-        query = "INSERT INTO tbl_user_sessions \
-            (session_token, user_id, session_type_id, last_accessed_time) \
-            VALUES ('%s', %s, %s, '%s');"
+        query = "INSERT INTO tbl_user_sessions (session_token, user_id, session_type_id, last_accessed_time) VALUES ('%s', %s, %s, '%s');"
         query = query % (session_id, user_id, session_type_id, updated_on)
-        if client_id != None:
-            self.execute(query, client_id)
+        if client_id is None:
+            result = self.execute(query)
         else:
-            self.execute(query)
+            self.execute(query, client_id)
         return session_id
 
     def clear_old_session(self, user_id, session_type_id, client_id = None) :
@@ -449,7 +446,6 @@ class KnowledgeDatabase(Database):
         )
         self.statutory_parent_mapping = {}
         self.geography_parent_mapping = {}
-        self.begin()
         self.initialize_table_names()
 
     def initialize_table_names(self):
@@ -2016,9 +2012,12 @@ class KnowledgeDatabase(Database):
         tbl_statutory = "tbl_statutories"
         columns = ["statutory_mapping_ids", "updated_by"]
         
+        print difference
+        print mapping_id
         for x in difference :
             old_map_id =  [int(j) for j in old_statu_ids.get(x).split(',')]
-            old_map_id = old_map_id.remove(mapping_id)
+            if mapping_id in old_map_id:
+                old_map_id = old_map_id.remove(mapping_id)
 
             new_map_id = ""
             if old_map_id is not None : 
@@ -3955,7 +3954,7 @@ class KnowledgeDatabase(Database):
 
     def get_unassigned_compliances(
         self, country_id, domain_id, industry_id, 
-        geography_id, client_statutory_id
+        geography_id, unit_id
     ) :
         query = "SELECT distinct \
             t6.compliance_id, t6.compliance_task, t6.document_name,\
@@ -4037,6 +4036,7 @@ class KnowledgeDatabase(Database):
         return level_1_compliance
 
     def return_assigned_statutories_by_id(self, data):
+        print data
         client_statutory_id = data["client_statutory_id"]
         statutories = self.return_assigned_compliances_by_id(client_statutory_id)
         new_compliances = self.get_unassigned_compliances(

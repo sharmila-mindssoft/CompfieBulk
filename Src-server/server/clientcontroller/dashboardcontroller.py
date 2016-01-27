@@ -16,6 +16,8 @@ def process_client_dashboard_requests(request, db) :
 		return process_get_chart_filters(db, session_user, client_id)
 	elif type(request) is dashboard.GetComplianceStatusChart :
 		return process_compliance_status_chart(db, request, session_user, client_id)	
+	elif type(request) is dashboard.GetComplianceStatusDrillDownDataSuccess:
+		return process_compliance_status_chart_drilldown(db, request, session_user, client_id)		
 	
 
 def process_get_chart_filters(db, session_user, client_id):
@@ -35,6 +37,9 @@ def process_get_chart_filters(db, session_user, client_id):
 
 def process_compliance_status_chart(db, request, session_user, client_id):
 	return db.get_compliance_status_chart(request, session_user, client_id)
+
+def process_compliance_status_chart_drilldown(db, request, session_user, client_id):
+	pass
 
 
 	
