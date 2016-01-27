@@ -1927,7 +1927,6 @@ class ClientDatabase(Database):
             final_result_list.append(chart)
         return final_result_list
 
-
     def frame_compliance_status_yearwise_count(self, inprogress, complied, delayed, not_complied, filter_type_ids, client_id):
         year_info = self.get_client_domain_configuration(client_id)
         calculated_data = {}
@@ -1969,6 +1968,62 @@ class ClientDatabase(Database):
         result = self.get_status_wise_compliances_count(request, client_id)
         return dashboard.GetComplianceStatusChartSuccess(result)        
 
+    def get_compliances_details_for_status_chart(self, request, session_user, client_id):
+        domain_ids = request.domain_ids
+        from_date = request.from_date
+        to_date= request.to_date
+        year = request.year
+        filter_type = request.filter_type
+        filter_id = request.filter_id
+        compliance_status = request.compliance_status
+
+        status_qry = ""
+        date_qry = ""
+        if from_date is not None and to_date is not None :
+            date_qry = ""            
+
+        query = "SELECT \
+            T1.compliance_history_id, T1.unit_id,\
+            T1.compliance_id, T1.start_date, \
+            T1.due_date, T1.completion_date, \
+            T1.completed_by,\
+            T2.compliance_task, T2.document_name, \
+            T2.compliance_description, T2.statutory_mapping, \
+            unit_name, division_name, legal_entity_name,\
+            business_group_name, country_name, \
+            T3.country_id, \
+            T3.domain_id, \
+            SUBSTRING_INDEX(T1.due_date, '-', 1) as year, \
+            SUBSTRING_INDEX(SUBSTRING_INDEX(T1.due_date , '-', -2 ),'-',1) as month,  \
+            FROM tbl_compliance_history T1 \
+            INNER JOIN tbl_client_compliances T2 \
+            ON T1.compliance_id = T2.compliance_id \
+            INNER JOIN tbl_client_statutories T3 \
+            ON T2.client_statutory_id = T3.client_statutory_id \
+            AND T1.unit_id = T3.unit_id \
+            INNER JOIN tbl_compliances T4\
+            ON T1.compliance_id = T4.compliance_id \
+            INNER JOIN tbl_units T5 \
+            ON T1.unit_id = T5.unit_id \
+            INNER JOIN tbl_divisions T6 \
+            ON T5.division_id = T6.division_id \
+            INNER JOIN tbl_legal_entities T7 \
+            ON T5.legal_entity_id = T7.legal_entity_id \
+            INNER JOIN tbl_business_groups T8 \
+            ON T5.business_group_id = T8.business_group_id \
+            INNER JOIN tbl_countries T9 \
+            ON T3.country_id = T9.country_id \
+            WHERE \
+            T3.domain_id IN %s  \
+            %s \
+            %s \
+            %s \
+            ORDER BY T1.due_date desc" % (
+                str(tuple(domain_ids)),
+                status_qry,
+                date_qry,
+                filter_type_qry,
+            )
 
     # unitwise compliance report
     def get_unitwise_compliance_report(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, client_id, session_user) :
