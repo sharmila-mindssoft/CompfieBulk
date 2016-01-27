@@ -345,7 +345,6 @@ UnitCompliance = RecordType("UnitCompliance", [
 	Field("business_group_name", Text50),
 	Field("legal_entity_name", Text50),
 	Field("division_name", Text50),
-	Field("domain_name", Text50),
 	Field("unit_wise_compliances", MapType(UNIT_NAME, VectorType(ComplianceUnit)))
 ])
 
