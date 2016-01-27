@@ -34,6 +34,17 @@ GetComplianceStatusChart = RecordType("GetComplianceStatusChart", [
 	Field("filter_ids",VectorType(Int8))
 ])
 
+GetComplianceStatusDrillDownData = RecordType("GetComplianceStatusDrillDownData", [
+	Field("domain_ids", VectorType(DOMAIN_ID)),
+	Field("from_date", Text),
+	Field("to_date", Text),
+	Field("year", Text),
+	Field("filter_type", FILTER_TYPE),
+	Field("filter_id", VectorType(Int8)),
+	Field("compliance_status", COMPLIANCE_STATUS)
+])
+
+
 GetEscalationsChart = RecordType("GetEscalationsChart", [
 	Field("country_id", COUNTRY_ID),
     Field("domain_id", DOMAIN_ID),
@@ -83,11 +94,6 @@ GetAssigneeWiseComplianceDrillDown = RecordType("GetAssigneeWiseComplianceDrillD
 	Field("domain_id", DOMAIN_ID)
 ])
 
-GetComplianceStatusDrillDownData = RecordType("GetComplianceStatusDrillDownData", [
-	Field("filter_type", FILTER_TYPE),
-	Field("filter_id", FILTER_ID),
-	Field("compliance_status", COMPLIANCE_STATUS)
-])
 
 GetEscalationsDrillDownData = RecordType("GetEscalationsDrillDownData", [
 	Field("filter_type", FILTER_TYPE),
