@@ -1,4 +1,4 @@
-var CLIENT_BASE_URL = "http://localhost:8080/";
+var CLIENT_BASE_URL = "http://localhost:8090/";
 function initClientMirror() {
     var DEBUG = true;
 
@@ -100,7 +100,6 @@ function initClientMirror() {
                 log("API STATUS :"+status)
 
                 if (status.toLowerCase().indexOf(matchString) != -1){
-                    alert(response);
                     callback(null, response);
                 }
                 else{
@@ -669,8 +668,6 @@ function initClientMirror() {
     
     function getUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, 
         division_id, unit_id, user_id, callback) {
-        console.log("country>>>>"+country_id)
-        console.log("domain_id>>>>"+domain_id)
         var request = [
             "GetUnitwisecomplianceReport",
             {

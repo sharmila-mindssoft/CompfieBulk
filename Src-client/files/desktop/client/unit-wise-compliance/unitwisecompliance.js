@@ -48,37 +48,23 @@ function loadresult(filterList){
   $(".grid-table-rpt").show();
   var country = $("#countryval").val();
   var domain = $("#domainval").val();
-  var compliance_frequency = $("#compliance_frequency").val();
   $(".country").text(country);
   $(".domain").text(domain);
 
-  $(".tbody-compliance").find("tbody").remove();
+  $(".tbody-unit").find("tbody").remove();
   var count=1;
   var compliance_count=0;
   for(var entity in filterList){
-    var checkNoCompliance = true;
-    var actname = '';
-    var display_occurance1=true;
-    var display_occurance2=true;
-    var display_occurance3=true;
-    var display_occurance4=true;
+    var unitname =  'UNIT NAME'/*filterList[entity][""]*/;
 
-    $.each(statutoriesList[$("#country").val()][$("#domain").val()], function(index, value) {
-    if (value.statutory_id == entity) {
-        actname = value.statutory_name;
-    }
-    });
-
-    var tableRow=$('#act-templates .table-act-list .table-row-act-list');
+    var tableRow=$('#unit-list-templates');
     var clone=tableRow.clone();
-    $('.actname', clone).html(actname +'<span><img src="/images/chevron_black_down.png"></span>');
-    $('.tbody-compliance').append(clone);
-    $('.tbody-compliance').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
-    if(count==1){
-      $('.accordion-content'+count).addClass("default");
-    }
+    $('.tbl_country', clone).text(country);
+    $('.tbody-unit').append(clone);
+   
+    
 
-    for(var j=0; j<complianceFrequencyList.length; j++){             
+/*    for(var j=0; j<complianceFrequencyList.length; j++){             
       for(var i=0; i<filterList[entity].length; i++){
         for(var k=0; k<filterList[entity][i]["compliances"].length; k++){
 
@@ -144,25 +130,12 @@ function loadresult(filterList){
           }
         }
       }
-    }
-    if(checkNoCompliance){
-      var tableRow1=$('#nocompliance-templates .table-nocompliances-list .table-row');
-      var clone1=tableRow1.clone();
-      $('.tbody-compliance').append(clone1);
-      $('.tbl_norecords', clone1).text("No Records");
-      $('.accordion-content'+count).append(clone1);
-    }
+    }*/
+    
     count++;
   }  
   $('.compliance_count').text("Total : "+ (compliance_count) +" records");
-  $(document).ready(function($) {
-    $('#accordion').find('.accordion-toggle').click(function(){
-      //Expand or collapse this panel
-      $(this).next().slideToggle('fast');
-      //Hide the other panels
-      $(".accordion-content").not($(this).next()).slideUp('fast');
-    });
-  });
+ 
 }
 
 

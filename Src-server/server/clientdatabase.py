@@ -12,11 +12,11 @@ __all__ = [
 
 class ClientDatabase(Database):
     def __init__(self):
-        # super(ClientDatabase, self).__init__(
-        #     "localhost", "root", "123456", "mirror_knowledge")
         super(ClientDatabase, self).__init__(
-            "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
-        )
+            "localhost", "root", "123456", "mirror_knowledge")
+        # super(ClientDatabase, self).__init__(
+        #     "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
+        # )
 
         self.begin()
         self._client_db_connections = {}
@@ -1973,14 +1973,28 @@ class ClientDatabase(Database):
     # unitwise compliance report
     def get_unitwise_compliance_report(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, client_id, session_user) :
         
-        unit_ids = self.get_user_unit_ids(session_user, client_id)
+        if unit_id is None :
+            unit_ids = self.get_user_unit_ids(session_user, client_id)
+        else:
+            unit_ids = unit_id
 
-        query = "select u.business_group_id, u.legal_entity_id, u.division_id, bg.business_group_name, le.legal_entity_name, \
-                d.division_name from tbl_units u, tbl_business_groups bg, tbl_legal_entities le, tbl_divisions d \
-                where u.business_group_id = bg.business_group_id and u.legal_entity_id = le.legal_entity_id and \
-                u.division_id = d.division_id \
-                group by business_group_id, legal_entity_id, division_id"
-        rows = self.select_all(query, client_id)
+        q = "SELECT u.business_group_id, u.legal_entity_id, u.division_id,  \
+            bg.business_group_name, le.legal_entity_name, d.division_name \
+            FROM tbl_units u \
+            INNER JOIN tbl_business_groups bg \
+            ON u.business_group_id = bg.business_group_id \
+            INNER JOIN tbl_legal_entities le \
+            ON u.legal_entity_id = le.legal_entity_id \
+            INNER JOIN tbl_divisions d \
+            ON u.division_id = d.division_id \
+            WHERE u.business_group_id like '%s' \
+            and u.legal_entity_id like '%s' \
+            and u.division_id like '%s' GROUP BY u.business_group_id, u.legal_entity_id, u.division_id" % (
+                str(business_group_id), 
+                str(legal_entity_id),
+                str(division_id)
+            ) 
+        rows = self.select_all(q, client_id)
 
         unit_wise_compliances_list = []
         for row in rows:
@@ -1988,8 +2002,6 @@ class ClientDatabase(Database):
             legal_entity_name = row[4]
             division_name = row[5]
             unit_columns = "unit_id, unit_code, unit_name, address"
-            domain_name = "Finance"
-            country = "India"
             detail_condition = "legal_entity_id = '%d' "% row[1]
             if row[0] == None:
                 detail_condition += " And business_group_id is NULL"
@@ -2005,34 +2017,46 @@ class ClientDatabase(Database):
             for unit in unit_rows:
                 unit_id = unit[0]
                 unit_name = "%s - %s "% (unit[1], unit[2])
-                query = "select cc.compliance_id, cs.unit_id, cs.domain_id, cs.country_id, u.unit_name, \
-                    u.address,c.compliance_task,ac.statutory_dates,ac.trigger_before_days,ac.validity_date,\
-                    ac.due_date, ac.assignee  from tbl_client_compliances cc, tbl_client_statutories cs, \
+                
+                query = "select c.compliance_task, c.compliance_description, ac.statutory_dates, ac.validity_date, \
+                    ac.due_date, ac.assignee \
+                    from tbl_client_compliances cc, tbl_client_statutories cs, \
                     tbl_compliances c, tbl_assigned_compliances ac, tbl_units u \
-                    where cc.client_statutory_id = cs.client_statutory_id and cs.country_id = %d \
-                    and cs.domain_id = %d \
-                    and cs.unit_id like '%d' \
+                    where cc.client_statutory_id = cs.client_statutory_id and cs.country_id = %s \
+                    and cs.domain_id = %s \
+                    and cs.unit_id like '%s' \
                     and cs.unit_id = u.unit_id and \
-                    c.compliance_id = cc.compliance_id" % (
+                    c.compliance_id = cc.compliance_id \
+                    and ac.assignee like '%s' " % (
                         country_id, domain_id,  
-                        unit_id
+                        unit_id, user_id
                     )
                 compliance_rows = self.select_all(query)
                 compliances_list = []
                 for compliance in compliance_rows:
-                    compliance_name = compliance[6]
-                    description = "Test description"
-                    statutory_date = []
+                    statutory_dates = compliance[2]
+                    statutory_dates = json.loads(statutory_dates)
+                    date_list = []
+                    for date in statutory_dates :
+                        s_date = core.StatutoryDate(
+                            date["statutory_date"],
+                            date["statutory_month"],
+                            date["trigger_before_days"]
+                        )
+                        date_list.append(s_date)
+
+                    compliance_name = compliance[0]
+                    description = compliance[1]
+                    statutory_date = date_list
                     compliance_frequency = core.COMPLIANCE_FREQUENCY("One Time")
-                    trigger_before_days = int(compliance[8])
-                    due_date = self.datetime_to_string(compliance[10])
-                    validity_date = self.datetime_to_string(compliance[9])
+                    due_date = self.datetime_to_string(compliance[4])
+                    validity_date = self.datetime_to_string(compliance[3])
                     compliances_list.append(clientreport.ComplianceUnit(compliance_name, unit_name, 
-                        compliance_frequency, description, statutory_date, trigger_before_days, 
+                        compliance_frequency, description, statutory_date, 
                         due_date, validity_date))
                 unit_wise_compliances[unit_name] = compliances_list
             unit_wise_compliances_list.append(clientreport.UnitCompliance(
-                business_group_name, legal_entity_name, division_name, domain_name, 
+                business_group_name, legal_entity_name, division_name, 
                 unit_wise_compliances))
         return unit_wise_compliances_list
 

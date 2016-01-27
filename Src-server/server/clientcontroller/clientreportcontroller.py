@@ -52,8 +52,8 @@ def get_unitwise_compliance(db, request, session_user, client_id):
 		legal_entity_id = '%'
 	if division_id is None :
 		division_id = '%'
-	if unit_id is None :
-		unit_id = '%'
+	# if unit_id is None :
+	# 	unit_id = '%'
 	if user_id is None :
 		user_id = '%'
 
