@@ -2649,6 +2649,13 @@ def to_structure_VectorType_RecordType_core_ComplianceApprovalStatus(data):
         lst.append(to_structure_RecordType_core_ComplianceApprovalStatus(item))
     return lst
 
+def to_structure_VectorType_RecordType_core_COMPLIANCE_APPROVAL_STATUS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(item))
+    return lst
+
 def to_structure_RecordType_knowledgemaster_Response_UpdateStatutoryNatureSuccess(data):
     from protocol import knowledgemaster
     return knowledgemaster.Response.to_structure(data)
@@ -2667,7 +2674,6 @@ def to_structure_VectorType_RecordType_core_ComplianceApplicability(data):
 def to_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability(data):
     if data is None: return None
     return to_structure_VectorType_RecordType_core_ComplianceApplicability(data)
-
 
 def to_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability(data):
     data = parse_dictionary(data)
@@ -3439,18 +3445,6 @@ def to_structure_VectorType_RecordType_core_GeographyWithMapping(data):
 def to_structure_RecordType_core_GeographyWithMapping(data):
     from protocol import core
     return core.GeographyWithMapping.to_structure(data)
-
-#clienttransaction getcompliancforunit
-def to_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
-    from protocol import clienttransactions
-    return clienttransactions.UNIT_WISE_STATUTORIES.to_structure(data)
-
-def to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
-    data = parse_list(data, 0)
-    lst = []
-    for item in data :
-        lst.append(to_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(item))
-    return lst
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
     data = parse_dictionary(data)

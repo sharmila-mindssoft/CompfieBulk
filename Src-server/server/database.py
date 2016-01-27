@@ -173,6 +173,7 @@ class Database(object) :
             else:
                 stringValue = stringValue+"'"+str(value)+"'"
         query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
+        print query
         if client_id != None:
             return self.execute(query, client_id)
         return self.execute(query)
@@ -196,6 +197,7 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
+        print query
         if client_id != None:
             return self.execute(query, client_id)
 
@@ -3950,7 +3952,11 @@ class KnowledgeDatabase(Database):
 
         return final_statutory_list
 
-    def get_unassigned_compliances(self, country_id, domain_id, industry_id, geography_id, unit_id) :
+
+    def get_unassigned_compliances(
+        self, country_id, domain_id, industry_id, 
+        geography_id, client_statutory_id
+    ) :
         query = "SELECT distinct \
             t6.compliance_id, t6.compliance_task, t6.document_name,\
             t6.statutory_provision, t6.compliance_description, t2.statutory_id, \
@@ -4051,7 +4057,7 @@ class KnowledgeDatabase(Database):
                     key,
                     statutory_name,
                     None,
-                    True,
+                    True, 
                     None,
                     None
                 )
@@ -4183,8 +4189,9 @@ class KnowledgeDatabase(Database):
                             break
                     if is_exists is False :
                         statutories.append(new_s)
-
-
+                statutories.append(
+                    self.return_assigned_compliances_by_id(client_statutory_id)
+                )
                 unit_statutories.assigned_statutories = statutories
 
             unit_wise_statutories_dict[unit_id] = unit_statutories
@@ -4346,8 +4353,8 @@ class KnowledgeDatabase(Database):
             users = self.return_users()
         forms = self.return_forms()
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
-
-#
+ 
+# 
 #   Update Profile
 #
 

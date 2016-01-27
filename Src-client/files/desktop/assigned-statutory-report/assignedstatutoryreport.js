@@ -163,11 +163,94 @@ $("#show-button").click(function(){
 		);
 	}
 });
+
 function loadAssignedStatutoryList(data){
 	$('.grid-table-rpt').show();
 	$('.tbody-assigned-statutory-list tr').remove();
 	var sno = 0;
 	
+	$.each(data, function(key, value) {
+	  	var list = data[key];
+	  	var tableRow = $('#unit-details-list .table-unit-details-list .tablerow');
+		var clone = tableRow.clone();
+		var unitNameAddress = list['unit_name']+", "+list['address'];
+		$('.unit-name-address', clone).text(unitNameAddress);
+		$('.tbody-assigned-statutory-list').append(clone);
+		var assignedList = list['assigned_statutories'];
+		//Assigned Act List
+	  	$.each(assignedList, function(k, val) { 
+	  		var asImageName;
+	  		var optedImageName;
+	  		var tableRowAssigned = $('#act-heading .table-act-heading-list .tablerow');
+			var cloneAssigned = tableRowAssigned.clone();
+			var appStatus = assignedList[k]['applicable_status']
+			if(appStatus == true){
+				asImageName = "<img src='/images/tick1bold.png'>";
+			}
+			else{
+				asImageName = "<img src='/images/deletebold.png'>";  
+			}
+			var optedStatus = assignedList[k]['compliance_opted_status']
+			if(optedStatus == true){
+				optedImageName = "<img src='/images/tick1bold.png'>";
+			}
+			else if(optedStatus == false){
+				optedImageName = "<img src='/images/deletebold.png'>";  
+			}
+			else{
+				optedImageName = "Nil";
+			}
+			var remarks = assignedList[k]['compliance_remarks'];
+			if(remarks == null){
+				remarks = "Nil";
+			}
+			$('.heading', cloneAssigned).text(assignedList[k]['level_1_statutory_name']);
+			$('.act-applicable', cloneAssigned).html(asImageName);
+			$('.act-opted', cloneAssigned).html(optedImageName);
+			$('.act-remarks', cloneAssigned).text(remarks);
+			var assignedRecord = assignedList[k]['compliances']; 
+			$('.tbody-assigned-statutory-list').append(cloneAssigned);		
+			$.each(assignedRecord, function(ke, valu) {
+				var appStatus = assignedRecord[ke]['compliance_applicable_status']
+				if(appStatus == true){
+					asImageName = "<img src='/images/tick1bold.png'>";
+				}
+				else{
+					asImageName = "<img src='/images/deletebold.png'>";  
+				}
+				var optedStatus = assignedRecord[ke]['compliance_opted_status']
+				if(optedStatus == true){
+					optedImageName = "<img src='/images/tick1bold.png'>";
+				}
+				else if(optedStatus == false){
+					optedImageName = "<img src='/images/deletebold.png'>";  
+				}
+				else{
+					optedImageName = "Nil";
+				}
+				var remarks = assignedRecord[ke]['compliance_remarks'];
+				if(remarks == null){
+					remarks = "Nil";
+				}
+				sno++; 
+		  		var tableRowAssignedRecord = $('#statutory-list .table-statutory-list .tablerow');
+				var cloneAssignedRecord = tableRowAssignedRecord.clone();
+				$('.sno', cloneAssignedRecord).text(sno);
+				$('.statutory-provision', cloneAssignedRecord).text(assignedRecord[ke]['statutory_provision']);
+				$('.compliance-task', cloneAssignedRecord).text(assignedRecord[ke]['compliance_name']);
+				$('.compliance-description', cloneAssignedRecord).text(assignedRecord[ke]['description']);
+				$('.statutory-nature', cloneAssignedRecord).text(assignedRecord[ke]['statutory_nature']);
+				$('.applicability-status', cloneAssignedRecord).html(asImageName);
+				$('.opted', cloneAssignedRecord).html(optedImageName);
+				$('.remarks', cloneAssignedRecord).text(remarks);
+				$('.tbody-assigned-statutory-list').append(cloneAssignedRecord);
+
+			});			
+
+function loadClientDetailsList(data){
+	$('.grid-table-rpt').show();
+	$('.tbody-assigned-statutory-list tr').remove();
+	var sno = 0;
 	$.each(data, function(key, value) {
 	  	var list = data[key];
 	  	var tableRow = $('#unit-details-list .table-unit-details-list .tablerow');
@@ -491,3 +574,4 @@ $(function() {
 	// });
 	initialize();
 });
+

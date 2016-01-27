@@ -49,13 +49,8 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_100,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     parse_structure_OptionalType_CustomTextType_20,
-    parse_structure_VectorType_RecordType_core_ComplianceFrequency,
     parse_structure_OptionalType_UnsignedIntegerType_32,
-    parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
-    parse_structure_CustomTextType_100,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
-    parse_structure_OptionalType_CustomTextType_20,
-    parse_structure_OptionalType_UnsignedIntegerType_32
+    parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -107,17 +102,17 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_20,
     to_structure_VectorType_RecordType_core_Unit,
     to_structure_VectorType_RecordType_core_Level1Statutory,
-    to_structure_VectorType_RecordType_core_ClientBusinessGroup,
-    to_structure_VectorType_RecordType_core_ClientLegalEntity,
-    to_structure_VectorType_RecordType_core_ClientDivision,
     to_structure_VectorType_RecordType_core_ClientUnit,
     to_structure_RecordType_client_transactions_IndustryWiseUnits,
     to_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits,
+    to_structure_OptionalType_UnsignedIntegerType_32,
+    to_structure_OptionalType_CustomTextType_50,
+    to_structure_VectorType_RecordType_core_ComplianceApprovalStatus,
     to_structure_VectorType_RecordType_core_ComplianceFrequency,
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate
 )
- 
+
 #
 # Request 
 #
@@ -131,7 +126,7 @@ class Request(object):
     def to_inner_structure(self):
         raise NotImplementedError
 
-    @staticmethod
+    @staticmethod 
     def parse_structure(data):
         data = parse_static_list(data, 2)
         name, data = data
@@ -360,27 +355,37 @@ class GetComplianceApprovalList(Request):
         }
 
 class ApproveCompliance(Request):
-    def __init__(self, compliance_history_id, approval_status, remarks):
+    def __init__(self, compliance_history_id, approval_status, remarks, documents, next_due_date):
         self.compliance_history_id = compliance_history_id
         self.approval_status = approval_status
         self.remarks = remarks
+        self.documents = documents
+        self.next_due_date = next_due_date
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["compliance_history_id", "approval_status", "remarks"])
+        data = parse_dictionary(data, ["compliance_history_id", "approval_status",
+         "remarks", "documents", "next_due_date"])
         compliance_history_id = data.get("compliance_history_id")
         compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         approval_status = data.get("approval_status")
         approval_status = parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(approval_status)
         remarks = data.get("remarks")
         remarks = parse_structure_CustomTextType_500(remarks)
-        return ApproveCompliance(compliance_history_id, approval_status, remarks)
+        documents = data.get("documents")
+        documents = parse_structure_OptionalType_VectorType_RecordType_core_FileList(documents)
+        next_due_date = data.get("next_due_date")
+        next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
+        return ApproveCompliance(compliance_history_id, approval_status, remarks, 
+            documents, next_due_date)
 
     def to_inner_structure(self):
         return {
             "compliance_history_id": to_structure_SignedIntegerType_8(self.compliance_history_id),
             "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
             "remarks": to_structure_CustomTextType_500(self.remarks),
+            "documents": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.documents),
+            "next_due_date": parse_structure_OptionalType_CustomTextType_20(self.next_due_date)
         }
 
 class GetPastRecordsFormData(Request):
@@ -618,9 +623,6 @@ class GetComplianceForUnitsSuccess(Response):
             "statutories": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(self.statutories)
         }
 
-
-
-
 class SaveAssignedComplianceSuccess(Response):
     def __init__(self):
         pass
@@ -707,19 +709,23 @@ class ReassignComplianceSuccess(Response):
         }
 
 class GetComplianceApprovalListSuccess(Response):
-    def __init__(self, approval_list):
+    def __init__(self, approval_list, approval_status):
         self.approval_list = approval_list
+        self.approval_status = approval_status
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["approval_list"])
+        data = parse_dictionary(data, ["approval_list", "approval_status"])
         approval_list = data.get("approval_list")
         approval_list = parse_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST(approval_list)
-        return GetComplianceApprovalListSuccess(approval_list)
+        approval_status = data.get("approval_status")
+        approval_status = parse_structure_VectorType_RecordType_core_ComplianceApprovalStatus(approval_status)
+        return GetComplianceApprovalListSuccess(approval_list, approval_status)
 
     def to_inner_structure(self):
         return {
             "approval_list": to_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST(self.approval_list),
+            "approval_status": to_structure_VectorType_RecordType_core_ComplianceApprovalStatus(self.approval_status)
         }
 
 class ApproveComplianceSuccess(Response):
@@ -1230,7 +1236,10 @@ class USERWISECOMPLIANCE(object):
 #
 
 class APPROVALCOMPLIANCE(object):
-    def __init__(self, compliance_history_id, compliance_name, description, domain_name, start_date, due_date, delayed_by, compliance_frequency, documents, upload_date, completion_date, next_due_date, concurrenced_by, remarks):
+    def __init__(self, compliance_history_id, compliance_name, description, 
+        domain_name, start_date, due_date, delayed_by, compliance_frequency, 
+        documents, upload_date, completion_date, next_due_date, concurrenced_by, 
+        remarks, action):
         self.compliance_history_id = compliance_history_id
         self.compliance_name = compliance_name
         self.description = description
@@ -1245,10 +1254,14 @@ class APPROVALCOMPLIANCE(object):
         self.next_due_date = next_due_date
         self.concurrenced_by = concurrenced_by
         self.remarks = remarks
+        self.action = action
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_history_id", "compliance_name", "description", "domain_name", "start_date", "due_date", "delayed_by", "compliance_frequency", "documents", "upload_date", "completion_date", "next_due_date", "concurrenced_by", "remarks"])
+        data = parse_dictionary(data, ["compliance_history_id", "compliance_name", 
+            "description", "domain_name", "start_date", "due_date", "delayed_by", 
+            "compliance_frequency", "documents", "upload_date", "completion_date", 
+            "next_due_date", "concurrenced_by", "remarks", "action"])
         compliance_history_id = data.get("compliance_history_id")
         compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         compliance_name = data.get("compliance_name")
@@ -1262,7 +1275,7 @@ class APPROVALCOMPLIANCE(object):
         due_date = data.get("due_date")
         due_date = parse_structure_CustomTextType_20(due_date)
         delayed_by = data.get("delayed_by")
-        delayed_by = parse_structure_UnsignedIntegerType_32(delayed_by)
+        delayed_by = parse_structure_OptionalType_UnsignedIntegerType_32(delayed_by)
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         documents = data.get("documents")
@@ -1272,12 +1285,17 @@ class APPROVALCOMPLIANCE(object):
         completion_date = data.get("completion_date")
         completion_date = parse_structure_CustomTextType_20(completion_date)
         next_due_date = data.get("next_due_date")
-        next_due_date = parse_structure_CustomTextType_20(next_due_date)
+        next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         concurrenced_by = data.get("concurrenced_by")
-        concurrenced_by = parse_structure_CustomTextType_50(concurrenced_by)
+        concurrenced_by = parse_structure_OptionalType_CustomTextType_50(concurrenced_by)
         remarks = data.get("remarks")
         remarks = parse_structure_CustomTextType_500(remarks)
-        return APPROVALCOMPLIANCE(compliance_history_id, compliance_name, description, domain_name, start_date, due_date, delayed_by, compliance_frequency, documents, upload_date, completion_date, next_due_date, concurrenced_by, remarks)
+        action = data.get("action")
+        action = parse_structure_CustomTextType_20(remarks)
+        return APPROVALCOMPLIANCE(compliance_history_id, compliance_name, description, 
+            domain_name, start_date, due_date, delayed_by, compliance_frequency, 
+            documents, upload_date, completion_date, next_due_date, concurrenced_by, 
+            remarks, action)
 
     def to_structure(self):
         return {
@@ -1287,14 +1305,15 @@ class APPROVALCOMPLIANCE(object):
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "start_date": to_structure_CustomTextType_20(self.start_date),
             "due_date": to_structure_CustomTextType_20(self.due_date),
-            "delayed_by": to_structure_SignedIntegerType_8(self.delayed_by),
+            "delayed_by": to_structure_OptionalType_UnsignedIntegerType_32(self.delayed_by),
             "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
             "documents": to_structure_VectorType_CustomTextType_50(self.documents),
             "upload_date": to_structure_CustomTextType_20(self.upload_date),
             "completion_date": to_structure_CustomTextType_20(self.completion_date),
-            "next_due_date": to_structure_CustomTextType_20(self.next_due_date),
-            "concurrenced_by": to_structure_CustomTextType_50(self.concurrenced_by),
+            "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),
+            "concurrenced_by": to_structure_OptionalType_CustomTextType_50(self.concurrenced_by),
             "remarks": to_structure_CustomTextType_500(self.remarks),
+            "action": to_structure_CustomTextType_20(self.action)
         }
 
 #

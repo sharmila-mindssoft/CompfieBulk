@@ -385,7 +385,6 @@ $("#location").click(function(event){
       $(el).removeClass( "active" );
     });
     $(event.target).addClass("active");
-
     loadunit();
   }
 });
@@ -433,7 +432,6 @@ $("#unit").click(function(event){
           return a.indexOf(v) !== -1;
       });
     });
-     
     var str=''; 
     $('#domain').empty();
     for(var domain in domainsList){
@@ -445,7 +443,6 @@ $("#unit").click(function(event){
     }else{
        $('#domain').empty();
     }
-  
 });
 
 $("#domain").click(function(event){
@@ -542,6 +539,7 @@ displayMessage('');
 clearValues('all');
 $(".breadcrumbs").html('');
 $("#activate-step-submit").hide();
+
 
 function onSuccess(data){
   loadCountriesList(data);
@@ -838,7 +836,6 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
       location_id = assignedStatutoriesList[entity]["geography_id"];
       domain_id = assignedStatutoriesList[entity]["domain_id"];
       unit_id = assignedStatutoriesList[entity]["unit_id"];
-
       var tableRow=$('#templates .table-assignstatutory .table-row');
       var clone=tableRow.clone();
       $('.tbl_sno', clone).text(j);

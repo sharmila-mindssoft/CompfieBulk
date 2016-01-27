@@ -1098,7 +1098,7 @@ function initMirror() {
         apiRequest(callerName, request, callback)
     }
 
-    function getAssignStatutoryWizardTwo(countryId, domainId, industryId, geographyId, unitId, callback) {
+    function getAssignStatutoryWizardTwo(countryId, domainId, industryId, geographyId, clientStatutoryId, callback) {
         var request = [
             "GetStatutoryWizardTwoData",
             {
@@ -1344,6 +1344,5 @@ function initMirror() {
         getAuditTrail: getAuditTrail,
         updateUserProfile: updateUserProfile
     }
-
 }
 var mirror = initMirror();

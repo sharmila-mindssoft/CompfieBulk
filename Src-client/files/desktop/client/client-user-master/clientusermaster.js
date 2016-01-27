@@ -135,6 +135,7 @@ function loadClientUserList(){
 		
 		var seatingUnitId = userList[i]['seating_unit_id']
 		var userGroupId = userList[i]['user_group_id'];
+
 		if(users["user_group_id"] != null){
 			var tableRow = $('#templates .table-users-list .table-row');
 			var clone = tableRow.clone();
