@@ -52,7 +52,12 @@ parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_VectorType_RecordType_clientreport_AssigneeCompliance,
     parse_structure_VariantType_clientreport_Request,
     parse_structure_VectorType_RecordType_clientreport_ComplianceList,
-    parse_structure_VectorType_RecordType_clientreport_Activities
+    parse_structure_VectorType_RecordType_clientreport_Activities,
+    parse_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    parse_structure_VectorType_RecordType_core_ClientLegalEntity,
+    parse_structure_VectorType_RecordType_core_ClientDivision,
+    parse_structure_VectorType_RecordType_core_ClientUnit
+
 )
 from protocol.to_structure import (
 to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
@@ -105,7 +110,13 @@ to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     to_structure_VectorType_RecordType_clientreport_AssigneeCompliance,
     to_structure_VariantType_clientreport_Request,
     to_structure_VectorType_RecordType_clientreport_ComplianceList,
-    to_structure_VectorType_RecordType_clientreport_Activities
+    to_structure_VectorType_RecordType_clientreport_Activities,
+    to_structure_VectorType_RecordType_core_ClientBusinessGroup,
+    to_structure_VectorType_RecordType_core_ClientLegalEntity,
+    to_structure_VectorType_RecordType_core_ClientDivision,
+    to_structure_VectorType_RecordType_core_ClientUnit
+
+
 )
 
 #
@@ -894,13 +905,13 @@ class GetClientReportFiltersSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
+        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
         legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_Unit(units)
+        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
         users = data.get("users")
         users = parse_structure_VectorType_RecordType_clientreport_User(users)
         return GetClientReportFiltersSuccess(countries, domains, business_groups, legal_entities, divisions, units, users)
@@ -909,10 +920,10 @@ class GetClientReportFiltersSuccess(Response):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
             "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
         }
 

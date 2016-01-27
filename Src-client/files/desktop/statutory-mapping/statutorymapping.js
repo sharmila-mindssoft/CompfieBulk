@@ -327,7 +327,6 @@ function loadStatutoryLevels(countryval,domainval){
     loadStatutoryMappingList(filteredList);
   });
 
-
   //check & uncheck list data for single selection
   function activate(element, id, dispname, type){
     $(type).each( function( index, el ) {

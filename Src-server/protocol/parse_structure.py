@@ -450,13 +450,6 @@ def parse_structure_RecordType_knowledgemaster_Request_SaveIndustry(data):
     from protocol import knowledgemaster
     return knowledgemaster.Request.parse_structure(data)
 
-def parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
-    data = parse_list(data, 0)
-    lst = []
-    for item in data:
-        lst.append(parse_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(item))
-    return lst
-
 def parse_structure_RecordType_knowledgemaster_Request_UpdateIndustry(data):
     from protocol import knowledgemaster
     return knowledgemaster.Request.parse_structure(data)
@@ -1419,10 +1412,6 @@ def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport
 def parse_structure_RecordType_knowledgereport_Request_GetGeographyReport(data):
     from protocol import knowledgereport
     return knowledgereport.Request.parse_structure(data)
-
-def parse_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
-    from protocol import clienttransactions
-    return clienttransactions.UNIT_WISE_STATUTORIES.parse_structure(data)
 
 def parse_structure_VariantType_knowledgereport_Request(data):
     from protocol import knowledgereport
@@ -3308,6 +3297,18 @@ def parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryComp
         lst.append(parse_structure_RecordType_clienttransactions_UpdateStatutoryCompliance(item))
     return lst
 
+#clienttransaction getcompliancforunit
+def parse_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    from protocol import clienttransactions
+    return clienttransactions.UNIT_WISE_STATUTORIES.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(item))
+    return lst
+
 def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
     data = parse_list(data)
     d = {}
@@ -3376,3 +3377,12 @@ def parse_structure_VectorType_RecordType_core_ClientDivision(data):
     for item in data:
         lst.append(parse_structure_RecordType_core_ClientDivision(item))
     return lst
+
+# Client Report Filter
+def parse_structure_VectorType_RecordType_core_ClientUnit(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_Unit(item))
+    return lst
+

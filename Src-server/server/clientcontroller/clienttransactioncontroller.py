@@ -41,6 +41,31 @@ def process_get_statutory_settings(db, session_user, client_id):
 def process_update_statutory_settings(db, request, session_user, client_id):
 	return db.update_statutory_settings(request, session_user, client_id)
 
+def process_get_assign_compliance_form_data(db, session_user, client_id):
+	countries = db.get_countries_for_user(session_user, client_id)
+	business_group_ids = None
+	business_groups = db.get_business_groups_for_user(business_group_ids, client_id)
+	legal_entity_ids = None
+	legal_entities = db.get_legal_entities_for_user(legal_entity_ids, client_id)
+	division_ids = None
+	divisions = db.get_divisions_for_user(division_ids, client_id)
+	units = db.get_units_for_assign_compliance(session_user, client_id)
+	users = db.get_users_for_seating_units(session_user, client_id)
+	return clienttransactions.GetAssignCompliancesFormDataSuccess(
+		countries, business_groups, legal_entities,
+		divisions, units, users
+	)
+
+
+def process_get_compliance_for_units(db, request, session_user, client_id):
+	unit_ids = request.unit_ids
+	statutories = db.get_assign_compliance_statutories_for_units(unit_ids, session_user, client_id)
+	return clienttransactions.GetComplianceForUnitsSuccess(statutories)
+
+def process_save_assigned_compliance(db, request, session_user, client_id):
+	return 	db.save_assigned_compliance(request, session_user, client_id)
+
+
 def process_get_past_records_form_data(db, request, session_user, client_id): 
 	countries = db.get_countries_for_user(session_user, client_id)
 	row = db.get_user_company_details(session_user, client_id)
@@ -71,6 +96,7 @@ def process_get_compliance_approval_list(db, request, session_user, client_id):
 	approval_status = db.get_compliance_approval_status_list(session_user, client_id)
 	return clienttransactions.GetComplianceApprovalListSuccess(
 		approval_list = compliance_approval_list, approval_status = approval_status)
+
 
 def process_get_compliance_for_units(db, request, session_user, client_id):
 	unit_ids = request.unit_ids

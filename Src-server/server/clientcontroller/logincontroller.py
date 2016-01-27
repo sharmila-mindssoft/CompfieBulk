@@ -40,6 +40,7 @@ def process_login(db, request):
 	encrypt_password = db.encrypt(password)
 	client_id = db.get_client_id_from_short_name(short_name)
 	response = db.verify_login(username, encrypt_password, int(client_id))
+	print response
 	if response is True:
 		return admin_login_response(db, client_id)
 	else :
@@ -57,6 +58,10 @@ def user_login_response(db, data, client_id):
 	employee_name = data["employee_name"]
 	employee_code = data["employee_code"]
 	contact_no = data["contact_no"]
+	# address = data["address"]
+	# designation = data["designation"]
+	address = "None"
+	designation = "None"
 	user_group_name = data["user_group_name"]
 	form_ids = data["form_ids"]
 	menu = process_user_forms(db, form_ids, client_id, 0)
