@@ -60,6 +60,7 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_500,
     to_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability,
     to_structure_UnsignedIntegerType_32
+
 )
 
 #
@@ -134,7 +135,7 @@ class GetAssignedStatutoryWizardOneData(Request):
         }
 
 class GetStatutoryWizardTwoData(Request):
-    def __init__(self, country_id, geography_id, industry_id, domain_id, unit_id):
+    def __init__(self, country_id, geography_id, industry_id, domain_id, client_statutory_id):
         self.country_id = country_id
         self.geography_id = geography_id
         self.industry_id = industry_id

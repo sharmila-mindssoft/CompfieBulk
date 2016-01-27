@@ -420,6 +420,24 @@
 			function getComplianceApprovalList(){
 				client_mirror.getComplianceApprovalList(callback);
 			}
+			function getUnitWiseComplianceReport(){
+				country_id = 1
+				domain_id =1
+				business_group_id =1
+				legal_entity_id =1
+				division_id =1
+				unit_id =1
+				user_id =1
+				client_mirror.getUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, callback)
+
+			function approveCompliance(){
+				compliance_history_id = 1
+				compliance_approval_status = "Approve"
+				remarks = "Sample Remarks"
+				documents = ["document1","document2"]
+				next_due_date = "12-08-2016"
+				client_mirror.approveCompliance(approveCompliance(compliance_history_id, compliance_approval_status, remarks, documents, next_due_date,callback));
+			}
 		</script>
 	</head>
 	<body>
@@ -618,8 +636,13 @@
 			<button onclick="getComplianceApprovalList()">
 				Get Compliance Approval List
 			</button>
-			<button onclick="">
-				
+			<button onclick="approveCompliance()">
+				Approve Compliance				
+			</button>
+		</div>
+		<div>
+			<button onclick="getUnitWiseComplianceReport()">
+				Get Unit Wise Compliane Report
 			</button>
 		</div>
 		<br>

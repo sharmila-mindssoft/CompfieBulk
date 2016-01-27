@@ -841,6 +841,7 @@ $("#btn-clientunit-submit").click(function(){
 	}
 });
 
+
 //Active or inactive Client Unit List --------------------------------------------------------------------------
 function clientunit_active(clientunitId, lentityId, divisionId, isActive){
  	function onSuccess(data) {

@@ -163,6 +163,7 @@ $("#show-button").click(function(){
 		);
 	}
 });
+
 function loadAssignedStatutoryList(data){
 	$('.grid-table-rpt').show();
 	$('.tbody-assigned-statutory-list tr').remove();
@@ -203,7 +204,6 @@ function loadAssignedStatutoryList(data){
 			if(remarks == null){
 				remarks = "Nil";
 			}
-
 			$('.heading', cloneAssigned).text(assignedList[k]['level_1_statutory_name']);
 			$('.act-applicable', cloneAssigned).html(asImageName);
 			$('.act-opted', cloneAssigned).html(optedImageName);
@@ -245,7 +245,7 @@ function loadAssignedStatutoryList(data){
 				$('.remarks', cloneAssignedRecord).text(remarks);
 				$('.tbody-assigned-statutory-list').append(cloneAssignedRecord);
 
-			});			
+			});				
 		});
 	});
 	$(".total-records").html("Total : "+sno+" records")
@@ -491,3 +491,4 @@ $(function() {
 	// });
 	initialize();
 });
+

@@ -25,7 +25,7 @@ ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 # cors_handler
 #
 
-def cors_handler(request, response):
+def cors_handler(request, response): 
     response.set_header("Access-Control-Allow-Origin", "*")
     response.set_header("Access-Control-Allow-Headers", "Content-Type")
     response.set_header("Access-Control-Allow-Methods", "POST")
@@ -103,15 +103,15 @@ class API(object):
                 response_data, response
             )
 
-        self._db.begin()
+        # self._db.begin()
         try:
             response_data = unbound_method(self, request_data, self._db)
-            self._db.commit()
+            # self._db.commit()
             respond(response_data)
         except Exception, e:
             print(traceback.format_exc())
             print e
-            self._db.rollback()
+            # self._db.rollback()
 
 
     @api_request(login.Request)
@@ -250,9 +250,10 @@ def run_server(port):
     io_loop = IOLoop()  
 
     def delay_initialize():
-        #db = KnowledgeDatabase(
-        #    "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
-        #)
+
+        # db = KnowledgeDatabase(
+        #     "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
+        # )
         db = KnowledgeDatabase(
             "localhost", "root", "123456", "mirror_knowledge_usha"
         )

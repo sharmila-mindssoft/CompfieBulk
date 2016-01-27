@@ -6,9 +6,9 @@ __all__ = [
 
 def process_client_transaction_requests(request, db) :
 	client_info = request.session_token.split("-")
+	session_token = request.session_token
 	request = request.request
 	client_id = int(client_info[0])
-	session_token = client_info[1]
 	session_user = db.validate_session_token(client_id, session_token)
 	if session_user is None:
 		return login.InvalidSessionToken()
@@ -32,6 +32,8 @@ def process_client_transaction_requests(request, db) :
 		return process_get_statutories_by_unit(db, request, session_user, client_id)
 	elif type(request) is clienttransactions.GetComplianceApprovalList :
 		return process_get_compliance_approval_list(db, request, session_user, client_id)
+	elif type(request) is clienttransactions.ApproveCompliance:
+		return process_approve_compliance(db, request, session_user, client_id)
 
 def process_get_statutory_settings(db, session_user, client_id):
 	return db.get_statutory_settings(session_user, client_id)
@@ -87,11 +89,13 @@ def process_get_statutories_by_unit(db, request, session_user, client_id):
 	statutory_wise_compliances = db.get_statutory_wise_compliances(unit_id, 
 		domain_id, level_1_statutory_id, frequecy_id)
 	return clienttransactions.GetStatutoriesByUnitSuccess(statutory_wise_compliances = 
-		statutory_wise_compliances)
+		statutory_wise_compliances) 
 
 def process_get_compliance_approval_list(db, request, session_user, client_id):
 	compliance_approval_list = db.get_compliance_approval_list(session_user, client_id)
-	return GetComplianceApprovalListSuccess(approval_list = compliance_approval_list)
+	approval_status = db.get_compliance_approval_status_list(session_user, client_id)
+	return clienttransactions.GetComplianceApprovalListSuccess(
+		approval_list = compliance_approval_list, approval_status = approval_status)
 
 
 def process_get_compliance_for_units(db, request, session_user, client_id):
@@ -101,3 +105,34 @@ def process_get_compliance_for_units(db, request, session_user, client_id):
 
 def process_save_assigned_compliance(db, request, session_user, client_id):
 	return 	db.save_assigned_compliance(request, session_user, client_id)
+
+def process_approve_compliance(db, request, session_user, client_id):
+	compliance_history_id = request.compliance_history_id
+	status = request.approval_status
+	remarks = request.remarks
+	next_due_date = request.next_due_date
+	if status == "Approve":
+		db.approveCompliance(compliance_history_id, remarks, next_due_date, client_id)
+	elif status == "RejectApproval":
+		db.rejectComplianceApproval(compliance_history_id, remarks,  next_due_date, client_id)
+	elif status == "Concur":
+		db.concurCompliance(compliance_history_id, remarks, next_due_date, client_id)
+	elif status == "RejectConcurrence":
+		db.rejectComplianceConcurrence(compliance_history_id, remarks, next_due_date, client_id)
+	return clienttransactions.ApproveComplianceSuccess()
+	
+
+def process_get_assign_compliance_form_data(db, session_user, client_id):  
+	countries = db.get_countries_for_user(session_user, client_id)
+	business_group_ids = None
+	business_groups = db.get_business_groups_for_user(business_group_ids, client_id)
+	legal_entity_ids = None
+	legal_entities = db.get_legal_entities_for_user(legal_entity_ids, client_id)
+	division_ids = None
+	divisions = db.get_divisions_for_user(division_ids, client_id)
+	units = db.get_units_for_assign_compliance(session_user, client_id)
+	users = db.get_users_for_seating_units(session_user, client_id)
+	return clienttransactions.GetAssignCompliancesFormDataSuccess(
+		countries, business_groups, legal_entities,
+		divisions, units, users
+	)

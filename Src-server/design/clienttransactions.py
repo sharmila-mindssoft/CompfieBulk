@@ -8,7 +8,7 @@ from core import (
 	COMPLIANCE_APPROVAL_STATUS, COMPLIANCE_FREQUENCY,
 	AssignedStatutory, Country, 
 	StatutoryDate, BusinessGroup, LegalEntity,
-	Division, Domain, Unit, Statutory
+	Division, Domain, Unit, Statutory, ApprovalStatus
 )
 __all__=  [
 	"Request", "Response", "RequestFormat", "ASSINGED_COMPLIANCE", "REASSIGNED_COMPLIANCE",
@@ -283,14 +283,15 @@ APPROVALCOMPLIANCE =  RecordType("APPROVALCOMPLIANCE", [
 	Field("domain_name", DOCUMENT_NAME),
 	Field("start_date", DATE),
 	Field("due_date", DATE),
-	Field("delayed_by", AGEING),
+	Field("delayed_by", OptionalType(AGEING)),
 	Field("compliance_frequency", COMPLIANCE_FREQUENCY),
 	Field("documents", VectorType(FORMAT_FILE_NAME)),
 	Field("upload_date", DATE),
 	Field("completion_date", DATE),
 	Field("next_due_date", DATE),
-	Field("concurrenced_by", EMPLOYEE_NAME),
-	Field("remarks", DESCRIPTION)
+	Field("concurrenced_by", OptionalType(EMPLOYEE_NAME)),
+	Field("remarks", OptionalType(DESCRIPTION)),
+	Field("action", DESCRIPTION)
 ])
 
 APPORVALCOMPLIANCELIST =  RecordType("APPORVALCOMPLIANCELIST", [
@@ -299,8 +300,10 @@ APPORVALCOMPLIANCELIST =  RecordType("APPORVALCOMPLIANCELIST", [
 	Field("compliances", VectorType(APPROVALCOMPLIANCE))
 ])
 
+
 GetComplianceApprovalListSuccess = RecordType("GetComplianceApprovalListSuccess", [
 	Field("approval_list", VectorType(APPORVALCOMPLIANCELIST)),
+	Field("approval_status", VectorType(ApprovalStatus))
 ])
 
 ApproveComplianceSuccess = RecordType("ApproveComplianceSuccess", [

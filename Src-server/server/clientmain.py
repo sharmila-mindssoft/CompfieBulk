@@ -67,7 +67,6 @@ class API(object):
         assert response is not None
         data = response_data.to_structure()
         s = json.dumps(data, indent=2)
-        print s
         response.send(s)
 
     def _parse_request(
@@ -147,9 +146,11 @@ class TemplateHandler(tornado.web.RequestHandler) :
 
     def get(self, url = None) :
         if url != None:
-            #db = KnowledgeDatabase( "198.143.141.73", "root", "Root!@#123",  "mirror_knowledge")
-            db = KnowledgeDatabase( "localhost", "root", "123456",  "mirror_knowledge")
-            con = db.begin()
+
+            db = KnowledgeDatabase("localhost", "root", "123456", "mirror_knowledge")
+            # db = KnowledgeDatabase("198.143.141.73", "root", "Root!@#123", "mirror_knowledge")
+            # con = db.begin()
+
             if not db.validate_short_name(url):
                 print "Invalid URL"
                 return
@@ -192,8 +193,12 @@ TEMPLATE_PATHS = [
     ("/unit-closure", "files/desktop/client/unit-closure/unitclosure.html", None, {}), 
     #reports
     ("/compliance", "files/desktop/client/audit-trail/audittrail.html", None, {}),
-    ("/audit-trail", "files/desktop/client/audit-trail/audittrail.html", None, {}),       
-
+    ("/audit-trail", "files/desktop/client/audit-trail/audittrail.html", None, {}),
+    ("/unit-wise-compliance", "files/desktop/client/unit-wise-compliance/unitwisecompliance.html", None, {}),
+    ("/assignee-wise-compliance", "files/desktop/client/assignee-wise-compliance/assigneewisecompliance.html", None, {}),
+    ("/service-provider-wise-compliance", "files/desktop/client/service-provider-wise-compliance/serviceproviderwisecompliance.html", None, {}),
+    ("/compliance-details", "files/desktop/client/compliance-details/compliancedetails.html", None, {}),
+    ("/risk-report", "files/desktop/client/risk-report/riskreport.html", None, {}),
 ]
 
 

@@ -133,6 +133,7 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
+        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
@@ -172,6 +173,7 @@ class Database(object) :
             else:
                 stringValue = stringValue+"'"+str(value)+"'"
         query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
+        print query
         if client_id != None:
             return self.execute(query, client_id)
         return self.execute(query)
@@ -195,6 +197,7 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
+        print query
         if client_id != None:
             return self.execute(query, client_id)
 
@@ -446,6 +449,7 @@ class KnowledgeDatabase(Database):
         )
         self.statutory_parent_mapping = {}
         self.geography_parent_mapping = {}
+        self.begin()
         self.initialize_table_names()
 
     def initialize_table_names(self):
@@ -3948,7 +3952,11 @@ class KnowledgeDatabase(Database):
 
         return final_statutory_list
 
-    def get_unassigned_compliances(self, country_id, domain_id, industry_id, geography_id, unit_id) :
+
+    def get_unassigned_compliances(
+        self, country_id, domain_id, industry_id, 
+        geography_id, client_statutory_id
+    ) :
         query = "SELECT distinct \
             t6.compliance_id, t6.compliance_task, t6.document_name,\
             t6.statutory_provision, t6.compliance_description, t2.statutory_id, \
@@ -4049,7 +4057,7 @@ class KnowledgeDatabase(Database):
                     key,
                     statutory_name,
                     None,
-                    True,
+                    True, 
                     None,
                     None
                 )
@@ -4181,8 +4189,9 @@ class KnowledgeDatabase(Database):
                             break
                     if is_exists is False :
                         statutories.append(new_s)
-
-
+                statutories.append(
+                    self.return_assigned_compliances_by_id(client_statutory_id)
+                )
                 unit_statutories.assigned_statutories = statutories
 
             unit_wise_statutories_dict[unit_id] = unit_statutories
@@ -4344,8 +4353,8 @@ class KnowledgeDatabase(Database):
             users = self.return_users()
         forms = self.return_forms()
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
-
-#
+ 
+# 
 #   Update Profile
 #
 
@@ -4417,12 +4426,10 @@ class KnowledgeDatabase(Database):
     def get_statutory_notifications_report_data(self, request_data):
         country_id = request_data.country_id
         domain_id = request_data.domain_id
-        level_1_statutory_id = request_data.level_1_statutory_id
+        level_1_statutory_id = request_data.level_1_statutory_id        
         if level_1_statutory_id is None :
             level_1_statutory_id = '%'
-        query = "SELECT tsnl.statutory_notification_id, tsm.country_id, \
-             tsm.domain_id, ts.statutory_name, tsnl.statutory_provision,\
-             tsnl.notification_text, tsnl.updated_on \
+        query = "SELECT  distinct tsm.country_id, tsm.domain_id\
              from `tbl_statutory_notifications_log` tsnl    \
             INNER JOIN `tbl_statutory_statutories` tss ON \
             tsnl.statutory_mapping_id = tss.statutory_mapping_id \
@@ -4436,25 +4443,38 @@ class KnowledgeDatabase(Database):
             group by tsm.country_id, tsm.domain_id " % (
                 country_id, domain_id
             )
-
         rows = self.select_all(query)
-        columns = ["statutory_notification_id", "country_id", "domain_id",
-          "statutory_name", "statutory_provision", "notification_text", "updated_on" ]
-        result = self.convert_to_dict(rows, columns)
-        print "result from database: {} ".format(result)
-        return result
-
-    def return_statutory_notifications(self, statutory_notifications):
+        columns = ["country_id", "domain_id"]
         country_wise_notifications = []
         for row in rows:
+            query = "SELECT  ts.statutory_name, tsnl.statutory_provision,\
+             tsnl.notification_text, tsnl.updated_on \
+             from `tbl_statutory_notifications_log` tsnl    \
+            INNER JOIN `tbl_statutory_statutories` tss ON \
+            tsnl.statutory_mapping_id = tss.statutory_mapping_id \
+            INNER JOIN `tbl_statutory_mappings` tsm ON \
+            tsm.statutory_mapping_id = tsnl.statutory_mapping_id \
+            INNER JOIN  `tbl_statutories` ts ON \
+            tss.statutory_id = ts.statutory_id \
+            WHERE  \
+            tsm.country_id = %s and \
+            tsm.domain_id = %s \
+            group by tsm.country_id, tsm.domain_id " % (
+                row[0], row[1]
+            )
+            notifications_rows = self.select_all(query)
+            notification_columns = ["statutory_name", "statutory_provision", 
+            "notification_text", "updated_on" ]
+            statutory_notifications = self.convert_to_dict(notifications_rows, notification_columns)
             notifications =[]
             for notification in statutory_notifications:
-                notifications.append(clientreports.NOTIFICATIONS(
+                notifications.append(technoreports.NOTIFICATIONS(
                     statutory_provision = notification["statutory_provision"], 
                     notification_text = notification["notification_text"],
-                    date_and_time = notification["date_and_time"]
+                    date_and_time = self.datetime_to_string(notification["updated_on"])
                 ))
-        country_wise_notifications.append(
-            COUNTRY_WISE_NOTIFICATIONS(country_id = row["country_id"], domain_id = row["domain_id"], notifications = notifications))
-
+            country_wise_notifications.append(
+            technoreports.COUNTRY_WISE_NOTIFICATIONS(country_id = row[0], domain_id = row[1], notifications = notifications))
         return country_wise_notifications
+       
+

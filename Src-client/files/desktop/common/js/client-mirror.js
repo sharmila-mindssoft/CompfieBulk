@@ -98,10 +98,15 @@ function initClientMirror() {
                 var response = data[1];
                 matchString = 'success';
                 log("API STATUS :"+status)
+
                 if (status.toLowerCase().indexOf(matchString) != -1){
+                    alert(response);
                     callback(null, response);
                 }
-                callback(status, null) 
+                else{
+                    callback(status, null) 
+                }
+                
             }
         )
         .fail(
@@ -653,6 +658,75 @@ function initClientMirror() {
         clientApiRequest("api/client_transaction", request, callback);
     }
 
+    function getClientReportFilters(callback) {
+        var request = [
+            "GetClientReportFilters",
+            {}
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+    
+    function getUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, 
+        division_id, unit_id, user_id, callback) {
+        console.log("country>>>>"+country_id)
+        console.log("domain_id>>>>"+domain_id)
+        var request = [
+            "GetUnitwisecomplianceReport",
+            {
+                "country_id": country_id,
+                "domain_id": domain_id,
+                "business_group_id": business_group_id,
+                "legal_entity_id": legal_entity_id,
+                "division_id"  : division_id,
+                "unit_id": unit_id,
+                "user_id": user_id
+            }
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function approveCompliance(compliance_history_id, compliance_approval_status, 
+        remarks, documents, next_due_date, callback){
+        var request = [
+            "ApproveCompliance",
+            {
+                "compliance_history_id": compliance_history_id,
+                "approval_status": compliance_approval_status,
+                "remarks": remarks,
+                "documents": documents,
+                "next_due_date":next_due_date
+            }
+        ];
+    }
+
+    function getChartFilters(callback) {
+        var request = [
+            "GetChartFilters",
+            {}
+        ];
+        var callerName = "api/client_dashboard";
+        clientApiRequest(callerName, request, callback);         
+    }
+
+    function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate,  callback) {
+        var request = [
+            "GetComplianceStatusChart",
+            {
+                "country_ids": countryIds,
+                "domain_ids": domainIds,
+                "filter_type": filterType,
+                "filter_ids": filterIds,
+                "from_date": fromDate,
+                "to_date": toDate,
+
+            }
+        ];
+        var callerName = "api/client_dashboard";
+        clientApiRequest(callerName, request, callback); 
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -722,7 +796,15 @@ function initClientMirror() {
 
         getPastRecordsFormData: getPastRecordsFormData,
         getStatutoriesByUnit: getStatutoriesByUnit,
-    }
 
+        getClientReportFilters: getClientReportFilters,
+        getUnitwisecomplianceReport: getUnitwisecomplianceReport,
+
+        getComplianceApprovalList: getComplianceApprovalList,
+        approveCompliance: approveCompliance,
+
+        getChartFilters: getChartFilters,
+        getComplianceStatusChartData : getComplianceStatusChartData,
+    }
 }
 var client_mirror = initClientMirror();

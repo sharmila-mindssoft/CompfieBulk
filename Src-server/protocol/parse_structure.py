@@ -450,13 +450,6 @@ def parse_structure_RecordType_knowledgemaster_Request_SaveIndustry(data):
     from protocol import knowledgemaster
     return knowledgemaster.Request.parse_structure(data)
 
-def parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
-    data = parse_list(data, 0)
-    lst = []
-    for item in data:
-        lst.append(parse_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(item))
-    return lst
-
 def parse_structure_RecordType_knowledgemaster_Request_UpdateIndustry(data):
     from protocol import knowledgemaster
     return knowledgemaster.Request.parse_structure(data)
@@ -1419,10 +1412,6 @@ def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport
 def parse_structure_RecordType_knowledgereport_Request_GetGeographyReport(data):
     from protocol import knowledgereport
     return knowledgereport.Request.parse_structure(data)
-
-def parse_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
-    from protocol import clienttransactions
-    return clienttransactions.UNIT_WISE_STATUTORIES.parse_structure(data)
 
 def parse_structure_VariantType_knowledgereport_Request(data):
     from protocol import knowledgereport
@@ -2473,6 +2462,15 @@ def parse_structure_VectorType_RecordType_core_NumberOfCompliances(data):
         lst.append(parse_structure_RecordType_core_NumberOfCompliances(item))
     return lst
 
+def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items() :
+        key = parse_structure_SignedIntegerType_8(key)
+        value = parse_structure_VectorType_RecordType_core_NumberOfCompliances(value)
+        dict[key] = value
+    return dict
+
 def parse_structure_VectorType_RecordType_dashboard_ChartDataMap(data):
     data = parse_list(data, 0)
     lst = []
@@ -2579,7 +2577,6 @@ def parse_structure_VectorType_RecordType_core_ComplianceApplicability(data):
 def parse_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability(data):
     if data is None: return None
     return parse_structure_VectorType_RecordType_core_ComplianceApplicability(data)
-
 
 def parse_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability(data):
     data = parse_dictionary(data)
@@ -3320,7 +3317,6 @@ def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttran
         value = parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
         d[key] = value
     return d
-
 #
 #   Get Clients
 #
@@ -3344,7 +3340,6 @@ def parse_structure_VectorType_RecordType_core_GeographyWithMapping(data):
 def parse_structure_RecordType_core_GeographyWithMapping(data):
     from protocol import core
     return core.GeographyWithMapping.parse_structure(data)
-
 
 # Client Business Group
 
@@ -3383,3 +3378,23 @@ def parse_structure_VectorType_RecordType_core_ClientDivision(data):
         lst.append(parse_structure_RecordType_core_ClientDivision(item))
     return lst
 
+# Client Report Filter
+def parse_structure_VectorType_RecordType_core_ClientUnit(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_Unit(item))
+    return lst
+
+# Statutory Notifications (Techno)
+
+def parse_structure_VectorType_RecordType_technoreports_NOTIFICATIONS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_technoreports_NOTIFICATIONS(item))
+    return lst
+
+def parse_structure_RecordType_technoreports_NOTIFICATIONS(data):
+    from protocol import technoreports
+    return technoreports.NOTIFICATIONS.parse_structure(data)

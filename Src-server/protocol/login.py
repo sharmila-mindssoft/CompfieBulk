@@ -22,7 +22,8 @@ from protocol.to_structure import (
     to_structure_CustomTextType_20, to_structure_CustomTextType_50,
     to_structure_OptionalType_CustomTextType_100,
     to_structure_OptionalType_CustomTextType_20,
-    to_structure_OptionalType_UnsignedIntegerType_32
+    to_structure_OptionalType_UnsignedIntegerType_32,
+    to_structure_OptionalType_CustomTextType_500
 )
 
 #
@@ -252,9 +253,9 @@ class UserLoginSuccess(Response):
         contact_no = data.get("contact_no")
         contact_no = parse_structure_CustomTextType_20(contact_no)
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
+        address = parse_structure_OptionalType_CustomTextType_250(address)
         designation = data.get("designation")
-        designation = parse_structure_CustomTextType_50(designation)
+        designation = parse_structure_OptionalType_CustomTextType_50(designation)
         client_id = data.get("client_id")
         client_id = parse_structure_OptionalType_UnsignedIntegerType_32(client_id)
         return UserLoginSuccess(user_id, session_token, email_id, user_group_name, menu, employee_name, employee_code, contact_no, address, designation, client_id)
@@ -269,8 +270,8 @@ class UserLoginSuccess(Response):
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
             "employee_code": to_structure_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "address": to_structure_CustomTextType_250(self.address),
-            "designation": to_structure_CustomTextType_50(self.designation),
+            "address": to_structure_OptionalType_CustomTextType_500(self.address),
+            "designation": to_structure_OptionalType_CustomTextType_50(self.designation),
             "client_id": to_structure_OptionalType_UnsignedIntegerType_32(self.client_id)
         }
 
