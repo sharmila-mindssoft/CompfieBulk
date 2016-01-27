@@ -6,10 +6,10 @@ __all__ = [
 ]
 
 def process_client_master_requests(request, db) :
-	client_info = request.session_token.split("-")
+	session_token = request.session_token
+	client_info = session_token.split("-")
 	request = request.request
 	client_id = int(client_info[0])
-	session_token = client_info[1]
 	session_user = db.validate_session_token(client_id, session_token)
 	if session_user is None:
 		return login.InvalidSessionToken()
@@ -217,11 +217,13 @@ def get_units(db, request, session_user, client_id):
 	user_company_info = db.get_user_company_details( session_user, client_id)
 	unit_ids = user_company_info[0]
 	division_ids = user_company_info[1]
+	print division_ids
 	legal_entity_ids = user_company_info[2]
 	business_group_ids = user_company_info[3]
 	business_group_list = db.get_business_groups_for_user(business_group_ids, client_id)
 	legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids, client_id)
 	division_list =  db.get_divisions_for_user(division_ids, client_id)
+	print division_list
 	unit_list = db.get_units_for_user(unit_ids, client_id)
 	return clientmasters.GetUnitsSuccess(business_groups= business_group_list, 
 		legal_entities=legal_entity_list, divisions = division_list, 

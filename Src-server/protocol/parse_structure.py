@@ -3390,3 +3390,11 @@ def parse_structure_VectorType_RecordType_core_GeographyWithMapping(data):
 def parse_structure_RecordType_core_GeographyWithMapping(data):
     from protocol import core
     return core.GeographyWithMapping.parse_structure(data)
+
+# Client Report Filter
+def parse_structure_VectorType_RecordType_core_ClientUnit(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_Unit(item))
+    return lst

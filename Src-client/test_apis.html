@@ -113,19 +113,19 @@
 				client_mirror.getClientUsers(callback)	
 			}
 			function saveClientUser(){
-				emailId  = "TestClientUser6@domain.com"
+				emailId  = "TestClientUser7@domain.com"
 		        userGroupId = 1
-		        employeeName = "Test Employee 6"
-		        employeeCode = "TEMP006"
-		        contactNo = "+919445729583"
-		        seatingUnitId = 1
+		        employeeName = "Test Employee 7"
+		        employeeCode = "TEMP007"
+		        contactNo = "+919745729583"
+		        seatingUnitId = null
 		        userLevel = 1
 		        countryIds = [1]
 		        domainIds = [1]
 		        unitIds = [1]
 		        isAdmin = false
-		        isServiceProvider = false
-		        serviceProviderId = null
+		        isServiceProvider = true
+		        serviceProviderId = 1
 		        clientUserDetail = [emailId, userGroupId, employeeName, 
 		        employeeCode, contactNo, seatingUnitId, userLevel, 
 		        countryIds, domainIds, unitIds, isAdmin, isServiceProvider,
@@ -136,7 +136,7 @@
 			}
 			function updateClientUser(){
 				userId = 2
-			      userGroupId = 2
+			      userGroupId = 1
 			      employeeName = "Test Employee 2 Update"
 			      employeeCode = "TEMPUP002"
 			      contactNo = "+918145729583"
@@ -170,7 +170,7 @@
 			}
 			function closeUnit(){
 				unitId = 1;
-		        password = "1234567";
+		        password = "123456";
 		        client_mirror.closeUnit(unitId, password, callback)
 			}
 			function saveAdminUserGroup(){
@@ -340,11 +340,11 @@
 		        legalEntity = mirror.getLegalEntityDict(1,"Test Legal Entity 11");
 		        division = null;//mirror.getDivisionDict(null, "Test Division 111");
 		        domainIds = [1]
-		        unit1 = mirror.getUnitDict(null, "Test Unit 122", "UN0112", "Test Address 11", 668234, 1, "Test location 11", 1, "Test Industry 11", domainIds)
-		        unit2 = mirror.getUnitDict(null, "Test Unit 123", "UN0122", "Test Address 21", 668234, 1, "Test location 12", 1, "Test Industry 12", domainIds)
+		        unit1 = mirror.getUnitDict(null, "Test Unit 125", "UN0113", "Test Address 11", 668234, 1, "Test location 11", 1, "Test Industry 11", domainIds)
+		        unit2 = mirror.getUnitDict(null, "Test Unit 124", "UN0123", "Test Address 21", 668234, 1, "Test location 13", 1, "Test Industry 13", domainIds)
 
 		        Units = [unit1, unit2]
-		        countryId = 1
+		        countryId = 2
 		        countryWiseUnits = []
 		        countryWiseUnits.push(mirror.mapUnitsToCountry(countryId, Units))
 
@@ -416,6 +416,19 @@
 				frequency_id = 1
 				client_mirror.getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_id, 
 					frequency_id, callback);
+			}
+			function getComplianceApprovalList(){
+				client_mirror.getComplianceApprovalList(callback);
+			}
+			function getUnitWiseComplianceReport(){
+				country_id = 1
+				domain_id =1
+				business_group_id =1
+				legal_entity_id =1
+				division_id =1
+				unit_id =1
+				user_id =1
+				client_mirror.getUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, callback)
 			}
 		</script>
 	</head>
@@ -609,6 +622,19 @@
 			</button>
 			<button onclick="getStatutoriesByUnit()">
 				Get Statutories by Unit
+			</button>
+		</div>
+		<div>
+			<button onclick="getComplianceApprovalList()">
+				Get Compliance Approval List
+			</button>
+			<button onclick="">
+				
+			</button>
+		</div>
+		<div>
+			<button onclick="getUnitWiseComplianceReport()">
+				Get Unit Wise Compliane Report
 			</button>
 		</div>
 		<br>

@@ -1,0 +1,200 @@
+{% extends "files/desktop/home/container.html" %}
+{% block content %}
+  <div class="content-container">
+    <div class="content-area">
+      <div class="add-container">
+        <div class="add-container-heading">Unit wise Compliances<span class="error-message"></span></div>
+        <div class="input-row-left">
+          <div class="input-row">
+            <div class="field-label">Country:<span class="mandatory">*</span></div>
+            <div class="field-input">
+            <select class="input-box" id="country">
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Domain:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" >
+            <input type="hidden" id="domain" value="">
+            <div id="autocomplete_domain" class="ac-textbox default-display-none">
+            <ul id="ulist_domain" style="width:215px;" class="hidemenu"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="field-label">Business Group:</div>
+        <div class="field-input">
+          <input type="text" class="input-box icon-autocomplete" id="businessgroupval" placeholder="Enter Business Group">
+          <input type="hidden" id="businessgroup">
+          <div id="autocomplete_businessgroup" class="ac-textbox default-display-none">
+          <ul id="ulist_businessgroup" style="width:215px;" class="hidemenu"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="field-label">Legal Entity:</div>
+      <div class="field-input">
+        <input type="text" class="input-box icon-autocomplete" id="legalentityval" placeholder="Enter Legal Entity">
+        <input type="hidden" id="legalentity">
+        <div id="autocomplete_legalentity" class="ac-textbox default-display-none" >
+        <ul id="ulist_legalentity" style="width:215px;" class="hidemenu"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="input-row-right">
+  <div class="input-row">
+    <div class="field-label">Division:</div>
+    <div class="field-input">
+      <input type="text" class="input-box icon-autocomplete" id="divisionval" placeholder="Enter Division">
+      <input type="hidden" id="division">
+      <div id="autocomplete_division" class="ac-textbox default-display-none">
+      <ul id="ulist_division" style="width:215px;" class="hidemenu"></ul>
+    </div>
+  </div>
+</div>
+<div class="input-row">
+  <div class="field-label">Unit:</div>
+  <div class="field-input">
+    <input type="text" class="input-box icon-autocomplete" id="unitval" placeholder="Enter Unit">
+    <input type="hidden" id="unit">
+    <div id="autocomplete_unit" class="ac-textbox default-display-none">
+    <ul id="ulist_unit" style="width:215px;" class="hidemenu"></ul>
+  </div>
+</div>
+</div>
+<div class="input-row">
+<div class="field-label">Assignee:</div>
+ <div class="field-input">
+    <input type="text" class="input-box icon-autocomplete" id="assigneeval" placeholder="Enter Assignee">
+    <input type="hidden" id="assignee">
+    <div id="autocomplete_assignee" class="ac-textbox default-display-none">
+    <ul id="ulist_assignee" style="width:215px;" class="hidemenu"></ul>
+  </div>
+</div>
+</div>
+</div>
+<div class="submit-button-container">
+<input type="submit" value="Show" class="btn-submit" id="submit">
+</div>
+<div class="clearfix"></div>
+<div class="grid-table-rpt" style="padding-bottom:0em;">
+<h1>Unit wise Compliances</h1>
+
+<div style="margin-left:15%; margin-top:1em;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+            <div style="margin-left:10px; font-size:0.8em;padding-bottom:1em;">Country:<span style="margin-left:10px; font-weight:bold;" class="tbl_country"></span> </div>
+
+             <div style="margin-left:10px; font-size:0.8em;padding-bottom:1em;">Business Group:<span style="margin-left:10px; font-weight:bold;" class="tbl_businessgroup"></span> </div>
+               <div style="margin-left:10px; font-size:0.8em;padding-bottom:1em;">Division:<span style="margin-left:10px; font-weight:bold;" class="tbl_division"></span> </div>         
+            
+          </div>
+          <div style="float:right; margin-right:20%;">
+            <div style="margin-left:10px; font-size:0.8em;padding-bottom:1em;">Domain:<span style="margin-left:10px; font-weight:bold;" class="tbl_domain"></span> </div>
+
+           <div style="margin-left:10px; font-size:0.8em;padding-bottom:1em;">Legal Entity:<span style="margin-left:10px; font-weight:bold;" class="tbl_legalentity"></span> </div>
+          
+          </div>
+</div>
+
+<!--         <table class="font1" style="width:100%;">
+    
+            <tr >
+              <td colspan="3" style="padding-left:0px; padding-top:0px"> <div class="grid-table-rpt"><table cellpadding="0" cellspacing="0" width="100%" >
+                  <tr align="left">
+                    <th width="2%" style="background:#ccc;"><span style="font-weight:bold;">#</span></th>
+                    <th width="28%" style="background:#ccc;" ><span style="font-weight:bold;">Compliance</span></th>
+                 
+                    <th width="8%"  style="background:#ccc;"><span style="font-weight:bold;">Compliance Frequency</span></th>
+                    <th width="15%"  style="background:#ccc;"colspan="4" ><span style="font-weight:bold;" >Statutory Date</span></th>
+                    <th width="13%" style="background:#ccc;" ><span style="font-weight:bold;">Trigger Before</span></th>
+                    <th width="12%"  style="background:#ccc;" ><span style="font-weight:bold;">Due Date</span></th>
+                    <th width="12%"  style="background:#ccc;" ><span style="font-weight:bold;">Validity Date</span></th>
+                  </tr>
+                   <tr><td colspan="7"><span class="heading"><abbr class="page-load tipso_style" title="16, North Street, Simmakal, Madurai, 625005"><img src="/images/icon-info.png" style="margin-right:10px"></abbr> MDU1038 - Madurai Unit </span></td></tr>
+                  <tr >
+                    <td  align="center">1</td>
+                    <td ><abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>FORM I - Half yearly returns Submission</td>
+                   
+                    <td>Periodical</td>
+                    <td colspan="4">Every Year 1st January</td>
+                    <td >20 Days</td>
+                    <td>01-Jan-2016</td>
+                   
+                    <td>01-Jan-2016</td>
+                  </tr>   
+                </table></div>
+                </td></tr></table> -->
+
+
+<div class="clearfix"></div>
+<table class="tbody-compliance" id="accordion">
+
+</table>
+<p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
+</div>
+</div>
+</div>
+<div id="act-templates" class="default-display-none">
+<table class="font1 table-act-list" style="width:100%;height:30px; ">
+<tbody class=" table-row-act-list accordion-toggle">
+<tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+<th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="5"  class="actname" >
+</th>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="head-templates">
+<table class="table-compliance-frequency-list">
+<tr class="table-row-com-frequency">
+<td align="center" class="tbl_heading" ></td>
+</tr>
+</table>
+<div class="clearfix"></div>
+</div>
+<div id="compliance-templates" style="display:none;">
+<table width="100%" style="border:1px dotted #CCCCCC;" class="table-compliances-list">
+<tr align="left" class="sub-head table-row">
+<th width="3%" align="center">#</th>
+<th width="12%">Industry Type</th>
+<th width="12%">Statutory Nature</th>
+<th width="12%">Statutory Provision</th>
+<th width="12%">Compliance Task</th>
+</tr>
+<tr class="table-row" >
+<td align="center" class="tbl_sno"></td>
+<td class="tbl_industrytype"></td>
+<td class="tbl_statutorynature"></td>
+<td class="tbl_statutoryprovision"></td>
+<td class="tbl_compliancetask"><a href="#"></a></td>
+</tr>
+<tr align="left" class="sub-head table-row">
+<th align="center">&nbsp;</th>
+<th width="15%">Compliance Description</th>
+<th width="15%">Penal Consequences</th>
+<th>Compliance Occurence</th>
+<th colspan="2" >Applicable Location</th>
+</tr>
+<tr class="table-row">
+<td></td>
+<td class="tbl_description"></td>
+<td class="tbl_penalconsequences"></td>
+<td class="tbl_occurance"> <br>(Trigger : 20 days)</td>
+<td colspan="2" class="tbl_applicablelocation"> </td>
+</tr>
+</table>
+</div>
+
+<div id="nocompliance-templates" style="display:none;">
+<table width="100%" style="border:1px dotted #CCCCCC;" class="table-nocompliances-list">
+<tr class="table-row" >
+<td align="center" colspan="5" class="tbl_norecords"></td>
+</tr>
+</table>
+</div>
+</div>
+
+<script type="text/javascript" src="/files/desktop/client/unit-wise-compliance/unitwisecompliance.js"></script>
+{% endblock %}

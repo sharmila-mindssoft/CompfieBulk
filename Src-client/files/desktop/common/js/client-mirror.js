@@ -83,11 +83,10 @@ function initClientMirror() {
 
     function clientApiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
-        var client_id = getClientId();
         if (sessionToken == null)
             sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
         var requestFrame = {
-            "session_token": client_id+"-"+sessionToken,
+            "session_token": sessionToken,
             "request": request
         };
         jQuery.post(
@@ -99,10 +98,15 @@ function initClientMirror() {
                 var response = data[1];
                 matchString = 'success';
                 log("API STATUS :"+status)
+
                 if (status.toLowerCase().indexOf(matchString) != -1){
+                    alert(response);
                     callback(null, response);
                 }
-                callback(status, null) 
+                else{
+                    callback(status, null) 
+                }
+                
             }
         )
         .fail(
@@ -643,6 +647,44 @@ function initClientMirror() {
                 "compliance_frequency" : frequency_id
             }
         ]
+        clientApiRequest("api/client_transaction", request, callback);  
+    } 
+
+    function getComplianceApprovalList(callback){
+        var request = [
+            "GetComplianceApprovalList",
+            {}
+        ];
+        clientApiRequest("api/client_transaction", request, callback);
+    }
+
+    function getClientReportFilters(callback) {
+        var request = [
+            "GetClientReportFilters",
+            {}
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+    
+    function getUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, 
+        division_id, unit_id, user_id, callback) {
+        console.log("country>>>>"+country_id)
+        console.log("domain_id>>>>"+domain_id)
+        var request = [
+            "GetUnitwisecomplianceReport",
+            {
+                "country_id": country_id,
+                "domain_id": domain_id,
+                "business_group_id": business_group_id,
+                "legal_entity_id": legal_entity_id,
+                "division_id"  : division_id,
+                "unit_id": unit_id,
+                "user_id": user_id
+            }
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
     }
 
     function getChartFilters(callback) {
@@ -743,6 +785,9 @@ function initClientMirror() {
 
         getChartFilters: getChartFilters,
         getComplianceStatusChartData : getComplianceStatusChartData,
+
+        getClientReportFilters: getClientReportFilters,
+        getUnitwisecomplianceReport: getUnitwisecomplianceReport,
     }
 
 }

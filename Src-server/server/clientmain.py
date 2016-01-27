@@ -192,8 +192,12 @@ TEMPLATE_PATHS = [
     ("/unit-closure", "files/desktop/client/unit-closure/unitclosure.html", None, {}), 
     #reports
     ("/compliance", "files/desktop/client/audit-trail/audittrail.html", None, {}),
-    ("/audit-trail", "files/desktop/client/audit-trail/audittrail.html", None, {}),       
-
+    ("/audit-trail", "files/desktop/client/audit-trail/audittrail.html", None, {}),
+    ("/unit-wise-compliance", "files/desktop/client/unit-wise-compliance/unitwisecompliance.html", None, {}),
+    ("/assignee-wise-compliance", "files/desktop/client/assignee-wise-compliance/assigneewisecompliance.html", None, {}),
+    ("/service-provider-wise-compliance", "files/desktop/client/service-provider-wise-compliance/serviceproviderwisecompliance.html", None, {}),
+    ("/compliance-details", "files/desktop/client/compliance-details/compliancedetails.html", None, {}),
+    ("/risk-report", "files/desktop/client/risk-report/riskreport.html", None, {}),
 ]
 
 
