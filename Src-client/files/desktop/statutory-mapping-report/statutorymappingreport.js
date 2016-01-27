@@ -7,12 +7,7 @@ var statutoryNaturesList;
 var statutoriesList;
 var complianceFrequencyList;
 
-/*var temp_country = 0;
-var temp_domain = 0;
-var temp_industry = null;
-var temp_statutorynature = null;
-var temp_geography = null;
-var temp_act = null;*/
+var temp_act = null;
 
 function clearMessage() {
   $(".error-message").hide();
@@ -192,6 +187,7 @@ $("#submit").click(function(){
   sec  = currentTime.getSeconds();
   ms = currentTime.getMilliseconds();
   console.log("Start Progress : "+ hour + ":" + min + ":" + sec + ":" + ms  );
+
   var country = $("#country").val();
   var domain = $("#domain").val();
   var industry = null;
@@ -232,7 +228,6 @@ $("#submit").click(function(){
         sec  = currentTime.getSeconds();
         ms = currentTime.getMilliseconds();
         console.log("API Response: "+ hour + ":" + min + ":" + sec + ":" + ms  );
-
         loadresult(statutoryMappingDataList);
       }
       function onFailure(error){
@@ -245,6 +240,7 @@ $("#submit").click(function(){
       sec  = currentTime.getSeconds();
       ms = currentTime.getMilliseconds();
       console.log("Call API : "+ hour + ":" + min + ":" + sec + ":" + ms  );
+
       mirror.getStatutoryMappingsReportData(filterdata, 
         function (error, response) {
           if (error == null){
@@ -254,14 +250,7 @@ $("#submit").click(function(){
             onFailure(error);
           }
         });
-   /* }
-
-    temp_country = country;
-    temp_domain = domain;
-    temp_industry = industry;
-    temp_statutorynature = statutorynature;
-    temp_geography = geography;
-    temp_act = act;*/
+    temp_act = act;
   }
 });
 
@@ -450,3 +439,4 @@ $(function() {
   $(".grid-table-rpt").hide();
   getStatutoryMappings();
 });
+

@@ -1,5 +1,6 @@
 {% extends "files/desktop/home/container.html" %}
 {% block content %} 
+
 <div class="content-container">
   <div class="content-area">
     <div class="add-container">
@@ -15,8 +16,8 @@
         <div class="input-row">
           <div class="field-label"> Domain<span class="mandatory">*</span>:</div>
           <div class="field-input">
-            <input type="hidden" id="domain" value=""> 
-            <input type="text" class="input-box icon-autocomplete" id="domainval" value=""  onkeyup="loadauto_domains(this.value)"> 
+            <input type="hidden" id="domain" value="1"> 
+            <input type="text" class="input-box icon-autocomplete" id="domainval" value="Test Domain"  onkeyup="loadauto_domains(this.value)"> 
             <div id="selectboxview-domains" class="ac-textbox" style="display:none;" onclick="hidedomainslist();">
               <ul style="width:195px;"></ul> 
             </div>
@@ -133,7 +134,7 @@
             <th width="10%" class="header-bg">Remarks</th>
              <!-- <th width="10%" class="header-bg">Statutory Date</th> -->
           </tr>
-          <tbody class="tbody-assigned-statutory-list">
+          <tbody class="tbody-assigned-statutory-list" >
           </tbody>
         </table>
         <p style="border-top:1px dashed #ccc;" class="total-records"></p>
@@ -172,4 +173,5 @@
 </table>
 </div>
 <script type="text/javascript" src="/files/desktop/assigned-statutory-report/assignedstatutoryreport.js"></script>
+
 {% endblock %}

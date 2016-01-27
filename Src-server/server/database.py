@@ -67,8 +67,9 @@ class Database(object) :
     def connect(self):
         assert self._connection is None
         connection = mysql.connect(
-            self._mysqlHost, self._mysqlUser, 
-            self._mysqlPassword, self._mysqlDatabase
+            host=self._mysqlHost, user=self._mysqlUser, 
+            passwd=self._mysqlPassword, db=self._mysqlDatabase,
+            port=3306
         )
         connection.autocommit(False)
         self._connection = connection
@@ -448,6 +449,7 @@ class KnowledgeDatabase(Database):
         )
         self.statutory_parent_mapping = {}
         self.geography_parent_mapping = {}
+        self.begin()
         self.initialize_table_names()
 
     def initialize_table_names(self):
@@ -2102,10 +2104,18 @@ class KnowledgeDatabase(Database):
                 pass
 
             elif compliance_frequency == 4 :
+                if duration is None :
+                    duration = ""
+                if duration_type is None:
+                    duration_type = ""
                 columns.extend(["duration", "duration_type_id"])
                 values.extend([duration, duration_type])
 
             else :
+                if repeats_every is None :
+                    repeats_every = ""
+                if repeats_type is None :
+                    repeats_type = ""
                 columns.extend(["repeats_every", "repeats_type_id"])
                 values.extend([repeats_every, repeats_type])
             self.insert(table_name, columns, values)
@@ -3165,7 +3175,7 @@ class KnowledgeDatabase(Database):
         columns = ["is_active", "updated_on" , "updated_by"]
         values = [is_active, current_time_stamp, session_user]
         condition = "legal_entity_id = '%d' and client_id = '%d' "% (legal_entity_id, client_id)
-        result = self.update(self.tblUnits, columns, values, condition)
+        self.update(self.tblUnits, columns, values, condition)
 
         division_name = None
         legal_entity_name = None
@@ -3178,7 +3188,7 @@ class KnowledgeDatabase(Database):
             division_name = rows[0][0]
         else:
             action_column = "legal_entity_name"
-            action_condition = "legal_entity_name='%d' and client_id = '%d' "% (legal_entity_id, client_id)
+            action_condition = "legal_entity_id='%d' and client_id = '%d' "% (legal_entity_id, client_id)
             rows = self.get_data(self.tblLegalEntities, action_column, action_condition)
             legal_entity_name = rows[0][0]
 
@@ -3192,7 +3202,8 @@ class KnowledgeDatabase(Database):
                 action = "Activated Division \"%s\" " % division_name
             else:
                 action = "Activated Legal Entity \"%s\" " % legal_entity_name
-        return result
+
+        return True
 
     def reactivate_unit(self, client_id, unit_id, session_user):
         current_time_stamp = str(self.get_date_time())
@@ -3586,6 +3597,8 @@ class KnowledgeDatabase(Database):
             s_mapping = statutory_data[1] 
             statutory_parents = statutory_data[2]
             level_1 = statutory_parents[0]
+            if level_1 == 0 :
+                level_1 = statutory_id
             compliance_applicable_status = bool(1)
             compliance_opted_status = None
             compliance_remarks = None
@@ -3610,7 +3623,8 @@ class KnowledgeDatabase(Database):
 
         assigned_statutory_list = []
         for key, value in level_1_compliance.iteritems() :
-            name = self.statutory_parent_mapping[int(key)][0]
+            name = self.statutory_parent_mapping.get(int(key))
+            name = name[0]
             compliances = value
             applicable_status = bool(1)
             statutory_opted_status = None
@@ -3688,7 +3702,16 @@ class KnowledgeDatabase(Database):
                 self.save_data(self.tblClientCompliances, field, values)
         return True
 
+    def get_compliance_ids(self, client_statutory_id):
+        query = "SELECT group_concat(distinct compliance_id) \
+            FROM tbl_client_compliances \
+            WHERE client_statutory_id = %s" % (client_statutory_id)
+        row = self.select_one(query)
+        return row[0]
+
     def update_client_compliances(self, client_statutory_id, data, user_id, submited_on = None):
+        saved_compliance_ids = self.get_compliance_ids(client_statutory_id)
+        saved_compliance_ids = [int(x) for x in saved_compliance_ids.split(',')]
         for d in data :
             level_1_id = d.level_1_statutory_id
             applicable_status = int(d.applicable_status)
@@ -3697,21 +3720,28 @@ class KnowledgeDatabase(Database):
                 not_applicable_remarks = ""
             for key, value in d.compliances.iteritems():
                 compliance_id = int(key)
-                compliance_applicable_status = int(value)
+                if compliance_id not in saved_compliance_ids :
+                    created_on = str(self.get_date_time())
+                    new_data = d
+                    new_data.compliances = {key: value}
+                    self.save_client_compliances(client_statutory_id, [new_data], user_id, created_on)
+                    saved_compliance_ids.append(compliance_id)
+                else :
+                    compliance_applicable_status = int(value)
 
-                field_with_data = "statutory_applicable = %s, \
-                    not_applicable_remarks = '%s', \
-                    compliance_applicable = %s, updated_by = %s" % (
-                        applicable_status, not_applicable_remarks,
-                        compliance_applicable_status, int(user_id)
-                    )
-                if submited_on is not None :
-                    field_with_data = field_with_data + " , submitted_on ='%s'" % (submited_on)
-                where_condition = " client_statutory_id = %s \
-                    AND statutory_id = %s AND compliance_id = %s" % (
-                        client_statutory_id, level_1_id, compliance_id
-                    )
-                self.update_data(self.tblClientCompliances, field_with_data, where_condition)
+                    field_with_data = "statutory_applicable = %s, \
+                        not_applicable_remarks = '%s', \
+                        compliance_applicable = %s, updated_by = %s" % (
+                            applicable_status, not_applicable_remarks,
+                            compliance_applicable_status, int(user_id)
+                        )
+                    if submited_on is not None :
+                        field_with_data = field_with_data + " , submitted_on ='%s'" % (submited_on)
+                    where_condition = " client_statutory_id = %s \
+                        AND statutory_id = %s AND compliance_id = %s" % (
+                            client_statutory_id, level_1_id, compliance_id
+                        )
+                    self.update_data(self.tblClientCompliances, field_with_data, where_condition)
         return True
     
     def submit_client_statutories_compliances(self, client_statutory_id, data, user_id) :
@@ -3922,7 +3952,11 @@ class KnowledgeDatabase(Database):
 
         return final_statutory_list
 
-    def get_unassigned_compliances(self, country_id, domain_id, industry_id, geography_id, unit_id) :
+
+    def get_unassigned_compliances(
+        self, country_id, domain_id, industry_id, 
+        geography_id, client_statutory_id
+    ) :
         query = "SELECT distinct \
             t6.compliance_id, t6.compliance_task, t6.document_name,\
             t6.statutory_provision, t6.compliance_description, t2.statutory_id, \
@@ -4023,7 +4057,7 @@ class KnowledgeDatabase(Database):
                     key,
                     statutory_name,
                     None,
-                    True,
+                    True, 
                     None,
                     None
                 )
@@ -4144,8 +4178,18 @@ class KnowledgeDatabase(Database):
                 )
             else :
                 statutories = unit_statutories.assigned_statutories
-
-                statutories.extend(
+                new_stautory = self.return_assigned_compliances_by_id(client_statutory_id)
+                for new_s in new_stautory :
+                    new_id = new_s.level_1_statutory_id
+                    is_exists = False
+                    for x in statutories :
+                        if x.level_1_statutory_id == new_id :
+                            x.compliances.extend(new_s.compliances)
+                            is_exists = True
+                            break
+                    if is_exists is False :
+                        statutories.append(new_s)
+                statutories.append(
                     self.return_assigned_compliances_by_id(client_statutory_id)
                 )
                 unit_statutories.assigned_statutories = statutories
@@ -4224,8 +4268,8 @@ class KnowledgeDatabase(Database):
         profiles = []
         for client_id in client_ids_list:
             settings_rows = self.get_settings(client_id)
-            contract_from = settings_rows[0][0]
-            contract_to = settings_rows[0][1]
+            contract_from = self.datetime_to_string(settings_rows[0][0])
+            contract_to = self.datetime_to_string(settings_rows[0][1])
             no_of_user_licence = settings_rows[0][2]
             file_space = settings_rows[0][3]
             used_space = 34
@@ -4291,7 +4335,7 @@ class KnowledgeDatabase(Database):
             user_ids = rows[0][0]
             condition = "user_id in (%s)"% user_ids
         else:
-            condition = "1"
+            condition = "1" 
         columns = "user_id, form_id, action, created_on"
         rows = self.get_data(self.tblActivityLog, columns, condition)
         audit_trail_details = []
@@ -4301,7 +4345,7 @@ class KnowledgeDatabase(Database):
             action = row[2]
             date = self.datetime_to_string(row[3])
             audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
-        users = None
+        users = None       
         if session_user != 0:
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
@@ -4309,8 +4353,8 @@ class KnowledgeDatabase(Database):
             users = self.return_users()
         forms = self.return_forms()
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
-
-#
+ 
+# 
 #   Update Profile
 #
 
@@ -4373,4 +4417,37 @@ class KnowledgeDatabase(Database):
                     result_row[2], result_row[4], result_row[6], 
                     [int(x) for x in result_row[5].split(",")]))
             GroupedUnits.append(technoreports.GroupedUnits(row[2], row[1], row[0], units))
-        return GroupedUnits  
+        return GroupedUnits   
+
+
+#
+#   Statutory_Notification_list
+#
+    def get_statutory_notifications_report_data(self, request_data):
+        country_id = request_data.country_id
+        domain_id = request_data.domain_id
+        level_1_statutory_id = request_data.level_1_statutory_id
+        if level_1_statutory_id is None :
+            level_1_statutory_id = '%'
+        query = "SELECT tsnl.statutory_notification_id, tsm.country_id, \
+             tsm.domain_id, ts.statutory_name, tsnl.statutory_provision,\
+             tsnl.notification_text, tsnl.updated_on \
+             from `tbl_statutory_notifications_log` tsnl    \
+            INNER JOIN `tbl_statutory_statutories` tss ON \
+            tsnl.statutory_mapping_id = tss.statutory_mapping_id \
+            INNER JOIN `tbl_statutory_mappings` tsm ON \
+            tsm.statutory_mapping_id = tsnl.statutory_mapping_id \
+            INNER JOIN  `tbl_statutories` ts ON \
+            tss.statutory_id = ts.statutory_id \
+            WHERE  \
+            tsm.country_id = %s and \
+            tsm.domain_id = %s " % (
+                country_id, domain_id
+            )
+
+        rows = self.select_all(query)
+        columns = ["statutory_notification_id", "country_id", "domain_id",
+          "statutory_name", "statutory_provision", "notification_text", "updated_on" ]
+        result = self.convert_to_dict(rows, columns)
+        print result
+        return result

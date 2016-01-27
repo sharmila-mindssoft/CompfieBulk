@@ -450,6 +450,10 @@ def to_structure_VectorType_CustomTextType_20(data):
 def to_structure_Text(data):
     return parse_string(data)
 
+def to_structure_OptionalType_Text(data):
+    if data is None: return None
+    return to_structure_Text(data)
+
 def to_structure_VectorType_CustomTextType_50(data):
     data = parse_list(data, 0)
     lst = []
@@ -2534,9 +2538,28 @@ def to_structure_VectorType_RecordType_core_ComplianceRepeatType(data):
         lst.append(to_structure_RecordType_core_ComplianceRepeatType(item))
     return lst
 
+# Core Number of compliances
+
 def to_structure_RecordType_core_NumberOfCompliances(data):
     from protocol import core
     return core.NumberOfCompliances.to_structure(data)
+
+def to_structure_VectorType_RecordType_core_NumberOfCompliances(data):
+    data = parse_list(data, 0)    
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_NumberOfCompliances(item))
+    return lst
+
+def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items() :
+        key = to_structure_SignedIntegerType_8(key)
+        value = to_structure_VectorType_RecordType_core_NumberOfCompliances(value)
+        dict[key] = value
+    return dict
+
 
 def to_structure_VectorType_RecordType_dashboard_ChartDataMap(data):
     data = parse_list(data, 0)
@@ -2626,6 +2649,13 @@ def to_structure_VectorType_RecordType_core_ComplianceApprovalStatus(data):
         lst.append(to_structure_RecordType_core_ComplianceApprovalStatus(item))
     return lst
 
+def to_structure_VectorType_RecordType_core_COMPLIANCE_APPROVAL_STATUS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(item))
+    return lst
+
 def to_structure_RecordType_knowledgemaster_Response_UpdateStatutoryNatureSuccess(data):
     from protocol import knowledgemaster
     return knowledgemaster.Response.to_structure(data)
@@ -2644,7 +2674,6 @@ def to_structure_VectorType_RecordType_core_ComplianceApplicability(data):
 def to_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability(data):
     if data is None: return None
     return to_structure_VectorType_RecordType_core_ComplianceApplicability(data)
-
 
 def to_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_ComplianceApplicability(data):
     data = parse_dictionary(data)
@@ -3416,3 +3445,12 @@ def to_structure_VectorType_RecordType_core_GeographyWithMapping(data):
 def to_structure_RecordType_core_GeographyWithMapping(data):
     from protocol import core
     return core.GeographyWithMapping.to_structure(data)
+
+def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_dictionary(data)
+    d = {}
+    for key, value in data.items():
+        key = to_structure_SignedIntegerType_8(key)
+        value = to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
+        d[key] = value
+    return d

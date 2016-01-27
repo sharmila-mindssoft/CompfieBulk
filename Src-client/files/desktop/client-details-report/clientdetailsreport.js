@@ -56,7 +56,7 @@ $("#show-button").click(function(){
 		var businessgroupid = parseInt(bgroups);
 	}
 	else{
-	 var businessgroupid = null;
+		var businessgroupid = null;
 	}
 	businessgroupsval = $("#businessgroupsval").val();
 	var legalentity = $("#legalentityid").val();
@@ -132,7 +132,7 @@ function loadClientDetailsList(data){
 	$('.tbody-clientdetails-list tr').remove();
 	var sno = 0;
 	$.each(data, function(key, value) {
-	  	var list = data[key];
+	  	var list = data[key]['units'];
 	  	$.each(list, function(k, val) { 
 		  	var arr = [];
 			var tableRow = $('#templates .table-clientdetails-list .table-row');
@@ -150,7 +150,7 @@ function loadClientDetailsList(data){
 				}
 			});					
 			$('.domain-name', clone).html(domainsNames);
-			$('.unit-address', clone).text(list[k]['unit_location_and_address']);
+			$('.unit-address', clone).text(list[k]['unit_address']+", "+list[k]['geography_name']);
 			$('.pincode', clone).html(list[k]['postal_code']);
 			$('.tbody-clientdetails-list').append(clone);
 		});

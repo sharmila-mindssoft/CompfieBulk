@@ -328,7 +328,7 @@ AssignedStatutory = RecordType("AssignedStatutory", [
     Field("level_1_statutory_name", LEVEL_1_STATUTORY_NAME),
     Field("compliances", OptionalType(ComplianceApplicabilityList)), 
     Field("applicable_status", STATUS),
-    Field("opted_status", STATUS),
+    Field("opted_status", STATUS), 
     Field("not_applicable_remarks", OptionalType(DESCRIPTION))
 ])
 

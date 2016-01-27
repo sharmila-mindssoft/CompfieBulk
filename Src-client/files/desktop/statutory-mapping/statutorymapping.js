@@ -327,7 +327,6 @@ function loadStatutoryLevels(countryval,domainval){
     loadStatutoryMappingList(filteredList);
   });
 
-
   //check & uncheck list data for single selection
   function activate(element, id, dispname, type){
     $(type).each( function( index, el ) {
@@ -381,7 +380,6 @@ function make_breadcrumbs(){
     var arrowimage = " <img src=\'/images/right_arrow.png\'/> ";
     $(".breadcrumbs_1").html(sm_countryval + arrowimage + sm_domainval + arrowimage + sm_industryvals + arrowimage + sm_statutorynatureval);
 }
-
 
 //check & uncheck list data
 function activate_statutorylist(element,id,type,country,domain,level){

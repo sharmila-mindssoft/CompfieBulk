@@ -11,7 +11,7 @@ def process_techno_report_request(request, db):
 	user_id = validate_user_session(db, session_token)
 	if user_id is None:
 		return login.InvalidSessionToken()
-
+	print "Validated session token : request frame : {}".format(request_frame)
 	if type(request_frame) is technoreports.GetAssignedStatutoryReportFilters:
 		return process_get_assigned_statutory_report_filters(db, user_id)
 	elif type(request_frame) is technoreports.GetAssignedStatutoryReport:
@@ -20,7 +20,11 @@ def process_techno_report_request(request, db):
 		return process_get_client_details_report_filters(db, request_frame, user_id) 
 	elif type(request_frame) is technoreports.GetClientDetailsReportData:
 		return process_get_client_details_report_data(db, request_frame, user_id) 
-    
+	elif type(request_frame) is technoreports.GetStatutoryNotificationsFilters:
+		return process_get_statutory_notifications_filters(db, request_frame, user_id) 
+	elif type(request_frame) is technoreports.GetStatutoryNotificationsReportData:
+		return process_get_statutory_notifications_report_data(db, request_frame, user_id) 
+ 
 def process_get_assigned_statutory_report_filters(db, user_id):
 	countries = db.get_countries_for_user(user_id)
 	domains = db.get_domains_for_user(user_id)
@@ -38,6 +42,22 @@ def process_get_assigned_statutory_report_filters(db, user_id):
 
 def process_get_assigned_statutory_report_data(db, request_frame, user_id):
 	return db.get_assigned_statutories_report(request_frame, user_id)
+
+def process_get_statutory_notifications_filters(db, request_frame, user_id):
+	countries = db.get_countries_for_user(user_id)
+	domains = db.get_domains_for_user(user_id)
+	level_1_statutories = db.get_country_wise_level_1_statutoy()
+	return technoreports.GetStatutoryNotificationsFiltersSuccess(countries = countries, domains = domains, 
+	 level_1_statutories = level_1_statutories)
+
+def process_get_statutory_notifications_report_data(db, request, user_id):
+	countries = db.get_countries_for_user(user_id)
+	domains = db.get_domains_for_user(user_id)
+	level_1_statutories = db.get_country_wise_level_1_statutoy()
+	print "inside process_get_statutory_notifications_report_data: {}".format(request)
+	result = db.get_statutory_notifications_report_data(request)
+	print "Result Value process_get_statutory_notifications_report_data: {}".format(result)
+	return technoreports.GetStatutoryNotificationsReportDataSuccess(countries, domains, level_1_statutories, result)
 
 def process_get_client_details_report_filters(db, request_frame, session_user):
 	countries = db.get_countries_for_user(session_user)

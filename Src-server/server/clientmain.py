@@ -67,7 +67,6 @@ class API(object):
         assert response is not None
         data = response_data.to_structure()
         s = json.dumps(data, indent=2)
-        print s
         response.send(s)
 
     def _parse_request(
@@ -130,6 +129,10 @@ class API(object):
     def handle_client_reports(self, request, db):
         return controller.process_client_report_requests(request, db)
 
+    @api_request(dashboard.RequestFormat)
+    def handle_client_dashboard(self, request, db):
+        return controller.process_client_dashboard_requests(request, db)
+
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
 )
@@ -143,8 +146,11 @@ class TemplateHandler(tornado.web.RequestHandler) :
 
     def get(self, url = None) :
         if url != None:
-            db = KnowledgeDatabase("localhost", "root", "123456", "mirror_knowledge")
-            con = db.begin()
+
+            # db = KnowledgDatabase("localhost", "root", "123456", "mirror_knowledge")
+            db = KnowledgeDatabase("198.143.141.73", "root", "Root!@#123", "mirror_knowledge")
+            # con = db.begin()
+
             if not db.validate_short_name(url):
                 print "Invalid URL"
                 return
@@ -225,7 +231,8 @@ def run_server(port):
             ("/api/login", api.handle_login),
             ("/api/client_masters", api.handle_client_masters),
             ("/api/client_transaction", api.handle_client_transaction),
-            ("/api/client_reports", api.handle_client_reports)
+            ("/api/client_reports", api.handle_client_reports),
+            ("/api/client_dashboard", api.handle_client_dashboard)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

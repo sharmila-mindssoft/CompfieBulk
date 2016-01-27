@@ -111,6 +111,7 @@ function loadClientUserList(){
 		var userId = users["user_id"];
 		var isActive = users["is_active"];
 		var isAdmin = users["is_admin"];
+
 		if(isActive == true){
 			imageName = "icon-active.png";
 			title = "Click here to deactivate"
@@ -134,7 +135,7 @@ function loadClientUserList(){
 		
 		var seatingUnitId = userList[i]['seating_unit_id']
 		var userGroupId = userList[i]['user_group_id'];
-		
+
 		if(users["user_group_id"] != null){
 			var tableRow = $('#templates .table-users-list .table-row');
 			var clone = tableRow.clone();
@@ -392,22 +393,8 @@ $("#submit").click(function(){
 			}
 		}
 		arrayUnits = arrayUnits.filter(function(n){ return n != undefined });  
-		
-		var userDetails = {}
-		userDetails["email_id"] = emailid ;
-		userDetails["user_group_id"] = parseInt(usergroup);
-		userDetails["employee_name"] = employeename;
-		userDetails["employee_code"] = employeeid;
-		userDetails["contact_no"] = countrycode+"-"+areacode+"-"+mobilenumber;
-		userDetails["seating_unit_id"] = parseInt(seatingunit);
-		userDetails["seating_unit_name"] = seatingunitname;
-		userDetails["user_level"] = parseInt(userlevel);
-		userDetails["country_ids"] = arrayCountries;
-		userDetails["domain_ids"] = arrayDomains;
-		userDetails["unit_ids"] = arrayUnits;
-		userDetails["is_service_provider"] = isserviceprovider;
-		userDetails["is_admin"] = isAdmin;
-		userDetails["service_provider_id"] = serviceprovider;
+		var contactNo = countrycode+"-"+areacode+"-"+mobilenumber;
+
 		function onSuccess(data){
 			$("#user-add").hide();
 			$("#user-view").show();
@@ -416,7 +403,13 @@ $("#submit").click(function(){
 		function onFailure(status, data){
 			displayMessage(status);
 		}
-		client_mirror.updateClientUser(userDetails,
+		var clientUserDetail = [userId,  parseInt(usergroup), employeename, 
+			      employeeid, contactNo, parseInt(seatingunit), parseInt(userlevel), 
+			      arrayCountries, arrayDomains, arrayUnits, isAdmin, isserviceprovider,
+			      serviceprovider];
+		var clientUserDetailDict = client_mirror.getUpdateClientUserDict(clientUserDetail)
+		
+		client_mirror.updateClientUser(clientUserDetailDict,
 			function(error, response){
 				if(error == null){
 					onSuccess(response);
@@ -428,7 +421,7 @@ $("#submit").click(function(){
 		);
 	}
 	else{
-		alert("all fails");
+		console.log("All fails.. Something Wrong");
 	}
 });
 function user_active(userId, isActive){

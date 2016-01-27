@@ -1,4 +1,4 @@
-var CLIENT_BASE_URL = "http://localhost:8090/";
+var CLIENT_BASE_URL = "http://localhost:8080/";
 function initClientMirror() {
     var DEBUG = true;
 
@@ -687,6 +687,45 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function approveCompliance(compliance_history_id, compliance_approval_status, 
+        remarks, documents, next_due_date, callback){
+        var request = [
+            "ApproveCompliance",
+            {
+                "compliance_history_id": compliance_history_id,
+                "approval_status": compliance_approval_status,
+                "remarks": remarks,
+                "documents": documents,
+                "next_due_date":next_due_date
+            }
+        ];
+    }
+
+    function getChartFilters(callback) {
+        var request = [
+            "GetChartFilters",
+            {}
+        ];
+        var callerName = "api/client_dashboard";
+        clientApiRequest(callerName, request, callback);         
+    }
+
+    function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate,  callback) {
+        var request = [
+            "GetComplianceStatusChart",
+            {
+                "country_ids": countryIds,
+                "domain_ids": domainIds,
+                "filter_type": filterType,
+                "filter_ids": filterIds,
+                "from_date": fromDate,
+                "to_date": toDate,
+
+            }
+        ];
+        var callerName = "api/client_dashboard";
+        clientApiRequest(callerName, request, callback); 
+    }
 
     return {
         log: log,
@@ -760,7 +799,12 @@ function initClientMirror() {
 
         getClientReportFilters: getClientReportFilters,
         getUnitwisecomplianceReport: getUnitwisecomplianceReport,
-    }
 
+        getComplianceApprovalList: getComplianceApprovalList,
+        approveCompliance: approveCompliance,
+
+        getChartFilters: getChartFilters,
+        getComplianceStatusChartData : getComplianceStatusChartData,
+    }
 }
 var client_mirror = initClientMirror();
