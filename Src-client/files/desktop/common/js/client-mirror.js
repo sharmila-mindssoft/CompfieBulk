@@ -651,26 +651,9 @@ function initClientMirror() {
             {}
         ];
         clientApiRequest("api/client_transaction", request, callback);
-<<<<<<< HEAD
     }
 
-    function approveCompliance(compliance_history_id, compliance_approval_status, 
-        remarks, documents, next_due_date, callback){
-        var request = [
-            "ApproveCompliance",
-            {
-                "compliance_history_id": compliance_history_id,
-                "approval_status": compliance_approval_status,
-                "remarks": remarks,
-                "documents": documents,
-                "next_due_date":next_due_date
-            }
-        ];
-=======
->>>>>>> Changed Client side session token format and changed seating_unit to optional type
-    }
 
-<<<<<<< HEAD
     function getChartFilters(callback) {
         var request = [
             "GetChartFilters",
@@ -698,6 +681,7 @@ function initClientMirror() {
 
     function approveCompliance(compliance_history_id, compliance_approval_status, 
         remarks, documents, next_due_date, callback){
+        var callerName = "api/client_transaction"
         var request = [
             "ApproveCompliance",
             {
@@ -708,10 +692,8 @@ function initClientMirror() {
                 "next_due_date":next_due_date
             }
         ];
+        clientApiRequest(callerName, request, callback)
     }
-
-=======
->>>>>>> Incomplete Approve Compliance Api
     return {
         log: log,
         toJSON: toJSON, 
