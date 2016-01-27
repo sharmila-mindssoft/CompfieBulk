@@ -104,6 +104,7 @@ class Database(object) :
 
     def select_all(self, query) :
         cursor = self.cursor()
+        print cursor
         assert cursor is not None
         cursor.execute(query)
         return cursor.fetchall()
