@@ -12,11 +12,11 @@ __all__ = [
 
 class ClientDatabase(Database):
     def __init__(self):
-        super(ClientDatabase, self).__init__(
-            "localhost", "root", "123456", "mirror_knowledge")
         # super(ClientDatabase, self).__init__(
-        #     "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
-        # )
+        #     "localhost", "root", "123456", "mirror_knowledge")
+        super(ClientDatabase, self).__init__(
+            "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
+        )
 
         self.begin()
         self._client_db_connections = {}
@@ -40,7 +40,7 @@ class ClientDatabase(Database):
             self.begin()
             self._client_db_connections[int(client_id)] = self._connection
             self._client_db_cursors[int(client_id)] = self._cursor
-        #print self._client_db_cursors
+        print self._client_db_cursors
         self.initialize_table_names()
 
     def execute(self, query, client_id = None) :
@@ -1755,10 +1755,15 @@ class ClientDatabase(Database):
         else :
             return self.frame_compliance_status_yearwise_count(inprogress, complied, delayed, not_complied, filter_ids, client_id)
 
-    def get_client_domain_configuration(self, client_id) :
+    def get_client_domain_configuration(self, client_id, country_id = None, domain_id = None) :
+        where_qry = ""
+        if country_id is not None and domain_id is not None :
+            where_qry = " WHERE country_id = %s AND domain_id = %s" % (country_id, domain_id)
+
         query = "SELECT country_id, domain_id, \
             period_from, period_to \
-            FROM  tbl_client_configurations "
+            FROM  tbl_client_configurations %s" % (where_qry)
+
         rows = self.select_all(query, client_id)
         columns = ["country_id", "domain_id", "period_from", "period_to"]
         data = self.convert_to_dict(rows, columns)
@@ -1978,9 +1983,46 @@ class ClientDatabase(Database):
         compliance_status = request.compliance_status
 
         status_qry = ""
+        if compliance_status == "Inprogress" :
+            status_qry = " AND T1.due_date > CURDATE() \
+                    AND T1.approve_status is NULL"
+
+        elif compliance_status == "Complied" :
+            status_qry = " AND T1.due_date >= T1.completion_date \
+                AND T1.completion_date != NULL \
+                AND T1.approve_status = 1"
+
+        elif compliance_status == "DelayedCompliance" :
+            status_qry = " AND T1.due_date < T1.completion_date \
+                AND T1.completion_date != NULL\
+                AND T1.approve_status = 1"
+
+        elif compliance_status == "NotComplied" :
+            status_qry = " AND T1.due_date < CURDATE() \
+                AND T1.approve_status is NULL "
+
+        if filter_type ==  "Group" :
+            filter_type_qry = "AND T3.country_id = %s" % (filter_id)
+
+        elif filter_type == "BusinessGroup" :
+            filter_type_qry = "AND T5.business_group_id = %s" % (filter_id)
+
+        elif filter_type == "LegalEntity" :
+            filter_type_qry = "AND T5.legal_entity_id = %s" % (filter_id)
+
+        elif filter_type == "Division" :
+            filter_type_qry = "AND T5.division_id = %s" % (filter_id)
+
+        elif filter_type == "Unit":
+            filter_type_qry = "AND T5.unit_id = %s" % (filter_id)
+
+
+
         date_qry = ""
         if from_date is not None and to_date is not None :
-            date_qry = ""            
+            date_qry = " AND T1.due_date >= '%s' AND T1.due_date <= '%s' " % (from_date, to_date)
+
+        print date_qry
 
         query = "SELECT \
             T1.compliance_history_id, T1.unit_id,\
@@ -1990,11 +2032,11 @@ class ClientDatabase(Database):
             T2.compliance_task, T2.document_name, \
             T2.compliance_description, T2.statutory_mapping, \
             unit_name, division_name, legal_entity_name,\
-            business_group_name, country_name, \
+            business_group_name, country_name, employee_name,\
             T3.country_id, \
             T3.domain_id, \
             SUBSTRING_INDEX(T1.due_date, '-', 1) as year, \
-            SUBSTRING_INDEX(SUBSTRING_INDEX(T1.due_date , '-', -2 ),'-',1) as month,  \
+            SUBSTRING_INDEX(SUBSTRING_INDEX(T1.due_date , '-', -2 ),'-',1) as month  \
             FROM tbl_compliance_history T1 \
             INNER JOIN tbl_client_compliances T2 \
             ON T1.compliance_id = T2.compliance_id \
@@ -2013,6 +2055,8 @@ class ClientDatabase(Database):
             ON T5.business_group_id = T8.business_group_id \
             INNER JOIN tbl_countries T9 \
             ON T3.country_id = T9.country_id \
+            INNER JOIN tbl_users T10 \
+            ON T1.completed_by = T10.user_id \
             WHERE \
             T3.domain_id IN %s  \
             %s \
@@ -2020,10 +2064,27 @@ class ClientDatabase(Database):
             %s \
             ORDER BY T1.due_date desc" % (
                 str(tuple(domain_ids)),
-                status_qry,
                 date_qry,
+                status_qry,
                 filter_type_qry,
             )
+        print query
+        rows = self.select_all(query, client_id)
+        columns = ["compliance_history_id", "unit_id", 
+            "compliance_id", "start_date", "due_date",
+            "completion_date", "assignee", "compliance_task",
+            "document_name", "compliance_description",
+            "statutory_mapping", "unit_name", "division_name",
+            "legal_entity_name", "business_group_name",
+            "country_name", "employee_name", "country_id", "domain_id", 
+            "year", "month"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        print result
+
+    def return_compliance_status_drill_down(self, request, result, client_id) :
+        pass        
+
 
     # unitwise compliance report
     def get_unitwise_compliance_report(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, client_id, session_user) :
