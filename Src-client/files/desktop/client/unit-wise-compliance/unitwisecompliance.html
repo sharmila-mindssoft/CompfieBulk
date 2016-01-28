@@ -79,23 +79,26 @@
 <div class="submit-button-container">
 <input type="submit" value="Show" class="btn-submit" id="submit">
 </div>
-</div>
+
 
 <div class="clearfix"></div>
-
 <div class="grid-table-rpt" style="padding-bottom:0em;" class="default-display-none">
 <h1>Unit wise Compliances</h1>
-
-<table class="tbody-unit">
+<table class="tbody-unit" width="100%">
 
 </table>
+
 <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
 </div>
 </div>
 </div>
+</div>
 
-<div id="unit-list-templates" >
-<table class="table-unit-list default-display-none">
+
+<div id="unit-list-templates" style="display:none;" >
+<table class="table-unit-list" width="100%">
+<tr>
+<td colspan="11">
 <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
   <div style="margin-left:10px; font-size:0.8em;padding-bottom:1em;">Country:<span style="margin-left:10px; font-weight:bold;" class="tbl_country"></span> </div>
 
@@ -108,51 +111,51 @@
 
  <div style="margin-left:10px; font-size:0.8em;padding-bottom:1em;">Legal Entity:<span style="margin-left:10px; font-weight:bold;" class="tbl_legalentity"></span> </div>  
 </div>
+</td>
+<tr>
+</table>
+</div>
+
+<div id="unit-head-templates" style="display:none;">
+<table class="table-unit-head">
+<tr align="left" class="table-row-unit-head">
+<th width="2%" style="background:#ccc;"><span style="font-weight:bold;">#</span></th>
+<th width="28%" style="background:#ccc;" ><span style="font-weight:bold;">Compliance</span></th>
+<th width="8%"  style="background:#ccc;"><span style="font-weight:bold;">Compliance Frequency</span></th>
+<th width="15%"  style="background:#ccc;"colspan="4" ><span style="font-weight:bold;" >Statutory Date</span></th>
+<th width="13%" style="background:#ccc;" ><span style="font-weight:bold;">Trigger Before</span></th>
+<th width="12%"  style="background:#ccc;" ><span style="font-weight:bold;">Due Date</span></th>
+<th width="12%"  style="background:#ccc;" ><span style="font-weight:bold;">Validity Date</span></th>
+</tr>
 </table>
 </div>
 
 
-<div id="unit-head-templates">
-<table class="table-unit-head">
-<tr class="table-row-unit-head">
-<td align="center" class="tbl_unitname" ></td>
+<div id="unit-name-templates">
+<table class="table-unit-name">
+<tr class="table-row-unit-name">
+<td align="left" class="tbl_unitheading" colspan="11">
+</td>
 </tr>
 </table>
 <div class="clearfix"></div>
 </div>
 
-<!-- <div id="compliance-templates" style="display:none;">
-<table width="100%" style="border:1px dotted #CCCCCC;" class="table-compliances-list">
-<tr align="left" class="sub-head table-row">
-<th width="3%" align="center">#</th>
-<th width="12%">Industry Type</th>
-<th width="12%">Statutory Nature</th>
-<th width="12%">Statutory Provision</th>
-<th width="12%">Compliance Task</th>
-</tr>
-<tr class="table-row" >
-<td align="center" class="tbl_sno"></td>
-<td class="tbl_industrytype"></td>
-<td class="tbl_statutorynature"></td>
-<td class="tbl_statutoryprovision"></td>
-<td class="tbl_compliancetask"><a href="#"></a></td>
-</tr>
-<tr align="left" class="sub-head table-row">
-<th align="center">&nbsp;</th>
-<th width="15%">Compliance Description</th>
-<th width="15%">Penal Consequences</th>
-<th>Compliance Occurence</th>
-<th colspan="2" >Applicable Location</th>
-</tr>
-<tr class="table-row">
-<td></td>
-<td class="tbl_description"></td>
-<td class="tbl_penalconsequences"></td>
-<td class="tbl_occurance"> <br>(Trigger : 20 days)</td>
-<td colspan="2" class="tbl_applicablelocation"> </td>
+<div id="unit-content-templates">
+<table class="table-unit-content">
+<tr align="left" class="table-row-unit-content">
+
+<td  align="center" class="tbl_sno"></td>
+<td class="tbl_compliance"> </td>
+<td class="tbl_frequency"> </td>
+<td colspan="4" class="tbl_statutorydate"></td>
+<td class="tbl_triggerbefore" > </td>
+<td class="tbl_duedate" ></td>
+<td class="tbl_validitydate"></td>
+
 </tr>
 </table>
-</div> -->
+</div>
 
 
 <script type="text/javascript" src="/files/desktop/client/unit-wise-compliance/unitwisecompliance.js"></script>

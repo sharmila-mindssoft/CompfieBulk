@@ -46,7 +46,7 @@ function getClientReportFilters(){
 
 function loadresult(filterList){
   $(".grid-table-rpt").show();
-  var country = $("#countryval").val();
+  var country = $("#country").text();
   var domain = $("#domainval").val();
   $(".country").text(country);
   $(".domain").text(domain);
@@ -55,12 +55,56 @@ function loadresult(filterList){
   var count=1;
   var compliance_count=0;
   for(var entity in filterList){
-    var unitname =  'UNIT NAME'/*filterList[entity][""]*/;
-
-    var tableRow=$('#unit-list-templates');
+    var tableRow=$('#unit-list-templates .table-unit-list');
     var clone=tableRow.clone();
     $('.tbl_country', clone).text(country);
+    $('.tbl_domain', clone).text(domain);
+    $('.tbl_businessgroup', clone).text(filterList[entity]["business_group_name"]);
+    $('.tbl_division', clone).text(filterList[entity]["division_name"]);
+    $('.tbl_legalentity', clone).text(filterList[entity]["legal_entity_name"]);
     $('.tbody-unit').append(clone);
+
+    var tableRow1=$('#unit-head-templates .table-unit-head .table-row-unit-head');
+    var clone1=tableRow1.clone();
+    $('.tbody-unit').append(clone1);
+
+    var compliancelists = filterList[entity]["unit_wise_compliances"]
+    for(var compliancelist in compliancelists){
+
+      for(i=0; i<compliancelists[compliancelist].length; i++){
+
+        var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
+        var clone2=tableRow2.clone();
+        $('.tbl_unitheading', clone2).html('<div class="heading" style="margin-top:5px;width:auto;">'+compliancelist+'</div>');
+        $('.tbody-unit').append(clone2);
+        var tableRow3=$('#unit-content-templates .table-unit-content .table-row-unit-content');
+        var clone3=tableRow3.clone();
+
+        var triggerdate = '';
+        var statutorydate = '';
+        for(j=0; j<compliancelists[compliancelist][i]["statutory_dates"].length; j++){
+          triggerdate += compliancelists[compliancelist][i]["statutory_dates"][j]["trigger_before_days"] + " Days";
+          statutorydate += compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_date"] + ' - ' + compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_month"];
+        }
+        
+        $('.tbl_sno', clone3).text(compliance_count+1);
+        $('.tbl_compliance', clone3).text(compliancelists[compliancelist][i]["compliance_name"]);
+        $('.tbl_frequency', clone3).text(compliancelists[compliancelist][i]["compliance_frequency"]);
+        $('.tbl_statutorydate', clone3).text(statutorydate);
+        $('.tbl_triggerbefore', clone3).text(triggerdate);
+        $('.tbl_duedate', clone3).text(compliancelists[compliancelist][i]["due_date"]);
+        $('.tbl_validitydate', clone3).text(compliancelists[compliancelist][i]["validity_date"]);
+
+        $('.tbody-unit').append(clone3);
+
+        compliance_count++;
+
+
+      }
+
+    
+    }
+
    
     
 
