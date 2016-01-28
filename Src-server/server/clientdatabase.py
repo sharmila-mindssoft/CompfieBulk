@@ -12,11 +12,11 @@ __all__ = [
 
 class ClientDatabase(Database):
     def __init__(self):
-        # super(ClientDatabase, self).__init__(
-        #     "localhost", "root", "123456", "mirror_knowledge")
         super(ClientDatabase, self).__init__(
-            "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
-        )
+            "localhost", "root", "123456", "mirror_knowledge")
+        # super(ClientDatabase, self).__init__(
+        #     "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
+        # )
         self.begin()
         self._client_db_connections = {}
         self._client_db_cursors = {}
@@ -173,7 +173,6 @@ class ClientDatabase(Database):
         columns = "client_id"
         condition = "url_short_name = '%s'"% short_name
         rows = self.get_data("tbl_client_groups", columns, condition, 0)
-        print rows
         return rows[0][0]
 
     def verify_username(self, username, client_id):
@@ -319,7 +318,6 @@ class ClientDatabase(Database):
             condition = "business_group_id in (%s)" % business_group_ids
         print condition
         rows = self.get_data(self.tblBusinessGroups, columns, condition, client_id) 
-        print rows
         columns = ["business_group_id", "business_group_name"]
         result = self.convert_to_dict(rows, columns)
         return self.return_business_groups(result)
@@ -1205,17 +1203,16 @@ class ClientDatabase(Database):
         tables = [self.tblComplianceHistory, self.tblUsers]
         aliases = ["tch", "tu"]
         join_condition = ["tch.completed_by = tu.user_id"]
-        assignee_condition = "completion_date is not Null and approved_on is Null and "+\
-        "(approved_by = '%d' or concurred_by = '%d')" % (session_user, session_user)
+        assignee_condition = "completion_date is not Null and completed_on is not Null and "+\
+        "approve_status is Null and (approved_by = '%d' or concurred_by = '%d')" % (session_user, session_user)
         assignee_rows = self.get_data_from_multiple_tables(assignee_columns, tables, 
             aliases, join_type,  join_condition, assignee_condition, client_id)
-        
         approved_compliances = []
         for assignee in assignee_rows:
             query_columns = "compliance_history_id, tch.compliance_id, start_date,"+\
             " due_date, documents, completion_date, completed_on, next_due_date, "+\
             "concurred_by, remarks, datediff(due_date, completion_date ),compliance_task,"+\
-            " compliance_description, tc.frequency_id, frequency, document_name"
+            " compliance_description, tc.frequency_id, frequency, document_name, concurrence_status"
             join_type = "left join"
             query_tables = [
                     self.tblComplianceHistory, 
@@ -1252,6 +1249,7 @@ class ClientDatabase(Database):
                 frequency_id = int(row[13])
                 frequency = core.COMPLIANCE_FREQUENCY(row[14])
                 description = row[12]
+                concurrence_status = row[16]
 
                 domain_name_column = "domain_name"
                 condition = " domain_id = (select domain_id from tbl_client_statutories "+\
@@ -1262,10 +1260,16 @@ class ClientDatabase(Database):
                 domain_name = domain_name_row[0][0]
 
                 action = None
-                if concurred_by == session_user:
+                if int(row[8]) == session_user:
                     action = "Concur"
                 else:
-                    action = "Approve"
+                    if concurrence_status is not None:
+                        if concurrence_status != 0:
+                            action = "Approve"
+                        else:
+                            continue
+                    else:
+                        continue
 
                 compliances.append(clienttransactions.APPROVALCOMPLIANCE(
                     compliance_history_id, compliance_name, description, domain_name, 
@@ -1274,8 +1278,11 @@ class ClientDatabase(Database):
                     remarks, action))
             assignee_id = assignee[0]
             assignee_name = "{} - {}".format(assignee[1], assignee[2])
-            approved_compliances.append(clienttransactions.APPORVALCOMPLIANCELIST(
-                assignee_id, assignee_name, compliances))
+            if len(compliances) > 0:
+                approved_compliances.append(clienttransactions.APPORVALCOMPLIANCELIST(
+                    assignee_id, assignee_name, compliances))
+            else:
+                continue
         return approved_compliances 
 
 
@@ -2036,7 +2043,7 @@ class ClientDatabase(Database):
         return unit_wise_compliances_list
 
 
-    def approveCompliance(compliance_history_id, remarks, next_due_date, client_id):
+    def approveCompliance(self, compliance_history_id, remarks, next_due_date, client_id):
         columns = ["approve_status", "approved_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
@@ -2051,19 +2058,19 @@ class ClientDatabase(Database):
         values = [self.string_to_datetime(next_due_date)]
         self.update(self.tblAssignedCompliances, columns, values, condition, client_id)
 
-    def rejectComplianceApproval(compliance_history_id, remarks,  next_due_date):
+    def rejectComplianceApproval(self, compliance_history_id, remarks,  next_due_date, client_id):
         columns = ["approve_status", "remarks", "completion_date", "completed_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0, remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
 
-    def concurCompliance(compliance_history_id, remarks, next_due_date):
+    def concurCompliance(self, compliance_history_id, remarks, next_due_date, client_id):
         columns = ["concurrence_status", "concurred_on", "remarks" ]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
 
-    def rejectComplianceConcurrence(compliance_history_id, remarks,  next_due_date):
+    def rejectComplianceConcurrence(self, compliance_history_id, remarks,  next_due_date, client_id):
         columns = ["concurrence_status", "remarks", "completion_date", "completed_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0,  remarks, None, None]

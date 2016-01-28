@@ -147,8 +147,8 @@ class TemplateHandler(tornado.web.RequestHandler) :
     def get(self, url = None) :
         if url != None:
 
-            # db = KnowledgDatabase("localhost", "root", "123456", "mirror_knowledge")
-            db = KnowledgeDatabase("198.143.141.73", "root", "Root!@#123", "mirror_knowledge")
+            db = KnowledgeDatabase("localhost", "root", "123456", "mirror_knowledge")
+            # db = KnowledgeDatabase("198.143.141.73", "root", "Root!@#123", "mirror_knowledge")
             # con = db.begin()
 
             if not db.validate_short_name(url):

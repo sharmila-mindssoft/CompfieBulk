@@ -50,7 +50,8 @@ from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES,
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_OptionalType_UnsignedIntegerType_32,
-    parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate
+    parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
+    parse_structure_OptionalType_VectorType_RecordType_core_FileList
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -110,7 +111,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_ComplianceApprovalStatus,
     to_structure_VectorType_RecordType_core_ComplianceFrequency,
     to_structure_OptionalType_SignedIntegerType_8,
-    to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate
+    to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
+    to_structure_OptionalType_VectorType_RecordType_core_FileList
 )
 
 #
@@ -355,36 +357,32 @@ class GetComplianceApprovalList(Request):
         }
 
 class ApproveCompliance(Request):
-    def __init__(self, compliance_history_id, approval_status, remarks, documents, next_due_date):
+    def __init__(self, compliance_history_id, approval_status, remarks, next_due_date):
         self.compliance_history_id = compliance_history_id
         self.approval_status = approval_status
         self.remarks = remarks
-        self.documents = documents
         self.next_due_date = next_due_date
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["compliance_history_id", "approval_status",
-         "remarks", "documents", "next_due_date"])
+         "remarks",  "next_due_date"])
         compliance_history_id = data.get("compliance_history_id")
         compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         approval_status = data.get("approval_status")
         approval_status = parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(approval_status)
         remarks = data.get("remarks")
         remarks = parse_structure_CustomTextType_500(remarks)
-        documents = data.get("documents")
-        documents = parse_structure_OptionalType_VectorType_RecordType_core_FileList(documents)
         next_due_date = data.get("next_due_date")
         next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         return ApproveCompliance(compliance_history_id, approval_status, remarks, 
-            documents, next_due_date)
+            next_due_date)
 
     def to_inner_structure(self):
         return {
             "compliance_history_id": to_structure_SignedIntegerType_8(self.compliance_history_id),
             "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
             "remarks": to_structure_CustomTextType_500(self.remarks),
-            "documents": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.documents),
             "next_due_date": parse_structure_OptionalType_CustomTextType_20(self.next_due_date)
         }
 

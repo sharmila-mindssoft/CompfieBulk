@@ -100,7 +100,6 @@ function initClientMirror() {
                 log("API STATUS :"+status)
 
                 if (status.toLowerCase().indexOf(matchString) != -1){
-                    alert(response);
                     callback(null, response);
                 }
                 else{
@@ -688,17 +687,19 @@ function initClientMirror() {
     }
 
     function approveCompliance(compliance_history_id, compliance_approval_status, 
-        remarks, documents, next_due_date, callback){
+        remarks, next_due_date, callback){
+        console.log()
         var request = [
             "ApproveCompliance",
             {
                 "compliance_history_id": compliance_history_id,
                 "approval_status": compliance_approval_status,
                 "remarks": remarks,
-                "documents": documents,
                 "next_due_date":next_due_date
             }
         ];
+        callerName = "api/client_transaction";
+        clientApiRequest(callerName, request, callback);
     }
 
     function getChartFilters(callback) {

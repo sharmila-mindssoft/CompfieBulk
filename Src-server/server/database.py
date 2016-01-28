@@ -133,7 +133,6 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
@@ -173,7 +172,6 @@ class Database(object) :
             else:
                 stringValue = stringValue+"'"+str(value)+"'"
         query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
-        print query
         if client_id != None:
             return self.execute(query, client_id)
         return self.execute(query)
@@ -197,7 +195,6 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
-        print query
         if client_id != None:
             return self.execute(query, client_id)
 
@@ -278,6 +275,7 @@ class Database(object) :
 
     def generate_password(self) : 
         password = self.generate_random()
+        password = "123456"
         return self.encrypt(password)
 
     def encrypt(self, value):
