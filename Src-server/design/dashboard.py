@@ -40,7 +40,7 @@ GetComplianceStatusDrillDownData = RecordType("GetComplianceStatusDrillDownData"
 	Field("to_date", Text),
 	Field("year", Text),
 	Field("filter_type", FILTER_TYPE),
-	Field("filter_id", VectorType(Int8)),
+	Field("filter_id", Int8),
 	Field("compliance_status", COMPLIANCE_STATUS)
 ])
 

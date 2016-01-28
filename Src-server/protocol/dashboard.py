@@ -40,7 +40,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_NumberOfCompliances,
     parse_structure_OptionalType_VectorType_SignedIntegerType_8,
     parse_structure_OptionalType_Text,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances,
+    parse_structure_SignedIntegerType_8
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -357,24 +358,40 @@ class GetAssigneeWiseComplianceDrillDown(Request):
         }
 
 class GetComplianceStatusDrillDownData(Request):
-    def __init__(self, filter_type, filter_id, compliance_status):
+    def __init__(self, domain_ids, from_date, to_date, year, filter_type, filter_id, compliance_status):
+        self.domain_ids = domain_ids
+        self.from_date = from_date
+        self.to_date = to_date
+        self.year = year
         self.filter_type = filter_type
         self.filter_id = filter_id
         self.compliance_status = compliance_status
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["filter_type", "filter_id", "compliance_status"])
+        data = parse_dictionary(data, ["domain_ids", "from_date", "to_date", "year",  "filter_type", "filter_id", "compliance_status"])
+        domain_ids = data.get("domain_ids")
+        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        from_date = data.get("from_date")
+        from_date = parse_structure_OptionalType_Text(from_date)
+        to_date = data.get("to_date")
+        to_date = parse_structure_OptionalType_Text(to_date)
+        year = data.get("year")
+        year = parse_structure_Text(year)
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
+        filter_id = parse_structure_SignedIntegerType_8(filter_id)
         compliance_status = data.get("compliance_status")
         compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
-        return GetComplianceStatusDrillDownData(filter_type, filter_id, compliance_status)
+        return GetComplianceStatusDrillDownData(domain_ids, from_date, to_date, year, filter_type, filter_id, compliance_status)
 
     def to_inner_structure(self):
         return {
+            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
+            "from_date": to_structure_OptionalType_Text(self.from_date),
+            "to_date": to_structure_OptionalType_Text(self.to_date),
+            "year": to_structure_Text(self.year),
             "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
             "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
             "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
