@@ -25,9 +25,6 @@ class ClientDatabase(Database):
         self._client_db_connections[0] = self._connection
         self._client_db_cursors[0] = self._cursor
         for row in rows:
-            print row
-            print
-
             host = row[0]
             client_id = row[1]
             username = row[2]
@@ -124,7 +121,6 @@ class ClientDatabase(Database):
             password, username
         )
         admin_details = self.get_data("tbl_admin", "*", tblAdminCondition, client_id)
-        print admin_details
 
         if (len(admin_details) == 0) :
             data_columns = ["user_id", "user_group_id", "email_id", 
@@ -247,7 +243,6 @@ class ClientDatabase(Database):
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
 
-        print query
         row = self.select_one(query, client_id)
         user_id = row[0]
         return user_id
@@ -318,9 +313,7 @@ class ClientDatabase(Database):
         condition = "1"
         if business_group_ids != None:
             condition = "business_group_id in (%s)" % business_group_ids
-        print condition
         rows = self.get_data(self.tblBusinessGroups, columns, condition, client_id) 
-        print rows
         columns = ["business_group_id", "business_group_name"]
         result = self.convert_to_dict(rows, columns)
         return self.return_business_groups(result)
@@ -361,7 +354,6 @@ class ClientDatabase(Database):
         columns = ["division_id", "division_name", "legal_entity_id", 
         "business_group_id"]
         result = self.convert_to_dict(rows, columns)
-        print result
         return self.return_divisions(result)
 
     def return_divisions(self, divisions):
@@ -756,7 +748,6 @@ class ClientDatabase(Database):
         return rows[0][0]
 
     def get_user_unit_ids(self, user_id, client_id):
-        print user_id
         columns = "group_concat(unit_id)"
         condition = " user_id = '%d'"% user_id
         rows = self.get_data(self.tblUserUnits, columns, condition, client_id)
@@ -1809,7 +1800,7 @@ class ClientDatabase(Database):
                 period_to = int(y["period_to"])
                 for index, i in enumerate(years_range) :
                     
-                    compliance_sum = year_wise.get(str(index))
+                    compliance_sum = year_wise.get(str(i))
                     
                     if compliance_sum is None :
                         compliance_sum = [0, 0, 0, 0]
@@ -1859,7 +1850,7 @@ class ClientDatabase(Database):
                     elif status == "not_complied":
                         compliance_sum[3] = compliance_count
 
-                    year_wise[str(index)] = compliance_sum
+                    year_wise[str(i)] = compliance_sum
 
 
                 country[domain_id] = year_wise
@@ -1951,7 +1942,7 @@ class ClientDatabase(Database):
                 compliance_list = []
                 for k , v in val.iteritems():
                     dict = {}
-                    year =  current_year - int(k)
+                    year =  k
                     inprogress = v[0]
                     complied = v[1]
                     delayed = v[2]
@@ -2022,17 +2013,16 @@ class ClientDatabase(Database):
         if from_date is not None and to_date is not None :
             date_qry = " AND T1.due_date >= '%s' AND T1.due_date <= '%s' " % (from_date, to_date)
 
-        print date_qry
-
         query = "SELECT \
             T1.compliance_history_id, T1.unit_id,\
             T1.compliance_id, T1.start_date, \
             T1.due_date, T1.completion_date, \
             T1.completed_by,\
-            T2.compliance_task, T2.document_name, \
-            T2.compliance_description, T2.statutory_mapping, \
+            T4.compliance_task, T4.document_name, \
+            T4.compliance_description, T4.statutory_mapping, \
             unit_name, division_name, legal_entity_name,\
             business_group_name, country_name, employee_name,\
+            T5.unit_code, T5.address, T5.geography, T5.postal_code,\
             T3.country_id, \
             T3.domain_id, \
             SUBSTRING_INDEX(T1.due_date, '-', 1) as year, \
@@ -2068,7 +2058,6 @@ class ClientDatabase(Database):
                 status_qry,
                 filter_type_qry,
             )
-        print query
         rows = self.select_all(query, client_id)
         columns = ["compliance_history_id", "unit_id", 
             "compliance_id", "start_date", "due_date",
@@ -2076,15 +2065,114 @@ class ClientDatabase(Database):
             "document_name", "compliance_description",
             "statutory_mapping", "unit_name", "division_name",
             "legal_entity_name", "business_group_name",
-            "country_name", "employee_name", "country_id", "domain_id", 
+            "country_name", "employee_name", 
+            "unit_code", "address", "geography", "postal_code",
+            "country_id", "domain_id", 
             "year", "month"
         ]
         result = self.convert_to_dict(rows, columns)
-        print result
+        year_info = self.get_client_domain_configuration(client_id)
+        return self.return_compliance_status_drill_down(year_info, request, result, client_id)
 
-    def return_compliance_status_drill_down(self, request, result, client_id) :
-        pass        
+    def return_compliance_status_drill_down(self, year_info, request, result, client_id) :
+        compliance_status = request.compliance_status
+        current_date = datetime.date.today()
+        # current_date = datetime.datetime.strptime(current_date, "%Y-%m-%d")
 
+        unit_wise_data = {}
+        for r in result :
+            country_id = int(r["country_id"])
+            domain_id = int(r["domain_id"])
+            saved_year = int(r["year"])
+            saved_month = int(r["month"])
+
+            years_list = []
+            month_from = 0
+            month_to = 0
+            for y in year_info :
+                if country_id == int(y["country_id"]) and domain_id == int(y["domain_id"]) :
+                    years = y["years"]
+                    month_from = int(y["period_from"])
+                    month_to = int(y["period_to"])
+                    for i in years :
+                        year = 0
+                        if type(i) is int and i == int(request.year):
+                            years_list = [i]
+                        elif type(i) is list :
+                            if i[0] == int(request.year) :
+                                years_list = i
+                    break
+
+
+            if saved_year not in years_list :
+                continue
+            else :
+                if len(years_list) == 2:
+                    if (saved_year == years_list[0] and
+                        saved_month not in [x for x in range(month_from, 12+1)]
+                    ) :
+                        continue
+                    elif (saved_year == years_list[1] and
+                        saved_month not in [x for x in range(1, month_to+1)]
+                    ) : 
+                        continue
+
+
+            unit_id = int(r["unit_id"])
+            statutories = r["statutory_mapping"].split('>>')
+            level_1 = statutories[0].strip()
+            ageing = 0
+            due_date = r["due_date"]
+            completion_date = r["completion_date"]
+
+            if compliance_status == "Inprogress" :
+                ageing = abs((due_date - current_date).days)
+            elif compliance_status == "Complied" :
+                ageing = 0
+            elif compliance_status == "NotComplied" :
+                ageing = abs((current_date - due_date).days)
+            elif compliance_status == "DelayedCompliance" :
+                ageing = abs((completion_date - due_date).days)
+            
+            status = core.COMPLIANCE_STATUS(compliance_status)
+            name = "%s-%s" % (r["document_name"], r["compliance_task"])
+            compliance = dashboard.Level1Compliance(
+                name, r["compliance_description"], r["employee_name"],
+                str(r["start_date"]), str(due_date),
+                str(completion_date), status,
+                ageing
+            )
+            
+            drill_down_data = unit_wise_data.get(unit_id)
+            if drill_down_data is None :
+                level_compliance = {}
+                level_compliance[level_1] = [compliance]
+                unit_name = "%s-%s" % (r["unit_code"], r["unit_name"])
+                geography = r["geography"].split(">>")
+                geography.reverse()
+                geography = ','.join(geography)
+                address = "%s, %s, %s" % (r["address"], geography, r["postal_code"])
+                drill_down_data = dashboard.DrillDownData(
+                    r["business_group_name"], r["legal_entity_name"],
+                    r["division_name"], r["unit_name"], address,
+                    level_compliance
+                )
+
+            else :
+                level_compliance = drill_down_data.compliances
+                compliance_list = level_compliance[level_1]
+                if compliance_list is None :
+                    compliance_list = []
+                compliance_list.append(compliance)
+
+                level_compliance[level_1] = compliance_list
+                drill_down_data.compliances = level_compliance
+
+            unit_wise_data[unit_id] = drill_down_data
+
+        return dashboard.GetComplianceStatusDrillDownDataSuccess(
+            unit_wise_data.values()
+        )
 
     # unitwise compliance report
     def get_unitwise_compliance_report(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, client_id, session_user) :

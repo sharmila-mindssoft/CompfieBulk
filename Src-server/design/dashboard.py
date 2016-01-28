@@ -287,7 +287,10 @@ DrillDownData = RecordType("DrillDownData", [
 	Field("business_group", Text50),
 	Field("legal_entity", Text50),
 	Field("division", Text50),
-	Field("unit_wise_compliances", VectorType(UnitCompliance))
+	Field("unit_name", Text100),
+	Field("address", ADDRESS),
+	Field("compliances", MapType(LEVEL_1_STATUTORY_NAME, VectorType(Level1Compliance))),
+	# Field("unit_wise_compliances", VectorType(UnitCompliance))
 ])
 
 GetComplianceStatusDrillDownDataSuccess = RecordType("GetComplianceStatusDrillDownDataSuccess", [
