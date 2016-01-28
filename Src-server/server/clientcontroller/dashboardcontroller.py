@@ -5,10 +5,11 @@ __all__ = [
 ]
 
 def process_client_dashboard_requests(request, db) :
-	client_info = request.session_token.split("-")
+	session_token = request.session_token
+	client_info = session_token.split("-")
+	
 	request = request.request
 	client_id = int(client_info[0])
-	session_token = client_info[1]
 	session_user = db.validate_session_token(client_id, session_token)
 	if session_user is None:
 		return login.InvalidSessionToken()
@@ -16,7 +17,7 @@ def process_client_dashboard_requests(request, db) :
 		return process_get_chart_filters(db, session_user, client_id)
 	elif type(request) is dashboard.GetComplianceStatusChart :
 		return process_compliance_status_chart(db, request, session_user, client_id)	
-	elif type(request) is dashboard.GetComplianceStatusDrillDownDataSuccess:
+	elif type(request) is dashboard.GetComplianceStatusDrillDownData:
 		return process_compliance_status_chart_drilldown(db, request, session_user, client_id)		
 	
 
@@ -39,7 +40,7 @@ def process_compliance_status_chart(db, request, session_user, client_id):
 	return db.get_compliance_status_chart(request, session_user, client_id)
 
 def process_compliance_status_chart_drilldown(db, request, session_user, client_id):
-	pass
+	return db.get_compliances_details_for_status_chart(request, session_user, client_id)
 
 
 	
