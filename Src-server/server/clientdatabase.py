@@ -12,11 +12,13 @@ __all__ = [
 
 class ClientDatabase(Database):
     def __init__(self):
-        super(ClientDatabase, self).__init__(
-            "localhost", "root", "123456", "mirror_knowledge")
+
         # super(ClientDatabase, self).__init__(
-        #     "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
+        #     "localhost", "root", "123456", "mirror_knowledge"
         # )
+        super(ClientDatabase, self).__init__(
+            "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
+        )
 
         self.begin()
         self._client_db_connections = {}
@@ -2458,21 +2460,20 @@ class ClientDatabase(Database):
             for unit in unit_rows:
                 unit_id = unit[0]
                 unit_name = "%s - %s "% (unit[1], unit[2])
+                unit_address = unit[3]
                 
-                query = "select c.compliance_task, c.compliance_description, ac.statutory_dates, ac.validity_date, \
-                    ac.due_date, ac.assignee \
-                    from tbl_client_compliances cc, tbl_client_statutories cs, \
-                    tbl_compliances c, tbl_assigned_compliances ac, tbl_units u \
-                    where cc.client_statutory_id = cs.client_statutory_id and cs.country_id = %s \
-                    and cs.domain_id = %s \
-                    and cs.unit_id like '%s' \
-                    and cs.unit_id = u.unit_id and \
-                    c.compliance_id = cc.compliance_id \
-                    and ac.assignee like '%s' " % (
+                query = "select c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
+                        ac.assignee, cf.frequency from tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
+                        tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
+                        ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
+                        cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
+                        and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
+                        and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee like '%s' " % (
                         country_id, domain_id,  
                         unit_id, user_id
                     )
                 compliance_rows = self.select_all(query)
+
                 compliances_list = []
                 for compliance in compliance_rows:
                     statutory_dates = compliance[2]
@@ -2489,10 +2490,14 @@ class ClientDatabase(Database):
                     compliance_name = compliance[0]
                     description = compliance[1]
                     statutory_date = date_list
-                    compliance_frequency = core.COMPLIANCE_FREQUENCY("One Time")
+                    compliance_frequency = core.COMPLIANCE_FREQUENCY(compliance[6])
                     due_date = self.datetime_to_string(compliance[4])
-                    validity_date = self.datetime_to_string(compliance[3])
-                    compliances_list.append(clientreport.ComplianceUnit(compliance_name, unit_name, 
+
+                    validity_date = None
+                    if(validity_date != None):
+                        validity_date = self.datetime_to_string(compliance[3])
+
+                    compliances_list.append(clientreport.ComplianceUnit(compliance_name, unit_address, 
                         compliance_frequency, description, statutory_date, 
                         due_date, validity_date))
                 unit_wise_compliances[unit_name] = compliances_list
@@ -2500,6 +2505,108 @@ class ClientDatabase(Database):
                 business_group_name, legal_entity_name, division_name, 
                 unit_wise_compliances))
         return unit_wise_compliances_list
+
+    # assigneewise compliance report
+    def get_assigneewise_compliance_report(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, client_id, session_user) :
+
+        if unit_id is None :
+            unit_ids = self.get_user_unit_ids(session_user, client_id)
+        else:
+            unit_ids = unit_id
+
+        q = "SELECT u.business_group_id, u.legal_entity_id, u.division_id,  \
+            bg.business_group_name, le.legal_entity_name, d.division_name \
+            FROM tbl_units u \
+            INNER JOIN tbl_business_groups bg \
+            ON u.business_group_id = bg.business_group_id \
+            INNER JOIN tbl_legal_entities le \
+            ON u.legal_entity_id = le.legal_entity_id \
+            INNER JOIN tbl_divisions d \
+            ON u.division_id = d.division_id \
+            WHERE u.business_group_id like '%s' \
+            and u.legal_entity_id like '%s' \
+            and u.division_id like '%s' GROUP BY u.business_group_id, u.legal_entity_id, u.division_id" % (
+                str(business_group_id), 
+                str(legal_entity_id),
+                str(division_id)
+            ) 
+        rows = self.select_all(q, client_id)
+
+        assignee_wise_compliances_list = []
+        for row in rows:
+            business_group_name = row[3]
+            legal_entity_name = row[4]
+            division_name = row[5]
+            q = "SELECT ac.assignee, \
+            (SELECT concat( u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = ac.assignee) AS assigneename, \
+            (SELECT concat( u.employee_code, '-', u.employee_name )FROM tbl_users u WHERE u.user_id = ac.concurrence_person) AS concurrencename,\
+            (SELECT concat( u.employee_code, '-', u.employee_name )FROM tbl_users u WHERE u.user_id = ac.approval_person) AS approvalname \
+            FROM tbl_client_statutories cs, tbl_client_compliances cc, tbl_assigned_compliances ac, tbl_units ut \
+            WHERE cs.country_id = %s  and ut.unit_id = (SELECT u.seating_unit_id from tbl_users u WHERE u.user_id = ac.assignee) \
+            AND ut.business_group_id = %s and ut.legal_entity_id = %s and ut.division_id = %s \
+            AND cs.domain_id = %s \
+            AND cs.client_statutory_id = cc.client_statutory_id  AND ac.assignee like '%s'\
+            GROUP BY ac.assignee, ac.concurrence_person, ac.approval_person \
+            ORDER BY ac.assignee" % (
+                        country_id, row[0], row[1], row[2], domain_id, user_id
+                    )
+
+            assigneerows = self.select_all(q, client_id)
+            
+            assignee_wise_compliances = []
+            for assignee in assigneerows:
+                assignee_id = assignee[0]
+                assingee_name = assignee[1]
+                concurrence_person = assignee[2]
+                approval_person = assignee[3]
+                
+                query = "select c.compliance_task, c.compliance_description, ac.statutory_dates, ch.validity_date, ch.due_date, \
+                        ac.assignee, cf.frequency from tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
+                        tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
+                        ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
+                        cs.country_id = %s and cs.domain_id = %s and cs.unit_id in (%s) \
+                        and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
+                        and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee = '%s' " % (
+                        country_id, domain_id,  
+                        unit_ids, assignee_id
+                    )
+                compliance_rows = self.select_all(query)
+
+                compliances_list = []
+                for compliance in compliance_rows:
+                    statutory_dates = compliance[2]
+                    statutory_dates = json.loads(statutory_dates)
+                    date_list = []
+                    for date in statutory_dates :
+                        s_date = core.StatutoryDate(
+                            date["statutory_date"],
+                            date["statutory_month"],
+                            date["trigger_before_days"]
+                        )
+                        date_list.append(s_date)
+
+                    compliance_name = compliance[0]
+                    description = compliance[1]
+                    statutory_date = date_list
+                    compliance_frequency = core.COMPLIANCE_FREQUENCY(compliance[6])
+                    due_date = self.datetime_to_string(compliance[4])
+
+                    validity_date = None
+                    if(validity_date != None):
+                        validity_date = self.datetime_to_string(compliance[3])
+
+                    compliances_list.append(clientreport.ComplianceUnit(compliance_name, "unit_name", 
+                        compliance_frequency, description, statutory_date, 
+                        due_date, validity_date))
+
+                assignee_wise_compliances.append(clientreport.UserWiseCompliance(
+                assingee_name, concurrence_person, approval_person, 
+                compliances_list))
+
+            assignee_wise_compliances_list.append(clientreport.AssigneeCompliance(
+                business_group_name, legal_entity_name, division_name, 
+                assignee_wise_compliances))
+        return assignee_wise_compliances_list
 
 
     def approveCompliance(compliance_history_id, remarks, next_due_date, client_id):
