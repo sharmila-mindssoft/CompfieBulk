@@ -16,9 +16,12 @@ def process_client_dashboard_requests(request, db) :
 	if type(request) is dashboard.GetChartFilters :
 		return process_get_chart_filters(db, session_user, client_id)
 	elif type(request) is dashboard.GetComplianceStatusChart :
-		return process_compliance_status_chart(db, request, session_user, client_id)	
+		return process_compliance_status_chart(db, request, session_user, client_id)
 	elif type(request) is dashboard.GetComplianceStatusDrillDownData:
-		return process_compliance_status_chart_drilldown(db, request, session_user, client_id)		
+		return process_compliance_status_chart_drilldown(db, request, session_user, client_id)
+
+	elif type(request) is dashboard.GetEscalationsChart :
+		return process_Escalation_chart(db, request, session_user, client_id)
 	
 
 def process_get_chart_filters(db, session_user, client_id):
@@ -42,5 +45,7 @@ def process_compliance_status_chart(db, request, session_user, client_id):
 def process_compliance_status_chart_drilldown(db, request, session_user, client_id):
 	return db.get_compliances_details_for_status_chart(request, session_user, client_id)
 
+def process_Escalation_chart(db, request, session_user, client_id):
+	return db.get_escalation_chart(request, session_user, client_id)
 
 	
