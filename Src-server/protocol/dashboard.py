@@ -190,40 +190,33 @@ class GetEscalationsChart(Request):
         }
 
 class GetNotCompliedChart(Request):
-    def __init__(self, country_id, domain_id, from_date, to_date, filter_type, filter_id):
-        self.country_id = country_id
-        self.domain_id = domain_id
-        self.from_date = from_date
-        self.to_date = to_date
+    def __init__(self, country_ids, domain_ids, filter_type, filter_id):
+        self.country_ids = country_ids
+        self.domain_ids = domain_ids
         self.filter_type = filter_type
         self.filter_id = filter_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "from_date", "to_date", "filter_type", "filter_id"])
-        country_id = data.get("country_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
-        domain_id = data.get("domain_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        from_date = data.get("from_date")
-        from_date = parse_structure_CustomTextType_20(from_date)
-        to_date = data.get("to_date")
-        to_date = parse_structure_CustomTextType_20(to_date)
+        data = parse_dictionary(data, ["country_ids", "domain_ids", "filter_type", "filter_id"])
+        country_ids = data.get("country_ids")
+        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
+        domain_ids = data.get("domain_ids")
+        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
         filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
-        return GetNotCompliedChart(country_id, domain_id, from_date, to_date, filter_type, filter_id)
+        return GetNotCompliedChart(country_ids, domain_ids, filter_type, filter_id)
 
     def to_inner_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "from_date": to_structure_CustomTextType_20(self.from_date),
-            "to_date": to_structure_CustomTextType_20(self.to_date),
+            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
+            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
             "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
         }
+
 
 class GetTrendChart(Request):
     def __init__(self, country_id, domain_id, from_date, to_date, filter_type, filter_id):

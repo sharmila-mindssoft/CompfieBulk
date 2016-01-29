@@ -12,11 +12,11 @@ __all__ = [
 
 class ClientDatabase(Database):
     def __init__(self):
-        # super(ClientDatabase, self).__init__(
-        #     "localhost", "root", "123456", "mirror_knowledge")
         super(ClientDatabase, self).__init__(
-            "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
-        )
+            "localhost", "root", "123456", "mirror_knowledge")
+        # super(ClientDatabase, self).__init__(
+        #     "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
+        # )
 
         self.begin()
         self._client_db_connections = {}
@@ -2183,12 +2183,18 @@ class ClientDatabase(Database):
 
         return unit_wise_data
 
+    #
+    # Escalation chart
+    #
     def get_escalation_chart(self, request, session_user, client_id):
         country_ids = request.country_ids
         domain_ids = request.domain_ids
         filter_type = request.filter_type
         filter_id = request.filter_id
-        filter_ids = [filter_id]
+        if filter_id is None :
+            filter_ids = country_ids
+        elif type(filter_id) is int :
+            filter_ids = [filter_id] 
 
         delayed_qry = " AND T1.due_date < T1.completion_date \
                 AND T1.approve_status = 1"
@@ -2217,7 +2223,7 @@ class ClientDatabase(Database):
             group_by_name = "T4.unit_id"
             filter_type_ids = "AND T4.unit_id = %s" % (filter_id)
 
-        chart_type = 'Escalation'
+        chart_type = "Escalation"
         delayed = self.get_compliance_status(
                 group_by_name, delayed_qry, filter_type_ids, client_id,
                 request, chart_type
@@ -2318,6 +2324,91 @@ class ClientDatabase(Database):
         )
 
         return [delayed_details_list.values(), not_complied_details_list.values()]
+
+    #
+    # Not Complied chart
+    #
+
+    def get_not_complied_chart(self, request, session_user, client_id):
+        country_ids = request.country_ids
+        domain_ids = request.domain_ids
+        filter_type = request.filter_type
+        filter_id = request.filter_id
+        if filter_id is None :
+            filter_ids = country_ids
+        elif type(filter_id) is int :
+            filter_ids = [filter_id] 
+
+        if filter_type ==  "Group" :
+            group_by_name = "T4.country_id"
+            filter_type_ids = ""
+            filter_ids = country_ids
+
+        elif filter_type == "BusinessGroup" :
+            group_by_name = "T4.business_group_id"
+            filter_type_ids = "AND T4.business_group_id = %s" % (filter_id)
+
+        elif filter_type == "LegalEntity" :
+            group_by_name = "T4.legal_entity_id"
+            filter_type_ids = "AND T4.legal_entity_id = %s" % (filter_id)
+
+        elif filter_type == "Division" :
+            group_by_name = "T4.division_id"
+            filter_type_ids = "AND T4.division_id = %s" % (filter_id)
+
+        elif filter_type == "Unit":
+            group_by_name = "T4.unit_id"
+            filter_type_ids = "AND T4.unit_id = %s" % (filter_id)
+
+        chart_type = "Not Complied"
+        query = "SELECT T1.compliance_history_id, T1.unit_id, \
+            T1.compliance_id, T1.start_date, T1.due_date \
+            FROM tbl_compliance_history T1 \
+            INNER JOIN tbl_client_compliances T2 \
+            ON T1.compliance_id = T2.compliance_id \
+            INNER JOIN tbl_client_statutories T3 \
+            ON T2.client_statutory_id = T3.client_statutory_id \
+            AND T1.unit_id = T3.unit_id \
+            INNER JOIN tbl_units T4 \
+            ON T1.unit_id = T4.unit_id \
+            WHERE T3.country_id IN %s \
+            AND T3.domain_id IN %s \
+            AND T1.due_date < CURDATE() \
+            AND T1.approve_status is NULL \
+            OR T1.approve_status != 1 \
+            %s \
+            ORDER BY T1.due_date " % (
+                str(tuple(country_ids)),
+                str(tuple(domain_ids)),
+                filter_type_ids
+            )
+        rows = self.select_all(query, client_id)
+        columns = [
+            "compliance_history_id", "unit_id", "compliance_id",
+            "start_date", "due_date"
+        ]
+        not_complied = self.convert_to_dict(rows, columns)
+        current_date = datetime.date.today()
+        below_30 = 0
+        below_60 = 0
+        below_90 = 0
+        above_90 = 0
+        for i in not_complied :
+            due_date = i["due_date"]
+            ageing = abs((current_date - due_date).days)
+            if ageing <= 30 :
+                below_30 += 1
+            elif ageing > 30 and ageing <= 60 :
+                below_60 += 1
+            elif ageing > 60 and ageing <= 90 :
+                below_90 += 1
+            else :
+                above_90 += 1
+
+        return dashboard.GetNotCompliedChartSuccess(
+            below_30, below_60,
+            below_90, above_90
+        )
 
 
     # unitwise compliance report

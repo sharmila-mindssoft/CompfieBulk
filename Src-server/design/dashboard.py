@@ -46,19 +46,17 @@ GetComplianceStatusDrillDownData = RecordType("GetComplianceStatusDrillDownData"
 
 
 GetEscalationsChart = RecordType("GetEscalationsChart", [
-	Field("country_id", COUNTRY_ID),
-    Field("domain_id", DOMAIN_ID),
+	Field("country_ids", VectorType(COUNTRY_ID)),
+    Field("domain_ids", VectorType(DOMAIN_ID)),
     Field("filter_type", FILTER_TYPE),
-    Field("filter_id", Int8)
+    Field("filter_ids",  VectorType(Int8))
 ])
 
 GetNotCompliedChart = RecordType("GetNotCompliedChart", [
-	Field("country_id", COUNTRY_ID),
-    Field("domain_id", DOMAIN_ID),
-    Field("from_date", DATE),
-    Field("to_date", DATE),
+	Field("country_ids", VectorType(COUNTRY_ID)),
+    Field("domain_ids", VectorType(DOMAIN_ID)),
     Field("filter_type", FILTER_TYPE),
-    Field("filter_id", Int8)
+    Field("filter_ids", VectorType((Int8))
 ])
 
 GetTrendChart = RecordType("GetTrendChart", [
