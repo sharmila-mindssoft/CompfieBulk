@@ -390,26 +390,30 @@ class GetComplianceStatusDrillDownData(Request):
         }
 
 class GetEscalationsDrillDownData(Request):
-    def __init__(self, filter_type, filter_id, year):
+    def __init__(self, domain_ids, filter_type, filter_ids, year):
+        self.domain_ids = domain_ids
         self.filter_type = filter_type
-        self.filter_id = filter_id
+        self.filter_ids = filter_ids
         self.year = year
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["filter_type", "filter_id", "year"])
+        data = parse_dictionary(data, ["domain_ids", "filter_type", "filter_ids", "year"])
+        domain_ids = data.get("domain_ids")
+        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
-        filter_id = data.get("filter_id")
-        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
+        filter_ids = data.get("filter_ids")
+        filter_ids = parse_structure_VectorType_SignedIntegerType_8(filter_ids)
         year = data.get("year")
         year = parse_structure_UnsignedIntegerType_32(year)
-        return GetEscalationsDrillDownData(filter_type, filter_id, year)
+        return GetEscalationsDrillDownData(domain_ids, filter_type, filter_ids, year)
 
     def to_inner_structure(self):
         return {
+            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
-            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
+            "filter_ids": to_structure_VectorType_SignedIntegerType_8(self.filter_ids),
             "year": to_structure_SignedIntegerType_8(self.year),
         }
 

@@ -94,8 +94,9 @@ GetAssigneeWiseComplianceDrillDown = RecordType("GetAssigneeWiseComplianceDrillD
 
 
 GetEscalationsDrillDownData = RecordType("GetEscalationsDrillDownData", [
+	Field("domain_ids", VectorType(DOMAIN_ID)),
 	Field("filter_type", FILTER_TYPE),
-	Field("filter_id", FILTER_ID),
+	Field("filter_ids", VectorType(FILTER_ID)),
 	Field("year", Int8)
 ])
 
