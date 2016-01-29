@@ -313,11 +313,10 @@ GetClientReportFiltersSuccess =  RecordType("GetClientReportFiltersSuccess", [
 
 ComplianceUnit= RecordType("ComplianceUnit", [
 	Field("compliance_name", Text100),
-	Field("unit_name", Text100),
+	Field("unit_address", Text500),
 	Field("compliance_frequency", COMPLIANCE_FREQUENCY),
 	Field("description", Text500),
 	Field("statutory_dates", VectorType(StatutoryDates)),
-	Field("trigger_before", Int8),
 	Field("due_date", Text20),
 	Field("validity_date", Text20)
 ])
@@ -333,7 +332,6 @@ AssigneeCompliance = RecordType("AssigneeCompliance", [
 	Field("business_group_name", Text100),
 	Field("legal_entity_name", Text100),
 	Field("division_name", Text100),
-	Field("domain_name", Text100),
 	Field("user_wise_compliance", VectorType(UserWiseCompliance))
 ])
 

@@ -41,7 +41,7 @@ $("#show-button").click(function(){
 	//Domain	
 	var domain = $("#domain").val();
 	var domainNameVal = $("#domainval").val();
-	//act
+	//Level 1 Statutories
 	var level1id = $("#level1id").val();
 	if(level1id == ''){
 		level1id = null;
@@ -58,11 +58,11 @@ $("#show-button").click(function(){
 	}
 	else{
 		function onSuccess(data){
-			$(".grid-table-rpt").show();
 			console.log(data);
+			$(".grid-table-rpt").show();
 			$(".snCountryVal").text(countriesNameVal);
 			$(".snDomainVal").text(domainNameVal);
-			//loadAssignedStatutoryList(data['unit_wise_assigned_statutories']);		
+			loadStatutoryNotificationsList(data['country_wise_notifications']);		
 		}
 		function onFailure(error){
 			console.log(error);
@@ -80,32 +80,37 @@ $("#show-button").click(function(){
 		);
 	}
 });
+function getDomainName(domainId){
+	var domainName;
+	$.each(domainsList, function(key, value){
+		if(domainsList[key]['domain_id'] == domainId){
+			domainName = domainsList[key]['domain_name'];
+		}
+	});
+	return domainName;
+}
 
-function loadClientDetailsList(data){
-	$('.tbody-clientdetails-list tr').remove();
+function loadStatutoryNotificationsList(data){
+	$('.tbody-statutory-notifications-list tr').remove();
 	var sno = 0;
+	console.log(data);
 	$.each(data, function(key, value) {
-	  	var list = data[key]['units'];
+		var tableRowHeading = $('#templates .table-statutory-notifications-list .table-row-heading');
+		var cloneHeading = tableRowHeading.clone();
+		var domainId = data[key]['domain_id'];
+		$('.heading', cloneHeading).text(getDomainName(domainId));
+		$('.tbody-statutory-notifications-list').append(cloneHeading);
+	  	var list = data[key]['notifications'];
 	  	$.each(list, function(k, val) { 
 		  	var arr = [];
-			var tableRow = $('#templates .table-clientdetails-list .table-row');
+			var tableRow = $('#templates .table-statutory-notifications-list .table-row-values');
 			var clone = tableRow.clone();
 			sno = sno + 1;
 			$('.sno', clone).text(sno);
-			$('.unit-name', clone).html(list[k]['unit_name']);
-			var domainsNames = '';
-			arr = list[k]['domain_ids'];
-			$.each(domainsList, function(key, value){
-				var domianid = domainsList[key]['domain_id'];
-				var domainname = domainsList[key]['domain_name']
-				if(jQuery.inArray(domianid, arr ) > -1){
-					domainsNames += domainname + ", ";
-				}
-			});					
-			$('.domain-name', clone).html(domainsNames);
-			$('.unit-address', clone).text(list[k]['unit_address']+", "+list[k]['geography_name']);
-			$('.pincode', clone).html(list[k]['postal_code']);
-			$('.tbody-clientdetails-list').append(clone);
+			$('.statutory-provision', clone).html(list[k]['statutory_provision']);
+			$('.statutory-notificaions', clone).html(list[k]['notification_text']);
+			$('.date-time', clone).html(list[k]['date_and_time']);
+			$('.tbody-statutory-notifications-list').append(clone);
 		});
 	});
 	$(".total-records").html("Total : "+sno+" records")

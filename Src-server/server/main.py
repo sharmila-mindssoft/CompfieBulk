@@ -254,11 +254,12 @@ def run_server(port):
         db = KnowledgeDatabase(
             "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
         )
+        
+
         # db = KnowledgeDatabase(
         #     "localhost", "root", "123456", "mirror_knowledge"
         # )
         db.begin()
-
         web_server = WebServer(io_loop)
 
         web_server.url("/", GET=handle_root)

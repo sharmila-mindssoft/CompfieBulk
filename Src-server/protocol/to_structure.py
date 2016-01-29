@@ -3454,3 +3454,16 @@ def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransac
         value = to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
         d[key] = value
     return d
+
+# Statutory Notifications (Techno)
+
+def to_structure_VectorType_RecordType_technoreports_NOTIFICATIONS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_technoreports_NOTIFICATIONS(item))
+    return lst
+
+def to_structure_RecordType_technoreports_NOTIFICATIONS(data):
+    from protocol import technoreports
+    return technoreports.NOTIFICATIONS.to_structure(data)

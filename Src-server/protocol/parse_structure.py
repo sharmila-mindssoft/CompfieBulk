@@ -3386,3 +3386,15 @@ def parse_structure_VectorType_RecordType_core_ClientUnit(data):
         lst.append(parse_structure_RecordType_core_Unit(item))
     return lst
 
+# Statutory Notifications (Techno)
+
+def parse_structure_VectorType_RecordType_technoreports_NOTIFICATIONS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_technoreports_NOTIFICATIONS(item))
+    return lst
+
+def parse_structure_RecordType_technoreports_NOTIFICATIONS(data):
+    from protocol import technoreports
+    return technoreports.NOTIFICATIONS.parse_structure(data)
