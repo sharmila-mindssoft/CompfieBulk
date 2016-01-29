@@ -1216,17 +1216,18 @@ class UnitCompliance(object):
 #
 
 class DrillDownData(object):
-    def __init__(self, business_group, legal_entity, division, unit_name, address, compliances):
+    def __init__(self, business_group, legal_entity, division, unit_name, address, industry_name, compliances):
         self.business_group = business_group
         self.legal_entity = legal_entity
         self.division = division
         self.unit_name = unit_name
         self.address = address
+        self.industry_name = industry_name
         self.compliances = compliances
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["business_group", "legal_entity", "division", "unit_name", "address", "compliances"])
+        data = parse_dictionary(data, ["business_group", "legal_entity", "division", "unit_name", "address", "industry_name", "compliances"])
         business_group = data.get("business_group")
         business_group = parse_structure_CustomTextType_50(business_group)
         legal_entity = data.get("legal_entity")
@@ -1237,9 +1238,11 @@ class DrillDownData(object):
         unit_name = parse_structure_CustomTextType_100(unit_name)
         address = data.get("address")
         address = parse_structure_CustomTextType_500(address)
+        industry_name =  data.geT("industry_name")
+        industry_name = parse_structure_CustomTextType_50(industry_name)
         compliances = data.get("compliances")
         compliances = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance(compliances)
-        return DrillDownData(business_group, legal_entity, division, unit_name, address, compliances)
+        return DrillDownData(business_group, legal_entity, division, unit_name, address, industry_name, compliances)
 
     def to_structure(self):
         return {
@@ -1248,6 +1251,7 @@ class DrillDownData(object):
             "division": to_structure_CustomTextType_50(self.division),
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_500(self.address),
+            "industry_name": to_structure_CustomTextType_50(self.industry_name),
             "compliances": to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance(self.compliances),
         }
 

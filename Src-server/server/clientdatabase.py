@@ -2032,7 +2032,7 @@ class ClientDatabase(Database):
             unit_name, division_name, legal_entity_name,\
             business_group_name, country_name, employee_name,\
             T5.unit_code, T5.address, T5.geography, T5.postal_code,\
-            T3.country_id, \
+            T5.industry_name, T3.country_id, \
             T3.domain_id, \
             SUBSTRING_INDEX(T1.due_date, '-', 1) as year, \
             SUBSTRING_INDEX(SUBSTRING_INDEX(T1.due_date , '-', -2 ),'-',1) as month  \
@@ -2075,7 +2075,8 @@ class ClientDatabase(Database):
             "statutory_mapping", "unit_name", "division_name",
             "legal_entity_name", "business_group_name",
             "country_name", "employee_name", 
-            "unit_code", "address", "geography", "postal_code",
+            "unit_code", "address", "geography", 
+            "postal_code", "industry_name",
             "country_id", "domain_id", 
             "year", "month"
         ]
@@ -2164,6 +2165,7 @@ class ClientDatabase(Database):
                 drill_down_data = dashboard.DrillDownData(
                     r["business_group_name"], r["legal_entity_name"],
                     r["division_name"], r["unit_name"], address,
+                    r["industry_name"],
                     level_compliance
                 )
 
