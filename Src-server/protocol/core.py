@@ -281,6 +281,7 @@ class FILTER_TYPE(object):
     LegalEntity = "LegalEntity"
     Division = "Division"
     Unit = "Unit"
+    Consolidated = "Consolidated"
 
     def __init__(self, value):
         self._value = value
