@@ -569,6 +569,7 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisi
 	}
 
 	//Load Countries
+	console.log("loading countries");
 	$.each(unitList, function(key,value){
 		if( (unitList[key]['client_id'] == clientunitId) && (unitList[key]['business_group_id'] == businessgroupId) && 
 		(unitList[key]['legal_entity_id'] == legalEntityId ) &&  (unitList[key]['division_id'] == divisionId)){
