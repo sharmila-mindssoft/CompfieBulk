@@ -438,6 +438,14 @@
 				next_due_date = "12-Aug-2016"
 				client_mirror.approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date,callback);
 			}
+
+			function getTrendChart(){
+				country_ids = [1, 2]
+				domain_ids = [1, 2]
+				filter_type = "BusinessGroup"
+        		filter_ids = [1]
+        		client_mirror.getTrendChart(country_ids, domain_ids, filter_type, filter_ids, callback);
+			}
 		</script>
 	</head>
 	<body>
@@ -643,6 +651,11 @@
 		<div>
 			<button onclick="getUnitWiseComplianceReport()">
 				Get Unit Wise Compliane Report
+			</button>
+		</div>
+		<div>
+			<button onclick="getTrendChart()">
+				Get Trend Chart
 			</button>
 		</div>
 		<br>
