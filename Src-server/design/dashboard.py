@@ -55,8 +55,6 @@ GetNotCompliedChart = RecordType("GetNotCompliedChart", [
 GetTrendChart = RecordType("GetTrendChart", [
 	Field("country_id", COUNTRY_ID),
     Field("domain_id", DOMAIN_ID),
-    Field("from_date", DATE),
-    Field("to_date", DATE),
     Field("filter_type", FILTER_TYPE),
     Field("filter_id", Int8)
 ])
@@ -185,12 +183,13 @@ GetNotCompliedChartSuccess = RecordType("GetNotCompliedChartSuccess", [
 # Trend Chart
 
 CompliedMap = RecordType("CompliedMap", [
+	Field("year", Int8),
 	Field("total_compliances", Int8),
 	Field("complied_compliances_count", Int8)
 ])
 
 TrendData = RecordType("TrendData", [
-	Field("filter_name", FILTER_NAME),
+	Field("filter_id", FILTER_ID),
 	Field("complied_compliance", VectorType(CompliedMap))
 ])
 

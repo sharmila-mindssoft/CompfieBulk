@@ -40,7 +40,9 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_NumberOfCompliances,
     parse_structure_OptionalType_VectorType_SignedIntegerType_8,
     parse_structure_OptionalType_Text,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances,
+    parse_structure_VectorType_UnsignedIntegerType_32,
+    parse_structure_OptionalType_VectorType_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -82,7 +84,10 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_NumberOfCompliances,
     to_structure_OptionalType_VectorType_SignedIntegerType_8,
     to_structure_OptionalType_Text,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances
+    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances,
+    to_structure_VectorType_UnsignedIntegerType_32,
+    to_structure_OptionalType_VectorType_UnsignedIntegerType_32,
+    to_structure_UnsignedIntegerType_32
 )
 
 #
@@ -233,39 +238,31 @@ class GetNotCompliedChart(Request):
         }
 
 class GetTrendChart(Request):
-    def __init__(self, country_id, domain_id, from_date, to_date, filter_type, filter_id):
-        self.country_id = country_id
-        self.domain_id = domain_id
-        self.from_date = from_date
-        self.to_date = to_date
+    def __init__(self, country_ids, domain_ids,filter_type, filter_ids):
+        self.country_ids = country_ids
+        self.domain_ids = domain_ids
         self.filter_type = filter_type
-        self.filter_id = filter_id
+        self.filter_ids = filter_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "from_date", "to_date", "filter_type", "filter_id"])
-        country_id = data.get("country_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
-        domain_id = data.get("domain_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        from_date = data.get("from_date")
-        from_date = parse_structure_CustomTextType_20(from_date)
-        to_date = data.get("to_date")
-        to_date = parse_structure_CustomTextType_20(to_date)
+        data = parse_dictionary(data, ["country_ids", "domain_ids", "filter_type", "filter_ids"])
+        country_ids = data.get("country_ids")
+        country_ids = parse_structure_VectorType_UnsignedIntegerType_32(country_ids)
+        domain_ids = data.get("domain_ids")
+        domain_ids = parse_structure_VectorType_UnsignedIntegerType_32(domain_ids)
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
-        filter_id = data.get("filter_id")
-        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
-        return GetTrendChart(country_id, domain_id, from_date, to_date, filter_type, filter_id)
+        filter_ids = data.get("filter_ids")
+        filter_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(filter_ids)
+        return GetTrendChart(country_ids, domain_ids, filter_type, filter_ids)
 
     def to_inner_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "from_date": to_structure_CustomTextType_20(self.from_date),
-            "to_date": to_structure_CustomTextType_20(self.to_date),
+            "country_ids": to_structure_VectorType_UnsignedIntegerType_32(self.country_ids),
+            "domain_ids": to_structure_VectorType_UnsignedIntegerType_32(self.domain_ids),
             "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
-            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
+            "filter_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.filter_ids),
         }
 
 class GetComplianceApplicabilityStatusChart(Request):
@@ -609,14 +606,14 @@ class GetTrendChartSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["years", "data"])
         years = data.get("years")
-        years = parse_structure_VectorType_SignedIntegerType_8(years)
+        years = parse_structure_VectorType_UnignedIntegerType_32(years)
         data = data.get("data")
         data = parse_structure_VectorType_RecordType_dashboard_TrendData(data)
         return GetTrendChartSuccess(years, data)
 
     def to_inner_structure(self):
         return {
-            "years": to_structure_VectorType_SignedIntegerType_8(self.years),
+            "years": to_structure_VectorType_UnsignedIntegerType_32(self.years),
             "data": to_structure_VectorType_RecordType_dashboard_TrendData(self.data),
         }
 
@@ -919,22 +916,26 @@ class EscalationData(object):
 #
 
 class CompliedMap(object):
-    def __init__(self, total_compliances, complied_compliances_count):
+    def __init__(self, year, total_compliances, complied_compliances_count):
+        self.year = year
         self.total_compliances = total_compliances
         self.complied_compliances_count = complied_compliances_count
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["total_compliances", "complied_compliances_count"])
+        data = parse_dictionary(data, ["year", "total_compliances", "complied_compliances_count"])
+        year = data.get("year")
+        year = parse_structure_UnsignedIntegerType_32(year)
         total_compliances = data.get("total_compliances")
         total_compliances = parse_structure_UnsignedIntegerType_32(total_compliances)
         complied_compliances_count = data.get("complied_compliances_count")
         complied_compliances_count = parse_structure_UnsignedIntegerType_32(complied_compliances_count)
-        return CompliedMap(total_compliances, complied_compliances_count)
+        return CompliedMap(year, total_compliances, complied_compliances_count)
 
     def to_structure(self):
         return {
-            "total_compliances": to_structure_SignedIntegerType_8(self.total_compliances),
+            "year": to_structure_UnsignedIntegerType_32(self.year),
+            "total_compliances": to_structure_UnsignedIntegerType_32(self.total_compliances),
             "complied_compliances_count": to_structure_SignedIntegerType_8(self.complied_compliances_count),
         }
 
@@ -943,24 +944,25 @@ class CompliedMap(object):
 #
 
 class TrendData(object):
-    def __init__(self, filter_name, complied_compliance):
-        self.filter_name = filter_name
+    def __init__(self, filter_id, complied_compliance):
+        self.filter_id = filter_id
         self.complied_compliance = complied_compliance
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["filter_name", "complied_compliance"])
-        filter_name = data.get("filter_name")
-        filter_name = parse_structure_CustomTextType_100(filter_name)
+        data = parse_dictionary(data, ["filter_id", "complied_compliance"])
+        filter_id = data.get("filter_id")
+        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
         complied_compliance = data.get("complied_compliance")
         complied_compliance = parse_structure_VectorType_RecordType_dashboard_CompliedMap(complied_compliance)
-        return TrendData(filter_name, complied_compliance)
+        return TrendData(filter_id, complied_compliance)
 
     def to_structure(self):
         return {
-            "filter_name": to_structure_CustomTextType_100(self.filter_name),
+            "filter_id": to_structure_UnsignedIntegerType_32(self.filter_id),
             "complied_compliance": to_structure_VectorType_RecordType_dashboard_CompliedMap(self.complied_compliance),
         }
+
 
 #
 # RessignedCompliance

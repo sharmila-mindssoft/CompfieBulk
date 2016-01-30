@@ -3386,3 +3386,8 @@ def parse_structure_VectorType_RecordType_core_ClientUnit(data):
         lst.append(parse_structure_RecordType_core_Unit(item))
     return lst
 
+# Trend Chart
+def parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(data):
+    if data is None: return data
+    return parse_structure_VectorType_UnsignedIntegerType_32(data)
+

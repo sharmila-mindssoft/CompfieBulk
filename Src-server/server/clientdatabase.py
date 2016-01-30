@@ -24,9 +24,8 @@ class ClientDatabase(Database):
         self._client_db_connections[0] = self._connection
         self._client_db_cursors[0] = self._cursor
         for row in rows:
-            print row
-            print
-
+            # print row
+            # print
             host = row[0]
             client_id = row[1]
             username = row[2]
@@ -244,8 +243,6 @@ class ClientDatabase(Database):
     def validate_session_token(self, client_id, session_token) :
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
-
-        print query
         row = self.select_one(query, client_id)
         user_id = row[0]
         return user_id
@@ -2042,7 +2039,9 @@ class ClientDatabase(Database):
                 unit_wise_compliances))
         return unit_wise_compliances_list
 
-
+#
+#   Compliance Approval
+#
     def approveCompliance(self, compliance_history_id, remarks, next_due_date, client_id):
         columns = ["approve_status", "approved_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
@@ -2075,3 +2074,174 @@ class ClientDatabase(Database):
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0,  remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
+
+#
+#   Trend Chart
+#
+
+    def get_trend_chart(self, country_ids, domain_ids, client_id):
+        years = self.get_last_7_yaears()
+        country_domain_timelines = self.get_country_domain_timelines(
+            country_ids, domain_ids, years, client_id)
+
+        chart_data = []
+        for country_wise_timeline in country_domain_timelines:
+            country_id = country_wise_timeline[0]
+            domain_wise_timelines = country_wise_timeline[1]
+            year_wise_count = [[0,0]]*6
+            for domain_wise_timeline in domain_wise_timelines:
+                domain_id = domain_wise_timeline[0]
+                start_end_dates = domain_wise_timeline[1]
+                for index, dates in enumerate(start_end_dates):
+                    columns = "count(*) as total, sum(case when approve_status = 1 then 1 "+\
+                        "else 0 end) as complied"
+                    condition = "due_date between '{}' and '{}'".format(
+                        dates["start_date"], dates["end_date"]
+                    )
+                    condition += " and unit_id in (select group_concat(unit_id) from"+\
+                    " tbl_client_statutories where country_id= '%d' and domain_id = '%d')"%(
+                        country_id, domain_id
+                    )
+                    rows = self.get_data(self.tblComplianceHistory, 
+                                columns, condition, client_id)
+                    for row in rows:
+                        total_compliances = row[0]
+                        complied_compliances = row[1] if row[1] != None else 0
+                        year_wise_count[index][0] += total_compliances if total_compliances != None else 0
+                        year_wise_count[index][1] += complied_compliances if complied_compliances != None else 0
+
+            compliance_chart_data = []
+            for index, count_of_year in enumerate(year_wise_count):
+                compliance_chart_data.append(
+                    dashboard.CompliedMap(year = years[index], 
+                    total_compliances = count_of_year[0], 
+                    complied_compliances_count = count_of_year[1]))
+            chart_data.append(dashboard.TrendData(filter_id = country_id, 
+                complied_compliance= compliance_chart_data))
+        return years,chart_data       
+
+    def get_filtered_trend_data(self, country_ids, domain_ids, filter_type, 
+        filter_ids, client_id):
+        years = self.get_last_7_years()
+        country_domain_timelines = self.get_country_domain_timelines(
+            country_ids, domain_ids, years, client_id)
+
+        chart_data = []
+        for filter_id in filter_ids:
+            year_wise_count = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
+            for country_wise_timeline in country_domain_timelines:
+                country_id = country_wise_timeline[0]
+                domain_wise_timelines = country_wise_timeline[1]
+                for domain_wise_timeline in domain_wise_timelines:
+                    domain_id = domain_wise_timeline[0]
+                    start_end_dates = domain_wise_timeline[1]
+                    for index, dates in enumerate(start_end_dates):
+                        columns = "count(*) as total, sum(case when approve_status is null then 1 "+\
+                            "else 0 end) as complied"
+                        condition = "due_date between '{}' and '{}'".format(
+                            dates["start_date"], dates["end_date"]
+                        )
+                        sub_columns = "group_concat(client_statutory_id), group_concat(unit_id)"
+                        sub_condition = "country_id= '%d' and domain_id = '%d'" % (country_id, domain_id)
+                        sub_condition += " and unit_id in (select unit_id from  tbl_units where "+\
+                            "business_group_id = '%d' and country_id ='%d')"% (filter_id, country_id)
+                        sub_result = self.get_data(self.tblClientStatutories,
+                            sub_columns, sub_condition) 
+                        condition += " and compliance_history_id in (select "+\
+                            "group_concat(compliance_history_id) from "+\
+                            "tbl_compliance_history where compliance_id in "+\
+                            "(select group_concat(compliance_id) from "+\
+                            "tbl_client_compliances where client_statutory_id "+\
+                            "in (%s) and unit_id in (%s))"% (sub_result[0][0],
+                            sub_result[0][1])
+                        if filter_type == "BusinessGroup":
+                            condition += " and unit_id in (select unit_id from "+\
+                                " {} where business_group_id = '{}' and country_id ='{}') )".format(self.tblUnits, 
+                                filter_id, country_id) 
+                        elif filter_type == "LegalEntity":
+                            condition += " and unit_id in (select unit_id from "+\
+                                " {} where legal_entity_id = '{}' and country_id = '{}' ) )".format(self.tblUnits, filter_id, 
+                                country_id)
+                        elif filter_type == "Division":
+                            condition += " and unit_id in (select unit_id from "+\
+                                " {} where division_id = '{}' and country_id = '{}') )".format(self.tblUnits, filter_id, 
+                                country_id)
+                        elif filter_type == "Unit":
+                            condition += " and unit_id in (select unit_id from "+\
+                                " {} where unit_id = '{}' and country_id = '{}') )".format(
+                                self.tblUnits, filter_id, country_id)
+                        rows = self.get_data(self.tblComplianceHistory, columns, 
+                            condition)
+                        if len(rows) > 0:
+                            row = rows[0]
+                            total_compliances =int(row[0])
+                            complied_compliances = int(row[1]) if row[1] != None else 0
+                            year_wise_count[0][0] += total_compliances if total_compliances != None else 0
+                            year_wise_count[0][1] += complied_compliances if complied_compliances != None else 0
+            compliance_chart_data = []
+            for index, count_of_year in enumerate(year_wise_count):
+                compliance_chart_data.append(
+                    dashboard.CompliedMap(year = years[index], 
+                    total_compliances = count_of_year[0], 
+                    complied_compliances_count = count_of_year[1]))
+            chart_data.append(dashboard.TrendData(filter_id = filter_id, 
+                complied_compliance= compliance_chart_data))
+        return years,chart_data
+
+    def get_last_7_years(self):
+        seven_years_list = []
+        end_year = datetime.datetime.now().year - 1
+        start_year = end_year - 5
+        iter_value = start_year
+        while iter_value <= end_year:
+            seven_years_list.append(iter_value)
+            iter_value += 1
+        return seven_years_list
+
+    def get_country_domain_timelines(self,country_ids, domain_ids, years, client_id):
+        country_wise_timelines = []
+        for country_id in country_ids:
+            domain_wise_timeline = []
+            for domain_id in domain_ids:
+                columns = "period_from, period_to"
+                condition = "country_id = '%d' and domain_id = '%d'" % (
+                    country_id, domain_id)
+                rows= self.get_data(self.tblClientConfigurations, columns, 
+                    condition, client_id)
+                if len(rows) > 0:
+                    period_from = rows[0][0]
+                    period_to = rows[0][0]
+                    start_end_dates = []
+                    for year in years:
+                        start_year = year
+                        end_year = year+1
+                        start_date_string = None
+                        end_date_string = None
+                        if period_from == 1:
+                            start_date_string = "1-Jan-{}".format(start_year)
+                        else:
+                            start_date_string = "1-{}-{}".format(
+                                self.string_months[period_from],start_year
+                            )
+                        start_date = self.string_to_datetime(start_date_string)
+                        if period_to == 12:
+                            end_date_string = "31-Dec-{}".format(end_year)
+                        else:
+                            end_date_string = "{}-{}-{}".format(
+                                self.end_day_of_month[period_to],
+                                self.string_months[period_to],
+                                end_year+1
+                            )
+                        end_date = self.string_to_datetime(end_date_string)
+                        start_end_dates.append(
+                            {
+                                "year" : year,
+                                "start_date" : start_date,
+                                "end_date" : end_date
+                            }
+                        )
+                    domain_wise_timeline.append(
+                        [domain_id, start_end_dates]
+                    )
+            country_wise_timelines.append([country_id, domain_wise_timeline])
+        return country_wise_timelines

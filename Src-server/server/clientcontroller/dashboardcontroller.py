@@ -5,17 +5,19 @@ __all__ = [
 ]
 
 def process_client_dashboard_requests(request, db) :
-	client_info = request.session_token.split("-")
+	session_token = request.session_token
+	client_info = session_token.split("-")
 	request = request.request
 	client_id = int(client_info[0])
-	session_token = client_info[1]
 	session_user = db.validate_session_token(client_id, session_token)
 	if session_user is None:
 		return login.InvalidSessionToken()
 	if type(request) is dashboard.GetChartFilters :
 		return process_get_chart_filters(db, session_user, client_id)
 	elif type(request) is dashboard.GetComplianceStatusChart :
-		return process_compliance_status_chart(db, request, session_user, client_id)	
+		return process_compliance_status_chart(db, request, session_user, client_id)
+	elif type(request) is dashboard.GetTrendChart :
+		return process_trend_chart(db, request, session_user, client_id)
 	
 
 def process_get_chart_filters(db, session_user, client_id):
@@ -36,5 +38,14 @@ def process_get_chart_filters(db, session_user, client_id):
 def process_compliance_status_chart(db, request, session_user, client_id):
 	return db.get_compliance_status_chart(request, session_user, client_id)
 
-
-	
+def process_trend_chart(db, request, session_user, client_id):
+	trend_chart_info = None
+	if request.filter_type == "Group":
+		trend_chart_info = db.get_trend_chart(request.country_ids, request.domain_ids,
+			client_id)
+	else:
+		trend_chart_info = db.get_filtered_trend_data(request.country_ids, request.domain_ids,
+			request.filter_type, request.filter_ids, client_id)
+	years = trend_chart_info[0]
+	data = trend_chart_info[1]
+	return dashboard.GetTrendChartSuccess(years = years, data = data)

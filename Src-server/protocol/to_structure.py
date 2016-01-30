@@ -3454,3 +3454,10 @@ def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransac
         value = to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
         d[key] = value
     return d
+
+#
+# Trend Chart
+#
+def to_structure_OptionalType_VectorType_UnsignedIntegerType_32(data):
+    if data is None: return data
+    return to_structure_VectorType_UnsignedIntegerType_32(data)
