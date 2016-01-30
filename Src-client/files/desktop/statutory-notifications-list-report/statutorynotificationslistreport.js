@@ -80,14 +80,26 @@ $("#show-button").click(function(){
 		);
 	}
 });
+function getDomainName(domainId){
+	var domainName;
+	$.each(domainsList, function(key, value){
+		if(domainsList[key]['domain_id'] == domainId){
+			domainName = domainsList[key]['domain_name'];
+		}
+	});
+	return domainName;
+}
 
 function loadStatutoryNotificationsList(data){
 	$('.tbody-statutory-notifications-list tr').remove();
 	var sno = 0;
+	console.log(data);
 	$.each(data, function(key, value) {
 		var tableRowHeading = $('#templates .table-statutory-notifications-list .table-row-heading');
 		var cloneHeading = tableRowHeading.clone();
-		$('.heading', clone).text(data[key]);
+		var domainId = data[key]['domain_id'];
+		$('.heading', cloneHeading).text(getDomainName(domainId));
+		$('.tbody-statutory-notifications-list').append(cloneHeading);
 	  	var list = data[key]['notifications'];
 	  	$.each(list, function(k, val) { 
 		  	var arr = [];

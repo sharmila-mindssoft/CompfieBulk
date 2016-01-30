@@ -102,12 +102,12 @@ class Database(object) :
         return self._cursor
 
     def commit(self):
-        assert self._connection is not None
-        assert self._cursor is not None
-        self._cursor.close()
+        # assert self._connection is not None
+        # assert self._cursor is not None
+        # self._cursor.close()
         self._connection.commit()
-        self._cursor = None
-        self.close()
+        # self._cursor = None
+        # self.close()
 
     def rollback(self):
         assert self._connection is not None
@@ -119,6 +119,7 @@ class Database(object) :
 
     def select_all(self, query) :
         cursor = self.cursor()
+        print cursor
         assert cursor is not None
         cursor.execute(query)
         return cursor.fetchall()
@@ -134,7 +135,6 @@ class Database(object) :
         cursor = self.cursor()
         assert cursor is not None
         return cursor.execute(query)
-
 
     def call_proc(self, procedure_name, args):
         # args is tuple e.g, (parm1, parm2)
@@ -388,14 +388,12 @@ class Database(object) :
         if client_id != None:
             session_id = "%s-%s" % (client_id, session_id)
         updated_on = self.get_date_time()
-        query = "INSERT INTO tbl_user_sessions \
-            (session_token, user_id, session_type_id, last_accessed_time) \
-            VALUES ('%s', %s, %s, '%s');"
+        query = "INSERT INTO tbl_user_sessions (session_token, user_id, session_type_id, last_accessed_time) VALUES ('%s', %s, %s, '%s');"
         query = query % (session_id, user_id, session_type_id, updated_on)
-        if client_id != None:
-            self.execute(query, client_id)
+        if client_id is None:
+            result = self.execute(query)
         else:
-            self.execute(query)
+            self.execute(query, client_id)
         return session_id
 
     def clear_old_session(self, user_id, session_type_id, client_id = None) :
@@ -462,7 +460,6 @@ class KnowledgeDatabase(Database):
         )
         self.statutory_parent_mapping = {}
         self.geography_parent_mapping = {}
-        self.begin()
         self.initialize_table_names()
 
     def initialize_table_names(self):
@@ -2029,9 +2026,12 @@ class KnowledgeDatabase(Database):
         tbl_statutory = "tbl_statutories"
         columns = ["statutory_mapping_ids", "updated_by"]
         
+        print difference
+        print mapping_id
         for x in difference :
             old_map_id =  [int(j) for j in old_statu_ids.get(x).split(',')]
-            old_map_id = old_map_id.remove(mapping_id)
+            if mapping_id in old_map_id:
+                old_map_id = old_map_id.remove(mapping_id)
 
             new_map_id = ""
             if old_map_id is not None : 
@@ -3968,7 +3968,7 @@ class KnowledgeDatabase(Database):
 
     def get_unassigned_compliances(
         self, country_id, domain_id, industry_id, 
-        geography_id, client_statutory_id
+        geography_id, unit_id
     ) :
         query = "SELECT distinct \
             t6.compliance_id, t6.compliance_task, t6.document_name,\
@@ -4050,6 +4050,7 @@ class KnowledgeDatabase(Database):
         return level_1_compliance
 
     def return_assigned_statutories_by_id(self, data):
+        print data
         client_statutory_id = data["client_statutory_id"]
         statutories = self.return_assigned_compliances_by_id(client_statutory_id)
         new_compliances = self.get_unassigned_compliances(
@@ -4439,12 +4440,10 @@ class KnowledgeDatabase(Database):
     def get_statutory_notifications_report_data(self, request_data):
         country_id = request_data.country_id
         domain_id = request_data.domain_id
-        level_1_statutory_id = request_data.level_1_statutory_id
+        level_1_statutory_id = request_data.level_1_statutory_id        
         if level_1_statutory_id is None :
             level_1_statutory_id = '%'
-        query = "SELECT tsnl.statutory_notification_id, tsm.country_id, \
-             tsm.domain_id, ts.statutory_name, tsnl.statutory_provision,\
-             tsnl.notification_text, tsnl.updated_on \
+        query = "SELECT  distinct tsm.country_id, tsm.domain_id\
              from `tbl_statutory_notifications_log` tsnl    \
             INNER JOIN `tbl_statutory_statutories` tss ON \
             tsnl.statutory_mapping_id = tss.statutory_mapping_id \
@@ -4458,25 +4457,38 @@ class KnowledgeDatabase(Database):
             group by tsm.country_id, tsm.domain_id " % (
                 country_id, domain_id
             )
-
         rows = self.select_all(query)
-        columns = ["statutory_notification_id", "country_id", "domain_id",
-          "statutory_name", "statutory_provision", "notification_text", "updated_on" ]
-        result = self.convert_to_dict(rows, columns)
-        print "result from database: {} ".format(result)
-        return result
-
-    def return_statutory_notifications(self, statutory_notifications):
+        columns = ["country_id", "domain_id"]
         country_wise_notifications = []
         for row in rows:
+            query = "SELECT  ts.statutory_name, tsnl.statutory_provision,\
+             tsnl.notification_text, tsnl.updated_on \
+             from `tbl_statutory_notifications_log` tsnl    \
+            INNER JOIN `tbl_statutory_statutories` tss ON \
+            tsnl.statutory_mapping_id = tss.statutory_mapping_id \
+            INNER JOIN `tbl_statutory_mappings` tsm ON \
+            tsm.statutory_mapping_id = tsnl.statutory_mapping_id \
+            INNER JOIN  `tbl_statutories` ts ON \
+            tss.statutory_id = ts.statutory_id \
+            WHERE  \
+            tsm.country_id = %s and \
+            tsm.domain_id = %s \
+            group by tsm.country_id, tsm.domain_id " % (
+                row[0], row[1]
+            )
+            notifications_rows = self.select_all(query)
+            notification_columns = ["statutory_name", "statutory_provision", 
+            "notification_text", "updated_on" ]
+            statutory_notifications = self.convert_to_dict(notifications_rows, notification_columns)
             notifications =[]
             for notification in statutory_notifications:
-                notifications.append(clientreports.NOTIFICATIONS(
+                notifications.append(technoreports.NOTIFICATIONS(
                     statutory_provision = notification["statutory_provision"], 
                     notification_text = notification["notification_text"],
-                    date_and_time = notification["date_and_time"]
+                    date_and_time = self.datetime_to_string(notification["updated_on"])
                 ))
-        country_wise_notifications.append(
-            COUNTRY_WISE_NOTIFICATIONS(country_id = row["country_id"], domain_id = row["domain_id"], notifications = notifications))
-
+            country_wise_notifications.append(
+            technoreports.COUNTRY_WISE_NOTIFICATIONS(country_id = row[0], domain_id = row[1], notifications = notifications))
         return country_wise_notifications
+       
+

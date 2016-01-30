@@ -27,7 +27,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_BusinessGroup,
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     parse_structure_OptionalType_UnsignedIntegerType_32,
-    parse_structure_VectorType_RecordType_techno_report_UnitDetails
+    parse_structure_VectorType_RecordType_techno_report_UnitDetails,
+    parse_structure_VectorType_RecordType_technoreports_NOTIFICATIONS
 )
 from protocol.to_structure import (
     to_structure_VectorType_Text,
@@ -60,7 +61,9 @@ from protocol.to_structure import (
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_UnsignedIntegerType_32,
     to_structure_VectorType_SignedIntegerType_8,
-    to_structure_VectorType_RecordType_techno_report_GroupedUnits
+    to_structure_VectorType_RecordType_techno_report_GroupedUnits,
+    to_structure_VectorType_RecordType_technoreports_NOTIFICATIONS,
+    to_structure_CustomTextType_500
 )
 
 #
@@ -442,7 +445,7 @@ class GetStatutoryNotificationsReportDataSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory(level_1_statutories)
+        level_1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level_1_statutories)
         country_wise_notifications = data.get("country_wise_notifications")
         country_wise_notifications = parse_structure_VectorType_RecordType_technoreports_COUNTRY_WISE_NOTIFICATIONS(country_wise_notifications)
         return GetStatutoryNotificationsReportDataSuccess(countries, domains, level_1_statutories, country_wise_notifications)
@@ -451,7 +454,7 @@ class GetStatutoryNotificationsReportDataSuccess(Response):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "level_1_statutories": to_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory(self.level_1_statutories),
+            "level_1_statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level_1_statutories),
             "country_wise_notifications": to_structure_VectorType_RecordType_technoreports_COUNTRY_WISE_NOTIFICATIONS(self.country_wise_notifications),
         }
 
@@ -563,18 +566,18 @@ class COUNTRY_WISE_NOTIFICATIONS(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["country_id", "domain_id", "notifications"])
         country_id = data.get("country_id")
-        country_id = parse_structure_VectorType_RecordType_core_Country(country_id)
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_VectorType_RecordType_core_Domain(domain_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         notifications = data.get("notifications")
-        notifications = parse_structure_VectorType_Text(notifications)
+        notifications = parse_structure_VectorType_RecordType_technoreports_NOTIFICATIONS(notifications)
         return COUNTRY_WISE_NOTIFICATIONS(country_id, domain_id, notifications)
 
     def to_structure(self):
         return {
-            "country_id": to_structure_VectorType_RecordType_core_Country(self.country_id),
-            "domain_id": to_structure_VectorType_RecordType_core_Domain(self.domain_id),
-            "notifications": to_structure_VectorType_Text(self.notifications),
+            "country_id": to_structure_OptionalType_UnsignedIntegerType_32(self.country_id),
+            "domain_id": to_structure_OptionalType_UnsignedIntegerType_32(self.domain_id),
+            "notifications": to_structure_VectorType_RecordType_technoreports_NOTIFICATIONS(self.notifications),
         }
 
 #

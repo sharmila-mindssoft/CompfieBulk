@@ -34,22 +34,29 @@ GetComplianceStatusChart = RecordType("GetComplianceStatusChart", [
 	Field("filter_ids",VectorType(Int8))
 ])
 
+GetComplianceStatusDrillDownData = RecordType("GetComplianceStatusDrillDownData", [
+	Field("domain_ids", VectorType(DOMAIN_ID)),
+	Field("from_date", Text),
+	Field("to_date", Text),
+	Field("year", Text),
+	Field("filter_type", FILTER_TYPE),
+	Field("filter_id", Int8),
+	Field("compliance_status", COMPLIANCE_STATUS)
+])
+
+
 GetEscalationsChart = RecordType("GetEscalationsChart", [
-	Field("country_id", COUNTRY_ID),
-    Field("domain_id", DOMAIN_ID),
-    Field("from_date", DATE),
-    Field("to_date", DATE),
+	Field("country_ids", VectorType(COUNTRY_ID)),
+    Field("domain_ids", VectorType(DOMAIN_ID)),
     Field("filter_type", FILTER_TYPE),
-    Field("filter_id", Int8)
+    Field("filter_ids",  VectorType(Int8))
 ])
 
 GetNotCompliedChart = RecordType("GetNotCompliedChart", [
-	Field("country_id", COUNTRY_ID),
-    Field("domain_id", DOMAIN_ID),
-    Field("from_date", DATE),
-    Field("to_date", DATE),
+	Field("country_ids", VectorType(COUNTRY_ID)),
+    Field("domain_ids", VectorType(DOMAIN_ID)),
     Field("filter_type", FILTER_TYPE),
-    Field("filter_id", Int8)
+    Field("filter_ids", VectorType((Int8))
 ])
 
 GetTrendChart = RecordType("GetTrendChart", [
@@ -81,15 +88,11 @@ GetAssigneeWiseComplianceDrillDown = RecordType("GetAssigneeWiseComplianceDrillD
 	Field("domain_id", DOMAIN_ID)
 ])
 
-GetComplianceStatusDrillDownData = RecordType("GetComplianceStatusDrillDownData", [
-	Field("filter_type", FILTER_TYPE),
-	Field("filter_id", FILTER_ID),
-	Field("compliance_status", COMPLIANCE_STATUS)
-])
 
 GetEscalationsDrillDownData = RecordType("GetEscalationsDrillDownData", [
+	Field("domain_ids", VectorType(DOMAIN_ID)),
 	Field("filter_type", FILTER_TYPE),
-	Field("filter_id", FILTER_ID),
+	Field("filter_ids", VectorType(FILTER_ID)),
 	Field("year", Int8)
 ])
 
@@ -280,7 +283,10 @@ DrillDownData = RecordType("DrillDownData", [
 	Field("business_group", Text50),
 	Field("legal_entity", Text50),
 	Field("division", Text50),
-	Field("unit_wise_compliances", VectorType(UnitCompliance))
+	Field("unit_name", Text100),
+	Field("address", ADDRESS),
+	Field("compliances", MapType(LEVEL_1_STATUTORY_NAME, VectorType(Level1Compliance))),
+	# Field("unit_wise_compliances", VectorType(UnitCompliance))
 ])
 
 GetComplianceStatusDrillDownDataSuccess = RecordType("GetComplianceStatusDrillDownDataSuccess", [

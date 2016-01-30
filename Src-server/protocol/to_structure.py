@@ -1562,11 +1562,11 @@ def to_structure_RecordType_clientreport_ServiceProviderCompliance(data):
 
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ComplianceUnit(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_CustomTextType_50(key)
         value = to_structure_VectorType_RecordType_clientreport_ComplianceUnit(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(data):
@@ -3461,3 +3461,16 @@ def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransac
 def to_structure_OptionalType_VectorType_UnsignedIntegerType_32(data):
     if data is None: return data
     return to_structure_VectorType_UnsignedIntegerType_32(data)
+
+# Statutory Notifications (Techno)
+
+def to_structure_VectorType_RecordType_technoreports_NOTIFICATIONS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_technoreports_NOTIFICATIONS(item))
+    return lst
+
+def to_structure_RecordType_technoreports_NOTIFICATIONS(data):
+    from protocol import technoreports
+    return technoreports.NOTIFICATIONS.to_structure(data)

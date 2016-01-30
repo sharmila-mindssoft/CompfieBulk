@@ -4730,17 +4730,16 @@ On Success
     "GetTrendChartSuccess",
     {
         "years": [int,],
-        "data":[
-            {
-                "filter_name": FILTER_NAME,
-                "complied_compliance": [
-                    {
-                        "total_compliances": int,
-                        "complied_compliances_count": int
-                    },
-                ]
-            },
-        ]
+        "chart_data":{
+            FILTER_TYPE_ID : {
+              DOMAIN_ID :{                
+                YEAR:{
+                  "total_compliances": int,
+                  "complied_compliances_count": int,
+                }
+              }
+          },
+        }
     }
 ]
 </code></pre>

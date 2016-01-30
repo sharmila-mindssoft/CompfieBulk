@@ -17,9 +17,11 @@ def process_client_report_requests(request, db) :
 	if type(request) is clientmasters.GetServiceProviders: 
 		return get_service_providers(db, request, session_user, client_id)
 	elif type(request) is clientreport.GetClientReportFilters:
-		return get_client_report_filters(db, request, session_user, client_id)
+		return get_client_report_filters(db, request, session_user, client_id) 
 	elif type(request) is clientreport.GetUnitwisecomplianceReport:
 		return get_unitwise_compliance(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetAssigneewisecomplianceReport:
+		return get_assigneewise_compliance(db, request, session_user, client_id)
 
 
 def get_client_report_filters(db, request, session_user, client_id):
@@ -52,8 +54,6 @@ def get_unitwise_compliance(db, request, session_user, client_id):
 		legal_entity_id = '%'
 	if division_id is None :
 		division_id = '%'
-	if unit_id is None :
-		unit_id = '%'
 	if user_id is None :
 		user_id = '%'
 
@@ -62,6 +62,30 @@ def get_unitwise_compliance(db, request, session_user, client_id):
 	    legal_entity_id, division_id, unit_id, user_id, client_id,session_user
 	)
 	return clientreport.GetUnitwisecomplianceReportSuccess(unit_wise_compliances_list)
+
+
+def get_assigneewise_compliance(db, request, session_user, client_id):
+	country_id = request.country_id
+	domain_id = request.domain_id
+	business_group_id = request.business_group_id
+	legal_entity_id = request.division_id
+	division_id = request.division_id
+	unit_id = request.unit_id
+	user_id = request.user_id
+	if business_group_id is None :
+		business_group_id = '%'
+	if legal_entity_id is None :
+		legal_entity_id = '%'
+	if division_id is None :
+		division_id = '%'
+	if user_id is None :
+		user_id = '%'
+
+	assignee_wise_compliances_list = db.get_assigneewise_compliance_report(
+	    country_id, domain_id, business_group_id, 
+	    legal_entity_id, division_id, unit_id, user_id, client_id,session_user
+	)
+	return clientreport.GetAssigneewisecomplianceReportSuccess(assignee_wise_compliances_list)
 
 
 	

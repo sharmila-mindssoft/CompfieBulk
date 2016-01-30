@@ -668,8 +668,6 @@ function initClientMirror() {
     
     function getUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, 
         division_id, unit_id, user_id, callback) {
-        console.log("country>>>>"+country_id)
-        console.log("domain_id>>>>"+domain_id)
         var request = [
             "GetUnitwisecomplianceReport",
             {
@@ -685,6 +683,25 @@ function initClientMirror() {
         callerName = "api/client_reports";
         clientApiRequest(callerName, request, callback);
     }
+    
+    function getAssigneewisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, 
+        division_id, unit_id, user_id, callback) {
+        var request = [
+            "GetAssigneewisecomplianceReport",
+            {
+                "country_id": country_id,
+                "domain_id": domain_id,
+                "business_group_id": business_group_id,
+                "legal_entity_id": legal_entity_id,
+                "division_id"  : division_id,
+                "unit_id": unit_id,
+                "user_id": user_id
+            }
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+
 
     function approveCompliance(compliance_history_id, compliance_approval_status, 
         remarks, next_due_date, callback){
@@ -813,6 +830,7 @@ function initClientMirror() {
 
         getClientReportFilters: getClientReportFilters,
         getUnitwisecomplianceReport: getUnitwisecomplianceReport,
+        getAssigneewisecomplianceReport: getAssigneewisecomplianceReport,
 
         getComplianceApprovalList: getComplianceApprovalList,
         approveCompliance: approveCompliance,

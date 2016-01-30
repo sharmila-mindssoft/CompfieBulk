@@ -1,42 +1,50 @@
 from protocol import (dashboard, login, core)
 
 __all__ = [
-	"process_client_dashboard_requests"
+    "process_client_dashboard_requests"
 ]
 
 def process_client_dashboard_requests(request, db) :
-	session_token = request.session_token
-	client_info = session_token.split("-")
-	request = request.request
-	client_id = int(client_info[0])
-	session_user = db.validate_session_token(client_id, session_token)
-	if session_user is None:
-		return login.InvalidSessionToken()
-	if type(request) is dashboard.GetChartFilters :
-		return process_get_chart_filters(db, session_user, client_id)
-	elif type(request) is dashboard.GetComplianceStatusChart :
-		return process_compliance_status_chart(db, request, session_user, client_id)
+    session_token = request.session_token
+    client_info = session_token.split("-")
+    
+    request = request.request
+    client_id = int(client_info[0])
+    session_user = db.validate_session_token(client_id, session_token)
+    if session_user is None:
+        return login.InvalidSessionToken()
+    if type(request) is dashboard.GetChartFilters :
+        return process_get_chart_filters(db, session_user, client_id)
+    elif type(request) is dashboard.GetComplianceStatusChart :
+        return process_compliance_status_chart(db, request, session_user, client_id)
+    elif type(request) is dashboard.GetComplianceStatusDrillDownData:
+        return process_compliance_status_chart_drilldown(db, request, session_user, client_id)
+    elif type(request) is dashboard.GetEscalationsChart :
+        return process_escalation_chart(db, request, session_user, client_id)
+    elif type(request) is dashboard.GetEscalationsDrillDownData :
+        return process_escalation_chart_drilldown(db, request, session_user, client_id)   
+    elif type(request) is dashboard.GetNotCompliedChart :
+        return process_not_complied_chart(db, request, session_user, client_id)
 	elif type(request) is dashboard.GetTrendChart :
 		return process_trend_chart(db, request, session_user, client_id)
-	
 
 def process_get_chart_filters(db, session_user, client_id):
-	countries = db.get_countries_for_user(session_user, client_id)
-	domains = db.get_domains_for_user(session_user, client_id)
-	business_group_ids = None
-	business_groups = db.get_business_groups_for_user(business_group_ids, client_id)
-	legal_entity_ids = None
-	legal_entities = db.get_legal_entities_for_user(legal_entity_ids, client_id)
-	division_ids = None
-	divisions = db.get_divisions_for_user(division_ids, client_id)
-	units = db.get_units_for_assign_compliance(session_user, client_id)
-	return dashboard.GetChartFiltersSuccess(
-		countries, domains, business_groups,
-		legal_entities, divisions, units
-	)
+    countries = db.get_countries_for_user(session_user, client_id)
+    domains = db.get_domains_for_user(session_user, client_id)
+    business_group_ids = None
+    business_groups = db.get_business_groups_for_user(business_group_ids, client_id)
+    legal_entity_ids = None
+    legal_entities = db.get_legal_entities_for_user(legal_entity_ids, client_id)
+    division_ids = None
+    divisions = db.get_divisions_for_user(division_ids, client_id)
+    units = db.get_units_for_assign_compliance(session_user, client_id)
+    return dashboard.GetChartFiltersSuccess(
+        countries, domains, business_groups,
+        legal_entities, divisions, units
+    )
 
 def process_compliance_status_chart(db, request, session_user, client_id):
-	return db.get_compliance_status_chart(request, session_user, client_id)
+    return db.get_compliance_status_chart(request, session_user, client_id)
 
 def process_trend_chart(db, request, session_user, client_id):
 	trend_chart_info = None
@@ -49,3 +57,22 @@ def process_trend_chart(db, request, session_user, client_id):
 	years = trend_chart_info[0]
 	data = trend_chart_info[1]
 	return dashboard.GetTrendChartSuccess(years = years, data = data)
+
+def process_compliance_status_chart_drilldown(db, request, session_user, client_id):
+    unit_wise_data = db.get_compliances_details_for_status_chart(request, session_user, client_id)
+    return dashboard.GetComplianceStatusDrillDownDataSuccess(
+        unit_wise_data.values()
+    )
+
+def process_escalation_chart(db, request, session_user, client_id):
+    return db.get_escalation_chart(request, session_user, client_id)
+
+def process_escalation_chart_drilldown(db, request, session_user, client_id) :
+    result_list = db.get_escalation_drill_down_data(request, session_user, client_id)
+    return dashboard.GetEscalationsDrillDownDataSuccess(
+        result_list[0],
+        result_list[1]
+    )
+
+def process_not_complied_chart(db, request, session_user, client_id):
+    return db.get_not_complied_chart(request, session_user, client_id)
