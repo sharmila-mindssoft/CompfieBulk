@@ -42,8 +42,12 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_Text,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances,
     parse_structure_VectorType_UnsignedIntegerType_32,
-    parse_structure_OptionalType_VectorType_UnsignedIntegerType_32
-    parse_structure_SignedIntegerType_8
+    parse_structure_OptionalType_VectorType_UnsignedIntegerType_32,
+    parse_structure_SignedIntegerType_8,
+    parse_structure_VectorType_RecordType_dashboard_TrendCompliance,
+    parse_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance,
+    parse_structure_VectorType_RecordType_dashboard_TrendDrillDownData,
+    parse_structure_OptionalType_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -88,7 +92,11 @@ from protocol.to_structure import (
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances,
     to_structure_VectorType_UnsignedIntegerType_32,
     to_structure_OptionalType_VectorType_UnsignedIntegerType_32,
-    to_structure_UnsignedIntegerType_32
+    to_structure_UnsignedIntegerType_32,
+    to_structure_VectorType_RecordType_dashboard_TrendCompliance,
+    to_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance,
+    to_structure_VectorType_RecordType_dashboard_TrendDrillDownData,
+    to_structure_OptionalType_UnsignedIntegerType_32
 )
 
 #
@@ -452,23 +460,36 @@ class GetNotCompliedDrillDown(Request):
         }
 
 class GetTrendChartDrillDownData(Request):
-    def __init__(self, filter_type, filter_id):
+    def __init__(self, filter_type, filter_ids, country_ids, domain_ids, year):
         self.filter_type = filter_type
-        self.filter_id = filter_id
+        self.filter_ids = filter_ids
+        self.country_ids = country_ids
+        self.domain_ids = domain_ids
+        self.year = year
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["filter_type", "filter_id"])
+        data = parse_dictionary(data, ["filter_type", "filter_ids", "country_ids", "domain_ids", "year"])
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
-        filter_id = data.get("filter_id")
-        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
-        return GetTrendChartDrillDownData(filter_type, filter_id)
+        filter_ids = data.get("filter_ids")
+        filter_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(filter_ids)
+        country_ids = data.get("country_ids")
+        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
+        domain_ids = data.get("domain_ids")
+        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        year = data.get("year")
+        year = parse_structure_UnsignedIntegerType_32(year)
+        return GetTrendChartDrillDownData(filter_type, filter_ids, 
+            country_ids, domain_ids, year)
 
     def to_inner_structure(self):
         return {
             "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
-            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
+            "filter_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.filter_ids),
+            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
+            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
+            "year": to_structure_UnsignedIntegerType_32(self.year)
         }
 
 
@@ -775,12 +796,12 @@ class GetTrendChartDrillDownDataSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["drill_down_data"])
         drill_down_data = data.get("drill_down_data")
-        drill_down_data = parse_structure_VectorType_RecordType_dashboard_DrillDownData(drill_down_data)
+        drill_down_data = parse_structure_VectorType_RecordType_dashboard_TrendDrillDownData(drill_down_data)
         return GetTrendChartDrillDownDataSuccess(drill_down_data)
 
     def to_inner_structure(self):
         return {
-            "drill_down_data": to_structure_VectorType_RecordType_dashboard_DrillDownData(self.drill_down_data),
+            "drill_down_data": to_structure_VectorType_RecordType_dashboard_TrendDrillDownData(self.drill_down_data),
         }
 
 
@@ -1134,6 +1155,8 @@ class AssigneeChartData(object):
             "assignee_wise_details": to_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(self.assignee_wise_details),
         }
 
+
+
 #
 # Level1Compliance
 #
@@ -1210,6 +1233,30 @@ class UnitCompliance(object):
             "compliances": to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance(self.compliances),
         }
 
+class TrendCompliance(object):
+    def __init__(self, compliance_name, description, assignee_name):
+        self.compliance_name = compliance_name
+        self.description = description
+        self.assignee_name = assignee_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["compliance_name", "description", "assignee_name"])
+        compliance_name = data.get("compliance_name")
+        compliance_name = parse_structure_CustomTextType_100(compliance_name)
+        description = data.get("description")
+        description = parse_structure_CustomTextType_500(description)
+        assignee_name = data.get("assignee_name")
+        assignee_name = parse_structure_CustomTextType_100(assignee_name)
+        return TrendCompliance(compliance_name, description, assignee_name)
+
+    def to_structure(self):
+        return {
+            "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
+            "description": to_structure_CustomTextType_500(self.description),
+            "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
+        }
+
 #
 # DrillDownData
 #
@@ -1252,5 +1299,45 @@ class DrillDownData(object):
             "address": to_structure_CustomTextType_500(self.address),
             "industry_name": to_structure_CustomTextType_50(self.industry_name),
             "compliances": to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance(self.compliances),
+        }
+
+#
+# Trend DrillDownData
+#
+
+class TrendDrillDownData(object):
+    def __init__(self, business_group_id, legal_entity_id, division_id, unit_name, address, compliances):
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.division_id = division_id
+        self.unit_name = unit_name
+        self.address = address
+        self.compliances = compliances
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["business_group_id", "legal_entity_id", "division_id", "unit_name", "address", "compliances"])
+        business_group_id = data.get("business_group_id")
+        business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
+        division_id = data.get("division_id")
+        division_id = parse_structure_UnsignedIntegerType_32(division_id)
+        unit_name = data.get("unit_name")
+        unit_name = parse_structure_CustomTextType_100(unit_name)
+        address = data.get("address")
+        address = parse_structure_CustomTextType_500(address)
+        compliances = data.get("compliances")
+        compliances = parse_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance(compliances)
+        return TrendDrillDownData(business_group_id, legal_entity_id, division_id, unit_name, address, compliances)
+
+    def to_structure(self):
+        return {
+            "business_group_id": to_structure_UnsignedIntegerType_32(self.business_group_id),
+            "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id),
+            "division_id": to_structure_UnsignedIntegerType_32(self.division_id),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
+            "address": to_structure_CustomTextType_500(self.address),
+            "compliances": to_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance(self.compliances),
         }
 

@@ -289,6 +289,22 @@ DrillDownData = RecordType("DrillDownData", [
 	# Field("unit_wise_compliances", VectorType(UnitCompliance))
 ])
 
+TrendCompliance = RecordType("TrendCompliance", [
+	Field("compliance_name", Text100),
+	Field("description", Text500),
+	Field("assignee_name", Text100)
+])
+
+# Trend Drill Down Data
+TrendDrillDownData = RecordType("TrendDrillDownData", [
+	Field("business_group", Text50),
+	Field("legal_entity", Text50),
+	Field("division", Text50),
+	Field("unit_name", Text100),
+	Field("address", ADDRESS),
+	Field("compliances", VectorType(TrendCompliance))
+])
+
 GetComplianceStatusDrillDownDataSuccess = RecordType("GetComplianceStatusDrillDownDataSuccess", [
 	Field("drill_down_data", VectorType(DrillDownData))
 ])

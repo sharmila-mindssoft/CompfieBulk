@@ -758,6 +758,21 @@ function initClientMirror() {
         var callerName = "api/client_dashboard"
         clientApiRequest(callerName, request, callback)
     }
+    function getTrendChartDrillDown(country_ids, domain_ids, filter_type, 
+        filter_ids, year, callback){
+        var request = [
+            "GetTrendChartDrillDownData",
+            {
+                "country_ids": country_ids,
+                "domain_ids": domain_ids,
+                "filter_type": filter_type,
+                "filter_ids": filter_ids,
+                "year" : year
+            }
+        ];
+        var callerName = "api/client_dashboard"
+        clientApiRequest(callerName, request, callback)
+    }
     return {
         log: log,
         toJSON: toJSON, 
@@ -838,6 +853,7 @@ function initClientMirror() {
         getChartFilters: getChartFilters,
         getComplianceStatusChartData : getComplianceStatusChartData,
         getTrendChart: getTrendChart,
+        getTrendChartDrillDown: getTrendChartDrillDown
     }
 }
 var client_mirror = initClientMirror();

@@ -440,11 +440,19 @@
 			}
 
 			function getTrendChart(){
-				country_ids = [1, 2]
-				domain_ids = [1, 2]
-				filter_type = "BusinessGroup"
+				country_ids = [1]
+				domain_ids = [1]
+				filter_type = "Unit"
         		filter_ids = [1]
         		client_mirror.getTrendChart(country_ids, domain_ids, filter_type, filter_ids, callback);
+			}
+			function getTrendChartDrillDown(){
+				country_ids = [1]
+				domain_ids = [1]
+				filter_type = "BusinessGroup"
+        		filter_ids = [1]
+        		year = 2010
+        		client_mirror.getTrendChartDrillDown(country_ids, domain_ids, filter_type, filter_ids, year, callback);
 			}
 		</script>
 	</head>
@@ -656,6 +664,9 @@
 		<div>
 			<button onclick="getTrendChart()">
 				Get Trend Chart
+			</button>
+			<button onclick="getTrendChartDrillDown()">
+				Get Trend Chart Drill Down Data
 			</button>
 		</div>
 		<br>

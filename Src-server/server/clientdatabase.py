@@ -1168,7 +1168,6 @@ class ClientDatabase(Database):
         if len(client_statutory_rows) > 0: 
             client_statutory_ids = client_statutory_rows[0][0]
         else:
-            print "Assign Compliances to the Unit first"
             return
 
         client_compliances_columns = "group_concat(compliance_id)"
@@ -1179,7 +1178,6 @@ class ClientDatabase(Database):
         if len(client_compliance_rows) > 0:
             client_compliance_ids = client_compliance_rows[0][0]
         else:
-            print "Assign Compliances to the Unit first"
             return
         compliance_columns = "compliance_id, compliance_task, document_name, statutory_dates"
         compliance_condition = " compliance_id in (%s) " % client_compliance_ids
@@ -1298,10 +1296,6 @@ class ClientDatabase(Database):
             rows = self.get_data(self.tblUsers, columns, condition, client_id)
             if len(rows) > 0:
                 employee_name = "{} - {}".format(rows[0][0], rows[0][1])
-            else:
-                print "inside inner else"
-        else:
-            print "inside outer else"
         return employee_name
 
     # def calculate_next_due_date(self, completion_date, due_date, compliance_id):
@@ -2649,17 +2643,55 @@ class ClientDatabase(Database):
 #
 #   Trend Chart
 #
+    def get_client_statutory_ids_and_unit_ids_for_trend_chart(self, country_id, 
+        domain_id, client_id, filter_id = None, filter_type = None):
+        columns = "group_concat(client_statutory_id), group_concat(unit_id)"
+        condition = "country_id= '%d' and domain_id = '%d'" % (country_id, domain_id)
+        condition += " and unit_id in (select unit_id from  tbl_units where "
+        if filter_type != None:
+            if filter_type == "BusinessGroup":
+                condition += " business_group_id ='%d' and country_id ='%d')"% (
+                filter_id, country_id)
+            elif filter_type == "LegalEntity":
+                condition += " legal_entity_id ='%d' and country_id ='%d')"% (
+                filter_id, country_id)
+            elif filter_type == "Division":
+                condition += " division_id ='%d' and country_id ='%d')"% (
+                filter_id, country_id)
+            elif filter_type == "Unit":
+                condition += " unit_id ='%d' and country_id ='%d')"% (
+                filter_id, country_id)
+        else:
+           condition += " country_id ='%d')"% (country_id) 
+        result = self.get_data(self.tblClientStatutories, columns, condition, client_id)
+        client_statutoy_ids = result[0][0]
+        unit_ids = result[0][1]
+        return client_statutoy_ids, unit_ids
+
+    def get_compliance_history_ids_for_trend_chart(self, country_id, 
+        domain_id, client_id, filter_id = None, filter_type = None):
+        result = self.get_client_statutory_ids_and_unit_ids_for_trend_chart(
+            country_id, domain_id, client_id, filter_id, filter_type)
+        client_statutory_ids = result[0]
+        unit_ids = result[1]
+        columns = "group_concat(compliance_history_id)"
+        condition = "compliance_id in "+\
+                    "(select group_concat(compliance_id) from "+\
+                    "tbl_client_compliances where client_statutory_id "+\
+                    "in (%s) and unit_id in (%s))" % (client_statutory_ids, unit_ids)
+        result = self.get_data(self.tblComplianceHistory, columns, condition, client_id)
+        compliance_history_ids = result[0][0]
+        return compliance_history_ids, client_statutory_ids, unit_ids
 
     def get_trend_chart(self, country_ids, domain_ids, client_id):
-        years = self.get_last_7_yaears()
+        years = self.get_last_7_years()
         country_domain_timelines = self.get_country_domain_timelines(
             country_ids, domain_ids, years, client_id)
-
         chart_data = []
         for country_wise_timeline in country_domain_timelines:
             country_id = country_wise_timeline[0]
             domain_wise_timelines = country_wise_timeline[1]
-            year_wise_count = [[0,0]]*6
+            year_wise_count = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
             for domain_wise_timeline in domain_wise_timelines:
                 domain_id = domain_wise_timeline[0]
                 start_end_dates = domain_wise_timeline[1]
@@ -2668,35 +2700,132 @@ class ClientDatabase(Database):
                         "else 0 end) as complied"
                     condition = "due_date between '{}' and '{}'".format(
                         dates["start_date"], dates["end_date"]
-                    )
-                    condition += " and unit_id in (select group_concat(unit_id) from"+\
-                    " tbl_client_statutories where country_id= '%d' and domain_id = '%d')"%(
-                        country_id, domain_id
-                    )
+                    ) 
+                    compliance_history_ids = self.get_compliance_history_ids_for_trend_chart(
+                        country_id, domain_id, client_id)
+                    condition += " and compliance_history_id in (%s)"% (compliance_history_ids[0])
                     rows = self.get_data(self.tblComplianceHistory, 
                                 columns, condition, client_id)
-                    for row in rows:
+                    if len(rows) > 0:
+                        row = rows[0]
                         total_compliances = row[0]
                         complied_compliances = row[1] if row[1] != None else 0
                         year_wise_count[index][0] += total_compliances if total_compliances != None else 0
                         year_wise_count[index][1] += complied_compliances if complied_compliances != None else 0
-
             compliance_chart_data = []
             for index, count_of_year in enumerate(year_wise_count):
                 compliance_chart_data.append(
                     dashboard.CompliedMap(year = years[index], 
-                    total_compliances = count_of_year[0], 
-                    complied_compliances_count = count_of_year[1]))
+                    total_compliances = int(count_of_year[0]), 
+                    complied_compliances_count = int(count_of_year[1])))
             chart_data.append(dashboard.TrendData(filter_id = country_id, 
                 complied_compliance= compliance_chart_data))
         return years,chart_data       
+
+    def get_trend_chart_drill_down(self, country_ids, domain_ids, filter_ids, 
+        filter_type, year, client_id):
+        # Getting Unit ids
+        rows = None
+        country_ids = ",".join(str(x) for x in country_ids)
+        domain_ids = ",".join(str(x) for x in domain_ids)
+        
+        if filter_type == "Group":
+            columns = "group_concat(DISTINCT unit_id)"
+            condition = "country_id in (%s) and domain_id in (%s)" % (
+                country_ids, domain_ids)
+            rows = self.get_data(self.tblClientStatutories, columns, condition, client_id)
+        else:
+            columns = "group_concat(DISTINCT tcs.unit_id)"
+            tables = [self.tblClientStatutories, self.tblUnits]
+            aliases = ["tcs", "tu"]
+            join_type = "left join "
+            join_conditions = ["tcs.unit_id = tu.unit_id"]
+            where_condition = "tu.country_id in (%s) and domain_id in (%s)" % (
+                country_ids, domain_ids)
+            if filter_type == "BusinessGroup":
+                where_condition += " and  business_group_id in (%s) "% filter_ids
+            elif filter_type == "LegalEntity":
+                where_condition += " and  legal_entity_id in (%s) "% filter_ids
+            elif filter_type == "Division":
+                where_condition += " and  division_id in (%s) "% filter_ids
+            elif filter_type == "Unit":
+                where_condition += " and  tcs.unit_id in (%s) "% filter_ids
+            rows = self.get_data_from_multiple_tables(columns, tables, aliases, 
+                    join_type, join_conditions, where_condition, client_id)
+
+        unit_ids = rows[0][0] if rows[0][0] != None else []
+        drill_down_data = []
+        for unit_id in unit_ids:
+            # Getting Unit details
+            unit_detail_columns = "tu.country_id, domain_ids, business_group_id, legal_entity_id,"+\
+            " division_id, unit_code, unit_name, address, group_concat(tcs.client_statutory_id)"
+            unit_detail_condition = "tu.unit_id = '{}'".format(unit_id)
+            tables = "%s tu,%s tcs"% (self.tblUnits, self.tblClientStatutories)
+            unit_rows = self.get_data(tables, unit_detail_columns, unit_detail_condition, 
+                client_id)
+            unit_detail = unit_rows[0]
+            business_group_id = unit_detail[2]
+            legal_entity_id = unit_detail[3]
+            division_id = unit_detail[4]
+            unit_name = "%s-%s"%(unit_detail[5],unit_detail[6])
+            address = unit_detail[7]
+
+            # Getting compliances relevent to unit, country, domain
+            compliance_columns = "group_concat(compliance_id)"
+            compliance_condition = "compliance_opted = 1"
+            if unit_detail[8] != None:
+                compliance_condition += " and client_statutory_id in (%s)" % unit_detail[8]
+            compliance_rows = self.get_data(self.tblClientCompliances, compliance_columns, 
+                compliance_condition, client_id)
+            compliance_ids = compliance_rows[0][0]
+
+            # Getting complied compliances for the given year
+            years = [year]
+            country_ids = [unit_detail[0]]
+            domain_ids = unit_detail[1].split(",")
+            timelines = self.get_country_domain_timelines(country_ids, domain_ids, 
+                years, client_id)
+            domain_wise_timelines = timelines[0][1] if len(timelines)>0 else []
+            for domain_wise_timeline in domain_wise_timelines:
+                domain_id = domain_wise_timeline[0]
+                start_end_dates = domain_wise_timeline[1][0]
+                start_date = start_end_dates["start_date"]
+                end_date = start_end_dates["end_date"]
+                history_columns = "tch.compliance_id, tu.employee_code, tu.employee_name,"+\
+                "tc.compliance_task, tc.compliance_description, tc.document_name, "+\
+                "tc.compliance_description, tc.statutory_mapping"
+                history_condition = "due_date between '{}' and '{}'".format(start_date, end_date)
+                history_condition += " and tch.compliance_id in (%s)"% compliance_ids
+                tables = [self.tblComplianceHistory, self.tblUsers, self.tblCompliances]
+                aliases = ["tch", "tu", "tc"]
+                join_type = "left join"
+                join_condition = ["tch.completed_by = tu.user_id", 
+                "tch.compliance_id = tc.compliance_id"]
+                history_rows = self.get_data_from_multiple_tables(history_columns, tables, aliases, 
+                    join_type, join_condition, history_condition, client_id)
+                level_1_statutory_wise_compliances = {}
+                for history_row in history_rows:
+                    assignee_name = "%s-%s"% (history_row[1], history_row[2])
+                    compliance_name = "%s-%s"% (history_row[5], history_row[3])
+                    description = history_row[4]
+                    statutories = history_row[7].split(" >> ")
+                    level_1_statutory = statutories[0]
+                    if level_1_statutory not in level_1_statutory_wise_compliances:
+                        level_1_statutory_wise_compliances[level_1_statutory] = []
+                    level_1_statutory_wise_compliances[level_1_statutory].append(
+                        dashboard.TrendCompliance(compliance_name, description, 
+                            assignee_name))
+            if len(level_1_statutory_wise_compliances)>0:
+                drill_down_data.append(dashboard.TrendDrillDownData(business_group_id, 
+                    legal_entity_id, division_id, unit_name, address, 
+                    level_1_statutory_wise_compliances))
+        return drill_down_data
 
     def get_filtered_trend_data(self, country_ids, domain_ids, filter_type, 
         filter_ids, client_id):
         years = self.get_last_7_years()
         country_domain_timelines = self.get_country_domain_timelines(
             country_ids, domain_ids, years, client_id)
-
         chart_data = []
         for filter_id in filter_ids:
             year_wise_count = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
@@ -2712,37 +2841,12 @@ class ClientDatabase(Database):
                         condition = "due_date between '{}' and '{}'".format(
                             dates["start_date"], dates["end_date"]
                         )
-                        sub_columns = "group_concat(client_statutory_id), group_concat(unit_id)"
-                        sub_condition = "country_id= '%d' and domain_id = '%d'" % (country_id, domain_id)
-                        sub_condition += " and unit_id in (select unit_id from  tbl_units where "+\
-                            "business_group_id = '%d' and country_id ='%d')"% (filter_id, country_id)
-                        sub_result = self.get_data(self.tblClientStatutories,
-                            sub_columns, sub_condition) 
-                        condition += " and compliance_history_id in (select "+\
-                            "group_concat(compliance_history_id) from "+\
-                            "tbl_compliance_history where compliance_id in "+\
-                            "(select group_concat(compliance_id) from "+\
-                            "tbl_client_compliances where client_statutory_id "+\
-                            "in (%s) and unit_id in (%s))"% (sub_result[0][0],
-                            sub_result[0][1])
-                        if filter_type == "BusinessGroup":
-                            condition += " and unit_id in (select unit_id from "+\
-                                " {} where business_group_id = '{}' and country_id ='{}') )".format(self.tblUnits, 
-                                filter_id, country_id) 
-                        elif filter_type == "LegalEntity":
-                            condition += " and unit_id in (select unit_id from "+\
-                                " {} where legal_entity_id = '{}' and country_id = '{}' ) )".format(self.tblUnits, filter_id, 
-                                country_id)
-                        elif filter_type == "Division":
-                            condition += " and unit_id in (select unit_id from "+\
-                                " {} where division_id = '{}' and country_id = '{}') )".format(self.tblUnits, filter_id, 
-                                country_id)
-                        elif filter_type == "Unit":
-                            condition += " and unit_id in (select unit_id from "+\
-                                " {} where unit_id = '{}' and country_id = '{}') )".format(
-                                self.tblUnits, filter_id, country_id)
+                        compliance_history_ids = self.get_compliance_history_ids_for_trend_chart(
+                            country_id, domain_id, client_id, filter_id, filter_type)
+                        condition += " and compliance_history_id in (%s)" % compliance_history_ids[0]
+                        condition += " and unit_id in (%s)" % compliance_history_ids[2]
                         rows = self.get_data(self.tblComplianceHistory, columns, 
-                            condition)
+                            condition, client_id)
                         if len(rows) > 0:
                             row = rows[0]
                             total_compliances =int(row[0])
@@ -2753,8 +2857,8 @@ class ClientDatabase(Database):
             for index, count_of_year in enumerate(year_wise_count):
                 compliance_chart_data.append(
                     dashboard.CompliedMap(year = years[index], 
-                    total_compliances = count_of_year[0], 
-                    complied_compliances_count = count_of_year[1]))
+                    total_compliances = int(count_of_year[0]), 
+                    complied_compliances_count = int(count_of_year[1])))
             chart_data.append(dashboard.TrendData(filter_id = filter_id, 
                 complied_compliance= compliance_chart_data))
         return years,chart_data
@@ -2775,7 +2879,7 @@ class ClientDatabase(Database):
             domain_wise_timeline = []
             for domain_id in domain_ids:
                 columns = "period_from, period_to"
-                condition = "country_id = '%d' and domain_id = '%d'" % (
+                condition = "country_id = '{}' and domain_id = '{}'".format(
                     country_id, domain_id)
                 rows= self.get_data(self.tblClientConfigurations, columns, 
                     condition, client_id)
@@ -2788,21 +2892,15 @@ class ClientDatabase(Database):
                         end_year = year+1
                         start_date_string = None
                         end_date_string = None
-                        if period_from == 1:
-                            start_date_string = "1-Jan-{}".format(start_year)
-                        else:
-                            start_date_string = "1-{}-{}".format(
-                                self.string_months[period_from],start_year
-                            )
+                        start_date_string = "1-{}-{}".format(
+                            self.string_months[period_from],start_year
+                        )
                         start_date = self.string_to_datetime(start_date_string)
-                        if period_to == 12:
-                            end_date_string = "31-Dec-{}".format(end_year)
-                        else:
-                            end_date_string = "{}-{}-{}".format(
-                                self.end_day_of_month[period_to],
-                                self.string_months[period_to],
-                                end_year+1
-                            )
+                        end_date_string = "{}-{}-{}".format(
+                            self.end_day_of_month[period_to],
+                            self.string_months[period_to],
+                            end_year
+                        )
                         end_date = self.string_to_datetime(end_date_string)
                         start_end_dates.append(
                             {

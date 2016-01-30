@@ -3400,6 +3400,38 @@ def parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(data):
     if data is None: return data
     return parse_structure_VectorType_UnsignedIntegerType_32(data)
 
+def parse_structure_VectorType_RecordType_dashboard_TrendCompliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_dashboard_TrendCompliance(item))
+    return lst
+
+def parse_structure_RecordType_dashboard_TrendCompliance(data):
+    from protocol import dashboard
+    return dashboard.TrendCompliance.parse_structure(data)
+
+def parse_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance(data):
+    data = parse_list(data)
+    d = {}
+    for key, value in data:
+        key = parse_structure_CustomTextType_100(key)
+        value = parse_structure_VectorType_RecordType_dashboard_TrendCompliance(value)
+        d[key] = value
+    return d
+
+def parse_structure_VectorType_RecordType_dashboard_TrendDrillDownData(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_dashboard_TrendDrillDownData(item))
+    return lst
+
+def parse_structure_RecordType_dashboard_TrendDrillDownData(data):
+    from protocol import dashboard
+    return dashboard.TrendDrillDownData.parse_structure(data)
+
 def parse_structure_RecordType_technoreports_NOTIFICATIONS(data):
     from protocol import technoreports
     return technoreports.NOTIFICATIONS.parse_structure(data)
+
