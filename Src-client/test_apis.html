@@ -464,6 +464,17 @@
 		        escalation_reminder_days= 2;
 		        client_mirror.updateSettings(is_two_levels_of_approval, assignee_reminder_days, escalation_reminder_In_advance_days, escalation_reminder_days,callback);
 			}
+			function getNotifications(){
+				notification_type = "Notification"
+				mirror.getNotifications(notification_type, callback);
+			}
+			function getClientNotifications(){
+				notification_type = "Reminder"
+				client_mirror.getNotifications(notification_type, callback);
+			}
+			function updateNotificaionStatus(){
+
+			}
 		</script>
 	</head>
 	<body>
@@ -685,6 +696,17 @@
 			</button>
 			<button onclick="updateClientAdminSettings()">
 				Update Client Admin Settings
+			</button>
+		</div>
+		<div>
+			<button onclick="getNotifications()">
+				Get Notifications
+			</button>
+			<button onclick="getClientNotifications()">
+				Get Client Notifications
+			</button>
+			<button onclick="updateNotificationStatus()">
+				Update Notification Status
 			</button>
 		</div>
 		<br>

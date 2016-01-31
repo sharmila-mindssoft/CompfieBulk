@@ -448,8 +448,8 @@ CREATE TABLE `tbl_notifications_log` (
   CONSTRAINT `fk_notifications_log_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
   CONSTRAINT `fk_notifications_log_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
   CONSTRAINT `fk_notifications_log_assignee_units` FOREIGN KEY (`assignee`) REFERENCES `tbl_users` (`user_id`),
-  CONSTRAINT `fk_notifications_log_concurrence_units` FOREIGN KEY (`concurrence_person`) REFERENCES `tbl_units` (`unit_id`),
-  CONSTRAINT `fk_notifications_log_approve_units` FOREIGN KEY (`approval_person`) REFERENCES `tbl_units` (`unit_id`)
+  CONSTRAINT `fk_notifications_log_concurrence_units` FOREIGN KEY (`concurrence_person`) REFERENCES `tbl_users` (`user_id`),
+  CONSTRAINT `fk_notifications_log_approve_units` FOREIGN KEY (`approval_person`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_notification_user_log`;
 CREATE TABLE `tbl_notification_user_log` (
@@ -457,7 +457,7 @@ CREATE TABLE `tbl_notification_user_log` (
   `user_id` int(11) NOT NULL,
   `read_status` tinyint(1) DEFAULT '0',
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`notification_id`)
+  PRIMARY KEY (`notification_id`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 INSERT INTO tbl_form_type VALUES(1, "Home");
 INSERT INTO tbl_form_type VALUES(2, "Master");

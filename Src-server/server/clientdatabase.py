@@ -13,11 +13,11 @@ __all__ = [
 
 class ClientDatabase(Database):
     def __init__(self):
-        super(ClientDatabase, self).__init__(
-            "localhost", "root", "123456", "mirror_knowledge")
         # super(ClientDatabase, self).__init__(
-        #     "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
-        # )
+        #     "localhost", "root", "123456", "mirror_knowledge")
+        super(ClientDatabase, self).__init__(
+            "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
+        )
         self.begin()
         self._client_db_connections = {}
         self._client_db_cursors = {}
@@ -2989,3 +2989,30 @@ class ClientDatabase(Database):
         escalation_reminder_In_advance_days, escalation_reminder_days]
         condition = "1"
         self.update(self.tblClientSettings, columns, values, condition, client_id)
+
+#
+#   Notifications
+#
+    def get_notifications(self, notification_type, session_user, client_id = None):
+        columns = "tn.notification_id, notification_text, extra_details, "+\
+        "tn.updated_on, read_status"
+        join_type = "left join"
+        tables = [self.tblNotificationsLog , self.tblNotificationUserLog ]
+        aliases = ["tn", "tns"]
+        join_conditions = ["tn.notification_id = tns.notification_id"]
+        notification_type_id = None
+        if notification_type == "Notification":
+            notification_type_id = 1
+        elif notification_type == "Reminder":
+            notification_type_id = 2
+        elif notification_type == "Escalation":
+            notification_type_id = 3
+        where_condition = " tns.user_id ='%d' and tn.notification_type_id='%d'"%(
+            session_user, notification_type_id)
+        rows = self.get_data_from_multiple_tables(columns, tables, 
+            aliases, join_type, join_conditions, where_condition, client_id)
+        notifications = []
+        for row in rows:
+            notifications.append(general.Notification(row[0], row[1], row[2], 
+                bool(row[4]), self.datetime_to_string(row[3])))
+        return notifications

@@ -538,7 +538,7 @@ CREATE TABLE `tbl_notifications_status` (
   `notification_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `read_status` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`notification_id`),
+  PRIMARY KEY (`notification_id`, `user_id`),
   CONSTRAINT `fk_tbl_activity_log_ticker_status_users` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`),
   CONSTRAINT `fk_tbl_notifications_ns` FOREIGN KEY (`notification_id`) REFERENCES `tbl_notifications` (`notification_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

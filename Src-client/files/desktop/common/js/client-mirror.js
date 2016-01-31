@@ -801,8 +801,21 @@ function initClientMirror() {
         ];
         var callerName = "api/client_admin_settings"
         clientApiRequest(callerName, request, callback)
-
     }
+
+    /* Notifications */
+    
+    function getNotifications(notification_type, callback){
+        callerName = "api/general"
+        var request = [
+            "GetNotifications",
+            {
+                "notification_type" : notification_type
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
 
     return {
         log: log,
@@ -887,7 +900,8 @@ function initClientMirror() {
         getTrendChartDrillDown: getTrendChartDrillDown,
 
         getSettings: getSettings,
-        updateSettings: updateSettings
+        updateSettings: updateSettings,
+        getNotifications: getNotifications
     }
 }
 var client_mirror = initClientMirror();

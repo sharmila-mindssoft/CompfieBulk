@@ -1217,6 +1217,19 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+/* Notifications */
+    
+    function getNotifications(notification_type, callback){
+        callerName = "api/general"
+        var request = [
+            "GetNotifications",
+            {
+                "notification_type" : notification_type
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -1342,7 +1355,8 @@ function initMirror() {
 
 
         getAuditTrail: getAuditTrail,
-        updateUserProfile: updateUserProfile
+        updateUserProfile: updateUserProfile,
+        getNotifications: getNotifications
     }
 }
 var mirror = initMirror();
