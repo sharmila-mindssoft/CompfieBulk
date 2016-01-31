@@ -454,6 +454,16 @@
         		year = 2010
         		client_mirror.getTrendChartDrillDown(country_ids, domain_ids, filter_type, filter_ids, year, callback);
 			}
+			function getClientAdminSettings(){
+				client_mirror.getSettings(callback);
+			}
+			function updateClientAdminSettings(){
+				is_two_levels_of_approval= true;
+		        assignee_reminder_days= 2;
+		        escalation_reminder_In_advance_days= 2;
+		        escalation_reminder_days= 2;
+		        client_mirror.updateSettings(is_two_levels_of_approval, assignee_reminder_days, escalation_reminder_In_advance_days, escalation_reminder_days,callback);
+			}
 		</script>
 	</head>
 	<body>
@@ -667,6 +677,14 @@
 			</button>
 			<button onclick="getTrendChartDrillDown()">
 				Get Trend Chart Drill Down Data
+			</button>
+		</div>
+		<div>
+			<button onclick="getClientAdminSettings()">
+				Get Client Admin Settings
+			</button>
+			<button onclick="updateClientAdminSettings()">
+				Update Client Admin Settings
 			</button>
 		</div>
 		<br>

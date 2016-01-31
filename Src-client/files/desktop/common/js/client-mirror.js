@@ -744,6 +744,9 @@ function initClientMirror() {
         var callerName = "api/client_dashboard";
         clientApiRequest(callerName, request, callback); 
     }
+
+/* Trend Chart */
+
     function getTrendChart(country_ids, domain_ids, filter_type, 
         filter_id, callback){
         var request = [
@@ -773,6 +776,34 @@ function initClientMirror() {
         var callerName = "api/client_dashboard"
         clientApiRequest(callerName, request, callback)
     }
+
+/* Settings */
+
+    function getSettings(callback){
+        var request = [
+            "GetSettings",
+            {}
+        ];
+        var callerName = "api/client_admin_settings"
+        clientApiRequest(callerName, request, callback)
+    }
+
+    function updateSettings(is_two_levels_of_approval, assignee_reminder_days, 
+        escalation_reminder_In_advance_days, escalation_reminder_days, callback){
+        var request = [
+            "UpdateSettings",
+            {
+               "is_two_levels_of_approval": is_two_levels_of_approval,
+                "assignee_reminder_days": assignee_reminder_days,
+                "escalation_reminder_In_advance_days": escalation_reminder_In_advance_days,
+                "escalation_reminder_days": escalation_reminder_days 
+            }  
+        ];
+        var callerName = "api/client_admin_settings"
+        clientApiRequest(callerName, request, callback)
+
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -853,7 +884,10 @@ function initClientMirror() {
         getChartFilters: getChartFilters,
         getComplianceStatusChartData : getComplianceStatusChartData,
         getTrendChart: getTrendChart,
-        getTrendChartDrillDown: getTrendChartDrillDown
+        getTrendChartDrillDown: getTrendChartDrillDown,
+
+        getSettings: getSettings,
+        updateSettings: updateSettings
     }
 }
 var client_mirror = initClientMirror();

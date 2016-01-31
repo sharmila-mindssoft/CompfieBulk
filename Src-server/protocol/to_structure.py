@@ -3505,3 +3505,7 @@ def to_structure_VectorType_RecordType_technoreports_NOTIFICATIONS(data):
 def to_structure_RecordType_technoreports_NOTIFICATIONS(data):
     from protocol import technoreports
     return technoreports.NOTIFICATIONS.to_structure(data)
+
+def to_structure_OptionalType_CustomTextType_250(data):
+    if data is None: return data
+    return parse_custom_string(data, 250)

@@ -1,4 +1,5 @@
-from protocol import (core, general, clienttransactions, dashboard, clientreport)
+from protocol import (core, general, clienttransactions, dashboard, 
+    clientreport, clientadminsettings)
 from database import Database
 import json
 import datetime
@@ -12,11 +13,11 @@ __all__ = [
 
 class ClientDatabase(Database):
     def __init__(self):
-        # super(ClientDatabase, self).__init__(
-        #     "localhost", "root", "123456", "mirror_knowledge")
         super(ClientDatabase, self).__init__(
-            "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
-        )
+            "localhost", "root", "123456", "mirror_knowledge")
+        # super(ClientDatabase, self).__init__(
+        #     "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
+        # )
         self.begin()
         self._client_db_connections = {}
         self._client_db_cursors = {}
@@ -2914,3 +2915,77 @@ class ClientDatabase(Database):
                     )
             country_wise_timelines.append([country_id, domain_wise_timeline])
         return country_wise_timelines
+
+#
+#   Client Admin Settings
+#
+
+    def get_settings(self, client_id):
+        columns = "two_levels_of_approval, assignee_reminder, "+\
+        "escalation_reminder_in_advance, escalation_reminder,"+\
+        "contract_from, contract_to, no_of_user_licence, "+\
+        "total_disk_space, total_disk_space_used"
+        condition = "1"
+        rows = self.get_data(self.tblClientSettings, columns, condition, client_id)
+        if len(rows) > 0:
+            row = rows[0]
+            return row
+        else:
+            return None
+
+    def get_licence_holder_details(self, client_id):
+        columns = "tcu.user_id, tcu.email_id, tcu.employee_name, tcu.employee_code,"+\
+        " tcu.contact_no, tcu.is_admin, tu.unit_code, tu.unit_name, tu.address,"+\
+        " tcu.is_active"
+        tables = [self.tblUsers, self.tblUnits]
+        aliases = ["tcu", "tu"]
+        join_type = "left join"
+        join_conditions = ["tcu.seating_unit_id = tu.unit_id"]
+        where_condition = "1"
+        return self.get_data_from_multiple_tables(columns, tables, aliases, 
+            join_type, join_conditions, where_condition, client_id)
+
+    def get_profile(self, contract_from, contract_to, no_of_user_licence, 
+        total_disk_space, total_disk_space_used, client_id):
+        contract_from = self.datetime_to_string(contract_from)
+        contract_to = self.datetime_to_string(contract_to)
+        licence_holder_rows = self.get_licence_holder_details(client_id)
+        licence_holders = []
+        for row in licence_holder_rows:
+            employee_name = None
+            unit_name = None
+            if(row[3] == None):
+                employee_name = row[2]
+            else:
+                employee_name = "%s - %s" % (row[3], row[2])
+
+            if row[7] == None:
+                unit_name = "-"
+            else:
+                unit_name =  "%s - %s" % (row[6], row[7])
+            user_id = row[0]
+            email_id= row[1]
+            contact_no = row[4]
+            is_admin= row[5]
+            address= row[8]
+            is_active = row[9]
+            licence_holders.append(
+                clientadminsettings.LICENCE_HOLDER(
+                user_id, employee_name, email_id, contact_no, 
+                unit_name, address
+            ))
+        remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
+        profile_detail = clientadminsettings.PROFILE_DETAIL(contract_from, 
+            contract_to, no_of_user_licence, remaining_licence,licence_holders, 
+            total_disk_space/1000000000, total_disk_space_used/1000000000, )
+        return profile_detail
+
+    def updateSettings(self, is_two_levels_of_approval, assignee_reminder_days,
+        escalation_reminder_In_advance_days, escalation_reminder_days, client_id):
+        columns = ["two_levels_of_approval", "assignee_reminder",
+        "escalation_reminder_in_advance", "escalation_reminder"]
+        is_two_levels_of_approval = 1 if is_two_levels_of_approval == True else 0
+        values = [is_two_levels_of_approval, assignee_reminder_days,
+        escalation_reminder_In_advance_days, escalation_reminder_days]
+        condition = "1"
+        self.update(self.tblClientSettings, columns, values, condition, client_id)

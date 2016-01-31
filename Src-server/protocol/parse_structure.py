@@ -3435,3 +3435,7 @@ def parse_structure_RecordType_technoreports_NOTIFICATIONS(data):
     from protocol import technoreports
     return technoreports.NOTIFICATIONS.parse_structure(data)
 
+def parse_structure_OptionalType_CustomTextType_250(data):
+    if data is None: return data
+    return parse_custom_string(data, 250)
+
