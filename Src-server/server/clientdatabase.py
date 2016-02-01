@@ -2669,6 +2669,200 @@ class ClientDatabase(Database):
         return assignee_wise_compliances_list
 
 #
+# Compliance Applicability Chart
+#
+
+    def get_compliance_applicability_chart(self, request, session_user, client_id):
+        query = "SELECT T1.compliance_id, \
+            T1.statutory_applicable, T1.statutory_opted, \
+            T1.not_applicable_remarks, \
+            T1.compliance_applicable, T1.compliance_opted, \
+            T1.compliance_remarks \
+            FROM tbl_client_compliances T1 \
+            INNER JOIN tbl_client_statutories T2 \
+            ON T1.client_statutory_id = T2.client_statutory_id \
+            INNER JOIN tbl_units T3 \
+            ON T2.unit_id = T3.unit_id \
+            WHERE T2.country_id IN %s \
+            AND T2.domain_id IN %s \
+            %s "
+
+        country_ids = request.country_ids
+        domain_ids = request.domain_ids
+        filter_type = request.filter_type
+        filter_id = request.filter_id
+
+        
+        if filter_type ==  "Group" :
+            # filter_type_qry = "AND T3.country_id IN %s" % (str(tuple(filter_ids)))
+            filter_type_qry = ""
+
+        elif filter_type == "BusinessGroup" :
+            filter_type_qry = "AND T3.business_group_id = %s" % (filter_ids)
+
+        elif filter_type == "LegalEntity" :
+            filter_type_qry = "AND T3.legal_entity_id = %s" % (filter_ids)
+
+        elif filter_type == "Division" :
+            filter_type_qry = "AND T3.division_id = %s" % (filter_ids)
+
+        elif filter_type == "Unit":
+            filter_type_qry = "AND T3.unit_id = %s" % (filter_ids)
+
+
+        query1 = query % (str(tuple(country_ids)), str(tuple(domain_ids)), filter_type_qry)
+        rows = self.select_all(query1, client_id)
+        columns = [
+            "compliance_id", "statutory_applicable",
+            "statutory_opted", "not_applicable_remarks",
+            "compliance_applicable", "compliance_opted",
+            "compliance_remarks"
+        ]
+        result = self.convert_to_dict(rows, columns)
+
+        applicable_count = 0
+        not_applicable_count = 0
+        not_opted_count = 0
+
+        for r in result :
+            if r["compliance_opted"] == 1 :
+                applicable_count += 1
+            elif r["compliance_opted"] == 0 :
+                if r["compliance_applicable"] == 0 :
+                    not_applicable_count += 1
+                else :
+                    not_opted_count += 1
+
+        return dashboard.GetComplianceApplicabilityStatusChartSuccess(
+            applicable_count, not_applicable_count, not_opted_count
+        )
+
+    def get_compliance_applicability_drill_down(self, request, session_user, client_id):
+        query = "SELECT T1.compliance_id, T2.unit_id,\
+            T4.frequency_id, T4.repeat_type_id, T4.duration_type_id,\
+            T4.statutory_mapping, T4.statutory_provision,\
+            T4.compliance_task, T4.compliance_description,  \
+            T4.document_name, T4.format_file, T4.penal_consequences, \
+            T4.statutory_dates, T4.repeats_every, T4.duration, T4.is_active \
+            FROM tbl_client_compliances T1 \
+            INNER JOIN tbl_client_statutories T2 \
+            ON T1.client_statutory_id = T2.client_statutory_id \
+            INNER JOIN tbl_units T3 \
+            ON T2.unit_id = T3.unit_id \
+            INNER JOIN tbl_compliances T4\
+            ON T1.compliance_id = T4.compliance_id\
+            INNER JOIN tbl_compliance_frequency T5\
+            ON T4.frequency_id = T5.frequency_id \
+            INNER JOIN tbl_divisions T6 \
+            ON T3.division_id = T6.division_id \
+            INNER JOIN tbl_legal_entities T7 \
+            ON T3.legal_entity_id = T7.legal_entity_id \
+            INNER JOIN tbl_business_groups T8 \
+            ON T3.business_group_id = T8.business_group_id \
+            INNER JOIN tbl_countries T9 \
+            ON T3.country_id = T9.country_id \
+            WHERE T2.country_id IN %s \
+            AND T2.domain_id IN %s \
+            %s %s"
+
+        country_ids = request.country_ids
+        domain_ids = request.domain_ids
+        filter_type = request.filter_type
+        filter_id = request.filter_id
+        applicability = request.applicability_status
+
+        if filter_type ==  "Group" :
+            # filter_type_qry = "AND T3.country_id IN %s" % (str(tuple(filter_ids)))
+            filter_type_qry = ""
+
+        elif filter_type == "BusinessGroup" :
+            filter_type_qry = "AND T3.business_group_id = %s" % (filter_ids)
+
+        elif filter_type == "LegalEntity" :
+            filter_type_qry = "AND T3.legal_entity_id = %s" % (filter_ids)
+
+        elif filter_type == "Division" :
+            filter_type_qry = "AND T3.division_id = %s" % (filter_ids)
+
+        elif filter_type == "Unit":
+            filter_type_qry = "AND T3.unit_id = %s" % (filter_ids)
+
+        applicable_type_qry = ""
+        
+        if applicability == "Applicable" :
+            applicable_type_qry = "AND T1.compliance_opted = 1"
+        elif applicability == "NotApplicable" :
+            applicable_type_qry = "AND T1.compliance_opted = 0 AND T1.compliance_applicable = 0"
+        elif applicability == "NotOpted" :
+            applicable_type_qry = "AND T1.compliance_opted = 0"
+
+        query1 = query % (str(tuple(country_ids)), str(tuple(domain_ids)), filter_type_qry, applicable_type_qry)
+        rows = self.select_all(query1, client_id)
+        columns = [ "compliance_id", "unit_id",
+            "frequency_id", "repeat_type_id", "duration_type_id",
+            "statutory_mapping", "statutory_provision", "compliance_task",
+            "compliance_description", "document_name", "format_file",
+            "penal_consequences", "statutory_dates", "repeats_every",
+            "duration", "is_active"
+        ]
+        result = self.convert_to_dict(rows, columns)
+
+        level_1_wise_compliance = {}
+
+        for r in result :
+            unit_id = r["unit_id"]
+            mappings = r["statutory_mapping"].split(">>")
+            if len(mappings) >= 1 :
+                level_1 = mappings[0]
+            else :
+                level_1 = mappings
+
+            level_1 = level_1.strip()
+
+            
+            format_file_list = []
+            statutory_dates = json.loads(r["statutory_dates"])
+            date_list = []
+            for s in statutory_dates :
+                s_date = core.StatutoryDate(
+                    s["statutory_date"], s["statutory_month"],
+                    s["trigger_before_days"]
+                )
+                date_list.append(s_date)
+            compliance = core.Compliance(
+                int(r["compliance_id"]), r["statutory_provision"],
+                r["compliance_task"], r["compliance_description"],
+                r["document_name"], format_file_list, r["penal_consequences"],
+                int(r["frequency_id"]), date_list, r["repeat_type_id"],
+                r["repeats_every"], r["duration_type_id"],
+                r["duration"], bool(r["is_active"])
+            )
+            level_1_wise_data = level_1_wise_compliance.get(level_1)
+            if level_1_wise_data is None :
+                compliance_dict = {}
+                compliance_list = [compliance]
+                compliance_dict[unit_id] = compliance_list
+                level_1_wise_data = dashboard.ApplicableDrillDown(
+                    level_1, compliance_dict
+                )
+            else :
+                compliance_dict = level_1_wise_data.compliances
+                compliance_list = compliance_dict[unit_id]
+                compliance_list.append(compliance)
+
+                compliance_dict[unit_id] = compliance_list
+                level_1_wise_data.compliances = compliance_dict
+
+            level_1_wise_compliance[level_1] = level_1_wise_data
+
+        return level_1_wise_compliance.values()
+
+
+
+
+
+
+#
 #   Compliance Approval
 #
     def approveCompliance(self, compliance_history_id, remarks, next_due_date, client_id):

@@ -37,6 +37,11 @@ def process_client_dashboard_requests(request, db) :
     elif type(request) is dashboard.GetTrendChartDrillDownData :
         return process_get_trend_chart_drilldown(db, request, session_user, client_id)
 
+    elif type(request) is dashboard.GetComplianceApplicabilityStatusChart :
+        return process_compliance_applicability_chat(db, request, session_user, client_id)
+    elif type(request) is dashboard.GetComplianceApplicabilityStatusDrillDown :
+        return process_compliance_applicability_drill_down(db, request, session_user, client_id)
+
 def process_get_chart_filters(db, session_user, client_id):
     countries = db.get_countries_for_user(session_user, client_id)
     domains = db.get_domains_for_user(session_user, client_id)
@@ -86,7 +91,6 @@ def process_escalation_chart(db, request, session_user, client_id):
     return db.get_escalation_chart(request, session_user, client_id)
 
 def process_escalation_chart_drilldown(db, request, session_user, client_id) :
-    print "escalation drill_down_inf"
     result_list = db.get_escalation_drill_down_data(request, session_user, client_id)
     return dashboard.GetEscalationsDrillDownDataSuccess(
         result_list[0],
@@ -99,3 +103,10 @@ def process_not_complied_chart(db, request, session_user, client_id):
 def  process_not_complied_drill_down(db, request, session_user, client_id):
     result_list = db.get_not_complied_drill_down(request, session_user, client_id)
     return dashboard.GetNotCompliedDrillDownSuccess(result_list.values())
+
+def process_compliance_applicability_chat(db, request, session_user, client_id):
+    return db.get_compliance_applicability_chart(request, session_user, client_id)
+
+def process_compliance_applicability_drill_down(db, request, session_user, client_id) :
+    result_list = db.get_compliance_applicability_drill_down(request, session_user, client_id)
+    return dashboard.GetComplianceApplicabilityStatusDrillDownSuccess(result_list)
