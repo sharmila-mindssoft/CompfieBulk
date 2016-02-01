@@ -40,8 +40,9 @@ def process_general_request(request, db) :
 		return process_change_country_status(db, request_frame, user_id)
 	if type(request_frame) is general.GetAuditTrails :
 		return process_get_audit_trails(db, request_frame, user_id)
-	if type(request_frame) is general.GetNotifications :
-		return process_get_notifications(db, session_token, request_frame, user_id)
+	if type(request_frame) is general.UpdateNotificationStatus :
+		return process_update_notification_status(db, session_token, 
+			request_frame, user_id)
 
 
 def validate_user_session(db, session_token):
@@ -166,5 +167,16 @@ def process_get_notifications(db, session_token, request, session_user):
 	notifications = db.get_notifications(request.notification_type, session_user, 
 			client_id)
 	return general.GetNotificationsSuccess(notifications = notifications)
+
+def process_update_notification_status(db, session_token, request, session_user):
+	client_info = session_token.split("-")
+	client_id = None
+	notifications = None
+	if len(client_info) > 1:
+		client_id = int(client_info[0])
+	db.update_notification_status(request.notification_id, request.has_read, 
+		session_user, client_id)
+	return general.UpdateNotificationStatusSuccess()
+
 
 

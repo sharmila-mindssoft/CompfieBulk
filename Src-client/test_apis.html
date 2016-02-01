@@ -472,8 +472,15 @@
 				notification_type = "Reminder"
 				client_mirror.getNotifications(notification_type, callback);
 			}
-			function updateNotificaionStatus(){
-
+			function updateNotificationStatus(){
+				notification_id = 1
+				has_read = true
+				mirror.updateNotificationStatus(notification_id, has_read, callback)
+			}
+			function updateClientNotificationStatus(){
+				notification_id = 2
+				has_read = true
+				client_mirror.updateNotificationStatus(notification_id, has_read, callback)	
 			}
 		</script>
 	</head>
@@ -707,6 +714,9 @@
 			</button>
 			<button onclick="updateNotificationStatus()">
 				Update Notification Status
+			</button>
+			<button onclick="updateClientNotificationStatus()">
+				Update Client Notification Status
 			</button>
 		</div>
 		<br>

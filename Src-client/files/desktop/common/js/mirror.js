@@ -1230,6 +1230,18 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function updateNotificationStatus(notification_id, has_read, callback){
+        callerName = "api/general"
+        var request = [
+            "UpdateNotificationStatus",
+            {
+                "notification_id" : notification_id,
+                "has_read" : has_read
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -1356,7 +1368,8 @@ function initMirror() {
 
         getAuditTrail: getAuditTrail,
         updateUserProfile: updateUserProfile,
-        getNotifications: getNotifications
+        getNotifications: getNotifications,
+        updateNotificationStatus: updateNotificationStatus
     }
 }
 var mirror = initMirror();

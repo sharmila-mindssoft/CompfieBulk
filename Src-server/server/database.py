@@ -4505,3 +4505,11 @@ class KnowledgeDatabase(Database):
             notifications.append(general.Notification(row[0], row[1], row[2], 
                 bool(row[4]), self.datetime_to_string(row[3])))
         return notifications
+
+    def update_notification_status(self, notification_id, has_read, 
+        session_user, client_id = None):
+        columns = ["read_status"]
+        values = [1 if has_read == True else 0]
+        condition = "notification_id = '%d' and user_id='%d'"% (
+            notification_id, session_user)
+        self.update(self.tblNotificationsStatus, columns, values, condition)

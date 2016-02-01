@@ -816,6 +816,17 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function updateNotificationStatus(notification_id, has_read, callback){
+        callerName = "api/general"
+        var request = [
+            "UpdateNotificationStatus",
+            {
+                "notification_id" : notification_id,
+                "has_read" : has_read
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
 
     return {
         log: log,
@@ -901,7 +912,8 @@ function initClientMirror() {
 
         getSettings: getSettings,
         updateSettings: updateSettings,
-        getNotifications: getNotifications
+        getNotifications: getNotifications,
+        updateNotificationStatus: updateNotificationStatus
     }
 }
 var client_mirror = initClientMirror();
