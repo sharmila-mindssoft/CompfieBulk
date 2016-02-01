@@ -2183,9 +2183,9 @@ class ClientDatabase(Database):
 
         return unit_wise_data
 
-    #
-    # Escalation chart
-    #
+#
+# Escalation chart
+#
     def get_escalation_chart(self, request, session_user, client_id):
         country_ids = request.country_ids
         domain_ids = request.domain_ids
@@ -2325,9 +2325,9 @@ class ClientDatabase(Database):
 
         return [delayed_details_list.values(), not_complied_details_list.values()]
 
-    #
-    # Not Complied chart
-    #
+#
+# Not Complied chart
+#
 
     def get_not_complied_chart(self, request, session_user, client_id):
         country_ids = request.country_ids
@@ -2409,6 +2409,69 @@ class ClientDatabase(Database):
             below_30, below_60,
             below_90, above_90
         )
+
+    def get_not_complied_drill_down(self, request, session_user, client_id):
+        domain_ids = request.domain_ids
+        filter_type = request.filter_type
+        filter_ids = request.filter_ids
+        not_complied_type = request.not_complied_type
+        year = request.year
+
+        not_complied_status_qry = " AND T1.due_date < CURDATE() \
+            AND T1.approve_status is NULL  OR T1.approve_status != 1"
+
+        if len(filter_ids) == 1:
+            filter_ids.append(0)
+
+        if filter_type ==  "Group" :
+            filter_type_qry = "AND T3.country_id IN %s" % (str(tuple(filter_ids)))
+
+        elif filter_type == "BusinessGroup" :
+            filter_type_qry = "AND T5.business_group_id IN %s" % (str(tuple(filter_ids)))
+
+        elif filter_type == "LegalEntity" :
+            filter_type_qry = "AND T5.legal_entity_id IN %s" % (str(tuple(filter_ids)))
+
+        elif filter_type == "Division" :
+            filter_type_qry = "AND T5.division_id IN %s" % (str(tuple(filter_ids)))
+
+        elif filter_type == "Unit":
+            filter_type_qry = "AND T5.unit_id IN %s" % (str(tuple(filter_ids)))
+
+        date_qry = ""
+
+        year_info = self.get_client_domain_configuration(client_id)
+
+        not_complied_details = self.compliance_details_query(
+            domain_ids, date_qry, not_complied_status_qry, 
+            filter_type_qry, client_id
+        )
+        current_date = datetime.date.today()
+        not_complied_details_filtered = []
+
+        for c in not_complied_details :
+            due_date = c["due_date"]
+            ageing = abs((current_date - due_date).days)
+
+            if not_complied_type == "Below 30":
+                if ageing <= 30 :
+                    not_complied_details_filtered.append(c)
+            elif not_complied_type == "Below 60":
+                if ageing > 30 and ageing <= 60 :
+                    not_complied_details_filtered.append(c)
+            elif not_complied_type == "Below 90":
+                if ageing > 60 and ageing <= 90 :
+                    not_complied_details_filtered.append(c)
+            else :
+                if ageing > 90 :
+                    not_complied_details_filtered.append(c)
+
+        not_complied_details_list = self.return_compliance_details_drill_down(
+            year_info, "NotComplied", year,
+            not_complied_details_filtered, client_id
+        )
+
+        return not_complied_details_list
 
 
     # unitwise compliance report

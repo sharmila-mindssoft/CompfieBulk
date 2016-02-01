@@ -502,7 +502,7 @@ class NOT_COMPLIED_TYPE(object) :
 
     @staticmethod
     def values():
-        return ["Below 30", "Below 60", "Below 90" "Above 90"]
+        return ["Below 30", "Below 60", "Below 90", "Above 90"]
 
     def value (self):
         return self._value

@@ -47,7 +47,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_dashboard_TrendCompliance,
     parse_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance,
     parse_structure_VectorType_RecordType_dashboard_TrendDrillDownData,
-    parse_structure_OptionalType_UnsignedIntegerType_32
+    parse_structure_OptionalType_UnsignedIntegerType_32,
+    parse_structure_EnumType_core_NOT_COMPLIED_TYPE
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -96,7 +97,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_dashboard_TrendCompliance,
     to_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance,
     to_structure_VectorType_RecordType_dashboard_TrendDrillDownData,
-    to_structure_OptionalType_UnsignedIntegerType_32
+    to_structure_OptionalType_UnsignedIntegerType_32,
+    to_structure_EnumType_core_NOT_COMPLIED_TYPE
 )
 
 #
@@ -440,35 +442,35 @@ class GetComplianceApplicabilityStatusDrillDown(Request):
         }
 
 class GetNotCompliedDrillDown(Request):
-    def __init__(self, country_ids, domain_ids,  filter_type, filter_id, not_complied_type):
-        self.country_ids = country_ids
+    def __init__(self, domain_ids,  filter_type, filter_ids, not_complied_type, year):
         self.domain_ids = domain_ids
         self.filter_type = filter_type
-        self.filter_id = filter_id
+        self.filter_ids = filter_ids
         self.not_complied_type = not_complied_type
+        self.year = year
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_ids", "domain_ids", "filter_type", "filter_id", "not_complied_type"])
-        country_ids = data.get("country_ids")
-        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
+        data = parse_dictionary(data, ["domain_ids", "filter_type", "filter_ids", "not_complied_type", "year"])
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
-        filter_id = data.get("filter_id")
-        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
+        filter_ids = data.get("filter_ids")
+        filter_ids = parse_structure_VectorType_SignedIntegerType_8(filter_ids)
         not_complied_type = data.get("not_complied_type")
         not_complied_type = parse_structure_EnumType_core_NOT_COMPLIED_TYPE(not_complied_type)
-        return GetNotCompliedDrillDown(country_ids, domain_ids, filter_type, filter_id, not_complied_type)
+        year = data.get("year")
+        year = parse_structure_UnsignedIntegerType_32(year)
+        return GetNotCompliedDrillDown(domain_ids, filter_type, filter_ids, not_complied_type, year)
 
     def to_inner_structure(self):
         return {
-            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
-            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
-            "not_complied_type": to_structure_EnumType_core_NOT_COMPLIED_TYPE(self.not_complied_type)
+            "filter_ids": to_structure_VectorType_SignedIntegerType_8(self.filter_ids),
+            "not_complied_type": to_structure_EnumType_core_NOT_COMPLIED_TYPE(self.not_complied_type),
+            "year": to_structure_UnsignedIntegerType_32(self.year)
         }
 
 class GetTrendChartDrillDownData(Request):
@@ -781,22 +783,18 @@ class GetComplianceApplicabilityStatusDrillDownSuccess(Response):
         }
 
 class GetNotCompliedDrillDownSuccess(Response):
-    def __init__(self, filter_name, drill_down_data):
-        self.filter_name = filter_name
+    def __init__(self, drill_down_data):
         self.drill_down_data = drill_down_data
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["filter_name", "drill_down_data"])
-        filter_name = data.get("filter_name")
-        filter_name = parse_structure_CustomTextType_100(filter_name)
+        data = parse_dictionary(data, ["drill_down_data"])
         drill_down_data = data.get("drill_down_data")
         drill_down_data = parse_structure_VectorType_RecordType_dashboard_DrillDownData(drill_down_data)
         return GetNotCompliedDrillDownSuccess(filter_name, drill_down_data)
 
     def to_inner_structure(self):
         return {
-            "filter_name": to_structure_CustomTextType_100(self.filter_name),
             "drill_down_data": to_structure_VectorType_RecordType_dashboard_DrillDownData(self.drill_down_data),
         }
 
