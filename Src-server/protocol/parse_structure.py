@@ -3398,3 +3398,9 @@ def parse_structure_VectorType_RecordType_technoreports_NOTIFICATIONS(data):
 def parse_structure_RecordType_technoreports_NOTIFICATIONS(data):
     from protocol import technoreports
     return technoreports.NOTIFICATIONS.parse_structure(data)
+
+# not complied enum type
+
+def parse_structure_EnumType_core_NOT_COMPLIED_TYPE(data):
+    from protocol import core
+    return core.NOT_COMPLIED_TYPE.parse_structure(data)

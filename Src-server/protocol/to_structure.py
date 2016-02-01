@@ -3467,3 +3467,9 @@ def to_structure_VectorType_RecordType_technoreports_NOTIFICATIONS(data):
 def to_structure_RecordType_technoreports_NOTIFICATIONS(data):
     from protocol import technoreports
     return technoreports.NOTIFICATIONS.to_structure(data)
+
+# not complied enum type
+
+def to_structure_EnumType_core_NOT_COMPLIED_TYPE(data):
+    from protocol import core
+    return core.NOT_COMPLIED_TYPE.to_structure(data)
