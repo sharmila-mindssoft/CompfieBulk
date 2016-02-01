@@ -704,17 +704,19 @@ function initClientMirror() {
 
 
     function approveCompliance(compliance_history_id, compliance_approval_status, 
-        remarks, documents, next_due_date, callback){
+        remarks, next_due_date, callback){
+        console.log()
         var request = [
             "ApproveCompliance",
             {
                 "compliance_history_id": compliance_history_id,
                 "approval_status": compliance_approval_status,
                 "remarks": remarks,
-                "documents": documents,
                 "next_due_date":next_due_date
             }
         ];
+        callerName = "api/client_transaction";
+        clientApiRequest(callerName, request, callback);
     }
 
     function getChartFilters(callback) {
@@ -741,6 +743,89 @@ function initClientMirror() {
         ];
         var callerName = "api/client_dashboard";
         clientApiRequest(callerName, request, callback); 
+    }
+
+/* Trend Chart */
+
+    function getTrendChart(country_ids, domain_ids, filter_type, 
+        filter_id, callback){
+        var request = [
+            "GetTrendChart",
+            {
+                "country_ids": country_ids,
+                "domain_ids": domain_ids,
+                "filter_type": filter_type,
+                "filter_ids": filter_id
+            }
+        ];
+        var callerName = "api/client_dashboard"
+        clientApiRequest(callerName, request, callback)
+    }
+    function getTrendChartDrillDown(country_ids, domain_ids, filter_type, 
+        filter_ids, year, callback){
+        var request = [
+            "GetTrendChartDrillDownData",
+            {
+                "country_ids": country_ids,
+                "domain_ids": domain_ids,
+                "filter_type": filter_type,
+                "filter_ids": filter_ids,
+                "year" : year
+            }
+        ];
+        var callerName = "api/client_dashboard"
+        clientApiRequest(callerName, request, callback)
+    }
+
+/* Settings */
+
+    function getSettings(callback){
+        var request = [
+            "GetSettings",
+            {}
+        ];
+        var callerName = "api/client_admin_settings"
+        clientApiRequest(callerName, request, callback)
+    }
+
+    function updateSettings(is_two_levels_of_approval, assignee_reminder_days, 
+        escalation_reminder_In_advance_days, escalation_reminder_days, callback){
+        var request = [
+            "UpdateSettings",
+            {
+               "is_two_levels_of_approval": is_two_levels_of_approval,
+                "assignee_reminder_days": assignee_reminder_days,
+                "escalation_reminder_In_advance_days": escalation_reminder_In_advance_days,
+                "escalation_reminder_days": escalation_reminder_days 
+            }  
+        ];
+        var callerName = "api/client_admin_settings"
+        clientApiRequest(callerName, request, callback)
+    }
+
+    /* Notifications */
+    
+    function getNotifications(notification_type, callback){
+        callerName = "api/general"
+        var request = [
+            "GetNotifications",
+            {
+                "notification_type" : notification_type
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function updateNotificationStatus(notification_id, has_read, callback){
+        callerName = "api/general"
+        var request = [
+            "UpdateNotificationStatus",
+            {
+                "notification_id" : notification_id,
+                "has_read" : has_read
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
     }
 
     return {
@@ -822,6 +907,13 @@ function initClientMirror() {
 
         getChartFilters: getChartFilters,
         getComplianceStatusChartData : getComplianceStatusChartData,
+        getTrendChart: getTrendChart,
+        getTrendChartDrillDown: getTrendChartDrillDown,
+
+        getSettings: getSettings,
+        updateSettings: updateSettings,
+        getNotifications: getNotifications,
+        updateNotificationStatus: updateNotificationStatus
     }
 }
 var client_mirror = initClientMirror();

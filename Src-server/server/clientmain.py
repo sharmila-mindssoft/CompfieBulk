@@ -11,7 +11,7 @@ from basics.ioloop import IOLoop
 from protocol import (
     clientadminsettings, clientmasters, clientreport,
     clienttransactions, clientuser, core, dashboard,
-    login
+    login, general
 )
 from server.clientdatabase import ClientDatabase
 from server.database import KnowledgeDatabase
@@ -133,6 +133,14 @@ class API(object):
     def handle_client_dashboard(self, request, db):
         return controller.process_client_dashboard_requests(request, db)
 
+    @api_request(clientadminsettings.RequestFormat)
+    def handle_client_admin_settings(self, request, db):
+        return controller.process_client_admin_settings_requests(request, db)
+
+    @api_request(general.RequestFormat)
+    def handle_general(self, request, db):
+        return controller.process_general_request(request, db)        
+
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
 )
@@ -146,7 +154,6 @@ class TemplateHandler(tornado.web.RequestHandler) :
 
     def get(self, url = None) :
         if url != None:
-
             # db = KnowledgeDatabase("localhost", "root", "123456", "mirror_knowledge")
             db = KnowledgeDatabase("198.143.141.73", "root", "Root!@#123", "mirror_knowledge")
             con = db.begin()
@@ -232,7 +239,9 @@ def run_server(port):
             ("/api/client_masters", api.handle_client_masters),
             ("/api/client_transaction", api.handle_client_transaction),
             ("/api/client_reports", api.handle_client_reports),
-            ("/api/client_dashboard", api.handle_client_dashboard)
+            ("/api/client_dashboard", api.handle_client_dashboard),
+            ("/api/client_admin_settings", api.handle_client_admin_settings),
+            ("/api/general", api.handle_general),
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

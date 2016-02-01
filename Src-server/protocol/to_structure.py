@@ -3455,6 +3455,44 @@ def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransac
         d[key] = value
     return d
 
+#
+# Trend Chart
+#
+def to_structure_OptionalType_VectorType_UnsignedIntegerType_32(data):
+    if data is None: return data
+    return to_structure_VectorType_UnsignedIntegerType_32(data)
+
+def to_structure_VectorType_RecordType_dashboard_TrendCompliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_dashboard_TrendCompliance(item))
+    return lst
+
+def to_structure_RecordType_dashboard_TrendCompliance(data):
+    from protocol import dashboard
+    return dashboard.TrendCompliance.to_structure(data)
+
+def to_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance(data):
+    data = parse_dictionary(data)
+    dict = []
+    for key, value in data.items():
+        key = to_structure_CustomTextType_100(key)
+        value = to_structure_VectorType_RecordType_dashboard_TrendCompliance(value)
+        dict.append([key, value])
+    return dict
+
+def to_structure_VectorType_RecordType_dashboard_TrendDrillDownData(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_dashboard_TrendDrillDownData(item))
+    return lst
+
+def to_structure_RecordType_dashboard_TrendDrillDownData(data):
+    from protocol import dashboard
+    return dashboard.TrendDrillDownData.to_structure(data)
+
 # Statutory Notifications (Techno)
 
 def to_structure_VectorType_RecordType_technoreports_NOTIFICATIONS(data):
@@ -3473,3 +3511,7 @@ def to_structure_RecordType_technoreports_NOTIFICATIONS(data):
 def to_structure_EnumType_core_NOT_COMPLIED_TYPE(data):
     from protocol import core
     return core.NOT_COMPLIED_TYPE.to_structure(data)
+
+def to_structure_OptionalType_CustomTextType_250(data):
+    if data is None: return data
+    return parse_custom_string(data, 250)

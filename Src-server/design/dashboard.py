@@ -62,8 +62,6 @@ GetNotCompliedChart = RecordType("GetNotCompliedChart", [
 GetTrendChart = RecordType("GetTrendChart", [
 	Field("country_id", COUNTRY_ID),
     Field("domain_id", DOMAIN_ID),
-    Field("from_date", DATE),
-    Field("to_date", DATE),
     Field("filter_type", FILTER_TYPE),
     Field("filter_id", Int8)
 ])
@@ -191,12 +189,13 @@ GetNotCompliedChartSuccess = RecordType("GetNotCompliedChartSuccess", [
 # Trend Chart
 
 CompliedMap = RecordType("CompliedMap", [
+	Field("year", Int8),
 	Field("total_compliances", Int8),
 	Field("complied_compliances_count", Int8)
 ])
 
 TrendData = RecordType("TrendData", [
-	Field("filter_name", FILTER_NAME),
+	Field("filter_id", FILTER_ID),
 	Field("complied_compliance", VectorType(CompliedMap))
 ])
 
@@ -291,6 +290,22 @@ DrillDownData = RecordType("DrillDownData", [
 	Field("address", ADDRESS),
 	Field("compliances", MapType(LEVEL_1_STATUTORY_NAME, VectorType(Level1Compliance))),
 	# Field("unit_wise_compliances", VectorType(UnitCompliance))
+])
+
+TrendCompliance = RecordType("TrendCompliance", [
+	Field("compliance_name", Text100),
+	Field("description", Text500),
+	Field("assignee_name", Text100)
+])
+
+# Trend Drill Down Data
+TrendDrillDownData = RecordType("TrendDrillDownData", [
+	Field("business_group", Text50),
+	Field("legal_entity", Text50),
+	Field("division", Text50),
+	Field("unit_name", Text100),
+	Field("address", ADDRESS),
+	Field("compliances", VectorType(TrendCompliance))
 ])
 
 GetComplianceStatusDrillDownDataSuccess = RecordType("GetComplianceStatusDrillDownDataSuccess", [

@@ -61,6 +61,21 @@ class Database(object) :
          12 : "Dec",
     }
 
+    end_day_of_month = {
+         1 : 31,
+         2 : 28,
+         3 : 31,
+         4 : 30,
+         5 : 31,
+         6 : 30,
+         7 : 31,
+         8 : 31,
+         9 : 30,
+         10 : 31,
+         11 : 30,
+         12 : 31,
+    }
+
     def cursor(self):
         return self._cursor
  
@@ -104,7 +119,6 @@ class Database(object) :
 
     def select_all(self, query) :
         cursor = self.cursor()
-        print cursor
         assert cursor is not None
         cursor.execute(query)
         return cursor.fetchall()
@@ -133,7 +147,6 @@ class Database(object) :
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         if client_id != None:
             return self.select_all(query, client_id)
         return self.select_all(query)
@@ -173,7 +186,6 @@ class Database(object) :
             else:
                 stringValue = stringValue+"'"+str(value)+"'"
         query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
-        print query
         if client_id != None:
             return self.execute(query, client_id)
         return self.execute(query)
@@ -197,7 +209,6 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
-        print query
         if client_id != None:
             return self.execute(query, client_id)
 
@@ -278,6 +289,7 @@ class Database(object) :
 
     def generate_password(self) : 
         password = self.generate_random()
+        password = "123456"
         return self.encrypt(password)
 
     def encrypt(self, value):
@@ -2013,8 +2025,6 @@ class KnowledgeDatabase(Database):
         tbl_statutory = "tbl_statutories"
         columns = ["statutory_mapping_ids", "updated_by"]
         
-        print difference
-        print mapping_id
         for x in difference :
             old_map_id =  [int(j) for j in old_statu_ids.get(x).split(',')]
             if mapping_id in old_map_id:
@@ -4037,7 +4047,6 @@ class KnowledgeDatabase(Database):
         return level_1_compliance
 
     def return_assigned_statutories_by_id(self, data):
-        print data
         client_statutory_id = data["client_statutory_id"]
         statutories = self.return_assigned_compliances_by_id(client_statutory_id)
         new_compliances = self.get_unassigned_compliances(
@@ -4478,4 +4487,29 @@ class KnowledgeDatabase(Database):
             technoreports.COUNTRY_WISE_NOTIFICATIONS(country_id = row[0], domain_id = row[1], notifications = notifications))
         return country_wise_notifications
        
+#
+#   Notifications
+#
+    def get_notifications(self, notification_type, session_user, client_id = None):
+        columns = "tn.notification_id, notification_text, link, "+\
+        "created_on, read_status"
+        join_type = "left join"
+        tables = [self.tblNotifications, self.tblNotificationsStatus ]
+        aliases = ["tn", "tns"]
+        join_conditions = ["tn.notification_id = tns.notification_id"]
+        where_condition = " tns.user_id ='%d'"%(session_user)
+        rows = self.get_data_from_multiple_tables(columns, tables, 
+            aliases, join_type, join_conditions, where_condition, client_id)
+        notifications = []
+        for row in rows:
+            notifications.append(general.Notification(row[0], row[1], row[2], 
+                bool(row[4]), self.datetime_to_string(row[3])))
+        return notifications
 
+    def update_notification_status(self, notification_id, has_read, 
+        session_user, client_id = None):
+        columns = ["read_status"]
+        values = [1 if has_read == True else 0]
+        condition = "notification_id = '%d' and user_id='%d'"% (
+            notification_id, session_user)
+        self.update(self.tblNotificationsStatus, columns, values, condition)

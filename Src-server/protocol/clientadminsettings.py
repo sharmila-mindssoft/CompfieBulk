@@ -8,7 +8,9 @@ from protocol.parse_structure import (
     parse_structure_UnsignedIntegerType_32,
     parse_structure_CustomTextType_100, parse_structure_Bool,
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_50,
-    parse_structure_VariantType_clientadminsettings_Request
+    parse_structure_VariantType_clientadminsettings_Request,
+    parse_structure_OptionalType_CustomTextType_250,
+    parse_structure_Float
 )
 from protocol.to_structure import (
     to_structure_CustomIntegerType_1_7,
@@ -18,7 +20,10 @@ from protocol.to_structure import (
     to_structure_SignedIntegerType_8, to_structure_CustomTextType_100,
     to_structure_Bool, to_structure_CustomTextType_20,
     to_structure_CustomTextType_50,
-    to_structure_VariantType_clientadminsettings_Request
+    to_structure_VariantType_clientadminsettings_Request,
+    to_structure_RecordType_clientadminsettings_PROFILE_DETAIL,
+    to_structure_OptionalType_CustomTextType_250,
+    to_structure_Float
 )
 
 #
@@ -153,7 +158,7 @@ class GetSettingsSuccess(Response):
             "assignee_reminder_days": to_structure_SignedIntegerType_8(self.assignee_reminder_days),
             "escalation_reminder_In_advance_days": to_structure_SignedIntegerType_8(self.escalation_reminder_In_advance_days),
             "escalation_reminder_days": to_structure_SignedIntegerType_8(self.escalation_reminder_days),
-            "profile_detail": to_structure_VectorType_RecordType_clientadminsettings_PROFILE_DETAIL(self.profile_detail),
+            "profile_detail": to_structure_RecordType_clientadminsettings_PROFILE_DETAIL(self.profile_detail),
         }
 
 class UpdateSettingsSuccess(Response):
@@ -208,16 +213,21 @@ class RequestFormat(object):
 #
 
 class PROFILE_DETAIL(object):
-    def __init__(self, contract_from, contract_to, no_of_user_licence, remaining_licence, licence_holders):
+    def __init__(self, contract_from, contract_to, no_of_user_licence, 
+        remaining_licence, licence_holders, total_file_space, used_space):
         self.contract_from = contract_from
         self.contract_to = contract_to
         self.no_of_user_licence = no_of_user_licence
         self.remaining_licence = remaining_licence
         self.licence_holders = licence_holders
+        self.total_file_space = total_file_space
+        self.used_space = used_space
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["contract_from", "contract_to", "no_of_user_licence", "remaining_licence", "licence_holders"])
+        data = parse_dictionary(data, ["contract_from", "contract_to", 
+            "no_of_user_licence", "remaining_licence", "licence_holders",
+            "total_file_space", "used_space"])
         contract_from = data.get("contract_from")
         contract_from = parse_structure_CustomTextType_20(contract_from)
         contract_to = data.get("contract_to")
@@ -228,7 +238,12 @@ class PROFILE_DETAIL(object):
         remaining_licence = parse_structure_UnsignedIntegerType_32(remaining_licence)
         licence_holders = data.get("licence_holders")
         licence_holders = parse_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER(licence_holders)
-        return PROFILE_DETAIL(contract_from, contract_to, no_of_user_licence, remaining_licence, licence_holders)
+        total_file_space = data.get("total_file_space")
+        total_file_space = parse_structure_Float(total_file_space)
+        used_space = data.get("used_space")
+        used_space = parse_structure_Float(used_space)
+        return PROFILE_DETAIL(contract_from, contract_to, no_of_user_licence, 
+            remaining_licence, licence_holders, total_file_space, used_space)
 
     def to_structure(self):
         return {
@@ -237,6 +252,8 @@ class PROFILE_DETAIL(object):
             "no_of_user_licence": to_structure_SignedIntegerType_8(self.no_of_user_licence),
             "remaining_licence": to_structure_SignedIntegerType_8(self.remaining_licence),
             "licence_holders": to_structure_VectorType_RecordType_clientadminsettings_LICENCE_HOLDER(self.licence_holders),
+            "total_file_space": to_structure_Float(self.total_file_space),
+            "used_space": to_structure_Float(self.used_space)
         }
 
 #
@@ -244,19 +261,17 @@ class PROFILE_DETAIL(object):
 #
 
 class LICENCE_HOLDER(object):
-    def __init__(self, user_id, user_name, email_id, contact_no, seating_unit_name, address, total_disk_space, used_disk_space):
+    def __init__(self, user_id, user_name, email_id, contact_no, seating_unit_name, address):
         self.user_id = user_id
         self.user_name = user_name
         self.email_id = email_id
         self.contact_no = contact_no
         self.seating_unit_name = seating_unit_name
         self.address = address
-        self.total_disk_space = total_disk_space
-        self.used_disk_space = used_disk_space
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "user_name", "email_id", "contact_no", "seating_unit_name", "address", "total_disk_space", "used_disk_space"])
+        data = parse_dictionary(data, ["user_id", "user_name", "email_id", "contact_no", "seating_unit_name", "address"])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         user_name = data.get("user_name")
@@ -268,12 +283,8 @@ class LICENCE_HOLDER(object):
         seating_unit_name = data.get("seating_unit_name")
         seating_unit_name = parse_structure_CustomTextType_100(seating_unit_name)
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
-        total_disk_space = data.get("total_disk_space")
-        total_disk_space = parse_structure_UnsignedIntegerType_32(total_disk_space)
-        used_disk_space = data.get("used_disk_space")
-        used_disk_space = parse_structure_UnsignedIntegerType_32(used_disk_space)
-        return LICENCE_HOLDER(user_id, user_name, email_id, contact_no, seating_unit_name, address, total_disk_space, used_disk_space)
+        address = parse_structure_OptionalType_CustomTextType_250(address)
+        return LICENCE_HOLDER(user_id, user_name, email_id, contact_no, seating_unit_name, address)
 
     def to_structure(self):
         return {
@@ -282,8 +293,6 @@ class LICENCE_HOLDER(object):
             "email_id": to_structure_CustomTextType_100(self.email_id),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
             "seating_unit_name": to_structure_CustomTextType_100(self.seating_unit_name),
-            "address": to_structure_CustomTextType_250(self.address),
-            "total_disk_space": to_structure_SignedIntegerType_8(self.total_disk_space),
-            "used_disk_space": to_structure_SignedIntegerType_8(self.used_disk_space),
+            "address": to_structure_OptionalType_CustomTextType_250(self.address)
         }
 

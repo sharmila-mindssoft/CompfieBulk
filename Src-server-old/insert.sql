@@ -193,6 +193,10 @@ VALUES (1, 1, 'usha@mindssoft.com', 'e10adc3949ba59abbe56e057f20f883e', 'Test-us
 INSERT INTO tbl_user_sessions(session_token, user_id, session_type_id) VALUES ("12c94b934d5f4b5ebebd4471d8b29cb8", 0, 1);
 INSERT INTO tbl_user_sessions(session_token, user_id, session_type_id) VALUES ("b4c59894336c4ee3b598f5e4bd2b276b", 1, 1);
 
+--tbl_notification_types
+INSERT INTO tbl_notification_types VALUES(1, "Notification");
+INSERT INTO tbl_notification_types VALUES(2, "Reminder");
+INSERT INTO tbl_notification_types VALUES(3, "Escalation");
 
 --Get Statutory Notifications Log
 

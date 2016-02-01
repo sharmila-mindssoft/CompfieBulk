@@ -429,14 +429,58 @@
 				unit_id =1
 				user_id =1
 				client_mirror.getUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, callback)
+			}
 
 			function approveCompliance(){
 				compliance_history_id = 1
-				compliance_approval_status = "Approve"
+				compliance_approval_status = "RejectConcurrence"
 				remarks = "Sample Remarks"
-				documents = ["document1","document2"]
-				next_due_date = "12-08-2016"
-				client_mirror.approveCompliance(approveCompliance(compliance_history_id, compliance_approval_status, remarks, documents, next_due_date,callback));
+				next_due_date = "12-Aug-2016"
+				client_mirror.approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date,callback);
+			}
+
+			function getTrendChart(){
+				country_ids = [1]
+				domain_ids = [1]
+				filter_type = "Unit"
+        		filter_ids = [1]
+        		client_mirror.getTrendChart(country_ids, domain_ids, filter_type, filter_ids, callback);
+			}
+			function getTrendChartDrillDown(){
+				country_ids = [1]
+				domain_ids = [1]
+				filter_type = "BusinessGroup"
+        		filter_ids = [1]
+        		year = 2010
+        		client_mirror.getTrendChartDrillDown(country_ids, domain_ids, filter_type, filter_ids, year, callback);
+			}
+			function getClientAdminSettings(){
+				client_mirror.getSettings(callback);
+			}
+			function updateClientAdminSettings(){
+				is_two_levels_of_approval= true;
+		        assignee_reminder_days= 2;
+		        escalation_reminder_In_advance_days= 2;
+		        escalation_reminder_days= 2;
+		        client_mirror.updateSettings(is_two_levels_of_approval, assignee_reminder_days, escalation_reminder_In_advance_days, escalation_reminder_days,callback);
+			}
+			function getNotifications(){
+				notification_type = "Notification"
+				mirror.getNotifications(notification_type, callback);
+			}
+			function getClientNotifications(){
+				notification_type = "Reminder"
+				client_mirror.getNotifications(notification_type, callback);
+			}
+			function updateNotificationStatus(){
+				notification_id = 1
+				has_read = true
+				mirror.updateNotificationStatus(notification_id, has_read, callback)
+			}
+			function updateClientNotificationStatus(){
+				notification_id = 2
+				has_read = true
+				client_mirror.updateNotificationStatus(notification_id, has_read, callback)	
 			}
 		</script>
 	</head>
@@ -643,6 +687,36 @@
 		<div>
 			<button onclick="getUnitWiseComplianceReport()">
 				Get Unit Wise Compliane Report
+			</button>
+		</div>
+		<div>
+			<button onclick="getTrendChart()">
+				Get Trend Chart
+			</button>
+			<button onclick="getTrendChartDrillDown()">
+				Get Trend Chart Drill Down Data
+			</button>
+		</div>
+		<div>
+			<button onclick="getClientAdminSettings()">
+				Get Client Admin Settings
+			</button>
+			<button onclick="updateClientAdminSettings()">
+				Update Client Admin Settings
+			</button>
+		</div>
+		<div>
+			<button onclick="getNotifications()">
+				Get Notifications
+			</button>
+			<button onclick="getClientNotifications()">
+				Get Client Notifications
+			</button>
+			<button onclick="updateNotificationStatus()">
+				Update Notification Status
+			</button>
+			<button onclick="updateClientNotificationStatus()">
+				Update Client Notification Status
 			</button>
 		</div>
 		<br>

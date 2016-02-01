@@ -586,7 +586,7 @@ class Notification(object):
         has_read = data.get("has_read")
         has_read = parse_structure_Bool(has_read)
         date_and_time = data.get("date_and_time")
-        date_and_time = parse_structure_Float(date_and_time)
+        date_and_time = parse_structure_CustomTextType_20(date_and_time)
         return Notification(notification_id, notification_text, extra_details, has_read, date_and_time)
 
     def to_structure(self):
@@ -595,7 +595,7 @@ class Notification(object):
             "notification_text": to_structure_CustomTextType_500(self.notification_text),
             "extra_details": to_structure_CustomTextType_500(self.extra_details),
             "has_read": to_structure_Bool(self.has_read),
-            "date_and_time": to_structure_Float(self.date_and_time),
+            "date_and_time": to_structure_CustomTextType_20(self.date_and_time),
         }
 
 #
