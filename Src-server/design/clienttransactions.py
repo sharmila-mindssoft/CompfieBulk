@@ -245,29 +245,25 @@ STATUTORYWISECOMPLIANCE = RecordType("STATUTORYWISECOMPLIANCE", [
 	Field("due_date", DATE)
 ])
 
-USERWISESTATUTORIES = RecordType("USERWISESTATUTORIES", [
-	Field("level_1_statutory_name", LEVEL_1_STATUTORY_NAME),
-	Field("compliances", VectorType(STATUTORYWISECOMPLIANCE))
-])
+# USERWISESTATUTORIES = RecordType("USERWISESTATUTORIES", [
+# 	Field("level_1_statutory_name", LEVEL_1_STATUTORY_NAME),
+# 	Field("compliances", VectorType(STATUTORYWISECOMPLIANCE))
+# ])
 
 USERWISEUNITS = RecordType("USERWISEUNITS", [
 	Field("unit_id", UNIT_ID),
 	Field("unit_name", UNIT_NAME) ,
 	Field("address", ADDRESS),
-	Field("statutories", VectorType(USERWISESTATUTORIES))
+	Field("statutories", MapType(LEVEL_1_STATUTORY_NAME, VectorType(STATUTORYWISECOMPLIANCE)))
 ])
 
 USERWISECOMPLIANCE = RecordType("USERWISECOMPLIANCE", [
-	Field("user_id", USER_ID),
-	Field("user_name", EMPLOYEE_NAME),
-	Field("seating_unit", UNIT_NAME),
-	Field("address", ADDRESS),
 	Field("no_of_compliances", NO_OF_COMPLIANCES),
 	Field("units", VectorType(USERWISEUNITS))
 ])
 
 GetUserwiseCompliancesSuccess = RecordType("GetUserwiseCompliancesSuccess", [
-	Field("user_wise_compliances", VectorType(USERWISECOMPLIANCE)),
+	Field("user_wise_compliances", MapType(USER_ID, VectorType(USERWISECOMPLIANCE))),
 	Field("users", VectorType(ASSIGNCOMPLIANCEUSERS))
 ])
 
