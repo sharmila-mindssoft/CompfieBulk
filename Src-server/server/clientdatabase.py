@@ -1363,7 +1363,8 @@ class ClientDatabase(Database):
         query = "SELECT t1.user_id, t1.employee_name, t1.employee_code, \
             t1.seating_unit_id, t1.user_level, \
             group_concat(distinct t2.domain_id) domain_ids, \
-            group_concat(distinct t3.unit_id) unit_ids \
+            group_concat(distinct t3.unit_id) unit_ids, \
+            address\
             FROM tbl_users t1 \
             INNER JOIN tbl_user_domains t2\
             ON t1.user_id = t2.user_id \
@@ -1376,7 +1377,7 @@ class ClientDatabase(Database):
         columns = [
             "user_id", "employee_name", "employee_code",
             "seating_unit_id", "user_level",
-            "domain_ids", "unit_ids"
+            "domain_ids", "unit_ids", "address"
         ]
         result = self.convert_to_dict(rows, columns)
         seating_unit_users = {}
@@ -1395,7 +1396,8 @@ class ClientDatabase(Database):
                 r["user_level"],
                 unit_id,
                 unit_ids,
-                domain_ids
+                domain_ids,
+                r["address"]
             )
             user_list = seating_unit_users.get(unit_id)
             if user_list is None :
@@ -3280,3 +3282,97 @@ class ClientDatabase(Database):
         condition = "notification_id = '%d' and user_id='%d'"% (
             notification_id, session_user)
         self.update(self.tblNotificationUserLog , columns, values, condition, client_id)
+
+#
+# ReAssign Compliance
+#
+    
+    def get_user_wise_compliance(self, session_user, client_id):
+        # upcoming compliance
+        user_id = session_user
+        if session_user == 0 :
+            user_id = '%'
+
+        upcoming = "SELECT T1.unit_id, \
+            T1.compliance_id, T1.statutory_dates, T1.assignee, \
+            T1.due_date, T1.validity_date, \
+            T2.compliance_task, T2.document_name,\
+            T2.compliance_description, T1.statutory_dates,\
+            frequency, ''\
+            FROM tbl_assigned_compliances T1 \
+            INNER JOIN tbl_compliances T2 \
+            ON T1.compliance_id = T2.compliance_id \
+            INNER JOIN tbl_compliance_frequency T3 \
+            ON T2.frequency_id = T3.frequency_id \
+            INNER JOIN tbl_client_statutories T4 \
+            ON T1.unit_id = T4.unit_id \
+            AND T1.country_id = T4.country_id \
+            INNER JOIN tbl_user_countries T5 \
+            ON T1.country_id = T5.country_id \
+            INNER JOIN tbl_user_domains T6 \
+            ON T4.domain_id = T6.domain_id  \
+            AND T5.user_id = T6.user_id \
+            INNER JOIN tbl_users T7 \
+            ON T6.user_id = T7.user_id \
+            WHERE T1.due_date > CURDATE() \
+            AND T1.is_active = 1 \
+            AND T1.compliance_id NOT IN ( \
+                SELECT DISTINCT distinct TA.compliance_id \
+                FROM tbl_assigned_compliances TA \
+                INNER JOIN tbl_compliance_history TC \
+                ON TA.compliance_id = TC.compliance_id \
+                AND TA.unit_id = TC.unit_id \
+                WHERE TA.due_date > CURDATE() \
+                AND TA.is_active = 1 \
+                AND (TA.due_date = TC.due_date \
+                OR TA.due_date = TC.next_due_date ) \
+                AND TC.approve_status = 1 \
+            ) \
+            AND T7.user_id = %s" % (user_id)
+
+        columns = [
+            "unit_id", "compliance_id", "statutory_dates",
+            "assignee", "due_date", "validity_date",
+            "compliance_task", "document_name", 
+            "compliance_description", "statutory_dates",  
+            "frequency", "compliance_history_id"
+        ]
+        rows = self.select_all(upcoming, client_id)
+        result = self.convert_to_dict(rows, columns)
+
+        ongoin = "SELECT T1.unit_id, \
+            T1.compliance_id, T1.statutory_dates, T1.assignee, \
+            T1.due_date, T1.validity_date, \
+            T2.compliance_task, T2.document_name,\
+            T2.compliance_description, T1.statutory_dates,\
+            frequency, ''\
+            FROM tbl_assigned_compliances T1 \
+            INNER JOIN tbl_compliances T2 \
+            ON T1.compliance_id = T2.compliance_id \
+            INNER JOIN tbl_compliance_frequency T3 \
+            ON T2.frequency_id = T3.frequency_id \
+            INNER JOIN tbl_client_statutories T4 \
+            ON T1.unit_id = T4.unit_id \
+            AND T1.country_id = T4.country_id \
+            INNER JOIN tbl_user_countries T5 \
+            ON T1.country_id = T5.country_id \
+            INNER JOIN tbl_user_domains T6 \
+            ON T4.domain_id = T6.domain_id  \
+            AND T5.user_id = T6.user_id \
+            INNER JOIN tbl_users T7 \
+            ON T6.user_id = T7.user_id \
+            WHERE T1.due_date > CURDATE() \
+            AND T1.is_active = 1 \
+            AND T1.compliance_id NOT IN ( \
+                SELECT DISTINCT distinct TA.compliance_id \
+                FROM tbl_assigned_compliances TA \
+                INNER JOIN tbl_compliance_history TC \
+                ON TA.compliance_id = TC.compliance_id \
+                AND TA.unit_id = TC.unit_id \
+                WHERE TA.due_date > CURDATE() \
+                AND TA.is_active = 1 \
+                AND (TA.due_date = TC.due_date \
+                OR TA.due_date = TC.next_due_date ) \
+                AND TC.approve_status = 1 \
+            ) \
+            AND T7.user_id = %s" % (user_id)
