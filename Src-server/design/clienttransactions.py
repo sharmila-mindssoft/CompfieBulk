@@ -13,7 +13,7 @@ from core import (
 __all__=  [
 	"Request", "Response", "RequestFormat", "ASSINGED_COMPLIANCE", "REASSIGNED_COMPLIANCE",
 	"PAST_RECORD_COMPLIANCE", "UNIT_WISE_STATUTORIES", 
-	"UNIT_WISE_COMPLIANCE","ASSIGNCOMPLIANCEUSERS","STATUTORYWISECOMPLIANCE",
+	"UNIT_WISE_COMPLIANCE","ASSIGNCOMPLIANCEUSERS","STATUTORY_WISE_COMPLIANCE",
 	"USERWISESTATUTORIES","USERWISEUNITS","USERWISECOMPLIANCE","APPROVALCOMPLIANCE",
 	"APPORVALCOMPLIANCELIST", "STATUTORY_WISE_COMPLIANCES",
 	"UnitStatutoryCompliances"
@@ -235,26 +235,27 @@ SaveAssignedComplianceSuccess = RecordType("SaveAssignedComplianceSuccess", [
 
 ### Reassign Compliance
 
-STATUTORYWISECOMPLIANCE = RecordType("STATUTORYWISECOMPLIANCE", [
+STATUTORY_WISE_COMPLIANCE = RecordType("STATUTORY_WISE_COMPLIANCE", [
 	Field("compliance_history_id",COMPLIANCE_HISTORY_ID),
 	Field("compliance_id", COMPLIANCE_ID),
 	Field("compliance_name", COMPLIANCE_TASK_NAME),
 	Field("description", DESCRIPTION),
 	Field("compliance_frequency", COMPLIANCE_FREQUENCY),
 	Field("statutory_date", StatutoryDateList),
-	Field("due_date", DATE)
+	Field("due_date", DATE),
+	Field("validity_date", DATE)
 ])
 
 # USERWISESTATUTORIES = RecordType("USERWISESTATUTORIES", [
 # 	Field("level_1_statutory_name", LEVEL_1_STATUTORY_NAME),
-# 	Field("compliances", VectorType(STATUTORYWISECOMPLIANCE))
+# 	Field("compliances", VectorType(STATUTORY_WISE_COMPLIANCE))
 # ])
 
 USERWISEUNITS = RecordType("USERWISEUNITS", [
 	Field("unit_id", UNIT_ID),
 	Field("unit_name", UNIT_NAME) ,
 	Field("address", ADDRESS),
-	Field("statutories", MapType(LEVEL_1_STATUTORY_NAME, VectorType(STATUTORYWISECOMPLIANCE)))
+	Field("statutories", MapType(LEVEL_1_STATUTORY_NAME, VectorType(STATUTORY_WISE_COMPLIANCE)))
 ])
 
 USERWISECOMPLIANCE = RecordType("USERWISECOMPLIANCE", [
