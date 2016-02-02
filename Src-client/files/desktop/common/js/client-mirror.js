@@ -516,15 +516,6 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    /*function getComplianceDetailsReportFilters(callback){
-        callerName = "api/client_reports"
-        var request = [
-            "GetComplianceDetailsReportFilters",
-            {}
-        ];
-        clientApiRequest(callerName, request, callback);   
-    }*/
-
     // 
     // Statutory settings
     // 
