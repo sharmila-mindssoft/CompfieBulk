@@ -840,6 +840,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function updateComplianceDetail(callback){
+        
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -927,7 +931,8 @@ function initClientMirror() {
         getNotifications: getNotifications,
         updateNotificationStatus: updateNotificationStatus,
 
-        getComplianceDetail: getComplianceDetail
+        getComplianceDetail: getComplianceDetail,
+        updateComplianceDetail: updateComplianceDetail
     }
 }
 var client_mirror = initClientMirror();

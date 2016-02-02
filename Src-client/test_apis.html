@@ -485,6 +485,14 @@
 			function getComplianceDetail(){
 				client_mirror.getComplianceDetail(callback);
 			}
+			function updateComplianceDetail(){
+				"compliance_history_id": 1,
+		        "documents": ["Document1"], 
+		        "completion_date": "25-Jan-2016",
+		        "validity_date": "25-Jan-2017",
+		        "next_due_date": "24-Jan-2017",
+		        "remarks": "Sample Remarks"
+			}
 		</script>
 	</head>
 	<body>
@@ -725,6 +733,9 @@
 		<div>
 			<button onclick="getComplianceDetail()">
 				Get Compliance Detail
+			</button>
+			<button onclick="updateComplianceDetail()">
+				Update Compliance Detail
 			</button>
 		</div>
 		<br>
