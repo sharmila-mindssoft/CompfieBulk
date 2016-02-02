@@ -193,6 +193,7 @@ class TemplateHandler(tornado.web.RequestHandler) :
 #
 
 TEMPLATE_PATHS = [
+    ("/", "files/desktop/login/login.html", "files/mobile/login/login.html", {}),
     ("/login", "files/desktop/login/login.html", "files/mobile/login/login.html", {}),
     ("/test", "test_apis.html", "", {}),
     ("/home", "files/desktop/home/home.html", None, {}),
@@ -250,19 +251,16 @@ def run_server(port):
     io_loop = IOLoop()  
 
     def delay_initialize():
-
         db = KnowledgeDatabase(
             "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
         )
-        
-
         # db = KnowledgeDatabase(
         #     "localhost", "root", "123456", "mirror_knowledge"
         # )
         db.begin()
         web_server = WebServer(io_loop)
 
-        web_server.url("/", GET=handle_root)
+        # web_server.url("/", GET=handle_root)
 
         for url, path_desktop, path_mobile, parameters in TEMPLATE_PATHS :
             args = {

@@ -46,28 +46,22 @@ GetComplianceStatusDrillDownData = RecordType("GetComplianceStatusDrillDownData"
 
 
 GetEscalationsChart = RecordType("GetEscalationsChart", [
-	Field("country_id", COUNTRY_ID),
-    Field("domain_id", DOMAIN_ID),
-    Field("from_date", DATE),
-    Field("to_date", DATE),
+	Field("country_ids", VectorType(COUNTRY_ID)),
+    Field("domain_ids", VectorType(DOMAIN_ID)),
     Field("filter_type", FILTER_TYPE),
-    Field("filter_id", Int8)
+    Field("filter_ids",  VectorType(Int8))
 ])
 
 GetNotCompliedChart = RecordType("GetNotCompliedChart", [
-	Field("country_id", COUNTRY_ID),
-    Field("domain_id", DOMAIN_ID),
-    Field("from_date", DATE),
-    Field("to_date", DATE),
+	Field("country_ids", VectorType(COUNTRY_ID)),
+    Field("domain_ids", VectorType(DOMAIN_ID)),
     Field("filter_type", FILTER_TYPE),
-    Field("filter_id", Int8)
+    Field("filter_ids", VectorType((Int8))
 ])
 
 GetTrendChart = RecordType("GetTrendChart", [
 	Field("country_id", COUNTRY_ID),
     Field("domain_id", DOMAIN_ID),
-    Field("from_date", DATE),
-    Field("to_date", DATE),
     Field("filter_type", FILTER_TYPE),
     Field("filter_id", Int8)
 ])
@@ -96,8 +90,9 @@ GetAssigneeWiseComplianceDrillDown = RecordType("GetAssigneeWiseComplianceDrillD
 
 
 GetEscalationsDrillDownData = RecordType("GetEscalationsDrillDownData", [
+	Field("domain_ids", VectorType(DOMAIN_ID)),
 	Field("filter_type", FILTER_TYPE),
-	Field("filter_id", FILTER_ID),
+	Field("filter_ids", VectorType(FILTER_ID)),
 	Field("year", Int8)
 ])
 
@@ -108,8 +103,11 @@ GetComplianceApplicabilityStatusDrillDown = RecordType("GetComplianceApplicabili
 ])
 
 GetNotCompliedDrillDown = RecordType("GetNotCompliedDrillDown", [
+	Field("country_ids", VectorType(COUNTRY_ID)),
+	Field("domain_ids", VectorType(DOMAIN_ID)),
 	Field("filter_type", FILTER_TYPE),
-	Field("filter_id", FILTER_ID)
+	Field("filter_id", FILTER_ID),
+	Field("not_complied_type", Text)
 ])
 
 GetTrendChartDrillDownData = RecordType("GetTrendChartDrillDownData", [
@@ -191,12 +189,13 @@ GetNotCompliedChartSuccess = RecordType("GetNotCompliedChartSuccess", [
 # Trend Chart
 
 CompliedMap = RecordType("CompliedMap", [
+	Field("year", Int8),
 	Field("total_compliances", Int8),
 	Field("complied_compliances_count", Int8)
 ])
 
 TrendData = RecordType("TrendData", [
-	Field("filter_name", FILTER_NAME),
+	Field("filter_id", FILTER_ID),
 	Field("complied_compliance", VectorType(CompliedMap))
 ])
 
@@ -287,7 +286,26 @@ DrillDownData = RecordType("DrillDownData", [
 	Field("business_group", Text50),
 	Field("legal_entity", Text50),
 	Field("division", Text50),
-	Field("unit_wise_compliances", VectorType(UnitCompliance))
+	Field("unit_name", Text100),
+	Field("address", ADDRESS),
+	Field("compliances", MapType(LEVEL_1_STATUTORY_NAME, VectorType(Level1Compliance))),
+	# Field("unit_wise_compliances", VectorType(UnitCompliance))
+])
+
+TrendCompliance = RecordType("TrendCompliance", [
+	Field("compliance_name", Text100),
+	Field("description", Text500),
+	Field("assignee_name", Text100)
+])
+
+# Trend Drill Down Data
+TrendDrillDownData = RecordType("TrendDrillDownData", [
+	Field("business_group", Text50),
+	Field("legal_entity", Text50),
+	Field("division", Text50),
+	Field("unit_name", Text100),
+	Field("address", ADDRESS),
+	Field("compliances", VectorType(TrendCompliance))
 ])
 
 GetComplianceStatusDrillDownDataSuccess = RecordType("GetComplianceStatusDrillDownDataSuccess", [
