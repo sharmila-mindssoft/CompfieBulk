@@ -69,9 +69,7 @@ function loadresult(filterList){
     var clone1=tableRow1.clone();
     $('.tbody-assignee').append(clone1);
 
-    
     for(var compliancelist in compliancelists){
-  
       var tableRow2=$('#assignee-name-templates .table-assignee-name .table-row-assignee-name');
       var clone2=tableRow2.clone();
       $('.tbl_assigneeheading', clone2).html(compliancelists[compliancelist]["assignee"]);

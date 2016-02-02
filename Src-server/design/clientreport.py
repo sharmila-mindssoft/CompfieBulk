@@ -289,7 +289,7 @@ ServiceProviderCompliance = RecordType("ServiceProviderCompliance", [
 	Field("contract_to", Text20),
 	Field("contact_person", Text50),
 	Field("contact_no", CONTACT_NUMBER),
-	Field("unit_wise_compliance", VectorType(UnitWiseCompliance))
+	Field("unit_wise_compliance", VectorType(ComplianceUnit))
 ])
 
 GetServiceProviderWiseComplianceSuccess =  RecordType(

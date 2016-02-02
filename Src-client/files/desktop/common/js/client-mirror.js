@@ -516,14 +516,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getComplianceDetailsReportFilters(callback){
+    /*function getComplianceDetailsReportFilters(callback){
         callerName = "api/client_reports"
         var request = [
             "GetComplianceDetailsReportFilters",
             {}
         ];
         clientApiRequest(callerName, request, callback);   
-    }
+    }*/
 
     // 
     // Statutory settings
@@ -666,8 +666,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
     
-    function getUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, 
-        division_id, unit_id, user_id, callback) {
+    function getUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, callback) {
         var request = [
             "GetUnitwisecomplianceReport",
             {
@@ -684,8 +683,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
     
-    function getAssigneewisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, 
-        division_id, unit_id, user_id, callback) {
+    function getAssigneewisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, callback) {
         var request = [
             "GetAssigneewisecomplianceReport",
             {
@@ -703,8 +701,7 @@ function initClientMirror() {
     }
 
 
-    function approveCompliance(compliance_history_id, compliance_approval_status, 
-        remarks, documents, next_due_date, callback){
+    function approveCompliance(compliance_history_id, compliance_approval_status, remarks, documents, next_due_date, callback){
         var request = [
             "ApproveCompliance",
             {
@@ -742,6 +739,60 @@ function initClientMirror() {
         var callerName = "api/client_dashboard";
         clientApiRequest(callerName, request, callback); 
     }
+
+    function getServiceProviderReportFilters(callback) {
+        var request = [
+            "GetServiceProviderReportFilters",
+            {}
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getServiceProviderWiseCompliance(country_id, domain_id, statutory_id, unit_id, service_provider_id, callback) {
+        var request = [
+            "GetServiceProviderWiseCompliance",
+            {
+                "country_id": country_id,
+                "domain_id": domain_id,
+                "statutory_id": statutory_id,
+                "unit_id": unit_id,
+                "service_provider_id"  : service_provider_id
+            }
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getComplianceDetailsReportFilters(callback) {
+        var request = [
+            "GetComplianceDetailsReportFilters",
+            {}
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+    
+    
+    function getComplianceDetailsReport(country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status, callback) {
+        var request = [
+            "GetComplianceDetailsReport",
+            {
+                "country_id": country_id,
+                "domain_id": domain_id,
+                "statutory_id": statutory_id,
+                "unit_id": unit_id,
+                "compliance_id"  : compliance_id,
+                "assignee_id"  : assignee_id,
+                "from_date"  : from_date,
+                "to_date"  : to_date,
+                "compliance_status"  : compliance_status
+            }
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+
 
     return {
         log: log,
@@ -816,6 +867,14 @@ function initClientMirror() {
         getClientReportFilters: getClientReportFilters,
         getUnitwisecomplianceReport: getUnitwisecomplianceReport,
         getAssigneewisecomplianceReport: getAssigneewisecomplianceReport,
+
+        getServiceProviderReportFilters: getServiceProviderReportFilters,
+        getServiceProviderWiseCompliance: getServiceProviderWiseCompliance,
+
+        getComplianceDetailsReportFilters: getComplianceDetailsReportFilters,
+        getComplianceDetailsReport: getComplianceDetailsReport,
+
+        
 
         getComplianceApprovalList: getComplianceApprovalList,
         approveCompliance: approveCompliance,
