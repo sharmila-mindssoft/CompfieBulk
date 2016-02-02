@@ -1,4 +1,4 @@
-var CLIENT_BASE_URL = "http://localhost:8090/";
+var CLIENT_BASE_URL = "http://localhost:8080/";
 function initClientMirror() {
     var DEBUG = true;
 
@@ -26,9 +26,9 @@ function initClientMirror() {
         if(typeof pathArray[2] === 'undefined'){
             return null;
         }else{
-            return pathArray[2]   
+            return pathArray[2]
         }
-        
+
     }
 
     // function updateUser_Session(user) {
@@ -89,11 +89,14 @@ function initClientMirror() {
             "session_token": sessionToken,
             "request": request
         };
+        var body = [
+            sessionToken, requestFrame
+        ]
         jQuery.post(
             CLIENT_BASE_URL + callerName,
             toJSON(requestFrame),
             function (data) {
-                var data = parseJSON(data);
+                var data = parseJSON(body);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -103,9 +106,9 @@ function initClientMirror() {
                     callback(null, response);
                 }
                 else{
-                    callback(status, null) 
+                    callback(status, null)
                 }
-                
+
             }
         )
         .fail(
@@ -118,16 +121,20 @@ function initClientMirror() {
         );
     }
 
-    // Login function 
+    // Login function
     function login(username, password, short_name, callback) {
         var request = [
-            "Login", {
-                "login_type": "Web",
-                "username": username,
-                "password": password,
-                "short_name": short_name
-            }
+            short_name,
+            [
+                "Login", {
+                    "login_type": "Web",
+                    "username": username,
+                    "password": password,
+                    "short_name": short_name
+                }
+            ]
         ]
+
         jQuery.post(
             CLIENT_BASE_URL + "api/login",
             toJSON(request),
@@ -141,7 +148,7 @@ function initClientMirror() {
                     callback(null, response);
                 }
                 else {
-                    callback(status, null); 
+                    callback(status, null);
                 }
             }
         )
@@ -150,7 +157,7 @@ function initClientMirror() {
         sessionToken = getSessionToken()
         if (sessionToken == null)
             return false
-        else 
+        else
             return false
     }
     function logout(callback) {
@@ -172,7 +179,7 @@ function initClientMirror() {
                     callback(null, response);
                 }
                 else {
-                    callback(status, null); 
+                    callback(status, null);
                 }
             }
         )
@@ -210,7 +217,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function validateResetToken(resetToken, 
+    function validateResetToken(resetToken,
         callback) {
         callerName = "api/login"
         var request = [
@@ -223,7 +230,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function resetPassword(resetToken, newPassword, 
+    function resetPassword(resetToken, newPassword,
         callback) {
         callerName = "api/login"
         var request = [
@@ -237,7 +244,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    // Client User Group  
+    // Client User Group
     function getClientUserGroups(callback) {
         callerName = "api/client_masters"
         var request = [
@@ -255,7 +262,7 @@ function initClientMirror() {
     }
 
     function saveClientUserGroup(userGroupDetail, callback) {
-        callerName = "api/client_masters"  
+        callerName = "api/client_masters"
         var request = [
             "SaveUserPrivileges",
             userGroupDetail
@@ -280,7 +287,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeClientUserGroupStatus(userGroupId, isActive, 
+    function changeClientUserGroupStatus(userGroupId, isActive,
         callback) {
         callerName = "api/client_masters"
         var request = [
@@ -293,7 +300,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-     // Service Providers  
+     // Service Providers
     function getServiceProviders(callback) {
         callerName = "api/client_masters"
         var request = [
@@ -335,9 +342,9 @@ function initClientMirror() {
         }
     }
 
-    function updateServiceProvider(serviceProviderDetail, 
+    function updateServiceProvider(serviceProviderDetail,
         callback) {
-        callerName = "api/client_masters"  
+        callerName = "api/client_masters"
         var request = [
             "UpdateServiceProvider",
             serviceProviderDetail
@@ -345,7 +352,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeServiceProviderStatus(serviceProviderId, 
+    function changeServiceProviderStatus(serviceProviderId,
         isActive, callback) {
         callerName = "api/client_masters"
         var request = [
@@ -456,7 +463,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function closeUnit(unitId, password, callback, 
+    function closeUnit(unitId, password, callback,
         failure_callback){
         callerName = "api/client_masters"
         var request = [
@@ -489,7 +496,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId, 
+    function getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId,
         unitId, domainIds, callback){
         callerName = "api/techno"
         var request = [
@@ -522,12 +529,12 @@ function initClientMirror() {
             "GetComplianceDetailsReportFilters",
             {}
         ];
-        clientApiRequest(callerName, request, callback);   
+        clientApiRequest(callerName, request, callback);
     }
 
-    // 
+    //
     // Statutory settings
-    // 
+    //
     function getStatutorySettings(callback) {
         callerName = "api/client_transaction";
         var request = [
@@ -556,7 +563,7 @@ function initClientMirror() {
 
     function updateStatutorySettings(unitId, statutories, callback){
         var request = [
-            "UpdateStatutorySettings", 
+            "UpdateStatutorySettings",
             {
                 "unit_id": unitId,
                 "statutories": statutories
@@ -566,9 +573,9 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    // 
+    //
     // Assign compliance
-    // 
+    //
 
     function getAssignComplianceFormData(callback){
         var request = [
@@ -620,12 +627,12 @@ function initClientMirror() {
             }
         ];
         var callerName = "api/client_transaction";
-        clientApiRequest(callerName, request, callback);   
+        clientApiRequest(callerName, request, callback);
     }
 
-    // 
+    //
     // Past Records
-    // 
+    //
 
     function getPastRecordsFormData(callback){
        var request = [
@@ -635,7 +642,7 @@ function initClientMirror() {
        clientApiRequest("api/client_transaction", request, callback);
     }
 
-    function getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_id, 
+    function getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_id,
                     frequency_id, callback){
         var request = [
             "GetStatutoriesByUnit",
@@ -646,8 +653,8 @@ function initClientMirror() {
                 "compliance_frequency" : frequency_id
             }
         ]
-        clientApiRequest("api/client_transaction", request, callback);  
-    } 
+        clientApiRequest("api/client_transaction", request, callback);
+    }
 
     function getComplianceApprovalList(callback){
         var request = [
@@ -665,8 +672,8 @@ function initClientMirror() {
         callerName = "api/client_reports";
         clientApiRequest(callerName, request, callback);
     }
-    
-    function getUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, 
+
+    function getUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id,
         division_id, unit_id, user_id, callback) {
         var request = [
             "GetUnitwisecomplianceReport",
@@ -683,8 +690,8 @@ function initClientMirror() {
         callerName = "api/client_reports";
         clientApiRequest(callerName, request, callback);
     }
-    
-    function getAssigneewisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, 
+
+    function getAssigneewisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id,
         division_id, unit_id, user_id, callback) {
         var request = [
             "GetAssigneewisecomplianceReport",
@@ -703,7 +710,7 @@ function initClientMirror() {
     }
 
 
-    function approveCompliance(compliance_history_id, compliance_approval_status, 
+    function approveCompliance(compliance_history_id, compliance_approval_status,
         remarks, next_due_date, callback){
         console.log()
         var request = [
@@ -725,7 +732,7 @@ function initClientMirror() {
             {}
         ];
         var callerName = "api/client_dashboard";
-        clientApiRequest(callerName, request, callback);         
+        clientApiRequest(callerName, request, callback);
     }
 
     function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate,  callback) {
@@ -742,12 +749,12 @@ function initClientMirror() {
             }
         ];
         var callerName = "api/client_dashboard";
-        clientApiRequest(callerName, request, callback); 
+        clientApiRequest(callerName, request, callback);
     }
 
 /* Trend Chart */
 
-    function getTrendChart(country_ids, domain_ids, filter_type, 
+    function getTrendChart(country_ids, domain_ids, filter_type,
         filter_id, callback){
         var request = [
             "GetTrendChart",
@@ -761,7 +768,7 @@ function initClientMirror() {
         var callerName = "api/client_dashboard"
         clientApiRequest(callerName, request, callback)
     }
-    function getTrendChartDrillDown(country_ids, domain_ids, filter_type, 
+    function getTrendChartDrillDown(country_ids, domain_ids, filter_type,
         filter_ids, year, callback){
         var request = [
             "GetTrendChartDrillDownData",
@@ -788,7 +795,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback)
     }
 
-    function updateSettings(is_two_levels_of_approval, assignee_reminder_days, 
+    function updateSettings(is_two_levels_of_approval, assignee_reminder_days,
         escalation_reminder_In_advance_days, escalation_reminder_days, callback){
         var request = [
             "UpdateSettings",
@@ -796,15 +803,15 @@ function initClientMirror() {
                "is_two_levels_of_approval": is_two_levels_of_approval,
                 "assignee_reminder_days": assignee_reminder_days,
                 "escalation_reminder_In_advance_days": escalation_reminder_In_advance_days,
-                "escalation_reminder_days": escalation_reminder_days 
-            }  
+                "escalation_reminder_days": escalation_reminder_days
+            }
         ];
         var callerName = "api/client_admin_settings"
         clientApiRequest(callerName, request, callback)
     }
 
     /* Notifications */
-    
+
     function getNotifications(notification_type, callback){
         callerName = "api/general"
         var request = [
@@ -830,7 +837,7 @@ function initClientMirror() {
 
     return {
         log: log,
-        toJSON: toJSON, 
+        toJSON: toJSON,
         parseJSON: parseJSON,
 
         initSession: initSession,
@@ -854,7 +861,7 @@ function initClientMirror() {
 
         getSaveClientUserGroupDict: getSaveClientUserGroupDict,
         saveClientUserGroup: saveClientUserGroup,
-        getUpdateClientUserGroupDict: getUpdateClientUserGroupDict, 
+        getUpdateClientUserGroupDict: getUpdateClientUserGroupDict,
         updateClientUserGroup: updateClientUserGroup,
         changeClientUserGroupStatus: changeClientUserGroupStatus,
         getClientUserGroups: getClientUserGroups,

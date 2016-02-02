@@ -2,7 +2,7 @@
 
 import argparse
 import socket
-from server.clientmain import run_server
+from webfrontend.main import run_web_front_end
 
 args_parser = argparse.ArgumentParser()
 args_parser.add_argument(
@@ -23,6 +23,7 @@ def parse_port(port):
     except Exception:
         return None
 
+
 def parse_ip_address(ip_address):
     ip = None
     port = None
@@ -41,10 +42,10 @@ def parse_ip_address(ip_address):
     return (ip, port)
 
 
-def main() :
+def main():
     args = args_parser.parse_args()
     port = parse_port(args.port)
-    if port is None :
+    if port is None:
         msg = "error: port is not in PORT format: %s"
         print msg % (args.port,)
         return
@@ -55,7 +56,7 @@ def main() :
         msg = "error: ip address is not in IPADDRESS:PORT format: %s"
         print msg % (args.knowledge_server_ip_address,)
         return
-    run_server(port, knowledge_server_ip_address)
+    run_web_front_end(port, knowledge_server_ip_address)
 
-if __name__ == "__main__" :
+if __name__ == "__main__":
     main()

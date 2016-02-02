@@ -7,29 +7,32 @@ import datetime
 import re
 import uuid
 import json
-
 from types import *
 from protocol import (
     core, knowledgereport, technomasters,
     technotransactions, technoreports,general
 )
+from distribution.protocol import (
+    Company, IPAddress
+)
 
 __all__ = [
     "KnowledgeDatabase", "Database"
 ]
-    
+
 class Database(object) :
     def __init__(
-        self, 
-        mysqlHost, mysqlUser, 
+        self,
+        mysqlHost, mysqlPort, mysqlUser,
         mysqlPassword, mysqlDatabase
     ):
         self._mysqlHost = mysqlHost
+        self._mysqlPort = mysqlPort
         self._mysqlUser = mysqlUser
         self._mysqlPassword = mysqlPassword
         self._mysqlDatabase = mysqlDatabase
         self._connection = None
-        self._cursor = None 
+        self._cursor = None
 
     integer_months = {
         "Jan": 1,
@@ -78,13 +81,13 @@ class Database(object) :
 
     def cursor(self):
         return self._cursor
- 
+
     def connect(self):
         assert self._connection is None
         connection = mysql.connect(
-            host=self._mysqlHost, user=self._mysqlUser, 
+            host=self._mysqlHost, user=self._mysqlUser,
             passwd=self._mysqlPassword, db=self._mysqlDatabase,
-            port=3306
+            port=self._mysqlPort
         )
         connection.autocommit(False)
         self._connection = connection
@@ -95,19 +98,17 @@ class Database(object) :
         self._connection = None
 
     def begin(self):
-        self.connect()
         assert self._connection is not None
         assert self._cursor is None
         self._cursor = self._connection.cursor()
         return self._cursor
 
     def commit(self):
-        # assert self._connection is not None
-        # assert self._cursor is not None
-        # self._cursor.close()
+        assert self._connection is not None
+        assert self._cursor is not None
+        self._cursor.close()
         self._connection.commit()
-        # self._cursor = None
-        # self.close()
+        self._cursor = None
 
     def rollback(self):
         assert self._connection is not None
@@ -115,7 +116,6 @@ class Database(object) :
         self._cursor.close()
         self._connection.rollback()
         self._cursor = None
-        self.close()
 
     def select_all(self, query) :
         cursor = self.cursor()
@@ -143,7 +143,9 @@ class Database(object) :
         result = cursor.fetchall()
         return result
 
-    def get_data(self, table, columns, condition, client_id = None):
+    def get_data(
+        self, table, columns, condition, client_id = None
+    ):
         query = "SELECT %s FROM %s "  % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
@@ -151,7 +153,7 @@ class Database(object) :
             return self.select_all(query, client_id)
         return self.select_all(query)
 
-    def get_data_from_multiple_tables(self, columns, tables, aliases, join_type, 
+    def get_data_from_multiple_tables(self, columns, tables, aliases, join_type,
             join_conditions, where_condition, client_id = None
         ):
         query = "SELECT %s FROM " % columns
@@ -163,12 +165,12 @@ class Database(object) :
                 )
             elif index <= len(tables) -2:
                 query += " %s %s on (%s) %s " % (
-                    table, aliases[index], 
+                    table, aliases[index],
                     join_conditions[index-1], join_type
                 )
             else:
                 query += " %s %s on (%s)" % (
-                    table, aliases[index], 
+                    table, aliases[index],
                     join_conditions[index-1]
                 )
 
@@ -214,7 +216,7 @@ class Database(object) :
 
         return self.execute(query)
 
-    def on_duplicate_key_update(self, table, columns, valueList, 
+    def on_duplicate_key_update(self, table, columns, valueList,
         updateColumnsList, client_id = None):
         query = "INSERT INTO %s (%s) VALUES " % (table, columns)
 
@@ -241,7 +243,7 @@ class Database(object) :
         query = "DELETE from "+table+" WHERE "+condition
         if client_id != None:
             return self.execute(query, client_id)
-        return self.execute(query)        
+        return self.execute(query)
 
     def append(self, table, column, value, condition):
         rows = self.get_data(table, column, condition)
@@ -263,7 +265,7 @@ class Database(object) :
             newValue = 1
         columns = [column]
         values = [newValue]
-        return self.update(table, columns, values, condition)        
+        return self.update(table, columns, values, condition)
 
     def is_already_exists(self, table, condition, client_id = None) :
         query = "SELECT count(*) FROM "+table+" WHERE "+condition
@@ -271,23 +273,23 @@ class Database(object) :
         if client_id != None:
             rows = self.select_all(query, client_id)
         else:
-            rows = self.select_all(query)     
+            rows = self.select_all(query)
         if rows[0][0] > 0:
             return True
-        else : 
+        else :
             return False
 
     def is_invalid_id(self, table, field, value, client_id = None):
         condition = "%s = '%d'" % (field, value)
         if client_id != None:
-            return not self.is_already_exists(table, condition, client_id)    
+            return not self.is_already_exists(table, condition, client_id)
         return not self.is_already_exists(table, condition)
 
     def generate_random(self):
         characters = string.ascii_uppercase + string.digits
         return ''.join(random.SystemRandom().choice(characters) for _ in range(7))
 
-    def generate_password(self) : 
+    def generate_password(self) :
         password = self.generate_random()
         password = "123456"
         return self.encrypt(password)
@@ -303,7 +305,7 @@ class Database(object) :
         return datetime_val.date()
 
     def datetime_to_string(self, datetime_val):
-        return "%d-%s-%d"% (datetime_val.day, self.string_months[datetime_val.month], 
+        return "%d-%s-%d"% (datetime_val.day, self.string_months[datetime_val.month],
             datetime_val.year)
 
     def get_client_db_info(self):
@@ -335,8 +337,8 @@ class Database(object) :
         admin_details = self.get_data("tbl_admin", "*", tblAdminCondition)
 
         if (len(admin_details) == 0) :
-            data_columns = ["user_id", "user_group_id", "email_id", 
-                "employee_name", "employee_code", "contact_no", "address", 
+            data_columns = ["user_id", "user_group_id", "email_id",
+                "employee_name", "employee_code", "contact_no", "address",
                 "designation", "user_group_name", "form_ids"
             ]
             query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
@@ -450,12 +452,12 @@ class Database(object) :
 
 class KnowledgeDatabase(Database):
     def __init__(
-        self, 
-        mysqlHost, mysqlUser, 
-        mysqlPassword, mysqlDatabase
+        self, host, port,
+        username, password, database_name
     ):
         super(KnowledgeDatabase, self).__init__(
-            mysqlHost, mysqlUser, mysqlPassword, mysqlDatabase
+            host, port, username, password,
+            database_name
         )
         self.statutory_parent_mapping = {}
         self.geography_parent_mapping = {}
@@ -518,7 +520,7 @@ class KnowledgeDatabase(Database):
         return self.is_already_exists(self.tblClientGroups, condition)
 
     def validate_session_token(self, session_token) :
-        # query = "CALL sp_validate_session_token ('%s');" 
+        # query = "CALL sp_validate_session_token ('%s');"
         #% (session_token)
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
@@ -530,7 +532,7 @@ class KnowledgeDatabase(Database):
         m = hashlib.md5()
         m.update(value)
         return m.hexdigest()
-    
+
     def save_activity(self, user_id, form_id, action):
         created_on = self.get_date_time()
         activityId = self.get_new_id("activity_log_id", "tbl_activity_log")
@@ -541,6 +543,50 @@ class KnowledgeDatabase(Database):
             )
         self.execute(query)
         return True
+
+    #
+    # Companies
+    #
+
+    def get_servers(self):
+        query = "SELECT client_id, machine_id, database_ip, "
+        query += "database_port, database_username, "
+        query += "database_password, client_short_name, "
+        query += "database_name, server_ip, server_port "
+        query += "FROM tbl_client_database"
+        rows = self.select_all(query)
+        results = []
+        if rows :
+            columns = [
+                "client_id", "machine_id", "database_ip",
+                "database_port", "database_username",
+                "database_password", "client_short_name",
+                "database_name", "server_ip", "server_port"
+            ]
+            results = self.convert_to_dict(rows, columns)
+        return self.return_companies(results)
+
+    def return_companies(self, data):
+        results = []
+        for d in data :
+            database_ip = IPAddress(
+                d["database_ip"],
+                int(d["database_port"])
+            )
+            company_server_ip = IPAddress(
+                d["server_ip"],
+                int(d["server_port"])
+            )
+            results.append(Company(
+                int(d["client_id"]),
+                d["client_short_name"],
+                d["database_username"],
+                d["database_password"],
+                d["database_name"],
+                database_ip,
+                company_server_ip
+            ))
+        return results
 
     #
     # Domain
@@ -739,7 +785,7 @@ class KnowledgeDatabase(Database):
         tables = ["tbl_forms", "tbl_form_category", "tbl_form_type"]
         aliases = ["tf", "tfc", "tft"]
         join_conditions = [
-            "tf.form_category_id = tfc.form_category_id", 
+            "tf.form_category_id = tfc.form_category_id",
             "tf.form_type_id = tft.form_type_id"
         ]
         where_condition = " tf.form_id in (%s) order by tf.form_order" % (
@@ -750,8 +796,8 @@ class KnowledgeDatabase(Database):
             columns, tables, aliases, join_type, join_conditions, where_condition
         )
         row_columns = [
-            "form_id", "form_category_id", "form_category", 
-            "form_type_id", "form_type", "form_name", "form_url", 
+            "form_id", "form_category_id", "form_category",
+            "form_type_id", "form_type", "form_name", "form_url",
             "form_order", "parent_menu"
         ]
         result = self.convert_to_dict(rows, row_columns)
@@ -878,7 +924,7 @@ class KnowledgeDatabase(Database):
                 status = "deactivated"
             else:
                 status = "activated"
-            
+
             action = "Industry type %s status  - %s" % (oldData, status)
             self.save_activity(user_id, 7, action)
             return True
@@ -978,7 +1024,7 @@ class KnowledgeDatabase(Database):
                 status = "deactivated"
             else:
                 status = "activated"
-            
+
             action = "Statutory nature %s status  - %s" % (oldData, status)
             self.save_activity(user_id, 8, action)
             return True
@@ -1051,7 +1097,7 @@ class KnowledgeDatabase(Database):
                 field = "(level_id, level_position, level_name, \
                     country_id, domain_id, created_by, created_on)"
                 data = (
-                    int(level_id), position, name, int(country_id), 
+                    int(level_id), position, name, int(country_id),
                     int(domain_id), int(user_id), str(created_on)
                 )
                 if (self.save_data(table_name, field, data)):
@@ -1075,7 +1121,7 @@ class KnowledgeDatabase(Database):
         if rows :
             columns = ["level_id", "level_position", "level_name", "country_id"]
             result = self.convert_to_dict(rows, columns)
-        return self.return_geography_levels(result)    
+        return self.return_geography_levels(result)
 
     def return_geography_levels(self, data):
         geography_levels = {}
@@ -1137,7 +1183,7 @@ class KnowledgeDatabase(Database):
                 field = "(level_id, level_position, level_name, \
                     country_id, created_by, created_on)"
                 data = (
-                    level_id, position, name, int(country_id), 
+                    level_id, position, name, int(country_id),
                     int(user_id), str(created_on)
                 )
                 if (self.save_data(table_name, field, data)):
@@ -1202,10 +1248,10 @@ class KnowledgeDatabase(Database):
         where_condition = "1"
         if country_ids != None:
             where_condition = "t2.country_id in (%s)" % country_ids
-        rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type, 
+        rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type,
             join_conditions, where_condition)
         result = []
-        if rows :        
+        if rows :
             columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
             result = self.convert_to_dict(rows, columns)
         return self.return_geographies(result)
@@ -1225,10 +1271,10 @@ class KnowledgeDatabase(Database):
         where_condition = "1"
         if country_ids != None:
             where_condition = "t2.country_id in (%s)" % country_ids
-        rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type, 
+        rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type,
             join_conditions, where_condition)
         geographies = {}
-        if rows :        
+        if rows :
             columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
             result = self.convert_to_dict(rows, columns)
             for d in result:
@@ -1286,7 +1332,7 @@ class KnowledgeDatabase(Database):
             AND t2.country_id = %s" % (parent_ids, country_id)
         if geography_id is not None :
             query = query + " AND geography_id != %s" % geography_id
-        
+
         rows = self.select_all(query)
         columns = ["geography_id", "geography_name", "level_id", "is_active"]
         result = []
@@ -1303,7 +1349,7 @@ class KnowledgeDatabase(Database):
         field = "(geography_id, geography_name, level_id, \
             parent_ids, created_by, created_on)"
         data = (
-            geography_id, geography_name, int(geography_level_id), 
+            geography_id, geography_name, int(geography_level_id),
             parent_ids, int(user_id), str(created_on)
         )
         if (self.save_data(table_name, field, data)) :
@@ -1324,7 +1370,7 @@ class KnowledgeDatabase(Database):
         )
 
         where_condition = "geography_id = %s" % (geography_id)
-        
+
         self.update_data(table_name, field_with_data, where_condition)
         action = "Geography - %s updated" % name
         self.save_activity(updated_by, 6, action)
@@ -1380,7 +1426,7 @@ class KnowledgeDatabase(Database):
             FROM tbl_statutories WHERE parent_ids='%s' " % (parent_ids)
         if statutory_id is not None :
             query = query + " AND statutory_id != %s" % statutory_id
-        
+
         rows = self.select_all(query)
         columns = ["statutory_id", "statutory_name", "level_id"]
         result = []
@@ -1388,11 +1434,11 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return result
 
-    def get_statutory_master(self, statutory_id = None): 
+    def get_statutory_master(self, statutory_id = None):
         columns = [
-            "statutory_id", "statutory_name", 
+            "statutory_id", "statutory_name",
             "level_id", "parent_ids",
-            "country_id", "country_name", 
+            "country_id", "country_name",
             "domain_id", "domain_name"
         ]
         query = "SELECT t1.statutory_id, t1.statutory_name, \
@@ -1483,7 +1529,7 @@ class KnowledgeDatabase(Database):
         field = "(statutory_id, statutory_name, level_id, \
             parent_ids, created_by, created_on)"
         data = (
-            int(statutory_id), name, int(level_id), parent_ids, 
+            int(statutory_id), name, int(level_id), parent_ids,
             int(user_id), str(created_on)
         )
 
@@ -1505,7 +1551,7 @@ class KnowledgeDatabase(Database):
         )
 
         where_condition = "statutory_id = %s" % (statutory_id)
-        
+
         self.update_data(table_name, field_with_data, where_condition)
         action = "Statutory - %s updated" % name
         self.save_activity(updated_by, 6, action)
@@ -1535,7 +1581,7 @@ class KnowledgeDatabase(Database):
         _tempDict = {}
         for row in rows :
             _tempDict[row["statutory_id"]] = row["statutory_name"]
-        
+
         for row in rows :
             statutory_id = int(row["statutory_id"])
             parent_ids = [
@@ -1648,7 +1694,7 @@ class KnowledgeDatabase(Database):
             return approval_list
 
         status = ("Pending", "Approve", "Reject", "Approve & Notify")
-        
+
         if approval_id is None :
             return return_approval_status(status)
         else :
@@ -1676,9 +1722,9 @@ class KnowledgeDatabase(Database):
             and t6.user_id = %s" %(user_id, user_id)
         rows = self.select_all(q)
         columns = [
-            "statutory_mapping_id", "country_id", 
-            "country_name", "domain_id", "domain_name", "industry_ids", 
-            "statutory_nature_id", "statutory_nature_name", 
+            "statutory_mapping_id", "country_id",
+            "country_name", "domain_id", "domain_name", "industry_ids",
+            "statutory_nature_id", "statutory_nature_name",
             "statutory_ids", "compliance_ids", "geography_ids",
             "approval_status", "is_active"
         ]
@@ -1751,7 +1797,7 @@ class KnowledgeDatabase(Database):
         return mapping_data_list
 
     def get_statutory_mapping_report(
-        self, country_id, domain_id, industry_id, 
+        self, country_id, domain_id, industry_id,
         statutory_nature_id, geography_id, user_id
     ) :
         q = "SELECT t1.statutory_mapping_id, t1.country_id, \
@@ -1779,16 +1825,16 @@ class KnowledgeDatabase(Database):
             and t1.statutory_nature_id like '%s' \
             and t1.geography_ids like '%s'" % (
                 user_id, user_id,
-                country_id, domain_id, 
-                str("%" + str(industry_id) + ",%"), 
+                country_id, domain_id,
+                str("%" + str(industry_id) + ",%"),
                 str(statutory_nature_id),
                 str("%" + str(geography_id) + ",%")
             )
         rows = self.select_all(q)
         columns = [
-            "statutory_mapping_id", "country_id", 
-            "country_name", "domain_id", "domain_name", "industry_ids", 
-            "statutory_nature_id", "statutory_nature_name", 
+            "statutory_mapping_id", "country_id",
+            "country_name", "domain_id", "domain_name", "industry_ids",
+            "statutory_nature_id", "statutory_nature_name",
             "statutory_ids", "compliance_ids", "geography_ids",
             "approval_status", "is_active"
         ]
@@ -1835,7 +1881,7 @@ class KnowledgeDatabase(Database):
                 def get_data(i) :
                     return report_data.get(int(i))
                 mapping_list.extend(
-                    [get_data(x) for x in mapping_ids[:-1].split(',') if get_data(x) is not None]  
+                    [get_data(x) for x in mapping_ids[:-1].split(',') if get_data(x) is not None]
                 )
             level_1_mappings[statutory_id] = mapping_list
         return level_1_mappings
@@ -1864,8 +1910,8 @@ class KnowledgeDatabase(Database):
             FROM tbl_compliances t1 %s" % q
         rows = self.select_all(qry)
         columns = [
-            "compliance_id", "statutory_provision", 
-            "compliance_task", "compliance_description", 
+            "compliance_id", "statutory_provision",
+            "compliance_task", "compliance_description",
             "document_name","format_file", "penal_consequences",
             "frequency_id", "statutory_dates", "repeats_every",
             "repeats_type_id", "duration", "duration_type_id",
@@ -1937,14 +1983,14 @@ class KnowledgeDatabase(Database):
             industry_ids, statutory_nature_id, statutory_ids, \
             geography_ids, is_active, created_by, created_on)"
         data_save = (
-            statutory_mapping_id, int(country_id), int(domain_id), 
-            industry_ids, int(nature_id), statutory_ids, 
-            geography_ids, int(is_active), 
+            statutory_mapping_id, int(country_id), int(domain_id),
+            industry_ids, int(nature_id), statutory_ids,
+            geography_ids, int(is_active),
             int(created_by), str(created_on)
         )
-        if (self.save_data(statutory_table, field, data_save)) :            
+        if (self.save_data(statutory_table, field, data_save)) :
             self.update_statutory_mapping_id(
-                data.statutory_ids, 
+                data.statutory_ids,
                 statutory_mapping_id, created_by
             )
             ids = self.save_compliance(
@@ -1975,7 +2021,7 @@ class KnowledgeDatabase(Database):
 
         if is_new is False :
             qry = "DELETE FROM tbl_statutory_industry \
-                WHERE statutory_mapping_id = %s" % (mapping_id) 
+                WHERE statutory_mapping_id = %s" % (mapping_id)
             self.execute(qry)
 
         for i_id in industry_ids :
@@ -1988,7 +2034,7 @@ class KnowledgeDatabase(Database):
 
         if is_new is False :
             qry = "DELETE FROM tbl_statutory_geographies \
-                WHERE statutory_mapping_id = %s" % (mapping_id) 
+                WHERE statutory_mapping_id = %s" % (mapping_id)
             self.execute(qry)
 
         for g_id in geography_ids :
@@ -2001,7 +2047,7 @@ class KnowledgeDatabase(Database):
 
         if is_new is False :
             qry = "DELETE FROM tbl_statutory_statutories \
-                WHERE statutory_mapping_id = %s" % (mapping_id) 
+                WHERE statutory_mapping_id = %s" % (mapping_id)
             self.execute(qry)
 
         for s_id in statutory_ids :
@@ -2024,14 +2070,14 @@ class KnowledgeDatabase(Database):
 
         tbl_statutory = "tbl_statutories"
         columns = ["statutory_mapping_ids", "updated_by"]
-        
+
         for x in difference :
             old_map_id =  [int(j) for j in old_statu_ids.get(x).split(',')]
             if mapping_id in old_map_id:
                 old_map_id = old_map_id.remove(mapping_id)
 
             new_map_id = ""
-            if old_map_id is not None : 
+            if old_map_id is not None :
                 new_map_id = ','.join(str(k) for k in old_map_id) + ","
             values = [new_map_id, updated_by]
             where = "statutory_id = %s" % (x)
@@ -2053,7 +2099,7 @@ class KnowledgeDatabase(Database):
         for row in rows:
             statutory_id = int(row[0])
 
-            if row[1] is None : 
+            if row[1] is None :
                 map_id = ""
             else :
                 map_id = row[1]
@@ -2066,7 +2112,7 @@ class KnowledgeDatabase(Database):
             values = [_statutory_mapping_id, updated_by]
             where = "statutory_id = %s" % (statutory_id)
             self.update(tbl_statutory, columns, values, where)
-        
+
 
     def save_compliance(self, mapping_id, datas, created_by) :
         compliance_ids = []
@@ -2238,7 +2284,7 @@ class KnowledgeDatabase(Database):
             where_condition = "compliance_id = %s" % (compliance_id)
             self.update(table_name, columns, values, where_condition)
             compliance_ids.append(compliance_id)
-            
+
 
         return compliance_ids
 
@@ -2284,7 +2330,7 @@ class KnowledgeDatabase(Database):
             data = self.statutory_parent_mapping.get(int(sid))
             provision.append(data[1])
         mappings = ','.join(provision)
-        
+
         geo_map = []
         for gid in old_record["geography_ids"][:-1].split(',') :
             data = self.geography_parent_mapping.get(int(gid))
@@ -2350,7 +2396,7 @@ class KnowledgeDatabase(Database):
             "domain_name", "industry_ids", "statutory_nature_id",
             "statutory_nature_name", "statutory_ids",
             "compliance_ids", "geography_ids",
-            "approval_status"            
+            "approval_status"
         ]
         result = {}
         if rows :
@@ -2386,12 +2432,12 @@ class KnowledgeDatabase(Database):
             notification_log_text = "Statutory Mapping: %s \
                 has been Rejected" % (provision)
         else :
-            
+
             # query = "UPDATE tbl_statutory_mappings set \
             #     approval_status='%s', \
             #     updated_by=%s WHERE \
             #     statutory_mapping_id = %s" % (
-            #         approval_status, updated_by, 
+            #         approval_status, updated_by,
             #         statutory_mapping_id
             #     )
             notification_log_text = "Statutory Mapping: %s \
@@ -2404,7 +2450,7 @@ class KnowledgeDatabase(Database):
             )
             notification_log_text = "Statutory Mapping: %s \
                 has been Approve & Notified" % (provision)
-        
+
         link = "/statutorymapping/list"
         self.save_notifications(notification_log_text, link)
         action = "Statutory Mapping approval status changed"
@@ -2452,7 +2498,7 @@ class KnowledgeDatabase(Database):
         geo_mappings = ','.join(str(x) for x in geo_map)
 
         notification_id = self.get_new_id(
-            "statutory_notification_id", 
+            "statutory_notification_id",
             "tbl_statutory_notifications_log"
         )
         tbl_statutory_notification = "tbl_statutory_notifications_log"
@@ -2479,12 +2525,12 @@ class KnowledgeDatabase(Database):
         "tf.form_order, tf.parent_menu"
         tables = [self.tblForms, self.tblFormCategory, self.tblFormType]
         aliases = ["tf", "tfc", "tft"]
-        join_conditions = ["tf.form_category_id = tfc.form_category_id", 
+        join_conditions = ["tf.form_category_id = tfc.form_category_id",
         "tf.form_type_id = tft.form_type_id"]
         where_condition = " tf.form_category_id in (3,2,4) order by tf.form_order"
         join_type = "left join"
 
-        rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type, 
+        rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type,
             join_conditions, where_condition)
         return rows
 
@@ -2496,7 +2542,7 @@ class KnowledgeDatabase(Database):
             results.append(general.AuditTrailForm(form[0], form[1]))
         return results
 
-    def get_form_categories(self): 
+    def get_form_categories(self):
         columns = "form_category_id, form_category"
         condition = " form_category_id in (2,3)"
         rows = self.get_data(self.tblFormCategory, columns, condition)
@@ -2530,11 +2576,11 @@ class KnowledgeDatabase(Database):
     def save_user_group(self, user_group_id, user_group_name,
             form_category_id, form_ids):
         time_stamp = self.get_date_time()
-        columns = ["user_group_id", "user_group_name","form_category_id", 
-                    "form_ids", "is_active", "created_on", "created_by", 
+        columns = ["user_group_id", "user_group_name","form_category_id",
+                    "form_ids", "is_active", "created_on", "created_by",
                     "updated_on", "updated_by"]
-        values =  [user_group_id, user_group_name, form_category_id, 
-                ",".join(str(x) for x in form_ids), 1, time_stamp, 
+        values =  [user_group_id, user_group_name, form_category_id,
+                ",".join(str(x) for x in form_ids), 1, time_stamp,
                 0, time_stamp, 0]
         result = self.insert(self.tblUserGroups,columns,values)
         action = "Created User Group \"%s\"" % user_group_name
@@ -2546,7 +2592,7 @@ class KnowledgeDatabase(Database):
         time_stamp = self.get_date_time()
         columns = ["user_group_name","form_category_id","form_ids", "updated_on",
                  "updated_by"]
-        values =  [user_group_name, form_category_id, 
+        values =  [user_group_name, form_category_id,
                 ",".join(str(x) for x in form_ids), time_stamp, 0]
         condition = "user_group_id='%d'" % user_group_id
         action = "Updated User Group \"%s\"" % user_group_name
@@ -2559,7 +2605,7 @@ class KnowledgeDatabase(Database):
         values = [is_active, 0, time_stamp]
         condition = "user_group_id='%d'" % user_group_id
         result =  self.update(self.tblUserGroups, columns, values, condition)
-        
+
         action_columns = "user_group_name"
         rows = self.get_data(self.tblUserGroups, action_columns, condition)
         user_group_name = rows[0][0]
@@ -2613,7 +2659,7 @@ class KnowledgeDatabase(Database):
             results.append(core.User(
                 user["user_id"], employee_name, bool(user["is_active"])
             ))
-        return results  
+        return results
 
     def get_user_countries(self, user_id):
         columns = "group_concat(country_id)"
@@ -2639,8 +2685,8 @@ class KnowledgeDatabase(Database):
         result2 = False
         result3 = False
         current_time_stamp = self.get_date_time()
-        user_columns = ["user_id", "email_id", "user_group_id", "password", "employee_name", 
-                    "employee_code", "contact_no", "address", "designation", "is_active", 
+        user_columns = ["user_id", "email_id", "user_group_id", "password", "employee_name",
+                    "employee_code", "contact_no", "address", "designation", "is_active",
                     "created_on", "created_by", "updated_on", "updated_by"]
         user_values = [user_id, email_id, user_group_id, self.generate_password(),
                 employee_name, employee_code, contact_no, address,
@@ -2673,7 +2719,7 @@ class KnowledgeDatabase(Database):
         result3 = False
 
         current_time_stamp = self.get_date_time()
-        user_columns = [ "user_group_id", "employee_name", "employee_code", 
+        user_columns = [ "user_group_id", "employee_name", "employee_code",
                     "contact_no", "address", "designation",
                     "updated_on", "updated_by"]
         user_values = [user_group_id, employee_name, employee_code, contact_no,
@@ -2688,7 +2734,7 @@ class KnowledgeDatabase(Database):
         for country_id in country_ids:
             country_value_tuple = (user_id, int(country_id))
             country_values_list.append(country_value_tuple)
-        result2 = self.bulk_insert(self.tblUserCountries, country_columns, 
+        result2 = self.bulk_insert(self.tblUserCountries, country_columns,
             country_values_list)
 
         domain_columns = ["user_id", "domain_id"]
@@ -2696,13 +2742,13 @@ class KnowledgeDatabase(Database):
         for domain_id in domain_ids:
             domain_value_tuple = (user_id, int(domain_id))
             domain_values_list.append(domain_value_tuple)
-        result3 = self.bulk_insert(self.tblUserDomains, domain_columns, 
+        result3 = self.bulk_insert(self.tblUserDomains, domain_columns,
             domain_values_list)
 
         action = "Updated User \"%s - %s\"" % (employee_code, employee_name)
         self.save_activity(0, 4, action)
 
-        return (result1 and result2 and result3)    
+        return (result1 and result2 and result3)
 
     def update_user_status(self, user_id, is_active):
         columns = ["is_active", "updated_on" , "updated_by"]
@@ -2727,14 +2773,14 @@ class KnowledgeDatabase(Database):
     #
     def generate_new_client_id(self):
         return self.get_new_id("client_id", self.tblClientGroups)
-    
+
     def is_duplicate_group_name(self, group_name, client_id):
         condition = "group_name ='%s' AND client_id != '%d'" % (group_name, client_id)
         return self.is_already_exists(self.tblClientGroups, condition)
-    
+
     def is_duplicate_group_username(self, username, client_id):
         condition = "email_id ='%s' AND client_id != '%d'" % (username, client_id)
-        return self.is_already_exists(self.tblClientGroups, condition) 
+        return self.is_already_exists(self.tblClientGroups, condition)
 
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
@@ -2751,7 +2797,7 @@ class KnowledgeDatabase(Database):
         condition = "1"
         if client_ids != None:
             condition = "client_id in (%s)" % client_ids
-        rows = self.get_data(self.tblClientGroups, columns, condition) 
+        rows = self.get_data(self.tblClientGroups, columns, condition)
         columns = ["client_id", "group_name", "is_active"]
         result = self.convert_to_dict(rows, columns)
         return self.return_group_companies(result)
@@ -2763,10 +2809,10 @@ class KnowledgeDatabase(Database):
             countries = [int(x) for x in self.get_client_countries(group_company["client_id"]).split(",")]
             domains = [int(x) for x in self.get_client_domains(group_company["client_id"]).split(",")]
             results.append(core.GroupCompany(
-                group_company["client_id"], group_company["group_name"], 
+                group_company["client_id"], group_company["group_name"],
                 bool(group_company["is_active"]), countries, domains
             ))
-        return results       
+        return results
 
     def get_client_countries(self, client_id):
         columns = "group_concat(country_id)"
@@ -2795,12 +2841,12 @@ class KnowledgeDatabase(Database):
                 configuration["country_id"], configuration["domain_id"],
                 configuration["period_from"], configuration["period_to"]
             ))
-        return results  
+        return results
 
     def save_date_configurations(self, client_id, date_configurations, session_user):
         values_list = []
         current_time_stamp = self.get_date_time()
-        columns = ["client_id", "country_id" ,"domain_id", "period_from", 
+        columns = ["client_id", "country_id" ,"domain_id", "period_from",
         "period_to", "updated_by", "updated_on"]
         condition = "client_id='%d'"%client_id
         self.delete(self.tblClientConfigurations, condition)
@@ -2809,7 +2855,7 @@ class KnowledgeDatabase(Database):
             domain_id = configuration.domain_id
             period_from = configuration.period_from
             period_to = configuration.period_to
-            values_tuple = (client_id, country_id, domain_id, period_from, period_to, 
+            values_tuple = (client_id, country_id, domain_id, period_from, period_to,
                  int(session_user), str(current_time_stamp))
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblClientConfigurations,columns,values_list)
@@ -2838,10 +2884,10 @@ class KnowledgeDatabase(Database):
         return mysql.connect(host, username, password)
 
     def _db_connect(self, host, username, password, database) :
-        return mysql.connect(host, username, password, 
+        return mysql.connect(host, username, password,
             database)
 
-    def _create_database(self, host, username, password, 
+    def _create_database(self, host, username, password,
         database_name, db_username, db_password, email_id, client_id):
         con = self._mysql_server_connect(host, username, password)
         cursor = con.cursor()
@@ -2854,7 +2900,7 @@ class KnowledgeDatabase(Database):
 
         con = self._db_connect(host, username, password, database_name)
         cursor = con.cursor()
-        sql_script_path = os.path.join(os.path.join(os.path.split(__file__)[0]), 
+        sql_script_path = os.path.join(os.path.join(os.path.split(__file__)[0]),
         "scripts/mirror-client.sql")
         file_obj = open(sql_script_path, 'r')
         sql_file = file_obj.read()
@@ -2867,7 +2913,7 @@ class KnowledgeDatabase(Database):
             else:
                 break
         query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
-            email_id, self.generate_password())        
+            email_id, self.generate_password())
         cursor.execute(query)
         con.commit()
         return True
@@ -2889,7 +2935,7 @@ class KnowledgeDatabase(Database):
         db_username = self.generate_random()
         db_password = self.generate_random()
 
-        if self._create_database(host, username, password, database_name, db_username, 
+        if self._create_database(host, username, password, database_name, db_username,
             db_password, email_id, client_id):
             db_server_column = "company_ids"
             db_server_value = client_id
@@ -2909,7 +2955,7 @@ class KnowledgeDatabase(Database):
             rows = self.get_data(self.tblMachines, "machine_id", machine_condition)
             machine_id = rows[0][0]
 
-            client_db_columns = ["client_id", "machine_id", "database_ip", 
+            client_db_columns = ["client_id", "machine_id", "database_ip",
                     "database_port", "database_username", "database_password",
                     "client_short_name", "database_name"]
             client_dB_values = [client_id, machine_id, host, 90, db_username,
@@ -2923,15 +2969,15 @@ class KnowledgeDatabase(Database):
         contract_to = self.string_to_datetime(client_group.contract_to)
         is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
 
-        columns = ["client_id", "group_name", "email_id", "logo_url", 
-        "logo_size", "contract_from", "contract_to", "no_of_user_licence", 
-        "total_disk_space", "is_sms_subscribed", "url_short_name", 
-        "incharge_persons", "is_active", "created_by", "created_on", 
+        columns = ["client_id", "group_name", "email_id", "logo_url",
+        "logo_size", "contract_from", "contract_to", "no_of_user_licence",
+        "total_disk_space", "is_sms_subscribed", "url_short_name",
+        "incharge_persons", "is_active", "created_by", "created_on",
         "updated_by", "updated_on"]
         values = [client_id, client_group.group_name, client_group.email_id,
         client_group.logo, 1200, contract_from, contract_to,
-        client_group.no_of_user_licence, client_group.file_space * 1000000000, 
-        is_sms_subscribed, client_group.short_name, 
+        client_group.no_of_user_licence, client_group.file_space * 1000000000,
+        is_sms_subscribed, client_group.short_name,
         ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
         current_time_stamp, session_user, current_time_stamp]
         result = self.insert(self.tblClientGroups, columns, values)
@@ -2945,11 +2991,11 @@ class KnowledgeDatabase(Database):
         contract_to = self.string_to_datetime(client_group.contract_to)
         is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
 
-        columns = ["group_name", "logo_url", "logo_size", "contract_from", 
-        "contract_to", "no_of_user_licence", "total_disk_space", "is_sms_subscribed", 
+        columns = ["group_name", "logo_url", "logo_size", "contract_from",
+        "contract_to", "no_of_user_licence", "total_disk_space", "is_sms_subscribed",
         "incharge_persons", "is_active", "updated_by", "updated_on"]
         values = [client_group.group_name, client_group.logo,1200, contract_from, contract_to,
-        client_group.no_of_user_licence, client_group.file_space * 1000000000, 
+        client_group.no_of_user_licence, client_group.file_space * 1000000000,
         is_sms_subscribed,
         ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
         current_time_stamp]
@@ -2961,7 +3007,7 @@ class KnowledgeDatabase(Database):
         return self.update(self.tblClientGroups, columns, values, condition)
 
     def save_client_user(self, client_group, session_user):
-        columns = ["client_id", "user_id",  "email_id", 
+        columns = ["client_id", "user_id",  "email_id",
         "employee_name", "created_on", "is_admin", "is_active"]
         values = [client_group.client_id, 0, self.username, "Admin",
         self.get_date_time(), 1, 1]
@@ -2998,7 +3044,7 @@ class KnowledgeDatabase(Database):
 #
 #   Client Unit
 #
-    
+
     def generate_new_business_group_id(self) :
         return self.get_new_id("business_group_id", self.tblBusinessGroups)
 
@@ -3024,7 +3070,7 @@ class KnowledgeDatabase(Database):
     def is_duplicate_division(self, division_id, division_name, client_id):
         condition = "division_name ='%s' AND division_id != '%d' and client_id = '%d'" % (
             division_name, division_id, client_id)
-        return self.is_already_exists(self.tblDivisions, condition)        
+        return self.is_already_exists(self.tblDivisions, condition)
 
     def is_duplicate_unit_name(self, unit_id, unit_name, client_id):
         condition = "unit_name ='%s' AND unit_id != '%d' and client_id = '%d'" % (
@@ -3036,10 +3082,10 @@ class KnowledgeDatabase(Database):
             unit_code, unit_id, client_id)
         return self.is_already_exists(self.tblUnits, condition)
 
-    def save_business_group(self, client_id, business_group_id, business_group_name, 
+    def save_business_group(self, client_id, business_group_id, business_group_name,
         session_user):
         current_time_stamp = self.get_date_time()
-        columns = ["client_id", "business_group_id", "business_group_name", 
+        columns = ["client_id", "business_group_id", "business_group_name",
         "created_by", "created_on", "updated_by", "updated_on"]
         values = [client_id, business_group_id, business_group_name, session_user, current_time_stamp,
         session_user, current_time_stamp]
@@ -3048,27 +3094,27 @@ class KnowledgeDatabase(Database):
         action = "Created Business Group \"%s\"" % business_group_name
         self.save_activity(session_user, 19, action)
 
-        return result 
+        return result
 
-    def update_business_group(self, client_id, business_group_id, business_group_name, 
+    def update_business_group(self, client_id, business_group_id, business_group_name,
         session_user):
         current_time_stamp = self.get_date_time()
         columns = ["business_group_name", "updated_by", "updated_on"]
         values = [business_group_name, session_user, current_time_stamp]
         condition = "business_group_id = '%d' and client_id = '%d'"%(business_group_id, client_id)
-        result = self.update(self.tblBusinessGroups, columns, values, condition) 
+        result = self.update(self.tblBusinessGroups, columns, values, condition)
 
         action = "Updated Business Group \"%s\"" % business_group_name
         self.save_activity(session_user, 19, action)
 
         return result
 
-    def save_legal_entity(self, client_id, legal_entity_id, legal_entity_name, 
+    def save_legal_entity(self, client_id, legal_entity_id, legal_entity_name,
         business_group_id, session_user):
         current_time_stamp = self.get_date_time()
-        columns = ["client_id", "legal_entity_id", "legal_entity_name", 
+        columns = ["client_id", "legal_entity_id", "legal_entity_name",
         "created_by", "created_on", "updated_by", "updated_on"]
-        values = [client_id, legal_entity_id, legal_entity_name, business_group_id, 
+        values = [client_id, legal_entity_id, legal_entity_name, business_group_id,
         session_user, current_time_stamp, session_user, current_time_stamp]
 
         if business_group_id != None:
@@ -3078,7 +3124,7 @@ class KnowledgeDatabase(Database):
         result = self.insert(self.tblLegalEntities, columns, values)
         action = "Created Legal Entity \"%s\"" % legal_entity_name
         self.save_activity(session_user, 19, action)
-        return result 
+        return result
 
     def update_legal_entity(self, client_id, legal_entity_id, legal_entity_name, business_group_id, session_user):
         current_time_stamp = self.get_date_time()
@@ -3092,7 +3138,7 @@ class KnowledgeDatabase(Database):
 
         return result
 
-    def save_division(self, client_id, division_id, division_name, business_group_id, 
+    def save_division(self, client_id, division_id, division_name, business_group_id,
         legal_entity_id, session_user):
         current_time_stamp = self.get_date_time()
         columns = ["client_id", "division_id", "division_name", "legal_entity_id",
@@ -3124,8 +3170,8 @@ class KnowledgeDatabase(Database):
 
     def save_unit(self, client_id,  units, business_group_id, legal_entity_id, division_id, session_user):
         current_time_stamp = str(self.get_date_time())
-        columns = ["unit_id", "client_id", "legal_entity_id", "country_id", "geography_id", "industry_id", 
-        "domain_ids", "unit_code", "unit_name", "address", "postal_code", "is_active", "created_by", 
+        columns = ["unit_id", "client_id", "legal_entity_id", "country_id", "geography_id", "industry_id",
+        "domain_ids", "unit_code", "unit_name", "address", "postal_code", "is_active", "created_by",
         "created_on", "updated_by", "updated_on"]
         if business_group_id != None:
             columns.append("business_group_id")
@@ -3137,19 +3183,19 @@ class KnowledgeDatabase(Database):
             if business_group_id != None and division_id != None:
                 values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
                     str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
-                    str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
+                    str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp,
                     business_group_id, division_id)
             elif business_group_id != None:
                 values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
                     str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
-                    str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
-                    business_group_id)    
+                    str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp,
+                    business_group_id)
             elif division_id != None :
                 values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
                     str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
-                    str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp, 
-                    division_id)   
-            else: 
+                    str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp,
+                    division_id)
+            else:
                 values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
                         str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
                         str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp)
@@ -3157,26 +3203,26 @@ class KnowledgeDatabase(Database):
         result = self.bulk_insert(self.tblUnits, columns, values_list)
 
         action = "Created Unit \"%s - %s\"" % (unit.unit_code, unit.unit_name)
-        self.save_activity(session_user, 19, action)            
+        self.save_activity(session_user, 19, action)
 
         return result
 
 
     def update_unit(self, client_id,  units, business_group_id, legal_entity_id, division_id, session_user):
         current_time_stamp = str(self.get_date_time())
-        columns = ["country_id", "geography_id", "industry_id", "domain_ids", "unit_code", "unit_name", 
+        columns = ["country_id", "geography_id", "industry_id", "domain_ids", "unit_code", "unit_name",
         "address", "postal_code", "updated_by", "updated_on"]
         values_list = []
         for unit in units:
             domain_ids = ",".join(str(x) for x in unit.domain_ids)
-            values= [unit.country_id, unit.geography_id,unit.industry_id, domain_ids, 
+            values= [unit.country_id, unit.geography_id,unit.industry_id, domain_ids,
                         str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
                         str(unit.postal_code), session_user, current_time_stamp]
             condition = "client_id='%d' and unit_id = '%d'" % (client_id, unit.unit_id)
             self.update(self.tblUnits, columns, values, condition)
 
         action = "Updated Unit \"%s - %s\"" % (unit.unit_code, unit.unit_name)
-        self.save_activity(session_user, 19, action) 
+        self.save_activity(session_user, 19, action)
 
         return True
 
@@ -3225,7 +3271,7 @@ class KnowledgeDatabase(Database):
         action_column = "unit_code, unit_name"
         rows = self.get_data(self.tblUnits, action_column, condition)
         action = "Reactivated Unit \"%s-%s\"" % (rows[0][0], rows[0][1])
-        self.save_activity(session_user, 19, action) 
+        self.save_activity(session_user, 19, action)
 
         return result
 
@@ -3252,9 +3298,9 @@ class KnowledgeDatabase(Database):
         condition = "1"
         rows= None
         if user_id == 0:
-            condition = "password='%s'" % (encrypted_password)  
+            condition = "password='%s'" % (encrypted_password)
             rows = self.get_data(self.tblAdmin, columns, condition)
-        else:  
+        else:
             condition = "password='%s' and user_id='%d'" % (encrypted_password, user_id)
             rows = self.get_data(self.tblUsers, columns, condition)
         if(int(rows[0][0]) <= 0):
@@ -3285,7 +3331,7 @@ class KnowledgeDatabase(Database):
         condition = "1"
         if client_ids != None:
             condition = "client_id in (%s)" % client_ids
-        rows = self.get_data(self.tblBusinessGroups, columns, condition) 
+        rows = self.get_data(self.tblBusinessGroups, columns, condition)
         columns = ["business_group_id", "business_group_name", "client_id"]
         result = self.convert_to_dict(rows, columns)
         return self.return_business_groups(result)
@@ -3297,7 +3343,7 @@ class KnowledgeDatabase(Database):
                 business_group["business_group_id"], business_group["business_group_name"],
                 business_group["client_id"]
             ))
-        return results 
+        return results
 
     def get_legal_entities_for_user(self, user_id):
         client_ids = None
@@ -3307,8 +3353,8 @@ class KnowledgeDatabase(Database):
         condition = "1"
         if client_ids != None:
             condition = "client_id in (%s)" % client_ids
-        rows = self.get_data(self.tblLegalEntities, columns, condition) 
-        columns = ["legal_entity_id", "legal_entity_name", "business_group_id", 
+        rows = self.get_data(self.tblLegalEntities, columns, condition)
+        columns = ["legal_entity_id", "legal_entity_name", "business_group_id",
         "client_id"]
         result = self.convert_to_dict(rows, columns)
         return self.return_legal_entities(result)
@@ -3331,8 +3377,8 @@ class KnowledgeDatabase(Database):
         condition = "1"
         if client_ids != None:
             condition = "client_id in (%s)" % client_ids
-        rows = self.get_data(self.tblDivisions, columns, condition) 
-        columns = ["division_id", "division_name", "legal_entity_id", 
+        rows = self.get_data(self.tblDivisions, columns, condition)
+        columns = ["division_id", "division_name", "legal_entity_id",
         "business_group_id", "client_id"]
         result = self.convert_to_dict(rows, columns)
         return self.return_divisions(result)
@@ -3354,8 +3400,8 @@ class KnowledgeDatabase(Database):
         condition = "1"
         if client_ids != None:
             condition = "client_id in (%s)" % client_ids
-        rows = self.get_data(self.tblUnits, columns, condition) 
-        columns = ["unit_id", "unit_code", "unit_name", "unit_address", "division_id", 
+        rows = self.get_data(self.tblUnits, columns, condition)
+        columns = ["unit_id", "unit_code", "unit_name", "unit_address", "division_id",
         "legal_entity_id", "business_group_id", "client_id", "is_active", "geography_id", "industry_id", "domain_ids"]
         result = self.convert_to_dict(rows, columns)
         return self.return_units(result)
@@ -3381,10 +3427,10 @@ class KnowledgeDatabase(Database):
                     int(y) for y in group["domain_ids"].split(',')
                 ]
                 group_results.append(core.GroupCompany(
-                    group["client_id"], 
-                    group["group_name"], 
-                    bool(group["is_active"]), 
-                    countries, 
+                    group["client_id"],
+                    group["group_name"],
+                    bool(group["is_active"]),
+                    countries,
                     domains
                 ))
             return group_results
@@ -3471,12 +3517,12 @@ class KnowledgeDatabase(Database):
                 parent_ids.append(int(unit["geography_id"]))
                 unit_name = "%s - %s" % (unit["unit_code"], unit["unit_name"])
                 results.append(technotransactions.UNIT(
-                    unit["unit_id"], 
+                    unit["unit_id"],
                     unit_name,
-                    unit["division_id"], 
+                    unit["division_id"],
                     unit["legal_entity_id"],
-                    unit["business_group_id"], 
-                    unit["client_id"], 
+                    unit["business_group_id"],
+                    unit["client_id"],
                     domain_ids,
                     unit["industry_id"],
                     parent_ids
@@ -3500,16 +3546,16 @@ class KnowledgeDatabase(Database):
             )
         rows = self.select_all(query)
         columns = [
-            "unit_id", "unit_code", "unit_name", "division_id", 
-            "legal_entity_id", "business_group_id", 
-            "client_id", "geography_id", 
+            "unit_id", "unit_code", "unit_name", "division_id",
+            "legal_entity_id", "business_group_id",
+            "client_id", "geography_id",
             "industry_id", "domain_ids", "parent_ids"
         ]
         result = self.convert_to_dict(rows, columns)
         return return_unit_details(result)
 
     def get_assign_statutory_wizard_two(
-        self, country_id, geography_id, industry_id, 
+        self, country_id, geography_id, industry_id,
         domain_id, unit_id, user_id
     ):
         if unit_id is not None :
@@ -3536,19 +3582,19 @@ class KnowledgeDatabase(Database):
                 FROM tbl_geographies g \
                 WHERE g.geography_id = %s \
                 OR g.parent_ids LIKE '%s' )" % (
-                    domain_id, country_id, industry_id, geography_id, 
-                    str("%" + str(geography_id) + ",%"), 
+                    domain_id, country_id, industry_id, geography_id,
+                    str("%" + str(geography_id) + ",%"),
                 )
         rows = self.select_all(query)
         columns = [
-            "statutory_mapping_id", "statutory_nature_id", 
+            "statutory_mapping_id", "statutory_nature_id",
             "statutory_nature_name", "statutory_id"
         ]
         result = self.convert_to_dict(rows, columns)
         return self.return_assign_statutory_wizard_two(country_id, domain_id, result)
 
     def get_compliance_by_mapping_id(self, mapping_id):
-        
+
         qry = "SELECT t1.compliance_id, t1.statutory_provision, \
             t1.compliance_task, t1.compliance_description, \
             t1.document_name \
@@ -3558,8 +3604,8 @@ class KnowledgeDatabase(Database):
             )
         rows = self.select_all(qry)
         columns = [
-            "compliance_id", "statutory_provision", 
-            "compliance_task", "compliance_description", 
+            "compliance_id", "statutory_provision",
+            "compliance_task", "compliance_description",
             "document_name"
         ]
         result = []
@@ -3568,11 +3614,11 @@ class KnowledgeDatabase(Database):
         return result
 
     def return_unassign_statutory_wizard_two(
-        self, country_id, geography_id, industry_id, 
+        self, country_id, geography_id, industry_id,
         domain_id, unit_id
     ):
         new_compliance = self.get_unassigned_compliances(
-            country_id, domain_id, industry_id, 
+            country_id, domain_id, industry_id,
             geography_id, unit_id
         )
         assigned_statutory_list = []
@@ -3584,7 +3630,7 @@ class KnowledgeDatabase(Database):
             not_applicable_remarks = None
             assigned_statutory_list.append(
                 core.AssignedStatutory(
-                    key, name, compliances, applicable_status, 
+                    key, name, compliances, applicable_status,
                     statutory_opted_status,
                     not_applicable_remarks
                 )
@@ -3604,7 +3650,7 @@ class KnowledgeDatabase(Database):
             statutory_id = int(d["statutory_id"])
             compliance_list = self.get_compliance_by_mapping_id(mapping_id)
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
-            s_mapping = statutory_data[1] 
+            s_mapping = statutory_data[1]
             statutory_parents = statutory_data[2]
             level_1 = statutory_parents[0]
             if level_1 == 0 :
@@ -3641,7 +3687,7 @@ class KnowledgeDatabase(Database):
             not_applicable_remarks = None
             assigned_statutory_list.append(
                 core.AssignedStatutory(
-                    key, name, compliances, applicable_status, 
+                    key, name, compliances, applicable_status,
                     statutory_opted_status,
                     not_applicable_remarks
                 )
@@ -3651,7 +3697,7 @@ class KnowledgeDatabase(Database):
         )
 
     def save_assigned_statutories(self, data, user_id):
-        
+
         submission_type = data.submission_type
         client_statutory_id = data.client_statutory_id
         if submission_type == "Save" :
@@ -3660,7 +3706,7 @@ class KnowledgeDatabase(Database):
             else :
                 assigned_statutories = data.assigned_statutories
                 self.update_client_compliances(
-                    client_statutory_id, 
+                    client_statutory_id,
                     assigned_statutories, user_id
                 )
         elif submission_type == "Submit" :
@@ -3753,7 +3799,7 @@ class KnowledgeDatabase(Database):
                         )
                     self.update_data(self.tblClientCompliances, field_with_data, where_condition)
         return True
-    
+
     def submit_client_statutories_compliances(self, client_statutory_id, data, user_id) :
         submited_on = self.get_date_time()
         query = "UPDATE tbl_client_statutories SET submission_type = 2, \
@@ -3904,7 +3950,7 @@ class KnowledgeDatabase(Database):
             )
         rows = self.select_all(query)
         columns = [
-            "client_statutory_id", "compliance_id", "statutory_id", 
+            "client_statutory_id", "compliance_id", "statutory_id",
             "statutory_applicable", "statutory_opted",
             "not_applicable_remarks", "compliance_applicable",
             "compliance_opted", "compliance_remarks",
@@ -3924,7 +3970,7 @@ class KnowledgeDatabase(Database):
                 statutory_opted = bool(statutory_opted)
             statutory_id = int(r["statutory_id"])
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
-            s_mapping = statutory_data[1] 
+            s_mapping = statutory_data[1]
             provision = "%s - %s" % (s_mapping, r["statutory_provision"])
             name = "%s - %s" % (r["document_name"], r["compliance_task"])
             compliance = core.ComplianceApplicability(
@@ -3964,7 +4010,7 @@ class KnowledgeDatabase(Database):
 
 
     def get_unassigned_compliances(
-        self, country_id, domain_id, industry_id, 
+        self, country_id, domain_id, industry_id,
         geography_id, unit_id
     ) :
         query = "SELECT distinct \
@@ -4002,8 +4048,8 @@ class KnowledgeDatabase(Database):
                 AND s.unit_id = %s \
                 ) \
             " % (
-                    domain_id, country_id, industry_id, geography_id, 
-                    str("%" + str(geography_id) + ",%"), 
+                    domain_id, country_id, industry_id, geography_id,
+                    str("%" + str(geography_id) + ",%"),
                     geography_id, domain_id, unit_id
                 )
         rows = self.select_all(query)
@@ -4020,7 +4066,7 @@ class KnowledgeDatabase(Database):
             statutory_nature_name  = d["statutory_nature_name"]
             statutory_id = int(d["statutory_id"])
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
-            s_mapping = statutory_data[1] 
+            s_mapping = statutory_data[1]
             statutory_parents = statutory_data[2]
             level_1 = statutory_parents[0]
             compliance_applicable_status = bool(1)
@@ -4051,7 +4097,7 @@ class KnowledgeDatabase(Database):
         statutories = self.return_assigned_compliances_by_id(client_statutory_id)
         new_compliances = self.get_unassigned_compliances(
             data["country_id"], data["domain_id"],
-            data["industry_id"], data["geography_id"], 
+            data["industry_id"], data["geography_id"],
             data["unit_id"]
         )
         for key, value in new_compliances.iteritems():
@@ -4067,7 +4113,7 @@ class KnowledgeDatabase(Database):
                     key,
                     statutory_name,
                     None,
-                    True, 
+                    True,
                     None,
                     None
                 )
@@ -4150,7 +4196,7 @@ class KnowledgeDatabase(Database):
         rows = self.select_all(query)
         columns = ["client_statutory_id", "client_id", "geography_id",
             "country_id", "domain_id", "unit_id", "submission_type",
-            "group_name", "unit_name", 
+            "group_name", "unit_name",
             "business_group_name", "legal_entity_name",
             "division_name", "address", "postal_code", "unit_code"
         ]
@@ -4249,8 +4295,8 @@ class KnowledgeDatabase(Database):
                 detail_rows = self.get_data(self.tblUnits, unit_columns, unit_condition)
                 units = []
                 for unit_detail  in detail_rows:
-                    units.append(technomasters.UnitDetails(unit_detail[0], unit_detail[1], 
-                        unit_detail[2], unit_detail[3], unit_detail[4], unit_detail[5], 
+                    units.append(technomasters.UnitDetails(unit_detail[0], unit_detail[1],
+                        unit_detail[2], unit_detail[3], unit_detail[4], unit_detail[5],
                         unit_detail[6], [int(x) for x in unit_detail[7].split(",")], bool(unit_detail[8])))
                     division_is_active = division_is_active or bool(unit_detail[8])
                 # country_wise_units.append(technomasters.CountryWiseUnits(country_row[0], units))
@@ -4260,7 +4306,7 @@ class KnowledgeDatabase(Database):
 
     def get_settings(self, client_id):
         settings_columns = "contract_from, contract_to, no_of_user_licence, total_disk_space"
-        condition = "client_id = '%d'" % client_id                            
+        condition = "client_id = '%d'" % client_id
         return  self.get_data(self.tblClientGroups, settings_columns, "1")
 
     def get_licence_holder_details(self, client_id):
@@ -4305,14 +4351,14 @@ class KnowledgeDatabase(Database):
                 is_active = row[9]
                 licence_holders.append(
                     technomasters.LICENCE_HOLDER_DETAILS(
-                    user_id, user_name, email_id, contact_no, 
-                    unit_name, address, 
+                    user_id, user_name, email_id, contact_no,
+                    unit_name, address,
                     total_disk_space/1000000000, used_disk_space/1000000000
                 ))
 
             remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
-            profile_detail = technomasters.PROFILE_DETAIL(str(contract_from), 
-                str(contract_to), no_of_user_licence, remaining_licence, 
+            profile_detail = technomasters.PROFILE_DETAIL(str(contract_from),
+                str(contract_to), no_of_user_licence, remaining_licence,
                 file_space/1000000000, used_space/1000000000, licence_holders)
             profiles.append(technomasters.PROFILES(client_id, profile_detail))
         return profiles
@@ -4345,7 +4391,7 @@ class KnowledgeDatabase(Database):
             user_ids = rows[0][0]
             condition = "user_id in (%s)"% user_ids
         else:
-            condition = "1" 
+            condition = "1"
         columns = "user_id, form_id, action, created_on"
         rows = self.get_data(self.tblActivityLog, columns, condition)
         audit_trail_details = []
@@ -4355,7 +4401,7 @@ class KnowledgeDatabase(Database):
             action = row[2]
             date = self.datetime_to_string(row[3])
             audit_trail_details.append(general.AuditTrail(user_id, form_id, action, date))
-        users = None       
+        users = None
         if session_user != 0:
             condition = "user_id in (%s)" % user_ids
             users = self.return_users(condition)
@@ -4363,8 +4409,8 @@ class KnowledgeDatabase(Database):
             users = self.return_users()
         forms = self.return_forms()
         return general.GetAuditTrailSuccess(audit_trail_details, users, forms)
- 
-# 
+
+#
 #   Update Profile
 #
 
@@ -4378,7 +4424,7 @@ class KnowledgeDatabase(Database):
 #   Get Details Report
 #
 
-    def get_client_details_report(self, country_id, client_id, business_group_id, 
+    def get_client_details_report(self, country_id, client_id, business_group_id,
             legal_entity_id, division_id, unit_id, domain_ids):
 
         condition = "country_id = '%d' AND client_id = '%d' "%(country_id, client_id)
@@ -4419,15 +4465,15 @@ class KnowledgeDatabase(Database):
                 where_condition += " And tu.division_id = '%d'" % row[2]
             if unit_id != None:
                 where_condition += " AND tu.unit_id = '%d'" % unit_id
-            result_rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type, 
+            result_rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type,
             join_conditions, where_condition)
             units = []
             for result_row in result_rows:
-                units.append(technoreports.UnitDetails(result_row[0], result_row[3], result_row[1], 
-                    result_row[2], result_row[4], result_row[6], 
+                units.append(technoreports.UnitDetails(result_row[0], result_row[3], result_row[1],
+                    result_row[2], result_row[4], result_row[6],
                     [int(x) for x in result_row[5].split(",")]))
             GroupedUnits.append(technoreports.GroupedUnits(row[2], row[1], row[0], units))
-        return GroupedUnits   
+        return GroupedUnits
 
 
 #
@@ -4436,7 +4482,7 @@ class KnowledgeDatabase(Database):
     def get_statutory_notifications_report_data(self, request_data):
         country_id = request_data.country_id
         domain_id = request_data.domain_id
-        level_1_statutory_id = request_data.level_1_statutory_id        
+        level_1_statutory_id = request_data.level_1_statutory_id
         if level_1_statutory_id is None :
             level_1_statutory_id = '%'
         query = "SELECT  distinct tsm.country_id, tsm.domain_id\
@@ -4473,20 +4519,20 @@ class KnowledgeDatabase(Database):
                 row[0], row[1]
             )
             notifications_rows = self.select_all(query)
-            notification_columns = ["statutory_name", "statutory_provision", 
+            notification_columns = ["statutory_name", "statutory_provision",
             "notification_text", "updated_on" ]
             statutory_notifications = self.convert_to_dict(notifications_rows, notification_columns)
             notifications =[]
             for notification in statutory_notifications:
                 notifications.append(technoreports.NOTIFICATIONS(
-                    statutory_provision = notification["statutory_provision"], 
+                    statutory_provision = notification["statutory_provision"],
                     notification_text = notification["notification_text"],
                     date_and_time = self.datetime_to_string(notification["updated_on"])
                 ))
             country_wise_notifications.append(
             technoreports.COUNTRY_WISE_NOTIFICATIONS(country_id = row[0], domain_id = row[1], notifications = notifications))
         return country_wise_notifications
-       
+
 #
 #   Notifications
 #
@@ -4498,15 +4544,15 @@ class KnowledgeDatabase(Database):
         aliases = ["tn", "tns"]
         join_conditions = ["tn.notification_id = tns.notification_id"]
         where_condition = " tns.user_id ='%d'"%(session_user)
-        rows = self.get_data_from_multiple_tables(columns, tables, 
+        rows = self.get_data_from_multiple_tables(columns, tables,
             aliases, join_type, join_conditions, where_condition, client_id)
         notifications = []
         for row in rows:
-            notifications.append(general.Notification(row[0], row[1], row[2], 
+            notifications.append(general.Notification(row[0], row[1], row[2],
                 bool(row[4]), self.datetime_to_string(row[3])))
         return notifications
 
-    def update_notification_status(self, notification_id, has_read, 
+    def update_notification_status(self, notification_id, has_read,
         session_user, client_id = None):
         columns = ["read_status"]
         values = [1 if has_read == True else 0]

@@ -9,15 +9,19 @@ import jinja2
 from basics.webserver import WebServer
 from basics.ioloop import IOLoop
 from protocol import (
-    admin, clientadminsettings, clientmasters, clientreport,
-    clienttransactions, clientuser, core, dashboard,
+    admin, clientadminsettings,
     general, knowledgemaster, knowledgereport, knowledgetransaction,
     login, technomasters, technoreports, technotransactions
 )
 from server.database import KnowledgeDatabase
+import controller
+from distribution.protocol import (
+    Request as DistributionRequest,
+    Response as DistributionResponse,
+    CompanyServerDetails
+)
+from server.constants import TEMPLATE_PATHS
 
-import controller 
-import MySQLdb as mysql
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
@@ -25,7 +29,7 @@ ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 # cors_handler
 #
 
-def cors_handler(request, response): 
+def cors_handler(request, response):
     response.set_header("Access-Control-Allow-Origin", "*")
     response.set_header("Access-Control-Allow-Headers", "Content-Type")
     response.set_header("Access-Control-Allow-Methods", "POST")
@@ -60,7 +64,7 @@ class API(object):
     ):
         self._io_loop = io_loop
         self._db = db
-    
+
     def _send_response(
         self, response_data, response
     ):
@@ -103,7 +107,7 @@ class API(object):
                 response_data, response
             )
 
-        # self._db.begin()
+        self._db.begin()
         try:
             response_data = unbound_method(self, request_data, self._db)
             self._db.commit()
@@ -111,8 +115,15 @@ class API(object):
         except Exception, e:
             print(traceback.format_exc())
             print e
-            # self._db.rollback()
+            self._db.rollback()
 
+    @api_request(
+        DistributionRequest
+    )
+    def handle_server_list(self, request, db):
+        return CompanyServerDetails(
+            db.get_servers()
+        )
 
     @api_request(login.Request)
     def handle_login(self, request, db):
@@ -130,7 +141,7 @@ class API(object):
     @api_request(clientadminsettings.Request)
     def handle_client_admin_settings(self, request, db):
         pass
-                         
+
     @api_request(general.RequestFormat)
     def handle_general(self, request, db):
         return controller.process_general_request(request, db)
@@ -192,55 +203,6 @@ class TemplateHandler(tornado.web.RequestHandler) :
 # run_server
 #
 
-TEMPLATE_PATHS = [
-    ("/", "files/desktop/login/login.html", "files/mobile/login/login.html", {}),
-    ("/login", "files/desktop/login/login.html", "files/mobile/login/login.html", {}),
-    ("/test", "test_apis.html", "", {}),
-    ("/home", "files/desktop/home/home.html", None, {}),
-    ("/custom-controls", "files/desktop/custom-controls/custom-controls.html", None, {}),
-    #common
-    ("/profile", "files/desktop/profile/profile.html", None, {}),
-    ("/change-password", "files/desktop/change-password/changepassword.html", None, {}),
-    #IT Admin Master
-    ("/domain-master", "files/desktop/domain-master/domainmaster.html", None, {}),
-    ("/country-master", "files/desktop/country-master/countrymaster.html", None, {}),
-    ("/user-group-master", "files/desktop/user-group-master/usergroupmaster.html", None, {}),
-    ("/user-master", "files/desktop/user-master/usermaster.html", None, {}),    
-    #knowledge manager transaction
-    ("/approve-statutory-mapping", "files/desktop/approve-statutory-mapping/approvestatutorymapping.html", None, {}),
-    #knowledge user master
-    ("/geography-master", "files/desktop/geography-master/geographymaster.html", None, {}),
-    ("/geography-level-master", "files/desktop/geography-level-master/geographylevelmaster.html", None, {}),
-    ("/industry-master", "files/desktop/industry-master/industrymaster.html", None, {}),   
-    ("/statutory-nature-master", "files/desktop/statutory-nature-master/statutorynaturemaster.html", None, {}),
-    ("/statutory-level-master", "files/desktop/statutory-level-master/statutorylevelmaster.html", None, {}),
-    #knowledge user Transaction
-    ("/statutory-mapping", "files/desktop/statutory-mapping/statutorymapping.html", None, {}),    
-    #knowledge Reports
-    ("/statutory-mapping-report", "files/desktop/statutory-mapping-report/statutorymappingreport.html", None, {}),
-    ("/country-report", "files/desktop/knowledge-master-report/country-master-report/countrymasterreport.html", None, {}),
-    ("/domain-report", "files/desktop/knowledge-master-report/domain-master-report/domainmasterreport.html", None, {}),
-    ("/geography-report", "files/desktop/knowledge-master-report/geography-master-report/geographymasterreport.html", None, {}),
-    ("/industry-report", "files/desktop/knowledge-master-report/industry-master-report/industrymasterreport.html", None, {}),
-    ("/statutory-nature-report", "files/desktop/knowledge-master-report/statutory-nature-master-report/statutorynaturemasterreport.html", None, {}),
-    #Techno Manager master
-    ("/client-master", "files/desktop/client-master/clientmaster.html", None, {}),
-    #Techno user master
-    ("/client-unit", "files/desktop/client-unit/clientunit.html", None, {}),
-    ("/unit-closure", "files/desktop/unit-closure/unitclosure.html", None, {}), 
-    ("/client-profile", "files/desktop/client-profile/clientprofile.html", None, {}),
-    #Techno User Transaction
-    ("/assign-statutory", "files/desktop/assign-statutory/assignstatutory.html", None, {}),
-    #Techno reports
-    ("/client-details-report", "files/desktop/client-details-report/clientdetailsreport.html", None, {}),
-    ("/statutory-notifications-list", "files/desktop/statutory-notifications-list-report/statutorynotificationslistreport.html", None, {}),
-    ("/assigned-statutory-report", "files/desktop/assigned-statutory-report/assignedstatutoryreport.html", None, {}),
-    ("/compliance-task-list", "files/desktop/compliance-task-list/compliancetasklist.html", None, {}),
-    #audit trial
-    ("/audit-trail", "files/desktop/audit-trail/audittrail.html", None, {}),
-   ]
-
-
 def handle_root(request, response):
     # response.send("Are you lost?")
     template = template_env.get_template("/")
@@ -248,16 +210,14 @@ def handle_root(request, response):
     self.write(output)
 
 def run_server(port):
-    io_loop = IOLoop()  
+    io_loop = IOLoop()
 
     def delay_initialize():
         db = KnowledgeDatabase(
-            "198.143.141.73", "root", "Root!@#123", "mirror_knowledge"
+            "localhost", 3306, "root", "123456",
+            "mirror_knowledge"
         )
-        # db = KnowledgeDatabase(
-        #     "localhost", "root", "123456", "mirror_knowledge"
-        # )
-        db.begin()
+        db.connect()
         web_server = WebServer(io_loop)
 
         # web_server.url("/", GET=handle_root)
@@ -273,6 +233,7 @@ def run_server(port):
         api = API(io_loop, db)
 
         api_urls_and_handlers = [
+            ("/server-list", api.handle_server_list),
             ("/api/login", api.handle_login),
             ("/api/admin", api.handle_admin),
             ("/api/techno", api.handle_techno),
@@ -298,11 +259,11 @@ def run_server(port):
         css_path = os.path.join(common_path, "css")
         js_path = os.path.join(common_path, "js")
 
-        web_server.low_level_url(r"/images/(.*)", tornado.web.StaticFileHandler, dict(path=images_path))
-        
+        web_server.low_level_url(r"/images/(.*)", StaticFileHandler, dict(path=images_path))
+
         api_design_path = os.path.join(ROOT_PATH, "Doc", "API", "Web-API", "Version-1.0.4", "html")
-        web_server.low_level_url(r"/api-design/(.*)", tornado.web.StaticFileHandler, dict(path=api_design_path))
-        web_server.low_level_url(r"/(.*)", tornado.web.StaticFileHandler, dict(path=static_path))
+        web_server.low_level_url(r"/api-design/(.*)", StaticFileHandler, dict(path=api_design_path))
+        web_server.low_level_url(r"/(.*)", StaticFileHandler, dict(path=static_path))
 
 
         print "Local port: %s" % port

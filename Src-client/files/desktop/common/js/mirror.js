@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8080/";
+var BASE_URL = "http://localhost:8082/";
 
 function initMirror() {
     var DEBUG = true;
@@ -26,9 +26,9 @@ function initMirror() {
         if(typeof pathArray[2] === 'undefined'){
             return null;
         }else{
-            return pathArray[2]   
+            return pathArray[2]
         }
-        
+
     }
 
     // function updateUser_Session(user) {
@@ -81,7 +81,7 @@ function initMirror() {
         var info = getUserInfo();
         if (info !== null)
             return info["session_token"];
-        else 
+        else
             return null;
     }
 
@@ -114,7 +114,7 @@ function initMirror() {
                     callback(null, response);
                 }
                 else {
-                    callback(status, null) 
+                    callback(status, null)
                 }
             }
         )
@@ -141,7 +141,7 @@ function initMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1){
                     callback(null, response);
                 }
-                callback(status, null) 
+                callback(status, null)
             }
         )
         .fail(
@@ -154,7 +154,7 @@ function initMirror() {
         );
     }
 
-    // Login function 
+    // Login function
     function login(username, password, short_name, callback) {
         var request = [
             "Login", {
@@ -177,7 +177,7 @@ function initMirror() {
                     callback(null, response);
                 }
                 else {
-                    callback(status, null); 
+                    callback(status, null);
                 }
             }
         )
@@ -186,7 +186,7 @@ function initMirror() {
         sessionToken = getSessionToken()
         if (sessionToken == null)
             return false
-        else 
+        else
             return false
     }
     function logout(callback) {
@@ -209,7 +209,7 @@ function initMirror() {
                     callback(null, response)
                 }
                 else {
-                    callback(status, null); 
+                    callback(status, null);
                 }
             }
         )
@@ -316,7 +316,7 @@ function initMirror() {
         apiRequest("api/knowledge_master", request, callback);
     }
 
-    function updateStatutoryNature(statutoryNatureId, statutoryNatureName, 
+    function updateStatutoryNature(statutoryNatureId, statutoryNatureName,
         callback) {
         var request = [
             "UpdateStatutoryNature",
@@ -325,7 +325,7 @@ function initMirror() {
         apiRequest("api/knowledge_master", request, callback);
     }
 
-    function changeStatutoryNatureStatus(statutoryNatureId, isActive, 
+    function changeStatutoryNatureStatus(statutoryNatureId, isActive,
         callback) {
         var request = [
             "ChangeStatutoryNatureStatus",
@@ -339,10 +339,10 @@ function initMirror() {
         apiRequest("api/knowledge_master", request, callback);
     }
 
-    // Geography Levels 
+    // Geography Levels
     function getGeographyLevels(callback) {
         var request = ["GetGeographyLevels", {}];
-        apiRequest("api/knowledge_master", request, callback);   
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function levelDetails(levelId, levelPosition, levelName) {
@@ -353,11 +353,11 @@ function initMirror() {
         return level;
     }
 
-    function saveAndUpdateGeographyLevels(countryId, levels, 
+    function saveAndUpdateGeographyLevels(countryId, levels,
         callback) {
         var request = [
             "SaveGeographyLevel",
-            { 
+            {
                 "country_id" : countryId,
                 "levels" : levels
             }
@@ -368,14 +368,14 @@ function initMirror() {
     // Statutory Levels
     function getStatutoryLevels(callback) {
         var request = ["GetStatutoryLevels", {}];
-        apiRequest("api/knowledge_master", request, callback);   
+        apiRequest("api/knowledge_master", request, callback);
     }
 
-    function saveAndUpdateStatutoryLevels(countryId, domainId, levels, 
+    function saveAndUpdateStatutoryLevels(countryId, domainId, levels,
         callback) {
         var request = [
             "SaveStatutoryLevel",
-            { 
+            {
                 "country_id" : countryId,
                 "domain_id" : domainId,
                 "levels" : levels
@@ -387,13 +387,13 @@ function initMirror() {
     //Geographies
     function getGeographies(callback) {
         var request = ["GetGeographies", {}];
-        apiRequest("api/knowledge_master", request, callback);   
+        apiRequest("api/knowledge_master", request, callback);
     }
 
     function saveGeography(levelId, name, parentIds, countryId, callback) {
         var request = [
             "SaveGeography",
-            { 
+            {
                 "geography_level_id": levelId,
                 "geography_name": name,
                 "parent_ids": parentIds,
@@ -408,7 +408,7 @@ function initMirror() {
     ) {
         var request = [
             "UpdateGeography",
-            { 
+            {
                 "geography_id": geographyId,
                 "geography_level_id": levelId,
                 "geography_name": name,
@@ -422,7 +422,7 @@ function initMirror() {
     function changeGeographyStatus(geographyId, isActive, callback) {
         var request = [
             "ChangeGeographyStatus",
-            { 
+            {
                 "geography_id": geographyId,
                 "is_active": isActive
             }
@@ -432,7 +432,7 @@ function initMirror() {
 
     function getGeographyReport(callback) {
         var request = ["GetGeographyReport", {}];
-        apiRequest("api/knowledge_report", request, callback);   
+        apiRequest("api/knowledge_report", request, callback);
     }
 
     // statutory Mapping
@@ -471,8 +471,8 @@ function initMirror() {
     }
 
     function complianceDetails (
-        statutoryProvision, complianceTask, 
-        description, documentName, fileFormat, penalConsequence, 
+        statutoryProvision, complianceTask,
+        description, documentName, fileFormat, penalConsequence,
         complianceFrequency, statutoryDates, repeatsTypeId, repeatsEvery,
         durationTypeId, duration, isActive, complianceId
     ) {
@@ -502,7 +502,7 @@ function initMirror() {
     }
 
     function statutoryMapping(
-        countryId, domainId, industryIds, statutoryNatureId, 
+        countryId, domainId, industryIds, statutoryNatureId,
         statutoryIds, compliances, geographyIds, mappingId
     ) {
         var mappingData = {};
@@ -529,7 +529,7 @@ function initMirror() {
     }
 
     function UpdateStatutoryMappingData(
-        industryIds, statutoryNatureId, 
+        industryIds, statutoryNatureId,
         statutoryIds, compliances, geographyIds, mappingId
     ) {
         var mappingData = {};
@@ -553,7 +553,7 @@ function initMirror() {
         ]
         apiRequest("api/knowledge_transaction", request, callback);
     }
-    
+
     function getStatutoryMappings(callback) {
         var request = ["GetStatutoryMappings", {}];
         apiRequest("api/knowledge_transaction", request, callback);
@@ -696,13 +696,13 @@ function initMirror() {
                 "employee_name": employeeName,
                 "employee_code": employeeCode,
                 "contact_no": contactNo,
-                "address": address, 
+                "address": address,
                 "designation": designation,
                 "country_ids": countryIds,
                 "domain_ids": domainIds
             }
     }
-    
+
     function saveAdminUser(userDetail, callback) {
         callerName = "api/admin"
         var request = [
@@ -728,7 +728,7 @@ function initMirror() {
                 "employee_name": employeeName,
                 "employee_code": employeeCode,
                 "contact_no": contactNo,
-                "address": address, 
+                "address": address,
                 "designation": designation,
                 "country_ids": countryIds,
                 "domain_ids": domainIds
@@ -736,7 +736,7 @@ function initMirror() {
     }
 
     function updateAdminUser(userDetail, callback) {
-        callerName = "api/admin"        
+        callerName = "api/admin"
         var request = [
             "UpdateUser",
             userDetail
@@ -751,7 +751,7 @@ function initMirror() {
             "ChangeUserStatus",
             {
                 "user_id": userId,
-                "is_active" : isActive 
+                "is_active" : isActive
             }
         ];
         apiRequest(callerName, request, callback);
@@ -759,7 +759,7 @@ function initMirror() {
 
     // Client Group Master
 
-    function getDateConfigurations(countryId, domainId, periodFrom, 
+    function getDateConfigurations(countryId, domainId, periodFrom,
         periodTo){
         return {
             "country_id": countryId,
@@ -768,7 +768,7 @@ function initMirror() {
             "period_to": periodTo
         }
     }
-    
+
     function getSaveClientGroupDict(groupName, countryIds, domainIds, logo,
         contractFrom, contractTo, inchargePersons, noOfUserLicence, fileSpace,
         isSmsSubscribed, emailId, dateConfigurations, shortName){
@@ -789,14 +789,14 @@ function initMirror() {
         }
     }
 
-    function saveClientGroup(clientGroupDetails, 
+    function saveClientGroup(clientGroupDetails,
         callback) {
         callerName = "api/techno"
         var request = [
             "SaveClientGroup",
             clientGroupDetails
         ];
-       
+
         apiRequest(callerName, request, callback);
     }
 
@@ -817,7 +817,7 @@ function initMirror() {
             "is_sms_subscribed": isSmsSubscribed,
             "date_configurations":dateConfigurations
         }
-    } 
+    }
 
     function updateClientGroup(clientGroupDetails, callback) {
         callerName = "api/techno"
@@ -828,7 +828,7 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function changeClientGroupStatus( clientId, isActive, 
+    function changeClientGroupStatus( clientId, isActive,
         callback) {
         callerName = "api/techno"
         var request = [
@@ -880,7 +880,7 @@ function initMirror() {
         LoginApiRequest(callerName, request, callback);
     }
 
-    function validateResetToken(resetToken, 
+    function validateResetToken(resetToken,
         callback) {
         callerName = "api/login"
         var request = [
@@ -893,7 +893,7 @@ function initMirror() {
         LoginApiRequest(callerName, request, callback);
     }
 
-    function resetPassword( resetToken, newPassword, 
+    function resetPassword( resetToken, newPassword,
         callback) {
         callerName = "api/login"
         var request = [
@@ -963,7 +963,7 @@ function initMirror() {
         }
     }
 
-    function saveClient(clientId, businessGroup, legalEntity, 
+    function saveClient(clientId, businessGroup, legalEntity,
         division, countryWiseUnits, callback) {
         callerName = "api/techno"
         var request = [
@@ -980,7 +980,7 @@ function initMirror() {
     }
 
 
-    function updateClient(clientId, businessGroup, legalEntity, 
+    function updateClient(clientId, businessGroup, legalEntity,
         division, countryWiseUnits, callback) {
         callerName = "api/techno"
         var request = [
@@ -996,7 +996,7 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function changeClientStatus(clientId, legalEntityId, divisionId, isActive, 
+    function changeClientStatus(clientId, legalEntityId, divisionId, isActive,
         callback) {
         callerName = "api/techno"
         var request = [
@@ -1009,9 +1009,9 @@ function initMirror() {
             }
         ];
         apiRequest(callerName, request, callback);
-    }  
+    }
 
-    function reactivateUnit(clientId, unitId, password, 
+    function reactivateUnit(clientId, unitId, password,
         callback) {
         callerName = "api/techno"
         var request = [
@@ -1023,7 +1023,7 @@ function initMirror() {
             }
         ];
         apiRequest(callerName, request, callback);
-    }  
+    }
 
     //Client Profile
     function getClientProfile(callback){
@@ -1045,7 +1045,7 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId, 
+    function getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId,
         unitId, domainIds, callback){
         callerName = "api/techno_report"
         var request = [
@@ -1084,7 +1084,7 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback);
     }
-    
+
 
     // Assign statutories
     function getAssignStatutoryWizardOne(countryId, callback) {
@@ -1132,8 +1132,8 @@ function initMirror() {
     }
 
     function saveOrSubmitAssignStatutory(
-        countryId, clientId, geographyId, unitIds, 
-        domainId, submissionType, clientStatutoryId, 
+        countryId, clientId, geographyId, unitIds,
+        domainId, submissionType, clientStatutoryId,
         assignStatutories, callback
     ){
         var request = [
@@ -1152,7 +1152,7 @@ function initMirror() {
         callerName = "api/techno_transaction";
         apiRequest(callerName, request, callback);
     }
-    
+
     function getAssignedStatutoryById(clientStatutoryId, callback) {
         var request = [
             "GetAssignedStatutoriesById",
@@ -1163,7 +1163,7 @@ function initMirror() {
         callerName = "api/techno_transaction"
         apiRequest(callerName, request, callback);
     }
-    
+
     function getAssignedStatutoryReportFilters(callback) {
         var request = [
             "GetAssignedStatutoryReportFilters",
@@ -1172,9 +1172,9 @@ function initMirror() {
         callerName = "api/techno_report";
         apiRequest(callerName, request, callback);
     }
-    
-    function getAssignedStatutoryReport(countryId, domainId, 
-        clientId, businessGroupId, legalEntityId, divisionId, 
+
+    function getAssignedStatutoryReport(countryId, domainId,
+        clientId, businessGroupId, legalEntityId, divisionId,
         unitId, level1StatutoryId, applicableStatus, callback
     ){
         var request = [
@@ -1218,7 +1218,7 @@ function initMirror() {
     }
 
 /* Notifications */
-    
+
     function getNotifications(notification_type, callback){
         callerName = "api/general"
         var request = [
@@ -1244,7 +1244,7 @@ function initMirror() {
 
     return {
         log: log,
-        toJSON: toJSON, 
+        toJSON: toJSON,
         parseJSON: parseJSON,
 
         initSession: initSession,
@@ -1340,10 +1340,10 @@ function initMirror() {
         resetPassword: resetPassword,
 
         getClients: getClients,
-        getBusinessGroupDict :getBusinessGroupDict , 
-        getLegalEntityDict :getLegalEntityDict , 
-        getDivisionDict :getDivisionDict , 
-        getUnitDict :getUnitDict , 
+        getBusinessGroupDict :getBusinessGroupDict ,
+        getLegalEntityDict :getLegalEntityDict ,
+        getDivisionDict :getDivisionDict ,
+        getUnitDict :getUnitDict ,
         mapUnitsToCountry : mapUnitsToCountry,
         saveClient: saveClient,
         updateClient : updateClient,
