@@ -3118,7 +3118,7 @@ class ClientDatabase(Database):
             unitwise = clientreport.ComplianceDetailsUnitWise(unit_id, unit_name, unit_address, compliances_list)
             unit_wise_compliances.append(unitwise)
         return unit_wise_compliances
-=======
+
 #
 #   Trend Chart
 #
@@ -3616,3 +3616,16 @@ class ClientDatabase(Database):
             trigger_before = int(statutory_dates[0]["trigger_before_days"])
             next_start_date = due_date -timedelta(days=trigger_before)
         return next_start_date
+
+    def update_compliances(self, compliance_history_id, documents, completion_date, 
+        validity_date, next_due_date, remarks, client_id, session_user):
+        current_time_stamp = self.get_date_time()
+        history_columns = ["completion_date", "documents", "validity_date", 
+        "next_due_date", "remarks", "completed_on"]
+        history_values = [self.string_to_datetime(completion_date),
+        ",".join(documents), self.string_to_datetime(validity_date),
+        self.string_to_datetime(next_due_date), remarks, current_time_stamp]
+        history_condition = "compliance_history_id = '%d' and completed_by ='%d'"% (
+            compliance_history_id, session_user)
+        return self.update(self.tblComplianceHistory, history_columns, history_values, 
+            history_condition, client_id)

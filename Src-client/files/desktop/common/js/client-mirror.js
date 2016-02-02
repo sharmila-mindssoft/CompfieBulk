@@ -879,8 +879,21 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function updateComplianceDetail(callback){
-        
+    function updateComplianceDetail(compliance_history_id, documents, completion_date, 
+        validity_date, next_due_date, remarks, callback){
+        callerName = "api/client_user"
+        var request = [
+            "UpdateComplianceDetail",
+            {
+                "compliance_history_id": compliance_history_id,
+                "documents": documents, 
+                "completion_date": completion_date,
+                "validity_date": validity_date,
+                "next_due_date": next_due_date,
+                "remarks": remarks
+            }
+        ];
+        clientApiRequest(callerName, request, callback);   
     }
 
     return {
