@@ -1448,7 +1448,7 @@ class RiskData(object):
             "business_group_name": to_structure_CustomTextType_100(self.business_group_name),
             "legal_entity_name": to_structure_CustomTextType_100(self.legal_entity_name),
             "division_name": to_structure_CustomTextType_100(self.division_name),
-            "level_1_statutory_wise_units": to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory((self.level_1_statutory_wise_units),
+            "level_1_statutory_wise_units": to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(self.level_1_statutory_wise_units),
         }
 
 #
