@@ -1,11 +1,11 @@
-var unitWiseComplianceList;
+var riskComplianceList;
 var countriesList;
 var domainsList;
 var businessGroupsList;
 var legalEntitiesList;
 var divisionsList
 var unitsList;
-var assigneesList;
+var actList;
 
 
 function clearMessage() {
@@ -17,7 +17,7 @@ function displayMessage(message) {
   $(".error-message").show();
 }
 
-function getClientReportFilters(){
+function getRiskReportFilters(){
   function onSuccess(data){
     countriesList = data["countries"];
     domainsList = data["domains"];
@@ -25,13 +25,13 @@ function getClientReportFilters(){
     legalEntitiesList = data["legal_entities"];
     divisionsList = data["divisions"];
     unitsList = data["units"];
-    assigneesList = data["users"];
+    actList = data["level1_statutories"];
     loadCountries(countriesList);
   }
   function onFailure(error){
     displayMessage(error);
   }
-  client_mirror.getClientReportFilters(
+  client_mirror.getRiskReportFilters(
     function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -47,8 +47,6 @@ function loadresult(filterList){
   $(".grid-table-rpt").show();
   var country = $("#country").find('option:selected').text();
   var domain = $("#domainval").val();
-  $(".country").text(country);
-  $(".domain").text(domain);
 
   $(".tbody-unit").find("tbody").remove();
   var compliance_count=0;
@@ -143,13 +141,15 @@ $("#submit").click(function(){
   var legalentity = null;
   var division = null;
   var unit = null;
-  var assignee = null;
+  var act = null;
+  var statutory_status = null;
 
   if($("#businessgroup").val() != '') businessgroup = $("#businessgroup").val();
   if($("#legalentity").val() != '') legalentity = $("#legalentity").val();
   if($("#division").val() != '') division = $("#division").val();
   if($("#unit").val() != '') unit = $("#unit").val();
-  if($("#assignee").val() != '') assignee = $("#assignee").val();
+  if($("#act").val() != '') act = $("#act").val().trim();
+  if($("#statutory_status").val() != '') statutory_status = $("#statutory_status").val();
 
   if(country.length == 0){
     displayMessage("Country Required");
@@ -159,22 +159,23 @@ $("#submit").click(function(){
   }
   else{
       var filterdata={};
-      filterdata["country_id"]=parseInt(country);
-      filterdata["domain_id"]=parseInt(domain);
-      filterdata["businessgroup_id"]=parseInt(businessgroup);
-      filterdata["legalentity_id"]=parseInt(legalentity);
-      filterdata["division_id"]=parseInt(division);
-      filterdata["unit_id"]=parseInt(unit);
-      filterdata["user_id"]=parseInt(assignee);
+      filterdata["country_id"] = country;
+      filterdata["domain_id"] = domain;
+      filterdata["businessgroup_id"] = businessgroup;
+      filterdata["legalentity_id"] = legalentity;
+      filterdata["division_id"] = division;
+      filterdata["unit_id"] = unit;
+      filterdata["statutory_id"] = act;
+      filterdata["statutory_status"] = statutory_status;
 
       function onSuccess(data){
-        unitWiseComplianceList = data["compliance_list"];
-        loadresult(unitWiseComplianceList);
+        riskComplianceList = data["compliance_list"];
+        loadresult(riskComplianceList);
       }
       function onFailure(error){
         onFailure(error);
       }
-      client_mirror.getUnitwisecomplianceReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), parseInt(assignee), 
+      client_mirror.getRiskReport( parseInt(country), parseInt(domain), parseInt(businessgroup), parseInt(legalentity), parseInt(division), parseInt(unit), act, parseInt(statutory_status), 
         function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -195,7 +196,7 @@ $(".hidemenu").click(function(){
   $("#autocomplete_legalentity").hide();
   $("#autocomplete_division").hide();
   $("#autocomplete_unit").hide();
-  $("#autocomplete_assignee").hide();
+  $("#autocomplete_act").hide();
 });
 
 //load country list
@@ -204,7 +205,8 @@ function loadCountries(countriesList){
   $.each(countriesList, function(key, values){
     var countryId = countriesList[key]['country_id'];
     var countryName = countriesList[key]['country_name'];
-    $('#country').append($('<option value="'+countryId+'">'+countryName+'</option>'));
+    if(countriesList[key]['is_active'])
+      $('#country').append($('<option value="'+countryId+'">'+countryName+'</option>'));
   });
 }
 
@@ -354,39 +356,35 @@ function activate_unit (element,checkval,checkname) {
   $("#unit").val(checkval);
 }
 
-
-//Assignee---------------------------------------------------
-$("#assigneeval").keyup(function(){
-
+//acts-------------------------------------
+$("#actval").keyup(function(){
   var textval = $(this).val();
-  $("#autocomplete_assignee").show();
-  
-  var assignees = assigneesList;
+  $("#autocomplete_act").show();
+  var acts = actList;
   var suggestions = [];
- $('#ulist_assignee').empty();
+  $('#ulist_act').empty();
   if(textval.length>0){
-    for(var i in assignees){
-      if (~assignees[i]["employee_name"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([assignees[i]["employee_id"],assignees[i]["employee_name"]]); 
+    for(var i in acts){
+      if (~acts[i]["statutory"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([acts[i]["statutory"],acts[i]["statutory"]]); 
     }
     var str='';
     for(var i in suggestions){
-              str += '<li id="'+suggestions[i][0]+'"onclick="activate_assignee(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+              str += '<li id="'+suggestions[i][0]+'"onclick="activate_acts(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
     }
-    $('#ulist_assignee').append(str);
-    $("#assignee").val('');
+    $('#ulist_act').append(str);
+    $("#act").val('');
     }else{
-      $("#assignee").val('');
-      $("#autocomplete_assignee").hide();
+      $("#act").val('');
+      $("#autocomplete_act").hide();
     }
 });
-//set selected autocomplte value to textbox
-function activate_assignee (element,checkval,checkname) {
-  $("#assigneeval").val(checkname);
-  $("#assignee").val(checkval);
+function activate_acts (element,checkval,checkname) {
+  $("#actval").val(checkname);
+  $("#act").val(checkval);
 }
 //Autocomplete Script ends
 
 $(function() {
   $(".grid-table-rpt").hide();
-  getClientReportFilters();
+  getRiskReportFilters();
 });
