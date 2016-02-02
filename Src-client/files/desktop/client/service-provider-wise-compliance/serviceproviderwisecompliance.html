@@ -1,0 +1,162 @@
+{% extends "files/desktop/home/container.html" %}
+{% block content %}
+  <div class="content-container">
+    <div class="content-area">
+      
+      <div class="add-container">
+        <div class="add-container-heading">Service Provider wise Compliances<span class="error-message"></span></div>
+        <div class="input-row-left">
+          <div class="input-row">
+            <div class="field-label">Country:<span class="mandatory">*</span></div>
+            <div class="field-input">
+            <select class="input-box" id="country">
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field-label">Domain:<span class="mandatory">*</span></div>
+          <div class="field-input">
+            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" >
+            <input type="hidden" id="domain" value="">
+            <div id="autocomplete_domain" class="ac-textbox default-display-none">
+            <ul id="ulist_domain" style="width:215px;" class="hidemenu"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="field-label">Act:<span class="mandatory">*</span></div>
+        <div class="field-input">
+          <input type="text" class="input-box icon-autocomplete" id="actval" placeholder="Enter Business Group">
+          <input type="hidden" id="act">
+          <div id="autocomplete_act" class="ac-textbox default-display-none">
+          <ul id="ulist_act" style="width:215px;" class="hidemenu"></ul>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="input-row-right">
+<div class="input-row">
+  <div class="field-label">Unit:</div>
+  <div class="field-input">
+    <input type="text" class="input-box icon-autocomplete" id="unitval" placeholder="Enter Unit">
+    <input type="hidden" id="unit">
+    <div id="autocomplete_unit" class="ac-textbox default-display-none">
+    <ul id="ulist_unit" style="width:215px;" class="hidemenu"></ul>
+  </div>
+</div>
+</div>
+<div class="input-row">
+<div class="field-label">Service Provider:</div>
+ <div class="field-input">
+    <input type="text" class="input-box icon-autocomplete" id="serviceproviderval" placeholder="Enter Service Provider">
+    <input type="hidden" id="serviceprovider">
+    <div id="autocomplete_serviceprovider" class="ac-textbox default-display-none">
+    <ul id="ulist_serviceprovider" style="width:215px;" class="hidemenu"></ul>
+  </div>
+</div>
+</div>
+</div>
+<div class="submit-button-container">
+<input type="submit" value="Show" class="btn-submit" id="submit">
+<input type="submit" value="Export" class="btn-submit" id="export">
+</div>
+
+
+<div class="clearfix"></div>
+<div class="grid-table-rpt" style="padding-bottom:0em;" class="default-display-none">
+<h1>Service Provider wise Compliances</h1>
+<table class="tbody-serviceprovider" width="100%">
+
+</table>
+
+<p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="serviceprovider-list-templates" style="display:none;" >
+<table class="table-serviceprovider-list" width="100%">
+<tr class="table-row-serviceprovider-list" >
+<td colspan="11" style="padding-top:30px;">
+<div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+  <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Country:<span style="margin-left:10px; font-weight:bold;" class="tbl_country"></span> </div>
+
+   <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Act:<span style="margin-left:10px; font-weight:bold;" class="tbl_act"></span> </div>      
+  
+</div>
+<div style="float:right; margin-right:20%;">
+  <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Domain:<span style="margin-left:10px; font-weight:bold;" class="tbl_domain"></span> </div>
+</div>
+</td>
+<tr>
+</table>
+</div>
+
+<div id="serviceprovider-head-templates"  style="display:none;" width="100%">
+<table style=" border:dotted 1px #ccc;" class="table-serviceprovider-head" width="100%">
+        <tr class="table-row-serviceprovider-head">
+          <th style="background:#ccc;" width="3%" align="center">#</th>
+          <th style="background:#ccc;" width="15%" align="left">Service Provider Name</th>
+          <th style="background:#ccc;" width="14%" align="left">Contact Person</th>
+          <th style="background:#ccc;" width="14%" align="left">Email</th>
+          <th style="background:#ccc;" width="10%" align="left" colspan="3">Mobile</th>
+          <th style="background:#ccc;" width="25%" align="left">Address</th>
+          <th style="background:#ccc;"  align="left" width="18%" colspan="2">Contract Period</th>
+        </tr>
+        <tr style="background:#f1e9f6;" class="table-row-serviceprovider-headvalue">
+          <td align="center" class="tbl_sp_count"></td>
+          <td class="tbl_sp_name" ></td>
+          <td class="tbl_sp_contactperson"></td>
+          <td class="tbl_sp_email"></td>
+          <td class="tbl_sp_contactno" colspan="3">></td>
+          <td class="tbl_sp_address" ></td>
+          <td class="tbl_sp_period" colspan="2"></td>
+        </tr> 
+</table>
+</div>
+
+<div id="unit-head-templates" style="display:none;">
+<table class="table-unit-head">
+<tr align="left" class="table-row-unit-head">
+<th width="2%" style="background:#ccc;"><span style="font-weight:bold;"></span></th>
+<th width="28%" style="background:#ccc;" ><span style="font-weight:bold;">Compliance Task</span></th>
+<th width="13%"  style="background:#ccc;"><span style="font-weight:bold;">Compliance Description</span></th>
+<th width="15%"  style="background:#ccc;"colspan="4" ><span style="font-weight:bold;" >Statutory Date</span></th>
+<th width="10%" style="background:#ccc;" ><span style="font-weight:bold;">Trigger Before</span></th>
+<th width="10%"  style="background:#ccc;" ><span style="font-weight:bold;">Due Date</span></th>
+<th width="12%"  style="background:#ccc;" ><span style="font-weight:bold;">Validity Date</span></th>
+</tr>
+</table>
+</div>
+
+
+<div id="unit-name-templates">
+<table class="table-unit-name">
+<tr class="table-row-unit-name">
+<td align="left" class="tbl_unitheading" colspan="11">
+</td>
+</tr>
+</table>
+<div class="clearfix"></div>
+</div>
+
+<div id="unit-content-templates">
+<table class="table-unit-content">
+<tr align="left" class="table-row-unit-content">
+
+<td  align="center" class="tbl_sno"></td>
+<td class="tbl_compliance"> </td>
+<td class="tbl_description"> </td>
+<td colspan="4" class="tbl_statutorydate"></td>
+<td class="tbl_triggerbefore" > </td>
+<td class="tbl_duedate" ></td>
+<td class="tbl_validitydate"></td>
+
+</tr>
+</table>
+</div>
+
+<script type="text/javascript" src="/files/desktop/client/service-provider-wise-compliance/serviceproviderwisecompliance.js"></script>
+{% endblock %}

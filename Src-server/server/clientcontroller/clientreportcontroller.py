@@ -22,6 +22,14 @@ def process_client_report_requests(request, db) :
 		return get_unitwise_compliance(db, request, session_user, client_id)
 	elif type(request) is clientreport.GetAssigneewisecomplianceReport:
 		return get_assigneewise_compliance(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetServiceProviderReportFilters:
+		return get_serviceprovider_report_filters(db, request, session_user, client_id) 
+	elif type(request) is clientreport.GetServiceProviderWiseCompliance:
+		return get_serviceproviderwise_compliance(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetComplianceDetailsReportFilters:
+		return get_compliancedetails_report_filters(db, request, session_user, client_id) 
+	elif type(request) is clientreport.GetComplianceDetailsReport:
+		return get_compliancedetails_report(db, request, session_user, client_id)
 
 
 def get_client_report_filters(db, request, session_user, client_id):
@@ -86,6 +94,73 @@ def get_assigneewise_compliance(db, request, session_user, client_id):
 	    legal_entity_id, division_id, unit_id, user_id, client_id,session_user
 	)
 	return clientreport.GetAssigneewisecomplianceReportSuccess(assignee_wise_compliances_list)
+
+
+def get_serviceprovider_report_filters(db, request, session_user, client_id):
+	user_company_info = db.get_user_company_details( session_user, client_id)
+	unit_ids = user_company_info[0]
+	country_list = db.get_countries_for_user(session_user, client_id)
+	domain_list = db.get_domains_for_user(session_user, client_id)
+	unit_list = db.get_units_for_user(unit_ids, client_id)
+	level_1_statutories_list = db.get_client_level_1_statutoy(session_user, client_id)
+	service_providers_list = db.get_service_providers(client_id)
+
+	return clientreport.GetServiceProviderReportFiltersSuccess(
+		countries = country_list, domains = domain_list, level_1_statutories = level_1_statutories_list, units = unit_list, service_providers = service_providers_list)
+
+def get_serviceproviderwise_compliance(db, request, session_user, client_id):
+	country_id = request.country_id
+	domain_id = request.domain_id
+	statutory_id = request.statutory_id
+	unit_id = request.unit_id
+	service_provider_id = request.service_provider_id
+	
+	if service_provider_id is None :
+		service_provider_id = '%'
+
+	serviceprovider_wise_compliances_list = db.get_serviceproviderwise_compliance_report(
+	    country_id, domain_id, statutory_id, unit_id, service_provider_id, client_id,session_user
+	)
+	return clientreport.GetServiceProviderWiseComplianceSuccess(serviceprovider_wise_compliances_list)
+
+def get_compliancedetails_report_filters(db, request, session_user, client_id):
+	user_company_info = db.get_user_company_details( session_user, client_id)
+	unit_ids = user_company_info[0]
+	country_list = db.get_countries_for_user(session_user, client_id)
+	domain_list = db.get_domains_for_user(session_user, client_id)
+	unit_list = db.get_units_for_user(unit_ids, client_id)
+	level_1_statutories_list = db.get_client_level_1_statutoy(session_user, client_id)
+	compliances_list = db.get_client_compliances(session_user, client_id);
+	users_list = db.get_client_users(client_id);
+
+	return clientreport.GetComplianceDetailsReportFiltersSuccess(
+		countries = country_list, domains = domain_list, level_1_statutories = level_1_statutories_list, units = unit_list, Compliances = compliances_list, users = users_list)
+
+def get_compliancedetails_report(db, request, session_user, client_id):
+	country_id = request.country_id
+	domain_id = request.domain_id
+	statutory_id = request.statutory_id
+	unit_id = request.unit_id
+	compliance_id = request.compliance_id
+	assignee_id = request.assignee_id
+	from_date = request.from_date
+	to_date = request.to_date
+	
+	
+	if compliance_id is None :
+		compliance_id = '%'
+	if assignee_id is None :
+		assignee_id = '%'
+	if request.compliance_status is None :
+		compliance_status = '%'
+	else :
+		compliance_status = core.COMPLIANCE_STATUS(request.compliance_status)
+
+
+	compliance_details_list = db.get_compliance_details_report(
+	    country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status, client_id,session_user
+	)
+	return clientreport.GetComplianceDetailsReportSuccess(compliance_details_list)
 
 
 	

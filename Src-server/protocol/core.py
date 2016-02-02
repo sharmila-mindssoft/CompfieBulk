@@ -2471,3 +2471,48 @@ class ComplianceApprovalStatus(object):
             "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
         }
 
+#
+# Client Level One Statutory
+#
+
+class ClientLevelOneStatutory(object):
+    def __init__(self, statutory):
+        self.statutory = statutory
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["statutory"])
+        statutory = data.get("statutory")
+        statutory = parse_structure_CustomTextType_50(statutory)
+        return ClientLevelOneStatutory(statutory)
+
+    def to_structure(self):
+        return {
+            "statutory": to_structure_CustomTextType_50(self.statutory)
+        }
+
+#
+# Client Compliance Filter
+#
+
+class ComplianceFilter(object):
+    def __init__(self, compliance_id, compliance_name):
+        self.compliance_id = compliance_id
+        self.compliance_name = compliance_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["compliance_id", "compliance_name"])
+        compliance_id = data.get("compliance_id")
+        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
+
+        compliance_name = data.get("compliance_name")
+        compliance_name = parse_structure_CustomTextType_100(compliance_name)
+
+        return ComplianceFilter(compliance_id, compliance_name)
+
+    def to_structure(self):
+        return {
+            "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
+            "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
+        }
