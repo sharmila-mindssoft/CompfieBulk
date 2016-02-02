@@ -103,8 +103,11 @@ GetComplianceApplicabilityStatusDrillDown = RecordType("GetComplianceApplicabili
 ])
 
 GetNotCompliedDrillDown = RecordType("GetNotCompliedDrillDown", [
+	Field("country_ids", VectorType(COUNTRY_ID)),
+	Field("domain_ids", VectorType(DOMAIN_ID)),
 	Field("filter_type", FILTER_TYPE),
-	Field("filter_id", FILTER_ID)
+	Field("filter_id", FILTER_ID),
+	Field("not_complied_type", Text)
 ])
 
 GetTrendChartDrillDownData = RecordType("GetTrendChartDrillDownData", [

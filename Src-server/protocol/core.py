@@ -42,7 +42,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability,
     parse_structure_CustomTextType_500,
     parse_structure_OptionalType_CustomTextType_20,
-    parse_structure_VectorType_CustomTextType_100
+    parse_structure_VectorType_CustomTextType_100,
+    parse_structure_EnumType_core_NOT_COMPLIED_TYPE
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -91,7 +92,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability,
     to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS,
     to_structure_OptionalType_CustomTextType_20,
-    to_structure_VectorType_CustomTextType_100
+    to_structure_VectorType_CustomTextType_100,
+    to_structure_EnumType_core_NOT_COMPLIED_TYPE
 )
 
 #
@@ -488,6 +490,34 @@ class COMPLIANCE_ACTIVITY_STATUS(object):
 
     def to_structure(self):
         return parse_enum(self._value, COMPLIANCE_ACTIVITY_STATUS.values())
+
+#
+# NOT_COMPLIED_TYPE
+#
+
+class NOT_COMPLIED_TYPE(object) :
+    below_30 = "Below 30"
+    below_60 = "Below 60"
+    below_90 = "Below 90"
+    above_90 = "Above 90"
+
+    def __init__(self, value):
+        self._value = value
+
+    @staticmethod
+    def values():
+        return ["Below 30", "Below 60", "Below 90", "Above 90"]
+
+    def value (self):
+        return self._value
+
+    @staticmethod
+    def parse_structure(data):
+        return parse_enum(data, NOT_COMPLIED_TYPE.values())
+
+    def to_structure(self):
+        return parse_enum(self._value, NOT_COMPLIED_TYPE.values())
+
 
 #
 #  Form
