@@ -3494,3 +3494,10 @@ def parse_structure_EnumType_core_NOT_COMPLIED_TYPE(data):
 def parse_structure_OptionalType_CustomTextType_250(data):
     if data is None: return data
     return parse_custom_string(data, 250)
+
+def parse_structure_VectorType_CustomTextType_100(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_CustomTextType_100(item))
+    return lst

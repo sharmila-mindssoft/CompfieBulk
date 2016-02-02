@@ -1,8 +1,9 @@
 from protocol import (core, general, clienttransactions, dashboard, 
-    clientreport, clientadminsettings)
+    clientreport, clientadminsettings, clientuser)
 from database import Database
 import json
 import datetime
+from datetime import timedelta
 from types import *
 
 from types import *
@@ -3142,9 +3143,9 @@ class ClientDatabase(Database):
         else:
            condition += " country_id ='%d')"% (country_id) 
         result = self.get_data(self.tblClientStatutories, columns, condition, client_id)
-        client_statutoy_ids = result[0][0]
+        client_statutory_ids = result[0][0]
         unit_ids = result[0][1]
-        return client_statutoy_ids, unit_ids
+        return client_statutory_ids, unit_ids
 
     def get_compliance_history_ids_for_trend_chart(self, country_id, 
         domain_id, client_id, filter_id = None, filter_type = None):
@@ -3500,3 +3501,118 @@ class ClientDatabase(Database):
         condition = "notification_id = '%d' and user_id='%d'"% (
             notification_id, session_user)
         self.update(self.tblNotificationUserLog , columns, values, condition, client_id)
+
+# 
+#   Manage Compliances / Compliances List / Upload Compliances
+#
+    def calculate_ageing(self, due_date):
+        current_time_stamp = self.get_date_time()
+        due_date = datetime.datetime(due_date.year, due_date.month, due_date.day)
+        ageing = abs(current_time_stamp - due_date).days
+        compliance_status = " %d days left" % ageing
+        if ageing > 0:
+            compliance_status = "Overdue by %d days" % ageing
+        return compliance_status
+
+    def get_current_compliances_list(self, session_user, client_id):
+        columns = "compliance_history_id, start_date, due_date, "+\
+        "validity_date, next_due_date, document_name, compliance_task, "+\
+        "compliance_description, format_file, unit_code, unit_name,"+\
+        "address, domain_name, frequency"
+        tables = [self.tblComplianceHistory, self.tblCompliances, self.tblUnits,
+        self.tblClientCompliances, self.tblClientStatutories, self.tblDomains, 
+        self.tblComplianceFrequency]
+        aliases = ["ch", "c" , "u", "cc", "cs", "d", "cf"]
+        join_conditions = ["ch.compliance_id = c.compliance_id", 
+        "ch.unit_id = u.unit_id", "c.compliance_id = cc.compliance_id",
+        "cc.client_statutory_id = cs.client_statutory_id", "cs.domain_id = d.domain_id",
+        "c.frequency_id = cf.frequency_id"]
+        join_type = "right join"
+        where_condition = "ch.completed_by='%d'" % (
+            session_user)
+        where_condition += " and (ch.completed_on is Null or "+\
+            "ch.concurrence_status=0 or ch.approve_status=0)"
+        current_compliances_row = self.get_data_from_multiple_tables(columns, 
+            tables, aliases, join_type, join_conditions, where_condition, client_id)
+
+        current_compliances_list = []
+        for compliance in current_compliances_row:
+            document_name = compliance[5]
+            compliance_task = compliance[6]
+            compliance_name = "%s - %s"%(document_name, compliance_task)
+
+            unit_code = compliance[9]
+            unit_name = compliance[10]
+            unit_name = "%s - %s"% (unit_code, unit_name)
+            ageing = self.calculate_ageing(compliance[2])
+            compliance_status = core.COMPLIANCE_STATUS("Inprogress")
+            if ageing > 0:
+                compliance_status = core.COMPLIANCE_STATUS("NotComplied")
+            current_compliances_list.append(core.ActiveCompliance(
+                compliance_history_id = compliance[0], 
+                compliance_name = compliance_name, 
+                compliance_frequency = core.COMPLIANCE_FREQUENCY(compliance[13]), 
+                domain_name = compliance[12], 
+                start_date = self.datetime_to_string(compliance[1]), 
+                due_date = self.datetime_to_string(compliance[2]), 
+                compliance_status = compliance_status, 
+                validity_date = None if compliance[3] == None else self.datetime_to_string(compliance[3]), 
+                next_due_date = self.datetime_to_string(compliance[4]), 
+                ageing= ageing, format_file_name = compliance[8].split(","), 
+                unit_name = unit_name, address = compliance[11], 
+                compliance_description = compliance[12]))
+        return current_compliances_list
+
+    def get_upcoming_compliances_list(self, session_user, client_id):
+        columns = "due_date, document_name, compliance_task,"+\
+        " compliance_description, format_file, unit_code, unit_name,"+\
+        "  address, domain_name, ac.statutory_dates, repeats_every"
+        tables = [self.tblAssignedCompliances, self.tblUnits,  self.tblCompliances,
+        self.tblClientCompliances, self.tblClientStatutories, self.tblDomains]
+        aliases = ["ac", "u", "c", "cc", "cs", "d"]
+        join_conditions = ["ac.unit_id = u.unit_id", 
+        "ac.compliance_id = c.compliance_id", 
+        "ac.compliance_id = cc.compliance_id",
+        "cc.client_statutory_id = cs.client_statutory_id",
+        "cs.domain_id = d.domain_id"]
+        join_type = "right join"
+        where_condition = " assignee = '%d'" % session_user
+        where_condition += " and due_Date > DATE_SUB(now(), INTERVAL 6 MONTH) "
+        upcoming_compliances_rows = self.get_data_from_multiple_tables(columns, 
+            tables, aliases, join_type, join_conditions, where_condition, client_id)
+        upcoming_compliances_list = []
+        for compliance in upcoming_compliances_rows:
+            document_name = compliance[1]
+            compliance_task = compliance[2]
+            compliance_name = "%s - %s"%(document_name, compliance_task)
+
+            unit_code = compliance[5]
+            unit_name = compliance[6]
+            unit_name = "%s - %s"% (unit_code, unit_name)
+
+            start_date = self.calculate_next_start_date(compliance[0], 
+                compliance[9],  compliance[10])
+
+            upcoming_compliances_list.append(core.UpcomingCompliance(
+                compliance_name = compliance_name, domain_name = compliance[8], 
+                start_date = self.datetime_to_string(start_date), 
+                due_date = self.datetime_to_string(compliance[0]), 
+                format_file_name = compliance[4].split(","),unit_name = unit_name,
+                address = compliance[7], compliance_description = compliance[3]))
+        return upcoming_compliances_list
+
+    def calculate_next_start_date(self, due_date, statutory_dates, repeats_every):
+        statutory_dates = json.loads(statutory_dates)
+        next_start_date = None
+        if len(statutory_dates) > 1:
+            month_of_due_date = due_date.month()
+            for statutory_date in statutory_dates:
+                if month_of_due_date == statutory_date["statutory_month"]:
+                    next_start_date = due_date - timedelta(
+                        days=statutory_date["trigger_before_days"])
+                else:
+                    continue                
+        else:
+            trigger_before = int(statutory_dates[0]["trigger_before_days"])
+            next_start_date = due_date -timedelta(days=trigger_before)
+        return next_start_date

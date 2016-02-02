@@ -139,7 +139,11 @@ class API(object):
 
     @api_request(general.RequestFormat)
     def handle_general(self, request, db):
-        return controller.process_general_request(request, db)        
+        return controller.process_general_request(request, db) 
+
+    @api_request(clientuser.RequestFormat)
+    def handle_client_user(self, request, db):
+        return controller.process_client_user_request(request, db)
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Src-client")
@@ -242,6 +246,7 @@ def run_server(port):
             ("/api/client_dashboard", api.handle_client_dashboard),
             ("/api/client_admin_settings", api.handle_client_admin_settings),
             ("/api/general", api.handle_general),
+            ("/api/client_user", api.handle_client_user),
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

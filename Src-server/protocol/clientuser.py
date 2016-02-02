@@ -11,7 +11,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_clientuser_ComplianceDetail,
     parse_structure_CustomTextType_20,
     parse_structure_VariantType_clientuser_Request,
-    parse_structure_VectorType_CustomTextType_20
+    parse_structure_VectorType_CustomTextType_20,
+    parse_structure_RecordType_clientuser_ComplianceDetail
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_UpcomingCompliance,
@@ -23,7 +24,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_clientuser_ComplianceDetail,
     to_structure_CustomTextType_20,
     to_structure_VariantType_clientuser_Request,
-    to_structure_VectorType_CustomTextType_20
+    to_structure_VectorType_CustomTextType_20,
+    to_structure_RecordType_clientuser_ComplianceDetail
 )
 
 #
@@ -191,12 +193,12 @@ class GetComplianceDetailSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["compliance_detail"])
         compliance_detail = data.get("compliance_detail")
-        compliance_detail = parse_structure_VectorType_RecordType_clientuser_ComplianceDetail(compliance_detail)
+        compliance_detail = parse_structure_RecordType_clientuser_ComplianceDetail(compliance_detail)
         return GetComplianceDetailSuccess(compliance_detail)
 
     def to_inner_structure(self):
         return {
-            "compliance_detail": to_structure_VectorType_RecordType_clientuser_ComplianceDetail(self.compliance_detail),
+            "compliance_detail": to_structure_RecordType_clientuser_ComplianceDetail(self.compliance_detail),
         }
 
 class CheckDiskSpaceSuccess(Response):
@@ -313,27 +315,23 @@ class RequestFormat(object):
 #
 
 class ComplianceDetail(object):
-    def __init__(self, unit_id, current_compliances, upcoming_compliances):
-        self.unit_id = unit_id
+    def __init__(self, current_compliances, upcoming_compliances):
         self.current_compliances = current_compliances
         self.upcoming_compliances = upcoming_compliances
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "current_compliances", "upcoming_compliances"])
-        unit_id = data.get("unit_id")
-        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
+        data = parse_dictionary(data, ["current_compliances", "upcoming_compliances"])
         current_compliances = data.get("current_compliances")
         current_compliances = parse_structure_VectorType_RecordType_core_ActiveCompliance(current_compliances)
         upcoming_compliances = data.get("upcoming_compliances")
         upcoming_compliances = parse_structure_VectorType_RecordType_core_UpcomingCompliance(upcoming_compliances)
-        return ComplianceDetail(unit_id, current_compliances, upcoming_compliances)
+        return ComplianceDetail(current_compliances, upcoming_compliances)
 
     def to_structure(self):
         return {
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
             "current_compliances": to_structure_VectorType_RecordType_core_ActiveCompliance(self.current_compliances),
-            "upcoming_compliances": to_structure_VectorType_RecordType_core_UpcomingCompliance(self.upcoming_compliances),
+            "upcoming_compliances": to_structure_VectorType_RecordType_core_UpcomingCompliance(self.upcoming_compliances)
         }
 
 #
