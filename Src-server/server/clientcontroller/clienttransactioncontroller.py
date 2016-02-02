@@ -98,14 +98,6 @@ def process_get_compliance_approval_list(db, request, session_user, client_id):
 		approval_list = compliance_approval_list, approval_status = approval_status)
 
 
-def process_get_compliance_for_units(db, request, session_user, client_id):
-	unit_ids = request.unit_ids
-	statutories = db.get_assign_compliance_statutories_for_units(unit_ids, session_user, client_id)
-	return clienttransactions.GetComplianceForUnitsSuccess(statutories)
-
-def process_save_assigned_compliance(db, request, session_user, client_id):
-	return 	db.save_assigned_compliance(request, session_user, client_id)
-
 def process_approve_compliance(db, request, session_user, client_id):
 	compliance_history_id = request.compliance_history_id
 	status = request.approval_status
@@ -121,18 +113,5 @@ def process_approve_compliance(db, request, session_user, client_id):
 		db.rejectComplianceConcurrence(compliance_history_id, remarks, next_due_date, client_id)
 	return clienttransactions.ApproveComplianceSuccess()
 	
-
-def process_get_assign_compliance_form_data(db, session_user, client_id):  
-	countries = db.get_countries_for_user(session_user, client_id)
-	business_group_ids = None
-	business_groups = db.get_business_groups_for_user(business_group_ids, client_id)
-	legal_entity_ids = None
-	legal_entities = db.get_legal_entities_for_user(legal_entity_ids, client_id)
-	division_ids = None
-	divisions = db.get_divisions_for_user(division_ids, client_id)
-	units = db.get_units_for_assign_compliance(session_user, client_id)
+def process_get_user_wise_compliances(db, session_user, client_id):
 	users = db.get_users_for_seating_units(session_user, client_id)
-	return clienttransactions.GetAssignCompliancesFormDataSuccess(
-		countries, business_groups, legal_entities,
-		divisions, units, users
-	)
