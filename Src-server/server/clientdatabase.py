@@ -1135,22 +1135,30 @@ class ClientDatabase(Database):
 
         return clienttransactions.UpdateStatutorySettingsSuccess()
 
-    def get_level_1_statutory(self, client_id):
-        columns = "client_statutory_id, statutory_provision"
-        condition = "compliance_applicable is Null AND compliance_opted is null"
-        rows = self.get_data(self.tblClientCompliances, columns, condition, client_id)
-        columns = ["level_1_statutory_id" , "level_1_statutory_name"]
-        result = self.convert_to_dict(rows, columns)
-        return self.return_level_1_statutories(result)
+    def get_level_1_statutories_for_user(self, session_user, client_id):
+        domain_rows = self.get_data(self.tblDomains, "group_concat(domain_id)", 
+            "user_id='%d'"%session_user, client_id)
+        domain_ids = domain_rows[0][0]
 
-    def return_level_1_statutories(self, statutories): 
-        results = []
-        for statutory in statutories :
-            statutory_obj = core.Level1Statutory(
-                statutory["level_1_statutory_id"], 
-                statutory["level_1_statutory_name"])
-            results.append(statutory_obj)
-        return results 
+        client_statutory_rows = self.get_data(self.tblClientStatutories, 
+            "group_concat(client_statutory_id)", "domain_id in (%s)"% domain_ids,
+            client_id)
+        client_statutory_ids = client_statutory_rows[0][0]
+
+        client_compliance_rows = self.get_data(self.tblClientCompliances, 
+            "group_concat(compliance_id)", 
+            "client_statutory_id in (%s)"% client_statutory_ids, 
+            client_id)
+        client_compliance_ids = client_compliance_rows[0][0]
+
+        mapping_rows = self.get_data(self.tblCompliances, "statutory_mapping", 
+            "compliance_id in (%s)" % client_compliance_ids, client_id)
+
+        level_1_statutory = []
+        for mapping in mapping_rows:
+            statutories = mapping.split(" >> ")
+            level_1_statutory.append(statutories[0])
+        return level_1_statutory        
 
     def get_compliance_frequency(self, client_id):
         columns = "frequency_id, frequency" 

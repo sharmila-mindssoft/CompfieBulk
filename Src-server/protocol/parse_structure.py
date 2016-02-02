@@ -3501,3 +3501,16 @@ def parse_structure_VectorType_CustomTextType_100(data):
     for item in data:
         lst.append(parse_structure_CustomTextType_100(item))
     return lst
+
+# Risk Report
+
+def parse_structure_VectorType_RecordType_clientreport_RiskData(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clientreport_RiskData(item))
+    return lst
+
+def parse_structure_RecordType_clientreport_RiskData(data):
+    from protocol import clientreport
+    return clientreport.RiskData.parse_structure(data)    
