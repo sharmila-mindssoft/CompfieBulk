@@ -129,7 +129,8 @@ to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     to_structure_VectorType_RecordType_core_ClientLevelOneStatutory,
     to_structure_VectorType_RecordType_core_ComplianceFilter,
     to_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS,
-    to_structure_VectorType_RecordType_clientreport_RiskData
+    to_structure_VectorType_RecordType_clientreport_RiskData,
+    to_structure_VectorType_RecordType_clientreport_Level1Compliance
 )
 
 #
@@ -1397,6 +1398,46 @@ class ComplianceDetails(object):
 # Level1Statutory
 #
 
+class Level1Compliance(object):
+
+    def __init__(self, statutory_mapping, compliance_name, description, 
+        penal_consequences, compliance_frequency, repeats):
+        self.statutory_mapping = statutory_mapping
+        self.compliance_name = compliance_name
+        self.description = description
+        self.penal_consequences = penal_consequences
+        self.compliance_frequency = compliance_frequency
+        self.repeats = repeats
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["statutory_mapping", "compliance_name", 
+            "description", "penal_consequences", "compliance_frequency", "repeats"])
+        statutory_mapping = data.get("statutory_mapping")
+        statutory_mapping = parse_structure_CustomTextType_500(statutory_mapping)
+        compliance_name = data.get("compliance_name")
+        compliance_name = parse_structure_CustomTextType_100(compliance_name)
+        description = data.get("description")
+        description = parse_structure_CustomTextType_250(description)
+        penal_consequences = data.get("penal_consequences")
+        penal_consequences = parse_structure_CustomTextType_250(penal_consequences)
+        compliance_frequency = data.get("compliance_frequency")
+        compliance_frequency = parse_structure_CustomTextType_50(compliance_frequency)
+        repeats = data.get("repeats")
+        repeats = parse_structure_CustomTextType_50(repeats)
+        return Level1Compliance(statutory_mapping, compliance_name, description, 
+        penal_consequences, compliance_frequency, repeats)
+
+    def to_structure(self):
+        return {
+            "statutory_mapping": to_structure_CustomTextType_500(self.statutory_mapping),
+            "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
+            "description": to_structure_CustomTextType_250(self.description),
+            "penal_consequences": to_structure_CustomTextType_250(self.penal_consequences),
+            "compliance_frequency": to_structure_CustomTextType_50(self.compliance_frequency),
+            "repeats"  : to_structure_CustomTextType_50(self.repeats)
+        }
+
 class Level1Statutory(object):
     def __init__(self, unit_name, address, compliances):
         self.unit_name = unit_name
@@ -1411,14 +1452,14 @@ class Level1Statutory(object):
         address = data.get("address")
         address = parse_structure_CustomTextType_250(address)
         compliances = data.get("compliances")
-        compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
+        compliances = parse_structure_VectorType_RecordType_clientreport_Level1Compliance(compliances)
         return Level1Statutory(unit_name, address, compliances)
 
     def to_structure(self):
         return {
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
-            "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
+            "compliances": to_structure_VectorType_RecordType_clientreport_Level1Compliance(self.compliances)
         }
 
 class RiskData(object):

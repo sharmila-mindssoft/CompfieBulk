@@ -51,7 +51,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
-    parse_structure_OptionalType_VectorType_RecordType_core_FileList
+    parse_structure_OptionalType_VectorType_RecordType_core_FileList,
+    parse_structure_VectorType_CustomTextType_100
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -112,7 +113,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_ComplianceFrequency,
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
-    to_structure_OptionalType_VectorType_RecordType_core_FileList
+    to_structure_OptionalType_VectorType_RecordType_core_FileList,
+    to_structure_VectorType_CustomTextType_100
 )
 
 #
@@ -789,7 +791,7 @@ class GetPastRecordsFormDataSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_VectorType_RecordType_core_Level1Statutory(level_1_statutories)
+        level_1_statutories = parse_structure_VectorType_CustomTextType_100(level_1_statutories)
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_VectorType_RecordType_core_ComplianceFrequency(compliance_frequency)
         return GetPastRecordsFormDataSuccess(countries, business_groups, legal_entites, divisions, 
@@ -801,9 +803,9 @@ class GetPastRecordsFormDataSuccess(Response):
             "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
             "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
             "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
-            "units": to_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits(self.units),
+            "industry_wise_units": to_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits(self.units),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "level_1_statutories": to_structure_VectorType_RecordType_core_Level1Statutory(self.level_1_statutories),
+            "level_1_statutories": to_structure_VectorType_CustomTextType_100(self.level_1_statutories),
             "compliance_frequency" : to_structure_VectorType_RecordType_core_ComplianceFrequency(self.compliance_frequency)
         }
 

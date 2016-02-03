@@ -1136,7 +1136,7 @@ class ClientDatabase(Database):
         return clienttransactions.UpdateStatutorySettingsSuccess()
 
     def get_level_1_statutories_for_user(self, session_user, client_id):
-        domain_rows = self.get_data(self.tblDomains, "group_concat(domain_id)", 
+        domain_rows = self.get_data(self.tblUserDomains, "group_concat(domain_id)", 
             "user_id='%d'"%session_user, client_id)
         domain_ids = domain_rows[0][0]
 
@@ -1156,8 +1156,9 @@ class ClientDatabase(Database):
 
         level_1_statutory = []
         for mapping in mapping_rows:
-            statutories = mapping.split(" >> ")
-            level_1_statutory.append(statutories[0])
+            statutories = mapping[0].split(">>")
+            if statutories[0].strip() not in level_1_statutory:
+                level_1_statutory.append(statutories[0].strip())
         return level_1_statutory        
 
     def get_compliance_frequency(self, client_id):
