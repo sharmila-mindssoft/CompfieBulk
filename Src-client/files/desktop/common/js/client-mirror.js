@@ -906,7 +906,7 @@ function initClientMirror() {
         ];
         callerName = "api/client_reports";
         clientApiRequest(callerName, request, callback);
-
+    }
     function updateComplianceDetail(compliance_history_id, documents, completion_date, 
         validity_date, next_due_date, remarks, callback){
         callerName = "api/client_user"
@@ -921,7 +921,8 @@ function initClientMirror() {
                 "remarks": remarks
             }
         ];
-        clientApiRequest(callerName, request, callback);   
+        clientApiRequest(callerName, request, callback); 
+
     }
 
     return {
@@ -1020,7 +1021,7 @@ function initClientMirror() {
         getComplianceDetail: getComplianceDetail,
 
         getRiskReportFilters: getRiskReportFilters,
-        getRiskReport: getRiskReport
+        getRiskReport: getRiskReport,
         updateComplianceDetail: updateComplianceDetail
     }
 }

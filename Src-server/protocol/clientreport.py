@@ -63,7 +63,7 @@ parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_VectorType_RecordType_core_ClientLevelOneStatutory,
     parse_structure_VectorType_RecordType_core_ComplianceFilter,
     parse_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS,
-    parse_structure_OptionalType_UnsignedIntegerType_32
+    parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_clientreport_RiskData
 
 )

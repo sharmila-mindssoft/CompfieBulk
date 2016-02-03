@@ -158,8 +158,8 @@ class TemplateHandler(tornado.web.RequestHandler) :
 
     def get(self, url = None) :
         if url != None:
-            db = KnowledgeDatabase("localhost", "root", "123456", "mirror_knowledge")
-            # db = KnowledgeDatabase("198.143.141.73", "root", "Root!@#123", "mirror_knowledge")
+            # db = KnowledgeDatabase("localhost", "root", "123456", "mirror_knowledge")
+            db = KnowledgeDatabase("198.143.141.73", "root", "Root!@#123", "mirror_knowledge")
             con = db.begin()
 
             if not db.validate_short_name(url):
@@ -197,6 +197,8 @@ TEMPLATE_PATHS = [
     ("/change-password", "files/desktop/change-password/changepassword.html", None, {}),
     ("/test", "test_apis.html", "", {}),
     ("/home", "files/desktop/home/home.html", None, {}),
+    ("/settings", "files/desktop/client/settings/settings.html", None, {}),
+
      #client admin
     ("/service-provider", "files/desktop/client/service-provider/serviceprovider.html", None, {}),   
     ("/client-user-privilege", "files/desktop/client/client-user-privilege/clientuserprivilege.html", None, {}),  

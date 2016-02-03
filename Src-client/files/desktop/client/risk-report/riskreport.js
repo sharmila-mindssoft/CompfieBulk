@@ -51,6 +51,7 @@ function loadresult(filterList){
   $(".tbody-unit").find("tbody").remove();
   var compliance_count=0;
   for(var entity in filterList){
+
     var tableRow=$('#unit-list-templates .table-unit-list .table-row-unit-list');
     var clone=tableRow.clone();
     $('.tbl_country', clone).text(country);
@@ -60,73 +61,54 @@ function loadresult(filterList){
     $('.tbl_legalentity', clone).text(filterList[entity]["legal_entity_name"]);
     $('.tbody-unit').append(clone);
 
-    var tableRow1=$('#unit-head-templates .table-unit-head .table-row-unit-head');
-    var clone1=tableRow1.clone();
-    $('.tbody-unit').append(clone1);
+    var statutoryUnits = filterList[entity]["level_1_statutory_wise_units"]
+    for(var statutoryUnit in statutoryUnits){
 
-    var compliancelists = filterList[entity]["unit_wise_compliances"]
-    for(var compliancelist in compliancelists){
-      var uAddress = '';
-      if(compliancelists[compliancelist].length > 0)
-        uAddress = compliancelists[compliancelist][0]["unit_address"]
-      var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
-      var clone2=tableRow2.clone();
-      $('.tbl_unitheading', clone2).html('<div class="heading" style="margin-top:5px;width:auto;"> <abbr class="page-load tipso_style" title="'+ uAddress +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliancelist+'</div>');
-      $('.tbody-unit').append(clone2);
+      var tableRow5=$('#unit-head-templates .table-unit-head .table-row-act-name');
+      var clone5=tableRow5.clone();
+      $('.tbl_actname', clone5).html('<div class="heading" style="margin-top:5px;width:auto;">'+statutoryUnit+'</div>');
+      $('.tbody-unit').append(clone5);
+
+      var tableRow1=$('#unit-head-templates .table-unit-head .table-row-unit-head');
+      var clone1=tableRow1.clone();
+      $('.tbody-unit').append(clone1);
+
+      for(var j=0; j<statutoryUnits[statutoryUnit].length; j++){
+        var uName = statutoryUnits[statutoryUnit][j]["unit_name"];
+        var uAddress = statutoryUnits[statutoryUnit][j]["address"];
+
+        var tableRow2=$('#unit-name-templates .table-unit-name .table-row-unit-name');
+        var clone2=tableRow2.clone();
+        $('.tbl_unitheading', clone2).html('<abbr class="page-load tipso_style" title="'+ uAddress +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+uName);
+        $('.tbody-unit').append(clone2);
       
-      for(i=0; i<compliancelists[compliancelist].length; i++){
-        var triggerdate = '';
-        var statutorydate = '';
-        for(j=0; j<compliancelists[compliancelist][i]["statutory_dates"].length; j++){
+      
+      var uCompliences = statutoryUnits[statutoryUnit][j]["compliances"];
 
-          var sDay = '';
-          if(compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_date"] != null) sDay = compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_date"];
-
-          var sMonth = '';
-          if(compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_month"] != null) sMonth = compliancelists[compliancelist][i]["statutory_dates"][j]["statutory_month"];
-
-          var tDays = '';
-          if(compliancelists[compliancelist][i]["statutory_dates"][j]["trigger_before_days"] != null) tDays = compliancelists[compliancelist][i]["statutory_dates"][j]["trigger_before_days"];
-
-
-          if(sMonth == 1) sMonth = "January"
-          else if(sMonth == 2) sMonth = "February"
-          else if(sMonth == 3) sMonth = "March"
-          else if(sMonth == 4) sMonth = "April"  
-          else if(sMonth == 5) sMonth = "May"
-          else if(sMonth == 6) sMonth = "June"
-          else if(sMonth == 7) sMonth = "July"
-          else if(sMonth == 8) sMonth = "Auguest"
-          else if(sMonth == 9) sMonth = "September"
-          else if(sMonth == 10) sMonth = "October"
-          else if(sMonth == 11) sMonth = "November"
-          else if(sMonth == 12) sMonth = "December"
-            
-          triggerdate +=  tDays + " Days";
-          statutorydate +=  sDay + ' - ' + sMonth;
-        }
+      for(i=0; i<uCompliences.length; i++){
+        
         var tableRow3=$('#unit-content-templates .table-unit-content .table-row-unit-content');
         var clone3=tableRow3.clone();
-        var cDescription = compliancelists[compliancelist][i]["description"];
+
         $('.tbl_sno', clone3).text(compliance_count+1);
-        $('.tbl_compliance', clone3).html('<abbr class="page-load tipso_style" title="'+ cDescription +'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliancelists[compliancelist][i]["compliance_name"]);
-        $('.tbl_frequency', clone3).text(compliancelists[compliancelist][i]["compliance_frequency"]);
-        $('.tbl_statutorydate', clone3).text(statutorydate);
-        $('.tbl_triggerbefore', clone3).text(triggerdate);
-        $('.tbl_duedate', clone3).text(compliancelists[compliancelist][i]["due_date"]);
-        var vDate = '';
-        if(compliancelists[compliancelist][i]["validity_date"] != null) vDate = compliancelists[compliancelist][i]["validity_date"];
-        $('.tbl_validitydate', clone3).text(vDate);
+        $('.tbl_statutoryprovision', clone3).text(uCompliences[i]["statutory_mapping"]);
+        $('.tbl_compliance', clone3).text(uCompliences[i]["compliance_name"]);
+        $('.tbl_description', clone3).text(uCompliences[i]["description"]);
+        $('.tbl_penalconsequences', clone3).text(uCompliences[i]["penal_consequences"]);
+        $('.tbl_frequency', clone3).text(uCompliences[i]["compliance_frequency"]);
+        $('.tbl_repeats', clone3).text(uCompliences[i]["repeats"]);
+        
         $('.tbody-unit').append(clone3);
         compliance_count++;
       }
 
-      if(compliancelists[compliancelist].length == 0){
+      if(uCompliences.length == 0){
         var tableRow4=$('#unit-content-templates .table-unit-content .table-row-unit-content');
         var clone4=tableRow4.clone();
-        $('.tbl_statutorydate', clone4).text("No Compliance Found");
+        $('.tbl_description', clone4).text("No Compliance Found");
         $('.tbody-unit').append(clone4);
       }
+    }
     }   
   }  
   $('.compliance_count').text("Total : "+ (compliance_count) +" records");
@@ -158,7 +140,65 @@ $("#submit").click(function(){
     displayMessage("Domain Required");  
   }
   else{
-      var filterdata={};
+
+      riskComplianceList =
+            [{
+              "business_group_name" : "BUSINESS_GROUP_NAME",
+              "legal_entity_name" : "LEGAL_ENTITY_NAME",
+              "division_name" : "DIVISION_NAME",
+              "level_1_statutory_wise_units":{
+                "LEVEL_1_STATUTORY_NAME" : [
+                    {
+                        "unit_name": "UNIT_CODE - UNIT_NAME",
+                        "address": "ADDRESS",
+                        "compliances": [
+                            {
+                                "statutory_mapping": "SM",
+                                "compliance_name": "DOCUMENT_NAME - COMPLIANCE_TASK_NAME",
+                                "description": "description",
+                                "penal_consequences"  : "penal_consequences",
+                                "compliance_frequency": "COMPLIANCE_FREQUENCY",
+                                "repeats"  : "repeats"
+                            },
+                            {
+                                "statutory_mapping": "SM1",
+                                "compliance_name": "DOCUMENT_NAME1 - COMPLIANCE_TASK_NAME1",
+                                "description": "description1",
+                                "penal_consequences"  : "penal_consequences1",
+                                "compliance_frequency": "COMPLIANCE_FREQUENCY1",
+                                "repeats"  : "repeats1"
+                            },
+                        ]
+                    },
+                    ],
+                    "LEVEL_1_STATUTORY_NAME1" : [
+                    {
+                        "unit_name": "UNIT_CODE1 - UNIT_NAME1",
+                        "address": "ADDRESS1",
+                        "compliances": [
+                            {
+                                "statutory_mapping": "SM",
+                                "compliance_name": "DOCUMENT_NAME - COMPLIANCE_TASK_NAME",
+                                "description": "description",
+                                "penal_consequences"  : "penal_consequences",
+                                "compliance_frequency": "COMPLIANCE_FREQUENCY",
+                                "repeats"  : "repeats"
+                            },
+                            {
+                                "statutory_mapping": "SM1",
+                                "compliance_name": "DOCUMENT_NAME1 - COMPLIANCE_TASK_NAME1",
+                                "description": "description1",
+                                "penal_consequences"  : "penal_consequences1",
+                                "compliance_frequency": "COMPLIANCE_FREQUENCY1",
+                                "repeats"  : "repeats1"
+                            },
+                        ]
+                    },
+                ],
+              }
+           }]
+           loadresult(riskComplianceList);
+      /*var filterdata={};
       filterdata["country_id"] = country;
       filterdata["domain_id"] = domain;
       filterdata["businessgroup_id"] = businessgroup;
@@ -183,7 +223,7 @@ $("#submit").click(function(){
           else {
             onFailure(error);
           }
-        });
+        });*/
   }
 });
 
