@@ -65,7 +65,7 @@ class API(object):
         )
         self._databases = {}
 
-def close_connection(self, db):
+    def close_connection(self, db):
         try:
             db.close()
         except Exception:

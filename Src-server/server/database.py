@@ -511,12 +511,14 @@ class KnowledgeDatabase(Database):
         self.tblUsers = "tbl_users"
 
     def validate_short_name(self, short_name):
-        condition = "url_short_name ='%s'"%(short_name)
+        condition = "url_short_name ='%s'" % (
+            short_name
+        )
         return self.is_already_exists(self.tblClientGroups, condition)
 
     def validate_session_token(self, session_token) :
         # query = "CALL sp_validate_session_token ('%s');"
-        #% (session_token)
+        # % (session_token)
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
         row = self.select_one(query)
@@ -704,8 +706,6 @@ class KnowledgeDatabase(Database):
             ))
         return results
 
-
-
     def get_country_by_id(self, country_id) :
         q = "SELECT country_name FROM tbl_countries \
             WHERE country_id=%s" % country_id
@@ -731,7 +731,8 @@ class KnowledgeDatabase(Database):
         is_active = 1
 
         query = "INSERT INTO tbl_countries(country_id, country_name, \
-            is_active, created_by, created_on) VALUES (%s, '%s', %s, %s, '%s') " % (
+            is_active, created_by, created_on) \
+            VALUES (%s, '%s', %s, %s, '%s') " % (
             country_id, country_name, is_active, created_by, created_on
         )
         self.execute(query)
@@ -772,7 +773,6 @@ class KnowledgeDatabase(Database):
             return True
 
     def get_user_forms(self, form_ids):
-        forms = []
 
         columns = "tf.form_id, tf.form_category_id, tfc.form_category, \
             tf.form_type_id, tft.form_type,\
@@ -788,7 +788,9 @@ class KnowledgeDatabase(Database):
             )
         join_type = "left join"
         rows = self.get_data_from_multiple_tables(
-            columns, tables, aliases, join_type, join_conditions, where_condition
+            columns, tables,
+            aliases, join_type,
+            join_conditions, where_condition
         )
         row_columns = [
             "form_id", "form_category_id", "form_category",
@@ -829,7 +831,6 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return self.return_industry(result)
 
-
     def return_industry(self, data) :
         results = []
         for d in data :
@@ -840,8 +841,6 @@ class KnowledgeDatabase(Database):
                 industry_id, industry_name, is_active
             ))
         return results
-
-
 
     def get_industry_by_id(self, industry_id) :
         if type(industry_id) is IntType :
@@ -932,10 +931,12 @@ class KnowledgeDatabase(Database):
         rows = self.select_all(query)
         result = []
         if rows :
-            columns = ["statutory_nature_id", "statutory_nature_name", "is_active"]
+            columns = [
+                "statutory_nature_id",
+                "statutory_nature_name", "is_active"
+            ]
             result = self.convert_to_dict(rows, columns)
         return self.return_statutory_nature(result)
-
 
     def return_statutory_nature(self, data) :
         results = []
@@ -948,10 +949,11 @@ class KnowledgeDatabase(Database):
             ))
         return results
 
-
     def get_nature_by_id(self, nature_id) :
 
-        q = "SELECT statutory_nature_name FROM tbl_statutory_natures WHERE statutory_nature_id=%s" % nature_id
+        q = "SELECT statutory_nature_name \
+            FROM tbl_statutory_natures \
+            WHERE statutory_nature_id=%s" % nature_id
         row = self.select_one(q)
         nature_name = None
         if row :
@@ -971,7 +973,6 @@ class KnowledgeDatabase(Database):
             isDuplicate = True
 
         return isDuplicate
-
 
     def save_statutory_nature(self, nature_name, user_id) :
         table_name = "tbl_statutory_natures"
@@ -1033,17 +1034,21 @@ class KnowledgeDatabase(Database):
         rows = self.select_all(query)
         result = []
         if rows :
-            columns = ["level_id", "level_position", "level_name", "country_id", "domain_id"]
+            columns = [
+                "level_id", "level_position",
+                "level_name", "country_id", "domain_id"
+            ]
             result = self.convert_to_dict(rows, columns)
         return self.return_statutory_levels(result)
-
 
     def return_statutory_levels(self, data):
         statutory_levels = {}
         for d in data :
             country_id = d["country_id"]
             domain_id = d["domain_id"]
-            levels = core.Level(d["level_id"], d["level_position"], d["level_name"])
+            levels = core.Level(
+                d["level_id"], d["level_position"], d["level_name"]
+            )
             country_wise = statutory_levels.get(country_id)
             _list = []
             if country_wise is None :
@@ -1059,7 +1064,9 @@ class KnowledgeDatabase(Database):
 
     def get_levels_for_country_domain(self, country_id, domain_id) :
         query = "SELECT level_id, level_position, level_name \
-            FROM tbl_statutory_levels WHERE country_id = %s and domain_id = %s ORDER BY level_position" % (
+            FROM tbl_statutory_levels \
+            WHERE country_id = %s and domain_id = %s \
+            ORDER BY level_position" % (
                 country_id, domain_id
             )
         rows = self.select_all(query)
@@ -1069,13 +1076,18 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return result
 
-
-    def check_duplicate_levels(self, country_id, domain_id, levels) :
-        saved_names = [row["level_name"] for row in self.get_levels_for_country_domain(country_id, domain_id)]
+    def check_duplicate_levels(
+        self, country_id, domain_id, levels
+    ) :
+        saved_names = [
+            row["level_name"] for row in self.get_levels_for_country_domain(
+                country_id, domain_id
+            )
+        ]
 
         for level in levels :
             name = level.level_name
-            if level.level_id  is None :
+            if level.level_id is None :
                 if (saved_names.count(name) > 0) :
                     return name
         return None
@@ -1099,11 +1111,16 @@ class KnowledgeDatabase(Database):
                     action = "New Statutory levels added"
                     self.save_activity(user_id, 9, action)
             else :
-                field_with_data = "level_position=%s, level_name='%s', updated_by=%s" % (
-                    position, name, user_id
-                )
+                field_with_data = "level_position=%s, \
+                    level_name='%s', updated_by=%s" % (
+                        position, name, user_id
+                    )
                 where_condition = "level_id=%s" % (level.level_id)
-                if (self. update_data(table_name, field_with_data, where_condition)):
+                if (
+                    self. update_data(
+                        table_name, field_with_data, where_condition
+                    )
+                ) :
                     action = "Statutory levels updated"
                     self.save_activity(user_id, 9, action)
         return True
@@ -1114,16 +1131,19 @@ class KnowledgeDatabase(Database):
         rows = self.select_all(query)
         result = []
         if rows :
-            columns = ["level_id", "level_position", "level_name", "country_id"]
+            columns = [
+                "level_id", "level_position", "level_name", "country_id"
+            ]
             result = self.convert_to_dict(rows, columns)
         return self.return_geography_levels(result)
 
     def return_geography_levels(self, data):
         geography_levels = {}
-        results = []
         for d in data:
             country_id = d["country_id"]
-            level = core.Level(d["level_id"], d["level_position"], d["level_name"])
+            level = core.Level(
+                d["level_id"], d["level_position"], d["level_name"]
+            )
             _list = geography_levels.get(country_id)
             if _list is None :
                 _list = []
@@ -1133,23 +1153,25 @@ class KnowledgeDatabase(Database):
 
     def get_geograhpy_levels_for_user(self, user_id):
         country_ids = None
-        if ((user_id != None) and (user_id != 0)):
+        if ((user_id is not None) and (user_id != 0)):
             country_ids = self.get_user_countries(user_id)
         columns = "level_id, level_position, level_name, country_id"
         condition = "1"
         if country_ids is not None:
-            condition = "country_id in (%s)"% country_ids
+            condition = "country_id in (%s)" % country_ids
         rows = self.get_data(self.tblGeographyLevels, columns, condition)
         result = []
         if rows :
-            columns = ["level_id", "level_position", "level_name", "country_id"]
+            columns = [
+                "level_id", "level_position", "level_name", "country_id"
+            ]
             result = self.convert_to_dict(rows, columns)
         return self.return_geography_levels(result)
 
-
     def get_geography_levels_for_country(self, country_id) :
         query = "SELECT level_id, level_position, level_name \
-            FROM tbl_geography_levels WHERE country_id = %s ORDER BY level_position" % country_id
+            FROM tbl_geography_levels WHERE country_id = %s \
+            ORDER BY level_position" % country_id
         rows = self.select_all(query)
         columns = ["level_id", "level_position", "level_name"]
         result = []
@@ -1158,11 +1180,15 @@ class KnowledgeDatabase(Database):
         return result
 
     def check_duplicate_gepgrahy_levels(self, country_id, levels) :
-        saved_names = [row["level_name"] for row in self.get_geography_levels_for_country(country_id)]
+        saved_names = [
+            row["level_name"] for row in self.get_geography_levels_for_country(
+                country_id
+            )
+        ]
 
         for level in levels :
             name = level.level_name
-            if level.level_id  is None :
+            if level.level_id is None :
                 if (saved_names.count(name) > 0) :
                     return name
         return None
@@ -1185,11 +1211,16 @@ class KnowledgeDatabase(Database):
                     action = "New Geography levels added"
                     self.save_activity(user_id, 5, action)
             else :
-                field_with_data = "level_position=%s, level_name='%s', updated_by=%s" % (
+                field_with_data = "level_position=%s, level_name='%s', \
+                updated_by=%s" % (
                     position, name, int(user_id)
                 )
                 where_condition = "level_id=%s" % (level.level_id)
-                if (self. update_data(table_name, field_with_data, where_condition)):
+                if (
+                    self. update_data(
+                        table_name, field_with_data, where_condition
+                    )
+                ):
                     action = "Geography levels updated"
                     self.save_activity(user_id, 5, action)
         return True
@@ -1211,17 +1242,23 @@ class KnowledgeDatabase(Database):
         rows = self.select_all(query)
         result = []
         if rows :
-            columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]
+            columns = [
+                "geography_id", "geography_name", "level_id",
+                "parent_ids", "is_active", "country_id", "country_name"
+            ]
             result = self.convert_to_dict(rows, columns)
             self.set_geography_parent_mapping(result)
         return self.return_geographies(result)
-
 
     def return_geographies(self, data):
         geographies = {}
         for d in data :
             parent_ids = [int(x) for x in d["parent_ids"][:-1].split(',')]
-            geography = core.Geography(d["geography_id"], d["geography_name"], d["level_id"], parent_ids, parent_ids[-1], bool(d["is_active"]))
+            geography = core.Geography(
+                d["geography_id"], d["geography_name"],
+                d["level_id"], parent_ids, parent_ids[-1],
+                bool(d["is_active"])
+            )
             country_id = d["country_id"]
             _list = geographies.get(country_id)
             if _list is None :
@@ -1230,21 +1267,28 @@ class KnowledgeDatabase(Database):
             geographies[country_id] = _list
         return geographies
 
-    def get_geographies_for_user(self, user_id ):
+    def get_geographies_for_user(self, user_id):
         country_ids = None
-        if ((user_id != None) and (user_id != 0)):
+        if ((user_id is not None) and (user_id != 0)):
             country_ids = self.get_user_countries(user_id)
-        columns = "t1.geography_id, t1.geography_name, "+\
-        "t1.level_id,t1.parent_ids, t1.is_active, t2.country_id, t3.country_name"
-        tables = [self.tblGeographies, self.tblGeographyLevels, self.tblCountries]
+        columns = "t1.geography_id, t1.geography_name, "
+        columns += "t1.level_id,t1.parent_ids, t1.is_active, "
+        columns += "t2.country_id, t3.country_name"
+        tables = [
+            self.tblGeographies, self.tblGeographyLevels, self.tblCountries
+        ]
         aliases = ["t1", "t2", "t3"]
         join_type = " INNER JOIN"
-        join_conditions = ["t1.level_id = t2.level_id", "t2.country_id = t3.country_id"]
+        join_conditions = [
+            "t1.level_id = t2.level_id", "t2.country_id = t3.country_id"
+        ]
         where_condition = "1"
         if country_ids is not None:
             where_condition = "t2.country_id in (%s)" % country_ids
-        rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type,
-            join_conditions, where_condition)
+        rows = self.get_data_from_multiple_tables(
+            columns, tables, aliases, join_type,
+            join_conditions, where_condition
+        )
         result = []
         if rows :
             columns = ["geography_id", "geography_name", "level_id", "parent_ids", "is_active", "country_id", "country_name"]

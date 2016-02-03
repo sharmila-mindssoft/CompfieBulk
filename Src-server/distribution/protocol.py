@@ -1,15 +1,14 @@
-import json
-from distribution.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from distribution.jsonvalidators import (
+    parse_dictionary, parse_static_list
+)
 from distribution.parse_structure import (
     parse_structure_VectorType_RecordType_protocol_Company,
     parse_structure_Text, parse_structure_RecordType_protocol_IPAddress,
-    parse_structure_UnsignedIntegerType_32,
     parse_structure_UnsignedIntegerType_32
 )
 from distribution.to_structure import (
     to_structure_VectorType_RecordType_protocol_Company,
     to_structure_Text, to_structure_RecordType_protocol_IPAddress,
-    to_structure_UnsignedIntegerType_32,
     to_structure_UnsignedIntegerType_32
 )
 
@@ -57,7 +56,12 @@ class Company(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["company_id", "short_url", "db_username", "db_password", "db_name", "db_ip", "company_server_ip"])
+        data = parse_dictionary(
+            data, [
+                "company_id", "short_url", "db_username",
+                "db_password", "db_name", "db_ip", "company_server_ip"
+            ]
+        )
         company_id = data.get("company_id")
         company_id = parse_structure_UnsignedIntegerType_32(company_id)
         short_url = data.get("short_url")
@@ -71,8 +75,13 @@ class Company(object):
         db_ip = data.get("db_ip")
         db_ip = parse_structure_RecordType_protocol_IPAddress(db_ip)
         company_server_ip = data.get("company_server_ip")
-        company_server_ip = parse_structure_RecordType_protocol_IPAddress(company_server_ip)
-        return Company(company_id, short_url, db_username, db_password, db_name, db_ip, company_server_ip)
+        company_server_ip = parse_structure_RecordType_protocol_IPAddress(
+            company_server_ip
+        )
+        return Company(
+            company_id, short_url, db_username,
+            db_password, db_name, db_ip, company_server_ip
+        )
 
     def to_structure(self):
         return {
@@ -82,7 +91,9 @@ class Company(object):
             "db_password": to_structure_Text(self.db_password),
             "db_name": to_structure_Text(self.db_name),
             "db_ip": to_structure_RecordType_protocol_IPAddress(self.db_ip),
-            "company_server_ip": to_structure_RecordType_protocol_IPAddress(self.company_server_ip),
+            "company_server_ip": to_structure_RecordType_protocol_IPAddress(
+                self.company_server_ip
+            ),
         }
 
 #
@@ -168,12 +179,16 @@ class CompanyServerDetails(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["companies"])
         companies = data.get("companies")
-        companies = parse_structure_VectorType_RecordType_protocol_Company(companies)
+        companies = parse_structure_VectorType_RecordType_protocol_Company(
+            companies
+        )
         return CompanyServerDetails(companies)
 
     def to_inner_structure(self):
         return {
-            "companies": to_structure_VectorType_RecordType_protocol_Company(self.companies),
+            "companies": to_structure_VectorType_RecordType_protocol_Company(
+                self.companies
+            ),
         }
 
 
@@ -185,4 +200,3 @@ def _init_Response_class_map():
     return class_map
 
 _Response_class_map = _init_Response_class_map()
-
