@@ -74,7 +74,7 @@ def process_get_past_records_form_data(db, request, session_user, client_id):
 	divisions = db.get_divisions_for_user(row[1], client_id)
 	units = db.get_units_for_user_grouped_by_industry(row[0], client_id)
 	domains = db.get_domains_for_user(session_user, client_id)
-	level1_statutories = db.get_level_1_statutories_for_user(client_id)
+	level1_statutories = db.get_level_1_statutories_for_user(session_user, client_id)
 	compliance_frequency = db.get_compliance_frequency(client_id)
 	return clienttransactions.GetPastRecordsFormDataSuccess(countries = countries, 
 		business_groups = business_groups, legal_entities = legal_entities, divisions = divisions,
