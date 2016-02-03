@@ -30,6 +30,10 @@ def process_client_report_requests(request, db) :
 		return get_compliancedetails_report_filters(db, request, session_user, client_id) 
 	elif type(request) is clientreport.GetComplianceDetailsReport:
 		return get_compliancedetails_report(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetStatutoryNotificationListFilters:
+		return get_statutory_notifications_list_filters(db, request, session_user, client_id) 
+	elif type(request) is clientreport.GetStatutoryNotificationListReport:
+		return get_statutory_notifications_list_report(db, request, session_user, client_id)
 
 
 def get_client_report_filters(db, request, session_user, client_id):
