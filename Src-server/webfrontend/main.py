@@ -52,13 +52,12 @@ class Controller(object):
         self._company_manager = company_manager
 
     def handle_post(self, request, response):
-        print "handle_post"
+        print "handle_post web frontend"
         print request.uri()
         data = None
         actual_data = None
         try:
             data = json.loads(request.body())
-            print data
             if type(data) is not list:
                 send_bad_request(
                     response,

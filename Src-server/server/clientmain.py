@@ -72,10 +72,11 @@ class API(object):
             pass
 
     def server_added(self, servers):
-        self._databases = {}
+        # self._databases = {}
         try:
             for company_id, db in self._databases.iteritems():
-                db.close()
+                # db.close()
+                self.close_connection(db)
             for company_id, company in servers.iteritems():
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
@@ -120,6 +121,10 @@ class API(object):
         company_id = None
         try:
             data = json.loads(request.body())
+            print
+            print "_parse_request"
+            print data
+            print
             if type(data) is not list:
                 self.send_bad_request(
                     response,
@@ -190,7 +195,6 @@ class API(object):
 
     @api_request(clientmasters.RequestFormat)
     def handle_client_masters(self, request, db):
-        print "process_client_master_requests"
         return controller.process_client_master_requests(request, db)
 
     @api_request(clienttransactions.RequestFormat)

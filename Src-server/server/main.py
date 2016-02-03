@@ -255,27 +255,42 @@ def run_server(port):
         desktop_path = os.path.join(files_path, "desktop")
         common_path = os.path.join(desktop_path, "common")
         images_path = os.path.join(common_path, "images")
-        # css_path = os.path.join(common_path, "css")
-        # js_path = os.path.join(common_path, "js")
+        css_path = os.path.join(common_path, "css")
+        js_path = os.path.join(common_path, "js")
 
         web_server.low_level_url(
-            r"/images/(.*)",
+            r"/knowledge/images/(.*)",
             StaticFileHandler, dict(path=images_path)
+        )
+        web_server.low_level_url(
+            r"/knowledge/css/(.*)",
+            StaticFileHandler, dict(path=css_path)
+        )
+        web_server.low_level_url(
+            r"/knowledge/js/(.*)",
+            StaticFileHandler, dict(path=js_path)
+        )
+        web_server.low_level_url(
+            r"/knowledge/common/(.*)",
+            StaticFileHandler,
+            dict(path=common_path)
         )
 
         api_design_path = os.path.join(
             ROOT_PATH, "Doc", "API", "Web-API", "Version-1.0.4", "html"
         )
         web_server.low_level_url(
-            r"/api-design/(.*)", StaticFileHandler,
+            r"/knowledge/api-design/(.*)", StaticFileHandler,
             dict(path=api_design_path)
+        )
+        web_server.low_level_url(
+            r"knowledge/(.*)", StaticFileHandler,
+            dict(path=static_path)
         )
         web_server.low_level_url(
             r"/(.*)", StaticFileHandler,
             dict(path=static_path)
         )
-
-
         print "Local port: %s" % port
         web_server.start(port, backlog=1000)
 
