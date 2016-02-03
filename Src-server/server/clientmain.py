@@ -31,13 +31,13 @@ def cors_handler(request, response):
 #
 
 def api_request(
-    request_data_type
+    request_data_type, need_client_id=False
 ):
     def wrapper(f):
         def wrapped(self, request, response):
             self.handle_api_request(
                 f, request, response,
-                request_data_type
+                request_data_type, need_client_id
             )
         return wrapped
     return wrapper
@@ -50,10 +50,13 @@ def api_request(
 class API(object):
     def __init__(
         self,
-        io_loop, knowledge_server_address,
+        io_loop,
+        address,
+        knowledge_server_address,
         http_client
     ):
         self._io_loop = io_loop
+        self._address = address
         self._company_manager = CompanyManager(
             io_loop,
             knowledge_server_address,
@@ -62,7 +65,7 @@ class API(object):
         )
         self._databases = {}
 
-    def close_connection(self, db):
+def close_connection(self, db):
         try:
             db.close()
         except Exception:
@@ -74,15 +77,19 @@ class API(object):
             for company_id, db in self._databases.iteritems():
                 db.close()
             for company_id, company in servers.iteritems():
-                db = ClientDatabase(
-                    company.db_ip.ip_address,
-                    company.db_ip.port,
-                    company.db_username,
-                    company.db_password,
-                    company.db_name
-                )
-                db.connect()
-                self._databases[company_id] = db
+                company_server_ip = company.company_server_ip
+                ip, port = self._address
+                if company_server_ip.ip_address == ip and \
+                        company_server_ip.port == port:
+                    db = ClientDatabase(
+                        company.db_ip.ip_address,
+                        company.db_ip.port,
+                        company.db_username,
+                        company.db_password,
+                        company.db_name
+                    )
+                    db.connect()
+                    self._databases[company_id] = db
         except Exception:
             print db
 
@@ -110,6 +117,7 @@ class API(object):
     ):
         request_data = None
         db = None
+        company_id = None
         try:
             data = json.loads(request.body())
             if type(data) is not list:
@@ -140,19 +148,21 @@ class API(object):
             response.set_status(400)
             response.send(str(e))
             return None
-        return (db, request_data)
+        return (db, request_data, company_id)
 
     def handle_api_request(
         self, unbound_method, request, response,
-        request_data_type
+        request_data_type, need_client_id
     ):
         response.set_default_header("Access-Control-Allow-Origin", "*")
 
-        db, request_data = self._parse_request(
+        request_data = self._parse_request(
             request_data_type, request, response
         )
         if request_data is None:
             return
+
+        db, request_data, company_id = request_data
 
         def respond(response_data):
             self._send_response(
@@ -161,7 +171,12 @@ class API(object):
 
         db.begin()
         try:
-            response_data = unbound_method(self, request_data, db)
+            if need_client_id :
+                response_data = unbound_method(
+                    self, request_data, db, company_id
+                )
+            else :
+                response_data = unbound_method(self, request_data, db)
             db.commit()
             respond(response_data)
         except Exception, e:
@@ -169,12 +184,13 @@ class API(object):
             print e
             db.rollback()
 
-    @api_request(login.Request)
-    def handle_login(self, request, db):
-        return controller.process_login_request(request, db)
+    @api_request(login.Request, need_client_id=True)
+    def handle_login(self, request, db, client_id):
+        return controller.process_login_request(request, db, client_id)
 
     @api_request(clientmasters.RequestFormat)
     def handle_client_masters(self, request, db):
+        print "process_client_master_requests"
         return controller.process_client_master_requests(request, db)
 
     @api_request(clienttransactions.RequestFormat)
@@ -201,7 +217,8 @@ class API(object):
 # run_server
 #
 
-def run_server(port, knowledge_server_address):
+def run_server(address, knowledge_server_address):
+    ip, port = address
     io_loop = IOLoop()
 
     def delay_initialize():
@@ -213,7 +230,9 @@ def run_server(port, knowledge_server_address):
         web_server = WebServer(io_loop)
 
         api = API(
-            io_loop, knowledge_server_address,
+            io_loop,
+            address,
+            knowledge_server_address,
             http_client
         )
 
@@ -229,7 +248,7 @@ def run_server(port, knowledge_server_address):
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)
 
-        print "Local port: %s" % port
+        print "Listening at: %s:%s" % (ip, port)
         web_server.start(port, backlog=1000)
 
     io_loop.add_callback(delay_initialize)

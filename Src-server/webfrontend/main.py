@@ -53,10 +53,12 @@ class Controller(object):
 
     def handle_post(self, request, response):
         print "handle_post"
+        print request.uri()
         data = None
         actual_data = None
         try:
             data = json.loads(request.body())
+            print data
             if type(data) is not list:
                 send_bad_request(
                     response,
@@ -82,6 +84,7 @@ class Controller(object):
             print "Exception"
             send_invalid_json_format(response)
             return
+
         handle_request = HandleRequest(
             token, actual_data,
             request.uri(), response, self._http_client,
@@ -149,11 +152,6 @@ class TemplateHandler(RequestHandler):
 def server_added(servers):
     pass
 
-def handle_root(request, response):
-    template = template_env.get_template("/")
-    output = template.render(**self.__parameters)
-    self.write(output)
-
 def run_web_front_end(port, knowledge_server_address):
     io_loop = IOLoop()
 
@@ -182,8 +180,6 @@ def run_web_front_end(port, knowledge_server_address):
                 "company_manager": company_manager
             }
             web_server.low_level_url(url, TemplateHandler, args)
-
-        web_server.url("/", GET=handle_root)
 
         web_server.url(
             "/api/(.*)",

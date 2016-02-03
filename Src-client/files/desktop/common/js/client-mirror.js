@@ -94,9 +94,9 @@ function initClientMirror() {
         ]
         jQuery.post(
             CLIENT_BASE_URL + callerName,
-            toJSON(requestFrame),
+            toJSON(body),
             function (data) {
-                var data = parseJSON(body);
+                var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';

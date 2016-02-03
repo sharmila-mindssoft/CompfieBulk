@@ -6,8 +6,8 @@ from server.clientmain import run_server
 
 args_parser = argparse.ArgumentParser()
 args_parser.add_argument(
-    "port",
-    help="port to listen at (PORT)"
+    "address",
+    help="Address to listen at ((IP:PORT)"
 )
 args_parser.add_argument(
     "knowledge_server_ip_address",
@@ -43,19 +43,19 @@ def parse_ip_address(ip_address):
 
 def main() :
     args = args_parser.parse_args()
-    port = parse_port(args.port)
-    if port is None :
-        msg = "error: port is not in PORT format: %s"
-        print msg % (args.port,)
+    address = parse_ip_address(args.address)
+    if address is None:
+        msg = "error: ip address is not in IP:PORT format: %s"
+        print msg % (args.address,)
         return
     knowledge_server_ip_address = parse_ip_address(
         args.knowledge_server_ip_address
     )
     if knowledge_server_ip_address is None:
-        msg = "error: ip address is not in IPADDRESS:PORT format: %s"
+        msg = "error: knowledge server ip address is not in IP:PORT format: %s"
         print msg % (args.knowledge_server_ip_address,)
         return
-    run_server(port, knowledge_server_ip_address)
+    run_server(address, knowledge_server_ip_address)
 
 if __name__ == "__main__" :
     main()

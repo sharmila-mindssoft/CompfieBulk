@@ -10,7 +10,7 @@ import json
 from types import *
 from protocol import (
     core, knowledgereport, technomasters,
-    technotransactions, technoreports,general
+    technotransactions, technoreports, general
 )
 from distribution.protocol import (
     Company, IPAddress
@@ -144,26 +144,27 @@ class Database(object) :
         return result
 
     def get_data(
-        self, table, columns, condition, client_id = None
+        self, table, columns, condition
     ):
-        query = "SELECT %s FROM %s "  % (columns, table)
+        query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        if client_id != None:
-            return self.select_all(query, client_id)
+        # if client_id is not None:
+        #     return self.select_all(query, client_id)
         return self.select_all(query)
 
-    def get_data_from_multiple_tables(self, columns, tables, aliases, join_type,
-            join_conditions, where_condition, client_id = None
-        ):
+    def get_data_from_multiple_tables(
+        self, columns, tables, aliases, join_type,
+        join_conditions, where_condition
+    ):
         query = "SELECT %s FROM " % columns
 
-        for index,table in enumerate(tables):
+        for index, table in enumerate(tables):
             if index == 0:
                 query += "%s  %s  %s" % (
                     table, aliases[index], join_type
                 )
-            elif index <= len(tables) -2:
+            elif index <= len(tables) - 2:
                 query += " %s %s on (%s) %s " % (
                     table, aliases[index],
                     join_conditions[index-1], join_type
@@ -175,49 +176,55 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
-        if client_id != None:
-            return self.select_all(query, client_id)
+        # if client_id is not None:
+        #     return self.select_all(query, client_id)
         return self.select_all(query)
 
-    def insert(self, table, columns, values, client_id = None) :
+    def insert(self, table, columns, values, client_id=None) :
         columns = ",".join(columns)
         stringValue = ""
-        for index,value in enumerate(values):
+        for index, value in enumerate(values):
             if(index < len(values)-1):
                 stringValue = stringValue+"'"+str(value)+"',"
             else:
                 stringValue = stringValue+"'"+str(value)+"'"
-        query = "INSERT INTO %s (%s) VALUES (%s)" % (table, columns, stringValue)
-        if client_id != None:
-            return self.execute(query, client_id)
+        query = "INSERT INTO %s (%s) VALUES (%s)" % (
+            table, columns, stringValue
+        )
+        # if client_id is not None:
+        #     return self.execute(query, client_id)
         return self.execute(query)
 
-    def bulk_insert(self, table, columns, valueList, client_id = None) :
-        query = "INSERT INTO %s (%s)  VALUES" % (table, ",".join(str(x) for x in columns))
+    def bulk_insert(self, table, columns, valueList, client_id=None) :
+        query = "INSERT INTO %s (%s)  VALUES" % (
+            table, ",".join(str(x) for x in columns)
+        )
         for index, value in enumerate(valueList):
             if index < len(valueList)-1:
                 query += "%s," % str(value)
             else:
                 query += str(value)
-        if client_id != None:
-            return self.execute(query, client_id)
+        # if client_id is not None:
+        #     return self.execute(query, client_id)
         return self.execute(query)
 
-    def update(self, table, columns, values, condition, client_id = None) :
+    def update(self, table, columns, values, condition, client_id=None) :
         query = "UPDATE "+table+" set "
-        for index,column in enumerate(columns):
+        for index, column in enumerate(columns):
             if index < len(columns)-1:
                 query += column+" = '"+str(values[index])+"', "
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
-        if client_id != None:
-            return self.execute(query, client_id)
+        # if client_id is not None:
+        #     return self.execute(query, client_id)
 
         return self.execute(query)
 
-    def on_duplicate_key_update(self, table, columns, valueList,
-        updateColumnsList, client_id = None):
+    def on_duplicate_key_update(
+        self, table, columns, valueList,
+        updateColumnsList, client_id=None
+    ):
         query = "INSERT INTO %s (%s) VALUES " % (table, columns)
 
         for index, value in enumerate(valueList):
@@ -235,20 +242,20 @@ class Database(object) :
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
 
-        if client_id != None:
-            return self.execute(query, client_id)
+        # if client_id is not None:
+        #     return self.execute(query, client_id)
         return self.execute(query)
 
-    def delete(self, table, condition, client_id = None):
+    def delete(self, table, condition, client_id=None):
         query = "DELETE from "+table+" WHERE "+condition
-        if client_id != None:
-            return self.execute(query, client_id)
+        # if client_id is not None:
+        #     return self.execute(query, client_id)
         return self.execute(query)
 
     def append(self, table, column, value, condition):
         rows = self.get_data(table, column, condition)
         currentValue = rows[0][0]
-        if currentValue != None:
+        if currentValue is not None:
             newValue = currentValue+","+str(value)
         else:
             newValue = str(value)
@@ -259,7 +266,7 @@ class Database(object) :
     def increment(self, table, column, condition):
         rows = self.get_data(table, column, condition)
         currentValue = rows[0][0]
-        if currentValue != None:
+        if currentValue is not None:
             newValue = int(currentValue)+1
         else:
             newValue = 1
@@ -267,27 +274,29 @@ class Database(object) :
         values = [newValue]
         return self.update(table, columns, values, condition)
 
-    def is_already_exists(self, table, condition, client_id = None) :
+    def is_already_exists(self, table, condition, client_id=None) :
         query = "SELECT count(*) FROM "+table+" WHERE "+condition
         rows = None
-        if client_id != None:
-            rows = self.select_all(query, client_id)
-        else:
-            rows = self.select_all(query)
+        # if client_id is not None:
+        #     rows = self.select_all(query, client_id)
+        # else:
+        rows = self.select_all(query)
         if rows[0][0] > 0:
             return True
         else :
             return False
 
-    def is_invalid_id(self, table, field, value, client_id = None):
+    def is_invalid_id(self, table, field, value, client_id=None):
         condition = "%s = '%d'" % (field, value)
-        if client_id != None:
-            return not self.is_already_exists(table, condition, client_id)
+        # if client_id is not None:
+        #     return not self.is_already_exists(table, condition, client_id)
         return not self.is_already_exists(table, condition)
 
     def generate_random(self):
         characters = string.ascii_uppercase + string.digits
-        return ''.join(random.SystemRandom().choice(characters) for _ in range(7))
+        return ''.join(
+            random.SystemRandom().choice(characters) for _ in range(7)
+        )
 
     def generate_password(self) :
         password = self.generate_random()
@@ -301,28 +310,35 @@ class Database(object) :
 
     def string_to_datetime(self, string):
         date = string.split("-")
-        datetime_val = datetime.datetime(year=int(date[2]),month=self.integer_months[date[1]], day=int(date[0]))
+        datetime_val = datetime.datetime(
+            year=int(date[2]),
+            month=self.integer_months[date[1]],
+            day=int(date[0])
+        )
         return datetime_val.date()
 
     def datetime_to_string(self, datetime_val):
-        return "%d-%s-%d"% (datetime_val.day, self.string_months[datetime_val.month],
-            datetime_val.year)
+        return "%d-%s-%d" % (
+            datetime_val.day,
+            self.string_months[datetime_val.month],
+            datetime_val.year
+        )
 
     def get_client_db_info(self):
-        columns = "database_ip, client_id, database_username, "+\
-        "database_password, database_name"
+        columns = "database_ip, client_id, "
+        columns += " database_username, database_password, database_name"
         condition = "1"
         return self.get_data("tbl_client_database", columns, condition)
 
-    def get_new_id(self, field , table_name, client_id = None) :
+    def get_new_id(self, field , table_name, client_id=None) :
         newId = 1
         query = "SELECT max(%s) from %s " % (field, table_name)
 
         row = None
-        if client_id != None:
-            row = self.select_one(query, client_id)
-        else:
-            row = self.select_one(query)
+        # if client_id is not None:
+        #     row = self.select_one(query, client_id)
+        # else:
+        row = self.select_one(query)
         if row[0] is not None :
             newId = int(row[0]) + 1
         return newId
@@ -337,8 +353,10 @@ class Database(object) :
         admin_details = self.get_data("tbl_admin", "*", tblAdminCondition)
 
         if (len(admin_details) == 0) :
-            data_columns = ["user_id", "user_group_id", "email_id",
-                "employee_name", "employee_code", "contact_no", "address",
+            data_columns = [
+                "user_id", "user_group_id", "email_id",
+                "employee_name", "employee_code",
+                "contact_no", "address",
                 "designation", "user_group_name", "form_ids"
             ]
             query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
@@ -358,7 +376,6 @@ class Database(object) :
         else :
             return True
 
-
     def convert_to_dict(self, data_list, columns) :
         assert type(data_list) in (list, tuple)
         if len(data_list) > 0:
@@ -380,57 +397,35 @@ class Database(object) :
         else:
             return []
 
-    def add_session(self, user_id, session_type_id, client_id = None) :
-        if client_id != None:
+    def add_session(self, user_id, session_type_id, client_id=None) :
+        if client_id is not None:
             self.clear_old_session(user_id, session_type_id, client_id)
         else:
             self.clear_old_session(user_id, session_type_id)
         session_id = self.new_uuid()
-        if client_id != None:
+        if client_id is not None:
             session_id = "%s-%s" % (client_id, session_id)
         updated_on = self.get_date_time()
-        query = "INSERT INTO tbl_user_sessions (session_token, user_id, session_type_id, last_accessed_time) VALUES ('%s', %s, %s, '%s');"
+        query = "INSERT INTO tbl_user_sessions \
+            (session_token, user_id, session_type_id, last_accessed_time) \
+            VALUES ('%s', %s, %s, '%s');"
         query = query % (session_id, user_id, session_type_id, updated_on)
-        if client_id is None:
-            result = self.execute(query)
-        else:
-            self.execute(query, client_id)
+
+        self.execute(query)
+
         return session_id
 
-    def clear_old_session(self, user_id, session_type_id, client_id = None) :
+    def clear_old_session(self, user_id, session_type_id, client_id=None) :
         query = "DELETE FROM tbl_user_sessions \
             WHERE user_id=%s and session_type_id=%s" % (
                 user_id, session_type_id
             )
-        if client_id != None:
-            self.execute(query, client_id)
-        else:
-            self.execute(query)
+
+        self.execute(query)
 
     def new_uuid(self) :
         s = str(uuid.uuid4())
         return s.replace("-", "")
-
-    def convert_to_dict(self, data_list, columns) :
-        assert type(data_list) in (list, tuple)
-        if len(data_list) > 0:
-            if type(data_list[0]) is tuple :
-                result_list = []
-                if len(data_list[0]) == len(columns) :
-                    for data in data_list:
-                        result = {}
-                        for i, d in enumerate(data):
-                            result[columns[i]] = d
-                        result_list.append(result)
-                return result_list
-            else :
-                result = {}
-                if len(data_list) == len(columns) :
-                    for i, d in enumerate(data_list):
-                        result[columns[i]] = d
-                return result
-        else:
-            return []
 
     def validate_reset_token(self, reset_token):
         column = "count(*), user_id"
@@ -444,7 +439,7 @@ class Database(object) :
             return None
 
     def delete_used_token(self, reset_token):
-        condition =" verification_code='%s'" % reset_token
+        condition = " verification_code='%s'" % reset_token
         if self.delete(self.tblEmailVerification, condition):
             return True
         else:
@@ -1142,7 +1137,7 @@ class KnowledgeDatabase(Database):
             country_ids = self.get_user_countries(user_id)
         columns = "level_id, level_position, level_name, country_id"
         condition = "1"
-        if country_ids != None:
+        if country_ids is not None:
             condition = "country_id in (%s)"% country_ids
         rows = self.get_data(self.tblGeographyLevels, columns, condition)
         result = []
@@ -1246,7 +1241,7 @@ class KnowledgeDatabase(Database):
         join_type = " INNER JOIN"
         join_conditions = ["t1.level_id = t2.level_id", "t2.country_id = t3.country_id"]
         where_condition = "1"
-        if country_ids != None:
+        if country_ids is not None:
             where_condition = "t2.country_id in (%s)" % country_ids
         rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type,
             join_conditions, where_condition)
@@ -1269,7 +1264,7 @@ class KnowledgeDatabase(Database):
         join_type = " INNER JOIN"
         join_conditions = ["t1.level_id = t2.level_id", "t2.country_id = t3.country_id"]
         where_condition = "1"
-        if country_ids != None:
+        if country_ids is not None:
             where_condition = "t2.country_id in (%s)" % country_ids
         rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type,
             join_conditions, where_condition)
@@ -2795,7 +2790,7 @@ class KnowledgeDatabase(Database):
             client_ids = self.get_user_clients(user_id)
         columns = "client_id, group_name,  is_active"
         condition = "1"
-        if client_ids != None:
+        if client_ids is not None:
             condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblClientGroups, columns, condition)
         columns = ["client_id", "group_name", "is_active"]
@@ -3117,7 +3112,7 @@ class KnowledgeDatabase(Database):
         values = [client_id, legal_entity_id, legal_entity_name, business_group_id,
         session_user, current_time_stamp, session_user, current_time_stamp]
 
-        if business_group_id != None:
+        if business_group_id is not None:
             columns.append("business_group_id")
             values.append(business_group_id)
 
@@ -3146,7 +3141,7 @@ class KnowledgeDatabase(Database):
         values = [client_id, division_id, division_name, legal_entity_id,
         session_user, current_time_stamp, session_user, current_time_stamp]
 
-        if business_group_id != None:
+        if business_group_id is not None:
             columns.append("business_group_id")
             values.append(business_group_id)
 
@@ -3173,19 +3168,19 @@ class KnowledgeDatabase(Database):
         columns = ["unit_id", "client_id", "legal_entity_id", "country_id", "geography_id", "industry_id",
         "domain_ids", "unit_code", "unit_name", "address", "postal_code", "is_active", "created_by",
         "created_on", "updated_by", "updated_on"]
-        if business_group_id != None:
+        if business_group_id is not None:
             columns.append("business_group_id")
-        if division_id != None:
+        if division_id is not None:
             columns.append("division_id")
         values_list = []
         for unit in units:
             domain_ids = ",".join(str(x) for x in unit.domain_ids)
-            if business_group_id != None and division_id != None:
+            if business_group_id != None and division_id is not None:
                 values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
                     str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
                     str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp,
                     business_group_id, division_id)
-            elif business_group_id != None:
+            elif business_group_id is not None:
                 values_tuple = (str(unit.unit_id), client_id, legal_entity_id, str(unit.country_id), str(unit.geography_id),
                     str(unit.industry_id), domain_ids, str(unit.unit_code), str(unit.unit_name), str(unit.unit_address),
                     str(unit.postal_code), 1, session_user, current_time_stamp, session_user, current_time_stamp,
@@ -3236,7 +3231,7 @@ class KnowledgeDatabase(Database):
         division_name = None
         legal_entity_name = None
         rows = None
-        if division_id != None:
+        if division_id is not None:
             condition += " and division_id='%d' "% division_id
             action_column = "division_name"
             action_condition = "division_id='%d' and client_id = '%d' "% (division_id, client_id)
@@ -3249,12 +3244,12 @@ class KnowledgeDatabase(Database):
             legal_entity_name = rows[0][0]
 
         if is_active == 0:
-            if division_id != None:
+            if division_id is not None:
                 action = "Deactivated Division \"%s\" " % division_name
             else:
                 action = "Deactivated Legal Entity \"%s\" " % legal_entity_name
         else:
-            if division_id != None:
+            if division_id is not None:
                 action = "Activated Division \"%s\" " % division_name
             else:
                 action = "Activated Legal Entity \"%s\" " % legal_entity_name
@@ -3329,7 +3324,7 @@ class KnowledgeDatabase(Database):
             client_ids = self.get_user_clients(user_id)
         columns = "business_group_id, business_group_name, client_id"
         condition = "1"
-        if client_ids != None:
+        if client_ids is not None:
             condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblBusinessGroups, columns, condition)
         columns = ["business_group_id", "business_group_name", "client_id"]
@@ -3351,7 +3346,7 @@ class KnowledgeDatabase(Database):
             client_ids = self.get_user_clients(user_id)
         columns = "legal_entity_id, legal_entity_name, business_group_id, client_id"
         condition = "1"
-        if client_ids != None:
+        if client_ids is not None:
             condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblLegalEntities, columns, condition)
         columns = ["legal_entity_id", "legal_entity_name", "business_group_id",
@@ -3375,7 +3370,7 @@ class KnowledgeDatabase(Database):
         columns = "division_id, division_name, legal_entity_id, business_group_id,"+\
         "client_id"
         condition = "1"
-        if client_ids != None:
+        if client_ids is not None:
             condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblDivisions, columns, condition)
         columns = ["division_id", "division_name", "legal_entity_id",
@@ -3398,7 +3393,7 @@ class KnowledgeDatabase(Database):
         columns = "unit_id, unit_code, unit_name, address, division_id,"+\
         " legal_entity_id, business_group_id, client_id, is_active, geography_id, industry_id, domain_ids"
         condition = "1"
-        if client_ids != None:
+        if client_ids is not None:
             condition = "client_id in (%s)" % client_ids
         rows = self.get_data(self.tblUnits, columns, condition)
         columns = ["unit_id", "unit_code", "unit_name", "unit_address", "division_id",
@@ -4266,7 +4261,7 @@ class KnowledgeDatabase(Database):
             client_ids = self.get_user_clients(user_id)
 
         condition = "1"
-        if client_ids != None:
+        if client_ids is not None:
             condition = "client_id in (%s)" % client_ids
 
         columns = "business_group_id, legal_entity_id, division_id, client_id"
@@ -4428,15 +4423,15 @@ class KnowledgeDatabase(Database):
             legal_entity_id, division_id, unit_id, domain_ids):
 
         condition = "country_id = '%d' AND client_id = '%d' "%(country_id, client_id)
-        if business_group_id != None:
+        if business_group_id is not None:
             condition += " AND business_group_id = '%d'" % business_group_id
-        if legal_entity_id != None:
+        if legal_entity_id is not None:
             condition += " AND legal_entity_id = '%d'" % legal_entity_id
-        if division_id != None:
+        if division_id is not None:
             condition += " AND division_id = '%d'" % division_id
-        if unit_id != None:
+        if unit_id is not None:
             condition += " AND unit_id = '%d'" % unit_id
-        if domain_ids != None:
+        if domain_ids is not None:
             for domain_id in domain_ids:
                 condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
                             "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
@@ -4463,7 +4458,7 @@ class KnowledgeDatabase(Database):
                 where_condition += " And tu.division_id is NULL"
             else:
                 where_condition += " And tu.division_id = '%d'" % row[2]
-            if unit_id != None:
+            if unit_id is not None:
                 where_condition += " AND tu.unit_id = '%d'" % unit_id
             result_rows = self.get_data_from_multiple_tables(columns, tables, aliases, join_type,
             join_conditions, where_condition)
@@ -4536,7 +4531,7 @@ class KnowledgeDatabase(Database):
 #
 #   Notifications
 #
-    def get_notifications(self, notification_type, session_user, client_id = None):
+    def get_notifications(self, notification_type, session_user, client_id=None):
         columns = "tn.notification_id, notification_text, link, "+\
         "created_on, read_status"
         join_type = "left join"
@@ -4553,7 +4548,7 @@ class KnowledgeDatabase(Database):
         return notifications
 
     def update_notification_status(self, notification_id, has_read,
-        session_user, client_id = None):
+        session_user, client_id=None):
         columns = ["read_status"]
         values = [1 if has_read == True else 0]
         condition = "notification_id = '%d' and user_id='%d'"% (
