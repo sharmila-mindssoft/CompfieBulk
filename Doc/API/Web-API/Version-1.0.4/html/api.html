@@ -1194,6 +1194,8 @@ body .markdown-body
 <li><a href="#get-compliance-activity-report">Get Compliance activity report</a></li>
 <li><a href="#get-reassigned-history-report-filters">Get Reassigned History Report Filters</a></li>
 <li><a href="#get-reassigned-history-report">Get Reassigned History Report</a></li>
+<li><a href="#get-statutory-notifications-list-filters">Get Statutory Notifications List Filters</a></li>
+<li><a href="#get-statutory-notifications-list-report">Get Statutory Notifications List Report</a></li>
 <li><a href="#get-activity-log-filters">Get Activity Log Filters</a></li>
 <li><a href="#get-activity-log-report">Get Activity Log Report</a></li>
 <li><a href="#get-login-trace">Get Login Trace</a></li>
@@ -4397,6 +4399,73 @@ On Success
             }
         ]
     }
+]
+</code></pre>
+
+<h3 id="get-statutory-notifications-list-filters"><a name="user-content-get-statutory-notifications" href="#get-statutory-notifications" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Statutory Notifications List Filters</h3>
+<pre><code>[
+    "GetStatutoryNotificationsFilters",
+    {    
+      
+    }
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+    "GetStatutoryNotificationsFiltersSuccess"
+    {
+        "countries": [Country,],
+        "domains": [Domain,],
+        "business_groups": [BusinessGroup,],
+        "legal_entities": [LegalEntity,],
+        "divisions": [Division,],
+        "units":[
+            {
+                "unit_id": UNIT_ID,
+                "unit_name": UNIT_CODE - UNIT_NAME,
+            },
+        ],
+        "level_1_statutories":{
+            COUNTRY_ID :[ Statutory,],
+        }
+    }
+]
+</code></pre>
+<h3 id="get-statutory-notifications-list-report"><a name="user-content-get-statutory-notifications" href="#get-statutory-notifications" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Statutory Notifications List Filters</h3>
+<pre><code>[
+    "GetStatutoryNotificationsListReport",
+    {    
+        "countries": COUNTRY_ID,
+        "domains": DOMAIN_ID,
+        "business_group_id": BUSINESS_GROUP_ID,
+        "legal_entity_id": LEGAL_ENTITY_ID,
+        "division_id": DIVISION_ID,
+        "unit_id": UNIT_ID,
+        "level_1_statutories":  LEVEL_1_STATUTORY_ID,
+        "from_date": DATE,
+        "to_date": DATE,
+    }
+]
+</code></pre>
+<p>On Success</p>
+<pre><code>[
+  "GetStatutoryNotificationsListReportSuccess"
+  {      
+      "notifications" :[
+      {
+          "business_group_name" : business_group_name,
+          "legal_entity_name" : legal_entity_name,
+          "division_name" : division_name,
+          "level_1_statutory_wise_notifications" : {
+              Level_1_statutory_name : {
+                  "unit_name": String,
+                  "notification_text": String,
+                  "date_and_time": TIMESTAMP,
+              },
+          }
+      },
+      ]      
+  }
 ]
 </code></pre>
 <h3 id="get-activity-log-filters"><a name="user-content-get-activity-log-filters" href="#get-activity-log-filters" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Activity Log Filters</h3>

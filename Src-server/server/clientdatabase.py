@@ -3118,7 +3118,7 @@ class ClientDatabase(Database):
             unitwise = clientreport.ComplianceDetailsUnitWise(unit_id, unit_name, unit_address, compliances_list)
             unit_wise_compliances.append(unitwise)
         return unit_wise_compliances
-=======
+
 #
 #   Trend Chart
 #

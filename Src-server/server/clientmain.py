@@ -203,6 +203,7 @@ TEMPLATE_PATHS = [
     ("/client-user-master", "files/desktop/client/client-user-master/clientusermaster.html", None, {}),  
     ("/unit-closure", "files/desktop/client/unit-closure/unitclosure.html", None, {}), 
     #reports
+    ("/statutory-notifications-list", "files/desktop/client/statutory-notifications-list-report/statutorynotificationslistreport.html", None, {}),
     ("/compliance", "files/desktop/client/audit-trail/audittrail.html", None, {}),
     ("/audit-trail", "files/desktop/client/audit-trail/audittrail.html", None, {}),
     ("/unit-wise-compliance", "files/desktop/client/unit-wise-compliance/unitwisecompliance.html", None, {}),

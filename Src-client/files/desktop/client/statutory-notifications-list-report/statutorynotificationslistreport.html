@@ -1,0 +1,168 @@
+{% extends "files/desktop/home/container.html" %}
+{% block content %}
+    <link href="/files/desktop/common/css/jquery-ui/jquery-ui.css" rel="stylesheet">
+    <div class="content-container">
+        <div class="content-area">
+            <div class="add-container">
+                <div class="add-container-heading">Statutory Notifications List<span class="error-message"></span></div>
+                <div class="input-row-left">
+                    <div class="input-row">
+                        <div class="field-label">Country<span class="mandatory">*</span>:</div>
+                        <div class="field-input">
+                            <input type="hidden" id="country" value="1">
+                            <input type="text" class="input-box icon-autocomplete" id="countryval" value="India"  onkeyup="loadauto_country(this.value)">
+                            <div id="selectboxview-country" class="ac-textbox" style="display:none;" onclick="hidecountrylist();">
+                            <ul style="width:195px;"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="field-label">Domain<span class="mandatory">*</span>:</div>
+                    <div class="field-input">
+                        <input type="hidden" id="domain" value="1">
+                        <input type="text" class="input-box icon-autocomplete" id="domainval" value="Test Domain"  onkeyup="loadauto_domains(this.value)">
+                        <div id="selectboxview-domains" class="ac-textbox" style="display:none;" onclick="hidedomainslist();">
+                        <ul style="width:195px;"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="field-label">Business Group:</div>
+                    <div class="field-input">
+                        <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" style="width:213px;"  onkeyup="loadauto_businessgroups(this.value)"> 
+                        <input type="hidden" id="businessgroupid"> 
+                        <div id="autocompleteview-bgroups" class="ac-textbox" style="display:none;"  onclick="hidebgroupslist();">
+                            <ul style="width:195px;"></ul> 
+                        </div>
+
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="field-label">Legal Entity:</div>
+                    <div class="field-input">
+                                    <input type="text" class="input-box icon-autocomplete" id="legalentityval" value="" style="width:213px;"  onkeyup="loadauto_lentity(this.value)"> 
+            <input type="hidden" id="legalentityid"> 
+            <div id="autocompleteview-lentity" class="ac-textbox" style="display:none;"  onclick="hidelentitylist();">
+              <ul style="width:195px;"></ul> 
+            </div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="field-label">Division:</div>
+                    <div class="field-input">
+                        <input type="text" class="input-box icon-autocomplete" id="divisionval" value="" style="width:213px;"  onkeyup="loadauto_division(this.value)"> 
+                        <input type="hidden" id="divisionid"> 
+                        <div id="autocompleteview-division" class="ac-textbox" style="display:none;"  onclick="hidedivisionlist();">
+                          <ul style="width:195px;"></ul> 
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+    <div class="input-row-right">
+        <div class="input-row">
+            <div class="field-label">Unit:</div>
+            <div class="field-input">
+                <input type="text" class="input-box icon-autocomplete" autofocus id="unit" value="" placeholder="Enter Unit" />
+            </div>
+        </div>
+        <div class="input-row">
+            <div class="field-label">Act<span class="mandatory"></span>:</div>
+            <div class="field-input">
+                <input type="text" class="input-box icon-autocomplete" id="level1val" value="" style="width:213px;"  onkeyup="loadauto_level1(this.value)">
+                <input type="hidden" id="level1id">
+                <div id="autocompleteview-level1" class="ac-textbox" style="display:none;"  onclick="hidelevel1list();">
+                <ul style="width:195px;"></ul>
+                </div>
+            </div>
+        </div>
+    
+    <div class="input-row">
+        <div class="field-label">From:</div>
+        <div class="field-input">
+            <input type="text" class="input-box" autofocus id="unit" value="" placeholder="From date" />
+        </div>
+    </div>
+    <div class="input-row">
+        <div class="field-label">To:</div>
+        <div class="field-input">
+            <input type="text" class="input-box" value="" placeholder="To Date" />
+        </div>
+    </div>
+</div>
+<div class="submit-button-container">
+    <input type="submit" name="cancel" value="Show" class="btn-submit" id="show-button">
+    <input type="button"  class="btn-submit" value="Export" />
+</div>
+<div class="clearfix"></div>
+<div class="grid-table-rpt default-display-none">
+    <h1>Statutory Notifications List</h1>
+    <div style="margin-left:15%;">
+        <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;" class="snCountryVal"></span> </div>
+        </div>
+        <div style="float:right; margin-right:20%;">
+            
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;" class="snDomainVal"></span> </div>
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <table width="100%" style="border:1px dotted #CCCCCC;" >
+        <tr style="background:#ccc;font-size:1em; padding-top:10px; font-weight:bold; height:30px;">
+            <td width="3%" align="center" style="padding-top:6px;">#</td>
+            <td  width="22%" style="padding-top:6px;">Statutory Provision</td>
+            <td style="padding-top:6px;">Notifications Content</td>
+            <td style="padding-top:6px;" width="15%">Date and Time</td>
+        </tr>
+        <tbody class="tbody-statutory-notifications-list">
+        </tbody>
+    </table>
+    <p style="border-top:1px dashed #ccc;" >Total : <span class="total-records"></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="templates">
+<table class="table-statutory-notifications-list">
+<tr class="table-row-heading">
+<td colspan="4" ><span class="heading"></span></td>
+</tr>
+<tr class="table-row-values">
+<td align="center" class="sno"></td>
+<td class="statutory-provision"></td>
+<td class="statutory-notificaions"></td>
+<td class="date-time"></td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" src="/files/desktop/client/statutory-notifications-list-report/statutorynotificationslistreport.js"></script>
+<script src="/files/desktop/common/js/jquery-ui/jquery-ui.js"></script>
+<script type="text/javascript">
+$(function() {
+$("#from-date" ).datepicker({
+changeMonth: true,
+changeYear: true,
+numberOfMonths: 1,
+dateFormat: "dd-M-yy",
+monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+onClose: function( selectedDate ) {
+$( "#to-date" ).datepicker( "option", "minDate", selectedDate );
+}
+});
+$( "#to-date" ).datepicker({
+changeMonth: true,
+changeYear: true,
+numberOfMonths: 1,
+dateFormat: "dd-M-yy",
+monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+onClose: function( selectedDate ) {
+$( "#from-date" ).datepicker( "option", "maxDate", selectedDate );
+}
+});
+});
+</script>
+{% endblock %}

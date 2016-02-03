@@ -879,6 +879,34 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+/*Statutory Notifications List*/
+    function getStatutoryNotificationsListFilters(callback){
+        callerName = "api/client_reports"
+        var request = [
+            "GetStatutoryNotificationsListFilters",
+            {}
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getStatutoryNotificationsListReport(countryId, domainId, businessGroupId, 
+        legalEntityId, divisionId, unitId, level1Id, callback){
+        callerName = "api/client_reports"
+        var request = [
+            "GetStatutoryNotificationsListReport",
+            {
+                "country_id": countryId,
+                "domain_id": domainId,
+                "business_group_id": businessGroupId,
+                "legal_entity_id": legalEntityId,
+                "division_id": divisionId,
+                "unit_id": unitId,
+                "level_1_statutory_id": level1Id
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON, 
@@ -974,7 +1002,10 @@ function initClientMirror() {
         getNotifications: getNotifications,
         updateNotificationStatus: updateNotificationStatus,
 
-        getComplianceDetail: getComplianceDetail
+        getComplianceDetail: getComplianceDetail,
+
+        getStatutoryNotificationsListFilters: getStatutoryNotificationsListFilters,
+        getStatutoryNotificationsListReport: getStatutoryNotificationsListReport,
     }
 }
 var client_mirror = initClientMirror();

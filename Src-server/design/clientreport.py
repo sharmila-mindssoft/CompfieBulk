@@ -147,6 +147,21 @@ GetReassignedHistoryReport = RecordType(
 	]
 )
 
+GetStatutoryNotificationsListFilters = RecordType("GetStatutoryNotificationsListFilters", [])
+
+GetStatutoryNotificationsListReport = RecordType("GetStatutoryNotificationsListReport", [
+	Field('country_id', COUNTRY_ID),
+	Field('domain_id', DOMAIN_ID),
+	Field('business_group_id', BUSINESS_GROUP_ID),
+	Field('legal_entity_id', LEGAL_ENTITY_ID),
+	Field('division_id', DIVISION_ID),
+	Field('unit_id', UNIT_ID),
+	Field('level_1_statutory_id', LEVEL_1_STATUTORY_ID),
+	Field('from_date', Text20),
+	Field('to_date', Text20)
+])
+
+
 GetActivityLogFilters = RecordType("GetActivityLogFilters", [])
 
 GetActivityLogReport = RecordType("GetActivityLogReport", [
@@ -176,6 +191,8 @@ Request = VariantType("Request", [
 	GetComplianceActivityReport,
 	GetReassignedHistoryReportFilters,
 	GetReassignedHistoryReport,
+	GetStatutoryNotificationsListFilters,
+	GetStatutoryNotificationsListReport,
 	GetActivityLogFilters,
 	GetActivityLogReport,
 	GetLoginTrace,
@@ -471,6 +488,43 @@ GetReassignedHistoryReportSuccess =  RecordType("GetReassignedHistoryReportSucce
 	Field("statutory_wise_compliances", VectorType(StatutoryReassignCompliance))
 ])
 
+
+#Statutory Notification List
+
+GetStatutoryNotificationsListFiltersSuccess = RecordType("GetStatutoryNotificationsListFiltersSuccess", [
+	Field("countries", VectorType(Country)),
+	Field("domains", VectorType(Domain)),
+	Field("business_groups", VectorType(BusinessGroup)),
+	Field("legal_entities", VectorType(LegalEntity)),
+	Field("divisions", VectorType(Division)),
+	Field("units", VectorType(Unit)),
+	Field("level1_statutories", MapType(COUNTRY_ID, DomainStatutoryMap))
+])
+
+NOTIFICATIONS = RecordType("NOTIFICATIONS", [
+	Field("statutory_provision", STATUTORY_PROVISION),
+	Field("notification_text", NOTIFICATION_TEXT),
+	Field("date_and_time", TIMESTAMP)
+])
+
+COUNTRY_WISE_NOTIFICATIONS = RecordType("COUNTRY_WISE_NOTIFICATIONS", [
+	Field("country_id", CountryList),
+	Field("domain_id", DomainList),
+	Field("notifications", VectorType(NOTIFICATIONS))
+])
+
+GetStatutoryNotificationsListReportSuccess = RecordType("GetStatutoryNotificationsListReportSuccess", [
+	Field("countries", VectorType(Country)),
+	Field("domains", VectorType(Domain)),
+	Field("business_groups", VectorType(BusinessGroup)),
+	Field("legal_entities", VectorType(LegalEntity)),
+	Field("divisions", VectorType(Division)),
+	Field("units", VectorType(Unit)),	Field("level_1_statutories", MapType(COUNTRY_ID, Statutory)),
+	Field("country_wise_notifications", VectorType(COUNTRY_WISE_NOTIFICATIONS))
+])
+
+#Activity Log
+
 FormName = RecordType("FormName", [
 	Field("form_id", FORM_ID),
 	Field("form_name", FORM_NAME)
@@ -521,6 +575,8 @@ Response = VariantType("Response", [
 	GetComplianceActivityReportSuccess,
 	GetReassignedHistoryReportFiltersSuccess,
 	GetReassignedHistoryReportSuccess,
+	GetStatutoryNotificationsListFiltersSuccess,
+	GetStatutoryNotificationsListReportSuccess,
 	GetActivityLogFiltersSuccess,
 	GetActivityLogReportSuccess,
 	GetLoginTraceSuccess
