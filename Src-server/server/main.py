@@ -17,7 +17,6 @@ from server.database import KnowledgeDatabase
 import controller
 from distribution.protocol import (
     Request as DistributionRequest,
-    Response as DistributionResponse,
     CompanyServerDetails
 )
 from server.constants import TEMPLATE_PATHS
@@ -203,12 +202,6 @@ class TemplateHandler(tornado.web.RequestHandler) :
 # run_server
 #
 
-def handle_root(request, response):
-    # response.send("Are you lost?")
-    template = template_env.get_template("/")
-    output = template.render(**self.__parameters)
-    self.write(output)
-
 def run_server(port):
     io_loop = IOLoop()
 
@@ -234,19 +227,25 @@ def run_server(port):
 
         api_urls_and_handlers = [
             ("/server-list", api.handle_server_list),
-            ("/api/login", api.handle_login),
-            ("/api/admin", api.handle_admin),
-            ("/api/techno", api.handle_techno),
+            ("/knowledge/api/login", api.handle_login),
+            ("/knowledge/api/admin", api.handle_admin),
+            ("/knowledge/api/techno", api.handle_techno),
             (
-                "/api/handle_client_admin_settings",
+                "/knowledge/api/handle_client_admin_settings",
                 api.handle_client_admin_settings
             ),
-            ("/api/general", api.handle_general),
-            ("/api/knowledge_master", api.handle_knowledge_master),
-            ("/api/knowledge_transaction", api.handle_knowledge_transaction),
-            ("/api/knowledge_report", api.handle_knowledge_report),
-            ("/api/techno_transaction", api.handle_techno_transaction),
-            ("/api/techno_report", api.handle_techno_report)
+            ("/knowledge/api/general", api.handle_general),
+            ("/knowledge/api/knowledge_master", api.handle_knowledge_master),
+            (
+                "/knowledge/api/knowledge_transaction",
+                api.handle_knowledge_transaction
+            ),
+            ("/knowledge/api/knowledge_report", api.handle_knowledge_report),
+            (
+                "/knowledge/api/techno_transaction",
+                api.handle_techno_transaction
+            ),
+            ("/knowledge/api/techno_report", api.handle_techno_report)
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)
@@ -256,14 +255,25 @@ def run_server(port):
         desktop_path = os.path.join(files_path, "desktop")
         common_path = os.path.join(desktop_path, "common")
         images_path = os.path.join(common_path, "images")
-        css_path = os.path.join(common_path, "css")
-        js_path = os.path.join(common_path, "js")
+        # css_path = os.path.join(common_path, "css")
+        # js_path = os.path.join(common_path, "js")
 
-        web_server.low_level_url(r"/images/(.*)", StaticFileHandler, dict(path=images_path))
+        web_server.low_level_url(
+            r"/images/(.*)",
+            StaticFileHandler, dict(path=images_path)
+        )
 
-        api_design_path = os.path.join(ROOT_PATH, "Doc", "API", "Web-API", "Version-1.0.4", "html")
-        web_server.low_level_url(r"/api-design/(.*)", StaticFileHandler, dict(path=api_design_path))
-        web_server.low_level_url(r"/(.*)", StaticFileHandler, dict(path=static_path))
+        api_design_path = os.path.join(
+            ROOT_PATH, "Doc", "API", "Web-API", "Version-1.0.4", "html"
+        )
+        web_server.low_level_url(
+            r"/api-design/(.*)", StaticFileHandler,
+            dict(path=api_design_path)
+        )
+        web_server.low_level_url(
+            r"/(.*)", StaticFileHandler,
+            dict(path=static_path)
+        )
 
 
         print "Local port: %s" % port
@@ -271,5 +281,3 @@ def run_server(port):
 
     io_loop.add_callback(delay_initialize)
     io_loop.run()
-
-

@@ -1,4 +1,4 @@
-var BASE_URL = "http://localhost:8082/";
+var BASE_URL = "http://192.168.1.11:8082/";
 
 function initMirror() {
     var DEBUG = true;
@@ -165,7 +165,7 @@ function initMirror() {
             }
         ]
         jQuery.post(
-            BASE_URL + "api/login",
+            BASE_URL + "knowledge/api/login",
             toJSON(request),
             function (data) {
                 var data = parseJSON(data);
@@ -197,7 +197,7 @@ function initMirror() {
             }
         ]
         jQuery.post(
-            BASE_URL + "api/login",
+            BASE_URL + "knowledge/api/login",
             toJSON(request),
             function (data) {
                 var data = parseJSON(data);
@@ -221,7 +221,7 @@ function initMirror() {
             "SaveDomain",
             { "domain_name" : domainName }
         ];
-        apiRequest("api/general", request, callback);
+        apiRequest("knowledge/api/general", request, callback);
     }
 
     function updateDomain(domainId, domainName, callback) {
@@ -229,7 +229,7 @@ function initMirror() {
             "UpdateDomain",
             { "domain_id" : domainId, "domain_name" : domainName }
         ];
-        apiRequest("api/general", request, callback);
+        apiRequest("knowledge/api/general", request, callback);
     }
 
     function changeDomainStatus(domainId, isActive, callback) {
@@ -237,12 +237,12 @@ function initMirror() {
             "ChangeDomainStatus",
             {"domain_id" : domainId, "is_active" : isActive}
         ];
-        apiRequest("api/general", request, callback);
+        apiRequest("knowledge/api/general", request, callback);
     }
 
     function getDomainList(callback) {
         var request = ["GetDomains", {}];
-        apiRequest("api/general", request, callback);
+        apiRequest("knowledge/api/general", request, callback);
     }
 
     //Country Master
@@ -252,7 +252,7 @@ function initMirror() {
             "SaveCountry",
             { "country_name" : countryName }
         ];
-        apiRequest("api/general", request, callback);
+        apiRequest("knowledge/api/general", request, callback);
     }
 
     function updateCountry(countryId, countryName, callback) {
@@ -260,7 +260,7 @@ function initMirror() {
             "UpdateCountry",
             { "country_id" : countryId, "country_name" : countryName }
         ];
-        apiRequest("api/general", request, callback);
+        apiRequest("knowledge/api/general", request, callback);
     }
 
     function changeCountryStatus(countryId, isActive, callback) {
@@ -268,12 +268,12 @@ function initMirror() {
             "ChangeCountryStatus",
             {"country_id" : countryId, "is_active" : isActive}
         ];
-        apiRequest("api/general", request, callback);
+        apiRequest("knowledge/api/general", request, callback);
     }
 
     function getCountryList(callback) {
         var request = ["GetCountries", {}];
-        apiRequest("api/general", request, callback);
+        apiRequest("knowledge/api/general", request, callback);
     }
 
     //Industry Master
@@ -282,7 +282,7 @@ function initMirror() {
             "SaveIndustry",
             { "industry_name" : industryName }
         ];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function updateIndustry(industryId, industryName, callback) {
@@ -290,7 +290,7 @@ function initMirror() {
             "UpdateIndustry",
             { "industry_id" : industryId, "industry_name" : industryName }
         ];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function changeIndustryStatus(industryId, isActive, callback) {
@@ -298,12 +298,12 @@ function initMirror() {
             "ChangeIndustryStatus",
             {"industry_id" : industryId, "is_active" : isActive}
         ];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function getIndustryList(callback) {
         var request = ["GetIndustries", {}];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     //Statutory Nature Master
@@ -313,7 +313,7 @@ function initMirror() {
             "SaveStatutoryNature",
             { "statutory_nature_name" : statutoryNatureName }
         ];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function updateStatutoryNature(statutoryNatureId, statutoryNatureName,
@@ -322,7 +322,7 @@ function initMirror() {
             "UpdateStatutoryNature",
             { "statutory_nature_id" : statutoryNatureId, "statutory_nature_name" : statutoryNatureName }
         ];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function changeStatutoryNatureStatus(statutoryNatureId, isActive,
@@ -331,18 +331,18 @@ function initMirror() {
             "ChangeStatutoryNatureStatus",
             {"statutory_nature_id" : statutoryNatureId, "is_active" : isActive}
         ];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function getStatutoryNatureList(callback) {
         var request = ["GetStatutoryNatures", {}];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     // Geography Levels
     function getGeographyLevels(callback) {
         var request = ["GetGeographyLevels", {}];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function levelDetails(levelId, levelPosition, levelName) {
@@ -362,13 +362,13 @@ function initMirror() {
                 "levels" : levels
             }
         ];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     // Statutory Levels
     function getStatutoryLevels(callback) {
         var request = ["GetStatutoryLevels", {}];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function saveAndUpdateStatutoryLevels(countryId, domainId, levels,
@@ -381,13 +381,13 @@ function initMirror() {
                 "levels" : levels
             }
         ];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     //Geographies
     function getGeographies(callback) {
         var request = ["GetGeographies", {}];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function saveGeography(levelId, name, parentIds, countryId, callback) {
@@ -400,7 +400,7 @@ function initMirror() {
                 "country_id": countryId
             }
         ];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function updateGeography(
@@ -416,7 +416,7 @@ function initMirror() {
                 "country_id": countryId
             }
         ];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function changeGeographyStatus(geographyId, isActive, callback) {
@@ -427,12 +427,12 @@ function initMirror() {
                 "is_active": isActive
             }
         ];
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function getGeographyReport(callback) {
         var request = ["GetGeographyReport", {}];
-        apiRequest("api/knowledge_report", request, callback);
+        apiRequest("knowledge/api/knowledge_report", request, callback);
     }
 
     // statutory Mapping
@@ -446,7 +446,7 @@ function initMirror() {
                 "parent_ids": parentIds
             }
         ]
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function updateStatutory(statutoryId, levelId, name, parentIds, callback) {
@@ -459,7 +459,7 @@ function initMirror() {
                 "parent_ids": parentIds
             }
         ]
-        apiRequest("api/knowledge_master", request, callback);
+        apiRequest("knowledge/api/knowledge_master", request, callback);
     }
 
     function statutoryDates(date, month, triggerBefore) {
@@ -525,7 +525,7 @@ function initMirror() {
             "SaveStatutoryMapping",
             mappingData
         ];
-        apiRequest("api/knowledge_transaction", request, callback);
+        apiRequest("knowledge/api/knowledge_transaction", request, callback);
     }
 
     function UpdateStatutoryMappingData(
@@ -551,12 +551,12 @@ function initMirror() {
             "UpdateStatutoryMapping",
             mappingData
         ]
-        apiRequest("api/knowledge_transaction", request, callback);
+        apiRequest("knowledge/api/knowledge_transaction", request, callback);
     }
 
     function getStatutoryMappings(callback) {
         var request = ["GetStatutoryMappings", {}];
-        apiRequest("api/knowledge_transaction", request, callback);
+        apiRequest("knowledge/api/knowledge_transaction", request, callback);
     }
 
     function changeStatutoryMappingStatus(mappingId, isActive, callback) {
@@ -567,7 +567,7 @@ function initMirror() {
                 "is_active" : isActive
             }
         ]
-        apiRequest("api/knowledge_transaction", request, callback);
+        apiRequest("knowledge/api/knowledge_transaction", request, callback);
     }
 
     function approveStatutoryList(statutoryMappingId, statutoryProvision, approvalStatus, reason, notificationText) {
@@ -587,12 +587,12 @@ function initMirror() {
                 "statutory_mappings": approvalList
             }
         ]
-        apiRequest("api/knowledge_transaction", request, callback);
+        apiRequest("knowledge/api/knowledge_transaction", request, callback);
     }
 
     function getStatutoryMappingsReportFilter(callback) {
         var request = ["GetStatutoryMappingReportFilters", {}];
-        apiRequest("api/knowledge_report", request, callback);
+        apiRequest("knowledge/api/knowledge_report", request, callback);
     }
 
     function filterData(countryId, domainId, industryId, statutoryNatureId, geographyId, level1StatutoryId) {
@@ -608,12 +608,12 @@ function initMirror() {
 
     function getStatutoryMappingsReportData(filterDatas, callback) {
         var request = ["GetStatutoryMappingReportData", filterDatas];
-        apiRequest("api/knowledge_report", request, callback);
+        apiRequest("knowledge/api/knowledge_report", request, callback);
     }
 
     // Admin User Group Master
     function getAdminUserGroupList(callback) {
-        callerName = "api/admin"
+        callerName = "knowledge/api/admin"
         var request = [
             "GetUserGroups",
             {}
@@ -630,7 +630,7 @@ function initMirror() {
     }
 
     function saveAdminUserGroup(userGroupDetail, callback) {
-        callerName = "api/admin"
+        callerName = "knowledge/api/admin"
         var request = [
             "SaveUserGroup",
             userGroupDetail
@@ -648,7 +648,7 @@ function initMirror() {
     }
 
     function updateAdminUserGroup(userGroupDetail, callback) {
-        callerName = "api/admin"
+        callerName = "knowledge/api/admin"
         var request = [
             "UpdateUserGroup",
             userGroupDetail
@@ -657,7 +657,7 @@ function initMirror() {
     }
 
     function changeAdminUserGroupStatus(userGroupId, isActive, callback) {
-        callerName = "api/admin"
+        callerName = "knowledge/api/admin"
         var request = [
             "ChangeUserGroupStatus",
             {
@@ -672,7 +672,7 @@ function initMirror() {
     // Admin User Master
 
     function getAdminUserList(callback) {
-        callerName = "api/admin"
+        callerName = "knowledge/api/admin"
         var request = [
             "GetUsers",
             {}
@@ -704,7 +704,7 @@ function initMirror() {
     }
 
     function saveAdminUser(userDetail, callback) {
-        callerName = "api/admin"
+        callerName = "knowledge/api/admin"
         var request = [
             "SaveUser",
             userDetail
@@ -736,7 +736,7 @@ function initMirror() {
     }
 
     function updateAdminUser(userDetail, callback) {
-        callerName = "api/admin"
+        callerName = "knowledge/api/admin"
         var request = [
             "UpdateUser",
             userDetail
@@ -746,7 +746,7 @@ function initMirror() {
 
     function changeAdminUserStatus(userId, isActive,
      callback) {
-        callerName = "api/admin"
+        callerName = "knowledge/api/admin"
         var request = [
             "ChangeUserStatus",
             {
@@ -791,7 +791,7 @@ function initMirror() {
 
     function saveClientGroup(clientGroupDetails,
         callback) {
-        callerName = "api/techno"
+        callerName = "knowledge/api/techno"
         var request = [
             "SaveClientGroup",
             clientGroupDetails
@@ -820,7 +820,7 @@ function initMirror() {
     }
 
     function updateClientGroup(clientGroupDetails, callback) {
-        callerName = "api/techno"
+        callerName = "knowledge/api/techno"
         var request = [
             "UpdateClientGroup",
             clientGroupDetails
@@ -830,7 +830,7 @@ function initMirror() {
 
     function changeClientGroupStatus( clientId, isActive,
         callback) {
-        callerName = "api/techno"
+        callerName = "knowledge/api/techno"
         var request = [
             "ChangeClientGroupStatus",
             {
@@ -842,7 +842,7 @@ function initMirror() {
     }
 
     function getClientGroups(callback) {
-        callerName = "api/techno"
+        callerName = "knowledge/api/techno"
         var request = [
             "GetClientGroups",
             {}
@@ -854,7 +854,7 @@ function initMirror() {
 
     function changePassword(currentPassword, newPassword,
      callback) {
-        callerName = "api/login"
+        callerName = "knowledge/api/login"
         var request = [
             "ChangePassword",
             {
@@ -869,7 +869,7 @@ function initMirror() {
     // Forgot Password APIs
 
     function forgotPassword(username, callback) {
-        callerName = "api/login"
+        callerName = "knowledge/api/login"
         var request = [
             "ForgotPassword",
             {
@@ -882,7 +882,7 @@ function initMirror() {
 
     function validateResetToken(resetToken,
         callback) {
-        callerName = "api/login"
+        callerName = "knowledge/api/login"
         var request = [
             "ResetTokenValidation",
             {
@@ -895,7 +895,7 @@ function initMirror() {
 
     function resetPassword( resetToken, newPassword,
         callback) {
-        callerName = "api/login"
+        callerName = "knowledge/api/login"
         var request = [
             "ResetPassword",
             {
@@ -910,7 +910,7 @@ function initMirror() {
     // Client Unit APIs
 
     function getClients(callback) {
-        callerName = "api/techno"
+        callerName = "knowledge/api/techno"
         var request = [
             "GetClients",
             {}
@@ -965,7 +965,7 @@ function initMirror() {
 
     function saveClient(clientId, businessGroup, legalEntity,
         division, countryWiseUnits, callback) {
-        callerName = "api/techno"
+        callerName = "knowledge/api/techno"
         var request = [
             "SaveClient",
             {
@@ -982,7 +982,7 @@ function initMirror() {
 
     function updateClient(clientId, businessGroup, legalEntity,
         division, countryWiseUnits, callback) {
-        callerName = "api/techno"
+        callerName = "knowledge/api/techno"
         var request = [
             "UpdateClient",
             {
@@ -998,7 +998,7 @@ function initMirror() {
 
     function changeClientStatus(clientId, legalEntityId, divisionId, isActive,
         callback) {
-        callerName = "api/techno"
+        callerName = "knowledge/api/techno"
         var request = [
             "ChangeClientStatus",
             {
@@ -1013,7 +1013,7 @@ function initMirror() {
 
     function reactivateUnit(clientId, unitId, password,
         callback) {
-        callerName = "api/techno"
+        callerName = "knowledge/api/techno"
         var request = [
             "ReactivateUnit",
             {
@@ -1027,7 +1027,7 @@ function initMirror() {
 
     //Client Profile
     function getClientProfile(callback){
-        callerName = "api/techno"
+        callerName = "knowledge/api/techno"
         var request = [
             "GetClientProfile",
             {}
@@ -1037,7 +1037,7 @@ function initMirror() {
 
     // Client Details Report
     function getClientDetailsReportFilters(callback){
-        callerName = "api/techno_report"
+        callerName = "knowledge/api/techno_report"
         var request = [
             "GetClientDetailsReportFilters",
             {}
@@ -1047,7 +1047,7 @@ function initMirror() {
 
     function getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId,
         unitId, domainIds, callback){
-        callerName = "api/techno_report"
+        callerName = "knowledge/api/techno_report"
         var request = [
             "GetClientDetailsReportData",
             {
@@ -1065,7 +1065,7 @@ function initMirror() {
 
     //Statutory Notifications List
     function getStatutoryNotificationsFilters(callback){
-        callerName = "api/techno_report"
+        callerName = "knowledge/api/techno_report"
         var request = [
             "GetStatutoryNotificationsFilters",
             {}
@@ -1073,7 +1073,7 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
     function getStatutoryNotificationsReportData(countryId, domainId, level1Id, callback){
-        callerName = "api/techno_report"
+        callerName = "knowledge/api/techno_report"
         var request = [
             "GetStatutoryNotificationsReportData",
             {
@@ -1094,7 +1094,7 @@ function initMirror() {
                 "country_id": countryId
             }
         ];
-        callerName = "api/techno_transaction"
+        callerName = "knowledge/api/techno_transaction"
         apiRequest(callerName, request, callback)
     }
 
@@ -1109,7 +1109,7 @@ function initMirror() {
                 "unit_id": unitId
             }
         ]
-        callerName = "api/techno_transaction"
+        callerName = "knowledge/api/techno_transaction"
         apiRequest(callerName, request, callback)
     }
 
@@ -1117,7 +1117,7 @@ function initMirror() {
         var request = [
             "GetAssignedStatutoriesList", {}
         ];
-        callerName = "api/techno_transaction";
+        callerName = "knowledge/api/techno_transaction";
         apiRequest(callerName, request, callback);
     }
 
@@ -1149,7 +1149,7 @@ function initMirror() {
                 "assigned_statutories": assignStatutories
             }
         ];
-        callerName = "api/techno_transaction";
+        callerName = "knowledge/api/techno_transaction";
         apiRequest(callerName, request, callback);
     }
 
@@ -1160,7 +1160,7 @@ function initMirror() {
                 "client_statutory_id": clientStatutoryId
             }
         ];
-        callerName = "api/techno_transaction"
+        callerName = "knowledge/api/techno_transaction"
         apiRequest(callerName, request, callback);
     }
 
@@ -1169,7 +1169,7 @@ function initMirror() {
             "GetAssignedStatutoryReportFilters",
             {}
         ];
-        callerName = "api/techno_report";
+        callerName = "knowledge/api/techno_report";
         apiRequest(callerName, request, callback);
     }
 
@@ -1192,12 +1192,12 @@ function initMirror() {
             }
         ];
         console.log(request)
-        callerName = "api/techno_report";
+        callerName = "knowledge/api/techno_report";
         apiRequest(callerName, request, callback);
     }
 
     function getAuditTrail(callback){
-        callerName = "api/general"
+        callerName = "knowledge/api/general"
         var request = [
             "GetAuditTrails",
             {}
@@ -1206,7 +1206,7 @@ function initMirror() {
     }
 
     function updateUserProfile(contact_no, address, callback){
-        callerName = "api/general"
+        callerName = "knowledge/api/general"
         var request = [
             "UpdateUserProfile",
             {
@@ -1220,7 +1220,7 @@ function initMirror() {
 /* Notifications */
 
     function getNotifications(notification_type, callback){
-        callerName = "api/general"
+        callerName = "knowledge/api/general"
         var request = [
             "GetNotifications",
             {
@@ -1231,7 +1231,7 @@ function initMirror() {
     }
 
     function updateNotificationStatus(notification_id, has_read, callback){
-        callerName = "api/general"
+        callerName = "knowledge/api/general"
         var request = [
             "UpdateNotificationStatus",
             {
