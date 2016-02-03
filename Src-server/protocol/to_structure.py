@@ -3516,6 +3516,47 @@ def to_structure_RecordType_technoreports_NOTIFICATIONS(data):
     from protocol import technoreports
     return technoreports.NOTIFICATIONS.to_structure(data)
 
+# Complaince details report
+def to_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        item1 = to_structure_RecordType_clientreport_ComplianceDetailsUnitWise(item)
+        lst.append(item1)
+    return lst
+
+def to_structure_RecordType_clientreport_ComplianceDetailsUnitWise(data):
+    from protocol import clientreport
+    return clientreport.ComplianceDetailsUnitWise.to_structure(data)
+
+# Client Level One Statutory
+def to_structure_VectorType_RecordType_core_ClientLevelOneStatutory(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_ClientLevelOneStatutory(item))
+    return lst
+
+def to_structure_RecordType_core_ClientLevelOneStatutory(data):
+    from protocol import core
+    return core.ClientLevelOneStatutory.to_structure(data)
+
+# Client Compliance Filter
+def to_structure_VectorType_RecordType_core_ComplianceFilter(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_ComplianceFilter(item))
+    return lst
+
+def to_structure_RecordType_core_ComplianceFilter(data):
+    from protocol import core
+    return core.ComplianceFilter.to_structure(data)
+
+def to_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS(data):
+    from protocol import core
+    return core.COMPLIANCE_STATUS.to_structure(data)
+
 # not complied enum type
 
 def to_structure_EnumType_core_NOT_COMPLIED_TYPE(data):
@@ -3525,3 +3566,21 @@ def to_structure_EnumType_core_NOT_COMPLIED_TYPE(data):
 def to_structure_OptionalType_CustomTextType_250(data):
     if data is None: return data
     return parse_custom_string(data, 250)
+
+def to_structure_VectorType_CustomTextType_100(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_CustomTextType_100(item))
+    return lst
+
+def to_structure_VectorType_RecordType_clientreport_RiskData(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_clientreport_RiskData(item))
+    return lst
+
+def to_structure_RecordType_clientreport_RiskData(data):
+    from protocol import clientreport
+    return clientreport.RiskData.to_structure(data)

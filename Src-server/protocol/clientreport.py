@@ -57,7 +57,14 @@ parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_VectorType_RecordType_core_ClientLegalEntity,
     parse_structure_VectorType_RecordType_core_ClientDivision,
     parse_structure_VectorType_RecordType_core_ClientUnit,
-    parse_structure_VectorType_RecordType_core_StatutoryDate
+    parse_structure_VectorType_RecordType_core_StatutoryDate,
+    parse_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise,
+    parse_structure_OptionalType_VectorType_CustomTextType_50,
+    parse_structure_VectorType_RecordType_core_ClientLevelOneStatutory,
+    parse_structure_VectorType_RecordType_core_ComplianceFilter,
+    parse_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS,
+    parse_structure_OptionalType_UnsignedIntegerType_32,
+    parse_structure_VectorType_RecordType_clientreport_RiskData
 
 )
 from protocol.to_structure import (
@@ -116,9 +123,13 @@ to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     to_structure_VectorType_RecordType_core_ClientLegalEntity,
     to_structure_VectorType_RecordType_core_ClientDivision,
     to_structure_VectorType_RecordType_core_ClientUnit,
-    to_structure_VectorType_RecordType_core_StatutoryDate
-
-
+    to_structure_VectorType_RecordType_core_StatutoryDate,
+    to_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise,
+    to_structure_OptionalType_VectorType_CustomTextType_50,
+    to_structure_VectorType_RecordType_core_ClientLevelOneStatutory,
+    to_structure_VectorType_RecordType_core_ComplianceFilter,
+    to_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS,
+    to_structure_VectorType_RecordType_clientreport_RiskData
 )
 
 #
@@ -180,7 +191,7 @@ class GetComplianceDetailsReport(Request):
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_id)
+        statutory_id = parse_structure_OptionalType_CustomTextType_100(statutory_id)
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         compliance_id = data.get("compliance_id")
@@ -192,20 +203,20 @@ class GetComplianceDetailsReport(Request):
         to_date = data.get("to_date")
         to_date = parse_structure_OptionalType_CustomTextType_20(to_date)
         compliance_status = data.get("compliance_status")
-        compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
+        compliance_status = parse_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS(compliance_status)
         return GetComplianceDetailsReport(country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status)
 
     def to_inner_structure(self):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_id),
+            "statutory_id": to_structure_OptionalType_CustomTextType_100(self.statutory_id),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "compliance_id": to_structure_OptionalType_SignedIntegerType_8(self.compliance_id),
             "assignee_id": to_structure_OptionalType_SignedIntegerType_8(self.assignee_id),
             "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
             "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date),
-            "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
+            "compliance_status": to_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
         }
 
 class GetRiskReportFilters(Request):
@@ -248,9 +259,9 @@ class GetRiskReport(Request):
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_id)
+        statutory_id = parse_structure_OptionalType_CustomTextType_100(statutory_id)
         statutory_status = data.get("statutory_status")
-        statutory_status = parse_structure_UnsignedIntegerType_32(statutory_status)
+        statutory_status = parse_structure_OptionalType_UnsignedIntegerType_32(statutory_status)
         return GetRiskReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_id, statutory_status)
 
     def to_inner_structure(self):
@@ -261,8 +272,8 @@ class GetRiskReport(Request):
             "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
-            "statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_id),
-            "statutory_status": to_structure_SignedIntegerType_8(self.statutory_status),
+            "statutory_id": to_structure_OptionalType_CustomTextType_100(self.statutory_id),
+            "statutory_status": to_structure_OptionalType_SignedIntegerType_8(self.statutory_status),
         }
 
 class GetServiceProviderReportFilters(Request):
@@ -294,7 +305,7 @@ class GetServiceProviderWiseCompliance(Request):
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_UnsignedIntegerType_32(statutory_id)
+        statutory_id = parse_structure_OptionalType_CustomTextType_100(statutory_id)
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         service_provider_id = data.get("service_provider_id")
@@ -305,7 +316,7 @@ class GetServiceProviderWiseCompliance(Request):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "statutory_id": to_structure_SignedIntegerType_8(self.statutory_id),
+            "statutory_id": to_structure_OptionalType_CustomTextType_100(self.statutory_id),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "service_provider_id": to_structure_OptionalType_SignedIntegerType_8(self.service_provider_id),
         }
@@ -724,17 +735,17 @@ class GetComplianceDetailsReportFiltersSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "level_1_statutories", "units", "Compliances", "users"])
+        data = parse_dictionary(data, ["countries", "domains", "level_1_statutories", "units", "compliances", "users"])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level_1_statutories)
+        level_1_statutories = parse_structure_VectorType_RecordType_core_ClientLevelOneStatutory(level_1_statutories)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_Unit(units)
-        Compliances = data.get("Compliances")
-        Compliances = parse_structure_VectorType_RecordType_clientreport_ComplianceName(Compliances)
+        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
+        Compliances = data.get("compliances")
+        Compliances = parse_structure_VectorType_RecordType_core_ComplianceFilter(Compliances)
         users = data.get("users")
         users = parse_structure_VectorType_RecordType_clientreport_User(users)
         return GetComplianceDetailsReportFiltersSuccess(countries, domains, level_1_statutories, units, Compliances, users)
@@ -743,13 +754,13 @@ class GetComplianceDetailsReportFiltersSuccess(Response):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "level_1_statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level_1_statutories),
-            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
-            "Compliances": to_structure_VectorType_RecordType_clientreport_ComplianceName(self.Compliances),
+            "level_1_statutories": to_structure_VectorType_RecordType_core_ClientLevelOneStatutory(self.level_1_statutories),
+            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
+            "compliances": to_structure_VectorType_RecordType_core_ComplianceFilter(self.Compliances),
             "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
         }
 
-class GetComplianceDetailsReportSuccess(Response):
+class ComplianceDetailsUnitWise(object):
     def __init__(self, unit_id, unit_name, address, Compliances):
         self.unit_id = unit_id
         self.unit_name = unit_name
@@ -757,24 +768,43 @@ class GetComplianceDetailsReportSuccess(Response):
         self.Compliances = Compliances
 
     @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_id", "unit_name", "address", "Compliances"])
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "unit_name", "address", "compliances"])
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_100(unit_name)
         address = data.get("address")
         address = parse_structure_CustomTextType_250(address)
-        Compliances = data.get("Compliances")
+        Compliances = data.get("compliances")
         Compliances = parse_structure_VectorType_RecordType_clientreport_ComplianceDetails(Compliances)
-        return GetComplianceDetailsReportSuccess(unit_id, unit_name, address, Compliances)
+        return ComplianceDetailsUnitWise(unit_id, unit_name, address, Compliances)
 
-    def to_inner_structure(self):
-        return {
+    def to_structure(self):
+        result = {
             "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
-            "Compliances": to_structure_VectorType_RecordType_clientreport_ComplianceDetails(self.Compliances),
+            "compliances": to_structure_VectorType_RecordType_clientreport_ComplianceDetails(self.Compliances),
+        }
+        
+        return result
+
+class GetComplianceDetailsReportSuccess(Response):
+    def __init__(self, unit_wise_compliancess):
+        self.unit_wise_compliancess = unit_wise_compliancess
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["unit_wise_compliancess"])
+        unit_wise_compliances = data.get("unit_wise_compliances")
+        unit_wise_compliances = parse_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise(unit_wise_compliancess)
+        return GetComplianceDetailsReportSuccess(unit_wise_compliancess)
+
+    def to_inner_structure(self):
+       
+        return {
+            "unit_wise_compliancess": to_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise(self.unit_wise_compliancess)
         }
 
 class GetRiskReportFiltersSuccess(Response):
@@ -795,26 +825,26 @@ class GetRiskReportFiltersSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
+        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
         legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_Unit(units)
+        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
         level1_statutories = data.get("level1_statutories")
-        level1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level1_statutories)
+        level1_statutories = parse_structure_VectorType_RecordType_core_ClientLevelOneStatutory(level1_statutories)
         return GetRiskReportFiltersSuccess(countries, domains, business_groups, legal_entities, divisions, units, level1_statutories)
 
     def to_inner_structure(self):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
-            "level1_statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level1_statutories),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
+            "level1_statutories": to_structure_VectorType_RecordType_core_ClientLevelOneStatutory(self.level1_statutories),
         }
 
 class GetRiskReportSuccess(Response):
@@ -827,18 +857,18 @@ class GetRiskReportSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["delayed_compliance", "not_complied", "not_opted"])
         delayed_compliance = data.get("delayed_compliance")
-        delayed_compliance = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(delayed_compliance)
+        delayed_compliance = parse_structure_VectorType_RecordType_clientreport_RiskData(delayed_compliance)
         not_complied = data.get("not_complied")
-        not_complied = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(not_complied)
+        not_complied = parse_structure_VectorType_RecordType_clientreport_RiskData(not_complied)
         not_opted = data.get("not_opted")
-        not_opted = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(not_opted)
+        not_opted = parse_structure_VectorType_RecordType_clientreport_RiskData(not_opted)
         return GetRiskReportSuccess(delayed_compliance, not_complied, not_opted)
 
     def to_inner_structure(self):
         return {
-            "delayed_compliance": to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(self.delayed_compliance),
-            "not_complied": to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(self.not_complied),
-            "not_opted": to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(self.not_opted),
+            "delayed_compliance": to_structure_VectorType_RecordType_clientreport_RiskData(self.delayed_compliance),
+            "not_complied": to_structure_VectorType_RecordType_clientreport_RiskData(self.not_complied),
+            "not_opted": to_structure_VectorType_RecordType_clientreport_RiskData(self.not_opted),
         }
 
 class GetServiceProviderReportFiltersSuccess(Response):
@@ -857,9 +887,9 @@ class GetServiceProviderReportFiltersSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level_1_statutories)
+        level_1_statutories = parse_structure_VectorType_RecordType_core_ClientLevelOneStatutory(level_1_statutories)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_Unit(units)
+        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
         service_providers = data.get("service_providers")
         service_providers = parse_structure_VectorType_RecordType_core_ServiceProvider(service_providers)
         return GetServiceProviderReportFiltersSuccess(countries, domains, level_1_statutories, units, service_providers)
@@ -868,8 +898,8 @@ class GetServiceProviderReportFiltersSuccess(Response):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "level_1_statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level_1_statutories),
-            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
+            "level_1_statutories": to_structure_VectorType_RecordType_core_ClientLevelOneStatutory(self.level_1_statutories),
+            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
             "service_providers": to_structure_VectorType_RecordType_core_ServiceProvider(self.service_providers),
         }
 
@@ -1343,11 +1373,11 @@ class ComplianceDetails(object):
         due_date = data.get("due_date")
         due_date = parse_structure_CustomTextType_20(due_date)
         completion_date = data.get("completion_date")
-        completion_date = parse_structure_CustomTextType_20(completion_date)
+        completion_date = parse_structure_OptionalType_CustomTextType_20(completion_date)
         validity_date = data.get("validity_date")
-        validity_date = parse_structure_CustomTextType_20(validity_date)
+        validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         documents = data.get("documents")
-        documents = parse_structure_VectorType_CustomTextType_50(documents)
+        documents = parse_structure_OptionalType_VectorType_CustomTextType_50(documents)
         remarks = data.get("remarks")
         remarks = parse_structure_CustomTextType_500(remarks)
         return ComplianceDetails(compliance_name, assignee, due_date, completion_date, validity_date, documents, remarks)
@@ -1357,9 +1387,9 @@ class ComplianceDetails(object):
             "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
             "assignee": to_structure_CustomTextType_100(self.assignee),
             "due_date": to_structure_CustomTextType_20(self.due_date),
-            "completion_date": to_structure_CustomTextType_20(self.completion_date),
-            "validity_date": to_structure_CustomTextType_20(self.validity_date),
-            "documents": to_structure_VectorType_CustomTextType_50(self.documents),
+            "completion_date": to_structure_OptionalType_CustomTextType_20(self.completion_date),
+            "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
+            "documents": to_structure_OptionalType_VectorType_CustomTextType_50(self.documents),
             "remarks": to_structure_CustomTextType_500(self.remarks),
         }
 
@@ -1389,6 +1419,37 @@ class Level1Statutory(object):
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
             "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
+        }
+
+class RiskData(object):
+    def __init__(self, business_group_name, legal_entity_name, division_name, 
+        level_1_statutory_wise_units):
+        self.business_group_name = business_group_name
+        self.legal_entity_name = legal_entity_name
+        self.division_name = division_name
+        self.level_1_statutory_wise_units = level_1_statutory_wise_units
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [ "business_group_name", "legal_entity_name", 
+            "division_name", "level_1_statutory_wise_units"])
+        business_group_name = data.get("business_group_name")
+        business_group_name = parse_structure_CustomTextType_100(business_group_name)
+        legal_entity_name = data.get("legal_entity_name")
+        legal_entity_name = parse_structure_CustomTextType_100(legal_entity_name)
+        division_name = data.get("division_name")
+        division_name = parse_structure_CustomTextType_100(division_name)
+        level_1_statutory_wise_units = data.get("level_1_statutory_wise_units")
+        level_1_statutory_wise_units = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(level_1_statutory_wise_units)
+        return RiskData(business_group_name, legal_entity_name, division_name, 
+        level_1_statutory_wise_units)
+
+    def to_structure(self):
+        return {
+            "business_group_name": to_structure_CustomTextType_100(self.business_group_name),
+            "legal_entity_name": to_structure_CustomTextType_100(self.legal_entity_name),
+            "division_name": to_structure_CustomTextType_100(self.division_name),
+            "level_1_statutory_wise_units": to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(self.level_1_statutory_wise_units),
         }
 
 #
@@ -1421,7 +1482,7 @@ class ServiceProviderCompliance(object):
         contact_no = data.get("contact_no")
         contact_no = parse_structure_CustomTextType_20(contact_no)
         unit_wise_compliance = data.get("unit_wise_compliance")
-        unit_wise_compliance = parse_structure_VectorType_RecordType_clientreport_UnitWiseCompliance(unit_wise_compliance)
+        unit_wise_compliance = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ComplianceUnit(unit_wise_compliance)
         return ServiceProviderCompliance(service_provider_name, address, contract_from, contract_to, contact_person, contact_no, unit_wise_compliance)
 
     def to_structure(self):
@@ -1432,7 +1493,7 @@ class ServiceProviderCompliance(object):
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
             "contact_person": to_structure_CustomTextType_50(self.contact_person),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "unit_wise_compliance": to_structure_VectorType_RecordType_clientreport_UnitWiseCompliance(self.unit_wise_compliance),
+            "unit_wise_compliance": to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ComplianceUnit(self.unit_wise_compliance),
         }
 
 #

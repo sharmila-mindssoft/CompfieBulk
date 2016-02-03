@@ -252,11 +252,21 @@ Level1Statutory = RecordType("Level1Statutory", [
 	Field("compliances", VectorType(Compliance))
 ])
 
-GetRiskReportSuccess =  RecordType("GetRiskReportSuccess", [
-	Field("delayed_compliance", MapType(LEVEL_1_STATUTORY_NAME, VectorType(Level1Statutory))),
-	Field("not_complied", MapType(LEVEL_1_STATUTORY_NAME, VectorType(Level1Statutory))),
-	Field("not_opted", MapType(LEVEL_1_STATUTORY_NAME, VectorType(Level1Statutory)))
+RiskData = RecordType("RiskData",[
+	Field("business_group_name", Text100),
+	Field("legal_entity_name", Text100),
+	Field("division_name", Text100),
+	Field("level_1_statutory_wise_units",MapType(LEVEL_1_STATUTORY_NAME, VectorType(Level1Statutory)))
 ])
+
+GetRiskReportSuccess =  RecordType("GetRiskReportSuccess", [
+	Field("delayed_compliance", VectorType(RiskData)),
+	Field("not_complied",  VectorType(RiskData)),
+	Field("not_opted",  VectorType(RiskData)),
+	Field("unassigned",  VectorType(RiskData))
+])
+
+# Service Provider Compliance
 
 GetServiceProviderReportFiltersSuccess =  RecordType("GetServiceProviderReportFiltersSuccess", [
 	Field("countries", VectorType(Country)),
@@ -265,8 +275,6 @@ GetServiceProviderReportFiltersSuccess =  RecordType("GetServiceProviderReportFi
 	Field("units", VectorType(Unit)),
 	Field("service_providers", VectorType(ServiceProvider))
 ])
-
-# Service Provider Compliance
 
 ComplianceForUnit = RecordType("ComplianceForUnit", [
 	Field("compliance_name", Text100),
@@ -289,7 +297,7 @@ ServiceProviderCompliance = RecordType("ServiceProviderCompliance", [
 	Field("contract_to", Text20),
 	Field("contact_person", Text50),
 	Field("contact_no", CONTACT_NUMBER),
-	Field("unit_wise_compliance", VectorType(UnitWiseCompliance))
+	Field("unit_wise_compliance", VectorType(ComplianceUnit))
 ])
 
 GetServiceProviderWiseComplianceSuccess =  RecordType(

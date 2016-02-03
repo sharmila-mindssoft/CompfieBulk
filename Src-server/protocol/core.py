@@ -8,7 +8,6 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_ComplianceShortDescription,
     parse_structure_EnumType_core_FILTER_TYPE,
     parse_structure_EnumType_core_REPEATS_TYPE,
-    parse_structure_CustomTextType_500,
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_core_UnitDetails,
     parse_structure_VectorType_Text, parse_structure_CustomTextType_50,
@@ -41,6 +40,9 @@ from protocol.parse_structure import (
     parse_structure_Float,
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability,
+    parse_structure_CustomTextType_500,
+    parse_structure_OptionalType_CustomTextType_20,
+    parse_structure_VectorType_CustomTextType_100,
     parse_structure_EnumType_core_NOT_COMPLIED_TYPE
 )
 from protocol.to_structure import (
@@ -89,6 +91,8 @@ from protocol.to_structure import (
     to_structure_VectorType_UnsignedIntegerType_32,
     to_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability,
     to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS,
+    to_structure_OptionalType_CustomTextType_20,
+    to_structure_VectorType_CustomTextType_100,
     to_structure_EnumType_core_NOT_COMPLIED_TYPE
 )
 
@@ -1803,7 +1807,10 @@ class AssignedStatutory(object):
 #
 
 class ActiveCompliance(object):
-    def __init__(self, compliance_history_id, compliance_name, compliance_frequency, domain_name, start_date, due_date, compliance_status, validity_date, next_due_date, ageing, format_file_name):
+    def __init__(self, compliance_history_id, compliance_name, compliance_frequency, 
+        domain_name, start_date, due_date, compliance_status, validity_date, 
+        next_due_date, ageing, format_file_name, unit_name, address, 
+        compliance_description):
         self.compliance_history_id = compliance_history_id
         self.compliance_name = compliance_name
         self.compliance_frequency = compliance_frequency
@@ -1815,10 +1822,16 @@ class ActiveCompliance(object):
         self.next_due_date = next_due_date
         self.ageing = ageing
         self.format_file_name = format_file_name
+        self.unit_name = unit_name
+        self.address = address
+        self.compliance_description = compliance_description
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_history_id", "compliance_name", "compliance_frequency", "domain_name", "start_date", "due_date", "compliance_status", "validity_date", "next_due_date", "ageing", "format_file_name"])
+        data = parse_dictionary(data, ["compliance_history_id", "compliance_name", 
+            "compliance_frequency", "domain_name", "start_date", "due_date", 
+            "compliance_status", "validity_date", "next_due_date", "ageing", 
+            "format_file_name", "unit_name", "address", "compliance_description"])
         compliance_history_id = data.get("compliance_history_id")
         compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         compliance_name = data.get("compliance_name")
@@ -1832,16 +1845,25 @@ class ActiveCompliance(object):
         due_date = data.get("due_date")
         due_date = parse_structure_CustomTextType_20(due_date)
         compliance_status = data.get("compliance_status")
-        compliance_status = parse_structure_Bool(compliance_status)
+        compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
         validity_date = data.get("validity_date")
-        validity_date = parse_structure_CustomTextType_20(validity_date)
+        validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         next_due_date = data.get("next_due_date")
         next_due_date = parse_structure_CustomTextType_20(next_due_date)
         ageing = data.get("ageing")
-        ageing = parse_structure_UnsignedIntegerType_32(ageing)
+        ageing = parse_structure_CustomTextType_20(ageing)
         format_file_name = data.get("format_file_name")
         format_file_name = parse_structure_VectorType_CustomTextType_50(format_file_name)
-        return ActiveCompliance(compliance_history_id, compliance_name, compliance_frequency, domain_name, start_date, due_date, compliance_status, validity_date, next_due_date, ageing, format_file_name)
+        unit_name = data.get("unit_name")
+        unit_name = parse_structure_CustomTextType_100(unit_name)
+        address = data.get("address")
+        address = parse_structure_CustomTextType_500(address)
+        compliance_description = data.get("compliance_description")
+        compliance_description = parse_structure_CustomTextType_500(compliance_description)
+        return ActiveCompliance(compliance_history_id, compliance_name, 
+            compliance_frequency, domain_name, start_date, due_date, 
+            compliance_status, validity_date, next_due_date, ageing, 
+            format_file_name, unit_name, address, compliance_description)
 
     def to_structure(self):
         return {
@@ -1851,11 +1873,14 @@ class ActiveCompliance(object):
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "start_date": to_structure_CustomTextType_20(self.start_date),
             "due_date": to_structure_CustomTextType_20(self.due_date),
-            "compliance_status": to_structure_Bool(self.compliance_status),
-            "validity_date": to_structure_CustomTextType_20(self.validity_date),
+            "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
+            "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
             "next_due_date": to_structure_CustomTextType_20(self.next_due_date),
-            "ageing": to_structure_SignedIntegerType_8(self.ageing),
+            "ageing": to_structure_CustomTextType_20(self.ageing),
             "format_file_name": to_structure_VectorType_CustomTextType_50(self.format_file_name),
+            "unit_name" : to_structure_CustomTextType_100(self.unit_name),
+            "address" : to_structure_CustomTextType_500(self.address),
+            "compliance_description" : to_structure_CustomTextType_500(self.compliance_description)
         }
 
 #
@@ -1863,24 +1888,24 @@ class ActiveCompliance(object):
 #
 
 class UpcomingCompliance(object):
-    def __init__(self, compliance_history_id, compliance_name, compliance_frequency, domain_name, start_date, due_date, format_file_name):
-        self.compliance_history_id = compliance_history_id
+    def __init__(self, compliance_name, domain_name, start_date, due_date, 
+        format_file_name, unit_name, address, compliance_description):
         self.compliance_name = compliance_name
-        self.compliance_frequency = compliance_frequency
         self.domain_name = domain_name
         self.start_date = start_date
         self.due_date = due_date
         self.format_file_name = format_file_name
+        self.unit_name = unit_name
+        self.address = address
+        self.compliance_description = compliance_description
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_history_id", "compliance_name", "compliance_frequency", "domain_name", "start_date", "due_date", "format_file_name"])
-        compliance_history_id = data.get("compliance_history_id")
-        compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
+        data = parse_dictionary(data, ["compliance_name","domain_name", "start_date",
+         "due_date", "format_file_name", "unit_name", "address", 
+         "compliance_description"])
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_50(compliance_name)
-        compliance_frequency = data.get("compliance_frequency")
-        compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         domain_name = data.get("domain_name")
         domain_name = parse_structure_CustomTextType_50(domain_name)
         start_date = data.get("start_date")
@@ -1889,17 +1914,25 @@ class UpcomingCompliance(object):
         due_date = parse_structure_CustomTextType_20(due_date)
         format_file_name = data.get("format_file_name")
         format_file_name = parse_structure_VectorType_CustomTextType_50(format_file_name)
-        return UpcomingCompliance(compliance_history_id, compliance_name, compliance_frequency, domain_name, start_date, due_date, format_file_name)
+        unit_name = data.get("unit_name")
+        unit_name = parse_structure_CustomTextType_100(unit_name)
+        address = data.get("address")
+        address = parse_structure_CustomTextType_500(address)
+        compliance_description = data.get("compliance_description")
+        compliance_description = parse_structure_CustomTextType_500(compliance_description)
+        return UpcomingCompliance(compliance_name, domain_name, start_date, due_date, 
+            format_file_name, unit_name, address, compliance_description)
 
     def to_structure(self):
         return {
-            "compliance_history_id": to_structure_SignedIntegerType_8(self.compliance_history_id),
             "compliance_name": to_structure_CustomTextType_50(self.compliance_name),
-            "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "start_date": to_structure_CustomTextType_20(self.start_date),
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "format_file_name": to_structure_VectorType_CustomTextType_50(self.format_file_name),
+            "unit_name": to_structure_CustomTextType_100(self.unit_name),
+            "address" : to_structure_CustomTextType_500(self.address),
+            "compliance_description" : to_structure_CustomTextType_500(self.compliance_description)
         }
 
 #
@@ -2438,3 +2471,48 @@ class ComplianceApprovalStatus(object):
             "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
         }
 
+#
+# Client Level One Statutory
+#
+
+class ClientLevelOneStatutory(object):
+    def __init__(self, statutory):
+        self.statutory = statutory
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["statutory"])
+        statutory = data.get("statutory")
+        statutory = parse_structure_CustomTextType_50(statutory)
+        return ClientLevelOneStatutory(statutory)
+
+    def to_structure(self):
+        return {
+            "statutory": to_structure_CustomTextType_50(self.statutory)
+        }
+
+#
+# Client Compliance Filter
+#
+
+class ComplianceFilter(object):
+    def __init__(self, compliance_id, compliance_name):
+        self.compliance_id = compliance_id
+        self.compliance_name = compliance_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["compliance_id", "compliance_name"])
+        compliance_id = data.get("compliance_id")
+        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
+
+        compliance_name = data.get("compliance_name")
+        compliance_name = parse_structure_CustomTextType_100(compliance_name)
+
+        return ComplianceFilter(compliance_id, compliance_name)
+
+    def to_structure(self):
+        return {
+            "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
+            "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
+        }

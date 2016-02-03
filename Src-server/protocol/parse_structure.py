@@ -3445,6 +3445,46 @@ def parse_structure_RecordType_technoreports_NOTIFICATIONS(data):
     from protocol import technoreports
     return technoreports.NOTIFICATIONS.parse_structure(data)
 
+# Complaince details report
+def parse_structure_VectorType_RecordType_clientreport_ComplianceDetailsUnitWise(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clientreport_ComplianceDetailsUnitWise(item))
+    return lst
+
+def parse_structure_RecordType_clientreport_ComplianceDetailsUnitWise(data):
+    from protocol import clientreport
+    return clientreport.ComplianceDetailsUnitWise.parse_structure(data)
+
+# Client Level One Statutory
+def parse_structure_VectorType_RecordType_core_ClientLevelOneStatutory(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_ClientLevelOneStatutory(item))
+    return lst
+
+def parse_structure_RecordType_core_ClientLevelOneStatutory(data):
+    from protocol import core
+    return core.ClientLevelOneStatutory.parse_structure(data)
+
+# Client Compliance Filter
+def parse_structure_VectorType_RecordType_core_ComplianceFilter(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_ComplianceFilter(item))
+    return lst
+
+def parse_structure_RecordType_core_ComplianceFilter(data):
+    from protocol import core
+    return core.ComplianceFilter.parse_structure(data)
+
+def parse_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS(data):
+    if data is None: return data
+    return parse_structure_EnumType_core_COMPLIANCE_STATUS(data)
+
 # not complied enum type
 
 def parse_structure_EnumType_core_NOT_COMPLIED_TYPE(data):
@@ -3455,3 +3495,22 @@ def parse_structure_OptionalType_CustomTextType_250(data):
     if data is None: return data
     return parse_custom_string(data, 250)
 
+def parse_structure_VectorType_CustomTextType_100(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_CustomTextType_100(item))
+    return lst
+
+# Risk Report
+
+def parse_structure_VectorType_RecordType_clientreport_RiskData(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clientreport_RiskData(item))
+    return lst
+
+def parse_structure_RecordType_clientreport_RiskData(data):
+    from protocol import clientreport
+    return clientreport.RiskData.parse_structure(data)    

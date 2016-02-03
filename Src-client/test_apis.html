@@ -475,12 +475,26 @@
 			function updateNotificationStatus(){
 				notification_id = 1
 				has_read = true
-				mirror.updateNotificationStatus(notification_id, has_read, callback)
+				mirror.updateNotificationStatus(notification_id, has_read, callback);
 			}
 			function updateClientNotificationStatus(){
 				notification_id = 2
 				has_read = true
-				client_mirror.updateNotificationStatus(notification_id, has_read, callback)	
+				client_mirror.updateNotificationStatus(notification_id, has_read, callback)	;
+			}
+			function getComplianceDetail(){
+				client_mirror.getComplianceDetail(callback);
+			}
+			function updateComplianceDetail(){
+				compliance_history_id = 3;
+		        documents =  ["Document1"];
+		        completion_date = "25-Jan-2016";
+		        validity_date = "25-Jan-2017";
+		        next_due_date = "24-Jan-2017";
+		        remarks = "Sample Remarks";
+		        client_mirror.updateComplianceDetail(compliance_history_id, 
+		        	documents, completion_date, validity_date, next_due_date, 
+		        	remarks, callback);
 			}
 		</script>
 	</head>
@@ -717,6 +731,14 @@
 			</button>
 			<button onclick="updateClientNotificationStatus()">
 				Update Client Notification Status
+			</button>
+		</div>
+		<div>
+			<button onclick="getComplianceDetail()">
+				Get Compliance Detail
+			</button>
+			<button onclick="updateComplianceDetail()">
+				Update Compliance Detail
 			</button>
 		</div>
 		<br>

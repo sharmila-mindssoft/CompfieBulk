@@ -532,17 +532,23 @@ ActiveCompliance = RecordType("ActiveCompliance", [
     Field("validity_date", DATE),
     Field("next_due_date", DATE),
     Field("ageing", Int8),
-    Field("format_file_name", FormatFilesList)
+    Field("format_file_name", FormatFilesList),
+    Field("unit_name", UNIT_NAME),
+    Field("address", ADDRESS),
+    Field("compliance_description", DESCRIPTION)
+
 ])
 
 UpcomingCompliance = RecordType("UpcomingCompliance", [
-	Field("compliance_history_id", COMPLIANCE_HISTORY_ID),
     Field("compliance_name", COMPLIANCE_NAME),
     Field("compliance_frequency", COMPLIANCE_FREQUENCY), 
     Field("domain_name", DOMAIN_NAME),
     Field("start_date", DATE),
     Field("due_date", DATE),
-    Field("format_file_name", FormatFilesList)
+    Field("format_file_name", FormatFilesList),
+    Field("unit_name", UNIT_NAME),
+    Field("address", ADDRESS),
+    Field("compliance_description", DESCRIPTION)
 ])
 
 NumberOfCompliances = RecordType("NumberOfCompliances", [
