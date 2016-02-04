@@ -216,7 +216,7 @@ def to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(data)
     for key, value in data.items():
         key = to_structure_CustomTextType_50(key)
         value = to_structure_VectorType_RecordType_core_Form(value)
-        dict[key] = value        
+        dict[key] = value
     return dict
 
 def to_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES(data):
@@ -304,7 +304,7 @@ def to_structure_VectorType_RecordType_client_masters_ClientUserGroup(data):
     lst = []
     for item in data:
         lst.append(to_structure_RecordType_client_masters_ClientUserGroup(item))
-    return lst    
+    return lst
 
 def to_structure_VectorType_RecordType_core_LegalEntity(data):
     data = parse_list(data, 0)
@@ -1908,7 +1908,7 @@ def to_structure_VectorType_RecordType_core_AssignedStatutory(data):
     return lst
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_AssignedStatutory(data):
-    data = parse_dictionary(data)    
+    data = parse_dictionary(data)
     d = {}
     for key, value in data:
         key = to_structure_SignedIntegerType_8(key)
@@ -1952,7 +1952,7 @@ def to_structure_VectorType_RecordType_core_FileLst(data):
     lst = []
     for item in data :
         lst.append(to_structure_RecordType_core_FileList(item))
-    return lst        
+    return lst
 
 def to_structure_OptionalType_VectorType_RecordType_core_FileList(data):
     if data is None : return None
@@ -2555,7 +2555,7 @@ def to_structure_RecordType_core_NumberOfCompliances(data):
     return core.NumberOfCompliances.to_structure(data)
 
 def to_structure_VectorType_RecordType_core_NumberOfCompliances(data):
-    data = parse_list(data, 0)    
+    data = parse_list(data, 0)
     lst = []
     for item in data:
         lst.append(to_structure_RecordType_core_NumberOfCompliances(item))
@@ -3362,9 +3362,8 @@ def to_structure_VectorType_RecordType_clienttransactions_AssignedStatutory(data
     return lst
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_AssignedStatutory(data):
-    data = parse_dictionary(data)    
+    data = parse_dictionary(data)
     d = {}
-    print data
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_clienttransactions_AssignedStatutory(value)
@@ -3377,7 +3376,7 @@ def to_structure_RecordType_clienttransactions_UnitStatutoryCompliances(data):
     return clienttransactions.UnitStatutoryCompliances.to_structure(data)
 
 def to_structure_VectorType_RecordType_clienttransactions_UnitStatutoryCompliances(data):
-    data = parse_list(data, 0)    
+    data = parse_list(data, 0)
     lst = []
     for item in data :
         lst.append(to_structure_RecordType_clienttransactions_UnitStatutoryCompliances(item))

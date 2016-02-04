@@ -561,6 +561,7 @@ class KnowledgeDatabase(Database):
                 "database_name", "server_ip", "server_port"
             ]
             results = self.convert_to_dict(rows, columns)
+            # print results
         return self.return_companies(results)
 
     def return_companies(self, data):
