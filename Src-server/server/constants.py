@@ -91,167 +91,167 @@ TEMPLATE_PATHS = [
         "files/mobile/login/login.html", {}
     ),
     (
-        "/knowledge/login",
+        "/login",
         "files/desktop/login/login.html",
         "files/mobile/login/login.html", {}
     ),
-    ("/knowledge/test", "test_apis.html", "", {}),
+    ("/test", "test_apis.html", "", {}),
     ("/home", "files/desktop/home/home.html", None, {}),
     (
-        "/knowledge/custom-controls",
+        "/custom-controls",
         "files/desktop/custom-controls/custom-controls.html",
         None, {}
     ),
     # common
     (
-        "/knowledge/profile",
+        "/profile",
         "files/desktop/profile/profile.html",
         None, {}
     ),
     (
-        "/knowledge/change-password",
+        "/change-password",
         "files/desktop/change-password/changepassword.html",
         None, {}
     ),
     # IT Admin Master
     (
-        "/knowledge/domain-master",
+        "/domain-master",
         "files/desktop/domain-master/domainmaster.html",
         None, {}
     ),
     (
-        "/knowledge/country-master",
+        "/country-master",
         "files/desktop/country-master/countrymaster.html",
         None, {}
     ),
     (
-        "/knowledge/user-group-master",
+        "/user-group-master",
         "files/desktop/user-group-master/usergroupmaster.html",
         None, {}
     ),
     (
-        "/knowledge/user-master",
+        "/user-master",
         "files/desktop/user-master/usermaster.html",
         None, {}
     ),
     # knowledge manager transaction
     (
-        "/knowledge/approve-statutory-mapping",
+        "/approve-statutory-mapping",
         "files/desktop/approve-statutory-mapping/approvestatutorymapping.html",
         None, {}
     ),
     # knowledge user master
     (
-        "/knowledge/geography-master",
+        "/geography-master",
         "files/desktop/geography-master/geographymaster.html",
         None, {}
     ),
     (
-        "/knowledge/geography-level-master",
+        "/geography-level-master",
         "files/desktop/geography-level-master/geographylevelmaster.html",
         None, {}
     ),
     (
-        "/knowledge/industry-master",
+        "/industry-master",
         "files/desktop/industry-master/industrymaster.html",
         None, {}
     ),
     (
-        "/knowledge/statutory-nature-master",
+        "/statutory-nature-master",
         "files/desktop/statutory-nature-master/statutorynaturemaster.html",
         None, {}
     ),
     (
-        "/knowledge/statutory-level-master",
+        "/statutory-level-master",
         "files/desktop/statutory-level-master/statutorylevelmaster.html",
         None, {}
     ),
     # knowledge user Transaction
     (
-        "/knowledge/statutory-mapping",
+        "/statutory-mapping",
         "files/desktop/statutory-mapping/statutorymapping.html",
         None, {}
     ),
     # knowledge Reports
     (
-        "/knowledge/statutory-mapping-report",
+        "/statutory-mapping-report",
         "files/desktop/statutory-mapping-report/statutorymappingreport.html",
         None, {}
     ),
     (
-        "/knowledge/country-report",
+        "/country-report",
         "files/desktop/knowledge-master-report/country-master-report/countrymasterreport.html",
         None, {}
     ),
     (
-        "/knowledge/domain-report",
+        "/domain-report",
         "files/desktop/knowledge-master-report/domain-master-report/domainmasterreport.html",
         None, {}
     ),
     (
-        "/knowledge/geography-report",
+        "/geography-report",
         "files/desktop/knowledge-master-report/geography-master-report/geographymasterreport.html",
         None, {}
     ),
     (
-        "/knowledge/industry-report",
+        "/industry-report",
         "files/desktop/knowledge-master-report/industry-master-report/industrymasterreport.html",
         None, {}
     ),
     (
-        "/knowledge/statutory-nature-report",
+        "/statutory-nature-report",
         "files/desktop/knowledge-master-report/statutory-nature-master-report/statutorynaturemasterreport.html",
         None, {}
     ),
     # Techno Manager master
     (
-        "/knowledge/client-master", "files/desktop/client-master/clientmaster.html",
+        "/client-master", "files/desktop/client-master/clientmaster.html",
         None, {}
     ),
     # Techno user master
     (
-        "/knowledge/client-unit", "files/desktop/client-unit/clientunit.html",
+        "/client-unit", "files/desktop/client-unit/clientunit.html",
         None, {}
     ),
     (
-        "/knowledge/unit-closure",
+        "/unit-closure",
         "files/desktop/unit-closure/unitclosure.html",
         None, {}
     ),
     (
-        "/knowledge/client-profile", "files/desktop/client-profile/clientprofile.html",
+        "/client-profile", "files/desktop/client-profile/clientprofile.html",
         None, {}
     ),
     # Techno User Transaction
     (
-        "/knowledge/assign-statutory",
+        "/assign-statutory",
         "files/desktop/assign-statutory/assignstatutory.html",
         None, {}
     ),
     # Techno reports
     (
-        "/knowledge/client-details-report",
+        "/client-details-report",
         "files/desktop/client-details-report/clientdetailsreport.html",
         None, {}
     ),
     (
-        "/knowledge/statutory-notifications-list",
+        "/statutory-notifications-list",
         "files/desktop/statutory-notifications-list-report/statutorynotificationslistreport.html",
         None, {}
     ),
     (
-        "/knowledge/assigned-statutory-report",
+        "/assigned-statutory-report",
         "files/desktop/assigned-statutory-report/assignedstatutoryreport.html",
         None, {}
     ),
     (
-        "/knowledge/compliance-task-list",
+        "/compliance-task-list",
         "files/desktop/compliance-task-list/compliancetasklist.html",
         None, {}
     ),
     # audit trial
     (
-        "/knowledge/audit-trail", "files/desktop/audit-trail/audittrail.html",
+        "/audit-trail", "files/desktop/audit-trail/audittrail.html",
         None, {}
     ),
 
