@@ -207,7 +207,7 @@ def get_risk_report(db, request, session_user, client_id):
 	    country_id, domain_id, business_group_id, 
 	    legal_entity_id, division_id, unit_id, statutory_id, statutory_status, client_id,session_user
 	)
-	return clientreport.GetRiskReportSuccess(risk_report_list)
+	return clientreport.GetRiskReportSuccess(risk_report_list,risk_report_list,risk_report_list)
 
 
 	

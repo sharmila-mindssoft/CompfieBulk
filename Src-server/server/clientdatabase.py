@@ -3628,6 +3628,7 @@ class ClientDatabase(Database):
 
     # risk report
     def get_risk_report(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_id, statutory_status, client_id, session_user) :
+        
         if unit_id is None :
             unit_ids = self.get_user_unit_ids(session_user, client_id)
         else:
@@ -3663,7 +3664,8 @@ class ClientDatabase(Database):
                 FROM tbl_compliances GROUP BY statutory"
             statutory_rows = self.select_all(query, client_id)
 
-            level_1_statutory_wise_units = []
+            level_1_statutory_wise_units = {}
+            
             for srow in statutory_rows:
 
                 statutory_name = srow[0]
@@ -3682,22 +3684,22 @@ class ClientDatabase(Database):
                     detail_condition += " And division_id = '%d'" % row[2]
                 unit_condition = detail_condition +" and country_id = '%d' and unit_id in (%s)" % (country_id, unit_ids)
                 unit_rows = self.get_data(self.tblUnits, unit_columns, unit_condition)
-                unit_wise_compliances = {}
+                unit_wise_compliances = []
                 for unit in unit_rows:
                     unit_id = unit[0]
                     unit_name = "%s - %s "% (unit[1], unit[2])
                     unit_address = unit[3]
                     
-                    query = "select c.statutory_mapping, c.compliance_task, c.compliance_description, c.penal_consequences, \
+                    query = "SELECT c.statutory_mapping, c.compliance_task, c.compliance_description, c.penal_consequences, \
                             cf.frequency, c.repeats_every from tbl_client_statutories cs, tbl_client_compliances cc, tbl_compliances c, \
                             tbl_assigned_compliances ac, tbl_compliance_frequency cf, tbl_compliance_history ch where \
                             ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
                             cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
                             and cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
-                            and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id and ac.assignee like '%s' \
+                            and c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id and cf.frequency_id = c.frequency_id \
                             and c.statutory_mapping like '%s' " % ( 
                             country_id, domain_id,  
-                            unit_id, user_id, str(statutory_name+"%")
+                            unit_id, str(statutory_name+"%")
                         )
                     compliance_rows = self.select_all(query, client_id)
 
@@ -3707,22 +3709,20 @@ class ClientDatabase(Database):
                         compliance_name = compliance[1]
                         description = compliance[2]
                         penal_consequences = compliance[3]
-                        compliance_frequency = core.COMPLIANCE_FREQUENCY(compliance[4])
-                        repeats = compliance[5]
+                        compliance_frequency = "core.COMPLIANCE_FREQUENCY(compliance[4])"
+                        repeats = "compliance[5]"
 
-                       
-                        compliances_list.append(clientreport.Compliance(statutory_mapping, compliance_name, 
+                        compliances_list.append(clientreport.Level1Compliance(statutory_mapping, compliance_name, 
                             description, penal_consequences, compliance_frequency, 
                             repeats))
 
-                    #unit_wise_compliances[unit_name] = compliances_list
-
-                level_1_statutory_wise_units.append(clientreport.Level1Statutory(
+                    unit_wise_compliances.append(clientreport.Level1Statutory(
                     unit_name, unit_address, compliances_list))
+                level_1_statutory_wise_units[statutory_name] = unit_wise_compliances
 
             level_1_statutory.append(clientreport.RiskData(
                 business_group_name, legal_entity_name, division_name, 
-                unit_wise_compliances))
+                level_1_statutory_wise_units))
         return level_1_statutory
 
     def update_compliances(self, compliance_history_id, documents, completion_date, 
