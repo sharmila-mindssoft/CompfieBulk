@@ -30,6 +30,10 @@ def process_client_report_requests(request, db) :
 		return get_compliancedetails_report_filters(db, request, session_user, client_id) 
 	elif type(request) is clientreport.GetComplianceDetailsReport:
 		return get_compliancedetails_report(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetRiskReportFilters:
+		return get_risk_report_filters(db, request, session_user, client_id) 
+	elif type(request) is clientreport.GetRiskReport:
+		return get_risk_report(db, request, session_user, client_id)
 
 
 def get_client_report_filters(db, request, session_user, client_id):
@@ -161,6 +165,49 @@ def get_compliancedetails_report(db, request, session_user, client_id):
 	    country_id, domain_id, statutory_id, unit_id, compliance_id, assignee_id, from_date, to_date, compliance_status, client_id,session_user
 	)
 	return clientreport.GetComplianceDetailsReportSuccess(compliance_details_list)
+
+def get_risk_report_filters(db, request, session_user, client_id):
+	user_company_info = db.get_user_company_details( session_user, client_id)
+	unit_ids = user_company_info[0]
+	division_ids = user_company_info[1]
+	legal_entity_ids = user_company_info[2]
+	business_group_ids = user_company_info[3]
+	country_list = db.get_countries_for_user(session_user, client_id)
+	domain_list = db.get_domains_for_user(session_user, client_id)
+	business_group_list = db.get_business_groups_for_user(business_group_ids, client_id)
+	legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids, client_id)
+	division_list =  db.get_divisions_for_user(division_ids, client_id)
+	unit_list = db.get_units_for_user(unit_ids, client_id)
+	level_1_statutories_list = db.get_client_level_1_statutoy(session_user, client_id)
+	return clientreport.GetRiskReportFiltersSuccess(
+		countries = country_list, domains = domain_list, business_groups = business_group_list, legal_entities = legal_entity_list, divisions = division_list, units = unit_list, level1_statutories = level_1_statutories_list)
+
+def get_risk_report(db, request, session_user, client_id):
+	country_id = request.country_id
+	domain_id = request.domain_id
+	business_group_id = request.business_group_id
+	legal_entity_id = request.division_id
+	division_id = request.division_id
+	unit_id = request.unit_id
+	statutory_id = request.statutory_id
+	statutory_status = request.statutory_status
+
+	if business_group_id is None :
+		business_group_id = '%'
+	if legal_entity_id is None :
+		legal_entity_id = '%'
+	if division_id is None :
+		division_id = '%'
+	if statutory_id is None :
+		statutory_id = '%'
+	if statutory_status is None :
+		statutory_status = '%'
+
+	risk_report_list = db.get_risk_report(
+	    country_id, domain_id, business_group_id, 
+	    legal_entity_id, division_id, unit_id, statutory_id, statutory_status, client_id,session_user
+	)
+	return clientreport.GetRiskReportSuccess(risk_report_list,risk_report_list,risk_report_list)
 
 
 	

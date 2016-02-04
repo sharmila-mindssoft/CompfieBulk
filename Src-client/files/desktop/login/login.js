@@ -19,9 +19,9 @@ function getShortName(){
     if(typeof pathArray[2] === 'undefined'){
         return null;
     }else{
-        return pathArray[2]   
+        return pathArray[2]
     }
-    
+
 }
 
 //
@@ -93,7 +93,7 @@ function performLogin(e_button, e_email, e_password) {
                     onFailure(error)
                 }
             }
-        );    
+        );
     }else{
         client_mirror.login(
             e_email.val(),
@@ -109,9 +109,9 @@ function performLogin(e_button, e_email, e_password) {
                     onFailure(error)
                 }
             }
-        ); 
+        );
     }
-    
+
 }
 
 function initializeUI () {

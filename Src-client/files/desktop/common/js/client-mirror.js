@@ -1,4 +1,4 @@
-var CLIENT_BASE_URL = "http://localhost:8090/";
+var CLIENT_BASE_URL = "http://127.0.0.1:8080/";
 
 function initClientMirror() {
     var DEBUG = true;
@@ -90,9 +90,12 @@ function initClientMirror() {
             "session_token": sessionToken,
             "request": request
         };
+        var body = [
+            sessionToken, requestFrame
+        ]
         jQuery.post(
             CLIENT_BASE_URL + callerName,
-            toJSON(requestFrame),
+            toJSON(body),
             function(data) {
                 var data = parseJSON(data);
                 var status = data[0];
@@ -118,16 +121,19 @@ function initClientMirror() {
         );
     }
 
-    // Login function 
+    // Login function
     function login(username, password, short_name, callback) {
         var request = [
-            "Login", {
-                "login_type": "Web",
-                "username": username,
-                "password": password,
-                "short_name": short_name
-            }
+            short_name, [
+                "Login", {
+                    "login_type": "Web",
+                    "username": username,
+                    "password": password,
+                    "short_name": short_name
+                }
+            ]
         ]
+
         jQuery.post(
             CLIENT_BASE_URL + "api/login",
             toJSON(request),
@@ -233,7 +239,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    // Client User Group  
+    // Client User Group
     function getClientUserGroups(callback) {
         callerName = "api/client_masters"
         var request = [
@@ -287,7 +293,8 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    // Service Providers  
+    // Service Providers
+
     function getServiceProviders(callback) {
         callerName = "api/client_masters"
         var request = [
@@ -499,9 +506,9 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    // 
+    //
     // Statutory settings
-    // 
+    //
     function getStatutorySettings(callback) {
         callerName = "api/client_transaction";
         var request = [
@@ -538,9 +545,9 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    // 
+    //
     // Assign compliance
-    // 
+    //
 
     function getAssignComplianceFormData(callback) {
         var request = [
@@ -592,9 +599,9 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    // 
+    //
     // Past Records
-    // 
+    //
 
     function getPastRecordsFormData(callback) {
         var request = [
@@ -631,7 +638,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getUnitwisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, callback) {
+    function getUnitwisecomplianceReport(
+        country_id, domain_id, business_group_id, legal_entity_id,
+        division_id, unit_id, user_id, callback
+    ) {
         var request = [
             "GetUnitwisecomplianceReport", {
                 "country_id": country_id,
@@ -647,7 +657,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneewisecomplianceReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, callback) {
+    function getAssigneewisecomplianceReport(
+        country_id, domain_id, business_group_id, legal_entity_id,
+        division_id, unit_id, user_id, callback
+    ) {
         var request = [
             "GetAssigneewisecomplianceReport", {
                 "country_id": country_id,
@@ -663,7 +676,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function approveCompliance(compliance_history_id, compliance_approval_status, remarks, documents, next_due_date, callback) {
+    function approveCompliance(
+        compliance_history_id, compliance_approval_status,
+        remarks, next_due_date, callback
+    ) {
         var request = [
             "ApproveCompliance", {
                 "compliance_history_id": compliance_history_id,
@@ -805,9 +821,8 @@ function initClientMirror() {
     }
 
     /* Notifications */
-
     function getNotifications(notification_type, callback) {
-        callerName = "api/client_dashboard"
+        callerName = "api/general"
         var request = [
             "GetNotifications", {
                 "notification_type": notification_type
@@ -835,6 +850,32 @@ function initClientMirror() {
 
             }
         ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* Risk Report */
+    function getRiskReportFilters(callback) {
+        var request = [
+            "GetRiskReportFilters", {}
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getRiskReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_id, statutory_status, callback) {
+        var request = [
+            "GetRiskReport", {
+                "country_id": country_id,
+                "domain_id": domain_id,
+                "business_group_id": business_group_id,
+                "legal_entity_id": legal_entity_id,
+                "division_id": division_id,
+                "unit_id": unit_id,
+                "statutory_id": statutory_id,
+                "statutory_status": statutory_status
+            }
+        ];
+        callerName = "api/client_reports";
         clientApiRequest(callerName, request, callback);
     }
 
@@ -908,8 +949,6 @@ function initClientMirror() {
         getClientDetailsReport: getClientDetailsReport,
         getAuditTrail: getAuditTrail,
 
-        getComplianceDetailsReportFilters: getComplianceDetailsReportFilters,
-
         getStatutorySettings: getStatutorySettings,
         updateCompliances: updateCompliances,
         updateStatutory: updateStatutory,
@@ -934,8 +973,6 @@ function initClientMirror() {
         getComplianceDetailsReportFilters: getComplianceDetailsReportFilters,
         getComplianceDetailsReport: getComplianceDetailsReport,
 
-
-
         getComplianceApprovalList: getComplianceApprovalList,
         approveCompliance: approveCompliance,
 
@@ -950,6 +987,9 @@ function initClientMirror() {
         updateNotificationStatus: updateNotificationStatus,
 
         getComplianceDetail: getComplianceDetail,
+
+        getRiskReportFilters: getRiskReportFilters,
+        getRiskReport: getRiskReport,
         updateComplianceDetail: updateComplianceDetail
     }
 }

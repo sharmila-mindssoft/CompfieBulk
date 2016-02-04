@@ -63,6 +63,7 @@ parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_VectorType_RecordType_core_ClientLevelOneStatutory,
     parse_structure_VectorType_RecordType_core_ComplianceFilter,
     parse_structure_OptionalType_EnumType_core_COMPLIANCE_STATUS,
+    parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_clientreport_RiskData
 
 )
@@ -259,9 +260,9 @@ class GetRiskReport(Request):
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_id)
+        statutory_id = parse_structure_OptionalType_CustomTextType_100(statutory_id)
         statutory_status = data.get("statutory_status")
-        statutory_status = parse_structure_UnsignedIntegerType_32(statutory_status)
+        statutory_status = parse_structure_OptionalType_UnsignedIntegerType_32(statutory_status)
         return GetRiskReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_id, statutory_status)
 
     def to_inner_structure(self):
@@ -272,8 +273,8 @@ class GetRiskReport(Request):
             "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
-            "statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_id),
-            "statutory_status": to_structure_SignedIntegerType_8(self.statutory_status),
+            "statutory_id": to_structure_OptionalType_CustomTextType_100(self.statutory_id),
+            "statutory_status": to_structure_OptionalType_SignedIntegerType_8(self.statutory_status),
         }
 
 class GetServiceProviderReportFilters(Request):
@@ -825,26 +826,26 @@ class GetRiskReportFiltersSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
+        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
         legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_Unit(units)
+        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
         level1_statutories = data.get("level1_statutories")
-        level1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level1_statutories)
+        level1_statutories = parse_structure_VectorType_RecordType_core_ClientLevelOneStatutory(level1_statutories)
         return GetRiskReportFiltersSuccess(countries, domains, business_groups, legal_entities, divisions, units, level1_statutories)
 
     def to_inner_structure(self):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_Unit(self.units),
-            "level1_statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level1_statutories),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
+            "level1_statutories": to_structure_VectorType_RecordType_core_ClientLevelOneStatutory(self.level1_statutories),
         }
 
 class GetRiskReportSuccess(Response):

@@ -2,12 +2,12 @@
 
 import argparse
 import socket
-from server.clientmain import run_server
+from webfrontend.main import run_web_front_end
 
 args_parser = argparse.ArgumentParser()
 args_parser.add_argument(
-    "address",
-    help="Address to listen at ((IP:PORT)"
+    "port",
+    help="port to listen at (PORT)"
 )
 args_parser.add_argument(
     "knowledge_server_ip_address",
@@ -22,6 +22,7 @@ def parse_port(port):
         return port
     except Exception:
         return None
+
 
 def parse_ip_address(ip_address):
     ip = None
@@ -41,21 +42,21 @@ def parse_ip_address(ip_address):
     return (ip, port)
 
 
-def main() :
+def main():
     args = args_parser.parse_args()
-    address = parse_ip_address(args.address)
-    if address is None:
-        msg = "error: ip address is not in IP:PORT format: %s"
-        print msg % (args.address,)
+    port = parse_port(args.port)
+    if port is None:
+        msg = "error: port is not in PORT format: %s"
+        print msg % (args.port,)
         return
     knowledge_server_ip_address = parse_ip_address(
         args.knowledge_server_ip_address
     )
     if knowledge_server_ip_address is None:
-        msg = "error: knowledge server ip address is not in IP:PORT format: %s"
+        msg = "error: ip address is not in IPADDRESS:PORT format: %s"
         print msg % (args.knowledge_server_ip_address,)
         return
-    run_server(address, knowledge_server_ip_address)
+    run_web_front_end(port, knowledge_server_ip_address)
 
-if __name__ == "__main__" :
+if __name__ == "__main__":
     main()
