@@ -206,8 +206,12 @@ def run_server(port):
     io_loop = IOLoop()
 
     def delay_initialize():
+        # db = KnowledgeDatabase(
+        #     "localhost", 3306, "root", "123456",
+        #     "mirror_knowledge"
+        # )
         db = KnowledgeDatabase(
-            "localhost", 3306, "root", "123456",
+            "198.143.141.73", 3306, "root", "Root!@#123",
             "mirror_knowledge"
         )
         db.connect()
