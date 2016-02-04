@@ -259,7 +259,7 @@ def run_server(port):
         js_path = os.path.join(common_path, "js")
 
         web_server.low_level_url(
-            r"/knowledge/images/(.*)",
+            r"/images/(.*)",
             StaticFileHandler, dict(path=images_path)
         )
         web_server.low_level_url(

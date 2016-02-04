@@ -1,4 +1,4 @@
-var BASE_URL = "http://192.168.1.11:8082/";
+var BASE_URL = "http://127.0.0.1:8082/";
 
 function initMirror() {
     var DEBUG = true;
