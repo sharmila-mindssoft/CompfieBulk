@@ -43,6 +43,11 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/settings",
+        "files/desktop/client/settings/settings.html",
+        None, {}
+    ),
+    (
         "/unit-closure",
         "files/desktop/client/unit-closure/unitclosure.html",
         None, {}
