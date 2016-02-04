@@ -3573,6 +3573,8 @@ def to_structure_VectorType_CustomTextType_100(data):
         lst.append(to_structure_CustomTextType_100(item))
     return lst
 
+# Risk Report
+
 def to_structure_VectorType_RecordType_clientreport_RiskData(data):
     data = parse_list(data, 0)
     lst = []
@@ -3583,3 +3585,14 @@ def to_structure_VectorType_RecordType_clientreport_RiskData(data):
 def to_structure_RecordType_clientreport_RiskData(data):
     from protocol import clientreport
     return clientreport.RiskData.to_structure(data)
+
+def to_structure_VectorType_RecordType_clientreport_Level1Compliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_clientreport_Level1Compliance(item))
+    return lst
+
+def to_structure_RecordType_clientreport_Level1Compliance(data):
+    from protocol import clientreport
+    return clientreport.Level1Compliance.to_structure(data)

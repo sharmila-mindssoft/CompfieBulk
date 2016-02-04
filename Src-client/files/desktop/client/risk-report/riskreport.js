@@ -141,7 +141,7 @@ $("#submit").click(function(){
   }
   else{
 
-      riskComplianceList =
+      /*riskComplianceList =
             [{
               "business_group_name" : "BUSINESS_GROUP_NAME",
               "legal_entity_name" : "LEGAL_ENTITY_NAME",
@@ -197,8 +197,8 @@ $("#submit").click(function(){
                 ],
               }
            }]
-           loadresult(riskComplianceList);
-      /*var filterdata={};
+           loadresult(riskComplianceList);*/
+      var filterdata={};
       filterdata["country_id"] = country;
       filterdata["domain_id"] = domain;
       filterdata["businessgroup_id"] = businessgroup;
@@ -209,7 +209,7 @@ $("#submit").click(function(){
       filterdata["statutory_status"] = statutory_status;
 
       function onSuccess(data){
-        riskComplianceList = data["compliance_list"];
+        riskComplianceList = data["delayed_compliance"];
         loadresult(riskComplianceList);
       }
       function onFailure(error){
@@ -223,7 +223,7 @@ $("#submit").click(function(){
           else {
             onFailure(error);
           }
-        });*/
+        });
   }
 });
 

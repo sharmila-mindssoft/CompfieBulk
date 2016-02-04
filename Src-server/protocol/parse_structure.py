@@ -3514,3 +3514,14 @@ def parse_structure_VectorType_RecordType_clientreport_RiskData(data):
 def parse_structure_RecordType_clientreport_RiskData(data):
     from protocol import clientreport
     return clientreport.RiskData.parse_structure(data)    
+
+def parse_structure_VectorType_RecordType_clientreport_Level1Compliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clientreport_Level1Compliance(item))
+    return lst
+
+def parse_structure_RecordType_clientreport_Level1Compliance(data):
+    from protocol import clientreport
+    return clientreport.Level1Compliance.parse_structure(data)
