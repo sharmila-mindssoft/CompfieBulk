@@ -46,7 +46,7 @@ class CompanyManager(object) :
         def on_timeout():
             self._http_client.fetch(self._request_body, self._poll_response)
         self._io_loop.add_timeout(
-            time.time() + 100, on_timeout
+            time.time() + 1, on_timeout
         )
 
     def _poll_response(self, response) :

@@ -121,10 +121,6 @@ class API(object):
         company_id = None
         try:
             data = json.loads(request.body())
-            print
-            print "_parse_request"
-            print data
-            print
             if type(data) is not list:
                 self.send_bad_request(
                     response,
