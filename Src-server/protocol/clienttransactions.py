@@ -116,19 +116,19 @@ from protocol.to_structure import (
 )
 
 #
-# Request 
+# Request
 #
 
 class Request(object):
     def to_structure(self):
-        name = type(self).__name__ 
+        name = type(self).__name__
         inner = self.to_inner_structure()
         return [name, inner]
 
     def to_inner_structure(self):
         raise NotImplementedError
 
-    @staticmethod 
+    @staticmethod
     def parse_structure(data):
         data = parse_static_list(data, 2)
         name, data = data
@@ -182,7 +182,7 @@ class ApplicableCompliance(object):
 
 class UpdateStatutoryCompliance(object):
     def __init__(
-        self, client_statutory_id, compliances, 
+        self, client_statutory_id, compliances,
         applicable_status, not_applicable_remarks
     ):
         self.client_statutory_id = client_statutory_id
@@ -375,7 +375,7 @@ class ApproveCompliance(Request):
         remarks = parse_structure_CustomTextType_500(remarks)
         next_due_date = data.get("next_due_date")
         next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
-        return ApproveCompliance(compliance_history_id, approval_status, remarks, 
+        return ApproveCompliance(compliance_history_id, approval_status, remarks,
             next_due_date)
 
     def to_inner_structure(self):
@@ -761,7 +761,7 @@ class IndustryWiseUnits(object):
 
 
 class GetPastRecordsFormDataSuccess(Response):
-    def __init__(self, countries, business_groups, legal_entities, divisions, units, 
+    def __init__(self, countries, business_groups, legal_entities, divisions, units,
         domains, level_1_statutories, compliance_frequency):
         self.countries = countries
         self.business_groups = business_groups
@@ -774,7 +774,7 @@ class GetPastRecordsFormDataSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "business_groups", "legal_entites", 
+        data = parse_dictionary(data, ["countries", "business_groups", "legal_entites",
             "divisions", "units", "domains", "level_1_statutories", "compliance_frequency"])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
@@ -792,7 +792,7 @@ class GetPastRecordsFormDataSuccess(Response):
         level_1_statutories = parse_structure_VectorType_RecordType_core_Level1Statutory(level_1_statutories)
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_VectorType_RecordType_core_ComplianceFrequency(compliance_frequency)
-        return GetPastRecordsFormDataSuccess(countries, business_groups, legal_entites, divisions, 
+        return GetPastRecordsFormDataSuccess(countries, business_groups, legal_entites, divisions,
             units, domains, level_1_statutories, compliance_frequency)
 
     def to_inner_structure(self):
@@ -1222,9 +1222,9 @@ class USER_WISE_COMPLIANCE(object):
 #
 
 class APPROVALCOMPLIANCE(object):
-    def __init__(self, compliance_history_id, compliance_name, description, 
-        domain_name, start_date, due_date, delayed_by, compliance_frequency, 
-        documents, upload_date, completion_date, next_due_date, concurrenced_by, 
+    def __init__(self, compliance_history_id, compliance_name, description,
+        domain_name, start_date, due_date, delayed_by, compliance_frequency,
+        documents, upload_date, completion_date, next_due_date, concurrenced_by,
         remarks, action):
         self.compliance_history_id = compliance_history_id
         self.compliance_name = compliance_name
@@ -1244,9 +1244,9 @@ class APPROVALCOMPLIANCE(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_history_id", "compliance_name", 
-            "description", "domain_name", "start_date", "due_date", "delayed_by", 
-            "compliance_frequency", "documents", "upload_date", "completion_date", 
+        data = parse_dictionary(data, ["compliance_history_id", "compliance_name",
+            "description", "domain_name", "start_date", "due_date", "delayed_by",
+            "compliance_frequency", "documents", "upload_date", "completion_date",
             "next_due_date", "concurrenced_by", "remarks", "action"])
         compliance_history_id = data.get("compliance_history_id")
         compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
@@ -1278,9 +1278,9 @@ class APPROVALCOMPLIANCE(object):
         remarks = parse_structure_CustomTextType_500(remarks)
         action = data.get("action")
         action = parse_structure_CustomTextType_20(remarks)
-        return APPROVALCOMPLIANCE(compliance_history_id, compliance_name, description, 
-            domain_name, start_date, due_date, delayed_by, compliance_frequency, 
-            documents, upload_date, completion_date, next_due_date, concurrenced_by, 
+        return APPROVALCOMPLIANCE(compliance_history_id, compliance_name, description,
+            domain_name, start_date, due_date, delayed_by, compliance_frequency,
+            documents, upload_date, completion_date, next_due_date, concurrenced_by,
             remarks, action)
 
     def to_structure(self):

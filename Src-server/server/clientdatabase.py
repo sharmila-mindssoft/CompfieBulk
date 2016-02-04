@@ -90,7 +90,7 @@ class ClientDatabase(Database):
         admin_details = self.get_data(
             "tbl_admin", "*", tblAdminCondition
         )
-
+        print admin_details
         if (len(admin_details) == 0) :
             data_columns = [
                 "user_id", "user_group_id", "email_id",
@@ -1033,7 +1033,8 @@ class ClientDatabase(Database):
             INNER JOIN tbl_domains t7 \
             ON t1.domain_id = t7.domain_id "
         rows = self.select_all(query)
-        columns = ["client_statutory_id", "geography",
+        columns = [
+            "client_statutory_id", "geography",
             "country_id", "domain_id", "unit_id", "unit_name",
             "business_group_name", "legal_entity_name",
             "division_name", "address", "postal_code", "unit_code",
@@ -1092,8 +1093,13 @@ class ClientDatabase(Database):
 
             mappings = r["statutory_mapping"].split('>>')
             statutory_name = mappings[0].strip()
-            provision = "%s - %s" % (','.join(mappings[1:]), r["statutory_provision"])
-            name ="%s - %s" % (r["document_name"], r["compliance_task"])
+            provision = "%s - %s" % (
+                ','.join(mappings[1:]),
+                r["statutory_provision"]
+            )
+            name = "%s - %s" % (
+                r["document_name"], r["compliance_task"]
+            )
             compliance = clienttransactions.ComplianceApplicability(
                 r["compliance_id"],
                 name,
@@ -1104,7 +1110,9 @@ class ClientDatabase(Database):
                 compliance_remarks
             )
 
-            level_1_statutories = statutory_wise_compliances.get(statutory_name)
+            level_1_statutories = statutory_wise_compliances.get(
+                statutory_name
+            )
             if level_1_statutories is None :
                 level_1_statutories = clienttransactions.AssignedStatutory(
                     r["client_statutory_id"],
@@ -1128,10 +1136,16 @@ class ClientDatabase(Database):
             domain_name = d["domain_name"]
             unit_id = d["unit_id"]
             unit_name = "%s - %s" % (d["unit_code"], d["unit_name"])
-            address = "%s, %s, %s" % (d["address"], d["geography"], d["postal_code"])
+            address = "%s, %s, %s" % (
+                d["address"],
+                d["geography"],
+                d["postal_code"]
+            )
             domain_id = d["domain_id"]
             client_statutory_id = d["client_statutory_id"]
-            statutories = self.return_compliance_for_statutory_settings(domain_id, client_statutory_id, client_id)
+            statutories = self.return_compliance_for_statutory_settings(
+                domain_id, client_statutory_id, client_id
+            )
 
             unit_statutories = unit_wise_statutories.get(unit_id)
             if unit_statutories is None :
@@ -1157,13 +1171,14 @@ class ClientDatabase(Database):
                 if domain_statutories is None :
                     domain_statutories = statutories.values()
                 else :
-                    domain_statutories.append(statutories.values())
+                    domain_statutories.extend(statutories.values())
                 statutory_dict[domain_id] = domain_statutories
 
                 # set values
                 unit_statutories.domain_names = domain_list
                 unit_statutories.statutories = statutory_dict
             unit_wise_statutories[unit_id] = unit_statutories
+
         return clienttransactions.GetStatutorySettingsSuccess(
             unit_wise_statutories.values()
         )
@@ -1225,19 +1240,25 @@ class ClientDatabase(Database):
         return results
 
     def get_level_1_statutories_for_user(self, session_user, client_id):
-        domain_rows = self.get_data(self.tblDomains, "group_concat(domain_id)",
-            "user_id='%d'"%session_user, client_id)
+        domain_rows = self.get_data(
+            self.tblDomains,
+            "group_concat(domain_id)",
+            "user_id='%d'" % session_user,
+            )
         domain_ids = domain_rows[0][0]
 
-        client_statutory_rows = self.get_data(self.tblClientStatutories,
-            "group_concat(client_statutory_id)", "domain_id in (%s)"% domain_ids,
-            client_id)
+        client_statutory_rows = self.get_data(
+            self.tblClientStatutories,
+            "group_concat(client_statutory_id)",
+            "domain_id in (%s)" % domain_ids,
+            )
         client_statutory_ids = client_statutory_rows[0][0]
 
-        client_compliance_rows = self.get_data(self.tblClientCompliances,
+        client_compliance_rows = self.get_data(
+            self.tblClientCompliances,
             "group_concat(compliance_id)",
-            "client_statutory_id in (%s)"% client_statutory_ids,
-            client_id)
+            "client_statutory_id in (%s)" % client_statutory_ids,
+            )
         client_compliance_ids = client_compliance_rows[0][0]
 
         mapping_rows = self.get_data(
