@@ -63,6 +63,7 @@ class API(object):
             http_client,
             self.server_added
         )
+        print "API CLASS"
         self._databases = {}
 
     def close_connection(self, db):
@@ -75,8 +76,8 @@ class API(object):
         # self._databases = {}
         try:
             for company_id, db in self._databases.iteritems():
-                # db.close()
-                self.close_connection(db)
+                db.close()
+                # self.close_connection(db)
             for company_id, company in servers.iteritems():
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
@@ -121,6 +122,7 @@ class API(object):
         company_id = None
         try:
             data = json.loads(request.body())
+            print data
             if type(data) is not list:
                 self.send_bad_request(
                     response,
