@@ -2960,8 +2960,10 @@ class KnowledgeDatabase(Database):
         return mysql.connect(host, username, password,
             database)
 
-    def _create_database(self, host, username, password,
-        database_name, db_username, db_password, email_id, client_id):
+    def _create_database(
+        self, host, username, password,
+        database_name, db_username, db_password, email_id, client_id
+    ):
         con = self._mysql_server_connect(host, username, password)
         cursor = con.cursor()
         query = "CREATE DATABASE %s" % database_name
@@ -2999,8 +3001,8 @@ class KnowledgeDatabase(Database):
 
     def create_and_save_client_database(self, group_name, client_id, short_name, email_id):
         group_name = re.sub('[^a-zA-Z0-9 \n\.]', '', group_name)
-        group_name = group_name.replace (" ", "")
-        database_name = "mirror_%s_%d" %(group_name.lower(),client_id)
+        group_name = group_name.replace(" ", "")
+        database_name = "mirror_%s_%d" % (group_name.lower(), client_id)
         row = self._get_server_details()
         host = row[0]
         username = row[1]
@@ -3008,33 +3010,52 @@ class KnowledgeDatabase(Database):
         db_username = self.generate_random()
         db_password = self.generate_random()
 
-        if self._create_database(host, username, password, database_name, db_username,
-            db_password, email_id, client_id):
+        if self._create_database(
+            host, username, password, database_name, db_username,
+            db_password, email_id, client_id
+        ):
             db_server_column = "company_ids"
             db_server_value = client_id
-            db_server_condition = "ip='%s'"% host
-            self.append(self.tblDatabaseServer, db_server_column, db_server_value,
-                db_server_condition)
+            db_server_condition = "ip='%s'" % host
+            self.append(
+                self.tblDatabaseServer, db_server_column, db_server_value,
+                db_server_condition
+            )
             db_server_column = "length"
-            self.increment(self.tblDatabaseServer, db_server_column,
-                db_server_condition)
+            self.increment(
+                self.tblDatabaseServer, db_server_column,
+                db_server_condition
+            )
 
             machine_columns = "client_ids"
             machine_value = db_server_value
             machine_condition = db_server_condition
-            self.append(self.tblMachines, machine_columns, machine_value,
-                machine_condition)
+            self.append(
+                self.tblMachines, machine_columns, machine_value,
+                machine_condition
+            )
 
             rows = self.get_data(self.tblMachines, "machine_id", machine_condition)
             machine_id = rows[0][0]
+            server_ip = "127.0.0.1"
+            server_port = "8081"
 
-            client_db_columns = ["client_id", "machine_id", "database_ip",
-                    "database_port", "database_username", "database_password",
-                    "client_short_name", "database_name"]
-            client_dB_values = [client_id, machine_id, host, 90, db_username,
-            db_password, short_name, database_name]
+            client_db_columns = [
+                "client_id", "machine_id", "database_ip",
+                "database_port", "database_username", "database_password",
+                "client_short_name", "database_name",
+                "server_ip", "server_port"
+            ]
+            client_dB_values = [
+                client_id, machine_id, host, 3306, db_username,
+                db_password, short_name, database_name,
+                server_ip, server_port
+            ]
 
-            return self.insert(self.tblClientDatabase, client_db_columns, client_dB_values)
+            return self.insert(
+                self.tblClientDatabase, client_db_columns,
+                client_dB_values
+            )
 
     def save_client_group(self, client_id, client_group, session_user):
         current_time_stamp = self.get_date_time()
