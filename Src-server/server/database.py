@@ -285,7 +285,7 @@ class Database(object) :
 
     def generate_random(self):
         characters = string.ascii_uppercase + string.digits
-        return ''.join(random.SystemRandom().choice(characters) for _ in range(7))
+        return ''.join(random.SystemRandom().choice(characters) for i in range(7))
 
     def generate_password(self) : 
         password = self.generate_random()

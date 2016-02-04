@@ -41,20 +41,13 @@ def process_general_request(request, db) :
 	if type(request_frame) is general.GetAuditTrails :
 		return process_get_audit_trails(db, request_frame, user_id)
 	if type(request_frame) is general.UpdateNotificationStatus :
-		return process_update_notification_status(db, session_token, 
-			request_frame, user_id)
+		return process_update_notification_status(db, request_frame, user_id)
+	if type(request_frame) is general.GetNotifications :
+		return process_get_notifications(db, request_frame, user_id)
 
 
 def validate_user_session(db, session_token):
-	# Checking whether request is from client
-	client_info = session_token.split("-")
-	result = None
-	if len(client_info) > 1:
-		client_id = client_info[0]
-		result = db.validate_session_token(int(client_id), session_token)
-	else:
-		result = db.validate_session_token(session_token)
-	return result
+	return db.validate_session_token(session_token)
 
 def process_save_domain(db, request, user_id):
 	domain_name = request.domain_name
@@ -134,48 +127,19 @@ def process_get_countries(db, user_id):
 	success = general.GetCountriesSuccess(countries=results)
 	return success
 
-def process_get_notifications(db, request, user_id):
-	notification_type = request.notification_type
-	notification_list = []
-	notification_id = None
-	notification_text = None
-	extra_details = None
-	has_read = None
-	date_and_time = None
-
-	notification_list.append(
-		general.Notification(notification_id, notification_text, extra_details, has_read, date_and_time)
-	)
-
-	return general.GetNotificationsSuccess(notifications = notification_list)
-
-def process_update_notification_status(db, request, user_id):
-	notification_id = request.notification_id
-	has_read = request.has_read
-	return general.UpdateNotificationStatusSuccess()
-
 def process_get_audit_trails(db, request_frame, user_id):
 	audit_trails = db.get_audit_trails(user_id)
 	return audit_trails
 
-def process_get_notifications(db, session_token, request, session_user):
-	client_info = session_token.split("-")
-	client_id = None
+def process_get_notifications(db, request, session_user):
 	notifications = None
-	if len(client_info) > 1:
-		client_id = int(client_info[0])
-	notifications = db.get_notifications(request.notification_type, session_user, 
-			client_id)
+	notifications = db.get_notifications(request.notification_type, session_user)
 	return general.GetNotificationsSuccess(notifications = notifications)
 
-def process_update_notification_status(db, session_token, request, session_user):
-	client_info = session_token.split("-")
-	client_id = None
+def process_update_notification_status(db, request, session_user):
 	notifications = None
-	if len(client_info) > 1:
-		client_id = int(client_info[0])
 	db.update_notification_status(request.notification_id, request.has_read, 
-		session_user, client_id)
+		session_user)
 	return general.UpdateNotificationStatusSuccess()
 
 

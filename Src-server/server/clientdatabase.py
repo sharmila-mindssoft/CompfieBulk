@@ -3480,13 +3480,7 @@ class ClientDatabase(Database):
 #
 #   Notifications
 #
-    def get_notifications(self, notification_type, session_user, client_id = None):
-        columns = "tn.notification_id, notification_text, extra_details, "+\
-        "tn.updated_on, read_status"
-        join_type = "left join"
-        tables = [self.tblNotificationsLog , self.tblNotificationUserLog ]
-        aliases = ["tn", "tns"]
-        join_conditions = ["tn.notification_id = tns.notification_id"]
+    def get_notifications(self, notification_type, session_user, client_id):
         notification_type_id = None
         if notification_type == "Notification":
             notification_type_id = 1
@@ -3494,15 +3488,99 @@ class ClientDatabase(Database):
             notification_type_id = 2
         elif notification_type == "Escalation":
             notification_type_id = 3
-        where_condition = " tns.user_id ='%d' and tn.notification_type_id='%d'"%(
-            session_user, notification_type_id)
-        rows = self.get_data_from_multiple_tables(columns, tables, 
-            aliases, join_type, join_conditions, where_condition, client_id)
+
+        notification_rows = self.get_data(
+            self.tblNotificationUserLog, 
+            "notification_id, read_status",
+            "user_id = '%d'" % session_user,
+            client_id
+        )
         notifications = []
-        for row in rows:
-            notifications.append(general.Notification(row[0], row[1], row[2], 
-                bool(row[4]), self.datetime_to_string(row[3])))
+        for notification in notification_rows:
+            notification_id = notification[0]
+            read_status = bool(notification[1])
+            # Getting notification details
+            columns = "notification_id, notification_text, updated_on, extra_details, "+\
+            "nl.statutory_provision, unit_code, unit_name, address, assignee, "+\
+            "concurrence_person, approval_person, nl.compliance_id, "+\
+            " compliance_task, document_name, compliance_description"
+            tables = [self.tblNotificationsLog, self.tblUnits, self.tblCompliances]
+            aliases = ["nl", "u", "c"]
+            join_conditions = [
+                "nl.unit_id = u.unit_id", 
+                "nl.compliance_id = c.compliance_id"
+            ]
+            join_type = " left join"
+            where_condition = "notification_id = '%d'" % notification_id
+            where_condition += " and notification_type_id = '%d'"% notification_type_id
+            notification_detail_row = self.get_data_from_multiple_tables(
+                columns, tables, aliases, join_type, 
+                join_conditions, where_condition, client_id
+            )
+            notification_detail = notification_detail_row[0]
+            extra_details = notification_detail[3].split("-")
+            compliance_history_id = int(extra_details[0])
+
+            due_date_rows = self.get_data(
+                self.tblComplianceHistory,
+                "due_date",
+                "compliance_history_id = '%d'" % compliance_history_id,
+                client_id
+            )
+            due_date_as_date = due_date_rows[0][0]
+            due_date_as_datetime = datetime.datetime(
+                due_date_as_date.year,
+                due_date_as_date.month,
+                due_date_as_date.day
+            )
+            due_date = self.datetime_to_string(due_date_as_datetime)
+
+            diff = self.get_date_time() - due_date_as_datetime
+            delayed_days = "%d days" % diff.days
+            statutory_provision = notification_detail[4].split(">>")
+            level_1_statutory = statutory_provision[0]
+
+            notification_id = notification_detail[0]
+            notification_text = notification_detail[1]
+            extra_details = notification_detail[3]
+            updated_on = self.datetime_to_string(notification_detail[2])
+            unit_name = "%s - %s" % (notification_detail[5], 
+                notification_detail[6])
+            unit_address = notification_detail[7]
+            assignee = self.get_user_contact_details_by_id(
+                notification_detail[8], client_id
+            )
+            concurrence_person = self.get_user_contact_details_by_id(
+                notification_detail[9], client_id
+            )
+            approval_person = self.get_user_contact_details_by_id(
+                notification_detail[10], client_id
+            )
+            compliance_name = "%s - %s"%(notification_detail[13], notification_detail[12])
+            compliance_description = notification_detail[14]
+
+            notifications.append(
+                dashboard.Notification(
+                    notification_id, read_status, notification_text, extra_details,
+                    updated_on, level_1_statutory, unit_name, unit_address, assignee,
+                    concurrence_person, approval_person, compliance_name, 
+                    compliance_description, due_date, delayed_days
+                )
+            )
         return notifications
+        
+
+    def get_user_contact_details_by_id(self, user_id, client_id):
+        columns = "employee_code, employee_name, contact_no, email_id"
+        condition = "user_id = '%d'" % user_id
+        rows = self.get_data(self.tblUsers, columns, condition, client_id)
+        employee_name_with_contact_details = "%s - %s, (%s, %s)"%(
+            rows[0][0],
+            rows[0][1],
+            rows[0][2],
+            rows[0][3]
+        )
+        return employee_name_with_contact_details
 
     def update_notification_status(self, notification_id, has_read, session_user, client_id):
         columns = ["read_status"]

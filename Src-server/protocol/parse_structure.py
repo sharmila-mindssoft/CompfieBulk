@@ -3525,3 +3525,16 @@ def parse_structure_VectorType_RecordType_clientreport_Level1Compliance(data):
 def parse_structure_RecordType_clientreport_Level1Compliance(data):
     from protocol import clientreport
     return clientreport.Level1Compliance.parse_structure(data)
+
+# Client Notifications
+
+def parse_structure_VectorType_RecordType_dashboard_Notification(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_dashboard_Notification(item))
+    return lst
+
+def parse_structure_RecordType_dashboard_Notification(data):
+    from protocol import dashboard
+    return dashboard.Notification.parse_structure(data)
