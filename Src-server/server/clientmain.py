@@ -1,25 +1,18 @@
-import os
 import json
 import traceback
-import mimetypes
-import tornado.web
-from tornado.web import StaticFileHandler
-from user_agents import parse
-import jinja2
+from tornado.httpclient import AsyncHTTPClient
 from basics.webserver import WebServer
 from basics.ioloop import IOLoop
 from protocol import (
     clientadminsettings, clientmasters, clientreport,
-    clienttransactions, clientuser, core, dashboard,
+    clienttransactions, dashboard,
     login, general
 )
 from server.clientdatabase import ClientDatabase
-from server.database import KnowledgeDatabase
 
-import clientcontroller as controller 
-import MySQLdb as mysql
+import clientcontroller as controller
+from webfrontend.client import CompanyManager
 
-ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
 #
 # cors_handler
@@ -38,13 +31,13 @@ def cors_handler(request, response):
 #
 
 def api_request(
-    request_data_type
+    request_data_type, need_client_id=False
 ):
     def wrapper(f):
         def wrapped(self, request, response):
             self.handle_api_request(
                 f, request, response,
-                request_data_type
+                request_data_type, need_client_id
             )
         return wrapped
     return wrapper
@@ -56,11 +49,51 @@ def api_request(
 
 class API(object):
     def __init__(
-        self, io_loop, db
+        self,
+        io_loop,
+        address,
+        knowledge_server_address,
+        http_client
     ):
         self._io_loop = io_loop
-        self._db = db
-    
+        self._address = address
+        self._company_manager = CompanyManager(
+            io_loop,
+            knowledge_server_address,
+            http_client,
+            self.server_added
+        )
+        self._databases = {}
+
+    def close_connection(self, db):
+        try:
+            db.close()
+        except Exception:
+            pass
+
+    def server_added(self, servers):
+        # self._databases = {}
+        try:
+            for company_id, db in self._databases.iteritems():
+                # db.close()
+                self.close_connection(db)
+            for company_id, company in servers.iteritems():
+                company_server_ip = company.company_server_ip
+                ip, port = self._address
+                if company_server_ip.ip_address == ip and \
+                        company_server_ip.port == port:
+                    db = ClientDatabase(
+                        company.db_ip.ip_address,
+                        company.db_ip.port,
+                        company.db_username,
+                        company.db_password,
+                        company.db_name
+                    )
+                    db.connect()
+                    self._databases[company_id] = db
+        except Exception:
+            print db
+
     def _send_response(
         self, response_data, response
     ):
@@ -69,53 +102,92 @@ class API(object):
         s = json.dumps(data, indent=2)
         response.send(s)
 
+    def expectation_error(self, expected, received) :
+        msg = "expected %s, but received: %s"
+        return msg % (expected, repr(received))
+
+    def send_bad_request(self, response, custom_text=None):
+        response.set_status(400)
+        if custom_text is None:
+            response.send("invalid json format")
+        else:
+            response.send(custom_text)
+
     def _parse_request(
         self, request_data_type, request, response
     ):
         request_data = None
+        db = None
+        company_id = None
         try:
             data = json.loads(request.body())
+            if type(data) is not list:
+                self.send_bad_request(
+                    response,
+                    self.expectation_error(
+                        "a list", type(data)
+                    )
+                )
+                return None
+            if len(data) != 2:
+                self.send_invalid_json_format(
+                    response
+                )
+                return None
+            company_id = int(data[0])
+            db = self._databases.get(company_id)
+            if db is None:
+                response.set_status(404)
+                response.send("company not found")
+                return None
+            actual_data = data[1]
             request_data = request_data_type.parse_structure(
-                data
+                actual_data
             )
         except Exception, e:
             print e
             response.set_status(400)
             response.send(str(e))
             return None
-        return request_data
+        return (db, request_data, company_id)
 
     def handle_api_request(
         self, unbound_method, request, response,
-        request_data_type
+        request_data_type, need_client_id
     ):
         response.set_default_header("Access-Control-Allow-Origin", "*")
-        ip_address = unicode(request.remote_ip())
+
         request_data = self._parse_request(
             request_data_type, request, response
         )
         if request_data is None:
             return
 
+        db, request_data, company_id = request_data
+
         def respond(response_data):
             self._send_response(
                 response_data, response
             )
 
-        # self._db.begin()
+        db.begin()
         try:
-            response_data = unbound_method(self, request_data, self._db)
-            # self._db.commit() 
+            if need_client_id :
+                response_data = unbound_method(
+                    self, request_data, db, company_id
+                )
+            else :
+                response_data = unbound_method(self, request_data, db)
+            db.commit()
             respond(response_data)
         except Exception, e:
             print(traceback.format_exc())
             print e
-            # self._db.rollback()
+            db.rollback()
 
-
-    @api_request(login.Request)
-    def handle_login(self, request, db):
-        return controller.process_login_request(request, db)
+    @api_request(login.Request, need_client_id=True)
+    def handle_login(self, request, db, client_id):
+        return controller.process_login_request(request, db, client_id)
 
     @api_request(clientmasters.RequestFormat)
     def handle_client_masters(self, request, db):
@@ -139,106 +211,30 @@ class API(object):
 
     @api_request(general.RequestFormat)
     def handle_general(self, request, db):
-        return controller.process_general_request(request, db) 
-
-    @api_request(clientuser.RequestFormat)
-    def handle_client_user(self, request, db):
-        return controller.process_client_user_request(request, db)
-
-template_loader = jinja2.FileSystemLoader(
-    os.path.join(ROOT_PATH, "Src-client")
-)
-template_env = jinja2.Environment(loader=template_loader)
-
-class TemplateHandler(tornado.web.RequestHandler) :
-    def initialize(self, path_desktop, path_mobile, parameters) :
-        self.__path_desktop = path_desktop
-        self.__path_mobile = path_mobile
-        self.__parameters = parameters
-
-    def get(self, url = None) :
-        if url != None:
-            # db = KnowledgeDatabase("localhost", "root", "123456", "mirror_knowledge")
-            db = KnowledgeDatabase("198.143.141.73", "root", "Root!@#123", "mirror_knowledge")
-            con = db.begin()
-
-            if not db.validate_short_name(url):
-                print "Invalid URL"
-                return
-        path = self.__path_desktop
-        if self.__path_mobile is not None :
-            useragent = self.request.headers.get("User-Agent")
-            if useragent is None:
-                useragent = ""
-            user_agent = parse(useragent)
-            if user_agent.is_mobile :
-                path = self.__path_mobile
-        mime_type, encoding = mimetypes.guess_type(path)
-        self.set_header("Content-Type", mime_type)
-        template = template_env.get_template(path)
-        output = template.render(**self.__parameters)
-        self.write(output)
-
-    def options(self) :
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "Content-Type")
-        self.set_header("Access-Control-Allow-Methods", "GET, POST")
-        self.set_status(204)
-        self.write("")
+        return controller.process_general_request(request, db)
 
 #
 # run_server
 #
 
-TEMPLATE_PATHS = [
-    (r"/login/([a-zA-Z-0-9]+)", "files/desktop/login/login.html", "files/mobile/login/login.html", {}),
-    (r"/forgot_password/([a-zA-Z-0-9]+)", "files/desktop/ForgotPassword/ForgotPassword.html", "", {}),
-    (r"/reset_password/([a-zA-Z-0-9]+)", "files/desktop/ForgotPassword/resetpassword.html", "", {}),
-    ("/change-password", "files/desktop/change-password/changepassword.html", None, {}),
-    ("/test", "test_apis.html", "", {}),
-    ("/home", "files/desktop/home/home.html", None, {}),
-    ("/settings", "files/desktop/client/settings/settings.html", None, {}),
-
-     #client admin
-    ("/service-provider", "files/desktop/client/service-provider/serviceprovider.html", None, {}),   
-    ("/client-user-privilege", "files/desktop/client/client-user-privilege/clientuserprivilege.html", None, {}),  
-    ("/client-user-master", "files/desktop/client/client-user-master/clientusermaster.html", None, {}),  
-    ("/unit-closure", "files/desktop/client/unit-closure/unitclosure.html", None, {}), 
-    #reports
-    ("/compliance", "files/desktop/client/audit-trail/audittrail.html", None, {}),
-    ("/audit-trail", "files/desktop/client/audit-trail/audittrail.html", None, {}),
-    ("/unit-wise-compliance", "files/desktop/client/unit-wise-compliance/unitwisecompliance.html", None, {}),
-    ("/assignee-wise-compliance", "files/desktop/client/assignee-wise-compliance/assigneewisecompliance.html", None, {}),
-    ("/service-provider-wise-compliance", "files/desktop/client/service-provider-wise-compliance/serviceproviderwisecompliance.html", None, {}),
-    ("/compliance-details", "files/desktop/client/compliance-details/compliancedetails.html", None, {}),
-    ("/risk-report", "files/desktop/client/risk-report/riskreport.html", None, {}),
-]
-
-
-def handle_root(request, response):
-    # response.send("Are you lost?")
-    template = template_env.get_template("/")
-    output = template.render(**self.__parameters)
-    self.write(output)
-
-def run_server(port):
+def run_server(address, knowledge_server_address):
+    ip, port = address
     io_loop = IOLoop()
 
     def delay_initialize():
-        db = ClientDatabase()
+        http_client = AsyncHTTPClient(
+            io_loop.inner(),
+            max_clients=1000
+        )
+
         web_server = WebServer(io_loop)
 
-        web_server.url("/", GET=handle_root)
-
-        for url, path_desktop, path_mobile, parameters in TEMPLATE_PATHS :
-            args = {
-                "path_desktop": path_desktop,
-                "path_mobile": path_mobile,
-                "parameters": parameters
-            }
-            web_server.low_level_url(url, TemplateHandler, args)
-
-        api = API(io_loop, db)
+        api = API(
+            io_loop,
+            address,
+            knowledge_server_address,
+            http_client
+        )
 
         api_urls_and_handlers = [
             ("/api/login", api.handle_login),
@@ -248,30 +244,12 @@ def run_server(port):
             ("/api/client_dashboard", api.handle_client_dashboard),
             ("/api/client_admin_settings", api.handle_client_admin_settings),
             ("/api/general", api.handle_general),
-            ("/api/client_user", api.handle_client_user),
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)
 
-        static_path = os.path.join(ROOT_PATH, "Src-client")
-        files_path = os.path.join(static_path, "files")
-        desktop_path = os.path.join(files_path, "desktop")
-        common_path = os.path.join(desktop_path, "common")
-        images_path = os.path.join(common_path, "images")
-        css_path = os.path.join(common_path, "css")
-        js_path = os.path.join(common_path, "js")
-
-        web_server.low_level_url(r"/images/(.*)", tornado.web.StaticFileHandler, dict(path=images_path))
-        
-        api_design_path = os.path.join(ROOT_PATH, "Doc", "API", "Web-API", "Version-1.0.4", "html")
-        web_server.low_level_url(r"/api-design/(.*)", tornado.web.StaticFileHandler, dict(path=api_design_path))
-        web_server.low_level_url(r"/(.*)", tornado.web.StaticFileHandler, dict(path=static_path))
-
-
-        print "Local port: %s" % port
+        print "Listening at: %s:%s" % (ip, port)
         web_server.start(port, backlog=1000)
 
     io_loop.add_callback(delay_initialize)
     io_loop.run()
-
-

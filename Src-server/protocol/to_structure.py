@@ -2040,11 +2040,11 @@ def to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(da
         lst.append(to_structure_RecordType_clienttransactions_ASSINGED_COMPLIANCE(item))
     return lst
 
-def to_structure_VectorType_RecordType_clienttransactions_USERWISECOMPLIANCE(data):
+def to_structure_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
-        lst.append(to_structure_RecordType_clienttransactions_USERWISECOMPLIANCE(item))
+        lst.append(to_structure_RecordType_clienttransactions_USER_WISE_COMPLIANCE(item))
     return lst
 
 def to_structure_RecordType_knowledgemaster_Request_UpdateStatutoryNature(data):
@@ -3139,9 +3139,9 @@ def to_structure_RecordType_knowledgereport_Response_GetStatutoryMappingReportFi
     from protocol import knowledgereport
     return knowledgereport.Response.to_structure(data)
 
-def to_structure_RecordType_clienttransactions_USERWISEUNITS(data):
+def to_structure_RecordType_clienttransactions_USER_WISE_UNITS(data):
     from protocol import clienttransactions
-    return clienttransactions.USERWISEUNITS.to_structure(data)
+    return clienttransactions.USER_WISE_UNITS.to_structure(data)
 
 def to_structure_RecordType_admin_Request_ChangeUserGroupStatus(data):
     from protocol import admin
@@ -3174,11 +3174,11 @@ def to_structure_RecordType_technomasters_Request_GetClientProfile(data):
     from protocol import technomasters
     return technomasters.Request.to_structure(data)
 
-def to_structure_VectorType_RecordType_clienttransactions_USERWISEUNITS(data):
+def to_structure_VectorType_RecordType_clienttransactions_USER_WISE_UNITS(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
-        lst.append(to_structure_RecordType_clienttransactions_USERWISEUNITS(item))
+        lst.append(to_structure_RecordType_clienttransactions_USER_WISE_UNITS(item))
     return lst
 
 def to_structure_VariantType_dashboard_Request(data):
@@ -3189,9 +3189,9 @@ def to_structure_RecordType_clientuser_Request_CheckDiskSpace(data):
     from protocol import clientuser
     return clientuser.Request.to_structure(data)
 
-def to_structure_RecordType_clienttransactions_USERWISECOMPLIANCE(data):
+def to_structure_RecordType_clienttransactions_USER_WISE_COMPLIANCE(data):
     from protocol import clienttransactions
-    return clienttransactions.USERWISECOMPLIANCE.to_structure(data)
+    return clienttransactions.USER_WISE_COMPLIANCE.to_structure(data)
 
 def to_structure_VectorType_RecordType_dashboard_Level1Compliance(data):
     data = parse_list(data, 0)
