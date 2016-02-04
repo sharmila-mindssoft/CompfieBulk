@@ -210,6 +210,10 @@ def run_server(port):
             "localhost", 3306, "root", "123456",
             "mirror_knowledge"
         )
+        # db = KnowledgeDatabase(
+        #     "198.143.141.73", 3306, "root", "Root!@#123",
+        #     "mirror_knowledge"
+        # )
         db.connect()
         web_server = WebServer(io_loop)
 

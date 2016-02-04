@@ -1,0 +1,89 @@
+{% extends "files/desktop/home/container.html" %}
+{% block content %}
+<style>
+.reminder-box-content ul {
+  margin-top: 0px;
+  margin-left: 0px;
+  }
+.reminder-box-content ul li
+{
+  background: url("../images/right_arrow.png") no-repeat scroll #fff 1.4em 2.4em;
+  border-bottom: 1px solid #5c5c5c;
+  color: #333;
+  font-size: 0.75em;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  line-height: 1.4em;
+  list-style-type: none;
+  padding: 2em 2em 1em 3em;
+  cursor: pointer;
+}
+.reminder-box-content ul li:hover
+{
+  background: url("../images/right_arrow.png") no-repeat scroll #eee 1.4em 2.4em;
+  }
+.reminder-box-content ul li.unread
+{ 
+  color: #333;
+  background: url("../images/right_arrow.png") no-repeat scroll #E5D0FF 1.4em 2.4em;
+  
+}
+.reminder-box-content ul li.unread:hover
+{ 
+  color: #333;
+  background: url("../images/right_arrow.png") no-repeat scroll #eee 1.4em 2.4em;
+  
+}
+.reminder-box-content ul li .subtext
+{
+  padding-top: 1em;
+}
+.reminder-box-content ul li p .time
+{
+  color: #000 !important
+  text-align:left;
+   font-size: 0.9em;
+}
+.reminder-box-content ul li p .notification-cat
+{
+  color: #000 !important;
+  float:right;
+  font-size: 0.9em;
+}
+
+.reminder-box-content ul li span {
+    color: #ffae00;
+    position: absolute;
+    right: 1.5em;
+    top: 1em;
+}
+
+</style>
+
+
+<div class="content-container" >
+<div class="content-area">
+  
+  <div class="escalations-box" style="width:100%">
+  <div class="reminder-box-heading"> <span><img src="images/reminder.png" style="width:30px;"></span>
+      <span>
+      Reminder</span> </div>
+      <div class="reminder-box-content">
+      <ul id="reminderList">
+        <li class="remindertext unread">Compliance Form R - Register of wage should be completed in 7 days
+        <span class="user" >Sridhar 
+        <!-- <abbr class="page-load" title="Penal Provision goes here"><img src="images/icon-info.png"  style="width:15px;height:15px"> </abbr> -->
+        </span>
+        </li>
+
+      </ul>
+        <!-- <p><a href="#">Read more...</a></p> -->
+    </div>
+  </div> 
+  </div>
+</div>
+
+
+
+<script type="text/javascript" src="/files/desktop/client/reminders/reminders.js"></script>
+{% endblock %} 
