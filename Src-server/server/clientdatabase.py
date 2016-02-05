@@ -3196,7 +3196,6 @@ class ClientDatabase(Database):
                         country_id, domain_id,
                         unit_id, user_ids, str(statutory_id+"%")
                     )
-                print
                 compliance_rows = self.select_all(query)
 
                 compliances_list = []
@@ -4060,6 +4059,7 @@ class ClientDatabase(Database):
         return next_start_date
 
     def get_statutory_notifications_list_report(self, request_data, client_id):
+        print request_data.to_structure()
         country_name = request_data.country_name
         print country_name
         domain_name = request_data.domain_name
@@ -4108,6 +4108,7 @@ class ClientDatabase(Database):
                     date_and_time = self.datetime_to_string(notification["updated_on"])
                 ))
             notifications.append(clientreports.LEVEL_1_STATUTORY_NOTIFICATIONS())
+            print notifications
         return notifications
 
     # risk report

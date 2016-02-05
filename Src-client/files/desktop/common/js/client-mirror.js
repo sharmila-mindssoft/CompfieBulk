@@ -895,7 +895,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-/*Statutory Notifications List*/
+    /*Statutory Notifications List*/
     function getStatutoryNotificationsListFilters(callback){
         callerName = "api/client_reports"
         var request = [

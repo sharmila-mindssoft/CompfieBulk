@@ -161,7 +161,7 @@ def get_statutory_notifications_list_filters(db, request, session_user, client_i
 		level_1_statutories = level_1_statutories_list, users = users_list)
 
 def get_statutory_notifications_list_report(db, request, session_user, client_id):
-	print request
+	print request.country_name
 	result = db.get_statutory_notifications_list_report(request, client_id)
 	print result
 	return clientreport.GetStatutoryNotificationsListReportSuccess(result)

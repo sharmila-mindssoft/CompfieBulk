@@ -28,7 +28,7 @@ def cors_handler(request, response):
 
 #
 # api_request
-#
+#m
 
 def api_request(
     request_data_type, need_client_id=False
@@ -122,7 +122,6 @@ class API(object):
         company_id = None
         try:
             data = json.loads(request.body())
-            print data
             if type(data) is not list:
                 self.send_bad_request(
                     response,
@@ -201,6 +200,7 @@ class API(object):
 
     @api_request(clientreport.RequestFormat)
     def handle_client_reports(self, request, db):
+        print request.to_structure()
         return controller.process_client_report_requests(request, db)
 
     @api_request(dashboard.RequestFormat)

@@ -83,6 +83,11 @@ CLIENT_TEMPLATE_PATHS = [
         "files/desktop/client/risk-report/riskreport.html",
         None, {}
     ),
+    (
+        "/statutory-notifications-list",
+        "files/desktop/client/statutory-notifications-list-report/statutorynotificationslistreport.html",
+        None, {}
+    ),
 ]
 
 TEMPLATE_PATHS = [

@@ -6,7 +6,6 @@ __all__ = [
 ]
 
 def process_client_master_requests(request, db) :
-    print request.to_structure()
     session_token = request.session_token
     client_info = session_token.split("-")
     request = request.request
@@ -290,7 +289,6 @@ def get_units(db, request, session_user, client_id):
     )
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
-    print division_ids
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
     business_group_list = db.get_business_groups_for_user(
@@ -302,7 +300,6 @@ def get_units(db, request, session_user, client_id):
     division_list = db.get_divisions_for_user(
         division_ids, client_id
     )
-    print division_list
     unit_list = db.get_units_for_user(unit_ids, client_id)
     return clientmasters.GetUnitsSuccess(
         business_groups=business_group_list,

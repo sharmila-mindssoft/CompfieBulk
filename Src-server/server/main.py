@@ -82,8 +82,8 @@ class API(object):
                 data
             )
         except Exception, e:
-            print e
-            print(traceback.format_exc())
+            #print e
+            #print(traceback.format_exc())
             response.set_status(400)
             response.send(str(e))
             return None
@@ -206,14 +206,14 @@ def run_server(port):
     io_loop = IOLoop()
 
     def delay_initialize():
-        # db = KnowledgeDatabase(
-        #     "localhost", 3306, "root", "123456",
-        #     "mirror_knowledge"
-        # )
         db = KnowledgeDatabase(
-            "198.143.141.73", 3306, "root", "Root!@#123",
+            "localhost", 3306, "root", "123456",
             "mirror_knowledge"
         )
+        # db = KnowledgeDatabase(
+        #     "198.143.141.73", 3306, "root", "Root!@#123",
+        #     "mirror_knowledge"
+        # )
         db.connect()
         web_server = WebServer(io_loop)
 

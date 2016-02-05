@@ -664,11 +664,9 @@ class GetStatutoryNotificationsListReport(Request):
         data = parse_dictionary(data, ["country_name", "domain_name", "business_group_id", "legal_entity_id",
             "division_id", "unit_id", "level_1_statutory_id"])
         country_name = data.get("country_name")
-        country_name = parse_structure_CustomTextType_50("country_name")
-        print country_name
+        country_name = parse_structure_CustomTextType_50(country_name)
         domain_name = data.get("domain_name")
-        domain_name = parse_structure_CustomTextType_50("domain_name")
-        print domain_name
+        domain_name = parse_structure_CustomTextType_50(domain_name)
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
@@ -1312,10 +1310,7 @@ class GetStatutoryNotificationsListFiltersSuccess(Response):
         }
 
 class GetStatutoryNotificationsListReportSuccess(Response):
-    print Response
     def __init__(self, countries_name, domain_name, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_id):
-        print countries_name
-        print domain_name
         self.countries_name = countries_name
         self.domain_name = domain_name
         self.business_group_id = business_group_id
@@ -1326,12 +1321,11 @@ class GetStatutoryNotificationsListReportSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        print data
         data = parse_dictionary(data, ["country_name", "domain_name", "business_group_id", "legal_entity_id", "division_id", "unit_id", "level_1_statutory_id", "user_id"])
         country_name = data.get("country_name")
-        country_name = parse_structure_VectorType_CustomTextType_50(country_name)
+        country_name = parse_structure_CustomTextType_50(country_name)
         domain_name = data.get("domain_name")
-        domain_name = parse_structure_VectorType_CustomTextType_50(domain_name)
+        domain_name = parse_structure_CustomTextType_50(domain_name)
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
@@ -1345,21 +1339,14 @@ class GetStatutoryNotificationsListReportSuccess(Response):
         return GetStatutoryNotificationsListFiltersSuccess(country_name, domain_name, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_id, user_id)
 
     def to_inner_structure(self):
-        print parse_structure_VectorType_CustomTextType_50
-        print to_structure_VectorType_CustomTextType_50
-        print to_structure_VectorType_RecordType_core_ClientBusinessGroup
-        print to_structure_VectorType_RecordType_core_ClientLegalEntity
-        print to_structure_VectorType_RecordType_core_ClientDivision
-        print to_structure_VectorType_RecordType_core_ClientUnit
-        print to_structure_VectorType_RecordType_core_ClientLevelOneStatutory
         return {
-            "country_name": to_structure_VectorType_CustomTextType_50(self.country_name),
-            "domain_name": to_structure_VectorType_CustomTextType_50(self.domain_name),
-            "business_group_id": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_group_id),
-            "legal_entity_id": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entity_id),
-            "division_id": to_structure_VectorType_RecordType_core_ClientDivision(self.division_id),
-            "unit_id": to_structure_VectorType_RecordType_core_ClientUnit(self.unit_id),
-            "level_1_statutory_id": to_structure_VectorType_RecordType_core_ClientLevelOneStatutory(self.level_1_statutory_id),
+            "country_name": to_structure_CustomTextType_50(self.country_name),
+            "domain_name": to_structure_CustomTextType_50(self.domain_name),
+            "business_group_id": to_structure_RecordType_core_ClientBusinessGroup(self.business_group_id),
+            "legal_entity_id": to_structure_RecordType_core_ClientLegalEntity(self.legal_entity_id),
+            "division_id": to_structure_RecordType_core_ClientDivision(self.division_id),
+            "unit_id": to_structure_RecordType_core_ClientUnit(self.unit_id),
+            "level_1_statutory_id": to_structure_RecordType_core_ClientLevelOneStatutory(self.level_1_statutory_id),
         }
 
 class GetActivityLogFiltersSuccess(Response):
