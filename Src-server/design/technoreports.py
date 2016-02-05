@@ -116,8 +116,8 @@ NOTIFICATIONS = RecordType("NOTIFICATIONS", [
 ])
 
 COUNTRY_WISE_NOTIFICATIONS = RecordType("COUNTRY_WISE_NOTIFICATIONS", [
-	Field("country_id", CountryList),
-	Field("domain_id", DomainList),
+	Field("country_id", Countryid),
+	Field("domain_id", Domainid),
 	Field("notifications", VectorType(NOTIFICATIONS))
 ])
 

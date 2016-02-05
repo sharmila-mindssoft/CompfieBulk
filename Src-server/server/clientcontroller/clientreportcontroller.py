@@ -30,9 +30,9 @@ def process_client_report_requests(request, db) :
 		return get_compliancedetails_report_filters(db, request, session_user, client_id) 
 	elif type(request) is clientreport.GetComplianceDetailsReport:
 		return get_compliancedetails_report(db, request, session_user, client_id)
-	elif type(request) is clientreport.GetStatutoryNotificationListFilters:
+	elif type(request) is clientreport.GetStatutoryNotificationsListFilters:
 		return get_statutory_notifications_list_filters(db, request, session_user, client_id) 
-	elif type(request) is clientreport.GetStatutoryNotificationListReport:
+	elif type(request) is clientreport.GetStatutoryNotificationsListReport:
 		return get_statutory_notifications_list_report(db, request, session_user, client_id)
 
 
@@ -139,6 +139,30 @@ def get_compliancedetails_report_filters(db, request, session_user, client_id):
 
 	return clientreport.GetComplianceDetailsReportFiltersSuccess(
 		countries = country_list, domains = domain_list, level_1_statutories = level_1_statutories_list, units = unit_list, Compliances = compliances_list, users = users_list)
+
+def get_statutory_notifications_list_filters(db, request, session_user, client_id):
+	user_company_info = db.get_user_company_details( session_user, client_id)
+	unit_ids = user_company_info[0]
+	country_list = db.get_countries_for_user(session_user, client_id)
+	domain_list = db.get_domains_for_user(session_user, client_id)
+	business_group_list = db.get_business_groups_for_user(session_user, client_id)
+	legal_entity_list = db.get_legal_entities_for_user(session_user, client_id)
+	division_list = db.get_divisions_for_user(session_user, client_id)
+	unit_list = db.get_units_for_user(unit_ids, client_id)
+	level_1_statutories_list = db.get_client_level_1_statutoy(session_user, client_id)
+	users_list = db.get_client_users(client_id);
+
+	return clientreport.GetStatutoryNotificationsListFiltersSuccess	(countries = country_list, domains = domain_list, 
+		business_groups = business_group_list, legal_entities = legal_entity_list, divisions = division_list, units = unit_list,
+		level_1_statutories = level_1_statutories_list, users = users_list)
+
+def get_statutory_notifications_list_report(db, request, session_user, client_id):
+	print request
+	result = db.get_statutory_notifications_list_report(request, client_id)
+	print result
+	return clientreport.GetStatutoryNotificationsListReportSuccess(result)
+
+
 
 def get_compliancedetails_report(db, request, session_user, client_id):
 	country_id = request.country_id

@@ -150,15 +150,13 @@ GetReassignedHistoryReport = RecordType(
 GetStatutoryNotificationsListFilters = RecordType("GetStatutoryNotificationsListFilters", [])
 
 GetStatutoryNotificationsListReport = RecordType("GetStatutoryNotificationsListReport", [
-	Field('country_id', COUNTRY_ID),
-	Field('domain_id', DOMAIN_ID),
+	Field('country_name', COUNTRY_NAME),
+	Field('domain_name', DOMAIN_NAME),
 	Field('business_group_id', BUSINESS_GROUP_ID),
 	Field('legal_entity_id', LEGAL_ENTITY_ID),
 	Field('division_id', DIVISION_ID),
 	Field('unit_id', UNIT_ID),
-	Field('level_1_statutory_id', LEVEL_1_STATUTORY_ID),
-	Field('from_date', Text20),
-	Field('to_date', Text20)
+	Field('level_1_statutory_id', LEVEL_1_STATUTORY_ID)
 ])
 
 
@@ -501,26 +499,22 @@ GetStatutoryNotificationsListFiltersSuccess = RecordType("GetStatutoryNotificati
 	Field("level1_statutories", MapType(COUNTRY_ID, DomainStatutoryMap))
 ])
 
-NOTIFICATIONS = RecordType("NOTIFICATIONS", [
+LEVEL_1_STATUTORY_NOTIFICATIONS = RecordType("LEVEL_1_STATUTORY_NOTIFICATIONS", [
 	Field("statutory_provision", STATUTORY_PROVISION),
+	Field("unit_name", UNITNAME),
 	Field("notification_text", NOTIFICATION_TEXT),
 	Field("date_and_time", TIMESTAMP)
 ])
 
-COUNTRY_WISE_NOTIFICATIONS = RecordType("COUNTRY_WISE_NOTIFICATIONS", [
-	Field("country_id", CountryList),
-	Field("domain_id", DomainList),
-	Field("notifications", VectorType(NOTIFICATIONS))
+STATUTORY_PROVISION_NOTIFICATIONS = RecordType("STATUTORY_PROVISION_NOTIFICATIONS", [
+	Field("business_group_name", BusinessGroupName),
+	Field("legal_entity_name", LegalEntityName),
+	Field("division_name", DivisionName),
+	Field("level_1_statutory_name", VectorType(LEVEL_1_STATUTORY_NOTIFICATIONS))
 ])
 
 GetStatutoryNotificationsListReportSuccess = RecordType("GetStatutoryNotificationsListReportSuccess", [
-	Field("countries", VectorType(Country)),
-	Field("domains", VectorType(Domain)),
-	Field("business_groups", VectorType(BusinessGroup)),
-	Field("legal_entities", VectorType(LegalEntity)),
-	Field("divisions", VectorType(Division)),
-	Field("units", VectorType(Unit)),	Field("level_1_statutories", MapType(COUNTRY_ID, Statutory)),
-	Field("country_wise_notifications", VectorType(COUNTRY_WISE_NOTIFICATIONS))
+	Field("notifications", VectorType(STATUTORY_PROVISION_NOTIFICATIONS))
 ])
 
 #Activity Log

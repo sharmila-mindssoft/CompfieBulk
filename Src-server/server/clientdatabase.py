@@ -3616,3 +3616,55 @@ class ClientDatabase(Database):
             trigger_before = int(statutory_dates[0]["trigger_before_days"])
             next_start_date = due_date -timedelta(days=trigger_before)
         return next_start_date
+
+    def get_statutory_notifications_list_report(self, request_data, client_id):
+        country_name = request_data.country_name
+        print country_name
+        domain_name = request_data.domain_name
+        print domain_name
+        business_group_id = request_data.business_group_id
+        legal_entity_id = request_data.legal_entity_id
+        division_id = request_data.division_id
+        unit_id = request_data.unit_id
+        level_1_statutory_id = request_data.level_1_statutory_id  
+        if business_group_id != None:
+            condition += " AND snu.business_group_id = '%d'" % business_group_id
+        if legal_entity_id != None:
+            condition += " AND snu.legal_entity_id = '%d'" % legal_entity_id
+        if division_id != None:
+            condition += " AND snu.division_id = '%d'" % division_id
+        if unit_id != None:
+            condition += " AND snu.unit_id = '%d'" % unit_id
+        if level_1_statutory_id != None:
+            condition += "AND snl.statutory_provision like '%s'" % level_1_statutory_id
+        query = "SELECT snu.business_group_id, snu.legal_entity_id, snu.division_id, snu.unit_id,\
+                 snl.statutory_provision, snl.notification_text, snl.updated_on \
+                from \
+                tbl_statutory_notifications_log snl, tbl_statutory_notifications_units snu \
+                where\
+                snl.statutory_notification_id = snu.statutory_notification_id\
+                and \
+                snl.country_name = '%s' \
+                and \
+                snl.domain_name = '%s' " % (
+                    country_name, domain_name
+                        )
+        print query
+        rows = self.select_all(query, client_id)
+        notifications = []
+        #columns = ["business_group_id", "legal_entity_id", "division_id", "unit_id", "statutory_provision", "notification_text", "updated_on"]
+
+        for row in rows:
+            columns = ["unit_id", "statutory_provision", "notification_text", "updated_on" ]
+            statutory_notifications = self.convert_to_dict(rows, columns)
+            level_1_statutory_wise_notifications =[]
+            for notification in statutory_notifications:
+                level_1_statutory_wise_notifications.append(clientreports.NOTIFICATIONS(
+                    statutory_provision = notification["statutory_provision"], 
+                    unit_name = notification["unit_id"], 
+                    notification_text = notification["notification_text"],
+                    date_and_time = self.datetime_to_string(notification["updated_on"])
+                ))
+            notifications.append(clientreports.LEVEL_1_STATUTORY_NOTIFICATIONS())
+        return notifications
+

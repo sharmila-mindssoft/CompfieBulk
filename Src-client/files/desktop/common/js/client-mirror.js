@@ -889,14 +889,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getStatutoryNotificationsListReport(countryId, domainId, businessGroupId, 
+    function getStatutoryNotificationsListReport(countryName, domainName, businessGroupId, 
         legalEntityId, divisionId, unitId, level1Id, callback){
         callerName = "api/client_reports"
         var request = [
             "GetStatutoryNotificationsListReport",
             {
-                "country_id": countryId,
-                "domain_id": domainId,
+                "country_name": countryName,
+                "domain_name": domainName,
                 "business_group_id": businessGroupId,
                 "legal_entity_id": legalEntityId,
                 "division_id": divisionId,
