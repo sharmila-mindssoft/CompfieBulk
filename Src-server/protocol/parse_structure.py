@@ -1957,11 +1957,11 @@ def parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE
         lst.append(parse_structure_RecordType_clienttransactions_ASSINGED_COMPLIANCE(item))
     return lst
 
-def parse_structure_VectorType_RecordType_clienttransactions_USERWISECOMPLIANCE(data):
+def parse_structure_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
-        lst.append(parse_structure_RecordType_clienttransactions_USERWISECOMPLIANCE(item))
+        lst.append(parse_structure_RecordType_clienttransactions_USER_WISE_COMPLIANCE(item))
     return lst
 
 def parse_structure_RecordType_knowledgemaster_Request_UpdateStatutoryNature(data):
@@ -3047,9 +3047,9 @@ def parse_structure_RecordType_knowledgereport_Response_GetStatutoryMappingRepor
     from protocol import knowledgereport
     return knowledgereport.Response.parse_structure(data)
 
-def parse_structure_RecordType_clienttransactions_USERWISEUNITS(data):
+def parse_structure_RecordType_clienttransactions_USER_WISE_UNITS(data):
     from protocol import clienttransactions
-    return clienttransactions.USERWISEUNITS.parse_structure(data)
+    return clienttransactions.USER_WISE_UNITS.parse_structure(data)
 
 def parse_structure_RecordType_admin_Request_ChangeUserGroupStatus(data):
     from protocol import admin
@@ -3082,11 +3082,11 @@ def parse_structure_RecordType_technomasters_Request_GetClientProfile(data):
     from protocol import technomasters
     return technomasters.Request.parse_structure(data)
 
-def parse_structure_VectorType_RecordType_clienttransactions_USERWISEUNITS(data):
+def parse_structure_VectorType_RecordType_clienttransactions_USER_WISE_UNITS(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
-        lst.append(parse_structure_RecordType_clienttransactions_USERWISEUNITS(item))
+        lst.append(parse_structure_RecordType_clienttransactions_USER_WISE_UNITS(item))
     return lst
 
 def parse_structure_VariantType_dashboard_Request(data):
@@ -3097,9 +3097,9 @@ def parse_structure_RecordType_clientuser_Request_CheckDiskSpace(data):
     from protocol import clientuser
     return clientuser.Request.parse_structure(data)
 
-def parse_structure_RecordType_clienttransactions_USERWISECOMPLIANCE(data):
+def parse_structure_RecordType_clienttransactions_USER_WISE_COMPLIANCE(data):
     from protocol import clienttransactions
-    return clienttransactions.USERWISECOMPLIANCE.parse_structure(data)
+    return clienttransactions.USER_WISE_COMPLIANCE.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_dashboard_Level1Compliance(data):
     data = parse_list(data, 0)
@@ -3501,3 +3501,40 @@ def parse_structure_VectorType_CustomTextType_100(data):
     for item in data:
         lst.append(parse_structure_CustomTextType_100(item))
     return lst
+
+# Risk Report
+
+def parse_structure_VectorType_RecordType_clientreport_RiskData(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clientreport_RiskData(item))
+    return lst
+
+def parse_structure_RecordType_clientreport_RiskData(data):
+    from protocol import clientreport
+    return clientreport.RiskData.parse_structure(data)    
+
+def parse_structure_VectorType_RecordType_clientreport_Level1Compliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clientreport_Level1Compliance(item))
+    return lst
+
+def parse_structure_RecordType_clientreport_Level1Compliance(data):
+    from protocol import clientreport
+    return clientreport.Level1Compliance.parse_structure(data)
+
+# Client Notifications
+
+def parse_structure_VectorType_RecordType_dashboard_Notification(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_dashboard_Notification(item))
+    return lst
+
+def parse_structure_RecordType_dashboard_Notification(data):
+    from protocol import dashboard
+    return dashboard.Notification.parse_structure(data)

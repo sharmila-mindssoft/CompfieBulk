@@ -3878,7 +3878,7 @@ Note : statutory_status :- 0 - All , 1 - Delayed Compliance, 2 - Not Complied, 3
 </code></pre>
 <p>On Success </p>
 <pre><code>[
-    "GetRiskReportSuccess",
+<!--     "GetRiskReportSuccess",
     {
         "delayed_compliance": {
             LEVEL_1_STATUTORY_NAME : [
@@ -3898,6 +3898,41 @@ Note : statutory_status :- 0 - All , 1 - Delayed Compliance, 2 - Not Complied, 3
                 },
             ]
         },
+        "not_complied": {
+            Same as delayed compliance
+        },
+        "not_opted": {
+            Same as delayed compliance
+        }
+    }
+] -->
+   "GetRiskReportSuccess",
+    {
+        "delayed_compliance": [
+            {
+              "business_group_name" : BUSINESS_GROUP_NAME,
+              "legal_entity_name" : LEGAL_ENTITY_NAME,
+              "division_name" : DIVISION_NAME,
+              "level_1_statutory_wise_units":{
+                LEVEL_1_STATUTORY_NAME : [
+                    {
+                        "unit_name": UNIT_CODE - UNIT_NAME,
+                        "address": ADDRESS,
+                        "compliances": [
+                            {
+                                "statutory_mapping": String,
+                                "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
+                                "description": String,
+                                "penal_consequences"  : String,
+                                "compliance_frequency": COMPLIANCE_FREQUENCY,
+                                "repeats"  : String
+                            },
+                        ]
+                    },
+                ],
+              }
+           }
+        ],
         "not_complied": {
             Same as delayed compliance
         },

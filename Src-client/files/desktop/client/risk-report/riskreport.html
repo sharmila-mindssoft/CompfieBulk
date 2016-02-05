@@ -1,152 +1,190 @@
-{% extends "files/desktop/Header/Header.html" %}
+{% extends "files/desktop/home/container.html" %}
 {% block content %}
-<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/tooltip/tipso.css">
-<script src="/files/desktop/common/js/tooltip/tipso.js"></script>
-<div class="content-container">
-  <div class="content-area">
-    <div class="add-container">
-      <div class="add-container-heading">Compliance Task Applicability Status<span class="error-message"></span></div>
-      <div class="input-row-left">
+  <div class="content-container">
+    <div class="content-area">
+      
+      <div class="add-container">
+        <div class="add-container-heading">Risk Report<span class="error-message"></span></div>
+        <div class="input-row-left">
+          <div class="input-row">
+            <div class="field-label">Country:<span class="mandatory">*</span></div>
+            <div class="field-input">
+            <select class="input-box" id="country">
+            </select>
+          </div>
+        </div>
         <div class="input-row">
-          <div class="field-label">Country<span class="mandatory">*</span>:</div>
+          <div class="field-label">Domain:<span class="mandatory">*</span></div>
           <div class="field-input">
-           <input type="text" class="input-box icon-autocomplete" value="India" placeholder="Enter Country  " />
-         </div>
-       </div>
-       <div class="input-row">
-        <div class="field-label">Domain<span class="mandatory">*</span>:</div>
-        <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" value="Industrial Law" placeholder="Enter Domain" />
+            <input type="text" class="input-box icon-autocomplete" id="domainval" placeholder="Enter Domain" >
+            <input type="hidden" id="domain" value="">
+            <div id="autocomplete_domain" class="ac-textbox default-display-none">
+            <ul id="ulist_domain" style="width:215px;" class="hidemenu"></ul>
+          </div>
         </div>
       </div>
-      
       <div class="input-row">
         <div class="field-label">Business Group:</div>
         <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" id="businessgroup" value="RG Business Group" placeholder="Enter Business Group" />
+          <input type="text" class="input-box icon-autocomplete" id="businessgroupval" placeholder="Enter Business Group">
+          <input type="hidden" id="businessgroup">
+          <div id="autocomplete_businessgroup" class="ac-textbox default-display-none">
+          <ul id="ulist_businessgroup" style="width:215px;" class="hidemenu"></ul>
         </div>
       </div>
-      <div class="input-row">
-        <div class="field-label">Legal Entity:</div>
-        <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" id="entity" value="RG Entity" placeholder="Enter Legal Entity" />
-        </div>
-      </div>
-      
-      
-      
     </div>
-    <div class="input-row-right">
-
-      <div class="input-row">
-        <div class="field-label">Division:</div>
-        <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" id="division" value="Rg Division" placeholder="Enter Division Name" />
-        </div>
-      </div>
-      
-      <div class="input-row">
-        <div class="field-label">Unit:</div>
-        <div class="field-input">
-          <input type="text" class="input-box icon-autocomplete" autofocus id="unit" value="" placeholder="Enter Unit" />
-        </div>
-      </div>
-      
-      <div class="input-row">
-        <div class="field-label">Act<span class="mandatory"></span>:</div>
-        <div class="field-input">
-         <input type="text" class="input-box icon-autocomplete"  placeholder="Enter Act" />
-       </div>
-     </div> 
-     <div class="input-row">
-      <div class="field-label">Applicable Status:</div>
+    <div class="input-row">
+      <div class="field-label">Legal Entity:</div>
       <div class="field-input">
-        <select class="input-box">
-          <option selected="">Applicable</option>
-          <option>Not Applicable</option>
-          <option>Not Opted</option>
-        </select>
+        <input type="text" class="input-box icon-autocomplete" id="legalentityval" placeholder="Enter Legal Entity">
+        <input type="hidden" id="legalentity">
+        <div id="autocomplete_legalentity" class="ac-textbox default-display-none" >
+        <ul id="ulist_legalentity" style="width:215px;" class="hidemenu"></ul>
       </div>
-    </div> 
-    
-    
-    
-    
+    </div>
   </div>
-  <div class="submit-button-container">
-    <input type="submit" name="cancel" value="Show" class="btn-submit">
-    <input type="button"  class="btn-submit" value="Export" />
+</div>
+<div class="input-row-right">
+  <div class="input-row">
+    <div class="field-label">Division:</div>
+    <div class="field-input">
+      <input type="text" class="input-box icon-autocomplete" id="divisionval" placeholder="Enter Division">
+      <input type="hidden" id="division">
+      <div id="autocomplete_division" class="ac-textbox default-display-none">
+      <ul id="ulist_division" style="width:215px;" class="hidemenu"></ul>
+    </div>
   </div>
-  <div class="clearfix"></div>
-  <div class="grid-table-rpt">
-    <h1>Compliance Task Applicability Status</h1>
-    
-    <div style="margin-left:15%;">
-      <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
-        <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Country :<span style="margin-left:10px; font-weight:bold;">India</span> </div>
-        
-        <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Business Group :<span style="margin-left:10px; font-weight:bold;">RG Business Group</span> </div>
-        <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Division :<span style="margin-left:10px; font-weight:bold;">RG Division</span> </div>
+</div>
+<div class="input-row">
+  <div class="field-label">Unit:</div>
+  <div class="field-input">
+    <input type="text" class="input-box icon-autocomplete" id="unitval" placeholder="Enter Unit">
+    <input type="hidden" id="unit">
+    <div id="autocomplete_unit" class="ac-textbox default-display-none">
+    <ul id="ulist_unit" style="width:215px;" class="hidemenu"></ul>
+  </div>
+</div>
+</div>
 
-        
+<div class="input-row">
+        <div class="field-label">Act:</div>
+        <div class="field-input">
+          <input type="text" class="input-box icon-autocomplete" id="actval" placeholder="Enter Act">
+          <input type="hidden" id="act">
+          <div id="autocomplete_act" class="ac-textbox default-display-none">
+          <ul id="ulist_act" style="width:215px;" class="hidemenu"></ul>
+        </div>
       </div>
-      <div style="float:right; margin-right:20%;">
-       
-       <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Domain :<span style="margin-left:10px; font-weight:bold;">Industrial Law</span> </div>
-       <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Legal Entity:<span style="margin-left:10px; font-weight:bold;">RG Entity</span> </div>
-     </div>
-   </div>
-   <h2 style="background:#f1e9f6;font-size:0.8em !important;text-align:left;">Applicable</h2>
-   <div class="clearfix"></div>
-   <div class="heading">Batteries Act</div>
-   <div class="clearfix"></div>
+</div>
+
+<div class="input-row">
+  <div class="field-label">Statutory Status:</div>
+  <div class="field-input">
+  <select class="input-box" id="status">
+  <option value=''>Select</option>
+  <option value='1'>Delayed Compliance</option>
+  <option value='2'>Not Complied</option>
+  <option value='3'>Not Opted</option>
+  <option value='4'>Unassigned Compliance</option>
+  </select>
+</div>
+</div>
+
+</div>
+<div class="submit-button-container">
+<input type="submit" value="Show" class="btn-submit" id="submit">
+<input type="submit" value="Export" class="btn-submit" id="export">
+</div>
+
+
+<div class="clearfix"></div>
+<div class="grid-table-rpt" style="padding-bottom:0em;" class="default-display-none">
+<h1>Risk Report</h1>
+
+<h2 style="background:#f1e9f6;font-size:0.8em !important;text-align:left;">Delayed Compliance</h2>
+
+<table class="tbody-unit" width="100%">
+
+</table>
+
+<p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="unit-list-templates" style="display:none;" >
+<table class="table-unit-list" width="100%">
+<tr class="table-row-unit-list" >
+<td colspan="11" style="padding-top:30px;">
+<div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+  <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Country:<span style="margin-left:10px; font-weight:bold;" class="tbl_country"></span> </div>
+
+   <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Business Group:<span style="margin-left:10px; font-weight:bold;" class="tbl_businessgroup"></span> </div>
+     <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Division:<span style="margin-left:10px; font-weight:bold;" class="tbl_division"></span> </div>         
   
-  <table width="100%" style="border:1px dotted #CCCCCC;" >
-    <tr align="left">
-      <th width="3%" align="center">#</th>
-         <th width="13%">Statutory Provision</th>
-      <th width="13%">Unit</th>
-      <th width="13%">Compliance Task</th>
-      <th width="18%">Compliance Description</th>
-      <th width="14%">Penal Consequences</th>
-      <th width="12%">Compliance Frequency</th>
-      <th width="20%">Repeats</th>
-    </tr>
-    <tr>
-      <td align="center">1</td>
-      <td>Rule 4 >> FORM VIII</td>
-      <td><abbr class="page-load tipso_style" title="871, South street, Madurai, 625001">RG10028 - Madurai Unit</abbr></td>
-      <td><a href="#">FORM VIII - Notice of Opening</a></td>
-      <td>Within 30 days of opening a branch</td>
-      <td>Imprisonment With Fine</td>
-      <td>One Time</td>
-      <td>1st September <br> (Trigger : 20 days)</td>
-    </tr>
-    
- 
-    <tr>
-      <td align="center">2</td>
-      <td>Rule 4 >> FORM I</td>
-      <td><abbr class="page-load tipso_style" title="8, North street, Dindugal, 624001 ">RG10120 - Dindugal Unit</abbr></td>
-      <td><a href="#">FORM I - Dealer Registration</a> </td>
-      <td>Within 30 days of opening a branch</td>
-      <td>Imprisonment With Fine</td>
-      <td>Periodical</td>
-      <td>Every year 10th March and 10th December <br>(Trigger : 20 days and 10 days)</td>
-    </tr>
-    
-    
-  </table>
-  <p>Total : 2 records</p>
 </div>
+<div style="float:right; margin-right:20%;">
+  <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Domain:<span style="margin-left:10px; font-weight:bold;" class="tbl_domain"></span> </div>
+
+ <div style="margin-left:10px; font-size:1em;padding-bottom:1em;">Legal Entity:<span style="margin-left:10px; font-weight:bold;" class="tbl_legalentity"></span> </div>  
 </div>
+</td>
+<tr>
+</table>
 </div>
+
+
+<div id="unit-head-templates" style="display:none;">
+
+<table class="table-unit-head">
+<tr class="table-row-act-name">
+<td align="left" class="tbl_actname" colspan="7">
+</td>
+</tr>
+
+<tr align="left" class="table-row-unit-head">
+<th width="3%" align="center">#</th>
+<th width="13%">Statutory Provision</th>
+<th width="13%">Compliance Task</th>
+<th width="18%">Compliance Description</th>
+<th width="14%">Penal Consequences</th>
+<th width="12%">Compliance Frequency</th>
+<th width="20%">Repeats</th>
+</tr>
+</table>
 </div>
-<script type="text/javascript">
-  jQuery(window).load(function(){
-    jQuery('.page-load').tipso({
-      tooltipHover: true
-    });
-  });
-</script>
+
+
+<div id="unit-name-templates">
+<table class="table-unit-name">
+<tr class="table-row-unit-name">
+<td colspan="7" style="background:#ddd;font-size:0.8em; padding-top:7px; font-weight:bold;" class="tbl_unitheading">
+
+</td>
+</tr>
+</table>
+<div class="clearfix"></div>
+</div>
+
+
+<div id="unit-content-templates">
+<table class="table-unit-content">
+<tr align="left" class="table-row-unit-content">
+
+<td  align="center" class="tbl_sno"></td>
+<td class="tbl_statutoryprovision"> </td>
+<td class="tbl_compliance"> </td>
+<td class="tbl_description"></td>
+<td class="tbl_penalconsequences" > </td>
+<td class="tbl_frequency" ></td>
+<td class="tbl_repeats"></td>
+
+</tr>
+</table>
+</div>
+
+
+<script type="text/javascript" src="/files/desktop/client/risk-report/riskreport.js"></script>
 {% endblock %}

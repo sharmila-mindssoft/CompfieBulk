@@ -258,7 +258,6 @@ DROP TABLE IF EXISTS `tbl_client_compliances`;
 CREATE TABLE `tbl_client_compliances` (
   `client_statutory_id` int(11) NOT NULL,
   `compliance_id` int(11) NOT NULL,
-  `statutory_provision` VARCHAR(50) NOT NULL,
   `statutory_applicable` tinyint(4) DEFAULT NULL,
   `statutory_opted` tinyint(4) DEFAULT NULL,
   `not_applicable_remarks` varchar(250) DEFAULT NULL,

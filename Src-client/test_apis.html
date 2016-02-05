@@ -412,7 +412,7 @@
 			function getStatutoriesByUnit(){
 				unit_id = 1
 				domain_id = 1
-				level_1_statutory_id = 1
+				level_1_statutory_id = "Gratuity Act, 1972"
 				frequency_id = 1
 				client_mirror.getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_id, 
 					frequency_id, callback);
@@ -479,11 +479,22 @@
 			}
 			function updateClientNotificationStatus(){
 				notification_id = 2
-				has_read = true
+				has_read = false
 				client_mirror.updateNotificationStatus(notification_id, has_read, callback)	;
 			}
 			function getComplianceDetail(){
 				client_mirror.getComplianceDetail(callback);
+			}
+			function updateComplianceDetail(){
+				compliance_history_id = 3;
+		        documents =  ["Document1"];
+		        completion_date = "25-Jan-2016";
+		        validity_date = "25-Jan-2017";
+		        next_due_date = "24-Jan-2017";
+		        remarks = "Sample Remarks";
+		        client_mirror.updateComplianceDetail(compliance_history_id, 
+		        	documents, completion_date, validity_date, next_due_date, 
+		        	remarks, callback);
 			}
 		</script>
 	</head>
@@ -725,6 +736,9 @@
 		<div>
 			<button onclick="getComplianceDetail()">
 				Get Compliance Detail
+			</button>
+			<button onclick="updateComplianceDetail()">
+				Update Compliance Detail
 			</button>
 		</div>
 		<br>
