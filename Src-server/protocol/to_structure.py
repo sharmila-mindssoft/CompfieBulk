@@ -3609,3 +3609,35 @@ def to_structure_VectorType_RecordType_dashboard_Notification(data):
 def to_structure_RecordType_dashboard_Notification(data):
     from protocol import dashboard
     return dashboard.Notification.to_structure(data)
+
+
+def to_structure_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS(data):
+    from protocol import clientreport
+    return clientreport.STATUTORY_WISE_NOTIFICATIONS.to_structure(data) 
+
+def to_structure_VectorType_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS(item))
+    return lst
+
+def to_structure_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS(data):
+    from protocol import clientreport
+    return clientreport.LEVEL_1_STATUTORY_NOTIFICATIONS.to_structure(data)     
+
+def to_structure_VectorType_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS(item))
+    return lst
+
+def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items():
+        key = to_structure_CustomTextType_50(key)
+        value = to_structure_VectorType_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS(value)
+        dict[key] = value
+    return dict

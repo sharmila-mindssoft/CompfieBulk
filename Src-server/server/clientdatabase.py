@@ -4059,56 +4059,114 @@ class ClientDatabase(Database):
         return next_start_date
 
     def get_statutory_notifications_list_report(self, request_data, client_id):
-        print request_data.to_structure()
         country_name = request_data.country_name
-        print country_name
         domain_name = request_data.domain_name
-        print domain_name
         business_group_id = request_data.business_group_id
         legal_entity_id = request_data.legal_entity_id
         division_id = request_data.division_id
-        unit_id = request_data.unit_id
-        level_1_statutory_id = request_data.level_1_statutory_id  
+        unit_id = request_data.unit_id        
+        level_1_statutory_name = request_data.level_1_statutory_name 
+        from_date = request_data.from_date
+        to_date = request_data.to_date
+        if from_date == None:
+            from_date = '';
+        else:
+            from_date = self.string_to_datetime(from_date)
+        if to_date == None:
+            to_date = '';
+        else:
+            to_date = self.string_to_datetime(to_date)
+        condition = "1"
         if business_group_id != None:
-            condition += " AND snu.business_group_id = '%d'" % business_group_id
+            condition += " AND business_group_id = '%d'" % business_group_id
         if legal_entity_id != None:
-            condition += " AND snu.legal_entity_id = '%d'" % legal_entity_id
+            condition += " AND legal_entity_id = '%d'" % legal_entity_id
         if division_id != None:
-            condition += " AND snu.division_id = '%d'" % division_id
+            condition += " AND division_id = '%d'" % division_id
         if unit_id != None:
-            condition += " AND snu.unit_id = '%d'" % unit_id
-        if level_1_statutory_id != None:
-            condition += "AND snl.statutory_provision like '%s'" % level_1_statutory_id
-        query = "SELECT snu.business_group_id, snu.legal_entity_id, snu.division_id, snu.unit_id,\
-                 snl.statutory_provision, snl.notification_text, snl.updated_on \
+            condition += " AND unit_id = '%d'" % unit_id
+  
+
+        # Gettings distinct sets of bg_id, le_id, div_id, unit_id
+        columns = "business_group_id, legal_entity_id, division_id, unit_id"
+        where_condition = "1 AND %s" % condition
+        where_condition += " group by business_group_id, legal_entity_id, division_id, unit_id"
+        rows = self.get_data(self.tblStatutoryNotificationsUnits, columns, where_condition)
+        columns = ["business_group_id", "legal_entity_id", "division_id", "unit_id"]
+        rows = self.convert_to_dict(rows, columns)
+        notifications = []
+        conditiondate = None
+        for row in rows:
+            business_group_id = row["business_group_id"]
+            legal_entity_id = row["legal_entity_id"]
+            division_id = row["division_id"]
+            unit_id = row["unit_id"]
+            query = "SELECT bg.business_group_name, le.legal_entity_name, d.division_name, u.unit_code, u.unit_name, u.address,\
+                snl.statutory_provision, snl.notification_text, snl.updated_on \
                 from \
-                tbl_statutory_notifications_log snl, tbl_statutory_notifications_units snu \
-                where\
-                snl.statutory_notification_id = snu.statutory_notification_id\
-                and \
+                tbl_statutory_notifications_log snl \
+                INNER JOIN \
+                tbl_statutory_notifications_units snu  ON \
+                snl.statutory_notification_id = snu.statutory_notification_id \
+                INNER JOIN \
+                tbl_business_groups bg ON \
+                snu.business_group_id = bg.business_group_id \
+                INNER JOIN \
+                tbl_legal_entities le ON \
+                snu.legal_entity_id = le.legal_entity_id \
+                INNER JOIN \
+                tbl_divisions d ON \
+                snu.division_id = d.division_id \
+                INNER JOIN \
+                tbl_units u ON \
+                snu.unit_id = u.unit_id \
+                where \
                 snl.country_name = '%s' \
                 and \
-                snl.domain_name = '%s' " % (
-                    country_name, domain_name
-                        )
-        print query
-        rows = self.select_all(query, client_id)
-        notifications = []
-        #columns = ["business_group_id", "legal_entity_id", "division_id", "unit_id", "statutory_provision", "notification_text", "updated_on"]
-
-        for row in rows:
-            columns = ["unit_id", "statutory_provision", "notification_text", "updated_on" ]
-            statutory_notifications = self.convert_to_dict(rows, columns)
-            level_1_statutory_wise_notifications =[]
-            for notification in statutory_notifications:
-                level_1_statutory_wise_notifications.append(clientreports.NOTIFICATIONS(
-                    statutory_provision = notification["statutory_provision"], 
-                    unit_name = notification["unit_id"], 
-                    notification_text = notification["notification_text"],
-                    date_and_time = self.datetime_to_string(notification["updated_on"])
-                ))
-            notifications.append(clientreports.LEVEL_1_STATUTORY_NOTIFICATIONS())
-            print notifications
+                snl.domain_name = '%s' \
+                and \
+                bg.business_group_id = '%d' \
+                and \
+                le.legal_entity_id = '%d' \
+                and \
+                d.division_id = '%d' \
+                and \
+                u.unit_id = '%d' " % (
+                    country_name, domain_name, business_group_id, legal_entity_id, division_id, unit_id
+                )
+            if from_date != '' and to_date != '':
+                conditiondate = " AND  snl.updated_on between '%s' and '%s' " % (from_date, to_date)
+                query = query + conditiondate  
+            if level_1_statutory_name != None:
+                conditionlevel1 = " AND statutory_provision like '%s'" %  str(level_1_statutory_name+"%")
+                query = query + conditionlevel1        
+            print query                
+            result_rows = self.select_all(query)
+            columns = ["business_group_name", "legal_entity_name", "division_name", "unit_code", "unit_name", "address",
+                    "statutory_provision", "notification_text", "updated_on"]
+            statutory_notifications = self.convert_to_dict(result_rows, columns)
+            level_1_statutory_wise_notifications = {}
+            if len(result_rows) > 0:
+                business_group_name = result_rows[0][0]
+                legal_entity_name = result_rows[0][1]
+                division_name = result_rows[0][2]
+                for notification in statutory_notifications:
+                    unit_name = "%s - %s" % (notification["unit_code"], notification["unit_name"])
+                    statutories = notification["statutory_provision"].split(">>")
+                    level_1_statutory_name = statutories[0]
+                    if level_1_statutory_name not in level_1_statutory_wise_notifications:
+                        level_1_statutory_wise_notifications[level_1_statutory_name] = []
+                    level_1_statutory_wise_notifications[level_1_statutory_name].append(
+                        clientreport.LEVEL_1_STATUTORY_NOTIFICATIONS(
+                        statutory_provision = notification["statutory_provision"], 
+                        unit_name = unit_name, 
+                        notification_text = notification["notification_text"],
+                        date_and_time = self.datetime_to_string(notification["updated_on"])
+                    ))
+                notifications.append(clientreport.STATUTORY_WISE_NOTIFICATIONS(
+                    business_group_name, legal_entity_name, division_name, level_1_statutory_wise_notifications
+                        ))
+                print notifications
         return notifications
 
     # risk report

@@ -151,6 +151,7 @@ class Database(object) :
             query += " WHERE %s" % (condition)
         # if client_id is not None:
         #     return self.select_all(query, client_id)
+        print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(

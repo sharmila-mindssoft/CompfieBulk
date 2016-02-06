@@ -92,8 +92,8 @@ class API(object):
                     )
                     db.connect()
                     self._databases[company_id] = db
-        except Exception:
-            print db
+        except Exception, e :
+            print db, e
 
     def _send_response(
         self, response_data, response

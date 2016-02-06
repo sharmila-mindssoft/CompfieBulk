@@ -18,7 +18,7 @@ __all__ = [
 	"ApplicabilityCompliance", "AssigneeCompliance", "ComplianceForUnit", "ComplianceList",
 	"ComplianceUnit", "DomainWiseCompliance", "FormName", "LoginTrace", "ReassignCompliance",
 	"ReassignHistory", "StatutoryReassignCompliance", "UnitCompliance", "UnitWiseCompliance",
-	"UnitName", "UserName", "UserWiseCompliance"
+	"UnitName", "UserName", "UserWiseCompliance", "STATUTORY_WISE_NOTIFICATIONS",
 ]
 
 #
@@ -156,7 +156,7 @@ GetStatutoryNotificationsListReport = RecordType("GetStatutoryNotificationsListR
 	Field('legal_entity_id', LEGAL_ENTITY_ID),
 	Field('division_id', DIVISION_ID),
 	Field('unit_id', UNIT_ID),
-	Field('level_1_statutory_id', LEVEL_1_STATUTORY_ID)
+	Field('level_1_statutory_name', LEVEL_1_STATUTORY_NAME)
 ])
 
 
@@ -504,7 +504,9 @@ GetStatutoryNotificationsListFiltersSuccess = RecordType("GetStatutoryNotificati
 	Field("legal_entities", VectorType(LegalEntity)),
 	Field("divisions", VectorType(Division)),
 	Field("units", VectorType(Unit)),
-	Field("level1_statutories", MapType(COUNTRY_ID, DomainStatutoryMap))
+	Field("level1_statutories", MapType(COUNTRY_ID, DomainStatutoryMap)),
+	Field("fromdate", Text20),
+	Field("todate", Text20)
 ])
 
 LEVEL_1_STATUTORY_NOTIFICATIONS = RecordType("LEVEL_1_STATUTORY_NOTIFICATIONS", [
@@ -514,7 +516,7 @@ LEVEL_1_STATUTORY_NOTIFICATIONS = RecordType("LEVEL_1_STATUTORY_NOTIFICATIONS", 
 	Field("date_and_time", TIMESTAMP)
 ])
 
-STATUTORY_PROVISION_NOTIFICATIONS = RecordType("STATUTORY_PROVISION_NOTIFICATIONS", [
+STATUTORY_WISE_NOTIFICATIONS = RecordType("STATUTORY_WISE_NOTIFICATIONS", [
 	Field("business_group_name", BusinessGroupName),
 	Field("legal_entity_name", LegalEntityName),
 	Field("division_name", DivisionName),
@@ -522,7 +524,7 @@ STATUTORY_PROVISION_NOTIFICATIONS = RecordType("STATUTORY_PROVISION_NOTIFICATION
 ])
 
 GetStatutoryNotificationsListReportSuccess = RecordType("GetStatutoryNotificationsListReportSuccess", [
-	Field("notifications", VectorType(STATUTORY_PROVISION_NOTIFICATIONS))
+	Field("notifications", VectorType(STATUTORY_WISE_NOTIFICATIONS))
 ])
 
 #Activity Log

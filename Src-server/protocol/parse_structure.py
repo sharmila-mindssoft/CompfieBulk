@@ -3538,3 +3538,22 @@ def parse_structure_VectorType_RecordType_dashboard_Notification(data):
 def parse_structure_RecordType_dashboard_Notification(data):
     from protocol import dashboard
     return dashboard.Notification.parse_structure(data)
+
+
+def parse_structure_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS(data):
+    from protocol import clientreport
+    return clientreport.STATUTORY_WISE_NOTIFICATIONS.parse_structure(data) 
+
+def parse_structure_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS(item))
+    return lst
+
+def parse_structure_VectorType_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS(item))
+    return lst

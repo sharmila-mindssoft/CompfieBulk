@@ -906,7 +906,7 @@ function initClientMirror() {
     }
 
     function getStatutoryNotificationsListReport(countryName, domainName, businessGroupId, 
-        legalEntityId, divisionId, unitId, level1Id, callback){
+        legalEntityId, divisionId, unitId, level1Id, fromdate, todate, callback){
         callerName = "api/client_reports"
         var request = [
             "GetStatutoryNotificationsListReport",
@@ -917,7 +917,9 @@ function initClientMirror() {
                 "legal_entity_id": legalEntityId,
                 "division_id": divisionId,
                 "unit_id": unitId,
-                "level_1_statutory_id": level1Id
+                "level_1_statutory_name": level1Id,
+                "from_date": fromdate,
+                "to_date": todate
             }
         ];
         clientApiRequest(callerName, request, callback);
