@@ -151,6 +151,7 @@ class Database(object) :
             query += " WHERE %s" % (condition)
         # if client_id is not None:
         #     return self.select_all(query, client_id)
+        print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(
@@ -288,8 +289,6 @@ class Database(object) :
 
     def is_invalid_id(self, table, field, value, client_id=None):
         condition = "%s = '%d'" % (field, value)
-        # if client_id is not None:
-        #     return not self.is_already_exists(table, condition, client_id)
         return not self.is_already_exists(table, condition)
 
     def generate_random(self):

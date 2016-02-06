@@ -567,33 +567,33 @@ _Response_class_map = _init_Response_class_map()
 #
 
 class Notification(object):
-    def __init__(self, notification_id, notification_text, extra_details, has_read, date_and_time):
+    def __init__(self, notification_id, notification_text, link, has_read, date_and_time):
         self.notification_id = notification_id
         self.notification_text = notification_text
-        self.extra_details = extra_details
+        self.link = link
         self.has_read = has_read
         self.date_and_time = date_and_time
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["notification_id", "notification_text", "extra_details", "has_read", "date_and_time"])
+        data = parse_dictionary(data, ["notification_id", "notification_text", "link", "has_read", "date_and_time"])
         notification_id = data.get("notification_id")
         notification_id = parse_structure_UnsignedIntegerType_32(notification_id)
         notification_text = data.get("notification_text")
         notification_text = parse_structure_CustomTextType_500(notification_text)
-        extra_details = data.get("extra_details")
-        extra_details = parse_structure_CustomTextType_500(extra_details)
+        link = data.get("link")
+        link = parse_structure_CustomTextType_500(link)
         has_read = data.get("has_read")
         has_read = parse_structure_Bool(has_read)
         date_and_time = data.get("date_and_time")
         date_and_time = parse_structure_CustomTextType_20(date_and_time)
-        return Notification(notification_id, notification_text, extra_details, has_read, date_and_time)
+        return Notification(notification_id, notification_text, link, has_read, date_and_time)
 
     def to_structure(self):
         return {
             "notification_id": to_structure_SignedIntegerType_8(self.notification_id),
             "notification_text": to_structure_CustomTextType_500(self.notification_text),
-            "extra_details": to_structure_CustomTextType_500(self.extra_details),
+            "link": to_structure_CustomTextType_500(self.link),
             "has_read": to_structure_Bool(self.has_read),
             "date_and_time": to_structure_CustomTextType_20(self.date_and_time),
         }

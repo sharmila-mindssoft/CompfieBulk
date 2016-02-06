@@ -57,6 +57,11 @@ CLIENT_TEMPLATE_PATHS = [
         "files/desktop/client/reminders/reminders.html",
         None, {}
     ),
+    (
+        "/escalations",
+        "files/desktop/client/escalations/escalations.html",
+        None, {}
+    ),
     # reports
     (
         "/compliance",

@@ -1,4 +1,5 @@
 
+var remindersList;
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
@@ -11,26 +12,91 @@ function displayMessage(message) {
 function loadReminders(reminders){
     $("#reminderList").empty();
     var str='';
-  for(var reminder in reminders){
-    var readStatus = '';
-    var notificationId = 0;
-    if( readStatus = 'unread'){
-      readStatus = 'unread';
-    }
-    str += '<li class="'+readStatus+'" onclick="changeStatus('+notificationId+')">'+readStatus+"<span>"+readStatus+"</span> </li>"
+    for(var reminder in reminders){
+      var readStatus = 'unread';
+      var notificationId = reminders[reminder]["notification_id"];
+      var notificationText = reminders[reminder]["notification_text"];
+
+      var assignee = reminders[reminder]["assignee"];
+      var assigneesplit = assignee.split(',');
+
+      if(reminders[reminder]["read_status"]){
+        readStatus = '';
+      }
+
+      str += '<a href="#popup1" style="text-decoration: none;"> <li class="'+readStatus+'" onclick="changeStatus('+notificationId+','+reminders[reminder]["read_status"]+')">'+notificationText+"<span style='font-weight:bold'>"+assigneesplit[0]+"</span> </li></a>"
     }
    $('#reminderList').append(str);      
 }
 
-function changeStatus(notification_id){
+function changeStatus(notification_id, read_status){
 
+  $("#popup1").show();
+  var nId;
+  var act;
+  var unit;
+  var compliance;
+  var duedate;
+  var delayedby;
+  var assignee;
+  var concurrence;
+  var approval;
+  var reminders = remindersList;
+  for(var i in reminders){
+    nId = reminders[i]["notification_id"];
+    if(nId == notification_id){
+      act = reminders[i]["level_1_statutory"];
+      unit = reminders[i]["unit_name"];
+      unitaddress = reminders[i]["unit_address"];
+      compliance = reminders[i]["compliance_name"];
+      duedate = reminders[i]["due_date"];
+      delayedby = reminders[i]["delayed_days"];
+      assignee = reminders[i]["assignee"];
+      concurrence = reminders[i]["concurrence_person"];
+      approval = reminders[i]["approval_person"];
+      break;
+    }
+  }
+
+  var assigneeName;
+  var assigneeDetails;
+  var concurrenceName;
+  var concurrenceDetails;
+  var assigneeName;
+  var assigneeDetails;
+
+  if(assignee != ''){
+    assigneeName = assignee.split(',')[0];
+    assigneeDetails = assignee.substring(assignee.indexOf(",")+1).trim();
+  }
+
+  if(concurrence != ''){
+    concurrenceName = concurrence.split(',')[0];
+    concurrenceDetails = concurrence.substring(concurrence.indexOf(",")+1).trim();
+  }
+
+  if(approval != ''){
+    approvalName = approval.split(',')[0];
+    approvalDetails = approval.substring(approval.indexOf(",")+1).trim();
+  }
+ 
+  $(".popup_act").text(act);
+  $(".popup_unit").html('<abbr class="page-load tipso_style" title="'+ unitaddress +'"></abbr>'+unit);
+  $(".popup_compliance").text(compliance);
+  $(".popup_duedate").text(duedate);
+  $(".popup_delayedby").text(delayedby);
+  $(".popup_assignee").html(assigneeName +'<br>'+ assigneeDetails);
+  $(".popup_concurrence").html(concurrenceName +'<br>'+ concurrenceDetails);
+  $(".popup_approval").html(approvalName +'<br>'+ approvalDetails);
+  
+  if(read_status == false){
     function onSuccess(response){
         
-      }
+    }
     function onFailure(error) {
         displayMessage = error
     }
-    client_mirror.updateNotificationStatus(parseInt(notification_id), "read",
+    client_mirror.updateNotificationStatus(parseInt(notification_id), true,
         function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -39,14 +105,15 @@ function changeStatus(notification_id){
             onFailure(error);
           }
       });
+  }
 }
 
 
 function initialize(){
 
   function onSuccess(data){
-    var reminders = data['profile_detail'];
-    loadReminders(reminders)
+    remindersList = data['notifications'];
+    loadReminders(remindersList)
   }
   function onFailure(error){
         console.log(error);
