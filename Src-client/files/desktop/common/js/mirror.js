@@ -515,7 +515,7 @@ function initMirror() {
         statutoryProvision, complianceTask,
         description, documentName, fileFormat, penalConsequence,
         complianceFrequency, statutoryDates, repeatsTypeId, repeatsEvery,
-        durationTypeId, duration, isActive, complianceId
+        durationTypeId, duration, isActive, downloadFileList, complianceId
     ) {
         var compliance = {};
         compliance["statutory_provision"] = statutoryProvision;
@@ -531,6 +531,7 @@ function initMirror() {
         compliance["duration_type_id"] = durationTypeId;
         compliance["duration"] = duration;
         compliance["is_active"] = isActive;
+        compliance["download_file_list"] = downloadFileList;
         if ((complianceId !== null) && (complianceId !== '')) {
             compliance["compliance_id"] = complianceId;
         }
