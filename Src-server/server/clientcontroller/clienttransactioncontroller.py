@@ -31,9 +31,11 @@ def process_client_transaction_requests(request, db) :
             db, request, session_user, client_id
         )
     elif type(request) is clienttransactions.GetUserwiseCompliances :
-        pass
+        return process_get_user_wise_compliances(
+            db, session_user, client_id
+        )
     elif type(request) is clienttransactions.ReassignCompliance :
-        pass
+        return process_reassign_compliance(db, session_user)
     elif type(request) is clienttransactions.GetPastRecordsFormData :
         return process_get_past_records_form_data(
             db, request, session_user, client_id
@@ -162,4 +164,27 @@ def process_get_user_wise_compliances(db, session_user, client_id):
     users = db.get_users_for_seating_units(
         session_user, client_id
     )
-    return None
+    result = db.get_user_wise_compliance(session_user, client_id)
+    assignee_wise_compliance = result[0]
+    assignee_compliance_count = result[1]
+    final_dict = {}
+
+    for key, value in assignee_wise_compliance.iteritems():
+        unit_list = []
+        for k, v in value.iteritems():
+            unit_list.append(v)
+        no_of_compliance = assignee_compliance_count[key]
+        user_data = clienttransactions.USER_WISE_COMPLIANCE(
+            no_of_compliance,
+            unit_list
+        )
+        final_dict[key] = [user_data]
+
+    result = clienttransactions.GetUserwiseCompliancesSuccess(
+        final_dict, users
+    )
+
+    return result
+
+def process_reassign_compliance(db, request, session_user):
+    return db.reassign_compliance(request, session_user)
