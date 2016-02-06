@@ -4393,3 +4393,123 @@ class ClientDatabase(Database):
             history_columns, history_values,
             history_condition
         )
+
+    # Reassigned History Report
+    def get_reassigned_history_report(self, country_id, domain_id, level_1_statutory_id, 
+        unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user ) :
+        
+        if unit_id is None :
+            unit_ids = self.get_user_unit_ids(session_user, client_id)
+        else :
+            unit_ids = unit_id
+
+        if from_date is None :
+            query = "SELECT period_from, period_to FROM tbl_client_configurations where country_id = %s AND domain_id = %s " % (country_id, domain_id)
+            daterow = self.select_all(query, client_id)
+
+            period_from = daterow[0][0]
+            period_to = daterow[0][1]
+
+            current_year = datetime.date.today().year
+
+            if period_from == 1 :
+                year_from = current_year
+                year_to = current_year
+            else :
+                current_month = datetime.date.today().month
+                if current_month < period_from :
+                    year_from = datetime.date.today().year - 1
+                    year_to = datetime.date.today().year
+                else :
+                    year_from = datetime.date.today().year
+                    year_to = datetime.date.today().year + 1
+
+            start_date = self.string_to_datetime('01-'+self.string_months[period_from]+'-'+ str(year_from))
+            end_date = self.string_to_datetime('31-'+self.string_months[period_to]+'-'+ str(year_to))
+
+        else :
+            start_date = self.string_to_datetime(from_date)
+            end_date = self.string_to_datetime(to_date)
+
+
+
+        query = "SELECT (case when (LEFT(statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') \
+            THEN \
+            statutory_mapping \
+            ELSE \
+            LEFT (statutory_mapping,INSTR(statutory_mapping,'>>')-1) \
+            END ) as statutory \
+            FROM tbl_compliances GROUP BY statutory"
+
+
+        statutory_rows = self.select_all(query, client_id)
+
+        level_1_statutory_wise_units = []
+
+        for srow in statutory_rows:
+            statutoru_name = srow[0]
+            unit_columns = "unit_id, unit_code, unit_name, address"
+            detail_condition = "country_id = '%d' and unit_id in (%s) "% (country_id, unit_ids)
+            unit_rows = self.get_data(self.tblUnits, unit_columns, detail_condition)
+
+            unit_wise_compliances = []
+            for unit in unit_rows:
+                unit_id = unit[0]
+                unit_name = "%s - %s "% (unit[1], unit[2])
+                unit_address = unit[3]
+
+                query = "SELECT rc.compliance_id, c.compliance_task, ch.due_date \
+                        from tbl_compliances c,tbl_compliance_history ch, tbl_reassigned_compliances_history rc, \
+                        tbl_units ut where \
+                        ch.unit_id = %s \
+                        AND ut.country_id = %s and ut.domain_ids like '%s' \
+                        AND c.compliance_id = ch.compliance_id \
+                        AND ch.completed_by like '%s'  AND c.statutory_mapping like '%s'  AND c.compliance_id like '%s' and rc.reassigned_date BETWEEN '%s' AND '%s' GROUP BY rc.compliance_id" % (
+                        unit_id, country_id, domain_id,
+                        user_id, str(level_1_statutory_id+"%"), compliance_id, start_date, end_date
+                    )
+                print query
+                compliance_rows = self.select_all(query, client_id)
+
+                compliances_list = []
+                for compliance in compliance_rows:
+
+                    compliance_id = compliance[0]
+                    compliance_name = compliance[1]
+                    due_date = self.datetime_to_string(compliance[2])
+
+                    query = "SELECT (SELECT concat(u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = rh.assignee) AS assigneename, \
+                            (SELECT concat(u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = rh.reassigned_from) AS reassignfrom, \
+                            rh.reassigned_date, rh.remarks \
+                            from tbl_reassigned_compliances_history rh where \
+                            rh.unit_id = %s \
+                            AND rh.complianceid = %s AND rh.reassigned_date BETWEEN %s AND %s \
+                            ORDER BY rh.reassigned_date DESC" % (
+                            unit_id, compliance_id,
+                            start_date, end_date
+                    )
+                    history_rows = self.select_all(query, client_id)
+                    history_list = []
+                    for h_row in history_rows:
+                        assignee = h_row[0]
+                        reassignedfrom = h_row[1]
+                        reassigned_date = h_row[2]
+                        remarks = h_row[3]
+
+                        history_list.append()
+                        ReassignHistory
+                        compliance = clientreport.ReassignHistory(
+                        assignee, reassignedfrom, reassigned_date, remarks
+                        )
+                        history_list.append(compliance)
+
+
+                    compliance = clientreport.ReassignUnitCompliance(
+                        unit_name, compliances_list
+                    )
+                    unit_wise_compliances.append(compliance)
+
+
+            unitwise = clientreport.StatutoryReassignCompliance(statutoru_name, unit_wise_compliances)
+            level_1_statutory_wise_units.append(unitwise)
+        return level_1_statutory_wise_units
