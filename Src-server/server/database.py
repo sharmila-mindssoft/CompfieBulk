@@ -309,20 +309,24 @@ class Database(object) :
         return m.hexdigest()
 
     def string_to_datetime(self, string):
-        date = string.split("-")
-        datetime_val = datetime.datetime(
-            year=int(date[2]),
-            month=self.integer_months[date[1]],
-            day=int(date[0])
-        )
-        return datetime_val.date()
+        # date = string.split("-")
+        # datetime_val = datetime.datetime(
+        #     year=int(date[2]),
+        #     month=self.integer_months[date[1]],
+        #     day=int(date[0])
+        # )
+        # return datetime_val.date()
+        string_in_date = datetime.datetime.strptime(string, "%d-%b-%Y")
+        return string_in_date
 
     def datetime_to_string(self, datetime_val):
-        return "%d-%s-%d" % (
-            datetime_val.day,
-            self.string_months[datetime_val.month],
-            datetime_val.year
-        )
+        # return "%d-%s-%d" % (
+        #     datetime_val.day,
+        #     self.string_months[datetime_val.month],
+        #     datetime_val.year
+        # )
+        date_in_string = datetime_val.strftime("%d-%b-%Y")
+        return date_in_string
 
     def get_client_db_info(self):
         columns = "database_ip, client_id, "
