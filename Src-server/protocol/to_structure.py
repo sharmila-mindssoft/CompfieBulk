@@ -1581,11 +1581,11 @@ def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Co
 
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_CustomTextType_50(key)
         value = to_structure_VectorType_RecordType_clientreport_Level1Statutory(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_RecordType_dashboard_Response_GetEscalationsDrillDownDataSuccess(data):
@@ -3616,3 +3616,16 @@ def to_structure_VectorType_RecordType_clientreport_Level1Compliance(data):
 def to_structure_RecordType_clientreport_Level1Compliance(data):
     from protocol import clientreport
     return clientreport.Level1Compliance.to_structure(data)
+
+# Client Notification
+
+def to_structure_VectorType_RecordType_dashboard_Notification(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_dashboard_Notification(item))
+    return lst
+
+def to_structure_RecordType_dashboard_Notification(data):
+    from protocol import dashboard
+    return dashboard.Notification.to_structure(data)

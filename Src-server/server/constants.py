@@ -43,8 +43,23 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/settings",
+        "files/desktop/client/settings/settings.html",
+        None, {}
+    ),
+    (
         "/unit-closure",
         "files/desktop/client/unit-closure/unitclosure.html",
+        None, {}
+    ),
+    (
+        "/reminders",
+        "files/desktop/client/reminders/reminders.html",
+        None, {}
+    ),
+    (
+        "/escalations",
+        "files/desktop/client/escalations/escalations.html",
         None, {}
     ),
     # reports

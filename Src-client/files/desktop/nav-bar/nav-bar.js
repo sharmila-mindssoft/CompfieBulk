@@ -110,6 +110,7 @@ function initializeNavBar () {
 
 	$("ul", settingsMenuObject).append(item);
 	$("#cssmenu .menu-ul").append(settingsMenuObject);
+
 }
 
 $(document).ready(function () {
