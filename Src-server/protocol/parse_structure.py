@@ -1807,7 +1807,7 @@ def parse_structure_VectorType_RecordType_core_AssignedStatutory(data):
     return lst
 
 def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_AssignedStatutory(data):
-    data = parse_dictionary(data)    
+    data = parse_dictionary(data)
     d = {}
     for key, value in data:
         key = parse_structure_SignedIntegerType_8(key)
@@ -1839,7 +1839,7 @@ def parse_structure_VectorType_RecordType_core_StatutoryDate(data):
 
 def parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(data):
     if data is None : return None
-    return parse_structure_VectorType_RecordType_core_StatutoryDate(data)    
+    return parse_structure_VectorType_RecordType_core_StatutoryDate(data)
 
 def parse_structure_RecordType_core_FileList(data):
     from protocol import core
@@ -1850,7 +1850,7 @@ def parse_structure_VectorType_RecordType_core_FileLst(data):
     lst = []
     for item in data :
         lst.append(parse_structure_RecordType_core_FileList(item))
-    return lst        
+    return lst
 
 def parse_structure_OptionalType_VectorType_RecordType_core_FileList(data):
     if data is None: return None
@@ -1963,6 +1963,15 @@ def parse_structure_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANC
     for item in data:
         lst.append(parse_structure_RecordType_clienttransactions_USER_WISE_COMPLIANCE(item))
     return lst
+
+def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.iteritems() :
+        key = parse_structure_SignedIntegerType_8(key)
+        value = parse_structure_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(value)
+        dict[key] = value
+    return dict
 
 def parse_structure_RecordType_knowledgemaster_Request_UpdateStatutoryNature(data):
     from protocol import knowledgemaster
@@ -2983,16 +2992,27 @@ def parse_structure_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(data):
     from protocol import clienttransactions
     return clienttransactions.STATUTORYWISECOMPLIANCE.parse_structure(data)
 
-def parse_structure_VariantType_technoreports_Response(data):
-    from protocol import technoreports
-    return technoreports.Response.parse_structure(data)
-
 def parse_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
-        lst.append(parse_structure_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(item))
+        d = parse_structure_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(item)
+        lst.append(d)
     return lst
+
+def parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.iteritems() :
+        key = parse_structure_CustomTextType_100(key)
+        value = parse_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(value)
+        dict[key] = value
+    return dict
+
+def parse_structure_VariantType_technoreports_Response(data):
+    from protocol import technoreports
+    return technoreports.Response.parse_structure(data)
+
 
 def parse_structure_RecordType_clientmasters_Request_UpdateUserPrivileges(data):
     from protocol import clientmasters
@@ -3261,7 +3281,7 @@ def parse_structure_VectorType_RecordType_clienttransactions_AssignedStatutory(d
     return lst
 
 def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_AssignedStatutory(data):
-    data = parse_dictionary(data)    
+    data = parse_dictionary(data)
     d = {}
     for key, value in data:
         key = parse_structure_SignedIntegerType_8(key)
@@ -3275,7 +3295,7 @@ def parse_structure_RecordType_clienttransactions_UnitStatutoryCompliances(data)
     return clienttransactions.UnitStatutoryCompliances.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clienttransactions_UnitStatutoryCompliances(data):
-    data = parse_list(data, 0)    
+    data = parse_list(data, 0)
     lst = []
     for item in data :
         lst.append(parse_structure_RecordType_clienttransactions_UnitStatutoryCompliances(item))
@@ -3513,7 +3533,7 @@ def parse_structure_VectorType_RecordType_clientreport_RiskData(data):
 
 def parse_structure_RecordType_clientreport_RiskData(data):
     from protocol import clientreport
-    return clientreport.RiskData.parse_structure(data)    
+    return clientreport.RiskData.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_Level1Compliance(data):
     data = parse_list(data, 0)

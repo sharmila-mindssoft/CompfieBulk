@@ -2047,6 +2047,15 @@ def to_structure_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(d
         lst.append(to_structure_RecordType_clienttransactions_USER_WISE_COMPLIANCE(item))
     return lst
 
+def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.iteritems() :
+        key = to_structure_SignedIntegerType_8(key)
+        value = to_structure_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(value)
+        dict[key] = value
+    return dict
+
 def to_structure_RecordType_knowledgemaster_Request_UpdateStatutoryNature(data):
     from protocol import knowledgemaster
     return knowledgemaster.Request.to_structure(data)
@@ -3083,8 +3092,19 @@ def to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANC
     data = parse_list(data, 0)
     lst = []
     for item in data:
-        lst.append(to_structure_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(item))
+        d = to_structure_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(item)
+        lst.append(d)
     return lst
+
+def to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.iteritems() :
+        key = to_structure_CustomTextType_100(key)
+        value = to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(value)
+        dict[key] = value
+    return dict
+
 
 def to_structure_RecordType_clientmasters_Request_UpdateUserPrivileges(data):
     from protocol import clientmasters
@@ -3313,7 +3333,7 @@ def to_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping(data)
     data = parse_list(data, 0)
     lst = []
     for item in data:
-        lst.append(parse_structure_RecordType_knowledgetransaction_ApproveMapping(item))
+        lst.append(to_structure_RecordType_knowledgetransaction_ApproveMapping(item))
     return lst
 
 def to_structure_MapType_UnsignedIntegerType_32_Bool(data):
