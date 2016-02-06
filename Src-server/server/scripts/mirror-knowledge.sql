@@ -282,7 +282,7 @@ CREATE TABLE `tbl_compliances` (
   `compliance_task` varchar(100) NOT NULL,
   `compliance_description` longtext,
   `document_name` varchar(100) DEFAULT NULL,
-  `format_file` varchar(100) DEFAULT NULL,
+  `format_file` longtext,
   `format_file_size` float DEFAULT NULL,
   `penal_consequences` longtext,
   `statutory_dates` longtext,
@@ -411,7 +411,7 @@ CREATE TABLE `tbl_business_groups` (
   `updated_by` int(11) NOT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`business_group_id`),
-  CONSTRAINT `fk_tbl_cg_bg` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)  
+  CONSTRAINT `fk_tbl_cg_bg` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_legal_entities`;
@@ -426,7 +426,7 @@ CREATE TABLE `tbl_legal_entities` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`legal_entity_id`),
   CONSTRAINT `fk_legal_entities_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
-  CONSTRAINT `fk_tbl_cg_le` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)  
+  CONSTRAINT `fk_tbl_cg_le` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -444,7 +444,7 @@ CREATE TABLE `tbl_divisions` (
   PRIMARY KEY (`division_id`),
   CONSTRAINT `fk_divisions_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`),
   CONSTRAINT `fk_divisions_legal_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
-  CONSTRAINT `fk_tbl_cg_div` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)  
+  CONSTRAINT `fk_tbl_cg_div` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_units`;
@@ -490,7 +490,7 @@ CREATE TABLE `tbl_client_users` (
   `created_on` timestamp NULL DEFAULT NULL,
   `is_admin` tinyint(1) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
-  CONSTRAINT `fk_tbl_client_users_cg` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)  
+  CONSTRAINT `fk_tbl_client_users_cg` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

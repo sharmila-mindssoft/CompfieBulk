@@ -6,6 +6,7 @@ parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_VectorType_RecordType_clientreport_LoginTrace,
     parse_structure_VectorType_RecordType_clientreport_ReassignHistory,
     parse_structure_VectorType_RecordType_clientreport_ReassignCompliance,
+    parse_structure_VectorType_RecordType_clientreport_ReassignUnitCompliance,
     parse_structure_UnsignedIntegerType_32,
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_clientreport_DomainWiseCompliance,
@@ -75,6 +76,7 @@ to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     to_structure_VectorType_RecordType_clientreport_LoginTrace,
     to_structure_VectorType_RecordType_clientreport_ReassignHistory,
     to_structure_VectorType_RecordType_clientreport_ReassignCompliance,
+    to_structure_VectorType_RecordType_clientreport_ReassignUnitCompliance,
     to_structure_SignedIntegerType_8,
     to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     to_structure_VectorType_RecordType_clientreport_DomainWiseCompliance,
@@ -606,17 +608,19 @@ class GetReassignedHistoryReportFilters(Request):
         }
 
 class GetReassignedHistoryReport(Request):
-    def __init__(self, country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id):
+    def __init__(self, country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id, from_date, to_date):
         self.country_id = country_id
         self.domain_id = domain_id
         self.unit_id = unit_id
         self.level_1_statutory_id = level_1_statutory_id
         self.compliance_id = compliance_id
         self.user_id = user_id
+        self.from_date = from_date
+        self.to_date = to_date
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "unit_id", "level_1_statutory_id", "compliance_id", "user_id"])
+        data = parse_dictionary(data, ["country_id", "domain_id", "unit_id", "level_1_statutory_id", "compliance_id", "user_id", "from_date", "to_date"])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
@@ -624,21 +628,27 @@ class GetReassignedHistoryReport(Request):
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         level_1_statutory_id = data.get("level_1_statutory_id")
-        level_1_statutory_id = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_id)
+        level_1_statutory_id = parse_structure_OptionalType_CustomTextType_100(level_1_statutory_id)
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_OptionalType_SignedIntegerType_8(compliance_id)
         user_id = data.get("user_id")
         user_id = parse_structure_OptionalType_SignedIntegerType_8(user_id)
-        return GetReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id)
+        from_date = data.get("from_date")
+        from_date = parse_structure_OptionalType_CustomTextType_20(from_date)
+        to_date = data.get("to_date")
+        to_date = parse_structure_OptionalType_CustomTextType_20(to_date)
+        return GetReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id, from_date, to_date)
 
     def to_inner_structure(self):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
-            "level_1_statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_id),
+            "level_1_statutory_id": to_structure_OptionalType_CustomTextType_100(self.level_1_statutory_id),
             "compliance_id": to_structure_OptionalType_SignedIntegerType_8(self.compliance_id),
             "user_id": to_structure_OptionalType_SignedIntegerType_8(self.user_id),
+            "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
+            "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date),
         }
 
 class GetStatutoryNotificationsListFilters(Request):
@@ -1243,23 +1253,24 @@ class GetReassignedHistoryReportFiltersSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_clientreport_UnitName(units)
+        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
         level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_MapType_SignedIntegerType_8_VectorType_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level_1_statutories)
+        level_1_statutories = parse_structure_VectorType_RecordType_core_ClientLevelOneStatutory(level_1_statutories)
         compliances = data.get("compliances")
-        compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
+        compliances = parse_structure_VectorType_RecordType_core_ComplianceFilter(compliances)
         users = data.get("users")
-        users = parse_structure_VectorType_RecordType_clientreport_UserName(users)
+        users = parse_structure_VectorType_RecordType_clientreport_User(users)
+
         return GetReassignedHistoryReportFiltersSuccess(countries, domains, units, level_1_statutories, compliances, users)
 
     def to_inner_structure(self):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "units": to_structure_VectorType_RecordType_clientreport_UnitName(self.units),
-            "level_1_statutories": to_structure_MapType_SignedIntegerType_8_VectorType_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level_1_statutories),
-            "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
-            "users": to_structure_VectorType_RecordType_clientreport_UserName(self.users),
+            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
+            "level_1_statutories": to_structure_VectorType_RecordType_core_ClientLevelOneStatutory(self.level_1_statutories),
+            "compliances": to_structure_VectorType_RecordType_core_ComplianceFilter(self.compliances),
+            "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
         }
 
 class GetReassignedHistoryReportSuccess(Response):
@@ -2020,40 +2031,29 @@ class LoginTrace(object):
         }
 
 #
-# ReassignCompliance
+# ReassignUnitCompliance
 #
-
-class ReassignCompliance(object):
-    def __init__(self, unit_name, compliance_name, due_date, assignee, reassign_history):
+class ReassignUnitCompliance(object):
+    def __init__(self, unit_name, reassign_compliances):
         self.unit_name = unit_name
-        self.compliance_name = compliance_name
-        self.due_date = due_date
-        self.assignee = assignee
-        self.reassign_history = reassign_history
+        self.reassign_compliances = reassign_compliances
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_name", "compliance_name", "due_date", "assignee", "reassign_history"])
+        data = parse_dictionary(data, ["unit_name", "reassign_compliances"])
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_100(unit_name)
-        compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_100(compliance_name)
-        due_date = data.get("due_date")
-        due_date = parse_structure_CustomTextType_20(due_date)
-        assignee = data.get("assignee")
-        assignee = parse_structure_CustomTextType_100(assignee)
-        reassign_history = data.get("reassign_history")
-        reassign_history = parse_structure_VectorType_RecordType_clientreport_ReassignHistory(reassign_history)
-        return ReassignCompliance(unit_name, compliance_name, due_date, assignee, reassign_history)
+        
+        reassign_compliances = data.get("reassign_compliances")
+        reassign_compliances = parse_structure_VectorType_RecordType_clientreport_ReassignCompliance(reassign_history)
+        return ReassignCompliance(unit_name, reassign_compliances)
 
     def to_structure(self):
         return {
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
-            "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
-            "due_date": to_structure_CustomTextType_20(self.due_date),
-            "assignee": to_structure_CustomTextType_100(self.assignee),
-            "reassign_history": to_structure_VectorType_RecordType_clientreport_ReassignHistory(self.reassign_history),
+            "reassign_compliances": to_structure_VectorType_RecordType_clientreport_ReassignCompliance(self.reassign_history),
         }
+
 
 #
 # ReassignHistory
@@ -2087,30 +2087,57 @@ class ReassignHistory(object):
             "reassign_reason": to_structure_CustomTextType_500(self.reassign_reason),
         }
 
+
+#
+# ReassignCompliance
+#
+
+class ReassignCompliance(object):
+    def __init__(self, compliance_name, due_date, reassign_history):
+        self.compliance_name = compliance_name
+        self.due_date = due_date
+        self.reassign_history = reassign_history
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["compliance_name", "due_date", "assignee", "reassign_history"])
+        
+        compliance_name = data.get("compliance_name")
+        compliance_name = parse_structure_CustomTextType_100(compliance_name)
+        due_date = data.get("due_date")
+        due_date = parse_structure_CustomTextType_20(due_date)
+        reassign_history = data.get("reassign_history")
+        reassign_history = parse_structure_VectorType_RecordType_clientreport_ReassignHistory(reassign_history)
+        return ReassignCompliance(compliance_name, due_date, reassign_history)
+
+    def to_structure(self):
+        return {
+            "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
+            "due_date": to_structure_CustomTextType_20(self.due_date),
+            "reassign_history": to_structure_VectorType_RecordType_clientreport_ReassignHistory(self.reassign_history),
+        }
+
+
 #
 # StatutoryReassignCompliance
 #
 
 class StatutoryReassignCompliance(object):
-    def __init__(self, level_1_statutory_id, level_1_statutory_name, compliance):
-        self.level_1_statutory_id = level_1_statutory_id
+    def __init__(self, level_1_statutory_name, compliance):
         self.level_1_statutory_name = level_1_statutory_name
         self.compliance = compliance
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["level_1_statutory_id", "level_1_statutory_name", "compliance"])
-        level_1_statutory_id = data.get("level_1_statutory_id")
-        level_1_statutory_id = parse_structure_UnsignedIntegerType_32(level_1_statutory_id)
+        data = parse_dictionary(data, ["level_1_statutory_name", "compliance"])
         level_1_statutory_name = data.get("level_1_statutory_name")
         level_1_statutory_name = parse_structure_CustomTextType_50(level_1_statutory_name)
         compliance = data.get("compliance")
-        compliance = parse_structure_VectorType_RecordType_clientreport_ReassignCompliance(compliance)
-        return StatutoryReassignCompliance(level_1_statutory_id, level_1_statutory_name, compliance)
+        compliance = parse_structure_VectorType_RecordType_clientreport_ReassignUnitCompliance(compliance)
+        return StatutoryReassignCompliance(level_1_statutory_name, compliance)
 
     def to_structure(self):
         return {
-            "level_1_statutory_id": to_structure_SignedIntegerType_8(self.level_1_statutory_id),
             "level_1_statutory_name": to_structure_CustomTextType_50(self.level_1_statutory_name),
             "compliance": to_structure_VectorType_RecordType_clientreport_ReassignCompliance(self.compliance),
         }

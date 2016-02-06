@@ -1,4 +1,4 @@
-from protocol import login, core, knowledgereport
+from protocol import login, knowledgereport
 from generalcontroller import validate_user_session
 
 __all__ = [
@@ -29,7 +29,7 @@ def process_get_statutory_mapping_filters(db, request_frame, user_id):
     geographies = db.get_geographies()
     level_1_statutories = db.get_country_wise_level_1_statutoy()
     compliance_frequency = db.get_compliance_frequency()
-    return knowledgereport.GetStatutoryMappingReportFiltersSuccess (
+    return knowledgereport.GetStatutoryMappingReportFiltersSuccess(
         countries, domains, industries, statutory_nature,
         geographies, level_1_statutories, compliance_frequency
     )
@@ -49,7 +49,7 @@ def process_get_statutory_mapping_report_data(db, request_frame, user_id):
         geography_id = '%'
 
     report_data = db.get_statutory_mapping_report(
-        country_id, domain_id, industry_id, 
+        country_id, domain_id, industry_id,
         nature_id, geography_id, user_id
     )
     statutory_mappings = {}
@@ -62,8 +62,6 @@ def process_get_statutory_mapping_report_data(db, request_frame, user_id):
         country_id, domain_id, statutory_mappings
     )
 
-
-
 def process_get_geography_report(db, request_frame, user_id):
     countries = db.get_countries_for_user(user_id)
     geography_data = db.get_geography_report()
@@ -71,7 +69,3 @@ def process_get_geography_report(db, request_frame, user_id):
     return knowledgereport.GetGeographyReportSuccess(
         countries, geography_data
     )
-
-
-
-

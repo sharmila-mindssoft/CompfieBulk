@@ -1,7 +1,6 @@
-import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
-parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
+    parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     parse_structure_VariantType_knowledgetransaction_Request,
     parse_structure_VectorType_RecordType_core_Compliance,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
@@ -23,11 +22,11 @@ parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorTy
     parse_structure_CustomTextType_50,
     parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping,
     parse_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping,
-parse_structure_SignedIntegerType_8
-    
+    parse_structure_SignedIntegerType_8
+
 )
 from protocol.to_structure import (
-to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
+    to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     to_structure_VariantType_knowledgetransaction_Request,
     to_structure_VectorType_RecordType_core_Compliance,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
@@ -92,7 +91,11 @@ class GetStatutoryMappings(Request):
         }
 
 class SaveStatutoryMapping(Request):
-    def __init__(self, country_id, domain_id, industry_ids, statutory_nature_id, statutory_ids, compliances, geography_ids):
+    def __init__(
+        self, country_id, domain_id, industry_ids,
+        statutory_nature_id, statutory_ids,
+        compliances, geography_ids
+    ):
         self.country_id = country_id
         self.domain_id = domain_id
         self.industry_ids = industry_ids
@@ -103,7 +106,11 @@ class SaveStatutoryMapping(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "industry_ids", "statutory_nature_id", "statutory_ids", "compliances", "geography_ids"])
+        data = parse_dictionary(data, [
+            "country_id", "domain_id", "industry_ids",
+            "statutory_nature_id", "statutory_ids",
+            "compliances", "geography_ids"
+        ])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
@@ -118,7 +125,11 @@ class SaveStatutoryMapping(Request):
         compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
         geography_ids = data.get("geography_ids")
         geography_ids = parse_structure_VectorType_SignedIntegerType_8(geography_ids)
-        return SaveStatutoryMapping(country_id, domain_id, industry_ids, statutory_nature_id, statutory_ids, compliances, geography_ids)
+        return SaveStatutoryMapping(
+            country_id, domain_id, industry_ids,
+            statutory_nature_id, statutory_ids,
+            compliances, geography_ids
+        )
 
     def to_inner_structure(self):
         return {
@@ -434,4 +445,3 @@ class RequestFormat(object):
             "session_token": to_structure_CustomTextType_50(self.session_token),
             "request": to_structure_VariantType_knowledgetransaction_Request(self.request),
         }
-

@@ -186,6 +186,16 @@ def run_web_front_end(port, knowledge_server_address):
             OPTIONS=cors_handler
         )
 
+        server_path = os.path.join(ROOT_PATH, "Src-server")
+        server_path = os.path.join(server_path, "server")
+        format_path = os.path.join(server_path, "knowledgeformat")
+
+        web_server.low_level_url(
+            r"/client/compliance_format/(.*)",
+            StaticFileHandler,
+            dict(path=format_path)
+        )
+
         static_path = os.path.join(ROOT_PATH, "Src-client")
         files_path = os.path.join(static_path, "files")
         desktop_path = os.path.join(files_path, "desktop")
