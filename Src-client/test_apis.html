@@ -496,6 +496,21 @@
 		        	documents, completion_date, validity_date, next_due_date, 
 		        	remarks, callback);
 			}
+			function getReassignedHistoryReportFilters(){
+				client_mirror.getReassignedHistoryReportFilters(callback)
+			}
+			function getReassignedHistoryReport(){
+				country_id = 1
+				domain_id =1
+				level_1_statutory_id =null
+				unit_id =null
+				compliance_id = null
+				user_id = 2
+				from_date = null
+				to_date = null
+
+				client_mirror.getReassignedHistoryReport(country_id, domain_id,level_1_statutory_id,unit_id, compliance_id, user_id,from_date, to_date, callback)
+			}
 		</script>
 	</head>
 	<body>
@@ -741,6 +756,16 @@
 				Update Compliance Detail
 			</button>
 		</div>
+
+		<div>
+			<button onclick="getReassignedHistoryReportFilters()">
+				Get Resigned History Filters Detail
+			</button>
+			<button onclick="getReassignedHistoryReport()">
+				Get Resigned History Detail
+			</button>
+		</div>
+
 		<br>
 		<br>
 	</body>

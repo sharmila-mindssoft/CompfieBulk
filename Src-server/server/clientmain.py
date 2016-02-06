@@ -166,6 +166,7 @@ class API(object):
             return
 
         db, request_data, company_id = request_data
+        print request_data
 
         def respond(response_data):
             self._send_response(

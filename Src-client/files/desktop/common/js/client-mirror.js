@@ -895,6 +895,34 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+
+    /* Reassigned History Report */
+    function getReassignedHistoryReportFilters(callback) {
+        var request = [
+            "GetReassignedHistoryReportFilters", {}
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id, from_date, to_date, callback) {
+        var request = [
+            "GetReassignedHistoryReport", {
+
+                "country_id": country_id,
+                "domain_id": domain_id,
+                "unit_id": unit_id,
+                "level_1_statutory_id": level_1_statutory_id,
+                "compliance_id": compliance_id,
+                "user_id": user_id,
+                "from_date" : from_date,
+                "to_date" : to_date
+            }
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -990,6 +1018,10 @@ function initClientMirror() {
 
         getRiskReportFilters: getRiskReportFilters,
         getRiskReport: getRiskReport,
+
+        getReassignedHistoryReportFilters: getReassignedHistoryReportFilters,
+        getReassignedHistoryReport: getReassignedHistoryReport,
+
         updateComplianceDetail: updateComplianceDetail
     }
 }

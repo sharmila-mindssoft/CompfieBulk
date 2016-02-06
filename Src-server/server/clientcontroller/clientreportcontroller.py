@@ -34,6 +34,10 @@ def process_client_report_requests(request, db) :
 		return get_risk_report_filters(db, request, session_user, client_id) 
 	elif type(request) is clientreport.GetRiskReport:
 		return get_risk_report(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetReassignedHistoryReportFilters:
+		return get_reassignedhistory_report_filters(db, request, session_user, client_id) 
+	elif type(request) is clientreport.GetReassignedHistoryReport:
+		return get_reassignedhistory_report(db, request, session_user, client_id)
 
 
 def get_client_report_filters(db, request, session_user, client_id):
@@ -208,6 +212,45 @@ def get_risk_report(db, request, session_user, client_id):
 	    legal_entity_id, division_id, unit_id, statutory_id, statutory_status, client_id,session_user
 	)
 	return clientreport.GetRiskReportSuccess(risk_report_list,risk_report_list,risk_report_list)
+
+def get_reassignedhistory_report_filters(db, request, session_user, client_id):
+	user_company_info = db.get_user_company_details( session_user, client_id)
+	unit_ids = user_company_info[0]
+	country_list = db.get_countries_for_user(session_user, client_id)
+	domain_list = db.get_domains_for_user(session_user, client_id)
+	unit_list = db.get_units_for_user(unit_ids, client_id)
+	level_1_statutories_list = db.get_client_level_1_statutoy(session_user, client_id)
+	compliances_list = db.get_client_compliances(session_user, client_id)
+	users_list = db.get_client_users(client_id);
+
+	return clientreport.GetReassignedHistoryReportFiltersSuccess(
+		countries = country_list, domains = domain_list, units = unit_list, level_1_statutories = level_1_statutories_list, compliances = compliances_list, users = users_list)
+
+def get_reassignedhistory_report(db, request, session_user, client_id):
+	country_id = request.country_id
+	domain_id = request.domain_id
+	level_1_statutory_id = request.level_1_statutory_id
+	unit_id = request.unit_id
+	compliance_id = request.compliance_id
+	user_id = request.user_id
+	from_date = request.from_date
+	to_date = request.to_date
+
+	
+	
+	if level_1_statutory_id is None :
+		level_1_statutory_id = '%'
+	if compliance_id is None :
+		compliance_id = '%'
+	if user_id is None :
+		user_id = '%'
+
+	reassigned_history_list = db.get_reassigned_history_report(
+	    country_id, domain_id, level_1_statutory_id, 
+	    unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user
+	)
+	return clientreport.GetReassignedHistoryReportSuccess(reassigned_history_list)
+
 
 
 	

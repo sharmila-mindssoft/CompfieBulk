@@ -3538,3 +3538,18 @@ def parse_structure_VectorType_RecordType_dashboard_Notification(data):
 def parse_structure_RecordType_dashboard_Notification(data):
     from protocol import dashboard
     return dashboard.Notification.parse_structure(data)
+
+
+# ReassignUnitCompliance
+
+def parse_structure_RecordType_clientreport_ReassignUnitCompliance(data):
+    from protocol import clientreport
+    return clientreport.ReassignUnitCompliance.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_clientreport_ReassignUnitCompliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clientreport_ReassignUnitCompliance(item))
+    return lst
+
