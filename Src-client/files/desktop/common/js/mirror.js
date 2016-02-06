@@ -187,7 +187,7 @@ function initMirror() {
         if (sessionToken == null)
             return false
         else
-            return false
+            return true
     }
     function logout(callback) {
         sessionToken = getSessionToken()
@@ -470,6 +470,47 @@ function initMirror() {
         return statutoryDate;
     }
 
+    function uploadFileFormat(size, type, content) {
+        return {
+            "file_size": size,
+            "file_type": type,
+            "file_content": content
+        }
+    }
+
+    function uploadFile(fileListener) {
+        var evt = fileListener
+        max_limit =  1024 * 1024 * 50
+        // file max limit 50MB
+        var files = evt.target.files;
+        var file = files[0];
+        file_name = file.name
+        file_size = file.size
+        if (file_size > max_limit) {
+            return "File max limit exceeded"
+        }
+        // file_extension = file_name.substr(
+        //     file_name.lastIndexOf('.') + 1
+        // );
+        file_content = null
+        if (files && file) {
+            var reader = new FileReader();
+
+            reader.onload = function(readerEvt) {
+                var binaryString = readerEvt.target.result;
+                file_content = btoa(binaryString);
+            };
+
+            reader.readAsBinaryString(file);
+        }
+        if (file_content == null) {
+            return "File content is empty"
+        }
+        return uploadFileFormat(
+            file_size, file_name, file_content
+        )
+    }
+
     function complianceDetails (
         statutoryProvision, complianceTask,
         description, documentName, fileFormat, penalConsequence,
@@ -496,7 +537,6 @@ function initMirror() {
         else {
             compliance["compliance_id"] = null
         }
-
 
         return compliance;
     }
@@ -1298,6 +1338,7 @@ function initMirror() {
         updateStatutory: updateStatutory,
 
         statutoryDates: statutoryDates,
+        uploadFileFormat: uploadFileFormat,
         complianceDetails: complianceDetails,
         statutoryMapping: statutoryMapping,
         UpdateStatutoryMappingData: UpdateStatutoryMappingData,
