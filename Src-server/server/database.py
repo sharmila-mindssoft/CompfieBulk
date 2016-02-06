@@ -20,6 +20,10 @@ __all__ = [
     "KnowledgeDatabase", "Database"
 ]
 
+ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
+KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
+FORMAT_DOWNLOAD_URL = "/knowledge/compliance_format/"
+
 class Database(object) :
     def __init__(
         self,
@@ -1972,7 +1976,7 @@ class KnowledgeDatabase(Database):
 
         qry = "SELECT t1.compliance_id, t1.statutory_provision, \
             t1.compliance_task, t1.compliance_description, \
-            t1.document_name, t1.format_file, \
+            t1.document_name, t1.format_file, t1.format_file_size, \
             t1.penal_consequences, t1.frequency_id, \
             t1.statutory_dates, t1.repeats_every, \
             t1.repeats_type_id, \
@@ -1982,7 +1986,8 @@ class KnowledgeDatabase(Database):
         columns = [
             "compliance_id", "statutory_provision",
             "compliance_task", "compliance_description",
-            "document_name", "format_file", "penal_consequences",
+            "document_name", "format_file",
+            "format_file_size", "penal_consequences",
             "frequency_id", "statutory_dates", "repeats_every",
             "repeats_type_id", "duration", "duration_type_id",
             "is_active"
@@ -2013,18 +2018,35 @@ class KnowledgeDatabase(Database):
                 document_name, compliance_task
             )
             format_file = d["format_file"]
-            if not format_file :
-                format_file = None
+            format_file_size = d["format_file_size"]
+            file_list = []
+            download_file_list = []
+            if format_file :
+                file_info = core.FileList(
+                    format_file_size, format_file, None
+                )
+                file_list.append(file_info)
+                file_name = format_file.split('-')[0]
+                file_download = "%s/%s" % (
+                    FORMAT_DOWNLOAD_URL, file_name
+                )
+                download_file_list.append(
+                        file_download
+                    )
+            else :
+                file_list = None
+                download_file_list = None
 
             compliance_names.append(name)
             compliance = core.Compliance(
                 d["compliance_id"], d["statutory_provision"],
                 compliance_task, d["compliance_description"],
-                document_name, format_file,
+                document_name, file_list,
                 d["penal_consequences"], d["frequency_id"],
                 date_list, d["repeats_type_id"],
                 d["repeats_every"], d["duration_type_id"],
-                d["duration"], bool(d["is_active"])
+                d["duration"], bool(d["is_active"]),
+                download_file_list
             )
             compalinaces.append(compliance)
         return [compliance_names, compalinaces]
@@ -2032,6 +2054,18 @@ class KnowledgeDatabase(Database):
     #
     # save statutory mapping
     #
+
+    def convert_base64_to_file(self, file_name, file_content):
+        file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
+        self.remove_uploaded_file(file_path)
+        new_file = open(file_path, "wb")
+        new_file.write(file_info.file_content.decode('base64'))
+        new_file.close()
+
+    def remove_uploaded_file(self, file_name):
+        if os.path.exists(file_path) :
+            os.remove(file_path)
+
 
     def save_statutory_mapping(self, data, created_by) :
         country_id = data.country_id
@@ -2193,6 +2227,7 @@ class KnowledgeDatabase(Database):
 
     def save_compliance(self, mapping_id, datas, created_by) :
         compliance_ids = []
+        is_format = False
         for data in datas :
             compliance_id = self.get_new_id(
                 "compliance_id", "tbl_compliances"
@@ -2203,8 +2238,19 @@ class KnowledgeDatabase(Database):
             compliance_task = data.compliance_task
             compliance_description = data.description
             document_name = data.document_name
-            # format_file = ','.join(str(x) for x in data.format_file_list)
-            format_file = ''
+            file_list = data.format_file_list
+            file_name = ""
+            file_size = 0
+            file_content = ""
+
+            if file_list is not None :
+                file_list = file_list[0]
+                name = self.new_uuid()
+                file_name = "%s-%s" % (file_list.file_type, name)
+                file_size = file_list.file_size
+                file_content = file_list.file_content
+                is_format = True
+
             penal_consequences = data.penal_consequences
             compliance_frequency = data.frequency_id
             statutory_dates = []
@@ -2221,7 +2267,7 @@ class KnowledgeDatabase(Database):
             columns = [
                 "compliance_id", "statutory_provision",
                 "compliance_task", "compliance_description",
-                "document_name", "format_file",
+                "document_name", "format_file", "format_file_size",
                 "penal_consequences", "frequency_id",
                 "statutory_dates", "statutory_mapping_id",
                 "is_active", "created_by", "created_on"
@@ -2229,7 +2275,7 @@ class KnowledgeDatabase(Database):
             values = [
                 compliance_id, provision, compliance_task,
                 compliance_description, document_name,
-                format_file, penal_consequences,
+                file_name, file_size, penal_consequences,
                 compliance_frequency, statutory_dates,
                 mapping_id, is_active, created_by, created_on
             ]
@@ -2243,7 +2289,6 @@ class KnowledgeDatabase(Database):
                     duration_type = ""
                 columns.extend(["duration", "duration_type_id"])
                 values.extend([duration, duration_type])
-
             else :
                 if repeats_every is None :
                     repeats_every = ""
@@ -2252,6 +2297,9 @@ class KnowledgeDatabase(Database):
                 columns.extend(["repeats_every", "repeats_type_id"])
                 values.extend([repeats_every, repeats_type])
             self.insert(table_name, columns, values)
+            if is_format :
+                self.convert_base64_to_file(file_name, file_content)
+                is_format = False
             compliance_ids.append(compliance_id)
             # if (self.execute(query)) :
             #     compliance_ids.append(compliance_id)
@@ -2300,10 +2348,25 @@ class KnowledgeDatabase(Database):
         self.save_activity(updated_by, 17, action)
         return True
 
+    def get_saved_format_file(self, compliance_id):
+        query = "SELECT format_file, format_file_size \
+            FROM tbl_compliances WHERE compliance_id = %s " % (
+                compliance_id
+            )
+        rows = self.select_one(query)
+        result = self.convert_to_dict(rows, ["format_file", "format_file_size"])
+        if result :
+            return (result["format_file"], result["format_file_size"])
+        else :
+            return None
+
     def update_compliance(self, mapping_id, datas, updated_by) :
+        is_format = False
         compliance_ids = []
         for data in datas :
             compliance_id = data.compliance_id
+            saved_file = self.get_saved_format_file(compliance_id)
+
             if (compliance_id is None) :
                 ids = self.save_compliance(mapping_id, [data], updated_by)
                 compliance_ids.extend(ids)
@@ -2312,17 +2375,34 @@ class KnowledgeDatabase(Database):
             compliance_task = data.compliance_task
             description = data.description
             document_name = data.document_name
-            # format_file = ','.join(str(x) for x in data.format_file_list)
-            format_file = None
-            format_file = ''
+            file_list = data.format_file_list
+            file_name = ""
+            file_size = 0
+            file_content = ""
+
+            if file_list is None and saved_file is not None:
+                # delete saved file
+                self.remove_uploaded_file(saved_file[0])
+            else :
+                if saved_file is None :
+                    # create file
+                    file_list = file_list[0]
+                    name = self.new_uuid()
+                    file_name = "%s-%s" % (file_list.file_name, name)
+                    file_size = file_list.file_size
+                    file_content = file_list.file_content
+                else :
+                    # update saved file
+                    file_name = saved_file[0]
+                    file_size = file_list.file_size
+                    file_content = file_list.file_content
+
             penal_consequences = data.penal_consequences
             compliance_frequency = data.frequency_id
             statutory_dates = []
             for s_d in data.statutory_dates :
                 statutory_dates.append(s_d.to_structure())
-            # statutory_dates =  json.dumps(
-            #     data.statutory_dates.to_structure()
-            # )
+
             statutory_dates = json.dumps(statutory_dates)
             repeats_every = data.repeats_every
             repeats_type = data.repeats_type_id
@@ -2334,14 +2414,14 @@ class KnowledgeDatabase(Database):
             columns = [
                 "statutory_provision", "compliance_task",
                 "compliance_description", "document_name",
-                "format_file", "penal_consequences",
+                "format_file", "format_file_size", "penal_consequences",
                 "frequency_id", "statutory_dates",
                 "statutory_mapping_id", "is_active",
                 "updated_by"
             ]
             values = [
                 provision, compliance_task, description,
-                document_name, format_file,
+                document_name, format_file, file_size,
                 penal_consequences, compliance_frequency,
                 statutory_dates, mapping_id, is_active,
                 updated_by
@@ -2359,8 +2439,10 @@ class KnowledgeDatabase(Database):
 
             where_condition = "compliance_id = %s" % (compliance_id)
             self.update(table_name, columns, values, where_condition)
+            if is_format :
+                self.convert_base64_to_file(file_name, file_content)
+                is_format = False
             compliance_ids.append(compliance_id)
-
 
         return compliance_ids
 

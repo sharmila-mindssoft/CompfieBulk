@@ -13,6 +13,9 @@ from types import *
 __all__ = [
     "ClientDatabase"
 ]
+ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
+KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
+FORMAT_DOWNLOAD_URL = "/knowledge/compliance_format/"
 
 class ClientDatabase(Database):
     def __init__(
@@ -1240,7 +1243,7 @@ class ClientDatabase(Database):
         return results
 
     def get_level_1_statutories_for_user(self, session_user, client_id):
-        domain_rows = self.get_data(self.tblUserDomains, "group_concat(domain_id)", 
+        domain_rows = self.get_data(self.tblUserDomains, "group_concat(domain_id)",
             "user_id='%d'"%session_user, client_id)
 
         domain_ids = domain_rows[0][0]
@@ -2938,7 +2941,7 @@ class ClientDatabase(Database):
             T4.frequency_id, T4.repeat_type_id, T4.duration_type_id,\
             T4.statutory_mapping, T4.statutory_provision,\
             T4.compliance_task, T4.compliance_description,  \
-            T4.document_name, T4.format_file, T4.penal_consequences, \
+            T4.document_name, T4.format_file, T4.format_file_size, T4.penal_consequences, \
             T4.statutory_dates, T4.repeats_every, T4.duration, T4.is_active \
             FROM tbl_client_compliances T1 \
             INNER JOIN tbl_client_statutories T2 \
@@ -3006,8 +3009,8 @@ class ClientDatabase(Database):
             "frequency_id", "repeat_type_id", "duration_type_id",
             "statutory_mapping", "statutory_provision", "compliance_task",
             "compliance_description", "document_name", "format_file",
-            "penal_consequences", "statutory_dates", "repeats_every",
-            "duration", "is_active"
+            "format_file_size", "penal_consequences", "statutory_dates",
+            "repeats_every", "duration", "is_active"
         ]
         result = self.convert_to_dict(rows, columns)
 
@@ -3023,7 +3026,6 @@ class ClientDatabase(Database):
 
             level_1 = level_1.strip()
 
-            format_file_list = []
             statutory_dates = json.loads(r["statutory_dates"])
             date_list = []
             for s in statutory_dates :
@@ -3032,13 +3034,34 @@ class ClientDatabase(Database):
                     s["trigger_before_days"]
                 )
                 date_list.append(s_date)
+
+            format_file = d["format_file"]
+            format_file_size = d["format_file_size"]
+            file_list = []
+            download_file_list = []
+            if format_file :
+                file_info = core.FileList(
+                    format_file_size, format_file, None
+                )
+                file_list.append(file_info)
+                file_name = format_file.split('-')[0]
+                file_download = "%s/%s" % (
+                    FORMAT_DOWNLOAD_URL, file_name
+                )
+                download_file_list.append(
+                        file_download
+                    )
+            else :
+                file_list = None
+                download_file_list = None
+
             compliance = core.Compliance(
                 int(r["compliance_id"]), r["statutory_provision"],
                 r["compliance_task"], r["compliance_description"],
-                r["document_name"], format_file_list, r["penal_consequences"],
+                r["document_name"], file_list, r["penal_consequences"],
                 int(r["frequency_id"]), date_list, r["repeat_type_id"],
                 r["repeats_every"], r["duration_type_id"],
-                r["duration"], bool(r["is_active"])
+                r["duration"], bool(r["is_active"]), download_file_list
             )
             level_1_wise_data = level_1_wise_compliance.get(level_1)
             if level_1_wise_data is None :
@@ -3748,9 +3771,9 @@ class ClientDatabase(Database):
             notification_type_id = 2
         elif notification_type == "Escalation":
             notification_type_id = 3
-            
+
         notification_rows = self.get_data(
-            self.tblNotificationUserLog, 
+            self.tblNotificationUserLog,
             "notification_id, read_status",
             "user_id = '%d'" % session_user
         )
@@ -3768,14 +3791,14 @@ class ClientDatabase(Database):
             tables = [self.tblNotificationsLog, self.tblUnits, self.tblCompliances]
             aliases = ["nl", "u", "c"]
             join_conditions = [
-                "nl.unit_id = u.unit_id", 
+                "nl.unit_id = u.unit_id",
                 "nl.compliance_id = c.compliance_id"
             ]
             join_type = " left join"
             where_condition = "notification_id = '%d'" % notification_id
             where_condition += " and notification_type_id = '%d'"% notification_type_id
             notification_detail_row = self.get_data_from_multiple_tables(
-                columns, tables, aliases, join_type, 
+                columns, tables, aliases, join_type,
                 join_conditions, where_condition
             )
             notification_detail = notification_detail_row[0]
@@ -3804,7 +3827,7 @@ class ClientDatabase(Database):
             notification_text = notification_detail[1]
             extra_details = notification_detail[3]
             updated_on = self.datetime_to_string(notification_detail[2])
-            unit_name = "%s - %s" % (notification_detail[5], 
+            unit_name = "%s - %s" % (notification_detail[5],
                 notification_detail[6])
             unit_address = notification_detail[7]
             assignee = self.get_user_contact_details_by_id(
@@ -3823,12 +3846,12 @@ class ClientDatabase(Database):
                 dashboard.Notification(
                     notification_id, read_status, notification_text, extra_details,
                     updated_on, level_1_statutory, unit_name, unit_address, assignee,
-                    concurrence_person, approval_person, compliance_name, 
+                    concurrence_person, approval_person, compliance_name,
                     compliance_description, due_date, delayed_days
                 )
             )
         return notifications
-        
+
 
     def get_user_contact_details_by_id(self, user_id, client_id):
         columns = "employee_code, employee_name, contact_no, email_id"
