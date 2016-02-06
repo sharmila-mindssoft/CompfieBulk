@@ -465,6 +465,9 @@ def to_structure_OptionalType_VectorType_CustomTextType_50(data):
     if data is None: return data
     return to_structure_VectorType_CustomTextType_50(data)
 
+def to_structure_OptionalType_VectorType_CustomTextType_100(data):
+    if data is None: return data
+    return to_structure_VectorType_CustomTextType_100(data)
 
 def to_structure_VectorType_RecordType_clientreport_ComplianceList(data):
     data = parse_list(data, 0)

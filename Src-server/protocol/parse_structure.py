@@ -1538,6 +1538,10 @@ def parse_structure_OptionalType_VectorType_CustomTextType_50(data):
     if data is None: return data
     return parse_structure_VectorType_CustomTextType_50(data)
 
+def parse_structure_OptionalType_VectorType_CustomTextType_100(data):
+    if data is None: return data
+    return parse_structure_VectorType_CustomTextType_100(data)
+
 def parse_structure_RecordType_dashboard_Response_GetComplianceApplicabilityStatusDrillDownSuccess(data):
     from protocol import dashboard
     return dashboard.Response.parse_structure(data)
