@@ -1,3 +1,4 @@
+import os
 from protocol import (
     core, general, clienttransactions, dashboard,
     clientreport, clientadminsettings
