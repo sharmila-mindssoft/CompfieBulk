@@ -63,7 +63,6 @@ class API(object):
             http_client,
             self.server_added
         )
-        print "API CLASS"
         self._databases = {}
 
     def close_connection(self, db):
@@ -122,7 +121,6 @@ class API(object):
         company_id = None
         try:
             data = json.loads(request.body())
-            print data
             if type(data) is not list:
                 self.send_bad_request(
                     response,
