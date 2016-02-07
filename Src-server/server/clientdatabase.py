@@ -3764,7 +3764,7 @@ class ClientDatabase(Database):
             columns = "notification_id, notification_text, updated_on, extra_details, "+\
             "nl.statutory_provision, unit_code, unit_name, address, assignee, "+\
             "concurrence_person, approval_person, nl.compliance_id, "+\
-            " compliance_task, document_name, compliance_description"
+            " compliance_task, document_name, compliance_description, penal_consequences"
             tables = [self.tblNotificationsLog, self.tblUnits, self.tblCompliances]
             aliases = ["nl", "u", "c"]
             join_conditions = [
@@ -3825,7 +3825,7 @@ class ClientDatabase(Database):
                     notification_id, read_status, notification_text, extra_details,
                     updated_on, level_1_statutory, unit_name, unit_address, assignee,
                     concurrence_person, approval_person, compliance_name, 
-                    compliance_description, due_date, delayed_days
+                    compliance_description, due_date, delayed_days, penal_consequences
                 )
             )
         return notifications

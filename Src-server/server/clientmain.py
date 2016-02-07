@@ -158,7 +158,8 @@ class API(object):
         request_data_type, need_client_id
     ):
         response.set_default_header("Access-Control-Allow-Origin", "*")
-
+        print "request_data_type:{}".format(request_data_type)
+        print "request:{}".format(request)
         request_data = self._parse_request(
             request_data_type, request, response
         )

@@ -1399,7 +1399,7 @@ class Notification(object):
     def __init__(self, notification_id, read_status, notification_text, extra_details,
             updated_on, level_1_statutory, unit_name, unit_address, assignee,
             concurrence_person, approval_person, compliance_name, 
-            compliance_description, due_date, delayed_days):
+            compliance_description, due_date, delayed_days, penal_consequences):
         self.notification_id = notification_id
         self.read_status = read_status
         self.notification_text = notification_text
@@ -1415,6 +1415,7 @@ class Notification(object):
         self.compliance_description = compliance_description
         self.due_date = due_date
         self.delayed_days = delayed_days
+        self.penal_consequences = penal_consequences
 
     @staticmethod
     def parse_structure(data):
@@ -1422,7 +1423,8 @@ class Notification(object):
             "notification_id", "read_status", "notification_text", 
             "extra_details","updated_on", "level_1_statutory", "unit_name", 
             "unit_address", "assignee", "concurrence_person", "approval_person", 
-            "compliance_name", "compliance_description", "due_date", "delayed_days"])
+            "compliance_name", "compliance_description", "due_date", "delayed_days",
+            "penal_consequences"])
         notification_id = data.get("notification_id")
         notification_id = parse_structure_UnsignedIntegerType_32(notification_id)
         read_status = data.get("read_status")
@@ -1453,11 +1455,13 @@ class Notification(object):
         due_date = parse_structure_CustomTextType_20(due_date)
         delayed_days = data.get("delayed_days")
         delayed_days = parse_structure_CustomTextType_20(delayed_days)
+        penal_consequences = data.get("penal_consequences")
+        penal_consequences = parse_structure_CustomTextType_500(penal_consequences)
         return Notification(
             notification_id, read_status, notification_text, extra_details,
             updated_on, level_1_statutory, unit_name, unit_address, assignee,
             concurrence_person, approval_person, compliance_name, 
-            compliance_description, due_date, delayed_days
+            compliance_description, due_date, delayed_days, penal_consequences
         )
 
     def to_structure(self):
@@ -1476,7 +1480,8 @@ class Notification(object):
             "compliance_name" : to_structure_CustomTextType_100(self.compliance_name),
             "compliance_description" : to_structure_CustomTextType_500(self.compliance_description),
             "due_date" : to_structure_CustomTextType_20(self.due_date),
-            "delayed_days" : to_structure_CustomTextType_20(self.delayed_days)
+            "delayed_days" : to_structure_CustomTextType_20(self.delayed_days),
+            "penal_consequences" : to_structure_CustomTextType_500(self.penal_consequences)
         }
 
 #
