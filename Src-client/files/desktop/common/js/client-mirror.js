@@ -895,6 +895,33 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    /*Statutory Notifications List*/
+    function getStatutoryNotificationsListFilters(callback){
+        callerName = "api/client_reports"
+        var request = [
+            "GetStatutoryNotificationsListFilters",
+            {}
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getStatutoryNotificationsListReport(countryName, domainName, businessGroupId, 
+        legalEntityId, divisionId, unitId, level1Id, fromdate, todate, callback){
+        callerName = "api/client_reports"
+        var request = [
+            "GetStatutoryNotificationsListReport",
+            {
+                "country_name": countryName,
+                "domain_name": domainName,
+                "business_group_id": businessGroupId,
+                "legal_entity_id": legalEntityId,
+                "division_id": divisionId,
+                "unit_id": unitId,
+                "level_1_statutory_name": level1Id,
+                "from_date": fromdate,
+                "to_date": todate
+            }
+        ];
 
     /* Reassigned History Report */
     function getReassignedHistoryReportFilters(callback) {
@@ -920,6 +947,7 @@ function initClientMirror() {
             }
         ];
         callerName = "api/client_reports";
+>>>>>>> e97901734f905c660ca01d7b56e6f82808d6a2ff
         clientApiRequest(callerName, request, callback);
     }
 
@@ -1015,6 +1043,9 @@ function initClientMirror() {
         updateNotificationStatus: updateNotificationStatus,
 
         getComplianceDetail: getComplianceDetail,
+
+        getStatutoryNotificationsListFilters: getStatutoryNotificationsListFilters,
+        getStatutoryNotificationsListReport: getStatutoryNotificationsListReport,
 
         getRiskReportFilters: getRiskReportFilters,
         getRiskReport: getRiskReport,

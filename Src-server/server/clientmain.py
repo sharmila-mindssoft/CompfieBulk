@@ -28,7 +28,7 @@ def cors_handler(request, response):
 
 #
 # api_request
-#
+#m
 
 def api_request(
     request_data_type, need_client_id=False
@@ -91,8 +91,8 @@ class API(object):
                     )
                     db.connect()
                     self._databases[company_id] = db
-        except Exception:
-            print db
+        except Exception, e :
+            print db, e
 
     def _send_response(
         self, response_data, response
@@ -201,6 +201,7 @@ class API(object):
 
     @api_request(clientreport.RequestFormat)
     def handle_client_reports(self, request, db):
+        print request.to_structure()
         return controller.process_client_report_requests(request, db)
 
     @api_request(dashboard.RequestFormat)

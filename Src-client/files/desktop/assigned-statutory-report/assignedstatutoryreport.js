@@ -455,7 +455,6 @@ function activate_unit (element,checkval,checkname, concatunit) {
 }
 //Level 1 Statutories
 
-//Legal Entity---------------------------------------------------------------------------------------------------------------
 function hidelevel1list(){
 	document.getElementById('autocompleteview-level1').style.display = 'none';
 }

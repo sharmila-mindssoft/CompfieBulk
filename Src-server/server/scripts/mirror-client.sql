@@ -407,7 +407,7 @@ CREATE TABLE `tbl_statutory_notifications_units` (
   `legal_entity_id` int(11) NOT NULL,
   `division_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
-  PRIMARY KEY (`statutory_notification_id`)
+  PRIMARY KEY (`statutory_notification_id`, `business_group_id`, `legal_entity_id`, `division_id`, `unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_statutory_notification_status`;
 CREATE TABLE `tbl_statutory_notification_status` (

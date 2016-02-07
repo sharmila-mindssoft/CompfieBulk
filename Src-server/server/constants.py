@@ -98,6 +98,21 @@ CLIENT_TEMPLATE_PATHS = [
         "files/desktop/client/risk-report/riskreport.html",
         None, {}
     ),
+    (
+        "/statutory-notifications-list",
+        "files/desktop/client/statutory-notifications-list-report/statutorynotificationslistreport.html",
+        None, {}
+    ),
+    (
+        "/reassigned-history",
+        "files/desktop/client/reassigned-history-report/reassignedhistoryreport.html",
+        None, {}
+    ),
+    (
+        "/compliance-task-applicability-status",
+        "files/desktop/client/compliance-task-applicability-report/compliancetaskapplicabilityreport.html",
+        None, {}
+    ),
 ]
 
 TEMPLATE_PATHS = [

@@ -18,7 +18,7 @@ __all__ = [
 	"ApplicabilityCompliance", "AssigneeCompliance", "ComplianceForUnit", "ComplianceList",
 	"ComplianceUnit", "DomainWiseCompliance", "FormName", "LoginTrace", "ReassignCompliance",
 	"ReassignHistory", "StatutoryReassignCompliance", "UnitCompliance", "UnitWiseCompliance",
-	"UnitName", "UserName", "UserWiseCompliance"
+	"UnitName", "UserName", "UserWiseCompliance", "STATUTORY_WISE_NOTIFICATIONS",
 ]
 
 #
@@ -147,6 +147,19 @@ GetReassignedHistoryReport = RecordType(
 	]
 )
 
+GetStatutoryNotificationsListFilters = RecordType("GetStatutoryNotificationsListFilters", [])
+
+GetStatutoryNotificationsListReport = RecordType("GetStatutoryNotificationsListReport", [
+	Field('country_name', COUNTRY_NAME),
+	Field('domain_name', DOMAIN_NAME),
+	Field('business_group_id', BUSINESS_GROUP_ID),
+	Field('legal_entity_id', LEGAL_ENTITY_ID),
+	Field('division_id', DIVISION_ID),
+	Field('unit_id', UNIT_ID),
+	Field('level_1_statutory_name', LEVEL_1_STATUTORY_NAME)
+])
+
+
 GetActivityLogFilters = RecordType("GetActivityLogFilters", [])
 
 GetActivityLogReport = RecordType("GetActivityLogReport", [
@@ -176,6 +189,8 @@ Request = VariantType("Request", [
 	GetComplianceActivityReport,
 	GetReassignedHistoryReportFilters,
 	GetReassignedHistoryReport,
+	GetStatutoryNotificationsListFilters,
+	GetStatutoryNotificationsListReport,
 	GetActivityLogFilters,
 	GetActivityLogReport,
 	GetLoginTrace,
@@ -479,6 +494,41 @@ GetReassignedHistoryReportSuccess =  RecordType("GetReassignedHistoryReportSucce
 	Field("statutory_wise_compliances", VectorType(StatutoryReassignCompliance))
 ])
 
+
+#Statutory Notification List
+
+GetStatutoryNotificationsListFiltersSuccess = RecordType("GetStatutoryNotificationsListFiltersSuccess", [
+	Field("countries", VectorType(Country)),
+	Field("domains", VectorType(Domain)),
+	Field("business_groups", VectorType(BusinessGroup)),
+	Field("legal_entities", VectorType(LegalEntity)),
+	Field("divisions", VectorType(Division)),
+	Field("units", VectorType(Unit)),
+	Field("level1_statutories", MapType(COUNTRY_ID, DomainStatutoryMap)),
+	Field("fromdate", Text20),
+	Field("todate", Text20)
+])
+
+LEVEL_1_STATUTORY_NOTIFICATIONS = RecordType("LEVEL_1_STATUTORY_NOTIFICATIONS", [
+	Field("statutory_provision", STATUTORY_PROVISION),
+	Field("unit_name", UNITNAME),
+	Field("notification_text", NOTIFICATION_TEXT),
+	Field("date_and_time", TIMESTAMP)
+])
+
+STATUTORY_WISE_NOTIFICATIONS = RecordType("STATUTORY_WISE_NOTIFICATIONS", [
+	Field("business_group_name", BusinessGroupName),
+	Field("legal_entity_name", LegalEntityName),
+	Field("division_name", DivisionName),
+	Field("level_1_statutory_name", VectorType(LEVEL_1_STATUTORY_NOTIFICATIONS))
+])
+
+GetStatutoryNotificationsListReportSuccess = RecordType("GetStatutoryNotificationsListReportSuccess", [
+	Field("notifications", VectorType(STATUTORY_WISE_NOTIFICATIONS))
+])
+
+#Activity Log
+
 FormName = RecordType("FormName", [
 	Field("form_id", FORM_ID),
 	Field("form_name", FORM_NAME)
@@ -529,6 +579,8 @@ Response = VariantType("Response", [
 	GetComplianceActivityReportSuccess,
 	GetReassignedHistoryReportFiltersSuccess,
 	GetReassignedHistoryReportSuccess,
+	GetStatutoryNotificationsListFiltersSuccess,
+	GetStatutoryNotificationsListReportSuccess,
 	GetActivityLogFiltersSuccess,
 	GetActivityLogReportSuccess,
 	GetLoginTraceSuccess

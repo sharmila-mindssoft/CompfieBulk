@@ -84,8 +84,6 @@ class Controller(object):
             send_invalid_json_format(response)
             return
 
-        print "forward api call"
-        print request.uri()
         handle_request = HandleRequest(
             token, actual_data,
             request.uri(), response, self._http_client,
