@@ -1,0 +1,126 @@
+{% extends "files/desktop/home/container.html" %}
+{% block content %}
+<style>
+.reminder-box-content ul {
+  margin-top: 0px;
+  margin-left: 0px;
+  }
+.reminder-box-content ul li
+{
+  background: url("../images/right_arrow.png") no-repeat scroll #fff 1.4em 2.4em;
+  border-bottom: 1px solid #5c5c5c;
+  color: #333;
+  font-size: 0.75em;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  line-height: 1.4em;
+  list-style-type: none;
+  padding: 2em 2em 1em 3em;
+  cursor: pointer;
+}
+.reminder-box-content ul li:hover
+{
+  background: url("../images/right_arrow.png") no-repeat scroll #eee 1.4em 2.4em;
+  }
+.reminder-box-content ul li.unread
+{ 
+  color: #333;
+  background: url("../images/right_arrow.png") no-repeat scroll #E5D0FF 1.4em 2.4em;
+  
+}
+.reminder-box-content ul li.unread:hover
+{ 
+  color: #333;
+  background: url("../images/right_arrow.png") no-repeat scroll #eee 1.4em 2.4em;
+  
+}
+.reminder-box-content ul li .subtext
+{
+  padding-top: 1em;
+}
+.reminder-box-content ul li p .time
+{
+  color: #000 !important
+  text-align:left;
+   font-size: 0.9em;
+}
+.reminder-box-content ul li p .notification-cat
+{
+  color: #000 !important;
+  float:right;
+  font-size: 0.9em;
+}
+
+.reminder-box-content ul li span {
+    color: #ffae00;
+    position: absolute;
+    right: 1.5em;
+    top: 1em;
+}
+
+.modaltable th
+{
+    padding: 5px;
+}
+.modaltable td
+{
+  padding: 10px 0px;
+  font-size: 0.813em;
+}
+</style>
+
+
+<div class="content-container" >
+<div class="content-area">
+  <div class="escalations-box" style="width:100%">
+  <div class="reminder-box-heading"> 
+  <span><img src="images/escalation.png" style="width:30px;"></span>
+  <span>Escalations</span> </div>
+  <div class="reminder-box-content">
+  <ul id="reminderList">
+        
+  </ul>
+  </div>
+  </div> 
+  </div>
+</div>
+
+
+<div id="popup1" class="overlay">
+  <div class="popup">
+    <a class="close" href="#">x</a>
+    <div class="content">
+
+  <header>
+    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px; color: #000"> Notifications</h1>
+    <div class="close unread"></div>
+  </header>  
+  <section>
+    <p style="font-size:0.8em; padding-top:10px;">
+      <table class="modaltable" width="100%">
+        <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
+          <th width="16.67%" align="left">Act</th>
+          <th width="20%" align="left">Unit</th>
+          <th width="20%" align="left">Compliance</th>
+          <th width="16.67%" align="center">Due Date</th>
+          <th width="13%" align="center">Delayed By</th>
+        </tr>
+        <tr >
+          <td align="left" class="popup_act"></td>
+          <td align="left" class="popup_unit">
+          </td>
+          <td align="left" class="popup_compliance"></td>
+          <td align="center" class="popup_duedate"></td>
+          <td align="center" class="popup_delayedby"></td>
+        </tr>
+        </table>
+    </p>
+  </section>
+
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript" src="/files/desktop/client/escalations/escalations.js"></script>
+{% endblock %} 

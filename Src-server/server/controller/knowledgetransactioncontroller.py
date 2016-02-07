@@ -1,4 +1,4 @@
-from protocol import login, core, knowledgetransaction
+from protocol import login, knowledgetransaction
 from generalcontroller import validate_user_session
 
 __all__ = [
@@ -41,13 +41,12 @@ def process_get_statutory_mappings(db, user_id):
     compliance_duration_type = db.get_compliance_duration()
     compliance_approval_status = db.get_approval_status()
     statutory_mappings = db.get_statutory_mappings(user_id)
-    print "return statutory_mappings"
     return knowledgetransaction.GetStatutoryMappingsSuccess(
-        countries, domains, industries, statutory_natures, 
+        countries, domains, industries, statutory_natures,
         statutory_levels, statutories, geography_levels, geographies,
         compliance_frequency, compliance_repeat_type,
         compliance_approval_status,
-        compliance_duration_type, 
+        compliance_duration_type,
         statutory_mappings
     )
 
@@ -61,12 +60,12 @@ def process_update_statutory_mapping(db, request_frame, user_id):
     else :
         return knowledgetransaction.InvalidStatutoryMappingId()
 
-def process_change_statutory_mapping_status(db, request_frame, user_id):    
+def process_change_statutory_mapping_status(db, request_frame, user_id):
     if (db.change_statutory_mapping_status(request_frame, user_id)) :
         return knowledgetransaction.ChangeStatutoryMappingStatusSuccess()
-    else :  
+    else :
         return knowledgetransaction.InvalidStatutoryMappingId()
-    
+
 def process_approve_statutory_mapping(db, request_frame, user_id):
     is_approved = False
     for data in request_frame.statutory_mappings :
@@ -78,7 +77,5 @@ def process_approve_statutory_mapping(db, request_frame, user_id):
 
     if is_approved :
         return knowledgetransaction.ApproveStatutoryMappingSuccess()
-    else :  
+    else :
         return knowledgetransaction.InvalidStatutoryMappingId()
-    
-

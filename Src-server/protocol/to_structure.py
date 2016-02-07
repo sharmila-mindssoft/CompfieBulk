@@ -465,6 +465,9 @@ def to_structure_OptionalType_VectorType_CustomTextType_50(data):
     if data is None: return data
     return to_structure_VectorType_CustomTextType_50(data)
 
+def to_structure_OptionalType_VectorType_CustomTextType_100(data):
+    if data is None: return data
+    return to_structure_VectorType_CustomTextType_100(data)
 
 def to_structure_VectorType_RecordType_clientreport_ComplianceList(data):
     data = parse_list(data, 0)
@@ -1581,11 +1584,11 @@ def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Co
 
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_Level1Statutory(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_CustomTextType_50(key)
         value = to_structure_VectorType_RecordType_clientreport_Level1Statutory(value)
-        dict.append([key, value])
+        dict[key] = value
     return dict
 
 def to_structure_RecordType_dashboard_Response_GetEscalationsDrillDownDataSuccess(data):
@@ -2046,6 +2049,15 @@ def to_structure_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(d
     for item in data:
         lst.append(to_structure_RecordType_clienttransactions_USER_WISE_COMPLIANCE(item))
     return lst
+
+def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.iteritems() :
+        key = to_structure_SignedIntegerType_8(key)
+        value = to_structure_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(value)
+        dict[key] = value
+    return dict
 
 def to_structure_RecordType_knowledgemaster_Request_UpdateStatutoryNature(data):
     from protocol import knowledgemaster
@@ -3083,8 +3095,19 @@ def to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANC
     data = parse_list(data, 0)
     lst = []
     for item in data:
-        lst.append(to_structure_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(item))
+        d = to_structure_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(item)
+        lst.append(d)
     return lst
+
+def to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.iteritems() :
+        key = to_structure_CustomTextType_100(key)
+        value = to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE(value)
+        dict[key] = value
+    return dict
+
 
 def to_structure_RecordType_clientmasters_Request_UpdateUserPrivileges(data):
     from protocol import clientmasters
@@ -3313,7 +3336,7 @@ def to_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping(data)
     data = parse_list(data, 0)
     lst = []
     for item in data:
-        lst.append(parse_structure_RecordType_knowledgetransaction_ApproveMapping(item))
+        lst.append(to_structure_RecordType_knowledgetransaction_ApproveMapping(item))
     return lst
 
 def to_structure_MapType_UnsignedIntegerType_32_Bool(data):
@@ -3609,3 +3632,16 @@ def to_structure_VectorType_RecordType_dashboard_Notification(data):
 def to_structure_RecordType_dashboard_Notification(data):
     from protocol import dashboard
     return dashboard.Notification.to_structure(data)
+
+# ReassignUnitCompliance
+
+def to_structure_RecordType_clientreport_ReassignUnitCompliance(data):
+    from protocol import clientreport
+    return clientreport.ReassignUnitCompliance.to_structure(data)
+    
+def to_structure_VectorType_RecordType_clientreport_ReassignUnitCompliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_clientreport_ReassignUnitCompliance(item))
+    return lst
