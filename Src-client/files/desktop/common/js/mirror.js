@@ -31,6 +31,10 @@ function initMirror() {
 
     }
 
+    function getBaseUrl() {
+        return BASE_URL
+    }
+
     // function updateUser_Session(user) {
     //     var info = parseJSON(window.localStorage["userInfo"])
     //     delete window.localStorage["userInfo"];
@@ -497,19 +501,18 @@ function initMirror() {
         file_name = file.name
         file_size = file.size
         if (file_size > max_limit) {
-            return "File max limit exceeded"
+            callback("File max limit exceeded");
         }
         // file_extension = file_name.substr(
         //     file_name.lastIndexOf('.') + 1
         // );
         file_content = null
-        
+
 
         if (files && file) {
-            convert_to_base64(file, function(data) {
-                file_content = data
+            convert_to_base64(file, function(file_content) {
                 if (file_content == null) {
-                    return "File content is empty"
+                    callback("File content is empty")
                 }
                 result = uploadFileFormat(
                     file_size, file_name, file_content
@@ -524,7 +527,7 @@ function initMirror() {
         statutoryProvision, complianceTask,
         description, documentName, fileFormat, penalConsequence,
         complianceFrequency, statutoryDates, repeatsTypeId, repeatsEvery,
-        durationTypeId, duration, isActive, downloadFileList, complianceId
+        durationTypeId, duration, isActive, complianceId
     ) {
         var compliance = {};
         compliance["statutory_provision"] = statutoryProvision;
@@ -540,7 +543,6 @@ function initMirror() {
         compliance["duration_type_id"] = durationTypeId;
         compliance["duration"] = duration;
         compliance["is_active"] = isActive;
-        compliance["download_file_list"] = downloadFileList;
         if ((complianceId !== null) && (complianceId !== '')) {
             compliance["compliance_id"] = complianceId;
         }
@@ -1296,6 +1298,8 @@ function initMirror() {
         log: log,
         toJSON: toJSON,
         parseJSON: parseJSON,
+
+        getBaseUrl : getBaseUrl,
 
         initSession: initSession,
         // updateUser_Session: updateUser_Session,
