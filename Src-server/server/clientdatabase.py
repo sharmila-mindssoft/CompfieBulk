@@ -94,7 +94,6 @@ class ClientDatabase(Database):
         admin_details = self.get_data(
             "tbl_admin", "*", tblAdminCondition
         )
-        print admin_details
         if (len(admin_details) == 0) :
             data_columns = [
                 "user_id", "user_group_id", "email_id",
@@ -307,7 +306,7 @@ class ClientDatabase(Database):
             ))
         return results
 
-    def get_business_groups_for_user(self, business_group_ids, client_id):
+    def get_business_groups_for_user(self, business_group_ids):
         columns = "business_group_id, business_group_name"
         condition = "1"
         if business_group_ids is not None:
@@ -328,7 +327,7 @@ class ClientDatabase(Database):
             ))
         return results
 
-    def get_legal_entities_for_user(self, legal_entity_ids, client_id):
+    def get_legal_entities_for_user(self, legal_entity_ids):
         columns = "legal_entity_id, legal_entity_name, business_group_id"
         condition = "1"
         if legal_entity_ids is not None:
@@ -350,7 +349,7 @@ class ClientDatabase(Database):
             ))
         return results
 
-    def get_divisions_for_user(self, division_ids, client_id):
+    def get_divisions_for_user(self, division_ids):
         columns = "division_id, division_name, legal_entity_id, business_group_id"
         condition = "1"
         if division_ids is not None:
@@ -754,10 +753,17 @@ class ClientDatabase(Database):
 
     def get_user_company_details(self, user_id, client_id):
         columns = "group_concat(unit_id)"
-        condition = " user_id = '%d'"% user_id
-        rows = self.get_data(
-            self.tblUserUnits, columns, condition
-        )
+        condition = " 1 "
+        rows = None
+        if user_id > 0:
+            condition = " and user_id = '%d'"% user_id
+            rows = self.get_data(
+                self.tblUserUnits, columns, condition
+            )
+        else:
+            rows = self.get_data(
+                self.tblUnits, columns, condition
+            )
         unit_ids = rows[0][0]
 
         columns = "group_concat(division_id), group_concat(legal_entity_id), "+\
@@ -3777,10 +3783,8 @@ class ClientDatabase(Database):
             "notification_id, read_status",
             "user_id = '%d'" % session_user
         )
-        print "notification_rows:{}".format(notification_rows)
         notifications = []
         for notification in notification_rows:
-            print "notification:{}".format(notification)
             notification_id = notification[0]
             read_status = bool(notification[1])
             # Getting notification details
@@ -3801,55 +3805,57 @@ class ClientDatabase(Database):
                 columns, tables, aliases, join_type,
                 join_conditions, where_condition
             )
-            notification_detail = notification_detail_row[0]
-            extra_details = notification_detail[3].split("-")
-            compliance_history_id = int(extra_details[0])
+            notification_detail = []
+            if notification_detail_row:
+                notification_detail = notification_detail_row[0]
+                extra_details = notification_detail[3].split("-")
+                compliance_history_id = int(extra_details[0])
 
-            due_date_rows = self.get_data(
-                self.tblComplianceHistory,
-                "due_date",
-                "compliance_history_id = '%d'" % compliance_history_id
-            )
-            due_date_as_date = due_date_rows[0][0]
-            due_date_as_datetime = datetime.datetime(
-                due_date_as_date.year,
-                due_date_as_date.month,
-                due_date_as_date.day
-            )
-            due_date = self.datetime_to_string(due_date_as_datetime)
-
-            diff = self.get_date_time() - due_date_as_datetime
-            delayed_days = "%d days" % diff.days
-            statutory_provision = notification_detail[4].split(">>")
-            level_1_statutory = statutory_provision[0]
-
-            notification_id = notification_detail[0]
-            notification_text = notification_detail[1]
-            extra_details = notification_detail[3]
-            updated_on = self.datetime_to_string(notification_detail[2])
-            unit_name = "%s - %s" % (notification_detail[5],
-                notification_detail[6])
-            unit_address = notification_detail[7]
-            assignee = self.get_user_contact_details_by_id(
-                notification_detail[8], client_id
-            )
-            concurrence_person = self.get_user_contact_details_by_id(
-                notification_detail[9], client_id
-            )
-            approval_person = self.get_user_contact_details_by_id(
-                notification_detail[10], client_id
-            )
-            compliance_name = "%s - %s"%(notification_detail[13], notification_detail[12])
-            compliance_description = notification_detail[14]
-
-            notifications.append(
-                dashboard.Notification(
-                    notification_id, read_status, notification_text, extra_details,
-                    updated_on, level_1_statutory, unit_name, unit_address, assignee,
-                    concurrence_person, approval_person, compliance_name, 
-                    compliance_description, due_date, delayed_days, penal_consequences
+                due_date_rows = self.get_data(
+                    self.tblComplianceHistory,
+                    "due_date",
+                    "compliance_history_id = '%d'" % compliance_history_id
                 )
-            )
+                due_date_as_date = due_date_rows[0][0]
+                due_date_as_datetime = datetime.datetime(
+                    due_date_as_date.year,
+                    due_date_as_date.month,
+                    due_date_as_date.day
+                )
+                due_date = self.datetime_to_string(due_date_as_datetime)
+
+                diff = self.get_date_time() - due_date_as_datetime
+                delayed_days = "%d days" % diff.days
+                statutory_provision = notification_detail[4].split(">>")
+                level_1_statutory = statutory_provision[0]
+
+                notification_id = notification_detail[0]
+                notification_text = notification_detail[1]
+                extra_details = notification_detail[3]
+                updated_on = self.datetime_to_string(notification_detail[2])
+                unit_name = "%s - %s" % (notification_detail[5],
+                    notification_detail[6])
+                unit_address = notification_detail[7]
+                assignee = self.get_user_contact_details_by_id(
+                    notification_detail[8], client_id
+                )
+                concurrence_person = self.get_user_contact_details_by_id(
+                    notification_detail[9], client_id
+                )
+                approval_person = self.get_user_contact_details_by_id(
+                    notification_detail[10], client_id
+                )
+                compliance_name = "%s - %s"%(notification_detail[13], notification_detail[12])
+                compliance_description = notification_detail[14]
+                penal_consequences = notification_detail[15]
+                notifications.append(
+                    dashboard.Notification(
+                        notification_id, read_status, notification_text, extra_details,
+                        updated_on, level_1_statutory, unit_name, unit_address, assignee,
+                        concurrence_person, approval_person, compliance_name, 
+                        compliance_description, due_date, delayed_days, penal_consequences
+                    )
+                )
         return notifications
 
 
@@ -4342,7 +4348,6 @@ class ClientDatabase(Database):
             if level_1_statutory_name != None:
                 conditionlevel1 = " AND statutory_provision like '%s'" %  str(level_1_statutory_name+"%")
                 query = query + conditionlevel1        
-            print query                
             result_rows = self.select_all(query)
             columns = ["business_group_name", "legal_entity_name", "division_name", "unit_code", "unit_name", "address",
                     "statutory_provision", "notification_text", "updated_on"]
@@ -4368,7 +4373,6 @@ class ClientDatabase(Database):
                 notifications.append(clientreport.STATUTORY_WISE_NOTIFICATIONS(
                     business_group_name, legal_entity_name, division_name, level_1_statutory_wise_notifications
                         ))
-                print notifications
         return notifications
 
     # risk report
@@ -4578,7 +4582,6 @@ class ClientDatabase(Database):
                         unit_id, country_id, domain_id,
                         user_id, str(level_1_statutory_id+"%"), compliance_id, start_date, end_date
                     )
-                print query
                 compliance_rows = self.select_all(query, client_id)
 
                 compliances_list = []

@@ -155,7 +155,6 @@ class Database(object) :
             query += " WHERE %s" % (condition)
         # if client_id is not None:
         #     return self.select_all(query, client_id)
-        print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(
@@ -568,7 +567,6 @@ class KnowledgeDatabase(Database):
                 "database_name", "server_ip", "server_port"
             ]
             results = self.convert_to_dict(rows, columns)
-            # print results
         return self.return_companies(results)
 
     def return_companies(self, data):
@@ -3291,9 +3289,9 @@ class KnowledgeDatabase(Database):
     def save_legal_entity(self, client_id, legal_entity_id, legal_entity_name,
         business_group_id, session_user):
         current_time_stamp = self.get_date_time()
-        columns = ["client_id", "legal_entity_id", "legal_entity_name",
+        columns = ["client_id", "legal_entity_id", "legal_entity_name", 
         "created_by", "created_on", "updated_by", "updated_on"]
-        values = [client_id, legal_entity_id, legal_entity_name, business_group_id,
+        values = [client_id, legal_entity_id, legal_entity_name,
         session_user, current_time_stamp, session_user, current_time_stamp]
 
         if business_group_id is not None:

@@ -133,7 +133,6 @@ function initClientMirror() {
                 }
             ]
         ]
-
         jQuery.post(
             CLIENT_BASE_URL + "api/login",
             toJSON(request),
@@ -922,6 +921,7 @@ function initClientMirror() {
                 "to_date": todate
             }
         ];
+    }
 
     /* Reassigned History Report */
     function getReassignedHistoryReportFilters(callback) {
@@ -947,7 +947,6 @@ function initClientMirror() {
             }
         ];
         callerName = "api/client_reports";
->>>>>>> e97901734f905c660ca01d7b56e6f82808d6a2ff
         clientApiRequest(callerName, request, callback);
     }
 

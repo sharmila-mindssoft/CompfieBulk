@@ -156,8 +156,6 @@ class API(object):
         request_data_type, need_client_id
     ):
         response.set_default_header("Access-Control-Allow-Origin", "*")
-        print "request_data_type:{}".format(request_data_type)
-        print "request:{}".format(request)
         request_data = self._parse_request(
             request_data_type, request, response
         )
@@ -165,7 +163,6 @@ class API(object):
             return
 
         db, request_data, company_id = request_data
-        print request_data
 
         def respond(response_data):
             self._send_response(
@@ -201,7 +198,6 @@ class API(object):
 
     @api_request(clientreport.RequestFormat)
     def handle_client_reports(self, request, db):
-        print request.to_structure()
         return controller.process_client_report_requests(request, db)
 
     @api_request(dashboard.RequestFormat)
