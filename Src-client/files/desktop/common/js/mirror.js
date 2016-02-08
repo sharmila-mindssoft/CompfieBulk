@@ -495,7 +495,6 @@ function initMirror() {
         var files = evt.target.files;
         var file = files[0];
         file_name = file.name
-        alert(file_name)
         file_size = file.size
         if (file_size > max_limit) {
             return "File max limit exceeded"
@@ -504,23 +503,11 @@ function initMirror() {
         //     file_name.lastIndexOf('.') + 1
         // );
         file_content = null
-        if (files && file) {
-            var reader = new FileReader();
-
-            reader.onload = function(readerEvt) {
-                alert("reader-onload")
-                var binaryString = readerEvt.target.result;
-                file_content = btoa(binaryString);
-
-                alert(file_content)
-                return file_content
-            };
-            alert("gg " + file_content)
+        
 
         if (files && file) {
             convert_to_base64(file, function(data) {
                 file_content = data
-                alert(file_content)
                 if (file_content == null) {
                     return "File content is empty"
                 }

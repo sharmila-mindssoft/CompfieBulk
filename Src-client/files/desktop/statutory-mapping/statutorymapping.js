@@ -25,6 +25,7 @@ var disp_statutories = [];
 var statutory_dates = [];
 var sm_geographyids = [];
 var compliances = [];
+var uploadFile = []
 
 function clearMessage() {
   $(".error-message").hide();
@@ -416,10 +417,16 @@ function load(id,level,country,domain){
 }
 
 $("#upload_file").on("change", function(e) {
-  alert(e)
   mirror.uploadFile(e, function result_data(data) {
     //  data will be in uploadFileFormat
-    alert(data["file_name"] + data["file_size"])
+    /*alert(data["file_name"])
+    alert(data["file_size"])
+    alert(data["file_content"])*/
+
+    uploadFile = data;
+    alert(data)
+
+
   });
 
 });
@@ -578,8 +585,10 @@ $("#temp_addcompliance").click(function() {
   var compliance_task = $('#compliance_task').val().trim();
   var description = $('#compliance_description').val().trim();
   var compliance_document = $('#compliance_document').val().trim();
-  var file_format = null;
-  //file_format = $('#upload_file').val()
+  //var file_format = null;
+  var file_format = [];
+  file_format.push(uploadFile);
+  alert(file_format)
   var penal_consequences = $('#penal_consequences').val().trim();
   var compliance_frequency = $('#compliance_frequency').val().trim();
   var repeats_type = null;
@@ -678,6 +687,8 @@ $("#temp_addcompliance").click(function() {
     compliances[comp_id]["duration_type_id"] = duration_type;
     compliances[comp_id]["duration"] = duration;
     compliances[comp_id]["is_active"] = true;
+    compliances[comp_id]["download_file_list"] = null;
+    
   }
   $('#statutory_provision').val('');
   $('#compliance_task').val('');
