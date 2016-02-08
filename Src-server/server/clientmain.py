@@ -28,7 +28,7 @@ def cors_handler(request, response):
 
 #
 # api_request
-#
+#m
 
 def api_request(
     request_data_type, need_client_id=False
@@ -91,8 +91,8 @@ class API(object):
                     )
                     db.connect()
                     self._databases[company_id] = db
-        except Exception:
-            print db
+        except Exception, e :
+            print db, e
 
     def _send_response(
         self, response_data, response
@@ -156,7 +156,6 @@ class API(object):
         request_data_type, need_client_id
     ):
         response.set_default_header("Access-Control-Allow-Origin", "*")
-
         request_data = self._parse_request(
             request_data_type, request, response
         )
@@ -164,7 +163,6 @@ class API(object):
             return
 
         db, request_data, company_id = request_data
-        print request_data
 
         def respond(response_data):
             self._send_response(

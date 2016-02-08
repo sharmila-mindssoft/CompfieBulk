@@ -40,7 +40,6 @@ def process_login(db, request, client_id):
     encrypt_password = db.encrypt(password)
     # client_id = db.get_client_id_from_short_name(short_name)
     response = db.verify_login(username, encrypt_password)
-    print response
     if response is True:
         return admin_login_response(db, client_id)
     else :
