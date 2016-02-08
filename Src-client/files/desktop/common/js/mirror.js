@@ -470,15 +470,25 @@ function initMirror() {
         return statutoryDate;
     }
 
-    function uploadFileFormat(size, type, content) {
+    function uploadFileFormat(size, name, content) {
         return {
             "file_size": size,
-            "file_type": type,
+            "file_name": name,
             "file_content": content
         }
     }
 
-    function uploadFile(fileListener) {
+    function convert_to_base64(file, callback) {
+        var reader = new FileReader();
+        reader.onload = function(readerEvt) {
+            var binaryString = readerEvt.target.result;
+            file_content = btoa(binaryString);
+            callback(file_content)
+        };
+        reader.readAsBinaryString(file);
+    }
+
+    function uploadFile(fileListener, callback) {
         var evt = fileListener
         max_limit =  1024 * 1024 * 50
         // file max limit 50MB
@@ -492,23 +502,22 @@ function initMirror() {
         // file_extension = file_name.substr(
         //     file_name.lastIndexOf('.') + 1
         // );
-        file_content = null
+        // file_content = null
+
         if (files && file) {
-            var reader = new FileReader();
-
-            reader.onload = function(readerEvt) {
-                var binaryString = readerEvt.target.result;
-                file_content = btoa(binaryString);
-            };
-
-            reader.readAsBinaryString(file);
+            convert_to_base64(file, function(data) {
+                file_content = data
+                alert(file_content)
+                if (file_content == null) {
+                    return "File content is empty"
+                }
+                result = uploadFileFormat(
+                    file_size, file_name, file_content
+                )
+                callback(result)
+            });
         }
-        if (file_content == null) {
-            return "File content is empty"
-        }
-        return uploadFileFormat(
-            file_size, file_name, file_content
-        )
+
     }
 
     function complianceDetails (
@@ -1339,6 +1348,7 @@ function initMirror() {
         updateStatutory: updateStatutory,
 
         statutoryDates: statutoryDates,
+        uploadFile: uploadFile,
         uploadFileFormat: uploadFileFormat,
         complianceDetails: complianceDetails,
         statutoryMapping: statutoryMapping,
