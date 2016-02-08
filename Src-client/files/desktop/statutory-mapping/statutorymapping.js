@@ -416,17 +416,28 @@ function load(id,level,country,domain){
   }
 }
 
+function remove_temp_file(){
+  uploadFile = [];
+  $("#uploaded_fileview").hide();
+  $("#uploaded_filename").html('');
+  $("#upload_file").val('');
+}
+
 $("#upload_file").on("change", function(e) {
   mirror.uploadFile(e, function result_data(data) {
     //  data will be in uploadFileFormat
     /*alert(data["file_name"])
     alert(data["file_size"])
     alert(data["file_content"])*/
-
-    uploadFile = data;
-    alert(data)
-
-
+    if(data != 'File max limit exceeded' || data != 'File content is empty'){
+      uploadFile = data;
+      $("#uploaded_fileview").show();
+      $("#uploaded_filename").html( data["file_name"] + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' />")
+    }
+    else{
+      displayMessage(data);
+    }
+    
   });
 
 });
@@ -588,7 +599,6 @@ $("#temp_addcompliance").click(function() {
   //var file_format = null;
   var file_format = [];
   file_format.push(uploadFile);
-  alert(file_format)
   var penal_consequences = $('#penal_consequences').val().trim();
   var compliance_frequency = $('#compliance_frequency').val().trim();
   var repeats_type = null;
@@ -688,7 +698,7 @@ $("#temp_addcompliance").click(function() {
     compliances[comp_id]["duration"] = duration;
     compliances[comp_id]["is_active"] = true;
     compliances[comp_id]["download_file_list"] = null;
-    
+
   }
   $('#statutory_provision').val('');
   $('#compliance_task').val('');
@@ -729,6 +739,7 @@ $("#temp_addcompliance").click(function() {
   $('#multiple_triggerbefore6').val('');
   //$('.multipleinput').prop("checked") == false;
   $('#complianceid').val('');
+  uploadFile = [];
   load_compliance();
   }else{
     displayMessage("Duplicate Compliance");
@@ -799,6 +810,13 @@ function temp_editcompliance(edit_id){
   $('#duration').val(compliances[edit_id]["duration"]);
   $('#repeats_type').val(compliances[edit_id]["repeats_type_id"]);
   $('#repeats_every').val(compliances[edit_id]["repeats_every"]);
+
+  alert(compliances[edit_id]["format_file_list"])
+  /*file_format = data;
+    $("#uploaded_fileview").show();
+    $("#uploaded_filename").html( data["file_name"] + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' />")
+*/
+      
   var compliance_frequency = compliances[edit_id]["frequency_id"];
   statutory_dates = compliances[edit_id]["statutory_dates"];
   if(compliance_frequency == "1"){
