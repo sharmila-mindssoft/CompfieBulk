@@ -153,8 +153,7 @@ class Database(object) :
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        # if client_id is not None:
-        #     return self.select_all(query, client_id)
+        print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(
@@ -2060,7 +2059,7 @@ class KnowledgeDatabase(Database):
         new_file.write(file_info.file_content.decode('base64'))
         new_file.close()
 
-    def remove_uploaded_file(self, file_name):
+    def remove_uploaded_file(self, file_path):
         if os.path.exists(file_path) :
             os.remove(file_path)
 
@@ -2391,6 +2390,7 @@ class KnowledgeDatabase(Database):
                     file_content = file_list.file_content
                 else :
                     # update saved file
+                    file_list = file_list[0]
                     file_name = saved_file[0]
                     file_size = file_list.file_size
                     file_content = file_list.file_content
@@ -3289,7 +3289,7 @@ class KnowledgeDatabase(Database):
     def save_legal_entity(self, client_id, legal_entity_id, legal_entity_name,
         business_group_id, session_user):
         current_time_stamp = self.get_date_time()
-        columns = ["client_id", "legal_entity_id", "legal_entity_name", 
+        columns = ["client_id", "legal_entity_id", "legal_entity_name",
         "created_by", "created_on", "updated_by", "updated_on"]
         values = [client_id, legal_entity_id, legal_entity_name,
         session_user, current_time_stamp, session_user, current_time_stamp]
