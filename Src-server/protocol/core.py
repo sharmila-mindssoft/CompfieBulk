@@ -987,7 +987,7 @@ class Compliance(object):
         format_file_list, penal_consequences,
         frequency_id, statutory_dates, repeats_type_id,
         repeats_every, duration_type_id,
-        duration, is_active, download_file_list
+        duration, is_active
     ):
         self.compliance_id = compliance_id
         self.statutory_provision = statutory_provision
@@ -1003,7 +1003,6 @@ class Compliance(object):
         self.duration_type_id = duration_type_id
         self.duration = duration
         self.is_active = is_active
-        self.download_file_list = download_file_list
 
     @staticmethod
     def parse_structure(data):
@@ -1014,8 +1013,7 @@ class Compliance(object):
             "penal_consequences", "frequency_id",
             "statutory_dates", "repeats_type_id",
             "repeats_every", "duration_type_id",
-            "duration", "is_active",
-            "download_file_list"
+            "duration", "is_active"
         ])
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_OptionalType_SignedIntegerType_8(compliance_id)
@@ -1045,8 +1043,6 @@ class Compliance(object):
         duration = parse_structure_OptionalType_UnsignedIntegerType_32(duration)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
-        download_file_list = data.get("download_file_list")
-        download_file_list = parse_structure_OptionalType_VectorType_CustomTextType_100
         return Compliance(
             compliance_id, statutory_provision,
             compliance_task, description,
@@ -1054,7 +1050,7 @@ class Compliance(object):
             penal_consequences, frequency_id,
             statutory_dates, repeats_type_id,
             repeats_every, duration_type_id,
-            duration, is_active, download_file_list
+            duration, is_active
         )
 
     def to_structure(self):
@@ -1073,7 +1069,6 @@ class Compliance(object):
             "duration_type_id": to_structure_OptionalType_UnsignedIntegerType_32(self.duration_type_id),
             "duration": to_structure_OptionalType_UnsignedIntegerType_32(self.duration),
             "is_active": to_structure_Bool(self.is_active),
-            "download_file_list": to_structure_OptionalType_VectorType_CustomTextType_100(self.download_file_list),
         }
 
 #

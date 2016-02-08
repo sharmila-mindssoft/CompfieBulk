@@ -688,7 +688,7 @@ $("#temp_addcompliance").click(function() {
     compliances[comp_id]["duration"] = duration;
     compliances[comp_id]["is_active"] = true;
     compliances[comp_id]["download_file_list"] = null;
-    
+
   }
   $('#statutory_provision').val('');
   $('#compliance_task').val('');

@@ -16,7 +16,7 @@ __all__ = [
 ]
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
-FORMAT_DOWNLOAD_URL = "/client/compliance_format/"
+FORMAT_DOWNLOAD_URL = "client/compliance_format"
 
 class ClientDatabase(Database):
     def __init__(
