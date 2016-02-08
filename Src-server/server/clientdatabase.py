@@ -1841,16 +1841,12 @@ class ClientDatabase(Database):
             return double_years
 
     def get_status_wise_compliances_count(self, request, client_id):
-        country_ids = request.country_ids
-        domain_ids = request.domain_ids
-        from_date =request.from_date
+        # country_ids = request.country_ids
+        # domain_ids = request.domain_ids
+        from_date = request.from_date
         to_date = request.to_date
         filter_type = request.filter_type
-        filter_ids = request.filter_ids
-        _bgroup_ids = '%'
-        _lentity_ids = '%'
-        _division_ids = '%'
-        _unit_ids = '%'
+        # filter_ids = request.filter_ids
 
         inprogress_qry = " AND T1.due_date > CURDATE() \
                 AND T1.approve_status is NULL"
@@ -1864,9 +1860,8 @@ class ClientDatabase(Database):
         not_complied_qry = " AND T1.due_date < CURDATE() \
                 AND T1.approve_status is NULL "
 
-        date_qry = ""
 
-        if filter_ids == None :
+        if filter_ids is None :
             filter_ids = country_ids
 
         if len(filter_ids) == 1:
@@ -3854,7 +3849,7 @@ class ClientDatabase(Database):
                     dashboard.Notification(
                         notification_id, read_status, notification_text, extra_details,
                         updated_on, level_1_statutory, unit_name, unit_address, assignee,
-                        concurrence_person, approval_person, compliance_name, 
+                        concurrence_person, approval_person, compliance_name,
                         compliance_description, due_date, delayed_days, penal_consequences
                     )
                 )
@@ -4274,8 +4269,8 @@ class ClientDatabase(Database):
         business_group_id = request_data.business_group_id
         legal_entity_id = request_data.legal_entity_id
         division_id = request_data.division_id
-        unit_id = request_data.unit_id        
-        level_1_statutory_name = request_data.level_1_statutory_name 
+        unit_id = request_data.unit_id
+        level_1_statutory_name = request_data.level_1_statutory_name
         from_date = request_data.from_date
         to_date = request_data.to_date
         if from_date == None:
@@ -4295,7 +4290,7 @@ class ClientDatabase(Database):
             condition += " AND division_id = '%d'" % division_id
         if unit_id != None:
             condition += " AND unit_id = '%d'" % unit_id
-  
+
 
         # Gettings distinct sets of bg_id, le_id, div_id, unit_id
         columns = "business_group_id, legal_entity_id, division_id, unit_id"
@@ -4346,10 +4341,10 @@ class ClientDatabase(Database):
                 )
             if from_date != '' and to_date != '':
                 conditiondate = " AND  snl.updated_on between '%s' and '%s' " % (from_date, to_date)
-                query = query + conditiondate  
+                query = query + conditiondate
             if level_1_statutory_name != None:
                 conditionlevel1 = " AND statutory_provision like '%s'" %  str(level_1_statutory_name+"%")
-                query = query + conditionlevel1        
+                query = query + conditionlevel1
             result_rows = self.select_all(query)
             columns = ["business_group_name", "legal_entity_name", "division_name", "unit_code", "unit_name", "address",
                     "statutory_provision", "notification_text", "updated_on"]
@@ -4367,8 +4362,8 @@ class ClientDatabase(Database):
                         level_1_statutory_wise_notifications[level_1_statutory_name] = []
                     level_1_statutory_wise_notifications[level_1_statutory_name].append(
                         clientreport.LEVEL_1_STATUTORY_NOTIFICATIONS(
-                        statutory_provision = notification["statutory_provision"], 
-                        unit_name = unit_name, 
+                        statutory_provision = notification["statutory_provision"],
+                        unit_name = unit_name,
                         notification_text = notification["notification_text"],
                         date_and_time = self.datetime_to_string(notification["updated_on"])
                     ))

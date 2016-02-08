@@ -147,39 +147,27 @@ class GetChartFilters(Request):
         }
 
 class GetComplianceStatusChart(Request):
-    def __init__(self, country_ids, domain_ids, from_date, to_date, filter_type, filter_ids):
-        self.country_ids = country_ids
-        self.domain_ids = domain_ids
+    def __init__(self, from_date, to_date, filter_type):
         self.from_date = from_date
         self.to_date = to_date
         self.filter_type = filter_type
-        self.filter_ids = filter_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_ids", "domain_ids", "from_date", "to_date", "filter_type", "filter_ids"])
-        country_ids = data.get("country_ids")
-        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
-        domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        data = parse_dictionary(data, ["from_date", "to_date", "filter_type"])
         from_date = data.get("from_date")
         from_date = parse_structure_OptionalType_Text(from_date)
         to_date = data.get("to_date")
         to_date = parse_structure_OptionalType_Text(to_date)
         filter_type = data.get("filter_type")
-        filter_type = parse_structure_Text(filter_type)
-        filter_ids = data.get("filter_ids")
-        filter_ids = parse_structure_OptionalType_VectorType_SignedIntegerType_8(filter_ids)
-        return GetComplianceStatusChart(country_ids, domain_ids, from_date, to_date, filter_type, filter_ids)
+        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
+        return GetComplianceStatusChart(from_date, to_date, filter_type)
 
     def to_inner_structure(self):
         return {
-            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "from_date": to_structure_OptionalType_Text(self.from_date),
             "to_date": to_structure_OptionalType_Text(self.to_date),
-            "filter_type": to_structure_Text(self.filter_type),
-            "filter_ids": to_structure_OptionalType_VectorType_SignedIntegerType_8(self.filter_ids),
+            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
         }
 
 class GetEscalationsChart(Request):
