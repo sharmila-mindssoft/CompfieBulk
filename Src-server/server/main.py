@@ -82,8 +82,8 @@ class API(object):
                 data
             )
         except Exception, e:
-            print e
-            print(traceback.format_exc())
+            #print e
+            #print(traceback.format_exc())
             response.set_status(400)
             response.send(str(e))
             return None
