@@ -2390,6 +2390,7 @@ class KnowledgeDatabase(Database):
                     file_content = file_list.file_content
                 else :
                     # update saved file
+                    file_list = file_list[0]
                     file_name = saved_file[0]
                     file_size = file_list.file_size
                     file_content = file_list.file_content
