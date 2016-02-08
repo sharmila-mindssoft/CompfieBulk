@@ -449,8 +449,9 @@ function updateComplianceStatusChart (data) {
     var xAxis = data[1];
     var chartDataSeries = data[2];
 
-    $('#graph-1').show();
-    $('#graph-1').highcharts({
+    $(".graph-container").hide();
+    $(".graph-container.compliance-status").show();
+    $(".graph-container.compliance-status").highcharts({
         chart: {
             type: 'bar',
             width: '850'

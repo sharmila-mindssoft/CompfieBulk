@@ -343,11 +343,7 @@ table.filtertable-1 tr td table tr td {
 /*.chart-container-inner,*/
 .selections,
 /*.graph-box,*/
-#graph-1,
-#graph-2,
-#graph-3,
-#graph-4,
-#graph-5,
+.graph-container,
 .compliance-report-tab-content,
 .btn-back,
 .btn-pie-chart,
