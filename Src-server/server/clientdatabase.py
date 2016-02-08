@@ -3163,13 +3163,13 @@ class ClientDatabase(Database):
     def get_service_provider_user_ids(self, service_provider_id, client_id):
         columns = "group_concat(user_id)"
         condition = " service_provider_id = '%d' and is_service_provider = 1"% service_provider_id
-        rows = self.get_data(self.tblUsers, columns, condition, client_id)
+        rows = self.get_data(self.tblUsers, columns, condition)
         return rows[0][0]
 
     def get_service_provider_user_unit_ids(self, user_ids, client_id):
         columns = "group_concat(unit_id)"
         condition = " user_id in (%s)"% user_ids
-        rows = self.get_data(self.tblUserUnits, columns, condition, client_id)
+        rows = self.get_data(self.tblUserUnits, columns, condition)
         return rows[0][0]
 
     def get_serviceproviderwise_compliance_report(self, country_id, domain_id, statutory_id, unit_id, service_provider_id, client_id, session_user) :
@@ -4431,21 +4431,18 @@ class ClientDatabase(Database):
             start_date = self.string_to_datetime(from_date)
             end_date = self.string_to_datetime(to_date)
 
-
-
         query = "SELECT (case when (LEFT(statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') \
             THEN \
             statutory_mapping \
             ELSE \
             LEFT (statutory_mapping,INSTR(statutory_mapping,'>>')-1) \
             END ) as statutory \
-            FROM tbl_compliances GROUP BY statutory"
-
-
+            FROM tbl_compliances where statutory_mapping like '%s' GROUP BY statutory" % (
+                str(level_1_statutory_id+"%")
+                )
         statutory_rows = self.select_all(query, client_id)
 
         level_1_statutory_wise_units = []
-
         for srow in statutory_rows:
             statutoru_name = srow[0]
             unit_columns = "unit_id, unit_code, unit_name, address"
@@ -4453,6 +4450,7 @@ class ClientDatabase(Database):
             unit_rows = self.get_data(self.tblUnits, unit_columns, detail_condition)
 
             unit_wise_compliances = []
+
             for unit in unit_rows:
                 unit_id = unit[0]
                 unit_name = "%s - %s "% (unit[1], unit[2])
@@ -4460,15 +4458,15 @@ class ClientDatabase(Database):
 
                 query = "SELECT rc.compliance_id, c.compliance_task, ch.due_date \
                         from tbl_compliances c,tbl_compliance_history ch, tbl_reassigned_compliances_history rc, \
-                        tbl_units ut where \
-                        ch.unit_id = %s \
-                        AND ut.country_id = %s and ut.domain_ids like '%s' \
-                        AND c.compliance_id = ch.compliance_id \
-                        AND ch.completed_by like '%s'  AND c.statutory_mapping like '%s'  AND c.compliance_id like '%s' and rc.reassigned_date BETWEEN '%s' AND '%s' GROUP BY rc.compliance_id" % (
-                        unit_id, country_id, domain_id,
-                        user_id, str(level_1_statutory_id+"%"), compliance_id, start_date, end_date
+                        tbl_client_statutories cs, tbl_client_compliances cc, tbl_assigned_compliances ac where \
+                        ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id and ch.next_due_date = ac.due_date and \
+                        cs.country_id = %s and cs.domain_id = %s and cs.unit_id like '%s' \
+                        AND cs.client_statutory_id = cc.client_statutory_id and c.compliance_id = cc.compliance_id \
+                        AND c.compliance_id = ac.compliance_id and ac.unit_id = cs.unit_id \
+                        AND rc.assignee like '%s'  AND c.statutory_mapping like '%s'  AND c.compliance_id like '%s' and rc.reassigned_date BETWEEN '%s' AND '%s' GROUP BY rc.compliance_id" % (
+                        country_id, domain_id, unit_id,
+                        user_id, str(statutoru_name+"%"), compliance_id, start_date, end_date
                     )
-                print query
                 compliance_rows = self.select_all(query, client_id)
 
                 compliances_list = []
@@ -4482,10 +4480,9 @@ class ClientDatabase(Database):
                             (SELECT concat(u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = rh.reassigned_from) AS reassignfrom, \
                             rh.reassigned_date, rh.remarks \
                             from tbl_reassigned_compliances_history rh where \
-                            rh.unit_id = %s \
-                            AND rh.complianceid = %s AND rh.reassigned_date BETWEEN %s AND %s \
+                            rh.compliance_id = %s AND rh.reassigned_date BETWEEN '%s' AND '%s' \
                             ORDER BY rh.reassigned_date DESC" % (
-                            unit_id, compliance_id,
+                            compliance_id,
                             start_date, end_date
                     )
                     history_rows = self.select_all(query, client_id)
@@ -4493,23 +4490,21 @@ class ClientDatabase(Database):
                     for h_row in history_rows:
                         assignee = h_row[0]
                         reassignedfrom = h_row[1]
-                        reassigned_date = h_row[2]
+                        reassigned_date = self.datetime_to_string(h_row[2])
                         remarks = h_row[3]
 
-                        history_list.append()
-                        ReassignHistory
-                        compliance = clientreport.ReassignHistory(
+                        history = clientreport.ReassignHistory(
                         assignee, reassignedfrom, reassigned_date, remarks
                         )
-                        history_list.append(compliance)
+                        history_list.append(history)
 
-
-                    compliance = clientreport.ReassignUnitCompliance(
+                    compliances_list.append(clientreport.ReassignCompliance(compliance_name, due_date, history_list))
+                compliance = clientreport.ReassignUnitCompliance(
                         unit_name, compliances_list
                     )
-                    unit_wise_compliances.append(compliance)
-
+            unit_wise_compliances.append(compliance)
 
             unitwise = clientreport.StatutoryReassignCompliance(statutoru_name, unit_wise_compliances)
             level_1_statutory_wise_units.append(unitwise)
+
         return level_1_statutory_wise_units

@@ -485,6 +485,7 @@ function initMirror() {
         var files = evt.target.files;
         var file = files[0];
         file_name = file.name
+        alert(file_name)
         file_size = file.size
         if (file_size > max_limit) {
             return "File max limit exceeded"
@@ -497,9 +498,14 @@ function initMirror() {
             var reader = new FileReader();
 
             reader.onload = function(readerEvt) {
+                alert("reader-onload")
                 var binaryString = readerEvt.target.result;
                 file_content = btoa(binaryString);
+
+                alert(file_content)
+                return file_content
             };
+            alert("gg " + file_content)
 
             reader.readAsBinaryString(file);
         }
@@ -1339,6 +1345,7 @@ function initMirror() {
         updateStatutory: updateStatutory,
 
         statutoryDates: statutoryDates,
+        uploadFile: uploadFile,
         uploadFileFormat: uploadFileFormat,
         complianceDetails: complianceDetails,
         statutoryMapping: statutoryMapping,
