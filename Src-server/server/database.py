@@ -2059,7 +2059,7 @@ class KnowledgeDatabase(Database):
         new_file.write(file_info.file_content.decode('base64'))
         new_file.close()
 
-    def remove_uploaded_file(self, file_name):
+    def remove_uploaded_file(self, file_path):
         if os.path.exists(file_path) :
             os.remove(file_path)
 
@@ -3288,7 +3288,7 @@ class KnowledgeDatabase(Database):
     def save_legal_entity(self, client_id, legal_entity_id, legal_entity_name,
         business_group_id, session_user):
         current_time_stamp = self.get_date_time()
-        columns = ["client_id", "legal_entity_id", "legal_entity_name", 
+        columns = ["client_id", "legal_entity_id", "legal_entity_name",
         "created_by", "created_on", "updated_by", "updated_on"]
         values = [client_id, legal_entity_id, legal_entity_name,
         session_user, current_time_stamp, session_user, current_time_stamp]
