@@ -390,7 +390,7 @@ class ClientDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return self.return_units(result)
 
-    def get_units_for_user_grouped_by_industry(self, unit_ids, client_id):
+    def get_units_for_user_grouped_by_industry(self, unit_ids):
         condition = "1"
         if unit_ids is not None:
             condition = "unit_id in (%s)" % unit_ids
@@ -756,7 +756,7 @@ class ClientDatabase(Database):
         condition = " 1 "
         rows = None
         if user_id > 0:
-            condition = " and user_id = '%d'"% user_id
+            condition = "  user_id = '%d'"% user_id
             rows = self.get_data(
                 self.tblUserUnits, columns, condition
             )
@@ -782,27 +782,45 @@ class ClientDatabase(Database):
 
     def get_user_countries(self, user_id, client_id):
         columns = "group_concat(country_id)"
-        condition = " user_id = '%d'" % user_id
+        table = self.tblCountries
+        result = None
+        if user_id > 0:
+            table = self.tblUserCountries
+            condition = " user_id = '%d'" % user_id
         rows = self.get_data(
-            self.tblUserCountries, columns, condition
+            table, columns, condition
         )
-        return rows[0][0]
+        if rows :
+            result = rows[0][0]
+        return result
 
     def get_user_domains(self, user_id, client_id):
         columns = "group_concat(domain_id)"
-        condition = " user_id = '%d'" % user_id
+        table = self.tblDomains
+        result = None
+        if user_id > 0: 
+            table  = self.tblUserDomains
+            condition = " user_id = '%d'" % user_id
         rows = self.get_data(
-            self.tblUserDomains, columns, condition
+            table, columns, condition
         )
-        return rows[0][0]
+        if rows:
+            result = rows[0][0]
+        return result
 
     def get_user_unit_ids(self, user_id, client_id):
         columns = "group_concat(unit_id)"
-        condition = " user_id = '%d'"% user_id
+        table = self.tblUnits
+        result = None
+        if user_id > 0: 
+            table = self.tblUserUnits
+            condition = " user_id = '%d'"% user_id
         rows = self.get_data(
-            self.tblUserUnits, columns, condition
+            table, columns, condition
         )
-        return rows[0][0]
+        if rows : 
+            result = rows[0][0]
+        return result
 
     def get_client_users(self, client_id):
         columns = "user_id, employee_name, employee_code, is_active"
