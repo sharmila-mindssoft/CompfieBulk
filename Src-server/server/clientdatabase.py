@@ -2024,7 +2024,6 @@ class ClientDatabase(Database):
 
                     year_wise[str(i)] = compliance_sum
 
-
                 country[domain_id] = year_wise
                 calculated_data[filter_type] = country
 
@@ -2067,7 +2066,6 @@ class ClientDatabase(Database):
             domain_wise = {}
             compliance_list = []
             for k, v in value.iteritems() :
-                dict = {}
                 year = current_year
                 inprogress = v[0]
                 complied = v[1]
@@ -2075,7 +2073,7 @@ class ClientDatabase(Database):
                 not_complied = v[3]
                 if len(compliance_list) == 0 :
                     compliance_count = core.NumberOfCompliances(
-                        str(year), complied,
+                        int(k), str(year), complied,
                         delayed, inprogress, not_complied
                     )
                     compliance_list.append(compliance_count)
@@ -2089,9 +2087,13 @@ class ClientDatabase(Database):
                 domain_wise[k] = compliance_list
                 compliance_list = []
             filter_type_wise[key] = domain_wise
+
         final_result_list = []
         for k, v in filter_type_wise.items():
-            chart = dashboard.ChartDataMap(k, v)
+            data_list = []
+            for i, j in v.items():
+                data_list.extend(j)
+            chart = dashboard.ChartDataMap(k, data_list)
             final_result_list.append(chart)
         return final_result_list
 
@@ -2104,31 +2106,32 @@ class ClientDatabase(Database):
         calculated_data = self.calculate_year_wise_count(calculated_data, year_info, not_complied, "not_complied", filter_type_ids, domain_ids)
 
         # Sum compliance for filter_type wise
-        filter_type_wise_list = []
         filter_type_wise = {}
-        current_year = datetime.datetime.now().year
 
         for filter_type, value in calculated_data.iteritems():
             domain_wise = {}
             for key, val in value.iteritems():
                 compliance_list = []
                 for k , v in val.iteritems():
-                    dict = {}
-                    year =  k
+                    year = k
                     inprogress = v[0]
                     complied = v[1]
                     delayed = v[2]
                     not_complied = v[3]
                     compliance_count = core.NumberOfCompliances(
-                        str(year), complied,
+                        int(key), str(year), complied,
                         delayed, inprogress, not_complied
                     )
                     compliance_list.append(compliance_count)
                 domain_wise[key] = compliance_list
             filter_type_wise[filter_type] = domain_wise
+
         final_result_list = []
         for k, v in filter_type_wise.items():
-            chart = dashboard.ChartDataMap(k, v)
+            data_list = []
+            for i, j in v.items():
+                data_list.extend(j)
+            chart = dashboard.ChartDataMap(k, data_list)
             final_result_list.append(chart)
         return final_result_list
 
@@ -2397,30 +2400,26 @@ class ClientDatabase(Database):
                 request, chart_type
             )
 
-
         year_info = self.get_client_domain_configuration(client_id)
         calculated_data = {}
         calculated_data = self.calculate_year_wise_count(calculated_data, year_info, delayed, "delayed", filter_ids, domain_ids)
         calculated_data = self.calculate_year_wise_count(calculated_data, year_info, not_complied, "not_complied", filter_ids, domain_ids)
 
         # Sum compliance for filter_type wise
-        filter_type_wise_list = []
         filter_type_wise = {}
-        current_year = datetime.datetime.now().year
 
         for filter_type, value in calculated_data.iteritems():
             domain_wise = {}
             for key, val in value.iteritems():
                 compliance_list = []
                 for k , v in val.iteritems():
-                    dict = {}
-                    year =  k
+                    year = k
                     inprogress = 0
                     complied = 0
                     delayed = v[2]
                     not_complied = v[3]
                     compliance_count = core.NumberOfCompliances(
-                        str(year), complied,
+                        int(key), str(year), complied,
                         delayed, inprogress, not_complied
                     )
                     compliance_list.append(compliance_count)
@@ -2428,7 +2427,10 @@ class ClientDatabase(Database):
             filter_type_wise[filter_type] = domain_wise
         final_result_list = []
         for k, v in filter_type_wise.items():
-            chart = dashboard.ChartDataMap(k, v)
+            data_list = []
+            for i, j in v.items():
+                data_list.extend(j)
+            chart = dashboard.ChartDataMap(k, data_list)
             final_result_list.append(chart)
 
         return dashboard.GetEscalationsChartSuccess(final_result_list)
@@ -4395,9 +4397,9 @@ class ClientDatabase(Database):
         )
 
     # Reassigned History Report
-    def get_reassigned_history_report(self, country_id, domain_id, level_1_statutory_id, 
+    def get_reassigned_history_report(self, country_id, domain_id, level_1_statutory_id,
         unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user ) :
-        
+
         if unit_id is None :
             unit_ids = self.get_user_unit_ids(session_user, client_id)
         else :

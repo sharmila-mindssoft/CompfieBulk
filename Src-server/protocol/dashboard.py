@@ -500,7 +500,7 @@ class GetTrendChartDrillDownData(Request):
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         year = data.get("year")
         year = parse_structure_UnsignedIntegerType_32(year)
-        return GetTrendChartDrillDownData(filter_type, filter_ids, 
+        return GetTrendChartDrillDownData(filter_type, filter_ids,
             country_ids, domain_ids, year)
 
     def to_inner_structure(self):
@@ -550,11 +550,11 @@ class UpdateNotificationStatus(Request):
 
 
 def _init_Request_class_map():
-    classes = [GetChartFilters, GetComplianceStatusChart, GetEscalationsChart, 
-    GetNotCompliedChart, GetTrendChart, GetComplianceApplicabilityStatusChart, 
-    GetAssigneeWiseCompliancesChart, GetAssigneeWiseComplianceDrillDown, 
-    GetComplianceStatusDrillDownData, GetEscalationsDrillDownData, 
-    GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown, 
+    classes = [GetChartFilters, GetComplianceStatusChart, GetEscalationsChart,
+    GetNotCompliedChart, GetTrendChart, GetComplianceApplicabilityStatusChart,
+    GetAssigneeWiseCompliancesChart, GetAssigneeWiseComplianceDrillDown,
+    GetComplianceStatusDrillDownData, GetEscalationsDrillDownData,
+    GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
     GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus]
     class_map = {}
     for c in classes:
@@ -888,14 +888,14 @@ class UpdateNotificationStatusSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetChartFiltersSuccess, GetComplianceStatusChartSuccess, 
-    GetEscalationsChartSuccess, GetNotCompliedChartSuccess, GetTrendChartSuccess, 
-    GetComplianceApplicabilityStatusChartSuccess, 
-    GetAssigneeWiseCompliancesChartSuccess, 
-    GetAssigneeWiseComplianceDrillDownSuccess, 
-    GetComplianceStatusDrillDownDataSuccess, GetEscalationsDrillDownDataSuccess, 
-    GetComplianceApplicabilityStatusDrillDownSuccess, GetNotCompliedDrillDownSuccess, 
-    GetTrendChartDrillDownDataSuccess, GetNotificationsSuccess, 
+    classes = [GetChartFiltersSuccess, GetComplianceStatusChartSuccess,
+    GetEscalationsChartSuccess, GetNotCompliedChartSuccess, GetTrendChartSuccess,
+    GetComplianceApplicabilityStatusChartSuccess,
+    GetAssigneeWiseCompliancesChartSuccess,
+    GetAssigneeWiseComplianceDrillDownSuccess,
+    GetComplianceStatusDrillDownDataSuccess, GetEscalationsDrillDownDataSuccess,
+    GetComplianceApplicabilityStatusDrillDownSuccess, GetNotCompliedDrillDownSuccess,
+    GetTrendChartDrillDownDataSuccess, GetNotificationsSuccess,
     UpdateNotificationStatusSuccess]
     class_map = {}
     for c in classes:
@@ -991,13 +991,13 @@ class ChartDataMap(object):
         filter_type_id = data.get("filter_type_id")
         filter_type_id = parse_structure_SignedIntegerType_8(filter_type_id)
         data = data.get("data")
-        data = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances(data)
-        return ChartDataMap(filter_type, data)
+        data = parse_structure_VectorType_RecordType_core_NumberOfCompliances(data)
+        return ChartDataMap(filter_type_id, data)
 
     def to_structure(self):
         return {
             "filter_type_id": to_structure_SignedIntegerType_8(self.filter_type_id),
-            "data": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_NumberOfCompliances(self.data),
+            "data": to_structure_VectorType_RecordType_core_NumberOfCompliances(self.data),
         }
 
 #
@@ -1398,7 +1398,7 @@ class DrillDownData(object):
 class Notification(object):
     def __init__(self, notification_id, read_status, notification_text, extra_details,
             updated_on, level_1_statutory, unit_name, unit_address, assignee,
-            concurrence_person, approval_person, compliance_name, 
+            concurrence_person, approval_person, compliance_name,
             compliance_description, due_date, delayed_days):
         self.notification_id = notification_id
         self.read_status = read_status
@@ -1419,9 +1419,9 @@ class Notification(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "notification_id", "read_status", "notification_text", 
-            "extra_details","updated_on", "level_1_statutory", "unit_name", 
-            "unit_address", "assignee", "concurrence_person", "approval_person", 
+            "notification_id", "read_status", "notification_text",
+            "extra_details","updated_on", "level_1_statutory", "unit_name",
+            "unit_address", "assignee", "concurrence_person", "approval_person",
             "compliance_name", "compliance_description", "due_date", "delayed_days"])
         notification_id = data.get("notification_id")
         notification_id = parse_structure_UnsignedIntegerType_32(notification_id)
@@ -1456,7 +1456,7 @@ class Notification(object):
         return Notification(
             notification_id, read_status, notification_text, extra_details,
             updated_on, level_1_statutory, unit_name, unit_address, assignee,
-            concurrence_person, approval_person, compliance_name, 
+            concurrence_person, approval_person, compliance_name,
             compliance_description, due_date, delayed_days
         )
 
