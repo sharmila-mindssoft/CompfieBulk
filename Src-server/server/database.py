@@ -2016,6 +2016,8 @@ class KnowledgeDatabase(Database):
             )
             format_file = d["format_file"]
             format_file_size = d["format_file_size"]
+            if format_file_size is not None :
+                format_file_size = int(format_file_size)
             file_list = []
             download_file_list = []
             if format_file :
@@ -2054,6 +2056,7 @@ class KnowledgeDatabase(Database):
 
     def convert_base64_to_file(self, file_name, file_content):
         file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
+        print file_path
         self.remove_uploaded_file(file_path)
         new_file = open(file_path, "wb")
         new_file.write(file_info.file_content.decode('base64'))
@@ -2296,6 +2299,7 @@ class KnowledgeDatabase(Database):
             self.insert(table_name, columns, values)
             if is_format :
                 self.convert_base64_to_file(file_name, file_content)
+                print "file_saved", file_name
                 is_format = False
             compliance_ids.append(compliance_id)
             # if (self.execute(query)) :
@@ -2373,25 +2377,31 @@ class KnowledgeDatabase(Database):
             description = data.description
             document_name = data.document_name
             file_list = data.format_file_list
+            print file_list
+            print saved_file 
             file_name = ""
             file_size = 0
             file_content = ""
 
             if file_list is None and saved_file is not None:
-                # delete saved file
+                print "delete saved file"
+                print saved_file
                 self.remove_uploaded_file(saved_file[0])
             else :
                 if saved_file is None :
-                    # create file
+                    print "create file"
                     file_list = file_list[0]
                     name = self.new_uuid()
                     file_name = "%s-%s" % (file_list.file_name, name)
                     file_size = file_list.file_size
                     file_content = file_list.file_content
                 else :
-                    # update saved file
+                    print "update saved file"
                     file_list = file_list[0]
                     file_name = saved_file[0]
+                    if file_name == "" :
+                        name = self.new_uuid()
+                        file_name = "%s-%s" % (file_list.file_name, name)
                     file_size = file_list.file_size
                     file_content = file_list.file_content
 
@@ -2419,11 +2429,12 @@ class KnowledgeDatabase(Database):
             ]
             values = [
                 provision, compliance_task, description,
-                document_name, format_file, file_size,
+                document_name, file_name, file_size,
                 penal_consequences, compliance_frequency,
                 statutory_dates, mapping_id, is_active,
                 updated_by
             ]
+            print values
             if compliance_frequency == 1 :
                 pass
 

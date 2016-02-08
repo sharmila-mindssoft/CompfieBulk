@@ -472,7 +472,7 @@ function initMirror() {
 
     function uploadFileFormat(size, name, content) {
         return {
-            "file_size": size,
+            "file_size": parseInt(size),
             "file_name": name,
             "file_content": content
         }
