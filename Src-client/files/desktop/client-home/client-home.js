@@ -1,6 +1,9 @@
 var CHART_FILTERS_DATA = null;
 var COUNTRIES = {};
-var DOMAINS = {};
+var BUSINESS_GROUPS = {};
+var LEGAL_ENTITIES = {};
+var DIVISIONS = {};
+var UNITS = {};
 var COMPLIANCE_STATUS_DATA = null;
 
 function clearMessage() {
@@ -328,6 +331,48 @@ function parseComplianceStatusApiInput () {
     return requestData;
 }
 
+function getFilterTypeInput () {
+    if (chartInput.filter_type == "group") {
+        return chartInput.getCountries();
+    }
+    else if (chartInput.filter_type == "business_group") {
+        return chartInput.getBusinessGroups();
+    }
+    else if (chartInput.filter_type == "legal_entity") {
+        return chartInput.getLegalEntities();
+    }
+    else if (chartInput.filter_type == "division") {
+        return chartInput.getDivisions();
+    }
+    else if (chartInput.filter_type == "unit") {
+        return chartInput.getUnits();
+    }
+    else {
+        return null;
+    }
+}
+
+function getFilterTypeName (filter_type_id) {
+    if (chartInput.filter_type == "group") {
+        return COUNTRIES[filter_type_id];
+    }
+    else if (chartInput.filter_type == "business_group") {
+        return BUSINESS_GROUPS[filter_type_id];
+    }
+    else if (chartInput.filter_type == "legal_entity") {
+        return LEGAL_ENTITIES[filter_type_id];
+    }
+    else if (chartInput.filter_type == "division") {
+        return DIVISIONS[filter_type_id];
+    }
+    else if (chartInput.filter_type == "unit") {
+        return UNITS[filter_type_id];
+    }
+    else {
+        return null;
+    }
+}
+
 function getXAxisName () {
     xAxisNames = {
         "group": "Countries",
@@ -343,40 +388,37 @@ function getXAxisName () {
 function prepareComplianceStatusChartData (source_data) {
     var currentYear = (new Date()).getFullYear();
     var yearInput = currentYear - chartInput.getChartYear();
-    var countriesInput = chartInput.getCountries();
     var domainsInput = chartInput.getDomains();
     var xAxis = [];
-    var xAxisName = [];
     var yAxisComplied = [];
     var yAxisDelayed = [];
     var yAxisInprogress = [];
     var yAxisNotComplied = [];
     for (var i = 0; i < source_data.chart_data.length; i++) {
         var chartData = source_data.chart_data[i];
-        var country_id = chartData["filter_type_id"];
-        if (!(country_id in countriesInput))
+        var filter_type_id = chartData["filter_type_id"];
+        filterTypeInput = getFilterTypeInput();
+        if (!(filter_type_id in filterTypeInput))
             continue;
-        var country_name = COUNTRIES[country_id];
+        var filterTypeName = getFilterTypeName(filter_type_id);
 
         var compliedCount = 0;
         var delayedCount = 0;
         var inprogressCount = 0;
         var notCompliedCount = 0;
-        for (var domain_id in chartData["data"]) {
-            var domainItems = chartData["data"][domain_id];
-            for (var i = 0; i < domainItems.length; i++) {
-                var item = domainItems[i];
-                if (parseInt(item["year"]) != yearInput)
-                    continue;
-                compliedCount += item["complied_count"];
-                delayedCount += item["delayed_compliance_count"];
-                inprogressCount += item["inprogress_compliance_count"];
-                notCompliedCount += item["not_complied_count"];
-            };
-        }
+        for (var i = 0; i < chartData["data"].length; i++) {
+            var item = chartData["data"][i];
+            if (parseInt(item["year"]) != yearInput)
+                continue;
+            if (!(item["domain_id"] in domainsInput))
+                continue;
+            compliedCount += item["complied_count"];
+            delayedCount += item["delayed_compliance_count"];
+            inprogressCount += item["inprogress_compliance_count"];
+            notCompliedCount += item["not_complied_count"];
+        };
 
-        xAxis.push(country_name);
-        xAxisName.push(getXAxisName());
+        xAxis.push(filterTypeName);
         yAxisComplied.push(compliedCount);
         yAxisDelayed.push(delayedCount);
         yAxisInprogress.push(inprogressCount);
@@ -384,6 +426,7 @@ function prepareComplianceStatusChartData (source_data) {
     };
     if (xAxis.length == 0)
         return null;
+    var xAxisName = getXAxisName();
     var yAxis = ["Complied", "Delay Compliance", "Inprogress", "Not Complied"];
     var yAxisData = [
         yAxisComplied, yAxisDelayed, yAxisInprogress, yAxisNotComplied
@@ -427,15 +470,25 @@ function updateComplianceStatusChart (data) {
                 text: 'Total compliances'
             }
         },
-        legend: {
-            reversed: true
+        tooltip: {
+            headerFormat: '<b>{point.x}</b>: {point.percentage:.0f}% ',
+            pointFormat: '({point.y} out of {point.stackTotal})'
         },
         plotOptions: {
             series: {
-                stacking: 'normal'
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: '#000000',
+                    style: {
+                        textShadow: null,
+                        color: '#000000'
+                    },
+                    format: '{point.y}'
+                },
             }
         },
-        colors: ['#F32D2B', '#F0F468', '#F58835', '#A5D17A', ],
+        colors: ['#A5D17A', '#F58835', '#F0F468', '#F32D2B'],
         series: chartDataSeries
     });
 }
@@ -732,6 +785,13 @@ function initializeCharts () {
     initializeComplianceStatusChart();
 }
 
+function toDict (target, list, id_key, value_key) {
+    for (var i = 0; i < list.length; i++) {
+        var item = list[i];
+        target[item[id_key]] = item[value_key];
+    };
+}
+
 $(document).ready(function () {
     if (!client_mirror.verifyLoggedIn()) {
         hideLoader();
@@ -740,14 +800,17 @@ $(document).ready(function () {
     }
     client_mirror.getChartFilters(function (status, data) {
         CHART_FILTERS_DATA = data;
-        for (var i = 0; i < data.countries.length; i++) {
-            var country = data.countries[i];
-            COUNTRIES[country["country_id"]] = country["country_name"];
-        };
-        for (var i = 0; i < data.domains.length; i++) {
-            var domain = data.domains[i];
-            DOMAINS[domain["domain_id"]] = domain["domain_name"];
-        };
+        toDict(COUNTRIES, data.countries, "country_id", "country_name");
+        toDict(
+            BUSINESS_GROUPS, data.business_groups,
+            "business_group_id", "business_group_name"
+        );
+        toDict(
+            LEGAL_ENTITIES, data.legal_entities,
+            "legal_entity_id", "legal_entity_name"
+        );
+        toDict(DIVISIONS, data.divisions, "division_id", "division_name");
+        toDict(UNITS, data.units, "unit_id", "unit_name");
         initializeCharts();
         loadCharts();
     });
