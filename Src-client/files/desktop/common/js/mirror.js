@@ -501,7 +501,7 @@ function initMirror() {
         file_name = file.name
         file_size = file.size
         if (file_size > max_limit) {
-            return "File max limit exceeded"
+            callback("File max limit exceeded");
         }
         // file_extension = file_name.substr(
         //     file_name.lastIndexOf('.') + 1
@@ -510,10 +510,9 @@ function initMirror() {
 
 
         if (files && file) {
-            convert_to_base64(file, function(data) {
-                file_content = data
+            convert_to_base64(file, function(file_content) {
                 if (file_content == null) {
-                    return "File content is empty"
+                    callback("File content is empty")
                 }
                 result = uploadFileFormat(
                     file_size, file_name, file_content
