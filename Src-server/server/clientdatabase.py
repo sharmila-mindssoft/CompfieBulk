@@ -780,7 +780,7 @@ class ClientDatabase(Database):
         business_group_ids = rows[0][2]
         return unit_ids, division_ids, legal_entity_ids, business_group_ids
 
-    def get_user_countries(self, user_id, client_id):
+    def get_user_countries(self, user_id, client_id=None):
         columns = "group_concat(country_id)"
         table = self.tblCountries
         result = None
@@ -794,11 +794,11 @@ class ClientDatabase(Database):
             result = rows[0][0]
         return result
 
-    def get_user_domains(self, user_id, client_id):
+    def get_user_domains(self, user_id, client_id=None):
         columns = "group_concat(domain_id)"
         table = self.tblDomains
         result = None
-        if user_id > 0: 
+        if user_id > 0:
             table  = self.tblUserDomains
             condition = " user_id = '%d'" % user_id
         rows = self.get_data(
@@ -812,15 +812,58 @@ class ClientDatabase(Database):
         columns = "group_concat(unit_id)"
         table = self.tblUnits
         result = None
-        if user_id > 0: 
+        if user_id > 0:
             table = self.tblUserUnits
             condition = " user_id = '%d'"% user_id
         rows = self.get_data(
             table, columns, condition
         )
-        if rows : 
+        if rows :
             result = rows[0][0]
         return result
+
+    def get_user_business_group_ids(self, user_id):
+        columns = "group_concat(distinct business_group_id)"
+        table = self.tblUnits
+        result = None
+        if user_id > 0 :
+            table = self.tblUserUnits
+            condition = " user_id = %s " % user_id
+        rows = self.get_data(
+            table, columns, condition
+        )
+        if rows :
+            result = rows
+        return result
+
+    def get_user_legal_entity_ids(self, user_id):
+        columns = "group_concat(distinct legal_entity_id)"
+        table = self.tblUnits
+        result = None
+        if user_id > 0 :
+            table = self.tblUserUnits
+            condition = " user_id = %s " % user_id
+        rows = self.get_data(
+            table, columns, condition
+        )
+        if rows :
+            result = rows
+        return result
+
+    def get_user_division_ids(self, user_id):
+        columns = "group_concat(distinct division_id)"
+        table = self.tblUnits
+        result = None
+        if user_id > 0 :
+            table = self.tblUserUnits
+            condition = " user_id = %s " % user_id
+        rows = self.get_data(
+            table, columns, condition
+        )
+        if rows :
+            result = rows
+        return result
+
 
     def get_client_users(self, client_id):
         columns = "user_id, employee_name, employee_code, is_active"
@@ -1858,8 +1901,13 @@ class ClientDatabase(Database):
                 double_years.append(years)
             return double_years
 
-    def get_status_wise_compliances_count(self, request, client_id):
+    def get_status_wise_compliances_count(self, request, session_user):
         # country_ids = request.country_ids
+        user_id = int(user_id)
+        countries = self.get_user_countries(user_id)
+        country_ids = countries.split(',')
+        domains = self.get_user_domains(user_id)
+        domain_ids = domains.split(',')
         # domain_ids = request.domain_ids
         from_date = request.from_date
         to_date = request.to_date

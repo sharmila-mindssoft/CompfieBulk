@@ -2419,7 +2419,7 @@ class KnowledgeDatabase(Database):
             ]
             values = [
                 provision, compliance_task, description,
-                document_name, format_file, file_size,
+                document_name, file_name, file_size,
                 penal_consequences, compliance_frequency,
                 statutory_dates, mapping_id, is_active,
                 updated_by
