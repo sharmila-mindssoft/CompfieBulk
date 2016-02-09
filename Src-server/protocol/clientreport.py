@@ -2051,13 +2051,13 @@ class ReassignUnitCompliance(object):
         unit_name = parse_structure_CustomTextType_100(unit_name)
         
         reassign_compliances = data.get("reassign_compliances")
-        reassign_compliances = parse_structure_VectorType_RecordType_clientreport_ReassignCompliance(reassign_history)
+        reassign_compliances = parse_structure_VectorType_RecordType_clientreport_ReassignCompliance(reassign_compliances)
         return ReassignCompliance(unit_name, reassign_compliances)
 
     def to_structure(self):
         return {
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
-            "reassign_compliances": to_structure_VectorType_RecordType_clientreport_ReassignCompliance(self.reassign_history),
+            "reassign_compliances": to_structure_VectorType_RecordType_clientreport_ReassignCompliance(self.reassign_compliances),
         }
 
 
@@ -2145,7 +2145,7 @@ class StatutoryReassignCompliance(object):
     def to_structure(self):
         return {
             "level_1_statutory_name": to_structure_CustomTextType_50(self.level_1_statutory_name),
-            "compliance": to_structure_VectorType_RecordType_clientreport_ReassignCompliance(self.compliance),
+            "compliance": to_structure_VectorType_RecordType_clientreport_ReassignUnitCompliance(self.compliance),
         }
 
 #

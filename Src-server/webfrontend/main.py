@@ -52,10 +52,8 @@ class Controller(object):
         self._company_manager = company_manager
 
     def handle_post(self, request, response):
-        print "handle_post web frontend"
-        print request.uri()
         data = None
-        actual_data = None
+        actual_data = None 
         try:
             data = json.loads(request.body())
             if type(data) is not list:
@@ -80,7 +78,6 @@ class Controller(object):
                 )
                 return
         except Exception:
-            print "Exception"
             send_invalid_json_format(response)
             return
 
@@ -118,7 +115,7 @@ class TemplateHandler(RequestHandler):
 
     def get(self, url=None) :
         if url is not None:
-            print 'GOT URL%s1' % (url,)
+            print 'GOT URL %s' % (url,)
             company = self._company_manager.locate_company(
                 url
             )
