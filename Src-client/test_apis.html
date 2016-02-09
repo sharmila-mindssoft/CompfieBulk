@@ -412,10 +412,10 @@
 			function getStatutoriesByUnit(){
 				unit_id = 1
 				domain_id = 1
-				level_1_statutory_id = "Gratuity Act, 1972"
-				frequency_id = 1
-				client_mirror.getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_id, 
-					frequency_id, callback);
+				level_1_statutory_name = null //"Gratuity Act, 1972"
+				compliance_frequency =  null//"Periodical"
+				client_mirror.getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_name, 
+					compliance_frequency, callback);
 			}
 			function getComplianceApprovalList(){
 				client_mirror.getComplianceApprovalList(callback);

@@ -3594,3 +3594,18 @@ def parse_structure_VectorType_RecordType_clientreport_ReassignUnitCompliance(da
     for item in data:
         lst.append(parse_structure_RecordType_clientreport_ReassignUnitCompliance(item))
     return lst
+
+def parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(item))
+    return lst
+
+def parse_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(data):
+    from protocol import clienttransactions
+    return clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS.parse_structure(data)
+
+def parse_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY(data):
+    if data is None: return None
+    return parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(data)

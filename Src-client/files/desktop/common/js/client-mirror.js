@@ -609,14 +609,14 @@ function initClientMirror() {
         clientApiRequest("api/client_transaction", request, callback);
     }
 
-    function getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_id,
-        frequency_id, callback) {
+    function getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_name,
+        compliance_frequency, callback) {
         var request = [
             "GetStatutoriesByUnit", {
                 "unit_id": unit_id,
                 "domain_id": domain_id,
-                "level_1_statutory_id": level_1_statutory_id,
-                "compliance_frequency": frequency_id
+                "level_1_statutory_name": level_1_statutory_name,
+                "compliance_frequency": compliance_frequency
             }
         ]
         clientApiRequest("api/client_transaction", request, callback);
