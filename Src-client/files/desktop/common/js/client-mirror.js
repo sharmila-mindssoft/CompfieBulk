@@ -174,11 +174,11 @@ function initClientMirror() {
     }
 
     function verifyLoggedIn() {
-        sessionToken = getSessionToken()
+        sessionToken = getSessionToken();
         if (sessionToken == null)
-            return false
+            return false;
         else
-            return false
+            return true;
     }
 
     function logout() {
@@ -728,17 +728,22 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate, callback) {
-        var request = [
-            "GetComplianceStatusChart", {
-                "country_ids": countryIds,
-                "domain_ids": domainIds,
-                "filter_type": filterType,
-                "filter_ids": filterIds,
-                "from_date": fromDate,
-                "to_date": toDate,
+    // function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate, callback) {
+    //     var request = [
+    //         "GetComplianceStatusChart", {
+    //             "country_ids": countryIds,
+    //             "domain_ids": domainIds,
+    //             "filter_type": filterType,
+    //             "filter_ids": filterIds,
+    //             "from_date": fromDate,
+    //             "to_date": toDate,
 
-            }
+    //         }
+
+    function getComplianceStatusChartData(requestData, callback) {
+        var request = [
+            "GetComplianceStatusChart",
+            requestData
         ];
         var callerName = "api/client_dashboard";
         clientApiRequest(callerName, request, callback);

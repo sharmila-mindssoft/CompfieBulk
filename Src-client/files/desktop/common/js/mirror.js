@@ -190,12 +190,13 @@ function initMirror() {
         )
     }
     function verifyLoggedIn() {
-        sessionToken = getSessionToken()
+        sessionToken = getSessionToken();
         if (sessionToken == null)
-            return false
+            return false;
         else
-            return true
+            return true;
     }
+
     function logout() {
         sessionToken = getSessionToken()
         var request = [
