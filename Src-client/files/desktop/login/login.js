@@ -67,15 +67,8 @@ function performLogin(e_button, e_email, e_password) {
     }
 
     function onSuccess (response) {
-        mirror.initSession(response);
+        // mirror.initSession(response);
         window.location.href = "/home";
-        // mirror.getRedirectUrl();
-        // if (status == "LoginSuccess") {
-        //     window.location.href = mirror.getRedirectUrl();
-        // }
-        // else if (status == "LoginFailed") {
-        //     onFailure();
-        // }
     }
     console.log(getShortName());
     if (getShortName() === null){

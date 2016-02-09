@@ -17,9 +17,10 @@ function initClientMirror() {
         return JSON.parse(data);
     }
 
-    function initSession(userProfile) {
-        console.log(toJSON(userProfile))
+    function initSession(userProfile, shortName) {
+        // console.log(toJSON(userProfile))
         window.localStorage["userInfo"] = toJSON(userProfile);
+        window.localStorage["shortName"] = shortName;
     }
 
     function getShortName() {
@@ -42,12 +43,13 @@ function initClientMirror() {
 
     function clearSession() {
         delete window.localStorage["userInfo"];
+        delete window.localStorage["shortName"];
     }
 
     function getUserInfo() {
         var info = window.localStorage["userInfo"];
         user = parseJSON(info)
-        return user
+        return user;
     }
 
     function getUserProfile() {
@@ -78,8 +80,20 @@ function initClientMirror() {
 
     function getClientId() {
         var info = getUserInfo();
-        console.log(info)
+        // console.log(info)
         return info["client_id"];
+    }
+
+    function getClientShortName(){
+        var name = window.localStorage["shortName"];
+        return name;
+    }
+
+    function redirect_login(){
+        login_url = "/login/" + getClientShortName();
+        // console.log(login_url)
+        clearSession()
+        window.location.href = login_url;
     }
 
     function clientApiRequest(callerName, request, callback) {
@@ -105,7 +119,12 @@ function initClientMirror() {
 
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
-                } else {
+                }
+                else if (status == "InvalidSessionToken") {
+                    // console.log(status)
+                    redirect_login()
+                }
+                else {
                     callback(status, null)
                 }
 
@@ -143,8 +162,11 @@ function initClientMirror() {
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     console.log("status success");
+                    initSession(response, short_name)
                     callback(null, response);
-                } else {
+
+                }
+                else {
                     callback(status, null);
                 }
             }
@@ -904,7 +926,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getStatutoryNotificationsListReport(countryName, domainName, businessGroupId, 
+    function getStatutoryNotificationsListReport(countryName, domainName, businessGroupId,
         legalEntityId, divisionId, unitId, level1Id, fromdate, todate, callback){
         callerName = "api/client_reports"
         var request = [

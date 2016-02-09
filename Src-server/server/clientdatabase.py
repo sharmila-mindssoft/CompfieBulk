@@ -238,7 +238,10 @@ class ClientDatabase(Database):
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
         row = self.select_one(query)
-        user_id = row[0]
+        user_id = None
+        print row
+        if row :
+            user_id = row[0]
         return user_id
 
     def get_forms(self, client_id):
