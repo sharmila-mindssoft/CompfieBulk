@@ -14,6 +14,7 @@ def process_client_dashboard_requests(request, db) :
 
     if session_user is None:
         return login.InvalidSessionToken()
+
     if type(request) is dashboard.GetChartFilters :
         return process_get_chart_filters(db, session_user, client_id)
 
