@@ -2386,7 +2386,9 @@ class KnowledgeDatabase(Database):
             if len(saved_file_name) == 0 :
                 saved_file_name = None
 
-            if file_list is None and saved_file_name is not None:
+            if file_list is None :
+                pass
+            elif file_list is None and saved_file_name is not None:
                 print "delete saved file"
                 print saved_file
                 self.remove_uploaded_file(saved_file[0])
