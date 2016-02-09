@@ -16,12 +16,17 @@ function displayLoginLoader() {
 
 function getShortName(){
     var pathArray = window.location.pathname.split( '/' );
+    short_name = null;
     if(typeof pathArray[2] === 'undefined'){
-        return null;
-    }else{
-        return pathArray[2]
+        short_name = null;
     }
-
+    else if (pathArray[2] === "login") {
+        short_name = null
+    }
+    else{
+        short_name = pathArray[2]
+    }
+    return short_name
 }
 
 //
@@ -66,12 +71,13 @@ function performLogin(e_button, e_email, e_password) {
         resetLoginUI(e_button, e_email, e_password);
     }
 
-    function onSuccess (response) {
-        // mirror.initSession(response);
-        window.location.href = "/home";
-    }
+    // function onSuccess (response) {
+    //     // mirror.initSession(response);
+    //     window.location.href = "/home";
+    // }
     console.log(getShortName());
     if (getShortName() === null){
+        console.log("mirror")
         mirror.login(
             e_email.val(),
             e_password.val(),
@@ -80,7 +86,8 @@ function performLogin(e_button, e_email, e_password) {
                 console.log(error)
                 console.log(response)
                 if (error == null){
-                    onSuccess(response)
+                    // onSuccess(response)
+                    window.location.href = "/knowledge/home";
                 }
                 else {
                     onFailure(error)
@@ -88,6 +95,7 @@ function performLogin(e_button, e_email, e_password) {
             }
         );
     }else{
+        console.log("client_mirror")
         client_mirror.login(
             e_email.val(),
             e_password.val(),
@@ -96,7 +104,8 @@ function performLogin(e_button, e_email, e_password) {
                 console.log(error)
                 console.log(response)
                 if (error == null){
-                    onSuccess(response)
+                    // onSuccess(response)
+                    window.location.href = "/home";
                 }
                 else {
                     onFailure(error)
@@ -133,9 +142,19 @@ function initializeLogin () {
     });
 }
 
+function navigateToHome(){
+    client_name = client_mirror.getClientShortName()
+    console.log(client_name)
+    if ((client_name === null) || (client_name === undefined)) {
+        window.location.href = "/knowledge/home";
+    } else {
+        window.location.href = "/home";
+    }
+}
+
 $(document).ready(function () {
     if (mirror.verifyLoggedIn()) {
-        window.location.href = "/home";
+        navigateToHome()
         return;
     }
 

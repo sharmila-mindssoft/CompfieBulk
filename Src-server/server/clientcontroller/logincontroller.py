@@ -138,4 +138,5 @@ def process_change_password(db, request):
 
 
 def process_logout(db, request):
+    # save logout time
     return login.LogoutSuccess()
