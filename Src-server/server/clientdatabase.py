@@ -4623,3 +4623,31 @@ class ClientDatabase(Database):
             unitwise = clientreport.StatutoryReassignCompliance(statutoru_name, unit_wise_compliances)
             level_1_statutory_wise_units.append(unitwise)
         return level_1_statutory_wise_units
+
+    #login trace
+    def get_login_trace(self, client_id, session_user ):
+        query = "SELECT al.created_on, f.form_name, al.action \
+                FROM tbl_activity_log al \
+                INNER JOIN \
+                tbl_users u ON \
+                al.user_id  = u.user_id \
+                INNER JOIN \
+                tbl_forms f ON \
+                al.form_id = f.form_id \
+                WHERE \
+                al.form_id in (26, 27)" 
+
+        rows = self.select_all(query)
+        columns = ["created_on", "form_name", "action"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_logintrace(result)
+
+    def return_logintrace(self, data) :
+        results = []
+
+        for d in data :
+            created_on = self.datetime_to_string_time(d["created_on"])
+            results.append(clientreport.LoginTrace(
+                 created_on, d["form_name"], d["action"]
+            ))
+        return results
