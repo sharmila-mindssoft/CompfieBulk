@@ -20,9 +20,9 @@ __all__ = [
     "KnowledgeDatabase", "Database"
 ]
 
-ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
+ROOT_PATH = os.path.join(os.path.split(__file__)[0])
 KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
-FORMAT_DOWNLOAD_URL = "/knowledge/compliance_format/"
+FORMAT_DOWNLOAD_URL = "knowledge/compliance_format"
 
 class Database(object) :
     def __init__(
@@ -2021,30 +2021,28 @@ class KnowledgeDatabase(Database):
 
             compliance_task = d["compliance_task"]
             document_name = d["document_name"]
-            name = "%s - %s" % (
-                document_name, compliance_task
-            )
+            if document_name != "" :
+                name = "%s - %s" % (
+                    document_name, compliance_task
+                )
+            else :
+                name = compliance_task
             format_file = d["format_file"]
             format_file_size = d["format_file_size"]
             if format_file_size is not None :
                 format_file_size = int(format_file_size)
             file_list = []
-            download_file_list = []
             if format_file :
+                file_download = "%s/%s" % (
+                    FORMAT_DOWNLOAD_URL, format_file
+                )
                 file_info = core.FileList(
-                    format_file_size, format_file, None
+                    format_file_size, format_file, file_download
                 )
                 file_list.append(file_info)
-                file_name = format_file.split('-')[0]
-                file_download = "%s/%s" % (
-                    FORMAT_DOWNLOAD_URL, file_name
-                )
-                download_file_list.append(
-                        file_download
-                    )
+
             else :
                 file_list = None
-                download_file_list = None
 
             compliance_names.append(name)
             compliance = core.Compliance(
@@ -2054,8 +2052,7 @@ class KnowledgeDatabase(Database):
                 d["penal_consequences"], d["frequency_id"],
                 date_list, d["repeats_type_id"],
                 d["repeats_every"], d["duration_type_id"],
-                d["duration"], bool(d["is_active"]),
-                download_file_list
+                d["duration"], bool(d["is_active"])
             )
             compalinaces.append(compliance)
         return [compliance_names, compalinaces]
@@ -2069,7 +2066,7 @@ class KnowledgeDatabase(Database):
         print file_path
         self.remove_uploaded_file(file_path)
         new_file = open(file_path, "wb")
-        new_file.write(file_info.file_content.decode('base64'))
+        new_file.write(file_content.decode('base64'))
         new_file.close()
 
     def remove_uploaded_file(self, file_path):
@@ -2255,8 +2252,11 @@ class KnowledgeDatabase(Database):
 
             if file_list is not None :
                 file_list = file_list[0]
-                name = self.new_uuid()
-                file_name = "%s-%s" % (file_list.file_type, name)
+                name = file_list.file_name.split('.')[0]
+                exten = file_list.file_name.split('.')[1]
+                auto_code = self.new_uuid()
+                file_name = "%s-%s.%s" % (name, auto_code, exten)
+                print file_name
                 file_size = file_list.file_size
                 file_content = file_list.file_content
                 is_format = True
@@ -2388,30 +2388,43 @@ class KnowledgeDatabase(Database):
             document_name = data.document_name
             file_list = data.format_file_list
             print file_list
-            print saved_file 
+            print saved_file
             file_name = ""
             file_size = 0
             file_content = ""
+            saved_file_name = saved_file[0]
+            if len(saved_file_name) == 0 :
+                saved_file_name = None
 
-            if file_list is None and saved_file is not None:
+            if file_list is None :
+                pass
+            elif file_list is None and saved_file_name is not None:
                 print "delete saved file"
                 print saved_file
                 self.remove_uploaded_file(saved_file[0])
             else :
-                if saved_file is None :
+                if saved_file_name is None :
                     print "create file"
                     file_list = file_list[0]
-                    name = self.new_uuid()
-                    file_name = "%s-%s" % (file_list.file_name, name)
+                    file_name = file_list.file_name
+                    name = file_list.file_name.split('.')[0]
+                    exten = file_list.file_name.split('.')[1]
+                    auto_code = self.new_uuid()
+                    file_name = "%s-%s.%s" % (name, auto_code, exten)
                     file_size = file_list.file_size
                     file_content = file_list.file_content
+                    is_format = True
                 else :
                     print "update saved file"
                     file_list = file_list[0]
-                    file_name = saved_file[0]
-                    if file_name == "" :
-                        name = self.new_uuid()
-                        file_name = "%s-%s" % (file_list.file_name, name)
+                    file_name = saved_file_name
+                    if file_name is None :
+                        file_name = file_list.file_name
+                        name = file_list.file_name.split('.')[0]
+                        exten = file_list.file_name.split('.')[1]
+                        auto_code = self.new_uuid()
+                        file_name = "%s-%s.%s" % (name, auto_code, exten)
+                        is_format = True
                     file_size = file_list.file_size
                     file_content = file_list.file_content
 
