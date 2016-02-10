@@ -987,7 +987,7 @@ class Compliance(object):
         format_file_list, penal_consequences,
         frequency_id, statutory_dates, repeats_type_id,
         repeats_every, duration_type_id,
-        duration, is_active, download_file_list
+        duration, is_active
     ):
         self.compliance_id = compliance_id
         self.statutory_provision = statutory_provision
@@ -1003,7 +1003,6 @@ class Compliance(object):
         self.duration_type_id = duration_type_id
         self.duration = duration
         self.is_active = is_active
-        self.download_file_list = download_file_list
 
     @staticmethod
     def parse_structure(data):
@@ -1014,8 +1013,7 @@ class Compliance(object):
             "penal_consequences", "frequency_id",
             "statutory_dates", "repeats_type_id",
             "repeats_every", "duration_type_id",
-            "duration", "is_active",
-            "download_file_list"
+            "duration", "is_active"
         ])
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_OptionalType_SignedIntegerType_8(compliance_id)
@@ -1045,8 +1043,6 @@ class Compliance(object):
         duration = parse_structure_OptionalType_UnsignedIntegerType_32(duration)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
-        download_file_list = data.get("download_file_list")
-        download_file_list = parse_structure_OptionalType_VectorType_CustomTextType_100
         return Compliance(
             compliance_id, statutory_provision,
             compliance_task, description,
@@ -1054,7 +1050,7 @@ class Compliance(object):
             penal_consequences, frequency_id,
             statutory_dates, repeats_type_id,
             repeats_every, duration_type_id,
-            duration, is_active, download_file_list
+            duration, is_active
         )
 
     def to_structure(self):
@@ -1073,7 +1069,6 @@ class Compliance(object):
             "duration_type_id": to_structure_OptionalType_UnsignedIntegerType_32(self.duration_type_id),
             "duration": to_structure_OptionalType_UnsignedIntegerType_32(self.duration),
             "is_active": to_structure_Bool(self.is_active),
-            "download_file_list": to_structure_OptionalType_VectorType_CustomTextType_100(self.download_file_list),
         }
 
 #
@@ -1971,7 +1966,12 @@ class UpcomingCompliance(object):
 #
 
 class NumberOfCompliances(object):
-    def __init__(self, year, complied_count, delayed_compliance_count, inprogress_compliance_count, not_complied_count):
+    def __init__(
+        self, domain_id, year, complied_count,
+        delayed_compliance_count,
+        inprogress_compliance_count, not_complied_count
+    ):
+        self.domain_id = domain_id
         self.year = year
         self.complied_count = complied_count
         self.delayed_compliance_count = delayed_compliance_count
@@ -1980,7 +1980,13 @@ class NumberOfCompliances(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["year", "complied_count", "delayed_compliance_count", "inprogress_compliance_count", "not_complied_count"])
+        data = parse_dictionary(data, [
+            "domain_id", "year", "complied_count",
+            "delayed_compliance_count",
+            "inprogress_compliance_count", "not_complied_count"
+        ])
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         year = data.get("year")
         year = parse_structure_CustomTextType_20(year)
         complied_count = data.get("complied_count")
@@ -1991,10 +1997,15 @@ class NumberOfCompliances(object):
         inprogress_compliance_count = parse_structure_UnsignedIntegerType_32(inprogress_compliance_count)
         not_complied_count = data.get("not_complied_count")
         not_complied_count = parse_structure_UnsignedIntegerType_32(not_complied_count)
-        return NumberOfCompliances(year, complied_count, delayed_compliance_count, inprogress_compliance_count, not_complied_count)
+        return NumberOfCompliances(
+            domain_id, year, complied_count,
+            delayed_compliance_count,
+            inprogress_compliance_count, not_complied_count
+        )
 
     def to_structure(self):
         return {
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "year": to_structure_CustomTextType_20(self.year),
             "complied_count": to_structure_SignedIntegerType_8(self.complied_count),
             "delayed_compliance_count": to_structure_SignedIntegerType_8(self.delayed_compliance_count),

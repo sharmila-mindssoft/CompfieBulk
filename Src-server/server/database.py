@@ -20,9 +20,9 @@ __all__ = [
     "KnowledgeDatabase", "Database"
 ]
 
-ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
+ROOT_PATH = os.path.join(os.path.split(__file__)[0])
 KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
-FORMAT_DOWNLOAD_URL = "/knowledge/compliance_format/"
+FORMAT_DOWNLOAD_URL = "knowledge/compliance_format"
 
 class Database(object) :
     def __init__(
@@ -531,7 +531,9 @@ class KnowledgeDatabase(Database):
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
         row = self.select_one(query)
-        user_id = row[0]
+        user_id = None
+        if row :
+            user_id = row[0]
         return user_id
 
     def encrypt(self, value):
@@ -2015,28 +2017,28 @@ class KnowledgeDatabase(Database):
 
             compliance_task = d["compliance_task"]
             document_name = d["document_name"]
-            name = "%s - %s" % (
-                document_name, compliance_task
-            )
+            if document_name != "" :
+                name = "%s - %s" % (
+                    document_name, compliance_task
+                )
+            else :
+                name = compliance_task
             format_file = d["format_file"]
             format_file_size = d["format_file_size"]
+            if format_file_size is not None :
+                format_file_size = int(format_file_size)
             file_list = []
-            download_file_list = []
             if format_file :
+                file_download = "%s/%s" % (
+                    FORMAT_DOWNLOAD_URL, format_file
+                )
                 file_info = core.FileList(
-                    format_file_size, format_file, None
+                    format_file_size, format_file, file_download
                 )
                 file_list.append(file_info)
-                file_name = format_file.split('-')[0]
-                file_download = "%s/%s" % (
-                    FORMAT_DOWNLOAD_URL, file_name
-                )
-                download_file_list.append(
-                        file_download
-                    )
+
             else :
                 file_list = None
-                download_file_list = None
 
             compliance_names.append(name)
             compliance = core.Compliance(
@@ -2046,8 +2048,7 @@ class KnowledgeDatabase(Database):
                 d["penal_consequences"], d["frequency_id"],
                 date_list, d["repeats_type_id"],
                 d["repeats_every"], d["duration_type_id"],
-                d["duration"], bool(d["is_active"]),
-                download_file_list
+                d["duration"], bool(d["is_active"])
             )
             compalinaces.append(compliance)
         return [compliance_names, compalinaces]
@@ -2058,12 +2059,13 @@ class KnowledgeDatabase(Database):
 
     def convert_base64_to_file(self, file_name, file_content):
         file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
+        print file_path
         self.remove_uploaded_file(file_path)
         new_file = open(file_path, "wb")
-        new_file.write(file_info.file_content.decode('base64'))
+        new_file.write(file_content.decode('base64'))
         new_file.close()
 
-    def remove_uploaded_file(self, file_name):
+    def remove_uploaded_file(self, file_path):
         if os.path.exists(file_path) :
             os.remove(file_path)
 
@@ -2246,8 +2248,11 @@ class KnowledgeDatabase(Database):
 
             if file_list is not None :
                 file_list = file_list[0]
-                name = self.new_uuid()
-                file_name = "%s-%s" % (file_list.file_type, name)
+                name = file_list.file_name.split('.')[0]
+                exten = file_list.file_name.split('.')[1]
+                auto_code = self.new_uuid()
+                file_name = "%s-%s.%s" % (name, auto_code, exten)
+                print file_name
                 file_size = file_list.file_size
                 file_content = file_list.file_content
                 is_format = True
@@ -2300,6 +2305,7 @@ class KnowledgeDatabase(Database):
             self.insert(table_name, columns, values)
             if is_format :
                 self.convert_base64_to_file(file_name, file_content)
+                print "file_saved", file_name
                 is_format = False
             compliance_ids.append(compliance_id)
             # if (self.execute(query)) :
@@ -2377,24 +2383,44 @@ class KnowledgeDatabase(Database):
             description = data.description
             document_name = data.document_name
             file_list = data.format_file_list
+            print file_list
+            print saved_file
             file_name = ""
             file_size = 0
             file_content = ""
+            saved_file_name = saved_file[0]
+            if len(saved_file_name) == 0 :
+                saved_file_name = None
 
-            if file_list is None and saved_file is not None:
-                # delete saved file
+            if file_list is None :
+                pass
+            elif file_list is None and saved_file_name is not None:
+                print "delete saved file"
+                print saved_file
                 self.remove_uploaded_file(saved_file[0])
             else :
-                if saved_file is None :
-                    # create file
+                if saved_file_name is None :
+                    print "create file"
                     file_list = file_list[0]
-                    name = self.new_uuid()
-                    file_name = "%s-%s" % (file_list.file_name, name)
+                    file_name = file_list.file_name
+                    name = file_list.file_name.split('.')[0]
+                    exten = file_list.file_name.split('.')[1]
+                    auto_code = self.new_uuid()
+                    file_name = "%s-%s.%s" % (name, auto_code, exten)
                     file_size = file_list.file_size
                     file_content = file_list.file_content
+                    is_format = True
                 else :
-                    # update saved file
-                    file_name = saved_file[0]
+                    print "update saved file"
+                    file_list = file_list[0]
+                    file_name = saved_file_name
+                    if file_name is None :
+                        file_name = file_list.file_name
+                        name = file_list.file_name.split('.')[0]
+                        exten = file_list.file_name.split('.')[1]
+                        auto_code = self.new_uuid()
+                        file_name = "%s-%s.%s" % (name, auto_code, exten)
+                        is_format = True
                     file_size = file_list.file_size
                     file_content = file_list.file_content
 
@@ -2422,11 +2448,12 @@ class KnowledgeDatabase(Database):
             ]
             values = [
                 provision, compliance_task, description,
-                document_name, format_file, file_size,
+                document_name, file_name, file_size,
                 penal_consequences, compliance_frequency,
                 statutory_dates, mapping_id, is_active,
                 updated_by
             ]
+            print values
             if compliance_frequency == 1 :
                 pass
 
@@ -3292,7 +3319,7 @@ class KnowledgeDatabase(Database):
     def save_legal_entity(self, client_id, legal_entity_id, legal_entity_name,
         business_group_id, session_user):
         current_time_stamp = self.get_date_time()
-        columns = ["client_id", "legal_entity_id", "legal_entity_name", 
+        columns = ["client_id", "legal_entity_id", "legal_entity_name",
         "created_by", "created_on", "updated_by", "updated_on"]
         values = [client_id, legal_entity_id, legal_entity_name,
         session_user, current_time_stamp, session_user, current_time_stamp]

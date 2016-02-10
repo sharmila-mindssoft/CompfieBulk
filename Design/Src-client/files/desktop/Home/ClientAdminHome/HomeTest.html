@@ -1,0 +1,642 @@
+{% extends "files/desktop/Header/Header.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+<link rel="stylesheet" type="text/css" href="/css/multiselect/multiple-select.css">
+<link rel="stylesheet" type="text/css" href="/files/desktop/common/css/popup/popup.css">
+<link rel="stylesheet" type="text/css" href="/css/chart.css">
+<script type="text/javascript" src="/files/desktop/common/js/popup/modernizr.js"></script>
+<script src="/js/multiselect/jquery.multiple.select.js"></script>
+<script type="text/javascript" src="/files/desktop/Home/ClientAdminHome/js/HomeTest.js"></script>
+<div class="content-container">
+  <!-- <span style="float:right;padding-top:1em;">Contract Renewal : 20 Days Left</span> -->
+  <div class="content-area">
+    <div class="archive-container" style="width:100%;margin-bottom: 40px;">
+      <div class="archive-header">
+        <span class="task-status-tab active" id="task">Compliance Status</span>
+        <span class="esc-tab" id="esc">Escalations</span>
+        <span class="ageing-tab" id="age">Not Complied</span>
+        <span class="usecom-tab" id="usecom">Assignee wise Compliances</span>
+        <span class="trend-tab" id="trend">Trend Chart</span>
+        <span class="compliance-tab" id="comp">Compliance Applicability Status</span>
+      </div>
+      <div class="clearfix"></div>
+      <div class="archive-container-inner">
+        <div id="level-filter1" align="center" style="border:1px solid #fff;">
+          <table class="filtertable-1">
+            <tr>
+              <td>
+                <table>
+                  <tr>
+                    <td>
+                      <div class="text-filterby">Filter By:</div>
+                    </td>
+                    <td width="180">
+                      <div class="btn-country">Country</div>
+                      <div class="textboxcountry">
+                        <div id="country-para1">
+                          <div class="select-box">
+                            <select id="country" multiple="multiple" placeholder="Select Business" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1">
+                              <option value="selectall" >Select All</option>
+                              <option value="India" selected>India</option>
+                              <option value="US" selected>US</option>
+                              <option value="Malaysia" selected>Malaysia</option>
+                              <option value="Singapore" selected>Singapore</option>
+                              <option value="China" selected>China</option>
+                            </select>
+                          </div>
+                          <div class="btn-go"><input id="go-co" type="button" class="btn" value="Go"></div>
+                        </div>
+                      </div>
+                    </td>
+                    <td width="180">
+                      <div class="btn-domain">Domain</div>
+                      <div class="textboxdomain">
+                        <div id="domain-para1">
+                          <div class="select-box">
+                            <select id="domain" multiple="multiple" placeholder="Select Business" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1">
+                              <option value="selectall" >Select All</option>
+                              <option value="Industrial Law" selected>Finance</option>
+                              <option value="Finance" selected>Labour Law</option>
+                              <option value="Industrial Law" selected>Industrial Law</option>
+                            </select>
+                          </div>
+                          <div class="btn-go"><input id="go-do" type="button" class="btn" value="Go"/></div>
+                        </div>
+                      </div>
+                    </td>
+                    <td id="DateSelection" width="220">
+                      <div class="btn-date-selection">Date</div>
+                      <div class="date-para1">
+                        <div class="textboxdate">
+                          <div id="date-para1">
+                            <table>
+                              <tr>
+                                <td><input type="text" class="input-box" placeholder="From date"/></td>
+                                <td><input type="text" class="input-box" placeholder="To date"/></td>
+                                <td><input id="go-date" type="button" class="btn" value="Go"/></td>
+                              </tr>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+          <table class="filtertable">
+            <tr>
+              <td>
+                <div class="btn-group">Group</div>
+                <div class="textboxgroup"><input type="text" name="text1" id="text1" autofocus class="input-box icon-autocomplete margin10"></div>
+              </td>
+              <td>
+                <div class="btn-business-group">Business Group</div>
+                <div class="textboxbusiness">
+                  <input type="text" name="text2" id="bg-auto" value="KG" autofocus class="input-box icon-autocomplete spacing">
+                  <div id="business-para1">
+                    <div class="select-box">
+                      <select id="business" multiple="multiple" placeholder="Select Business" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1">
+                        <option value="selectall" selected>Select All</option>
+                        <option value="KGbg1" selected>KG Business Group 1</option>
+                        <option value="KGbg2" selected>KG Business Group 2</option>
+                        <option value="KGbg3" selected>KG Business Group 3</option>
+                        <option value="KGbg3" selected>KG Business Group 4</option>
+                        <option value="KGbg3" selected>KG Business Group 5</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="btn-go">
+                    <input id="go-bu" type="button" class="btn" value="Go"/>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="btn-legal-entity">Legal Entity</div>
+                <div class="textboxcompany">
+                  <input type="text" name="text2" id="entity-auto" value="KG" autofocus class="input-box icon-autocomplete">
+                  <p id="entity-para1">
+                  <div class="select-box">
+                    <select id="legal-entity" multiple="multiple" placeholder="Select Entity" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1">
+                      <option value="selectall" selected>Select All</option>
+                      <option value="KG Autoparts" selected>KG Autoparts</option>
+                      <option value="KG Transports" selected>KG Transports</option>
+                      <option value="KG Booking" selected>KG Booking</option>
+                      <option value="KG Electricals" selected>KG Electricals</option>
+                      <option value="KG Mobiles" selected>KG Mobiles</option>
+                      <option value="KG HealthCare" selected>KG HealthCare</option>
+                      <option value="KG HR Services" selected>KG HR Services</option>
+                      <option value="KG Hospitals" selected>KG Hospitals</option>
+                      <option value="KG Bakeries" selected>KG Bakeries</option>
+                      <option value="KG Hotels" selected>KG Hotels</option>
+                      <option value="KG Schools" selected>KG Schools</option>
+                      <option value="KG University" selected>KG University</option>
+                    </select>
+                  </div>
+                  </p>
+                  <div class="btn-go">
+                    <input id="go-le" type="button" class="btn" value="Go"/>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="btn-division">Division</div>
+                <div class="textboxdivision">
+                  <input type="text" name="text2" id="division-auto" value="KG" autofocus class="input-box icon-autocomplete">
+                  <p id="division-para1">
+                  <div class="select-box">
+                    <select id="division" multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo1">
+                      <option value="selectall" >Select All</option>
+                      <option value="KG Manufacturing" selected>KG Manufacturing</option>
+                      <option value="KG Sales" selected>KG Sales</option>
+                      <option value="KG Quality Checking" selected>KG Quality Checking</option>
+                      <option value="KG Administration" selected>KG Administration</option>
+                      <option value="KG Testing" selected>KG Testing</option>
+                      <option value="KG Security" selected>KG Security</option>
+                      <option value="KG Research" selected>KG Research</option>
+                      <option value="KG HR Unit" selected>KG HR Unit</option>
+                      <option value="KG Development" selected>KG Development</option>
+                    </select>
+                  </div>
+                  <div class="btn-go">
+                    <input id="go-d" type="button" class="btn" value="Go" />
+                  </div>
+                  </p>
+                </div>
+              </td>
+              <td>
+                <div class="btn-unit">Unit</div>
+                <div class="textboxbranch">
+                  <input type="text" name="text4" id="unit-auto" autofocus value="South gate, Madurai"  class="input-box icon-autocomplete">
+                  <p id="unit-para1">
+                  <div class="select-box">
+                    <select id="unit"  multiple="multiple" placeholder="Select Domain" onchange="console.log($(this).children(':selected').length)" class="unit">
+                      <optgroup label="Factory">
+                        <option value="Branch Office - 1" selected>Branch Office - 1</option>
+                        <option value="Branch Office - 2" selected>Branch Office - 2</option>
+                        <option value="Branch Office - 3" selected>Branch Office - 3</option>
+                        <option value="Branch Office - 4" selected>Branch Office - 4</option>
+                      </optgroup>
+                      <optgroup label="Office">
+                        <option value="Branch Office - 5" >Branch Office - 5</option>
+                        <option value="Branch Office - 6" >Branch Office - 6</option>
+                        <option value="Branch Office - 7" >Branch Office - 7</option>
+                        <option value="Branch Office - 8" >Branch Office - 8</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                  </p>
+                  <div class="btn-go">
+                    <input id="go-u" type="button" class="btn" value="Go" />
+                  </div>
+                </div>
+              </td>
+              <td id="consolidate">
+                <div class="btn-consolidate">Consolidated</div>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="clearfix" ></div>
+        <br />
+        <div class="graph-box">
+          <input type="button" id="viewaspie" style="float:right;margin-right:20px" value="View as pie chart"/>
+          <input type="button" id="viewasbar" style="float:right;margin-right:20px" value="View as bar chart"/>
+          <input type="button" id="back" onClick="loadGroup()" style="float:right;margin-right:20px" value="Back"/>
+          <!-- <p id="year-para" style="margin-top:5px;float:right;width:130px">
+            <span style="font-size:13px">Select Year:</span>
+            <select id="year" multiple="multiple" placeholder="Select Years" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo2" style="width:110px;float:right;" >
+              <option value="2009" >2009</option>
+              <option value="2010" >2010</option>
+              <option value="2011" >2011</option>
+              <option value="2012" >2012</option>
+              <option value="2013" selected>2013</option>
+              <option value="2014" selected>2014</option>
+              <option value="2015" selected>2015</option>
+            </select>
+          </p> -->
+          <div class="clearfix"></div>
+          <div id="graph-1" style="height: 400px;" align="center"></div>
+          <div id="graph-2" style="height: 400px;" align="center"></div>
+          <div id="graph-3" style="height: 400px;" align="center"></div>
+          <div id="graph-4" style="height: 400px;" align="center"></div>
+          <div id="graph-5" style="height: 400px;" align="center"></div>
+          <!-- <div class="chart-space" align="center">
+            <div class="compliance-status-chart-outer">
+              <div id="compliance-status-chart">
+                <svg></svg>
+              </div>
+            </div>
+          </div> -->
+          <div class="clearfix"></div>
+          <div class="graph-selections-bottom">
+            <div id="imgcontainer" style="height: auto"></div>
+            <input type="button" id="previousyear" style="float:left;margin-left:20px" value="<< Previous Year"/>
+            <input type="button" id="nextyear" style="float:left;margin-left:20px;" value="Next Year >>"/>
+            <input type="button" id="next" style="float:right;margin-right:20px;" value="Next >>"/>
+            <input type="button" id="previous" style="float:right;margin-right:20px"  value="<< Previous"/>
+          </div>
+        </div>
+        <div id="assignee-wise-compliance">
+          <!-- archive tab content start here -->
+          <div class="archive-tab-content">
+            <div class="archive-list-content" style="width:100% !important;">
+              <div class="grid-table-dash">
+                <div class="input-row-left">
+                  <div class="input-row">
+                    <div class="field-label">Country:<span class="mandatory">*</span></div>
+                    <div class="field-input">
+                      <input type="text" class="input-box icon-autocomplete" placeholder="Country">
+                    </div>
+                  </div>
+                  <div class="input-row">
+                    <div class="field-label">Legal Entity:</div>
+                    <div class="field-input">
+                      <input type="text" class="input-box icon-autocomplete" placeholder="Legal entity">
+                    </div>
+                  </div>
+                  <div class="input-row">
+                    <div class="field-label">Seating Unit:</div>
+                    <div class="field-input">
+                      <input type="text" class="input-box icon-autocomplete" placeholder="Seating Unit">
+                    </div>
+                  </div>
+                </div>
+                <div class="input-row-right">
+                  <div class="input-row">
+                    <div class="field-label">Business Group:</div>
+                    <div class="field-input">
+                      <input type="text" class="input-box icon-autocomplete" placeholder="Business Group">
+                    </div>
+                  </div>
+                  <div class="input-row">
+                    <div class="field-label">Division:</div>
+                    <div class="field-input">
+                      <input type="text" class="input-box icon-autocomplete" placeholder="Division">
+                    </div>
+                  </div>
+                  <div class="input-row">
+                    <div class="field-label">User:</div>
+                    <div class="field-input">
+                      <input type="text" class="input-box icon-autocomplete" placeholder="User">
+                    </div>
+                  </div>
+                </div>
+                <div class="submit-button-container">
+                  <input type="submit" name="cancel" value="Show" class="btn-submit">
+                  <input type="submit" name="cancel" value="Export" class="btn-submit">
+                </div>
+                <table style="border:1px solid #ddd;" >
+                  <tr >
+                    <th width="5%" align="center">#</th>
+                    <th width="25%" align="left">Domain</th>
+                    <th width="10%" align="center">Total</th>
+                    <th width="10%" align="center">Complied</th>
+                    <th width="10%" align="center">Delayed</th>
+                    <th width="10%" align="center">In progress</th>
+                    <th width="10%" align="center">Not complied</th>
+                    <th style="padding-right:10px;" width="5%"></th>
+                  </tr>
+                  <tr style="background-color:#fff;">
+                    <td width="4%" align="center"></td>
+                    <td width="15%" align="left"><input type="text"  class="filter-text-box"></td>
+                    <td width="10%" align="center"></td>
+                    <td width="10%" align="center"></td>
+                    <td width="10%" align="center"></td>
+                    <td width="10%" align="center"></td>
+                    <td width="10%" align="center"></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="9">
+                      KG1009 - Madurai unit
+                    </td>
+                  </tr>
+                  <tr align="left" >
+                    <td style="background-color:#fff;" align="left" colspan="8"> <a href="#" class="toggleModal" >EMP1028 -Sivaraman</a></th>
+                  </tr>
+                  <a href="#">
+                    <tr align="center" style="cursor:pointer;padding-right:5px" class="usecom1-tab">
+                      <td>1</td>
+                      <td align="left">Finance</td>
+                      <td>10</td>
+                      <td>06</td>
+                      <td>02</span></td>
+                      <td>01</td>
+                      <td>01</td>
+                      <td align="left" ><img src="/images/right_arrow.png" /></td>
+                    </tr>
+                  </a>
+                  <tr align="center" style="background-color:#FFFFFF">
+                    <td>2</td>
+                    <td align="left">Labour Law</td>
+                    <td>11</td>
+                    <td>04</td>
+                    <td>
+                      03
+                      <span class="toggleModal1">
+                        <a href="#" style="text-decoration:none">(+2)</a>
+                    </td>
+                    <td>01</td>
+                    <td>01</td>
+                    <td align="left" style="padding-right:1px;"><img src="/images/right_arrow.png" /></td>
+                  </tr>
+                  <tr align="center" >
+                  <td>3</td>
+                  <td align="left">Industrial Law</td>
+                  <td>11</td>
+                  <td>04</td>
+                  <td>03</td>
+                  <td>01</td>
+                  <td>01</td>
+                  <td align="left" ><img src="/images/right_arrow.png" /></td>
+                  </tr>
+                  <tr align="center" >
+                  <td colspan="2">Total</td>
+                  <td>32</td>
+                  <td>14</td>
+                  <td>10</td>
+                  <td>03</td>
+                  <td>03</td>
+                  <td align="left" ><img src="/images/right_arrow.png" /></td>
+                  </tr>
+                  <tr align="left" >
+                  <th colspan="10" style="background-color:#FFFFFF"><span><a href="#">EMP1027 - Vijayan</a></span></th>
+                  </tr>
+                  <tr align="center"  style="background-color:#FFFFFF">
+                  <td>4</td>
+                  <td align="left">Labour law</td>
+                  <td>08</td>
+                  <td>04</td>
+                  <td>01</td>
+                  <td>02</td>
+                  <td>01</td>
+                  <td align="left" ><img src="/images/right_arrow.png" /></td>
+                  </tr>
+                  <tr>
+                  <td style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="9">
+                  KG1180 - Namakkal unit 
+                  </td>
+                  </tr>
+                  <tr align="left" >
+                  <th colspan="9" style="background-color:#FFFFFF"><a href="#">EMP1129 - Sivanathan</a></th>
+                  </tr>
+                  <tr align="center" >
+                  <td>5</td>
+                  <td align="left">Industrial law</td>
+                  <td>09</td>
+                  <td>04</td>
+                  <td>02</td>
+                  <td>02</td>
+                  <td>01</td>
+                  <td align="left" ><img src="/images/right_arrow.png" /></td>
+                  </tr>
+                  <tr align="left" >
+                  <th colspan="9" style="background-color:#FFFFFF"><a href="#">EMP1207 - Velmurugan</a></th>
+                  </tr>
+                  <tr align="center">
+                  <td>6</td>
+                  <td align="left">Finance</td>
+                  <td>10</td>
+                  <td>04</td>
+                  <td>03</td>
+                  <td>02</td>
+                  <td>01</td>
+                  <td align="left" ><img src="/images/right_arrow.png" /></td>
+                  </tr>
+                  <tr align="left" >
+                  <th colspan="10" style="background-color:#FFFFFF"><a href="#">EMP2018 - Vetriselvam</a></th>
+                  </tr>
+                  <tr align="center" >
+                  <td>7</td>
+                  <td align="left">Finance</td>
+                  <td>08</td>
+                  <td>02</td>
+                  <td>04</td>
+                  <td>01</td>
+                  <td>01</td>
+                  <td align="left" ><img src="/images/right_arrow.png"/></td>
+                  </tr>
+                </table>
+              </div>
+              <div class="grid-table-dash1">
+                <table  style="border:1px solid #ddd;" >
+                  <tr >
+                  <td colspan="6" style="background-color:#FFF;"><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>User:</b> EMP1028 -Sivaraman</span><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em; margin-left:30%;"><b>Domain :</b> Finance</span><span style=" margin-left:30%; color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>Year:</b> 2015</span></td>
+                  </tr>
+                  <tr align="left" class="rightside">
+                  <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Complied<span><img src="/images/chevron_black_down.png"></span></th>
+                  </tr>
+                  <tr align="left" style="background-color:#DBDBDB; color:#000000; font-size: 1em;font-weight: bold;">
+                  <td width="5%" align="center">#</th>
+                  <td width="45%">Compliance</th>
+                  <td width="15%">Start date</th>
+                  <td width="15%">Actual due date</th>
+                  <td width="15%" colspan="2">Date of completion</th>
+                  </tr>
+                  <tr><td colspan="5" style="background:#D4B7EB;font-weight:bold;"> KG1009 - Madurai unit </td></tr>
+                  <tr align="left" class="rightside" >
+                  <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                    inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                    inset 0 0 5px rgba(53,86,129, 0.5),
+                    inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;"  width="250px"> The Tamilnadu shops and commercial establishments act - 1947 </span> </th>
+                  </tr>
+                  <tr style="background:#fff;">
+                  <td align="center">1</td>
+                  <td>Opening and closing hours</td>
+                  <td>10-Sep-2015</td>
+                  <td>15-Sep-2015</td>
+                  <td colspan="2">14-Sep-2015</td>
+                  </tr>
+                  <tr style="background:#fff;">
+                  <td align="center">2</td>
+                  <td>Daily and weekly hours</td>
+                  <td>10-Sep-2015</td>
+                  <td>15-Sep-2015</td>
+                  <td colspan="2">15-Sep-2015</td>
+                  </tr>
+                  <tr style="background:#fff;">
+                  <td align="center">3</td>
+                  <td>Overtime</td>
+                  <td>10-Sep-2015</td>
+                  <td>16-Sep-2015</td>
+                  <td colspan="2">15-Sep-2015</td>
+                  </tr>
+                  <tr align="left" class="rightside" >
+                  <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                    inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                    inset 0 0 5px rgba(53,86,129, 0.5),
+                    inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;"  width="250px"> The Batteries act - 2001 </span> </th>
+                  </tr>
+                  <tr style="background:#fff;">
+                  <td align="center">4</td>
+                  <td>Form I - Importers Half yearly returns</td>
+                  <td>12-Sep-2015</td>
+                  <td>20-Sep-2015</td>
+                  <td colspan="2">18-Sep-2015</td>
+                  </tr>
+                  <tr style="background:#fff;">
+                  <td align="center">5</td>
+                  <td>Form II - Importers registration</td>
+                  <td>15-Sep-2015</td>
+                  <td>24-Sep-2015</td>
+                  <td colspan="2">24-Sep-2015</td>
+                  </tr>
+                  <tr><td colspan="5" style="background:#D4B7EB;font-weight:bold;"> KG1010 - Chennai unit </td></tr>
+                  <tr align="left" class="rightside" >
+                  <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
+                    inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                    inset 0 0 5px rgba(53,86,129, 0.5),
+                    inset -285px 0 35px white;
+                    border-radius: 0 5px 0 5px;"  width="250px"> The Tamilnadu shops and commercial establishments act - 1947 </span> </th>
+                  </tr>
+                  <tr style="background:#fff;">
+                  <td align="center">1</td>
+                  <td>Opening and closing hours</td>
+                  <td>10-Sep-2015</td>
+                  <td>15-Sep-2015</td>
+                  <td colspan="2">14-Sep-2015</td>
+                  </tr>
+                  <tr style="background:#fff;">
+                  <td align="center">2</td>
+                  <td>Daily and weekly hours</td>
+                  <td>10-Sep-2015</td>
+                  <td>15-Sep-2015</td>
+                  <td colspan="2">15-Sep-2015</td>
+                  </tr>
+                  <tr  align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+                  <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Delayed<span><img src="/images/chevron_black_right.png"></span></th>
+                  </tr>
+                  <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+                  <th  colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: In progress<span><img src="/images/chevron_black_right.png"></span></th>
+                  </tr>
+                  <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
+                  <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Not complied<span><img src="/images/chevron_black_right.png"></span></th>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- archive tab content end here -->
+          <div id="assignee">
+            <div class="modal" style="width:75%; margin-left:-37.5%;">
+              <header>
+              <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">EMP1028 - Sivaraman</h1>
+              <div class="close toggleModal"></div>
+              </header>
+              <section>
+              <p style="font-size:0.8em; padding-top:10px;">
+              <table class="modaltable" width="100%">
+              <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
+              <th width="5%" align="center">#</th>
+              <th width="15%" align="left">Year</th>
+              <th width="12%" align="center">Total</th>
+              <th width="12%" align="center">Complied</th>
+              <th width="12%" align="center">Delayed</th>
+              <th width="12%" align="center">In progress</th>
+              <th width="13%" align="center">Not complied</th>
+              <th width="5%"></th>
+              </tr>
+              <tr >
+              <td align="center">1</td>
+              <td align="left"><a href="/home_userwise_2015" class="year2015">2015</a></td>
+              <td align="center">10</td>
+              <td align="center">06</td>
+              <td align="center">02</td>
+              <td align="center">01</td>
+              <td align="center">01</td>
+              <td><img src="/images/right_arrow.png"></td>
+              </tr>
+              <tr >
+              <td align="center">2</td>
+              <td align="left">2014</td>
+              <td align="center">10</td>
+              <td align="center">08</td>
+              <td align="center">00</td>
+              <td align="center">01</td>
+              <td align="center">01</td>
+              <td><img src="/images/right_arrow.png"></td>
+              </tr>
+              <tr >
+              <td align="center">3</td>
+              <td align="left">2013</td>
+              <td align="center">10</td>
+              <td align="center">07</td>
+              <td align="center">02</td>
+              <td align="center">0</td>
+              <td align="center">01</td>
+              <td><img src="/images/right_arrow.png"></td>
+              </tr>
+              <tr >
+              <td align="center">4</td>
+              <td align="left">2012</td>
+              <td align="center">10</td>
+              <td align="center">10</td>
+              <td align="center">0</td>
+              <td align="center">0</td>
+              <td align="center">0</td>
+              <td><img src="/images/right_arrow.png"></td>
+              </tr>
+              <tr>
+              <td align="center">5</td>
+              <td align="left">2011</td>
+              <td align="center">10</td>
+              <td align="center">07</td>
+              <td align="center">02</td>
+              <td align="center">01</td>
+              <td align="center">00</td>
+              <td><img src="/images/right_arrow.png"></td>
+              </tr>
+              </table>
+              </p>
+              </section>
+            </div>
+            <div class="modal modal1" style="width:75%; margin-left:-37.5%;">
+              <header>
+              <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">EMP1028 - Sivaraman</h1>
+              <div class="close toggleModal1"></div>
+              </header>
+              <section>
+              <p style="font-size:0.8em; padding-top:10px;">
+              <table class="modaltable" width="100%">
+              <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
+              <th width="5%" align="center">#</th>
+              <th width="15%" align="left">Compliance</th>
+              <th width="15%" align="left">Reassigned From</th>
+              <th width="12%" align="center">Start Date</th>
+              <th width="12%" align="center">Due Date</th>
+              <th width="12%" align="center">Reassigned Date</th>
+              <th width="13%" align="center">Completed Date</th>
+              </tr>
+              <tr >
+              <td align="center">1</td>
+              <td align="left">Form T - Wage Slip Submission</td>
+              <td align="left">EMP1020 - Raguram</td>
+              <td align="center">20-Oct-2015</td>
+              <td align="center">30-Dec-2015</td>
+              <td align="center">28-Dec-2015</td>
+              <td align="center">03-Jan-2015</td>
+              </tr>
+              <tr >
+              <td align="center">2</td>
+              <td align="left">Form Q - Register of employment</td>
+              <td align="left">EMP1022 - Vijayakumar</td>
+              <td align="center">01-Nov-2015</td>
+              <td align="center">30-Dec-2015</td>
+              <td align="center">01-Jan-2015</td>
+              <td align="center">03-Jan-2015</td>
+              </tr>
+              </table>
+              </p>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -51,6 +51,7 @@ def process_get_statutory_mappings(db, user_id):
     )
 
 def process_save_statutory_mapping(db, request_frame, user_id):
+    print request_frame
     if (db.save_statutory_mapping(request_frame, user_id)):
         return knowledgetransaction.SaveStatutoryMappingSuccess()
 

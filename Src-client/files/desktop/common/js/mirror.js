@@ -31,6 +31,10 @@ function initMirror() {
 
     }
 
+    function getBaseUrl() {
+        return BASE_URL
+    }
+
     // function updateUser_Session(user) {
     //     var info = parseJSON(window.localStorage["userInfo"])
     //     delete window.localStorage["userInfo"];
@@ -92,8 +96,6 @@ function initMirror() {
 
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
-        if (sessionToken == null)
-            sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
         var requestFrame = {
             "session_token": sessionToken,
             "request": request
@@ -106,12 +108,16 @@ function initMirror() {
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
-                log("API STATUS :"+status)
+                console.log("API STATUS :"+status)
                 if (status.toLowerCase().indexOf(matchString) != -1){
                     if(status == "UpdateUserProfileSuccess"){
                         updateUserInfo(response);
                     }
                     callback(null, response);
+                }
+                else if (status == "InvalidSessionToken") {
+                    clearSession();
+                    window.location.href = "/knowledge/login";
                 }
                 else {
                     callback(status, null)
@@ -173,7 +179,8 @@ function initMirror() {
                 var response = data[1];
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1){
-                    console.log("status success");
+                    console.log("mirror success");
+                    initSession(response)
                     callback(null, response);
                 }
                 else {
@@ -183,13 +190,14 @@ function initMirror() {
         )
     }
     function verifyLoggedIn() {
-        sessionToken = getSessionToken()
+        sessionToken = getSessionToken();
         if (sessionToken == null)
-            return false
+            return false;
         else
-            return true
+            return true;
     }
-    function logout(callback) {
+
+    function logout() {
         sessionToken = getSessionToken()
         var request = [
             "Logout", {
@@ -203,14 +211,15 @@ function initMirror() {
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
-                clearSession()
                 matchString = 'success';
-                if (status.toLowerCase().indexOf(matchString) != -1){
-                    callback(null, response)
-                }
-                else {
-                    callback(status, null);
-                }
+                // if (status.toLowerCase().indexOf(matchString) != -1){
+                //     callback(null, response)
+                // }
+                // else {
+                //     callback(status, null);
+                // }
+                clearSession();
+                window.location.href = "/knowledge/login";
             }
         )
     }
@@ -470,15 +479,25 @@ function initMirror() {
         return statutoryDate;
     }
 
-    function uploadFileFormat(size, type, content) {
+    function uploadFileFormat(size, name, content) {
         return {
-            "file_size": size,
-            "file_type": type,
+            "file_size": parseInt(size),
+            "file_name": name,
             "file_content": content
         }
     }
 
-    function uploadFile(fileListener) {
+    function convert_to_base64(file, callback) {
+        var reader = new FileReader();
+        reader.onload = function(readerEvt) {
+            var binaryString = readerEvt.target.result;
+            file_content = btoa(binaryString);
+            callback(file_content)
+        };
+        reader.readAsBinaryString(file);
+    }
+
+    function uploadFile(fileListener, callback) {
         var evt = fileListener
         max_limit =  1024 * 1024 * 50
         // file max limit 50MB
@@ -487,35 +506,33 @@ function initMirror() {
         file_name = file.name
         file_size = file.size
         if (file_size > max_limit) {
-            return "File max limit exceeded"
+            callback("File max limit exceeded");
         }
         // file_extension = file_name.substr(
         //     file_name.lastIndexOf('.') + 1
         // );
         file_content = null
+
+
         if (files && file) {
-            var reader = new FileReader();
-
-            reader.onload = function(readerEvt) {
-                var binaryString = readerEvt.target.result;
-                file_content = btoa(binaryString);
-            };
-
-            reader.readAsBinaryString(file);
+            convert_to_base64(file, function(file_content) {
+                if (file_content == null) {
+                    callback("File content is empty")
+                }
+                result = uploadFileFormat(
+                    file_size, file_name, file_content
+                )
+                callback(result)
+            });
         }
-        if (file_content == null) {
-            return "File content is empty"
-        }
-        return uploadFileFormat(
-            file_size, file_name, file_content
-        )
+
     }
 
     function complianceDetails (
         statutoryProvision, complianceTask,
         description, documentName, fileFormat, penalConsequence,
         complianceFrequency, statutoryDates, repeatsTypeId, repeatsEvery,
-        durationTypeId, duration, isActive, downloadFileList, complianceId
+        durationTypeId, duration, isActive, complianceId
     ) {
         var compliance = {};
         compliance["statutory_provision"] = statutoryProvision;
@@ -531,7 +548,6 @@ function initMirror() {
         compliance["duration_type_id"] = durationTypeId;
         compliance["duration"] = duration;
         compliance["is_active"] = isActive;
-        compliance["download_file_list"] = downloadFileList;
         if ((complianceId !== null) && (complianceId !== '')) {
             compliance["compliance_id"] = complianceId;
         }
@@ -1288,6 +1304,8 @@ function initMirror() {
         toJSON: toJSON,
         parseJSON: parseJSON,
 
+        getBaseUrl : getBaseUrl,
+
         initSession: initSession,
         // updateUser_Session: updateUser_Session,
         clearSession: clearSession,
@@ -1339,6 +1357,7 @@ function initMirror() {
         updateStatutory: updateStatutory,
 
         statutoryDates: statutoryDates,
+        uploadFile: uploadFile,
         uploadFileFormat: uploadFileFormat,
         complianceDetails: complianceDetails,
         statutoryMapping: statutoryMapping,

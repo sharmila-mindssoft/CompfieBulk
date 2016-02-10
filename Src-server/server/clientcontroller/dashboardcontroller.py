@@ -1,4 +1,4 @@
-from protocol import (dashboard, login, core)
+from protocol import (dashboard, login)
 
 __all__ = [
     "process_client_dashboard_requests"
@@ -14,6 +14,7 @@ def process_client_dashboard_requests(request, db) :
 
     if session_user is None:
         return login.InvalidSessionToken()
+
     if type(request) is dashboard.GetChartFilters :
         return process_get_chart_filters(db, session_user, client_id)
 
@@ -25,7 +26,7 @@ def process_client_dashboard_requests(request, db) :
     elif type(request) is dashboard.GetEscalationsChart :
         return process_escalation_chart(db, request, session_user, client_id)
     elif type(request) is dashboard.GetEscalationsDrillDownData :
-        return process_escalation_chart_drilldown(db, request, session_user, client_id)   
+        return process_escalation_chart_drilldown(db, request, session_user, client_id)
 
     elif type(request) is dashboard.GetNotCompliedChart :
         return process_not_complied_chart(db, request, session_user, client_id)
@@ -80,8 +81,8 @@ def process_trend_chart(db, request, session_user, client_id):
 def process_get_trend_chart_drilldown(db, request, session_user, client_id):
     drill_down_info = None
     filter_ids = None if request.filter_ids == None else ",".join(str(x) for x in request.filter_ids)
-    drill_down_info = db.get_trend_chart_drill_down(request.country_ids, 
-        request.domain_ids, filter_ids, request.filter_type, request.year, 
+    drill_down_info = db.get_trend_chart_drill_down(request.country_ids,
+        request.domain_ids, filter_ids, request.filter_type, request.year,
         client_id)
     return dashboard.GetTrendChartDrillDownDataSuccess(
         drill_down_data = drill_down_info)
@@ -123,6 +124,6 @@ def process_get_notifications(db, request, session_user, client_id):
 
 def process_update_notification_status(db, request, session_user, client_id):
     notifications = None
-    db.update_notification_status(request.notification_id, request.has_read, 
+    db.update_notification_status(request.notification_id, request.has_read,
         session_user, client_id)
     return dashboard.UpdateNotificationStatusSuccess()
