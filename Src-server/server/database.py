@@ -153,6 +153,8 @@ class Database(object) :
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
+        # if client_id is not None:
+        #     return self.select_all(query, client_id)
         return self.select_all(query)
 
     def get_data_from_multiple_tables(
@@ -327,6 +329,15 @@ class Database(object) :
         # )
         date_in_string = datetime_val.strftime("%d-%b-%Y")
         return date_in_string
+
+    def datetime_to_string_time(self, datetime_val):
+        # return "%d-%s-%d" % (
+        #     datetime_val.day,
+        #     self.string_months[datetime_val.month],
+        #     datetime_val.year
+        # )
+        datetime_in_string = datetime_val.strftime("%d-%b-%Y %H-%m-%S")
+        return datetime_in_string
 
     def get_client_db_info(self):
         columns = "database_ip, client_id, "

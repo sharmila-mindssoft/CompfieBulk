@@ -1012,6 +1012,15 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getLoginTrace(callback){
+        var request = [
+            "GetLoginTrace",{}
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+
+
     return {
         log: log,
         toJSON: toJSON,
@@ -1108,16 +1117,15 @@ function initClientMirror() {
 
         getComplianceDetail: getComplianceDetail,
 
-        getStatutoryNotificationsListFilters: getStatutoryNotificationsListFilters,
-        getStatutoryNotificationsListReport: getStatutoryNotificationsListReport,
-
         getRiskReportFilters: getRiskReportFilters,
         getRiskReport: getRiskReport,
 
         getReassignedHistoryReportFilters: getReassignedHistoryReportFilters,
         getReassignedHistoryReport: getReassignedHistoryReport,
 
-        updateComplianceDetail: updateComplianceDetail
+        updateComplianceDetail: updateComplianceDetail,
+
+        getLoginTrace: getLoginTrace
     }
 }
 var client_mirror = initClientMirror();

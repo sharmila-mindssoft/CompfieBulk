@@ -113,6 +113,11 @@ CLIENT_TEMPLATE_PATHS = [
         "files/desktop/client/compliance-task-applicability-report/compliancetaskapplicabilityreport.html",
         None, {}
     ),
+    (
+        "/login-trace",
+        "files/desktop/client/login-trace/logintrace.html",
+        None, {}
+    ),
 ]
 
 TEMPLATE_PATHS = [

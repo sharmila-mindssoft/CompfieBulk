@@ -12,7 +12,7 @@ $("#btn-userprivilege-add").click(function(){
 	clearMessage(); 
   	$("#user-privilege-id").val('');
   	$("#user-privilege-name").val('');
-	$('.form-checkbox').each(function() {
+	$('.tbody-userprivilege-form-list .form-checkbox').each(function() {
 		this.checked = false; 
 	});  	
 	function onSuccess(data){
@@ -36,7 +36,7 @@ $("#btn-userprivilege-add").click(function(){
 function loadFormData(formlist){
 	$.each(formlist, function(key, value) {  
 		var tableRowHeading = $('#templates-form-list .table-userprivilege-form-list .table-row-heading');
-		var clone=tableRowHeading.clone();
+		var clone = tableRowHeading.clone();
 		$('.heading-name', clone).text(key);
 		if(value.length != 0){
 			$('.tbody-userprivilege-form-list').append(clone);
@@ -110,7 +110,7 @@ $("#submit").click(function(){
 	var groupIdVal = $("#user-privilege-id").val();
 	var groupNameVal = $("#user-privilege-name").val();
 	var chkArray = [];
-	$(".form-checkbox:checked").each(function() {
+	$(".tbody-userprivilege-form-list .form-checkbox:checked").each(function() {
 		chkArray.push($(this).val());
 	}); 
 	
@@ -255,12 +255,12 @@ $("#search-user-group-name").keyup(function() {
 
 $('.checkbox-full-check').click(function(event) {  
 	if(this.checked) { 
-		$('.form-checkbox').each(function() { 
+		$('.tbody-userprivilege-form-list .form-checkbox').each(function() { 
 			this.checked = true;  
 	  	});
 	}
 	else{
-	  $('.form-checkbox').each(function() {
+	  $('.tbody-userprivilege-form-list .form-checkbox').each(function() {
 	    this.checked = false; 
 	  });        
 	}

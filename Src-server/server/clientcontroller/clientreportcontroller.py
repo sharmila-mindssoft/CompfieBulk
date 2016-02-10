@@ -42,6 +42,8 @@ def process_client_report_requests(request, db) :
 		return get_reassignedhistory_report_filters(db, request, session_user, client_id) 
 	elif type(request) is clientreport.GetReassignedHistoryReport:
 		return get_reassignedhistory_report(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetLoginTrace:
+		return get_login_trace(db, request, session_user, client_id) 
 
 
 def get_client_report_filters(db, request, session_user, client_id):
@@ -261,8 +263,6 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
 	user_id = request.user_id
 	from_date = request.from_date
 	to_date = request.to_date
-
-	
 	
 	if level_1_statutory_id is None :
 		level_1_statutory_id = '%'
@@ -277,8 +277,9 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
 	)
 	return clientreport.GetReassignedHistoryReportSuccess(reassigned_history_list)
 
-
-
-	
+def get_login_trace(db, request, session_user, client_id):
+	users_list = db.get_client_users(client_id);
+	logintracelist = db.get_login_trace(client_id, session_user)
+	return clientreport.GetLoginTraceSuccess(users = users_list,  login_trace = logintracelist)
 
 	

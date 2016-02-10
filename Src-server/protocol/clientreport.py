@@ -1397,16 +1397,18 @@ class GetLoginTraceSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["users", "login_trace"])
         users = data.get("users")
-        users = parse_structure_VectorType_RecordType_clientreport_UserName(users)
+        users = parse_structure_VectorType_RecordType_clientreport_User(users)
         login_trace = data.get("login_trace")
+        print login_trace
         login_trace = parse_structure_VectorType_RecordType_clientreport_LoginTrace(login_trace)
         return GetLoginTraceSuccess(users, login_trace)
 
     def to_inner_structure(self):
         return {
-            "users": to_structure_VectorType_RecordType_clientreport_UserName(self.users),
+            "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
             "login_trace": to_structure_VectorType_RecordType_clientreport_LoginTrace(self.login_trace),
         }
+
 
 
 def _init_Response_class_map():
@@ -2011,23 +2013,27 @@ class FormName(object):
 #
 
 class LoginTrace(object):
-    def __init__(self, date_and_time, action):
-        self.date_and_time = date_and_time
+    def __init__(self,  created_on, form_name, action):
+        self.created_on = created_on
+        self.form_name = form_name
         self.action = action
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["date_and_time", "action"])
-        date_and_time = data.get("date_and_time")
-        date_and_time = parse_structure_CustomTextType_20(date_and_time)
+        data = parse_dictionary(data, ["created_on", "form_name", "action"])
+        created_on = data.get("created_on")
+        created_on = parse_structure_CustomTextType_50(created_on)
+        form_name = data.get("form_name")
+        form_name = parse_structure_CustomTextType_50(form_name)
         action = data.get("action")
-        action = parse_structure_CustomTextType_100(action)
-        return LoginTrace(date_and_time, action)
+        action = to_structure_CustomTextType_500(action)
+        return LoginTrace(created_on, form_name, action)
 
     def to_structure(self):
-        return {
-            "date_and_time": to_structure_CustomTextType_20(self.date_and_time),
-            "action": to_structure_CustomTextType_100(self.action),
+        return {            
+            "created_on": to_structure_CustomTextType_20(self.created_on),
+            "form_name": to_structure_CustomTextType_50(self.form_name),
+            "action": to_structure_CustomTextType_500(self.action),
         }
 
 #
