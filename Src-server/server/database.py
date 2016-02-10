@@ -153,7 +153,6 @@ class Database(object) :
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(
@@ -384,9 +383,12 @@ class Database(object) :
     def convert_to_dict(self, data_list, columns) :
         assert type(data_list) in (list, tuple)
         if len(data_list) > 0:
+            print "inside if"
             if type(data_list[0]) is tuple :
+                print "inside second if"
                 result_list = []
                 if len(data_list[0]) == len(columns) :
+                    print "inside 3 rd if"
                     for data in data_list:
                         result = {}
                         for i, d in enumerate(data):
@@ -394,12 +396,14 @@ class Database(object) :
                         result_list.append(result)
                 return result_list
             else :
+                print "inside first else"
                 result = {}
                 if len(data_list) == len(columns) :
                     for i, d in enumerate(data_list):
                         result[columns[i]] = d
                 return result
         else:
+            print "inside second else"
             return []
 
     def add_session(self, user_id, session_type_id, client_id=None) :

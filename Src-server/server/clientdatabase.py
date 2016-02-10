@@ -7,6 +7,7 @@ from database import Database
 import json
 import datetime
 from datetime import timedelta
+from dateutil import relativedelta
 from types import *
 
 from types import *
@@ -1324,6 +1325,38 @@ class ClientDatabase(Database):
             result = rows[0][0]
         return result
 
+    def get_users_by_unit_and_domain(
+            self, unit_id, domain_id
+        ):
+        unit_user_rows = self.get_data(
+            self.tblUserUnits, "user_id" , "unit_id = '%d'" % unit_id
+        )
+        unit_users = []
+        for unit_user in unit_user_rows:
+            unit_users.append(unit_user[0])
+
+        domain_user_rows = self.get_data(
+            self.tblUserDomains, "user_id" , "domain_id = '%d'" % domain_id
+        )
+        domain_users = []
+        for domain_user in domain_user_rows:
+            domain_users.append(domain_user[0])
+
+        print "unit_users:{}".format(unit_users)
+        print "domain_users:{}".format(domain_users)
+        users = list(set(unit_users).intersection(domain_users))
+        print "users:{}".format(users)
+        user_ids = ",".join(str(x) for x in users)
+
+        columns = "user_id, employee_name, employee_code, is_active"
+        condition = " is_active = 1 and user_id in (%s)" % user_ids
+        rows = self.get_data(
+            self.tblUsers, columns, condition
+        )
+        columns = ["user_id", "employee_name", "employee_code", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_users(result)
+
     def get_statutory_wise_compliances( 
         self, unit_id, domain_id, level_1_statutory_name, frequency_name
     ):
@@ -1341,25 +1374,28 @@ class ClientDatabase(Database):
         compliance_id_rows = self.select_all(compliance_ids_query)
         if compliance_id_rows :
             compliance_ids = compliance_id_rows[0][0]
-        query = "SELECT ac.compliance_id, ac.statutory_dates, assignee, employee_code, \
+        query = "SELECT ac.compliance_id, ac.statutory_dates, ac.due_date, assignee, employee_code, \
                 employee_name, statutory_mapping, document_name, compliance_task, \
-                compliance_description, repeat_type_id, duration_type_id, repeats_every, \
-                duration, frequency FROM %s ac LEFT JOIN %s u ON (ac.assignee = u.user_id) \
-                LEFT JOIN %s c ON (ac.compliance_id = c.compliance_id)\
-                LEFT JOIN %s f ON (c.frequency_id = f.frequency_id)\
+                compliance_description, c.repeat_type_id, repeat_type, repeats_every, frequency, \
+                c.frequency_id FROM %s ac LEFT JOIN %s u ON (ac.assignee = u.user_id) \
+                LEFT JOIN %s c ON (ac.compliance_id = c.compliance_id) \
+                LEFT JOIN %s f ON (c.frequency_id = f.frequency_id) \
+                LEFT JOIN %s rt ON (c.repeat_type_id = rt.repeat_type_id) \
                 WHERE ac.compliance_id IN (%s) AND ac.is_active = %d \
                 AND %s" % (
-                self.tblAssignedCompliances, self.tblUsers, self.tblCompliances,
-                self.tblComplianceFrequency, compliance_ids, 1, condition)
+                    self.tblAssignedCompliances, self.tblUsers, self.tblCompliances,
+                    self.tblComplianceFrequency, self.tblComplianceRepeatType, compliance_ids, 
+                    1, condition
+                )
         client_compliance_rows = self.select_all(query)
         statutory_wise_compliances = []
         level_1_statutory_wise_compliances = {}
         if client_compliance_rows:
             columns = [
-                "compliance_id", "statutory_dates", "assignee", "employee_code",
+                "compliance_id", "statutory_dates", "due_date", "assignee", "employee_code",
                 "employee_name", "statutory_mapping", "document_name", "compliance_task",
-                "compliance_description", "repeat_type", "duration_type", "repeats_every", 
-                "duration", "frequency"
+                "compliance_description", "repeat_type_id",  "repeat_type", "repeat_every", 
+                "frequency", "frequency_id"
             ]
             client_compliance_rows = self.convert_to_dict(client_compliance_rows, columns)
             for compliance in client_compliance_rows:
@@ -1376,12 +1412,30 @@ class ClientDatabase(Database):
                 assingee_name = "%s - %s" % (
                     compliance["employee_code"], compliance["employee_name"]
                 )
-                # print "compliance['statutory_dates'] :{}".format(compliance["statutory_dates"])
-                due_dates, statutory_dates_list = self.calculate_due_date(
-                        compliance["statutory_dates"]
-                    )
+                due_dates = []
+                statutory_dates_list = []
+                if ((compliance["frequency_id"] == 2) or (compliance["frequency_id"] == 3)):
+                    if compliance["repeat_type_id"] == 1:
+                        due_dates, statutory_dates = self.calculate_due_date(
+                            repeat_by = 1,
+                            repeat_every = compliance["repeat_every"], 
+                            due_date = compliance["due_date"]
+                        )
+                    elif compliance["repeat_type_id"] == 2:
+                        due_dates, statutory_dates_list = self.calculate_due_date(
+                            statutory_dates = compliance["statutory_dates"]
+                        )
+                    elif compliance["repeat_type_id"] == 3:
+                        due_dates, statutory_dates = self.calculate_due_date(
+                            repeat_by = 3,
+                            repeat_every = compliance["repeat_every"], 
+                            due_date = compliance["due_date"]
+                        )
+                elif (compliance["frequency_id"] == 1):
+                    pass
+                
                 for due_date in due_dates:
-                    if not self.check_already_completed_compliance(
+                    if not self.is_already_completed_compliance(
                         due_date, compliance["compliance_id"], unit_id
                     ):
                         level_1_statutory_wise_compliances[statutories[0].strip()].append(
@@ -1393,6 +1447,8 @@ class ClientDatabase(Database):
                                 assingee_name, compliance["assignee"]
                             )
                         )
+                    else:
+                        print "entering into else"
             for level_1_statutory_name, compliances in level_1_statutory_wise_compliances.iteritems():
                 statutory_wise_compliances.append(
                     clienttransactions.STATUTORY_WISE_COMPLIANCES(
@@ -1403,7 +1459,9 @@ class ClientDatabase(Database):
         return statutory_wise_compliances
 
                 
-    def check_already_completed_compliance(self, due_date, compliance_id, unit_id):
+    def is_already_completed_compliance(
+            self, due_date, compliance_id, unit_id
+        ):
         columns = "count(*)"
         condition = "unit_id = '{}' and due_date = '{}' and compliance_id = '{}'".format(
             unit_id, due_date, compliance_id
@@ -1414,33 +1472,129 @@ class ClientDatabase(Database):
         else:
             return False
 
-    def calculate_due_date(self, statutory_dates):
-        result = []
-        statutory_dates_list = []
-        for statutory_date in json.loads(statutory_dates):
-            date = statutory_date["statutory_date"]
-            month = statutory_date["statutory_month"]
+    def calculate_due_date(
+            self, statutory_dates = None, repeat_by = None, repeat_every = None, due_date = None 
+        ):
+        def is_future_date(test_date):
+            result = False
             current_date = datetime.datetime.today()
-            due_date_guess = datetime.datetime(current_date.year, month, date)
-            real_due_date = None
-            if ((current_date - due_date_guess).days < 0):
-                real_due_date = datetime.datetime(current_date.year - 1, month, date)
-            else:
-                real_due_date = due_date_guess
-            result.append(
-                real_due_date
-            )
-            statutory_dates_list.append(
-                core.StatutoryDate(
-                    date, month, statutory_date["trigger_before_days"]
+            if ((current_date - test_date).days < 0):
+                result = True
+            return result
+
+        due_dates = []
+        statutory_dates_list = []
+        # For Monthly Recurring compliances
+        if statutory_dates:
+            for statutory_date in json.loads(statutory_dates):
+                date = statutory_date["statutory_date"]
+                month = statutory_date["statutory_month"]
+                current_date = datetime.datetime.today()
+                due_date_guess = datetime.datetime(current_date.year, month, date)
+                real_due_date = None
+                if is_future_date(due_date_guess):
+                    real_due_date = datetime.datetime(current_date.year - 1, month, date)
+                else:
+                    real_due_date = due_date_guess
+                due_dates.append(
+                    real_due_date
                 )
-            )
-        # print "due_dates: {}, statutory_dates: {}".format(result, statutory_dates_list)
-        return result, statutory_dates_list
+                statutory_dates_list.append(
+                    core.StatutoryDate(
+                        date, month, statutory_date["trigger_before_days"]
+                    )
+                )
+        elif repeat_by:
+            # For Compliances Recurring in days
+            if repeat_by == 1:
+                previous_year_due_date = datetime.datetime(
+                    due_date.year - 1, due_date.month, due_date.day
+                )
+                due_dates.append(previous_year_due_date)
+                iter_due_date = previous_year_due_date
+                while not is_future_date(iter_due_date):
+                    iter_due_date = iter_due_date + datetime.timedelta(days = repeat_every)
+                    due_dates.append(iter_due_date)
+            elif repeat_by == 3:
+                previous_due_date = datetime.datetime(
+                    due_date.year - repeat_every, due_date.month, due_date.day
+                )
+                r = relativedelta.relativedelta(
+                    previous_due_date, due_date
+                )
+                if r.months < 12:
+                    due_dates.append(previous_due_date)
+        return due_dates, statutory_dates_list
 
+    def save_past_record(
+            self, unit_id, compliance_id, due_date, completion_date, documents, 
+            validity_date, completed_by
+        ):
+        if is_already_completed_compliance(
+                due_date, compliance_id, unit_id
+            ):
+            return
+
+        is_two_level = self.is_two_levels_of_approval()
+        columns = [
+            "compliance_history_id", "unit_id", "compliance_id", "due_date", "completion_date", 
+            "documents", "validity_date", "next_due_date", "completed_by", "completed_on", 
+            "approve_status", "approved_by", "approved_on"
+        ]
+        if is_two_level:
+            columns.append("concurrence_status")
+            columns.append("concurred_by")
+            columns.append("concurred_on")
+
+        compliance_history_id = self.get_new_id("compliance_history_id", self.tblComplianceHistory)
+        completion_date = self.string_to_datetime(completion_date)
+
+        next_due_date = None
+        if validity_date:
+            next_due_date = self.string_to_datetime(validity_date)
+
+
+        concur_approve_columns = "approval_person"
+        if is_two_level:
+            concur_approve_columns += "concurrence_person"
+        condition = "compliance_id = '%d' and unit_id = '%d'" % (
+            compliance_id, unit_id
+        )
+        rows = self.get_data(
+            self.tblAssignedCompliances, concur_approve_columns, condition
+        )
+        concurred_by = 0
+        approved_by = 0 
+        if rows:
+            approved_by = rows [0][0]
+            if is_two_level:
+                concurred_by = rows[0][1]
+
+        values = [
+            compliance_history_id, unit_id, compliance_id, self.string_to_datetime(due_date), 
+            completion_date, ",".join(documents), self.string_to_datetime(validity_date), 
+            next_due_date, completed_by, completion_date, 1, approved_by, completion_date
+        ]
+        if is_two_level:
+            values.append(1)
+            values.append(concurred_by)
+            values.append(completion_date)
+        self.insert(
+            self.tblComplianceHistory, columns, values
+        )
+
+    def is_two_level_approval(self):
+        columns = "two_levels_of_approval"
+        rows = self.get_data(self.tblClientSettings, columns, "1")
+        return rows[0][0]
         
+#
+#   Compliance Approval
+#
 
-    def get_compliance_approval_list(self, session_user, client_id):
+    def get_compliance_approval_list(
+            self, session_user, client_id
+        ):
         assignee_columns = "completed_by, employee_code, employee_name"
         join_type = "left join"
         tables = [self.tblComplianceHistory, self.tblUsers]
@@ -1562,24 +1716,6 @@ class ClientDatabase(Database):
             if len(rows) > 0:
                 employee_name = "{} - {}".format(rows[0][0], rows[0][1])
         return employee_name
-
-    # def calculate_next_due_date(self, completion_date, due_date, compliance_id):
-    #     compliance_columns = "statutory_date, repeat_type_id, duration_type_id,"+\
-    #     " repeats_every, duration"
-    #     condition = "compliance_id = '%d'" % compliance_id
-    #     compliance_rows = self.get_data(self.tblCompliances, compliance_columns,
-    #         condition)
-    #     if len(compliance_rows) > 0:
-    #         statutory_date = compliance_rows[0][0]
-    #         repeat_type_id = compliance_rows[0][1]
-    #         duration_type_id = compliance_rows[0][2]
-    #         repeats_every = compliance_rows[0][3]
-    #         duration = compliance_rows[0][4]
-    #         if statutory_date == None:
-    #             if repeat_type_id = 1:
-
-    #             elif repeat_type_id = 2:
-    #             elif repeat_type_id = 3:
 
 #
 # Assign Compliance

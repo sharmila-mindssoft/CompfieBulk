@@ -60,7 +60,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS,
     parse_structure_OptionalType_CustomTextType_100,
     parse_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY,
-    parse_structure_UnsignedIntegerType_32
+    parse_structure_UnsignedIntegerType_32,
+    parse_structure_VectorType_RecordType_core_User
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -129,7 +130,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS,
     to_structure_OptionalType_CustomTextType_100,
     to_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY,
-    to_structure_UnsignedIntegerType_32
+    to_structure_UnsignedIntegerType_32,
+    to_structure_VectorType_RecordType_core_User
 )
 
 #
@@ -853,19 +855,23 @@ class GetPastRecordsFormDataSuccess(Response):
         }
 
 class GetStatutoriesByUnitSuccess(Response):
-    def __init__(self, statutory_wise_compliances):
+    def __init__(self, statutory_wise_compliances, users):
         self.statutory_wise_compliances = statutory_wise_compliances
+        self.users = users
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_wise_compliances"])
+        data = parse_dictionary(data, ["statutory_wise_compliances", "users"])
         statutory_wise_compliances = data.get("statutory_wise_compliances")
         statutory_wise_compliances = parse_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES(statutory_wise_compliances)
-        return GetStatutoriesByUnitSuccess(statutory_wise_compliances)
+        users = data.get("users")
+        users = parse_structure_VectorType_RecordType_core_User(users)
+        return GetStatutoriesByUnitSuccess(statutory_wise_compliances, users)
 
     def to_inner_structure(self):
         return {
-            "statutory_wise_compliances": to_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES(self.statutory_wise_compliances),
+            "statutory_wise_compliances" : to_structure_VectorType_RecordType_clienttransactions_STATUTORY_WISE_COMPLIANCES(self.statutory_wise_compliances),
+            "users" : to_structure_VectorType_RecordType_core_User(self.users)
         }
 
 class SavePastRecordsSuccess(Response):
@@ -993,16 +999,28 @@ class REASSIGNED_COMPLIANCE(object):
 #
 
 class PAST_RECORD_COMPLIANCE(object):
-    def __init__(self, compliance_id, due_date, completion_date, validity_date, documents):
+    def __init__(
+            self, unit_id, compliance_id, due_date, completion_date, documents, 
+            validity_date, completed_by
+        ):
+        self.unit_id = unit_id
         self.compliance_id = compliance_id
         self.due_date = due_date
         self.completion_date = completion_date
         self.validity_date = validity_date
         self.documents = documents
+        self.completed_by = completed_by
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_id", "due_date", "completion_date", "validity_date", "documents"])
+        data = parse_dictionary(
+            data, [
+                    "unit_id", "compliance_id", "due_date", "completion_date", 
+                    "documents", "validity_date", "completed_by"
+                ]
+        )
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         due_date = data.get("due_date")
@@ -1013,15 +1031,22 @@ class PAST_RECORD_COMPLIANCE(object):
         validity_date = parse_structure_CustomTextType_20(validity_date)
         documents = data.get("documents")
         documents = parse_structure_VectorType_CustomTextType_50(documents)
-        return PAST_RECORD_COMPLIANCE(compliance_id, due_date, completion_date, validity_date, documents)
+        completed_by = data.get("completed_by")
+        completed_by = parse_structure_UnsignedIntegerType_32(completed_by)
+        return PAST_RECORD_COMPLIANCE(
+            unit_id, compliance_id, due_date, completion_date, documents, 
+            validity_date, completed_by
+        )
 
     def to_structure(self):
         return {
+            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
             "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "completion_date": to_structure_CustomTextType_20(self.completion_date),
             "validity_date": to_structure_CustomTextType_20(self.validity_date),
             "documents": to_structure_VectorType_CustomTextType_50(self.documents),
+            "completed_by": to_structure_SignedIntegerType_8(self.completed_by)
         }
 
 #

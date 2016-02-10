@@ -598,9 +598,9 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    //
-    // Past Records
-    //
+    
+    /* Past Records */
+    
 
     function getPastRecordsFormData(callback) {
         var request = [
@@ -621,6 +621,34 @@ function initClientMirror() {
         ]
         clientApiRequest("api/client_transaction", request, callback);
     }
+
+    function getPastRecordsComplianceDict(
+        unit_id, compliance_id, due_date, completion_date, documents, validity_date, completed_by
+    ){
+        return {
+            "unit_id" : unit_id,
+            "compliance_id" : compliance_id,
+            "due_date" : due_date,
+            "completion_date" : completion_date,
+            "documents": documents,
+            "validity_date": validity_date,
+            "completed_by" : completed_by
+        };
+    }   
+
+    function savePastRecords(
+        compliances_list, callback
+    ){
+        var request = [
+            "SavePastRecords",
+            {
+                "compliances" : compliances_list 
+            }
+        ];
+        clientApiRequest("api/client_transaction", request, callback);
+    }
+
+    /* Compliance Approal */
 
     function getComplianceApprovalList(callback) {
         var request = [
@@ -1017,6 +1045,8 @@ function initClientMirror() {
 
         getPastRecordsFormData: getPastRecordsFormData,
         getStatutoriesByUnit: getStatutoriesByUnit,
+        getPastRecordsComplianceDict : getPastRecordsComplianceDict,
+        savePastRecords : savePastRecords,
 
         getClientReportFilters: getClientReportFilters,
         getUnitwisecomplianceReport: getUnitwisecomplianceReport,
