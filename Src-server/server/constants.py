@@ -22,8 +22,13 @@ CLIENT_TEMPLATE_PATHS = [
     (
         "/test", "test_apis.html", "", {}
     ),
+    # (
+    #     "/home", "files/desktop/home/home.html",
+    #     None, {}
+    # ),
     (
-        "/home", "files/desktop/home/home.html",
+        "/home",
+        "files/desktop/client-home/client-home.html",
         None, {}
     ),
     # client admin

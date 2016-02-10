@@ -297,7 +297,7 @@ class FILTER_TYPE(object):
 
     @staticmethod
     def values():
-        return ["Group", "BusinessGroup", "LegalEntity", "Division", "Unit"]
+        return ["Group", "BusinessGroup", "LegalEntity", "Division", "Unit", "Consolidated"]
 
     def value(self):
         return self._value
