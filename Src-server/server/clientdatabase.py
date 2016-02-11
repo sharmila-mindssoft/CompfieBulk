@@ -16,7 +16,7 @@ __all__ = [
     "ClientDatabase"
 ]
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
-KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
+CLIENT_DOCS_BASE_PATH = os.path.join(ROOT_PATH, "clientdocuments")
 FORMAT_DOWNLOAD_URL = "client/compliance_format"
 
 class ClientDatabase(Database):
@@ -1579,37 +1579,72 @@ class ClientDatabase(Database):
                     due_dates.append(previous_due_date)
         return due_dates, statutory_dates_list
 
+    def convert_base64_to_file(self, file_name, file_content, client_id):
+        client_directory = "%s/%d" % (CLIENT_DOCS_BASE_PATH, client_id)
+        file_path = "%s/%s" % (client_directory, file_name)
+        if not os.path.exists(client_directory):
+            os.makedirs(client_directory)
+        print file_path
+        self.remove_uploaded_file(file_path)
+        new_file = open(file_path, "wb")
+        new_file.write(file_content.decode('base64'))
+        new_file.close()
+
+    def remove_uploaded_file(self, file_path):
+        if os.path.exists(file_path) :
+            os.remove(file_path)
+
+    def is_space_available(self, upload_size):
+        columns = "total_disk_space - total_disk_space_used"
+        rows = self.get_data(self.tblClientSettings, columns, "1")
+        remaining_space = rows[0][0]
+        if upload_size < remaining_space:
+            return True
+        else:
+            return False
+
     def save_past_record(
             self, unit_id, compliance_id, due_date, completion_date, documents, 
-            validity_date, completed_by
+            validity_date, completed_by, client_id
         ):
-        if is_already_completed_compliance(
+        is_uploading_file = False
+        # Checking whether compliance already completed
+        if self.is_already_completed_compliance(
                 due_date, compliance_id, unit_id
             ):
-            return
+            return False
 
+        # Hanling upload
+        document_names = []
+        file_size = 0
+        if len(documents) > 0:
+            for doc in documents:
+                file_size += doc.file_size
+
+            if self.is_space_available(file_size):
+                is_uploading_file = True
+                for doc in documents:
+                    name = doc.file_name.split('.')[0]
+                    exten = doc.file_name.split('.')[1]
+                    auto_code = self.new_uuid()
+                    file_name = "%s-%s.%s" % (name, auto_code, exten)
+                    document_names.append(file_name)
+                    self.convert_base64_to_file(file_name, doc.file_content, client_id)
+            else:
+                return clienttransactions.NotEnoughSpaceAvailable()
+
+        # Checking Settings for two levels of approval
         is_two_level = self.is_two_levels_of_approval()
-        columns = [
-            "compliance_history_id", "unit_id", "compliance_id", "due_date", "completion_date", 
-            "documents", "validity_date", "next_due_date", "completed_by", "completed_on", 
-            "approve_status", "approved_by", "approved_on"
-        ]
-        if is_two_level:
-            columns.append("concurrence_status")
-            columns.append("concurred_by")
-            columns.append("concurred_on")
-
         compliance_history_id = self.get_new_id("compliance_history_id", self.tblComplianceHistory)
         completion_date = self.string_to_datetime(completion_date)
-
         next_due_date = None
         if validity_date:
             next_due_date = self.string_to_datetime(validity_date)
 
-
+        # Getting Approval and Concurrence Persons    
         concur_approve_columns = "approval_person"
         if is_two_level:
-            concur_approve_columns += "concurrence_person"
+            concur_approve_columns += ", concurrence_person"
         condition = "compliance_id = '%d' and unit_id = '%d'" % (
             compliance_id, unit_id
         )
@@ -1622,21 +1657,34 @@ class ClientDatabase(Database):
             approved_by = rows [0][0]
             if is_two_level:
                 concurred_by = rows[0][1]
-
+        columns = [
+            "compliance_history_id", "unit_id", "compliance_id", "due_date", "completion_date", 
+            "validity_date", "next_due_date", "completed_by", "completed_on", 
+            "approve_status", "approved_by", "approved_on"
+        ]          
         values = [
             compliance_history_id, unit_id, compliance_id, self.string_to_datetime(due_date), 
-            completion_date, ",".join(documents), self.string_to_datetime(validity_date), 
+            completion_date, self.string_to_datetime(validity_date), 
             next_due_date, completed_by, completion_date, 1, approved_by, completion_date
         ]
         if is_two_level:
+            columns.append("concurrence_status")
+            columns.append("concurred_by")
+            columns.append("concurred_on")
             values.append(1)
             values.append(concurred_by)
             values.append(completion_date)
+
+        if is_uploading_file:
+            columns.append("documents")
+            values.append(",".join(document_names))
+
         self.insert(
             self.tblComplianceHistory, columns, values
         )
+        return True
 
-    def is_two_level_approval(self):
+    def is_two_levels_of_approval(self):
         columns = "two_levels_of_approval"
         rows = self.get_data(self.tblClientSettings, columns, "1")
         return rows[0][0]

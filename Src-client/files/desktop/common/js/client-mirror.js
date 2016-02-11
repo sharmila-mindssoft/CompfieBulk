@@ -677,6 +677,59 @@ function initClientMirror() {
         clientApiRequest("api/client_transaction", request, callback);
     }
 
+/* Multiple File Upload */
+
+    function uploadFileFormat(size, name, content) {
+        result = {
+            "file_size": parseInt(size),
+            "file_name": name,
+            "file_content": content
+        }
+        return result
+    }
+
+    function convert_to_base64(file, name, size, callback) {
+        var reader = new FileReader();
+        reader.onload = function(readerEvt) {
+            var binaryString = readerEvt.target.result;
+            file_content = btoa(binaryString);
+            callback(file_content, name, size)
+        };
+        reader.readAsBinaryString(file);
+    }
+
+    function uploadFile(fileListener, callback) {
+        var evt = fileListener
+        max_limit =  1024 * 1024 * 50
+        // file max limit 50MB
+        var files = evt.target.files;
+        var results = [];
+        for(var i = 0; i < files.length; i++){
+            var file = files[i];
+            file_name = file.name
+            file_size = file.size
+            if (file_size > max_limit) {
+                callback("File max limit exceeded");
+            }
+            file_content = null;
+            if (file) {
+                convert_to_base64(file, file_name, file_size, function(file_content, name, size) {
+                    if (file_content == null) {
+                        callback("File content is empty")
+                    }
+                    result = uploadFileFormat(
+                            size, name, file_content
+                    );
+                    results.push(result);
+                    if (results.length == files.length){
+                        callback(results)        
+                    }
+                });
+            }
+        }
+        
+    }
+
     /* Compliance Approal */
 
     function getComplianceApprovalList(callback) {
@@ -1125,7 +1178,10 @@ function initClientMirror() {
 
         updateComplianceDetail: updateComplianceDetail,
 
-        getLoginTrace: getLoginTrace
+        getLoginTrace: getLoginTrace,
+
+        uploadFile: uploadFile,
+        uploadFileFormat: uploadFileFormat
     }
 }
 var client_mirror = initClientMirror();

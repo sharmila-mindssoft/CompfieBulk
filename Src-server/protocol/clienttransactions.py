@@ -61,7 +61,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_CustomTextType_100,
     parse_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY,
     parse_structure_UnsignedIntegerType_32,
-    parse_structure_VectorType_RecordType_core_User
+    parse_structure_VectorType_RecordType_core_User,
+    parse_structure_OptionalType_VectorType_RecordType_core_FileList
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -131,7 +132,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_100,
     to_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY,
     to_structure_UnsignedIntegerType_32,
-    to_structure_VectorType_RecordType_core_User
+    to_structure_VectorType_RecordType_core_User,
+    to_structure_OptionalType_VectorType_RecordType_core_FileList
 )
 
 #
@@ -874,6 +876,19 @@ class GetStatutoriesByUnitSuccess(Response):
             "users" : to_structure_VectorType_RecordType_core_User(self.users)
         }
 
+class NotEnoughSpaceAvailable(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return NotEnoughSpaceAvailable()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class SavePastRecordsSuccess(Response):
     def __init__(self):
         pass
@@ -1030,7 +1045,7 @@ class PAST_RECORD_COMPLIANCE(object):
         validity_date = data.get("validity_date")
         validity_date = parse_structure_CustomTextType_20(validity_date)
         documents = data.get("documents")
-        documents = parse_structure_VectorType_CustomTextType_50(documents)
+        documents = parse_structure_OptionalType_VectorType_RecordType_core_FileList(documents)
         completed_by = data.get("completed_by")
         completed_by = parse_structure_UnsignedIntegerType_32(completed_by)
         return PAST_RECORD_COMPLIANCE(
@@ -1045,7 +1060,7 @@ class PAST_RECORD_COMPLIANCE(object):
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "completion_date": to_structure_CustomTextType_20(self.completion_date),
             "validity_date": to_structure_CustomTextType_20(self.validity_date),
-            "documents": to_structure_VectorType_CustomTextType_50(self.documents),
+            "documents": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.documents),
             "completed_by": to_structure_SignedIntegerType_8(self.completed_by)
         }
 

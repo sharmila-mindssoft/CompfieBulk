@@ -144,7 +144,7 @@ def process_save_past_records(
         db.save_past_record(
             compliance.unit_id, compliance.compliance_id, compliance.due_date,
             compliance.completion_date, compliance.documents, compliance.validity_date,
-            compliance.completed_by
+            compliance.completed_by, client_id
         )
     return clienttransactions.SavePastRecordsSuccess()
 
