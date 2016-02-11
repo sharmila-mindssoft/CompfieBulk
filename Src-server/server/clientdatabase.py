@@ -4653,7 +4653,7 @@ class ClientDatabase(Database):
                     compliance_name = compliance[1]
                     due_date = self.datetime_to_string(compliance[2])
 
-                    query = "SELECT (SELECT concat(u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = rh.assignee) AS assigneename, \
+                    query = "SELECT (SELECT concat(u.employee_code, '-' ,u.employee_name) FROM tbl_users u WHERE u.user_id = rh.assignee) AS assigneename, \
                             (SELECT concat(u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = rh.reassigned_from) AS reassignfrom, \
                             rh.reassigned_date, rh.remarks \
                             from tbl_reassigned_compliances_history rh where \
