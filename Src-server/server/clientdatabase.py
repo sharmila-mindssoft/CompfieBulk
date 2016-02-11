@@ -240,7 +240,6 @@ class ClientDatabase(Database):
             WHERE session_token = '%s'" % (session_token)
         row = self.select_one(query)
         user_id = None
-        print row
         if row :
             user_id = row[0]
         return user_id
@@ -1395,10 +1394,7 @@ class ClientDatabase(Database):
         for domain_user in domain_user_rows:
             domain_users.append(domain_user[0])
 
-        print "unit_users:{}".format(unit_users)
-        print "domain_users:{}".format(domain_users)
         users = list(set(unit_users).intersection(domain_users))
-        print "users:{}".format(users)
         user_ids = ",".join(str(x) for x in users)
 
         columns = "user_id, employee_name, employee_code, is_active"
@@ -1584,7 +1580,6 @@ class ClientDatabase(Database):
         file_path = "%s/%s" % (client_directory, file_name)
         if not os.path.exists(client_directory):
             os.makedirs(client_directory)
-        print file_path
         self.remove_uploaded_file(file_path)
         new_file = open(file_path, "wb")
         new_file.write(file_content.decode('base64'))
@@ -1602,6 +1597,11 @@ class ClientDatabase(Database):
             return True
         else:
             return False
+
+    def update_used_space(self, file_size):
+        columns = "total_disk_space_used"
+        condition = "1"
+        self.increment( self.tblClientSettings, columns, condition, value = file_size)
 
     def save_past_record(
             self, unit_id, compliance_id, due_date, completion_date, documents, 
@@ -1630,6 +1630,7 @@ class ClientDatabase(Database):
                     file_name = "%s-%s.%s" % (name, auto_code, exten)
                     document_names.append(file_name)
                     self.convert_base64_to_file(file_name, doc.file_content, client_id)
+                self.update_used_space(file_size)
             else:
                 return clienttransactions.NotEnoughSpaceAvailable()
 
@@ -1677,7 +1678,9 @@ class ClientDatabase(Database):
 
         if is_uploading_file:
             columns.append("documents")
+            columns.append("document_size")
             values.append(",".join(document_names))
+            values.append(file_size)
 
         self.insert(
             self.tblComplianceHistory, columns, values
@@ -2108,8 +2111,6 @@ class ClientDatabase(Database):
             from_date = None
             to_date = None
 
-        print user_id
-
         if filter_type == "Group" :
             group_by_name = "T4.country_id"
             filter_type_ids = ""
@@ -2192,7 +2193,6 @@ class ClientDatabase(Database):
                 group_by_name,
                 group_by_name
             )
-        print query
         rows = self.select_all(query)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return filter_ids, self.convert_to_dict(rows, columns)

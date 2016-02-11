@@ -267,13 +267,13 @@ class Database(object) :
         values = [newValue]
         return self.update(table, columns, values, condition)
 
-    def increment(self, table, column, condition):
+    def increment(self, table, column, condition, value = 1):
         rows = self.get_data(table, column, condition)
         currentValue = rows[0][0]
         if currentValue is not None:
-            newValue = int(currentValue)+1
+            newValue = int(currentValue) + value
         else:
-            newValue = 1
+            newValue = value
         columns = [column]
         values = [newValue]
         return self.update(table, columns, values, condition)
@@ -394,12 +394,9 @@ class Database(object) :
     def convert_to_dict(self, data_list, columns) :
         assert type(data_list) in (list, tuple)
         if len(data_list) > 0:
-            print "inside if"
             if type(data_list[0]) is tuple :
-                print "inside second if"
                 result_list = []
                 if len(data_list[0]) == len(columns) :
-                    print "inside 3 rd if"
                     for data in data_list:
                         result = {}
                         for i, d in enumerate(data):
@@ -407,14 +404,12 @@ class Database(object) :
                         result_list.append(result)
                 return result_list
             else :
-                print "inside first else"
                 result = {}
                 if len(data_list) == len(columns) :
                     for i, d in enumerate(data_list):
                         result[columns[i]] = d
                 return result
         else:
-            print "inside second else"
             return []
 
     def add_session(self, user_id, session_type_id, client_id=None) :
@@ -2070,7 +2065,6 @@ class KnowledgeDatabase(Database):
 
     def convert_base64_to_file(self, file_name, file_content):
         file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
-        print file_path
         self.remove_uploaded_file(file_path)
         new_file = open(file_path, "wb")
         new_file.write(file_content.decode('base64'))
@@ -2263,7 +2257,6 @@ class KnowledgeDatabase(Database):
                 exten = file_list.file_name.split('.')[1]
                 auto_code = self.new_uuid()
                 file_name = "%s-%s.%s" % (name, auto_code, exten)
-                print file_name
                 file_size = file_list.file_size
                 file_content = file_list.file_content
                 is_format = True
@@ -2316,7 +2309,6 @@ class KnowledgeDatabase(Database):
             self.insert(table_name, columns, values)
             if is_format :
                 self.convert_base64_to_file(file_name, file_content)
-                print "file_saved", file_name
                 is_format = False
             compliance_ids.append(compliance_id)
             # if (self.execute(query)) :
@@ -2394,8 +2386,6 @@ class KnowledgeDatabase(Database):
             description = data.description
             document_name = data.document_name
             file_list = data.format_file_list
-            print file_list
-            print saved_file
             file_name = ""
             file_size = 0
             file_content = ""
@@ -2406,12 +2396,9 @@ class KnowledgeDatabase(Database):
             if file_list is None :
                 pass
             elif file_list is None and saved_file_name is not None:
-                print "delete saved file"
-                print saved_file
                 self.remove_uploaded_file(saved_file[0])
             else :
                 if saved_file_name is None :
-                    print "create file"
                     file_list = file_list[0]
                     file_name = file_list.file_name
                     name = file_list.file_name.split('.')[0]
@@ -2422,7 +2409,6 @@ class KnowledgeDatabase(Database):
                     file_content = file_list.file_content
                     is_format = True
                 else :
-                    print "update saved file"
                     file_list = file_list[0]
                     file_name = saved_file_name
                     if file_name is None :
@@ -2464,7 +2450,6 @@ class KnowledgeDatabase(Database):
                 statutory_dates, mapping_id, is_active,
                 updated_by
             ]
-            print values
             if compliance_frequency == 1 :
                 pass
 

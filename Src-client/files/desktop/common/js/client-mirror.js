@@ -1,4 +1,4 @@
-var CLIENT_BASE_URL = "http://127.0.0.1:8080/";
+var CLIENT_BASE_URL = "http://localhost:8080/";
 
 function initClientMirror() {
     var DEBUG = true;
@@ -1073,6 +1073,36 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getComplianceActivityReportFilters(callback){
+        var request = [
+            "GetComplianceActivityReportFilters",{}
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getComplianceActivityReportData(
+            user_type, user_id, domain_id, level_1_statutory_id, unit_id, 
+            compliance_id, from_date, to_date, callback
+        ){
+        var request = [
+            "GetComplianceActivityReport",
+            {
+                "user_type": user_type,
+                "user_id": user_id,
+                "domain_id": domain_id,
+                "statutory_id": level_1_statutory_id,
+                "unit_id": unit_id,
+                "compliance_id": compliance_id, 
+                "from_date" : from_date,
+                "to_date" : to_date
+            }
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+
+    }
+
 
     return {
         log: log,
@@ -1181,7 +1211,10 @@ function initClientMirror() {
         getLoginTrace: getLoginTrace,
 
         uploadFile: uploadFile,
-        uploadFileFormat: uploadFileFormat
+        uploadFileFormat: uploadFileFormat,
+
+        getComplianceActivityReportFilters: getComplianceActivityReportFilters,
+        getComplianceActivityReportData: getComplianceActivityReportData
     }
 }
 var client_mirror = initClientMirror();

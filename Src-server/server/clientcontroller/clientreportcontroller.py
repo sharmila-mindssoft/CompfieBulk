@@ -43,7 +43,11 @@ def process_client_report_requests(request, db) :
 	elif type(request) is clientreport.GetReassignedHistoryReport:
 		return get_reassignedhistory_report(db, request, session_user, client_id)
 	elif type(request) is clientreport.GetLoginTrace:
-		return get_login_trace(db, request, session_user, client_id) 
+		return get_login_trace(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetComplianceActivityReportFilters:
+		return get_compliance_activity_report_filters(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetComplianceActivityReport:
+		return get_compliance_activity_report(db, request, session_user, client_id)
 
 
 def get_client_report_filters(db, request, session_user, client_id):
@@ -148,7 +152,9 @@ def get_compliancedetails_report_filters(db, request, session_user, client_id):
 	users_list = db.get_client_users(client_id);
 
 	return clientreport.GetComplianceDetailsReportFiltersSuccess(
-		countries = country_list, domains = domain_list, level_1_statutories = level_1_statutories_list, units = unit_list, Compliances = compliances_list, users = users_list)
+		countries = country_list, domains = domain_list, level_1_statutories = level_1_statutories_list, 
+		units = unit_list, Compliances = compliances_list, users = users_list
+	)
 
 def get_statutory_notifications_list_filters(db, request, session_user, client_id):
 	user_company_info = db.get_user_company_details( session_user, client_id)
@@ -282,4 +288,18 @@ def get_login_trace(db, request, session_user, client_id):
 	logintracelist = db.get_login_trace(client_id, session_user)
 	return clientreport.GetLoginTraceSuccess(users = users_list,  login_trace = logintracelist)
 
-	
+def get_compliance_activity_report_filters(db, request, session_user, client_id):
+	user_company_info = db.get_user_company_details( session_user, client_id)
+	unit_ids = user_company_info[0]
+	domain_list = db.get_domains_for_user(session_user, client_id)
+	unit_list = db.get_units_for_user(unit_ids, client_id)
+	level_1_statutories_list = db.get_client_level_1_statutoy(session_user, client_id)
+	compliances_list = db.get_client_compliances(session_user, client_id);
+	users_list = db.get_client_users(client_id);
+	return clientreport.GetComplianceActivityReportFiltersSuccess(
+		users = users_list, domains = domain_list, level_1_statutories = level_1_statutories_list, 
+		units = unit_list, compliances = compliances_list
+	)
+
+def get_compliance_activity_report(db, request, session_user, client_id):
+	pass

@@ -1200,24 +1200,24 @@ class GetComplianceActivityReportFiltersSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["users", "domains", "level_1_statutories", "units", "compliances"])
         users = data.get("users")
-        users = parse_structure_VectorType_RecordType_clientreport_UserName(users)
+        users = parse_structure_VectorType_RecordType_clientreport_User(users)
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level_1_statutories)
+        level_1_statutories = parse_structure_VectorType_RecordType_core_ClientLevelOneStatutory(level_1_statutories)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_clientreport_UnitName(units)
+        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
         compliances = data.get("compliances")
-        compliances = parse_structure_VectorType_RecordType_clientreport_ComplianceName(compliances)
+        compliances = parse_structure_VectorType_RecordType_core_ComplianceFilter(compliances)
         return GetComplianceActivityReportFiltersSuccess(users, domains, level_1_statutories, units, compliances)
 
     def to_inner_structure(self):
         return {
-            "users": to_structure_VectorType_RecordType_clientreport_UserName(self.users),
+            "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "level_1_statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level_1_statutories),
-            "units": to_structure_VectorType_RecordType_clientreport_UnitName(self.units),
-            "compliances": to_structure_VectorType_RecordType_clientreport_ComplianceName(self.compliances),
+            "level_1_statutories": to_structure_VectorType_RecordType_core_ClientLevelOneStatutory(self.level_1_statutories),
+            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
+            "compliances": to_structure_VectorType_RecordType_core_ComplianceFilter(self.compliances)
         }
 
 class GetComplianceActivityReportSuccess(Response):
