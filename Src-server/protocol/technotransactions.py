@@ -135,7 +135,7 @@ class GetAssignedStatutoryWizardOneData(Request):
         }
 
 class GetStatutoryWizardTwoData(Request):
-    def __init__(self, country_id, geography_id, industry_id, domain_id, client_statutory_id):
+    def __init__(self, country_id, geography_id, industry_id, domain_id, unit_id):
         self.country_id = country_id
         self.geography_id = geography_id
         self.industry_id = industry_id
@@ -168,7 +168,7 @@ class GetStatutoryWizardTwoData(Request):
 
 class AssignedStatutoryCompliance(object):
     def __init__(
-        self, level_1_statutory_id, compliances, 
+        self, level_1_statutory_id, compliances,
         applicable_status, not_applicable_remarks
     ):
         self.level_1_statutory_id = level_1_statutory_id
@@ -198,9 +198,9 @@ class AssignedStatutoryCompliance(object):
 
 class SaveAssignedStatutory(Request):
     def __init__(
-        self, country_id, client_id, geography_id, 
+        self, country_id, client_id, geography_id,
         unit_ids, domain_id,
-        submission_type, client_statutory_id, 
+        submission_type, client_statutory_id,
         assigned_statutories
     ):
         self.country_id = country_id
@@ -466,11 +466,11 @@ class RequestFormat(object):
 
 class ASSIGNED_STATUTORIES(object):
     def __init__(
-        self, submission_status, client_statutory_id, 
-        country_id, country_name, 
-        client_id, group_name, business_group_name, 
-        legal_entity_name, division_name, 
-        unit_id, unit_name, 
+        self, submission_status, client_statutory_id,
+        country_id, country_name,
+        client_id, group_name, business_group_name,
+        legal_entity_name, division_name,
+        unit_id, unit_name,
         geography_id, geography_name, domain_id, domain_name, industry_name
     ):
         self.submission_status = submission_status
@@ -493,11 +493,11 @@ class ASSIGNED_STATUTORIES(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "submission_status", "client_statutory_id", 
+            "submission_status", "client_statutory_id",
             "country_id", "country_name", "client_id",
-            "group_name", "business_group_name", "legal_entity_name", 
-            "division_name", "unit_id", "unit_name", 
-            "geography_id", "geography_name", 
+            "group_name", "business_group_name", "legal_entity_name",
+            "division_name", "unit_id", "unit_name",
+            "geography_id", "geography_name",
             "domain_id", "domain_name", "industry_name"
         ])
         submission_status = data.get("submission_status")
@@ -533,9 +533,9 @@ class ASSIGNED_STATUTORIES(object):
         industry_name = data.get("industry_name")
         industry_name = parse_structure_CustomTextType_50(industry_name)
         return ASSIGNED_STATUTORIES(
-            submission_status, client_statutory_id, 
-            country_id, country_name, client_id, group_name, 
-            business_group_name, legal_entity_name, 
+            submission_status, client_statutory_id,
+            country_id, country_name, client_id, group_name,
+            business_group_name, legal_entity_name,
             division_name, unit_id, unit_name, geography_id,
             geography_name, domain_id, domain_name, industry_name
         )
