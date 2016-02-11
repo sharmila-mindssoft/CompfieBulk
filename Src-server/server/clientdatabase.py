@@ -1947,9 +1947,9 @@ class ClientDatabase(Database):
         current_year = datetime.datetime.now().year
         if month_from == 1 and month_to == 12 :
             single_years = []
-            single_years.append([str(current_year)])
+            single_years.append([current_year])
             for i in range(1, 7):
-                single_years.append([str(current_year - i)])
+                single_years.append([current_year - i])
             return single_years
         else :
             double_years = []
@@ -1963,11 +1963,11 @@ class ClientDatabase(Database):
 
             for i in range(1, 8):
                 if i == 1 :
-                    years = [str(first_year), str(second_year)]
+                    years = [first_year, second_year]
                 else :
                     first_year = current_year - i
                     second_year = first_year + 1
-                    years = [str(first_year), str(second_year)]
+                    years = [first_year, second_year]
 
                 double_years.append(years)
             return double_years
@@ -2100,7 +2100,7 @@ class ClientDatabase(Database):
                             compliance_count = compliance_sum[3]
 
                     for c in compliances :
-                        if str(c["year"]) not in (i) :
+                        if c["year"] not in (i) :
                             continue
                         if (
                             filter_type == int(c["filter_type"]) and
@@ -2111,7 +2111,7 @@ class ClientDatabase(Database):
 
                             if i[1] != 0 :
                                 if (
-                                    str(c["year"]) == i[0] and
+                                    c["year"] == i[0] and
                                     month in [
                                         int(x) for x in range(period_from, 12+1)
                                     ]
@@ -2119,7 +2119,7 @@ class ClientDatabase(Database):
                                     compliance_count += int(c["compliances"])
 
                                 elif (
-                                    str(c["year"]) == i[1] and
+                                    c["year"] == i[1] and
                                     month in [
                                         int(y) for y in range(1, period_to+1)
                                     ]
@@ -2128,7 +2128,7 @@ class ClientDatabase(Database):
 
                             else :
                                 if (
-                                    str(c["year"]) == i[0] and
+                                    c["year"] == i[0] and
                                     month in [
                                         int(x) for x in range(period_from, period_to + 1)
                                     ]
@@ -2363,11 +2363,11 @@ class ClientDatabase(Database):
             status_qry = " AND T1.due_date >= T1.completion_date \
                 AND T1.approve_status = 1"
 
-        elif compliance_status == "DelayedCompliance" :
+        elif compliance_status == "Delayed Compliance" :
             status_qry = " AND T1.due_date < T1.completion_date \
                 AND T1.approve_status = 1"
 
-        elif compliance_status == "NotComplied" :
+        elif compliance_status == "Not Complied" :
             status_qry = " AND T1.due_date < CURDATE() \
                 AND T1.approve_status is NULL "
 
@@ -2391,7 +2391,7 @@ class ClientDatabase(Database):
             date_qry = " AND T1.due_date >= '%s' AND T1.due_date <= '%s' " % (from_date, to_date)
 
         result = self.compliance_details_query(domain_ids, date_qry, status_qry, filter_type_qry, client_id)
-        year_info = self.get_client_domain_configuration()
+        year_info = self.get_client_domain_configuration(int(year))[0]
         return self.return_compliance_details_drill_down(year_info, compliance_status, request.year, result, client_id)
 
     def return_compliance_details_drill_down(self, year_info, compliance_status, request_year, result, client_id) :
@@ -2447,9 +2447,9 @@ class ClientDatabase(Database):
                 ageing = abs((due_date - current_date).days)
             elif compliance_status == "Complied" :
                 ageing = 0
-            elif compliance_status == "NotComplied" :
+            elif compliance_status == "Not Complied" :
                 ageing = abs((current_date - due_date).days)
-            elif compliance_status == "DelayedCompliance" :
+            elif compliance_status == "Delayed Compliance" :
                 ageing = abs((completion_date - due_date).days)
 
             status = core.COMPLIANCE_STATUS(compliance_status)
@@ -2621,7 +2621,7 @@ class ClientDatabase(Database):
         )
 
         delayed_details_list = self.return_compliance_details_drill_down(
-            year_info, "DelayedCompliance", year,
+            year_info, "Delayed Compliance", year,
             delayed_details, client_id
         )
 
@@ -2631,7 +2631,7 @@ class ClientDatabase(Database):
         )
 
         not_complied_details_list = self.return_compliance_details_drill_down(
-            year_info, "NotComplied", year,
+            year_info, "Not Complied", year,
             not_complied_details, client_id
         )
 
@@ -2779,7 +2779,7 @@ class ClientDatabase(Database):
                     not_complied_details_filtered.append(c)
 
         not_complied_details_list = self.return_compliance_details_drill_down(
-            year_info, "NotComplied", year,
+            year_info, "Not Complied", year,
             not_complied_details_filtered, client_id
         )
 
@@ -4350,7 +4350,7 @@ class ClientDatabase(Database):
             ageing = self.calculate_ageing(compliance[2])
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
             if ageing > 0:
-                compliance_status = core.COMPLIANCE_STATUS("NotComplied")
+                compliance_status = core.COMPLIANCE_STATUS("Not Complied")
             current_compliances_list.append(core.ActiveCompliance(
                 compliance_history_id=compliance[0],
                 compliance_name=compliance_name,

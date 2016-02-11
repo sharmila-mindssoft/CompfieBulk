@@ -342,16 +342,16 @@ class COMPLIANCE_FREQUENCY(object):
 
 class COMPLIANCE_STATUS(object):
     Complied = "Complied"
-    DelayedCompliance = "DelayedCompliance"
+    DelayedCompliance = "Delayed Compliance"
     Inprogress = "Inprogress"
-    NotComplied = "NotComplied"
+    NotComplied = "Not Complied"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Complied", "DelayedCompliance", "Inprogress", "NotComplied"]
+        return ["Complied", "Delayed Compliance", "Inprogress", "Not Complied"]
 
     def value(self):
         return self._value

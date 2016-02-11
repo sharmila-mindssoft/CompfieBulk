@@ -12,6 +12,10 @@
   <script type="text/javascript" src="/files/desktop/client-home/modernizr.js"></script>
   <script src="/files/desktop/client-home/multiple-select.js"></script>
   <script type="text/javascript" src="/files/desktop/common/highcharts/js/highcharts.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/highcharts/js/modules/exporting.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/highcharts/js/modules/customEvents.js"></script>
+  <script src="/files/desktop/common/highcharts/js/modules/drilldown.js"></script>
+  <script src="/files/desktop/common/highcharts/js/highcharts-3d.js"></script>
   <script type="text/javascript" src="/files/desktop/client-home/client-home.js"></script>
   <!-- <script type="text/javascript" src="/files/desktop/client-home/client-home-design.js"></script> -->
 </head>
@@ -177,11 +181,14 @@
                 <input type="button" class="btn-bar-chart" value="View as bar chart"/>
                 <input type="button" class="btn-back" value="Back"/>
                 <div class="clearfix"></div>
-                <div class="graph-container compliance-status" style="height: 400px;" align="center"></div>
+                <div id="status-container" class="graph-container compliance-status" style="height: 400px;" align="center"></div>
                 <div class="graph-container escalations" style="height: 400px;" align="center"></div>
                 <div class="graph-container not-complied" style="height: 400px;" align="center"></div>
                 <div class="graph-container trend-chart" style="height: 400px;" align="center"></div>
                 <div class="graph-container applicability-status" style="height: 400px;" align="center"></div>
+                <div class="drilldown-container">Compliance drilldown gose here
+                </div>
+
                 <!-- <div class="chart-space" align="center">
                   <div class="compliance-status-chart-outer">
                     <div id="compliance-status-chart">
@@ -336,7 +343,7 @@
                         </tr>
                         <tr>
                         <td style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="9">
-                        KG1180 - Namakkal unit 
+                        KG1180 - Namakkal unit
                         </td>
                         </tr>
                         <tr align="left" >
@@ -397,8 +404,8 @@
                         </tr>
                         <tr><td colspan="5" style="background:#D4B7EB;font-weight:bold;"> KG1009 - Madurai unit </td></tr>
                         <tr align="left" class="rightside" >
-                        <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
-                          inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                        <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow:
+                          inset 0 0 0 1px rgba(53,86,129, 0.4),
                           inset 0 0 5px rgba(53,86,129, 0.5),
                           inset -285px 0 35px white;
                           border-radius: 0 5px 0 5px;"  width="250px"> The Tamilnadu shops and commercial establishments act - 1947 </span> </th>
@@ -425,8 +432,8 @@
                         <td colspan="2">15-Sep-2015</td>
                         </tr>
                         <tr align="left" class="rightside" >
-                        <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
-                          inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                        <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow:
+                          inset 0 0 0 1px rgba(53,86,129, 0.4),
                           inset 0 0 5px rgba(53,86,129, 0.5),
                           inset -285px 0 35px white;
                           border-radius: 0 5px 0 5px;"  width="250px"> The Batteries act - 2001 </span> </th>
@@ -447,8 +454,8 @@
                         </tr>
                         <tr><td colspan="5" style="background:#D4B7EB;font-weight:bold;"> KG1010 - Chennai unit </td></tr>
                         <tr align="left" class="rightside" >
-                        <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow: 
-                          inset 0 0 0 1px rgba(53,86,129, 0.4), 
+                        <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow:
+                          inset 0 0 0 1px rgba(53,86,129, 0.4),
                           inset 0 0 5px rgba(53,86,129, 0.5),
                           inset -285px 0 35px white;
                           border-radius: 0 5px 0 5px;"  width="250px"> The Tamilnadu shops and commercial establishments act - 1947 </span> </th>

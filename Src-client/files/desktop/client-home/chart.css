@@ -44,7 +44,7 @@ abbr
     width: 160px;
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-    -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); 
+    -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 #radiolabel {
@@ -62,9 +62,9 @@ input.radio:empty {
 
 /* style label */
 input.radio:empty ~ label {
-    position: relative; 
+    position: relative;
     float: left;
-    line-height: 2.3em; 
+    line-height: 2.3em;
     text-indent: 3.25em;
     margin-top: 2em;
     cursor: pointer;
@@ -108,7 +108,7 @@ input.radio:checked ~ label:before {
 input.radio:checked ~ label {
     color: #777;
 }
-.leftmargin 
+.leftmargin
 {
   float: left;
   position: relative;
@@ -125,7 +125,7 @@ input.radio:checked ~ label {
 .ms-drop ul > li label.optgroup {
   font-size: 0.75em;
 }
-.optgroup 
+.optgroup
 {
   font-size: 0.75em !important;
 }
@@ -140,18 +140,18 @@ input.radio:checked ~ label {
   margin-left: 12%;
 }
 .filtertable td{
-  vertical-align: top; 
+  vertical-align: top;
   position: relative;
 }
 
-.btn-country, 
-.btn-domain, 
-.btn-date, 
-.btn-group, 
-.btn-business-group, 
-.btn-legal-entity, 
-.btn-division, 
-.btn-unit, 
+.btn-country,
+.btn-domain,
+.btn-date,
+.btn-group,
+.btn-business-group,
+.btn-legal-entity,
+.btn-division,
+.btn-unit,
 .btn-consolidated {
   font-size: 11px;
   float: left;
@@ -177,22 +177,22 @@ input.radio:checked ~ label {
 }
 .btn-date {
   /*margin-right: 120px;*/
-} 
-.btn-group, 
-.btn-division, 
+}
+.btn-group,
+.btn-division,
 .btn-unit {
   width: 90px;
 }
 
 
-.btn-country:before, 
-.btn-domain:before, 
-.btn-date:before, 
-.btn-group:before, 
-.btn-business-group:before, 
-.btn-legal-entity:before, 
-.btn-division:before, 
-.btn-unit:before, 
+.btn-country:before,
+.btn-domain:before,
+.btn-date:before,
+.btn-group:before,
+.btn-business-group:before,
+.btn-legal-entity:before,
+.btn-division:before,
+.btn-unit:before,
 .btn-consolidated:before {
   width: 30px;
   position: absolute;
@@ -205,25 +205,25 @@ input.radio:checked ~ label {
   background-color: #D1D3D4;
 }
 
-.btn-country.active, 
-.btn-domain.active, 
-.btn-date.active, 
-.btn-group.de-active, 
-.btn-business-group.active, 
-.btn-legal-entity.active, 
-.btn-division.active, 
-.btn-unit.active, 
+.btn-country.active,
+.btn-domain.active,
+.btn-date.active,
+.btn-group.de-active,
+.btn-business-group.active,
+.btn-legal-entity.active,
+.btn-division.active,
+.btn-unit.active,
 .btn-consolidated.active {
   border: 1px solid #D1D3D4;
 }
-.btn-country.active:before, 
+.btn-country.active:before,
 .btn-domain.active:before,
-.btn-date.active:before, 
-.btn-group.active:before, 
-.btn-business-group.active:before, 
-.btn-legal-entity.active:before, 
-.btn-division.active:before, 
-.btn-unit.active:before, 
+.btn-date.active:before,
+.btn-group.active:before,
+.btn-business-group.active:before,
+.btn-legal-entity.active:before,
+.btn-division.active:before,
+.btn-unit.active:before,
 .btn-consolidated.active:before  {
   background-color: #662d91;
 }
@@ -233,7 +233,7 @@ input.radio:checked ~ label {
   float: left;
   margin-top: 20px;
 }
-.country-selection, 
+.country-selection,
 .domain-selection,
 .date-selection {
   position: relative;
@@ -257,7 +257,7 @@ input.radio:checked ~ label {
 .filtertable-1 {
   width: 90%;
   margin-top: 1em;
-} 
+}
 table.filtertable-1 tr td {
   vertical-align: top;
 }
@@ -344,6 +344,7 @@ table.filtertable-1 tr td table tr td {
 .selections,
 /*.graph-box,*/
 .graph-container,
+.drilldown-container,
 .compliance-report-tab-content,
 .btn-back,
 .btn-pie-chart,
