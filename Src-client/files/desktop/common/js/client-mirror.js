@@ -17,9 +17,10 @@ function initClientMirror() {
         return JSON.parse(data);
     }
 
-    function initSession(userProfile) {
-        console.log(toJSON(userProfile))
+    function initSession(userProfile, shortName) {
+        // console.log(toJSON(userProfile))
         window.localStorage["userInfo"] = toJSON(userProfile);
+        window.localStorage["shortName"] = shortName;
     }
 
     function getShortName() {
@@ -42,12 +43,13 @@ function initClientMirror() {
 
     function clearSession() {
         delete window.localStorage["userInfo"];
+        delete window.localStorage["shortName"];
     }
 
     function getUserInfo() {
         var info = window.localStorage["userInfo"];
         user = parseJSON(info)
-        return user
+        return user;
     }
 
     function getUserProfile() {
@@ -78,8 +80,20 @@ function initClientMirror() {
 
     function getClientId() {
         var info = getUserInfo();
-        console.log(info)
+        // console.log(info)
         return info["client_id"];
+    }
+
+    function getClientShortName(){
+        var name = window.localStorage["shortName"];
+        return name;
+    }
+
+    function redirect_login(){
+        login_url = "/login/" + getClientShortName();
+        // console.log(login_url)
+        clearSession();
+        window.location.href = login_url;
     }
 
     function clientApiRequest(callerName, request, callback) {
@@ -105,7 +119,12 @@ function initClientMirror() {
 
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
-                } else {
+                }
+                else if (status == "InvalidSessionToken") {
+                    // console.log(status)
+                    redirect_login()
+                }
+                else {
                     callback(status, null)
                 }
 
@@ -143,8 +162,11 @@ function initClientMirror() {
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     console.log("status success");
+                    initSession(response, short_name)
                     callback(null, response);
-                } else {
+
+                }
+                else {
                     callback(status, null);
                 }
             }
@@ -152,20 +174,24 @@ function initClientMirror() {
     }
 
     function verifyLoggedIn() {
-        sessionToken = getSessionToken()
+        sessionToken = getSessionToken();
         if (sessionToken == null)
-            return false
+            return false;
         else
-            return false
+            return true;
     }
 
-    function logout(callback) {
+    function logout() {
         sessionToken = getSessionToken()
-        var request = [
-            "Logout", {
-                "session_token": sessionToken
-            }
-        ]
+        var request =  [
+            sessionToken,
+            [
+                "Logout", {
+                    "session_token": sessionToken
+                }
+            ]
+        ];
+
         jQuery.post(
             CLIENT_BASE_URL + "api/login",
             toJSON(request),
@@ -174,19 +200,22 @@ function initClientMirror() {
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
-                if (status.toLowerCase().indexOf(matchString) != -1) {
-                    callback(null, response);
-                } else {
-                    callback(status, null);
-                }
+                // if (status.toLowerCase().indexOf(matchString) != -1) {
+                //     callback(null, response);
+                // } else {
+                //     callback(status, null);
+                // }
+                redirect_login()
             }
         )
     }
 
     // Change Password APIs
 
-    function changePassword(currentPassword, newPassword,
-        callback) {
+    function changePassword(
+        currentPassword, newPassword,
+        callback
+    ) {
         callerName = "api/login"
         var sessionToken = getSessionToken();
         var client_id = getClientId()
@@ -699,17 +728,31 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate, callback) {
-        var request = [
-            "GetComplianceStatusChart", {
-                "country_ids": countryIds,
-                "domain_ids": domainIds,
-                "filter_type": filterType,
-                "filter_ids": filterIds,
-                "from_date": fromDate,
-                "to_date": toDate,
+    // function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate, callback) {
+    //     var request = [
+    //         "GetComplianceStatusChart", {
+    //             "country_ids": countryIds,
+    //             "domain_ids": domainIds,
+    //             "filter_type": filterType,
+    //             "filter_ids": filterIds,
+    //             "from_date": fromDate,
+    //             "to_date": toDate,
 
-            }
+    //         }
+
+    function getComplianceStatusChartData(requestData, callback) {
+        var request = [
+            "GetComplianceStatusChart",
+            requestData
+        ];
+        var callerName = "api/client_dashboard";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getComplianceStatusDrillDown(requestData, callback) {
+        var request = [
+            "GetComplianceStatusDrillDownData",
+            requestData
         ];
         var callerName = "api/client_dashboard";
         clientApiRequest(callerName, request, callback);
@@ -904,7 +947,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getStatutoryNotificationsListReport(countryName, domainName, businessGroupId, 
+    function getStatutoryNotificationsListReport(countryName, domainName, businessGroupId,
         legalEntityId, divisionId, unitId, level1Id, fromdate, todate, callback){
         callerName = "api/client_reports"
         var request = [
@@ -961,6 +1004,7 @@ function initClientMirror() {
         verifyLoggedIn: verifyLoggedIn,
         login: login,
         logout: logout,
+        getClientShortName: getClientShortName,
 
         getUserInfo: getUserInfo,
         getUserProfile: getUserProfile,
@@ -1033,6 +1077,7 @@ function initClientMirror() {
 
         getChartFilters: getChartFilters,
         getComplianceStatusChartData: getComplianceStatusChartData,
+        getComplianceStatusDrillDown: getComplianceStatusDrillDown,
         getTrendChart: getTrendChart,
         getTrendChartDrillDown: getTrendChartDrillDown,
 

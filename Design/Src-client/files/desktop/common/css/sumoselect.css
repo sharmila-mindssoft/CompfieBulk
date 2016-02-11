@@ -11,7 +11,7 @@
     padding: 0 0.5em;
     width: 85%;*/
 
-.SumoSelect { display: inline-block; position: relative;outline:none; width: 85%;}
+.SumoSelect { display: inline-block; position: relative;outline:none;}
 .SumoSelect:focus > .CaptionCont,.SumoSelect:hover > .CaptionCont {}
     .SumoSelect > .CaptionCont { position: relative; border: 1px solid #A4A4A4; min-height: 14px; background-color: #dadada; border-radius: 0.3em;margin:0px; font-size: 0.813em; color:#333;}
         .SumoSelect > .CaptionCont > span { display: block; padding-right: 30px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;cursor:default; width: 100%;}

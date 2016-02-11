@@ -26,12 +26,9 @@ __all__ = [
 GetChartFilters = RecordType("GetChartFilters", [])
 
 GetComplianceStatusChart = RecordType("GetComplianceStatusChart", [
-	Field("country_ids", VectorType(COUNTRY_ID)),
-	Field("domain_ids", VectorType(DOMAIN_ID)),
 	Field("from_date", Text),
 	Field("to_date", Text),
 	Field("filter_type", Text),
-	Field("filter_ids",VectorType(Int8))
 ])
 
 GetComplianceStatusDrillDownData = RecordType("GetComplianceStatusDrillDownData", [

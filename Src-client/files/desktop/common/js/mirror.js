@@ -96,8 +96,6 @@ function initMirror() {
 
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
-        if (sessionToken == null)
-            sessionToken = "b4c59894336c4ee3b598f5e4bd2b276b";
         var requestFrame = {
             "session_token": sessionToken,
             "request": request
@@ -110,12 +108,16 @@ function initMirror() {
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
-                log("API STATUS :"+status)
+                console.log("API STATUS :"+status)
                 if (status.toLowerCase().indexOf(matchString) != -1){
                     if(status == "UpdateUserProfileSuccess"){
                         updateUserInfo(response);
                     }
                     callback(null, response);
+                }
+                else if (status == "InvalidSessionToken") {
+                    clearSession();
+                    window.location.href = "/knowledge/login";
                 }
                 else {
                     callback(status, null)
@@ -177,7 +179,8 @@ function initMirror() {
                 var response = data[1];
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1){
-                    console.log("status success");
+                    console.log("mirror success");
+                    initSession(response)
                     callback(null, response);
                 }
                 else {
@@ -187,13 +190,14 @@ function initMirror() {
         )
     }
     function verifyLoggedIn() {
-        sessionToken = getSessionToken()
+        sessionToken = getSessionToken();
         if (sessionToken == null)
-            return false
+            return false;
         else
-            return true
+            return true;
     }
-    function logout(callback) {
+
+    function logout() {
         sessionToken = getSessionToken()
         var request = [
             "Logout", {
@@ -207,14 +211,15 @@ function initMirror() {
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
-                clearSession()
                 matchString = 'success';
-                if (status.toLowerCase().indexOf(matchString) != -1){
-                    callback(null, response)
-                }
-                else {
-                    callback(status, null);
-                }
+                // if (status.toLowerCase().indexOf(matchString) != -1){
+                //     callback(null, response)
+                // }
+                // else {
+                //     callback(status, null);
+                // }
+                clearSession();
+                window.location.href = "/knowledge/login";
             }
         )
     }

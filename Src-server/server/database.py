@@ -153,7 +153,6 @@ class Database(object) :
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(
@@ -527,7 +526,9 @@ class KnowledgeDatabase(Database):
         query = "SELECT user_id FROM tbl_user_sessions \
             WHERE session_token = '%s'" % (session_token)
         row = self.select_one(query)
-        user_id = row[0]
+        user_id = None
+        if row :
+            user_id = row[0]
         return user_id
 
     def encrypt(self, value):
