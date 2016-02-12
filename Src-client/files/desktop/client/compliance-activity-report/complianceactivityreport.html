@@ -92,7 +92,7 @@
             <div class="field-label">Domain:<span class="mandatory">*</span></div>
             <div class="field-input">
                 <input type="hidden" id="domain" value="1">
-                <input type="text" class="input-box icon-autocomplete" id="domainval" value="Test Domain"  onkeyup="loadauto_domains(this.value)">
+                <input type="text" class="input-box icon-autocomplete" id="domainval" value="Finance Law"  onkeyup="loadauto_domains(this.value)">
                 <div id="selectboxview-domains" class="ac-textbox" style="display:none;" onclick="hidedomainslist();">
                     <ul style="width:195px;"></ul>
                 </div>
@@ -101,18 +101,18 @@
         <div class="input-row">
             <div class="field-label">User Type:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <select class="input-box">
-              <option>Inhouse</option>
-              <option selected="selected">Service Provider</option>
+            <select class="input-box" id="user-type" >
+              <option value="Inhouse">Inhouse</option>
+              <option value="ServiceProvider">Service Provider</option>
             </select>
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">Assignee:</div>
           <div class="field-input">
-             <input type="text" class="input-box icon-autocomplete" id="user" autofocus placeholder="Enter User">
+             <input type="text" class="input-box icon-autocomplete" id="userval" autofocus placeholder="Enter assignee" onkeyup="loadauto_user(this.value)">
             <input type="hidden" id="userid"> 
-            <div id="userListView" class="ac-textbox default-display-none"  onchange="hidemenu();" onclick="hidemenu();">
+            <div id="autocompleteview-user" class="ac-textbox default-display-none"  onchange="hideuserlist();" onclick="hideuserlist();">
               <ul style="width:195px;"></ul> 
             </div>
         </div>
@@ -144,29 +144,41 @@
         <div class="input-row">
           <div class="field-label">Compliance Task:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" autofocus id="unit" value="" placeholder="Enter Compliance Task" />
+               <input type="text" class="input-box icon-autocomplete" id="complianceval" value=""  placeholder="Enter compliance"  style="width:213px;"  onkeyup="loadauto_compliance(this.value)">
+                <input type="hidden" id="complianceid">
+                <div id="autocompleteview-compliance" class="ac-textbox" style="display:none;"  onclick="hidecompliancelist();">
+                    <ul style="width:195px;"></ul>
+                </div>
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">From Date:</div>
           <div class="field-input">
-            <input type="text" class="input-box" value="01-Aug-2015" placeholder="dd-Mon-yyyy"></div>
+            <input type="text" class="input-box" id="from-date" placeholder="dd-Mon-yyyy"></div>
         </div>
         <div class="input-row">
           <div class="field-label">To Date:</div>
           <div class="field-input">
-            <input type="text" class="input-box" value="10-Aug-2015" placeholder="dd-Mon-yyyy"></div>
+            <input type="text" class="input-box" id="to-date" placeholder="dd-Mon-yyyy"></div>
         </div>
       </div>
       <div class="submit-button-container">
-        <input type="submit" name="cancel" value="Show" class="btn-submit">
+        <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit">
         &nbsp;&nbsp;
         <input type="submit" name="cancel" value="Export" class="btn-submit"></div>
       <div class="clearfix"></div>
-      <div class="grid-table-rpt">
+      <div class="grid-table-rpt default-display-none">
         <h1>Compliance Activity Report</h1>
+      
+
+        <table>
+        <tr><td colspan="6">
         <div style="margin-left:15%;">
           <div style="float:left; padding-bottom:0.5em; margin-left:1%;">
+           <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
+              Country :
+              <span style="margin-left:10px; font-weight:bold;">India</span>
+            </div>
             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
               User Type :
               <span style="margin-left:10px; font-weight:bold;">Service Provider</span>
@@ -177,7 +189,10 @@
             </div>
           </div>
           <div style="float:right; margin-right:20%;">
-
+          <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
+              Domain :
+              <span style="margin-left:10px; font-weight:bold;">Finance Law</span>
+            </div>
             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
               From Date :
               <span style="margin-left:10px; font-weight:bold;">01-Aug-2015</span>
@@ -187,11 +202,16 @@
               <span style="margin-left:10px; font-weight:bold;">10-Aug-2015</span>
             </div>
           </div>
-        </div>
+        </div> 
+        </td>
+         </tr>
+ <tr><td colspan="6">
         <h2 style="background:#f1e9f6;font-size:0.8em !important;text-align:left;"> <abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai, 600001">VRP10037 - Branch Office - 1</abbr>
         </h2>
+          </td>
+         </tr>
 
-        <table>
+
           <tr align="left">
             <th class="header-bg">#</th>
             <th class="header-bg">Compliance Task</th>
@@ -199,9 +219,10 @@
             <th class="header-bg">Activity Status</th>
             <th class="header-bg">Compliance Task Status</th>
             <th class="header-bg">Remarks</th>
-
           </tr>
-          <tr>
+          <tbody class="tbody-compliance-activity-list">
+          </tbody>
+         <!--  <tr>
             <td colspan="5">
               <span class="heading">
                 Industrial Law
@@ -220,9 +241,7 @@
         <ul class="tree">
           <li>
             <table>
-
               <tr class="smallfont" style="background-color:#eae8e8; color:#000000;">
-
                 <td width="19%">24-Jul-2015</td>
                 <td  width="26%">Submitted</td>
                 <td  width="20%">Inprogress</td>
@@ -254,36 +273,7 @@
             <td width="20%">Delayed Compliance</td>
             <td align="right">Delayed by 5 days</td>
           </tr>
-          <!--    <tr>
-          <td>3</td>
 
-          <td>FORM III - Undertaking submission</td>
-          <td>09-Aug-2015</td>
-          <td>Rejected</td>
-          <td>Not Complied</td>
-          <td>Over due by 3 Days</td>
-
-        </tr>
-        <tr>
-          <td>4</td>
-
-          <td>FORM IV - Dealer Registration</td>
-          <td>08-Aug-2015</td>
-          <td>Submitted</td>
-          <td>Inprogress</td>
-          <td>2 Days left</td>
-
-        </tr>
-        <tr>
-          <td>5</td>
-          <td>FORM V - Dealer Half yearly returns</td>
-          <td>08-Aug-2015</td>
-          <td>Submitted</td>
-          <td>Inprogress</td>
-          <td>4 Days left</td>
-
-        </tr>
-        -->
         <tr>
           <td colspan="5">
             <span class="heading">
@@ -309,9 +299,9 @@
           <td width="22%">Inprogress</td>
           <td>5 Days left</td>
         </tr>
-
+ -->
       </table>
-      <p style="border-top:1px dashed #ccc;">Total : 7 records</p>
+      <p style="border-top:1px dashed #ccc;" class="total-records">Total : 7 records</p>
     </div>
   </div>
 </div>
@@ -337,28 +327,28 @@
 <script src="/files/desktop/common/js/jquery-ui/jquery-ui.js"></script>
 <script type="text/javascript">
 $(function() {
-$("#from-date" ).datepicker({
-changeMonth: true,
-changeYear: true,
-numberOfMonths: 1,
-dateFormat: "dd-M-yy",
-monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-onClose: function( selectedDate ) {
-$( "#to-date" ).datepicker( "option", "minDate", selectedDate );
-}
-});
-$( "#to-date" ).datepicker({
-changeMonth: true,
-changeYear: true,
-numberOfMonths: 1,
-dateFormat: "dd-M-yy",
-monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-onClose: function( selectedDate ) {
-$( "#from-date" ).datepicker( "option", "maxDate", selectedDate );
-}
-});
+    $("#from-date" ).datepicker({
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        onClose: function( selectedDate ) {
+        $( "#to-date" ).datepicker( "option", "minDate", selectedDate );
+    }
+    });
+    $("#to-date").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        onClose: function( selectedDate ) {
+        $( "#from-date" ).datepicker( "option", "maxDate", selectedDate );
+        }
+    });
 });
 </script>
 
