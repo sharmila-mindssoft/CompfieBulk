@@ -28,7 +28,7 @@ CLIENT_TEMPLATE_PATHS = [
     # ),
     (
         "/home",
-        "files/desktop/client-home/client-home.html",
+        "files/desktop/client/client-home/client-home.html",
         None, {}
     ),
     # client admin
