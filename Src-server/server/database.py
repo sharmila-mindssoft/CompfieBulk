@@ -336,7 +336,7 @@ class Database(object) :
         #     self.string_months[datetime_val.month],
         #     datetime_val.year
         # )
-        datetime_in_string = datetime_val.strftime("%d-%b-%Y %H-%m-%S")
+        datetime_in_string = datetime_val.strftime("%d-%b-%Y %H:%m:%S")
         return datetime_in_string
 
     def get_client_db_info(self):

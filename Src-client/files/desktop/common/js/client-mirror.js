@@ -1082,7 +1082,7 @@ function initClientMirror() {
     }
 
     function getComplianceActivityReportData(
-            user_type, user_id, domain_id, level_1_statutory_id, unit_id, 
+            user_type, user_id, country_id, domain_id, level_1_statutory_name, unit_id, 
             compliance_id, from_date, to_date, callback
         ){
         var request = [
@@ -1090,8 +1090,9 @@ function initClientMirror() {
             {
                 "user_type": user_type,
                 "user_id": user_id,
+                "country_id" : country_id,
                 "domain_id": domain_id,
-                "statutory_id": level_1_statutory_id,
+                "level_1_statutory_name": level_1_statutory_name,
                 "unit_id": unit_id,
                 "compliance_id": compliance_id, 
                 "from_date" : from_date,

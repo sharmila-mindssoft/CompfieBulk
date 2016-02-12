@@ -3609,3 +3609,16 @@ def parse_structure_RecordType_clienttransactions_UNIT_WISE_STATUTORIES_FOR_PAST
 def parse_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY(data):
     if data is None: return None
     return parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(data)
+
+# Compliance Activity Report
+
+def parse_structure_VectorType_RecordType_clientreport_ActivityData(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clientreport_ActivityData(item))
+    return lst
+
+def parse_structure_RecordType_clientreport_ActivityData(data):
+    from protocol import clientreport
+    return clientreport.ActivityData.parse_structure(data)

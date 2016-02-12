@@ -294,12 +294,28 @@ def get_compliance_activity_report_filters(db, request, session_user, client_id)
 	domain_list = db.get_domains_for_user(session_user, client_id)
 	unit_list = db.get_units_for_user(unit_ids, client_id)
 	level_1_statutories_list = db.get_client_level_1_statutoy(session_user, client_id)
-	compliances_list = db.get_client_compliances(session_user, client_id);
+	compliances_list = db.get_client_compliances(session_user, client_id)
+	country_list = db.get_countries_for_user(session_user, client_id)
 	users_list = db.get_client_users(client_id);
 	return clientreport.GetComplianceActivityReportFiltersSuccess(
 		users = users_list, domains = domain_list, level_1_statutories = level_1_statutories_list, 
-		units = unit_list, compliances = compliances_list
+		units = unit_list, compliances = compliances_list, countries = country_list
 	)
 
 def get_compliance_activity_report(db, request, session_user, client_id):
-	pass
+	country_id = request.country_id
+	domain_id = request.domain_id
+	unit_id = request.unit_id
+	user_id = request.user_id
+	user_type = request.user_type
+	from_date = request.from_date
+	to_date = request.to_date
+	compliance_id = request.compliance_id
+	level_1_statutory_name = request.level_1_statutory_name
+	activities = db.get_compliance_activity_report(
+		country_id, domain_id, user_type, user_id, unit_id, compliance_id, level_1_statutory_name, 
+		from_date, to_date, session_user, client_id
+	)
+	return clientreport.GetComplianceActivityReportSuccess(
+		activities = activities
+	)

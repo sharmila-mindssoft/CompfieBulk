@@ -68,6 +68,8 @@ parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_VectorType_RecordType_clientreport_RiskData,
     parse_structure_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS,
     parse_structure_VectorType_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS,
+    parse_structure_VectorType_CustomTextType_100,
+    parse_structure_VectorType_RecordType_clientreport_ActivityData
 
 )
 from protocol.to_structure import (
@@ -138,7 +140,10 @@ to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     to_structure_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS,
     to_structure_VectorType_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS,
     to_structure_VectorType_RecordType_clientreports_LEVEL_1_STATUTORY_NOTIFICATIONS,
-    to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS
+    to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS,
+    to_structure_VectorType_CustomTextType_100,
+    to_structure_VectorType_RecordType_clientreport_ActivityData,
+    to_structure_MapType_CustomTextType_50_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityData
 )
 
 #
@@ -551,11 +556,13 @@ class GetComplianceActivityReportFilters(Request):
         }
 
 class GetComplianceActivityReport(Request):
-    def __init__(self, user_type, user_id, domain_id, statutory_id, unit_id, compliance_id, from_date, to_date):
+    def __init__(self, user_type, user_id, domain_id, country_id, level_1_statutory_name, unit_id, 
+        compliance_id, from_date, to_date):
         self.user_type = user_type
         self.user_id = user_id
         self.domain_id = domain_id
-        self.statutory_id = statutory_id
+        self.country_id = country_id
+        self.level_1_statutory_name = level_1_statutory_name
         self.unit_id = unit_id
         self.compliance_id = compliance_id
         self.from_date = from_date
@@ -563,15 +570,22 @@ class GetComplianceActivityReport(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_type", "user_id", "domain_id", "statutory_id", "unit_id", "compliance_id", "from_date", "to_date"])
+        data = parse_dictionary(
+            data, [
+                "user_type", "user_id", "domain_id", "country_id", 
+                "level_1_statutory_name", "unit_id", "compliance_id", "from_date", "to_date"
+            ]
+        )
         user_type = data.get("user_type")
         user_type = parse_structure_EnumType_core_USER_TYPE(user_type)
         user_id = data.get("user_id")
         user_id = parse_structure_OptionalType_SignedIntegerType_8(user_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_OptionalType_SignedIntegerType_8(domain_id)
-        statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_id)
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        level_1_statutory_name = data.get("level_1_statutory_name")
+        level_1_statutory_name = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_name)
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         compliance_id = data.get("compliance_id")
@@ -580,14 +594,18 @@ class GetComplianceActivityReport(Request):
         from_date = parse_structure_OptionalType_CustomTextType_20(from_date)
         to_date = data.get("to_date")
         to_date = parse_structure_OptionalType_CustomTextType_20(to_date)
-        return GetComplianceActivityReport(user_type, user_id, domain_id, statutory_id, unit_id, compliance_id, from_date, to_date)
+        return GetComplianceActivityReport(
+            user_type, user_id, domain_id, country_id, level_1_statutory_name, unit_id, compliance_id, 
+            from_date, to_date
+        )
 
     def to_inner_structure(self):
         return {
             "user_type": to_structure_EnumType_core_USER_TYPE(self.user_type),
             "user_id": to_structure_OptionalType_SignedIntegerType_8(self.user_id),
-            "domain_id": to_structure_OptionalType_SignedIntegerType_8(self.domain_id),
-            "statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_id),
+            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "level_1_statutory_name": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_name),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "compliance_id": to_structure_OptionalType_SignedIntegerType_8(self.compliance_id),
             "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),
@@ -1189,33 +1207,40 @@ class GetComplianceTaskApplicabilityStatusReportSuccess(Response):
         }
 
 class GetComplianceActivityReportFiltersSuccess(Response):
-    def __init__(self, users, domains, level_1_statutories, units, compliances):
+    def __init__(self, users, countries, domains, level_1_statutories, units, compliances):
         self.users = users
         self.domains = domains
         self.level_1_statutories = level_1_statutories
         self.units = units
         self.compliances = compliances
+        self.countries = countries
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["users", "domains", "level_1_statutories", "units", "compliances"])
+        data = parse_dictionary(data, ["users", "countries", "domains", "level_1_statutories", "units", "compliances"])
         users = data.get("users")
         users = parse_structure_VectorType_RecordType_clientreport_User(users)
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Domain(countries)
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_VectorType_RecordType_core_ClientLevelOneStatutory(level_1_statutories)
+        level_1_statutories = parse_structure_VectorType_CustomTextType_100(level_1_statutories)
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_core_ComplianceFilter(compliances)
-        return GetComplianceActivityReportFiltersSuccess(users, domains, level_1_statutories, units, compliances)
+        return GetComplianceActivityReportFiltersSuccess(
+            users, countries, domains, level_1_statutories, 
+            units, compliances
+        )
 
     def to_inner_structure(self):
         return {
             "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
+            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "level_1_statutories": to_structure_VectorType_RecordType_core_ClientLevelOneStatutory(self.level_1_statutories),
+            "level_1_statutories": to_structure_VectorType_CustomTextType_100(self.level_1_statutories),
             "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
             "compliances": to_structure_VectorType_RecordType_core_ComplianceFilter(self.compliances)
         }
@@ -1688,36 +1713,35 @@ class ServiceProviderCompliance(object):
 #
 
 class Activities(object):
-    def __init__(self, unit_name, address, domain_wise_compliances):
+    def __init__(self, unit_name, address, statutory_wise_compliances):
         self.unit_name = unit_name
         self.address = address
-        self.domain_wise_compliances = domain_wise_compliances
+        self.statutory_wise_compliances = statutory_wise_compliances
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_name", "address", "domain_wise_compliances"])
+        data = parse_dictionary(data, ["unit_name", "address", "statutory_wise_compliances"])
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_100(unit_name)
         address = data.get("address")
         address = parse_structure_CustomTextType_250(address)
-        domain_wise_compliances = data.get("domain_wise_compliances")
-        domain_wise_compliances = parse_structure_VectorType_RecordType_clientreport_DomainWiseCompliance(domain_wise_compliances)
-        return Activities(unit_name, address, domain_wise_compliances)
+        statutory_wise_compliances = data.get("statutory_wise_compliances")
+        statutory_wise_compliances = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityCompliance(statutory_wise_compliances)
+        return Activities(unit_name, address, statutory_wise_compliances)
 
     def to_structure(self):
         return {
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
-            "address": to_structure_CustomTextType_250(self.address),
-            "domain_wise_compliances": to_structure_VectorType_RecordType_clientreport_DomainWiseCompliance(self.domain_wise_compliances),
+            "address": to_structure_CustomTextType_250(self.address),            
+            "statutory_wise_compliances": to_structure_MapType_CustomTextType_50_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityData(self.statutory_wise_compliances)
         }
 
 #
-# ActivityCompliance
+# ActivityData
 #
 
-class ActivityCompliance(object):
-    def __init__(self, compliance_name, activity_date, activity_status, compliance_status, remarks):
-        self.compliance_name = compliance_name
+class ActivityData(object):
+    def __init__(self, activity_date, activity_status, compliance_status, remarks):
         self.activity_date = activity_date
         self.activity_status = activity_status
         self.compliance_status = compliance_status
@@ -1725,9 +1749,7 @@ class ActivityCompliance(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_name", "activity_date", "activity_status", "compliance_status", "remarks"])
-        compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_100(compliance_name)
+        data = parse_dictionary(data, ["activity_date", "activity_status", "compliance_status", "remarks"])
         activity_date = data.get("activity_date")
         activity_date = parse_structure_CustomTextType_20(activity_date)
         activity_status = data.get("activity_status")
@@ -1736,15 +1758,38 @@ class ActivityCompliance(object):
         compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
         remarks = data.get("remarks")
         remarks = parse_structure_CustomTextType_500(remarks)
-        return ActivityCompliance(compliance_name, activity_date, activity_status, compliance_status, remarks)
+        return ActivityCompliance(activity_date, activity_status, compliance_status, remarks)
 
     def to_structure(self):
         return {
-            "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
             "activity_date": to_structure_CustomTextType_20(self.activity_date),
             "activity_status": to_structure_EnumType_core_COMPLIANCE_ACTIVITY_STATUS(self.activity_status),
             "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
             "remarks": to_structure_CustomTextType_500(self.remarks),
+        }
+
+#
+# ActivityCompliance
+#
+
+class ActivityCompliance(object):
+    def __init__(self, compliance_name, activity_data):
+        self.compliance_name = compliance_name
+        self.activity_data = activity_data
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["compliance_name", "activity_data"])
+        compliance_name = data.get("compliance_name")
+        compliance_name = parse_structure_CustomTextType_100(compliance_name)
+        activity_data = data.get("activity_data")
+        activity_data = parse_structure_VectorType_RecordType_clientreport_ActivityData(activity_data)
+        return ActivityCompliance(compliance_name, activity_data)
+
+    def to_structure(self):
+        return {
+            "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
+            "activity_data": to_structure_VectorType_RecordType_clientreport_ActivityData(self.activity_data)
         }
 
 #
