@@ -22,16 +22,13 @@ function initialize(){
     function onSuccess(data){
         countriesList = data['countries'];
         domainsList = data['domains'];
-        businessgroupsList = data['business_groups'];
-        legalEntityList = data['legal_entities'];
-        divisionsList = data['divisions'];
         unitList = data['units'];
         level1List = data['level_1_statutories'];
     }
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getStatutoryNotificationsListFilters(
+    client_mirror.getComplianceActivityReportFilters(
         function (error, response){
             if(error == null){
                 onSuccess(response);
@@ -254,93 +251,6 @@ function activate_domains (element,checkval,checkname) {
 }
 
 
-//businessgroups---------------------------------------------------------------------------------------------------------------
-function hidebgroupslist(){
-    document.getElementById('autocompleteview-bgroups').style.display = 'none';
-}
-function loadauto_businessgroups (textval) {
-    if($("#businessgroupsval").val() == ''){
-        $("#businessgroupid").val('');
-    }
-    document.getElementById('autocompleteview-bgroups').style.display = 'block';
-    var bgroups = businessgroupsList;
-    var suggestions = [];
-    $('#autocompleteview-bgroups ul').empty();
-    if(textval.length>0){
-        for(var i in bgroups){
-            if (~bgroups[i]['business_group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([bgroups[i]["business_group_id"],bgroups[i]["business_group_name"]]);     
-        }
-        var str='';
-        for(var i in suggestions){
-            str += '<li id="'+suggestions[i][0]+'" onclick="activate_businessgroups(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-        }
-        $('#autocompleteview-bgroups ul').append(str);
-        $("#businessgroupid").val('');
-    }
-}
-function activate_businessgroups (element,checkval,checkname) {
-  $("#businessgroupsval").val(checkname);
-  $("#businessgroupid").val(checkval);
-}
-//Legal Entity---------------------------------------------------------------------------------------------------------------
-function hidelentitylist(){
-    document.getElementById('autocompleteview-lentity').style.display = 'none';
-}
-function loadauto_lentity (textval) {
-    if($("#legalentityval").val() == ''){
-        $("#legalentityid").val('');
-    }
-  document.getElementById('autocompleteview-lentity').style.display = 'block';
-  var lentity = legalEntityList;
-  var suggestions = [];
-  $('#autocompleteview-lentity ul').empty();
-  if(textval.length>0){
-    for(var i in lentity){
-        if($("#businessgroupid").val()!=''){
-            if (~lentity[i]['legal_entity_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([lentity[i]["legal_entity_id"],lentity[i]["legal_entity_name"]]);   
-        }        
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_lentity(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview-lentity ul').append(str);
-    $("#legalentityid").val('');
-    }
-}
-//set selected autocomplte value to textbox
-function activate_lentity (element,checkval,checkname) {
-  $("#legalentityval").val(checkname);
-  $("#legalentityid").val(checkval);
-}
-//Division---------------------------------------------------------------------------------------------------------------
-function hidedivisionlist(){
-    document.getElementById('autocompleteview-division').style.display = 'none';
-}
-function loadauto_division (textval) {
-    if($("#divisionval").val() == ''){
-        $("#divisionid").val('');
-    }
-  document.getElementById('autocompleteview-division').style.display = 'block';
-  var division = divisionsList;
-  var suggestions = [];
-  $('#autocompleteview-division ul').empty();
-  if(textval.length>0){
-    for(var i in division){
-        if (~division[i]['division_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([division[i]["division_id"],division[i]["division_name"]]);    
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_division(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#autocompleteview-division ul').append(str);
-    $("#divisionid").val('');
-    }
-}
-function activate_division (element,checkval,checkname) {
-  $("#divisionval").val(checkname);
-  $("#divisionid").val(checkval);
-}
 
 //Units---------------------------------------------------------------------------------------------------------------
 function hideunitlist(){
@@ -402,6 +312,35 @@ function activate_level1 (element,checkval,checkname) {
   $("#level1val").val(checkname);
   $("#level1id").val(checkval);
 }
+//User---------------------------------------------------------------------------------------------------------------
+function hideuserlist(){
+    document.getElementById('autocompleteview-user').style.display = 'none';
+}
+function loadauto_user (textval) {
+    if($("#userval").val() == ''){
+        $("#userid").val('');
+    }
+    document.getElementById('autocompleteview-user').style.display = 'block';
+    var user = userList;
+    var suggestions = [];
+    $('#autocompleteview-user ul').empty();
+    if(textval.length>0){
+        for(var i in user){
+            if (~user[i]['employee_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([user[i]["employee_id"],user[i]["employee_name"]]);    
+        }
+        var str='';
+        for(var i in suggestions){
+          str += '<li id="'+suggestions[i][0]+'" onclick="activate_user(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+        }
+        $('#autocompleteview-user ul').append(str);
+        $("#userid").val('');
+    }
+}
+function activate_user (element,checkval,checkname) {
+  $("#userval").val(checkname);
+  $("#userid").val(checkval);
+}
+
 $(function() {
     initialize();
 });
