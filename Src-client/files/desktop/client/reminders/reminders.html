@@ -1,4 +1,4 @@
-{% extends "files/desktop/home/container.html" %}
+{% extends "files/desktop/client/home/container.html" %}
 {% block content %}
 <style>
 .reminder-box-content ul {
@@ -23,16 +23,16 @@
   background: url("../images/right_arrow.png") no-repeat scroll #eee 1.4em 2.4em;
   }
 .reminder-box-content ul li.unread
-{ 
+{
   color: #333;
   background: url("../images/right_arrow.png") no-repeat scroll #E5D0FF 1.4em 2.4em;
-  
+
 }
 .reminder-box-content ul li.unread:hover
-{ 
+{
   color: #333;
   background: url("../images/right_arrow.png") no-repeat scroll #eee 1.4em 2.4em;
-  
+
 }
 .reminder-box-content ul li .subtext
 {
@@ -73,15 +73,15 @@
 <div class="content-container" >
 <div class="content-area">
   <div class="escalations-box" style="width:100%">
-  <div class="reminder-box-heading"> 
+  <div class="reminder-box-heading">
   <span><img src="images/reminder.png" style="width:30px;"></span>
   <span>Reminder</span> </div>
   <div class="reminder-box-content">
   <ul id="reminderList">
-        
+
   </ul>
   </div>
-  </div> 
+  </div>
   </div>
 </div>
 
@@ -94,12 +94,12 @@
   <header>
     <h1 style="background:#ccc; padding:5px 10px; border-radius:3px; color: #000"> Notifications</h1>
     <div class="close unread"></div>
-  </header>  
+  </header>
   <section>
     <p style="font-size:0.8em; padding-top:10px;">
       <table class="modaltable" width="100%">
         <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
- 
+
           <th width="16.67%" align="left">Act</th>
           <th width="20%" align="left">Unit</th>
           <th width="20%" align="left">Compliance</th>
@@ -118,7 +118,7 @@
         <br>
         <table class="modaltable" width="100%">
          <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
- 
+
           <th width="33.33%" align="left">Assignee</th>
           <th width="33.33%" align="left">Concurrence</th>
           <th width="33.33%" align="left">Approval</th>
@@ -137,4 +137,4 @@
 
 
 <script type="text/javascript" src="/files/desktop/client/reminders/reminders.js"></script>
-{% endblock %} 
+{% endblock %}

@@ -1,4 +1,4 @@
-{% extends "files/desktop/home/container.html" %}
+{% extends "files/desktop/client/home/container.html" %}
 {% block content %}
 <link href="/files/desktop/common/css/jquery-ui/jquery-ui.css" rel="stylesheet">
 <div class="content-container width80">
@@ -16,9 +16,9 @@
           <div class="field-label">User:</div>
           <div class="field-input">
             <input type="text" class="input-box icon-autocomplete" id="user" autofocus placeholder="Type User">
-            <input type="hidden" id="userid"> 
+            <input type="hidden" id="userid">
             <div id="userListView" class="ac-textbox default-display-none"  onchange="hidemenu();" onclick="hidemenu();">
-              <ul style="width:195px;"></ul> 
+              <ul style="width:195px;"></ul>
             </div>
           </div>
         </div>
@@ -34,9 +34,9 @@
           <div class="field-label">Form Name:</div>
           <div class="field-input">
             <input type="text" class="input-box icon-autocomplete" id="formname" autofocus placeholder="Type Form name">
-            <input type="hidden" id="formid"> 
+            <input type="hidden" id="formid">
             <div id="formListView" class="ac-textbox default-display-none"  onchange="hideMenuFormList();" onclick="hideMenuFormList();">
-              <ul style="width:195px;"></ul> 
+              <ul style="width:195px;"></ul>
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@
             <th>Action</th>
           </tr>
           <tbody class="tbody-audittrail-list">
-          </tbody> 
+          </tbody>
         </table>
       </div>
     </div>
@@ -67,7 +67,7 @@
   <td class="datetime"></td>
   <td class="formname"></td>
   <td class="action"></td>
-</tr> 
+</tr>
 </table>
 </div>
 <script type="text/javascript" src="/files/desktop/client/audit-trail/audittrail.js"></script>
@@ -98,4 +98,4 @@ $( "#from-date" ).datepicker( "option", "maxDate", selectedDate );
 });
 });
 </script>
-{% endblock %} 
+{% endblock %}

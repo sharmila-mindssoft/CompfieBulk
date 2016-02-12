@@ -1,7 +1,7 @@
-{% extends "files/desktop/home/container.html" %}
+{% extends "files/desktop/client/home/container.html" %}
 {% block content %}
 <style>
-  
+
 .overlay {
   position: absolute;
   top: 0;
@@ -99,17 +99,17 @@
       <td class="division"></td>
       <td class="unit"></td>
       <td class="unit-address"></td>
-      <td class="is-active" align="center" ></td>          
+      <td class="is-active" align="center" ></td>
     </tr>
   </table>
 </div>
- 
+
 <div id="popup" class="overlay" >
   <div class="popup">
     <a class="close" href="#">X</a>
     <div class="content">
       Password<br>
-      <input type="hidden" id="unitidval"> 
+      <input type="hidden" id="unitidval">
      <input type="password" name="password" class="input-box" id="password" style="margin-top:10px;"><br>
      <input type="submit" name="submit" class="btn-submit" id="popup-submit" value="Submit" onclick="unit_close()" style="margin-top:10px;">
      <span class="popup-error-msg"></span>
@@ -118,4 +118,4 @@
 </div>
 
 <script type="text/javascript" src="/files/desktop/client/unit-closure/unitclosure.js"></script>
-{% endblock %} 
+{% endblock %}

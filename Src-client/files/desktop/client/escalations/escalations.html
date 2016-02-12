@@ -1,4 +1,4 @@
-{% extends "files/desktop/home/container.html" %}
+{% extends "files/desktop/client/home/container.html" %}
 {% block content %}
 <style>
 .reminder-box-content ul {
@@ -23,16 +23,16 @@
   background: url("../images/right_arrow.png") no-repeat scroll #eee 1.4em 2.4em;
   }
 .reminder-box-content ul li.unread
-{ 
+{
   color: #333;
   background: url("../images/right_arrow.png") no-repeat scroll #E5D0FF 1.4em 2.4em;
-  
+
 }
 .reminder-box-content ul li.unread:hover
-{ 
+{
   color: #333;
   background: url("../images/right_arrow.png") no-repeat scroll #eee 1.4em 2.4em;
-  
+
 }
 .reminder-box-content ul li .subtext
 {
@@ -73,15 +73,15 @@
 <div class="content-container" >
 <div class="content-area">
   <div class="escalations-box" style="width:100%">
-  <div class="reminder-box-heading"> 
+  <div class="reminder-box-heading">
   <span><img src="images/escalation.png" style="width:30px;"></span>
   <span>Escalations</span> </div>
   <div class="reminder-box-content">
   <ul id="reminderList">
-        
+
   </ul>
   </div>
-  </div> 
+  </div>
   </div>
 </div>
 
@@ -94,7 +94,7 @@
   <header>
     <h1 style="background:#ccc; padding:5px 10px; border-radius:3px; color: #000"> Notifications</h1>
     <div class="close unread"></div>
-  </header>  
+  </header>
   <section>
     <p style="font-size:0.8em; padding-top:10px;">
       <table class="modaltable" width="100%">
@@ -123,4 +123,4 @@
 
 
 <script type="text/javascript" src="/files/desktop/client/escalations/escalations.js"></script>
-{% endblock %} 
+{% endblock %}

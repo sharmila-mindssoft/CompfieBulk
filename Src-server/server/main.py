@@ -7,7 +7,6 @@ from tornado.web import StaticFileHandler
 from user_agents import parse
 import jinja2
 from lxml import etree
-from lxml import html
 from basics.webserver import WebServer
 from basics.ioloop import IOLoop
 from protocol import (
@@ -190,19 +189,15 @@ class TemplateHandler(tornado.web.RequestHandler) :
         tree = etree.fromstring(content, parser)
         for node in tree.xpath('//*[@src]'):
             url = node.get('src')
-            print "src ", url
             new_url = self.set_path(url)
             node.set('src', new_url)
-            print "src ", new_url
         for node in tree.xpath('//*[@href]'):
             url = node.get('href')
-            print url
             if not url.startswith("#"):
                 new_url = self.set_path(url)
             else :
                 new_url = url
             node.set('href', new_url)
-            print new_url
         data = etree.tostring(tree, method="html")
         return data
 
