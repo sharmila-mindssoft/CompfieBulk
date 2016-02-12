@@ -1,0 +1,38 @@
+{% extends "files/desktop/knowledge/home/container.html" %}
+{% block content %}
+<div class="content-container width40">
+  <div class="content-area">
+    <h1>Domains</h1>
+    <div class="clearfix"></div>
+    <div class="grid-table" >
+      <table class="table-domain-list" >
+        <tr align="left">
+          <th align="center">#</th>
+          <th>Domain Name</th>
+          <th align="center">Status</th>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td><input type="text" class="filter-text-box" id="search-domain-name"></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tbody class="tbody-domain-list">
+        </tbody>
+        <tr>
+          <td colspan="3" class="border-dashed" ><p id="total-records"></p></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<div id="templates">
+<table class="table-domain-report">
+  <tr class="table-row">
+    <td class="sno" align="center"></td>
+    <td class="domain-name"></td>
+    <td class="is-active" align="center"></td>
+  </tr>
+</table>
+</div>
+<script type="text/javascript" src="/files/desktop/knowledge/knowledge-master-report/domain-master-report/domainmasterreport.js"></script>
+{% endblock %}

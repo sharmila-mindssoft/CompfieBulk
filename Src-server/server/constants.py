@@ -22,8 +22,13 @@ CLIENT_TEMPLATE_PATHS = [
     (
         "/test", "test_apis.html", "", {}
     ),
+    # (
+    #     "/home", "files/desktop/home/home.html",
+    #     None, {}
+    # ),
     (
-        "/home", "files/desktop/home/home.html",
+        "/home",
+        "files/desktop/client/client-home/client-home.html",
         None, {}
     ),
     # client admin
@@ -137,166 +142,185 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/login",
-        "files/desktop/login/login.html",
-        "files/mobile/login/login.html", {}
-    ),
-    ("/knowledge/test", "test_apis.html", "", {}),
-    ("/knowledge/home", "files/desktop/home/home.html", None, {}),
-    (
-        "/knowledge/custom-controls",
-        "files/desktop/custom-controls/custom-controls.html",
+        "files/desktop/knowledge/login.html",
         None, {}
     ),
+    (
+        "/knowledge/forgot-password",
+        "files/desktop/knowledge/ForgotPassword.html",
+        "", {}
+    ),
+    (
+        "/knowledge/reset-password",
+        "files/desktop/knowledge/resetpassword.html",
+        "", {}
+    ),
+    # (
+    #     "/knowledge/login",
+    #     "files/desktop/login/login.html",
+    #     "files/mobile/login/login.html", {}
+    # ),
+    # ("/knowledge/test", "test_apis.html", "", {}),
+    ("/knowledge/home", "files/desktop/knowledge/home/home.html", None, {}),
+    # (
+    #     "/knowledge/custom-controls",
+    #     "files/desktop/custom-controls/custom-controls.html",
+    #     None, {}
+    # ),
     # common
     (
         "/knowledge/profile",
-        "files/desktop/profile/profile.html",
+        "files/desktop/knowledge/profile.html",
         None, {}
     ),
     (
         "/knowledge/change-password",
-        "files/desktop/change-password/changepassword.html",
+        "files/desktop/knowledge/changepassword.html",
         None, {}
     ),
     # IT Admin Master
     (
         "/knowledge/domain-master",
-        "files/desktop/domain-master/domainmaster.html",
+        "files/desktop/knowledge/domain-master/domainmaster.html",
         None, {}
     ),
     (
         "/knowledge/country-master",
-        "files/desktop/country-master/countrymaster.html",
+        "files/desktop/knowledge/country-master/countrymaster.html",
         None, {}
     ),
     (
         "/knowledge/user-group-master",
-        "files/desktop/user-group-master/usergroupmaster.html",
+        "files/desktop/knowledge/user-group-master/usergroupmaster.html",
         None, {}
     ),
     (
         "/knowledge/user-master",
-        "files/desktop/user-master/usermaster.html",
+        "files/desktop/knowledge/user-master/usermaster.html",
         None, {}
     ),
     # knowledge manager transaction
     (
         "/knowledge/approve-statutory-mapping",
-        "files/desktop/approve-statutory-mapping/approvestatutorymapping.html",
+        "files/desktop/knowledge/approve-statutory-mapping/approvestatutorymapping.html",
         None, {}
     ),
     # knowledge user master
     (
         "/knowledge/geography-master",
-        "files/desktop/geography-master/geographymaster.html",
+        "files/desktop/knowledge/geography-master/geographymaster.html",
         None, {}
     ),
     (
         "/knowledge/geography-level-master",
-        "files/desktop/geography-level-master/geographylevelmaster.html",
+        "files/desktop/knowledge/geography-level-master/geographylevelmaster.html",
         None, {}
     ),
     (
         "/knowledge/industry-master",
-        "files/desktop/industry-master/industrymaster.html",
+        "files/desktop/knowledge/industry-master/industrymaster.html",
         None, {}
     ),
     (
         "/knowledge/statutory-nature-master",
-        "files/desktop/statutory-nature-master/statutorynaturemaster.html",
+        "files/desktop/knowledge/statutory-nature-master/statutorynaturemaster.html",
         None, {}
     ),
     (
         "/knowledge/statutory-level-master",
-        "files/desktop/statutory-level-master/statutorylevelmaster.html",
+        "files/desktop/knowledge/statutory-level-master/statutorylevelmaster.html",
         None, {}
     ),
     # knowledge user Transaction
     (
         "/knowledge/statutory-mapping",
-        "files/desktop/statutory-mapping/statutorymapping.html",
+        "files/desktop/knowledge/statutory-mapping/statutorymapping.html",
         None, {}
     ),
     # knowledge Reports
     (
         "/knowledge/statutory-mapping-report",
-        "files/desktop/statutory-mapping-report/statutorymappingreport.html",
+        "files/desktop/knowledge/statutory-mapping-report/statutorymappingreport.html",
         None, {}
     ),
     (
         "/knowledge/country-report",
-        "files/desktop/knowledge-master-report/country-master-report/countrymasterreport.html",
+        "files/desktop/knowledge/knowledge-master-report/country-master-report/countrymasterreport.html",
         None, {}
     ),
     (
         "/knowledge/domain-report",
-        "files/desktop/knowledge-master-report/domain-master-report/domainmasterreport.html",
+        "files/desktop/knowledge/knowledge-master-report/domain-master-report/domainmasterreport.html",
         None, {}
     ),
     (
         "/knowledge/geography-report",
-        "files/desktop/knowledge-master-report/geography-master-report/geographymasterreport.html",
+        "files/desktop/knowledge/knowledge-master-report/geography-master-report/geographymasterreport.html",
         None, {}
     ),
     (
         "/knowledge/industry-report",
-        "files/desktop/knowledge-master-report/industry-master-report/industrymasterreport.html",
+        "files/desktop/knowledge/knowledge-master-report/industry-master-report/industrymasterreport.html",
         None, {}
     ),
     (
         "/knowledge/statutory-nature-report",
-        "files/desktop/knowledge-master-report/statutory-nature-master-report/statutorynaturemasterreport.html",
+        "files/desktop/knowledge/knowledge-master-report/statutory-nature-master-report/statutorynaturemasterreport.html",
         None, {}
     ),
     # Techno Manager master
     (
-        "/knowledge/client-master", "files/desktop/client-master/clientmaster.html",
+        "/knowledge/client-master",
+        "files/desktop/knowledge/client-master/clientmaster.html",
         None, {}
     ),
     # Techno user master
     (
-        "/knowledge/client-unit", "files/desktop/client-unit/clientunit.html",
+        "/knowledge/client-unit",
+        "files/desktop/knowledge/client-unit/clientunit.html",
         None, {}
     ),
     (
         "/knowledge/unit-closure",
-        "files/desktop/unit-closure/unitclosure.html",
+        "files/desktop/knowledge/unit-closure/unitclosure.html",
         None, {}
     ),
     (
-        "/knowledge/client-profile", "files/desktop/client-profile/clientprofile.html",
+        "/knowledge/client-profile",
+        "files/desktop/knowledge/client-profile/clientprofile.html",
         None, {}
     ),
     # Techno User Transaction
     (
         "/knowledge/assign-statutory",
-        "files/desktop/assign-statutory/assignstatutory.html",
+        "files/desktop/knowledge/assign-statutory/assignstatutory.html",
         None, {}
     ),
     # Techno reports
     (
         "/knowledge/client-details-report",
-        "files/desktop/client-details-report/clientdetailsreport.html",
+        "files/desktop/knowledge/client-details-report/clientdetailsreport.html",
         None, {}
     ),
     (
         "/knowledge/statutory-notifications-list",
-        "files/desktop/statutory-notifications-list-report/statutorynotificationslistreport.html",
+        "files/desktop/knowledge/statutory-notifications-list-report/statutorynotificationslistreport.html",
         None, {}
     ),
     (
         "/knowledge/assigned-statutory-report",
-        "files/desktop/assigned-statutory-report/assignedstatutoryreport.html",
+        "files/desktop/knowledge/assigned-statutory-report/assignedstatutoryreport.html",
         None, {}
     ),
     (
         "/knowledge/compliance-task-list",
-        "files/desktop/compliance-task-list/compliancetasklist.html",
+        "files/desktop/knowledge/compliance-task-list/compliancetasklist.html",
         None, {}
     ),
     # audit trial
     (
-        "/knowledge/audit-trail", "files/desktop/audit-trail/audittrail.html",
+        "/knowledge/audit-trail",
+        "files/desktop/knowledge/audit-trail/audittrail.html",
         None, {}
     ),
 

@@ -4397,7 +4397,8 @@ class KnowledgeDatabase(Database):
             )
 
         rows = self.select_all(query)
-        columns = ["client_statutory_id", "client_id", "geography_id",
+        columns = [
+            "client_statutory_id", "client_id", "geography_id",
             "country_id", "domain_id", "unit_id", "submission_type",
             "group_name", "unit_name",
             "business_group_name", "legal_entity_name",
@@ -4420,7 +4421,7 @@ class KnowledgeDatabase(Database):
                 geography_parents = self.geography_parent_mapping.get(geography_id)
                 temp_parents = geography_parents[0].split(">>")
                 ordered = temp_parents[::-1]
-                unit_name  = "%s - %s" % (data["unit_code"], data["unit_name"])
+                unit_name = "%s - %s" % (data["unit_code"], data["unit_name"])
                 unit_address = "%s, %s, %s" % (
                     data["address"], ', '.join(ordered), data["postal_code"]
                 )
@@ -4448,7 +4449,7 @@ class KnowledgeDatabase(Database):
                             break
                     if is_exists is False :
                         statutories.append(new_s)
-                statutories.append(
+                statutories.extend(
                     self.return_assigned_compliances_by_id(client_statutory_id)
                 )
                 unit_statutories.assigned_statutories = statutories
@@ -4465,7 +4466,7 @@ class KnowledgeDatabase(Database):
 
     def get_unit_details_for_user(self, user_id):
         client_ids = None
-        if ((user_id != None) and (user_id != 0)):
+        if ((user_id is not None) and (user_id is not 0)):
             client_ids = self.get_user_clients(user_id)
 
         condition = "1"
@@ -4478,7 +4479,7 @@ class KnowledgeDatabase(Database):
         unit_details = []
         for row in rows:
             detail_columns = "country_id"
-            detail_condition = "legal_entity_id = '%d' "% row[1]
+            detail_condition = "legal_entity_id = '%d' " % row[1]
             if row[0] == None:
                 detail_condition += " And business_group_id is NULL"
             else:

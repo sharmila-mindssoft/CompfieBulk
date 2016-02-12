@@ -1,6 +1,5 @@
-{% extends "files/desktop/home/container.html" %}
+{% extends "files/desktop/client/home/container.html" %}
 {% block content %}
-<link href="/files/desktop/common/css/jquery-ui/jquery-ui.css" rel="stylesheet">
 <div class="content-container width60" id="service-provider-view">
   <div class="content-area">
     <h1>Service Providers</h1>
@@ -41,7 +40,7 @@
     <td align="left" class="contact-number"></td>
     <td align="center" class="edit"></a></td>
     <td align="center" class="is-active"></td>
-  </tr>     
+  </tr>
 </table>
 </div>
 <div class="content-container width70 default-display-none" id="service-provider-add">
@@ -67,24 +66,24 @@
           <div class="field-input">
           <span style="font-size:10px;">[+91 452 1234567]</span>
           </div>
-        </div>       
-       
+        </div>
+
       </div>
       <div class="input-row-right">
         <div class="input-row">
           <div class="field-label">Address:</div>
           <div class="field-input"><textarea class="input-box" style="height:50px;" id="address"></textarea></div>
-        </div>      
+        </div>
          <div class="input-row" >
           <div class="field-label">Contract From:<span class="mandatory">*</span></div>
           <div class="field-input"><input type="text" class="input-box" id="contract-from"></div>
-        </div>             
+        </div>
         <div class="input-row" >
           <div class="field-label">Contract To:<span class="mandatory">*</span></div>
           <div class="field-input"><input type="text" class="input-box" id="contract-to">
           </div>
         </div>
-      </div>      
+      </div>
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Cancel" id="btn-service-provider-cancel" class="btn-cancel">&nbsp;&nbsp;
         <input type="submit" name="submit" value="Submit" id="submit" class="btn-submit">
@@ -94,7 +93,6 @@
 </div>
 
 <script type="text/javascript" src="/files/desktop/client/service-provider/serviceprovider.js"></script>
-<script src="/files/desktop/common/js/jquery-ui/jquery-ui.js"></script>  
 <script type="text/javascript">
 $(function() {
     $( "#contract-from" ).datepicker({
@@ -102,7 +100,7 @@ $(function() {
       changeYear: true,
       numberOfMonths: 1,
       dateFormat: "d-M-yy",
-      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
       onClose: function( selectedDate ) {
         $( "#contract-to" ).datepicker( "option", "minDate", selectedDate );
@@ -113,7 +111,7 @@ $(function() {
       changeYear: true,
       numberOfMonths: 1,
       dateFormat: "d-M-yy",
-      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
       onClose: function( selectedDate ) {
         $( "#contract-from" ).datepicker( "option", "maxDate", selectedDate );
