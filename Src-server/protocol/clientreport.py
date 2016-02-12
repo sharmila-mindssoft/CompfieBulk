@@ -1280,7 +1280,7 @@ class GetReassignedHistoryReportFiltersSuccess(Response):
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
         level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_VectorType_RecordType_core_ClientLevelOneStatutory(level_1_statutories)
+        level_1_statutories = parse_structure_VectorType_CustomTextType_100(level_1_statutories)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_core_ComplianceFilter(compliances)
         users = data.get("users")
@@ -1293,7 +1293,7 @@ class GetReassignedHistoryReportFiltersSuccess(Response):
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
             "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
-            "level_1_statutories": to_structure_VectorType_RecordType_core_ClientLevelOneStatutory(self.level_1_statutories),
+            "level_1_statutories": to_structure_VectorType_CustomTextType_100(self.level_1_statutories),
             "compliances": to_structure_VectorType_RecordType_core_ComplianceFilter(self.compliances),
             "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
         }

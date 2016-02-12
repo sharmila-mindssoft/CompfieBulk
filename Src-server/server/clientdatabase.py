@@ -5044,15 +5044,16 @@ class ClientDatabase(Database):
                             assignee, reassignedfrom, reassigned_date, remarks
                         )
                         history_list.append(history)
-
-                    compliances_list.append(clientreport.ReassignCompliance(compliance_name, due_date, history_list))
-                compliance = clientreport.ReassignUnitCompliance(
+                    if history_list:
+                        compliances_list.append(clientreport.ReassignCompliance(compliance_name, due_date, history_list))
+                if compliances_list:
+                    compliance = clientreport.ReassignUnitCompliance(
                         unit_name, compliances_list
                     )
-            unit_wise_compliances.append(compliance)
-
-            unitwise = clientreport.StatutoryReassignCompliance(statutoru_name, unit_wise_compliances)
-            level_1_statutory_wise_units.append(unitwise)
+                    unit_wise_compliances.append(compliance)
+            if unit_wise_compliances:
+                unitwise = clientreport.StatutoryReassignCompliance(statutoru_name, unit_wise_compliances)
+                level_1_statutory_wise_units.append(unitwise)
 
         return level_1_statutory_wise_units
 
