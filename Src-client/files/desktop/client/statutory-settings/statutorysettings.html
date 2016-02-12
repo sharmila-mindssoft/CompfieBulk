@@ -9,11 +9,11 @@ tbody {
   border : 1px solid blue;
 }*/
 </style>
-  <div class="content-container" id="assignstatutory-view">
+  <div class="content-container" id="statutorysettings-view">
     <div class="content-area">
-      <h1>Assign Statutory </h1>
+      <h1>Statutory Settings </h1>
       <div class="filters-and-search">
-        <div class="btn-add btn-assignstatutory-add">Add</div>
+        <div class="btn-add btn-statutorysettings-add">Add</div>
       </div>
       <div class="clearfix"></div>
       <div class="grid-table">
@@ -21,17 +21,12 @@ tbody {
           <tr align="left">
             <th align="center">#</th>
             <th width="6%">Country</th>
-            <th>Group</th>
             <th>Business Group</th>
             <th>Legal Entity</th>
             <th >Division</th>
-            <th >Location</th>
-            <th >Industry</th>
             <th width="12%">Unit</th>
             <th >Domain</th>
-            <th >Status</th>
             <th align="center" width="5%" style="padding-right:5px">Edit</th>
-            <th align="center" width="5%" style="padding-right:5px">View & Submit</th>
           </tr>
           <tr>
             <td align="center"></td>
@@ -41,14 +36,9 @@ tbody {
             <td><input type="text" class="filter-text-box listfilter" id="filter4"></td>
             <td><input type="text" class="filter-text-box listfilter" id="filter5"></td>
             <td><input type="text" class="filter-text-box listfilter" id="filter6"></td>
-            <td><input type="text" class="filter-text-box listfilter" id="filter7"></td>
-            <td><input type="text" class="filter-text-box listfilter" id="filter8"></td>
-            <td><input type="text" class="filter-text-box listfilter" id="filter9"></td>
-            <td><input type="text" class="filter-text-box listfilter" id="filter10"></td>
-            <td align="center"></td>
             <td align="center"></td>
           </tr>
-          <tbody class="tbody-assignstatutory-list">
+          <tbody class="tbody-statutorysettings-list">
           </tbody>
         </table>
       </div>
@@ -56,27 +46,22 @@ tbody {
     </div>
   </div>
   <div id="templates">
-    <table class="table-assignstatutory">
+    <table class="table-statutorysettings">
       <tr class="table-row">
         <td class="tbl_sno" align="center"></td>
         <td class="tbl_country"></td>
-        <td class="tbl_group"></td>
         <td class="tbl_businessgroup"></td>
         <td class="tbl_legalentity"></td>
         <td class="tbl_division"></td>
-        <td class="tbl_location"></td>
-        <td class="tbl_industry"></td>
         <td class="tbl_unit"></td>
         <td class="tbl_domain"></td>
-        <td class="tbl_status"></td>
         <td class="tbl_edit" align="center"></td>
-        <td class="tbl_view" align="center"></td>
       </tr>
     </table>
   </div>
-  <div class="content-container width75 default-display-none" id="assignstatutory-add" >
+  <div class="content-container width75 default-display-none" id="statutorysettings-add" >
     <div class="content-area">
-      <h1>Assign Statutory</h1>
+      <h1>Statutory Settings</h1>
       <div class="add-container">
         <div class="form-container-outer">
           <ul class="nav  nav-pills nav-justified setup-panel">
@@ -210,7 +195,7 @@ tbody {
           <div class="innercontent">
             <h2 style="font-size:0.813em;" class="breadcrumbs"> </h2>
             <div class="grid-table">
-              <table class="tbody-assignstatutory" id="accordion">
+              <table class="tbody-statutorysettings" id="accordion">
               </table>
             </div>
           </div>
@@ -274,5 +259,5 @@ tbody {
   </table>
 </div>
 
-<script type="text/javascript" src="/files/desktop/assign-statutory/assignstatutory.js"></script>
+<script type="text/javascript" src="/files/desktop/assign-statutory/statutorysettings.js"></script>
 {% endblock %}
