@@ -32,7 +32,6 @@ class HandleRequest(object):
             else:
                 callback(code, body)
         body = json.dumps([self._company_id, body])
-        print "inside api request :{}".format(body)
         request = HTTPRequest(
             url,
             method="POST",
@@ -71,7 +70,6 @@ class HandleRequest(object):
             self._respond_error(code, response_data)
 
     def forward_request(self):
-        print "inside forward request"
         company = self._company_manager.locate_company_server(
             self._security_token
         )

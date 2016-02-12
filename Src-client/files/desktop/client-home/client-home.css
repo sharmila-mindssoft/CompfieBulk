@@ -1,0 +1,83 @@
+
+.chart-container {
+	width: 100%;
+	float: left;
+	background: #fff;
+}
+.chart-header {
+	width: 100%;
+	float: left;
+	background: #662d91;
+	padding: 0.5em 0 0.5em 0.5em;
+}
+.chart-header span {
+	background: #8658a8;
+	color: #fff;
+	font-size: 0.813em;
+	padding: 0.5em 1em;
+	display: inline-block;
+	margin-right: 0.5em;
+	cursor: pointer;
+
+	-webkit-border-radius: 0.5em;
+	-moz-border-radius: 0.5em;
+	border-radius: 0.5em;
+}
+.chart-header span.active {
+	background: rgba(0,0,0,0.50);
+}
+
+.chart-header span a {
+	text-decoration: none;
+	color: white;
+}
+
+.chart-header span a.active {
+	text-decoration: none;
+	color: white;
+}
+
+.chart-container-inner {
+	width: 100%;
+	float: left;
+}
+
+.chart-filters {
+	border: 1px solid #fff;
+}
+/*
+.filtertable td div {
+	margin: 0.4em;
+	position: relative;
+}
+
+.filtertable td div.filter-label {
+	height: 1.6em;
+	padding: 0.4em 0em;
+}*/
+
+.checked-button {
+	border-radius: 3px;
+	border: 1px solid #D1D3D4;
+	font-size: 11px;
+	height: 2.4em;
+	color: #777;
+	background-color: #ffffff;
+}
+
+.checked-button.active {
+	border-radius: 3px;
+	font-size: 11px;
+	height: 2.4em;
+	color: #fff;
+	background-color: #662d91;
+}
+
+.chart-space {
+	height: 400px;
+}
+
+.graph-selections-top,
+.graph-selections-bottom {
+	display: none;
+}

@@ -35,7 +35,9 @@ def process_client_transaction_requests(request, db) :
             db, session_user, client_id
         )
     elif type(request) is clienttransactions.ReassignCompliance :
-        return process_reassign_compliance(db, session_user)
+        return process_reassign_compliance(
+            db, session_user
+        )
     elif type(request) is clienttransactions.GetPastRecordsFormData :
         return process_get_past_records_form_data(
             db, request, session_user, client_id
@@ -44,12 +46,18 @@ def process_client_transaction_requests(request, db) :
         return process_get_statutories_by_unit(
             db, request, session_user, client_id
         )
+    elif type(request) is clienttransactions.SavePastRecords :
+        return process_save_past_records(
+            db, request, session_user, client_id
+        )
     elif type(request) is clienttransactions.GetComplianceApprovalList :
         return process_get_compliance_approval_list(
             db, request, session_user, client_id
         )
     elif type(request) is clienttransactions.ApproveCompliance:
-        return process_approve_compliance(db, request, session_user, client_id)
+        return process_approve_compliance(
+            db, request, session_user, client_id
+        )
 
 def process_get_statutory_settings(db, session_user, client_id):
     return db.get_statutory_settings(session_user, client_id)
@@ -96,8 +104,8 @@ def process_get_past_records_form_data(db, request, session_user, client_id):
     legal_entities = db.get_legal_entities_for_user(row[2])
     divisions = db.get_divisions_for_user(row[1])
     units = db.get_units_for_user_grouped_by_industry(row[0])
-    domains = db.get_domains_for_user(session_user)
-    level1_statutories = db.get_level_1_statutories_for_user(client_id)
+    domains = db.get_domains_for_user(session_user, client_id)
+    level1_statutories = db.get_level_1_statutories_for_user(session_user, client_id)
     compliance_frequency = db.get_compliance_frequency(client_id)
     return clienttransactions.GetPastRecordsFormDataSuccess(
         countries=countries,
@@ -110,19 +118,35 @@ def process_get_past_records_form_data(db, request, session_user, client_id):
         compliance_frequency=compliance_frequency
     )
 
-def process_get_statutories_by_unit(db, request, session_user, client_id):
+def process_get_statutories_by_unit(
+        db, request, session_user, client_id
+    ):
     unit_id = request.unit_id
     domain_id = request.domain_id
-    level_1_statutory_id = request.level_1_statutory_id
-    frequecy_id = request.frequecy_id
+    level_1_statutory_name = request.level_1_statutory_name
+    compliance_frequency = request.compliance_frequency
     statutory_wise_compliances = db.get_statutory_wise_compliances(
         unit_id,
-        domain_id, level_1_statutory_id,
-        frequecy_id
+        domain_id, level_1_statutory_name,
+        compliance_frequency
     )
+    users = db.get_users_by_unit_and_domain(unit_id, domain_id)
     return clienttransactions.GetStatutoriesByUnitSuccess(
-        statutory_wise_compliances=statutory_wise_compliances
+        statutory_wise_compliances = statutory_wise_compliances,
+        users = users
     )
+
+def process_save_past_records(
+        db, request, session_user, client_id
+    ):
+    compliance_list = request.compliances
+    for compliance in compliance_list:
+        db.save_past_record(
+            compliance.unit_id, compliance.compliance_id, compliance.due_date,
+            compliance.completion_date, compliance.documents, compliance.validity_date,
+            compliance.completed_by, client_id
+        )
+    return clienttransactions.SavePastRecordsSuccess()
 
 def process_get_compliance_approval_list(db, request, session_user, client_id):
     compliance_approval_list = db.get_compliance_approval_list(

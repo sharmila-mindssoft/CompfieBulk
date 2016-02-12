@@ -1,4 +1,4 @@
-var CLIENT_BASE_URL = "http://127.0.0.1:8080/";
+var CLIENT_BASE_URL = "http://localhost:8080/";
 
 function initClientMirror() {
     var DEBUG = true;
@@ -174,11 +174,11 @@ function initClientMirror() {
     }
 
     function verifyLoggedIn() {
-        sessionToken = getSessionToken()
+        sessionToken = getSessionToken();
         if (sessionToken == null)
-            return false
+            return false;
         else
-            return false
+            return true;
     }
 
     function logout() {
@@ -627,9 +627,9 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    //
-    // Past Records
-    //
+    
+    /* Past Records */
+    
 
     function getPastRecordsFormData(callback) {
         var request = [
@@ -638,18 +638,99 @@ function initClientMirror() {
         clientApiRequest("api/client_transaction", request, callback);
     }
 
-    function getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_id,
-        frequency_id, callback) {
+    function getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_name,
+        compliance_frequency, callback) {
         var request = [
             "GetStatutoriesByUnit", {
                 "unit_id": unit_id,
                 "domain_id": domain_id,
-                "level_1_statutory_id": level_1_statutory_id,
-                "compliance_frequency": frequency_id
+                "level_1_statutory_name": level_1_statutory_name,
+                "compliance_frequency": compliance_frequency
             }
         ]
         clientApiRequest("api/client_transaction", request, callback);
     }
+
+    function getPastRecordsComplianceDict(
+        unit_id, compliance_id, due_date, completion_date, documents, validity_date, completed_by
+    ){
+        return {
+            "unit_id" : unit_id,
+            "compliance_id" : compliance_id,
+            "due_date" : due_date,
+            "completion_date" : completion_date,
+            "documents": documents,
+            "validity_date": validity_date,
+            "completed_by" : completed_by
+        };
+    }   
+
+    function savePastRecords(
+        compliances_list, callback
+    ){
+        var request = [
+            "SavePastRecords",
+            {
+                "compliances" : compliances_list 
+            }
+        ];
+        clientApiRequest("api/client_transaction", request, callback);
+    }
+
+/* Multiple File Upload */
+
+    function uploadFileFormat(size, name, content) {
+        result = {
+            "file_size": parseInt(size),
+            "file_name": name,
+            "file_content": content
+        }
+        return result
+    }
+
+    function convert_to_base64(file, name, size, callback) {
+        var reader = new FileReader();
+        reader.onload = function(readerEvt) {
+            var binaryString = readerEvt.target.result;
+            file_content = btoa(binaryString);
+            callback(file_content, name, size)
+        };
+        reader.readAsBinaryString(file);
+    }
+
+    function uploadFile(fileListener, callback) {
+        var evt = fileListener
+        max_limit =  1024 * 1024 * 50
+        // file max limit 50MB
+        var files = evt.target.files;
+        var results = [];
+        for(var i = 0; i < files.length; i++){
+            var file = files[i];
+            file_name = file.name
+            file_size = file.size
+            if (file_size > max_limit) {
+                callback("File max limit exceeded");
+            }
+            file_content = null;
+            if (file) {
+                convert_to_base64(file, file_name, file_size, function(file_content, name, size) {
+                    if (file_content == null) {
+                        callback("File content is empty")
+                    }
+                    result = uploadFileFormat(
+                            size, name, file_content
+                    );
+                    results.push(result);
+                    if (results.length == files.length){
+                        callback(results)        
+                    }
+                });
+            }
+        }
+        
+    }
+
+    /* Compliance Approal */
 
     function getComplianceApprovalList(callback) {
         var request = [
@@ -728,17 +809,22 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate, callback) {
-        var request = [
-            "GetComplianceStatusChart", {
-                "country_ids": countryIds,
-                "domain_ids": domainIds,
-                "filter_type": filterType,
-                "filter_ids": filterIds,
-                "from_date": fromDate,
-                "to_date": toDate,
+    // function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate, callback) {
+    //     var request = [
+    //         "GetComplianceStatusChart", {
+    //             "country_ids": countryIds,
+    //             "domain_ids": domainIds,
+    //             "filter_type": filterType,
+    //             "filter_ids": filterIds,
+    //             "from_date": fromDate,
+    //             "to_date": toDate,
 
-            }
+    //         }
+
+    function getComplianceStatusChartData(requestData, callback) {
+        var request = [
+            "GetComplianceStatusChart",
+            requestData
         ];
         var callerName = "api/client_dashboard";
         clientApiRequest(callerName, request, callback);
@@ -987,6 +1073,37 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getComplianceActivityReportFilters(callback){
+        var request = [
+            "GetComplianceActivityReportFilters",{}
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getComplianceActivityReportData(
+            user_type, user_id, country_id, domain_id, level_1_statutory_name, unit_id, 
+            compliance_id, from_date, to_date, callback
+        ){
+        var request = [
+            "GetComplianceActivityReport",
+            {
+                "user_type": user_type,
+                "user_id": user_id,
+                "country_id" : country_id,
+                "domain_id": domain_id,
+                "level_1_statutory_name": level_1_statutory_name,
+                "unit_id": unit_id,
+                "compliance_id": compliance_id, 
+                "from_date" : from_date,
+                "to_date" : to_date
+            }
+        ];
+        callerName = "api/client_reports";
+        clientApiRequest(callerName, request, callback);
+
+    }
+
 
     return {
         log: log,
@@ -1056,6 +1173,8 @@ function initClientMirror() {
 
         getPastRecordsFormData: getPastRecordsFormData,
         getStatutoriesByUnit: getStatutoriesByUnit,
+        getPastRecordsComplianceDict : getPastRecordsComplianceDict,
+        savePastRecords : savePastRecords,
 
         getClientReportFilters: getClientReportFilters,
         getUnitwisecomplianceReport: getUnitwisecomplianceReport,
@@ -1090,7 +1209,13 @@ function initClientMirror() {
 
         updateComplianceDetail: updateComplianceDetail,
 
-        getLoginTrace: getLoginTrace
+        getLoginTrace: getLoginTrace,
+
+        uploadFile: uploadFile,
+        uploadFileFormat: uploadFileFormat,
+
+        getComplianceActivityReportFilters: getComplianceActivityReportFilters,
+        getComplianceActivityReportData: getComplianceActivityReportData
     }
 }
 var client_mirror = initClientMirror();

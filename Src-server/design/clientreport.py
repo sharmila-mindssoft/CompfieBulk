@@ -450,12 +450,15 @@ GetComplianceActivityReportFiltersSuccess =  RecordType("GetComplianceActivityRe
 	Field("compliances", VectorType(ComplianceName))
 ])
 
-ActivityCompliance = RecordType("ActivityCompliance", [
-	Field("compliance_name", Text100),
+ActivityData = RecordType("ActivityCompliance", [
 	Field("activity_date", Text20),
 	Field("activity_status", COMPLIANCE_ACTIVITY_STATUS),
 	Field("compliance_status", COMPLIANCE_STATUS),
 	Field("remarks", Text500)
+])
+
+ActivityCompliance = RecordType("ActivityCompliance", [
+	Field("compliance_wise_acitivities", MapType(COMPLIANCE_NAME, VectorType(ActivityData)))
 ])
 
 DomainWiseCompliance = RecordType("DomainWiseCompliance", [
