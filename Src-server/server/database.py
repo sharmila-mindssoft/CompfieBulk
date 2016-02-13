@@ -2065,9 +2065,12 @@ class KnowledgeDatabase(Database):
     #
 
     def convert_base64_to_file(self, file_name, file_content, file_path = None):
-        if file_path is not None:
+        print "inside convert_base64_to_file"
+        if file_path is None:
+            print "file path is None"
             file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
         else:
+            print "file path is not none : {}".format(file_path)
             if not os.path.exists(file_path):
                 os.makedirs(file_path)
             file_path = "%s/%s" % (file_path, file_name)
@@ -3234,9 +3237,11 @@ class KnowledgeDatabase(Database):
         return self.bulk_insert(self.tblUserClients, columns, values_list)
 
     def save_client_logo(self, logo, client_id):
+        print "inside save client logo"
         file_size = logo.file_size
         exten = logo.file_name.split('.')[1]
         file_name = "%d.%s" % (client_id, exten)
+        print "file name : {}".format(file_name)
         self.convert_base64_to_file(file_name, logo.file_content, CLIENT_LOGO_PATH)
         return file_name
 

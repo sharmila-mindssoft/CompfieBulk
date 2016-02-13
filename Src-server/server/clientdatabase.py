@@ -5005,6 +5005,8 @@ class ClientDatabase(Database):
                                         history["reassigned_date"], history["remarks"]
                                     )
                                 )
+                        
+
 
 
 
@@ -5269,6 +5271,9 @@ class ClientDatabase(Database):
                                 )
                             if compliance_name not in compliance_wise_activities:
                                 compliance_wise_activities[compliance_name] = []
+                            print activity_data
+                            activity_data.reverse()
+                            print activity_data
                             compliance_wise_activities[compliance_name] += activity_data
 
                 if compliance_wise_activities:

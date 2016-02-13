@@ -160,7 +160,7 @@ TEMPLATE_PATHS = [
     #     "files/desktop/login/login.html",
     #     "files/mobile/login/login.html", {}
     # ),
-    # ("/knowledge/test", "test_apis.html", "", {}),
+    ("/knowledge/test", "test_apis.html", "", {}),
     ("/knowledge/home", "files/desktop/knowledge/home/home.html", None, {}),
     # (
     #     "/knowledge/custom-controls",
