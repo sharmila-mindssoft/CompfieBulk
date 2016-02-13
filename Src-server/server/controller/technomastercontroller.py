@@ -23,7 +23,7 @@ def get_client_groups(db, request, session_user):
 	user_list = []
 	client_list = []
 
-	user_rows = db.get_users()
+	user_rows = db.get_techno_users()
 	for user_row in user_rows:
 		employee_name = None
 		if user_row[2] == None:
@@ -33,29 +33,7 @@ def get_client_groups(db, request, session_user):
 		user_id = user_row[0]
 		is_active = True if user_row[3]==1 else False
 		user_list.append(core.User(user_id, employee_name, is_active))
-
-	client_rows = db.get_group_company_details()
-	for client_row in client_rows:
-		client_id = client_row[0]
-		group_name = client_row[1]
-		email_id = client_row[2]
-		logo_url = client_row[3]
-		contract_from = db.datetime_to_string(client_row[4])
-		contract_to  = db.datetime_to_string(client_row[5])
-		no_of_user_licence = client_row[6] 
-		total_disk_space = client_row[7]/ 1000000000
-		is_sms_subscribed = True if client_row[8]==1 else False
-		incharge_persons = [int(x) for x in client_row[9].split(",")]
-		is_active = True if client_row[10]==1 else False
-		short_name = client_row[11]
-		country_ids = [int(x) for x in db.get_client_countries(client_id).split(",")]
-		domain_ids = [int(x) for x in db.get_client_domains(client_id).split(",")]
-		date_configurations = db.get_date_configurations(client_id)
-		client_list.append(core.GroupCompanyDetail(client_id, group_name, domain_ids, 
-			country_ids, incharge_persons, logo_url, contract_from, contract_to, 
-			no_of_user_licence, total_disk_space, is_sms_subscribed, email_id, 
-			is_active, short_name, date_configurations))
-
+	client_list = db.get_group_company_details()
 	return technomasters.GetClientGroupsSuccess(countries = country_list, 
 		domains = domain_list, users = user_list, client_list = client_list)
 
@@ -66,6 +44,8 @@ def save_client_group(db, request, session_user):
 		return technomasters.GroupNameAlreadyExists()
 	elif db.is_duplicate_group_username(request.email_id, client_id):
 		return technomasters.EmailIDAlreadyExists()
+	elif db.is_duplicate_short_name(request.short_name, client_id):
+		return technomasters.ShortNameAlreadyExists()
 	else:
 		db.save_client_group(client_id, request, session_user)
 		db.save_date_configurations(client_id, request.date_configurations, 
