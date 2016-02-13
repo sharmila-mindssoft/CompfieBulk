@@ -1967,11 +1967,12 @@ class UpcomingCompliance(object):
 
 class NumberOfCompliances(object):
     def __init__(
-        self, domain_id, year, complied_count,
+        self, domain_id, country_id, year, complied_count,
         delayed_compliance_count,
         inprogress_compliance_count, not_complied_count
     ):
         self.domain_id = domain_id
+        self.country_id = country_id
         self.year = year
         self.complied_count = complied_count
         self.delayed_compliance_count = delayed_compliance_count
@@ -1981,12 +1982,14 @@ class NumberOfCompliances(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "domain_id", "year", "complied_count",
+            "domain_id", "country_id", "year", "complied_count",
             "delayed_compliance_count",
             "inprogress_compliance_count", "not_complied_count"
         ])
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         year = data.get("year")
         year = parse_structure_CustomTextType_20(year)
         complied_count = data.get("complied_count")
@@ -1998,7 +2001,7 @@ class NumberOfCompliances(object):
         not_complied_count = data.get("not_complied_count")
         not_complied_count = parse_structure_UnsignedIntegerType_32(not_complied_count)
         return NumberOfCompliances(
-            domain_id, year, complied_count,
+            domain_id, country_id, year, complied_count,
             delayed_compliance_count,
             inprogress_compliance_count, not_complied_count
         )
@@ -2006,6 +2009,7 @@ class NumberOfCompliances(object):
     def to_structure(self):
         return {
             "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
             "year": to_structure_CustomTextType_20(self.year),
             "complied_count": to_structure_SignedIntegerType_8(self.complied_count),
             "delayed_compliance_count": to_structure_SignedIntegerType_8(self.delayed_compliance_count),

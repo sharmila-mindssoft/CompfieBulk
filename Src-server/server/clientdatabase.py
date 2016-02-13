@@ -1274,30 +1274,28 @@ class ClientDatabase(Database):
             not_applicable_remarks = s.not_applicable_remarks
             if not_applicable_remarks is None :
                 not_applicable_remarks = ""
-            compliances = s.compliances
-            for c in compliances :
-                compliance_id = c.compliance_id
-                opted_status = int(c.compliance_opted_status)
-                remarks = c.compliance_remarks
+            compliance_id = s.compliance_id
+            opted_status = int(s.compliance_opted_status)
+            remarks = s.compliance_remarks
 
-                query = "UPDATE tbl_client_compliances t1 \
-                    INNER JOIN tbl_client_statutories t2 \
-                    ON t1.client_statutory_id = t2.client_statutory_id \
-                    SET \
-                    t1.statutory_opted=%s, \
-                    t1.not_applicable_remarks='%s', \
-                    t1.compliance_opted=%s, \
-                    t1.compliance_remarks='%s',\
-                    t1.updated_by=%s, \
-                    t1.updated_on='%s' \
-                    WHERE t2.unit_id = %s \
-                    AND t1.client_statutory_id = %s \
-                    AND t1.compliance_id = %s" % (
-                        statutory_opted_status, not_applicable_remarks,
-                        opted_status, remarks, session_user, updated_on,
-                        unit_id, client_statutory_id, compliance_id
-                    )
-                self.execute(query)
+            query = "UPDATE tbl_client_compliances t1 \
+                INNER JOIN tbl_client_statutories t2 \
+                ON t1.client_statutory_id = t2.client_statutory_id \
+                SET \
+                t1.statutory_opted=%s, \
+                t1.not_applicable_remarks='%s', \
+                t1.compliance_opted=%s, \
+                t1.compliance_remarks='%s',\
+                t1.updated_by=%s, \
+                t1.updated_on='%s' \
+                WHERE t2.unit_id = %s \
+                AND t1.client_statutory_id = %s \
+                AND t1.compliance_id = %s" % (
+                    statutory_opted_status, not_applicable_remarks,
+                    opted_status, remarks, session_user, updated_on,
+                    unit_id, client_statutory_id, compliance_id
+                )
+            self.execute(query)
 
         return clienttransactions.UpdateStatutorySettingsSuccess()
 
@@ -1415,7 +1413,7 @@ class ClientDatabase(Database):
         result = self.convert_to_dict(rows, columns)
         return self.return_users(result)
 
-    def get_statutory_wise_compliances( 
+    def get_statutory_wise_compliances(
         self, unit_id, domain_id, level_1_statutory_name, frequency_name
     ):
         condition = "1"
@@ -1442,7 +1440,7 @@ class ClientDatabase(Database):
                 WHERE ac.compliance_id IN (%s) AND ac.is_active = %d \
                 AND %s" % (
                     self.tblAssignedCompliances, self.tblUsers, self.tblCompliances,
-                    self.tblComplianceFrequency, self.tblComplianceRepeatType, compliance_ids, 
+                    self.tblComplianceFrequency, self.tblComplianceRepeatType, compliance_ids,
                     1, condition
                 )
         client_compliance_rows = self.select_all(query)
@@ -1452,7 +1450,7 @@ class ClientDatabase(Database):
             columns = [
                 "compliance_id", "statutory_dates", "due_date", "assignee", "employee_code",
                 "employee_name", "statutory_mapping", "document_name", "compliance_task",
-                "compliance_description", "repeat_type_id",  "repeat_type", "repeat_every", 
+                "compliance_description", "repeat_type_id",  "repeat_type", "repeat_every",
                 "frequency", "frequency_id"
             ]
             client_compliance_rows = self.convert_to_dict(client_compliance_rows, columns)
@@ -1462,7 +1460,7 @@ class ClientDatabase(Database):
                     if statutories[0].strip() != level_1_statutory_name.strip():
                         continue
                 if statutories[0].strip() not in level_1_statutory_wise_compliances:
-                    level_1_statutory_wise_compliances[statutories[0].strip()] = []   
+                    level_1_statutory_wise_compliances[statutories[0].strip()] = []
 
                 compliance_name = "%s - %s" % (
                     compliance["document_name"], compliance["compliance_task"]
@@ -1476,7 +1474,7 @@ class ClientDatabase(Database):
                     if compliance["repeat_type_id"] == 1:
                         due_dates, statutory_dates = self.calculate_due_date(
                             repeat_by = 1,
-                            repeat_every = compliance["repeat_every"], 
+                            repeat_every = compliance["repeat_every"],
                             due_date = compliance["due_date"]
                         )
                     elif compliance["repeat_type_id"] == 2:
@@ -1486,22 +1484,22 @@ class ClientDatabase(Database):
                     elif compliance["repeat_type_id"] == 3:
                         due_dates, statutory_dates = self.calculate_due_date(
                             repeat_by = 3,
-                            repeat_every = compliance["repeat_every"], 
+                            repeat_every = compliance["repeat_every"],
                             due_date = compliance["due_date"]
                         )
                 elif (compliance["frequency_id"] == 1):
                     pass
-                
+
                 for due_date in due_dates:
                     if not self.is_already_completed_compliance(
                         due_date, compliance["compliance_id"], unit_id
                     ):
                         level_1_statutory_wise_compliances[statutories[0].strip()].append(
                             clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
-                                compliance["compliance_id"], compliance_name, 
-                                compliance["compliance_description"], 
-                                core.COMPLIANCE_FREQUENCY(compliance["frequency"]), 
-                                statutory_dates_list, self.datetime_to_string(due_date), 
+                                compliance["compliance_id"], compliance_name,
+                                compliance["compliance_description"],
+                                core.COMPLIANCE_FREQUENCY(compliance["frequency"]),
+                                statutory_dates_list, self.datetime_to_string(due_date),
                                 assingee_name, compliance["assignee"]
                             )
                         )
@@ -1516,7 +1514,7 @@ class ClientDatabase(Database):
 
         return statutory_wise_compliances
 
-                
+
     def is_already_completed_compliance(
             self, due_date, compliance_id, unit_id
         ):
@@ -1531,7 +1529,7 @@ class ClientDatabase(Database):
             return False
 
     def calculate_due_date(
-            self, statutory_dates = None, repeat_by = None, repeat_every = None, due_date = None 
+            self, statutory_dates = None, repeat_by = None, repeat_every = None, due_date = None
         ):
         def is_future_date(test_date):
             result = False
@@ -1613,7 +1611,7 @@ class ClientDatabase(Database):
         self.increment( self.tblClientSettings, columns, condition, value = file_size)
 
     def save_past_record(
-            self, unit_id, compliance_id, due_date, completion_date, documents, 
+            self, unit_id, compliance_id, due_date, completion_date, documents,
             validity_date, completed_by, client_id
         ):
         is_uploading_file = False
@@ -1651,7 +1649,7 @@ class ClientDatabase(Database):
         if validity_date:
             next_due_date = self.string_to_datetime(validity_date)
 
-        # Getting Approval and Concurrence Persons    
+        # Getting Approval and Concurrence Persons
         concur_approve_columns = "approval_person"
         if is_two_level:
             concur_approve_columns += ", concurrence_person"
@@ -1662,19 +1660,19 @@ class ClientDatabase(Database):
             self.tblAssignedCompliances, concur_approve_columns, condition
         )
         concurred_by = 0
-        approved_by = 0 
+        approved_by = 0
         if rows:
             approved_by = rows [0][0]
             if is_two_level:
                 concurred_by = rows[0][1]
         columns = [
-            "compliance_history_id", "unit_id", "compliance_id", "due_date", "completion_date", 
-            "validity_date", "next_due_date", "completed_by", "completed_on", 
+            "compliance_history_id", "unit_id", "compliance_id", "due_date", "completion_date",
+            "validity_date", "next_due_date", "completed_by", "completed_on",
             "approve_status", "approved_by", "approved_on"
-        ]          
+        ]
         values = [
-            compliance_history_id, unit_id, compliance_id, self.string_to_datetime(due_date), 
-            completion_date, self.string_to_datetime(validity_date), 
+            compliance_history_id, unit_id, compliance_id, self.string_to_datetime(due_date),
+            completion_date, self.string_to_datetime(validity_date),
             next_due_date, completed_by, completion_date, 1, approved_by, completion_date
         ]
         if is_two_level:
@@ -1700,7 +1698,7 @@ class ClientDatabase(Database):
         columns = "two_levels_of_approval"
         rows = self.get_data(self.tblClientSettings, columns, "1")
         return rows[0][0]
-        
+
 #
 #   Compliance Approval
 #
@@ -2111,21 +2109,24 @@ class ClientDatabase(Database):
         domains = self.get_user_domains(user_id)
         domain_ids = domains.split(',')
         filter_type = request.filter_type
-        chart_year = request.chart_year
-        # domain_ids = request.domain_ids
-        year_condition = self.get_client_domain_configuration(chart_year)[1]
-        year_range_qry = ""
-        for i, y in enumerate(year_condition):
-            if i == 0 :
-                year_range_qry = y
-            else :
-                year_range_qry += "OR %s" % (y)
-        year_range_qry = "(%s)" % year_range_qry
 
+        # domain_ids = request.domain_ids
+        year_range_qry = ""
         filter_ids = country_ids
         if chart_type is None :
             from_date = request.from_date
             to_date = request.to_date
+            chart_year = request.chart_year
+            print chart_year
+            year_condition = self.get_client_domain_configuration(chart_year)[1]
+
+            for i, y in enumerate(year_condition):
+                if i == 0 :
+                    year_range_qry = y
+                else :
+                    year_range_qry += "OR %s" % (y)
+            year_range_qry = "AND (%s)" % year_range_qry
+
         else :
             from_date = None
             to_date = None
@@ -2189,17 +2190,9 @@ class ClientDatabase(Database):
             INNER JOIN tbl_units T4 \
             ON T1.unit_id = T4.unit_id \
             AND T3.country_id = T4.country_id \
-            INNER JOIN tbl_divisions T5 \
-            ON T4.division_id = T5.division_id \
-            INNER JOIN tbl_legal_entities T6 \
-            ON T4.legal_entity_id = T6.legal_entity_id \
-            INNER JOIN tbl_business_groups T7 \
-            ON T4.business_group_id = T7.business_group_id \
-            INNER JOIN tbl_countries T8 \
-            ON T3.country_id = T8.country_id \
             WHERE 1 \
-            AND %s \
-            AND %s \
+            %s \
+            %s \
             %s \
             AND T3.country_id IN %s \
             AND T3.domain_id IN %s  \
@@ -2216,6 +2209,7 @@ class ClientDatabase(Database):
                 group_by_name,
                 group_by_name
             )
+
         rows = self.select_all(query)
         columns = ["filter_type", "country_id", "domain_id", "year", "month", "compliances"]
         return filter_ids, self.convert_to_dict(rows, columns)
@@ -2258,16 +2252,16 @@ class ClientDatabase(Database):
 
         filter_ids = []
 
-        inprogress_qry = " T1.due_date > CURDATE() \
+        inprogress_qry = " AND T1.due_date > CURDATE() \
                 AND T1.approve_status is NULL"
 
-        complied_qry = " T1.due_date >= T1.completion_date \
+        complied_qry = " AND T1.due_date >= T1.completion_date \
                 AND T1.approve_status = 1"
 
-        delayed_qry = " T1.due_date < T1.completion_date \
+        delayed_qry = " AND T1.due_date < T1.completion_date \
                 AND T1.approve_status = 1"
 
-        not_complied_qry = " T1.due_date < CURDATE() \
+        not_complied_qry = " AND T1.due_date < CURDATE() \
                 AND T1.approve_status is NULL "
 
         filter_ids, inprogress = self.get_compliance_status(
@@ -2294,7 +2288,7 @@ class ClientDatabase(Database):
             )
 
     def get_client_domain_configuration(
-        self, current_year
+        self, current_year=None
     ):
         where_qry = ""
         # if country_id is not None and domain_id is not None :
@@ -2318,19 +2312,21 @@ class ClientDatabase(Database):
             info["domain_id"] = domain_id
             year_list = self.calculate_years(int(d["period_from"]), int(d["period_to"]))
             years_list = []
-            for y in year_list :
-                if current_year == y[0]:
-                    years_list.append(y)
-                    if len(y) == 1 :
-                        y.append(0)
-                    year_condition.append(
-                        cond % (country_id, domain_id, str(tuple(y)))
-                    )
+            if current_year is None :
+                years_list = year_list
+            else :
+                for y in year_list :
+                    if current_year == y[0]:
+                        years_list.append(y)
+                        if len(y) == 1 :
+                            y.append(0)
+                        year_condition.append(
+                            cond % (country_id, domain_id, str(tuple(y)))
+                        )
             info["years"] = years_list
             info["period_from"] = int(d["period_from"])
             info["period_to"] = int(d["period_to"])
             years_range.append(info)
-
         return (years_range, year_condition)
 
     def calculate_year_wise_count(
@@ -2362,32 +2358,26 @@ class ClientDatabase(Database):
                 period_to = int(y["period_to"])
                 for index, i in enumerate(years_range) :
 
-                    compliance_sum = year_wise.get(i[0])
-
-                    if compliance_sum is None :
-                        compliance_sum = [0, 0, 0, 0]
-                        compliance_count = 0
-                    else :
-                        if status == "inprogress":
-                            compliance_count = compliance_sum[0]
-                        elif status == "complied" :
-                            compliance_count = compliance_sum[1]
-                        elif status == "delayed" :
-                            compliance_count = compliance_sum[2]
-                        elif status == "not_complied":
-                            compliance_count = compliance_sum[3]
-
+                    compliance_count_info = year_wise.get(i[0])
+                    if compliance_count_info is None :
+                        compliance_count_info = {
+                            "inprogress_count": 0,
+                            "complied_count": 0,
+                            "delayed_count": 0,
+                            "not_complied_count": 0,
+                        }
+                    compliance_count = 0
                     for c in compliances :
-                        if c["year"] not in (i) :
+                        if int(c["year"]) not in (i) :
                             continue
                         if (
                             filter_type == int(c["filter_type"]) and
-                            country_id == c["country_id"] and
+                            country_id == int(c["country_id"]) and
                             domain_id == int(c["domain_id"])
                         ):
                             month = int(c["month"])
 
-                            if i[1] != 0 :
+                            if len(i) == 2 :
                                 if (
                                     c["year"] == i[0] and
                                     month in [
@@ -2406,7 +2396,7 @@ class ClientDatabase(Database):
 
                             else :
                                 if (
-                                    c["year"] == i[0] and
+                                    int(c["year"]) == i[0] and
                                     month in [
                                         int(x) for x in range(period_from, period_to + 1)
                                     ]
@@ -2414,15 +2404,17 @@ class ClientDatabase(Database):
                                     compliance_count += int(c["compliances"])
 
                     if status == "inprogress":
-                        compliance_sum[0] = compliance_count
+                        compliance_count_info["inprogress_count"] += compliance_count
                     elif status == "complied" :
-                        compliance_sum[1] = compliance_count
+                        compliance_count_info["complied_count"] += compliance_count
                     elif status == "delayed" :
-                        compliance_sum[2] = compliance_count
+                        compliance_count_info["delayed_count"] += compliance_count
                     elif status == "not_complied":
-                        compliance_sum[3] = compliance_count
+                        compliance_count_info["not_complied_count"] += compliance_count
 
-                    year_wise[i[0]] = compliance_sum
+                    compliance_count_info["domain_id"] = domain_id
+                    compliance_count_info["country_id"] = country_id
+                    year_wise[i[0]] = compliance_count_info
 
                 country[domain_id] = year_wise
                 calculated_data[filter_type] = country
@@ -2446,23 +2438,26 @@ class ClientDatabase(Database):
                 if domain_wise is None :
                     domain_wise = {}
 
-                compliance_sum = domain_wise.get(domain_id)
-                if compliance_sum is None :
-                    compliance_sum = [0, 0, 0, 0]
-                    compliance_count = 0
-                else :
-                    compliance_count = compliance_sum[status]
+                compliance_count_info = domain_wise.get(domain_id)
+                if compliance_count_info is None :
+                    compliance_count_info = {
+                        "inprogress_count": 0,
+                        "complied_count": 0,
+                        "delayed_count": 0,
+                        "not_complied_count": 0,
+                    }
 
-                compliance_count += int(i["compliances"])
-                compliance_sum[status] = compliance_count
-                domain_wise[domain_id] = compliance_sum
+                compliance_count_info[status] += int(i["compliances"])
+                compliance_count_info["domain_id"] = i["domain_id"]
+                compliance_count_info["country_id"] = i["country_id"]
+                domain_wise[domain_id] = compliance_count_info
                 calculated_data[filter_type] = domain_wise
             return calculated_data
 
-        calculated_data = compliance_count(inprogress, 0)
-        calculated_data = compliance_count(complied, 1)
-        calculated_data = compliance_count(delayed, 2)
-        calculated_data = compliance_count(not_complied, 3)
+        calculated_data = compliance_count(inprogress, "inprogress_count")
+        calculated_data = compliance_count(complied, "complied_count")
+        calculated_data = compliance_count(delayed, "delayed_count")
+        calculated_data = compliance_count(not_complied, "not_complied_count")
 
         current_year = datetime.datetime.now().year
         filter_type_wise = {}
@@ -2472,13 +2467,15 @@ class ClientDatabase(Database):
 
             for k, v in value.iteritems() :
                 year = current_year
-                inprogress = v[0]
-                complied = v[1]
-                delayed = v[2]
-                not_complied = v[3]
+                inprogress = v["inprogress_count"]
+                complied = v["complied_count"]
+                delayed = v["delayed_count"]
+                not_complied = v["not_complied_count"]
+                country_id = v["country_id"]
+                domain_id = v["domain_id"]
                 if len(compliance_list) == 0 :
                     compliance_count = core.NumberOfCompliances(
-                        int(k), str(year), complied,
+                        domain_id, country_id, str(year), complied,
                         delayed, inprogress, not_complied
                     )
                     compliance_list.append(compliance_count)
@@ -2535,12 +2532,14 @@ class ClientDatabase(Database):
                 compliance_list = []
                 for k , v in val.iteritems():
                     year = k
-                    inprogress = v[0]
-                    complied = v[1]
-                    delayed = v[2]
-                    not_complied = v[3]
+                    inprogress = v["inprogress_count"]
+                    complied = v["complied_count"]
+                    delayed = v["delayed_count"]
+                    not_complied = v["not_complied_count"]
+                    country_id = v["country_id"]
+                    domain_id = v["domain_id"]
                     compliance_count = core.NumberOfCompliances(
-                        int(key), str(year), complied,
+                        domain_id, country_id, str(year), complied,
                         delayed, inprogress, not_complied
                     )
                     compliance_list.append(compliance_count)
@@ -2818,7 +2817,7 @@ class ClientDatabase(Database):
                 not_complied_qry, request, user_id, chart_type
             )
 
-        year_info = self.get_client_domain_configuration()
+        year_info = self.get_client_domain_configuration()[0]
         calculated_data = {}
         calculated_data = self.calculate_year_wise_count(
             calculated_data, year_info, delayed,
@@ -2838,12 +2837,14 @@ class ClientDatabase(Database):
                 compliance_list = []
                 for k , v in val.iteritems():
                     year = k
-                    inprogress = 0
-                    complied = 0
-                    delayed = v[2]
-                    not_complied = v[3]
+                    inprogress = v["inprogress_count"]
+                    complied = v["complied_count"]
+                    delayed = v["delayed_count"]
+                    not_complied = v["not_complied_count"]
+                    country_id = v["country_id"]
+                    domain_id = v["domain_id"]
                     compliance_count = core.NumberOfCompliances(
-                        int(key), str(year), complied,
+                        domain_id, country_id, str(year), complied,
                         delayed, inprogress, not_complied
                     )
                     compliance_list.append(compliance_count)
@@ -2891,7 +2892,7 @@ class ClientDatabase(Database):
 
         date_qry = ""
 
-        year_info = self.get_client_domain_configuration()
+        year_info = self.get_client_domain_configuration()[0]
 
         delayed_details = self.compliance_details_query(
             domain_ids, date_qry, delayed_status_qry,
@@ -3030,7 +3031,7 @@ class ClientDatabase(Database):
 
         date_qry = ""
 
-        year_info = self.get_client_domain_configuration()
+        year_info = self.get_client_domain_configuration()[0]
 
         not_complied_details = self.compliance_details_query(
             domain_ids, date_qry, not_complied_status_qry,
@@ -5086,7 +5087,7 @@ class ClientDatabase(Database):
                 tbl_forms f ON \
                 al.form_id = f.form_id \
                 WHERE \
-                al.form_id in (26, 27)" 
+                al.form_id in (26, 27)"
 
         rows = self.select_all(query)
         columns = ["created_on", "form_name", "action"]
@@ -5106,7 +5107,7 @@ class ClientDatabase(Database):
 #   Compliance Activity Report
 #
     def get_compliance_activity_report(
-        self, country_id, domain_id, user_type, user_id, unit_id, compliance_id, 
+        self, country_id, domain_id, user_type, user_id, unit_id, compliance_id,
         level_1_statutory_name, from_date, to_date, session_user, client_id
     ):
         unit_ids = unit_id
@@ -5122,13 +5123,13 @@ class ClientDatabase(Database):
                 user_unit_condition = "user_id = '%d'" % user_id
                 user_unit_columns = "group_concat(unit_id)"
                 rows = self.get_data(self.tblUserUnits, user_unit_columns, user_unit_condition)
-                if rows: 
+                if rows:
                     user_unit_ids = rows[0][0]
                 user_unit_ids = [int(x) for x in user_unit_ids.split(",")]
                 unit_ids_list = list(set(user_unit_ids).intersection(session_unit_ids))
             else:
                 unit_ids_list = session_unit_ids
-        
+
         level_1_statutories_list = []
         if level_1_statutory_name is not None:
             level_1_statutories_list = [level_1_statutory_name]
@@ -5211,9 +5212,9 @@ class ClientDatabase(Database):
                             for compliance_activity in  compliance_activity_rows:
                                 activity_data.append(
                                     clientreport.ActivityData(
-                                        activity_date = self.datetime_to_string(compliance_activity["activity_date"]), 
-                                        activity_status = core.COMPLIANCE_ACTIVITY_STATUS(compliance_activity["activity_status"]), 
-                                        compliance_status = core.COMPLIANCE_STATUS(compliance_activity["compliance_status"]), 
+                                        activity_date = self.datetime_to_string(compliance_activity["activity_date"]),
+                                        activity_status = core.COMPLIANCE_ACTIVITY_STATUS(compliance_activity["activity_status"]),
+                                        compliance_status = core.COMPLIANCE_STATUS(compliance_activity["compliance_status"]),
                                         remarks = compliance_activity["remarks"]
                                     )
                                 )
@@ -5228,8 +5229,8 @@ class ClientDatabase(Database):
             if len(level_1_statutory_wise_activities) > 0:
                 unit_wise_compliances.append(
                     clientreport.Activities(
-                        unit_name = unit_name, 
-                        address = address, 
+                        unit_name = unit_name,
+                        address = address,
                         statutory_wise_compliances = level_1_statutory_wise_activities
                     )
                 )
