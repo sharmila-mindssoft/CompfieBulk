@@ -4749,7 +4749,7 @@ class KnowledgeDatabase(Database):
         join_conditions = ["tn.notification_id = tns.notification_id"]
         where_condition = " tns.user_id ='%d'"%(session_user)
         rows = self.get_data_from_multiple_tables(columns, tables,
-            aliases, join_type, join_conditions, where_condition, client_id)
+            aliases, join_type, join_conditions, where_condition)
         notifications = []
         for row in rows:
             notifications.append(general.Notification(row[0], row[1], row[2],

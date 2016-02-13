@@ -31,7 +31,7 @@ function initialize(){
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getStatutoryNotificationsListFilters(
+    client_mirror.getTaskApplicabilityStatusFilters(
         function (error, response){
             if(error == null){
                 onSuccess(response);
@@ -99,14 +99,14 @@ $("#show-button").click(function(){
         function onSuccess(data){
             console.log(data);
             $(".grid-table-rpt").show();
-            loadStatutoryNotificationsList(data['notifications']);     
+            loadTaskApplicabilityStatusList(data['notifications']);     
         }
         function onFailure(error){
             console.log(error);
         }
 
-        client_mirror.getStatutoryNotificationsListReport(
-            countriesNameVal, domainNameVal, businessgroupid, legalentityid, divisionid, unitid, level1id,
+        client_mirror.getComplianceTaskApplicabilityStatusReport(
+            countries, domain, businessgroupid, legalentityid, divisionid, unitid, level1id,
             function (error, response){
                 if(error == null){
                     onSuccess(response);
@@ -120,7 +120,7 @@ $("#show-button").click(function(){
 });
 
 
-function loadStatutoryNotificationsList(data){
+function loadTaskApplicabilityStatusList(data){
     $('.tbody-statutory-notifications-list tr').remove();
     var sno = 0;
     console.log(data);
