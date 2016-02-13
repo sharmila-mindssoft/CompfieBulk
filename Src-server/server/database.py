@@ -23,6 +23,7 @@ __all__ = [
 ROOT_PATH = os.path.join(os.path.split(__file__)[0])
 KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
 FORMAT_DOWNLOAD_URL = "knowledge/compliance_format"
+CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
 
 class Database(object) :
     def __init__(
@@ -2063,8 +2064,14 @@ class KnowledgeDatabase(Database):
     # save statutory mapping
     #
 
-    def convert_base64_to_file(self, file_name, file_content):
-        file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
+    def convert_base64_to_file(self, file_name, file_content, file_path = None):
+        if file_path is not None:
+            file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
+        else:
+            if not os.path.exists(file_path):
+                os.makedirs(file_path)
+            file_path = "%s/%s" % (file_path, file_name)
+            print "file_path:{}".format(file_path)
         self.remove_uploaded_file(file_path)
         new_file = open(file_path, "wb")
         new_file.write(file_content.decode('base64'))
@@ -2073,7 +2080,6 @@ class KnowledgeDatabase(Database):
     def remove_uploaded_file(self, file_path):
         if os.path.exists(file_path) :
             os.remove(file_path)
-
 
     def save_statutory_mapping(self, data, created_by) :
         country_id = data.country_id
@@ -3177,8 +3183,9 @@ class KnowledgeDatabase(Database):
         "total_disk_space", "is_sms_subscribed", "url_short_name",
         "incharge_persons", "is_active", "created_by", "created_on",
         "updated_by", "updated_on"]
+        file_name = self.save_client_logo(client_group.logo, client_id)
         values = [client_id, client_group.group_name, client_group.email_id,
-        client_group.logo, 1200, contract_from, contract_to,
+        file_name, 1200, contract_from, contract_to,
         client_group.no_of_user_licence, client_group.file_space * 1000000000,
         is_sms_subscribed, client_group.short_name,
         ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
@@ -3193,11 +3200,11 @@ class KnowledgeDatabase(Database):
         contract_from = self.string_to_datetime(client_group.contract_from)
         contract_to = self.string_to_datetime(client_group.contract_to)
         is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
-
+        file_name = self.save_client_logo(request.logo, client_group.client_id)
         columns = ["group_name", "logo_url", "logo_size", "contract_from",
         "contract_to", "no_of_user_licence", "total_disk_space", "is_sms_subscribed",
         "incharge_persons", "is_active", "updated_by", "updated_on"]
-        values = [client_group.group_name, client_group.logo,1200, contract_from, contract_to,
+        values = [client_group.group_name, file_name, 1200, contract_from, contract_to,
         client_group.no_of_user_licence, client_group.file_space * 1000000000,
         is_sms_subscribed,
         ','.join(str(x) for x in client_group.incharge_persons),1, session_user,
@@ -3225,6 +3232,13 @@ class KnowledgeDatabase(Database):
             values_tuple = (client_id, incharge_person)
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblUserClients, columns, values_list)
+
+    def save_client_logo(self, logo, client_id):
+        file_size = logo.file_size
+        exten = logo.file_name.split('.')[1]
+        file_name = "%d.%s" % (client_id, exten)
+        self.convert_base64_to_file(file_name, logo.file_content, CLIENT_LOGO_PATH)
+        return file_name
 
     def update_client_group_status(self, client_id, is_active, session_user):
         is_active = 1 if is_active != False else 0
@@ -4748,11 +4762,11 @@ class KnowledgeDatabase(Database):
         join_conditions = ["tn.notification_id = tns.notification_id"]
         where_condition = " tns.user_id ='%d'"%(session_user)
         rows = self.get_data_from_multiple_tables(columns, tables,
-            aliases, join_type, join_conditions, where_condition, client_id)
+            aliases, join_type, join_conditions, where_condition)
         notifications = []
         for row in rows:
             notifications.append(general.Notification(row[0], row[1], row[2],
-                bool(row[4]), self.datetime_to_string(row[3])))
+                bool(row[4]), self.datetime_to_string_time(row[3])))
         return notifications
 
     def update_notification_status(self, notification_id, has_read,
