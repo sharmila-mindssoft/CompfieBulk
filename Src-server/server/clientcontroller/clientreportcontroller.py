@@ -42,6 +42,12 @@ def process_client_report_requests(request, db) :
 		return get_reassignedhistory_report_filters(db, request, session_user, client_id) 
 	elif type(request) is clientreport.GetReassignedHistoryReport:
 		return get_reassignedhistory_report(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetLoginTrace:
+		return get_login_trace(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetComplianceActivityReportFilters:
+		return get_compliance_activity_report_filters(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetComplianceActivityReport:
+		return get_compliance_activity_report(db, request, session_user, client_id)
 
 
 def get_client_report_filters(db, request, session_user, client_id):
@@ -146,7 +152,9 @@ def get_compliancedetails_report_filters(db, request, session_user, client_id):
 	users_list = db.get_client_users(client_id);
 
 	return clientreport.GetComplianceDetailsReportFiltersSuccess(
-		countries = country_list, domains = domain_list, level_1_statutories = level_1_statutories_list, units = unit_list, Compliances = compliances_list, users = users_list)
+		countries = country_list, domains = domain_list, level_1_statutories = level_1_statutories_list, 
+		units = unit_list, Compliances = compliances_list, users = users_list
+	)
 
 def get_statutory_notifications_list_filters(db, request, session_user, client_id):
 	user_company_info = db.get_user_company_details( session_user, client_id)
@@ -261,8 +269,6 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
 	user_id = request.user_id
 	from_date = request.from_date
 	to_date = request.to_date
-
-	
 	
 	if level_1_statutory_id is None :
 		level_1_statutory_id = '%'
@@ -277,8 +283,39 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
 	)
 	return clientreport.GetReassignedHistoryReportSuccess(reassigned_history_list)
 
+def get_login_trace(db, request, session_user, client_id):
+	users_list = db.get_client_users(client_id);
+	logintracelist = db.get_login_trace(client_id, session_user)
+	return clientreport.GetLoginTraceSuccess(users = users_list,  login_trace = logintracelist)
 
+def get_compliance_activity_report_filters(db, request, session_user, client_id):
+	user_company_info = db.get_user_company_details( session_user, client_id)
+	unit_ids = user_company_info[0]
+	domain_list = db.get_domains_for_user(session_user, client_id)
+	unit_list = db.get_units_for_user(unit_ids, client_id)
+	level_1_statutories_list = db.get_client_level_1_statutoy(session_user, client_id)
+	compliances_list = db.get_client_compliances(session_user, client_id)
+	country_list = db.get_countries_for_user(session_user, client_id)
+	users_list = db.get_client_users(client_id);
+	return clientreport.GetComplianceActivityReportFiltersSuccess(
+		users = users_list, domains = domain_list, level_1_statutories = level_1_statutories_list, 
+		units = unit_list, compliances = compliances_list, countries = country_list
+	)
 
-	
-
-	
+def get_compliance_activity_report(db, request, session_user, client_id):
+	country_id = request.country_id
+	domain_id = request.domain_id
+	unit_id = request.unit_id
+	user_id = request.user_id
+	user_type = request.user_type
+	from_date = request.from_date
+	to_date = request.to_date
+	compliance_id = request.compliance_id
+	level_1_statutory_name = request.level_1_statutory_name
+	activities = db.get_compliance_activity_report(
+		country_id, domain_id, user_type, user_id, unit_id, compliance_id, level_1_statutory_name, 
+		from_date, to_date, session_user, client_id
+	)
+	return clientreport.GetComplianceActivityReportSuccess(
+		activities = activities
+	)

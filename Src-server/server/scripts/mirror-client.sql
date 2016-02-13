@@ -333,6 +333,7 @@ CREATE TABLE `tbl_compliance_history` (
   `due_date` date DEFAULT NULL,
   `completion_date` date DEFAULT NULL,
   `documents` longtext,
+  `document_size` int(11) DEFAULT NULL,
   `validity_date` date DEFAULT NULL,
   `next_due_date` date DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
