@@ -1,7 +1,7 @@
 from protocol import login, core, technotransactions
 from generalcontroller import validate_user_session
 
-__all__ =[ 
+__all__ =[
     "process_techno_transaction_request"
 ]
 
@@ -57,8 +57,9 @@ def process_get_assigned_statutory_wizard_two(db, request_frame, user_id):
     domain_id = request_frame.domain_id
     country_id = request_frame.country_id
     unit_id = request_frame.unit_id
+    print unit_id
     return db.get_assign_statutory_wizard_two(
-        country_id, geography_id, industry_id, 
+        country_id, geography_id, industry_id,
         domain_id, unit_id, user_id
     )
 

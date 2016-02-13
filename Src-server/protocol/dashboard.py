@@ -151,7 +151,8 @@ class GetComplianceStatusChart(Request):
         self,
         country_ids, domain_ids,
         filter_type, filter_ids,
-        from_date, to_date
+        from_date, to_date,
+        chart_year
     ):
         self.country_ids = country_ids
         self.domain_ids = domain_ids
@@ -159,13 +160,15 @@ class GetComplianceStatusChart(Request):
         self.filter_ids = filter_ids
         self.from_date = from_date
         self.to_date = to_date
+        self.chart_year = chart_year
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "country_ids", "domain_ids",
             "filter_type", "filter_ids",
-            "from_date", "to_date"
+            "from_date", "to_date",
+            "chart_year"
         ])
         country_ids = data.get("country_ids")
         country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
@@ -174,15 +177,18 @@ class GetComplianceStatusChart(Request):
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_ids = data.get("filter_ids")
-        filter_ids = parse_structure_VectorType_SignedIntegerType_8(filter_ids)
+        filter_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(filter_ids)
         from_date = data.get("from_date")
         from_date = parse_structure_OptionalType_Text(from_date)
         to_date = data.get("to_date")
         to_date = parse_structure_OptionalType_Text(to_date)
+        chart_year = data.get("chart_year")
+        chart_year = parse_structure_UnsignedIntegerType_32(chart_year)
         return GetComplianceStatusChart(
             country_ids, domain_ids,
             filter_type, filter_ids,
             from_date, to_date,
+            chart_year
         )
 
     def to_inner_structure(self):
@@ -190,9 +196,10 @@ class GetComplianceStatusChart(Request):
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
-            "filter_ids": to_structure_VectorType_SignedIntegerType_8(self.filter_ids),
+            "filter_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.filter_ids),
             "from_date": to_structure_OptionalType_Text(self.from_date),
             "to_date": to_structure_OptionalType_Text(self.to_date),
+            "chart_year": to_structure_UnsignedIntegerType_32(self.chart_year)
         }
 
 class GetEscalationsChart(Request):
@@ -380,21 +387,25 @@ class GetComplianceStatusDrillDownData(Request):
         to_date = data.get("to_date")
         to_date = parse_structure_OptionalType_Text(to_date)
         year = data.get("year")
-        year = parse_structure_Text(year)
+        year = parse_structure_UnsignedIntegerType_32(year)
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
         filter_id = parse_structure_SignedIntegerType_8(filter_id)
         compliance_status = data.get("compliance_status")
         compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
-        return GetComplianceStatusDrillDownData(domain_ids, from_date, to_date, year, filter_type, filter_id, compliance_status)
+        return GetComplianceStatusDrillDownData(
+            domain_ids, from_date, to_date,
+            year, filter_type, filter_id,
+            compliance_status
+        )
 
     def to_inner_structure(self):
         return {
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "from_date": to_structure_OptionalType_Text(self.from_date),
             "to_date": to_structure_OptionalType_Text(self.to_date),
-            "year": to_structure_Text(self.year),
+            "year": parse_structure_UnsignedIntegerType_32(self.year),
             "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
             "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
             "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
