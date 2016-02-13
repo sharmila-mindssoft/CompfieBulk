@@ -3725,6 +3725,8 @@ On Success
                         "compliance_name": DOCUMENT_NAME - COMPLIANCE_TASK_NAME,
                         "compliance_description": String,
                         "compliance_frequency": COMPLIANCE_FREQUENCY,
+                        "due_date": DATE,
+                        "assignee" : EMPLOYEE_CODE - EMPLOYEENAME,
                         "statutory_date":[
                             {
                                 "statutory_day": int,
@@ -3745,11 +3747,13 @@ On Success
     {
         "compliances":[
             {
-                "compliance_id": COMPLIANCE_ID,
-                "due_date" : Date,
-                "completion_date": Date,
-                "validity_date": Date,
-                "documents": [String,]
+              "unit_id" : UNIT_ID,
+              "compliance_id" : COMPLIANCE_ID,
+              "due_date" : DATE,
+              "completion_date" : DATE,
+              "documents": [DOCUMENT,],
+              "validity_date": DATE,
+              "completed_by" : USER_ID
             },
         ]
     }
@@ -4571,6 +4575,7 @@ On Success
         "users": [User,],
         "login_trace": [
             {
+                "user_id": USER_ID
                 "date_and_time": TIMESTAMP,
                 "action": String
             },

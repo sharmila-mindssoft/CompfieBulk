@@ -7,6 +7,7 @@ from database import Database
 import json
 import datetime
 from datetime import timedelta
+from dateutil import relativedelta
 from types import *
 
 from types import *
@@ -15,7 +16,7 @@ __all__ = [
     "ClientDatabase"
 ]
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
-KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
+CLIENT_DOCS_BASE_PATH = os.path.join(ROOT_PATH, "clientdocuments")
 FORMAT_DOWNLOAD_URL = "client/compliance_format"
 
 class ClientDatabase(Database):
@@ -1273,30 +1274,28 @@ class ClientDatabase(Database):
             not_applicable_remarks = s.not_applicable_remarks
             if not_applicable_remarks is None :
                 not_applicable_remarks = ""
-            compliances = s.compliances
-            for c in compliances :
-                compliance_id = c.compliance_id
-                opted_status = int(c.compliance_opted_status)
-                remarks = c.compliance_remarks
+            compliance_id = s.compliance_id
+            opted_status = int(s.compliance_opted_status)
+            remarks = s.compliance_remarks
 
-                query = "UPDATE tbl_client_compliances t1 \
-                    INNER JOIN tbl_client_statutories t2 \
-                    ON t1.client_statutory_id = t2.client_statutory_id \
-                    SET \
-                    t1.statutory_opted=%s, \
-                    t1.not_applicable_remarks='%s', \
-                    t1.compliance_opted=%s, \
-                    t1.compliance_remarks='%s',\
-                    t1.updated_by=%s, \
-                    t1.updated_on='%s' \
-                    WHERE t2.unit_id = %s \
-                    AND t1.client_statutory_id = %s \
-                    AND t1.compliance_id = %s" % (
-                        statutory_opted_status, not_applicable_remarks,
-                        opted_status, remarks, session_user, updated_on,
-                        unit_id, client_statutory_id, compliance_id
-                    )
-                self.execute(query)
+            query = "UPDATE tbl_client_compliances t1 \
+                INNER JOIN tbl_client_statutories t2 \
+                ON t1.client_statutory_id = t2.client_statutory_id \
+                SET \
+                t1.statutory_opted=%s, \
+                t1.not_applicable_remarks='%s', \
+                t1.compliance_opted=%s, \
+                t1.compliance_remarks='%s',\
+                t1.updated_by=%s, \
+                t1.updated_on='%s' \
+                WHERE t2.unit_id = %s \
+                AND t1.client_statutory_id = %s \
+                AND t1.compliance_id = %s" % (
+                    statutory_opted_status, not_applicable_remarks,
+                    opted_status, remarks, session_user, updated_on,
+                    unit_id, client_statutory_id, compliance_id
+                )
+            self.execute(query)
 
         return clienttransactions.UpdateStatutorySettingsSuccess()
 
@@ -1319,11 +1318,12 @@ class ClientDatabase(Database):
             results.append(statutory_obj)
         return results
 
-    def get_level_1_statutories_for_user(self, session_user, client_id):
-        domain_rows = self.get_data(self.tblUserDomains, "group_concat(domain_id)",
-            "user_id='%d'"%session_user, client_id)
-
-        domain_ids = domain_rows[0][0]
+    def get_level_1_statutories_for_user(self, session_user, client_id, domain_id = None):
+        domain_ids = domain_id
+        if not domain_id:
+            domain_rows = self.get_data(self.tblUserDomains, "group_concat(domain_id)",
+                "user_id='%d'" % session_user)
+            domain_ids = domain_rows[0][0]
 
         client_statutory_rows = self.get_data(
             self.tblClientStatutories,
@@ -1342,8 +1342,7 @@ class ClientDatabase(Database):
         mapping_rows = self.get_data(
             self.tblCompliances,
             "statutory_mapping",
-            "compliance_id in (%s)" % (client_compliance_ids),
-            client_id
+            "compliance_id in (%s)" % (client_compliance_ids)
         )
 
         level_1_statutory = []
@@ -1368,50 +1367,345 @@ class ClientDatabase(Database):
                 )
         return compliance_frequency
 
-    def get_statutory_wise_compliances(
-        unit_id, domain_id, level_1_statutory_id,
-        frequecy_id
-    ):
-        client_statutory_columns = "group_concat(client_statutory_id)"
-        client_statutory_condition = " unit_id = '%d' and \
-            domain_id = '%d' " % (
+    def get_frequecy_id_by_name(self, frequency_name):
+        columns = "frequency_id"
+        condition = "frequency = '%s'" % frequency_name
+        rows = self.get_data(self.tblComplianceFrequency, columns, condition)
+        result = None
+        if rows:
+            result = rows[0][0]
+        return result
+
+    def get_user_ids_by_unit_and_domain(
+            self, unit_id, domain_id
+        ):
+        unit_user_rows = self.get_data(
+            self.tblUserUnits, "user_id" , "unit_id = '%d'" % unit_id
+        )
+        unit_users = []
+        for unit_user in unit_user_rows:
+            unit_users.append(unit_user[0])
+
+        domain_user_rows = self.get_data(
+            self.tblUserDomains, "user_id" , "domain_id = '%d'" % domain_id
+        )
+        domain_users = []
+        for domain_user in domain_user_rows:
+            domain_users.append(domain_user[0])
+
+        users = list(set(unit_users).intersection(domain_users))
+        user_ids = ",".join(str(x) for x in users)
+        return user_ids
+
+
+    def get_users_by_unit_and_domain(
+            self, unit_id, domain_id
+        ):
+        user_ids = self.get_user_ids_by_unit_and_domain(
             unit_id, domain_id
         )
-        client_statutory_rows = self.get_data(
-            self.tblClientStatutories,
-            client_statutory_columns,
-            client_statutory_condition
+        columns = "user_id, employee_name, employee_code, is_active"
+        condition = " is_active = 1 and user_id in (%s)" % user_ids
+        rows = self.get_data(
+            self.tblUsers, columns, condition
         )
-        client_statutory_ids = None
-        if len(client_statutory_rows) > 0:
-            client_statutory_ids = client_statutory_rows[0][0]
-        else:
-            return
+        columns = ["user_id", "employee_name", "employee_code", "is_active"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_users(result)
 
-        client_compliances_columns = "group_concat(compliance_id)"
-        client_compliances_condition = " client_statutory_id in \
-            (%s)" % client_statutory_ids
+    def get_statutory_wise_compliances(
+        self, unit_id, domain_id, level_1_statutory_name, frequency_name
+    ):
+        condition = "1"
+        if frequency_name:
+            frequency_id = self.get_frequecy_id_by_name(frequency_name)
+            if frequency_id is not None:
+                condition = "c.frequency_id = %d" % int(frequency_id)
 
-        client_compliances_rows = self.get_data(
-                self.tblClientCompliances,
-                client_compliances_columns,
-                client_compliances_condition
-            )
-        client_compliance_ids = None
-        if len(client_compliance_rows) > 0:
-            client_compliance_ids = client_compliance_rows[0][0]
-        else:
-            return
-        compliance_columns = "compliance_id, compliance_task, document_name, statutory_dates"
-        compliance_condition = " compliance_id in (%s) " % client_compliance_ids
-        compliance_rows = self.get_data(
-            self.tblCompliances, compliance_columns,
-            compliance_condition
+        compliance_ids_query = "SELECT group_concat(compliance_id) \
+            FROM tbl_client_compliances \
+            WHERE client_statutory_id IN (SELECT group_concat(client_statutory_id) \
+            FROM tbl_client_statutories \
+            WHERE unit_id = 1 AND domain_id = 1)"
+        compliance_id_rows = self.select_all(compliance_ids_query)
+        if compliance_id_rows :
+            compliance_ids = compliance_id_rows[0][0]
+        query = "SELECT ac.compliance_id, ac.statutory_dates, ac.due_date, assignee, employee_code, \
+                employee_name, statutory_mapping, document_name, compliance_task, \
+                compliance_description, c.repeat_type_id, repeat_type, repeats_every, frequency, \
+                c.frequency_id FROM %s ac LEFT JOIN %s u ON (ac.assignee = u.user_id) \
+                LEFT JOIN %s c ON (ac.compliance_id = c.compliance_id) \
+                LEFT JOIN %s f ON (c.frequency_id = f.frequency_id) \
+                LEFT JOIN %s rt ON (c.repeat_type_id = rt.repeat_type_id) \
+                WHERE ac.compliance_id IN (%s) AND ac.is_active = %d \
+                AND %s" % (
+                    self.tblAssignedCompliances, self.tblUsers, self.tblCompliances,
+                    self.tblComplianceFrequency, self.tblComplianceRepeatType, compliance_ids,
+                    1, condition
+                )
+        client_compliance_rows = self.select_all(query)
+        statutory_wise_compliances = []
+        level_1_statutory_wise_compliances = {}
+        if client_compliance_rows:
+            columns = [
+                "compliance_id", "statutory_dates", "due_date", "assignee", "employee_code",
+                "employee_name", "statutory_mapping", "document_name", "compliance_task",
+                "compliance_description", "repeat_type_id",  "repeat_type", "repeat_every",
+                "frequency", "frequency_id"
+            ]
+            client_compliance_rows = self.convert_to_dict(client_compliance_rows, columns)
+            for compliance in client_compliance_rows:
+                statutories = compliance["statutory_mapping"].split(">>")
+                if level_1_statutory_name is not None:
+                    if statutories[0].strip() != level_1_statutory_name.strip():
+                        continue
+                if statutories[0].strip() not in level_1_statutory_wise_compliances:
+                    level_1_statutory_wise_compliances[statutories[0].strip()] = []
+
+                compliance_name = "%s - %s" % (
+                    compliance["document_name"], compliance["compliance_task"]
+                )
+                assingee_name = "%s - %s" % (
+                    compliance["employee_code"], compliance["employee_name"]
+                )
+                due_dates = []
+                statutory_dates_list = []
+                if ((compliance["frequency_id"] == 2) or (compliance["frequency_id"] == 3)):
+                    if compliance["repeat_type_id"] == 1:
+                        due_dates, statutory_dates = self.calculate_due_date(
+                            repeat_by = 1,
+                            repeat_every = compliance["repeat_every"],
+                            due_date = compliance["due_date"]
+                        )
+                    elif compliance["repeat_type_id"] == 2:
+                        due_dates, statutory_dates_list = self.calculate_due_date(
+                            statutory_dates = compliance["statutory_dates"]
+                        )
+                    elif compliance["repeat_type_id"] == 3:
+                        due_dates, statutory_dates = self.calculate_due_date(
+                            repeat_by = 3,
+                            repeat_every = compliance["repeat_every"],
+                            due_date = compliance["due_date"]
+                        )
+                elif (compliance["frequency_id"] == 1):
+                    pass
+
+                for due_date in due_dates:
+                    if not self.is_already_completed_compliance(
+                        due_date, compliance["compliance_id"], unit_id
+                    ):
+                        level_1_statutory_wise_compliances[statutories[0].strip()].append(
+                            clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
+                                compliance["compliance_id"], compliance_name,
+                                compliance["compliance_description"],
+                                core.COMPLIANCE_FREQUENCY(compliance["frequency"]),
+                                statutory_dates_list, self.datetime_to_string(due_date),
+                                assingee_name, compliance["assignee"]
+                            )
+                        )
+                    else:
+                        print "entering into else"
+            for level_1_statutory_name, compliances in level_1_statutory_wise_compliances.iteritems():
+                statutory_wise_compliances.append(
+                    clienttransactions.STATUTORY_WISE_COMPLIANCES(
+                        level_1_statutory_name, compliances
+                    )
+                )
+
+        return statutory_wise_compliances
+
+
+    def is_already_completed_compliance(
+            self, due_date, compliance_id, unit_id
+        ):
+        columns = "count(*)"
+        condition = "unit_id = '{}' and due_date = '{}' and compliance_id = '{}'".format(
+            unit_id, due_date, compliance_id
         )
-        for compliance in compliance_rows:
-            pass
+        rows = self.get_data(self.tblComplianceHistory, columns, condition)
+        if rows[0][0] > 0:
+            return True
+        else:
+            return False
 
-    def get_compliance_approval_list(self, session_user, client_id):
+    def calculate_due_date(
+            self, statutory_dates = None, repeat_by = None, repeat_every = None, due_date = None
+        ):
+        def is_future_date(test_date):
+            result = False
+            current_date = datetime.datetime.today()
+            if ((current_date - test_date).days < 0):
+                result = True
+            return result
+
+        due_dates = []
+        statutory_dates_list = []
+        # For Monthly Recurring compliances
+        if statutory_dates:
+            for statutory_date in json.loads(statutory_dates):
+                date = statutory_date["statutory_date"]
+                month = statutory_date["statutory_month"]
+                current_date = datetime.datetime.today()
+                due_date_guess = datetime.datetime(current_date.year, month, date)
+                real_due_date = None
+                if is_future_date(due_date_guess):
+                    real_due_date = datetime.datetime(current_date.year - 1, month, date)
+                else:
+                    real_due_date = due_date_guess
+                due_dates.append(
+                    real_due_date
+                )
+                statutory_dates_list.append(
+                    core.StatutoryDate(
+                        date, month, statutory_date["trigger_before_days"]
+                    )
+                )
+        elif repeat_by:
+            # For Compliances Recurring in days
+            if repeat_by == 1:
+                previous_year_due_date = datetime.datetime(
+                    due_date.year - 1, due_date.month, due_date.day
+                )
+                due_dates.append(previous_year_due_date)
+                iter_due_date = previous_year_due_date
+                while not is_future_date(iter_due_date):
+                    iter_due_date = iter_due_date + datetime.timedelta(days = repeat_every)
+                    due_dates.append(iter_due_date)
+            elif repeat_by == 3:
+                previous_due_date = datetime.datetime(
+                    due_date.year - repeat_every, due_date.month, due_date.day
+                )
+                r = relativedelta.relativedelta(
+                    previous_due_date, due_date
+                )
+                if r.months < 12:
+                    due_dates.append(previous_due_date)
+        return due_dates, statutory_dates_list
+
+    def convert_base64_to_file(self, file_name, file_content, client_id):
+        client_directory = "%s/%d" % (CLIENT_DOCS_BASE_PATH, client_id)
+        file_path = "%s/%s" % (client_directory, file_name)
+        if not os.path.exists(client_directory):
+            os.makedirs(client_directory)
+        self.remove_uploaded_file(file_path)
+        new_file = open(file_path, "wb")
+        new_file.write(file_content.decode('base64'))
+        new_file.close()
+
+    def remove_uploaded_file(self, file_path):
+        if os.path.exists(file_path) :
+            os.remove(file_path)
+
+    def is_space_available(self, upload_size):
+        columns = "total_disk_space - total_disk_space_used"
+        rows = self.get_data(self.tblClientSettings, columns, "1")
+        remaining_space = rows[0][0]
+        if upload_size < remaining_space:
+            return True
+        else:
+            return False
+
+    def update_used_space(self, file_size):
+        columns = "total_disk_space_used"
+        condition = "1"
+        self.increment( self.tblClientSettings, columns, condition, value = file_size)
+
+    def save_past_record(
+            self, unit_id, compliance_id, due_date, completion_date, documents,
+            validity_date, completed_by, client_id
+        ):
+        is_uploading_file = False
+        # Checking whether compliance already completed
+        if self.is_already_completed_compliance(
+                due_date, compliance_id, unit_id
+            ):
+            return False
+
+        # Hanling upload
+        document_names = []
+        file_size = 0
+        if len(documents) > 0:
+            for doc in documents:
+                file_size += doc.file_size
+
+            if self.is_space_available(file_size):
+                is_uploading_file = True
+                for doc in documents:
+                    name = doc.file_name.split('.')[0]
+                    exten = doc.file_name.split('.')[1]
+                    auto_code = self.new_uuid()
+                    file_name = "%s-%s.%s" % (name, auto_code, exten)
+                    document_names.append(file_name)
+                    self.convert_base64_to_file(file_name, doc.file_content, client_id)
+                self.update_used_space(file_size)
+            else:
+                return clienttransactions.NotEnoughSpaceAvailable()
+
+        # Checking Settings for two levels of approval
+        is_two_level = self.is_two_levels_of_approval()
+        compliance_history_id = self.get_new_id("compliance_history_id", self.tblComplianceHistory)
+        completion_date = self.string_to_datetime(completion_date)
+        next_due_date = None
+        if validity_date:
+            next_due_date = self.string_to_datetime(validity_date)
+
+        # Getting Approval and Concurrence Persons
+        concur_approve_columns = "approval_person"
+        if is_two_level:
+            concur_approve_columns += ", concurrence_person"
+        condition = "compliance_id = '%d' and unit_id = '%d'" % (
+            compliance_id, unit_id
+        )
+        rows = self.get_data(
+            self.tblAssignedCompliances, concur_approve_columns, condition
+        )
+        concurred_by = 0
+        approved_by = 0
+        if rows:
+            approved_by = rows [0][0]
+            if is_two_level:
+                concurred_by = rows[0][1]
+        columns = [
+            "compliance_history_id", "unit_id", "compliance_id", "due_date", "completion_date",
+            "validity_date", "next_due_date", "completed_by", "completed_on",
+            "approve_status", "approved_by", "approved_on"
+        ]
+        values = [
+            compliance_history_id, unit_id, compliance_id, self.string_to_datetime(due_date),
+            completion_date, self.string_to_datetime(validity_date),
+            next_due_date, completed_by, completion_date, 1, approved_by, completion_date
+        ]
+        if is_two_level:
+            columns.append("concurrence_status")
+            columns.append("concurred_by")
+            columns.append("concurred_on")
+            values.append(1)
+            values.append(concurred_by)
+            values.append(completion_date)
+
+        if is_uploading_file:
+            columns.append("documents")
+            columns.append("document_size")
+            values.append(",".join(document_names))
+            values.append(file_size)
+
+        self.insert(
+            self.tblComplianceHistory, columns, values
+        )
+        return True
+
+    def is_two_levels_of_approval(self):
+        columns = "two_levels_of_approval"
+        rows = self.get_data(self.tblClientSettings, columns, "1")
+        return rows[0][0]
+
+#
+#   Compliance Approval
+#
+
+    def get_compliance_approval_list(
+            self, session_user, client_id
+        ):
         assignee_columns = "completed_by, employee_code, employee_name"
         join_type = "left join"
         tables = [self.tblComplianceHistory, self.tblUsers]
@@ -1533,24 +1827,6 @@ class ClientDatabase(Database):
             if len(rows) > 0:
                 employee_name = "{} - {}".format(rows[0][0], rows[0][1])
         return employee_name
-
-    # def calculate_next_due_date(self, completion_date, due_date, compliance_id):
-    #     compliance_columns = "statutory_date, repeat_type_id, duration_type_id,"+\
-    #     " repeats_every, duration"
-    #     condition = "compliance_id = '%d'" % compliance_id
-    #     compliance_rows = self.get_data(self.tblCompliances, compliance_columns,
-    #         condition)
-    #     if len(compliance_rows) > 0:
-    #         statutory_date = compliance_rows[0][0]
-    #         repeat_type_id = compliance_rows[0][1]
-    #         duration_type_id = compliance_rows[0][2]
-    #         repeats_every = compliance_rows[0][3]
-    #         duration = compliance_rows[0][4]
-    #         if statutory_date == None:
-    #             if repeat_type_id = 1:
-
-    #             elif repeat_type_id = 2:
-    #             elif repeat_type_id = 3:
 
 #
 # Assign Compliance
@@ -3285,9 +3561,9 @@ class ClientDatabase(Database):
     def return_client_level_1_statutories(self, data) :
         results = []
         for d in data :
-            results.append(core.ClientLevelOneStatutory(
+            results.append(
                 d["statutory"]
-            ))
+            )
         return results
 
     def get_client_compliances(self, user_id, client_id) :
@@ -3999,7 +4275,7 @@ class ClientDatabase(Database):
                 notification_id = notification_detail[0]
                 notification_text = notification_detail[1]
                 extra_details = notification_detail[3]
-                updated_on = self.datetime_to_string(notification_detail[2])
+                updated_on = self.datetime_to_string_time(notification_detail[2])
                 unit_name = "%s - %s" % (
                     notification_detail[5],
                     notification_detail[6]
@@ -4784,14 +5060,182 @@ class ClientDatabase(Database):
                             assignee, reassignedfrom, reassigned_date, remarks
                         )
                         history_list.append(history)
-
-                    compliances_list.append(clientreport.ReassignCompliance(compliance_name, due_date, history_list))
-                compliance = clientreport.ReassignUnitCompliance(
+                    if history_list:
+                        compliances_list.append(clientreport.ReassignCompliance(compliance_name, due_date, history_list))
+                if compliances_list:
+                    compliance = clientreport.ReassignUnitCompliance(
                         unit_name, compliances_list
                     )
-            unit_wise_compliances.append(compliance)
-
-            unitwise = clientreport.StatutoryReassignCompliance(statutoru_name, unit_wise_compliances)
-            level_1_statutory_wise_units.append(unitwise)
+                    unit_wise_compliances.append(compliance)
+            if unit_wise_compliances:
+                unitwise = clientreport.StatutoryReassignCompliance(statutoru_name, unit_wise_compliances)
+                level_1_statutory_wise_units.append(unitwise)
 
         return level_1_statutory_wise_units
+
+    #login trace
+    def get_login_trace(self, client_id, session_user ):
+        query = "SELECT al.created_on, f.form_name, al.action \
+                FROM tbl_activity_log al \
+                INNER JOIN \
+                tbl_users u ON \
+                al.user_id  = u.user_id \
+                INNER JOIN \
+                tbl_forms f ON \
+                al.form_id = f.form_id \
+                WHERE \
+                al.form_id in (26, 27)"
+
+        rows = self.select_all(query)
+        columns = ["created_on", "form_name", "action"]
+        result = self.convert_to_dict(rows, columns)
+        return self.return_logintrace(result)
+
+    def return_logintrace(self, data) :
+        results = []
+        for d in data :
+            created_on = self.datetime_to_string_time(d["created_on"])
+            results.append(clientreport.LoginTrace(
+                 created_on, d["form_name"], d["action"]
+            ))
+        return results
+
+#
+#   Compliance Activity Report
+#
+    def get_compliance_activity_report(
+        self, country_id, domain_id, user_type, user_id, unit_id, compliance_id,
+        level_1_statutory_name, from_date, to_date, session_user, client_id
+    ):
+        unit_ids = unit_id
+        unit_ids_list = []
+        if unit_ids is not None:
+            user_unit_columns = "group_concat(unit_id)"
+            user_unit_condition = "user_id = '%d'" % session_user
+            rows = self.get_data(self.tblUserUnits, user_unit_columns, user_unit_condition)
+            if rows:
+                unit_ids = rows[0][0]
+            session_unit_ids = [int(x) for x in unit_ids.split(",")]
+            if user_id is not None:
+                user_unit_condition = "user_id = '%d'" % user_id
+                user_unit_columns = "group_concat(unit_id)"
+                rows = self.get_data(self.tblUserUnits, user_unit_columns, user_unit_condition)
+                if rows:
+                    user_unit_ids = rows[0][0]
+                user_unit_ids = [int(x) for x in user_unit_ids.split(",")]
+                unit_ids_list = list(set(user_unit_ids).intersection(session_unit_ids))
+            else:
+                unit_ids_list = session_unit_ids
+
+        level_1_statutories_list = []
+        if level_1_statutory_name is not None:
+            level_1_statutories_list = [level_1_statutory_name]
+        else:
+            level_1_statutories_list = self.get_level_1_statutories_for_user(
+                session_user, client_id, domain_id
+            )
+        unit_wise_compliances = []
+        for unit_id in unit_ids_list:
+            unit_columns = "unit_name, unit_code, address"
+            unit_condition = "unit_id = '%d'" % unit_id
+            unit_rows = self.get_data(
+                self.tblUnits, unit_columns, unit_condition
+            )
+            unit_name = "%s-%s" % (unit_rows[0][1], unit_rows[0][0])
+            address = unit_rows[0][2]
+            compliance_ids_list = []
+            if compliance_id is not None:
+                compliance_ids_list = [compliance_id]
+            else:
+                client_statutory_columns = "group_concat(client_statutory_ids)"
+                client_statutory_conditions = "country_id = '%d' and domain_id = '%d' and unit_id='%d'" % (
+                    country_id, domain_id, unit_id
+                )
+                client_statutory_rows = self.get_data(
+                    self.tblClientStatutories, client_statutory_columns, client_statutory_conditions
+                )
+                if client_statutory_rows:
+                    client_statutory_ids = client_statutory_rows[0][0]
+                    client_compliance_columns = "group_concat(compliance_id)"
+                    client_compliance_conditions = "client_statutory_id in (%s)" % client_statutory_ids
+                    client_compliance_rows = self.get_data(
+                        self.tblClientCompliances, client_compliance_columns, client_compliance_conditions
+                    )
+                    if compliance_rows:
+                        compliance_ids = compliance_rows[0][0]
+                        compliance_ids_list = compliance_ids.split(",")
+            level_1_statutory_wise_activities = {}
+            for level_1_statutory in level_1_statutories_list:
+                compliance_wise_activities = {}
+                for compliance_id in compliance_ids_list:
+                    compliance_columns = "statutory_mapping, document_name, compliance_task, compliance_description"
+                    compliance_condition = "statutory_mapping like '%s%s' and compliance_id = '%d'" % (
+                        level_1_statutory, "%", compliance_id)
+                    compliance_rows = self.get_data(
+                        self.tblCompliances, compliance_columns, compliance_condition
+                    )
+                    if compliance_rows:
+                        compliance_name = "%s - %s" % (compliance_rows[0][1], compliance_rows[0][2])
+
+                        compliance_activity_columns = "activity_date, activity_status, compliance_status," \
+                        "remarks"
+                        compliance_activity_condition = "compliance_id = '%d' and unit_id = '%d'" % (
+                            compliance_id, unit_id
+                        )
+                        if from_date is not None and to_date is not None:
+                            from_date_in_datetime = self.string_to_datetime(from_date)
+                            to_date_in_datetime = self.string_to_datetime(to_date)
+                            compliance_activity_condition += " and activity_date between '{}' and '{}'".format(
+                                from_date_in_datetime, to_date_in_datetime
+                            )
+                        else:
+                            if from_date is not None:
+                                from_date_in_datetime = self.string_to_datetime(from_date)
+                                compliance_activity_condition += " and activity_date > '{}' ".format(
+                                    from_date_in_datetime
+                                )
+                            if to_date is not None:
+                                to_date_in_datetime = self.string_to_datetime(to_date)
+                                compliance_activity_condition += " and activity_date < '{}' ".format(
+                                    to_date_in_datetime
+                                )
+                        compliance_activity_rows = self.get_data(
+                            self.tblComplianceActivityLog, compliance_activity_columns, compliance_activity_condition
+                        )
+                        if compliance_activity_rows:
+                            columns = ["activity_date", "activity_status", "compliance_status", "remarks"]
+                            compliance_activity_rows = self.convert_to_dict(compliance_activity_rows, columns)
+                            activity_data = []
+                            for compliance_activity in  compliance_activity_rows:
+                                activity_data.append(
+                                    clientreport.ActivityData(
+                                        activity_date = self.datetime_to_string(compliance_activity["activity_date"]),
+                                        activity_status = core.COMPLIANCE_ACTIVITY_STATUS(compliance_activity["activity_status"]),
+                                        compliance_status = core.COMPLIANCE_STATUS(compliance_activity["compliance_status"]),
+                                        remarks = compliance_activity["remarks"]
+                                    )
+                                )
+                            if compliance_name not in compliance_wise_activities:
+                                compliance_wise_activities[compliance_name] = []
+                            compliance_wise_activities[compliance_name] += activity_data
+
+                if compliance_wise_activities:
+                    if level_1_statutory not in level_1_statutory_wise_activities:
+                        level_1_statutory_wise_activities[level_1_statutory] = {}
+                    level_1_statutory_wise_activities[level_1_statutory] = compliance_wise_activities
+            if len(level_1_statutory_wise_activities) > 0:
+                unit_wise_compliances.append(
+                    clientreport.Activities(
+                        unit_name = unit_name,
+                        address = address,
+                        statutory_wise_compliances = level_1_statutory_wise_activities
+                    )
+                )
+        return unit_wise_compliances
+
+
+
+
+
+
+

@@ -180,8 +180,8 @@ class API(object):
             db.commit()
             respond(response_data)
         except Exception, e:
-            print(traceback.format_exc())
-            print e
+           # print(traceback.format_exc())
+           # print e
             db.rollback()
 
     @api_request(login.Request, need_client_id=True)

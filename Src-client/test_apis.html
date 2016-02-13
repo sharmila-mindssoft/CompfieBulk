@@ -10,6 +10,7 @@
 		<script type="text/javascript" src="/files/desktop/common/js/mirror.js"></script>
 		<script type="text/javascript" src="/files/desktop/common/js/client-mirror.js"></script>
 		<script type="text/javascript">
+			var file_list = []
 			function createSession(){
 				var userDetails = {
 		            "user_id": 0,
@@ -412,10 +413,10 @@
 			function getStatutoriesByUnit(){
 				unit_id = 1
 				domain_id = 1
-				level_1_statutory_id = "Gratuity Act, 1972"
-				frequency_id = 1
-				client_mirror.getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_id, 
-					frequency_id, callback);
+				level_1_statutory_name = null //"Gratuity Act, 1972"
+				compliance_frequency =  null//"Periodical"
+				client_mirror.getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_name, 
+					compliance_frequency, callback);
 			}
 			function getComplianceApprovalList(){
 				client_mirror.getComplianceApprovalList(callback);
@@ -511,6 +512,37 @@
 
 				client_mirror.getReassignedHistoryReport(country_id, domain_id,level_1_statutory_id,unit_id, compliance_id, user_id,from_date, to_date, callback)
 			}
+			function savePastRecords(){
+				unit_id = 1;
+				compliance_id = 21;
+				due_date = "25-Aug-2014";
+				completion_date = "20-Aug-2014";
+				documents = file_list;
+				validity_date = "25-Aug-2015";
+				completed_by = 3;
+				compliance_list = [];
+				compliance = client_mirror.getPastRecordsComplianceDict(unit_id, compliance_id, due_date, completion_date,documents, validity_date, completed_by);
+				compliance_list.push(compliance);
+				client_mirror.savePastRecords(compliance_list, callback);
+				file_list = []
+			}
+			function getComplianceActivityReportFilters(){
+				client_mirror.getComplianceActivityReportFilters(callback);
+			}
+			function getComplianceActivityReportData(){
+				country_id = 1
+				assignee_id = 3;
+				domain_id = 1;
+				level_1_statutory_id = null;
+				unit_id = 1;
+				compliance_id = 21;
+				from_date = "12-Aug-2015"
+				to_date = "11-Aug-2016"
+				user_type = "Inhouse"
+				client_mirror.getComplianceActivityReportData(
+					user_type, assignee_id, country_id, domain_id, level_1_statutory_id, unit_id, compliance_id, from_date, to_date, callback
+				);
+			}
 		</script>
 	</head>
 	<body>
@@ -522,251 +554,309 @@
 			<button onclick="createSession()">Create Session</button>
 			
 		</div>
-		<div>
-			<button onclick="saveServiceProvider()">
-				Save Service Provider
-			</button>
-			<button onclick="updateServiceProvider()">
-				Update Service Provider
-			</button>
-			<button onclick="changeServiceProviderStatus()">
-				Change Service Provider Status
-			</button>
-			<button onclick="getServiceProvidersList()">
-				Get service Providers
-			</button>
-		</div>
-		<div>
-			<button onclick="saveClientUserGroup()">
-				Save Client User Group
-			</button>
-			<button onclick="updateClientUserGroup()">
-				Update Client User Group
-			</button>
-			<button onclick="changeClientUserGroupStatus()">
-				Change Client User Group Status
-			</button>
-			<button onclick="getClientUserGroupList()">
-				Get Client User Groups
-			</button>
-		</div>
-		<div>
-			<button onclick="getClientUsers()">
-				Get Client Users
-			</button>
-			<button onclick="saveClientUser()">
-				Save Client User
-			</button>
-			<button onclick="updateClientUser()">
-				Update Client User
-			</button>
-			<button onclick="changeClientUserStatus()">
-				Change Client User Status
-			</button>
-			<button onclick="changeAdminStatus()">
-				Change Admin Status
-			</button>
-		</div>
-		<div>
-			<button onclick="getUnitClosureList()">
-				Get Unit Closure List
-			</button>
-			<button onclick="closeUnit()">
-				Close Unit
-			</button>
-		</div>
-		<div>
-			<button onclick="saveAdminUserGroup()">
-				Save Admin User Group
-			</button>
-			<button onclick="updateAdminUserGroup()">
-				Update Admin User Group
-			</button>
-			<button onclick="changeAdminUserGroupStatus()">
-				Change Admin User Group Status
-			</button>
-			<button onclick="getAdminUserGroupList()">
-				Get Admin User Groups
-			</button>
-		</div>
-		<div>
-			<button onclick="getAdminUsers()">
-				Get Admin Users
-			</button>
-			<button onclick="saveAdminUser()">
-				Save Admin User
-			</button>
-			<button onclick="updateAdminUser()">
-				Update Admin User
-			</button>
-			<button onclick="changeAdminUserStatus()">
-				Change Admin User Status
-			</button>
-		</div>
-		<div>
-			<button onclick="changePassword()">
-				Change Password
-			</button>
-			<button onclick="ClientChangePassword()">
-				Client Change Password
-			</button>
-		</div>
-		<div>
-			<button onclick="forgotPassword()">
-				Forgot Password
-			</button>
-			<button onclick="ClientForgotPassword()">
-				Client Forgot Password
-			</button>
-		</div>
-		<div>
-			<button onclick="validateResetToken()">
-				Validate Reset Token
-			</button>
-			<button onclick="validateClientResetToken()">
-				Validate Client Reset Token
-			</button>	
-		</div>
-		<div>
-			<button onclick="resetPassword()">
-				Reset password
-			</button>
-			<button onclick="resetClientPassword()">
-				Reset Client Password
-			</button>
-		</div>
-		<div>
-			<button onclick="saveClientGroup()">
-				Save Client Group
-			</button>
-			<button onclick="updateClientGroup()">
-				Update Client Group
-			</button>
-			<button onclick="changeClientGroupStatus()">
-				Change Client Group Status
-			</button>
-			<button onclick="getClientGroups()">
-				Get Client Groups
-			</button>
-		</div>
-		<div>
-			<button onclick="saveClient()">
-				Save Client 
-			</button>
-			<button onclick="updateClient()">
-				Update Client 
-			</button>
-			<button onclick="changeClientStatus()">
-				Change Client  Status
-			</button>
-			<button onclick="getClients()">
-				Get Clients
-			</button>
-			<button onclick="reactivateUnit()">
-				Reactivate Unit
-			</button>
-		</div>
-		<div>
-			<button onclick="getClientProfile()">
-				Get Client Profile
-			</button>
-		</div>
-		<div>
-			<button onclick="getAuditTrail()">
-				Get Audit Trail
-			</button>
-			<button onclick="getClientAuditTrail()">
-				Get Client Audit Trail
-			</button>
-		</div>
-		<div>
-			<button onclick="getComplianceDetailsReportFilters()">
-				Get Compliance Details Report Filters
-			</button>
-		</div>
-		<div>
-			<button onclick="updateUserProfile()">
-				Update User Profile
-			</button>
-		</div>
-		<div>
-			<button onclick="getClientDetailsReportFilters()">
-				Get Client Details Report Filters
-			</button>
-			<button onclick="getClientDetailsReport()">
-				Get Client Details Report 
-			</button>
-		</div>
-		<div>
-			<button onclick="getPastRecordsFormData()">
-				Get Past Records form data
-			</button>
-			<button onclick="getStatutoriesByUnit()">
-				Get Statutories by Unit
-			</button>
-		</div>
-		<div>
-			<button onclick="getComplianceApprovalList()">
-				Get Compliance Approval List
-			</button>
-			<button onclick="approveCompliance()">
-				Approve Compliance				
-			</button>
-		</div>
-		<div>
-			<button onclick="getUnitWiseComplianceReport()">
-				Get Unit Wise Compliane Report
-			</button>
-		</div>
-		<div>
-			<button onclick="getTrendChart()">
-				Get Trend Chart
-			</button>
-			<button onclick="getTrendChartDrillDown()">
-				Get Trend Chart Drill Down Data
-			</button>
-		</div>
-		<div>
-			<button onclick="getClientAdminSettings()">
-				Get Client Admin Settings
-			</button>
-			<button onclick="updateClientAdminSettings()">
-				Update Client Admin Settings
-			</button>
-		</div>
-		<div>
-			<button onclick="getNotifications()">
-				Get Notifications
-			</button>
-			<button onclick="getClientNotifications()">
-				Get Client Notifications
-			</button>
-			<button onclick="updateNotificationStatus()">
-				Update Notification Status
-			</button>
-			<button onclick="updateClientNotificationStatus()">
-				Update Client Notification Status
-			</button>
-		</div>
-		<div>
-			<button onclick="getComplianceDetail()">
-				Get Compliance Detail
-			</button>
-			<button onclick="updateComplianceDetail()">
-				Update Compliance Detail
-			</button>
-		</div>
-
-		<div>
-			<button onclick="getReassignedHistoryReportFilters()">
-				Get Resigned History Filters Detail
-			</button>
-			<button onclick="getReassignedHistoryReport()">
-				Get Resigned History Detail
-			</button>
-		</div>
-
+		<fieldset>
+			<legend>Client Masters</legend>
+			<div>
+				<button onclick="saveServiceProvider()">
+					Save Service Provider
+				</button>
+				<button onclick="updateServiceProvider()">
+					Update Service Provider
+				</button>
+				<button onclick="changeServiceProviderStatus()">
+					Change Service Provider Status
+				</button>
+				<button onclick="getServiceProvidersList()">
+					Get service Providers
+				</button>
+			</div>
+			<div>
+				<button onclick="saveClientUserGroup()">
+					Save Client User Group
+				</button>
+				<button onclick="updateClientUserGroup()">
+					Update Client User Group
+				</button>
+				<button onclick="changeClientUserGroupStatus()">
+					Change Client User Group Status
+				</button>
+				<button onclick="getClientUserGroupList()">
+					Get Client User Groups
+				</button>
+			</div>
+			<div>
+				<button onclick="getClientUsers()">
+					Get Client Users
+				</button>
+				<button onclick="saveClientUser()">
+					Save Client User
+				</button>
+				<button onclick="updateClientUser()">
+					Update Client User
+				</button>
+				<button onclick="changeClientUserStatus()">
+					Change Client User Status
+				</button>
+				<button onclick="changeAdminStatus()">
+					Change Admin Status
+				</button>
+			</div>
+			<div>
+				<button onclick="getUnitClosureList()">
+					Get Unit Closure List
+				</button>
+				<button onclick="closeUnit()">
+					Close Unit
+				</button>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Admin Masters</legend>
+			<div>
+				<button onclick="saveAdminUserGroup()">
+					Save Admin User Group
+				</button>
+				<button onclick="updateAdminUserGroup()">
+					Update Admin User Group
+				</button>
+				<button onclick="changeAdminUserGroupStatus()">
+					Change Admin User Group Status
+				</button>
+				<button onclick="getAdminUserGroupList()">
+					Get Admin User Groups
+				</button>
+			</div>
+			<div>
+				<button onclick="getAdminUsers()">
+					Get Admin Users
+				</button>
+				<button onclick="saveAdminUser()">
+					Save Admin User
+				</button>
+				<button onclick="updateAdminUser()">
+					Update Admin User
+				</button>
+				<button onclick="changeAdminUserStatus()">
+					Change Admin User Status
+				</button>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Common</legend>
+			<div>
+				<button onclick="changePassword()">
+					Change Password
+				</button>
+				<button onclick="ClientChangePassword()">
+					Client Change Password
+				</button>
+			</div>
+			<div>
+				<button onclick="forgotPassword()">
+					Forgot Password
+				</button>
+				<button onclick="ClientForgotPassword()">
+					Client Forgot Password
+				</button>
+			</div>
+			<div>
+				<button onclick="validateResetToken()">
+					Validate Reset Token
+				</button>
+				<button onclick="validateClientResetToken()">
+					Validate Client Reset Token
+				</button>	
+			</div>
+			<div>
+				<button onclick="resetPassword()">
+					Reset password
+				</button>
+				<button onclick="resetClientPassword()">
+					Reset Client Password
+				</button>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Techno Masters</legend>
+			<div>
+				<button onclick="saveClientGroup()">
+					Save Client Group
+				</button>
+				<button onclick="updateClientGroup()">
+					Update Client Group
+				</button>
+				<button onclick="changeClientGroupStatus()">
+					Change Client Group Status
+				</button>
+				<button onclick="getClientGroups()">
+					Get Client Groups
+				</button>
+			</div>
+			<div>
+				<button onclick="saveClient()">
+					Save Client 
+				</button>
+				<button onclick="updateClient()">
+					Update Client 
+				</button>
+				<button onclick="changeClientStatus()">
+					Change Client  Status
+				</button>
+				<button onclick="getClients()">
+					Get Clients
+				</button>
+				<button onclick="reactivateUnit()">
+					Reactivate Unit
+				</button>
+			</div>
+			<div>
+				<button onclick="getClientProfile()">
+					Get Client Profile
+				</button>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Client Reports</legend>
+			<div>
+				<button onclick="getAuditTrail()">
+					Get Audit Trail
+				</button>
+				<button onclick="getClientAuditTrail()">
+					Get Client Audit Trail
+				</button>
+			</div>
+			<div>
+				<button onclick="getComplianceDetailsReportFilters()">
+					Get Compliance Details Report Filters
+				</button>
+			</div>
+			<div>
+				<button onclick="updateUserProfile()">
+					Update User Profile
+				</button>
+			</div>
+			<div>
+				<button onclick="getClientDetailsReportFilters()">
+					Get Client Details Report Filters
+				</button>
+				<button onclick="getClientDetailsReport()">
+					Get Client Details Report 
+				</button>
+			</div>
+			<div>
+				<button onclick="getReassignedHistoryReportFilters()">
+					Get Resigned History Filters Detail
+				</button>
+				<button onclick="getReassignedHistoryReport()">
+					Get Resigned History Detail
+				</button>
+			</div>
+			<div>
+				<button onclick="getComplianceActivityReportFilters()">
+					Get Compliance Activity Report Filters
+				</button>
+				<button onclick="getComplianceActivityReportData()">
+					Get Compliance Activity Report Data
+				</button>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Client Transactions</legend>
+			<div>
+				<button onclick="getPastRecordsFormData()">
+					Get Past Records form data
+				</button>
+				<button onclick="getStatutoriesByUnit()">
+					Get Statutories by Unit
+				</button>
+				<button onclick="savePastRecords()">
+					Save Past Records
+				</button>
+				<input id="upload_file" type = "file" name = "files[]" multiple/>
+				<div id="uploaded_filename"></div>
+				<button onclick="uploadPastRecordDocuments()">
+					Upload Past Record Documents
+				</button>
+			</div>
+			<div>
+				<button onclick="getComplianceDetail()">
+					Get Compliance Detail
+				</button>
+				<button onclick="updateComplianceDetail()">
+					Update Compliance Detail
+				</button>
+			</div>
+			<div>
+				<button onclick="getComplianceApprovalList()">
+					Get Compliance Approval List
+				</button>
+				<button onclick="approveCompliance()">
+					Approve Compliance				
+				</button>
+			</div>
+			<div>
+				<button onclick="getUnitWiseComplianceReport()">
+					Get Unit Wise Compliane Report
+				</button>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Client Dashboard</legend>
+			<div>
+				<button onclick="getTrendChart()">
+					Get Trend Chart
+				</button>
+				<button onclick="getTrendChartDrillDown()">
+					Get Trend Chart Drill Down Data
+				</button>
+			</div>
+			<div>
+				<button onclick="getClientAdminSettings()">
+					Get Client Admin Settings
+				</button>
+				<button onclick="updateClientAdminSettings()">
+					Update Client Admin Settings
+				</button>
+			</div>
+			<div>
+				<button onclick="getNotifications()">
+					Get Notifications
+				</button>
+				<button onclick="getClientNotifications()">
+					Get Client Notifications
+				</button>
+				<button onclick="updateNotificationStatus()">
+					Update Notification Status
+				</button>
+				<button onclick="updateClientNotificationStatus()">
+					Update Client Notification Status
+				</button>
+			</div>
+		</fieldset>
 		<br>
 		<br>
 	</body>
+	<script>
+		$("#upload_file").on("change", function(e) {
+			  
+			  client_mirror.uploadFile(e, function result_data(data) {
+			    if(data != 'File max limit exceeded' || data != 'File content is empty'){
+			      uploadFile = data;
+			      file_list = data
+			      var result = ""
+			      console.log("result : "+data);
+			      console.log("result size : "+data.length);
+			      for(i = 0; i < data.length; i++){
+			      	console.log(data[i]["file_name"]);
+			      	result += data[i]["file_name"] + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' /> </br>";	
+			      }
+			      $("#uploaded_filename").html(result);
+			    }
+			    else{
+			      alert(data);
+			    }
+			 });
+
+		});
+	</script>
 </html>

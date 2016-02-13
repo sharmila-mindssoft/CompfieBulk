@@ -110,6 +110,9 @@ function initializeNavBar () {
 
     $("ul", settingsMenuObject).append(item);
     $("#cssmenu .menu-ul").append(settingsMenuObject);
+     var notifications = '<li><a href="/reminders"><img alt="" src="/images/reminders.png" style="width:30px;vertical-align:middle; padding-right:5px;" title="Reminders"></a></li><li><a href="/notifications"><img alt="" src="/images/notifications.png" style="width:30px; vertical-align:middle; padding-right:5px;" title="Notifications"></a></li><li><a href="/escalations"><img alt="" src="/images/escalations.png" style="width:30px;vertical-align:middle; padding-right:5px;" title="Escalations"></a></li>';
+
+    $("#cssmenu .menu-ul").append(notifications);
 
 }
 

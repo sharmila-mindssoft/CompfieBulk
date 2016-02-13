@@ -119,8 +119,23 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/login-trace",
+        "files/desktop/client/login-trace/logintrace.html",
+        None, {}
+    ),
+    (
         "/statutory-settings",
         "files/desktop/client/statutory-settings/statutorysettings.html",
+        None, {}
+    ),
+    (
+        "/notifications",
+        "files/desktop/client/notifications/notifications.html",
+        None, {}
+    ),
+    (
+        "/compliance-activity-report",
+        "files/desktop/client/compliance-activity-report/complianceactivityreport.html",
         None, {}
     ),
 ]
