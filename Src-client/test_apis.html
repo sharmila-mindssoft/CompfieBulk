@@ -11,6 +11,7 @@
 		<script type="text/javascript" src="/files/desktop/common/js/client-mirror.js"></script>
 		<script type="text/javascript">
 			var file_list = []
+			var logo_file;
 			function createSession(){
 				var userDetails = {
 		            "user_id": 0,
@@ -287,18 +288,18 @@
 		        dateConfigurations.push(configuration5)
 		        dateConfigurations.push(configuration6)
 
-			    group_name = "BPL Groups";
-		        country_ids = [1,2, 4];
+			    group_name = "Bajaj";
+		        country_ids = [1,2, 3, 4];
 		        domain_ids = [1,2];
-		        logo = "logo.png";
+		        logo = logo_file;
 		        contract_from = "02-Nov-2015";
 		        contract_to = "01-Nov-2016";
 		        incharge_persons = [1];
 		        no_of_user_licence = 10;
 		        file_space = 4.6;
 		        is_sms_subscribed = true;
-		        email_id = "info@bpl.com";
-		        shortName = "bpl"
+		        email_id = "info@bajanj.com";
+		        shortName = "mssv"
 			    clientGroupDetails = mirror.getSaveClientGroupDict(group_name,
 		            country_ids, domain_ids, logo, contract_from, contract_to,
 		            incharge_persons, no_of_user_licence,file_space,
@@ -533,12 +534,12 @@
 				country_id = 1
 				assignee_id = 3;
 				domain_id = 1;
-				level_1_statutory_id = null;
+				level_1_statutory_id = "Finance Act";
 				unit_id = 1;
 				compliance_id = 21;
-				from_date = "12-Aug-2015"
-				to_date = "11-Aug-2016"
-				user_type = "Inhouse"
+				from_date = "12-Jan-2009";
+				to_date = "12-Dec-2016";
+				user_type = "Inhouse";
 				client_mirror.getComplianceActivityReportData(
 					user_type, assignee_id, country_id, domain_id, level_1_statutory_id, unit_id, compliance_id, from_date, to_date, callback
 				);
@@ -679,6 +680,8 @@
 		<fieldset>
 			<legend>Techno Masters</legend>
 			<div>
+				<input id="upload_logo" type = "file" name = "logo"/>
+				<div id="uploaded_logo"></div>
 				<button onclick="saveClientGroup()">
 					Save Client Group
 				</button>
@@ -774,9 +777,6 @@
 				</button>
 				<input id="upload_file" type = "file" name = "files[]" multiple/>
 				<div id="uploaded_filename"></div>
-				<button onclick="uploadPastRecordDocuments()">
-					Upload Past Record Documents
-				</button>
 			</div>
 			<div>
 				<button onclick="getComplianceDetail()">
@@ -837,8 +837,25 @@
 		<br>
 	</body>
 	<script>
+		$("#upload_logo").on("change", function(e) {
+			mirror.uploadFile(e, function result_data(data) {
+			    if(data != 'File max limit exceeded' || data != 'File content is empty'){
+			      uploadFile = data;
+			      logo_file = data
+			      var result = ""
+			      console.log("result : "+data);
+			      console.log("result size : "+data.length);
+			      console.log(data["file_name"]);
+			      result += data["file_name"] + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' /> </br>";	
+			      $("#uploaded_logo_name").html(result);
+			    }
+			    else{
+			      alert(data);
+			    }
+			 });
+		});
+
 		$("#upload_file").on("change", function(e) {
-			  
 			  client_mirror.uploadFile(e, function result_data(data) {
 			    if(data != 'File max limit exceeded' || data != 'File content is empty'){
 			      uploadFile = data;
