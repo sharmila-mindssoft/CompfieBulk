@@ -6,6 +6,8 @@ import tornado.web
 from tornado.web import StaticFileHandler
 from user_agents import parse
 import jinja2
+from lxml import etree
+from lxml import html
 from basics.webserver import WebServer
 from basics.ioloop import IOLoop
 from protocol import (
@@ -176,6 +178,34 @@ class TemplateHandler(tornado.web.RequestHandler) :
         self.__path_mobile = path_mobile
         self.__parameters = parameters
 
+    def set_path(self, url):
+        if url.startswith("/"):
+            new_url = "/knowledge" + url
+        else :
+            new_url = "/knowledge/" + url
+        return new_url
+
+    def update_static_urls(self, content):
+        parser = etree.HTMLParser()
+        tree = etree.fromstring(content, parser)
+        for node in tree.xpath('//*[@src]'):
+            url = node.get('src')
+            print "src ", url
+            new_url = self.set_path(url)
+            node.set('src', new_url)
+            print "src ", new_url
+        for node in tree.xpath('//*[@href]'):
+            url = node.get('href')
+            print url
+            if not url.startswith("#"):
+                new_url = self.set_path(url)
+            else :
+                new_url = url
+            node.set('href', new_url)
+            print new_url
+        data = etree.tostring(tree, method="html")
+        return data
+
     def get(self) :
         path = self.__path_desktop
         if self.__path_mobile is not None :
@@ -189,6 +219,7 @@ class TemplateHandler(tornado.web.RequestHandler) :
         self.set_header("Content-Type", mime_type)
         template = template_env.get_template(path)
         output = template.render(**self.__parameters)
+        output = self.update_static_urls(output)
         self.write(output)
 
     def options(self) :
@@ -277,6 +308,10 @@ def run_server(port):
             StaticFileHandler, dict(path=images_path)
         )
         web_server.low_level_url(
+            r"/knowledge/images/(.*)",
+            StaticFileHandler, dict(path=images_path)
+        )
+        web_server.low_level_url(
             r"/knowledge/css/(.*)",
             StaticFileHandler, dict(path=css_path)
         )
@@ -298,14 +333,14 @@ def run_server(port):
             dict(path=api_design_path)
         )
         web_server.low_level_url(
-            r"knowledge/(.*)", StaticFileHandler,
+            r"/knowledge/(.*)", StaticFileHandler,
             dict(path=static_path)
         )
         web_server.low_level_url(
             r"/(.*)", StaticFileHandler,
             dict(path=static_path)
         )
-        print "Local port: %s" % port
+        print "Listening port: %s" % port
         web_server.start(port, backlog=1000)
 
     io_loop.add_callback(delay_initialize)
