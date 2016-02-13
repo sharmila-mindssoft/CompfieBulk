@@ -2117,7 +2117,6 @@ class ClientDatabase(Database):
             from_date = request.from_date
             to_date = request.to_date
             chart_year = request.chart_year
-            print chart_year
             year_condition = self.get_client_domain_configuration(chart_year)[1]
 
             for i, y in enumerate(year_condition):
