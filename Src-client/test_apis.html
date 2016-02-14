@@ -543,6 +543,23 @@
 					user_type, assignee_id, country_id, domain_id, level_1_statutory_id, unit_id, compliance_id, from_date, to_date, callback
 				);
 			}
+			function getRiskReportFilters(){
+				client_mirror.getRiskReportFilters(callback);
+			}
+			function getRiskReport(){
+				country_id = 1;
+				domain_id = 1;
+				business_group_id = 1;
+				legal_entity_id = 1;
+				division_id = 1;
+				unit_id = 1;
+			    level_1_statutory_name = "Gratuity Act, 1972"
+			    statutory_status = 1
+				client_mirror.getRiskReport(
+			        country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, 
+			        level_1_statutory_name, statutory_status, callback
+			    );
+			}
 		</script>
 	</head>
 	<body>
@@ -759,6 +776,14 @@
 				</button>
 				<button onclick="getComplianceActivityReportData()">
 					Get Compliance Activity Report Data
+				</button>
+			</div>
+			<div>
+				<button onclick="getRiskReportFilters()">
+					Get Risk Report Filters
+				</button>
+				<button onclick="getRiskReport()">
+					Get Risk Report Data
 				</button>
 			</div>
 		</fieldset>

@@ -985,7 +985,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getRiskReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_id, statutory_status, callback) {
+    function getRiskReport(
+        country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, 
+        level_1_statutory_name, statutory_status, callback
+    ) {
         var request = [
             "GetRiskReport", {
                 "country_id": country_id,
@@ -994,10 +997,11 @@ function initClientMirror() {
                 "legal_entity_id": legal_entity_id,
                 "division_id": division_id,
                 "unit_id": unit_id,
-                "statutory_id": statutory_id,
+                "level_1_statutory_name": level_1_statutory_name,
                 "statutory_status": statutory_status
             }
         ];
+        console.log(request);
         callerName = "api/client_reports";
         clientApiRequest(callerName, request, callback);
     }
