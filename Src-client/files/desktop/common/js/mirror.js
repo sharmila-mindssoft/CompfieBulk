@@ -611,6 +611,11 @@ function initMirror() {
         apiRequest("knowledge/api/knowledge_transaction", request, callback);
     }
 
+    function getStatutoryMappingsMaster(callback) {
+        var request = ["GetStatutoryMappingsMaster", {}];
+        apiRequest("knowledge/api/knowledge_transaction", request, callback);
+    }
+
     function getStatutoryMappings(callback) {
         var request = ["GetStatutoryMappings", {}];
         apiRequest("knowledge/api/knowledge_transaction", request, callback);
@@ -1365,6 +1370,7 @@ function initMirror() {
 
         saveStatutoryMapping: saveStatutoryMapping,
         updateStatutoryMapping: updateStatutoryMapping,
+        getStatutoryMappingsMaster: getStatutoryMappingsMaster,
         getStatutoryMappings: getStatutoryMappings,
         changeStatutoryMappingStatus: changeStatutoryMappingStatus,
         approveStatutoryList: approveStatutoryList,
