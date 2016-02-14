@@ -504,14 +504,13 @@
 			function getReassignedHistoryReport(){
 				country_id = 1
 				domain_id =1
-				level_1_statutory_id =null
-				unit_id =null
-				compliance_id = null
+				level_1_statutory_id = "Finance Act"
+				unit_id = 1
+				compliance_id = 21
 				user_id = null
-				from_date = null
-				to_date = null
-
-				client_mirror.getReassignedHistoryReport(country_id, domain_id,level_1_statutory_id,unit_id, compliance_id, user_id,from_date, to_date, callback)
+				from_date = "2015-01-01"
+				to_date = "2015-05-01"
+				client_mirror.getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id,  from_date, to_date, callback)
 			}
 			function savePastRecords(){
 				unit_id = 1;

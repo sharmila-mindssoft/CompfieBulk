@@ -4959,58 +4959,136 @@ class ClientDatabase(Database):
 
     # Reassigned History Report
     def get_reassigned_history_report(
-        self, country_id, domain_id, level_1_statutory_id,
+        self, country_id, domain_id, level_1_statutory_name,
         unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user
     ) :
         level_1_statutories_list = self.get_level_1_statutories_for_user(
             session_user, client_id, domain_id
         )
-        unit_ids_list = self.get_user_unit_ids(session_user, client_id)
+        if level_1_statutory_name is not None:
+            level_1_statutories_list = [level_1_statutory_name]
 
+        unit_ids = self.get_user_unit_ids(session_user, client_id)
+        unit_ids_list = [int(x) for x in unit_ids.split(",")]
+        if unit_id is not None:
+            unit_ids_list = [unit_id]
+
+        level_1_statutory_wise_compliance = []
         for level_1_statutory in level_1_statutories_list:
+            unit_wise_compliances = []
             for unit_id in unit_ids_list:
-                columns = "trch.compliance_id, tc.document_name, tc.compliance_task, tc.compliance_description, "\
-                "tc.statutory_mapping"
-                tables = [self.tblCompliances, self.tblReassignedCompliancesHistory]
-                aliases = ["tc",  "trch"]
-                joinConditions = ["tc.compliance_id = trch.compliance_id"]
-                whereCondition = " tc.statutory_mapping like '%s%s'" % (
-                        level_1_statutory, "%"
+                columns = "compliance_id, document_name, compliance_task, compliance_description, "\
+                "statutory_mapping"
+                condition = "select compliance_id from %s where \
+                    unit_id = '%d' group by compliance_id" % (
+                        self.tblReassignedCompliancesHistory, unit_id
+                    )
+                if compliance_id is not None:
+                    condition = compliance_id
+
+                whereCondition = " compliance_id in (%s) and statutory_mapping like '%s%s'" % (
+                        condition, level_1_statutory, "%"
+                )                
+
+                compliance_rows = self.get_data(
+                    self.tblCompliances, columns, whereCondition
                 )
-                joinType = "left join"
-                compliance_rows = self.get_data_from_multiple_tables(
-                    columns, tables, aliases, joinType, joinConditions, whereCondition
-                )
-                if compliance_rows:
-                    compliance_columns = ["compliance_id", "document_name", "compliance_task", "compliance_description",
-                    "tc.statutory_mapping"]
-                    compliance_rows = self.convert_to_dict(compliance_rows, compliance_columns)
+                compliance_wise_history = []
+                if len(compliance_rows) > 0:
+                    compliance_columns = [
+                        "compliance_id", "document_name", "compliance_task", "compliance_description",
+                        "tc.statutory_mapping"
+                    ]
+                    compliance_rows = self.convert_to_dict(
+                        compliance_rows, compliance_columns
+                    )
                     
                     for compliance in compliance_rows:
-                        reassign_columns = "assignee, reassigned_from, reassigned_date, remarks"
-                        reassign_condition = "compliance_id = '%d' and unit_id = '%d'" % (
-                            compliance["compliance_id"], unit_id
+                        compliance_name = "%s - %s" % (
+                            compliance["document_name"], compliance["compliance_task"]
                         )
+                        reassign_columns = "assignee, reassigned_from, reassigned_date, remarks"
+                        condition = "1"
+                        if user_id is not None:
+                            condition = "reassigned_from = '%d' or assignee = '%d'" % (
+                                user_id, user_id
+                            )
+                        if from_date is not None and to_date is not None:
+                            condition += " and reassigned_date between '{}' and '{}'".format(
+                                from_date, to_date
+                            )
+                        elif from_date is None and to_date is None:
+                            current_year = self.get_date_time().year
+                            result = self.get_country_domain_timelines(
+                                [country_id], [domain_id], [current_year], client_id
+                            )                          
+                            calculated_from_date = result[0][1][0][1][0]["start_date"]
+                            calculated_to_date = result[0][1][0][1][0]["end_date"]
+                            condition += " and reassigned_date between '{}' and '{}'".format(
+                                calculated_from_date, calculated_to_date
+                            )
+                        else:
+                            if from_date is not None:
+                                condition += " and reassigned_date > '{}'".format(from_date)
+                            elif to_date is not None:
+                                condition += " and reassigned_date < '{}'".format(to_date)
+
+                        reassign_condition = "compliance_id = '%d' and unit_id = '%d' \
+                        and %s" % (
+                            compliance["compliance_id"], unit_id, condition
+                        )    
                         reassign_rows = self.get_data(
                             self.tblReassignedCompliancesHistory, reassign_columns, reassign_condition
                         )
+                        history_list = []
                         if reassign_rows:
-                            reassign_columns = ["assignee", "reassigned_from", "reassigned_date", "remarks"]
-                            reassign_rows = self.convert_to_dict(reassign_rows, reassign_columns)
-                            history_list = []
                             for history in reassign_rows:
+                                reassigned_from = self.get_user_name_by_id(history[1], client_id)
+                                reassigned_to = self.get_user_name_by_id(history[0], client_id)
                                 history_list.append(
                                     clientreport.ReassignHistory(
-                                        history["assignee"], history["reassigned_from"], 
-                                        history["reassigned_date"], history["remarks"]
+                                        reassigned_to, reassigned_from,
+                                        self.datetime_to_string(history[2]), 
+                                        history[3]
                                     )
                                 )
+                        current_due_date_column = "due_date"
+                        current_due_date_condition = " next_due_date = (select due_date from %s where \
+                            compliance_id = '%d' and unit_id = '%d')" % (
+                            self.tblAssignedCompliances, compliance["compliance_id"], unit_id
+                        )
+                        current_due_date_rows = self.get_data(
+                            self.tblComplianceHistory, current_due_date_column, current_due_date_condition
+                        )
+                        current_due_date = self.datetime_to_string(current_due_date_rows[0][0])
+                        if len(history_list) > 0:
+                            compliance_wise_history.append(
+                                clientreport.ReassignCompliance(
+                                    compliance_name, current_due_date, history_list
+                                )
+                            )
+                if len(compliance_wise_history) > 0:
+                    unit_column = "unit_code, unit_name, address"
+                    condition = "unit_id = '%d'" % unit_id
+                    unit_rows = self.get_data(
+                        self.tblUnits, unit_column, condition
+                    )
+                    unit_name = "%s - %s" % (
+                        unit_rows[0][0], unit_rows[0][1]
+                    )
+                    unit_wise_compliances.append(
+                        clientreport.ReassignUnitCompliance(
+                            unit_name, unit_rows[0][2], compliance_wise_history
+                        )
+                    )
+            if len(unit_wise_compliances) > 0:
+                level_1_statutory_wise_compliance.append(
+                    clientreport.StatutoryReassignCompliance(
+                        level_1_statutory, unit_wise_compliances
+                    )
+                )
+        return level_1_statutory_wise_compliance
                         
-
-
-
-
-
     # # Reassigned History Report
     # def get_reassigned_history_report(
     #     self, country_id, domain_id, level_1_statutory_id,

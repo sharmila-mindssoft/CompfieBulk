@@ -1056,7 +1056,8 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id, from_date, to_date, callback) {
+    function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, 
+        compliance_id, user_id, from_date, to_date, callback) {
         var request = [
             "GetReassignedHistoryReport", {
 

@@ -1361,14 +1361,12 @@ class GetStatutoryNotificationsListFiltersSuccess(Response):
 
 class GetStatutoryNotificationsListReportSuccess(Response):
     def __init__(self, statutory_wise_notifications):
-        print statutory_wise_notifications
         self.statutory_wise_notifications = statutory_wise_notifications
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["statutory_wise_notifications"])
         statutory_wise_notifications = data.get("statutory_wise_notifications")
-        print statutory_wise_notifications
         statutory_wise_notifications = parse_structure_VectorType_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS(statutory_wise_notifications)
         return GetStatutoryNotificationsListFiltersSuccess(statutory_wise_notifications)
 
@@ -1424,7 +1422,6 @@ class GetLoginTraceSuccess(Response):
         users = data.get("users")
         users = parse_structure_VectorType_RecordType_clientreport_User(users)
         login_trace = data.get("login_trace")
-        print login_trace
         login_trace = parse_structure_VectorType_RecordType_clientreport_LoginTrace(login_trace)
         return GetLoginTraceSuccess(users, login_trace)
 
@@ -2085,23 +2082,26 @@ class LoginTrace(object):
 # ReassignUnitCompliance
 #
 class ReassignUnitCompliance(object):
-    def __init__(self, unit_name, reassign_compliances):
+    def __init__(self, unit_name, address, reassign_compliances):
         self.unit_name = unit_name
+        self.address = address
         self.reassign_compliances = reassign_compliances
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_name", "reassign_compliances"])
+        data = parse_dictionary(data, ["unit_name",  "address", "reassign_compliances"])
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_100(unit_name)
-        
+        address = data.get("address")
+        address = parse_structure_CustomTextType_100(address)
         reassign_compliances = data.get("reassign_compliances")
         reassign_compliances = parse_structure_VectorType_RecordType_clientreport_ReassignCompliance(reassign_compliances)
-        return ReassignCompliance(unit_name, reassign_compliances)
+        return ReassignCompliance(unit_name, address, reassign_compliances)
 
     def to_structure(self):
         return {
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
+            "address": to_structure_CustomTextType_100(self.address),
             "reassign_compliances": to_structure_VectorType_RecordType_clientreport_ReassignCompliance(self.reassign_compliances),
         }
 

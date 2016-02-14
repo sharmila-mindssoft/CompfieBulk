@@ -256,7 +256,6 @@ def get_reassignedhistory_report_filters(db, request, session_user, client_id):
 	level_1_statutories_list = db.get_client_level_1_statutoy(session_user, client_id)
 	compliances_list = db.get_client_compliances(session_user, client_id)
 	users_list = db.get_client_users(client_id);
-
 	return clientreport.GetReassignedHistoryReportFiltersSuccess(
 		countries = country_list, domains = domain_list, units = unit_list, level_1_statutories = level_1_statutories_list, compliances = compliances_list, users = users_list)
 
@@ -269,14 +268,6 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
 	user_id = request.user_id
 	from_date = request.from_date
 	to_date = request.to_date
-	
-	if level_1_statutory_id is None :
-		level_1_statutory_id = '%'
-	if compliance_id is None :
-		compliance_id = '%'
-	if user_id is None :
-		user_id = '%'
-
 	reassigned_history_list = db.get_reassigned_history_report(
 	    country_id, domain_id, level_1_statutory_id, 
 	    unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user
