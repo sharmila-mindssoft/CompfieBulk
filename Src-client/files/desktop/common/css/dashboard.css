@@ -425,12 +425,14 @@ img, object {
 	width: 275px;
 	background: rgba(28,28,28,0.60);
 	right: 0;
-	top: 3.125em;
+	top: 0em;
 	overflow-y: scroll;
+	padding-bottom: 4.5em;
+	padding-top: 5em;
 }
 .notification-container ul{
-	margin-top: 0.675em;
-	margin-bottom: 6.25em;
+	/*margin-top: 0.675em;
+	margin-bottom: 6.25em;*/
 }
 .notification-container ul li {
 	list-style-type: none;
