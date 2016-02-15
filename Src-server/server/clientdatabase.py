@@ -1277,6 +1277,8 @@ class ClientDatabase(Database):
             compliance_id = s.compliance_id
             opted_status = int(s.compliance_opted_status)
             remarks = s.compliance_remarks
+            if remarks is None :
+                remarks = ""
 
             query = "UPDATE tbl_client_compliances t1 \
                 INNER JOIN tbl_client_statutories t2 \
