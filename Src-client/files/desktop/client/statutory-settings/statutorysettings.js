@@ -107,6 +107,9 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
         var compliance_id = complianceslist[compliance]["compliance_id"];
         var compliance_applicable_status = complianceslist[compliance]["compliance_applicable_status"];
         var compliance_opted_status = complianceslist[compliance]["compliance_opted_status"];
+        var compliance_remarks = complianceslist[compliance]["compliance_remarks"];
+        if (compliance_remarks == null) compliance_remarks = '';
+
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
         var clone2=complianceDetailtableRow.clone();
         $('.sno', clone2).text(statutoriesCount);
@@ -115,36 +118,21 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
         $('.compliancedescription', clone2).text(complianceslist[compliance]["description"]);
 
         $('.complianceopted', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" value="'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this)"><label for="statutory'+statutoriesCount+'"></label>');
-        
-        $('.cremark', clone2).html('<span class="cremarkadd'+statutoriesCount+'"><textarea class="input-box" style="height:30px;"  placeholder="Enter client decision"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span><span class="cremarkview'+statutoriesCount+'"><abbr class="page-load tipso_style" title="Remarks text goes here."><img src="images/icon-info.png"/>Remarks text g...</abbr></span>');
+        $('.cremark', clone2).html('<span class="cremarkadd'+statutoriesCount+' default-display-none" > <textarea class="input-box" style="height:30px;"  placeholder="Enter client decision"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span><span class="cremarkview'+statutoriesCount+'"><abbr class="page-load tipso_style" title="'+compliance_remarks+'"><img src="images/icon-info.png"/>Remarks text g...</abbr></span>');
 
         if(compliance_applicable_status){
           $('.applicable', clone2).html('<img src=\'/images/tick1bold.png\' />');
-          $('.cremarkadd'+statutoriesCount).hide();
-          $('.cremarkview'+statutoriesCount).show();
         }
         else{
           $('.applicable', clone2).html('<img src=\'/images/deletebold.png\'/>');
-          $('.cremarkadd'+statutoriesCount).show();
-          $('.cremarkview'+statutoriesCount).hide();
         }
-
-
-        if(applicable_status == false){
-        $('.remark'+actCount).show();
-        $('#act'+actCount).each(function() { 
-          this.checked = false;           
-        });
-      }
-
-
         $('.accordion-content'+count).append(clone2);
 
         if(compliance_opted_status == false){
           $('#statutory'+statutoriesCount).each(function() { 
           this.checked = false;           
         });
-      }
+        }
         statutoriesCount = statutoriesCount + 1;
       }  
       actCount = actCount + 1;
