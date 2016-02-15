@@ -67,20 +67,20 @@ tbody {
          <div style="margin-left:15%;margin-top:10px">
           <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">            
              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Business Group :
-             <span style="margin-left:10px; font-weight:bold;" class="tbl_businessgroup"></span>
+             <span style="margin-left:10px; font-weight:bold;" class="tbl_businessgroup_disp"></span>
              </div>
              <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Division :
-             <span style="margin-left:10px; font-weight:bold;" class="tbl_division"></span> 
+             <span style="margin-left:10px; font-weight:bold;" class="tbl_division_disp"></span> 
              </div>
           </div>
           <div style="float:right; margin-right:20%;">           
             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Legal Entity:
 
-            <span style="margin-left:10px; font-weight:bold;" class="tbl_legalentity"></span> 
+            <span style="margin-left:10px; font-weight:bold;" class="tbl_legalentity_disp"></span> 
             </div>
             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Unit:
 
-            <span style="margin-left:10px; font-weight:bold;" class="tbl_unit">
+            <span style="margin-left:10px; font-weight:bold;" class="tbl_unit_disp">
             <!-- <abbr class="page-load tipso_style" title="12 RJ Complex, Main road, T.Nagar, Chennai">VRM1005 - Branch Office 2</abbr> -->
             </span> 
             </div>
@@ -96,6 +96,7 @@ tbody {
                 <span class="error-message" style="float:left;color:red;font-size: 0.8em;margin:10px;"></span>
               </td>
               <td width="10%">
+                <input type="hidden" id="unit" value="" />
                 <button id="submit" class="btn-right" >Submit</button>
               </td>
               <td width="45%">
@@ -117,7 +118,7 @@ tbody {
   <table class="font1" >
   <tbody class="accordion-toggle tbody-heading">
     <tr align="left" class="rightside tableRow " style="margin-bottom:1em; border:1px solid #ccc;">
-      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="100%" colspan="5"><div class="actapplicable gt" style="float:left; width:3%;padding-top:5px;"></div><div class="actname" style="float:left; width:94%;margin-top:0px;"></div>
+      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="100%" colspan="7"><div class="actapplicable ot" style="float:left; width:3%;padding-top:5px;"></div><div class="actname" style="float:left; width:94%;margin-top:0px;"></div>
       <div style="float:right; width:3%;padding-top:5px;"><img src="/images/chevron_black_down.png"></div>
       </th>
     </tr>
@@ -126,16 +127,14 @@ tbody {
 </div>
 <div id="statutory-templates" class="default-display-none">
   <table cellpadding="0" cellspacing="0" width="100%" class="checkedtable">  
-    <tr class="compliance-heading" style="width:100%;">
-      <td width="5%"><span style="font-weight:bold;">#</span></td>
-      <td width="30%" ><span style="font-weight:bold;">Statutory Provision</span></td>
-      <td width="30%"><span style="font-weight:bold;">Compliance Task</span></td>
-      <td width="35%"> <span style="font-weight:bold; ">Compliance Description</span></td>
-      <td width="10%" align="center">
-        <span style="font-weight:bold;">
-          <img src="/images/icon-client-comply.png" title="Applicable" >
-        </span>
-      </td>
+    <tr align="left" class="compliance-heading">
+      <td width="2%"><span style="font-weight:bold;">#</span></td>
+      <td ><span style="font-weight:bold;">Statutory Provision</span></td>
+      <td ><span style="font-weight:bold;">Compliance Tasks</span></td>
+      <td width="40%"><span style="font-weight:bold; ">Compliance Description
+      <td align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Applicable" ></span></td>
+      <td  align="center"><span style="font-weight:bold; "><img src="/images/icon-client-tick.png" title="Opted"></span></td>
+      <td width="15%"><span style="font-weight:bold; font-size:11px;">Remarks</span></td>
     </tr>
   </table>
 </div>
@@ -147,7 +146,9 @@ tbody {
       <td class="statutoryprovision"></td>
       <td class="compliancetask"></td>
       <td class="compliancedescription"></td>
-      <td align="center" class="gt complianceapplicable"></td>
+      <td class="applicable"></td>
+      <td align="center" class="ot complianceopted"></td>
+      <td class="cremark"></td>
     </tr>
   </table>
 </div>

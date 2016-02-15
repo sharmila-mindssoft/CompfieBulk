@@ -217,7 +217,10 @@ class UpdateStatutoryCompliance(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_statutory_id", "compliances", "applicable_status", "not_applicable_remarks"])
+        data = parse_dictionary(data, [
+            "client_statutory_id", "applicable_status", "not_applicable_remarks",
+            "compliance_id", "compliance_opted_status", "compliance_remarks"
+        ])
         client_statutory_id = data.get("client_statutory_id")
         client_statutory_id = parse_structure_UnsignedIntegerType_32(client_statutory_id)
         applicable_status = data.get("applicable_status")
