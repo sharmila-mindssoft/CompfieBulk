@@ -59,7 +59,7 @@ INSERT INTO tbl_form_type VALUES(4, "Report");
 INSERT INTO tbl_form_type VALUES(5, "Settings");
 
 -- fields(form_id, form_type_id, form_name, form_url, form_order, parent_menu, is_admin)
-INSERT INTO tbl_forms VALUES(1, 1, 'Dashboard', '/home', 1, null, 0);
+INSERT INTO tbl_forms VALUES(1, 1, 'Dashboard', '/home', 1, null, 1);
 INSERT INTO tbl_forms VALUES(2, 2, 'Service Provider', '/service-provider', 2, null, 1);
 INSERT INTO tbl_forms VALUES(3, 2, 'User Privilege', '/client-user-privilege', 3, null, 1);
 INSERT INTO tbl_forms VALUES(4, 2, 'User', '/client-user-master', 4, null, 1);
@@ -67,23 +67,23 @@ INSERT INTO tbl_forms VALUES(5, 2, 'Unit Closure', '/unit-closure', 5, null, 1);
 INSERT INTO tbl_forms VALUES(6, 3, 'Statutory Settings', '/statutory-settings', 6, null, 1);
 INSERT INTO tbl_forms VALUES(7, 3, 'Assign Compliance', '/assign-compliance', 7, null, 1);
 INSERT INTO tbl_forms VALUES(8, 3, 'Reassign Compliance', '/reassign-compliance', 8, null, 1);
-INSERT INTO tbl_forms VALUES(9, 3, 'Compliance Approval', '/compliance-approval', 9, null, 0);
-INSERT INTO tbl_forms VALUES(10, 3, 'Completed Tasks - Current Year', '/completed-tasks-current-year', 10, null, 0);
-INSERT INTO tbl_forms VALUES(11, 3, 'Compliance Task Details', '/compliance-task-details',11, null, 0);
-INSERT INTO tbl_forms VALUES(12, 3, 'On Occurrence Compliances', '/on-occurrence-compliances', 12, null, 0);
-INSERT INTO tbl_forms VALUES(13, 4, 'Compliance Details', '/compliance-details', 13, null, 0);
-INSERT INTO tbl_forms VALUES(14, 4, 'Risk Report', '/risk-report', 14, null, 0);
-INSERT INTO tbl_forms VALUES(15, 4, 'Service Provider wise Compliance', '/service-provider-wise-compliance', 15, "Compliance List", 0);
-INSERT INTO tbl_forms VALUES(16, 4, 'Assignee wise Compliance', '/assignee-wise-compliance', 16, "Compliance List", 0);
-INSERT INTO tbl_forms VALUES(17, 4, 'Unit wise Compliance', '/unit-wise-compliance', 17, "Compliance List", 0);
-INSERT INTO tbl_forms VALUES(18, 4, 'Compliance Task Applicability Status', '/compliance-task-applicability-status', 18, null, 0);
-INSERT INTO tbl_forms VALUES(19, 4, 'Unit Details', '/unit-details', 19, null, 0);
-INSERT INTO tbl_forms VALUES(20, 4, 'Compliance Activity Report', '/compliance-activity-report', 20, null, 0);
-INSERT INTO tbl_forms VALUES(21, 4, 'Reassigned History', '/reassigned-history', 21, null, 0);
-INSERT INTO tbl_forms VALUES(22, 4, 'Statutory Notifications List', '/statutory-notifications-list', 22, null, 0);
+INSERT INTO tbl_forms VALUES(9, 3, 'Compliance Approval', '/compliance-approval', 9, null, 1);
+INSERT INTO tbl_forms VALUES(10, 3, 'Completed Tasks - Current Year', '/completed-tasks-current-year', 10, null, 1);
+INSERT INTO tbl_forms VALUES(11, 3, 'Compliance Task Details', '/compliance-task-details',11, null, 1);
+INSERT INTO tbl_forms VALUES(12, 3, 'On Occurrence Compliances', '/on-occurrence-compliances', 12, null, 1);
+INSERT INTO tbl_forms VALUES(13, 4, 'Compliance Details', '/compliance-details', 13, null, 1);
+INSERT INTO tbl_forms VALUES(14, 4, 'Risk Report', '/risk-report', 14, null, 1);
+INSERT INTO tbl_forms VALUES(15, 4, 'Service Provider wise Compliance', '/service-provider-wise-compliance', 15, "Compliance List", 1);
+INSERT INTO tbl_forms VALUES(16, 4, 'Assignee wise Compliance', '/assignee-wise-compliance', 16, "Compliance List", 1);
+INSERT INTO tbl_forms VALUES(17, 4, 'Unit wise Compliance', '/unit-wise-compliance', 17, "Compliance List", 1);
+INSERT INTO tbl_forms VALUES(18, 4, 'Compliance Task Applicability Status', '/compliance-task-applicability-status', 18, null, 1);
+INSERT INTO tbl_forms VALUES(19, 4, 'Unit Details', '/unit-details', 19, null, 1);
+INSERT INTO tbl_forms VALUES(20, 4, 'Compliance Activity Report', '/compliance-activity-report', 20, null, 1);
+INSERT INTO tbl_forms VALUES(21, 4, 'Reassigned History', '/reassigned-history', 21, null, 1);
+INSERT INTO tbl_forms VALUES(22, 4, 'Statutory Notifications List', '/statutory-notifications-list', 22, null, 1);
 INSERT INTO tbl_forms VALUES(23, 4, 'Login Trace', '/login-trace', 23, null, 1);
 INSERT INTO tbl_forms VALUES(24, 4, 'Audit Trail', '/audit-trail', 24, null, 1);
-INSERT INTO tbl_forms VALUES(25, 4, 'Settings', '/settings',  25, null, 1);
+INSERT INTO tbl_forms VALUES(25, 5, 'Settings', '/settings',  25, null, 1);
 INSERT INTO tbl_forms VALUES(26, 5, 'View Profile', '/view-profile',  26, null, 1);
 
 --tbl_admin
@@ -119,12 +119,12 @@ INSERT INTO tbl_compliance_frequency VALUES(2, "Periodical");
 INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
 INSERT INTO tbl_compliance_frequency VALUES(4, "On Occurrence");
 
---tbl_user_groups
-INSERT INTO tbl_user_groups(user_group_id, form_category_id, user_group_name, form_ids, is_active) VALUES(1, 2, "knowledge", "5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16", 1);
+-- --tbl_user_groups
+-- INSERT INTO tbl_user_groups(user_group_id, form_category_id, user_group_name, form_ids, is_active) VALUES(1, 2, "knowledge", "5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16", 1);
 
---tbl_users
-INSERT INTO tbl_users(user_id, user_group_id, email_id, password, employee_name, contact_no, designation, address, employee_code )
-VALUES (1, 1, 'usha@mindssoft.com', 'e10adc3949ba59abbe56e057f20f883e', 'Test-user', "9876543210", "Manager", "KK Nagar", "TEST001")
+-- --tbl_users
+-- INSERT INTO tbl_users(user_id, user_group_id, email_id, password, employee_name, contact_no, designation, address, employee_code )
+-- VALUES (1, 1, 'usha@mindssoft.com', 'e10adc3949ba59abbe56e057f20f883e', 'Test-user', "9876543210", "Manager", "KK Nagar", "TEST001")
 
 --tbl_user_sessions
 INSERT INTO tbl_user_sessions(session_token, user_id, session_type_id) VALUES ("12c94b934d5f4b5ebebd4471d8b29cb8", 0, 1);
@@ -136,27 +136,6 @@ INSERT INTO tbl_notification_types VALUES(2, "Reminder");
 INSERT INTO tbl_notification_types VALUES(3, "Escalation");
 
 --Get Statutory Notifications Log
-
-SELECT tsnl.statutory_notification_id,
-	   tsm.country_id,
-	 tsm.domain_id, ts.statutory_name, tsnl.statutory_provision,
-	 tsnl.notification_text, tsnl.updated_on
-	 from `tbl_statutory_notifications_log` tsnl
-	INNER JOIN `tbl_statutory_statutories` tss ON
-	tsnl.statutory_mapping_id = tss.statutory_mapping_id
-	INNER JOIN `tbl_statutory_mappings` tsm ON
-	tsm.statutory_mapping_id = tsnl.statutory_mapping_id
-	INNER JOIN  `tbl_statutories` ts ON
-	tss.statutory_id = ts.statutory_id
-	WHERE
-	tsm.country_id = 1
-	and
-	tsm.domain_id = 1
-	and
-	tsnl.updated_on between
-	'2016-01-18 05:37:51' and '2016-01-20 05:37:51'
-
-
 
 
 
