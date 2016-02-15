@@ -585,7 +585,7 @@ class GetComplianceActivityReport(Request):
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         level_1_statutory_name = data.get("level_1_statutory_name")
-        level_1_statutory_name = parse_structure_OptionalType_SignedIntegerType_8(level_1_statutory_name)
+        level_1_statutory_name = parse_structure_OptionalType_CustomTextType_100(level_1_statutory_name)
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         compliance_id = data.get("compliance_id")
@@ -605,7 +605,7 @@ class GetComplianceActivityReport(Request):
             "user_id": to_structure_OptionalType_SignedIntegerType_8(self.user_id),
             "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "level_1_statutory_name": to_structure_OptionalType_SignedIntegerType_8(self.level_1_statutory_name),
+            "level_1_statutory_name": to_structure_OptionalType_CustomTextType_100(self.level_1_statutory_name),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "compliance_id": to_structure_OptionalType_SignedIntegerType_8(self.compliance_id),
             "from_date": to_structure_OptionalType_CustomTextType_20(self.from_date),

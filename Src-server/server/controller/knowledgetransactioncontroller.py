@@ -12,7 +12,10 @@ def process_knowledge_transaction_request(request, db) :
     if user_id is None:
         return login.InvalidSessionToken()
 
-    if type(request_frame) is knowledgetransaction.GetStatutoryMappings :
+    if type(request_frame) is knowledgetransaction.GetStatutoryMappingsMaster:
+        return process_get_statutory_mapping_master(db, user_id)
+
+    elif type(request_frame) is knowledgetransaction.GetStatutoryMappings :
         return process_get_statutory_mappings(db, user_id)
 
     elif type(request_frame) is knowledgetransaction.SaveStatutoryMapping :
@@ -27,7 +30,7 @@ def process_knowledge_transaction_request(request, db) :
     elif type(request_frame) is knowledgetransaction.ApproveStatutoryMapping :
         return process_approve_statutory_mapping(db, request_frame, user_id)
 
-def process_get_statutory_mappings(db, user_id):
+def process_get_statutory_mapping_master(db, user_id):
     countries = db.get_countries_for_user(user_id)
     domains = db.get_domains_for_user(user_id)
     industries = db.get_industries()
@@ -40,13 +43,17 @@ def process_get_statutory_mappings(db, user_id):
     compliance_repeat_type = db.get_compliance_repeat()
     compliance_duration_type = db.get_compliance_duration()
     compliance_approval_status = db.get_approval_status()
+    return knowledgetransaction.GetStatutoryMappingsMasterSuccess(
+        countries, domains, industries, statutory_natures,
+        statutory_levels, statutories, geography_levels,
+        geographies, compliance_frequency,
+        compliance_repeat_type,
+        compliance_approval_status, compliance_duration_type
+    )
+
+def process_get_statutory_mappings(db, user_id):
     statutory_mappings = db.get_statutory_mappings(user_id)
     return knowledgetransaction.GetStatutoryMappingsSuccess(
-        countries, domains, industries, statutory_natures,
-        statutory_levels, statutories, geography_levels, geographies,
-        compliance_frequency, compliance_repeat_type,
-        compliance_approval_status,
-        compliance_duration_type,
         statutory_mappings
     )
 

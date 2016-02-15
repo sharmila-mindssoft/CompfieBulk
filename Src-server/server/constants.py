@@ -5,6 +5,11 @@ CLIENT_TEMPLATE_PATHS = [
         "files/mobile/login/login.html", {}
     ),
     (
+        "/profile",
+        "files/desktop/client/profile.html",
+        None, {}
+    ),
+    (
         r"/forgot_password/([a-zA-Z-0-9]+)",
         "files/desktop/client/forgotpassword.html",
         "", {}

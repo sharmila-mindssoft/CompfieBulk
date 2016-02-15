@@ -622,9 +622,9 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    
+
     /* Past Records */
-    
+
 
     function getPastRecordsFormData(callback) {
         var request = [
@@ -658,7 +658,7 @@ function initClientMirror() {
             "validity_date": validity_date,
             "completed_by" : completed_by
         };
-    }   
+    }
 
     function savePastRecords(
         compliances_list, callback
@@ -666,7 +666,7 @@ function initClientMirror() {
         var request = [
             "SavePastRecords",
             {
-                "compliances" : compliances_list 
+                "compliances" : compliances_list
             }
         ];
         clientApiRequest("api/client_transaction", request, callback);
@@ -717,12 +717,12 @@ function initClientMirror() {
                     );
                     results.push(result);
                     if (results.length == files.length){
-                        callback(results)        
+                        callback(results)
                     }
                 });
             }
         }
-        
+
     }
 
     /* Compliance Approal */
@@ -828,6 +828,15 @@ function initClientMirror() {
     function getComplianceStatusDrillDown(requestData, callback) {
         var request = [
             "GetComplianceStatusDrillDownData",
+            requestData
+        ];
+        var callerName = "api/client_dashboard";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getEscalationChartData(requestData, callback) {
+        var request = [
+            "GetEscalationsChart",
             requestData
         ];
         var callerName = "api/client_dashboard";
@@ -1087,7 +1096,7 @@ function initClientMirror() {
 
 
     function getComplianceActivityReportData(
-            user_type, user_id, country_id, domain_id, level_1_statutory_name, unit_id, 
+            user_type, user_id, country_id, domain_id, level_1_statutory_name, unit_id,
             compliance_id, from_date, to_date, callback
         ){
         var request = [
@@ -1099,7 +1108,7 @@ function initClientMirror() {
                 "domain_id": domain_id,
                 "level_1_statutory_name": level_1_statutory_name,
                 "unit_id": unit_id,
-                "compliance_id": compliance_id, 
+                "compliance_id": compliance_id,
                 "from_date" : from_date,
                 "to_date" : to_date
             }
@@ -1196,6 +1205,7 @@ function initClientMirror() {
         getChartFilters: getChartFilters,
         getComplianceStatusChartData: getComplianceStatusChartData,
         getComplianceStatusDrillDown: getComplianceStatusDrillDown,
+        getEscalationChartData: getEscalationChartData,
         getTrendChart: getTrendChart,
         getTrendChartDrillDown: getTrendChartDrillDown,
 
