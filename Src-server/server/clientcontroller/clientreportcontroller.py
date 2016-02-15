@@ -48,6 +48,10 @@ def process_client_report_requests(request, db) :
 		return get_compliance_activity_report_filters(db, request, session_user, client_id)
 	elif type(request) is clientreport.GetComplianceActivityReport:
 		return get_compliance_activity_report(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetClientDetailsReportFilters:
+		return get_client_details_report_filters(db, request, session_user, client_id)
+	elif type(request) is clientreport.GetClientDetailsReportData:
+		return get_client_details_report_data(db, request, session_user, client_id)
 
 
 def get_client_report_filters(db, request, session_user, client_id):
@@ -319,3 +323,21 @@ def get_compliance_activity_report(db, request, session_user, client_id):
 	return clientreport.GetComplianceActivityReportSuccess(
 		activities = activities
 	)
+
+def get_client_details_report_filters(db, request, session_user, client_id):
+	countries = db.get_countries_for_user(session_user, client_id)
+	domains = db.get_domains_for_user(session_user, client_id)
+	group_companies = db.get_group_companies_for_user(session_user, client_id)
+	business_groups = db.get_business_groups_for_user(session_user, client_id)
+	legal_entities = db.get_legal_entities_for_user(session_user, client_id)
+	divisions = db.get_divisions_for_user(session_user, client_id)
+	unit_ids = user_company_info[0]
+	units = db.get_units_for_user(unit_ids, client_id)
+	return clientreport.GetClientDetailsReportFiltersSuccess(countries = countries, domains = domains, 
+		 business_groups = business_groups, legal_entities = legal_entities, 
+		 divisions = divisions, units = units)
+
+def get_client_details_report_data(db, request, session_user, client_id):
+	units = db.get_client_details_report(request.country_id, request.business_group_id, 
+            request.legal_entity_id, request.division_id, request.unit_id, request.domain_ids)
+	return clientreport.GetClientDetailsReportDataSuccess(units = units)
