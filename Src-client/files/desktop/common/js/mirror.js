@@ -94,6 +94,14 @@ function initMirror() {
         return info["menu"]["menus"];
     }
 
+    function getEmployeeName(){
+        var info = getUserInfo();
+        if (info !== null)
+            return info["employee_name"];
+        else
+            return null;
+    }
+
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
@@ -1318,6 +1326,7 @@ function initMirror() {
         login: login,
         logout: logout,
 
+        getEmployeeName: getEmployeeName,
         getUserInfo: getUserInfo,
         updateUserInfo: updateUserInfo,
         getUserProfile: getUserProfile,

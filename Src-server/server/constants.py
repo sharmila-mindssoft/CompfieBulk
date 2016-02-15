@@ -5,18 +5,23 @@ CLIENT_TEMPLATE_PATHS = [
         "files/mobile/login/login.html", {}
     ),
     (
+        "/profile",
+        "files/desktop/client/profile.html",
+        None, {}
+    ),
+    (
         r"/forgot_password/([a-zA-Z-0-9]+)",
-        "files/desktop/ForgotPassword/ForgotPassword.html",
+        "files/desktop/client/ForgotPassword.html",
         "", {}
     ),
     (
         r"/reset_password/([a-zA-Z-0-9]+)",
-        "files/desktop/ForgotPassword/resetpassword.html",
+        "files/desktop/client/resetpassword.html",
         "", {}
     ),
     (
         "/change-password",
-        "files/desktop/change-password/changepassword.html",
+        "files/desktop/client/changepassword.html",
         None, {}
     ),
     (
