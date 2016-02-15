@@ -1261,7 +1261,7 @@ function initClientMirror() {
         uploadFileFormat: uploadFileFormat,
 
         getComplianceActivityReportFilters: getComplianceActivityReportFilters,
-        getComplianceActivityReportData: getComplianceActivityReportData
+        getComplianceActivityReportData: getComplianceActivityReportData,
 
         getUnitDetailsReportFilters: getUnitDetailsReportFilters,
         getUnitDetailsReportData: getUnitDetailsReportData
