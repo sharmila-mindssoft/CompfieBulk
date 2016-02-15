@@ -62,7 +62,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY,
     parse_structure_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_core_User,
-    parse_structure_OptionalType_VectorType_RecordType_core_FileList
+    parse_structure_OptionalType_VectorType_RecordType_core_FileList,
+    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -133,7 +134,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY,
     to_structure_UnsignedIntegerType_32,
     to_structure_VectorType_RecordType_core_User,
-    to_structure_OptionalType_VectorType_RecordType_core_FileList
+    to_structure_OptionalType_VectorType_RecordType_core_FileList,
+    to_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory
 )
 
 #
@@ -557,7 +559,7 @@ class UnitStatutoryCompliances(object):
         division_name = data.get("division_name")
         division_name = parse_structure_CustomTextType_50(division_name)
         statutories = data.get("statutories")
-        statutories = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_AssignedStatutory(statutories)
+        statutories = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory(statutories)
         return UnitStatutoryCompliances(unit_id, unit_name, address, country_name, domain_names, business_group_name, legal_entity_name, division_name, statutories)
 
     def to_structure(self):
@@ -570,7 +572,7 @@ class UnitStatutoryCompliances(object):
             "business_group_name": to_structure_CustomTextType_50(self.business_group_name),
             "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
             "division_name": to_structure_CustomTextType_50(self.division_name),
-            "statutories": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_AssignedStatutory(self.statutories),
+            "statutories": to_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory(self.statutories),
         }
 
 class GetStatutorySettingsSuccess(Response):

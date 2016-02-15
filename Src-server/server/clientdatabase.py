@@ -1231,7 +1231,7 @@ class ClientDatabase(Database):
             unit_statutories = unit_wise_statutories.get(unit_id)
             if unit_statutories is None :
                 statutory_dict = {}
-                statutory_dict[domain_id] = statutories.values()
+                statutory_dict[domain_name] = statutories.values()
                 unit_statutories = clienttransactions.UnitStatutoryCompliances(
                     unit_id,
                     unit_name,
@@ -1248,12 +1248,12 @@ class ClientDatabase(Database):
                 domain_list.append(domain_name)
                 domain_list = list(set(domain_list))
                 statutory_dict = unit_statutories.statutories
-                domain_statutories = statutory_dict.get(domain_id)
+                domain_statutories = statutory_dict.get(domain_name)
                 if domain_statutories is None :
                     domain_statutories = statutories.values()
                 else :
                     domain_statutories.extend(statutories.values())
-                statutory_dict[domain_id] = domain_statutories
+                statutory_dict[domain_name] = domain_statutories
 
                 # set values
                 unit_statutories.domain_names = domain_list
