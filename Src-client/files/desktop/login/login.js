@@ -75,16 +75,13 @@ function performLogin(e_button, e_email, e_password) {
     //     // mirror.initSession(response);
     //     window.location.href = "/home";
     // }
-    console.log(getShortName());
     if (getShortName() === null){
-        console.log("mirror")
         mirror.login(
             e_email.val(),
             e_password.val(),
             null,
             function (error, response) {
                 console.log(error)
-                console.log(response)
                 if (error == null){
                     // onSuccess(response)
                     window.location.href = "/knowledge/home";
@@ -95,14 +92,12 @@ function performLogin(e_button, e_email, e_password) {
             }
         );
     }else{
-        console.log("client_mirror")
         client_mirror.login(
             e_email.val(),
             e_password.val(),
             getShortName(),
             function (error, response) {
                 console.log(error)
-                console.log(response)
                 if (error == null){
                     // onSuccess(response)
                     window.location.href = "/home";
@@ -144,7 +139,6 @@ function initializeLogin () {
 
 function navigateToHome(){
     client_name = client_mirror.getClientShortName()
-    console.log(client_name)
     if ((client_name === null) || (client_name === undefined)) {
         window.location.href = "/knowledge/home";
     } else {

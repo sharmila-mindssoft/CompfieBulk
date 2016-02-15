@@ -8,16 +8,17 @@
 </head>
 <body>
   <div id="wrapper">
-    {% include "/files/desktop/client/home/nav-bar.html" %}
     <div class="main-content-area">
+      {% include "/files/desktop/client/home/nav-bar.html" %}
       <div class="content-container">
         <div class="content-area">
-          <!-- <div class="welcome-msg"></div> -->
           {% block content %} {% endblock %}
         </div>
       </div>
     </div>
+    <div class="clearfix"></div>
   </div>
-  {% include "/files/desktop/client/home/footer.html" %}
+  <div class="push"></div>
+  {% include "/files/desktop/knowledge/home/footer.html" %}
 </body>
 </html>

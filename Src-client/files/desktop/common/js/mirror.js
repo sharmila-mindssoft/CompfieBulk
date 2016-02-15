@@ -94,6 +94,14 @@ function initMirror() {
         return info["menu"]["menus"];
     }
 
+    function getEmployeeName(){
+        var info = getUserInfo();
+        if (info !== null)
+            return info["employee_name"];
+        else
+            return null;
+    }
+
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
@@ -608,6 +616,11 @@ function initMirror() {
             "UpdateStatutoryMapping",
             mappingData
         ]
+        apiRequest("knowledge/api/knowledge_transaction", request, callback);
+    }
+
+    function getStatutoryMappingsMaster(callback) {
+        var request = ["GetStatutoryMappingsMaster", {}];
         apiRequest("knowledge/api/knowledge_transaction", request, callback);
     }
 
@@ -1313,6 +1326,7 @@ function initMirror() {
         login: login,
         logout: logout,
 
+        getEmployeeName: getEmployeeName,
         getUserInfo: getUserInfo,
         updateUserInfo: updateUserInfo,
         getUserProfile: getUserProfile,
@@ -1365,6 +1379,7 @@ function initMirror() {
 
         saveStatutoryMapping: saveStatutoryMapping,
         updateStatutoryMapping: updateStatutoryMapping,
+        getStatutoryMappingsMaster: getStatutoryMappingsMaster,
         getStatutoryMappings: getStatutoryMappings,
         changeStatutoryMappingStatus: changeStatutoryMappingStatus,
         approveStatutoryList: approveStatutoryList,
