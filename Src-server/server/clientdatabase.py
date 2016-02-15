@@ -1157,10 +1157,10 @@ class ClientDatabase(Database):
         statutory_wise_compliances = {}
         for r in results :
             statutory_opted = r["statutory_opted"]
-            if type(statutory_opted) is int :
-                statutory_opted = bool(statutory_opted)
-            else :
+            if statutory_opted is None :
                 statutory_opted = bool(r["statutory_applicable"])
+            else :
+                statutory_opted = bool(statutory_opted)
 
             compliance_opted = r["compliance_opted"]
             if type(compliance_opted) is int :
@@ -2006,7 +2006,6 @@ class ClientDatabase(Database):
             due_date = None
             due_date_list = []
             add_month = 0
-            print statutory_dates
             for date in statutory_dates:
                 s_date = core.StatutoryDate(
                     date["statutory_date"],
@@ -2022,7 +2021,6 @@ class ClientDatabase(Database):
                 # n_date = (datetime.date.today() + datetime.timedelta(add_month*365/12)).isoformat()
                 n_date = datetime.date.today()
                 current_date = datetime.date.today()
-                print s_date.statutory_date, s_date.statutory_month
 
                 if s_date.statutory_month is not None :
                     new_date = n_date.replace(month=s_month)

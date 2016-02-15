@@ -546,20 +546,15 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function updateCompliances(complianceId, optedStatus, remarks) {
+
+    function updateStatutory(clientStatutoryId, applicableStatus, applicableRemarks, complianceId, optedStatus, remarks) {
         return {
+            "client_statutory_id": clientStatutoryId,
+            "applicable_status": applicableStatus,
+            "not_applicable_remarks": applicableRemarks,
             "compliance_id": complianceId,
             "compliance_opted_status": optedStatus,
             "compliance_remarks": remarks
-        }
-    }
-
-    function updateStatutory(clientStatutoryId, compliances, applicableStatus, applicableRemarks) {
-        return {
-            "client_statutory_id": clientStatutoryId,
-            "compliances": compliances,
-            "applicable_status": applicableStatus,
-            "not_applicable_remarks": applicableRemarks
         };
     }
 
@@ -1100,6 +1095,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+
     function getComplianceActivityReportData(
             user_type, user_id, country_id, domain_id, level_1_statutory_name, unit_id,
             compliance_id, from_date, to_date, callback
@@ -1206,7 +1202,6 @@ function initClientMirror() {
         getAuditTrail: getAuditTrail,
 
         getStatutorySettings: getStatutorySettings,
-        updateCompliances: updateCompliances,
         updateStatutory: updateStatutory,
         updateStatutorySettings: updateStatutorySettings,
 

@@ -81,7 +81,7 @@ function validate(){
 
 $("#submit").click(function(){
   var domainId = $("#domainid").val();
-  var domainName = $("#domainname").val();
+  var domainName = $("#domainname").val().trim();
 
 if(validate()){
   if($("#domainid").val() == ''){

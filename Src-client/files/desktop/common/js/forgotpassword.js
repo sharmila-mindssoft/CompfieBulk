@@ -1,23 +1,47 @@
-$(".btn-domain-cancel").click(function(){
-  window.location.href='/login';
+function clearMessage() {
+  $(".error-message").hide();
+  $(".error-message").text("");
+}
+function displayMessage(message) {
+  $(".error-message").text(message);
+  $(".error-message").show();
+}
+
+$(".btn-forgotpassword-cancel").click(function(){
+  var pathArray = window.location.pathname.split( '/' );
+  if (pathArray[1] === 'knowledge'){
+    window.location.href='/knowledge/login';
+  }else{
+    window.location.href='/login/';
+  }
+  
 });
 
 $("#submit").click(function(){
-    $(".error-message").html("");
-    var username = $("#username").val();
-    if(username == '') {
-      $(".error-message").html("User Name Required"); 
+    displayMessage("");
+    var username = $("#username").val().trim();
+    if(username.length == 0) {
+      displayMessage("User Name Required");
     } else {
-        function success(status,data) {
-          if(status == 'ForgotPasswordSuccess') {
-            $(".error-message").html("Password Reset Link send to your Mail Id");
-            $("#username").val("");
-          } else {
-            $("#error").text(status);
+
+        function onSuccess(data){
+          displayMessage("Password Reset Link send to your Mail Id");
+          $("#username").val("");
+        }
+        function onFailure(error){
+          if(error == "InvalidUsername"){
+            displayMessage("Invalid Username");
           }
         }
-        function failure(data){
+        mirror.forgotPassword(username, 
+          function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
         }
-        mirror.forgotPassword("AdminAPI", username, success, failure);
+      );
       }
   });
