@@ -335,18 +335,55 @@ class GetServiceProviderWiseCompliance(Request):
             "service_provider_id": to_structure_OptionalType_SignedIntegerType_8(self.service_provider_id),
         }
 
-class GetClientReportFilters(Request):
+class GetUnitDetailsReportFilters(Request):
     def __init__(self):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data)
-        return GetClientReportFilters()
+        return GetUnitDetailsReportFilters()
 
     def to_inner_structure(self):
         return {
         }
+
+class GetUnitDetailsReportData(Request):
+    def __init__(self, country_id,  business_group_id, legal_entity_id, division_id, unit_id, domain_ids):
+        self.country_id = country_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.division_id = division_id
+        self.unit_id = unit_id
+        self.domain_ids = domain_ids
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["country_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "domain_ids"])
+        country_id = data.get("country_id")
+        group_id = parse_structure_UnsignedIntegerType_32(group_id)
+        business_group_id = data.get("business_group_id")
+        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = parse_structure_OptionalType_SignedIntegerType_8(legal_entity_id)
+        division_id = data.get("division_id")
+        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
+        domain_ids = data.get("domain_ids")
+        domain_ids = parse_structure_OptionalType_VectorType_SignedIntegerType_8(domain_ids)
+        return GetClientDetailsReportData(country_id,  business_group_id, legal_entity_id, division_id, unit_id, domain_ids)
+
+    def to_inner_structure(self):
+        return {
+            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
+            "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
+            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
+            "domain_ids": to_structure_OptionalType_BoolalType_VectorType_SignedIntegerType_8(self.domain_ids),
+        }
+
 
 class GetAssigneewisecomplianceReport(Request):
     def __init__(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, user_id):
@@ -789,7 +826,7 @@ class GetLoginTrace(Request):
 
 
 def _init_Request_class_map():
-    classes = [GetComplianceDetailsReportFilters, GetComplianceDetailsReport, GetRiskReportFilters, GetRiskReport, GetServiceProviderReportFilters, GetServiceProviderWiseCompliance, GetClientReportFilters, GetAssigneewisecomplianceReport, GetUnitwisecomplianceReport, GetReassignComplianceTaskReportFilters, GetReassignComplianceTaskDetails, GetTaskApplicabilityStatusFilters, GetComplianceTaskApplicabilityStatusReport, GetComplianceActivityReportFilters, GetComplianceActivityReport, GetReassignedHistoryReportFilters, GetReassignedHistoryReport, GetStatutoryNotificationsListFilters, GetStatutoryNotificationsListReport, GetActivityLogFilters, GetActivityLogReport, GetLoginTrace]
+    classes = [GetComplianceDetailsReportFilters, GetComplianceDetailsReport, GetRiskReportFilters, GetRiskReport, GetServiceProviderReportFilters, GetServiceProviderWiseCompliance, GetUnitDetailsReportFilters, GetUnitDetailsReportData, GetClientReportFilters, GetAssigneewisecomplianceReport, GetUnitwisecomplianceReport, GetReassignComplianceTaskReportFilters, GetReassignComplianceTaskDetails, GetTaskApplicabilityStatusFilters, GetComplianceTaskApplicabilityStatusReport, GetComplianceActivityReportFilters, GetComplianceActivityReport, GetReassignedHistoryReportFilters, GetReassignedHistoryReport, GetStatutoryNotificationsListFilters, GetStatutoryNotificationsListReport, GetActivityLogFilters, GetActivityLogReport, GetLoginTrace]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -1018,7 +1055,7 @@ class GetServiceProviderWiseComplianceSuccess(Response):
             "compliance_list": to_structure_VectorType_RecordType_clientreport_ServiceProviderCompliance(self.compliance_list),
         }
 
-class GetClientReportFiltersSuccess(Response):
+class GetUnitDetailsReportFiltersSuccess(Response):
     def __init__(self, countries, domains, business_groups, legal_entities, divisions, units, users):
         self.countries = countries
         self.domains = domains
@@ -1026,11 +1063,10 @@ class GetClientReportFiltersSuccess(Response):
         self.legal_entities = legal_entities
         self.divisions = divisions
         self.units = units
-        self.users = users
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "business_groups", "legal_entities", "divisions", "units", "users"])
+        data = parse_dictionary(data, ["countries", "domains", "business_groups", "legal_entities", "divisions", "units"])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
@@ -1045,7 +1081,7 @@ class GetClientReportFiltersSuccess(Response):
         units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
         users = data.get("users")
         users = parse_structure_VectorType_RecordType_clientreport_User(users)
-        return GetClientReportFiltersSuccess(countries, domains, business_groups, legal_entities, divisions, units, users)
+        return GetUnitDetailsReportFiltersSuccess(countries, domains, business_groups, legal_entities, divisions, units)
 
     def to_inner_structure(self):
         return {
@@ -1055,7 +1091,6 @@ class GetClientReportFiltersSuccess(Response):
             "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
             "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
             "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
-            "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
         }
 
 class GetAssigneewisecomplianceReportSuccess(Response):
@@ -1437,7 +1472,7 @@ class GetLoginTraceSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetComplianceDetailsReportFiltersSuccess, GetComplianceDetailsReportSuccess, GetRiskReportFiltersSuccess, GetRiskReportSuccess, GetServiceProviderReportFiltersSuccess, GetServiceProviderWiseComplianceSuccess, GetClientReportFiltersSuccess, GetAssigneewisecomplianceReportSuccess, GetUnitwisecomplianceReportSuccess, GetReassignComplianceTaskReportFiltersSuccess, GetReassignComplianceTaskDetailsSuccess, GetTaskApplicabilityStatusFiltersSuccess, GetComplianceTaskApplicabilityStatusReportSuccess, GetComplianceActivityReportFiltersSuccess, GetComplianceActivityReportSuccess, GetReassignedHistoryReportFiltersSuccess, GetReassignedHistoryReportSuccess, GetStatutoryNotificationsListFiltersSuccess, GetStatutoryNotificationsListReportSuccess, GetActivityLogFiltersSuccess, GetActivityLogReportSuccess, GetLoginTraceSuccess]
+    classes = [GetComplianceDetailsReportFiltersSuccess, GetComplianceDetailsReportSuccess, GetRiskReportFiltersSuccess, GetRiskReportSuccess, GetServiceProviderReportFiltersSuccess, GetServiceProviderWiseComplianceSuccess, GetUnitDetailsReportFiltersSuccess, GetAssigneewisecomplianceReportSuccess, GetUnitwisecomplianceReportSuccess, GetReassignComplianceTaskReportFiltersSuccess, GetReassignComplianceTaskDetailsSuccess, GetTaskApplicabilityStatusFiltersSuccess, GetComplianceTaskApplicabilityStatusReportSuccess, GetComplianceActivityReportFiltersSuccess, GetComplianceActivityReportSuccess, GetReassignedHistoryReportFiltersSuccess, GetReassignedHistoryReportSuccess, GetStatutoryNotificationsListFiltersSuccess, GetStatutoryNotificationsListReportSuccess, GetActivityLogFiltersSuccess, GetActivityLogReportSuccess, GetLoginTraceSuccess]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

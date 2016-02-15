@@ -1112,6 +1112,32 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
 
     }
+    // Unit Details Report
+    function getUnitDetailsReportFilters(callback){
+        var request = [
+            "GetUnitDetailsReportFilters",
+            {}
+        ];
+        callerName = "api/client_reports"
+        apiRequest(callerName, request, callback);
+    }
+
+    function getUnitDetailsReportData(countryId, businessGroupId, legalEntityId, divisionId,
+        unitId, domainIds, callback){
+        callerName = "api/client_reports"
+        var request = [
+            "GetUnitDetailsReportData",
+            {
+                "country_id": countryId,
+                "business_group_id": businessGroupId,
+                "legal_entity_id" : legalEntityId,
+                "division_id" : divisionId,
+                "unit_id": unitId,
+                "domain_ids" : domainIds
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
 
 
     return {
@@ -1226,6 +1252,9 @@ function initClientMirror() {
 
         getComplianceActivityReportFilters: getComplianceActivityReportFilters,
         getComplianceActivityReportData: getComplianceActivityReportData
+
+        getUnitDetailsReportFilters: getUnitDetailsReportFilters,
+        getUnitDetailsReportData: getUnitDetailsReportData
     }
 }
 var client_mirror = initClientMirror();
