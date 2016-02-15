@@ -6,17 +6,17 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         r"/forgot_password/([a-zA-Z-0-9]+)",
-        "files/desktop/ForgotPassword/ForgotPassword.html",
+        "files/desktop/client/forgotpassword.html",
         "", {}
     ),
     (
         r"/reset_password/([a-zA-Z-0-9]+)",
-        "files/desktop/ForgotPassword/resetpassword.html",
+        "files/desktop/client/resetpassword.html",
         "", {}
     ),
     (
         "/change-password",
-        "files/desktop/change-password/changepassword.html",
+        "files/desktop/client/changepassword.html",
         None, {}
     ),
     (
@@ -152,7 +152,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/forgot-password",
-        "files/desktop/knowledge/ForgotPassword.html",
+        "files/desktop/knowledge/forgotpassword.html",
         "", {}
     ),
     (
