@@ -1102,6 +1102,10 @@ def to_structure_OptionalType_CustomTextType_20(data):
     if data is None: return data
     return to_structure_CustomTextType_20(data)
 
+def to_structure_OptionalType_VectorType_CustomTextType_20(data):
+    if data is None: return data
+    return to_structure_VectorType_CustomTextType_20(data)
+
 def to_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_STATUS(data):
     from protocol import core
     return core.ASSIGN_STATUTORY_SUBMISSION_STATUS.to_structure(data)

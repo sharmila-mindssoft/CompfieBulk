@@ -1030,6 +1030,10 @@ def parse_structure_OptionalType_CustomTextType_20(data):
     if data is None: return data
     return parse_structure_CustomTextType_20(data)
 
+def parse_structure_OptionalType_VectorType_CustomTextType_20(data):
+    if data is None: return data
+    return parse_structure_VectorType_CustomTextType_20(data)
+
 def parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_STATUS(data):
     from protocol import core
     return core.ASSIGN_STATUTORY_SUBMISSION_STATUS.parse_structure(data)

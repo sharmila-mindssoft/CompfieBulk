@@ -1989,6 +1989,7 @@ class ClientDatabase(Database):
     def return_assign_compliance_data(self, result):
         now = datetime.datetime.now()
         current_month = now.month
+        current_year = now.year
         domain_wise_compliance = {}
         for r in result:
             domain_id = int(r["domain_id"])
@@ -2003,7 +2004,10 @@ class ClientDatabase(Database):
             statutory_dates = json.loads(statutory_dates)
             date_list = []
             due_date = None
-            for date in statutory_dates :
+            due_date_list = []
+            add_month = 0
+            print statutory_dates
+            for date in statutory_dates:
                 s_date = core.StatutoryDate(
                     date["statutory_date"],
                     date["statutory_month"],
@@ -2011,17 +2015,28 @@ class ClientDatabase(Database):
                 )
                 date_list.append(s_date)
 
-            add_month = 0
-            for date in statutory_dates:
-                month = date["statutory_month"]
+                s_month = date["statutory_month"]
                 s_day = date["statutory_date"]
-                if current_month < month :
-                    add_month = month - current_month
-                    n_date = (datetime.date.today() + datetime.timedelta(add_month*365/12)).isoformat()
-                    n_date = datetime.datetime.strptime(n_date, "%Y-%m-%d")
-                    new_date = n_date.replace(day = s_day)
-                    due_date = new_date.strftime("%d-%b-%Y")
-                    break;
+                # if current_month < month :
+                # add_month = month - current_mo
+                # n_date = (datetime.date.today() + datetime.timedelta(add_month*365/12)).isoformat()
+                n_date = datetime.date.today()
+                current_date = datetime.date.today()
+                print s_date.statutory_date, s_date.statutory_month
+
+                if s_date.statutory_month is not None :
+                    new_date = n_date.replace(month=s_month)
+
+                if s_date.statutory_date is not None :
+                    new_date = n_date.replace(day=s_day)
+
+                if current_date > new_date :
+                    new_date = new_date.replace(year=current_year+1)
+
+                # n_date = datetime.datetime.strptime(n_date, "%Y-%m-%d")
+
+                due_date = new_date.strftime("%d-%b-%Y")
+                due_date_list.append(due_date)
 
             compliance = clienttransactions.UNIT_WISE_STATUTORIES(
                 r["compliance_id"],
@@ -2029,7 +2044,7 @@ class ClientDatabase(Database):
                 r["compliance_description"],
                 core.COMPLIANCE_FREQUENCY(r["frequency"]),
                 date_list,
-                due_date,
+                due_date_list,
                 unit_ids
             )
             compliance_list.append(compliance)
