@@ -826,7 +826,7 @@ class GetLoginTrace(Request):
 
 
 def _init_Request_class_map():
-    classes = [GetComplianceDetailsReportFilters, GetComplianceDetailsReport, GetRiskReportFilters, GetRiskReport, GetServiceProviderReportFilters, GetServiceProviderWiseCompliance, GetUnitDetailsReportFilters, GetUnitDetailsReportData, GetClientReportFilters, GetAssigneewisecomplianceReport, GetUnitwisecomplianceReport, GetReassignComplianceTaskReportFilters, GetReassignComplianceTaskDetails, GetTaskApplicabilityStatusFilters, GetComplianceTaskApplicabilityStatusReport, GetComplianceActivityReportFilters, GetComplianceActivityReport, GetReassignedHistoryReportFilters, GetReassignedHistoryReport, GetStatutoryNotificationsListFilters, GetStatutoryNotificationsListReport, GetActivityLogFilters, GetActivityLogReport, GetLoginTrace]
+    classes = [GetComplianceDetailsReportFilters, GetComplianceDetailsReport, GetRiskReportFilters, GetRiskReport, GetServiceProviderReportFilters, GetServiceProviderWiseCompliance, GetUnitDetailsReportFilters, GetUnitDetailsReportData, GetAssigneewisecomplianceReport, GetUnitwisecomplianceReport, GetReassignComplianceTaskReportFilters, GetReassignComplianceTaskDetails, GetTaskApplicabilityStatusFilters, GetComplianceTaskApplicabilityStatusReport, GetComplianceActivityReportFilters, GetComplianceActivityReport, GetReassignedHistoryReportFilters, GetReassignedHistoryReport, GetStatutoryNotificationsListFilters, GetStatutoryNotificationsListReport, GetActivityLogFilters, GetActivityLogReport, GetLoginTrace]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
