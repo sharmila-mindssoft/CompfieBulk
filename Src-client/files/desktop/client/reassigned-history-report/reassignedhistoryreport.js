@@ -115,7 +115,7 @@ $("#show-button").click(function(){
 
 function loadReassignedHistoryList(data){
     $('.grid-table-rpt').show();
-    $('.tbody-statutory-notifications-list tr').remove();
+    $('.tbody-reassigned-list tr').remove();
     var sno = 0;  
     $('.country-name').text(countriesNameVal);
     $('.domain-name').text(domainNameVal);

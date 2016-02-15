@@ -40,8 +40,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_technomasters_CountryWiseUnits,
     parse_structure_RecordType_technomasters_CountryWiseUnits,
     parse_structure_OptionalType_UnsignedIntegerType_32,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping
-
+    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping,
+    parse_structure_RecordType_core_FileList
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -81,7 +81,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_UnsignedIntegerType_32,
     to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_UnitDetails,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping
+    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping,
+    to_structure_RecordType_core_FileList
 )
 
 #
@@ -141,6 +142,7 @@ class SaveClientGroup(Request):
 
     @staticmethod
     def parse_inner_structure(data):
+        print "inside save client group  parse structure"
         data = parse_dictionary(data, ["group_name", "country_ids", "domain_ids", "logo", "contract_from", "contract_to", "incharge_persons", "no_of_user_licence", "file_space", "is_sms_subscribed", "email_id", "date_configurations", "short_name"])
         group_name = data.get("group_name")
         group_name = parse_structure_CustomTextType_50(group_name)
@@ -149,7 +151,7 @@ class SaveClientGroup(Request):
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         logo = data.get("logo")
-        logo = parse_structure_CustomTextType_250(logo)
+        logo = parse_structure_RecordType_core_FileList(logo)
         contract_from = data.get("contract_from")
         contract_from = parse_structure_CustomTextType_20(contract_from)
         contract_to = data.get("contract_to")
@@ -175,7 +177,7 @@ class SaveClientGroup(Request):
             "group_name": to_structure_CustomTextType_50(self.group_name),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "logo": to_structure_CustomTextType_250(self.logo),
+            "logo": to_structure_RecordType_core_FileList(self.logo),
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
             "incharge_persons": to_structure_VectorType_SignedIntegerType_8(self.incharge_persons),

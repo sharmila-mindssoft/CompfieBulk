@@ -17,8 +17,8 @@ img, object {
 	width: 100%;
 	min-height: 100%;
 	min-width: 100%;
+	display: flex;
 	background: url(/files/desktop/common/images/inner-page-bg.gif) no-repeat center bottom;
-
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;

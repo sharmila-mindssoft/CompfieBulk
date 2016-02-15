@@ -58,9 +58,9 @@ def get_client_report_filters(db, request, session_user, client_id):
 	business_group_ids = user_company_info[3]
 	country_list = db.get_countries_for_user(session_user, client_id)
 	domain_list = db.get_domains_for_user(session_user, client_id)
-	business_group_list = db.get_business_groups_for_user(business_group_ids, client_id)
-	legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids, client_id)
-	division_list =  db.get_divisions_for_user(division_ids, client_id)
+	business_group_list = db.get_business_groups_for_user(business_group_ids)
+	legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids)
+	division_list =  db.get_divisions_for_user(division_ids)
 	unit_list = db.get_units_for_user(unit_ids, client_id)
 	users_list = db.get_client_users(client_id);
 	return clientreport.GetClientReportFiltersSuccess(
@@ -212,9 +212,9 @@ def get_risk_report_filters(db, request, session_user, client_id):
 	business_group_ids = user_company_info[3]
 	country_list = db.get_countries_for_user(session_user, client_id)
 	domain_list = db.get_domains_for_user(session_user, client_id)
-	business_group_list = db.get_business_groups_for_user(business_group_ids, client_id)
-	legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids, client_id)
-	division_list =  db.get_divisions_for_user(division_ids, client_id)
+	business_group_list = db.get_business_groups_for_user(business_group_ids)
+	legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids)
+	division_list =  db.get_divisions_for_user(division_ids)
 	unit_list = db.get_units_for_user(unit_ids, client_id)
 	level_1_statutories_list = db.get_client_level_1_statutoy(session_user, client_id)
 	return clientreport.GetRiskReportFiltersSuccess(

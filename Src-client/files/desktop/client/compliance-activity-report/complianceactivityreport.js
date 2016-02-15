@@ -7,6 +7,10 @@ var complianceList;
 
 var countriesNameVal;
 var domainNameVal;
+var usertype;
+var userval;
+var fromdate;
+var todate; 
 
 function clearMessage() {
     $(".error-message").hide();
@@ -48,7 +52,7 @@ $("#show-button").click(function(){
     var domain = parseInt($("#domain").val());
     domainNameVal = $("#domainval").val();
     //Usertype
-    var usertype = $("#user-type").val();
+    usertype = $("#user-type").val();
     if(usertype == ''){
         usertype = null;
     }
@@ -61,6 +65,7 @@ $("#show-button").click(function(){
         unitid = parseInt(unitid);
     }
      //User
+    userval = $("#userval").val();
     var userid = $("#userid").val();
     if(userid == ''){
         userid = null;
@@ -78,11 +83,11 @@ $("#show-button").click(function(){
     if(complianceid == ''){
         complianceid = null;
     }
-    var fromdate = $("#from-date").val();
+    fromdate = $("#from-date").val();
     if(fromdate == ''){
         fromdate = null;
     }
-    var todate = $("#to-date").val();
+    todate = $("#to-date").val();
     if(todate == ''){
         todate = null;
     }
@@ -100,9 +105,7 @@ $("#show-button").click(function(){
     }
     else{
         function onSuccess(data){
-            $(".grid-table-rpt").show();
-            console.log(data);
-            loadComplianceActivityReportList(data['statutory_wise_notifications']);     
+            loadComplianceActivityReportList(data['activities']);     
         }
         function onFailure(error){
             console.log(error);
@@ -124,41 +127,63 @@ $("#show-button").click(function(){
 
 
 function loadComplianceActivityReportList(data){
-    $('.tbody-statutory-notifications-list tr').remove();
+    $('.tbody-compliance-activity-list tr').remove();
+    $(".grid-table-rpt").show();
     var sno = 0;
     
     $.each(data, function(key, value) {
-        var tableRowHeading = $('#templates .table-statutory-notifications-list .filter-heading-list');
+        var tableRowHeading = $('#templates .table-compliance-activity-list .filter-heading-list');
         var cloneHeading = tableRowHeading.clone();
-        $('.heading-country-name', cloneHeading).text(countriesNameVal);
-        $('.heading-domain-name', cloneHeading).text(domainNameVal);
-        $('.heading-business-group-name', cloneHeading).text(data[key]['business_group_name']);
-        $('.heading-legal-entity-name', cloneHeading).text(data[key]['legal_entity_name']);
-        $('.heading-division-name', cloneHeading).text(data[key]['division_name']);
-        $('.statutory-notifications-list .tbody-statutory-notifications-list').append(cloneHeading);
+        $('.country-filter-name', cloneHeading).text(countriesNameVal);
+        $('.domain-filter-name', cloneHeading).text(domainNameVal);
+        $('.usertype-filter-name', cloneHeading).text(usertype);
+        $('.user-filter-name', cloneHeading).text(userval);
+        $('.fromdate-filter-name', cloneHeading).text(fromdate);
+        $('.todate-filter-name', cloneHeading).text(todate);
 
-        var tableRowHeadingth = $('#templates .table-statutory-notifications-list .heading-th');
+        $('.compliance-activity-list .heading-list').append(cloneHeading);
+
+        var tableRowHeadingth = $('#templates .table-compliance-activity-list .table-heading-th');
         var cloneHeadingth = tableRowHeadingth.clone();
-        $('.statutory-notifications-list .tbody-statutory-notifications-list').append(cloneHeadingth);
+        $('.compliance-activity-list .heading-list').append(cloneHeadingth);
 
-        var level1list = data[key]['level_1_statutory_wise_notifications'];
+        var tableRowUnit = $('#templates .table-compliance-activity-list .table-unit-heading');
+        var cloneUnit = tableRowUnit.clone();
+        $('.unit-heading', cloneUnit).text(data[key]['unit_name']);
+        $('.compliance-activity-list .heading-list').append(cloneUnit);
+
+        var level1list = data[key]['statutory_wise_compliances'];
+
         $.each(level1list, function(ke, valu) { 
-            var tableRow = $('#templates .table-statutory-notifications-list .table-row-heading ');
+            var tableRow = $('#templates .table-compliance-activity-list .table-level1-heading');
             var clone = tableRow.clone();
             $('.level1-heading', clone).text(ke);
-            $('.statutory-notifications-list .tbody-statutory-notifications-list').append(clone);
+            $('.compliance-activity-list .tbody-compliance-activity-list').append(clone);
 
             var list = level1list[ke];
             $.each(list, function(k, val){
-                var tableRowvalues = $('#templates .table-statutory-notifications-list .table-row-values');
+                var tableRowvalues = $('#templates .table-compliance-activity-list .table-row-list');
                 var cloneval = tableRowvalues.clone();
                 sno = sno + 1;
+                console.log(k);
                 $('.sno', cloneval).text(sno);
-                $('.statutory-provision', cloneval).html(list[k]['statutory_provision']);
-                $('.unit-name', cloneval).html(list[k]['unit_name']);
-                $('.statutory-notificaions', cloneval).html(list[k]['notification_text']);
-                $('.date-time', cloneval).html(list[k]['date_and_time']);
-                $('.statutory-notifications-list .tbody-statutory-notifications-list').append(cloneval);
+                $('.compliance-task', cloneval).html(k);
+                var clist = list[k];
+                var count = 0;
+                $.each(clist, function(k1, val1){
+                    $('.compliance-date', cloneval).html(clist[k1]['activity_date']);
+                    $('.activity-status', cloneval).html(clist[k1]['activity_status']);
+                    $('.compliance-task-status', cloneval).html(clist[k1]['compliance_status']);
+                    $('.remarks', cloneval).html(clist[k1]['remarks']);
+                    if(count == 0){
+                        $('.compliance-activity-list .tbody-compliance-activity-list').append(cloneval);
+                    }
+                    else{
+                        $('.compliance-activity-list .tbody-compliance-activity-list').append(cloneval);   
+                    }
+                    count++;                    
+                });
+                
             });            
         });        
     });
