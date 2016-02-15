@@ -3,7 +3,7 @@
 <head>
   <title>Dashboard</title>
   {% include "/files/desktop/client/home/header.html" %}
-  <link rel="stylesheet" type="text/css" href="/files/desktop/client/client-home/dashboard.css">
+  <link rel="stylesheet" type="text/css" href="/files/desktop/common/css/dashboard.css">
   <link rel="stylesheet" type="text/css" href="/files/desktop/client/client-home/popup.css">
   <link rel="stylesheet" type="text/css" href="/files/desktop/client/client-home/chart.css">
   <link rel="stylesheet" type="text/css" href="/files/desktop/client/client-home/multiple-select.css">
@@ -14,6 +14,7 @@
   <script type="text/javascript" src="/files/desktop/common/highcharts/js/highcharts.js"></script>
   <script type="text/javascript" src="/files/desktop/common/highcharts/js/modules/exporting.js"></script>
   <script type="text/javascript" src="/files/desktop/common/highcharts/js/modules/customEvents.js"></script>
+
   <script src="/files/desktop/common/highcharts/js/modules/drilldown.js"></script>
   <script src="/files/desktop/common/highcharts/js/highcharts-3d.js"></script>
   <script type="text/javascript" src="/files/desktop/client/client-home/client-home.js"></script>
@@ -21,8 +22,8 @@
 </head>
 <body>
   <div id="wrapper">
-    {% include "/files/desktop/client/home/nav-bar.html" %}
     <div class="main-content-area">
+      {% include "/files/desktop/client/home/nav-bar.html" %}
       <div class="loading-indicator-spin">
         <span><img src='/files/desktop/common/images/loading-img.gif' alt=""></span>
       </div>
