@@ -247,11 +247,11 @@
 				client_mirror.changePassword(currentPassword, newPassword,callback)
 			}
 			function forgotPassword(){
-				username = "admin"
+				username = "sharmila@mindssoft.com"
 				mirror.forgotPassword(username, callback)
 			}
 			function ClientForgotPassword(){
-				username = "sharmi"
+				username = "sharmila@mindssoft.com"
 				client_mirror.forgotPassword(username, callback)
 			}
 			function validateResetToken(){
@@ -288,7 +288,7 @@
 		        dateConfigurations.push(configuration5)
 		        dateConfigurations.push(configuration6)
 
-			    group_name = "Bajaj";
+			    group_name = "junsu Groups";
 		        country_ids = [1,2, 3, 4];
 		        domain_ids = [1,2];
 		        logo = logo_file;
@@ -298,8 +298,8 @@
 		        no_of_user_licence = 10;
 		        file_space = 4.6;
 		        is_sms_subscribed = true;
-		        email_id = "info@bajanj.com";
-		        shortName = "mssv"
+		        email_id = "info@junsu.com";
+		        shortName = "tvs"
 			    clientGroupDetails = mirror.getSaveClientGroupDict(group_name,
 		            country_ids, domain_ids, logo, contract_from, contract_to,
 		            incharge_persons, no_of_user_licence,file_space,
@@ -313,11 +313,11 @@
 		        configuration1 = mirror.getDateConfigurations(1,1,1,12)
 		        dateConfigurations.push(configuration1)
 
-		        client_id = 7
-		        group_name = "Client Test Group 21 Update";
+		        client_id = 9
+		        group_name = "JYJ";
 		        country_ids = [1];
 		        domain_ids = [1];
-		        logo = "logo.png";
+		        logo = logo_file;
 		        contract_from = "02-Nov-2015";
 		        contract_to = "01-Nov-2016";
 		        incharge_persons = [1];
@@ -504,14 +504,13 @@
 			function getReassignedHistoryReport(){
 				country_id = 1
 				domain_id =1
-				level_1_statutory_id =null
-				unit_id =null
-				compliance_id = null
+				level_1_statutory_id = "Finance Act"
+				unit_id = 1
+				compliance_id = 21
 				user_id = null
-				from_date = null
-				to_date = null
-
-				client_mirror.getReassignedHistoryReport(country_id, domain_id,level_1_statutory_id,unit_id, compliance_id, user_id,from_date, to_date, callback)
+				from_date = "2015-01-01"
+				to_date = "2015-05-01"
+				client_mirror.getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id,  from_date, to_date, callback)
 			}
 			function savePastRecords(){
 				unit_id = 1;
@@ -542,6 +541,40 @@
 				user_type = "Inhouse";
 				client_mirror.getComplianceActivityReportData(
 					user_type, assignee_id, country_id, domain_id, level_1_statutory_id, unit_id, compliance_id, from_date, to_date, callback
+				);
+			}
+			function getRiskReportFilters(){
+				client_mirror.getRiskReportFilters(callback);
+			}
+			function getRiskReport(){
+				country_id = 1;
+				domain_id = 1;
+				business_group_id = 1;
+				legal_entity_id = 1;
+				division_id = 1;
+				unit_id = 1;
+			    level_1_statutory_name = "Gratuity Act, 1972"
+			    statutory_status = 1
+				client_mirror.getRiskReport(
+			        country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, 
+			        level_1_statutory_name, statutory_status, callback
+			    );
+			}
+			function getAssigneewiseComplianesFilters(){
+				console.log(client_mirror);
+				console.log(callback);
+				client_mirror.getAssigneewiseComplianesFilters(callback);
+			}
+			function getAssigneewiseComplianes(){
+				country_id = 1
+				business_group_id = null
+				legal_entity_id = null
+				division_id = null
+				unit_id = null
+				user_id = null
+				client_mirror.getAssigneewiseComplianes(
+					country_id, business_group_id, legal_entity_id, division_id, 
+					unit_id, user_id, callback
 				);
 			}
 		</script>
@@ -762,6 +795,14 @@
 					Get Compliance Activity Report Data
 				</button>
 			</div>
+			<div>
+				<button onclick="getRiskReportFilters()">
+					Get Risk Report Filters
+				</button>
+				<button onclick="getRiskReport()">
+					Get Risk Report Data
+				</button>
+			</div>
 		</fieldset>
 		<fieldset>
 			<legend>Client Transactions</legend>
@@ -830,6 +871,14 @@
 				</button>
 				<button onclick="updateClientNotificationStatus()">
 					Update Client Notification Status
+				</button>
+			</div>
+			<div>
+				<button onclick="getAssigneewiseComplianesFilters()">
+					Get Assignee Wise Compliances Filters
+				</button>
+				<button onclick="getAssigneewiseComplianes()">
+					Get Assignee Wise Compliances
 				</button>
 			</div>
 		</fieldset>

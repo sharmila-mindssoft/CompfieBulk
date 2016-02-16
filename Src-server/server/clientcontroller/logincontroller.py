@@ -1,4 +1,5 @@
 from server.controller.corecontroller import process_user_forms
+from server.emailcontroller import EmailHandler as email
 from protocol import login
 
 
@@ -82,29 +83,26 @@ def admin_login_response(db, client_id):
     )
 
 def process_forgot_password(db, request):
-    client_id = db.get_client_id_from_short_name(request.short_name)
-    user_id = db.verify_username(request.username, client_id)
+    user_id = db.verify_username(request.username)
     if user_id is not None:
-        send_reset_link(db, user_id, client_id)
+        send_reset_link(db, user_id, request.username, request.short_name)
         return login.ForgotPasswordSuccess()
     else:
         return login.InvalidUserName()
 
-def send_reset_link(db, user_id, client_id):
+def send_reset_link(db, user_id, username, short_name):
     reset_token = db.new_uuid()
-    print "http://localhost:8080/ForgotPassword?reset_token=%s" % reset_token
+    reset_link = "http://localhost:8080/%s/ForgotPassword?reset_token=%s" % (
+        short_name, reset_token)
     columns = ["user_id", "verification_code"]
     values_list = [user_id, reset_token]
-    if db.insert(db.tblEmailVerification, columns, values_list, client_id):
-        if send_email():
+    if db.insert(db.tblEmailVerification, columns, values_list):
+        if email().send_reset_link(db, user_id, username, reset_link):
             return True
         else:
             print "Send email failed"
     else:
         print "Saving reset token failed"
-
-def send_email():
-    return True
 
 def process_reset_token(db, request):
     client_id = db.get_client_id_from_short_name(request.short_name)
@@ -113,7 +111,6 @@ def process_reset_token(db, request):
         return login.ResetSessionTokenValidationSuccess()
     else:
         return login.InvalidResetToken()
-
 
 def process_reset_password(db, request):
     client_id = db.get_client_id_from_short_name(request.short_name)

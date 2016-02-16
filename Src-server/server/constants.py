@@ -25,7 +25,7 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/test", "test_apis.html", "", {}
+        r"/test/([a-zA-Z-0-9]+)", "test_apis.html", "", {}
     ),
     # (
     #     "/home", "files/desktop/home/home.html",
@@ -175,7 +175,7 @@ TEMPLATE_PATHS = [
     #     "files/desktop/login/login.html",
     #     "files/mobile/login/login.html", {}
     # ),
-    # ("/knowledge/test", "test_apis.html", "", {}),
+    ("/knowledge/test", "test_apis.html", "", {}),
     ("/knowledge/home", "files/desktop/knowledge/home/home.html", None, {}),
     # (
     #     "/knowledge/custom-controls",

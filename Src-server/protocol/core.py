@@ -1195,7 +1195,7 @@ class GroupCompany(object):
 
 class GroupCompanyDetail(object):
     def __init__(self, client_id, client_name, domain_ids, country_ids,
-        incharge_persons, logo, contract_from, contract_to, no_of_user_licence,
+        incharge_persons, file_name, logo, contract_from, contract_to, no_of_user_licence,
         total_disk_space, is_sms_subscribed, username, is_active, short_name,
         date_configurations):
         self.client_id = client_id
@@ -1203,6 +1203,7 @@ class GroupCompanyDetail(object):
         self.domain_ids = domain_ids
         self.country_ids = country_ids
         self.incharge_persons = incharge_persons
+        self.file_name = file_name
         self.logo = logo
         self.contract_from = contract_from
         self.contract_to = contract_to
@@ -1216,7 +1217,10 @@ class GroupCompanyDetail(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "client_name", "domain_ids", "country_ids", "incharge_persons", "logo", "contract_from", "contract_to", "no_of_user_licence", "total_disk_space", "is_sms_subscribed", "username", "is_active", "short_name"])
+        data = parse_dictionary(data, ["client_id", "client_name", "domain_ids", 
+            "country_ids", "incharge_persons", "file_name", "logo", "contract_from", "contract_to", 
+            "no_of_user_licence", "total_disk_space", "is_sms_subscribed", "username", 
+            "is_active", "short_name"])
         client_id = data.get("client_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
         client_name = data.get("client_name")
@@ -1227,6 +1231,8 @@ class GroupCompanyDetail(object):
         country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
         incharge_persons = data.get("incharge_persons")
         incharge_persons = parse_structure_VectorType_SignedIntegerType_8(incharge_persons)
+        file_name = data.get("file_name")
+        file_name = parse_structure_CustomTextType_250(file_name)
         logo = data.get("logo")
         logo = parse_structure_CustomTextType_250(logo)
         contract_from = data.get("contract_from")
@@ -1248,7 +1254,7 @@ class GroupCompanyDetail(object):
         date_configurations = data.get("date_configurations")
         date_configurations = parse_structure_VectorType_RecordType_core_ClientConfiguration(date_configurations)
         return GroupCompanyDetail(client_id, client_name, domain_ids,
-            country_ids, incharge_persons, logo, contract_from, contract_to,
+            country_ids, incharge_persons, file_name, logo, contract_from, contract_to,
             no_of_user_licence, total_disk_space, is_sms_subscribed,
             username, is_active, short_name, date_configurations)
 
@@ -1259,6 +1265,7 @@ class GroupCompanyDetail(object):
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "incharge_persons": to_structure_VectorType_SignedIntegerType_8(self.incharge_persons),
+            "file_name": to_structure_CustomTextType_250(self.file_name),
             "logo": to_structure_CustomTextType_250(self.logo),
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
@@ -2508,13 +2515,13 @@ class ComplianceApprovalStatus(object):
         approval_status_id = data.get("approval_status_id")
         approval_status_id = parse_structure_UnsignedIntegerType_32(approval_status_id)
         approval_status = data.get("approval_status")
-        approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(approval_status)
+        approval_status = parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(approval_status)
         return ComplianceApprovalStatus(approval_status_id, approval_status)
 
     def to_structure(self):
         return {
             "approval_status_id": to_structure_SignedIntegerType_8(self.approval_status_id),
-            "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
+            "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
         }
 
 #

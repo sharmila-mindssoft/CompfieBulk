@@ -231,25 +231,42 @@ def get_risk_report(db, request, session_user, client_id):
 	legal_entity_id = request.division_id
 	division_id = request.division_id
 	unit_id = request.unit_id
-	statutory_id = request.statutory_id
+	level_1_statutory_name = request.level_1_statutory_name
 	statutory_status = request.statutory_status
-
-	if business_group_id is None :
-		business_group_id = '%'
-	if legal_entity_id is None :
-		legal_entity_id = '%'
-	if division_id is None :
-		division_id = '%'
-	if statutory_id is None :
-		statutory_id = '%'
-	if statutory_status is None :
-		statutory_status = '%'
-
-	risk_report_list = db.get_risk_report(
-	    country_id, domain_id, business_group_id, 
-	    legal_entity_id, division_id, unit_id, statutory_id, statutory_status, client_id,session_user
+	delayed_compliance = [] #1
+	not_complied = [] # 2
+	not_opted = [] # 3
+	unassigned = [] # 4
+	if statutory_status == 1 or statutory_status == 0:
+		delayed_compliance = db.get_risk_report(
+		    country_id, domain_id, business_group_id, 
+		    legal_entity_id, division_id, unit_id, level_1_statutory_name, 1, 
+		    client_id, session_user
+		)
+	if statutory_status == 2 or statutory_status == 0:
+		not_complied = db.get_risk_report(
+		    country_id, domain_id, business_group_id, 
+		    legal_entity_id, division_id, unit_id, level_1_statutory_name, 2, 
+		    client_id, session_user
+		)
+	if statutory_status == 3 or statutory_status == 0:
+		not_opted = db.get_not_opted_compliances(
+		    country_id, domain_id, business_group_id, 
+		    legal_entity_id, division_id, unit_id, level_1_statutory_name, 3, 
+		    client_id, session_user
+		)
+	if statutory_status == 4 or statutory_status == 0:
+		unassigned = db.get_unasssigned_compliances(
+		    country_id, domain_id, business_group_id, 
+		    legal_entity_id, division_id, unit_id, level_1_statutory_name, 4, 
+		    client_id, session_user
+		)
+	return clientreport.GetRiskReportSuccess(
+		delayed_compliance = delayed_compliance, 
+		not_complied = not_complied,
+		not_opted = not_opted,
+		unassigned_compliance = unassigned 
 	)
-	return clientreport.GetRiskReportSuccess(risk_report_list,risk_report_list,risk_report_list)
 
 def get_reassignedhistory_report_filters(db, request, session_user, client_id):
 	user_company_info = db.get_user_company_details( session_user, client_id)
@@ -260,7 +277,6 @@ def get_reassignedhistory_report_filters(db, request, session_user, client_id):
 	level_1_statutories_list = db.get_client_level_1_statutoy(session_user, client_id)
 	compliances_list = db.get_client_compliances(session_user, client_id)
 	users_list = db.get_client_users(client_id);
-
 	return clientreport.GetReassignedHistoryReportFiltersSuccess(
 		countries = country_list, domains = domain_list, units = unit_list, level_1_statutories = level_1_statutories_list, compliances = compliances_list, users = users_list)
 
@@ -273,14 +289,6 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
 	user_id = request.user_id
 	from_date = request.from_date
 	to_date = request.to_date
-	
-	if level_1_statutory_id is None :
-		level_1_statutory_id = '%'
-	if compliance_id is None :
-		compliance_id = '%'
-	if user_id is None :
-		user_id = '%'
-
 	reassigned_history_list = db.get_reassigned_history_report(
 	    country_id, domain_id, level_1_statutory_id, 
 	    unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user
