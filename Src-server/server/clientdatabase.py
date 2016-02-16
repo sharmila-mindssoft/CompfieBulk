@@ -875,7 +875,7 @@ class ClientDatabase(Database):
             result = rows[0][0]
         return result
 
-    def get_client_users(self, client_id, unit_ids=None):
+    def get_client_users(self, client_id=None, unit_ids=None):
         columns = "user_id, employee_name, employee_code, is_active"
         condition = "1"
         if unit_ids is not None:
@@ -5859,11 +5859,13 @@ class ClientDatabase(Database):
             statutory_dates = json.loads(r["statutory_dates"])
             repeat_text = ""
             repeats_every = r["repeats_every"]
+            repeat_type = r["repeat_type"]
             if repeats_every is not None or repeats_every is not "" :
                 repeat_text = statutory_repeat_text(statutory_dates, repeats_every, repeat_type)
 
-            duration_every = r["duration"]
-            if duration_every is not None or duration_every is not "" :
+            duration = r["duration"]
+            duration_type = r["duration_type"]
+            if duration is not None or duration is not "" :
                 repeat_text = statutory_duration_text(duration, duration_type)
 
             compliance = clientreport.ComplianceList(
@@ -5871,7 +5873,7 @@ class ClientDatabase(Database):
                 [compliance_name],
                 r["compliance_description"],
                 r["penal_consequences"],
-                r["frequency"],
+                core.COMPLIANCE_FREQUENCY(r["frequency"]),
                 repeat_text
             )
 

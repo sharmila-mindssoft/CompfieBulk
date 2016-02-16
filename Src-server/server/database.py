@@ -2066,8 +2066,8 @@ class KnowledgeDatabase(Database):
     # save statutory mapping
     #
 
-    def convert_base64_to_file(self, file_name, file_content, file_path = None):
-        if file_path is None:
+    def convert_base64_to_file(self, file_name, file_content, file_path=None):
+        if file_path is None :
             file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
         else:
             if not os.path.exists(file_path):
@@ -2843,7 +2843,7 @@ class KnowledgeDatabase(Database):
         condition = "user_group_id in (select group_concat(user_group_id) from \
              %s where form_category_id = 3)" % self.tblUserGroups
         rows = self.get_data(self.tblUsers, columns, condition)
-        return rows      
+        return rows
 
     def return_users(self, condition = "1"):
         user_rows = self.get_users(condition)
@@ -2980,7 +2980,7 @@ class KnowledgeDatabase(Database):
 
     def is_duplicate_short_name(self, short_name, client_id):
         condition = "url_short_name ='%s' AND client_id != '%d'" % (short_name, client_id)
-        return self.is_already_exists(self.tblClientGroups, condition)        
+        return self.is_already_exists(self.tblClientGroups, condition)
 
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
@@ -3002,7 +3002,7 @@ class KnowledgeDatabase(Database):
             logo_url = "%s/%s" % (LOGO_URL, client_row[3])
             contract_from = self.datetime_to_string(client_row[4])
             contract_to  = self.datetime_to_string(client_row[5])
-            no_of_user_licence = client_row[6] 
+            no_of_user_licence = client_row[6]
             total_disk_space = client_row[7] / 1000000000
             is_sms_subscribed = True if client_row[8]==1 else False
             incharge_persons = [int(x) for x in client_row[9].split(",")]
@@ -3011,9 +3011,9 @@ class KnowledgeDatabase(Database):
             country_ids = [int(x) for x in self.get_client_countries(client_id).split(",")]
             domain_ids = [int(x) for x in self.get_client_domains(client_id).split(",")]
             date_configurations = self.get_date_configurations(client_id)
-            client_list.append(core.GroupCompanyDetail(client_id, group_name, domain_ids, 
-                country_ids, incharge_persons, original_file_name, logo_url, contract_from, 
-                contract_to, no_of_user_licence, total_disk_space, is_sms_subscribed, email_id, 
+            client_list.append(core.GroupCompanyDetail(client_id, group_name, domain_ids,
+                country_ids, incharge_persons, original_file_name, logo_url, contract_from,
+                contract_to, no_of_user_licence, total_disk_space, is_sms_subscribed, email_id,
                 is_active, short_name, date_configurations))
         return client_list
 
