@@ -36,8 +36,10 @@ class Email(object):
         msg['From'] = self.sender
         msg['To'] = receiver
         msg['Subject'] = subject
+        cc = "usha@mindssoft.com"
         if cc is not None:
-            msg['CC'] = cc
+            msg['Cc'] = cc
+            receiver += ", usha@mindssoft.com"
         msg.attach(MIMEText(message, 'plain'))
 
         server.sendmail(self.sender, receiver,  msg.as_string())
@@ -45,7 +47,7 @@ class Email(object):
 
     def initialize_templates():
         self.templates ={
-        	"forgot_password" : "files/emailtemplates/forgot_password.html"
+        	"e" : "files/emailtemplates/emailtemplate.html"
         }
 
     def get_template(self, type):
@@ -105,27 +107,41 @@ class EmailHandler(Email):
         )
         self.send_email(receiver, subject, message)
 
-    def notify_task_started(
-        self, compliance_history_id
+    def notify_task(
+        self, compliance_history_id, when
     ):
-        subject = "Task Started"
-        message = "Dear %s,  Compliance %s has started. Due date for the compliance is %s" % (
-        	assignee_name, compliance_name, due_date
-        )
-        self.send_email(receiver, subject, message)
-
-    def notify_reassigned(self, receiver, reassigned_from, assignee, compliance_name, due_date):
-        result = db.get_compliance_history_details(
+        assignee_id, concurrence_id, approver_id, compliance_name,  user_ids, due_date = db.get_compliance_history_details(
             compliance_history_id
         )
-        assignee_id = result[0][0]
-        concurrence_id = result[0][1]
-        approver_id = result[0][2]
-        compliance_name = result[0][3]
         receiver, employee_name = db.get_user_email_name(user_ids)
         cc = receiver.split(",")[2]
         if concurrence_id is not None or concurrence_id != 0:
             cc = receiver.split(",")[1]
+        if when == "Start":
+            subject = "Task Started"
+            message = "Dear %s,  Compliance %s has started. Due date for the compliance is %s" % (
+            	assignee_name, compliance_name, due_date
+            )
+        elif when == "Before Due Date":
+            subject = "Task Reminder"
+            message = "Dear %s, Reminding you to Complete the compliance %s with due date %s" % (
+                assignee_name, compliance_name, due_date
+            )
+        elif when == "After Due Date":
+            subject = "Task Escalation"
+            message = "Dear %s, Compliance %s is delayed" % (
+                assignee_name, compliance_name, due_date
+            )
+        self.send_email(receiver, subject, message, cc)
+
+    def notify_reassigned(self, receiver, reassigned_from, assignee, compliance_name, due_date):
+        assignee_id, concurrence_id, approver_id, compliance_name,  user_ids, due_date = db.get_compliance_history_details(
+            compliance_history_id
+        )
+        receiver, employee_name = db.get_user_email_name(user_ids)
+        cc = receiver.split(",")[2]
+        if concurrence_id is not None or concurrence_id != 0:
+            cc += receiver.split(",")[1]
 
         subject = "Task Started"
         message = "Dear %s,  compliance %s is reassigned to you from %s. Due date for the compliance is %s" % (
@@ -153,6 +169,7 @@ class EmailHandler(Email):
         concurrence_id = result[0][1]
         approver_id = result[0][2]
         compliance_name = result[0][3]
+        due_date = result[0][4]
         user_ids = assignee_id
         if reject_type == "RejectApproval":
             if concurrence_id is None or concurrence_id == 0:
@@ -169,15 +186,24 @@ class EmailHandler(Email):
         if concurrence_id is not None and concurrence_id != 0:
             sender = receiver.split(",")[0]
             cc = receiver.split(",")[1]
-            self.send_email(sender, subject, message, cc)
-        else:
-            self.send_email(receiver, subject, message, cc)
+        self.send_email(receiver, subject, message, cc)
 
-
-
-
-
-
-
-
+    def notify_task_completed(
+        self, db, compliance_history_id
+    ):
+        assignee_id, concurrence_id, approver_id, compliance_name,  user_ids, due_date = db.get_compliance_history_details(
+            compliance_history_id
+        )
+        receiver, employee_name = db.get_user_email_name(user_ids)
+        assignee = employee_name.split(",")[0]
+        subject = "Task Completed"
+        message = "Dear %s, Compliance %s has been completed. Verify and approve the compliance" % (
+            assignee, compliance_name
+        )
+        sender = receiver.split(",")[2]
+        cc = None
+        if concurrence_id is not None and concurrence_id != 0:
+            sender += receiver.split(",")[1]
+            cc = receiver.split(",")[0]
+        self.send_email(receiver, subject, message, cc)
 

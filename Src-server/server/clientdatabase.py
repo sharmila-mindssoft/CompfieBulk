@@ -1834,7 +1834,7 @@ class ClientDatabase(Database):
                 compliance_status[0], core.COMPLIANCE_APPROVAL_STATUS(compliance_status[1])))
         return result_compliance_status
 
-    def get_user_name_by_id(self, user_id, client_id):
+    def get_user_name_by_id(self, user_id, client_id = None):
         employee_name = None
         if user_id != None:
             columns = "employee_code, employee_name"
@@ -5624,61 +5624,205 @@ class ClientDatabase(Database):
         return unit_wise_compliances
 
     def get_assigneewise_compliances_list(
-        self, country_id, business_group_id, legal_entity_id, division_id, unit_id, user_id,
+        self, country_id, business_group_id, legal_entity_id, division_id, unit_id,
         session_user, client_id
     ):
         user_unit_ids = self.get_user_unit_ids(session_user, client_id)
-        seating_unit_column = "unit_id"
+        seating_unit_column = "seating_unit_id"
         seating_unit_condition = "user_id = '%d'" % session_user
         seating_unit_rows = self.get_data(
             self.tblUsers, seating_unit_column, seating_unit_condition
         )
         unit_ids = "%s,%s" % (user_unit_ids, seating_unit_rows[0][0])
 
-        unit_columns = "unit_id, unit_code, unit_name, addres"
+        unit_columns = "unit_id, unit_code, unit_name, address"
         unit_condition = " unit_id in (%s) " % unit_ids
         unit_list = self.get_data(
             self.tblUnits, unit_columns, unit_condition
         )
+        chart_data = []
         for unit in unit_list:
             unit_id = unit[0]
             unit_name = "%s - %s" % (
                 unit[1], unit[2]
             )
             address = unit[3]
+            user_ids = self.get_unit_user_ids(unit_id)
+            assignee_wise_compliances_count = []
+            for user_id in user_ids.split(","):
+                assigned_compliance_ids, reassigned_compliance_ids = self.get_user_assigned_reassigned_ids(
+                    user_id
+                )
+                all_compliance_ids = None
+                if assigned_compliance_ids is not None:
+                    all_compliance_ids = "%s" % (
+                        assigned_compliance_ids
+                    )
+                if reassigned_compliance_ids is not None:
+                    if all_compliance_ids is not None:
+                        all_compliance_ids = "%s, %s" % (
+                            all_compliance_ids, reassigned_compliance_ids
+                        )
+                    all_compliance_ids = "%s" % (
+                        reassigned_compliance_ids
+                    )
+                if all_compliance_ids is not None:
+                    client_statutory_id_columns = "group_concat(client_statutory_id)"
+                    client_statutory_id_condition = "compliance_id in (%s)" % all_compliance_ids
+                    client_statutory_id_rows = self.get_data(
+                        self.tblClientCompliances, 
+                        client_statutory_id_columns, 
+                        client_statutory_id_condition
+                    )
 
-            client_statutory_columns = "group_concat(client_statutory_id), domain_id, \
-            (select domain_name from %s d where d.domain_id = cs.domain_id)" % self.tblDomains
-            client_statutory_condition = "unit_id = '%d'" % unit_id
-            client_statutory_rows = self.get_data(
-                self.tblClientStatutories+" cs", client_statutory_columns, client_statutory_condition
+                    domain_columns = "group_concat(client_statutory_id), domain_id, \
+                    (select domain_name from %s d where d.domain_id = cs.domain_id)" % self.tblDomains
+                    domain_condition = "unit_id = '%d'" % unit_id
+                    domain_condition += " and client_statutory_id in (%s)" % (
+                        client_statutory_id_rows[0][0]
+                    )
+                    domain_rows = self.get_data(
+                        self.tblClientStatutories+" cs", domain_columns, domain_condition
+                    )
+                    domain_wise_compliance_count = []
+                    for domain in domain_rows:
+                        unit_users_column = "user_id, "
+                        domain_id = domain[1]
+                        domain_name = domain[2]
+                        client_statutory_ids = domain[0]
+                        complied = inprogress = not_complied = delayed_compliance = total = 0
+                        if client_statutory_ids is not None:
+                            client_compliance_columns = "group_concat(compliance_id)"
+                            client_compliance_condition = "client_statutory_id in (%s)" % client_statutory_ids
+                            client_compliance_rows = self.get_data(
+                                self.tblClientCompliances, client_compliance_columns, client_compliance_condition
+                            )
+                            compliance_ids = client_compliance_rows[0][0]
+                            columns = "sum(case when (approve_status = 1 and (due_date < completion_date or \
+                            due_date = completion_date)) then 1 else 0 end) as complied, \
+                            sum(case when ((approve_status = 0 or approve_status is null) and \
+                            due_date > now()) then 1 else 0 end) as Inprogress, \
+                            sum(case when ((approve_status = 0 or approve_status is null) and \
+                            due_date < now()) then 1 else 0 end) as NotComplied, \
+                            sum(case when (approve_status = 1 and completion_date > due_date) then 1 else 0 end)\
+                            as DelayedCompliance"
+                            condition = "compliance_id in (%s)" % compliance_ids
+                            rows = self.get_data(
+                                self.tblComplianceHistory, columns, condition
+                            )
+                            complied = int(rows[0][0])
+                            inprogress = int(rows[0][1])
+                            not_complied = int(rows[0][2])
+                            delayed_compliance = int(rows[0][3])
+                            total = complied + inprogress + not_complied + delayed_compliance
+                        reassigned_compliances = []
+                        delayed_reassigned_count = 0
+                        if reassigned_compliance_ids is not None:
+                            delayed_reassigned_columns = "compliance_id, start_date, due_date, completed_on, \
+                            (select concat(document_name,'-',compliance_task) from %s c where \
+                            ch.compliance_id = c.compliance_id)" % self.tblCompliances
+                            delayed_reassigned_condition = " compliance_id in ({}) and completed_by = '{}'".format(
+                                reassigned_compliance_ids, user_id
+                            )
+                            delayed_reassigned_condition += " and completed_on > due_date and approve_status = 1"
+                            delayed_rows = self.get_data(
+                                self.tblComplianceHistory+" ch", delayed_reassigned_columns, 
+                                delayed_reassigned_condition
+                            )
+                            delayed_reassigned_count = len(delayed_rows)
+                            for delayed in delayed_rows:
+                                start_date = delayed[1]
+                                due_date = delayed[2]
+                                completed_on = delayed[3]
+                                compliance_name = delayed[4]
+                                rh_columns = "reassigned_date, reassigned_from, (select concat(\
+                                employee_code, '-', employee_name) from %s u where u.user_id = rh.reassigned_from\
+                                )" % self.tblUsers
+                                rh_condition = "compliance_id = '%d' and assignee = '%d'" % (
+                                    delayed[0], user_id
+                                )
+                                rh_rows = self.get_data(
+                                    self.tblReassignedCompliancesHistory+" rh", rh_columns, rh_condition
+                                )
+                                reassigned_compliances.append(
+                                    dashboard.RessignedCompliance(
+                                        compliance_name=compliance_name, 
+                                        reassigned_from=rh_rows[0][1], 
+                                        start_date=start_date, 
+                                        due_date=due_date, 
+                                        reassigned_date=rh_rows[0][0], 
+                                        completed_date=completed_on
+                                    )
+                                )
+                        delayed_compliances_obj = dashboard.DelayedCompliance(
+                            assigned_count=delayed_compliance - delayed_reassigned_count, 
+                            reassigned_count=delayed_reassigned_count, 
+                            reassigned_compliances=None if len(reassigned_compliances) == 0 else  reassigned_compliances
+                        )
+                        domain_wise_compliance_count.append(
+                            dashboard.DomainWise(
+                                domain_id=domain_id, 
+                                domain_name=domain_name, 
+                                total_compliances=total, 
+                                complied_count=complied, 
+                                delayed_compliance=delayed_compliances_obj, 
+                                inprogress_compliance_count=inprogress, 
+                                not_complied_count=not_complied
+                            )
+                        )
+                    assignee_wise_compliances_count.append(
+                        dashboard.AssigneeWiseDetails(
+                            user_id=int(user_id), 
+                            assignee_name=self.get_user_name_by_id(user_id), 
+                            domain_wise_details=domain_wise_compliance_count
+                        )
+                    )
+            chart_data.append(
+                dashboard.AssigneeChartData(
+                    unit_name=unit_name,
+                    address=address, 
+                    assignee_wise_details=assignee_wise_compliances_count
+                )
             )
-            for client_statutory in client_statutory_rows:
-                unit_users_column = "user_id, "
-                domain_id = client_statutory[1]
-                domain_name = client_statutory[2]
-                client_statutory_ids = client_statutory[0]
-                client_compliance_columns = "group_concat(compliance_id)"
-                client_compliance_condition = "client_statutory_id in (%s)" % client_statutoy_ids
-                client_compliance_rows = self.get_data(
-                    self.tblClientCompliances, client_compliance_columns, client_compliance_condition
-                )
-                compliance_ids = client_compliance_rows[0][0]
-                columns = "compliance_id, count(*) as total, \
-                sum(case when approve_status = 1 and (due_date < completion_date or \
-                due_date = completion_date) then 1 else 0 end) as complied \
-                sum(case when (approve_status = 0 or approve_status is null) and \
-                due_date > now() then 1 else 0 end) as Inprogress \
-                sum(case when (approve_status = 0 or approve_status is null) and \
-                due_date < now() then 1 else 0 end) as NotComplied \
-                sum(case when approve_status = 1 and completion_date > due_date then 1 else 0 end)\
-                as DelayedCompliance "
-                condition = "compliance_id in (%d)" % compliance_ids
-                rows = self.get_data(
-                    self.tblComplianceHistory, columns, condition
-                )
+        return chart_data
+
+    def get_unit_user_ids(self, unit_id, client_id=None):
+        columns = "group_concat(user_id)"
+        table = self.tblUnits
+        result = None
+        condition = " unit_id = '%d'"% unit_id
+        rows = self.get_data(
+            self.tblUserUnits, columns, condition
+        )
+        if rows :
+            result = rows[0][0]
+        return result
 
 
+    def get_user_assigned_reassigned_ids(self, user_id):
+        columns = "group_concat(compliance_id)"
+        condition = " assignee = '{}' ".format(
+            user_id
+        )
+        assigned_condition = "%s %s" % (
+            condition, "and (is_reassigned = 0 or is_reassigned is null)"
+        )
+        reassigned_condition = "%s %s" % (
+            condition, "and (is_reassigned = 1)"
+        )
+        assigned_rows = self.get_data(
+            self.tblAssignedCompliances, columns, assigned_condition
+        )
+        reassigned_rows = self.get_data(
+            self.tblAssignedCompliances, columns, reassigned_condition
+        )
+        assigned_compliance_ids = None
+        reassigned_compliance_ids = None
+        if assigned_rows :
+            assigned_compliance_ids = assigned_rows[0][0]
+        if reassigned_rows:
+            reassigned_compliance_ids = reassigned_rows[0][0]
+        return assigned_compliance_ids, reassigned_compliance_ids
 
 #
 #   Email   
@@ -5739,6 +5883,7 @@ class ClientDatabase(Database):
     def get_compliance_history_details(self, compliance_history_id):
         columns = "completed_by, ifnull(concurred_by, 0), approved_by, ( \
             select concat(document_name, ' - ', compliance_task) from %s c \
-            where c.compliance_id = ch.compliance_id )" % (self.tblCompliances)
+            where c.compliance_id = ch.compliance_id ), due_date" % (self.tblCompliances)
         condition = "compliance_history_id = '%d'" % compliance_history_id
-        return self.get_data(self.tblComplianceHistory+" ch", columns, condition )
+        rows = self.get_data(self.tblComplianceHistory+" ch", columns, condition )
+        return rows

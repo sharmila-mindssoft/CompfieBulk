@@ -3721,3 +3721,7 @@ def to_structure_MapType_CustomTextType_50_MapType_CustomTextType_50_VectorType_
         value = to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityData(value)
         dict[key] = value
     return dict
+
+def to_structure_OptinalType_VectorType_RecordType_dashboard_RessignedCompliance(data):
+    if data is None: return data
+    return to_structure_VectorType_RecordType_dashboard_RessignedCompliance(data)

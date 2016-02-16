@@ -51,7 +51,8 @@ from protocol.parse_structure import (
     parse_structure_EnumType_core_NOT_COMPLIED_TYPE,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Compliance,
     parse_structure_VectorType_RecordType_dashboard_Notification,
-    parse_structure_Bool
+    parse_structure_Bool,
+    parse_structure_OptinalType_VectorType_RecordType_dashboard_RessignedCompliance
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -106,7 +107,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_dashboard_Notification,
     to_structure_Bool,
     to_structure_VectorType_RecordType_core_ClientUnit,
-    to_structure_VectorType_RecordType_clientreport_User
+    to_structure_VectorType_RecordType_clientreport_User,
+    to_structure_OptinalType_VectorType_RecordType_dashboard_RessignedCompliance
 )
 
 #
@@ -344,22 +346,22 @@ class GetAssigneeWiseCompliancesChart(Request):
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
+        business_group_id = parse_structure_OptionalType_UnsignedIntegerType_32(business_group_id)
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
+        legal_entity_id = parse_structure_OptionalType_UnsignedIntegerType_32(legal_entity_id)
         division_id = data.get("division_id")
-        division_id = parse_structure_UnsignedIntegerType_32(division_id)
+        division_id = parse_structure_OptionalType_UnsignedIntegerType_32(division_id)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
+        unit_id = parse_structure_OptionalType_UnsignedIntegerType_32(unit_id)
         return GetAssigneeWiseCompliancesChart(country_id, business_group_id, legal_entity_id, division_id, unit_id)
 
     def to_inner_structure(self):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
-            "division_id": to_structure_SignedIntegerType_8(self.division_id),
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
+            "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
+            "legal_entity_id": to_structure_OptionalType_UnsignedIntegerType_32(self.legal_entity_id),
+            "division_id": to_structure_OptionalType_UnsignedIntegerType_32(self.division_id),
+            "unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.unit_id),
         }
 
 class GetAssigneeWiseComplianceDrillDown(Request):
@@ -1219,14 +1221,14 @@ class DelayedCompliance(object):
         reassigned_count = data.get("reassigned_count")
         reassigned_count = parse_structure_UnsignedIntegerType_32(reassigned_count)
         reassigned_compliances = data.get("reassigned_compliances")
-        reassigned_compliances = parse_structure_VectorType_RecordType_dashboard_RessignedCompliance(reassigned_compliances)
+        reassigned_compliances = parse_structure_OptinalType_VectorType_RecordType_dashboard_RessignedCompliance(reassigned_compliances)
         return DelayedCompliance(assigned_count, reassigned_count, reassigned_compliances)
 
     def to_structure(self):
         return {
             "assigned_count": to_structure_SignedIntegerType_8(self.assigned_count),
             "reassigned_count": to_structure_SignedIntegerType_8(self.reassigned_count),
-            "reassigned_compliances": to_structure_VectorType_RecordType_dashboard_RessignedCompliance(self.reassigned_compliances),
+            "reassigned_compliances": to_structure_OptinalType_VectorType_RecordType_dashboard_RessignedCompliance(self.reassigned_compliances),
         }
 
 #
@@ -1306,22 +1308,26 @@ class AssigneeWiseDetails(object):
 #
 
 class AssigneeChartData(object):
-    def __init__(self, unit_name, assignee_wise_details):
+    def __init__(self, unit_name, assignee_wise_details, address):
         self.unit_name = unit_name
         self.assignee_wise_details = assignee_wise_details
+        self.address = address
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_name", "assignee_wise_details"])
+        data = parse_dictionary(data, ["unit_name", "assignee_wise_details", "address"])
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_50(unit_name)
         assignee_wise_details = data.get("assignee_wise_details")
         assignee_wise_details = parse_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(assignee_wise_details)
-        return AssigneeChartData(unit_name, assignee_wise_details)
+        address = data.get("address")
+        address = parse_structure_CustomTextType_500(address)
+        return AssigneeChartData(unit_name, assignee_wise_details, address)
 
     def to_structure(self):
         return {
             "unit_name": to_structure_CustomTextType_50(self.unit_name),
+            "address": to_structure_CustomTextType_500(self.address),
             "assignee_wise_details": to_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(self.assignee_wise_details),
         }
 
