@@ -1177,7 +1177,7 @@ function initClientMirror() {
             "GetAssigneewiseComplianesFilters",
             {}
         ];
-        callerName = "api/client_dashboard";
+        callerName = "client_dashboard";
         clientApiRequest(callerName, request, callback);
 
     }
@@ -1196,9 +1196,38 @@ function initClientMirror() {
                 "unit_id": unit_id
             }
         ];
-        callerName = "api/client_dashboard";
+        callerName = "client_dashboard";
         clientApiRequest(callerName, request, callback);
 
+    }
+
+    function getTaskApplicabilityReportFilters(callback) {
+        var request = [
+            "GetTaskApplicabilityStatusFilters", {}
+        ];
+        callerName = "client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getTaskApplicabilityReportData(
+        country_id, domain_id, business_group_id,
+        legal_entity_id, division_id, unit_id,
+        level_1_statutory_name, applicable_status
+    ) {
+        var request = [
+            "GetComplianceTaskApplicabilityStatusReport", {
+                "country_id" : country_id,
+                "domain_id" : domain_id,
+                "business_group_id": business_group_id,
+                "legal_entity_id": legal_entity_id,
+                "division_id": division_id,
+                "unit_id": unit_id,
+                "level_1_statutory_name": level_1_statutory_name,
+                "applicable_status": applicable_status
+            }
+        ];
+        callerName = "client_reports";
+        clientApiRequest(callerName, request, callback);
     }
 
     return {
@@ -1318,7 +1347,10 @@ function initClientMirror() {
         getClientDetailsReportData: getClientDetailsReportData,
 
         getAssigneewiseComplianesFilters: getAssigneewiseComplianesFilters,
-        getAssigneewiseComplianes: getAssigneewiseComplianes
+        getAssigneewiseComplianes: getAssigneewiseComplianes,
+
+        getTaskApplicabilityReportFilters: getTaskApplicabilityReportFilters,
+        getTaskApplicabilityReportData: getTaskApplicabilityReportData
 
     }
 }

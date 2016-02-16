@@ -17,7 +17,7 @@ __all__ = [
 ]
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 CLIENT_DOCS_BASE_PATH = os.path.join(ROOT_PATH, "clientdocuments")
-FORMAT_DOWNLOAD_URL = "client/compliance_format"
+FORMAT_DOWNLOAD_URL = "/client/compliance_format"
 
 class ClientDatabase(Database):
     def __init__(
@@ -1841,7 +1841,7 @@ class ClientDatabase(Database):
             session_user = '%'
         query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, \
             t1.division_id, t1.legal_entity_id, t1.business_group_id, \
-            t1.address \
+            t1.address, t1.country_id \
             FROM tbl_units t1 \
             INNER JOIN tbl_user_units t2 \
             ON t1.unit_id = t2.unit_id \
@@ -1852,7 +1852,7 @@ class ClientDatabase(Database):
         columns = [
             "unit_id", "unit_code", "unit_name",
             "division_id", "legal_entity_id",
-            "business_group_id", "address"
+            "business_group_id", "address", "country_id"
         ]
         result = self.convert_to_dict(rows, columns)
         unit_list = []
@@ -1864,7 +1864,8 @@ class ClientDatabase(Database):
                     r["address"],
                     r["division_id"],
                     r["legal_entity_id"],
-                    r["business_group_id"]
+                    r["business_group_id"],
+                    r["country_id"]
                 )
             )
         return unit_list
@@ -5848,8 +5849,9 @@ class ClientDatabase(Database):
 
             unit_wise = act_wise.get(level_1_statutory)
 
-            if r["document_name"] is not None :
-                compliance_name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            document_name = r["document_name"]
+            if document_name :
+                compliance_name = "%s - %s" % (document_name, r["compliance_task"])
             else :
                 compliance_name = r["compliance_task"]
 
@@ -5860,17 +5862,21 @@ class ClientDatabase(Database):
             repeat_text = ""
             repeats_every = r["repeats_every"]
             repeat_type = r["repeat_type"]
-            if repeats_every is not None or repeats_every is not "" :
+            if repeats_every :
                 repeat_text = statutory_repeat_text(statutory_dates, repeats_every, repeat_type)
 
             duration = r["duration"]
             duration_type = r["duration_type"]
-            if duration is not None or duration is not "" :
+            if duration:
                 repeat_text = statutory_duration_text(duration, duration_type)
 
+            compliance_name_list = [compliance_name]
+            format_file = r["format_file"]
+            if format_file :
+                compliance_name_list.append("%s/%s" % (FORMAT_DOWNLOAD_URL, format_file))
             compliance = clientreport.ComplianceList(
                 r["statutory_provision"] + r["statutory_mapping"],
-                [compliance_name],
+                compliance_name_list,
                 r["compliance_description"],
                 r["penal_consequences"],
                 core.COMPLIANCE_FREQUENCY(r["frequency"]),

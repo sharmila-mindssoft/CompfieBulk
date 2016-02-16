@@ -1185,17 +1185,24 @@ class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
 #
 
 class ASSIGN_COMPLIANCE_UNITS(object):
-    def __init__(self, unit_id, unit_name, address, division_id, legal_entity_id, business_group_id):
+    def __init__(
+        self, unit_id, unit_name, address, division_id,
+        legal_entity_id, business_group_id, country_id
+    ):
         self.unit_id = unit_id
         self.unit_name = unit_name
         self.address = address
         self.division_id = division_id
         self.legal_entity_id = legal_entity_id
         self.business_group_id = business_group_id
+        self.country_id = country_id
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "unit_name", "address", "division_id", "legal_entity_id", "business_group_id"])
+        data = parse_dictionary(data, [
+            "unit_id", "unit_name", "address", "division_id",
+            "legal_entity_id", "business_group_id", "country_id"
+        ])
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
@@ -1208,7 +1215,12 @@ class ASSIGN_COMPLIANCE_UNITS(object):
         legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
         business_group_id = data.get("business_group_id")
         business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
-        return ASSIGN_COMPLIANCE_UNITS(unit_id, unit_name, address, division_id, legal_entity_id, business_group_id)
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
+        return ASSIGN_COMPLIANCE_UNITS(
+            unit_id, unit_name, address, division_id,
+            legal_entity_id, business_group_id, country_id
+        )
 
     def to_structure(self):
         return {
@@ -1218,6 +1230,7 @@ class ASSIGN_COMPLIANCE_UNITS(object):
             "division_id": to_structure_SignedIntegerType_8(self.division_id),
             "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
             "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id)
         }
 
 #
