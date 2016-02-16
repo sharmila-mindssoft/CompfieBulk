@@ -11,6 +11,7 @@ from dateutil import relativedelta
 from types import *
 
 from types import *
+from server.emailcontroller import EmailHandler
 
 __all__ = [
     "ClientDatabase"
@@ -18,6 +19,7 @@ __all__ = [
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 CLIENT_DOCS_BASE_PATH = os.path.join(ROOT_PATH, "clientdocuments")
 FORMAT_DOWNLOAD_URL = "client/compliance_format"
+email = EmailHandler()
 
 class ClientDatabase(Database):
     def __init__(
@@ -150,6 +152,13 @@ class ClientDatabase(Database):
         condition = "url_short_name = '%s'" % short_name
         rows = self.get_data(
             "tbl_client_groups", columns, condition
+        )
+        return rows[0][0]
+
+    def get_short_name_from_client_id(self, client_id):
+        columns = "url_short_name"
+        rows = self.get_data(
+            self.tblClientSettings, columns, "1"
         )
         return rows[0][0]
 
@@ -620,7 +629,8 @@ class ClientDatabase(Database):
                 "employee_code", "contact_no", "user_level",
                 "is_admin", "is_service_provider","created_by", "created_on",
                 "updated_by", "updated_on"]
-        values = [ user_id, user.user_group_id, user.email_id, self.generate_password(), user.employee_name,
+        encrypted_password, password = self.generate_and_return_password()
+        values = [ user_id, user.user_group_id, user.email_id, encrypted_password, user.employee_name,
                 user.employee_code, user.contact_no, user.user_level,
                 0, user.is_service_provider, session_user,current_time_stamp,
                 session_user, current_time_stamp]
@@ -656,7 +666,11 @@ class ClientDatabase(Database):
 
         action = "Created user \"%s - %s\"" % (user.employee_code, user.employee_name)
         self.save_activity(session_user, 4, action, client_id)
-
+        email.send_user_credentials(
+            self.get_short_name_from_client_id(
+                client_id
+            ), user.email_id, password, user.employee_name, user.employee_code
+        )
         return (result1 and result2 and result3 and result4)
 
     def update_user(self, user, session_user, client_id):
@@ -3514,7 +3528,7 @@ class ClientDatabase(Database):
 #
 #   Compliance Approval
 #
-    def approveCompliance(self, compliance_history_id, remarks, next_due_date, client_id):
+    def approve_compliance(self, compliance_history_id, remarks, next_due_date, client_id):
         columns = ["approve_status", "approved_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
@@ -3531,23 +3545,29 @@ class ClientDatabase(Database):
         values = [self.string_to_datetime(next_due_date)]
         self.update(self.tblAssignedCompliances, columns, values, condition, client_id)
 
-    def rejectComplianceApproval(self, compliance_history_id, remarks,  next_due_date, client_id):
+    def reject_compliance_approval(self, compliance_history_id, remarks,  next_due_date, client_id):
         columns = ["approve_status", "remarks", "completion_date", "completed_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0, remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
+        email.notify_task_rejected(
+            self, compliance_history_id, remarks, "RejectApproval" 
+        )
 
-    def concurCompliance(self, compliance_history_id, remarks, next_due_date, client_id):
+    def concur_Compliance(self, compliance_history_id, remarks, next_due_date, client_id):
         columns = ["concurrence_status", "concurred_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
 
-    def rejectComplianceConcurrence(self, compliance_history_id, remarks,  next_due_date, client_id):
+    def reject_compliance_concurrence(self, compliance_history_id, remarks,  next_due_date, client_id):
         columns = ["concurrence_status", "remarks", "completion_date", "completed_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0,  remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
+        email.notify_task_rejected(
+            self, compliance_history_id, remarks, "RejectConcurrence" 
+        )
 
     def get_client_level_1_statutoy(self, user_id, client_id) :
         query = "SELECT (case when (LEFT(statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') \
@@ -4594,7 +4614,7 @@ class ClientDatabase(Database):
             "address, (select domain_name \
             from %s d where domain_id = (select domain_id from %s cs where cs.unit_id = u.unit_id and\
             client_statutory_id in (select client_statutory_id from %s cc \
-            where cc.compliance_id = ch.compliance_id ))) as domain_name, frequency" % (
+            where cc.compliance_id = ch.compliance_id ))) as domain_name, frequency, remarks" % (
                 self.tblDomains, self.tblClientStatutories, self.tblClientCompliances
             )
         tables = [
@@ -4635,20 +4655,23 @@ class ClientDatabase(Database):
             format_files = [ "%s/%s" % (
                     FORMAT_DOWNLOAD_URL, x
                 ) for x in compliance[8].split(",")]
-            current_compliances_list.append(core.ActiveCompliance(
-                compliance_history_id = compliance[0],
-                compliance_name = compliance_name,
-                compliance_frequency = core.COMPLIANCE_FREQUENCY(compliance[13]),
-                domain_name = compliance[12],
-                start_date = self.datetime_to_string(compliance[1]),
-                due_date = self.datetime_to_string(compliance[2]),
-                compliance_status = compliance_status,
-                validity_date = None if compliance[3] == None else self.datetime_to_string(compliance[3]),
-                next_due_date = self.datetime_to_string(compliance[4]),
-                ageing = ageing,
-                format_file_name = format_files,
-                unit_name = unit_name, address = compliance[11],
-                compliance_description = compliance[12])
+            current_compliances_list.append(
+                core.ActiveCompliance(
+                    compliance_history_id=compliance[0],
+                    compliance_name=compliance_name,
+                    compliance_frequency=core.COMPLIANCE_FREQUENCY(compliance[13]),
+                    domain_name=compliance[12],
+                    start_date=self.datetime_to_string(compliance[1]),
+                    due_date=self.datetime_to_string(compliance[2]),
+                    compliance_status=compliance_status,
+                    validity_date=None if compliance[3] == None else self.datetime_to_string(compliance[3]),
+                    next_due_date=None if compliance[4] == None else self.datetime_to_string(compliance[4]),
+                    ageing=ageing,
+                    format_file_name=format_files,
+                    unit_name=unit_name, address=compliance[11],
+                    compliance_description=compliance[7],
+                    remarks=compliance[14] 
+                )
             )
         return current_compliances_list
 
@@ -5656,3 +5679,66 @@ class ClientDatabase(Database):
                 )
 
 
+
+#
+#   Email   
+#
+
+#   Service Provider Contract Exiration
+
+    def get_admin_username(self):
+        # Getting primary admin username password
+        column = "username"
+        rows = self.get_data(
+            self.tblAdmin, column, "1"
+        )
+        admin_username = rows[0][0]
+
+        # Getting Secondary admin username password
+        column = "email_id"
+        condition = "isadmin = 1"
+        rows = self.get_data(
+            self.tblUsers, column, condition
+        )
+        for row in rows:
+            admin_username += ", %s" % row[0]
+
+        return admin_username
+
+    def get_service_provider_name_by_id(self, service_provider_id):
+        column = "service_provider_name"
+        condition = "service_provider_id = '%d'" % service_provider_id
+        rows = self.get_data(
+            self.tblServiceProviders, column, condition
+        )
+        return rows[0][0]
+
+
+# Task Rejected notification
+
+    def get_user_email_name(self, user_ids):
+        column = "email_id, employee_name"
+        condition = "user_id in (%s)" % user_ids
+        rows = self.get_data(
+            self.tblUsers, column, condition
+        )
+        email_ids = ""
+        employee_name = ""
+        for index, row in enumerate(rows):
+            if index == 0:
+                if row[1] is not None:
+                    employee_name += "%s" % row[1]
+                email_ids += "%s" % row[0]
+            else:
+                if row[1] is not None:
+                    employee_name += ", %s" % row[1]
+                email_ids += ", %s" % row[0]
+        return email_ids, employee_name
+
+
+    def get_compliance_history_details(self, compliance_history_id):
+        columns = "completed_by, ifnull(concurred_by, 0), approved_by, ( \
+            select concat(document_name, ' - ', compliance_task) from %s c \
+            where c.compliance_id = ch.compliance_id )" % (self.tblCompliances)
+        condition = "compliance_history_id = '%d'" % compliance_history_id
+        return self.get_data(self.tblComplianceHistory+" ch", columns, condition )

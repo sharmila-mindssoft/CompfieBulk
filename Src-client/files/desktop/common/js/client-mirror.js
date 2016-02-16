@@ -233,7 +233,6 @@ function initClientMirror() {
 
     function forgotPassword(username, callback) {
         var short_name = getShortName();
-        callerName = "api/login"
         var request = [
             short_name, [
                 "ForgotPassword", {
