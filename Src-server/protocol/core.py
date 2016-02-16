@@ -369,15 +369,15 @@ class COMPLIANCE_STATUS(object):
 
 class APPLICABILITY_STATUS(object):
     Applicable = "Applicable"
-    NotApplicable = "NotApplicable"
-    NotOpted = "NotOpted"
+    NotApplicable = "Not Applicable"
+    NotOpted = "Not Opted"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Applicable", "NotApplicable", "NotOpted"]
+        return ["Applicable", "Not Applicable", "Not Opted"]
 
     def value(self):
         return self._value

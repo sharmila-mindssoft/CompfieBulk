@@ -55,18 +55,18 @@ class Database(object) :
     }
 
     string_months = {
-         1 : "Jan",
-         2 : "Feb",
-         3 : "Mar",
-         4 : "Apr",
-         5 : "May",
-         6 : "Jun",
-         7 : "Jul",
-         8 : "Aug",
-         9 : "Sep",
-         10 : "Oct",
-         11 : "Nov",
-         12 : "Dec",
+        1 : "January",
+        2 : "February",
+        3 : "March",
+        4 : "April",
+        5 : "May",
+        6 : "June",
+        7 : "July",
+        8 : "August",
+        9 : "September",
+        10 : "October",
+        11 : "November",
+        12 : "December",
     }
 
     end_day_of_month = {
@@ -3696,7 +3696,7 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_clients t3 \
             ON t1.client_id = t3.client_id \
             AND t3.user_id = %s \
-            AND t2.client_id = %s" % (
+            AND t2.country_id = %s" % (
                 user_id, country_id
             )
         rows = self.select_all(query)
