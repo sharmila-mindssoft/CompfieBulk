@@ -5849,8 +5849,9 @@ class ClientDatabase(Database):
 
             unit_wise = act_wise.get(level_1_statutory)
 
-            if r["document_name"] is not None :
-                compliance_name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            document_name = r["document_name"]
+            if document_name :
+                compliance_name = "%s - %s" % (document_name, r["compliance_task"])
             else :
                 compliance_name = r["compliance_task"]
 
@@ -5861,21 +5862,21 @@ class ClientDatabase(Database):
             repeat_text = ""
             repeats_every = r["repeats_every"]
             repeat_type = r["repeat_type"]
-            if repeats_every is not None or repeats_every is not "" :
+            if repeats_every :
                 repeat_text = statutory_repeat_text(statutory_dates, repeats_every, repeat_type)
 
             duration = r["duration"]
             duration_type = r["duration_type"]
-            if duration is not None or duration is not "" :
+            if duration:
                 repeat_text = statutory_duration_text(duration, duration_type)
 
             compliance_name_list = [compliance_name]
             format_file = r["format_file"]
-            if format_file is not None or format_file is not "" :
+            if format_file :
                 compliance_name_list.append("%s/%s" % (FORMAT_DOWNLOAD_URL, format_file))
             compliance = clientreport.ComplianceList(
                 r["statutory_provision"] + r["statutory_mapping"],
-                [compliance_name],
+                compliance_name_list,
                 r["compliance_description"],
                 r["penal_consequences"],
                 core.COMPLIANCE_FREQUENCY(r["frequency"]),
