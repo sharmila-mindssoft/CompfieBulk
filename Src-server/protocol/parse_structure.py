@@ -3648,3 +3648,14 @@ def parse_structure_VectorType_RecordType_client_report_UnitDetails(data):
 def parse_structure_RecordType_client_report_UnitDetails(data):
     from protocol import clientreport
     return clientreport.UnitDetails.parse_structure(data)
+
+def parse_structure_RecordType_core_Compliance_Download(data):
+    from protocol import core
+    return core.Compliance_Download.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_core_Compliance_Download(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_core_Compliance_Download(item))
+    return lst

@@ -213,7 +213,7 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     }
     var complianceNames='';
     for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
-      complianceNames = complianceNames + statutoryMappingsList[entity]["compliance_names"][i] + " <br>";
+      complianceNames = complianceNames + statutoryMappingsList[entity]["compliance_names"][i]["compliance_name"] + " <br>";
     }
 
     for(approvalstatuslist in complianceApprovalStatusList){
