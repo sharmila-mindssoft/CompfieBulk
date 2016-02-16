@@ -1,7 +1,5 @@
-import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
-    parse_structure_Float,
     parse_structure_VectorType_RecordType_general_Notification,
     parse_structure_CustomTextType_250,
     parse_structure_VectorType_RecordType_core_Domain,
@@ -11,10 +9,10 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_50,
     parse_structure_VectorType_RecordType_general_AuditTrail,
     parse_structure_VectorType_RecordType_general_User,
-    parse_structure_VectorType_RecordType_general_AuditTrailForm
+    parse_structure_VectorType_RecordType_general_AuditTrailForm,
+    parse_structure_VectorType_RecordType_core_Country
 )
 from protocol.to_structure import (
-    to_structure_Float,
     to_structure_VectorType_RecordType_general_Notification,
     to_structure_CustomTextType_250,
     to_structure_VectorType_RecordType_core_Domain,
@@ -26,7 +24,7 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_general_AuditTrail,
     to_structure_UnsignedIntegerType_32,
     to_structure_VectorType_RecordType_general_User,
-    to_structure_VectorType_RecordType_general_AuditTrailForm
+    to_structure_VectorType_RecordType_general_AuditTrailForm,
 )
 
 #
@@ -263,10 +261,12 @@ class GetAuditTrails(Request):
         }
 
 def _init_Request_class_map():
-    classes = [UpdateUserProfile, GetDomains, SaveDomain, UpdateDomain, 
-    ChangeDomainStatus, GetCountries, SaveCountry, UpdateCountry, 
-    ChangeCountryStatus, GetNotifications, UpdateNotificationStatus,
-    GetAuditTrails]
+    classes = [
+        UpdateUserProfile, GetDomains, SaveDomain, UpdateDomain,
+        ChangeDomainStatus, GetCountries, SaveCountry, UpdateCountry,
+        ChangeCountryStatus, GetNotifications, UpdateNotificationStatus,
+        GetAuditTrails
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -548,13 +548,13 @@ class GetAuditTrailSuccess(Response):
             "forms": to_structure_VectorType_RecordType_general_AuditTrailForm(self.forms)
         }
 
-
-
 def _init_Response_class_map():
-    classes = [UpdateUserProfileSuccess, ContactNumberAlreadyExists, 
-    GetDomainsSuccess, SaveDomainSuccess, DomainNameAlreadyExists, 
-    UpdateDomainSuccess, InvalidDomainId, ChangeDomainStatusSuccess, 
-    GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess]
+    classes = [
+        UpdateUserProfileSuccess, ContactNumberAlreadyExists,
+        GetDomainsSuccess, SaveDomainSuccess, DomainNameAlreadyExists,
+        UpdateDomainSuccess, InvalidDomainId, ChangeDomainStatusSuccess,
+        GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -642,7 +642,7 @@ class AuditTrailForm(object):
         form_id = parse_structure_UnsignedIntegerType_32(form_id)
         form_name = data.get("form_name")
         form_name = parse_structure_CustomTextType_50(form_name)
-        return Form(form_id, form_name)
+        return AuditTrailForm(form_id, form_name)
 
     def to_structure(self):
         return {
@@ -673,4 +673,3 @@ class RequestFormat(object):
             "session_token": to_structure_CustomTextType_50(self.session_token),
             "request": to_structure_VariantType_general_Request(self.request),
         }
-

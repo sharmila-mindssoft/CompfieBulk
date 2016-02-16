@@ -1,4 +1,4 @@
-{% extends "files/desktop/home/container.html" %}
+{% extends "files/desktop/client/home/container.html" %}
 {% block content %}
 <div class="content-container">
   <div class="content-area">
@@ -25,8 +25,8 @@
         <div class="input-row">
           <div class="field-label">Domain:</div>
           <div class="field-input">
-            <input type="hidden" id="domains">
-            <input type="text" class="input-box icon-autocomplete" id="domainsselected" value="" readonly="readonly" onclick="loadautodomains()">
+            <input type="hidden" id="domain">
+            <input type="text" class="input-box icon-autocomplete" id="domainselected" value="" readonly="readonly" onclick="loadauto_domains()">
             <div id="selectboxview-domains" class="ac-selectbox" style="display:none;"  onmouseleave="hidemenudomains();">
               <ul style=" width:195px;"></ul>
             </div>
@@ -75,48 +75,48 @@
             </div>
           </div>
         </div>
-
       </div>
       <div class="submit-button-container">
         <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit">
         <input type="submit" name="cancel" value="Export" class="btn-submit"></div>
       <div class="clearfix"></div>
-      <div class="grid-table-rpt">
+      <div class="grid-table-rpt default-display-none">
         <h1>Unit Details</h1>
-
+        <div class="unitdetails-list">
         <table style="border-bottom:dotted 1px #999999;">
           <tbody class="filter-heading-list"></tbody>
           <tbody class="heading-list"></tbody>
           <tbody class="tbody-unitdetails-list"></tbody>
 
         </table>
-        <p>Total : 5 records</p>
+      </div>
+        <p class="total-records"></p>
       </div>
     </div>
   </div>
 </div>
 
 <div id="templates">
-  <table class="table-clientdetails-list">
-    <tr class="filter-header-list">
+  <table class="table-unitdetails-list">
+    <tr class="filter-heading-list" style="border-top:1px solid #eee; ">
       <td colspan="6">
-        <div style="margin-left:15%;">
+        <div style="margin-left:15%;padding-top:10px;">
           <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
+            <div style="margin-left:10px;  padding-bottom:1em;">
               Country :
-              <span style="margin-left:10px; font-weight:bold;" class="filer-country-name"></span>
+              <span style="margin-left:10px; font-weight:bold;" class="filter-country-name"></span>
             </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
+            <div style="margin-left:10px;  padding-bottom:1em;">
               Business Group  :
               <span style="margin-left:10px; font-weight:bold;" class="filter-business-group-name"></span>
             </div>
           </div>
           <div style="float:right; margin-right:20%;">
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
+            <div style="margin-left:10px;  padding-bottom:1em;">
               Legal Entity :
               <span style="margin-left:10px; font-weight:bold;" class="filter-legal-entity-name"></span>
             </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
+            <div style="margin-left:10px;  padding-bottom:1em;">
               Division :
               <span style="margin-left:10px; font-weight:bold;"class= "filter-division-name"></span>
             </div>
@@ -143,4 +143,5 @@
     </tr>
   </table>
 </div>
+<script type="text/javascript" src="/files/desktop/client/unit-details-report/unitdetailsreport.js"></script>
 {% endblock %}

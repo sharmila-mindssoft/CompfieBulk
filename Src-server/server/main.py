@@ -283,11 +283,18 @@ def run_server(port):
         server_path = os.path.join(ROOT_PATH, "Src-server")
         server_path = os.path.join(server_path, "server")
         format_path = os.path.join(server_path, "knowledgeformat")
+        logo_path = os.path.join(server_path, "clientlogo")
 
         web_server.low_level_url(
             r"/knowledge/compliance_format/(.*)",
             StaticFileHandler,
             dict(path=format_path)
+        )
+
+        web_server.low_level_url(
+            r"/knowledge/clientlogo/(.*)",
+            StaticFileHandler,
+            dict(path=logo_path)
         )
 
         static_path = os.path.join(ROOT_PATH, "Src-client")

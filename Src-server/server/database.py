@@ -15,6 +15,7 @@ from protocol import (
 from distribution.protocol import (
     Company, IPAddress
 )
+from server.emailcontroller import EmailHandler as email
 
 __all__ = [
     "KnowledgeDatabase", "Database"
@@ -24,6 +25,7 @@ ROOT_PATH = os.path.join(os.path.split(__file__)[0])
 KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
 FORMAT_DOWNLOAD_URL = "knowledge/compliance_format"
 CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
+LOGO_URL = "knowledge/clientlogo"
 
 class Database(object) :
     def __init__(
@@ -55,18 +57,18 @@ class Database(object) :
     }
 
     string_months = {
-         1 : "Jan",
-         2 : "Feb",
-         3 : "Mar",
-         4 : "Apr",
-         5 : "May",
-         6 : "Jun",
-         7 : "Jul",
-         8 : "Aug",
-         9 : "Sep",
-         10 : "Oct",
-         11 : "Nov",
-         12 : "Dec",
+        1 : "January",
+        2 : "February",
+        3 : "March",
+        4 : "April",
+        5 : "May",
+        6 : "June",
+        7 : "July",
+        8 : "August",
+        9 : "September",
+        10 : "October",
+        11 : "November",
+        12 : "December",
     }
 
     end_day_of_month = {
@@ -2065,13 +2067,13 @@ class KnowledgeDatabase(Database):
     #
 
     def convert_base64_to_file(self, file_name, file_content, file_path=None):
+
         if file_path is None:
             file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
         else:
             if not os.path.exists(file_path):
                 os.makedirs(file_path)
             file_path = "%s/%s" % (file_path, file_name)
-            print "file_path:{}".format(file_path)
         self.remove_uploaded_file(file_path)
         new_file = open(file_path, "wb")
         new_file.write(file_content.decode('base64'))
@@ -2837,6 +2839,13 @@ class KnowledgeDatabase(Database):
         rows = self.get_data(self.tblUsers, columns, condition)
         return rows
 
+    def get_techno_users(self):
+        columns = "user_id, employee_name, employee_code, is_active"
+        condition = "user_group_id in (select group_concat(user_group_id) from \
+             %s where form_category_id = 3)" % self.tblUserGroups
+        rows = self.get_data(self.tblUsers, columns, condition)
+        return rows      
+
     def return_users(self, condition = "1"):
         user_rows = self.get_users(condition)
         columns = ["user_id", "employee_name", "employee_code", "is_active"]
@@ -2970,12 +2979,44 @@ class KnowledgeDatabase(Database):
         condition = "email_id ='%s' AND client_id != '%d'" % (username, client_id)
         return self.is_already_exists(self.tblClientGroups, condition)
 
+    def is_duplicate_short_name(self, short_name, client_id):
+        condition = "url_short_name ='%s' AND client_id != '%d'" % (short_name, client_id)
+        return self.is_already_exists(self.tblClientGroups, condition)        
+
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
         " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
         " is_active, url_short_name"
         condition = "1"
-        return self.get_data(self.tblClientGroups, columns, condition)
+        rows = self.get_data(self.tblClientGroups, columns, condition)
+        return self.return_group_company_details(rows)
+
+    def return_group_company_details(self, result):
+        client_list = []
+        for client_row in result:
+            client_id = client_row[0]
+            group_name = client_row[1]
+            email_id = client_row[2]
+            file_parts = client_row[3].split("-")
+            etn_parts = client_row[3].split(".")
+            original_file_name = "%s.%s" % (file_parts[0], etn_parts[1])
+            logo_url = "%s/%s" % (LOGO_URL, client_row[3])
+            contract_from = self.datetime_to_string(client_row[4])
+            contract_to  = self.datetime_to_string(client_row[5])
+            no_of_user_licence = client_row[6] 
+            total_disk_space = client_row[7] / 1000000000
+            is_sms_subscribed = True if client_row[8]==1 else False
+            incharge_persons = [int(x) for x in client_row[9].split(",")]
+            is_active = True if client_row[10]==1 else False
+            short_name = client_row[11]
+            country_ids = [int(x) for x in self.get_client_countries(client_id).split(",")]
+            domain_ids = [int(x) for x in self.get_client_domains(client_id).split(",")]
+            date_configurations = self.get_date_configurations(client_id)
+            client_list.append(core.GroupCompanyDetail(client_id, group_name, domain_ids, 
+                country_ids, incharge_persons, original_file_name, logo_url, contract_from, 
+                contract_to, no_of_user_licence, total_disk_space, is_sms_subscribed, email_id, 
+                is_active, short_name, date_configurations))
+        return client_list
 
     def get_group_companies_for_user(self, user_id):
         client_ids = None
@@ -3102,10 +3143,12 @@ class KnowledgeDatabase(Database):
                 cursor.execute(command)
             else:
                 break
+        password = self.generate_password()
         query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
-            email_id, self.generate_password())
+            email_id, password)
         cursor.execute(query)
         con.commit()
+        email().send_client_credentials(email_id, password)
         return True
 
     def _get_server_details(self):
@@ -3200,10 +3243,11 @@ class KnowledgeDatabase(Database):
         contract_from = self.string_to_datetime(client_group.contract_from)
         contract_to = self.string_to_datetime(client_group.contract_to)
         is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
-        file_name = self.save_client_logo(request.logo, client_group.client_id)
+
         columns = ["group_name", "logo_url", "logo_size", "contract_from",
         "contract_to", "no_of_user_licence", "total_disk_space", "is_sms_subscribed",
         "incharge_persons", "is_active", "updated_by", "updated_on"]
+        file_name = self.update_client_logo(client_group.logo, client_group.client_id)
         values = [client_group.group_name, file_name, 1200, contract_from, contract_to,
         client_group.no_of_user_licence, client_group.file_space * 1000000000,
         is_sms_subscribed,
@@ -3235,10 +3279,21 @@ class KnowledgeDatabase(Database):
 
     def save_client_logo(self, logo, client_id):
         file_size = logo.file_size
+        name = logo.file_name.split('.')[0]
         exten = logo.file_name.split('.')[1]
-        file_name = "%d.%s" % (client_id, exten)
+        auto_code = self.new_uuid()
+        file_name = "%s-%s.%s" % (name, auto_code, exten)
         self.convert_base64_to_file(file_name, logo.file_content, CLIENT_LOGO_PATH)
         return file_name
+
+    def update_client_logo(self, logo, client_id):
+        column = "logo_url"
+        condition = "client_id = '%d'" % client_id
+        rows = self.get_data(self.tblClientGroups, column, condition)
+        old_file_name = rows[0][0]
+        old_file_path = "%s/%s" % (CLIENT_LOGO_PATH, old_file_name)
+        self.remove_uploaded_file(old_file_path)
+        return self.save_client_logo(logo, client_id)
 
     def update_client_group_status(self, client_id, is_active, session_user):
         is_active = 1 if is_active != False else 0

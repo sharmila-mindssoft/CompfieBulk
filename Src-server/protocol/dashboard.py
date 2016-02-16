@@ -104,7 +104,9 @@ from protocol.to_structure import (
     to_structure_EnumType_core_NOT_COMPLIED_TYPE,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Compliance,
     to_structure_VectorType_RecordType_dashboard_Notification,
-    to_structure_Bool
+    to_structure_Bool,
+    to_structure_VectorType_RecordType_core_ClientUnit,
+    to_structure_VectorType_RecordType_clientreport_User
 )
 
 #
@@ -313,6 +315,19 @@ class GetComplianceApplicabilityStatusChart(Request):
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
             "filter_id": to_structure_OptionalType_UnsignedIntegerType_32(self.filter_id),
+        }
+
+class GetAssigneewiseComplianesFilters(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetAssigneewiseComplianesFilters()
+
+    def to_inner_structure(self):
+        return {
         }
 
 class GetAssigneeWiseCompliancesChart(Request):
@@ -579,7 +594,8 @@ def _init_Request_class_map():
     GetAssigneeWiseCompliancesChart, GetAssigneeWiseComplianceDrillDown,
     GetComplianceStatusDrillDownData, GetEscalationsDrillDownData,
     GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
-    GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus]
+    GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
+    GetAssigneewiseComplianesFilters]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -753,6 +769,46 @@ class GetComplianceApplicabilityStatusChartSuccess(Response):
             "not_opted_count": to_structure_SignedIntegerType_8(self.not_opted_count),
         }
 
+
+class GetAssigneewiseComplianesFiltersSuccess(Response):
+    def __init__(self, countries, business_groups, legal_entities, divisions, units, users):
+        self.countries = countries
+        self.business_groups = business_groups
+        self.legal_entities = legal_entities
+        self.divisions = divisions
+        self.units = units
+        self.users = users
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "countries", "business_groups", "legal_entities", "divisions", "units", "users"
+        ])
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_RecordType_core_Country(countries)
+        business_groups = data.get("business_groups")
+        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
+        legal_entities = data.get("legal_entities")
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
+        divisions = data.get("divisions")
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
+        units = data.get("units")
+        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
+        users = data.get("users")
+        users = parse_structure_VectorType_RecordType_clientreport_User(users)
+        return GetAssigneewiseComplianesFiltersSuccess(countries, business_groups, legal_entities, divisions, units, users)
+
+    def to_inner_structure(self):
+        return {
+            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
+            "users": to_structure_VectorType_RecordType_clientreport_User(self.users)
+        }
+
+
 class GetAssigneeWiseCompliancesChartSuccess(Response):
     def __init__(self, chart_data):
         self.chart_data = chart_data
@@ -920,7 +976,7 @@ def _init_Response_class_map():
     GetComplianceStatusDrillDownDataSuccess, GetEscalationsDrillDownDataSuccess,
     GetComplianceApplicabilityStatusDrillDownSuccess, GetNotCompliedDrillDownSuccess,
     GetTrendChartDrillDownDataSuccess, GetNotificationsSuccess,
-    UpdateNotificationStatusSuccess]
+    UpdateNotificationStatusSuccess, GetAssigneewiseComplianesFiltersSuccess]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

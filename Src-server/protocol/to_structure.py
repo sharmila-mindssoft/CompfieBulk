@@ -1102,6 +1102,10 @@ def to_structure_OptionalType_CustomTextType_20(data):
     if data is None: return data
     return to_structure_CustomTextType_20(data)
 
+def to_structure_OptionalType_VectorType_CustomTextType_20(data):
+    if data is None: return data
+    return to_structure_VectorType_CustomTextType_20(data)
+
 def to_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_STATUS(data):
     from protocol import core
     return core.ASSIGN_STATUTORY_SUBMISSION_STATUS.to_structure(data)
@@ -3730,3 +3734,25 @@ def to_structure_MapType_CustomTextType_50_MapType_CustomTextType_50_VectorType_
         value = to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityData(value)
         dict[key] = value
     return dict
+
+def to_structure_VectorType_RecordType_client_report_GroupedUnits(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_client_report_GroupedUnits(item))
+    return lst
+
+def to_structure_RecordType_client_report_GroupedUnits(data):
+    from protocol import clientreport
+    return clientreport.GroupedUnits.to_structure(data)
+
+def to_structure_VectorType_RecordType_client_report_UnitDetails(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_client_report_UnitDetails(item))
+    return lst
+
+def to_structure_RecordType_client_report_UnitDetails(data):
+    from protocol import clientreport
+    return clientreport.UnitDetails.to_structure(data)

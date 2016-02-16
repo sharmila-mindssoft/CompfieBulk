@@ -63,7 +63,9 @@ from protocol.parse_structure import (
     parse_structure_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_core_User,
     parse_structure_OptionalType_VectorType_RecordType_core_FileList,
-    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory
+    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory,
+    parse_structure_OptionalType_VectorType_CustomTextType_20
+
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -135,7 +137,8 @@ from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
     to_structure_VectorType_RecordType_core_User,
     to_structure_OptionalType_VectorType_RecordType_core_FileList,
-    to_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory
+    to_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory,
+    to_structure_OptionalType_VectorType_CustomTextType_20
 )
 
 #
@@ -1109,7 +1112,7 @@ class UNIT_WISE_STATUTORIES(object):
         statutory_date = data.get("statutory_date")
         statutory_date = parse_structure_VectorType_RecordType_core_StatutoryDate(statutory_date)
         due_date = data.get("due_date")
-        due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
+        due_date = parse_structure_OptionalType_VectorType_CustomTextType_20(due_date)
         applicable_units = parse_structure_VectorType_SignedIntegerType_8(applicable_units)
         return UNIT_WISE_STATUTORIES(compliance_id, compliance_name, description, frequency, statutory_date, due_date, applicable_units)
 
@@ -1120,7 +1123,7 @@ class UNIT_WISE_STATUTORIES(object):
             "description": to_structure_CustomTextType_500(self.description),
             "frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.frequency),
             "statutory_date": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_date),
-            "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
+            "due_date": to_structure_OptionalType_VectorType_CustomTextType_20(self.due_date),
             "applicable_units": to_structure_VectorType_SignedIntegerType_8(self.applicable_units)
         }
 

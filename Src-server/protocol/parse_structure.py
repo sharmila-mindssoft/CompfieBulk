@@ -1030,6 +1030,10 @@ def parse_structure_OptionalType_CustomTextType_20(data):
     if data is None: return data
     return parse_structure_CustomTextType_20(data)
 
+def parse_structure_OptionalType_VectorType_CustomTextType_20(data):
+    if data is None: return data
+    return parse_structure_VectorType_CustomTextType_20(data)
+
 def parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_STATUS(data):
     from protocol import core
     return core.ASSIGN_STATUTORY_SUBMISSION_STATUS.parse_structure(data)
@@ -3632,3 +3636,15 @@ def parse_structure_VectorType_RecordType_clientreport_ActivityData(data):
 def parse_structure_RecordType_clientreport_ActivityData(data):
     from protocol import clientreport
     return clientreport.ActivityData.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_client_report_UnitDetails(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_client_report_UnitDetails(item))
+    return lst
+
+
+def parse_structure_RecordType_client_report_UnitDetails(data):
+    from protocol import clientreport
+    return clientreport.UnitDetails.parse_structure(data)

@@ -1,0 +1,878 @@
+{% extends "files/desktop/client/home/container.html" %}
+  {% block content %}
+<style>
+    .grid-table table tr:hover {
+      background-color: #F1E9F6;
+      cursor: pointer;
+    }
+    .grid-table table tr:nth-child(even) {
+      background: #fff;
+    }
+
+    .grid-table table tr:nth-child(odd) {
+      background: #fff;
+    }
+
+    .grid-table table tr:nth-child(odd):hover {
+      background-color: #F1E9F6;
+      cursor: pointer;
+    }
+    .grid-table table tr:nth-child(even):hover {
+      background-color: #F1E9F6;
+      cursor: pointer;
+    }
+        .slider{
+          background-color: gray;
+          color: white;
+        }
+        #trigger{
+          width: 90%;
+          padding: 10px;
+          margin: 5px 5%;
+        }
+      </style>
+<script type="text/javascript">
+      $(document).ready(function() {
+        $('.arrow3').hide();
+        $('.arrow4').hide();
+        $(".current-tab").click(function() {
+        $(".current-tab").addClass("active")
+        $(".upcomming-tab").removeClass("active")
+        $(".main-tab-content").show();
+        $(".current-tab-content").hide();
+        $(".upcomming-tab-content").hide();
+      })
+
+      $(".upcomming-tab").click(function() {
+        $(".upcomming-tab").addClass("active")
+        $(".current-tab").removeClass("active")
+        $(".current-tab-content").hide();
+        $(".upcomming-tab-content").show();
+        $(".main-tab-content").hide();
+      })
+
+      $(".close").click(function() {
+        $(".current-tab-content").hide();
+        $(".main-tab-content").show();
+      })
+
+     })
+  $(function() {
+    $('.validity2_icon').click(function(){    
+      $('.duedate2_textbox').show();
+      $('.duedate2_label').hide();
+      $('.validity2_textbox').show();
+      $('.validity2_label').hide();
+    });
+    $('.validity1_icon').click(function(){    
+      $('.duedate1_textbox').show();
+      $('.duedate1_label').hide();
+      $('.validity1_textbox').show();
+      $('.validity1_label').hide();
+    });
+  });
+      </script>
+<div class="content-container width75">
+  <div class="content-area">
+    <div class="add-container">
+      <div class="archive-container">
+        <div class="archive-header">
+          <span class="current-tab active">Compliance Tasks</span>
+          <span class="upcomming-tab">Upcoming Compliance Tasks</span>
+        </div>
+
+        <div class="main-tab-content" style="border:1px solid white;">
+          <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
+            <tr>
+              <td width="100%">
+                <div class="grid-table" style="padding-bottom:0em;">
+                  <table>
+                    <tr align="left" style="background:#ccc;">
+                      <td width="3%">
+                        <span style="font-weight:bold;">#</span>
+                      </td>
+                      <td width="25%">
+                        <span style="font-weight:bold;">Compliance Task</span>
+                      </td>
+                      <td width="10%">
+                        <span style="font-weight:bold;">Domain</span>
+                      </td>
+                      <td width="8%">
+                        <span style="font-weight:bold;">Start Date</span>
+                      </td>
+                      <td width="8%">
+                        <span style="font-weight:bold;">Due Date</span>
+                      </td>
+                      <td width="14%">
+                        <span style="font-weight:bold;">Days</span>
+                      </td>
+                      <td width="5%">
+                        <span style="font-weight:bold;">Status</span>
+                      </td>
+                      <td width="3%" colspan="2">
+                        <span style="font-weight:bold;padding-right:5px">Format</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box" ></td>
+                      <td>
+                        <input type="text" class="filter-text-box"></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box"></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box"></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box"></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box"  ></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    <tr >
+                      <th colspan="9" align="left" style="background:#ccc;color:black;font-weight:bold">Over due Compliances</th>
+                    </tr>
+                    <tr>
+                      <td >1</td>
+                      <td > <abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer"><img src="/images/icon-info.png" style="margin-right:3px"/>
+                          FORM V - Dealer Half yearly returns</abbr> 
+                      </td>
+                      <td>Industrial Law</td>
+                      <td>26-Jul-2015</td>
+                      <td>29-Jul-2015</td>
+                      <td style="color:#FF4644">Over Due By 7 Days</td>
+                      <td>Not Complied</td>
+                      <td align="center" style="color:#FF4644">
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style=" padding-right:5px;">
+                        <img src="/images/right_arrow.png"  style="visibility:hidden"></td>
+                    </tr>
+                    <tr>
+                      <td >2</td>
+                      <td> <abbr class="page-load" title="Whether half yearly returns submitted by recyclers."><img src="/images/icon-info.png" style="margin-right:3px">FORM VII - Recycler Half yearly returns</abbr>
+                      </td>
+                      <td>Industrial Law</td>
+                      <td>25-Jul-2015</td>
+                      <td>31-Jul-2015</td>
+                      <td style="color:#FF4644">Over Due By 4 Days</td>
+                      <td>Not Complied</td>
+                      <td align="center" >
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style=" padding-right:5px;">
+                        <img src="/images/right_arrow.png"  style="visibility:hidden"></td>
+                    </tr>
+                    <tr>
+                      <th colspan="9" align="left" style="background:#ccc;color:black;font-weight:bold">Inprogress Compliances</th>
+                    </tr>
+                    <tr class="index-tab1" >
+                      <td style="color:#FF4644">3</td>
+                      <td style="color:#FF4644">
+                        <abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned">
+                          <img src="/images/icon-info.png" style="margin-right:3px">FORM I - Half yearly returns Submission</abbr>
+                      </td>
+                      <td style="color:#FF4644">Industrial Law</td>
+                      <td style="color:#FF4644">15-Aug-2015</td>
+                      <td style="color:#FF4644">24-Aug-2015</td>
+                      <td style="color:#FF4644">10 Days left</td>
+                      <td  style="color:#FF4644">Inprogress</td>
+                      <td align="center" style="color:#FF4644">
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style="padding-right:5px;color:#FF4644"></td>
+                    </tr>
+                    <tr class="archive-tab1">
+                      <td>4</td>
+                      <td>
+                        <abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead">
+                          <img src="/images/icon-info.png" style="margin-right:3px">FORM II - Registration</abbr>
+                      </td>
+                      <td>Industrial Law</td>
+                      <td>20-Aug-2015</td>
+                      <td>24-Aug-2015</td>
+                      <td>5 Days left</td>
+                      <td>Inprogress</td>
+                      <td align="center">
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style=" padding-right:5px;"></td>
+                    </tr>
+                    <tr >
+                      <td>5</td>
+                      <td>
+                        <abbr class="page-load" title="Whether undertaking submitted by importer to authority">
+                          <img src="/images/icon-info.png" style="margin-right:3px">FORM III - Undertaking submission</abbr>
+                      </td>
+                      <td>Industrial Law</td>
+                      <td>21-Aug-2015</td>
+                      <td>26-Aug-2015</td>
+                      <td>6 Days left</td>
+                      <td>Inprogress</td>
+                      <td align="center">
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style="padding-right:5px;"></td>
+                    </tr >
+                    <tr >
+                      <td>6</td>
+                      <td>
+                        <abbr class="page-load" title="Whether registration obtained for dealers">
+                          <img src="/images/icon-info.png" style="margin-right:3px">FORM IV - Dealer Registration</abbr>
+                      </td>
+                      <td>Industrial Law</td>
+                      <td>25-Aug-2015</td>
+                      <td>31-Aug-2015</td>
+                      <td>7 Days left</td>
+                      <td>Inprogress</td>
+                      <td align="center">
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style="padding-right:5px;"></td>
+                    </tr>
+                    <tr >
+                      <td>7</td>
+                      <td>
+                        <abbr class="page-load" title="Whether registration and renewal obtained by recycler">
+                          <img src="/images/icon-info.png" style="margin-right:3px">FORM VI - Recycler Registration and Review</abbr>
+                      </td>
+                      <td>Industrial Law</td>
+                      <td>21-Aug-2015</td>
+                      <td>26-Aug-2015</td>
+                      <td>6 Days</td>
+                      <td>Inprogress</td>
+                      <td align="center">
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style=" padding-right:5px;"></td>
+                    </tr >
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="current-tab-content" style="border:1px solid white;display:none" >
+
+          <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
+            <tr>
+              <td width="60%">
+                <div class="grid-table" style="padding-bottom:0em;">
+                  <table>
+
+                    <tr align="left" style="background:#ccc;">
+                      <td width="3%">
+                        <span style="font-weight:bold;">#</span>
+                      </td>
+                      <td>
+                        <span style="font-weight:bold;">Compliance Task</span>
+                      </td>
+                      <td>
+                        <span style="font-weight:bold;">Domain</span>
+                      </td>
+                      <td >
+                        <span style="font-weight:bold;">Start Date</span>
+                      </td>
+                      <td>
+                        <span style="font-weight:bold;">Due Date</span>
+                      </td>
+                      <td width="14%">
+                        <span style="font-weight:bold;">Days</span>
+                      </td>
+                      <td colspan="2">
+                        <span style="font-weight:bold;padding-right:5px">Format</span>
+                      </td>
+
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box" style="width:150px;"></td>
+                      <td>
+                        <input type="text" class="filter-text-box"></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box"></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box"></td>
+                      <td align="center">
+                        <input type="text" class="filter-text-box"  style="width:70px;"></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th colspan="9" align="left" style="background:#ccc;color:black;font-weight:bold">Over due Compliances</th>
+                    </tr>
+                    <tr style="background:#fff;">
+                      <td >1</td>
+
+                      <td >
+                        <abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer  ">
+                          <img src="/images/icon-info.png">FORM V - Dealer Half yearly returns</abbr>
+                      </td>
+                      <td >Industrial Law</td>
+                      <td >26-Jul-2015</td>
+                      <td >29-Jul-2015</td>
+                      <td style="color:#FF4644">Over Due By 7 Days</td>
+                      <td align="center" style="color:#FF4644">
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style=" padding-right:5px;">
+                        <img src="/images/right_arrow.png"  style="visibility:hidden"></td>
+                    </tr>
+                    <tr style="background:#fff;">
+                      <td >2</td>
+
+                      <td >
+                        <abbr class="page-load" title="Whether half yearly returns submitted by recyclers.">
+                          <img src="/images/icon-info.png">FORM VII - Recycler Half yearly returns</abbr>
+                      </td>
+                      <td >Industrial Law</td>
+                      <td >25-Jul-2015</td>
+                      <td >31-Jul-2015</td>
+                      <td style="color:#FF4644">Over Due By 4 Days</td>
+                      <td align="center" >
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style=" padding-right:5px;">
+                        <img src="/images/right_arrow.png"  style="visibility:hidden"></td>
+                    </tr>
+                    <tr>
+                      <th colspan="9" align="left" style="background:#ccc;color:black;font-weight:bold">Inprogress Compliances</th>
+                    </tr>
+                    <tr class="index-tab " style="background:#fff;" >
+                      <td style="color:#FF4644">3</td>
+
+                      <td style="color:#FF4644">
+                        <abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned">
+                          <img src="/images/icon-info.png">FORM I - Half yearly returns Submission</abbr>
+                      </td>
+                      <td style="color:#FF4644">Industrial Law</td>
+                      <td style="color:#FF4644">15-Aug-2015</td>
+                      <td style="color:#FF4644">24-Aug-2015</td>
+                      <td style="color:#FF4644">10 Days left</td>
+                      <td align="center" style="color:#FF4644">
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style="padding-right:5px;color:#FF4644">
+                        <img class="arrow3" src="/images/right_arrow.png"></td>
+                    </tr>
+                    <tr style="background:#fff;" class="archive-tab active1">
+                      <td>4</td>
+
+                      <td>
+                        <abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead  ">
+                          <img src="/images/icon-info.png">FORM II - Registration</abbr>
+                      </td>
+                      <td>Industrial Law</td>
+                      <td>20-Aug-2015</td>
+                      <td>24-Aug-2015</td>
+                      <td>5 Days left</td>
+                      <td align="center">
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style=" padding-right:5px;">
+                        <img class="arrow4" src="/images/right_arrow.png"></td>
+                    </tr>
+                    <tr style="background:#fff;">
+                      <td>5</td>
+
+                      <td>
+                        <abbr class="page-load" title="Whether undertaking submitted by importer to authority">
+                          <img src="/images/icon-info.png">FORM III - Undertaking submission</abbr>
+                      </td>
+                      <td>Industrial Law</td>
+                      <td>21-Aug-2015</td>
+                      <td>26-Aug-2015</td>
+                      <td>6 Days left</td>
+                      <td align="center">
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style="padding-right:5px;">
+                        <img src="/images/right_arrow.png"  style="visibility:hidden"></td>
+                    </tr >
+                    <tr style="background:#fff;">
+                      <td>6</td>
+
+                      <td>
+                        <abbr class="page-load" title="Whether registration obtained for dealers">
+                          <img src="/images/icon-info.png">FORM IV - Dealer Registration</abbr>
+                      </td>
+                      <td>Industrial Law</td>
+                      <td>25-Aug-2015</td>
+                      <td>31-Aug-2015</td>
+                      <td>7 Days left</td>
+                      <td align="center">
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style="padding-right:5px;">
+                        <img src="/images/right_arrow.png"  style="visibility:hidden"></td>
+                    </tr>
+                    <tr style="background:#fff;">
+                      <td>7</td>
+
+                      <td>
+                        <abbr class="page-load" title="Whether registration and renewal obtained by recycler
+  ">
+                          <img src="/images/icon-info.png">FORM VI - Recycler Registration and Review</abbr>
+                      </td>
+                      <td>Industrial Law</td>
+                      <td>21-Aug-2015</td>
+                      <td>26-Aug-2015</td>
+                      <td>6 Days</td>
+                      <td align="center">
+                        <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+                      <td style=" padding-right:5px;">
+                        <img src="/images/right_arrow.png" style="visibility:hidden"></td>
+                    </tr >
+                  </table>
+                </div>
+              </td>
+              <td width="40%" style="vertical-align:top; background:#F1E9F6; padding-left:10px;">
+
+                <div class="index-tab-content1" style="width:100%; height:100%; display:none;">
+                  <table class="managetask">
+                    <tr>
+                      <td colspan="2">
+                        <a href="#">
+                          <img class="close" src="/images/delete.png" style="float:right"/>
+                        </a>
+                      </td>
+                    </tr>
+                    <tr align="left">
+                      <td width="30%">
+                        <span style="font-weight:bold;">Compliance Task</span>
+                      </td>
+                      <td width="70%" colspan="3">
+                        <abbr class="page-load" title="Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned.">
+                          <img src="/images/icon-info.png" style="margin-right:3px">FORM I - Half yearly returns Submission</abbr>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td >
+                        <span style="font-weight:bold;">Compliance Frequency:</span>
+                      </td>
+                      <td>One Time</td>
+                    </tr>
+                    <tr>
+                      <td >
+                        <span style="font-weight:bold;">Upload Documents</span>
+                      </td>
+                      <td>
+                        <input type="file" class="input-box" style="width:65%;" value="">
+                        <span style="float:right;">
+                          <span style="font-weight:bold;">25-Aug-2015</span>
+                          <br>
+                          <span style="font-size:10px">(Upload Date)</span>
+                        </span>
+                        <br>
+                        <span style="font-size:0.75em;">(max 50 MB)</span>
+                      </td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td >
+                        <span style="font-weight:bold;">Attached Documents:</span>
+                      </td>
+                      <td colspan="2">
+                        <table class="tablenopadd">
+                          <tr>
+                            <td width="80%">Form I.pdf</td>
+                            <td width="10%">
+                              <img src="/images/delete.png" style="width:16px;height:16px;"/>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td width="80%">Document 2.pdf</td>
+                            <td width="10%">
+                              <img src="/images/delete.png" style="width:16px;height:16px;"/>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span style="font-weight:bold;">Document / Completion Date</span>
+                      </td>
+                      <td>
+                        <input class="input-box" type="text" value="23-Aug-2015"/>
+                      </td>
+                    </tr>
+                    <!--<tr>
+                    <td >
+                      <span style="font-weight:bold;">Validity Date:</span>
+                    </td>
+                    <td>
+                      <input type="text" value="22-Aug-2016" class="input-box"/>
+                    </td>
+                  </tr>
+                  -->
+                  <tr>
+                    <td >
+                      <span style="font-weight:bold;">Status</span>
+                    </td>
+                    <td>Inprogress (Rejected)</td>
+                  </tr>
+                  <tr>
+                    <td style="vertical-align:middle;">
+                      <span style="font-weight:bold;">Remarks</span>
+                    </td>
+                    <td  colspan="3">
+                      <Textarea class="input-box"></Textarea>
+                      <br>
+                      <span style="font-size:0.75em;">(max 500 characters)</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" align="center">
+                      <input type="submit" value="Submit" class="btn-submit"></td>
+                  </tr>
+                </table>
+              </div>
+
+              <div class="archive-tab-content1" style="width:100%; height:100%;">
+                <table class="managetask">
+                  <tr>
+                    <td colspan="2">
+                      <a href="#">
+                        <img class="close" src="/images/delete.png" style="float:right"/>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr align="left">
+                    <td width="30%">
+                      <span style="font-weight:bold;">Compliance Task</span>
+                    </td>
+                    <td width="70%" colspan="3">
+                      <abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead.">
+                        <img src="/images/icon-info.png">FORM II - Registration</abbr>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td >
+                      <span style="font-weight:bold;">Compliance Frequency:</span>
+                    </td>
+                    <td>Periodical</td>
+                  </tr>
+                  <tr>
+                    <td >
+                      <span style="font-weight:bold;">Upload Documents</span>
+                    </td>
+                    <td>
+                      <input type="file" class="input-box" style="width:65%;" value="">
+                      <span style="float:right;">
+                        <span style="font-weight:bold;">28-Aug-2015</span>
+                        <br>
+                        <span style="font-size:10px">(Upload Date)</span>
+                      </span>
+                      <br>
+                      <span style="font-size:0.75em;">(max 50 MB)</span>
+                    </td>
+
+                  </tr>
+                  <tr>
+                    <td >
+                      <span style="font-weight:bold;">Attached Documents:</span>
+                    </td>
+                    <td colspan="2">
+                      <table class="tablenopadd">
+                        <tr>
+                          <td width="80%">Form I.pdf</td>
+                          <td width="10%">
+                            <img src="/images/delete.png" style="width:16px;height:16px;"/>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td width="80%">Document 2.pdf</td>
+                          <td width="10%">
+                            <img src="/images/delete.png" style="width:16px;height:16px;"/>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td >
+                      <span style="font-weight:bold;">Document / Completion Date</span>
+                    </td>
+                    <td  colspan="2">
+                      <input type="text" value="27-Aug-2015" class="input-box"></td>
+                  </tr>
+                  <tr>
+                    <td >
+                      <span style="font-weight:bold;">Validity Date:</span>
+                    </td>
+                    <td>
+                      <span class="validity1_label">
+                        25-Aug-2016
+                        <a href="#" style="padding-left:40px;">
+                          <img src="/images/icon-edit.png" class="validity1_icon"></a>
+                      </span>
+                      <span class="validity1_textbox" style="display:none;">
+                        <input type="text" value="25-Aug-2016" class="input-box"/>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td >
+                      <span style="font-weight:bold;">Next Due Date:</span>
+                    </td>
+                    <td>
+                      <span class="duedate1_label">15-Aug-2016</span>
+                      <span class="duedate1_textbox" style="display:none;">
+                        <input type="text" value="15-Aug-2016" class="input-box"/>
+                      </span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td >
+                      <span style="font-weight:bold;">Status</span>
+                    </td>
+                    <td colspan="2">In progress</td>
+                  </tr>
+                  <tr>
+                    <td valign="top" style="vertical-align:middle;" >
+                      <span style="font-weight:bold;">Remarks</span>
+                    </td>
+                    <td colspan="3">
+                      <textarea class="input-box"></textarea>
+                      <br>
+                      <span style="font-size:0.75em;">(max 500 characters)</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" align="center">
+                      <input type="submit" value="Submit" class="btn-submit"></td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <!-- index tab content end here -->
+
+      <!-- archive tab content start here -->
+      <div class="upcomming-tab-content" style="display:none; border:1px solid #fff;">
+        <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
+          <tr>
+            <td width="100%">
+              <div class="grid-table" style="padding-bottom:0em;">
+                <table>
+
+                  <tr align="left" style="background:#ccc;">
+                    <td width="3%">
+                      <span style="font-weight:bold;">#</span>
+                    </td>
+                    <td width="41%">
+                      <span style="font-weight:bold;">Compliance Task</span>
+                    </td>
+                    <td>
+                      <span style="font-weight:bold;">Domain</span>
+                    </td>
+                    <td >
+                      <span style="font-weight:bold;">Start Date</span>
+                    </td>
+                    <td>
+                      <span style="font-weight:bold;">Due Date</span>
+                    </td>
+
+                    <td>
+                      <span style="font-weight:bold;padding-right:5px">Format</span>
+                    </td>
+
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td align="center">
+                      <input type="text" class="filter-text-box" ></td>
+                    <td>
+                      <input type="text" class="filter-text-box"></td>
+                    <td align="center">
+                      <input type="text" class="filter-text-box"></td>
+                    <td align="center">
+                      <input type="text" class="filter-text-box"></td>
+
+                    <td></td>
+
+                  </tr>
+                  <tr style="background:#fff;" >
+                    <td>1</td>
+
+                    <td>
+                      <abbr class="page-load" title="Whether half yearly returns submitted by manufacturer,  importer, bulk consumer, assembler and reconditioned">
+                        <img src="/images/icon-info.png" style="margin-right:3px">FORM I - Half yearly returns Submission</abbr>
+                    </td>
+                    <td>Industrial Law</td>
+                    <td>15-Aug-2015</td>
+                    <td>30-Aug-2015</td>
+
+                    <td align="center">
+                      <img src="/images/download.png" style="width:16px;height:16px;" title="Download Format"></td>
+
+                  </tr>
+                  <tr style="background:#fff;" >
+                    <td>2</td>
+
+                    <td>
+                      <abbr class="page-load" title="Whether registration for importers obtained for importing lead acid battery or primary Lead ">
+                        <img src="/images/icon-info.png">FORM II - Registration</abbr>
+                    </td>
+                    <td>Industrial Law</td>
+                    <td>20-Aug-2015</td>
+                    <td>26-Aug-2015</td>
+
+                    <td align="center">
+                      <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+
+                  </tr>
+                  <tr style="background:#fff;">
+                    <td>3</td>
+
+                    <td>
+                      <abbr class="page-load" title="Whether undertaking submitted by importer to authority">
+                        <img src="/images/icon-info.png" style="margin-right:3px">FORM III - Undertaking submission</abbr>
+                    </td>
+                    <td>Industrial Law</td>
+                    <td>21-Aug-2015</td>
+                    <td>28-Aug-2015</td>
+
+                    <td align="center">
+                      <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+
+                  </tr >
+                  <tr style="background:#fff;">
+                    <td>4</td>
+
+                    <td>
+                      <abbr class="page-load" title="Whether registration obtained for dealers">
+                        <img src="/images/icon-info.png">FORM IV - Dealer Registration</abbr>
+                    </td>
+                    <td>Industrial Law</td>
+                    <td>25-Aug-2015</td>
+                    <td>31-Aug-2015</td>
+
+                    <td align="center">
+                      <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+
+                  </tr>
+                  <tr style="background:#fff;">
+                    <td>5</td>
+
+                    <td>
+                      <abbr class="page-load" title="Whether half yearly returns submitted by dealer to manufacturer ">
+                        <img src="/images/icon-info.png" style="margin-right:3px">FORM V - Dealer Half yearly returns</abbr>
+                    </td>
+                    <td>Industrial Law</td>
+                    <td>26-Aug-2015</td>
+                    <td>29-Aug-2015</td>
+                    <td align="center">
+                      <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+
+                  </tr>
+                  <tr style="background:#fff;">
+                    <td>6</td>
+
+                    <td>
+                      <abbr class="page-load" title="Whether registration and renewal obtained by recycler ">
+                        <img src="/images/icon-info.png">FORM VI - Recycler Registration and Review</abbr>
+                    </td>
+                    <td>Industrial Law</td>
+                    <td>21-Aug-2015</td>
+                    <td>26-Aug-2015</td>
+
+                    <td align="center">
+                      <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+
+                  </tr >
+                  <tr style="background:#fff;">
+                    <td>7</td>
+
+                    <td>
+                      <abbr class="page-load" title="Whether half yearly returns submitted by recyclers.">
+                        <img src="/images/icon-info.png">FORM VII - Recycler Half yearly returns</abbr>
+                    </td>
+                    <td>Industrial Law</td>
+                    <td>25-Aug-2015</td>
+                    <td>31-Aug-2015</td>
+
+                    <td align="center">
+                      <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></td>
+
+                  </tr>
+                </table>
+              </div>
+            </td>
+
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</div>
+</div>
+<div id="templates">
+<table class="table-compliance-task-list">
+  <tr class="heading">
+    <th colspan="9" align="left" style="background:#ccc;color:black;font-weight:bold" class="compliance-types">Over due Compliances</th>
+  </tr>
+  <tr style="background:#fff;" class="table-row-list">
+    <td class="sno"></td>
+    <td>
+      <abbr class="page-load compliance-task" title="Whether undertaking submitted by importer to authority">
+        <img src="/images/icon-info.png"></abbr>
+    </td>
+    <td class="domain"></td>
+    <td class="startdate"></td>
+    <td class="duedate"></td>
+    <td class="days-text"></td>
+    <td align="center" class="status">
+      <img src="/images/download.png" style="width:16px;height:16px" title="Download Format">
+    </td>
+    <td style="padding-right:5px;">
+      <img src="/images/right_arrow.png" class="visible-task"  style="visibility:hidden">
+    </td>
+  </tr >
+</table>
+</div>
+
+
+<script type="text/javascript" src="/files/desktop/client/compliance-task-details/compliancetaskdetails.js"></script>
+<script>
+  $(function(){
+    $(".index-tab").click(function() {
+      $('.arrow3').show();
+      $('.arrow4').hide();
+      $(".index-tab").addClass("active1")
+      $(".archive-tab").removeClass("active1")
+      $(".main-tab-content").hide();
+      $(".index-tab-content1").show();
+      $(".archive-tab-content1").hide();
+      $(".current-tab-content").show();
+    })
+    $(".archive-tab").click(function() {
+      $('.arrow3').hide();
+      $('.arrow4').show();
+      $(".archive-tab").addClass("active1")
+      $(".index-tab").removeClass("active1")
+      $(".main-tab-content").hide();
+      $(".index-tab-content1").hide();
+      $(".archive-tab-content1").show();
+      $(".current-tab-content").show();
+    })
+    $(".index-tab1").click(function() {
+      $(".main-tab-content").hide();
+      $(".current-tab-content").show();
+      $('.arrow3').show();
+      $('.arrow4').hide();
+      $(".index-tab").addClass("active1")
+      $(".archive-tab").removeClass("active1")
+      $(".index-tab-content1").show();
+      $(".archive-tab-content1").hide();
+    })
+    $(".archive-tab1").click(function() {
+      $(".main-tab-content").hide();
+      $(".current-tab-content").show();
+      $('.arrow3').hide();
+      $('.arrow4').show();
+      $(".archive-tab").addClass("active1")
+      $(".index-tab").removeClass("active1")
+      $(".index-tab-content1").hide();
+      $(".archive-tab-content1").show();
+    })
+  });
+  
+    </script>
+
+{% endblock %}

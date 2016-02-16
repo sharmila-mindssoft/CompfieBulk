@@ -430,6 +430,10 @@ img, object {
 	padding-bottom: 4.5em;
 	padding-top: 5em;
 }
+.notification-container ul{
+	/*margin-top: 0.675em;
+	margin-bottom: 6.25em;*/
+}
 .notification-container ul li {
 	list-style-type: none;
 	background: url(../images/notification-arrow.png) no-repeat 1em 0.4em;

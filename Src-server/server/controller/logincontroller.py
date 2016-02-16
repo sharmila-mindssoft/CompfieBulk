@@ -1,5 +1,6 @@
 from corecontroller import process_user_forms
 from generalcontroller import validate_user_session
+from server.emailcontroller import EmailHandler as email
 from protocol import login, core
 
 
@@ -78,26 +79,23 @@ def admin_login_response(db):
 def process_forgot_password(db, request):
 	user_id = db.verify_username(request.username)
 	if user_id != None:
-		send_reset_link(db, user_id)
+		send_reset_link(db, user_id, request.username)
 		return login.ForgotPasswordSuccess()
 	else:
 	    return login.InvalidUserName()
 	
-def send_reset_link(db, user_id):
+def send_reset_link(db, user_id, username):
 	reset_token = db.new_uuid()
-	print "http://localhost:8080/ForgotPassword?reset_token=%s" % reset_token
+	reset_link = "http://localhost:8080/ForgotPassword?reset_token=%s" % reset_token
 	columns = ["user_id", "verification_code"]
 	values_list = [user_id, reset_token]
 	if db.insert(db.tblEmailVerification, columns, values_list):
-	    if send_email():
+	    if email().send_reset_link(db, user_id, username, reset_link):
 	        return True
 	    else:
 	        print "Send email failed"
 	else:
 	    print "Saving reset token failed"
-
-def send_email():
-	return True
 
 def process_reset_token(db, request):
 	user_id = db.validate_reset_token(request.reset_token)
