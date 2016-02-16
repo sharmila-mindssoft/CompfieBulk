@@ -67,6 +67,13 @@ def process_client_report_requests(request, db) :
     elif type(request) is clientreport.GetComplianceTaskApplicabilityStatusReport:
         process_get_task_applicability_report_data(db, request, session_user)
 
+    elif type(request) is clientreport.GetClientDetailsReportFilters:
+        return get_client_details_report_filters(db, request, session_user, client_id)
+
+    elif type(request) is clientreport.GetClientDetailsReportData:
+        return get_client_details_report_data(db, request, session_user, client_id)
+
+
 def get_client_report_filters(db, request, session_user):
     user_company_info = db.get_user_company_details(session_user)
     unit_ids = user_company_info[0]
@@ -113,7 +120,6 @@ def get_unitwise_compliance(db, request, session_user):
     )
     return clientreport.GetUnitwisecomplianceReportSuccess(unit_wise_compliances_list)
 
-
 def get_assigneewise_compliance(db, request, session_user):
     country_id = request.country_id
     domain_id = request.domain_id
@@ -136,7 +142,6 @@ def get_assigneewise_compliance(db, request, session_user):
         legal_entity_id, division_id, unit_id, user_id, session_user
     )
     return clientreport.GetAssigneewisecomplianceReportSuccess(assignee_wise_compliances_list)
-
 
 def get_serviceprovider_report_filters(db, request, session_user):
     user_company_info = db.get_user_company_details(session_user)
@@ -263,33 +268,6 @@ def get_risk_report_filters(db, request, session_user, client_id):
         level1_statutories=level_1_statutories_list
     )
 
-def get_risk_report(db, request, session_user, client_id):
-    country_id = request.country_id
-    domain_id = request.domain_id
-    business_group_id = request.business_group_id
-    legal_entity_id = request.division_id
-    division_id = request.division_id
-    unit_id = request.unit_id
-    statutory_id = request.statutory_id
-    statutory_status = request.statutory_status
-
-    if business_group_id is None :
-        business_group_id = '%'
-    if legal_entity_id is None :
-        legal_entity_id = '%'
-    if division_id is None :
-        division_id = '%'
-    if statutory_id is None :
-        statutory_id = '%'
-    if statutory_status is None :
-        statutory_status = '%'
-
-    risk_report_list = db.get_risk_report(
-        country_id, domain_id, business_group_id,
-        legal_entity_id, division_id, unit_id, statutory_id, statutory_status, client_id, session_user
-    )
-    return clientreport.GetRiskReportSuccess(risk_report_list, risk_report_list, risk_report_list)
-
 def get_reassignedhistory_report_filters(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details(session_user)
     unit_ids = user_company_info[0]
@@ -331,6 +309,50 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
         unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user
     )
     return clientreport.GetReassignedHistoryReportSuccess(reassigned_history_list)
+
+def get_risk_report(db, request, session_user, client_id):
+    country_id = request.country_id
+    domain_id = request.domain_id
+    business_group_id = request.business_group_id
+    legal_entity_id = request.division_id
+    division_id = request.division_id
+    unit_id = request.unit_id
+    level_1_statutory_name = request.level_1_statutory_name
+    statutory_status = request.statutory_status
+    delayed_compliance = [] #1
+    not_complied = [] # 2
+    not_opted = [] # 3
+    unassigned = [] # 4
+    if statutory_status == 1 or statutory_status == 0:
+        delayed_compliance = db.get_risk_report(
+            country_id, domain_id, business_group_id,
+            legal_entity_id, division_id, unit_id, level_1_statutory_name, 1,
+            client_id, session_user
+        )
+    if statutory_status == 2 or statutory_status == 0:
+        not_complied = db.get_risk_report(
+            country_id, domain_id, business_group_id,
+            legal_entity_id, division_id, unit_id, level_1_statutory_name, 2,
+            client_id, session_user
+        )
+    if statutory_status == 3 or statutory_status == 0:
+        not_opted = db.get_not_opted_compliances(
+            country_id, domain_id, business_group_id,
+            legal_entity_id, division_id, unit_id, level_1_statutory_name, 3,
+            client_id, session_user
+        )
+    if statutory_status == 4 or statutory_status == 0:
+        unassigned = db.get_unasssigned_compliances(
+            country_id, domain_id, business_group_id,
+            legal_entity_id, division_id, unit_id, level_1_statutory_name, 4,
+            client_id, session_user
+        )
+    return clientreport.GetRiskReportSuccess(
+        delayed_compliance = delayed_compliance,
+        not_complied = not_complied,
+        not_opted = not_opted,
+        unassigned_compliance = unassigned
+    )
 
 def get_login_trace(db, request, session_user, client_id):
     users_list = db.get_client_users()
@@ -392,3 +414,29 @@ def process_get_task_applicability_status_filters(db, request, session_user):
 
 def process_get_task_applicability_report_data(db, request, session_user):
     db.get_compliance_task_applicability(request, session_user)
+
+def get_client_details_report_filters(db, request, session_user, client_id):
+    countries = db.get_countries_for_user(session_user, client_id)
+    domains = db.get_domains_for_user(session_user, client_id)
+    group_companies = db.get_group_companies_for_user(session_user, client_id)
+    business_groups = db.get_business_groups_for_user(session_user, client_id)
+    legal_entities = db.get_legal_entities_for_user(session_user, client_id)
+    divisions = db.get_divisions_for_user(session_user, client_id)
+    user_company_info = db.get_user_company_details(session_user)
+    unit_ids = user_company_info[0]
+    units = db.get_units_for_user(unit_ids, client_id)
+    return clientreport.GetClientDetailsReportFiltersSuccess(
+        countries=countries,
+        domains=domains,
+        business_groups=business_groups,
+        legal_entities=legal_entities,
+        divisions=divisions,
+        units=units
+    )
+
+def get_client_details_report_data(db, request, session_user, client_id):
+    units = db.get_client_details_report(
+        request.country_id, request.business_group_id,
+        request.legal_entity_id, request.division_id, request.unit_id, request.domain_ids
+    )
+    return clientreport.GetClientDetailsReportDataSuccess(units=units)

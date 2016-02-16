@@ -216,7 +216,7 @@ class UpdateClientGroup(Request):
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         logo = data.get("logo")
-        logo = parse_structure_CustomTextType_250(logo)
+        logo = parse_structure_RecordType_core_FileList(logo)
         contract_from = data.get("contract_from")
         contract_from = parse_structure_CustomTextType_20(contract_from)
         contract_to = data.get("contract_to")
@@ -239,7 +239,7 @@ class UpdateClientGroup(Request):
             "group_name": to_structure_CustomTextType_50(self.group_name),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "logo": to_structure_CustomTextType_250(self.logo),
+            "logo": to_structure_RecordType_core_FileList(self.logo),
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
             "incharge_persons": to_structure_VectorType_SignedIntegerType_8(self.incharge_persons),
@@ -927,6 +927,19 @@ class EmailIDAlreadyExists(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data)
         return EmailIDAlreadyExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class ShortNameAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ShortNameAlreadyExists()
 
     def to_inner_structure(self):
         return {

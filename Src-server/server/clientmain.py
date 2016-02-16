@@ -6,7 +6,7 @@ from basics.ioloop import IOLoop
 from protocol import (
     clientadminsettings, clientmasters, clientreport,
     clienttransactions, dashboard,
-    login, general
+    login, general, clientuser
 )
 from server.clientdatabase import ClientDatabase
 
@@ -213,6 +213,10 @@ class API(object):
     def handle_general(self, request, db):
         return controller.process_general_request(request, db)
 
+    @api_request(clientuser.RequestFormat)
+    def handle_client_user(self, request, db):
+        return controller.process_client_user_request(request, db)
+
 #
 # run_server
 #
@@ -244,6 +248,7 @@ def run_server(address, knowledge_server_address):
             ("/api/client_dashboard", api.handle_client_dashboard),
             ("/api/client_admin_settings", api.handle_client_admin_settings),
             ("/api/general", api.handle_general),
+            ("/api/client_user", api.handle_client_user),
         ]
         for url, handler in api_urls_and_handlers:
             web_server.url(url, POST=handler, OPTIONS=cors_handler)

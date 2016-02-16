@@ -234,13 +234,34 @@ function initClientMirror() {
 
     function forgotPassword(username, callback) {
         callerName = "login"
+        var short_name = getShortName();
         var request = [
-            "ForgotPassword", {
-                "username": username,
-                "short_name": getShortName()
+            short_name, [
+                "ForgotPassword", {
+                    "username": username,
+                    "short_name" : short_name
+                }
+            ]
+        ]
+        jQuery.post(
+            CLIENT_BASE_URL + callerName,
+            toJSON(request),
+            function(data) {
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                if (status.toLowerCase().indexOf(matchString) != -1) {
+                    console.log("status success");
+                    initSession(response, short_name)
+                    callback(null, response);
+
+                }
+                else {
+                    callback(status, null);
+                }
             }
-        ];
-        clientApiRequest(callerName, request, callback);
+        )
     }
 
     function validateResetToken(resetToken,
@@ -990,7 +1011,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getRiskReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_id, statutory_status, callback) {
+    function getRiskReport(
+        country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id,
+        level_1_statutory_name, statutory_status, callback
+    ) {
         var request = [
             "GetRiskReport", {
                 "country_id": country_id,
@@ -999,7 +1023,7 @@ function initClientMirror() {
                 "legal_entity_id": legal_entity_id,
                 "division_id": division_id,
                 "unit_id": unit_id,
-                "statutory_id": statutory_id,
+                "level_1_statutory_name": level_1_statutory_name,
                 "statutory_status": statutory_status
             }
         ];
@@ -1061,7 +1085,8 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id, from_date, to_date, callback) {
+    function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id,
+        compliance_id, user_id, from_date, to_date, callback) {
         var request = [
             "GetReassignedHistoryReport", {
 
@@ -1119,20 +1144,20 @@ function initClientMirror() {
 
     }
     // Unit Details Report
-    function getUnitDetailsReportFilters(callback){
+    function getClientDetailsReportFilters(callback){
         var request = [
-            "GetUnitDetailsReportFilters",
+            "GetClientDetailsReportFilters",
             {}
         ];
         callerName = "client_reports"
         apiRequest(callerName, request, callback);
     }
 
-    function getUnitDetailsReportData(countryId, businessGroupId, legalEntityId, divisionId,
+    function getClientDetailsReportData(countryId, businessGroupId, legalEntityId, divisionId,
         unitId, domainIds, callback){
         callerName = "client_reports"
         var request = [
-            "GetUnitDetailsReportData",
+            "GetClientDetailsReportData",
             {
                 "country_id": countryId,
                 "business_group_id": businessGroupId,
@@ -1142,9 +1167,39 @@ function initClientMirror() {
                 "domain_ids" : domainIds
             }
         ];
-        apiRequest(callerName, request, callback);
+        clientApiRequest(callerName, request, callback);
     }
 
+    function getAssigneewiseComplianesFilters(
+        callback
+    ){
+        var request = [
+            "GetAssigneewiseComplianesFilters",
+            {}
+        ];
+        callerName = "api/client_dashboard";
+        clientApiRequest(callerName, request, callback);
+
+    }
+
+    function getAssigneewiseComplianes(
+        country_id, business_group_id, legal_entity_id, division_id,
+        unit_id, user_id, callback
+    ){
+        var request = [
+            "GetAssigneeWiseCompliancesChart",
+            {
+                "country_id": country_id,
+                "business_group_id": business_group_id,
+                "legal_entity_id": legal_entity_id,
+                "division_id": division_id,
+                "unit_id": unit_id
+            }
+        ];
+        callerName = "api/client_dashboard";
+        clientApiRequest(callerName, request, callback);
+
+    }
 
     return {
         log: log,
@@ -1259,8 +1314,12 @@ function initClientMirror() {
         getComplianceActivityReportFilters: getComplianceActivityReportFilters,
         getComplianceActivityReportData: getComplianceActivityReportData,
 
-        getUnitDetailsReportFilters: getUnitDetailsReportFilters,
-        getUnitDetailsReportData: getUnitDetailsReportData
+        getClientDetailsReportFilters: getClientDetailsReportFilters,
+        getClientDetailsReportData: getClientDetailsReportData,
+
+        getAssigneewiseComplianesFilters: getAssigneewiseComplianesFilters,
+        getAssigneewiseComplianes: getAssigneewiseComplianes
+
     }
 }
 var client_mirror = initClientMirror();
