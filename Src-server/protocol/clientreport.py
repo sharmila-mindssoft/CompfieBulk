@@ -563,19 +563,19 @@ class GetTaskApplicabilityStatusFilters(Request):
         }
 
 class GetComplianceTaskApplicabilityStatusReport(Request):
-    def __init__(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_id, applicable_status):
+    def __init__(self, country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_name, applicable_status):
         self.country_id = country_id
         self.domain_id = domain_id
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
         self.division_id = division_id
         self.unit_id = unit_id
-        self.statutory_id = statutory_id
+        self.statutory_name = statutory_name
         self.applicable_status = applicable_status
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "statutory_id", "applicable_status"])
+        data = parse_dictionary(data, ["country_id", "domain_id", "business_group_id", "legal_entity_id", "division_id", "unit_id", "statutory_name", "applicable_status"])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
@@ -588,11 +588,11 @@ class GetComplianceTaskApplicabilityStatusReport(Request):
         division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
-        statutory_id = data.get("statutory_id")
-        statutory_id = parse_structure_OptionalType_SignedIntegerType_8(statutory_id)
+        statutory_name = data.get("statutory_name")
+        statutory_name = parse_structure_OptionalType_SignedIntegerType_8(statutory_name)
         applicable_status = data.get("applicable_status")
         applicable_status = parse_structure_OptionalType_EnumType_core_APPLICABILITY_STATUS(applicable_status)
-        return GetComplianceTaskApplicabilityStatusReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_id, applicable_status)
+        return GetComplianceTaskApplicabilityStatusReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, statutory_name, applicable_status)
 
     def to_inner_structure(self):
         return {
@@ -602,7 +602,7 @@ class GetComplianceTaskApplicabilityStatusReport(Request):
             "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
-            "statutory_id": to_structure_OptionalType_SignedIntegerType_8(self.statutory_id),
+            "statutory_name": to_structure_OptionalType_SignedIntegerType_8(self.statutory_name),
             "applicable_status": to_structure_OptionalType_EnumType_core_APPLICABILITY_STATUS(self.applicable_status),
         }
 
@@ -1232,15 +1232,15 @@ class GetTaskApplicabilityStatusFiltersSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_BusinessGroup(business_groups)
+        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
         legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_LegalEntity(legal_entities)
+        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_Division(divisions)
+        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
         units = data.get("units")
-        units = parse_structure_VectorType_RecordType_clientreport_UnitName(units)
+        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
         level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level_1_statutories)
+        level_1_statutories = parse_structure_VectorType_CustomTextType_100(level_1_statutories)
         applicable_status = data.get("applicable_status")
         applicable_status = parse_structure_VectorType_CustomTextType_100(applicable_status)
         return GetTaskApplicabilityStatusFiltersSuccess(countries, domains, business_groups, legal_entities, divisions, units, level_1_statutories, applicable_status)
@@ -1249,11 +1249,11 @@ class GetTaskApplicabilityStatusFiltersSuccess(Response):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "business_groups": to_structure_VectorType_RecordType_core_BusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_LegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_Division(self.divisions),
-            "units": to_structure_VectorType_RecordType_clientreport_UnitName(self.units),
-            "level_1_statutories": to_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(self.level_1_statutories),
+            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
+            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
+            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
+            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
+            "level_1_statutories": to_structure_VectorType_CustomTextType_100(self.level_1_statutories),
             "applicable_status": to_structure_VectorType_CustomTextType_100(self.applicable_status),
         }
 

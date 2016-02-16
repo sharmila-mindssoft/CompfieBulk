@@ -64,10 +64,10 @@ def process_client_report_requests(request, db) :
         return get_compliance_activity_report(db, request, session_user, client_id)
 
     elif type(request) is clientreport.GetTaskApplicabilityStatusFilters:
-        process_get_task_applicability_status_filters(db, request, session_user)
+        return process_get_task_applicability_status_filters(db, request, session_user)
 
     elif type(request) is clientreport.GetComplianceTaskApplicabilityStatusReport:
-        process_get_task_applicability_report_data(db, request, session_user)
+        return process_get_task_applicability_report_data(db, request, session_user)
 
     elif type(request) is clientreport.GetClientDetailsReportFilters:
         return get_client_details_report_filters(db, request, session_user, client_id)
@@ -401,12 +401,18 @@ def get_compliance_activity_report(db, request, session_user, client_id):
     )
 
 def process_get_task_applicability_status_filters(db, request, session_user):
+    user_company_info = db.get_user_company_details(session_user)
+    unit_ids = user_company_info[0]
+    division_ids = user_company_info[1]
+    legal_entity_ids = user_company_info[2]
+    business_group_ids = user_company_info[3]
+
     countries = db.get_countries_for_user(session_user)
     domains = db.get_domains_for_user(session_user)
-    business_groups = db.get_business_groups_for_user(session_user)
-    legal_entities = db.get_legal_entities_for_user(session_user)
-    divisions = db.get_divisions_for_user(session_user)
-    units = db.get_units_for_user(session_user)
+    business_groups = db.get_business_groups_for_user(business_group_ids)
+    legal_entities = db.get_legal_entities_for_user(legal_entity_ids)
+    divisions = db.get_divisions_for_user(division_ids)
+    units = db.get_units_for_user(unit_ids)
     level1_statutories = db.get_client_level_1_statutoy(session_user)
     applicable_status = core.APPLICABILITY_STATUS.values()
     return clientreport.GetTaskApplicabilityStatusFiltersSuccess(
@@ -415,7 +421,7 @@ def process_get_task_applicability_status_filters(db, request, session_user):
     )
 
 def process_get_task_applicability_report_data(db, request, session_user):
-    db.get_compliance_task_applicability(request, session_user)
+    return db.get_compliance_task_applicability(request, session_user)
 
 def get_client_details_report_filters(db, request, session_user, client_id):
     countries = db.get_countries_for_user(session_user, client_id)

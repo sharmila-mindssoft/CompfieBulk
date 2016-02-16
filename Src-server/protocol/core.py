@@ -1217,9 +1217,9 @@ class GroupCompanyDetail(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "client_name", "domain_ids", 
-            "country_ids", "incharge_persons", "file_name", "logo", "contract_from", "contract_to", 
-            "no_of_user_licence", "total_disk_space", "is_sms_subscribed", "username", 
+        data = parse_dictionary(data, ["client_id", "client_name", "domain_ids",
+            "country_ids", "incharge_persons", "file_name", "logo", "contract_from", "contract_to",
+            "no_of_user_licence", "total_disk_space", "is_sms_subscribed", "username",
             "is_active", "short_name"])
         client_id = data.get("client_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
@@ -2515,13 +2515,13 @@ class ComplianceApprovalStatus(object):
         approval_status_id = data.get("approval_status_id")
         approval_status_id = parse_structure_UnsignedIntegerType_32(approval_status_id)
         approval_status = data.get("approval_status")
-        approval_status = parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(approval_status)
+        approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(approval_status)
         return ComplianceApprovalStatus(approval_status_id, approval_status)
 
     def to_structure(self):
         return {
             "approval_status_id": to_structure_SignedIntegerType_8(self.approval_status_id),
-            "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
+            "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
         }
 
 #

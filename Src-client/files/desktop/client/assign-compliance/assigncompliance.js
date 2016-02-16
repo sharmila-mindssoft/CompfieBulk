@@ -4,6 +4,8 @@ var legalentitiesList;
 var divisionsList;
 var unitsList;
 var usersList;
+var assignStatutoryUnitIds = [];
+var assignStatutoryUnitValues = [];
 
 
 function clearMessage() {
@@ -16,42 +18,35 @@ function displayMessage(message) {
 }
 
 function clearValues(levelvalue) {
-  
   if(levelvalue == 'country'){
+    assignStatutoryUnitIds = [];
+    assignStatutoryUnitValues = [];
     $('#businessgroup').empty();
     $('#legalentity').empty();
     $('#division').empty();
     $('#unit').empty();
   }
 
-
- /* if(levelvalue == 'businessgroup'){
+  if(levelvalue == 'businessgroup'){
     assignStatutoryUnitIds = [];
     assignStatutoryUnitValues = [];
-
     $('#legalentity').empty();
     $('#division').empty();
     $('#unit').empty();
-    $('#domain').empty();
   }
 
   if(levelvalue == 'legalentity'){
     assignStatutoryUnitIds = [];
     assignStatutoryUnitValues = [];
-
     $('#division').empty();
     $('#unit').empty();
-    $('#domain').empty();
-
   }
 
   if(levelvalue == 'division'){
     assignStatutoryUnitIds = [];
     assignStatutoryUnitValues = [];
     $('#unit').empty();
-    $('#domain').empty();
   }
-*/
 }
 
 /*function actstatus(element){
@@ -396,38 +391,46 @@ $('#activate-step-finish').on('click', function(e) {
 
 function loadunit(){
 
-  
-  var assignStatutoryLegalEntityId = 0;
-  if($('.legalentitylist.active').attr('id') != 'undefined')
+  var assignStatutoryLegalEntityId = null;
+  if($('.legalentitylist.active').attr('id') != undefined)
     assignStatutoryLegalEntityId = parseInt($('.legalentitylist.active').attr('id'));
 
-  var assignStatutoryDivisionId = 0;
-  if($('.divisionlist.active').attr('id') != 'undefined')
+  var assignStatutoryDivisionId = null;
+  if($('.divisionlist.active').attr('id') != undefined)
     assignStatutoryDivisionId = parseInt($('.divisionlist.active').attr('id'));
 
+  var assignStatutoryBusinessGroupId = null;
+  if($('.businessgrouplist.active').attr('id') != undefined)
+    assignStatutoryBusinessGroupId = parseInt($('.businessgrouplist.active').attr('id'));
 
-  if(assignStatutoryLegalEntityId != 0){
-    if(assignStatutoryDivisionId == 0){
+  var assignStatutoryCountryEntityId = parseInt($('.countrylist.active').attr('id'));
+  
+  if(assignStatutoryLegalEntityId != null){
       var str='';
       $('#unit').empty();
       for(var unit in unitsList){
-        if(unitsList[unit]["division_id"] == null && unitsList[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && unitsList[unit]["client_id"] == assignStatutoryGroupId && unitsList[unit]["industry_id"] == assignStatutoryIndustryId && $.inArray(assignStatutoryLocationId, unitsList[unit]["geography_ids"]) >= 0){
+        if(unitsList[unit]["business_group_id"] == assignStatutoryBusinessGroupId && unitsList[unit]["division_id"] == assignStatutoryDivisionId && unitsList[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && unitsList[unit]["country_id"] == assignStatutoryCountryId){
           str += '<li id="'+unitsList[unit]["unit_id"]+'" class="unitlist" >'+unitsList[unit]["unit_name"]+'</li>';
         }
       }
       $('#unit').append(str);
-    }else{
-      var str='';
-      $('#unit').empty();
-      for(var unit in unitsList){
-        if(unitsList[unit]["division_id"] == assignStatutoryDivisionId && unitsList[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && unitsList[unit]["client_id"] == assignStatutoryGroupId && unitsList[unit]["industry_id"] == assignStatutoryIndustryId && $.inArray(assignStatutoryLocationId, unitsList[unit]["geography_ids"]) >= 0){
-          str += '<li id="'+unitsList[unit]["unit_id"]+'" class="unitlist" >'+unitsList[unit]["unit_name"]+'</li>';
-        }
-      }
-      $('#unit').append(str);
-    }
   }
 }
+
+$("#unit").click(function(event){
+    var chkstatus = $(event.target).attr('class');
+    if(chkstatus == 'unitlist active'){
+      $(event.target).removeClass("active");
+      var removeid = assignStatutoryUnitIds.indexOf(parseInt(event.target.id));
+      assignStatutoryUnitIds.splice(removeid,1);
+      var removename = assignStatutoryUnitValues.indexOf($(event.target).text());
+      assignStatutoryUnitValues.splice(removename,1);
+    }else{
+      $(event.target).addClass("active");
+      assignStatutoryUnitIds.push(parseInt(event.target.id));
+      assignStatutoryUnitValues.push($(event.target).text());
+    }
+});
 
 $("#businessgroup").click(function(event){
   if($(event.target).attr('class') == 'businessgrouplist'){
@@ -481,7 +484,6 @@ $("#division").click(function(event){
 });
 
 $("#country").click(function(event){
-
   if($(event.target).attr('class') == 'countrylist'){
       clearValues('country');
   $('.'+$(event.target).attr('class')).each( function( index, el ) {
