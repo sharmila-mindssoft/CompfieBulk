@@ -790,6 +790,13 @@ $("#temp_addcompliance").click(function() {
     (value.statutory_provision == statutory_provision) && 
     (value.compliance_task == compliance_task) && 
     comp_id == '') {
+
+    if(value.statutory_provision == statutory_provision){
+      displayMessage("Statutory provision is duplicate");
+    }
+    if(value.compliance_task == compliance_task){
+      displayMessage("Compliance task is duplicate");
+    }
       check_duplicate_status = false;
   }
   });
@@ -838,8 +845,6 @@ $("#temp_addcompliance").click(function() {
   $("#uploaded_filename").html('');
   resetvalues();
   load_compliance();
-  }else{
-    displayMessage("Duplicate Compliance");
   }
   }
 });

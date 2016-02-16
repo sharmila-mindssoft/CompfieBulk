@@ -875,7 +875,7 @@ class ClientDatabase(Database):
             result = rows[0][0]
         return result
 
-    def get_client_users(self, client_id, unit_ids=None):
+    def get_client_users(self, client_id=None, unit_ids=None):
         columns = "user_id, employee_name, employee_code, is_active"
         condition = "1"
         if unit_ids is not None:
