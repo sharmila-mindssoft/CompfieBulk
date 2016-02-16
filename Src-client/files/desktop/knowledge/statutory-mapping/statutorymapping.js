@@ -318,7 +318,7 @@ function loadStatutoryLevels(countryval,domainval){
       var tableRow=$('#statutory-level-templates');
       var clone=tableRow.clone();
       $('.statutory_title', clone).text(statutoryLevelList[j]["level_name"]);
-      $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder="" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+      $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder="" style="width:90%" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
       $('.tbody-statutory-level').append(clone);
     }
 
@@ -569,7 +569,7 @@ function reload(last_statutory_id,last_level,country,domain){
   }
   function failure(data){
   }
-  mirror.getStatutoryMappings(success, failure);
+  mirror.getStatutoryMappingsMaster(success, failure);
 }
 
 function filter_statutory(position){
@@ -786,7 +786,10 @@ $("#temp_addcompliance").click(function() {
   }
   var check_duplicate_status= true;
   $.each(compliances, function(index, value) {
-  if (((value.statutory_provision == statutory_provision) || (value.compliance_task == compliance_task) || (value.document_name == compliance_document && compliance_document != '')) &&  comp_id == '') {
+  if (
+    (value.statutory_provision == statutory_provision) && 
+    (value.compliance_task == compliance_task) && 
+    comp_id == '') {
       check_duplicate_status = false;
   }
   });

@@ -1,17 +1,4 @@
 var assignedStatutoriesList;
-var newCompliancesList;
-var groupcompaniesList;
-var businessgroupsList;
-var legalentitiesList;
-var divisionsList;
-var geographyLevelsList;
-var geographiesList;
-var industriesList;
-var domainsList;
-var unitsList;
-var statutoriesList;
-var assignStatutoryUnitIds = [];
-var assignStatutoryUnitValues = [];
 var sList;
 
 function clearMessage() {
@@ -22,7 +9,6 @@ function displayMessage(message) {
   $(".error-message").text(message);
   $(".error-message").show();
 }
-
 
 function actstatus(element){
   var remarkbox = '.remark'+$(element).val();
@@ -72,22 +58,19 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
   $(".tbl_legalentity_disp").text(dispLegalEntity);
   $(".tbl_division_disp").text(dispDivision);
   $(".tbl_unit_disp").text(dispUnit);
-
   $("#unit").val(unit_id);
 
   $(".tbody-statutorysettings").find("tbody").remove();
-
   $.each(sList, function(key, value){
-
   var tableRow3=$('#head-templates');
   var clone3=tableRow3.clone();
-  $('.tbl_heading', clone3).html('<div class="heading" style="margin-top:20px;margin-bottom:5px;">'+key+'</div>');
+  $('.tbl_heading', clone3).html('<div class="heading" style="margin-top:20px;margin-bottom:5px;width:auto;">'+key+'</div>');
   $('.tbody-statutorysettings').append(clone3);
     for(var statutory in value){
       var actname = value[statutory]["level_1_statutory_name"];
       var complianceslist = value[statutory]["compliances"];
       var level_1_statutory_id = value[statutory]["level_1_statutory_id"];
-      var applicable_status = value[statutory]["applicable_status"];
+      var applicable_status = value[statutory]["opted_status"];
       var not_applicable_remarks = value[statutory]["not_applicable_remarks"];
       if (not_applicable_remarks == null) not_applicable_remarks = '';
 
@@ -119,9 +102,7 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
         var compliance_applicable_status = complianceslist[compliance]["compliance_applicable_status"];
         var compliance_opted_status = complianceslist[compliance]["compliance_opted_status"];
         var compliance_remarks = complianceslist[compliance]["compliance_remarks"];
-
         var compliance_remarks_part = '';
-
         var viewremarks = true;
         if (compliance_remarks == null) {
           compliance_remarks = '';
@@ -136,7 +117,6 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
         $('.statutoryprovision', clone2).text(complianceslist[compliance]["statutory_provision"]);
         $('.compliancetask', clone2).text(complianceslist[compliance]["compliance_name"]);
         $('.compliancedescription', clone2).text(complianceslist[compliance]["description"]);
-
         $('.complianceopted', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" value="'+statutoriesCount+'" class="statutoryclass'+actCount+'" onclick="compliancestatus(this,'+viewremarks+')"><label for="statutory'+statutoriesCount+'"></label>');
         $('.cremark', clone2).html('<span class="cremarkadd'+statutoriesCount+' default-display-none" > <textarea id="cremarkvalue'+statutoriesCount+'" class="input-box" style="height:30px;"  placeholder="Enter client decision"></textarea><br><span style="font-size:0.75em;">(max 500 characters)</span></span><span class="cremarkview'+statutoriesCount+'"><abbr class="page-load tipso_style" title="'+compliance_remarks+'"><img src="images/icon-info.png"/>'+compliance_remarks_part+'</abbr></span>');
 
@@ -168,6 +148,7 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
       $('#accordion').find('.accordion-toggle').click(function(){
         //Expand or collapse this panel
         $(this).next().slideToggle('fast');
+        /*$(this).next('tbody').slideToggle('fast');*/
         //Hide the other panels
         $(".accordion-content").not($(this).next()).slideUp('fast');
       });
@@ -179,14 +160,11 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
 $("#submit").click(function() {
 
   var uId = $("#unit").val();
-
   var assignedStatutories = [];
   var statutoriesCount= 1;
   var actCount = 1;
   var saveflag = true;
-  
   $.each(sList, function(key, value){
-
     for(var statutory in value){
       var client_statutory_id = value[statutory]["client_statutory_id"];
       var applicableStatus = null;

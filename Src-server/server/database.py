@@ -2064,8 +2064,8 @@ class KnowledgeDatabase(Database):
     # save statutory mapping
     #
 
-    def convert_base64_to_file(self, file_name, file_content, file_path = None):
-        if file_path is not None:
+    def convert_base64_to_file(self, file_name, file_content, file_path=None):
+        if file_path is None:
             file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
         else:
             if not os.path.exists(file_path):
@@ -3696,7 +3696,7 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_clients t3 \
             ON t1.client_id = t3.client_id \
             AND t3.user_id = %s \
-            AND t2.client_id = %s" % (
+            AND t2.country_id = %s" % (
                 user_id, country_id
             )
         rows = self.select_all(query)

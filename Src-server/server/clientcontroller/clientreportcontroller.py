@@ -1,4 +1,4 @@
-from protocol import (clientmasters, core, clientreport)
+from protocol import (core, clientreport)
 from server.controller.corecontroller import process_user_menus
 
 __all__ = [
@@ -14,9 +14,7 @@ def process_client_report_requests(request, db) :
 	if session_user is None:
 		return login.InvalidSessionToken()
 
-	if type(request) is clientmasters.GetServiceProviders: 
-		return get_service_providers(db, request, session_user, client_id)
-	elif type(request) is clientreport.GetClientReportFilters:
+	if type(request) is clientreport.GetClientReportFilters:
 		return get_client_report_filters(db, request, session_user, client_id) 
 	elif type(request) is clientreport.GetUnitwisecomplianceReport:
 		return get_unitwise_compliance(db, request, session_user, client_id)

@@ -234,31 +234,33 @@ function load_secondwizard(){
 function loadunit(){
 
   var assignStatutoryGroupId = 0;
-  if($('.grouplist.active').attr('id') != 'undefined')
+  if($('.grouplist.active').attr('id') != undefined)
     assignStatutoryGroupId = parseInt($('.grouplist.active').attr('id'));
 
   var assignStatutoryLegalEntityId = 0;
-  if($('.legalentitylist.active').attr('id') != 'undefined')
+  if($('.legalentitylist.active').attr('id') != undefined)
     assignStatutoryLegalEntityId = parseInt($('.legalentitylist.active').attr('id'));
 
   var assignStatutoryIndustryId = 0;
-  if($('.industrylist.active').attr('id') != 'undefined')
+  if($('.industrylist.active').attr('id') != undefined)
     assignStatutoryIndustryId = parseInt($('.industrylist.active').attr('id'));
 
   var assignStatutoryLocationId = 0;
-  if($('.locationlist.active').attr('id') != 'undefined')
+  if($('.locationlist.active').attr('id') != undefined)
     assignStatutoryLocationId = parseInt($('.locationlist.active').attr('id'));
 
   var assignStatutoryDivisionId = 0;
-  if($('.divisionlist.active').attr('id') != 'undefined')
+  if($('.divisionlist.active').attr('id') != undefined){
     assignStatutoryDivisionId = parseInt($('.divisionlist.active').attr('id'));
-
+  }
 
   if(assignStatutoryLegalEntityId != 0 && assignStatutoryIndustryId != 0 && assignStatutoryLocationId != 0){
+
     if(assignStatutoryDivisionId == 0){
       var str='';
       $('#unit').empty();
       for(var unit in unitsList){
+
         if(unitsList[unit]["division_id"] == null && unitsList[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && unitsList[unit]["client_id"] == assignStatutoryGroupId && unitsList[unit]["industry_id"] == assignStatutoryIndustryId && $.inArray(assignStatutoryLocationId, unitsList[unit]["geography_ids"]) >= 0){
           str += '<li id="'+unitsList[unit]["unit_id"]+'" class="unitlist" >'+unitsList[unit]["unit_name"]+'</li>';
         }
