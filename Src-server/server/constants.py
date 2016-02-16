@@ -143,6 +143,11 @@ CLIENT_TEMPLATE_PATHS = [
         "files/desktop/client/unit-details-report/unitdetailsreport.html",
         None, {}
     ),
+    (
+        "/compliance-task-details",
+        "files/desktop/client/compliance-task-details/compliancetaskdetails.html",
+        None, {}
+    ),
 ]
 
 TEMPLATE_PATHS = [
