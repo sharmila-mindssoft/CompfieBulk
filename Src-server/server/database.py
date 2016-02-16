@@ -15,6 +15,7 @@ from protocol import (
 from distribution.protocol import (
     Company, IPAddress
 )
+from server.emailcontroller import EmailHandler as email
 
 __all__ = [
     "KnowledgeDatabase", "Database"
@@ -3141,10 +3142,12 @@ class KnowledgeDatabase(Database):
                 cursor.execute(command)
             else:
                 break
+        password = self.generate_password()
         query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
-            email_id, self.generate_password())
+            email_id, password)
         cursor.execute(query)
         con.commit()
+        email().send_client_credentials(email_id, password)
         return True
 
     def _get_server_details(self):

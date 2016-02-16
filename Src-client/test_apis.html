@@ -247,11 +247,11 @@
 				client_mirror.changePassword(currentPassword, newPassword,callback)
 			}
 			function forgotPassword(){
-				username = "admin"
+				username = "sharmila@mindssoft.com"
 				mirror.forgotPassword(username, callback)
 			}
 			function ClientForgotPassword(){
-				username = "sharmi"
+				username = "sharmila@mindssoft.com"
 				client_mirror.forgotPassword(username, callback)
 			}
 			function validateResetToken(){
@@ -560,6 +560,23 @@
 			        level_1_statutory_name, statutory_status, callback
 			    );
 			}
+			function getAssigneewiseComplianesFilters(){
+				console.log(client_mirror);
+				console.log(callback);
+				client_mirror.getAssigneewiseComplianesFilters(callback);
+			}
+			function getAssigneewiseComplianes(){
+				country_id = 1
+				business_group_id = null
+				legal_entity_id = null
+				division_id = null
+				unit_id = null
+				user_id = null
+				client_mirror.getAssigneewiseComplianes(
+					country_id, business_group_id, legal_entity_id, division_id, 
+					unit_id, user_id, callback
+				);
+			}
 		</script>
 	</head>
 	<body>
@@ -854,6 +871,14 @@
 				</button>
 				<button onclick="updateClientNotificationStatus()">
 					Update Client Notification Status
+				</button>
+			</div>
+			<div>
+				<button onclick="getAssigneewiseComplianesFilters()">
+					Get Assignee Wise Compliances Filters
+				</button>
+				<button onclick="getAssigneewiseComplianes()">
+					Get Assignee Wise Compliances
 				</button>
 			</div>
 		</fieldset>

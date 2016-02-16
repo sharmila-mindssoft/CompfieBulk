@@ -48,6 +48,13 @@ def process_client_dashboard_requests(request, db) :
     elif type(request) is dashboard.UpdateNotificationStatus :
         return process_update_notification_status(db, request, session_user, client_id)
 
+    elif type(request) is dashboard.GetAssigneewiseComplianesFilters :
+        return process_assigneewise_compliances_filters(db, request, session_user, client_id)
+    elif type(request) is dashboard.GetAssigneeWiseCompliancesChart :
+        return process_assigneewise_compliances(db, request, session_user, client_id)
+
+        
+
 def process_get_chart_filters(db, session_user, client_id):
     countries = db.get_countries_for_user(session_user, client_id)
     domains = db.get_domains_for_user(session_user, client_id)
@@ -127,3 +134,37 @@ def process_update_notification_status(db, request, session_user, client_id):
     db.update_notification_status(request.notification_id, request.has_read,
         session_user, client_id)
     return dashboard.UpdateNotificationStatusSuccess()
+
+def process_assigneewise_compliances_filters(db, request, session_user, client_id):
+    user_company_info = db.get_user_company_details( session_user, client_id)
+    unit_ids = user_company_info[0]
+    division_ids = user_company_info[1]
+    legal_entity_ids = user_company_info[2]
+    business_group_ids = user_company_info[3]
+    country_list = db.get_countries_for_user(session_user, client_id)
+    domain_list = db.get_domains_for_user(session_user, client_id)
+    business_group_list = db.get_business_groups_for_user(business_group_ids)
+    legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids)
+    division_list =  db.get_divisions_for_user(division_ids)
+    unit_list = db.get_units_for_user(unit_ids, client_id)
+    users_list = db.get_client_users(client_id, unit_ids);
+    return dashboard.GetAssigneewiseComplianesFiltersSuccess(
+        countries = country_list, business_groups = business_group_list, 
+        legal_entities = legal_entity_list, divisions =division_list, 
+        units = unit_list, users = users_list
+    )
+
+def process_assigneewise_compliances(db, request, session_user, client_id):
+    country_id = request.country_id
+    business_group_id = request.business_group_id
+    legal_entity_id = request.legal_entity_id
+    division_id = request.division_id
+    unit_id = request.unit_id
+    user_id = request.user_id
+    chart_data = db.get_assigneewise_compliances_list(
+        country_id, business_group_id, legal_entity_id, division_id, unit_id, user_id,
+        session_user, client_id
+    )
+    return dashboard.GetAssigneeWiseCompliancesChartSuccess(
+        chart_data = chart_data
+    )

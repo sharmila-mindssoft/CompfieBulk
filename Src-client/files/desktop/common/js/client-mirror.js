@@ -232,14 +232,35 @@ function initClientMirror() {
     // Forgot Password APIs
 
     function forgotPassword(username, callback) {
+        var short_name = getShortName();
         callerName = "api/login"
         var request = [
-            "ForgotPassword", {
-                "username": username,
-                "short_name": getShortName()
+            short_name, [
+                "ForgotPassword", {
+                    "username": username,
+                    "short_name" : short_name
+                }
+            ]
+        ]
+        jQuery.post(
+            CLIENT_BASE_URL + "api/login",
+            toJSON(request),
+            function(data) {
+                var data = parseJSON(data);
+                var status = data[0];
+                var response = data[1];
+                matchString = 'success';
+                if (status.toLowerCase().indexOf(matchString) != -1) {
+                    console.log("status success");
+                    initSession(response, short_name)
+                    callback(null, response);
+
+                }
+                else {
+                    callback(status, null);
+                }
             }
-        ];
-        clientApiRequest(callerName, request, callback);
+        )
     }
 
     function validateResetToken(resetToken,
@@ -1118,6 +1139,36 @@ function initClientMirror() {
 
     }
 
+    function getAssigneewiseComplianesFilters(
+        callback
+    ){
+        var request = [
+            "GetAssigneewiseComplianesFilters",
+            {}
+        ];
+        callerName = "api/client_dashboard";
+        clientApiRequest(callerName, request, callback);
+
+    }
+
+    function getAssigneewiseComplianes(
+        country_id, business_group_id, legal_entity_id, division_id, 
+        unit_id, user_id, callback
+    ){
+        var request = [
+            "GetAssigneeWiseCompliancesChart",
+            {
+                "country_id": country_id,
+                "business_group_id": business_group_id,
+                "legal_entity_id": legal_entity_id,
+                "division_id": division_id,
+                "unit_id": unit_id
+            }
+        ];
+        callerName = "api/client_dashboard";
+        clientApiRequest(callerName, request, callback);
+
+    }
 
     return {
         log: log,
@@ -1230,7 +1281,10 @@ function initClientMirror() {
         uploadFileFormat: uploadFileFormat,
 
         getComplianceActivityReportFilters: getComplianceActivityReportFilters,
-        getComplianceActivityReportData: getComplianceActivityReportData
+        getComplianceActivityReportData: getComplianceActivityReportData,
+
+        getAssigneewiseComplianesFilters: getAssigneewiseComplianesFilters,
+        getAssigneewiseComplianes: getAssigneewiseComplianes
     }
 }
 var client_mirror = initClientMirror();
