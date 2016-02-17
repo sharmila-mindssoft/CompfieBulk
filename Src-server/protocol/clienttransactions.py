@@ -64,7 +64,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_User,
     parse_structure_OptionalType_VectorType_RecordType_core_FileList,
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory,
-    parse_structure_OptionalType_VectorType_CustomTextType_20
+    parse_structure_OptionalType_VectorType_CustomTextType_20,
+    parse_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES
 
 )
 from protocol.to_structure import (
@@ -138,7 +139,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_User,
     to_structure_OptionalType_VectorType_RecordType_core_FileList,
     to_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory,
-    to_structure_OptionalType_VectorType_CustomTextType_20
+    to_structure_OptionalType_VectorType_CustomTextType_20,
+    to_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES
 )
 
 #
@@ -664,12 +666,12 @@ class GetComplianceForUnitsSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["statutories"])
         statutories = data.get("statutories")
-        statutories = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(statutories)
+        statutories = parse_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES(statutories)
         return GetComplianceForUnitsSuccess(statutories)
 
     def to_inner_structure(self):
         return {
-            "statutories": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(self.statutories)
+            "statutories": to_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES(self.statutories)
         }
 
 class SaveAssignedComplianceSuccess(Response):

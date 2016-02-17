@@ -1942,6 +1942,8 @@ class ClientDatabase(Database):
     def get_assign_compliance_statutories_for_units(
         self, unit_ids, session_user, client_id
     ):
+        if len(unit_ids) == 1 :
+            unit_ids.append(0)
         if session_user == 0 :
             session_user = '%'
         query = "SELECT distinct t2.compliance_id,\
@@ -2005,15 +2007,21 @@ class ClientDatabase(Database):
 
     def return_assign_compliance_data(self, result):
         now = datetime.datetime.now()
-        current_month = now.month
+
         current_year = now.year
         domain_wise_compliance = {}
         for r in result:
             domain_id = int(r["domain_id"])
+            maipping = r["statutory_mapping"].split(">>")
+            level_1 = maipping[0].strip()
             unit_ids = [
                 int(x) for x in r["units"].split(',')
             ]
-            compliance_list = domain_wise_compliance.get(domain_id)
+            level_1_wise = domain_wise_compliance.get(domain_id)
+            if level_1_wise is None :
+                level_1_wise = {}
+
+            compliance_list = level_1_wise.get(level_1)
             if compliance_list is None :
                 compliance_list = []
             name = "%s - %s" % (r["document_name"], r["compliance_task"])
@@ -2022,7 +2030,7 @@ class ClientDatabase(Database):
             date_list = []
             due_date = None
             due_date_list = []
-            add_month = 0
+
             for date in statutory_dates:
                 s_date = core.StatutoryDate(
                     date["statutory_date"],
@@ -2063,7 +2071,8 @@ class ClientDatabase(Database):
                 unit_ids
             )
             compliance_list.append(compliance)
-            domain_wise_compliance[domain_id] = compliance_list
+            level_1_wise[level_1] = compliance_list
+            domain_wise_compliance[domain_id] = level_1_wise
         return domain_wise_compliance
 
     def save_assigned_compliance(self, request, session_user, client_id):
@@ -3569,7 +3578,7 @@ class ClientDatabase(Database):
         values = [0, remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
         email.notify_task_rejected(
-            self, compliance_history_id, remarks, "RejectApproval" 
+            self, compliance_history_id, remarks, "RejectApproval"
         )
 
     def concur_Compliance(self, compliance_history_id, remarks, next_due_date, client_id):
@@ -3584,7 +3593,7 @@ class ClientDatabase(Database):
         values = [0,  remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
         email.notify_task_rejected(
-            self, compliance_history_id, remarks, "RejectConcurrence" 
+            self, compliance_history_id, remarks, "RejectConcurrence"
         )
 
     def get_client_level_1_statutoy(self, user_id, client_id=None) :
@@ -4691,7 +4700,7 @@ class ClientDatabase(Database):
                     format_file_name=format_files,
                     unit_name=unit_name, address=compliance[11],
                     compliance_description=compliance[7],
-                    remarks=compliance[14] 
+                    remarks=compliance[14]
                 )
             )
         return current_compliances_list
@@ -5695,8 +5704,8 @@ class ClientDatabase(Database):
                     client_statutory_id_columns = "group_concat(client_statutory_id)"
                     client_statutory_id_condition = "compliance_id in (%s)" % all_compliance_ids
                     client_statutory_id_rows = self.get_data(
-                        self.tblClientCompliances, 
-                        client_statutory_id_columns, 
+                        self.tblClientCompliances,
+                        client_statutory_id_columns,
                         client_statutory_id_condition
                     )
 
@@ -5751,7 +5760,7 @@ class ClientDatabase(Database):
                             )
                             delayed_reassigned_condition += " and completed_on > due_date and approve_status = 1"
                             delayed_rows = self.get_data(
-                                self.tblComplianceHistory+" ch", delayed_reassigned_columns, 
+                                self.tblComplianceHistory+" ch", delayed_reassigned_columns,
                                 delayed_reassigned_condition
                             )
                             delayed_reassigned_count = len(delayed_rows)
@@ -5771,41 +5780,41 @@ class ClientDatabase(Database):
                                 )
                                 reassigned_compliances.append(
                                     dashboard.RessignedCompliance(
-                                        compliance_name=compliance_name, 
-                                        reassigned_from=rh_rows[0][1], 
-                                        start_date=start_date, 
-                                        due_date=due_date, 
-                                        reassigned_date=rh_rows[0][0], 
+                                        compliance_name=compliance_name,
+                                        reassigned_from=rh_rows[0][1],
+                                        start_date=start_date,
+                                        due_date=due_date,
+                                        reassigned_date=rh_rows[0][0],
                                         completed_date=completed_on
                                     )
                                 )
                         delayed_compliances_obj = dashboard.DelayedCompliance(
-                            assigned_count=delayed_compliance - delayed_reassigned_count, 
-                            reassigned_count=delayed_reassigned_count, 
+                            assigned_count=delayed_compliance - delayed_reassigned_count,
+                            reassigned_count=delayed_reassigned_count,
                             reassigned_compliances=None if len(reassigned_compliances) == 0 else  reassigned_compliances
                         )
                         domain_wise_compliance_count.append(
                             dashboard.DomainWise(
-                                domain_id=domain_id, 
-                                domain_name=domain_name, 
-                                total_compliances=total, 
-                                complied_count=complied, 
-                                delayed_compliance=delayed_compliances_obj, 
-                                inprogress_compliance_count=inprogress, 
+                                domain_id=domain_id,
+                                domain_name=domain_name,
+                                total_compliances=total,
+                                complied_count=complied,
+                                delayed_compliance=delayed_compliances_obj,
+                                inprogress_compliance_count=inprogress,
                                 not_complied_count=not_complied
                             )
                         )
                     assignee_wise_compliances_count.append(
                         dashboard.AssigneeWiseDetails(
-                            user_id=int(user_id), 
-                            assignee_name=self.get_user_name_by_id(user_id), 
+                            user_id=int(user_id),
+                            assignee_name=self.get_user_name_by_id(user_id),
                             domain_wise_details=domain_wise_compliance_count
                         )
                     )
             chart_data.append(
                 dashboard.AssigneeChartData(
                     unit_name=unit_name,
-                    address=address, 
+                    address=address,
                     assignee_wise_details=assignee_wise_compliances_count
                 )
             )
@@ -5850,7 +5859,7 @@ class ClientDatabase(Database):
         return assigned_compliance_ids, reassigned_compliance_ids
 
 #
-#   Email   
+#   Email
 #
 
 #   Service Provider Contract Exiration

@@ -3467,6 +3467,26 @@ def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransac
         d[key] = value
     return d
 
+def to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_dictionary(data)
+    d = {}
+    for key, value in data.iteritems():
+        key = to_structure_CustomTextType_100(key)
+        value = to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
+        d[key] = value
+    return d
+
+
+def to_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.iteritems():
+        key = to_structure_SignedIntegerType_8(key)
+        value = to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
+        dict[key] = value
+    return dict
+
+
 #
 #   Get Clients
 #
