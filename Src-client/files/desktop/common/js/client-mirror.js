@@ -1168,6 +1168,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
 
     }
+    function getAssigneewiseCompliancesDrilldown(
+    ){
+         
+    }
+
 
     return {
         log: log,
@@ -1283,7 +1288,8 @@ function initClientMirror() {
         getComplianceActivityReportData: getComplianceActivityReportData,
 
         getAssigneewiseComplianesFilters: getAssigneewiseComplianesFilters,
-        getAssigneewiseComplianes: getAssigneewiseComplianes
+        getAssigneewiseComplianes: getAssigneewiseComplianes,
+        getAssigneewiseCompliancesDrilldown: getAssigneewiseCompliancesDrilldown, 
     }
 }
 var client_mirror = initClientMirror();

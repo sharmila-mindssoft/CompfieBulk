@@ -1215,7 +1215,8 @@ class DelayedCompliance(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["assigned_count", "reassigned_count", "reassigned_compliances"])
+        data = parse_dictionary(data,
+        ["assigned_count", "reassigned_count", "reassigned_compliances"])
         assigned_count = data.get("assigned_count")
         assigned_count = parse_structure_UnsignedIntegerType_32(assigned_count)
         reassigned_count = data.get("reassigned_count")
