@@ -464,7 +464,7 @@ INSERT INTO tbl_form_type VALUES(2, "Master");
 INSERT INTO tbl_form_type VALUES(3, "Transaction");
 INSERT INTO tbl_form_type VALUES(4, "Report");
 INSERT INTO tbl_form_type VALUES(5, "Settings");
-INSERT INTO tbl_forms VALUES(1, 1, 'Dashboard', '/home', 1, null, 0);
+INSERT INTO tbl_forms VALUES(1, 1, 'Dashboard', '/home', 1, null, 1);
 INSERT INTO tbl_forms VALUES(2, 2, 'Service Provider', '/service-provider', 2, null, 1);
 INSERT INTO tbl_forms VALUES(3, 2, 'User Privilege', '/client-user-privilege', 3, null, 1);
 INSERT INTO tbl_forms VALUES(4, 2, 'User', '/client-user-master', 4, null, 1);

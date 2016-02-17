@@ -1436,7 +1436,7 @@ class Division(object):
         legal_entity_id = data.get("legal_entity_id")
         legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
+        business_group_id = parse_structure_OptionalType_UnsignedIntegerType_32(business_group_id)
         client_id = data.get("client_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
         return Division(division_id, division_name, legal_entity_id, business_group_id, client_id)
@@ -1446,7 +1446,7 @@ class Division(object):
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
             "division_name": to_structure_CustomTextType_50(self.division_name),
             "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
-            "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
+            "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
         }
 
