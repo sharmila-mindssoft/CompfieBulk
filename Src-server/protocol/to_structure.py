@@ -3735,7 +3735,7 @@ def to_structure_MapType_CustomTextType_50_MapType_CustomTextType_50_VectorType_
         dict[key] = value
     return dict
 
-def to_structure_OptinalType_VectorType_RecordType_dashboard_RessignedCompliance(data):
+def to_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance(data):
     if data is None: return data
     return to_structure_VectorType_RecordType_dashboard_RessignedCompliance(data)
 
