@@ -5,18 +5,23 @@ CLIENT_TEMPLATE_PATHS = [
         "files/mobile/login/login.html", {}
     ),
     (
+        "/profile",
+        "files/desktop/client/profile.html",
+        None, {}
+    ),
+    (
         r"/forgot_password/([a-zA-Z-0-9]+)",
-        "files/desktop/ForgotPassword/ForgotPassword.html",
+        "files/desktop/client/forgotpassword.html",
         "", {}
     ),
     (
         r"/reset_password/([a-zA-Z-0-9]+)",
-        "files/desktop/ForgotPassword/resetpassword.html",
+        "files/desktop/client/resetpassword.html",
         "", {}
     ),
     (
         "/change-password",
-        "files/desktop/change-password/changepassword.html",
+        "files/desktop/client/changepassword.html",
         None, {}
     ),
     (
@@ -124,6 +129,11 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/statutory-settings",
+        "files/desktop/client/statutory-settings/statutorysettings.html",
+        None, {}
+    ),
+    (
         "/notifications",
         "files/desktop/client/notifications/notifications.html",
         None, {}
@@ -131,6 +141,16 @@ CLIENT_TEMPLATE_PATHS = [
     (
         "/compliance-activity-report",
         "files/desktop/client/compliance-activity-report/complianceactivityreport.html",
+        None, {}
+    ),
+    (
+        "/unit-details",
+        "files/desktop/client/unit-details-report/unitdetailsreport.html",
+        None, {}
+    ),
+    (
+        "/compliance-task-details",
+        "files/desktop/client/compliance-task-details/compliancetaskdetails.html",
         None, {}
     ),
 ]
@@ -147,7 +167,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/forgot-password",
-        "files/desktop/knowledge/ForgotPassword.html",
+        "files/desktop/knowledge/forgotpassword.html",
         "", {}
     ),
     (

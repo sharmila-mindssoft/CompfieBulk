@@ -254,22 +254,44 @@ function loadStatutoryMappingList(statutoryMappingsList) {
     }
   }
 
+function getStatutoryMappingsMastersList() {
+  mirror.getStatutoryMappingsMaster(function (error, data) {
+    if (error == null) {
+      industriesList = data["industries"];
+      statutoryLevelsList = data["statutory_levels"];
+      statutoriesList = data["statutories"];
+      countriesList = data["countries"];
+      domainsList = data["domains"];
+      geographyLevelsList = data["geography_levels"];
+      statutoryNaturesList = data["statutory_natures"];
+      geographiesList = data["geographies"];
+      complianceFrequencyList = data["compliance_frequency"];
+      complianceDurationTypeList = data["compliance_duration_type"];
+      complianceRepeatTypeList = data["compliance_repeat_type"];
+      complianceApprovalStatusList = data["compliance_approval_status"];
+    }
+    else {
+      console.log(error);
+    }
+  });
+}
+
 function getStatutoryMappings(){
   function onSuccess(data){
-    industriesList = data["industries"];
-    statutoryLevelsList = data["statutory_levels"];
-    statutoriesList = data["statutories"];
-    countriesList = data["countries"];
-    domainsList = data["domains"];
-    geographyLevelsList = data["geography_levels"];
-    statutoryNaturesList = data["statutory_natures"];
-    geographiesList = data["geographies"];
+    // industriesList = data["industries"];
+    // statutoryLevelsList = data["statutory_levels"];
+    // statutoriesList = data["statutories"];
+    // countriesList = data["countries"];
+    // domainsList = data["domains"];
+    // geographyLevelsList = data["geography_levels"];
+    // statutoryNaturesList = data["statutory_natures"];
+    // geographiesList = data["geographies"];
+    // statutoryMappingsList = data["statutory_mappings"];
+    // complianceFrequencyList = data["compliance_frequency"];
+    // complianceDurationTypeList = data["compliance_duration_type"];
+    // complianceRepeatTypeList = data["compliance_repeat_type"];
+    // complianceApprovalStatusList = data["compliance_approval_status"];
     statutoryMappingsList = data["statutory_mappings"];
-    complianceFrequencyList = data["compliance_frequency"];
-    complianceDurationTypeList = data["compliance_duration_type"];
-    complianceRepeatTypeList = data["compliance_repeat_type"];
-    complianceApprovalStatusList = data["compliance_approval_status"];
-
     loadStatutoryMappingList(statutoryMappingsList);
   }
   function onFailure(error){
@@ -463,7 +485,7 @@ $("#upload_file").on("change", function(e) {
     else{
       displayMessage(data);
     }
-    
+
   });
 
 });
@@ -686,7 +708,7 @@ $("#temp_addcompliance").click(function() {
     file_format = [];
     file_format.push(uploadFile);
   }
-  
+
   /*if(file_format.size < 0){
     file_format = null;
   } */
@@ -838,19 +860,20 @@ function temp_editcompliance(edit_id){
       uploadFile = uploadFile[0]
     }
     var fullname = compliances[edit_id]["format_file_list"][0]["file_name"];
+    console.log(fullname)
     var concatfilename = '';
-    if(fullname.contains('-')){
+    if(fullname.indexOf('-') != -1){
       var fname= fullname.substr(0, fullname.indexOf('-'));
       var fextension = fullname.substr(fullname.indexOf(".") + 1);
       concatfilename = fname + "." +fextension;
     }else{
       concatfilename = fullname;
     }
-    
+
     $("#uploaded_fileview").show();
     $("#uploaded_filename").html( concatfilename + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' />")
   }
-      
+
   var compliance_frequency = compliances[edit_id]["frequency_id"];
   statutory_dates = compliances[edit_id]["statutory_dates"];
   if(compliance_frequency == "1"){
@@ -1481,6 +1504,7 @@ $(function()
 
 $(document).ready(function(){
   getStatutoryMappings();
+  getStatutoryMappingsMastersList();
   //start -filter process in select domain tab
   $("#filter_country").keyup( function() {
     var filter = $("#filter_country").val().toLowerCase();

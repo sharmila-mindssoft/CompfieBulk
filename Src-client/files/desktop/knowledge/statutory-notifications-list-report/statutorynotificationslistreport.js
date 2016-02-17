@@ -37,7 +37,7 @@ function initialize(){
 }
 $("#show-button").click(function(){	
 	var countries = $("#country").val();
-	var countriesNameVal = $("#countriesval").val();
+	var countriesNameVal = $("#countryval").val();
 	//Domain	
 	var domain = $("#domain").val();
 	var domainNameVal = $("#domainval").val();

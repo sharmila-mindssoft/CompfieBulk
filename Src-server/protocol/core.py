@@ -369,15 +369,15 @@ class COMPLIANCE_STATUS(object):
 
 class APPLICABILITY_STATUS(object):
     Applicable = "Applicable"
-    NotApplicable = "NotApplicable"
-    NotOpted = "NotOpted"
+    NotApplicable = "Not Applicable"
+    NotOpted = "Not Opted"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Applicable", "NotApplicable", "NotOpted"]
+        return ["Applicable", "Not Applicable", "Not Opted"]
 
     def value(self):
         return self._value
@@ -1217,9 +1217,9 @@ class GroupCompanyDetail(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "client_name", "domain_ids", 
-            "country_ids", "incharge_persons", "file_name", "logo", "contract_from", "contract_to", 
-            "no_of_user_licence", "total_disk_space", "is_sms_subscribed", "username", 
+        data = parse_dictionary(data, ["client_id", "client_name", "domain_ids",
+            "country_ids", "incharge_persons", "file_name", "logo", "contract_from", "contract_to",
+            "no_of_user_licence", "total_disk_space", "is_sms_subscribed", "username",
             "is_active", "short_name"])
         client_id = data.get("client_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
@@ -1985,11 +1985,12 @@ class UpcomingCompliance(object):
 
 class NumberOfCompliances(object):
     def __init__(
-        self, domain_id, year, complied_count,
+        self, domain_id, country_id, year, complied_count,
         delayed_compliance_count,
         inprogress_compliance_count, not_complied_count
     ):
         self.domain_id = domain_id
+        self.country_id = country_id
         self.year = year
         self.complied_count = complied_count
         self.delayed_compliance_count = delayed_compliance_count
@@ -1999,12 +2000,14 @@ class NumberOfCompliances(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "domain_id", "year", "complied_count",
+            "domain_id", "country_id", "year", "complied_count",
             "delayed_compliance_count",
             "inprogress_compliance_count", "not_complied_count"
         ])
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        country_id = data.get("country_id")
+        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         year = data.get("year")
         year = parse_structure_CustomTextType_20(year)
         complied_count = data.get("complied_count")
@@ -2016,7 +2019,7 @@ class NumberOfCompliances(object):
         not_complied_count = data.get("not_complied_count")
         not_complied_count = parse_structure_UnsignedIntegerType_32(not_complied_count)
         return NumberOfCompliances(
-            domain_id, year, complied_count,
+            domain_id, country_id, year, complied_count,
             delayed_compliance_count,
             inprogress_compliance_count, not_complied_count
         )
@@ -2024,6 +2027,7 @@ class NumberOfCompliances(object):
     def to_structure(self):
         return {
             "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
             "year": to_structure_CustomTextType_20(self.year),
             "complied_count": to_structure_SignedIntegerType_8(self.complied_count),
             "delayed_compliance_count": to_structure_SignedIntegerType_8(self.delayed_compliance_count),
@@ -2522,13 +2526,13 @@ class ComplianceApprovalStatus(object):
         approval_status_id = data.get("approval_status_id")
         approval_status_id = parse_structure_UnsignedIntegerType_32(approval_status_id)
         approval_status = data.get("approval_status")
-        approval_status = parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(approval_status)
+        approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(approval_status)
         return ComplianceApprovalStatus(approval_status_id, approval_status)
 
     def to_structure(self):
         return {
             "approval_status_id": to_structure_SignedIntegerType_8(self.approval_status_id),
-            "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
+            "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
         }
 
 #

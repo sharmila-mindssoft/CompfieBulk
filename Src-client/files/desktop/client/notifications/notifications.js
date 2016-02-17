@@ -113,7 +113,7 @@ function initialize(){
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getNotifications( 'Notification',
+    client_mirror.getNotifications('Notification',
         function(error, response){
             if(error == null){
                 onSuccess(response);

@@ -77,6 +77,18 @@ class Request(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
+class GetStatutoryMappingsMaster(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetStatutoryMappingsMaster()
+
+    def to_inner_structure(self):
+        return{}
+
 class GetStatutoryMappings(Request):
     def __init__(self):
         pass
@@ -87,8 +99,7 @@ class GetStatutoryMappings(Request):
         return GetStatutoryMappings()
 
     def to_inner_structure(self):
-        return {
-        }
+        return {}
 
 class SaveStatutoryMapping(Request):
     def __init__(
@@ -249,7 +260,7 @@ class ApproveStatutoryMapping(Request):
 
 
 def _init_Request_class_map():
-    classes = [GetStatutoryMappings, SaveStatutoryMapping, UpdateStatutoryMapping, ChangeStatutoryMappingStatus, ApproveStatutoryMapping]
+    classes = [GetStatutoryMappingsMaster, GetStatutoryMappings, SaveStatutoryMapping, UpdateStatutoryMapping, ChangeStatutoryMappingStatus, ApproveStatutoryMapping]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -283,8 +294,14 @@ class Response(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
-class GetStatutoryMappingsSuccess(Response):
-    def __init__(self, countries, domains, industries, statutory_natures, statutory_levels, statutories, geography_levels, geographies, compliance_frequency, compliance_repeat_type, compliance_approval_status, compliance_duration_type, statutory_mappings):
+class GetStatutoryMappingsMasterSuccess(Response):
+    def __init__(
+        self, countries, domains, industries,
+        statutory_natures, statutory_levels, statutories,
+        geography_levels, geographies,
+        compliance_frequency, compliance_repeat_type,
+        compliance_approval_status, compliance_duration_type
+    ):
         self.countries = countries
         self.domains = domains
         self.industries = industries
@@ -297,11 +314,10 @@ class GetStatutoryMappingsSuccess(Response):
         self.compliance_repeat_type = compliance_repeat_type
         self.compliance_approval_status = compliance_approval_status
         self.compliance_duration_type = compliance_duration_type
-        self.statutory_mappings = statutory_mappings
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "industries", "statutory_natures", "statutory_levels", "statutories", "geography_levels", "geographies", "compliance_frequency", "compliance_repeat_type", "compliance_approval_status", "compliance_duration_type", "statutory_mappings"])
+        data = parse_dictionary(data, ["countries", "domains", "industries", "statutory_natures", "statutory_levels", "statutories", "geography_levels", "geographies", "compliance_frequency", "compliance_repeat_type", "compliance_approval_status", "compliance_duration_type"])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
@@ -326,9 +342,12 @@ class GetStatutoryMappingsSuccess(Response):
         compliance_approval_status = parse_structure_VectorType_RecordType_core_ComplianceApprovalStatus(compliance_approval_status)
         compliance_duration_type = data.get("compliance_duration_type")
         compliance_duration_type = parse_structure_VectorType_RecordType_core_ComplianceDurationType(compliance_duration_type)
-        statutory_mappings = data.get("statutory_mappings")
-        statutory_mappings = parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping(statutory_mappings)
-        return GetStatutoryMappingsSuccess(countries, domains, industries, statutory_natures, statutory_levels, statutories, geography_levels, geographies, compliance_frequency, compliance_repeat_type, compliance_approval_status, compliance_duration_type, statutory_mappings)
+        return GetStatutoryMappingsMasterSuccess(
+            countries, domains, industries, statutory_natures,
+            statutory_levels, statutories, geography_levels,
+            geographies, compliance_frequency, compliance_repeat_type,
+            compliance_approval_status, compliance_duration_type
+        )
 
     def to_inner_structure(self):
         return {
@@ -343,8 +362,23 @@ class GetStatutoryMappingsSuccess(Response):
             "compliance_frequency": to_structure_VectorType_RecordType_core_ComplianceFrequency(self.compliance_frequency),
             "compliance_repeat_type": to_structure_VectorType_RecordType_core_ComplianceRepeatType(self.compliance_repeat_type),
             "compliance_approval_status": to_structure_VectorType_RecordType_core_ComplianceApprovalStatus(self.compliance_approval_status),
-            "compliance_duration_type": to_structure_VectorType_RecordType_core_ComplianceDurationType(self.compliance_duration_type),
-            "statutory_mappings": to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping(self.statutory_mappings),
+            "compliance_duration_type": to_structure_VectorType_RecordType_core_ComplianceDurationType(self.compliance_duration_type)
+        }
+
+class GetStatutoryMappingsSuccess(Response):
+    def __init__(self, statutory_mappings):
+        self.statutory_mappings = statutory_mappings
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["statutory_mappings"])
+        statutory_mappings = data.get("statutory_mappings")
+        statutory_mappings = parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping(statutory_mappings)
+        return GetStatutoryMappingsSuccess(statutory_mappings)
+
+    def to_inner_structure(self):
+        return {
+            "statutory_mappings": to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping(self.statutory_mappings)
         }
 
 class SaveStatutoryMappingSuccess(Response):
@@ -414,7 +448,7 @@ class ApproveStatutoryMappingSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetStatutoryMappingsSuccess, SaveStatutoryMappingSuccess, UpdateStatutoryMappingSuccess, InvalidStatutoryMappingId, ChangeStatutoryMappingStatusSuccess, ApproveStatutoryMappingSuccess]
+    classes = [GetStatutoryMappingsMasterSuccess, GetStatutoryMappingsSuccess, SaveStatutoryMappingSuccess, UpdateStatutoryMappingSuccess, InvalidStatutoryMappingId, ChangeStatutoryMappingStatusSuccess, ApproveStatutoryMappingSuccess]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

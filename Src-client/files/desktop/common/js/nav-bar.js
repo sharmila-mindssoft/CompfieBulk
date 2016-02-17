@@ -80,20 +80,35 @@ function initializeNavBar () {
     }
 
     var user = mirror.getUserInfo();
-    var settingsMenu = navBarItems["settings"];
+    var settingsMenu = navBarItems["Settings"];
     var settingsMenuObject = $("#nav-bar-templates .settings-menu .user-icon").clone();
     $(".username", settingsMenuObject).text(user["employee_name"]);
 
-    for (var form_key in navBarItems["settings"]) {
-        var form = navBarItems["settings"][form_key];
+    for (var form_key in settingsMenu) {
+        var form = navBarItems["Settings"][form_key];
         var item = getItemObject(form["form_url"], form["form_name"]);
         $("ul", settingsMenuObject).append(item);
     }
 
-    var item = getItemObject("/profile", "View Profile");
-    $("ul", settingsMenuObject).append(item);
+    var client_name = client_mirror.getClientShortName();
+    var employee_name = mirror.getEmployeeName();
+    if (typeof(client_name) == "undefined") {
+        profile_url = "/knowledge/profile";
+        change_password_url = "/knowledge/change-password";
+    }
+    else {
+        profile_url = "/profile";
+        change_password_url = "/change-password";
+    }
 
-    var item = getItemObject("/change-password", "Change Password");
+    if (
+        (typeof(employee_name) == "undefined") ||
+        (employee_name != "Administrator")
+    ){
+        var item = getItemObject(profile_url, "View Profile");
+        $("ul", settingsMenuObject).append(item);
+    }
+    var item = getItemObject(change_password_url, "Change Password");
     $("ul", settingsMenuObject).append(item);
 
     var item = getItemObject(null, "Logout");

@@ -6,6 +6,7 @@ var DIVISIONS = {};
 var UNITS = {};
 var COMPLIANCE_STATUS_DATA = null;
 var COMPLIANCE_STATUS_DRILL_DOWN_DATE = null;
+var ESCALATION_DATA = null;
 
 function clearMessage() {
     $(".chart-error-message").text("");
@@ -435,6 +436,7 @@ function prepareComplianceStatusChartData (source_data) {
     // console.log(yearInput)
     var chartTitle = getFilterTypeTitle()
     var domainsInput = chartInput.getDomains();
+    var countriesInput = chartInput.getCountries();
     var xAxis = [];
     var xAxisIds = [];
     var yAxisComplied = [];
@@ -459,6 +461,8 @@ function prepareComplianceStatusChartData (source_data) {
             if (parseInt(item["year"]) != yearInput)
                 continue;
             if (!(item["domain_id"] in domainsInput))
+                continue;
+            if (!(item["country_id"] in countriesInput))
                 continue;
             compliedCount += item["complied_count"];
             delayedCount += item["delayed_compliance_count"];
@@ -756,6 +760,137 @@ function updateDrillDown(data) {
     $(".btn-back").show();
 }
 
+function prepareEscalationChartdata(source_data) {
+    var chartTitle = getFilterTypeTitle();
+    var domainsInput = chartInput.getDomains();
+    var countriesInput = chartInput.getCountries();
+    var xAxis = [];
+    var yAxisDelayed = {}; //{ "year": count}
+    var yAxisNotComplied = {};
+    var filterTypeInput = getFilterTypeInput()
+    function set_value(dict, key, value) {
+        var temp = dict[key];
+        if (typeof(temp) === "undefined")
+            temp = 0;
+        temp = parseInt(temp) + parseInt(value);
+        dict[key] = temp;
+    }
+    for (var i = 0; i < source_data.chart_data.length; i++) {
+        var chartData = source_data.chart_data[i];
+        var filter_type_id = chartData["filter_type_id"];
+        if (filterTypeInput.indexOf(filter_type_id) == -1)
+            continue;
+        // var filterTypeName = getFilterTypeName(filter_type_id);
+        for (var j = 0; j < chartData["data"].length; j++) {
+            var item = chartData["data"][j];
+            if (domainsInput.indexOf(item["domain_id"]) == -1)
+                continue;
+            if(countriesInput.indexOf(item["country_id"]) == -1)
+                continue;
+            year = item["year"];
+            if (
+                (item["delayed_compliance_count"] !== 0) ||
+                (item["not_complied_count"] !== 0)
+            ){
+                set_value(yAxisDelayed, year, item["delayed_compliance_count"]);
+                set_value(yAxisNotComplied, year, item["not_complied_count"]);
+                if (xAxis.indexOf(year) == -1)
+                    xAxis.push(year);
+            }
+        }
+
+    }
+    if (xAxis.length == 0)
+        return null;
+    var chartDataSeries = [];
+    delayed_data = []
+    $.each(yAxisDelayed, function(key, value) {
+        delayed_data.push({
+            "y": value,
+            "drilldown":"Delay Compliance",
+            "year": key
+        });
+    });
+    not_complied_data = [];
+    $.each(yAxisNotComplied, function(key, value) {
+        not_complied_data.push({
+            "y": value,
+            "drilldown":"Not Complied",
+            "year": key
+        });
+    });
+    chartDataSeries.push({
+        "name": "Delay Compliance",
+        "data": delayed_data
+    });
+    chartDataSeries.push(
+        {
+            "name": "Not Complied",
+            "data": not_complied_data
+        }
+    );
+    console.log(chartDataSeries)
+    chartTitle = "Escalation of " + chartTitle;
+    return [xAxis, chartDataSeries, chartTitle]
+}
+
+function updateEscalationChart(data) {
+    $(".graph-container").hide();
+    $(".drilldown-container").hide();
+    $(".graph-selections-bottom").hide();
+    $(".graph-container.compliance-status").show();
+    data = prepareEscalationChartdata(data);
+    xAxis = data[0];
+    chartDataSeries = data[1];
+    chartTitle = data[2];
+
+    highchart = new Highcharts.Chart({
+        colors:['#F58835','#F32D2B',],
+        chart: {
+            type: 'column',
+            renderTo: "status-container",
+        },
+        title: {
+            text: chartTitle
+        },
+        xAxis: {
+            categories: xAxis,
+            crosshair: true,
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Total Compliances'
+            },
+            allowDecimals: false
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0,
+                groupPadding: 0.3,
+                borderWidth: 0,
+                dataLabels: {
+                enabled: true,
+                textShadow:null,
+                format:'{point.y}'
+            },
+            point: {
+                events: {
+                    click: function() {
+                        var drilldown = this.drilldown;
+                        if (drilldown) {
+                            console.log(drilldown)
+                            console.log(this.year)
+                        }
+                    }
+                  }
+                },
+            }
+        },
+        series: chartDataSeries,
+    });
+}
+
 function loadComplianceStatusChart () {
     var requestData = parseComplianceStatusApiInput();
     client_mirror.getComplianceStatusChartData(
@@ -789,8 +924,25 @@ function loadComplianceStatusDrillDown(status, filter_type_id) {
             updateDrillDown(data);
         }
     );
-    console.log(status)
-    console.log(filter_type_id)
+}
+
+function loadEscalationChart() {
+    var filter_type = chartInput.getFilterType();
+    var filterType = filter_type.replace("_", "-");
+    filterType = hyphenatedToUpperCamelCase(filterType);
+    var requestData = {
+        "country_ids": chartInput.getCountries(),
+        "domain_ids": chartInput.getDomains(),
+        "filter_type": filterType,
+        "filter_id": 1
+    };
+    client_mirror.getEscalationChartData(
+        requestData,
+        function (status, data) {
+            ESCALATION_DATA = data;
+            updateEscalationChart(data);
+        }
+    )
 }
 
 function loadCharts () {
@@ -798,6 +950,9 @@ function loadCharts () {
     var chartType = chartInput.getChartType();
     if (chartType == "compliance_status") {
         loadComplianceStatusChart();
+    }
+    else if (chartType == "escalations") {
+        loadEscalationChart();
     }
     else {
         hideLoader();
@@ -811,13 +966,39 @@ function loadCharts () {
 
 function initializeChartTabs () {
     $(".chart-tab").on("click", function () {
-        if ($(this).hasClass("active")) {
-            $(".chart-tab").removeClass("active");
-            $(".chart-tab.compliance-status-tab").addClass("active");
-
-        }
         $(".chart-tab").removeClass("active");
-        $(this).addClass("active");
+        if ($(this).hasClass("compliance-status-tab")) {
+            $(".chart-tab.compliance-status-tab").addClass("active");
+            chartInput.setChartType("compliance_status");
+        }
+        else if($(this).hasClass("escalations-tab")) {
+            $(".chart-tab.escalations-tab").addClass("active");
+            chartInput.setChartType("escalations");
+        }
+        else if($(this).hasClass("not-complied-tab")) {
+            $(".chart-tab.not-complied-tab").addClass("active");
+            chartInput.setChartType("not_complied");
+        }
+        else if($(this).hasClass("compliance-report-tab")) {
+            $(".chart-tab.compliance-report-tab").addClass("active");
+            chartInput.setChartType("compliance_report");
+        }
+        else if($(this).hasClass("trend-chart-tab")) {
+            $(".chart-tab.trend-chart-tab").addClass("active");
+            chartInput.setChartType("trend_chart");
+        }
+        else if($(this).hasClass("applicability-status-tab")) {
+            $(".chart-tab.applicability-status-tab").addClass("active");
+            chartInput.setChartType("applicability_status");
+        }
+        // if ($(this).hasClass("active")) {
+        //     $(".chart-tab").removeClass("active");
+
+        //     $(".chart-tab.compliance-status-tab").addClass("active");
+
+        // }
+        // $(".chart-tab").removeClass("active");
+        // $(this).addClass("active");
         loadCharts();
     });
 }

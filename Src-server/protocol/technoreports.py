@@ -142,7 +142,7 @@ class GetClientDetailsReportData(Request):
             "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
-            "domain_ids": to_structure_OptionalType_BoolalType_VectorType_SignedIntegerType_8(self.domain_ids),
+            "domain_ids": to_structure_OptionalType_VectorType_SignedIntegerType_8(self.domain_ids),
         }
 
 class GetStatutoryNotificationsFilters(Request):

@@ -1,12 +1,3 @@
-var countriesList;
-var domainsList;
-var businessgroupsList;
-var legalEntityList;
-var divisionsList;
-var unitList;
-var level1List;
-var countriesText;
-var domainval;
 
 function clearMessage() {
     $(".error-message").hide();
@@ -20,18 +11,11 @@ function displayMessage(message) {
 function initialize(){
     function onSuccess(data){
         console.log(data);
-        countriesList = data['countries'];
-        domainsList = data['domains'];
-        businessgroupsList = data['business_groups'];
-        legalEntityList = data['legal_entities'];
-        divisionsList = data['divisions'];
-        unitList = data['units'];
-        level1List = data['level_1_statutories'];
     }
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getTaskApplicabilityStatusFilters(
+    client_mirror.getComplianceDetail(
         function (error, response){
             if(error == null){
                 onSuccess(response);
@@ -42,107 +26,45 @@ function initialize(){
         }
     );
 }
-$("#show-button").click(function(){ 
-    var countries = $("#country").val();
-    var countriesNameVal = $("#countryval").val();
-    //Domain    
-    var domain = $("#domain").val();
-    var domainNameVal = $("#domainval").val();
-    //business_groups
-    var businessgroupid = $("#businessgroupid").val();
-    if(businessgroupid == ''){
-        businessgroupid = null;
-    }
-    else{
-        businessgroupid = parseInt(businessgroupid);
-    }
-    //Legal Entity
-    var legalentityid = $("#legalentityid").val();
-    if(legalentityid == ''){
-        legalentityid = null;
-    }
-    else{
-        legalentityid = parseInt(legalentityid);
-    }
-    //Divisions
-    var divisionid = $("#divisionid").val();
-    if(divisionid == ''){
-        divisionid = null;
-    }
-    else{
-        divisionid = parseInt(divisionid);
-    }
-    //Unit
-    var unitid = $("#unitid").val();
-    if(unitid == ''){
-        unitid = null;
-    }
-    else{
-        unitid = parseInt(unitid);
-    }
-    //Level 1 Statutories
-    var level1id = $("#level1id").val();
-    if(level1id == ''){
-        level1id = null;
-    }
-    else{
-        level1id = parseInt(level1id);
-    }
-   
-    if(countries == ""){
-        displayMessage("Please Enter Country");
-    }
-    else if(domain == ""){
-        displayMessage("Please Enter Domain");  
-    }
-    else{
-        function onSuccess(data){
-            console.log(data);
-            $(".grid-table-rpt").show();
-            loadTaskApplicabilityStatusList(data['notifications']);     
-        }
-        function onFailure(error){
-            console.log(error);
-        }
 
-        client_mirror.getComplianceTaskApplicabilityStatusReport(
-            countries, domain, businessgroupid, legalentityid, divisionid, unitid, level1id,
-            function (error, response){
-                if(error == null){
-                    onSuccess(response);
-                }
-                else{
-                    onFailure(error);
-                }
-            }
-        );
-    }
-});
-
-
-function loadTaskApplicabilityStatusList(data){
+function loadStatutoryNotificationsList(data){
     $('.tbody-statutory-notifications-list tr').remove();
     var sno = 0;
-    console.log(data);
+    
     $.each(data, function(key, value) {
-        var tableRowHeading = $('#templates .table-statutory-notifications-list .table-row-heading');
+        var tableRowHeading = $('#templates .table-statutory-notifications-list .filter-heading-list');
         var cloneHeading = tableRowHeading.clone();
-        var domainId = data[key]['domain_id'];
-        $('.heading', cloneHeading).text(getDomainName(domainId));
-        $('.tbody-statutory-notifications-list').append(cloneHeading);
-        var list = data[key]['notifications'];
-        $.each(list, function(k, val) { 
-            var arr = [];
-            var tableRow = $('#templates .table-statutory-notifications-list .table-row-values');
+        $('.heading-country-name', cloneHeading).text(countriesNameVal);
+        $('.heading-domain-name', cloneHeading).text(domainNameVal);
+        $('.heading-business-group-name', cloneHeading).text(data[key]['business_group_name']);
+        $('.heading-legal-entity-name', cloneHeading).text(data[key]['legal_entity_name']);
+        $('.heading-division-name', cloneHeading).text(data[key]['division_name']);
+        $('.statutory-notifications-list .tbody-statutory-notifications-list').append(cloneHeading);
+
+        var tableRowHeadingth = $('#templates .table-statutory-notifications-list .heading-th');
+        var cloneHeadingth = tableRowHeadingth.clone();
+        $('.statutory-notifications-list .tbody-statutory-notifications-list').append(cloneHeadingth);
+
+        var level1list = data[key]['level_1_statutory_wise_notifications'];
+        $.each(level1list, function(ke, valu) { 
+            var tableRow = $('#templates .table-statutory-notifications-list .table-row-heading ');
             var clone = tableRow.clone();
-            sno = sno + 1;
-            $('.sno', clone).text(sno);
-            $('.statutory-provision', clone).html(list[k]['statutory_provision']);
-            $('.unit-name', clone).html(list[k]['statutory_provision']);
-            $('.statutory-notificaions', clone).html(list[k]['notification_text']);
-            $('.date-time', clone).html(list[k]['date_and_time']);
-            $('.tbody-statutory-notifications-list').append(clone);
-        });
+            $('.level1-heading', clone).text(ke);
+            $('.statutory-notifications-list .tbody-statutory-notifications-list').append(clone);
+
+            var list = level1list[ke];
+            $.each(list, function(k, val){
+                var tableRowvalues = $('#templates .table-statutory-notifications-list .table-row-values');
+                var cloneval = tableRowvalues.clone();
+                sno = sno + 1;
+                $('.sno', cloneval).text(sno);
+                $('.statutory-provision', cloneval).html(list[k]['statutory_provision']);
+                $('.unit-name', cloneval).html(list[k]['unit_name']);
+                $('.statutory-notificaions', cloneval).html(list[k]['notification_text']);
+                $('.date-time', cloneval).html(list[k]['date_and_time']);
+                $('.statutory-notifications-list .tbody-statutory-notifications-list').append(cloneval);
+            });            
+        });        
     });
     $(".total-records").html("Total : "+sno+" records")
 }
