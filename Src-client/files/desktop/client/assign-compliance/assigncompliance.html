@@ -1,0 +1,165 @@
+{% extends "files/desktop/client/home/container.html" %}
+{% block content %}
+
+  <div class="content-container width75" >
+    <div class="content-area">
+      <h1>Assign Compliance</h1>
+      <div class="add-container">
+        <div class="form-container-outer">
+          <ul class="nav  nav-pills nav-justified setup-panel">
+            <li class="active" style="width: 32.8%;"><a href="#step-1">
+              <h4 class="list-group-item-heading">1. Select Unit</h4>
+            </a>
+            </li>
+          <li class="disabled" style="width: 32.8%;"><a href="#step-2">
+            <h4 class="list-group-item-heading">2. Select Compliance Task</h4>
+          </a></li>
+
+          <li class="disabled" style="width: 32.8%;"><a href="#step-2">
+            <h4 class="list-group-item-heading">3. Select Assignee</h4>
+          </a></li>
+
+        </ul>
+        <div class="clearfix"></div>
+        <div class="setup-content" id="step-1">
+          <div class="innercontent">
+            <div class="form-container-grid-table">
+              <table style="border:1px solid #ccc; margin-bottom:5px; height:500px !important;">
+                <tr align="left">
+                  <th width="18%">Country</th>
+                  <th width="18%">Business Group </th>
+                  <th width="18%">Legal Entity </th>
+                  <th width="20%">Division</th>
+                  <th width="26%">Unit</th>
+                </tr>
+                <tr>
+                  <td>
+                    <input type="hidden" id="ascountry">
+                    <input type="text" class="filter-text-box" id="filter_country">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_businessgroup">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_legalentity">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_division">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_unit">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <ul style="height:500px;overflow-y:scroll" id="country">
+                    </ul>
+                  </td>
+                
+                  <td>
+                    <ul style="height:500px;overflow-y:scroll" id="businessgroup">
+                    </ul>
+                  </td>
+                  <td>
+                    <ul style="height:500px;overflow-y:scroll" id="legalentity">
+                    </ul>
+                  </td>
+                  <td>
+                    <ul style="height:500px;overflow-y:scroll" id="division">
+                    </ul>
+                  </td>
+                  <td>
+                    <ul style="height:500px;overflow-y:scroll" id="unit">
+                    </ul>
+                  </td>
+
+                </tr>
+              </table>
+            </div>
+          </div>
+          <table width="100%">
+            <tr>
+              <td width="50%" valign="middle">
+                <span class="error-message" style="text-align:left;float:left;color:red;font-size: 0.8em;margin:10px;"></span>
+              </td>
+              <td align="right" width="50%">
+                <button id="activate-step-2" class="btn-right">Next</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="setup-content" id="step-2">
+          <table width="100%">
+            <tr>
+              <td width="50%" valign="middle">
+                <span class="error-message" style="float:left;color:red;font-size: 0.8em;margin:10px;"></span>
+              </td>
+              
+              <td align="right" width="50%">
+                <button id="activate-step-3" class="btn-right">Next</button>
+                <button id="backward-step-1" class="btn-right">Previous</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="setup-content" id="step-3">
+          <table width="100%">
+            <tr>
+              <td width="50%" valign="middle">
+                <span class="error-message" style="float:left;color:red;font-size: 0.8em;margin:10px;"></span>
+              </td>
+              
+              <td align="right" width="50%">
+                <button id="activate-step-finish" class="btn-right">Submit</button>
+                <button id="backward-step-2" class="btn-right">Previous</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div id="act-templates" class="default-display-none">
+  <table class="font1" >
+  <tbody class="accordion-toggle tbody-heading">
+    <tr align="left" class="rightside tableRow " style="margin-bottom:1em; border:1px solid #ccc;">
+      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="100%" colspan="5"><div class="actapplicable gt" style="float:left; width:3%;padding-top:5px;"></div><div class="actname" style="float:left; width:94%;margin-top:0px;"></div>
+      <div style="float:right; width:3%;padding-top:5px;"><img src="/images/chevron_black_down.png"></div>
+      </th>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div id="statutory-templates" class="default-display-none">
+  <table cellpadding="0" cellspacing="0" width="100%" class="checkedtable">
+    <tr class="compliance-heading" style="width:100%;">
+      <td width="5%"><span style="font-weight:bold;">#</span></td>
+      <td width="30%" ><span style="font-weight:bold;">Statutory Provision</span></td>
+      <td width="30%"><span style="font-weight:bold;">Compliance Task</span></td>
+      <td width="35%"> <span style="font-weight:bold; ">Compliance Description</span></td>
+      <td width="10%" align="center">
+        <span style="font-weight:bold;">
+          <img src="/images/icon-client-comply.png" title="Applicable" >
+        </span>
+      </td>
+    </tr>
+  </table>
+</div>
+
+ <div id="statutory-values" class="default-display-none">
+  <table class="table-statutory-values">
+    <tr class="compliance-details">
+      <td class="sno"></td>
+      <td class="statutoryprovision"></td>
+      <td class="compliancetask"></td>
+      <td class="compliancedescription"></td>
+      <td align="center" class="gt complianceapplicable"></td>
+    </tr>
+  </table>
+</div> -->
+
+<script type="text/javascript" src="/files/desktop/client/assign-compliance/assigncompliance.js"></script>
+{% endblock %}

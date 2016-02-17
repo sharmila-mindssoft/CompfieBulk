@@ -134,6 +134,11 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/assign-compliance",
+        "files/desktop/client/assign-compliance/assigncompliance.html",
+        None, {}
+    ),
+    (
         "/notifications",
         "files/desktop/client/notifications/notifications.html",
         None, {}
