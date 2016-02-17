@@ -3659,7 +3659,7 @@ def parse_structure_RecordType_clientreport_ActivityData(data):
 
 def parse_structure_OptinalType_VectorType_RecordType_dashboard_RessignedCompliance(data):
     if data is None: return None
-    return parse_structure_VectorType_RecordType_dashboard_RessignedCompliance
+    return parse_structure_VectorType_RecordType_dashboard_RessignedCompliance(data)
 
 def parse_structure_VectorType_RecordType_client_report_UnitDetails(data):
     data = parse_list(data, 0)
