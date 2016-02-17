@@ -1927,7 +1927,10 @@ class ClientDatabase(Database):
 
     def get_assign_compliance_statutories_for_units(
         self, unit_ids, session_user, client_id
-    ):
+    ):  
+        if len(unit_ids) == 1 :
+            unit_ids.append(0)
+
         if session_user == 0 :
             session_user = '%'
         query = "SELECT distinct t2.compliance_id,\
