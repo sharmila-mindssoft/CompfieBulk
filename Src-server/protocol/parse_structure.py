@@ -3637,13 +3637,16 @@ def parse_structure_RecordType_clientreport_ActivityData(data):
     from protocol import clientreport
     return clientreport.ActivityData.parse_structure(data)
 
+def parse_structure_OptinalType_VectorType_RecordType_dashboard_RessignedCompliance(data):
+    if data is None: return None
+    return parse_structure_VectorType_RecordType_dashboard_RessignedCompliance
+
 def parse_structure_VectorType_RecordType_client_report_UnitDetails(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
         lst.append(parse_structure_RecordType_client_report_UnitDetails(item))
     return lst
-
 
 def parse_structure_RecordType_client_report_UnitDetails(data):
     from protocol import clientreport

@@ -1777,7 +1777,7 @@ class ClientUser(object):
         contact_no = data.get("contact_no")
         contact_no = parse_structure_CustomTextType_20(contact_no)
         seating_unit_id = data.get("seating_unit_id")
-        seating_unit_id = parse_structure_UnsignedIntegerType_32(seating_unit_id)
+        seating_unit_id = parse_structure_OptionalType_UnsignedIntegerType_32(seating_unit_id)
         user_level = data.get("user_level")
         user_level = parse_structure_CustomIntegerType_1_10(user_level)
         country_ids = data.get("country_ids")
@@ -1805,7 +1805,7 @@ class ClientUser(object):
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
             "employee_code": to_structure_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "seating_unit_id": to_structure_SignedIntegerType_8(self.seating_unit_id),
+            "seating_unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.seating_unit_id),
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
@@ -1864,7 +1864,7 @@ class ActiveCompliance(object):
     def __init__(self, compliance_history_id, compliance_name, compliance_frequency,
         domain_name, start_date, due_date, compliance_status, validity_date,
         next_due_date, ageing, format_file_name, unit_name, address,
-        compliance_description):
+        compliance_description, remarks):
         self.compliance_history_id = compliance_history_id
         self.compliance_name = compliance_name
         self.compliance_frequency = compliance_frequency
@@ -1879,13 +1879,18 @@ class ActiveCompliance(object):
         self.unit_name = unit_name
         self.address = address
         self.compliance_description = compliance_description
+        self.remarks = remarks
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_history_id", "compliance_name",
-            "compliance_frequency", "domain_name", "start_date", "due_date",
-            "compliance_status", "validity_date", "next_due_date", "ageing",
-            "format_file_name", "unit_name", "address", "compliance_description"])
+        data = parse_dictionary(
+            data, ["compliance_history_id", "compliance_name",
+                "compliance_frequency", "domain_name", "start_date", "due_date",
+                "compliance_status", "validity_date", "next_due_date", "ageing",
+                "format_file_name", "unit_name", "address", "compliance_description", 
+                "remarks"
+            ]
+        )
         compliance_history_id = data.get("compliance_history_id")
         compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         compliance_name = data.get("compliance_name")
@@ -1903,7 +1908,7 @@ class ActiveCompliance(object):
         validity_date = data.get("validity_date")
         validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         next_due_date = data.get("next_due_date")
-        next_due_date = parse_structure_CustomTextType_20(next_due_date)
+        next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         ageing = data.get("ageing")
         ageing = parse_structure_CustomTextType_20(ageing)
         format_file_name = data.get("format_file_name")
@@ -1914,10 +1919,15 @@ class ActiveCompliance(object):
         address = parse_structure_CustomTextType_500(address)
         compliance_description = data.get("compliance_description")
         compliance_description = parse_structure_CustomTextType_500(compliance_description)
-        return ActiveCompliance(compliance_history_id, compliance_name,
+        remarks = data.get("remarks")
+        remarks = parse_structure_OptionalType_CustomTextType_500(compliance_description)
+        return ActiveCompliance(
+            compliance_history_id, compliance_name,
             compliance_frequency, domain_name, start_date, due_date,
             compliance_status, validity_date, next_due_date, ageing,
-            format_file_name, unit_name, address, compliance_description)
+            format_file_name, unit_name, address, compliance_description,
+            remarks
+        )
 
     def to_structure(self):
         return {
@@ -1929,12 +1939,13 @@ class ActiveCompliance(object):
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
             "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
-            "next_due_date": to_structure_CustomTextType_20(self.next_due_date),
+            "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),
             "ageing": to_structure_CustomTextType_20(self.ageing),
             "format_file_name": to_structure_VectorType_CustomTextType_50(self.format_file_name),
             "unit_name" : to_structure_CustomTextType_100(self.unit_name),
             "address" : to_structure_CustomTextType_500(self.address),
-            "compliance_description" : to_structure_CustomTextType_500(self.compliance_description)
+            "compliance_description" : to_structure_CustomTextType_500(self.compliance_description),
+            "remarks" : to_structure_OptionalType_CustomTextType_500(self.remarks)
         }
 
 #
