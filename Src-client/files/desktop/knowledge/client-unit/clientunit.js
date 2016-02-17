@@ -160,10 +160,15 @@ $("#btn-clientunit-add").click(function(){
 	$("#clientunit-view").hide();
 	$("#client-unit-id").val('');	
 	countryByCount = 1;
+	countc = 0;
  	clearMessage();
  	var x = document.getElementsByTagName("input");
  	for(i = 0; i <= x.length-1; i++){
 		if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
+	}
+	var y = document.getElementsByTagName("select");
+ 	for(i = 0; i <= y.length-1; i++){
+ 		y.item(i).value = ""; 
 	}
 	$('#group-select:gt(0)').empty();
 	$('#businessgroup-select:gt(0)').empty();
@@ -172,6 +177,7 @@ $("#btn-clientunit-add").click(function(){
 	$('.industry').empty();
 	$('.add-country-unit-list').empty();
 	loadClientGroups(groupList);
+
 });
 
 //Cancel Button ----------------------------------------------------------------------------------------------
@@ -191,7 +197,8 @@ function loadClientGroups(groupsList){
 }
 
 //Load Business Groups  ---------------------------------------------------------------------------------------------
-function loadBusinessGroups(groupId) {
+function loadBusinessGroups() {
+	var groupId = $("#group-select").val();
 	$('#businessgroup-select').find('option:gt(0)').remove();
 	for (var i in businessGroupList){
 		if(businessGroupList[i]['client_id'] == groupId){
@@ -210,7 +217,10 @@ function loadBusinessGroups(groupId) {
 	}
 }
 //Load LegalEntities ---------------------------------------------------------------------------------------------
-function loadLegalEntity(clientId, businessGroupId) {
+function loadLegalEntity() {
+	var clientId = $("#group-select").val();
+	var businessGroupId = $("#businessgroup-select").val();
+	console.log(clientId+"---"+businessGroupId);
 	if(businessGroupId != null){
 		$('#entity-select').find('option:gt(0)').remove();
 		for (var i in legalEntitiesList){
@@ -223,11 +233,8 @@ function loadLegalEntity(clientId, businessGroupId) {
 	}
 	if(businessGroupId == null){
 		$('#entity-select').find('option:gt(0)').remove();
-
 		for (var i in legalEntitiesList){
-			console.log(legalEntitiesList[i]['client_id']+" == "+clientId+" &&"+ legalEntitiesList[i]['business_group_id'] +" == "+ null);
 			if(legalEntitiesList[i]['client_id'] == clientId && legalEntitiesList[i]['business_group_id'] == null){
-				console.log(clientId+"--"+businessGroupId);
 				var lentityId = legalEntitiesList[i]['legal_entity_id'];
 				var lentityName = legalEntitiesList[i]['legal_entity_name'];
 				$('#entity-select').append($('<option value = "'+lentityId+'">'+lentityName+'</option>'));
@@ -237,7 +244,8 @@ function loadLegalEntity(clientId, businessGroupId) {
 }
 
 //Load Divisions ---------------------------------------------------------------------------------------------
-function loadDivision(lentityId) {
+function loadDivision() {
+	var lentityId = $("#entity-select").val();
 	$('#division-select').find('option:gt(0)').remove();
 	for (var i in divisionList){
 		if(divisionList[i]['legal_entity_id'] == lentityId){
@@ -557,7 +565,7 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisi
 		$('#businessgroup-select').append($('<option value = "">select</option>'));
 	}	
 	//legalentity
-	loadLegalEntity(clientunitId, businessgroupId);
+	//loadLegalEntity(clientunitId, businessgroupId);
 	$('#entity-select option[value = '+legalEntityId+']').attr('selected','selected');
 	//Division 
 	if(divisionId != ''){
