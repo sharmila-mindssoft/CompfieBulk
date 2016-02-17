@@ -1,4 +1,4 @@
-from protocol import (admin, core)
+from protocol import (admin, core, login)
 from corecontroller import process_user_menus
 
 __all__ = [
