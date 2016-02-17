@@ -11,7 +11,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         r"/forgot_password/([a-zA-Z-0-9]+)",
-        "files/desktop/client/ForgotPassword.html",
+        "files/desktop/client/forgotpassword.html",
         "", {}
     ),
     (
@@ -129,6 +129,16 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/statutory-settings",
+        "files/desktop/client/statutory-settings/statutorysettings.html",
+        None, {}
+    ),
+    (
+        "/assign-compliance",
+        "files/desktop/client/assign-compliance/assigncompliance.html",
+        None, {}
+    ),
+    (
         "/notifications",
         "files/desktop/client/notifications/notifications.html",
         None, {}
@@ -162,7 +172,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/forgot-password",
-        "files/desktop/knowledge/ForgotPassword.html",
+        "files/desktop/knowledge/forgotpassword.html",
         "", {}
     ),
     (

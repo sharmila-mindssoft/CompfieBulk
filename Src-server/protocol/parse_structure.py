@@ -1030,6 +1030,10 @@ def parse_structure_OptionalType_CustomTextType_20(data):
     if data is None: return data
     return parse_structure_CustomTextType_20(data)
 
+def parse_structure_OptionalType_VectorType_CustomTextType_20(data):
+    if data is None: return data
+    return parse_structure_VectorType_CustomTextType_20(data)
+
 def parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_STATUS(data):
     from protocol import core
     return core.ASSIGN_STATUTORY_SUBMISSION_STATUS.parse_structure(data)
@@ -3293,6 +3297,16 @@ def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttran
         d[key] = value
     return d
 
+def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory(data):
+    data = parse_dictionary(data)
+    d = {}
+    for key, value in data.items():
+        key = parse_structure_CustomTextType_50(key)
+        value = parse_structure_VectorType_RecordType_clienttransactions_AssignedStatutory(value)
+        d[key] = value
+    return d
+
+
 # UnitStatutoryCompliances
 def parse_structure_RecordType_clienttransactions_UnitStatutoryCompliances(data):
     from protocol import clienttransactions
@@ -3344,13 +3358,33 @@ def parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORI
     return lst
 
 def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
-    data = parse_list(data)
+    data = parse_dictionary(data)
     d = {}
-    for key, value in data:
+    for key, value in data.iteritems():
         key = parse_structure_SignedIntegerType_8(key)
         value = parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
         d[key] = value
     return d
+
+def parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_dictionary(data)
+    d = {}
+    for key, value in data.iteritems():
+        key = parse_structure_CustomTextType_100(key)
+        value = parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
+        d[key] = value
+    return d
+
+
+def parse_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.iteritems():
+        key = parse_structure_SignedIntegerType_8(key)
+        value = parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
+        dict[key] = value
+    return dict
+
 #
 #   Get Clients
 #
@@ -3566,7 +3600,7 @@ def parse_structure_RecordType_dashboard_Notification(data):
 
 def parse_structure_RecordType_clientreport_STATUTORY_WISE_NOTIFICATIONS(data):
     from protocol import clientreport
-    return clientreport.STATUTORY_WISE_NOTIFICATIONS.parse_structure(data) 
+    return clientreport.STATUTORY_WISE_NOTIFICATIONS.parse_structure(data)
 
 def parse_structure_VectorType_RecordType_clientreport_LEVEL_1_STATUTORY_NOTIFICATIONS(data):
     data = parse_list(data, 0)
@@ -3623,6 +3657,10 @@ def parse_structure_RecordType_clientreport_ActivityData(data):
     from protocol import clientreport
     return clientreport.ActivityData.parse_structure(data)
 
+def parse_structure_OptinalType_VectorType_RecordType_dashboard_RessignedCompliance(data):
+    if data is None: return None
+    return parse_structure_VectorType_RecordType_dashboard_RessignedCompliance(data)
+
 def parse_structure_VectorType_RecordType_client_report_UnitDetails(data):
     data = parse_list(data, 0)
     lst = []
@@ -3630,7 +3668,17 @@ def parse_structure_VectorType_RecordType_client_report_UnitDetails(data):
         lst.append(parse_structure_RecordType_client_report_UnitDetails(item))
     return lst
 
-
 def parse_structure_RecordType_client_report_UnitDetails(data):
     from protocol import clientreport
     return clientreport.UnitDetails.parse_structure(data)
+
+def parse_structure_RecordType_core_Compliance_Download(data):
+    from protocol import core
+    return core.Compliance_Download.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_core_Compliance_Download(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_core_Compliance_Download(item))
+    return lst

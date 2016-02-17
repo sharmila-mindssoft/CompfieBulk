@@ -1,0 +1,157 @@
+{% extends "files/desktop/client/home/container.html" %}
+{% block content %}
+<style type="text/css">
+  /*td, th {
+    border : 1px solid red;
+  }
+
+tbody {
+  border : 1px solid blue;
+}*/
+</style>
+  <div class="content-container" id="statutorysettings-view">
+    <div class="content-area">
+      <h1>Statutory Settings </h1>
+      
+      <div class="grid-table">
+        <table>
+          <tr align="left">
+            <th align="center">#</th>
+            <th width="6%">Country</th>
+            <th>Business Group</th>
+            <th>Legal Entity</th>
+            <th >Division</th>
+            <th width="12%">Unit</th>
+            <th >Domain</th>
+            <th align="center" width="5%" style="padding-right:5px">Edit</th>
+          </tr>
+          <tr>
+            <td align="center"></td>
+            <td><input type="text" class="filter-text-box listfilter" id="filter1"></td>
+            <td><input type="text" class="filter-text-box listfilter" id="filter2"></td>
+            <td><input type="text" class="filter-text-box listfilter" id="filter3"></td>
+            <td><input type="text" class="filter-text-box listfilter" id="filter4"></td>
+            <td><input type="text" class="filter-text-box listfilter" id="filter5"></td>
+            <td><input type="text" class="filter-text-box listfilter" id="filter6"></td>
+            <td align="center"></td>
+          </tr>
+          <tbody class="tbody-statutorysettings-list">
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+  </div>
+
+  <div id="templates">
+    <table class="table-statutorysettings">
+      <tr class="table-row">
+        <td class="tbl_sno" align="center"></td>
+        <td class="tbl_country"></td>
+        <td class="tbl_businessgroup"></td>
+        <td class="tbl_legalentity"></td>
+        <td class="tbl_division"></td>
+        <td class="tbl_unit"></td>
+        <td class="tbl_domain"></td>
+        <td class="tbl_edit" align="center"></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="content-container width75 default-display-none" id="statutorysettings-add">
+    <div class="content-area">
+      <h1>Statutory Settings</h1>
+      <div class="add-container">
+      <div class="grid-table">
+
+         <div style="margin-left:15%;margin-top:10px">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">            
+             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Business Group :
+             <span style="margin-left:10px; font-weight:bold;" class="tbl_businessgroup_disp"></span>
+             </div>
+             <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Division :
+             <span style="margin-left:10px; font-weight:bold;" class="tbl_division_disp"></span> 
+             </div>
+          </div>
+          <div style="float:right; margin-right:20%;">           
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Legal Entity:
+
+            <span style="margin-left:10px; font-weight:bold;" class="tbl_legalentity_disp"></span> 
+            </div>
+            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">Unit:
+
+            <span style="margin-left:10px; font-weight:bold;" class="tbl_unit_disp">
+            </span> 
+            </div>
+          </div>
+        </div>
+
+        <table class="tbody-statutorysettings" id="accordion" width="100%">
+        </table>
+
+        <table width="100%">
+            <tr>
+              <td width="45%" valign="middle">
+                <span class="error-message" style="float:left;color:red;font-size: 0.8em;margin:10px;"></span>
+              </td>
+              <td width="10%">
+                <input type="hidden" id="unit" value="" />
+                <button id="submit" class="btn-right" >Submit</button>
+              </td>
+              <td width="45%">
+              </td>
+
+            </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="head-templates">
+  <span class="tbl_heading"> </span>
+</div>
+
+
+<div id="act-templates" class="default-display-none">
+  <table class="font1" >
+  <tbody class="accordion-toggle tbody-heading">
+    <tr align="left" class="rightside tableRow " style="margin-bottom:1em; border:1px solid #ccc;">
+      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="100%" colspan="7"><div class="actapplicable ot" style="float:left; width:3%;padding-top:5px;"></div><div class="actname" style="float:left; width:94%;margin-top:0px;"></div>
+      <div style="float:right; width:3%;padding-top:5px;"><img src="/images/chevron_black_down.png"></div>
+      </th>
+    </tr>
+  </tbody>
+  </table>
+</div>
+
+<div id="statutory-templates" class="default-display-none">
+  <table cellpadding="0" cellspacing="0" width="100%" class="checkedtable">  
+    <tr align="left" class="compliance-heading">
+      <td width="2%"><span style="font-weight:bold;">#</span></td>
+      <td width="20%" ><span style="font-weight:bold;">Statutory Provision</span></td>
+      <td width="15%" ><span style="font-weight:bold;">Compliance Tasks</span></td>
+      <td width="40%"><span style="font-weight:bold; ">Compliance Description
+      <td width="4%" align="center"><span style="font-weight:bold;"><img src="/images/icon-client-comply.png" title="Applicable" ></span></td>
+      <td  width="4%" align="center"><span style="font-weight:bold; "><img src="/images/icon-client-tick.png" title="Opted"></span></td>
+      <td width="15%"><span style="font-weight:bold; font-size:11px;">Remarks</span></td>
+    </tr>
+  </table>
+</div>
+
+ <div id="statutory-values" class="default-display-none">
+  <table class="table-statutory-values">
+    <tr class="compliance-details">
+      <td class="sno"></td>
+      <td class="statutoryprovision"></td>
+      <td class="compliancetask"></td>
+      <td class="compliancedescription"></td>
+      <td class="applicable"></td>
+      <td align="center" class="ot complianceopted"></td>
+      <td class="cremark"></td>
+    </tr>
+  </table>
+</div>
+
+<script type="text/javascript" src="/files/desktop/client/statutory-settings/statutorysettings.js"></script>
+{% endblock %}

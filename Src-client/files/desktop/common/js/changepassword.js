@@ -9,14 +9,14 @@ function displayMessage(message) {
 
 $("#submit").click(function(){
   displayMessage("");
-  var currentpassword = $("#currentpassword").val();
-  var newpassword = $("#newpassword").val();
-  var confirmpassword = $("#confirmpassword").val();
-  if(currentpassword == '') {
+  var currentpassword = $("#currentpassword").val().trim();
+  var newpassword = $("#newpassword").val().trim();
+  var confirmpassword = $("#confirmpassword").val().trim();
+  if(currentpassword.length == 0) {
     displayMessage("Current Password Required");
-  } else if(newpassword == '') {
+  } else if(newpassword.length == 0) {
     displayMessage("New Password Required");
-  } else if(confirmpassword == '') {
+  } else if(confirmpassword.length == 0) {
     displayMessage("Confirm Password Required");
   } else if(confirmpassword != newpassword) {
     displayMessage("New Password & Confirm Password is Not Match");
@@ -28,6 +28,9 @@ $("#submit").click(function(){
           $("#confirmpassword").val("");
       }
       function onFailure(error){
+        if(error == "InvalidCurrentPassword"){
+          displayMessage("Invalid Current Password");
+        }
       }
       mirror.changePassword(currentpassword, newpassword, 
         function (error, response) {

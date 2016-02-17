@@ -1,42 +1,61 @@
 $("#submit").click(function(){
     $(".error-message").html("");
     var resetToken = "71546293895338817723334292533594853377";
-    var newpassword = $("#newpassword").val();
-    var confirmpassword = $("#confirmpassword").val();
+    var newpassword = $("#newpassword").val().trim();
+    var confirmpassword = $("#confirmpassword").val().trim();
 
-    if(newpassword == '') {
+    if(newpassword.length == 0) {
       $(".error-message").html("New Password Required");
-    } else if(confirmpassword == '') {
+    } else if(confirmpassword.length == 0) {
       $(".error-message").html("Confirm Password Required");
     } else if(confirmpassword != newpassword) {
       $(".error-message").html("New Password & Confirm Password is Not Match");
     } else {
-        function success(status,data) {
-          if(status == 'ResetPasswordSuccess') {
-            $(".error-message").html("Password Changed Successfully");
-            $("#newpassword").val("");
-            $("#confirmpassword").val("");
-          } else {
-            $(".error-message").html(status);
+
+        function onSuccess(data){
+          displayMessage("Password Reset Successfully");
+          $("#newpassword").val("");
+          $("#confirmpassword").val("");
+        }
+        function onFailure(error){
+          if(error == "InvalidResetToken"){
+            displayMessage("Invalid Reset Token");
           }
         }
-        function failure(data){
+        mirror.resetPassword(resetToken, newpassword, 
+          function (error, response) {
+            if (error == null){
+              onSuccess(response);
+            }
+            else {
+              onFailure(error);
+            }
         }
-        mirror.resetPassword("AdminAPI", resetToken, newpassword, success, failure);
+      );
       }
   });
 
 $(document).ready(function(){
-  function success(status,data) {
-  if(status == 'ResetTokenValidationSuccess') {
-  
+
+  function onSuccess(data){
   }
-  else {
+
+  function onFailure(error){
+    if(error == "InvalidResetToken"){
+      displayMessage("Invalid Reset Token");
+    }
     $(".error-message").html(status);
-    window.location.href='/login';
+    window.location.href='/knowledge/login';
+
   }
+  mirror.validateResetToken("71546293895338817723334292533594853377", 
+    function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
   }
-  function failure(data){
-  }
-  mirror.validateResetToken("AdminAPI", "71546293895338817723334292533594853377", success, failure)
-  });
+);
+});

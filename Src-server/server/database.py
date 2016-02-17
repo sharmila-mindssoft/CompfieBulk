@@ -23,7 +23,7 @@ __all__ = [
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0])
 KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
-FORMAT_DOWNLOAD_URL = "knowledge/compliance_format"
+FORMAT_DOWNLOAD_URL = "compliance_format"
 CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
 LOGO_URL = "knowledge/clientlogo"
 
@@ -57,18 +57,18 @@ class Database(object) :
     }
 
     string_months = {
-         1 : "Jan",
-         2 : "Feb",
-         3 : "Mar",
-         4 : "Apr",
-         5 : "May",
-         6 : "Jun",
-         7 : "Jul",
-         8 : "Aug",
-         9 : "Sep",
-         10 : "Oct",
-         11 : "Nov",
-         12 : "Dec",
+        1 : "January",
+        2 : "February",
+        3 : "March",
+        4 : "April",
+        5 : "May",
+        6 : "June",
+        7 : "July",
+        8 : "August",
+        9 : "September",
+        10 : "October",
+        11 : "November",
+        12 : "December",
     }
 
     end_day_of_month = {
@@ -156,7 +156,6 @@ class Database(object) :
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        print query
         # if client_id is not None:
         #     return self.select_all(query, client_id)
         return self.select_all(query)
@@ -2054,8 +2053,11 @@ class KnowledgeDatabase(Database):
 
             else :
                 file_list = None
+                file_download = None
 
-            compliance_names.append(name)
+            compliance_names.append(core.Compliance_Download(name, file_download))
+
+            # compliance_names.append(name)
             compliance = core.Compliance(
                 d["compliance_id"], d["statutory_provision"],
                 compliance_task, d["compliance_description"],
@@ -2849,7 +2851,7 @@ class KnowledgeDatabase(Database):
         condition = "user_group_id in (select group_concat(user_group_id) from \
              %s where form_category_id = 3)" % self.tblUserGroups
         rows = self.get_data(self.tblUsers, columns, condition)
-        return rows      
+        return rows
 
     def return_users(self, condition = "1"):
         user_rows = self.get_users(condition)
@@ -2989,7 +2991,7 @@ class KnowledgeDatabase(Database):
 
     def is_duplicate_short_name(self, short_name, client_id):
         condition = "url_short_name ='%s' AND client_id != '%d'" % (short_name, client_id)
-        return self.is_already_exists(self.tblClientGroups, condition)        
+        return self.is_already_exists(self.tblClientGroups, condition)
 
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
@@ -3011,7 +3013,7 @@ class KnowledgeDatabase(Database):
             logo_url = "%s/%s" % (LOGO_URL, client_row[3])
             contract_from = self.datetime_to_string(client_row[4])
             contract_to  = self.datetime_to_string(client_row[5])
-            no_of_user_licence = client_row[6] 
+            no_of_user_licence = client_row[6]
             total_disk_space = client_row[7] / 1000000000
             is_sms_subscribed = True if client_row[8]==1 else False
             incharge_persons = [int(x) for x in client_row[9].split(",")]
@@ -3020,9 +3022,9 @@ class KnowledgeDatabase(Database):
             country_ids = [int(x) for x in self.get_client_countries(client_id).split(",")]
             domain_ids = [int(x) for x in self.get_client_domains(client_id).split(",")]
             date_configurations = self.get_date_configurations(client_id)
-            client_list.append(core.GroupCompanyDetail(client_id, group_name, domain_ids, 
-                country_ids, incharge_persons, original_file_name, logo_url, contract_from, 
-                contract_to, no_of_user_licence, total_disk_space, is_sms_subscribed, email_id, 
+            client_list.append(core.GroupCompanyDetail(client_id, group_name, domain_ids,
+                country_ids, incharge_persons, original_file_name, logo_url, contract_from,
+                contract_to, no_of_user_licence, total_disk_space, is_sms_subscribed, email_id,
                 is_active, short_name, date_configurations))
         return client_list
 
@@ -3759,7 +3761,7 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_clients t3 \
             ON t1.client_id = t3.client_id \
             AND t3.user_id = %s \
-            AND t2.client_id = %s" % (
+            AND t2.country_id = %s" % (
                 user_id, country_id
             )
         rows = self.select_all(query)

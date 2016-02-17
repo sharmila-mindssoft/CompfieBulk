@@ -44,7 +44,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_CustomTextType_100,
     parse_structure_EnumType_core_NOT_COMPLIED_TYPE,
     parse_structure_OptionalType_VectorType_CustomTextType_100,
-    parse_structure_OptionalType_Text
+    parse_structure_OptionalType_Text,
+    parse_structure_VectorType_RecordType_core_Compliance_Download
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -96,7 +97,8 @@ from protocol.to_structure import (
     to_structure_VectorType_CustomTextType_100,
     to_structure_EnumType_core_NOT_COMPLIED_TYPE,
     to_structure_OptionalType_VectorType_CustomTextType_100,
-    to_structure_OptionalType_Text
+    to_structure_OptionalType_Text,
+    to_structure_VectorType_RecordType_core_Compliance_Download
 )
 
 #
@@ -369,15 +371,15 @@ class COMPLIANCE_STATUS(object):
 
 class APPLICABILITY_STATUS(object):
     Applicable = "Applicable"
-    NotApplicable = "NotApplicable"
-    NotOpted = "NotOpted"
+    NotApplicable = "Not Applicable"
+    NotOpted = "Not Opted"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Applicable", "NotApplicable", "NotOpted"]
+        return ["Applicable", "Not Applicable", "Not Opted"]
 
     def value(self):
         return self._value
@@ -980,6 +982,25 @@ class FileList(object):
 # Compliance
 #
 
+class Compliance_Download(object):
+    def __init__(self, compliance_name, url):
+        self.compliance_name = compliance_name
+        self.url = url
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["compliance_name", 'url'])
+        compliance_name = data.get("compliance_name")
+        compliance_name = parse_structure_CustomTextType_100(compliance_name)
+        url = data.get("url")
+        url = parse_structure_OptionalType_CustomTextType_500(url)
+
+    def to_structure(self):
+        return {
+            "compliance_name": self.compliance_name,
+            "url": self.url
+        }
+
 class Compliance(object):
     def __init__(
         self, compliance_id, statutory_provision,
@@ -1120,7 +1141,7 @@ class StatutoryMapping(object):
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
         compliance_names = data.get("compliance_names")
-        compliance_names = parse_structure_VectorType_Text(compliance_names)
+        compliance_names = parse_structure_VectorType_RecordType_core_Compliance_Download(compliance_names)
         geography_ids = data.get("geography_ids")
         geography_ids = parse_structure_VectorType_SignedIntegerType_8(geography_ids)
         geography_mappings = data.get("geography_mappings")
@@ -1144,7 +1165,7 @@ class StatutoryMapping(object):
             "statutory_ids": to_structure_VectorType_SignedIntegerType_8(self.statutory_ids),
             "statutory_mappings": to_structure_VectorType_Text(self.statutory_mappings),
             "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
-            "compliance_names": to_structure_VectorType_Text(self.compliance_names),
+            "compliance_names": to_structure_VectorType_RecordType_core_Compliance_Download(self.compliance_names),
             "geography_ids": to_structure_VectorType_SignedIntegerType_8(self.geography_ids),
             "geography_mappings": to_structure_VectorType_Text(self.geography_mappings),
             "approval_status": to_structure_SignedIntegerType_8(self.approval_status),
@@ -1217,9 +1238,9 @@ class GroupCompanyDetail(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "client_name", "domain_ids", 
-            "country_ids", "incharge_persons", "file_name", "logo", "contract_from", "contract_to", 
-            "no_of_user_licence", "total_disk_space", "is_sms_subscribed", "username", 
+        data = parse_dictionary(data, ["client_id", "client_name", "domain_ids",
+            "country_ids", "incharge_persons", "file_name", "logo", "contract_from", "contract_to",
+            "no_of_user_licence", "total_disk_space", "is_sms_subscribed", "username",
             "is_active", "short_name"])
         client_id = data.get("client_id")
         client_id = parse_structure_UnsignedIntegerType_32(client_id)
@@ -2526,13 +2547,13 @@ class ComplianceApprovalStatus(object):
         approval_status_id = data.get("approval_status_id")
         approval_status_id = parse_structure_UnsignedIntegerType_32(approval_status_id)
         approval_status = data.get("approval_status")
-        approval_status = parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(approval_status)
+        approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(approval_status)
         return ComplianceApprovalStatus(approval_status_id, approval_status)
 
     def to_structure(self):
         return {
             "approval_status_id": to_structure_SignedIntegerType_8(self.approval_status_id),
-            "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
+            "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
         }
 
 #
