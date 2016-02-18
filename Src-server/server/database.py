@@ -1518,14 +1518,20 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return result
 
-    def check_duplicate_statutory(self, parent_ids, statutory_id) :
-        query = "SELECT statutory_id, statutory_name, level_id \
-            FROM tbl_statutories WHERE parent_ids='%s' " % (parent_ids)
+    def check_duplicate_statutory(self, parent_ids, statutory_id, domain_id=None) :
+        query = "SELECT T1.statutory_id, T1.statutory_name, T1.level_id, T2.domain_id \
+            FROM tbl_statutories T1 \
+            INNER JOIN tbl_statutory_levels T2\
+            ON T1.level_id = T2.level_id \
+            WHERE T1.parent_ids='%s' " % (parent_ids)
         if statutory_id is not None :
-            query = query + " AND statutory_id != %s" % statutory_id
+            query = query + " AND T1.statutory_id != %s" % statutory_id
+
+        if domain_id is not None :
+            query = query + " AND domain_id = %s" % (domain_id)
 
         rows = self.select_all(query)
-        columns = ["statutory_id", "statutory_name", "level_id"]
+        columns = ["statutory_id", "statutory_name", "level_id", "domain_id"]
         result = []
         if rows :
             result = self.convert_to_dict(rows, columns)
