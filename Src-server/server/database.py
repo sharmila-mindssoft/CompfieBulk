@@ -2146,6 +2146,9 @@ class KnowledgeDatabase(Database):
             self.save_statutory_statutories_id(
                 statutory_mapping_id, data.statutory_ids, True
             )
+            notification_log_text = "Statutory mapping created"
+            link = "/knowledge/statutory-mapping"
+            self.save_notifications(notification_log_text, link)
             action = "New statutory mappings added"
             self.save_activity(created_by, 17, action)
             return True
@@ -2628,7 +2631,7 @@ class KnowledgeDatabase(Database):
         if approval_status == 2 :
             #Rejected
             columns.extend(["rejected_reason"])
-            values.extend(["rejected_reason"])
+            values.extend([rejected_reason])
             # query = "UPDATE tbl_statutory_mappings set \
             #     approval_status='%s', rejected_reason='%s', \
             #     updated_by=%s WHERE \
@@ -2658,7 +2661,7 @@ class KnowledgeDatabase(Database):
             notification_log_text = "Statutory Mapping: %s \
                 has been Approve & Notified" % (provision)
 
-        link = "/statutorymapping/list"
+        link = "/knowledge/statutory-mapping"
         self.save_notifications(notification_log_text, link)
         action = "Statutory Mapping approval status changed"
         self.save_activity(updated_by, 17, action)
