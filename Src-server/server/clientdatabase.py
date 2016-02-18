@@ -5990,6 +5990,56 @@ class ClientDatabase(Database):
         return result
 
 
+
+
+    def get_client_details_report(self, country_id,  business_group_id,
+            legal_entity_id, division_id, unit_id, domain_ids):
+
+        condition = "country_id = '%d' "%(country_id)
+        if business_group_id is not None:
+            condition += " AND business_group_id = '%d'" % business_group_id
+        if legal_entity_id is not None:
+            condition += " AND legal_entity_id = '%d'" % legal_entity_id
+        if division_id is not None:
+            condition += " AND division_id = '%d'" % division_id
+        if unit_id is not None:
+            condition += " AND unit_id = '%d'" % unit_id
+        if domain_ids is not None:
+            for domain_id in domain_ids:
+                condition += " AND  ( domain_ids LIKE  '%,"+str(domain_id)+",%' "+\
+                            "or domain_ids LIKE  '%,"+str(domain_id)+"' "+\
+                            "or domain_ids LIKE  '"+str(domain_id)+",%'"+\
+                            " or domain_ids LIKE '"+str(domain_id)+"') "
+
+        group_by_columns = "business_group_id, legal_entity_id, division_id"
+        group_by_condition = condition+" group by business_group_id, legal_entity_id, division_id"
+        group_by_rows = self.get_data(self.tblUnits, group_by_columns, group_by_condition)
+        GroupedUnits = []
+        for row in group_by_rows:
+            columns = "unit_id, unit_code, unit_name, geography, "\
+            "address, domain_ids, postal_code"
+          
+            where_condition = "legal_entity_id = '%d' "% row[1]
+            if row[0] == None:
+                where_condition += " And business_group_id is NULL"
+            else:
+                where_condition += " And business_group_id = '%d'" % row[0]
+            if row[2] == None:
+                where_condition += " And division_id is NULL"
+            else:
+                where_condition += " And division_id = '%d'" % row[2]
+            if unit_id is not None:
+                where_condition += " AND unit_id = '%d'" % unit_id
+            result_rows = self.get_data(self.tblUnits, columns,  where_condition)
+            units = []
+            for result_row in result_rows:
+                units.append(clientreport.UnitDetails(result_row[0], result_row[3], result_row[1],
+                    result_row[2], result_row[4], result_row[6],
+                    [int(x) for x in result_row[5].split(",")]))
+            GroupedUnits.append(clientreport.GroupedUnits(row[2], row[1], row[0], units))
+        return GroupedUnits
+
+
     def get_user_assigned_reassigned_ids(self, user_id):
         columns = "group_concat(compliance_id)"
         condition = " assignee = '{}' ".format(
@@ -6014,6 +6064,7 @@ class ClientDatabase(Database):
         if reassigned_rows:
             reassigned_compliance_ids = reassigned_rows[0][0]
         return assigned_compliance_ids, reassigned_compliance_ids
+
 
 #
 #   Email
@@ -6316,3 +6367,4 @@ class ClientDatabase(Database):
         return clientreport.GetComplianceTaskApplicabilityStatusReportSuccess(
             applicable_list, not_applicable_list, not_opted_list
         )
+>>>>>>> 057f052fe46af98bfd339d782af0f91c0c1adc7d
