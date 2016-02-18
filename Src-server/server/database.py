@@ -57,18 +57,18 @@ class Database(object) :
     }
 
     string_months = {
-        1 : "January",
-        2 : "February",
-        3 : "March",
-        4 : "April",
+        1 : "Jan",
+        2 : "Feb",
+        3 : "Mar",
+        4 : "Apr",
         5 : "May",
-        6 : "June",
-        7 : "July",
-        8 : "August",
-        9 : "September",
-        10 : "October",
-        11 : "November",
-        12 : "December",
+        6 : "Jun",
+        7 : "Jul",
+        8 : "Aug",
+        9 : "Sep",
+        10 : "Oct",
+        11 : "Nov",
+        12 : "Dec",
     }
 
     end_day_of_month = {
@@ -183,6 +183,8 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
+        print query
+        print
         # if client_id is not None:
         #     return self.select_all(query, client_id)
         return self.select_all(query)
@@ -1516,14 +1518,20 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return result
 
-    def check_duplicate_statutory(self, parent_ids, statutory_id) :
-        query = "SELECT statutory_id, statutory_name, level_id \
-            FROM tbl_statutories WHERE parent_ids='%s' " % (parent_ids)
+    def check_duplicate_statutory(self, parent_ids, statutory_id, domain_id=None) :
+        query = "SELECT T1.statutory_id, T1.statutory_name, T1.level_id, T2.domain_id \
+            FROM tbl_statutories T1 \
+            INNER JOIN tbl_statutory_levels T2\
+            ON T1.level_id = T2.level_id \
+            WHERE T1.parent_ids='%s' " % (parent_ids)
         if statutory_id is not None :
-            query = query + " AND statutory_id != %s" % statutory_id
+            query = query + " AND T1.statutory_id != %s" % statutory_id
+
+        if domain_id is not None :
+            query = query + " AND domain_id = %s" % (domain_id)
 
         rows = self.select_all(query)
-        columns = ["statutory_id", "statutory_name", "level_id"]
+        columns = ["statutory_id", "statutory_name", "level_id", "domain_id"]
         result = []
         if rows :
             result = self.convert_to_dict(rows, columns)
@@ -2138,6 +2146,9 @@ class KnowledgeDatabase(Database):
             self.save_statutory_statutories_id(
                 statutory_mapping_id, data.statutory_ids, True
             )
+            notification_log_text = "Statutory mapping created"
+            link = "/knowledge/statutory-mapping"
+            self.save_notifications(notification_log_text, link)
             action = "New statutory mappings added"
             self.save_activity(created_by, 17, action)
             return True
@@ -2391,12 +2402,13 @@ class KnowledgeDatabase(Database):
         compliance_ids = []
         for data in datas :
             compliance_id = data.compliance_id
-            saved_file = self.get_saved_format_file(compliance_id)
 
             if (compliance_id is None) :
                 ids = self.save_compliance(mapping_id, [data], updated_by)
                 compliance_ids.extend(ids)
                 continue
+            else :
+                saved_file = self.get_saved_format_file(compliance_id)
             provision = data.statutory_provision
             compliance_task = data.compliance_task
             description = data.description
@@ -2619,7 +2631,7 @@ class KnowledgeDatabase(Database):
         if approval_status == 2 :
             #Rejected
             columns.extend(["rejected_reason"])
-            values.extend(["rejected_reason"])
+            values.extend([rejected_reason])
             # query = "UPDATE tbl_statutory_mappings set \
             #     approval_status='%s', rejected_reason='%s', \
             #     updated_by=%s WHERE \
@@ -2649,7 +2661,7 @@ class KnowledgeDatabase(Database):
             notification_log_text = "Statutory Mapping: %s \
                 has been Approve & Notified" % (provision)
 
-        link = "/statutorymapping/list"
+        link = "/knowledge/statutory-mapping"
         self.save_notifications(notification_log_text, link)
         action = "Statutory Mapping approval status changed"
         self.save_activity(updated_by, 17, action)

@@ -57,7 +57,7 @@
               <div class="single-column-field-label">Group:<span class="mandatory">*</span></div>
               <div class="single-column-field-input">
                 <input type="hidden" id="client-unit-id" value="">
-                <Select id="group-select" class="input-box" onchange="loadBusinessGroups(this.value);" >
+                <Select id="group-select" class="input-box" onchange="loadBusinessGroups();loadLegalEntity();" >
                   <option value="">Select</option>
                 </Select>
               </div>
@@ -65,7 +65,7 @@
             <div class="input-row">
               <div class="single-column-field-label">Business Group</div>
               <div class="single-column-field-input">
-                <Select id="businessgroup-select" class="input-box" onchange="loadLegalEntity(this.value);">
+                <Select id="businessgroup-select" class="input-box" onchange="loadLegalEntity();">
                   <option value="">Select</option>
                 </Select>
                 <input id="businessgroup-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Business Group Name">

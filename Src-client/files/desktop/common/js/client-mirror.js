@@ -1201,8 +1201,17 @@ function initClientMirror() {
 
     }
     function getAssigneewiseCompliancesDrilldown(
+        assignee_id, domain_id
     ){
-         
+        var request = [
+            "GetAssigneeWiseComplianceDrillDown",
+            {
+                "assignee_id": assignee_id,
+                "domain_id": domain_id
+            }
+        ];
+        callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);   
     }
 
 

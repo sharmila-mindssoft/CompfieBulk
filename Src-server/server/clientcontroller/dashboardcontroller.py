@@ -52,6 +52,8 @@ def process_client_dashboard_requests(request, db) :
         return process_assigneewise_compliances_filters(db, request, session_user, client_id)
     elif type(request) is dashboard.GetAssigneeWiseCompliancesChart :
         return process_assigneewise_compliances(db, request, session_user, client_id)
+    elif type(request) is dashboard.GetAssigneeWiseComplianceDrillDown :
+        return process_assigneewise_compliances_drilldown(db, request, session_user, client_id)
 
         
 
@@ -166,4 +168,19 @@ def process_assigneewise_compliances(db, request, session_user, client_id):
     )
     return dashboard.GetAssigneeWiseCompliancesChartSuccess(
         chart_data = chart_data
+    )
+
+def process_assigneewise_compliances_drilldown(
+    db, request, session_user, client_id
+):
+    assignee_id = request.assignee_id
+    domain_id = request.domain_id
+    complied, delayed, inprogress, not_complied = db.get_assigneewise_compliances_drilldown_data(
+        assignee_id, domain_id, client_id
+    )
+    return dashboard.GetAssigneeWiseComplianceDrillDownSuccess(
+        complied= complied,
+        delayed=delayed,
+        inprogress=inprogress, 
+        not_complied=not_complied
     )

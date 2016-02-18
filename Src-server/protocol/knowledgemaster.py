@@ -375,24 +375,28 @@ class GetStatutories(Request):
         }
 
 class SaveStatutory(Request):
-    def __init__(self, statutory_level_id, statutory_name, parent_ids):
+    def __init__(self, domain_id, statutory_level_id, statutory_name, parent_ids):
+        self.domain_id = domain_id
         self.statutory_level_id = statutory_level_id
         self.statutory_name = statutory_name
         self.parent_ids = parent_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_level_id", "statutory_name", "parent_ids"])
+        data = parse_dictionary(data, ["domain_id", "statutory_level_id", "statutory_name", "parent_ids"])
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_SignedIntegerType_8(domain_id)
         statutory_level_id = data.get("statutory_level_id")
         statutory_level_id = parse_structure_UnsignedIntegerType_32(statutory_level_id)
         statutory_name = data.get("statutory_name")
         statutory_name = parse_structure_CustomTextType_50(statutory_name)
         parent_ids = data.get("parent_ids")
         parent_ids = parse_structure_VectorType_SignedIntegerType_8(parent_ids)
-        return SaveStatutory(statutory_level_id, statutory_name, parent_ids)
+        return SaveStatutory(domain_id, statutory_level_id, statutory_name, parent_ids)
 
     def to_inner_structure(self):
         return {
+            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
             "statutory_level_id": to_structure_SignedIntegerType_8(self.statutory_level_id),
             "statutory_name": to_structure_CustomTextType_50(self.statutory_name),
             "parent_ids": to_structure_VectorType_SignedIntegerType_8(self.parent_ids),
