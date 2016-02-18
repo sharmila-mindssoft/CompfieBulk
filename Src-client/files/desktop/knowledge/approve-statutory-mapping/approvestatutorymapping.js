@@ -236,7 +236,7 @@ function loadApproveStatutory(){
         $('.statutory', clone).html(statutoryMappings);
         var complianceNames='';
         for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
-          complianceNames = complianceNames + '<a href="#popup1" onclick="disppopup('+statutorymappingId+','+i+')">'+(i+1)+'. '+statutoryMappingsList[entity]["compliance_names"][i]+'</a>';
+          complianceNames = complianceNames + '<a href="#popup1" onclick="disppopup('+statutorymappingId+','+i+')">'+(i+1)+'. '+statutoryMappingsList[entity]["compliance_names"][i]['compliance_name']+'</a>';
         }
         $('.compliancetask', clone).html(complianceNames);
         $('.applicablelocation', clone).text(applicableLocation);
