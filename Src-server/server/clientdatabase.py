@@ -5646,7 +5646,7 @@ class ClientDatabase(Database):
         return unit_wise_compliances
 
 #
-#   Get Details Report
+#   Assigee wise compliance chart
 #
     def get_assigneewise_compliances_list(
         self, country_id, business_group_id, legal_entity_id, division_id, unit_id,
@@ -5810,6 +5810,163 @@ class ClientDatabase(Database):
                 )
             )
         return chart_data
+
+    def get_assigneewise_compliances_drilldown_data(self, assignee_id, domain_id, client_id):
+        level_1_statutories_list = self.get_level_1_statutories_for_user(
+            assignee_id, client_id, domain_id
+        )
+
+        assigned, reassigned = self.get_user_assigned_reassigned_ids(assignee_id)
+        compliance_ids = "%s, %s" % (assigned, reassigned)
+
+        unit_ids = self.get_user_unit_ids(assignee_id)
+        complied_unit_wise_compliances = []
+        delayed_unit_wise_compliances = []
+        inprogress_unit_wise_compliances = []
+        not_complied_unit_wise_compliances = []
+        for unit_id in [int(x) for x in unit_ids.split(",")]:
+            country_id_columns = "country_id"
+            country_id_condition = "unit_id = '%d'" % unit_id
+            rows = self.get_data(self.tblUnits, country_id_columns, country_id_condition)
+            country_id = rows[0][0]
+            current_year = self.get_date_time().year
+            result = self.get_country_domain_timelines(
+                [country_id], [domain_id], [current_year], client_id
+            )
+            from_date = result[0][1][0][1][0]["start_date"]
+            to_date = result[0][1][0][1][0]["end_date"]
+            complied_compliances = {}
+            delayed_compliances = {}
+            inprogress_compliances = {}
+            not_complied_compliances = {}
+            for level_1_statutory in level_1_statutories_list:
+                complied_level_1_statutory_wise_compliances = []
+                delayed_level_1_statutory_wise_compliances = []
+                inprogress_level_1_statutory_wise_compliances = []
+                not_complied_level_1_statutory_wise_compliances = []
+
+                columns = "ch.compliance_id, start_date, due_date, completed_on, \
+                concat(document_name, '-', compliance_task), compliance_description, statutory_mapping "
+                tables = [self.tblComplianceHistory, self.tblCompliances]
+                aliases = ["ch", "c"]
+                join_type = "inner join"
+                join_condition = ["ch.compliance_id = c.compliance_id"]
+                where_condition = "completed_by = '{}' and unit_id = {} and \
+                due_date  between '{}' and '{}' and statutory_mapping like '%s%s'".format(
+                    assignee_id, unit_id, from_date, to_date, level_1_statutory, "%"
+                )
+
+                complied_condition = "%s and approve_status = 1 and completed_on <= due_date" % where_condition
+                delayed_condition = "%s and approve_status = 1 and completed_on > due_date" % where_condition
+                inprogress_condition = "%s and (approve_status = 0 or approve_status is null) and \
+                due_date > now()" % where_condition
+                not_complied_condition = "%s and (approve_status = 0 or approve_status is null) and \
+                due_date < now()" % where_condition
+
+                complied_rows = self.get_data_from_multiple_tables(
+                    columns, tables, aliases, join_type,join_condition, complied_condition
+                )
+                delayed_rows = self.get_data_from_multiple_tables(
+                    columns, tables, aliases, join_type,join_condition, delayed_condition
+                )
+                inprogress_rows = self.get_data_from_multiple_tables(
+                    columns, tables, aliases, join_type,join_condition, inprogress_condition
+                )
+                not_complied_rows = self.get_data_from_multiple_tables(
+                    columns, tables, aliases, join_type,join_condition, not_complied_condition
+                )
+
+                for compliance in complied_rows:
+                    complied_level_1_statutory_wise_compliances.append(
+                        dashboard.Level1Compliance(
+                            compliance_name=compliance[4], description=compliance[5], 
+                            assignee_name=self.get_user_name_by_id(assignee_id), 
+                            assigned_date=compliance[1], due_date=compliance[2], 
+                            completion_date=compliance[3]
+                        )
+                    )
+                if len(complied_level_1_statutory_wise_compliances) > 0:
+                    complied_compliances[level_1_statutory] = complied_level_1_statutory_wise_compliances
+
+                for compliance in delayed_rows:
+                    delayed_level_1_statutory_wise_compliances.append(
+                        dashboard.Level1Compliance(
+                            compliance_name=compliance[4], description=compliance[5], 
+                            assignee_name=self.get_user_name_by_id(assignee_id), 
+                            assigned_date=compliance[1], due_date=compliance[2], 
+                            completion_date=compliance[3]
+                        )
+                    )
+                if len(delayed_level_1_statutory_wise_compliances) > 0:
+                    delayed_compliances[level_1_statutory] = delayed_level_1_statutory_wise_compliances
+
+                for compliance in inprogress_rows:
+                    inprogress_level_1_statutory_wise_compliances.append(
+                        dashboard.Level1Compliance(
+                            compliance_name=compliance[4], description=compliance[5], 
+                            assignee_name=self.get_user_name_by_id(assignee_id), 
+                            assigned_date=compliance[1], due_date=compliance[2], 
+                            completion_date=compliance[3]
+                        )
+                    )
+                if len(inprogress_level_1_statutory_wise_compliances) > 0:
+                    inprogress_compliances[level_1_statutory] = inprogress_level_1_statutory_wise_compliances
+
+                for compliance in not_complied_rows:
+                    not_complied_level_1_statutory_wise_compliances.append(
+                        dashboard.Level1Compliance(
+                            compliance_name=compliance[4], description=compliance[5], 
+                            assignee_name=self.get_user_name_by_id(assignee_id), 
+                            assigned_date=compliance[1], due_date=compliance[2], 
+                            completion_date=compliance[3]
+                        )
+                    )
+                if len(not_complied_level_1_statutory_wise_compliances) > 0:
+                    not_complied_compliances[level_1_statutory] = not_complied_level_1_statutory_wise_compliances
+
+            unit_columns = "unit_id, concat(unit_code, '-', unit_name), address"
+            unit_condition = " unit_id = %d" % unit_id
+            unit_details = self.get_data(
+                self.tblUnits, unit_columns, unit_condition
+            )
+
+            if len(complied_compliances) > 0:
+                complied_unit_wise_compliances.append(
+                    dashboard.UnitCompliance(
+                        unit_name=unit_details[0][1], 
+                        address=unit_details[0][2], 
+                        compliances=complied_compliances
+                    )
+                )
+            if len(delayed_compliances) > 0:
+                delayed_unit_wise_compliances.append(
+                    dashboard.UnitCompliance(
+                        unit_name=unit_details[0][1], 
+                        address=unit_details[0][2], 
+                        compliances=delayed_compliances
+                    )
+                )
+            if len(inprogress_compliances) > 0: 
+                inprogress_unit_wise_compliances.append(
+                    dashboard.UnitCompliance(
+                        unit_name=unit_details[0][1], 
+                        address=unit_details[0][2], 
+                        compliances=inprogress_compliances
+                    )
+                )
+            if len(not_complied_compliances) > 0:
+                not_complied_unit_wise_compliances.append(
+                    dashboard.UnitCompliance(
+                        unit_name=unit_details[0][1], 
+                        address=unit_details[0][2], 
+                        compliances=not_complied_compliances
+                    )
+                )
+        return (
+            complied_unit_wise_compliances, delayed_unit_wise_compliances, 
+            inprogress_unit_wise_compliances, not_complied_unit_wise_compliances
+        )
+
 
     def get_unit_user_ids(self, unit_id, client_id=None):
         columns = "group_concat(user_id)"

@@ -577,6 +577,13 @@
 					unit_id, user_id, callback
 				);
 			}
+			function getAssigneewiseComplianesDrillDown(){
+				user_id = 3
+				domain_id = 1
+				client_mirror.getAssigneewiseCompliancesDrilldown(
+					user_id, domain_id
+				);
+			}
 		</script>
 	</head>
 	<body>
@@ -880,7 +887,7 @@
 				<button onclick="getAssigneewiseComplianes()">
 					Get Assignee Wise Compliances
 				</button>
-				<button onclick="getAssigneewiseComplianeDrillDown()">
+				<button onclick="getAssigneewiseComplianesDrillDown()">
 					Get Assignee Wise Compliances Drill Down
 				</button>
 			</div>

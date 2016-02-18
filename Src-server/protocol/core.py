@@ -1461,21 +1461,21 @@ class ClientDivision(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["division_id", "division_name", "legal_entity_id", "business_group_id"])
         division_id = data.get("division_id")
-        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
+        division_id = parse_structure_UnsignedIntegerType_32(division_id)
         division_name = data.get("division_name")
         division_name = parse_structure_CustomTextType_50(division_name)
         legal_entity_id = data.get("legal_entity_id")
         legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_UnsignedIntegerType_32(business_group_id)
+        business_group_id = parse_structure_OptionalType_UnsignedIntegerType_32(business_group_id)
         return Division(division_id, division_name, legal_entity_id, business_group_id)
 
     def to_structure(self):
         return {
-            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
+            "division_id": to_structure_UnsignedIntegerType_8(self.division_id),
             "division_name": to_structure_CustomTextType_50(self.division_name),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
-            "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
+            "legal_entity_id": to_structure_UnsignedIntegerType_8(self.legal_entity_id),
+            "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
         }
 
 #
@@ -1519,10 +1519,10 @@ class Unit(object):
 
     def to_structure(self):
         return {
-            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
-            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
-            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
+            "division_id": to_structure_OptionalType_UnsignedIntegerType_32(self.division_id),
+            "legal_entity_id": to_structure_UnsignedIntegerType_8(self.legal_entity_id),
+            "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
             "unit_code": to_structure_CustomTextType_20(self.unit_code),
             "unit_name": to_structure_CustomTextType_50(self.unit_name),
