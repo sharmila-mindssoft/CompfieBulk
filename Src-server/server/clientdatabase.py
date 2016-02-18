@@ -1975,7 +1975,8 @@ class ClientDatabase(Database):
             (SELECT distinct U.compliance_id, group_concat(distinct U.unit_id) units FROM  \
             (SELECT A.unit_id, A.client_statutory_id, B.compliance_id FROM tbl_client_statutories A \
             INNER JOIN tbl_client_compliances B \
-            ON A.client_statutory_id = B.client_statutory_id) U \
+            ON A.client_statutory_id = B.client_statutory_id \
+            AND A.unit_id IN %s) U \
             group by U.compliance_id )UC \
             ON t2.compliance_id = UC.compliance_id \
             WHERE \
@@ -1989,8 +1990,10 @@ class ClientDatabase(Database):
             AND t5.user_id LIKE '%s'; " % (
                 str(tuple(unit_ids)),
                 str(tuple(unit_ids)),
+                str(tuple(unit_ids)),
                 session_user
             )
+
         rows = self.select_all(query)
         columns = [
             "compliance_id", "domain_id", "units",
@@ -5888,9 +5891,9 @@ class ClientDatabase(Database):
                 for compliance in complied_rows:
                     complied_level_1_statutory_wise_compliances.append(
                         dashboard.Level1Compliance(
-                            compliance_name=compliance[4], description=compliance[5], 
-                            assignee_name=self.get_user_name_by_id(assignee_id), 
-                            assigned_date=compliance[1], due_date=compliance[2], 
+                            compliance_name=compliance[4], description=compliance[5],
+                            assignee_name=self.get_user_name_by_id(assignee_id),
+                            assigned_date=compliance[1], due_date=compliance[2],
                             completion_date=compliance[3]
                         )
                     )
@@ -5900,9 +5903,9 @@ class ClientDatabase(Database):
                 for compliance in delayed_rows:
                     delayed_level_1_statutory_wise_compliances.append(
                         dashboard.Level1Compliance(
-                            compliance_name=compliance[4], description=compliance[5], 
-                            assignee_name=self.get_user_name_by_id(assignee_id), 
-                            assigned_date=compliance[1], due_date=compliance[2], 
+                            compliance_name=compliance[4], description=compliance[5],
+                            assignee_name=self.get_user_name_by_id(assignee_id),
+                            assigned_date=compliance[1], due_date=compliance[2],
                             completion_date=compliance[3]
                         )
                     )
@@ -5912,9 +5915,9 @@ class ClientDatabase(Database):
                 for compliance in inprogress_rows:
                     inprogress_level_1_statutory_wise_compliances.append(
                         dashboard.Level1Compliance(
-                            compliance_name=compliance[4], description=compliance[5], 
-                            assignee_name=self.get_user_name_by_id(assignee_id), 
-                            assigned_date=compliance[1], due_date=compliance[2], 
+                            compliance_name=compliance[4], description=compliance[5],
+                            assignee_name=self.get_user_name_by_id(assignee_id),
+                            assigned_date=compliance[1], due_date=compliance[2],
                             completion_date=compliance[3]
                         )
                     )
@@ -5924,9 +5927,9 @@ class ClientDatabase(Database):
                 for compliance in not_complied_rows:
                     not_complied_level_1_statutory_wise_compliances.append(
                         dashboard.Level1Compliance(
-                            compliance_name=compliance[4], description=compliance[5], 
-                            assignee_name=self.get_user_name_by_id(assignee_id), 
-                            assigned_date=compliance[1], due_date=compliance[2], 
+                            compliance_name=compliance[4], description=compliance[5],
+                            assignee_name=self.get_user_name_by_id(assignee_id),
+                            assigned_date=compliance[1], due_date=compliance[2],
                             completion_date=compliance[3]
                         )
                     )
@@ -5942,37 +5945,37 @@ class ClientDatabase(Database):
             if len(complied_compliances) > 0:
                 complied_unit_wise_compliances.append(
                     dashboard.UnitCompliance(
-                        unit_name=unit_details[0][1], 
-                        address=unit_details[0][2], 
+                        unit_name=unit_details[0][1],
+                        address=unit_details[0][2],
                         compliances=complied_compliances
                     )
                 )
             if len(delayed_compliances) > 0:
                 delayed_unit_wise_compliances.append(
                     dashboard.UnitCompliance(
-                        unit_name=unit_details[0][1], 
-                        address=unit_details[0][2], 
+                        unit_name=unit_details[0][1],
+                        address=unit_details[0][2],
                         compliances=delayed_compliances
                     )
                 )
-            if len(inprogress_compliances) > 0: 
+            if len(inprogress_compliances) > 0:
                 inprogress_unit_wise_compliances.append(
                     dashboard.UnitCompliance(
-                        unit_name=unit_details[0][1], 
-                        address=unit_details[0][2], 
+                        unit_name=unit_details[0][1],
+                        address=unit_details[0][2],
                         compliances=inprogress_compliances
                     )
                 )
             if len(not_complied_compliances) > 0:
                 not_complied_unit_wise_compliances.append(
                     dashboard.UnitCompliance(
-                        unit_name=unit_details[0][1], 
-                        address=unit_details[0][2], 
+                        unit_name=unit_details[0][1],
+                        address=unit_details[0][2],
                         compliances=not_complied_compliances
                     )
                 )
         return (
-            complied_unit_wise_compliances, delayed_unit_wise_compliances, 
+            complied_unit_wise_compliances, delayed_unit_wise_compliances,
             inprogress_unit_wise_compliances, not_complied_unit_wise_compliances
         )
 
@@ -6018,7 +6021,7 @@ class ClientDatabase(Database):
         for row in group_by_rows:
             columns = "unit_id, unit_code, unit_name, geography, "\
             "address, domain_ids, postal_code"
-          
+
             where_condition = "legal_entity_id = '%d' "% row[1]
             if row[0] == None:
                 where_condition += " And business_group_id is NULL"
