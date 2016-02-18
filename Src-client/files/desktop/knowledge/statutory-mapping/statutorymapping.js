@@ -524,7 +524,7 @@ function saverecord(j,e){
         if(map_statutory_id.length == 0){
           map_statutory_id.push(0);
         }
-        mirror.saveStatutory(parseInt(statutorylevel_id), datavalue, map_statutory_id,
+        mirror.saveStatutory(sm_domainid, parseInt(statutorylevel_id), datavalue, map_statutory_id,
           function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -787,9 +787,16 @@ $("#temp_addcompliance").click(function() {
   var check_duplicate_status= true;
   $.each(compliances, function(index, value) {
   if (
-    (value.statutory_provision == statutory_provision) && 
-    (value.compliance_task == compliance_task) && 
+    (value.statutory_provision == statutory_provision) &&
+    (value.compliance_task == compliance_task) &&
     comp_id == '') {
+
+    if(value.statutory_provision == statutory_provision){
+      displayMessage("Statutory provision is duplicate");
+    }
+    if(value.compliance_task == compliance_task){
+      displayMessage("Compliance task is duplicate");
+    }
       check_duplicate_status = false;
   }
   });
@@ -838,8 +845,6 @@ $("#temp_addcompliance").click(function() {
   $("#uploaded_filename").html('');
   resetvalues();
   load_compliance();
-  }else{
-    displayMessage("Duplicate Compliance");
   }
   }
 });

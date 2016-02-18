@@ -455,10 +455,11 @@ function initMirror() {
 
     // statutory Mapping
 
-    function saveStatutory(levelId, name, parentIds, callback) {
+    function saveStatutory(domainId, levelId, name, parentIds, callback) {
         var request = [
             "SaveStatutory",
             {
+                "domain_id": domainId,
                 "statutory_level_id": levelId,
                 "statutory_name": name,
                 "parent_ids": parentIds

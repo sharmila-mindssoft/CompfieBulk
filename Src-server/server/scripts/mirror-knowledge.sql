@@ -528,8 +528,8 @@ CREATE TABLE `tbl_activity_log` (
 DROP TABLE IF EXISTS `tbl_notifications`;
 CREATE TABLE `tbl_notifications` (
   `notification_id` int(11) NOT NULL,
-  `notification_text` varchar(250) DEFAULT NULL,
-  `link` varchar(100) DEFAULT NULL,
+  `notification_text` longtext DEFAULT NULL,
+  `link` varchar(500) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
