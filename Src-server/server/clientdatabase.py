@@ -6210,4 +6210,4 @@ class ClientDatabase(Database):
         return clientreport.GetComplianceTaskApplicabilityStatusReportSuccess(
             applicable_list, not_applicable_list, not_opted_list
         )
->>>>>>> 057f052fe46af98bfd339d782af0f91c0c1adc7d
+
