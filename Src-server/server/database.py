@@ -23,7 +23,7 @@ __all__ = [
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0])
 KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
-FORMAT_DOWNLOAD_URL = "knowledge/compliance_format"
+FORMAT_DOWNLOAD_URL = "compliance_format"
 CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
 LOGO_URL = "knowledge/clientlogo"
 
@@ -307,6 +307,11 @@ class Database(object) :
         password = self.generate_random()
         password = "123456"
         return self.encrypt(password)
+
+    def generate_and_return_password(self):
+        password = self.generate_random()
+        password = "123456"
+        return self.encrypt(password), password
 
     def encrypt(self, value):
         m = hashlib.md5()
@@ -2048,8 +2053,11 @@ class KnowledgeDatabase(Database):
 
             else :
                 file_list = None
+                file_download = None
 
-            compliance_names.append(name)
+            compliance_names.append(core.Compliance_Download(name, file_download))
+
+            # compliance_names.append(name)
             compliance = core.Compliance(
                 d["compliance_id"], d["statutory_provision"],
                 compliance_task, d["compliance_description"],
@@ -2885,7 +2893,8 @@ class KnowledgeDatabase(Database):
         user_columns = ["user_id", "email_id", "user_group_id", "password", "employee_name",
                     "employee_code", "contact_no", "address", "designation", "is_active",
                     "created_on", "created_by", "updated_on", "updated_by"]
-        user_values = [user_id, email_id, user_group_id, self.generate_password(),
+        encrypted_password, password = self.generate_and_return_password()
+        user_values = [user_id, email_id, user_group_id, encrypted_password,
                 employee_name, employee_code, contact_no, address,
                 designation, 1, current_time_stamp, 0, current_time_stamp, 0]
         result1 = self.insert(self.tblUsers, user_columns, user_values)
@@ -2906,7 +2915,9 @@ class KnowledgeDatabase(Database):
 
         action = "Created User \"%s - %s\"" % (employee_code, employee_name)
         self.save_activity(0, 4, action)
-
+        email().send_knowledge_user_credentials(
+            email_id, password, employee_name, employee_code
+        )
         return (result1 and result2 and result3)
 
     def update_user(self, user_id, user_group_id, employee_name, employee_code, contact_no,
@@ -3118,7 +3129,7 @@ class KnowledgeDatabase(Database):
 
     def _create_database(
         self, host, username, password,
-        database_name, db_username, db_password, email_id, client_id
+        database_name, db_username, db_password, email_id, client_id, short_name
     ):
         con = self._mysql_server_connect(host, username, password)
         cursor = con.cursor()
@@ -3143,12 +3154,12 @@ class KnowledgeDatabase(Database):
                 cursor.execute(command)
             else:
                 break
-        password = self.generate_password()
+        encrypted_password, password = self.generate_and_return_password()
         query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
-            email_id, password)
+            email_id, encrypted_password)
         cursor.execute(query)
         con.commit()
-        email().send_client_credentials(email_id, password)
+        email().send_client_credentials(short_name, email_id, password)
         return True
 
     def _get_server_details(self):
@@ -3170,7 +3181,7 @@ class KnowledgeDatabase(Database):
 
         if self._create_database(
             host, username, password, database_name, db_username,
-            db_password, email_id, client_id
+            db_password, email_id, client_id, short_name
         ):
             db_server_column = "company_ids"
             db_server_value = client_id

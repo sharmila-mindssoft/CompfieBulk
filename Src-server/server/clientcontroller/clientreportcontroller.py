@@ -6,7 +6,6 @@ __all__ = [
 ]
 
 def process_client_report_requests(request, db) :
-
     session_token = request.session_token
     client_info = request.session_token.split("-")
     request = request.request

@@ -506,7 +506,7 @@ class GetClientDetailsReportFilters(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data)
-        return GetClientReportFilters()
+        return GetClientDetailsReportFilters()
 
     def to_inner_structure(self):
         return {
