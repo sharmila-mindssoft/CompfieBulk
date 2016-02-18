@@ -51,43 +51,158 @@ function clearValues(levelvalue) {
 }
 
 function actstatus(element){
-  /*var remarkbox = '.remark'+$(element).val();
   var changestatusStatutories = '.statutoryclass'+$(element).val();
   if ($(element).is(":checked"))
   {
-    $(remarkbox).hide();
     $(changestatusStatutories).each(function() { 
       this.checked = true;           
     });
   }else{
-    $(remarkbox).show();
     $(changestatusStatutories).each(function() {
       this.checked = false;                     
     });  
-  }*/
+  }
 }
 
+/*$.each(compliances, function(index, value) {
+
+    
+  
+  });*/
+
+function disppopup(applicable_units){
+  $("#popup1").show();
+/*  var compliances = statutoryMappingsList[sm_id]["compliances"];
+  var statutoryMappings='';
+  for(var i=0; i<statutoryMappingsList[sm_id]["statutory_mappings"].length; i++){
+    statutoryMappings = statutoryMappings + statutoryMappingsList[sm_id]["statutory_mappings"][i];
+  }
+  var frequency = '';
+  $.each(complianceFrequencyList, function(index, value) {
+  if (value.frequency_id == compliances[compliance_id]["frequency_id"]) {
+      frequency = value.frequency;
+  }
+  });*/
+  $(".popup_unitname").text("statutoryMappings");
+}
 
 function load_secondwizard(){
   var count=1;
   var statutoriesCount= 1;
   var actCount = 1;
   $(".tbody-assignstatutory").find("tbody").remove();
-  for(var statutory in statutoriesList){
-    var actname = statutory;
-    
-    var acttableRow=$('#act-templates .font1 .tbody-heading');
-    var clone=acttableRow.clone();
-    $('.actname', clone).html('<input style="margin-top:5px" type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)"> <label for="act'+actCount+'">'+actname+'</label> <span><img src="/images/chevron_black_down.png"></span>');
-    $('.tbody-assignstatutory').append(clone);
 
-    $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
-    if(count==1){
-      $('.accordion-content'+count).addClass("default");
+  for(var entity in statutoriesList){
+    var actname = '';
+    var domainList = statutoriesList[entity];
+    for(var domainentity in domainList){
+
+      actname = domainentity;
+      var acttableRow=$('#act-templates .font1 .tbody-heading');
+      var clone=acttableRow.clone();
+      $('.actname', clone).html('<input style="margin-top:5px" type="checkbox" checked="checked" id="act'+actCount+'" value="'+actCount+'" onclick="actstatus(this)"> <label for="act'+actCount+'">'+actname+'</label> <span><img src="/images/chevron_black_down.png"></span>');
+      $('.tbody-assignstatutory').append(clone);
+
+      $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
+      if(count==1){
+        $('.accordion-content'+count).addClass("default");
+      }
+      
+      var complianceHeadingtableRow=$('#statutory-templates .compliance-heading');
+      var clone1=complianceHeadingtableRow.clone();
+      $('.accordion-content'+count).append(clone1);
+
+      var actList = domainList[domainentity];
+
+      $('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
+      for(var actentity in actList){    
+        var statutoryprovision = '';
+        var compliance_id = actList[actentity]["compliance_id"];
+        var compliance_name = actList[actentity]["compliance_name"];
+        var compliance_description = actList[actentity]["description"];
+        var applicable_units =  actList[actentity]["applicable_units"];
+
+        var frequency =  actList[actentity]["frequency"];
+        var statutory_date =  actList[actentity]["statutory_date"];
+
+        var triggerdate = '';
+        var statutorydate = '';
+        var sdateDesc = '';
+        if(frequency == 'Periodical' || frequency == 'Review') sdateDesc = 'Every';
+        for(j=0; j<statutory_date.length; j++){
+
+          var sDay = '';
+          if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
+
+          var sMonth = '';
+          if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
+
+          var tDays = '';
+          if(statutory_date[j]["trigger_before_days"] != null) tDays = statutory_date[j]["trigger_before_days"];
+
+
+          if(sMonth == 1) sMonth = "January"
+          else if(sMonth == 2) sMonth = "February"
+          else if(sMonth == 3) sMonth = "March"
+          else if(sMonth == 4) sMonth = "April"  
+          else if(sMonth == 5) sMonth = "May"
+          else if(sMonth == 6) sMonth = "June"
+          else if(sMonth == 7) sMonth = "July"
+          else if(sMonth == 8) sMonth = "Auguest"
+          else if(sMonth == 9) sMonth = "September"
+          else if(sMonth == 10) sMonth = "October"
+          else if(sMonth == 11) sMonth = "November"
+          else if(sMonth == 12) sMonth = "December"
+            
+          triggerdate +=  tDays + " Day(s)";
+          statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
+        }
+
+        var due_date =  actList[actentity]["due_date"];
+
+        var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
+        var clone2=complianceDetailtableRow.clone();
+        $('.ckbox', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'">');
+        $('.compliancetask', clone2).html('<abbr class="page-load" title="'+
+          compliance_description+'"><img src="/images/icon-info.png" style="margin-right:10px"></abbr>'+compliance_name);
+        
+        var dispApplicableUnits = applicable_units.length + '/' + assignStatutoryUnitIds.length;
+        
+        $('.applicableunit', clone2).html('<a href="#popup1" onclick="disppopup(\''+applicable_units+'\')">'+dispApplicableUnits+'</a>');
+        $('.compliancefrequency', clone2).text(frequency);
+
+        $('.statutorydate', clone2).text(statutorydate);
+
+        $('.triggerbefore', clone2).html(triggerdate);
+
+        $('.duedate', clone2).html('');
+
+
+        $('.validitydate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="validitydate'+statutoriesCount+'" />');
+       
+        $('.accordion-content'+count).append(clone2);
+
+        $("#validitydate"+statutoriesCount ).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            onClose: function( selectedDate ) {
+            $( "#validitydate"+statutoriesCount ).datepicker( "option", "minDate", selectedDate );
+          }
+        });
+
+        statutoriesCount = statutoriesCount + 1;
+      }  
+
+      actCount = actCount + 1;
+      count++;
+       
     }
-    var complianceHeadingtableRow=$('#statutory-templates .compliance-heading');
-    var clone1=complianceHeadingtableRow.clone();
-    $('.accordion-content'+count).append(clone1);
+    
+
    
     /*$('.tbody-assignstatutory').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
     for(var compliance in complianceslist){    
@@ -110,10 +225,9 @@ function load_secondwizard(){
     }
       statutoriesCount = statutoriesCount + 1;
     }  
-    }*/
+    */
 
-    actCount = actCount + 1;
-    count++;
+    
   }
   $(document).ready(function($) {
     $('#accordion').find('.accordion-toggle').click(function(){
@@ -474,6 +588,8 @@ function getAssignCompliances () {
 
 $(document).ready(function () {
   getAssignCompliances ();
+
+
   $("#filter_country").keyup( function() {
     var filter = $("#filter_country").val().toLowerCase();
     var lis = document.getElementsByClassName('countrylist');
