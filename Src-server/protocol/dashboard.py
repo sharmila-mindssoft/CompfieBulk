@@ -52,7 +52,7 @@ from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Compliance,
     parse_structure_VectorType_RecordType_dashboard_Notification,
     parse_structure_Bool,
-    parse_structure_OptinalType_VectorType_RecordType_dashboard_RessignedCompliance
+    parse_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -108,7 +108,7 @@ from protocol.to_structure import (
     to_structure_Bool,
     to_structure_VectorType_RecordType_core_ClientUnit,
     to_structure_VectorType_RecordType_clientreport_User,
-    to_structure_OptinalType_VectorType_RecordType_dashboard_RessignedCompliance
+    to_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance
 )
 
 #
@@ -1222,14 +1222,14 @@ class DelayedCompliance(object):
         reassigned_count = data.get("reassigned_count")
         reassigned_count = parse_structure_UnsignedIntegerType_32(reassigned_count)
         reassigned_compliances = data.get("reassigned_compliances")
-        reassigned_compliances = parse_structure_OptinalType_VectorType_RecordType_dashboard_RessignedCompliance(reassigned_compliances)
+        reassigned_compliances = parse_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance(reassigned_compliances)
         return DelayedCompliance(assigned_count, reassigned_count, reassigned_compliances)
 
     def to_structure(self):
         return {
             "assigned_count": to_structure_SignedIntegerType_8(self.assigned_count),
             "reassigned_count": to_structure_SignedIntegerType_8(self.reassigned_count),
-            "reassigned_compliances": to_structure_OptinalType_VectorType_RecordType_dashboard_RessignedCompliance(self.reassigned_compliances),
+            "reassigned_compliances": to_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance(self.reassigned_compliances),
         }
 
 #
