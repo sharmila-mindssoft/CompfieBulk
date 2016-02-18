@@ -1339,47 +1339,43 @@ class AssigneeChartData(object):
 #
 
 class Level1Compliance(object):
-    def __init__(self, compliance_name, description, assignee_name, assigne_date, due_date, completion_date, compliance_status, ageing):
+    def __init__(self, compliance_name, description, assignee_name, assigned_date, 
+        due_date, completion_date):
         self.compliance_name = compliance_name
         self.description = description
         self.assignee_name = assignee_name
-        self.assigne_date = assigne_date
+        self.assigned_date = assigned_date
         self.due_date = due_date
         self.completion_date = completion_date
-        self.compliance_status = compliance_status
-        self.ageing = ageing
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_name", "description", "assignee_name", "assigne_date", "due_date", "completion_date", "compliance_status", "ageing"])
+        data = parse_dictionary(data, ["compliance_name", "description", 
+            "assignee_name", "assigned_date", "due_date", "completion_date", 
+        ])
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_100(compliance_name)
         description = data.get("description")
         description = parse_structure_CustomTextType_500(description)
         assignee_name = data.get("assignee_name")
         assignee_name = parse_structure_CustomTextType_100(assignee_name)
-        assigne_date = data.get("assigne_date")
-        assigne_date = parse_structure_CustomTextType_20(assigne_date)
+        assigned_date = data.get("assigned_date")
+        assigned_date = parse_structure_CustomTextType_20(assigned_date)
         due_date = data.get("due_date")
         due_date = parse_structure_CustomTextType_20(due_date)
         completion_date = data.get("completion_date")
         completion_date = parse_structure_CustomTextType_20(completion_date)
-        compliance_status = data.get("compliance_status")
-        compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
-        ageing = data.get("ageing")
-        ageing = parse_structure_UnsignedIntegerType_32(ageing)
-        return Level1Compliance(compliance_name, description, assignee_name, assigne_date, due_date, completion_date, compliance_status, ageing)
+        return Level1Compliance(compliance_name, description, assignee_name, assigned_date,
+        due_date, completion_date)
 
     def to_structure(self):
         return {
             "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
             "description": to_structure_CustomTextType_500(self.description),
             "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
-            "assigne_date": to_structure_CustomTextType_20(self.assigne_date),
+            "assigned_date": to_structure_CustomTextType_20(self.assigned_date),
             "due_date": to_structure_CustomTextType_20(self.due_date),
-            "completion_date": to_structure_CustomTextType_20(self.completion_date),
-            "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
-            "ageing": to_structure_SignedIntegerType_8(self.ageing),
+            "completion_date": to_structure_CustomTextType_20(self.completion_date)
         }
 
 #
