@@ -2390,12 +2390,13 @@ class KnowledgeDatabase(Database):
         compliance_ids = []
         for data in datas :
             compliance_id = data.compliance_id
-            saved_file = self.get_saved_format_file(compliance_id)
 
             if (compliance_id is None) :
                 ids = self.save_compliance(mapping_id, [data], updated_by)
                 compliance_ids.extend(ids)
                 continue
+            else :
+                saved_file = self.get_saved_format_file(compliance_id)
             provision = data.statutory_provision
             compliance_task = data.compliance_task
             description = data.description
