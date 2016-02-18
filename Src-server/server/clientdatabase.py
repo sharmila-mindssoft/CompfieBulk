@@ -5001,7 +5001,7 @@ class ClientDatabase(Database):
                                     if compliance["duration_type_id"] == 1: # Days
                                         repeats = "Complete within %s Day/s" % (compliance["duration"])
                                     elif compliance["duration_type_id"] == 2: # Hours
-                                        repeats = "Complete %s Hour/s" % (compliance["duration"])
+                                        repeats = "Complete within %s Hour/s" % (compliance["duration"])
                                 compliances_list.append(
                                     clientreport.Level1Compliance(
                                         statutory_mapping, compliance_name,
