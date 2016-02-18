@@ -15,7 +15,7 @@
             <h4 class="list-group-item-heading">2. Select Compliance Task</h4>
           </a></li>
 
-          <li class="disabled" style="width: 32.8%;"><a href="#step-2">
+          <li class="disabled" style="width: 32.8%;"><a href="#step-3">
             <h4 class="list-group-item-heading">3. Select Assignee</h4>
           </a></li>
 
@@ -24,7 +24,7 @@
         <div class="setup-content" id="step-1">
           <div class="innercontent">
             <div class="form-container-grid-table">
-              <table style="border:1px solid #ccc; margin-bottom:5px; height:500px !important;">
+              <table style="border:1px solid #ccc; margin-bottom:5px; height:450px !important;">
                 <tr align="left">
                   <th width="18%">Country</th>
                   <th width="18%">Business Group </th>
@@ -52,24 +52,24 @@
                 </tr>
                 <tr>
                   <td>
-                    <ul style="height:500px;overflow-y:scroll" id="country">
+                    <ul style="height:450px;overflow-y:scroll" id="country">
                     </ul>
                   </td>
                 
                   <td>
-                    <ul style="height:500px;overflow-y:scroll" id="businessgroup">
+                    <ul style="height:450px;overflow-y:scroll" id="businessgroup">
                     </ul>
                   </td>
                   <td>
-                    <ul style="height:500px;overflow-y:scroll" id="legalentity">
+                    <ul style="height:450px;overflow-y:scroll" id="legalentity">
                     </ul>
                   </td>
                   <td>
-                    <ul style="height:500px;overflow-y:scroll" id="division">
+                    <ul style="height:450px;overflow-y:scroll" id="division">
                     </ul>
                   </td>
                   <td>
-                    <ul style="height:500px;overflow-y:scroll" id="unit">
+                    <ul style="height:450px;overflow-y:scroll" id="unit">
                     </ul>
                   </td>
 
@@ -89,6 +89,14 @@
           </table>
         </div>
         <div class="setup-content" id="step-2">
+
+          <div class="innercontent">
+            <div class="grid-table">
+              <table class="tbody-assignstatutory" id="accordion">
+              </table>
+            </div>
+          </div>
+
           <table width="100%">
             <tr>
               <td width="50%" valign="middle">
@@ -104,6 +112,12 @@
         </div>
 
         <div class="setup-content" id="step-3">
+          <div class="innercontent">
+            <div class="form-container-grid-table">
+
+            </div>
+          </div>
+
           <table width="100%">
             <tr>
               <td width="50%" valign="middle">
@@ -122,29 +136,29 @@
     </div>
   </div>
 </div>
-<!-- <div id="act-templates" class="default-display-none">
+<div id="act-templates" class="default-display-none">
   <table class="font1" >
   <tbody class="accordion-toggle tbody-heading">
+
     <tr align="left" class="rightside tableRow " style="margin-bottom:1em; border:1px solid #ccc;">
-      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="100%" colspan="5"><div class="actapplicable gt" style="float:left; width:3%;padding-top:5px;"></div><div class="actname" style="float:left; width:94%;margin-top:0px;"></div>
-      <div style="float:right; width:3%;padding-top:5px;"><img src="/images/chevron_black_down.png"></div>
+      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="95%" class="actname"></div>
       </th>
     </tr>
     </tbody>
   </table>
 </div>
+
 <div id="statutory-templates" class="default-display-none">
   <table cellpadding="0" cellspacing="0" width="100%" class="checkedtable">
     <tr class="compliance-heading" style="width:100%;">
-      <td width="5%"><span style="font-weight:bold;">#</span></td>
-      <td width="30%" ><span style="font-weight:bold;">Statutory Provision</span></td>
-      <td width="30%"><span style="font-weight:bold;">Compliance Task</span></td>
-      <td width="35%"> <span style="font-weight:bold; ">Compliance Description</span></td>
-      <td width="10%" align="center">
-        <span style="font-weight:bold;">
-          <img src="/images/icon-client-comply.png" title="Applicable" >
-        </span>
-      </td>
+      <td width="2%"><span style="font-weight:bold;"></span></td>
+      <td width="28%" ><span style="font-weight:bold;">Compliance Tasks</span></td>
+      <td width="10%"><span style="font-weight:bold;">Applicable Unit</span></td>
+      <td width="8%" ><span style="font-weight:bold;">Compliance Frequency</span></td>
+      <td width="15%" colspan="4" ><span style="font-weight:bold;" >Statutory Date</span></td>
+      <td width="13%" ><span style="font-weight:bold;">Trigger Before</span></td>
+      <td width="12%"  ><span style="font-weight:bold;">Due Date</span></td>
+      <td width="12%"  ><span style="font-weight:bold;">Validity Date</span></td>
     </tr>
   </table>
 </div>
@@ -152,14 +166,17 @@
  <div id="statutory-values" class="default-display-none">
   <table class="table-statutory-values">
     <tr class="compliance-details">
-      <td class="sno"></td>
-      <td class="statutoryprovision"></td>
+      <td class="ckbox"></td>
       <td class="compliancetask"></td>
-      <td class="compliancedescription"></td>
-      <td align="center" class="gt complianceapplicable"></td>
+      <td class="applicableunit"></td>
+      <td class="compliancefrequency"></td>
+      <td class="statutorydate"></td>
+      <td class="triggerbefore"></td>
+      <td class="duedate"></td>
+      <td class="validitydate"></td>
     </tr>
   </table>
-</div> -->
+</div>
 
 <script type="text/javascript" src="/files/desktop/client/assign-compliance/assigncompliance.js"></script>
 {% endblock %}

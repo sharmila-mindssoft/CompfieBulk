@@ -2077,7 +2077,8 @@ class KnowledgeDatabase(Database):
     #
 
     def convert_base64_to_file(self, file_name, file_content, file_path=None):
-        if file_path is None:
+
+        if file_path is None :
             file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
         else:
             if not os.path.exists(file_path):
