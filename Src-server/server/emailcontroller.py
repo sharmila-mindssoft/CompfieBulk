@@ -24,11 +24,11 @@ __all__ = [
 class Email(object):
 
     def __init__(self):
-        self.sender = "sharmila@mindssoft.com"
-        self.password = "6108816659"
+        self.sender = "mindssoft.com@gmail.com"
+        self.password = "Mindssoft@12345"
 
     def send_email(self, receiver, subject, message, cc=None):
-        server = smtplib.SMTP('mail.mindssoft.com', 25)
+        server = smtplib.SMTP('mail.google.com', 25)
         server.ehlo()
         server.login(self.sender, self.password)
 
@@ -36,10 +36,9 @@ class Email(object):
         msg['From'] = self.sender
         msg['To'] = receiver
         msg['Subject'] = subject
-        cc = "usha@mindssoft.com"
         if cc is not None:
             msg['Cc'] = cc
-            receiver += ", usha@mindssoft.com"
+            receiver += cc
         msg.attach(MIMEText(message, 'plain'))
 
         server.sendmail(self.sender, receiver,  msg.as_string())
