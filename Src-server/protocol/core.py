@@ -1493,9 +1493,9 @@ class ClientDivision(object):
 
     def to_structure(self):
         return {
-            "division_id": to_structure_UnsignedIntegerType_8(self.division_id),
+            "division_id": to_structure_SignedIntegerType_8(self.division_id),
             "division_name": to_structure_CustomTextType_50(self.division_name),
-            "legal_entity_id": to_structure_UnsignedIntegerType_8(self.legal_entity_id),
+            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
             "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
         }
 
@@ -1542,7 +1542,7 @@ class Unit(object):
         return {
             "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
             "division_id": to_structure_OptionalType_UnsignedIntegerType_32(self.division_id),
-            "legal_entity_id": to_structure_UnsignedIntegerType_8(self.legal_entity_id),
+            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
             "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
             "unit_code": to_structure_CustomTextType_20(self.unit_code),
@@ -1887,7 +1887,7 @@ class ActiveCompliance(object):
             data, ["compliance_history_id", "compliance_name",
                 "compliance_frequency", "domain_name", "start_date", "due_date",
                 "compliance_status", "validity_date", "next_due_date", "ageing",
-                "format_file_name", "unit_name", "address", "compliance_description", 
+                "format_file_name", "unit_name", "address", "compliance_description",
                 "remarks"
             ]
         )
