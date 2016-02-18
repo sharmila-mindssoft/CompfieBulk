@@ -3467,6 +3467,26 @@ def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransac
         d[key] = value
     return d
 
+def to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_dictionary(data)
+    d = {}
+    for key, value in data.iteritems():
+        key = to_structure_CustomTextType_100(key)
+        value = to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
+        d[key] = value
+    return d
+
+
+def to_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.iteritems():
+        key = to_structure_SignedIntegerType_8(key)
+        value = to_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
+        dict[key] = value
+    return dict
+
+
 #
 #   Get Clients
 #
@@ -3760,3 +3780,14 @@ def to_structure_VectorType_RecordType_client_report_UnitDetails(data):
 def to_structure_RecordType_client_report_UnitDetails(data):
     from protocol import clientreport
     return clientreport.UnitDetails.to_structure(data)
+
+def to_structure_RecordType_core_Compliance_Download(data):
+    from protocol import core
+    return core.Compliance_Download.to_structure(data)
+
+def to_structure_VectorType_RecordType_core_Compliance_Download(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_core_Compliance_Download(item))
+    return lst

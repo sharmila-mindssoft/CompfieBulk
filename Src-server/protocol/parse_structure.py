@@ -3358,13 +3358,33 @@ def parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORI
     return lst
 
 def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
-    data = parse_list(data)
+    data = parse_dictionary(data)
     d = {}
-    for key, value in data:
+    for key, value in data.iteritems():
         key = parse_structure_SignedIntegerType_8(key)
         value = parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
         d[key] = value
     return d
+
+def parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_dictionary(data)
+    d = {}
+    for key, value in data.iteritems():
+        key = parse_structure_CustomTextType_100(key)
+        value = parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
+        d[key] = value
+    return d
+
+
+def parse_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.iteritems():
+        key = parse_structure_SignedIntegerType_8(key)
+        value = parse_structure_MapType_CustomTextType_100_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
+        dict[key] = value
+    return dict
+
 #
 #   Get Clients
 #
@@ -3651,3 +3671,14 @@ def parse_structure_VectorType_RecordType_client_report_UnitDetails(data):
 def parse_structure_RecordType_client_report_UnitDetails(data):
     from protocol import clientreport
     return clientreport.UnitDetails.parse_structure(data)
+
+def parse_structure_RecordType_core_Compliance_Download(data):
+    from protocol import core
+    return core.Compliance_Download.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_core_Compliance_Download(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(parse_structure_RecordType_core_Compliance_Download(item))
+    return lst

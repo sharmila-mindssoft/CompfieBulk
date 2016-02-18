@@ -23,7 +23,7 @@ __all__ = [
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0])
 KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
-FORMAT_DOWNLOAD_URL = "knowledge/compliance_format"
+FORMAT_DOWNLOAD_URL = "compliance_format"
 CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
 LOGO_URL = "knowledge/clientlogo"
 
@@ -2055,8 +2055,11 @@ class KnowledgeDatabase(Database):
 
             else :
                 file_list = None
+                file_download = None
 
-            compliance_names.append(name)
+            compliance_names.append(core.Compliance_Download(name, file_download))
+
+            # compliance_names.append(name)
             compliance = core.Compliance(
                 d["compliance_id"], d["statutory_provision"],
                 compliance_task, d["compliance_description"],
