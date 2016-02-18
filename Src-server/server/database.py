@@ -2850,7 +2850,7 @@ class KnowledgeDatabase(Database):
 
     def get_techno_users(self):
         columns = "user_id, employee_name, employee_code, is_active"
-        condition = "user_group_id in (select group_concat(user_group_id) from \
+        condition = "user_group_id in (select user_group_id from \
              %s where form_category_id = 3)" % self.tblUserGroups
         rows = self.get_data(self.tblUsers, columns, condition)
         return rows
