@@ -69,7 +69,7 @@
                   <option value="">Select</option>
                 </Select>
                 <input id="businessgroup-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Business Group Name">
-                <span style="font-size:10px"><a href="#" id="businessgroup-new">New</a><a href="#" id="businessgroup-existing" style="display:none;">Cancel</a></span> </div>
+                <span style="font-size:10px"><a href="#" id="businessgroup-new" onclick="businessGroupExistingChecking('New')">New</a><a href="#" id="businessgroup-existing" style="display:none;" onclick="businessGroupExistingChecking('Cancel')">Cancel</a></span> </div>
               </div>
             </div>
             <div class="input-row-right">
@@ -80,7 +80,7 @@
                     <option value="">Select</option>
                   </Select>
                   <input id="entity-text" type="text" class="input-box" style="width:190px;display:none" placeholder="Legal Entity Name">
-                  <span style="font-size:10px"><a href="#" id="entity-new">New</a><a href="#" id="entity-existing" style="display:none;">Cancel</a></span> </div>
+                  <span style="font-size:10px"><a href="#" id="entity-new" onclick="legalEntityExistingChecking('New')">New</a><a href="#" id="entity-existing" style="display:none;" onclick="legalEntityExistingChecking('Cancel')">Cancel</a></span> </div>
                 </div>
                 <div class="input-row">
                   <div class="single-column-field-label">Division</div>
@@ -89,7 +89,7 @@
                       <option value="">Select</option>
                     </Select>
                     <input id="division-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Division Name">
-                    <span style="font-size:10px"><a href="#" id="division-new">New</a><a href="#" id="division-existing" style="display:none;">Cancel</a></span> </div>
+                    <span style="font-size:10px"><a href="#" id="division-new" onclick="divisionExistingChecking('New')">New</a><a href="#" id="division-existing" style="display:none;" onclick="divisionExistingChecking('Cancel')">Cancel</a></span> </div>
                   </div>
                 </div>
                 <input type="hidden" id="countrycount" value="">

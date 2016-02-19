@@ -917,9 +917,9 @@
 			      console.log("result size : "+data.length);
 			      for(i = 0; i < data.length; i++){
 			      	console.log(data[i]["file_name"]);
-			      	result += data[i]["file_name"] + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' /> </br>";	
+			      	result += data[i]["file_name"] + "    <img src='/images/delete.png' style='width:16px;height:16px;' onclick='remove_temp_file()' /> </br>";	
 			      }
-			      $("#uploaded_filename").html(result);
+			      $("#uploaded_filename").html("<span>"+result+"</span>");
 			    }
 			    else{
 			      alert(data);

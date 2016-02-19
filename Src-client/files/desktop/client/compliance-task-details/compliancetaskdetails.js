@@ -1,4 +1,6 @@
 var currentCompliances;
+var file_list = [];
+
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
@@ -28,31 +30,35 @@ function initialize(){
         }
     );
 }
+
 function loadComplianceTaskDetails(data){
     $('.tbody-compliances-task-list tr').remove();
-    var sno = 0;
+    var snoOverdue = 1;
+    var snoInprogress = 1;
     var countOverdue = 0;
     var countInprogress = 0;
+  
     $.each(data, function(k, value) {
         if(data[k]['compliance_status'] == "Not Complied" && countOverdue == 0){
             var tableRowHeading = $('#templates .table-compliances-task-list .headingRow');
             var clone = tableRowHeading.clone();
             $('.compliance-types', clone).html("Over due Compliances");      
-            $('.tbody-compliances-task-list').append(clone);
+            $('.tbody-compliances-task-list-overdue').append(clone);
             countOverdue++;
         }
         if(data[k]['compliance_status'] == "Inprogress" && countInprogress == 0){
             var tableRowHeading = $('#templates .table-compliances-task-list .headingRow');
             var clone = tableRowHeading.clone();
             $('.compliance-types', clone).html("Inprogress Compliances");      
-            $('.tbody-compliances-task-list').append(clone);
+            $('.tbody-compliances-task-list-inprogress').append(clone);
             countInprogress++;
         }
 
         var tableRowvalues = $('#templates .table-compliances-task-list .table-row-list');
         var cloneval = tableRowvalues.clone();
-        sno = sno + 1;
-        $('.sno', cloneval).text(sno);
+      
+        //Full Width list append ---------------------------------------------------------------
+       
         $('.compliance-task span', cloneval).html(data[k]['compliance_name']);
         $('.compliance-task', cloneval).attr("title", data[k]['compliance_description']);
         $('.domain', cloneval).html(data[k]['domain_name']);
@@ -64,8 +70,21 @@ function loadComplianceTaskDetails(data){
         }
         $('.status', cloneval).html(data[k]['compliance_status']);
         $('.format-file', cloneval).attr("href", data[k]['format_file_name']);
-        $('.table-row-list', cloneval).attr("id", "id-"+data[k]['compliance_history_id'])
-        $('.tbody-compliances-task-list').append(cloneval);
+        var compliance_history_id = data[k]["compliance_history_id"];
+        $(cloneval, ".expand-compliance").on("click", function() {
+            showSideBar(compliance_history_id, data);
+        });
+
+        if(data[k]['compliance_status'] == "Not Complied"){
+            $('.sno', cloneval).text(snoOverdue);
+            $('.tbody-compliances-task-list-overdue').append(cloneval);
+            snoOverdue = snoOverdue + 1
+        }
+        if(data[k]['compliance_status'] == "Inprogress" || data[k]['compliance_status'] == "Inprogress(Rejected)"){
+            $('.sno', cloneval).text(snoInprogress);
+            $('.tbody-compliances-task-list-inprogress').append(cloneval);   
+            snoInprogress = snoInprogress + 1
+        }      
     });    
 }
 function loadUpcomingCompliancesDetails(data){
@@ -86,11 +105,155 @@ function loadUpcomingCompliancesDetails(data){
     }); 
 
 }
-$(".table-row-list").click(function(){
-    var getIdValue = this.id;
-    var idValue = getIdValue.split("-");
-    console.log(idValue[1]);
-});
+function showSideBar(idval, data){
+    $('.half-width-task-details').empty();
+    var d = new Date().toLocaleDateString('en-GB', {  
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    }).split(' ').join('-');
+    $('.half-width-task-details').show();
+    $('.full-width-list').attr("width", "60%");
+    $('.half-width-task-details').attr("width", "40%");
+    //SideView append ---------------------------------------------------------------------
+    $.each(data, function(k, value) {
+        if(data[k]['compliance_history_id'] == idval){
+            var tableRowSide = $('#templates .sideview-div');
+            var cloneValSide = tableRowSide.clone();
+            var complianceStatus = data[k]['compliance_status'];
+            $('.sideview-compliance-task span', cloneValSide).html(data[k]['compliance_name']);
+            $('.sideview-compliance-frequency', cloneValSide).html(data[k]['compliance_frequency']);
+            $('.sideview-completion-date', cloneValSide).html("<input  type='text' class='input-box datepick sideview-completion-date'>");
+            $('.sideview-compliance-status', cloneValSide).html(complianceStatus);
+            $('.sideview-upload-date', cloneValSide).html(d);
+            $('.sideview-remarks', cloneValSide).html("<textarea class='input-box sideview-remarks'></textarea>");
+            $(cloneValSide, ".upload-documents").on("change", function(e) {
+                uploadedfile(e);
+            });
+            if(complianceStatus == 'Not Complied') {
+                $('.validityAndDueDate', cloneValSide).hide();
+            }
+            if(complianceStatus == 'Inprogress'){
+                $('.validityAndDueDate').show();
+                $(cloneValSide, '.validity1_icon').on("click", function(e, complianceStatus){  
+                    showTextbox(complianceStatus);
+                }); 
+                $('.validity1_label abbr', cloneValSide).html(data[k]['validity_date']);
+                $('.duedate1_label abbr', cloneValSide).html(data[k]['next_due_date']); 
+                $('.validity1-textbox-input', cloneValSide).val(data[k]['validity_date']);
+                $('.duedate1-textbox-input', cloneValSide).val(data[k]['next_due_date']);  
+            }
+            $(cloneValSide, 'btn-submit').on("click", function(e){
+                var completion_date;
+                var compliance_history_id;
+                var documents;
+                var validity_date;
+                var next_due_date;
+                var arr = [];
+                compliance_history_id = data[k]['compliance_history_id'];
+                
+                documents =$(".upload-documents")[0].files;
+                if(documents.length == 0){
+                    arr = null;
+                }
+                else {
+                    for (var i = 0; i < documents.length; i++) {
+                        arr = documents[i].name;
+                    }    
+                }
+                
+                completion_date = $('.sideview-completion-date').text();
+                validity_date = $('.validity1_label span').html();
+                if(validity_date == ''){
+                    validity_date = $('.validity1-textbox-input').val();
+                    if(validity_date == ''){
+                        validity_date = null;
+                    }
+                }
+                next_due_date = $('.duedate1_label').val();
+                if(next_due_date == ''){
+                    next_due_date = $('.duedate1-textbox-input').val();
+                    if(next_due_date == ''){
+                        next_due_date = null;
+                    }
+                }
+                remarks = $('.sideview-remarks').val();
+                if(remarks == ''){
+                    remarks = null;
+                }
+                if(completion_date == ''){
+                    displayMessage("Select Completion Date");
+                }
+                else{
+                    function onSuccess(data){
+                        initialize();
+                    }
+                    function onFailure(error){
+                        console.log(error);
+                    }
+                    client_mirror.updateComplianceDetail(compliance_history_id, documents,
+                        completion_date, validity_date, next_due_date, remarks,
+                        
+                        function (error, response){
+                            if(error == null){
+                                onSuccess(response);
+                            }
+                            else{
+                                onFailure(error);
+                            }
+                        }    
+                    );   
+                }
+                 
+            });
+            $('.half-width-task-details').append(cloneValSide);    
+        }        
+    });
+    $(".datepick" ).datepicker({
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
+    });
+}
+function showTextbox(complianceStatus){
+    $('.duedate1_textbox').show();
+    $('.duedate1_label').hide();
+    $('.validity1_textbox').show();
+    $('.validity1_label').hide();
+}
+function closeicon(){
+    $('.half-width-task-details').hide();
+    $('.full-width-list').attr("width", "100%");
+    $('.half-width-task-details').attr("width", "0%");
+}
+
+function uploadedfile(e){
+    client_mirror.uploadFile(e, function result_data(data) {
+        if(data != 'File max limit exceeded' || data != 'File content is empty'){
+            uploadFile = data;
+            file_list = data
+            var result = ""
+            for(i = 0; i < data.length; i++){                
+                result += "<span>"+data[i]["file_name"] + "<img src='/images/delete.png' class='removeicon' style='width:16px;height:16px;' onclick='remove_temp_file()' /></span>"; 
+            }
+            $(".uploaded-filename").html(result);
+        }
+        else{
+          alert(data);
+        }
+    });
+}
+function remove_temp_file(){
+  uploadFile = null;
+  $("#uploaded_fileview").hide();
+  $("#uploaded-filename").html('');
+  $("#upload_file").val('');
+}
+
+ 
 
 $(function() {
     initialize();

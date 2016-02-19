@@ -4631,11 +4631,11 @@ class ClientDatabase(Database):
     def calculate_ageing(self, due_date):
         current_time_stamp = self.get_date_time()
         due_date = datetime.datetime(due_date.year, due_date.month, due_date.day)
-        ageing = abs(current_time_stamp - due_date).days
-        compliance_status = " %d days left" % ageing
+        ageing = (current_time_stamp - due_date).days
+        compliance_status = " %d days left" % abs(ageing)
         if ageing > 0:
-            compliance_status = "Overdue by %d days" % ageing
-        return compliance_status
+            compliance_status = "Overdue by %d days" % abs(ageing)
+        return compliance_status, ageing
 
     def get_current_compliances_list(self, session_user, client_id):
         columns = "compliance_history_id, start_date, due_date, " +\
@@ -4678,9 +4678,9 @@ class ClientDatabase(Database):
             unit_name = "%s - %s" % (
                 unit_code, unit_name
             )
-            ageing = self.calculate_ageing(compliance[2])
+            ageing, ageing_value = self.calculate_ageing(compliance[2])
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
-            if ageing > 0:
+            if ageing_value > 0:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
             format_files = [ "%s/%s" % (
                     FORMAT_DOWNLOAD_URL, x
