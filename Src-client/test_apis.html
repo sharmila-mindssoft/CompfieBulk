@@ -489,11 +489,11 @@
 			}
 			function updateComplianceDetail(){
 				compliance_history_id = 3;
-		        documents =  file_list;
+		        documents =  null;
 		        completion_date = "25-Jan-2016";
-		        validity_date = "25-Jan-2017";
-		        next_due_date = "24-Jan-2017";
-		        remarks = "Sample Remarks";
+		        validity_date = null;
+		        next_due_date = null;
+		        remarks = null;
 		        client_mirror.updateComplianceDetail(compliance_history_id, 
 		        	documents, completion_date, validity_date, next_due_date, 
 		        	remarks, callback);

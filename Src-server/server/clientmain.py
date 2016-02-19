@@ -1,5 +1,7 @@
+import os
 import json
 import traceback
+from tornado.web import StaticFileHandler
 from tornado.httpclient import AsyncHTTPClient
 from basics.webserver import WebServer
 from basics.ioloop import IOLoop
@@ -13,7 +15,7 @@ from server.clientdatabase import ClientDatabase
 import clientcontroller as controller
 from webfrontend.client import CompanyManager
 
-
+ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 #
 # cors_handler
 #
@@ -232,6 +234,12 @@ def run_server(address, knowledge_server_address):
         )
 
         web_server = WebServer(io_loop)
+        client_docs_path = os.path.join(ROOT_PATH, "clientdocuments")
+        web_server.low_level_url(
+            r"/client/client_documents/(.*)",
+            StaticFileHandler,
+            dict(path=client_docs_path)
+        )
 
         api = API(
             io_loop,
