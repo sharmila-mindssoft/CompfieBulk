@@ -1652,8 +1652,17 @@ class ClientDatabase(Database):
             if self.is_space_available(file_size):
                 is_uploading_file = True
                 for doc in documents:
-                    name = doc.file_name.split('.')[0]
-                    exten = doc.file_name.split('.')[1]
+                    file_name_parts = doc.file_name.split('.')
+                    name = None
+                    exten = None
+                    for index, file_name_part in enumerate(file_name_parts):
+                        if index == len(file_name_parts) - 1:
+                            exten = file_name_part
+                        else:
+                            if name is None:
+                                name = file_name_part
+                            else:
+                                name += file_name_part
                     auto_code = self.new_uuid()
                     file_name = "%s-%s.%s" % (name, auto_code, exten)
                     document_names.append(file_name)
