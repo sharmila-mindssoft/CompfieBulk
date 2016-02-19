@@ -115,6 +115,7 @@ function showSideBar(idval, data){
     $('.half-width-task-details').show();
     $('.full-width-list').attr("width", "60%");
     $('.half-width-task-details').attr("width", "40%");
+
     //SideView append ---------------------------------------------------------------------
     $.each(data, function(k, value) {
         if(data[k]['compliance_history_id'] == idval){
@@ -123,11 +124,12 @@ function showSideBar(idval, data){
             var complianceStatus = data[k]['compliance_status'];
             $('.sideview-compliance-task span', cloneValSide).html(data[k]['compliance_name']);
             $('.sideview-compliance-frequency', cloneValSide).html(data[k]['compliance_frequency']);
-            $('.sideview-completion-date', cloneValSide).html("<input  type='text' class='input-box datepick sideview-completion-date'>");
+            $('.sideview-completion-date-td', cloneValSide).html("<input  type='text' class='input-box datepick sideview-completion-date' id='completion-date'>");
             $('.sideview-compliance-status', cloneValSide).html(complianceStatus);
             $('.sideview-upload-date', cloneValSide).html(d);
-            $('.sideview-remarks', cloneValSide).html("<textarea class='input-box sideview-remarks'></textarea>");
-            $(cloneValSide, ".upload-documents").on("change", function(e) {
+            $('.sideview-remarks-td', cloneValSide).html("<textarea class='input-box sideview-remarks'></textarea>");
+            $("#upload_file", cloneValSide).on("change", function(e) {
+                if (e.originalEvent.defaultPrevented) return;
                 uploadedfile(e);
             });
             if(complianceStatus == 'Not Complied') {
@@ -143,27 +145,21 @@ function showSideBar(idval, data){
                 $('.validity1-textbox-input', cloneValSide).val(data[k]['validity_date']);
                 $('.duedate1-textbox-input', cloneValSide).val(data[k]['next_due_date']);  
             }
-            $(cloneValSide, 'btn-submit').on("click", function(e){
+            $('.btn-submit', cloneValSide).on("click", function(e){
                 var completion_date;
                 var compliance_history_id;
                 var documents;
                 var validity_date;
                 var next_due_date;
-                var arr = [];
                 compliance_history_id = data[k]['compliance_history_id'];
-                
-                documents =$(".upload-documents")[0].files;
+               
+                documents = file_list;
                 if(documents.length == 0){
-                    arr = null;
+                    documents = null;
                 }
-                else {
-                    for (var i = 0; i < documents.length; i++) {
-                        arr = documents[i].name;
-                    }    
-                }
-                
-                completion_date = $('.sideview-completion-date').text();
-                validity_date = $('.validity1_label span').html();
+
+                completion_date = $('.sideview-completion-date').val();
+                validity_date = $('.validity1_label abbr').html();
                 if(validity_date == ''){
                     validity_date = $('.validity1-textbox-input').val();
                     if(validity_date == ''){
@@ -178,6 +174,7 @@ function showSideBar(idval, data){
                     }
                 }
                 remarks = $('.sideview-remarks').val();
+
                 if(remarks == ''){
                     remarks = null;
                 }
@@ -218,6 +215,7 @@ function showSideBar(idval, data){
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],  
     });
 }
+
 function showTextbox(complianceStatus){
     $('.duedate1_textbox').show();
     $('.duedate1_label').hide();
@@ -236,21 +234,21 @@ function uploadedfile(e){
             uploadFile = data;
             file_list = data
             var result = ""
-            for(i = 0; i < data.length; i++){                
-                result += "<span>"+data[i]["file_name"] + "<img src='/images/delete.png' class='removeicon' style='width:16px;height:16px;' onclick='remove_temp_file()' /></span>"; 
+            for(i = 0; i < data.length; i++){   
+                var filename = data[i]['file_name']             
+                result += "<span class='"+filename+"'>" + filename + "<img src='/images/delete.png' class='removeicon' style='width:16px;height:16px;' onclick='remove_temp_file(\""+filename+"\")' /></span>"; 
             }
             $(".uploaded-filename").html(result);
+
         }
         else{
           alert(data);
         }
     });
 }
-function remove_temp_file(){
-  uploadFile = null;
-  $("#uploaded_fileview").hide();
-  $("#uploaded-filename").html('');
-  $("#upload_file").val('');
+function remove_temp_file(classnameval){
+    console.log(classnameval);
+    $('.'+classnameval).remove();
 }
 
  

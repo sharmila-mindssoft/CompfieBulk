@@ -77,6 +77,7 @@ $(document).ready(function() {
         <div class="archive-header">
           <span class="current-tab active">Compliance Tasks</span>
           <span class="upcomming-tab">Upcoming Compliance Tasks</span>
+          <abbr class="error-message" style="padding-right:10px; padding-top:5px;"></abbr>
         </div>
 
         <div class="main-tab-content" style="border:1px solid white;">
@@ -268,7 +269,7 @@ $(document).ready(function() {
           <span style="font-weight:bold;">Upload Documents</span>
         </td>
         <td>
-          <input type="file" class="input-box upload-documents" id="upload-file" multiple="multiple" style="width:65%;" value="">
+          <input type="file" class="input-box upload-documents" id="upload_file" multiple="multiple" style="width:65%;" value="" />
           <span style="float:right;">
             <span style="font-weight:bold;" class="sideview-upload-date"></span>
             <br>
@@ -289,8 +290,8 @@ $(document).ready(function() {
         <td>
           <span style="font-weight:bold;">Document / Completion Date</span>
         </td>
-        <td>
-          <input class="input-box" type="text sideview-completion-date" value=""/>
+        <td class="sideview-completion-date-td">
+          
         </td>
       </tr>
       <tr class="validityAndDueDate" >
@@ -312,7 +313,7 @@ $(document).ready(function() {
         <td>
           <span class="duedate1_label"><abbr></abbr></span>
           <span class="duedate1_textbox" style="display:none;">
-            <input type="text" value="" class="input-box duedate1-textbox-input"/>
+            <input type="text" value="" class="input-box duedate1-textbox-input "/>
           </span>
         </td>
       </tr>
@@ -327,7 +328,7 @@ $(document).ready(function() {
           <span style="font-weight:bold;">Remarks</span>
         </td>
         <td  colspan="3">
-          <span class="sideview-remarks"></span>
+          <span class="sideview-remarks-td"></span>
           <br>
           <span style="font-size:0.75em;">(max 500 characters)</span>
         </td>
