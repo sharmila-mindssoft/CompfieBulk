@@ -24,11 +24,11 @@ __all__ = [
 class Email(object):
 
     def __init__(self):
-        self.sender = "mindssoft.com@gmail.com"
-        self.password = "Mindssoft@12345"
+        self.sender = "sharmila@mindssoft.com"
+        self.password = "6108816659"
 
     def send_email(self, receiver, subject, message, cc=None):
-        server = smtplib.SMTP('mail.google.com', 25)
+        server = smtplib.SMTP('mail.mindssoft.com', 25)
         server.ehlo()
         server.login(self.sender, self.password)
 

@@ -666,11 +666,14 @@ class ClientDatabase(Database):
 
         action = "Created user \"%s - %s\"" % (user.employee_code, user.employee_name)
         self.save_activity(session_user, 4, action, client_id)
-        email.send_user_credentials(
-            self.get_short_name_from_client_id(
-                client_id
-            ), user.email_id, password, user.employee_name, user.employee_code
-        )
+        try:
+            email.send_user_credentials(
+                self.get_short_name_from_client_id(
+                    client_id
+                ), user.email_id, password, user.employee_name, user.employee_code
+            )
+        except e:
+            print "Error while sending email : {}".format(e)
         return (result1 and result2 and result3 and result4)
 
     def update_user(self, user, session_user, client_id):
@@ -3577,9 +3580,12 @@ class ClientDatabase(Database):
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0, remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        email.notify_task_rejected(
-            self, compliance_history_id, remarks, "RejectApproval"
-        )
+        try:
+            email.notify_task_rejected(
+                self, compliance_history_id, remarks, "RejectApproval"
+            )
+        except e:
+            print "Error while sending email : {}".format(e)
 
     def concur_Compliance(self, compliance_history_id, remarks, next_due_date, client_id):
         columns = ["concurrence_status", "concurred_on", "remarks"]
@@ -3592,9 +3598,12 @@ class ClientDatabase(Database):
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0,  remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        email.notify_task_rejected(
-            self, compliance_history_id, remarks, "RejectConcurrence"
-        )
+        try:
+            email.notify_task_rejected(
+                self, compliance_history_id, remarks, "RejectConcurrence"
+            )
+        except e:
+            print "Error while sending email : {}".format(e)
 
     def get_client_level_1_statutoy(self, user_id, client_id=None) :
         query = "SELECT (case when (LEFT(statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') \
@@ -5337,6 +5346,35 @@ class ClientDatabase(Database):
         self, compliance_history_id, documents, completion_date,
         validity_date, next_due_date, remarks, client_id, session_user
     ):
+        # Hanling upload
+        document_names = []
+        file_size = 0
+        if len(documents) > 0:
+            for doc in documents:
+                file_size += doc.file_size
+
+            if self.is_space_available(file_size):
+                is_uploading_file = True
+                for doc in documents:
+                    file_name_parts = doc.file_name.split('.')
+                    name = None
+                    exten = None
+                    for index, file_name_part in enumerate(file_name_parts):
+                        if index == len(file_name_parts) - 1:
+                            exten = file_name_part
+                        else:
+                            if name is None:
+                                name = file_name_part
+                            else:
+                                name += file_name_part
+                    auto_code = self.new_uuid()
+                    file_name = "%s-%s.%s" % (name, auto_code, exten)
+                    document_names.append(file_name)
+                    self.convert_base64_to_file(file_name, doc.file_content, client_id)
+                self.update_used_space(file_size)
+            else:
+                return clienttransactions.NotEnoughSpaceAvailable()
+
         current_time_stamp = self.get_date_time()
         history_columns = [
             "completion_date", "documents", "validity_date",
@@ -5344,7 +5382,7 @@ class ClientDatabase(Database):
         ]
         history_values = [
             self.string_to_datetime(completion_date),
-            ",".join(documents),
+            ",".join(document_names),
             self.string_to_datetime(validity_date),
             self.string_to_datetime(next_due_date),
             remarks,

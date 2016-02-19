@@ -2927,9 +2927,12 @@ class KnowledgeDatabase(Database):
 
         action = "Created User \"%s - %s\"" % (employee_code, employee_name)
         self.save_activity(0, 4, action)
-        email().send_knowledge_user_credentials(
-            email_id, password, employee_name, employee_code
-        )
+        try:
+            email().send_knowledge_user_credentials(
+                email_id, password, employee_name, employee_code
+            )
+        except e:
+            print "Error while sending email : {}".format(e)
         return (result1 and result2 and result3)
 
     def update_user(self, user_id, user_group_id, employee_name, employee_code, contact_no,
@@ -3171,7 +3174,10 @@ class KnowledgeDatabase(Database):
             email_id, encrypted_password)
         cursor.execute(query)
         con.commit()
-        email().send_client_credentials(short_name, email_id, password)
+        try:
+            email().send_client_credentials(short_name, email_id, password)
+        except e:
+            print "Error while sending email : {}".format(e)
         return True
 
     def _get_server_details(self):
