@@ -636,6 +636,9 @@ def to_structure_RecordType_technomasters_Response_DivisionNameAlreadyExists(dat
 def to_structure_CustomTextType_100(data):
     return parse_custom_string(data, 100)
 
+def to_structure_CustomTextType_200(data):
+    return parse_custom_string(data, 200)
+
 def to_structure_RecordType_clienttransactions_Response_GetStatutoriesByUnitSuccess(data):
     from protocol import clienttransactions
     return clienttransactions.Response.to_structure(data)

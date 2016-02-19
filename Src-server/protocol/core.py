@@ -45,7 +45,8 @@ from protocol.parse_structure import (
     parse_structure_EnumType_core_NOT_COMPLIED_TYPE,
     parse_structure_OptionalType_VectorType_CustomTextType_100,
     parse_structure_OptionalType_Text,
-    parse_structure_VectorType_RecordType_core_Compliance_Download
+    parse_structure_VectorType_RecordType_core_Compliance_Download,
+    parse_structure_CustomTextType_200
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -98,7 +99,8 @@ from protocol.to_structure import (
     to_structure_EnumType_core_NOT_COMPLIED_TYPE,
     to_structure_OptionalType_VectorType_CustomTextType_100,
     to_structure_OptionalType_Text,
-    to_structure_VectorType_RecordType_core_Compliance_Download
+    to_structure_VectorType_RecordType_core_Compliance_Download,
+    to_structure_CustomTextType_200
 )
 
 #
@@ -2321,7 +2323,7 @@ class ComplianceApplicability(object):
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_50(compliance_name)
+        compliance_name = to_structure_CustomTextType_200(compliance_name)
         description = data.get("description")
         description = parse_structure_CustomTextType_500(description)
         statutory_provision = data.get("statutory_provision")
@@ -2339,7 +2341,7 @@ class ComplianceApplicability(object):
     def to_structure(self):
         return {
             "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
-            "compliance_name": to_structure_CustomTextType_50(self.compliance_name),
+            "compliance_name": to_structure_CustomTextType_200(self.compliance_name),
             "description": to_structure_CustomTextType_500(self.description),
             "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
             "statutory_nature": to_structure_CustomTextType_50(self.statutory_nature),

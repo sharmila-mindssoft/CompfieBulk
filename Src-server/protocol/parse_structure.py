@@ -575,6 +575,9 @@ def parse_structure_RecordType_technomasters_Response_DivisionNameAlreadyExists(
 def parse_structure_CustomTextType_100(data):
     return parse_custom_string(data, 100)
 
+def parse_structure_CustomTextType_200(data):
+    return parse_custom_string(data, 200)
+
 def parse_structure_RecordType_clienttransactions_Response_GetStatutoriesByUnitSuccess(data):
     from protocol import clienttransactions
     return clienttransactions.Response.parse_structure(data)
