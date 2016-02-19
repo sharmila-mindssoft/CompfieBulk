@@ -257,7 +257,7 @@ $("#actval").keyup(function(){
   $('#ulist_act').empty();
   if(textval.length>0){
     for(var i in acts){
-      if (~acts[i]["statutory"].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([acts[i]["statutory"],acts[i]["statutory"]]); 
+      if (~acts[i].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([acts[i],acts[i]]); 
     }
     var str='';
     for(var i in suggestions){

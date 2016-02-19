@@ -36,10 +36,9 @@ class Email(object):
         msg['From'] = self.sender
         msg['To'] = receiver
         msg['Subject'] = subject
-        cc = "usha@mindssoft.com"
         if cc is not None:
             msg['Cc'] = cc
-            receiver += ", usha@mindssoft.com"
+            receiver += cc
         msg.attach(MIMEText(message, 'plain'))
 
         server.sendmail(self.sender, receiver,  msg.as_string())
@@ -64,7 +63,7 @@ class EmailHandler(Email):
     ):
         subject = "Reset Password"
         message = "Dear User, Kindly click on the following link to reset your \
-        password for Complify. %s" % reset_link 
+        password for Complify. %s" % reset_link
         self.send_email(receiver, subject, message)
         return True
 
@@ -75,7 +74,7 @@ class EmailHandler(Email):
         message = "Dear Client, Your Compfie account has been created. Login and enjoy the services.\
         Your Credentials are <br> Url: 'http://localhost:8080/login/%s' <br> Username: %s <br> password: %s" % (
         	short_name, receiver, password
-        ) 
+        )
         self.send_email(receiver, subject, message)
 
     def send_user_credentials(
@@ -85,7 +84,7 @@ class EmailHandler(Email):
         message = "Dear %s, Your Compfie account has been created. Your code is %s\
         Your Credentials are <br> Url: 'http://localhost:8080/login/%s' <br> Username: %s <br> password: %s" % (
         	employee_name, employee_code, short_name, receiver, password
-        ) 
+        )
         self.send_email(receiver, subject, message)
 
     def send_knowledge_user_credentials(
@@ -95,7 +94,7 @@ class EmailHandler(Email):
         message = "Dear %s, Your Compfie account has been created. Your code is %s\
         Your Credentials are <br> Url: 'http://localhost:8082/knowledge/login' <br> Username: %s <br> password: %s" % (
         	employee_name, employee_code,  receiver, password
-        ) 
+        )
         self.send_email(receiver, subject, message)
 
     def notify_task_assigned(
@@ -174,7 +173,7 @@ class EmailHandler(Email):
         if reject_type == "RejectApproval":
             if concurrence_id is None or concurrence_id == 0:
                 user_ids = "%d,%d" % (user_ids, concurrence_id)
-        	
+
         receiver, employee_name = db.get_user_email_name(user_ids)
         assignee = employee_name.split(",")[0]
         subject = "Task Rejected"
@@ -206,4 +205,3 @@ class EmailHandler(Email):
             sender += receiver.split(",")[1]
             cc = receiver.split(",")[0]
         self.send_email(receiver, subject, message, cc)
-

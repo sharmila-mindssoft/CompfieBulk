@@ -22,19 +22,35 @@ function displayMessage(message) {
 }
 
 function getStatutoryMappings(){
-  function onSuccess(data){
+  function onSuccessMaster(data){
     industriesList = data["industries"];
     statutoryLevelsList = data["statutory_levels"];
-    statutoriesList = data["statutories"];
     countriesList = data["countries"];
     domainsList = data["domains"];
     geographyLevelsList = data["geography_levels"];
     statutoryNaturesList = data["statutory_natures"];
     geographiesList = data["geographies"];
-    statutoryMappingsList = data["statutory_mappings"];
-    tempstatutoryMappingsList = data["statutory_mappings"];
+    statutoriesList = data["statutories"];
     complianceFrequencyList = data["compliance_frequency"];
     approvalStatusList = data["compliance_approval_status"]
+  }
+  function onFailureMaster(error){
+  }
+  mirror.getStatutoryMappingsMaster(
+    function (error, response) {
+      if (error == null){
+        onSuccessMaster(response);
+      }
+      else {
+        onFailureMaster(error);
+      }
+    }
+  );
+
+  function onSuccess(data){
+    statutoryMappingsList = data["statutory_mappings"];
+    tempstatutoryMappingsList = data["statutory_mappings"];
+    
   }
   function onFailure(error){
   }
@@ -48,6 +64,7 @@ function getStatutoryMappings(){
       }
     }
   );
+
 }
 
 //Autocomplete Script Starts
@@ -219,7 +236,7 @@ function loadApproveStatutory(){
         $('.statutory', clone).html(statutoryMappings);
         var complianceNames='';
         for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
-          complianceNames = complianceNames + '<a href="#popup1" onclick="disppopup('+statutorymappingId+','+i+')">'+(i+1)+'. '+statutoryMappingsList[entity]["compliance_names"][i]+'</a>';
+          complianceNames = complianceNames + '<a href="#popup1" onclick="disppopup('+statutorymappingId+','+i+')">'+(i+1)+'. '+statutoryMappingsList[entity]["compliance_names"][i]['compliance_name']+'</a>';
         }
         $('.compliancetask', clone).html(complianceNames);
         $('.applicablelocation', clone).text(applicableLocation);

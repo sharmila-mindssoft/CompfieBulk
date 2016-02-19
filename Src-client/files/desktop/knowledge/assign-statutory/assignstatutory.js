@@ -233,7 +233,7 @@ function load_secondwizard(){
 
 function loadunit(){
 
-  var assignStatutoryGroupId = 0;
+  var assignStatutoryGroupId = null;
   if($('.grouplist.active').attr('id') != undefined)
     assignStatutoryGroupId = parseInt($('.grouplist.active').attr('id'));
 
@@ -249,33 +249,23 @@ function loadunit(){
   if($('.locationlist.active').attr('id') != undefined)
     assignStatutoryLocationId = parseInt($('.locationlist.active').attr('id'));
 
-  var assignStatutoryDivisionId = 0;
+  var assignStatutoryDivisionId = null;
   if($('.divisionlist.active').attr('id') != undefined){
     assignStatutoryDivisionId = parseInt($('.divisionlist.active').attr('id'));
   }
+  var assignStatutoryBusinessGroupId = null;
+  if($('.businessgrouplist.active').attr('id') != undefined)
+    assignStatutoryBusinessGroupId = parseInt($('.businessgrouplist.active').attr('id'));
 
   if(assignStatutoryLegalEntityId != 0 && assignStatutoryIndustryId != 0 && assignStatutoryLocationId != 0){
-
-    if(assignStatutoryDivisionId == 0){
       var str='';
       $('#unit').empty();
       for(var unit in unitsList){
-
-        if(unitsList[unit]["division_id"] == null && unitsList[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && unitsList[unit]["client_id"] == assignStatutoryGroupId && unitsList[unit]["industry_id"] == assignStatutoryIndustryId && $.inArray(assignStatutoryLocationId, unitsList[unit]["geography_ids"]) >= 0){
+        if(unitsList[unit]["business_group_id"] == assignStatutoryBusinessGroupId && unitsList[unit]["division_id"] == assignStatutoryDivisionId && unitsList[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && unitsList[unit]["client_id"] == assignStatutoryGroupId && unitsList[unit]["industry_id"] == assignStatutoryIndustryId && $.inArray(assignStatutoryLocationId, unitsList[unit]["geography_ids"]) >= 0){
           str += '<li id="'+unitsList[unit]["unit_id"]+'" class="unitlist" >'+unitsList[unit]["unit_name"]+'</li>';
         }
       }
       $('#unit').append(str);
-    }else{
-      var str='';
-      $('#unit').empty();
-      for(var unit in unitsList){
-        if(unitsList[unit]["division_id"] == assignStatutoryDivisionId && unitsList[unit]["legal_entity_id"] == assignStatutoryLegalEntityId && unitsList[unit]["client_id"] == assignStatutoryGroupId && unitsList[unit]["industry_id"] == assignStatutoryIndustryId && $.inArray(assignStatutoryLocationId, unitsList[unit]["geography_ids"]) >= 0){
-          str += '<li id="'+unitsList[unit]["unit_id"]+'" class="unitlist" >'+unitsList[unit]["unit_name"]+'</li>';
-        }
-      }
-      $('#unit').append(str);
-    }
   }
 }
 
