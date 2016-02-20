@@ -1342,11 +1342,18 @@ class ClientDatabase(Database):
 
     def get_level_1_statutories_for_user(self, session_user, client_id, domain_id = None):
         domain_ids = domain_id
-        if not domain_id:
-            domain_rows = self.get_data(self.tblUserDomains, "group_concat(domain_id)",
+        if domain_ids == None:
+            columns = "group_concat(domain_id)"
+            domain_rows = None
+            if session_user != 0:
+                domain_rows = self.get_data(self.tblUserDomains, columns,
                 "user_id='%d'" % session_user)
+            else:
+                domain_rows = self.get_data(self.tblDomains, columns,
+                "1")
+            print domain_rows
             domain_ids = domain_rows[0][0]
-
+        print domain_ids
         client_statutory_rows = self.get_data(
             self.tblClientStatutories,
             "group_concat(client_statutory_id)",
