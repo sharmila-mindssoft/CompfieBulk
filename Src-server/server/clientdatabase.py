@@ -1351,9 +1351,7 @@ class ClientDatabase(Database):
             else:
                 domain_rows = self.get_data(self.tblDomains, columns,
                 "1")
-            print domain_rows
             domain_ids = domain_rows[0][0]
-        print domain_ids
         client_statutory_rows = self.get_data(
             self.tblClientStatutories,
             "group_concat(client_statutory_id)",
