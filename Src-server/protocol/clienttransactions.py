@@ -1411,7 +1411,7 @@ class APPROVALCOMPLIANCE(object):
     def __init__(self, compliance_history_id, compliance_name, description,
         domain_name, start_date, due_date, delayed_by, compliance_frequency,
         documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
-        remarks, action):
+        remarks, action, statutory_dates):
         self.compliance_history_id = compliance_history_id
         self.compliance_name = compliance_name
         self.description = description
@@ -1428,13 +1428,14 @@ class APPROVALCOMPLIANCE(object):
         self.concurrenced_by = concurrenced_by
         self.remarks = remarks
         self.action = action
+        self.statutory_dates = statutory_dates
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_history_id", "compliance_name",
             "description", "domain_name", "file_names", "start_date", "due_date", "delayed_by",
             "compliance_frequency", "documents", "upload_date", "completion_date",
-            "next_due_date", "concurrenced_by", "remarks", "action"])
+            "next_due_date", "concurrenced_by", "remarks", "action", "statutory_dates"])
         compliance_history_id = data.get("compliance_history_id")
         compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         compliance_name = data.get("compliance_name")
@@ -1444,7 +1445,7 @@ class APPROVALCOMPLIANCE(object):
         domain_name = data.get("domain_name")
         domain_name = parse_structure_CustomTextType_500(domain_name)
         file_names = data.get("file_names")
-        file_names = parse_structure_OptionalType_CustomTextType_500(file_names)
+        file_names = parse_structure_OptionalType_VectorType_CustomTextType_500(file_names)
         start_date = data.get("start_date")
         start_date = parse_structure_CustomTextType_20(start_date)
         due_date = data.get("due_date")
@@ -1467,10 +1468,12 @@ class APPROVALCOMPLIANCE(object):
         remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
         action = data.get("action")
         action = parse_structure_CustomTextType_20(remarks)
+        statutory_dates = data.get("statutory_dates")
+        statutory_dates = parse_structure_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         return APPROVALCOMPLIANCE(compliance_history_id, compliance_name, description,
             domain_name, start_date, due_date, delayed_by, compliance_frequency,
             documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
-            remarks, action)
+            remarks, action, statutory_dates)
 
     def to_structure(self):
         return {
@@ -1489,7 +1492,8 @@ class APPROVALCOMPLIANCE(object):
             "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),
             "concurrenced_by": to_structure_OptionalType_CustomTextType_50(self.concurrenced_by),
             "remarks": to_structure_OptionalType_CustomTextType_500(self.remarks),
-            "action": to_structure_CustomTextType_20(self.action)
+            "action": to_structure_CustomTextType_20(self.action),
+            "statutory_dates" : to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_dates)
         }
 
 #

@@ -1360,7 +1360,7 @@ class KnowledgeDatabase(Database):
                 geography = core.GeographyWithMapping(
                     d["geography_id"], d["geography_name"],
                     d["level_id"],
-                    self.geography_parent_mapping[d["geography_id"]][0],
+                    self.geography_parent_mapping[int(d["geography_id"])][0],
                     parent_ids[-1], bool(d["is_active"])
                 )
                 country_id = d["country_id"]

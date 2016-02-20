@@ -1743,7 +1743,8 @@ class ClientDatabase(Database):
         aliases = ["tch", "tu"]
         join_condition = ["tch.completed_by = tu.user_id"]
         assignee_condition = "completion_date is not Null and completed_on is not Null and "+\
-        "(approve_status is Null or approve_status = 0) and (approved_by = '%d' or concurred_by = '%d')" % (session_user, session_user)
+        "(approve_status is Null or approve_status = 0) and (approved_by = '%d' or concurred_by = '%d')\
+        group by completed_by" % (session_user, session_user)
         assignee_rows = self.get_data_from_multiple_tables(
             assignee_columns, tables,
             aliases, join_type,  join_condition,
@@ -1754,7 +1755,8 @@ class ClientDatabase(Database):
             query_columns = "compliance_history_id, tch.compliance_id, start_date,"+\
             " due_date, documents, completion_date, completed_on, next_due_date, "+\
             "concurred_by, remarks, datediff(due_date, completion_date ),compliance_task,"+\
-            " compliance_description, tc.frequency_id, frequency, document_name, concurrence_status"
+            " compliance_description, tc.frequency_id, frequency, document_name, concurrence_status, \
+            statutory_dates"
             join_type = "left join"
             query_tables = [
                     self.tblComplianceHistory,
@@ -1766,8 +1768,9 @@ class ClientDatabase(Database):
                     "tch.compliance_id = tc.compliance_id",
                     "tc.frequency_id = tcf.frequency_id"
             ]
-            where_condition = "%s and completed_by = '%d'"% (
-                assignee_condition, assignee[0]
+            where_condition = "completion_date is not Null and completed_on is not Null and \
+            (approve_status is Null or approve_status = 0) and completed_by = '%d'"% (
+                assignee[0]
             )
             rows = self.get_data_from_multiple_tables(
                 query_columns, query_tables, aliases,
@@ -1775,26 +1778,25 @@ class ClientDatabase(Database):
                 where_condition
             )
             compliances = []
-            file_name = []
             for row in rows:
                 download_urls = []
+                file_name = []
                 if row[4] is not None:
                     for document in row[4].split(","):
                         dl_url = "%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, document)
                         download_urls.append(dl_url)    
                         file_name.append(document.split("-")[0])
-                # print file_name
-                # if file_name 
-                # file_name = file_name if len(file_name) > 0 else None
+                concurred_by_id = None if row[8] is None else int(row[8])
                 compliance_history_id = row[0]
                 compliance_id = row[1]
                 start_date = self.datetime_to_string(row[2])
                 due_date = self.datetime_to_string(row[3])
-                documents = download_urls if len(download_urls) > 0  else None
+                documents = download_urls if len(download_urls) > 0 else None
+                file_names = file_name if len(file_name) > 0 else None
                 completion_date = self.datetime_to_string(row[5])
                 completed_on = self.datetime_to_string(row[6])
                 next_due_date = None if row[7] is None else self.datetime_to_string(row[7])
-                concurred_by = None if row[8] is None else self.get_user_name_by_id(int(row[8]), client_id)
+                concurred_by = None if concurred_by_id is None else self.get_user_name_by_id(concurred_by_id, client_id)
                 remarks = row[9]
                 delayed_by = None if row[10] < 0 else row[10]
                 compliance_name = "%s - %s"%(row[15], row[11])
@@ -1803,6 +1805,15 @@ class ClientDatabase(Database):
                 frequency = core.COMPLIANCE_FREQUENCY(row[14])
                 description = row[12]
                 concurrence_status = row[16]
+                statutory_dates = json.loads(row[17])
+                date_list = []
+                for date in statutory_dates :
+                    s_date = core.StatutoryDate(
+                        date["statutory_date"],
+                        date["statutory_month"],
+                        date["trigger_before_days"]
+                    )
+                    date_list.append(s_date)
 
                 domain_name_column = "domain_name"
                 condition = " domain_id = (select domain_id from tbl_client_statutories "+\
@@ -1816,31 +1827,15 @@ class ClientDatabase(Database):
 
                 action = None
 
-                if row[8] is not None:
-                    if int(row[8]) == session_user:
-                        action = "Concur"
-                    else:
-                        if concurrence_status is not None:
-                            if concurrence_status != 0:
-                                action = "Approve"
-                            else:
-                                continue
-                        else:
-                            continue
+                if concurred_by_id == session_user:
+                    action = "Concur"
                 else:
-                    if concurrence_status is not None:
-                        if concurrence_status != 0:
-                            action = "Approve"
-                        else:
-                            continue
-                    else:
-                        continue
-
+                    action = "Approve"
                 compliances.append(clienttransactions.APPROVALCOMPLIANCE(
                     compliance_history_id, compliance_name, description, domain_name,
-                    start_date, due_date, delayed_by, frequency, documents, file_name, 
-                    completion_date, completed_on, next_due_date, concurred_by,
-                    remarks, action))
+                    start_date, due_date, delayed_by, frequency, documents, 
+                    file_names, completion_date, completed_on, next_due_date, 
+                    concurred_by, remarks, action, date_list))
             assignee_id = assignee[0]
             assignee_name = "{} - {}".format(assignee[1], assignee[2])
             if len(compliances) > 0:
@@ -3595,12 +3590,12 @@ class ClientDatabase(Database):
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
         try:
             email.notify_task_rejected(
-                self, compliance_history_id, remarks, "RejectApproval"
+                self, compliance_history_id, remarks, "Reject Approval"
             )
         except e:
             print "Error while sending email : {}".format(e)
 
-    def concur_Compliance(self, compliance_history_id, remarks, next_due_date, client_id):
+    def concur_compliance(self, compliance_history_id, remarks, next_due_date, client_id):
         columns = ["concurrence_status", "concurred_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
@@ -3613,7 +3608,7 @@ class ClientDatabase(Database):
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
         try:
             email.notify_task_rejected(
-                self, compliance_history_id, remarks, "RejectConcurrence"
+                self, compliance_history_id, remarks, "Reject Concurrence"
             )
         except e:
             print "Error while sending email : {}".format(e)
