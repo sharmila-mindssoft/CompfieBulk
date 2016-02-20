@@ -4668,8 +4668,8 @@ class ClientDatabase(Database):
         join_type = "right join"
         where_condition = "ch.completed_by='%d'" % (
             session_user)
-        where_condition += " and (ch.completed_on is null or ch.approve_status \
-        is null or ch.approve_status = 0)"
+        where_condition += " and (ch.completed_on is null and (ch.approve_status \
+        is null or ch.approve_status = 0))"
         current_compliances_row = self.get_data_from_multiple_tables(
             columns,
             tables, aliases, join_type, join_conditions, where_condition
@@ -5349,42 +5349,47 @@ class ClientDatabase(Database):
         # Hanling upload
         document_names = []
         file_size = 0
-        if len(documents) > 0:
-            for doc in documents:
-                file_size += doc.file_size
-
-            if self.is_space_available(file_size):
-                is_uploading_file = True
+        if documents is not None:
+            if len(documents) > 0:
                 for doc in documents:
-                    file_name_parts = doc.file_name.split('.')
-                    name = None
-                    exten = None
-                    for index, file_name_part in enumerate(file_name_parts):
-                        if index == len(file_name_parts) - 1:
-                            exten = file_name_part
-                        else:
-                            if name is None:
-                                name = file_name_part
+                    file_size += doc.file_size
+
+                if self.is_space_available(file_size):
+                    is_uploading_file = True 
+                    for doc in documents:
+                        file_name_parts = doc.file_name.split('.')
+                        name = None
+                        exten = None
+                        for index, file_name_part in enumerate(file_name_parts):
+                            if index == len(file_name_parts) - 1:
+                                exten = file_name_part
                             else:
-                                name += file_name_part
-                    auto_code = self.new_uuid()
-                    file_name = "%s-%s.%s" % (name, auto_code, exten)
-                    document_names.append(file_name)
-                    self.convert_base64_to_file(file_name, doc.file_content, client_id)
-                self.update_used_space(file_size)
-            else:
-                return clienttransactions.NotEnoughSpaceAvailable()
+                                if name is None:
+                                    name = file_name_part
+                                else:
+                                    name += file_name_part
+                        auto_code = self.new_uuid()
+                        file_name = "%s-%s.%s" % (name, auto_code, exten)
+                        document_names.append(file_name)
+                        self.convert_base64_to_file(file_name, doc.file_content, client_id)
+                    self.update_used_space(file_size)
+                else:
+                    return clienttransactions.NotEnoughSpaceAvailable()
 
         current_time_stamp = self.get_date_time()
         history_columns = [
             "completion_date", "documents", "validity_date",
             "next_due_date", "remarks", "completed_on"
         ]
+        if validity_date is not None:
+            validity_date = self.string_to_datetime(validity_date)
+        if next_due_date is not None:
+            next_due_date = self.string_to_datetime(next_due_date)
         history_values = [
             self.string_to_datetime(completion_date),
             ",".join(document_names),
-            self.string_to_datetime(validity_date),
-            self.string_to_datetime(next_due_date),
+            validity_date,
+            next_due_date,
             remarks,
             current_time_stamp
         ]

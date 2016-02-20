@@ -234,7 +234,7 @@ def run_server(port):
     def delay_initialize():
         db = KnowledgeDatabase(
             "localhost", 3306, "root", "123456",
-            "mirror_knowledge"
+            "mirror_knowledge_usha"
         )
         # db = KnowledgeDatabase(
         #     "198.143.141.73", 3306, "root", "Root!@#123",
