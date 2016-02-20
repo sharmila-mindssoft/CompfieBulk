@@ -34,7 +34,6 @@
                 </tr>
                 <tr>
                   <td>
-                    <input type="hidden" id="ascountry">
                     <input type="text" class="filter-text-box" id="filter_country">
                   </td>
                   <td>
@@ -114,7 +113,59 @@
         <div class="setup-content" id="step-3">
           <div class="innercontent">
             <div class="form-container-grid-table">
+          <table style="width:100%">                
+                <tr>
+                  <th>Assignee</th>
+                  <th align="center">Concurrence</th>
+                  <th align="center">Approval</th>
+                </tr>
+                <tr>
+                  <th  style="padding-bottom:5px">
+                    <Select class="input-box" style="width:95%; float:left;" id="assignee_unit">
+                      
+                    </Select>
+                  </th>
+                  <th >
+                    <Select class="input-box" style="width:95%; float:left;" id="concurrence_unit">
+                      
+                    </Select>
+                  </th>
+                  <th >
+                    <Select class="input-box" style="width:95%; float:left;" id="approval_unit">
+                        
+                    </Select>
+                  </th>
+                </tr>
+                
+                <tr>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_assignee" placeholder="Search" style="margin-bottom:5px">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_concurrence" placeholder="Search" style="margin-bottom:5px">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_approval" placeholder="Search" style="margin-bottom:5px">
+                  </td>
+                </tr>
 
+                <tr>
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="assignee">
+                    </ul>
+                  </td>
+                
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="concurrence">
+                    </ul>
+                  </td>
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="approval">
+                    </ul>
+                  </td>
+
+                </tr>
+              </table> 
             </div>
           </div>
 
@@ -184,8 +235,8 @@
     <a class="close" href="#">x</a>
     <div class="content">
     <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;color:#000">Applicable Units</h1>
-     <table width="100%">
-        <tr align="left">
+     <table width="100%" id="popup_table">
+        <tr align="left" class = "popup_row">
           <td class="popup_unitname"></td>
         </tr>
     </table>
