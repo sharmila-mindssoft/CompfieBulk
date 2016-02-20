@@ -414,21 +414,23 @@ class ClientDatabase(Database):
             self.tblUnits, industry_column, industry_condition
         )
 
-        columns = "unit_id, unit_code, unit_name, address, division_id,"+\
-        " legal_entity_id, business_group_id, is_active"
+        columns = "unit_id, concat(unit_code,'-',unit_name), address, division_id,"+\
+        " legal_entity_id, business_group_id, country_id"
         industry_wise_units =[]
         for industry in industry_rows:
             industry_name = industry[0]
             units = []
-            condition += " and industry_name = '%s'" % industry_name
+            condition += " and industry_name = '%s' and is_active = 1" % industry_name
             rows = self.get_data(
                 self.tblUnits, columns, condition
             )
             for unit in rows:
-                units.append(core.ClientUnit(
-                    unit[0], unit[4], unit[5],unit[6], unit[1],
-                    unit[2], unit[3], bool(unit[7])
-                ))
+                units.append(
+                    clienttransactions.ASSIGN_COMPLIANCE_UNITS(
+                        unit[0], unit[1], unit[2],unit[3], unit[4],
+                        unit[5], unit[6]
+                    )
+                )
             industry_wise_units.append(clienttransactions.IndustryWiseUnits(industry_name, units))
         return industry_wise_units
 
@@ -1342,11 +1344,16 @@ class ClientDatabase(Database):
 
     def get_level_1_statutories_for_user(self, session_user, client_id, domain_id = None):
         domain_ids = domain_id
-        if not domain_id:
-            domain_rows = self.get_data(self.tblUserDomains, "group_concat(domain_id)",
+        if domain_ids == None:
+            columns = "group_concat(domain_id)"
+            domain_rows = None
+            if session_user != 0:
+                domain_rows = self.get_data(self.tblUserDomains, columns,
                 "user_id='%d'" % session_user)
+            else:
+                domain_rows = self.get_data(self.tblDomains, columns,
+                "1")
             domain_ids = domain_rows[0][0]
-
         client_statutory_rows = self.get_data(
             self.tblClientStatutories,
             "group_concat(client_statutory_id)",

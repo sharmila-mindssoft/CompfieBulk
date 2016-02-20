@@ -820,12 +820,12 @@ class IndustryWiseUnits(object):
         industry_name = data.get("industry_name")
         industry_name = parse_structure_CustomTextType_20(industry_name)
         units = data.get("units")
-        units = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_core_ClientUnit(units)
+        units = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(units)
 
     def to_structure(self):
         return {
             "industry_name": to_structure_CustomTextType_20(self.industry_name),
-            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units)
+            "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units)
         }
 
 class GetPastRecordsFormDataSuccess(Response):
