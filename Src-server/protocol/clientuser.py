@@ -16,7 +16,6 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_RecordType_core_FileList,
     parse_structure_OptionalType_CustomTextType_20,
     parse_structure_OptionalType_CustomTextType_500
-
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_UpcomingCompliance,

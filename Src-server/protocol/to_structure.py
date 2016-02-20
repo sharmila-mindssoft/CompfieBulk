@@ -3794,3 +3794,10 @@ def to_structure_VectorType_RecordType_core_Compliance_Download(data):
     for item in data :
         lst.append(to_structure_RecordType_core_Compliance_Download(item))
     return lst
+
+def to_structure_VectorType_CustomTextType_500(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_CustomTextType_500(item))
+    return lst

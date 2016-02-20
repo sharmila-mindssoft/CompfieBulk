@@ -18,6 +18,7 @@ __all__ = [
 ]
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 CLIENT_DOCS_BASE_PATH = os.path.join(ROOT_PATH, "clientdocuments")
+CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 FORMAT_DOWNLOAD_URL = "/client/compliance_format"
 email = EmailHandler()
 
@@ -1652,8 +1653,17 @@ class ClientDatabase(Database):
             if self.is_space_available(file_size):
                 is_uploading_file = True
                 for doc in documents:
-                    name = doc.file_name.split('.')[0]
-                    exten = doc.file_name.split('.')[1]
+                    file_name_parts = doc.file_name.split('.')
+                    name = None
+                    exten = None
+                    for index, file_name_part in enumerate(file_name_parts):
+                        if index == len(file_name_parts) - 1:
+                            exten = file_name_part
+                        else:
+                            if name is None:
+                                name = file_name_part
+                            else:
+                                name += file_name_part
                     auto_code = self.new_uuid()
                     file_name = "%s-%s.%s" % (name, auto_code, exten)
                     document_names.append(file_name)
@@ -1733,7 +1743,7 @@ class ClientDatabase(Database):
         aliases = ["tch", "tu"]
         join_condition = ["tch.completed_by = tu.user_id"]
         assignee_condition = "completion_date is not Null and completed_on is not Null and "+\
-        "approve_status is Null and (approved_by = '%d' or concurred_by = '%d')" % (session_user, session_user)
+        "(approve_status is Null or approve_status = 0) and (approved_by = '%d' or concurred_by = '%d')" % (session_user, session_user)
         assignee_rows = self.get_data_from_multiple_tables(
             assignee_columns, tables,
             aliases, join_type,  join_condition,
@@ -1765,15 +1775,21 @@ class ClientDatabase(Database):
                 where_condition
             )
             compliances = []
+            file_name = []
             for row in rows:
+                download_urls = []
+                for document in row[4].split(","):
+                    dl_url = "%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, document)
+                    download_urls.append(dl_url)    
+                    file_name.append(document.split("-")[0])
                 compliance_history_id = row[0]
                 compliance_id = row[1]
                 start_date = self.datetime_to_string(row[2])
                 due_date = self.datetime_to_string(row[3])
-                documents = row[4].split(",")
+                documents = download_urls
                 completion_date = self.datetime_to_string(row[5])
                 completed_on = self.datetime_to_string(row[6])
-                next_due_date = self.datetime_to_string(row[7])
+                next_due_date = None if row[7] is None else self.datetime_to_string(row[7])
                 concurred_by = self.get_user_name_by_id(int(row[8]), client_id)
                 remarks = row[9]
                 delayed_by = None if row[10] < 0 else row[10]
@@ -1787,7 +1803,7 @@ class ClientDatabase(Database):
                 domain_name_column = "domain_name"
                 condition = " domain_id = (select domain_id from tbl_client_statutories "+\
                 " where client_statutory_id = (select client_statutory_id from "+\
-                " tbl_client_compliances where compliance_id ='%d'))" % compliance_id
+                " tbl_client_compliances where compliance_id ='%d' limit 1))" % compliance_id
                 domain_name_row =  self.get_data(
                     self.tblDomains, domain_name_column,
                     condition
@@ -1808,7 +1824,7 @@ class ClientDatabase(Database):
 
                 compliances.append(clienttransactions.APPROVALCOMPLIANCE(
                     compliance_history_id, compliance_name, description, domain_name,
-                    start_date, due_date, delayed_by, frequency, documents,
+                    start_date, due_date, delayed_by, frequency, documents, file_name, 
                     completion_date, completed_on, next_due_date, concurred_by,
                     remarks, action))
             assignee_id = assignee[0]
@@ -1819,23 +1835,6 @@ class ClientDatabase(Database):
             else:
                 continue
         return approved_compliances
-
-
-    def get_compliance_approval_status_list(self, session_user, client_id):
-        columns = "compliance_status_id, compliance_status"
-        condition = "1"
-        rows = self.get_data(
-            self.tblComplianceStatus, columns, condition
-        )
-        columns = columns.split(",")
-        return self.return_compliance_approval_status_list(columns, rows)
-
-    def return_compliance_approval_status_list(self, columns, compliance_status_list):
-        result_compliance_status = []
-        for compliance_status in compliance_status_list:
-            result_compliance_status.append(core.ComplianceApprovalStatus(
-                compliance_status[0], core.COMPLIANCE_APPROVAL_STATUS(compliance_status[1])))
-        return result_compliance_status
 
     def get_user_name_by_id(self, user_id, client_id = None):
         employee_name = None
@@ -4644,7 +4643,7 @@ class ClientDatabase(Database):
         compliance_status = " %d days left" % abs(ageing)
         if ageing > 0:
             compliance_status = "Overdue by %d days" % abs(ageing)
-        return compliance_status, ageing
+        return ageing, compliance_status
 
     def get_current_compliances_list(self, session_user, client_id):
         columns = "compliance_history_id, start_date, due_date, " +\
@@ -4668,8 +4667,9 @@ class ClientDatabase(Database):
         join_type = "right join"
         where_condition = "ch.completed_by='%d'" % (
             session_user)
-        where_condition += " and (ch.completed_on is null and (ch.approve_status \
-        is null or ch.approve_status = 0))"
+        where_condition += " and ((ch.completed_on is null or ch.completed_on = 0) \
+        and (ch.approve_status is null or ch.approve_status = 0))"
+
         current_compliances_row = self.get_data_from_multiple_tables(
             columns,
             tables, aliases, join_type, join_conditions, where_condition
@@ -4687,9 +4687,9 @@ class ClientDatabase(Database):
             unit_name = "%s - %s" % (
                 unit_code, unit_name
             )
-            ageing, ageing_value = self.calculate_ageing(compliance[2])
+            no_of_days, ageing = self.calculate_ageing(compliance[2])
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
-            if ageing_value > 0:
+            if no_of_days > 0:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
             format_files = [ "%s/%s" % (
                     FORMAT_DOWNLOAD_URL, x
@@ -5355,7 +5355,7 @@ class ClientDatabase(Database):
                     file_size += doc.file_size
 
                 if self.is_space_available(file_size):
-                    is_uploading_file = True 
+                    is_uploading_file = True
                     for doc in documents:
                         file_name_parts = doc.file_name.split('.')
                         name = None

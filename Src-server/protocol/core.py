@@ -46,7 +46,9 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_CustomTextType_100,
     parse_structure_OptionalType_Text,
     parse_structure_VectorType_RecordType_core_Compliance_Download,
-    parse_structure_CustomTextType_200
+    parse_structure_CustomTextType_200,
+    parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS
+
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -100,7 +102,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_CustomTextType_100,
     to_structure_OptionalType_Text,
     to_structure_VectorType_RecordType_core_Compliance_Download,
-    to_structure_CustomTextType_200
+    to_structure_CustomTextType_200,
+    to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS
 )
 
 #
@@ -187,16 +190,16 @@ class APPROVAL_STATUS(object):
 
 class COMPLIANCE_APPROVAL_STATUS(object):
     Concur = "Concur"
-    RejectConcurrence = "RejectConcurrence"
+    RejectConcurrence = "Reject Concurrence"
     Approve = "Approve"
-    RejectApproval = "RejectApproval"
+    RejectApproval = "Reject Approval"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Concur", "RejectConcurrence", "Approve", "RejectApproval"]
+        return ["Concur", "Reject Concurrence", "Approve", "Reject Approval"]
 
     def value(self):
         return self._value
@@ -2549,13 +2552,13 @@ class ComplianceApprovalStatus(object):
         approval_status_id = data.get("approval_status_id")
         approval_status_id = parse_structure_UnsignedIntegerType_32(approval_status_id)
         approval_status = data.get("approval_status")
-        approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(approval_status)
+        approval_status = parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(approval_status)
         return ComplianceApprovalStatus(approval_status_id, approval_status)
 
     def to_structure(self):
         return {
             "approval_status_id": to_structure_SignedIntegerType_8(self.approval_status_id),
-            "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
+            "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
         }
 
 #

@@ -3685,3 +3685,17 @@ def parse_structure_VectorType_RecordType_core_Compliance_Download(data):
     for item in data :
         lst.append(parse_structure_RecordType_core_Compliance_Download(item))
     return lst
+
+def parse_structure_VectorType_RecordType_core_COMPLIANCE_APPROVAL_STATUS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_COMPLIANCE_APPROVAL_STATUS(item))
+    return lst
+
+def parse_structure_VectorType_CustomTextType_500(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_CustomTextType_500(item))
+    return lst
