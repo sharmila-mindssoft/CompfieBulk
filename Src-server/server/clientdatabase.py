@@ -1743,7 +1743,7 @@ class ClientDatabase(Database):
         aliases = ["tch", "tu"]
         join_condition = ["tch.completed_by = tu.user_id"]
         assignee_condition = "completion_date is not Null and completed_on is not Null and "+\
-        "approve_status is Null and (approved_by = '%d' or concurred_by = '%d')" % (session_user, session_user)
+        "(approve_status is Null or approve_status = 0) and (approved_by = '%d' or concurred_by = '%d')" % (session_user, session_user)
         assignee_rows = self.get_data_from_multiple_tables(
             assignee_columns, tables,
             aliases, join_type,  join_condition,
@@ -1775,11 +1775,13 @@ class ClientDatabase(Database):
                 where_condition
             )
             compliances = []
+            file_name = []
             for row in rows:
                 download_urls = []
                 for document in row[4].split(","):
                     dl_url = "%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, document)
                     download_urls.append(dl_url)    
+                    file_name.append(document.split("-")[0])
                 compliance_history_id = row[0]
                 compliance_id = row[1]
                 start_date = self.datetime_to_string(row[2])
@@ -1787,7 +1789,7 @@ class ClientDatabase(Database):
                 documents = download_urls
                 completion_date = self.datetime_to_string(row[5])
                 completed_on = self.datetime_to_string(row[6])
-                next_due_date = self.datetime_to_string(row[7])
+                next_due_date = None if row[7] is None else self.datetime_to_string(row[7])
                 concurred_by = self.get_user_name_by_id(int(row[8]), client_id)
                 remarks = row[9]
                 delayed_by = None if row[10] < 0 else row[10]
@@ -1801,7 +1803,7 @@ class ClientDatabase(Database):
                 domain_name_column = "domain_name"
                 condition = " domain_id = (select domain_id from tbl_client_statutories "+\
                 " where client_statutory_id = (select client_statutory_id from "+\
-                " tbl_client_compliances where compliance_id ='%d'))" % compliance_id
+                " tbl_client_compliances where compliance_id ='%d' limit 1))" % compliance_id
                 domain_name_row =  self.get_data(
                     self.tblDomains, domain_name_column,
                     condition
@@ -1822,7 +1824,7 @@ class ClientDatabase(Database):
 
                 compliances.append(clienttransactions.APPROVALCOMPLIANCE(
                     compliance_history_id, compliance_name, description, domain_name,
-                    start_date, due_date, delayed_by, frequency, documents,
+                    start_date, due_date, delayed_by, frequency, documents, file_name, 
                     completion_date, completed_on, next_due_date, concurred_by,
                     remarks, action))
             assignee_id = assignee[0]
@@ -1833,23 +1835,6 @@ class ClientDatabase(Database):
             else:
                 continue
         return approved_compliances
-
-
-    def get_compliance_approval_status_list(self, session_user, client_id):
-        columns = "compliance_status_id, compliance_status"
-        condition = "1"
-        rows = self.get_data(
-            self.tblComplianceStatus, columns, condition
-        )
-        columns = columns.split(",")
-        return self.return_compliance_approval_status_list(columns, rows)
-
-    def return_compliance_approval_status_list(self, columns, compliance_status_list):
-        result_compliance_status = []
-        for compliance_status in compliance_status_list:
-            result_compliance_status.append(core.ComplianceApprovalStatus(
-                compliance_status[0], core.COMPLIANCE_APPROVAL_STATUS(compliance_status[1])))
-        return result_compliance_status
 
     def get_user_name_by_id(self, user_id, client_id = None):
         employee_name = None
@@ -4654,11 +4639,11 @@ class ClientDatabase(Database):
     def calculate_ageing(self, due_date):
         current_time_stamp = self.get_date_time()
         due_date = datetime.datetime(due_date.year, due_date.month, due_date.day)
-        ageing = abs(current_time_stamp - due_date).days
-        compliance_status = " %d days left" % ageing
+        ageing = (current_time_stamp - due_date).days
+        compliance_status = " %d days left" % abs(ageing)
         if ageing > 0:
-            compliance_status = "Overdue by %d days" % ageing
-        return compliance_status
+            compliance_status = "Overdue by %d days" % abs(ageing)
+        return ageing, compliance_status
 
     def get_current_compliances_list(self, session_user, client_id):
         columns = "compliance_history_id, start_date, due_date, " +\
@@ -4682,8 +4667,8 @@ class ClientDatabase(Database):
         join_type = "right join"
         where_condition = "ch.completed_by='%d'" % (
             session_user)
-        where_condition += " and (ch.completed_on is null and (ch.approve_status \
-        is null or ch.approve_status = 0))"
+        where_condition += " and ((ch.completed_on is null or ch.completed_on = 0) \
+        and (ch.approve_status is null or ch.approve_status = 0))"
         current_compliances_row = self.get_data_from_multiple_tables(
             columns,
             tables, aliases, join_type, join_conditions, where_condition
@@ -4701,9 +4686,9 @@ class ClientDatabase(Database):
             unit_name = "%s - %s" % (
                 unit_code, unit_name
             )
-            ageing = self.calculate_ageing(compliance[2])
+            no_of_days, ageing = self.calculate_ageing(compliance[2])
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
-            if ageing > 0:
+            if no_of_days > 0:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
             format_files = [ "%s/%s" % (
                     FORMAT_DOWNLOAD_URL, x
