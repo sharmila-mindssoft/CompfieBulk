@@ -636,6 +636,9 @@ def to_structure_RecordType_technomasters_Response_DivisionNameAlreadyExists(dat
 def to_structure_CustomTextType_100(data):
     return parse_custom_string(data, 100)
 
+def to_structure_CustomTextType_200(data):
+    return parse_custom_string(data, 200)
+
 def to_structure_RecordType_clienttransactions_Response_GetStatutoriesByUnitSuccess(data):
     from protocol import clienttransactions
     return clienttransactions.Response.to_structure(data)
@@ -3791,3 +3794,14 @@ def to_structure_VectorType_RecordType_core_Compliance_Download(data):
     for item in data :
         lst.append(to_structure_RecordType_core_Compliance_Download(item))
     return lst
+
+def to_structure_VectorType_CustomTextType_500(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_CustomTextType_500(item))
+    return lst
+
+def to_structure_OptionalType_VectorType_CustomTextType_500(data):
+    if data is None: return data
+    return to_structure_VectorType_CustomTextType_500(data)

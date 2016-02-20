@@ -12,7 +12,10 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_20,
     parse_structure_VariantType_clientuser_Request,
     parse_structure_VectorType_CustomTextType_20,
-    parse_structure_RecordType_clientuser_ComplianceDetail
+    parse_structure_RecordType_clientuser_ComplianceDetail,
+    parse_structure_OptionalType_VectorType_RecordType_core_FileList,
+    parse_structure_OptionalType_CustomTextType_20,
+    parse_structure_OptionalType_CustomTextType_500
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_UpcomingCompliance,
@@ -25,7 +28,10 @@ from protocol.to_structure import (
     to_structure_CustomTextType_20,
     to_structure_VariantType_clientuser_Request,
     to_structure_VectorType_CustomTextType_20,
-    to_structure_RecordType_clientuser_ComplianceDetail
+    to_structure_RecordType_clientuser_ComplianceDetail,
+    to_structure_OptionalType_VectorType_RecordType_core_FileList,
+    to_structure_OptionalType_CustomTextType_20,
+    to_structure_OptionalType_CustomTextType_500
 )
 
 #
@@ -95,25 +101,25 @@ class UpdateComplianceDetail(Request):
         compliance_history_id = data.get("compliance_history_id")
         compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         documents = data.get("documents")
-        documents = parse_structure_VectorType_CustomTextType_20(documents)
+        documents = parse_structure_OptionalType_VectorType_RecordType_core_FileList(documents)
         completion_date = data.get("completion_date")
         completion_date = parse_structure_CustomTextType_20(completion_date)
         validity_date = data.get("validity_date")
-        validity_date = parse_structure_CustomTextType_20(validity_date)
+        validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         next_due_date = data.get("next_due_date")
-        next_due_date = parse_structure_CustomTextType_20(next_due_date)
+        next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         remarks = data.get("remarks")
-        remarks = parse_structure_CustomTextType_500(remarks)
+        remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
         return UpdateComplianceDetail(compliance_history_id, documents, completion_date, validity_date, next_due_date, remarks)
 
     def to_inner_structure(self):
         return {
             "compliance_history_id": to_structure_SignedIntegerType_8(self.compliance_history_id),
-            "documents": to_structure_VectorType_CustomTextType_20(self.documents),
+            "documents": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.documents),
             "completion_date": to_structure_CustomTextType_20(self.completion_date),
-            "validity_date": to_structure_CustomTextType_20(self.validity_date),
-            "next_due_date": to_structure_CustomTextType_20(self.next_due_date),
-            "remarks": to_structure_CustomTextType_500(self.remarks),
+            "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
+            "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),
+            "remarks": to_structure_OptionalType_CustomTextType_500(self.remarks),
         }
 
 class GetOnOccurrenceCompliances(Request):

@@ -575,6 +575,9 @@ def parse_structure_RecordType_technomasters_Response_DivisionNameAlreadyExists(
 def parse_structure_CustomTextType_100(data):
     return parse_custom_string(data, 100)
 
+def parse_structure_CustomTextType_200(data):
+    return parse_custom_string(data, 200)
+
 def parse_structure_RecordType_clienttransactions_Response_GetStatutoriesByUnitSuccess(data):
     from protocol import clienttransactions
     return clienttransactions.Response.parse_structure(data)
@@ -3682,3 +3685,21 @@ def parse_structure_VectorType_RecordType_core_Compliance_Download(data):
     for item in data :
         lst.append(parse_structure_RecordType_core_Compliance_Download(item))
     return lst
+
+def parse_structure_VectorType_RecordType_core_COMPLIANCE_APPROVAL_STATUS(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_COMPLIANCE_APPROVAL_STATUS(item))
+    return lst
+
+def parse_structure_VectorType_CustomTextType_500(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_CustomTextType_500(item))
+    return lst
+
+def parse_structure_OptionalType_VectorType_CustomTextType_500(data):
+    if data is None: return data
+    return parse_structure_VectorType_CustomTextType_500(data)

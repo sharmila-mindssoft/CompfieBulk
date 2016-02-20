@@ -204,11 +204,11 @@
 				mirror.getAdminUserList(callback);
 			}
 			function saveAdminUser(){
-				emailId =  "ssharmila.m@gmail.com"
+				emailId =  "siva@mindssoft.com"
 		        userGroupId = 1
 		        employeeName = "Test User 13"
-		        employeeCode = "TU1123"
-		        contactNo = "+9181787832675"
+		        employeeCode = "TU1723"
+		        contactNo = "+918787832675"
 		        address = "Test Address 12"
 		        designation = "Test designation 12"
 		        countryIds = [1,2]
@@ -435,7 +435,7 @@
 
 			function approveCompliance(){
 				compliance_history_id = 1
-				compliance_approval_status = "RejectConcurrence"
+				compliance_approval_status = "Approve"
 				remarks = "Sample Remarks"
 				next_due_date = "12-Aug-2016"
 				client_mirror.approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date,callback);
@@ -488,12 +488,12 @@
 				client_mirror.getComplianceDetail(callback);
 			}
 			function updateComplianceDetail(){
-				compliance_history_id = 3;
-		        documents =  ["Document1"];
-		        completion_date = "25-Jan-2016";
-		        validity_date = "25-Jan-2017";
-		        next_due_date = "24-Jan-2017";
-		        remarks = "Sample Remarks";
+				compliance_history_id = 1;
+		        documents =  null;
+		        completion_date = "19-Feb-2016";
+		        validity_date = null;
+		        next_due_date = null;
+		        remarks = null;
 		        client_mirror.updateComplianceDetail(compliance_history_id, 
 		        	documents, completion_date, validity_date, next_due_date, 
 		        	remarks, callback);
@@ -924,9 +924,9 @@
 			      console.log("result size : "+data.length);
 			      for(i = 0; i < data.length; i++){
 			      	console.log(data[i]["file_name"]);
-			      	result += data[i]["file_name"] + "   <img src=\'/images/close-icon-black.png\' onclick='remove_temp_file()' /> </br>";	
+			      	result += data[i]["file_name"] + "    <img src='/images/delete.png' style='width:16px;height:16px;' onclick='remove_temp_file()' /> </br>";	
 			      }
-			      $("#uploaded_filename").html(result);
+			      $("#uploaded_filename").html("<span>"+result+"</span>");
 			    }
 			    else{
 			      alert(data);

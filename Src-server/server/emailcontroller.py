@@ -36,10 +36,9 @@ class Email(object):
         msg['From'] = self.sender
         msg['To'] = receiver
         msg['Subject'] = subject
-        cc = "usha@mindssoft.com"
         if cc is not None:
             msg['Cc'] = cc
-            receiver += ", usha@mindssoft.com"
+            receiver += cc
         msg.attach(MIMEText(message, 'plain'))
 
         server.sendmail(self.sender, receiver,  msg.as_string())

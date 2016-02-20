@@ -18,6 +18,7 @@ __all__ = [
 ]
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 CLIENT_DOCS_BASE_PATH = os.path.join(ROOT_PATH, "clientdocuments")
+CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 FORMAT_DOWNLOAD_URL = "/client/compliance_format"
 email = EmailHandler()
 
@@ -666,11 +667,14 @@ class ClientDatabase(Database):
 
         action = "Created user \"%s - %s\"" % (user.employee_code, user.employee_name)
         self.save_activity(session_user, 4, action, client_id)
-        email.send_user_credentials(
-            self.get_short_name_from_client_id(
-                client_id
-            ), user.email_id, password, user.employee_name, user.employee_code
-        )
+        try:
+            email.send_user_credentials(
+                self.get_short_name_from_client_id(
+                    client_id
+                ), user.email_id, password, user.employee_name, user.employee_code
+            )
+        except e:
+            print "Error while sending email : {}".format(e)
         return (result1 and result2 and result3 and result4)
 
     def update_user(self, user, session_user, client_id):
@@ -1649,8 +1653,17 @@ class ClientDatabase(Database):
             if self.is_space_available(file_size):
                 is_uploading_file = True
                 for doc in documents:
-                    name = doc.file_name.split('.')[0]
-                    exten = doc.file_name.split('.')[1]
+                    file_name_parts = doc.file_name.split('.')
+                    name = None
+                    exten = None
+                    for index, file_name_part in enumerate(file_name_parts):
+                        if index == len(file_name_parts) - 1:
+                            exten = file_name_part
+                        else:
+                            if name is None:
+                                name = file_name_part
+                            else:
+                                name += file_name_part
                     auto_code = self.new_uuid()
                     file_name = "%s-%s.%s" % (name, auto_code, exten)
                     document_names.append(file_name)
@@ -1730,7 +1743,8 @@ class ClientDatabase(Database):
         aliases = ["tch", "tu"]
         join_condition = ["tch.completed_by = tu.user_id"]
         assignee_condition = "completion_date is not Null and completed_on is not Null and "+\
-        "approve_status is Null and (approved_by = '%d' or concurred_by = '%d')" % (session_user, session_user)
+        "(approve_status is Null or approve_status = 0) and (approved_by = '%d' or concurred_by = '%d')\
+        group by completed_by" % (session_user, session_user)
         assignee_rows = self.get_data_from_multiple_tables(
             assignee_columns, tables,
             aliases, join_type,  join_condition,
@@ -1741,7 +1755,8 @@ class ClientDatabase(Database):
             query_columns = "compliance_history_id, tch.compliance_id, start_date,"+\
             " due_date, documents, completion_date, completed_on, next_due_date, "+\
             "concurred_by, remarks, datediff(due_date, completion_date ),compliance_task,"+\
-            " compliance_description, tc.frequency_id, frequency, document_name, concurrence_status"
+            " compliance_description, tc.frequency_id, frequency, document_name, concurrence_status, \
+            statutory_dates"
             join_type = "left join"
             query_tables = [
                     self.tblComplianceHistory,
@@ -1753,8 +1768,9 @@ class ClientDatabase(Database):
                     "tch.compliance_id = tc.compliance_id",
                     "tc.frequency_id = tcf.frequency_id"
             ]
-            where_condition = "%s and completed_by = '%d'"% (
-                assignee_condition, assignee[0]
+            where_condition = "completion_date is not Null and completed_on is not Null and \
+            (approve_status is Null or approve_status = 0) and completed_by = '%d'"% (
+                assignee[0]
             )
             rows = self.get_data_from_multiple_tables(
                 query_columns, query_tables, aliases,
@@ -1763,15 +1779,24 @@ class ClientDatabase(Database):
             )
             compliances = []
             for row in rows:
+                download_urls = []
+                file_name = []
+                if row[4] is not None:
+                    for document in row[4].split(","):
+                        dl_url = "%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, document)
+                        download_urls.append(dl_url)    
+                        file_name.append(document.split("-")[0])
+                concurred_by_id = None if row[8] is None else int(row[8])
                 compliance_history_id = row[0]
                 compliance_id = row[1]
                 start_date = self.datetime_to_string(row[2])
                 due_date = self.datetime_to_string(row[3])
-                documents = row[4].split(",")
+                documents = download_urls if len(download_urls) > 0 else None
+                file_names = file_name if len(file_name) > 0 else None
                 completion_date = self.datetime_to_string(row[5])
                 completed_on = self.datetime_to_string(row[6])
-                next_due_date = self.datetime_to_string(row[7])
-                concurred_by = self.get_user_name_by_id(int(row[8]), client_id)
+                next_due_date = None if row[7] is None else self.datetime_to_string(row[7])
+                concurred_by = None if concurred_by_id is None else self.get_user_name_by_id(concurred_by_id, client_id)
                 remarks = row[9]
                 delayed_by = None if row[10] < 0 else row[10]
                 compliance_name = "%s - %s"%(row[15], row[11])
@@ -1780,11 +1805,20 @@ class ClientDatabase(Database):
                 frequency = core.COMPLIANCE_FREQUENCY(row[14])
                 description = row[12]
                 concurrence_status = row[16]
+                statutory_dates = json.loads(row[17])
+                date_list = []
+                for date in statutory_dates :
+                    s_date = core.StatutoryDate(
+                        date["statutory_date"],
+                        date["statutory_month"],
+                        date["trigger_before_days"]
+                    )
+                    date_list.append(s_date)
 
                 domain_name_column = "domain_name"
                 condition = " domain_id = (select domain_id from tbl_client_statutories "+\
                 " where client_statutory_id = (select client_statutory_id from "+\
-                " tbl_client_compliances where compliance_id ='%d'))" % compliance_id
+                " tbl_client_compliances where compliance_id ='%d' limit 1))" % compliance_id
                 domain_name_row =  self.get_data(
                     self.tblDomains, domain_name_column,
                     condition
@@ -1792,22 +1826,16 @@ class ClientDatabase(Database):
                 domain_name = domain_name_row[0][0]
 
                 action = None
-                if int(row[8]) == session_user:
+
+                if concurred_by_id == session_user:
                     action = "Concur"
                 else:
-                    if concurrence_status is not None:
-                        if concurrence_status != 0:
-                            action = "Approve"
-                        else:
-                            continue
-                    else:
-                        continue
-
+                    action = "Approve"
                 compliances.append(clienttransactions.APPROVALCOMPLIANCE(
                     compliance_history_id, compliance_name, description, domain_name,
-                    start_date, due_date, delayed_by, frequency, documents,
-                    completion_date, completed_on, next_due_date, concurred_by,
-                    remarks, action))
+                    start_date, due_date, delayed_by, frequency, documents, 
+                    file_names, completion_date, completed_on, next_due_date, 
+                    concurred_by, remarks, action, date_list))
             assignee_id = assignee[0]
             assignee_name = "{} - {}".format(assignee[1], assignee[2])
             if len(compliances) > 0:
@@ -1816,23 +1844,6 @@ class ClientDatabase(Database):
             else:
                 continue
         return approved_compliances
-
-
-    def get_compliance_approval_status_list(self, session_user, client_id):
-        columns = "compliance_status_id, compliance_status"
-        condition = "1"
-        rows = self.get_data(
-            self.tblComplianceStatus, columns, condition
-        )
-        columns = columns.split(",")
-        return self.return_compliance_approval_status_list(columns, rows)
-
-    def return_compliance_approval_status_list(self, columns, compliance_status_list):
-        result_compliance_status = []
-        for compliance_status in compliance_status_list:
-            result_compliance_status.append(core.ComplianceApprovalStatus(
-                compliance_status[0], core.COMPLIANCE_APPROVAL_STATUS(compliance_status[1])))
-        return result_compliance_status
 
     def get_user_name_by_id(self, user_id, client_id = None):
         employee_name = None
@@ -3580,11 +3591,14 @@ class ClientDatabase(Database):
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0, remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        email.notify_task_rejected(
-            self, compliance_history_id, remarks, "RejectApproval"
-        )
+        try:
+            email.notify_task_rejected(
+                self, compliance_history_id, remarks, "Reject Approval"
+            )
+        except e:
+            print "Error while sending email : {}".format(e)
 
-    def concur_Compliance(self, compliance_history_id, remarks, next_due_date, client_id):
+    def concur_compliance(self, compliance_history_id, remarks, next_due_date, client_id):
         columns = ["concurrence_status", "concurred_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
@@ -3595,9 +3609,12 @@ class ClientDatabase(Database):
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0,  remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        email.notify_task_rejected(
-            self, compliance_history_id, remarks, "RejectConcurrence"
-        )
+        try:
+            email.notify_task_rejected(
+                self, compliance_history_id, remarks, "Reject Concurrence"
+            )
+        except e:
+            print "Error while sending email : {}".format(e)
 
     def get_client_level_1_statutoy(self, user_id, client_id=None) :
         query = "SELECT (case when (LEFT(statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') \
@@ -4634,11 +4651,11 @@ class ClientDatabase(Database):
     def calculate_ageing(self, due_date):
         current_time_stamp = self.get_date_time()
         due_date = datetime.datetime(due_date.year, due_date.month, due_date.day)
-        ageing = abs(current_time_stamp - due_date).days
-        compliance_status = " %d days left" % ageing
+        ageing = (current_time_stamp - due_date).days
+        compliance_status = " %d days left" % abs(ageing)
         if ageing > 0:
-            compliance_status = "Overdue by %d days" % ageing
-        return compliance_status
+            compliance_status = "Overdue by %d days" % abs(ageing)
+        return ageing, compliance_status
 
     def get_current_compliances_list(self, session_user, client_id):
         columns = "compliance_history_id, start_date, due_date, " +\
@@ -4662,8 +4679,9 @@ class ClientDatabase(Database):
         join_type = "right join"
         where_condition = "ch.completed_by='%d'" % (
             session_user)
-        where_condition += " and (ch.completed_on is null or ch.approve_status \
-        is null or ch.approve_status = 0)"
+        where_condition += " and ((ch.completed_on is null or ch.completed_on = 0) \
+        and (ch.approve_status is null or ch.approve_status = 0))"
+
         current_compliances_row = self.get_data_from_multiple_tables(
             columns,
             tables, aliases, join_type, join_conditions, where_condition
@@ -4681,9 +4699,9 @@ class ClientDatabase(Database):
             unit_name = "%s - %s" % (
                 unit_code, unit_name
             )
-            ageing = self.calculate_ageing(compliance[2])
+            no_of_days, ageing = self.calculate_ageing(compliance[2])
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
-            if ageing > 0:
+            if no_of_days > 0:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
             format_files = [ "%s/%s" % (
                     FORMAT_DOWNLOAD_URL, x
@@ -5340,16 +5358,50 @@ class ClientDatabase(Database):
         self, compliance_history_id, documents, completion_date,
         validity_date, next_due_date, remarks, client_id, session_user
     ):
+        # Hanling upload
+        document_names = []
+        file_size = 0
+        if documents is not None:
+            if len(documents) > 0:
+                for doc in documents:
+                    file_size += doc.file_size
+
+                if self.is_space_available(file_size):
+                    is_uploading_file = True
+                    for doc in documents:
+                        file_name_parts = doc.file_name.split('.')
+                        name = None
+                        exten = None
+                        for index, file_name_part in enumerate(file_name_parts):
+                            if index == len(file_name_parts) - 1:
+                                exten = file_name_part
+                            else:
+                                if name is None:
+                                    name = file_name_part
+                                else:
+                                    name += file_name_part
+                        auto_code = self.new_uuid()
+                        file_name = "%s-%s.%s" % (name, auto_code, exten)
+                        document_names.append(file_name)
+                        self.convert_base64_to_file(file_name, doc.file_content, client_id)
+                    self.update_used_space(file_size)
+                else:
+                    return clienttransactions.NotEnoughSpaceAvailable()
+
         current_time_stamp = self.get_date_time()
         history_columns = [
             "completion_date", "documents", "validity_date",
             "next_due_date", "remarks", "completed_on"
         ]
+        if validity_date is not None:
+            validity_date = self.string_to_datetime(validity_date)
+        if next_due_date is not None:
+            next_due_date = self.string_to_datetime(next_due_date)
         history_values = [
             self.string_to_datetime(completion_date),
-            ",".join(documents),
-            self.string_to_datetime(validity_date),
-            self.string_to_datetime(next_due_date),
+            ",".join(document_names),
+            validity_date,
+            next_due_date,
             remarks,
             current_time_stamp
         ]
