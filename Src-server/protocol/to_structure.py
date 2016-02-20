@@ -3798,3 +3798,8 @@ def to_structure_VectorType_CustomTextType_500(data):
     for item in data:
         lst.append(to_structure_CustomTextType_500(item))
     return lst
+
+
+def to_structure_OptionalType_VectorType_CustomTextType_500(data):
+    if data is None: return data
+    return to_structure_VectorType_CustomTextType_500(data)
