@@ -437,10 +437,9 @@ CREATE TABLE `tbl_notifications_log` (
   `concurrence_person` int(11) DEFAULT NULL,
   `approval_person` int(11) DEFAULT NULL,
   `notification_type_id` int(11) DEFAULT NULL,
-  `statutory_provision` varchar(250) DEFAULT NULL,
   `notification_text` longtext,
   `extra_details` longtext,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`notification_id`),
   CONSTRAINT `fk_notifications_log_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `fk_notifications_log_domains` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
@@ -456,8 +455,7 @@ CREATE TABLE `tbl_notification_user_log` (
   `notification_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `read_status` tinyint(1) DEFAULT '0',
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`notification_id`, `user_id`)
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 INSERT INTO tbl_form_type VALUES(1, "Home");
 INSERT INTO tbl_form_type VALUES(2, "Master");
