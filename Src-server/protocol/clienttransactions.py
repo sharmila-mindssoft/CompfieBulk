@@ -67,7 +67,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_CustomTextType_20,
     parse_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES,
     parse_structure_VectorType_RecordType_core_COMPLIANCE_APPROVAL_STATUS,
-    parse_structure_VectorType_CustomTextType_500
+    parse_structure_VectorType_CustomTextType_500,
+    parse_structure_OptionalType_VectorType_CustomTextType_500
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_STATUTORYWISECOMPLIANCE,
@@ -143,7 +144,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_CustomTextType_20,
     to_structure_MapType_SignedIntegerType_8_MapType_CustomTextType_100_VectorType_RecordType_Clienttransactions_UNIT_WISE_STATUTORIES,
     to_structure_VectorType_RecordType_core_COMPLIANCE_APPROVAL_STATUS,
-    to_structure_VectorType_CustomTextType_500
+    to_structure_VectorType_CustomTextType_500,
+    to_structure_OptionalType_VectorType_CustomTextType_500
 )
 
 #
@@ -1442,7 +1444,7 @@ class APPROVALCOMPLIANCE(object):
         domain_name = data.get("domain_name")
         domain_name = parse_structure_CustomTextType_500(domain_name)
         file_names = data.get("file_names")
-        file_names = parse_structure_CustomTextType_500(file_names)
+        file_names = parse_structure_OptionalType_CustomTextType_500(file_names)
         start_date = data.get("start_date")
         start_date = parse_structure_CustomTextType_20(start_date)
         due_date = data.get("due_date")
@@ -1452,7 +1454,7 @@ class APPROVALCOMPLIANCE(object):
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         documents = data.get("documents")
-        documents = parse_structure_VectorType_CustomTextType_50(documents)
+        documents = parse_structure_OptionalType_VectorType_CustomTextType_500(documents)
         upload_date = data.get("upload_date")
         upload_date = parse_structure_CustomTextType_20(upload_date)
         completion_date = data.get("completion_date")
@@ -1462,7 +1464,7 @@ class APPROVALCOMPLIANCE(object):
         concurrenced_by = data.get("concurrenced_by")
         concurrenced_by = parse_structure_OptionalType_CustomTextType_50(concurrenced_by)
         remarks = data.get("remarks")
-        remarks = parse_structure_CustomTextType_500(remarks)
+        remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
         action = data.get("action")
         action = parse_structure_CustomTextType_20(remarks)
         return APPROVALCOMPLIANCE(compliance_history_id, compliance_name, description,
@@ -1480,13 +1482,13 @@ class APPROVALCOMPLIANCE(object):
             "due_date": to_structure_CustomTextType_20(self.due_date),
             "delayed_by": to_structure_OptionalType_UnsignedIntegerType_32(self.delayed_by),
             "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
-            "documents": to_structure_VectorType_CustomTextType_500(self.documents),
-            "file_names": to_structure_VectorType_CustomTextType_500(self.file_names),
+            "documents": to_structure_OptionalType_VectorType_CustomTextType_500(self.documents),
+            "file_names": to_structure_OptionalType_VectorType_CustomTextType_500(self.file_names),
             "upload_date": to_structure_CustomTextType_20(self.upload_date),
             "completion_date": to_structure_CustomTextType_20(self.completion_date),
             "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),
             "concurrenced_by": to_structure_OptionalType_CustomTextType_50(self.concurrenced_by),
-            "remarks": to_structure_CustomTextType_500(self.remarks),
+            "remarks": to_structure_OptionalType_CustomTextType_500(self.remarks),
             "action": to_structure_CustomTextType_20(self.action)
         }
 

@@ -3699,3 +3699,7 @@ def parse_structure_VectorType_CustomTextType_500(data):
     for item in data:
         lst.append(parse_structure_CustomTextType_500(item))
     return lst
+
+def parse_structure_OptionalType_VectorType_CustomTextType_500(data):
+    if data is None: return data
+    return parse_structure_VectorType_CustomTextType_500(data)

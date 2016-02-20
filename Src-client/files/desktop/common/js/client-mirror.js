@@ -1228,7 +1228,7 @@ function initClientMirror() {
     function getTaskApplicabilityReportData(
         country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id,
-        level_1_statutory_name, applicable_status, callback
+        statutory_name, applicable_status, callback
     ) {
         var request = [
             "GetComplianceTaskApplicabilityStatusReport", {

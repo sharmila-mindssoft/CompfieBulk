@@ -1778,19 +1778,23 @@ class ClientDatabase(Database):
             file_name = []
             for row in rows:
                 download_urls = []
-                for document in row[4].split(","):
-                    dl_url = "%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, document)
-                    download_urls.append(dl_url)    
-                    file_name.append(document.split("-")[0])
+                if row[4] is not None:
+                    for document in row[4].split(","):
+                        dl_url = "%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, document)
+                        download_urls.append(dl_url)    
+                        file_name.append(document.split("-")[0])
+                # print file_name
+                # if file_name 
+                # file_name = file_name if len(file_name) > 0 else None
                 compliance_history_id = row[0]
                 compliance_id = row[1]
                 start_date = self.datetime_to_string(row[2])
                 due_date = self.datetime_to_string(row[3])
-                documents = download_urls
+                documents = download_urls if len(download_urls) > 0  else None
                 completion_date = self.datetime_to_string(row[5])
                 completed_on = self.datetime_to_string(row[6])
                 next_due_date = None if row[7] is None else self.datetime_to_string(row[7])
-                concurred_by = self.get_user_name_by_id(int(row[8]), client_id)
+                concurred_by = None if row[8] is None else self.get_user_name_by_id(int(row[8]), client_id)
                 remarks = row[9]
                 delayed_by = None if row[10] < 0 else row[10]
                 compliance_name = "%s - %s"%(row[15], row[11])
@@ -1811,8 +1815,18 @@ class ClientDatabase(Database):
                 domain_name = domain_name_row[0][0]
 
                 action = None
-                if int(row[8]) == session_user:
-                    action = "Concur"
+
+                if row[8] is not None:
+                    if int(row[8]) == session_user:
+                        action = "Concur"
+                    else:
+                        if concurrence_status is not None:
+                            if concurrence_status != 0:
+                                action = "Approve"
+                            else:
+                                continue
+                        else:
+                            continue
                 else:
                     if concurrence_status is not None:
                         if concurrence_status != 0:
