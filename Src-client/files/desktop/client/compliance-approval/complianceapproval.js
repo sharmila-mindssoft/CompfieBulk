@@ -12,15 +12,15 @@ function displayMessage(message) {
 
 function initialize(){
     function onSuccess(data){
+        console.log(data);
         closeicon();
         currentCompliances = data['compliance_detail']['current_compliances'];
-        loadComplianceTaskDetails(currentCompliances);
-        loadUpcomingCompliancesDetails(data['compliance_detail']['upcoming_compliances'])
+        loadComplianceTaskDetails(currentCompliances);     
     }
     function onFailure(error){
         console.log(error);
     }
-    client_mirror.getComplianceDetail(
+    client_mirror.getComplianceApprovalList(
         function (error, response){
             if(error == null){
                 onSuccess(response);

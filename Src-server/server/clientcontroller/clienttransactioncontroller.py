@@ -1,4 +1,4 @@
-from protocol import (clienttransactions, login)
+from protocol import (clienttransactions, login, core)
 
 __all__ = [
     "process_client_transaction_requests"
@@ -152,9 +152,12 @@ def process_get_compliance_approval_list(db, request, session_user, client_id):
     compliance_approval_list = db.get_compliance_approval_list(
         session_user, client_id
     )
-    approval_status = db.get_compliance_approval_status_list(
-        session_user, client_id
-    )
+    approval_status = [
+        core.COMPLIANCE_APPROVAL_STATUS("Concur"),
+        core.COMPLIANCE_APPROVAL_STATUS("Reject Concurrence"),
+        core.COMPLIANCE_APPROVAL_STATUS("Approve"),
+        core.COMPLIANCE_APPROVAL_STATUS("Reject Approval")
+    ]    
     return clienttransactions.GetComplianceApprovalListSuccess(
         approval_list=compliance_approval_list,
         approval_status=approval_status

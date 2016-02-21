@@ -183,8 +183,6 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
-        print query
-        print
         # if client_id is not None:
         #     return self.select_all(query, client_id)
         return self.select_all(query)
@@ -1362,7 +1360,7 @@ class KnowledgeDatabase(Database):
                 geography = core.GeographyWithMapping(
                     d["geography_id"], d["geography_name"],
                     d["level_id"],
-                    self.geography_parent_mapping[d["geography_id"]][0],
+                    self.geography_parent_mapping[int(d["geography_id"])][0],
                     parent_ids[-1], bool(d["is_active"])
                 )
                 country_id = d["country_id"]
@@ -2861,7 +2859,7 @@ class KnowledgeDatabase(Database):
 
     def get_techno_users(self):
         columns = "user_id, employee_name, employee_code, is_active"
-        condition = "user_group_id in (select group_concat(user_group_id) from \
+        condition = "user_group_id in (select user_group_id from \
              %s where form_category_id = 3)" % self.tblUserGroups
         rows = self.get_data(self.tblUsers, columns, condition)
         return rows
@@ -2927,9 +2925,12 @@ class KnowledgeDatabase(Database):
 
         action = "Created User \"%s - %s\"" % (employee_code, employee_name)
         self.save_activity(0, 4, action)
-        email().send_knowledge_user_credentials(
-            email_id, password, employee_name, employee_code
-        )
+        try:
+            email().send_knowledge_user_credentials(
+                email_id, password, employee_name, employee_code
+            )
+        except e:
+            print "Error while sending email : {}".format(e)
         return (result1 and result2 and result3)
 
     def update_user(self, user_id, user_group_id, employee_name, employee_code, contact_no,
@@ -3171,7 +3172,10 @@ class KnowledgeDatabase(Database):
             email_id, encrypted_password)
         cursor.execute(query)
         con.commit()
-        email().send_client_credentials(short_name, email_id, password)
+        try:
+            email().send_client_credentials(short_name, email_id, password)
+        except e:
+            print "Error while sending email : {}".format(e)
         return True
 
     def _get_server_details(self):
