@@ -202,7 +202,7 @@ CREATE TABLE `tbl_geographies` (
   `geography_name` varchar(50) NOT NULL,
   `level_id` int(11) NOT NULL,
   `parent_ids` varchar(50) DEFAULT NULL,
-  `parent_names` varchar(500) DEFAULT NULL,
+  `parent_names` longtext DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,

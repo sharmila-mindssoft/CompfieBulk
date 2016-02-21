@@ -1427,17 +1427,17 @@ class KnowledgeDatabase(Database):
         return result
 
     def save_geography(
-        self, geography_level_id, geography_name, parent_ids, user_id
+        self, geography_level_id, geography_name, parent_ids, parent_names, user_id
     ):
         is_saved = False
         table_name = "tbl_geographies"
         created_on = self.get_date_time()
         geography_id = self.get_new_id("geography_id", table_name)
         field = "(geography_id, geography_name, level_id, \
-            parent_ids, created_by, created_on)"
+            parent_ids, parent_names, created_by, created_on)"
         data = (
             geography_id, geography_name, int(geography_level_id),
-            parent_ids, int(user_id), str(created_on)
+            parent_ids, parent_names, int(user_id), str(created_on)
         )
         if (self.save_data(table_name, field, data)) :
             action = "New Geography %s added" % (geography_id)
@@ -1445,16 +1445,16 @@ class KnowledgeDatabase(Database):
             is_saved = True
         return is_saved
 
-    def update_geography(self, geography_id, name, parent_ids, updated_by) :
+    def update_geography(self, geography_id, name, parent_ids, parent_names, updated_by) :
         oldData = self.get_geography_by_id(geography_id)
         if bool(oldData) is False:
             return False
         # oldparent_ids = oldData["parent_ids"]
 
         table_name = "tbl_geographies"
-        field_with_data = "geography_name='%s', parent_ids='%s', \
+        field_with_data = "geography_name='%s', parent_ids='%s', parent_names='%s', \
             updated_by=%s " % (
-                name, parent_ids, updated_by
+                name, parent_ids, parent_names, updated_by
             )
 
         where_condition = "geography_id = %s" % (geography_id)
