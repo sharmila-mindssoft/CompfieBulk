@@ -1494,7 +1494,7 @@ class KnowledgeDatabase(Database):
                 from tbl_geographies as p \
                 where p.geography_id = %s \
                 ) as B on A.geography_id = B.geography_id \
-                set A.parent_names = SUBSTRING(B.names, 1, char_length(B.names) -2 ) \
+                set A.parent_names = B.names \
                 where A.geography_id = %s " % (row["parent_ids"], row["geography_id"], row["geography_id"])
 
             self.execute(q)
@@ -1694,7 +1694,7 @@ class KnowledgeDatabase(Database):
                     from tbl_statutories as p \
                     where p.statutory_id = %s \
                     ) as B on A.statutory_id = B.statutory_id \
-                    set A.parent_names = SUBSTRING(B.names, 1, char_length(B.names) -2 ) \
+                    set A.parent_names = B.names\
                     where A.statutory_id = %s " % (row["parent_ids"], row["statutory_id"], row["statutory_id"])
             self.execute(q)
             action = "statutory name %s updated in child rows." % name
@@ -1829,7 +1829,7 @@ class KnowledgeDatabase(Database):
             approval_list = []
             for sts in enumerate(data) :
                 approve = core.APPROVAL_STATUS(sts[1])
-                c_approval = core.ComplianceApprovalStatus(
+                c_approval = core.StatutoryApprovalStatus(
                     sts[0], approve
                 )
                 approval_list.append(c_approval)
