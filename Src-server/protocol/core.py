@@ -2552,13 +2552,13 @@ class ComplianceApprovalStatus(object):
         approval_status_id = data.get("approval_status_id")
         approval_status_id = parse_structure_UnsignedIntegerType_32(approval_status_id)
         approval_status = data.get("approval_status")
-        approval_status = parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(approval_status)
+        approval_status = parse_structure_EnumType_core_APPROVAL_STATUS(approval_status)
         return ComplianceApprovalStatus(approval_status_id, approval_status)
 
     def to_structure(self):
         return {
             "approval_status_id": to_structure_SignedIntegerType_8(self.approval_status_id),
-            "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
+            "approval_status": to_structure_EnumType_core_APPROVAL_STATUS(self.approval_status),
         }
 
 #

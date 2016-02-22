@@ -499,11 +499,13 @@ function saverecord(j,e){
     var statutorylevel_id = $('#statutorylevelid'+j).val();
     var datavalue = $('#datavalue'+j).val();
     var map_statutory_id=[];
+    var map_statutory_names = [];
     var last_statutory_id=0;
     var last_level = 0;
     for(k=1;k<j;k++){
       $(".slist"+k+".active").each( function( index, el ) {
         map_statutory_id.push(parseInt(el.id));
+        map_statutory_names.push(el.innerHTML);
         last_statutory_id = el.id;
         last_level = k;
         });
@@ -523,8 +525,9 @@ function saverecord(j,e){
         }
         if(map_statutory_id.length == 0){
           map_statutory_id.push(0);
+          map_statutory_names.push(datavalue)
         }
-        mirror.saveStatutory(sm_domainid, parseInt(statutorylevel_id), datavalue, map_statutory_id,
+        mirror.saveStatutory(sm_domainid, parseInt(statutorylevel_id), datavalue, map_statutory_id, map_statutory_names,
           function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -544,8 +547,9 @@ function saverecord(j,e){
         }
         if(map_statutory_id.length == 0){
           map_statutory_id.push(0);
+          map_statutory_names.push(datavalue);
         }
-        mirror.updateStatutory(parseInt($("#statutoryid").val()), parseInt(statutorylevel_id), datavalue, map_statutory_id,
+        mirror.updateStatutory(parseInt($("#statutoryid").val()), parseInt(statutorylevel_id), datavalue, map_statutory_id, map_statutory_names,
         function (error, response) {
           if (error == null){
             onSuccessUpdate(response);

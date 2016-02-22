@@ -457,27 +457,29 @@ function initMirror() {
 
     // statutory Mapping
 
-    function saveStatutory(domainId, levelId, name, parentIds, callback) {
+    function saveStatutory(domainId, levelId, name, parentIds, parentNames, callback) {
         var request = [
             "SaveStatutory",
             {
                 "domain_id": domainId,
                 "statutory_level_id": levelId,
                 "statutory_name": name,
-                "parent_ids": parentIds
+                "parent_ids": parentIds,
+                "parent_names": parentNames
             }
         ]
         apiRequest("knowledge_master", request, callback);
     }
 
-    function updateStatutory(statutoryId, levelId, name, parentIds, callback) {
+    function updateStatutory(statutoryId, levelId, name, parentIds, parentNames, callback) {
         var request = [
             "UpdateStatutory",
             {
                 "statutory_id": statutoryId,
                 "statutory_level_id": levelId,
                 "statutory_name": name,
-                "parent_ids": parentIds
+                "parent_ids": parentIds,
+                "parent_names": parentNames
             }
         ]
         apiRequest("knowledge_master", request, callback);
