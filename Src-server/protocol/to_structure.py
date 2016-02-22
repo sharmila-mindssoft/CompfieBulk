@@ -3805,3 +3805,32 @@ def to_structure_VectorType_CustomTextType_500(data):
 def to_structure_OptionalType_VectorType_CustomTextType_500(data):
     if data is None: return data
     return to_structure_VectorType_CustomTextType_500(data)
+
+def to_structure_VectorType_RecordType_clienttransactions_PastRecordUnits(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_clienttransactions_PastRecordUnits(item))
+    return lst
+
+def to_structure_RecordType_clienttransactions_PastRecordUnits(data):
+    from protocol import clienttransactions
+    return clienttransactions.PastRecordUnits.to_structure(data)
+
+def to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items():
+        key = to_structure_CustomTextType_50(key)
+        value = to_structure_VectorType_UnsignedIntegerType_32(value)
+        dict[key] = value
+    return dict
+
+def to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items():
+        key = to_structure_CustomTextType_50(key)
+        value = to_structure_VectorType_CustomTextType_500(value)
+        dict[key] = value
+    return dict
