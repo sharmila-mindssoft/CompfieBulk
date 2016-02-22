@@ -120,10 +120,10 @@ function changeStatus (geographyId,isActive) {
 //Autocomplete Script Starts
 //Hide list items after select
 $(".hidemenu").click(function(){
-  $("#autocompleteview").hide(); 
+  $("#autocompleteview").hide();
 });
 
-//load country list in autocomplete text box  
+//load country list in autocomplete text box
 $("#countryval").keyup(function(){
   var textval = $(this).val();
   $("#autocompleteview").show();
@@ -132,8 +132,8 @@ $("#countryval").keyup(function(){
   $('#ulist_text').empty();
   if(textval.length>0){
     for(var i in countries){
-      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true) 
-        suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]); 
+      if (~countries[i]["country_name"].toLowerCase().indexOf(textval.toLowerCase()) && countries[i]["is_active"] == true)
+        suggestions.push([countries[i]["country_id"],countries[i]["country_name"]]);
     }
     var str='';
     for(var i in suggestions){
@@ -163,7 +163,7 @@ function loadGeographyFirstLevels(saverecord){
     $('.title', clone).text(geographyLevelList[j]["level_name"]);
     $('.levelvalue', clone).html('<ul id="ulist'+levelposition+'"></ul><div align="center" class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder=""  style="width:90%;" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="glmid'+levelposition+'" value="'+geographyLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
     $('.tbody-geography-level').append(clone);
-  }    
+  }
   var setlevelstage= 1;
   $('#datavalue'+setlevelstage).val('');
   $('#ulist'+setlevelstage).empty();
@@ -179,7 +179,7 @@ function loadGeographyFirstLevels(saverecord){
     str += '<a href="#"> <li id="'+setgeographyid+'" class="'+clsval1+'" onclick="activate(this,'+setgeographyid+',\''+clsval+'\','+saverecord+','+setlevelstage+')" >'+geographyList[i]["geography_name"]+'</li> </a>';
   }
   }
-  $('#ulist'+setlevelstage).append(str); 
+  $('#ulist'+setlevelstage).append(str);
 }
 
 //check & uncheck list data
@@ -213,7 +213,7 @@ function load(id,level,country){
       str += '<a href="#"> <li id="'+setgeographyid+'" class="'+clsval1+'" onclick="activate(this,'+setgeographyid+',\''+clsval+'\','+country+','+setlevelstage+')" >'+geographyList[i]["geography_name"]+'</li> </a>';
     }
     }
-    $('#ulist'+setlevelstage).append(str); 
+    $('#ulist'+setlevelstage).append(str);
   }
 }
 
@@ -228,7 +228,7 @@ function filter (term, cellNr){
       table.rows[r].style.display = '';
     else table.rows[r].style.display = 'none';
   }
-} 
+}
 
 //validate and insert records in geograpahymapping table
 function saverecord(j,e){
@@ -239,11 +239,13 @@ function saverecord(j,e){
     var glm_id = $('#glmid'+j).val();
     var datavalue = $('#datavalue'+j).val().trim();
     var map_gm_id=[];
+    var map_gm_name = [];
     var last_geography_id=0;
     var last_level = 0;
     for(k=1;k<j;k++){
       $(".list"+k+".active").each( function( index, el ) {
         map_gm_id.push(parseInt(el.id));
+        map_gm_name.push(el.innerHTML)
         last_geography_id = el.id;
         last_level = k;
         });
@@ -263,10 +265,13 @@ function saverecord(j,e){
             displayMessage("Geography Name Already Exists");
         }
       }
+      countryId = parseInt($("#country").val());
+      console.log($("countryval").innerHTML)
       if(map_gm_id.length == 0){
         map_gm_id.push(0);
+        map_gm_name.push("India");
       }
-      mirror.saveGeography(parseInt(glm_id), datavalue, map_gm_id, parseInt($("#country").val()),
+      mirror.saveGeography(parseInt(glm_id), datavalue, map_gm_id, map_gm_name, countryId,
         function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -340,7 +345,7 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
     var geographyLevelList = geographyLevelsList[countryid];
     var levelid=$('#glmid'+setlevelstage).val();
     var geographyList = geographiesList[countryid];
-   
+
     for(var i in geographyList){
       var setgeographyid = geographyList[i]["geography_id"];
       if( geographyList[i]["level_id"] == levelid && geographyList[i]["is_active"] == true) {
@@ -362,7 +367,7 @@ function displayEdit (geographyId,geographyName,country,countryid,lposition,pare
         }
     }
   }
-  $('#ulist'+setlevelstage).append(str); 
+  $('#ulist'+setlevelstage).append(str);
   }
 }
 
@@ -375,11 +380,13 @@ function updaterecord(j,e){
     var geographyid = $('#geographyid').val();
     var datavalue = $('#datavalue'+j).val().trim();
     var map_gm_id=[];
+    var map_gm_name = [];
     var last_geography_id=0;
     var last_level = 0;
     for(k=1;k<j;k++){
       $(".list"+k+".active").each( function( index, el ) {
         map_gm_id.push(parseInt(el.id));
+        map_gm_name.push(el.innerHTML);
         last_geography_id = el.id;
         last_level = k;
         });
@@ -406,8 +413,9 @@ function updaterecord(j,e){
       }
       if(map_gm_id.length == 0){
         map_gm_id.push(0);
+        map_gm_name.push("india");
       }
-      mirror.updateGeography(parseInt(geographyid), parseInt(glm_id), datavalue, map_gm_id, parseInt($("#country").val()),
+      mirror.updateGeography(parseInt(geographyid), parseInt(glm_id), datavalue, map_gm_id, map_gm_name, parseInt($("#country").val()),
         function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -451,7 +459,7 @@ function loadedit(id,level,country,levelstagemax){
     str += '<a href="#"> <li id="'+setgeographyid+'" class="'+clsval1+'" onclick="activateedit(this,'+setgeographyid+',\''+clsval+'\','+country+','+setlevelstage+','+levelstagemax+')" >'+geographyList[i]["geography_name"]+'</li> </a>';
   }
   }
-  $('#ulist'+setlevelstage).append(str); 
+  $('#ulist'+setlevelstage).append(str);
   }
 }
 

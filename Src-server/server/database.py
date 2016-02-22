@@ -1427,17 +1427,17 @@ class KnowledgeDatabase(Database):
         return result
 
     def save_geography(
-        self, geography_level_id, geography_name, parent_ids, user_id
+        self, geography_level_id, geography_name, parent_ids, parent_names, user_id
     ):
         is_saved = False
         table_name = "tbl_geographies"
         created_on = self.get_date_time()
         geography_id = self.get_new_id("geography_id", table_name)
         field = "(geography_id, geography_name, level_id, \
-            parent_ids, created_by, created_on)"
+            parent_ids, parent_names, created_by, created_on)"
         data = (
             geography_id, geography_name, int(geography_level_id),
-            parent_ids, int(user_id), str(created_on)
+            parent_ids, parent_names, int(user_id), str(created_on)
         )
         if (self.save_data(table_name, field, data)) :
             action = "New Geography %s added" % (geography_id)
@@ -1445,16 +1445,16 @@ class KnowledgeDatabase(Database):
             is_saved = True
         return is_saved
 
-    def update_geography(self, geography_id, name, parent_ids, updated_by) :
+    def update_geography(self, geography_id, name, parent_ids, parent_names, updated_by) :
         oldData = self.get_geography_by_id(geography_id)
         if bool(oldData) is False:
             return False
         # oldparent_ids = oldData["parent_ids"]
 
         table_name = "tbl_geographies"
-        field_with_data = "geography_name='%s', parent_ids='%s', \
+        field_with_data = "geography_name='%s', parent_ids='%s', parent_names='%s', \
             updated_by=%s " % (
-                name, parent_ids, updated_by
+                name, parent_ids, parent_names, updated_by
             )
 
         where_condition = "geography_id = %s" % (geography_id)
@@ -1462,27 +1462,46 @@ class KnowledgeDatabase(Database):
         self.update_data(table_name, field_with_data, where_condition)
         action = "Geography - %s updated" % name
         self.save_activity(updated_by, 6, action)
-        return True
+
 
         # if oldparent_ids != parent_ids :
-        #     oldPId = str(oldparent_ids) + str(geography_id)
-        #     newPId = str(parent_ids) + str(geography_id)
-        #     qry = "SELECT geography_id, geography_name, parent_ids \
-        #       from tbl_geographies \
-        #         WHERE parent_ids like '%s'" % str("%" + str(oldPId) + ",%")
-        #     rows = self.dataSelect(qry)
-        #     for row in rows :
-        #         newParentId = str(row[2]).replace(oldPId, newPId)
-        #         q = "UPDATE tbl_geographies \
-        #           set parent_ids='%s', updated_by=%s \
-        #           where geography_id=%s" % (
-        #             newParentId, updated_by, row[0]
-        #         )
-        #         self.dataInsertUpdate(q)
-        #     action = "Edit Geography Mappings Parent"
-        #     self.save_activity(updated_by, 7, action)
+            # oldPId = str(oldparent_ids) + str(geography_id)
+            # newPId = str(parent_ids) + str(geography_id)
+        qry = "SELECT geography_id, geography_name, parent_ids \
+          from tbl_geographies \
+            WHERE parent_ids like '%s'" % str("%" + str(geography_id) + ",%")
+        rows = self.select_all(qry)
+        columns = ["geography_id", "geography_name", "parent_ids"]
+        result = self.convert_to_dict(rows, columns)
+
+        for row in result :
+            if row["parent_ids"] == "0,":
+                row["parent_ids"] = geography_id
+            else :
+                row["parent_ids"] = row["parent_ids"][:-1]
+            # newParentId = str(row[2]).replace(oldPId, newPId)
+            # q = "UPDATE tbl_geographies \
+            #   set parent_names = (select group_concat(a.geography_name, '>>') \
+            #     from tbl_geographies a where a.geography_id in (%s)), \
+            #   updated_by=%s \
+            #   where geography_id=%s" % (
+            #     row[2], updated_by, row[0]
+            # )
+            #  updating child parent-names
+            q = "Update tbl_geographies as A inner join ( \
+                select p.geography_id, (select group_concat(p1.geography_name SEPARATOR '>>') \
+                    from tbl_geographies as p1 where geography_id in (%s)) as names \
+                from tbl_geographies as p \
+                where p.geography_id = %s \
+                ) as B on A.geography_id = B.geography_id \
+                set A.parent_names = SUBSTRING(B.names, 1, char_length(B.names) -2 ) \
+                where A.geography_id = %s " % (row["parent_ids"], row["geography_id"], row["geography_id"])
+
+            self.execute(q)
+        action = "Geography name  %s updated in child parent_names" % (name)
+        self.save_activity(updated_by, 6, action)
         # self.getAllGeographies()
-        # return True
+        return True
 
     def change_geography_status(self, geography_id, is_active, updated_by) :
         oldData = self.get_geography_by_id(geography_id)
@@ -1620,43 +1639,67 @@ class KnowledgeDatabase(Database):
             result = self.convert_to_dict(rows, columns)
         return self.return_statutory_master(result)
 
-    def save_statutory(self, name, level_id, parent_ids, user_id) :
+    def save_statutory(self, name, level_id, parent_ids, parent_names, user_id) :
         is_saved = False
         statutory_id = self.get_new_id("statutory_id", "tbl_statutories")
         created_on = self.get_date_time()
         table_name = "tbl_statutories"
         field = "(statutory_id, statutory_name, level_id, \
-            parent_ids, created_by, created_on)"
+            parent_ids, parent_names, created_by, created_on)"
         data = (
-            int(statutory_id), name, int(level_id), parent_ids,
+            int(statutory_id), name, int(level_id), parent_ids, parent_names,
             int(user_id), str(created_on)
         )
 
         if (self.save_data(table_name, field, data)) :
             action = "Statutory - %s added" % name
-            self.save_activity(user_id, 12, action)
+            self.save_activity(user_id, 9, action)
             is_saved = True
         return is_saved
 
-    def update_statutory(self, statutory_id, name, parent_ids, updated_by) :
+    def update_statutory(self, statutory_id, name, parent_ids, parent_names, updated_by) :
         oldData = self.get_statutory_by_id(statutory_id)
         if bool(oldData) is False:
             return False
         # oldparent_ids = oldData["parent_ids"]
 
         table_name = "tbl_statutories"
-        field_with_data = "statutory_name='%s', parent_ids='%s', \
+        field_with_data = "statutory_name='%s', parent_ids='%s', parent_names='%s', \
             updated_by=%s " % (
-                name, parent_ids, updated_by
+                name, parent_ids, parent_names, updated_by
             )
 
         where_condition = "statutory_id = %s" % (statutory_id)
 
         self.update_data(table_name, field_with_data, where_condition)
         action = "Statutory - %s updated" % name
-        self.save_activity(updated_by, 6, action)
-        return True
+        self.save_activity(updated_by, 9, action)
 
+        qry = "SELECT statutory_id, statutory_name, parent_ids \
+            from tbl_statutories \
+            WHERE parent_ids like '%s'" % str("%" + str(statutory_id) + ",%")
+        rows = self.select_all(qry)
+        columns = ["statutory_id", "statutory_name", "parent_ids"]
+        result = self.convert_to_dict(rows, columns)
+
+        for row in result :
+            if row["parent_ids"] == "0,":
+                row["parent_ids"] = statutory_id
+            else :
+                row["parent_ids"] = row["parent_ids"][:-1]
+
+            q = "Update tbl_statutories as A inner join ( \
+                    select p.statutory_id, (select group_concat(p1.statutory_name SEPARATOR '>>') \
+                        from tbl_statutories as p1 where statutory_id in (%s)) as names \
+                    from tbl_statutories as p \
+                    where p.statutory_id = %s \
+                    ) as B on A.statutory_id = B.statutory_id \
+                    set A.parent_names = SUBSTRING(B.names, 1, char_length(B.names) -2 ) \
+                    where A.statutory_id = %s " % (row["parent_ids"], row["statutory_id"], row["statutory_id"])
+            self.execute(q)
+            action = "statutory name %s updated in child rows." % name
+            self.save_activity(updated_by, 9, action)
+        return True
         # if oldparent_ids != parent_ids :
         #     oldPId = str(oldparent_ids) + str(statutory_id)
         #     newPId = str(parent_ids) + str(statutory_id)

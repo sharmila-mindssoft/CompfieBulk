@@ -408,13 +408,14 @@ function initMirror() {
         apiRequest("knowledge_master", request, callback);
     }
 
-    function saveGeography(levelId, name, parentIds, countryId, callback) {
+    function saveGeography(levelId, name, parentIds, parentNames, countryId, callback) {
         var request = [
             "SaveGeography",
             {
                 "geography_level_id": levelId,
                 "geography_name": name,
                 "parent_ids": parentIds,
+                "parent_names": parentNames,
                 "country_id": countryId
             }
         ];
@@ -422,7 +423,7 @@ function initMirror() {
     }
 
     function updateGeography(
-        geographyId, levelId, name, parentIds, countryId, callback
+        geographyId, levelId, name, parentIds, parentNames, countryId, callback
     ) {
         var request = [
             "UpdateGeography",
@@ -431,6 +432,7 @@ function initMirror() {
                 "geography_level_id": levelId,
                 "geography_name": name,
                 "parent_ids": parentIds,
+                "parent_names": parentNames,
                 "country_id": countryId
             }
         ];
@@ -455,27 +457,29 @@ function initMirror() {
 
     // statutory Mapping
 
-    function saveStatutory(domainId, levelId, name, parentIds, callback) {
+    function saveStatutory(domainId, levelId, name, parentIds, parentNames, callback) {
         var request = [
             "SaveStatutory",
             {
                 "domain_id": domainId,
                 "statutory_level_id": levelId,
                 "statutory_name": name,
-                "parent_ids": parentIds
+                "parent_ids": parentIds,
+                "parent_names": parentNames
             }
         ]
         apiRequest("knowledge_master", request, callback);
     }
 
-    function updateStatutory(statutoryId, levelId, name, parentIds, callback) {
+    function updateStatutory(statutoryId, levelId, name, parentIds, parentNames, callback) {
         var request = [
             "UpdateStatutory",
             {
                 "statutory_id": statutoryId,
                 "statutory_level_id": levelId,
                 "statutory_name": name,
-                "parent_ids": parentIds
+                "parent_ids": parentIds,
+                "parent_names": parentNames
             }
         ]
         apiRequest("knowledge_master", request, callback);
