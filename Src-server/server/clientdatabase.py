@@ -3625,8 +3625,8 @@ class ClientDatabase(Database):
             email.notify_task_rejected(
                 self, compliance_history_id, remarks, "Reject Approval"
             )
-        except e:
-            print "Error while sending email : {}".format(e)
+        except:
+            print "Error while sending email"
 
     def concur_compliance(self, compliance_history_id, remarks, next_due_date, client_id):
         columns = ["concurrence_status", "concurred_on", "remarks"]
@@ -3643,8 +3643,8 @@ class ClientDatabase(Database):
             email.notify_task_rejected(
                 self, compliance_history_id, remarks, "Reject Concurrence"
             )
-        except e:
-            print "Error while sending email : {}".format(e)
+        except:
+            print "Error while sending email"
 
     def get_client_level_1_statutoy(self, user_id, client_id=None) :
         query = "SELECT (case when (LEFT(statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') \
@@ -5438,6 +5438,12 @@ class ClientDatabase(Database):
             and completed_by ='%d'" % (
                 compliance_history_id, session_user
             )
+        try:
+            email.notify_task_completed(
+                self, compliance_history_id
+            )
+        except:
+            print "Error while sending email"
         return self.update(
             self.tblComplianceHistory,
             history_columns, history_values,
