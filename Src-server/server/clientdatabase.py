@@ -1840,7 +1840,7 @@ class ClientDatabase(Database):
                 description = row[12]
                 concurrence_status = row[16]
                 statutory_dates = json.loads(row[17])
-                validity_date = None if row[7] is None else self.datetime_to_string(row[18]) 
+                validity_date = None if row[18] is None else self.datetime_to_string(row[18]) 
                 date_list = []
                 for date in statutory_dates :
                     s_date = core.StatutoryDate(
@@ -3603,7 +3603,8 @@ class ClientDatabase(Database):
 #
 #   Compliance Approval
 #
-    def approve_compliance(self, compliance_history_id, remarks, next_due_date, client_id):
+    def approve_compliance(self, compliance_history_id, remarks, next_due_date, 
+        validity_date, client_id):
         columns = ["approve_status", "approved_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
@@ -3618,24 +3619,33 @@ class ClientDatabase(Database):
         condition = " unit_id = '%d' and compliance_id = '%d'" % (
             rows[0][0], rows[0][1])
         values = [self.string_to_datetime(next_due_date)]
+        if validity_date is not None:
+            columns.append("validity_date")
+            values.append(self.string_to_datetime(validity_date))
         self.update(self.tblAssignedCompliances, columns, values, condition, client_id)
 
-    def reject_compliance_approval(self, compliance_history_id, remarks,  next_due_date, client_id):
-        columns = ["approve_status", "remarks", "completion_date", "completed_on"]
+    def reject_compliance_approval(self, compliance_history_id, remarks,  
+        next_due_date, client_id):
+        columns = ["approve_status", "remarks", "completion_date", "completed_on", "concurred_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
-        values = [0, remarks, None, None]
+        values = [0, remarks, None, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
         email.notify_task_rejected(
             self, compliance_history_id, remarks, "Reject Approval"
         )
 
-    def concur_compliance(self, compliance_history_id, remarks, next_due_date, client_id):
+    def concur_compliance(self, compliance_history_id, remarks, 
+        next_due_date, validity_date, client_id):
         columns = ["concurrence_status", "concurred_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
+        if validity_date is not None:
+            columns.append("validity_date")
+            values.append(self.string_to_datetime(validity_date))
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
 
-    def reject_compliance_concurrence(self, compliance_history_id, remarks,  next_due_date, client_id):
+    def reject_compliance_concurrence(self, compliance_history_id, remarks,  
+        next_due_date, client_id):
         columns = ["concurrence_status", "remarks", "completion_date", "completed_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0,  remarks, None, None]

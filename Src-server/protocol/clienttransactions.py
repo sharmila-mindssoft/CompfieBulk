@@ -414,18 +414,20 @@ class GetComplianceApprovalList(Request):
         }
 
 class ApproveCompliance(Request):
-    def __init__(self, compliance_history_id, approval_status, remarks, next_due_date):
+    def __init__(self, compliance_history_id, approval_status, remarks, 
+        next_due_date, validity_date):
         self.compliance_history_id = compliance_history_id
         self.approval_status = approval_status
         self.remarks = remarks
         self.next_due_date = next_due_date
+        self.validity_date = validity_date
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
                 "compliance_history_id", "approval_status",
-                "remarks",  "next_due_date"
+                "remarks",  "next_due_date", "validity_date"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
@@ -436,9 +438,11 @@ class ApproveCompliance(Request):
         remarks = parse_structure_CustomTextType_500(remarks)
         next_due_date = data.get("next_due_date")
         next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
+        validity_date = data.get("validity_date")
+        validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         return ApproveCompliance(
             compliance_history_id, approval_status, remarks,
-            next_due_date
+            next_due_date, validity_date
         )
 
     def to_inner_structure(self):
@@ -446,7 +450,8 @@ class ApproveCompliance(Request):
             "compliance_history_id": to_structure_SignedIntegerType_8(self.compliance_history_id),
             "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
             "remarks": to_structure_CustomTextType_500(self.remarks),
-            "next_due_date": parse_structure_OptionalType_CustomTextType_20(self.next_due_date)
+            "next_due_date": parse_structure_OptionalType_CustomTextType_20(self.next_due_date),
+            "validity_date": parse_structure_OptionalType_CustomTextType_20(self.validity_date)
         }
 
 class GetPastRecordsFormData(Request):
