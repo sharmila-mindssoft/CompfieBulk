@@ -269,6 +269,8 @@ function getStatutoryMappingsMastersList() {
       complianceDurationTypeList = data["compliance_duration_type"];
       complianceRepeatTypeList = data["compliance_repeat_type"];
       complianceApprovalStatusList = data["compliance_approval_status"];
+
+      loadStatutoryMappingList(statutoryMappingsList);
     }
     else {
       console.log(error);
@@ -278,21 +280,7 @@ function getStatutoryMappingsMastersList() {
 
 function getStatutoryMappings(){
   function onSuccess(data){
-    // industriesList = data["industries"];
-    // statutoryLevelsList = data["statutory_levels"];
-    // statutoriesList = data["statutories"];
-    // countriesList = data["countries"];
-    // domainsList = data["domains"];
-    // geographyLevelsList = data["geography_levels"];
-    // statutoryNaturesList = data["statutory_natures"];
-    // geographiesList = data["geographies"];
-    // statutoryMappingsList = data["statutory_mappings"];
-    // complianceFrequencyList = data["compliance_frequency"];
-    // complianceDurationTypeList = data["compliance_duration_type"];
-    // complianceRepeatTypeList = data["compliance_repeat_type"];
-    // complianceApprovalStatusList = data["compliance_approval_status"];
     statutoryMappingsList = data["statutory_mappings"];
-    loadStatutoryMappingList(statutoryMappingsList);
   }
   function onFailure(error){
   }
