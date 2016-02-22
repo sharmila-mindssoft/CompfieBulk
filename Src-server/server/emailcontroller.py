@@ -56,7 +56,7 @@ class Email(object):
             'global_merge_vars': []
         }
         for em in email_to:
-            message['to'].append({'email': "sharmila@mindssoft.com"})
+            message['to'].append({'email': em})
 
         for k, v in context.iteritems():
             message['global_merge_vars'].append(
@@ -68,7 +68,9 @@ class Email(object):
     def initializeTemplates(self):
         self.templates = {
             "task_rejected" : "TaskRejected",
-            "task_completed" : "TaskCompleted"
+            "task_completed" : "TaskCompleted",
+            "reset_password" : "ResetPassword",
+            "account_created" : "AccountCreated",
         }
 
     def get_template(self, type):
@@ -83,10 +85,13 @@ class EmailHandler(Email):
     def send_reset_link(
         self, db, user_id, receiver, reset_link
     ):
-        subject = "Reset Password"
-        message = "Dear User, Kindly click on the following link to reset your \
-        password for Complify. %s" % reset_link
-        self.send_email(receiver, subject, message)
+        email_to = [receiver]
+        context = {
+            "User" : db.get_user_name_by_id(user_id),
+            "ResetLink" : reset_link
+        }
+        template_name = self.get_template("task_completed")
+        self.send_mail(template_name, email_to, context)
         return True
 
     def send_client_credentials(
@@ -98,6 +103,15 @@ class EmailHandler(Email):
         	short_name, receiver, password
         )
         self.send_email(receiver, subject, message)
+        
+        email_to = [receiver]
+        context = {
+            "User" : db.get_user_name_by_id(user_id),
+            "ResetLink" : reset_link
+        }
+        template_name = self.get_template("task_completed")
+        self.send_mail(template_name, email_to, context)
+
 
     def send_user_credentials(
         self, short_name, receiver, password, employee_name, employee_code
@@ -183,14 +197,9 @@ class EmailHandler(Email):
     def notify_task_rejected(
         self, db, compliance_history_id, rejected_reason, reject_type
     ):
-        result = db.get_compliance_history_details(
+        assignee_id, concurrence_id, approver_id, compliance_name, due_date = db.get_compliance_history_details(
             compliance_history_id
         )
-        assignee_id = result[0][0]
-        concurrence_id = result[0][1]
-        approver_id = result[0][2]
-        compliance_name = result[0][3]
-        due_date = result[0][4]
         user_ids = assignee_id
         if reject_type == "RejectApproval":
             if concurrence_id is None or concurrence_id == 0:
@@ -210,22 +219,15 @@ class EmailHandler(Email):
     def notify_task_completed(
         self, db, compliance_history_id
     ):
-        assignee_id, concurrence_id, approver_id, compliance_name,  user_ids, due_date = db.get_compliance_history_details(
+        assignee_id, concurrence_id, approver_id, compliance_name, due_date = db.get_compliance_history_details(
             compliance_history_id
         )
+        user_ids = "%s, %s" % (assignee_id, approver_id)
+        if concurrence_id != 0:
+            user_ids = "%s, %s, %s" % (assignee_id, concurrence_id, approver_id)
         receiver, employee_name = db.get_user_email_name(user_ids)
         assignee = employee_name.split(",")[0]
-        subject = "Task Completed"
-        message = "Dear %s, Compliance %s has been completed. Verify and approve the compliance" % (
-            assignee, compliance_name
-        )
-        sender = receiver.split(",")[2]
-        cc = None
-        if concurrence_id is not None and concurrence_id != 0:
-            sender += receiver.split(",")[1]
-            cc = receiver.split(",")[0]
-        # self.send_email(receiver, subject, message, cc)
-
+        
         email_to = receiver.split(",")
         context = {
             "User" : assignee,

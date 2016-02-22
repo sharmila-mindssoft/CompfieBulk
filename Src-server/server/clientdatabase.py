@@ -1790,7 +1790,7 @@ class ClientDatabase(Database):
             " due_date, documents, completion_date, completed_on, next_due_date, "+\
             "concurred_by, remarks, datediff(due_date, completion_date ),compliance_task,"+\
             " compliance_description, tc.frequency_id, frequency, document_name, concurrence_status, \
-            statutory_dates"
+            statutory_dates, validity_date"
             join_type = "left join"
             query_tables = [
                     self.tblComplianceHistory,
@@ -1840,6 +1840,7 @@ class ClientDatabase(Database):
                 description = row[12]
                 concurrence_status = row[16]
                 statutory_dates = json.loads(row[17])
+                validity_date = None if row[7] is None else self.datetime_to_string(row[18]) 
                 date_list = []
                 for date in statutory_dates :
                     s_date = core.StatutoryDate(
@@ -1865,10 +1866,12 @@ class ClientDatabase(Database):
                 else:
                     action = "Approve"
                 compliances.append(clienttransactions.APPROVALCOMPLIANCE(
-                    compliance_history_id, compliance_name, description, domain_name,
-                    start_date, due_date, delayed_by, frequency, documents, 
-                    file_names, completion_date, completed_on, next_due_date, 
-                    concurred_by, remarks, action, date_list))
+                        compliance_history_id, compliance_name, description, domain_name,
+                        start_date, due_date, delayed_by, frequency, documents, 
+                        file_names, completion_date, completed_on, next_due_date, 
+                        concurred_by, remarks, action, date_list, validity_date
+                    )
+                )
             assignee_id = assignee[0]
             assignee_name = "{} - {}".format(assignee[1], assignee[2])
             if len(compliances) > 0:
@@ -3621,12 +3624,9 @@ class ClientDatabase(Database):
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0, remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        try:
-            email.notify_task_rejected(
-                self, compliance_history_id, remarks, "Reject Approval"
-            )
-        except:
-            print "Error while sending email"
+        email.notify_task_rejected(
+            self, compliance_history_id, remarks, "Reject Approval"
+        )
 
     def concur_compliance(self, compliance_history_id, remarks, next_due_date, client_id):
         columns = ["concurrence_status", "concurred_on", "remarks"]
@@ -3639,12 +3639,9 @@ class ClientDatabase(Database):
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0,  remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        try:
-            email.notify_task_rejected(
-                self, compliance_history_id, remarks, "Reject Concurrence"
-            )
-        except:
-            print "Error while sending email"
+        email.notify_task_rejected(
+            self, compliance_history_id, remarks, "Reject Concurrence"
+        )
 
     def get_client_level_1_statutoy(self, user_id, client_id=None) :
         query = "SELECT (case when (LEFT(statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') \
@@ -5438,12 +5435,9 @@ class ClientDatabase(Database):
             and completed_by ='%d'" % (
                 compliance_history_id, session_user
             )
-        try:
-            email.notify_task_completed(
-                self, compliance_history_id
-            )
-        except:
-            print "Error while sending email"
+        email.notify_task_completed(
+            self, compliance_history_id
+        )
         return self.update(
             self.tblComplianceHistory,
             history_columns, history_values,
@@ -6218,7 +6212,8 @@ class ClientDatabase(Database):
             where c.compliance_id = ch.compliance_id ), due_date" % (self.tblCompliances)
         condition = "compliance_history_id = '%d'" % compliance_history_id
         rows = self.get_data(self.tblComplianceHistory+" ch", columns, condition )
-        return rows
+        if rows:
+            return rows[0]
 
     def get_client_details_report(
         self, country_id,  business_group_id,
