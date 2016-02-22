@@ -22,7 +22,8 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_50,
     parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping,
     parse_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping,
-    parse_structure_SignedIntegerType_8
+    parse_structure_SignedIntegerType_8,
+    parse_structure_VectorType_RecordType_core_StatutoryApprovalStatus
 
 )
 from protocol.to_structure import (
@@ -48,7 +49,8 @@ from protocol.to_structure import (
     to_structure_CustomTextType_50,
     to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping,
     to_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping,
-    to_structure_UnsignedIntegerType_32
+    to_structure_UnsignedIntegerType_32,
+    to_structure_VectorType_RecordType_core_StatutoryApprovalStatus
 )
 
 #
@@ -339,7 +341,7 @@ class GetStatutoryMappingsMasterSuccess(Response):
         compliance_repeat_type = data.get("compliance_repeat_type")
         compliance_repeat_type = parse_structure_VectorType_RecordType_core_ComplianceRepeatType(compliance_repeat_type)
         compliance_approval_status = data.get("compliance_approval_status")
-        compliance_approval_status = parse_structure_VectorType_RecordType_core_ComplianceApprovalStatus(compliance_approval_status)
+        compliance_approval_status = parse_structure_VectorType_RecordType_core_StatutoryApprovalStatus(compliance_approval_status)
         compliance_duration_type = data.get("compliance_duration_type")
         compliance_duration_type = parse_structure_VectorType_RecordType_core_ComplianceDurationType(compliance_duration_type)
         return GetStatutoryMappingsMasterSuccess(
@@ -361,7 +363,7 @@ class GetStatutoryMappingsMasterSuccess(Response):
             "geographies": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(self.geographies),
             "compliance_frequency": to_structure_VectorType_RecordType_core_ComplianceFrequency(self.compliance_frequency),
             "compliance_repeat_type": to_structure_VectorType_RecordType_core_ComplianceRepeatType(self.compliance_repeat_type),
-            "compliance_approval_status": to_structure_VectorType_RecordType_core_ComplianceApprovalStatus(self.compliance_approval_status),
+            "compliance_approval_status": to_structure_VectorType_RecordType_core_StatutoryApprovalStatus(self.compliance_approval_status),
             "compliance_duration_type": to_structure_VectorType_RecordType_core_ComplianceDurationType(self.compliance_duration_type)
         }
 

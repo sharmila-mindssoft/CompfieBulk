@@ -3703,3 +3703,14 @@ def parse_structure_VectorType_CustomTextType_500(data):
 def parse_structure_OptionalType_VectorType_CustomTextType_500(data):
     if data is None: return data
     return parse_structure_VectorType_CustomTextType_500(data)
+
+def parse_structure_RecordType_core_StatutoryApprovalStatus(data):
+    from protocol import core
+    return core.StatutoryApprovalStatus.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_core_StatutoryApprovalStatus(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_StatutoryApprovalStatus(item))
+    return lst
