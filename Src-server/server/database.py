@@ -1372,12 +1372,19 @@ class KnowledgeDatabase(Database):
         return geographies
 
     def get_geography_report(self):
+        q = "SELECT t1.geography_id, t1.geography_name, t1.parent_names, t1.is_active, \
+            (select distinct country_id FROM tbl_geography_levels where level_id = t1.level_id) country_id \
+            FROM tbl_geographies t1 "
+        rows = self.select_all(q)
+        columns = ["geography_id", "geography_name", "parent_names", "is_active", "country_id"]
+        result = self.convert_to_dict(rows, columns)
+
         def return_report_data(result) :
             mapping_dict = {}
-            for key, value in result.iteritems():
-                mappings = value[0]
-                is_active = value[1]
-                country_id = value[2]
+            for item in result :
+                mappings = item["parent_names"] + ">>" + item["geography_name"]
+                is_active = bool(item["is_active"])
+                country_id = item["country_id"]
                 _list = mapping_dict.get(country_id)
                 if _list is None:
                     _list = []
@@ -1388,12 +1395,17 @@ class KnowledgeDatabase(Database):
                     )
                 )
                 mapping_dict[country_id] = _list
+            # for key, value in result.iteritems():
+            #     mappings = value[0]
+            #     is_active = value[1]
+            #     country_id = value[2]
+
             return mapping_dict
 
         if bool(self.geography_parent_mapping) is False :
             self.get_geographies()
 
-        return return_report_data(self.geography_parent_mapping)
+        return return_report_data(result)
 
     def get_geography_by_id(self, geography_id):
         query = "SELECT geography_id, geography_name, level_id, parent_ids, is_active \
@@ -1467,11 +1479,11 @@ class KnowledgeDatabase(Database):
         # if oldparent_ids != parent_ids :
             # oldPId = str(oldparent_ids) + str(geography_id)
             # newPId = str(parent_ids) + str(geography_id)
-        qry = "SELECT geography_id, geography_name, parent_ids \
+        qry = "SELECT geography_id, geography_name, parent_ids, level_id \
           from tbl_geographies \
             WHERE parent_ids like '%s'" % str("%" + str(geography_id) + ",%")
         rows = self.select_all(qry)
-        columns = ["geography_id", "geography_name", "parent_ids"]
+        columns = ["geography_id", "geography_name", "parent_ids", "level_id"]
         result = self.convert_to_dict(rows, columns)
 
         for row in result :
@@ -1488,15 +1500,19 @@ class KnowledgeDatabase(Database):
             #     row[2], updated_by, row[0]
             # )
             #  updating child parent-names
-            q = "Update tbl_geographies as A inner join ( \
+            q = "UPDATE tbl_geographies as A inner join ( \
                 select p.geography_id, (select group_concat(p1.geography_name SEPARATOR '>>') \
                     from tbl_geographies as p1 where geography_id in (%s)) as names \
                 from tbl_geographies as p \
                 where p.geography_id = %s \
-                ) as B on A.geography_id = B.geography_id \
-                set A.parent_names = B.names \
-                where A.geography_id = %s " % (row["parent_ids"], row["geography_id"], row["geography_id"])
-
+                ) as B ON A.geography_id = B.geography_id \
+                inner join (select c.country_name, g.level_id from tbl_countries c \
+                    inner join tbl_geography_levels g on c.country_id = g.country_id ) as C \
+                    ON A.level_id  = C.level_id \
+                set A.parent_names = concat(C.country_name, '>>', B.names) \
+                where A.geography_id = %s AND C.level_id = %s " % (
+                    row["parent_ids"], row["geography_id"], row["geography_id"], row["level_id"]
+                )
             self.execute(q)
         action = "Geography name  %s updated in child parent_names" % (name)
         self.save_activity(updated_by, 6, action)
@@ -3779,18 +3795,15 @@ class KnowledgeDatabase(Database):
 
         query = "SELECT distinct t1.client_id, t1.group_name, \
             t1.is_active, \
-            group_concat(distinct t2.domain_id) domain_ids, \
-            group_concat(distinct t3.country_id) country_ids \
+            (select group_concat(distinct d.domain_id) from tbl_client_domains d where d.client_id = t1.client_id)domain_ids, \
+            (select group_concat(distinct c.country_id) from tbl_client_countries c where c.client_id = t1.client_id) country_ids \
             FROM tbl_client_groups t1 \
-            INNER JOIN tbl_client_domains t2 \
-            ON t1.client_id = t2.client_id \
-            INNER JOIN tbl_client_countries t3 \
-            ON t1.client_id = t3.client_id  \
             INNER JOIN tbl_user_clients t4 \
-            ON t1.client_id = t4.client_id\
+            ON t1.client_id = t4.client_id \
             AND t1.is_active = 1 \
-            AND t4.user_id = %s \
-            AND t3.country_id=%s" % (user_id, country_id)
+            AND t4.user_id =  %s \
+            AND t1.client_id in (select distinct client_id from tbl_client_countries where country_id = %s)" % (user_id, country_id)
+
         rows = self.select_all(query)
         columns = ["client_id", "group_name", "is_active", "domain_ids", "country_ids"]
         results = self.convert_to_dict(rows, columns)
