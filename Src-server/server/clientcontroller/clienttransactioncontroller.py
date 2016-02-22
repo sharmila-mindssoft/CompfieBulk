@@ -105,7 +105,7 @@ def process_get_past_records_form_data(db, request, session_user, client_id):
     divisions = db.get_divisions_for_user(row[1])
     units = db.get_units_for_user_grouped_by_industry(row[0])
     domains = db.get_domains_for_user(session_user, client_id)
-    level1_statutories = db.get_level_1_statutories_for_user(session_user, client_id)
+    level1_statutories = db.get_level_1_statutories_for_user_with_domain(session_user, client_id)
     compliance_frequency = db.get_compliance_frequency(client_id)
     return clienttransactions.GetPastRecordsFormDataSuccess(
         countries=countries,
@@ -173,7 +173,7 @@ def process_approve_compliance(db, request, session_user, client_id):
         db.approve_compliance(
             compliance_history_id, remarks, next_due_date, client_id
         )
-    elif status == "RejectApproval":
+    elif status == "Reject Approval":
         db.reject_compliance_approval(
             compliance_history_id, remarks,  next_due_date, client_id
         )
@@ -181,7 +181,7 @@ def process_approve_compliance(db, request, session_user, client_id):
         db.concur_compliance(
             compliance_history_id, remarks, next_due_date, client_id
         )
-    elif status == "RejectConcurrence":
+    elif status == "Reject Concurrence":
         db.reject_compliance_concurrence(
             compliance_history_id, remarks, next_due_date, client_id
         )

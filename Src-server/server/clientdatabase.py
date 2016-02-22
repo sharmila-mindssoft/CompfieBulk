@@ -415,7 +415,7 @@ class ClientDatabase(Database):
         )
 
         columns = "unit_id, concat(unit_code,'-',unit_name), address, division_id,"+\
-        " legal_entity_id, business_group_id, country_id"
+        " legal_entity_id, business_group_id, country_id, domain_ids"
         industry_wise_units =[]
         for industry in industry_rows:
             industry_name = industry[0]
@@ -425,10 +425,11 @@ class ClientDatabase(Database):
                 self.tblUnits, columns, condition
             )
             for unit in rows:
+                domain_ids_list = [int(x) for x in unit[7].split(",")]
                 units.append(
-                    clienttransactions.ASSIGN_COMPLIANCE_UNITS(
+                    clienttransactions.PastRecordUnits(
                         unit[0], unit[1], unit[2],unit[3], unit[4],
-                        unit[5], unit[6]
+                        unit[5], unit[6], domain_ids_list
                     )
                 )
             industry_wise_units.append(clienttransactions.IndustryWiseUnits(industry_name, units))
@@ -1341,6 +1342,32 @@ class ClientDatabase(Database):
                 statutory["level_1_statutory_name"])
             results.append(statutory_obj)
         return results
+
+    def get_level_1_statutories_for_user_with_domain(self, session_user, client_id, domain_id = None):
+        domain_ids = domain_id
+        if domain_ids == None:
+            columns = "group_concat(domain_id)"
+            domain_rows = None
+            if session_user != 0:
+                domain_rows = self.get_data(self.tblUserDomains, columns,
+                "user_id='%d'" % session_user)
+            else:
+                domain_rows = self.get_data(self.tblDomains, columns,
+                "1")
+            domain_ids = domain_rows[0][0]
+        level_1_statutory = {}
+        for domain_id in domain_ids.split(","):
+            mapping_rows = self.get_data(
+                self.tblCompliances,
+                "statutory_mapping",
+                "domain_id in (%s)" % (domain_id)
+            )
+            level_1_statutory[domain_id] = []
+            for mapping in mapping_rows:
+                statutories = mapping[0].split(">>")
+                if statutories[0].strip() not in level_1_statutory[domain_id]:
+                    level_1_statutory[domain_id].append(statutories[0].strip())
+        return level_1_statutory
 
     def get_level_1_statutories_for_user(self, session_user, client_id, domain_id = None):
         domain_ids = domain_id
@@ -3602,8 +3629,8 @@ class ClientDatabase(Database):
             email.notify_task_rejected(
                 self, compliance_history_id, remarks, "Reject Approval"
             )
-        except e:
-            print "Error while sending email : {}".format(e)
+        except:
+            print "Error while sending email"
 
     def concur_compliance(self, compliance_history_id, remarks, next_due_date, client_id):
         columns = ["concurrence_status", "concurred_on", "remarks"]
@@ -3620,8 +3647,8 @@ class ClientDatabase(Database):
             email.notify_task_rejected(
                 self, compliance_history_id, remarks, "Reject Concurrence"
             )
-        except e:
-            print "Error while sending email : {}".format(e)
+        except:
+            print "Error while sending email"
 
     def get_client_level_1_statutoy(self, user_id, client_id=None) :
         query = "SELECT (case when (LEFT(statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') \
@@ -5416,6 +5443,12 @@ class ClientDatabase(Database):
             and completed_by ='%d'" % (
                 compliance_history_id, session_user
             )
+        try:
+            email.notify_task_completed(
+                self, compliance_history_id
+            )
+        except:
+            print "Error while sending email"
         return self.update(
             self.tblComplianceHistory,
             history_columns, history_values,

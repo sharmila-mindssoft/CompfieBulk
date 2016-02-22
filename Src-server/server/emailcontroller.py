@@ -1,31 +1,36 @@
 #!/usr/bin/python
-
+import mandrill
 import smtplib
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 
-# email_to = 'sharmila@mindssoft.com'
-# username = 'sharmila@mindssoft.com'
-# password = '6108816659'
+# server = smtplib.SMTP('mail.mindssoft.com', 25)
+# server.ehlo()
+# server.login(self.sender, self.password)
 
-# smtpserver = smtplib.SMTP("mindssoft.com",25)
-# smtpserver.ehlo()
-# smtpserver.login(username,password)
-# header = 'To:' + <email_to + '\n' + 'From: ' + username + '\n' + 'Subject: Python SMTP Auth\n'
-# msg = header + '\n\n This is a test message generated from python script \n\n'
-# smtpserver.sendmail(username, email_to, msg)
-# smtpserver.close()
-# print 'Email sent successfully'
+# msg = MIMEMultipart()
+# msg['From'] = self.sender
+# msg['To'] = receiver
+# msg['Subject'] = subject
+# if cc is not None:
+#     msg['Cc'] = cc
+#     receiver += cc
+# msg.attach(MIMEText(message, 'plain'))
+
+# server.sendmail(self.sender, receiver,  msg.as_string())
+# server.close()
 
 __all__ = [
 	"EmailHandler"
 ]
 
 class Email(object):
-
+    
     def __init__(self):
         self.sender = "sharmila@mindssoft.com"
         self.password = "6108816659"
+        self.API_KEY = 'u5IPdlY1JAxa5_fJoJaPEw'
+        self.initializeTemplates()
 
     def send_email(self, receiver, subject, message, cc=None):
         server = smtplib.SMTP('mail.mindssoft.com', 25)
@@ -44,9 +49,26 @@ class Email(object):
         server.sendmail(self.sender, receiver,  msg.as_string())
         server.close()
 
-    def initialize_templates():
-        self.templates ={
-        	"e" : "files/emailtemplates/emailtemplate.html"
+    def send_mail(self, template_name, email_to, context):
+        mandrill_client = mandrill.Mandrill(self.API_KEY)
+        message = {
+            'to': [],
+            'global_merge_vars': []
+        }
+        for em in email_to:
+            message['to'].append({'email': "sharmila@mindssoft.com"})
+
+        for k, v in context.iteritems():
+            message['global_merge_vars'].append(
+                {'name': k, 'content': v}
+            )
+        print message
+        print mandrill_client.messages.send_template(template_name, [], message)
+
+    def initializeTemplates(self):
+        self.templates = {
+            "task_rejected" : "TaskRejected",
+            "task_completed" : "TaskCompleted"
         }
 
     def get_template(self, type):
@@ -173,19 +195,17 @@ class EmailHandler(Email):
         if reject_type == "RejectApproval":
             if concurrence_id is None or concurrence_id == 0:
                 user_ids = "%d,%d" % (user_ids, concurrence_id)
-
         receiver, employee_name = db.get_user_email_name(user_ids)
         assignee = employee_name.split(",")[0]
-        subject = "Task Rejected"
-        message = "Dear %s, Compliance %s has been rejected. The reason is %s." % (
-            assignee, compliance_name, rejected_reason
-        )
-        sender = None
-        cc = None
-        if concurrence_id is not None and concurrence_id != 0:
-            sender = receiver.split(",")[0]
-            cc = receiver.split(",")[1]
-        self.send_email(receiver, subject, message, cc)
+
+        email_to = receiver.split(",")
+        context = {
+            "User" : assignee,
+            "Compliance" : compliance_name,
+            "Reason" : rejected_reason
+        }
+        template_name = self.get_template("task_rejected")
+        self.send_mail(template_name, email_to, context)
 
     def notify_task_completed(
         self, db, compliance_history_id
@@ -204,4 +224,12 @@ class EmailHandler(Email):
         if concurrence_id is not None and concurrence_id != 0:
             sender += receiver.split(",")[1]
             cc = receiver.split(",")[0]
-        self.send_email(receiver, subject, message, cc)
+        # self.send_email(receiver, subject, message, cc)
+
+        email_to = receiver.split(",")
+        context = {
+            "User" : assignee,
+            "Compliance" : compliance_name
+        }
+        template_name = self.get_template("task_completed")
+        self.send_mail(template_name, email_to, context)
