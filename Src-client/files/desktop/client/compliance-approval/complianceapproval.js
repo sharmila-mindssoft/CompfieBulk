@@ -1,4 +1,4 @@
-var currentCompliances;
+var approvalList;
 var file_list = [];
 
 function clearMessage() {
@@ -14,8 +14,8 @@ function initialize(){
     function onSuccess(data){
         console.log(data);
         closeicon();
-        currentCompliances = data['compliance_detail']['current_compliances'];
-        loadComplianceTaskDetails(currentCompliances);     
+        approvalList = data['approval_list'];
+        loadComplianceApprovalDetails(approvalList);     
     }
     function onFailure(error){
         console.log(error);
@@ -32,81 +32,42 @@ function initialize(){
     );
 }
 
-function loadComplianceTaskDetails(data){
-    $('.tbody-compliances-task-list-overdue tr').remove();
-    $('.tbody-compliances-task-list-inprogress tr').remove();
-    var snoOverdue = 1;
-    var snoInprogress = 1;
-    var countOverdue = 0;
-    var countInprogress = 0;
-  
-    $.each(data, function(k, value) {
-        if(data[k]['compliance_status'] == "Not Complied" && countOverdue == 0){
-            var tableRowHeading = $('#templates .table-compliances-task-list .headingRow');
-            var clone = tableRowHeading.clone();
-            $('.compliance-types', clone).html("Over due Compliances");      
-            $('.tbody-compliances-task-list-overdue').append(clone);
-            countOverdue++;
-        }
-        if(data[k]['compliance_status'] == "Inprogress" && countInprogress == 0){
-            var tableRowHeading = $('#templates .table-compliances-task-list .headingRow');
-            var clone = tableRowHeading.clone();
-            $('.compliance-types', clone).html("Inprogress Compliances");      
-            $('.tbody-compliances-task-list-inprogress').append(clone);
-            countInprogress++;
-        }
-
-        var tableRowvalues = $('#templates .table-compliances-task-list .table-row-list');
-        var cloneval = tableRowvalues.clone();
-      
+function loadComplianceApprovalDetails(data){
+    $('.tbody-compliance-approval-list tr').remove();
+    var sno = 1;
+    $.each(data, function(key, value) {
+        var tableRowHeading = $('#templates .table-compliance-approval-list .headingRow');
+        var clone = tableRowHeading.clone();
+        $('.heading', clone).html(value["assignee_name"]);      
+        $('.tbody-compliance-approval-list').append(clone);
+        complianceList = value['compliances'];
         //Full Width list append ---------------------------------------------------------------
-       
-        $('.compliance-task span', cloneval).html(data[k]['compliance_name']);
-        $('.compliance-task', cloneval).attr("title", data[k]['compliance_description']);
-        $('.domain', cloneval).html(data[k]['domain_name']);
-        $('.startdate', cloneval).html(data[k]['start_date']);
-        $('.duedate', cloneval).html(data[k]['due_date']);
-        $('.days-text', cloneval).html(data[k]['ageing']);
-        if(data[k]['compliance_status'] == "Not Complied"){
-            $('.days-text', cloneval).attr("style", "color:#f00;");
-        }
-        $('.status', cloneval).html(data[k]['compliance_status']);
-        $('.format-file', cloneval).attr("href", data[k]['format_file_name']);
-        var compliance_history_id = data[k]["compliance_history_id"];
-        $(cloneval, ".expand-compliance").on("click", function() {
-            showSideBar(compliance_history_id, data);
-        });
+        $.each(complianceList, function(k, val) {
+            var tableRowvalues = $('#templates .table-compliance-approval-list .table-row-list');
+            var clonelist = tableRowvalues.clone();
+            $('.sno-ca', clonelist).html(sno);
+            $('.compliance-task span', clonelist).html(val['compliance_name']);
+            $('.compliance-task', clonelist).attr("title", val['description']);
+            $('.domain', clonelist).html(val['domain_name']);
+            $('.startdate', clonelist).html(val['start_date']);
+            $('.duedate', clonelist).html(val['due_date']);
+            if(val['delayedby'] == null){
+                $('.delayedby', clonelist).html('');    
+            }
+            if(val['delayedby'] != null){
+                $('.delayedby', clonelist).html(val['delayedby']+" days");    
+            }
+            var compliance_history_id = val['compliance_history_id'];  
 
-        if(data[k]['compliance_status'] == "Not Complied"){
-            $('.sno', cloneval).text(snoOverdue);
-            $('.tbody-compliances-task-list-overdue').append(cloneval);
-            snoOverdue = snoOverdue + 1
-        }
-        if(data[k]['compliance_status'] == "Inprogress" || data[k]['compliance_status'] == "Inprogress(Rejected)"){
-            $('.sno', cloneval).text(snoInprogress);
-            $('.tbody-compliances-task-list-inprogress').append(cloneval);   
-            snoInprogress = snoInprogress + 1
-        }      
+            $(clonelist, ".expand-compliance").on("click", function() {
+                showSideBar(compliance_history_id, val);
+            });
+            $('.full-width-list .tbody-compliance-approval-list').append(clonelist);   
+            sno = sno + 1;
+        });      
     });    
 }
-function loadUpcomingCompliancesDetails(data){
-    $('.tbody-upcoming-compliances-list tr').remove();
-    var sno = 0;
-    $.each(data, function(k, value) {
-        var tableRowvalues = $('#templates .table-upcoming-compliances-list .table-row-list');
-        var cloneval = tableRowvalues.clone();
-        sno = sno + 1;
-        $('.uc-sno', cloneval).text(sno);
-        $('.uc-compliance-task span', cloneval).html(data[k]['compliance_name']);
-        $('.uc-compliance-task', cloneval).attr("title", data[k]['compliance_description']);
-        $('.uc-domain', cloneval).html(data[k]['domain_name']);
-        $('.uc-startdate', cloneval).html(data[k]['start_date']);
-        $('.uc-duedate', cloneval).html(data[k]['due_date']);
-        $('.format-file', cloneval).attr("href", data[k]['format_file_name']);
-        $('.tbody-upcoming-compliances-list').append(cloneval);
-    }); 
 
-}
 function showSideBar(idval, data){
     $('.half-width-task-details').empty();
     var d = new Date().toLocaleDateString('en-GB', {  
@@ -114,107 +75,134 @@ function showSideBar(idval, data){
         month: 'short',
         day: 'numeric'
     }).split(' ').join('-');
+
     $('.half-width-task-details').show();
     $('.full-width-list').attr("width", "60%");
     $('.half-width-task-details').attr("width", "40%");
-
     //SideView append ---------------------------------------------------------------------
-    $.each(data, function(k, value) {
-        if(data[k]['compliance_history_id'] == idval){
-            $('.validity1_label').show();
-            $('.duedate1_label').show();
-            $('.validity1_textbox').hide();
-            $('.duedate1_textbox').hide();
-            var tableRowSide = $('#templates .sideview-div');
-            var cloneValSide = tableRowSide.clone();
-            var complianceStatus = data[k]['compliance_status'];
-            $('.sideview-compliance-task span', cloneValSide).html(data[k]['compliance_name']);
-            $('.sideview-compliance-frequency', cloneValSide).html(data[k]['compliance_frequency']);
-            $('.sideview-completion-date-td', cloneValSide).html("<input  type='text' class='input-box datepick sideview-completion-date' id='completion-date'>");
-            $('.sideview-compliance-status', cloneValSide).html(complianceStatus);
-            $('.sideview-upload-date', cloneValSide).html(d);
-            $('.sideview-remarks-td', cloneValSide).html("<textarea class='input-box sideview-remarks'></textarea>");
-            $("#upload_file", cloneValSide).on("change", function(e) {
-                if (e.originalEvent.defaultPrevented) return;
-                uploadedfile(e);
-            });
-            if(data[k]['compliance_frequency'] == 'One Time') {
-                $('.validityAndDueDate', cloneValSide).hide();
-            }
-            if(data[k]['compliance_frequency'] != 'One Time'){
-                $('.validityAndDueDate').show();
-                $(cloneValSide, '.validity1_icon').on("click", function(e, complianceStatus){  
-                    showTextbox(complianceStatus);
-                }); 
-                $('.validity1_label abbr', cloneValSide).html(data[k]['validity_date']);
-                $('.duedate1_label abbr', cloneValSide).html(data[k]['next_due_date']); 
-                $('.validity1-textbox-input', cloneValSide).val(data[k]['validity_date']);
-                $('.duedate1-textbox-input', cloneValSide).val(data[k]['next_due_date']);  
-            }
-            $('.btn-submit', cloneValSide).on("click", function(e){
-                var completion_date;
-                var compliance_history_id;
-                var documents;
-                var validity_date;
-                var next_due_date;
-                compliance_history_id = data[k]['compliance_history_id'];
-               
-                documents = file_list;
-                if(documents.length == 0){
-                    documents = null;
-                }
+    $('.validity1_label').show();
+    $('.duedate1_label').show();
+    $('.validity1_textbox').hide();
+    $('.duedate1_textbox').hide();
+    var tableRowSide = $('#templates .sideview-div');
+    var cloneValSide = tableRowSide.clone();
+    var complianceFrequency = data['compliance_frequency'];
+    $('.sideview-compliance-task span', cloneValSide).html(data['compliance_name']);
+    $('.sideview-compliance-frequency', cloneValSide).html(complianceFrequency);
+    $('.sidebar-uploaded-documents span', cloneValSide).html();
+    $('.sidebar-uploaded-date', cloneValSide).html(data['upload_date']);
+    $('.sidebar-completion-date', cloneValSide).html(data['completion_date']);
+    if(complianceFrequency != 'One Time'){
+        $('.validityAndDueDate').show();
+        $(cloneValSide, '.duedate1_icon').on("click", function(e, data){  
+            showTextbox();
+        }); 
+        $('.validity1_label abbr', cloneValSide).html(data[key]['validity_date']);
+        $('.duedate1_label abbr', cloneValSide).html(data[key]['next_due_date']); 
+        $('.validity1-textbox-input', cloneValSide).val(data[key]['validity_date']);
+        $('.duedate1-textbox-input', cloneValSide).val(data[key]['next_due_date']); 
+    }    
+    if(data['delayedby'] != null){
+        $('.sideview-status', cloneValSide).html("Not Complied");    
+    }
+    if(data['delayedby'] == null){
+        $('.sideview-status', cloneValSide).html("InProgress");    
+    }
+    
+    $('.sideview-remarks', cloneValSide).html(data['remarks']);
+    var action = data['action'];
+    if(action == "Approve"){
+        $(".action-tr").show();
+        //$(".sidebar-remarks-textarea").show();
+    }
+    if(action == "Concur"){
+        $(".concurrance-tab").show();
+        $(".sidebar-concurrance").html(data['remarks']);
+        $(".action-tr").show();
+        $('.sidebar-remarks-textarea').show();
+    }
+    if(action == "Reject Concurrence"){
+        
+    }
+    if(action == "Reject Approval"){
+        
+    }
 
-                completion_date = $('.sideview-completion-date').val();
-                validity_date = $('.validity1_label abbr').html();
-                if(validity_date == ''){
-                    validity_date = $('.validity1-textbox-input').val();
-                    if(validity_date == ''){
-                        validity_date = null;
-                    }
-                }
-                next_due_date = $('.duedate1_label').val();
-                if(next_due_date == ''){
-                    next_due_date = $('.duedate1-textbox-input').val();
-                    if(next_due_date == ''){
-                        next_due_date = null;
-                    }
-                }
-                remarks = $('.sideview-remarks').val();
+    // if(data[k]['compliance_frequency'] == 'One Time') {
+    //     $('.validityAndDueDate', cloneValSide).hide();
+    // }
+    // if(data[k]['compliance_frequency'] != 'One Time'){
+    //     $('.validityAndDueDate').show();
+    //     $(cloneValSide, '.validity1_icon').on("click", function(e, complianceStatus){  
+    //         showTextbox(complianceStatus);
+    //     }); 
+    //     $('.validity1_label abbr', cloneValSide).html(data[key]['validity_date']);
+    //     $('.duedate1_label abbr', cloneValSide).html(data[key]['next_due_date']); 
+    //     $('.validity1-textbox-input', cloneValSide).val(data[key]['validity_date']);
+    //     $('.duedate1-textbox-input', cloneValSide).val(data[key]['next_due_date']);  
+    // }
+    // $('.btn-submit', cloneValSide).on("click", function(e){
+    //     var completion_date;
+    //     var compliance_history_id;
+    //     var documents;
+    //     var validity_date;
+    //     var next_due_date;
+    //     compliance_history_id = data[k]['compliance_history_id'];
+       
+    //     documents = file_list;
+    //     if(documents.length == 0){
+    //         documents = null;
+    //     }
 
-                if(remarks == ''){
-                    remarks = null;
-                }
-                if(completion_date == ''){
-                    displayMessage("Select Completion Date");
-                }
-                else if(validity_date == ''){
-                    displayMessage("Select Completion Date");
-                }
-                else{
-                    function onSuccess(data){
-                        initialize();
-                    }
-                    function onFailure(error){
-                        console.log(error);
-                    }
-                    client_mirror.updateComplianceDetail(compliance_history_id, documents,
-                        completion_date, validity_date, next_due_date, remarks,
-                        
-                        function (error, response){
-                            if(error == null){
-                                onSuccess(response);
-                            }
-                            else{
-                                onFailure(error);
-                            }
-                        }    
-                    );   
-                }
-                 
-            });
-            $('.half-width-task-details').append(cloneValSide);    
-        }        
-    });
+    //     completion_date = $('.sideview-completion-date').val();
+    //     validity_date = $('.validity1_label abbr').html();
+    //     if(validity_date == ''){
+    //         validity_date = $('.validity1-textbox-input').val();
+    //         if(validity_date == ''){
+    //             validity_date = null;
+    //         }
+    //     }
+    //     next_due_date = $('.duedate1_label').val();
+    //     if(next_due_date == ''){
+    //         next_due_date = $('.duedate1-textbox-input').val();
+    //         if(next_due_date == ''){
+    //             next_due_date = null;
+    //         }
+    //     }
+    //     remarks = $('.sideview-remarks').val();
+
+    //     if(remarks == ''){
+    //         remarks = null;
+    //     }
+    //     if(completion_date == ''){
+    //         displayMessage("Select Completion Date");
+    //     }
+    //     else if(validity_date == ''){
+    //         displayMessage("Select Completion Date");
+    //     }
+    //     else{
+    //         function onSuccess(data){
+    //             initialize();
+    //         }
+    //         function onFailure(error){
+    //             console.log(error);
+    //         }
+    //         client_mirror.updateComplianceDetail(compliance_history_id, documents,
+    //             completion_date, validity_date, next_due_date, remarks,
+                
+    //             function (error, response){
+    //                 if(error == null){
+    //                     onSuccess(response);
+    //                 }
+    //                 else{
+    //                     onFailure(error);
+    //                 }
+    //             }    
+    //         );   
+    //     }
+         
+    // });
+    $('.full-width-list .half-width-task-details').append(cloneValSide);   
     $(".datepick" ).datepicker({
         changeMonth: true,
         changeYear: true,
@@ -225,11 +213,11 @@ function showSideBar(idval, data){
     });
 }
 
-function showTextbox(complianceStatus){
-    $('.duedate1_textbox').show();
-    $('.duedate1_label').hide();
+function showTextbox(){
     $('.validity1_textbox').show();
     $('.validity1_label').hide();
+    $('.duedate1_textbox').show();
+    $('.duedate1_label').hide();
 }
 function closeicon(){
     $('.half-width-task-details').hide();
