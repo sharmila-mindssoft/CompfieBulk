@@ -240,6 +240,7 @@ function saverecord(j,e){
     var datavalue = $('#datavalue'+j).val().trim();
     var map_gm_id=[];
     var map_gm_name = [];
+    map_gm_name.push($("#countryval").val());
     var last_geography_id=0;
     var last_level = 0;
     for(k=1;k<j;k++){
@@ -269,7 +270,6 @@ function saverecord(j,e){
       console.log($("countryval").innerHTML)
       if(map_gm_id.length == 0){
         map_gm_id.push(0);
-        map_gm_name.push("India");
       }
       mirror.saveGeography(parseInt(glm_id), datavalue, map_gm_id, map_gm_name, countryId,
         function (error, response) {
@@ -381,6 +381,7 @@ function updaterecord(j,e){
     var datavalue = $('#datavalue'+j).val().trim();
     var map_gm_id=[];
     var map_gm_name = [];
+    map_gm_name.push($("#countryval").val());
     var last_geography_id=0;
     var last_level = 0;
     for(k=1;k<j;k++){
@@ -413,7 +414,6 @@ function updaterecord(j,e){
       }
       if(map_gm_id.length == 0){
         map_gm_id.push(0);
-        map_gm_name.push("india");
       }
       mirror.updateGeography(parseInt(geographyid), parseInt(glm_id), datavalue, map_gm_id, map_gm_name, parseInt($("#country").val()),
         function (error, response) {

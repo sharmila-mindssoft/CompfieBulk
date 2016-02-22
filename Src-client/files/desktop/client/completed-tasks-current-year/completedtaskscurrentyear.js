@@ -4,8 +4,6 @@ var legalentitiesList;
 var divisionsList;
 var unitsList;
 var usersList;
-var assignStatutoryUnitIds = [];
-var assignStatutoryUnitValues = [];
 var statutoriesList;
 
 function clearMessage() {
@@ -19,8 +17,6 @@ function displayMessage(message) {
 
 function clearValues(levelvalue) {
   if(levelvalue == 'country'){
-    assignStatutoryUnitIds = [];
-    assignStatutoryUnitValues = [];
     $('#businessgroup').empty();
     $('#legalentity').empty();
     $('#division').empty();
@@ -28,23 +24,17 @@ function clearValues(levelvalue) {
   }
 
   if(levelvalue == 'businessgroup'){
-    assignStatutoryUnitIds = [];
-    assignStatutoryUnitValues = [];
     $('#legalentity').empty();
     $('#division').empty();
     $('#unit').empty();
   }
 
   if(levelvalue == 'legalentity'){
-    assignStatutoryUnitIds = [];
-    assignStatutoryUnitValues = [];
     $('#division').empty();
     $('#unit').empty();
   }
 
   if(levelvalue == 'division'){
-    assignStatutoryUnitIds = [];
-    assignStatutoryUnitValues = [];
     $('#unit').empty();
   }
 }
@@ -255,7 +245,7 @@ function validate_firsttab(){
   }else if ($('.legalentitylist.active').text() == ''){
     displayMessage("Legal Entity Required");
     return false;
-  }else if (assignStatutoryUnitIds.length == 0){
+  }else if ($('.unitlist.active').text() == ''){
     displayMessage("Unit Required");
     return false;
   }else{
@@ -490,20 +480,12 @@ function loadunit(){
 }
 
 $("#unit").click(function(event){
-    var chkstatus = $(event.target).attr('class');
-    if(chkstatus != undefined && chkstatus != 'active'){
-
-      if(chkstatus == 'unitlist active'){
-      $(event.target).removeClass("active");
-      var removeid = assignStatutoryUnitIds.indexOf(parseInt(event.target.id));
-      assignStatutoryUnitIds.splice(removeid,1);
-      var removename = assignStatutoryUnitValues.indexOf($(event.target).text());
-      assignStatutoryUnitValues.splice(removename,1);
-      }else{
-        $(event.target).addClass("active");
-        assignStatutoryUnitIds.push(parseInt(event.target.id));
-        assignStatutoryUnitValues.push($(event.target).text());
-      }
+  if($(event.target).attr('class') == 'unitlist'){
+    $('.'+$(event.target).attr('class')).each( function( index, el ) {
+      $(el).removeClass( "active" );
+    });
+    $(event.target).addClass("active");
+  }
 
 /*      function onSuccess(data){
         statutoriesList = data["statutories"];
@@ -521,7 +503,6 @@ $("#unit").click(function(event){
               }
           }
       );*/
-    }
 });
 
 

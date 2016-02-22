@@ -3714,3 +3714,32 @@ def parse_structure_VectorType_RecordType_core_StatutoryApprovalStatus(data):
     for item in data:
         lst.append(parse_structure_RecordType_core_StatutoryApprovalStatus(item))
     return lst
+
+def parse_structure_VectorType_RecordType_clienttransactions_PastRecordUnits(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_clienttransactions_PastRecordUnits(item))
+    return lst
+
+def parse_structure_RecordType_clienttransactions_PastRecordUnits(data):
+    from protocol import clienttransactions
+    return clienttransactions.PastRecordUnits.parse_structure(data)
+
+def parse_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32(data):
+    data = parse_list(data)
+    d = {}
+    for key, value in data:
+        key = parse_structure_CustomTextType_50(key)
+        value = parse_structure_VectorType_UnsignedIntegerType_32(value)
+        d[key] = value
+    return d
+
+def parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500(data):
+    data = parse_list(data)
+    d = {}
+    for key, value in data:
+        key = parse_structure_CustomTextType_50(key)
+        value = parse_structure_VectorType_CustomTextType_500(value)
+        d[key] = value
+    return d
