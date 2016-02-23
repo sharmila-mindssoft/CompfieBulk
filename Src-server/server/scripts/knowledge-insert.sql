@@ -72,3 +72,11 @@ INSERT INTO tbl_compliance_frequency VALUES(1, "One Time");
 INSERT INTO tbl_compliance_frequency VALUES(2, "Periodical");
 INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
 INSERT INTO tbl_compliance_frequency VALUES(4, "On Occurrence");
+
+-- tbl_machines
+INSERT INTO `tbl_machines` (`machine_id`, `ip`, `port`, `client_ids`, `server_full`) VALUES
+(1, 'localhost', 8080, '1', 0);
+
+-- tbl_database_server
+INSERT INTO `tbl_database_server` (`ip`, `server_username`, `server_password`) VALUES
+('localhost', 'root', '123456');

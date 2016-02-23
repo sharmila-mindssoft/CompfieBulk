@@ -158,6 +158,16 @@ CLIENT_TEMPLATE_PATHS = [
         "files/desktop/client/compliance-task-details/compliancetaskdetails.html",
         None, {}
     ),
+    (
+        "/compliance-approval",
+        "files/desktop/client/compliance-approval/complianceapproval.html",
+        None, {}
+    ),
+    (
+        "/completed-tasks-current-year",
+        "files/desktop/client/completed-tasks-current-year/completedtaskscurrentyear.html",
+        None, {}
+    ),
 ]
 
 TEMPLATE_PATHS = [

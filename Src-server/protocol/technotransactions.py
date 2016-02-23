@@ -13,7 +13,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_Industry,
     parse_structure_VectorType_RecordType_core_GroupCompany,
     parse_structure_VectorType_RecordType_core_Country,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
+    parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Geography,
     parse_structure_VectorType_RecordType_core_Division,
     parse_structure_VectorType_RecordType_core_BusinessGroup,
     parse_structure_OptionalType_SignedIntegerType_8,
@@ -371,7 +371,7 @@ class GetAssignedStatutoryWizardOneDataSuccess(Response):
         geography_levels = data.get("geography_levels")
         geography_levels = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(geography_levels)
         geographies = data.get("geographies")
-        geographies = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(geographies)
+        geographies = parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Geography(geographies)
         group_companies = data.get("group_companies")
         group_companies = parse_structure_VectorType_RecordType_core_GroupCompany(group_companies)
         business_groups = data.get("business_groups")

@@ -344,11 +344,11 @@ def parse_structure_VariantType_technomasters_Request(data):
     from protocol import technomasters
     return technomasters.Request.parse_structure(data)
 
-def parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(data):
+def parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Geography(data):
     data = parse_list(data)
     d = {}
     for key, value in data:
-        key = parse_structure_SignedIntegerType_8(key)
+        key = parse_structure_UnsignedIntegerType_32(key)
         value = parse_structure_VectorType_RecordType_core_Geography(value)
         d[key] = value
     return d
@@ -574,6 +574,9 @@ def parse_structure_RecordType_technomasters_Response_DivisionNameAlreadyExists(
 
 def parse_structure_CustomTextType_100(data):
     return parse_custom_string(data, 100)
+
+def parse_structure_CustomTextType_200(data):
+    return parse_custom_string(data, 200)
 
 def parse_structure_RecordType_clienttransactions_Response_GetStatutoriesByUnitSuccess(data):
     from protocol import clienttransactions
@@ -3700,6 +3703,17 @@ def parse_structure_VectorType_CustomTextType_500(data):
 def parse_structure_OptionalType_VectorType_CustomTextType_500(data):
     if data is None: return data
     return parse_structure_VectorType_CustomTextType_500(data)
+
+def parse_structure_RecordType_core_StatutoryApprovalStatus(data):
+    from protocol import core
+    return core.StatutoryApprovalStatus.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_core_StatutoryApprovalStatus(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_StatutoryApprovalStatus(item))
+    return lst
 
 def parse_structure_VectorType_RecordType_clienttransactions_PastRecordUnits(data):
     data = parse_list(data, 0)

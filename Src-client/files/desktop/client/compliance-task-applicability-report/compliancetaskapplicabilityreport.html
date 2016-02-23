@@ -29,8 +29,8 @@
             :
           </div>
           <div class="field-input">
-            <input type="hidden" id="domain" value="1">
-            <input type="text" class="input-box icon-autocomplete" id="domainval" value="Test Domain"  onkeyup="loadauto_domains(this.value)">
+            <input type="hidden" id="domain" value="">
+            <input type="text" class="input-box icon-autocomplete" id="domainval" value=""  onkeyup="loadauto_domains(this.value)">
             <div id="selectboxview-domains" class="ac-textbox" style="display:none;" onclick="hidedomainslist();">
               <ul style="width:195px;"></ul>
             </div>
@@ -101,109 +101,68 @@
         <div class="input-row">
           <div class="field-label">Applicable Status:</div>
           <div class="field-input">
-            <select class="input-box">
-              <option selected="">Applicable</option>
-              <option>Not Applicable</option>
-              <option>Not Opted</option>
+            <select class="input-box" id="applicable-status">
             </select>
           </div>
         </div>
-
       </div>
       <div class="submit-button-container">
-        <input type="submit" name="cancel" value="Show" class="btn-submit">
+        <input type="submit" name="cancel" value="Show" id="show-button" class="btn-submit">
         <input type="button"  class="btn-submit" value="Export" />
       </div>
       <div class="clearfix"></div>
-      <div class="grid-table-rpt">
-        <h1>Compliance Task Applicability Status</h1>
-
-        <div style="margin-left:15%;">
-          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
-              Country :
-              <span style="margin-left:10px; font-weight:bold;">India</span>
-            </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
-              Business Group :
-              <span style="margin-left:10px; font-weight:bold;">RG Business Group</span>
-            </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
-              Division :
-              <span style="margin-left:10px; font-weight:bold;">RG Division</span>
-            </div>
-          </div>
-          <div style="float:right; margin-right:20%;">
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
-              Domain :
-              <span style="margin-left:10px; font-weight:bold;">Industrial Law</span>
-            </div>
-            <div style="margin-left:10px; font-size:0.8em; padding-bottom:1em;">
-              Legal Entity:
-              <span style="margin-left:10px; font-weight:bold;">RG Entity</span>
-            </div>
-          </div>
-        </div>
-
+      <div class="grid-table-rpt default-display-none" >
+        <h1>Compliance Task Applicability Status</h1>     
         <div class="clearfix"></div>
 
 
         <table width="100%" style="border:1px dotted #CCCCCC;" >
-        <tbody class="tbody-task-list"></tbody>
-        <tr><td colspan="8"><h2 style="background:#f1e9f6;font-size:0.8em !important;text-align:left;">Applicable</h2></td></tr>
-        <tr><td colspan="8"><div class="heading">Batteries Act</div> </td></tr>
-          <tr align="left">
-            <th width="3%" align="center">#</th>
-            <th width="13%">Statutory Provision</th>
-            <th width="13%">Unit</th>
-            <th width="13%">Compliance Task</th>
-            <th width="18%">Compliance Description</th>
-            <th width="14%">Penal Consequences</th>
-            <th width="12%">Compliance Frequency</th>
-            <th width="20%">Repeats</th>
-          </tr>
-          <tr>
-            <td align="center">1</td>
-            <td>Rule 4 >> FORM VIII</td>
-            <td> <abbr class="page-load tipso_style" title="871, South street, Madurai, 625001">RG10028 - Madurai Unit</abbr>
-            </td>
-            <td>
-              <a href="#">FORM VIII - Notice of Opening</a>
-            </td>
-            <td>Within 30 days of opening a branch</td>
-            <td>Imprisonment With Fine</td>
-            <td>One Time</td>
-            <td>
-              1st September
-              <br>(Trigger : 20 days)</td>
-          </tr>
-
-          <tr>
-            <td align="center">2</td>
-            <td>Rule 4 >> FORM I</td>
-            <td> <abbr class="page-load tipso_style" title="8, North street, Dindugal, 624001 ">RG10120 - Dindugal Unit</abbr>
-            </td>
-            <td>
-              <a href="#">FORM I - Dealer Registration</a>
-            </td>
-            <td>Within 30 days of opening a branch</td>
-            <td>Imprisonment With Fine</td>
-            <td>Periodical</td>
-            <td>
-              Every year 10th March and 10th December
-              <br>(Trigger : 20 days and 10 days)</td>
-          </tr>
-
+        <tbody class="tbody-task-applicability-list"></tbody>
+        
         </table>
-        <p>Total : 2 records</p>
+        <p class="total-records"></p>
       </div>
     </div>
   </div>
 </div>
 <div id="templates">
-<table class="table-compliance-task-list">
-  <tr class="applicable-status-list"><td colspan="8"><h2 style="background:#f1e9f6;font-size:0.8em !important;text-align:left;" class="applicable-status-heading">Applicable</h2></td></tr>
-  <tr class="level1-list"><td colspan="8"><div class="heading level1-heading">Batteries Act</div> </td></tr>
+<table class="table-task-applicability-list">
+  <tr class="filter-task-applicability-list">
+  <td colspan="7">
+    <div style="margin-left:15%;">
+          <div style="float:left; padding-bottom:0.5em; margin-left:0.5em;">
+            <div style="margin-left:10px;  padding-bottom:1em;">
+              Country :
+              <span style="margin-left:10px; font-weight:bold;" class="filter-country"></span>
+            </div>
+            <div style="margin-left:10px;  padding-bottom:1em;">
+              Business Group :
+              <span style="margin-left:10px; font-weight:bold;" class="filter-businessgroup"></span>
+            </div>
+            <div style="margin-left:10px;  padding-bottom:1em;">
+              Division :
+              <span style="margin-left:10px; font-weight:bold;" class="filter-division"></span>
+            </div>
+          </div>
+          <div style="float:right; margin-right:20%;">
+            <div style="margin-left:10px;  padding-bottom:1em;">
+              Domain :
+              <span style="margin-left:10px; font-weight:bold;" class="filter-domain"></span>
+            </div>
+            <div style="margin-left:10px;  padding-bottom:1em;">
+              Legal Entity:
+              <span style="margin-left:10px; font-weight:bold;" class="filter-legalentity"></span>
+            </div>
+          </div>
+        </div>
+  </td>
+  </tr>
+  <tr class="applicable-status-list">
+    <td colspan="8"><h2 style="background:#f1e9f6;font-size:0.8em !important;text-align:left;" class="applicable-status-heading"></h2></td>
+  </tr>
+  <tr class="level1-list">
+    <td colspan="8"><div class="heading level1-heading"></div> </td>
+  </tr>
   <tr align="left" class="list-heading">
     <th width="3%" align="center">#</th>
       <th width="13%">Statutory Provision</th>
@@ -231,4 +190,5 @@
 
 </table>
 </div>
+<script type="text/javascript" src="/files/desktop/client/compliance-task-applicability-report/compliancetaskapplicabilityreport.js"></script>
 {% endblock %}

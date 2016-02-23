@@ -1036,6 +1036,7 @@ function initClientMirror() {
     function updateComplianceDetail(compliance_history_id, documents, completion_date,
         validity_date, next_due_date, remarks, callback) {
         callerName = "client_user"
+        console.log(validity_date);
         var request = [
             "UpdateComplianceDetail", {
                 "compliance_history_id": compliance_history_id,
@@ -1046,6 +1047,7 @@ function initClientMirror() {
                 "remarks": remarks
             }
         ];
+        console.log(request);
         clientApiRequest(callerName, request, callback);
     }
 
@@ -1145,14 +1147,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
 
     }
-    // Unit Details Report
+    // Client Details Report
     function getClientDetailsReportFilters(callback){
         var request = [
             "GetClientDetailsReportFilters",
             {}
         ];
         callerName = "client_reports"
-        apiRequest(callerName, request, callback);
+        clientApiRequest(callerName, request, callback);
     }
 
     function getClientDetailsReportData(countryId, businessGroupId, legalEntityId, divisionId,
@@ -1228,7 +1230,7 @@ function initClientMirror() {
     function getTaskApplicabilityReportData(
         country_id, domain_id, business_group_id,
         legal_entity_id, division_id, unit_id,
-        level_1_statutory_name, applicable_status
+        statutory_name, applicable_status, callback
     ) {
         var request = [
             "GetComplianceTaskApplicabilityStatusReport", {
@@ -1238,7 +1240,7 @@ function initClientMirror() {
                 "legal_entity_id": legal_entity_id,
                 "division_id": division_id,
                 "unit_id": unit_id,
-                "level_1_statutory_name": level_1_statutory_name,
+                "statutory_name": statutory_name,
                 "applicable_status": applicable_status
             }
         ];

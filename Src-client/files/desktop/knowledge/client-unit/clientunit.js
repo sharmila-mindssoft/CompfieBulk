@@ -176,8 +176,10 @@ $("#btn-clientunit-add").click(function(){
 	$('#division-select:gt(0)').empty();
 	$('.industry').empty();
 	$('.add-country-unit-list').empty();
+	divisionExistingChecking('Cancel');
+	legalEntityExistingChecking('Cancel');
+	businessGroupExistingChecking('Cancel');
 	loadClientGroups(groupList);
-
 });
 
 //Cancel Button ----------------------------------------------------------------------------------------------
@@ -221,6 +223,9 @@ function loadLegalEntity() {
 	var clientId = $("#group-select").val();
 	var businessGroupId = $("#businessgroup-select").val();
 	console.log(clientId+"---"+businessGroupId);
+	if(businessGroupId == ''){
+		businessGroupId = null;
+	}
 	if(businessGroupId != null){
 		$('#entity-select').find('option:gt(0)').remove();
 		for (var i in legalEntitiesList){
@@ -287,8 +292,7 @@ function addcountryrow(){
 		}
 		var countryArray = [];		
 		var countryCount = countryIds.length;		
-
-		if(countryCount>countc){			
+		if(countryCount > countc){			
 			var divCountryAddRow = $('#templates .grid-table');
 			var clone = divCountryAddRow.clone();	
 			$('.btable', clone).addClass('table-'+countryByCount);
@@ -327,6 +331,7 @@ function addcountryrow(){
 		if(countryCount <= countc){
 			displayMessage(countryCount+" Countries Are Allowed for this group");
 		}
+
 	}
 }
 //Add Unit for individual Rows---------------------------------------------------------------------------------
@@ -1031,8 +1036,8 @@ function activate(element, count){
 	$(".domainselected"+count).val(totalcount+" Selected");
 	$(".domain"+count).val(selids);
 }
-$("#division-new").click(function(){
-	if($(this).text() == "New"){
+function divisionExistingChecking(str){
+	if(str == "New"){
 		$("#division-text").show();
 	  	$("#division-select").hide();
  		$("#division-new").hide();	
@@ -1040,9 +1045,7 @@ $("#division-new").click(function(){
  		$("#division-text").val("");
  		$("#division-select").val("");
 	}
-});
-$("#division-existing").click(function(){
-	if($(this).text() == "Cancel"){
+	if(str == "Cancel"){
 		$("#division-text").hide();
   		$("#division-select").show();
  		$("#division-new").show();
@@ -1050,9 +1053,9 @@ $("#division-existing").click(function(){
  		$("#division-text").val("");
  		$("#division-select").val("");
 	}
-});
-$("#entity-new").click(function(){
-	if($(this).text() == "New"){
+}
+function legalEntityExistingChecking(str){
+	if(str == "New"){
 		$("#entity-text").show();
 		$("#entity-select").hide();
 		$("#entity-new").hide();
@@ -1066,9 +1069,7 @@ $("#entity-new").click(function(){
  		$("#entity-text").val("");
  		$("#entity-select").val("");
 	}
-});
-$("#entity-existing").click(function(){
-	if($(this).text() == "Cancel"){
+	if(str == "Cancel"){
 		$("#entity-text").hide();
 		$("#entity-select").show();
 		$("#entity-new").show();
@@ -1082,9 +1083,9 @@ $("#entity-existing").click(function(){
  		$("#entity-text").val("");
  		$("#entity-select").val("");
 	}
-});
-$("#businessgroup-new").click(function(){
-	if($(this).text() == "New"){
+}
+function businessGroupExistingChecking(str){
+	if(str == "New"){
 		$("#businessgroup-text").show();
 		$("#businessgroup-select").hide();
 		$("#businessgroup-new").hide();
@@ -1104,9 +1105,7 @@ $("#businessgroup-new").click(function(){
  		$("#businessgroup-text").val("");
  		$("#businessgroup-select").val("");
 	}
-});
-$("#businessgroup-existing").click(function(){
-	if($(this).text() == "Cancel"){
+	if(str == "Cancel"){
 		$("#businessgroup-text").hide();
 		$("#businessgroup-select").show();
 		$("#businessgroup-new").show();
@@ -1126,7 +1125,7 @@ $("#businessgroup-existing").click(function(){
  		$("#businessgroup-text").val("");
  		$("#businessgroup-select").val("");	
 	}
-});
+}
 $(function() {
 	initialize();
 });
