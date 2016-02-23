@@ -1602,6 +1602,9 @@ class ClientDatabase(Database):
                 date = statutory_date["statutory_date"]
                 month = statutory_date["statutory_month"]
                 current_date = datetime.datetime.today()
+                print "current_date.year : {}".format(current_date.year)
+                print "month : {}".format(month)
+                print "date : {}".format(date)
                 due_date_guess = datetime.datetime(current_date.year, month, date)
                 real_due_date = None
                 if is_future_date(due_date_guess):

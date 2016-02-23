@@ -15,7 +15,7 @@
             <h4 class="list-group-item-heading">2. Select Domain</h4>
           </a></li>
 
-          <li class="disabled" style="width: 32.8%;"><a href="#step-3">
+          <li class="disabled" style="width: 32.8%;" id="step3"><a href="#step-3">
             <h4 class="list-group-item-heading">3. Compliances</h4>
           </a></li>
 
@@ -90,10 +90,45 @@
         <div class="setup-content" id="step-2">
 
           <div class="innercontent">
-            <div class="grid-table">
-              <table class="tbody-assignstatutory" id="accordion">
-              </table>
+          <div class="form-container-grid-table">
+          <table style="width:100%">   
+            <tr align="left">
+                <th width="33%">Domain<span class="mandatory">*</span></th>
+                <th width="33%">Act </th>
+                <th width="33%">Frequency </th>
+              </tr>             
+                <tr>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_domain" placeholder="Search" style="margin-bottom:5px">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_act" placeholder="Search" style="margin-bottom:5px">
+                  </td>
+                  <td>
+                    <input type="text" class="filter-text-box" id="filter_frequency" placeholder="Search" style="margin-bottom:5px">
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="domain">
+                    </ul>
+                  </td>
+                
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="act">
+                    </ul>
+                  </td>
+                  <td>
+                    <ul style="height:450px;overflow-y:scroll" id="frequency">
+                    </ul>
+                  </td>
+
+                </tr>
+              </table> 
             </div>
+
+           
           </div>
 
           <table width="100%">
@@ -112,60 +147,24 @@
 
         <div class="setup-content" id="step-3">
           <div class="innercontent">
-            <div class="form-container-grid-table">
-          <table style="width:100%">                
-                <tr>
-                  <th>Assignee</th>
-                  <th align="center">Concurrence</th>
-                  <th align="center">Approval</th>
-                </tr>
-                <tr>
-                  <th  style="padding-bottom:5px">
-                    <Select class="input-box" style="width:95%; float:left;" id="assignee_unit">
-                      
-                    </Select>
-                  </th>
-                  <th >
-                    <Select class="input-box" style="width:95%; float:left;" id="concurrence_unit">
-                      
-                    </Select>
-                  </th>
-                  <th >
-                    <Select class="input-box" style="width:95%; float:left;" id="approval_unit">
-                        
-                    </Select>
-                  </th>
-                </tr>
-                
-                <tr>
-                  <td>
-                    <input type="text" class="filter-text-box" id="filter_assignee" placeholder="Search" style="margin-bottom:5px">
-                  </td>
-                  <td>
-                    <input type="text" class="filter-text-box" id="filter_concurrence" placeholder="Search" style="margin-bottom:5px">
-                  </td>
-                  <td>
-                    <input type="text" class="filter-text-box" id="filter_approval" placeholder="Search" style="margin-bottom:5px">
-                  </td>
-                </tr>
+             <div class="grid-table">
+             <table>
+             <tr align="left">
+            <td width="20%"  ><span style="font-weight:bold;">Compliance Tasks</span><span class="mandatory">*</span></td>
+            <td width="8%" ><span style="font-weight:bold;">Compliance Frequency</span></td>
+            <td width="12%"><span style="font-weight:bold;" >Statutory Date</span></td>
+            <td width="12%" ><span style="font-weight:bold;">Due Date</span><span class="mandatory">*</span></td>
+            <td width="12%" ><span style="font-weight:bold;">Completion Date</span><span class="mandatory">*</span></td>
+            <td width="12%"  ><span style="font-weight:bold;">Validity Date</span><span class="mandatory">*</span></td>
+            <td width="11%" ><span style="font-weight:bold;">Document Upload</span></td>                  
+            <td width="18%" ><span style="font-weight:bold;">Assignee</span><span class="mandatory">*</span></td>
+            <td width="3%" ><span style="font-weight:bold;">Save</span></td>
+            </tr>
+            <tbody class="tbody-assignstatutory">
+          </tbody>
 
-                <tr>
-                  <td>
-                    <ul style="height:450px;overflow-y:scroll" id="assignee">
-                    </ul>
-                  </td>
-                
-                  <td>
-                    <ul style="height:450px;overflow-y:scroll" id="concurrence">
-                    </ul>
-                  </td>
-                  <td>
-                    <ul style="height:450px;overflow-y:scroll" id="approval">
-                    </ul>
-                  </td>
-
-                </tr>
-              </table> 
+             </table>
+              
             </div>
           </div>
 
@@ -189,17 +188,15 @@
 </div>
 <div id="act-templates" class="default-display-none">
   <table class="font1" >
-  <tbody class="accordion-toggle tbody-heading">
-
-    <tr align="left" class="rightside tableRow " style="margin-bottom:1em; border:1px solid #ccc;">
-      <th style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold; vertical-align:middle;" width="95%" class="actname" colspan="8"></div>
-      </th>
+    <tr align="left" class="tableRow">
+      <td colspan="9" style="padding:0em;" class="actname">
+  
+      </td>
     </tr>
-    </tbody>
   </table>
 </div>
 
-<div id="statutory-templates" class="default-display-none">
+<!-- <div id="statutory-templates" class="default-display-none">
   <table cellpadding="0" cellspacing="0" width="100%" class="checkedtable">
     <tr class="compliance-heading" style="width:100%;">
       <td width="2%"><span style="font-weight:bold;"></span></td>
@@ -212,36 +209,22 @@
       <td width="12%"  ><span style="font-weight:bold;">Validity Date</span></td>
     </tr>
   </table>
-</div>
+</div> -->
 
- <div id="statutory-values" class="default-display-none">
+ <div id="statutory-values">
   <table class="table-statutory-values">
     <tr class="compliance-details">
-      <td class="ckbox"></td>
       <td class="compliancetask"></td>
-      <td class="applicableunit"></td>
       <td class="compliancefrequency"></td>
       <td class="statutorydate"></td>
-      <td class="triggerbefore"></td>
       <td class="duedate"></td>
+      <td class="completiondate"></td>
       <td class="validitydate"></td>
+      <td class="documentupload"></td>
+      <td class="assignee"></td>
+      <td class="completedstatus"></td>
     </tr>
   </table>
-</div>
-
-
-<div id="popup1" class="overlay default-display-none">
-  <div class="popup">
-    <a class="close" href="#">x</a>
-    <div class="content">
-    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;color:#000">Applicable Units</h1>
-     <table width="100%" id="popup_table">
-        <tr align="left" class = "popup_row">
-          <td class="popup_unitname"></td>
-        </tr>
-    </table>
-    </div>
-  </div>
 </div>
 
 <script type="text/javascript" src="/files/desktop/client/completed-tasks-current-year/completedtaskscurrentyear.js"></script>
