@@ -408,7 +408,7 @@ class GetComplianceStatusDrillDownData(Request):
         filter_type = data.get("filter_type")
         filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_SignedIntegerType_8(filter_id)
+        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
         compliance_status = data.get("compliance_status")
         compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
         return GetComplianceStatusDrillDownData(
@@ -1071,7 +1071,7 @@ class ChartDataMap(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["filter_type_id", "data"])
         filter_type_id = data.get("filter_type_id")
-        filter_type_id = parse_structure_SignedIntegerType_8(filter_type_id)
+        filter_type_id = parse_structure_UnsignedIntegerType_32(filter_type_id)
         data = data.get("data")
         data = parse_structure_VectorType_RecordType_core_NumberOfCompliances(data)
         return ChartDataMap(filter_type_id, data)
@@ -1339,7 +1339,7 @@ class AssigneeChartData(object):
 #
 
 class Level1Compliance(object):
-    def __init__(self, compliance_name, description, assignee_name, assigned_date, 
+    def __init__(self, compliance_name, description, assignee_name, assigned_date,
         due_date, completion_date):
         self.compliance_name = compliance_name
         self.description = description
@@ -1350,8 +1350,8 @@ class Level1Compliance(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_name", "description", 
-            "assignee_name", "assigned_date", "due_date", "completion_date", 
+        data = parse_dictionary(data, ["compliance_name", "description",
+            "assignee_name", "assigned_date", "due_date", "completion_date",
         ])
         compliance_name = data.get("compliance_name")
         compliance_name = parse_structure_CustomTextType_100(compliance_name)
