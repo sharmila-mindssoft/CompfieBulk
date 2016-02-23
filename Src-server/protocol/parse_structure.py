@@ -3729,3 +3729,14 @@ def parse_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500(data
         value = parse_structure_VectorType_CustomTextType_500(value)
         d[key] = value
     return d
+
+def parse_structure_VectorType_RecordType_technomasters_UnitDetails(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_technomasters_UnitDetails(item))
+    return lst
+
+def parse_structure_RecordType_technomasters_UnitDetails(data):
+    from protocol import technomasters
+    return technomasters.UnitDetails.parse_structure(data)

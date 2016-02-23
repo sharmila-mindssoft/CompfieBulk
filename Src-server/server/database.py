@@ -4575,7 +4575,6 @@ class KnowledgeDatabase(Database):
             self.tblUserClients, user_id
         )
         rows = self.get_data(self.tblUnits, columns, condition)
-        print rows
         unit_details = []
         for row in rows:
             detail_columns = "country_id"

@@ -77,7 +77,7 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_technomasters_Unit,
     to_structure_VectorType_RecordType_technomasters_CountryWiseUnits,
     to_structure_RecordType_technomasters_CountryWiseUnits,
-    to_structure_VectorType_RecordType_techno_master_UnitDetails,
+    to_structure_VectorType_RecordType_technomasters_UnitDetails,
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_UnsignedIntegerType_32,
     to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_UnitDetails,
@@ -799,7 +799,7 @@ class CountryWiseUnits(object):
 
     def to_structure(self):
         return {
-            to_structure_SignedIntegerType_8(self.country_id) : to_structure_VectorType_RecordType_techno_master_UnitDetails(self.units),
+            to_structure_SignedIntegerType_8(self.country_id) : to_structure_VectorType_RecordType_technomasters_UnitDetails(self.units),
         }
 
 class UnitDetails(object):
