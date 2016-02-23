@@ -47,7 +47,10 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_Text,
     parse_structure_VectorType_RecordType_core_Compliance_Download,
     parse_structure_CustomTextType_200,
-    parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS
+    parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS,
+    parse_structure_VectorType_UnsignedIntegerType_32,
+    parse_structure_OptionalType_UnsignedIntegerType_32,
+    parse_structure_SignedIntegerType_8,
 
 )
 from protocol.to_structure import (
@@ -103,7 +106,11 @@ from protocol.to_structure import (
     to_structure_OptionalType_Text,
     to_structure_VectorType_RecordType_core_Compliance_Download,
     to_structure_CustomTextType_200,
-    to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS
+    to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS,
+    to_structure_VectorType_UnignedIntegerType_32,
+    to_structure_OptionalType_UnsignedIntegerType_32,
+    to_structure_OptionalType_CustomTextType_500,
+    to_structure_CustomTextType_100
 )
 
 #
@@ -518,7 +525,7 @@ class NOT_COMPLIED_TYPE(object) :
     def values():
         return ["Below 30", "Below 60", "Below 90", "Above 90"]
 
-    def value (self):
+    def value(self):
         return self._value
 
     @staticmethod
@@ -559,7 +566,7 @@ class Form(object):
 
     def to_structure(self):
         return {
-            "form_id": to_structure_SignedIntegerType_8(self.form_id),
+            "form_id": to_structure_UnsignedIntegerType_32(self.form_id),
             "form_name": to_structure_CustomTextType_50(self.form_name),
             "form_url": to_structure_CustomTextType_250(self.form_url),
             "parent_menu": to_structure_OptionalType_CustomTextType_50(self.parent_menu),
@@ -609,7 +616,7 @@ class UserGroup(object):
 
     def to_structure(self):
         return {
-            "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
+            "user_group_id": to_structure_UnsignedIntegerType_32(self.user_group_id),
             "user_group_name": to_structure_CustomTextType_50(self.user_group_name),
             "is_active": to_structure_Bool(self.is_active),
         }
@@ -637,7 +644,7 @@ class Country(object):
 
     def to_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
             "country_name": to_structure_CustomTextType_50(self.country_name),
             "is_active": to_structure_Bool(self.is_active),
         }
@@ -665,7 +672,7 @@ class Domain(object):
 
     def to_structure(self):
         return {
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "is_active": to_structure_Bool(self.is_active),
         }
@@ -684,7 +691,7 @@ class Level(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["level_id", "level_position", "level_name"])
         level_id = data.get("level_id")
-        level_id = parse_structure_OptionalType_SignedIntegerType_8(level_id)
+        level_id = parse_structure_OptionalType_UnsignedIntegerType_32(level_id)
         level_position = data.get("level_position")
         level_position = parse_structure_CustomIntegerType_1_10(level_position)
         level_name = data.get("level_name")
@@ -693,7 +700,7 @@ class Level(object):
 
     def to_structure(self):
         return {
-            "level_id": to_structure_OptionalType_SignedIntegerType_8(self.level_id),
+            "level_id": to_structure_OptionalType_UnsignedIntegerType_32(self.level_id),
             "level_position": to_structure_CustomIntegerType_1_10(self.level_position),
             "level_name": to_structure_CustomTextType_50(self.level_name),
         }
@@ -721,7 +728,7 @@ class GeographyLevel(object):
 
     def to_structure(self):
         return {
-            "level_id": to_structure_SignedIntegerType_8(self.level_id),
+            "level_id": to_structure_UnsignedIntegerType_32(self.level_id),
             "level_position": to_structure_CustomIntegerType_1_10(self.level_position),
             "level_name": to_structure_CustomTextType_50(self.level_name),
         }
@@ -749,7 +756,7 @@ class Geography(object):
         level_id = data.get("level_id")
         level_id = parse_structure_UnsignedIntegerType_32(level_id)
         parent_ids = data.get("parent_ids")
-        parent_ids = parse_structure_VectorType_SignedIntegerType_8(parent_ids)
+        parent_ids = parse_structure_VectorType_UnsignedIntegerType_32(parent_ids)
         parent_id = data.get("parent_id")
         parent_id = parse_structure_UnsignedIntegerType_32(parent_id)
         is_active = data.get("is_active")
@@ -758,11 +765,11 @@ class Geography(object):
 
     def to_structure(self):
         return {
-            "geography_id": to_structure_SignedIntegerType_8(self.geography_id),
+            "geography_id": to_structure_UnsignedIntegerType_32(self.geography_id),
             "geography_name": to_structure_CustomTextType_50(self.geography_name),
-            "level_id": to_structure_SignedIntegerType_8(self.level_id),
-            "parent_ids": to_structure_VectorType_SignedIntegerType_8(self.parent_ids),
-            "parent_id": to_structure_SignedIntegerType_8(self.parent_id),
+            "level_id": to_structure_UnsignedIntegerType_32(self.level_id),
+            "parent_ids": to_structure_VectorType_UnignedIntegerType_32(self.parent_ids),
+            "parent_id": to_structure_UnsignedIntegerType_32(self.parent_id),
             "is_active": to_structure_Bool(self.is_active),
         }
 
@@ -798,11 +805,11 @@ class GeographyWithMapping(object):
 
     def to_structure(self):
         return {
-            "geography_id": to_structure_SignedIntegerType_8(self.geography_id),
+            "geography_id": to_structure_UnsignedIntegerType_32(self.geography_id),
             "geography_name": to_structure_CustomTextType_50(self.geography_name),
-            "level_id": to_structure_SignedIntegerType_8(self.level_id),
+            "level_id": to_structure_UnsignedIntegerType_32(self.level_id),
             "mapping": to_structure_CustomTextType_250(self.mapping),
-            "parent_id": to_structure_SignedIntegerType_8(self.parent_id),
+            "parent_id": to_structure_UnsignedIntegerType_32(self.parent_id),
             "is_active": to_structure_Bool(self.is_active),
         }
 
@@ -829,7 +836,7 @@ class Industry(object):
 
     def to_structure(self):
         return {
-            "industry_id": to_structure_SignedIntegerType_8(self.industry_id),
+            "industry_id": to_structure_UnsignedIntegerType_32(self.industry_id),
             "industry_name": to_structure_CustomTextType_50(self.industry_name),
             "is_active": to_structure_Bool(self.is_active),
         }
@@ -857,7 +864,7 @@ class StatutoryNature(object):
 
     def to_structure(self):
         return {
-            "statutory_nature_id": to_structure_SignedIntegerType_8(self.statutory_nature_id),
+            "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
             "statutory_nature_name": to_structure_CustomTextType_50(self.statutory_nature_name),
             "is_active": to_structure_Bool(self.is_active),
         }
@@ -885,7 +892,7 @@ class StatutoryLevel(object):
 
     def to_structure(self):
         return {
-            "level_id": to_structure_SignedIntegerType_8(self.level_id),
+            "level_id": to_structure_UnsignedIntegerType_32(self.level_id),
             "level_position": to_structure_CustomIntegerType_1_10(self.level_position),
             "level_name": to_structure_CustomTextType_50(self.level_name),
         }
@@ -938,7 +945,7 @@ class Statutory(object):
         level_id = data.get("level_id")
         level_id = parse_structure_UnsignedIntegerType_32(level_id)
         parent_ids = data.get("parent_ids")
-        parent_ids = parse_structure_VectorType_SignedIntegerType_8(parent_ids)
+        parent_ids = parse_structure_VectorType_UnsignedIntegerType_32(parent_ids)
         parent_id = data.get("parent_id")
         parent_id = parse_structure_UnsignedIntegerType_32(parent_id)
         parent_mappings = data.get("parent_mappings")
@@ -950,7 +957,7 @@ class Statutory(object):
             "statutory_id": to_structure_SignedIntegerType_8(self.statutory_id),
             "statutory_name": to_structure_CustomTextType_50(self.statutory_name),
             "level_id": to_structure_SignedIntegerType_8(self.level_id),
-            "parent_ids": to_structure_VectorType_SignedIntegerType_8(self.parent_ids),
+            "parent_ids": to_structure_VectorType_UnignedIntegerType_32(self.parent_ids),
             "parent_id": to_structure_SignedIntegerType_8(self.parent_id),
             "parent_mappings": to_structure_Text(self.parent_mappings),
         }
@@ -1002,8 +1009,8 @@ class Compliance_Download(object):
 
     def to_structure(self):
         return {
-            "compliance_name": self.compliance_name,
-            "url": self.url
+            "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
+            "url": to_structure_OptionalType_CustomTextType_500(self.url)
         }
 
 class Compliance(object):
@@ -1042,7 +1049,7 @@ class Compliance(object):
             "duration", "is_active"
         ])
         compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_OptionalType_SignedIntegerType_8(compliance_id)
+        compliance_id = parse_structure_OptionalType_UnsignedIntegerType_32(compliance_id)
         statutory_provision = data.get("statutory_provision")
         statutory_provision = parse_structure_CustomTextType_500(statutory_provision)
         compliance_task = data.get("compliance_task")
@@ -1081,7 +1088,7 @@ class Compliance(object):
 
     def to_structure(self):
         return {
-            "compliance_id": to_structure_OptionalType_SignedIntegerType_8(self.compliance_id),
+            "compliance_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_id),
             "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
             "compliance_task": to_structure_CustomTextType_50(self.compliance_task),
             "description": to_structure_CustomTextType_500(self.description),
