@@ -2185,7 +2185,7 @@ class KnowledgeDatabase(Database):
                 data.statutory_ids,
                 statutory_mapping_id, created_by
             )
-            ids = self.save_compliance(
+            ids, names = self.save_compliance(
                 statutory_mapping_id, compliances, created_by
             )
             compliance_ids = ','.join(str(x) for x in ids) + ","
@@ -2203,11 +2203,12 @@ class KnowledgeDatabase(Database):
             self.save_statutory_statutories_id(
                 statutory_mapping_id, data.statutory_ids, True
             )
-            notification_log_text = "Statutory mapping created"
+            notification_log_text = "Statutory mapping created for %s" % ''.join(names)
+            print notification_log_text
             link = "/knowledge/statutory-mapping"
-            self.save_notifications(notification_log_text, link)
+            self.save_notifications(notification_log_text, link, domain_id, user_id=None, form_id=10)
             action = "New statutory mappings added"
-            self.save_activity(created_by, 17, action)
+            self.save_activity(created_by, 10, action)
             return True
         else :
             return False
@@ -2319,6 +2320,7 @@ class KnowledgeDatabase(Database):
 
     def save_compliance(self, mapping_id, datas, created_by) :
         compliance_ids = []
+        compliance_names = []
         is_format = False
         for data in datas :
             compliance_id = self.get_new_id(
@@ -2395,10 +2397,11 @@ class KnowledgeDatabase(Database):
                 self.convert_base64_to_file(file_name, file_content)
                 is_format = False
             compliance_ids.append(compliance_id)
+            compliance_names.append(document_name + "-" + compliance_task)
             # if (self.execute(query)) :
             #     compliance_ids.append(compliance_id)
 
-        return compliance_ids
+        return compliance_ids, compliance_names
 
     def update_statutory_mapping(self, data, updated_by) :
         statutory_mapping_id = data.statutory_mapping_id
@@ -2426,7 +2429,7 @@ class KnowledgeDatabase(Database):
 
         self.update(table_name, columns, values, where_condition)
         self.update_statutory_mapping_id(data.statutory_ids, statutory_mapping_id, updated_by)
-        ids = self.update_compliance(statutory_mapping_id, compliances, updated_by)
+        ids, names = self.update_compliance(statutory_mapping_id, compliances, updated_by)
         compliance_ids = ','.join(str(x) for x in ids) + ","
         self.update(table_name, ["compliance_ids"], [compliance_ids], where_condition)
         self.save_statutory_industry(
@@ -2439,7 +2442,10 @@ class KnowledgeDatabase(Database):
             statutory_mapping_id, data.statutory_ids, False
         )
         action = "Edit Statutory Mappings"
-        self.save_activity(updated_by, 17, action)
+        self.save_activity(updated_by, 10, action)
+        notification_log_text = "Stautory mapping updated for %s" % (names)
+        link = "/knowledge/statutory-mapping"
+        self.save_notifications(notification_log_text, link, domain_id, user_id=None, form_id=10)
         return True
 
     def get_saved_format_file(self, compliance_id):
@@ -2457,11 +2463,12 @@ class KnowledgeDatabase(Database):
     def update_compliance(self, mapping_id, datas, updated_by) :
         is_format = False
         compliance_ids = []
+        compliance_names = []
         for data in datas :
             compliance_id = data.compliance_id
 
             if (compliance_id is None) :
-                ids = self.save_compliance(mapping_id, [data], updated_by)
+                ids, names = self.save_compliance(mapping_id, [data], updated_by)
                 compliance_ids.extend(ids)
                 continue
             else :
@@ -2553,7 +2560,7 @@ class KnowledgeDatabase(Database):
                 is_format = False
             compliance_ids.append(compliance_id)
 
-        return compliance_ids
+        return compliance_ids, compliance_names
 
     def change_compliance_status(self, mapping_id, is_active, updated_by) :
         tbl_name = "tbl_compliances"
@@ -2643,7 +2650,7 @@ class KnowledgeDatabase(Database):
             )
         self.execute(qry)
 
-    def get_statutory_mapping_by_id (self, mapping_id) :
+    def get_statutory_mapping_by_id(self, mapping_id) :
         q = "SELECT t1.country_id, t2.country_name, \
             t1.domain_id, t3.domain_name, t1.industry_ids, \
             t1.statutory_nature_id, t4.statutory_nature_name, \
@@ -2678,35 +2685,24 @@ class KnowledgeDatabase(Database):
         notification_text = data.notification_text
         tbl_name = "tbl_statutory_mappings"
         columns = [
-            "approval_status", "updated_by"
+            "approval_status"
         ]
         values = [
-            approval_status, int(updated_by)
+            approval_status
         ]
         where = "statutory_mapping_id=%s" % (statutory_mapping_id)
 
+        q = "SELECT created_by, updated_by, domain_id from tbl_statutory_mappings where statutory_mapping_id = %s" % (statutory_mapping_id)
+        rows = self.select_one(q)
+        users = self.convert_to_dict(rows, ["created_by", "updated_by", "domain_id"])
+
         if approval_status == 2 :
-            #Rejected
+            # Rejected
             columns.extend(["rejected_reason"])
             values.extend([rejected_reason])
-            # query = "UPDATE tbl_statutory_mappings set \
-            #     approval_status='%s', rejected_reason='%s', \
-            #     updated_by=%s WHERE \
-            #     statutory_mapping_id = %s" % (
-            #         approval_status, rejected_reason, updated_by, statutory_mapping_id
-            #     )
-            # self.execute(query)
             notification_log_text = "Statutory Mapping: %s \
                 has been Rejected" % (provision)
         else :
-
-            # query = "UPDATE tbl_statutory_mappings set \
-            #     approval_status='%s', \
-            #     updated_by=%s WHERE \
-            #     statutory_mapping_id = %s" % (
-            #         approval_status, updated_by,
-            #         statutory_mapping_id
-            #     )
             notification_log_text = "Statutory Mapping: %s \
                 has been Approved" % (provision)
 
@@ -2719,13 +2715,16 @@ class KnowledgeDatabase(Database):
                 has been Approve & Notified" % (provision)
 
         link = "/knowledge/statutory-mapping"
-        self.save_notifications(notification_log_text, link)
-        action = "Statutory Mapping approval status changed"
-        self.save_activity(updated_by, 17, action)
+        if users["updated_by"] is None :
+            user_id = users["created_by"]
+        else :
+            user_id = users["updated_by"]
+        self.save_notifications(notification_log_text, link, users["domain_id"], user_id, form_id=None)
+        self.save_activity(updated_by, 10, notification_log_text)
         return True
 
-    def save_notifications(self, notification_text, link):
-        #internal notification
+    def save_notifications(self, notification_text, link, domain_id, user_id, form_id):
+        # internal notification
         notification_id = self.get_new_id(
             "notification_id", "tbl_notifications"
         )
@@ -2734,7 +2733,53 @@ class KnowledgeDatabase(Database):
             VALUES (%s, '%s', '%s')" % (
                 notification_id, notification_text, link
             )
+        print query
         self.execute(query)
+        self.save_notifications_status(notification_id, domain_id, user_id, form_id)
+
+    def save_notifications_status(self, notification_id, domain_id, user_id=None, form_id=None):
+        q = "INSERT INTO tbl_notifications_status \
+                (notification_id, user_id, read_status) VALUES \
+                (%s, %s, 0)"
+        if form_id is not None :
+            query = "SELECT distinct user_id from tbl_users WHERE \
+                    user_group_id in \
+                    (select user_group_id from tbl_user_groups \
+                    where form_ids like '%s') AND \
+                    user_id in (select user_id from tbl_user_domains where domain_id = %s \
+                    )  " % (
+                        str('%' + str(form_id) + ',%'),
+                        domain_id
+                    )
+            rows = self.select_all(query)
+            if rows :
+                for r in rows :
+                    user_id = r[0]
+                    self.execute(q % (notification_id, user_id))
+        if user_id is not None :
+            self.execute(q % (notification_id, user_id))
+
+    def chack_statutory_assigned_to_client(self, mapping_id):
+        query = "SELECT distinct t1.unit_id, t1.client_id, \
+            (select business_group_id from tbl_units \
+                where unit_id = t1.unit_id) business_group_id, \
+            (select legal_entity_id from tbl_units \
+                where unit_id = t1.unit_id) legal_entity_id,\
+            (select division_id from tbl_units \
+                where unit_id = t1.unit_id) division_id, \
+            from tbl_client_statutories t1 \
+            INNER JOIN tbl_client_compliances t2 \
+            ON t1.client_statutory_id = t2.client_statutory_id \
+            AND t2.compliance_id in \
+                (select c.compliance_id from \
+                tbl_compliances c where c.statutory_mapping_id = %s) " % (mapping_id)
+        rows = self.select_all(query)
+        columns = [
+            "unit_id", "client_id", "business_group_id",
+            "legal_entity_id", "division_id"
+        ]
+        result = self.convert_to_dict(rows, columns)
+        return result
 
     def save_statutory_notifications(self, mapping_id, notification_text ):
         # client notification
@@ -2748,9 +2793,6 @@ class KnowledgeDatabase(Database):
             industry_name = self.get_industry_by_id(industry_ids[0])
         else :
             industry_name = self.get_industry_by_id(industry_ids)
-
-
-
         provision = []
         for sid in old_record["statutory_ids"][:-1].split(',') :
             data = self.statutory_parent_mapping.get(int(sid))
@@ -2782,6 +2824,23 @@ class KnowledgeDatabase(Database):
             mappings, geo_mappings, notification_text
         ]
         self.insert(tbl_statutory_notification, columns, values)
+
+    def save_statutory_notification_units(self, statutory_notification_id, mapping_id, client_info):
+
+        if client_info is not None:
+            for r in client_info :
+                q = "INSERT INTO tbl_statutory_notification_units\
+                    (statutory_notification_id, client_id, \
+                        business_group_id, legal_entity_id, division_id, unit_id) VALUES \
+                    (%s, %s, %s, %s, %s, %s)" % (
+                        statutory_notification_id,
+                        int(r["client_id"]),
+                        int(r["business_group_id"]),
+                        int(r["legal_entity_id"]),
+                        int(r["division_id"]),
+                        int(r["unit_id"])
+                    )
+                self.execute(q)
 
     #
     #   Forms

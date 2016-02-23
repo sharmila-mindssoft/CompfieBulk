@@ -513,6 +513,16 @@ CREATE TABLE `tbl_statutory_notifications_log` (
   CONSTRAINT `fk_statutory_notifications_log_statutory_mapping` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `tbl_statutory_notifications_units`;
+CREATE TABLE `tbl_statutory_notifications_units` (
+  `statutory_notification_id` int(11) NOT NULL,
+  `client_id` int(11) NOT NULL,
+  `business_group_id` int(11) NULL DEFAULT NULL,
+  `legal_entity_id` int(11) NOT  NULL,
+  `division_id` int(11)  NULL DEFAULT NULL,
+  `unit_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 DROP TABLE IF EXISTS `tbl_activity_log`;
 CREATE TABLE `tbl_activity_log` (
