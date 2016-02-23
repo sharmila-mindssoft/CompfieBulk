@@ -50,7 +50,7 @@ from protocol.parse_structure import (
     parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS,
     parse_structure_VectorType_UnsignedIntegerType_32,
     parse_structure_OptionalType_UnsignedIntegerType_32,
-    parse_structure_SignedIntegerType_8,
+    parse_structure_SignedIntegerType_8
 
 )
 from protocol.to_structure import (
@@ -954,11 +954,11 @@ class Statutory(object):
 
     def to_structure(self):
         return {
-            "statutory_id": to_structure_SignedIntegerType_8(self.statutory_id),
+            "statutory_id": to_structure_UnsignedIntegerType_32(self.statutory_id),
             "statutory_name": to_structure_CustomTextType_50(self.statutory_name),
-            "level_id": to_structure_SignedIntegerType_8(self.level_id),
+            "level_id": to_structure_UnsignedIntegerType_32(self.level_id),
             "parent_ids": to_structure_VectorType_UnignedIntegerType_32(self.parent_ids),
-            "parent_id": to_structure_SignedIntegerType_8(self.parent_id),
+            "parent_id": to_structure_UnsignedIntegerType_32(self.parent_id),
             "parent_mappings": to_structure_Text(self.parent_mappings),
         }
 
@@ -1166,13 +1166,13 @@ class StatutoryMapping(object):
 
     def to_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
             "country_name": to_structure_CustomTextType_50(self.country_name),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "industry_ids": to_structure_VectorType_SignedIntegerType_8(self.industry_ids),
             "industry_names": to_structure_Text(self.industry_names),
-            "statutory_nature_id": to_structure_SignedIntegerType_8(self.statutory_nature_id),
+            "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
             "statutory_nature_name": to_structure_CustomTextType_50(self.statutory_nature_name),
             "statutory_ids": to_structure_VectorType_SignedIntegerType_8(self.statutory_ids),
             "statutory_mappings": to_structure_VectorType_Text(self.statutory_mappings),
@@ -1180,7 +1180,7 @@ class StatutoryMapping(object):
             "compliance_names": to_structure_VectorType_RecordType_core_Compliance_Download(self.compliance_names),
             "geography_ids": to_structure_VectorType_SignedIntegerType_8(self.geography_ids),
             "geography_mappings": to_structure_VectorType_Text(self.geography_mappings),
-            "approval_status": to_structure_SignedIntegerType_8(self.approval_status),
+            "approval_status": to_structure_UnsignedIntegerType_32(self.approval_status),
             "is_active": to_structure_Bool(self.is_active),
         }
 
@@ -1215,7 +1215,7 @@ class GroupCompany(object):
 
     def to_structure(self):
         return {
-            "client_id": to_structure_SignedIntegerType_8(self.client_id),
+            "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
             "group_name": to_structure_CustomTextType_50(self.group_name),
             "is_active": to_structure_Bool(self.is_active),
             "country_ids": to_structure_VectorType_UnsignedIntegerType_32(self.country_ids),
@@ -1293,7 +1293,7 @@ class GroupCompanyDetail(object):
 
     def to_structure(self):
         return {
-            "client_id": to_structure_SignedIntegerType_8(self.client_id),
+            "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
             "client_name": to_structure_CustomTextType_50(self.client_name),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
@@ -1302,7 +1302,7 @@ class GroupCompanyDetail(object):
             "logo": to_structure_CustomTextType_250(self.logo),
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "no_of_user_licence": to_structure_SignedIntegerType_8(self.no_of_user_licence),
+            "no_of_user_licence": to_structure_UnsignedIntegerType_32(self.no_of_user_licence),
             "total_disk_space": to_structure_Float(self.total_disk_space),
             "is_sms_subscribed": to_structure_Bool(self.is_sms_subscribed),
             "username": to_structure_CustomTextType_100(self.username),
@@ -1337,8 +1337,8 @@ class ClientConfiguration(object):
 
     def to_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "period_from": to_structure_SignedIntegerType_8(self.period_from),
             "period_to": to_structure_SignedIntegerType_8(self.period_to),
         }
@@ -1368,7 +1368,7 @@ class BusinessGroup(object):
         return {
             "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
             "business_group_name": to_structure_CustomTextType_50(self.business_group_name),
-            "client_id": to_structure_SignedIntegerType_8(self.client_id),
+            "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
         }
 
 class ClientBusinessGroup(object):
@@ -1478,7 +1478,7 @@ class Division(object):
         return {
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
             "division_name": to_structure_CustomTextType_50(self.division_name),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
+            "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id),
             "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
             "client_id": to_structure_SignedIntegerType_8(self.client_id),
         }
@@ -1505,9 +1505,9 @@ class ClientDivision(object):
 
     def to_structure(self):
         return {
-            "division_id": to_structure_SignedIntegerType_8(self.division_id),
+            "division_id": to_structure_UnsignedIntegerType_32(self.division_id),
             "division_name": to_structure_CustomTextType_50(self.division_name),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
+            "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id),
             "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
         }
 
@@ -1554,9 +1554,9 @@ class Unit(object):
         return {
             "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
             "division_id": to_structure_OptionalType_UnsignedIntegerType_32(self.division_id),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
+            "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id),
             "business_group_id": to_structure_OptionalType_UnsignedIntegerType_32(self.business_group_id),
-            "client_id": to_structure_SignedIntegerType_8(self.client_id),
+            "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
             "unit_code": to_structure_CustomTextType_20(self.unit_code),
             "unit_name": to_structure_CustomTextType_50(self.unit_name),
             "unit_address": to_structure_CustomTextType_250(self.unit_address),
@@ -1599,7 +1599,7 @@ class ClientUnit(object):
         return {
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
+            "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id),
             "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
             "unit_code": to_structure_CustomTextType_20(self.unit_code),
             "unit_name": to_structure_CustomTextType_50(self.unit_name),
@@ -1665,16 +1665,16 @@ class UnitDetails(object):
         return {
             "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
             "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
-            "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
+            "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id),
             "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
-            "client_id": to_structure_SignedIntegerType_8(self.client_id),
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "geography_id": to_structure_SignedIntegerType_8(self.geography_id),
+            "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "geography_id": to_structure_UnsignedIntegerType_32(self.geography_id),
             "unit_code": to_structure_CustomTextType_20(self.unit_code),
             "unit_name": to_structure_CustomTextType_50(self.unit_name),
-            "industry_id": to_structure_SignedIntegerType_8(self.industry_id),
+            "industry_id": to_structure_UnsignedIntegerType_32(self.industry_id),
             "unit_address": to_structure_CustomTextType_250(self.unit_address),
-            "postal_code": to_structure_SignedIntegerType_8(self.postal_code),
+            "postal_code": to_structure_UnsignedIntegerType_32(self.postal_code),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "is_active": to_structure_Bool(self.is_active),
         }
@@ -1811,9 +1811,9 @@ class ClientUser(object):
     def to_structure(self):
         print "inside core client users inner structure"
         return {
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
+            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "email_id": to_structure_CustomTextType_100(self.email_id),
-            "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
+            "user_group_id": to_structure_UnsignedIntegerType_32(self.user_group_id),
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
             "employee_code": to_structure_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
@@ -1860,7 +1860,7 @@ class AssignedStatutory(object):
 
     def to_structure(self):
         return {
-            "level_1_statutory_id": to_structure_SignedIntegerType_8(self.level_1_statutory_id),
+            "level_1_statutory_id": to_structure_UnsignedIntegerType_32(self.level_1_statutory_id),
             "level_1_statutory_name": to_structure_CustomTextType_50(self.level_1_statutory_name),
             "compliances": to_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability(self.compliances),
             "applicable_status": to_structure_Bool(self.applicable_status),
@@ -1943,7 +1943,7 @@ class ActiveCompliance(object):
 
     def to_structure(self):
         return {
-            "compliance_history_id": to_structure_SignedIntegerType_8(self.compliance_history_id),
+            "compliance_history_id": to_structure_UnsignedIntegerType_32(self.compliance_history_id),
             "compliance_name": to_structure_CustomTextType_50(self.compliance_name),
             "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
@@ -2062,10 +2062,10 @@ class NumberOfCompliances(object):
             "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
             "year": to_structure_CustomTextType_20(self.year),
-            "complied_count": to_structure_SignedIntegerType_8(self.complied_count),
-            "delayed_compliance_count": to_structure_SignedIntegerType_8(self.delayed_compliance_count),
-            "inprogress_compliance_count": to_structure_SignedIntegerType_8(self.inprogress_compliance_count),
-            "not_complied_count": to_structure_SignedIntegerType_8(self.not_complied_count),
+            "complied_count": to_structure_UnsignedIntegerType_32(self.complied_count),
+            "delayed_compliance_count": to_structure_UnsignedIntegerType_32(self.delayed_compliance_count),
+            "inprogress_compliance_count": to_structure_UnsignedIntegerType_32(self.inprogress_compliance_count),
+            "not_complied_count": to_structure_UnsignedIntegerType_32(self.not_complied_count),
         }
 
 #
@@ -2100,12 +2100,12 @@ class ChartFilters(object):
 
     def to_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "from_date": to_structure_CustomTextType_20(self.from_date),
             "to_date": to_structure_CustomTextType_20(self.to_date),
             "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
-            "filter_id": to_structure_SignedIntegerType_8(self.filter_id),
+            "filter_id": to_structure_UnsignedIntegerType_32(self.filter_id),
         }
 
 #
@@ -2131,8 +2131,8 @@ class ComplianceStatusDrillDown(object):
 
     def to_structure(self):
         return {
-            "unit_name": to_structure_SignedIntegerType_8(self.unit_name),
-            "address": to_structure_SignedIntegerType_8(self.address),
+            "unit_name": to_structure_UnsignedIntegerType_32(self.unit_name),
+            "address": to_structure_UnsignedIntegerType_32(self.address),
             "compliances": to_structure_VectorType_RecordType_core_ComplianceShortDescription(self.compliances),
         }
 
@@ -2159,7 +2159,7 @@ class EscalationsDrillDown(object):
 
     def to_structure(self):
         return {
-            "unit_name": to_structure_SignedIntegerType_8(self.unit_name),
+            "unit_name": to_structure_UnsignedIntegerType_32(self.unit_name),
             "address": to_structure_SignedIntegerType_8(self.address),
             "compliances": to_structure_VectorType_RecordType_core_ComplianceShortDescription(self.compliances),
         }
@@ -2193,9 +2193,9 @@ class UserGroupDetails(object):
 
     def to_structure(self):
         return {
-            "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
+            "user_group_id": to_structure_UnsignedIntegerType_32(self.user_group_id),
             "user_group_name": to_structure_CustomTextType_50(self.user_group_name),
-            "form_category_id": to_structure_SignedIntegerType_8(self.form_category_id),
+            "form_category_id": to_structure_UnsignedIntegerType_32(self.form_category_id),
             "form_ids": to_structure_VectorType_SignedIntegerType_8(self.form_ids),
             "is_active": to_structure_Bool(self.is_active),
         }
@@ -2223,7 +2223,7 @@ class User(object):
 
     def to_structure(self):
         return {
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
+            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
             "is_active": to_structure_Bool(self.is_active),
         }
@@ -2275,9 +2275,9 @@ class UserDetails(object):
 
     def to_structure(self):
         return {
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
+            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
             "email_id": to_structure_CustomTextType_100(self.email_id),
-            "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
+            "user_group_id": to_structure_UnsignedIntegerType_32(self.user_group_id),
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
             "employee_code": to_structure_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
@@ -2308,7 +2308,7 @@ class CountryWiseUnits(object):
 
     def to_structure(self):
         return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
             "units": to_structure_VectorType_RecordType_core_UnitDetails(self.units),
         }
 
@@ -2350,7 +2350,7 @@ class ComplianceApplicability(object):
 
     def to_structure(self):
         return {
-            "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
+            "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
             "compliance_name": to_structure_CustomTextType_200(self.compliance_name),
             "description": to_structure_CustomTextType_500(self.description),
             "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
@@ -2393,7 +2393,7 @@ class ComplianceShortDescription(object):
             "description": to_structure_CustomTextType_500(self.description),
             "assignee_name": to_structure_CustomTextType_50(self.assignee_name),
             "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
-            "ageing": to_structure_SignedIntegerType_8(self.ageing),
+            "ageing": to_structure_UnsignedIntegerType_32(self.ageing),
         }
 
 #
@@ -2444,7 +2444,7 @@ class FormCategory(object):
 
     def to_structure(self):
         return {
-            "form_category_id": to_structure_SignedIntegerType_8(self.form_category_id),
+            "form_category_id": to_structure_UnsignedIntegerType_32(self.form_category_id),
             "form_category": to_structure_CustomTextType_50(self.form_category),
         }
 
@@ -2468,7 +2468,7 @@ class FormType(object):
 
     def to_structure(self):
         return {
-            "form_type_id": to_structure_SignedIntegerType_8(self.form_type_id),
+            "form_type_id": to_structure_UnsignedIntegerType_32(self.form_type_id),
             "form_type": to_structure_CustomTextType_50(self.form_type),
         }
 
@@ -2633,6 +2633,6 @@ class ComplianceFilter(object):
 
     def to_structure(self):
         return {
-            "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
+            "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
             "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
         }
