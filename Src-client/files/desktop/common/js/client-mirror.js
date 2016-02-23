@@ -804,16 +804,18 @@ function initClientMirror() {
 
     function approveCompliance(
         compliance_history_id, compliance_approval_status,
-        remarks, next_due_date, callback
+        remarks, next_due_date, validity_date, callback
     ) {
         var request = [
             "ApproveCompliance", {
                 "compliance_history_id": compliance_history_id,
                 "approval_status": compliance_approval_status,
                 "remarks": remarks,
-                "next_due_date": next_due_date
+                "next_due_date": next_due_date,
+                "validity_date" : validity_date
             }
         ];
+        console.log(request)
         callerName = "client_transaction";
         clientApiRequest(callerName, request, callback);
     }

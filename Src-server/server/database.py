@@ -4685,8 +4685,12 @@ class KnowledgeDatabase(Database):
             condition = "client_id in (%s)" % client_ids
 
         columns = "business_group_id, legal_entity_id, division_id, client_id"
-        condition = " 1 group by business_group_id, legal_entity_id, division_id, client_id"
+        condition = " client_id in (select client_id from %s where user_id = %d) \
+        group by business_group_id, legal_entity_id, division_id, client_id" % (
+            self.tblUserClients, user_id
+        )
         rows = self.get_data(self.tblUnits, columns, condition)
+        print rows
         unit_details = []
         for row in rows:
             detail_columns = "country_id"
@@ -4974,3 +4978,15 @@ class KnowledgeDatabase(Database):
         condition = "notification_id = '%d' and user_id='%d'"% (
             notification_id, session_user)
         self.update(self.tblNotificationsStatus, columns, values, condition)
+
+    def get_user_name_by_id(self, user_id, client_id = None):
+        employee_name = None
+        if user_id != None:
+            columns = "employee_code, employee_name"
+            condition = "user_id ='{}'".format(user_id)
+            rows = self.get_data(
+                self.tblUsers, columns, condition
+            )
+            if len(rows) > 0:
+                employee_name = "{} - {}".format(rows[0][0], rows[0][1])
+        return employee_name

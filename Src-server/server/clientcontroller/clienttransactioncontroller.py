@@ -169,9 +169,10 @@ def process_approve_compliance(db, request, session_user, client_id):
     status = request.approval_status
     remarks = request.remarks
     next_due_date = request.next_due_date
+    validity_date = request.validity_date
     if status == "Approve":
         db.approve_compliance(
-            compliance_history_id, remarks, next_due_date, client_id
+            compliance_history_id, remarks, next_due_date, validity_date, client_id
         )
     elif status == "Reject Approval":
         db.reject_compliance_approval(
@@ -179,7 +180,7 @@ def process_approve_compliance(db, request, session_user, client_id):
         )
     elif status == "Concur":
         db.concur_compliance(
-            compliance_history_id, remarks, next_due_date, client_id
+            compliance_history_id, remarks, next_due_date, validity_date, client_id
         )
     elif status == "Reject Concurrence":
         db.reject_compliance_concurrence(
