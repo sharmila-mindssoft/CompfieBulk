@@ -10,7 +10,7 @@ parse_structure_VectorType_RecordType_knowledgereport_MappingReport,
     parse_structure_VectorType_RecordType_core_Industry,
     parse_structure_VariantType_knowledgereport_Request,
     parse_structure_VectorType_RecordType_core_Country,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
+    parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Geography,
     parse_structure_Bool, parse_structure_CustomTextType_50,
     parse_structure_OptionalType_SignedIntegerType_8,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_StatutoryMapping,
@@ -160,8 +160,8 @@ class Response(object):
 
 class GetStatutoryMappingReportFiltersSuccess(Response):
     def __init__(
-        self, countries, domains, 
-        industries, statutory_natures, geographies, 
+        self, countries, domains,
+        industries, statutory_natures, geographies,
         level_1_statutories, compliance_frequency
     ):
         self.countries = countries
@@ -184,7 +184,7 @@ class GetStatutoryMappingReportFiltersSuccess(Response):
         statutory_natures = data.get("statutory_natures")
         statutory_natures = parse_structure_VectorType_RecordType_core_StatutoryNature(statutory_natures)
         geographies = data.get("geographies")
-        geographies = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(geographies)
+        geographies = parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Geography(geographies)
         level_1_statutories = data.get("level_1_statutories")
         level_1_statutories = parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(level_1_statutories)
         compliance_frequency = data.get("compliance_frequency")

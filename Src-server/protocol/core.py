@@ -1139,7 +1139,7 @@ class StatutoryMapping(object):
         domain_name = data.get("domain_name")
         domain_name = parse_structure_CustomTextType_50(domain_name)
         industry_ids = data.get("industry_ids")
-        industry_ids = parse_structure_VectorType_SignedIntegerType_8(industry_ids)
+        industry_ids = parse_structure_VectorType_UnsignedIntegerType_32(industry_ids)
         industry_names = data.get("industry_names")
         industry_names = parse_structure_Text(industry_names)
         statutory_nature_id = data.get("statutory_nature_id")
@@ -1147,7 +1147,7 @@ class StatutoryMapping(object):
         statutory_nature_name = data.get("statutory_nature_name")
         statutory_nature_name = parse_structure_CustomTextType_50(statutory_nature_name)
         statutory_ids = data.get("statutory_ids")
-        statutory_ids = parse_structure_VectorType_SignedIntegerType_8(statutory_ids)
+        statutory_ids = parse_structure_VectorType_UnsignedIntegerType_32(statutory_ids)
         statutory_mappings = data.get("statutory_mappings")
         statutory_mappings = parse_structure_VectorType_Text(statutory_mappings)
         compliances = data.get("compliances")
@@ -1155,7 +1155,7 @@ class StatutoryMapping(object):
         compliance_names = data.get("compliance_names")
         compliance_names = parse_structure_VectorType_RecordType_core_Compliance_Download(compliance_names)
         geography_ids = data.get("geography_ids")
-        geography_ids = parse_structure_VectorType_SignedIntegerType_8(geography_ids)
+        geography_ids = parse_structure_VectorType_UnsignedIntegerType_32(geography_ids)
         geography_mappings = data.get("geography_mappings")
         geography_mappings = parse_structure_VectorType_Text(geography_mappings)
         approval_status = data.get("approval_status")
@@ -1170,15 +1170,15 @@ class StatutoryMapping(object):
             "country_name": to_structure_CustomTextType_50(self.country_name),
             "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
-            "industry_ids": to_structure_VectorType_SignedIntegerType_8(self.industry_ids),
+            "industry_ids": to_structure_VectorType_UnsignedIntegerType_32(self.industry_ids),
             "industry_names": to_structure_Text(self.industry_names),
             "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
             "statutory_nature_name": to_structure_CustomTextType_50(self.statutory_nature_name),
-            "statutory_ids": to_structure_VectorType_SignedIntegerType_8(self.statutory_ids),
+            "statutory_ids": to_structure_VectorType_UnsignedIntegerType_32(self.statutory_ids),
             "statutory_mappings": to_structure_VectorType_Text(self.statutory_mappings),
             "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
             "compliance_names": to_structure_VectorType_RecordType_core_Compliance_Download(self.compliance_names),
-            "geography_ids": to_structure_VectorType_SignedIntegerType_8(self.geography_ids),
+            "geography_ids": to_structure_VectorType_UnsignedIntegerType_32(self.geography_ids),
             "geography_mappings": to_structure_VectorType_Text(self.geography_mappings),
             "approval_status": to_structure_UnsignedIntegerType_32(self.approval_status),
             "is_active": to_structure_Bool(self.is_active),
@@ -1297,7 +1297,7 @@ class GroupCompanyDetail(object):
             "client_name": to_structure_CustomTextType_50(self.client_name),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
-            "incharge_persons": to_structure_VectorType_SignedIntegerType_8(self.incharge_persons),
+            "incharge_persons": to_structure_VectorType_UnsignedIntegerType_32(self.incharge_persons),
             "file_name": to_structure_CustomTextType_250(self.file_name),
             "logo": to_structure_CustomTextType_250(self.logo),
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
@@ -1821,7 +1821,7 @@ class ClientUser(object):
             "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "unit_ids": to_structure_VectorType_SignedIntegerType_8(self.unit_ids),
+            "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
             "is_admin": to_structure_Bool(self.is_admin),
             "is_service_provider": to_structure_Bool(self.is_service_provider),
             "service_provider_id": to_structure_OptionalType_UnsignedIntegerType_32(self.service_provider_id),
