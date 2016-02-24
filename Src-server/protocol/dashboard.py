@@ -52,7 +52,8 @@ from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Compliance,
     parse_structure_VectorType_RecordType_dashboard_Notification,
     parse_structure_Bool,
-    parse_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance
+    parse_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance,
+    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -108,7 +109,8 @@ from protocol.to_structure import (
     to_structure_Bool,
     to_structure_VectorType_RecordType_core_ClientUnit,
     to_structure_VectorType_RecordType_clientreport_User,
-    to_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance
+    to_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance,
+    to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance
 )
 
 #
@@ -1339,6 +1341,65 @@ class AssigneeChartData(object):
 #
 
 class Level1Compliance(object):
+    def __init__(
+        self, compliance_name, description, assignee_name, assigned_date,
+        due_date, completion_date, status, ageing
+    ):
+        self.compliance_name = compliance_name
+        self.description = description
+        self.assignee_name = assignee_name
+        self.assigned_date = assigned_date
+        self.due_date = due_date
+        self.completion_date = completion_date
+        self.status = status
+        self.ageing = ageing
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "compliance_name", "description",
+            "assignee_name", "assigned_date", "due_date", "completion_date",
+            "status", "ageing"
+        ])
+        compliance_name = data.get("compliance_name")
+        compliance_name = parse_structure_CustomTextType_100(compliance_name)
+        description = data.get("description")
+        description = parse_structure_CustomTextType_500(description)
+        assignee_name = data.get("assignee_name")
+        assignee_name = parse_structure_CustomTextType_100(assignee_name)
+        assigned_date = data.get("assigned_date")
+        assigned_date = parse_structure_CustomTextType_20(assigned_date)
+        due_date = data.get("due_date")
+        due_date = parse_structure_CustomTextType_20(due_date)
+        completion_date = data.get("completion_date")
+        completion_date = parse_structure_CustomTextType_20(completion_date)
+        status = data.get("status")
+        status = parse_structure_EnumType_core_COMPLIANCE_STATUS(status)
+        ageing = data.get("ageing")
+        ageing = parse_structure_UnsignedIntegerType_32(ageing)
+        return Level1Compliance(
+            compliance_name, description, assignee_name, assigned_date,
+            due_date, completion_date,
+            status, ageing
+        )
+
+    def to_structure(self):
+        return {
+            "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
+            "description": to_structure_CustomTextType_500(self.description),
+            "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
+            "assigned_date": to_structure_CustomTextType_20(self.assigned_date),
+            "due_date": to_structure_CustomTextType_20(self.due_date),
+            "completion_date": to_structure_CustomTextType_20(self.completion_date),
+            "status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.status),
+            "ageing": to_structure_UnsignedIntegerType_32(self.ageing)
+        }
+
+#
+# Level1Compliance
+#
+
+class AssigneeWiseLevel1Compliance(object):
     def __init__(self, compliance_name, description, assignee_name, assigned_date,
         due_date, completion_date):
         self.compliance_name = compliance_name
@@ -1365,7 +1426,7 @@ class Level1Compliance(object):
         due_date = parse_structure_CustomTextType_20(due_date)
         completion_date = data.get("completion_date")
         completion_date = parse_structure_CustomTextType_20(completion_date)
-        return Level1Compliance(compliance_name, description, assignee_name, assigned_date,
+        return AssigneeWiseLevel1Compliance(compliance_name, description, assignee_name, assigned_date,
         due_date, completion_date)
 
     def to_structure(self):
@@ -1396,14 +1457,14 @@ class UnitCompliance(object):
         address = data.get("address")
         address = parse_structure_CustomTextType_250(address)
         compliances = data.get("compliances")
-        compliances = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance(compliances)
+        compliances = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(compliances)
         return UnitCompliance(unit_name, address, compliances)
 
     def to_structure(self):
         return {
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
-            "compliances": to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance(self.compliances),
+            "compliances": to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(self.compliances),
         }
 
 class TrendCompliance(object):
