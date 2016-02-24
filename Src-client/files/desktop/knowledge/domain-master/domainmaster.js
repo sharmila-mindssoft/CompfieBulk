@@ -150,20 +150,29 @@ function displayEdit (domainId,domainName) {
 }
 
 function changeStatus (domainId,isActive) {
-  function onSuccess(response){
-    getDomains ();
+
+  var msgstatus='deactivate';
+  if(isActive){
+    msgstatus='activate';
   }
-  function onFailure(error){
-  }
-  mirror.changeDomainStatus(domainId, isActive,
-    function (error, response) {
-      if (error == null){
-        onSuccess(response);
-      }
-      else {
-        onFailure(error);
-      }
-    });
+  var answer = confirm('Are you sure you want to '+msgstatus+ '?');
+  if (answer)
+  {
+    function onSuccess(response){
+      getDomains ();
+    }
+    function onFailure(error){
+    }
+    mirror.changeDomainStatus(domainId, isActive,
+      function (error, response) {
+        if (error == null){
+          onSuccess(response);
+        }
+        else {
+          onFailure(error);
+        }
+      });
+    }    
 }
 
 $("#search-domain-name").keyup(function() { 

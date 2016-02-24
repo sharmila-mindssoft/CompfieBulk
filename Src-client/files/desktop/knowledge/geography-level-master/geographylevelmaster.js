@@ -187,7 +187,9 @@ $("#insert-record").click(function(){
 	  	$("#add").show();
 	}else{
 		displayMessage("Title should not be Empty");
+		$("#add").hide();
 	}
+
 	for(var i=1; i <= 10; i++){
    		if( $("#level"+i).val() == ''){
    			$("#add").show();

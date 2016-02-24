@@ -317,10 +317,26 @@ img, object {
 .content-container.width90 {
 	width: 90%;
 }
+.content-container.width45 {
+	width: 45%;
+}
+.content-container.width55 {
+	width: 55%;
+}
+.content-container.width65 {
+	width: 65%;
+}
+.content-container.width75 {
+	width: 75%;
+}
+.content-container.width85 {
+	width: 85%;
+}
+
 .content-area {
 	width: 100%;
 	float: left;
-	padding-top: 2em;
+	padding-top: 1em;
 	margin-bottom: 2em;
 }
 .content-area h1 {
