@@ -91,10 +91,10 @@ $('#industryname').keypress(function (e) {
 
 $("#submit").click(function(){
   var industryId = $("#industryid").val();
-  var industryName = $("#industryname").val();
+  var industryName = $("#industryname").val().trim();
 
 if(validate()){
-  if($("#industryid").val() == ''){
+  if(industryName.length > 0){
     function onSuccess(response) {
       getIndustries ();
       $("#industry-add").hide();
@@ -151,21 +151,30 @@ function displayEdit (industryId,industryName) {
 }
 
 function changeStatus (industryId,isActive) {
-  function onSuccess(response){
-    getIndustries ();
+
+  var msgstatus='deactivate';
+  if(isActive){
+    msgstatus='activate';
   }
-  function onFailure(error){
-  }
-  mirror.changeIndustryStatus(industryId, isActive,
-    function (error, response) {
-      if (error == null){
-        onSuccess(response);
-      }
-      else {
-        onFailure(error);
-      }
+  var answer = confirm('Are you sure you want to '+msgstatus+ '?');
+  if (answer)
+  {
+    function onSuccess(response){
+      getIndustries ();
     }
-    );
+    function onFailure(error){
+    }
+    mirror.changeIndustryStatus(industryId, isActive,
+      function (error, response) {
+        if (error == null){
+          onSuccess(response);
+        }
+        else {
+          onFailure(error);
+        }
+      }
+      );
+    }
 }
 
 $("#search-industry-name").keyup(function() { 

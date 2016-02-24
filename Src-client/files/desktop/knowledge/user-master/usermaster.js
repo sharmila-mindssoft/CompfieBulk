@@ -20,14 +20,15 @@ $(".btn-user-cancel").click(function(){
 });
 
 $(".btn-user-add").click(function(){
-  $("#user-view").hide();
-  $("#user-add").show();
-  $(".fieldvalue").val('');
-  $("#userid").val('');
-  domainIds = [];
-  countryIds = []
-  displayMessage('');
-
+$("#user-view").hide();
+$("#user-add").show();
+$(".fieldvalue").val('');
+$("#view_emailid").hide();
+$("#emailid").show();
+$("#userid").val('');
+domainIds = [];
+countryIds = []
+displayMessage('');
 });
 
 function displayEdit (userId) {
@@ -68,13 +69,23 @@ function displayEdit (userId) {
 		$("#designation").val(designation);
 		$("#domainselected").val(domainIds.length+" Selected");
 		$("#countryselected").val(countryIds.length+" Selected");
-		$("#emailid").val(emailId);
+		$("#emailid").hide();
+		$("#view_emailid").text(emailId);
 		break;
 		}
 	}
 }
 
 function changeStatus (userId,isActive) {
+
+	var msgstatus='deactivate';
+    if(isActive){
+      msgstatus='activate';
+    }
+    var answer = confirm('Are you sure you want to '+msgstatus+ '?');
+    if (answer)
+    {
+
 	function onSuccess(response){
 		getUsers();
 	}
@@ -92,6 +103,7 @@ function changeStatus (userId,isActive) {
             }
         }
     );
+}
 }
 
 function loadUserList(usersList) {
@@ -159,7 +171,6 @@ function getUsers(){
   );
 }
 
-
 function validate(){
 	var employeeName = $("#employeename").val().trim();
 	var employeeId = $("#employeeid").val().trim();
@@ -203,15 +214,15 @@ function validate(){
 
 $("#submit").click(function(){
 	var userId = parseInt($("#userid").val());
-	var employeeName = $("#employeename").val();
-	var employeeId = $("#employeeid").val();
+	var employeeName = $("#employeename").val().trim();
+	var employeeId = $("#employeeid").val().trim();
 	var address = $("#address").val();
 	var countryCode = $("#countrycode").val();
 	var areaCode = $("#areacode").val();
 	var contactNo = $("#contactno").val();
 	var userGroup = parseInt($("#usergroup").val());
 	var designation = $("#designation").val();
-	var emailId = $("#emailid").val();
+	var emailId = $("#emailid").val().trim();
 	if(validate()){
 		if($("#userid").val() == '') {
 			function onSuccess(response) {
@@ -376,7 +387,7 @@ function activatecountry(element){
 
 //load usergroup list in autocomplete text box  
 $("#usergroupval").keyup(function(){
-	var textval = $(this).val();
+  var textval = $(this).val();
   $("#autocompleteview").show();
   var usergroups = userGroupsList;
   var suggestions = [];
@@ -391,6 +402,9 @@ $("#usergroupval").keyup(function(){
     }
     $('#ulist_text').append(str);
     $("#usergroup").val('');
+    }else{
+      $("#usergroup").val('');
+      $("#autocompleteview").hide();
     }
 });
 //set selected autocomplte value to textbox
@@ -399,30 +413,57 @@ function activate_text (element,checkval,checkname) {
   $("#usergroup").val(checkval);
 }
 
-/*$(".fieldvalue").keyup(function (evt) {
- var element = $(evt.target);
- var tabIndex = element.attr('tabIndex');
- if (evt.keyCode == 13){
-  if(tabIndex == 11){
-    if(validate()){
-      jQuery('#submit').focus().click();
-    }
-  }else{
-    var nextElement = $("input[tabIndex=" + (parseInt(tabIndex) + 1) + "]");
-     if (nextElement) {
-         nextElement.focus().click();
-     }
-  return false;
-  }
- }
-});*/
 
 $(document).ready(function(){
 	getUsers();
-	$('#contactno').keydown(function (e) {
-    var key = e.keyCode;
-    if (!((key == 8) || (key >= 48 && key <= 57))) {
-  	  e.preventDefault();
-  	}
-	});
+
+	//attach keypress to input
+    $('#contactno').keydown(function(event) {
+        // Allow special chars + arrows 
+        if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 
+            || event.keyCode == 27 || event.keyCode == 13 
+            || (event.keyCode == 65 && event.ctrlKey === true) 
+            || (event.keyCode >= 35 && event.keyCode <= 39)){
+                return;
+        }else {
+            // If it's not a number stop the keypress
+            if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+                event.preventDefault(); 
+            }   
+        }
+    });
+
+    //attach keypress to input
+    $('#areacode').keydown(function(event) {
+        // Allow special chars + arrows 
+        if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 
+            || event.keyCode == 27 || event.keyCode == 13 
+            || (event.keyCode == 65 && event.ctrlKey === true) 
+            || (event.keyCode >= 35 && event.keyCode <= 39)){
+                return;
+        }else {
+            // If it's not a number stop the keypress
+            if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+                event.preventDefault(); 
+            }   
+        }
+    });
+
+    //attach keypress to input
+    $('#countrycode').keydown(function(event) {
+        // Allow special chars + arrows 
+        if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 
+            || event.keyCode == 27 || event.keyCode == 13 
+            || (event.keyCode == 65 && event.ctrlKey === true) 
+            || (event.keyCode >= 35 && event.keyCode <= 39)){
+                return;
+        }else {
+            // If it's not a number stop the keypress
+            if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+                event.preventDefault(); 
+            }   
+        }
+    });
+
+
 });
