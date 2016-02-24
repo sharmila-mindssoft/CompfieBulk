@@ -170,16 +170,16 @@ class USER_TYPE(object):
 
 class APPROVAL_STATUS(object):
     Pending = "Pending"
-    Approve = "Approve"
-    Reject = "Reject"
-    ApproveAndNotify = "Approve & Notify"
+    Approve = "Approved"
+    Reject = "Rejected"
+    ApproveAndNotify = "Approved & Notified"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Pending", "Approve", "Reject", "Approve & Notify"]
+        return ["Pending", "Approved", "Rejected", "Approved & Notified"]
 
     def value(self):
         return self._value

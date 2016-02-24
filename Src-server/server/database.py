@@ -1854,7 +1854,7 @@ class KnowledgeDatabase(Database):
                 approval_list.append(c_approval)
             return approval_list
 
-        status = ("Pending", "Approve", "Reject", "Approve & Notify")
+        status = ("Pending", "Approved", "Rejected", "Approved & Notified")
 
         if approval_id is None :
             return return_approval_status(status)
