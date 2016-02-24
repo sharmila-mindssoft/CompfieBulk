@@ -187,33 +187,40 @@ $("#btnUserGroupSubmit").click(function(){
 	if(groupIdVal == ''){
 		$(".checkedFormId:checked").each(function() {
 			chkArray.push($(this).val());
-		});	
-		
-		function onSuccess(response){
-			$("#userGroupAdd").hide();
-		  	$("#userGroupView").show();
-			initialize();		
-		}
-		function onFailure(error){
-			if(error == "GroupNameAlreadyExists"){
-				displayMessage("Group Name Already Exists");
-			}
-		}
-		chkArrayInt = chkArray.map(function(item) {
-		    return parseInt(item, 10);
-		});		
-		var userGroupInsertDetails = mirror.getSaveAdminUserGroupDict(groupNameVal, parseInt(categoryNameVal), chkArrayInt);
+		});
+		if(chkArray.length == 0){
+			displayMessage("Select Atleast one Form to create user group");
 
-		mirror.saveAdminUserGroup(userGroupInsertDetails, 
-		   function (error, response) {
-                if (error == null){
-                  onSuccess(response);
-                }
-                else {
-                  onFailure(error);
-                }
-            }
-        );
+		}	
+		else{
+			chkArrayInt = chkArray.map(function(item) {
+			    return parseInt(item, 10);
+			});		
+			function onSuccess(response){
+				$("#userGroupAdd").hide();
+			  	$("#userGroupView").show();
+				initialize();		
+			}
+			function onFailure(error){
+				if(error == "GroupNameAlreadyExists"){
+					displayMessage("Group Name Already Exists");
+				}
+			}
+			
+			var userGroupInsertDetails = mirror.getSaveAdminUserGroupDict(groupNameVal, parseInt(categoryNameVal), chkArrayInt);
+
+			mirror.saveAdminUserGroup(userGroupInsertDetails, 
+			   function (error, response) {
+	                if (error == null){
+	                  onSuccess(response);
+	                }
+	                else {
+	                  onFailure(error);
+	                }
+	            }
+	        );
+		}
+		
 	}
 	if(groupIdVal != ''){
 		$(".checkedFormId:checked").each(function() {

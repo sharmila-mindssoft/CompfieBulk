@@ -92,16 +92,16 @@ $("#show-button").click(function(){
         todate = null;
     }
     if(countries == ""){
-        displayMessage("Please Enter Country");
+        displayMessage("Enter Country");
     }
     else if(domain == ""){
-        displayMessage("Please Enter Domain");  
+        displayMessage("Enter Domain");  
     }
     else if(fromdate != '' && todate ==''){
-        displayMessage("Please Select To Date");
+        displayMessage("Select To Date");
     }
     else if(fromdate == '' && todate !=''){
-        displayMessage("Please Select From Date");
+        displayMessage("Select From Date");
     }
     else{
         function onSuccess(data){

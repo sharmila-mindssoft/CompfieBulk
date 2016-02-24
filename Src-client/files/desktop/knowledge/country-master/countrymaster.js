@@ -116,7 +116,7 @@ $("#submit").click(function(){
 		}
 		function onFailure(error){			
 			if(error == 'InvalidCountryId') {
-  				displayMessage("Invalid Country Id");
+  				displayMessage("Invalid Country Name");
   			}	
 		}
 		mirror.updateCountry(parseInt(countryIdValue), countryNameValue, 

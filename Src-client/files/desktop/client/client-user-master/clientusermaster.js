@@ -267,57 +267,57 @@ $("#submit").click(function(){
 		var seatingunit = $('#seatingunit').val();	
 		var seatingunitname = $('#seatingunitval').val();		
 		if(seatingunit == ''){
-			displayMessage("Please Enter seating Unit");	
+			displayMessage("Enter seating Unit");	
 		}	
 		if(employeeid == ''){
-			displayMessage("Please Enter Employee Code");	
+			displayMessage("Enter Employee Code");	
 		}	
 		if(seatingunitname == ''){
-			displayMessage("Please Enter seating Unit");	
+			displayMessage("Enter seating Unit");	
 		}
 	}
 	if(usertype == 'Service Provider'){
 		isserviceprovider = true;
 		serviceprovider = $('#serviceprovider').val();
 		if(serviceprovider.length == 0){
-			displayMessage("Please Enter service provider");	
+			displayMessage("Enter service provider");	
 		}
 	}	
 	if(employeename == ''){
-		displayMessage("Please Enter Employee Name");
+		displayMessage("Enter Employee Name");
 	}
 	if(countrycode == ''){
-		displayMessage("Please Enter Country Code");
+		displayMessage("Enter Country Code");
 	}
 	if(mobilenumber == ''){
-		displayMessage("Please Enter Mobile Number");
+		displayMessage("Enter Mobile Number");
 	}
 	if(usergroup == ''){
-		displayMessage("Please Enter usergroup");
+		displayMessage("Enter usergroup");
 	}
 	if(userlevel == ''){
-		displayMessage("Please Select User Level");
+		displayMessage("Select User Level");
 	}
 	if(emailid == ''){
-		displayMessage("Please Enter Email Id");
+		displayMessage("Enter Email Id");
 	}
 	if(country == ''){
-		displayMessage("Please select Country");
+		displayMessage("select Country");
 	}
 	if(businessgroups == ''){
-		displayMessage("Please select businessgroups");
+		displayMessage("Select businessgroups");
 	}
 	if(legalentities == ''){
-		displayMessage("Please select legalentities");
+		displayMessage("select legalentities");
 	}
 	if(division == ''){
-		displayMessage("Please select division");
+		displayMessage("select division");
 	}
 	if(domains == ''){
-		displayMessage("Please select domains");
+		displayMessage("select domains");
 	}
 	if(units == ''){
-		displayMessage("Please Select Units")
+		displayMessage("Select Units")
 	}
 
 	if($('#client-user-id').val() == ''){
