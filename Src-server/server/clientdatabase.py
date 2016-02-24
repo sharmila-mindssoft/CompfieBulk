@@ -2858,7 +2858,7 @@ class ClientDatabase(Database):
                 address = "%s, %s, %s" % (r["address"], geography, r["postal_code"])
                 drill_down_data = dashboard.DrillDownData(
                     r["business_group_name"], r["legal_entity_name"],
-                    r["division_name"], r["unit_name"], address,
+                    r["division_name"], unit_name, address,
                     r["industry_name"],
                     level_compliance
                 )
