@@ -435,8 +435,8 @@
 
 			function approveCompliance(){
 				compliance_history_id = 1
-				compliance_approval_status = "Reject Approval"
-				remarks = "Sample Remarks"
+				compliance_approval_status = "Approve"
+				remarks = null
 				next_due_date = "12-Aug-2016"
 				validity_date = "12-Aug-2018"
 				client_mirror.approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback);

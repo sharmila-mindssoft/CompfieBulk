@@ -4954,14 +4954,16 @@ class KnowledgeDatabase(Database):
 #
 #   Notifications
 #
-    def get_notifications(self, notification_type, session_user, client_id=None):
+    def get_notifications(
+        self, notification_type, session_user, client_id=None
+    ):
         columns = "tn.notification_id, notification_text, link, "+\
         "created_on, read_status"
         join_type = "left join"
         tables = [self.tblNotifications, self.tblNotificationsStatus ]
         aliases = ["tn", "tns"]
         join_conditions = ["tn.notification_id = tns.notification_id"]
-        where_condition = " tns.user_id ='%d'"%(session_user)
+        where_condition = " tns.user_id ='%d'" % (session_user)
         rows = self.get_data_from_multiple_tables(columns, tables,
             aliases, join_type, join_conditions, where_condition)
         notifications = []
