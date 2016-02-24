@@ -2202,7 +2202,7 @@ class KnowledgeDatabase(Database):
                 statutory_mapping_id, created_by
             )
             ids, names = self.save_compliance(
-                statutory_mapping_id, compliances, created_by
+                statutory_mapping_id, domain_id, compliances, created_by
             )
             compliance_ids = ','.join(str(x) for x in ids) + ","
             qry = "UPDATE tbl_statutory_mappings set compliance_ids='%s' \
@@ -2336,7 +2336,7 @@ class KnowledgeDatabase(Database):
             where = "statutory_id = %s" % (statutory_id)
             self.update(tbl_statutory, columns, values, where)
 
-    def save_compliance(self, mapping_id, datas, created_by) :
+    def save_compliance(self, mapping_id, domain_id, datas, created_by) :
         compliance_ids = []
         compliance_names = []
         is_format = False
@@ -2384,14 +2384,14 @@ class KnowledgeDatabase(Database):
                 "document_name", "format_file", "format_file_size",
                 "penal_consequences", "frequency_id",
                 "statutory_dates", "statutory_mapping_id",
-                "is_active", "created_by", "created_on"
+                "is_active", "created_by", "created_on", "domain_id"
             ]
             values = [
                 compliance_id, provision, compliance_task,
                 compliance_description, document_name,
                 file_name, file_size, penal_consequences,
                 compliance_frequency, statutory_dates,
-                mapping_id, is_active, created_by, created_on
+                mapping_id, is_active, created_by, created_on, domain_id
             ]
             if compliance_frequency == 1 :
                 pass
@@ -2426,7 +2426,7 @@ class KnowledgeDatabase(Database):
         is_exists = self.get_statutory_mapping_by_id(statutory_mapping_id)
         if bool(is_exists) is False :
             return False
-        domain_id = is_exists["domain_id"]
+        domain_id = data.domain_id
         industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
         nature_id = data.statutory_nature_id
         statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
@@ -2448,7 +2448,7 @@ class KnowledgeDatabase(Database):
 
         self.update(table_name, columns, values, where_condition)
         self.update_statutory_mapping_id(data.statutory_ids, statutory_mapping_id, updated_by)
-        ids, names = self.update_compliance(statutory_mapping_id, compliances, updated_by)
+        ids, names = self.update_compliance(statutory_mapping_id, domain_id, compliances, updated_by)
         compliance_ids = ','.join(str(x) for x in ids) + ","
         self.update(table_name, ["compliance_ids"], [compliance_ids], where_condition)
         self.save_statutory_industry(
@@ -2481,7 +2481,7 @@ class KnowledgeDatabase(Database):
         else :
             return None
 
-    def update_compliance(self, mapping_id, datas, updated_by) :
+    def update_compliance(self, mapping_id, domain_id, datas, updated_by) :
         is_format = False
         compliance_ids = []
         compliance_names = []
@@ -2489,7 +2489,7 @@ class KnowledgeDatabase(Database):
             compliance_id = data.compliance_id
 
             if (compliance_id is None) :
-                ids, names = self.save_compliance(mapping_id, [data], updated_by)
+                ids, names = self.save_compliance(mapping_id, domain_id, [data], updated_by)
                 compliance_ids.extend(ids)
                 continue
             else :
@@ -2554,14 +2554,14 @@ class KnowledgeDatabase(Database):
                 "format_file", "format_file_size", "penal_consequences",
                 "frequency_id", "statutory_dates",
                 "statutory_mapping_id", "is_active",
-                "updated_by"
+                "updated_by", "domain_id"
             ]
             values = [
                 provision, compliance_task, description,
                 document_name, file_name, file_size,
                 penal_consequences, compliance_frequency,
                 statutory_dates, mapping_id, is_active,
-                updated_by
+                updated_by, domain_id
             ]
             if compliance_frequency == 1 :
                 pass
@@ -3325,7 +3325,7 @@ class KnowledgeDatabase(Database):
         con.commit()
         try:
             email().send_client_credentials(short_name, email_id, password)
-        except e:
+        except Exception, e:
             print "Error while sending email : {}".format(e)
         return True
 

@@ -277,6 +277,7 @@ DROP TABLE IF EXISTS `tbl_compliances`;
 CREATE TABLE `tbl_compliances` (
   `compliance_id` int(11) NOT NULL,
   `statutory_mapping_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
   `frequency_id` int(11) NOT NULL,
   `repeats_type_id` int(11) DEFAULT NULL,
   `duration_type_id` int(11) DEFAULT NULL,

@@ -1194,7 +1194,7 @@ function savestatutorymapping(){
       }
   );
   }else{
-    statutorymappingData = mirror.UpdateStatutoryMappingData(sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, sm_id)
+    statutorymappingData = mirror.UpdateStatutoryMappingData(sm_domainid, sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, sm_id)
     mirror.updateStatutoryMapping(statutorymappingData,
       function (error, response) {
           if (error == null){
