@@ -445,7 +445,7 @@ class ClientDatabase(Database):
             ))
         return results
 
-    def save_activity(self, user_id, form_id, action, client_id):
+    def save_activity(self, user_id, form_id, action, client_id=None):
         created_on = self.get_date_time()
         activityId = self.get_new_id("activity_log_id", "tbl_activity_log", client_id)
         query = "INSERT INTO tbl_activity_log \
@@ -1289,6 +1289,7 @@ class ClientDatabase(Database):
 
     def update_statutory_settings(self, data, session_user, client_id):
         unit_id = data.unit_id
+        unit_name = data.unit_name
         statutories = data.statutories
         updated_on = self.get_date_time()
         for s in statutories :
@@ -1322,6 +1323,9 @@ class ClientDatabase(Database):
                 )
             self.execute(query)
 
+        action = "Statutory settings updated for unit - %s " % (unit_name)
+        self.save_activity(session_user, 6, action)
+
         return clienttransactions.UpdateStatutorySettingsSuccess()
 
     def get_level_1_statutory(self, client_id):
@@ -1343,17 +1347,21 @@ class ClientDatabase(Database):
             results.append(statutory_obj)
         return results
 
-    def get_level_1_statutories_for_user_with_domain(self, session_user, client_id, domain_id = None):
+    def get_level_1_statutories_for_user_with_domain(self, session_user, client_id, domain_id=None):
         domain_ids = domain_id
-        if domain_ids == None:
+        if domain_ids is None :
             columns = "group_concat(domain_id)"
             domain_rows = None
             if session_user != 0:
-                domain_rows = self.get_data(self.tblUserDomains, columns,
-                "user_id='%d'" % session_user)
+                domain_rows = self.get_data(
+                    self.tblUserDomains, columns,
+                    "user_id='%d'" % session_user
+                )
             else:
-                domain_rows = self.get_data(self.tblDomains, columns,
-                "1")
+                domain_rows = self.get_data(
+                    self.tblDomains, columns,
+                    "1"
+                )
             domain_ids = domain_rows[0][0]
         level_1_statutory = {}
         for domain_id in domain_ids.split(","):
@@ -1369,9 +1377,9 @@ class ClientDatabase(Database):
                     level_1_statutory[domain_id].append(statutories[0].strip())
         return level_1_statutory
 
-    def get_level_1_statutories_for_user(self, session_user, client_id, domain_id = None):
+    def get_level_1_statutories_for_user(self, session_user, client_id, domain_id=None):
         domain_ids = domain_id
-        if domain_ids == None:
+        if domain_ids is None :
             columns = "group_concat(domain_id)"
             domain_rows = None
             if session_user != 0:
@@ -1793,7 +1801,7 @@ class ClientDatabase(Database):
             " due_date, documents, completion_date, completed_on, next_due_date, "+\
             "concurred_by, remarks, datediff(due_date, completion_date ),compliance_task,"+\
             " compliance_description, tc.frequency_id, frequency, document_name, concurrence_status, \
-            statutory_dates"
+            statutory_dates, validity_date"
             join_type = "left join"
             query_tables = [
                     self.tblComplianceHistory,
@@ -1821,7 +1829,7 @@ class ClientDatabase(Database):
                 if row[4] is not None:
                     for document in row[4].split(","):
                         dl_url = "%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, document)
-                        download_urls.append(dl_url)    
+                        download_urls.append(dl_url)
                         file_name.append(document.split("-")[0])
                 concurred_by_id = None if row[8] is None else int(row[8])
                 compliance_history_id = row[0]
@@ -1843,6 +1851,7 @@ class ClientDatabase(Database):
                 description = row[12]
                 concurrence_status = row[16]
                 statutory_dates = json.loads(row[17])
+                validity_date = None if row[18] is None else self.datetime_to_string(row[18])
                 date_list = []
                 for date in statutory_dates :
                     s_date = core.StatutoryDate(
@@ -1869,10 +1878,12 @@ class ClientDatabase(Database):
                 else:
                     action = "Approve"
                 compliances.append(clienttransactions.APPROVALCOMPLIANCE(
-                    compliance_history_id, compliance_name, description, domain_name,
-                    start_date, due_date, delayed_by, frequency, documents, 
-                    file_names, completion_date, completed_on, next_due_date, 
-                    concurred_by, remarks, action, date_list))
+                        compliance_history_id, compliance_name, description, domain_name,
+                        start_date, due_date, delayed_by, frequency, documents,
+                        file_names, completion_date, completed_on, next_due_date,
+                        concurred_by, remarks, action, date_list, validity_date
+                    )
+                )
             assignee_id = assignee[0]
             assignee_name = "{} - {}".format(assignee[1], assignee[2])
             if len(compliances) > 0:
@@ -2135,8 +2146,10 @@ class ClientDatabase(Database):
             concurrence = ""
         approval = int(request.approval_person)
         compliances = request.compliances
+        compliance_ids = []
         for c in compliances:
             compliance_id = int(c.compliance_id)
+            compliance_ids.append(compliance_id)
             statutory_dates = c.statutory_dates
             if statutory_dates is not None :
                 date_list = []
@@ -2169,12 +2182,13 @@ class ClientDatabase(Database):
                     )
                 self.execute(query)
             self.update_user_units(assignee, unit_ids, client_id)
-
+        action = "Compliances %s assigned to assignee %s" % (str(compliance_ids), assignee)
+        self.save_activity(session_user, 7, action)
         return clienttransactions.SaveAssignedComplianceSuccess()
 
     def update_user_units(self, user_id, unit_ids, client_id):
         user_units = self.get_user_unit_ids(user_id, client_id)
-        user_units = [ int(x) for x in user_units.split(',')]
+        user_units = [int(x) for x in user_units.split(',')]
         new_units = []
         for u_id in unit_ids :
             if u_id not in user_units :
@@ -2187,6 +2201,8 @@ class ClientDatabase(Database):
                 unit_value_tuple = (int(user_id), int(unit_id))
                 unit_values_list.append(unit_value_tuple)
             result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
+            action = "New units %s added for user %s while assign compliance " % (new_units, user_id)
+            self.save_activity(user_id, 7, action)
 
 #
 #   Chart Api
@@ -3606,7 +3622,8 @@ class ClientDatabase(Database):
 #
 #   Compliance Approval
 #
-    def approve_compliance(self, compliance_history_id, remarks, next_due_date, client_id):
+    def approve_compliance(self, compliance_history_id, remarks, next_due_date,
+        validity_date, client_id):
         columns = ["approve_status", "approved_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
@@ -3621,37 +3638,40 @@ class ClientDatabase(Database):
         condition = " unit_id = '%d' and compliance_id = '%d'" % (
             rows[0][0], rows[0][1])
         values = [self.string_to_datetime(next_due_date)]
+        if validity_date is not None:
+            columns.append("validity_date")
+            values.append(self.string_to_datetime(validity_date))
         self.update(self.tblAssignedCompliances, columns, values, condition, client_id)
 
-    def reject_compliance_approval(self, compliance_history_id, remarks,  next_due_date, client_id):
-        columns = ["approve_status", "remarks", "completion_date", "completed_on"]
+    def reject_compliance_approval(self, compliance_history_id, remarks,
+        next_due_date, client_id):
+        columns = ["approve_status", "remarks", "completion_date", "completed_on", "concurred_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
-        values = [0, remarks, None, None]
+        values = [0, remarks, None, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        try:
-            email.notify_task_rejected(
-                self, compliance_history_id, remarks, "Reject Approval"
-            )
-        except:
-            print "Error while sending email"
+        email.notify_task_rejected(
+            self, compliance_history_id, remarks, "Reject Approval"
+        )
 
-    def concur_compliance(self, compliance_history_id, remarks, next_due_date, client_id):
+    def concur_compliance(self, compliance_history_id, remarks,
+        next_due_date, validity_date, client_id):
         columns = ["concurrence_status", "concurred_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [1, self.get_date_time(), remarks]
+        if validity_date is not None:
+            columns.append("validity_date")
+            values.append(self.string_to_datetime(validity_date))
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
 
-    def reject_compliance_concurrence(self, compliance_history_id, remarks,  next_due_date, client_id):
+    def reject_compliance_concurrence(self, compliance_history_id, remarks,
+        next_due_date, client_id):
         columns = ["concurrence_status", "remarks", "completion_date", "completed_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
         values = [0,  remarks, None, None]
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
-        try:
-            email.notify_task_rejected(
-                self, compliance_history_id, remarks, "Reject Concurrence"
-            )
-        except:
-            print "Error while sending email"
+        email.notify_task_rejected(
+            self, compliance_history_id, remarks, "Reject Concurrence"
+        )
 
     def get_client_level_1_statutoy(self, user_id, client_id=None) :
         query = "SELECT (case when (LEFT(statutory_mapping,INSTR(statutory_mapping,'>>')-1) = '') \
@@ -4646,9 +4666,11 @@ class ClientDatabase(Database):
         created_on = self.get_date_time()
         reassigned_date = created_on.strftime("%Y-%m-%d")
         created_by = int(session_user)
+        compliance_ids = []
         for c in compliances :
             unit_id = c.unit_id
             compliance_id = c.compliance_id
+            compliance_ids.append(compliance_id)
             due_date = c.due_date
             history_id = c.compliance_history_id
 
@@ -4680,6 +4702,8 @@ class ClientDatabase(Database):
                     )
                 self.execute(update_history)
 
+        action = "Compliances reassigned %s to assignee %s" % (str(compliance_ids), assignee)
+        self.save_activity(session_user, 8, action)
         return clienttransactions.ReassignComplianceSuccess()
 
 #
@@ -5446,12 +5470,9 @@ class ClientDatabase(Database):
             and completed_by ='%d'" % (
                 compliance_history_id, session_user
             )
-        try:
-            email.notify_task_completed(
-                self, compliance_history_id
-            )
-        except:
-            print "Error while sending email"
+        email.notify_task_completed(
+            self, compliance_history_id
+        )
         return self.update(
             self.tblComplianceHistory,
             history_columns, history_values,
@@ -6087,9 +6108,6 @@ class ClientDatabase(Database):
             result = rows[0][0]
         return result
 
-
-
-
     def get_client_details_report(self, country_id,  business_group_id,
             legal_entity_id, division_id, unit_id, domain_ids):
 
@@ -6226,7 +6244,8 @@ class ClientDatabase(Database):
             where c.compliance_id = ch.compliance_id ), due_date" % (self.tblCompliances)
         condition = "compliance_history_id = '%d'" % compliance_history_id
         rows = self.get_data(self.tblComplianceHistory+" ch", columns, condition )
-        return rows
+        if rows:
+            return rows[0]
 
     def get_client_details_report(
         self, country_id,  business_group_id,
@@ -6434,7 +6453,7 @@ class ClientDatabase(Database):
             compliance_det = unit_wise.get(unit_id)
             if compliance_det is None :
                 compliance_det = clientreport.ApplicabilityCompliance(
-                    r["unit_name"], r["unit_address"],
+                    unit_id, r["unit_name"], r["unit_address"],
                     [compliance]
                 )
             else :
@@ -6465,4 +6484,3 @@ class ClientDatabase(Database):
         return clientreport.GetComplianceTaskApplicabilityStatusReportSuccess(
             applicable_list, not_applicable_list, not_opted_list
         )
-

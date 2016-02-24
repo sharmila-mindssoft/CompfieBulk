@@ -513,6 +513,16 @@ CREATE TABLE `tbl_statutory_notifications_log` (
   CONSTRAINT `fk_statutory_notifications_log_statutory_mapping` FOREIGN KEY (`statutory_mapping_id`) REFERENCES `tbl_statutory_mappings` (`statutory_mapping_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `tbl_statutory_notifications_units`;
+CREATE TABLE `tbl_statutory_notifications_units` (
+  `statutory_notification_id` int(11) NOT NULL,
+  `client_id` int(11) NOT NULL,
+  `business_group_id` int(11) NULL DEFAULT NULL,
+  `legal_entity_id` int(11) NOT  NULL,
+  `division_id` int(11)  NULL DEFAULT NULL,
+  `unit_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 DROP TABLE IF EXISTS `tbl_activity_log`;
 CREATE TABLE `tbl_activity_log` (
@@ -649,7 +659,7 @@ CREATE TABLE `tbl_machines` (
   `machine_id` int(11) NOT NULL,
   `ip` varchar(20) NOT NULL,
   `port` int(11) NOT NULL,
-  `client_ids` varchar(100) NOT NULL,
+  `client_ids` varchar(100) NULL DEFAULT NULL,
   `server_full` tinyint(1) NOT NULL,
   PRIMARY KEY (`machine_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -675,9 +685,9 @@ CREATE TABLE `tbl_database_server` (
   `ip` varchar(20) NOT NULL,
   `server_username` varchar(50) NOT NULL,
   `server_password` varchar(50) NOT NULL,
-  `company_ids` varchar(50) NOT NULL,
-  `length` int(11) NOT NULL,
-  `server_full` tinyint(1) NOT NULL,
+  `company_ids` varchar(50) NULL DEFAULT NULL,
+  `length` int(11) NOT NULL DEFAULT 0,
+  `server_full` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

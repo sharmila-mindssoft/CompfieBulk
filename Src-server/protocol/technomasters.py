@@ -1,20 +1,13 @@
-import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_GroupCompany,
     parse_structure_UnsignedIntegerType_32, parse_structure_Bool,
     parse_structure_OptionalType_VectorType_RecordType_core_Division,
-    parse_structure_RecordType_core_CountryWiseUnits,
     parse_structure_OptionalType_VectorType_RecordType_core_BusinessGroup,
     parse_structure_VectorType_RecordType_core_Country,
-    parse_structure_OptionalType_RecordType_core_Division,
-    parse_structure_VectorType_RecordType_core_UnitDetails,
-    parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_CustomTextType_50,
-    parse_structure_RecordType_core_LegalEntity,
     parse_structure_CustomTextType_100,
     parse_structure_VectorType_SignedIntegerType_8,
-    parse_structure_OptionalType_RecordType_core_BusinessGroup,
     parse_structure_VectorType_RecordType_core_User,
     parse_structure_VectorType_RecordType_technomasters_LICENCE_HOLDER_DETAILS,
     parse_structure_CustomTextType_250,
@@ -30,18 +23,16 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_RecordType_techno_master_LEGALENTITY,
     parse_structure_OptionalType_RecordType_techno_master_DIVISION,
     parse_structure_VectorType_RecordType_techno_master_UNIT,
-    parse_structure_RecordType_techno_master_COUNTRYWISEUNITS,
     parse_structure_VectorType_RecordType_techno_master_COUNTRYWISEUNITS,
     parse_structure_Float,
     parse_structure_VectorType_RecordType_core_Industry,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
     parse_structure_VectorType_RecordType_technomasters_Unit,
     parse_structure_VectorType_RecordType_technomasters_CountryWiseUnits,
-    parse_structure_RecordType_technomasters_CountryWiseUnits,
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping,
-    parse_structure_RecordType_core_FileList
+    parse_structure_RecordType_core_FileList,
+    parse_structure_VectorType_UnsignedIntegerType_32
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -69,20 +60,17 @@ from protocol.to_structure import (
     to_structure_VariantType_technomasters_Request,
     to_structure_CustomTextType_20,
     to_structure_VectorType_RecordType_core_GroupCompanyDetail,
-    to_structure_VectorType_RecordType_core_Unit,
     to_structure_Float,
     to_structure_VectorType_RecordType_core_Industry,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
     to_structure_VectorType_RecordType_technomasters_Unit,
-    to_structure_VectorType_RecordType_technomasters_CountryWiseUnits,
-    to_structure_RecordType_technomasters_CountryWiseUnits,
-    to_structure_VectorType_RecordType_techno_master_UnitDetails,
+    to_structure_VectorType_RecordType_technomasters_UnitDetails,
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_UnsignedIntegerType_32,
     to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_UnitDetails,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping,
-    to_structure_RecordType_core_FileList
+    to_structure_RecordType_core_FileList,
+    to_structure_VectorType_UnsignedIntegerType_32
 )
 
 #
@@ -157,7 +145,7 @@ class SaveClientGroup(Request):
         contract_to = data.get("contract_to")
         contract_to = parse_structure_CustomTextType_20(contract_to)
         incharge_persons = data.get("incharge_persons")
-        incharge_persons = parse_structure_VectorType_SignedIntegerType_8(incharge_persons)
+        incharge_persons = parse_structure_VectorType_UnsignedIntegerType_32(incharge_persons)
         no_of_user_licence = data.get("no_of_user_licence")
         no_of_user_licence = parse_structure_UnsignedIntegerType_32(no_of_user_licence)
         file_space = data.get("file_space")
@@ -180,7 +168,7 @@ class SaveClientGroup(Request):
             "logo": to_structure_RecordType_core_FileList(self.logo),
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "incharge_persons": to_structure_VectorType_SignedIntegerType_8(self.incharge_persons),
+            "incharge_persons": to_structure_VectorType_UnsignedIntegerType_32(self.incharge_persons),
             "no_of_user_licence": to_structure_SignedIntegerType_8(self.no_of_user_licence),
             "file_space": to_structure_Float(self.file_space),
             "is_sms_subscribed": to_structure_Bool(self.is_sms_subscribed),
@@ -222,7 +210,7 @@ class UpdateClientGroup(Request):
         contract_to = data.get("contract_to")
         contract_to = parse_structure_CustomTextType_20(contract_to)
         incharge_persons = data.get("incharge_persons")
-        incharge_persons = parse_structure_VectorType_SignedIntegerType_8(incharge_persons)
+        incharge_persons = parse_structure_VectorType_UnsignedIntegerType_32(incharge_persons)
         no_of_user_licence = data.get("no_of_user_licence")
         no_of_user_licence = parse_structure_UnsignedIntegerType_32(no_of_user_licence)
         file_space = data.get("file_space")
@@ -242,7 +230,7 @@ class UpdateClientGroup(Request):
             "logo": to_structure_RecordType_core_FileList(self.logo),
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "incharge_persons": to_structure_VectorType_SignedIntegerType_8(self.incharge_persons),
+            "incharge_persons": to_structure_VectorType_UnsignedIntegerType_32(self.incharge_persons),
             "no_of_user_licence": to_structure_SignedIntegerType_8(self.no_of_user_licence),
             "file_space": to_structure_Float(self.file_space),
             "is_sms_subscribed": to_structure_Bool(self.is_sms_subscribed),
@@ -299,7 +287,7 @@ class BUSINESS_GROUP(Request):
     def to_inner_structure(self):
         return {
             "business_group_id": to_structure_SignedIntegerType_8(self.business_group_id),
-            "business_group_name": to_structure_CustomTextType_50(business_group_name),
+            "business_group_name": to_structure_CustomTextType_50(self.business_group_name),
         }
 
 class LEGAL_ENTITY(Request):
@@ -319,7 +307,7 @@ class LEGAL_ENTITY(Request):
     def to_inner_structure(self):
         return {
             "legal_entity_id": to_structure_SignedIntegerType_8(self.legal_entity_id),
-            "legal_entity_name": to_structure_CustomTextType_50(legal_entity_name),
+            "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
         }
 
 class DIVISION(Request):
@@ -339,15 +327,17 @@ class DIVISION(Request):
     def to_inner_structure(self):
         return {
             "division_id": to_structure_SignedIntegerType_8(self.division_id),
-            "division_name": to_structure_CustomTextType_50(division_name),
+            "division_name": to_structure_CustomTextType_50(self.division_name),
         }
 
 
 class UNIT(object):
     country_id = None
 
-    def __init__(self, unit_id, geography_id, unit_code, unit_name, industry_id, 
-        industry_name, unit_address, unit_location, postal_code, domain_ids):
+    def __init__(
+        self, unit_id, geography_id, unit_code, unit_name, industry_id,
+        industry_name, unit_address, unit_location, postal_code, domain_ids
+    ):
         self.unit_id = unit_id
         self.geography_id = geography_id
         self.unit_code = unit_code
@@ -382,8 +372,10 @@ class UNIT(object):
         postal_code = parse_structure_UnsignedIntegerType_32(postal_code)
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
-        return UNIT(unit_id, geography_id, unit_code, unit_name, industry_id, 
-        industry_name, unit_address, unit_location, postal_code, domain_ids)
+        return UNIT(
+            unit_id, geography_id, unit_code, unit_name, industry_id,
+            industry_name, unit_address, unit_location, postal_code, domain_ids
+        )
 
     def to_structure(self):
         return {
@@ -799,7 +791,7 @@ class CountryWiseUnits(object):
 
     def to_structure(self):
         return {
-            to_structure_SignedIntegerType_8(self.country_id) : to_structure_VectorType_RecordType_techno_master_UnitDetails(self.units),
+            to_structure_SignedIntegerType_8(self.country_id) : to_structure_VectorType_RecordType_technomasters_UnitDetails(self.units),
         }
 
 class UnitDetails(object):
@@ -1084,12 +1076,12 @@ class GetClientProfileSuccess(Response):
 
 
 def _init_Response_class_map():
-    classes = [GetClientGroupsSuccess, SaveClientGroupSuccess, GroupNameAlreadyExists, 
-    UpdateClientGroupSuccess, ChangeClientGroupStatusSuccess, InvalidClientId, 
-    GetClientsSuccess, SaveClientSuccess, BusinessGroupNameAlreadyExists, 
-    LegalEntityNameAlreadyExists, DivisionNameAlreadyExists, UnitNameAlreadyExists, 
-    UnitCodeAlreadyExists, LogoSizeLimitExceeds, UpdateClientSuccess, 
-    ChangeClientStatusSuccess, ReactivateUnitSuccess, GetClientProfileSuccess, 
+    classes = [GetClientGroupsSuccess, SaveClientGroupSuccess, GroupNameAlreadyExists,
+    UpdateClientGroupSuccess, ChangeClientGroupStatusSuccess, InvalidClientId,
+    GetClientsSuccess, SaveClientSuccess, BusinessGroupNameAlreadyExists,
+    LegalEntityNameAlreadyExists, DivisionNameAlreadyExists, UnitNameAlreadyExists,
+    UnitCodeAlreadyExists, LogoSizeLimitExceeds, UpdateClientSuccess,
+    ChangeClientStatusSuccess, ReactivateUnitSuccess, GetClientProfileSuccess,
     InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId, InvalidUnitId]
     class_map = {}
     for c in classes:
