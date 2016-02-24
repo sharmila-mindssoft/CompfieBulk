@@ -190,7 +190,7 @@ def to_structure_VectorType_UnignedIntegerType_32(data):
 
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Unit(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_CustomTextType_50(key)
         value = to_structure_VectorType_RecordType_core_Unit(value)
@@ -493,7 +493,7 @@ def to_structure_RecordType_core_EscalationsDrillDown(data):
 
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ApplicabilityCompliance(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_CustomTextType_50(key)
         value = to_structure_VectorType_RecordType_clientreport_ApplicabilityCompliance(value)
@@ -535,7 +535,7 @@ def to_structure_VectorType_RecordType_core_ServiceProviderDetails(data):
 
 def to_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_RecordType_core_Statutory(value)
@@ -1249,7 +1249,7 @@ def to_structure_RecordType_clientadminsettings_Response_UpdateSettingsSuccess(d
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyLevel(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_core_GeographyLevel(value)
@@ -1415,7 +1415,7 @@ def to_structure_RecordType_knowledgemaster_Response_GetStatutoriesSuccess(data)
 
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_CustomTextType_50(key)
         value = to_structure_VectorType_RecordType_dashboard_Level1Compliance(value)
@@ -1499,7 +1499,7 @@ def to_structure_RecordType_technomasters_Response_ChangeClientStatusSuccess(dat
 
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clientreport_ActivityCompliance(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_CustomTextType_50(key)
         value = to_structure_VectorType_RecordType_clientreport_ActivityCompliance(value)
@@ -1899,7 +1899,7 @@ def to_structure_RecordType_admin_Request_GetUserGroups(data):
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory(value)
@@ -2708,7 +2708,7 @@ def to_structure_maptype_signedIntegerType_8_VectorType_RecordType_core_Complian
     data = parse_dictionary(data)
     dict = {}
     for key, value in data.items() :
-        key  = to_structure_SignedIntegerType_8(key)
+        key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_core_ComplianceApplicability(value)
         dict[key] = value
     return dict
@@ -2862,7 +2862,7 @@ def to_structure_RecordType_knowledgemaster_Request_GetStatutories(data):
 
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_CustomTextType_50(key)
         value = to_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES(value)
@@ -3264,7 +3264,7 @@ def to_structure_RecordType_clienttransactions_Response_UpdateStatutorySettingsS
 
 def to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Form(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_SignedIntegerType_8(key)
         value = to_structure_VectorType_RecordType_core_Form(value)
@@ -3543,7 +3543,7 @@ def to_structure_RecordType_dashboard_TrendCompliance(data):
 
 def to_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_CustomTextType_100(key)
         value = to_structure_VectorType_RecordType_dashboard_TrendCompliance(value)
@@ -3848,7 +3848,7 @@ def to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500(data):
 
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
     data = parse_dictionary(data)
-    dict = []
+    dict = {}
     for key, value in data.items():
         key = to_structure_CustomTextType_50(key)
         value = to_structure_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(value)
