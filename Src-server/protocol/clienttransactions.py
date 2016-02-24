@@ -267,24 +267,28 @@ class UpdateStatutoryCompliance(object):
         }
 
 class UpdateStatutorySettings(Request):
-    def __init__(self, unit_name, unit_id, statutories):
+    def __init__(self, password, unit_name, unit_id, statutories):
+        self.password = password
         self.unit_name = unit_name
         self.unit_id = unit_id
         self.statutories = statutories
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_name", "unit_id", "statutories"])
+        data = parse_dictionary(data, ["password", "unit_name", "unit_id", "statutories"])
+        password = data.get("password")
+        password = parse_structure_CustomTextType_50(password)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_250(unit_name)
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         statutories = data.get("statutories")
         statutories = parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance(statutories)
-        return UpdateStatutorySettings(unit_name, unit_id, statutories)
+        return UpdateStatutorySettings(password, unit_name, unit_id, statutories)
 
     def to_inner_structure(self):
         return {
+            "password": to_structure_VectorType_CustomTextType_50(self.password),
             "unit_name": to_structure_CustomTextType_250(self.unit_name),
             "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
             "statutories": to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance(self.statutories)

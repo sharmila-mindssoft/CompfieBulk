@@ -1,4 +1,4 @@
-from protocol import (clienttransactions, login, core)
+from protocol import (clienttransactions, clientmasters, login, core)
 
 __all__ = [
     "process_client_transaction_requests"
@@ -65,7 +65,11 @@ def process_get_statutory_settings(db, session_user, client_id):
     return db.get_statutory_settings(session_user, client_id)
 
 def process_update_statutory_settings(db, request, session_user, client_id):
-    return db.update_statutory_settings(request, session_user, client_id)
+    password = request.password
+    if db.verify_password(password) :
+        return db.update_statutory_settings(request, session_user, client_id)
+    else :
+        return clientmasters.InvalidPassword()
 
 def process_get_assign_compliance_form_data(db, session_user, client_id):
     countries = db.get_countries_for_user(session_user, client_id)

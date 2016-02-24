@@ -185,7 +185,7 @@ class ClientDatabase(Database):
             else:
                 return None
 
-    def verify_password(self, password, user_id, client_id):
+    def verify_password(self, password, user_id, client_id=None):
         columns = "count(*)"
         encrypted_password = self.encrypt(password)
         condition = "1"
