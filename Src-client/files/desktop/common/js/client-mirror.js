@@ -582,6 +582,7 @@ function initClientMirror() {
     function updateStatutorySettings(unitName, unitId, statutories, callback) {
         var request = [
             "UpdateStatutorySettings", {
+                "password": password,
                 "unit_name": unitName,
                 "unit_id": unitId,
                 "statutories": statutories
@@ -621,9 +622,10 @@ function initClientMirror() {
         return statutoryDate;
     }
 
-    function assignCompliances(complianceId, statutoryDateList, dueDate, validityDate, unitIds, callback) {
+    function assignCompliances(complianceId, complianceName, statutoryDateList, dueDate, validityDate, unitIds, callback) {
         return {
             "compliance_id": complianceId,
+            "compliance_name": complianceName,
             "statutory_dates": statutoryDateList,
             "due_date": dueDate,
             "validity_date": validityDate,
@@ -631,13 +633,21 @@ function initClientMirror() {
         }
     }
 
-    function saveAssignedComplianceFormData(countryId, assignee, concurrence, approval, compliances, callback) {
+    function saveAssignedComplianceFormData(
+        countryId, assignee, assigneeName,
+        concurrence, concurrenceName,
+        approval, approvalName,
+        compliances, callback
+    ) {
         var request = [
             "SaveAssignedCompliance", {
                 "country_id": countryId,
                 "assignee": assignee,
+                "assignee_name": assigneeName,
                 "concurrence_person": concurrence,
+                "concurrence_person_name": concurrenceName,
                 "approval_person": approval,
+                "approval_person_name": approvalName,
                 "compliances": compliances
             }
         ];
@@ -1198,9 +1208,11 @@ function initClientMirror() {
                 "business_group_id": business_group_id,
                 "legal_entity_id": legal_entity_id,
                 "division_id": division_id,
-                "unit_id": unit_id
+                "unit_id": unit_id,
+                "user_id" : user_id
             }
         ];
+        console.log(request);
         callerName = "client_dashboard";
         clientApiRequest(callerName, request, callback);
 
@@ -1364,6 +1376,9 @@ function initClientMirror() {
 
         getClientDetailsReportFilters: getClientDetailsReportFilters,
         getClientDetailsReportData: getClientDetailsReportData,
+
+        getStatutoryNotificationsListFilters: getStatutoryNotificationsListFilters,
+        getStatutoryNotificationsListReport: getStatutoryNotificationsListReport,
 
         getAssigneewiseComplianesFilters: getAssigneewiseComplianesFilters,
         getAssigneewiseComplianes: getAssigneewiseComplianes,

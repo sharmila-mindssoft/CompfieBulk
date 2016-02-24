@@ -3754,3 +3754,23 @@ def parse_structure_VectorType_RecordType_technomasters_UnitDetails(data):
 def parse_structure_RecordType_technomasters_UnitDetails(data):
     from protocol import technomasters
     return technomasters.UnitDetails.parse_structure(data)
+
+def parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
+    data = parse_list(data)
+    d = {}
+    for key, value in data:
+        key = parse_structure_CustomTextType_50(key)
+        value = parse_structure_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(value)
+        d[key] = value
+    return d
+
+def parse_structure_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_dashboard_AssigneeWiseLevel1Compliance(item))
+    return lst
+
+def parse_structure_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
+    from protocol import dashboard
+    return dashboard.AssigneeWiseLevel1Compliance.parse_structure(data)

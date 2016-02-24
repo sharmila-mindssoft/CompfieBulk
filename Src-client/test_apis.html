@@ -414,8 +414,8 @@
 			function getStatutoriesByUnit(){
 				unit_id = 1
 				domain_id = 1
-				level_1_statutory_name = null //"Gratuity Act, 1972"
-				compliance_frequency =  null//"Periodical"
+				level_1_statutory_name = "Gratuity Act, 1972"
+				compliance_frequency =  "Periodical"
 				client_mirror.getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_name, 
 					compliance_frequency, callback);
 			}
@@ -515,12 +515,12 @@
 			}
 			function savePastRecords(){
 				unit_id = 1;
-				compliance_id = 21;
-				due_date = "25-Aug-2014";
-				completion_date = "20-Aug-2014";
+				compliance_id = 2;
+				due_date = "01-Jan-2016";
+				completion_date = "31-Dec-2015";
 				documents = file_list;
-				validity_date = "25-Aug-2015";
-				completed_by = 3;
+				validity_date = "1-Jun-2016";
+				completed_by = 1;
 				compliance_list = [];
 				compliance = client_mirror.getPastRecordsComplianceDict(unit_id, compliance_id, due_date, completion_date,documents, validity_date, completed_by);
 				compliance_list.push(compliance);
@@ -568,11 +568,11 @@
 			}
 			function getAssigneewiseComplianes(){
 				country_id = 1
-				business_group_id = null
-				legal_entity_id = null
-				division_id = null
-				unit_id = null
-				user_id = null
+				business_group_id = 1
+				legal_entity_id = 1
+				division_id = 1
+				unit_id = 1
+				user_id = 1
 				client_mirror.getAssigneewiseComplianes(
 					country_id, business_group_id, legal_entity_id, division_id, 
 					unit_id, user_id, callback

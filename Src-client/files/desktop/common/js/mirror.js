@@ -600,10 +600,11 @@ function initMirror() {
     }
 
     function UpdateStatutoryMappingData(
-        industryIds, statutoryNatureId,
+        domainId, industryIds, statutoryNatureId,
         statutoryIds, compliances, geographyIds, mappingId
     ) {
         var mappingData = {};
+        mappingData["domain_id"] = domainId;
         mappingData["industry_ids"] = industryIds;
         mappingData["statutory_nature_id"] = statutoryNatureId;
         mappingData["statutory_ids"] = statutoryIds;

@@ -51,9 +51,9 @@ CREATE TABLE `tbl_compliance_duration_type` (
 DROP TABLE IF EXISTS `tbl_compliances`;
 CREATE TABLE `tbl_compliances` (
   `compliance_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
   `frequency_id` int(11) NOT NULL,
   `repeat_type_id` int(11) NOT NULL,
-  `domain_id` int(11) NOT NULL,
   `duration_type_id` int(11) NOT NULL,
   `statutory_mapping` varchar(500) NOT NULL,
   `statutory_provision` varchar(250) NOT NULL,
@@ -270,7 +270,7 @@ CREATE TABLE `tbl_client_compliances` (
   `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_by` int(11) NOT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`compliance_id`)
+  PRIMARY KEY (`client_statutory_id`, `compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_assigned_compliances`;
 CREATE TABLE `tbl_assigned_compliances` (
@@ -463,10 +463,10 @@ INSERT INTO tbl_form_type VALUES(2, "Master");
 INSERT INTO tbl_form_type VALUES(3, "Transaction");
 INSERT INTO tbl_form_type VALUES(4, "Report");
 INSERT INTO tbl_form_type VALUES(5, "Settings");
-INSERT INTO tbl_forms VALUES(1, 1, 'Dashboard', '/home', 1, null, 1);
-INSERT INTO tbl_forms VALUES(2, 2, 'Service Provider', '/service-provider', 2, null, 1);
-INSERT INTO tbl_forms VALUES(3, 2, 'User Privilege', '/client-user-privilege', 3, null, 1);
-INSERT INTO tbl_forms VALUES(4, 2, 'User', '/client-user-master', 4, null, 1);
+INSERT INTO tbl_forms VALUES(1, 1, 'Dashboard', '/home', 1, null, 0);
+INSERT INTO tbl_forms VALUES(2, 2, 'Service Provider', '/service-provider', 2, null, 0);
+INSERT INTO tbl_forms VALUES(3, 2, 'User Privilege', '/client-user-privilege', 3, null, 0);
+INSERT INTO tbl_forms VALUES(4, 2, 'User', '/client-user-master', 4, null, 0);
 INSERT INTO tbl_forms VALUES(5, 2, 'Unit Closure', '/unit-closure', 5, null, 1);
 INSERT INTO tbl_forms VALUES(6, 3, 'Statutory Settings', '/statutory-settings', 6, null, 1);
 INSERT INTO tbl_forms VALUES(7, 3, 'Assign Compliance', '/assign-compliance', 7, null, 1);

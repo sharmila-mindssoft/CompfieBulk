@@ -60,6 +60,18 @@ def get_forms(db) :
                 form_type=row[4]
             )
             techno_forms.append(form)
+        else:
+            form = core.Form(
+                form_id=row[0],
+                form_name=row[5],
+                form_url=row[6],
+                parent_menu=parent_menu,
+                form_type=row[4]
+            )
+            knowledge_forms.append(form)
+            if form.form_name == "Audit Trail":
+                techno_forms.append(form)
+
     result = {}
     result[2] = process_user_menus(knowledge_forms)
     result[3] = process_user_menus(techno_forms)
