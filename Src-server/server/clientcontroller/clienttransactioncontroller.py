@@ -66,7 +66,7 @@ def process_get_statutory_settings(db, session_user, client_id):
 
 def process_update_statutory_settings(db, request, session_user, client_id):
     password = request.password
-    if db.verify_password(password) :
+    if db.verify_password(password, session_user) :
         return db.update_statutory_settings(request, session_user, client_id)
     else :
         return clientmasters.InvalidPassword()

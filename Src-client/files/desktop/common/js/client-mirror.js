@@ -579,7 +579,7 @@ function initClientMirror() {
         };
     }
 
-    function updateStatutorySettings(unitName, unitId, statutories, callback) {
+    function updateStatutorySettings(password, unitName, unitId, statutories, callback) {
         var request = [
             "UpdateStatutorySettings", {
                 "password": password,
