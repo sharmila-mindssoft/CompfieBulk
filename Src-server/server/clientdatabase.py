@@ -1821,7 +1821,7 @@ class ClientDatabase(Database):
                 if row[4] is not None:
                     for document in row[4].split(","):
                         dl_url = "%s/%s" % (CLIENT_DOCS_DOWNLOAD_URL, document)
-                        download_urls.append(dl_url)    
+                        download_urls.append(dl_url)
                         file_name.append(document.split("-")[0])
                 concurred_by_id = None if row[8] is None else int(row[8])
                 compliance_history_id = row[0]
@@ -1843,7 +1843,7 @@ class ClientDatabase(Database):
                 description = row[12]
                 concurrence_status = row[16]
                 statutory_dates = json.loads(row[17])
-                validity_date = None if row[18] is None else self.datetime_to_string(row[18]) 
+                validity_date = None if row[18] is None else self.datetime_to_string(row[18])
                 date_list = []
                 for date in statutory_dates :
                     s_date = core.StatutoryDate(
@@ -1871,8 +1871,8 @@ class ClientDatabase(Database):
                     action = "Approve"
                 compliances.append(clienttransactions.APPROVALCOMPLIANCE(
                         compliance_history_id, compliance_name, description, domain_name,
-                        start_date, due_date, delayed_by, frequency, documents, 
-                        file_names, completion_date, completed_on, next_due_date, 
+                        start_date, due_date, delayed_by, frequency, documents,
+                        file_names, completion_date, completed_on, next_due_date,
                         concurred_by, remarks, action, date_list, validity_date
                     )
                 )
@@ -3609,7 +3609,7 @@ class ClientDatabase(Database):
 #
 #   Compliance Approval
 #
-    def approve_compliance(self, compliance_history_id, remarks, next_due_date, 
+    def approve_compliance(self, compliance_history_id, remarks, next_due_date,
         validity_date, client_id):
         columns = ["approve_status", "approved_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
@@ -3630,7 +3630,7 @@ class ClientDatabase(Database):
             values.append(self.string_to_datetime(validity_date))
         self.update(self.tblAssignedCompliances, columns, values, condition, client_id)
 
-    def reject_compliance_approval(self, compliance_history_id, remarks,  
+    def reject_compliance_approval(self, compliance_history_id, remarks,
         next_due_date, client_id):
         columns = ["approve_status", "remarks", "completion_date", "completed_on", "concurred_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
@@ -3640,7 +3640,7 @@ class ClientDatabase(Database):
             self, compliance_history_id, remarks, "Reject Approval"
         )
 
-    def concur_compliance(self, compliance_history_id, remarks, 
+    def concur_compliance(self, compliance_history_id, remarks,
         next_due_date, validity_date, client_id):
         columns = ["concurrence_status", "concurred_on", "remarks"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
@@ -3650,7 +3650,7 @@ class ClientDatabase(Database):
             values.append(self.string_to_datetime(validity_date))
         self.update(self.tblComplianceHistory, columns, values, condition, client_id)
 
-    def reject_compliance_concurrence(self, compliance_history_id, remarks,  
+    def reject_compliance_concurrence(self, compliance_history_id, remarks,
         next_due_date, client_id):
         columns = ["concurrence_status", "remarks", "completion_date", "completed_on"]
         condition = "compliance_history_id = '%d'" % compliance_history_id
@@ -6439,7 +6439,7 @@ class ClientDatabase(Database):
             compliance_det = unit_wise.get(unit_id)
             if compliance_det is None :
                 compliance_det = clientreport.ApplicabilityCompliance(
-                    r["unit_name"], r["unit_address"],
+                    unit_id, r["unit_name"], r["unit_address"],
                     [compliance]
                 )
             else :

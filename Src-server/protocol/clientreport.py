@@ -1916,24 +1916,28 @@ class ActivityLog(object):
 #
 
 class ApplicabilityCompliance(object):
-    def __init__(self, unit_name, address, compliances):
+    def __init__(self, unit_id, unit_name, address, compliances):
+        self.unit_id = unit_id
         self.unit_name = unit_name
         self.address = address
         self.compliances = compliances
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_name", "address", "compliances"])
+        data = parse_dictionary(data, ["unit_id", "unit_name", "address", "compliances"])
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_100(unit_name)
         address = data.get("address")
         address = parse_structure_CustomTextType_250(address)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_clientreport_ComplianceList(compliances)
-        return ApplicabilityCompliance(unit_name, address, compliances)
+        return ApplicabilityCompliance(unit_id, unit_name, address, compliances)
 
     def to_structure(self):
         return {
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
             "compliances": to_structure_VectorType_RecordType_clientreport_ComplianceList(self.compliances),
