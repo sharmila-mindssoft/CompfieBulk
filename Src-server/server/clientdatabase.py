@@ -445,7 +445,7 @@ class ClientDatabase(Database):
             ))
         return results
 
-    def save_activity(self, user_id, form_id, action, client_id):
+    def save_activity(self, user_id, form_id, action, client_id=None):
         created_on = self.get_date_time()
         activityId = self.get_new_id("activity_log_id", "tbl_activity_log", client_id)
         query = "INSERT INTO tbl_activity_log \
@@ -1289,6 +1289,7 @@ class ClientDatabase(Database):
 
     def update_statutory_settings(self, data, session_user, client_id):
         unit_id = data.unit_id
+        unit_name = data.unit_name
         statutories = data.statutories
         updated_on = self.get_date_time()
         for s in statutories :
@@ -1322,6 +1323,9 @@ class ClientDatabase(Database):
                 )
             self.execute(query)
 
+        action = "Statutory settings updated for unit - %s " % (unit_name)
+        self.save_activity(session_user, 6, action)
+
         return clienttransactions.UpdateStatutorySettingsSuccess()
 
     def get_level_1_statutory(self, client_id):
@@ -1343,17 +1347,21 @@ class ClientDatabase(Database):
             results.append(statutory_obj)
         return results
 
-    def get_level_1_statutories_for_user_with_domain(self, session_user, client_id, domain_id = None):
+    def get_level_1_statutories_for_user_with_domain(self, session_user, client_id, domain_id=None):
         domain_ids = domain_id
-        if domain_ids == None:
+        if domain_ids is None :
             columns = "group_concat(domain_id)"
             domain_rows = None
             if session_user != 0:
-                domain_rows = self.get_data(self.tblUserDomains, columns,
-                "user_id='%d'" % session_user)
+                domain_rows = self.get_data(
+                    self.tblUserDomains, columns,
+                    "user_id='%d'" % session_user
+                )
             else:
-                domain_rows = self.get_data(self.tblDomains, columns,
-                "1")
+                domain_rows = self.get_data(
+                    self.tblDomains, columns,
+                    "1"
+                )
             domain_ids = domain_rows[0][0]
         level_1_statutory = {}
         for domain_id in domain_ids.split(","):
@@ -1369,9 +1377,9 @@ class ClientDatabase(Database):
                     level_1_statutory[domain_id].append(statutories[0].strip())
         return level_1_statutory
 
-    def get_level_1_statutories_for_user(self, session_user, client_id, domain_id = None):
+    def get_level_1_statutories_for_user(self, session_user, client_id, domain_id=None):
         domain_ids = domain_id
-        if domain_ids == None:
+        if domain_ids is None :
             columns = "group_concat(domain_id)"
             domain_rows = None
             if session_user != 0:
@@ -2138,8 +2146,10 @@ class ClientDatabase(Database):
             concurrence = ""
         approval = int(request.approval_person)
         compliances = request.compliances
+        compliance_ids = []
         for c in compliances:
             compliance_id = int(c.compliance_id)
+            compliance_ids.append(compliance_id)
             statutory_dates = c.statutory_dates
             if statutory_dates is not None :
                 date_list = []
@@ -2172,12 +2182,13 @@ class ClientDatabase(Database):
                     )
                 self.execute(query)
             self.update_user_units(assignee, unit_ids, client_id)
-
+        action = "Compliances %s assigned to assignee %s" % (str(compliance_ids), assignee)
+        self.save_activity(session_user, 7, action)
         return clienttransactions.SaveAssignedComplianceSuccess()
 
     def update_user_units(self, user_id, unit_ids, client_id):
         user_units = self.get_user_unit_ids(user_id, client_id)
-        user_units = [ int(x) for x in user_units.split(',')]
+        user_units = [int(x) for x in user_units.split(',')]
         new_units = []
         for u_id in unit_ids :
             if u_id not in user_units :
@@ -2190,6 +2201,8 @@ class ClientDatabase(Database):
                 unit_value_tuple = (int(user_id), int(unit_id))
                 unit_values_list.append(unit_value_tuple)
             result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
+            action = "New units %s added for user %s while assign compliance " % (new_units, user_id)
+            self.save_activity(user_id, 7, action)
 
 #
 #   Chart Api
@@ -4653,9 +4666,11 @@ class ClientDatabase(Database):
         created_on = self.get_date_time()
         reassigned_date = created_on.strftime("%Y-%m-%d")
         created_by = int(session_user)
+        compliance_ids = []
         for c in compliances :
             unit_id = c.unit_id
             compliance_id = c.compliance_id
+            compliance_ids.append(compliance_id)
             due_date = c.due_date
             history_id = c.compliance_history_id
 
@@ -4687,6 +4702,8 @@ class ClientDatabase(Database):
                     )
                 self.execute(update_history)
 
+        action = "Compliances reassigned %s to assignee %s" % (str(compliance_ids), assignee)
+        self.save_activity(session_user, 8, action)
         return clienttransactions.ReassignComplianceSuccess()
 
 #
@@ -6091,9 +6108,6 @@ class ClientDatabase(Database):
             result = rows[0][0]
         return result
 
-
-
-
     def get_client_details_report(self, country_id,  business_group_id,
             legal_entity_id, division_id, unit_id, domain_ids):
 
@@ -6470,4 +6484,3 @@ class ClientDatabase(Database):
         return clientreport.GetComplianceTaskApplicabilityStatusReportSuccess(
             applicable_list, not_applicable_list, not_opted_list
         )
-
