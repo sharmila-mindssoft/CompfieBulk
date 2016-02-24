@@ -18,6 +18,9 @@ $("#btnUserGroupAdd").click(function(){
 	clearMessage();
 	$("#groupName").val('');
 	$("#groupId").val('');
+	$("#categoryName").val('');
+	$('#categoryName option:gt(0)').remove();
+	$('.checkbox-full-check').prop('checked', false);
 	loadFormCategories();
 });
 function loadFormCategories(){
@@ -92,15 +95,18 @@ function loadUserGroupdata(userGroupList){
 }
 
 $("#btnUserGroupShow").click(function(){
-	var groupNameVal = $("#groupName").val();
-	var categoryNameVal = $("#categoryName").val();
+	var groupNameVal = $("#groupName").val().trim();
+	var categoryNameVal = $("#categoryName").val().trim();
 	if(groupNameVal == ''){
 		displayMessage('Group Name Required');
+	}
+	else if(categoryNameVal == ''){
+		displayMessage('Select Category Name');
 	}
 	else{
 		clearMessage();
 		$("#formList").show();
-		function onSuccess( data){
+		function onSuccess(data){
 			loadFormList(data['forms'], categoryNameVal);			
 		}
 		function onFailure(error){
@@ -145,7 +151,7 @@ function loadFormList(formList,categoryNameVal){
 	});
 }
 function loadFormListUpdate(formList, userGroupList, catgid, userGroupId){
-	$(".tableFormList").find("tr:gt(0)").remove();
+	$(".tableFormList").find("tr").remove();
 	$('.checkedFormId').prop("checked", false);
 
 	var i_incre;
@@ -180,11 +186,17 @@ function loadFormListUpdate(formList, userGroupList, catgid, userGroupId){
 }
 $("#btnUserGroupSubmit").click(function(){
 	var groupIdVal = $("#groupId").val();
-	var groupNameVal = $("#groupName").val();
-	var categoryNameVal = $("#categoryName").val();
+	var groupNameVal = $("#groupName").val().trim();
+	var categoryNameVal = $("#categoryName").val().trim();
 	var chkArray = [];
 	var chkArrayInt = [];
-	if(groupIdVal == ''){
+	if(groupNameVal == ''){
+		displayMessage("Group Name Required");
+	}
+	else if(categoryNameVal == ''){
+		displayMessage("Select Category Name");
+	}
+	else if(groupIdVal == ''){
 		$(".checkedFormId:checked").each(function() {
 			chkArray.push($(this).val());
 		});
@@ -222,7 +234,7 @@ $("#btnUserGroupSubmit").click(function(){
 		}
 		
 	}
-	if(groupIdVal != ''){
+	else if(groupIdVal != ''){
 		$(".checkedFormId:checked").each(function() {
 			chkArray.push($(this).val());
 		});	

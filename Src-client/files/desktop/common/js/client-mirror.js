@@ -1365,6 +1365,9 @@ function initClientMirror() {
         getClientDetailsReportFilters: getClientDetailsReportFilters,
         getClientDetailsReportData: getClientDetailsReportData,
 
+        getStatutoryNotificationsListFilters: getStatutoryNotificationsListFilters,
+        getStatutoryNotificationsListReport: getStatutoryNotificationsListReport,
+
         getAssigneewiseComplianesFilters: getAssigneewiseComplianesFilters,
         getAssigneewiseComplianes: getAssigneewiseComplianes,
         getAssigneewiseCompliancesDrilldown: getAssigneewiseCompliancesDrilldown,
