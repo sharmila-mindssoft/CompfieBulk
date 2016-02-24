@@ -77,7 +77,6 @@ function displayEdit (userId) {
 function changeStatus (userId,isActive) {
 	function onSuccess(response){
 		getUsers();
-		displayMessage("Status Changed Successfully");
 	}
 	function onFailure(error){
 		displayMessage(error);
