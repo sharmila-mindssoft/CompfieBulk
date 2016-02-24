@@ -1585,7 +1585,6 @@ class ClientDatabase(Database):
                                 level_1_statutory_name, compliances
                             )
                         )
-
         return statutory_wise_compliances
 
 
@@ -5783,18 +5782,32 @@ class ClientDatabase(Database):
 #
     def get_assigneewise_compliances_list(
         self, country_id, business_group_id, legal_entity_id, division_id, unit_id,
-        session_user, client_id
+        session_user, client_id, assignee_id
     ):
-        user_unit_ids = self.get_user_unit_ids(session_user, client_id)
-        seating_unit_column = "seating_unit_id"
-        seating_unit_condition = "user_id = '%d'" % session_user
-        seating_unit_rows = self.get_data(
-            self.tblUsers, seating_unit_column, seating_unit_condition
-        )
-        unit_ids = "%s,%s" % (user_unit_ids, seating_unit_rows[0][0])
+        unit_ids = None
+        if unit_id is not None:
+            unit_ids = unit_id
+        else:
+            user_unit_ids = self.get_user_unit_ids(session_user, client_id)
+            seating_unit_column = "seating_unit_id"
+            seating_unit_condition = "user_id = '%d'" % session_user
+            seating_unit_rows = self.get_data(
+                self.tblUsers, seating_unit_column, seating_unit_condition
+            )
+            unit_ids = "%s,%s" % (user_unit_ids, seating_unit_rows[0][0])
 
         unit_columns = "unit_id, unit_code, unit_name, address"
-        unit_condition = " unit_id in (%s) " % unit_ids
+        unit_condition = " unit_id in (%s) AND country_id = %d" % (
+            unit_ids, country_id
+        )
+
+        if business_group_id is not None:
+            unit_condition += " AND business_group_id = '%d' " % (business_group_id)
+        if legal_entity_id is not None:
+            unit_condition += " AND legal_entity_id = '%d' " % (legal_entity_id)
+        if division_id is not None:
+            unit_condition += " AND division_id = '%d' " % (division_id)
+
         unit_list = self.get_data(
             self.tblUnits, unit_columns, unit_condition
         )
@@ -5805,7 +5818,12 @@ class ClientDatabase(Database):
                 unit[1], unit[2]
             )
             address = unit[3]
-            user_ids = self.get_unit_user_ids(unit_id)
+            user_ids = None
+            if assignee_id is not None:
+                user_ids = str(assignee_id)
+            else:
+                user_ids = self.get_unit_user_ids(unit_id)
+
             assignee_wise_compliances_count = []
             for user_id in user_ids.split(","):
                 assigned_compliance_ids, reassigned_compliance_ids = self.get_user_assigned_reassigned_ids(
