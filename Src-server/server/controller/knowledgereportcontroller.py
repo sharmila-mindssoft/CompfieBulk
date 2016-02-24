@@ -41,12 +41,6 @@ def process_get_statutory_mapping_report_data(db, request_frame, user_id):
     nature_id = request_frame.statutory_nature_id
     geography_id = request_frame.geography_id
     level_1_id = request_frame.level_1_statutory_id
-    if industry_id is None :
-        industry_id = '%'
-    if nature_id is None :
-        nature_id = '%'
-    if geography_id is None :
-        geography_id = '%'
 
     report_data = db.get_statutory_mapping_report(
         country_id, domain_id, industry_id,
