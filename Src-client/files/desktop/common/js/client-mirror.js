@@ -582,7 +582,7 @@ function initClientMirror() {
     function updateStatutorySettings(unitName, unitId, statutories, callback) {
         var request = [
             "UpdateStatutorySettings", {
-                "unnit_name": unitName,
+                "unit_name": unitName,
                 "unit_id": unitId,
                 "statutories": statutories
             }
@@ -621,9 +621,10 @@ function initClientMirror() {
         return statutoryDate;
     }
 
-    function assignCompliances(complianceId, statutoryDateList, dueDate, validityDate, unitIds, callback) {
+    function assignCompliances(complianceId, complianceName, statutoryDateList, dueDate, validityDate, unitIds, callback) {
         return {
             "compliance_id": complianceId,
+            "compliance_name": complianceName,
             "statutory_dates": statutoryDateList,
             "due_date": dueDate,
             "validity_date": validityDate,
@@ -631,13 +632,21 @@ function initClientMirror() {
         }
     }
 
-    function saveAssignedComplianceFormData(countryId, assignee, concurrence, approval, compliances, callback) {
+    function saveAssignedComplianceFormData(
+        countryId, assignee, assigneeName,
+        concurrence, concurrenceName,
+        approval, approvalName,
+        compliances, callback
+    ) {
         var request = [
             "SaveAssignedCompliance", {
                 "country_id": countryId,
                 "assignee": assignee,
+                "assignee_name": assigneeName,
                 "concurrence_person": concurrence,
+                "concurrence_person_name": concurrenceName,
                 "approval_person": approval,
+                "approval_person_name": approvalName,
                 "compliances": compliances
             }
         ];

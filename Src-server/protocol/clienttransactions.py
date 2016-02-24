@@ -276,7 +276,7 @@ class UpdateStatutorySettings(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["unit_name", "unit_id", "statutories"])
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_VectorType_CustomTextType_100(unit_name)
+        unit_name = parse_structure_CustomTextType_250(unit_name)
         unit_id = data.get("unit_id")
         unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         statutories = data.get("statutories")
@@ -285,7 +285,7 @@ class UpdateStatutorySettings(Request):
 
     def to_inner_structure(self):
         return {
-            "unit_name": to_structure_CustomTextType_100(self.unit_name),
+            "unit_name": to_structure_CustomTextType_250(self.unit_name),
             "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
             "statutories": to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance(self.statutories)
         }
@@ -325,34 +325,60 @@ class GetComplianceForUnits(Request):
         }
 
 class SaveAssignedCompliance(Request):
-    def __init__(self, country_id, assignee, concurrence_person, approval_person, compliances):
+    def __init__(
+        self, country_id, assignee, assignee_name,
+        concurrence_person, concurrence_person_name,
+        approval_person, approval_person_name,
+        compliances
+    ):
         self.country_id = country_id
         self.assignee = assignee
+        self.assignee_name = assignee_name
         self.concurrence_person = concurrence_person
+        self.concurrence_person_name = concurrence_person_name
         self.approval_person = approval_person
+        self.approval_person_name = approval_person_name
         self.compliances = compliances
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "assignee", "concurrence_person", "approval_person", "compliances"])
+        data = parse_dictionary(data, [
+            "country_id", "assignee", "assignee_name",
+            "concurrence_person", "concurrence_person_name",
+            "approval_person", "approval_person_name", "compliances"
+        ])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         assignee = data.get("assignee")
         assignee = parse_structure_UnsignedIntegerType_32(assignee)
+        assignee_name = data.get("assignee_name")
+        assignee_name = parse_structure_CustomTextType_100(assignee_name)
         concurrence_person = data.get("concurrence_person")
         concurrence_person = parse_structure_OptionalType_UnsignedIntegerType_32(concurrence_person)
+        concurrence_person_name = data.get("concurrence_person_name")
+        concurrence_person_name = parse_structure_CustomTextType_100(concurrence_person_name)
         approval_person = data.get("approval_person")
         approval_person = parse_structure_UnsignedIntegerType_32(approval_person)
+        approval_person_name = data.get("approval_person_name")
+        approval_person_name = parse_structure_CustomTextType_100(approval_person_name)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(compliances)
-        return SaveAssignedCompliance(country_id, assignee, concurrence_person, approval_person, compliances)
+        return SaveAssignedCompliance(
+            country_id, assignee, assignee_name,
+            concurrence_person, concurrence_person_name,
+            approval_person, approval_person_name,
+            compliances
+        )
 
     def to_inner_structure(self):
         return {
             "country_id": to_structure_SignedIntegerType_8(self.country_id),
             "assignee": to_structure_SignedIntegerType_8(self.assignee),
+            "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
             "concurrence_person": to_structure_OptionalType_SignedIntegerType_8(self.concurrence_person),
+            "concurrence_person_name": to_structure_CustomTextType_100(self.concurrence_person_name),
             "approval_person": to_structure_SignedIntegerType_8(self.approval_person),
+            "approval_person_name": to_structure_CustomTextType_100(self.approval_person_name),
             "compliances": to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(self.compliances),
         }
 
@@ -983,8 +1009,9 @@ class RequestFormat(object):
 #
 
 class ASSINGED_COMPLIANCE(object):
-    def __init__(self, compliance_id, statutory_dates, due_date, validity_date, unit_ids):
+    def __init__(self, compliance_id, compliance_name, statutory_dates, due_date, validity_date, unit_ids):
         self.compliance_id = compliance_id
+        self.compliance_name = compliance_name
         self.statutory_dates = statutory_dates
         self.due_date = due_date
         self.validity_date = validity_date
@@ -992,9 +1019,11 @@ class ASSINGED_COMPLIANCE(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_id", "statutory_dates", "due_date", "validity_date", "unit_ids"])
+        data = parse_dictionary(data, ["compliance_name", "compliance_id", "statutory_dates", "due_date", "validity_date", "unit_ids"])
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
+        compliance_name = data.get("compliance_name")
+        compliance_name = parse_structure_CustomTextType_250(compliance_name)
         statutory_dates = data.get("statutory_dates")
         statutory_dates = parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         due_date = data.get("due_date")
@@ -1003,11 +1032,12 @@ class ASSINGED_COMPLIANCE(object):
         validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         unit_ids = data.get("unit_ids")
         unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
-        return ASSINGED_COMPLIANCE(compliance_id, statutory_dates, due_date, validity_date, unit_ids)
+        return ASSINGED_COMPLIANCE(compliance_id, compliance_name, statutory_dates, due_date, validity_date, unit_ids)
 
     def to_structure(self):
         return {
             "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
+            "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
             "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
             "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
             "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),

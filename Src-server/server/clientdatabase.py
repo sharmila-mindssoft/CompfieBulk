@@ -2146,10 +2146,10 @@ class ClientDatabase(Database):
             concurrence = ""
         approval = int(request.approval_person)
         compliances = request.compliances
-        compliance_ids = []
+        compliance_names = []
         for c in compliances:
             compliance_id = int(c.compliance_id)
-            compliance_ids.append(compliance_id)
+            compliance_names.append(c.compliance_name)
             statutory_dates = c.statutory_dates
             if statutory_dates is not None :
                 date_list = []
@@ -2182,7 +2182,10 @@ class ClientDatabase(Database):
                     )
                 self.execute(query)
             self.update_user_units(assignee, unit_ids, client_id)
-        action = "Compliances %s assigned to assignee %s" % (str(compliance_ids), assignee)
+        action = "Compliances %s assigned to assignee - %s concurrence - %s approval - %s " % (
+            str(compliance_names), request.assignee_name, request.concurrence_person_name,
+            request.approval_person_name
+        )
         self.save_activity(session_user, 7, action)
         return clienttransactions.SaveAssignedComplianceSuccess()
 
