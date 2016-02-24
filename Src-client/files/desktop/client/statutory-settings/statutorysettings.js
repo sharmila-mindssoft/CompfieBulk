@@ -59,13 +59,14 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
   $(".tbl_division_disp").text(dispDivision);
   $(".tbl_unit_disp").text(dispUnit);
   $("#unit").val(unit_id);
+  $("#unitval").val(dispUnit);
 
   $(".tbody-statutorysettings").find("tbody").remove();
   $.each(sList, function(key, value){
-  var tableRow3=$('#head-templates');
-  var clone3=tableRow3.clone();
-  $('.tbl_heading', clone3).html('<div class="heading" style="margin-top:20px;margin-bottom:5px;width:auto;">'+key+'</div>');
-  $('.tbody-statutorysettings').append(clone3);
+    var tableRow3 = $('#head-templates .tbl_heading');
+    var clone3 = tableRow3.clone();
+    $('.heading', clone3).html(key);
+    $('.tbody-statutorysettings').append(clone3);
     for(var statutory in value){
       var actname = value[statutory]["level_1_statutory_name"];
       var complianceslist = value[statutory]["compliances"];
@@ -88,6 +89,7 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
       }
 
       $('.tbody-statutorysettings').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
+      
       if(count==1){
         $('.accordion-content'+count).addClass("default");
       }
@@ -135,8 +137,8 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
 
         if(compliance_opted_status == false){
           $('#statutory'+statutoriesCount).each(function() { 
-          this.checked = false;           
-        });
+            this.checked = false;           
+          });
         }
         statutoriesCount = statutoriesCount + 1;
       }  
@@ -144,22 +146,25 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
       count++;
     }
 
-    $(document).ready(function($) {
-      $('#accordion').find('.accordion-toggle').click(function(){
+   
+  });
+  $(document).ready(function($) {
+      $("#accordion").find(".accordion-toggle").click(function(){
         //Expand or collapse this panel
-        $(this).next().slideToggle('fast');
-        /*$(this).next('tbody').slideToggle('fast');*/
+        //$(this).next().slideToggle('fast');
+        //alert($("#accordion"));
+        $(this).next('tbody').slideToggle('fast');
         //Hide the other panels
         $(".accordion-content").not($(this).next()).slideUp('fast');
       });
     });
-  });
 }
 
 
 $("#submit").click(function() {
 
   var uId = $("#unit").val();
+  var uVal = $("#unitval").val();
   var assignedStatutories = [];
   var statutoriesCount= 1;
   var actCount = 1;
@@ -218,7 +223,7 @@ $("#submit").click(function() {
     function onFailure(error){
       displayMessage(error)
     }
-    client_mirror.updateStatutorySettings(parseInt(uId), assignedStatutories, 
+    client_mirror.updateStatutorySettings(uVal, parseInt(uId), assignedStatutories, 
       function (error, response) {
       if (error == null){
         onSuccess(response);

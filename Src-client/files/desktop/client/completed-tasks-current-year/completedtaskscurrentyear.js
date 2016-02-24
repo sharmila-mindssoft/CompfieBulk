@@ -53,6 +53,12 @@ $(".hidemenu").click(function(){
 });
 
 function load_thirdwizard(){
+
+  var arrowimage = " <img src=\'/images/right_arrow.png\'/> ";
+    $(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.businessgrouplist.active').text() + arrowimage + 
+      $('.legalentitylist.active').text() + arrowimage + $('.divisionlist.active').text() + arrowimage + $('.unitlist.active').text() +
+      arrowimage + $('.domainlist.active').text());
+
   var count=1;
   var statutoriesCount= 1;
   var actCount = 1;

@@ -20,7 +20,11 @@ from distribution.protocol import (
     Request as DistributionRequest,
     CompanyServerDetails
 )
-from server.constants import TEMPLATE_PATHS
+from server.constants import (
+    TEMPLATE_PATHS,
+    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+)
 
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
@@ -232,14 +236,21 @@ def run_server(port):
     io_loop = IOLoop()
 
     def delay_initialize():
-        db = KnowledgeDatabase(
-            "localhost", 3306, "root", "123456",
-            "mirror_knowledge_usha"
-        )
+        # db = KnowledgeDatabase(
+        #     "localhost", 3306, "root", "123456",
+        #     "mirror_knowledge"
+        # )
+
         # db = KnowledgeDatabase(
         #     "198.143.141.73", 3306, "root", "Root!@#123",
         #     "mirror_knowledge"
         # )
+        db = KnowledgeDatabase(
+            KNOWLEDGE_DB_HOST,
+            KNOWLEDGE_DB_PORT,
+            KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
+            KNOWLEDGE_DATABASE_NAME
+        )
         db.connect()
         web_server = WebServer(io_loop)
 

@@ -1,7 +1,7 @@
 {% extends "files/desktop/client/home/container.html" %}
 {% block content %}
 <style type="text/css">
-  /*td, th {
+/*  td, th {
     border : 1px solid red;
   }
 
@@ -96,6 +96,7 @@ tbody {
               </td>
               <td width="10%">
                 <input type="hidden" id="unit" value="" />
+                <input type="hidden" id="unitval" value="" />
                 <button id="submit" class="btn-right" >Submit</button>
               </td>
               <td width="45%">
@@ -109,7 +110,11 @@ tbody {
 </div>
 
 <div id="head-templates">
-  <span class="tbl_heading"> </span>
+<table>
+  <tbody class="tbl_heading" style="margin-top:10px;" > 
+    <tr><td colspan="7"> <span class="heading" style="display:none"></span></td></tr>
+  </tbody>
+</table>
 </div>
 
 

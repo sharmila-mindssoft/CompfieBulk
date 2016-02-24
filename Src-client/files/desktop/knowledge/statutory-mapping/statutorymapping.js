@@ -174,7 +174,6 @@ $(".tbody-geography-level").find("div").remove();
 function changeStatus (statutorymappingId,isActive) {
     function onSuccess(data){
       getStatutoryMappings();
-      displayMessage("Status Changed Successfully");
     }
     function onFailure(error){
     }

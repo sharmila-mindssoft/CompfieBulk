@@ -152,7 +152,6 @@ function displayEdit (domainId,domainName) {
 function changeStatus (domainId,isActive) {
   function onSuccess(response){
     getDomains ();
-    displayMessage("Status Changed Successfully");
   }
   function onFailure(error){
   }

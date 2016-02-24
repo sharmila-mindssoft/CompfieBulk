@@ -758,7 +758,20 @@ function updateDrillDown(data) {
     $(".graph-selections-bottom").hide();
     $(".drilldown-container").show();
     $(".btn-back").show();
+    showDrillDownRecord(data);
 }
+
+function showDrillDownRecord(data){
+//    var tableAccordian =
+
+}
+
+$(document).ready(function($) {
+    $('#accordion').find('.accordion-toggle').click(function(){
+      $(this).next().slideToggle('fast');
+      $(".accordion-content").not($(this).next()).slideUp('fast');
+    });
+});
 
 function prepareEscalationChartdata(source_data) {
     var chartTitle = getFilterTypeTitle();
