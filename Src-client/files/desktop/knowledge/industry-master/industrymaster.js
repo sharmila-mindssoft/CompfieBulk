@@ -153,7 +153,6 @@ function displayEdit (industryId,industryName) {
 function changeStatus (industryId,isActive) {
   function onSuccess(response){
     getIndustries ();
-    displayMessage("Status Changed Successfully");
   }
   function onFailure(error){
   }

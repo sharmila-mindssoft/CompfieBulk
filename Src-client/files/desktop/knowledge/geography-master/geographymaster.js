@@ -101,7 +101,6 @@ function loadGeographiesList(geographiesList) {
 function changeStatus (geographyId,isActive) {
   function onSuccess(response){
     GetGeographies();
-    displayMessage("Status Changed Successfully");
   }
   function onFailure(error){
   }
