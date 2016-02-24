@@ -579,9 +579,10 @@ function initClientMirror() {
         };
     }
 
-    function updateStatutorySettings(unitId, statutories, callback) {
+    function updateStatutorySettings(unitName, unitId, statutories, callback) {
         var request = [
             "UpdateStatutorySettings", {
+                "unnit_name": unitName,
                 "unit_id": unitId,
                 "statutories": statutories
             }
@@ -1215,7 +1216,7 @@ function initClientMirror() {
             }
         ];
         callerName = "client_dashboard";
-        clientApiRequest(callerName, request, callback);   
+        clientApiRequest(callerName, request, callback);
     }
 
 
@@ -1366,7 +1367,7 @@ function initClientMirror() {
 
         getAssigneewiseComplianesFilters: getAssigneewiseComplianesFilters,
         getAssigneewiseComplianes: getAssigneewiseComplianes,
-        getAssigneewiseCompliancesDrilldown: getAssigneewiseCompliancesDrilldown, 
+        getAssigneewiseCompliancesDrilldown: getAssigneewiseCompliancesDrilldown,
 
         getTaskApplicabilityReportFilters: getTaskApplicabilityReportFilters,
         getTaskApplicabilityReportData: getTaskApplicabilityReportData

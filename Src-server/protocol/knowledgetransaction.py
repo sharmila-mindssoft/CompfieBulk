@@ -3,10 +3,10 @@ from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     parse_structure_VariantType_knowledgetransaction_Request,
     parse_structure_VectorType_RecordType_core_Compliance,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
+    parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Geography,
     parse_structure_VectorType_RecordType_core_ComplianceDurationType,
     parse_structure_EnumType_core_APPROVAL_STATUS,
-    parse_structure_VectorType_SignedIntegerType_8,
+    parse_structure_VectorType_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_UnsignedIntegerType_32,
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
@@ -22,7 +22,8 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_50,
     parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping,
     parse_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping,
-    parse_structure_SignedIntegerType_8
+    parse_structure_UnsignedIntegerType_32,
+    parse_structure_VectorType_RecordType_core_StatutoryApprovalStatus
 
 )
 from protocol.to_structure import (
@@ -48,7 +49,9 @@ from protocol.to_structure import (
     to_structure_CustomTextType_50,
     to_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping,
     to_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping,
-    to_structure_UnsignedIntegerType_32
+    to_structure_UnsignedIntegerType_32,
+    to_structure_VectorType_RecordType_core_StatutoryApprovalStatus,
+    to_structure_VectorType_UnsignedIntegerType_32
 )
 
 #
@@ -127,15 +130,15 @@ class SaveStatutoryMapping(Request):
         domain_id = data.get("domain_id")
         domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         industry_ids = data.get("industry_ids")
-        industry_ids = parse_structure_VectorType_SignedIntegerType_8(industry_ids)
+        industry_ids = parse_structure_VectorType_UnsignedIntegerType_32(industry_ids)
         statutory_nature_id = data.get("statutory_nature_id")
         statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_ids = data.get("statutory_ids")
-        statutory_ids = parse_structure_VectorType_SignedIntegerType_8(statutory_ids)
+        statutory_ids = parse_structure_VectorType_UnsignedIntegerType_32(statutory_ids)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
         geography_ids = data.get("geography_ids")
-        geography_ids = parse_structure_VectorType_SignedIntegerType_8(geography_ids)
+        geography_ids = parse_structure_VectorType_UnsignedIntegerType_32(geography_ids)
         return SaveStatutoryMapping(
             country_id, domain_id, industry_ids,
             statutory_nature_id, statutory_ids,
@@ -146,11 +149,11 @@ class SaveStatutoryMapping(Request):
         return {
             "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
             "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
-            "industry_ids": to_structure_VectorType_SignedIntegerType_8(self.industry_ids),
+            "industry_ids": to_structure_VectorType_UnsignedIntegerType_32(self.industry_ids),
             "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
-            "statutory_ids": to_structure_VectorType_SignedIntegerType_8(self.statutory_ids),
+            "statutory_ids": to_structure_VectorType_UnsignedIntegerType_32(self.statutory_ids),
             "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
-            "geography_ids": to_structure_VectorType_SignedIntegerType_8(self.geography_ids),
+            "geography_ids": to_structure_VectorType_UnsignedIntegerType_32(self.geography_ids),
         }
 
 class UpdateStatutoryMapping(Request):
@@ -168,25 +171,25 @@ class UpdateStatutoryMapping(Request):
         statutory_mapping_id = data.get("statutory_mapping_id")
         statutory_mapping_id = parse_structure_UnsignedIntegerType_32(statutory_mapping_id)
         industry_ids = data.get("industry_ids")
-        industry_ids = parse_structure_VectorType_SignedIntegerType_8(industry_ids)
+        industry_ids = parse_structure_VectorType_UnsignedIntegerType_32(industry_ids)
         statutory_nature_id = data.get("statutory_nature_id")
         statutory_nature_id = parse_structure_UnsignedIntegerType_32(statutory_nature_id)
         statutory_ids = data.get("statutory_ids")
-        statutory_ids = parse_structure_VectorType_SignedIntegerType_8(statutory_ids)
+        statutory_ids = parse_structure_VectorType_UnsignedIntegerType_32(statutory_ids)
         compliances = data.get("compliances")
         compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
         geography_ids = data.get("geography_ids")
-        geography_ids = parse_structure_VectorType_SignedIntegerType_8(geography_ids)
+        geography_ids = parse_structure_VectorType_UnsignedIntegerType_32(geography_ids)
         return UpdateStatutoryMapping(statutory_mapping_id, industry_ids, statutory_nature_id, statutory_ids, compliances, geography_ids)
 
     def to_inner_structure(self):
         return {
             "statutory_mapping_id": to_structure_UnsignedIntegerType_32(self.statutory_mapping_id),
-            "industry_ids": to_structure_VectorType_SignedIntegerType_8(self.industry_ids),
+            "industry_ids": to_structure_VectorType_UnsignedIntegerType_32(self.industry_ids),
             "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
-            "statutory_ids": to_structure_VectorType_SignedIntegerType_8(self.statutory_ids),
+            "statutory_ids": to_structure_VectorType_UnsignedIntegerType_32(self.statutory_ids),
             "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
-            "geography_ids": to_structure_VectorType_SignedIntegerType_8(self.geography_ids),
+            "geography_ids": to_structure_VectorType_UnsignedIntegerType_32(self.geography_ids),
         }
 
 class ChangeStatutoryMappingStatus(Request):
@@ -223,7 +226,7 @@ class ApproveMapping(object):
         statutory_mapping_id = data.get("statutory_mapping_id")
         statutory_mapping_id = parse_structure_UnsignedIntegerType_32(statutory_mapping_id)
         approval_status = data.get("approval_status")
-        approval_status = parse_structure_SignedIntegerType_8(approval_status)
+        approval_status = parse_structure_UnsignedIntegerType_32(approval_status)
         rejected_reason = data.get("rejected_reason")
         rejected_reason = parse_structure_Text(rejected_reason)
         statutory_provision = data.get("statutory_provision")
@@ -333,13 +336,13 @@ class GetStatutoryMappingsMasterSuccess(Response):
         geography_levels = data.get("geography_levels")
         geography_levels = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(geography_levels)
         geographies = data.get("geographies")
-        geographies = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(geographies)
+        geographies = parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Geography(geographies)
         compliance_frequency = data.get("compliance_frequency")
         compliance_frequency = parse_structure_VectorType_RecordType_core_ComplianceFrequency(compliance_frequency)
         compliance_repeat_type = data.get("compliance_repeat_type")
         compliance_repeat_type = parse_structure_VectorType_RecordType_core_ComplianceRepeatType(compliance_repeat_type)
         compliance_approval_status = data.get("compliance_approval_status")
-        compliance_approval_status = parse_structure_VectorType_RecordType_core_ComplianceApprovalStatus(compliance_approval_status)
+        compliance_approval_status = parse_structure_VectorType_RecordType_core_StatutoryApprovalStatus(compliance_approval_status)
         compliance_duration_type = data.get("compliance_duration_type")
         compliance_duration_type = parse_structure_VectorType_RecordType_core_ComplianceDurationType(compliance_duration_type)
         return GetStatutoryMappingsMasterSuccess(
@@ -361,7 +364,7 @@ class GetStatutoryMappingsMasterSuccess(Response):
             "geographies": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography(self.geographies),
             "compliance_frequency": to_structure_VectorType_RecordType_core_ComplianceFrequency(self.compliance_frequency),
             "compliance_repeat_type": to_structure_VectorType_RecordType_core_ComplianceRepeatType(self.compliance_repeat_type),
-            "compliance_approval_status": to_structure_VectorType_RecordType_core_ComplianceApprovalStatus(self.compliance_approval_status),
+            "compliance_approval_status": to_structure_VectorType_RecordType_core_StatutoryApprovalStatus(self.compliance_approval_status),
             "compliance_duration_type": to_structure_VectorType_RecordType_core_ComplianceDurationType(self.compliance_duration_type)
         }
 

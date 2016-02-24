@@ -53,7 +53,7 @@ class Controller(object):
 
     def handle_post(self, request, response):
         data = None
-        actual_data = None 
+        actual_data = None
         try:
             data = json.loads(request.body())
             if type(data) is not list:
@@ -219,7 +219,7 @@ def run_web_front_end(port, knowledge_server_address):
             dict(path=static_path)
         )
 
-        print "Local port: %s" % port
+        print "Listening port: %s" % port
         web_server.start(port, backlog=1000)
 
     io_loop.add_callback(delay_initialize)

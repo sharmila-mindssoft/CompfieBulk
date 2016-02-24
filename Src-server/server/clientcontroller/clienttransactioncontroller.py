@@ -12,8 +12,10 @@ def process_client_transaction_requests(request, db) :
     session_user = db.validate_session_token(client_id, session_token)
     if session_user is None:
         return login.InvalidSessionToken()
+
     if type(request) is clienttransactions.GetStatutorySettings :
         return process_get_statutory_settings(db, session_user, client_id)
+
     elif type(request) is clienttransactions.UpdateStatutorySettings :
         return process_update_statutory_settings(
             db, request, session_user, client_id
@@ -157,7 +159,7 @@ def process_get_compliance_approval_list(db, request, session_user, client_id):
         core.COMPLIANCE_APPROVAL_STATUS("Reject Concurrence"),
         core.COMPLIANCE_APPROVAL_STATUS("Approve"),
         core.COMPLIANCE_APPROVAL_STATUS("Reject Approval")
-    ]    
+    ]
     return clienttransactions.GetComplianceApprovalListSuccess(
         approval_list=compliance_approval_list,
         approval_status=approval_status

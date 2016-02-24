@@ -202,7 +202,7 @@ def to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_U
     dict = {}
     for key, value in data.items():
         key = to_structure_UnsignedIntegerType_32(key)
-        value = to_structure_VectorType_RecordType_techno_master_UnitDetails(value)
+        value = to_structure_VectorType_RecordType_technomasters_UnitDetails(value)
         dict[key] = value
     return dict
 
@@ -1540,7 +1540,7 @@ def to_structure_VectorType_RecordType_techno_report_GroupedUnits(data):
     return lst
 
 
-def to_structure_VectorType_RecordType_techno_master_UnitDetails(data):
+def to_structure_VectorType_RecordType_technomasters_UnitDetails(data):
     data = parse_list(data, 0)
     lst = []
     for item in data:
@@ -3805,6 +3805,17 @@ def to_structure_VectorType_CustomTextType_500(data):
 def to_structure_OptionalType_VectorType_CustomTextType_500(data):
     if data is None: return data
     return to_structure_VectorType_CustomTextType_500(data)
+
+def to_structure_RecordType_core_StatutoryApprovalStatus(data):
+    from protocol import core
+    return core.StatutoryApprovalStatus.to_structure(data)
+
+def to_structure_VectorType_RecordType_core_StatutoryApprovalStatus(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_StatutoryApprovalStatus(item))
+    return lst
 
 def to_structure_VectorType_RecordType_clienttransactions_PastRecordUnits(data):
     data = parse_list(data, 0)

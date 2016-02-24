@@ -1,12 +1,9 @@
-import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
-    parse_structure_VectorType_Text,
     parse_structure_VectorType_RecordType_core_Domain,
-    parse_structure_EnumType_core_APPLICABILITY_STATUS,
     parse_structure_VectorType_RecordType_core_AssignedStatutory,
     parse_structure_VariantType_technoreports_Request,
-    parse_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory,
     parse_structure_VectorType_RecordType_core_LegalEntity,
     parse_structure_OptionalType_VectorType_SignedIntegerType_8,
     parse_structure_UnsignedIntegerType_32,
@@ -28,15 +25,15 @@ from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_MapType_SignedIntegerType_8_VectorType_RecordType_core_Statutory,
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_techno_report_UnitDetails,
-    parse_structure_VectorType_RecordType_technoreports_NOTIFICATIONS
+    parse_structure_VectorType_RecordType_technoreports_NOTIFICATIONS,
+    parse_structure_VectorType_SignedIntegerType_8,
+    parse_structure_CustomTextType_20,
+    parse_structure_CustomTextType_500
 )
 from protocol.to_structure import (
-    to_structure_VectorType_Text,
     to_structure_VectorType_RecordType_core_Domain,
-    to_structure_EnumType_core_APPLICABILITY_STATUS,
     to_structure_VectorType_RecordType_core_AssignedStatutory,
     to_structure_VariantType_technoreports_Request,
-    to_structure_MapType_SignedIntegerType_8_RecordType_core_Statutory,
     to_structure_VectorType_RecordType_core_LegalEntity,
     to_structure_OptionalType_VectorType_SignedIntegerType_8,
     to_structure_SignedIntegerType_8,
@@ -45,7 +42,6 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
     to_structure_VectorType_RecordType_core_Country,
     to_structure_VectorType_RecordType_core_Division,
-    to_structure_VectorType_RecordType_core_UnitDetails,
     to_structure_VectorType_RecordType_technoreports_COUNTRY_WISE_NOTIFICATIONS,
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_VectorType_RecordType_technoreports_UNIT_WISE_ASSIGNED_STATUTORIES,
@@ -166,7 +162,7 @@ class GetStatutoryNotificationsReportData(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "domain_id", "level_1_statutory_id" ])
+        data = parse_dictionary(data, ["country_id", "domain_id", "level_1_statutory_id"])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         domain_id = data.get("domain_id")
@@ -325,7 +321,7 @@ class GroupedUnits(object):
         self.legal_entity_id = legal_entity_id
         self.business_group_id = business_group_id
         self.units = units
-    
+
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["division_id", "legal_entity_id", "business_group_id", "units"])
@@ -410,7 +406,6 @@ class GetStatutoryNotificationsFiltersSuccess(Response):
         self.countries = countries
         self.domains = domains
         self.level_1_statutories = level_1_statutories
- 
 
     @staticmethod
     def parse_inner_structure(data):
@@ -627,7 +622,7 @@ class UNIT_WISE_ASSIGNED_STATUTORIES(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["unit_id", "unit_name", "group_name", "business_group_name", "legal_entity_name", "division_name", "address", "assigned_statutories"])
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_100(unit_name)
         group_name = data.get("group_name")
@@ -646,7 +641,7 @@ class UNIT_WISE_ASSIGNED_STATUTORIES(object):
 
     def to_structure(self):
         return {
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "group_name": to_structure_CustomTextType_50(self.group_name),
             "business_group_name": to_structure_CustomTextType_50(self.business_group_name),
@@ -655,4 +650,3 @@ class UNIT_WISE_ASSIGNED_STATUTORIES(object):
             "address": to_structure_CustomTextType_250(self.address),
             "assigned_statutories": to_structure_VectorType_RecordType_core_AssignedStatutory(self.assigned_statutories),
         }
-
