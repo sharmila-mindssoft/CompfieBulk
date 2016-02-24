@@ -51,9 +51,9 @@ CREATE TABLE `tbl_compliance_duration_type` (
 DROP TABLE IF EXISTS `tbl_compliances`;
 CREATE TABLE `tbl_compliances` (
   `compliance_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
   `frequency_id` int(11) NOT NULL,
   `repeat_type_id` int(11) NOT NULL,
-  `domain_id` int(11) NOT NULL,
   `duration_type_id` int(11) NOT NULL,
   `statutory_mapping` varchar(500) NOT NULL,
   `statutory_provision` varchar(250) NOT NULL,
