@@ -162,9 +162,10 @@ def process_assigneewise_compliances(db, request, session_user, client_id):
     legal_entity_id = request.legal_entity_id
     division_id = request.division_id
     unit_id = request.unit_id
+    user_id = request.user_id
     chart_data = db.get_assigneewise_compliances_list(
         country_id, business_group_id, legal_entity_id, division_id, unit_id,
-        session_user, client_id
+        session_user, client_id, user_id
     )
     return dashboard.GetAssigneeWiseCompliancesChartSuccess(
         chart_data = chart_data

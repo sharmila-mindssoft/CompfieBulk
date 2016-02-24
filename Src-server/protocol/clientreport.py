@@ -74,12 +74,10 @@ parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_VectorType_RecordType_core_UnitDetails,
     parse_structure_VectorType_RecordType_client_report_UnitDetails,
     parse_structure_VectorType_SignedIntegerType_8,
-
-
-
+    parse_structure_VectorType_CustomTextType_500
 )
 from protocol.to_structure import (
-to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
+    to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     to_structure_VectorType_RecordType_core_Compliance,
     to_structure_VectorType_RecordType_clientreport_LoginTrace,
     to_structure_VectorType_RecordType_clientreport_ReassignHistory,
@@ -155,8 +153,8 @@ to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     to_structure_VectorType_RecordType_client_report_UnitDetails,
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_UnsignedIntegerType_32,
-    to_structure_VectorType_SignedIntegerType_8
-
+    to_structure_VectorType_SignedIntegerType_8,
+    to_structure_VectorType_CustomTextType_500
 )
 
 #
@@ -1420,7 +1418,7 @@ class GetStatutoryNotificationsListFiltersSuccess(Response):
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
         level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_VectorType_RecordType_core_ClientLevelOneStatutory(level_1_statutories)
+        level_1_statutories = parse_structure_VectorType_CustomTextType_500(level_1_statutories)
         return GetStatutoryNotificationsListFiltersSuccess(countries, domains, business_groups, legal_entities, divisions, units, level_1_statutories)
 
     def to_inner_structure(self):
@@ -1431,7 +1429,7 @@ class GetStatutoryNotificationsListFiltersSuccess(Response):
             "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
             "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
             "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
-            "level_1_statutories": to_structure_VectorType_RecordType_core_ClientLevelOneStatutory(self.level_1_statutories),
+            "level_1_statutories": to_structure_VectorType_CustomTextType_500(self.level_1_statutories),
         }
 
 class GetStatutoryNotificationsListReportSuccess(Response):

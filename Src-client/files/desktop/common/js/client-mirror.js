@@ -1208,9 +1208,11 @@ function initClientMirror() {
                 "business_group_id": business_group_id,
                 "legal_entity_id": legal_entity_id,
                 "division_id": division_id,
-                "unit_id": unit_id
+                "unit_id": unit_id,
+                "user_id" : user_id
             }
         ];
+        console.log(request);
         callerName = "client_dashboard";
         clientApiRequest(callerName, request, callback);
 
@@ -1374,6 +1376,9 @@ function initClientMirror() {
 
         getClientDetailsReportFilters: getClientDetailsReportFilters,
         getClientDetailsReportData: getClientDetailsReportData,
+
+        getStatutoryNotificationsListFilters: getStatutoryNotificationsListFilters,
+        getStatutoryNotificationsListReport: getStatutoryNotificationsListReport,
 
         getAssigneewiseComplianesFilters: getAssigneewiseComplianesFilters,
         getAssigneewiseComplianes: getAssigneewiseComplianes,
