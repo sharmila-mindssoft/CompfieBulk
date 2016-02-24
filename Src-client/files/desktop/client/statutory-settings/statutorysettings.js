@@ -59,6 +59,7 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
   $(".tbl_division_disp").text(dispDivision);
   $(".tbl_unit_disp").text(dispUnit);
   $("#unit").val(unit_id);
+  $("#unitval").val(dispUnit);
 
   $(".tbody-statutorysettings").find("tbody").remove();
   $.each(sList, function(key, value){
@@ -163,6 +164,7 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
 $("#submit").click(function() {
 
   var uId = $("#unit").val();
+  var uVal = $("#unitval").val();
   var assignedStatutories = [];
   var statutoriesCount= 1;
   var actCount = 1;
@@ -221,7 +223,7 @@ $("#submit").click(function() {
     function onFailure(error){
       displayMessage(error)
     }
-    client_mirror.updateStatutorySettings(parseInt(uId), assignedStatutories, 
+    client_mirror.updateStatutorySettings(uVal, parseInt(uId), assignedStatutories, 
       function (error, response) {
       if (error == null){
         onSuccess(response);

@@ -582,7 +582,7 @@ function initClientMirror() {
     function updateStatutorySettings(unitName, unitId, statutories, callback) {
         var request = [
             "UpdateStatutorySettings", {
-                "unnit_name": unitName,
+                "unit_name": unitName,
                 "unit_id": unitId,
                 "statutories": statutories
             }
