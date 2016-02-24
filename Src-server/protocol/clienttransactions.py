@@ -1028,7 +1028,7 @@ class REASSIGNED_COMPLIANCE(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["unit_id", "compliance_id", "compliance_history_id", "due_date"])
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_SignedIntegerType_8(unit_id)
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         compliance_history_id = data.get("compliance_history_id")

@@ -1,8 +1,6 @@
-import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_dictionary, parse_static_list)
 from protocol.parse_structure import (
     parse_structure_VariantType_technotransactions_Request,
-    parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_STATUS,
     parse_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE,
     parse_structure_VectorType_RecordType_core_AssignedStatutory,
     parse_structure_VectorType_RecordType_technotransactions_UNIT,
@@ -12,7 +10,6 @@ from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     parse_structure_VectorType_RecordType_core_Industry,
     parse_structure_VectorType_RecordType_core_GroupCompany,
-    parse_structure_VectorType_RecordType_core_Country,
     parse_structure_MapType_UnsignedIntegerType_32_VectorType_RecordType_core_Geography,
     parse_structure_VectorType_RecordType_core_Division,
     parse_structure_VectorType_RecordType_core_BusinessGroup,
@@ -33,7 +30,6 @@ from protocol.parse_structure import (
 )
 from protocol.to_structure import (
     to_structure_VariantType_technotransactions_Request,
-    to_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_STATUS,
     to_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE,
     to_structure_VectorType_RecordType_core_AssignedStatutory,
     to_structure_VectorType_RecordType_technotransactions_UNIT,
@@ -43,7 +39,6 @@ from protocol.to_structure import (
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     to_structure_VectorType_RecordType_core_Industry,
     to_structure_VectorType_RecordType_core_GroupCompany,
-    to_structure_VectorType_RecordType_core_Country,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Geography,
     to_structure_VectorType_RecordType_core_Division,
     to_structure_VectorType_RecordType_core_BusinessGroup,
@@ -131,7 +126,7 @@ class GetAssignedStatutoryWizardOneData(Request):
 
     def to_inner_structure(self):
         return {
-            "country_id": to_structure_UnSignedIntegerType_32(self.country_id)
+            "country_id": to_structure_UnsignedIntegerType_32(self.country_id)
         }
 
 class GetStatutoryWizardTwoData(Request):
@@ -175,6 +170,7 @@ class AssignedStatutoryCompliance(object):
         self.compliances = compliances
         self.applicable_status = applicable_status
         self.not_applicable_remarks = not_applicable_remarks
+
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["level_1_statutory_id", "compliances", "applicable_status", "not_applicable_remarks"])
@@ -236,10 +232,10 @@ class SaveAssignedStatutory(Request):
     def to_inner_structure(self):
         return {
             "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
-            "client_id": to_structure_UnSignedIntegerType_32(self.client_id),
-            "geography_id": to_structure_UnSignedIntegerType_32(self.geography_id),
+            "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
+            "geography_id": to_structure_UnsignedIntegerType_32(self.geography_id),
             "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
-            "domain_id": to_structure_UnSignedIntegerType_32(self.domain_id),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "submission_type": to_structure_EnumType_core_ASSIGN_STATUTORY_SUBMISSION_TYPE(self.submission_type),
             "client_statutory_id": to_structure_OptionalType_UnsignedIntegerType_32(self.client_statutory_id),
             "assigned_statutories": to_structure_VectorType_RecordType_technotransactions_AssignedStatutoryCompliance(self.assigned_statutories),
