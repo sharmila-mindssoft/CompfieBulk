@@ -4987,9 +4987,11 @@ class KnowledgeDatabase(Database):
 #
 #   Notifications
 #
-    def get_notifications(self, notification_type, session_user, client_id=None):
-        columns = "tn.notification_id, notification_text, link, " + \
-            "created_on, read_status"
+    def get_notifications(
+        self, notification_type, session_user, client_id=None
+    ):
+        columns = "tn.notification_id, notification_text, link, "+\
+        "created_on, read_status"
         join_type = "left join"
         tables = [self.tblNotifications, self.tblNotificationsStatus]
         aliases = ["tn", "tns"]

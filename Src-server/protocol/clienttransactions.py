@@ -466,7 +466,7 @@ class ApproveCompliance(Request):
         approval_status = data.get("approval_status")
         approval_status = parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(approval_status)
         remarks = data.get("remarks")
-        remarks = parse_structure_CustomTextType_500(remarks)
+        remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
         next_due_date = data.get("next_due_date")
         next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         validity_date = data.get("validity_date")
@@ -480,7 +480,7 @@ class ApproveCompliance(Request):
         return {
             "compliance_history_id": to_structure_SignedIntegerType_8(self.compliance_history_id),
             "approval_status": to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(self.approval_status),
-            "remarks": to_structure_CustomTextType_500(self.remarks),
+            "remarks": to_structure_OptionalType_CustomTextType_500(self.remarks),
             "next_due_date": parse_structure_OptionalType_CustomTextType_20(self.next_due_date),
             "validity_date": parse_structure_OptionalType_CustomTextType_20(self.validity_date)
         }

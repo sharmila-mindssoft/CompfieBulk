@@ -3845,3 +3845,23 @@ def to_structure_MapType_CustomTextType_50_VectorType_CustomTextType_500(data):
         value = to_structure_VectorType_CustomTextType_500(value)
         dict[key] = value
     return dict
+
+def to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
+    data = parse_dictionary(data)
+    dict = []
+    for key, value in data.items():
+        key = to_structure_CustomTextType_50(key)
+        value = to_structure_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(value)
+        dict.append([key, value])
+    return dict
+
+def to_structure_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_dashboard_AssigneeWiseLevel1Compliance(item))
+    return lst
+
+def to_structure_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
+    from protocol import dashboard
+    return dashboard.TrendData.to_structure(data)
