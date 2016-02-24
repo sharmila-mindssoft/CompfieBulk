@@ -1336,6 +1336,7 @@ class ClientDatabase(Database):
                 KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
                 KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
             )
+            db_con.connect()
             db_con.begin()
             statutories = data.statutories
             for s in statutories :
