@@ -1570,11 +1570,12 @@ class ClientDatabase(Database):
                     else:
                         print "entering into else"
             for level_1_statutory_name, compliances in level_1_statutory_wise_compliances.iteritems():
-                statutory_wise_compliances.append(
-                    clienttransactions.STATUTORY_WISE_COMPLIANCES(
-                        level_1_statutory_name, compliances
+                if len(compliances) > 0:
+                    statutory_wise_compliances.append(
+                        clienttransactions.STATUTORY_WISE_COMPLIANCES(
+                            level_1_statutory_name, compliances
+                        )
                     )
-                )
 
         return statutory_wise_compliances
 
