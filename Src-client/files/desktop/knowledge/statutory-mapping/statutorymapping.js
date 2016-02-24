@@ -174,7 +174,6 @@ $(".tbody-geography-level").find("div").remove();
 function changeStatus (statutorymappingId,isActive) {
     function onSuccess(data){
       getStatutoryMappings();
-      displayMessage("Status Changed Successfully");
     }
     function onFailure(error){
     }
@@ -1195,7 +1194,7 @@ function savestatutorymapping(){
       }
   );
   }else{
-    statutorymappingData = mirror.UpdateStatutoryMappingData(sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, sm_id)
+    statutorymappingData = mirror.UpdateStatutoryMappingData(sm_domainid, sm_industryids,sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, sm_id)
     mirror.updateStatutoryMapping(statutorymappingData,
       function (error, response) {
           if (error == null){

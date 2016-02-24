@@ -157,8 +157,9 @@ class SaveStatutoryMapping(Request):
         }
 
 class UpdateStatutoryMapping(Request):
-    def __init__(self, statutory_mapping_id, industry_ids, statutory_nature_id, statutory_ids, compliances, geography_ids):
+    def __init__(self, statutory_mapping_id, domain_id, industry_ids, statutory_nature_id, statutory_ids, compliances, geography_ids):
         self.statutory_mapping_id = statutory_mapping_id
+        self.domain_id = domain_id
         self.industry_ids = industry_ids
         self.statutory_nature_id = statutory_nature_id
         self.statutory_ids = statutory_ids
@@ -167,9 +168,11 @@ class UpdateStatutoryMapping(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_mapping_id", "industry_ids", "statutory_nature_id", "statutory_ids", "compliances", "geography_ids"])
+        data = parse_dictionary(data, ["statutory_mapping_id", "domain_id", "industry_ids", "statutory_nature_id", "statutory_ids", "compliances", "geography_ids"])
         statutory_mapping_id = data.get("statutory_mapping_id")
         statutory_mapping_id = parse_structure_UnsignedIntegerType_32(statutory_mapping_id)
+        domain_id = data.get("domain_id")
+        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         industry_ids = data.get("industry_ids")
         industry_ids = parse_structure_VectorType_UnsignedIntegerType_32(industry_ids)
         statutory_nature_id = data.get("statutory_nature_id")
@@ -180,11 +183,12 @@ class UpdateStatutoryMapping(Request):
         compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
         geography_ids = data.get("geography_ids")
         geography_ids = parse_structure_VectorType_UnsignedIntegerType_32(geography_ids)
-        return UpdateStatutoryMapping(statutory_mapping_id, industry_ids, statutory_nature_id, statutory_ids, compliances, geography_ids)
+        return UpdateStatutoryMapping(statutory_mapping_id, domain_id, industry_ids, statutory_nature_id, statutory_ids, compliances, geography_ids)
 
     def to_inner_structure(self):
         return {
             "statutory_mapping_id": to_structure_UnsignedIntegerType_32(self.statutory_mapping_id),
+            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
             "industry_ids": to_structure_VectorType_UnsignedIntegerType_32(self.industry_ids),
             "statutory_nature_id": to_structure_UnsignedIntegerType_32(self.statutory_nature_id),
             "statutory_ids": to_structure_VectorType_UnsignedIntegerType_32(self.statutory_ids),

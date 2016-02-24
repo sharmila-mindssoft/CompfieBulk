@@ -51,9 +51,9 @@ CREATE TABLE `tbl_compliance_duration_type` (
 DROP TABLE IF EXISTS `tbl_compliances`;
 CREATE TABLE `tbl_compliances` (
   `compliance_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
   `frequency_id` int(11) NOT NULL,
   `repeat_type_id` int(11) NOT NULL,
-  `domain_id` int(11) NOT NULL,
   `duration_type_id` int(11) NOT NULL,
   `statutory_mapping` varchar(500) NOT NULL,
   `statutory_provision` varchar(250) NOT NULL,
@@ -270,7 +270,7 @@ CREATE TABLE `tbl_client_compliances` (
   `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_by` int(11) NOT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`compliance_id`)
+  PRIMARY KEY (`client_statutory_id`, `compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_assigned_compliances`;
 CREATE TABLE `tbl_assigned_compliances` (
