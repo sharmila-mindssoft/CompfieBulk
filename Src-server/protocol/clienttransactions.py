@@ -360,7 +360,7 @@ class SaveAssignedCompliance(Request):
         concurrence_person = data.get("concurrence_person")
         concurrence_person = parse_structure_OptionalType_UnsignedIntegerType_32(concurrence_person)
         concurrence_person_name = data.get("concurrence_person_name")
-        concurrence_person_name = parse_structure_CustomTextType_100(concurrence_person_name)
+        concurrence_person_name = parse_structure_OptionalType_CustomTextType_100(concurrence_person_name)
         approval_person = data.get("approval_person")
         approval_person = parse_structure_UnsignedIntegerType_32(approval_person)
         approval_person_name = data.get("approval_person_name")
@@ -380,7 +380,7 @@ class SaveAssignedCompliance(Request):
             "assignee": to_structure_SignedIntegerType_8(self.assignee),
             "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
             "concurrence_person": to_structure_OptionalType_SignedIntegerType_8(self.concurrence_person),
-            "concurrence_person_name": to_structure_CustomTextType_100(self.concurrence_person_name),
+            "concurrence_person_name": to_structure_OptionalType_CustomTextType_100(self.concurrence_person_name),
             "approval_person": to_structure_SignedIntegerType_8(self.approval_person),
             "approval_person_name": to_structure_CustomTextType_100(self.approval_person_name),
             "compliances": to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(self.compliances),
