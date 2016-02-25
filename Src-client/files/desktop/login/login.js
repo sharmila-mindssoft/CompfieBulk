@@ -147,10 +147,22 @@ function navigateToHome(){
 }
 
 $(document).ready(function () {
-    if (mirror.verifyLoggedIn()) {
-        navigateToHome()
-        return;
+    short_name = getShortName()
+    if (short_name === null) {
+        if (mirror.verifyLoggedIn()) {
+            navigateToHome()
+            return;
+        }
     }
+    else {
+        if (short_name == client_mirror.getClientShortName()) {
+            navigateToHome();
+        }
+        else  {
+            client_mirror.clearSession();
+        }
+    }
+
 
     initializeLogin();
 });

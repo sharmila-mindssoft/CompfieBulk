@@ -87,6 +87,9 @@ function initClientMirror() {
 
     function getClientShortName(){
         var name = window.localStorage["shortName"];
+        if (typeof(name) == "undefined"){
+            return null;
+        }
         return name;
     }
 
@@ -1273,6 +1276,7 @@ function initClientMirror() {
         login: login,
         logout: logout,
         getClientShortName: getClientShortName,
+        redirect_login : redirect_login,
 
         getUserInfo: getUserInfo,
         getUserProfile: getUserProfile,
