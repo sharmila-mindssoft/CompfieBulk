@@ -1862,7 +1862,7 @@ class ClientDatabase(Database):
             join_condition = [
                     "tch.compliance_id = tc.compliance_id",
                     "tc.frequency_id = tcf.frequency_id",
-                    "tac.compliance_id = tc.compliance_id" 
+                    "tac.compliance_id = tc.compliance_id"
             ]
             where_condition = "completion_date is not Null and completed_on is not Null and \
             (approve_status is Null or approve_status = 0) and completed_by = '%d'"% (
@@ -1892,7 +1892,7 @@ class ClientDatabase(Database):
                             )
                             file_name.append(name)
                         else:
-                           file_name.append(file_name_part) 
+                           file_name.append(file_name_part)
                 concurred_by_id = None if row[8] is None else int(row[8])
                 compliance_history_id = row[0]
                 compliance_id = row[1]
@@ -2725,6 +2725,11 @@ class ClientDatabase(Database):
             chart = dashboard.ChartDataMap(k, data_list)
             final_result_list.append(chart)
         return final_result_list
+
+    def get_client_compliance_count(self):
+        q = "select count(*) from tbl_compliances"
+        row = self.select_one(q)
+        return row[0]
 
     def get_compliance_status_chart(self, request, session_user, client_id):
         result = self.get_status_wise_compliances_count(request, session_user)

@@ -1253,12 +1253,17 @@ function toDict (target, list, id_key, value_key) {
 }
 
 $(document).ready(function () {
+    hideLoader();
     if (!client_mirror.verifyLoggedIn()) {
         hideLoader();
         // window.location.href = "/login";
         return;
     }
     client_mirror.getChartFilters(function (status, data) {
+        console.log(data)
+        if (data == null) {
+            return
+        }
         CHART_FILTERS_DATA = data;
         toDict(COUNTRIES, data.countries, "country_id", "country_name");
         toDict(
