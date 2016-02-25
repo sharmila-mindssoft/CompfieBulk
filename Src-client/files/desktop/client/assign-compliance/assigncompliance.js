@@ -300,10 +300,23 @@ function submitcompliance(){
     var assignComplianceConcurrenceId = null;
     var assignComplianceApprovalId = null;
 
+    var assignComplianceAssigneeName = null;
+    var assignComplianceConcurrenceName = null;
+    var assignComplianceApprovalName = null;
+
+
     assignComplianceCountryId = parseInt($('.countrylist.active').attr('id'));
     assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
     assignComplianceConcurrenceId = parseInt($('.concurrencelist.active').attr('id'));
     assignComplianceApprovalId = parseInt($('.approvallist.active').attr('id'));
+
+    assignComplianceAssigneeName = $('.assigneelist.active').text();
+    
+    if($('.concurrencelist.active').text() != '') assignComplianceConcurrenceName = $('.concurrencelist.active').text();
+    
+    assignComplianceApprovalName = $('.approvallist.active').text();
+
+
  
     assignCompliance = [];
     var statutoriesCount= 1;
@@ -324,6 +337,8 @@ function submitcompliance(){
           var due_date =  actList[actentity]["due_date"];
           var statutory_dates = [];
           var current_due_date = '';
+          var current_trigger_day = '';
+
           var current_due_dates = [];
           var current_trigger_days = [];
           var validitydate = $('#validitydate'+statutoriesCount).val();
@@ -337,14 +352,21 @@ function submitcompliance(){
             }
           }
 
-          if(current_due_dates.length > 0){
+          if(current_due_dates.length > 1){
             var sort_elements = current_due_dates;
             sort_elements.sort(function(a, b) {
             return new Date(a) > new Date(b);
             });
             current_due_date = sort_elements[0];
+
+            for(var z=0;z<current_due_dates.length;z++){
+              if(current_due_date == current_due_dates[z]){
+                current_trigger_day = current_trigger_days[z];
+              }
+            }
           }else{
             current_due_date = current_due_dates[0];
+            current_trigger_day = current_trigger_days[0];
           }
           
           for(var dDates = 0; dDates < current_due_dates.length; dDates++){
@@ -388,7 +410,8 @@ function submitcompliance(){
     displayMessage(error)
   }
   client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId, 
-    assignComplianceConcurrenceId, assignComplianceApprovalId, assignCompliance, 
+    assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName, 
+    assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, 
     function (error, response) {
     if (error == null){
       onSuccess(response);
