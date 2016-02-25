@@ -2165,24 +2165,18 @@ class ClientDatabase(Database):
 
                 s_month = date["statutory_month"]
                 s_day = date["statutory_date"]
-                # if current_month < month :
-                # add_month = month - current_mo
-                # n_date = (datetime.date.today() + datetime.timedelta(add_month*365/12)).isoformat()
-                n_date = datetime.date.today()
-                current_date = datetime.date.today()
+                current_date = n_date = datetime.date.today()
 
                 if s_date.statutory_month is not None :
-                    new_date = n_date.replace(month=s_month)
+                    n_date = n_date.replace(month=s_month)
 
                 if s_date.statutory_date is not None :
-                    new_date = n_date.replace(day=s_day)
+                    n_date = n_date.replace(day=s_day)
 
-                if current_date > new_date :
-                    new_date = new_date.replace(year=current_year+1)
+                if current_date > n_date:
+                    n_date = n_date.replace(year=current_year+1)
 
-                # n_date = datetime.datetime.strptime(n_date, "%Y-%m-%d")
-
-                due_date = new_date.strftime("%d-%b-%Y")
+                due_date = n_date.strftime("%d-%b-%Y")
                 due_date_list.append(due_date)
 
             compliance = clienttransactions.UNIT_WISE_STATUTORIES(
@@ -2220,6 +2214,7 @@ class ClientDatabase(Database):
                 date_list = json.dumps(date_list)
                 due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
                 validity_date = c.validity_date
+                trigger_before = int(c.trigger_before)
                 if validity_date is not None :
                     validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
                 else :
@@ -2234,12 +2229,12 @@ class ClientDatabase(Database):
                     (country_id, unit_id, compliance_id, \
                     statutory_dates, assignee, \
                     concurrence_person, approval_person, \
-                    due_date, validity_date, created_by, \
+                    trigger_before_days, due_date, validity_date, created_by, \
                     created_on) VALUES \
                     (%s, %s, %s, '%s', %s, '%s', %s, '%s', '%s', %s, '%s')" % (
                         country_id, unit_id, compliance_id,
                         date_list, assignee, concurrence,
-                        approval, due_date, validity_date,
+                        approval, trigger_before, due_date, validity_date,
                         int(session_user), created_on
                     )
                 self.execute(query)
