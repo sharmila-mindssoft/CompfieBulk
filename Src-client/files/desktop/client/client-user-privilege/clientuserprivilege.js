@@ -115,10 +115,10 @@ $("#submit").click(function(){
 	}); 
 	
 	if(groupNameVal == ''){
-	  	displayMessage("Please Enter Group Name ");  	
+	  	displayMessage("Enter Group Name ");  	
 	}
 	else if(chkArray.length == 0){
-		displayMessage("Please select atleast on form name ");  	 	
+		displayMessage("Select Atleast one form from list");  	 	
 	}
 	else if(groupIdVal == ''){
 		chkArrayInt = chkArray.map(function(item) {

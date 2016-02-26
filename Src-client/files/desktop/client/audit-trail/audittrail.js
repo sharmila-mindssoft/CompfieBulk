@@ -37,10 +37,10 @@ $("#show").click(function(){
 	var formIdValue = $("#formid").val();
 
 	if(fromDateValue == ''){
-		displayMessage('Please Enter From Date');
+		displayMessage('Select From Date');
 	}
 	else if(toDateValue == ''){
-		displayMessage('Please Enter To Date');
+		displayMessage('Select To Date');
 	}
 	else{
 	 	$(".tbody-audittrail-list").find("tr").remove();

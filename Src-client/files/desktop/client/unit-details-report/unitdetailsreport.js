@@ -93,7 +93,7 @@ $("#show-button").click(function(){
 	}	
 
 	if(countries == ""){
-		displayMessage("Please Select Country");
+		displayMessage("Select Country");
 	}
 	else{
 		function onSuccess(data){

@@ -34,10 +34,10 @@ $("#show-button").click(function(){
     var fromdate = $("#from-date").val();
     var todate = $("#to-date").val();
     if(fromdate == ''){
-        displayMessage("Please Select from Date");
+        displayMessage(" Select from Date");
     }
     else if(todate ==''){
-        displayMessage("Please Select to Date");
+        displayMessage(" Select to Date");
     }
     else{
         $('.grid-table').show();
