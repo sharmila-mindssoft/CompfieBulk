@@ -454,6 +454,7 @@ class ClientDatabase(Database):
             VALUES (%s, %s, %s, '%s', '%s')" % (
                 activityId, user_id, form_id, action, created_on
             )
+        print query
         self.execute(query)
         return True
 
@@ -2231,7 +2232,7 @@ class ClientDatabase(Database):
                     concurrence_person, approval_person, \
                     trigger_before_days, due_date, validity_date, created_by, \
                     created_on) VALUES \
-                    (%s, %s, %s, '%s', %s, '%s', %s, '%s', '%s', %s, '%s')" % (
+                    (%s, %s, %s, '%s', %s, '%s', %s, %s, '%s', '%s', %s, '%s')" % (
                         country_id, unit_id, compliance_id,
                         date_list, assignee, concurrence,
                         approval, trigger_before, due_date, validity_date,
@@ -2239,11 +2240,17 @@ class ClientDatabase(Database):
                     )
                 self.execute(query)
             self.update_user_units(assignee, unit_ids, client_id)
-        action = "Compliances %s assigned to assignee - %s concurrence - %s approval - %s " % (
-            str(compliance_names), request.assignee_name, request.concurrence_person_name,
+
+        if request.concurrence_person_name is None :
+            concurrence_person_name = ""
+        else :
+            concurrence_person_name = request.concurrence_person_name
+
+        action = "Compliances '%s' assigned to assignee - %s concurrence - %s approval - %s " % (
+            str(compliance_names), request.assignee_name, concurrence_person_name,
             request.approval_person_name
         )
-        self.save_activity(session_user, 7, action)
+        # self.save_activity(session_user, 7, action)
         return clienttransactions.SaveAssignedComplianceSuccess()
 
     def update_user_units(self, user_id, unit_ids, client_id):

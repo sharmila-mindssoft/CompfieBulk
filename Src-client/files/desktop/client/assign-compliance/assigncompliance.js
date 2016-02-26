@@ -355,7 +355,8 @@ function submitcompliance(){
           var current_due_dates = [];
           var current_trigger_days = [];
 
-          var validitydate = $('#validitydate'+statutoriesCount).val();
+          var validitydate = null;
+          if($('#validitydate'+statutoriesCount).val() != undefined && $('#validitydate'+statutoriesCount).val() != '') $('#validitydate'+statutoriesCount).val();
           for(var k = 0; k < due_date.length; k++){
             var dDate = null;
             var tDay = null;
@@ -449,8 +450,10 @@ function submitcompliance(){
             statutoryDateList = client_mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
             statutory_dates.push(statutoryDateList);
           }*/
-          assignComplianceData = client_mirror.assignCompliances(compliance_id, compliance_name, statutory_dates, current_due_date, validitydate,
-           parseInt(current_trigger_day), applicable_units);
+          assignComplianceData = client_mirror.assignCompliances(
+            compliance_id, compliance_name, statutory_dates,
+            current_due_date, validitydate, parseInt(current_trigger_day), applicable_units
+          );
           assignCompliance.push(assignComplianceData);
         }
         statutoriesCount = statutoriesCount + 1;

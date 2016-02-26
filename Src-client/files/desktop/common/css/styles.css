@@ -1817,6 +1817,35 @@ list-style-type:none; line-height:25px;
   font-size: 0.8em;
 }
 
+.popup-password {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 3px;
+  width: 20%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+.popup-password .close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  transition: all 200ms;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup-password .close:hover {
+  color: orange;
+}
+.popup-password .content {
+  max-height: 25%;
+  overflow: auto;
+  line-height: 20px;
+  font-size: 0.8em;
+}
+
 .gt input[type="checkbox"] {
 display: none !important;
 }

@@ -625,7 +625,7 @@ function initClientMirror() {
         return statutoryDate;
     }
 
-    function assignCompliances(complianceId, complianceName, statutoryDateList, dueDate, validityDate, triggerBefore, unitIds, callback) {
+    function assignCompliances(complianceId, complianceName, statutoryDateList, dueDate, validityDate, triggerBefore, unitIds) {
         return {
             "compliance_id": complianceId,
             "compliance_name": complianceName,
