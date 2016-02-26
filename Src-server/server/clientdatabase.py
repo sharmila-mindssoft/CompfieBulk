@@ -2212,18 +2212,23 @@ class ClientDatabase(Database):
                 for dates in statutory_dates :
                     date_list.append(dates.to_structure())
                 date_list = json.dumps(date_list)
-                due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
-                validity_date = c.validity_date
-                trigger_before = int(c.trigger_before)
-                if validity_date is not None :
-                    validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
-                else :
-                    validity_date = ""
+                # due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+                # validity_date = c.validity_date
             else :
                 date_list = []
-                due_date = ""
-                validity_date = ""
+
             unit_ids = c.unit_ids
+            trigger_before = int(c.trigger_before)
+            due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
+            if validity_date is not None :
+                validity_date = datetime.datetime.strptime(validity_date, "%d-%b-%Y")
+                if due_date > validity_date :
+                    due_date = validity_date
+                elif (validity_date - datetime.timedelta(days=60)) < due_date :
+                    due_date = validity_date
+            else :
+                validity_date = ""
+
             for unit_id in unit_ids:
                 query = "INSERT INTO tbl_assigned_compliances \
                     (country_id, unit_id, compliance_id, \
@@ -2239,10 +2244,18 @@ class ClientDatabase(Database):
                     )
                 self.execute(query)
             self.update_user_units(assignee, unit_ids, client_id)
-        action = "Compliances %s assigned to assignee - %s concurrence - %s approval - %s " % (
-            str(compliance_names), request.assignee_name, request.concurrence_person_name,
-            request.approval_person_name
-        )
+        compliance_names = json.dumps(compliance_names)
+        if request.concurrence_person_name is None :
+            action = "Compliances %s assigned to assignee - %s and approval-person - %s " % (
+                str(compliance_names), request.assignee_name,
+                request.approval_person_name
+            )
+        else :
+            action = "Compliances %s assigned to assignee - %s concurrence-person - %s approval-person - %s " % (
+                str(compliance_names), request.assignee_name, request.concurrence_person_name,
+                request.approval_person_name
+            )
+        action = json.dumps(action)
         self.save_activity(session_user, 7, action)
         return clienttransactions.SaveAssignedComplianceSuccess()
 
@@ -3991,7 +4004,7 @@ class ClientDatabase(Database):
         result = self.get_data(
             self.tblClientStatutories, columns, condition
         )
-        client_statutoy_ids = result[0][0]
+        client_statutory_ids = result[0][0]
         unit_ids = result[0][1]
         return client_statutory_ids, unit_ids
 
@@ -4004,18 +4017,21 @@ class ClientDatabase(Database):
             country_id, domain_id, client_id, filter_id, filter_type)
         client_statutory_ids = result[0]
         unit_ids = result[1]
-        columns = "group_concat(compliance_history_id)"
-        condition = "compliance_id in " +\
-                    "(select group_concat(compliance_id) from " + \
-                    "tbl_client_compliances where client_statutory_id " + \
-                    "in (%s) and unit_id in (%s))" % (client_statutory_ids, unit_ids)
-        result = self.get_data(
-            self.tblComplianceHistory, columns, condition
-        )
-        compliance_history_ids = result[0][0]
+        compliance_history_ids = None
+        if client_statutory_ids is not None and unit_ids is not None:
+            columns = "group_concat(compliance_history_id)"
+            condition = "compliance_id in " +\
+                        "(select group_concat(compliance_id) from " + \
+                        "tbl_client_compliances where client_statutory_id " + \
+                        "in (%s) and unit_id in (%s))" % (client_statutory_ids, unit_ids)
+            result = self.get_data(
+                self.tblComplianceHistory, columns, condition
+            )
+            compliance_history_ids = result[0][0]
         return compliance_history_ids, client_statutory_ids, unit_ids
 
     def get_trend_chart(self, country_ids, domain_ids, client_id):
+        print client_id
         years = self.get_last_7_years()
         country_domain_timelines = self.get_country_domain_timelines(
             country_ids, domain_ids, years, client_id)
@@ -4033,9 +4049,13 @@ class ClientDatabase(Database):
                     condition = "due_date between '{}' and '{}'".format(
                         dates["start_date"], dates["end_date"]
                     )
+                    print columns
+                    print condition
                     compliance_history_ids = self.get_compliance_history_ids_for_trend_chart(
                         country_id, domain_id, client_id)
-                    condition += " and compliance_history_id in (%s)" % (compliance_history_ids[0])
+                    print compliance_history_ids[0]
+                    if compliance_history_ids[0] is not None :
+                        condition += " and compliance_history_id in (%s)" % (compliance_history_ids[0])
                     rows = self.get_data(
                             self.tblComplianceHistory,
                             columns, condition

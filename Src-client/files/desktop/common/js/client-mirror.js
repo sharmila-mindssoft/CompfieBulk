@@ -932,15 +932,24 @@ function initClientMirror() {
 
     /* Trend Chart */
 
-    function getTrendChart(country_ids, domain_ids, filter_type,
-        filter_id, callback) {
+    // function getTrendChart(country_ids, domain_ids, filter_type,
+    //     filter_id, callback) {
+    //     var request = [
+    //         "GetTrendChart", {
+    //             "country_ids": country_ids,
+    //             "domain_ids": domain_ids,
+    //             "filter_type": filter_type,
+    //             "filter_ids": filter_id
+    //         }
+    //     ];
+    //     var callerName = "client_dashboard"
+    //     clientApiRequest(callerName, request, callback)
+    // }
+
+    function getTrendChart(requestData, callback) {
         var request = [
-            "GetTrendChart", {
-                "country_ids": country_ids,
-                "domain_ids": domain_ids,
-                "filter_type": filter_type,
-                "filter_ids": filter_id
-            }
+            "GetTrendChart",
+            requestData
         ];
         var callerName = "client_dashboard"
         clientApiRequest(callerName, request, callback)
@@ -959,6 +968,24 @@ function initClientMirror() {
         ];
         var callerName = "client_dashboard"
         clientApiRequest(callerName, request, callback)
+    }
+
+    function getNotCompliedData(requestData, callback) {
+        var request = [
+            "GetNotCompliedChart",
+            requestData
+        ];
+        var callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getComplianceApplicabilityChart(requestData, callback) {
+        var request = [
+            "GetComplianceApplicabilityStatusChart",
+            requestData
+        ];
+        var callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);
     }
 
     /* Settings */
@@ -1354,6 +1381,8 @@ function initClientMirror() {
         getEscalationChartData: getEscalationChartData,
         getTrendChart: getTrendChart,
         getTrendChartDrillDown: getTrendChartDrillDown,
+        getNotCompliedData: getNotCompliedData,
+        getComplianceApplicabilityChart: getComplianceApplicabilityChart,
 
         getSettings: getSettings,
         updateSettings: updateSettings,

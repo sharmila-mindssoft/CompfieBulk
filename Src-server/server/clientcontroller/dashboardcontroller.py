@@ -81,14 +81,21 @@ def process_compliance_status_chart(db, request, session_user, client_id):
 def process_trend_chart(db, request, session_user, client_id):
     trend_chart_info = None
     if request.filter_type == "Group":
-        trend_chart_info = db.get_trend_chart(request.country_ids, request.domain_ids,
-            client_id)
+        trend_chart_info = db.get_trend_chart(
+            request.country_ids, request.domain_ids,
+            client_id
+        )
     else:
-        trend_chart_info = db.get_filtered_trend_data(request.country_ids, request.domain_ids,
-            request.filter_type, request.filter_ids, client_id)
+        trend_chart_info = db.get_filtered_trend_data(
+            request.country_ids, request.domain_ids,
+            request.filter_type, request.filter_ids, client_id
+        )
     years = trend_chart_info[0]
     data = trend_chart_info[1]
-    return dashboard.GetTrendChartSuccess(years = years, data = data)
+    return dashboard.GetTrendChartSuccess(
+        years=years,
+        data=data
+    )
 
 def process_get_trend_chart_drilldown(db, request, session_user, client_id):
     drill_down_info = None

@@ -4,9 +4,15 @@ var BUSINESS_GROUPS = {};
 var LEGAL_ENTITIES = {};
 var DIVISIONS = {};
 var UNITS = {};
+
 var COMPLIANCE_STATUS_DATA = null;
 var COMPLIANCE_STATUS_DRILL_DOWN_DATE = null;
+
 var ESCALATION_DATA = null;
+var TREND_CHART_DATA = null;
+var NOT_COMPLIED_DATA = null;
+var COMPLIANCE_APPLICABILITY_DATA = null;
+
 
 function clearMessage() {
     $(".chart-error-message").text("");
@@ -63,6 +69,7 @@ function ChartInput () {
     this.units = [];
     this.chart_year = 0; // previous_year = 1, current_year = 0, next_year = -1
     this.current_year = (new Date()).getFullYear();
+    this.range_index = 7;
 
 
     this.setChartType = function (v) {
@@ -300,6 +307,13 @@ function ChartInput () {
     this.getCurrentYear = function() {
         return this.current_year;
     }
+
+    this.setRangeIndex = function(v) {
+        this.range_index += v;
+    }
+    this.getRangeIndex = function () {
+        return this.range_index;
+    }
 }
 
 var chartInput = new ChartInput();
@@ -332,7 +346,10 @@ function parseComplianceStatusApiInput () {
     filterType = hyphenatedToUpperCamelCase(filterType);
     var fromDate = chartInput.getFromDate();
     var toDate = chartInput.getToDate();
-    var chart_year = chartInput.getCurrentYear();
+    var chart_year = chartInput.getChartYear();
+    if (chart_year == 0) {
+        chart_year = chartInput.getCurrentYear();
+    }
     var requestData = {
         "country_ids": countryIds,
         "domain_ids": domainIds,
@@ -428,8 +445,19 @@ function hideButtons() {
     $(".btn-pie-chart").hide();
     $(".btn-bar-chart").hide();
 }
+function showPreviousNext() {
+    $(".btn-previous").show();
+    $(".btn-next").show();
+}
+function hidePreviousNext() {
+    $(".btn-previous").hide();
+    $(".btn-next").hide();
+}
 
-function prepareComplianceStatusChartData (source_data) {
+
+//  Compliance Status Chart
+
+function prepareComplianceStatusChartData (chart_data) {
     // var currentYear = (new Date()).getFullYear();
     var yearInput = chartInput.getCurrentYear()
     // var yearInput = currentYear - chartInput.getChartYear();
@@ -443,8 +471,8 @@ function prepareComplianceStatusChartData (source_data) {
     var yAxisDelayed = [];
     var yAxisInprogress = [];
     var yAxisNotComplied = [];
-    for (var i = 0; i < source_data.chart_data.length; i++) {
-        var chartData = source_data.chart_data[i];
+    for (var i = 0; i < chart_data.length; i++) {
+        var chartData = chart_data[i];
         var filter_type_id = chartData["filter_type_id"];
         filterTypeInput = getFilterTypeInput();
         // if (!(filter_type_id in filterTypeInput))
@@ -523,7 +551,8 @@ function prepareComplianceStatusChartData (source_data) {
             data_list.push({
                 "name": yAxis[x1],
                 "y": value,
-                "drilldown": yAxis[x1]
+                "filter_id": xAxisIds[j],
+                "drilldown": xAxis[j]
             });
         }
         xAxisDrillDownSeries[xAxis[j]] = data_list
@@ -537,7 +566,7 @@ function updateComplianceStatusChart (data) {
     var data = prepareComplianceStatusChartData(data);
     if (data == null)
         return;
-
+    console.log("updateComplianceStatusChart")
     chartType = getFilterTypeTitle();
     if (chartType == "Consolidated") {
         chartTitle = "Consolidated Chart";
@@ -549,6 +578,21 @@ function updateComplianceStatusChart (data) {
         $(".drilldown-container").hide();
         $(".graph-container.compliance-status").show();
         $(".graph-selections-bottom").show();
+        currentYear = chartInput.getCurrentYear();
+        chartYear = chartInput.getChartYear();
+        range = chartInput.getRangeIndex();
+        if (chartYear == 0 || chartYear == currentYear){
+            $(".btn-next-year").hide();
+        }
+        else {
+            $(".btn-next-year").show();
+        }
+        if ((currentYear - 7) == chartYear) {
+            $(".btn-previous-year").hide();
+        }
+        else {
+            $(".btn-previous-year").show();
+        }
         $(".btn-back").on("click", function() {
             updateComplianceStatusStackBarChart(data);
             hideButtons()
@@ -633,7 +677,8 @@ function updateComplianceStatusStackBarChart(data) {
                         click: function() {
                             var drilldown = this.drilldown;
                             if (drilldown) {
-                              loadComplianceStatusDrillDown(drilldown, this.filter_type_id);
+                                console.log(drilldown)
+                                loadComplianceStatusDrillDown(drilldown, this.filter_type_id);
                             }
                         }
                     }
@@ -697,7 +742,8 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType) {
                         click: function() {
                             var drilldown = this.drilldown;
                             if (drilldown) {
-                              console.log(drilldown)
+                              console.log(drilldown);
+                              loadComplianceStatusDrillDown(this.name, this.filter_id)
                             }
                         }
                     }
@@ -718,6 +764,9 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType) {
                             var drilldown = this.drilldown;
                             if (drilldown) {
                               console.log(drilldown)
+                              console.log(this.name)
+                              console.log(this.filter_id)
+                              loadComplianceStatusDrillDown(this.name, this.filter_id)
                             }
                         }
                     }
@@ -759,6 +808,8 @@ function updateDrillDown(data) {
     $(".drilldown-container").show();
     $(".btn-back").show();
 }
+
+//  Escalation Chart
 
 function prepareEscalationChartdata(source_data) {
     var chartTitle = getFilterTypeTitle();
@@ -891,14 +942,304 @@ function updateEscalationChart(data) {
     });
 }
 
+// Trend Chart
+
+function prepareTrendChartData(source_data) {
+    var chartTitle = getFilterTypeTitle();
+    var xAxis = [];
+    var xAxisIds = [];
+    var chartDataSeries = [];
+    xAxis = source_data["years"];
+    console.log(xAxis)
+    for (var i =0; i< source_data["data"].length; i++) {
+        chartData = source_data["data"][i];
+        var filter_type_id = chartData["filter_id"];
+        if (filterTypeInput.indexOf(filter_type_id) == -1)
+            continue;
+        var filterTypeName = getFilterTypeName(filter_type_id);
+
+        compliance_count = [];
+        total_count = [];
+        compliance_info = chartData["complied_compliance"];
+        for (var j = 0; j < compliance_info.length; j++) {
+            compliance_count.push(
+                compliance_info["complied_compliances_count"] + j + 10
+            );
+            total_count.push(
+                compliance_info["total_compliances"] + 100
+            );
+        }
+        chartDataSeries.push(
+            {
+                "name": filterTypeName,
+                "data": compliance_count,
+                "total":total_count
+            }
+        );
+    }
+    return [xAxis, chartTitle, chartDataSeries];
+}
+
+function updateTrendChart(data) {
+    data = prepareTrendChartData(data);
+    xAxis = data[0];
+    chartTitle = data[1];
+    chartDataSeries = data[2];
+    var highchart;
+    function setChart(name) {
+        data_series = drilldownSeries[name];
+        var title = chartTitle + " - " + name;
+        updateComplianceStatusPieChart(data_series, title, "pie");
+        complianceDrillDown(data_series, title);
+    }
+    highchart = new Highcharts.Chart({
+        chart: {
+            renderTo: "status-container",
+        },
+        title: {
+            text: chartTitle
+        },
+        credits: {
+            enabled: false
+        },
+        xAxis: {
+            categories: xAxis,
+            title: {
+                text: "Year",
+            },
+            labels: {
+                events: {
+                    click: function() {
+                        setChart(this.value)
+                    }
+                },
+                style: {
+                    cursor: 'pointer',
+                    color: "blue",
+                    textDecoration: "underline",
+                }
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Compliance (%)'
+            },
+            labels: {
+                formatter: function() {
+                    return this.value + '%';
+                }
+            },
+            allowDecimals: false
+        },
+        tooltip: {
+            crosshair: true,
+            shared: true,
+            backgroundColor: "#FCFFC5",
+            headerFormat: '<b>{point.x}</b>: {point.percentage:.0f}% ',
+            pointFormat: '({point.y} out of {point.stackTotal})'
+        },
+        plotOptions: {
+            spline: {
+                marker: {
+                    radius: 4,
+                    lineColor: "#666666",
+                    lineWidth: 1
+                }
+            }
+        },
+        series: chartDataSeries,
+
+    });
+}
+
+function prepareNotCompliedChart(source_data) {
+    var chartTitle = getFilterTypeTitle();
+    var chartDataSeries = [];
+    $.each(source_data, function(key, item) {
+        if (key == "T_31_to_60_days_count") {
+            chartDataSeries.push(
+                {
+                    name: "Below 60",
+                    y: item,
+                    drilldown: "Below 60"
+                }
+            );
+        }
+        else if (key == "T_0_to_30_days_count") {
+            chartDataSeries.push(
+                {
+                    name: "Below 30",
+                    y: item,
+                    drilldown: "Below 30"
+                }
+            );
+        }
+        else if (key == "T_61_to_90_days_count") {
+            chartDataSeries.push(
+                {
+                    name: "Below 90",
+                    y: item,
+                    drilldown: "Below 90"
+                }
+            )
+        }
+        else if (key == "Above_90_days_count") {
+            chartDataSeries.push(
+                {
+                    name: "Above 90",
+                    y: item,
+                    drilldown: "Above 90"
+                }
+            )
+        }
+    });
+    return [chartDataSeries, chartTitle];
+}
+
+function updateNotCompliedChart(data) {
+    data = prepareNotCompliedChart(data);
+    chartDataSeries = data[0];
+    chartTitle = data[1];
+    highchart = new Highcharts.Chart({
+        colors: ['#FF9C80', '#F2746B', '#FB4739', '#DD070C'],
+        chart: {
+            type: "pie",
+            renderTo: "status-container"
+        },
+        title: {
+            text: 'Over due compliance of' + chartTitle
+        },
+        xAxis: {
+            categories: true,
+        },
+        credits: {
+            enabled: false
+        },
+        tooltip: {
+            headerFormat: '',
+            pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b>out of total'
+        },
+        legend: {
+            enabled: true
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 45,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.percentage: .0f}%'
+                },
+                showInLegend: true,
+                point: {
+                    events: {
+                        click: function() {
+                            var drilldown = this.drilldown
+                            console.log(drilldown);
+                        }
+                    }
+                }
+            },
+        },
+        series: [{
+            name: "compliance",
+            colorByPoint: true,
+            data: chartDataSeries
+        }],
+    });
+}
+
+function prepareComplianceApplicability(source_data) {
+    chartDataSeries = [];
+    chartTitle = "Compliance Applicability Status";
+    chartDataSeries.push({
+        name: "Applicable",
+        y: source_data["applicable_count"],
+        drilldown: "Applicable"
+    });
+    chartDataSeries.push({
+        name: "Not Applicable",
+        y: source_data["not_applicable_count"],
+        drilldown: "Not Applicable"
+    });
+    chartDataSeries.push({
+        name: "Not Opted",
+        y: source_data["not_opted_count"],
+        drilldown: "Not Applicable"
+    });
+    return [chartDataSeries, chartTitle]
+
+}
+
+function updateComplianceApplicabilityChart(data) {
+    data = prepareComplianceApplicability(data);
+    chartTitle = data[1];
+    chartDataSeries = data[0];
+    console.log(chartDataSeries)
+    highchart = new Highcharts.Chart({
+        colors: ['#66FF66','#FFDC52','#CE253C'],
+        chart: {
+            type: "pie",
+            renderTo: "status-container"
+        },
+        title: {
+            text: chartTitle
+        },
+        xAxis: {
+            categories: true,
+        },
+        credits: {
+            enabled: false
+        },
+        tooltip: {
+            headerFormat: '',
+            pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b>out of total'
+        },
+        legend: {
+            enabled: true
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 45,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.percentage: .0f}%'
+                },
+                showInLegend: true,
+                point: {
+                    events: {
+                        click: function() {
+                            var drilldown = this.drilldown
+                            console.log(drilldown);
+                        }
+                    }
+                }
+            },
+        },
+        series: [{
+            name: "compliance",
+            colorByPoint: true,
+            data : chartDataSeries
+        }],
+    });
+}
+
+//Chart load function
+
 function loadComplianceStatusChart () {
     var requestData = parseComplianceStatusApiInput();
+    console.log(requestData);
     client_mirror.getComplianceStatusChartData(
         requestData,
         function (status, data) {
             // TODO: API Error Validation
+            data = data["chart_data"];
             COMPLIANCE_STATUS_DATA = data;
-            updateComplianceStatusChart(data);
+            updateComplianceStatusChart(data.splice(0, 7));
             hideLoader();
         }
     );
@@ -917,6 +1258,7 @@ function loadComplianceStatusDrillDown(status, filter_type_id) {
         "compliance_status": status,
         "year": chartInput.getCurrentYear()
     }
+    console.log(requestData)
     client_mirror.getComplianceStatusDrillDown(
         requestData,
         function (status, data) {
@@ -945,14 +1287,81 @@ function loadEscalationChart() {
     )
 }
 
+function loadTrendChart(){
+    var filter_type = chartInput.getFilterType();
+    var filterType = filter_type.replace("_", "-");
+    filterType = hyphenatedToUpperCamelCase(filterType);
+    var requestData = {
+        "country_ids": chartInput.getCountries(),
+        "domain_ids": chartInput.getDomains(),
+        "filter_type": filterType,
+        "filter_ids": [1]
+    };
+    client_mirror.getTrendChart(
+        requestData, function(status, data) {
+            TREND_CHART_DATA = data;
+            console.log(data)
+            updateTrendChart(data);
+        }
+    )
+}
+
+function loadNotCompliedChart(){
+    var filter_type = chartInput.getFilterType();
+    var filterType = filter_type.replace("_", "-");
+    filterType = hyphenatedToUpperCamelCase(filterType);
+    var requestData = {
+        "country_ids": chartInput.getCountries(),
+        "domain_ids": chartInput.getDomains(),
+        "filter_type": filterType,
+        "filter_id": 1
+    };
+    client_mirror.getNotCompliedData(
+        requestData, function(status, data) {
+            NOT_COMPLIED_DATA = data;
+            console.log(data)
+            updateNotCompliedChart(data);
+        }
+    );
+}
+
+function loadComplianceApplicabilityChart(){
+    var filter_type = chartInput.getFilterType().replace("_", "-");
+    filterType = hyphenatedToUpperCamelCase(filter_type)
+    var requestData = {
+        "country_ids": chartInput.getCountries(),
+        "domain_ids": chartInput.getDomains(),
+        "filter_type": filterType,
+        "filter_id": 1
+    };
+    client_mirror.getComplianceApplicabilityChart(
+        requestData, function(status, data) {
+            COMPLIANCE_APPLICABILITY_DATA = data;
+            console.log(data);
+            updateComplianceApplicabilityChart(data);
+        }
+    );
+}
+
 function loadCharts () {
     // displayLoader();
+    hideButtons();
     var chartType = chartInput.getChartType();
+    chartInput.setChartYear(0);
     if (chartType == "compliance_status") {
         loadComplianceStatusChart();
     }
     else if (chartType == "escalations") {
         loadEscalationChart();
+    }
+    else if (chartType == "not_complied") {
+        loadNotCompliedChart();
+    }
+    else if (chartType == "trend_chart") {
+        loadTrendChart();
+    }
+    else if (chartType == "applicability_status") {
+        loadComplianceApplicabilityChart();
     }
     else {
         hideLoader();
@@ -1233,16 +1642,71 @@ function initializeFilters () {
     $(".specific-filter .btn-go input").on("click", function () {
         loadCharts();
     });
+
+    $(".btn-previous-year").on("click", function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        currentYear = chartInput.getCurrentYear();
+        chartYear = chartInput.getChartYear();
+        if (chartYear == 0) {
+            chartInput.setChartYear(currentYear - 1);
+        } else {
+            chartInput.setChartYear(chartYear - 1);
+        }
+        console.log(chartInput.getChartYear())
+        console.log("previous_year");
+        loadComplianceStatusChart()
+    });
+
+    $(".btn-next-year").on("click", function() {
+        currentYear = chartInput.getCurrentYear();
+        chartYear = chartInput.getChartYear();
+        chartInput.setChartYear(chartYear + 1);
+        console.log(chartInput.getChartYear());
+        console.log("next_year");
+        loadComplianceStatusChart()
+    });
+
+    $(".btn-next").on("click", function() {
+        range = chartInput.getRangeIndex();
+        var data = [];
+        if (range == 7) {
+            data1 = COMPLIANCE_STATUS_DATA;
+            data = data1.splice(0, range);
+        }
+        else {
+            chartInput.setRangeIndex(7);
+            data1 = COMPLIANCE_STATUS_DATA;
+            data = data1.splice(range, range+7);
+        }
+        updateComplianceStatusChart(data);
+        console.log("data");
+        console.log(data)
+    });
+    $(".btn-previous").on("click", function() {
+        range = chartInput.getRangeIndex();
+        var data = [];
+        if (range == 7) {
+            data1 = COMPLIANCE_STATUS_DATA;
+            data = data1.splice(0, range);
+        }
+        else {
+            chartInput.setRangeIndex(range - 7);
+            data1 = COMPLIANCE_STATUS_DATA;
+            data = data1.splice(range-7, range);
+        }
+        updateComplianceStatusChart(data);
+        console.log("data");
+        console.log(data)
+    });
+
 }
 
-function initializeComplianceStatusChart () {
-    // body...
-}
 
 function initializeCharts () {
     initializeFilters();
     initializeChartTabs();
-    initializeComplianceStatusChart();
+    // initializeComplianceStatusChart();
 }
 
 function toDict (target, list, id_key, value_key) {
