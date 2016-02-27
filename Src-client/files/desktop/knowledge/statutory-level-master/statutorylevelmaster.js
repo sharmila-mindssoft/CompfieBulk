@@ -66,6 +66,9 @@ $("#countryval").keyup(function(){
     }
     $('#ulist_text').append(str);
     $("#country").val('');
+    }else{
+      $("#country").val('');
+      $("#autocompleteview").hide();
     }
 });
 
@@ -93,6 +96,9 @@ $("#domainval").keyup(function(){
     }
     $('#ulist_text_domain').append(str);
     $("#domain").val('');
+    }else{
+      $("#domain").val('');
+      $("#autocompleteview-domain").hide();
     }
 });
 //set selected autocomplte value to textbox
@@ -159,9 +165,9 @@ $("#submit").click(function(){
             return false;
           }else if($("#level"+k).val().trim().length > 0){
             if($("#levelid"+k).val().trim().length > 0){
-              passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val(), "level_id" : parseInt($("#levelid"+k).val())});
+              passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val().trim(), "level_id" : parseInt($("#levelid"+k).val())});
             }else{
-              passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val(), "level_id" : null});
+              passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val().trim(), "level_id" : null});
             }
           }
          }

@@ -146,7 +146,7 @@ function loadresult(filterList){
               var url = filterList[entity][i]["compliance_names"][k]["url"]
               if (url === null)
                 url = '#'
-              $('.tbl_compliancetask', clone1).html('<a href= "'+ url +'">'+compliance_name+'</a>');
+              $('.tbl_compliancetask', clone1).html('<a href= "'+ url +'" target="_new">'+compliance_name+'</a>');
               $('.tbl_description', clone1).text(filterList[entity][i]["compliances"][k]["description"]);
               $('.tbl_penalconsequences', clone1).text(filterList[entity][i]["compliances"][k]["penal_consequences"]);
               $('.tbl_occurance', clone1).text(occurance);

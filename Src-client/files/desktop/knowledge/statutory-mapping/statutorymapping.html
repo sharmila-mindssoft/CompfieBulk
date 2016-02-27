@@ -305,7 +305,7 @@
                     <legend>On Occurrence</legend>
                     <div class="input-row-left">
                       <div class="input-row">
-                        <div class="field-label">To Complete Within</div>
+                        <div class="field-label">To Complete Within<span class="mandatory">*</span></div>
                         <div class="field-input">
                           <input class="input-box " value="" style="width:55px; float:left;" id="duration">
                           <select class="input-box dayhour" style="width:100px; margin-left:10px; float:left;" id="duration_type">
@@ -346,23 +346,20 @@
                             <option>12</option>
                           </select>
                           <select class="input-box" style="width:100px; margin-left:10px; float:left;" id="repeats_type">
-                            <!-- <option value="">Select</option> -->
-                            <!-- <option value="day">Day(s)</option>
-                            <option value="month">Month(s)</option>
-                            <option value="year">Year(s)</option> -->
+                          
                           </select>
                           <div class="clearfix"></div>
                           <label style="font-size:0.8em; padding-top:5px;"></label>
                         </div>
                       </div>
-                      <div class="input-row">
+                      <div class="input-row repeatby-view">
                         <div class="field-label">Repeat by<span class="mandatory">*</span></div>
                         <div class="field-input">
                           <label style="padding:3px 0px 5px 0px; vertical-align:middle;" class="repeatlabelday" >
                             <input type="radio" name="repeatby" style="width:20px;float:left;" value="dayofmonth" checked="checked">
                             <span style="font-size:0.8em; padding-top:4px; float:left;">Day of the month</span>
                           </label>
-                          <div class="clearfix"></div>
+                          <div class="clearfix" style="height:30px;"></div>
                           <label   class="repeatlabelendday" >
                             <input type="radio" name="repeatby" style="width:20px; float:left;"   value="enddayofmonth">
                             <span style="font-size:0.8em; padding-top:4px;">End day of the month</span>
@@ -372,7 +369,7 @@
                     </div>
                     <div class="input-row-right">
                       <div class="input-row">
-                        <div class="field-label" style="width:100% !important;"><input type="checkbox" class="multipleinput" />Multiple Input Selection</div>
+                        <div class="field-label default-display-none" id="multipleview" style="width:100% !important; "> <input type="checkbox" class="multipleinput" />Multiple Input Selection</div>
                       </div>
                       <div class="multipleselect" style="display:none">
                         <div class="input-row">

@@ -150,6 +150,9 @@ $("#countryval").keyup(function(){
     }
     $('#ulist_text').append(str);
     $("#country").val('');
+    }else{
+      $("#country").val('');
+      $("#autocompleteview").hide();
     }
 });
 //set selected autocomplte value to textbox

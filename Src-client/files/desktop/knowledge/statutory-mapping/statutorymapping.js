@@ -339,7 +339,7 @@ function loadStatutoryLevels(countryval,domainval){
     var filter5 = $("#filter5").val().toLowerCase();
     var filter6 = $("#filter6").val().toLowerCase();
 
-    var filteredList=[];
+    var filteredList={};
     for(var entity in statutoryMappingsList) {
       var filter1val = statutoryMappingsList[entity]["country_name"];
       var filter2val = statutoryMappingsList[entity]["domain_name"];
@@ -352,12 +352,13 @@ function loadStatutoryLevels(countryval,domainval){
       }
       var filter6val='';
       for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
-        filter6val = filter6val + statutoryMappingsList[entity]["compliance_names"][i] + " <br>";
+        filter6val = filter6val + statutoryMappingsList[entity]["compliance_names"][i]["compliance_name"] + " <br>";
       }
-
-      if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2) && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4) && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6))
+      if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2) 
+        && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4) 
+        && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6))
       {
-        filteredList.push(statutoryMappingsList[entity]);
+        filteredList [entity] = statutoryMappingsList[entity];
       }
     }
     loadStatutoryMappingList(filteredList);
@@ -484,7 +485,7 @@ function saverecord(j,e){
     displayMessage("");
     var levelstage = $('#level'+j).val();
     var statutorylevel_id = $('#statutorylevelid'+j).val();
-    var datavalue = $('#datavalue'+j).val();
+    var datavalue = $('#datavalue'+j).val().trim();
     var map_statutory_id=[];
     var map_statutory_names = [];
     var last_statutory_id=0;
@@ -508,7 +509,11 @@ function saverecord(j,e){
           reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
         }
         function onFailure(error){
-          displayMessage(error)
+          if(error == "StatutoryNameAlreadyExists"){
+            displayMessage("Statutory Name Already Exists");
+          }else{
+            displayMessage(error);
+          }
         }
         if(map_statutory_id.length == 0){
           map_statutory_id.push(0);
@@ -530,7 +535,12 @@ function saverecord(j,e){
           reload(last_statutory_id,last_level,sm_countryid,sm_domainid);
         }
         function onFailureUpdate(error){
-          onFailure(error);
+
+          if(error == "StatutoryNameAlreadyExists"){
+            displayMessage("Statutory Name Already Exists");
+          }else{
+            displayMessage(error);
+          }
         }
         if(map_statutory_id.length == 0){
           map_statutory_id.push(0);
@@ -604,6 +614,15 @@ function load_statories(){
     $('.tbody-statutory-list').append(clone);
 }
 make_breadcrumbs2();
+
+// Reset all level of statutory list after added in temp statutory list
+for(var i=2 ; i<=10; i++){
+  $('#statutorylist'+i).empty();
+}
+$('.slist1').each( function( index, el ) {
+  $(el).removeClass( "active" );
+});
+
 }
 
 $("#temp_addstatutories").click(function() {
@@ -630,6 +649,28 @@ function temp_removestatutories(remove_id){
 }
 
 function load_compliance(){
+
+  $('#statutory_provision').val('');
+  $('#compliance_task').val('');
+  $('#compliance_description').val('');
+  $('#compliance_frequency').val('');
+  $('#compliance_document').val('');
+  $('#upload_file').val('');
+  $('#penal_consequences').val('');
+  $('#Recurring').hide();
+  $('#Occasional').hide();
+  $('#One_Time').hide();
+  $('#repeats_every').val('');
+  $('#repeats_type').val('');
+  $('#duration').val('');
+  $('#statutory_date').val('');
+  $('#statutory_month').val('');
+  $('#triggerbefore').val('');
+  $('#complianceid').val('');
+  uploadFile = null;
+  $("#uploaded_fileview").hide();
+  $("#uploaded_filename").html('');
+
   $(".tbody-compliance-list").find("tr").remove();
   complianceid = 0;
   for(var entity in compliances) {
@@ -692,9 +733,10 @@ $("#temp_addcompliance").click(function() {
   var statutory_provision = $('#statutory_provision').val().trim();
   var compliance_task = $('#compliance_task').val().trim();
   var description = $('#compliance_description').val().trim();
-  var compliance_document = $('#compliance_document').val().trim();
+  var compliance_document = null;
+
+  if($('#compliance_document').val().trim().length > 0) compliance_document = $('#compliance_document').val().trim();
   var file_format = null;
-  console.log(uploadFile)
   if(uploadFile != null){
     file_format = [];
     file_format.push(uploadFile);
@@ -941,7 +983,15 @@ function make_breadcrumbs2(){
 function make_breadcrumbs3(){
     var compliance_name = '';
     for(var entity in compliances) {
-        compliance_name = compliance_name + compliances[entity]["document"] +" - " + compliances[entity]["statutory_provision"] + ',';
+      var doc_name = compliances[entity]["document_name"];
+      var statu_provision = compliances[entity]["statutory_provision"];
+      var breadcrumbs_text = '';
+      if(doc_name != null){
+        breadcrumbs_text = doc_name + ' - ' + statu_provision;
+      }else{
+        breadcrumbs_text = statu_provision;
+      }
+      compliance_name = compliance_name + breadcrumbs_text + ',';
     }
     compliance_name = compliance_name.replace(/,\s*$/, "");
     $(".breadcrumbs_3").html(compliance_name);
@@ -1190,6 +1240,7 @@ function savestatutorymapping(){
           }
           else {
             onFailure(error);
+
           }
       }
   );
@@ -1729,7 +1780,9 @@ function load_data(){
   if($('#repeats_type').val() == '2' && $('.multipleinput').prop("checked") == true){
   $('.multipleselectnone').hide();
   $('.multipleselect').show();
+  $('#multipleview').show();
   $('#sdate').show();
+  $('.repeatby-view').show();
   load_stautorydates();
   }
   else if($('#repeats_type').val() == '1'){
@@ -1738,6 +1791,9 @@ function load_data(){
     $('.multipleselect').hide();
     $('.multipleselectnone').show();
     $('#sdate').hide();
+    $('#multipleview').hide();
+    $('.repeatby-view').hide();
+    
   }
   else if($('#repeats_type').val() == '3'){
     $('#single_statutory_date').show();
@@ -1745,6 +1801,8 @@ function load_data(){
     $('.multipleselect').hide();
     $('.multipleselectnone').show();
     $('#sdate').show();
+    $('.repeatby-view').show();
+    $('#multipleview').hide();
   }
   else if($('#repeats_type').val() == '2' && $('.multipleinput').prop("checked") == false){
     $('#single_statutory_date').show();
@@ -1752,6 +1810,8 @@ function load_data(){
     $('.multipleselect').hide();
     $('.multipleselectnone').show();
     $('#sdate').show();
+    $('.repeatby-view').show();
+    $('#multipleview').show();
   }
 
   resetvalues();
