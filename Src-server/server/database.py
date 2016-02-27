@@ -3172,7 +3172,7 @@ class KnowledgeDatabase(Database):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
         " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
         " is_active, url_short_name"
-        condition = "1"
+        condition = "1 ORDER BY group_name"
         rows = self.get_data(self.tblClientGroups, columns, condition)
         return self.return_group_company_details(rows)
 
@@ -3357,52 +3357,53 @@ class KnowledgeDatabase(Database):
         db_username = self.generate_random()
         db_password = self.generate_random()
 
-        if self._create_database(
+        db_server_column = "company_ids"
+        db_server_value = client_id
+        db_server_condition = "ip='%s'" % host
+        self.append(
+            self.tblDatabaseServer, db_server_column, db_server_value,
+            db_server_condition
+        )
+        db_server_column = "length"
+        self.increment(
+            self.tblDatabaseServer, db_server_column,
+            db_server_condition
+        )
+
+        machine_columns = "client_ids"
+        machine_value = db_server_value
+        machine_condition = db_server_condition
+        self.append(
+            self.tblMachines, machine_columns, machine_value,
+            machine_condition
+        )
+
+        rows = self.get_data(
+            self.tblMachines, "machine_id, port", machine_condition
+        )
+        machine_id = rows[0][0]
+        server_ip = host
+        server_port = rows[0][1]
+
+        client_db_columns = [
+            "client_id", "machine_id", "database_ip",
+            "database_port", "database_username", "database_password",
+            "client_short_name", "database_name",
+            "server_ip", "server_port"
+        ]
+        client_dB_values = [
+            client_id, machine_id, host, 3306, db_username,
+            db_password, short_name, database_name,
+            server_ip, server_port
+        ]
+        self.insert(
+            self.tblClientDatabase, client_db_columns,
+            client_dB_values
+        )
+        return self._create_database(
             host, username, password, database_name, db_username,
             db_password, email_id, client_id, short_name
-        ):
-            db_server_column = "company_ids"
-            db_server_value = client_id
-            db_server_condition = "ip='%s'" % host
-            self.append(
-                self.tblDatabaseServer, db_server_column, db_server_value,
-                db_server_condition
-            )
-            db_server_column = "length"
-            self.increment(
-                self.tblDatabaseServer, db_server_column,
-                db_server_condition
-            )
-
-            machine_columns = "client_ids"
-            machine_value = db_server_value
-            machine_condition = db_server_condition
-            self.append(
-                self.tblMachines, machine_columns, machine_value,
-                machine_condition
-            )
-
-            rows = self.get_data(self.tblMachines, "machine_id", machine_condition)
-            machine_id = rows[0][0]
-            server_ip = "127.0.0.1"
-            server_port = "8081"
-
-            client_db_columns = [
-                "client_id", "machine_id", "database_ip",
-                "database_port", "database_username", "database_password",
-                "client_short_name", "database_name",
-                "server_ip", "server_port"
-            ]
-            client_dB_values = [
-                client_id, machine_id, host, 3306, db_username,
-                db_password, short_name, database_name,
-                server_ip, server_port
-            ]
-
-            return self.insert(
-                self.tblClientDatabase, client_db_columns,
-                client_dB_values
-            )
+        )
 
     def save_client_group(self, client_id, client_group, session_user):
         current_time_stamp = self.get_date_time()
@@ -3449,10 +3450,12 @@ class KnowledgeDatabase(Database):
 
         return self.update(self.tblClientGroups, columns, values, condition)
 
-    def save_client_user(self, client_group, session_user):
+    def save_client_user(self, client_group, session_user, client_id = None):
+        if client_id is None:
+            client_id = client_group.client_id
         columns = ["client_id", "user_id",  "email_id",
         "employee_name", "created_on", "is_admin", "is_active"]
-        values = [client_group.client_id, 0, self.username, "Admin",
+        values = [client_id, 0, client_group.email_id, "Admin",
         self.get_date_time(), 1, 1]
         return self.insert(self.tblClientUsers, columns, values)
 
