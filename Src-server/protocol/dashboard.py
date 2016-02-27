@@ -336,7 +336,7 @@ class GetAssigneewiseComplianesFilters(Request):
 
 class GetAssigneeWiseCompliancesChart(Request):
     def __init__(
-        self, country_id, business_group_id, legal_entity_id, division_id, 
+        self, country_id, business_group_id, legal_entity_id, division_id,
         unit_id, user_id
     ):
         self.country_id = country_id
@@ -350,7 +350,7 @@ class GetAssigneeWiseCompliancesChart(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "country_id", "business_group_id", "legal_entity_id", "division_id", 
+                "country_id", "business_group_id", "legal_entity_id", "division_id",
                 "unit_id", "user_id"
             ]
         )
@@ -367,7 +367,7 @@ class GetAssigneeWiseCompliancesChart(Request):
         user_id = data.get("user_id")
         user_id = parse_structure_OptionalType_UnsignedIntegerType_32(user_id)
         return GetAssigneeWiseCompliancesChart(
-            country_id, business_group_id, legal_entity_id, division_id, 
+            country_id, business_group_id, legal_entity_id, division_id,
             unit_id, user_id
         )
 

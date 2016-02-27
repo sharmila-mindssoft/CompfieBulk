@@ -87,6 +87,9 @@ function initClientMirror() {
 
     function getClientShortName(){
         var name = window.localStorage["shortName"];
+        if (typeof(name) == "undefined"){
+            return null;
+        }
         return name;
     }
 
@@ -579,7 +582,7 @@ function initClientMirror() {
         };
     }
 
-    function updateStatutorySettings(unitName, unitId, statutories, callback) {
+    function updateStatutorySettings(password, unitName, unitId, statutories, callback) {
         var request = [
             "UpdateStatutorySettings", {
                 "password": password,
@@ -929,15 +932,24 @@ function initClientMirror() {
 
     /* Trend Chart */
 
-    function getTrendChart(country_ids, domain_ids, filter_type,
-        filter_id, callback) {
+    // function getTrendChart(country_ids, domain_ids, filter_type,
+    //     filter_id, callback) {
+    //     var request = [
+    //         "GetTrendChart", {
+    //             "country_ids": country_ids,
+    //             "domain_ids": domain_ids,
+    //             "filter_type": filter_type,
+    //             "filter_ids": filter_id
+    //         }
+    //     ];
+    //     var callerName = "client_dashboard"
+    //     clientApiRequest(callerName, request, callback)
+    // }
+
+    function getTrendChart(requestData, callback) {
         var request = [
-            "GetTrendChart", {
-                "country_ids": country_ids,
-                "domain_ids": domain_ids,
-                "filter_type": filter_type,
-                "filter_ids": filter_id
-            }
+            "GetTrendChart",
+            requestData
         ];
         var callerName = "client_dashboard"
         clientApiRequest(callerName, request, callback)
@@ -956,6 +968,24 @@ function initClientMirror() {
         ];
         var callerName = "client_dashboard"
         clientApiRequest(callerName, request, callback)
+    }
+
+    function getNotCompliedData(requestData, callback) {
+        var request = [
+            "GetNotCompliedChart",
+            requestData
+        ];
+        var callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getComplianceApplicabilityChart(requestData, callback) {
+        var request = [
+            "GetComplianceApplicabilityStatusChart",
+            requestData
+        ];
+        var callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);
     }
 
     /* Settings */
@@ -1273,6 +1303,7 @@ function initClientMirror() {
         login: login,
         logout: logout,
         getClientShortName: getClientShortName,
+        redirect_login : redirect_login,
 
         getUserInfo: getUserInfo,
         getUserProfile: getUserProfile,
@@ -1350,6 +1381,8 @@ function initClientMirror() {
         getEscalationChartData: getEscalationChartData,
         getTrendChart: getTrendChart,
         getTrendChartDrillDown: getTrendChartDrillDown,
+        getNotCompliedData: getNotCompliedData,
+        getComplianceApplicabilityChart: getComplianceApplicabilityChart,
 
         getSettings: getSettings,
         updateSettings: updateSettings,

@@ -619,7 +619,7 @@ class KnowledgeDatabase(Database):
         if user_id > 0 :
             query = query + " INNER JOIN tbl_user_domains t2 ON \
                 t1.domain_id = t2.domain_id WHERE t2.user_id = %s" % (user_id)
-        query += " order by t1.domain_name"
+        query = query + " ORDER BY t1.domain_name"
         rows = self.select_all(query)
         result = []
         if rows :
@@ -714,7 +714,7 @@ class KnowledgeDatabase(Database):
                 ON t1.country_id = t2.country_id WHERE t2.user_id = %s" % (
                     user_id
                 )
-        query += " order by t1.country_name"
+        query = query + " ORDER BY t1.country_name"
         rows = self.select_all(query)
         result = []
         if rows :
@@ -848,7 +848,7 @@ class KnowledgeDatabase(Database):
 
     def get_industries(self) :
         query = "SELECT industry_id, industry_name, is_active \
-            FROM tbl_industries "
+            FROM tbl_industries ORDER BY industry_name"
         rows = self.select_all(query)
         result = []
         if rows :
@@ -952,7 +952,7 @@ class KnowledgeDatabase(Database):
 
     def get_statutory_nature(self) :
         query = "SELECT statutory_nature_id, statutory_nature_name, \
-            is_active FROM tbl_statutory_natures "
+            is_active FROM tbl_statutory_natures Order By statutory_nature_name"
         rows = self.select_all(query)
         result = []
         if rows :
@@ -1251,25 +1251,29 @@ class KnowledgeDatabase(Database):
         return True
 
     def get_geographies(self, user_id=None, country_id=None) :
-        query = "SELECT distinct t1.geography_id, t1.geography_name, \
-            t1.level_id, t1.parent_ids, t1.is_active, \
-            t2.country_id, t3.country_name FROM tbl_geographies t1 \
+        query = "SELECT distinct t1.geography_id, \
+            t1.geography_name, \
+            t1.level_id, \
+            t1.parent_ids, t1.is_active, \
+            t2.country_id, \
+            (select country_name from tbl_countries where country_id = t2.country_id)as country_name, \
+            t2.level_position \
+            FROM tbl_geographies t1 \
             INNER JOIN tbl_geography_levels t2 \
             on t1.level_id = t2.level_id \
-            INNER JOIN tbl_countries t3 \
-            on t2.country_id = t3.country_id \
             INNER JOIN tbl_user_countries t4 \
             ON t2.country_id = t4.country_id"
         if user_id :
             query = query + " AND t4.user_id=%s" % (user_id)
         if country_id :
-            query = query + " AND t3.country_id=%s" % (country_id)
+            query = query + " AND t2.country_id=%s" % (country_id)
+        query = query + " ORDER BY country_name, level_position, geography_name"
         rows = self.select_all(query)
         result = []
         if rows :
             columns = [
                 "geography_id", "geography_name", "level_id",
-                "parent_ids", "is_active", "country_id", "country_name"
+                "parent_ids", "is_active", "country_id", "country_name", "level_position"
             ]
             result = self.convert_to_dict(rows, columns)
             self.set_geography_parent_mapping(result)

@@ -10,7 +10,7 @@ from email.MIMEText import MIMEText
 
 # msg = MIMEMultipart()
 # msg['From'] = self.sender
-# msg['To'] = receiver
+# msg['To'] = receive
 # msg['Subject'] = subject
 # if cc is not None:
 #     msg['Cc'] = cc
@@ -25,7 +25,7 @@ __all__ = [
 ]
 
 class Email(object):
-    
+
     def __init__(self):
         self.sender = "sharmila@mindssoft.com"
         self.password = "6108816659"
@@ -103,7 +103,6 @@ class EmailHandler(Email):
         	short_name, receiver, password
         )
         self.send_email(receiver, subject, message)
-        
         # email_to = [receiver]
         # context = {
         #     "User" : db.get_user_name_by_id(user_id),
@@ -227,7 +226,7 @@ class EmailHandler(Email):
             user_ids = "%s, %s, %s" % (assignee_id, concurrence_id, approver_id)
         receiver, employee_name = db.get_user_email_name(user_ids)
         assignee = employee_name.split(",")[0]
-        
+
         email_to = receiver.split(",")
         context = {
             "User" : assignee,

@@ -1,6 +1,6 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
-    <div class="content-container width50" id="user-view">
+    <div class="content-container width65" id="user-view">
       <div class="content-area">
         <h1>Users</h1>
         <div class="filters-and-search">
@@ -50,7 +50,7 @@
   </tr>
 </table>
 </div>
-    <div class="content-container width70 default-display-none" id="user-add">
+    <div class="content-container width85 default-display-none" id="user-add">
       <div class="content-area">
         <div class="add-container">
           <div class="add-container-heading">Users<span class="error-message"></span></div>
@@ -77,7 +77,9 @@
 
             <div class="input-row" style="padding-bottom:0px;">
               <div class="field-label">Email ID:<span class="mandatory">*</span></div>
-              <div class="field-input"><input type="text" maxlength="100" id="emailid" class="input-box fieldvalue" placeholder="Email ID" tabindex="4">
+              <div class="field-input"><input type="text" maxlength="50" id="emailid" class="input-box fieldvalue" placeholder="Email ID" tabindex="4">
+
+              <span id="view_emailid" style="default-display-none"> </span>
             </div>
           </div>
           <div class="input-row" style="padding-bottom:0px;">
@@ -88,7 +90,7 @@
           </div>
           <div class="input-row" style="padding-bottom:0px;">
             <div class="field-label">Contact No.:<span class="mandatory">*</span></div>
-            <div class="field-input"><input type="text" maxlength="3" id="countrycode" class="input-box countrycode fieldvaluefieldvalue" value="+91" tabindex="5"> <input type="text" maxlength="5" id="areacode" class="input-box areacode fieldvalue" tabindex="6" > <input type="text" maxlength="10" id="contactno" class="input-box mobile fieldvalue" tabindex="7"></div>
+            <div class="field-input"><input type="text" maxlength="3" id="countrycode" class="input-box countrycode fieldvalue" value="+91" tabindex="5"> <input type="text" maxlength="5" id="areacode" class="input-box areacode fieldvalue" tabindex="6" > <input type="text" maxlength="10" id="contactno" class="input-box mobile fieldvalue" tabindex="7"></div>
           </div>
 
           <div class="input-row" style="padding-bottom:0px;">

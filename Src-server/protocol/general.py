@@ -548,12 +548,26 @@ class GetAuditTrailSuccess(Response):
             "forms": to_structure_VectorType_RecordType_general_AuditTrailForm(self.forms)
         }
 
+class MasterDataNotAvailableForClient(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return MasterDataNotAvailableForClient()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Response_class_map():
     classes = [
         UpdateUserProfileSuccess, ContactNumberAlreadyExists,
         GetDomainsSuccess, SaveDomainSuccess, DomainNameAlreadyExists,
         UpdateDomainSuccess, InvalidDomainId, ChangeDomainStatusSuccess,
-        GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess
+        GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess,
+        MasterDataNotAvailableForClient
     ]
     class_map = {}
     for c in classes:

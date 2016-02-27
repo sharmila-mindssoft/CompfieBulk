@@ -272,6 +272,7 @@ CREATE TABLE `tbl_client_compliances` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`client_statutory_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `tbl_assigned_compliances`;
 CREATE TABLE `tbl_assigned_compliances` (
   `country_id` int(11) NOT NULL,
@@ -281,18 +282,18 @@ CREATE TABLE `tbl_assigned_compliances` (
   `assignee` int(11) DEFAULT NULL,
   `concurrence_person` int(11) DEFAULT NULL,
   `approval_person` int(11) DEFAULT NULL,
-  `trigger_before_days` longtext,
+  `trigger_before_days` int(11) DEFAULT NULL,
   `due_date` date DEFAULT NULL,
   `validity_date` date DEFAULT NULL,
   `is_reassigned` tinyint(4) DEFAULT NULL,
-  `is_active` tinyint(4) DEFAULT NULL,
+  `is_active` tinyint(4) DEFAULT 1,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT `fk_assigned_compliances_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `fk_assigned_compliances_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
-  CONSTRAINT `fk_assigned_compliances_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_client_compliances` (`compliance_id`),
+  CONSTRAINT `fk_assigned_compliances_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
   CONSTRAINT `fk_assigned_compliances_assignee_client_user_details` FOREIGN KEY (`assignee`) REFERENCES `tbl_users` (`user_id`),
   CONSTRAINT `fk_assigned_compliances_approve_client_user_details` FOREIGN KEY (`approval_person`) REFERENCES `tbl_users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -310,7 +311,7 @@ CREATE TABLE `tbl_reassigned_compliances_history` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT `fk_rch_assignee_user_details` FOREIGN KEY (`assignee`) REFERENCES `tbl_users` (`user_id`),
   CONSTRAINT `fk_rch_reassigned_from_user_details` FOREIGN KEY (`reassigned_from`) REFERENCES `tbl_users` (`user_id`),
-  CONSTRAINT `fk_rch_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_client_compliances` (`compliance_id`),
+  CONSTRAINT `fk_rch_compliances` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
   CONSTRAINT `fk_rch_units` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_compliance_status`;
