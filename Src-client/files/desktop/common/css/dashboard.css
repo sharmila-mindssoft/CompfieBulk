@@ -558,11 +558,12 @@ img, object {
 .grid-table {
 	width: 100%;
 	float: left;
-	padding-bottom: 1em;
+	padding: 0em 0.2em 1em 0.2em;
+
 }
 .grid-table table{
 	width: 100%;
-	height: 15em;
+	/*height: 15em;*/
 	/*overflow-y: scroll;*/
 	float: left;
 }
@@ -576,7 +577,7 @@ img, object {
 }
 .grid-table table tr td {
 	font-size: 0.813em;
-	color: #f1f2f2;
+	color: #000;
 	height: 2.3em;
 	vertical-align: middle;
 	padding-left:0.5em;
@@ -686,4 +687,7 @@ img, object {
 	text-decoration: none;
 	color: #ffae00;
 	font-size: 0.813em;
+}
+.accordion-content tr{
+	width: 100%;
 }

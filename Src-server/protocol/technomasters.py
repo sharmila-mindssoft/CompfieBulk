@@ -169,7 +169,7 @@ class SaveClientGroup(Request):
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
             "incharge_persons": to_structure_VectorType_UnsignedIntegerType_32(self.incharge_persons),
-            "no_of_user_licence": to_structure_SignedIntegerType_8(self.no_of_user_licence),
+            "no_of_user_licence": to_structure_UnsignedIntegerType_32(self.no_of_user_licence),
             "file_space": to_structure_Float(self.file_space),
             "is_sms_subscribed": to_structure_Bool(self.is_sms_subscribed),
             "email_id": to_structure_CustomTextType_100(self.email_id),
@@ -231,7 +231,7 @@ class UpdateClientGroup(Request):
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
             "incharge_persons": to_structure_VectorType_UnsignedIntegerType_32(self.incharge_persons),
-            "no_of_user_licence": to_structure_SignedIntegerType_8(self.no_of_user_licence),
+            "no_of_user_licence": to_structure_UnsignedIntegerType_32(self.no_of_user_licence),
             "file_space": to_structure_Float(self.file_space),
             "is_sms_subscribed": to_structure_Bool(self.is_sms_subscribed),
             "date_configurations": to_structure_VectorType_RecordType_core_ClientConfiguration(self.date_configurations),
@@ -1054,6 +1054,20 @@ class ReactivateUnitSuccess(Response):
         return {
         }
 
+class UserIsNotResponsibleForAnyClient(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UserIsNotResponsibleForAnyClient()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 class GetClientProfileSuccess(Response):
     def __init__(self, group_companies, profiles):
         self.group_companies = group_companies
@@ -1082,7 +1096,8 @@ def _init_Response_class_map():
     LegalEntityNameAlreadyExists, DivisionNameAlreadyExists, UnitNameAlreadyExists,
     UnitCodeAlreadyExists, LogoSizeLimitExceeds, UpdateClientSuccess,
     ChangeClientStatusSuccess, ReactivateUnitSuccess, GetClientProfileSuccess,
-    InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId, InvalidUnitId]
+    InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId, 
+    InvalidUnitId, UserIsNotResponsibleForAnyClient]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

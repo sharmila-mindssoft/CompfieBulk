@@ -1,3 +1,5 @@
+import collections
+
 from protocol import core
 
 __all__ = [
@@ -7,14 +9,11 @@ __all__ = [
 def process_user_forms(
     db, form_ids, client_id=None, is_admin=None
 ):
-    print "process_user_forms", form_ids
     forms = None
-    print client_id
     if client_id is not None:
         forms = db.get_user_forms(form_ids, client_id, is_admin)
     else:
         forms = db.get_user_forms(form_ids)
-    print forms
     form_list = []
     for f in forms :
         form_id = int(f["form_id"])
@@ -36,4 +35,15 @@ def process_user_menus(form_list):
             _forms = []
         _forms.append(form)
         menus[form_type] = _forms
+    menus = reorder_menu(menus)
     return core.Menu(menus)
+
+def reorder_menu(menus):
+    new_menu = collections.OrderedDict()
+    if "Master" in menus:
+        new_menu["Master"] = menus["Master"]
+    if "Transaction" in menus:
+        new_menu["Transaction"] = menus["Transaction"]
+    if "Report" in menus:
+        new_menu["Report"] = menus["Report"]
+    return new_menu

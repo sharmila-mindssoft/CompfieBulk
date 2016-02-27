@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 __all__ = [
     "parse_bool",
     "parse_number",
@@ -118,7 +120,7 @@ def parse_static_list(x, length=0) :
 def parse_dictionary(x, field_names=[]) :
     if x is None:
         raise empty_error()
-    if type(x) is not dict :
+    if (type(x) is not dict) and (type(x) is not OrderedDict):
         raise expectation_error("a dict", x)
     for field_name in field_names:
         if field_name not in x.keys():
