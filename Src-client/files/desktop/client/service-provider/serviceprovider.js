@@ -88,25 +88,25 @@ $("#submit").click(function(){
 	var contractFromValue = $("#contract-from").val();
 	var contractToValue = $("#contract-to").val();
 	if(serviceProviderNameValue == ''){
-		displayMessage('Please Enter Service Provider Name ');
+		displayMessage('Enter Service Provider Name ');
 	}
 	else if(contactPersonValue == ''){
-		displayMessage('Please Enter Contact Person Name ');
+		displayMessage('Enter Contact Person Name ');
 	}
 	else if(countryCodeValue == ''){
-		displayMessage('Please Enter Country Code');
+		displayMessage('Enter Mobile Country Code');
 	}
 	else if(mobileNumberValue == ''){
-		displayMessage('Please Enter Mobile Number');
+		displayMessage('Enter Mobile Number');
 	}
 	else if(addressValue == ''){
-		displayMessage('Please Enter Address ');
+		displayMessage('Enter Address ');
 	}
 	else if(contractFromValue == ''){
-		displayMessage('Please Enter Contract From ');
+		displayMessage('Enter Contract From ');
 	}
 	else if(contractToValue == ''){
-		displayMessage('Please Enter Contract To');
+		displayMessage('Enter Contract To');
 	}
 	else if(serviceProviderIdValue == ''){		
 		function onSuccess(data){

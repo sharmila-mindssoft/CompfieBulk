@@ -20,6 +20,15 @@ $(".error-message").html('');
 $(".tbody-geography-level").find("div").remove();
 });
 
+$(".btn-geography-back").click(function(){
+$("#geography-view").show();
+$("#geography-add").hide();
+$("#country").val('');
+$("#countryval").val('');
+$(".error-message").html('');
+$(".tbody-geography-level").find("div").remove();
+});
+
 function GetGeographies(){
   function onSuccess(data){
     geographyLevelsList = data["geography_levels"];

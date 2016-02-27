@@ -27,16 +27,16 @@ $("#submit").click(function(){
 	var mobile = $(".mobile").val();
 	var address = $(".address").val();
 	if(countrycode == ''){
-		displayMessage("Please Enter country code");
+		displayMessage("Enter country code");
 	}
 	if(mobile == ''){
-		displayMessage("Please Enter Contact Number");
+		displayMessage("Enter Contact Number");
 	}
 	if(isNaN(mobile)){
-		displayMessage("Invalid Contact Number");
+		displayMessage("Contact Number Invalid");
 	}
 	if(address == ''){
-		displayMessage("Please Enter address")
+		displayMessage("Enter address")
 	}
 	function onSuccess(data){
 		initialize();

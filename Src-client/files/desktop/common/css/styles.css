@@ -438,6 +438,27 @@ img, object {
 	-moz-border-radius: 0.5em;
 	border-radius: 0.5em;
 }
+
+.btn-back {
+	width: 5.625em;
+	float: left;
+	height: 2.5em;
+	line-height: 2.5em;
+	background: #fc9b01 url(../images/icon-back.png) no-repeat 0.5em center;
+	cursor: pointer;
+	color: #333;
+	font-size: 0.813em;
+	text-align: left;
+	border: none;
+	outline: none;
+	padding-left: 2.5em;
+	font-weight: bold;
+
+	-webkit-border-radius: 0.5em;
+	-moz-border-radius: 0.5em;
+	border-radius: 0.5em;
+}
+
 .grid-table {
 	width: 100%;
 	float: left;
@@ -1523,12 +1544,6 @@ list-style-type:none; line-height:25px;
 .ac-selectbox ul li.active_selectbox_users {
   background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 }
-.heading{
-  color: #000;
-  font-size: 1em;
-  height: 2.25em;
-  margin-bottom:0px;
-}
 .date-configuration{
   max-height: 270px;
   overflow: auto;
@@ -1575,12 +1590,7 @@ list-style-type:none; line-height:25px;
     height: 2.2em;
     font-size: 0.9em;
  }
-.heading{
-  color: #000;
-  font-size: 1em;
-  height: 2.25em;
-  margin-bottom:0px;
-}
+
 .date-configuration{
   max-height: 270px;
   overflow: auto;
@@ -1817,6 +1827,35 @@ list-style-type:none; line-height:25px;
   font-size: 0.8em;
 }
 
+.popup-password {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 3px;
+  width: 20%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+.popup-password .close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  transition: all 200ms;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup-password .close:hover {
+  color: orange;
+}
+.popup-password .content {
+  max-height: 25%;
+  overflow: auto;
+  line-height: 20px;
+  font-size: 0.8em;
+}
+
 .gt input[type="checkbox"] {
 display: none !important;
 }
@@ -1845,14 +1884,6 @@ cursor: pointer;
 background: url('/images/tick-orange.png') no-repeat;
 height:17px;
 cursor: pointer;
-}
-/*siva ends*/
-
-.heading{
-  color: #000;
-  font-size: 1em;
-  height: 2.25em;
-  margin-bottom:0px;
 }
 .date-configuration{
   max-height: 270px;

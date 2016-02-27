@@ -43,7 +43,7 @@ function unit_close(){
 	var password=$('#password').val();
 	console.log(unitidval);
 	if(password==''){
-		$('.popup-error-msg').html("Please Enter password");
+		$('.popup-error-msg').html("Enter password");
 	}
 	else{
 		function onSuccess(data){

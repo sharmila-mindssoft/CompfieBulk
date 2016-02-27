@@ -276,21 +276,24 @@ def update_client(db, request, session_user):
 
 
 def get_clients(db, request, session_user):
-	country_list = db.get_countries_for_user(session_user)
-	domain_list = db.get_domains_for_user(session_user)
 	group_company_list = db.get_group_companies_for_user(session_user)
-	business_group_list = db.get_business_groups_for_user(session_user)
-	legal_entity_list = db.get_legal_entities_for_user(session_user)
-	division_list = db.get_divisions_for_user(session_user)
-	unit_list = db.get_unit_details_for_user(session_user)
-	geography_levels = db.get_geograhpy_levels_for_user(session_user)
-	geographies = db.get_geographies_for_user_with_mapping(session_user)
-	industries = db.get_industries()
-	return technomasters.GetClientsSuccess(countries=country_list, 
-		domains = domain_list, group_companies = group_company_list, 
-		business_groups = business_group_list, legal_entities = legal_entity_list, 
-		divisions = division_list, units = unit_list, geography_levels = geography_levels,
-		geographies = geographies, industries = industries)
+	if len(group_company_list) > 0:
+		country_list = db.get_countries_for_user(session_user)
+		domain_list = db.get_domains_for_user(session_user)
+		business_group_list = db.get_business_groups_for_user(session_user)
+		legal_entity_list = db.get_legal_entities_for_user(session_user)
+		division_list = db.get_divisions_for_user(session_user)
+		unit_list = db.get_unit_details_for_user(session_user)
+		geography_levels = db.get_geograhpy_levels_for_user(session_user)
+		geographies = db.get_geographies_for_user_with_mapping(session_user)
+		industries = db.get_industries()
+		return technomasters.GetClientsSuccess(countries=country_list, 
+			domains = domain_list, group_companies = group_company_list, 
+			business_groups = business_group_list, legal_entities = legal_entity_list, 
+			divisions = division_list, units = unit_list, geography_levels = geography_levels,
+			geographies = geographies, industries = industries)
+	else:
+		return technomasters.UserIsNotResponsibleForAnyClient()
 
 def change_client_status(db, request, session_user):
 	session_user = int(session_user)
@@ -337,7 +340,7 @@ def get_client_profile(db, request, session_user):
 	client_ids = db.get_user_clients(session_user)
 
 	if client_ids ==  None:
-		print "Error : User is not responsible for any client"
+		return technomasters.UserIsNotResponsibleForAnyClient()
 	else:
 		profiles = db.get_profiles(client_ids)
 		group_companies = db.get_group_companies_for_user(session_user)

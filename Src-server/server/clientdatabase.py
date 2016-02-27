@@ -454,6 +454,7 @@ class ClientDatabase(Database):
             VALUES (%s, %s, %s, '%s', '%s')" % (
                 activityId, user_id, form_id, action, created_on
             )
+        print query
         self.execute(query)
         return True
 
@@ -2236,7 +2237,7 @@ class ClientDatabase(Database):
                     concurrence_person, approval_person, \
                     trigger_before_days, due_date, validity_date, created_by, \
                     created_on) VALUES \
-                    (%s, %s, %s, '%s', %s, '%s', %s, '%s', '%s', %s, '%s')" % (
+                    (%s, %s, %s, '%s', %s, '%s', %s, %s, '%s', '%s', %s, '%s')" % (
                         country_id, unit_id, compliance_id,
                         date_list, assignee, concurrence,
                         approval, trigger_before, due_date, validity_date,
@@ -4459,7 +4460,7 @@ class ClientDatabase(Database):
             ]
             join_type = " left join"
             where_condition = "notification_id = '%d'" % notification_id
-            where_condition += " and notification_type_id = '%d'" % notification_type_id
+            where_condition += " and notification_type_id = '%d' order by updated_on DESC" % notification_type_id
             notification_detail_row = self.get_data_from_multiple_tables(
                 columns, tables, aliases, join_type,
                 join_conditions, where_condition

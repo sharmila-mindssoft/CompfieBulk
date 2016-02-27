@@ -270,7 +270,7 @@ CREATE TABLE `tbl_client_compliances` (
   `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_by` int(11) NOT NULL,
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`client_statutory_id`, `compliance_id`)
+  PRIMARY KEY (`client_statutory_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_assigned_compliances`;

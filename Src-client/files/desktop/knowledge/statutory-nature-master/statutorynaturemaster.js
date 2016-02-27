@@ -114,7 +114,7 @@ $("#btn-statutory-nature-submit").click(function(){
 		}
 		function onFailure(error){
 			if(error == 'InvalidStatutoryNatureId'){
-				displayMessage('Invalid Statutory Nature Id');
+				displayMessage('Invalid Statutory Nature Name');
 			}
 			if(error == 'StatutoryNatureNameAlreadyExists'){
 				displayMessage('Statutory Nature Name Already Exists');

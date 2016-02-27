@@ -84,6 +84,7 @@ def get_user_group_detailed_list(db):
         user_group_id = int(row[0])
         user_group_name = row[1]
         form_category_id = row[2]
+        no_of_users = row[5]
         if len(row[3]) > 1 :
             form_ids = [int(x) for x in row[3].split(",")]
         else :
@@ -91,7 +92,7 @@ def get_user_group_detailed_list(db):
         is_active = False if row[4] == 0 else True
         user_group_list.append(admin.UserGroup(
             user_group_id, user_group_name,
-            form_category_id, form_ids, is_active
+            form_category_id, form_ids, is_active, no_of_users
         ))
     return user_group_list
 

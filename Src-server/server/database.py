@@ -156,8 +156,6 @@ class Database(object) :
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
-        # if client_id is not None:
-        #     return self.select_all(query, client_id)
         return self.select_all(query)
 
     def get_data_from_multiple_tables(
@@ -2927,16 +2925,17 @@ class KnowledgeDatabase(Database):
         return self.get_new_id("user_group_id", self.tblUserGroups)
 
     def get_user_group_detailed_list(self) :
-        columns = "user_group_id, user_group_name, form_category_id, "+\
-                    "form_ids, is_active"
-        tables = self.tblUserGroups
-        where_condition = "1"
+        columns = "ug.user_group_id, user_group_name, form_category_id, "+\
+                    "form_ids, is_active, (select count(*) from %s u where \
+                    ug.user_group_id = u.user_group_id)" % (self.tblUsers)
+        tables = self.tblUserGroups+" ug"
+        where_condition = " 1 order by user_group_name"
         rows = self.get_data( tables, columns, where_condition)
         return rows
 
     def get_user_groups(self):
         columns = "user_group_id, user_group_name, is_active"
-        where_condition = "1"
+        where_condition = "1 order by user_group_name"
         rows = self.get_data(self.tblUserGroups, columns, where_condition)
         return rows
 
@@ -3049,8 +3048,13 @@ class KnowledgeDatabase(Database):
 
     def get_user_clients(self, user_id):
         columns = "group_concat(client_id)"
-        condition = " user_id = '%d'"% user_id
-        rows = self.get_data(self.tblUserClients, columns, condition)
+        if user_id > 0:
+            table = self.tblUserClients
+            condition = " user_id = '%d'"% user_id
+        else:
+            table = self.tblClientGroups
+            condition = "1"
+        rows = self.get_data(table, columns, condition)
         return rows[0][0]
 
     def save_user(self, user_id, email_id, user_group_id, employee_name,
@@ -3088,7 +3092,7 @@ class KnowledgeDatabase(Database):
             email().send_knowledge_user_credentials(
                 email_id, password, employee_name, employee_code
             )
-        except e:
+        except Exception, e:
             print "Error while sending email : {}".format(e)
         return (result1 and result2 and result3)
 
@@ -3202,16 +3206,17 @@ class KnowledgeDatabase(Database):
         return client_list
 
     def get_group_companies_for_user(self, user_id):
+        result = {}
         client_ids = None
-        if ((user_id != None) and (user_id != 0)):
+        if user_id != None:
             client_ids = self.get_user_clients(user_id)
-        columns = "client_id, group_name,  is_active"
+        columns = "client_id, group_name, is_active"
         condition = "1"
         if client_ids is not None:
-            condition = "client_id in (%s)" % client_ids
-        rows = self.get_data(self.tblClientGroups, columns, condition)
-        columns = ["client_id", "group_name", "is_active"]
-        result = self.convert_to_dict(rows, columns)
+            condition = "client_id in (%s) order by group_name ASC" % client_ids
+            rows = self.get_data(self.tblClientGroups, columns, condition)
+            columns = ["client_id", "group_name", "is_active"]
+            result = self.convert_to_dict(rows, columns)
         return self.return_group_companies(result)
 
 
@@ -3782,16 +3787,17 @@ class KnowledgeDatabase(Database):
             return False
 
     def get_business_groups_for_user(self, user_id):
+        result = {}
         client_ids = None
-        if ((user_id != None) and (user_id != 0)):
+        if user_id != None:
             client_ids = self.get_user_clients(user_id)
         columns = "business_group_id, business_group_name, client_id"
         condition = "1"
         if client_ids is not None:
-            condition = "client_id in (%s)" % client_ids
-        rows = self.get_data(self.tblBusinessGroups, columns, condition)
-        columns = ["business_group_id", "business_group_name", "client_id"]
-        result = self.convert_to_dict(rows, columns)
+            condition = "client_id in (%s) order by business_group_name ASC" % client_ids
+            rows = self.get_data(self.tblBusinessGroups, columns, condition)
+            columns = ["business_group_id", "business_group_name", "client_id"]
+            result = self.convert_to_dict(rows, columns)
         return self.return_business_groups(result)
 
     def return_business_groups(self, business_groups):
@@ -3805,16 +3811,17 @@ class KnowledgeDatabase(Database):
 
     def get_legal_entities_for_user(self, user_id):
         client_ids = None
-        if ((user_id != None) and (user_id != 0)):
+        result = {}
+        if user_id != None:
             client_ids = self.get_user_clients(user_id)
         columns = "legal_entity_id, legal_entity_name, business_group_id, client_id"
         condition = "1"
         if client_ids is not None:
-            condition = "client_id in (%s)" % client_ids
-        rows = self.get_data(self.tblLegalEntities, columns, condition)
-        columns = ["legal_entity_id", "legal_entity_name", "business_group_id",
-        "client_id"]
-        result = self.convert_to_dict(rows, columns)
+            condition = "client_id in (%s) order by legal_entity_name ASC" % client_ids
+            rows = self.get_data(self.tblLegalEntities, columns, condition)
+            columns = ["legal_entity_id", "legal_entity_name", "business_group_id",
+            "client_id"]
+            result = self.convert_to_dict(rows, columns)
         return self.return_legal_entities(result)
 
     def return_legal_entities(self, legal_entities):
@@ -3828,17 +3835,18 @@ class KnowledgeDatabase(Database):
 
     def get_divisions_for_user(self, user_id):
         client_ids = None
-        if ((user_id != None) and (user_id != 0)):
+        result = {}
+        if user_id != None:
             client_ids = self.get_user_clients(user_id)
         columns = "division_id, division_name, legal_entity_id, business_group_id,"+\
         "client_id"
         condition = "1"
         if client_ids is not None:
-            condition = "client_id in (%s)" % client_ids
-        rows = self.get_data(self.tblDivisions, columns, condition)
-        columns = ["division_id", "division_name", "legal_entity_id",
-        "business_group_id", "client_id"]
-        result = self.convert_to_dict(rows, columns)
+            condition = "client_id in (%s) order by division_name ASC" % client_ids
+            rows = self.get_data(self.tblDivisions, columns, condition)
+            columns = ["division_id", "division_name", "legal_entity_id",
+            "business_group_id", "client_id"]
+            result = self.convert_to_dict(rows, columns)
         return self.return_divisions(result)
 
     def return_divisions(self, divisions):
@@ -3851,17 +3859,18 @@ class KnowledgeDatabase(Database):
 
     def get_units_for_user(self, user_id):
         client_ids = None
-        if ((user_id != None) and (user_id != 0)):
+        result = {}
+        if user_id != None:
             client_ids = self.get_user_clients(user_id)
         columns = "unit_id, unit_code, unit_name, address, division_id,"+\
         " legal_entity_id, business_group_id, client_id, is_active, geography_id, industry_id, domain_ids"
         condition = "1"
         if client_ids is not None:
-            condition = "client_id in (%s)" % client_ids
-        rows = self.get_data(self.tblUnits, columns, condition)
-        columns = ["unit_id", "unit_code", "unit_name", "unit_address", "division_id",
-        "legal_entity_id", "business_group_id", "client_id", "is_active", "geography_id", "industry_id", "domain_ids"]
-        result = self.convert_to_dict(rows, columns)
+            condition = "client_id in (%s) order by unit_name ASC" % client_ids
+            rows = self.get_data(self.tblUnits, columns, condition)
+            columns = ["unit_id", "unit_code", "unit_name", "unit_address", "division_id",
+            "legal_entity_id", "business_group_id", "client_id", "is_active", "geography_id", "industry_id", "domain_ids"]
+            result = self.convert_to_dict(rows, columns)
         return self.return_units(result)
 
     def return_units(self, units):
@@ -4725,12 +4734,27 @@ class KnowledgeDatabase(Database):
         if client_ids is not None:
             condition = "client_id in (%s)" % client_ids
 
-        columns = "business_group_id, legal_entity_id, division_id, client_id"
-        condition = " client_id in (select client_id from %s where user_id = %d) \
-        group by business_group_id, legal_entity_id, division_id, client_id" % (
+        columns = "u.business_group_id, u.legal_entity_id, u.division_id, u.client_id"
+        tables = [self.tblUnits, self.tblClientGroups, self.tblBusinessGroups, 
+        self.tblLegalEntities, self.tblDivisions]
+        aliases = ["u", "c", "bg","le", "d" ]
+        join_conditions = [
+            "u.client_id = c.client_id",
+            "u.business_group_id = bg.business_group_id",
+            "u.legal_entity_id = le.legal_entity_id",
+            "u.division_id = d.division_id"
+        ]
+        join_type = "inner join"
+        condition = " u.client_id in (select client_id from %s where user_id = %d) \
+        group by u.business_group_id, u.legal_entity_id, u.division_id, u.client_id \
+        order by group_name, business_group_name, legal_entity_name, \
+        division_name" % (
             self.tblUserClients, user_id
         )
-        rows = self.get_data(self.tblUnits, columns, condition)
+        rows = self.get_data_from_multiple_tables(
+            columns, tables, aliases, join_type,
+            join_conditions, condition
+        )
         unit_details = []
         for row in rows:
             detail_columns = "country_id"
@@ -4758,7 +4782,6 @@ class KnowledgeDatabase(Database):
                         unit_detail[2], unit_detail[3], unit_detail[4], unit_detail[5],
                         unit_detail[6], [int(x) for x in unit_detail[7].split(",")], bool(unit_detail[8])))
                     division_is_active = division_is_active or bool(unit_detail[8])
-                # country_wise_units.append(technomasters.CountryWiseUnits(country_row[0], units))
                 country_wise_units[country_row[0]] = units
             unit_details.append(technomasters.Unit(row[0], row[1], row[2], row[3], country_wise_units,division_is_active))
         return unit_details
@@ -5004,7 +5027,9 @@ class KnowledgeDatabase(Database):
         tables = [self.tblNotifications, self.tblNotificationsStatus]
         aliases = ["tn", "tns"]
         join_conditions = ["tn.notification_id = tns.notification_id"]
-        where_condition = " tns.user_id ='%d'" % (session_user)
+        where_condition = " tns.user_id ='%d' order by created_on DESC" % (
+            session_user
+        )
         rows = self.get_data_from_multiple_tables(
             columns, tables,
             aliases, join_type, join_conditions, where_condition

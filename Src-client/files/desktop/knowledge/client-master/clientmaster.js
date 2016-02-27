@@ -4,6 +4,7 @@ var countriesList;
 var dateconfigList;
 var uploadFile = [];
 var logo_file;
+
 function clearMessage() {
     $(".error-message").hide();
     $(".error-message").text("");
@@ -184,7 +185,7 @@ $("#btn-clientgroup-submit").click(function(){
         displayMessage('File Space Required');
     }
     else if(!$.isNumeric(fileSpaceVal)){
-        displayMessage('File Space Value Invalid');
+        displayMessage('Invalid File Space Value');
     }
     else if(inchargePersonVal == ''){
         displayMessage('Incharge Person Required');

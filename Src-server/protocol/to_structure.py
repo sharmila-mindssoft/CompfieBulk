@@ -1,4 +1,5 @@
 from sets import Set
+from collections import OrderedDict
 from protocol.jsonvalidators import (
     parse_bool,
     parse_number,
@@ -208,11 +209,7 @@ def to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_U
 
 def to_structure_MapType_CustomTextType_50_VectorType_RecordType_core_Form(data):
     data = parse_dictionary(data)
-    dict = {}
-    # for key, value in data.items():
-    #     key = to_structure_CustomTextType_50(key)
-    #     value = to_structure_VectorType_RecordType_core_Form(value)
-    #     dict.append([key, value])
+    dict = OrderedDict()
     for key, value in data.items():
         key = to_structure_CustomTextType_50(key)
         value = to_structure_VectorType_RecordType_core_Form(value)

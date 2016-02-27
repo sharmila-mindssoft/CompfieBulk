@@ -160,5 +160,17 @@ tbody {
   </table>
 </div>
 
+<div id="popup" class="overlay" >
+  <div class="popup-password">
+    <a class="close" href="#">X</a>
+    <div class="content">
+      Password<br>
+     <input type="password" name="password" class="input-box" id="password" style="margin-top:10px;"><br>
+     <input type="submit" name="submit" class="btn-submit" id="popup-submit" value="Submit" onclick="submit_statutory()" style="margin-top:10px;">
+     <span class="popup-error-msg"></span>
+    </div>
+  </div>
+</div>
+
 <script type="text/javascript" src="/files/desktop/client/statutory-settings/statutorysettings.js"></script>
 {% endblock %}
