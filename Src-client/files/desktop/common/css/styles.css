@@ -1507,12 +1507,6 @@ list-style-type:none; line-height:25px;
 .ac-selectbox ul li.active_selectbox_users {
   background: #f1e9f6 url(/files/desktop/common/images/tick_1.png) no-repeat left 5px center;
 }
-.heading{
-  color: #000;
-  font-size: 1em;
-  height: 2.25em;
-  margin-bottom:0px;
-}
 .date-configuration{
   max-height: 270px;
   overflow: auto;
@@ -1559,12 +1553,7 @@ list-style-type:none; line-height:25px;
     height: 2.2em;
     font-size: 0.9em;
  }
-.heading{
-  color: #000;
-  font-size: 1em;
-  height: 2.25em;
-  margin-bottom:0px;
-}
+
 .date-configuration{
   max-height: 270px;
   overflow: auto;
@@ -1829,14 +1818,6 @@ cursor: pointer;
 background: url('/images/tick-orange.png') no-repeat;
 height:17px;
 cursor: pointer;
-}
-/*siva ends*/
-
-.heading{
-  color: #000;
-  font-size: 1em;
-  height: 2.25em;
-  margin-bottom:0px;
 }
 .date-configuration{
   max-height: 270px;
