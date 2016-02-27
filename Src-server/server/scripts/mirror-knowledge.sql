@@ -675,6 +675,8 @@ CREATE TABLE `tbl_client_database` (
   `database_password` varchar(50) NOT NULL,
   `client_short_name` varchar(20) NOT NULL,
   `database_name` varchar(50) NOT NULL,
+  `server_ip` varchar(20) NOT NULL,
+  `server_port` int(11) NOT NULL,
   PRIMARY KEY (`client_id`),
   CONSTRAINT `fk_tbl_client_group_id` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
   CONSTRAINT `fk_tbl_machines_id` FOREIGN KEY (`machine_id`) REFERENCES `tbl_machines` (`machine_id`)

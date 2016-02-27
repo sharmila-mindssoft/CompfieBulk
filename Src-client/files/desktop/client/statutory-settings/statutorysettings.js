@@ -49,6 +49,9 @@ function part_compliance (remark) {
     }
 }
 
+function submit_statutory(){
+  alert("submit_statutory");
+}
 function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision, dispUnit, unit_id){
   var count=1;
   var statutoriesCount= 1;
@@ -160,70 +163,78 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
     });
 }
 
-
-$("#submit").click(function() {
-
-  var uId = $("#unit").val();
-  var uVal = $("#unitval").val();
-  var assignedStatutories = [];
-  var statutoriesCount= 1;
-  var actCount = 1;
-  var saveflag = true;
-  $.each(sList, function(key, value){
-    for(var statutory in value){
-      var client_statutory_id = value[statutory]["client_statutory_id"];
-      var applicableStatus = null;
-      var notApplicableRemarks = null;
-      
-      if($('#act'+actCount).is(":checked")){
-        applicableStatus = true;
-      }
-      else{
-        applicableStatus = false;
-        notApplicableRemarks = $('#remarkvalue'+actCount).val();
-        if(notApplicableRemarks.length==0){
-          displayMessage("Remarks required for not applicable act");
-          saveflag = false;
-          return false;
+function submit_statutory(){
+  var password = $('#password').val();
+  if(password == ''){
+    $('.popup-error-msg').html("Please Enter password");
+  }else{
+    var uId = $("#unit").val();
+    var uVal = $("#unitval").val();
+    var assignedStatutories = [];
+    var statutoriesCount= 1;
+    var actCount = 1;
+    var saveflag = true;
+    $.each(sList, function(key, value){
+      for(var statutory in value){
+        var client_statutory_id = value[statutory]["client_statutory_id"];
+        var applicableStatus = null;
+        var notApplicableRemarks = null;
+        
+        if($('#act'+actCount).is(":checked")){
+          applicableStatus = true;
         }
-      }
-
-    var complianceslist = value[statutory]["compliances"];
-    var compliances = { };
-    for(var compliance in complianceslist){    
-      var complianceId = complianceslist[compliance]["compliance_id"];
-      var complianceApplicableStatus = false;
-      var compliancenotApplicableRemarks = null;
-      var compliance_remarks = complianceslist[compliance]["compliance_remarks"];
-      if($('#statutory'+statutoriesCount).is(":checked")){
-        complianceApplicableStatus = true;
-      }else{
-        compliancenotApplicableRemarks = $('#cremarkvalue'+statutoriesCount).val();
-        if(compliancenotApplicableRemarks.length == 0 && compliance_remarks == null && applicableStatus == true){
-          displayMessage("Remarks required for not applicable compliance");
-          saveflag = false;
-          return false;
+        else{
+          applicableStatus = false;
+          notApplicableRemarks = $('#remarkvalue'+actCount).val();
+          if(notApplicableRemarks.length==0){
+            displayMessage("Remarks required for not applicable act");
+            saveflag = false;
+            return false;
+          }
         }
-      }
 
-      assignedstatutoriesData = client_mirror.updateStatutory(client_statutory_id, applicableStatus, notApplicableRemarks, complianceId, complianceApplicableStatus, compliancenotApplicableRemarks);
-      assignedStatutories.push(assignedstatutoriesData);
-      statutoriesCount++;
-    } 
-    actCount++;
-  }
+      var complianceslist = value[statutory]["compliances"];
+      var compliances = { };
+      for(var compliance in complianceslist){    
+        var complianceId = complianceslist[compliance]["compliance_id"];
+        var complianceApplicableStatus = false;
+        var compliancenotApplicableRemarks = null;
+        var compliance_remarks = complianceslist[compliance]["compliance_remarks"];
+        if($('#statutory'+statutoriesCount).is(":checked")){
+          complianceApplicableStatus = true;
+        }else{
+          compliancenotApplicableRemarks = $('#cremarkvalue'+statutoriesCount).val();
+          if(compliancenotApplicableRemarks.length == 0 && compliance_remarks == null && applicableStatus == true){
+            displayMessage("Remarks required for not applicable compliance");
+            saveflag = false;
+            return false;
+          }
+        }
+
+        assignedstatutoriesData = client_mirror.updateStatutory(client_statutory_id, applicableStatus, notApplicableRemarks, complianceId, complianceApplicableStatus, compliancenotApplicableRemarks);
+        assignedStatutories.push(assignedstatutoriesData);
+        statutoriesCount++;
+      } 
+      actCount++;
+    }
   });
   
   if(saveflag){
     function onSuccess(data){
-    getStatutorySettings ();
-    $("#statutorysettings-add").hide();
-    $("#statutorysettings-view").show();
+      $('.overlay').css("visibility","hidden");
+      $('.overlay').css("opacity","0");
+      $('#password').val("");
+      getStatutorySettings ();
+      $("#statutorysettings-add").hide();
+      $("#statutorysettings-view").show();
     }
     function onFailure(error){
-      displayMessage(error)
+      if(error == 'InvalidPassword'){
+        $('.popup-error-msg').html("Enter Correct password");
+        $('#password').val("");
+      }
     }
-    client_mirror.updateStatutorySettings("123456", uVal, parseInt(uId), assignedStatutories, 
+    client_mirror.updateStatutorySettings(password, uVal, parseInt(uId), assignedStatutories, 
       function (error, response) {
       if (error == null){
         onSuccess(response);
@@ -234,6 +245,20 @@ $("#submit").click(function() {
     }
     );
     }
+  }
+}
+
+$('.close').click(function(){
+  $('#unitidval').val("");
+  $('.overlay').css("visibility","hidden");
+  $('.overlay').css("opacity","0");
+});
+
+$("#submit").click(function() {
+  $('.overlay').css("visibility","visible");
+  $('.overlay').css("opacity","1");
+  $('.popup-error-msg').html("");
+  $('#password').html("");
 });
 
 function displayEdit(unit_id){
@@ -242,7 +267,6 @@ function displayEdit(unit_id){
   var dispLegalEntity;
   var dispDivision;
   var dispUnit;
-
   $("#statutorysettings-view").hide();
   $("#statutorysettings-add").show();
   for(var entity in assignedStatutoriesList) {
@@ -259,7 +283,6 @@ function displayEdit(unit_id){
 
   load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision, dispUnit, unit_id);
 }
-
 
 function loadStatutorySettingsList(assignedStatutoriesList){
   var j = 1;

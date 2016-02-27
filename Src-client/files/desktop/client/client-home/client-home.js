@@ -9,6 +9,8 @@ var COMPLIANCE_STATUS_DATA = null;
 var COMPLIANCE_STATUS_DRILL_DOWN_DATE = null;
 
 var ESCALATION_DATA = null;
+var ESCALATION_STATUS_DRILL_DOWN_DATA = null;
+
 var TREND_CHART_DATA = null;
 var NOT_COMPLIED_DATA = null;
 var COMPLIANCE_APPLICABILITY_DATA = null;
@@ -814,6 +816,9 @@ function updateDrillDown(status, data) {
     showDrillDownRecord(status, data);
 }
 
+function updateEscalationDrillDown(status, data) {
+    //pass
+}
 
 function showDrillDownRecord(status, data){
     var data = data["drill_down_data"];
@@ -854,7 +859,7 @@ function groupWiseComplianceDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".dates-left-to-complete-row").show();
     }
-    else if (status == "Not Complied") {        
+    else if (status == "Not Complied") {
         $(".tr-level1 th").attr("colspan", "8");
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".over-due-row").show();
@@ -868,6 +873,7 @@ function groupWiseComplianceDrillDown(status, data){
         $(".tr-level1 th").attr("colspan", "7");
         $(".tr-unit tr th").attr("colspan", "6");
     }
+
     complianceStatusDrilldown(status, data);         
 }
 
@@ -879,7 +885,7 @@ function businessgroupWiseComplianceDrillDown(status, data){
 
     $(".legal-entity-row").show();
     $(".legalentity-name").show();
-    
+
     $(".delayed-by-row").hide();
     $(".dates-left-to-complete-row").hide();
     $(".over-due-row").hide();
@@ -981,6 +987,7 @@ function divisionWiseComplianceDrillDown(status, data){
         $(".tr-unit tr th").attr("colspan", "3");
     }
     complianceStatusDrilldown(status, data);
+
 }
 
 function unitWiseComplianceDrillDown(status, data){
@@ -993,8 +1000,8 @@ function unitWiseComplianceDrillDown(status, data){
 
     $(".division-row").hide();
     $(".division-name").hide();
-    
-    
+
+
     $(".delayed-by-row").hide();
     $(".dates-left-to-complete-row").hide();
     $(".over-due-row").hide();
@@ -1057,7 +1064,7 @@ function complianceStatusDrilldown(status, data){
                 $(".assigned-to", clone).html(val['assignee_name']);
                 if(val['status'] == "Delayed"){
                     $(".delayed-by", clone).html(val['ageing']+" Days");
-                }   
+                }
                 if(val['status'] == "Inprogress"){
                     $(".dates-left-to-complete", clone).html(val['ageing']+" Days");
                 }
@@ -1071,6 +1078,7 @@ function complianceStatusDrilldown(status, data){
         });
         count = count + 1;
     });
+
     accordianType('accordion', 'accordion-toggle', 'accordion-content');
 }
 
@@ -1082,7 +1090,6 @@ function accordianType(idtype, toggleClass, contentClass){
 }
 
 //  Escalation Chart
-
 function prepareEscalationChartdata(source_data) {
     var chartTitle = getFilterTypeTitle();
     var domainsInput = chartInput.getDomains();
@@ -1544,6 +1551,22 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id) {
     );
 }
 
+function loadEscalationDrillDown(filter_type_id, year) {
+    var requestData = {
+        "domain_ids": chartInput.getDomains(),
+        "filter_id": filter_type_id,
+        "year": year
+    }
+    client_mirror.getEscalationDrillDown(
+        requestData,
+        function (status, data) {
+            ESCALATION_STATUS_DRILL_DOWN_DATA = data;
+            updateEscalationDrillDown(data);
+        }
+    );
+
+}
+
 function loadEscalationChart() {
     var filter_type = chartInput.getFilterType();
     var filterType = filter_type.replace("_", "-");
@@ -1619,13 +1642,8 @@ function loadComplianceApplicabilityChart(){
     );
 }
 
-function loadAssignessWiseComplianceChart () {
-    client_mirror.getAssigneewiseComplianesFilters(
-        function (status, data) {
-            updateAssigneeWiseCompliancesFiltersList(data);
-            hideLoader();
-        }
-    );
+function loadAssigneeWiseCompliance() {
+
 }
 
 function loadCharts () {
@@ -1633,6 +1651,14 @@ function loadCharts () {
     hideButtons();
     var chartType = chartInput.getChartType();
     chartInput.setChartYear(0);
+    if (chartType == "compliance_report") {
+        $(".chart-container-inner").hide();
+        $(".report-container-inner").show();
+    }
+    else {
+        $(".chart-container-inner").show();
+        $(".report-container-inner").hide();
+    }
     if (chartType == "compliance_status") {
         loadComplianceStatusChart();
     }
@@ -1641,6 +1667,9 @@ function loadCharts () {
     }
     else if (chartType == "not_complied") {
         loadNotCompliedChart();
+    }
+    else if (chartType == "compliance_report") {
+        loadAssigneeWiseCompliance();
     }
     else if (chartType == "trend_chart") {
         loadTrendChart();
