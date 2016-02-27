@@ -812,6 +812,10 @@ function updateDrillDown(status, data) {
     showDrillDownRecord(status, data);
 }
 
+function updateEscalationDrillDown(status, data) {
+    //pass
+}
+
 function showDrillDownRecord(status, data){
     var data = data["drill_down_data"];
     var filter_type = chartInput.getFilterType();
@@ -844,7 +848,7 @@ function groupWiseComplianceDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".dates-left-to-complete-row").show();
     }
-    else if (status == "Not Complied") {        
+    else if (status == "Not Complied") {
         $(".tr-level1 th").attr("colspan", "8");
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".over-due-row").show();
@@ -894,7 +898,7 @@ function groupWiseComplianceDrillDown(status, data){
                 $(".assigned-to", clone).html(val['assignee_name']);
                 if(val['status'] == "Delayed"){
                     $(".delayed-by", clone).html(val['ageing']+" Days");
-                }   
+                }
                 if(val['status'] == "Inprogress"){
                     $(".dates-left-to-complete", clone).html(val['ageing']+" Days");
                 }
@@ -913,7 +917,7 @@ function groupWiseComplianceDrillDown(status, data){
             $(this).next().slideToggle('fast');
             $(".accordion-content").not($(this).next()).slideUp('fast');
         });
-    });           
+    });
 }
 
 function businessgroupWiseComplianceDrillDown(status, data){
@@ -921,7 +925,7 @@ function businessgroupWiseComplianceDrillDown(status, data){
     var sno;
     $(".business-group-row").hide();
     $(".businessgroup-name").hide();
-    
+
     $(".delayed-by-row").hide();
     $(".dates-left-to-complete-row").hide();
     $(".over-due-row").hide();
@@ -931,7 +935,7 @@ function businessgroupWiseComplianceDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".dates-left-to-complete-row").show();
     }
-    else if (status == "Not Complied") {        
+    else if (status == "Not Complied") {
         $(".tr-level1 th").attr("colspan", "8");
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".over-due-row").show();
@@ -980,7 +984,7 @@ function businessgroupWiseComplianceDrillDown(status, data){
                 $(".assigned-to", clone).html(val['assignee_name']);
                 if(val['status'] == "Delayed"){
                     $(".delayed-by", clone).html(val['ageing']+" Days");
-                }   
+                }
                 if(val['status'] == "Inprogress"){
                     $(".dates-left-to-complete", clone).html(val['ageing']+" Days");
                 }
@@ -999,7 +1003,7 @@ function businessgroupWiseComplianceDrillDown(status, data){
             $(this).next().slideToggle('fast');
             $(".accordion-content").not($(this).next()).slideUp('fast');
         });
-    });   
+    });
 }
 
 function legalentityWiseComplianceDrillDown(data){
@@ -1010,7 +1014,7 @@ function legalentityWiseComplianceDrillDown(data){
 
     $(".legal-entity-row").hide();
     $(".legalentity-name").hide();
-    
+
     $(".delayed-by-row").hide();
     $(".dates-left-to-complete-row").hide();
     $(".over-due-row").hide();
@@ -1020,7 +1024,7 @@ function legalentityWiseComplianceDrillDown(data){
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".dates-left-to-complete-row").show();
     }
-    else if (status == "Not Complied") {        
+    else if (status == "Not Complied") {
         $(".tr-level1 th").attr("colspan", "8");
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".over-due-row").show();
@@ -1069,7 +1073,7 @@ function legalentityWiseComplianceDrillDown(data){
                 $(".assigned-to", clone).html(val['assignee_name']);
                 if(val['status'] == "Delayed"){
                     $(".delayed-by", clone).html(val['ageing']+" Days");
-                }   
+                }
                 if(val['status'] == "Inprogress"){
                     $(".dates-left-to-complete", clone).html(val['ageing']+" Days");
                 }
@@ -1088,7 +1092,7 @@ function legalentityWiseComplianceDrillDown(data){
             $(this).next().slideToggle('fast');
             $(".accordion-content").not($(this).next()).slideUp('fast');
         });
-    });   
+    });
 }
 
 function divisionWiseComplianceDrillDown(data){
@@ -1102,8 +1106,8 @@ function divisionWiseComplianceDrillDown(data){
 
     $(".division-row").hide();
     $(".division-name").hide();
-    
-    
+
+
     $(".delayed-by-row").hide();
     $(".dates-left-to-complete-row").hide();
     $(".over-due-row").hide();
@@ -1113,7 +1117,7 @@ function divisionWiseComplianceDrillDown(data){
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".dates-left-to-complete-row").show();
     }
-    else if (status == "Not Complied") {        
+    else if (status == "Not Complied") {
         $(".tr-level1 th").attr("colspan", "8");
         $(".tr-unit .unit-heading").attr("colspan", "7");
         $(".over-due-row").show();
@@ -1162,7 +1166,7 @@ function divisionWiseComplianceDrillDown(data){
                 $(".assigned-to", clone).html(val['assignee_name']);
                 if(val['status'] == "Delayed"){
                     $(".delayed-by", clone).html(val['ageing']+" Days");
-                }   
+                }
                 if(val['status'] == "Inprogress"){
                     $(".dates-left-to-complete", clone).html(val['ageing']+" Days");
                 }
@@ -1181,7 +1185,7 @@ function divisionWiseComplianceDrillDown(data){
             $(this).next().slideToggle('fast');
             $(".accordion-content").not($(this).next()).slideUp('fast');
         });
-    });   
+    });
 }
 
 function unitWiseComplianceDrillDown(data){
@@ -1736,11 +1740,23 @@ function loadComplianceApplicabilityChart(){
     );
 }
 
+function loadAssigneeWiseCompliance() {
+
+}
+
 function loadCharts () {
     // displayLoader();
     hideButtons();
     var chartType = chartInput.getChartType();
     chartInput.setChartYear(0);
+    if (chartType == "compliance_report") {
+        $(".chart-container-inner").hide();
+        $(".report-container-inner").show();
+    }
+    else {
+        $(".chart-container-inner").show();
+        $(".report-container-inner").hide();
+    }
     if (chartType == "compliance_status") {
         loadComplianceStatusChart();
     }
@@ -1749,6 +1765,9 @@ function loadCharts () {
     }
     else if (chartType == "not_complied") {
         loadNotCompliedChart();
+    }
+    else if (chartType == "compliance_report") {
+        loadAssigneeWiseCompliance();
     }
     else if (chartType == "trend_chart") {
         loadTrendChart();
