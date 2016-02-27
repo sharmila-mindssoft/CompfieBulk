@@ -8,15 +8,20 @@
   <link rel="stylesheet" type="text/css" href="/files/desktop/client/client-home/chart.css">
   <link rel="stylesheet" type="text/css" href="/files/desktop/client/client-home/multiple-select.css">
   <link rel="stylesheet" type="text/css" href="/files/desktop/client/client-home/client-home.css">
+
+  <script type="text/javascript" src="/files/desktop/common/js/jquery.min.js"></script>
+  <script src="/files/desktop/client/client-home/multiple-select.js"></script>
   <script type="text/javascript" src="/files/desktop/common/js/common.js"></script>
   <script type="text/javascript" src="/files/desktop/client/client-home/modernizr.js"></script>
-  <script src="/files/desktop/client/client-home/multiple-select.js"></script>
-  <script type="text/javascript" src="/files/desktop/common/highcharts/js/highcharts.js"></script>
-  <script type="text/javascript" src="/files/desktop/common/highcharts/js/modules/exporting.js"></script>
-  <script type="text/javascript" src="/files/desktop/common/highcharts/js/modules/customEvents.js"></script>
 
-  <script src="/files/desktop/common/highcharts/js/modules/drilldown.js"></script>
-  <script src="/files/desktop/common/highcharts/js/highcharts-3d.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/highcharts/highcharts.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/highcharts/highcharts-3d.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/highcharts/modules/exporting.js"></script>
+
+  <script type="text/javascript" src="/files/desktop/common/highcharts/modules/drilldown.js"></script>
+  <!-- <script type="text/javascript" src="/files/desktop/common/highcharts/customEvents.js"></script> -->
+
+
   <script type="text/javascript" src="/files/desktop/client/client-home/client-home.js"></script>
   <!-- <script type="text/javascript" src="/files/desktop/client/client-home/client-home-design.js"></script> -->
 </head>
@@ -182,7 +187,7 @@
                 <input type="button" class="btn-bar-chart" value="View as bar chart"/>
                 <input type="button" class="btn-back" value="Back"/>
                 <div class="clearfix"></div>
-                <div id="status-container" class="graph-container compliance-status" style="height: 400px;" align="center"></div>
+                <div id="status-container" class="graph-container compliance-status" style="height: 450px;" align="center"></div>
                 <div class="graph-container escalations" style="height: 400px;" align="center"></div>
                 <div class="graph-container not-complied" style="height: 400px;" align="center"></div>
                 <div class="graph-container trend-chart" style="height: 400px;" align="center"></div>

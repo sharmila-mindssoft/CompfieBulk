@@ -638,11 +638,6 @@ function updateComplianceStatusStackBarChart(data) {
                 text: xAxisName,
             },
             labels: {
-                events: {
-                    click: function() {
-                        setChart(this.value)
-                    }
-                },
                 style: {
                     cursor: 'pointer',
                     color: "blue",
@@ -662,6 +657,9 @@ function updateComplianceStatusStackBarChart(data) {
             pointFormat: '({point.y} out of {point.stackTotal})'
         },
         plotOptions: {
+            series: {
+                pointWidth: 35
+            },
             bar: {
                 stacking: "normal",
                 cursor: "pointer",
@@ -689,7 +687,16 @@ function updateComplianceStatusStackBarChart(data) {
         },
         colors: ['#A5D17A', '#F58835', '#F0F468', '#F32D2B'],
         series: chartDataSeries,
-
+    });
+    $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
+        var value = (this.textContent || this.innerText);
+        console.log(value);
+        name = value;
+        data_series = drilldownSeries[name];
+        var title = chartTitle + " - " + name;
+        updateComplianceStatusPieChart(data_series, title, "pie");
+        complianceDrillDown(data_series, title);
+        // setChart(value);
     });
 }
 
@@ -712,7 +719,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType) {
     // var options = new Highcharts.Chart({
         colors:['#A5D17A','#F58835', '#F0F468', '#F32D2B'],
         chart: {
-            renderTo: "status-container",
+            renderTo: "status-container"
         },
         title: {
             text: chartTitle
@@ -754,7 +761,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType) {
             pie: {
                 allowPointSelect: true,
                 cursor: 'pointer',
-
+                depth: 45,
                 dataLabels: {
                     enabled: true,
                     format: '{point.percentage:.0f}%'
@@ -784,6 +791,10 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType) {
         $(".btn-pie-chart").hide();
         $(".btn-bar-chart").show();
         options.chart.type = 'pie';
+        options.chart.options3d = {
+            enabled: true,
+            alpha: 30
+        };
         var chart1 = new Highcharts.Chart(options);
 
     } else {
@@ -1297,6 +1308,9 @@ function updateEscalationChart(data) {
             allowDecimals: false
         },
         plotOptions: {
+            series: {
+                pointWidth: 40
+            },
             column: {
                 pointPadding: 0,
                 groupPadding: 0.3,
@@ -1485,8 +1499,12 @@ function updateNotCompliedChart(data) {
     highchart = new Highcharts.Chart({
         colors: ['#FF9C80', '#F2746B', '#FB4739', '#DD070C'],
         chart: {
+            renderTo: "status-container",
             type: "pie",
-            renderTo: "status-container"
+            options3d: {
+                enabled: true,
+                alpha: 30
+            }
         },
         title: {
             text: 'Over due compliance of' + chartTitle
@@ -1563,7 +1581,11 @@ function updateComplianceApplicabilityChart(data) {
         colors: ['#66FF66','#FFDC52','#CE253C'],
         chart: {
             type: "pie",
-            renderTo: "status-container"
+            renderTo: "status-container",
+            options3d: {
+                enabled: true,
+                alpha: 45
+            }
         },
         title: {
             text: chartTitle
@@ -1585,7 +1607,7 @@ function updateComplianceApplicabilityChart(data) {
             pie: {
                 allowPointSelect: true,
                 cursor: 'pointer',
-                depth: 45,
+                depth: 40,
                 dataLabels: {
                     enabled: true,
                     format: '{point.percentage: .0f}%'
