@@ -438,6 +438,27 @@ img, object {
 	-moz-border-radius: 0.5em;
 	border-radius: 0.5em;
 }
+
+.btn-back {
+	width: 5.625em;
+	float: left;
+	height: 2.5em;
+	line-height: 2.5em;
+	background: #fc9b01 url(../images/icon-back.png) no-repeat 0.5em center;
+	cursor: pointer;
+	color: #333;
+	font-size: 0.813em;
+	text-align: left;
+	border: none;
+	outline: none;
+	padding-left: 2.5em;
+	font-weight: bold;
+
+	-webkit-border-radius: 0.5em;
+	-moz-border-radius: 0.5em;
+	border-radius: 0.5em;
+}
+
 .grid-table {
 	width: 100%;
 	float: left;

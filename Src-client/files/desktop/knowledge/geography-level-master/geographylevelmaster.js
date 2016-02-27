@@ -72,6 +72,9 @@ $("#countryval").keyup(function(){
     }
     $('#ulist_text').append(str);
     $("#country").val('');
+    }else{
+    	$("#country").val('');
+    	$("#autocompleteview").hide();
     }
 });
 //set selected autocomplte value to textbox
@@ -130,15 +133,14 @@ $("#submit").click(function(){
 	  if(result) {
 	   	var passlevellist = [];
 		for(var k=1; k<=10; k++) {
-
-			if($("#levelid"+k).val() != '' && $("#level"+k).val() == ''){
+			if($("#levelid"+k).val() != '' && $("#level"+k).val().trim() == ''){
 				displayMessage("Geography Level "+ k + " Should not be Empty")
 				return false;
-			}else if($("#level"+k).val() != ''){
+			}else if($("#level"+k).val().trim() != ''){
 				if($("#levelid"+k).val() != ''){
-					passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val(), "level_id" : parseInt($("#levelid"+k).val())});
+					passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val().trim(), "level_id" : parseInt($("#levelid"+k).val())});
 				}else{
-					passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val(), "level_id" : null });
+					passlevellist.push({"level_position" : k, "level_name" : $("#level"+k).val().trim(), "level_id" : null });
 				}
 			}
 	   }
@@ -170,6 +172,7 @@ $("#submit").click(function(){
 $("#insert-record").click(function(){
 	var insertlevel = parseInt($("#insertlevel").val());
 	var insertvalue = $("#insertvalue").val().trim();
+	var inserlevelstatus = true;
 	if(insertvalue.length > 0){
 		for(var x=10; x >= insertlevel; x--){
 	   		var s = x-1;
@@ -181,13 +184,14 @@ $("#insert-record").click(function(){
 	   			$("#levelid"+x).val($("#levelid"+s).val());
 	   		}
 	   	}
-	   	$("#insertlevel").val("");
+	   	$("#insertlevel").val("1");
 		$("#insertvalue").val("");
 		$("#view-insert-level").hide();
 	  	$("#add").show();
 	}else{
 		displayMessage("Title should not be Empty");
 		$("#add").hide();
+		inserlevelstatus = false;
 	}
 
 	for(var i=1; i <= 10; i++){
@@ -196,7 +200,9 @@ $("#insert-record").click(function(){
    		}else{
    			$("#add").hide();
    		}
-	   	}
+	}
+
+	if(inserlevelstatus == false) $("#add").hide();
 });
 
 $(document).ready(function(){
