@@ -335,16 +335,25 @@ class GetAssigneewiseComplianesFilters(Request):
         }
 
 class GetAssigneeWiseCompliancesChart(Request):
-    def __init__(self, country_id, business_group_id, legal_entity_id, division_id, unit_id):
+    def __init__(
+        self, country_id, business_group_id, legal_entity_id, division_id,
+        unit_id, user_id
+    ):
         self.country_id = country_id
         self.business_group_id = business_group_id
         self.legal_entity_id = legal_entity_id
         self.division_id = division_id
         self.unit_id = unit_id
+        self.user_id = user_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["country_id", "business_group_id", "legal_entity_id", "division_id", "unit_id"])
+        data = parse_dictionary(
+            data, [
+                "country_id", "business_group_id", "legal_entity_id", "division_id",
+                "unit_id", "user_id"
+            ]
+        )
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
         business_group_id = data.get("business_group_id")
@@ -355,7 +364,12 @@ class GetAssigneeWiseCompliancesChart(Request):
         division_id = parse_structure_OptionalType_UnsignedIntegerType_32(division_id)
         unit_id = data.get("unit_id")
         unit_id = parse_structure_OptionalType_UnsignedIntegerType_32(unit_id)
-        return GetAssigneeWiseCompliancesChart(country_id, business_group_id, legal_entity_id, division_id, unit_id)
+        user_id = data.get("user_id")
+        user_id = parse_structure_OptionalType_UnsignedIntegerType_32(user_id)
+        return GetAssigneeWiseCompliancesChart(
+            country_id, business_group_id, legal_entity_id, division_id,
+            unit_id, user_id
+        )
 
     def to_inner_structure(self):
         return {
@@ -364,6 +378,7 @@ class GetAssigneeWiseCompliancesChart(Request):
             "legal_entity_id": to_structure_OptionalType_UnsignedIntegerType_32(self.legal_entity_id),
             "division_id": to_structure_OptionalType_UnsignedIntegerType_32(self.division_id),
             "unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.unit_id),
+            "user_id": to_structure_OptionalType_UnsignedIntegerType_32(self.user_id)
         }
 
 class GetAssigneeWiseComplianceDrillDown(Request):

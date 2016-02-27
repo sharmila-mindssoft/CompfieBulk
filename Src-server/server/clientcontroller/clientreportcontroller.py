@@ -198,11 +198,14 @@ def get_compliancedetails_report_filters(db, request, session_user, client_id):
 def get_statutory_notifications_list_filters(db, request, session_user, client_id):
     user_company_info = db.get_user_company_details(session_user)
     unit_ids = user_company_info[0]
+    division_ids = user_company_info[1]
+    legal_entity_ids = user_company_info[2]
+    business_group_ids = user_company_info[3]
     country_list = db.get_countries_for_user(session_user)
     domain_list = db.get_domains_for_user(session_user)
-    business_group_list = db.get_business_groups_for_user(session_user, client_id)
-    legal_entity_list = db.get_legal_entities_for_user(session_user, client_id)
-    division_list = db.get_divisions_for_user(session_user, client_id)
+    business_group_list = db.get_business_groups_for_user(business_group_ids)
+    legal_entity_list = db.get_legal_entities_for_user(legal_entity_ids)
+    division_list = db.get_divisions_for_user(division_ids)
     unit_list = db.get_units_for_user(unit_ids)
     level_1_statutories_list = db.get_client_level_1_statutoy(session_user)
     users_list = db.get_client_users()

@@ -223,7 +223,7 @@ $("#submit").click(function() {
     function onFailure(error){
       displayMessage(error)
     }
-    client_mirror.updateStatutorySettings(uVal, parseInt(uId), assignedStatutories, 
+    client_mirror.updateStatutorySettings("123456", uVal, parseInt(uId), assignedStatutories, 
       function (error, response) {
       if (error == null){
         onSuccess(response);

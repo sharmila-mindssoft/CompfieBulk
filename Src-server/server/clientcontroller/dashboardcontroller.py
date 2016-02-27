@@ -1,4 +1,4 @@
-from protocol import (dashboard, login)
+from protocol import (dashboard, login, general)
 
 __all__ = [
     "process_client_dashboard_requests"
@@ -15,7 +15,10 @@ def process_client_dashboard_requests(request, db) :
     if session_user is None:
         return login.InvalidSessionToken()
 
-    if type(request) is dashboard.GetChartFilters :
+    if db.get_client_compliance_count() == 0:
+        return general.MasterDataNotAvailableForClient()
+
+    elif type(request) is dashboard.GetChartFilters :
         return process_get_chart_filters(db, session_user, client_id)
 
     elif type(request) is dashboard.GetComplianceStatusChart :
@@ -55,7 +58,7 @@ def process_client_dashboard_requests(request, db) :
     elif type(request) is dashboard.GetAssigneeWiseComplianceDrillDown :
         return process_assigneewise_compliances_drilldown(db, request, session_user, client_id)
 
-        
+
 
 def process_get_chart_filters(db, session_user, client_id):
     countries = db.get_countries_for_user(session_user, client_id)
@@ -78,14 +81,21 @@ def process_compliance_status_chart(db, request, session_user, client_id):
 def process_trend_chart(db, request, session_user, client_id):
     trend_chart_info = None
     if request.filter_type == "Group":
-        trend_chart_info = db.get_trend_chart(request.country_ids, request.domain_ids,
-            client_id)
+        trend_chart_info = db.get_trend_chart(
+            request.country_ids, request.domain_ids,
+            client_id
+        )
     else:
-        trend_chart_info = db.get_filtered_trend_data(request.country_ids, request.domain_ids,
-            request.filter_type, request.filter_ids, client_id)
+        trend_chart_info = db.get_filtered_trend_data(
+            request.country_ids, request.domain_ids,
+            request.filter_type, request.filter_ids, client_id
+        )
     years = trend_chart_info[0]
     data = trend_chart_info[1]
-    return dashboard.GetTrendChartSuccess(years = years, data = data)
+    return dashboard.GetTrendChartSuccess(
+        years=years,
+        data=data
+    )
 
 def process_get_trend_chart_drilldown(db, request, session_user, client_id):
     drill_down_info = None
@@ -151,8 +161,8 @@ def process_assigneewise_compliances_filters(db, request, session_user, client_i
     unit_list = db.get_units_for_user(unit_ids, client_id)
     users_list = db.get_client_users(client_id, unit_ids);
     return dashboard.GetAssigneewiseComplianesFiltersSuccess(
-        countries = country_list, business_groups = business_group_list, 
-        legal_entities = legal_entity_list, divisions =division_list, 
+        countries = country_list, business_groups = business_group_list,
+        legal_entities = legal_entity_list, divisions =division_list,
         units = unit_list, users = users_list
     )
 
@@ -162,12 +172,13 @@ def process_assigneewise_compliances(db, request, session_user, client_id):
     legal_entity_id = request.legal_entity_id
     division_id = request.division_id
     unit_id = request.unit_id
+    user_id = request.user_id
     chart_data = db.get_assigneewise_compliances_list(
         country_id, business_group_id, legal_entity_id, division_id, unit_id,
-        session_user, client_id
+        session_user, client_id, user_id
     )
     return dashboard.GetAssigneeWiseCompliancesChartSuccess(
-        chart_data = chart_data
+        chart_data=chart_data
     )
 
 def process_assigneewise_compliances_drilldown(
@@ -179,8 +190,8 @@ def process_assigneewise_compliances_drilldown(
         assignee_id, domain_id, client_id
     )
     return dashboard.GetAssigneeWiseComplianceDrillDownSuccess(
-        complied= complied,
+        complied=complied,
         delayed=delayed,
-        inprogress=inprogress, 
+        inprogress=inprogress,
         not_complied=not_complied
     )
