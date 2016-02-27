@@ -2003,7 +2003,8 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t1.country_id = t6.country_id \
             and t6.user_id = %s \
-            WHERE t1.country_id = %s \
+            WHERE t1.approval_status in (1, 3) AND \
+            t1.country_id = %s \
             and t1.domain_id = %s \
             %s" % (
                 user_id, user_id,
@@ -2062,7 +2063,8 @@ class KnowledgeDatabase(Database):
                 mapping_list.extend(
                     [get_data(x) for x in mapping_ids[:-1].split(',') if get_data(x) is not None]
                 )
-            level_1_mappings[statutory_id] = mapping_list
+            if mapping_list:
+                level_1_mappings[statutory_id] = mapping_list
         return level_1_mappings
 
     #
