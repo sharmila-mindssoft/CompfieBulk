@@ -881,6 +881,15 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getEscalationDrillDown(requestData, callback) {
+        var request = [
+            "getEscalationDrillDown",
+            requestData
+        ];
+        var callerName =  "client_dashboard";
+        clientApiRequest(callerName, request, callback);
+    }
+
     function getServiceProviderReportFilters(callback) {
         var request = [
             "GetServiceProviderReportFilters", {}
@@ -1378,7 +1387,10 @@ function initClientMirror() {
         getChartFilters: getChartFilters,
         getComplianceStatusChartData: getComplianceStatusChartData,
         getComplianceStatusDrillDown: getComplianceStatusDrillDown,
+
         getEscalationChartData: getEscalationChartData,
+        getEscalationDrillDown: getEscalationDrillDown,
+
         getTrendChart: getTrendChart,
         getTrendChartDrillDown: getTrendChartDrillDown,
         getNotCompliedData: getNotCompliedData,

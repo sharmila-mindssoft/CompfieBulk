@@ -9,6 +9,8 @@ var COMPLIANCE_STATUS_DATA = null;
 var COMPLIANCE_STATUS_DRILL_DOWN_DATE = null;
 
 var ESCALATION_DATA = null;
+var ESCALATION_STATUS_DRILL_DOWN_DATA = null;
+
 var TREND_CHART_DATA = null;
 var NOT_COMPLIED_DATA = null;
 var COMPLIANCE_APPLICABILITY_DATA = null;
@@ -1266,6 +1268,22 @@ function loadComplianceStatusDrillDown(status, filter_type_id) {
             updateDrillDown(data);
         }
     );
+}
+
+function loadEscalationDrillDown(filter_type_id, year) {
+    var requestData = {
+        "domain_ids": chartInput.getDomains(),
+        "filter_id": filter_type_id,
+        "year": year
+    }
+    client_mirror.getEscalationDrillDown(
+        requestData,
+        function (status, data) {
+            ESCALATION_STATUS_DRILL_DOWN_DATA = data;
+            updateEscalationDrillDown(data);
+        }
+    );
+
 }
 
 function loadEscalationChart() {
