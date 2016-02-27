@@ -807,10 +807,22 @@ function updateDrillDown(data) {
     $(".graph-selections-bottom").hide();
     $(".drilldown-container").show();
     $(".btn-back").show();
+    showDrillDownRecord(data);
 }
 
-//  Escalation Chart
+function showDrillDownRecord(data){
+//    var tableAccordian =
 
+}
+
+$(document).ready(function($) {
+    $('#accordion').find('.accordion-toggle').click(function(){
+      $(this).next().slideToggle('fast');
+      $(".accordion-content").not($(this).next()).slideUp('fast');
+    });
+});
+
+//  Escalation Chart
 function prepareEscalationChartdata(source_data) {
     var chartTitle = getFilterTypeTitle();
     var domainsInput = chartInput.getDomains();

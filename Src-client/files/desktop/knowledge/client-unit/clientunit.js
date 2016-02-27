@@ -279,10 +279,10 @@ function addcountryrow(){
 		var legalEntityValue = $("#entity-text").val();		
 	}	
 	if(groupId == ''){
-		displayMessage("Please Select Group");
+		displayMessage("Select Group");
 	}
 	else if(legalEntityValue == ''){
- 		displayMessage('Please Select Legal Entity');
+ 		displayMessage('Select Legal Entity');
  	}
 	else{
 		clearMessage();
@@ -474,7 +474,7 @@ function loadglevels(classval){
 	var countryid = $('.country-'+checkval[1]).val();
 	
 	if(countryvalue == ''){
-		displayMessage('Please Select Country');
+		displayMessage('Enter Country');
 	}
 	
 	else{
@@ -622,21 +622,21 @@ $("#btn-clientunit-submit").click(function(){
 	var countryVal = $(".country").val();
 	console.log("enter 2");
 	if(groupNameValue.length == 0){
-		displayMessage("Please Select Group");
+		displayMessage("Select Group");
 		return false;
 	}
 	if(lentitytextValue.length == 0){
 		if(legalEntityValue.length == 0){
-			displayMessage("Please Select Legal Entity or Create New One");
+			displayMessage("Select Legal Entity or Create New One");
 			return false;
 		}
 	}
 	if(unitCountValue.length == 0){
-		displayMessage("Please Add Atleast One Unit in a Group!");
+		displayMessage("Add Atleast One Unit in a Group");
 		return false;
 	}
 	if(countryVal.length == 0){
-		displayMessage("Please Enter Country");
+		displayMessage("Enter Country");
 		return false;
 	}
 	if(clientunitIdValue == ''){	

@@ -1,6 +1,6 @@
 {% extends "files/desktop/knowledge/home/container.html" %}
 {% block content %}
-<div class="content-container width40" id="country-view">
+<div class="content-container width50" id="country-view">
   <div class="content-area">
     <h1>Countries</h1>
     <div class="filters-and-search">
@@ -12,15 +12,15 @@
       <thead>
         <tr align="left">
           <th align="center" width="10%">#</th>
-          <th width="70%">Country Name</th>
+          <th width="65%">Country Name</th>
           <th align="center" width="10%">Edit</th>
-          <th align="center" width="10%">Status</th>
+          <th align="center" width="15%">Status</th>
         </tr>
         <tr>
           <td width="10%">&nbsp;</td>
-          <td width="70%"><input type="text" class="filter-text-box" id="search-country-name" ></td>
+          <td width="65%"><input type="text" class="filter-text-box" id="search-country-name" ></td>
           <td width="10%">&nbsp;</td>
-          <td width="10%">&nbsp;</td>
+          <td width="15%">&nbsp;</td>
         </tr>
       </thead>
       <tbody class="tbody-countries-list">
@@ -46,7 +46,7 @@
       <div class="single-column-input-row">
         <div class="input-row">
           <div class="single-column-field-label">Country Name:<span class="mandatory">*</span></div>
-          <div class="single-column-field-input"><input type="text" class="input-box" name="country-name" id="country-name">
+          <div class="single-column-field-input"><input type="text" class="input-box" name="country-name" id="country-name" maxlength="50">
           <input type="hidden" id="country-id" value="" ></div>
         </div>
         <div class="submit-button-container">

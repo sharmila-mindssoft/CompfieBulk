@@ -454,6 +454,7 @@ class ClientDatabase(Database):
             VALUES (%s, %s, %s, '%s', '%s')" % (
                 activityId, user_id, form_id, action, created_on
             )
+        print query
         self.execute(query)
         return True
 
@@ -2236,7 +2237,7 @@ class ClientDatabase(Database):
                     concurrence_person, approval_person, \
                     trigger_before_days, due_date, validity_date, created_by, \
                     created_on) VALUES \
-                    (%s, %s, %s, '%s', %s, '%s', %s, '%s', '%s', %s, '%s')" % (
+                    (%s, %s, %s, '%s', %s, '%s', %s, %s, '%s', '%s', %s, '%s')" % (
                         country_id, unit_id, compliance_id,
                         date_list, assignee, concurrence,
                         approval, trigger_before, due_date, validity_date,

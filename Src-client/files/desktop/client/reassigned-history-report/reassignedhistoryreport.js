@@ -85,10 +85,10 @@ $("#show-button").click(function(){
  
    
     if(countries == ""){
-        displayMessage("Please Enter Country");
+        displayMessage("Enter Country");
     }
     else if(domain == ""){
-        displayMessage("Please Enter Domain");  
+        displayMessage("Enter Domain");  
     }
     else{
         function onSuccess(data){

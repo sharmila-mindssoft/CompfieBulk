@@ -7,7 +7,11 @@ var unitList;
 var level1List;
 var applicableStatusList;
 var countriesText;
-var domainval;
+var domainText;
+var businessGroupText;
+var legalentityText;
+var divisionText;
+
 
 function clearMessage() {
     $(".error-message").hide();
@@ -46,11 +50,12 @@ function initialize(){
 }
 $("#show-button").click(function(){ 
     var countries = $("#country").val();
-    var countriesNameVal = $("#countryval").val();
+    countriesText = $("#countryval").val();
     //Domain    
     var domain = $("#domain").val();
-    var domainNameVal = $("#domainval").val();
+    domainText = $("#domainval").val();
     //business_groups
+    businessgroupText = $("#businessgroupsval").val();
     var businessgroupid = $("#businessgroupid").val();
     if(businessgroupid == ''){
         businessgroupid = null;
@@ -59,6 +64,7 @@ $("#show-button").click(function(){
         businessgroupid = parseInt(businessgroupid);
     }
     //Legal Entity
+    legalentityText = $("#legalentityval").val();
     var legalentityid = $("#legalentityid").val();
     if(legalentityid == ''){
         legalentityid = null;
@@ -67,6 +73,7 @@ $("#show-button").click(function(){
         legalentityid = parseInt(legalentityid);
     }
     //Divisions
+    divisionText = $("#divisionval").val();
     var divisionid = $("#divisionid").val();
     if(divisionid == ''){
         divisionid = null;
@@ -92,16 +99,16 @@ $("#show-button").click(function(){
     }
     var appstatus = $("#applicable-status").val();
     if(countries == ""){
-        displayMessage("Please Enter Country");
+        displayMessage("Enter Country");
     }
     else if(domain == ""){
-        displayMessage("Please Enter Domain");  
+        displayMessage("Enter Domain");  
     }
     else{
         function onSuccess(data){
             console.log(data);
             $(".grid-table-rpt").show();
-            loadTaskApplicabilityStatusList(data['notifications']);     
+            loadTaskApplicabilityStatusList(data);     
         }
         function onFailure(error){
             console.log(error);
@@ -126,25 +133,44 @@ $("#show-button").click(function(){
 function loadTaskApplicabilityStatusList(data){
     $('.tbody-task-applicability-list tr').remove();
     var sno = 0;
-    console.log(data);
+    var tableFilterHeading = $('#templates .table-task-applicability-list .filter-task-applicability-list');
+    var clonefilterHeading = tableFilterHeading.clone();
+    $('.filter-country', clonefilterHeading).text(countriesText);
+    $('.filter-domain', clonefilterHeading).text(domainText);
+    $('.filter-businessgroup', clonefilterHeading).text(businessgroupText);
+    $('.filter-legalentity', clonefilterHeading).text(legalentityText);
+    $('.filter-division', clonefilterHeading).text(divisionText);
+   
+    $('.tbody-task-applicability-list').append(clonefilterHeading);
     $.each(data, function(key, value) {
-        var tableRowHeading = $('#templates .table-task-applicability-list .filter-task-applicability-list');
+        var tableRowHeading = $('#templates .table-task-applicability-list .applicable-status-list');
         var cloneHeading = tableRowHeading.clone();
-        var domainId = data[key]['domain_id'];
-        $('.heading', cloneHeading).text(getDomainName(domainId));
+        $('.applicable-status-heading', cloneHeading).text(key);
         $('.tbody-task-applicability-list').append(cloneHeading);
-        var list = data[key]['notifications'];
-        $.each(list, function(k, val) { 
+
+        var actwiselist = data[key];
+        $.each(actwiselist, function(ke, valu) { 
             var arr = [];
-            var tableRow = $('#templates .table-task-applicability-list .table-row-values');
-            var clone = tableRow.clone();
-            sno = sno + 1;
-            $('.sno', clone).text(sno);
-            $('.statutory-provision', clone).html(list[k]['statutory_provision']);
-            $('.unit-name', clone).html(list[k]['statutory_provision']);
-            $('.statutory-notificaions', clone).html(list[k]['notification_text']);
-            $('.date-time', clone).html(list[k]['date_and_time']);
-            $('.tbody-task-applicability-list').append(clone);
+            var tableRowLevel1 = $('#templates .table-task-applicability-list .level1-list');
+            var cloneLevel1 = tableRowLevel1.clone();
+            $('.level1-heading', cloneLevel1).text(valu);
+            $('.tbody-task-applicability-list').append(cloneLevel1);
+            var list = actwiselist[ke];
+            $.each(list, function(k, val) { 
+                var tableRow = $('#templates .table-task-applicability-list .task-list');
+                var clone = tableRow.clone();
+                sno = sno + 1;
+                $('.sno', clone).text(sno);
+                $('.statutory-provision', clone).html(val['statutory_provision']);
+                $('.unit-name', clone).html(valu["unit-name"]);
+                $('.compliance-task a', clone).html(val['compliance_name']);
+                $('.compliance-task a', clone).attr("href",val['compliance_name']);
+                $('.compliance-description', clone).html(val['description']);
+                $('.penal-consequences', clone).html(val['penal_consequences']);
+                $('.compliance-frequency', clone).html(val['compliance_frequency']);
+                $('.repeats', clone).html(val['repeats']);
+                $('.tbody-task-applicability-list').append(clone);
+            });
         });
     });
     $(".total-records").html("Total : "+sno+" records")
@@ -186,32 +212,7 @@ function loadauto_domains (textval) {
   document.getElementById('selectboxview-domains').style.display = 'block';
   var domains = domainsList;
   var suggestions = [];
-  $('#autocompleteview-domains ul').empty();
-  if(textval.length>0){
-    for(var i in domains){
-        if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);     
-    }
-    var str='';
-    for(var i in suggestions){
-      str += '<li id="'+suggestions[i][0]+'" onclick="activate_domains(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-    }
-    $('#selectboxview-domains ul').append(str);
-    $("#domain").val('');
-    }
-}
-function activate_domains (element,checkval,checkname) {
-  $("#domainval").val(checkname);
-  $("#domain").val(checkval);
-}
-//Level1 Statutory---------------------------------------------------------------------------------------------------------------
-function hidedomainslist(){
-    document.getElementById('selectboxview-domains').style.display = 'none';
-}
-function loadauto_domains (textval) {
-  document.getElementById('selectboxview-domains').style.display = 'block';
-  var domains = domainsList;
-  var suggestions = [];
-  $('#autocompleteview-domains ul').empty();
+  $('#selectboxview-domains ul').empty();
   if(textval.length>0){
     for(var i in domains){
         if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);     
