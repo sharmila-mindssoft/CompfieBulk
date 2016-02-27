@@ -4439,7 +4439,7 @@ class ClientDatabase(Database):
             ]
             join_type = " left join"
             where_condition = "notification_id = '%d'" % notification_id
-            where_condition += " and notification_type_id = '%d'" % notification_type_id
+            where_condition += " and notification_type_id = '%d' order by updated_on DESC" % notification_type_id
             notification_detail_row = self.get_data_from_multiple_tables(
                 columns, tables, aliases, join_type,
                 join_conditions, where_condition

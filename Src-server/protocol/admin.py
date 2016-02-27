@@ -31,7 +31,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_UserDetails,
     to_structure_CustomTextType_20, to_structure_CustomTextType_50,
     to_structure_RecordType_admin_UserGroup,
-    to_structure_VectorType_RecordType_admin_UserGroup
+    to_structure_VectorType_RecordType_admin_UserGroup,
+    to_structure_UnsignedIntegerType_32
 )
 
 #
@@ -312,17 +313,18 @@ class Response(object):
 
 class UserGroup(object):
     def __init__(self, user_group_id, user_group_name, form_category_id, 
-        form_ids, is_active):
+        form_ids, is_active, no_of_users):
         self.user_group_id = user_group_id
         self.user_group_name = user_group_name
         self.form_category_id = form_category_id
         self.form_ids = form_ids
         self.is_active = is_active
+        self.no_of_users = no_of_users
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["user_group_id", "user_group_name", 
-            "form_category_id", "form_ids", "is_active"])
+            "form_category_id", "form_ids", "is_active", "no_of_users"])
         user_group_id = data.get("user_group_id")
         user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
         user_group_name = data.get("user_group_name")
@@ -333,16 +335,19 @@ class UserGroup(object):
         form_ids = parse_structure_VectorType_SignedIntegerType_8(form_ids)
         is_active = data.get("is_active")
         is_active = parse_structure_Bool(is_active)
+        no_of_users = data.get("no_of_users")
+        no_of_users = parse_structure_UnsignedIntegerType_32(no_of_users)
         return UserGroup(user_group_id, user_group_name, form_category_id,
-            form_ids, is_active)
+            form_ids, is_active, no_of_users)
 
     def to_structure(self):
         return {
-            "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
+            "user_group_id": to_structure_UnsignedIntegerType_32(self.user_group_id),
             "user_group_name": to_structure_CustomTextType_50(self.user_group_name),
             "form_category_id": to_structure_SignedIntegerType_8(self.form_category_id),
             "form_ids": to_structure_VectorType_SignedIntegerType_8(self.form_ids),
             "is_active": to_structure_Bool(self.is_active),
+            "no_of_users" : to_structure_UnsignedIntegerType_32(self.no_of_users)
         }
 
 class GetUserGroupsSuccess(Response):

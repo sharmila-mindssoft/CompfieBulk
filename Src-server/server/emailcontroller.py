@@ -104,13 +104,13 @@ class EmailHandler(Email):
         )
         self.send_email(receiver, subject, message)
         
-        email_to = [receiver]
-        context = {
-            "User" : db.get_user_name_by_id(user_id),
-            "ResetLink" : reset_link
-        }
-        template_name = self.get_template("task_completed")
-        self.send_mail(template_name, email_to, context)
+        # email_to = [receiver]
+        # context = {
+        #     "User" : db.get_user_name_by_id(user_id),
+        #     "ResetLink" : reset_link
+        # }
+        # template_name = self.get_template("task_completed")
+        # self.send_mail(template_name, email_to, context)
 
 
     def send_user_credentials(
