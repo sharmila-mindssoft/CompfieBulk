@@ -278,7 +278,7 @@ $("#submit").click(function(){
 	}
 	if(usertype == 'Service Provider'){
 		isserviceprovider = true;
-		serviceprovider = $('#serviceprovider').val();
+		serviceprovider = parseInt($('#serviceprovider').val());
 		if(serviceprovider.length == 0){
 			displayMessage("Enter service provider");	
 		}

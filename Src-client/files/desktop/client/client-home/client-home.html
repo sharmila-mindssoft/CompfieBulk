@@ -213,26 +213,38 @@
               <div class="compliance-report-tab-content" id="assignee-wise-compliance">
               Welcome to compliance report tab 
                 <!-- archive tab content start here -->
-               <!--  <div class="archive-tab-content">
+                <div class="archive-tab-content">
                   <div class="archive-list-content" style="width:100% !important;">
                     <div class="grid-table-dash">
                       <div class="input-row-left">
                         <div class="input-row">
                           <div class="field-label">Country:<span class="mandatory">*</span></div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" placeholder="Country">
+                             <input type="hidden" id="country" value="1">
+                              <input type="text" class="input-box icon-autocomplete" id="countryval" value="India"  onkeyup="loadauto_country(this.value)">
+                              <div id="autocompleteview-country" class="ac-textbox" style="display:none;" onclick="hidecountrylist();">
+                                  <ul style="width:195px;"></ul>
+                              </div>
                           </div>
                         </div>
                         <div class="input-row">
                           <div class="field-label">Legal Entity:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" placeholder="Legal entity">
+                              <input type="text" class="input-box icon-autocomplete" id="legalentityval" value="" style="width:213px;"  onkeyup="loadauto_lentity(this.value)">
+                              <input type="hidden" id="legalentityid">
+                              <div id="autocompleteview-lentity" class="ac-textbox" style="display:none;"  onclick="hidelentitylist();">
+                                  <ul style="width:195px;"></ul>
+                              </div>
                           </div>
                         </div>
                         <div class="input-row">
                           <div class="field-label">Seating Unit:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" placeholder="Seating Unit">
+                            <input type="text" class="input-box icon-autocomplete" id="unitval" value="" style="width:213px;"  onkeyup="loadauto_unit(this.value)">
+                        <input type="hidden" id="unitid">
+                        <div id="autocompleteview-unit" class="ac-textbox" style="display:none;"  onclick="hideunitlist();">
+                            <ul style="width:195px;"></ul>
+                        </div>
                           </div>
                         </div>
                       </div>
@@ -240,19 +252,31 @@
                         <div class="input-row">
                           <div class="field-label">Business Group:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" placeholder="Business Group">
+                            <input type="text" class="input-box icon-autocomplete" id="businessgroupsval" value="" style="width:213px;"  onkeyup="loadauto_businessgroups(this.value)">
+                        <input type="hidden" id="businessgroupid">
+                        <div id="autocompleteview-bgroups" class="ac-textbox" style="display:none;"  onclick="hidebgroupslist();">
+                            <ul style="width:195px;"></ul>
+                        </div>
                           </div>
                         </div>
                         <div class="input-row">
                           <div class="field-label">Division:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" placeholder="Division">
+                             <input type="text" class="input-box icon-autocomplete" id="divisionval" value="" style="width:213px;"  onkeyup="loadauto_division(this.value)">
+                        <input type="hidden" id="divisionid">
+                        <div id="autocompleteview-division" class="ac-textbox" style="display:none;"  onclick="hidedivisionlist();">
+                            <ul style="width:195px;"></ul>
+                        </div>
                           </div>
                         </div>
                         <div class="input-row">
                           <div class="field-label">User:</div>
                           <div class="field-input">
-                            <input type="text" class="input-box icon-autocomplete" placeholder="User">
+                             <input type="text" class="input-box icon-autocomplete" id="userval" value="" style="width:213px;"  onkeyup="loadauto_user(this.value)">
+                        <input type="hidden" id="userid">
+                        <div id="autocompleteview-user" class="ac-textbox" style="display:none;"  onclick="hideuserlist();">
+                            <ul style="width:195px;"></ul>
+                        </div>
                           </div>
                         </div>
                       </div>
@@ -492,9 +516,9 @@
                       </table>
                     </div>
                   </div>
-                </div> -->
+                </div>
                 <!-- archive tab content end here -->
-                <!-- <div id="assignee">
+                <div id="assignee">
                   <div class="modal" style="width:75%; margin-left:-37.5%;">
                     <header>
                     <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">EMP1028 - Sivaraman</h1>
@@ -606,7 +630,7 @@
                     </p>
                     </section>
                   </div>
-                </div> -->
+                </div>
               </div>
             </div>
           </div>
@@ -616,13 +640,13 @@
   </div>
   {% include "/files/desktop/client/home/footer.html" %}
   <div id="templates">
-    <div class="compliance-status-group">
+    <div class="compliance-status">
       <table>
         <tr class="tr-heading">
           <th width="3%" align="center">#</th>
           <th width="13%" align="left" class="business-group-row">Business Group<span><img src="/images/dropdown-arrow.png"/></span></th>
-          <th width="13%" align="left"  class="legal-entity-row">Legal Entity <span><img src="/images/dropdown-arrow.png"/></span></th>
-          <th width="15%" align="left"  class="division-row">Division <span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="13%" align="left" class="legal-entity-row">Legal Entity <span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="15%" align="left" class="division-row">Division <span><img src="/images/dropdown-arrow.png"/></span></th>
           <th width="5%" align="left" class="type-row">Type <span><img src="/images/dropdown-arrow.png"/></span></th>
           <th width="20%" align="left" class="compliance-row">Compliance <span><img src="/images/dropdown-arrow.png"/></span></th>
           <th width="11%" align="left" class="assigned-to-row">Assigned To <span><img src="/images/dropdown-arrow.png"/></span></th>
