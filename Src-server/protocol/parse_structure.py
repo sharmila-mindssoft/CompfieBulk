@@ -3774,3 +3774,14 @@ def parse_structure_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance
 def parse_structure_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
     from protocol import dashboard
     return dashboard.AssigneeWiseLevel1Compliance.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_dashboard_YearWise(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_dashboard_YearWise(item))
+    return lst
+
+def parse_structure_RecordType_dashboard_YearWise(data):
+    from protocol import dashboard
+    return dashboard.YearWise.parse_structure(data)

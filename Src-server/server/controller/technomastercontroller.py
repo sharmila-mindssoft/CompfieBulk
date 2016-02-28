@@ -1,3 +1,5 @@
+import threading
+
 from protocol import core, technomasters
 
 __all__ = [
@@ -37,24 +39,33 @@ def get_client_groups(db, request, session_user):
 	return technomasters.GetClientGroupsSuccess(countries = country_list, 
 		domains = domain_list, users = user_list, client_list = client_list)
 
+def create_database(group_name, client_id, db, short_name, email_id):
+	db.create_and_save_client_database(
+		group_name, client_id, short_name, email_id
+	)
+
 def save_client_group(db, request, session_user):
 	session_user = int(session_user)
 	client_id = db.generate_new_client_id()
 	if db.is_duplicate_group_name(request.group_name, client_id):
 		return technomasters.GroupNameAlreadyExists()
-	elif db.is_duplicate_group_username(request.email_id, client_id):
-		return technomasters.EmailIDAlreadyExists()
 	elif db.is_duplicate_short_name(request.short_name, client_id):
 		return technomasters.ShortNameAlreadyExists()
 	else:
+		create_database_thread = threading.Thread(
+				target=create_database, args=[
+					request.group_name, client_id, db,
+					request.short_name, request.email_id
+				]
+			)
+		create_database_thread.start()
 		db.save_client_group(client_id, request, session_user)
 		db.save_date_configurations(client_id, request.date_configurations, 
 			session_user)
 		db.save_client_countries(client_id, request.country_ids)
 		db.save_client_domains(client_id, request.domain_ids)
-		db.create_and_save_client_database(request.group_name, client_id, 
-			request.short_name, request.email_id)
 		db.save_incharge_persons(request, client_id)
+		db.save_client_user(request, session_user, client_id)
 		return technomasters.SaveClientGroupSuccess()
 
 def update_client_group(db, request, session_user):

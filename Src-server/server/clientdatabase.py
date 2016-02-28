@@ -5954,6 +5954,12 @@ class ClientDatabase(Database):
                             client_compliance_rows = self.get_data(
                                 self.tblClientCompliances, client_compliance_columns, client_compliance_condition
                             )
+                            current_year = self.get_date_time().year
+                            result = self.get_country_domain_timelines(
+                                [country_id], [domain_id], [current_year], client_id
+                            )
+                            from_date = result[0][1][0][1][0]["start_date"]
+                            to_date = result[0][1][0][1][0]["end_date"]
                             compliance_ids = client_compliance_rows[0][0]
                             columns = "sum(case when (approve_status = 1 and (due_date < completion_date or \
                             due_date = completion_date)) then 1 else 0 end) as complied, \
@@ -5963,7 +5969,10 @@ class ClientDatabase(Database):
                             due_date < now()) then 1 else 0 end) as NotComplied, \
                             sum(case when (approve_status = 1 and completion_date > due_date) then 1 else 0 end)\
                             as DelayedCompliance"
-                            condition = "compliance_id in (%s)" % compliance_ids
+                            condition = "compliance_id in (%s) and due_date \
+                            between '%s' and '%s'" % (
+                                compliance_ids, from_date, to_date
+                            )
                             rows = self.get_data(
                                 self.tblComplianceHistory, columns, condition
                             )
@@ -6027,11 +6036,15 @@ class ClientDatabase(Database):
                                 not_complied_count=not_complied
                             )
                         )
+                    year_wise_compliance_count = self.get_year_wise_assignee_compliances(
+                        country_id, domain_id, client_id, compliance_ids
+                    )
                     assignee_wise_compliances_count.append(
                         dashboard.AssigneeWiseDetails(
                             user_id=int(user_id),
                             assignee_name=self.get_user_name_by_id(user_id),
-                            domain_wise_details=domain_wise_compliance_count
+                            domain_wise_details=domain_wise_compliance_count,
+                            year_wise_details= year_wise_compliance_count
                         )
                     )
             chart_data.append(
@@ -6042,6 +6055,52 @@ class ClientDatabase(Database):
                 )
             )
         return chart_data
+
+    def get_year_wise_assignee_compliances(
+        self, country_id, domain_id, client_id, compliance_ids
+    ):
+        current_year = self.get_date_time().year
+        start_year = current_year - 5
+        iter_year = start_year
+        year_wise_compliance_count = []
+        while iter_year <= current_year:
+            result = self.get_country_domain_timelines(
+                [country_id], [domain_id], [iter_year], client_id
+            )
+            from_date = result[0][1][0][1][0]["start_date"]
+            to_date = result[0][1][0][1][0]["end_date"]
+            columns = "sum(case when (approve_status = 1 and (due_date < completion_date or \
+            due_date = completion_date)) then 1 else 0 end) as complied, \
+            sum(case when ((approve_status = 0 or approve_status is null) and \
+            due_date > now()) then 1 else 0 end) as Inprogress, \
+            sum(case when ((approve_status = 0 or approve_status is null) and \
+            due_date < now()) then 1 else 0 end) as NotComplied, \
+            sum(case when (approve_status = 1 and completion_date > due_date) then 1 else 0 end)\
+            as DelayedCompliance"
+            condition = "compliance_id in (%s) and due_date \
+            between '%s' and '%s'" % (
+                compliance_ids, from_date, to_date
+            )
+            rows = self.get_data(
+                self.tblComplianceHistory, columns, condition
+            )
+            complied = 0 if rows[0][0] is None else int(rows[0][0])
+            inprogress = 0 if rows[0][1] is None else int(rows[0][1])
+            not_complied = 0 if rows[0][2] is None else int(rows[0][2])
+            delayed_compliance = 0 if rows[0][3] is None else  int(rows[0][3])
+            total = complied + inprogress + not_complied + delayed_compliance
+            year_wise_compliance_count.append(
+                dashboard.YearWise(
+                    year=str(iter_year),
+                    total_compliances=total,
+                    complied_count=complied,
+                    delayed_compliance=delayed_compliance,
+                    inprogress_compliance_count=inprogress,
+                    not_complied_count=not_complied
+                )
+            )
+            iter_year += 1
+        return year_wise_compliance_count
 
     def get_assigneewise_compliances_drilldown_data(self, assignee_id, domain_id, client_id):
         level_1_statutories_list = self.get_level_1_statutories_for_user(

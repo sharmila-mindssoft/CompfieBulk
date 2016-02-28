@@ -3862,3 +3862,14 @@ def to_structure_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(da
 def to_structure_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
     from protocol import dashboard
     return dashboard.TrendData.to_structure(data)
+
+def to_structure_VectorType_RecordType_dashboard_YearWise(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_dashboard_YearWise(item))
+    return lst
+
+def to_structure_RecordType_dashboard_YearWise(data):
+    from protocol import dashboard
+    return dashboard.YearWise.to_structure(data)
