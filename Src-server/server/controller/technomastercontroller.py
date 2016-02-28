@@ -85,12 +85,15 @@ def save_client_group(db, request, session_user):
 			db.save_incharge_persons(request, client_id)
 			db.save_client_user(request, session_user, client_id)
 			db.update_client_db_details(host, client_id, db_username,
-	            db_password, request.short_names, database_name)
+	            db_password, request.short_name, database_name)
+			return technomasters.SaveClientGroupSuccess()
 		except Exception, e:
 			print e
-			db.rollback()
 			db.delete_database(host, database_name, db_username, db_password)
-		return technomasters.SaveClientGroupSuccess()
+			db._connection.rollback()
+		return technomasters.ClientCreationFailed(error="Failed to create client")
+		
+		
 
 def update_client_group(db, request, session_user):
 	session_user = int(session_user)
