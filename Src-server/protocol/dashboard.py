@@ -55,7 +55,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance,
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance,
     parse_structure_VectorType_RecordType_dashboard_YearWise,
-    parse_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance
+    parse_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance,
+    parse_structure_OptionalType_CustomTextType_20
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -114,7 +115,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance,
     to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance,
     to_structure_VectorType_RecordType_dashboard_YearWise,
-    to_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance
+    to_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance,
+    to_structure_OptionalType_CustomTextType_20
 )
 
 #
@@ -1520,7 +1522,7 @@ class AssigneeWiseLevel1Compliance(object):
         due_date = data.get("due_date")
         due_date = parse_structure_CustomTextType_20(due_date)
         completion_date = data.get("completion_date")
-        completion_date = parse_structure_CustomTextType_20(completion_date)
+        completion_date = parse_structure_OptionalType_CustomTextType_20(completion_date)
         return AssigneeWiseLevel1Compliance(compliance_name, description, assignee_name, assigned_date,
         due_date, completion_date)
 
@@ -1531,7 +1533,7 @@ class AssigneeWiseLevel1Compliance(object):
             "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
             "assigned_date": to_structure_CustomTextType_20(self.assigned_date),
             "due_date": to_structure_CustomTextType_20(self.due_date),
-            "completion_date": to_structure_CustomTextType_20(self.completion_date)
+            "completion_date": to_structure_OptionalType_CustomTextType_20(self.completion_date)
         }
 
 #

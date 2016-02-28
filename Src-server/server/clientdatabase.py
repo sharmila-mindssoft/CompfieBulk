@@ -6181,7 +6181,7 @@ class ClientDatabase(Database):
                             assignee_name=self.get_user_name_by_id(assignee_id),
                             assigned_date=self.datetime_to_string(compliance[1]), 
                             due_date=self.datetime_to_string(compliance[2]),
-                            completion_date=self.datetime_to_string(compliance[3])
+                            completion_date=None if compliance[3] is None else self.datetime_to_string(compliance[3])
                         )
                     )
                 if len(complied_level_1_statutory_wise_compliances) > 0:
@@ -6194,7 +6194,7 @@ class ClientDatabase(Database):
                             assignee_name=self.get_user_name_by_id(assignee_id),
                             assigned_date=self.datetime_to_string(compliance[1]), 
                             due_date=self.datetime_to_string(compliance[2]),
-                            completion_date=self.datetime_to_string(compliance[3])
+                            completion_date=None if compliance[3] is None else self.datetime_to_string(compliance[3])
                         )
                     )
                 if len(delayed_level_1_statutory_wise_compliances) > 0:
@@ -6207,7 +6207,7 @@ class ClientDatabase(Database):
                             assignee_name=self.get_user_name_by_id(assignee_id),
                             assigned_date=self.datetime_to_string(compliance[1]), 
                             due_date=self.datetime_to_string(compliance[2]),
-                            completion_date=self.datetime_to_string(compliance[3])
+                            completion_date=None if compliance[3] is None else self.datetime_to_string(compliance[3])
                         )
                     )
                 if len(inprogress_level_1_statutory_wise_compliances) > 0:
@@ -6220,7 +6220,7 @@ class ClientDatabase(Database):
                             assignee_name=self.get_user_name_by_id(assignee_id),
                             assigned_date=self.datetime_to_string(compliance[1]), 
                             due_date=self.datetime_to_string(compliance[2]),
-                            completion_date=self.datetime_to_string(compliance[3])
+                            completion_date=None if compliance[3] is None else self.datetime_to_string(compliance[3])
                         )
                     )
                 if len(not_complied_level_1_statutory_wise_compliances) > 0:
