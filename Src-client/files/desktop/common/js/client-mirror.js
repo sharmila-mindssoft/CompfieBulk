@@ -1249,13 +1249,14 @@ function initClientMirror() {
 
     }
     function getAssigneewiseCompliancesDrilldown(
-        assignee_id, domain_id
+        assignee_id, domain_id, year
     ){
         var request = [
             "GetAssigneeWiseComplianceDrillDown",
             {
                 "assignee_id": assignee_id,
-                "domain_id": domain_id
+                "domain_id": domain_id,
+                "year" : year
             }
         ];
         callerName = "client_dashboard";

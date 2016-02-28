@@ -6105,7 +6105,7 @@ class ClientDatabase(Database):
         return year_wise_compliance_count
 
     def get_assigneewise_compliances_drilldown_data(
-        self, assignee_id, domain_id, client_id
+        self, assignee_id, domain_id, client_id, year
     ):
         level_1_statutories_list = self.get_level_1_statutories_for_user(
             assignee_id, client_id, domain_id
@@ -6124,7 +6124,9 @@ class ClientDatabase(Database):
             country_id_condition = "unit_id = '%d'" % unit_id
             rows = self.get_data(self.tblUnits, country_id_columns, country_id_condition)
             country_id = rows[0][0]
-            current_year = self.get_date_time().year
+            current_year = year
+            if year is None:
+                current_year = self.get_date_time().year
             result = self.get_country_domain_timelines(
                 [country_id], [domain_id], [current_year], client_id
             )

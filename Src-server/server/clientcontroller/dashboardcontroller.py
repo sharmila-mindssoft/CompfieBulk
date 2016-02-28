@@ -186,11 +186,12 @@ def process_assigneewise_compliances_drilldown(
 ):
     assignee_id = request.assignee_id
     domain_ids = request.domain_id
+    year = request.year
     
     drill_down_data = {}
     for domain_id in domain_ids:
         complied, delayed, inprogress, not_complied = db.get_assigneewise_compliances_drilldown_data(
-            assignee_id, domain_id, client_id
+            assignee_id, domain_id, client_id, year
         )
         if (
             (len(complied) > 0) or (len(delayed) > 0) 
