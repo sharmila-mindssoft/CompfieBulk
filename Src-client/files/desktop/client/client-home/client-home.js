@@ -824,7 +824,11 @@ function updateDrillDown(status, data) {
 }
 
 function updateEscalationDrillDown(status, data) {
-    //pass
+    $(".graph-container.compliance-status").hide();
+    $(".graph-selections-bottom").hide();
+    $(".drilldown-container").show();
+    $(".btn-back").show();
+    showDrillDownRecord(status, data);
 }
 
 function showDrillDownRecord(status, data){
@@ -1278,9 +1282,6 @@ function prepareEscalationChartdata(source_data) {
 }
 
 function updateEscalationChart(data) {
-    $(".graph-container").hide();
-    $(".drilldown-container").hide();
-    $(".graph-selections-bottom").hide();
     $(".graph-container.compliance-status").show();
     data = prepareEscalationChartdata(data);
     xAxis = data[0];
@@ -1316,24 +1317,19 @@ function updateEscalationChart(data) {
                 groupPadding: 0.3,
                 borderWidth: 0,
                 dataLabels: {
-                enabled: true,
-                textShadow:null,
-                format:'{point.y}'
-            },
-            point: {
-                events: {
-                    click: function() {
-                        var drilldown = this.drilldown;
-                        if (drilldown) {
-                            console.log(drilldown)
-                            console.log(this.year)
-                        }
-                    }
-                  }
+                    enabled: true,
+                    textShadow:null,
+                    format:'{point.y}'
                 },
             }
         },
         series: chartDataSeries,
+    });
+    $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
+        var year = (this.textContent || this.innerText);
+        console.log(year);
+        loadEscalationDrillDown(year);
+        // setChart(value);
     });
 }
 
@@ -1671,16 +1667,28 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id) {
     );
 }
 
-function loadEscalationDrillDown(filter_type_id, year) {
+function loadEscalationDrillDown(year) {
+    var filter_type = chartInput.getFilterType();
+    var filterType = filter_type.replace("_", "-");
+    filterType = hyphenatedToUpperCamelCase(filterType);
+    if (filterType == "Group") {
+        filter_ids = chartInput.getCountries();
+    }
+    else {
+        filter_ids = getFilterIds(filter_type);
+    }
     var requestData = {
         "domain_ids": chartInput.getDomains(),
-        "filter_id": filter_type_id,
-        "year": year
+        "filter_type": filterType,
+        "filter_ids": filter_ids,
+        "year": parseInt(year)
     }
+    console.log(requestData);
     client_mirror.getEscalationDrillDown(
         requestData,
         function (status, data) {
             ESCALATION_STATUS_DRILL_DOWN_DATA = data;
+            console.log(data);
             updateEscalationDrillDown(data);
         }
     );
@@ -1776,6 +1784,16 @@ function loadCharts () {
         $(".report-container-inner").show();
     }
     else {
+        if (chartType == "compliance_status") {
+            $(".chart-filters").show();
+            $(".chart-filters-autocomplete").hide();
+            $(".graph-selections-bottom").show();
+        }
+        else {
+            $(".chart-filters").show();
+            $(".chart-filters-autocomplete").show();
+            $(".graph-selections-bottom").hide();
+        }
         $(".chart-container-inner").show();
         $(".report-container-inner").hide();
     }
