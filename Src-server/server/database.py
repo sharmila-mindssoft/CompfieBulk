@@ -1889,6 +1889,7 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t1.country_id = t6.country_id \
             and t6.user_id = %s" % (user_id, user_id)
+        q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
         rows = self.select_all(q)
         columns = [
             "compliance_id", "statutory_mapping_id", "country_id",
