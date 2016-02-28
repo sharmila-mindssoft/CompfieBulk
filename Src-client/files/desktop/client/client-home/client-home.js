@@ -13,7 +13,10 @@ var ESCALATION_STATUS_DRILL_DOWN_DATA = null;
 
 var TREND_CHART_DATA = null;
 var NOT_COMPLIED_DATA = null;
+var NOT_COMPLIED_DRILL_DOWN_DATA = null;
+
 var COMPLIANCE_APPLICABILITY_DATA = null;
+var COMPLIANCE_APPLICABILITY_DRILL_DOWN = null;
 
 
 function clearMessage() {
@@ -831,6 +834,23 @@ function updateEscalationDrillDown(status, data) {
     showDrillDownRecord(status, data);
 }
 
+function updateNotCompliedDrillDown(status, data) {
+    $(".graph-container.compliance-status").hide();
+    $(".graph-selections-bottom").hide();
+    $(".drilldown-container").show();
+    $(".btn-back").show();
+    showDrillDownRecord(status, data);
+}
+
+function updateComplianceApplicabilityDrillDown(status, data) {
+    $(".graph-container.compliance-status").hide();
+    $(".graph-selections-bottom").hide();
+    $(".drilldown-container").show();
+    $(".btn-back").show();
+    showDrillDownRecord(status, data);
+}
+
+
 function showDrillDownRecord(status, data){
     var data = data["drill_down_data"];
     var filter_type = chartInput.getFilterType();
@@ -1533,6 +1553,7 @@ function updateNotCompliedChart(data) {
                         click: function() {
                             var drilldown = this.drilldown
                             console.log(drilldown);
+                            loadNotCompliedDrillDown(drilldown);
                         }
                     }
                 }
@@ -1614,6 +1635,7 @@ function updateComplianceApplicabilityChart(data) {
                         click: function() {
                             var drilldown = this.drilldown
                             console.log(drilldown);
+                            loadComplianceApplicabilityDrillDown(drilldown);
                         }
                     }
                 }
@@ -1692,7 +1714,6 @@ function loadEscalationDrillDown(year) {
             updateEscalationDrillDown(data);
         }
     );
-
 }
 
 function loadEscalationChart() {
@@ -1752,6 +1773,33 @@ function loadNotCompliedChart(){
     );
 }
 
+function loadNotCompliedDrillDown(type){
+    var filter_type = chartInput.getFilterType();
+    var filterType = filter_type.replace("_", "-");
+    filterType = hyphenatedToUpperCamelCase(filterType);
+    if (filterType == "Group") {
+        filter_ids = chartInput.getCountries();
+    }
+    else {
+        filter_ids = getFilterIds(filter_type);
+    }
+    var requestData = {
+        "domain_ids": chartInput.getDomains(),
+        "filter_type": filterType,
+        "filter_ids": filter_ids,
+        "not_complied_type": type
+    }
+    console.log(requestData);
+    client_mirror.getNotCompliedDrillDown(
+        requestData,
+        function (status, data) {
+            NOT_COMPLIED_DRILL_DOWN_DATA = data;
+            console.log(data);
+            updateNotCompliedDrillDown(status, data);
+        }
+    );
+}
+
 function loadComplianceApplicabilityChart(){
     var filter_type = chartInput.getFilterType().replace("_", "-");
     filterType = hyphenatedToUpperCamelCase(filter_type)
@@ -1769,6 +1817,35 @@ function loadComplianceApplicabilityChart(){
         }
     );
 }
+
+function loadComplianceApplicabilityDrillDown(type){
+    var filter_type = chartInput.getFilterType();
+    var filterType = filter_type.replace("_", "-");
+    filterType = hyphenatedToUpperCamelCase(filterType);
+    if (filterType == "Group") {
+        filter_ids = chartInput.getCountries();
+    }
+    else {
+        filter_ids = getFilterIds(filter_type);
+    }
+    var requestData = {
+        "country_ids": chartInput.getCountries(),
+        "domain_ids": chartInput.getDomains(),
+        "filter_type": filterType,
+        "filter_id": filter_ids[0],
+        "applicability_status": type
+    }
+    console.log(requestData);
+    client_mirror.getComplianceApplicabilityDrillDown(
+        requestData,
+        function (status, data) {
+            COMPLIANCE_APPLICABILITY_DRILL_DOWN = data;
+            console.log(data);
+            updateComplianceApplicabilityDrillDown(status, data);
+        }
+    );
+}
+
 
 function loadAssigneeWiseCompliance() {
 
