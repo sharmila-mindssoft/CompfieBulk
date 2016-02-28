@@ -800,18 +800,21 @@ class GetComplianceApplicabilityStatusChartSuccess(Response):
 
 
 class GetAssigneewiseComplianesFiltersSuccess(Response):
-    def __init__(self, countries, business_groups, legal_entities, divisions, units, users):
+    def __init__(self, countries, business_groups, legal_entities, divisions, 
+        units, users, domains):
         self.countries = countries
         self.business_groups = business_groups
         self.legal_entities = legal_entities
         self.divisions = divisions
         self.units = units
         self.users = users
+        self.domains = domains
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "business_groups", "legal_entities", "divisions", "units", "users"
+            "countries", "business_groups", "legal_entities", "divisions", 
+            "units", "users", "domains"
         ])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
@@ -825,7 +828,10 @@ class GetAssigneewiseComplianesFiltersSuccess(Response):
         units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
         users = data.get("users")
         users = parse_structure_VectorType_RecordType_clientreport_User(users)
-        return GetAssigneewiseComplianesFiltersSuccess(countries, business_groups, legal_entities, divisions, units, users)
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+        return GetAssigneewiseComplianesFiltersSuccess(countries, 
+            business_groups, legal_entities, divisions, units, users, domains)
 
     def to_inner_structure(self):
         return {
@@ -834,7 +840,8 @@ class GetAssigneewiseComplianesFiltersSuccess(Response):
             "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
             "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
             "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
-            "users": to_structure_VectorType_RecordType_clientreport_User(self.users)
+            "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
+            "domins": to_structure_VectorType_RecordType_core_Domain(self.domains)
         }
 
 

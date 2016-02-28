@@ -161,9 +161,9 @@ def process_assigneewise_compliances_filters(db, request, session_user, client_i
     unit_list = db.get_units_for_user(unit_ids, client_id)
     users_list = db.get_client_users(client_id, unit_ids);
     return dashboard.GetAssigneewiseComplianesFiltersSuccess(
-        countries = country_list, business_groups = business_group_list,
-        legal_entities = legal_entity_list, divisions =division_list,
-        units = unit_list, users = users_list
+        countries=country_list, business_groups=business_group_list,
+        legal_entities=legal_entity_list, divisions=division_list,
+        units=unit_list, users=users_list, domains=domain_list
     )
 
 def process_assigneewise_compliances(db, request, session_user, client_id):
