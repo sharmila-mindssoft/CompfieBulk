@@ -503,12 +503,21 @@ function prepareComplianceStatusChartData (chart_data) {
             notCompliedCount += item["not_complied_count"];
         };
 
+        if (
+            (compliedCount == 0) &&
+            (delayedCount == 0) &&
+            (inprogressCount == 0) &&
+            (notCompliedCount == 0)
+        ) {
+            continue;
+        }
         xAxis.push(filterTypeName);
         xAxisIds.push(filter_type_id);
         yAxisComplied.push(compliedCount);
         yAxisDelayed.push(delayedCount);
         yAxisInprogress.push(inprogressCount);
         yAxisNotComplied.push(notCompliedCount);
+
     };
     if (xAxis.length == 0)
         return null;
@@ -1369,7 +1378,6 @@ function prepareTrendChartData(source_data) {
     var xAxisIds = [];
     var chartDataSeries = [];
     xAxis = source_data["years"];
-    console.log(xAxis)
     for (var i =0; i< source_data["data"].length; i++) {
         chartData = source_data["data"][i];
         var filter_type_id = chartData["filter_id"];
@@ -1394,7 +1402,6 @@ function prepareTrendChartData(source_data) {
             });
 
         }
-        console.log(total_count)
         chartDataSeries.push(
             {
                 "name": filterTypeName,
@@ -1403,7 +1410,7 @@ function prepareTrendChartData(source_data) {
             }
         );
     }
-    console.log(chartDataSeries)
+    chartTitle = "Complied (" + xAxis[0] + " to " + xAxis[xAxis.length - 1] + ")";
     return [xAxis, chartTitle, chartDataSeries];
 }
 
