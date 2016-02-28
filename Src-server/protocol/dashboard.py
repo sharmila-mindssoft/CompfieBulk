@@ -386,23 +386,27 @@ class GetAssigneeWiseCompliancesChart(Request):
         }
 
 class GetAssigneeWiseComplianceDrillDown(Request):
-    def __init__(self, assignee_id, domain_id):
+    def __init__(self, assignee_id, domain_id, year):
         self.assignee_id = assignee_id
         self.domain_id = domain_id
+        self.year = year
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["assignee_id", "domain_id"])
+        data = parse_dictionary(data, ["assignee_id", "domain_id", "year"])
         assignee_id = data.get("assignee_id")
         assignee_id = parse_structure_UnsignedIntegerType_32(assignee_id)
         domain_id = data.get("domain_id")
         domain_id = parse_structure_VectorType_UnsignedIntegerType_32(domain_id)
-        return GetAssigneeWiseComplianceDrillDown(assignee_id, domain_id)
+        year = data.get("year")
+        year = parse_structure_OptionalType_UnsignedIntegerType_32(year)
+        return GetAssigneeWiseComplianceDrillDown(assignee_id, domain_id, year)
 
     def to_inner_structure(self):
         return {
             "assignee_id": to_structure_UnsignedIntegerType_32(self.assignee_id),
             "domain_id": to_structure_VectorType_UnsignedIntegerType_32(self.domain_id),
+            "year": to_structure_OptionalType_UnsignedIntegerType_32(self.year),
         }
 
 class GetComplianceStatusDrillDownData(Request):
