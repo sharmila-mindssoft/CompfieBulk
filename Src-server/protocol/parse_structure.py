@@ -3785,3 +3785,16 @@ def parse_structure_VectorType_RecordType_dashboard_YearWise(data):
 def parse_structure_RecordType_dashboard_YearWise(data):
     from protocol import dashboard
     return dashboard.YearWise.parse_structure(data)
+
+def parse_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance(data):
+    data = parse_list(data)
+    d = {}
+    for key, value in data:
+        key = parse_structure_UnsignedIntegerType_32(key)
+        value = parse_structure_RecordType_dashboard_AssigneeWiseCompliance(value)
+        d[key] = value
+    return d
+
+def parse_structure_RecordType_dashboard_AssigneeWiseCompliance(data):
+    from protocol import dashboard
+    return dashboard.AssigneeWiseCompliance.parse_inner_structure(data)
