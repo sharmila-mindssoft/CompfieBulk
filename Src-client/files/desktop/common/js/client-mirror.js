@@ -884,7 +884,7 @@ function initClientMirror() {
 
     function getEscalationDrillDown(requestData, callback) {
         var request = [
-            "getEscalationDrillDown",
+            "GetEscalationsDrillDownData",
             requestData
         ];
         var callerName =  "client_dashboard";
@@ -989,9 +989,27 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getNotCompliedDrillDown(requestData, callback) {
+        var request = [
+            "GetNotCompliedDrillDown",
+            requestData
+        ];
+        var callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);
+    }
+
     function getComplianceApplicabilityChart(requestData, callback) {
         var request = [
             "GetComplianceApplicabilityStatusChart",
+            requestData
+        ];
+        var callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getComplianceApplicabilityDrillDown(requestData, callback) {
+        var request = [
+            "GetComplianceApplicabilityStatusDrillDown",
             requestData
         ];
         var callerName = "client_dashboard";
@@ -1396,7 +1414,9 @@ function initClientMirror() {
         getTrendChart: getTrendChart,
         getTrendChartDrillDown: getTrendChartDrillDown,
         getNotCompliedData: getNotCompliedData,
+        getNotCompliedDrillDown: getNotCompliedDrillDown,
         getComplianceApplicabilityChart: getComplianceApplicabilityChart,
+        getComplianceApplicabilityDrillDown: getComplianceApplicabilityDrillDown,
 
         getSettings: getSettings,
         updateSettings: updateSettings,

@@ -51,6 +51,12 @@
 
 .chart-filters {
 	border: 1px solid #fff;
+	display: none;
+}
+
+.chart-filters-autocomplete {
+	border: 1px solid #fff;
+	display: none;
 }
 /*
 .filtertable td div {

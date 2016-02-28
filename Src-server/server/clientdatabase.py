@@ -3193,7 +3193,6 @@ class ClientDatabase(Database):
         filter_type = request.filter_type
         filter_ids = request.filter_ids
         not_complied_type = request.not_complied_type
-        year = request.year
 
         not_complied_status_qry = " AND T1.due_date < CURDATE() \
             AND T1.approve_status is NULL  OR T1.approve_status != 1"
@@ -3217,8 +3216,6 @@ class ClientDatabase(Database):
             filter_type_qry = "AND T5.unit_id IN %s" % (str(tuple(filter_ids)))
 
         date_qry = ""
-
-        year_info = self.get_client_domain_configuration()[0]
 
         not_complied_details = self.compliance_details_query(
             domain_ids, date_qry, not_complied_status_qry,
@@ -3244,12 +3241,59 @@ class ClientDatabase(Database):
                 if ageing > 90 :
                     not_complied_details_filtered.append(c)
 
-        not_complied_details_list = self.return_compliance_details_drill_down(
-            year_info, "Not Complied", year,
-            not_complied_details_filtered, client_id
-        )
+        current_date = datetime.date.today()
 
-        return not_complied_details_list
+        unit_wise_data = {}
+        for r in not_complied_details_filtered :
+
+            unit_id = int(r["unit_id"])
+            statutories = r["statutory_mapping"].split('>>')
+            level_1 = statutories[0].strip()
+            ageing = 0
+            due_date = r["due_date"]
+            completion_date = r["completion_date"]
+
+            ageing = abs((current_date - due_date).days)
+
+            status = core.COMPLIANCE_STATUS("Not Complied")
+            name = "%s-%s" % (r["document_name"], r["compliance_task"])
+            compliance = dashboard.Level1Compliance(
+                name, r["compliance_description"], r["employee_name"],
+                str(r["start_date"]), str(due_date),
+                str(completion_date), status,
+                ageing
+            )
+
+            drill_down_data = unit_wise_data.get(unit_id)
+            if drill_down_data is None :
+                level_compliance = {}
+                level_compliance[level_1] = [compliance]
+                unit_name = "%s-%s" % (r["unit_code"], r["unit_name"])
+                geography = r["geography"].split(">>")
+                geography.reverse()
+                geography = ','.join(geography)
+                address = "%s, %s, %s" % (r["address"], geography, r["postal_code"])
+                drill_down_data = dashboard.DrillDownData(
+                    r["business_group_name"], r["legal_entity_name"],
+                    r["division_name"], unit_name, address,
+                    r["industry_name"],
+                    level_compliance
+                )
+
+            else :
+                level_compliance = drill_down_data.compliances
+                compliance_list = level_compliance[level_1]
+                if compliance_list is None :
+                    compliance_list = []
+                compliance_list.append(compliance)
+
+                level_compliance[level_1] = compliance_list
+                drill_down_data.compliances = level_compliance
+
+            unit_wise_data[unit_id] = drill_down_data
+
+        return unit_wise_data
+
 
     # unitwise compliance report
     def get_unitwise_compliance_report(
@@ -3593,7 +3637,7 @@ class ClientDatabase(Database):
             filter_type_qry = ""
 
         elif filter_type == "BusinessGroup" :
-            filter_type_qry = "AND T3.business_group_id = %s" % (filter_id)
+            filter_type_qry = "AND T3.business_group_id IN %s" % (filter_id)
 
         elif filter_type == "LegalEntity" :
             filter_type_qry = "AND T3.legal_entity_id = %s" % (filter_id)
@@ -3634,7 +3678,7 @@ class ClientDatabase(Database):
         level_1_wise_compliance = {}
 
         for r in result :
-            unit_id = r["unit_id"]
+            unit_id = int(r["unit_id"])
             mappings = r["statutory_mapping"].split(">>")
             if len(mappings) >= 1 :
                 level_1 = mappings[0]
@@ -3652,11 +3696,11 @@ class ClientDatabase(Database):
                 )
                 date_list.append(s_date)
 
-            format_file = d["format_file"]
-            format_file_size = d["format_file_size"]
+            format_file = r["format_file"]
+            format_file_size = r["format_file_size"]
             file_list = []
             download_file_list = []
-            if format_file :
+            if format_file is not None and format_file_size is not None :
                 file_info = core.FileList(
                     format_file_size, format_file, None
                 )
@@ -3678,7 +3722,7 @@ class ClientDatabase(Database):
                 r["document_name"], file_list, r["penal_consequences"],
                 int(r["frequency_id"]), date_list, r["repeat_type_id"],
                 r["repeats_every"], r["duration_type_id"],
-                r["duration"], bool(r["is_active"]), download_file_list
+                r["duration"], bool(r["is_active"])
             )
             level_1_wise_data = level_1_wise_compliance.get(level_1)
             if level_1_wise_data is None :
@@ -3690,7 +3734,9 @@ class ClientDatabase(Database):
                 )
             else :
                 compliance_dict = level_1_wise_data.compliances
-                compliance_list = compliance_dict[unit_id]
+                compliance_list = compliance_dict.get(unit_id)
+                if compliance_list is None :
+                    compliance_list = []
                 compliance_list.append(compliance)
 
                 compliance_dict[unit_id] = compliance_list

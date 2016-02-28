@@ -13,7 +13,10 @@ var ESCALATION_STATUS_DRILL_DOWN_DATA = null;
 
 var TREND_CHART_DATA = null;
 var NOT_COMPLIED_DATA = null;
+var NOT_COMPLIED_DRILL_DOWN_DATA = null;
+
 var COMPLIANCE_APPLICABILITY_DATA = null;
+var COMPLIANCE_APPLICABILITY_DRILL_DOWN = null;
 
 var COUNTRYLIST = null;
 var BUSINESSGROUPSLIST = null;
@@ -645,11 +648,6 @@ function updateComplianceStatusStackBarChart(data) {
                 text: xAxisName,
             },
             labels: {
-                events: {
-                    click: function() {
-                        setChart(this.value)
-                    }
-                },
                 style: {
                     cursor: 'pointer',
                     color: "blue",
@@ -669,6 +667,9 @@ function updateComplianceStatusStackBarChart(data) {
             pointFormat: '({point.y} out of {point.stackTotal})'
         },
         plotOptions: {
+            series: {
+                pointWidth: 35
+            },
             bar: {
                 stacking: "normal",
                 cursor: "pointer",
@@ -696,7 +697,16 @@ function updateComplianceStatusStackBarChart(data) {
         },
         colors: ['#A5D17A', '#F58835', '#F0F468', '#F32D2B'],
         series: chartDataSeries,
-
+    });
+    $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
+        var value = (this.textContent || this.innerText);
+        console.log(value);
+        name = value;
+        data_series = drilldownSeries[name];
+        var title = chartTitle + " - " + name;
+        updateComplianceStatusPieChart(data_series, title, "pie");
+        complianceDrillDown(data_series, title);
+        // setChart(value);
     });
 }
 
@@ -719,7 +729,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType) {
     // var options = new Highcharts.Chart({
         colors:['#A5D17A','#F58835', '#F0F468', '#F32D2B'],
         chart: {
-            renderTo: "status-container",
+            renderTo: "status-container"
         },
         title: {
             text: chartTitle
@@ -761,7 +771,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType) {
             pie: {
                 allowPointSelect: true,
                 cursor: 'pointer',
-
+                depth: 45,
                 dataLabels: {
                     enabled: true,
                     format: '{point.percentage:.0f}%'
@@ -791,6 +801,10 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType) {
         $(".btn-pie-chart").hide();
         $(".btn-bar-chart").show();
         options.chart.type = 'pie';
+        options.chart.options3d = {
+            enabled: true,
+            alpha: 30
+        };
         var chart1 = new Highcharts.Chart(options);
 
     } else {
@@ -820,8 +834,29 @@ function updateDrillDown(status, data) {
 }
 
 function updateEscalationDrillDown(status, data) {
-    //pass
+    $(".graph-container.compliance-status").hide();
+    $(".graph-selections-bottom").hide();
+    $(".drilldown-container").show();
+    $(".btn-back").show();
+    showDrillDownRecord(status, data);
 }
+
+function updateNotCompliedDrillDown(status, data) {
+    $(".graph-container.compliance-status").hide();
+    $(".graph-selections-bottom").hide();
+    $(".drilldown-container").show();
+    $(".btn-back").show();
+    showDrillDownRecord(status, data);
+}
+
+function updateComplianceApplicabilityDrillDown(status, data) {
+    $(".graph-container.compliance-status").hide();
+    $(".graph-selections-bottom").hide();
+    $(".drilldown-container").show();
+    $(".btn-back").show();
+    showDrillDownRecord(status, data);
+}
+
 
 function showDrillDownRecord(status, data){
     var data = data["drill_down_data"];
@@ -1168,9 +1203,6 @@ function prepareEscalationChartdata(source_data) {
 }
 
 function updateEscalationChart(data) {
-    $(".graph-container").hide();
-    $(".drilldown-container").hide();
-    $(".graph-selections-bottom").hide();
     $(".graph-container.compliance-status").show();
     data = prepareEscalationChartdata(data);
     xAxis = data[0];
@@ -1198,29 +1230,27 @@ function updateEscalationChart(data) {
             allowDecimals: false
         },
         plotOptions: {
+            series: {
+                pointWidth: 40
+            },
             column: {
                 pointPadding: 0,
                 groupPadding: 0.3,
                 borderWidth: 0,
                 dataLabels: {
-                enabled: true,
-                textShadow:null,
-                format:'{point.y}'
-            },
-            point: {
-                events: {
-                    click: function() {
-                        var drilldown = this.drilldown;
-                        if (drilldown) {
-                            console.log(drilldown)
-                            console.log(this.year)
-                        }
-                    }
-                  }
+                    enabled: true,
+                    textShadow:null,
+                    format:'{point.y}'
                 },
             }
         },
         series: chartDataSeries,
+    });
+    $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
+        var year = (this.textContent || this.innerText);
+        console.log(year);
+        loadEscalationDrillDown(year);
+        // setChart(value);
     });
 }
 
@@ -1386,8 +1416,12 @@ function updateNotCompliedChart(data) {
     highchart = new Highcharts.Chart({
         colors: ['#FF9C80', '#F2746B', '#FB4739', '#DD070C'],
         chart: {
+            renderTo: "status-container",
             type: "pie",
-            renderTo: "status-container"
+            options3d: {
+                enabled: true,
+                alpha: 30
+            }
         },
         title: {
             text: 'Over due compliance of' + chartTitle
@@ -1420,6 +1454,7 @@ function updateNotCompliedChart(data) {
                         click: function() {
                             var drilldown = this.drilldown
                             console.log(drilldown);
+                            loadNotCompliedDrillDown(drilldown);
                         }
                     }
                 }
@@ -1464,7 +1499,11 @@ function updateComplianceApplicabilityChart(data) {
         colors: ['#66FF66','#FFDC52','#CE253C'],
         chart: {
             type: "pie",
-            renderTo: "status-container"
+            renderTo: "status-container",
+            options3d: {
+                enabled: true,
+                alpha: 45
+            }
         },
         title: {
             text: chartTitle
@@ -1486,7 +1525,7 @@ function updateComplianceApplicabilityChart(data) {
             pie: {
                 allowPointSelect: true,
                 cursor: 'pointer',
-                depth: 45,
+                depth: 40,
                 dataLabels: {
                     enabled: true,
                     format: '{point.percentage: .0f}%'
@@ -1497,6 +1536,7 @@ function updateComplianceApplicabilityChart(data) {
                         click: function() {
                             var drilldown = this.drilldown
                             console.log(drilldown);
+                            loadComplianceApplicabilityDrillDown(drilldown);
                         }
                     }
                 }
@@ -1795,20 +1835,31 @@ function loadComplianceStatusDrillDown(compliance_status, filter_type_id) {
     );
 }
 
-function loadEscalationDrillDown(filter_type_id, year) {
+function loadEscalationDrillDown(year) {
+    var filter_type = chartInput.getFilterType();
+    var filterType = filter_type.replace("_", "-");
+    filterType = hyphenatedToUpperCamelCase(filterType);
+    if (filterType == "Group") {
+        filter_ids = chartInput.getCountries();
+    }
+    else {
+        filter_ids = getFilterIds(filter_type);
+    }
     var requestData = {
         "domain_ids": chartInput.getDomains(),
-        "filter_id": filter_type_id,
-        "year": year
+        "filter_type": filterType,
+        "filter_ids": filter_ids,
+        "year": parseInt(year)
     }
+    console.log(requestData);
     client_mirror.getEscalationDrillDown(
         requestData,
         function (status, data) {
             ESCALATION_STATUS_DRILL_DOWN_DATA = data;
+            console.log(data);
             updateEscalationDrillDown(data);
         }
     );
-
 }
 
 function loadEscalationChart() {
@@ -1868,6 +1919,33 @@ function loadNotCompliedChart(){
     );
 }
 
+function loadNotCompliedDrillDown(type){
+    var filter_type = chartInput.getFilterType();
+    var filterType = filter_type.replace("_", "-");
+    filterType = hyphenatedToUpperCamelCase(filterType);
+    if (filterType == "Group") {
+        filter_ids = chartInput.getCountries();
+    }
+    else {
+        filter_ids = getFilterIds(filter_type);
+    }
+    var requestData = {
+        "domain_ids": chartInput.getDomains(),
+        "filter_type": filterType,
+        "filter_ids": filter_ids,
+        "not_complied_type": type
+    }
+    console.log(requestData);
+    client_mirror.getNotCompliedDrillDown(
+        requestData,
+        function (status, data) {
+            NOT_COMPLIED_DRILL_DOWN_DATA = data;
+            console.log(data);
+            updateNotCompliedDrillDown(status, data);
+        }
+    );
+}
+
 function loadComplianceApplicabilityChart(){
     var filter_type = chartInput.getFilterType().replace("_", "-");
     filterType = hyphenatedToUpperCamelCase(filter_type)
@@ -1885,6 +1963,35 @@ function loadComplianceApplicabilityChart(){
         }
     );
 }
+
+function loadComplianceApplicabilityDrillDown(type){
+    var filter_type = chartInput.getFilterType();
+    var filterType = filter_type.replace("_", "-");
+    filterType = hyphenatedToUpperCamelCase(filterType);
+    if (filterType == "Group") {
+        filter_ids = chartInput.getCountries();
+    }
+    else {
+        filter_ids = getFilterIds(filter_type);
+    }
+    var requestData = {
+        "country_ids": chartInput.getCountries(),
+        "domain_ids": chartInput.getDomains(),
+        "filter_type": filterType,
+        "filter_id": filter_ids[0],
+        "applicability_status": type
+    }
+    console.log(requestData);
+    client_mirror.getComplianceApplicabilityDrillDown(
+        requestData,
+        function (status, data) {
+            COMPLIANCE_APPLICABILITY_DRILL_DOWN = data;
+            console.log(data);
+            updateComplianceApplicabilityDrillDown(status, data);
+        }
+    );
+}
+
 
 function loadAssigneeWiseCompliance() {
     client_mirror.getAssigneewiseComplianesFilters(
@@ -1904,6 +2011,16 @@ function loadCharts () {
         $(".report-container-inner").show();
     }
     else {
+        if (chartType == "compliance_status") {
+            $(".chart-filters").show();
+            $(".chart-filters-autocomplete").hide();
+            $(".graph-selections-bottom").show();
+        }
+        else {
+            $(".chart-filters").show();
+            $(".chart-filters-autocomplete").show();
+            $(".graph-selections-bottom").hide();
+        }
         $(".chart-container-inner").show();
         $(".report-container-inner").hide();
     }

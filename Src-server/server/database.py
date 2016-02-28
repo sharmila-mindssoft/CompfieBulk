@@ -4741,7 +4741,7 @@ class KnowledgeDatabase(Database):
             condition = "client_id in (%s)" % client_ids
 
         columns = "u.business_group_id, u.legal_entity_id, u.division_id, u.client_id"
-        tables = [self.tblUnits, self.tblClientGroups, self.tblBusinessGroups, 
+        tables = [self.tblUnits, self.tblClientGroups, self.tblBusinessGroups,
         self.tblLegalEntities, self.tblDivisions]
         aliases = ["u", "c", "bg","le", "d" ]
         join_conditions = [
