@@ -1,3 +1,6 @@
+import threading
+import re
+
 from protocol import core, technomasters
 
 __all__ = [
@@ -37,25 +40,60 @@ def get_client_groups(db, request, session_user):
 	return technomasters.GetClientGroupsSuccess(countries = country_list, 
 		domains = domain_list, users = user_list, client_list = client_list)
 
+def create_database(
+	host, username, password, database_name, db_username,
+	db_password, email_id, client_id, short_name, db
+):
+	try:
+		db._create_database(
+			host, username, password, database_name, db_username,
+			db_password, email_id, client_id, short_name
+		)
+	except Exception, x:
+		print x
+
 def save_client_group(db, request, session_user):
 	session_user = int(session_user)
 	client_id = db.generate_new_client_id()
 	if db.is_duplicate_group_name(request.group_name, client_id):
 		return technomasters.GroupNameAlreadyExists()
-	elif db.is_duplicate_group_username(request.email_id, client_id):
-		return technomasters.EmailIDAlreadyExists()
 	elif db.is_duplicate_short_name(request.short_name, client_id):
 		return technomasters.ShortNameAlreadyExists()
 	else:
-		db.save_client_group(client_id, request, session_user)
-		db.save_date_configurations(client_id, request.date_configurations, 
-			session_user)
-		db.save_client_countries(client_id, request.country_ids)
-		db.save_client_domains(client_id, request.domain_ids)
-		db.create_and_save_client_database(request.group_name, client_id, 
-			request.short_name, request.email_id)
-		db.save_incharge_persons(request, client_id)
-		return technomasters.SaveClientGroupSuccess()
+		group_name = re.sub('[^a-zA-Z0-9 \n\.]', '', request.group_name)
+		group_name = group_name.replace(" ", "")
+		database_name = "mirror_%s_%d" % (group_name.lower(), client_id)
+		row = db._get_server_details()
+		host = row[0]
+		username = row[1]
+		password = row[2]
+		db_username = db.generate_random()
+		db_password = db.generate_random()
+		create_database_thread = threading.Thread(
+			target=create_database, args=[
+				host, username, password, database_name, db_username,
+				db_password, request.email_id, client_id, request.short_name, db
+			]
+		)
+		create_database_thread.start()
+		try:
+			db.save_client_group(client_id, request, session_user)
+			db.save_date_configurations(client_id, request.date_configurations, 
+				session_user)
+			db.save_client_countries(client_id, request.country_ids)
+			db.save_client_domains(client_id, request.domain_ids)
+			db.save_incharge_persons(request, client_id)
+			db.save_client_user(request, session_user, client_id)
+			db.update_client_db_details(host, client_id, db_username,
+	            db_password, request.short_name, database_name)
+			return technomasters.SaveClientGroupSuccess()
+		except Exception, e:
+			print e
+			db.delete_database(host, database_name, db_username, db_password)
+			db._connection.rollback()
+		return technomasters.ClientCreationFailed(error="Failed to create client")
+		
+		
 
 def update_client_group(db, request, session_user):
 	session_user = int(session_user)

@@ -1008,13 +1008,13 @@ textarea.input-box{
 	float: left;
 	background: #fff;
 }
-.archive-tab-content {
+/*.archive-tab-content {
 	width: 100%;
 	float: left;
 	background: #fff;
 	display: none;
 }
-.index-list-content, .archive-list-content {
+*/.index-list-content, .archive-list-content {
 	width: 50%;
 	float: left;
 	padding: 0.5em;

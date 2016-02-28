@@ -32,7 +32,8 @@ from protocol.parse_structure import (
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping,
     parse_structure_RecordType_core_FileList,
-    parse_structure_VectorType_UnsignedIntegerType_32
+    parse_structure_VectorType_UnsignedIntegerType_32,
+    parse_structure_CustomTextType_500
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -70,7 +71,8 @@ from protocol.to_structure import (
     to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_UnitDetails,
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping,
     to_structure_RecordType_core_FileList,
-    to_structure_VectorType_UnsignedIntegerType_32
+    to_structure_VectorType_UnsignedIntegerType_32,
+    to_structure_CustomTextType_500
 )
 
 #
@@ -1028,6 +1030,23 @@ class UpdateClientSuccess(Response):
         return {
         }
 
+class ClientCreationFailed(Response):
+    def __init__(self, error):
+        self.error = error
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["error"])
+        error = data.get("error")
+        error = parse_structure_CustomTextType_500(error)
+        return ClientCreationFailed(error)
+
+    def to_inner_structure(self):
+        return {
+            "error": to_structure_CustomTextType_500(self.error)
+        }
+
+
 class ChangeClientStatusSuccess(Response):
     def __init__(self):
         pass
@@ -1097,7 +1116,7 @@ def _init_Response_class_map():
     UnitCodeAlreadyExists, LogoSizeLimitExceeds, UpdateClientSuccess,
     ChangeClientStatusSuccess, ReactivateUnitSuccess, GetClientProfileSuccess,
     InvalidBusinessGroupId, InvalidLegalEntityId, InvalidDivisionId, 
-    InvalidUnitId, UserIsNotResponsibleForAnyClient]
+    InvalidUnitId, UserIsNotResponsibleForAnyClient, ClientCreationFailed]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
