@@ -44,10 +44,13 @@ def create_database(
 	host, username, password, database_name, db_username,
 	db_password, email_id, client_id, short_name, db
 ):
-	db._create_database(
-		host, username, password, database_name, db_username,
-		db_password, email_id, client_id, short_name
-	)
+	try:
+		db._create_database(
+			host, username, password, database_name, db_username,
+			db_password, email_id, client_id, short_name
+		)
+	except Exception, x:
+		print x
 
 def save_client_group(db, request, session_user):
 	session_user = int(session_user)
@@ -82,9 +85,10 @@ def save_client_group(db, request, session_user):
 			db.save_incharge_persons(request, client_id)
 			db.save_client_user(request, session_user, client_id)
 			db.update_client_db_details(host, client_id, db_username,
-	            db_password, request.short_name, database_name)
+	            db_password, request.short_names, database_name)
 		except Exception, e:
 			print e
+			db.rollback()
 			db.delete_database(host, database_name, db_username, db_password)
 		return technomasters.SaveClientGroupSuccess()
 
