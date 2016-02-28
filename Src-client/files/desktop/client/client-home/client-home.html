@@ -282,10 +282,10 @@
                         </div>
                       </div>
                       <div class="submit-button-container">
-                        <input type="submit" name="cancel" value="Show" id="assigneeWiseShow" class="btn-submit">
+                        <input type="submit" name="cancel" value="Show" id="assigneeWiseShow" onclick="showFiltersResults()" class="btn-submit">
                         <input type="submit" name="cancel" value="Export" class="btn-submit">
                       </div>
-                      <table style="border:1px solid #ddd;" >
+                      <table style="border:1px solid #ddd;" class="table-assignee-wise-compliance-list" >
                         <tr >
                           <th width="5%" align="center">#</th>
                           <th width="25%" align="left">Domain</th>
@@ -306,292 +306,51 @@
                           <td width="10%" align="center"></td>
                           <td></td>
                         </tr>
-                        <tr>
-                          <td style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="9">
-                            KG1009 - Madurai unit
-                          </td>
-                        </tr>
-                        <tr align="left" >
-                          <td style="background-color:#fff;" align="left" colspan="8"> <a href="#" class="toggleModal" >EMP1028 -Sivaraman</a></th>
-                        </tr>
-                        <a href="#">
-                          <tr align="center" style="cursor:pointer;padding-right:5px" class="usecom1-tab">
-                            <td>1</td>
-                            <td align="left">Finance</td>
-                            <td>10</td>
-                            <td>06</td>
-                            <td>02</span></td>
-                            <td>01</td>
-                            <td>01</td>
-                            <td align="left" ><img src="/images/right_arrow.png" /></td>
-                          </tr>
-                        </a>
-                        <tr align="center" style="background-color:#FFFFFF">
-                          <td>2</td>
-                          <td align="left">Labour Law</td>
-                          <td>11</td>
-                          <td>04</td>
-                          <td>
-                            03
-                            <span class="toggleModal1">
-                              <a href="#" style="text-decoration:none">(+2)</a>
-                          </td>
-                          <td>01</td>
-                          <td>01</td>
-                          <td align="left" style="padding-right:1px;"><img src="/images/right_arrow.png" /></td>
-                        </tr>
-                        <tr align="center" >
-                        <td>3</td>
-                        <td align="left">Industrial Law</td>
-                        <td>11</td>
-                        <td>04</td>
-                        <td>03</td>
-                        <td>01</td>
-                        <td>01</td>
-                        <td align="left" ><img src="/images/right_arrow.png" /></td>
-                        </tr>
-                        <tr align="center" >
-                        <td colspan="2">Total</td>
-                        <td>32</td>
-                        <td>14</td>
-                        <td>10</td>
-                        <td>03</td>
-                        <td>03</td>
-                        <td align="left" ><img src="/images/right_arrow.png" /></td>
-                        </tr>
-                        <tr align="left" >
-                        <th colspan="10" style="background-color:#FFFFFF"><span><a href="#">EMP1027 - Vijayan</a></span></th>
-                        </tr>
-                        <tr align="center"  style="background-color:#FFFFFF">
-                        <td>4</td>
-                        <td align="left">Labour law</td>
-                        <td>08</td>
-                        <td>04</td>
-                        <td>01</td>
-                        <td>02</td>
-                        <td>01</td>
-                        <td align="left" ><img src="/images/right_arrow.png" /></td>
-                        </tr>
-                        <tr>
-                        <td style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="9">
-                        KG1180 - Namakkal unit
-                        </td>
-                        </tr>
-                        <tr align="left" >
-                        <th colspan="9" style="background-color:#FFFFFF"><a href="#">EMP1129 - Sivanathan</a></th>
-                        </tr>
-                        <tr align="center" >
-                        <td>5</td>
-                        <td align="left">Industrial law</td>
-                        <td>09</td>
-                        <td>04</td>
-                        <td>02</td>
-                        <td>02</td>
-                        <td>01</td>
-                        <td align="left" ><img src="/images/right_arrow.png" /></td>
-                        </tr>
-                        <tr align="left" >
-                        <th colspan="9" style="background-color:#FFFFFF"><a href="#">EMP1207 - Velmurugan</a></th>
-                        </tr>
-                        <tr align="center">
-                        <td>6</td>
-                        <td align="left">Finance</td>
-                        <td>10</td>
-                        <td>04</td>
-                        <td>03</td>
-                        <td>02</td>
-                        <td>01</td>
-                        <td align="left" ><img src="/images/right_arrow.png" /></td>
-                        </tr>
-                        <tr align="left" >
-                        <th colspan="10" style="background-color:#FFFFFF"><a href="#">EMP2018 - Vetriselvam</a></th>
-                        </tr>
-                        <tr align="center" >
-                        <td>7</td>
-                        <td align="left">Finance</td>
-                        <td>08</td>
-                        <td>02</td>
-                        <td>04</td>
-                        <td>01</td>
-                        <td>01</td>
-                        <td align="left" ><img src="/images/right_arrow.png"/></td>
-                        </tr>
+                        <tbody class="tbody-assignee-wise-compliance-list"></tbody>
+                        
                       </table>
                     </div>
+
                     <div class="grid-table-dash1">
                       <table  style="border:1px solid #ddd;" >
-                        <tr >
-                        <td colspan="6" style="background-color:#FFF;"><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>User:</b> EMP1028 -Sivaraman</span><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em; margin-left:30%;"><b>Domain :</b> Finance</span><span style=" margin-left:30%; color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>Year:</b> 2015</span></td>
-                        </tr>
-                        <tr align="left" class="rightside">
-                        <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Complied<span><img src="/images/chevron_black_down.png"></span></th>
-                        </tr>
-                        <tr align="left" style="background-color:#DBDBDB; color:#000000; font-size: 1em;font-weight: bold;">
-                        <td width="5%" align="center">#</th>
-                        <td width="45%">Compliance</th>
-                        <td width="15%">Start date</th>
-                        <td width="15%">Actual due date</th>
-                        <td width="15%" colspan="2">Date of completion</th>
-                        </tr>
-                        <tr><td colspan="5" style="background:#D4B7EB;font-weight:bold;"> KG1009 - Madurai unit </td></tr>
-                        <tr align="left" class="rightside" >
-                        <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow:
-                          inset 0 0 0 1px rgba(53,86,129, 0.4),
-                          inset 0 0 5px rgba(53,86,129, 0.5),
-                          inset -285px 0 35px white;
-                          border-radius: 0 5px 0 5px;"  width="250px"> The Tamilnadu shops and commercial establishments act - 1947 </span> </th>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">1</td>
-                        <td>Opening and closing hours</td>
-                        <td>10-Sep-2015</td>
-                        <td>15-Sep-2015</td>
-                        <td colspan="2">14-Sep-2015</td>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">2</td>
-                        <td>Daily and weekly hours</td>
-                        <td>10-Sep-2015</td>
-                        <td>15-Sep-2015</td>
-                        <td colspan="2">15-Sep-2015</td>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">3</td>
-                        <td>Overtime</td>
-                        <td>10-Sep-2015</td>
-                        <td>16-Sep-2015</td>
-                        <td colspan="2">15-Sep-2015</td>
-                        </tr>
-                        <tr align="left" class="rightside" >
-                        <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow:
-                          inset 0 0 0 1px rgba(53,86,129, 0.4),
-                          inset 0 0 5px rgba(53,86,129, 0.5),
-                          inset -285px 0 35px white;
-                          border-radius: 0 5px 0 5px;"  width="250px"> The Batteries act - 2001 </span> </th>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">4</td>
-                        <td>Form I - Importers Half yearly returns</td>
-                        <td>12-Sep-2015</td>
-                        <td>20-Sep-2015</td>
-                        <td colspan="2">18-Sep-2015</td>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">5</td>
-                        <td>Form II - Importers registration</td>
-                        <td>15-Sep-2015</td>
-                        <td>24-Sep-2015</td>
-                        <td colspan="2">24-Sep-2015</td>
-                        </tr>
-                        <tr><td colspan="5" style="background:#D4B7EB;font-weight:bold;"> KG1010 - Chennai unit </td></tr>
-                        <tr align="left" class="rightside" >
-                        <th  colspan="3" style="background-color:#fff; padding-left:0px; "> <span style="background-color:#eee; color:#000000; font-size: 0.813em; float:left; padding:5px 5px; margin-left:0px; box-shadow:
-                          inset 0 0 0 1px rgba(53,86,129, 0.4),
-                          inset 0 0 5px rgba(53,86,129, 0.5),
-                          inset -285px 0 35px white;
-                          border-radius: 0 5px 0 5px;"  width="250px"> The Tamilnadu shops and commercial establishments act - 1947 </span> </th>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">1</td>
-                        <td>Opening and closing hours</td>
-                        <td>10-Sep-2015</td>
-                        <td>15-Sep-2015</td>
-                        <td colspan="2">14-Sep-2015</td>
-                        </tr>
-                        <tr style="background:#fff;">
-                        <td align="center">2</td>
-                        <td>Daily and weekly hours</td>
-                        <td>10-Sep-2015</td>
-                        <td>15-Sep-2015</td>
-                        <td colspan="2">15-Sep-2015</td>
-                        </tr>
-                        <tr  align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-                        <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Delayed<span><img src="/images/chevron_black_right.png"></span></th>
-                        </tr>
-                        <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-                        <th  colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: In progress<span><img src="/images/chevron_black_right.png"></span></th>
-                        </tr>
-                        <tr align="left" class="rightside" style="margin-bottom:1em; border:1px solid #ccc;">
-                        <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: Not complied<span><img src="/images/chevron_black_right.png"></span></th>
+                      <tbody class="compliance-details-drilldown"></tbody>
                         </tr>
                       </table>
                     </div>
                   </div>
                 </div>
                 <!-- archive tab content end here -->
-                <div id="assignee">
-                  <div class="modal" style="width:75%; margin-left:-37.5%;">
-                    <header>
-                    <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">EMP1028 - Sivaraman</h1>
-                    <div class="close toggleModal"></div>
-                    </header>
-                    <section>
-                    <p style="font-size:0.8em; padding-top:10px;">
-                    <table class="modaltable" width="100%">
-                    <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
-                    <th width="5%" align="center">#</th>
-                    <th width="15%" align="left">Year</th>
-                    <th width="12%" align="center">Total</th>
-                    <th width="12%" align="center">Complied</th>
-                    <th width="12%" align="center">Delayed</th>
-                    <th width="12%" align="center">In progress</th>
-                    <th width="13%" align="center">Not complied</th>
-                    <th width="5%"></th>
-                    </tr>
-                    <tr >
-                    <td align="center">1</td>
-                    <td align="left"><a href="/home_userwise_2015" class="year2015">2015</a></td>
-                    <td align="center">10</td>
-                    <td align="center">06</td>
-                    <td align="center">02</td>
-                    <td align="center">01</td>
-                    <td align="center">01</td>
-                    <td><img src="/images/right_arrow.png"></td>
-                    </tr>
-                    <tr >
-                    <td align="center">2</td>
-                    <td align="left">2014</td>
-                    <td align="center">10</td>
-                    <td align="center">08</td>
-                    <td align="center">00</td>
-                    <td align="center">01</td>
-                    <td align="center">01</td>
-                    <td><img src="/images/right_arrow.png"></td>
-                    </tr>
-                    <tr >
-                    <td align="center">3</td>
-                    <td align="left">2013</td>
-                    <td align="center">10</td>
-                    <td align="center">07</td>
-                    <td align="center">02</td>
-                    <td align="center">0</td>
-                    <td align="center">01</td>
-                    <td><img src="/images/right_arrow.png"></td>
-                    </tr>
-                    <tr >
-                    <td align="center">4</td>
-                    <td align="left">2012</td>
-                    <td align="center">10</td>
-                    <td align="center">10</td>
-                    <td align="center">0</td>
-                    <td align="center">0</td>
-                    <td align="center">0</td>
-                    <td><img src="/images/right_arrow.png"></td>
-                    </tr>
-                    <tr>
-                    <td align="center">5</td>
-                    <td align="left">2011</td>
-                    <td align="center">10</td>
-                    <td align="center">07</td>
-                    <td align="center">02</td>
-                    <td align="center">01</td>
-                    <td align="center">00</td>
-                    <td><img src="/images/right_arrow.png"></td>
-                    </tr>
-                    </table>
-                    </p>
-                    </section>
+                  <div id="popup-year" class="popupoverlay" >
+                    <div class="popup-year">
+                      <a class="close" onclick="close()">x</a>
+                      <div class="content">
+                        <div>
+                        <header>
+                          <h1 style="background:#ccc; padding:5px 10px; border-radius:3px; color:#000; font-size:1em;">EMP1028 - Sivaraman</h1>
+                          <div class="close"></div>
+                        </header>
+                        <section>
+                        <p style="font-size:0.8em; padding-top:10px;">
+                        <table class="modaltable" width="100%">
+                        <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
+                        <th width="5%" align="center">#</th>
+                        <th width="15%" align="left">Year</th>
+                        <th width="12%" align="center">Total</th>
+                        <th width="12%" align="center">Complied</th>
+                        <th width="12%" align="center">Delayed</th>
+                        <th width="12%" align="center">In progress</th>
+                        <th width="13%" align="center">Not complied</th>
+                        <th width="5%"></th>
+                        </tr>
+                        <tbody class="tbody-popup-list">
+                        </tbody>
+                        </table>
+                        </p>
+                        </section>
+                      </div>
+                    </div>
                   </div>
+
                   <div class="modal modal1" style="width:75%; margin-left:-37.5%;">
                     <header>
                     <h1 style="background:#ccc; padding:5px 10px; border-radius:3px;">EMP1028 - Sivaraman</h1>
@@ -693,6 +452,68 @@
         </tr>
       </table>
     </div>
-  </div>
+    <div class="assignee-wise-compliance-list">
+      <table>
+        <tr class="unitHeading">
+        <td style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" colspan="9" class="unit-name">
+        </td>
+      </tr>
+      <tr align="left" class="userHeading" >
+        <td style="background-color:#fff;" align="left" colspan="8"> <span class="assignee-name-for-popup"></span></td>
+      </tr>    
+      <tr align="center" style="cursor:pointer;padding-right:5px" class="usecom1-tab assignee-row-list"  >
+        <td class="sno"></td>
+        <td align="left" class="level1value"></td>
+        <td class="total-count"></td>
+        <td class="complied-count"></td>
+        <td class="delayed-count"></td>
+        <td class="inprogress-count"></td>
+        <td class="not-complied-count"></td>
+        <td align="left" class="open-details-list"><img src="/images/right_arrow.png" /></td>
+      </tr>                        
+      </table>        
+    </div>
+    <table class="year-wise-compliance-list-popup">
+    <tr class="tablerow assign-wise-compliance-details">
+      <td align="center" class="popup-sno"></td>
+      <td align="left" class="popup-year-val"></td>
+      <td align="center" class="popup-total-count"></td>
+      <td align="center" class="popup-complied-count"></td>
+      <td align="center" class="popup-delayed-count"></td>
+      <td align="center" class="popup-inprogress-count"></td>
+      <td align="center" class="popup-not-complied-count"></td>
+      <td class="popup-click-drilldown"><img src="/images/right_arrow.png"></td>
+      </tr>
+  </table>
+  <table class="compliance-details-list">
+   <tr class="filterHeader">
+    <td colspan="6" style="background-color:#FFF;"  ><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>User:</b><span class="comp-list-user"></span></span><span style="color:#000 !important; vertical-align:middle; padding-bottom:0.5em; margin-left:30%;" class="comp-list-filter-domain"><b>Domain :</b> <span class="comp-list-domain"></span></span><span style=" margin-left:30%; color:#000 !important; vertical-align:middle; padding-bottom:0.5em;"><b>Year:</b> <span class="comp-list-year"></span></span></td>
+  </tr>
+  <tr align="left" class="rightside comp-list-statusheading">
+    <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: <abbr class="comp-list-status"></span><abbr><img src="/images/chevron_black_down.png"></span></th>
+  </tr>
+  <tr align="left" style="background-color:#DBDBDB; color:#000000; font-size: 1em;font-weight: bold;" class="comp-list-heading">
+    <td width="5%" align="center">#</th>
+    <td width="45%">Compliance</th>
+    <td width="15%">Start date</th>
+    <td width="15%">Actual due date</th>
+    <td width="15%" colspan="2">Date of completion</th>
+  </tr>
+  <tr class="comp-list-filter-unitname">
+    <td colspan="5" style="background:#D4B7EB;font-weight:bold;" class="comp-list-unitname">  </td>
+  </tr>
+  <tr align="left" class="rightside comp-list-level1" >
+    <th  colspan="5" style="background-color:#fff; padding-left:0px;  "> <span class="comp-list-level1-val heading" style="color:#000; float:left;"> </span> </th>
+  </tr>
+  <tr style="background:#fff;" class="comp-list-tablerowlist">
+    <td align="center" class="comp-list-sno"></td>
+    <td class="comp-list-compliance"></td>
+    <td class="comp-list-startdate"></td>
+    <td class="comp-list-duedate"></td>
+    <td class="comp-list-completiondate" colspan="2"></td>
+    </tr>
+  </table>
+
+</div>
 </body>
 </html>
