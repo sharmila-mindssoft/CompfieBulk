@@ -3798,3 +3798,14 @@ def parse_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_Assignee
 def parse_structure_RecordType_dashboard_AssigneeWiseCompliance(data):
     from protocol import dashboard
     return dashboard.AssigneeWiseCompliance.parse_inner_structure(data)
+
+def parse_structure_VectorType_RecordType_core_ClientInchargePersons(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_core_ClientInchargePersons(item))
+    return lst
+
+def parse_structure_RecordType_core_ClientInchargePersons(data):
+    from protocol import core
+    return core.ClientInchargePersons.parse_structure(data)

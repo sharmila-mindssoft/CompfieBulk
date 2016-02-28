@@ -2222,7 +2222,6 @@ class KnowledgeDatabase(Database):
                 statutory_mapping_id, data.statutory_ids, True
             )
             notification_log_text = "Statutory mapping created for %s" % ''.join(names)
-            print notification_log_text
             link = "/knowledge/statutory-mapping"
             self.save_notifications(
                 notification_log_text, link, domain_id, user_id=None, form_id=11
@@ -3012,11 +3011,29 @@ class KnowledgeDatabase(Database):
         return rows
 
     def get_techno_users(self):
-        columns = "user_id, employee_name, employee_code, is_active"
+        columns = "user_id, concat(employee_code,'-',employee_name), \
+        is_active, (select group_concat(country_id) from  %s uc where u.user_id = uc.user_id),\
+        (select group_concat(domain_id) from  %s ud where u.user_id = ud.user_id)" % (
+            self.tblUserCountries, self.tblUserDomains
+        )
         condition = "user_group_id in (select user_group_id from \
              %s where form_category_id = 3)" % self.tblUserGroups
-        rows = self.get_data(self.tblUsers, columns, condition)
-        return rows
+        rows = self.get_data(self.tblUsers + " u", columns, condition)
+        columns = ["user_id", "employee_name", "is_active", "countries", "domains"]
+        users = self.convert_to_dict(rows, columns)
+        return self.return_techno_users(users)
+
+    def return_techno_users(self, users):
+        results = []
+        for user in users :
+            results.append(
+                core.ClientInchargePersons(
+                    user["user_id"], user["employee_name"], 
+                    bool(user["is_active"]), [int(x) for x in user["countries"].split(',')],
+                    [int(x) for x in user["domains"].split(",")]
+                )
+            )
+        return results
 
     def return_users(self, condition = "1"):
         user_rows = self.get_users(condition)
