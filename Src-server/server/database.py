@@ -3304,6 +3304,15 @@ class KnowledgeDatabase(Database):
         return mysql.connect(host, username, password,
             database)
 
+    def delete_database(
+        self, host, database_name, username, password, 
+    ):
+        con = self._mysql_server_connect(host, username, password)
+        cursor = con.cursor()
+        query = "DROP DATABASE %s" % database_name
+        cursor.execute(query)
+        con.commit()
+
     def _create_database(
         self, host, username, password,
         database_name, db_username, db_password, email_id, client_id, short_name
@@ -3348,17 +3357,17 @@ class KnowledgeDatabase(Database):
         rows = self.get_data(self.tblDatabaseServer, columns, condition)
         return rows[0]
 
-    def create_and_save_client_database(self, group_name, client_id, short_name, email_id):
-        group_name = re.sub('[^a-zA-Z0-9 \n\.]', '', group_name)
-        group_name = group_name.replace(" ", "")
-        database_name = "mirror_%s_%d" % (group_name.lower(), client_id)
-        row = self._get_server_details()
-        host = row[0]
-        username = row[1]
-        password = row[2]
-        db_username = self.generate_random()
-        db_password = self.generate_random()
+    def create_and_save_client_database(
+        self, host, username, password, database_name, db_username,
+        db_password, email_id, client_id, short_name
+    ):
+        self._create_database(
+            host, username, password, database_name, db_username,
+            db_password, email_id, client_id, short_name
+        )
 
+    def update_client_db_details(self, host, client_id, db_username,
+            db_password, short_name, database_name):
         db_server_column = "company_ids"
         db_server_value = client_id
         db_server_condition = "ip='%s'" % host
@@ -3398,13 +3407,9 @@ class KnowledgeDatabase(Database):
             db_password, short_name, database_name,
             server_ip, server_port
         ]
-        self.insert(
+        return self.insert(
             self.tblClientDatabase, client_db_columns,
             client_dB_values
-        )
-        return self._create_database(
-            host, username, password, database_name, db_username,
-            db_password, email_id, client_id, short_name
         )
 
     def save_client_group(self, client_id, client_group, session_user):
