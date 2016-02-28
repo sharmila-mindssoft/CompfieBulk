@@ -1,4 +1,4 @@
-abbr
+  abbr
 {
     border-bottom: 1px dotted #666;
     cursor: help;
@@ -307,11 +307,11 @@ table.filtertable-1 tr td table tr td {
 }
 
 #assignee-wise-compliance {
-  width: 90%;
+  width: 100%;
   float: left;
-  margin-left: 5%;
+/*  margin-left: 5%;
   margin-right: 5%;
-}
+*/}
 
 .year-selection {
   float: right;

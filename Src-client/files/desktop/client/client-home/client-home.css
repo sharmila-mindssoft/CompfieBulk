@@ -44,6 +44,7 @@
 
 .report-container-inner {
 	width: : 100%;
+	min-height: 300px;
 	float: left;
 	display: none;
 }
@@ -87,3 +88,4 @@
 .graph-selections-bottom {
 	display: none;
 }
+
