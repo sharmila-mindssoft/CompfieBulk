@@ -5869,12 +5869,14 @@ class ClientDatabase(Database):
             unit_ids = unit_id
         else:
             user_unit_ids = self.get_user_unit_ids(session_user, client_id)
-            seating_unit_column = "seating_unit_id"
-            seating_unit_condition = "user_id = '%d'" % session_user
-            seating_unit_rows = self.get_data(
-                self.tblUsers, seating_unit_column, seating_unit_condition
-            )
-            unit_ids = "%s,%s" % (user_unit_ids, seating_unit_rows[0][0])
+            if session_user > 0:
+                seating_unit_column = "seating_unit_id"
+                seating_unit_condition = "user_id = '%d'" % session_user
+                seating_unit_rows = self.get_data(
+                    self.tblUsers, seating_unit_column, seating_unit_condition
+                )
+                unit_ids = "%s,%s" % (user_unit_ids, seating_unit_rows[0][0])
+            unit_ids = user_unit_ids
 
         unit_columns = "unit_id, unit_code, unit_name, address"
         unit_condition = " unit_id in (%s) AND country_id = %d" % (
