@@ -54,7 +54,8 @@ from protocol.parse_structure import (
     parse_structure_Bool,
     parse_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance,
     parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance,
-    parse_structure_VectorType_RecordType_dashboard_YearWise
+    parse_structure_VectorType_RecordType_dashboard_YearWise,
+    parse_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -112,7 +113,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_clientreport_User,
     to_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance,
     to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance,
-    to_structure_VectorType_RecordType_dashboard_YearWise
+    to_structure_VectorType_RecordType_dashboard_YearWise,
+    to_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance
 )
 
 #
@@ -394,13 +396,13 @@ class GetAssigneeWiseComplianceDrillDown(Request):
         assignee_id = data.get("assignee_id")
         assignee_id = parse_structure_UnsignedIntegerType_32(assignee_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
+        domain_id = parse_structure_VectorType_UnsignedIntegerType_32(domain_id)
         return GetAssigneeWiseComplianceDrillDown(assignee_id, domain_id)
 
     def to_inner_structure(self):
         return {
-            "assignee_id": to_structure_SignedIntegerType_8(self.assignee_id),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
+            "assignee_id": to_structure_UnsignedIntegerType_32(self.assignee_id),
+            "domain_id": to_structure_VectorType_UnsignedIntegerType_32(self.domain_id),
         }
 
 class GetComplianceStatusDrillDownData(Request):
@@ -846,7 +848,7 @@ class GetAssigneeWiseCompliancesChartSuccess(Response):
             "chart_data": to_structure_VectorType_RecordType_dashboard_AssigneeChartData(self.chart_data),
         }
 
-class GetAssigneeWiseComplianceDrillDownSuccess(Response):
+class AssigneeWiseCompliance(object):
     def __init__(self, complied, delayed, inprogress, not_complied):
         self.complied = complied
         self.delayed = delayed
@@ -864,7 +866,7 @@ class GetAssigneeWiseComplianceDrillDownSuccess(Response):
         inprogress = parse_structure_VectorType_RecordType_dashboard_UnitCompliance(inprogress)
         not_complied = data.get("not_complied")
         not_complied = parse_structure_VectorType_RecordType_dashboard_UnitCompliance(not_complied)
-        return GetAssigneeWiseComplianceDrillDownSuccess(complied, delayed, inprogress, not_complied)
+        return AssigneeWiseCompliance(complied, delayed, inprogress, not_complied)
 
     def to_inner_structure(self):
         return {
@@ -873,6 +875,20 @@ class GetAssigneeWiseComplianceDrillDownSuccess(Response):
             "inprogress": to_structure_VectorType_RecordType_dashboard_UnitCompliance(self.inprogress),
             "not_complied": to_structure_VectorType_RecordType_dashboard_UnitCompliance(self.not_complied),
         }
+
+class GetAssigneeWiseComplianceDrillDownSuccess(Response):
+    def __init__(self, drill_down_data):
+        self.drill_down_data = drill_down_data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["drill_down_data"])
+        drill_down_data = data.get("drill_down_data")
+        drill_down_data = parse_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance(drill_down_data)
+        return GetAssigneeWiseComplianceDrillDownSuccess(drill_down_data)
+
+    def to_inner_structure(self):
+        return to_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance(self.drill_down_data)
 
 class GetComplianceStatusDrillDownDataSuccess(Response):
     def __init__(self, drill_down_data):
@@ -1471,7 +1487,7 @@ class Level1Compliance(object):
         }
 
 #
-# Level1Compliance
+# AssigneeWiseLevel1Compliance
 #
 
 class AssigneeWiseLevel1Compliance(object):
