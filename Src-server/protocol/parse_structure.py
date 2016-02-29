@@ -3809,3 +3809,12 @@ def parse_structure_VectorType_RecordType_core_ClientInchargePersons(data):
 def parse_structure_RecordType_core_ClientInchargePersons(data):
     from protocol import core
     return core.ClientInchargePersons.parse_structure(data)
+
+def parse_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence(data):
+    data = parse_list(data)
+    d = {}
+    for key, value in data:
+        key = parse_structure_MapType_CustomTextType_250(key)
+        value = parse_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence(value)
+        d[key] = value
+    return d

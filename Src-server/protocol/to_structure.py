@@ -3897,3 +3897,12 @@ def to_structure_VectorType_RecordType_core_ClientInchargePersons(data):
 def to_structure_RecordType_core_ClientInchargePersons(data):
     from protocol import core
     return core.ClientInchargePersons.to_structure(data)
+
+def to_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items():
+        key = to_structure_CustomTextType_250(key)
+        value = to_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence(value)
+        dict[key] = value
+    return dict

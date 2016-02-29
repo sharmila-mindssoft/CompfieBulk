@@ -1293,6 +1293,30 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getOnOccurrenceCompliances(callback){
+        var request = [
+            "GetOnOccurrenceCompliances", {}
+        ];
+        callerName = "client_user";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function startOnOccurrenceCompliance(
+        compliance_id, start_date, unit_id, duration, callback
+    ){
+        var request = [
+            "StartOnOccurrenceCompliance",
+            {
+                "compliance_id": compliance_id,
+                "start_date": start_date,
+                "unit_id": unit_id,
+                "duration": duration
+            }
+        ];
+        callerName = "client_user";
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -1420,7 +1444,10 @@ function initClientMirror() {
         getAssigneewiseCompliancesDrilldown: getAssigneewiseCompliancesDrilldown,
 
         getTaskApplicabilityReportFilters: getTaskApplicabilityReportFilters,
-        getTaskApplicabilityReportData: getTaskApplicabilityReportData
+        getTaskApplicabilityReportData: getTaskApplicabilityReportData,
+
+        getOnOccurrenceCompliances: getOnOccurrenceCompliances,
+        startOnOccurrenceCompliance: startOnOccurrenceCompliance
     }
 }
 var client_mirror = initClientMirror();
