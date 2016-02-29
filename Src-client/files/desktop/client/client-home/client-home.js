@@ -510,12 +510,21 @@ function prepareComplianceStatusChartData (chart_data) {
             notCompliedCount += item["not_complied_count"];
         };
 
+        if (
+            (compliedCount == 0) &&
+            (delayedCount == 0) &&
+            (inprogressCount == 0) &&
+            (notCompliedCount == 0)
+        ) {
+            continue;
+        }
         xAxis.push(filterTypeName);
         xAxisIds.push(filter_type_id);
         yAxisComplied.push(compliedCount);
         yAxisDelayed.push(delayedCount);
         yAxisInprogress.push(inprogressCount);
         yAxisNotComplied.push(notCompliedCount);
+
     };
     if (xAxis.length == 0)
         return null;
@@ -1083,6 +1092,15 @@ function escalationDrilldown(status, data){
     
 }
 
+function updateTrendChartDrillDown(status, data) {
+    $(".graph-container.compliance-status").hide();
+    $(".graph-selections-bottom").hide();
+    $(".drilldown-container").show();
+    $(".btn-back").show();
+    showDrillDownRecord(status, data);
+}
+
+
 function showDrillDownRecord(status, data){
     var data = data["drill_down_data"];
     var filter_type = chartInput.getFilterType();
@@ -1491,7 +1509,6 @@ function prepareTrendChartData(source_data) {
     var xAxisIds = [];
     var chartDataSeries = [];
     xAxis = source_data["years"];
-    console.log(xAxis)
     for (var i =0; i< source_data["data"].length; i++) {
         chartData = source_data["data"][i];
         var filter_type_id = chartData["filter_id"];
@@ -1502,22 +1519,29 @@ function prepareTrendChartData(source_data) {
         compliance_count = [];
         total_count = [];
         compliance_info = chartData["complied_compliance"];
+        data = []
         for (var j = 0; j < compliance_info.length; j++) {
             compliance_count.push(
-                compliance_info["complied_compliances_count"] + j + 10
+                compliance_info[j]["complied_compliances_count"]
             );
             total_count.push(
-                compliance_info["total_compliances"] + 100
+                compliance_info[j]["total_compliances"]
             );
+            data.push({
+                y: compliance_info[j]["complied_compliances_count"],
+                t: compliance_info[j]["total_compliances"]
+            });
+
         }
         chartDataSeries.push(
             {
                 "name": filterTypeName,
-                "data": compliance_count,
+                "data": data,
                 "total":total_count
             }
         );
     }
+    chartTitle = "Complied (" + xAxis[0] + " to " + xAxis[xAxis.length - 1] + ")";
     return [xAxis, chartTitle, chartDataSeries];
 }
 
@@ -1527,12 +1551,6 @@ function updateTrendChart(data) {
     chartTitle = data[1];
     chartDataSeries = data[2];
     var highchart;
-    function setChart(name) {
-        data_series = drilldownSeries[name];
-        var title = chartTitle + " - " + name;
-        updateComplianceStatusPieChart(data_series, title, "pie");
-        complianceDrillDown(data_series, title);
-    }
     highchart = new Highcharts.Chart({
         chart: {
             renderTo: "status-container",
@@ -1549,11 +1567,6 @@ function updateTrendChart(data) {
                 text: "Year",
             },
             labels: {
-                events: {
-                    click: function() {
-                        setChart(this.value)
-                    }
-                },
                 style: {
                     cursor: 'pointer',
                     color: "blue",
@@ -1578,7 +1591,19 @@ function updateTrendChart(data) {
             shared: true,
             backgroundColor: "#FCFFC5",
             headerFormat: '<b>{point.x}</b>: {point.percentage:.0f}% ',
-            pointFormat: '({point.y} out of {point.stackTotal})'
+            pointFormat: '({point.y} out of {point.stackTotal})',
+            formatter: function() {
+                var s = '<b>' + this.x + '</b>',
+                sum = 0;
+                $.each(this.points, function(i, point) {
+                    total = point.point.t;
+                    tasks = (point.y/100) * total;
+                    color = point.color;
+                    s += '<br/><span style="color:' + color + '"> <b>'+ point.series.name + '</b> </span>: ' + point.y + '% (' + Math.round(tasks)+ ' out of ' + total + ')';
+                    sum += point.y;
+                })
+                return s;
+            }
         },
         plotOptions: {
             spline: {
@@ -1591,6 +1616,14 @@ function updateTrendChart(data) {
         },
         series: chartDataSeries,
 
+    });
+    $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
+        var value = (this.textContent || this.innerText);
+        console.log(value);
+        name = value;
+        loadTrendChartDrillDown(value);
+
+        // setChart(value);
     });
 }
 
@@ -2124,6 +2157,26 @@ function loadTrendChart(){
             TREND_CHART_DATA = data;
             console.log(data)
             updateTrendChart(data);
+        }
+    )
+}
+
+function loadTrendChartDrillDown(year){
+    var filter_type = chartInput.getFilterType();
+    var filterType = filter_type.replace("_", "-");
+    filterType = hyphenatedToUpperCamelCase(filterType);
+    var requestData = {
+        "country_ids": chartInput.getCountries(),
+        "domain_ids": chartInput.getDomains(),
+        "filter_type": filterType,
+        "filter_ids": [1],
+        "year": parseInt(year)
+    };
+    client_mirror.getTrendChartDrillDown(
+        requestData, function(status, data) {
+            TREND_CHART_DATA = data;
+            console.log(data)
+            updateTrendChartDrillDown(status, data);
         }
     )
 }

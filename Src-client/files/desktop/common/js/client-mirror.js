@@ -965,16 +965,25 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback)
     }
 
-    function getTrendChartDrillDown(country_ids, domain_ids, filter_type,
-        filter_ids, year, callback) {
+    // function getTrendChartDrillDown(country_ids, domain_ids, filter_type,
+    //     filter_ids, year, callback) {
+    //     var request = [
+    //         "GetTrendChartDrillDownData", {
+    //             "country_ids": country_ids,
+    //             "domain_ids": domain_ids,
+    //             "filter_type": filter_type,
+    //             "filter_ids": filter_ids,
+    //             "year": year
+    //         }
+    //     ];
+    //     var callerName = "client_dashboard"
+    //     clientApiRequest(callerName, request, callback)
+    // }
+
+    function getTrendChartDrillDown(requestData, callback) {
         var request = [
-            "GetTrendChartDrillDownData", {
-                "country_ids": country_ids,
-                "domain_ids": domain_ids,
-                "filter_type": filter_type,
-                "filter_ids": filter_ids,
-                "year": year
-            }
+            "GetTrendChartDrillDownData",
+            requestData
         ];
         var callerName = "client_dashboard"
         clientApiRequest(callerName, request, callback)
