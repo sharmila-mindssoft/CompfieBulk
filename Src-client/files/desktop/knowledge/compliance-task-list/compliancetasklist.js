@@ -101,7 +101,7 @@ function loadresult(filterList){
                     if(display_industry){
                       var tableRow3=$('#industry-head-templates .table-industry-list .table-row-industry');
                       var clone3=tableRow3.clone();
-                      $('.tbl_industry_heading', clone3).html(industriesList[indus]["industry_name"]);
+                      $('.tbl_industry_heading', clone3).html("Industry : " + industriesList[indus]["industry_name"]);
                       $('.accordion-content'+count).append(clone3);
                       display_industry = false;
                     }
@@ -117,7 +117,7 @@ function loadresult(filterList){
                     if(display_industry){
                       var tableRow3=$('#industry-head-templates .table-industry-list .table-row-industry');
                       var clone3=tableRow3.clone();
-                      $('.tbl_industry_heading', clone3).html(industriesList[indus]["industry_name"]);
+                      $('.tbl_industry_heading', clone3).html("Industry : " +industriesList[indus]["industry_name"]);
                       $('.accordion-content'+count).append(clone3);
                       display_industry = false;
                     }
@@ -133,7 +133,7 @@ function loadresult(filterList){
                     if(display_industry){
                       var tableRow3=$('#industry-head-templates .table-industry-list .table-row-industry');
                       var clone3=tableRow3.clone();
-                      $('.tbl_industry_heading', clone3).html(industriesList[indus]["industry_name"]);
+                      $('.tbl_industry_heading', clone3).html("Industry : " +industriesList[indus]["industry_name"]);
                       $('.accordion-content'+count).append(clone3);
                       display_industry = false;
                     }
@@ -149,7 +149,7 @@ function loadresult(filterList){
                     if(display_industry){
                       var tableRow3=$('#industry-head-templates .table-industry-list .table-row-industry');
                       var clone3=tableRow3.clone();
-                      $('.tbl_industry_heading', clone3).html(industriesList[indus]["industry_name"]);
+                      $('.tbl_industry_heading', clone3).html("Industry : " +industriesList[indus]["industry_name"]);
                       $('.accordion-content'+count).append(clone3);
                       display_industry = false;
                     }
@@ -169,10 +169,44 @@ function loadresult(filterList){
                     $('.tbl_compliancefrequency', clone1).text(occurance);
                     $('.tbl_statutorynature',   clone1).text(filterList[entity][i]["statutory_nature_name"]);
                     $('.tbl_statutoryprovision', clone1).text(filterList[entity][i]["compliances"][k]["statutory_provision"]);
-                    $('.tbl_compliancetask', clone1).html('<a href="#">'+filterList[entity][i]["compliance_names"][k]+'</a>');
+
+                    var download_url = filterList[entity][i]["compliance_names"][k]["url"]
+                    if(download_url == null){
+                      $('.tbl_compliancetask', clone1).html(filterList[entity][i]["compliance_names"][k]["compliance_name"]);
+                    }else{
+                      $('.tbl_compliancetask', clone1).html('<a href="'+download_url+'" target="_balnk">'+filterList[entity][i]["compliance_names"][k]["compliance_name"]+'</a>');
+                    }
+
+                    var sdateDesc = '';
+                    var statutory_date =  filterList[entity][i]["compliances"][k]["statutory_dates"];
+                    var statutorydate = '';
+
+                    if(occurance == 'Periodical' || occurance == 'Review') sdateDesc = 'Every';
+                    for(z = 0; z < statutory_date.length; z++){
+                      var sDay = '';
+                      if(statutory_date[z]["statutory_date"] != null) sDay = statutory_date[z]["statutory_date"];
+                      
+                      var sMonth = '';
+                      if(statutory_date[z]["statutory_month"] != null) sMonth = statutory_date[z]["statutory_month"];
+
+                      if(sMonth == 1) sMonth = "January"
+                      else if(sMonth == 2) sMonth = "February"
+                      else if(sMonth == 3) sMonth = "March"
+                      else if(sMonth == 4) sMonth = "April"  
+                      else if(sMonth == 5) sMonth = "May"
+                      else if(sMonth == 6) sMonth = "June"
+                      else if(sMonth == 7) sMonth = "July"
+                      else if(sMonth == 8) sMonth = "Auguest"
+                      else if(sMonth == 9) sMonth = "September"
+                      else if(sMonth == 10) sMonth = "October"
+                      else if(sMonth == 11) sMonth = "November"
+                      else if(sMonth == 12) sMonth = "December"
+                      statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
+                    }
+                    
                     $('.tbl_description', clone1).text(filterList[entity][i]["compliances"][k]["description"]);
                     $('.tbl_penalconsequences', clone1).text(filterList[entity][i]["compliances"][k]["penal_consequences"]);
-                    $('.tbl_occurance', clone1).text(filterList[entity][i]["industry_names"]);
+                    $('.tbl_occurance', clone1).text(statutorydate);
                     $('.tbl_applicablelocation', clone1).text(filterList[entity][i]["geography_mappings"]);
                     $('.accordion-content'+count).append(clone1);
                     compliance_count = compliance_count + 1;

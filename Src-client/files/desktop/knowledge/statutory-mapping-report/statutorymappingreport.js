@@ -141,15 +141,46 @@ function loadresult(filterList){
               $('.tbl_industrytype', clone1).text(filterList[entity][i]["industry_names"]);
               $('.tbl_statutorynature',   clone1).text(filterList[entity][i]["statutory_nature_name"]);
               $('.tbl_statutoryprovision', clone1).text(filterList[entity][i]["compliances"][k]["statutory_provision"]);
-              console.log()
               var compliance_name = filterList[entity][i]["compliance_names"][k]["compliance_name"]
-              var url = filterList[entity][i]["compliance_names"][k]["url"]
-              if (url === null)
-                url = '#'
-              $('.tbl_compliancetask', clone1).html('<a href= "'+ url +'" target="_new">'+compliance_name+'</a>');
+
+              var download_url = filterList[entity][i]["compliance_names"][k]["url"]
+              if(download_url == null){
+                $('.tbl_compliancetask', clone1).html(compliance_name);
+              }else{
+                $('.tbl_compliancetask', clone1).html('<a href= "'+ url +'" target="_new">'+compliance_name+'</a>');
+              }
+
+              
+              var sdateDesc = '';
+              var statutory_date =  filterList[entity][i]["compliances"][k]["statutory_dates"];
+              var statutorydate = '';
+
+              if(occurance == 'Periodical' || occurance == 'Review') sdateDesc = 'Every';
+              for(z = 0; z < statutory_date.length; z++){
+                var sDay = '';
+                if(statutory_date[z]["statutory_date"] != null) sDay = statutory_date[z]["statutory_date"];
+                
+                var sMonth = '';
+                if(statutory_date[z]["statutory_month"] != null) sMonth = statutory_date[z]["statutory_month"];
+
+                if(sMonth == 1) sMonth = "January"
+                else if(sMonth == 2) sMonth = "February"
+                else if(sMonth == 3) sMonth = "March"
+                else if(sMonth == 4) sMonth = "April"  
+                else if(sMonth == 5) sMonth = "May"
+                else if(sMonth == 6) sMonth = "June"
+                else if(sMonth == 7) sMonth = "July"
+                else if(sMonth == 8) sMonth = "Auguest"
+                else if(sMonth == 9) sMonth = "September"
+                else if(sMonth == 10) sMonth = "October"
+                else if(sMonth == 11) sMonth = "November"
+                else if(sMonth == 12) sMonth = "December"
+                statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
+              }
+
               $('.tbl_description', clone1).text(filterList[entity][i]["compliances"][k]["description"]);
               $('.tbl_penalconsequences', clone1).text(filterList[entity][i]["compliances"][k]["penal_consequences"]);
-              $('.tbl_occurance', clone1).text(occurance);
+              $('.tbl_occurance', clone1).text(statutorydate);
               $('.tbl_applicablelocation', clone1).text(filterList[entity][i]["geography_mappings"]);
               $('.accordion-content'+count).append(clone1);
               compliance_count = compliance_count + 1;

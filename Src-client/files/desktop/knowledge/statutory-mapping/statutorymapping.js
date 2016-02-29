@@ -579,7 +579,7 @@ function filter_statutory(position){
   var filter = $('#statutoryfilter'+position).val().toLowerCase();
   for (var i = 0; i < slist_filter.length; i++) {
     name = slist_filter[i].innerHTML.trim();
-    if (name.toLowerCase().indexOf(filter) == 0) {
+    if (~name.toLowerCase().indexOf(filter)) {
         slist_filter[i].style.display = 'list-item';
         eslist_filter[i].style.display = 'list-item';
     } else {
@@ -772,10 +772,13 @@ $("#temp_addcompliance").click(function() {
   }else{
     displayMessage("");
     if(compliance_frequency == "1"){
-      if($('#statutory_date').val() != '' && $('#statutory_month').val() != ''){
+      if($('#statutory_date').val() != '')
         statutory_date = parseInt($('#statutory_date').val());
+      
+
+      if($('#statutory_month').val() != '')
         statutory_month = parseInt($('#statutory_month').val());
-      }
+
 
       if($('#triggerbefore').val().trim().length > 0)
         trigger_before_days = parseInt($('#triggerbefore').val());
@@ -785,34 +788,52 @@ $("#temp_addcompliance").click(function() {
       }else if (compliance_frequency == "2" || compliance_frequency == "3"){
         repeats_type = parseInt($('#repeats_type').val());
         repeats_every = parseInt($('#repeats_every').val());
-        if(repeats_type == '2' && $('.multipleinput').prop("checked") == true){
-          for(var i=1;i<=6;i++){
-            if($('#multiple_statutory_month'+i).val() != ""){
+        repeats_every_length = $('#repeats_every').val().trim().length;
 
-            if($('#multiple_statutory_date'+i).val() != '' && $('#multiple_statutory_month'+i).val() != ''){
-              statutory_date = parseInt($('#multiple_statutory_date'+i).val());
-              statutory_month = parseInt($('#multiple_statutory_month'+i).val());
+        if(repeats_type == '1' && repeats_every_length > 3){
+          displayMessage("Repeats Every should be lessthan or equql 3 digits");
+          return false;
+        }else if(repeats_type == '2' && repeats_every_length > 2){
+          displayMessage("Repeats Every should be lessthan or equql 2 digits");
+          return false;
+        }else if(repeats_type == '3'  && repeats_every_length > 1){
+          displayMessage("Repeats Every should be lessthan or equql 1 digits");
+          return false;
+        }
+        else{
+          if(repeats_type == '2' && $('.multipleinput').prop("checked") == true){
+            for(var i=1;i<=6;i++){
+              if($('#multiple_statutory_month'+i).val() != "" || $('#multiple_statutory_month'+i).val() != '' || $('#multiple_triggerbefore'+i).val().trim().length > 0){
+                if($('#multiple_statutory_date'+i).val() != '')
+                  statutory_date = parseInt($('#multiple_statutory_date'+i).val());
+
+                if($('#multiple_statutory_month'+i).val() != '')
+                  statutory_month = parseInt($('#multiple_statutory_month'+i).val());
+
+                if($('#multiple_triggerbefore'+i).val().trim().length > 0)
+                  trigger_before_days = parseInt($('#multiple_triggerbefore'+i).val());
+
+                  statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
+                  statutory_dates.push(statutory_date);
+              }
             }
+          }else{
+            if($('#single_statutory_date').val() != '' || $('#single_statutory_month').val() != '' || $('#single_triggerbefore').val().trim().length > 0){
+              
+              if($('#single_statutory_date').val() != '')
+                 statutory_date = parseInt($('#single_statutory_date').val());
 
-            if($('#multiple_triggerbefore'+i).val().trim().length > 0)
-            trigger_before_days = parseInt($('#multiple_triggerbefore'+i).val());
+              if($('#single_statutory_month').val() != '')
+                statutory_month = parseInt($('#single_statutory_month').val());
+            
+              if($('#single_triggerbefore').val().trim().length > 0)
+                trigger_before_days = parseInt($('#single_triggerbefore').val());
 
             statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
             statutory_dates.push(statutory_date);
+            }
+          }
         }
-      }
-    }else{
-      if($('#single_statutory_date').val() != '' && $('#single_statutory_month').val() != ''){
-        statutory_date = parseInt($('#single_statutory_date').val());
-        statutory_month = parseInt($('#single_statutory_month').val());
-      }
-
-      if($('#single_triggerbefore').val().trim().length > 0)
-        trigger_before_days = parseInt($('#single_triggerbefore').val());
-
-      statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
-      statutory_dates.push(statutory_date);
-    }
   }else{
     duration = parseInt($('#duration').val());
     duration_type = parseInt($('#duration_type').val());
@@ -1183,12 +1204,14 @@ function getGeographyResult(){
   for(k=1;k<=10;k++){
     $(".list"+k+".active").each( function( index, el ) {
       var split_id = el.id.split('-');
-      var g_id = parseInt(split_id[0]);
-      var p_id = parseInt(split_id[1]);
-      sm_geographyids.push(g_id);
-      if($.inArray(p_id, sm_geographyids) >= 0){
-          var remove_geography = sm_geographyids.indexOf(p_id);
-          sm_geographyids.splice(remove_geography,1);
+      if(!split_id[0].contains("select")){
+        var g_id = parseInt(split_id[0]);
+        var p_id = parseInt(split_id[1]);
+        sm_geographyids.push(g_id);
+        if($.inArray(p_id, sm_geographyids) >= 0){
+            var remove_geography = sm_geographyids.indexOf(p_id);
+            sm_geographyids.splice(remove_geography,1);
+        }
       }
     });
   }
@@ -1199,7 +1222,7 @@ function filter_geography(position){
   var filter = $('#filter_geography'+position).val().toLowerCase();
   for (var i = 0; i < glist_filter.length; i++) {
       name = glist_filter[i].innerHTML.trim();
-      if (name.toLowerCase().indexOf(filter) == 0) {
+      if (~name.toLowerCase().indexOf(filter)) {
           glist_filter[i].style.display = 'list-item';
       } else {
           glist_filter[i].style.display = 'none';
@@ -1210,6 +1233,7 @@ function filter_geography(position){
 function savestatutorymapping(){
   function onSuccess(data){
       getStatutoryMappings();
+      getStatutoryMappingsMastersList();
       //displayMessage("Record Added Successfully");
       $("#statutorymapping-add").hide();
       $('ul.setup-panel li:eq(0)').addClass('active');
@@ -1472,7 +1496,10 @@ function displayEdit (sm_Id) {
 
 function load_stautorydates(){
   var rep_every = parseInt($('#repeats_every').val());
-  if(rep_every == 1 || rep_every == 12){
+  var modResult = 12 % rep_every;
+
+  if(modResult == 0){
+    if(rep_every == 1 || rep_every == 12){
     $('.input-row1').show();
     $('.input-row2').hide();
     $('.input-row3').hide();
@@ -1500,13 +1527,6 @@ function load_stautorydates(){
     $('.input-row4').hide();
     $('.input-row5').hide();
     $('.input-row6').hide();
-  }else if (rep_every == 5){
-    $('.input-row1').show();
-    $('.input-row2').show();
-    $('.input-row3').show();
-    $('.input-row4').hide();
-    $('.input-row5').hide();
-    $('.input-row6').hide();
   }else{
     $('.input-row1').show();
     $('.input-row2').show();
@@ -1515,6 +1535,16 @@ function load_stautorydates(){
     $('.input-row5').hide();
     $('.input-row6').hide();
   }
+  }else{
+    $('#single_statutory_date').show();
+    $('#single_statutory_month').show();
+    $('.multipleselect').hide();
+    $('.multipleselectnone').show();
+    $('#sdate').show();
+    $('.repeatby-view').show();
+    $('#multipleview').hide();
+  }
+
 }
 
 $(function()
@@ -1561,7 +1591,7 @@ $(document).ready(function(){
     var lis = document.getElementsByClassName('countrylist');
     for (var i = 0; i < lis.length; i++) {
         var name = lis[i].getElementsByClassName('filter1_name')[0].innerHTML;
-        if (name.toLowerCase().indexOf(filter) == 0)
+        if (~name.toLowerCase().indexOf(filter))
             lis[i].style.display = 'list-item';
         else
             lis[i].style.display = 'none';
@@ -1573,7 +1603,7 @@ $(document).ready(function(){
     var lis = document.getElementsByClassName('domainlist');
     for (var i = 0; i < lis.length; i++) {
         var name = lis[i].getElementsByClassName('filter2_name')[0].innerHTML;
-        if (name.toLowerCase().indexOf(filter) == 0)
+        if (~name.toLowerCase().indexOf(filter))
             lis[i].style.display = 'list-item';
         else
             lis[i].style.display = 'none';
@@ -1585,7 +1615,7 @@ $(document).ready(function(){
     var lis = document.getElementsByClassName('industrylist');
     for (var i = 0; i < lis.length; i++) {
         var name = lis[i].getElementsByClassName('filter3_name')[0].innerHTML;
-        if (name.toLowerCase().indexOf(filter) == 0)
+        if (~name.toLowerCase().indexOf(filter))
             lis[i].style.display = 'list-item';
         else
             lis[i].style.display = 'none';
@@ -1597,7 +1627,7 @@ $(document).ready(function(){
     var lis = document.getElementsByClassName('statutorynaturelist');
     for (var i = 0; i < lis.length; i++) {
         var name = lis[i].getElementsByClassName('filter4_name')[0].innerHTML;
-        if (name.toLowerCase().indexOf(filter) == 0)
+        if (~name.toLowerCase().indexOf(filter))
             lis[i].style.display = 'list-item';
         else
             lis[i].style.display = 'none';

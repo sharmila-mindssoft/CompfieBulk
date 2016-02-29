@@ -208,7 +208,7 @@ function loadApproveStatutory(){
     var industryName = '';
     var statutoryNatureName = '';
     var approvalStatus = '';
-    var applicableLocation = '';
+    
     var isActive = false;
     var countryId = '';
     var domainId = '';
@@ -229,9 +229,13 @@ function loadApproveStatutory(){
         statutoryprovision = statutoryprovision + statutoryMappingsList[entity]["statutory_mappings"][i];
       }
       statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
-      applicableLocation = statutoryMappingsList[entity]["geography_mappings"];
+      
+      var applicableLocation = '';
 
-      //applicableLocation = applicableLocation.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
+      for(var i=0; i<statutoryMappingsList[entity]["geography_mappings"].length; i++){
+        applicableLocation = applicableLocation + statutoryMappingsList[entity]["geography_mappings"][i];
+      }
+      applicableLocation = applicableLocation.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
 
       isActive = statutoryMappingsList[entity]["is_active"];
       approvalStatus = statutoryMappingsList[entity]["approval_status"];
@@ -256,7 +260,7 @@ function loadApproveStatutory(){
         $('.compliancetask', clone).html(complianceNames);
         $('.applicablelocation', clone).html(applicableLocation);
         $('.action', clone).html('<input type="hidden" id="mapping_id'+j+'" value="'+statutorymappingId+'" /> <input type="hidden" id="statutoryprovision'+j+'" value="'+statutoryprovision+'" /> <select class="input-box" id="action'+j+'" onchange="dispreason('+j+')"></select>');
-        $('.reason', clone).html('<textarea class="input-box" id="notifyreason'+j+'" placeholder="Enter notification text" style="height:50px;display:none;"></textarea><span style="font-size:0.75em;display:none;" id="notifynote'+j+'">(max 500 characters)</span> <input type="text" maxlength="500" style="display:none;" id="reason'+j+'" class="input-box" placeholder="Enter reason" />');
+        $('.reason', clone).html('<textarea class="input-box" id="notifyreason'+j+'" placeholder="Enter notification text" style="height:50px;display:none;"></textarea><span style="font-size:0.75em;display:none;" id="notifynote'+j+'"> <br> (max 500 characters)</span> <input type="text" maxlength="500" style="display:none;" id="reason'+j+'" class="input-box" placeholder="Enter reason" />');
         $('.tbody-statutorymapping-list').append(clone);
         //load compliance frequency selectbox
 
