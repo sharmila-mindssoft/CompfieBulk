@@ -408,6 +408,7 @@
   </div>
   {% include "/files/desktop/client/home/footer.html" %}
   <div id="templates">
+ 
     <div class="compliance-status">
       <table>
         <tr class="tr-heading">
@@ -456,6 +457,58 @@
           <td class="assigned-to"></td>
           <td class="delayed-by-row delayed-by"></td>
           <td class="dates-left-to-complete-row dates-left-to-complete"></td>
+          <td class="over-due-row over-due"></td>
+        </tr>
+      </table>
+    </div>
+    <div class="escalation-status"> 
+      <table>
+      <tr class="tr-h2">
+        <td colspan="8" style="padding:0px;"><h2 style="color:black" class="escalation-status-value"> </h2></td>
+      </tr>
+        <tr class="tr-heading">
+          <th width="3%" align="center">#</th>
+          <th width="13%" align="left" class="business-group-row">Business Group<span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="13%" align="left" class="legal-entity-row">Legal Entity <span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="15%" align="left" class="division-row">Division <span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="5%" align="left" class="type-row">Type <span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="20%" align="left" class="compliance-row">Compliance <span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="11%" align="left" class="assigned-to-row">Assigned To <span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="11%" class="delayed-by-row" align="left">Delayed By<span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="11%" class="over-due-row" align="left">Over Due<span><img src="/images/dropdown-arrow.png"/></span></th>
+
+        </tr>
+        <tr class="tr-filter">
+          <td align="center"></td>
+          <td class="business-group-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
+          <td class="legal-entity-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
+          <td class="division-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
+          <td class="type-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
+          <td class="compliance-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
+          <td class="assigned-to-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
+          <td class="delayed-by-row"><input type="text"  class="filter-text-box" placeholder="Search"></td>
+          <td class="over-due-row"><input type="text"  class="filter-text-box" placeholder="Search"></td>
+        </tr>
+        <tbody class="tr-unit accordion-toggle">
+          <tr style="padding:10px;text-align:left;">
+            <th colspan="6" style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" class="unit-heading"></th>
+            <th style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;padding-right:5px" align="right"><img src="/images/chevron_black_down.png"/></th>
+          </tr>
+        </tbody>
+        <tr align="left" class="rightside tr-level1" >
+          <th  colspan="7" style="background-color:#fff; padding-left:0px; " align="left">
+            <span class="heading" style="color:#000; float:left;"></span>
+          </th>
+        </tr>
+        <tr class="table-row-list">
+          <td align="center" class="sno"></td>
+          <td class="businessgroup-name"></td>
+          <td class="legalentity-name"></td>
+          <td class="division-name"></td>
+          <td class="industry-type-name"></td>
+          <td class="compliance-name"><img src="/images/icon-info.png" style="padding-right:3px;"><span><span></td>
+          <td class="assigned-to"></td>
+          <td class="delayed-by-row delayed-by"></td>
           <td class="over-due-row over-due"></td>
         </tr>
       </table>

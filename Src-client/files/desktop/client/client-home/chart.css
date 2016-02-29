@@ -1,4 +1,4 @@
-  abbr
+abbr
 {
     border-bottom: 1px dotted #666;
     cursor: help;
@@ -435,4 +435,11 @@ table.filtertable-1 tr td table tr td {
 }
 .close{
   cursor: pointer;
+}
+.escalation-status-value {
+  background: #F1E9F6;
+  color: #000;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 1em;
 }
