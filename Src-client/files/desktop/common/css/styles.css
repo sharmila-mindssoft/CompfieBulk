@@ -1778,7 +1778,7 @@ list-style-type:none; line-height:25px;
   display: none;
 }
 .accordion-content.default {
-  display: block;
+  display: table-row-group;
 }
 
 /* popup window */

@@ -1,10 +1,3 @@
-/**
- * @author zhixin wen <wenzhixin2010@gmail.com>
- * @version 1.2.1
- *
- * http://wenzhixin.net.cn/p/multiple-select/
- */
-
 (function ($) {
 
     'use strict';
@@ -210,10 +203,8 @@
                 $ul.append([
                     '<li class="ms-select-all">',
                     '<label>',
-                    sprintf('<input type="checkbox" %s /> ', this.selectAllName),
-                    this.options.selectAllDelimiter[0],
-                    this.options.selectAllText,
-                    this.options.selectAllDelimiter[1],
+                    sprintf('<input type="checkbox" %s />', this.selectAllName),
+                    this.options.selectAllText,                  
                     '</label>',
                     '</li>'
                 ].join(''));
@@ -736,7 +727,7 @@
         filterAcceptOnEnter: false,
         hideOptgroupCheckboxes: false,
 
-        selectAllText: 'Select all',
+        selectAllText: 'Select All',
         allSelected: 'All selected',
         countSelected: '# of % selected',
         noMatchesFound: 'No matches found',
