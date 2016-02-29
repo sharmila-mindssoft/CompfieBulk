@@ -4,7 +4,6 @@ import hashlib
 import string
 import random
 import datetime
-import re
 import uuid
 import json
 from types import *
@@ -1674,7 +1673,7 @@ class KnowledgeDatabase(Database):
 
         if (self.save_data(table_name, field, data)) :
             action = "Statutory - %s added" % name
-            self.save_activity(user_id, 9, action)
+            self.save_activity(user_id, 10, action)
             is_saved = True
         return is_saved
 
@@ -1694,7 +1693,7 @@ class KnowledgeDatabase(Database):
 
         self.update_data(table_name, field_with_data, where_condition)
         action = "Statutory - %s updated" % name
-        self.save_activity(updated_by, 9, action)
+        self.save_activity(updated_by, 10, action)
 
         qry = "SELECT statutory_id, statutory_name, parent_ids \
             from tbl_statutories \
@@ -1719,7 +1718,7 @@ class KnowledgeDatabase(Database):
                     where A.statutory_id = %s " % (row["parent_ids"], row["statutory_id"], row["statutory_id"])
             self.execute(q)
             action = "statutory name %s updated in child rows." % name
-            self.save_activity(updated_by, 9, action)
+            self.save_activity(updated_by, 10, action)
         return True
         # if oldparent_ids != parent_ids :
         #     oldPId = str(oldparent_ids) + str(statutory_id)
@@ -2042,7 +2041,9 @@ class KnowledgeDatabase(Database):
     def return_knowledge_report(self, country_id, domain_id, report_data):
         level_1_statutory = self.get_country_wise_level_1_statutoy()
 
-        level1s = level_1_statutory[country_id][domain_id]
+        level1s = level_1_statutory[country_id].get(domain_id)
+        if level1s is None :
+            level1s = []
         level_1_mappings = {}
         for x in level1s :
             statutory_id = x.statutory_id
@@ -2228,7 +2229,9 @@ class KnowledgeDatabase(Database):
             print notification_log_text
             link = "/knowledge/statutory-mapping"
             self.save_notifications(
-                notification_log_text, link, domain_id, user_id=None, form_id=11
+                notification_log_text, link,
+                domain_id, country_id,
+                user_id=None, form_id=11
             )
             action = "New statutory mappings added"
             self.save_activity(created_by, 10, action)
@@ -2432,6 +2435,7 @@ class KnowledgeDatabase(Database):
         if bool(is_exists) is False :
             return False
         domain_id = data.domain_id
+        country_id = int(is_exists["country_id"])
         industry_ids = ','.join(str(x) for x in data.industry_ids) + ","
         nature_id = data.statutory_nature_id
         statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
@@ -2470,7 +2474,9 @@ class KnowledgeDatabase(Database):
         notification_log_text = "Stautory mapping updated for %s" % (names)
         link = "/knowledge/statutory-mapping"
         self.save_notifications(
-            notification_log_text, link, domain_id, user_id=None, form_id=11
+            notification_log_text, link,
+            domain_id, country_id,
+            user_id=None, form_id=11
         )
         return True
 
@@ -2608,8 +2614,8 @@ class KnowledgeDatabase(Database):
             status = "deactivated"
         else:
             status = "activated"
-        action = "Statutory Mapping status changed"
-        self.save_activity(updated_by, 17, action)
+        action = "Statutory Mapping has been %s" % status
+        self.save_activity(updated_by, 10, action)
         return True
 
     def save_statutory_backup(self, statutory_mapping_id, created_by):
@@ -2721,9 +2727,15 @@ class KnowledgeDatabase(Database):
         ]
         where = "statutory_mapping_id=%s" % (statutory_mapping_id)
 
-        q = "SELECT created_by, updated_by, domain_id from tbl_statutory_mappings where statutory_mapping_id = %s" % (statutory_mapping_id)
+        q = "SELECT created_by, updated_by, domain_id, \
+            country_id from tbl_statutory_mappings \
+            where statutory_mapping_id = %s" % (
+                statutory_mapping_id
+            )
         rows = self.select_one(q)
-        users = self.convert_to_dict(rows, ["created_by", "updated_by", "domain_id"])
+        users = self.convert_to_dict(rows, [
+            "created_by", "updated_by", "domain_id", "country_id"
+        ])
 
         if approval_status == 2 :
             # Rejected
@@ -2745,16 +2757,21 @@ class KnowledgeDatabase(Database):
 
         link = "/knowledge/statutory-mapping"
         if users["updated_by"] is None :
-            user_id = users["created_by"]
+            user_id = int(users["created_by"])
         else :
-            user_id = users["updated_by"]
+            user_id = int(users["updated_by"])
         self.save_notifications(
-            notification_log_text, link, users["domain_id"], user_id, form_id=None
+            notification_log_text, link,
+            users["domain_id"], users["country_id"],
+            user_id, form_id=11
         )
-        self.save_activity(updated_by, 10, notification_log_text)
+        self.save_activity(updated_by, 11, notification_log_text)
         return True
 
-    def save_notifications(self, notification_text, link, domain_id, user_id, form_id):
+    def save_notifications(
+        self, notification_text, link,
+        domain_id, country_id, user_id, form_id
+    ):
         # internal notification
         notification_id = self.get_new_id(
             "notification_id", "tbl_notifications"
@@ -2765,9 +2782,14 @@ class KnowledgeDatabase(Database):
                 notification_id, notification_text, link
             )
         self.execute(query)
-        self.save_notifications_status(notification_id, domain_id, user_id, form_id)
+        self.save_notifications_status(
+            notification_id, domain_id, country_id, user_id, form_id
+        )
 
-    def save_notifications_status(self, notification_id, domain_id, user_id=None, form_id=None):
+    def save_notifications_status(
+        self, notification_id, domain_id, country_id,
+        user_id=None, form_id=None
+    ):
         q = "INSERT INTO tbl_notifications_status \
                 (notification_id, user_id, read_status) VALUES \
                 (%s, %s, 0)"
@@ -2776,10 +2798,14 @@ class KnowledgeDatabase(Database):
                     user_group_id in \
                     (select user_group_id from tbl_user_groups \
                     where form_ids like '%s') AND \
-                    user_id in (select user_id from tbl_user_domains where domain_id = %s \
-                    )  " % (
+                    user_id in (select user_id from \
+                        tbl_user_domains where domain_id = %s \
+                    )  \
+                    AND user_id in (select user_id from \
+                        tbl_user_countries where country_id = %s)" % (
                         str('%' + str(form_id) + ',%'),
-                        domain_id
+                        domain_id,
+                        country_id
                     )
             rows = self.select_all(query)
             if rows :
@@ -3304,7 +3330,7 @@ class KnowledgeDatabase(Database):
             database)
 
     def delete_database(
-        self, host, database_name, username, password, 
+        self, host, database_name, username, password,
     ):
         con = self._mysql_server_connect(host, username, password)
         cursor = con.cursor()
