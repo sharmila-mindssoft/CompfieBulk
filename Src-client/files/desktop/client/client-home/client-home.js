@@ -855,7 +855,7 @@ function updateNotCompliedDrillDown(status, data) {
     $(".graph-selections-bottom").hide();
     $(".drilldown-container").show();
     $(".btn-back").show();
-    showDrillDownRecord(status, data);
+    showNotCompliedDrillDownRecord(data);
 }
 
 function updateComplianceApplicabilityDrillDown(status, data) {
@@ -864,6 +864,166 @@ function updateComplianceApplicabilityDrillDown(status, data) {
     $(".drilldown-container").show();
     $(".btn-back").show();
     showDrillDownRecord(status, data);
+}
+
+function showNotCompliedDrillDownRecord(data){
+    var data =  data['drill_down_data'];
+    var filter_type = chartInput.getFilterType();
+    if(filter_type == "group"){
+        groupWiseNotCompliedDrillDown("not_complied", data);
+    }
+    if(filter_type == "business_group"){
+        businessgroupWiseNotCompliedDrillDown("not_complied", data);
+    }
+    if(filter_type == "legal_entity"){
+        legalentityWiseNotCompliedDrillDown("not_complied", data);
+    }
+    if(filter_type == "division"){
+        divisionWiseNotCompliedDrillDown("not_complied", data);
+    }
+    if(filter_type == "unit"){
+        unitWiseNotCompliedDrillDown("not_complied", data);
+    }
+}
+function groupWiseNotCompliedDrillDown(status, data){    
+    $(".table-drilldown-list tbody").remove();
+
+    $(".business-group-row").show();
+    $(".businessgroup-name").show();
+
+    $(".legal-entity-row").show();
+    $(".legalentity-name").show();
+
+    $(".division-row").show();
+    $(".division-name").show();
+
+    $(".tr-level1 th").attr("colspan", "8");
+    $(".tr-unit .unit-heading").attr("colspan", "7");
+
+    notCompliedDrilldown(status, data);         
+}
+
+function businessgroupWiseNotCompliedDrillDown(status, data){
+    $(".table-drilldown-list tbody").remove();
+
+    $(".business-group-row").hide();
+    $(".businessgroup-name").hide();
+
+    $(".legal-entity-row").show();
+    $(".legalentity-name").show();
+
+    $(".division-row").show();
+    $(".division-name").show();
+
+    
+    $(".tr-level1 th").attr("colspan", "7");
+    $(".tr-unit .unit-heading").attr("colspan", "6");
+    
+    notCompliedDrilldown(status, data);         
+}
+function legalentityWiseNotCompliedDrillDown(status, data){
+    $(".table-drilldown-list tbody").remove();
+
+    $(".business-group-row").hide();
+    $(".businessgroup-name").hide();
+
+    $(".legal-entity-row").hide();
+    $(".legalentity-name").hide();
+
+    $(".division-row").show();
+    $(".division-name").show();
+    
+    $(".tr-level1 th").attr("colspan", "6");
+    $(".tr-unit .unit-heading").attr("colspan", "5");
+   
+    notCompliedDrilldown(status, data);    
+}
+
+function divisionWiseNotCompliedDrillDown(status, data){
+    $(".table-drilldown-list tbody").remove();
+
+    $(".business-group-row").hide();
+    $(".businessgroup-name").hide();
+
+    $(".legal-entity-row").hide();
+    $(".legalentity-name").hide();
+
+    $(".division-row").hide();
+    $(".division-name").hide();
+  
+    $(".tr-level1 th").attr("colspan", "5");
+    $(".tr-unit .unit-heading").attr("colspan", "4");
+
+    notCompliedDrilldown(status, data);
+
+}
+
+function unitWiseNotCompliedDrillDown(status, data){
+    $(".table-drilldown-list tbody").remove();
+
+    $(".business-group-row").hide();
+    $(".businessgroup-name").hide();
+
+    $(".legal-entity-row").hide();
+    $(".legalentity-name").hide();
+
+    $(".division-row").hide();
+    $(".division-name").hide();
+
+    $(".tr-level1 th").attr("colspan", "5");
+    $(".tr-unit .unit-heading").attr("colspan", "4");
+
+    notCompliedDrilldown(status, data);
+}
+
+function notCompliedDrilldown(status, data){    
+    var sno = 1;
+    var count = 1;
+
+    var tableHeading = $('#templates .notComplied-status .tr-heading');
+    var cloneHeading = tableHeading.clone();
+    $(".table-drilldown-list").append(cloneHeading);
+
+    var tableFilter = $('#templates .notComplied-status .tr-filter');
+    var cloneFilter = tableFilter.clone();
+    $(".table-drilldown-list").append(cloneFilter);
+
+    $.each(data, function(key, value){
+        var tableUnit = $('#templates .notComplied-status .tr-unit');
+        var cloneUnit = tableUnit.clone();
+        $(".unit-heading", cloneUnit).html(value["unit_name"]);
+        $(".table-drilldown-list").append(cloneUnit);
+        $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
+        if(count==1){
+            $('.accordion-content'+count).addClass("default");
+        }
+        var unitList = value["compliances"];
+
+        $.each(unitList, function(ke, valu){
+            var tableLevel1 = $('#templates .notComplied-status .tr-level1');
+            var cloneLevel1 = tableLevel1.clone();
+            $(".heading", cloneLevel1).html(ke);
+            $('.accordion-content'+count).append(cloneLevel1);
+
+            $.each(valu, function(k, val){
+                var tableRow = $('#templates .notComplied-status .table-row-list');
+                var clone = tableRow.clone();
+                $(".sno", clone).html(sno);
+                $(".businessgroup-name", clone).html(value["business_group"]);
+                $(".legalentity-name", clone).html(value["legal_entity"])
+                $(".division-name", clone).html(value["division"]);
+                $(".industry-type-name", clone).html(value["industry_name"]);
+                $(".compliance-name span", clone).html(val['compliance_name']);
+                $(".assigned-to", clone).html(val['assignee_name']);
+                $(".over-due", clone).html(val['ageing']+" Days");
+                $('.accordion-content'+count).append(clone);
+                sno = sno + 1;
+
+            });
+        });
+        count = count + 1;
+    });
+    accordianType('accordion', 'accordion-toggle', 'accordion-content');            
 }
 
 function showEscalationDrillDownRecord(data){
@@ -1016,12 +1176,14 @@ function unitWiseEscalationDrillDown(status, data){
         $(".tr-unit .unit-heading").attr("colspan", "4");
         $(".over-due-row").show();
         $(".delayed-by-row").hide();
+        var status = "Not Complied"
     }
     else if (status == "delayed") {
         $(".tr-level1 th").attr("colspan", "5");
         $(".tr-unit .unit-heading").attr("colspan", "4");
         $(".delayed-by-row").show();
         $(".over-due-row").hide();
+        var status = "Delayed"
     }
   
     escalationDrilldown(status, data);
