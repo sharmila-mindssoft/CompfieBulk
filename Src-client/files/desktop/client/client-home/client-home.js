@@ -2059,7 +2059,15 @@ function updateTrendChart(data) {
         var value = (this.textContent || this.innerText);
         console.log(value);
         name = value;
+
         loadTrendChartDrillDown(value);
+        $(".btn-back").show();
+        $(".btn-back").on("click", function() {
+            updateTrendChart(data);
+            hideButtons()
+        });
+
+        
 
         // setChart(value);
     });

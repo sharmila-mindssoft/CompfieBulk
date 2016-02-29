@@ -4317,18 +4317,19 @@ class ClientDatabase(Database):
                         )
                         compliance_history_ids = self.get_compliance_history_ids_for_trend_chart(
                             country_id, domain_id, client_id, filter_id, filter_type)
-                        condition += " and compliance_history_id in (%s)" % compliance_history_ids[0]
-                        condition += " and unit_id in (%s)" % compliance_history_ids[2]
-                        rows = self.get_data(
-                            self.tblComplianceHistory, columns,
-                            condition
-                        )
-                        if len(rows) > 0:
-                            row = rows[0]
-                            total_compliances = int(row[0])
-                            complied_compliances = int(row[1]) if row[1] != None else 0
-                            year_wise_count[0][0] += total_compliances if total_compliances is not None else 0
-                            year_wise_count[0][1] += complied_compliances if complied_compliances is not None else 0
+                        if compliance_history_ids[0] is not None and compliance_history_ids[2] is not None:
+                            condition += " and compliance_history_id in (%s)" % compliance_history_ids[0]
+                            condition += " and unit_id in (%s)" % compliance_history_ids[2]
+                            rows = self.get_data(
+                                self.tblComplianceHistory, columns,
+                                condition
+                            )
+                            if len(rows) > 0:
+                                row = rows[0]
+                                total_compliances = int(row[0])
+                                complied_compliances = int(row[1]) if row[1] != None else 0
+                                year_wise_count[0][0] += total_compliances if total_compliances is not None else 0
+                                year_wise_count[0][1] += complied_compliances if complied_compliances is not None else 0
             compliance_chart_data = []
             for index, count_of_year in enumerate(year_wise_count):
                 compliance_chart_data.append(
