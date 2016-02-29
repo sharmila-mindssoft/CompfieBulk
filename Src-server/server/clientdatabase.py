@@ -4121,12 +4121,13 @@ class ClientDatabase(Database):
                 where_condition
             )
 
-        unit_ids = rows[0][0] if rows[0][0] != None else []
+        unit_ids = [int(x) for x in rows[0][0].split(",")] if rows[0][0] != None else []
         drill_down_data = []
         for unit_id in unit_ids:
             # Getting Unit details
-            unit_detail_columns = "tu.country_id, domain_ids, business_group_id, legal_entity_id," + \
-                " division_id, unit_code, unit_name, address, group_concat(tcs.client_statutory_id)"
+            unit_detail_columns = "tu.country_id, domain_ids, business_group_id, \
+            legal_entity_id, division_id, unit_code, unit_name, address, \
+            group_concat(tcs.client_statutory_id)"
             unit_detail_condition = "tu.unit_id = '{}'".format(unit_id)
             tables = "%s tu, %s tcs" % (
                 self.tblUnits, self.tblClientStatutories
@@ -4214,10 +4215,28 @@ class ClientDatabase(Database):
                         )
                     )
             if len(level_1_statutory_wise_compliances) > 0:
+                business_group_name = None
+                legal_entity_name = None
+                division_name = None
+                if business_group_id is not None:
+                    rows = self.get_data(
+                        self.tblBusinessGroups, "business_group_name", "business_group_id='%d'" % (business_group_id)  
+                    )
+                    business_group_name = rows[0][0]
+                if division_id is not None:
+                    rows = self.get_data(
+                        self.tblDivisions, "division_name", "division_id='%d'" % (division_id)  
+                    )
+                    division_name = rows[0][0]
+                rows = self.get_data(
+                    self.tblLegalEntities, "legal_entity_name", "legal_entity_id='%d'" % (legal_entity_id)  
+                )
+                legal_entity_name = rows[0][0]
+
                 drill_down_data.append(
                     dashboard.TrendDrillDownData(
-                            business_group_id,
-                            legal_entity_id, division_id,
+                            business_group_name,
+                            legal_entity_name, division_name,
                             unit_name, address,
                             level_1_statutory_wise_compliances
                         )
