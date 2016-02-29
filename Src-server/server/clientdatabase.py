@@ -4168,7 +4168,7 @@ class ClientDatabase(Database):
                 where_condition
             )
 
-        unit_ids = rows[0][0] if rows[0][0] != None else []
+        unit_ids = [int(x) for x in rows[0][0].split(",")] if rows[0][0] != None else []
         drill_down_data = []
         for unit_id in unit_ids:
             # Getting Unit details

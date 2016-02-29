@@ -1254,13 +1254,289 @@ function escalationDrilldown(status, data){
     
 }
 
+// Trend Chart Drill Down
 function updateTrendChartDrillDown(status, data) {
     $(".graph-container.compliance-status").hide();
     $(".graph-selections-bottom").hide();
     $(".drilldown-container").show();
     $(".btn-back").show();
-    showDrillDownRecord(status, data);
+    showTrendChartDrillDownRecord(status, data);
 }
+
+function showTrendChartDrillDownRecord(status, data){
+    var data = data["drill_down_data"];
+    var filter_type = chartInput.getFilterType();
+    if(filter_type == "group"){
+        groupWiseTrendChartDrillDown(status, data);
+    }
+    if(filter_type == "business_group"){
+        businessgroupWiseTrendChartDrillDown(status, data);
+    }
+    if(filter_type == "legal_entity"){
+        legalentityWiseTrendChartDrillDown(status, data);
+    }
+    if(filter_type == "division"){
+        divisionWiseTrendChartDrillDown(status, data);
+    }
+    if(filter_type == "unit"){
+        unitWiseTrendChartDrillDown(status, data);
+    }
+}
+
+function groupWiseTrendChartDrillDown(status, data){
+    $(".table-drilldown-list tbody").remove();
+
+    $(".business-group-row").show();
+    $(".businessgroup-name").show();
+
+    $(".legal-entity-row").show();
+    $(".legalentity-name").show();
+
+    $(".division-row").show();
+    $(".division-name").show();
+
+    $(".delayed-by-row").hide();
+    $(".dates-left-to-complete-row").hide();
+    $(".over-due-row").hide();
+
+    if (status == "Inprogress") {
+        $(".tr-level1 th").attr("colspan", "8");
+        $(".tr-unit .unit-heading").attr("colspan", "7");
+        $(".dates-left-to-complete-row").show();
+    }
+    else if (status == "Not Complied") {
+        $(".tr-level1 th").attr("colspan", "8");
+        $(".tr-unit .unit-heading").attr("colspan", "7");
+        $(".over-due-row").show();
+    }
+    else if (status == "Delayed") {
+        $(".tr-level1 th").attr("colspan", "8");
+        $(".tr-unit .unit-heading").attr("colspan", "7");
+        $(".delayed-by-row").show();
+    }
+    else{
+        $(".tr-level1 th").attr("colspan", "7");
+        $(".tr-unit tr th").attr("colspan", "6");
+    }
+    trendChartDrilldown(status, data);         
+}
+
+function businessgroupWiseTrendChartDrillDown(status, data){
+    $(".table-drilldown-list tbody").remove();
+
+    $(".business-group-row").hide();
+    $(".businessgroup-name").hide();
+
+    $(".legal-entity-row").show();
+    $(".legalentity-name").show();
+
+    $(".division-row").show();
+    $(".division-name").show();
+
+    $(".delayed-by-row").hide();
+    $(".dates-left-to-complete-row").hide();
+    $(".over-due-row").hide();
+
+    if (status == "Inprogress") {
+        $(".tr-level1 th").attr("colspan", "7");
+        $(".tr-unit .unit-heading").attr("colspan", "6");
+        $(".dates-left-to-complete-row").show();
+    }
+    else if (status == "Not Complied") {        
+        $(".tr-level1 th").attr("colspan", "7");
+        $(".tr-unit .unit-heading").attr("colspan", "6");
+        $(".over-due-row").show();
+    }
+    else if (status == "Delayed") {
+        $(".tr-level1 th").attr("colspan", "7");
+        $(".tr-unit .unit-heading").attr("colspan", "6");
+        $(".delayed-by-row").show();
+    }
+    else{
+        $(".tr-level1 th").attr("colspan", "6");
+        $(".tr-unit tr th").attr("colspan", "5");
+    }
+    trendChartDrilldown(status, data);
+}
+
+function legalentityWiseTrendChartDrillDown(status, data){
+    $(".table-drilldown-list tbody").remove();
+
+    $(".business-group-row").hide();
+    $(".businessgroup-name").hide();
+
+    $(".legal-entity-row").hide();
+    $(".legalentity-name").hide();
+
+    $(".division-row").show();
+    $(".division-name").show();
+    
+    $(".delayed-by-row").hide();
+    $(".dates-left-to-complete-row").hide();
+    $(".over-due-row").hide();
+
+    if (status == "Inprogress") {
+        $(".tr-level1 th").attr("colspan", "6");
+        $(".tr-unit .unit-heading").attr("colspan", "5");
+        $(".dates-left-to-complete-row").show();
+    }
+    else if (status == "Not Complied") {        
+        $(".tr-level1 th").attr("colspan", "6");
+        $(".tr-unit .unit-heading").attr("colspan", "5");
+        $(".over-due-row").show();
+    }
+    else if (status == "Delayed") {
+        $(".tr-level1 th").attr("colspan", "6");
+        $(".tr-unit .unit-heading").attr("colspan", "5");
+        $(".delayed-by-row").show();
+    }
+    else{
+        $(".tr-level1 th").attr("colspan", "5");
+        $(".tr-unit tr th").attr("colspan", "4");
+    }
+    trendChartDrilldown(status, data);    
+}
+
+function divisionWiseTrendChartDrillDown(status, data){
+    $(".table-drilldown-list tbody").remove();
+
+    $(".business-group-row").hide();
+    $(".businessgroup-name").hide();
+
+    $(".legal-entity-row").hide();
+    $(".legalentity-name").hide();
+
+    $(".division-row").hide();
+    $(".division-name").hide();
+    
+    
+    $(".delayed-by-row").hide();
+    $(".dates-left-to-complete-row").hide();
+    $(".over-due-row").hide();
+
+    if (status == "Inprogress") {
+        $(".tr-level1 th").attr("colspan", "5");
+        $(".tr-unit .unit-heading").attr("colspan", "4");
+        $(".dates-left-to-complete-row").show();
+    }
+    else if (status == "Not Complied") {        
+        $(".tr-level1 th").attr("colspan", "5");
+        $(".tr-unit .unit-heading").attr("colspan", "4");
+        $(".over-due-row").show();
+    }
+    else if (status == "Delayed") {
+        $(".tr-level1 th").attr("colspan", "5");
+        $(".tr-unit .unit-heading").attr("colspan", "4");
+        $(".delayed-by-row").show();
+    }
+    else{
+        $(".tr-level1 th").attr("colspan", "4");
+        $(".tr-unit tr th").attr("colspan", "3");
+    }
+    trendChartDrilldown(status, data);
+
+}
+
+function unitWiseTrendChartDrillDown(status, data){
+    $(".table-drilldown-list tbody").remove();
+    $(".business-group-row").hide();
+    $(".businessgroup-name").hide();
+
+    $(".legal-entity-row").hide();
+    $(".legalentity-name").hide();
+
+    $(".division-row").hide();
+    $(".division-name").hide();
+
+
+    $(".delayed-by-row").hide();
+    $(".dates-left-to-complete-row").hide();
+    $(".over-due-row").hide();
+
+    if (status == "Inprogress") {
+        $(".tr-level1 th").attr("colspan", "5");
+        $(".tr-unit .unit-heading").attr("colspan", "4");
+        $(".dates-left-to-complete-row").show();
+    }
+    else if (status == "Not Complied") {        
+        $(".tr-level1 th").attr("colspan", "5");
+        $(".tr-unit .unit-heading").attr("colspan", "4");
+        $(".over-due-row").show();
+    }
+    else if (status == "Delayed") {
+        $(".tr-level1 th").attr("colspan", "5");
+        $(".tr-unit .unit-heading").attr("colspan", "4");
+        $(".delayed-by-row").show();
+    }
+    else{
+        $(".tr-level1 th").attr("colspan", "4");
+        $(".tr-unit tr th").attr("colspan", "3");
+    }
+    trendChartDrilldown(status, data);
+}
+
+function trendChartDrilldown(status, data){
+    var sno = 1;
+    var count = 1;
+    var tableHeading = $('#templates .compliance-status .tr-heading');
+    var cloneHeading = tableHeading.clone();
+    $(".table-drilldown-list").append(cloneHeading);
+    var tableFilter = $('#templates .compliance-status .tr-filter');
+    var cloneFilter = tableFilter.clone();
+    $(".table-drilldown-list").append(cloneFilter);
+    $.each(data, function(key, value){
+        var tableUnit = $('#templates .compliance-status .tr-unit');
+        var cloneUnit = tableUnit.clone();
+        $(".unit-heading", cloneUnit).html(value["unit_name"]);
+        $(".table-drilldown-list").append(cloneUnit);
+        $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
+        if(count==1){
+            $('.accordion-content'+count).addClass("default");
+        }
+        var unitList = value["compliances"];
+        $.each(unitList, function(ke, valu){
+            var tableLevel1 = $('#templates .compliance-status .tr-level1');
+            var cloneLevel1 = tableLevel1.clone();
+            $(".heading", cloneLevel1).html(ke);
+            $('.accordion-content'+count).append(cloneLevel1);
+            $.each(valu, function(k, val){
+                var tableRow = $('#templates .compliance-status .table-row-list');
+                var clone = tableRow.clone();
+                $(".sno", clone).html(sno);
+                $(".businessgroup-name", clone).html(value["business_group"]);
+                $(".legalentity-name", clone).html(value["legal_entity"])
+                $(".division-name", clone).html(value["division"]);
+                $(".industry-type-name", clone).html(value["industry_name"]);
+                $(".compliance-name span", clone).html(val['compliance_name']);
+                $(".assigned-to", clone).html(val['assignee_name']);
+                if(val['status'] == "Delayed"){
+                    $(".delayed-by", clone).html(val['ageing']+" Days");
+                }
+                if(val['status'] == "Inprogress"){
+                    $(".dates-left-to-complete", clone).html(val['ageing']+" Days");
+                }
+                if(val['status'] == "Not Complied"){
+                    $(".over-due", clone).html(val['ageing']+" Days");
+                }
+                $('.accordion-content'+count).append(clone);
+                sno = sno + 1;
+
+            });
+        });
+        count = count + 1;
+    });
+
+    accordianType('accordion', 'accordion-toggle', 'accordion-content');
+}
+
+function accordianType(idtype, toggleClass, contentClass){
+    $('#'+idtype).find('.'+toggleClass).click(function(){
+        $(this).next().slideToggle('fast');
+        $("."+contentClass).not($(this).next()).slideUp('fast');
+    });
+}
+
+
 
 
 function showDrillDownRecord(status, data){
