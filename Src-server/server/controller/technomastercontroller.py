@@ -26,19 +26,19 @@ def get_client_groups(db, request, session_user):
 	user_list = []
 	client_list = []
 
-	user_rows = db.get_techno_users()
-	for user_row in user_rows:
-		employee_name = None
-		if user_row[2] == None:
-			employee_name = user_row[1]
-		else:
-			employee_name = "%s-%s" % (user_row[2], user_row[1])
-		user_id = user_row[0]
-		is_active = True if user_row[3]==1 else False
-		user_list.append(core.User(user_id, employee_name, is_active))
+	users = db.get_techno_users()
+	# for user_row in user_rows:
+	# 	employee_name = None
+	# 	if user_row[2] == None:
+	# 		employee_name = user_row[1]
+	# 	else:
+	# 		employee_name = "%s-%s" % (user_row[2], user_row[1])
+	# 	user_id = user_row[0]
+	# 	is_active = True if user_row[3]==1 else False
+	# 	user_list.append(core.User(user_id, employee_name, is_active))
 	client_list = db.get_group_company_details()
 	return technomasters.GetClientGroupsSuccess(countries = country_list, 
-		domains = domain_list, users = user_list, client_list = client_list)
+		domains = domain_list, users = users, client_list = client_list)
 
 def create_database(
 	host, username, password, database_name, db_username,

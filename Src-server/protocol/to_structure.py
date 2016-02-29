@@ -3886,3 +3886,14 @@ def to_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWis
 def to_structure_RecordType_dashboard_AssigneeWiseCompliance(data):
     from protocol import dashboard
     return dashboard.AssigneeWiseCompliance.to_inner_structure(data)
+
+def to_structure_VectorType_RecordType_core_ClientInchargePersons(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_core_ClientInchargePersons(item))
+    return lst
+
+def to_structure_RecordType_core_ClientInchargePersons(data):
+    from protocol import core
+    return core.ClientInchargePersons.to_structure(data)

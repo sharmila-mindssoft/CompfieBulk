@@ -2229,6 +2229,49 @@ class User(object):
         }
 
 #
+# Client Incharge Persons
+#
+
+class ClientInchargePersons(object):
+    def __init__(
+        self, user_id, employee_name, is_active, countries, domains
+    ):
+        self.user_id = user_id
+        self.employee_name = employee_name
+        self.is_active = is_active
+        self.countries = countries
+        self.domains = domains
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "user_id", "employee_name", 
+                "is_active", "countries", "domains"
+            ]
+        )
+        user_id = data.get("user_id")
+        user_id = parse_structure_UnsignedIntegerType_32(user_id)
+        employee_name = data.get("employee_name")
+        employee_name = parse_structure_CustomTextType_50(employee_name)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        countries = data.get("countries")
+        countries = parse_structure_VectorType_UnsignedIntegerType_32(countries)
+        domains = data.get("domains")
+        domains = parse_structure_VectorType_UnsignedIntegerType_32(domains)
+        return User(user_id, employee_name, is_active, countries, domains)
+
+    def to_structure(self):
+        return {
+            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
+            "employee_name": to_structure_CustomTextType_50(self.employee_name),
+            "is_active": to_structure_Bool(self.is_active),
+            "countries": to_structure_VectorType_UnsignedIntegerType_32(self.countries),
+            "domains": to_structure_VectorType_UnsignedIntegerType_32(self.domains)
+        }
+
+#
 # UserDetails
 #
 
