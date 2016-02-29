@@ -1119,25 +1119,21 @@ class ClientDatabase(Database):
 #
 
     def get_statutory_settings(self, session_user, client_id):
-        query = "SELECT distinct t1.client_statutory_id, \
-            t1.geography, t1.country_id, t1.domain_id, t1.unit_id, \
-            t2.unit_name, \
-            t3.business_group_name, t4.legal_entity_name,\
-            t5.division_name, t2.address, t2.postal_code, t2.unit_code, \
-            t6.country_name, t7.domain_name \
+        query = "SELECT distinct t1.client_statutory_id,  t1.geography, \
+            t1.country_id, t1.domain_id, t1.unit_id,t2.unit_name, \
+            (select business_group_name from tbl_business_groups \
+                where business_group_id = t2.business_group_id)business_group_name, \
+            (select legal_entity_name from tbl_legal_entities \
+                where legal_entity_id = t2.legal_entity_id)legal_entity_name,\
+            (select division_name from tbl_divisions \
+                where division_id = t2.division_id)division_name, \
+            t2.address, t2.postal_code, t2.unit_code, \
+            (select country_name from tbl_countries where country_id = t1.country_id )country_name, \
+            (select domain_name from tbl_domains where domain_id = t1.domain_id)domain_name \
             FROM tbl_client_statutories t1 \
             INNER JOIN tbl_units t2 \
-            ON t1.unit_id = t2.unit_id \
-            INNER JOIN tbl_business_groups t3 \
-            ON t2.business_group_id = t3.business_group_id \
-            INNER JOIN tbl_legal_entities t4 \
-            ON t2.legal_entity_id = t4.legal_entity_id \
-            INNER JOIN tbl_divisions t5 \
-            ON t2.division_id = t5.division_id \
-            INNER JOIN tbl_countries t6 \
-            ON t1.country_id = t6.country_id \
-            INNER JOIN tbl_domains t7 \
-            ON t1.domain_id = t7.domain_id "
+            ON t1.unit_id = t2.unit_id "
+
         rows = self.select_all(query)
         columns = [
             "client_statutory_id", "geography",
@@ -1196,16 +1192,27 @@ class ClientDatabase(Database):
             compliance_remarks = r["compliance_remarks"]
             if compliance_remarks == "" :
                 compliance_remarks = None
+            if r["document_name"] == "" :
+                r["document_name"] = None
 
             mappings = r["statutory_mapping"].split('>>')
             statutory_name = mappings[0].strip()
-            provision = "%s - %s" % (
-                ','.join(mappings[1:]),
-                r["statutory_provision"]
-            )
-            name = "%s - %s" % (
-                r["document_name"], r["compliance_task"]
-            )
+            if len(mappings) > 1 :
+                provision = "%s - %s" % (
+                    ','.join(mappings[1:]),
+                    r["statutory_provision"]
+                )
+            else :
+                provision = r["statutory_provision"]
+
+            if r["document_name"] is not None :
+                name = "%s - %s" % (
+                    r["document_name"], r["compliance_task"]
+                )
+
+            else :
+                name = r["compliance_task"]
+
             compliance = clienttransactions.ComplianceApplicability(
                 r["compliance_id"],
                 name,
@@ -2289,8 +2296,12 @@ class ClientDatabase(Database):
     ):
         countries = self.get_user_countries(user_id)
         country_ids = countries.split(',')
+        if len(country_ids) == 1 :
+            country_ids.append(0)
         domains = self.get_user_domains(user_id)
         domain_ids = domains.split(',')
+        if len(domain_ids) == 1 :
+            domain_ids.append(0)
         filter_type = request.filter_type
 
         # domain_ids = request.domain_ids
@@ -6225,7 +6236,7 @@ class ClientDatabase(Database):
                         dashboard.AssigneeWiseLevel1Compliance(
                             compliance_name=compliance[4], description=compliance[5],
                             assignee_name=self.get_user_name_by_id(assignee_id),
-                            assigned_date=self.datetime_to_string(compliance[1]), 
+                            assigned_date=self.datetime_to_string(compliance[1]),
                             due_date=self.datetime_to_string(compliance[2]),
                             completion_date=None if compliance[3] is None else self.datetime_to_string(compliance[3])
                         )
@@ -6238,7 +6249,7 @@ class ClientDatabase(Database):
                         dashboard.AssigneeWiseLevel1Compliance(
                             compliance_name=compliance[4], description=compliance[5],
                             assignee_name=self.get_user_name_by_id(assignee_id),
-                            assigned_date=self.datetime_to_string(compliance[1]), 
+                            assigned_date=self.datetime_to_string(compliance[1]),
                             due_date=self.datetime_to_string(compliance[2]),
                             completion_date=None if compliance[3] is None else self.datetime_to_string(compliance[3])
                         )
@@ -6251,7 +6262,7 @@ class ClientDatabase(Database):
                         dashboard.AssigneeWiseLevel1Compliance(
                             compliance_name=compliance[4], description=compliance[5],
                             assignee_name=self.get_user_name_by_id(assignee_id),
-                            assigned_date=self.datetime_to_string(compliance[1]), 
+                            assigned_date=self.datetime_to_string(compliance[1]),
                             due_date=self.datetime_to_string(compliance[2]),
                             completion_date=None if compliance[3] is None else self.datetime_to_string(compliance[3])
                         )
@@ -6264,7 +6275,7 @@ class ClientDatabase(Database):
                         dashboard.AssigneeWiseLevel1Compliance(
                             compliance_name=compliance[4], description=compliance[5],
                             assignee_name=self.get_user_name_by_id(assignee_id),
-                            assigned_date=self.datetime_to_string(compliance[1]), 
+                            assigned_date=self.datetime_to_string(compliance[1]),
                             due_date=self.datetime_to_string(compliance[2]),
                             completion_date=None if compliance[3] is None else self.datetime_to_string(compliance[3])
                         )
