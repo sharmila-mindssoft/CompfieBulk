@@ -44,12 +44,19 @@
 
 .report-container-inner {
 	width: : 100%;
+	min-height: 300px;
 	float: left;
 	display: none;
 }
 
 .chart-filters {
 	border: 1px solid #fff;
+	display: none;
+}
+
+.chart-filters-autocomplete {
+	border: 1px solid #fff;
+	display: none;
 }
 /*
 .filtertable td div {
@@ -87,3 +94,4 @@
 .graph-selections-bottom {
 	display: none;
 }
+

@@ -1436,28 +1436,29 @@ class ClientDatabase(Database):
         client_statutory_rows = self.get_data(
             self.tblClientStatutories,
             "group_concat(client_statutory_id)",
-            "domain_id in (%s)" % domain_ids,
+            "domain_id in (%s)" % domain_ids
             )
         client_statutory_ids = client_statutory_rows[0][0]
-
-        client_compliance_rows = self.get_data(
-            self.tblClientCompliances,
-            "group_concat(compliance_id)",
-            "client_statutory_id in (%s)" % client_statutory_ids,
-            )
-        client_compliance_ids = client_compliance_rows[0][0]
-
-        mapping_rows = self.get_data(
-            self.tblCompliances,
-            "statutory_mapping",
-            "compliance_id in (%s)" % (client_compliance_ids)
-        )
-
+        mapping_rows = []
+        if client_statutory_ids is not None:
+            client_compliance_rows = self.get_data(
+                self.tblClientCompliances,
+                "group_concat(compliance_id)",
+                "client_statutory_id in (%s)" % client_statutory_ids,
+                )
+            client_compliance_ids = client_compliance_rows[0][0]
+            if client_compliance_ids is not None:
+                mapping_rows = self.get_data(
+                    self.tblCompliances,
+                    "statutory_mapping",
+                    "compliance_id in (%s)" % (client_compliance_ids)
+                )
         level_1_statutory = []
-        for mapping in mapping_rows:
-            statutories = mapping[0].split(">>")
-            if statutories[0].strip() not in level_1_statutory:
-                level_1_statutory.append(statutories[0].strip())
+        if len(mapping_rows) > 0:
+            for mapping in mapping_rows:
+                statutories = mapping[0].split(">>")
+                if statutories[0].strip() not in level_1_statutory:
+                    level_1_statutory.append(statutories[0].strip())
         return level_1_statutory
 
     def get_compliance_frequency(self, client_id):
@@ -3192,7 +3193,6 @@ class ClientDatabase(Database):
         filter_type = request.filter_type
         filter_ids = request.filter_ids
         not_complied_type = request.not_complied_type
-        year = request.year
 
         not_complied_status_qry = " AND T1.due_date < CURDATE() \
             AND T1.approve_status is NULL  OR T1.approve_status != 1"
@@ -3216,8 +3216,6 @@ class ClientDatabase(Database):
             filter_type_qry = "AND T5.unit_id IN %s" % (str(tuple(filter_ids)))
 
         date_qry = ""
-
-        year_info = self.get_client_domain_configuration()[0]
 
         not_complied_details = self.compliance_details_query(
             domain_ids, date_qry, not_complied_status_qry,
@@ -3243,12 +3241,59 @@ class ClientDatabase(Database):
                 if ageing > 90 :
                     not_complied_details_filtered.append(c)
 
-        not_complied_details_list = self.return_compliance_details_drill_down(
-            year_info, "Not Complied", year,
-            not_complied_details_filtered, client_id
-        )
+        current_date = datetime.date.today()
 
-        return not_complied_details_list
+        unit_wise_data = {}
+        for r in not_complied_details_filtered :
+
+            unit_id = int(r["unit_id"])
+            statutories = r["statutory_mapping"].split('>>')
+            level_1 = statutories[0].strip()
+            ageing = 0
+            due_date = r["due_date"]
+            completion_date = r["completion_date"]
+
+            ageing = abs((current_date - due_date).days)
+
+            status = core.COMPLIANCE_STATUS("Not Complied")
+            name = "%s-%s" % (r["document_name"], r["compliance_task"])
+            compliance = dashboard.Level1Compliance(
+                name, r["compliance_description"], r["employee_name"],
+                str(r["start_date"]), str(due_date),
+                str(completion_date), status,
+                ageing
+            )
+
+            drill_down_data = unit_wise_data.get(unit_id)
+            if drill_down_data is None :
+                level_compliance = {}
+                level_compliance[level_1] = [compliance]
+                unit_name = "%s-%s" % (r["unit_code"], r["unit_name"])
+                geography = r["geography"].split(">>")
+                geography.reverse()
+                geography = ','.join(geography)
+                address = "%s, %s, %s" % (r["address"], geography, r["postal_code"])
+                drill_down_data = dashboard.DrillDownData(
+                    r["business_group_name"], r["legal_entity_name"],
+                    r["division_name"], unit_name, address,
+                    r["industry_name"],
+                    level_compliance
+                )
+
+            else :
+                level_compliance = drill_down_data.compliances
+                compliance_list = level_compliance[level_1]
+                if compliance_list is None :
+                    compliance_list = []
+                compliance_list.append(compliance)
+
+                level_compliance[level_1] = compliance_list
+                drill_down_data.compliances = level_compliance
+
+            unit_wise_data[unit_id] = drill_down_data
+
+        return unit_wise_data
+
 
     # unitwise compliance report
     def get_unitwise_compliance_report(
@@ -3592,7 +3637,7 @@ class ClientDatabase(Database):
             filter_type_qry = ""
 
         elif filter_type == "BusinessGroup" :
-            filter_type_qry = "AND T3.business_group_id = %s" % (filter_id)
+            filter_type_qry = "AND T3.business_group_id IN %s" % (filter_id)
 
         elif filter_type == "LegalEntity" :
             filter_type_qry = "AND T3.legal_entity_id = %s" % (filter_id)
@@ -3633,7 +3678,7 @@ class ClientDatabase(Database):
         level_1_wise_compliance = {}
 
         for r in result :
-            unit_id = r["unit_id"]
+            unit_id = int(r["unit_id"])
             mappings = r["statutory_mapping"].split(">>")
             if len(mappings) >= 1 :
                 level_1 = mappings[0]
@@ -3651,11 +3696,11 @@ class ClientDatabase(Database):
                 )
                 date_list.append(s_date)
 
-            format_file = d["format_file"]
-            format_file_size = d["format_file_size"]
+            format_file = r["format_file"]
+            format_file_size = r["format_file_size"]
             file_list = []
             download_file_list = []
-            if format_file :
+            if format_file is not None and format_file_size is not None :
                 file_info = core.FileList(
                     format_file_size, format_file, None
                 )
@@ -3677,7 +3722,7 @@ class ClientDatabase(Database):
                 r["document_name"], file_list, r["penal_consequences"],
                 int(r["frequency_id"]), date_list, r["repeat_type_id"],
                 r["repeats_every"], r["duration_type_id"],
-                r["duration"], bool(r["is_active"]), download_file_list
+                r["duration"], bool(r["is_active"])
             )
             level_1_wise_data = level_1_wise_compliance.get(level_1)
             if level_1_wise_data is None :
@@ -3689,7 +3734,9 @@ class ClientDatabase(Database):
                 )
             else :
                 compliance_dict = level_1_wise_data.compliances
-                compliance_list = compliance_dict[unit_id]
+                compliance_list = compliance_dict.get(unit_id)
+                if compliance_list is None :
+                    compliance_list = []
                 compliance_list.append(compliance)
 
                 compliance_dict[unit_id] = compliance_list
@@ -5870,12 +5917,14 @@ class ClientDatabase(Database):
             unit_ids = unit_id
         else:
             user_unit_ids = self.get_user_unit_ids(session_user, client_id)
-            seating_unit_column = "seating_unit_id"
-            seating_unit_condition = "user_id = '%d'" % session_user
-            seating_unit_rows = self.get_data(
-                self.tblUsers, seating_unit_column, seating_unit_condition
-            )
-            unit_ids = "%s,%s" % (user_unit_ids, seating_unit_rows[0][0])
+            if session_user > 0:
+                seating_unit_column = "seating_unit_id"
+                seating_unit_condition = "user_id = '%d'" % session_user
+                seating_unit_rows = self.get_data(
+                    self.tblUsers, seating_unit_column, seating_unit_condition
+                )
+                unit_ids = "%s,%s" % (user_unit_ids, seating_unit_rows[0][0])
+            unit_ids = user_unit_ids
 
         unit_columns = "unit_id, unit_code, unit_name, address"
         unit_condition = " unit_id in (%s) AND country_id = %d" % (
@@ -5954,6 +6003,12 @@ class ClientDatabase(Database):
                             client_compliance_rows = self.get_data(
                                 self.tblClientCompliances, client_compliance_columns, client_compliance_condition
                             )
+                            current_year = self.get_date_time().year
+                            result = self.get_country_domain_timelines(
+                                [country_id], [domain_id], [current_year], client_id
+                            )
+                            from_date = result[0][1][0][1][0]["start_date"]
+                            to_date = result[0][1][0][1][0]["end_date"]
                             compliance_ids = client_compliance_rows[0][0]
                             columns = "sum(case when (approve_status = 1 and (due_date < completion_date or \
                             due_date = completion_date)) then 1 else 0 end) as complied, \
@@ -5963,7 +6018,10 @@ class ClientDatabase(Database):
                             due_date < now()) then 1 else 0 end) as NotComplied, \
                             sum(case when (approve_status = 1 and completion_date > due_date) then 1 else 0 end)\
                             as DelayedCompliance"
-                            condition = "compliance_id in (%s)" % compliance_ids
+                            condition = "compliance_id in (%s) and due_date \
+                            between '%s' and '%s'" % (
+                                compliance_ids, from_date, to_date
+                            )
                             rows = self.get_data(
                                 self.tblComplianceHistory, columns, condition
                             )
@@ -6027,11 +6085,15 @@ class ClientDatabase(Database):
                                 not_complied_count=not_complied
                             )
                         )
+                    year_wise_compliance_count = self.get_year_wise_assignee_compliances(
+                        country_id, domain_id, client_id, compliance_ids
+                    )
                     assignee_wise_compliances_count.append(
                         dashboard.AssigneeWiseDetails(
                             user_id=int(user_id),
                             assignee_name=self.get_user_name_by_id(user_id),
-                            domain_wise_details=domain_wise_compliance_count
+                            domain_wise_details=domain_wise_compliance_count,
+                            year_wise_details= year_wise_compliance_count
                         )
                     )
             chart_data.append(
@@ -6043,7 +6105,55 @@ class ClientDatabase(Database):
             )
         return chart_data
 
-    def get_assigneewise_compliances_drilldown_data(self, assignee_id, domain_id, client_id):
+    def get_year_wise_assignee_compliances(
+        self, country_id, domain_id, client_id, compliance_ids
+    ):
+        current_year = self.get_date_time().year
+        start_year = current_year - 5
+        iter_year = start_year
+        year_wise_compliance_count = []
+        while iter_year <= current_year:
+            result = self.get_country_domain_timelines(
+                [country_id], [domain_id], [iter_year], client_id
+            )
+            from_date = result[0][1][0][1][0]["start_date"]
+            to_date = result[0][1][0][1][0]["end_date"]
+            columns = "sum(case when (approve_status = 1 and (due_date < completion_date or \
+            due_date = completion_date)) then 1 else 0 end) as complied, \
+            sum(case when ((approve_status = 0 or approve_status is null) and \
+            due_date > now()) then 1 else 0 end) as Inprogress, \
+            sum(case when ((approve_status = 0 or approve_status is null) and \
+            due_date < now()) then 1 else 0 end) as NotComplied, \
+            sum(case when (approve_status = 1 and completion_date > due_date) then 1 else 0 end)\
+            as DelayedCompliance"
+            condition = "compliance_id in (%s) and due_date \
+            between '%s' and '%s'" % (
+                compliance_ids, from_date, to_date
+            )
+            rows = self.get_data(
+                self.tblComplianceHistory, columns, condition
+            )
+            complied = 0 if rows[0][0] is None else int(rows[0][0])
+            inprogress = 0 if rows[0][1] is None else int(rows[0][1])
+            not_complied = 0 if rows[0][2] is None else int(rows[0][2])
+            delayed_compliance = 0 if rows[0][3] is None else  int(rows[0][3])
+            total = complied + inprogress + not_complied + delayed_compliance
+            year_wise_compliance_count.append(
+                dashboard.YearWise(
+                    year=str(iter_year),
+                    total_compliances=total,
+                    complied_count=complied,
+                    delayed_compliance=delayed_compliance,
+                    inprogress_compliance_count=inprogress,
+                    not_complied_count=not_complied
+                )
+            )
+            iter_year += 1
+        return year_wise_compliance_count
+
+    def get_assigneewise_compliances_drilldown_data(
+        self, assignee_id, domain_id, client_id, year
+    ):
         level_1_statutories_list = self.get_level_1_statutories_for_user(
             assignee_id, client_id, domain_id
         )
@@ -6061,7 +6171,9 @@ class ClientDatabase(Database):
             country_id_condition = "unit_id = '%d'" % unit_id
             rows = self.get_data(self.tblUnits, country_id_columns, country_id_condition)
             country_id = rows[0][0]
-            current_year = self.get_date_time().year
+            current_year = year
+            if year is None:
+                current_year = self.get_date_time().year
             result = self.get_country_domain_timelines(
                 [country_id], [domain_id], [current_year], client_id
             )
@@ -6084,7 +6196,7 @@ class ClientDatabase(Database):
                 join_type = "inner join"
                 join_condition = ["ch.compliance_id = c.compliance_id"]
                 where_condition = "completed_by = '{}' and unit_id = {} and \
-                due_date  between '{}' and '{}' and statutory_mapping like '%s%s'".format(
+                due_date  between '{}' and '{}' and statutory_mapping like '{}{}'".format(
                     assignee_id, unit_id, from_date, to_date, level_1_statutory, "%"
                 )
 
@@ -6110,11 +6222,12 @@ class ClientDatabase(Database):
 
                 for compliance in complied_rows:
                     complied_level_1_statutory_wise_compliances.append(
-                        dashboard.Level1Compliance(
+                        dashboard.AssigneeWiseLevel1Compliance(
                             compliance_name=compliance[4], description=compliance[5],
                             assignee_name=self.get_user_name_by_id(assignee_id),
-                            assigned_date=compliance[1], due_date=compliance[2],
-                            completion_date=compliance[3]
+                            assigned_date=self.datetime_to_string(compliance[1]), 
+                            due_date=self.datetime_to_string(compliance[2]),
+                            completion_date=None if compliance[3] is None else self.datetime_to_string(compliance[3])
                         )
                     )
                 if len(complied_level_1_statutory_wise_compliances) > 0:
@@ -6122,11 +6235,12 @@ class ClientDatabase(Database):
 
                 for compliance in delayed_rows:
                     delayed_level_1_statutory_wise_compliances.append(
-                        dashboard.Level1Compliance(
+                        dashboard.AssigneeWiseLevel1Compliance(
                             compliance_name=compliance[4], description=compliance[5],
                             assignee_name=self.get_user_name_by_id(assignee_id),
-                            assigned_date=compliance[1], due_date=compliance[2],
-                            completion_date=compliance[3]
+                            assigned_date=self.datetime_to_string(compliance[1]), 
+                            due_date=self.datetime_to_string(compliance[2]),
+                            completion_date=None if compliance[3] is None else self.datetime_to_string(compliance[3])
                         )
                     )
                 if len(delayed_level_1_statutory_wise_compliances) > 0:
@@ -6134,11 +6248,12 @@ class ClientDatabase(Database):
 
                 for compliance in inprogress_rows:
                     inprogress_level_1_statutory_wise_compliances.append(
-                        dashboard.Level1Compliance(
+                        dashboard.AssigneeWiseLevel1Compliance(
                             compliance_name=compliance[4], description=compliance[5],
                             assignee_name=self.get_user_name_by_id(assignee_id),
-                            assigned_date=compliance[1], due_date=compliance[2],
-                            completion_date=compliance[3]
+                            assigned_date=self.datetime_to_string(compliance[1]), 
+                            due_date=self.datetime_to_string(compliance[2]),
+                            completion_date=None if compliance[3] is None else self.datetime_to_string(compliance[3])
                         )
                     )
                 if len(inprogress_level_1_statutory_wise_compliances) > 0:
@@ -6146,11 +6261,12 @@ class ClientDatabase(Database):
 
                 for compliance in not_complied_rows:
                     not_complied_level_1_statutory_wise_compliances.append(
-                        dashboard.Level1Compliance(
+                        dashboard.AssigneeWiseLevel1Compliance(
                             compliance_name=compliance[4], description=compliance[5],
                             assignee_name=self.get_user_name_by_id(assignee_id),
-                            assigned_date=compliance[1], due_date=compliance[2],
-                            completion_date=compliance[3]
+                            assigned_date=self.datetime_to_string(compliance[1]), 
+                            due_date=self.datetime_to_string(compliance[2]),
+                            completion_date=None if compliance[3] is None else self.datetime_to_string(compliance[3])
                         )
                     )
                 if len(not_complied_level_1_statutory_wise_compliances) > 0:

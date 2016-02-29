@@ -3861,4 +3861,28 @@ def to_structure_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(da
 
 def to_structure_RecordType_dashboard_AssigneeWiseLevel1Compliance(data):
     from protocol import dashboard
-    return dashboard.TrendData.to_structure(data)
+    return dashboard.AssigneeWiseLevel1Compliance.to_structure(data)
+
+def to_structure_VectorType_RecordType_dashboard_YearWise(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_dashboard_YearWise(item))
+    return lst
+
+def to_structure_RecordType_dashboard_YearWise(data):
+    from protocol import dashboard
+    return dashboard.YearWise.to_structure(data)
+
+def to_structure_MapType_UnsignedIntegerType_32_RecordType_dashboard_AssigneeWiseCompliance(data):
+    data = parse_dictionary(data)
+    d = {}
+    for key, value in data.items():
+        key = to_structure_UnsignedIntegerType_32(key)
+        value = to_structure_RecordType_dashboard_AssigneeWiseCompliance(value)
+        d[key] = value
+    return d
+
+def to_structure_RecordType_dashboard_AssigneeWiseCompliance(data):
+    from protocol import dashboard
+    return dashboard.AssigneeWiseCompliance.to_inner_structure(data)

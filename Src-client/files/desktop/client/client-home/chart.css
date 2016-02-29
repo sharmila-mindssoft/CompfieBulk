@@ -1,4 +1,4 @@
-abbr
+  abbr
 {
     border-bottom: 1px dotted #666;
     cursor: help;
@@ -307,11 +307,11 @@ table.filtertable-1 tr td table tr td {
 }
 
 #assignee-wise-compliance {
-  width: 90%;
+  width: 100%;
   float: left;
-  margin-left: 5%;
+/*  margin-left: 5%;
   margin-right: 5%;
-}
+*/}
 
 .year-selection {
   float: right;
@@ -362,3 +362,77 @@ table.filtertable-1 tr td table tr td {
 .legal-entity-selection,
 .division-selection,
 .unit-selection,*/
+
+
+/*Popup For Assignee Wise Compliance*/
+
+.popupoverlay{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 1000;
+}
+.popupoverlay:target {
+  visibility: visible;
+  opacity: 1;
+
+}
+
+.popup-year {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 70%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup-year h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup-year .close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  transition: all 200ms;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: Arial;
+  text-decoration: none;
+  color: #333;
+}
+.popup-year .close:hover {
+  color: orange;
+}
+.popup-year .content {
+  max-height: 30%;
+  overflow: auto;
+}
+.popup-error-msg{
+  font-size: 0.813em;
+  color: red;
+}
+
+.assignee-name-for-popup{
+  color: #00f;
+  text-decoration: underline;
+}
+.popup-year-val {
+  width: 30%;
+}
+.delayedvalue{
+  color: #00f;
+  text-decoration: underline; 
+}
+.close{
+  cursor: pointer;
+}

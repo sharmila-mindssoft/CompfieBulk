@@ -884,7 +884,7 @@ function initClientMirror() {
 
     function getEscalationDrillDown(requestData, callback) {
         var request = [
-            "getEscalationDrillDown",
+            "GetEscalationsDrillDownData",
             requestData
         ];
         var callerName =  "client_dashboard";
@@ -965,16 +965,25 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback)
     }
 
-    function getTrendChartDrillDown(country_ids, domain_ids, filter_type,
-        filter_ids, year, callback) {
+    // function getTrendChartDrillDown(country_ids, domain_ids, filter_type,
+    //     filter_ids, year, callback) {
+    //     var request = [
+    //         "GetTrendChartDrillDownData", {
+    //             "country_ids": country_ids,
+    //             "domain_ids": domain_ids,
+    //             "filter_type": filter_type,
+    //             "filter_ids": filter_ids,
+    //             "year": year
+    //         }
+    //     ];
+    //     var callerName = "client_dashboard"
+    //     clientApiRequest(callerName, request, callback)
+    // }
+
+    function getTrendChartDrillDown(requestData, callback) {
         var request = [
-            "GetTrendChartDrillDownData", {
-                "country_ids": country_ids,
-                "domain_ids": domain_ids,
-                "filter_type": filter_type,
-                "filter_ids": filter_ids,
-                "year": year
-            }
+            "GetTrendChartDrillDownData",
+            requestData
         ];
         var callerName = "client_dashboard"
         clientApiRequest(callerName, request, callback)
@@ -989,9 +998,27 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getNotCompliedDrillDown(requestData, callback) {
+        var request = [
+            "GetNotCompliedDrillDown",
+            requestData
+        ];
+        var callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);
+    }
+
     function getComplianceApplicabilityChart(requestData, callback) {
         var request = [
             "GetComplianceApplicabilityStatusChart",
+            requestData
+        ];
+        var callerName = "client_dashboard";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getComplianceApplicabilityDrillDown(requestData, callback) {
+        var request = [
+            "GetComplianceApplicabilityStatusDrillDown",
             requestData
         ];
         var callerName = "client_dashboard";
@@ -1258,13 +1285,14 @@ function initClientMirror() {
 
     }
     function getAssigneewiseCompliancesDrilldown(
-        assignee_id, domain_id
+        assignee_id, domain_id, year, callback
     ){
         var request = [
             "GetAssigneeWiseComplianceDrillDown",
             {
                 "assignee_id": assignee_id,
-                "domain_id": domain_id
+                "domain_id": domain_id,
+                "year" : year
             }
         ];
         callerName = "client_dashboard";
@@ -1395,7 +1423,9 @@ function initClientMirror() {
         getTrendChart: getTrendChart,
         getTrendChartDrillDown: getTrendChartDrillDown,
         getNotCompliedData: getNotCompliedData,
+        getNotCompliedDrillDown: getNotCompliedDrillDown,
         getComplianceApplicabilityChart: getComplianceApplicabilityChart,
+        getComplianceApplicabilityDrillDown: getComplianceApplicabilityDrillDown,
 
         getSettings: getSettings,
         updateSettings: updateSettings,
