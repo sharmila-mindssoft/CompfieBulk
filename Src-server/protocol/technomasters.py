@@ -33,7 +33,8 @@ from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping,
     parse_structure_RecordType_core_FileList,
     parse_structure_VectorType_UnsignedIntegerType_32,
-    parse_structure_CustomTextType_500
+    parse_structure_CustomTextType_500,
+    parse_structure_VectorType_RecordType_core_ClientInchargePersons
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -72,7 +73,8 @@ from protocol.to_structure import (
     to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping,
     to_structure_RecordType_core_FileList,
     to_structure_VectorType_UnsignedIntegerType_32,
-    to_structure_CustomTextType_500
+    to_structure_CustomTextType_500,
+    to_structure_VectorType_RecordType_core_ClientInchargePersons
 )
 
 #
@@ -593,7 +595,7 @@ class GetClientGroupsSuccess(Response):
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
         users = data.get("users")
-        users = parse_structure_VectorType_RecordType_core_User(users)
+        users = parse_structure_VectorType_RecordType_core_ClientInchargePersons(users)
         client_list = data.get("client_list")
         client_list = parse_structure_VectorType_RecordType_core_GroupCompanyDetail(client_list)
         return GetClientGroupsSuccess(countries, domains, users, client_list)
@@ -602,7 +604,7 @@ class GetClientGroupsSuccess(Response):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "users": to_structure_VectorType_RecordType_core_User(self.users),
+            "users": to_structure_VectorType_RecordType_core_ClientInchargePersons(self.users),
             "client_list": to_structure_VectorType_RecordType_core_GroupCompanyDetail(self.client_list),
         }
 
