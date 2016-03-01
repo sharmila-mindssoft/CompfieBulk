@@ -3047,36 +3047,55 @@ class ClientDatabase(Database):
         )
 
         # Sum compliance for filter_type wise
-        filter_type_wise = {}
+        escalation_years = {}
 
         for filter_type, value in calculated_data.iteritems():
-            domain_wise = {}
             for key, val in value.iteritems():
-                compliance_list = []
                 for k , v in val.iteritems():
                     year = k
-                    inprogress = v["inprogress_count"]
-                    complied = v["complied_count"]
                     delayed = v["delayed_count"]
                     not_complied = v["not_complied_count"]
-                    country_id = v["country_id"]
-                    domain_id = v["domain_id"]
-                    compliance_count = core.NumberOfCompliances(
-                        domain_id, country_id, str(year), complied,
-                        delayed, inprogress, not_complied
-                    )
-                    compliance_list.append(compliance_count)
-                domain_wise[key] = compliance_list
-            filter_type_wise[filter_type] = domain_wise
-        final_result_list = []
-        for k, v in filter_type_wise.items():
-            data_list = []
-            for i, j in v.items():
-                data_list.extend(j)
-            chart = dashboard.ChartDataMap(k, data_list)
-            final_result_list.append(chart)
 
-        return dashboard.GetEscalationsChartSuccess(final_result_list)
+                    count_det = escalation_years.get(year)
+                    if count_det is None :
+                        count_det = dashboard.EscalationData(
+                            year,
+                            delayed,
+                            not_complied
+                        )
+                        # count_det["year"] = year
+                        # count_det["delayed_count"] = delayed
+                        # count_det["not_complied_count"] = not_complied
+
+                    else :
+                        count_det.delayed_compliance_count += int(delayed)
+                        count_det.not_complied_count += int(not_complied)
+
+                    escalation_years[year] = count_det
+
+        print escalation_years
+        years = escalation_years.keys()
+        print years.sort()
+        years.sort()
+        chart_data = []
+        for y in years:
+            chart_data.append(
+                escalation_years.get(y)
+            )
+
+        # final_result_list = []
+        # print
+        # print escalation_years
+        # for k, v in filter_type_wise.items():
+        #     data_list = []
+        #     for i, j in v.items():
+        #         data_list.extend(j)
+        #     chart = dashboard.ChartDataMap(k, data_list)
+        #     final_result_list.append(chart)
+
+        return dashboard.GetEscalationsChartSuccess(
+            years, chart_data
+        )
 
     def get_escalation_drill_down_data(self, request, session_user, client_id):
         domain_ids = request.domain_ids

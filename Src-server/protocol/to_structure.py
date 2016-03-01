@@ -3917,3 +3917,4 @@ def to_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_Doma
         value = to_structure_VectorType_RecordType_dashboard_DomainWiseYearConfiguration(value)
         d[key] = value
     return d
+
