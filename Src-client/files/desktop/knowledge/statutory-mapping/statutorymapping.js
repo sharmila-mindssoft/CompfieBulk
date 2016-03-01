@@ -1493,7 +1493,6 @@ function displayEdit (sm_Id) {
 }
 
 
-
 function load_stautorydates(){
   var rep_every = parseInt($('#repeats_every').val());
   var modResult = 12 % rep_every;
@@ -1543,6 +1542,7 @@ function load_stautorydates(){
     $('#sdate').show();
     $('.repeatby-view').show();
     $('#multipleview').hide();
+    //$('.multipleinput').prop("checked").false();
   }
 
 }
