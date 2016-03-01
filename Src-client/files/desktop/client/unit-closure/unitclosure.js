@@ -41,7 +41,6 @@ $('.close').click(function(){
 function unit_close(){
 	var unitidval=$('#unitidval').val();
 	var password=$('#password').val();
-	console.log(unitidval);
 	if(password==''){
 		$('.popup-error-msg').html("Enter password");
 	}

@@ -26,7 +26,7 @@ function initialize(){
         legalEntityList = data['legal_entities'];
         divisionsList = data['divisions'];
         unitList = data['units'];
-        level1List = data['level_1_statutories'];
+        level1List = data['users'];
     }
     function onFailure(error){
         console.log(error);

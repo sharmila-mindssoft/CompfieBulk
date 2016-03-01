@@ -1887,6 +1887,7 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t1.country_id = t6.country_id \
             and t6.user_id = %s" % (user_id, user_id)
+        q = q + " ORDER BY country_name, domain_name, statutory_nature_name"
         rows = self.select_all(q)
         columns = [
             "compliance_id", "statutory_mapping_id", "country_id",
@@ -1999,7 +2000,8 @@ class KnowledgeDatabase(Database):
             INNER JOIN tbl_user_countries t6 \
             ON t1.country_id = t6.country_id \
             and t6.user_id = %s \
-            WHERE t1.country_id = %s \
+            WHERE t1.approval_status in (1, 3) AND \
+            t1.country_id = %s \
             and t1.domain_id = %s \
             %s" % (
                 user_id, user_id,
@@ -2058,7 +2060,8 @@ class KnowledgeDatabase(Database):
                 mapping_list.extend(
                     [get_data(x) for x in mapping_ids[:-1].split(',') if get_data(x) is not None]
                 )
-            level_1_mappings[statutory_id] = mapping_list
+            if mapping_list:
+                level_1_mappings[statutory_id] = mapping_list
         return level_1_mappings
 
     #
@@ -4756,7 +4759,7 @@ class KnowledgeDatabase(Database):
             condition = "client_id in (%s)" % client_ids
 
         columns = "u.business_group_id, u.legal_entity_id, u.division_id, u.client_id"
-        tables = [self.tblUnits, self.tblClientGroups, self.tblBusinessGroups, 
+        tables = [self.tblUnits, self.tblClientGroups, self.tblBusinessGroups,
         self.tblLegalEntities, self.tblDivisions]
         aliases = ["u", "c", "bg","le", "d" ]
         join_conditions = [
