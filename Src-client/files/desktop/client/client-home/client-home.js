@@ -895,7 +895,97 @@ function updateComplianceApplicabilityDrillDown(status, data) {
     $(".graph-selections-bottom").hide();
     $(".drilldown-container").show();
     $(".btn-back").show();
-    showDrillDownRecord(status, data);
+    showComplianceApplicabilityDrillDownRecord(data);
+}
+
+function showComplianceApplicabilityDrillDownRecord(data){
+    var data =  data['drill_down_data'];
+    var sno = 1;
+    var count = 1;
+    var tableHeading = $('#templates .compliance-applicable-status .tr-heading');
+    var cloneHeading = tableHeading.clone();
+    $(".table-drilldown-list").append(cloneHeading);
+    $.each(data, function(key, value){
+        var tableUnit = $('#templates .compliance-applicable-status .tr-unit');
+        var cloneUnit = tableUnit.clone();
+        $(".unit-heading", cloneUnit).html(value["level1_statutory_name"]);
+        $(".table-drilldown-list").append(cloneUnit);
+        $('.table-drilldown-list').append('<tbody class="accordion-content accordion-content'+count+'"></tbody>');
+        if(count==1){
+            $('.accordion-content'+count).addClass("default");
+        }
+        var unitList = value["compliances"];
+        $.each(unitList, function(ke, valu){
+            var tableLevel1 = $('#templates .compliance-applicable-status .tr-level1');
+            var cloneLevel1 = tableLevel1.clone();
+            var disp_unitname = '';
+            for(unit in units){
+                if(units[unit]["unit_id"] == ke){
+                    disp_unitname = units[unit]["unit_name"]
+                }
+            }
+            $(".heading", cloneLevel1).html(disp_unitname);
+            $('.accordion-content'+count).append(cloneLevel1);
+            $.each(valu, function(k, val){
+                var frequency =  val["frequency_id"];
+                var statutory_date =  val["statutory_dates"];
+                var statutorydate = '';
+                var triggerbefore = '';
+                var repeats = 'Nil';
+                if(frequency == '2' || frequency == '3') repeats = 'Every';
+
+                for(j = 0; j < statutory_date.length; j++){
+                  var sDay = '';
+                  if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
+                  
+                  var sMonth = '';
+                  if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
+
+                  var tBefore = '';
+                  if(statutory_date[j]["trigger_before_days"] != null) tBefore = statutory_date[j]["trigger_before_days"] + " Days";
+
+                  if(sMonth == 1) sMonth = "Jan"
+                  else if(sMonth == 2) sMonth = "Feb"
+                  else if(sMonth == 3) sMonth = "Mar"
+                  else if(sMonth == 4) sMonth = "Apr"  
+                  else if(sMonth == 5) sMonth = "May"
+                  else if(sMonth == 6) sMonth = "Jun"
+                  else if(sMonth == 7) sMonth = "Jul"
+                  else if(sMonth == 8) sMonth = "Aug"
+                  else if(sMonth == 9) sMonth = "Sep"
+                  else if(sMonth == 10) sMonth = "Oct"
+                  else if(sMonth == 11) sMonth = "Nov"
+                  else if(sMonth == 12) sMonth = "Dec"
+                  
+                  statutorydate +=  sDay +' - '+ sMonth;
+                  triggerbefore +=  tBefore;
+                }
+
+                var tableRow = $('#templates .compliance-applicable-status .table-row-list');
+                var clone = tableRow.clone();
+                $(".sno", clone).html(sno);
+                $(".statutory-name", clone).html(val["statutory_provision"]);
+                $(".compliance-task-name", clone).html(val["compliance_task"])
+                $(".compliance-description-name", clone).html(val["description"]);
+                $(".penal-consequences-name", clone).html(val["penal_consequences"]);
+                $(".compliance-frequency-name", clone).html(val["frequency_id"]);
+                $(".repeats", clone).html(repeats);
+                $(".statutory-date", clone).html(statutorydate);
+                $(".trigger-before", clone).html(triggerbefore);
+                $('.accordion-content'+count).append(clone);
+                sno = sno + 1;
+            });
+        });
+        count = count + 1;
+    });
+    accordianType('accordion', 'accordion-toggle', 'accordion-content');
+}
+
+function accordianType(idtype, toggleClass, contentClass){
+    $('#'+idtype).find('.'+toggleClass).click(function(){
+        $(this).next().slideToggle('fast');
+        $("."+contentClass).not($(this).next()).slideUp('fast');
+    });
 }
 
 function showNotCompliedDrillDownRecord(data){
@@ -2950,8 +3040,10 @@ function loadDivisions () {
 }
 
 function loadUnits () {
+
     $('.unit-filter').empty();
     units = CHART_FILTERS_DATA.units;
+
     for (var i = 0; i < units.length; i++) {
         var unit = units[i];
         var option = getOptionElement(
@@ -3198,7 +3290,10 @@ function toDict (target, list, id_key, value_key) {
     };
 }
 
+
+
 $(document).ready(function () {
+
     hideLoader();
     if (!client_mirror.verifyLoggedIn()) {
         hideLoader();
@@ -3227,7 +3322,31 @@ $(document).ready(function () {
         initializeCharts();
         loadCharts();
     });
+
+    $("#fromdate" ).datepicker({
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        onClose: function( selectedDate ) {
+        $( "#fromdate" ).datepicker( "option", "minDate", selectedDate );
+      }
+    });
+    $( "#todate" ).datepicker({
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        onClose: function( selectedDate ) {
+        $( "#todate" ).datepicker( "option", "maxDate", selectedDate );
+        }
+    });
 });
+
 
 //Assignee Wise Compliance list - autocomplete for all fields
 function hidecountrylist(){
