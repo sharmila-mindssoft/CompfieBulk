@@ -741,10 +741,6 @@ $("#temp_addcompliance").click(function() {
     file_format = [];
     file_format.push(uploadFile);
   }
-
-  /*if(file_format.size < 0){
-    file_format = null;
-  } */
   var penal_consequences = $('#penal_consequences').val().trim();
   var compliance_frequency = $('#compliance_frequency').val().trim();
   var repeats_type = null;
@@ -752,6 +748,7 @@ $("#temp_addcompliance").click(function() {
   var duration = null;
   var duration_type= null;
   var statutory_date = null;
+  var statutory_day = null;
   var statutory_month = null;
   var trigger_before_days = null;
   var is_active = true;
@@ -773,17 +770,18 @@ $("#temp_addcompliance").click(function() {
     displayMessage("");
     if(compliance_frequency == "1"){
       if($('#statutory_date').val() != '')
-        statutory_date = parseInt($('#statutory_date').val());
-      
-
+        statutory_day = parseInt($('#statutory_date').val());
       if($('#statutory_month').val() != '')
         statutory_month = parseInt($('#statutory_month').val());
-
-
-      if($('#triggerbefore').val().trim().length > 0)
+      if($('#triggerbefore').val().trim().length > 0){
         trigger_before_days = parseInt($('#triggerbefore').val());
+        if(trigger_before_days > 100){
+          displayMessage("Trigger before days should not exceed 100");
+          return false;
+        }
+      }
 
-      statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
+      statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
       statutory_dates.push(statutory_date);
       }else if (compliance_frequency == "2" || compliance_frequency == "3"){
         repeats_type = parseInt($('#repeats_type').val());
@@ -802,34 +800,58 @@ $("#temp_addcompliance").click(function() {
         }
         else{
           if(repeats_type == '2' && $('.multipleinput').prop("checked") == true){
-            for(var i=1;i<=6;i++){
-              if($('#multiple_statutory_month'+i).val() != "" || $('#multiple_statutory_month'+i).val() != '' || $('#multiple_triggerbefore'+i).val().trim().length > 0){
-                if($('#multiple_statutory_date'+i).val() != '')
-                  statutory_date = parseInt($('#multiple_statutory_date'+i).val());
 
-                if($('#multiple_statutory_month'+i).val() != '')
-                  statutory_month = parseInt($('#multiple_statutory_month'+i).val());
+            var rep_every = parseInt($('#repeats_every').val());
+            var maxCount = 0;
 
-                if($('#multiple_triggerbefore'+i).val().trim().length > 0)
-                  trigger_before_days = parseInt($('#multiple_triggerbefore'+i).val());
+            if(rep_every == 1 || rep_every == 12){
+              maxCount = 1;
+            }else if (rep_every == 2){
+              maxCount = 6;
+            }else if (rep_every == 3){
+              maxCount = 4;
+            }else if (rep_every == 4){
+              maxCount = 3;
+            }else{
+              maxCount = 2;
+            }
+            for(var i=1;i<=maxCount;i++){
+              statutory_day = null;
+              statutory_month = null;
+              trigger_before_days = null;
+              if($('#multiple_statutory_month'+i).val() == '' || $('#multiple_statutory_month'+i).val() == '' || $('#multiple_triggerbefore'+i).val().trim().length == 0){
+                displayMessage("Statutory dates and trigger dates mandatory for multiple inputs");
+                return false;
+              }else{
+                statutory_day = parseInt($('#multiple_statutory_date'+i).val());
+                statutory_month = parseInt($('#multiple_statutory_month'+i).val());
+                trigger_before_days = parseInt($('#multiple_triggerbefore'+i).val());
+                if(trigger_before_days > 100){
+                  displayMessage("Trigger before days should not exceed 100");
+                  return false;
+                }
 
-                  statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
-                  statutory_dates.push(statutory_date);
+                statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
+                statutory_dates.push(statutory_date);
               }
             }
           }else{
             if($('#single_statutory_date').val() != '' || $('#single_statutory_month').val() != '' || $('#single_triggerbefore').val().trim().length > 0){
               
               if($('#single_statutory_date').val() != '')
-                 statutory_date = parseInt($('#single_statutory_date').val());
+                 statutory_day = parseInt($('#single_statutory_date').val());
 
               if($('#single_statutory_month').val() != '')
                 statutory_month = parseInt($('#single_statutory_month').val());
             
               if($('#single_triggerbefore').val().trim().length > 0)
                 trigger_before_days = parseInt($('#single_triggerbefore').val());
+              if(trigger_before_days > 100){
+                displayMessage("Trigger before days should not exceed 100");
+                return false;
+              }
 
-            statutory_date = mirror.statutoryDates(statutory_date, statutory_month, trigger_before_days);
+            statutory_date = mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
             statutory_dates.push(statutory_date);
             }
           }
@@ -1542,7 +1564,7 @@ function load_stautorydates(){
     $('#sdate').show();
     $('.repeatby-view').show();
     $('#multipleview').hide();
-    //$('.multipleinput').prop("checked").false();
+    $('.multipleinput').prop("checked", false);
   }
 
 }
