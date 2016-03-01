@@ -69,7 +69,20 @@ class Database(object) :
         11 : "Nov",
         12 : "Dec",
     }
-
+    string_full_months = {
+        1 : "January",
+        2 : "February",
+        3 : "March",
+        4 : "April",
+        5 : "May",
+        6 : "June",
+        7 : "July",
+        8 : "August",
+        9 : "September",
+        10 : "October",
+        11 : "November",
+        12 : "December",
+    }
     end_day_of_month = {
          1 : 31,
          2 : 28,
@@ -3061,7 +3074,7 @@ class KnowledgeDatabase(Database):
         for user in users :
             results.append(
                 core.ClientInchargePersons(
-                    user["user_id"], user["employee_name"], 
+                    user["user_id"], user["employee_name"],
                     bool(user["is_active"]), [int(x) for x in user["countries"].split(',')],
                     [int(x) for x in user["domains"].split(",")]
                 )
