@@ -1,7 +1,7 @@
 import os
 from protocol import (
     core, general, clienttransactions, dashboard,
-    clientreport, clientadminsettings
+    clientreport, clientadminsettings, clientuser
 )
 from database import Database
 import json
@@ -1975,6 +1975,14 @@ class ClientDatabase(Database):
             if len(rows) > 0:
                 employee_name = "{} - {}".format(rows[0][0], rows[0][1])
         return employee_name
+
+    def get_unit_name_by_id(self, unit_id):
+        columns = "concat(unit_code, '-', unit_name)"
+        condition = "unit_id ='{}'".format(unit_id)
+        rows = self.get_data(
+            self.tblUnits, columns, condition
+        )
+        return rows[0][0]
 
 #
 # Assign Compliance
@@ -6793,3 +6801,113 @@ class ClientDatabase(Database):
         return clientreport.GetComplianceTaskApplicabilityStatusReportSuccess(
             applicable_list, not_applicable_list, not_opted_list
         )
+
+    def get_on_occurrence_compliances_for_user(self, session_user):
+        user_domain_ids = self.get_user_domains(session_user)
+        user_unit_ids = self.get_user_unit_ids(session_user)
+        
+        if user_domain_ids is not None and user_unit_ids is not None:
+            unit_wise_compliances = {}
+            for unit in [int(x) for x in user_unit_ids.split(",")]:
+                columns = "ac.compliance_id, c.statutory_provision, concat(document_name,'-',\
+                compliance_task), compliance_description, duration_type, duration"
+                tables = [
+                    self.tblAssignedCompliances, self.tblCompliances, 
+                    self.tblComplianceDurationType
+                ]
+                aliases = [
+                    "ac", "c", "cd"
+                ]
+                join_type = "inner join"
+                join_condition = [
+                    "ac.compliance_id = c. compliance_id", 
+                    "c.duration_type_id = cd.duration_type_id"
+                ]
+                where_condition = "ac.unit_id = (%d) and c.domain_id in (%s) and \
+                c.frequency_id = 4" % (
+                    unit, user_domain_ids
+                )
+                rows = self.get_data_from_multiple_tables(
+                    columns, tables, aliases, join_type,
+                    join_condition, where_condition 
+                )
+                columns = [
+                    "compliance_id", "statutory_provision", "compliance_name", 
+                    "description", "duration_type", "duration"
+                ]
+                result = self.convert_to_dict(rows, columns)
+                compliances = []
+                for row in result:
+                    duration = "%s %s" % (row["duration"], row["duration_type"])
+                    compliances.append(
+                        clientuser.ComplianceOnOccurrence(
+                            row["compliance_id"], row["statutory_provision"], 
+                            row["compliance_name"], row["description"], 
+                            duration
+                        )
+                    )
+                if len(compliances) > 0:
+                    unit_name = self.get_unit_name_by_id(unit)
+                    unit_wise_compliances[unit_name] = compliances
+        return unit_wise_compliances
+
+    def start_on_occurrence_task(
+        self, compliance_id, start_date, unit_id, duration, session_user, client_id
+    ):
+        columns = [
+            "compliance_history_id", "unit_id", "compliance_id", 
+            "start_date", "due_date", "completed_by"
+        ]
+        compliance_history_id = self.get_new_id(
+            "compliance_history_id", self.tblComplianceHistory, client_id
+        )
+        start_date = self.string_to_datetime(start_date)
+        duration = duration.split(" ")
+        duration_value = duration[0]
+        duration_type = [1]
+        due_date = None
+        if duration_type == "Day(s)":
+            due_date = start_date + datetime.timedelta(days = duration_value)
+        elif duration_type == "Hour(s)":
+            due_date = start_date + datetime.timedelta(hours = duration_value)
+        values = [
+            compliance_history_id, unit_id, compliance_id, start_date, due_date,
+            session_user 
+        ]
+        if self.is_two_levels_of_approval():
+            approval_columns = "approval_person, concurrence_person"
+            approval_condition = " compliance_id = '%d' and unit_id = '%d' " % (
+                compliance_id, unit_id
+            )
+            rows = self.get_data(
+                self.tblAssignedCompliances, approval_columns, approval_condition
+            )
+            concurred_by = rows[0][1]
+            approved_by = rows[0][0]
+            columns.append("concurred_by")
+            values.append(concurred_by)
+            columns.append("approved_by")
+            values.append(approved_by)
+        else:
+            approval_columns = "approval_person"
+            approval_condition = " compliance_id = '%d' and unit_id = '%d' " % (
+                compliance_id, unit_id
+            )
+            rows = self.get_data(
+                self.tblAssignedCompliances, approval_columns, approval_condition
+            )
+            print rows
+            approved_by = rows[0][0]
+            columns.append("approved_by")
+            values.append(approved_by)
+        try:
+            email.notify_task_assigned(
+                self, receiver, assignee_name, compliance_name, due_date
+            )
+        except Exception, e:
+            print "Error sending email :{}".format(e)
+        return self.insert(
+            self.tblComplianceHistory, columns, values
+        )
+
+        

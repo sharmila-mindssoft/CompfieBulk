@@ -586,6 +586,18 @@
 					user_id, domain_id, year
 				);
 			}
+			function getOnOccurrenceList(){
+				client_mirror.getOnOccurrenceCompliances(callback);
+			}
+			function startOnOccurrenceCompliance(){
+				compliance_id = 12
+				start_date = "1-Dec-2016"
+				unit_id = 2
+				duration = "12days"
+				client_mirror.startOnOccurrenceCompliance(
+			        compliance_id, start_date, unit_id, duration, callback
+			    );
+			}
 		</script>
 	</head>
 	<body>
@@ -847,6 +859,14 @@
 			<div>
 				<button onclick="getUnitWiseComplianceReport()">
 					Get Unit Wise Compliane Report
+				</button>
+			</div>
+			<div>
+				<button onclick="getOnOccurrenceList()">
+					Get On Occurrence Compliance List
+				</button>
+				<button onclick="startOnOccurrenceCompliance()">
+					start On Occurrence Compliance
 				</button>
 			</div>
 		</fieldset>
