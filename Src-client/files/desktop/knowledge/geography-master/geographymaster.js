@@ -29,27 +29,7 @@ $(".error-message").html('');
 $(".tbody-geography-level").find("div").remove();
 });
 
-function GetGeographies(){
-  function onSuccess(data){
-    geographyLevelsList = data["geography_levels"];
-    geographiesList = data["geographies"];
-    countriesList = data["countries"];
-    loadGeographiesList(geographiesList);
-  }
-  function onFailure(error){
-    displayMessage(error);
-  }
-  mirror.getGeographies(
-    function (error, response) {
-          if (error == null){
-            onSuccess(response);
-          }
-          else {
-            onFailure(error);
-          }
-      }
-  );
-}
+
 
 function loadGeographiesList(geographiesList) {
   var j = 1;
@@ -195,11 +175,24 @@ function loadGeographyFirstLevels(saverecord){
 
 //check & uncheck list data
 function activate(element, id, type,country, level){
-  $(type).each( function( index, el ) {
+  var chkstatus = $(element).attr('class');
+  if(chkstatus == 'list'+level+' active'){
+    $(element).removeClass("active");
+    for(var i=level+1; i<=10; i++){
+      $('#ulist'+i).empty();
+    }
+  }else{
+    $(type).each( function( index, el ) {
     $(el).removeClass( "active" );
       });
    $(element).addClass("active");
      load(id,level,country);
+  }
+  /*$(type).each( function( index, el ) {
+    $(el).removeClass( "active" );
+      });
+   $(element).addClass("active");
+     load(id,level,country);*/
 }
 
 //load geographymapping sub level data dynamically
@@ -472,6 +465,28 @@ function loadedit(id,level,country,levelstagemax){
   }
   $('#ulist'+setlevelstage).append(str);
   }
+}
+
+function GetGeographies(){
+  function onSuccess(data){
+    geographyLevelsList = data["geography_levels"];
+    geographiesList = data["geographies"];
+    countriesList = data["countries"];
+    loadGeographiesList(geographiesList);
+  }
+  function onFailure(error){
+    displayMessage(error);
+  }
+  mirror.getGeographies(
+    function (error, response) {
+          if (error == null){
+            onSuccess(response);
+          }
+          else {
+            onFailure(error);
+          }
+      }
+  );
 }
 
 $(document).ready(function(){
