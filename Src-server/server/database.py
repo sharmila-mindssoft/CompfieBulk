@@ -183,6 +183,33 @@ class Database(object) :
         query += " where %s" % where_condition
         return self.select_all(query)
 
+    def get_full_join_data(
+        self, columns, tables, aliases,
+        join_conditions, where_condition
+    ):
+        join_types = ["LEFT JOIN", "RIGHT JOIN"]
+        query = ""
+        for join_type in join_types:
+            query += "SELECT %s FROM " % columns
+            for index, table in enumerate(tables):
+                if index == 0:
+                    query += "%s  %s  %s" % (
+                        table, aliases[index], join_type
+                    )
+                elif index <= len(tables) - 2:
+                    query += " %s %s on (%s) %s " % (
+                        table, aliases[index],
+                        join_conditions[index-1], join_type
+                    )
+                else:
+                    query += " %s %s on (%s)" % (
+                        table, aliases[index],
+                        join_conditions[index-1]
+                    )
+            query += " UNION "
+        query += " where %s" % where_condition
+        return self.select_all(query)
+
     def insert(self, table, columns, values, client_id=None) :
         columns = ",".join(columns)
         stringValue = ""
@@ -4782,28 +4809,31 @@ class KnowledgeDatabase(Database):
         if client_ids is not None:
             condition = "client_id in (%s)" % client_ids
 
-        columns = "u.business_group_id, u.legal_entity_id, u.division_id, \
-        u.client_id"
-        tables = [self.tblUnits, self.tblClientGroups, self.tblBusinessGroups,
-        self.tblLegalEntities, self.tblDivisions]
-        aliases = ["u", "c", "bg","le", "d" ]
-        join_conditions = [
-            "u.client_id = c.client_id",
-            "u.business_group_id = bg.business_group_id",
-            "u.legal_entity_id = le.legal_entity_id",
-            "u.division_id = d.division_id"
-        ]
-        join_type = "inner join"
-        condition = " u.client_id in (select client_id from %s where user_id = %d) \
-        group by u.business_group_id, u.legal_entity_id, u.division_id, u.client_id \
-        order by group_name, business_group_name, legal_entity_name, \
-        division_name" % (
-            self.tblUserClients, user_id
+        query = "SELECT business_group_id, legal_entity_id, division_id, client_id, \
+        group_name, business_group_name, legal_entity_name, division_name \
+        from ( \
+        SELECT c.group_name, bg.business_group_name, \
+        le.legal_entity_name, d.division_name, u.business_group_id,\
+        u.legal_entity_id, u.division_id, u.client_id \
+        FROM tbl_units  u  \
+        LEFT JOIN tbl_client_groups c on (u.client_id = c.client_id) \
+        LEFT JOIN  tbl_business_groups bg on (u.business_group_id = bg.business_group_id) \
+        LEFT JOIN  tbl_legal_entities le on (u.legal_entity_id = le.legal_entity_id) \
+        LEFT JOIN  tbl_divisions d on (u.division_id = d.division_id) \
+        where  u.client_id in (select client_id from tbl_user_clients where user_id = '%d') \
+        UNION \
+        SELECT c.group_name, bg.business_group_name, le.legal_entity_name, d.division_name, u.business_group_id, u.legal_entity_id, u.division_id, u.client_id \
+        FROM tbl_units  u  \
+        RIGHT JOIN tbl_client_groups c on (u.client_id = c.client_id) \
+        RIGHT JOIN  tbl_business_groups bg on (u.business_group_id = bg.business_group_id) \
+        RIGHT JOIN  tbl_legal_entities le on (u.legal_entity_id = le.legal_entity_id) \
+        RIGHT JOIN  tbl_divisions d on (u.division_id = d.division_id) \
+        where  u.client_id in (select client_id from tbl_user_clients where user_id = '%d')) a \
+        group by business_group_id, legal_entity_id, division_id, client_id  \
+        order by group_name, business_group_name, legal_entity_name, division_name" % (
+            user_id, user_id
         )
-        rows = self.get_data_from_multiple_tables(
-            columns, tables, aliases, join_type,
-            join_conditions, condition
-        )
+        rows = self.select_all(query)
         unit_details = []
         for row in rows:
             detail_columns = "country_id"
