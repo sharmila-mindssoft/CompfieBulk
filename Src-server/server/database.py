@@ -246,9 +246,6 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
-        # if client_id is not None:
-        #     return self.execute(query, client_id)
-
         return self.execute(query)
 
     def on_duplicate_key_update(
@@ -4853,6 +4850,8 @@ class KnowledgeDatabase(Database):
             country_rows = self.get_data(self.tblUnits, detail_columns, country_condition)
             country_wise_units = {}
             division_is_active = bool(1)
+            active_count = 0
+            deactive_count = 0
             for country_row in country_rows:
                 unit_columns = "unit_id, geography_id, unit_code, unit_name, industry_id, address, "+\
                 "postal_code, domain_ids, is_active"
@@ -4863,8 +4862,13 @@ class KnowledgeDatabase(Database):
                     units.append(technomasters.UnitDetails(unit_detail[0], unit_detail[1],
                         unit_detail[2], unit_detail[3], unit_detail[4], unit_detail[5],
                         unit_detail[6], [int(x) for x in unit_detail[7].split(",")], bool(unit_detail[8])))
-                    division_is_active = division_is_active or bool(unit_detail[8])
+                    if bool(unit_detail[8]) == True :
+                        active_count += 1 
+                    else:
+                        deactive_count += 1
                 country_wise_units[country_row[0]] = units
+            if active_count <= 0:
+                division_is_active = bool(0)
             unit_details.append(technomasters.Unit(row[0], row[1], row[2], row[3], country_wise_units,division_is_active))
         return unit_details
 
