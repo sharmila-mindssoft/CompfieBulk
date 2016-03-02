@@ -2378,6 +2378,8 @@ class KnowledgeDatabase(Database):
             file_name = ""
             file_size = 0
             file_content = ""
+            if document_name is None:
+                document_name = ""
 
             if file_list is not None :
                 file_list = file_list[0]
@@ -2439,7 +2441,13 @@ class KnowledgeDatabase(Database):
                 self.convert_base64_to_file(file_name, file_content)
                 is_format = False
             compliance_ids.append(compliance_id)
-            compliance_names.append(document_name + "-" + compliance_task)
+            print document_name
+            if document_name is not "" :
+                compliance_names.append(
+                    document_name + "-" + compliance_task
+                )
+            else :
+                compliance_names.append(compliance_task)
             # if (self.execute(query)) :
             #     compliance_ids.append(compliance_id)
 
@@ -2806,6 +2814,7 @@ class KnowledgeDatabase(Database):
         self, notification_id, domain_id, country_id,
         user_id=None, form_id=None
     ):
+        user_ids = []
         q = "INSERT INTO tbl_notifications_status \
                 (notification_id, user_id, read_status) VALUES \
                 (%s, %s, 0)"
@@ -2827,9 +2836,14 @@ class KnowledgeDatabase(Database):
             if rows :
                 for r in rows :
                     notify_user_id = r[0]
+                    user_ids.append(notify_user_id)
                     self.execute(q % (notification_id, notify_user_id))
         if user_id is not None :
-            self.execute(q % (notification_id, user_id))
+            if user_ids:
+                if user_id not in user_ids:
+                    self.execute(q % (notification_id, user_id))
+            else :
+                self.execute(q % (notification_id, user_id))
 
     def get_statutory_assigned_to_client(self, mapping_id):
         query = "SELECT distinct t1.unit_id, t1.client_id, \
@@ -4140,6 +4154,8 @@ class KnowledgeDatabase(Database):
                     domain_id, country_id, industry_id, geography_id,
                     str("%" + str(geography_id) + ",%"),
                 )
+        print
+        print query
         rows = self.select_all(query)
         columns = [
             "statutory_mapping_id", "statutory_nature_id",
@@ -5151,10 +5167,10 @@ class KnowledgeDatabase(Database):
         return employee_name
 
     def get_client_ids(
-        self, 
+        self,
     ):
         columns = "group_concat(client_id)"
-        condition = "1" 
+        condition = "1"
         rows = self.get_data(
             self.tblUserClients, columns, condition
         )
