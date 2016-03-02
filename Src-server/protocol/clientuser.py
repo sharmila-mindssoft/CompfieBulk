@@ -372,17 +372,23 @@ class ComplianceDetail(object):
 class ComplianceOnOccurrence(object):
     def __init__(
         self, compliance_id, statutory_provision, compliance_name, 
-        description, complete_within_days
+        description, complete_within_days, unit_id
     ):
         self.compliance_id = compliance_id
         self.statutory_provision = statutory_provision
         self.compliance_name = compliance_name
         self.description = description
         self.complete_within_days = complete_within_days
+        self.unit_id = unit_id
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_id", "statutory_provision", "compliance_name", "description", "complete_within_days"])
+        data = parse_dictionary(
+            data, [
+                "compliance_id", "statutory_provision", "compliance_name", 
+                "description", "complete_within_days", "unit_id"
+            ]
+        )
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         statutory_provision = data.get("statutory_provision")
@@ -393,14 +399,20 @@ class ComplianceOnOccurrence(object):
         description = parse_structure_CustomTextType_500(description)
         complete_within_days = data.get("complete_within_days")
         complete_within_days = parse_structure_CustomTextType_50(complete_within_days)
-        return ComplianceOnOccurrence(compliance_id, statutory_provision, compliance_name, description, complete_within_days)
+        unit_id = data.get("unit_id")
+        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
+        return ComplianceOnOccurrence(
+            compliance_id, statutory_provision, compliance_name, description, 
+            complete_within_days, unit_id
+        )
 
     def to_structure(self):
         return {
-            "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
+            "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
             "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
             "compliance_name": to_structure_CustomTextType_100(self.compliance_name),
             "description": to_structure_CustomTextType_500(self.description),
             "complete_within_days": to_structure_CustomTextType_50(self.complete_within_days),
+            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
         }
 
