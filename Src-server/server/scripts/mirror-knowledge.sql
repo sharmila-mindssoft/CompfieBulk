@@ -518,6 +518,7 @@ CREATE TABLE `tbl_statutory_notifications_log` (
 
 DROP TABLE IF EXISTS `tbl_statutory_notifications_units`;
 CREATE TABLE `tbl_statutory_notifications_units` (
+  `statutory_notification_unit_id` int(11) NOT NULL,
   `statutory_notification_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `business_group_id` int(11) NULL DEFAULT NULL,
@@ -623,6 +624,7 @@ CREATE TABLE `tbl_client_statutories` (
 
 DROP TABLE IF EXISTS `tbl_client_compliances`;
 CREATE TABLE `tbl_client_compliances` (
+  `client_compliance_id` int(11) NOT NULL,
   `client_statutory_id` int(11) NOT NULL,
   `compliance_id` int(11) NOT NULL,
   `statutory_id` int(11) NOT NULL,
