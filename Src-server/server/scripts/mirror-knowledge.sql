@@ -225,6 +225,7 @@ CREATE TABLE `tbl_statutory_mappings` (
   `approval_status` tinyint(4) DEFAULT 0,
   `rejected_reason` varchar(500) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT 1,
+  `statutory_mapping` longtext DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
@@ -391,6 +392,7 @@ CREATE TABLE `tbl_user_clients` (
 
 DROP TABLE IF EXISTS `tbl_client_configurations`;
 CREATE TABLE `tbl_client_configurations` (
+  `client_config_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
