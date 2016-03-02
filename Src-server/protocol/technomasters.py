@@ -34,7 +34,9 @@ from protocol.parse_structure import (
     parse_structure_RecordType_core_FileList,
     parse_structure_VectorType_UnsignedIntegerType_32,
     parse_structure_CustomTextType_500,
-    parse_structure_VectorType_RecordType_core_ClientInchargePersons
+    parse_structure_VectorType_RecordType_core_ClientInchargePersons,
+    parse_structure_OptionalType_RecordType_core_FileList,
+    parse_structure_OptionalType_CustomTextType_250
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -74,7 +76,9 @@ from protocol.to_structure import (
     to_structure_RecordType_core_FileList,
     to_structure_VectorType_UnsignedIntegerType_32,
     to_structure_CustomTextType_500,
-    to_structure_VectorType_RecordType_core_ClientInchargePersons
+    to_structure_VectorType_RecordType_core_ClientInchargePersons,
+    to_structure_OptionalType_RecordType_core_FileList,
+    to_structure_OptionalType_CustomTextType_250
 )
 
 #
@@ -208,7 +212,7 @@ class UpdateClientGroup(Request):
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
         logo = data.get("logo")
-        logo = parse_structure_RecordType_core_FileList(logo)
+        logo = parse_structure_OptionalType_RecordType_core_FileList(logo)
         contract_from = data.get("contract_from")
         contract_from = parse_structure_CustomTextType_20(contract_from)
         contract_to = data.get("contract_to")
@@ -231,7 +235,7 @@ class UpdateClientGroup(Request):
             "group_name": to_structure_CustomTextType_50(self.group_name),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "logo": to_structure_RecordType_core_FileList(self.logo),
+            "logo": to_structure_OptionalType_RecordType_core_FileList(self.logo),
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
             "incharge_persons": to_structure_VectorType_UnsignedIntegerType_32(self.incharge_persons),
@@ -581,29 +585,46 @@ class Response(object):
         raise NotImplementedError
 
 class GetClientGroupsSuccess(Response):
-    def __init__(self, countries, domains, users, client_list):
+    def __init__(
+        self, countries, domains, users, client_list, client_countries, client_domains
+    ):
         self.countries = countries
         self.domains = domains
         self.users = users
         self.client_list = client_list
+        self.client_countries = client_countries
+        self.client_domains = client_domains
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "users", "client_list"])
+        data = parse_dictionary(
+            data, [
+                "countries", "domains", "users", "client_list", 
+                "client_countries", "client_domains"
+            ]
+        )
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+        client_countries = data.get("client_countries")
+        client_countries = parse_structure_VectorType_RecordType_core_Country(client_countries)
+        client_domains = data.get("client_domains")
+        client_domains = parse_structure_VectorType_RecordType_core_Domain(client_domains)
         users = data.get("users")
         users = parse_structure_VectorType_RecordType_core_ClientInchargePersons(users)
         client_list = data.get("client_list")
         client_list = parse_structure_VectorType_RecordType_core_GroupCompanyDetail(client_list)
-        return GetClientGroupsSuccess(countries, domains, users, client_list)
+        return GetClientGroupsSuccess(
+            countries, domains, users, client_list, client_countries, client_domains
+        )
 
     def to_inner_structure(self):
         return {
             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
+            "client_countries": to_structure_VectorType_RecordType_core_Country(self.client_countries),
+            "client_domains": to_structure_VectorType_RecordType_core_Domain(self.client_domains),
             "users": to_structure_VectorType_RecordType_core_ClientInchargePersons(self.users),
             "client_list": to_structure_VectorType_RecordType_core_GroupCompanyDetail(self.client_list),
         }
@@ -851,7 +872,9 @@ class UnitDetails(object):
 
 
 class GetClientsSuccess(Response):
-    def __init__(self, countries, domains, group_companies, business_groups, legal_entities, divisions, units, geography_levels, geographies, industries):
+    def __init__(self, countries, domains, group_companies, business_groups, 
+        legal_entities, divisions, units, geography_levels, geographies, 
+        industries, client_domains):
         self.countries = countries
         self.domains = domains
         self.group_companies = group_companies
@@ -862,14 +885,19 @@ class GetClientsSuccess(Response):
         self.geography_levels = geography_levels
         self.geographies = geographies
         self.industries = industries
+        self.client_domains = client_domains
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "group_companies", "business_groups", "legal_entities", "divisions", "units", "geography_levels", "geographies", "industries"])
+        data = parse_dictionary(data, ["countries", "domains", "group_companies", 
+            "business_groups", "legal_entities", "divisions", "units", 
+            "geography_levels", "geographies", "industries", "client_domains"])
         countries = data.get("countries")
         countries = parse_structure_VectorType_RecordType_core_Country(countries)
         domains = data.get("domains")
         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+        client_domains = data.get("client_domains")
+        client_domains = parse_structure_VectorType_RecordType_core_Domain(client_domains)
         group_companies = data.get("group_companies")
         group_companies = parse_structure_VectorType_RecordType_core_GroupCompany(group_companies)
         business_groups = data.get("business_groups")
@@ -886,7 +914,11 @@ class GetClientsSuccess(Response):
         geographies = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping(geographies)
         industries = data.get("industries")
         industries = parse_structure_VectorType_RecordType_core_Industry(industries)
-        return GetClientsSuccess(countries, domains, group_companies, business_groups, legal_entities, divisions, units, geography_levels, geographies, industries)
+        return GetClientsSuccess(
+            countries, domains, group_companies, 
+            business_groups, legal_entities, divisions, units, geography_levels, 
+            geographies, industries, client_domains
+        )
 
     def to_inner_structure(self):
         return {
@@ -899,7 +931,8 @@ class GetClientsSuccess(Response):
             "units": to_structure_VectorType_RecordType_technomasters_Unit(self.units),
             "industries": to_structure_VectorType_RecordType_core_Industry(self.industries),
             "geography_levels": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level(self.geography_levels),
-            "geographies": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping(self.geographies)
+            "geographies": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping(self.geographies),
+            "client_domains": to_structure_VectorType_RecordType_core_Domain(self.client_domains),
         }
 
 class SaveClientSuccess(Response):
@@ -1155,7 +1188,11 @@ class RequestFormat(object):
 #
 
 class LICENCE_HOLDER_DETAILS(object):
-    def __init__(self, user_id, user_name, email_id, contact_no, seating_unit_name, address, total_disk_space, used_disk_space):
+    def __init__(
+        self, user_id, user_name, email_id, contact_no, 
+        seating_unit_name, address, total_disk_space, used_disk_space,
+        is_active, is_admin
+    ):
         self.user_id = user_id
         self.user_name = user_name
         self.email_id = email_id
@@ -1164,10 +1201,17 @@ class LICENCE_HOLDER_DETAILS(object):
         self.address = address
         self.total_disk_space = total_disk_space
         self.used_disk_space = used_disk_space
+        self.is_active = is_active
+        self.is_admin = is_admin
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "user_name", "email_id", "contact_no", "seating_unit_name", "address", "total_disk_space", "used_disk_space"])
+        data = parse_dictionary(data, [
+                "user_id", "user_name", "email_id", "contact_no", 
+                "seating_unit_name", "address", "total_disk_space", 
+                "used_disk_space", "is_active", "is_admin"
+            ]
+        )
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         user_name = data.get("user_name")
@@ -1179,12 +1223,19 @@ class LICENCE_HOLDER_DETAILS(object):
         seating_unit_name = data.get("seating_unit_name")
         seating_unit_name = parse_structure_CustomTextType_50(seating_unit_name)
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
+        address = parse_structure_OptionalType_CustomTextType_250(address)
         total_disk_space = data.get("total_disk_space")
         total_disk_space = parse_structure_Float(total_disk_space)
         used_disk_space = data.get("used_disk_space")
         used_disk_space = parse_structure_Float(used_disk_space)
-        return LICENCE_HOLDER_DETAILS(user_id, user_name, email_id, contact_no, seating_unit_name, address, total_disk_space, used_disk_space)
+        is_active = data.get("is_active")
+        is_active = parse_structure_Bool(is_active)
+        is_admin = data.get("is_admin")
+        is_admin = parse_structure_Bool(is_admin)
+        return LICENCE_HOLDER_DETAILS(
+            user_id, user_name, email_id, contact_no, seating_unit_name, 
+            address, total_disk_space, used_disk_space, is_active, is_admin
+        )
 
     def to_structure(self):
         return {
@@ -1193,9 +1244,11 @@ class LICENCE_HOLDER_DETAILS(object):
             "email_id": to_structure_CustomTextType_100(self.email_id),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
             "seating_unit_name": to_structure_CustomTextType_50(self.seating_unit_name),
-            "address": to_structure_CustomTextType_250(self.address),
+            "address": to_structure_OptionalType_CustomTextType_250(self.address),
             "total_disk_space": to_structure_Float(self.total_disk_space),
             "used_disk_space": to_structure_Float(self.used_disk_space),
+            "is_active": to_structure_Bool(self.is_active),
+            "is_admin": to_structure_Bool(self.is_admin),
         }
 
 #
@@ -1235,8 +1288,8 @@ class PROFILE_DETAIL(object):
         return {
             "contract_from": to_structure_CustomTextType_20(self.contract_from),
             "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "no_of_user_licence": to_structure_SignedIntegerType_8(self.no_of_user_licence),
-            "remaining_licence": to_structure_SignedIntegerType_8(self.remaining_licence),
+            "no_of_user_licence": to_structure_UnsignedIntegerType_32(self.no_of_user_licence),
+            "remaining_licence": to_structure_UnsignedIntegerType_32(self.remaining_licence),
             "total_disk_space": to_structure_Float(self.total_disk_space),
             "used_disk_space": to_structure_Float(self.used_disk_space),
             "licence_holders": to_structure_VectorType_RecordType_technomasters_LICENCE_HOLDER_DETAILS(self.licence_holders),

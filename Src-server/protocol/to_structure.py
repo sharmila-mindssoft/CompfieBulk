@@ -3906,3 +3906,7 @@ def to_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_Com
         value = to_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence(value)
         dict[key] = value
     return dict
+
+def to_structure_OptionalType_RecordType_core_FileList(data):
+    if data is None: return data
+    return to_structure_RecordType_core_FileList(data)
