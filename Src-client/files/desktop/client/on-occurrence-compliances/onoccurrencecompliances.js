@@ -11,17 +11,63 @@ function displayMessage(message) {
 
 
 
-function submitcompliance(){
+function startcompliance(){
 
-  /*function onSuccess(data){
-    load_firstwizard();
+ 
+}
+
+
+function load_compliances (compliancesList) {
+  var j = 1;
+  $(".tbody-complainces-list").find("tbody").remove();
+    for(var entity in compliancesList) {
+      var tableRow = $('#head-templates .tbl_heading');
+      var clone = tableRow.clone();
+      $('.heading', clone).html(entity);
+      $('.tbody-compliances-list').append(clone);
+      
+      var compliances = compliancesList[entity];
+      for(var compliance in compliances){
+        var complianceId = compliances[compliance]["compliance_id"];
+        var tableRow1=$('#templates .table-compliances .table-row');
+        var clone1=tableRow1.clone();
+        $('.sno', clone1).text(j);
+        $('.statutory', clone1).text(compliances[compliance]["compliance_name"]);
+        $('.compliance-task', clone1).text(compliances[compliance]["statutory_provision"]);
+        $('.description', clone1).text(compliances[compliance]["description"]);
+        $('.duration', clone1).text(compliances[compliance]["complete_within_days"]);
+        $('.startdate', clone1).html('<input type="text" id="startdate'+ complianceId +'" class="input-box"/>');
+        $('.action', clone1).on("click", function(e){
+            var startdate = $(".startdate", clone1).val();
+            submitOnOccurence(complianceId, compliances[compliance]["complete_within_days"],
+              startdate);
+        });
+
+        $('.tbody-compliances-list').append(clone1);
+        j = j + 1;
+
+        $("#startdate"+complianceId).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            onClose: function( selectedDate ) {
+            $( "#startdate"+complianceId ).datepicker( "option", "minDate", selectedDate );
+          }
+        });
+      }
+    }
+}
+function submitOnOccurence(complianceId, complete_within_days,  startdate, unitId){
+   function onSuccess(data){
+    //load_firstwizard();
   }
   function onFailure(error){
     displayMessage(error)
   }
-  client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId, 
-    assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName, 
-    assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, 
+  client_mirror.startOnOccurrenceCompliance( complianceId, complete_within_days,  startdate, unitId, 
     function (error, response) {
     if (error == null){
       onSuccess(response);
@@ -30,30 +76,7 @@ function submitcompliance(){
       onFailure(error);
     }
   }
-  );*/
-}
-
-
-function load_compliances (compliancesList) {
-  var j = 1;
-  var domainId = 0;
-  $(".tbody-complainces-list").find("tr").remove();
-    for(var entity in compliancesList) {
-      domainId = domainsList[entity]["domain_id"];
-      
-      var tableRow=$('#templates .table-compliances .table-row');
-      var clone=tableRow.clone();
-      $('.sno', clone).text(j);
-      $('.statutory', clone).text(domainName);
-      $('.compliance-task', clone).text(j);
-      $('.description', clone).text(j);
-      $('.duration', clone).text(j);
-      $('.startdate', clone).text(j);
-      $('.action', clone).text(j);
-
-      $('.tbody-compliances').append(clone);
-      j = j + 1;
-    }
+  );
 }
 
 
