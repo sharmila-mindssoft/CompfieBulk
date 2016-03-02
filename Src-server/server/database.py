@@ -4839,9 +4839,10 @@ class KnowledgeDatabase(Database):
         return unit_details
 
     def get_settings(self, client_id):
-        settings_columns = "contract_from, contract_to, no_of_user_licence, total_disk_space"
+        settings_columns = "contract_from, contract_to, no_of_user_licence, \
+        total_disk_space, total_disk_space_used"
         condition = "client_id = '%d'" % client_id
-        return  self.get_data(self.tblClientGroups, settings_columns, "1")
+        return  self.get_data(self.tblClientGroups, settings_columns, condition)
 
     def get_licence_holder_details(self, client_id):
         columns = "tcu.user_id, tcu.email_id, tcu.employee_name, tcu.employee_code, tcu.contact_no,"+\
@@ -4862,7 +4863,7 @@ class KnowledgeDatabase(Database):
             contract_to = self.datetime_to_string(settings_rows[0][1])
             no_of_user_licence = settings_rows[0][2]
             file_space = settings_rows[0][3]
-            used_space = 34
+            used_space = settings_rows[0][4]
             licence_holder_rows = self.get_licence_holder_details(client_id)
             licence_holders = []
             for row in licence_holder_rows:
@@ -4877,7 +4878,7 @@ class KnowledgeDatabase(Database):
                     unit_name = "-"
                 else:
                     unit_name =  "%s - %s" % (row[6], row[7])
-                used_id = row[0]
+                user_id = row[0]
                 email_id= row[1]
                 contact_no = row[4]
                 is_admin= row[5]
@@ -4885,9 +4886,10 @@ class KnowledgeDatabase(Database):
                 is_active = row[9]
                 licence_holders.append(
                     technomasters.LICENCE_HOLDER_DETAILS(
-                    user_id, user_name, email_id, contact_no,
+                    user_id, employee_name, email_id, contact_no,
                     unit_name, address,
-                    total_disk_space/1000000000, used_disk_space/1000000000
+                    file_space/1000000000, used_space/1000000000,
+                    bool(is_active), bool(is_admin)
                 ))
 
             remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
