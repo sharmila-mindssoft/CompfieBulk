@@ -6735,9 +6735,8 @@ class ClientDatabase(Database):
     def get_on_occurrence_compliances_for_user(self, session_user):
         user_domain_ids = self.get_user_domains(session_user)
         user_unit_ids = self.get_user_unit_ids(session_user)
-        
+        unit_wise_compliances = {}
         if user_domain_ids is not None and user_unit_ids is not None:
-            unit_wise_compliances = {}
             for unit in [int(x) for x in user_unit_ids.split(",")]:
                 columns = "ac.compliance_id, c.statutory_provision, concat(document_name,'-',\
                 compliance_task), compliance_description, duration_type, duration"
@@ -6773,7 +6772,7 @@ class ClientDatabase(Database):
                         clientuser.ComplianceOnOccurrence(
                             row["compliance_id"], row["statutory_provision"], 
                             row["compliance_name"], row["description"], 
-                            duration
+                            duration, unit
                         )
                     )
                 if len(compliances) > 0:
