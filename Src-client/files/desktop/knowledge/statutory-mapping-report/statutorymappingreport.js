@@ -147,7 +147,7 @@ function loadresult(filterList){
               if(download_url == null){
                 $('.tbl_compliancetask', clone1).html(compliance_name);
               }else{
-                $('.tbl_compliancetask', clone1).html('<a href= "'+ url +'" target="_new">'+compliance_name+'</a>');
+                $('.tbl_compliancetask', clone1).html('<a href= "'+ download_url +'" target="_new">'+compliance_name+'</a>');
               }
 
               
