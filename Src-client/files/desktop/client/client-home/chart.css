@@ -1,4 +1,4 @@
-  abbr
+abbr
 {
     border-bottom: 1px dotted #666;
     cursor: help;
@@ -122,7 +122,7 @@ input.radio:checked ~ label {
   top: 46.5px !important;
 }
 
-.ms-drop ul > li label.optgroup {
+/*.ms-drop ul > li label.optgroup {
   font-size: 0.75em;
 }
 .optgroup
@@ -132,12 +132,10 @@ input.radio:checked ~ label {
 .ms-drop ul > li label
 {
   font-size: 0.75em !important;
-}
+}*/
 .filtertable {
   width: 57%;
   margin-top: 20px;
-  float: left;
-  margin-left: 12%;
 }
 .filtertable td{
   vertical-align: top;
@@ -161,7 +159,7 @@ input.radio:checked ~ label {
   width: 120px;
   padding-left: 3.5em;
   margin-bottom: 5px;
-  margin-left: 10px;
+  /*margin-left: 10px;*/
   margin-right: 10px;
 
   -webkit-border-radius: 3px;
@@ -229,9 +227,9 @@ input.radio:checked ~ label {
 }
 
 .text-filterby {
-  width: 70px;
+  width: 100px;
   float: left;
-  margin-top: 20px;
+  margin-top: 7px;
 }
 .country-selection,
 .domain-selection,
@@ -431,8 +429,15 @@ table.filtertable-1 tr td table tr td {
 }
 .delayedvalue{
   color: #00f;
-  text-decoration: underline; 
+  text-decoration: underline;
 }
 .close{
   cursor: pointer;
+}
+.escalation-status-value {
+  background: #F1E9F6;
+  color: #000;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 1em;
 }

@@ -608,11 +608,11 @@ class UnitStatutoryCompliances(object):
         domain_names = data.get("domain_names")
         domain_names = parse_structure_VectorType_CustomTextType_50(domain_names)
         business_group_name = data.get("business_group_name")
-        business_group_name = parse_structure_CustomTextType_50(business_group_name)
+        business_group_name = parse_structure_OptionalType_CustomTextType_100(business_group_name)
         legal_entity_name = data.get("legal_entity_name")
         legal_entity_name = parse_structure_CustomTextType_50(legal_entity_name)
         division_name = data.get("division_name")
-        division_name = parse_structure_CustomTextType_50(division_name)
+        division_name = parse_structure_OptionalType_CustomTextType_100(division_name)
         statutories = data.get("statutories")
         statutories = parse_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory(statutories)
         return UnitStatutoryCompliances(unit_id, unit_name, address, country_name, domain_names, business_group_name, legal_entity_name, division_name, statutories)
@@ -624,9 +624,9 @@ class UnitStatutoryCompliances(object):
             "address": to_structure_CustomTextType_250(self.address),
             "country_name": to_structure_CustomTextType_50(self.country_name),
             "domain_names": to_structure_VectorType_CustomTextType_50(self.domain_names),
-            "business_group_name": to_structure_CustomTextType_50(self.business_group_name),
+            "business_group_name": to_structure_OptionalType_CustomTextType_100(self.business_group_name),
             "legal_entity_name": to_structure_CustomTextType_50(self.legal_entity_name),
-            "division_name": to_structure_CustomTextType_50(self.division_name),
+            "division_name": to_structure_OptionalType_CustomTextType_100(self.division_name),
             "statutories": to_structure_MapType_CustomTextType_50_VectorType_RecordType_clienttransactions_AssignedStatutory(self.statutories),
         }
 

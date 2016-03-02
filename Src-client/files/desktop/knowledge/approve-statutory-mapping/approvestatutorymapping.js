@@ -93,6 +93,9 @@ $("#countryval").keyup(function(){
     }
     $('#ulist_text').append(str);
     $("#country").val('');
+    }else{
+      $("#country").val('');
+      $("#autocompleteview").hide();
     }
 });
 //set selected autocomplte value to textbox
@@ -118,6 +121,9 @@ $("#domainval").keyup(function(){
     }
     $('#ulist_domain').append(str);
     $("#domain").val('');
+    }else{
+      $("#domain").val('');
+      $("#autocomplete_domain").hide();
     }
 });
 //set selected autocomplte value to textbox
@@ -143,6 +149,9 @@ $("#industryval").keyup(function(){
     }
     $('#ulist_industry').append(str);
     $("#industry").val('');
+    }else{
+      $("#industry").val('');
+      $("#autocomplete_industry").hide();
     }
 });
 //set selected autocomplte value to textbox
@@ -169,6 +178,9 @@ $("#statutorynatureval").keyup(function(){
     }
     $('#ulist_statutorynature').append(str);
     $("#statutorynature").val('');
+    }else{
+      $("#statutorynature").val('');
+      $("#autocomplete_statutorynature").hide();
     }
 });
 //set selected autocomplte value to textbox
@@ -196,7 +208,7 @@ function loadApproveStatutory(){
     var industryName = '';
     var statutoryNatureName = '';
     var approvalStatus = '';
-    var applicableLocation = '';
+    
     var isActive = false;
     var countryId = '';
     var domainId = '';
@@ -217,7 +229,14 @@ function loadApproveStatutory(){
         statutoryprovision = statutoryprovision + statutoryMappingsList[entity]["statutory_mappings"][i];
       }
       statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
-      applicableLocation = statutoryMappingsList[entity]["geography_mappings"];
+      
+      var applicableLocation = '';
+
+      for(var i=0; i<statutoryMappingsList[entity]["geography_mappings"].length; i++){
+        applicableLocation = applicableLocation + statutoryMappingsList[entity]["geography_mappings"][i];
+      }
+      applicableLocation = applicableLocation.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
+
       isActive = statutoryMappingsList[entity]["is_active"];
       approvalStatus = statutoryMappingsList[entity]["approval_status"];
       conditionResult = (approvalStatus == '0' && isActive == true && countryId == country && domainId == domain);
@@ -239,9 +258,9 @@ function loadApproveStatutory(){
           complianceNames = complianceNames + '<a href="#popup1" onclick="disppopup('+statutorymappingId+','+i+')">'+(i+1)+'. '+statutoryMappingsList[entity]["compliance_names"][i]['compliance_name']+'</a>';
         }
         $('.compliancetask', clone).html(complianceNames);
-        $('.applicablelocation', clone).text(applicableLocation);
+        $('.applicablelocation', clone).html(applicableLocation);
         $('.action', clone).html('<input type="hidden" id="mapping_id'+j+'" value="'+statutorymappingId+'" /> <input type="hidden" id="statutoryprovision'+j+'" value="'+statutoryprovision+'" /> <select class="input-box" id="action'+j+'" onchange="dispreason('+j+')"></select>');
-        $('.reason', clone).html('<textarea class="input-box" id="notifyreason'+j+'" placeholder="Enter notification text" style="height:50px;display:none;"></textarea><span style="font-size:0.75em;display:none;" id="notifynote'+j+'">(max 500 characters)</span> <input type="text" maxlength="500" style="display:none;" id="reason'+j+'" class="input-box" placeholder="Enter reason" />');
+        $('.reason', clone).html('<textarea class="input-box" id="notifyreason'+j+'" placeholder="Enter notification text" style="height:50px;display:none;"></textarea><span style="font-size:0.75em;display:none;" id="notifynote'+j+'"> <br> (max 500 characters)</span> <input type="text" maxlength="500" style="display:none;" id="reason'+j+'" class="input-box" placeholder="Enter reason" />');
         $('.tbody-statutorymapping-list').append(clone);
         //load compliance frequency selectbox
 
@@ -262,10 +281,12 @@ $("#submit").click(function(){
 
 function disppopup(sm_id,compliance_id){
   $("#popup1").show();
-  var compliances = statutoryMappingsList[sm_id]["compliances"];
+  var sm = statutoryMappingsList[sm_id];
+
+  var compliances = sm["compliances"];
   var statutoryMappings='';
-  for(var i=0; i<statutoryMappingsList[sm_id]["statutory_mappings"].length; i++){
-    statutoryMappings = statutoryMappings + statutoryMappingsList[sm_id]["statutory_mappings"][i];
+  for(var i=0; i<sm["statutory_mappings"].length; i++){
+    statutoryMappings = statutoryMappings + sm["statutory_mappings"][i];
   }
   var frequency = '';
   $.each(complianceFrequencyList, function(index, value) {
@@ -273,14 +294,48 @@ function disppopup(sm_id,compliance_id){
       frequency = value.frequency;
   }
   });
+  
+  var sdateDesc = '';
+  var statutorydate = '';
+  var statutory_date =  compliances[compliance_id]["statutory_dates"];
+
+  if(frequency == 'Periodical' || frequency == 'Review') sdateDesc = 'Every';
+    for(j = 0; j < statutory_date.length; j++){
+      var sDay = '';
+      if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
+
+      var sMonth = '';
+      if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
+
+      var tDays = '';
+      if(statutory_date[j]["trigger_before_days"] != null) tDays = statutory_date[j]["trigger_before_days"];
+
+      if(sMonth == 1) sMonth = "January"
+      else if(sMonth == 2) sMonth = "February"
+      else if(sMonth == 3) sMonth = "March"
+      else if(sMonth == 4) sMonth = "April"  
+      else if(sMonth == 5) sMonth = "May"
+      else if(sMonth == 6) sMonth = "June"
+      else if(sMonth == 7) sMonth = "July"
+      else if(sMonth == 8) sMonth = "Auguest"
+      else if(sMonth == 9) sMonth = "September"
+      else if(sMonth == 10) sMonth = "October"
+      else if(sMonth == 11) sMonth = "November"
+      else if(sMonth == 12) sMonth = "December"
+        
+      //triggerdate +=  tDays + " Day(s)";
+      statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
+    }
+
+  
   $(".popup_statutory").html(statutoryMappings);
-  $(".popup_statutorynature").text(statutoryMappingsList[sm_id]["statutory_nature_name"]);
-  $(".popup_compliancetask").html(statutoryMappingsList[sm_id]["compliance_names"][compliance_id]);
+  $(".popup_statutorynature").text(sm["statutory_nature_name"]);
+  $(".popup_compliancetask").html(sm["compliance_names"][compliance_id]["compliance_name"]);
   $(".popup_compliancedescription").text(compliances[compliance_id]["description"]);
   $(".popup_penalconsequences").text(compliances[compliance_id]["penal_consequences"]);
   $(".popup_compliancefrequency").text(frequency);
-  $(".popup_complianceoccurance").text("");
-  $(".popup_applicablelocation").text(statutoryMappingsList[sm_id]["geography_mappings"]);
+  $(".popup_complianceoccurance").text(statutorydate);
+  $(".popup_applicablelocation").text(sm["geography_mappings"]);
 }
 
 function dispreason(j){

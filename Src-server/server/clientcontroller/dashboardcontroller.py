@@ -58,8 +58,6 @@ def process_client_dashboard_requests(request, db) :
     elif type(request) is dashboard.GetAssigneeWiseComplianceDrillDown :
         return process_assigneewise_compliances_drilldown(db, request, session_user, client_id)
 
-
-
 def process_get_chart_filters(db, session_user, client_id):
     countries = db.get_countries_for_user(session_user, client_id)
     domains = db.get_domains_for_user(session_user, client_id)
@@ -70,9 +68,12 @@ def process_get_chart_filters(db, session_user, client_id):
     division_ids = None
     divisions = db.get_divisions_for_user(division_ids)
     units = db.get_units_for_assign_compliance(session_user)
+    domain_info = db.get_country_wise_domain_month_range()
+    group_name = db.get_group_name()
     return dashboard.GetChartFiltersSuccess(
         countries, domains, business_groups,
-        legal_entities, divisions, units
+        legal_entities, divisions, units,
+        domain_info, group_name
     )
 
 def process_compliance_status_chart(db, request, session_user, client_id):
@@ -187,14 +188,14 @@ def process_assigneewise_compliances_drilldown(
     assignee_id = request.assignee_id
     domain_ids = request.domain_id
     year = request.year
-    
+
     drill_down_data = {}
     for domain_id in domain_ids:
         complied, delayed, inprogress, not_complied = db.get_assigneewise_compliances_drilldown_data(
             assignee_id, domain_id, client_id, year
         )
         if (
-            (len(complied) > 0) or (len(delayed) > 0) 
+            (len(complied) > 0) or (len(delayed) > 0)
             or (len(inprogress) > 0) or (len(not_complied) > 0)
         ):
             drill_down_data[domain_id] = dashboard.AssigneeWiseCompliance(

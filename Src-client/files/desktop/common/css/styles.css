@@ -439,7 +439,7 @@ img, object {
 	border-radius: 0.5em;
 }
 
-.btn-back {
+.btn-back-geography {
 	width: 5.625em;
 	float: left;
 	height: 2.5em;
@@ -1778,7 +1778,7 @@ list-style-type:none; line-height:25px;
   display: none;
 }
 .accordion-content.default {
-  display: block;
+  display: table-row-group;
 }
 
 /* popup window */

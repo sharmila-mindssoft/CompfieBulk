@@ -3810,6 +3810,26 @@ def parse_structure_RecordType_core_ClientInchargePersons(data):
     from protocol import core
     return core.ClientInchargePersons.parse_structure(data)
 
+def parse_structure_RecordType_dashboard_DomainWiseYearConfiguration(data):
+    from protocol import dashboard
+    return dashboard.DomainWiseYearConfiguration.parse_structure(data)
+
+def parse_structure_VectorType_RecordType_dashboard_DomainWiseYearConfiguration(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(parse_structure_RecordType_dashboard_DomainWiseYearConfiguration(item))
+    return lst
+
+def parse_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_DomainWiseYearConfiguration(data):
+    data = parse_dictionary(data)
+    d = {}
+    for key, value in data.items():
+        key = parse_structure_CustomTextType_100(key)
+        value = parse_structure_VectorType_RecordType_dashboard_DomainWiseYearConfiguration(value)
+        d[key] = value
+    return d
+
 def parse_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence(data):
     data = parse_list(data)
     d = {}
