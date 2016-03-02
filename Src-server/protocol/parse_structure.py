@@ -3818,3 +3818,7 @@ def parse_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_
         value = parse_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence(value)
         d[key] = value
     return d
+
+def parse_structure_OptionalType_RecordType_core_FileList(data):
+    if data is None: return data
+    return parse_structure_RecordType_core_FileList(data)
