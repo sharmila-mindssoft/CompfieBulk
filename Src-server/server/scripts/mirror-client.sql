@@ -72,8 +72,8 @@ CREATE TABLE `tbl_compliances` (
   CONSTRAINT `fk_compliance_repeat_type_compliances` FOREIGN KEY (`repeat_type_id`) REFERENCES `tbl_compliance_repeat_type` (`repeat_type_id`),
   CONSTRAINT `fk_compliance_duration_type_compliances` FOREIGN KEY (`duration_type_id`) REFERENCES `tbl_compliance_duration_type` (`duration_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_client_settings`;
-CREATE TABLE `tbl_client_settings` (
+DROP TABLE IF EXISTS `tbl_client_groups`;
+CREATE TABLE `tbl_client_groups` (
   `group_name` varchar(50) NOT NULL,
   `logo_url` varchar(200) NOT NULL,
   `logo_size` float(11) NOT NULL,

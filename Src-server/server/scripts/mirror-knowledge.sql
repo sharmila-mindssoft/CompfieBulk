@@ -365,6 +365,7 @@ CREATE TABLE `tbl_client_groups` (
 
 DROP TABLE IF EXISTS `tbl_client_countries`;
 CREATE TABLE `tbl_client_countries` (
+  `client_country_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   PRIMARY KEY (`client_id`,`country_id`),
@@ -374,6 +375,7 @@ CREATE TABLE `tbl_client_countries` (
 
 DROP TABLE IF EXISTS `tbl_client_domains`;
 CREATE TABLE `tbl_client_domains` (
+  `client_domain_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   PRIMARY KEY (`client_id`,`domain_id`),

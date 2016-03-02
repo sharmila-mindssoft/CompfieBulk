@@ -57,7 +57,7 @@ class ClientDatabase(Database):
         self.tblBusinessGroups = "tbl_business_groups"
         self.tblClientCompliances = "tbl_client_compliances"
         self.tblClientConfigurations = "tbl_client_configurations"
-        self.tblClientSettings = "tbl_client_settings"
+        self.tblClientGroups = "tbl_client_groups"
         self.tblClientStatutories = "tbl_client_statutories"
         self.tblComplianceActivityLog = "tbl_compliance_activity_log"
         self.tblComplianceDurationType = "tbl_compliance_duration_type"
@@ -160,7 +160,7 @@ class ClientDatabase(Database):
     def get_short_name_from_client_id(self, client_id):
         columns = "url_short_name"
         rows = self.get_data(
-            self.tblClientSettings, columns, "1"
+            self.tblClientGroups, columns, "1"
         )
         return rows[0][0]
 
@@ -1723,7 +1723,7 @@ class ClientDatabase(Database):
 
     def is_space_available(self, upload_size):
         columns = "total_disk_space - total_disk_space_used"
-        rows = self.get_data(self.tblClientSettings, columns, "1")
+        rows = self.get_data(self.tblClientGroups, columns, "1")
         remaining_space = rows[0][0]
         if upload_size < remaining_space:
             return True
@@ -1733,7 +1733,7 @@ class ClientDatabase(Database):
     def update_used_space(self, file_size):
         columns = "total_disk_space_used"
         condition = "1"
-        self.increment( self.tblClientSettings, columns, condition, value = file_size)
+        self.increment( self.tblClientGroups, columns, condition, value = file_size)
 
     def save_past_record(
             self, unit_id, compliance_id, due_date, completion_date, documents,
@@ -1830,7 +1830,7 @@ class ClientDatabase(Database):
 
     def is_two_levels_of_approval(self):
         columns = "two_levels_of_approval"
-        rows = self.get_data(self.tblClientSettings, columns, "1")
+        rows = self.get_data(self.tblClientGroups, columns, "1")
         return rows[0][0]
 
 #
@@ -4489,7 +4489,7 @@ class ClientDatabase(Database):
             "total_disk_space, total_disk_space_used"
         condition = "1"
         rows = self.get_data(
-            self.tblClientSettings, columns, condition
+            self.tblClientGroups, columns, condition
         )
         if len(rows) > 0:
             row = rows[0]
@@ -4569,7 +4569,7 @@ class ClientDatabase(Database):
             escalation_reminder_In_advance_days, escalation_reminder_days
         ]
         condition = "1"
-        self.update(self.tblClientSettings, columns, values, condition, client_id)
+        self.update(self.tblClientGroups, columns, values, condition, client_id)
 
 #
 #   Notifications

@@ -556,6 +556,7 @@ class KnowledgeDatabase(Database):
         self.tblStatutoryMappings = "tbl_statutory_mappings"
         self.tblStatutoryNatures = "tbl_statutory_natures"
         self.tblStatutoryNotificationsLog = "tbl_statutory_notifications_log"
+        self.tblStatutoryNotificationsUnits = "tbl_statutory_notifications_units"
         self.tblUnits = "tbl_units"
         self.tblUserClients = "tbl_user_clients"
         self.tblUserCountries = "tbl_user_countries"
@@ -2947,10 +2948,15 @@ class KnowledgeDatabase(Database):
 
         if client_info is not None:
             for r in client_info :
+                statutory_notification_unit_id = self.get_new_id(
+                    "statutory_notification_unit_id", 
+                    self.tblStatutoryNotificationsUnits
+                )
                 q = "INSERT INTO tbl_statutory_notifications_units \
-                    (statutory_notification_id, client_id, \
+                    (statutory_notification_unit_id, statutory_notification_id, client_id, \
                         business_group_id, legal_entity_id, division_id, unit_id) VALUES \
-                    (%s, %s, %s, %s, %s, %s)" % (
+                    (%s, %s, %s, %s, %s, %s, %s)" % (
+                        statutory_notification_unit_id,
                         statutory_notification_id,
                         int(r["client_id"]),
                         int(r["business_group_id"]),
@@ -3363,37 +3369,48 @@ class KnowledgeDatabase(Database):
     def save_date_configurations(self, client_id, date_configurations, session_user):
         values_list = []
         current_time_stamp = self.get_date_time()
-        columns = ["client_id", "country_id" ,"domain_id", "period_from",
+        columns = ["client_config_id", "client_id", "country_id" ,"domain_id", "period_from",
         "period_to", "updated_by", "updated_on"]
         condition = "client_id='%d'"%client_id
         self.delete(self.tblClientConfigurations, condition)
         for configuration in date_configurations:
+            client_config_id = self.get_new_id(
+                "client_config_id", self.tblClientConfigurations
+            )
             country_id = configuration.country_id
             domain_id = configuration.domain_id
             period_from = configuration.period_from
             period_to = configuration.period_to
-            values_tuple = (client_id, country_id, domain_id, period_from, period_to,
-                 int(session_user), str(current_time_stamp))
+            values_tuple = (
+                client_config_id, client_id, country_id, domain_id, 
+                period_from, period_to, int(session_user), str(current_time_stamp)
+            )
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblClientConfigurations,columns,values_list)
 
     def save_client_countries(self, client_id, country_ids):
         values_list = []
-        columns = ["client_id", "country_id"]
+        columns = ["client_country_id", "client_id", "country_id"]
         condition = "client_id = '%d'" % client_id
         self.delete(self.tblClientCountries, condition)
         for country_id in country_ids:
-            values_tuple = (client_id, country_id)
+            client_country_id = self.get_new_id(
+                "client_country_id", self.tblClientCountries
+            )
+            values_tuple = (client_country_id, client_id, country_id)
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblClientCountries, columns, values_list)
 
     def save_client_domains(self, client_id, domain_ids):
         values_list = []
-        columns = ["client_id", "domain_id"]
+        columns = ["client_domain_id", "client_id", "domain_id"]
         condition = "client_id = '%d'" % client_id
         self.delete(self.tblClientDomains, condition)
         for domain_id in domain_ids:
-            values_tuple = (client_id, domain_id)
+            client_domain_id = self.get_new_id(
+                "client_domain_id", self.tblClientDomains
+            )
+            values_tuple = (client_domain_id, client_id, domain_id)
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblClientDomains, columns, values_list)
 
@@ -4333,7 +4350,7 @@ class KnowledgeDatabase(Database):
                 self.save_client_compliances(client_statutory_id, assigned_statutories, user_id, created_on)
 
     def save_client_compliances(self, client_statutory_id, data, user_id, created_on):
-        field = "(client_statutory_id, compliance_id, \
+        field = "(client_compliance_id, client_statutory_id, compliance_id, \
             statutory_id, statutory_applicable, not_applicable_remarks, \
             compliance_applicable, created_by, created_on)"
         for d in data :
@@ -4345,8 +4362,11 @@ class KnowledgeDatabase(Database):
             for key, value in d.compliances.iteritems():
                 compliance_id = int(key)
                 compliance_applicable_status = int(value)
+                client_compliance_id = self.get_new_id(
+                    "client_compliance_id", self.tblClientCompliances    
+                )
                 values = (
-                    client_statutory_id, compliance_id,
+                    client_compliance_id, client_statutory_id, compliance_id,
                     level_1_id, int(applicable_status), not_applicable_remarks,
                     compliance_applicable_status, int(user_id), created_on
                 )
