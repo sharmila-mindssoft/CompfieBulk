@@ -774,7 +774,8 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType) {
     // var options = new Highcharts.Chart({
         colors:['#A5D17A','#F58835', '#F0F468', '#F32D2B'],
         chart: {
-            renderTo: "status-container"
+            renderTo: "status-container",
+            width: '850'
         },
         title: {
             text: chartTitle
@@ -799,6 +800,9 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType) {
             enabled: true
         },
         plotOptions: {
+            series: {
+                pointWidth: 50
+            },
             column: {
                 colorByPoint: true,
                 point: {
@@ -937,7 +941,7 @@ function showComplianceApplicabilityDrillDownRecord(data){
                 for(j = 0; j < statutory_date.length; j++){
                   var sDay = '';
                   if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
-                  
+
                   var sMonth = '';
                   if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
 
@@ -947,7 +951,7 @@ function showComplianceApplicabilityDrillDownRecord(data){
                   if(sMonth == 1) sMonth = "Jan"
                   else if(sMonth == 2) sMonth = "Feb"
                   else if(sMonth == 3) sMonth = "Mar"
-                  else if(sMonth == 4) sMonth = "Apr"  
+                  else if(sMonth == 4) sMonth = "Apr"
                   else if(sMonth == 5) sMonth = "May"
                   else if(sMonth == 6) sMonth = "Jun"
                   else if(sMonth == 7) sMonth = "Jul"
@@ -956,7 +960,7 @@ function showComplianceApplicabilityDrillDownRecord(data){
                   else if(sMonth == 10) sMonth = "Oct"
                   else if(sMonth == 11) sMonth = "Nov"
                   else if(sMonth == 12) sMonth = "Dec"
-                  
+
                   statutorydate +=  sDay +' - '+ sMonth;
                   triggerbefore +=  tBefore;
                 }
@@ -1936,12 +1940,8 @@ function accordianType(idtype, toggleClass, contentClass){
 //  Escalation Chart
 function prepareEscalationChartdata(source_data) {
     var chartTitle = getFilterTypeTitle();
-    var domainsInput = chartInput.getDomains();
-    var countriesInput = chartInput.getCountries();
     var xAxis = [];
-    var yAxisDelayed = {}; //{ "year": count}
-    var yAxisNotComplied = {};
-    var filterTypeInput = getFilterTypeInput()
+
     function set_value(dict, key, value) {
         var temp = dict[key];
         if (typeof(temp) === "undefined")
@@ -1949,50 +1949,33 @@ function prepareEscalationChartdata(source_data) {
         temp = parseInt(temp) + parseInt(value);
         dict[key] = temp;
     }
-    for (var i = 0; i < source_data.chart_data.length; i++) {
-        var chartData = source_data.chart_data[i];
-        var filter_type_id = chartData["filter_type_id"];
-        if (filterTypeInput.indexOf(filter_type_id) == -1)
-            continue;
-        // var filterTypeName = getFilterTypeName(filter_type_id);
-        for (var j = 0; j < chartData["data"].length; j++) {
-            var item = chartData["data"][j];
-            if (domainsInput.indexOf(item["domain_id"]) == -1)
-                continue;
-            if(countriesInput.indexOf(item["country_id"]) == -1)
-                continue;
-            year = item["year"];
-            if (
-                (item["delayed_compliance_count"] !== 0) ||
-                (item["not_complied_count"] !== 0)
-            ){
-                set_value(yAxisDelayed, year, item["delayed_compliance_count"]);
-                set_value(yAxisNotComplied, year, item["not_complied_count"]);
-                if (xAxis.indexOf(year) == -1)
-                    xAxis.push(year);
-            }
-        }
+    chart_data = source_data.chart_data;
 
-    }
-    if (xAxis.length == 0)
-        return null;
     var chartDataSeries = [];
-    delayed_data = []
-    $.each(yAxisDelayed, function(key, value) {
-        delayed_data.push({
-            "y": value,
-            "drilldown":"Delay Compliance",
-            "year": key
-        });
-    });
+    delayed_data = [];
     not_complied_data = [];
-    $.each(yAxisNotComplied, function(key, value) {
-        not_complied_data.push({
-            "y": value,
-            "drilldown":"Not Complied",
-            "year": key
-        });
+    $.each(chart_data, function(i, value) {
+        delayed = value["delayed_compliance_count"];
+        not_complied = value["not_complied_count"];
+        year = value["year"];
+        if  ((delayed == 0) && (not_complied == 0)) {
+
+        }
+        else {
+            delayed_data.push({
+                "y": delayed,
+                "drilldown": "Delay Compliance",
+                "year": year
+            });
+            not_complied_data.push({
+                "y": not_complied,
+                "drilldown": "Not Complied",
+                "year": year
+            });
+            xAxis.push(year);
+        }
     });
+
     chartDataSeries.push({
         "name": "Delay Compliance",
         "data": delayed_data
@@ -2003,6 +1986,8 @@ function prepareEscalationChartdata(source_data) {
             "data": not_complied_data
         }
     );
+
+    var filterTypeInput = getFilterTypeInput()
     if (chartTitle == "Country") {
         chartTitle = "Escalation of " + GROUP_NAME
     }
@@ -2029,9 +2014,13 @@ function updateEscalationChart(data) {
         chart: {
             type: 'column',
             renderTo: "status-container",
+            width: '850'
         },
         title: {
             text: chartTitle
+        },
+        credits: {
+            enabled: false
         },
         xAxis: {
             categories: xAxis,
@@ -2246,6 +2235,18 @@ function prepareNotCompliedChart(source_data) {
     });
     if (count == 0)
         chartDataSeries = [];
+    var filterTypeInput = getFilterTypeInput()
+    if (chartTitle == "Country") {
+        chartTitle = "Over due compliance of " + GROUP_NAME
+    }
+    else {
+        filter_names = []
+        for (var i=0; i < filterTypeInput.length; i++){
+            name = getFilterTypeName(filterTypeInput[i]);
+            filter_names.push(name);
+        }
+        chartTitle = "Over due compliance of " + chartTitle + " " + filter_names;
+    }
     return [chartDataSeries, chartTitle];
 }
 
@@ -2264,7 +2265,7 @@ function updateNotCompliedChart(data) {
             }
         },
         title: {
-            text: 'Over due compliance of' + chartTitle
+            text: chartTitle
         },
         xAxis: {
             categories: true,
@@ -2310,22 +2311,46 @@ function updateNotCompliedChart(data) {
 
 function prepareComplianceApplicability(source_data) {
     chartDataSeries = [];
-    chartTitle = "Compliance Applicability Status";
-    chartDataSeries.push({
-        name: "Applicable",
-        y: source_data["applicable_count"],
-        drilldown: "Applicable"
-    });
-    chartDataSeries.push({
-        name: "Not Applicable",
-        y: source_data["not_applicable_count"],
-        drilldown: "Not Applicable"
-    });
-    chartDataSeries.push({
-        name: "Not Opted",
-        y: source_data["not_opted_count"],
-        drilldown: "Not Applicable"
-    });
+    chartTitle = getFilterTypeTitle();
+    applicable = source_data["applicable_count"];
+    not_applicable = source_data["not_applicable_count"];
+    not_opted = source_data["not_opted_count"];
+    if (
+        (applicable == 0) &&
+        (not_applicable == 0) &&
+        (not_opted == 0)
+    ) {
+        //pass
+    }
+    else {
+        chartDataSeries.push({
+            name: "Applicable",
+            y: applicable,
+            drilldown: "Applicable"
+        });
+        chartDataSeries.push({
+            name: "Not Applicable",
+            y: not_applicable,
+            drilldown: "Not Applicable"
+        });
+        chartDataSeries.push({
+            name: "Not Opted",
+            y: not_opted,
+            drilldown: "Not Applicable"
+        });
+    }
+    var filterTypeInput = getFilterTypeInput()
+    if (chartTitle == "Country") {
+        chartTitle = "Compliance Applicability Status of " + GROUP_NAME
+    }
+    else {
+        filter_names = []
+        for (var i=0; i < filterTypeInput.length; i++){
+            name = getFilterTypeName(filterTypeInput[i]);
+            filter_names.push(name);
+        }
+        chartTitle = "Compliance Applicability Status of " + chartTitle + " " + filter_names;
+    }
     return [chartDataSeries, chartTitle]
 
 }
