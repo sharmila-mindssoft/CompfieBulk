@@ -195,6 +195,33 @@ class Database(object) :
         query += " where %s" % where_condition
         return self.select_all(query)
 
+    def get_full_join_data(
+        self, columns, tables, aliases,
+        join_conditions, where_condition
+    ):
+        join_types = ["LEFT JOIN", "RIGHT JOIN"]
+        query = ""
+        for join_type in join_types:
+            query += "SELECT %s FROM " % columns
+            for index, table in enumerate(tables):
+                if index == 0:
+                    query += "%s  %s  %s" % (
+                        table, aliases[index], join_type
+                    )
+                elif index <= len(tables) - 2:
+                    query += " %s %s on (%s) %s " % (
+                        table, aliases[index],
+                        join_conditions[index-1], join_type
+                    )
+                else:
+                    query += " %s %s on (%s)" % (
+                        table, aliases[index],
+                        join_conditions[index-1]
+                    )
+            query += " UNION "
+        query += " where %s" % where_condition
+        return self.select_all(query)
+
     def insert(self, table, columns, values, client_id=None) :
         columns = ",".join(columns)
         stringValue = ""
@@ -231,9 +258,6 @@ class Database(object) :
             else:
                 query += column+" = '"+str(values[index])+"' "
         query += " WHERE "+condition
-        # if client_id is not None:
-        #     return self.execute(query, client_id)
-
         return self.execute(query)
 
     def on_duplicate_key_update(
@@ -3063,7 +3087,10 @@ class KnowledgeDatabase(Database):
             self.tblUserCountries, self.tblUserDomains
         )
         condition = "user_group_id in (select user_group_id from \
-             %s where form_category_id = 3)" % self.tblUserGroups
+             %s where form_category_id = 3 and (form_ids like '%s%s%s' \
+             or form_ids like '%s%s%s'))" % (
+                self.tblUserGroups, "%", "19", "%", "%","21", "%"
+            )
         rows = self.get_data(self.tblUsers + " u", columns, condition)
         columns = ["user_id", "employee_name", "is_active", "countries", "domains"]
         users = self.convert_to_dict(rows, columns)
@@ -3534,6 +3561,27 @@ class KnowledgeDatabase(Database):
             values_tuple = (client_id, incharge_person)
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblUserClients, columns, values_list)
+
+    def notify_incharge_persons(self, client_group):
+        notification_text = "Client %s has assigned to you" % client_group.group_name
+        link = "/knowledge/client-unit"
+        notification_id = self.get_new_id(
+            "notification_id", "tbl_notifications"
+        )
+        query = "INSERT INTO tbl_notifications \
+            (notification_id, notification_text, link) \
+            VALUES (%s, '%s', '%s')" % (
+                notification_id, notification_text, link
+            )
+        self.execute(query)
+        columns = ["notification_id", "user_id", "read_status"]
+        values_list = []
+        for incharge_person in client_group.incharge_persons:
+            values_tuple = (notification_id, incharge_person, 0)
+            values_list.append(values_tuple)
+        return self.bulk_insert(
+            self.tblNotificationsStatus, columns, values_list
+        )
 
     def save_client_logo(self, logo, client_id):
         file_size = logo.file_size
@@ -4790,27 +4838,31 @@ class KnowledgeDatabase(Database):
         if client_ids is not None:
             condition = "client_id in (%s)" % client_ids
 
-        columns = "u.business_group_id, u.legal_entity_id, u.division_id, u.client_id"
-        tables = [self.tblUnits, self.tblClientGroups, self.tblBusinessGroups,
-        self.tblLegalEntities, self.tblDivisions]
-        aliases = ["u", "c", "bg","le", "d" ]
-        join_conditions = [
-            "u.client_id = c.client_id",
-            "u.business_group_id = bg.business_group_id",
-            "u.legal_entity_id = le.legal_entity_id",
-            "u.division_id = d.division_id"
-        ]
-        join_type = "inner join"
-        condition = " u.client_id in (select client_id from %s where user_id = %d) \
-        group by u.business_group_id, u.legal_entity_id, u.division_id, u.client_id \
-        order by group_name, business_group_name, legal_entity_name, \
-        division_name" % (
-            self.tblUserClients, user_id
+        query = "SELECT business_group_id, legal_entity_id, division_id, client_id, \
+        group_name, business_group_name, legal_entity_name, division_name \
+        from ( \
+        SELECT c.group_name, bg.business_group_name, \
+        le.legal_entity_name, d.division_name, u.business_group_id,\
+        u.legal_entity_id, u.division_id, u.client_id \
+        FROM tbl_units  u  \
+        LEFT JOIN tbl_client_groups c on (u.client_id = c.client_id) \
+        LEFT JOIN  tbl_business_groups bg on (u.business_group_id = bg.business_group_id) \
+        LEFT JOIN  tbl_legal_entities le on (u.legal_entity_id = le.legal_entity_id) \
+        LEFT JOIN  tbl_divisions d on (u.division_id = d.division_id) \
+        where  u.client_id in (select client_id from tbl_user_clients where user_id = '%d') \
+        UNION \
+        SELECT c.group_name, bg.business_group_name, le.legal_entity_name, d.division_name, u.business_group_id, u.legal_entity_id, u.division_id, u.client_id \
+        FROM tbl_units  u  \
+        RIGHT JOIN tbl_client_groups c on (u.client_id = c.client_id) \
+        RIGHT JOIN  tbl_business_groups bg on (u.business_group_id = bg.business_group_id) \
+        RIGHT JOIN  tbl_legal_entities le on (u.legal_entity_id = le.legal_entity_id) \
+        RIGHT JOIN  tbl_divisions d on (u.division_id = d.division_id) \
+        where  u.client_id in (select client_id from tbl_user_clients where user_id = '%d')) a \
+        group by business_group_id, legal_entity_id, division_id, client_id  \
+        order by group_name, business_group_name, legal_entity_name, division_name" % (
+            user_id, user_id
         )
-        rows = self.get_data_from_multiple_tables(
-            columns, tables, aliases, join_type,
-            join_conditions, condition
-        )
+        rows = self.select_all(query)
         unit_details = []
         for row in rows:
             detail_columns = "country_id"
@@ -4822,11 +4874,16 @@ class KnowledgeDatabase(Database):
             if row[2] == None:
                 detail_condition += " And division_id is NULL"
             else:
-                detail_condition += " And division_id = '%d'" % row[2]
-            country_condition = detail_condition + " group by country_id"
+                detail_condition += " AND division_id = '%d'" % row[2]
+            country_condition = detail_condition + " AND country_id in (%s) \
+            group by country_id" % (
+                self.get_user_countries(user_id)
+            )
             country_rows = self.get_data(self.tblUnits, detail_columns, country_condition)
             country_wise_units = {}
             division_is_active = bool(1)
+            active_count = 0
+            deactive_count = 0
             for country_row in country_rows:
                 unit_columns = "unit_id, geography_id, unit_code, unit_name, industry_id, address, "+\
                 "postal_code, domain_ids, is_active"
@@ -4837,15 +4894,21 @@ class KnowledgeDatabase(Database):
                     units.append(technomasters.UnitDetails(unit_detail[0], unit_detail[1],
                         unit_detail[2], unit_detail[3], unit_detail[4], unit_detail[5],
                         unit_detail[6], [int(x) for x in unit_detail[7].split(",")], bool(unit_detail[8])))
-                    division_is_active = division_is_active or bool(unit_detail[8])
+                    if bool(unit_detail[8]) == True :
+                        active_count += 1 
+                    else:
+                        deactive_count += 1
                 country_wise_units[country_row[0]] = units
+            if active_count <= 0:
+                division_is_active = bool(0)
             unit_details.append(technomasters.Unit(row[0], row[1], row[2], row[3], country_wise_units,division_is_active))
         return unit_details
 
     def get_settings(self, client_id):
-        settings_columns = "contract_from, contract_to, no_of_user_licence, total_disk_space"
+        settings_columns = "contract_from, contract_to, no_of_user_licence, \
+        total_disk_space, total_disk_space_used"
         condition = "client_id = '%d'" % client_id
-        return  self.get_data(self.tblClientGroups, settings_columns, "1")
+        return  self.get_data(self.tblClientGroups, settings_columns, condition)
 
     def get_licence_holder_details(self, client_id):
         columns = "tcu.user_id, tcu.email_id, tcu.employee_name, tcu.employee_code, tcu.contact_no,"+\
@@ -4866,7 +4929,7 @@ class KnowledgeDatabase(Database):
             contract_to = self.datetime_to_string(settings_rows[0][1])
             no_of_user_licence = settings_rows[0][2]
             file_space = settings_rows[0][3]
-            used_space = 34
+            used_space = settings_rows[0][4]
             licence_holder_rows = self.get_licence_holder_details(client_id)
             licence_holders = []
             for row in licence_holder_rows:
@@ -4881,7 +4944,7 @@ class KnowledgeDatabase(Database):
                     unit_name = "-"
                 else:
                     unit_name =  "%s - %s" % (row[6], row[7])
-                used_id = row[0]
+                user_id = row[0]
                 email_id= row[1]
                 contact_no = row[4]
                 is_admin= row[5]
@@ -4889,9 +4952,10 @@ class KnowledgeDatabase(Database):
                 is_active = row[9]
                 licence_holders.append(
                     technomasters.LICENCE_HOLDER_DETAILS(
-                    user_id, user_name, email_id, contact_no,
+                    user_id, employee_name, email_id, contact_no,
                     unit_name, address,
-                    total_disk_space/1000000000, used_disk_space/1000000000
+                    file_space/1000000000, used_space/1000000000,
+                    bool(is_active), bool(is_admin)
                 ))
 
             remaining_licence = (no_of_user_licence) - len(licence_holder_rows)
@@ -4965,7 +5029,9 @@ class KnowledgeDatabase(Database):
     def get_client_details_report(self, country_id, client_id, business_group_id,
             legal_entity_id, division_id, unit_id, domain_ids):
 
-        condition = "country_id = '%d' AND client_id = '%d' "%(country_id, client_id)
+        condition = "country_id = '%d' AND client_id = '%d' "%(
+            country_id, client_id
+        )
         if business_group_id is not None:
             condition += " AND business_group_id = '%d'" % business_group_id
         if legal_entity_id is not None:
@@ -5083,7 +5149,7 @@ class KnowledgeDatabase(Database):
         tables = [self.tblNotifications, self.tblNotificationsStatus]
         aliases = ["tn", "tns"]
         join_conditions = ["tn.notification_id = tns.notification_id"]
-        where_condition = " tns.user_id ='%d' order by created_on DESC" % (
+        where_condition = " tns.user_id ='%d' order by created_on DESC limit 30" % (
             session_user
         )
         rows = self.get_data_from_multiple_tables(
@@ -5106,7 +5172,9 @@ class KnowledgeDatabase(Database):
             notification_id, session_user)
         self.update(self.tblNotificationsStatus, columns, values, condition)
 
-    def get_user_name_by_id(self, user_id, client_id = None):
+    def get_user_name_by_id(
+        self, user_id, client_id = None
+    ):
         employee_name = None
         if user_id != None:
             columns = "employee_code, employee_name"
@@ -5117,3 +5185,60 @@ class KnowledgeDatabase(Database):
             if len(rows) > 0:
                 employee_name = "{} - {}".format(rows[0][0], rows[0][1])
         return employee_name
+
+    def get_client_ids(
+        self, 
+    ):
+        columns = "group_concat(client_id)"
+        condition = "1" 
+        rows = self.get_data(
+            self.tblUserClients, columns, condition
+        )
+        client_ids = None
+        if rows:
+            client_ids = rows[0][0]
+        return client_ids
+
+    def get_user_client_countries(self, session_user):
+        client_ids = self.get_client_ids()
+        if client_ids is not None:
+            client_ids_list = client_ids.split(",")
+            country_ids = []
+            for client_id in client_ids_list:
+                country_ids += self.get_client_countries(int(client_id)).split(",")
+            columns = "DISTINCT country_id, country_name, is_active"
+            condition = "country_id in (%s) " % (
+                ",".join(
+                    str(x) for x in country_ids
+                )
+            )
+            rows = self.get_data(
+                self.tblCountries, columns, condition
+            )
+            result = []
+            if rows :
+                columns = ["country_id", "country_name", "is_active"]
+                result = self.convert_to_dict(rows, columns)
+            return self.return_countries(result)
+
+    def get_user_client_domains(self, session_user):
+        client_ids = self.get_client_ids()
+        if client_ids is not None:
+            client_ids_list = client_ids.split(",")
+            domain_ids = []
+            for client_id in client_ids_list:
+                domain_ids += self.get_client_domains(int(client_id)).split(",")
+            columns = "DISTINCT domain_id, domain_name, is_active"
+            condition = "domain_id in (%s) " % (
+                ",".join(
+                    str(x) for x in domain_ids
+                )
+            )
+            rows = self.get_data(
+                self.tblDomains, columns, condition
+            )
+            result = []
+            if rows :
+                columns = ["domain_id", "domain_name", "is_active"]
+                result = self.convert_to_dict(rows, columns)
+            return self.return_domains(result)

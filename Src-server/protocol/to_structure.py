@@ -3917,3 +3917,16 @@ def to_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_Doma
         value = to_structure_VectorType_RecordType_dashboard_DomainWiseYearConfiguration(value)
         d[key] = value
     return d
+
+def to_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence(data):
+    data = parse_dictionary(data)
+    dict = {}
+    for key, value in data.items():
+        key = to_structure_CustomTextType_250(key)
+        value = to_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence(value)
+        dict[key] = value
+    return dict
+
+def to_structure_OptionalType_RecordType_core_FileList(data):
+    if data is None: return data
+    return to_structure_RecordType_core_FileList(data)

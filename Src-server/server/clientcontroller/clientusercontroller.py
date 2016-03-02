@@ -18,6 +18,14 @@ def process_client_user_request(request, db) :
 		return process_get_compliance_detail(db, request, session_user, client_id)
 	if type(request) is clientuser.UpdateComplianceDetail:
 		return process_update_compliance_detail(db, request, session_user, client_id)
+	elif type(request) is clientuser.GetOnOccurrenceCompliances:
+		return process_get_on_occurrence_compliances(
+		    db, request, session_user, client_id
+		)
+	elif type(request) is clientuser.StartOnOccurrenceCompliance:
+		return process_start_on_occurrence_compliance(
+		    db, request, session_user, client_id
+		)
 
 def process_get_compliance_detail(db, request, session_user, client_id):
 	current_compliances_list = db.get_current_compliances_list(session_user, client_id)
@@ -35,3 +43,23 @@ def process_update_compliance_detail(db, request, session_user, client_id):
 		return clientuser.UpdateComplianceDetailSuccess()
 	else:
 		return clientuser.InvalidUser()
+
+def process_get_on_occurrence_compliances(
+	db, request, session_user, client_id
+):
+	compliances = db.get_on_occurrence_compliances_for_user(session_user)
+	return clientuser.GetOnOccurrenceCompliancesSuccess(
+		compliances=compliances
+	)
+
+def process_start_on_occurrence_compliance(
+	db, request, session_user, client_id
+):
+	compliance_id = request.compliance_id
+	start_date = request.start_date
+	unit_id = request.unit_id
+	duration = request.duration
+	db.start_on_occurrence_task(
+        compliance_id, start_date, unit_id, duration, session_user, client_id
+    )
+	return clientuser.StartOnOccurrenceComplianceSuccess()

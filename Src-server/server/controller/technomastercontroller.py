@@ -23,22 +23,15 @@ __all__ = [
 def get_client_groups(db, request, session_user):
 	domain_list = db.get_domains_for_user(session_user)
 	country_list = db.get_countries_for_user(session_user)
-	user_list = []
-	client_list = []
-
+	user_client_countries = db.get_user_client_countries(session_user)
+	user_client_domains = db.get_user_client_domains(session_user)
 	users = db.get_techno_users()
-	# for user_row in user_rows:
-	# 	employee_name = None
-	# 	if user_row[2] == None:
-	# 		employee_name = user_row[1]
-	# 	else:
-	# 		employee_name = "%s-%s" % (user_row[2], user_row[1])
-	# 	user_id = user_row[0]
-	# 	is_active = True if user_row[3]==1 else False
-	# 	user_list.append(core.User(user_id, employee_name, is_active))
 	client_list = db.get_group_company_details()
-	return technomasters.GetClientGroupsSuccess(countries = country_list, 
-		domains = domain_list, users = users, client_list = client_list)
+	return technomasters.GetClientGroupsSuccess(countries=country_list, 
+		domains=domain_list, users=users, client_list=client_list,
+		client_countries=user_client_countries, 
+		client_domains=user_client_domains
+	)
 
 def create_database(
 	host, username, password, database_name, db_username,
@@ -86,6 +79,7 @@ def save_client_group(db, request, session_user):
 			db.save_client_user(request, session_user, client_id)
 			db.update_client_db_details(host, client_id, db_username,
 	            db_password, request.short_name, database_name)
+			db.notify_incharge_persons(request)
 			return technomasters.SaveClientGroupSuccess()
 		except Exception, e:
 			print e
@@ -325,11 +319,13 @@ def get_clients(db, request, session_user):
 		geography_levels = db.get_geograhpy_levels_for_user(session_user)
 		geographies = db.get_geographies_for_user_with_mapping(session_user)
 		industries = db.get_industries()
+		client_domains = db.get_user_client_domains(session_user)
 		return technomasters.GetClientsSuccess(countries=country_list, 
-			domains = domain_list, group_companies = group_company_list, 
-			business_groups = business_group_list, legal_entities = legal_entity_list, 
-			divisions = division_list, units = unit_list, geography_levels = geography_levels,
-			geographies = geographies, industries = industries)
+			domains=domain_list, group_companies=group_company_list, 
+			business_groups=business_group_list, legal_entities=legal_entity_list, 
+			divisions=division_list, units=unit_list, geography_levels=geography_levels,
+			geographies=geographies, industries=industries, client_domains=client_domains
+		)
 	else:
 		return technomasters.UserIsNotResponsibleForAnyClient()
 

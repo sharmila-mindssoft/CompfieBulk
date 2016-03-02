@@ -3829,3 +3829,16 @@ def parse_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_D
         value = parse_structure_VectorType_RecordType_dashboard_DomainWiseYearConfiguration(value)
         d[key] = value
     return d
+
+def parse_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence(data):
+    data = parse_list(data)
+    d = {}
+    for key, value in data:
+        key = parse_structure_MapType_CustomTextType_250(key)
+        value = parse_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence(value)
+        d[key] = value
+    return d
+
+def parse_structure_OptionalType_RecordType_core_FileList(data):
+    if data is None: return data
+    return parse_structure_RecordType_core_FileList(data)
