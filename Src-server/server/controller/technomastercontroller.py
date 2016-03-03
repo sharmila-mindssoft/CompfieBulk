@@ -95,6 +95,14 @@ def update_client_group(db, request, session_user):
 		return technomasters.InvalidClientId()
 	elif db.is_duplicate_group_name(request.group_name, request.client_id):
 		return technomasters.GroupNameAlreadyExists()
+	# elif db.is_deactivated_existing_country(request.client_id, request.country_ids):
+	# 	return technomasters.CannotDeactivateCountry(
+	# 		country_name=country_name
+	# 	)
+	# elif db.is_deactivated_existing_domain(request.client_id, request.domain_ids):
+	# 	return technomasters.CannotDeactivateDomain(
+	# 		domain_name=domain_name
+	# 	)
 	else:
 		db.update_client_group(request, session_user)
 		db.save_date_configurations(request.client_id, request.date_configurations,

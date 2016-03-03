@@ -3284,6 +3284,12 @@ class KnowledgeDatabase(Database):
         condition = "url_short_name ='%s' AND client_id != '%d'" % (short_name, client_id)
         return self.is_already_exists(self.tblClientGroups, condition)
 
+    def is_deactivated_existing_country(self, client_id, country_ids):
+        existing_countries = self.get_client_countries(client_id).split(",")
+        pass
+
+        
+
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
         " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
@@ -3385,10 +3391,11 @@ class KnowledgeDatabase(Database):
             period_from = configuration.period_from
             period_to = configuration.period_to
             if self.is_combination_already_exists(country_id, domain_id, client_id):
-                
                 update_values = [period_from, period_to]
                 update_condition = " client_id = '%d' AND country_id = '%d' \
-                AND domain_id = '%d'"
+                AND domain_id = '%d'" % (
+                    client_id, country_id, domain_id
+                )
                 self.update(
                     self.tblClientConfigurations, update_columns, update_values, update_condition
                 )
@@ -3402,7 +3409,21 @@ class KnowledgeDatabase(Database):
                 ]
                 self.insert(
                     self.tblClientConfigurations, insert_columns, insert_values
-                )           
+                )
+
+    def is_combination_already_exists(
+        self, country_id, domain_id, client_id
+    ):
+        columns = "count(*)"
+        condition = " client_id = '%d' AND country_id = '%d' \
+                AND domain_id = '%d'" % (
+                    client_id, country_id, domain_id
+                ) 
+        rows = self.get_data(self.tblClientConfigurations, columns, condition)     
+        if rows[0][0] > 0:
+            return True
+        else:
+            return False
 
     def save_client_countries(self, client_id, country_ids):
         values_list = []
