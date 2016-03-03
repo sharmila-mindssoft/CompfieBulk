@@ -22,11 +22,12 @@ __all__ = [
 class CompanyManager(object) :
     def __init__(
         self, io_loop, knowledge_server_address, http_client,
-        server_added_callback
+        timeout_seconds, server_added_callback
     ) :
         self._io_loop = io_loop
         self._knowledge_server_address = knowledge_server_address
         self._http_client = http_client
+        self._timeout_seconds = timeout_seconds
         self._server_added_callback = server_added_callback
         self._servers = {}
         ip, port = self._knowledge_server_address
@@ -41,10 +42,15 @@ class CompanyManager(object) :
         )
         self._request_body = request
         self._io_loop.add_callback(self._poll)
+        self._first_time = True
 
     def _poll(self) :
         def on_timeout():
             self._http_client.fetch(self._request_body, self._poll_response)
+        if self._first_time:
+            self._first_time = False
+            on_timeout()
+            return
         self._io_loop.add_timeout(
             time.time() + 1, on_timeout
         )
