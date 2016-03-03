@@ -57,7 +57,7 @@ class ClientDatabase(Database):
         self.tblBusinessGroups = "tbl_business_groups"
         self.tblClientCompliances = "tbl_client_compliances"
         self.tblClientConfigurations = "tbl_client_configurations"
-        self.tblClientSettings = "tbl_client_settings"
+        self.tblClientSettings = "tbl_client_groups"
         self.tblClientStatutories = "tbl_client_statutories"
         self.tblComplianceActivityLog = "tbl_compliance_activity_log"
         self.tblComplianceDurationType = "tbl_compliance_duration_type"
@@ -2313,7 +2313,7 @@ class ClientDatabase(Database):
 #   Chart Api
 #
     def get_group_name(self):
-        query = "SELECT group_name from tbl_client_settings"
+        query = "SELECT group_name from tbl_client_groups"
         row = self.select_one(query)
         if row :
             return row[0]
