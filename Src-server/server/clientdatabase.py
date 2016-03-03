@@ -4825,7 +4825,8 @@ class ClientDatabase(Database):
             )
             frequency = core.COMPLIANCE_FREQUENCY(d["frequency"])
             due_date = d["due_date"]
-            due_date = due_date.strftime("%d-%b-%Y")
+            if due_date is not None :
+                due_date = due_date.strftime("%d-%b-%Y")
             validity_date = d["validity_date"]
             if validity_date is not None :
                 validity_date = validity_date.strftime("%d-%b-%Y")
