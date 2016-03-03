@@ -54,9 +54,18 @@ function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision,
   var statutoriesCount= 1;
   var actCount = 1;
 
-  $(".tbl_businessgroup_disp").text(dispBusinessGroup);
+  var bGroup = dispBusinessGroup;
+  if(bGroup == null){
+    bGroup = 'Nil';
+  }
+  var dName = dispDivision;
+  if(dName == null){
+    dName = 'Nil';
+  }
+
+  $(".tbl_businessgroup_disp").text(bGroup);
   $(".tbl_legalentity_disp").text(dispLegalEntity);
-  $(".tbl_division_disp").text(dispDivision);
+  $(".tbl_division_disp").text(dName);
   $(".tbl_unit_disp").text(dispUnit);
   $("#unit").val(unit_id);
   $("#unitval").val(dispUnit);
@@ -293,13 +302,21 @@ function loadStatutorySettingsList(assignedStatutoriesList){
   $(".tbody-statutorysettings-list").find("tr").remove();
     for(var entity in assignedStatutoriesList) {
       unit_id = assignedStatutoriesList[entity]["unit_id"];
+      var bGroup = assignedStatutoriesList[entity]["business_group_name"];
+      if(bGroup == null){
+        bGroup = 'Nil';
+      }
+      var dName = assignedStatutoriesList[entity]["division_name"];
+      if(dName == null){
+        dName = 'Nil';
+      }
       var tableRow=$('#templates .table-statutorysettings .table-row');
       var clone=tableRow.clone();
       $('.tbl_sno', clone).text(j);
       $('.tbl_country', clone).text(assignedStatutoriesList[entity]["country_name"]);
-      $('.tbl_businessgroup', clone).text(assignedStatutoriesList[entity]["business_group_name"]);
+      $('.tbl_businessgroup', clone).text(bGroup);
       $('.tbl_legalentity', clone).text(assignedStatutoriesList[entity]["legal_entity_name"]);
-      $('.tbl_division', clone).text(assignedStatutoriesList[entity]["division_name"]);
+      $('.tbl_division', clone).text(dName);
       $('.tbl_unit', clone).text(assignedStatutoriesList[entity]["unit_name"]);
       $('.tbl_domain', clone).text(assignedStatutoriesList[entity]["domain_names"]);
       $('.tbl_edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+unit_id+')"/>');

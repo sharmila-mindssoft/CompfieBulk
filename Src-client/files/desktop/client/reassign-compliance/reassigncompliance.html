@@ -1,0 +1,73 @@
+{% extends "files/desktop/client/home/container.html" %}
+{% block content %}
+<div class="content-container" id="reassign-view">
+  <div class="content-area">
+    <div class="add-container width70">
+      <div class="add-container-heading">Reassign Compliance<span class="error-message"></span></div>
+       <div class="input-row-left">
+          <div class="input-row">
+            <div class="field-label">Seating Unit:</div>
+            <div class="field-input">
+              <input type="text" class="input-box icon-autocomplete" id="seatingunitval" placeholder="Type Unit Code-Unit Name" />
+              <input type="hidden" id="seatingunit" value="">
+              <div id="autocomplete_seatingunit" class="ac-textbox default-display-none">
+              <ul id="ulist_seatingunit" style="width:215px;" class="hidemenu"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="input-row-right">
+          <div class="input-row">
+            <div class="field-label">Assignee:</div>
+              <div class="field-input">
+                <input type="text" class="input-box icon-autocomplete" id="assigneeval" placeholder="Type Assignee Name" />
+                <input type="hidden" id="assignee" value="">
+                <div id="autocomplete_assignee" class="ac-textbox default-display-none">
+                <ul id="ulist_assignee" style="width:215px;" class="hidemenu"></ul>
+                </div>
+              </div> 
+          </div>
+        </div> 
+        <div class="submit-button-container">
+          <input type="submit" value="Show" class="btn-submit">
+        </div>
+        <div class="clearfix"></div>
+        <div class="grid-table default-display-none" style="margin-top:20px" id="compliance-list">
+          <table>
+            <tr>
+              <th width="5%" align="left">#</th>
+              <th width="35%" align="left">Assignee</th>
+              <th width="30%" align="left">Seating Unit</th>
+              <th width="20%" align="center">No. of Compliance Tasks</th>
+              <th width="10%" align="left">Reassign</th>
+            </tr>
+            <tbody class="tbody-reassign-compliances-list">
+            </tbody>
+          </table>
+        </div> 
+        </div>
+    </div>
+</div>
+
+<!-- <div id="head-templates" class="default-display-none">
+<table>
+    <tr class="tbl_heading" style="margin-top:10px;"><td colspan="6"> <span class="heading"></span></td></tr>
+</table>
+</div> -->
+
+<div id="templates">
+  <table class="table-compliances">
+    <tr class="table-row">
+      <td class="sno" align="center"></td>
+      <td class="assigneename"></td>
+      <td class="seatingunit"></td>
+      <td class="noofcompliance" align="center"></td>
+      <td style="padding-top:0.3em; padding-bottom:0.3em;" class="action"></td>
+      <!-- <td class="action" align="center"><input type="button" class="btn-submit" value="Start"/></td> -->
+    </tr>
+  </table>
+</div>
+
+<script type="text/javascript" src="/files/desktop/client/reassign-compliance/reassigncompliance.js"></script>
+{% endblock %}
+
