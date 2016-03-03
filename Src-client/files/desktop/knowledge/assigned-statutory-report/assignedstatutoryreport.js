@@ -131,12 +131,20 @@ $("#show-button").click(function(){
 	}
 	if(countries == ""){
 		displayMessage("Please Select Country");
+		$(".grid-table-rpt").hide();
 	}
 	else if(domain == ""){
 		displayMessage("Please Enter Domain");	
+		$(".grid-table-rpt").hide();
 	}
+	else if(domainName == ""){
+		displayMessage("Please Enter Domain");	
+		$(".grid-table-rpt").hide();
+	}	
 	else{
+
 		function onSuccess(data){
+			clearMessage();
 			$(".grid-table-rpt").show();
 			$(".countryval").text(countriesText);
 			$(".groupsval").text(groupsval);
@@ -254,8 +262,8 @@ function loadAssignedStatutoryList(data){
 //Countries---------------------------------------------------------------------------------------------------------------
 function loadCountries(countriesList){
 	$.each(countriesList, function(key, values){
-		var countryId = countriesList[key]['country_id'];
-		var countryName = countriesList[key]['country_name'];
+		var countryId = values['country_id'];
+		var countryName = values['country_name'];
 		$('#countries').append($('<option value="'+countryId+'">'+countryName+'</option>'));
 	});
 }

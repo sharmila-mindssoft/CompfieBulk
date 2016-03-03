@@ -93,7 +93,7 @@ function changeStatus (userId,isActive) {
 		displayMessage(error);
 	}
 
-	mirror.changeAdminUserStatus(userId, isActive, 
+	mirror.changeAdminUserStatus(userId, isActive,
 		function (error, response) {
             if (error == null){
               onSuccess(response);
