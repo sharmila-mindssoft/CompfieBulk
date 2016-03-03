@@ -1,6 +1,17 @@
 CREATE DATABASE  IF NOT EXISTS `mirror_knowledge`;
 USE `mirror_knowledge`;
 
+DROP TABLE IF EXISTS `tbl_audit_log`;
+CREATE TABLE `tbl_audit_log` (
+  `audit_trail_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `tbl_name` varchar(100),
+  `tbl_auto_id` int(10),
+  `column_name` varchar(100),
+  `value` longtext,
+  `client_id` int(10),
+  `action` varchar(20)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `tbl_form_category`;
 CREATE TABLE `tbl_form_category` (
   `form_category_id` int(11) NOT NULL,
@@ -394,7 +405,7 @@ CREATE TABLE `tbl_user_clients` (
 
 DROP TABLE IF EXISTS `tbl_client_configurations`;
 CREATE TABLE `tbl_client_configurations` (
-  `client_config_id` int(11) NOT NULL,
+  `client_config_id` int(11) NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -402,7 +413,7 @@ CREATE TABLE `tbl_client_configurations` (
   `period_to` tinyint(2) NOT NULL,
   `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updated_by` int(11) DEFAULT NULL,
-  PRIMARY Key (client_id, country_id, domain_id),
+  PRIMARY Key (client_config_id, client_id, country_id, domain_id),
   CONSTRAINT `fk_tb_client_id_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`),
   CONSTRAINT `fk_tbl_countries_id_1` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `fk_tbl_domains_id_1` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`)
@@ -626,7 +637,7 @@ CREATE TABLE `tbl_client_statutories` (
 
 DROP TABLE IF EXISTS `tbl_client_compliances`;
 CREATE TABLE `tbl_client_compliances` (
-  `client_compliance_id` int(11) NOT NULL,
+  `client_compliance_id` int(11) NOT  NULL,
   `client_statutory_id` int(11) NOT NULL,
   `compliance_id` int(11) NOT NULL,
   `statutory_id` int(11) NOT NULL,

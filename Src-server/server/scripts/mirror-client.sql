@@ -1,3 +1,14 @@
+DROP TABLE IF EXISTS `tbl_audit_log`;
+CREATE TABLE `tbl_audit_log` (
+  `audit_trail_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  -- `tbl_name` varchar(100),
+  -- `tbl_auto_id` int(10),
+  -- `column_name` varchar(100),
+  -- `value` longtext,
+  -- `client_id` int(10),
+  -- `action` varchar(20)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `tbl_form_type`;
 CREATE TABLE `tbl_form_type` (
   `form_type_id` int(11) NOT NULL,
@@ -92,6 +103,7 @@ CREATE TABLE `tbl_client_groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_client_configurations`;
 CREATE TABLE `tbl_client_configurations` (
+  `client_config_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `period_from` int(11) NOT NULL,
@@ -257,6 +269,7 @@ CREATE TABLE `tbl_client_statutories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_client_compliances`;
 CREATE TABLE `tbl_client_compliances` (
+  `client_compliance_id` int(11) NOT  NULL,
   `client_statutory_id` int(11) NOT NULL,
   `compliance_id` int(11) NOT NULL,
   `statutory_applicable` tinyint(4) DEFAULT NULL,
@@ -405,6 +418,7 @@ CREATE TABLE `tbl_statutory_notifications_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_statutory_notifications_units`;
 CREATE TABLE `tbl_statutory_notifications_units` (
+  `statutory_notification_unit_id` int(11) NOT NULL,
   `statutory_notification_id` int(11) NOT NULL,
   `business_group_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,

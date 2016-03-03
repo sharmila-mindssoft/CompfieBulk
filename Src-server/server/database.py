@@ -14,6 +14,7 @@ from protocol import (
 from distribution.protocol import (
     Company, IPAddress
 )
+from replication.protocol import Change
 from server.emailcontroller import EmailHandler as email
 
 __all__ = [
@@ -602,6 +603,43 @@ class KnowledgeDatabase(Database):
     #
     # Companies
     #
+
+    def get_trail_id(self):
+        query = "select IFNULL(MAX(audit_trail_id), 0) as audit_trail_id from tbl_audit_log;"
+        row = self.select_one(query)
+        trail_id = row[0]
+        return trail_id
+
+    def get_trail_log(self, client_id, received_count):
+        query = "SELECT "
+        query += "  audit_trail_id, tbl_name, tbl_auto_id,"
+        query += "  column_name, value, client_id, action"
+        query += " from tbl_audit_log WHERE audit_trail_id>%s AND (client_id = 0 OR client_id=%s) LIMIT 100;" % (
+            received_count, client_id
+        )
+        rows = self.select_all(query)
+        results = []
+        if rows :
+            columns = [
+                "audit_trail_id", "tbl_name", "tbl_auto_id",
+                "column_name", "value", "client_id", "action"
+            ]
+            results = self.convert_to_dict(rows, columns)
+        return self.return_changes(results)
+
+    def return_changes(self, data):
+        results = []
+        for d in data :
+            results.append(Change(
+                int(d["audit_trail_id"]),
+                d["tbl_name"],
+                int(d["tbl_auto_id"]),
+                d["column_name"],
+                d["value"],
+                int(d["client_id"]),
+                d["action"]
+            ))
+        return results
 
     def get_servers(self):
         query = "SELECT client_id, machine_id, database_ip, "
@@ -2225,6 +2263,7 @@ class KnowledgeDatabase(Database):
         statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
         compliances = data.compliances
         geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
+        statutory_mapping = '-'.join(data.mappings)
         statutory_mapping_id = self.get_new_id(
             "statutory_mapping_id", "tbl_statutory_mappings"
         )
@@ -2234,11 +2273,12 @@ class KnowledgeDatabase(Database):
         statutory_table = "tbl_statutory_mappings"
         field = "(statutory_mapping_id, country_id, domain_id, \
             industry_ids, statutory_nature_id, statutory_ids, \
-            geography_ids, is_active, created_by, created_on)"
+            geography_ids, is_active, statutory_mapping, created_by, created_on)"
         data_save = (
             statutory_mapping_id, int(country_id), int(domain_id),
             industry_ids, int(nature_id), statutory_ids,
             geography_ids, int(is_active),
+            statutory_mapping,
             int(created_by), str(created_on)
         )
         if (self.save_data(statutory_table, field, data_save)) :
@@ -2490,17 +2530,19 @@ class KnowledgeDatabase(Database):
         statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
         compliances = data.compliances
         geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
+        statutory_mapping = '-'.join(data.mappings)
 
         self.save_statutory_backup(statutory_mapping_id, updated_by)
         table_name = "tbl_statutory_mappings"
         columns = (
             "industry_ids", "statutory_nature_id", "statutory_ids",
             "geography_ids", "approval_status", "rejected_reason",
+            "statutory_mapping",
             "updated_by"
         )
         values = (
             industry_ids, nature_id, statutory_ids, geography_ids,
-            0, '', int(updated_by)
+            0, '', statutory_mapping, int(updated_by)
         )
         where_condition = " statutory_mapping_id= %s " % (statutory_mapping_id)
 
@@ -2948,15 +2990,15 @@ class KnowledgeDatabase(Database):
 
         if client_info is not None:
             for r in client_info :
-                statutory_notification_unit_id = self.get_new_id(
-                    "statutory_notification_unit_id", 
-                    self.tblStatutoryNotificationsUnits
+                notification_unit_id = self.get_new_id(
+                    "statutory_notification_unit_id",
+                    "tbl_statutory_notifications_units"
                 )
                 q = "INSERT INTO tbl_statutory_notifications_units \
                     (statutory_notification_unit_id, statutory_notification_id, client_id, \
                         business_group_id, legal_entity_id, division_id, unit_id) VALUES \
                     (%s, %s, %s, %s, %s, %s, %s)" % (
-                        statutory_notification_unit_id,
+                        notification_unit_id,
                         statutory_notification_id,
                         int(r["client_id"]),
                         int(r["business_group_id"]),
@@ -3461,12 +3503,36 @@ class KnowledgeDatabase(Database):
         query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
             email_id, encrypted_password)
         cursor.execute(query)
+        self._save_client_countries(client_id)
+        self.__save_client_domains(client_id)
         con.commit()
         try:
             email().send_client_credentials(short_name, email_id, password)
         except Exception, e:
             print "Error while sending email : {}".format(e)
         return True
+
+    def _save_client_countries(self, client_id, cursor):
+        q = "SELECT country_id, country_name, is_active \
+                FROM tbl_countries\
+                WHERE country_id\
+                IN (\
+                    SELECT DISTINCT country_id\
+                    FROM tbl_client_countries\
+                    WHERE client_id = %s \
+                )" % (client_id)
+        cursor.execute(q)
+
+    def _save_client_domains(self, client_id, cursor):
+        q = "SELECT domain_id, domain_name, is_active \
+                FROM tbl_domains\
+                WHERE domain_id\
+                IN (\
+                    SELECT DISTINCT domain_id\
+                    FROM tbl_client_domains\
+                    WHERE client_id = %s \
+                )" % (client_id)
+        cursor.execute(q)
 
     def _get_server_details(self):
         columns = "ip, server_username,server_password"
@@ -4354,6 +4420,7 @@ class KnowledgeDatabase(Database):
             statutory_id, statutory_applicable, not_applicable_remarks, \
             compliance_applicable, created_by, created_on)"
         for d in data :
+            client_compliance_id = self.get_new_id("client_compliance_id", self.tblClientCompliances)
             level_1_id = d.level_1_statutory_id
             applicable_status = d.applicable_status
             not_applicable_remarks = d.not_applicable_remarks
@@ -4366,7 +4433,8 @@ class KnowledgeDatabase(Database):
                     "client_compliance_id", self.tblClientCompliances    
                 )
                 values = (
-                    client_compliance_id, client_statutory_id, compliance_id,
+                    client_compliance_id,
+                    client_statutory_id, compliance_id,
                     level_1_id, int(applicable_status), not_applicable_remarks,
                     compliance_applicable_status, int(user_id), created_on
                 )
@@ -4931,7 +4999,7 @@ class KnowledgeDatabase(Database):
                         unit_detail[2], unit_detail[3], unit_detail[4], unit_detail[5],
                         unit_detail[6], [int(x) for x in unit_detail[7].split(",")], bool(unit_detail[8])))
                     if bool(unit_detail[8]) == True :
-                        active_count += 1 
+                        active_count += 1
                     else:
                         deactive_count += 1
                 country_wise_units[country_row[0]] = units
