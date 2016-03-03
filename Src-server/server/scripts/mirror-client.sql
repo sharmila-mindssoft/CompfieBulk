@@ -1,12 +1,6 @@
 DROP TABLE IF EXISTS `tbl_audit_log`;
 CREATE TABLE `tbl_audit_log` (
-  `audit_trail_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  -- `tbl_name` varchar(100),
-  -- `tbl_auto_id` int(10),
-  -- `column_name` varchar(100),
-  -- `value` longtext,
-  -- `client_id` int(10),
-  -- `action` varchar(20)
+  `audit_trail_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_form_type`;

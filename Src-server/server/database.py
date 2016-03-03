@@ -2262,7 +2262,9 @@ class KnowledgeDatabase(Database):
         statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
         compliances = data.compliances
         geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
+        print data.mappings
         statutory_mapping = '-'.join(data.mappings)
+
         statutory_mapping_id = self.get_new_id(
             "statutory_mapping_id", "tbl_statutory_mappings"
         )
@@ -3468,6 +3470,7 @@ class KnowledgeDatabase(Database):
         cursor = con.cursor()
         query = "CREATE DATABASE %s" % database_name
         cursor.execute(query)
+        print "grant privileges"
         query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" %(
             database_name, db_username, host, db_password)
         cursor.execute(query)
@@ -3475,6 +3478,7 @@ class KnowledgeDatabase(Database):
 
         con = self._db_connect(host, username, password, database_name)
         cursor = con.cursor()
+        print "exec scripts"
         sql_script_path = os.path.join(os.path.join(os.path.split(__file__)[0]),
         "scripts/mirror-client.sql")
         file_obj = open(sql_script_path, 'r')
@@ -3490,9 +3494,12 @@ class KnowledgeDatabase(Database):
         encrypted_password, password = self.generate_and_return_password()
         query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
             email_id, encrypted_password)
+        print "admin user"
         cursor.execute(query)
-        self._save_client_countries(client_id)
-        self.__save_client_domains(client_id)
+        print "client countries"
+        self._save_client_countries(client_id, cursor)
+        print "client domains"
+        self.__save_client_domains(client_id, cursor)
         con.commit()
         try:
             email().send_client_credentials(short_name, email_id, password)
@@ -3509,7 +3516,12 @@ class KnowledgeDatabase(Database):
                     FROM tbl_client_countries\
                     WHERE client_id = %s \
                 )" % (client_id)
-        cursor.execute(q)
+        rows = self.select_all(q)
+        for r in rows :
+            q = " INSERT INTO tbl_countries VALUES (%s, '%s', %s)" % (
+                int(r(0)), r(1), int(r(2))
+            )
+            cursor.execute(q)
 
     def _save_client_domains(self, client_id, cursor):
         q = "SELECT domain_id, domain_name, is_active \
@@ -3520,7 +3532,13 @@ class KnowledgeDatabase(Database):
                     FROM tbl_client_domains\
                     WHERE client_id = %s \
                 )" % (client_id)
-        cursor.execute(q)
+        rows = self.select_all(q)
+        for r in rows :
+            q = " INSERT INTO tbl_domains VALUES (%s, '%s', %s)" % (
+                int(r(0)), r(1), int(r(2))
+            )
+            cursor.execute(q)
+
 
     def _get_server_details(self):
         columns = "ip, server_username,server_password"
@@ -5309,6 +5327,8 @@ class KnowledgeDatabase(Database):
                 columns = ["country_id", "country_name", "is_active"]
                 result = self.convert_to_dict(rows, columns)
             return self.return_countries(result)
+        else :
+            return self.get_countries_for_user(session_user)
 
     def get_user_client_domains(self, session_user):
         client_ids = self.get_client_ids()
@@ -5331,3 +5351,5 @@ class KnowledgeDatabase(Database):
                 columns = ["domain_id", "domain_name", "is_active"]
                 result = self.convert_to_dict(rows, columns)
             return self.return_domains(result)
+        else :
+            return self.get_domains_for_user(session_user)

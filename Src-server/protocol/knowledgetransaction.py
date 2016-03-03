@@ -143,7 +143,7 @@ class SaveStatutoryMapping(Request):
         geography_ids = data.get("geography_ids")
         geography_ids = parse_structure_VectorType_UnsignedIntegerType_32(geography_ids)
         mappings = data.get("mappings")
-        mappings = parse_structure_VectorType_Text
+        mappings = parse_structure_VectorType_Text(mappings)
         return SaveStatutoryMapping(
             country_id, domain_id, industry_ids,
             statutory_nature_id, statutory_ids,
