@@ -47,12 +47,19 @@ $("#show").click(function(){
 	 	$('.grid-table').show();
 	 	function getUserName(userId){
 	 		var userName;
-	 		$.each(userList, function(key){
-	 			if(userList[key]['user_id'] == userId){
-	 				userName = userList[key]['employee_name'];
-	 			}
-	 		});
-	 		return userName;
+	 		if(userId != 0){
+	 			$.each(userList, function(key){
+	 				if(userList[key]['user_id'] == userId){
+	 					userName = userList[key]['employee_name'];
+	 				}
+	 			});
+	 			return userName;	
+	 		}
+	 		else{
+	 			userName = "Apidmin";
+	 			return userName;
+	 		}
+	 		
 	 	}
 	 	function getFormName(formId){
 	 		var formName;
@@ -75,13 +82,13 @@ $("#show").click(function(){
 			var tosplitDate = toDate[1]+","+toDate[0]+","+toDate[2];
 			var toDateVal = new Date(tosplitDate).getTime();
 			//Api Date conversion
-			var auditDateValue = auditTrailList[key]['date'];
+			var auditDateValue = value['date'];
 			var auditDate = auditDateValue.split("-");
 			var auditdatesplit = auditDate[1]+","+auditDate[0]+","+auditDate[2];
 			var auditDateVal = new Date(auditdatesplit).getTime();
 
-			var auditUser = auditTrailList[key]['user_id'];
-			var auditFormId = auditTrailList[key]['form_id'];
+			var auditUser = value['user_id'];
+			var auditFormId = value['form_id'];
 			var formCheckval;
 			var userCheckval;
 			//userid empty, formid empty
@@ -138,6 +145,7 @@ $("#show").click(function(){
 			}
 
 		});
+		$("#total-records").html('Total : '+sno+' records');
 	}
 });
 function hidemenu(){

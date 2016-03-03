@@ -34,6 +34,10 @@ $(function() {
 $("#btn-user-add").click(function(){
     $("#user-add").show();
     $("#user-view").hide();
+    var x=document.getElementsByTagName("input");
+    for(i = 0; i<=x.length-1; i++){
+        if(x.item(i).type!="submit" ){ x.item(i).value = ""; }
+    }
     clearMessage();
     $("#user-privilege-id").val('');
     loadautocountry();
@@ -89,13 +93,21 @@ function getUserGroupName(userGroupId){
     }
     return usergroupname;
 }
-function getUnitNameAndAddress(unitId){
+function getUnitNameAndAddress(unitId, serviceproviderid){
     var unit = {};
     if(unitId != null){
         $.each(unitList, function(key, value) { //unit name
-            if(unitList[key]['unit_id'] == unitId){
-                unit['unitName'] = unitList[key]['unit_name'];
-                unit['unitAddress'] = unitList[key]['unit_address'];
+            if(value['unit_id'] == unitId){
+                unit['unitName'] = value['unit_name'];
+                unit['unitAddress'] = value['unit_address'];
+            }
+        });
+    }
+    else{
+        $.each(serviceProviderList, function(key, value) { //unit name
+            if(value['service_provider_id'] == serviceproviderid){
+                unit['unitName'] = value['service_provider_name'];
+                unit['unitAddress'] = value['service_provider_name'];
             }
         });
     }
@@ -133,7 +145,8 @@ function loadClientUserList(){
             admintitle = "Click here to Promote Admin";
         }
 
-        var seatingUnitId = userList[i]['seating_unit_id']
+        var seatingUnitId = userList[i]['seating_unit_id'];
+        var serviceProviderId = userList[i]['service_provider_id'];
         var userGroupId = userList[i]['user_group_id'];
 
         if(users["user_group_id"] != null){
@@ -144,7 +157,7 @@ function loadClientUserList(){
             $('.employee-code-name', clone).text(users["employee_code"]+" - "+users["employee_name"]);
             $('.group-name', clone).text(getUserGroupName(userGroupId));
             $('.level-name', clone).text("Level "+users["user_level"]);
-            $('.seating-unit', clone).html('<abbr class="page-load tipso_style" title="'+getUnitNameAndAddress(seatingUnitId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId)['unitName']);
+            $('.seating-unit', clone).html('<abbr class="page-load tipso_style" title="'+getUnitNameAndAddress(seatingUnitId, serviceProviderId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId, serviceProviderId)['unitName']);
 
             $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
             $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+')"/>');
@@ -915,4 +928,7 @@ function activate_text_sp (element,checkval,checkname) {
 }
 $(function() {
     initialize();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

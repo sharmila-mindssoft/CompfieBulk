@@ -16,6 +16,7 @@ $("#btn-service-provider-add").click(function(){
  	for(i = 0; i <= x.length-1; i++){
   		if(x.item(i).type != "submit" ){ x.item(i).value = ""; }
   	}
+  	$("#address").val('');
 });
 $("#btn-service-provider-cancel").click(function(){
 	$("#service-provider-add").hide();
@@ -76,6 +77,15 @@ function loadServiceProviderList(serviceProviderList){
 		}
 	}
 }
+$('#country-code').on('input', function (event) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+$('#area-code').on('input', function (event) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+$('#mobile-number').on('input', function (event) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
 
 $("#submit").click(function(){
 	var serviceProviderIdValue = $("#service-provider-id").val();
@@ -90,17 +100,32 @@ $("#submit").click(function(){
 	if(serviceProviderNameValue == ''){
 		displayMessage('Enter Service Provider Name ');
 	}
+	else if(serviceProviderNameValue.length > 50){
+		displayMessage('Service Provider Name is maximum 50 characters Allowed');
+	}
 	else if(contactPersonValue == ''){
 		displayMessage('Enter Contact Person Name ');
 	}
+	else if(contactPersonValue.length > 50){
+		displayMessage('Contact Person Name is maximum 50 characters Allowed');
+	}
 	else if(countryCodeValue == ''){
-		displayMessage('Enter Mobile Country Code');
+		displayMessage('Enter Contact No. Country Code');
+	}
+	else if(countryCodeValue.length > 4){
+		displayMessage('Contact No. Country Code is maximum 4 characters Allowed');
+	}
+	else if(areaCodeValue > 4){
+		displayMessage('Contact No. Area Code is maximum 4 characters');
 	}
 	else if(mobileNumberValue == ''){
-		displayMessage('Enter Mobile Number');
+		displayMessage('Enter Contact No.');
 	}
-	else if(addressValue == ''){
-		displayMessage('Enter Address ');
+	else if(mobileNumberValue.length > 12){
+		displayMessage('Contact No. is maximum 12 characters Allowed');
+	}
+	else if(addressValue.length > 500){
+		displayMessage('Address is maximum 500 characters Allowed');
 	}
 	else if(contractFromValue == ''){
 		displayMessage('Enter Contract From ');
@@ -218,7 +243,7 @@ function serviceprovider_active(serviceProviderId, isActive){
 
 $("#search-service-provider").keyup(function() { 
   var value = this.value.toLowerCase();
-  $("table").f0ind("tr:not(:first)").each(function(index) {
+  $("table").find("tr:not(:first)").each(function(index) {
     if (index === 0) return;
     var id = $(this).find(".service-provider-name").text().toLowerCase();       
     $(this).toggle(id.indexOf(value) !== -1);

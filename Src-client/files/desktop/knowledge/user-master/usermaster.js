@@ -59,8 +59,8 @@ function displayEdit (userId) {
 				}
 		}
 		$("#employeename").val(employeeName);
-	    $("#employeeid").val(employeeId);
-	  	$("#address").val(address);
+    $("#employeeid").val(employeeId);
+  	$("#address").val(address);
 	 	$("#countrycode").val(countryCode);
 		$("#areacode").val(areaCode);
 		$("#contactno").val(contactNo);
