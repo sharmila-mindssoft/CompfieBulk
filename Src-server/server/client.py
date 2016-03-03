@@ -42,12 +42,32 @@ class ReplicationManager(object) :
 
     def _load_auto_id_columns(self):
         self._auto_id_columns = {
-            "tbl_business_groups": "business_group_id"
+            "tbl_client_groups": "client_id",
+            "tbl_business_groups": "business_group_id",
+            "tbl_legal_entities": "legal_entity_id",
+            "tbl_divisions": "division_id",
+            "tbl_units": "unit_id",
+            "tbl_client_configurations": "client_config_id",
+            "tbl_compliances": "compliance_id",
+            "tbl_client_statutories": "client_statutory_id",
+            "tbl_client_compliances": "client_compliance_id",
+            "tbl_statutory_notifications_log": "statutory_notification_id",
+            "tbl_statutory_notifications_units": "statutory_notification_unit_id"
         }
 
     def _load_columns_count(self):
         self._columns_count = {
-            "tbl_business_groups": 1
+            "tbl_client_groups": 11,
+            "tbl_business_groups": 2,
+            "tbl_legal_entities": 3,
+            "tbl_divisions": 4,
+            "tbl_units": 13,
+            "tbl_client_configurations": 5,
+            "tbl_compliances": 17,
+            "tbl_client_statutories": 5,
+            "tbl_client_compliances": 10,
+            "tbl_statutory_notifications_log": 8,
+            "tbl_statutory_notifications_units": 6
         }
 
     def _get_received_count(self):
@@ -65,6 +85,7 @@ class ReplicationManager(object) :
     def _poll(self) :
         assert self._stop is False
         assert self._received_count is not None
+
         def on_timeout():
             if self._stop:
                 return
@@ -108,7 +129,7 @@ class ReplicationManager(object) :
             print err, response.error
         self._poll()
 
-    def _execute_insert_statement(changes, error_ok=False):
+    def _execute_insert_statement(self, changes, error_ok=False):
         assert (len(changes)) > 0
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
@@ -118,20 +139,20 @@ class ReplicationManager(object) :
             if column_count != len(changes):
                 return
         else:
-            assert column_count == len(changes):
+            assert column_count == len(changes)
         columns = [x.column_name for x in changes]
         values = ["'" + x.value.replace("'", "\\'") + "'" for x in changes]
         query = "INSERT INTO %s (%s, %s) VALUES(%s, %s);" % (
             tbl_name,
-            auto_id.
+            auto_id,
             ",".join(columns),
-            change[0].tbl_auto_id
+            changes[0].tbl_auto_id,
             values
         )
         self._db.execute(query)
         self._temp_count += len(changes)
 
-    def _execute_update_statement(change):
+    def _execute_update_statement(self, change):
         auto_id = self._auto_id_columns.get(change.tbl_name)
         assert auto_id is not None
         query = "UPDATE %s SET %s = %s WHERE %s = %s;" % (
@@ -152,23 +173,23 @@ class ReplicationManager(object) :
             tbl_name = ""
             auto_id = 0
             is_insert = False
-            for change in r.changes:
+            for change in changes:
                 # Update
                 if change.action == "1":
                     if is_insert:
                         self._execute_insert_statement(changes_list)
                     is_insert = False
                     changes_list = []
-                    self._execute_update_statement(change):
+                    self._execute_update_statement(change)
                 else:
                     if is_insert is False:
                         is_insert = True
-                        auto_id = change.tbl_auto_id:
+                        auto_id = change.tbl_auto_id
                         tbl_name = change.tbl_name
                     if auto_id != change.tbl_auto_id or tbl_name != change.tbl_name:
                         self._execute_insert_statement(changes_list)
                         changes_list = []
-                    auto_id = change.tbl_auto_id:
+                    auto_id = change.tbl_auto_id
                     tbl_name = change.tbl_name
                     changes_list.append(change)
             if is_insert:
