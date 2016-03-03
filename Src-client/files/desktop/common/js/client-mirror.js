@@ -1353,6 +1353,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getUserwiseCompliances(callback){
+        var request = [
+            "GetUserwiseCompliances", {}
+        ];
+        callerName = "client_transaction";
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -1488,7 +1496,9 @@ function initClientMirror() {
         getTaskApplicabilityReportData: getTaskApplicabilityReportData,
 
         getOnOccurrenceCompliances: getOnOccurrenceCompliances,
-        startOnOccurrenceCompliance: startOnOccurrenceCompliance
+        startOnOccurrenceCompliance: startOnOccurrenceCompliance,
+
+        getUserwiseCompliances: getUserwiseCompliances,
     }
 }
 var client_mirror = initClientMirror();

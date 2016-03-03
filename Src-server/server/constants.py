@@ -168,6 +168,16 @@ CLIENT_TEMPLATE_PATHS = [
         "files/desktop/client/completed-tasks-current-year/completedtaskscurrentyear.html",
         None, {}
     ),
+    (
+        "/on-occurrence-compliances",
+        "files/desktop/client/on-occurrence-compliances/onoccurrencecompliances.html",
+        None, {}
+    ),
+    (
+        "/reassign-compliance",
+        "files/desktop/client/reassign-compliance/reassigncompliance.html",
+        None, {}
+    ),
 ]
 
 TEMPLATE_PATHS = [

@@ -177,4 +177,17 @@ $("#search-seating-unit").keyup(function() {
 
 $(function() {
   initialize();
+
+  $('#assigneeval').keyup('input', function (event) {
+      this.value = this.value.replace(/[^0-9]/g, '');
+  });
+  
+  $('#concurrenceapprovalval').keyup('input', function (event) {
+      this.value = this.value.replace(/[^0-9]/g, '');
+  });
+
+  $('#allval').keyup('input', function (event) {
+      this.value = this.value.replace(/[^0-9]/g, '');
+  });
+
 });

@@ -55,9 +55,13 @@ $(".hidemenu").click(function(){
 function load_thirdwizard(){
 
   var arrowimage = " <img src=\'/images/right_arrow.png\'/> ";
-    $(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.businessgrouplist.active').text() + arrowimage + 
-      $('.legalentitylist.active').text() + arrowimage + $('.divisionlist.active').text() + arrowimage + $('.unitlist.active').text() +
+    $(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + 
+      $('.legalentitylist.active').text() + arrowimage + $('.unitlist.active').text() +
       arrowimage + $('.domainlist.active').text());
+
+    /*$(".breadcrumbs").html($('.countrylist.active').text() + arrowimage + $('.businessgrouplist.active').text() + arrowimage + 
+      $('.legalentitylist.active').text() + arrowimage + $('.divisionlist.active').text() + arrowimage + $('.unitlist.active').text() +
+      arrowimage + $('.domainlist.active').text());*/
 
   var count=1;
   var statutoriesCount= 1;
@@ -150,9 +154,6 @@ function load_thirdwizard(){
             dateFormat: "dd-M-yy",
             monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            onClose: function( selectedDate ) {
-            $( "#duedate"+statutoriesCount ).datepicker( "option", "minDate", selectedDate );
-          }
         });
 
         $("#validitydate"+statutoriesCount ).datepicker({
@@ -162,9 +163,6 @@ function load_thirdwizard(){
             dateFormat: "dd-M-yy",
             monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            onClose: function( selectedDate ) {
-            $( "#validitydate"+statutoriesCount ).datepicker( "option", "minDate", selectedDate );
-          }
         });
 
         $("#completiondate"+statutoriesCount ).datepicker({
@@ -174,9 +172,6 @@ function load_thirdwizard(){
             dateFormat: "dd-M-yy",
             monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            onClose: function( selectedDate ) {
-            $( "#completiondate"+statutoriesCount ).datepicker( "option", "minDate", selectedDate );
-          }
         });
 
         $("#assigneeval"+statutoriesCount).keyup(function(){
@@ -210,7 +205,13 @@ function load_thirdwizard(){
       }  
       actCount = actCount + 1;
       count++;
-    
+  }
+
+  if(count <= 1){
+    var norecordtableRow=$('#no-record-templates .font1');
+    var noclone=norecordtableRow.clone();
+    $('.tbody-assignstatutory').append(noclone);
+    $('#activate-step-finish').hide();
   }
 }
 
