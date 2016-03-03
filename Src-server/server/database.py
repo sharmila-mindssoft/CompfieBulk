@@ -609,12 +609,12 @@ class KnowledgeDatabase(Database):
         trail_id = row[0]
         return trail_id
 
-    def get_trail_log(self, received_count):
+    def get_trail_log(self, client_id, received_count):
         query = "SELECT "
         query += "  audit_trail_id, tbl_name, tbl_auto_id,"
         query += "  column_name, value, client_id, action"
-        query += " from tbl_audit_log WHERE audit_trail_id>%s;" % (
-            received_count,
+        query += " from tbl_audit_log WHERE audit_trail_id>%s AND (client_id = 0 OR client_id=%s) LIMIT 100;" % (
+            received_count, client_id
         )
         rows = self.select_all(query)
         results = []
@@ -630,13 +630,13 @@ class KnowledgeDatabase(Database):
         results = []
         for d in data :
             results.append(Change(
-                int(d("audit_trail_id")),
-                d("tbl_name"),
-                int(d("tbl_auto_id")),
-                d("column_name"),
-                d("value"),
-                int(d("client_id")),
-                d("action")
+                int(d["audit_trail_id"]),
+                d["tbl_name"],
+                int(d["tbl_auto_id"]),
+                d["column_name"],
+                d["value"],
+                int(d["client_id"]),
+                d["action"]
             ))
         return results
 
@@ -2262,7 +2262,7 @@ class KnowledgeDatabase(Database):
         statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
         compliances = data.compliances
         geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
-        statutory_mapping = '-'.join(str(x) for x in data.mappings)
+        statutory_mapping = '-'.join(data.mappings)
         statutory_mapping_id = self.get_new_id(
             "statutory_mapping_id", "tbl_statutory_mappings"
         )
@@ -3491,12 +3491,36 @@ class KnowledgeDatabase(Database):
         query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
             email_id, encrypted_password)
         cursor.execute(query)
+        self._save_client_countries(client_id)
+        self.__save_client_domains(client_id)
         con.commit()
         try:
             email().send_client_credentials(short_name, email_id, password)
         except Exception, e:
             print "Error while sending email : {}".format(e)
         return True
+
+    def _save_client_countries(self, client_id, cursor):
+        q = "SELECT country_id, country_name, is_active \
+                FROM tbl_countries\
+                WHERE country_id\
+                IN (\
+                    SELECT DISTINCT country_id\
+                    FROM tbl_client_countries\
+                    WHERE client_id = %s \
+                )" % (client_id)
+        cursor.execute(q)
+
+    def _save_client_domains(self, client_id, cursor):
+        q = "SELECT domain_id, domain_name, is_active \
+                FROM tbl_domains\
+                WHERE domain_id\
+                IN (\
+                    SELECT DISTINCT domain_id\
+                    FROM tbl_client_domains\
+                    WHERE client_id = %s \
+                )" % (client_id)
+        cursor.execute(q)
 
     def _get_server_details(self):
         columns = "ip, server_username,server_password"

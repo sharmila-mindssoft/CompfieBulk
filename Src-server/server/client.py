@@ -121,7 +121,7 @@ class ReplicationManager(object) :
                 return
             if type(r) is InvalidReceivedCount:
                 print "InvalidReceivedCount sent %s"
-                self._poll()
+                # self._poll()
                 return
             assert r is not None
             self._parse_data(r.changes)
@@ -134,6 +134,7 @@ class ReplicationManager(object) :
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
         column_count = self._columns_count.get(tbl_name)
+        column_count -= 1
         assert auto_id is not None
         if error_ok:
             if column_count != len(changes):
@@ -141,7 +142,12 @@ class ReplicationManager(object) :
         else:
             assert column_count == len(changes)
         columns = [x.column_name for x in changes]
-        values = ["'" + x.value.replace("'", "\\'") + "'" for x in changes]
+        values = []
+        for x in changes:
+            if x.value is None:
+                values.append["NULL"]
+            else:
+                values.append["'" + x.value.replace("'", "\\'") + "'"]
         query = "INSERT INTO %s (%s, %s) VALUES(%s, %s);" % (
             tbl_name,
             auto_id,
@@ -150,7 +156,7 @@ class ReplicationManager(object) :
             values
         )
         self._db.execute(query)
-        self._temp_count += len(changes)
+        self._temp_count = changes[-1].audit_trail_id
 
     def _execute_update_statement(self, change):
         auto_id = self._auto_id_columns.get(change.tbl_name)
@@ -163,10 +169,10 @@ class ReplicationManager(object) :
             change.tbl_auto_id
         )
         self._db.execute(query)
-        self._temp_count += 1
+        self._temp_count = change.audit_trail_id
 
     def _parse_data(self, changes):
-        self._temp_count = 0
+        self._temp_count = self._received_count
         self._db.begin()
         try:
             changes_list = []
@@ -194,13 +200,14 @@ class ReplicationManager(object) :
                     changes_list.append(change)
             if is_insert:
                 self._execute_insert_statement(changes_list, error_ok=True)
-            self._db.update_traild_id(self._received_count + self._temp_count)
+            self._db.update_traild_id(self._temp_count)
             self._db.commit()
         except Exception, e:
             print e
-            self._temp_count = 0
+            self._temp_count = self._received_count
             self._db.rollback()
-        self._received_count += self._temp_count
+        assert self._received_count <= self._temp_count
+        self._received_count = self._temp_count
 
     def stop(self):
         self._stop = True

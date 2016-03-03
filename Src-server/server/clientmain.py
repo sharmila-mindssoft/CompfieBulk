@@ -66,6 +66,7 @@ class API(object):
             io_loop,
             knowledge_server_address,
             http_client,
+            60,
             self.server_added
         )
         self._databases = {}
