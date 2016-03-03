@@ -159,9 +159,9 @@ function load_secondwizard(){
           statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
 
           if(statutory_date.length > 1){
-            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+j+'" class="input-box" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
+            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+j+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
           }else{
-            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'" class="input-box" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
+            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
           }
         }
         var complianceDetailtableRow=$('#statutory-values .table-statutory-values .compliance-details');
@@ -176,7 +176,7 @@ function load_secondwizard(){
         $('.statutorydate', clone2).text(statutorydate);
 
         if(triggerdate == ''){
-          $('.triggerbefore', clone2).html('<input type="text" value="" class="input-box" id="triggerdate'+statutoriesCount+'" />');
+          $('.triggerbefore', clone2).html('<input type="text" value="" class="input-box trigger" id="triggerdate'+statutoriesCount+'" />');
           $('.duedate', clone2).html('<input type="text" value="" class="input-box" id="duedate'+statutoriesCount+'" />');
         }
         else{
@@ -230,6 +230,11 @@ function load_secondwizard(){
           $('.edittrigger'+clickvalue).show();
           $('.closetrigger'+clickvalue).hide();
         });
+
+        $('.trigger').keyup('input', function (event) {
+          this.value = this.value.replace(/[^0-9]/g, '');
+        });
+        
         statutoriesCount = statutoriesCount + 1;
       }  
       actCount = actCount + 1;
@@ -415,6 +420,10 @@ function submitcompliance(){
                 trigger_before_days = parseInt(current_trigger_days[dDates]);
                 if(trigger_before_days > 100){
                   displayMessage("Trigger days should not be exceed 100");
+                  return false;
+                }
+                if(trigger_before_days == 0){
+                  displayMessage("Trigger days should be 1 to 100");
                   return false;
                 }
               }else{
@@ -833,6 +842,8 @@ function getAssignCompliances () {
 
 $(document).ready(function () {
   getAssignCompliances ();
+
+  
 
   $("#filter_assignee").keyup( function() {
     var filter = $("#filter_assignee").val().toLowerCase();

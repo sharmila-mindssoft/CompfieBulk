@@ -222,6 +222,14 @@ function load_secondwizard(){
     actCount = actCount + 1;
     count++;
   }
+
+  if(count <= 1){
+    var norecordtableRow=$('#no-record-templates .font1');
+    var noclone=norecordtableRow.clone();
+    $('.tbody-assignstatutory').append(noclone);
+    $('#activate-step-finish').hide();
+  }
+
   $(document).ready(function($) {
     $('#accordion').find('.accordion-toggle').click(function(){
       //Expand or collapse this panel
@@ -396,9 +404,9 @@ $("#industry").click(function(event){
 
 
 $("#unit").click(function(event){
-  
-    clearValues('unit');
     var chkstatus = $(event.target).attr('class');
+    if(chkstatus != undefined){
+      clearValues('unit');
     if(chkstatus == 'unitlist active'){
       $(event.target).removeClass("active");
       var removeid = assignStatutoryUnitIds.indexOf(parseInt(event.target.id));
@@ -436,6 +444,7 @@ $("#unit").click(function(event){
     }else{
        $('#domain').empty();
     }
+  }
 });
 
 $("#domain").click(function(event){

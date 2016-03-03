@@ -168,6 +168,11 @@ CLIENT_TEMPLATE_PATHS = [
         "files/desktop/client/completed-tasks-current-year/completedtaskscurrentyear.html",
         None, {}
     ),
+    (
+        "/on-occurrence-compliances",
+        "files/desktop/client/on-occurrence-compliances/onoccurrencecompliances.html",
+        None, {}
+    ),
 ]
 
 TEMPLATE_PATHS = [
@@ -365,4 +370,4 @@ KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "mirror_knowledge_backup1"
+KNOWLEDGE_DATABASE_NAME = "mirror_knowledge"

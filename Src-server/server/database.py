@@ -196,33 +196,6 @@ class Database(object) :
         query += " where %s" % where_condition
         return self.select_all(query)
 
-    def get_full_join_data(
-        self, columns, tables, aliases,
-        join_conditions, where_condition
-    ):
-        join_types = ["LEFT JOIN", "RIGHT JOIN"]
-        query = ""
-        for join_type in join_types:
-            query += "SELECT %s FROM " % columns
-            for index, table in enumerate(tables):
-                if index == 0:
-                    query += "%s  %s  %s" % (
-                        table, aliases[index], join_type
-                    )
-                elif index <= len(tables) - 2:
-                    query += " %s %s on (%s) %s " % (
-                        table, aliases[index],
-                        join_conditions[index-1], join_type
-                    )
-                else:
-                    query += " %s %s on (%s)" % (
-                        table, aliases[index],
-                        join_conditions[index-1]
-                    )
-            query += " UNION "
-        query += " where %s" % where_condition
-        return self.select_all(query)
-
     def insert(self, table, columns, values, client_id=None) :
         columns = ",".join(columns)
         stringValue = ""
@@ -234,8 +207,6 @@ class Database(object) :
         query = "INSERT INTO %s (%s) VALUES (%s)" % (
             table, columns, stringValue
         )
-        # if client_id is not None:
-        #     return self.execute(query, client_id)
         return self.execute(query)
 
     def bulk_insert(self, table, columns, valueList, client_id=None) :
@@ -247,8 +218,6 @@ class Database(object) :
                 query += "%s," % str(value)
             else:
                 query += str(value)
-        # if client_id is not None:
-        #     return self.execute(query, client_id)
         return self.execute(query)
 
     def update(self, table, columns, values, condition, client_id=None) :
@@ -281,9 +250,6 @@ class Database(object) :
                 query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
-
-        # if client_id is not None:
-        #     return self.execute(query, client_id)
         return self.execute(query)
 
     def delete(self, table, condition, client_id=None):
@@ -3409,26 +3375,34 @@ class KnowledgeDatabase(Database):
         return results
 
     def save_date_configurations(self, client_id, date_configurations, session_user):
-        values_list = []
         current_time_stamp = self.get_date_time()
-        columns = ["client_config_id", "client_id", "country_id" ,"domain_id", "period_from",
+        insert_columns = ["client_config_id", "client_id", "country_id" ,"domain_id", "period_from",
         "period_to", "updated_by", "updated_on"]
-        condition = "client_id='%d'"%client_id
-        self.delete(self.tblClientConfigurations, condition)
+        update_columns = ["period_from", "period_to"]
         for configuration in date_configurations:
-            client_config_id = self.get_new_id(
-                "client_config_id", self.tblClientConfigurations
-            )
             country_id = configuration.country_id
             domain_id = configuration.domain_id
             period_from = configuration.period_from
             period_to = configuration.period_to
-            values_tuple = (
-                client_config_id, client_id, country_id, domain_id, 
-                period_from, period_to, int(session_user), str(current_time_stamp)
-            )
-            values_list.append(values_tuple)
-        return self.bulk_insert(self.tblClientConfigurations,columns,values_list)
+            if self.is_combination_already_exists(country_id, domain_id, client_id):
+                
+                update_values = [period_from, period_to]
+                update_condition = " client_id = '%d' AND country_id = '%d' \
+                AND domain_id = '%d'"
+                self.update(
+                    self.tblClientConfigurations, update_columns, update_values, update_condition
+                )
+            else:
+                client_config_id = self.get_new_id(
+                    "client_config_id", self.tblClientConfigurations
+                )
+                insert_values = [
+                    client_config_id, client_id, country_id, 
+                    domain_id, period_from, period_to, session_user, current_time_stamp
+                ]
+                self.insert(
+                    self.tblClientConfigurations, insert_columns, insert_values
+                )           
 
     def save_client_countries(self, client_id, country_ids):
         values_list = []

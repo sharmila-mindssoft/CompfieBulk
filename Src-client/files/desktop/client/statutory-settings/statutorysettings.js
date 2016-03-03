@@ -49,9 +49,6 @@ function part_compliance (remark) {
     }
 }
 
-function submit_statutory(){
-  alert("submit_statutory");
-}
 function load_statutory(sList, dispBusinessGroup, dispLegalEntity, dispDivision, dispUnit, unit_id){
   var count=1;
   var statutoriesCount= 1;
@@ -261,6 +258,11 @@ $("#submit").click(function() {
   $('#password').html("");
 });
 
+$("#cancel").click(function() {
+  $("#statutorysettings-add").hide();
+  $("#statutorysettings-view").show();
+});
+
 function displayEdit(unit_id){
   displayMessage("");
   var dispBusinessGroup;
@@ -340,8 +342,12 @@ $(".listfilter").keyup(function() {
     var filter3val = assignedStatutoriesList[entity]["legal_entity_name"];
     var filter4val = assignedStatutoriesList[entity]["division_name"];
     var filter5val = assignedStatutoriesList[entity]["unit_name"];
-    //var filter6val = assignedStatutoriesList[entity]["domain_name"];
-    var filter6val = assignedStatutoriesList[entity]["unit_name"];
+    var domainList = assignedStatutoriesList[entity]["domain_names"];
+    var domains = '';
+    for(var i=0; i<domainList.length; i++){
+      domains += domainList[i];
+    }
+    var filter6val = domains;
     
     if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2) && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4) && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6) ) 
     {
