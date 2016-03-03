@@ -16,6 +16,7 @@
 
   <script type="text/javascript" src="/files/desktop/common/highcharts/highcharts.js"></script>
   <script type="text/javascript" src="/files/desktop/common/highcharts/highcharts-3d.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/highcharts/modules/no-data-to-display.js"></script>
   <script type="text/javascript" src="/files/desktop/common/highcharts/modules/exporting.js"></script>
 
   <script type="text/javascript" src="/files/desktop/common/highcharts/modules/drilldown.js"></script>
@@ -23,6 +24,7 @@
 
 
   <script type="text/javascript" src="/files/desktop/client/client-home/client-home.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/js/jquery-ui/jquery-ui.js"></script>
   <!-- <script type="text/javascript" src="/files/desktop/client/client-home/client-home-design.js"></script> -->
 </head>
 <body>
@@ -89,8 +91,8 @@
                             <div class="selections date-selection">
                               <table>
                                 <tr>
-                                  <td><input type="text" class="input-box" placeholder="From date"/></td>
-                                  <td><input type="text" class="input-box" placeholder="To date"/></td>
+                                  <td><input type="text" id="fromdate" class="input-box" placeholder="From date"/></td>
+                                  <td><input type="text" id="todate" class="input-box" placeholder="To date"/></td>
                                   <td><div class="btn-go"><input type="button" class="btn btn-date-filter" value="Go"/></div></td>
                                 </tr>
                               </table>
@@ -315,7 +317,7 @@
                           <td></td>
                         </tr>
                         <tbody class="tbody-assignee-wise-compliance-list"></tbody>
-                        
+
                       </table>
                     </div>
 
@@ -408,7 +410,7 @@
   </div>
   {% include "/files/desktop/client/home/footer.html" %}
   <div id="templates">
- 
+
     <div class="compliance-status">
       <table>
         <tr class="tr-heading">
@@ -461,7 +463,7 @@
         </tr>
       </table>
     </div>
-    <div class="escalation-status"> 
+    <div class="escalation-status">
       <table>
       <tr class="tr-h2">
         <td colspan="8" style="padding:0px;"><h2 style="color:black" class="escalation-status-value"> </h2></td>
@@ -513,7 +515,7 @@
         </tr>
       </table>
     </div>
-    <div class="notComplied-status"> 
+    <div class="notComplied-status">
       <table>
         <tr class="tr-heading">
           <th width="3%" align="center">#</th>
@@ -559,6 +561,43 @@
         </tr>
       </table>
     </div>
+    <div class="compliance-applicable-status">
+      <table>
+        <tr class="tr-heading">
+          <th width="3%" align="center">#</th>
+          <th width="15%" align="left" class="statutory-row">Statutory<span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="15%" align="left" class="compliance-task-row">Compliance Task <span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="15%" align="left" class="compliance-description-row">Compliance Description <span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="12%" align="left" class="penal-consequences-row">Penal Consequences <span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="10%" align="left" class="compliance-frequency-row">Compliance Frequency<span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="10%" align="left" class="repeats-row">Repeats <span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="10%" class="statutory-date-row" align="left">Statutory Date<span><img src="/images/dropdown-arrow.png"/></span></th>
+          <th width="10%" class="trigger-before-row" align="left">Trigger Before <span><img src="/images/dropdown-arrow.png"/></span></th>
+        </tr>
+        <tbody class="tr-unit accordion-toggle">
+          <tr style="padding:10px;text-align:left;">
+            <th colspan="8" style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;" class="unit-heading"></th>
+            <th style="background-color:#DBDBDB; color:#000000; font-size: 0.813em;font-weight: bold;padding-right:5px" align="right"><img src="/images/chevron_black_down.png"/></th>
+          </tr>
+        </tbody>
+        <tr align="left" class="rightside tr-level1" >
+          <th  colspan="9" style="background-color:#fff; padding-left:0px; " align="left">
+            <span class="heading" style="color:#000; float:left;"></span>
+          </th>
+        </tr>
+        <tr class="table-row-list">
+          <td align="center" class="sno"></td>
+          <td class="statutory-name"></td>
+          <td class="compliance-task-name"></td>
+          <td class="compliance-description-name"></td>
+          <td class="penal-consequences-name"></td>
+          <td class="compliance-frequency-name"></td>
+          <td class="repeats"></td>
+          <td class="statutory-date"></td>
+          <td class="trigger-before"></td>
+        </tr>
+      </table>
+    </div>
     <div class="assignee-wise-compliance-list">
       <table>
         <tr class="unitHeading">
@@ -567,7 +606,7 @@
       </tr>
       <tr align="left" class="userHeading" >
         <td style="background-color:#fff;" align="left" colspan="8"> <span class="assignee-name-for-popup"></span></td>
-      </tr>    
+      </tr>
       <tr align="center" style="cursor:pointer;padding-right:5px" class="usecom1-tab assignee-row-list"  >
         <td class="sno"></td>
         <td align="left" class="level1value"></td>
@@ -577,8 +616,8 @@
         <td class="inprogress-count"></td>
         <td class="not-complied-count"></td>
         <td align="left" class="open-details-list"><img src="/images/right_arrow.png" /></td>
-      </tr>                        
-      </table>        
+      </tr>
+      </table>
     </div>
     <table class="year-wise-compliance-list-popup">
     <tr class="tablerow assign-wise-compliance-details">

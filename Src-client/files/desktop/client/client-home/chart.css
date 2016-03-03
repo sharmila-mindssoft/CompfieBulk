@@ -136,8 +136,6 @@ input.radio:checked ~ label {
 .filtertable {
   width: 57%;
   margin-top: 20px;
-  float: left;
-  margin-left: 12%;
 }
 .filtertable td{
   vertical-align: top;
@@ -231,7 +229,7 @@ input.radio:checked ~ label {
 .text-filterby {
   width: 100px;
   float: left;
-  margin-top: 20px;
+  margin-top: 7px;
 }
 .country-selection,
 .domain-selection,
@@ -431,7 +429,7 @@ table.filtertable-1 tr td table tr td {
 }
 .delayedvalue{
   color: #00f;
-  text-decoration: underline; 
+  text-decoration: underline;
 }
 .close{
   cursor: pointer;
