@@ -1,13 +1,13 @@
-CREATE TABLE tbl_audit_log
-(
-   audit_trail_id   int(10) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-   tbl_name         varchar(100),
-   tbl_auto_id      int(10),
-   column_name      varchar(100),
-   value            varchar(1000),
-   client_id        int(10),
-   action           varchar(20)
-);
+-- CREATE TABLE tbl_audit_log
+-- (
+--    audit_trail_id   int(10) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+--    tbl_name         varchar(100),
+--    tbl_auto_id      int(10),
+--    column_name      varchar(100),
+--    value            varchar(1000),
+--    client_id        int(10),
+--    action           varchar(20)
+-- );
 
 CREATE TRIGGER mirror_knowledge.after_tbl_statutory_mappings_update
    AFTER UPDATE
