@@ -23,7 +23,8 @@ from protocol.parse_structure import (
     parse_structure_MapType_SignedIntegerType_8_RecordType_core_StatutoryMapping,
     parse_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping,
     parse_structure_UnsignedIntegerType_32,
-    parse_structure_VectorType_RecordType_core_StatutoryApprovalStatus
+    parse_structure_VectorType_RecordType_core_StatutoryApprovalStatus,
+    parse_structure_VectorType_Text
 
 )
 from protocol.to_structure import (
@@ -51,7 +52,8 @@ from protocol.to_structure import (
     to_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping,
     to_structure_UnsignedIntegerType_32,
     to_structure_VectorType_RecordType_core_StatutoryApprovalStatus,
-    to_structure_VectorType_UnsignedIntegerType_32
+    to_structure_VectorType_UnsignedIntegerType_32,
+    to_structure_VectorType_Text
 )
 
 #
@@ -108,7 +110,7 @@ class SaveStatutoryMapping(Request):
     def __init__(
         self, country_id, domain_id, industry_ids,
         statutory_nature_id, statutory_ids,
-        compliances, geography_ids
+        compliances, geography_ids, mappings
     ):
         self.country_id = country_id
         self.domain_id = domain_id
@@ -117,13 +119,14 @@ class SaveStatutoryMapping(Request):
         self.statutory_ids = statutory_ids
         self.compliances = compliances
         self.geography_ids = geography_ids
+        self.mappings = mappings
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "country_id", "domain_id", "industry_ids",
             "statutory_nature_id", "statutory_ids",
-            "compliances", "geography_ids"
+            "compliances", "geography_ids", "mappings"
         ])
         country_id = data.get("country_id")
         country_id = parse_structure_UnsignedIntegerType_32(country_id)
@@ -139,10 +142,12 @@ class SaveStatutoryMapping(Request):
         compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
         geography_ids = data.get("geography_ids")
         geography_ids = parse_structure_VectorType_UnsignedIntegerType_32(geography_ids)
+        mappings = data.get("mappings")
+        mappings = parse_structure_VectorType_Text
         return SaveStatutoryMapping(
             country_id, domain_id, industry_ids,
             statutory_nature_id, statutory_ids,
-            compliances, geography_ids
+            compliances, geography_ids, mappings
         )
 
     def to_inner_structure(self):
@@ -154,10 +159,15 @@ class SaveStatutoryMapping(Request):
             "statutory_ids": to_structure_VectorType_UnsignedIntegerType_32(self.statutory_ids),
             "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
             "geography_ids": to_structure_VectorType_UnsignedIntegerType_32(self.geography_ids),
+            "mappings": to_structure_VectorType_Text(self.mappings)
         }
 
 class UpdateStatutoryMapping(Request):
-    def __init__(self, statutory_mapping_id, domain_id, industry_ids, statutory_nature_id, statutory_ids, compliances, geography_ids):
+    def __init__(
+        self, statutory_mapping_id, domain_id,
+        industry_ids, statutory_nature_id, statutory_ids,
+        compliances, geography_ids, mappings
+    ):
         self.statutory_mapping_id = statutory_mapping_id
         self.domain_id = domain_id
         self.industry_ids = industry_ids
@@ -165,10 +175,15 @@ class UpdateStatutoryMapping(Request):
         self.statutory_ids = statutory_ids
         self.compliances = compliances
         self.geography_ids = geography_ids
+        self.mappings = mappings
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_mapping_id", "domain_id", "industry_ids", "statutory_nature_id", "statutory_ids", "compliances", "geography_ids"])
+        data = parse_dictionary(data, [
+            "statutory_mapping_id", "domain_id", "industry_ids",
+            "statutory_nature_id", "statutory_ids", "compliances",
+            "geography_ids", "mappings"
+        ])
         statutory_mapping_id = data.get("statutory_mapping_id")
         statutory_mapping_id = parse_structure_UnsignedIntegerType_32(statutory_mapping_id)
         domain_id = data.get("domain_id")
@@ -183,7 +198,13 @@ class UpdateStatutoryMapping(Request):
         compliances = parse_structure_VectorType_RecordType_core_Compliance(compliances)
         geography_ids = data.get("geography_ids")
         geography_ids = parse_structure_VectorType_UnsignedIntegerType_32(geography_ids)
-        return UpdateStatutoryMapping(statutory_mapping_id, domain_id, industry_ids, statutory_nature_id, statutory_ids, compliances, geography_ids)
+        mappings = data.get("mappings")
+        mappings = parse_structure_VectorType_Text(mappings)
+        return UpdateStatutoryMapping(
+            statutory_mapping_id, domain_id, industry_ids,
+            statutory_nature_id, statutory_ids, compliances,
+            geography_ids, mappings
+        )
 
     def to_inner_structure(self):
         return {
@@ -194,6 +215,7 @@ class UpdateStatutoryMapping(Request):
             "statutory_ids": to_structure_VectorType_UnsignedIntegerType_32(self.statutory_ids),
             "compliances": to_structure_VectorType_RecordType_core_Compliance(self.compliances),
             "geography_ids": to_structure_VectorType_UnsignedIntegerType_32(self.geography_ids),
+            "mappings": to_structure_VectorType_Text(self.mappings)
         }
 
 class ChangeStatutoryMappingStatus(Request):

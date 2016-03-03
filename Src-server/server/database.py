@@ -613,7 +613,7 @@ class KnowledgeDatabase(Database):
         query = "SELECT "
         query += "  audit_trail_id, tbl_name, tbl_auto_id,"
         query += "  column_name, value, client_id, action"
-        query += "from tbl_audit_log WHERE audit_trail_id>%s;" % (
+        query += " from tbl_audit_log WHERE audit_trail_id>%s;" % (
             received_count,
         )
         rows = self.select_all(query)
@@ -2262,6 +2262,7 @@ class KnowledgeDatabase(Database):
         statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
         compliances = data.compliances
         geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
+        statutory_mapping = '-'.join(str(x) for x in data.mappings)
         statutory_mapping_id = self.get_new_id(
             "statutory_mapping_id", "tbl_statutory_mappings"
         )
@@ -2271,11 +2272,12 @@ class KnowledgeDatabase(Database):
         statutory_table = "tbl_statutory_mappings"
         field = "(statutory_mapping_id, country_id, domain_id, \
             industry_ids, statutory_nature_id, statutory_ids, \
-            geography_ids, is_active, created_by, created_on)"
+            geography_ids, is_active, statutory_mapping, created_by, created_on)"
         data_save = (
             statutory_mapping_id, int(country_id), int(domain_id),
             industry_ids, int(nature_id), statutory_ids,
             geography_ids, int(is_active),
+            statutory_mapping,
             int(created_by), str(created_on)
         )
         if (self.save_data(statutory_table, field, data_save)) :
@@ -2527,17 +2529,19 @@ class KnowledgeDatabase(Database):
         statutory_ids = ','.join(str(x) for x in data.statutory_ids) + ","
         compliances = data.compliances
         geography_ids = ','.join(str(x) for x in data.geography_ids) + ","
+        statutory_mapping = '-'.join(data.mappings)
 
         self.save_statutory_backup(statutory_mapping_id, updated_by)
         table_name = "tbl_statutory_mappings"
         columns = (
             "industry_ids", "statutory_nature_id", "statutory_ids",
             "geography_ids", "approval_status", "rejected_reason",
+            "statutory_mapping",
             "updated_by"
         )
         values = (
             industry_ids, nature_id, statutory_ids, geography_ids,
-            0, '', int(updated_by)
+            0, '', statutory_mapping, int(updated_by)
         )
         where_condition = " statutory_mapping_id= %s " % (statutory_mapping_id)
 
@@ -2985,10 +2989,15 @@ class KnowledgeDatabase(Database):
 
         if client_info is not None:
             for r in client_info :
+                notification_unit_id = self.get_new_id(
+                    "statutory_notification_unit_id",
+                    "tbl_statutory_notifications_units"
+                )
                 q = "INSERT INTO tbl_statutory_notifications_units \
                     (statutory_notification_id, client_id, \
                         business_group_id, legal_entity_id, division_id, unit_id) VALUES \
-                    (%s, %s, %s, %s, %s, %s)" % (
+                    (%s, %s, %s, %s, %s, %s, %s)" % (
+                        notification_unit_id,
                         statutory_notification_id,
                         int(r["client_id"]),
                         int(r["business_group_id"]),
@@ -4371,10 +4380,11 @@ class KnowledgeDatabase(Database):
                 self.save_client_compliances(client_statutory_id, assigned_statutories, user_id, created_on)
 
     def save_client_compliances(self, client_statutory_id, data, user_id, created_on):
-        field = "(client_statutory_id, compliance_id, \
+        field = "(client_compliance_id, client_statutory_id, compliance_id, \
             statutory_id, statutory_applicable, not_applicable_remarks, \
             compliance_applicable, created_by, created_on)"
         for d in data :
+            client_compliance_id = self.get_new_id("client_compliance_id", self.tblClientCompliances)
             level_1_id = d.level_1_statutory_id
             applicable_status = d.applicable_status
             not_applicable_remarks = d.not_applicable_remarks
@@ -4384,6 +4394,7 @@ class KnowledgeDatabase(Database):
                 compliance_id = int(key)
                 compliance_applicable_status = int(value)
                 values = (
+                    client_compliance_id,
                     client_statutory_id, compliance_id,
                     level_1_id, int(applicable_status), not_applicable_remarks,
                     compliance_applicable_status, int(user_id), created_on
