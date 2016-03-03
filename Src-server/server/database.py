@@ -14,6 +14,7 @@ from protocol import (
 from distribution.protocol import (
     Company, IPAddress
 )
+from replication.protocol import Change
 from server.emailcontroller import EmailHandler as email
 
 __all__ = [
@@ -601,6 +602,43 @@ class KnowledgeDatabase(Database):
     #
     # Companies
     #
+
+    def get_trail_id(self):
+        query = "select IFNULL(MAX(audit_trail_id), 0) as audit_trail_id from tbl_audit_log;"
+        row = self.select_one(query)
+        trail_id = row[0]
+        return trail_id
+
+    def get_trail_log(self, received_count):
+        query = "SELECT "
+        query += "  audit_trail_id, tbl_name, tbl_auto_id,"
+        query += "  column_name, value, client_id, action"
+        query += "from tbl_audit_log WHERE audit_trail_id>%s;" % (
+            received_count,
+        )
+        rows = self.select_all(query)
+        results = []
+        if rows :
+            columns = [
+                "audit_trail_id", "tbl_name", "tbl_auto_id",
+                "column_name", "value", "client_id", "action"
+            ]
+            results = self.convert_to_dict(rows, columns)
+        return self.return_changes(results)
+
+    def return_changes(self, data):
+        results = []
+        for d in data :
+            results.append(Change(
+                int(d("audit_trail_id")),
+                d("tbl_name"),
+                int(d("tbl_auto_id")),
+                d("column_name"),
+                d("value"),
+                int(d("client_id")),
+                d("action")
+            ))
+        return results
 
     def get_servers(self):
         query = "SELECT client_id, machine_id, database_ip, "
@@ -4911,7 +4949,7 @@ class KnowledgeDatabase(Database):
                         unit_detail[2], unit_detail[3], unit_detail[4], unit_detail[5],
                         unit_detail[6], [int(x) for x in unit_detail[7].split(",")], bool(unit_detail[8])))
                     if bool(unit_detail[8]) == True :
-                        active_count += 1 
+                        active_count += 1
                     else:
                         deactive_count += 1
                 country_wise_units[country_row[0]] = units

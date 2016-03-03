@@ -92,6 +92,20 @@ class ClientDatabase(Database):
         self.tblUserUnits = "tbl_user_units"
         self.tblUsers = "tbl_users"
 
+    #
+    # Replication
+    #
+
+    def update_traild_id(self, audit_trail_id):
+        query = "UPDATE tbl_audit_log SET audit_trail_id=%s;" % (audit_trail_id)
+        self.execute(query)
+
+    def get_trail_id(self):
+        query = "select IFNULL(MAX(audit_trail_id), 0) as audit_trail_id from tbl_audit_log;"
+        row = self.select_one(query)
+        trail_id = row[0]
+        return trail_id
+
     def verify_login(self, username, password):
         tblAdminCondition = "password='%s' and username='%s'" % (
             password, username
@@ -6811,7 +6825,7 @@ class ClientDatabase(Database):
                 columns = "ac.compliance_id, c.statutory_provision, concat(document_name,'-',\
                 compliance_task), compliance_description, duration_type, duration"
                 tables = [
-                    self.tblAssignedCompliances, self.tblCompliances, 
+                    self.tblAssignedCompliances, self.tblCompliances,
                     self.tblComplianceDurationType
                 ]
                 aliases = [
@@ -6819,7 +6833,7 @@ class ClientDatabase(Database):
                 ]
                 join_type = "inner join"
                 join_condition = [
-                    "ac.compliance_id = c. compliance_id", 
+                    "ac.compliance_id = c. compliance_id",
                     "c.duration_type_id = cd.duration_type_id"
                 ]
                 where_condition = "ac.unit_id = (%d) and c.domain_id in (%s) and \
@@ -6828,10 +6842,10 @@ class ClientDatabase(Database):
                 )
                 rows = self.get_data_from_multiple_tables(
                     columns, tables, aliases, join_type,
-                    join_condition, where_condition 
+                    join_condition, where_condition
                 )
                 columns = [
-                    "compliance_id", "statutory_provision", "compliance_name", 
+                    "compliance_id", "statutory_provision", "compliance_name",
                     "description", "duration_type", "duration"
                 ]
                 result = self.convert_to_dict(rows, columns)
@@ -6840,8 +6854,8 @@ class ClientDatabase(Database):
                     duration = "%s %s" % (row["duration"], row["duration_type"])
                     compliances.append(
                         clientuser.ComplianceOnOccurrence(
-                            row["compliance_id"], row["statutory_provision"], 
-                            row["compliance_name"], row["description"], 
+                            row["compliance_id"], row["statutory_provision"],
+                            row["compliance_name"], row["description"],
                             duration, unit
                         )
                     )
@@ -6854,7 +6868,7 @@ class ClientDatabase(Database):
         self, compliance_id, start_date, unit_id, duration, session_user, client_id
     ):
         columns = [
-            "compliance_history_id", "unit_id", "compliance_id", 
+            "compliance_history_id", "unit_id", "compliance_id",
             "start_date", "due_date", "completed_by"
         ]
         compliance_history_id = self.get_new_id(
@@ -6871,7 +6885,7 @@ class ClientDatabase(Database):
             due_date = start_date + datetime.timedelta(hours = duration_value)
         values = [
             compliance_history_id, unit_id, compliance_id, start_date, due_date,
-            session_user 
+            session_user
         ]
         if self.is_two_levels_of_approval():
             approval_columns = "approval_person, concurrence_person"
@@ -6909,4 +6923,4 @@ class ClientDatabase(Database):
             self.tblComplianceHistory, columns, values
         )
 
-        
+
