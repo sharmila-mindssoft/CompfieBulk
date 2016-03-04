@@ -2,11 +2,13 @@ import json
 from replication.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
 from replication.parse_structure import (
     parse_structure_VectorType_RecordType_protocol_Change,
-    parse_structure_Text, parse_structure_SignedIntegerType_64
+    parse_structure_Text, parse_structure_SignedIntegerType_64,
+    parse_structure_OptionalType_Text
 )
 from replication.to_structure import (
     to_structure_VectorType_RecordType_protocol_Change,
-    to_structure_Text, to_structure_SignedIntegerType_64
+    to_structure_Text, to_structure_SignedIntegerType_64,
+    to_structure_OptionalType_Text
 )
 
 #
@@ -35,7 +37,7 @@ class Change(object):
         column_name = data.get("column_name")
         column_name = parse_structure_Text(column_name)
         value = data.get("value")
-        value = parse_structure_Text(value)
+        value = parse_structure_OptionalType_Text(value)
         client_id = data.get("client_id")
         client_id = parse_structure_SignedIntegerType_64(client_id)
         action = data.get("action")
@@ -48,7 +50,7 @@ class Change(object):
             "tbl_name": to_structure_Text(self.tbl_name),
             "tbl_auto_id": to_structure_SignedIntegerType_64(self.tbl_auto_id),
             "column_name": to_structure_Text(self.column_name),
-            "value": to_structure_Text(self.value),
+            "value": to_structure_OptionalType_Text(self.value),
             "client_id": to_structure_SignedIntegerType_64(self.client_id),
             "action": to_structure_Text(self.action),
         }
