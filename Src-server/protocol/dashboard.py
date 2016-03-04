@@ -725,19 +725,23 @@ class GetComplianceStatusChartSuccess(Response):
         }
 
 class GetEscalationsChartSuccess(Response):
-    def __init__(self, chart_data):
+    def __init__(self, years, chart_data):
+        self.years = years
         self.chart_data = chart_data
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["chart_data"])
+        data = parse_dictionary(data, ["years", "chart_data"])
+        years = data.get("years")
+        years = parse_structure_VectorType_UnsignedIntegerType_32(years)
         chart_data = data.get("chart_data")
-        chart_data = parse_structure_VectorType_RecordType_dashboard_ChartDataMap(chart_data)
-        return GetEscalationsChartSuccess(chart_data)
+        chart_data = parse_structure_VectorType_RecordType_dashboard_EscalationData(chart_data)
+        return GetEscalationsChartSuccess(chart_data, years)
 
     def to_inner_structure(self):
         return {
-            "chart_data": to_structure_VectorType_RecordType_dashboard_ChartDataMap(self.chart_data),
+            "years": to_structure_VectorType_UnsignedIntegerType_32(self.years),
+            "chart_data": to_structure_VectorType_RecordType_dashboard_EscalationData(self.chart_data),
         }
 
 class GetNotCompliedChartSuccess(Response):
@@ -1158,7 +1162,7 @@ class EscalationData(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["year", "delayed_compliance_count", "not_complied_count"])
         year = data.get("year")
-        year = parse_structure_CustomTextType_20(year)
+        year = parse_structure_UnsignedIntegerType_32(year)
         delayed_compliance_count = data.get("delayed_compliance_count")
         delayed_compliance_count = parse_structure_UnsignedIntegerType_32(delayed_compliance_count)
         not_complied_count = data.get("not_complied_count")
@@ -1167,9 +1171,9 @@ class EscalationData(object):
 
     def to_structure(self):
         return {
-            "year": to_structure_CustomTextType_20(self.year),
-            "delayed_compliance_count": to_structure_SignedIntegerType_8(self.delayed_compliance_count),
-            "not_complied_count": to_structure_SignedIntegerType_8(self.not_complied_count),
+            "year": to_structure_UnsignedIntegerType_32(self.year),
+            "delayed_compliance_count": to_structure_UnsignedIntegerType_32(self.delayed_compliance_count),
+            "not_complied_count": to_structure_UnsignedIntegerType_32(self.not_complied_count),
         }
 
 #

@@ -648,6 +648,7 @@ function loadAutoUsers () {
 }
 //check & uncheck process
 function activateUsers(element){
+    console.log(element);
   var chkstatus = $(element).attr('class');
   if(chkstatus == 'active_selectbox_users'){
         $(element).removeClass("active_selectbox_users");

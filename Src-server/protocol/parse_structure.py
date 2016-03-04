@@ -3849,3 +3849,7 @@ def parse_structure_VectorType_CustomTextType_250(data):
     for item in data:
         lst.append(parse_structure_CustomTextType_250(item))
     return lst
+
+def parse_structure_OptionalType_VectorType_CustomTextType_250(data):
+    if data is None: return data
+    return parse_structure_VectorType_CustomTextType_250(data)

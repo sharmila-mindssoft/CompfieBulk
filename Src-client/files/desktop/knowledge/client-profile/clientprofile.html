@@ -67,7 +67,8 @@
           </table>
       </div>
       <div class="grid-table">
-          <table>
+          <table class="js-filtertable">
+          <thead>
             <tr>
               <th align="left" colspan="4" style="background:#ccc;color:black;font-weight:bold">
               Licence Holders list
@@ -87,13 +88,14 @@
         </tr>
         <tr>
           <td align="center">&nbsp;</td>
-          <td><input type="text" class="filter-text-box" id="search-employee"></td>
-          <td><input type="text" class="filter-text-box" id="search-email"></td>
-          <td><input type="text" class="filter-text-box" id="search-mobile-number"></td>
-          <td><input type="text" class="filter-text-box" id="search-seating-unit"></td>
+          <td><input type="text" class="filter-text-box js-filter" ></td>
+          <td><input type="text" class="filter-text-box js-filter" ></td>
+          <td><input type="text" class="filter-text-box js-filter" ></td>
+          <td><input type="text" class="filter-text-box js-filter" ></td>
           <td align="center">&nbsp;</td>
           <td align="center">&nbsp;</td>
         </tr>
+        </thead>
         <tbody class="tbody-clientprofile-list">
         </tbody>
         </table>
@@ -114,17 +116,12 @@
       <td class="employee"></td>
       <td class="email"></td>
       <td class="mobile-number"></td>
-      <td class="seating-unit"></td>
+      <td class="seating-unit"><abbr title=""><img style="margin-right:5px" src="/images/icon-info.png"></abbr><span></span></td>
       <td align="center" class="is-active"></td>
       <td align="center" class="promote-admin"> </td>
     </tr>
   </table>
 </div>
 <script type="text/javascript" src="/files/desktop/knowledge/client-profile/clientprofile.js"></script>
-<script type="text/javascript">
-$('.toggleModal').on('click', function (e) {
-  $('.modal').toggleClass('active');
-});
-</script>
 {% endblock %}
 

@@ -51,8 +51,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_UnsignedIntegerType_32,
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_SignedIntegerType_8,
-    parse_structure_VectorType_CustomTextType_250
-
+    parse_structure_VectorType_CustomTextType_250,
+    parse_structure_OptionalType_VectorType_CustomTextType_250
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -112,7 +112,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_OptionalType_CustomTextType_500,
     to_structure_CustomTextType_100,
-    to_structure_VectorType_CustomTextType_250
+    to_structure_VectorType_CustomTextType_250,
+    to_structure_OptionalType_VectorType_CustomTextType_250
 )
 
 #
@@ -1926,7 +1927,7 @@ class ActiveCompliance(object):
         ageing = data.get("ageing")
         ageing = parse_structure_CustomTextType_20(ageing)
         format_file_name = data.get("format_file_name")
-        format_file_name = parse_structure_VectorType_CustomTextType_250(format_file_name)
+        format_file_name = parse_structure_OptionalType_VectorType_CustomTextType_250(format_file_name)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_100(unit_name)
         address = data.get("address")
@@ -1955,7 +1956,7 @@ class ActiveCompliance(object):
             "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
             "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),
             "ageing": to_structure_CustomTextType_20(self.ageing),
-            "format_file_name": to_structure_VectorType_CustomTextType_250(self.format_file_name),
+            "format_file_name": to_structure_OptionalType_VectorType_CustomTextType_250(self.format_file_name),
             "unit_name" : to_structure_CustomTextType_100(self.unit_name),
             "address" : to_structure_CustomTextType_500(self.address),
             "compliance_description" : to_structure_CustomTextType_500(self.compliance_description),
@@ -1992,7 +1993,7 @@ class UpcomingCompliance(object):
         due_date = data.get("due_date")
         due_date = parse_structure_CustomTextType_20(due_date)
         format_file_name = data.get("format_file_name")
-        format_file_name = parse_structure_VectorType_CustomTextType_50(format_file_name)
+        format_file_name = parse_structure_OptionalType_VectorType_CustomTextType_250(format_file_name)
         unit_name = data.get("unit_name")
         unit_name = parse_structure_CustomTextType_100(unit_name)
         address = data.get("address")
@@ -2008,7 +2009,7 @@ class UpcomingCompliance(object):
             "domain_name": to_structure_CustomTextType_50(self.domain_name),
             "start_date": to_structure_CustomTextType_20(self.start_date),
             "due_date": to_structure_CustomTextType_20(self.due_date),
-            "format_file_name": to_structure_VectorType_CustomTextType_50(self.format_file_name),
+            "format_file_name": to_structure_OptionalType_VectorType_CustomTextType_250(self.format_file_name),
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address" : to_structure_CustomTextType_500(self.address),
             "compliance_description" : to_structure_CustomTextType_500(self.compliance_description)

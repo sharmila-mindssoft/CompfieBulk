@@ -179,6 +179,7 @@ function loadUnitDetailsList(data){
     var sno = 0;
     
     $.each(data, function(key, value) {
+    	console.log(data);
         var tableRowHeading = $('#templates .table-unitdetails-list .filter-heading-list');
         var cloneHeading = tableRowHeading.clone();
         $('.filter-country-name', cloneHeading).text(countriesText);

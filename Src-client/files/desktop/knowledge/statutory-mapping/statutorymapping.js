@@ -354,8 +354,8 @@ function loadStatutoryLevels(countryval,domainval){
       for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
         filter6val = filter6val + statutoryMappingsList[entity]["compliance_names"][i]["compliance_name"] + " <br>";
       }
-      if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2) 
-        && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4) 
+      if (~filter1val.toLowerCase().indexOf(filter1) && ~filter2val.toLowerCase().indexOf(filter2)
+        && ~filter3val.toLowerCase().indexOf(filter3) && ~filter4val.toLowerCase().indexOf(filter4)
         && ~filter5val.toLowerCase().indexOf(filter5) && ~filter6val.toLowerCase().indexOf(filter6))
       {
         filteredList [entity] = statutoryMappingsList[entity];
@@ -1279,8 +1279,10 @@ function savestatutorymapping(){
   }
 
   if(sm_id == null){
-    statutorymappingData = mirror.statutoryMapping(sm_countryid,sm_domainid,sm_industryids,
-      sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, sm_id);
+    statutorymappingData = mirror.statutoryMapping(
+      sm_countryid,sm_domainid,sm_industryids,sm_statutorynatureid,
+      sm_statutoryids,compliances,sm_geographyids, disp_statutories, sm_id
+    );
     mirror.saveStatutoryMapping(statutorymappingData,
       function (error, response) {
           if (error == null){
@@ -1293,8 +1295,10 @@ function savestatutorymapping(){
       }
   );
   }else{
-    statutorymappingData = mirror.UpdateStatutoryMappingData(sm_domainid, sm_industryids,
-      sm_statutorynatureid,sm_statutoryids,compliances,sm_geographyids, sm_id)
+    statutorymappingData = mirror.UpdateStatutoryMappingData(
+      sm_domainid, sm_industryids,sm_statutorynatureid,
+      sm_statutoryids,compliances,sm_geographyids,
+      disp_statutories, sm_id)
     mirror.updateStatutoryMapping(statutorymappingData,
       function (error, response) {
           if (error == null){
@@ -1831,7 +1835,7 @@ function load_data(){
     $('#sdate').hide();
     $('#multipleview').hide();
     $('.repeatby-view').hide();
-    
+
   }
   else if($('#repeats_type').val() == '3'){
     $('#single_statutory_date').show();
@@ -1904,7 +1908,7 @@ function load_data(){
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date2').val(monthDate);
     }
-    
+
   });
 
   $('#multiple_statutory_month3').change(function() {
@@ -1913,7 +1917,7 @@ function load_data(){
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date3').val(monthDate);
     }
-    
+
   });
 
   $('#multiple_statutory_month4').change(function() {
@@ -1922,7 +1926,7 @@ function load_data(){
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date4').val(monthDate);
     }
-    
+
   });
 
   $('#multiple_statutory_month5').change(function() {
@@ -1931,7 +1935,7 @@ function load_data(){
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date5').val(monthDate);
     }
-    
+
   });
 
   $('#multiple_statutory_month6').change(function() {
@@ -1940,7 +1944,7 @@ function load_data(){
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date6').val(monthDate);
     }
-    
+
   });
 
   $('#multiple_statutory_month').change(function() {
@@ -1949,7 +1953,7 @@ function load_data(){
       var monthDate = load_date(selectedMonth);
       $('#multiple_statutory_date').val(monthDate);
     }
-    
+
   });
 
   $('#statutory_month').change(function() {
@@ -1958,6 +1962,6 @@ function load_data(){
       var monthDate = load_date(selectedMonth);
       $('#statutory_date').val(monthDate);
     }
-    
+
   });
 });

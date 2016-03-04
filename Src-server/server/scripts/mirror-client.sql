@@ -1,3 +1,8 @@
+DROP TABLE IF EXISTS `tbl_audit_log`;
+CREATE TABLE `tbl_audit_log` (
+  `audit_trail_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `tbl_form_type`;
 CREATE TABLE `tbl_form_type` (
   `form_type_id` int(11) NOT NULL,
@@ -72,8 +77,8 @@ CREATE TABLE `tbl_compliances` (
   CONSTRAINT `fk_compliance_repeat_type_compliances` FOREIGN KEY (`repeat_type_id`) REFERENCES `tbl_compliance_repeat_type` (`repeat_type_id`),
   CONSTRAINT `fk_compliance_duration_type_compliances` FOREIGN KEY (`duration_type_id`) REFERENCES `tbl_compliance_duration_type` (`duration_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-DROP TABLE IF EXISTS `tbl_client_settings`;
-CREATE TABLE `tbl_client_settings` (
+DROP TABLE IF EXISTS `tbl_client_groups`;
+CREATE TABLE `tbl_client_groups` (
   `group_name` varchar(50) NOT NULL,
   `logo_url` varchar(200) NOT NULL,
   `logo_size` float(11) NOT NULL,
@@ -92,6 +97,7 @@ CREATE TABLE `tbl_client_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_client_configurations`;
 CREATE TABLE `tbl_client_configurations` (
+  `client_config_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `period_from` int(11) NOT NULL,
@@ -257,6 +263,7 @@ CREATE TABLE `tbl_client_statutories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_client_compliances`;
 CREATE TABLE `tbl_client_compliances` (
+  `client_compliance_id` int(11) NOT  NULL,
   `client_statutory_id` int(11) NOT NULL,
   `compliance_id` int(11) NOT NULL,
   `statutory_applicable` tinyint(4) DEFAULT NULL,
@@ -405,6 +412,7 @@ CREATE TABLE `tbl_statutory_notifications_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_statutory_notifications_units`;
 CREATE TABLE `tbl_statutory_notifications_units` (
+  `statutory_notification_unit_id` int(11) NOT NULL,
   `statutory_notification_id` int(11) NOT NULL,
   `business_group_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
