@@ -64,9 +64,9 @@
 //     });
 //   });
 </script>
-<div class="content-container width75">
+<div class="content-container width100">
   <div class="content-area">
-    <div class="add-container">
+    <div class="add-container" style="min-height: 395px;">
       <div class="add-container-heading">
         Compliance Approval
         <span class="error-message"></span>
@@ -77,7 +77,8 @@
           <table width="100%" border="1" style="border-collapse:collapse !important;" class="tablealign">
           <tr>
             <td width="100%" class="full-width-list" style="padding:0px;">
-            <table>
+            <table class="js-filtertable">
+            <thead>
               <tr align="left" style="background:#ccc;">
                 <td width="5%">
                   <span style="font-weight:bold;">#</span>
@@ -102,17 +103,18 @@
               <tr>
                 <td></td>
                 <td align="center">
-                  <input type="text" class="filter-text-box" ></td>
+                  <input type="text" class="filter-text-box js-filter" ></td>
                 <td>
-                  <input type="text" class="filter-text-box"></td>
+                  <input type="text" class="filter-text-box js-filter"></td>
                 <td align="center">
-                  <input type="text" class="filter-text-box"></td>
+                  <input type="text" class="filter-text-box js-filter"></td>
                 <td align="center">
-                  <input type="text" class="filter-text-box"></td>
+                  <input type="text" class="filter-text-box js-filter"></td>
                 <td align="center">
-                  <input type="text" class="filter-text-box" ></td>
+                  <input type="text" class="filter-text-box js-filter" ></td>
                 <td></td>
               </tr>
+              </thead>
               <tbody class="tbody-compliance-approval-list"></tbody>
             </table>
             </td>
@@ -227,18 +229,19 @@
 
       </td>
     </tr>
+     <tr>
+      <td >
+        <span style="font-weight:bold;">Document / Completion Date:</span>
+      </td>
+      <td class="sidebar-completion-date"></td>
+    </tr>
     <tr>
       <td >
         <span style="font-weight:bold;">Uploaded Date:</span>
       </td>
       <td class="sidebar-uploaded-date"></td>
     </tr>
-    <tr>
-      <td >
-        <span style="font-weight:bold;">Document / Completion Date:</span>
-      </td>
-      <td class="sidebar-completion-date"></td>
-    </tr>
+   
     <tr class="validityAndDueDate">
       <td >
         <span style="font-weight:bold;">Validity Date:</span>

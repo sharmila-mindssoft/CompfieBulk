@@ -21,31 +21,41 @@ function initialize(){
 	$('textarea.address').text(userprofile['address']);
 	$('.userid').val(userprofile['user_id']);
 }
+$('.countrycode').on('input', function (event) {
+    this.value = this.value.replace(/^[0-9 ()+-]+$/, '');
+});
+$('.areacode').on('input', function (event) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+$('.mobile').on('input', function (event) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
 $("#submit").click(function(){
-	var countrycode = $(".countrycode").val();
-	var areacode = $(".areacode").val();
-	var mobile = $(".mobile").val();
-	var address = $(".address").val();
+	var countrycode = $(".countrycode").val().trim();
+	var areacode = $(".areacode").val().trim();
+	var mobile = $(".mobile").val().trim();
+	var address = $(".address").val().trim();
 	if(countrycode == ''){
 		displayMessage("Enter country code");
 	}
-	if(mobile == ''){
+	else if(mobile == ''){
 		displayMessage("Enter Contact Number");
 	}
-	if(isNaN(mobile)){
+	else if(isNaN(mobile)){
 		displayMessage("Contact Number Invalid");
 	}
-	if(address == ''){
+	else if(address == ''){
 		displayMessage("Enter address")
 	}
-	function onSuccess(data){
-		initialize();
-		displayMessage("Updated Successfully");
-	}
-	function onFailure(error){
-		console.log(error);
-	}
-	mirror.updateUserProfile( countrycode+"-"+areacode+"-"+mobile, address,
+	else{
+		function onSuccess(data){
+			initialize();
+			displayMessage("Updated Successfully");
+		}
+		function onFailure(error){
+			console.log(error);
+		}
+		mirror.updateUserProfile( countrycode+"-"+areacode+"-"+mobile, address,
 	    	function(error, response){
 	            if(error == null){
 	                onSuccess(response);
@@ -55,6 +65,7 @@ $("#submit").click(function(){
 	            }
 	        }
 	    );
+	}
 });
 
 $(function() {

@@ -127,14 +127,15 @@
             <input type="hidden" id="users">
             <input type="text" class="input-box icon-autocomplete" id="usersSelected" value="" readonly="readonly" onclick="loadAutoUsers()">
             <div id="selectboxview-users" class="ac-selectbox" style="display:none;">
-            <ul id="ulist-users" onmouseleave="hidemenu();" style="width:213px;"></ul>
+            <ul onmouseleave="hidemenu();" style="width:213px;"></ul>
           </div>
         </div>
       </div>
       <div class="input-row">
         <div class="single-column-field-label">Short Name:<span class="mandatory">*</span></div>
         <div class="field-input">
-          <input id="short-name" type="text" class="input-box"  value="" >
+          <input id="short-name" type="text" class="input-box"  value="" maxlength="50">
+           <span style="font-size:10px;">[http://aparajitha.com/login/<abbr class="shorturl"></abbr>]</span>
         </div>
       </div>
     </div>

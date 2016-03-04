@@ -41,10 +41,14 @@ margin: 5px 5%;
   display: inline-table;
   margin-bottom: 3px !important;  
   width: 85%;
+  line-height: 25px;
+  text-indent: 5px; 
+
 }
 .uploaded-filename span .removeicon{
   text-align: right !important;
   float: right;
+  line-height: 25px;
   padding-top: 2px;
   vertical-align: middle;
 }
@@ -70,7 +74,7 @@ $(document).ready(function() {
   })
 })
 </script>
-<div class="content-container width75">
+<div class="content-container width100">
   <div class="content-area">
     <div class="add-container">
       <div class="archive-container">
@@ -85,7 +89,8 @@ $(document).ready(function() {
             <tr>
               <td width="100%" class="full-width-list">
                 <div class="grid-table" style="padding-bottom:0em;">
-                  <table>
+                  <table class="js-filtertable">
+                  <thead>
                     <tr align="left" style="background:#ccc;">
                       <td width="3%">
                         <span style="font-weight:bold;">#</span>
@@ -115,20 +120,21 @@ $(document).ready(function() {
                     <tr>
                       <td></td>
                       <td align="center">
-                        <input type="text" class="filter-text-box" ></td>
+                        <input type="text" class="filter-text-box js-filter" ></td>
                       <td>
-                        <input type="text" class="filter-text-box"></td>
+                        <input type="text" class="filter-text-box js-filter"></td>
                       <td align="center">
-                        <input type="text" class="filter-text-box"></td>
+                        <input type="text" class="filter-text-box js-filter"></td>
                       <td align="center">
-                        <input type="text" class="filter-text-box"></td>
+                        <input type="text" class="filter-text-box js-filter"></td>
                       <td align="center">
-                        <input type="text" class="filter-text-box"></td>
+                        <input type="text" class="filter-text-box js-filter"></td>
                       <td align="center">
-                        <input type="text" class="filter-text-box"  ></td>
+                        <input type="text" class="filter-text-box js-filter"></td>
                       <td></td>
                       <td></td>
                     </tr>
+                    </thead>
                     <tbody class="tbody-compliances-task-list-overdue"></tbody>
                     <tbody class="tbody-compliances-task-list-inprogress"></tbody>
 
@@ -211,7 +217,7 @@ $(document).ready(function() {
       <td class="duedate"></td>
       <td class="days-text" style=""></td>
       <td class="status"></td>
-      <td align="center">
+      <td align="center"><span class="sasd"></span>
         <a class="format-file" href="" target="new">
           <img src="/images/download.png" style="width:16px;height:16px" title="Download Format"></a>
       </td>
@@ -230,8 +236,8 @@ $(document).ready(function() {
       <td class="uc-duedate"></td>
 
       <td align="center">
-        <a class="format-file" href="" target="new">
-          <img src="/images/download.png" style="width:16px;height:16px;" title="Download Format"></a>
+        <a class="format-file" href="" target="new" style="text-align:center;">
+          <img src="/images/download.png" style="width:16px;height:16px; text-align: center;" title="Download Format" align="center"></a>
       </td>
 
     </tr>

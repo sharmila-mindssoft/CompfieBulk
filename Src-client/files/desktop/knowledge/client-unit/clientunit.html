@@ -8,7 +8,8 @@
       </div>
       <div class="clearfix"></div>
       <div class="grid-table">
-        <table>
+        <table class="js-filtertable">
+           <thead>
           <tr align="left">
             <th align="center">#</th>
             <th>Group</th>
@@ -20,13 +21,14 @@
           </tr>
           <tr>
             <td align="center"></td>
-            <td><input type="text" class="filter-text-box"></td>
-            <td><input type="text" class="filter-text-box"></td>
-            <td><input type="text" class="filter-text-box"></td>
-            <td><input type="text" class="filter-text-box"></td>
+            <td><input type="text" class="filter-text-box js-filter"></td>
+            <td><input type="text" class="filter-text-box js-filter"></td>
+            <td><input type="text" class="filter-text-box js-filter"></td>
+            <td><input type="text" class="filter-text-box js-filter"></td>
             <td align="center"></td>
             <td align="center"></td>
           </tr>
+          </thead>
           <tbody class="tbody-clientunit-list">
           </tbody>
         </table>
@@ -69,7 +71,7 @@
                   <option value="">Select</option>
                 </Select>
                 <input id="businessgroup-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Business Group Name">
-                <span style="font-size:10px"><a href="#" id="businessgroup-new" onclick="businessGroupExistingChecking('New')">New</a><a href="#" id="businessgroup-existing" style="display:none;" onclick="businessGroupExistingChecking('Cancel')">Cancel</a></span> </div>
+                <span style="font-size:10px"><a href="" id="businessgroup-new" onclick="businessGroupExistingChecking('New')">New</a><a href="" id="businessgroup-existing" style="display:none;" onclick="businessGroupExistingChecking('Cancel')">Cancel</a></span> </div>
               </div>
             </div>
             <div class="input-row-right">
@@ -80,7 +82,7 @@
                     <option value="">Select</option>
                   </Select>
                   <input id="entity-text" type="text" class="input-box" style="width:190px;display:none" placeholder="Legal Entity Name">
-                  <span style="font-size:10px"><a href="#" id="entity-new" onclick="legalEntityExistingChecking('New')">New</a><a href="#" id="entity-existing" style="display:none;" onclick="legalEntityExistingChecking('Cancel')">Cancel</a></span> </div>
+                  <span style="font-size:10px"><a href="" id="entity-new" onclick="legalEntityExistingChecking('New')">New</a><a href="" id="entity-existing" style="display:none;" onclick="legalEntityExistingChecking('Cancel')">Cancel</a></span> </div>
                 </div>
                 <div class="input-row">
                   <div class="single-column-field-label">Division</div>
@@ -89,14 +91,14 @@
                       <option value="">Select</option>
                     </Select>
                     <input id="division-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Division Name">
-                    <span style="font-size:10px"><a href="#" id="division-new" onclick="divisionExistingChecking('New')">New</a><a href="#" id="division-existing" style="display:none;" onclick="divisionExistingChecking('Cancel')">Cancel</a></span> </div>
+                    <span style="font-size:10px"><a href="" id="division-new" onclick="divisionExistingChecking('New')">New</a><a href="" id="division-existing" style="display:none;" onclick="divisionExistingChecking('Cancel')">Cancel</a></span> </div>
                   </div>
                 </div>
                 <input type="hidden" id="countrycount" value="">
                 <input type="hidden" id="unitcount" value="">
                 <div class="clearfix"></div>
                 <div class="add-container" style="padding-left:0px; padding-right:0px;">
-                  <a href="#" style="float:right;" onclick="addcountryrow()"><img src="/images/icon-plus.png" formtarget="_self" id="add-country-row"  alt="Add New Country List Unit"  /></a>
+                  <a style="float:right;" onclick="addcountryrow()" style="cursor: pointer;"><img src="/images/icon-plus.png" formtarget="_self" id="add-country-row"  alt="Add New Country List Unit"  /></a>
                   <div class="add-country-unit-list">  <!-- Add Country Wise Load List -->
                 </div>
               </div>
@@ -134,6 +136,7 @@
           <th width="7%">Postal Code</th>
           <th width="10%">Domain</th>
           <th width="5%" style="padding-right:5px">Status</th>
+          
         </tr>
         <tbody class="tbody-unit-list">
           <tr class="table-row" style="vertical-align:top;">
@@ -163,6 +166,7 @@
     </div>
   </td>
   <td align="center">Active</td>
+  
 </tr>
 </tbody>
 <tr>
@@ -188,6 +192,7 @@
         <td><input type="text" class="input-box unit-code"  ></td>
         <td><input type="text" class="input-box unit-name"  ></td>
         <td><select class="input-box industry" onfocus="industrytype(this.className);">
+          <option value="">Select</option>
         </select>
         </td>
         <td><input type="text" class="input-box unit-address" /></td>

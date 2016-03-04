@@ -576,7 +576,7 @@ img, object {
 	float: left;
 	background: #fff;
 	padding: 0.3em;
-
+	
 	-webkit-border-radius: 0.4em;
 	-moz-border-radius: 0.4em;
 	border-radius: 0.4em;
@@ -1773,8 +1773,10 @@ list-style-type:none; line-height:25px;
 
 .accordion-toggle {
   cursor: pointer;
+  	border:1px solid #aaa;
 }
 .accordion-content {
+
   display: none;
 }
 .accordion-content.default {
@@ -2056,4 +2058,43 @@ cursor: pointer;
 	text-decoration: none;
 	color: #ffae00;
 	font-size: 0.813em;
+}
+.tbody-country-list .table-row{
+	background: #fff !important;
+}
+.tbody-domain-list .table-row{
+	background: #fff !important;
+}
+.tbody-industry-list .table-row{
+	background: #fff !important;
+}
+.tbody-stat-nature-list .table-row{
+	background: #fff !important;
+}
+.report-list table tr:nth-child(2n) {
+    background: none repeat scroll 0 0 #fff !important;
+}
+.report-list td.border-dashed{
+	font-size:0.813em;
+	background:#F1E9F6 !important;
+	width:100%;
+}
+.tbody-country-list, .tbody-domain-list, .tbody-industry-list, .tbody-stat-nature-list{
+	max-height: 300px;
+	overflow-y:scroll;
+}
+.grid-table table tr td.closeunit {
+	cursor: pointer;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+.grid-table table tr td.closecountry {
+	cursor: pointer;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+.unit-error-msg{
+	text-align: right;
+	font-size: 0.8em;
+	color: #f00;
 }

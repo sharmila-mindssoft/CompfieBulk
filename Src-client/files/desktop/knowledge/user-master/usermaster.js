@@ -59,8 +59,8 @@ function displayEdit (userId) {
 				}
 		}
 		$("#employeename").val(employeeName);
-	    $("#employeeid").val(employeeId);
-	  	$("#address").val(address);
+    $("#employeeid").val(employeeId);
+  	$("#address").val(address);
 	 	$("#countrycode").val(countryCode);
 		$("#areacode").val(areaCode);
 		$("#contactno").val(contactNo);
@@ -93,7 +93,7 @@ function changeStatus (userId,isActive) {
 		displayMessage(error);
 	}
 
-	mirror.changeAdminUserStatus(userId, isActive, 
+	mirror.changeAdminUserStatus(userId, isActive,
 		function (error, response) {
             if (error == null){
               onSuccess(response);

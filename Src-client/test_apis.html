@@ -310,17 +310,18 @@
 			function updateClientGroup(){
 				dateConfigurations = []
 
-		        configuration1 = mirror.getDateConfigurations(1,1,1,12)
+		        configuration1 = mirror.getDateConfigurations(1,1,5,4)
+		        configuration1 = mirror.getDateConfigurations(1,2,1,12)
 		        dateConfigurations.push(configuration1)
 
-		        client_id = 9
-		        group_name = "JYJ";
+		        client_id = 6
+		        group_name = "Compfie";
 		        country_ids = [1];
 		        domain_ids = [1];
 		        logo = logo_file;
 		        contract_from = "02-Nov-2015";
 		        contract_to = "01-Nov-2016";
-		        incharge_persons = [1];
+		        incharge_persons = [4];
 		        no_of_user_licence = 10;
 		        file_space = 4.6;
 		        is_sms_subscribed = true;
@@ -435,10 +436,10 @@
 
 			function approveCompliance(){
 				compliance_history_id = 1
-				compliance_approval_status = "Approve"
+				compliance_approval_status = "Concur"
 				remarks = null
-				next_due_date = "12-Aug-2016"
-				validity_date = "12-Aug-2018"
+				next_due_date = null
+				validity_date = null
 				client_mirror.approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback);
 			}
 
@@ -532,13 +533,13 @@
 			}
 			function getComplianceActivityReportData(){
 				country_id = 1
-				assignee_id = 3;
+				assignee_id = null;
 				domain_id = 1;
-				level_1_statutory_id = "Finance Act";
+				level_1_statutory_id = null;
 				unit_id = 1;
-				compliance_id = 21;
-				from_date = "12-Jan-2009";
-				to_date = "12-Dec-2016";
+				compliance_id = null;
+				from_date = null;
+				to_date = null;
 				user_type = "Inhouse";
 				client_mirror.getComplianceActivityReportData(
 					user_type, assignee_id, country_id, domain_id, level_1_statutory_id, unit_id, compliance_id, from_date, to_date, callback

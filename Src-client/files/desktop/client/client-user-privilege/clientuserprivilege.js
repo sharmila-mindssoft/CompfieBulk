@@ -12,6 +12,8 @@ $("#btn-userprivilege-add").click(function(){
 	clearMessage(); 
   	$("#user-privilege-id").val('');
   	$("#user-privilege-name").val('');
+  	$(".checkbox-full-check").prop('checked', false);
+  	$(".tbody-userprivilege-form-list tr").remove();
 	$('.tbody-userprivilege-form-list .form-checkbox').each(function() {
 		this.checked = false; 
 	});  	
@@ -20,7 +22,7 @@ $("#btn-userprivilege-add").click(function(){
 		loadFormData(data['forms']['menus'])		
 	}
 	function onFailure(error){
-		console.log(status);
+		console.log(error);
 	}
 	client_mirror.getClientUserGroups(
 		function (error, response){
@@ -129,9 +131,9 @@ $("#submit").click(function(){
 	   		$("#userprivilege-view").show();
 	   		initialize();
 	 	}
-		function onFailure(error){
-			if(error == "userGroupNameAlreadyExists"){
-	   			displayMessage(error);
+		function onFailure(error){		
+			if(error == "UserGroupNameAlreadyExists"){
+	   			displayMessage("User Group Name Already Exists");
 	  		}
 		}
 		var userGroupInsertDetails;
@@ -157,8 +159,8 @@ $("#submit").click(function(){
 		    initialize();
 		}
 		function onFailure(error){
-			if(error == "GroupNameAlreadyExists"){
-				displayMessage("Group Name Already Exists");
+			if(error == "UserGroupNameAlreadyExists"){
+				displayMessage("User Group Name Already Exists");
 			}
 		}
 		var userGroupUpdateDetails;
@@ -181,6 +183,8 @@ function userPrivilegeEdit(userGroupId, userGroupName){
 	$("#userprivilege-view").hide();
 	$("#user-privilege-name").val(userGroupName);
 	$("#user-privilege-id").val(userGroupId);  
+	$(".checkbox-full-check").prop('checked' , false);
+
 	function onSuccess(data){
 		loadFormListUpdate(data['forms']['menus'], data['user_groups'], userGroupId);     
 	}

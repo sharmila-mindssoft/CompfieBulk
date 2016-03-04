@@ -196,33 +196,6 @@ class Database(object) :
         query += " where %s" % where_condition
         return self.select_all(query)
 
-    def get_full_join_data(
-        self, columns, tables, aliases,
-        join_conditions, where_condition
-    ):
-        join_types = ["LEFT JOIN", "RIGHT JOIN"]
-        query = ""
-        for join_type in join_types:
-            query += "SELECT %s FROM " % columns
-            for index, table in enumerate(tables):
-                if index == 0:
-                    query += "%s  %s  %s" % (
-                        table, aliases[index], join_type
-                    )
-                elif index <= len(tables) - 2:
-                    query += " %s %s on (%s) %s " % (
-                        table, aliases[index],
-                        join_conditions[index-1], join_type
-                    )
-                else:
-                    query += " %s %s on (%s)" % (
-                        table, aliases[index],
-                        join_conditions[index-1]
-                    )
-            query += " UNION "
-        query += " where %s" % where_condition
-        return self.select_all(query)
-
     def insert(self, table, columns, values, client_id=None) :
         columns = ",".join(columns)
         stringValue = ""
@@ -234,8 +207,6 @@ class Database(object) :
         query = "INSERT INTO %s (%s) VALUES (%s)" % (
             table, columns, stringValue
         )
-        # if client_id is not None:
-        #     return self.execute(query, client_id)
         return self.execute(query)
 
     def bulk_insert(self, table, columns, valueList, client_id=None) :
@@ -247,8 +218,6 @@ class Database(object) :
                 query += "%s," % str(value)
             else:
                 query += str(value)
-        # if client_id is not None:
-        #     return self.execute(query, client_id)
         return self.execute(query)
 
     def update(self, table, columns, values, condition, client_id=None) :
@@ -281,9 +250,6 @@ class Database(object) :
                 query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
-
-        # if client_id is not None:
-        #     return self.execute(query, client_id)
         return self.execute(query)
 
     def delete(self, table, condition, client_id=None):
@@ -557,6 +523,7 @@ class KnowledgeDatabase(Database):
         self.tblStatutoryMappings = "tbl_statutory_mappings"
         self.tblStatutoryNatures = "tbl_statutory_natures"
         self.tblStatutoryNotificationsLog = "tbl_statutory_notifications_log"
+        self.tblStatutoryNotificationsUnits = "tbl_statutory_notifications_units"
         self.tblUnits = "tbl_units"
         self.tblUserClients = "tbl_user_clients"
         self.tblUserCountries = "tbl_user_countries"
@@ -2997,7 +2964,7 @@ class KnowledgeDatabase(Database):
                     "tbl_statutory_notifications_units"
                 )
                 q = "INSERT INTO tbl_statutory_notifications_units \
-                    (statutory_notification_id, client_id, \
+                    (statutory_notification_unit_id, statutory_notification_id, client_id, \
                         business_group_id, legal_entity_id, division_id, unit_id) VALUES \
                     (%s, %s, %s, %s, %s, %s, %s)" % (
                         notification_unit_id,
@@ -3320,6 +3287,12 @@ class KnowledgeDatabase(Database):
         condition = "url_short_name ='%s' AND client_id != '%d'" % (short_name, client_id)
         return self.is_already_exists(self.tblClientGroups, condition)
 
+    def is_deactivated_existing_country(self, client_id, country_ids):
+        existing_countries = self.get_client_countries(client_id).split(",")
+        pass
+
+        
+
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
         " no_of_user_licence, total_disk_space, is_sms_subscribed,  incharge_persons,"+\
@@ -3411,39 +3384,73 @@ class KnowledgeDatabase(Database):
         return results
 
     def save_date_configurations(self, client_id, date_configurations, session_user):
-        values_list = []
         current_time_stamp = self.get_date_time()
-        columns = ["client_id", "country_id" ,"domain_id", "period_from",
+        insert_columns = ["client_config_id", "client_id", "country_id" ,"domain_id", "period_from",
         "period_to", "updated_by", "updated_on"]
-        condition = "client_id='%d'"%client_id
-        self.delete(self.tblClientConfigurations, condition)
+        update_columns = ["period_from", "period_to"]
         for configuration in date_configurations:
             country_id = configuration.country_id
             domain_id = configuration.domain_id
             period_from = configuration.period_from
             period_to = configuration.period_to
-            values_tuple = (client_id, country_id, domain_id, period_from, period_to,
-                 int(session_user), str(current_time_stamp))
-            values_list.append(values_tuple)
-        return self.bulk_insert(self.tblClientConfigurations,columns,values_list)
+            if self.is_combination_already_exists(country_id, domain_id, client_id):
+                update_values = [period_from, period_to]
+                update_condition = " client_id = '%d' AND country_id = '%d' \
+                AND domain_id = '%d'" % (
+                    client_id, country_id, domain_id
+                )
+                self.update(
+                    self.tblClientConfigurations, update_columns, update_values, update_condition
+                )
+            else:
+                client_config_id = self.get_new_id(
+                    "client_config_id", self.tblClientConfigurations
+                )
+                insert_values = [
+                    client_config_id, client_id, country_id, 
+                    domain_id, period_from, period_to, session_user, current_time_stamp
+                ]
+                self.insert(
+                    self.tblClientConfigurations, insert_columns, insert_values
+                )
+
+    def is_combination_already_exists(
+        self, country_id, domain_id, client_id
+    ):
+        columns = "count(*)"
+        condition = " client_id = '%d' AND country_id = '%d' \
+                AND domain_id = '%d'" % (
+                    client_id, country_id, domain_id
+                ) 
+        rows = self.get_data(self.tblClientConfigurations, columns, condition)     
+        if rows[0][0] > 0:
+            return True
+        else:
+            return False
 
     def save_client_countries(self, client_id, country_ids):
         values_list = []
-        columns = ["client_id", "country_id"]
+        columns = ["client_country_id", "client_id", "country_id"]
         condition = "client_id = '%d'" % client_id
         self.delete(self.tblClientCountries, condition)
         for country_id in country_ids:
-            values_tuple = (client_id, country_id)
+            client_country_id = self.get_new_id(
+                "client_country_id", self.tblClientCountries
+            )
+            values_tuple = (client_country_id, client_id, country_id)
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblClientCountries, columns, values_list)
 
     def save_client_domains(self, client_id, domain_ids):
         values_list = []
-        columns = ["client_id", "domain_id"]
+        columns = ["client_domain_id", "client_id", "domain_id"]
         condition = "client_id = '%d'" % client_id
         self.delete(self.tblClientDomains, condition)
         for domain_id in domain_ids:
-            values_tuple = (client_id, domain_id)
+            client_domain_id = self.get_new_id(
+                "client_domain_id", self.tblClientDomains
+            )
+            values_tuple = (client_domain_id, client_id, domain_id)
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblClientDomains, columns, values_list)
 
@@ -3507,6 +3514,7 @@ class KnowledgeDatabase(Database):
         print "client domains"
         self._save_client_domains(domain_ids, client_db_cursor)
         client_db_con.commit()
+
         try:
             email().send_client_credentials(short_name, email_id, password)
         except Exception, e:
@@ -3514,12 +3522,10 @@ class KnowledgeDatabase(Database):
         return True
 
     def _save_client_countries(self, country_ids, cursor):
-        print "self._cursor:{}".format(self._cursor)
         q = "SELECT country_id, country_name, is_active \
                 FROM tbl_countries\
                 WHERE country_id\
                 IN (%s)" % (country_ids)
-        print q
         rows = self.select_all(q)
         print rows
         for r in rows :
@@ -3545,7 +3551,13 @@ class KnowledgeDatabase(Database):
         columns = "ip, server_username,server_password"
         condition = "server_full = 0 order by length ASC limit 1"
         rows = self.get_data(self.tblDatabaseServer, columns, condition)
-        return rows[0]
+        return rows
+
+    def _get_machine_details(self):
+        columns = "machine_id, ip, port"
+        condition = "server_full = 0 limit 1"
+        rows = self.get_data(self.tblMachines, columns, condition)
+        return rows
 
     def create_and_save_client_database(
         self, host, username, password, database_name, db_username,
@@ -3558,33 +3570,35 @@ class KnowledgeDatabase(Database):
 
     def update_client_db_details(self, host, client_id, db_username,
             db_password, short_name, database_name):
-        db_server_column = "company_ids"
-        db_server_value = client_id
-        db_server_condition = "ip='%s'" % host
-        self.append(
-            self.tblDatabaseServer, db_server_column, db_server_value,
-            db_server_condition
-        )
-        db_server_column = "length"
-        self.increment(
-            self.tblDatabaseServer, db_server_column,
-            db_server_condition
-        )
-
+        # db_server_column = "company_ids"
+        # db_server_value = client_id
+        
+        # self.append(
+        #     self.tblDatabaseServer, db_server_column, db_server_value,
+        #     db_server_condition
+        # )
+        # db_server_column = "length"
+        # self.increment(
+        #     self.tblDatabaseServer, db_server_column,
+        #     db_server_condition
+        # )
+        result = self._get_machine_details()
+        machine_id = result[0][0]
+        ip = result[0][1]
+        port = result[0][2]
         machine_columns = "client_ids"
-        machine_value = db_server_value
-        machine_condition = db_server_condition
+        machine_value = client_id
+        machine_condition = "ip='%s'" % ip
         self.append(
             self.tblMachines, machine_columns, machine_value,
             machine_condition
         )
 
-        rows = self.get_data(
-            self.tblMachines, "machine_id, port", machine_condition
-        )
-        machine_id = rows[0][0]
+        # rows = self.get_data(
+        #     self.tblMachines, "machine_id, port", machine_condition
+        # )
         server_ip = host
-        server_port = rows[0][1]
+        server_port = port
 
         client_db_columns = [
             "client_id", "machine_id", "database_ip",
@@ -3593,7 +3607,7 @@ class KnowledgeDatabase(Database):
             "server_ip", "server_port"
         ]
         client_dB_values = [
-            client_id, machine_id, host, 3306, db_username,
+            client_id, machine_id, host, port, db_username,
             db_password, short_name, database_name,
             server_ip, server_port
         ]
@@ -4268,8 +4282,6 @@ class KnowledgeDatabase(Database):
                     domain_id, country_id, industry_id, geography_id,
                     str("%" + str(geography_id) + ",%"),
                 )
-        print
-        print query
         rows = self.select_all(query)
         columns = [
             "statutory_mapping_id", "statutory_nature_id",
@@ -4436,6 +4448,9 @@ class KnowledgeDatabase(Database):
             for key, value in d.compliances.iteritems():
                 compliance_id = int(key)
                 compliance_applicable_status = int(value)
+                client_compliance_id = self.get_new_id(
+                    "client_compliance_id", self.tblClientCompliances    
+                )
                 values = (
                     client_compliance_id,
                     client_statutory_id, compliance_id,

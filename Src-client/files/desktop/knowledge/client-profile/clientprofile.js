@@ -36,7 +36,7 @@ function loadClientProfileList(groupId){
 	var imageName, title;
     $.each(profiles, function(key, value){
         if(profiles[key]['client_id'] == groupId){
-            var list=profiles[key]['profile_detail'];
+            var list = profiles[key]['profile_detail'];
             var contractFrom = list['contract_from'];
             var contractTo = list['contract_to'];
             var noLicence = list['no_of_user_licence'];
@@ -63,6 +63,7 @@ function loadClientProfileList(groupId){
             $('.remaining-licence').html(remaininglicence);
 
             var lists = list['licence_holders'];
+            console.log(lists)
             $.each(lists, function(key, val) { 
                 var tableRow = $('#templates .table-clientprofile-list .table-row');
                 var clone = tableRow.clone();
@@ -76,8 +77,8 @@ function loadClientProfileList(groupId){
                 else{
                   $('.mobile-number', clone).text(lists[key]['contact_no']);
                 }     
-                $('.seating-unit', clone).text(lists[key]['unit_name']);
-                $('.unit-address', clone).text(lists[key]['address']);      
+                $('.seating-unit span', clone).text(lists[key]['unit_name']);
+                $('.seating-unit abbr', clone).text(lists[key]['address']);      
                 var userId = lists[key]['user_id'];
                 var isAdmin = lists[key]["is_admin"];
                 var isActive = lists[key]["is_active"];
@@ -156,7 +157,9 @@ function loadauto_text (textval) {
   $('#autocompleteview ul').empty();
   if(textval.length>0){
     for(var i in groups){
-      if (~groups[i]['group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([groups[i]["client_id"],groups[i]["group_name"]]); 
+        if(groups[i]['is_active'] == true){
+            if (~groups[i]['group_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([groups[i]["client_id"],groups[i]["group_name"]]);       
+        }      
     }
     var str='';
     for(var i in suggestions){
@@ -174,46 +177,25 @@ function activate_text (element,checkval,checkname) {
   loadClientProfileList(checkval);
 }
 
-$("#search-employee").keyup(function() { 
-	var count=0;
-    var value = this.value.toLowerCase();
-    $(".tbody-clientprofile-list").find("tr").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".employee").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
-
-$("#search-email").keyup(function() { 
-	var count=0;
-    var value = this.value.toLowerCase();
-    $(".tbody-clientprofile-list").find("tr").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".email").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
-
-$("#search-mobile-number").keyup(function() { 
-	var count=0;
-    var value = this.value.toLowerCase();
-    $(".tbody-clientprofile-list").find("tr").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".mobile-number").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
-
-$("#search-seating-unit").keyup(function() { 
-	var count=0;
-    var value = this.value.toLowerCase();
-    $(".tbody-clientprofile-list").find("tr").each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find(".seating-unit").text().toLowerCase();       
-        $(this).toggle(id.indexOf(value) !== -1);;
-    });
-});
-
 $(function() {
   initialize();
+});
+
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
+});
+
+$( document ).tooltip({
+    position: {
+        my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+            $( this ).css( position );
+            $( "<div>" )
+                .addClass( "arrow" )
+                .addClass( feedback.vertical )
+                .addClass( feedback.horizontal )
+                .appendTo( this );
+        }
+    }
 });
