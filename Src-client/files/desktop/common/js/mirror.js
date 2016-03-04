@@ -574,7 +574,7 @@ function initMirror() {
 
     function statutoryMapping(
         countryId, domainId, industryIds, statutoryNatureId,
-        statutoryIds, compliances, geographyIds, mappingId
+        statutoryIds, compliances, geographyIds, mappings, mappingId
     ) {
         var mappingData = {};
         mappingData["country_id"] = countryId;
@@ -584,6 +584,7 @@ function initMirror() {
         mappingData["statutory_ids"] = statutoryIds;
         mappingData["compliances"] = compliances;
         mappingData["geography_ids"] = geographyIds;
+        mappingData["mappings"] = mappings;
         if (mappingId !== null) {
             mappingData["statutory_mapping_id"] = mappingId
         }
@@ -601,7 +602,7 @@ function initMirror() {
 
     function UpdateStatutoryMappingData(
         domainId, industryIds, statutoryNatureId,
-        statutoryIds, compliances, geographyIds, mappingId
+        statutoryIds, compliances, geographyIds, mappings, mappingId
     ) {
         var mappingData = {};
         mappingData["domain_id"] = domainId;
@@ -610,6 +611,7 @@ function initMirror() {
         mappingData["statutory_ids"] = statutoryIds;
         mappingData["compliances"] = compliances;
         mappingData["geography_ids"] = geographyIds;
+        mappingData["mappings"] = mappings;
         if (mappingId !== null) {
             mappingData["statutory_mapping_id"] = mappingId
         }

@@ -75,8 +75,8 @@ INSERT INTO tbl_compliance_frequency VALUES(4, "On Occurrence");
 
 -- tbl_machines
 INSERT INTO `tbl_machines` (`machine_id`, `ip`, `port`, `client_ids`, `server_full`) VALUES
-(1, 'localhost', 8080, '1', 0);
+(1, '127.0.0.1', 8081, '1', 0);
 
 -- tbl_database_server
 INSERT INTO `tbl_database_server` (`ip`, `server_username`, `server_password`) VALUES
-('localhost', 'root', '123456');
+('127.0.0.1', 'root', '123456');

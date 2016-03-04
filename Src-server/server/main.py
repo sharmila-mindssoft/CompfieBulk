@@ -20,6 +20,9 @@ from distribution.protocol import (
     Request as DistributionRequest,
     CompanyServerDetails
 )
+from replication.protocol import (
+    GetChanges, GetChangesSuccess, InvalidReceivedCount
+)
 from server.constants import (
     TEMPLATE_PATHS,
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
@@ -128,6 +131,21 @@ class API(object):
         return CompanyServerDetails(
             db.get_servers()
         )
+
+    @api_request(
+        GetChanges
+    )
+    def handle_replication(self, request, db):
+        actual_count = db.get_trail_id()
+        client_id = request.client_id
+        received_count = request.received_count
+        if received_count > actual_count:
+            return InvalidReceivedCount()
+        res = GetChangesSuccess(
+            db.get_trail_log(client_id, received_count)
+        )
+        res.to_structure()
+        return res
 
     @api_request(login.Request)
     def handle_login(self, request, db):
@@ -268,6 +286,7 @@ def run_server(port):
 
         api_urls_and_handlers = [
             ("/server-list", api.handle_server_list),
+            ("/replication", api.handle_replication),
             ("/knowledge/api/login", api.handle_login),
             ("/knowledge/api/admin", api.handle_admin),
             ("/knowledge/api/techno", api.handle_techno),

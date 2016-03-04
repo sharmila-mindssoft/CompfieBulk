@@ -14,6 +14,7 @@ from server.clientdatabase import ClientDatabase
 
 import clientcontroller as controller
 from webfrontend.client import CompanyManager
+from server.client import ReplicationManager
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 #
@@ -59,13 +60,17 @@ class API(object):
     ):
         self._io_loop = io_loop
         self._address = address
+        self._knowledge_server_address = knowledge_server_address
+        self._http_client = http_client
         self._company_manager = CompanyManager(
             io_loop,
             knowledge_server_address,
             http_client,
+            1,
             self.server_added
         )
         self._databases = {}
+        self._replication_managers = {}
 
     def close_connection(self, db):
         try:
@@ -76,10 +81,21 @@ class API(object):
     def server_added(self, servers):
         # self._databases = {}
         try:
-            for company_id, db in self._databases.iteritems():
-                db.close()
-                # self.close_connection(db)
+            #
+            # print "company manager"
+            # for company_id, db in self._databases.iteritems():
+            #     db.close()
+
+            # for company_id, rep_man in self._replication_managers.iteritems():
+            #     print "replication stopped"
+            #     rep_man.stop()
+
+            self._databases = {}
+            self._replication_managers = {}
+
             for company_id, company in servers.iteritems():
+                print company_id
+                print company.to_structure()
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
                 if company_server_ip.ip_address == ip and \
@@ -93,6 +109,17 @@ class API(object):
                     )
                     db.connect()
                     self._databases[company_id] = db
+
+                    rep_man = ReplicationManager(
+                        self._io_loop,
+                        self._knowledge_server_address,
+                        self._http_client,
+                        db,
+                        company_id
+                    )
+                    print "replication started"
+                    rep_man.start()
+                    self._replication_managers[company_id] = rep_man
         except Exception, e :
             print db, e
 

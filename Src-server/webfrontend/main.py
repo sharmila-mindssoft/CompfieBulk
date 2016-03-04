@@ -145,6 +145,7 @@ class TemplateHandler(RequestHandler):
         self.set_header("Access-Control-Allow-Methods", "GET, POST")
         self.set_status(204)
         self.write("")
+
 def server_added(servers):
     pass
 
@@ -160,6 +161,7 @@ def run_web_front_end(port, knowledge_server_address):
             io_loop,
             knowledge_server_address,
             http_client,
+            60,
             server_added
         )
         controller = Controller(
