@@ -157,7 +157,7 @@ function loadClientUserList(){
             $('.employee-code-name', clone).text(users["employee_code"]+" - "+users["employee_name"]);
             $('.group-name', clone).text(getUserGroupName(userGroupId));
             $('.level-name', clone).text("Level "+users["user_level"]);
-            $('.seating-unit', clone).html('<abbr class="page-load tipso_style" title="'+getUnitNameAndAddress(seatingUnitId, serviceProviderId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId, serviceProviderId)['unitName']);
+            $('.seating-unit', clone).html('<abbr class="page-load" title="'+getUnitNameAndAddress(seatingUnitId, serviceProviderId)['unitAddress']+'"><img src="/images/icon-info.png" style="margin-right:10px"/>'+getUnitNameAndAddress(seatingUnitId, serviceProviderId)['unitName']);
 
             $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="user_edit('+userId+')"/>');
             $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="user_active('+userId+', '+statusVal+')"/>');
@@ -299,41 +299,40 @@ $("#submit").click(function(){
 	if(employeename == ''){
 		displayMessage("Enter Employee Name");
 	}
-	if(countrycode == ''){
+	else if(countrycode == ''){
 		displayMessage("Enter Country Code");
 	}
-	if(mobilenumber == ''){
+	else if(mobilenumber == ''){
 		displayMessage("Enter Mobile Number");
 	}
-	if(usergroup == ''){
+	else if(usergroup == ''){
 		displayMessage("Enter usergroup");
 	}
-	if(userlevel == ''){
+	else if(userlevel == ''){
 		displayMessage("Select User Level");
 	}
-	if(emailid == ''){
+	else if(emailid == ''){
 		displayMessage("Enter Email Id");
 	}
-	if(country == ''){
+	else if(country == ''){
 		displayMessage("select Country");
 	}
-	if(businessgroups == ''){
+	else if(businessgroups == ''){
 		displayMessage("Select businessgroups");
 	}
-	if(legalentities == ''){
+	else if(legalentities == ''){
 		displayMessage("select legalentities");
 	}
-	if(division == ''){
+	else if(division == ''){
 		displayMessage("select division");
 	}
-	if(domains == ''){
+	else if(domains == ''){
 		displayMessage("select domains");
 	}
-	if(units == ''){
+	else if(units == ''){
 		displayMessage("Select Units")
 	}
-
-	if($('#client-user-id').val() == ''){
+	else if($('#client-user-id').val() == ''){
 		var isAdmin = false;
 
 		var arrayCountriesVal = country.split(",");
@@ -931,4 +930,19 @@ $(function() {
 });
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
+});
+
+$( document ).tooltip({
+    position: {
+        my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+            $( this ).css( position );
+            $( "<div>" )
+                .addClass( "arrow" )
+                .addClass( feedback.vertical )
+                .addClass( feedback.horizontal )
+                .appendTo( this );
+        }
+    }
 });

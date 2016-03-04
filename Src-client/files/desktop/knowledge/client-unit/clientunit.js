@@ -426,12 +426,13 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
 }
 
 function addunitrowupdate(countval, lastClassval, tbodyclasses){
-    console.log("addunitrowupdate:"+countval+"-"+lastClassval+"-"+tbodyclasses);
+    console.log("addunitrowupdate:"+countval + "-"+lastClassval+"-"+tbodyclasses);
     //var divUnitAddRowUpdate = $("#templatesUnitRow .table-UnitRow-list .table-row");
-    var divUnitAddRowUpdate = $('#templates .table-clientunit-list .table-row');
+    var divUnitAddRowUpdate = $('#templatesUnitRow .table-UnitRow-list .table-row');
     var cloneRow = divUnitAddRowUpdate.clone();
 
-    $(".tbody-unit-list").append(cloneRow);
+    // $(".tbody-unit-list").append(cloneRow);
+    $("." + tbodyclasses).append(cloneRow);
 
     // $('.geography-levels', clone1).addClass('glevel-'+countval+'-'+(lastClassval+1));
     // $('.unit-location', clone1).addClass('unitlocation-'+countval+'-'+(lastClassval+1));

@@ -168,6 +168,7 @@ class Database(object) :
         query = "SELECT %s FROM %s " % (columns, table)
         if condition is not None :
             query += " WHERE %s" % (condition)
+        print query
         return self.select_all(query)
 
     def get_data_from_multiple_tables(
