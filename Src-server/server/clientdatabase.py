@@ -5906,11 +5906,11 @@ class ClientDatabase(Database):
     ):
         unit_ids = unit_id
         unit_ids_list = []
-        user_unit_columns = "group_concat(unit_id)"
-        user_unit_condition = "user_id = '%d'" % session_user
-        rows = self.get_data(self.tblUserUnits, user_unit_columns, user_unit_condition)
-        if rows:
-            unit_ids = rows[0][0]
+        # user_unit_columns = "group_concat(unit_id)"
+        # user_unit_condition = "user_id = '%d'" % session_user
+        # rows = self.get_data(self.tblUserUnits, user_unit_columns, user_unit_condition)
+        # if rows:
+        unit_ids = self.get_user_unit_ids(session_user)
         session_unit_ids = [int(x) for x in unit_ids.split(",")]
         if user_id is not None:
             user_unit_condition = "user_id = '%d'" % user_id
