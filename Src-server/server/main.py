@@ -136,7 +136,6 @@ class API(object):
         GetChanges
     )
     def handle_replication(self, request, db):
-        print request.to_structure()
         actual_count = db.get_trail_id()
         client_id  = request.client_id
         received_count = request.received_count

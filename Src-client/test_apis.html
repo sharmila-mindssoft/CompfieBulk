@@ -315,13 +315,13 @@
 		        dateConfigurations.push(configuration1)
 
 		        client_id = 6
-		        group_name = "Aparajitha";
+		        group_name = "Compfie";
 		        country_ids = [1];
 		        domain_ids = [1];
 		        logo = logo_file;
 		        contract_from = "02-Nov-2015";
 		        contract_to = "01-Nov-2016";
-		        incharge_persons = [5];
+		        incharge_persons = [4];
 		        no_of_user_licence = 10;
 		        file_space = 4.6;
 		        is_sms_subscribed = true;
@@ -436,10 +436,10 @@
 
 			function approveCompliance(){
 				compliance_history_id = 1
-				compliance_approval_status = "Approve"
+				compliance_approval_status = "Concur"
 				remarks = null
-				next_due_date = "12-Aug-2016"
-				validity_date = "12-Aug-2018"
+				next_due_date = null
+				validity_date = null
 				client_mirror.approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback);
 			}
 

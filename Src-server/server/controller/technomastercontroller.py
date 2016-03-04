@@ -36,13 +36,14 @@ def get_client_groups(db, request, session_user):
     )
 
 def create_database(
-    host, username, password, database_name, db_username,
-    db_password, email_id, client_id, short_name, db
+    host, username, password, database_name, db_username, db_password, email_id, 
+    client_id, short_name, db, country_ids, domain_ids
 ):
     try:
         db._create_database(
             host, username, password, database_name, db_username,
-            db_password, email_id, client_id, short_name
+            db_password, email_id, client_id, short_name, country_ids, 
+            domain_ids
         )
     except Exception, x:
         print x
@@ -64,10 +65,12 @@ def save_client_group(db, request, session_user):
         password = row[2]
         db_username = db.generate_random()
         db_password = db.generate_random()
+        country_ids = ",".join(str(x) for x in request.country_ids)
+        domain_ids = ",".join(str(x) for x in request.domain_ids)
         create_database_thread = threading.Thread(
             target=create_database, args=[
-                host, username, password, database_name, db_username,
-                db_password, request.email_id, client_id, request.short_name, db
+                host, username, password, database_name, db_username, db_password, 
+                request.email_id, client_id, request.short_name, db, country_ids, domain_ids
             ]
         )
         create_database_thread.start()

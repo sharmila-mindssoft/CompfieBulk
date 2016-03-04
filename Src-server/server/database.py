@@ -3470,8 +3470,8 @@ class KnowledgeDatabase(Database):
         con.commit()
 
     def _create_database(
-        self, host, username, password,
-        database_name, db_username, db_password, email_id, client_id, short_name
+        self, host, username, password, database_name, db_username, db_password, 
+        email_id, client_id, short_name, country_ids, domain_ids
     ):
         con = self._mysql_server_connect(host, username, password)
         cursor = con.cursor()
@@ -3504,9 +3504,9 @@ class KnowledgeDatabase(Database):
         print "admin user"
         cursor.execute(query)
         print "client countries"
-        self._save_client_countries(client_id, cursor)
+        self._save_client_countries(country_ids, cursor)
         print "client domains"
-        self.__save_client_domains(client_id, cursor)
+        self.__save_client_domains(domain_ids, cursor)
         con.commit()
         try:
             email().send_client_credentials(short_name, email_id, password)
@@ -3514,15 +3514,11 @@ class KnowledgeDatabase(Database):
             print "Error while sending email : {}".format(e)
         return True
 
-    def _save_client_countries(self, client_id, cursor):
+    def _save_client_countries(self, country_ids, cursor):
         q = "SELECT country_id, country_name, is_active \
                 FROM tbl_countries\
                 WHERE country_id\
-                IN (\
-                    SELECT DISTINCT country_id\
-                    FROM tbl_client_countries\
-                    WHERE client_id = %s \
-                )" % (client_id)
+                IN (%s)" % (country_ids)
         rows = self.select_all(q)
         for r in rows :
             q = " INSERT INTO tbl_countries VALUES (%s, '%s', %s)" % (
@@ -3530,15 +3526,11 @@ class KnowledgeDatabase(Database):
             )
             cursor.execute(q)
 
-    def _save_client_domains(self, client_id, cursor):
+    def _save_client_domains(self, domain_ids, cursor):
         q = "SELECT domain_id, domain_name, is_active \
                 FROM tbl_domains\
                 WHERE domain_id\
-                IN (\
-                    SELECT DISTINCT domain_id\
-                    FROM tbl_client_domains\
-                    WHERE client_id = %s \
-                )" % (client_id)
+                IN (%s)" % (domain_ids)
         rows = self.select_all(q)
         for r in rows :
             q = " INSERT INTO tbl_domains VALUES (%s, '%s', %s)" % (
@@ -4274,8 +4266,6 @@ class KnowledgeDatabase(Database):
                     domain_id, country_id, industry_id, geography_id,
                     str("%" + str(geography_id) + ",%"),
                 )
-        print
-        print query
         rows = self.select_all(query)
         columns = [
             "statutory_mapping_id", "statutory_nature_id",
