@@ -3506,7 +3506,7 @@ class KnowledgeDatabase(Database):
         print "client countries"
         self._save_client_countries(country_ids, cursor)
         print "client domains"
-        self.__save_client_domains(domain_ids, cursor)
+        self._save_client_domains(domain_ids, cursor)
         con.commit()
         try:
             email().send_client_credentials(short_name, email_id, password)
@@ -3522,7 +3522,7 @@ class KnowledgeDatabase(Database):
         rows = self.select_all(q)
         for r in rows :
             q = " INSERT INTO tbl_countries VALUES (%s, '%s', %s)" % (
-                int(r(0)), r(1), int(r(2))
+                int(r[0]), r[1], int(r[2])
             )
             cursor.execute(q)
 
@@ -3534,7 +3534,7 @@ class KnowledgeDatabase(Database):
         rows = self.select_all(q)
         for r in rows :
             q = " INSERT INTO tbl_domains VALUES (%s, '%s', %s)" % (
-                int(r(0)), r(1), int(r(2))
+                int(r[0]), r[1], int(r[2])
             )
             cursor.execute(q)
 
@@ -3543,7 +3543,13 @@ class KnowledgeDatabase(Database):
         columns = "ip, server_username,server_password"
         condition = "server_full = 0 order by length ASC limit 1"
         rows = self.get_data(self.tblDatabaseServer, columns, condition)
-        return rows[0]
+        return rows
+
+    def _get_machine_details(self):
+        columns = "machine_id, ip, port"
+        condition = "server_full = 0 limit 1"
+        rows = self.get_data(self.tblMachines, columns, condition)
+        return rows
 
     def create_and_save_client_database(
         self, host, username, password, database_name, db_username,
@@ -3556,33 +3562,35 @@ class KnowledgeDatabase(Database):
 
     def update_client_db_details(self, host, client_id, db_username,
             db_password, short_name, database_name):
-        db_server_column = "company_ids"
-        db_server_value = client_id
-        db_server_condition = "ip='%s'" % host
-        self.append(
-            self.tblDatabaseServer, db_server_column, db_server_value,
-            db_server_condition
-        )
-        db_server_column = "length"
-        self.increment(
-            self.tblDatabaseServer, db_server_column,
-            db_server_condition
-        )
-
+        # db_server_column = "company_ids"
+        # db_server_value = client_id
+        
+        # self.append(
+        #     self.tblDatabaseServer, db_server_column, db_server_value,
+        #     db_server_condition
+        # )
+        # db_server_column = "length"
+        # self.increment(
+        #     self.tblDatabaseServer, db_server_column,
+        #     db_server_condition
+        # )
+        result = self._get_machine_details()
+        machine_id = result[0][0]
+        ip = result[0][1]
+        port = result[0][2]
         machine_columns = "client_ids"
-        machine_value = db_server_value
-        machine_condition = db_server_condition
+        machine_value = client_id
+        machine_condition = "ip='%s'" % ip
         self.append(
             self.tblMachines, machine_columns, machine_value,
             machine_condition
         )
 
-        rows = self.get_data(
-            self.tblMachines, "machine_id, port", machine_condition
-        )
-        machine_id = rows[0][0]
+        # rows = self.get_data(
+        #     self.tblMachines, "machine_id, port", machine_condition
+        # )
         server_ip = host
-        server_port = rows[0][1]
+        server_port = port
 
         client_db_columns = [
             "client_id", "machine_id", "database_ip",
@@ -3591,7 +3599,7 @@ class KnowledgeDatabase(Database):
             "server_ip", "server_port"
         ]
         client_dB_values = [
-            client_id, machine_id, host, 3306, db_username,
+            client_id, machine_id, host, port, db_username,
             db_password, short_name, database_name,
             server_ip, server_port
         ]
