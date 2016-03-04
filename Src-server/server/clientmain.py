@@ -66,7 +66,7 @@ class API(object):
             io_loop,
             knowledge_server_address,
             http_client,
-            60,
+            1,
             self.server_added
         )
         self._databases = {}
@@ -82,16 +82,20 @@ class API(object):
         # self._databases = {}
         try:
             #
-            for company_id, db in self._databases.iteritems():
-                db.close()
+            # print "company manager"
+            # for company_id, db in self._databases.iteritems():
+            #     db.close()
 
-            for company_id, rep_man in self._replication_managers.iteritems():
-                rep_man.stop()
+            # for company_id, rep_man in self._replication_managers.iteritems():
+            #     print "replication stopped"
+            #     rep_man.stop()
 
             self._databases = {}
             self._replication_managers = {}
 
             for company_id, company in servers.iteritems():
+                print company_id
+                print company.to_structure()
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
                 if company_server_ip.ip_address == ip and \
@@ -113,6 +117,7 @@ class API(object):
                         db,
                         company_id
                     )
+                    print "replication started"
                     rep_man.start()
                     self._replication_managers[company_id] = rep_man
         except Exception, e :

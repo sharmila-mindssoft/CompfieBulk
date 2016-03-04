@@ -629,7 +629,7 @@ class KnowledgeDatabase(Database):
     def return_changes(self, data):
         results = []
         for d in data :
-            results.append(Change(
+            change = Change(
                 int(d["audit_trail_id"]),
                 d["tbl_name"],
                 int(d["tbl_auto_id"]),
@@ -637,7 +637,8 @@ class KnowledgeDatabase(Database):
                 d["value"],
                 int(d["client_id"]),
                 d["action"]
-            ))
+            )
+            results.append(change)
         return results
 
     def get_servers(self):
@@ -3464,23 +3465,28 @@ class KnowledgeDatabase(Database):
 
     def _create_database(
         self, host, username, password,
-        database_name, db_username, db_password, email_id, client_id, short_name
+        database_name, db_username, db_password, email_id, client_id,
+        short_name, country_ids, domain_ids
     ):
-        con = self._mysql_server_connect(host, username, password)
-        cursor = con.cursor()
+        print "self._cursor:{}".format(self._cursor)
+        client_con = self._mysql_server_connect(host, username, password)
+        client_cursor = client_con.cursor()
         query = "CREATE DATABASE %s" % database_name
-        cursor.execute(query)
+        client_cursor.execute(query)
         print "grant privileges"
-        query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" %(
+        query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" % (
             database_name, db_username, host, db_password)
-        cursor.execute(query)
-        con.commit()
+        client_cursor.execute(query)
+        client_con.commit()
 
-        con = self._db_connect(host, username, password, database_name)
-        cursor = con.cursor()
+        client_db_con = self._db_connect(host, username, password, database_name)
+        client_db_cursor = client_db_con.cursor()
         print "exec scripts"
-        sql_script_path = os.path.join(os.path.join(os.path.split(__file__)[0]),
-        "scripts/mirror-client.sql")
+        sql_script_path = os.path.join(
+            os.path.join(
+                os.path.split(__file__)[0]
+            ),"scripts/mirror-client.sql"
+        )
         file_obj = open(sql_script_path, 'r')
         sql_file = file_obj.read()
         file_obj.close()
@@ -3488,54 +3494,49 @@ class KnowledgeDatabase(Database):
         size = len(sql_commands)
         for index,command in enumerate(sql_commands):
             if (index < size-1):
-                cursor.execute(command)
+                client_db_cursor.execute(command)
             else:
                 break
         encrypted_password, password = self.generate_and_return_password()
         query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
             email_id, encrypted_password)
         print "admin user"
-        cursor.execute(query)
+        client_db_cursor.execute(query)
         print "client countries"
-        self._save_client_countries(client_id, cursor)
+        self._save_client_countries(country_ids, client_db_cursor)
         print "client domains"
-        self.__save_client_domains(client_id, cursor)
-        con.commit()
+        self._save_client_domains(domain_ids, client_db_cursor)
+        client_db_con.commit()
         try:
             email().send_client_credentials(short_name, email_id, password)
         except Exception, e:
             print "Error while sending email : {}".format(e)
         return True
 
-    def _save_client_countries(self, client_id, cursor):
+    def _save_client_countries(self, country_ids, cursor):
+        print "self._cursor:{}".format(self._cursor)
         q = "SELECT country_id, country_name, is_active \
                 FROM tbl_countries\
                 WHERE country_id\
-                IN (\
-                    SELECT DISTINCT country_id\
-                    FROM tbl_client_countries\
-                    WHERE client_id = %s \
-                )" % (client_id)
+                IN (%s)" % (country_ids)
+        print q
         rows = self.select_all(q)
+        print rows
         for r in rows :
             q = " INSERT INTO tbl_countries VALUES (%s, '%s', %s)" % (
-                int(r(0)), r(1), int(r(2))
+                int(r[0]), r[1], int(r[2])
             )
             cursor.execute(q)
 
-    def _save_client_domains(self, client_id, cursor):
+    def _save_client_domains(self, domain_ids, cursor):
         q = "SELECT domain_id, domain_name, is_active \
                 FROM tbl_domains\
                 WHERE domain_id\
-                IN (\
-                    SELECT DISTINCT domain_id\
-                    FROM tbl_client_domains\
-                    WHERE client_id = %s \
-                )" % (client_id)
+                IN (%s)" % (domain_ids)
         rows = self.select_all(q)
         for r in rows :
             q = " INSERT INTO tbl_domains VALUES (%s, '%s', %s)" % (
-                int(r(0)), r(1), int(r(2))
+                int(r[0]), r[1], int(r[2])
             )
             cursor.execute(q)
 
