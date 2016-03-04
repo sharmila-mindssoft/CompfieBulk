@@ -3930,3 +3930,7 @@ def to_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_Com
 def to_structure_OptionalType_RecordType_core_FileList(data):
     if data is None: return data
     return to_structure_RecordType_core_FileList(data)
+
+def to_structure_OptionalType_VectorType_CustomTextType_250(data):
+    if data is None: return data
+    return to_structure_VectorType_CustomTextType_250(data)

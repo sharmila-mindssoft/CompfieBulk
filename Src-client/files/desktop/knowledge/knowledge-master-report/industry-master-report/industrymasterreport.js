@@ -9,7 +9,7 @@ function initialize(){
 }
 function loadIndustriesData(industriesList){
   	var sno=0;
-	var title;	
+	var title;
 	for(var i in industriesList){
 		var industry=industriesList[i];
 		for(var j in industry){
@@ -22,18 +22,17 @@ function loadIndustriesData(industriesList){
 			$('.sno', clone).text(sno);
 			$('.industry-name', clone).text(industry[j]["industry_name"]);
 			$('.is-active', clone).text(title);
-			$('.tbody-industry-list').append(clone);			
+			$('.tbody-industry-list').append(clone);
 		}
-	
 	}
 	$("#total-records").html('Total : '+sno+' records');
 }
-$("#search-industry-name").keyup(function() { 
+$("#search-industry-name").keyup(function() {
 	var count=0;
     var value = this.value.toLowerCase();
     $("table").find("tr:not(:first):not(:last)").each(function(index) {
         if (index === 0) return;
-        var id = $(this).find(".industry-name").text().toLowerCase();       
+        var id = $(this).find(".industry-name").text().toLowerCase();
         $(this).toggle(id.indexOf(value) !== -1);;
     });
     count = $('tr:visible').length-3;

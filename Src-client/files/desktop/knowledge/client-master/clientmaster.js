@@ -27,15 +27,15 @@ $(".btn-clientgroup-add").click(function(){
     }
     loadautocountry();
     loadauto();
-    loadAutoUsers();    
+    loadAutoUsers();
     hidemenu();
     $('.tbody-dateconfiguration-list').empty();
     function onSuccess(data){
         userList = data["users"];
         domainsList = data["domains"];
-        countriesList = data["countries"];      
-    }   
-    function onFailure(error){  
+        countriesList = data["countries"];
+    }
+    function onFailure(error){
         console.log(error);
     }
     mirror.getClientGroups(
@@ -44,7 +44,7 @@ $(".btn-clientgroup-add").click(function(){
                 onSuccess(response);
             }
             else {
-                onFailure(error);   
+                onFailure(error);
             }
         }
     );
@@ -53,11 +53,11 @@ $("#btn-clientgroup-cancel").click(function(){
     $("#clientgroup-add").hide();
     $("#clientgroup-view").show();
 });
-function initialize(){  
+function initialize(){
     function onSuccess(data){
         loadClientGroupList(data['client_list']);
     }
-    function onFailure(error){  
+    function onFailure(error){
         console.log(error);
     }
     mirror.getClientGroups(
@@ -66,7 +66,7 @@ function initialize(){
                 onSuccess(response);
             }
             else {
-                onFailure(error);   
+                onFailure(error);
             }
         }
     );
@@ -75,7 +75,7 @@ function initialize(){
 function loadClientGroupList(clientGroupList){
     $(".tbody-clientgroup-list").find("tr").remove();
     var sno = 0;
-    var imageName, title;   
+    var imageName, title;
     for(var i in clientGroupList){
         var clientGroups = clientGroupList[i];
         var clientId = clientGroups["client_id"];
@@ -86,7 +86,7 @@ function loadClientGroupList(clientGroupList){
             statusVal = false;
         }
         else{
-            imageName = "icon-inactive.png";    
+            imageName = "icon-inactive.png";
             title = "Click here to Activate"
             statusVal = true;
         }
@@ -97,17 +97,32 @@ function loadClientGroupList(clientGroupList){
         $('.clientgroup-name', clone).text(clientGroups["client_name"]);
         $('.edit', clone).html('<img src="/images/icon-edit.png" id="editid" onclick="clientgroup_edit('+clientId+')"/>');
         $('.is-active', clone).html('<img src="/images/'+imageName+'" title="'+title+'" onclick="clientgroup_active('+clientId+', '+statusVal+')"/>');
-        $('.tbody-clientgroup-list').append(clone);         
+        $('.tbody-clientgroup-list').append(clone);
     }
     //$("#total-records").html('Total : '+sno+' records');
 }
+$('#no-of-user-licence').on('input', function (event) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+
+$('#file-space').on('input', function (event) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+
+$("#short-name").keypress(function (e) {
+   $(this).val($(this).val().replace(' ',''));
+});
+
+$("#short-name").on('keyup', function(){
+    $(".shorturl").text($(this).val());
+})
 
 $("#btn-clientgroup-submit").click(function(){
-    var dateConfigurations = [];    
+    var dateConfigurations = [];
     var countriesList = $('#country').val();
     var domainsList = $('#domain').val();
     if(countriesList != '' && domainsList != ''){
-        if(countriesList != ''){ 
+        if(countriesList != ''){
             var arrayCountries = countriesList.split(",");
             if(domainsList != ''){
                 var arrayDomains = domainsList.split(",");
@@ -119,43 +134,43 @@ $("#btn-clientgroup-submit").click(function(){
                         parseInt(arrayCountries[ccount]), parseInt(arrayDomains[dcount]), 
                         parseInt($(".tl-from-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val()), 
                         parseInt($(".tl-to-"+arrayCountries[ccount]+"-"+arrayDomains[dcount]).val())
-                    );  
+                    );
                     dateConfigurations.push(configuration);
                 }
             }
         }
     }
     var clientGroupIdVal = $("#clientgroup-id").val();
-    var clientGroupNameVal = $("#clientgroup-name").val();
+    var clientGroupNameVal = $("#clientgroup-name").val().trim();
     var arrayCountriesVal = $("#country").val().split(",");
     var arrayCountries = [];
-    for(var i = 0; i < arrayCountriesVal.length; i++){ arrayCountries[i] = parseInt(arrayCountriesVal[i]); } 
+    for(var i = 0; i < arrayCountriesVal.length; i++){ arrayCountries[i] = parseInt(arrayCountriesVal[i]); }
     var countriesVal = arrayCountries;
     var arrayDomainsVal = $("#domain").val().split(",");
     var arrayDomains = [];
-    for(var j = 0; j < arrayDomainsVal.length; j++){ arrayDomains[j] = parseInt(arrayDomainsVal[j]); } 
+    for(var j = 0; j < arrayDomainsVal.length; j++){ arrayDomains[j] = parseInt(arrayDomainsVal[j]); }
     var domainsVal = arrayDomains;
-    var contractFromVal = $("#contract-from").val();
-    var contractToVal = $("#contract-to").val();    
-    var usernameVal = $("#username").val();
-    var uploadLogoVal = $("#upload-logo").val();
-    var licenceVal = parseInt($("#no-of-user-licence").val());
-    var fileSpaceVal = parseFloat(Number($("#file-space").val()*100)/100).toFixed(2);
-    
-    //var subscribeSmsVal = $("#subscribe-sms").val();
-    var arrayinchargePersonVal = $("#users").val().split(",");
-    var arrayinchargePerson = [];
-    for(var k = 0; k < arrayinchargePersonVal.length; k++) { arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]); } 
-    var inchargePersonVal = arrayinchargePerson;
+    var contractFromVal = $("#contract-from").val().trim();
+    var contractToVal = $("#contract-to").val().trim();
+    var usernameVal = $("#username").val().trim();
+    var uploadLogoVal = $("#upload-logo").val().trim();
+    var licenceVal =$("#no-of-user-licence").val().trim();
+    var fileSpaceVal = $("#file-space").val().trim();
+    var inchargePersonVal = $("#users").val().trim();
+    //var subscribeSmsVal = $("#subscribe-sms").val();    
     if ($('#subscribe-sms').is(":checked")){
-        var subscribeSmsVal = true;  
+        var subscribeSmsVal = true;
     }
-    else{ 
+    else{
         var subscribeSmsVal = false;
     }
-    var shortname = $("#short-name").val();
+    var shortname = $("#short-name").val().trim();
+
     if(clientGroupNameVal == ''){
         displayMessage('Group Required');
+    }
+    if(clientGroupNameVal.length > 50){
+        displayMessage('Group :  Not Allowed More than 50 Characters.');
     }
     else if(countriesList == ''){
         displayMessage('Country Required');
@@ -164,28 +179,34 @@ $("#btn-clientgroup-submit").click(function(){
         displayMessage('Domain Required');
     }
     else if(contractFromVal == ''){
-        displayMessage('Contract From Required');       
+        displayMessage('Contract From Required');
     }
     else if(contractToVal == ''){
-        displayMessage('Contract To Required');     
+        displayMessage('Contract To Required');
     }
     else if(usernameVal == ''){
-        displayMessage('Username Required');        
+        displayMessage('Username Required');
     }
     else if(validateEmail(usernameVal) == ''){
-        displayMessage('Username Invalid Format');      
+        displayMessage('Username Invalid Format');
     }
     else if(licenceVal == ''){
         displayMessage('No. Of User Licence Required');
-    }
+    }   
     else if(isNaN(licenceVal)){
         displayMessage('Invalid No. Of User Licence');
+    }
+    else if(licenceVal.length > 4){
+        displayMessage('No. of User License : Max 4 Digits are allowed');
     }
     else if(fileSpaceVal == ''){
         displayMessage('File Space Required');
     }
     else if(!$.isNumeric(fileSpaceVal)){
         displayMessage('Invalid File Space Value');
+    }
+    else if(fileSpaceVal.length > 4){
+        displayMessage('File Space : Max 4 Digits are allowed');
     }
     else if(inchargePersonVal == ''){
         displayMessage('Incharge Person Required');
@@ -194,42 +215,15 @@ $("#btn-clientgroup-submit").click(function(){
         displayMessage('Short Name Required');
         gototop();
     }
-    else if(clientGroupIdVal == ''){    
+    else if(clientGroupIdVal == ''){
+        var arrayinchargePersonVal = inchargePersonVal.split(",");
+        var arrayinchargePerson = [];
+        for(var k = 0; k < arrayinchargePersonVal.length; k++) { arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]); }
+        inchargePersonVal = arrayinchargePerson;
         if(logo_file == ''){
-            displayMessage('Logo Required');    
-            return false;   
-        }   
-        function onSuccess(data){
-            $("#clientgroup-add").hide();
-            $("#clientgroup-view").show();
-            initialize();
+            displayMessage('Logo Required');
+            return false
         }
-        function onFailure(error){
-            if(error == 'GroupNameAlreadyExists'){
-                displayMessage('Group Name Already Exists');    
-            }
-            if(error == 'UsernameAlreadyExists'){
-                displayMessage('Username Already Exists');  
-            }
-        }
-        
-        var clientGroupDetails = mirror.getSaveClientGroupDict(
-            clientGroupNameVal, countriesVal, domainsVal, logo_file,
-            contractFromVal, contractToVal,inchargePersonVal, licenceVal, 
-            parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal, 
-            usernameVal, dateConfigurations, shortname);
-        mirror.saveClientGroup(clientGroupDetails,
-            function (error, response) {
-                if (error == null){
-                    onSuccess(response);
-                }
-                else {
-                    onFailure(error);   
-                }
-            }   
-        );
-    }
-    else if(clientGroupIdVal!=''){      
         function onSuccess(data){
             $("#clientgroup-add").hide();
             $("#clientgroup-view").show();
@@ -240,21 +234,58 @@ $("#btn-clientgroup-submit").click(function(){
                 displayMessage('Group Name Already Exists');
             }
             if(error == 'UsernameAlreadyExists'){
-                displayMessage('Username Already Exists');  
+                displayMessage('Username Already Exists');
             }
         }
-    
-        var clientGroupDetails = mirror.getUpdateClientGroupDict(
-            parseInt(clientGroupIdVal), clientGroupNameVal, countriesVal, domainsVal, uploadLogoVal,
-            contractFromVal, contractToVal,inchargePersonVal, licenceVal,
-            parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal, dateConfigurations);
-        mirror.updateClientGroup( clientGroupDetails, 
+
+        var clientGroupDetails = mirror.getSaveClientGroupDict(
+            clientGroupNameVal, countriesVal, domainsVal, logo_file,
+            contractFromVal, contractToVal, inchargePersonVal,  parseInt(licenceVal),
+            parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal,
+            usernameVal, dateConfigurations, shortname);
+        mirror.saveClientGroup(clientGroupDetails,
             function (error, response) {
                 if (error == null){
                     onSuccess(response);
                 }
                 else {
-                    onFailure(error);   
+                    onFailure(error);
+                }
+            }
+        );
+    }
+    else if(clientGroupIdVal!=''){
+        var arrayinchargePersonVal = inchargePersonVal.split(",");
+        var arrayinchargePerson = [];
+        for(var k = 0; k < arrayinchargePersonVal.length; k++) { arrayinchargePerson[k] = parseInt(arrayinchargePersonVal[k]); }
+        inchargePersonVal = arrayinchargePerson;
+        if(logo_file == ''){
+            logo_file = null;
+        }
+        function onSuccess(data){
+            $("#clientgroup-add").hide();
+            $("#clientgroup-view").show();
+            initialize();
+        }
+        function onFailure(error){
+            if(error == 'GroupNameAlreadyExists'){
+                displayMessage('Group Name Already Exists');
+            }
+            if(error == 'UsernameAlreadyExists'){
+                displayMessage('Username Already Exists');
+            }
+        }
+        var clientGroupDetails = mirror.getUpdateClientGroupDict(
+            parseInt(clientGroupIdVal), clientGroupNameVal, countriesVal, domainsVal, logo_file,
+            contractFromVal, contractToVal,inchargePersonVal, parseInt(licenceVal),
+            parseFloat(Number(fileSpaceVal*100/100)), subscribeSmsVal, dateConfigurations);
+        mirror.updateClientGroup( clientGroupDetails,
+            function (error, response) {
+                if (error == null){
+                    onSuccess(response);
+                }
+                else {
+                    onFailure(error);
                 }
             }
         );
@@ -292,8 +323,8 @@ function clientgroup_edit(clientGroupId){
     $("#clientgroup-id").val(clientGroupId);
     function onSuccess(data){
         userList = data["users"];
-        domainsList = data["domains"];  
-        countriesList = data["countries"];      
+        domainsList = data["domains"];
+        countriesList = data["countries"];
         loadFormListUpdate(data['client_list'],clientGroupId);
     }
     function onFailure(error){
@@ -328,7 +359,7 @@ function loadFormListUpdate(clientListData, clientGroupId){
             //$("#upload-logo-img").attr("src",clientListData[clientList]['logo']);
             $("#upload-logo-img").show();
             $("#no-of-user-licence").val(clientListData[clientList]['no_of_user_licence']);
-            $("#file-space").val(clientListData[clientList]['total_disk_space']);           
+            $("#file-space").val(clientListData[clientList]['total_disk_space']);
             if(clientListData[clientList]['is_sms_subscribed'] == true){
                 $('#subscribe-sms').prop("checked", true);
             }
@@ -339,8 +370,8 @@ function loadFormListUpdate(clientListData, clientGroupId){
             $("#short-name").attr("readonly", "true");
             dateconfigList = clientListData[clientList]['date_configurations'];
         }
-    }   
-    dateConfigurations(dateconfigList); 
+    }
+    dateConfigurations(dateconfigList);
 }
 
 function dateConfigurations(dateconfigList){
@@ -348,7 +379,7 @@ function dateConfigurations(dateconfigList){
     var countriesValue = $('#country').val();
     var domainsValue = $('#domain').val();
     if(countriesValue != '' && domainsValue != ''){
-        if(countriesValue != ''){ 
+        if(countriesValue != ''){
             var arrayCountries = countriesValue.split(",");
             if(domainsValue != ''){
                 var arrayDomains = domainsValue.split(",");
@@ -414,15 +445,14 @@ $("#upload-logo").on("change", function(e) {
         }
      });
 });
-$("#search-clientgroup-name").keyup(function() { 
+$("#search-clientgroup-name").keyup(function() {
     var count = 0;
     var value = this.value.toLowerCase();
     $("table").find("tr:not(:first)").each(function(index) {
         if (index === 0) return;
-        var id = $(this).find(".clientgroup-name").text().toLowerCase();       
+        var id = $(this).find(".clientgroup-name").text().toLowerCase();
         $(this).toggle(id.indexOf(value) !== -1);;
     });
-   
 });
 
 //Autocomplete Script Starts and Hide list items after select
@@ -468,7 +498,7 @@ function activate(element){
         $(element).removeClass("active_selectbox");
     }else{
         $(element).addClass("active_selectbox");
-    }  
+    }
     var selIds='';
     var selNames='';
     var totalCount =  $(".active_selectbox").length;
@@ -478,19 +508,19 @@ function activate(element){
             selNames = selNames + $(this).text();
         }else{
             selIds = selIds + el.id+",";
-            selNames = selNames + $(this).text() + ",";         
-        }    
+            selNames = selNames + $(this).text() + ",";
+        }
     });
     $("#domainselected").val(totalCount+" Selected");
     $("#domain").val(selIds);
     $("#domainNames").val(selNames);
     if($("#clientgroup-id").val() == ''){
-        dateconfig();   
+        dateconfig();
     }
     else{
         dateConfigurations(dateconfigList);
     }
-    
+
 }
 
 function loadautocountry () {
@@ -513,8 +543,8 @@ function loadautocountry () {
         }
         var countryId = parseInt(countries[i]["country_id"]);
         var countryName = countries[i]["country_name"];
-        
-        if(selectcountrystatus == 'checked'){   
+
+        if(selectcountrystatus == 'checked'){
             str += '<li id = "'+countryId+'" class="active_selectbox_country" onclick="activateCountry(this)" >'+countryName+'</li> ';
         }else{
             str += '<li id="'+countryId+'" onclick="activateCountry(this)" >'+countryName+'</li> ';
@@ -522,7 +552,6 @@ function loadautocountry () {
     }
   $('#ulist-country').append(str);
   $("#countryselected").val(editcountryval.length+" Selected");
-  
 }
 //check & uncheck process
 function activateCountry(element){
@@ -532,7 +561,7 @@ function activateCountry(element){
     }
     else{
         $(element).addClass("active_selectbox_country");
-    }  
+    }
     var selids = '';
     var selNames = '';
     var totalcount =  $(".active_selectbox_country").length;
@@ -543,13 +572,13 @@ function activateCountry(element){
         }else{
             selids = selids + el.id + ",";
             selNames = selNames + $(this).text() + ",";
-        }    
+        }
     });
     $("#countryselected").val(totalcount+" Selected");
     $("#country").val(selids);
     $("#countryNames").val(selNames);
     if($("#clientgroup-id").val() == ''){
-        dateconfig();   
+        dateconfig();
     }
     else{
         dateConfigurations(dateconfigList);
@@ -563,7 +592,7 @@ function dateconfig(){
     var domainNamesList = $('#domainNames').val();
     //console.log(countriesList+"==="+domainsList);
     if(countriesList != '' && domainsList != ''){
-        if(countriesList != ''){ 
+        if(countriesList != ''){
             var arrayCountries = countriesList.split(",");
             var arrayCountriesName = countriesNamesList.split(",");
             if(domainsList != ''){
@@ -599,9 +628,9 @@ function loadAutoUsers () {
         editusersval = $("#users").val().split(",");
     }
     var users = userList;
-    $('#ulist-users').empty();
+    $('#selectboxview-users ul').empty();
     var str = '';
-    for(var i in users){        
+    for(var i in users){
         var selectUserStatus = '';
         for(var j = 0; j<editusersval.length; j++){
             if(editusersval[j] == users[i]["user_id"]){
@@ -614,18 +643,19 @@ function loadAutoUsers () {
             str += '<li id="'+users[i]["user_id"]+'" onclick="activateUsers(this)" >'+users[i]["employee_name"]+'</li> ';
         }
     }
-  $('#ulist-users').append(str);
+  $('#selectboxview-users ul').append(str);
   $("#usersSelected").val(editusersval.length+" Selected")
 }
 //check & uncheck process
 function activateUsers(element){
+    console.log(element);
   var chkstatus = $(element).attr('class');
   if(chkstatus == 'active_selectbox_users'){
         $(element).removeClass("active_selectbox_users");
   }
   else{
     $(element).addClass("active_selectbox_users");
-  }  
+  }
     var selids = '';
     var totalcount =  $(".active_selectbox_users").length;
     $(".active_selectbox_users").each( function( index, el ) {
@@ -633,7 +663,7 @@ function activateUsers(element){
             selids = selids+el.id;
         }else{
             selids = selids+el.id+",";
-        }    
+        }
     });
     $("#usersSelected").val(totalcount+" Selected");
     $("#users").val(selids);

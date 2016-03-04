@@ -57,7 +57,7 @@ class ClientDatabase(Database):
         self.tblBusinessGroups = "tbl_business_groups"
         self.tblClientCompliances = "tbl_client_compliances"
         self.tblClientConfigurations = "tbl_client_configurations"
-        self.tblClientSettings = "tbl_client_groups"
+        self.tblClientGroups = "tbl_client_groups"
         self.tblClientStatutories = "tbl_client_statutories"
         self.tblComplianceActivityLog = "tbl_compliance_activity_log"
         self.tblComplianceDurationType = "tbl_compliance_duration_type"
@@ -174,7 +174,7 @@ class ClientDatabase(Database):
     def get_short_name_from_client_id(self, client_id):
         columns = "url_short_name"
         rows = self.get_data(
-            self.tblClientSettings, columns, "1"
+            self.tblClientGroups, columns, "1"
         )
         return rows[0][0]
 
@@ -692,7 +692,7 @@ class ClientDatabase(Database):
                     client_id
                 ), user.email_id, password, user.employee_name, user.employee_code
             )
-        except e:
+        except Exception, e:
             print "Error while sending email : {}".format(e)
         return (result1 and result2 and result3 and result4)
 
@@ -1737,7 +1737,7 @@ class ClientDatabase(Database):
 
     def is_space_available(self, upload_size):
         columns = "total_disk_space - total_disk_space_used"
-        rows = self.get_data(self.tblClientSettings, columns, "1")
+        rows = self.get_data(self.tblClientGroups, columns, "1")
         remaining_space = rows[0][0]
         if upload_size < remaining_space:
             return True
@@ -1747,7 +1747,7 @@ class ClientDatabase(Database):
     def update_used_space(self, file_size):
         columns = "total_disk_space_used"
         condition = "1"
-        self.increment( self.tblClientSettings, columns, condition, value = file_size)
+        self.increment( self.tblClientGroups, columns, condition, value = file_size)
 
     def save_past_record(
             self, unit_id, compliance_id, due_date, completion_date, documents,
@@ -1844,7 +1844,7 @@ class ClientDatabase(Database):
 
     def is_two_levels_of_approval(self):
         columns = "two_levels_of_approval"
-        rows = self.get_data(self.tblClientSettings, columns, "1")
+        rows = self.get_data(self.tblClientGroups, columns, "1")
         return rows[0][0]
 
 #
@@ -1855,7 +1855,7 @@ class ClientDatabase(Database):
             self, session_user, client_id
         ):
         assignee_columns = "completed_by, employee_code, employee_name"
-        join_type = "left join"
+        join_type = "inner join"
         tables = [self.tblComplianceHistory, self.tblUsers]
         aliases = ["tch", "tu"]
         join_condition = ["tch.completed_by = tu.user_id"]
@@ -1867,14 +1867,14 @@ class ClientDatabase(Database):
             aliases, join_type,  join_condition,
             assignee_condition
         )
-        approved_compliances = []
+        approval_compliances = []
         for assignee in assignee_rows:
             query_columns = "compliance_history_id, tch.compliance_id, start_date,"+\
             " tch.due_date, documents, completion_date, completed_on, next_due_date, "+\
             "concurred_by, remarks, datediff(tch.due_date, completion_date ),compliance_task,"+\
             " compliance_description, tc.frequency_id, frequency, document_name, concurrence_status, \
             tac.statutory_dates, tch.validity_date"
-            join_type = "left join"
+            join_type = "inner join"
             query_tables = [
                     self.tblComplianceHistory,
                     self.tblCompliances,
@@ -1934,7 +1934,7 @@ class ClientDatabase(Database):
                 frequency_id = int(row[13])
                 frequency = core.COMPLIANCE_FREQUENCY(row[14])
                 description = row[12]
-                concurrence_status = row[16]
+                concurrence_status = bool(row[16])
                 statutory_dates = [] if row[17] is None else json.loads(row[17])
                 validity_date = None if row[18] is None else self.datetime_to_string(row[18])
                 date_list = []
@@ -1957,11 +1957,20 @@ class ClientDatabase(Database):
                 domain_name = domain_name_row[0][0]
 
                 action = None
-
-                if concurred_by_id == session_user:
-                    action = "Concur"
-                else:
+                if self.is_two_levels_of_approval():
+                    if concurred_by_id == session_user:
+                        if concurrence_status is True:
+                            continue
+                        else:
+                            action = "Concur"
+                    elif concurrence_status is True:
+                        action = "Approve"
+                    else:
+                        continue
+                elif concurred_by_id != session_user:
                     action = "Approve"
+                else:
+                    continue
                 compliances.append(clienttransactions.APPROVALCOMPLIANCE(
                         compliance_history_id, compliance_name, description, domain_name,
                         start_date, due_date, delayed_by, frequency, documents,
@@ -1972,11 +1981,11 @@ class ClientDatabase(Database):
             assignee_id = assignee[0]
             assignee_name = "{} - {}".format(assignee[1], assignee[2])
             if len(compliances) > 0:
-                approved_compliances.append(clienttransactions.APPORVALCOMPLIANCELIST(
+                approval_compliances.append(clienttransactions.APPORVALCOMPLIANCELIST(
                     assignee_id, assignee_name, compliances))
             else:
                 continue
-        return approved_compliances
+        return approval_compliances
 
     def get_user_name_by_id(self, user_id, client_id = None):
         employee_name = None
@@ -3852,14 +3861,16 @@ class ClientDatabase(Database):
             self.tblComplianceHistory, columns, condition
         )
 
-        columns = ["due_date"]
-        condition = " unit_id = '%d' and compliance_id = '%d'" % (
-            rows[0][0], rows[0][1])
-        values = [self.string_to_datetime(next_due_date)]
+        if next_due_date is not None:
+            columns = ["due_date"]
+            condition = " unit_id = '%d' and compliance_id = '%d'" % (
+                rows[0][0], rows[0][1])
+            values = [self.string_to_datetime(next_due_date)]
         if validity_date is not None:
             columns.append("validity_date")
             values.append(self.string_to_datetime(validity_date))
-        self.update(self.tblAssignedCompliances, columns, values, condition, client_id)
+        if len(columns) > 0 and len(values) > 0 and len(columns) == len(values):
+            self.update(self.tblAssignedCompliances, columns, values, condition, client_id)
 
     def reject_compliance_approval(self, compliance_history_id, remarks,
         next_due_date, client_id):
@@ -4503,7 +4514,7 @@ class ClientDatabase(Database):
             "total_disk_space, total_disk_space_used"
         condition = "1"
         rows = self.get_data(
-            self.tblClientSettings, columns, condition
+            self.tblClientGroups, columns, condition
         )
         if len(rows) > 0:
             row = rows[0]
@@ -4583,7 +4594,7 @@ class ClientDatabase(Database):
             escalation_reminder_In_advance_days, escalation_reminder_days
         ]
         condition = "1"
-        self.update(self.tblClientSettings, columns, values, condition, client_id)
+        self.update(self.tblClientGroups, columns, values, condition, client_id)
 
 #
 #   Notifications
@@ -5010,9 +5021,11 @@ class ClientDatabase(Database):
             compliance_status = core.COMPLIANCE_STATUS("Inprogress")
             if no_of_days > 0:
                 compliance_status = core.COMPLIANCE_STATUS("Not Complied")
-            format_files = [ "%s/%s" % (
-                    FORMAT_DOWNLOAD_URL, x
-                ) for x in compliance[8].split(",")]
+            format_files = None
+            if compliance[8] is not None:
+                format_files = [ "%s/%s" % (
+                        FORMAT_DOWNLOAD_URL, x
+                    ) for x in compliance[8].split(",")]
             current_compliances_list.append(
                 core.ActiveCompliance(
                     compliance_history_id=compliance[0],
@@ -5037,10 +5050,8 @@ class ClientDatabase(Database):
         columns = "due_date, document_name, compliance_task," + \
             " compliance_description, format_file, unit_code, unit_name," + \
             "  address, ac.statutory_dates, repeats_every, (select domain_name \
-            from %s d where domain_id = (select domain_id from %s cs where cs.unit_id = u.unit_id and\
-             client_statutory_id in (select client_statutory_id from %s cc \
-             where cc.compliance_id = ac.compliance_id ))) as domain_name" % (
-            self.tblDomains, self.tblClientStatutories, self.tblClientCompliances)
+            from %s d where d.domain_id = c.domain_id) as domain_name" % (
+            self.tblDomains)
         tables = [
             self.tblAssignedCompliances, self.tblUnits,  self.tblCompliances
         ]
@@ -5049,7 +5060,7 @@ class ClientDatabase(Database):
             "ac.unit_id = u.unit_id",
             "ac.compliance_id = c.compliance_id"
         ]
-        join_type = "right join"
+        join_type = "inner join"
         where_condition = " assignee = '%d'" % session_user
         where_condition += " and due_Date > DATE_SUB(now(), INTERVAL 6 MONTH) "
         upcoming_compliances_rows = self.get_data_from_multiple_tables(
@@ -5071,9 +5082,11 @@ class ClientDatabase(Database):
                 compliance[0],
                 compliance[8],  compliance[9]
             )
-            format_files = [ "%s/%s" % (
-                    FORMAT_DOWNLOAD_URL, x
-                ) for x in compliance[4].split(",")]
+            format_files = None
+            if compliance[4] is not None:
+                format_files = [ "%s/%s" % (
+                        FORMAT_DOWNLOAD_URL, x
+                    ) for x in compliance[4].split(",")]
             upcoming_compliances_list.append(
                 core.UpcomingCompliance(
                     compliance_name = compliance_name,
@@ -5894,11 +5907,11 @@ class ClientDatabase(Database):
     ):
         unit_ids = unit_id
         unit_ids_list = []
-        user_unit_columns = "group_concat(unit_id)"
-        user_unit_condition = "user_id = '%d'" % session_user
-        rows = self.get_data(self.tblUserUnits, user_unit_columns, user_unit_condition)
-        if rows:
-            unit_ids = rows[0][0]
+        # user_unit_columns = "group_concat(unit_id)"
+        # user_unit_condition = "user_id = '%d'" % session_user
+        # rows = self.get_data(self.tblUserUnits, user_unit_columns, user_unit_condition)
+        # if rows:
+        unit_ids = self.get_user_unit_ids(session_user)
         session_unit_ids = [int(x) for x in unit_ids.split(",")]
         if user_id is not None:
             user_unit_condition = "user_id = '%d'" % user_id
