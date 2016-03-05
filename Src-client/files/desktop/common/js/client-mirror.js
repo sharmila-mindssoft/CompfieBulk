@@ -1352,6 +1352,16 @@ function initClientMirror() {
         callerName = "client_user";
         clientApiRequest(callerName, request, callback);
     }
+    function exportToCSV(jsonResponse){
+        var request = [
+            "ExportToCSV",
+            {
+                "data":jsonResponse
+            }
+        ];
+        callerName = "client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
 
     function getUserwiseCompliances(callback){
         var request = [
@@ -1497,8 +1507,8 @@ function initClientMirror() {
 
         getOnOccurrenceCompliances: getOnOccurrenceCompliances,
         startOnOccurrenceCompliance: startOnOccurrenceCompliance,
-
         getUserwiseCompliances: getUserwiseCompliances,
+        exportToCSV: exportToCSV
     }
 }
 var client_mirror = initClientMirror();

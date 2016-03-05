@@ -3551,7 +3551,7 @@ class KnowledgeDatabase(Database):
 
 
     def _get_server_details(self):
-        columns = "ip, server_username,server_password"
+        columns = "ip, server_username,server_password, port"
         condition = "server_full = 0 order by length ASC limit 1"
         rows = self.get_data(self.tblDatabaseServer, columns, condition)
         return rows
@@ -3572,7 +3572,7 @@ class KnowledgeDatabase(Database):
         )
 
     def update_client_db_details(self, host, client_id, db_username,
-            db_password, short_name, database_name):
+            db_password, short_name, database_name, db_port):
         # db_server_column = "company_ids"
         # db_server_value = client_id
 
@@ -3587,11 +3587,11 @@ class KnowledgeDatabase(Database):
         # )
         result = self._get_machine_details()
         machine_id = result[0][0]
-        ip = result[0][1]
-        port = result[0][2]
+        server_ip = result[0][1]
+        server_port = result[0][2]
         machine_columns = "client_ids"
         machine_value = client_id
-        machine_condition = "ip='%s'" % ip
+        machine_condition = "ip='%s'" % server_ip
         self.append(
             self.tblMachines, machine_columns, machine_value,
             machine_condition
@@ -3600,8 +3600,6 @@ class KnowledgeDatabase(Database):
         # rows = self.get_data(
         #     self.tblMachines, "machine_id, port", machine_condition
         # )
-        server_ip = host
-        server_port = port
 
         client_db_columns = [
             "client_id", "machine_id", "database_ip",

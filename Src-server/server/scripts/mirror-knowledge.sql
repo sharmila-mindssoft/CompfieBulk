@@ -703,6 +703,7 @@ CREATE TABLE `tbl_client_database` (
 DROP TABLE IF EXISTS `tbl_database_server`;
 CREATE TABLE `tbl_database_server` (
   `ip` varchar(20) NOT NULL,
+  `port` int(11) NOT NULL,
   `server_username` varchar(50) NOT NULL,
   `server_password` varchar(50) NOT NULL,
   `company_ids` varchar(50) NULL DEFAULT NULL,

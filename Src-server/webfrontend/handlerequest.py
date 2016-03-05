@@ -70,9 +70,12 @@ class HandleRequest(object):
             self._respond_error(code, response_data)
 
     def forward_request(self):
+        print "inside forward request"
         company = self._company_manager.locate_company_server(
             self._security_token
         )
+        print "company:{}".format(company)
+        print "self._body:{}".format(self._body)
         if company is None:
             self._respond_not_found()
             return
@@ -81,6 +84,7 @@ class HandleRequest(object):
         ip = company_server_ip.ip_address
         port = company_server_ip.port
         url = self._url_template % (ip, port, self._relative_url)
+        print url
         self._api_request(
             url, self._body, self._forward_request_callback
         )
