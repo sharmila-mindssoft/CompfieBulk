@@ -1223,7 +1223,7 @@ class KnowledgeDatabase(Database):
         columns = "level_id, level_position, level_name, country_id"
         condition = "1"
         if country_ids is not None:
-            condition = "country_id in (%s)" % country_ids
+            condition = "country_id in (%s) ORDER BY level_position" % country_ids
         rows = self.get_data(self.tblGeographyLevels, columns, condition)
         result = []
         if rows :
