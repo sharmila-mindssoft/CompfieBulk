@@ -1,7 +1,9 @@
 import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (
+    parse_enum, parse_dictionary, parse_static_list, parse_list
+)
 from protocol.parse_structure import (
-parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
+    parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_VectorType_RecordType_core_Compliance,
     parse_structure_VectorType_RecordType_clientreport_LoginTrace,
     parse_structure_VectorType_RecordType_clientreport_ReassignHistory,
@@ -74,7 +76,7 @@ parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
     parse_structure_VectorType_RecordType_core_UnitDetails,
     parse_structure_VectorType_RecordType_client_report_UnitDetails,
     parse_structure_VectorType_SignedIntegerType_8,
-    parse_structure_VectorType_CustomTextType_500
+    parse_structure_VectorType_CustomTextType_500,
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
@@ -849,9 +851,34 @@ class GetLoginTrace(Request):
         return {
         }
 
+class ExportToCSV(Request):
+    def __init__(self, json_data):
+        self.json_data = json_data 
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["data"])
+        json_data = data.get("data")
+        json_data = parse_dictionary(json_data)
+        return ExportToCSV(json_data)
+
+    def to_inner_structure(self):
+        return {
+            "data": to_list(self.json_data)
+        }
 
 def _init_Request_class_map():
-    classes = [GetComplianceDetailsReportFilters, GetComplianceDetailsReport, GetRiskReportFilters, GetRiskReport, GetServiceProviderReportFilters, GetServiceProviderWiseCompliance, GetClientReportFilters, GetAssigneewisecomplianceReport, GetUnitwisecomplianceReport, GetReassignComplianceTaskReportFilters, GetReassignComplianceTaskDetails, GetTaskApplicabilityStatusFilters, GetComplianceTaskApplicabilityStatusReport, GetComplianceActivityReportFilters, GetComplianceActivityReport, GetReassignedHistoryReportFilters, GetReassignedHistoryReport, GetStatutoryNotificationsListFilters, GetStatutoryNotificationsListReport, GetClientDetailsReportFilters, GetClientDetailsReportData, GetActivityLogFilters, GetActivityLogReport, GetLoginTrace]
+    classes = [GetComplianceDetailsReportFilters, GetComplianceDetailsReport, 
+    GetRiskReportFilters, GetRiskReport, GetServiceProviderReportFilters, 
+    GetServiceProviderWiseCompliance, GetClientReportFilters, 
+    GetAssigneewisecomplianceReport, GetUnitwisecomplianceReport, 
+    GetReassignComplianceTaskReportFilters, GetReassignComplianceTaskDetails, 
+    GetTaskApplicabilityStatusFilters, GetComplianceTaskApplicabilityStatusReport, 
+    GetComplianceActivityReportFilters, GetComplianceActivityReport, 
+    GetReassignedHistoryReportFilters, GetReassignedHistoryReport, 
+    GetStatutoryNotificationsListFilters, GetStatutoryNotificationsListReport, 
+    GetClientDetailsReportFilters, GetClientDetailsReportData, GetActivityLogFilters, 
+    GetActivityLogReport, GetLoginTrace, ExportToCSV]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -1520,9 +1547,36 @@ class GetClientDetailsReportDataSuccess(Response):
             "units": to_structure_VectorType_RecordType_client_report_GroupedUnits(self.units)
         }
 
+class ExportToCSVSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ExportToCSVSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 
 def _init_Response_class_map():
-    classes = [GetComplianceDetailsReportFiltersSuccess, GetComplianceDetailsReportSuccess, GetRiskReportFiltersSuccess, GetRiskReportSuccess, GetServiceProviderReportFiltersSuccess, GetServiceProviderWiseComplianceSuccess, GetClientReportFiltersSuccess, GetAssigneewisecomplianceReportSuccess, GetUnitwisecomplianceReportSuccess, GetReassignComplianceTaskReportFiltersSuccess, GetReassignComplianceTaskDetailsSuccess, GetTaskApplicabilityStatusFiltersSuccess, GetComplianceTaskApplicabilityStatusReportSuccess, GetComplianceActivityReportFiltersSuccess, GetComplianceActivityReportSuccess, GetReassignedHistoryReportFiltersSuccess, GetReassignedHistoryReportSuccess, GetStatutoryNotificationsListFiltersSuccess, GetStatutoryNotificationsListReportSuccess, GetClientDetailsReportDataSuccess, GetActivityLogFiltersSuccess, GetActivityLogReportSuccess, GetLoginTraceSuccess]
+    classes = [GetComplianceDetailsReportFiltersSuccess, 
+    GetComplianceDetailsReportSuccess, GetRiskReportFiltersSuccess, 
+    GetRiskReportSuccess, GetServiceProviderReportFiltersSuccess, 
+    GetServiceProviderWiseComplianceSuccess, GetClientReportFiltersSuccess, 
+    GetAssigneewisecomplianceReportSuccess, GetUnitwisecomplianceReportSuccess, 
+    GetReassignComplianceTaskReportFiltersSuccess, 
+    GetReassignComplianceTaskDetailsSuccess, 
+    GetTaskApplicabilityStatusFiltersSuccess, 
+    GetComplianceTaskApplicabilityStatusReportSuccess, 
+    GetComplianceActivityReportFiltersSuccess, GetComplianceActivityReportSuccess, 
+    GetReassignedHistoryReportFiltersSuccess, GetReassignedHistoryReportSuccess, 
+    GetStatutoryNotificationsListFiltersSuccess, 
+    GetStatutoryNotificationsListReportSuccess, 
+    GetClientDetailsReportDataSuccess, GetActivityLogFiltersSuccess, 
+    GetActivityLogReportSuccess, GetLoginTraceSuccess, ExportToCSVSuccess]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

@@ -211,6 +211,7 @@ class API(object):
 
     @api_request(login.Request, need_client_id=True)
     def handle_login(self, request, db, client_id):
+        print "inside handle login"
         return controller.process_login_request(request, db, client_id)
 
     @api_request(clientmasters.RequestFormat)

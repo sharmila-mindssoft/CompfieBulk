@@ -58,12 +58,12 @@ def save_client_group(db, request, session_user):
         group_name = group_name.replace(" ", "")
         database_name = "mirror_%s_%d" % (group_name.lower(), client_id)
         row = db._get_server_details()
-        print row
         host = row[0][0]
         username = row[0][1]
         password = row[0][2]
         db_username = db.generate_random()
         db_password = db.generate_random()
+        db_port = row[0][3]
         country_ids = ",".join(str(x) for x in request.country_ids)
         domain_ids = ",".join(str(x) for x in request.domain_ids)
         create_database_thread = threading.Thread(
@@ -82,7 +82,7 @@ def save_client_group(db, request, session_user):
             db.save_incharge_persons(request, client_id)
             db.save_client_user(request, session_user, client_id)
             db.update_client_db_details(host, client_id, db_username,
-                db_password, request.short_name, database_name)
+                db_password, request.short_name, database_name, db_port)
             db.notify_incharge_persons(request)
             while create_database_thread.isAlive():
                 continue

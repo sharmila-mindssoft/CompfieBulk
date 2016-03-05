@@ -32,6 +32,7 @@ class CompanyManager(object) :
         self._servers = {}
         ip, port = self._knowledge_server_address
         self._poll_url = "http://%s:%s/server-list" % (ip, port)
+        print self._poll_url
         body = json.dumps(
             GetCompanyServerDetails().to_structure()
         )

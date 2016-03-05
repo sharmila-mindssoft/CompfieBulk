@@ -1352,6 +1352,16 @@ function initClientMirror() {
         callerName = "client_user";
         clientApiRequest(callerName, request, callback);
     }
+    function exportToCSV(jsonResponse){
+        var request = [
+            "ExportToCSV",
+            {
+                "data":jsonResponse
+            }
+        ];
+        callerName = "client_reports";
+        clientApiRequest(callerName, request, callback);
+    }
 
     return {
         log: log,
@@ -1488,7 +1498,8 @@ function initClientMirror() {
         getTaskApplicabilityReportData: getTaskApplicabilityReportData,
 
         getOnOccurrenceCompliances: getOnOccurrenceCompliances,
-        startOnOccurrenceCompliance: startOnOccurrenceCompliance
+        startOnOccurrenceCompliance: startOnOccurrenceCompliance,
+        exportToCSV: exportToCSV
     }
 }
 var client_mirror = initClientMirror();
