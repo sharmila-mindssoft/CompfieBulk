@@ -221,7 +221,8 @@ function loadApproveStatutory(){
       domainId = statutoryMappingsList[entity]["domain_id"];
       industryIds = statutoryMappingsList[entity]["industry_ids"];
       industryName = statutoryMappingsList[entity]["industry_names"];
-      statutoryNatureName = statutoryMappingsList[entity]["statutory_nature_name"];        
+      statutoryNatureName = statutoryMappingsList[entity]["statutory_nature_name"];
+      statutoryNatureId = statutoryMappingsList[entity]["statutory_nature_id"];        
       var statutoryMappings='';
       var statutoryprovision = '';
       for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
@@ -271,10 +272,11 @@ function loadApproveStatutory(){
         }
         j = j + 1;
       }
+      $('#saverecord').show();
     }
 
     if(j <= 1){
-    var norecordtableRow=$('#no-record-templates .font1');
+    var norecordtableRow=$('#no-record-templates .font1 .norecord-table-row');
     var noclone=norecordtableRow.clone();
     $('.tbody-statutorymapping-list').append(noclone);
     $('#saverecord').hide();
@@ -406,6 +408,7 @@ $("#saverecord").click(function(){
   }
   function onSuccess(response) {
     $(".grid-table").hide();
+    displayMessage("Statutory Mapping successfully approved");
     reloadStatutoryMapping();
   }
   function onFailure(error){

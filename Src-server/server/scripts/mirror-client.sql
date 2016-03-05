@@ -73,7 +73,7 @@ CREATE TABLE `tbl_compliances` (
   `duration` int(11)  NOT NULL,
   `is_active` tinyint(4) DEFAULT 1,
   PRIMARY KEY (`compliance_id`),
-  CONSTRAINT `fk_compliance_frequency_compliances` FOREIGN KEY (`frequency_id`) REFERENCES `tbl_compliance_frequency` (`frequency_id`),
+  CONSTRAINT `fk_compliance_frequency_compliances` FOREIGN KEY (`frequency_id`) REFERENCES `tbl_compliance_frequency` (`frequency_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_client_groups`;
 CREATE TABLE `tbl_client_groups` (

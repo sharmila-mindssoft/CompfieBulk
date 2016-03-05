@@ -46,7 +46,7 @@ function loadDomainList (domainsList) {
   var domainId = 0;
   var domainName = null;
   var isActive = false;
-  $(".tbody-domain-list").find("tr").remove();
+  $(".tbody-domain-list1").find("tr").remove();
     for(var entity in domainsList) {
       domainId = domainsList[entity]["domain_id"];
       domainName = domainsList[entity]["domain_name"];
@@ -65,7 +65,7 @@ function loadDomainList (domainsList) {
       $('.domain-name', clone).text(domainName);
       $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+domainId+',\''+domainName+'\')"/>');
       $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+domainId+','+passStatus+')"/>');
-      $('.tbody-domain-list').append(clone);
+      $('.tbody-domain-list1').append(clone);
       j = j + 1;
     }
 }
