@@ -262,7 +262,9 @@ def run_server(address, knowledge_server_address):
 
         web_server = WebServer(io_loop)
         client_docs_path = os.path.join(ROOT_PATH, "clientdocuments")
+        print client_docs_path
         exported_reports_path = os.path.join(ROOT_PATH, "exported_reports")
+        print exported_reports_path
         web_server.low_level_url(
             r"/client/client_documents/(.*)",
             StaticFileHandler,
