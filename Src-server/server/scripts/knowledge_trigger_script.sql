@@ -67,149 +67,150 @@ DELIMITER ;
 -- Triggers `tbl_client_compliances`
 --
 DROP TRIGGER IF EXISTS `after_tbl_client_compliances_insert`;
-DELIMITER //
-CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER INSERT ON `tbl_client_compliances`
- FOR EACH ROW BEGIN
-   SET @action = 0;
+-- DELIMITER //
+-- CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER INSERT ON `tbl_client_compliances`
+--  FOR EACH ROW BEGIN
+--    SET @action = 0;
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.client_compliance_id,
-                'client_statutory_id',
-                NEW.client_statutory_id,
-                'tbl_client_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.client_compliance_id,
+--                 'client_statutory_id',
+--                 NEW.client_statutory_id,
+--                 'tbl_client_compliances');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.client_compliance_id,
-                'compliance_id',
-                NEW.compliance_id,
-                'tbl_client_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.client_compliance_id,
+--                 'compliance_id',
+--                 NEW.compliance_id,
+--                 'tbl_client_compliances');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.client_compliance_id,
-                'statutory_applicable',
-                NEW.statutory_applicable,
-                'tbl_client_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.client_compliance_id,
+--                 'statutory_applicable',
+--                 NEW.statutory_applicable,
+--                 'tbl_client_compliances');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.client_compliance_id,
-                'statutory_opted',
-                NEW.statutory_opted,
-                'tbl_client_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.client_compliance_id,
+--                 'statutory_opted',
+--                 NEW.statutory_opted,
+--                 'tbl_client_compliances');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.client_compliance_id,
-                'not_applicable_remarks',
-                NEW.not_applicable_remarks,
-                'tbl_client_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.client_compliance_id,
+--                 'not_applicable_remarks',
+--                 NEW.not_applicable_remarks,
+--                 'tbl_client_compliances');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.client_compliance_id,
-                'compliance_applicable',
-                NEW.compliance_applicable,
-                'tbl_client_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.client_compliance_id,
+--                 'compliance_applicable',
+--                 NEW.compliance_applicable,
+--                 'tbl_client_compliances');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.client_compliance_id,
-                'compliance_opted',
-                NEW.compliance_opted,
-                'tbl_client_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.client_compliance_id,
+--                 'compliance_opted',
+--                 NEW.compliance_opted,
+--                 'tbl_client_compliances');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.client_compliance_id,
-                'compliance_remarks',
-                NEW.compliance_remarks,
-                'tbl_client_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.client_compliance_id,
+--                 'compliance_remarks',
+--                 NEW.compliance_remarks,
+--                 'tbl_client_compliances');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.client_compliance_id,
-                'submitted_on',
-                NEW.submitted_on,
-                'tbl_client_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.client_compliance_id,
+--                 'submitted_on',
+--                 NEW.submitted_on,
+--                 'tbl_client_compliances');
 
-END
-//
-DELIMITER ;
+-- END
+-- //
+-- DELIMITER ;
 
 DROP TRIGGER IF EXISTS `after_tbl_client_compliances_update`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client_compliances`
  FOR EACH ROW BEGIN
-   SET @action = 1;
+    SET @action = 1;
+    SET @submission_type = SELECT IFNULL(t1.submission_type, 0) FROM tbl_client_statutories t1 WHERE t1.client_statutory_id = NEW.client_statutory_id;
 
 
-   IF OLD.client_statutory_id <> NEW.client_statutory_id THEN
+   IF (OLD.client_statutory_id <> NEW.client_statutory_id and @submission_type == 1) THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -225,7 +226,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
    END IF;
 
 
-   IF OLD.compliance_id <> NEW.compliance_id THEN
+   IF (OLD.compliance_id <> NEW.compliance_id and @submission_type == 1) THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -241,7 +242,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
    END IF;
 
 
-   IF OLD.statutory_applicable <> NEW.statutory_applicable THEN
+   IF (OLD.statutory_applicable <> NEW.statutory_applicable and @submission_type == 1) THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -257,7 +258,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
    END IF;
 
 
-   IF OLD.statutory_opted <> NEW.statutory_opted THEN
+   IF (OLD.statutory_opted <> NEW.statutory_opted and @submission_type == 1) THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -273,7 +274,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
    END IF;
 
 
-   IF OLD.not_applicable_remarks <> NEW.not_applicable_remarks THEN
+   IF (OLD.not_applicable_remarks <> NEW.not_applicable_remarks and @submission_type == 1) THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -289,7 +290,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
    END IF;
 
 
-   IF OLD.compliance_applicable <> NEW.compliance_applicable THEN
+   IF (OLD.compliance_applicable <> NEW.compliance_applicable and @submission_type == 1) THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -305,7 +306,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
    END IF;
 
 
-   IF OLD.compliance_opted <> NEW.compliance_opted THEN
+   IF (OLD.compliance_opted <> NEW.compliance_opted and @submission_type == 1) THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -321,7 +322,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
    END IF;
 
 
-   IF OLD.compliance_remarks <> NEW.compliance_remarks THEN
+   IF (OLD.compliance_remarks <> NEW.compliance_remarks and @submission_type == 1) THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -337,7 +338,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
    END IF;
 
 
-   IF OLD.submitted_on <> NEW.submitted_on THEN
+   IF (OLD.submitted_on <> NEW.submitted_on and @submission_type == 1) THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -827,68 +828,69 @@ DELIMITER ;
 -- Triggers `tbl_client_statutories`
 --
 DROP TRIGGER IF EXISTS `after_tbl_client_statutories_insert`;
-DELIMITER //
-CREATE TRIGGER `after_tbl_client_statutories_insert` AFTER INSERT ON `tbl_client_statutories`
- FOR EACH ROW BEGIN
-   SET @action = 0;
+-- DELIMITER //
+-- CREATE TRIGGER `after_tbl_client_statutories_insert` AFTER INSERT ON `tbl_client_statutories`
+--  FOR EACH ROW BEGIN
+--    SET @action = 0;
 
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-  SELECT @action, NEW.client_id, NEW.client_statutory_id, 'geography', parent_names, 'tbl_client_statutories'  FROM tbl_geographies WHERE geography_id=NEW.geography_id;
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--   SELECT @action, NEW.client_id, NEW.client_statutory_id, 'geography', parent_names, 'tbl_client_statutories'  FROM tbl_geographies WHERE geography_id=NEW.geography_id;
 
 
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                NEW.client_id,
-                NEW.client_statutory_id,
-                'country_id',
-                NEW.country_id,
-                'tbl_client_statutories');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 NEW.client_id,
+--                 NEW.client_statutory_id,
+--                 'country_id',
+--                 NEW.country_id,
+--                 'tbl_client_statutories');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                NEW.client_id,
-                NEW.client_statutory_id,
-                'domain_id',
-                NEW.domain_id,
-                'tbl_client_statutories');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 NEW.client_id,
+--                 NEW.client_statutory_id,
+--                 'domain_id',
+--                 NEW.domain_id,
+--                 'tbl_client_statutories');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                NEW.client_id,
-                NEW.client_statutory_id,
-                'unit_id',
-                NEW.unit_id,
-                'tbl_client_statutories');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 NEW.client_id,
+--                 NEW.client_statutory_id,
+--                 'unit_id',
+--                 NEW.unit_id,
+--                 'tbl_client_statutories');
 
-END
-//
-DELIMITER ;
+-- END
+-- //
+-- DELIMITER ;
+
 DROP TRIGGER IF EXISTS `after_tbl_client_statutories_update`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client_statutories`
@@ -896,7 +898,7 @@ CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client
    SET @action = 1;
 
 
-   IF OLD.geography_id <> NEW.geography_id THEN
+   IF (OLD.geography_id <> NEW.geography_id and NEW.submission_type == 1 )THEN
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -910,7 +912,7 @@ CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client
 
 
 
-   IF OLD.country_id <> NEW.country_id THEN
+   IF (OLD.country_id <> NEW.country_id and NEW.submission_type == 1) THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -926,7 +928,7 @@ CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client
    END IF;
 
 
-   IF OLD.domain_id <> NEW.domain_id THEN
+   IF (OLD.domain_id <> NEW.domain_id and NEW.submission_type == 1) THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
@@ -942,7 +944,7 @@ CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client
    END IF;
 
 
-   IF OLD.unit_id <> NEW.unit_id THEN
+   IF (OLD.unit_id <> NEW.unit_id and NEW.submission_type == 1) THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
                              tbl_auto_id,
