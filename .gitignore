@@ -2,7 +2,9 @@
 *.sublime-workspace
 *~
 *.txt
+*.csv
 /Src-server/server/knowledgeformat
 /Src-server/server/knowledgeformat
 /clientdocuments
 /Src-server/server/clientlogo
+/Src-server/server/exported_reports
