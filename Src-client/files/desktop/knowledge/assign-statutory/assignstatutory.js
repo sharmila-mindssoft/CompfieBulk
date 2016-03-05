@@ -857,7 +857,7 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
       $('.tbl_industry', clone).text(assignedStatutoriesList[entity]["industry_name"]);
       $('.tbl_unit', clone).text(assignedStatutoriesList[entity]["unit_name"]);
       $('.tbl_domain', clone).text(assignedStatutoriesList[entity]["domain_name"]);
-      if(assignedStatutoriesList[entity]["submission_status"] == 2){
+      if(assignedStatutoriesList[entity]["submission_status"] == 1){
         $('.tbl_status', clone).text('Submitted');
       }
       else{

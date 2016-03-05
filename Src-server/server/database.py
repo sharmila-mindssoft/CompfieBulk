@@ -4419,7 +4419,7 @@ class KnowledgeDatabase(Database):
         geography_id = data.geography_id
         unit_ids = data.unit_ids
         domain_id = data.domain_id
-        submission_type = 1
+        submission_type = 0
 
         field = "(client_statutory_id, client_id, geography_id,\
             country_id, domain_id, unit_id, submission_type,\
@@ -4505,7 +4505,7 @@ class KnowledgeDatabase(Database):
 
     def submit_client_statutories_compliances(self, client_statutory_id, data, user_id) :
         submited_on = self.get_date_time()
-        query = "UPDATE tbl_client_statutories SET submission_type = 2, \
+        query = "UPDATE tbl_client_statutories SET submission_type = 1, \
             updated_by=%s WHERE client_statutory_id = %s" % (
                 int(user_id), client_statutory_id
             )
