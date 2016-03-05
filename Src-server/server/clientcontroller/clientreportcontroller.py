@@ -1,11 +1,9 @@
-# from jsontocsvconverter import ConvertJsonToCSV
+from server.jsontocsvconverter import ConvertJsonToCSV
 from protocol import (core, clientreport, login)
 
 __all__ = [
     "process_client_report_requests"
 ]
-
-# converter = ConvertJsonToCSV()
 
 def process_client_report_requests(request, db) :
     session_token = request.session_token
@@ -452,7 +450,7 @@ def get_client_details_report_data(db, request, session_user, client_id):
     )
     return clientreport.GetClientDetailsReportDataSuccess(units=units)
 
-# def export_to_csv(db, request, session_user, client_id):
-#     data = request.json_data
-#     converter.convert_json_to_csv(data)
-#     return clientreport.ExportToCSVSuccess()
+def export_to_csv(db, request, session_user, client_id):
+    data = request.json_data
+    converter = ConvertJsonToCSV(data)
+    return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)

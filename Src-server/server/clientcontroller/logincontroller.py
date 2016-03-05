@@ -58,17 +58,24 @@ def user_login_response(db, data, client_id):
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
     contact_no = data["contact_no"]
-    # address = data["address"]
-    # designation = data["designation"]
-    # address = "None"
-    # designation = "None"
     user_group_name = data["user_group_name"]
     form_ids = data["form_ids"]
+    is_promoted_admin = int(data["is_admin"])
+    if is_promoted_admin == 1:
+        form_ids = "%s, 3, 4, 6, 7, 8" % (form_ids)
+        form_ids_list = form_ids.split(",")
+        if 1 not in form_ids_list:
+            form_ids_list.append(1)
+        report_form_ids = db.get_report_form_ids().split(",")
+        for form_id in report_form_ids:
+            if form_id not in form_ids_list:
+                form_ids_list.append(form_id)
+        form_ids = ",".join(str(x) for x in  form_ids_list)
     menu = process_user_forms(db, form_ids, client_id, 0)
     return login.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, None, None,
-        client_id
+        client_id, bool(is_promoted_admin)
     )
 
 def admin_login_response(db, client_id):
@@ -76,7 +83,8 @@ def admin_login_response(db, client_id):
     email_id = None
     session_type = 1  # web
     session_token = db.add_session(user_id, session_type, client_id)
-    menu = process_user_forms(db, "1,2,3,4", client_id, 1)
+    form_ids = db.get_form_ids_for_admin()
+    menu = process_user_forms(db, form_ids, client_id, 1)
     employee_name = "Administrator"
     return login.AdminLoginSuccess(
         user_id, session_token, email_id, menu, employee_name, client_id

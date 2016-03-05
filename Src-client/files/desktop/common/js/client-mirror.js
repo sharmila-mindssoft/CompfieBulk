@@ -166,6 +166,7 @@ function initClientMirror() {
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     console.log("status success");
+                    console.log(data);
                     initSession(response, short_name)
                     callback(null, response);
 
@@ -1352,7 +1353,7 @@ function initClientMirror() {
         callerName = "client_user";
         clientApiRequest(callerName, request, callback);
     }
-    function exportToCSV(jsonResponse){
+    function exportToCSV(jsonResponse, callback){
         var request = [
             "ExportToCSV",
             {

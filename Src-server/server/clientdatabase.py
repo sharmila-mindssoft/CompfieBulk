@@ -117,18 +117,18 @@ class ClientDatabase(Database):
             data_columns = [
                 "user_id", "user_group_id", "email_id",
                 "employee_name", "employee_code", "contact_no",
-                "user_group_name", "form_ids"
+                "user_group_name", "form_ids", "is_admin"
             ]
             query = "SELECT t1.user_id, t1.user_group_id, t1.email_id, \
                 t1.employee_name, t1.employee_code, t1.contact_no, \
-                t2.user_group_name, t2.form_ids \
+                t2.user_group_name, t2.form_ids, t1.is_admin \
                 FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
                 ON t1.user_group_id = t2.user_group_id \
                 WHERE t1.password='%s' and t1.email_id='%s'" % (
                     password, username
                 )
             data_list = self.select_one(query)
-            if data_list is None :
+            if data_list is None : 
                 return False
             else :
                 result = self.convert_to_dict(data_list, data_columns)
@@ -144,12 +144,9 @@ class ClientDatabase(Database):
         tables = [self.tblForms, self.tblFormType]
         aliases = ["tf",  "tft"]
         joinConditions = ["tf.form_type_id = tft.form_type_id"]
-        if is_admin != 0:
-            whereCondition = " is_admin = 1 order by tf.form_order"
-        else:
-            whereCondition = " form_id in (%s) order by tf.form_order" % (
-                form_ids
-            )
+        whereCondition = " form_id in (%s) order by tf.form_order" % (
+            form_ids
+        )
         joinType = "left join"
 
         rows = self.get_data_from_multiple_tables(
@@ -275,7 +272,8 @@ class ClientDatabase(Database):
         tables = [self.tblForms, self.tblFormType]
         aliases = ["tf",  "tft"]
         joinConditions = ["tf.form_type_id = tft.form_type_id"]
-        whereCondition = " 1 order by tf.form_order"
+        whereCondition = " is_admin = 0 and tf.form_type_id not in (5) \
+        order by tf.form_order"
         joinType = "left join"
         rows = self.get_data_from_multiple_tables(
             columns, tables, aliases, joinType,
@@ -2322,7 +2320,7 @@ class ClientDatabase(Database):
 #   Chart Api
 #
     def get_group_name(self):
-        query = "SELECT group_name from tbl_client_groups"
+        query = "SELECT group_name from %s " % self.tblClientGroups
         row = self.select_one(query)
         if row :
             return row[0]
@@ -6938,4 +6936,18 @@ class ClientDatabase(Database):
             self.tblComplianceHistory, columns, values
         )
 
+    def get_form_ids_for_admin(self):
+        columns = "group_concat(form_id)"
+        condition = "is_admin = 1 OR form_type_id in (4,5)"
+        rows = self.get_data(
+            self.tblForms, columns, condition
+        )
+        return rows[0][0]
 
+    def get_report_form_ids(self):
+        columns = "group_concat(form_id)"
+        condition = " form_type_id = 3"
+        rows = self.get_data(
+            self.tblForms, columns, condition
+        )
+        return rows[0][0]

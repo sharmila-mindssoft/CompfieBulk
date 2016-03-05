@@ -3319,8 +3319,10 @@ class KnowledgeDatabase(Database):
             incharge_persons = [int(x) for x in client_row[9].split(",")]
             is_active = True if client_row[10]==1 else False
             short_name = client_row[11]
-            country_ids = [int(x) for x in self.get_client_countries(client_id).split(",")]
-            domain_ids = [int(x) for x in self.get_client_domains(client_id).split(",")]
+            client_countries = self.get_client_countries(client_id)
+            country_ids = None if client_countries is None else [int(x) for x in client_countries.split(",")]
+            client_domains = self.get_client_domains(client_id)
+            domain_ids = None if client_domains is None else [int(x) for x in client_domains.split(",")]
             date_configurations = self.get_date_configurations(client_id)
             client_list.append(core.GroupCompanyDetail(client_id, group_name, domain_ids,
                 country_ids, incharge_persons, original_file_name, logo_url, contract_from,
@@ -3346,8 +3348,11 @@ class KnowledgeDatabase(Database):
     def return_group_companies(self, group_companies):
         results = []
         for group_company in group_companies :
-            countries = [int(x) for x in self.get_client_countries(group_company["client_id"]).split(",")]
-            domains = [int(x) for x in self.get_client_domains(group_company["client_id"]).split(",")]
+            client_countries = self.get_client_countries(group_company["client_id"])
+            print "client_countries:{}".format(client_countries)
+            countries = None if client_countries is None else [int(x) for x in client_countries.split(",")]
+            client_domains = self.get_client_domains(group_company["client_id"])
+            domains = None if client_domains is None else [int(x) for x in client_domains.split(",")]
             results.append(core.GroupCompany(
                 group_company["client_id"], group_company["group_name"],
                 bool(group_company["is_active"]), countries, domains
@@ -3573,18 +3578,20 @@ class KnowledgeDatabase(Database):
 
     def update_client_db_details(self, host, client_id, db_username,
             db_password, short_name, database_name, db_port):
-        # db_server_column = "company_ids"
-        # db_server_value = client_id
+        db_server_column = "company_ids"
+        db_server_value = client_id
 
-        # self.append(
-        #     self.tblDatabaseServer, db_server_column, db_server_value,
-        #     db_server_condition
-        # )
-        # db_server_column = "length"
-        # self.increment(
-        #     self.tblDatabaseServer, db_server_column,
-        #     db_server_condition
-        # )
+        db_server_condition = "ip = '%s'" % str(host)
+
+        self.append(
+            self.tblDatabaseServer, db_server_column, db_server_value,
+            db_server_condition
+        )
+        db_server_column = "length"
+        self.increment(
+            self.tblDatabaseServer, db_server_column,
+            db_server_condition
+        )
         result = self._get_machine_details()
         machine_id = result[0][0]
         server_ip = result[0][1]
@@ -3597,10 +3604,6 @@ class KnowledgeDatabase(Database):
             machine_condition
         )
 
-        # rows = self.get_data(
-        #     self.tblMachines, "machine_id, port", machine_condition
-        # )
-
         client_db_columns = [
             "client_id", "machine_id", "database_ip",
             "database_port", "database_username", "database_password",
@@ -3608,7 +3611,7 @@ class KnowledgeDatabase(Database):
             "server_ip", "server_port"
         ]
         client_dB_values = [
-            client_id, machine_id, host, 3306, db_username,
+            client_id, machine_id, host, db_port, db_username,
             db_password, short_name, database_name,
             server_ip, server_port
         ]
@@ -5329,7 +5332,9 @@ class KnowledgeDatabase(Database):
             client_ids_list = client_ids.split(",")
             country_ids = []
             for client_id in client_ids_list:
-                country_ids += self.get_client_countries(int(client_id)).split(",")
+                countries = self.get_client_countries(int(client_id))
+                if countries is not None:
+                    country_ids += countries.split(",")
             columns = "DISTINCT country_id, country_name, is_active"
             condition = "country_id in (%s) " % (
                 ",".join(

@@ -100,6 +100,13 @@ function initializeNavBar () {
     else {
         profile_url = "/profile";
         change_password_url = "/change-password";
+        if (
+            (employee_name == "Administrator")
+        ){
+            settings_url = "/settings"
+            var item = getItemObject(settings_url, "Settings");
+            $("ul", settingsMenuObject).append(item);
+        }
     }
 
     if (
