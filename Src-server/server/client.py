@@ -40,7 +40,7 @@ class ReplicationManager(object) :
         self._get_received_count()
         ip, port = self._knowledge_server_address
         self._poll_url = "http://%s:%s/replication" % (ip, port)
-        # print "_received_count ================ " , self._received_count
+        print "_received_count ================ " , self._received_count
 
     def _load_auto_id_columns(self):
         self._auto_id_columns = {
@@ -77,7 +77,6 @@ class ReplicationManager(object) :
         self._db.begin()
         try:
             self._received_count = self._db.get_trail_id()
-            # print "get_trail_id ", self._received_count
             self._db.commit()
         except Exception, e:
             print e
@@ -88,7 +87,7 @@ class ReplicationManager(object) :
     def _poll(self) :
         assert self._stop is False
         assert self._received_count is not None
-        # print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
+        print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
 
         def on_timeout():
             if self._stop:
@@ -134,9 +133,6 @@ class ReplicationManager(object) :
         self._poll()
 
     def _execute_insert_statement(self, changes, error_ok=False):
-        # print "Execute insert"
-        # print "self._received_count", self._received_count
-        # print "self._temp_count", self._temp_count
         assert (len(changes)) > 0
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
@@ -167,8 +163,12 @@ class ReplicationManager(object) :
             changes[0].tbl_auto_id,
             val
         )
-        # print query
-        self._db.execute(query)
+        print query
+        try :
+            self._db.execute(query)
+        except Exception, e:
+            print e
+            print query
 
         self._temp_count = changes[-1].audit_trail_id
 
@@ -189,8 +189,8 @@ class ReplicationManager(object) :
     def _parse_data(self, changes):
 
         self._db.begin()
-        # print "begin _parse_data", self._received_count
-        # print "_temp_count ", self._temp_count
+        print "begin _parse_data", self._received_count
+        print "_temp_count ", self._temp_count
         self._temp_count = self._received_count
         try:
             changes_list = []
@@ -218,8 +218,6 @@ class ReplicationManager(object) :
                     changes_list.append(change)
             if is_insert:
                 self._execute_insert_statement(changes_list, error_ok=True)
-            # print "-" * 10
-            # print "update_traild_id ", self._temp_count
             self._db.update_traild_id(self._temp_count)
             self._db.commit()
         except Exception, e:

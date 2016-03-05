@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # client db details from server
 # loop every client
 # ## Task start
@@ -117,7 +119,7 @@ def get_compliance_to_start(db, client_id, current_date):
         t1.statutory_dates, t1.trigger_before_days, t1.due_date, t1.validity_date, \
         (select group_concat(document_name, '-', compliance_task) from tbl_compliances where compliance_id = t1.compliance_id) compliance_name, \
         (select frequency_id from tbl_compliances WHERE compliance_id = t1.compliance_id)frequency, \
-        (select repeat_type_id from tbl_compliances WHERE compliance_id = t1.compliance_id) repeat_type_id, \
+        (select repeats_type_id from tbl_compliances WHERE compliance_id = t1.compliance_id) repeat_type_id, \
         (select repeats_every from tbl_compliances WHERE compliance_id = t1.compliance_id) repeats_every, \
         (t1.due_date - INTERVAL t1.trigger_before_days DAY) start_date, \
         (select business_group_id from tbl_units where unit_id = t1.unit_id) business_group_id, \
@@ -262,7 +264,7 @@ def get_new_id(db, table_name, column_name):
     return row[0]
 
 def save_in_compliance_history(
-    db, unit_id, compliance_id, start_date, due_date, next_due_date, assignee
+    db, unit_id, compliance_id, start_date, due_date, next_due_date, assignee, concurrence, approvar
 ):
     print "new task saved in history (unit_id, compliance_id, start_date) %s, %s, %s" % (unit_id, compliance_id, start_date)
     compliance_history_id = get_new_id(db, "tbl_compliance_history", "compliance_history_id")
@@ -383,7 +385,7 @@ def get_inprogress_compliances(db):
             INNER JOIN tbl_client_compliances b ON a.client_statutory_id = b.client_statutory_id\
             INNER JOIN tbl_compliances c ON c.compliance_id = b.compliance_id \
             WHERE c.compliance_id = t1.compliance_id AND a.unit_id = t1.unit_id \
-            AND a.country_id = t1.country_id) domain_id,\
+            AND a.country_id = t1.country_id) domain_id \
         FROM tbl_compliance_history t1 WHERE approve_status = NULL OR approve_status != 1  "
     cursor = db.cursor()
     cursor.execute(query)
@@ -403,7 +405,7 @@ def get_inprogress_compliances(db):
 
 def get_client_settings(db):
     query = "SELECT assignee_reminder, escalation_reminder_in_advance, escalation_reminder \
-        FROM tbl_client_settings"
+        FROM tbl_client_groups"
     cursor = db.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()

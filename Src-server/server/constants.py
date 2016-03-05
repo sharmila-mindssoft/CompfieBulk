@@ -371,22 +371,22 @@ TEMPLATE_PATHS = [
 
 ]
 
-# KNOWLEDGE_DB_HOST = "localhost"
-# KNOWLEDGE_DB_PORT = 3306
-# KNOWLEDGE_DB_USERNAME = "root"
-# KNOWLEDGE_DB_PASSWORD = "123456"
-# KNOWLEDGE_DATABASE_NAME = "mirror_knowledge"
-
-# CLIENT_URL = "http://localhost:8080/"
-# KNOWLEDGE_URL = "http://localhost:8082/knowledge/"
-
-
-# mindssoft aws
 KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
-KNOWLEDGE_DB_PASSWORD = "Msft!@#$%^"
+KNOWLEDGE_DB_PASSWORD = "123456"
 KNOWLEDGE_DATABASE_NAME = "mirror_knowledge"
 
-CLIENT_URL = "http://52.11.242.90:8080/"
-KNOWLEDGE_URL = "http://52.11.242.90:8082/knowledge/"
+CLIENT_URL = "http://localhost:8080/"
+KNOWLEDGE_URL = "http://localhost:8082/knowledge/"
+
+
+# mindssoft aws
+# KNOWLEDGE_DB_HOST = "localhost"
+# KNOWLEDGE_DB_PORT = 3306
+# KNOWLEDGE_DB_USERNAME = "root"
+# KNOWLEDGE_DB_PASSWORD = "Msft!@#$%^"
+# KNOWLEDGE_DATABASE_NAME = "mirror_knowledge"
+
+# CLIENT_URL = "http://52.11.242.90:8080/"
+# KNOWLEDGE_URL = "http://52.11.242.90:8082/knowledge/"
