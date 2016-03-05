@@ -26,6 +26,7 @@ var statutory_dates = [];
 var sm_geographyids = [];
 var compliances = [];
 var uploadFile = null
+var isAllComplianceActive;
 
 function clearMessage() {
   $(".error-message").hide();
@@ -307,35 +308,38 @@ function getStatutoryMappings(){
 //load statutory levels
 function loadStatutoryLevels(countryval,domainval){
   $(".tbody-statutory-level").find("div").remove();
-  var statutoryLevelList = statutoryLevelsList[countryval][domainval];
-  var levelposition;
-    for(var j in statutoryLevelList){
-      levelposition = statutoryLevelList[j]["level_position"];
-      var tableRow=$('#statutory-level-templates');
-      var clone=tableRow.clone();
-      $('.statutory_title', clone).text(statutoryLevelList[j]["level_name"]);
-      $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder="" style="width:90%" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
-      $('.tbody-statutory-level').append(clone);
-    }
 
-    var setlevelstage= 1;
-    $('#datavalue'+setlevelstage).val('');
-    $('#statutorylist'+setlevelstage).empty();
-    var firstlevelid= $('#statutorylevelid'+setlevelstage).val();
+  if((countryval in statutoryLevelsList) && (domainval in statutoryLevelsList[countryval])){
+      var statutoryLevelList = statutoryLevelsList[countryval][domainval];
+      var levelposition;
+        for(var j in statutoryLevelList){
+          levelposition = statutoryLevelList[j]["level_position"];
+          var tableRow=$('#statutory-level-templates');
+          var clone=tableRow.clone();
+          $('.statutory_title', clone).text(statutoryLevelList[j]["level_name"]);
+          $('.statutory_levelvalue', clone).html('<input type="text" class="filter-text-box" id="statutoryfilter'+levelposition+'" onkeyup="filter_statutory('+levelposition+')"> <ul id="statutorylist'+levelposition+'"></ul><div class="bottomfield"><input type="text" maxlength="50" class="input-box addleft" placeholder="" style="width:90%" id="datavalue'+levelposition+'" onkeypress="saverecord('+levelposition+',event)"/><span> <a href="#" class="addleftbutton" id="update'+levelposition+'"><img src="/images/icon-plus.png" formtarget="_self" onclick="saverecord('+levelposition+',\'clickimage\')" /></a></span></div><input type="hidden" id="statutorylevelid'+levelposition+'" value="'+statutoryLevelList[j]["level_id"]+'"/><input type="hidden" id="level'+levelposition+'" value="'+levelposition+'" />');
+          $('.tbody-statutory-level').append(clone);
+        }
 
-    var str='';
-    var idval='';
-    var clsval='.slist'+setlevelstage;
-    var clsval1='slist'+setlevelstage;
+        var setlevelstage= 1;
+        $('#datavalue'+setlevelstage).val('');
+        $('#statutorylist'+setlevelstage).empty();
+        var firstlevelid= $('#statutorylevelid'+setlevelstage).val();
 
-    var statutoryList = statutoriesList[countryval][domainval];
-    for(var i in statutoryList){
-      var setstatutoryid = statutoryList[i]["statutory_id"];
-      if(statutoryList[i]["level_id"] == firstlevelid){
-      str += '<span class="eslist-filter'+setlevelstage+'" style="float:left;margin-right:5px;margin-left:5px;margin-top:3px;cursor:pointer;" onclick="editstaturoty('+setstatutoryid+',\''+statutoryList[i]["statutory_name"]+'\','+setlevelstage+')"><img src="/images/icon-edit.png" style="width:11px;height:11px"/> </span> <li id="'+setstatutoryid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+countryval+','+domainval+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> ';
-    }
-    }
-    $('#statutorylist'+setlevelstage).append(str);
+        var str='';
+        var idval='';
+        var clsval='.slist'+setlevelstage;
+        var clsval1='slist'+setlevelstage;
+
+        var statutoryList = statutoriesList[countryval][domainval];
+        for(var i in statutoryList){
+          var setstatutoryid = statutoryList[i]["statutory_id"];
+          if(statutoryList[i]["level_id"] == firstlevelid){
+          str += '<span class="eslist-filter'+setlevelstage+'" style="float:left;margin-right:5px;margin-left:5px;margin-top:3px;cursor:pointer;" onclick="editstaturoty('+setstatutoryid+',\''+statutoryList[i]["statutory_name"]+'\','+setlevelstage+')"><img src="/images/icon-edit.png" style="width:11px;height:11px"/> </span> <li id="'+setstatutoryid+'" class="'+clsval1+'" onclick="activate_statutorylist(this,'+setstatutoryid+',\''+clsval+'\','+countryval+','+domainval+','+setlevelstage+')" >'+statutoryList[i]["statutory_name"]+'</li> ';
+        }
+      }
+        $('#statutorylist'+setlevelstage).append(str);
+  }
 }
 
 
@@ -679,6 +683,7 @@ function load_compliance(){
   uploadFile = null;
   $("#uploaded_fileview").hide();
   $("#uploaded_filename").html('');
+  isAllComplianceActive = false;
 
   $(".tbody-compliance-list").find("tr").remove();
   complianceid = 0;
@@ -706,12 +711,19 @@ function load_compliance(){
       }
     }
 
+    var cDescription = compliances[entity]["description"];
+    var partDescription = cDescription;
+    if (cDescription != null && cDescription.length > 50){
+      partDescription = cDescription.substring(0,49)+'...';
+    }
+
     var tableRow=$('#compliance-templates .table-compliance .table-row');
     var clone=tableRow.clone();
     $('.sno', clone).text(complianceid+1);
     $('.statutory-provision', clone).text(compliances[entity]["statutory_provision"]);
     $('.task', clone).text(compliances[entity]["compliance_task"]);
-    $('.description', clone).text(compliances[entity]["description"]);
+    $('.description', clone).html('<abbr class="page-load" title="'+
+          cDescription+'">'+partDescription+'</abbr>');
     $('.frequency', clone).text(complianceFrequency);
     $('.repeats', clone).text(display_repeats);
     $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="temp_editcompliance(\''+complianceid+'\')"/>');
@@ -720,6 +732,7 @@ function load_compliance(){
       if(isActive == true) {
         display_image="icon-active.png"
         passStatus = false;
+        isAllComplianceActive = true;
       }
       else {
         display_image="icon-inactive.png";
@@ -1051,6 +1064,7 @@ function make_breadcrumbs3(){
 
 function loadGeographyLevels(sm_countryid){
   $(".tbody-geography-level").find("div").remove();
+  if(sm_countryid in geographyLevelsList){
   var geographyLevelList = geographyLevelsList[sm_countryid];
   var levelposition;
   for(var j in geographyLevelList){
@@ -1069,13 +1083,14 @@ function loadGeographyLevels(sm_countryid){
   var clsval='.list'+setlevelstage;
   var clsval1='list'+setlevelstage;
   var str = '';
+  var geographyList = geographiesList[sm_countryid];
+
   for(var i in geographyList){
     if((geographyList[i]["level_id"] == firstlevelid) && (geographyList[i]["is_active"] == true)){
       str='<li id="select'+setlevelstage+'" class="'+clsval1+'" onclick="activate_geography_all(this,'+sm_countryid+','+setlevelstage+')" > Select All</li>';
     }
   }
 
-  var geographyList = geographiesList[sm_countryid];
   for(var i in geographyList){
     var setgeographyid = geographyList[i]["geography_id"];
     var setparentid = geographyList[i]["parent_id"];
@@ -1086,7 +1101,7 @@ function loadGeographyLevels(sm_countryid){
   }
   $('#ulist'+setlevelstage).append(str);
 }
-
+}
 //check & uncheck list data
 function activate_geography(element,country,level,combineid){
   var chkstatus = $(element).attr('class');
@@ -1352,6 +1367,8 @@ function validate_secondtab(){
 function validate_thirdtab(){
   if (compliances.length == 0){
     displayMessage("Atleast one Compliance should be selected");
+  }else if(isAllComplianceActive == false) {
+    displayMessage("Atleast one Compliance should be Activate");
   }else{
     displayMessage("");
     return true;
@@ -1979,4 +1996,19 @@ function load_data(){
     }
 
   });
+});
+
+$( document ).tooltip({
+    position: {
+        my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+            $( this ).css( position );
+            $( "<div>" )
+                .addClass( "arrow" )
+                .addClass( feedback.vertical )
+                .addClass( feedback.horizontal )
+                .appendTo( this );
+        }
+    }
 });

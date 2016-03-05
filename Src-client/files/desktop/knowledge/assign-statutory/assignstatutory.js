@@ -173,7 +173,13 @@ function load_secondwizard(){
     var complianceHeadingtableRow=$('#statutory-templates .compliance-heading');
     var clone1=complianceHeadingtableRow.clone();
     $('.accordion-content'+count).append(clone1);
-   
+    
+    var cDescription = complianceslist[compliance]["description"];
+    var partDescription = cDescription;
+    if (cDescription != null && cDescription.length > 50){
+      partDescription = cDescription.substring(0,49)+'...';
+    }
+
     for(var compliance in complianceslist){    
       var statutoryprovision = '';
       var compliance_id = complianceslist[compliance]["compliance_id"];
@@ -183,7 +189,8 @@ function load_secondwizard(){
       $('.sno', clone2).text(statutoriesCount);
       $('.statutoryprovision', clone2).text(complianceslist[compliance]["statutory_provision"]);
       $('.compliancetask', clone2).text(complianceslist[compliance]["compliance_name"]);
-      $('.compliancedescription', clone2).text(complianceslist[compliance]["description"]);
+      $('.compliancedescription', clone2).html('<abbr class="page-load" title="'+
+          cDescription+'">'+partDescription+'</abbr>');
       $('.complianceapplicable', clone2).html('<input type="checkbox" checked="checked" id="statutory'+statutoriesCount+'" class="statutoryclass'+actCount+'"><label for="statutory'+statutoriesCount+'"></label>');
       $('.accordion-content'+count).append(clone2);
 

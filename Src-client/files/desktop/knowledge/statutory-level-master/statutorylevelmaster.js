@@ -116,7 +116,7 @@ function loadstatutoryLevelsList() {
   var countryval = $("#country").val();
   var domainval = $("#domain").val();
   var levellist;
-  if( statutoryLevelsList[countryval][domainval] != undefined ){
+  if((countryval in statutoryLevelsList) && (domainval in statutoryLevelsList[countryval])){
   levellist = statutoryLevelsList[countryval][domainval];
    for(var entity in levellist) {
        var levelPosition = levellist[entity]["level_position"];
