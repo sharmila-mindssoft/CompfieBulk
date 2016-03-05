@@ -363,62 +363,32 @@ function activate_unit (element,checkval,checkname) {
   $("#unitval").val(checkname);
   $("#unitid").val(checkval);
 }
-//Domains------------------------------------------------------------------------------------------------
-
-
-function hidemenudomains() {
-	document.getElementById('selectboxview-domains').style.display = 'none';
+//Domains---------------------------------------------------------------------------------------------------------------
+function hidemenudomains(){
+    document.getElementById('selectboxview-domains').style.display = 'none';
+}
+function loadauto_domains (textval) {
+  document.getElementById('selectboxview-domains').style.display = 'block';
+  var domains = domainsList;
+  var suggestions = [];
+  $('#autocompleteview-domains ul').empty();
+  if(textval.length>0){
+    for(var i in domains){
+        if (~domains[i]['domain_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([domains[i]["domain_id"],domains[i]["domain_name"]]);     
+    }
+    var str='';
+    for(var i in suggestions){
+      str += '<li id="'+suggestions[i][0]+'" onclick="activate_domains(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
+    }
+    $('#selectboxview-domains ul').append(str);
+    $("#domain").val('');
+    }
+}
+function activate_domains (element,checkval,checkname) {
+  $("#domainval").val(checkname);
+  $("#domain").val(checkval);
 }
 
-function loadauto_domains() {
-	document.getElementById('selectboxview-domains').style.display = 'block';
-	var editdomainval=[];
-	if($("#domain").val() != ''){
-		editdomainval = $("#domain").val().split(",");
-	}
-	var domains = domainsList;
-	$('#selectboxview-domains ul').empty();
-	var str='';
-	for(var i in domains){
-		var selectdomainstatus='';
-		for(var j=0; j<editdomainval.length; j++){
-			if(editdomainval[j]==domains[i]["domain_id"]){
-				selectdomainstatus='checked';
-			}
-		}
-		var domainId=parseInt(domains[i]["domain_id"]);
-		var domainName=domains[i]["domain_name"];
-		if(selectdomainstatus == 'checked'){
-			str += '<li id="'+domainId+'" class="active_selectbox" onclick="activate(this)" >'+domainName+'</li> ';
-		}else{
-			str += '<li id="'+domainId+'" onclick="activate(this)" >'+domainName+'</li> ';
-		}
-	}
-  $('#selectboxview-domains ul').append(str);
-  $("#domainselected").val(editdomainval.length+" Selected")
- // }
-}
-//check & uncheck process
-function activate(element){
-	var chkstatus = $(element).attr('class');
-	if(chkstatus == 'active_selectbox'){
-		$(element).removeClass("active_selectbox");
-	}else{
-		$(element).addClass("active_selectbox");
-	}  
-	var selids='';
-	var totalcount =  $(".active_selectbox").length;
-	$(".active_selectbox").each( function( index, el ) {
-		if (index === totalcount - 1) {
-			selids = selids+el.id;
-		}else{
-			selids = selids+el.id+",";			
-		}    
-	});
-	$("#domainselected").val(totalcount+" Selected");
-	$("#domain").val(selids);
-	
-}
 
 $(function() {
 	$(".grid-table-rpt").hide();
