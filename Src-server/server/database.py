@@ -3430,27 +3430,27 @@ class KnowledgeDatabase(Database):
 
     def save_client_countries(self, client_id, country_ids):
         values_list = []
-        columns = ["client_country_id", "client_id", "country_id"]
+        columns = ["client_id", "country_id"]
         condition = "client_id = '%d'" % client_id
         self.delete(self.tblClientCountries, condition)
         for country_id in country_ids:
-            client_country_id = self.get_new_id(
-                "client_country_id", self.tblClientCountries
-            )
-            values_tuple = (client_country_id, client_id, country_id)
+            # client_country_id = self.get_new_id(
+            #     "client_country_id", self.tblClientCountries
+            # )
+            values_tuple = (client_id, country_id)
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblClientCountries, columns, values_list)
 
     def save_client_domains(self, client_id, domain_ids):
         values_list = []
-        columns = ["client_domain_id", "client_id", "domain_id"]
+        columns = ["client_id", "domain_id"]
         condition = "client_id = '%d'" % client_id
         self.delete(self.tblClientDomains, condition)
         for domain_id in domain_ids:
-            client_domain_id = self.get_new_id(
-                "client_domain_id", self.tblClientDomains
-            )
-            values_tuple = (client_domain_id, client_id, domain_id)
+            # client_domain_id = self.get_new_id(
+            #     "client_domain_id", self.tblClientDomains
+            # )
+            values_tuple = (client_id, domain_id)
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblClientDomains, columns, values_list)
 
@@ -3476,13 +3476,17 @@ class KnowledgeDatabase(Database):
         short_name, country_ids, domain_ids
     ):
         print "self._cursor:{}".format(self._cursor)
+        print "host before creating db:{}".format(host)
         client_con = self._mysql_server_connect(host, username, password)
+        print "client con : {}".format(client_con)
         client_cursor = client_con.cursor()
+        print "client_cursor : {}".format(client_cursor)
         query = "CREATE DATABASE %s" % database_name
         client_cursor.execute(query)
         print "grant privileges"
         query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" % (
             database_name, db_username, host, db_password)
+        print query
         client_cursor.execute(query)
         client_con.commit()
 
@@ -3606,7 +3610,7 @@ class KnowledgeDatabase(Database):
             "server_ip", "server_port"
         ]
         client_dB_values = [
-            client_id, machine_id, host, port, db_username,
+            client_id, machine_id, host, 3306, db_username,
             db_password, short_name, database_name,
             server_ip, server_port
         ]

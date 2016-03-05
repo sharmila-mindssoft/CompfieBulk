@@ -137,10 +137,14 @@ class API(object):
     )
     def handle_replication(self, request, db):
         actual_count = db.get_trail_id()
+        # print "actual_count ", actual_count
+
         client_id = request.client_id
         received_count = request.received_count
+        # print  "received_count", received_count
         if received_count > actual_count:
             return InvalidReceivedCount()
+        # print "replication client_id = %s, received_count = %s" % (client_id, received_count)
         res = GetChangesSuccess(
             db.get_trail_log(client_id, received_count)
         )

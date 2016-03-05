@@ -52,7 +52,7 @@ class CompanyManager(object) :
             on_timeout()
             return
         self._io_loop.add_timeout(
-            time.time() + 1, on_timeout
+            time.time() + self._timeout_seconds, on_timeout
         )
 
     def _poll_response(self, response) :

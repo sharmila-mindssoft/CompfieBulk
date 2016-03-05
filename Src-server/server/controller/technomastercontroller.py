@@ -77,21 +77,30 @@ def save_client_group(db, request, session_user):
         create_database_thread.start()
         try:
             db.save_client_group(client_id, request, session_user)
+            print "client group saved"
             db.save_date_configurations(client_id, request.date_configurations,
                 session_user)
+            print "client config saved"
             db.save_client_countries(client_id, request.country_ids)
+            print "client countries saved"
             db.save_client_domains(client_id, request.domain_ids)
+            print "client domains saved"
             db.save_incharge_persons(request, client_id)
+            print "client incharge persons saved"
             db.save_client_user(request, session_user, client_id)
+            print "client admin saved"
             db.update_client_db_details(host, client_id, db_username,
                 db_password, request.short_name, database_name)
+            print "client db details updated saved"
             db.notify_incharge_persons(request)
+            print "notified to incharge"
             while create_database_thread.isAlive():
                 continue
             return technomasters.SaveClientGroupSuccess()
         except Exception, e:
             print "Error:{}".format(e)
             db.delete_database(host, database_name, db_username, db_password)
+            print "database deleted"
             db._connection.rollback()
             return technomasters.ClientCreationFailed(error="Failed to create client")
 
