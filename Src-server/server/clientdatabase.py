@@ -5766,7 +5766,8 @@ class ClientDatabase(Database):
                     )
                 if compliance_id is not None:
                     condition = compliance_id
-
+                print "condition:{}".format(condition)
+                print "level_1_statutory:{}".format(level_1_statutory)
                 whereCondition = " compliance_id in (%s) and statutory_mapping like '%s%s'" % (
                         condition, level_1_statutory, "%"
                 )

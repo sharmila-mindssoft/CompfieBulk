@@ -68,6 +68,7 @@ $("#show-button").click(function(){
 });
 
 //User---------------------------------------------------------------------------------------------------------------
+
 function hideuserlist(){
     document.getElementById('autocompleteview-user').style.display = 'none';
 }
@@ -75,27 +76,27 @@ function loadauto_user (textval) {
     if($("#userval").val() == ''){
         $("#userid").val('');
     }
-    document.getElementById('autocompleteview-user').style.display = 'block';
-    var user = userList;
-    var suggestions = [];
-    $('#autocompleteview-user ul').empty();
-    if(textval.length>0){
-        for(var i in user){
-            if (~user[i]['employee_name'].toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([user[i]["employee_id"],user[i]["employee_name"]]);    
-        }
-        var str='';
-        for(var i in suggestions){
-          str += '<li id="'+suggestions[i][0]+'" onclick="activate_user(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\')">'+suggestions[i][1]+'</li>';
-        }
-        $('#autocompleteview-user ul').append(str);
-        $("#userid").val('');
+  document.getElementById('autocompleteview-user').style.display = 'block';
+  var user = userList;
+  var suggestions = [];
+  $('#autocompleteview-user ul').empty();
+  if(textval.length>0){
+    for(var i in user){
+        var getemployeeidname = user[i]['employee_code']+"-"+user[i]['employee_name'];
+        if (~getemployeeidname.toLowerCase().indexOf(textval.toLowerCase())) suggestions.push([user[i]["employee_code"],user[i]["employee_name"],user[i]["employee_code"]]);  
+    }
+    var str='';
+    for(var i in suggestions){
+      str += '<li id="'+suggestions[i][0]+'" onclick="activate_user(this,\''+suggestions[i][0]+'\',\''+suggestions[i][1]+'\', \''+suggestions[i][2]+'\')">'+suggestions[i][2]+'-'+suggestions[i][1]+'</li>';
+    }
+    $('#autocompleteview-user ul').append(str);
+    $("#userid").val('');
     }
 }
-function activate_user (element,checkval,checkname) {
-  $("#userval").val(checkname);
+function activate_user (element,checkval,checkname, concatunit) {
+  $("#userval").val(concatunit+'-'+checkname);
   $("#userid").val(checkval);
 }
-
 $(function() {
     initialize();
 });

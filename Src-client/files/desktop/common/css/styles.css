@@ -576,7 +576,7 @@ img, object {
 	float: left;
 	background: #fff;
 	padding: 0.3em;
-
+	
 	-webkit-border-radius: 0.4em;
 	-moz-border-radius: 0.4em;
 	border-radius: 0.4em;
@@ -1773,8 +1773,10 @@ list-style-type:none; line-height:25px;
 
 .accordion-toggle {
   cursor: pointer;
+  	border:1px solid #aaa;
 }
 .accordion-content {
+
   display: none;
 }
 .accordion-content.default {

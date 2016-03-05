@@ -51,6 +51,7 @@ from protocol.parse_structure import (
     parse_structure_VectorType_UnsignedIntegerType_32,
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_SignedIntegerType_8,
+    parse_structure_VectorType_CustomTextType_250,
     parse_structure_OptionalType_VectorType_CustomTextType_250
 )
 from protocol.to_structure import (
@@ -111,6 +112,7 @@ from protocol.to_structure import (
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_OptionalType_CustomTextType_500,
     to_structure_CustomTextType_100,
+    to_structure_VectorType_CustomTextType_250,
     to_structure_OptionalType_VectorType_CustomTextType_250
 )
 

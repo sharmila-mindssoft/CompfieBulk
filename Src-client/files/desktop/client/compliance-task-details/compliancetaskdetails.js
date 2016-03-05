@@ -12,6 +12,7 @@ function displayMessage(message) {
 
 function initialize(){
     function onSuccess(data){
+        clearMessage();
         closeicon();
         currentCompliances = data['compliance_detail']['current_compliances'];
         loadComplianceTaskDetails(currentCompliances);
@@ -35,6 +36,8 @@ function initialize(){
 function loadComplianceTaskDetails(data){
     $('.tbody-compliances-task-list-overdue tr').remove();
     $('.tbody-compliances-task-list-inprogress tr').remove();
+    clearMessage();
+    $('.uploaded-filename').empty();
     var snoOverdue = 1;
     var snoInprogress = 1;
     var countOverdue = 0;
@@ -71,7 +74,12 @@ function loadComplianceTaskDetails(data){
             $('.days-text', cloneval).attr("style", "color:#f00;");
         }
         $('.status', cloneval).html(data[k]['compliance_status']);
-        $('.format-file', cloneval).attr("href", data[k]['format_file_name']);
+        if(data[k]['format_file_name']  != null){
+            $('.format-file', cloneval).attr("href", data[k]['format_file_name']);    
+        }
+        else{
+            $('.format-file', cloneval).hide();   
+        }
         var compliance_history_id = data[k]["compliance_history_id"];
         $(cloneval, ".expand-compliance").on("click", function() {
             showSideBar(compliance_history_id, data);
@@ -244,11 +252,13 @@ function uploadedfile(e){
             file_list = data
             var result = ""
             for(i = 0; i < data.length; i++){   
-                var filename = data[i]['file_name']             
-                result += "<span class='"+filename+"'>" + filename + "<img src='/images/delete.png' class='removeicon' style='width:16px;height:16px;' onclick='remove_temp_file(\""+filename+"\")' /></span>"; 
+                var fileclassname;
+                var filename = data[i]['file_name']   
+                fileclassname = filename.replace(/[^\w\s]/gi,"");
+                fileclassname = fileclassname.replace(/\s/g, "");
+                result += "<span class='"+fileclassname+"'>" + filename + "<img src='/images/delete.png' class='removeicon' style='width:16px;height:16px;' onclick='remove_temp_file(\""+fileclassname+"\")' /></span>"; 
             }
             $(".uploaded-filename").html(result);
-
         }
         else{
           alert(data);
@@ -256,12 +266,11 @@ function uploadedfile(e){
     });
 }
 function remove_temp_file(classnameval){
-    console.log(classnameval);
     $('.'+classnameval).remove();
 }
-
- 
-
 $(function() {
     initialize();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });
