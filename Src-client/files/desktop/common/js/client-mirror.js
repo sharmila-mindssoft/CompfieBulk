@@ -1352,7 +1352,7 @@ function initClientMirror() {
         callerName = "client_user";
         clientApiRequest(callerName, request, callback);
     }
-    function exportToCSV(jsonResponse){
+    function exportToCSV(jsonResponse, callback){
         var request = [
             "ExportToCSV",
             {

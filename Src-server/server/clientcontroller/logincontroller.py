@@ -76,7 +76,9 @@ def admin_login_response(db, client_id):
     email_id = None
     session_type = 1  # web
     session_token = db.add_session(user_id, session_type, client_id)
-    menu = process_user_forms(db, "1,2,3,4", client_id, 1)
+    form_ids = db.get_form_ids_for_admin()
+    print "form_ids:{}".format(form_ids)
+    menu = process_user_forms(db, form_ids, client_id, 1)
     employee_name = "Administrator"
     return login.AdminLoginSuccess(
         user_id, session_token, email_id, menu, employee_name, client_id

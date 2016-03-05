@@ -3318,8 +3318,10 @@ class KnowledgeDatabase(Database):
             incharge_persons = [int(x) for x in client_row[9].split(",")]
             is_active = True if client_row[10]==1 else False
             short_name = client_row[11]
-            country_ids = [int(x) for x in self.get_client_countries(client_id).split(",")]
-            domain_ids = [int(x) for x in self.get_client_domains(client_id).split(",")]
+            client_countries = self.get_client_countries(client_id)
+            country_ids = None if client_countries is None else [int(x) for x in client_countries.split(",")]
+            client_domains = self.get_client_domains(client_id)
+            domain_ids = None if client_domains is None else [int(x) for x in client_domains.split(",")]
             date_configurations = self.get_date_configurations(client_id)
             client_list.append(core.GroupCompanyDetail(client_id, group_name, domain_ids,
                 country_ids, incharge_persons, original_file_name, logo_url, contract_from,
@@ -5318,7 +5320,9 @@ class KnowledgeDatabase(Database):
             client_ids_list = client_ids.split(",")
             country_ids = []
             for client_id in client_ids_list:
-                country_ids += self.get_client_countries(int(client_id)).split(",")
+                countries = self.get_client_countries(int(client_id))
+                if countries is not None:
+                    country_ids += countries.split(",")
             columns = "DISTINCT country_id, country_name, is_active"
             condition = "country_id in (%s) " % (
                 ",".join(
