@@ -166,6 +166,7 @@ function initClientMirror() {
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     console.log("status success");
+                    console.log(data);
                     initSession(response, short_name)
                     callback(null, response);
 

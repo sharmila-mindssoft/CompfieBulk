@@ -126,7 +126,7 @@ def get_forms(db, client_id) :
     result_rows = db.get_forms(client_id)
     forms = []
     for row in result_rows:
-        parent_menu = "" if row[6] == None else row[6]
+        parent_menu = None if row[6] == None else row[6]
         form = core.Form(
             form_id=row[0],
             form_name=row[3],

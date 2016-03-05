@@ -79,7 +79,7 @@ class API(object):
             pass
 
     def server_added(self, servers):
-        print "server_added called"
+        # print "server_added called"
         # self._databases = {}
         try:
             #
@@ -93,7 +93,7 @@ class API(object):
 
             self._databases = {}
             self._replication_managers = {}
-            print servers
+            # print servers
             for company_id, company in servers.iteritems():
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
@@ -116,7 +116,7 @@ class API(object):
                         db,
                         company_id
                     )
-                    print "replication started ", company_id
+                    # print "replication started ", company_id
                     rep_man.start()
                     self._replication_managers[company_id] = rep_man
         except Exception, e :

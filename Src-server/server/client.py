@@ -40,7 +40,7 @@ class ReplicationManager(object) :
         self._get_received_count()
         ip, port = self._knowledge_server_address
         self._poll_url = "http://%s:%s/replication" % (ip, port)
-        print "_received_count ================ " , self._received_count
+        # print "_received_count ================ " , self._received_count
 
     def _load_auto_id_columns(self):
         self._auto_id_columns = {
@@ -87,7 +87,7 @@ class ReplicationManager(object) :
     def _poll(self) :
         assert self._stop is False
         assert self._received_count is not None
-        print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
+        # print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
 
         def on_timeout():
             if self._stop:
@@ -123,7 +123,7 @@ class ReplicationManager(object) :
                 self._poll()
                 return
             if type(r) is InvalidReceivedCount:
-                print "InvalidReceivedCount sent %s"
+                # print "InvalidReceivedCount sent %s"
                 # self._poll()
                 return
             assert r is not None
@@ -163,7 +163,7 @@ class ReplicationManager(object) :
             changes[0].tbl_auto_id,
             val
         )
-        print query
+        # print query
         try :
             self._db.execute(query)
         except Exception, e:
@@ -189,8 +189,8 @@ class ReplicationManager(object) :
     def _parse_data(self, changes):
 
         self._db.begin()
-        print "begin _parse_data", self._received_count
-        print "_temp_count ", self._temp_count
+        # print "begin _parse_data", self._received_count
+        # print "_temp_count ", self._temp_count
         self._temp_count = self._received_count
         try:
             changes_list = []
