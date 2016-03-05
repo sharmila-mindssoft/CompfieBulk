@@ -24,6 +24,9 @@ __all__ = [
 	"EmailHandler"
 ]
 
+CLIENT_URL = "http://localhost:8080/"
+KNOWLEDGE_URL= "http://localhost:8082/knowledge/"
+
 class Email(object):
 
     def __init__(self):
@@ -99,8 +102,8 @@ class EmailHandler(Email):
     ):
         subject = "Account Created"
         message = "Dear Client, Your Compfie account has been created. Login and enjoy the services.\
-        Your Credentials are <br> Url: 'http://localhost:8080/login/%s' <br> Username: %s <br> password: %s" % (
-        	short_name, receiver, password
+        Your Credentials are <br> Url: '%slogin/%s' <br> Username: %s <br> password: %s" % (
+        	CLIENT_URL, short_name, receiver, password
         )
         self.send_email(receiver, subject, message)
         # email_to = [receiver]
@@ -117,8 +120,8 @@ class EmailHandler(Email):
     ):
         subject = "Account Created"
         message = "Dear %s, Your Compfie account has been created. Your code is %s\
-        Your Credentials are <br> Url: 'http://localhost:8080/login/%s' <br> Username: %s <br> password: %s" % (
-        	employee_name, employee_code, short_name, receiver, password
+        Your Credentials are <br> Url: '%slogin/%s' <br> Username: %s <br> password: %s" % (
+        	CLIENT_URL, employee_name, employee_code, short_name, receiver, password
         )
         self.send_email(receiver, subject, message)
 
@@ -127,8 +130,8 @@ class EmailHandler(Email):
     ):
         subject = "Account Created"
         message = "Dear %s, Your Compfie account has been created. Your code is %s\
-        Your Credentials are <br> Url: 'http://localhost:8082/knowledge/login' <br> Username: %s <br> password: %s" % (
-        	employee_name, employee_code,  receiver, password
+        Your Credentials are <br> Url: '%slogin' <br> Username: %s <br> password: %s" % (
+        	KNOWLEDGE_URL, employee_name, employee_code,  receiver, password
         )
         self.send_email(receiver, subject, message)
 
