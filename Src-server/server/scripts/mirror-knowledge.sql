@@ -500,11 +500,11 @@ DROP TABLE IF EXISTS `tbl_client_users`;
 CREATE TABLE `tbl_client_users` (
   `client_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `seating_unit_id` int(11) NOT NULL,
+  `seating_unit_id` int(11) NULL DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,
   `employee_name` varchar(50) NOT NULL,
-  `employee_code` varchar(50) NOT NULL,
-  `contact_no` varchar(20) NOT NULL,
+  `employee_code` varchar(50) NULL DEFAULT NULL,
+  `contact_no` varchar(20) NULL DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `is_admin` tinyint(1) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
@@ -703,6 +703,7 @@ CREATE TABLE `tbl_client_database` (
 DROP TABLE IF EXISTS `tbl_database_server`;
 CREATE TABLE `tbl_database_server` (
   `ip` varchar(20) NOT NULL,
+  `port` int(11) NOT NULL,
   `server_username` varchar(50) NOT NULL,
   `server_password` varchar(50) NOT NULL,
   `company_ids` varchar(50) NULL DEFAULT NULL,

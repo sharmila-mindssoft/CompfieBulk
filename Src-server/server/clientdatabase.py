@@ -5025,7 +5025,7 @@ class ClientDatabase(Database):
             if compliance[8] is not None:
                 format_files = [ "%s/%s" % (
                         FORMAT_DOWNLOAD_URL, x
-                    ) for x in compliance[8].split(",")]                
+                    ) for x in compliance[8].split(",")]
             current_compliances_list.append(
                 core.ActiveCompliance(
                     compliance_history_id=compliance[0],

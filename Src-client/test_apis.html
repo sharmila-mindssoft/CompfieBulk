@@ -12,6 +12,7 @@
 		<script type="text/javascript">
 			var file_list = []
 			var logo_file;
+			var jsonResponse;
 			function createSession(){
 				var userDetails = {
 		            "user_id": 0,
@@ -51,6 +52,7 @@
 				);
 			}
 			function callback(status, response){
+				jsonResponse = response
 				console.log(status, response);
 			}
 			function failure_callback(status, response){
@@ -599,6 +601,9 @@
 			        compliance_id, start_date, unit_id, duration, callback
 			    );
 			}
+			function exportToCSV(){
+				client_mirror.exportToCSV(jsonResponse);
+			}
 		</script>
 	</head>
 	<body>
@@ -815,6 +820,9 @@
 				</button>
 				<button onclick="getComplianceActivityReportData()">
 					Get Compliance Activity Report Data
+				</button>
+				<button onclick="exportToCSV()">
+					Export to CSV
 				</button>
 			</div>
 			<div>

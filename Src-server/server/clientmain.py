@@ -66,7 +66,7 @@ class API(object):
             io_loop,
             knowledge_server_address,
             http_client,
-            1,
+            60,
             self.server_added
         )
         self._databases = {}
@@ -79,6 +79,7 @@ class API(object):
             pass
 
     def server_added(self, servers):
+        print "server_added called"
         # self._databases = {}
         try:
             #
@@ -92,10 +93,8 @@ class API(object):
 
             self._databases = {}
             self._replication_managers = {}
-
+            print servers
             for company_id, company in servers.iteritems():
-                print company_id
-                print company.to_structure()
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
                 if company_server_ip.ip_address == ip and \
@@ -117,7 +116,7 @@ class API(object):
                         db,
                         company_id
                     )
-                    print "replication started"
+                    print "replication started ", company_id
                     rep_man.start()
                     self._replication_managers[company_id] = rep_man
         except Exception, e :
@@ -216,6 +215,7 @@ class API(object):
 
     @api_request(login.Request, need_client_id=True)
     def handle_login(self, request, db, client_id):
+        print "inside handle login"
         return controller.process_login_request(request, db, client_id)
 
     @api_request(clientmasters.RequestFormat)

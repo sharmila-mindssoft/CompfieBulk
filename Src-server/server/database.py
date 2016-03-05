@@ -3291,7 +3291,7 @@ class KnowledgeDatabase(Database):
         existing_countries = self.get_client_countries(client_id).split(",")
         pass
 
-        
+
 
     def get_group_company_details(self):
         columns = "client_id, group_name, email_id, logo_url,  contract_from, contract_to,"+\
@@ -3407,7 +3407,7 @@ class KnowledgeDatabase(Database):
                     "client_config_id", self.tblClientConfigurations
                 )
                 insert_values = [
-                    client_config_id, client_id, country_id, 
+                    client_config_id, client_id, country_id,
                     domain_id, period_from, period_to, session_user, current_time_stamp
                 ]
                 self.insert(
@@ -3421,8 +3421,8 @@ class KnowledgeDatabase(Database):
         condition = " client_id = '%d' AND country_id = '%d' \
                 AND domain_id = '%d'" % (
                     client_id, country_id, domain_id
-                ) 
-        rows = self.get_data(self.tblClientConfigurations, columns, condition)     
+                )
+        rows = self.get_data(self.tblClientConfigurations, columns, condition)
         if rows[0][0] > 0:
             return True
         else:
@@ -3430,27 +3430,27 @@ class KnowledgeDatabase(Database):
 
     def save_client_countries(self, client_id, country_ids):
         values_list = []
-        columns = ["client_country_id", "client_id", "country_id"]
+        columns = ["client_id", "country_id"]
         condition = "client_id = '%d'" % client_id
         self.delete(self.tblClientCountries, condition)
         for country_id in country_ids:
-            client_country_id = self.get_new_id(
-                "client_country_id", self.tblClientCountries
-            )
-            values_tuple = (client_country_id, client_id, country_id)
+            # client_country_id = self.get_new_id(
+            #     "client_country_id", self.tblClientCountries
+            # )
+            values_tuple = (client_id, country_id)
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblClientCountries, columns, values_list)
 
     def save_client_domains(self, client_id, domain_ids):
         values_list = []
-        columns = ["client_domain_id", "client_id", "domain_id"]
+        columns = ["client_id", "domain_id"]
         condition = "client_id = '%d'" % client_id
         self.delete(self.tblClientDomains, condition)
         for domain_id in domain_ids:
-            client_domain_id = self.get_new_id(
-                "client_domain_id", self.tblClientDomains
-            )
-            values_tuple = (client_domain_id, client_id, domain_id)
+            # client_domain_id = self.get_new_id(
+            #     "client_domain_id", self.tblClientDomains
+            # )
+            values_tuple = (client_id, domain_id)
             values_list.append(values_tuple)
         return self.bulk_insert(self.tblClientDomains, columns, values_list)
 
@@ -3476,13 +3476,17 @@ class KnowledgeDatabase(Database):
         short_name, country_ids, domain_ids
     ):
         print "self._cursor:{}".format(self._cursor)
+        print "host before creating db:{}".format(host)
         client_con = self._mysql_server_connect(host, username, password)
+        print "client con : {}".format(client_con)
         client_cursor = client_con.cursor()
+        print "client_cursor : {}".format(client_cursor)
         query = "CREATE DATABASE %s" % database_name
         client_cursor.execute(query)
         print "grant privileges"
         query = "grant all privileges on %s.* to %s@%s IDENTIFIED BY '%s';" % (
             database_name, db_username, host, db_password)
+        print query
         client_cursor.execute(query)
         client_con.commit()
 
@@ -3490,9 +3494,8 @@ class KnowledgeDatabase(Database):
         client_db_cursor = client_db_con.cursor()
         print "exec scripts"
         sql_script_path = os.path.join(
-            os.path.join(
-                os.path.split(__file__)[0]
-            ),"scripts/mirror-client.sql"
+            os.path.join(os.path.split(__file__)[0]),
+            "scripts/mirror-client.sql"
         )
         file_obj = open(sql_script_path, 'r')
         sql_file = file_obj.read()
@@ -3505,7 +3508,7 @@ class KnowledgeDatabase(Database):
             else:
                 break
         encrypted_password, password = self.generate_and_return_password()
-        query = "insert into tbl_admin (username, password) values ('%s', '%s')"%(
+        query = "insert into tbl_admin (username, password) values ('%s', '%s')" %(
             email_id, encrypted_password)
         print "admin user"
         client_db_cursor.execute(query)
@@ -3525,7 +3528,7 @@ class KnowledgeDatabase(Database):
         q = "SELECT country_id, country_name, is_active \
                 FROM tbl_countries\
                 WHERE country_id\
-                IN (%s)" % (country_ids)
+                IN (%s) " % (country_ids)
         rows = self.select_all(q)
         print rows
         for r in rows :
@@ -3548,7 +3551,7 @@ class KnowledgeDatabase(Database):
 
 
     def _get_server_details(self):
-        columns = "ip, server_username,server_password"
+        columns = "ip, server_username,server_password, port"
         condition = "server_full = 0 order by length ASC limit 1"
         rows = self.get_data(self.tblDatabaseServer, columns, condition)
         return rows
@@ -3569,10 +3572,10 @@ class KnowledgeDatabase(Database):
         )
 
     def update_client_db_details(self, host, client_id, db_username,
-            db_password, short_name, database_name):
+            db_password, short_name, database_name, db_port):
         # db_server_column = "company_ids"
         # db_server_value = client_id
-        
+
         # self.append(
         #     self.tblDatabaseServer, db_server_column, db_server_value,
         #     db_server_condition
@@ -3584,11 +3587,11 @@ class KnowledgeDatabase(Database):
         # )
         result = self._get_machine_details()
         machine_id = result[0][0]
-        ip = result[0][1]
-        port = result[0][2]
+        server_ip = result[0][1]
+        server_port = result[0][2]
         machine_columns = "client_ids"
         machine_value = client_id
-        machine_condition = "ip='%s'" % ip
+        machine_condition = "ip='%s'" % server_ip
         self.append(
             self.tblMachines, machine_columns, machine_value,
             machine_condition
@@ -3597,8 +3600,6 @@ class KnowledgeDatabase(Database):
         # rows = self.get_data(
         #     self.tblMachines, "machine_id, port", machine_condition
         # )
-        server_ip = host
-        server_port = port
 
         client_db_columns = [
             "client_id", "machine_id", "database_ip",
@@ -3607,7 +3608,7 @@ class KnowledgeDatabase(Database):
             "server_ip", "server_port"
         ]
         client_dB_values = [
-            client_id, machine_id, host, port, db_username,
+            client_id, machine_id, host, 3306, db_username,
             db_password, short_name, database_name,
             server_ip, server_port
         ]
@@ -4449,7 +4450,7 @@ class KnowledgeDatabase(Database):
                 compliance_id = int(key)
                 compliance_applicable_status = int(value)
                 client_compliance_id = self.get_new_id(
-                    "client_compliance_id", self.tblClientCompliances    
+                    "client_compliance_id", self.tblClientCompliances
                 )
                 values = (
                     client_compliance_id,
