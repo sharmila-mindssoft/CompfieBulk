@@ -26,7 +26,7 @@ function loadGeographyList(geographyList){
   var geography = '';
   var isActive = 0;
   var title;  
-  $(".tbody-geography-list").find("tr").remove();
+  $(".tbody-geography-report-list").find("tr").remove();
   for(var list in geographyList) {
     geography = geographyList[list]["geography"];
     isActive = geographyList[list]["is_active"];
@@ -43,7 +43,7 @@ sno = sno + 1;
 $('.sno', clone).text(sno);
 $('.geography-name', clone).html(geographyimage);
 $('.is-active', clone).text(title);
-$('.tbody-geography-list').append(clone);
+$('.tbody-geography-report-list').append(clone);
   }
   $("#total-records").html('Total : '+sno+' records');
 }

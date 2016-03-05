@@ -48,7 +48,7 @@ function loadIndustryList (industriesList) {
   var industryName = null;
   var isActive = false;
 
-  $(".tbody-industry-list").find("tr").remove();
+  $(".tbody-industry-list-view").find("tr").remove();
     for(var entity in industriesList) {
       industryId = industriesList[entity]["industry_id"];
       industryName = industriesList[entity]["industry_name"];
@@ -67,7 +67,7 @@ function loadIndustryList (industriesList) {
       $('.industry-name', clone).text(industryName);
       $('.edit', clone).html('<img src=\'/images/icon-edit.png\' onclick="displayEdit('+industryId+',\''+industryName+'\')"/>');
       $('.status', clone).html('<img src=\'/images/'+imgName+'\' onclick="changeStatus('+industryId+','+passStatus+')"/>');
-      $('.tbody-industry-list').append(clone);
+      $('.tbody-industry-list-view').append(clone);
       j = j + 1;
     }
 }

@@ -150,13 +150,42 @@ function loadresult(filterList){
                 $('.tbl_compliancetask', clone1).html('<a href= "'+ download_url +'" target="_new">'+compliance_name+'</a>');
               }
 
-              
               var sdateDesc = '';
+              var duration = filterList[entity][i]["compliances"][k]["duration"];
+              var duration_type_id = filterList[entity][i]["compliances"][k]["duration_type_id"];
+              var repeats_every = filterList[entity][i]["compliances"][k]["repeats_every"];
+              var repeats_type_id = filterList[entity][i]["compliances"][k]["repeats_type_id"];
+
               var statutory_date =  filterList[entity][i]["compliances"][k]["statutory_dates"];
               var statutorydate = '';
 
-              if(occurance == 'Periodical' || occurance == 'Review') sdateDesc = 'Every';
-              for(z = 0; z < statutory_date.length; z++){
+              var duration_type = '';
+              var repeats_type = '';
+
+              if(occurance == "On Occurrence"){
+                if(duration_type_id == 1){
+                  duration_type = 'Day(s)';
+                }else{
+                  duration_type = 'Hour(s)';
+                }
+                sdateDesc = duration + ' ' + duration_type;
+              }
+              else if(occurance == 'One Time'){
+                sdateDesc = '';
+              }
+              else{
+                if(repeats_type_id == 1){
+                  repeats_type = 'Day(s)';
+                }else if(repeats_type_id == 2){
+                  repeats_type = 'Month(s)';
+                }else{
+                  repeats_type = 'Year(s)';
+                }
+                sdateDesc = 'Every ' + repeats_every + ' ' + repeats_type;
+              }
+
+              if(occurance != "On Occurrence"){
+                for(z = 0; z < statutory_date.length; z++){
                 var sDay = '';
                 if(statutory_date[z]["statutory_date"] != null) sDay = statutory_date[z]["statutory_date"];
                 
@@ -175,8 +204,15 @@ function loadresult(filterList){
                 else if(sMonth == 10) sMonth = "October"
                 else if(sMonth == 11) sMonth = "November"
                 else if(sMonth == 12) sMonth = "December"
-                statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
+                statutorydate +=  sMonth +' '+ sDay +' ';
+                }
+                if(sdateDesc != ''){
+                  statutorydate = sdateDesc + ' ( '+statutorydate+' )';
+                }
+              }else{
+                statutorydate = sdateDesc;
               }
+              
 
               $('.tbl_description', clone1).text(filterList[entity][i]["compliances"][k]["description"]);
               $('.tbl_penalconsequences', clone1).text(filterList[entity][i]["compliances"][k]["penal_consequences"]);
