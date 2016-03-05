@@ -172,6 +172,13 @@ $(".tbody-geography-level").find("div").remove();
 });
 
 function changeStatus (statutorymappingId,isActive) {
+  var msgstatus='deactivate';
+  if(isActive){
+    msgstatus='activate';
+  }
+  var answer = confirm('Are you sure you want to '+msgstatus+ '?');
+  if (answer)
+  {
     function onSuccess(data){
       getStatutoryMappings();
       getStatutoryMappingsMastersList();
@@ -188,6 +195,7 @@ function changeStatus (statutorymappingId,isActive) {
           }
       }
   );
+  }    
 }
 
 function loadStatutoryMappingList(statutoryMappingsList) {

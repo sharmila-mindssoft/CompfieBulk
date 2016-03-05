@@ -592,7 +592,6 @@ $('ul.setup-panel li a[href="#step-2"]').trigger('click');
 $('#backward-step-1').on('click', function(e) {
 $('ul.setup-panel li:eq(1)').removeClass('disabled');
 $('ul.setup-panel li a[href="#step-1"]').trigger('click');
-
 })
 
 $('#activate-step-finish').on('click', function(e) {
