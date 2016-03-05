@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `tbl_audit_log`;
 CREATE TABLE `tbl_audit_log` (
-  `audit_trail_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT
+  `audit_trail_id` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_form_type`;
@@ -58,7 +58,7 @@ CREATE TABLE `tbl_compliances` (
   `compliance_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `frequency_id` int(11) NOT NULL,
-  `repeat_type_id` int(11) NOT NULL,
+  `repeats_type_id` int(11) NOT NULL,
   `duration_type_id` int(11) NOT NULL,
   `statutory_mapping` varchar(500) NOT NULL,
   `statutory_provision` varchar(250) NOT NULL,
@@ -74,11 +74,10 @@ CREATE TABLE `tbl_compliances` (
   `is_active` tinyint(4) DEFAULT 1,
   PRIMARY KEY (`compliance_id`),
   CONSTRAINT `fk_compliance_frequency_compliances` FOREIGN KEY (`frequency_id`) REFERENCES `tbl_compliance_frequency` (`frequency_id`),
-  CONSTRAINT `fk_compliance_repeat_type_compliances` FOREIGN KEY (`repeat_type_id`) REFERENCES `tbl_compliance_repeat_type` (`repeat_type_id`),
-  CONSTRAINT `fk_compliance_duration_type_compliances` FOREIGN KEY (`duration_type_id`) REFERENCES `tbl_compliance_duration_type` (`duration_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE IF EXISTS `tbl_client_groups`;
 CREATE TABLE `tbl_client_groups` (
+  `client_id` int(11) NOT NULL,
   `group_name` varchar(50) NOT NULL,
   `logo_url` varchar(200) NOT NULL,
   `logo_size` float(11) NOT NULL,
@@ -467,6 +466,7 @@ CREATE TABLE `tbl_notification_user_log` (
   `read_status` tinyint(1) DEFAULT '0',
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+INSERT INTO tbl_audit_log VALUES(0);
 INSERT INTO tbl_form_type VALUES(1, "Home");
 INSERT INTO tbl_form_type VALUES(2, "Master");
 INSERT INTO tbl_form_type VALUES(3, "Transaction");

@@ -255,14 +255,13 @@ function loadApproveStatutory(){
         $('.statutory', clone).html(statutoryMappings);
         var complianceNames='';
         for(var i=0; i<statutoryMappingsList[entity]["compliance_names"].length; i++){
-          complianceNames = complianceNames + '<a href="#popup1" onclick="disppopup('+statutorymappingId+','+i+')">'+(i+1)+'. '+statutoryMappingsList[entity]["compliance_names"][i]['compliance_name']+'</a>';
+          complianceNames = complianceNames + '<a href="#popup1" onclick="disppopup('+statutorymappingId+','+i+')">'+(i+1)+'. '+statutoryMappingsList[entity]["compliance_names"][i]['compliance_name']+'</a> <br>';
         }
         $('.compliancetask', clone).html(complianceNames);
         $('.applicablelocation', clone).html(applicableLocation);
         $('.action', clone).html('<input type="hidden" id="mapping_id'+j+'" value="'+statutorymappingId+'" /> <input type="hidden" id="statutoryprovision'+j+'" value="'+statutoryprovision+'" /> <select class="input-box" id="action'+j+'" onchange="dispreason('+j+')"></select>');
         $('.reason', clone).html('<textarea class="input-box" id="notifyreason'+j+'" placeholder="Enter notification text" style="height:50px;display:none;"></textarea><span style="font-size:0.75em;display:none;" id="notifynote'+j+'"> <br> (max 500 characters)</span> <input type="text" maxlength="500" style="display:none;" id="reason'+j+'" class="input-box" placeholder="Enter reason" />');
         $('.tbody-statutorymapping-list').append(clone);
-        //load compliance frequency selectbox
 
         for (var status in approvalStatusList) {
           var option = $("<option></option>");
@@ -273,6 +272,14 @@ function loadApproveStatutory(){
         j = j + 1;
       }
     }
+
+    if(j <= 1){
+    var norecordtableRow=$('#no-record-templates .font1');
+    var noclone=norecordtableRow.clone();
+    $('.tbody-statutorymapping-list').append(noclone);
+    $('#saverecord').hide();
+    }
+
   }
 }
 $("#submit").click(function(){

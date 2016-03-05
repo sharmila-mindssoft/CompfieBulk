@@ -1574,11 +1574,11 @@ class ClientDatabase(Database):
             compliance_ids = compliance_id_rows[0][0]
             query = "SELECT ac.compliance_id, ac.statutory_dates, ac.due_date, assignee, employee_code, \
                 employee_name, statutory_mapping, document_name, compliance_task, \
-                compliance_description, c.repeat_type_id, repeat_type, repeats_every, frequency, \
+                compliance_description, c.repeats_type_id, repeat_type, repeats_every, frequency, \
                 c.frequency_id FROM %s ac LEFT JOIN %s u ON (ac.assignee = u.user_id) \
                 LEFT JOIN %s c ON (ac.compliance_id = c.compliance_id) \
                 LEFT JOIN %s f ON (c.frequency_id = f.frequency_id) \
-                LEFT JOIN %s rt ON (c.repeat_type_id = rt.repeat_type_id) \
+                LEFT JOIN %s rt ON (c.repeats_type_id = rt.repeat_type_id) \
                 WHERE ac.compliance_id IN (%s) AND ac.is_active = %d \
                 AND unit_id = %d AND %s" % (
                     self.tblAssignedCompliances, self.tblUsers, self.tblCompliances,
@@ -1590,7 +1590,7 @@ class ClientDatabase(Database):
                 columns = [
                     "compliance_id", "statutory_dates", "due_date", "assignee", "employee_code",
                     "employee_name", "statutory_mapping", "document_name", "compliance_task",
-                    "compliance_description", "repeat_type_id",  "repeat_type", "repeat_every",
+                    "compliance_description", "repeats_type_id",  "repeat_type", "repeat_every",
                     "frequency", "frequency_id"
                 ]
                 client_compliance_rows = self.convert_to_dict(client_compliance_rows, columns)
@@ -1611,17 +1611,17 @@ class ClientDatabase(Database):
                     due_dates = []
                     statutory_dates_list = []
                     if ((compliance["frequency_id"] == 2) or (compliance["frequency_id"] == 3)):
-                        if compliance["repeat_type_id"] == 1:# Days
+                        if compliance["repeats_type_id"] == 1:# Days
                             due_dates, statutory_dates = self.calculate_due_date(
                                 repeat_by = 1,
                                 repeat_every = compliance["repeat_every"],
                                 due_date = compliance["due_date"]
                             )
-                        elif compliance["repeat_type_id"] == 2:# Months
+                        elif compliance["repeats_type_id"] == 2:# Months
                             due_dates, statutory_dates_list = self.calculate_due_date(
                                 statutory_dates = compliance["statutory_dates"]
                             )
-                        elif compliance["repeat_type_id"] == 3:# years
+                        elif compliance["repeats_type_id"] == 3:# years
                             due_dates, statutory_dates = self.calculate_due_date(
                                 repeat_by = 3,
                                 repeat_every = compliance["repeat_every"],
@@ -2322,7 +2322,7 @@ class ClientDatabase(Database):
 #   Chart Api
 #
     def get_group_name(self):
-        query = "SELECT group_name from tbl_client_settings"
+        query = "SELECT group_name from tbl_client_groups"
         row = self.select_one(query)
         if row :
             return row[0]
@@ -3692,7 +3692,7 @@ class ClientDatabase(Database):
         self, request, session_user, client_id
     ):
         query = "SELECT T1.compliance_id, T2.unit_id,\
-            T4.frequency_id, T4.repeat_type_id, T4.duration_type_id,\
+            T4.frequency_id, T4.repeats_type_id, T4.duration_type_id,\
             T4.statutory_mapping, T4.statutory_provision,\
             T4.compliance_task, T4.compliance_description,  \
             T4.document_name, T4.format_file, T4.format_file_size, T4.penal_consequences, \
@@ -3767,7 +3767,7 @@ class ClientDatabase(Database):
         rows = self.select_all(query1)
         columns = [
             "compliance_id", "unit_id",
-            "frequency_id", "repeat_type_id", "duration_type_id",
+            "frequency_id", "repeats_type_id", "duration_type_id",
             "statutory_mapping", "statutory_provision", "compliance_task",
             "compliance_description", "document_name", "format_file",
             "format_file_size", "penal_consequences", "statutory_dates",
@@ -3820,7 +3820,7 @@ class ClientDatabase(Database):
                 int(r["compliance_id"]), r["statutory_provision"],
                 r["compliance_task"], r["compliance_description"],
                 r["document_name"], file_list, r["penal_consequences"],
-                int(r["frequency_id"]), date_list, r["repeat_type_id"],
+                int(r["frequency_id"]), date_list, r["repeats_type_id"],
                 r["repeats_every"], r["duration_type_id"],
                 r["duration"], bool(r["is_active"])
             )
@@ -4836,7 +4836,8 @@ class ClientDatabase(Database):
             )
             frequency = core.COMPLIANCE_FREQUENCY(d["frequency"])
             due_date = d["due_date"]
-            due_date = due_date.strftime("%d-%b-%Y")
+            if due_date is not None :
+                due_date = due_date.strftime("%d-%b-%Y")
             validity_date = d["validity_date"]
             if validity_date is not None :
                 validity_date = validity_date.strftime("%d-%b-%Y")
@@ -5024,7 +5025,7 @@ class ClientDatabase(Database):
             if compliance[8] is not None:
                 format_files = [ "%s/%s" % (
                         FORMAT_DOWNLOAD_URL, x
-                    ) for x in compliance[8].split(",")]                
+                    ) for x in compliance[8].split(",")]
             current_compliances_list.append(
                 core.ActiveCompliance(
                     compliance_history_id=compliance[0],
@@ -5283,7 +5284,7 @@ class ClientDatabase(Database):
                         if compliance_ids is not None:
                             compliance_columns = "document_name, compliance_task, compliance_description, \
                             penal_consequences, (select frequency from %s f where c.frequency_id = \
-                            f.frequency_id) as frequency, c.frequency_id, repeat_type_id, repeats_every, \
+                            f.frequency_id) as frequency, c.frequency_id, repeats_type_id, repeats_every, \
                             duration_type_id, duration, statutory_dates, statutory_mapping, \
                             statutory_provision" % (
                                 self.tblComplianceFrequency
@@ -5295,7 +5296,7 @@ class ClientDatabase(Database):
                             )
                             compliance_columns = [
                                 "document_name", "compliance_task", "compliance_description",
-                                "penal", "frequency", "frequency_id", "repeat_type_id", "repeats_every",
+                                "penal", "frequency", "frequency_id", "repeats_type_id", "repeats_every",
                                 "duration_type_id", "duration", "statutory_dates", "statutory_mapping",
                                 "statutory_provision"
                             ]
@@ -5312,11 +5313,11 @@ class ClientDatabase(Database):
                                 repeats = None
                                 trigger = "Trigger :"
                                 if compliance["frequency_id"] != 1 and compliance["frequency_id"] != 4: # checking not onetime and onoccrence
-                                    if compliance["repeat_type_id"] == 1: # Days
+                                    if compliance["repeats_type_id"] == 1: # Days
                                         repeats = "Every %s Day/s" % (compliance["repeats_every"])
-                                    elif compliance["repeat_type_id"] == 2: # Month
+                                    elif compliance["repeats_type_id"] == 2: # Month
                                         repeats = "Every %s Month/s" % (compliance["repeats_every"])
-                                    elif compliance["repeat_type_id"] == 3: # Year
+                                    elif compliance["repeats_type_id"] == 3: # Year
                                         repeats = "Every %s Year/s" % (compliance["repeats_every"])
                                     if compliance["statutory_dates"] is not None:
                                         statutory_dates = json.loads(compliance["statutory_dates"])
@@ -5430,7 +5431,7 @@ class ClientDatabase(Database):
                         if compliance_ids is not None:
                             compliance_columns = "document_name, compliance_task, compliance_description, \
                             penal_consequences, (select frequency from %s f where c.frequency_id = \
-                            f.frequency_id) as frequency, c.frequency_id, repeat_type_id, repeats_every, \
+                            f.frequency_id) as frequency, c.frequency_id, repeats_type_id, repeats_every, \
                             duration_type_id, duration, statutory_dates, statutory_mapping, \
                             statutory_provision" % (
                                 self.tblComplianceFrequency
@@ -5442,7 +5443,7 @@ class ClientDatabase(Database):
                             )
                             compliance_columns = [
                                 "document_name", "compliance_task", "compliance_description",
-                                "penal", "frequency", "frequency_id", "repeat_type_id", "repeats_every",
+                                "penal", "frequency", "frequency_id", "repeats_type_id", "repeats_every",
                                 "duration_type_id", "duration", "statutory_dates", "statutory_mapping",
                                 "statutory_provision"
                             ]
@@ -5459,11 +5460,11 @@ class ClientDatabase(Database):
                                 repeats = None
                                 trigger = "Trigger :"
                                 if compliance["frequency_id"] != 1 and compliance["frequency_id"] != 4: # checking not onetime and onoccrence
-                                    if compliance["repeat_type_id"] == 1: # Days
+                                    if compliance["repeats_type_id"] == 1: # Days
                                         repeats = "Every %s Day/s" % (compliance["repeats_every"])
-                                    elif compliance["repeat_type_id"] == 2: # Month
+                                    elif compliance["repeats_type_id"] == 2: # Month
                                         repeats = "Every %s Month/s" % (compliance["repeats_every"])
-                                    elif compliance["repeat_type_id"] == 3: # Year
+                                    elif compliance["repeats_type_id"] == 3: # Year
                                         repeats = "Every %s Year/s" % (compliance["repeats_every"])
                                     if compliance["statutory_dates"] is not None:
                                         statutory_dates = json.loads(compliance["statutory_dates"])
@@ -5582,7 +5583,7 @@ class ClientDatabase(Database):
                         if compliance_ids is not None and statutory_mapping is not None:
                             compliance_columns = "document_name, compliance_task, compliance_description, \
                             penal_consequences, (select frequency from %s f where c.frequency_id = \
-                            f.frequency_id) as frequency, c.frequency_id, repeat_type_id, repeats_every, \
+                            f.frequency_id) as frequency, c.frequency_id, repeats_type_id, repeats_every, \
                             duration_type_id, duration, statutory_dates, statutory_mapping, \
                             statutory_provision" % (
                                 self.tblComplianceFrequency
@@ -5594,7 +5595,7 @@ class ClientDatabase(Database):
                             )
                             compliance_columns = [
                                 "document_name", "compliance_task", "compliance_description",
-                                "penal", "frequency", "frequency_id", "repeat_type_id", "repeats_every",
+                                "penal", "frequency", "frequency_id", "repeats_type_id", "repeats_every",
                                 "duration_type_id", "duration", "statutory_dates", "statutory_mapping",
                                 "statutory_provision"
                             ]
@@ -5611,11 +5612,11 @@ class ClientDatabase(Database):
                                 repeats = None
                                 trigger = "Trigger :"
                                 if compliance["frequency_id"] != 1 and compliance["frequency_id"] != 4: # checking not onetime and onoccrence
-                                    if compliance["repeat_type_id"] == 1: # Days
+                                    if compliance["repeats_type_id"] == 1: # Days
                                         repeats = "Every %s Day/s" % (compliance["repeats_every"])
-                                    elif compliance["repeat_type_id"] == 2: # Month
+                                    elif compliance["repeats_type_id"] == 2: # Month
                                         repeats = "Every %s Month/s" % (compliance["repeats_every"])
-                                    elif compliance["repeat_type_id"] == 3: # Year
+                                    elif compliance["repeats_type_id"] == 3: # Year
                                         repeats = "Every %s Year/s" % (compliance["repeats_every"])
                                     if compliance["statutory_dates"] is not None:
                                         statutory_dates = json.loads(compliance["statutory_dates"])
@@ -6674,7 +6675,7 @@ class ClientDatabase(Database):
                 where unit_id = T3.unit_id) as unit_address, \
             T1.statutory_applicable, T1.statutory_opted, T1.compliance_opted, \
             (select repeat_type from tbl_compliance_repeat_type where \
-                repeat_type_id = T2.repeat_type_id) repeat_type, \
+                repeat_type_id = T2.repeats_type_id) repeat_type, \
             (select duration_type from tbl_compliance_duration_type where \
                 duration_type_id = T2.duration_type_id) duration_type , \
             T2.repeats_every, T2.duration \

@@ -173,6 +173,11 @@ CLIENT_TEMPLATE_PATHS = [
         "files/desktop/client/on-occurrence-compliances/onoccurrencecompliances.html",
         None, {}
     ),
+    (
+        "/reassign-compliance",
+        "files/desktop/client/reassign-compliance/reassigncompliance.html",
+        None, {}
+    ),
 ]
 
 TEMPLATE_PATHS = [
@@ -370,4 +375,12 @@ KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "mirror_knowledge_samy"
+KNOWLEDGE_DATABASE_NAME = "mirror_knowledge"
+
+# mindssoft aws
+# KNOWLEDGE_DB_HOST = "localhost"
+# KNOWLEDGE_DB_PORT = 3306
+# KNOWLEDGE_DB_USERNAME = "root"
+# KNOWLEDGE_DB_PASSWORD = "Msft!@#$%^"
+# KNOWLEDGE_DATABASE_NAME = "mirror_knowledge"
+

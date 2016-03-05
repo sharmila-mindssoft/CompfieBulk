@@ -1485,6 +1485,33 @@ CREATE TRIGGER `after_tbl_divisions_insert` AFTER INSERT ON `tbl_divisions`
                 NEW.division_name,
                 'tbl_divisions');
 
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.division_id,
+                'business_group_id',
+                NEW.business_group_id,
+                'tbl_divisions');
+
+
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.division_id,
+                'legal_entity_id',
+                NEW.legal_entity_id,
+                'tbl_divisions');
+
 END
 //
 DELIMITER ;
@@ -1588,6 +1615,19 @@ CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_enti
                 NEW.legal_entity_id,
                 'legal_entity_name',
                 NEW.legal_entity_name,
+                'tbl_legal_entities');
+
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                'business_group_id',
+                NEW.business_group_id,
                 'tbl_legal_entities');
 
 END

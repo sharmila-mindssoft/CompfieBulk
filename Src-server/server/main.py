@@ -133,13 +133,19 @@ class API(object):
     )
     def handle_replication(self, request, db):
         actual_count = db.get_trail_id()
-        client_id  = request.client_id
+        # print "actual_count ", actual_count
+
+        client_id = request.client_id
         received_count = request.received_count
+        # print  "received_count", received_count
         if received_count > actual_count:
             return InvalidReceivedCount()
-        return GetChangesSuccess(
+        # print "replication client_id = %s, received_count = %s" % (client_id, received_count)
+        res = GetChangesSuccess(
             db.get_trail_log(client_id, received_count)
         )
+        res.to_structure()
+        return res
 
     @api_request(login.Request)
     def handle_login(self, request, db):

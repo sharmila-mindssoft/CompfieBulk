@@ -3355,9 +3355,6 @@ $(document).ready(function () {
         dateFormat: "dd-M-yy",
         monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        onClose: function( selectedDate ) {
-        $( "#fromdate" ).datepicker( "option", "minDate", selectedDate );
-      }
     });
     $( "#todate" ).datepicker({
         changeMonth: true,
@@ -3366,9 +3363,6 @@ $(document).ready(function () {
         dateFormat: "dd-M-yy",
         monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        onClose: function( selectedDate ) {
-        $( "#todate" ).datepicker( "option", "maxDate", selectedDate );
-        }
     });
 });
 
