@@ -21,12 +21,14 @@
 import MySQLdb as mysql
 import datetime
 import json
+import traceback
 
 mysqlHost = "localhost"
 mysqlUser = "root"
 mysqlPassword = "123456"
 mysqlDatabase = "mirror_knowledge"
 mysqlPort = 3306
+
 
 def convert_to_dict(data_list, columns) :
     assert type(data_list) in (list, tuple)
@@ -49,12 +51,14 @@ def convert_to_dict(data_list, columns) :
     else:
         return []
 
+
 def db_connection(host, user, password, db, port):
     connection = mysql.connect(
         host, user, password, db, port
     )
     connection.autocommit(False)
     return connection
+
 
 def get_client_db_list():
     print "begin fetching client info"
@@ -76,6 +80,7 @@ def get_client_db_list():
         return result
     else :
         return None
+
 
 def create_client_db_connection(data):
     if data is None :
@@ -117,7 +122,7 @@ def get_compliance_to_start(db, client_id, current_date):
         t1.statutory_dates, t1.trigger_before_days, t1.due_date, t1.validity_date, \
         (select group_concat(document_name, '-', compliance_task) from tbl_compliances where compliance_id = t1.compliance_id) compliance_name, \
         (select frequency_id from tbl_compliances WHERE compliance_id = t1.compliance_id)frequency, \
-        (select repeat_type_id from tbl_compliances WHERE compliance_id = t1.compliance_id) repeat_type_id, \
+        (select repeats_type_id from tbl_compliances WHERE compliance_id = t1.compliance_id) repeat_type_id, \
         (select repeats_every from tbl_compliances WHERE compliance_id = t1.compliance_id) repeats_every, \
         (t1.due_date - INTERVAL t1.trigger_before_days DAY) start_date, \
         (select business_group_id from tbl_units where unit_id = t1.unit_id) business_group_id, \
@@ -135,7 +140,7 @@ def get_compliance_to_start(db, client_id, current_date):
         AND \
         (t1.due_date - INTERVAL t1.trigger_before_days DAY) <=  '%s'" % (current_date)
 
-    # print query
+    #print query
     cursor = db.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
@@ -341,7 +346,7 @@ def start_new_task(db, client_id, current_date):
                 db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
                 d["due_date"], next_due_date, int(d["assignee"])
             )
-        else :
+        else:
             next_due_date, trigger_before = calculate_next_due_date(
                 d["frequency"], d["statutory_dates"], d["repeat_type_id"],
                 d["repeats_every"], d["due_date"]
@@ -350,7 +355,7 @@ def start_new_task(db, client_id, current_date):
                 db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
                 d["due_date"], next_due_date, int(d["assignee"])
             )
-            if trigger_before is None :
+            if trigger_before is None:
                 trigger_before = d["trigger_before_days"]
             update_assign_compliance_due_date(db, trigger_before, next_due_date, d["unit_id"], d["compliance_id"])
             notification_text = "Compliance task %s started" % (d["compliance_name"])
@@ -383,8 +388,9 @@ def get_inprogress_compliances(db):
             INNER JOIN tbl_client_compliances b ON a.client_statutory_id = b.client_statutory_id\
             INNER JOIN tbl_compliances c ON c.compliance_id = b.compliance_id \
             WHERE c.compliance_id = t1.compliance_id AND a.unit_id = t1.unit_id \
-            AND a.country_id = t1.country_id) domain_id,\
+            ) domain_id\
         FROM tbl_compliance_history t1 WHERE approve_status = NULL OR approve_status != 1  "
+    #print query
     cursor = db.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
@@ -403,7 +409,7 @@ def get_inprogress_compliances(db):
 
 def get_client_settings(db):
     query = "SELECT assignee_reminder, escalation_reminder_in_advance, escalation_reminder \
-        FROM tbl_client_settings"
+        FROM tbl_client_groups"
     cursor = db.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
@@ -414,25 +420,31 @@ def get_client_settings(db):
 def reminder_to_assignee(db, client_info, compliance_info):
 
     current_date = get_current_date()
-    print "begin process to remind inprogress compliance task %s " % (current_date)
-    # client_info = get_client_settings(db)
-    reminder_interval = int(client_info["assignee_reminder"])
-    # compliance_info = get_inprogress_compliances(db)
-    count = 0
-    for c in compliance_info:
-        date_diff = (current_date - c["start_date"]).days
-        days_left = (c["due_date"] - current_date).days
-        notification_text = "%s days left to complete %s task" % (days_left, c["compliance_name"])
-        extra_details = ""
-        if (date_diff % reminder_interval) == 0 :
-            save_in_notification(
-                db, c["country_id"], c["domain_id"], c["business_group_id"], c["legal_entity_id"],
-                c["division_id"], c["unit_id"], c["compliance_id"], c["assignee"],
-                c["concurrence_person"], c["approval_person"],
-                notification_text, extra_details, notification_type_id=2, notify_to_all=False
-            )
-            count += 1
-    print "%s compliances remindered" % (count)
+    try :
+        print "begin process to remind inprogress compliance task %s " % (current_date)
+        # client_info = get_client_settings(db)
+        print client_info
+        if client_info :
+            reminder_interval = int(client_info["assignee_reminder"])
+            # compliance_info = get_inprogress_compliances(db)
+            count = 0
+            for c in compliance_info:
+                date_diff = (current_date - c["start_date"]).days
+                days_left = (c["due_date"] - current_date).days
+                notification_text = "%s days left to complete %s task" % (days_left, c["compliance_name"])
+                extra_details = ""
+                if (date_diff % reminder_interval) == 0 :
+                    save_in_notification(
+                        db, c["country_id"], c["domain_id"], c["business_group_id"], c["legal_entity_id"],
+                        c["division_id"], c["unit_id"], c["compliance_id"], c["assignee"],
+                        c["concurrence_person"], c["approval_person"],
+                        notification_text, extra_details, notification_type_id=2, notify_to_all=False
+                    )
+                    count += 1
+            print "%s compliances remindered" % (count)
+    except Exception, e:
+        print e
+        print(traceback.format_exc())
 
 def reminder_before_due_date(db, client_info, compliance_info):
     current_date = get_current_date()
@@ -470,9 +482,10 @@ def notify_escalation_to_all(db, client_info, compliance_info):
 def notify_task_details(db, client_id):
     client_info = get_client_settings(db)
     compliance_info = get_inprogress_compliances(db)
-    reminder_to_assignee(db, client_info, compliance_info)
-    reminder_before_due_date(db, client_info, compliance_info)
-    notify_escalation_to_all(db, client_info, compliance_info)
+    if compliance_info :
+        reminder_to_assignee(db, client_info, compliance_info)
+        reminder_before_due_date(db, client_info, compliance_info)
+        notify_escalation_to_all(db, client_info, compliance_info)
 
 def notify_before_contract_period(db, client_id):
     pass

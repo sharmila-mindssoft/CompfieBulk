@@ -25,6 +25,7 @@
 
   <script type="text/javascript" src="/files/desktop/client/client-home/client-home.js"></script>
   <script type="text/javascript" src="/files/desktop/common/js/jquery-ui/jquery-ui.js"></script>
+  <script type="text/javascript" src="/files/desktop/common/js/filtertable.jquery.js"></script>
   <!-- <script type="text/javascript" src="/files/desktop/client/client-home/client-home-design.js"></script> -->
 </head>
 <body>
@@ -199,7 +200,12 @@
                 <div class="graph-container applicability-status" style="height: 400px;" align="center"></div> -->
                 <div class="drilldown-container">
                   <div class="grid-table">
-                  <table class="table-drilldown-list" id="accordion">
+                  <h2 class="drilldown-title"></h2>
+                  <br>
+                  <table class="table-drilldown-list js-filtertable" id="accordion">
+
+                  <thead class="table-thead-drilldown-list">
+                  </thead>
                   </table>
                   </div>
                 </div>
@@ -308,7 +314,7 @@
                         </tr>
                         <tr style="background-color:#fff;">
                           <td width="4%" align="center"></td>
-                          <td width="15%" align="left"><input type="text"  class="filter-text-box"></td>
+                          <td width="15%" align="left"><input type="text"  class="filter-text-box js-filter"></td>
                           <td width="10%" align="center"></td>
                           <td width="10%" align="center"></td>
                           <td width="10%" align="center"></td>
@@ -413,6 +419,7 @@
 
     <div class="compliance-status">
       <table>
+
         <tr class="tr-heading">
           <th width="3%" align="center">#</th>
           <th width="13%" align="left" class="business-group-row">Business Group<span><img src="/images/dropdown-arrow.png"/></span></th>
@@ -428,15 +435,15 @@
         </tr>
         <tr class="tr-filter">
           <td align="center"></td>
-          <td class="business-group-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="legal-entity-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="division-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="type-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="compliance-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="assigned-to-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="delayed-by-row"><input type="text"  class="filter-text-box" placeholder="Search"></td>
-          <td class="dates-left-to-complete-row"><input type="text"  class="filter-text-box" placeholder="Search"></td>
-          <td class="over-due-row"><input type="text"  class="filter-text-box" placeholder="Search"></td>
+          <td class="business-group-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="legal-entity-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="division-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="type-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="compliance-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="assigned-to-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="delayed-by-row"><input type="text"  class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="dates-left-to-complete-row"><input type="text"  class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="over-due-row"><input type="text"  class="filter-text-box js-filter" placeholder="Search"></td>
         </tr>
         <tbody class="tr-unit accordion-toggle">
           <tr style="padding:10px;text-align:left;">
@@ -482,14 +489,14 @@
         </tr>
         <tr class="tr-filter">
           <td align="center"></td>
-          <td class="business-group-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="legal-entity-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="division-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="type-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="compliance-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="assigned-to-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="delayed-by-row"><input type="text"  class="filter-text-box" placeholder="Search"></td>
-          <td class="over-due-row"><input type="text"  class="filter-text-box" placeholder="Search"></td>
+          <td class="business-group-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="legal-entity-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="division-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="type-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="compliance-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="assigned-to-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="delayed-by-row"><input type="text"  class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="over-due-row"><input type="text"  class="filter-text-box js-filter" placeholder="Search"></td>
         </tr>
         <tbody class="tr-unit accordion-toggle">
           <tr style="padding:10px;text-align:left;">
@@ -530,13 +537,13 @@
         </tr>
         <tr class="tr-filter">
           <td align="center"></td>
-          <td class="business-group-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="legal-entity-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="division-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="type-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="compliance-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="assigned-to-row"><input type="text" class="filter-text-box" placeholder="Search"></td>
-          <td class="over-due-row"><input type="text"  class="filter-text-box" placeholder="Search"></td>
+          <td class="business-group-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="legal-entity-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="division-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="type-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="compliance-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="assigned-to-row"><input type="text" class="filter-text-box js-filter" placeholder="Search"></td>
+          <td class="over-due-row"><input type="text"  class="filter-text-box js-filter" placeholder="Search"></td>
         </tr>
         <tbody class="tr-unit accordion-toggle">
           <tr style="padding:10px;text-align:left;">
