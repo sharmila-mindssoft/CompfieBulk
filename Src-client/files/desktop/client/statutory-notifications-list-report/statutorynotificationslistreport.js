@@ -227,7 +227,7 @@ function activate_domains (element,checkval,checkname) {
   $("#domainval").val(checkname);
   $("#domain").val(checkval);
 }
-//Level1 Statutory---------------------------------------------------------------------------------------------------------------
+//Domains---------------------------------------------------------------------------------------------------------------
 function hidedomainslist(){
     document.getElementById('selectboxview-domains').style.display = 'none';
 }
