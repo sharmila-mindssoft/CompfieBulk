@@ -9,51 +9,75 @@ function displayMessage(message) {
   $(".error-message").show();
 }
 
-
-
-function submitcompliance(){
-
-  /*function onSuccess(data){
-    load_firstwizard();
-  }
-  function onFailure(error){
-    displayMessage(error)
-  }
-  client_mirror.saveAssignedComplianceFormData(assignComplianceCountryId, assignComplianceAssigneeId, 
-    assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName, 
-    assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, 
-    function (error, response) {
-    if (error == null){
-      onSuccess(response);
-    }
-    else {
-      onFailure(error);
-    }
-  }
-  );*/
-}
-
-
 function load_compliances (compliancesList) {
   var j = 1;
-  var domainId = 0;
   $(".tbody-complainces-list").find("tr").remove();
     for(var entity in compliancesList) {
-      domainId = domainsList[entity]["domain_id"];
-      
-      var tableRow=$('#templates .table-compliances .table-row');
-      var clone=tableRow.clone();
-      $('.sno', clone).text(j);
-      $('.statutory', clone).text(domainName);
-      $('.compliance-task', clone).text(j);
-      $('.description', clone).text(j);
-      $('.duration', clone).text(j);
-      $('.startdate', clone).text(j);
-      $('.action', clone).text(j);
+      var tableRow = $('#head-templates .tbl_heading');
+      var clone = tableRow.clone();
+      $('.heading', clone).html(entity);
+      $('.tbody-compliances-list').append(clone);
+      var compliances = compliancesList[entity];
+      for(var compliance in compliances){
+        var complianceId = compliances[compliance]["compliance_id"];
+        var unitId = compliances[compliance]["unit_id"];
+        var completeDays = compliances[compliance]["complete_within_days"];
+        var tableRow1=$('#templates .table-compliances .table-row');
+        var clone1=tableRow1.clone();
+        $('.sno', clone1).text(j);
+        $('.statutory', clone1).text(compliances[compliance]["compliance_name"]);
+        $('.compliance-task', clone1).text(compliances[compliance]["statutory_provision"]);
+        $('.description', clone1).text(compliances[compliance]["description"]);
+        $('.duration', clone1).text(completeDays);
+        $('.startdate', clone1).html('<input type="text" class="input-box" readonly="readonly" id="startdate'+j+'"/>');
+        $('.action', clone1).html('<input type="button" class="btn-submit" value="Start" onclick="submitOnOccurence('+complianceId+','+j+','+unitId+',\''+completeDays+'\')"/>');
 
-      $('.tbody-compliances').append(clone);
-      j = j + 1;
+        /*$(clone1, '.action').on("click", function(e){   
+            submitOnOccurence(complianceId, j, unitId, completeDays);
+        });*/
+
+        $('.tbody-compliances-list').append(clone1);
+        
+        $("#startdate"+j).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        });
+        j = j + 1;
+      } 
     }
+}
+
+function submitOnOccurence(complianceId, count, unitId, complete_within_days){
+  var startdate = $('#startdate'+count).val();
+  if(startdate != ''){
+    function onSuccess(data){
+      //displayMessage("Task started successfully");
+      //getOnOccuranceCompliances ();
+      $('#startdate'+count).val('');
+      window.location.href='/compliance-task-details'
+    }
+    function onFailure(error){
+      displayMessage(error)
+    }
+    client_mirror.startOnOccurrenceCompliance(complianceId, startdate, unitId, complete_within_days, 
+      function (error, response) {
+      if (error == null){
+        onSuccess(response);
+      }
+      else {
+        onFailure(error);
+      }
+    }
+    );
+  }else{
+    displayMessage("Start date is required");
+    return false;
+  }
+  
 }
 
 

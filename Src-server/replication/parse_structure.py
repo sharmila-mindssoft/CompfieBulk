@@ -45,3 +45,6 @@ def parse_structure_VectorType_RecordType_protocol_Change(data):
         lst.append(parse_structure_RecordType_protocol_Change(item))
     return lst
 
+def parse_structure_OptionalType_Text(data):
+    if data is '' or data is None : return None
+    return parse_structure_Text(data)

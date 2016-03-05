@@ -3931,6 +3931,13 @@ def to_structure_OptionalType_RecordType_core_FileList(data):
     if data is None: return data
     return to_structure_RecordType_core_FileList(data)
 
+def to_structure_VectorType_CustomTextType_250(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_CustomTextType_250(item))
+    return lst
+
 def to_structure_OptionalType_VectorType_CustomTextType_250(data):
     if data is None: return data
     return to_structure_VectorType_CustomTextType_250(data)

@@ -58,7 +58,12 @@ function loadComplianceApprovalDetails(data){
             }
             var compliance_history_id = val['compliance_history_id'];  
 
+            
             $(clonelist, ".expand-compliance").on("click", function() {
+                //$(".table-row-list", clonelist).addClass("active1");
+                // tableRowvalues.addClass("active1");
+                $(".table-row-list").removeClass("active1");
+                $(clonelist, ".table-row-list").addClass("active1");
                 showSideBar(compliance_history_id, val);
             });
             $('.full-width-list .tbody-compliance-approval-list').append(clonelist);   
@@ -84,19 +89,19 @@ function showSideBar(idval, data){
     documentslist = data['documents'];
     if( fileslist != null){
         for (var i = 0; i < fileslist.length; i++){
-            $('.sidebar-uploaded-documents', cloneValSide).append("<span>"+fileslist[i]+"<img src='/images/download.png' style='width:16px;height:16px' class='download-file'/><img src='/images/view.png' style='width:16px;height:16px;' class='view-file'/></span>");    
-            $('.view-file', cloneValSide).on("click", function(e){
-                $('.view-file', cloneValSide).attr({target: '_new', 
-                       href  : documentslist[i]
-                });
-            }); 
-            $('.download-file', cloneValSide).on("click", function(e){        
-                $('.download-file', cloneValSide).attr({target: '_new', 
-                       href  : documentslist[i]
-                });
-            }); 
+            console.log( documentslist[i]);
+            $('.sidebar-uploaded-documents', cloneValSide).append("<span>"+fileslist[i]+"<a href='' download='"+documentslist[i]+"' class='download-file' ><img src='/images/download.png' style='width:16px;height:16px' /></a><a href='"+ documentslist[i] +"' target='_new' class='view-file'> <img src='/images/view.png' style='width:16px;height:16px;' /></a></span>");    
+            
         }    
     }
+    // $(".view-file", cloneValSide).on("click", function(e){
+    //     $(".view-file", cloneValSide).attr("target", "_new");
+    //     $(".view-file", cloneValSide).attr("href", documentslist[i]);
+    // }); 
+    // $(".download-file", cloneValSide).on("click", function(e){        
+    //     $(".download-file", cloneValSide).attr("target", "_new");
+    //     $(".download-file", cloneValSide).attr("href", documentslist[i]);
+    // }); 
     $('.sidebar-uploaded-date', cloneValSide).html(data['upload_date']);
     $('.sidebar-completion-date', cloneValSide).html(data['completion_date']);
     if(complianceFrequency != 'One Time'){       
@@ -268,12 +273,11 @@ function uploadedfile(e){
 
 }
 function remove_temp_file(classnameval){
-    console.log(classnameval);
     $('.'+classnameval).remove();
 }
-
- 
-
 $(function() {
     initialize();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

@@ -1,4 +1,4 @@
-from jsontocsvconverter import ConvertJsonToCSV
+# from jsontocsvconverter import ConvertJsonToCSV
 from protocol import (core, clientreport, login)
 
 __all__ = [
@@ -294,6 +294,7 @@ def get_reassignedhistory_report_filters(db, request, session_user, client_id):
         users=users_list
     )
 
+
 def get_reassignedhistory_report(db, request, session_user, client_id):
     country_id = request.country_id
     domain_id = request.domain_id
@@ -303,16 +304,8 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
     user_id = request.user_id
     from_date = request.from_date
     to_date = request.to_date
-
-    if level_1_statutory_id is None :
-        level_1_statutory_id = '%'
-    if compliance_id is None :
-        compliance_id = '%'
-    if user_id is None :
-        user_id = '%'
-
     reassigned_history_list = db.get_reassigned_history_report(
-        country_id, domain_id, level_1_statutory_id,
+    country_id, domain_id, level_1_statutory_id,
         unit_id, compliance_id, user_id, from_date, to_date, client_id, session_user
     )
     return clientreport.GetReassignedHistoryReportSuccess(reassigned_history_list)
@@ -431,13 +424,16 @@ def process_get_task_applicability_report_data(db, request, session_user):
 def get_client_details_report_filters(db, request, session_user, client_id):
     countries = db.get_countries_for_user(session_user, client_id)
     domains = db.get_domains_for_user(session_user, client_id)
-    group_companies = db.get_group_companies_for_user(session_user, client_id)
-    business_groups = db.get_business_groups_for_user(session_user, client_id)
-    legal_entities = db.get_legal_entities_for_user(session_user, client_id)
-    divisions = db.get_divisions_for_user(session_user, client_id)
     user_company_info = db.get_user_company_details(session_user)
     unit_ids = user_company_info[0]
-    units = db.get_units_for_user(unit_ids, client_id)
+    division_ids = user_company_info[1]
+    legal_entity_ids = user_company_info[2]
+    business_group_ids = user_company_info[3]
+
+    business_groups = db.get_business_groups_for_user(business_group_ids)
+    legal_entities = db.get_legal_entities_for_user(legal_entity_ids)
+    divisions = db.get_divisions_for_user(division_ids)
+    units = db.get_units_for_user(unit_ids)
     return clientreport.GetClientDetailsReportFiltersSuccess(
         countries=countries,
         domains=domains,

@@ -174,6 +174,7 @@ $(".tbody-geography-level").find("div").remove();
 function changeStatus (statutorymappingId,isActive) {
     function onSuccess(data){
       getStatutoryMappings();
+      getStatutoryMappingsMastersList();
     }
     function onFailure(error){
     }
@@ -1059,15 +1060,21 @@ function loadGeographyLevels(sm_countryid){
   var idval='';
   var clsval='.list'+setlevelstage;
   var clsval1='list'+setlevelstage;
-  var str='<li id="select'+setlevelstage+'" class="'+clsval1+'" onclick="activate_geography_all(this,'+sm_countryid+','+setlevelstage+')" > Select All</li>';
+  var str = '';
+  for(var i in geographyList){
+    if((geographyList[i]["level_id"] == firstlevelid) && (geographyList[i]["is_active"] == true)){
+      str='<li id="select'+setlevelstage+'" class="'+clsval1+'" onclick="activate_geography_all(this,'+sm_countryid+','+setlevelstage+')" > Select All</li>';
+    }
+  }
+
   var geographyList = geographiesList[sm_countryid];
   for(var i in geographyList){
     var setgeographyid = geographyList[i]["geography_id"];
     var setparentid = geographyList[i]["parent_id"];
     var combineid = setgeographyid + "-" + setparentid;
     if((geographyList[i]["level_id"] == firstlevelid) && (geographyList[i]["is_active"] == true)){
-    str += '<li id="'+combineid+'" value="'+setparentid+'" class="'+clsval1+'" onclick="activate_geography(this,'+sm_countryid+','+setlevelstage+',\''+combineid+'\')" >'+geographyList[i]["geography_name"]+'</li>';
-  }
+      str += '<li id="'+combineid+'" value="'+setparentid+'" class="'+clsval1+'" onclick="activate_geography(this,'+sm_countryid+','+setlevelstage+',\''+combineid+'\')" >'+geographyList[i]["geography_name"]+'</li>';
+    }
   }
   $('#ulist'+setlevelstage).append(str);
 }
@@ -1693,7 +1700,7 @@ $(document).ready(function(){
     var defaultoption = $("<option></option>");
     defaultoption.val("");
     defaultoption.text("")
-    
+
     $("#multiple_statutory_date"+j).append(defaultoption);
     for (var i=1; i<=31; i++) {
         var option = $("<option></option>");

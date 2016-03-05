@@ -8,13 +8,13 @@
         <div class="input-row">
           <div class="field-label">From Date:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box" id="from-date" placeholder="dd-Mon-yyyy">
+            <input type="text" class="input-box" id="from-date" readonly="readonly" placeholder="dd-Mon-yyyy">
           </div>
         </div>
         <div class="input-row">
           <div class="field-label">User:</div>
           <div class="field-input">
-            <input type="text" class="input-box icon-autocomplete" id="userval" value=""   onkeyup="loadauto_user(this.value)">
+            <input type="text" class="input-box icon-autocomplete" id="userval"  value=""   onkeyup="loadauto_user(this.value)">
               <input type="hidden" id="userid">
               <div id="autocompleteview-user" class="ac-textbox" style="display:none;"  onclick="hideuserlist();">
                   <ul style="width:195px;"></ul>
@@ -26,7 +26,7 @@
         <div class="input-row">
           <div class="field-label">To Date:<span class="mandatory">*</span></div>
           <div class="field-input">
-            <input type="text" class="input-box" id="to-date" placeholder="dd-Mon-yyyy">
+            <input type="text" class="input-box" id="to-date" readonly="readonly" placeholder="dd-Mon-yyyy">
           </div>
         </div>
 

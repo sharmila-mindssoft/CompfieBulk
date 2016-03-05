@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # client db details from server
 # loop every client
 # ## Task start
@@ -117,7 +119,7 @@ def get_compliance_to_start(db, client_id, current_date):
         t1.statutory_dates, t1.trigger_before_days, t1.due_date, t1.validity_date, \
         (select group_concat(document_name, '-', compliance_task) from tbl_compliances where compliance_id = t1.compliance_id) compliance_name, \
         (select frequency_id from tbl_compliances WHERE compliance_id = t1.compliance_id)frequency, \
-        (select repeat_type_id from tbl_compliances WHERE compliance_id = t1.compliance_id) repeat_type_id, \
+        (select repeats_type_id from tbl_compliances WHERE compliance_id = t1.compliance_id) repeat_type_id, \
         (select repeats_every from tbl_compliances WHERE compliance_id = t1.compliance_id) repeats_every, \
         (t1.due_date - INTERVAL t1.trigger_before_days DAY) start_date, \
         (select business_group_id from tbl_units where unit_id = t1.unit_id) business_group_id, \
@@ -262,15 +264,15 @@ def get_new_id(db, table_name, column_name):
     return row[0]
 
 def save_in_compliance_history(
-    db, unit_id, compliance_id, start_date, due_date, next_due_date, assignee
+    db, unit_id, compliance_id, start_date, due_date, next_due_date, assignee, concurrence, approve
 ):
     print "new task saved in history (unit_id, compliance_id, start_date) %s, %s, %s" % (unit_id, compliance_id, start_date)
     compliance_history_id = get_new_id(db, "tbl_compliance_history", "compliance_history_id")
     query = "INSERT INTO tbl_compliance_history (compliance_history_id, unit_id, compliance_id, \
-            start_date, due_date, next_due_date, completed_by) \
-        VALUES (%s, %s, %s, '%s', '%s', '%s', %s) " % (
+            start_date, due_date, next_due_date, completed_by, concurred_by, approved_by) \
+        VALUES (%s, %s, %s, '%s', '%s', '%s', %s, %s, %s) " % (
                 compliance_history_id, unit_id, compliance_id,
-                start_date, due_date, next_due_date, assignee
+                start_date, due_date, next_due_date, assignee, concurrence, approve
             )
     # print
     # print query
@@ -335,11 +337,12 @@ def start_new_task(db, client_id, current_date):
             d["division_id"] = "NULL"
         if d["concurrence_person"] == 0 :
             d["concurrence_person"] = "NULL"
+        approval_person = d["approval_person"]
         if d["frequency"] == 1 :
             next_due_date = ""
             save_in_compliance_history(
                 db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
-                d["due_date"], next_due_date, int(d["assignee"])
+                d["due_date"], next_due_date, int(d["assignee"], d["concurrence_person"], int(approval_person))
             )
         else :
             next_due_date, trigger_before = calculate_next_due_date(
@@ -348,7 +351,7 @@ def start_new_task(db, client_id, current_date):
             )
             save_in_compliance_history(
                 db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
-                d["due_date"], next_due_date, int(d["assignee"])
+                d["due_date"], next_due_date, int(d["assignee"], d["concurrence_person"], int(approval_person))
             )
             if trigger_before is None :
                 trigger_before = d["trigger_before_days"]
@@ -383,7 +386,7 @@ def get_inprogress_compliances(db):
             INNER JOIN tbl_client_compliances b ON a.client_statutory_id = b.client_statutory_id\
             INNER JOIN tbl_compliances c ON c.compliance_id = b.compliance_id \
             WHERE c.compliance_id = t1.compliance_id AND a.unit_id = t1.unit_id \
-            AND a.country_id = t1.country_id) domain_id,\
+        ) domain_id \
         FROM tbl_compliance_history t1 WHERE approve_status = NULL OR approve_status != 1  "
     cursor = db.cursor()
     cursor.execute(query)
@@ -403,7 +406,7 @@ def get_inprogress_compliances(db):
 
 def get_client_settings(db):
     query = "SELECT assignee_reminder, escalation_reminder_in_advance, escalation_reminder \
-        FROM tbl_client_settings"
+        FROM tbl_client_groups"
     cursor = db.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
@@ -470,9 +473,10 @@ def notify_escalation_to_all(db, client_info, compliance_info):
 def notify_task_details(db, client_id):
     client_info = get_client_settings(db)
     compliance_info = get_inprogress_compliances(db)
-    reminder_to_assignee(db, client_info, compliance_info)
-    reminder_before_due_date(db, client_info, compliance_info)
-    notify_escalation_to_all(db, client_info, compliance_info)
+    if compliance_info :
+        reminder_to_assignee(db, client_info, compliance_info)
+        reminder_before_due_date(db, client_info, compliance_info)
+        notify_escalation_to_all(db, client_info, compliance_info)
 
 def notify_before_contract_period(db, client_id):
     pass

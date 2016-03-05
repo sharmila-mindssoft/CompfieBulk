@@ -57,21 +57,22 @@ function displayEdit (userId) {
 					userGroupval = userGroupsList[k]["user_group_name"];
 					break;
 				}
-		}
-		$("#employeename").val(employeeName);
-	    $("#employeeid").val(employeeId);
-	  	$("#address").val(address);
-	 	$("#countrycode").val(countryCode);
-		$("#areacode").val(areaCode);
-		$("#contactno").val(contactNo);
-		$("#usergroupval").val(userGroupval);
-		$("#usergroup").val(userGroup);
-		$("#designation").val(designation);
-		$("#domainselected").val(domainIds.length+" Selected");
-		$("#countryselected").val(countryIds.length+" Selected");
-		$("#emailid").hide();
-		$("#view_emailid").text(emailId);
-		break;
+			}
+			$("#employeename").val(employeeName);
+		    $("#employeeid").val(employeeId);
+		  	$("#address").val(address);
+		 	$("#countrycode").val(countryCode);
+			$("#areacode").val(areaCode);
+			$("#contactno").val(contactNo);
+			$("#usergroupval").val(userGroupval);
+			$("#usergroup").val(userGroup);
+			$("#designation").val(designation);
+			$("#domainselected").val(domainIds.length+" Selected");
+			$("#countryselected").val(countryIds.length+" Selected");
+			$("#emailid").hide();
+			$("#emailid").val(emailId);
+			$("#view_emailid").text(emailId);
+			break;
 		}
 	}
 }

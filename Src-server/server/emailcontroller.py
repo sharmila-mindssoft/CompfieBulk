@@ -4,6 +4,11 @@ import smtplib
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 
+from server.constants import (
+    CLIENT_URL, KNOWLEDGE_URL
+)
+
+
 # server = smtplib.SMTP('mail.mindssoft.com', 25)
 # server.ehlo()
 # server.login(self.sender, self.password)
@@ -24,8 +29,8 @@ __all__ = [
 	"EmailHandler"
 ]
 
-CLIENT_URL = "http://localhost:8080/"
-KNOWLEDGE_URL= "http://localhost:8082/knowledge/"
+# CLIENT_URL = "http://localhost:8080/"
+# KNOWLEDGE_URL= "http://localhost:8082/knowledge/"
 
 class Email(object):
 

@@ -8,7 +8,8 @@
       </div>
       <div class="clearfix"></div>
       <div class="grid-table">
-        <table>
+        <table class="js-filtertable">
+           <thead>
           <tr align="left">
             <th align="center">#</th>
             <th>Group</th>
@@ -20,13 +21,14 @@
           </tr>
           <tr>
             <td align="center"></td>
-            <td><input type="text" class="filter-text-box"></td>
-            <td><input type="text" class="filter-text-box"></td>
-            <td><input type="text" class="filter-text-box"></td>
-            <td><input type="text" class="filter-text-box"></td>
+            <td><input type="text" class="filter-text-box js-filter"></td>
+            <td><input type="text" class="filter-text-box js-filter"></td>
+            <td><input type="text" class="filter-text-box js-filter"></td>
+            <td><input type="text" class="filter-text-box js-filter"></td>
             <td align="center"></td>
             <td align="center"></td>
           </tr>
+          </thead>
           <tbody class="tbody-clientunit-list">
           </tbody>
         </table>
@@ -69,7 +71,7 @@
                   <option value="">Select</option>
                 </Select>
                 <input id="businessgroup-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Business Group Name">
-                <span style="font-size:10px"><a href="#" id="businessgroup-new" onclick="businessGroupExistingChecking('New')">New</a><a href="#" id="businessgroup-existing" style="display:none;" onclick="businessGroupExistingChecking('Cancel')">Cancel</a></span> </div>
+                <span style="font-size:10px"><a href="" id="businessgroup-new" onclick="businessGroupExistingChecking('New')">New</a><a href="" id="businessgroup-existing" style="display:none;" onclick="businessGroupExistingChecking('Cancel')">Cancel</a></span> </div>
               </div>
             </div>
             <div class="input-row-right">
@@ -80,7 +82,7 @@
                     <option value="">Select</option>
                   </Select>
                   <input id="entity-text" type="text" class="input-box" style="width:190px;display:none" placeholder="Legal Entity Name">
-                  <span style="font-size:10px"><a href="#" id="entity-new" onclick="legalEntityExistingChecking('New')">New</a><a href="#" id="entity-existing" style="display:none;" onclick="legalEntityExistingChecking('Cancel')">Cancel</a></span> </div>
+                  <span style="font-size:10px"><a href="" id="entity-new" onclick="legalEntityExistingChecking('New')">New</a><a href="" id="entity-existing" style="display:none;" onclick="legalEntityExistingChecking('Cancel')">Cancel</a></span> </div>
                 </div>
                 <div class="input-row">
                   <div class="single-column-field-label">Division</div>
@@ -89,7 +91,7 @@
                       <option value="">Select</option>
                     </Select>
                     <input id="division-text" type="text" class="input-box"  style="width:190px;display:none" placeholder="Division Name">
-                    <span style="font-size:10px"><a href="#" id="division-new" onclick="divisionExistingChecking('New')">New</a><a href="#" id="division-existing" style="display:none;" onclick="divisionExistingChecking('Cancel')">Cancel</a></span> </div>
+                    <span style="font-size:10px"><a href="" id="division-new" onclick="divisionExistingChecking('New')">New</a><a href="" id="division-existing" style="display:none;" onclick="divisionExistingChecking('Cancel')">Cancel</a></span> </div>
                   </div>
                 </div>
                 <input type="hidden" id="countrycount" value="">
@@ -123,7 +125,6 @@
             </div>
           </td>
           <td colspan="7"><div style="text-align:right;" class="unit-error-msg"></div></td>
-          <td class="closecountry"><img src="images/deletebold.png"></td>
         </tr>
         <tr align="left">
           <th width="11%">Geography Level</th>
@@ -135,7 +136,7 @@
           <th width="7%">Postal Code</th>
           <th width="10%">Domain</th>
           <th width="5%" style="padding-right:5px">Status</th>
-          <th></th>
+          
         </tr>
         <tbody class="tbody-unit-list">
           <tr class="table-row" style="vertical-align:top;">
@@ -165,11 +166,11 @@
     </div>
   </td>
   <td align="center">Active</td>
-  <td align="center" class="closeunit"><img src="images/deletebold.png"></td>
+  
 </tr>
 </tbody>
 <tr>
-<td colspan="10" align="right"><div style="float:right" class="add-unit-row" onclick="addNewUnitRow(this)" ><img src="/images/icon-plus.png" alt="Add New Unit" />Add Unit</div></td>
+<td colspan="9" align="right"><div style="float:right" class="add-unit-row" onclick="addNewUnitRow(this)" ><img src="/images/icon-plus.png" alt="Add New Unit" />Add Unit</div></td>
 </tr>
 </table>
 </div>
@@ -203,7 +204,6 @@
         </div>
         </td>
         <td align="center">Active</td>
-        <td align="center" class="closeunit">x</td>
     </tr>
 </table>
 </div>

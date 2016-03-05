@@ -34,13 +34,14 @@ def get_client_groups(db, request, session_user):
     )
 
 def create_database(
-    host, username, password, database_name, db_username, db_password, email_id, 
-    client_id, short_name, db, country_ids, domain_ids
+    host, username, password, database_name, db_username,
+    db_password, email_id, client_id, short_name, db,
+    country_ids, domain_ids
 ):
     try:
         db._create_database(
             host, username, password, database_name, db_username,
-            db_password, email_id, client_id, short_name, country_ids, 
+            db_password, email_id, client_id, short_name, country_ids,
             domain_ids
         )
     except Exception, x:
@@ -68,28 +69,39 @@ def save_client_group(db, request, session_user):
         domain_ids = ",".join(str(x) for x in request.domain_ids)
         create_database_thread = threading.Thread(
             target=create_database, args=[
-                host, username, password, database_name, db_username, db_password, 
-                request.email_id, client_id, request.short_name, db, country_ids, domain_ids
+                host, username, password, database_name, db_username,
+                db_password, request.email_id, client_id, request.short_name, db,
+                country_ids, domain_ids
             ]
         )
         create_database_thread.start()
         try:
             db.save_client_group(client_id, request, session_user)
+            print "client group saved"
             db.save_date_configurations(client_id, request.date_configurations,
                 session_user)
+            print "client config saved"
             db.save_client_countries(client_id, request.country_ids)
+            print "client countries saved"
             db.save_client_domains(client_id, request.domain_ids)
+            print "client domains saved"
             db.save_incharge_persons(request, client_id)
+            print "client incharge persons saved"
             db.save_client_user(request, session_user, client_id)
-            db.update_client_db_details(host, client_id, db_username,
-                db_password, request.short_name, database_name, db_port)
+            print "client admin saved"
+            db.update_client_db_details(
+                host, client_id, db_username,
+                db_password, request.short_name, database_name, db_port
+            )
             db.notify_incharge_persons(request)
+            print "notified to incharge"
             while create_database_thread.isAlive():
                 continue
             return technomasters.SaveClientGroupSuccess()
         except Exception, e:
             print "Error:{}".format(e)
             db.delete_database(host, database_name, db_username, db_password)
+            print "database deleted"
             db._connection.rollback()
             return technomasters.ClientCreationFailed(error="Failed to create client")
 

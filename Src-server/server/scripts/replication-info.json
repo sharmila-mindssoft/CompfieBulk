@@ -31,7 +31,8 @@
         "auto_id": "legal_entity_id",
         "client_id": "client_id",
         "columns": [
-            "legal_entity_name"
+            "legal_entity_name",
+            "business_group_id",
         ],
         "references": []
     },
@@ -40,7 +41,9 @@
         "auto_id": "division_id",
         "client_id": "client_id",
         "columns": [
-            "division_name"
+            "division_name",
+            "division_id",
+            "legal_entity_id"
         ],
         "references": []
     },

@@ -1,6 +1,7 @@
 import time
 from tornado.httpclient import HTTPRequest
 import json
+import traceback
 from replication.protocol import (
     Response, GetChanges, GetChangesSuccess, InvalidReceivedCount
 )
@@ -39,6 +40,7 @@ class ReplicationManager(object) :
         self._get_received_count()
         ip, port = self._knowledge_server_address
         self._poll_url = "http://%s:%s/replication" % (ip, port)
+        print "_received_count ================ " , self._received_count
 
     def _load_auto_id_columns(self):
         self._auto_id_columns = {
@@ -85,6 +87,7 @@ class ReplicationManager(object) :
     def _poll(self) :
         assert self._stop is False
         assert self._received_count is not None
+        print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
 
         def on_timeout():
             if self._stop:
@@ -145,17 +148,28 @@ class ReplicationManager(object) :
         values = []
         for x in changes:
             if x.value is None:
-                values.append["NULL"]
+                values.append("NULL ")
             else:
-                values.append["'" + x.value.replace("'", "\\'") + "'"]
+                values.append(str(x.value))
+            val = str(values)[1:-1]
+            # if i != 0 :
+            #     values += "," + values
+            # values.append(str(x.value))
+            # values.append["'" + x.value.replace("'", "\\'") + "'"]
         query = "INSERT INTO %s (%s, %s) VALUES(%s, %s);" % (
             tbl_name,
             auto_id,
             ",".join(columns),
             changes[0].tbl_auto_id,
-            values
+            val
         )
-        self._db.execute(query)
+        print query
+        try :
+            self._db.execute(query)
+        except Exception, e:
+            print e
+            print query
+
         self._temp_count = changes[-1].audit_trail_id
 
     def _execute_update_statement(self, change):
@@ -169,11 +183,15 @@ class ReplicationManager(object) :
             change.tbl_auto_id
         )
         self._db.execute(query)
+
         self._temp_count = change.audit_trail_id
 
     def _parse_data(self, changes):
-        self._temp_count = self._received_count
+
         self._db.begin()
+        print "begin _parse_data", self._received_count
+        print "_temp_count ", self._temp_count
+        self._temp_count = self._received_count
         try:
             changes_list = []
             tbl_name = ""
@@ -203,6 +221,7 @@ class ReplicationManager(object) :
             self._db.update_traild_id(self._temp_count)
             self._db.commit()
         except Exception, e:
+            print(traceback.format_exc())
             print e
             self._temp_count = self._received_count
             self._db.rollback()

@@ -92,7 +92,8 @@ function initializeNavBar () {
 
     var client_name = client_mirror.getClientShortName();
     var employee_name = mirror.getEmployeeName();
-    if (typeof(client_name) == "undefined") {
+    console.log(client_name)
+    if ((typeof(client_name) == "undefined") || (client_name == null) ){
         profile_url = "/knowledge/profile";
         change_password_url = "/knowledge/change-password";
     }

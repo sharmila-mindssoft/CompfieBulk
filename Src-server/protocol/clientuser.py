@@ -33,7 +33,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_RecordType_core_FileList,
     to_structure_OptionalType_CustomTextType_20,
     to_structure_OptionalType_CustomTextType_500,
-    to_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence
+    to_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence,
+    to_structure_UnsignedIntegerType_32
 )
 
 #

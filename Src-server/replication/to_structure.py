@@ -45,3 +45,6 @@ def to_structure_VectorType_RecordType_protocol_Change(data):
         lst.append(to_structure_RecordType_protocol_Change(item))
     return lst
 
+def to_structure_OptionalType_Text(data):
+    if data is '' or data is None: return None
+    return to_structure_Text(data)
