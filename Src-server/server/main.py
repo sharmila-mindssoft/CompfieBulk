@@ -90,6 +90,8 @@ class API(object):
                 data
             )
         except Exception, e:
+            print e
+            print(traceback.format_exc())
             response.set_status(400)
             response.send(str(e))
             return None
@@ -118,6 +120,8 @@ class API(object):
             self._db.commit()
             respond(response_data)
         except Exception, e:
+            print e
+            print(traceback.format_exc())
             self._db.rollback()
 
     @api_request(

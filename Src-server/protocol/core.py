@@ -51,8 +51,9 @@ from protocol.parse_structure import (
     parse_structure_VectorType_UnsignedIntegerType_32,
     parse_structure_OptionalType_UnsignedIntegerType_32,
     parse_structure_SignedIntegerType_8,
-    parse_structure_VectorType_CustomTextType_250,
-    parse_structure_OptionalType_VectorType_CustomTextType_250
+    parse_structure_OptionalType_VectorType_CustomTextType_250,
+    parse_structure_OptionalType_VectorType_UnsignedIntegerType_32,
+    parse_structure_VectorType_CustomTextType_250
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -112,8 +113,10 @@ from protocol.to_structure import (
     to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_OptionalType_CustomTextType_500,
     to_structure_CustomTextType_100,
+    to_structure_OptionalType_VectorType_CustomTextType_250,
+    to_structure_OptionalType_VectorType_UnsignedIntegerType_32,
     to_structure_VectorType_CustomTextType_250,
-    to_structure_OptionalType_VectorType_CustomTextType_250
+
 )
 
 #
@@ -1262,9 +1265,9 @@ class GroupCompanyDetail(object):
         client_name = data.get("client_name")
         client_name = parse_structure_CustomTextType_50(client_name)
         domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        domain_ids = parse_structure_OptionalType_VectorType_UnignedIntegerType_32(domain_ids)
         country_ids = data.get("country_ids")
-        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
+        country_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(country_ids)
         incharge_persons = data.get("incharge_persons")
         incharge_persons = parse_structure_VectorType_SignedIntegerType_8(incharge_persons)
         file_name = data.get("file_name")
@@ -1298,8 +1301,8 @@ class GroupCompanyDetail(object):
         return {
             "client_id": to_structure_UnsignedIntegerType_32(self.client_id),
             "client_name": to_structure_CustomTextType_50(self.client_name),
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
+            "domain_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.domain_ids),
+            "country_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.country_ids),
             "incharge_persons": to_structure_VectorType_UnsignedIntegerType_32(self.incharge_persons),
             "file_name": to_structure_CustomTextType_250(self.file_name),
             "logo": to_structure_CustomTextType_250(self.logo),

@@ -1,5 +1,5 @@
 import json
-from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list)
+from protocol.jsonvalidators import (parse_enum, parse_dictionary, parse_static_list, parse_bool)
 from protocol.parse_structure import (
     parse_structure_CustomTextType_100,
     parse_structure_RecordType_core_Menu,
@@ -23,7 +23,8 @@ from protocol.to_structure import (
     to_structure_OptionalType_CustomTextType_100,
     to_structure_OptionalType_CustomTextType_20,
     to_structure_OptionalType_UnsignedIntegerType_32,
-    to_structure_OptionalType_CustomTextType_500
+    to_structure_OptionalType_CustomTextType_500,
+    to_structure_Bool
 )
 
 #
@@ -220,7 +221,10 @@ class Response(object):
         raise NotImplementedError
 
 class UserLoginSuccess(Response):
-    def __init__(self, user_id, session_token, email_id, user_group_name, menu, employee_name, employee_code, contact_no, address, designation, client_id):
+    def __init__(self, user_id, session_token, email_id, user_group_name, menu, 
+        employee_name, employee_code, contact_no, address, designation, client_id,
+        is_admin
+    ):
         self.user_id = user_id
         self.session_token = session_token
         self.email_id = email_id
@@ -232,10 +236,13 @@ class UserLoginSuccess(Response):
         self.address = address
         self.designation = designation
         self.client_id = client_id
+        self.is_admin = is_admin
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "session_token", "email_id", "user_group_name", "menu", "employee_name", "employee_code", "contact_no", "address", "designation"])
+        data = parse_dictionary(data, ["user_id", "session_token", "email_id", 
+            "user_group_name", "menu", "employee_name", "employee_code", 
+            "contact_no", "address", "designation", "is_admin"])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         session_token = data.get("session_token")
@@ -258,7 +265,11 @@ class UserLoginSuccess(Response):
         designation = parse_structure_OptionalType_CustomTextType_50(designation)
         client_id = data.get("client_id")
         client_id = parse_structure_OptionalType_UnsignedIntegerType_32(client_id)
-        return UserLoginSuccess(user_id, session_token, email_id, user_group_name, menu, employee_name, employee_code, contact_no, address, designation, client_id)
+        is_admin = data.get("is_admin")
+        is_admin = parse_bool(is_admin)
+        return UserLoginSuccess(
+            user_id, session_token, email_id, user_group_name, menu, employee_name, 
+            employee_code, contact_no, address, designation, client_id, is_admin)
 
     def to_inner_structure(self):
         return {
@@ -272,7 +283,8 @@ class UserLoginSuccess(Response):
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
             "address": to_structure_OptionalType_CustomTextType_500(self.address),
             "designation": to_structure_OptionalType_CustomTextType_50(self.designation),
-            "client_id": to_structure_OptionalType_UnsignedIntegerType_32(self.client_id)
+            "client_id": to_structure_OptionalType_UnsignedIntegerType_32(self.client_id),
+            "is_admin": to_structure_Bool(self.is_admin)
         }
 
 class AdminLoginSuccess(Response):

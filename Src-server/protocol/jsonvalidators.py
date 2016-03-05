@@ -56,16 +56,20 @@ def parse_point_numbers(x) :
 def parse_string(x) :
     if x is None:
         raise empty_error()
+    elif x  == "":
+        raise empty_error()
     t = type(x)
     if t is unicode :
         return x.encode("utf8")
-    elif t is str :
+    elif t is str:
         return x
     else :
         raise expectation_error("a string", x)
 
 def parse_custom_string(x, length) :
     if x is None:
+        raise empty_error()
+    elif x  == "":
         raise empty_error()
     t = type(x)
     custom_string = None
@@ -86,6 +90,8 @@ def parse_custom_string(x, length) :
 
 def parse_bytes(x) :
     if x is None:
+        raise empty_error()
+    elif x  == "":
         raise empty_error()
     t = type(x)
     if t is unicode :

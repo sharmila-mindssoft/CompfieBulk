@@ -77,7 +77,6 @@ class ReplicationManager(object) :
         self._db.begin()
         try:
             self._received_count = self._db.get_trail_id()
-            # print "get_trail_id ", self._received_count
             self._db.commit()
         except Exception, e:
             print e
@@ -124,7 +123,7 @@ class ReplicationManager(object) :
                 self._poll()
                 return
             if type(r) is InvalidReceivedCount:
-                print "InvalidReceivedCount sent %s"
+                # print "InvalidReceivedCount sent %s"
                 # self._poll()
                 return
             assert r is not None
@@ -134,9 +133,6 @@ class ReplicationManager(object) :
         self._poll()
 
     def _execute_insert_statement(self, changes, error_ok=False):
-        # print "Execute insert"
-        # print "self._received_count", self._received_count
-        # print "self._temp_count", self._temp_count
         assert (len(changes)) > 0
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
@@ -168,7 +164,11 @@ class ReplicationManager(object) :
             val
         )
         # print query
-        self._db.execute(query)
+        try :
+            self._db.execute(query)
+        except Exception, e:
+            print e
+            print query
 
         self._temp_count = changes[-1].audit_trail_id
 
@@ -218,8 +218,6 @@ class ReplicationManager(object) :
                     changes_list.append(change)
             if is_insert:
                 self._execute_insert_statement(changes_list, error_ok=True)
-            # print "-" * 10
-            # print "update_traild_id ", self._temp_count
             self._db.update_traild_id(self._temp_count)
             self._db.commit()
         except Exception, e:

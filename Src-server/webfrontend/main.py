@@ -1,5 +1,6 @@
 import os
 import json
+import traceback
 from tornado.httpclient import AsyncHTTPClient
 from tornado.web import (
     StaticFileHandler, RequestHandler

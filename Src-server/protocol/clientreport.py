@@ -1548,16 +1548,19 @@ class GetClientDetailsReportDataSuccess(Response):
         }
 
 class ExportToCSVSuccess(Response):
-    def __init__(self):
-        pass
+    def __init__(self, link):
+        self.link = link
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return ExportToCSVSuccess()
+        data = parse_dictionary(data, ["link"])
+        link = data.get("link")
+        link = parse_structure_CustomTextType_500(link)
+        return ExportToCSVSuccess(link)
 
     def to_inner_structure(self):
         return {
+            "link" : to_structure_CustomTextType_500(self.link)
         }
 
 
