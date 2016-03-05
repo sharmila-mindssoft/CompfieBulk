@@ -174,6 +174,7 @@ $(".tbody-geography-level").find("div").remove();
 function changeStatus (statutorymappingId,isActive) {
     function onSuccess(data){
       getStatutoryMappings();
+      getStatutoryMappingsMastersList();
     }
     function onFailure(error){
     }
