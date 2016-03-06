@@ -123,13 +123,17 @@ function load_secondwizard(){
         //var sdateDesc = '';
         var elementTriggerdate = '';
         var elementDuedate = '';
-        for(var k = 0; k < due_date.length; k++){
-          if(due_date.length > 1){
-            elementDuedate += '<input type="text" id="duedate'+statutoriesCount+'-'+k+'" readonly="readonly" class="input-box" value="' + due_date[k] + '"/>'
-          }else{
-            elementDuedate += '<input type="text" id="duedate'+statutoriesCount+'" readonly="readonly" class="input-box" value="' + due_date[k] + '"/>'
+
+
+        if(due_date.length > 1){
+          for(var k = 0; k < due_date.length; k++){
+            elementDuedate += '<input type="text" id="duedate'+statutoriesCount+'-'+k+'" readonly="readonly" class="input-box" value="' + due_date[k] + '"/>';
           }
+        }else{
+          elementDuedate += '<input type="text" id="duedate'+statutoriesCount+'" readonly="readonly" class="input-box" value="' + due_date[0] + '"/>'
         }
+
+       
 
         //if(frequency == 'Periodical' || frequency == 'Review') sdateDesc = 'Every';
         for(j = 0; j < statutory_date.length; j++){
@@ -155,12 +159,14 @@ function load_secondwizard(){
           else if(sMonth == 10) sMonth = "October"
           else if(sMonth == 11) sMonth = "November"
           else if(sMonth == 12) sMonth = "December"
-            
-          triggerdate +=  tDays + " Day(s)";
+
+          if(tDays != ''){
+            triggerdate +=  tDays + " Day(s)";
+          }
           statutorydate +=  sMonth +' '+ sDay + ' ';
 
           if(statutory_date.length > 1){
-            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+j+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
+            elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'-'+j+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
           }else{
             elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
           }
@@ -196,11 +202,21 @@ function load_secondwizard(){
         
         $('.accordion-content'+count).append(clone2);
 
-        for(var k = 0; k < due_date.length; k++){
-          var duename = statutoriesCount;
-          if(due_date.length > 1){
+
+        var duename = statutoriesCount;
+        if(due_date.length > 1){
+          for(var k = 0; k < due_date.length; k++){
             duename = statutoriesCount+'-'+k;
-          }
+            $("#duedate"+duename).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          });
+          }  
+        }else{
           $("#duedate"+duename).datepicker({
             changeMonth: true,
             changeYear: true,
@@ -210,9 +226,7 @@ function load_secondwizard(){
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         });
         }
-
-        
-
+          
         $("#validitydate"+statutoriesCount ).datepicker({
             changeMonth: true,
             changeYear: true,
@@ -377,25 +391,27 @@ function submitcompliance(){
 
           var validitydate = null;
           if($('#validitydate'+statutoriesCount).val() != undefined && $('#validitydate'+statutoriesCount).val() != '') $('#validitydate'+statutoriesCount).val();
-          for(var k = 0; k < due_date.length; k++){
+          
+          if(due_date.length > 1){
+            for(var k = 0; k < due_date.length; k++){
             var dDate = null;
             var tDay = null;
-            if(due_date.length > 1){
-              dDate = $('#duedate'+statutoriesCount+'-'+k).val();
-              tDay = $('#triggerdate'+statutoriesCount+'-'+k).val();
-              current_due_dates.push(dDate);
-              current_trigger_days.push(tDay);
-            }else{
-              dDate = $('#duedate'+statutoriesCount).val();
-              tDay = $('#triggerdate'+statutoriesCount).val();
-              current_due_dates.push(dDate);
-              current_trigger_days.push(tDay);
+
+            dDate = $('#duedate'+statutoriesCount+'-'+k).val();
+            tDay = $('#triggerdate'+statutoriesCount+'-'+k).val();
+            current_due_dates.push(dDate);
+            current_trigger_days.push(tDay);
             }
-            var convertDueDate = convert_date(dDate);
-            if (convertDueDate < currentDate) {
-                displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
-                return false;
-            }
+          }else{
+            dDate = $('#duedate'+statutoriesCount).val();
+            tDay = $('#triggerdate'+statutoriesCount).val();
+            current_due_dates.push(dDate);
+            current_trigger_days.push(tDay);
+          }
+          var convertDueDate = convert_date(dDate);
+          if (convertDueDate < currentDate) {
+              displayMessage("Due date is less than today's date for compliance '" + compliance_name + "'");
+              return false;
           }
 
           var sort_elements = current_due_dates;
