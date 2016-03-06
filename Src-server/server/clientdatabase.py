@@ -639,11 +639,11 @@ class ClientDatabase(Database):
         return results
 
     def notify_user(
-        self, email_id, password, employee_name, employee_code
+        self, short_name, email_id, password, employee_name, employee_code
     ):
         try:
             email.send_user_credentials(
-                short_name, user.email_id, password, user.employee_name, user.employee_code
+                short_name, email_id, password, employee_name, employee_code
             )
         except Exception, e:
             print "Error while sending email : {}".format(e)
@@ -671,6 +671,7 @@ class ClientDatabase(Database):
             values.append(user.seating_unit_id)
 
         result1 = self.insert(self.tblUsers, columns, values, client_id)
+        print "saved user"
 
         country_columns = ["user_id", "country_id"]
         country_values_list = []
@@ -678,6 +679,7 @@ class ClientDatabase(Database):
             country_value_tuple = (user_id, int(country_id))
             country_values_list.append(country_value_tuple)
         result2 = self.bulk_insert(self.tblUserCountries, country_columns, country_values_list, client_id)
+        print "saved user countries"
 
         domain_columns = ["user_id", "domain_id"]
         domain_values_list = []
@@ -685,6 +687,7 @@ class ClientDatabase(Database):
             domain_value_tuple = (user_id, int(domain_id))
             domain_values_list.append(domain_value_tuple)
         result3 = self.bulk_insert(self.tblUserDomains, domain_columns, domain_values_list, client_id)
+        print "saved user domains"
 
         unit_columns = ["user_id", "unit_id"]
         unit_values_list = []
@@ -692,6 +695,7 @@ class ClientDatabase(Database):
             unit_value_tuple = (user_id, int(unit_id))
             unit_values_list.append(unit_value_tuple)
         result4 = self.bulk_insert(self.tblUserUnits, unit_columns, unit_values_list, client_id)
+        print "saved user units"
 
         action = "Created user \"%s - %s\"" % (user.employee_code, user.employee_name)
         self.save_activity(session_user, 4, action, client_id)

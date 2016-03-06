@@ -54,7 +54,7 @@ def user_login_response(db, data, client_id, ip):
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
     employee = "%s - %s" % (employee_code, employee_name)
-    session_token = db.add_session(user_id, session_type, ip, client_id, employee)
+    session_token = db.add_session(user_id, session_type, ip, employee, client_id)
     contact_no = data["contact_no"]
     user_group_name = data["user_group_name"]
     form_ids = data["form_ids"]
@@ -81,7 +81,7 @@ def admin_login_response(db, client_id, ip):
     email_id = None
     session_type = 1  # web
     session_token = db.add_session(
-        user_id, session_type, ip, client_id, "Administrator"
+        user_id, session_type, ip, "Administrator", client_id
     )
     form_ids = db.get_form_ids_for_admin()
     menu = process_user_forms(db, form_ids, client_id, 1)
