@@ -1,4 +1,5 @@
 import os
+import threading
 from protocol import (
     core, general, clienttransactions, dashboard,
     clientreport, clientadminsettings, clientuser
@@ -637,6 +638,16 @@ class ClientDatabase(Database):
             ))
         return results
 
+    def notify_user(
+        self, email_id, password, employee_name, employee_code
+    ):
+        try:
+            email.send_user_credentials(
+                short_name, user.email_id, password, user.employee_name, user.employee_code
+            )
+        except Exception, e:
+            print "Error while sending email : {}".format(e)
+    
     def save_user(self, user_id, user, session_user, client_id):
         result1 = None
         result2 = None
@@ -684,15 +695,18 @@ class ClientDatabase(Database):
 
         action = "Created user \"%s - %s\"" % (user.employee_code, user.employee_name)
         self.save_activity(session_user, 4, action, client_id)
-        try:
-            email.send_user_credentials(
-                self.get_short_name_from_client_id(
-                    client_id
-                ), user.email_id, password, user.employee_name, user.employee_code
-            )
-        except Exception, e:
-            print "Error while sending email : {}".format(e)
+        short_name = self.get_short_name_from_client_id(
+            client_id
+        )
+        notify_user_thread = threading.Thread(
+            target=self.notify_user, args=[
+                short_name, user.email_id, password, user.employee_name, user.employee_code
+            ]
+        )
+        notify_user_thread.start()
         return (result1 and result2 and result3 and result4)
+
+    
 
     def update_user(self, user, session_user, client_id):
         result1 = None
@@ -2044,19 +2058,24 @@ class ClientDatabase(Database):
         return unit_list
 
     def get_users_for_seating_units(self, session_user, client_id):
-        where_condition = " WHERE t1.seating_unit_id In \
-            (SELECT t.unit_id FROM tbl_user_units t \
-            WHERE t.user_id = %s)" % (
-                session_user
-            )
-        query = "SELECT t1.user_id, t1.employee_name, t1.employee_code, \
+        # where_condition = " WHERE t1.seating_unit_id In \
+        #     (SELECT t.unit_id FROM tbl_user_units t \
+        #     WHERE t.user_id = %s)" % (
+        #         session_user
+        #     )
+        where_condition = "WHERE t2.unit_id \
+            IN \
+            (select distinct unit_id from tbl_user_units where user_id = %s)" % (session_user)
+        query = "SELECT t1.user_id, t1.employee_name, \
+            t1.employee_code, \
             t1.seating_unit_id, t1.user_level, \
             (select group_concat(distinct domain_id) from tbl_user_domains where user_id = t1.user_id) domain_ids, \
             (select group_concat(distinct unit_id) from tbl_user_units where user_id = t1.user_id ) unit_ids,\
-            t4.address \
+            t1.is_service_provider, \
+            (select service_provider_name from  tbl_service_providers where service_provider_id = t1.service_provider_id) service_provider\
             FROM tbl_users t1 \
-            INNER JOIN tbl_units t4 \
-            ON t1.seating_unit_id = t4.unit_id "
+            INNER JOIN tbl_user_units t2 \
+            ON t1.user_id = t2.user_id "
 
         if session_user > 0 :
             query = query + where_condition
@@ -2065,12 +2084,16 @@ class ClientDatabase(Database):
         columns = [
             "user_id", "employee_name", "employee_code",
             "seating_unit_id", "user_level",
-            "domain_ids", "unit_ids", "address"
+            "domain_ids", "unit_ids",
+            "is_service_provider", "service_provider"
         ]
         result = self.convert_to_dict(rows, columns)
-        seating_unit_users = {}
+        user_list = []
         for r in result :
-            name = "%s - %s" % (r["employee_code"], r["employee_name"])
+            if int(r["is_service_provider"]) == 0 :
+                name = "%s - %s" % (r["employee_code"], r["employee_name"])
+            else :
+                name = "%s - %s" % (r["service_provider"], r["employee_name"])
             unit_id = int(r["seating_unit_id"])
             domain_ids = [
                 int(x) for x in r["domain_ids"].split(',')
@@ -2084,16 +2107,16 @@ class ClientDatabase(Database):
                 r["user_level"],
                 unit_id,
                 unit_ids,
-                domain_ids,
-                r["address"]
+                domain_ids
             )
-            user_list = seating_unit_users.get(unit_id)
-            if user_list is None :
-                user_list = []
+            # user_list = seating_unit_users.get(unit_id)
+            # if user_list is None :
+            #     user_list = []
+            # user_list.append(user)
+            # seating_unit_users[unit_id] = user_list
             user_list.append(user)
-            seating_unit_users[unit_id] = user_list
 
-        return seating_unit_users
+        return user_list
 
     def get_assign_compliance_statutories_for_units(
         self, unit_ids, session_user, client_id

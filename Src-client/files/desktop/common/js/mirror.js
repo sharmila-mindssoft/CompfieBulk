@@ -766,7 +766,13 @@ function initMirror() {
         var employeeCode = userDetail[3];
         var contactNo = userDetail[4];
         var address = userDetail[5];
+        if (userDetail[5] == ""){
+            address = null;
+        }
         var designation = userDetail[6];
+        if (userDetail[6] == ""){
+            designation = null;
+        }
         var countryIds= userDetail[7] ;
         var domainIds= userDetail[8];
         return {
@@ -797,8 +803,13 @@ function initMirror() {
         var employeeName = userDetail[2];
         var employeeCode = userDetail[3];
         var contactNo = userDetail[4];
-        var address = userDetail[5];
+        if (userDetail[5] == ""){
+            address = null;
+        }
         var designation = userDetail[6];
+        if (userDetail[6] ==""){
+            designation = null;
+        }
         var countryIds= userDetail[7] ;
         var domainIds= userDetail[8] ;
         return {
@@ -815,6 +826,7 @@ function initMirror() {
     }
 
     function updateAdminUser(userDetail, callback) {
+        console.log("inside update admin user")
         callerName = "admin"
         var request = [
             "UpdateUser",

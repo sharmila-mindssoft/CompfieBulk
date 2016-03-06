@@ -15,7 +15,9 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_UserDetails,
     parse_structure_CustomTextType_20, parse_structure_CustomTextType_50,
     parse_structure_RecordType_admin_UserGroup,
-    parse_structure_VectorType_RecordType_admin_UserGroup
+    parse_structure_VectorType_RecordType_admin_UserGroup,
+    parse_structure_OptionalType_CustomTextType_250,
+    parse_structure_OptionalType_CustomTextType_50
 )
 from protocol.to_structure import (
     to_structure_MapType_SignedIntegerType_8_RecordType_core_Menu,
@@ -32,7 +34,9 @@ from protocol.to_structure import (
     to_structure_CustomTextType_20, to_structure_CustomTextType_50,
     to_structure_RecordType_admin_UserGroup,
     to_structure_VectorType_RecordType_admin_UserGroup,
-    to_structure_UnsignedIntegerType_32
+    to_structure_UnsignedIntegerType_32,
+    to_structure_OptionalType_CustomTextType_250,
+    to_structure_OptionalType_CustomTextType_50
 )
 
 #
@@ -185,9 +189,9 @@ class SaveUser(Request):
         contact_no = data.get("contact_no")
         contact_no = parse_structure_CustomTextType_20(contact_no)
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
+        address = parse_structure_OptionalType_CustomTextType_250(address)
         designation = data.get("designation")
-        designation = parse_structure_CustomTextType_50(designation)
+        designation = parse_structure_OptionalType_CustomTextType_50(designation)
         country_ids = data.get("country_ids")
         country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
         domain_ids = data.get("domain_ids")
@@ -201,8 +205,8 @@ class SaveUser(Request):
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
             "employee_code": to_structure_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "address": to_structure_CustomTextType_250(self.address),
-            "designation": to_structure_CustomTextType_50(self.designation),
+            "address": to_structure_OptionalType_CustomTextType_250(self.address),
+            "designation": to_structure_OptionalType_CustomTextType_50(self.designation),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
         }
@@ -233,9 +237,9 @@ class UpdateUser(Request):
         contact_no = data.get("contact_no")
         contact_no = parse_structure_CustomTextType_20(contact_no)
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
+        address = parse_structure_OptionalType_CustomTextType_250(address)
         designation = data.get("designation")
-        designation = parse_structure_CustomTextType_50(designation)
+        designation = parse_structure_OptionalType_CustomTextType_50(designation)
         country_ids = data.get("country_ids")
         country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
         domain_ids = data.get("domain_ids")
@@ -249,8 +253,8 @@ class UpdateUser(Request):
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
             "employee_code": to_structure_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "address": to_structure_CustomTextType_250(self.address),
-            "designation": to_structure_CustomTextType_50(self.designation),
+            "address": to_structure_OptionalType_CustomTextType_250(self.address),
+            "designation": to_structure_OptionalType_CustomTextType_50(self.designation),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
         }

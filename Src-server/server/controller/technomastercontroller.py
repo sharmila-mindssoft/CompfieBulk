@@ -44,8 +44,12 @@ def create_database(
             db_password, email_id, client_id, short_name, country_ids,
             domain_ids
         )
-    except Exception, x:
-        print x
+    except Exception, e:
+        print "Error:{}".format(e)
+        db.delete_database(host, database_name, db_username, db_password)
+        print "database deleted"
+        db._connection.rollback()
+        return technomasters.ClientCreationFailed(error="Failed to create client")
 
 def save_client_group(db, request, session_user):
     session_user = int(session_user)
