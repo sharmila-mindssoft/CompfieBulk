@@ -1149,7 +1149,11 @@ class PAST_RECORD_COMPLIANCE(object):
 #
 
 class UNIT_WISE_STATUTORIES(object):
-    def __init__(self, compliance_id, compliance_name, description, frequency, statutory_date, due_date, applicable_units):
+    def __init__(
+        self, compliance_id, compliance_name, description,
+        frequency, statutory_date, due_date, applicable_units,
+        summary
+    ):
         self.compliance_id = compliance_id
         self.compliance_name = compliance_name
         self.description = description
@@ -1157,10 +1161,15 @@ class UNIT_WISE_STATUTORIES(object):
         self.statutory_date = statutory_date
         self.due_date = due_date
         self.applicable_units = applicable_units
+        self.summary = summary
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_id", "compliance_name", "description", "frequency", "statutory_date", "due_date", "applicable_units"])
+        data = parse_dictionary(data, [
+            "compliance_id", "compliance_name", "description", 
+            "frequency", "statutory_date", "due_date", 
+            "applicable_units", "summary"
+        ])
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         compliance_name = data.get("compliance_name")
@@ -1175,7 +1184,13 @@ class UNIT_WISE_STATUTORIES(object):
         due_date = parse_structure_OptionalType_VectorType_CustomTextType_20(due_date)
         applicable_units = data.get("applicable_units")
         applicable_units = parse_structure_VectorType_UnsignedIntegerType_32(applicable_units)
-        return UNIT_WISE_STATUTORIES(compliance_id, compliance_name, description, frequency, statutory_date, due_date, applicable_units)
+        summary = data.get("summary")
+        summary = parse_structure_OptionalType_CustomTextType_100(summary)
+        return UNIT_WISE_STATUTORIES(
+            compliance_id, compliance_name, description,
+            frequency, statutory_date, due_date, applicable_units,
+            summary
+        )
 
     def to_structure(self):
         return {
@@ -1185,7 +1200,8 @@ class UNIT_WISE_STATUTORIES(object):
             "frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.frequency),
             "statutory_date": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_date),
             "due_date": to_structure_OptionalType_VectorType_CustomTextType_20(self.due_date),
-            "applicable_units": to_structure_VectorType_UnsignedIntegerType_32(self.applicable_units)
+            "applicable_units": to_structure_VectorType_UnsignedIntegerType_32(self.applicable_units),
+            "summary": to_structure_OptionalType_CustomTextType_100(self.summary)
         }
 
 #
