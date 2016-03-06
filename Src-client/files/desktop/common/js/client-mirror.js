@@ -1397,6 +1397,34 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function reassingComplianceDet(unitId, complianceId, complianceHistoryId, dueDate) {
+        return {
+            "unit_id": unitId,
+            "compliance_id": complianceId,
+            "compliance_history_id": complianceHistoryId,
+            "due_date": dueDate
+        }
+    }
+
+    function saveReassignCompliance(
+        reassignFrom, reassignedTo, concurrence, approval, 
+        compliance_list, reason, callback 
+    ) {
+        request = [
+            "ReassignCompliance",
+            {
+                "reassigned_from": reassignFrom,
+                "assignee": reassignedTo,
+                "concurrence_person": concurrence,
+                "approval_person": approval,
+                "compliances": compliance_list,
+                "reassigned_reason": reason
+            }
+        ];
+        callerName = "client_transaction";
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -1535,7 +1563,8 @@ function initClientMirror() {
         startOnOccurrenceCompliance: startOnOccurrenceCompliance,
         getUserwiseCompliances: getUserwiseCompliances,
         exportToCSV: exportToCSV,
-        get_ip: get_ip
+        get_ip: get_ip,
+        saveReassignCompliance : saveReassignCompliance
     }
 }
 var client_mirror = initClientMirror();

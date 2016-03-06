@@ -198,6 +198,7 @@ def process_get_user_wise_compliances(db, session_user, client_id):
     users = db.get_users_for_seating_units(
         session_user, client_id
     )
+    units = db.get_units_for_assign_compliance(session_user, client_id)
     result = db.get_user_wise_compliance(session_user, client_id)
     assignee_wise_compliance = result[0]
     assignee_compliance_count = result[1]
@@ -215,7 +216,7 @@ def process_get_user_wise_compliances(db, session_user, client_id):
         final_dict[key] = [user_data]
 
     result = clienttransactions.GetUserwiseCompliancesSuccess(
-        final_dict, users
+        final_dict, users, units
     )
 
     return result
