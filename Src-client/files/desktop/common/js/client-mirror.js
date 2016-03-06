@@ -171,11 +171,11 @@ function initClientMirror() {
                 }
             ]
         ]
-        console.log(request)
         jQuery.post(
             CLIENT_BASE_URL + "login",
             toJSON(request),
             function(data) {
+                console.log("data:"+data);
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
@@ -185,13 +185,16 @@ function initClientMirror() {
                     console.log(data);
                     initSession(response, short_name)
                     callback(null, response);
-
                 }
                 else {
                     callback(status, null);
                 }
             }
-        )
+        ).fail(function(jqXHR, textStatus, errorThrown){
+            if(jqXHR.status == 404) {
+                callback("Client Database not exists")
+            }
+        });
     }
 
     function verifyLoggedIn() {
