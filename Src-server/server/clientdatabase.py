@@ -2066,7 +2066,7 @@ class ClientDatabase(Database):
         where_condition = "WHERE t2.unit_id \
             IN \
             (select distinct unit_id from tbl_user_units where user_id = %s)" % (session_user)
-        query = "SELECT t1.user_id, t1.employee_name, \
+        query = "SELECT distinct t1.user_id, t1.employee_name, \
             t1.employee_code, \
             t1.seating_unit_id, t1.user_level, \
             (select group_concat(distinct domain_id) from tbl_user_domains where user_id = t1.user_id) domain_ids, \
