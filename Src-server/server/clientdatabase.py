@@ -129,7 +129,7 @@ class ClientDatabase(Database):
                     password, username
                 )
             data_list = self.select_one(query)
-            if data_list is None : 
+            if data_list is None :
                 return False
             else :
                 result = self.convert_to_dict(data_list, data_columns)
@@ -647,7 +647,7 @@ class ClientDatabase(Database):
             )
         except Exception, e:
             print "Error while sending email : {}".format(e)
-    
+
     def save_user(self, user_id, user, session_user, client_id):
         result1 = None
         result2 = None
@@ -710,7 +710,7 @@ class ClientDatabase(Database):
         notify_user_thread.start()
         return (result1 and result2 and result3 and result4)
 
-    
+
 
     def update_user(self, user, session_user, client_id):
         result1 = None
@@ -6978,3 +6978,10 @@ class ClientDatabase(Database):
             self.tblForms, columns, condition
         )
         return rows[0][0]
+
+    def get_client_settings(self):
+        query = "SELECT two_levels_of_approval \
+            FROM tbl_client_groups"
+        row = self.select_one(query)
+        if row:
+            return bool(int(row[0]))

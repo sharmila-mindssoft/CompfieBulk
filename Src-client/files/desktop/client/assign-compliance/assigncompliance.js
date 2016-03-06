@@ -474,6 +474,7 @@ function submitcompliance(){
             statutoryDateList = client_mirror.statutoryDates(statutory_day, statutory_month, trigger_before_days);
             statutory_dates.push(statutoryDateList);
           }*/
+          console.log(current_due_date)
           assignComplianceData = client_mirror.assignCompliances(
             compliance_id, compliance_name, statutory_dates,
             current_due_date, validitydate, parseInt(current_trigger_day), applicable_units

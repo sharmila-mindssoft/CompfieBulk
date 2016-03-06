@@ -85,9 +85,10 @@ def process_get_assign_compliance_form_data(db, session_user, client_id):
     divisions = db.get_divisions_for_user(division_ids)
     units = db.get_units_for_assign_compliance(session_user, client_id)
     users = db.get_users_for_seating_units(session_user, client_id)
+    two_level_approve = db.get_client_settings()
     return clienttransactions.GetAssignCompliancesFormDataSuccess(
         countries, business_groups, legal_entities,
-        divisions, units, users
+        divisions, units, users, two_level_approve
     )
 
 
