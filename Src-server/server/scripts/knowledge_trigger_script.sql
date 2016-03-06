@@ -207,7 +207,7 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client_compliances`
  FOR EACH ROW BEGIN
     SET @action = 0;
-    SET @submission_type = (SELECT IFNULL(t1.submission_type, 0) FROM tbl_client_statutories t1 WHERE t1.client_statutory_id = NEW.client_statutory_id);
+    SET @submission_type = (SELECT t1.submission_type FROM tbl_client_statutories t1 WHERE t1.client_statutory_id = NEW.client_statutory_id);
 
 
    IF (@submission_type = 1) THEN
