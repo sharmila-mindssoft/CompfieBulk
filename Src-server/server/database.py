@@ -3488,6 +3488,15 @@ class KnowledgeDatabase(Database):
         cursor.execute(query)
         con.commit()
 
+    def send_client_credentials(
+        self, short_name, email_id, password
+    ):
+        try:
+            email().send_client_credentials(short_name, email_id, password)
+        except Exception, e:
+            print "Error while sending email : {}".format(e)
+        return True
+
     def _create_database(
         self, host, username, password,
         database_name, db_username, db_password, email_id, client_id,
@@ -3535,12 +3544,12 @@ class KnowledgeDatabase(Database):
         print "client domains"
         self._save_client_domains(domain_ids, client_db_cursor)
         client_db_con.commit()
-
-        try:
-            email().send_client_credentials(short_name, email_id, password)
-        except Exception, e:
-            print "Error while sending email : {}".format(e)
-        return True
+        send_client_credentials_thread = threading.Thread(
+            target=self.send_client_credentials, args=[
+                short_name, email_id, password
+            ]
+        )
+        send_client_credentials_thread.start()
 
     def _save_client_countries(self, country_ids, cursor):
         q = "SELECT country_id, country_name, is_active \

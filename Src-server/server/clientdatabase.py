@@ -2088,7 +2088,9 @@ class ClientDatabase(Database):
         seating_unit_users = {}
         for r in result :
             name = "%s - %s" % (r["employee_code"], r["employee_name"])
-            unit_id = int(r["seating_unit_id"])
+            unit_id = None
+            if r["seating_unit_id"] is not None:
+                unit_id = int(r["seating_unit_id"])
             domain_ids = [
                 int(x) for x in r["domain_ids"].split(',')
             ]

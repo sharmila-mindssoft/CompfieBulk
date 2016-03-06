@@ -44,7 +44,7 @@ def create_database(
             db_password, email_id, client_id, short_name, country_ids,
             domain_ids
         )
-    except Exception, x:
+    except Exception, e:
         print "Error:{}".format(e)
         db.delete_database(host, database_name, db_username, db_password)
         print "database deleted"

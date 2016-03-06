@@ -358,9 +358,14 @@ function initClientMirror() {
     }
 
     function getSaveServiceProviderDict(serviceProviderDetail) {
+        address = serviceProviderDetail[1]
+        if (address  == ""){
+            address = null;
+        }
+        console.log("address"+address)
         return {
             "service_provider_name": serviceProviderDetail[0],
-            "address": serviceProviderDetail[1],
+            "address": address,
             "contract_from": serviceProviderDetail[2],
             "contract_to": serviceProviderDetail[3],
             "contact_person": serviceProviderDetail[4],
@@ -378,10 +383,14 @@ function initClientMirror() {
     }
 
     function getUpdateServiceProviderDict(serviceProviderDetail) {
+        address = serviceProviderDetail[2]
+        if (address  == ""){
+            address = null;
+        }
         return {
             "service_provider_id": serviceProviderDetail[0],
             "service_provider_name": serviceProviderDetail[1],
-            "address": serviceProviderDetail[2],
+            "address": address,
             "contract_from": serviceProviderDetail[3],
             "contract_to": serviceProviderDetail[4],
             "contact_person": serviceProviderDetail[5],
