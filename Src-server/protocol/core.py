@@ -53,7 +53,8 @@ from protocol.parse_structure import (
     parse_structure_SignedIntegerType_8,
     parse_structure_OptionalType_VectorType_CustomTextType_250,
     parse_structure_OptionalType_VectorType_UnsignedIntegerType_32,
-    parse_structure_VectorType_CustomTextType_250
+    parse_structure_VectorType_CustomTextType_250,
+    parse_structure_OptionalType_CustomTextType_250
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_Compliance,
@@ -116,7 +117,7 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_CustomTextType_250,
     to_structure_OptionalType_VectorType_UnsignedIntegerType_32,
     to_structure_VectorType_CustomTextType_250,
-
+    to_structure_OptionalType_CustomTextType_250
 )
 
 #
@@ -2311,9 +2312,9 @@ class UserDetails(object):
         contact_no = data.get("contact_no")
         contact_no = parse_structure_CustomTextType_20(contact_no)
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
+        address = parse_structure_OptionalType_CustomTextType_250(address)
         designation = data.get("designation")
-        designation = parse_structure_CustomTextType_50(designation)
+        designation = parse_structure_OptionalType_CustomTextType_50(designation)
         country_ids = data.get("country_ids")
         country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
         domain_ids = data.get("domain_ids")
@@ -2330,8 +2331,8 @@ class UserDetails(object):
             "employee_name": to_structure_CustomTextType_50(self.employee_name),
             "employee_code": to_structure_CustomTextType_50(self.employee_code),
             "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "address": to_structure_CustomTextType_250(self.address),
-            "designation": to_structure_CustomTextType_50(self.designation),
+            "address": to_structure_OptionalType_CustomTextType_250(self.address),
+            "designation": to_structure_OptionalType_CustomTextType_50(self.designation),
             "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
             "is_active": to_structure_Bool(self.is_active),

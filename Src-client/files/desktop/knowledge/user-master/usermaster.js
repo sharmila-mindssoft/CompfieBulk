@@ -275,6 +275,7 @@ $("#submit").click(function(){
 			}
 			userDetail = [userId,userGroup,employeeName,employeeId,countryCode+'-'+areaCode+'-'+contactNo,address, designation,countryIds,domainIds];
 			userDetailDict = mirror.getUpdateAdminUserDict(userDetail);
+			console.log(userDetailDict)
 			mirror.updateAdminUser(userDetailDict,
 				function (error, response) {
         if (error == null){
