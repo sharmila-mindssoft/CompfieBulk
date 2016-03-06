@@ -777,9 +777,10 @@ class ApprovalPersonNotBelongToUnit(Response):
         }
 
 class GetUserwiseCompliancesSuccess(Response):
-    def __init__(self, user_wise_compliances, users):
+    def __init__(self, user_wise_compliances, users, units):
         self.user_wise_compliances = user_wise_compliances
         self.users = users
+        self.units = units
 
     @staticmethod
     def parse_inner_structure(data):
@@ -787,24 +788,29 @@ class GetUserwiseCompliancesSuccess(Response):
         print
 
         data = parse_dictionary(
-            data, ["user_wise_compliances", "users"]
+            data, ["user_wise_compliances", "users", "units"]
         )
         user_wise_compliances = data.get("user_wise_compliances")
         user_wise_compliances = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(
             user_wise_compliances
         )
         users = data.get("users")
-        users = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(
-            users
-        )
+        users = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(users)
+        # users = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(
+        #     users
+        # )
+        units = data.get("units")
+        units = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(units)
         return GetUserwiseCompliancesSuccess(
-            user_wise_compliances, users
+            user_wise_compliances, users, units
         )
 
     def to_inner_structure(self):
         result = {
             "user_wise_compliances": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_USER_WISE_COMPLIANCE(self.user_wise_compliances),
-            "users": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users)
+            "users": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users),
+            "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units)
+            # "users": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users)
         }
         return result
 
