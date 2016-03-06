@@ -4440,12 +4440,14 @@ class KnowledgeDatabase(Database):
 
     def save_client_compliances(self, client_statutory_id, data, user_id, created_on):
         field = "(client_compliance_id, client_statutory_id, compliance_id, \
-            statutory_id, statutory_applicable, not_applicable_remarks, \
-            compliance_applicable, created_by, created_on)"
+            statutory_id, statutory_applicable, statutory_opted, \
+            not_applicable_remarks, \
+            compliance_applicable, compliance_opted, \
+            created_by, created_on)"
         for d in data :
             client_compliance_id = self.get_new_id("client_compliance_id", self.tblClientCompliances)
             level_1_id = d.level_1_statutory_id
-            applicable_status = d.applicable_status
+            applicable_status = int(d.applicable_status)
             not_applicable_remarks = d.not_applicable_remarks
             if not_applicable_remarks is None :
                 not_applicable_remarks = ""
@@ -4458,8 +4460,10 @@ class KnowledgeDatabase(Database):
                 values = (
                     client_compliance_id,
                     client_statutory_id, compliance_id,
-                    level_1_id, int(applicable_status), not_applicable_remarks,
-                    compliance_applicable_status, int(user_id), created_on
+                    level_1_id, applicable_status, applicable_status,
+                    not_applicable_remarks,
+                    compliance_applicable_status,  compliance_applicable_status,
+                    int(user_id), created_on
                 )
                 self.save_data(self.tblClientCompliances, field, values)
         return True
@@ -4471,7 +4475,7 @@ class KnowledgeDatabase(Database):
         row = self.select_one(query)
         return row[0]
 
-    def update_client_compliances(self, client_statutory_id, data, user_id, submited_on = None):
+    def update_client_compliances(self, client_statutory_id, data, user_id, submited_on=None):
         saved_compliance_ids = self.get_compliance_ids(client_statutory_id)
         saved_compliance_ids = [int(x) for x in saved_compliance_ids.split(',')]
         for d in data :
@@ -4492,9 +4496,13 @@ class KnowledgeDatabase(Database):
                     compliance_applicable_status = int(value)
 
                     field_with_data = "statutory_applicable = %s, \
+                        statutory_opted = %s,\
                         not_applicable_remarks = '%s', \
-                        compliance_applicable = %s, updated_by = %s" % (
-                            applicable_status, not_applicable_remarks,
+                        compliance_applicable = %s, \
+                        compliance_opted = %s, \
+                        updated_by = %s" % (
+                            applicable_status, applicable_status,
+                            not_applicable_remarks, compliance_applicable_status,
                             compliance_applicable_status, int(user_id)
                         )
                     if submited_on is not None :
