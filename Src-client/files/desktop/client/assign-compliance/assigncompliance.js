@@ -117,9 +117,10 @@ function load_secondwizard(){
         var frequency =  actList[actentity]["frequency"];
         var statutory_date =  actList[actentity]["statutory_date"];
         var due_date =  actList[actentity]["due_date"];
+        var summary = actList[actentity]["summary"];
         var triggerdate = '';
         var statutorydate = '';
-        var sdateDesc = '';
+        //var sdateDesc = '';
         var elementTriggerdate = '';
         var elementDuedate = '';
         for(var k = 0; k < due_date.length; k++){
@@ -130,7 +131,7 @@ function load_secondwizard(){
           }
         }
 
-        if(frequency == 'Periodical' || frequency == 'Review') sdateDesc = 'Every';
+        //if(frequency == 'Periodical' || frequency == 'Review') sdateDesc = 'Every';
         for(j = 0; j < statutory_date.length; j++){
 
           var sDay = '';
@@ -156,7 +157,7 @@ function load_secondwizard(){
           else if(sMonth == 12) sMonth = "December"
             
           triggerdate +=  tDays + " Day(s)";
-          statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
+          statutorydate +=  sMonth +' '+ sDay + ' ';
 
           if(statutory_date.length > 1){
             elementTriggerdate += '<input type="text" id="triggerdate'+statutoriesCount+j+'" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;"/>';
@@ -173,6 +174,10 @@ function load_secondwizard(){
         var dispApplicableUnits = applicable_units.length + '/' + assignStatutoryUnitIds.length;
         $('.applicableunit', clone2).html('<a href="#popup1" onclick="disppopup(\''+applicable_units+'\')">'+dispApplicableUnits+'</a>');
         $('.compliancefrequency', clone2).text(frequency);
+
+        if(summary != null){
+          statutorydate = summary + ' ( '+statutorydate+' )';
+        }
         $('.statutorydate', clone2).text(statutorydate);
 
         if(triggerdate == ''){
@@ -191,17 +196,22 @@ function load_secondwizard(){
         
         $('.accordion-content'+count).append(clone2);
 
-        $("#duedate"+statutoriesCount).datepicker({
+        for(var k = 0; k < due_date.length; k++){
+          var duename = statutoriesCount;
+          if(due_date.length > 1){
+            duename = statutoriesCount+'-'+k;
+          }
+          $("#duedate"+duename).datepicker({
             changeMonth: true,
             changeYear: true,
             numberOfMonths: 1,
             dateFormat: "dd-M-yy",
             monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            onClose: function( selectedDate ) {
-            $( "#duedate"+statutoriesCount ).datepicker( "option", "minDate", selectedDate );
-          }
         });
+        }
+
+        
 
         $("#validitydate"+statutoriesCount ).datepicker({
             changeMonth: true,
@@ -210,9 +220,6 @@ function load_secondwizard(){
             dateFormat: "dd-M-yy",
             monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            onClose: function( selectedDate ) {
-            $( "#validitydate"+statutoriesCount ).datepicker( "option", "minDate", selectedDate );
-          }
         });
 
         $('.edittrigger'+statutoriesCount).click(function(){  
@@ -486,6 +493,9 @@ function submitcompliance(){
     $('ul.setup-panel li:eq(2)').addClass('disabled');
     $('ul.setup-panel li a[href="#step-1"]').trigger('click');
     $(".tbody-assignstatutory").find("tbody").remove();
+    $('#assignee').empty();
+    $('#concurrence').empty();
+    $('#approval').empty();
     load_firstwizard();
   }
   function onFailure(error){
@@ -715,8 +725,8 @@ $("#assignee").click(function(event){
     var concurrenceUnit =  $("#concurrence_unit").val();
     var approvalUnit =  $("#approval_unit").val();
 
-    loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
-    loadUser(approvalUnit, 'approvallist', 'approval');
+    //loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
+    //loadUser(approvalUnit, 'approvallist', 'approval');
   }
 });
 
@@ -732,8 +742,8 @@ $("#concurrence").click(function(event){
     var assigneeUnit =  $("#assignee_unit").val();
     var approvalUnit =  $("#approval_unit").val();
 
-    loadUser(assigneeUnit, 'assigneelist', 'assignee');
-    loadUser(approvalUnit, 'approvallist', 'approval');
+    //loadUser(assigneeUnit, 'assigneelist', 'assignee');
+    //loadUser(approvalUnit, 'approvallist', 'approval');
   }
 });
 
@@ -749,8 +759,8 @@ $("#approval").click(function(event){
     var assigneeUnit =  $("#assignee_unit").val();
     var concurrenceUnit =  $("#concurrence_unit").val();
 
-    loadUser(assigneeUnit, 'assigneelist', 'assignee');
-    loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
+    //loadUser(assigneeUnit, 'assigneelist', 'assignee');
+    //loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
   }
 });
 
@@ -771,7 +781,17 @@ function loadUser(selectedUnit, userClass, userType){
 
   $('#'+userType).empty();
   for(var user in usersList){
-      if( selectedUnit == 'all' || selectedUnit == user ){
+    var userUnits = usersList[user]["unit_ids"];
+    if( selectedUnit == 'all' || $.inArray(selectedUnit, userUnits) >= 0){
+          var userId= usersList[user]["user_id"];
+          var userName= usersList[user]["user_name"];
+          if((assigneeUserId == null || assigneeUserId != userId) && 
+            (concurrenceUserId == null || concurrenceUserId !=userId) && 
+            (approvalUserId == null || approvalUserId != userId)){
+            str += '<li id="'+userId+'" class="'+userClass+'" >'+userName+'</li>';
+          }
+        }
+      /*if( selectedUnit == 'all' || selectedUnit == user ){
         var unitusers = usersList[user];
         for(var user in unitusers){
           var userId= unitusers[user]["user_id"];
@@ -779,7 +799,7 @@ function loadUser(selectedUnit, userClass, userType){
             str += '<li id="'+userId+'" class="'+userClass+'" >'+unitusers[user]["user_name"]+'</li>';
           }
         }
-      }
+      }*/
     }
   $('#'+userType).append(str);
 }

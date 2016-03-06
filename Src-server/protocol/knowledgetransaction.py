@@ -24,7 +24,8 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_knowledgetransaction_ApproveMapping,
     parse_structure_UnsignedIntegerType_32,
     parse_structure_VectorType_RecordType_core_StatutoryApprovalStatus,
-    parse_structure_VectorType_Text
+    parse_structure_VectorType_Text,
+    parse_structure_OptionalType_Text
 
 )
 from protocol.to_structure import (
@@ -53,7 +54,8 @@ from protocol.to_structure import (
     to_structure_UnsignedIntegerType_32,
     to_structure_VectorType_RecordType_core_StatutoryApprovalStatus,
     to_structure_VectorType_UnsignedIntegerType_32,
-    to_structure_VectorType_Text
+    to_structure_VectorType_Text,
+    to_structure_OptionalType_Text
 )
 
 #
@@ -254,20 +256,20 @@ class ApproveMapping(object):
         approval_status = data.get("approval_status")
         approval_status = parse_structure_UnsignedIntegerType_32(approval_status)
         rejected_reason = data.get("rejected_reason")
-        rejected_reason = parse_structure_Text(rejected_reason)
+        rejected_reason = parse_structure_OptionalType_Text(rejected_reason)
         statutory_provision = data.get("statutory_provision")
         statutory_provision = parse_structure_Text(statutory_provision)
         notification_text = data.get("notification_text")
-        notification_text = parse_structure_Text(notification_text)
+        notification_text = parse_structure_OptionalType_Text(notification_text)
         return ApproveMapping(statutory_mapping_id, approval_status, rejected_reason, statutory_provision, notification_text)
 
     def to_structure(self):
         return {
             "statutory_mapping_id": to_structure_UnsignedIntegerType_32(self.statutory_mapping_id),
             "approval_status": to_structure_SignedIntegerType_8(self.approval_status),
-            "rejected_reason": to_structure_Text(self.rejected_reason),
+            "rejected_reason": to_structure_OptionalType_Text(self.rejected_reason),
             "statutory_provision": to_structure_Text(self.statutory_provision),
-            "notification_text": to_structure_Text(self.notification_text),
+            "notification_text": to_structure_OptionalType_Text(self.notification_text),
         }
 
 
