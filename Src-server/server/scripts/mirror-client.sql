@@ -141,6 +141,7 @@ CREATE TABLE `tbl_units` (
   `postal_code` int(11) NOT NULL,
   `domain_ids` varchar(100) NOT NULL,
   `is_active` tinyint(1) DEFAULT '1',
+  `is_closed` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`unit_id`),
   CONSTRAINT `fk_units_legel_entities` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `fk_units_countries` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`)

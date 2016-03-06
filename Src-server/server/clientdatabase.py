@@ -6986,3 +6986,38 @@ class ClientDatabase(Database):
             self.tblForms, columns, condition
         )
         return rows[0][0]
+
+    def close_unit(unit_id, session_user):
+        condition = "unit_id ='%d'" % unit_id
+        columns = ["is_closed", "is_active"]
+        values = [1, 0]
+        result = self.update(
+            self.tblUnits, columns, values, condition, client_id
+        )
+
+        columns = ["is_active"]
+        values = [1, 0]
+        result = self.update(
+            self.tblAssignedCompliances, columns, values, condition, client_id
+        ) 
+
+        columns = "client_statutory_id"
+        rows = self.get_data(self.tblClientStatutories, columns, condition)
+        client_statutory_id = rows[0][0]
+
+        condition = "client_statutory_id='{}' and unit_id='{}'".format(
+            client_statutory_id, unit_id
+        ) 
+        self.delete(self.tblClientStatutories, condition)
+
+        condition = "client_statutory_id='{}' ".format(
+            client_statutory_id
+        ) 
+        self.delete(self.tblClientCompliances, condition)
+
+        action_column = "unit_code, unit_name"
+        rows = self.get_data(
+            self.tblUnits, action_column, condition
+        )
+        action = "Closed Unit \"%s - %s\"" % (rows[0][0], rows[0][1])
+        self.save_activity(session_user, 5, action, client_id)
