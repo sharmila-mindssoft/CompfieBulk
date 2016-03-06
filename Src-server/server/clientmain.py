@@ -106,9 +106,12 @@ class API(object):
                         company.db_password,
                         company.db_name
                     )
-                    db.connect()
+                    try:
+                        db.connect()
+                    except Exception, e:
+                        print "Client database not available to connect"
+                        continue
                     self._databases[company_id] = db
-
                     rep_man = ReplicationManager(
                         self._io_loop,
                         self._knowledge_server_address,
