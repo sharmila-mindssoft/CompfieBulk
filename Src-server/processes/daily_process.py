@@ -2,7 +2,7 @@
 
 # run every 5 mins
 # PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
-# */5 * * * * ~/Python/workspace/Compliance-Mirror/Src-server/processes/daily_process.py >> ~/Python/workspace/Compliance-Mirror/Src-server/processes/daily_process.log 2>&1
+# */5 * * * * cd ~/Python/workspace/Compliance-Mirror/Src-server/processes/daily_process.py >> cd ~/Python/workspace/Compliance-Mirror/Src-server/processes/daily_process.log 2>&1
 
 # sudo chmod 777 daily_process.py
 
