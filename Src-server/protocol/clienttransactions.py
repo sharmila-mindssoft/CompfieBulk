@@ -695,7 +695,7 @@ class GetAssignCompliancesFormDataSuccess(Response):
         units = data.get("units")
         units = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(units)
         users = data.get("users")
-        users = parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(users)
+        users = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(users)
         return GetAssignCompliancesFormDataSuccess(countries, business_groups, legal_entities, divisions, units, users)
 
     def to_inner_structure(self):
@@ -705,7 +705,7 @@ class GetAssignCompliancesFormDataSuccess(Response):
             "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
             "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
             "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units),
-            "users": to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users),
+            "users": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_USER(self.users),
         }
 
 class GetComplianceForUnitsSuccess(Response):
@@ -1149,7 +1149,11 @@ class PAST_RECORD_COMPLIANCE(object):
 #
 
 class UNIT_WISE_STATUTORIES(object):
-    def __init__(self, compliance_id, compliance_name, description, frequency, statutory_date, due_date, applicable_units):
+    def __init__(
+        self, compliance_id, compliance_name, description,
+        frequency, statutory_date, due_date, applicable_units,
+        summary
+    ):
         self.compliance_id = compliance_id
         self.compliance_name = compliance_name
         self.description = description
@@ -1157,10 +1161,15 @@ class UNIT_WISE_STATUTORIES(object):
         self.statutory_date = statutory_date
         self.due_date = due_date
         self.applicable_units = applicable_units
+        self.summary = summary
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_id", "compliance_name", "description", "frequency", "statutory_date", "due_date", "applicable_units"])
+        data = parse_dictionary(data, [
+            "compliance_id", "compliance_name", "description", 
+            "frequency", "statutory_date", "due_date", 
+            "applicable_units", "summary"
+        ])
         compliance_id = data.get("compliance_id")
         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         compliance_name = data.get("compliance_name")
@@ -1175,7 +1184,13 @@ class UNIT_WISE_STATUTORIES(object):
         due_date = parse_structure_OptionalType_VectorType_CustomTextType_20(due_date)
         applicable_units = data.get("applicable_units")
         applicable_units = parse_structure_VectorType_UnsignedIntegerType_32(applicable_units)
-        return UNIT_WISE_STATUTORIES(compliance_id, compliance_name, description, frequency, statutory_date, due_date, applicable_units)
+        summary = data.get("summary")
+        summary = parse_structure_OptionalType_CustomTextType_100(summary)
+        return UNIT_WISE_STATUTORIES(
+            compliance_id, compliance_name, description,
+            frequency, statutory_date, due_date, applicable_units,
+            summary
+        )
 
     def to_structure(self):
         return {
@@ -1185,7 +1200,8 @@ class UNIT_WISE_STATUTORIES(object):
             "frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.frequency),
             "statutory_date": to_structure_VectorType_RecordType_core_StatutoryDate(self.statutory_date),
             "due_date": to_structure_OptionalType_VectorType_CustomTextType_20(self.due_date),
-            "applicable_units": to_structure_VectorType_UnsignedIntegerType_32(self.applicable_units)
+            "applicable_units": to_structure_VectorType_UnsignedIntegerType_32(self.applicable_units),
+            "summary": to_structure_OptionalType_CustomTextType_100(self.summary)
         }
 
 #
@@ -1357,18 +1373,23 @@ class PastRecordUnits(object):
 #
 
 class ASSIGN_COMPLIANCE_USER(object):
-    def __init__(self, user_id, user_name, user_level, seating_unit_id, unit_ids, domain_ids, address):
+    def __init__(
+        self, user_id, user_name, user_level, seating_unit_id,
+        unit_ids, domain_ids
+    ):
         self.user_id = user_id
         self.user_name = user_name
         self.user_level = user_level
         self.seating_unit_id = seating_unit_id
         self.unit_ids = unit_ids
         self.domain_ids = domain_ids
-        self.address = address
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "user_name", "user_level", "seating_unit_id", "unit_ids", "domain_ids", "address"])
+        data = parse_dictionary(data, [
+            "user_id", "user_name", "user_level",
+            "seating_unit_id", "unit_ids", "domain_ids"
+        ])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         user_name = data.get("user_name")
@@ -1381,9 +1402,9 @@ class ASSIGN_COMPLIANCE_USER(object):
         unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
         domain_ids = data.get("domain_ids")
         domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
-        address = data.get("address")
-        address = parse_structure_CustomTextType_500(address)
-        return ASSIGN_COMPLIANCE_USER(user_id, user_name, user_level, seating_unit_id, unit_ids, domain_ids)
+        return ASSIGN_COMPLIANCE_USER(
+            user_id, user_name, user_level, seating_unit_id,
+            unit_ids, domain_ids)
 
     def to_structure(self):
         return {
@@ -1393,7 +1414,6 @@ class ASSIGN_COMPLIANCE_USER(object):
             "seating_unit_id": to_structure_SignedIntegerType_8(self.seating_unit_id),
             "unit_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
             "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "address": to_structure_CustomTextType_500(self.address)
         }
 
 #

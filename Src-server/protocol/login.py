@@ -246,7 +246,7 @@ class UserLoginSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["user_id", "session_token", "email_id", 
             "user_group_name", "menu", "employee_name", "employee_code", 
-            "contact_no", "address", "designation", "is_admin"])
+            "contact_no", "address", "designation", "client_id", "is_admin"])
         user_id = data.get("user_id")
         user_id = parse_structure_UnsignedIntegerType_32(user_id)
         session_token = data.get("session_token")
@@ -272,7 +272,7 @@ class UserLoginSuccess(Response):
         is_admin = data.get("is_admin")
         is_admin = parse_bool(is_admin)
         return UserLoginSuccess(
-            user_id, session_token, email_id, user_group_name, menu, employee_name, 
+            user_id, session_token, email_id, user_group_name, menu, employee_name,
             employee_code, contact_no, address, designation, client_id, is_admin)
 
     def to_inner_structure(self):

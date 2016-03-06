@@ -134,6 +134,7 @@ class ReplicationManager(object) :
 
     def _execute_insert_statement(self, changes, error_ok=False):
         assert (len(changes)) > 0
+        print changes
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
         column_count = self._columns_count.get(tbl_name)
@@ -148,7 +149,7 @@ class ReplicationManager(object) :
         values = []
         for x in changes:
             if x.value is None:
-                values.append("NULL ")
+                values.append('')
             else:
                 values.append(str(x.value))
             val = str(values)[1:-1]
@@ -166,8 +167,12 @@ class ReplicationManager(object) :
         # print query
         try :
             self._db.execute(query)
+            print "INSERT success ",  query
+            print '' * 100
         except Exception, e:
             print e
+            print "self._received_count ", self._received_count
+            print "self._temp_count ", self._temp_count
             print query
 
         self._temp_count = changes[-1].audit_trail_id
@@ -175,10 +180,14 @@ class ReplicationManager(object) :
     def _execute_update_statement(self, change):
         auto_id = self._auto_id_columns.get(change.tbl_name)
         assert auto_id is not None
+        if change.value is None:
+            val = ""
+        else:
+            val = "'" + change.value.replace("'", "\\'") + "'"
         query = "UPDATE %s SET %s = %s WHERE %s = %s;" % (
             change.tbl_name,
             change.column_name,
-            "'" + change.value.replace("'", "\\'") + "'",
+            val,
             auto_id,
             change.tbl_auto_id
         )

@@ -2071,6 +2071,10 @@ cursor: pointer;
 .tbody-stat-nature-list .table-row{
 	background: #fff !important;
 }
+.tbody-geography-report-list .table-row{
+	background: #fff !important;
+}
+
 .report-list table tr:nth-child(2n) {
     background: none repeat scroll 0 0 #fff !important;
 }
@@ -2079,7 +2083,7 @@ cursor: pointer;
 	background:#F1E9F6 !important;
 	width:100%;
 }
-.tbody-country-list, .tbody-domain-list, .tbody-industry-list, .tbody-stat-nature-list{
+.tbody-country-list, .tbody-domain-list, .tbody-industry-list, .tbody-stat-nature-list, .tbody-geography-report-list{
 	max-height: 300px;
 	overflow-y:scroll;
 }

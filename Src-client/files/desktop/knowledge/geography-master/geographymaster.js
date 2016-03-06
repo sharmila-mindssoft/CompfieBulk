@@ -88,7 +88,14 @@ function loadGeographiesList(geographiesList) {
 }
 
 function changeStatus (geographyId,isActive) {
-  function onSuccess(response){
+  var msgstatus='deactivate';
+  if(isActive){
+    msgstatus='activate';
+  }
+  var answer = confirm('Are you sure you want to '+msgstatus+ '?');
+  if (answer)
+  {
+    function onSuccess(response){
     GetGeographies();
   }
   function onFailure(error){
@@ -103,6 +110,7 @@ function changeStatus (geographyId,isActive) {
             }
         }
     );
+  }    
 }
 
 //Autocomplete Script Starts

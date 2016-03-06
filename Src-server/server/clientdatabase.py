@@ -2058,39 +2058,43 @@ class ClientDatabase(Database):
         return unit_list
 
     def get_users_for_seating_units(self, session_user, client_id):
-        where_condition = " WHERE t1.seating_unit_id In \
-            (SELECT t.unit_id FROM tbl_user_units t \
-            WHERE t.user_id = %s)" % (
-                session_user
-            )
-        query = "SELECT t1.user_id, t1.employee_name, t1.employee_code, \
+        # where_condition = " WHERE t1.seating_unit_id In \
+        #     (SELECT t.unit_id FROM tbl_user_units t \
+        #     WHERE t.user_id = %s)" % (
+        #         session_user
+        #     )
+        where_condition = "WHERE t2.unit_id \
+            IN \
+            (select distinct unit_id from tbl_user_units where user_id = %s)" % (session_user)
+        query = "SELECT t1.user_id, t1.employee_name, \
+            t1.employee_code, \
             t1.seating_unit_id, t1.user_level, \
-            group_concat(distinct t2.domain_id) domain_ids, \
-            group_concat(distinct t3.unit_id) unit_ids, \
-            t4.address \
+            (select group_concat(distinct domain_id) from tbl_user_domains where user_id = t1.user_id) domain_ids, \
+            (select group_concat(distinct unit_id) from tbl_user_units where user_id = t1.user_id ) unit_ids,\
+            t1.is_service_provider, \
+            (select service_provider_name from  tbl_service_providers where service_provider_id = t1.service_provider_id) service_provider\
             FROM tbl_users t1 \
-            INNER JOIN tbl_user_domains t2\
-            ON t1.user_id = t2.user_id \
-            INNER JOIN tbl_user_units t3\
-            ON t1.user_id = t3.user_id \
-            INNER JOIN tbl_units t4 \
-            ON t1.seating_unit_id = t4.unit_id "
+            INNER JOIN tbl_user_units t2 \
+            ON t1.user_id = t2.user_id "
 
         if session_user > 0 :
             query = query + where_condition
+        print query
         rows = self.select_all(query)
         columns = [
             "user_id", "employee_name", "employee_code",
             "seating_unit_id", "user_level",
-            "domain_ids", "unit_ids", "address"
+            "domain_ids", "unit_ids",
+            "is_service_provider", "service_provider"
         ]
         result = self.convert_to_dict(rows, columns)
-        seating_unit_users = {}
+        user_list = []
         for r in result :
-            name = "%s - %s" % (r["employee_code"], r["employee_name"])
-            unit_id = None
-            if r["seating_unit_id"] is not None:
-                unit_id = int(r["seating_unit_id"])
+            if int(r["is_service_provider"]) == 0 :
+                name = "%s - %s" % (r["employee_code"], r["employee_name"])
+            else :
+                name = "%s - %s" % (r["service_provider"], r["employee_name"])
+            unit_id = int(r["seating_unit_id"])
             domain_ids = [
                 int(x) for x in r["domain_ids"].split(',')
             ]
@@ -2103,16 +2107,16 @@ class ClientDatabase(Database):
                 r["user_level"],
                 unit_id,
                 unit_ids,
-                domain_ids,
-                r["address"]
+                domain_ids
             )
-            user_list = seating_unit_users.get(unit_id)
-            if user_list is None :
-                user_list = []
+            # user_list = seating_unit_users.get(unit_id)
+            # if user_list is None :
+            #     user_list = []
+            # user_list.append(user)
+            # seating_unit_users[unit_id] = user_list
             user_list.append(user)
-            seating_unit_users[unit_id] = user_list
 
-        return seating_unit_users
+        return user_list
 
     def get_assign_compliance_statutories_for_units(
         self, unit_ids, session_user, client_id
@@ -2136,7 +2140,9 @@ class ClientDatabase(Database):
             t3.statutory_mapping,\
             t3.statutory_provision,\
             t3.statutory_dates,\
-            t4.frequency\
+            (select frequency from tbl_compliance_frequency where frequency_id = t3.frequency_id)frequency, t3.frequency_id, \
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) duration_type, t3.duration,\
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t3.repeats_type_id) repeat_type, t3.repeats_every\
             FROM tbl_client_compliances t2 \
             INNER JOIN tbl_client_statutories t1 \
             ON t2.client_statutory_id = t1.client_statutory_id \
@@ -2178,7 +2184,8 @@ class ClientDatabase(Database):
             "compliance_remarks", "compliance_task",
             "document_name", "compliance_description",
             "statutory_mapping", "statutory_provision",
-            "statutory_dates", "frequency"
+            "statutory_dates", "frequency", "frequency_id", "duration_type", "duration",
+            "repeat_type", "repeats_every"
         ]
         result = self.convert_to_dict(rows, columns)
         return self.return_assign_compliance_data(result)
@@ -2233,6 +2240,13 @@ class ClientDatabase(Database):
                 due_date = n_date.strftime("%d-%b-%Y")
                 due_date_list.append(due_date)
 
+            if r["frequency_id"] in (2, 3) :
+                summary = "Repeats ever %s - %s" % (r["repeats_every"], r["repeat_type"])
+            elif r["frequency_id"] == 4 :
+                summary = "To complete within %s - %s" % (r["duration"], r["duration_type"])
+            else :
+                summary = None
+
             compliance = clienttransactions.UNIT_WISE_STATUTORIES(
                 r["compliance_id"],
                 name,
@@ -2240,7 +2254,8 @@ class ClientDatabase(Database):
                 core.COMPLIANCE_FREQUENCY(r["frequency"]),
                 date_list,
                 due_date_list,
-                unit_ids
+                unit_ids,
+                summary
             )
             compliance_list.append(compliance)
             level_1_wise[level_1] = compliance_list

@@ -221,11 +221,12 @@ function loadApproveStatutory(){
       domainId = statutoryMappingsList[entity]["domain_id"];
       industryIds = statutoryMappingsList[entity]["industry_ids"];
       industryName = statutoryMappingsList[entity]["industry_names"];
-      statutoryNatureName = statutoryMappingsList[entity]["statutory_nature_name"];        
+      statutoryNatureName = statutoryMappingsList[entity]["statutory_nature_name"];
+      statutoryNatureId = statutoryMappingsList[entity]["statutory_nature_id"];        
       var statutoryMappings='';
       var statutoryprovision = '';
       for(var i=0; i<statutoryMappingsList[entity]["statutory_mappings"].length; i++){
-        statutoryMappings = statutoryMappings + statutoryMappingsList[entity]["statutory_mappings"][i];
+        statutoryMappings = statutoryMappings + statutoryMappingsList[entity]["statutory_mappings"][i]+ '<br>';
         statutoryprovision = statutoryprovision + statutoryMappingsList[entity]["statutory_mappings"][i];
       }
       statutoryMappings = statutoryMappings.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
@@ -233,7 +234,7 @@ function loadApproveStatutory(){
       var applicableLocation = '';
 
       for(var i=0; i<statutoryMappingsList[entity]["geography_mappings"].length; i++){
-        applicableLocation = applicableLocation + statutoryMappingsList[entity]["geography_mappings"][i];
+        applicableLocation = applicableLocation + statutoryMappingsList[entity]["geography_mappings"][i] + '<br>';
       }
       applicableLocation = applicableLocation.replace(/>>/gi,' <img src=\'/images/right_arrow.png\'/> ');
 
@@ -271,10 +272,11 @@ function loadApproveStatutory(){
         }
         j = j + 1;
       }
+      $('#saverecord').show();
     }
 
     if(j <= 1){
-    var norecordtableRow=$('#no-record-templates .font1');
+    var norecordtableRow=$('#no-record-templates .font1 .norecord-table-row');
     var noclone=norecordtableRow.clone();
     $('.tbody-statutorymapping-list').append(noclone);
     $('#saverecord').hide();
@@ -302,39 +304,70 @@ function disppopup(sm_id,compliance_id){
   }
   });
   
+
   var sdateDesc = '';
-  var statutorydate = '';
+  var duration = compliances[compliance_id]["duration"];
+  var duration_type_id = compliances[compliance_id]["duration_type_id"];
+  var repeats_every = compliances[compliance_id]["repeats_every"];
+  var repeats_type_id = compliances[compliance_id]["repeats_type_id"];
+
   var statutory_date =  compliances[compliance_id]["statutory_dates"];
+  var statutorydate = '';
 
-  if(frequency == 'Periodical' || frequency == 'Review') sdateDesc = 'Every';
-    for(j = 0; j < statutory_date.length; j++){
-      var sDay = '';
-      if(statutory_date[j]["statutory_date"] != null) sDay = statutory_date[j]["statutory_date"];
+  var duration_type = '';
+  var repeats_type = '';
 
-      var sMonth = '';
-      if(statutory_date[j]["statutory_month"] != null) sMonth = statutory_date[j]["statutory_month"];
-
-      var tDays = '';
-      if(statutory_date[j]["trigger_before_days"] != null) tDays = statutory_date[j]["trigger_before_days"];
-
-      if(sMonth == 1) sMonth = "January"
-      else if(sMonth == 2) sMonth = "February"
-      else if(sMonth == 3) sMonth = "March"
-      else if(sMonth == 4) sMonth = "April"  
-      else if(sMonth == 5) sMonth = "May"
-      else if(sMonth == 6) sMonth = "June"
-      else if(sMonth == 7) sMonth = "July"
-      else if(sMonth == 8) sMonth = "Auguest"
-      else if(sMonth == 9) sMonth = "September"
-      else if(sMonth == 10) sMonth = "October"
-      else if(sMonth == 11) sMonth = "November"
-      else if(sMonth == 12) sMonth = "December"
-        
-      //triggerdate +=  tDays + " Day(s)";
-      statutorydate +=  sdateDesc + ' ' +sMonth +' '+ sDay;
+  if(frequency == "On Occurrence"){
+    if(duration_type_id == 1){
+      duration_type = 'Day(s)';
+    }else{
+      duration_type = 'Hour(s)';
     }
+    sdateDesc = duration + ' ' + duration_type;
+  }
+  else if(frequency == 'One Time'){
+    sdateDesc = '';
+  }
+  else{
+    if(repeats_type_id == 1){
+      repeats_type = 'Day(s)';
+    }else if(repeats_type_id == 2){
+      repeats_type = 'Month(s)';
+    }else{
+      repeats_type = 'Year(s)';
+    }
+    sdateDesc = 'Every ' + repeats_every + ' ' + repeats_type;
+  }
 
-  
+  if(frequency != "On Occurrence"){
+    for(z = 0; z < statutory_date.length; z++){
+    var sDay = '';
+    if(statutory_date[z]["statutory_date"] != null) sDay = statutory_date[z]["statutory_date"];
+    
+    var sMonth = '';
+    if(statutory_date[z]["statutory_month"] != null) sMonth = statutory_date[z]["statutory_month"];
+
+    if(sMonth == 1) sMonth = "January"
+    else if(sMonth == 2) sMonth = "February"
+    else if(sMonth == 3) sMonth = "March"
+    else if(sMonth == 4) sMonth = "April"  
+    else if(sMonth == 5) sMonth = "May"
+    else if(sMonth == 6) sMonth = "June"
+    else if(sMonth == 7) sMonth = "July"
+    else if(sMonth == 8) sMonth = "Auguest"
+    else if(sMonth == 9) sMonth = "September"
+    else if(sMonth == 10) sMonth = "October"
+    else if(sMonth == 11) sMonth = "November"
+    else if(sMonth == 12) sMonth = "December"
+    statutorydate +=  sMonth +' '+ sDay +' ';
+    }
+    if(sdateDesc != ''){
+      statutorydate = sdateDesc + ' ( '+statutorydate+' )';
+    }
+  }else{
+    statutorydate = sdateDesc;
+  }
+
   $(".popup_statutory").html(statutoryMappings);
   $(".popup_statutorynature").text(sm["statutory_nature_name"]);
   $(".popup_compliancetask").html(sm["compliance_names"][compliance_id]["compliance_name"]);
@@ -406,6 +439,7 @@ $("#saverecord").click(function(){
   }
   function onSuccess(response) {
     $(".grid-table").hide();
+    displayMessage("Statutory Mapping successfully approved");
     reloadStatutoryMapping();
   }
   function onFailure(error){
