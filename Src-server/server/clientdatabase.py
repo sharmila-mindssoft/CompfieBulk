@@ -2051,19 +2051,16 @@ class ClientDatabase(Database):
             )
         query = "SELECT t1.user_id, t1.employee_name, t1.employee_code, \
             t1.seating_unit_id, t1.user_level, \
-            group_concat(distinct t2.domain_id) domain_ids, \
-            group_concat(distinct t3.unit_id) unit_ids, \
+            (select group_concat(distinct domain_id) from tbl_user_domains where user_id = t1.user_id) domain_ids, \
+            (select group_concat(distinct unit_id) from tbl_user_units where user_id = t1.user_id ) unit_ids,\
             t4.address \
             FROM tbl_users t1 \
-            INNER JOIN tbl_user_domains t2\
-            ON t1.user_id = t2.user_id \
-            INNER JOIN tbl_user_units t3\
-            ON t1.user_id = t3.user_id \
             INNER JOIN tbl_units t4 \
             ON t1.seating_unit_id = t4.unit_id "
 
         if session_user > 0 :
             query = query + where_condition
+        print query
         rows = self.select_all(query)
         columns = [
             "user_id", "employee_name", "employee_code",
@@ -2120,7 +2117,9 @@ class ClientDatabase(Database):
             t3.statutory_mapping,\
             t3.statutory_provision,\
             t3.statutory_dates,\
-            t4.frequency\
+            (select frequency from tbl_compliance_frequency where frequency_id = t3.frequency_id)frequency, t3.frequency_id, \
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) duration_type, t3.duration,\
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t3.repeats_type_id) repeat_type, t3.repeats_every\
             FROM tbl_client_compliances t2 \
             INNER JOIN tbl_client_statutories t1 \
             ON t2.client_statutory_id = t1.client_statutory_id \
@@ -2162,7 +2161,8 @@ class ClientDatabase(Database):
             "compliance_remarks", "compliance_task",
             "document_name", "compliance_description",
             "statutory_mapping", "statutory_provision",
-            "statutory_dates", "frequency"
+            "statutory_dates", "frequency", "frequency_id", "duration_type", "duration",
+            "repeat_type", "repeats_every"
         ]
         result = self.convert_to_dict(rows, columns)
         return self.return_assign_compliance_data(result)
@@ -2217,6 +2217,13 @@ class ClientDatabase(Database):
                 due_date = n_date.strftime("%d-%b-%Y")
                 due_date_list.append(due_date)
 
+            if r["frequency_id"] in (2, 3) :
+                summary = "Repeats ever %s - %s" % (r["repeats_every"], r["repeat_type"])
+            elif r["frequency_id"] == 4 :
+                summary = "To complete within %s - %s" % (r["duration"], r["duration_type"])
+            else :
+                summary = None
+
             compliance = clienttransactions.UNIT_WISE_STATUTORIES(
                 r["compliance_id"],
                 name,
@@ -2224,7 +2231,8 @@ class ClientDatabase(Database):
                 core.COMPLIANCE_FREQUENCY(r["frequency"]),
                 date_list,
                 due_date_list,
-                unit_ids
+                unit_ids,
+                summary
             )
             compliance_list.append(compliance)
             level_1_wise[level_1] = compliance_list

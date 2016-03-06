@@ -174,13 +174,15 @@ function load_secondwizard(){
     var clone1=complianceHeadingtableRow.clone();
     $('.accordion-content'+count).append(clone1);
     
-    var cDescription = complianceslist[compliance]["description"];
-    var partDescription = cDescription;
-    if (cDescription != null && cDescription.length > 50){
-      partDescription = cDescription.substring(0,49)+'...';
-    }
+    
 
     for(var compliance in complianceslist){    
+      var cDescription = complianceslist[compliance]["description"];
+      var partDescription = cDescription;
+      if (cDescription != null && cDescription.length > 50){
+        partDescription = cDescription.substring(0,49)+'...';
+      }
+      
       var statutoryprovision = '';
       var compliance_id = complianceslist[compliance]["compliance_id"];
       var compliance_applicable_status = complianceslist[compliance]["compliance_applicable_status"];
@@ -864,7 +866,7 @@ function loadAssignedStatutoriesList(assignedStatutoriesList){
       $('.tbl_industry', clone).text(assignedStatutoriesList[entity]["industry_name"]);
       $('.tbl_unit', clone).text(assignedStatutoriesList[entity]["unit_name"]);
       $('.tbl_domain', clone).text(assignedStatutoriesList[entity]["domain_name"]);
-      if(assignedStatutoriesList[entity]["submission_status"] == 2){
+      if(assignedStatutoriesList[entity]["submission_status"] == 1){
         $('.tbl_status', clone).text('Submitted');
       }
       else{

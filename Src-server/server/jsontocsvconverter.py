@@ -4,7 +4,8 @@ import csv
 import uuid
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
-FILE_DOWNLOAD_PATH = "/download/csv"
+CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
+FILE_DOWNLOAD_BASE_PATH = "/download/csv"
 
 class ConvertJsonToCSV(object):
 
@@ -15,11 +16,12 @@ class ConvertJsonToCSV(object):
         self.initializeFormatStrings()
         s = str(uuid.uuid4())
         file_name = "%s.csv" % s.replace("-", "")
-        self.CSV_PATH = "%s/exported_reports" % ROOT_PATH
-        self.FILE_PATH = "%s/%s" % (FILE_DOWNLOAD_PATH, file_name)
-        if not os.path.exists(self.CSV_PATH):
-            os.makedirs(self.CSV_PATH)
-        with open(file_name, 'wb+') as f:
+        self.FILE_DOWNLOAD_PATH = "%s/%s" % (FILE_DOWNLOAD_BASE_PATH, file_name)
+        self.FILE_PATH = "%s/%s" % (CSV_PATH, file_name)
+
+        if not os.path.exists(CSV_PATH):
+            os.makedirs(CSV_PATH)
+        with open(self.FILE_PATH, 'wb+') as f:
             self.writer = csv.writer(f)#self.header, quoting=csv.QUOTE_ALL) 
             self.convert_json_to_csv(jsonObj)
 

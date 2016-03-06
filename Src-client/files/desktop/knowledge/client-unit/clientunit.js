@@ -515,7 +515,7 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisi
                     units[j++] = val['unit_id'];
                 });
 
-                addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divisionId, key, units, bycount); //add country by Unit
+                addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divisionId, key, units, bycount, unitval['units']); //add country by Unit
                 bycount++;
             });             
                 
@@ -523,7 +523,8 @@ function loadFormListUpdate(clientunitId, businessgroupId, legalEntityId, divisi
     });
 
 }
-function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divisionId, key, units, bycount){
+function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divisionId, key, units, bycount, unitval){
+
     var countryByCount = bycount;
     var divCountryAddRow = $('#templates .grid-table');
     var clone = divCountryAddRow.clone();
@@ -557,10 +558,14 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
     $('#unitcount').val(1);
     $('.unit-error-msg', clone).addClass('unit-error-msg-'+countryByCount);
     $('.add-country-unit-list').append(clone);          
-   
+
     $(".postal-code", clone).on('input', function (event) {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
+    $('.countryval-'+countryByCount).val(getCountryName(key));
+    $('.country-'+countryByCount).val(key);
+    $('glevel-'+countryByCount+'-'+1).val(key);
+
     if(units != ''){
         var lastClassvalglobal = 2;
         var tbodyclassname = "tbody-unit-"+countryByCount;
@@ -570,8 +575,6 @@ function addcountryrowupdate(clientunitId, businessgroupId, legalEntityId, divis
             lastClassvalglobal++;
         }
     }
-    countc++;
-    countryByCount++;
 }
 
 function addUnitRowUpdate(clientunitId, businessgroupId, legalEntityId, divisionId, unitid, tbodyclassname, lastClassval, countval){   
