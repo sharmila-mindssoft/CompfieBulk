@@ -381,7 +381,7 @@ CLIENT_URL = "http://localhost:8080/"
 KNOWLEDGE_URL = "http://localhost:8082/knowledge/"
 
 
-# mindssoft aws
+# # mindssoft aws
 # KNOWLEDGE_DB_HOST = "localhost"
 # KNOWLEDGE_DB_PORT = 3306
 # KNOWLEDGE_DB_USERNAME = "root"
