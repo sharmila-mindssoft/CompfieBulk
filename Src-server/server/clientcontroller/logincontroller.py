@@ -33,30 +33,28 @@ def process_login_request(request, db, company_id) :
 
 
 def process_login(db, request, client_id):
-    # login_type = request.login_type
     print "client controller login called"
     username = request.username
     password = request.password
-    # short_name = request.short_name
     encrypt_password = db.encrypt(password)
-    # client_id = db.get_client_id_from_short_name(short_name)
     response = db.verify_login(username, encrypt_password)
     if response is True:
-        return admin_login_response(db, client_id)
+        return admin_login_response(db, client_id, request.ip)
     else :
         if bool(response):
-            return user_login_response(db, response, client_id)
+            return user_login_response(db, response, client_id, request.ip)
         else :
             return login.InvalidCredentials()
 
 
-def user_login_response(db, data, client_id):
+def user_login_response(db, data, client_id, ip):
     user_id = data["user_id"]
     email_id = data["email_id"]
     session_type = 1  # web
-    session_token = db.add_session(user_id, session_type, client_id)
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
+    employee = "%s - %s" % (employee_code, employee_name)
+    session_token = db.add_session(user_id, session_type, ip, client_id, employee)
     contact_no = data["contact_no"]
     user_group_name = data["user_group_name"]
     form_ids = data["form_ids"]
@@ -78,11 +76,13 @@ def user_login_response(db, data, client_id):
         client_id, bool(is_promoted_admin)
     )
 
-def admin_login_response(db, client_id):
+def admin_login_response(db, client_id, ip):
     user_id = 0
     email_id = None
     session_type = 1  # web
-    session_token = db.add_session(user_id, session_type, client_id)
+    session_token = db.add_session(
+        user_id, session_type, ip, client_id, "Administrator"
+    )
     form_ids = db.get_form_ids_for_admin()
     menu = process_user_forms(db, form_ids, client_id, 1)
     employee_name = "Administrator"

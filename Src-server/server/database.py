@@ -388,7 +388,7 @@ class Database(object) :
                 t2.user_group_name, t2.form_ids \
                 FROM tbl_users t1 INNER JOIN tbl_user_groups t2\
                 ON t1.user_group_id = t2.user_group_id \
-                WHERE t1.password='%s' and t1.email_id='%s'" % (
+                WHERE t1.password='%s' and t1.email_id='%s' and t1.is_active=1" % (
                     password, username
                 )
             data_list = self.select_one(query)
@@ -420,7 +420,10 @@ class Database(object) :
         else:
             return []
 
-    def add_session(self, user_id, session_type_id, client_id=None) :
+    def add_session(
+        self, user_id, session_type_id, ip,  
+        employee, client_id=None
+    ) :
         if client_id is not None:
             self.clear_old_session(user_id, session_type_id, client_id)
         else:
@@ -433,10 +436,20 @@ class Database(object) :
             (session_token, user_id, session_type_id, last_accessed_time) \
             VALUES ('%s', %s, %s, '%s');"
         query = query % (session_id, user_id, session_type_id, updated_on)
-
         self.execute(query)
 
+        action = "Log In by - \"%s\" from \"%s\"" % ( employee, ip)
+        self.save_activity(user_id, 1, action)
+
         return session_id
+
+    def save_user_login_history(self, user_id):
+        updated_on = self.get_date_time()
+        query = "INSERT INTO tbl_user_login_history \
+            (user_id, login_time) \
+            VALUES ('%s', '%s');"
+        query = query % (user_id, updated_on)
+        self.execute(query)
 
     def clear_old_session(self, user_id, session_type_id, client_id=None) :
         query = "DELETE FROM tbl_user_sessions \
@@ -557,7 +570,6 @@ class KnowledgeDatabase(Database):
         return m.hexdigest()
 
     def save_activity(self, user_id, form_id, action):
-        print "inside save activity"
         created_on = self.get_date_time()
         activityId = self.get_new_id("activity_log_id", "tbl_activity_log")
         query = "INSERT INTO tbl_activity_log \
@@ -3121,8 +3133,8 @@ class KnowledgeDatabase(Database):
         )
         condition = "user_group_id in (select user_group_id from \
              %s where form_category_id = 3 and (form_ids like '%s%s%s' \
-             or form_ids like '%s%s%s'))" % (
-                self.tblUserGroups, "%", "19", "%", "%","21", "%"
+             or form_ids like '%s%s%s' or form_ids like '%s%s%s'))" % (
+                self.tblUserGroups, "%", "19", "%", "%","21", "%", "%","20", "%"
             )
         rows = self.get_data(self.tblUsers + " u", columns, condition)
         columns = ["user_id", "employee_name", "is_active", "countries", "domains"]
@@ -3188,18 +3200,23 @@ class KnowledgeDatabase(Database):
 
     def save_user(self, user_id, email_id, user_group_id, employee_name,
      employee_code, contact_no, address, designation, country_ids, domain_ids):
-        print "inside save user"
         result1 = False
         result2 = False
         result3 = False
         current_time_stamp = self.get_date_time()
         user_columns = ["user_id", "email_id", "user_group_id", "password", "employee_name",
-                    "employee_code", "contact_no", "address", "designation", "is_active",
+                    "employee_code", "contact_no", "is_active",
                     "created_on", "created_by", "updated_on", "updated_by"]
         encrypted_password, password = self.generate_and_return_password()
         user_values = [user_id, email_id, user_group_id, encrypted_password,
-                employee_name, employee_code, contact_no, address,
-                designation, 1, current_time_stamp, 0, current_time_stamp, 0]
+                employee_name, employee_code, contact_no,  1, 
+                current_time_stamp, 0, current_time_stamp, 0]
+        if address is not None:
+            user_columns.append("address")
+            user_values.append(address)
+        if designation is not None:
+            user_columns.append("designation")
+            user_values.append(designation)
         result1 = self.insert(self.tblUsers, user_columns, user_values)
 
         country_columns = ["user_id", "country_id"]
