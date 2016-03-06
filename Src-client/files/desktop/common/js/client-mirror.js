@@ -53,6 +53,20 @@ function initClientMirror() {
         return user;
     }
 
+    function get_ip(){
+        // alert("inside get_ip")
+        // var get = function(u){
+        //     var x = new XMLHttpRequest;
+        //     x.open('GET', u, false);
+        //     x.send();
+        //     return x.responseText;
+        // }
+
+        // response = JSON.parse(get('http://ifconfig.me/all.json'))
+        // return response["ip_addr"]
+        return "127.0.0.1"
+    }
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -152,10 +166,12 @@ function initClientMirror() {
                     "login_type": "Web",
                     "username": username,
                     "password": password,
-                    "short_name": short_name
+                    "short_name": short_name,
+                    "ip": get_ip()
                 }
             ]
         ]
+        console.log(request)
         jQuery.post(
             CLIENT_BASE_URL + "login",
             toJSON(request),
@@ -1518,7 +1534,8 @@ function initClientMirror() {
         getOnOccurrenceCompliances: getOnOccurrenceCompliances,
         startOnOccurrenceCompliance: startOnOccurrenceCompliance,
         getUserwiseCompliances: getUserwiseCompliances,
-        exportToCSV: exportToCSV
+        exportToCSV: exportToCSV,
+        get_ip: get_ip
     }
 }
 var client_mirror = initClientMirror();

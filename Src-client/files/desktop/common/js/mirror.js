@@ -103,6 +103,20 @@ function initMirror() {
             return null;
     }
 
+    function get_ip(){
+        // alert("inside get_ip")
+        // var get = function(u){
+        //     var x = new XMLHttpRequest;
+        //     x.open('GET', u, false);
+        //     x.send();
+        //     return x.responseText;
+        // }
+
+        // response = JSON.parse(get('http://ifconfig.me/all.json'))
+        // return response["ip_addr"]
+        return "127.0.0.1"
+    }
+
     function apiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
@@ -176,7 +190,8 @@ function initMirror() {
                 "login_type": "Web",
                 "username": username,
                 "password": password,
-                "short_name": short_name
+                "short_name": short_name,
+                "ip" : get_ip()
             }
         ]
         jQuery.post(
@@ -649,8 +664,15 @@ function initMirror() {
         apiRequest("knowledge_transaction", request, callback);
     }
 
-    function approveStatutoryList(statutoryMappingId, statutoryProvision, approvalStatus, reason, notificationText) {
+    function approveStatutoryList(statutoryMappingId, statutoryProvision, 
+        approvalStatus, reason, notificationText) {
         var dict = {}
+        if (reason == ""){
+            reason = null
+        }
+        if (notificationText == ""){
+            notificationText = null
+        }
         dict["statutory_mapping_id"] = statutoryMappingId;
         dict["statutory_provision"] = statutoryProvision;
         dict["approval_status"] = approvalStatus;
@@ -1462,7 +1484,7 @@ function initMirror() {
         getStatutoryNotificationsFilters: getStatutoryNotificationsFilters,
         getStatutoryNotificationsReportData: getStatutoryNotificationsReportData,
 
-
+        get_ip: get_ip,
         getAuditTrail: getAuditTrail,
         updateUserProfile: updateUserProfile,
         getNotifications: getNotifications,

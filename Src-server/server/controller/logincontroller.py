@@ -39,40 +39,41 @@ def process_login(db, request):
 	encrypt_password = db.encrypt(password)
 	response = db.verify_login(username, encrypt_password)
 	if response is True:
-		return admin_login_response(db)
+		return admin_login_response(db, request.ip)
 	else :
 		if bool(response):
-			return user_login_response(db, response)
+			return user_login_response(db, response, request.ip)
 		else :
 			return login.InvalidCredentials()
 
 
-def user_login_response(db, data):
+def user_login_response(db, data, ip):
 	user_id = data["user_id"]
 	email_id = data["email_id"]
 	session_type = 1 #web
-	session_token = db.add_session(user_id, session_type)
 	employee_name = data["employee_name"]
 	employee_code = data["employee_code"]
+	employee = "%s - %s" % (employee_code, employee_name)
+	session_token = db.add_session(user_id, session_type, ip, employee)
 	contact_no = data["contact_no"]
 	address = None if data["address"] == "" else data["address"]
 	designation = None if data["designation"] == "" else data["designation"]
 	user_group_name = data["user_group_name"]
 	form_ids = data["form_ids"]
 	menu = process_user_forms(db, form_ids)
+	# db.save_user_login_history(user_id)
 	return login.UserLoginSuccess(
 		int(user_id), session_token, email_id, user_group_name, 
 		menu, employee_name, employee_code, contact_no, address, 
 		designation, None, bool(1)
 	)
 
-def admin_login_response(db):
+def admin_login_response(db, ip):
 	user_id = 0
 	email_id = None
 	session_type = 1 #web
-	session_token = db.add_session(user_id, session_type)
+	session_token = db.add_session(user_id, session_type, ip, "Administrator")
 	menu = process_user_forms(db, "1,2,3,4")
-	print menu
 	employee_name = "Administrator"
 	return login.AdminLoginSuccess(user_id, session_token, email_id, menu, employee_name, None)
 
