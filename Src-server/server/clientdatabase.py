@@ -3721,7 +3721,9 @@ class ClientDatabase(Database):
         self, request, session_user, client_id
     ):
         query = "SELECT T1.compliance_id, T2.unit_id,\
-            T4.frequency_id, T4.repeats_type_id, T4.duration_type_id,\
+            (select frequency from tbl_compliance_frequency where frequency_id = t4.frequency_id) frequency,\
+            (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t4.repeats_type_id) repeats_type, \
+            (select duration_type from tbl_compliance_duration_type where duration_type_id = t4.duration_type_id)duration_type,\
             T4.statutory_mapping, T4.statutory_provision,\
             T4.compliance_task, T4.compliance_description,  \
             T4.document_name, T4.format_file, T4.format_file_size, T4.penal_consequences, \
@@ -3733,16 +3735,6 @@ class ClientDatabase(Database):
             ON T2.unit_id = T3.unit_id \
             INNER JOIN tbl_compliances T4\
             ON T1.compliance_id = T4.compliance_id\
-            INNER JOIN tbl_compliance_frequency T5\
-            ON T4.frequency_id = T5.frequency_id \
-            INNER JOIN tbl_divisions T6 \
-            ON T3.division_id = T6.division_id \
-            INNER JOIN tbl_legal_entities T7 \
-            ON T3.legal_entity_id = T7.legal_entity_id \
-            INNER JOIN tbl_business_groups T8 \
-            ON T3.business_group_id = T8.business_group_id \
-            INNER JOIN tbl_countries T9 \
-            ON T3.country_id = T9.country_id \
             WHERE T2.country_id IN %s \
             AND T2.domain_id IN %s \
             %s %s"
@@ -3796,7 +3788,7 @@ class ClientDatabase(Database):
         rows = self.select_all(query1)
         columns = [
             "compliance_id", "unit_id",
-            "frequency_id", "repeats_type_id", "duration_type_id",
+            "frequency", "repeats_type", "duration_type",
             "statutory_mapping", "statutory_provision", "compliance_task",
             "compliance_description", "document_name", "format_file",
             "format_file_size", "penal_consequences", "statutory_dates",
