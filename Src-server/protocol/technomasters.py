@@ -36,7 +36,9 @@ from protocol.parse_structure import (
     parse_structure_CustomTextType_500,
     parse_structure_VectorType_RecordType_core_ClientInchargePersons,
     parse_structure_OptionalType_RecordType_core_FileList,
-    parse_structure_OptionalType_CustomTextType_250
+    parse_structure_OptionalType_CustomTextType_250,
+    parse_structure_OptionalType_CustomTextType_20,
+    parse_structure_OptionalType_CustomTextType_50
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
@@ -78,7 +80,9 @@ from protocol.to_structure import (
     to_structure_CustomTextType_500,
     to_structure_VectorType_RecordType_core_ClientInchargePersons,
     to_structure_OptionalType_RecordType_core_FileList,
-    to_structure_OptionalType_CustomTextType_250
+    to_structure_OptionalType_CustomTextType_250,
+    to_structure_OptionalType_CustomTextType_20,
+    to_structure_OptionalType_CustomTextType_50
 )
 
 #
@@ -1219,9 +1223,9 @@ class LICENCE_HOLDER_DETAILS(object):
         email_id = data.get("email_id")
         email_id = parse_structure_CustomTextType_100(email_id)
         contact_no = data.get("contact_no")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
+        contact_no = parse_structure_OptionalType_CustomTextType_20(contact_no)
         seating_unit_name = data.get("seating_unit_name")
-        seating_unit_name = parse_structure_CustomTextType_50(seating_unit_name)
+        seating_unit_name = parse_structure_OptionalType_CustomTextType_50(seating_unit_name)
         address = data.get("address")
         address = parse_structure_OptionalType_CustomTextType_250(address)
         total_disk_space = data.get("total_disk_space")
@@ -1242,8 +1246,8 @@ class LICENCE_HOLDER_DETAILS(object):
             "user_id": to_structure_SignedIntegerType_8(self.user_id),
             "user_name": to_structure_CustomTextType_50(self.user_name),
             "email_id": to_structure_CustomTextType_100(self.email_id),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "seating_unit_name": to_structure_CustomTextType_50(self.seating_unit_name),
+            "contact_no": to_structure_OptionalType_CustomTextType_20(self.contact_no),
+            "seating_unit_name": to_structure_OptionalType_CustomTextType_50(self.seating_unit_name),
             "address": to_structure_OptionalType_CustomTextType_250(self.address),
             "total_disk_space": to_structure_Float(self.total_disk_space),
             "used_disk_space": to_structure_Float(self.used_disk_space),

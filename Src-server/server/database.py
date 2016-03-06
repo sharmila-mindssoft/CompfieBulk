@@ -1,3 +1,4 @@
+import threading
 import os
 import MySQLdb as mysql
 import hashlib
@@ -556,6 +557,7 @@ class KnowledgeDatabase(Database):
         return m.hexdigest()
 
     def save_activity(self, user_id, form_id, action):
+        print "inside save activity"
         created_on = self.get_date_time()
         activityId = self.get_new_id("activity_log_id", "tbl_activity_log")
         query = "INSERT INTO tbl_activity_log \
@@ -3174,8 +3176,19 @@ class KnowledgeDatabase(Database):
         rows = self.get_data(table, columns, condition)
         return rows[0][0]
 
+    def notify_user(
+        self, email_id, password, employee_name, employee_code
+    ):
+        try:
+            email().send_knowledge_user_credentials(
+                email_id, password, employee_name, employee_code
+            )
+        except Exception, e:
+            print "Error while sending email : {}".format(e)
+
     def save_user(self, user_id, email_id, user_group_id, employee_name,
      employee_code, contact_no, address, designation, country_ids, domain_ids):
+        print "inside save user"
         result1 = False
         result2 = False
         result3 = False
@@ -3205,12 +3218,12 @@ class KnowledgeDatabase(Database):
 
         action = "Created User \"%s - %s\"" % (employee_code, employee_name)
         self.save_activity(0, 4, action)
-        try:
-            email().send_knowledge_user_credentials(
+        notify_user_thread = threading.Thread(
+            target=self.notify_user, args=[
                 email_id, password, employee_name, employee_code
-            )
-        except Exception, e:
-            print "Error while sending email : {}".format(e)
+            ]
+        )
+        notify_user_thread.start()
         return (result1 and result2 and result3)
 
     def update_user(self, user_id, user_group_id, employee_name, employee_code, contact_no,
@@ -3475,6 +3488,15 @@ class KnowledgeDatabase(Database):
         cursor.execute(query)
         con.commit()
 
+    def send_client_credentials(
+        self, short_name, email_id, password
+    ):
+        try:
+            email().send_client_credentials(short_name, email_id, password)
+        except Exception, e:
+            print "Error while sending email : {}".format(e)
+        return True
+
     def _create_database(
         self, host, username, password,
         database_name, db_username, db_password, email_id, client_id,
@@ -3522,12 +3544,12 @@ class KnowledgeDatabase(Database):
         print "client domains"
         self._save_client_domains(domain_ids, client_db_cursor)
         client_db_con.commit()
-
-        try:
-            email().send_client_credentials(short_name, email_id, password)
-        except Exception, e:
-            print "Error while sending email : {}".format(e)
-        return True
+        send_client_credentials_thread = threading.Thread(
+            target=self.send_client_credentials, args=[
+                short_name, email_id, password
+            ]
+        )
+        send_client_credentials_thread.start()
 
     def _save_client_countries(self, country_ids, cursor):
         q = "SELECT country_id, country_name, is_active \
@@ -5066,6 +5088,7 @@ class KnowledgeDatabase(Database):
             file_space = settings_rows[0][3]
             used_space = settings_rows[0][4]
             licence_holder_rows = self.get_licence_holder_details(client_id)
+            print licence_holder_rows
             licence_holders = []
             for row in licence_holder_rows:
                 employee_name = None
@@ -5081,7 +5104,7 @@ class KnowledgeDatabase(Database):
                     unit_name =  "%s - %s" % (row[6], row[7])
                 user_id = row[0]
                 email_id= row[1]
-                contact_no = row[4]
+                contact_no = None if row[4] is "" else row[4]
                 is_admin= row[5]
                 address= row[8]
                 is_active = row[9]

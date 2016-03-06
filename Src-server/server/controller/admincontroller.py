@@ -41,7 +41,7 @@ def get_forms(db) :
     knowledge_forms = []
     techno_forms = []
     for row in result_rows:
-        parent_menu = "" if row[8] == None else row[8]
+        parent_menu = None if row[8] == None else row[8]
         if int(row[1]) == 2:
             form = core.Form(
                 form_id=row[0],
@@ -173,8 +173,8 @@ def get_users(db, request_frame, session_user):
         employee_name = user_row[3]
         employee_code = user_row[4]
         contact_no = user_row[5]
-        address = user_row[6]
-        designation = user_row[7]
+        address = None if user_row[6] == "" else user_row[6]
+        designation = None if user_row[7] == "" else user_row[7]
         is_active = True if user_row[8] == 1 else False
         country_ids = [int(x) for x in db.get_user_countries(user_id).split(",")]
         domain_ids = [int(x) for x in db.get_user_domains(user_id).split(",")]
@@ -192,8 +192,8 @@ def save_user(db, request, session_user):
     employee_name = request.employee_name
     employee_code = request.employee_code
     contact_no = request.contact_no
-    address =  request.address
-    designation =  request.designation
+    address =  None if request.address == "" else request.address
+    designation =  None if request.designation == "" else request.designation
     country_ids = request.country_ids
     domain_ids = request.domain_ids
     if db.is_duplicate_email(email_id, user_id) :

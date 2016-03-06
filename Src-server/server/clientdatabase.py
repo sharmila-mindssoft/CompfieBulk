@@ -1,4 +1,5 @@
 import os
+import threading
 from protocol import (
     core, general, clienttransactions, dashboard,
     clientreport, clientadminsettings, clientuser
@@ -637,6 +638,16 @@ class ClientDatabase(Database):
             ))
         return results
 
+    def notify_user(
+        self, email_id, password, employee_name, employee_code
+    ):
+        try:
+            email.send_user_credentials(
+                short_name, user.email_id, password, user.employee_name, user.employee_code
+            )
+        except Exception, e:
+            print "Error while sending email : {}".format(e)
+    
     def save_user(self, user_id, user, session_user, client_id):
         result1 = None
         result2 = None
@@ -684,15 +695,18 @@ class ClientDatabase(Database):
 
         action = "Created user \"%s - %s\"" % (user.employee_code, user.employee_name)
         self.save_activity(session_user, 4, action, client_id)
-        try:
-            email.send_user_credentials(
-                self.get_short_name_from_client_id(
-                    client_id
-                ), user.email_id, password, user.employee_name, user.employee_code
-            )
-        except Exception, e:
-            print "Error while sending email : {}".format(e)
+        short_name = self.get_short_name_from_client_id(
+            client_id
+        )
+        notify_user_thread = threading.Thread(
+            target=self.notify_user, args=[
+                short_name, user.email_id, password, user.employee_name, user.employee_code
+            ]
+        )
+        notify_user_thread.start()
         return (result1 and result2 and result3 and result4)
+
+    
 
     def update_user(self, user, session_user, client_id):
         result1 = None
