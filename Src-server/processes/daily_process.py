@@ -318,7 +318,7 @@ def save_in_notification(
         (notification_id, country_id, domain_id, business_group_id, \
         legal_entity_id, division_id, unit_id, compliance_id,\
         assignee, concurrence_person, approval_person, notification_type_id,\
-        notification_text, extra_details, updated_on\
+        notification_text, extra_details, created_on\
         ) VALUES (%s, %s, %s, %s, %s, %s, \
         %s, %s, %s, %s, %s, %s, '%s', '%s', '%s')" % (
             notification_id, country_id, domain_id, business_group_id,
@@ -362,7 +362,7 @@ def start_new_task(db, client_id, current_date):
             )
             save_in_compliance_history(
                 db, int(d["unit_id"]), int(d["compliance_id"]), current_date,
-                d["due_date"], next_due_date, int(d["assignee"], d["concurrence_person"], int(approval_person))
+                d["due_date"], next_due_date, int(d["assignee"]), d["concurrence_person"], int(approval_person)
             )
             if trigger_before is None:
                 trigger_before = d["trigger_before_days"]
@@ -513,6 +513,7 @@ def main():
     except Exception, e :
         print e
         db.rollback()
+        print(traceback.format_exc())
 
     print '*' * 20
 
