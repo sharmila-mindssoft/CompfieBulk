@@ -732,7 +732,7 @@ $("#concurrence").click(function(event){
     var assigneeUnit =  $("#assignee_unit").val();
     var approvalUnit =  $("#approval_unit").val();
 
-    loadUser(assigneeUnit, 'assigneelist', 'assignee');
+    // loadUser(assigneeUnit, 'assigneelist', 'assignee');
     loadUser(approvalUnit, 'approvallist', 'approval');
   }
 });
@@ -749,8 +749,8 @@ $("#approval").click(function(event){
     var assigneeUnit =  $("#assignee_unit").val();
     var concurrenceUnit =  $("#concurrence_unit").val();
 
-    loadUser(assigneeUnit, 'assigneelist', 'assignee');
-    loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
+    // loadUser(assigneeUnit, 'assigneelist', 'assignee');
+    // loadUser(concurrenceUnit, 'concurrencelist', 'concurrence');
   }
 });
 
@@ -774,9 +774,11 @@ function loadUser(selectedUnit, userClass, userType){
       if( selectedUnit == 'all' || selectedUnit == user ){
         var unitusers = usersList[user];
         for(var user in unitusers){
-          var userId= unitusers[user]["user_id"];
+          console.log(unitusers)
+          console.log(user)
+          var userId= unitusers["user_id"];
           if(assigneeUserId != userId && concurrenceUserId !=userId && approvalUserId != userId){
-            str += '<li id="'+userId+'" class="'+userClass+'" >'+unitusers[user]["user_name"]+'</li>';
+            str += '<li id="'+userId+'" class="'+userClass+'" >'+unitusers["user_name"]+'</li>';
           }
         }
       }

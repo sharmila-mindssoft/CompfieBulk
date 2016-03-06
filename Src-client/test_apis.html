@@ -313,13 +313,12 @@
 				dateConfigurations = []
 
 		        configuration1 = mirror.getDateConfigurations(1,1,5,4)
-		        configuration1 = mirror.getDateConfigurations(1,2,1,12)
 		        dateConfigurations.push(configuration1)
 
-		        client_id = 6
-		        group_name = "Compfie";
-		        country_ids = [1];
-		        domain_ids = [1];
+		        client_id = 1
+		        group_name = "P and G";
+		        country_ids = [1,2];
+		        domain_ids = [2];
 		        logo = logo_file;
 		        contract_from = "02-Nov-2015";
 		        contract_to = "01-Nov-2016";
@@ -438,7 +437,7 @@
 
 			function approveCompliance(){
 				compliance_history_id = 1
-				compliance_approval_status = "Concur"
+				compliance_approval_status = "Reject Concurrence"
 				remarks = null
 				next_due_date = null
 				validity_date = null

@@ -195,6 +195,7 @@ class Database(object) :
                 )
 
         query += " where %s" % where_condition
+        print query
         return self.select_all(query)
 
     def insert(self, table, columns, values, client_id=None) :
@@ -3317,10 +3318,66 @@ class KnowledgeDatabase(Database):
         condition = "url_short_name ='%s' AND client_id != '%d'" % (short_name, client_id)
         return self.is_already_exists(self.tblClientGroups, condition)
 
-    def is_deactivated_existing_country(self, client_id, country_ids):
-        existing_countries = self.get_client_countries(client_id).split(",")
-        pass
+    def is_unit_exists_under_country(self, country):
+        print "checking whether unit exists under this country"
+        columns = "count(*)"
+        condition = "country_id = '{}'".format(country)
+        rows = self.get_data(self.tblUnits, columns, condition)
+        if rows[0][0] > 0:
+            print "returning exists"
+            return True
+        else:
+            print "returning not exists"
+            return False
 
+    def is_unit_exists_under_domain(self, domain):
+        columns = "count(*)"
+        condition = "(domain_ids like '{}{}{}') or \
+        (domain_ids like '{}{}') or (domain_ids like '{}{}')".format(
+            "%", domain, "%", domain, "%", "%", domain
+        )
+        rows = self.get_data(self.tblUnits, columns, condition)
+        if rows[0][0] > 0:
+            print "returning exists"
+            return True
+        else:
+            print "returning not exists"
+            return False
+
+    def is_deactivated_existing_country(self, client_id, country_ids):
+        existing_countries = self.get_client_countries(client_id)
+        existing_countries_list = None
+        if existing_countries is not None:
+            existing_countries_list = [int(x) for x in existing_countries.split(",")]
+        current_countries = [int(x) for x in country_ids]
+        for country in existing_countries_list:
+            if country not in current_countries:
+                print "country not in  current countries"
+                if self.is_unit_exists_under_country(country):
+                    return True
+                else:
+                    continue
+            else:
+                continue
+        return False
+                
+
+    def is_deactivated_existing_domain(self, client_id, domain_ids):
+        existing_domains = self.get_client_domains(client_id)
+        existing_domains_list = None
+        if existing_domains is not None:
+            existing_domains_list = [int(x) for x in existing_domains.split(",")]
+        current_domains = [int(x) for x in domain_ids]
+        for domain in existing_domains_list:
+            if domain not in current_domains:
+                if self.is_unit_exists_under_domain(domain):
+                    return True
+                else:
+                    continue
+            else:
+                continue
+        return False 
+                
 
 
     def get_group_company_details(self):

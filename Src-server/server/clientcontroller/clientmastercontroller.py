@@ -300,7 +300,7 @@ def get_units(db, request, session_user, client_id):
     division_list = db.get_divisions_for_user(
         division_ids
     )
-    unit_list = db.get_units_for_user(unit_ids, client_id)
+    unit_list = db.get_units_closure_for_user(unit_ids)
     return clientmasters.GetUnitsSuccess(
         business_groups=business_group_list,
         legal_entities=legal_entity_list,
@@ -313,7 +313,7 @@ def close_unit(db, request, session_user, client_id):
     password = request.password
 
     if db.verify_password(password, session_user, client_id):
-        db.close_unit(request.unit_id, client_id, session_user)
+        db.close_unit(request.unit_id, session_user)
         return clientmasters.CloseUnitSuccess()
     else:
         return clientmasters.InvalidPassword()
