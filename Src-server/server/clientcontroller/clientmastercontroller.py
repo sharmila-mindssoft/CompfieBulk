@@ -116,6 +116,10 @@ def change_service_provider_status(db, request, session_user, client_id):
         request.service_provider_id, client_id
     ):
         return clientmasters.InvalidServiceProviderId()
+    elif db.is_user_exists_under_service_provider(
+        request.service_provider_id
+    ):
+        return clientmasters.CannotDeactivateUserExists()
     elif db.update_service_provider_status(
         request.service_provider_id,
         is_active, session_user, client_id
@@ -193,6 +197,10 @@ def change_user_privilege_status(db, request, session_user, client_id):
         request.user_group_id, client_id
     ):
         return clientmasters.InvalidUserGroupId()
+    elif db.is_user_exists_under_user_group(
+        request.user_group_id
+    ):
+        return clientmasters.CannotDeactivateUserExists()
     elif db.update_user_privilege_status(
         request.user_group_id, request.is_active,
         session_user, client_id

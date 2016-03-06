@@ -959,6 +959,19 @@ class ContactNumberAlreadyExists(Response):
         return {
         }
 
+class CannotDeactivateUserExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CannotDeactivateUserExists()
+
+    def to_inner_structure(self):
+        return {
+        } 
+
 class GetAuditTrailSuccess(Response):
     def __init__(self, audit_trails):
         self.audit_trails = audit_trails
@@ -985,7 +998,7 @@ def _init_Response_class_map():
     UpdateUserPrivilegesSuccess, ChangeUserPrivilegeStatusSuccess,
     GetClientUsersSuccess, SaveClientUserSuccess, EmployeeCodeAlreadyExists,
     UpdateClientUserSuccess, InvalidUserId, ChangeClientUserStatusSuccess,
-    ChangeAdminStatusSuccess, GetAuditTrailSuccess,
+    ChangeAdminStatusSuccess, GetAuditTrailSuccess, CannotDeactivateUserExists,
     GetUnitsSuccess, InvalidPassword, CloseUnitSuccess, ContactNumberAlreadyExists,
     InvalidServiceProviderId, EmailIdAlreadyExists]
     class_map = {}

@@ -504,14 +504,14 @@ class ClientDatabase(Database):
     def get_user_privilege_details_list(self, client_id):
         columns = "user_group_id, user_group_name, form_ids, is_active"
         rows = self.get_data(
-            self.tblUserGroups, columns, "1"
+            self.tblUserGroups, columns, "1 ORDER BY user_group_name"
         )
         return rows
 
     def get_user_privileges(self, client_id):
         columns = "user_group_id, user_group_name, is_active"
         rows = self.get_data(
-            self.tblUserGroups, columns, "1"
+            self.tblUserGroups, columns, "1 ORDER BY user_group_name"
         )
 
         columns = ["user_group_id", "user_group_name", "is_active"]
@@ -599,7 +599,7 @@ class ClientDatabase(Database):
         columns = "user_id, email_id, user_group_id, employee_name,"+\
         "employee_code, contact_no, seating_unit_id, user_level, "+\
         " is_admin, is_service_provider, service_provider_id, is_active"
-        condition = "1"
+        condition = "1 ORDER BY employee_name"
         rows =  self.get_data(
             self.tblUsers,columns, condition
         )
@@ -1005,7 +1005,7 @@ class ClientDatabase(Database):
         columns = "service_provider_id, service_provider_name, address, contract_from,"+\
                 "contract_to, contact_person, contact_no, is_active"
         rows = self.get_data(
-            self.tblServiceProviders, columns, "1"
+            self.tblServiceProviders, columns, "1 ORDER BY service_provider_name"
         )
         columns = ["service_provider_id", "service_provider_name", "address", "contract_from",
         "contract_to", "contact_person", "contact_no", "is_active"]
@@ -4210,7 +4210,13 @@ class ClientDatabase(Database):
                     year_to = datetime.date.today().year + 1
 
             start_date = self.string_to_datetime('01-' + self.string_months[period_from] + '-' + str(year_from))
-            end_date = self.string_to_datetime('31-' + self.string_months[period_to] + '-' + str(year_to))
+            day = "30-"
+            if period_to == 2:
+                day = "29-"
+            elif period_to in [1, 3, 5, 7, 8, 10, 12]:
+                day = "31-"
+            end_date = self.string_to_datetime(
+                day + self.string_months[period_to] + '-' + str(year_to))
 
         else :
             start_date = self.string_to_datetime(from_date)
@@ -4226,7 +4232,7 @@ class ClientDatabase(Database):
             unit_name = "%s - %s " % (unit[1], unit[2])
             unit_address = unit[3]
 
-            query = "SELECT c.compliance_task, c.compliance_description, ch.validity_date, ch.due_date, \
+            query = "SELECT concat(c.document_name,'-',c.compliance_task), c.compliance_description, ch.validity_date, ch.due_date, \
                     (SELECT concat( u.employee_code, '-' ,u.employee_name ) FROM tbl_users u WHERE u.user_id = ch.completed_by) AS assigneename, \
                     ch.documents, ch.completion_date \
                     from tbl_compliances c,tbl_compliance_history ch, \
@@ -4251,7 +4257,7 @@ class ClientDatabase(Database):
                 if(compliance[2] != None):
                     validity_date = self.datetime_to_string(compliance[2])
 
-                documents = compliance[5]
+                documents = None if compliance[5] == "" else compliance[5]
                 remarks = "remarks"
                 completion_date = None
                 if(compliance[6] != None):
@@ -4775,7 +4781,7 @@ class ClientDatabase(Database):
             ]
             join_type = " left join"
             where_condition = "notification_id = '%d'" % notification_id
-            where_condition += " and notification_type_id = '%d' order by updated_on DESC" % notification_type_id
+            where_condition += " and notification_type_id = '%d' order by updated_on DESC limit 30" % notification_type_id
             notification_detail_row = self.get_data_from_multiple_tables(
                 columns, tables, aliases, join_type,
                 join_conditions, where_condition
@@ -7167,3 +7173,25 @@ class ClientDatabase(Database):
         )
         action = "Closed Unit \"%s - %s\"" % (rows[0][0], rows[0][1])
         self.save_activity(session_user, 5, action)
+
+    def is_user_exists_under_user_group(self, user_group_id):
+        columns = "count(*)"
+        condition = "user_group_id = '%d'" % user_group_id
+        rows = self.get_data(
+            self.tblUsers, columns, condition
+        )
+        if rows[0][0] > 0: 
+            return True
+        else:
+            return False
+
+    def is_user_exists_under_service_provider(self, service_provider_id):
+        columns = "count(*)"
+        condition = "service_provider_id = '%d'" % service_provider_id
+        rows = self.get_data(
+            self.tblUsers, columns, condition
+        )
+        if rows[0][0] > 0:
+            return True
+        else:
+            return False
