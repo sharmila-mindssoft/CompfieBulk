@@ -4469,6 +4469,11 @@ class KnowledgeDatabase(Database):
             compliance_list = self.get_compliance_by_mapping_id(mapping_id)
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
             s_mapping = statutory_data[1]
+            level_map = s_mapping.split(">>")
+            if len(level_map) == 1 :
+                level_map = ""
+            else :
+                level_map = ">>".join(level_map[-1:])
             statutory_parents = statutory_data[2]
             level_1 = statutory_parents[0]
             if level_1 == 0 :
@@ -4480,7 +4485,8 @@ class KnowledgeDatabase(Database):
             if compliance_applicable_list is None:
                 compliance_applicable_list = []
             for c in compliance_list :
-                provision = "%s - %s" % (s_mapping, c["statutory_provision"])
+                provision = "%s - %s" % (level_map, c["statutory_provision"])
+                # provision.replace(level_1, "")
                 name = "%s - %s" % (c["document_name"], c["compliance_task"])
                 c_data = core.ComplianceApplicability(
                     c["compliance_id"],
