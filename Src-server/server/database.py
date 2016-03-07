@@ -891,8 +891,12 @@ class KnowledgeDatabase(Database):
         query = "INSERT INTO %s %s VALUES %s" % (
             table_name, field, str(data)
         )
-        self.execute(query)
-        return True
+        try :
+            self.execute(query)
+            return True
+        except Exception ,e :
+            print query
+            print e
 
     def update_data(self, table_name, field_with_data, where_condition) :
         query = "UPDATE %s SET %s WHERE %s" % (
@@ -3756,7 +3760,7 @@ class KnowledgeDatabase(Database):
         is_sms_subscribed = 0 if client_group.is_sms_subscribed == False else 1
 
         columns = [
-            "group_name", "contract_from", "contract_to", "no_of_user_licence", 
+            "group_name", "contract_from", "contract_to", "no_of_user_licence",
             "total_disk_space", "is_sms_subscribed", "incharge_persons", "is_active",
             "updated_by", "updated_on"
         ]
@@ -3773,7 +3777,7 @@ class KnowledgeDatabase(Database):
             file_name = self.update_client_logo(client_group.logo, client_group.client_id)
             values.append(file_name)
             values.append(client_group.logo.file_size)
-        
+
         condition = "client_id = '%d'" % client_group.client_id
 
         action = "Updated Client \"%s\"" % client_group.group_name
@@ -4497,7 +4501,10 @@ class KnowledgeDatabase(Database):
             for c in compliance_list :
                 provision = "%s - %s" % (level_map, c["statutory_provision"])
                 # provision.replace(level_1, "")
-                name = "%s - %s" % (c["document_name"], c["compliance_task"])
+                if c["document_name"] is not None :
+                    name = "%s - %s" % (c["document_name"], c["compliance_task"])
+                else :
+                    name = c["compliance_task"]
                 c_data = core.ComplianceApplicability(
                     c["compliance_id"],
                     name,
@@ -4807,8 +4814,16 @@ class KnowledgeDatabase(Database):
             statutory_id = int(r["statutory_id"])
             statutory_data = self.statutory_parent_mapping.get(statutory_id)
             s_mapping = statutory_data[1]
-            provision = "%s - %s" % (s_mapping, r["statutory_provision"])
-            name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            level_map = s_mapping.split(">>")
+            if len(level_map) == 1 :
+                level_map = ""
+            else :
+                level_map = ">>".join(level_map[-1:])
+            provision = "%s - %s" % (level_map, r["statutory_provision"])
+            if r["document_name"] is not None :
+                name = "%s - %s" % (r["document_name"], r["compliance_task"])
+            else :
+                name = r["compliance_task"]
             compliance = core.ComplianceApplicability(
                 r["compliance_id"],
                 name,
